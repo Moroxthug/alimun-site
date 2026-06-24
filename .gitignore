@@ -1,0 +1,16 @@
+# ── Secrets ─────────────────────────────────────────────────
+.env
+.env.local
+.env.production
+
+# ── OS / Editor ─────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+*.suo
+*.user
+
+# ── Node (if you ever add a build step) ─────────────────────
+node_modules/
+dist/
+.next/

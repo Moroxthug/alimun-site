@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Welcome to Alimun – Registration Complete</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<style>
+:root{--g:#ceff65;--b:#080808;--body:'Satoshi',sans-serif;--disp:'Anton',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--body);background:#f0efe9;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;padding:2rem;}
+
+/* Card */
+.card{background:#fff;border-radius:1.75rem;box-shadow:0 12px 60px rgba(0,0,0,.1);max-width:480px;width:100%;overflow:hidden;position:relative;}
+
+/* States */
+.state{display:none;padding:3rem 2.5rem;text-align:center;}
+.state.active{display:block;}
+
+/* Loading state */
+.spinner{width:48px;height:48px;border:3px solid #f0efe9;border-top-color:var(--b);border-radius:50%;animation:spin 0.7s linear infinite;margin:0 auto 1.5rem;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loading-title{font-family:var(--disp);font-size:1.5rem;text-transform:uppercase;color:var(--b);margin-bottom:.5rem;}
+.loading-sub{font-size:.875rem;color:#aaa;line-height:1.6;}
+
+/* Success state */
+.success-burst{position:relative;width:88px;height:88px;margin:0 auto 1.75rem;}
+.success-ring{position:absolute;inset:0;border-radius:50%;background:var(--g);animation:burst .5s ease-out forwards;}
+@keyframes burst{0%{transform:scale(0);opacity:0;}60%{transform:scale(1.15);}100%{transform:scale(1);opacity:1;}}
+.success-ico{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;}
+.success-ico svg{width:36px;height:36px;stroke:var(--b);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:60;stroke-dashoffset:60;animation:draw .45s .3s ease forwards;}
+@keyframes draw{to{stroke-dashoffset:0;}}
+.success-title{font-family:var(--disp);font-size:2rem;text-transform:uppercase;line-height:1.05;color:var(--b);margin-bottom:.625rem;}
+.success-sub{font-size:.9rem;color:#555;line-height:1.65;margin-bottom:1.75rem;}
+.tier-pill{display:inline-flex;align-items:center;gap:.5rem;background:#f5f4f0;border-radius:5rem;padding:.5rem 1.125rem;font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--b);margin-bottom:1.75rem;}
+.tier-pill-dot{width:8px;height:8px;border-radius:50%;background:var(--g);flex-shrink:0;}
+.redirect-note{font-size:.75rem;color:#bbb;margin-bottom:1.25rem;}
+.countdown{font-weight:700;color:var(--b);}
+.progress-bar-wrap{height:3px;background:#f0efe9;border-radius:5rem;overflow:hidden;margin-bottom:1.75rem;}
+.progress-bar-fill{height:100%;background:var(--g);border-radius:5rem;width:0%;transition:width .1s linear;}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;background:var(--g);color:var(--b);font-family:var(--body);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.055em;border:none;border-radius:5rem;padding:.75rem 1.75rem;cursor:pointer;transition:background .22s;text-decoration:none;line-height:1;}
+.btn:hover{background:#b3e940;}
+
+/* Error state */
+.error-ico{width:64px;height:64px;border-radius:50%;background:#fff0f0;border:2px solid #fca5a5;display:flex;align-items:center;justify-content:center;margin:0 auto 1.5rem;}
+.error-ico svg{width:28px;height:28px;stroke:#dc2626;fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
+.error-title{font-family:var(--disp);font-size:1.5rem;text-transform:uppercase;color:#dc2626;margin-bottom:.5rem;}
+.error-msg{font-size:.875rem;color:#555;line-height:1.6;margin-bottom:1.5rem;}
+.btn-outline{display:inline-flex;align-items:center;justify-content:center;background:transparent;color:#aaa;border:1px solid rgba(0,0,0,.12);font-family:var(--body);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.055em;border-radius:5rem;padding:.75rem 1.5rem;cursor:pointer;transition:all .22s;text-decoration:none;line-height:1;margin-top:.5rem;}
+.btn-outline:hover{color:var(--b);border-color:rgba(0,0,0,.25);}
+</style>
+
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  window.ALIMUN_CONFIG = {
+    supabaseUrl:          'https://dgaiasmefcbrtzqwdyri.supabase.co',
+    supabaseAnonKey:      'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
+    stripePublishableKey: 'pk_test_51TlpPSBSEHl9NbpEoDK36xbj5VKYSvmnvf27AdnK0JdFwbfGuF1lslFVzgZEkQRyLhZQoYwWFmrM9pThGYFk8GVG00TyJB6tTS',
+  };
+</script>
+</head>
+<body>
+
+<div class="card" id="card">
+
+  <!-- State: loading -->
+  <div class="state active" id="state-loading">
+    <div class="spinner"></div>
+    <div class="loading-title">Confirming payment…</div>
+    <div class="loading-sub">Please wait while we verify your subscription with Stripe.</div>
+  </div>
+
+  <!-- State: success -->
+  <div class="state" id="state-success">
+    <div class="success-burst">
+      <div class="success-ring"></div>
+      <div class="success-ico">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+    </div>
+    <div class="success-title" id="success-title">You're in!</div>
+    <div class="success-sub" id="success-sub">Your Alimun account is now active. Get ready for your first live session.</div>
+    <div class="tier-pill" id="tier-pill">
+      <span class="tier-pill-dot"></span>
+      <span id="tier-pill-text">Focused plan · Active</span>
+    </div>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progress-bar"></div></div>
+    <div class="redirect-note">Redirecting to your dashboard in <span class="countdown" id="countdown">3</span>s…</div>
+    <a href="student-dashboard.html" class="btn" id="btn-dashboard">Go to dashboard →</a>
+  </div>
+
+  <!-- State: error -->
+  <div class="state" id="state-error">
+    <div class="error-ico">
+      <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </div>
+    <div class="error-title">Payment not confirmed</div>
+    <div class="error-msg" id="error-msg">We couldn't verify your payment. This can happen if the session expired or was cancelled. No charge has been made.</div>
+    <a href="signup.html?step=4" class="btn">Try again →</a>
+    <br>
+    <a href="index.html" class="btn-outline">Back to Alimun</a>
+  </div>
+
+</div><!-- /card -->
+
+<script type="module">
+import { supabase } from '/js/supabase/config.js';
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function showState(id) {
+  document.querySelectorAll('.state').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showError(msg) {
+  if (msg) document.getElementById('error-msg').textContent = msg;
+  showState('state-error');
+}
+
+// Tier display names
+const TIER_NAMES = {
+  community: 'Community',
+  focused:   'Focused',
+  intensive: 'Intensive',
+  private:   '1 on 1',
+  onetoone:  '1 on 1',
+  unknown:   'Alimun',
+};
+
+// ── Countdown + progress bar ──────────────────────────────────────────────────
+function startRedirectCountdown(seconds = 3) {
+  const countEl  = document.getElementById('countdown');
+  const barEl    = document.getElementById('progress-bar');
+  const totalMs  = seconds * 1000;
+  const tickMs   = 50;
+  let elapsed    = 0;
+
+  const interval = setInterval(() => {
+    elapsed += tickMs;
+    const pct = Math.min((elapsed / totalMs) * 100, 100);
+    barEl.style.width = `${pct}%`;
+
+    const remaining = Math.max(0, Math.ceil((totalMs - elapsed) / 1000));
+    countEl.textContent = remaining;
+
+    if (elapsed >= totalMs) {
+      clearInterval(interval);
+      window.location.href = 'student-dashboard.html';
+    }
+  }, tickMs);
+}
+
+// ── Main ──────────────────────────────────────────────────────────────────────
+async function init() {
+  // 1. Extract session_id from URL
+  const params    = new URLSearchParams(window.location.search);
+  const sessionId = params.get('session_id');
+
+  if (!sessionId || !sessionId.startsWith('cs_')) {
+    showError('No valid Stripe session ID found in the URL. Please go back and try again.');
+    return;
+  }
+
+  try {
+    // 2. Retrieve Checkout Session from our API endpoint
+    const resp = await fetch(`/api/checkout-session?session_id=${encodeURIComponent(sessionId)}`);
+    if (!resp.ok) {
+      const errData = await resp.json().catch(() => ({}));
+      throw new Error(errData.error || `API error ${resp.status}`);
+    }
+
+    const session = await resp.json();
+
+    // 3. Verify payment actually succeeded
+    if (session.status !== 'complete' || session.paymentStatus !== 'paid') {
+      showError(
+        `Your payment status is "${session.paymentStatus}". ` +
+        'If you believe this is an error, please contact support@alimun.com.'
+      );
+      return;
+    }
+
+    // 4. Update student_profiles with subscription info
+    const supabaseUserId = session.metadata?.supabase_user_id;
+    const tier           = session.metadata?.tier || 'unknown';
+    const subscriptionId = session.subscriptionId;
+
+    if (supabaseUserId && subscriptionId) {
+      const { error: updateErr } = await supabase
+        .from('student_profiles')
+        .update({
+          stripe_subscription_id:     subscriptionId,
+          stripe_subscription_status: 'active',
+        })
+        .eq('user_id', supabaseUserId);
+
+      if (updateErr) {
+        // Non-fatal: payment succeeded, just log
+        console.warn('[Alimun] Could not update student_profiles:', updateErr.message);
+      }
+    }
+
+    // 5. Show success UI
+    const tierName   = TIER_NAMES[tier] || 'Alimun';
+    const firstName  = session.customerEmail?.split('@')[0] || '';
+
+    document.getElementById('success-title').textContent =
+      `You're in${firstName ? ', ' + firstName.charAt(0).toUpperCase() + firstName.slice(1) : ''}!`;
+    document.getElementById('success-sub').textContent =
+      `Your ${tierName} account is active. Get ready for your first live session — we'll be in touch shortly.`;
+    document.getElementById('tier-pill-text').textContent =
+      `${tierName} plan · Active`;
+
+    showState('state-success');
+    startRedirectCountdown(3);
+
+  } catch (err) {
+    console.error('[Alimun] signup-success error:', err);
+    showError(err.message || 'An unexpected error occurred. Please contact support@alimun.com.');
+  }
+}
+
+init();
+</script>
+</body>
+</html>

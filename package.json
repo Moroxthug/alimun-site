@@ -1,0 +1,17 @@
+{
+  "name": "alimun-site",
+  "version": "1.0.0",
+  "description": "Alimun language learning platform – static site + Vercel serverless functions",
+  "private": true,
+  "scripts": {
+    "dev": "npx vercel dev",
+    "deploy": "npx vercel --prod"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.45.0",
+    "stripe": "^16.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

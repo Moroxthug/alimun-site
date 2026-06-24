@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Teacher Dashboard – Alimun</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  window.ALIMUN_CONFIG = {
+    supabaseUrl:     'https://dgaiasmefcbrtzqwdyri.supabase.co',
+    supabaseAnonKey: 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
+  };
+</script>
+<script src="js/translations.js"></script>
+<script src="js/i18n.js"></script>
+<style>
+:root{--g:#ceff65;--b:#080808;--sb:258px;--sbc:68px;--ease:cubic-bezier(.4,0,.2,1);--body:'Satoshi',sans-serif;--disp:'Anton',sans-serif;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;}
+body{font-family:var(--body);color:var(--b);background:#f0efe9;}
+.sb{position:fixed;left:0;top:0;bottom:0;width:var(--sb);background:#fff;border-right:1px solid rgba(0,0,0,.07);display:flex;flex-direction:column;z-index:30;transition:width .22s var(--ease);overflow:hidden;}
+.sb.col{width:var(--sbc);}
+.sb-top{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 1.125rem 1.25rem;flex-shrink:0;min-height:72px;}
+.sb-lf{display:flex;align-items:center;}
+.sb-li{display:none;align-items:center;justify-content:center;width:36px;}
+.sb.col .sb-lf{display:none;}.sb.col .sb-li{display:flex;}.sb.col .sb-top{justify-content:center;padding:1.375rem .75rem;}
+.sb-tgl{width:28px;height:28px;border-radius:50%;background:#f5f4f0;border:1px solid rgba(0,0,0,.08);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .16s;flex-shrink:0;}
+.sb-tgl:hover{background:#eae9e3;}
+.sb-tgl svg{width:14px;height:14px;stroke:#888;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+.sb.col .sb-tgl{display:none;}
+.sb-nav{flex:1;padding:0 .625rem;overflow-y:auto;overflow-x:hidden;}
+.sb-sec{display:flex;align-items:center;font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(0,0,0,.25);padding:.75rem .625rem .2rem;}
+.sb-sec span{transition:opacity .18s,max-width .22s var(--ease);max-width:200px;overflow:hidden;white-space:nowrap;}
+.sb.col .sb-sec span{opacity:0;max-width:0;}
+.sb-a{display:flex;align-items:center;gap:.7rem;padding:.6rem .75rem;border-radius:.5rem;color:#777;font-size:.83rem;font-weight:500;cursor:pointer;border:none;background:none;width:100%;text-align:left;white-space:nowrap;transition:background .15s,color .15s;margin-bottom:.06rem;position:relative;}
+.sb-a svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
+.sb-a:hover{background:#f5f4f0;color:var(--b);}
+.sb-a.on{background:var(--b);color:#fff;font-weight:700;}
+.sb-a.on svg{stroke:#fff;}
+.sb-lbl{transition:opacity .15s,max-width .22s var(--ease);max-width:200px;overflow:hidden;}
+.sb.col .sb-lbl{opacity:0;max-width:0;}
+.sb.col .sb-a{justify-content:center;padding:.6rem 0;gap:0;}
+.sb.col .sb-a.on::after{content:'';position:absolute;right:-1px;top:50%;transform:translateY(-50%);width:3px;height:60%;border-radius:2px 0 0 2px;background:var(--b);}
+.sb-bot{flex-shrink:0;padding:.875rem .75rem 1.5rem;border-top:1px solid rgba(0,0,0,.07);overflow:hidden;}
+.sb-role{background:#f5f4f0;border-radius:.75rem;padding:.7rem .875rem;margin-bottom:.875rem;transition:opacity .15s,max-height .22s var(--ease),margin .22s var(--ease),padding .22s var(--ease);max-height:80px;}
+.sb.col .sb-role{opacity:0;max-height:0;margin:0;padding:0;}
+.sb-role-l{font-size:.6rem;letter-spacing:.12em;text-transform:uppercase;color:#aaa;margin-bottom:.15rem;}
+.sb-role-v{font-family:var(--disp);font-size:.9rem;color:var(--b);text-transform:uppercase;letter-spacing:.03em;}
+.sb-role-s{font-size:.66rem;color:#bbb;margin-top:.08rem;}
+.sb-user{display:flex;align-items:center;gap:.75rem;}
+.sb-av{width:34px;height:34px;border-radius:50%;background:var(--g);color:var(--b);font-weight:900;font-size:.78rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.sb-ui{overflow:hidden;transition:opacity .15s,max-width .22s var(--ease);max-width:160px;}
+.sb.col .sb-ui{opacity:0;max-width:0;}
+.sb-un{font-size:.83rem;font-weight:700;color:var(--b);line-height:1.2;white-space:nowrap;}
+.sb-us{font-size:.68rem;color:#aaa;margin-top:.06rem;white-space:nowrap;}
+.sb.col .sb-bot{padding:.875rem .375rem 1.5rem;}
+.sb.col .sb-user{justify-content:center;}
+.main{margin-left:var(--sb);height:100vh;overflow-y:auto;transition:margin-left .22s var(--ease);}
+.main.col{margin-left:var(--sbc);}
+#content{padding:2rem 2.25rem 3rem;transition:opacity .18s ease;}
+.pg-h1{font-family:var(--disp);font-size:2rem;text-transform:uppercase;line-height:1.05;letter-spacing:-.01em;}
+.pg-sub{font-size:.84rem;color:#888;margin-top:.3rem;}
+.pg-head{margin-bottom:1.75rem;}
+.sec-t{font-family:var(--disp);font-size:.95rem;text-transform:uppercase;letter-spacing:.04em;}
+.sh{display:flex;justify-content:space-between;align-items:center;margin-bottom:.875rem;}
+.sh-a{font-size:.75rem;color:#aaa;cursor:pointer;font-weight:500;}
+.sh-a:hover{color:var(--b);}
+.card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:1.125rem;padding:1.375rem;}
+.card.dark{background:var(--b);color:#fff;border:none;}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.25rem;}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;}
+.mb{margin-bottom:1.25rem;}
+.mb2{margin-bottom:1.75rem;}
+.btn{display:inline-flex;align-items:center;gap:.4rem;background:var(--g);color:var(--b);font-family:var(--body);font-weight:700;font-size:.75rem;text-transform:uppercase;letter-spacing:.055em;border:none;border-radius:5rem;padding:.625rem 1.25rem;cursor:pointer;transition:background .22s;text-decoration:none;white-space:nowrap;line-height:1;}
+.btn:hover{background:#b3e940;}
+.btn.ghost{background:rgba(255,255,255,.09);color:#fff;}
+.btn.ghost:hover{background:rgba(255,255,255,.16);}
+.btn.out{background:transparent;color:var(--b);border:1px solid rgba(0,0,0,.14);}
+.btn.out:hover{background:#f5f4f0;}
+.btn.sm{padding:.42rem .9rem;font-size:.7rem;}
+.btn:disabled{background:#eae9e4;color:#bbb;cursor:not-allowed;}
+.pill{display:inline-flex;align-items:center;font-size:.62rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;border-radius:5rem;padding:.2rem .625rem;white-space:nowrap;}
+.pill.dt{background:#fff7ed;color:#c2410c;}
+.pill.ok{background:#f0fdf4;color:#15803d;}
+.pill.na{background:#f8fafc;color:#94a3b8;border:1px solid #e2e8f0;}
+.stat-row{display:flex;gap:1rem;margin-bottom:1.5rem;}
+.stat-b{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:1rem;padding:1.125rem 1.375rem;flex:1;}
+.stat-b .v{font-family:var(--disp);font-size:1.875rem;color:var(--b);line-height:1;margin-bottom:.18rem;}
+.stat-b .l{font-size:.67rem;letter-spacing:.1em;text-transform:uppercase;color:#bbb;}
+.stat-b.hi{background:var(--b);}
+.stat-b.hi .v{color:var(--g);}
+.stat-b.hi .l{color:rgba(255,255,255,.35);}
+.sess-card{background:var(--b);color:#fff;border-radius:1.375rem;padding:1.75rem 2rem;margin-bottom:1.375rem;display:flex;justify-content:space-between;align-items:center;gap:2rem;position:relative;overflow:hidden;}
+.sess-card::after{content:'';position:absolute;right:-120px;top:-120px;width:360px;height:360px;border-radius:50%;background:var(--g);opacity:.05;}
+.s-badge{display:inline-flex;align-items:center;gap:.4rem;background:var(--g);color:var(--b);font-size:.62rem;font-weight:700;letter-spacing:.09em;text-transform:uppercase;border-radius:5rem;padding:.18rem .7rem;margin-bottom:.875rem;}
+.s-dot{width:5px;height:5px;border-radius:50%;background:var(--b);animation:blink 1.4s ease infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.s-title{font-family:var(--disp);font-size:1.5rem;text-transform:uppercase;color:#fff;line-height:1.1;margin-bottom:.45rem;}
+.s-meta{font-size:.78rem;color:rgba(255,255,255,.38);display:flex;gap:1.5rem;}
+.s-meta b{color:rgba(255,255,255,.72);}
+.s-r{text-align:right;flex-shrink:0;}
+.cd{font-family:var(--disp);font-size:2.75rem;color:var(--g);line-height:1;font-variant-numeric:tabular-nums;}
+.cd-l{font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.25);margin:.22rem 0 1.125rem;}
+.sub-card{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:1rem;padding:1.1rem 1.25rem;display:flex;align-items:center;gap:.875rem;margin-bottom:.625rem;cursor:pointer;transition:all .18s;}
+.sub-card:hover{border-color:rgba(0,0,0,.14);box-shadow:0 3px 18px rgba(0,0,0,.06);}
+.s-av2{width:36px;height:36px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;color:var(--b);flex-shrink:0;}
+.s-info{flex:1;min-width:0;}
+.s-name{font-weight:700;font-size:.875rem;}
+.s-detail{font-size:.74rem;color:#aaa;margin-top:.04rem;}
+.stu-row{display:flex;align-items:center;gap:.875rem;padding:1rem 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.stu-row:last-child{border-bottom:none;}
+.stu-av{width:36px;height:36px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:.72rem;color:var(--b);flex-shrink:0;}
+.stu-info{flex:1;}
+.stu-name{font-weight:700;font-size:.875rem;}
+.stu-sub{font-size:.74rem;color:#aaa;margin-top:.04rem;}
+.stu-prog{width:80px;text-align:right;}
+.stu-pct{font-family:var(--disp);font-size:1rem;}
+.stu-bar-wrap{width:80px;height:4px;background:#eae9e4;border-radius:5rem;overflow:hidden;margin-top:.3rem;}
+.stu-bar{height:100%;border-radius:5rem;background:var(--b);}
+.prog-trk{height:5px;background:#eae9e4;border-radius:5rem;overflow:hidden;}
+.prog-bar{height:100%;border-radius:5rem;width:0;transition:width 1.1s cubic-bezier(.215,.61,.355,1);}
+.field-row{margin-bottom:.875rem;}
+.field-row label{display:block;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#aaa;margin-bottom:.4rem;}
+.field-row input,.field-row select,.field-row textarea{width:100%;background:#fafaf8;border:1.5px solid rgba(0,0,0,.1);border-radius:.75rem;padding:.75rem 1rem;font-family:var(--body);font-size:.88rem;color:var(--b);outline:none;transition:border-color .2s;}
+.field-row input:focus,.field-row select:focus,.field-row textarea:focus{border-color:var(--b);}
+.field-row textarea{min-height:100px;resize:vertical;}
+.sess-row{display:flex;align-items:center;gap:1rem;padding:.875rem 0;border-bottom:1px solid rgba(0,0,0,.06);}
+.sess-row:last-child{border-bottom:none;}
+.sess-dot2{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+.sess-dot2.done{background:var(--g);}
+.sess-dot2.up{background:var(--b);animation:blink 1.4s ease infinite;}
+.sess-info2{flex:1;}
+.sess-topic2{font-size:.875rem;font-weight:600;}
+.sess-date2{font-size:.75rem;color:#aaa;margin-top:.04rem;}
+.sess-b2{font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.18rem .5rem;border-radius:5rem;}
+.sess-b2.done{background:#f0fdf4;color:#15803d;}
+.sess-b2.up{background:var(--g);color:var(--b);}
+.ov{position:fixed;inset:0;background:rgba(8,8,8,.6);backdrop-filter:blur(8px);z-index:50;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .25s;}
+.ov.open{opacity:1;pointer-events:all;}
+.modal{background:#fff;border-radius:1.75rem;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;transform:translateY(16px) scale(.983);transition:transform .3s cubic-bezier(.215,.61,.355,1);box-shadow:0 40px 100px rgba(0,0,0,.24);}
+.ov.open .modal{transform:none;}
+.m-hd{padding:1.75rem 1.75rem 0;}
+.m-ey{font-size:.63rem;letter-spacing:.12em;text-transform:uppercase;color:#bbb;margin-bottom:.25rem;}
+.m-title{font-family:var(--disp);font-size:1.875rem;text-transform:uppercase;line-height:1.05;margin-bottom:1.375rem;border-bottom:1px solid rgba(0,0,0,.07);padding-bottom:1.375rem;}
+.m-bd{padding:0 1.75rem 1.75rem;}
+.g-load{text-align:center;padding:2.25rem 1.75rem 2.75rem;}
+.g-spin{width:28px;height:28px;border:2.5px solid #eae9e4;border-top-color:var(--b);border-radius:50%;animation:spin .7s linear infinite;margin:0 auto .875rem;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.g-load p{font-size:.84rem;color:#bbb;}
+.g-res{margin:0 1.75rem 1.75rem;}
+.g-top{background:var(--b);border-radius:1.25rem 1.25rem 0 0;padding:1.5rem 1.625rem;display:flex;align-items:baseline;gap:.875rem;}
+.g-score{font-family:var(--disp);font-size:4rem;color:var(--g);line-height:1;}
+.g-sum{color:rgba(255,255,255,.7);font-size:.875rem;line-height:1.55;}
+.g-bot{background:#f5f4f0;border-radius:0 0 1.25rem 1.25rem;padding:1.25rem 1.625rem;}
+.g-cols{display:grid;grid-template-columns:1fr 1fr;gap:1rem;}
+.g-col-h{font-size:.61rem;letter-spacing:.11em;text-transform:uppercase;color:#aaa;margin-bottom:.45rem;}
+.g-list{list-style:none;display:flex;flex-direction:column;gap:.3rem;}
+.g-list li{font-size:.83rem;line-height:1.5;padding-left:.875rem;position:relative;color:#333;}
+.g-list li::before{content:'';position:absolute;left:0;top:.54rem;width:5px;height:5px;border-radius:50%;}
+.str .g-list li::before{background:#22c55e;}
+.imp .g-list li::before{background:#f59e0b;}
+.g-fix{margin-top:1rem;background:#fff;border-radius:.75rem;padding:.875rem 1rem;border:1px solid #e8e7e2;}
+.g-fix small{display:block;font-size:.61rem;letter-spacing:.11em;text-transform:uppercase;color:#bbb;margin-bottom:.3rem;}
+.g-fix p{font-size:.83rem;color:#16a34a;font-style:italic;}
+.sub-text{background:#f5f4f0;border-radius:.875rem;padding:1rem 1.25rem;margin-bottom:1.25rem;font-size:.875rem;line-height:1.65;color:#444;white-space:pre-wrap;}
+</style>
+</head>
+<body>
+
+<aside class="sb" id="sb">
+  <div class="sb-top">
+    <div class="sb-lf">
+      <svg height="27" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg"><path fill="#1a443c" d="M511.61,422.8c7.52-6.66,14.43-12.94,21.51-19.03,39.31-33.83,106.66-27.64,140.27,16.17,14.4,18.78,21.44,39.83,21.45,63.41.02,68.76.14,137.52.18,206.28,0,10.53-7.15,16.92-18.75,18.45-19.69,2.58-34.39-7.28-48.55-18.57-4.48-3.57-7.41-7.75-15.6-13.9-.71-.53-2.27-1.67-4.02-1.37-2.91.5-4.44,4.62-5.04,6.3-3.83,10.72-2.66,34.16-2.52,39.03.13,4.43.82,28.52-13.85,45.33-1.01,1.15-17.78,19.78-40.19,16.39-2.85-.43-13.79-2.49-21.95-11.42-5.45-5.96-8.82-13.82-9.4-22.82-.21-3.17-.03-6.37-1.29-9.8-.42,1.75-1.02,3.49-1.24,5.26-2.46,19.75-13.92,34.17-30.6,38.4-19.11,4.84-37.78-9.63-46.25-20.07-11.88-14.64-13.39-32.61-14-40.02-1.92-22.95,3.77-42.27-3.13-45.38-1.58-.71-3.3-.33-4.43.06-.95.79-2.33,1.94-3.99,3.32-17.56,14.46-27.1,20.26-34.43,25.12-8.37,5.55-18.26,5.32-27.89,3.79-11.98-1.9-17.17-8.02-17.24-20.62-.16-28.31-.11-56.63-.07-84.94.05-42.15-.22-84.31.36-126.46.49-35.59,29.27-73.93,62.39-86.42,41.32-15.59,88.94-3.66,115.38,30.44,1.15,1.49,2.58,2.76,2.89,3.09ZM513.63,706.58c.86-13.48,4.79-25.89,11.7-37.43,10.56-17.61,26.74-27.53,45.89-33.24,28.41-8.47,56.17-8.14,82.85,6.35,4.6,2.5,5.87,1.5,5.85-4.72-.1-51.72-.14-103.45-.4-155.17-.19-37.68-32.62-70.18-72.91-64.61-27.84,3.85-52.86,27.48-55.15,55.5-1.25,15.23-.67,30.61-.74,45.93-.19,38.1-.24,76.2-.43,114.3-.05,9.75-6.62,17.5-15.2,18.39-9.79,1.02-17.73-4.86-19.73-15.05-.69-3.5-.55-7.19-.56-10.79-.15-49.17.23-98.34-.57-147.5-.39-24.21-12.5-42.52-33.93-54-21.42-11.48-43.06-9.53-63.33,2.35-21.66,12.7-31.27,33.11-31.3,57.8-.03,30,.84,60,.91,90,.05,20.21-.62,40.41-.89,60.62-.03,2.4.43,4.8.71,7.65,8.18-3.19,15.28-6.63,22.76-8.76,23.5-6.68,46.7-4.34,69.68,3.11,25.86,8.38,42.75,25.36,50.28,51.5,1.69,5.87,3.01,11.85,4.5,17.78Z"/><path fill="#d5af33" d="M453.39,586.88c10.72.03,19.04,7.83,19.11,17.91.07,11.01-8.28,19.4-19.25,19.34-11.3-.06-20.16-8.82-19.91-19.7.24-10.53,8.29-17.58,20.05-17.54Z"/><path fill="#d5af33" d="M573.28,624.11c-11.23,1.24-18.87-10.64-18.97-18.33-.15-11.63,8.06-18.99,20.76-18.86,10.61.1,18.26,7.92,18.33,18.72.05,8.76-8.98,20.09-20.12,18.47Z"/><path fill="#1a443c" d="M819.26,598.31l-23.46,71.04h-30.16l76.74-225.86h35.19l77.07,225.86h-31.16l-24.13-71.04h-80.09ZM893.31,575.52l-22.12-65.01c-5.03-14.74-8.38-28.15-11.73-41.22h-.67c-3.35,13.4-7.04,27.14-11.39,40.88l-22.12,65.34h68.02Z"/><path fill="#1a443c" d="M985.8,431.43h29.49v237.92h-29.49v-237.92Z"/><path fill="#1a443c" d="M1064.88,669.35v-162.19h29.49v162.19h-29.49Z"/><path fill="#1a443c" d="M1143.29,551.06c0-16.75-.33-30.49-1.34-43.9h25.8l1.34,26.14h1.01c9.05-15.42,24.13-29.82,50.94-29.82,22.12,0,38.87,13.4,45.91,32.5h.67c5.03-9.05,11.39-16.08,18.1-21.11,9.72-7.37,20.44-11.39,35.86-11.39,21.45,0,53.28,14.07,53.28,70.37v95.5h-28.82v-91.82c0-31.16-11.39-49.93-35.19-49.93-16.75,0-29.82,12.4-34.85,26.81-1.34,4.02-2.35,9.38-2.35,14.74v100.19h-28.82v-97.18c0-25.8-11.39-44.57-33.84-44.57-18.43,0-31.83,14.74-36.53,29.49-1.68,4.36-2.35,9.38-2.35,14.41v97.85h-28.82v-118.29Z"/><path fill="#1a443c" d="M1558.47,625.12c0,16.75.33,31.5,1.34,44.23h-26.14l-1.68-26.47h-.67c-7.71,13.07-24.8,30.16-53.62,30.16-25.47,0-55.96-14.07-55.96-71.04v-94.83h29.49v89.81c0,30.83,9.38,51.6,36.19,51.6,19.77,0,33.51-13.74,38.87-26.81,1.67-4.36,2.68-9.72,2.68-15.08v-99.52h29.49v117.95Z"/><path fill="#1a443c" d="M1607.39,551.06c0-16.75-.33-30.49-1.34-43.9h26.14l1.67,26.81h.67c8.04-15.41,26.81-30.49,53.62-30.49,22.45,0,57.3,13.4,57.3,69.03v96.84h-29.49v-93.49c0-26.14-9.72-47.92-37.53-47.92-19.44,0-34.51,13.74-39.54,30.16-1.34,3.69-2.01,8.71-2.01,13.74v97.51h-29.49v-118.29Z"/></svg>
+    </div>
+    <div class="sb-li">
+      <svg width="30" viewBox="340 380 340 420" xmlns="http://www.w3.org/2000/svg"><path fill="#1a443c" d="M511.61,422.8c7.52-6.66,14.43-12.94,21.51-19.03,39.31-33.83,106.66-27.64,140.27,16.17,14.4,18.78,21.44,39.83,21.45,63.41.02,68.76.14,137.52.18,206.28,0,10.53-7.15,16.92-18.75,18.45-19.69,2.58-34.39-7.28-48.55-18.57-4.48-3.57-7.41-7.75-15.6-13.9-.71-.53-2.27-1.67-4.02-1.37-2.91.5-4.44,4.62-5.04,6.3-3.83,10.72-2.66,34.16-2.52,39.03.13,4.43.82,28.52-13.85,45.33-1.01,1.15-17.78,19.78-40.19,16.39-2.85-.43-13.79-2.49-21.95-11.42-5.45-5.96-8.82-13.82-9.4-22.82-.21-3.17-.03-6.37-1.29-9.8-.42,1.75-1.02,3.49-1.24,5.26-2.46,19.75-13.92,34.17-30.6,38.4-19.11,4.84-37.78-9.63-46.25-20.07-11.88-14.64-13.39-32.61-14-40.02-1.92-22.95,3.77-42.27-3.13-45.38-1.58-.71-3.3-.33-4.43.06-.95.79-2.33,1.94-3.99,3.32-17.56,14.46-27.1,20.26-34.43,25.12-8.37,5.55-18.26,5.32-27.89,3.79-11.98-1.9-17.17-8.02-17.24-20.62-.16-28.31-.11-56.63-.07-84.94.05-42.15-.22-84.31.36-126.46.49-35.59,29.27-73.93,62.39-86.42,41.32-15.59,88.94-3.66,115.38,30.44,1.15,1.49,2.58,2.76,2.89,3.09ZM513.63,706.58c.86-13.48,4.79-25.89,11.7-37.43,10.56-17.61,26.74-27.53,45.89-33.24,28.41-8.47,56.17-8.14,82.85,6.35,4.6,2.5,5.87,1.5,5.85-4.72-.1-51.72-.14-103.45-.4-155.17-.19-37.68-32.62-70.18-72.91-64.61-27.84,3.85-52.86,27.48-55.15,55.5-1.25,15.23-.67,30.61-.74,45.93-.19,38.1-.24,76.2-.43,114.3-.05,9.75-6.62,17.5-15.2,18.39-9.79,1.02-17.73-4.86-19.73-15.05-.69-3.5-.55-7.19-.56-10.79-.15-49.17.23-98.34-.57-147.5-.39-24.21-12.5-42.52-33.93-54-21.42-11.48-43.06-9.53-63.33,2.35-21.66,12.7-31.27,33.11-31.3,57.8-.03,30,.84,60,.91,90,.05,20.21-.62,40.41-.89,60.62-.03,2.4.43,4.8.71,7.65,8.18-3.19,15.28-6.63,22.76-8.76,23.5-6.68,46.7-4.34,69.68,3.11,25.86,8.38,42.75,25.36,50.28,51.5,1.69,5.87,3.01,11.85,4.5,17.78Z"/><path fill="#d5af33" d="M453.39,586.88c10.72.03,19.04,7.83,19.11,17.91.07,11.01-8.28,19.4-19.25,19.34-11.3-.06-20.16-8.82-19.91-19.7.24-10.53,8.29-17.58,20.05-17.54Z"/><path fill="#d5af33" d="M573.28,624.11c-11.23,1.24-18.87-10.64-18.97-18.33-.15-11.63,8.06-18.99,20.76-18.86,10.61.1,18.26,7.92,18.33,18.72.05,8.76-8.98,20.09-20.12,18.47Z"/></svg>
+    </div>
+    <button class="sb-tgl" id="sb-tgl">
+      <svg id="tgl-ico" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+  </div>
+  <nav class="sb-nav">
+    <span class="sb-sec"><span data-i18n="teacher_sb_teach_section">&nbsp;Teach</span></span>
+    <button class="sb-a on" data-v="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="sb-lbl" data-i18n="teacher_sb_overview">Overview</span></button>
+    <button class="sb-a" data-v="students"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg><span class="sb-lbl" data-i18n="teacher_sb_students">My students</span></button>
+    <button class="sb-a" data-v="assignments"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><span class="sb-lbl" data-i18n="teacher_sb_assignments">Assignments</span></button>
+    <button class="sb-a" data-v="sessions"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="sb-lbl" data-i18n="teacher_sb_sessions">Sessions</span></button>
+    <span class="sb-sec"><span data-i18n="teacher_sb_account_section">&nbsp;Account</span></span>
+    <button class="sb-a" data-v="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span class="sb-lbl" data-i18n="teacher_sb_settings">Settings</span></button>
+  </nav>
+  <div class="sb-bot">
+    <div class="sb-role">
+      <div class="sb-role-l" data-i18n="teacher_sb_role_title">Teaching</div>
+      <div class="sb-role-v" data-i18n="tier_focused_name">Focused Practice</div>
+      <div class="sb-role-s" data-i18n="teacher_sb_role_desc">20 students · Spanish B1</div>
+    </div>
+    <div class="sb-user">
+      <div class="sb-av" id="sb-user-av">ST</div>
+      <div class="sb-ui">
+        <div class="sb-un" id="sb-user-name">Sarah Thompson</div>
+        <div class="sb-us"><span data-i18n="role_teacher_title">Teacher</span> · <span id="sb-user-loc">Madrid, Spain</span></div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<main class="main" id="main">
+  <div id="content"></div>
+</main>
+<div class="ov" id="ov"><div class="modal" id="modal"></div></div>
+
+<script>
+const STUDENTS=[
+  {n:'Alex Chen',i:'AC',lvl:'B1',pct:71,active:'Today',streak:14,sub:'My Weekend Plans',subType:'Essay',subText:'Este fin de semana voy a visitar a mis amigos en Barcelona. También voy a comer en un restaurante famoso y voy a caminar por las Ramblas. Espero que haga buen tiempo porque quiero pasar tiempo al aire libre.',subTime:'2 hours ago'},
+  {n:'Maria Garcia',i:'MG',lvl:'A2',pct:45,active:'Yesterday',streak:7,sub:'Basic Introduction',subType:'Writing',subText:'Me llamo Maria Garcia. Soy de Mexico. Tengo 28 años. Me gusta la musica y cocinar. Trabajo en un oficina. Estudio español porque quiero hablar mejor.',subTime:'5 hours ago'},
+  {n:'James Wilson',i:'JW',lvl:'B2',pct:88,active:'Today',streak:21,sub:null},
+  {n:'Sophie Martin',i:'SM',lvl:'B1',pct:63,active:'2 days ago',streak:3,sub:'Describe the Scene',subType:'Writing',subText:'En la imagen puedo ver un mercado muy animado. Hay muchos colores y personas. Los vendedores venden frutas y verduras frescas. El mercado está lleno de gente y hay mucho ruido. Me recuerda a los mercados de mi ciudad.',subTime:'Yesterday'},
+  {n:'Lucas Oliveira',i:'LO',lvl:'A2',pct:38,active:'Today',streak:9,sub:null},
+];
+const PENDING=STUDENTS.filter(s=>s.sub);
+const TEACHER_ASGMT=[
+  {id:1,name:'My Weekend Plans',type:'Essay',due:'Today',submissions:8,total:20},
+  {id:2,name:'Past Perfect Test',type:'Test',due:'In 3 days',submissions:3,total:20},
+  {id:3,name:'Describe the Scene',type:'Writing',due:'Overdue',submissions:18,total:20},
+  {id:4,name:'Vocabulary Chapter 4',type:'Homework',due:'Next week',submissions:0,total:20},
+];
+const SESSIONS=[
+  {date:'Today',time:'3:00 PM',topic:'Ser vs. Estar — the full picture',students:20,status:'up'},
+  {date:'Jun 19',time:'3:00 PM',topic:'Pretérito Indefinido in context',students:18,status:'done'},
+  {date:'Jun 12',time:'3:00 PM',topic:'Reflexive verbs — key patterns',students:19,status:'done'},
+  {date:'Jun 5',time:'3:00 PM',topic:'Gustar and similar verbs',students:17,status:'done'},
+];
+
+let sbCol=false;
+document.getElementById('sb-tgl').addEventListener('click',()=>{sbCol=!sbCol;document.getElementById('sb').classList.toggle('col',sbCol);document.getElementById('main').classList.toggle('col',sbCol);document.getElementById('tgl-ico').setAttribute('points',sbCol?'9 18 15 12 9 6':'15 18 9 12 15 6');});
+
+const VIEWS={overview:vOverview,students:vStudents,assignments:vAssignments,sessions:vSessions,settings:vSettings};
+function nav(v){document.querySelectorAll('.sb-a').forEach(a=>a.classList.toggle('on',a.dataset.v===v));const el=document.getElementById('content');el.style.opacity='0';setTimeout(()=>{VIEWS[v]();el.style.opacity='1';},150);}
+document.querySelectorAll('.sb-a').forEach(a=>a.addEventListener('click',()=>nav(a.dataset.v)));
+
+async function claude(prompt,sys){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}],...(sys?{system:sys}:{})})});const d=await r.json();return(d.content||[]).map(b=>b.type==='text'?b.text:'').join('');}
+const ov=document.getElementById('ov'),modal=document.getElementById('modal');
+ov.addEventListener('click',e=>{if(e.target===ov)closeModal();});
+function openModal(h){modal.innerHTML=h;ov.classList.add('open');}
+function closeModal(){ov.classList.remove('open');setTimeout(()=>modal.innerHTML='',280);}
+
+function gradeModal(s){
+  openModal(`<div class="m-hd"><div class="m-ey">${s.subType} · ${s.n}</div><div class="m-title">${s.sub}</div></div><div class="m-bd"><div style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#aaa;margin-bottom:.5rem;">Student's submission · ${s.subTime}</div><div class="sub-text">${s.subText}</div><button class="btn" id="grade-ai-btn" onclick="runGrade(this,'${s.n}','${s.subType}',\`${s.subText.replace(/`/g,"'")}\`)">Grade with AI</button><div id="grade-out"></div></div>`);
+}
+async function runGrade(btn,name,type,text){
+  btn.disabled=true;btn.textContent='Grading…';
+  document.getElementById('grade-out').innerHTML=`<div class="g-load" style="margin-top:1.25rem;"><div class="g-spin"></div><p>Analysing ${name}'s ${type.toLowerCase()}…</p></div>`;
+  try{
+    const raw=await claude(`Student: ${name}\nSubmission:\n"${text}"\n\nGrade this fairly. Respond ONLY with raw JSON:\n{"score":<0-100>,"summary":"<one sentence>","strengths":["<point>","<point>"],"improvements":["<actionable point>","<actionable point>"],"corrected_excerpt":"<one corrected sentence or empty string>"}`,`You are an expert Spanish language teacher grading a student's ${type.toLowerCase()} submission.`);
+    const r=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    document.getElementById('grade-out').innerHTML=`<div style="margin-top:1.25rem;"><div class="g-res" style="margin:0;"><div class="g-top"><div class="g-score">${r.score}</div><div class="g-sum">${r.summary}</div></div><div class="g-bot"><div class="g-cols"><div class="str"><div class="g-col-h">Strengths</div><ul class="g-list">${r.strengths.map(s=>`<li>${s}</li>`).join('')}</ul></div><div class="imp"><div class="g-col-h">Work on next</div><ul class="g-list">${r.improvements.map(s=>`<li>${s}</li>`).join('')}</ul></div></div>${r.corrected_excerpt?`<div class="g-fix"><small>Example correction</small><p>"${r.corrected_excerpt}"</p></div>`:''}</div></div><div style="margin-top:1.25rem;display:flex;gap:.625rem;"><button class="btn" onclick="closeModal()">Send feedback to student</button><button class="btn out" onclick="closeModal()">Cancel</button></div></div>`;
+  }catch(e){document.getElementById('grade-out').innerHTML=`<p style="color:#dc2626;font-size:.84rem;margin-top:1rem;">Something went wrong. Try again.</p>`;btn.disabled=false;btn.textContent='Grade with AI';}
+}
+
+function vOverview(){
+  const now=new Date();const h=now.getHours();
+  
+  const translations = window.ALIMUN_TRANSLATIONS || {};
+  const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
+  const dict = translations[lang] || translations['en'] || {};
+  
+  const greetKey = h<12?'greet_morning':h<18?'greet_afternoon':'greet_evening';
+  const greet = dict[greetKey] || (h<12?'Good morning':h<18?'Good afternoon':'Good evening');
+  const name = window.currentTeacher ? window.currentTeacher.name.split(' ')[0] : 'Sarah';
+  const welcomeStr = (dict['teacher_welcome'] || 'Welcome back, {name}').replace('{name}', name);
+  
+  const locales = { en: 'en-GB', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-PT', zh: 'zh-CN', ar: 'ar-EG' };
+  const dateStr = now.toLocaleDateString(locales[lang] || 'en-GB', {weekday:'long',day:'numeric',month:'long'});
+  
+  const target=new Date(Date.now()+(1*3600+47*60+23)*1000);
+  
+  document.getElementById('content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem;gap:1.5rem;">
+      <div><div style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#aaa;margin-bottom:.18rem;">${dateStr}</div><h1 class="pg-h1">${welcomeStr}</h1></div>
+      <button class="btn sm" style="flex-shrink:0;" onclick="createAssignment()" data-i18n="teacher_action_create">${dict.teacher_action_create || '+ Create new'}</button>
+    </div>
+    <div class="stat-row mb">
+      <div class="stat-b"><div class="v">20</div><div class="l" data-i18n="teacher_stats_students">${dict.teacher_stats_students || 'active students'}</div></div>
+      <div class="stat-b hi"><div class="v">${PENDING.length}</div><div class="l" data-i18n="teacher_stats_grading">${dict.teacher_stats_grading || 'Awaiting grading'}</div></div>
+      <div class="stat-b"><div class="v">73%</div><div class="l" data-i18n="teacher_stats_class_avg">${dict.teacher_stats_class_avg || 'Class avg. score'}</div></div>
+      <div class="stat-b"><div class="v">4</div><div class="l" data-i18n="teacher_stats_sessions_week">${dict.teacher_stats_sessions_week || 'Sessions this week'}</div></div>
+    </div>
+    <div class="sess-card mb">
+      <div>
+        <div class="s-badge"><span class="s-dot"></span><span data-i18n="teacher_upcoming_session_title">${dict.teacher_upcoming_session_title || "Today's session"}</span></div>
+        <div class="s-title">Ser vs. Estar — the full picture</div>
+        <div class="s-meta">
+          <span><b>20 ${dict.teacher_stats_students || 'active students'}</b></span>
+          <span>3:00 PM</span>
+          <span>60 ${dict.student_min || 'min'}</span>
+        </div>
+      </div>
+      <div class="s-r">
+        <div class="cd" id="cd">—</div>
+        <div class="cd-l" data-i18n="student_until_session">${dict.student_until_session || 'Until session starts'}</div>
+        <div style="display:flex;gap:.5rem;justify-content:flex-end;">
+          <button class="btn ghost sm" data-i18n="teacher_btn_prepare_notes">${dict.teacher_btn_prepare_notes || 'Prepare notes'}</button>
+          <button class="btn sm" data-i18n="teacher_action_start">${dict.teacher_action_start || 'Start session'}</button>
+        </div>
+      </div>
+    </div>
+    <div class="g2" style="align-items:start;">
+      <div>
+        <div class="sh"><span class="sec-t" data-i18n="teacher_pending_grades">${dict.teacher_pending_grades || 'Pending grades'}</span><a class="sh-a" onclick="nav('assignments')" data-i18n="student_view_all">${dict.student_view_all || 'View all'}</a></div>
+        ${PENDING.map(s=>`<div class="sub-card" onclick="gradeModal(${JSON.stringify(s).replace(/"/g,'&quot;')})"><div class="s-av2">${s.i}</div><div class="s-info"><div class="s-name">${s.n}</div><div class="s-detail">${s.subType} · ${s.sub} · ${s.subTime}</div></div><button class="btn sm" data-i18n="teacher_action_grade">${dict.teacher_action_grade || 'Grade →'}</button></div>`).join('')}
+      </div>
+      <div>
+        <div class="sh"><span class="sec-t" data-i18n="teacher_student_activity">${dict.teacher_student_activity || 'Student activity'}</span><a class="sh-a" onclick="nav('students')" data-i18n="student_view_all">${dict.student_view_all || 'View all'}</a></div>
+        <div class="card">${STUDENTS.slice(0,5).map(s=>`<div class="stu-row"><div class="stu-av">${s.i}</div><div class="stu-info"><div class="stu-name">${s.n}</div><div class="stu-sub">${s.lvl} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : s.active}</div></div><div class="stu-prog"><div class="stu-pct">${s.pct}%</div><div class="stu-bar-wrap"><div class="stu-bar" style="width:${s.pct}%"></div></div></div></div>`).join('')}</div>
+      </div>
+    </div>
+    <div style="height:2.5rem"></div>`;
+  const cdEl=document.getElementById('cd');function tick(){const d=Math.max(0,target-Date.now());const hh=String(Math.floor(d/3600000)).padStart(2,'0');const mm=String(Math.floor((d%3600000)/60000)).padStart(2,'0');const ss=String(Math.floor((d%60000)/1000)).padStart(2,'0');if(cdEl)cdEl.textContent=hh+':'+mm+':'+ss;}tick();const i=setInterval(tick,1000);
+}
+
+function vStudents(){
+  const translations = window.ALIMUN_TRANSLATIONS || {};
+  const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
+  const dict = translations[lang] || translations['en'] || {};
+
+  const enrolledText = dict['teacher_lbl_enrolled'] || 'enrolled';
+  const activeTodayText = dict['teacher_lbl_active_today'] || 'active today';
+  const overallText = dict['teacher_lbl_overall'] || 'overall';
+
+  document.getElementById('content').innerHTML=`
+    <div class="pg-head"><h1 class="pg-h1" data-i18n="teacher_sb_students">${dict.teacher_sb_students || 'My Students'}</h1><p class="pg-sub">20 ${enrolledText} · ${STUDENTS.filter(s=>s.active==='Today').length} ${activeTodayText}</p></div>
+    <div class="card">
+      ${STUDENTS.map(s=>`
+        <div class="stu-row">
+          <div class="stu-av">${s.i}</div>
+          <div class="stu-info"><div class="stu-name">${s.n}</div><div class="stu-sub">${s.lvl} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : s.active} · 🔥 ${s.streak} ${dict.student_streak_label || 'day streak'}</div></div>
+          <div style="display:flex;align-items:center;gap:1.25rem;">
+            <div style="text-align:right;"><div style="font-family:var(--disp);font-size:1.1rem;">${s.pct}%</div><div style="font-size:.68rem;color:#bbb;text-transform:uppercase;letter-spacing:.06em;">${overallText}</div><div class="stu-bar-wrap" style="margin-left:auto;"><div class="stu-bar" style="width:${s.pct}%"></div></div></div>
+            ${s.sub?`<button class="btn sm" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;" onclick="gradeModal(${JSON.stringify(s).replace(/"/g,'&quot;')})" data-i18n="teacher_action_grade">${dict.teacher_action_grade || 'Grade →'}</button>`:`<button class="btn out sm" data-i18n="teacher_action_view">${dict.teacher_action_view || 'View'}</button>`}
+          </div>
+        </div>`).join('')}
+    </div>
+    <div style="height:2.5rem"></div>`;
+}
+
+function vAssignments(){
+  const translations = window.ALIMUN_TRANSLATIONS || {};
+  const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
+  const dict = translations[lang] || translations['en'] || {};
+
+  const activeAssignmentsText = dict['teacher_lbl_active_assignments'] || 'active assignments';
+  const dueText = dict['teacher_lbl_due'] || 'Due:';
+  const submittedText = dict['teacher_lbl_submitted'] || 'submitted';
+  const viewSubmissionsText = dict['teacher_lbl_view_submissions'] || 'View submissions';
+
+  document.getElementById('content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.75rem;gap:1.5rem;">
+      <div><h1 class="pg-h1" data-i18n="teacher_sb_assignments">${dict.teacher_sb_assignments || 'Assignments'}</h1><p class="pg-sub">${TEACHER_ASGMT.length} ${activeAssignmentsText}</p></div>
+      <button class="btn sm" onclick="createAssignment()" data-i18n="teacher_action_create">${dict.teacher_action_create || '+ Create new'}</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:.875rem;">
+      ${TEACHER_ASGMT.map(a=>`
+        <div class="card" style="display:flex;align-items:center;gap:1rem;">
+          <div style="flex:1;">
+            <div style="font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:#ccc;margin-bottom:.1rem;">${a.type}</div>
+            <div style="font-weight:700;font-size:.9rem;margin-bottom:.25rem;">${a.name}</div>
+            <div style="font-size:.78rem;color:#aaa;">${dueText} <b style="color:${a.due==='Overdue'?'#dc2626':a.due==='Today'?'#c2410c':'var(--b)'};">${a.due}</b></div>
+          </div>
+          <div style="text-align:center;flex-shrink:0;">
+            <div style="font-family:var(--disp);font-size:1.25rem;">${a.submissions}/${a.total}</div>
+            <div style="font-size:.65rem;color:#aaa;text-transform:uppercase;letter-spacing:.07em;">${submittedText}</div>
+          </div>
+          <div class="prog-trk" style="width:80px;"><div class="prog-bar" data-p="${Math.round(a.submissions/a.total*100)}" style="background:${a.due==='Overdue'?'#dc2626':'var(--b)'}"></div></div>
+          <button class="btn out sm" data-i18n="teacher_lbl_view_submissions">${viewSubmissionsText}</button>
+        </div>`).join('')}
+    </div>
+    <div style="height:2.5rem"></div>`;
+  setTimeout(()=>{document.querySelectorAll('.prog-bar').forEach(b=>b.style.width=b.dataset.p+'%');},50);
+}
+
+function createAssignment(){
+  const translations = window.ALIMUN_TRANSLATIONS || {};
+  const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
+  const dict = translations[lang] || translations['en'] || {};
+
+  openModal(`<div class="m-hd"><div class="m-ey" data-i18n="teacher_action_create">${dict.teacher_action_create || 'Create'}</div><div class="m-title" data-i18n="teacher_lbl_modal_new_assignment">${dict.teacher_lbl_modal_new_assignment || 'New Assignment'}</div></div>
+  <div class="m-bd">
+    <div class="field-row"><label data-i18n="teacher_lbl_modal_title">${dict.teacher_lbl_modal_title || 'Title'}</label><input type="text" placeholder="e.g. Describe your neighbourhood"></div>
+    <div class="g2">
+      <div class="field-row"><label data-i18n="teacher_lbl_modal_type">${dict.teacher_lbl_modal_type || 'Type'}</label><select><option>Essay</option><option>Test</option><option>Writing</option><option>Homework</option><option>Speaking</option></select></div>
+      <div class="field-row"><label data-i18n="teacher_lbl_modal_due_date">${dict.teacher_lbl_modal_due_date || 'Due date'}</label><input type="date"></div>
+    </div>
+    <div class="field-row"><label data-i18n="teacher_lbl_modal_instructions">${dict.teacher_lbl_modal_instructions || 'Prompt / Instructions'}</label><textarea placeholder="${dict.teacher_lbl_modal_placeholder || 'Write the full assignment instructions here…'}" data-i18n-placeholder="teacher_lbl_modal_placeholder"></textarea></div>
+    <div style="display:flex;gap:.625rem;margin-top:.5rem;">
+      <button class="btn" data-i18n="teacher_action_create">${dict.teacher_action_create || 'Create assignment'}</button>
+      <button class="btn out" onclick="closeModal()" data-i18n="teacher_lbl_modal_cancel">${dict.teacher_lbl_modal_cancel || 'Cancel'}</button>
+    </div>
+  </div>`);
+}
+
+function vSessions(){
+  const translations = window.ALIMUN_TRANSLATIONS || {};
+  const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
+  const dict = translations[lang] || translations['en'] || {};
+
+  const cohortDescText = dict['teacher_lbl_live_cohort_desc'] || 'Live cohort sessions — Focused Practice group';
+  const upcomingText = dict['teacher_lbl_upcoming'] || 'Upcoming';
+  const todayText = dict['teacher_lbl_today'] || 'Today';
+  const sessionTipsText = dict['teacher_lbl_session_tips'] || 'Session tips';
+  const completedText = dict['teacher_lbl_completed'] || 'Completed';
+
+  document.getElementById('content').innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.75rem;">
+      <div><h1 class="pg-h1" data-i18n="teacher_sb_sessions">${dict.teacher_sb_sessions || 'Sessions'}</h1><p class="pg-sub">${cohortDescText}</p></div>
+      <button class="btn sm" data-i18n="teacher_action_schedule">${dict.teacher_action_schedule || '+ Schedule session'}</button>
+    </div>
+    <div class="g2 mb" style="align-items:start;">
+      <div>
+        <div class="sh"><span class="sec-t">${upcomingText}</span></div>
+        <div class="card dark" style="padding:1.75rem;">
+          <div class="s-badge"><span class="s-dot"></span>${todayText} · 3:00 PM</div>
+          <div class="s-title" style="font-size:1.25rem;">Ser vs. Estar — the full picture</div>
+          <div class="s-meta" style="margin:1rem 0;"><span>20 ${dict.teacher_stats_students || 'students registered'}</span><span>60 ${dict.student_min || 'min'}</span></div>
+          <div style="display:flex;gap:.5rem;">
+            <button class="btn sm" data-i18n="teacher_action_start">${dict.teacher_action_start || 'Start session'}</button>
+            <button class="btn ghost sm" data-i18n="teacher_btn_prepare_notes">${dict.teacher_btn_prepare_notes || 'Prepare notes'}</button>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="sh"><span class="sec-t">${sessionTipsText}</span></div>
+        <div class="card">
+          <p style="font-size:.84rem;line-height:1.7;color:#555;">3 students submitted this week's essay — review their common errors before the session to address them as a group. Alex and Sophie both struggled with por vs. para.</p>
+          <div style="margin-top:1rem;border-top:1px solid rgba(0,0,0,.06);padding-top:1rem;font-size:.84rem;line-height:1.7;color:#555;">Avg. quiz score this week: <b>71%</b> — grammar drills on ser/estar would be well-timed.</div>
+        </div>
+      </div>
+    </div>
+    <div class="sh"><span class="sec-t" data-i18n="student_session_history">${dict.student_session_history || 'Session history'}</span></div>
+    <div class="card">${SESSIONS.map(s=>`<div class="sess-row"><div class="sess-dot2 ${s.status}"></div><div class="sess-info2"><div class="sess-topic2">${s.topic}</div><div class="sess-date2">${s.date} · ${s.time} · ${s.students} ${dict.teacher_stats_students || 'students'}</div></div><span class="sess-b2 ${s.status}">${s.status==='up'?(dict.teacher_lbl_upcoming || 'Upcoming'):(completedText)}</span></div>`).join('')}</div>
+    <div style="height:2.5rem"></div>`;
+}
+
+function vSettings(){
+  const t = window.currentTeacher || { name: 'Sarah Thompson', email: 'sarah.thompson@alimun.com', profile: { location: 'Madrid, Spain' } };
+  const loc = t.profile?.location || 'Madrid, Spain';
+  
+  const translations = window.ALIMUN_TRANSLATIONS || {};
+  const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
+  const dict = translations[lang] || translations['en'] || {};
+
+  document.getElementById('content').innerHTML=`
+    <div class="pg-head"><h1 class="pg-h1" data-i18n="teacher_settings_title">${dict.teacher_settings_title || 'Settings'}</h1></div>
+    <div style="max-width:520px;">
+      <div style="margin-bottom:1.75rem;"><div style="font-family:var(--disp);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:#aaa;margin-bottom:.875rem;" data-i18n="teacher_settings_profile">${dict.teacher_settings_profile || 'Profile'}</div>
+        <div class="card">
+          <div class="field-row"><label data-i18n="teacher_settings_fullname">${dict.teacher_settings_fullname || 'Full name'}</label><input type="text" id="set-fullname" value="${t.name}"></div>
+          <div class="field-row"><label data-i18n="teacher_settings_email">${dict.teacher_settings_email || 'Email'}</label><input type="email" id="set-email" value="${t.email}"></div>
+          <div class="field-row"><label data-i18n="teacher_settings_location">${dict.teacher_settings_location || 'Teaching location'}</label><input type="text" id="set-location" value="${loc}"></div>
+          <button class="btn out sm" onclick="saveSettings()" data-i18n="dash_save_changes">${dict.dash_save_changes || 'Save changes'}</button>
+        </div>
+      </div>
+      <div style="margin-bottom:1.75rem;"><button class="btn out sm" style="color:#dc2626;border-color:#dc2626;" onclick="window.__teacherSignOut && window.__teacherSignOut()" data-i18n="student_sb_logout">${dict.student_sb_logout || 'Sign out'}</button></div>
+    </div>
+    <div style="height:2.5rem"></div>`;
+}
+
+async function saveSettings() {
+  const fullname = document.getElementById('set-fullname').value;
+  const location = document.getElementById('set-location').value;
+  if (!fullname) return;
+
+  const btn = document.querySelector('[data-i18n="dash_save_changes"]');
+  const originalText = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try {
+    const _sb = window.currentTeacher.supabase;
+    const { error } = await _sb
+      .from('teacher_profiles')
+      .update({ full_name: fullname, location: location })
+      .eq('user_id', window.currentTeacher.id);
+
+    if (error) throw error;
+
+    // Update local state
+    window.currentTeacher.name = fullname;
+    window.currentTeacher.profile.full_name = fullname;
+    window.currentTeacher.profile.location = location;
+
+    // Update sidebar UI
+    document.getElementById('sb-user-name').textContent = fullname;
+    const initials = fullname.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+    document.getElementById('sb-user-av').textContent = initials;
+    document.getElementById('sb-user-loc').textContent = location;
+
+    alert('Profile updated successfully!');
+  } catch (e) {
+    console.error(e);
+    alert('Error saving changes: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+}
+
+/* ═══ AUTH GUARD + INIT ═══ */
+(async () => {
+  // ─ 1. Bootstrap Supabase client ─────────────────────────────────────────────────
+  const { createClient } = window.supabase;
+  const cfg = window.ALIMUN_CONFIG || {};
+  const _sb = createClient(cfg.supabaseUrl, cfg.supabaseAnonKey, {
+    auth: { autoRefreshToken: true, persistSession: true, storageKey: 'alimun-auth' },
+  });
+
+  // ─ 2. Session check ─────────────────────────────────────────────────────────
+  const { data: { session } } = await _sb.auth.getSession();
+
+  if (!session) {
+    window.location.href = 'signin.html';
+    return;
+  }
+
+  // ─ 3. Role check ───────────────────────────────────────────────────────────
+  const role = session.user?.user_metadata?.role || '';
+  if (role !== 'teacher') {
+    // Student or admin landed here — send them to the right place
+    window.location.href = role === 'student' ? 'student-dashboard.html' :
+                          role === 'admin' ? 'admin.html' : 'signin.html';
+    return;
+  }
+
+  // ─ 4. Teacher profile status check ────────────────────────────────────────
+  const { data: profile } = await _sb
+    .from('teacher_profiles')
+    .select('*')
+    .eq('user_id', session.user.id)
+    .single();
+
+  // No profile or not approved → back to sign-in (which shows the status screen)
+  if (!profile || profile.status !== 'approved') {
+    window.location.href = 'signin.html';
+    return;
+  }
+
+  // ─ 5. Expose global currentTeacher ─────────────────────────────────────────
+  window.currentTeacher = {
+    id:       session.user.id,
+    email:    session.user.email,
+    role:     'teacher',
+    name:     profile.full_name || session.user.user_metadata?.full_name || session.user.email,
+    profile:  profile,
+    session:  session,
+    supabase: _sb,
+  };
+
+  // Populate sidebar user details
+  const tName = window.currentTeacher.name;
+  const initials = tName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
+  const location = profile.location || 'Madrid, Spain';
+  document.getElementById('sb-user-name').textContent = tName;
+  document.getElementById('sb-user-av').textContent = initials;
+  document.getElementById('sb-user-loc').textContent = location;
+
+  // ─ 6. Wire sign-out ─────────────────────────────────────────────────────────
+  window.__teacherSignOut = async function() {
+    await _sb.auth.signOut();
+    window.location.href = 'signin.html';
+  };
+
+  // ─ 7. Boot dashboard ────────────────────────────────────────────────────────
+  nav('overview');
+})();;
+</script>
+</body>
+</html>
