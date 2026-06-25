@@ -1,9 +1,15 @@
 {
   "version": 2,
+  "cleanUrls": true,
   "routes": [
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
+    },
+    {
+      "src": "/locations(.html)?",
+      "headers": { "Location": "/tiers" },
+      "status": 301
     },
     {
       "src": "/(.*)",

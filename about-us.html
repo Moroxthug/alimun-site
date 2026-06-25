@@ -38,8 +38,8 @@ body {
           <nav role="navigation" class="nav_menu-items w-nav-menu">
             <div class="nav_menu-items-inner">
               <div class="nav_menu-link-wrap is-left">
-                <a href="locations.html" class="nav_link w-inline-block">
-                  <div class="z-index-2" data-i18n="nav_launch">launch</div>
+                <a href="tiers.html" class="nav_link w-inline-block">
+                  <div class="z-index-2" data-i18n="nav_tiers">tiers</div>
                   <div class="link_line"></div>
                 </a>
                 <a href="services.html" class="nav_link w-inline-block">
@@ -207,9 +207,144 @@ body {
             <div class="max-width-700">
               <h2 class="heading-style-h1"><span class="is-word is-1">Ready</span> <span class="is-word is-2">to</span> <br><span class="is-word is-3">learn?</span></h2>
             </div>
-            <div class="bottom-cta_box">
-              <div class="video_bg">
-                <div class="video_bg_overlay"></div><img src="images/edu_cta_bg.png" loading="lazy" alt="" class="img-cover">
+            <div class="bottom-cta_box" style="background-color: #ffffff; border: 1px solid rgba(0,0,0,0.06); box-shadow: 0 10px 40px rgba(0,0,0,0.02);">
+              <!-- Typography sequence animation with white background -->
+              <style>
+                .alimun-cta-adv-container {
+                  position: absolute;
+                  inset: 0;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  background-color: #ffffff;
+                  font-family: 'Satoshi', 'Inter', sans-serif;
+                  overflow: hidden;
+                }
+                .alimun-cta-adv-text {
+                  font-size: 5vw;
+                  font-weight: 800;
+                  color: #080808;
+                  text-transform: uppercase;
+                  letter-spacing: -0.03em;
+                  position: absolute;
+                  opacity: 0;
+                  text-align: center;
+                  width: 100%;
+                  transform: scale(0.95) translateY(10px);
+                  animation: ctaAdvSequence 15s infinite ease-in-out;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  gap: 1rem;
+                  flex-wrap: wrap;
+                  padding: 0 2rem;
+                }
+                .alimun-cta-highlight {
+                  background-color: #ceff65;
+                  color: #080808;
+                  padding: 0.1em 0.5em;
+                  border-radius: 5rem;
+                  display: inline-block;
+                  box-shadow: 0 4px 15px rgba(206, 255, 101, 0.3);
+                }
+                
+                /* Timings for the four phrases */
+                .cta-phrase-1 { animation-delay: 0s; }
+                .cta-phrase-2 { animation-delay: 3s; }
+                .cta-phrase-3 { animation-delay: 6s; }
+                .cta-phrase-4 { animation-delay: 9s; }
+
+                @keyframes ctaAdvSequence {
+                  0% {
+                    opacity: 0;
+                    transform: scale(0.95) translateY(10px);
+                  }
+                  1.5%, 17% {
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                  }
+                  18.5%, 100% {
+                    opacity: 0;
+                    transform: scale(1.02) translateY(-10px);
+                  }
+                }
+
+                /* Dark Logo screen animation for bottom CTA */
+                .alimun-cta-logo-anim {
+                  position: absolute;
+                  width: 100%;
+                  height: 100%;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  background-color: #ffffff;
+                  opacity: 0;
+                  transform: scale(0.8);
+                  animation: ctaLogoSequence 15s infinite ease-in-out;
+                  pointer-events: none;
+                }
+                
+                .alimun-cta-logo-anim img {
+                  width: 45vw;
+                  max-width: 450px;
+                  height: auto;
+                }
+
+                @keyframes ctaLogoSequence {
+                  0%, 78% {
+                    opacity: 0;
+                    transform: scale(0.8);
+                  }
+                  82%, 96% {
+                    opacity: 1;
+                    transform: scale(1);
+                  }
+                  98%, 100% {
+                    opacity: 0;
+                    transform: scale(1.05);
+                  }
+                }
+
+                /* Subtle background grid effect for CTA */
+                .alimun-cta-grid-bg {
+                  position: absolute;
+                  inset: 0;
+                  background-image: 
+                    radial-gradient(circle at 1px 1px, rgba(206, 255, 101, 0.3) 1.5px, transparent 0);
+                  background-size: 30px 30px;
+                  opacity: 0.5;
+                  animation: ctaGridFloat 30s infinite linear;
+                }
+                
+                @keyframes ctaGridFloat {
+                  from { background-position: 0 0; }
+                  to { background-position: 30px 30px; }
+                }
+
+                @media (max-width: 768px) {
+                  .alimun-cta-adv-text {
+                    font-size: 8vw;
+                    gap: 0.5rem;
+                  }
+                  .alimun-cta-logo-anim img {
+                    width: 70vw;
+                  }
+                }
+              </style>
+
+              <div class="alimun-cta-adv-container">
+                <div class="alimun-cta-grid-bg"></div>
+                
+                <!-- Word-on-screen publicity phrases -->
+                <div class="alimun-cta-adv-text cta-phrase-1">Want to <span class="alimun-cta-highlight">move abroad?</span></div>
+                <div class="alimun-cta-adv-text cta-phrase-2">Want to <span class="alimun-cta-highlight">land that job?</span></div>
+                <div class="alimun-cta-adv-text cta-phrase-3">Want to <span class="alimun-cta-highlight">pass that exam?</span></div>
+                <div class="alimun-cta-adv-text cta-phrase-4">Join <span class="alimun-cta-highlight">Alimun.</span></div>
+                
+                <!-- Final Logo Animation -->
+                <div class="alimun-cta-logo-anim">
+                  <img src="images/alimun-logo.svg" alt="Alimun Logo">
+                </div>
               </div>
             </div>
             <div class="max-width-full">
@@ -233,7 +368,7 @@ body {
             </div>
             <ul role="list" class="footer_links">
               <li class="footer_link-item">
-                <a href="locations.html" class="footer_link w-inline-block">
+                <a href="tiers.html" class="footer_link w-inline-block">
                   <div class="z-index-2">
                     <div data-i18n="footer_tiers">Tiers</div>
                   </div>
