@@ -75,10 +75,137 @@ body {
     <main class="main-wrapper">
       <section class="section is-hero">
         <div data-w-id="03ed8e6b-3b81-745a-78d6-9b0187a7ce30" class="hero_wrap">
-          <div data-poster-url="images/education_cohort_poster.png" data-video-urls="videos/5741379-uhd_4096_2160_25fps-transcode.mp4,videos/5741379-uhd_4096_2160_25fps-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="video_bg w-background-video w-background-video-atom"><video id="4c273f53-3549-55dd-725e-fdb09bfc597c-video" autoplay="" loop="" style="background-image:url(&quot;images/education_cohort_poster.png&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
-              <source src="videos/5741379-uhd_4096_2160_25fps-transcode.mp4" data-wf-ignore="true">
-              <source src="videos/5741379-uhd_4096_2160_25fps-transcode.webm" data-wf-ignore="true">
-            </video></div>
+          <div class="video_bg w-background-video w-background-video-atom" style="background: #080808; display: flex; align-items: center; justify-content: center; overflow: hidden; position: absolute; top: 0; left: 0; width: 100%; height: 100%;">
+            <!-- Scoped style block for the typography and animation -->
+            <style>
+              .alimun-adv-container {
+                position: absolute;
+                inset: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #080808;
+                font-family: 'Satoshi', 'Inter', sans-serif;
+                overflow: hidden;
+              }
+              .alimun-adv-text {
+                font-size: 7.5vw;
+                font-weight: 800;
+                color: #ffffff;
+                text-transform: uppercase;
+                letter-spacing: -0.03em;
+                position: absolute;
+                opacity: 0;
+                text-align: center;
+                width: 100%;
+                transform: scale(0.9) translateY(10px);
+                animation: advSequence 12s infinite ease-in-out;
+              }
+              .alimun-adv-text span {
+                color: #ceff65;
+              }
+              
+              /* Timings for the four phrases */
+              .phrase-1 { animation-delay: 0s; }
+              .phrase-2 { animation-delay: 3s; }
+              .phrase-3 { animation-delay: 6s; }
+              .phrase-4 { animation-delay: 9s; }
+
+              @keyframes advSequence {
+                0% {
+                  opacity: 0;
+                  transform: scale(0.9) translateY(10px);
+                }
+                5% {
+                  opacity: 1;
+                  transform: scale(1) translateY(0);
+                }
+                20% {
+                  opacity: 1;
+                  transform: scale(1) translateY(0);
+                }
+                25% {
+                  opacity: 0;
+                  transform: scale(1.05) translateY(-10px);
+                }
+                100% {
+                  opacity: 0;
+                }
+              }
+
+              /* Logo screen animation */
+              .alimun-logo-anim {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                background-color: #080808;
+                opacity: 0;
+                transform: scale(0.8);
+                animation: logoSequence 12s infinite ease-in-out;
+                pointer-events: none;
+              }
+              
+              .alimun-logo-anim img {
+                width: 60vw;
+                max-width: 600px;
+                height: auto;
+              }
+
+              @keyframes logoSequence {
+                0%, 75% {
+                  opacity: 0;
+                  transform: scale(0.8);
+                }
+                80% {
+                  opacity: 1;
+                  transform: scale(1.05);
+                }
+                83%, 95% {
+                  opacity: 1;
+                  transform: scale(1);
+                }
+                98%, 100% {
+                  opacity: 0;
+                  transform: scale(1.1);
+                }
+              }
+
+              /* Subtle background grid effect */
+              .alimun-grid-bg {
+                position: absolute;
+                inset: 0;
+                background-image: 
+                  radial-gradient(circle at 1px 1px, rgba(206, 255, 101, 0.15) 1px, transparent 0),
+                  linear-gradient(rgba(206, 255, 101, 0.03) 1px, transparent 0);
+                background-size: 40px 40px, 100% 20px;
+                opacity: 0.4;
+                animation: gridFloat 20s infinite linear;
+              }
+              
+              @keyframes gridFloat {
+                from { background-position: 0 0; }
+                to { background-position: 40px 80px; }
+              }
+            </style>
+
+            <div class="alimun-adv-container">
+              <div class="alimun-grid-bg"></div>
+              
+              <!-- Word-on-screen publicity phrases -->
+              <div class="alimun-adv-text phrase-1">Learn <span>Together.</span></div>
+              <div class="alimun-adv-text phrase-2">Daily <span>Cohorts.</span></div>
+              <div class="alimun-adv-text phrase-3">Real <span>Feedback.</span></div>
+              <div class="alimun-adv-text phrase-4">Speak with <span>Confidence.</span></div>
+              
+              <!-- Final Logo Animation -->
+              <div class="alimun-logo-anim">
+                <img src="images/Alimun-Source-File-fixes.svg" alt="Alimun Logo">
+              </div>
+            </div>
+          </div>
           <div class="container-large">
             <div data-w-id="cd271bba-260c-d0ac-a377-96bcddb9d88f" class="hero_inner">
               <h1 class="heading-style-h1"><span style="opacity:0;-webkit-transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="is-word is-1">Toolkit</span></h1>
@@ -127,20 +254,20 @@ body {
               </div>
               <div data-w-id="3d8a5086-b811-6497-ff27-f5612d0369ec" class="gallery_img _3">
                 <div class="rotate-box shadow-card">
-                  <div class="rotate-img"><img src="images/edu_square_2.png" loading="lazy" alt="" class="img-cover"></div>
-                  <div class="rotate-img is-back"><img src="images/edu_square_1.png" loading="lazy" alt="" class="img-cover"></div>
+                  <div class="rotate-img"><img src="images/edu_square_5.png" loading="lazy" alt="" class="img-cover"></div>
+                  <div class="rotate-img is-back"><img src="images/edu_square_6.png" loading="lazy" alt="" class="img-cover"></div>
                 </div>
               </div>
               <div data-w-id="00e4789c-f5b4-f8f6-d739-25a9b69e21df" class="gallery_img _4">
                 <div class="rotate-box shadow-card">
-                  <div class="rotate-img"><img src="images/edu_square_4.png" loading="lazy" alt="" class="img-cover"></div>
-                  <div class="rotate-img is-back"><img src="images/edu_square_3.png" loading="lazy" alt="" class="img-cover"></div>
+                  <div class="rotate-img"><img src="images/edu_square_7.png" loading="lazy" alt="" class="img-cover"></div>
+                  <div class="rotate-img is-back"><img src="images/edu_alimun_screen.png" loading="lazy" alt="" class="img-cover"></div>
                 </div>
               </div>
               <div data-w-id="9df46b77-dac5-2d62-d982-31df081bda45" class="gallery_img _5">
                 <div class="rotate-box shadow-card">
-                  <div class="rotate-img"><img src="images/edu_square_1.png" loading="lazy" alt="" class="img-cover"></div>
-                  <div class="rotate-img is-back"><img src="images/edu_square_4.png" loading="lazy" alt="" class="img-cover"></div>
+                  <div class="rotate-img"><img src="images/education_cohort_poster.png" loading="lazy" alt="" class="img-cover"></div>
+                  <div class="rotate-img is-back"><img src="images/edu_cta_bg.png" loading="lazy" alt="" class="img-cover"></div>
                 </div>
               </div>
             </div>
@@ -191,7 +318,7 @@ body {
                 <div class="exp-slider_item">
                   <div class="z-index-2">
                     <p class="text-size-medium">Homework Review</p>
-                  </div><img src="images/edu_land_1.png" loading="lazy" alt="" class="img-cover">
+                  </div><img src="images/edu_cta_bg.png" loading="lazy" alt="" class="img-cover">
                   <div class="exp-slider_overlay"></div>
                 </div>
               </div>
