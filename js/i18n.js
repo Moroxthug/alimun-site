@@ -153,8 +153,8 @@
       }
       /* Dropdown UI alignment for RTL */
       html[dir="rtl"] .alimun-i18n-dropdown-menu {
-        right: auto !important;
-        left: 0 !important;
+        left: auto !important;
+        right: 0 !important;
       }
     `;
     const style = document.createElement('style');
@@ -284,7 +284,7 @@
 
     if (leftNav) {
       container = leftNav;
-      insertionType = 'append'; // Append to the left nav wrapper (to the left of the logo)
+      insertionType = 'prepend'; // Prepend to left nav wrapper (before tiers link)
     } else if (webflowNav) {
       container = webflowNav;
       insertionType = 'prepend'; // Insert before sign-in/get-started
@@ -317,22 +317,16 @@
           position: relative;
           display: inline-block;
           font-family: 'Satoshi', sans-serif;
-          font-size: 0.74rem;
-          font-weight: 700;
-          color: #080808;
-          z-index: 9999;
-          margin-right: 0.5rem;
+          font-size: 0.64rem; font-weight: 700; color: #080808; z-index: 9999; margin-right: 0.25rem;
         }
         .alimun-i18n-btn {
           display: flex;
           align-items: center;
-          gap: 0.4rem;
+          gap: 0.3rem;
           background: rgba(255, 255, 255, 0.6);
           backdrop-filter: blur(10px);
           -webkit-backdrop-filter: blur(10px);
-          border: 1.5px solid rgba(0, 0, 0, 0.18);
-          border-radius: 5rem;
-          padding: 0.44rem 0.8rem;
+          border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 5rem; padding: 0.28rem 0.55rem;
           cursor: pointer;
           transition: all 0.2s ease;
           line-height: 1;
@@ -345,7 +339,7 @@
         .alimun-i18n-dropdown-menu {
           position: absolute;
           top: calc(100% + 0.5rem);
-          right: 0;
+          left: 0;
           background: rgba(8, 8, 8, 0.94);
           backdrop-filter: blur(12px);
           -webkit-backdrop-filter: blur(12px);
@@ -390,6 +384,27 @@
         .alimun-i18n-dropdown-menu.show + .alimun-i18n-btn .alimun-i18n-dropdown-arrow,
         .alimun-i18n-btn.active-arrow .alimun-i18n-dropdown-arrow {
           transform: rotate(180deg);
+        }
+
+        .alimun-i18n-dropdown .link_line {
+          bottom: -6px;
+          left: 0;
+          transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .alimun-i18n-dropdown:hover .link_line {
+          transform: scale3d(1, 1, 1);
+        }
+
+        .alimun-get-started-wrapper {
+          position: relative;
+        }
+        .alimun-get-started-wrapper .link_line {
+          bottom: -6px;
+          left: 0;
+          transition: transform 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        .alimun-get-started-wrapper:hover .link_line {
+          transform: scale3d(1, 1, 1);
         }
 
         /* Floating Fallback Mode */
@@ -440,6 +455,13 @@
     wrapper.className = 'alimun-i18n-dropdown';
     if (insertionType === 'float') {
       wrapper.classList.add('is-floating');
+    }
+
+    const isSidebar = (container.closest && (container.closest('.sb') || container.closest('.sb-top') || container.closest('.sb-bot'))) || false;
+    if (insertionType !== 'float' && !isSidebar) {
+      const line = document.createElement('div');
+      line.className = 'link_line';
+      wrapper.appendChild(line);
     }
 
     // Toggle button
@@ -507,6 +529,22 @@
     }
   }
 
+  function setupGetStartedHover() {
+    const btn = document.querySelector('.nav_wrap a[href="signup.html"]');
+    if (!btn) return;
+    
+    const parent = btn.parentElement;
+    if (!parent) return;
+    
+    parent.classList.add('alimun-get-started-wrapper');
+    
+    if (!parent.querySelector('.link_line')) {
+      const line = document.createElement('div');
+      line.className = 'link_line';
+      parent.appendChild(line);
+    }
+  }
+
   // Global functions exposed
   window.i18nTranslateElement = translateElement;
   window.i18nTranslatePage = translatePage;
@@ -517,6 +555,7 @@
   window.addEventListener('DOMContentLoaded', () => {
     translatePage();
     injectLanguageSelector();
+    setupGetStartedHover();
     initObserver();
   });
 
@@ -524,6 +563,7 @@
   if (document.readyState === 'interactive' || document.readyState === 'complete') {
     translatePage();
     injectLanguageSelector();
+    setupGetStartedHover();
     initObserver();
   } else {
     // Immediate RTL set to prevent flicker

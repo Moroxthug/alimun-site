@@ -1024,6 +1024,12 @@ function renderTeacherConfirm() {
 }
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
+const urlParams = new URLSearchParams(window.location.search);
+const queryRole = urlParams.get('role');
+if (queryRole === 'teacher' || queryRole === 'student') {
+  fd.role = queryRole;
+  step = 2;
+}
 render();
 </script>
   <script src="js/cookies-banner.js" type="text/javascript"></script>
