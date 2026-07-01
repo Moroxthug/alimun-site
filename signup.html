@@ -189,29 +189,29 @@ const PRICE_IDS = {
 const TIERS = [
   {
     id:'community', stripeId:'community', name:'Community', size:'~35 learners',
-    monthlyPrice: 17,  yearlyPrice: 170,  yearlyMonthlyEq: 14,
-    // 2 months free = 10 × €17 = €170/yr → €14.17/mo
+    monthlyPrice: 24,  yearlyPrice: 240,  yearlyMonthlyEq: 20,
+    // 2 months free = 10 × €24 = €240/yr → €20.00/mo
     badge:'Popular', featured:false,
     feats:['Live cohort sessions','Community access','Session notes & vocab PDF','Goal-specific curriculum'],
   },
   {
     id:'focused', stripeId:'focused', name:'Focused', size:'~17 learners',
-    monthlyPrice: 39,  yearlyPrice: 390,  yearlyMonthlyEq: 33,
-    // 2 months free = 10 × €39 = €390/yr → €32.50/mo
+    monthlyPrice: 59,  yearlyPrice: 590,  yearlyMonthlyEq: 49,
+    // 2 months free = 10 × €59 = €590/yr → €49.17/mo
     badge:'Best value', featured:true,
     feats:['Everything in Community','Smaller, focused groups','Weekly group feedback','AI essay grading','Monthly progress report'],
   },
   {
     id:'intensive', stripeId:'intensive', name:'Intensive', size:'~6 learners + 1:1',
-    monthlyPrice: 69,  yearlyPrice: 690,  yearlyMonthlyEq: 58,
-    // 2 months free = 10 × €69 = €690/yr → €57.50/mo
+    monthlyPrice: 109,  yearlyPrice: 1090,  yearlyMonthlyEq: 90,
+    // 2 months free = 10 × €109 = €1090/yr → €90.83/mo
     badge:'Premium', featured:false,
     feats:['Everything in Focused','Near-private setting','Weekly 1-on-1 session','Custom learning path','Priority support'],
   },
   {
     id:'onetoone', stripeId:'private', name:'1 on 1', size:'Private (Base 3 classes/week)',
-    monthlyPrice: 179, yearlyPrice: 1790, yearlyMonthlyEq: 149,
-    // 2 months free = 10 × €179 = €1790/yr → €149.17/mo
+    monthlyPrice: 269, yearlyPrice: 2690, yearlyMonthlyEq: 224,
+    // 2 months free = 10 × €269 = €2690/yr → €224.17/mo
     badge:'Elite', featured:false,
     feats:['100% private sessions','Choose extra classes after limit','Fully custom curriculum','Dedicated teacher','Voice note feedback'],
   },
@@ -971,7 +971,7 @@ window.applyTeacher = async function() {
   }
 
   // INSERT into teacher_profiles
-  const { error: dbErr } = await supabase
+  const { data: insertedData, error: dbErr } = await supabase
     .from('teacher_profiles')
     .insert({
       user_id:          userId,
@@ -981,7 +981,8 @@ window.applyTeacher = async function() {
       specialty:        fd.specialty,
       bio:              fd.bio,
       status:           'pending',
-    });
+    })
+    .select();
 
   if (dbErr) {
     setLoading('btn-teach', false, 'Submit application →');
@@ -989,15 +990,25 @@ window.applyTeacher = async function() {
     return;
   }
 
-  // Notify admin (console.log until Resend edge function is wired)
-  console.log(
-    `[Alimun] New teacher application from ${fd.name} <${fd.email}>. ` +
-    `Language: ${fd.language}. Review in Supabase → teacher_profiles.`
-  );
-  // TODO (T-Resend): invoke Supabase edge function to send email:
-  // await supabase.functions.invoke('notify-admin', {
-  //   body: { type: 'teacher_application', name: fd.name, email: fd.email, language: fd.language },
-  // });
+  const teacherId = insertedData?.[0]?.id || userId;
+
+  // Notify admin via Vercel serverless function
+  try {
+    await fetch('/api/admin/notify-teacher-application', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        teacher_id: teacherId,
+        full_name: fd.name,
+        languages: [fd.language],
+        experience_years: fd.experience_years,
+        specialty: fd.specialty,
+        bio: fd.bio,
+      }),
+    });
+  } catch (err) {
+    console.error('[Alimun] Error notifying admin:', err);
+  }
 
   step = 4;
   render();

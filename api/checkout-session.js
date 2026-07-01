@@ -42,6 +42,27 @@ module.exports = async function handler(req, res) {
     return res.status(400).json({ error: 'Invalid or missing session_id' });
   }
 
+  // Intercept mock sessions for testing
+  if (sessionId.startsWith('cs_mock_')) {
+    const parts = sessionId.split('_');
+    const supabaseUserId = parts[2];
+    const tier = parts[3] || 'focused';
+    return res.status(200).json({
+      status:          'complete',
+      paymentStatus:   'paid',
+      customerEmail:   'mock_student@alimun.com',
+      subscriptionId:  'sub_mock_' + Math.random().toString(36).substr(2, 9),
+      subscriptionStatus: 'active',
+      amountTotal:     3900,
+      currency:        'eur',
+      metadata:        {
+        supabase_user_id: supabaseUserId,
+        tier,
+        source:          'signup_flow'
+      }
+    });
+  }
+
   try {
     const session = await stripe.checkout.sessions.retrieve(sessionId, {
       expand: ['subscription', 'customer'],

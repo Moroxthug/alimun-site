@@ -32,6 +32,30 @@
     return 'en';
   }
 
+  // Immediate auto-redirection / language sync routing
+  (function initRouting() {
+    const pathname = window.location.pathname;
+    const parts = pathname.split('/').filter(p => p.length > 0);
+    const langCodes = LANGUAGES.map(l => l.code);
+    
+    const hasLangPrefix = parts.length > 0 && langCodes.includes(parts[0]);
+    const urlLang = hasLangPrefix ? parts[0] : 'en';
+
+    if (hasLangPrefix) {
+      const savedLang = localStorage.getItem(STORAGE_KEY);
+      if (savedLang !== urlLang) {
+        localStorage.setItem(STORAGE_KEY, urlLang);
+      }
+    } else {
+      const activeLang = getActiveLang();
+      if (activeLang !== 'en') {
+        const filename = parts.join('/') || 'index.html';
+        const targetPath = `/${activeLang}/${filename}`;
+        window.location.replace(window.location.origin + targetPath);
+      }
+    }
+  })();
+
   // Set direction and lang attributes
   function updateDocumentDirection(lang) {
     const active = LANGUAGES.find(l => l.code === lang);
@@ -276,13 +300,17 @@
     let container = null;
     let insertionType = 'append'; // append or prepend or insertBefore
 
+    const customLangContainer = document.getElementById('alimun-lang-container');
     const leftNav = document.querySelector('.nav_menu-link-wrap.is-left');
     const webflowNav = document.querySelector('.nav_wrap div[style*="display:flex"]');
     const topBar = document.querySelector('.topbar');
     const sbTop = document.querySelector('.sb-top');
     const sbBot = document.querySelector('.sb-bot');
 
-    if (leftNav) {
+    if (customLangContainer) {
+      container = customLangContainer;
+      insertionType = 'append';
+    } else if (leftNav) {
       container = leftNav;
       insertionType = 'prepend'; // Prepend to left nav wrapper (before tiers link)
     } else if (webflowNav) {
@@ -422,26 +450,52 @@
 
         /* Dark mode overrides for dashboard sidebars */
         .sb-top .alimun-i18n-dropdown,
-        .sb-bot .alimun-i18n-dropdown {
+        .sb-bot .alimun-i18n-dropdown,
+        .sb-lang-container .alimun-i18n-dropdown {
           margin-right: 0;
           width: 100%;
         }
         .sb-top .alimun-i18n-btn,
-        .sb-bot .alimun-i18n-btn {
+        .sb-bot .alimun-i18n-btn,
+        .sb-lang-container .alimun-i18n-btn {
           width: 100%;
           justify-content: space-between;
           background: #f5f4f0;
           border-color: rgba(0,0,0,0.08);
         }
         .sb-top .alimun-i18n-btn:hover,
-        .sb-bot .alimun-i18n-btn:hover {
+        .sb-bot .alimun-i18n-btn:hover,
+        .sb-lang-container .alimun-i18n-btn:hover {
           background: #eae9e3;
         }
         .sb-top .alimun-i18n-dropdown-menu,
-        .sb-bot .alimun-i18n-dropdown-menu {
+        .sb-bot .alimun-i18n-dropdown-menu,
+        .sb-lang-container .alimun-i18n-dropdown-menu {
           right: 0;
           left: 0;
           min-width: 100%;
+        }
+
+        /* Student dashboard dark sidebar overrides */
+        #sb .sb-lang-container .alimun-i18n-btn {
+          background: rgba(255, 255, 255, 0.05);
+          border-color: rgba(255, 255, 255, 0.1);
+          color: #f0f0f0;
+        }
+        #sb .sb-lang-container .alimun-i18n-btn:hover {
+          background: rgba(255, 255, 255, 0.1);
+          border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Collapsed sidebar language selector compact styling */
+        .sb.col .sb-lang-container .alimun-i18n-btn,
+        #sb.col .sb-lang-container .alimun-i18n-btn {
+          justify-content: center;
+          padding: 0.28rem 0;
+        }
+        .sb.col .sb-lang-container .alimun-i18n-btn span:not(:first-child),
+        #sb.col .sb-lang-container .alimun-i18n-btn span:not(:first-child) {
+          display: none;
         }
       `;
       const style = document.createElement('style');
@@ -457,7 +511,7 @@
       wrapper.classList.add('is-floating');
     }
 
-    const isSidebar = (container.closest && (container.closest('.sb') || container.closest('.sb-top') || container.closest('.sb-bot'))) || false;
+    const isSidebar = (container.closest && (container.closest('.sb') || container.closest('#sb') || container.closest('.sb-top') || container.closest('.sb-bot') || container.closest('.sb-lang-container'))) || false;
     if (insertionType !== 'float' && !isSidebar) {
       const line = document.createElement('div');
       line.className = 'link_line';
@@ -486,21 +540,21 @@
       item.addEventListener('click', () => {
         localStorage.setItem(STORAGE_KEY, lang.code);
         
-        // Update menu items active class
-        menu.querySelectorAll('.alimun-i18n-item').forEach(i => i.classList.remove('active'));
-        item.classList.add('active');
+        // Calculate target subdirectory URL
+        const pathname = window.location.pathname;
+        const parts = pathname.split('/').filter(p => p.length > 0);
+        const langCodes = ['en', 'es', 'fr', 'de', 'pt', 'it', 'zh', 'ar'];
         
-        // Update button text
-        btn.querySelector('span:first-child').innerHTML = `${lang.flag} ${lang.code.toUpperCase()}`;
+        let filename = 'index.html';
+        if (parts.length > 0 && langCodes.includes(parts[0])) {
+          filename = parts.slice(1).join('/') || 'index.html';
+        } else {
+          filename = parts.join('/') || 'index.html';
+        }
         
-        menu.classList.remove('show');
-        btn.classList.remove('active-arrow');
-
-        // Translate the page instantly
-        translatePage();
-        
-        // Re-inject languages selectors on the page (in case RTL mirrored positions)
-        injectLanguageSelector();
+        // Perform clean directory redirect
+        const targetPath = lang.code === 'en' ? `/${filename}` : `/${lang.code}/${filename}`;
+        window.location.href = window.location.origin + targetPath;
       });
       menu.appendChild(item);
     });

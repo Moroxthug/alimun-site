@@ -1,0 +1,802 @@
+{
+  "it/corsi-inglese-online.html": {
+    "exists": true,
+    "htmlIntegrity": [],
+    "brokenAssets": [],
+    "placeholders": [],
+    "jsonLdErrors": [],
+    "cleanUrlMatches": [
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "corporate.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "corporate.html"
+      },
+      {
+        "href": "about-us.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "about-us.html"
+      },
+      {
+        "href": "careers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "careers.html"
+      },
+      {
+        "href": "contact.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "contact.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "corporate.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "corporate.html"
+      },
+      {
+        "href": "about-us.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "about-us.html"
+      },
+      {
+        "href": "careers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "careers.html"
+      },
+      {
+        "href": "contact.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "contact.html"
+      },
+      {
+        "href": "terms.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "terms.html"
+      },
+      {
+        "href": "cookies.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "cookies.html"
+      },
+      {
+        "href": "gdpr.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "gdpr.html"
+      }
+    ],
+    "brokenAnchors": []
+  },
+  "it/corsi-tedesco-online.html": {
+    "exists": true,
+    "htmlIntegrity": [],
+    "brokenAssets": [],
+    "placeholders": [],
+    "jsonLdErrors": [],
+    "cleanUrlMatches": [
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "corporate.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "corporate.html"
+      },
+      {
+        "href": "about-us.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "about-us.html"
+      },
+      {
+        "href": "careers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "careers.html"
+      },
+      {
+        "href": "contact.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "contact.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "corporate.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "corporate.html"
+      },
+      {
+        "href": "about-us.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "about-us.html"
+      },
+      {
+        "href": "careers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "careers.html"
+      },
+      {
+        "href": "contact.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "contact.html"
+      },
+      {
+        "href": "terms.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "terms.html"
+      },
+      {
+        "href": "cookies.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "cookies.html"
+      },
+      {
+        "href": "gdpr.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "gdpr.html"
+      }
+    ],
+    "brokenAnchors": []
+  },
+  "it/corsi-francese-online.html": {
+    "exists": true,
+    "htmlIntegrity": [],
+    "brokenAssets": [],
+    "placeholders": [],
+    "jsonLdErrors": [],
+    "cleanUrlMatches": [
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "corporate.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "corporate.html"
+      },
+      {
+        "href": "about-us.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "about-us.html"
+      },
+      {
+        "href": "careers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "careers.html"
+      },
+      {
+        "href": "contact.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "contact.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "corporate.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "corporate.html"
+      },
+      {
+        "href": "about-us.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "about-us.html"
+      },
+      {
+        "href": "careers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "careers.html"
+      },
+      {
+        "href": "contact.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "contact.html"
+      },
+      {
+        "href": "terms.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "terms.html"
+      },
+      {
+        "href": "cookies.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "cookies.html"
+      },
+      {
+        "href": "gdpr.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "gdpr.html"
+      }
+    ],
+    "brokenAnchors": []
+  },
+  "it/corsi-spagnolo-online.html": {
+    "exists": true,
+    "htmlIntegrity": [],
+    "brokenAssets": [],
+    "placeholders": [],
+    "jsonLdErrors": [],
+    "cleanUrlMatches": [
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "corporate.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "corporate.html"
+      },
+      {
+        "href": "about-us.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "about-us.html"
+      },
+      {
+        "href": "careers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "careers.html"
+      },
+      {
+        "href": "contact.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "contact.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "corporate.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "corporate.html"
+      },
+      {
+        "href": "about-us.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "about-us.html"
+      },
+      {
+        "href": "careers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "careers.html"
+      },
+      {
+        "href": "contact.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "contact.html"
+      },
+      {
+        "href": "terms.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "terms.html"
+      },
+      {
+        "href": "cookies.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "cookies.html"
+      },
+      {
+        "href": "gdpr.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "gdpr.html"
+      }
+    ],
+    "brokenAnchors": []
+  },
+  "it/corsi-portoghese-online.html": {
+    "exists": true,
+    "htmlIntegrity": [],
+    "brokenAssets": [],
+    "placeholders": [],
+    "jsonLdErrors": [],
+    "cleanUrlMatches": [
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "corporate.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "corporate.html"
+      },
+      {
+        "href": "about-us.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "about-us.html"
+      },
+      {
+        "href": "careers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "careers.html"
+      },
+      {
+        "href": "contact.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "contact.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "signup.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "signup.html"
+      },
+      {
+        "href": "index.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "index.html"
+      },
+      {
+        "href": "tiers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "tiers.html"
+      },
+      {
+        "href": "services.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "services.html"
+      },
+      {
+        "href": "corporate.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "corporate.html"
+      },
+      {
+        "href": "about-us.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "about-us.html"
+      },
+      {
+        "href": "careers.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "careers.html"
+      },
+      {
+        "href": "contact.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "contact.html"
+      },
+      {
+        "href": "terms.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "terms.html"
+      },
+      {
+        "href": "cookies.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "cookies.html"
+      },
+      {
+        "href": "gdpr.html",
+        "isClean": false,
+        "targetExists": true,
+        "resolvedPath": "gdpr.html"
+      }
+    ],
+    "brokenAnchors": []
+  }
+}

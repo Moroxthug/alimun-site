@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+Disallow: /admin.html
+Disallow: /signin.html
+Disallow: /signup.html
+Disallow: /student-dashboard.html
+Disallow: /teacher-dashboard.html
+Disallow: /signup-success.html
+Disallow: /careers-teachers-section.html
+Disallow: /*/admin.html
+Disallow: /*/signin.html
+Disallow: /*/signup.html
+Disallow: /*/student-dashboard.html
+Disallow: /*/teacher-dashboard.html
+Disallow: /*/signup-success.html
+Disallow: /*/careers-teachers-section.html
+
+Sitemap: https://alimun.com/sitemap.xml

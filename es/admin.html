@@ -1,0 +1,774 @@
+<!DOCTYPE html><html lang="es" dir="ltr"><head>
+<meta charset="utf-8">
+<title>Admin Portal – Alimun</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;display=swap" rel="stylesheet">
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  window.ALIMUN_CONFIG = {
+    supabaseUrl:     'https://dgaiasmefcbrtzqwdyri.supabase.co',
+    supabaseAnonKey: 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
+  };
+</script>
+<style>
+:root {
+  --g: #ceff65;
+  --b: #080808;
+  --card-bg: #121212;
+  --border: rgba(255,255,255,0.08);
+  --body: 'Satoshi', sans-serif;
+  --disp: 'Anton', sans-serif;
+}
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: var(--body);
+  background: var(--b);
+  color: #ffffff;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2.5rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(8,8,8,0.85);
+  backdrop-filter: blur(12px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-decoration: none;
+  font-family: var(--disp);
+  font-size: 1.5rem;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.logo svg {
+  height: 24px;
+}
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+.admin-badge {
+  background: rgba(206,255,101,0.1);
+  color: var(--g);
+  border: 1px solid rgba(206,255,101,0.2);
+  padding: 0.35rem 0.85rem;
+  border-radius: 5rem;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+.btn {
+  background: var(--g);
+  color: var(--b);
+  border: none;
+  border-radius: 5rem;
+  padding: 0.625rem 1.25rem;
+  font-family: var(--body);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.055em;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.15s;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  text-decoration: none;
+}
+.btn:hover {
+  background: #b3e940;
+  transform: translateY(-1px);
+}
+.btn:active {
+  transform: translateY(0);
+}
+.btn.out {
+  background: transparent;
+  color: #ffffff;
+  border: 1px solid rgba(255,255,255,0.2);
+}
+.btn.out:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: #ffffff;
+}
+.btn.danger {
+  background: #ef4444;
+  color: #ffffff;
+}
+.btn.danger:hover {
+  background: #dc2626;
+}
+.btn.success {
+  background: #10b981;
+  color: #ffffff;
+}
+.btn.success:hover {
+  background: #059669;
+}
+.btn.sm {
+  padding: 0.45rem 0.9rem;
+  font-size: 0.68rem;
+}
+.container {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 2.5rem;
+  flex: 1;
+}
+.header-row {
+  margin-bottom: 2.5rem;
+}
+.title {
+  font-family: var(--disp);
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.35rem;
+  background: linear-gradient(135deg, #ffffff 0%, #aaaaaa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.subtitle {
+  color: #888888;
+  font-size: 0.88rem;
+}
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+.stat-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: 1.5rem;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.stat-card:hover {
+  border-color: rgba(255,255,255,0.18);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+}
+.stat-val {
+  font-family: var(--disp);
+  font-size: 2.25rem;
+  color: #ffffff;
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+.stat-val.highlight {
+  color: var(--g);
+}
+.stat-lbl {
+  font-size: 0.68rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #888888;
+  font-weight: 700;
+}
+.tab-row {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.75rem;
+  overflow-x: auto;
+}
+.tab {
+  background: transparent;
+  border: none;
+  color: #888888;
+  font-family: var(--body);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  padding: 1rem 1.25rem;
+  cursor: pointer;
+  transition: color 0.18s, border-color 0.18s;
+  position: relative;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+.tab:hover {
+  color: #ffffff;
+}
+.tab.on {
+  color: var(--g);
+  border-bottom-color: var(--g);
+}
+.panel {
+  display: none;
+  animation: fadeIn 0.25s ease;
+}
+.panel.on {
+  display: block;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 1.25rem;
+  padding: 1.75rem;
+  margin-bottom: 1.5rem;
+  overflow-x: auto;
+}
+.card-title-sec {
+  font-family: var(--disp);
+  font-size: 1.25rem;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  letter-spacing: 0.02em;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+th {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #888888;
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-weight: 700;
+}
+td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  font-size: 0.88rem;
+  color: #dddddd;
+  vertical-align: middle;
+}
+tr:last-child td {
+  border-bottom: none;
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border-radius: 5rem;
+  padding: 0.2rem 0.6rem;
+  border: 1px solid transparent;
+}
+.badge.pending {
+  background: rgba(245,158,11,0.1);
+  color: #fbbf24;
+  border-color: rgba(245,158,11,0.2);
+}
+.badge.approved {
+  background: rgba(16,185,129,0.1);
+  color: #34d399;
+  border-color: rgba(16,185,129,0.2);
+}
+.badge.suspended {
+  background: rgba(239,68,68,0.1);
+  color: #f87171;
+  border-color: rgba(239,68,68,0.2);
+}
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.empty-state {
+  text-align: center;
+  padding: 3rem 1.5rem;
+  color: #666666;
+  font-size: 0.9rem;
+}
+.empty-ico {
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
+}
+.toast {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  background: #ffffff;
+  color: var(--b);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 1rem 1.5rem;
+  border-radius: 0.875rem;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  transform: translateY(100px);
+  opacity: 0;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.3s;
+  z-index: 1000;
+}
+.toast.show {
+  transform: translateY(0);
+  opacity: 1;
+}
+</style>
+</head>
+<body>
+
+<nav class="navbar">
+  <a href="index.html" class="logo">
+    <svg height="24" viewBox="0 0 1920 1080" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#ffffff" d="M511.61,422.8c7.52-6.66,14.43-12.94,21.51-19.03,39.31-33.83,106.66-27.64,140.27,16.17,14.4,18.78,21.44,39.83,21.45,63.41.02,68.76.14,137.52.18,206.28,0,10.53-7.15,16.92-18.75,18.45-19.69,2.58-34.39-7.28-48.55-18.57-4.48-3.57-7.41-7.75-15.6-13.9-.71-.53-2.27-1.67-4.02-1.37-2.91.5-4.44,4.62-5.04,6.3-3.83,10.72-2.66,34.16-2.52,39.03.13,4.43.82,28.52-13.85,45.33-1.01,1.15-17.78,19.78-40.19,16.39-2.85-.43-13.79-2.49-21.95-11.42-5.45-5.96-8.82-13.82-9.4-22.82-.21-3.17-.03-6.37-1.29-9.8-.42,1.75-1.02,3.49-1.24,5.26-2.46,19.75-13.92,34.17-30.6,38.4-19.11,4.84-37.78-9.63-46.25-20.07-11.88-14.64-13.39-32.61-14-40.02-1.92-22.95,3.77-42.27-3.13-45.38-1.58-.71-3.3-.33-4.43.06-.95.79-2.33,1.94-3.99,3.32-17.56,14.46-27.1,20.26-34.43,25.12-8.37,5.55-18.26,5.32-27.89,3.79-11.98-1.9-17.17-8.02-17.24-20.62-.16-28.31-.11-56.63-.07-84.94.05-42.15-.22-84.31.36-126.46.49-35.59,29.27-73.93,62.39-86.42,41.32-15.59,88.94-3.66,115.38,30.44,1.15,1.49,2.58,2.76,2.89,3.09ZM513.63,706.58c.86-13.48,4.79-25.89,11.7-37.43,10.56-17.61,26.74-27.53,45.89-33.24,28.41-8.47,56.17-8.14,82.85,6.35,4.6,2.5,5.87,1.5,5.85-4.72-.1-51.72-.14-103.45-.4-155.17-.19-37.68-32.62-70.18-72.91-64.61-27.84,3.85-52.86,27.48-55.15,55.5-1.25,15.23-.67,30.61-.74,45.93-.19,38.1-.24,76.2-.43,114.3-.05,9.75-6.62,17.5-15.2,18.39-9.79,1.02-17.73-4.86-19.73-15.05-.69-3.5-.55-7.19-.56-10.79-.15-49.17.23-98.34-.57-147.5-.39-24.21-12.5-42.52-33.93-54-21.42-11.48-43.06-9.53-63.33,2.35-21.66,12.7-31.27,33.11-31.3,57.8-.03,30,.84,60,.91,90,.05,20.21-.62,40.41-.89,60.62-.03,2.4.43,4.8.71,7.65,8.18-3.19,15.28-6.63,22.76-8.76,23.5-6.68,46.7-4.34,69.68,3.11,25.86,8.38,42.75,25.36,50.28,51.5,1.69,5.87,3.01,11.85,4.5,17.78Z"></path>
+      <path fill="#ceff65" d="M453.39,586.88c10.72.03,19.04,7.83,19.11,17.91.07,11.01-8.28,19.4-19.25,19.34-11.3-.06-20.16-8.82-19.91-19.7.24-10.53,8.29-17.58,20.05-17.54Z"></path>
+      <path fill="#ceff65" d="M573.28,624.11c-11.23,1.24-18.87-10.64-18.97-18.33-.15-11.63,8.06-18.99,20.76-18.86,10.61.1,18.26,7.92,18.33,18.72.05,8.76-8.98,20.09-20.12,18.47Z"></path>
+    </svg>
+    <span>ali mun</span>
+  </a>
+  <div class="nav-actions">
+    <span class="admin-badge">Admin</span>
+    <button class="btn out sm" onclick="adminSignOut()">Sign out</button>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="header-row">
+    <h1 class="title">Admin Portal</h1>
+    <p class="subtitle" id="greeting">Welcome to the Alimun management dashboard.</p>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-val highlight" id="stat-pending">0</div>
+      <div class="stat-lbl">Pending Teachers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-teachers">0</div>
+      <div class="stat-lbl">Total Teachers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-students">0</div>
+      <div class="stat-lbl">Total Students</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-val" id="stat-cohorts">0</div>
+      <div class="stat-lbl">Active Cohorts</div>
+    </div>
+  </div>
+
+  <div class="tab-row">
+    <button class="tab on" onclick="switchTab('pending-pnl', this)">Teacher Applications</button>
+    <button class="tab" onclick="switchTab('approved-pnl', this)">Approved Teachers</button>
+    <button class="tab" onclick="switchTab('students-pnl', this)">Student List</button>
+    <button class="tab" onclick="switchTab('cohorts-pnl', this)">Cohort List</button>
+  </div>
+
+  <!-- Panel: Teacher Applications -->
+  <div id="pending-pnl" class="panel on">
+    <div class="card">
+      <h2 class="card-title-sec">Pending Applications</h2>
+      <table id="tbl-pending">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Language</th>
+            <th>Experience</th>
+            <th>Specialty</th>
+            <th>Bio Summary</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="pending-rows">
+          <!-- Dynamically populated -->
+        </tbody>
+      </table>
+      <div id="pending-empty" class="empty-state" style="display:none;">
+        <div class="empty-ico">✨</div>
+        <p>No pending teacher applications to review.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel: Approved Teachers -->
+  <div id="approved-pnl" class="panel">
+    <div class="card">
+      <h2 class="card-title-sec">Approved Teachers</h2>
+      <table id="tbl-approved">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Languages</th>
+            <th>Experience</th>
+            <th>Specialty</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="approved-rows">
+          <!-- Dynamically populated -->
+        </tbody>
+      </table>
+      <div id="approved-empty" class="empty-state" style="display:none;">
+        <div class="empty-ico">👤</div>
+        <p>No approved teachers found.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel: Students -->
+  <div id="students-pnl" class="panel">
+    <div class="card">
+      <h2 class="card-title-sec">Registered Students</h2>
+      <table id="tbl-students">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Language</th>
+            <th>Level</th>
+            <th>Tier</th>
+            <th>Goal Track</th>
+            <th>Stripe Status</th>
+          </tr>
+        </thead>
+        <tbody id="student-rows">
+          <!-- Dynamically populated -->
+        </tbody>
+      </table>
+      <div id="students-empty" class="empty-state" style="display:none;">
+        <div class="empty-ico">🎓</div>
+        <p>No registered students found.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Panel: Cohorts -->
+  <div id="cohorts-pnl" class="panel">
+    <div class="card">
+      <h2 class="card-title-sec">Active Cohorts</h2>
+      <table id="tbl-cohorts">
+        <thead>
+          <tr>
+            <th>Cohort ID</th>
+            <th>Language</th>
+            <th>Level</th>
+            <th>Tier</th>
+            <th>Schedule</th>
+            <th>Students</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="cohort-rows">
+          <!-- Dynamically populated -->
+        </tbody>
+      </table>
+      <div id="cohorts-empty" class="empty-state" style="display:none;">
+        <div class="empty-ico">🏫</div>
+        <p>No active cohorts found.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">Profile status updated successfully</div>
+
+<script type="module">
+import { supabase } from '/js/supabase/config.js';
+
+let currentAdmin = null;
+
+/* ── Auth Guard ── */
+(async () => {
+  const { data: { session } } = await supabase.auth.getSession();
+
+  if (!session) {
+    window.location.href = 'signin.html';
+    return;
+  }
+
+  const role = session.user?.user_metadata?.role || '';
+  if (role !== 'admin') {
+    // Not admin, redirect to correct dashboard
+    window.location.href = role === 'student' ? 'student-dashboard.html' : 
+                          role === 'teacher' ? 'teacher-dashboard.html' : 'signin.html';
+    return;
+  }
+
+  currentAdmin = session.user;
+  document.getElementById('greeting').textContent = `Welcome back, ${currentAdmin.email}!`;
+  
+  // Show page content
+  document.body.style.opacity = '1';
+  
+  // Initial load
+  await loadDashboard();
+})();
+
+window.adminSignOut = async function() {
+  await supabase.auth.signOut();
+  window.location.href = 'signin.html';
+};
+
+/* ── UI Tab Switcher ── */
+window.switchTab = function(panelId, tabEl) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  
+  tabEl.classList.add('on');
+  document.getElementById(panelId).classList.add('on');
+};
+
+/* ── Load Dashboard Data ── */
+async function loadDashboard() {
+  try {
+    // 1. Fetch Teachers
+    const { data: teachers, error: tErr } = await supabase
+      .from('teacher_profiles')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (tErr) throw tErr;
+
+    // 2. Fetch Students
+    const { data: students, error: sErr } = await supabase
+      .from('student_profiles')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (sErr) throw sErr;
+
+    // 3. Fetch Cohorts
+    const { data: cohorts, error: cErr } = await supabase
+      .from('cohorts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (cErr) throw cErr;
+
+    // Filter teachers by status
+    const pendingTeachers = teachers.filter(t => t.status === 'pending');
+    const approvedTeachers = teachers.filter(t => t.status === 'approved' || t.status === 'suspended');
+
+    // Update Stats Card Counts
+    document.getElementById('stat-pending').textContent = pendingTeachers.length;
+    document.getElementById('stat-teachers').textContent = teachers.length;
+    document.getElementById('stat-students').textContent = students.length;
+    document.getElementById('stat-cohorts').textContent = cohorts.length;
+
+    // Populate Pending Table
+    renderPendingTable(pendingTeachers);
+
+    // Populate Approved Table
+    renderApprovedTable(approvedTeachers);
+
+    // Populate Students Table
+    renderStudentsTable(students);
+
+    // Populate Cohorts Table
+    renderCohortsTable(cohorts);
+
+  } catch (err) {
+    console.error('[Admin Dashboard] Error loading details:', err.message);
+    showToast('Failed to load dashboard data.');
+  }
+}
+
+/* ── Render Pending Table ── */
+function renderPendingTable(teachers) {
+  const rows = document.getElementById('pending-rows');
+  const empty = document.getElementById('pending-empty');
+  const tbl = document.getElementById('tbl-pending');
+
+  rows.innerHTML = '';
+  if (teachers.length === 0) {
+    tbl.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  tbl.style.display = 'table';
+  empty.style.display = 'none';
+
+  teachers.forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight: 700;">${escapeHTML(t.full_name)}</td>
+      <td>${escapeHTML(t.languages.join(', ') || 'N/A')}</td>
+      <td>${t.experience_years} years</td>
+      <td>${escapeHTML(t.specialty || 'N/A')}</td>
+      <td style="max-width: 320px; font-size: 0.8rem; color: #888;" title="${escapeHTML(t.bio)}">
+        ${escapeHTML(t.bio ? t.bio.substring(0, 80) + '...' : 'No bio')}
+      </td>
+      <td class="actions-cell">
+        <button class="btn success sm" onclick="updateTeacherStatus('${t.id}', 'approved')">Approve</button>
+        <button class="btn danger sm" onclick="updateTeacherStatus('${t.id}', 'suspended')">Reject</button>
+      </td>
+    `;
+    rows.appendChild(tr);
+  });
+}
+
+/* ── Render Approved Table ── */
+function renderApprovedTable(teachers) {
+  const rows = document.getElementById('approved-rows');
+  const empty = document.getElementById('approved-empty');
+  const tbl = document.getElementById('tbl-approved');
+
+  rows.innerHTML = '';
+  if (teachers.length === 0) {
+    tbl.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  tbl.style.display = 'table';
+  empty.style.display = 'none';
+
+  teachers.forEach(t => {
+    const tr = document.createElement('tr');
+    const badgeClass = t.status === 'approved' ? 'approved' : 'suspended';
+    const actionBtn = t.status === 'approved' 
+      ? `<button class="btn danger sm" onclick="updateTeacherStatus('${t.id}', 'suspended')">Suspend</button>`
+      : `<button class="btn success sm" onclick="updateTeacherStatus('${t.id}', 'approved')">Re-Approve</button>`;
+
+    tr.innerHTML = `
+      <td style="font-weight: 700;">${escapeHTML(t.full_name)}</td>
+      <td>${escapeHTML(t.languages.join(', ') || 'N/A')}</td>
+      <td>${t.experience_years} years</td>
+      <td>${escapeHTML(t.specialty || 'N/A')}</td>
+      <td><span class="badge ${badgeClass}">${t.status}</span></td>
+      <td class="actions-cell">
+        ${actionBtn}
+      </td>
+    `;
+    rows.appendChild(tr);
+  });
+}
+
+/* ── Render Students Table ── */
+function renderStudentsTable(students) {
+  const rows = document.getElementById('student-rows');
+  const empty = document.getElementById('students-empty');
+  const tbl = document.getElementById('tbl-students');
+
+  rows.innerHTML = '';
+  if (students.length === 0) {
+    tbl.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  tbl.style.display = 'table';
+  empty.style.display = 'none';
+
+  students.forEach(s => {
+    const tr = document.createElement('tr');
+    const subStatus = s.stripe_subscription_status || 'N/A';
+    const subClass = subStatus === 'active' ? 'approved' : 'suspended';
+
+    tr.innerHTML = `
+      <td style="font-weight: 700;">${escapeHTML(s.full_name)}</td>
+      <td>${escapeHTML(s.language)}</td>
+      <td style="font-weight: 700; color: var(--g);">${escapeHTML(s.level)}</td>
+      <td style="text-transform: capitalize;">${escapeHTML(s.tier)}</td>
+      <td style="text-transform: capitalize; color: #888;">${escapeHTML(s.goal_track)}</td>
+      <td><span class="badge ${subStatus === 'active' ? 'approved' : 'pending'}">${subStatus}</span></td>
+    `;
+    rows.appendChild(tr);
+  });
+}
+
+/* ── Render Cohorts Table ── */
+function renderCohortsTable(cohorts) {
+  const rows = document.getElementById('cohort-rows');
+  const empty = document.getElementById('cohorts-empty');
+  const tbl = document.getElementById('tbl-cohorts');
+
+  rows.innerHTML = '';
+  if (cohorts.length === 0) {
+    tbl.style.display = 'none';
+    empty.style.display = 'block';
+    return;
+  }
+
+  tbl.style.display = 'table';
+  empty.style.display = 'none';
+
+  cohorts.forEach(c => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-family: monospace; font-size: 0.75rem; color: #aaa;">${c.id.substring(0, 8)}...</td>
+      <td>${escapeHTML(c.language)}</td>
+      <td>${escapeHTML(c.level)}</td>
+      <td style="text-transform: capitalize;">${escapeHTML(c.tier)}</td>
+      <td style="font-size: 0.8rem; color: #888;">
+        ${escapeHTML(c.schedule_days.join(', ') || 'N/A')} @ ${c.schedule_time || 'N/A'}
+      </td>
+      <td><b>${c.enrolled_count}</b> / ${c.max_students}</td>
+      <td><span class="badge ${c.status === 'open' ? 'approved' : 'pending'}">${c.status}</span></td>
+    `;
+    rows.appendChild(tr);
+  });
+}
+
+/* ── Update Teacher Status ── */
+window.updateTeacherStatus = async function(id, newStatus) {
+  try {
+    const { error } = await supabase
+      .from('teacher_profiles')
+      .update({ status: newStatus })
+      .eq('id', id);
+
+    if (error) throw error;
+
+    showToast(`Teacher status updated to: ${newStatus}`);
+    await loadDashboard();
+  } catch (err) {
+    console.error('[Admin Actions] Update status failed:', err.message);
+    showToast('Failed to update teacher status.');
+  }
+};
+
+/* ── Helper: Toast notification ── */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+/* ── Helper: Escape HTML ── */
+function escapeHTML(str) {
+  if (!str) return '';
+  return str.replace(/[&<>'"]/g, 
+    tag => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      "'": '&#39;',
+      '"': '&quot;'
+    }[tag] || tag)
+  );
+}
+</script>
+
+
+</body></html>

@@ -1,0 +1,314 @@
+<!DOCTYPE html><html lang="pt" dir="ltr"><head>
+<meta charset="utf-8">
+<title>Sign In – Alimun</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;display=swap" rel="stylesheet">
+<style>
+:root { --g:#ceff65; --b:#080808; --body:'Satoshi',sans-serif; --disp:'Anton',sans-serif; }
+*{ box-sizing:border-box; margin:0; padding:0; }
+body{ font-family:var(--body); background:#f0efe9; min-height:100vh; display:flex; flex-direction:column; -webkit-font-smoothing:antialiased; }
+
+.topbar{ padding:1.5rem 2rem; display:flex; align-items:center; }
+.topbar a{ text-decoration:none; }
+
+.center{ flex:1; display:flex; align-items:center; justify-content:center; padding:2rem; }
+
+.card{
+  background:#fff; border-radius:1.5rem;
+  width:100%; max-width:420px;
+  box-shadow:0 8px 40px rgba(0,0,0,.08);
+  overflow:hidden;
+}
+.card-head{ padding:2rem 2rem 1.5rem; border-bottom:1px solid rgba(0,0,0,.07); }
+.card-eyebrow{ font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; color:#aaa; margin-bottom:.35rem; }
+.card-title{ font-family:var(--disp); font-size:1.875rem; text-transform:uppercase; line-height:1.05; }
+
+.tabs{ display:flex; gap:.375rem; margin-bottom:1.5rem; }
+.tab{
+  flex:1; padding:.6rem; border-radius:.625rem; border:1px solid rgba(0,0,0,.1);
+  background:transparent; font-family:var(--body); font-size:.78rem; font-weight:700;
+  text-transform:uppercase; letter-spacing:.05em; color:#aaa; cursor:pointer; transition:all .18s;
+}
+.tab.on{ background:var(--b); color:#fff; border-color:var(--b); }
+
+.card-body{ padding:1.75rem 2rem 2rem; }
+
+.field{ margin-bottom:1rem; }
+.field label{ display:block; font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#888; margin-bottom:.5rem; }
+.field input{
+  width:100%; background:#fafaf8; border:1.5px solid rgba(0,0,0,.1); border-radius:.75rem;
+  padding:.875rem 1.125rem; font-family:var(--body); font-size:.9rem; color:var(--b); outline:none;
+  transition:border-color .18s;
+}
+.field input:focus{ border-color:var(--b); }
+.field input::placeholder{ color:#ccc; }
+
+.signin-btn{
+  width:100%; background:var(--g); color:var(--b); border:none; border-radius:5rem;
+  padding:.875rem; font-family:var(--body); font-weight:700; font-size:.82rem;
+  text-transform:uppercase; letter-spacing:.055em; cursor:pointer; margin-top:.5rem;
+  transition:background .22s;
+}
+.signin-btn:hover{ background:#b3e940; }
+.signin-btn:disabled{ opacity:.55; cursor:not-allowed; background:var(--g); }
+
+.error-msg{
+  display:none; margin-top:.875rem;
+  background:#fff0f0; border:1px solid #fca5a5; border-radius:.625rem;
+  padding:.65rem 1rem; font-size:.8rem; color:#dc2626; line-height:1.45;
+}
+
+.divider{ display:flex; align-items:center; gap:.875rem; margin:1.375rem 0; }
+.divider::before, .divider::after{ content:''; flex:1; height:1px; background:rgba(0,0,0,.08); }
+.divider span{ font-size:.72rem; color:#bbb; white-space:nowrap; }
+
+.google-btn{
+  width:100%; background:#fff; color:var(--b); border:1.5px solid rgba(0,0,0,.1); border-radius:5rem;
+  padding:.75rem; font-family:var(--body); font-weight:600; font-size:.82rem;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; gap:.625rem;
+  transition:background .18s;
+}
+.google-btn:hover{ background:#f5f4f0; }
+.google-ico{ width:16px; height:16px; }
+
+.card-foot{ padding:1.25rem 2rem 1.75rem; border-top:1px solid rgba(0,0,0,.07); text-align:center; }
+.card-foot p{ font-size:.8rem; color:#aaa; }
+.card-foot a{ color:var(--b); font-weight:700; text-decoration:none; }
+.card-foot a:hover{ text-decoration:underline; }
+
+.footer{ padding:1.5rem 2rem; text-align:center; }
+.footer p{ font-size:.75rem; color:#bbb; }
+.footer a{ color:#aaa; text-decoration:none; }
+.footer a:hover{ color:var(--b); }
+
+/* ── Teacher status holding screens ──────────────────────── */
+.status-wrap{ padding:2.5rem 2rem; text-align:center; }
+.status-ico{
+  width:56px; height:56px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  margin:0 auto 1.25rem;
+}
+.status-ico.pending  { background:#fef9c3; }
+.status-ico.suspended{ background:#fee2e2; }
+.status-ico svg{ width:26px;height:26px;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;fill:none; }
+.status-ico.pending svg  { stroke:#ca8a04; }
+.status-ico.suspended svg{ stroke:#dc2626; }
+.status-title{ font-family:var(--disp);font-size:1.5rem;text-transform:uppercase;line-height:1.1;margin-bottom:.5rem; }
+.status-sub  { font-size:.85rem;color:#888;line-height:1.65;margin-bottom:1.75rem; }
+.status-pill{
+  display:inline-block;font-size:.65rem;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;border-radius:5rem;padding:.35rem .875rem;margin-bottom:1.5rem;
+}
+.status-pill.pending  { background:#fef9c3;color:#92400e; }
+.status-pill.suspended{ background:#fee2e2;color:#991b1b; }
+.status-back{ display:block;font-size:.8rem;font-weight:700;color:#aaa;text-decoration:none;margin-top:1rem; }
+.status-back:hover{ color:var(--b); }
+</style>
+<!-- Supabase CDN -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script>
+  window.ALIMUN_CONFIG = {
+    supabaseUrl:     'https://dgaiasmefcbrtzqwdyri.supabase.co',
+    supabaseAnonKey: 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
+  };
+</script>
+<script src="../js/translations.js"></script>
+<script src="../js/i18n.js"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="index.html" style="display: block; height: 34px; overflow: hidden; width: 10.5625rem; position: relative;">
+    <img src="../images/Alimun-Source-File-fixes.svg" alt="Alimun Logo" style="width: 100%; height: auto; position: absolute; top: 50%; transform: translateY(-50%);">
+  </a>
+</div>
+
+<div class="center">
+  <div class="card">
+    <div class="card-head">
+      <div class="card-eyebrow" data-i18n="auth_signin_eyebrow">Bem-vindo de volta</div>
+      <div class="card-title" data-i18n="auth_signin_title">Entrar</div>
+    </div>
+    <div class="card-body">
+      <div class="tabs">
+        <button class="tab on" onclick="setRole('student',this)" data-i18n="auth_role_student">Sou Aluno</button>
+        <button class="tab" onclick="setRole('teacher',this)" data-i18n="auth_role_teacher">Sou Professor</button>
+      </div>
+      <div class="field">
+        <label data-i18n="auth_email">Endereço de e-mail</label>
+        <input type="email" placeholder="alex@example.com" id="email-input">
+      </div>
+      <div class="field">
+        <label data-i18n="auth_password">Senha</label>
+        <input type="password" placeholder="••••••••" id="pw-input">
+      </div>
+      <button class="signin-btn" id="signin-btn" onclick="signIn()" data-i18n="auth_btn_signin">Entrar →</button>
+      <div class="error-msg" id="error-msg"></div>
+      <div class="divider"><span data-i18n="auth_or">ou</span></div>
+      <button class="google-btn">
+        <svg class="google-ico" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+        </svg>
+        <span data-i18n="auth_google_signin">Continuar com Google</span>
+      </button>
+    </div>
+    <div class="card-foot">
+      <p data-i18n-html="auth_no_account_waitlist">Não tem uma conta? <a href="contact.html">Entrar na lista de espera →</a></p>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  <p>
+    <a href="index.html" data-i18n="auth_back_to_alimun">← Voltar para a Alimun</a> &nbsp;·&nbsp;
+    <a href="terms.html" data-i18n="auth_terms">Termos</a> &nbsp;·&nbsp;
+    <a href="cookies.html" data-i18n="auth_cookies">Cookies</a> &nbsp;·&nbsp;
+    <a href="gdpr.html" data-i18n="auth_gdpr">GDPR</a> &nbsp;·&nbsp;
+    <a href="#" id="open-cookie-settings" data-i18n="auth_manage_cookies">Gerenciar Cookies</a>
+  </p>
+</div>
+
+<script type="module">
+import { supabase } from '/js/supabase/config.js';
+
+let role = 'student';
+
+window.setRole = function(r, el) {
+  role = r;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  el.classList.add('on');
+};
+
+/* ── UI helpers ───────────────────────────────────────────── */
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+function clearError() {
+  const el = document.getElementById('error-msg');
+  el.style.display = 'none';
+  el.textContent = '';
+}
+
+/* ── Teacher status screens (rendered inside .card) ─────── */
+function showPending(name) {
+  document.querySelector('.card').innerHTML = `
+    <div class="status-wrap">
+      <div class="status-ico pending">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </div>
+      <span class="status-pill pending" data-i18n="status_pending_pill">Under review</span>
+      <div class="status-title" data-i18n="status_pending_title">Application received</div>
+      <div class="status-sub" data-i18n-html="status_pending_desc" data-i18n-var-name="${name || 'there'}">
+        Hi ${name || 'there'} — your teacher application is being reviewed.<br>
+        We'll get back to you within <strong>48 hours</strong> by email.
+      </div>
+      <a href="index.html" class="status-back" data-i18n="status_back_signin">← Back to Alimun homepage</a>
+    </div>`;
+}
+
+function showSuspended() {
+  document.querySelector('.card').innerHTML = `
+    <div class="status-wrap">
+      <div class="status-ico suspended">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      </div>
+      <span class="status-pill suspended" data-i18n="status_suspended_pill">Suspended</span>
+      <div class="status-title" data-i18n="status_suspended_title">Account suspended</div>
+      <div class="status-sub" data-i18n-html="status_suspended_desc">
+        Your teacher account has been suspended.<br>
+        Please contact <a href="mailto:support@alimun.com" style="color:var(--b);font-weight:700;">support@alimun.com</a> for assistance.
+      </div>
+      <a href="index.html" class="status-back" data-i18n="status_back_signin">← Back to Alimun homepage</a>
+    </div>`;
+}
+
+/* ── Main sign-in function ───────────────────────────────── */
+window.signIn = async function() {
+  clearError();
+  const email    = document.getElementById('email-input').value.trim();
+  const password = document.getElementById('pw-input').value;
+
+  if (!email || !password) {
+    showError('Please enter your email and password.');
+    return;
+  }
+
+  const btn = document.getElementById('signin-btn');
+  btn.disabled = true;
+  btn.textContent = 'Signing in…';
+
+  /* 1 ── Authenticate ─────────────────────────────────── */
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+
+  if (error) {
+    btn.disabled = false;
+    btn.textContent = 'Sign in →';
+    showError('Invalid email or password. Please try again.');
+    return;
+  }
+
+  const userRole = data.user?.user_metadata?.role || '';
+
+  /* 2 ── Admin ─────────────────────────────────────────── */
+  if (userRole === 'admin') {
+    window.location.href = 'admin.html';
+    return;
+  }
+
+  /* 3 ── Student ───────────────────────────────────────── */
+  if (userRole === 'student') {
+    window.location.href = 'student-dashboard.html';
+    return;
+  }
+
+  /* 4 ── Teacher: check profile status ─────────────────── */
+  if (userRole === 'teacher') {
+    btn.textContent = 'Checking profile…';
+
+    const { data: profile, error: profErr } = await supabase
+      .from('teacher_profiles')
+      .select('status, full_name')
+      .eq('user_id', data.user.id)
+      .single();
+
+    const teacherName = profile?.full_name || data.user.user_metadata?.full_name;
+
+    if (profile?.status === 'approved') {
+      window.location.href = 'teacher-dashboard.html';
+      return;
+    }
+
+    // Not approved — sign them out so session doesn't persist,
+    // then show the appropriate holding screen.
+    await supabase.auth.signOut();
+
+    if (profile?.status === 'suspended') {
+      showSuspended();
+      return;
+    }
+
+    // pending, no profile found, or any other status
+    showPending(teacherName);
+    return;
+  }
+
+  /* 5 ── Unknown role fallback ─────────────────────────── */
+  btn.disabled = false;
+  btn.textContent = 'Sign in →';
+  showError('Account role is not recognised. Please contact support.');
+};
+
+document.getElementById('pw-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') window.signIn();
+});
+</script>
+  <script src="../js/cookies-banner.js" type="text/javascript"></script>
+
+
+</body></html>

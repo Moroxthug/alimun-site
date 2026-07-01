@@ -4,14 +4,21 @@
   "description": "Alimun language learning platform – static site + Vercel serverless functions",
   "private": true,
   "scripts": {
-    "dev": "npx vercel dev",
+    "build": "node build.js",
+    "dev": "echo 'Launching static server...'",
     "deploy": "npx vercel --prod"
   },
   "dependencies": {
+    "@react-pdf/renderer": "^4.5.1",
     "@supabase/supabase-js": "^2.45.0",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
     "stripe": "^16.0.0"
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "cheerio": "^1.2.0"
   }
 }
