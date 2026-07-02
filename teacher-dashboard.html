@@ -843,10 +843,112 @@ body{font-family:var(--body);color:var(--b);background:#f0efe9;}
   flex: 1;
   width: 100%;
 }
+
+/* ── MOBILE RESPONSIVE OVERRIDES ────────────────────── */
+.mobile-hdr {
+  display: none;
+}
+.mobile-sb-overlay {
+  display: none;
+}
+@media (max-width: 991px) {
+  .mobile-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 16px;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0,0,0,.07);
+    color: var(--b);
+    flex-shrink: 0;
+    z-index: 100;
+  }
+  .mobile-hdr-btn {
+    background: transparent;
+    color: var(--b);
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+  .mobile-hdr-btn:active {
+    background: rgba(0,0,0,0.05);
+  }
+  .mobile-hdr-logo {
+    height: 28px;
+  }
+  
+  /* Sidebar responsive positioning */
+  .sb {
+    position: fixed !important;
+    top: 0; left: 0; bottom: 0;
+    width: var(--sb) !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s cubic-bezier(.4,0,.2,1) !important;
+    box-shadow: 0 0 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+  }
+  .sb.open {
+    transform: translateX(0);
+  }
+  .sb-tgl {
+    display: none !important;
+  }
+  
+  /* Main content shifts */
+  .main {
+    margin-left: 0 !important;
+  }
+  #content {
+    padding: 16px 16px 80px !important;
+  }
+  
+  /* Overlay */
+  .mobile-sb-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+  }
+  .mobile-sb-overlay.active {
+    display: block;
+  }
+
+  /* Grid layout reflows */
+  .g2, .g3, .g4 {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  
+  .day-cards-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  
+  /* Video Grid and Call containers */
+  .video-grid {
+    grid-template-columns: 1fr !important;
+    grid-template-rows: auto !important;
+    gap: 8px !important;
+    overflow-y: auto;
+  }
+  .vid-cell.teacher {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+    aspect-ratio: 16/9;
+  }
+  .vid-cell {
+    aspect-ratio: 16/9;
+  }
+}
 </style>
 
 </head>
 <body>
+<div class="mobile-sb-overlay" id="sb-overlay"></div>
 
 <aside class="sb" id="sb">
   <div class="sb-inner">
@@ -891,6 +993,14 @@ body{font-family:var(--body);color:var(--b);background:#f0efe9;}
 </aside>
 
 <main class="main" id="main">
+<header class="mobile-hdr">
+  <button class="mobile-hdr-btn" id="mobile-hamburger">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <!-- Custom logo text/svg for top mobile header -->
+  <div style="font-family:var(--disp); font-size:1.2rem; color:var(--b); text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">Alimun</div>
+  <div class="sb-av" id="mobile-hdr-av" style="width:36px; height:36px; font-size:11px; font-weight:700; background:var(--g); color:var(--b); display:flex; align-items:center; justify-content:center; border-radius:50%;">ST</div>
+</header>
   <div id="content"></div>
 </main>
 
@@ -1024,6 +1134,36 @@ const defaultSessions=[
 
 let sbCol=false;
 document.getElementById('sb-tgl').addEventListener('click',()=>{sbCol=!sbCol;document.getElementById('sb').classList.toggle('col',sbCol);document.getElementById('main').classList.toggle('col',sbCol);document.getElementById('tgl-ico').setAttribute('points',sbCol?'9 18 15 12 9 6':'15 18 9 12 15 6');});
+
+// Mobile drawer sidebar toggles
+const mobileHamburger = document.getElementById('mobile-hamburger');
+const sbOverlay = document.getElementById('sb-overlay');
+const sidebar = document.getElementById('sb');
+
+function closeMobileSidebar() {
+  if (sidebar) sidebar.classList.remove('open');
+  if (sbOverlay) sbOverlay.classList.remove('active');
+}
+
+if (mobileHamburger) {
+  mobileHamburger.addEventListener('click', () => {
+    if (sidebar) sidebar.classList.add('open');
+    if (sbOverlay) sbOverlay.classList.add('active');
+  });
+}
+
+if (sbOverlay) {
+  sbOverlay.addEventListener('click', closeMobileSidebar);
+}
+
+// Close mobile sidebar on nav button click
+document.querySelectorAll('.sb-a').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (window.innerWidth < 992) {
+      closeMobileSidebar();
+    }
+  });
+});
 
 const VIEWS = { overview: vOverview, students: vStudents, assignments: vAssignments, sessions: vSessions, payouts: vPayouts, availability: vAvailability, settings: vSettings };
 function nav(v) {
@@ -1808,6 +1948,8 @@ async function saveSettings() {
     document.getElementById('sb-user-name').textContent = fullname;
     const initials = fullname.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
     document.getElementById('sb-user-av').textContent = initials;
+    const mobAv = document.getElementById('mobile-hdr-av');
+    if (mobAv) mobAv.textContent = initials;
     document.getElementById('sb-user-loc').textContent = location;
 
     alert('Profile updated successfully!');
@@ -3130,6 +3272,8 @@ window.submitSessionNotes = submitSessionNotes;
   const location = profile.location || 'Madrid, Spain';
   document.getElementById('sb-user-name').textContent = tName;
   document.getElementById('sb-user-av').textContent = initials;
+  const mobAv = document.getElementById('mobile-hdr-av');
+  if (mobAv) mobAv.textContent = initials;
   document.getElementById('sb-user-loc').textContent = location;
 
   // ─ 6. Wire sign-out ─────────────────────────────────────────────────────────

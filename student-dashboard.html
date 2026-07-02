@@ -984,10 +984,36 @@ nav {
   flex: 1;
   width: 100%;
 }
-</style>
-</head>
-<body>
+
+/* ── MOBILE RESPONSIVE OVERRIDES ────────────────────── */
+.mobile-hdr {
+  display: none;
+}
+.mobile-sb-overlay {
+  display: none;
+}
+@media (max-width: 991px) {
+  .mobile-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 16px;
+    background: #0d0d0d;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    color: #fff;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+  .mobile-hdr-btn {
+    background: transparent;
+    color: #fff;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+ <body>
 <div id="app">
+<div class="mobile-sb-overlay" id="sb-overlay"></div>
 
 <!-- ════════════════════════════════════════════════ SIDEBAR -->
 <aside id="sb">
@@ -1053,6 +1079,13 @@ nav {
 
 <!-- ════════════════════════════════════════════════ MAIN -->
 <main id="main">
+<header class="mobile-hdr">
+  <button class="mobile-hdr-btn" id="mobile-hamburger">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <img class="mobile-hdr-logo" src="images/alimun.svg" alt="Alimun">
+  <div style="width:36px; height:36px; border-radius:50%; background:#3B1F6A; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11px; font-weight:700; color:#fff;" id="mobile-hdr-av">SC</div>
+</header>
 
 <!-- ── HOME ── -->
 <div id="v-home" class="view active">
@@ -2649,6 +2682,8 @@ let VOCAB = [];
   document.getElementById('sb-name').textContent=USER.name;
   const initials=USER.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   document.getElementById('sb-av').textContent=initials;
+  const mobAv = document.getElementById('mobile-hdr-av');
+  if (mobAv) mobAv.textContent = initials;
   
   if (USER.profile) {
     document.getElementById('sb-level').textContent=`${USER.profile.level} ${USER.profile.language}`;
@@ -5091,6 +5126,8 @@ async function saveSettings() {
     document.getElementById('sb-name').textContent = USER.name;
     const initials = USER.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
     document.getElementById('sb-av').textContent = initials;
+    const mobAv = document.getElementById('mobile-hdr-av');
+    if (mobAv) mobAv.textContent = initials;
     document.getElementById('sb-level').textContent = `${level} ${lang}`;
     
     alert("Profile settings saved successfully!");
@@ -6042,6 +6079,36 @@ function init(){
       }
     });
   }
+
+  // Mobile sidebar drawer toggles
+  const mobileHamburger = document.getElementById('mobile-hamburger');
+  const sbOverlay = document.getElementById('sb-overlay');
+  const sidebar = document.getElementById('sb');
+
+  function closeMobileSidebar() {
+    if (sidebar) sidebar.classList.remove('open');
+    if (sbOverlay) sbOverlay.classList.remove('active');
+  }
+
+  if (mobileHamburger) {
+    mobileHamburger.addEventListener('click', () => {
+      if (sidebar) sidebar.classList.add('open');
+      if (sbOverlay) sbOverlay.classList.add('active');
+    });
+  }
+
+  if (sbOverlay) {
+    sbOverlay.addEventListener('click', closeMobileSidebar);
+  }
+
+  // Also close sidebar on nav-btn clicks under mobile viewport
+  document.querySelectorAll('.nav-btn, .sb-foot-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (window.innerWidth < 992) {
+        closeMobileSidebar();
+      }
+    });
+  });
 }
 
 /* ══════════════════════════════════════════════════════

@@ -982,16 +982,42 @@ nav {
   flex: 1;
   width: 100%;
 }
-</style>
-</head>
-<body>
+
+/* ── MOBILE RESPONSIVE OVERRIDES ────────────────────── */
+.mobile-hdr {
+  display: none;
+}
+.mobile-sb-overlay {
+  display: none;
+}
+@media (max-width: 991px) {
+  .mobile-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 16px;
+    background: #0d0d0d;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+    color: #fff;
+    flex-shrink: 0;
+    z-index: 100;
+  }
+  .mobile-hdr-btn {
+    background: transparent;
+    color: #fff;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+ <body>
 <div id="app">
+<div class="mobile-sb-overlay" id="sb-overlay"></div>
 
 <!-- ════════════════════════════════════════════════ SIDEBAR -->
 <aside id="sb">
   <div class="sb-inner">
     <div class="sb-head">
-      <img class="sb-logo" src="../images/alimun.svg" alt="Alimun">
+      <img class="sb-logo" src="images/alimun.svg" alt="Alimun">
       <div class="sb-logo-compact">A</div>
       <div class="sb-user">
         <div class="av sb-av" id="sb-av" style="background:#3B1F6A;width:36px;height:36px;font-size:11px;">SC</div>
@@ -1004,53 +1030,60 @@ nav {
     <div id="alimun-lang-container" class="sb-lang-container"></div>
     <nav>
       <button class="nav-btn active" data-view="home">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
-        <span data-i18n="student_sb_learn">Aprender</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <span data-i18n="student_sb_learn">Home</span>
       </button>
       <button class="nav-btn" data-view="live">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg>
-        <span data-i18n="student_sb_today">Sesión de Hoy</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        <span data-i18n="student_sb_today">Live</span>
       </button>
       <button class="nav-btn" data-view="calendar">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-        <span data-i18n="student_sb_track">Seguimiento</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        <span data-i18n="student_sb_track">Calendar</span>
       </button>
       <button class="nav-btn" data-view="exercises">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-        <span data-i18n="student_sb_practice">Práctica</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        <span data-i18n="student_sb_practice">Exercises</span>
         <span id="notes-ready-badge" class="badge" style="display:none; background:#ceff65; color:#080808; font-size:9px; font-weight:700; padding:2px 6px; border-radius:10px; margin-left:auto;">Notes Ready</span>
       </button>
       <button class="nav-btn" data-view="progress">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-        <span data-i18n="student_sb_progress">Progreso</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        <span data-i18n="student_sb_progress">Progress</span>
       </button>
       <button class="nav-btn" data-view="tests">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path></svg>
-        <span data-i18n="student_sb_achieve">Logros</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+        <span data-i18n="student_sb_achieve">Tests</span>
       </button>
       <button class="nav-btn" data-view="chat">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path></svg>
-        <span data-i18n="student_sb_messages">Mensajes</span>
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <span data-i18n="student_sb_messages">Chat</span>
       </button>
     </nav>
     <div class="sb-foot">
       <button class="sb-foot-btn" onclick="goView('settings')">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
-        <span data-i18n="student_sb_settings">Ajustes</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <span data-i18n="student_sb_settings">Settings</span>
       </button>
       <button class="sb-foot-btn" id="logout-btn">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-        <span data-i18n="student_sb_logout">Salir</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        <span data-i18n="student_sb_logout">Log out</span>
       </button>
     </div>
   </div>
   <button class="sb-tgl" id="sb-tgl">
-    <svg id="tgl-ico" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    <svg id="tgl-ico" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
 </aside>
 
 <!-- ════════════════════════════════════════════════ MAIN -->
 <main id="main">
+<header class="mobile-hdr">
+  <button class="mobile-hdr-btn" id="mobile-hamburger">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <img class="mobile-hdr-logo" src="images/alimun.svg" alt="Alimun">
+  <div style="width:36px; height:36px; border-radius:50%; background:#3B1F6A; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11px; font-weight:700; color:#fff;" id="mobile-hdr-av">SC</div>
+</header>
 
 <!-- ── HOME ── -->
 <div id="v-home" class="view active">
@@ -1120,7 +1153,7 @@ nav {
   </style>
 
   <!-- Enrolled View -->
-  <div id="home-enrolled-view" style="display:none; flex-direction:column; gap:20px;">
+  </head><body><div id="home-enrolled-view" style="display:none; flex-direction:column; gap:20px;">
     <!-- Stats row -->
     <!-- DATA: replace with Supabase query: SELECT streak, weekly_avg, exercises_done, exercises_total, cohort_rank FROM student_stats WHERE student_id = $1 -->
     <div class="card no-pad" style="display:flex;">
@@ -1285,7 +1318,7 @@ nav {
       <!-- Cards rendered dynamically -->
     </div>
   </div>
-</div>
+
 
 <!-- ── LIVE ── -->
 <div id="v-live" class="view">
@@ -1596,7 +1629,7 @@ nav {
   </div>
 </div>
 
-</main> <!-- Close #main wrapper -->
+ <!-- Close #main wrapper -->
 
 <!-- ── CLASSROOM CONTAINER ─────────────────────────── -->
 <div id="live-incall" class="classroom-container">
@@ -2645,6 +2678,8 @@ let VOCAB = [];
   document.getElementById('sb-name').textContent=USER.name;
   const initials=USER.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
   document.getElementById('sb-av').textContent=initials;
+  const mobAv = document.getElementById('mobile-hdr-av');
+  if (mobAv) mobAv.textContent = initials;
   
   if (USER.profile) {
     document.getElementById('sb-level').textContent=`${USER.profile.level} ${USER.profile.language}`;
@@ -5087,6 +5122,8 @@ async function saveSettings() {
     document.getElementById('sb-name').textContent = USER.name;
     const initials = USER.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
     document.getElementById('sb-av').textContent = initials;
+    const mobAv = document.getElementById('mobile-hdr-av');
+    if (mobAv) mobAv.textContent = initials;
     document.getElementById('sb-level').textContent = `${level} ${lang}`;
     
     alert("Profile settings saved successfully!");
@@ -6038,6 +6075,36 @@ function init(){
       }
     });
   }
+
+  // Mobile sidebar drawer toggles
+  const mobileHamburger = document.getElementById('mobile-hamburger');
+  const sbOverlay = document.getElementById('sb-overlay');
+  const sidebar = document.getElementById('sb');
+
+  function closeMobileSidebar() {
+    if (sidebar) sidebar.classList.remove('open');
+    if (sbOverlay) sbOverlay.classList.remove('active');
+  }
+
+  if (mobileHamburger) {
+    mobileHamburger.addEventListener('click', () => {
+      if (sidebar) sidebar.classList.add('open');
+      if (sbOverlay) sbOverlay.classList.add('active');
+    });
+  }
+
+  if (sbOverlay) {
+    sbOverlay.addEventListener('click', closeMobileSidebar);
+  }
+
+  // Also close sidebar on nav-btn clicks under mobile viewport
+  document.querySelectorAll('.nav-btn, .sb-foot-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      if (window.innerWidth < 992) {
+        closeMobileSidebar();
+      }
+    });
+  });
 }
 
 /* ══════════════════════════════════════════════════════
@@ -6419,4 +6486,4 @@ window.addEventListener('beforeunload', () => {
 </script>
 
 
-</div></body></html>
+</body></html>
