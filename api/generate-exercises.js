@@ -41,7 +41,10 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const geminiKey = process.env.GEMINI_API_KEY;
-  if (!geminiKey) return res.status(501).json({ error: 'AI is not configured (set GEMINI_API_KEY)' });
+  const groqKey = process.env.GROQ_API_KEY;
+  if (!geminiKey && !groqKey) {
+    return res.status(501).json({ error: 'AI is not configured (set GEMINI_API_KEY or GROQ_API_KEY)' });
+  }
 
   // Auth: any signed-in user
   const authHeader = req.headers.authorization;
@@ -87,28 +90,51 @@ Respond ONLY with a JSON array. Each element must follow EXACTLY one of these sc
 - Essay: {"type":"Essay","title":str,"diff":2-5,"time":"N min","cat":"writing","question":str,"stem":writing prompt in ${language},"minWords":20-60,"criteria":str}`;
 
   try {
-    const r = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiKey}`,
-      {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          contents: [{ role: 'user', parts: [{ text: prompt }] }],
-          generationConfig: {
-            maxOutputTokens: 8192,
-            temperature: 0.9,
-            responseMimeType: 'application/json',
-          },
-        }),
+    let raw;
+    if (geminiKey) {
+      const r = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODEL}:generateContent?key=${geminiKey}`,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            contents: [{ role: 'user', parts: [{ text: prompt }] }],
+            generationConfig: {
+              maxOutputTokens: 8192,
+              temperature: 0.9,
+              responseMimeType: 'application/json',
+            },
+          }),
+        }
+      );
+      const d = await r.json();
+      if (!r.ok) {
+        console.error('[Generate Exercises API] Gemini error:', JSON.stringify(d).slice(0, 500));
+        return res.status(502).json({ error: 'Exercise generation failed' });
       }
-    );
-    const d = await r.json();
-    if (!r.ok) {
-      console.error('[Generate Exercises API] Gemini error:', JSON.stringify(d).slice(0, 500));
-      return res.status(502).json({ error: 'Exercise generation failed' });
+      raw = (d.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('');
+    } else {
+      const groqModel = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+      const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${groqKey}`,
+        },
+        body: JSON.stringify({
+          model: groqModel,
+          messages: [{ role: 'user', content: prompt }],
+          temperature: 0.9,
+          response_format: { type: 'json_object' },
+        }),
+      });
+      const d = await r.json();
+      if (!r.ok) {
+        console.error('[Generate Exercises API] Groq error:', JSON.stringify(d).slice(0, 500));
+        return res.status(502).json({ error: 'Exercise generation failed' });
+      }
+      raw = d.choices?.[0]?.message?.content || '';
     }
-
-    const raw = (d.candidates?.[0]?.content?.parts || []).map((p) => p.text || '').join('');
     let exercises;
     try {
       exercises = JSON.parse(raw);

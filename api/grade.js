@@ -62,6 +62,33 @@ async function callAnthropic({ prompt, system }) {
   return (d.content || []).map((b) => (b.type === 'text' ? b.text : '')).join('');
 }
 
+async function callGroq({ prompt, system, json }) {
+  const model = process.env.GROQ_MODEL || 'llama-3.3-70b-versatile';
+  const messages = [];
+  if (system) messages.push({ role: 'system', content: system });
+  messages.push({ role: 'user', content: prompt });
+
+  const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model,
+      messages,
+      temperature: 0.7,
+      ...(json ? { response_format: { type: 'json_object' } } : {}),
+    }),
+  });
+  const d = await r.json();
+  if (!r.ok) {
+    console.error('[Grade API] Groq error:', JSON.stringify(d).slice(0, 500));
+    throw new Error('Groq request failed (' + r.status + ')');
+  }
+  return d.choices?.[0]?.message?.content || '';
+}
+
 async function requireAuth(req) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) return false;
@@ -82,8 +109,8 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  if (!process.env.GEMINI_API_KEY && !process.env.ANTHROPIC_API_KEY) {
-    return res.status(501).json({ error: 'AI is not configured (set GEMINI_API_KEY)' });
+  if (!process.env.GEMINI_API_KEY && !process.env.ANTHROPIC_API_KEY && !process.env.GROQ_API_KEY) {
+    return res.status(501).json({ error: 'AI is not configured (set GEMINI_API_KEY, GROQ_API_KEY or ANTHROPIC_API_KEY)' });
   }
 
   if (!(await requireAuth(req))) {
@@ -96,9 +123,14 @@ module.exports = async function handler(req, res) {
   }
 
   try {
-    const text = process.env.GEMINI_API_KEY
-      ? await callGemini({ prompt, system, json })
-      : await callAnthropic({ prompt, system });
+    let text;
+    if (process.env.GEMINI_API_KEY) {
+      text = await callGemini({ prompt, system, json });
+    } else if (process.env.GROQ_API_KEY) {
+      text = await callGroq({ prompt, system, json });
+    } else {
+      text = await callAnthropic({ prompt, system });
+    }
     return res.status(200).json({ text });
   } catch (err) {
     console.error('[Grade API] Error:', err);
