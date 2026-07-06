@@ -24,6 +24,22 @@
       "dest": "/api/admin/teacher?action=notify"
     },
     {
+      "src": "/api/create-checkout-session",
+      "dest": "/api/stripe?action=create-checkout"
+    },
+    {
+      "src": "/api/checkout-session",
+      "dest": "/api/stripe?action=retrieve-session"
+    },
+    {
+      "src": "/api/stripe/create-checkout",
+      "dest": "/api/stripe?action=create-checkout"
+    },
+    {
+      "src": "/api/stripe/billing-portal",
+      "dest": "/api/stripe?action=billing-portal"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },

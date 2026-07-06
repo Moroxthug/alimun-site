@@ -1,11 +1,13 @@
 /**
  * ============================================================
- *  ALIMUN — POST /api/stripe/create-checkout
+ *  ALIMUN — Consolidated Stripe Endpoint
+ *  /api/stripe.js
  *  Vercel Serverless Function (Node.js runtime)
  *
- *  Creates a Stripe Checkout Session.
- *  - Supports both anonymous signups and authenticated dashboard requests.
- *  - Handles metadata linkage to Supabase user profiles.
+ *  Consolidates:
+ *    - POST /api/stripe/create-checkout /api/create-checkout-session (action=create-checkout)
+ *    - GET /api/checkout-session (action=retrieve-session)
+ *    - POST /api/stripe/billing-portal (action=billing-portal)
  * ============================================================
  */
 
@@ -103,14 +105,8 @@ async function persistStripeCustomerId(supabaseAdmin, supabaseUserId, stripeCust
     .eq('user_id', supabaseUserId);
 }
 
-module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-
-  if (req.method === 'OPTIONS') return res.status(200).end();
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
-
+// ── Action: Create Checkout ──
+async function handleCreateCheckout(req, res) {
   let body;
   try {
     body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
@@ -132,11 +128,9 @@ module.exports = async function handler(req, res) {
 
   if (!priceId) return res.status(400).json({ error: 'priceId is required' });
 
-  // Resolve email and user ID
   let email = requestEmail || customerEmail;
   let supabaseUserId = requestCustomerId;
 
-  // Verify auth session if token is provided to get accurate user details
   const authUser = await getSupabaseUser(req);
   if (authUser) {
     supabaseUserId = authUser.id;
@@ -199,5 +193,150 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     console.error('[Alimun] create-checkout error:', err);
     return res.status(500).json({ error: err.message || 'Failed to create checkout session' });
+  }
+}
+
+// ── Action: Retrieve Checkout Session ──
+async function handleRetrieveSession(req, res) {
+  const sessionId = req.query?.session_id;
+  if (!sessionId || typeof sessionId !== 'string' || !sessionId.startsWith('cs_')) {
+    return res.status(400).json({ error: 'Invalid or missing session_id' });
+  }
+
+  if (sessionId.startsWith('cs_mock_')) {
+    const parts = sessionId.split('_');
+    const supabaseUserId = parts[2];
+    const tier = parts[3] || 'focused';
+    return res.status(200).json({
+      status:          'complete',
+      paymentStatus:   'paid',
+      customerEmail:   'mock_student@alimun.com',
+      subscriptionId:  'sub_mock_' + Math.random().toString(36).substr(2, 9),
+      subscriptionStatus: 'active',
+      amountTotal:     3900,
+      currency:        'eur',
+      metadata:        {
+        supabase_user_id: supabaseUserId,
+        tier,
+        source:          'signup_flow'
+      }
+    });
+  }
+
+  try {
+    const session = await stripe.checkout.sessions.retrieve(sessionId, {
+      expand: ['subscription', 'customer'],
+    });
+
+    return res.status(200).json({
+      status:          session.status,
+      paymentStatus:   session.payment_status,
+      customerEmail:   session.customer_details?.email || session.customer?.email || null,
+      subscriptionId:  session.subscription?.id   || session.subscription || null,
+      subscriptionStatus: session.subscription?.status || null,
+      amountTotal:     session.amount_total,
+      currency:        session.currency,
+      metadata:        session.metadata,
+    });
+  } catch (err) {
+    console.error('[Alimun] checkout-session retrieval error:', err);
+    return res.status(500).json({ error: err.message || 'Failed to retrieve checkout session' });
+  }
+}
+
+// ── Action: Billing Portal ──
+async function handleBillingPortal(req, res) {
+  let body;
+  try {
+    body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  } catch {
+    return res.status(400).json({ error: 'Invalid JSON body' });
+  }
+
+  const { returnUrl } = body || {};
+  const appUrl = process.env.APP_URL || 'https://alimun.com';
+  const resolvedReturnUrl = returnUrl || `${appUrl}/student-dashboard.html`;
+
+  const user = await getSupabaseUser(req);
+  if (!user) {
+    return res.status(401).json({ error: 'Unauthorized. Valid user session is required.' });
+  }
+
+  const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) {
+    return res.status(500).json({ error: 'Database service is unavailable' });
+  }
+
+  try {
+    let { data: profile } = await supabaseAdmin
+      .from('student_profiles')
+      .select('stripe_customer_id, full_name')
+      .eq('user_id', user.id)
+      .single();
+
+    let stripeCustomerId = profile?.stripe_customer_id;
+
+    if (!stripeCustomerId) {
+      let { data: tProfile } = await supabaseAdmin
+        .from('teacher_profiles')
+        .select('stripe_customer_id')
+        .eq('user_id', user.id)
+        .single();
+      stripeCustomerId = tProfile?.stripe_customer_id;
+    }
+
+    if (!stripeCustomerId) {
+      const existing = await stripe.customers.list({ email: user.email, limit: 1 });
+      if (existing.data.length > 0) {
+        stripeCustomerId = existing.data[0].id;
+      } else {
+        const customer = await stripe.customers.create({
+          email: user.email,
+          name: profile?.full_name || undefined,
+          metadata: { supabase_user_id: user.id },
+        });
+        stripeCustomerId = customer.id;
+      }
+
+      await supabaseAdmin
+        .from('student_profiles')
+        .update({ stripe_customer_id: stripeCustomerId })
+        .eq('user_id', user.id);
+    }
+
+    const session = await stripe.billingPortal.sessions.create({
+      customer: stripeCustomerId,
+      return_url: resolvedReturnUrl,
+    });
+
+    return res.status(200).json({ url: session.url });
+  } catch (err) {
+    console.error('[Alimun] billing-portal error:', err);
+    return res.status(500).json({ error: err.message || 'Failed to create portal session' });
+  }
+}
+
+// ── Main handler ──
+module.exports = async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+  if (req.method === 'OPTIONS') return res.status(200).end();
+
+  const action = req.query.action || 'create-checkout';
+
+  switch (action) {
+    case 'create-checkout':
+      if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+      return handleCreateCheckout(req, res);
+    case 'retrieve-session':
+      if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+      return handleRetrieveSession(req, res);
+    case 'billing-portal':
+      if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+      return handleBillingPortal(req, res);
+    default:
+      return res.status(400).json({ error: `Unknown action: ${action}` });
   }
 };
