@@ -11,8 +11,8 @@
     supabaseAnonKey: 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
   };
 </script>
-<script src="../js/translations.js" defer></script>
-<script src="../js/i18n.js" defer></script>
+<script src="../js/translations.js" defer=""></script>
+<script src="../js/i18n.js" defer=""></script>
 <link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=JetBrains+Mono:wght@400;600;700&amp;display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&amp;display=swap" rel="stylesheet">
 <style>
@@ -1492,8 +1492,8 @@ nav {
 <div id="v-tests" class="view">
   <div style="display:flex;justify-content:space-between;align-items:center;">
     <div>
-      <div style="font-family:var(--anton);font-size:22px;color:var(--txt);letter-spacing:.04em;">TESTS</div>
-      <div style="font-size:12px;color:var(--dim);margin-top:4px;">Practice &amp; Exam Results</div>
+      <div style="font-family:var(--anton);font-size:22px;color:var(--txt);letter-spacing:.04em;" data-i18n="student_tests_title">الاختبارات</div>
+      <div style="font-size:12px;color:var(--dim);margin-top:4px;" data-i18n="student_tests_subtitle">نتائج التدريب والامتحانات</div>
     </div>
     <div style="display:flex;align-items:center;gap:16px;">
       <svg width="88" height="88" viewBox="0 0 88 88" class="ring-svg">
@@ -1502,26 +1502,26 @@ nav {
         <text x="44" y="50" text-anchor="middle" fill="var(--txt)" font-size="16">68%</text>
       </svg>
       <div>
-        <div style="font-size:13px;font-weight:700;color:var(--txt);">Overall average</div>
-        <div style="font-size:11px;color:var(--dim);font-family:var(--mono);margin-top:2px;">68% overall average</div>
+        <div style="font-size:13px;font-weight:700;color:var(--txt);" data-i18n="student_overall_average">المعدل العام</div>
+        <div style="font-size:11px;color:var(--dim);font-family:var(--mono);margin-top:2px;" data-i18n="student_overall_average_desc_initial">68% المعدل العام</div>
       </div>
     </div>
   </div>
   <div class="test-grid">
     <div style="display:flex;flex-direction:column;gap:20px;">
       <div class="card upcoming-test-card">
-        <div class="lbl" style="color:var(--lime-d);margin-bottom:8px;">Upcoming</div>
-        <div style="font-family:var(--anton);font-size:20px;color:var(--txt);letter-spacing:.04em;margin-bottom:4px;">END-OF-MONTH</div>
-        <div style="font-size:12px;color:var(--dim);margin-bottom:16px;">CEFR Assessment · All topics</div>
+        <div class="lbl" style="color:var(--lime-d);margin-bottom:8px;" data-i18n="student_upcoming_test_label">قادم</div>
+        <div style="font-family:var(--anton);font-size:20px;color:var(--txt);letter-spacing:.04em;margin-bottom:4px;" data-i18n="student_upcoming_test_title">نهاية الشهر</div>
+        <div style="font-size:12px;color:var(--dim);margin-bottom:16px;" data-i18n="student_upcoming_test_desc">تقييم CEFR · جميع المواضيع</div>
         <div style="display:flex;gap:16px;margin-bottom:20px;">
-          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);">APR 28</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);">30 min</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);">25 Q</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);" data-i18n="student_upcoming_test_date">28 أبريل</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);" data-i18n="student_upcoming_test_duration">30 دقيقة</div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);" data-i18n="student_upcoming_test_questions">25 س</div>
         </div>
-        <button onclick="document.querySelector('.quiz-body').scrollIntoView({behavior:'smooth'})" style="padding:11px 20px;background:var(--lime);color:var(--txt);border:none;border-radius:8px;font-family:var(--sans);font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;">Start Practice <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
+        <button onclick="document.querySelector('.quiz-body').scrollIntoView({behavior:'smooth'})" style="padding:11px 20px;background:var(--lime);color:var(--txt);border:none;border-radius:8px;font-family:var(--sans);font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;" data-i18n="student_start_practice">ابدأ التدريب</button>
       </div>
       <div class="card no-pad">
-        <div class="quiz-head"><span class="quiz-q-meta">Practice Question</span><span class="quiz-timer" style="color:var(--dim);">Self-paced</span></div>
+        <div class="quiz-head"><span class="quiz-q-meta" data-i18n="student_practice_question_title">سؤال تدريبي</span><span class="quiz-timer" style="color:var(--dim);" data-i18n="student_self_paced">ذاتي التوجيه</span></div>
         <div class="quiz-prog-bar"><div class="quiz-prog-fill" style="width:100%;"></div></div>
         <div class="quiz-body">
           <div class="quiz-stem">"Il est important que tu ____ à l'heure."</div>
@@ -1531,7 +1531,7 @@ nav {
       </div>
     </div>
     <div class="card">
-      <div class="lbl" style="margin-bottom:16px;">Results</div>
+      <div class="lbl" style="margin-bottom:16px;" data-i18n="student_results_title">النتائج</div>
       <!-- DATA: replace with Supabase: SELECT topic, score, taken_at, teacher_remark FROM test_results WHERE student_id = $1 ORDER BY taken_at DESC -->
       <div id="test-results"></div>
     </div>
@@ -1542,20 +1542,20 @@ nav {
 <div id="v-chat" class="view">
   <div class="chat-members">
     <div class="chat-members-head">
-      <div class="chat-mem-title">Members</div>
-      <div class="chat-mem-sub" id="online-count">5 online</div>
+      <div class="chat-mem-title" data-i18n="student_chat_members_title">الأعضاء</div>
+      <div class="chat-mem-sub" id="online-count" data-i18n="student_chat_online_count">5 متصل</div>
     </div>
     <div class="chat-mem-list" id="member-list"></div>
   </div>
   <div class="chat-main">
     <div class="chat-main-head">
-      <div class="chat-main-title">French B2 — Class Chat</div>
-      <div class="chat-main-date" id="chat-date">April 16, 2026</div>
+      <div class="chat-main-title" data-i18n="student_chat_title">الفرنسية B2 — دردشة الفصل</div>
+      <div class="chat-main-date" id="chat-date" data-i18n="student_chat_date">16 أبريل 2026</div>
     </div>
     <div class="chat-msgs" id="chat-msgs"></div>
     <div class="chat-ft">
       <div class="chat-input-wrap">
-        <input id="chat-in" type="text" placeholder="Message the class..." onkeydown="if(event.key==='Enter')sendChatMsg()">
+        <input id="chat-in" type="text" placeholder="أرسل رسالة للفصل..." data-i18n-placeholder="student_chat_input_placeholder" onkeydown="if(event.key==='Enter')sendChatMsg()">
         <button class="chat-send" onclick="sendChatMsg()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button>
       </div>
     </div>
@@ -5171,12 +5171,15 @@ function renderTests(){
 
   document.getElementById('test-results').innerHTML=TEST_RESULTS.map(t=>{
     const col=t.score>=80?'var(--ok)':t.score>=65?'var(--ora)':'var(--err)';
+    const translatedTopic = xt(t.topic, t.topic);
+    const translatedDate = xt(t.date, t.date);
+    const translatedRemark = xt(t.remark, t.remark);
     return `<div class="result-row">
       <div class="result-score" style="color:${col};">${t.score}</div>
       <div>
-        <div class="result-topic">${t.topic}</div>
-        <div class="result-date">${t.date}</div>
-        <div class="result-remark">"${t.remark}"</div>
+        <div class="result-topic">${translatedTopic}</div>
+        <div class="result-date">${translatedDate}</div>
+        <div class="result-remark">"${translatedRemark}"</div>
       </div>
     </div>`;
   }).join('');
@@ -5199,7 +5202,7 @@ function renderTests(){
   
   const ringSub = document.querySelector('.ring-svg + div div:last-child');
   if (ringSub) {
-    ringSub.textContent = `${avgTestScore}% overall average`;
+    ringSub.textContent = xt('{avg}% overall average', '{avg}% overall average').replace('{avg}', avgTestScore);
   }
 }
 

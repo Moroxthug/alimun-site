@@ -20,6 +20,17 @@
 
   // Helper to get active language
   function getActiveLang() {
+    // 1. Detect from domain extension (TLD)
+    try {
+      const hostParts = window.location.hostname.split('.');
+      const tld = hostParts[hostParts.length - 1].toLowerCase();
+      if (LANGUAGES.some(l => l.code === tld)) {
+        return tld;
+      }
+    } catch (e) {
+      console.error('Error detecting lang from domain:', e);
+    }
+
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved && LANGUAGES.some(l => l.code === saved)) {
       return saved;

@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="ma" dir="ltr"><head>
 <meta charset="utf-8">
 <title>Admin Portal — Alimun</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,900&display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,900&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=JetBrains+Mono:wght@400;600;700&amp;display=swap" rel="stylesheet">
 <!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script>
@@ -14,12 +12,12 @@
     supabaseAnonKey: 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
   };
 </script>
-<script src="../js/translations.js" defer></script>
-<script src="../js/i18n.js" defer></script>
+<script src="../js/translations.js" defer=""></script>
+<script src="../js/i18n.js" defer=""></script>
 <style>
 @font-face {
   font-family: 'Coolvetica Condensed';
-  src: url('../fonts/coolvetica-condensed-rg.otf') format('opentype');
+  src: url('fonts/coolvetica-condensed-rg.otf') format('opentype');
   font-weight: 400 700;
   font-display: swap;
 }
@@ -543,23 +541,23 @@ tr:hover td {
       </div>
       <nav class="sb-nav">
         <button class="sb-a on" onclick="nav('overview', this)">
-          <svg viewBox="0 0 24 24"><path d="M10 20H5a1 1 0 0 1-1-1v-6.586l8-8 8 8V19a1 1 0 0 1-1 1h-5v-6H10v6z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M10 20H5a1 1 0 0 1-1-1v-6.586l8-8 8 8V19a1 1 0 0 1-1 1h-5v-6H10v6z"></path></svg>
           Overview
         </button>
         <button class="sb-a" onclick="nav('students', this)">
-          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"></path></svg>
           Students
         </button>
         <button class="sb-a" onclick="nav('teachers', this)">
-          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-6h2v6zm0-8h-2V7h2v2z"></path></svg>
           Teachers HR
         </button>
         <button class="sb-a" onclick="nav('cohorts', this)">
-          <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
-          Classes & Cohorts
+          <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z"></path></svg>
+          Classes &amp; Cohorts
         </button>
         <button class="sb-a" onclick="nav('financials', this)">
-          <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+          <svg viewBox="0 0 24 24"><path d="M21 18v1c0 1.1-.9 2-2 2H5c-1.11 0-2-.9-2-2V5c0-1.1.89-2 2-2h14c1.1 0 2 .9 2 2v1h-9c-1.11 0-2 .9-2 2v8c0 1.1.89 2 2 2h9zm-9-2h10V8H12v8zm4-2.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"></path></svg>
           Financials
         </button>
       </nav>
@@ -610,27 +608,27 @@ tr:hover td {
         <div class="card">
           <div class="card-header-flex">
             <h2 class="card-title">
-              <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"/></svg>
-              Weekly Growth & Signups Trend
+              <svg viewBox="0 0 24 24"><path d="M16 6l2.29 2.29-4.88 4.88-4-4L2 16.59 3.41 18l6-6 4 4 6.3-6.29L22 12V6z"></path></svg>
+              Weekly Growth &amp; Signups Trend
             </h2>
           </div>
           <div class="chart-container">
             <svg class="chart-svg" viewBox="0 0 600 220" preserveAspectRatio="none">
               <defs>
                 <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%" stop-color="var(--lime)" stop-opacity="0.3"/>
-                  <stop offset="100%" stop-color="var(--lime)" stop-opacity="0"/>
+                  <stop offset="0%" stop-color="var(--lime)" stop-opacity="0.3"></stop>
+                  <stop offset="100%" stop-color="var(--lime)" stop-opacity="0"></stop>
                 </linearGradient>
               </defs>
               <!-- Grid lines -->
-              <line x1="0" y1="50" x2="600" y2="50" class="chart-grid-line" />
-              <line x1="0" y1="100" x2="600" y2="100" class="chart-grid-line" />
-              <line x1="0" y1="150" x2="600" y2="150" class="chart-grid-line" />
-              <line x1="0" y1="200" x2="600" y2="200" class="chart-grid-line" />
+              <line x1="0" y1="50" x2="600" y2="50" class="chart-grid-line"></line>
+              <line x1="0" y1="100" x2="600" y2="100" class="chart-grid-line"></line>
+              <line x1="0" y1="150" x2="600" y2="150" class="chart-grid-line"></line>
+              <line x1="0" y1="200" x2="600" y2="200" class="chart-grid-line"></line>
               
               <!-- Sparkline Area -->
-              <path d="M0,200 L50,180 L100,165 L150,140 L200,150 L250,110 L300,120 L350,90 L400,95 L450,70 L500,80 L550,55 L600,45 L600,200 Z" class="chart-fill" />
-              <path d="M0,200 L50,180 L100,165 L150,140 L200,150 L250,110 L300,120 L350,90 L400,95 L450,70 L500,80 L550,55 L600,45" class="chart-line" />
+              <path d="M0,200 L50,180 L100,165 L150,140 L200,150 L250,110 L300,120 L350,90 L400,95 L450,70 L500,80 L550,55 L600,45 L600,200 Z" class="chart-fill"></path>
+              <path d="M0,200 L50,180 L100,165 L150,140 L200,150 L250,110 L300,120 L350,90 L400,95 L450,70 L500,80 L550,55 L600,45" class="chart-line"></path>
               
               <!-- Labels -->
               <text x="10" y="215" class="chart-label">Week 1</text>
@@ -643,7 +641,7 @@ tr:hover td {
         </div>
 
         <div class="card">
-          <h2 class="card-title">Live & Ongoing Sessions Right Now</h2>
+          <h2 class="card-title">Live &amp; Ongoing Sessions Right Now</h2>
           <div class="table-wrap" style="margin-top:16px;">
             <table>
               <thead>
@@ -804,7 +802,7 @@ tr:hover td {
 <div class="toast" id="toast-notif">Status updated successfully</div>
 
 <script type="module">
-import { supabase } from '../js/supabase/config.js';
+import { supabase } from '/js/supabase/config.js';
 
 let STUDENTS = [];
 let TEACHERS = [];
@@ -1495,5 +1493,6 @@ window.markPayoutPaid = async function(id) {
 };
 
 </script>
-</body>
-</html>
+
+
+</body></html>
