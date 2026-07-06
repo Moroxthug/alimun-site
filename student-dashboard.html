@@ -289,10 +289,10 @@ nav {
 .view.active > *:last-child{margin-bottom:0;}
 
 /* ── CARD ────────────────────────────────────────────── */
-.card{background:var(--card);box-shadow:var(--sh);border-radius:var(--r);border:1px solid var(--card-bd);padding:24px 28px;overflow:hidden;transition:transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);}
-.card:hover{transform:translateY(-4px);box-shadow:0 12px 24px rgba(0,0,0,.03), 0 20px 48px rgba(0,0,0,.05);border-color:rgba(0,0,0,.15);}
+.card{background:rgba(255,255,255,0.85);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border:1px solid rgba(8,8,8,0.06);border-radius:1.25rem;padding:24px 28px;overflow:hidden;box-shadow:0 8px 32px rgba(8,8,8,0.03);transition:transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1);}
+.card:hover{transform:translateY(-4px);box-shadow:0 16px 36px rgba(8,8,8,0.08);border-color:rgba(8,8,8,0.12);}
 .card.no-pad{padding:0;}
-.card.no-pad:hover{transform:none;box-shadow:var(--sh);border-color:var(--card-bd);}
+.card.no-pad:hover{transform:none;box-shadow:0 8px 32px rgba(8,8,8,0.03);border-color:rgba(8,8,8,0.06);}
 
 
 /* ── LABEL ───────────────────────────────────────────── */

@@ -193,6 +193,66 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    const dailyApiKey = process.env.DAILY_API_KEY;
+    if (sessionCount > 0 && dailyApiKey) {
+      try {
+        const { data: sessions } = await supabase
+          .from('sessions')
+          .select('id, scheduled_at')
+          .eq('cohort_id', newCohort.id);
+
+        if (sessions && sessions.length > 0) {
+          await Promise.all(
+            sessions.map(async (session) => {
+              const sessionStart = new Date(session.scheduled_at);
+              const expEpoch = Math.floor((sessionStart.getTime() + 90 * 60 * 1000) / 1000);
+              const roomName = `alimun-${session.id}`;
+
+              try {
+                const dailyRes = await fetch('https://api.daily.co/v1/rooms', {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${dailyApiKey}`
+                  },
+                  body: JSON.stringify({
+                    name: roomName,
+                    privacy: 'private',
+                    properties: {
+                      exp: expEpoch,
+                      max_participants: 40,
+                      enable_chat: true,
+                      enable_screenshare: true,
+                      enable_knocking: false,
+                      start_video_off: false,
+                      eject_at_room_exp: true,
+                    }
+                  })
+                });
+
+                if (dailyRes.ok) {
+                  const dailyData = await dailyRes.json();
+                  if (dailyData?.url) {
+                    await supabase
+                      .from('sessions')
+                      .update({ daily_room_url: dailyData.url })
+                      .eq('id', session.id);
+                  }
+                } else {
+                  const errText = await dailyRes.text();
+                  console.error(`Daily.co room creation failed for session ${session.id}:`, errText);
+                }
+              } catch (dailyErr) {
+                console.error(`Failed to fetch Daily.co API for session ${session.id}:`, dailyErr);
+              }
+            })
+          );
+        }
+      } catch (err) {
+        console.error('[Create Cohort API] Daily room generation failed:', err);
+      }
+    }
+
     return res.status(201).json({
       success: true,
       cohort: newCohort,

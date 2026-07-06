@@ -1002,6 +1002,12 @@ window.openStudentDetail = async function(id) {
       <button class="btn btn-out btn-sm" onclick="closeModal()">Close</button>
     </div>
     <div class="m-bd">
+      <div style="font-size:0.75rem;color:var(--dim);margin-bottom:18px;line-height:1.6;background:rgba(255,255,255,0.02);padding:12px;border-radius:8px;border:1px solid var(--bd);">
+        <div><strong>Student ID:</strong> <span class="mono">${student.id}</span></div>
+        <div><strong>User ID:</strong> <span class="mono">${student.user_id}</span></div>
+        <div><strong>Joined:</strong> ${student.created_at ? new Date(student.created_at).toLocaleDateString() : 'N/A'}</div>
+      </div>
+
       <div class="form-grid">
         <div class="form-field">
           <label>CEFR Level</label>
@@ -1017,6 +1023,16 @@ window.openStudentDetail = async function(id) {
         <div class="form-field">
           <label>Goal Track</label>
           <input type="text" id="edit-std-track" value="${student.goal_track || 'Foundations'}">
+        </div>
+        <div class="form-field" style="grid-column: span 2;">
+          <label>Subscription Tier (Without Card)</label>
+          <select id="edit-std-tier">
+            <option value="free" ${student.tier==='free'?'selected':''}>Free Tier</option>
+            <option value="community" ${student.tier==='community'?'selected':''}>Community (1 class/week)</option>
+            <option value="focused" ${student.tier==='focused'?'selected':''}>Focused (2 classes/week)</option>
+            <option value="intensive" ${student.tier==='intensive'?'selected':''}>Intensive (Unlimited classes)</option>
+            <option value="private" ${student.tier==='private'?'selected':''}>Private (1-on-1 sessions)</option>
+          </select>
         </div>
       </div>
       
@@ -1035,44 +1051,109 @@ window.openStudentDetail = async function(id) {
         `).join('') : `<p style="font-size:0.82rem;color:var(--dim);">No active enrollments</p>`}
       </div>
 
-      <div style="display:flex;justify-content:space-between;gap:12px;border-top:1px solid var(--bd);padding-top:20px;">
-        <button class="btn btn-out" onclick="triggerFreeUpgrade('${student.id}', 'private')">🎁 Free Private Upgrade</button>
-        <button class="btn" onclick="saveStudentDetail('${student.id}')">Save Changes</button>
+      <div style="margin-bottom:24px; border-top:1px solid var(--bd); padding-top:20px;">
+        <h4 style="font-size:0.75rem;text-transform:uppercase;color:var(--dim);margin-bottom:12px;">Send Promotional / Update Email (Resend)</h4>
+        <div class="form-field" style="margin-bottom:10px;">
+          <label>Subject</label>
+          <input type="text" id="promo-email-subject" placeholder="e.g., Exclusive discount or important account update...">
+        </div>
+        <div class="form-field" style="margin-bottom:12px;">
+          <label>Message Body</label>
+          <textarea id="promo-email-body" rows="4" style="background:rgba(255,255,255,0.03);border:1px solid var(--bd);border-radius:8px;padding:10px 14px;color:#fff;font-size:0.88rem;resize:vertical;" placeholder="Enter promotional email body..."></textarea>
+        </div>
+        <button class="btn btn-out btn-sm" onclick="sendPromoEmail('${student.id}')">✉️ Dispatch Email</button>
+      </div>
+
+      <div style="display:flex;justify-content:flex-end;gap:12px;border-top:1px solid var(--bd);padding-top:20px;">
+        <button class="btn btn-out" onclick="closeModal()">Cancel</button>
+        <button class="btn" onclick="saveStudentDetail('${student.id}', '${student.tier || 'free'}')">Save Changes</button>
       </div>
     </div>
   `;
   openModal(modalHtml);
 };
 
-window.triggerFreeUpgrade = async function(id, tier) {
-  const { error } = await supabase
-    .from('student_profiles')
-    .update({ tier })
-    .eq('id', id);
-  if (error) {
-    alert("Could not update tier: " + error.message);
-  } else {
-    showToast(`Upgraded student to free ${tier} tier successfully!`);
-    closeModal();
-    await loadStudents();
+window.sendPromoEmail = async function(targetId) {
+  const subject = document.getElementById('promo-email-subject').value.trim();
+  const body = document.getElementById('promo-email-body').value.trim();
+  if (!subject || !body) {
+    alert("Please provide both a subject and message body.");
+    return;
+  }
+
+  const btn = document.querySelector('button[onclick^="sendPromoEmail"]');
+  const origText = btn.textContent;
+  btn.disabled = true; btn.textContent = 'Sending...';
+
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    const resp = await fetch('/api/send-admin-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session?.access_token || ''}`
+      },
+      body: JSON.stringify({ targetId, emailType: 'promo', customSubject: subject, customBody: body })
+    });
+    
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Failed to dispatch email');
+
+    showToast(`Promo email successfully sent to ${data.recipient || 'student'}!`);
+    document.getElementById('promo-email-subject').value = '';
+    document.getElementById('promo-email-body').value = '';
+  } catch (err) {
+    console.error(err);
+    alert(err.message);
+  } finally {
+    btn.disabled = false; btn.textContent = origText;
   }
 };
 
-window.saveStudentDetail = async function(id) {
+window.saveStudentDetail = async function(id, originalTier) {
   const level = document.getElementById('edit-std-level').value;
   const goal_track = document.getElementById('edit-std-track').value;
+  const tier = document.getElementById('edit-std-tier').value;
 
-  const { error } = await supabase
-    .from('student_profiles')
-    .update({ level, goal_track })
-    .eq('id', id);
+  const btn = document.querySelector('button[onclick^="saveStudentDetail"]');
+  btn.disabled = true; btn.textContent = 'Saving...';
 
-  if (error) {
-    alert("Error updating profile: " + error.message);
-  } else {
+  try {
+    const { error } = await supabase
+      .from('student_profiles')
+      .update({ level, goal_track, tier })
+      .eq('id', id);
+
+    if (error) throw error;
+
+    // Send tier upgrade email if tier changed and it was an upgrade
+    if (tier !== originalTier) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        await fetch('/api/send-admin-email', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session?.access_token || ''}`
+          },
+          body: JSON.stringify({
+            targetId: id,
+            emailType: 'tier-upgrade',
+            tierName: tier.charAt(0).toUpperCase() + tier.slice(1)
+          })
+        });
+      } catch (emailErr) {
+        console.warn('Could not send notification email:', emailErr);
+      }
+    }
+
     showToast("Profile details updated successfully!");
     closeModal();
     await loadStudents();
+  } catch (err) {
+    console.error(err);
+    alert("Error updating profile: " + err.message);
+    btn.disabled = false; btn.textContent = 'Save Changes';
   }
 };
 
@@ -1183,9 +1264,25 @@ async function loadTeachers() {
   }
 }
 
-window.openTeacherReview = function(id) {
+window.openTeacherReview = async function(id) {
   const t = TEACHERS.find(x => x.id === id);
   if (!t) return;
+
+  // Retrieve active cohorts taught by this teacher
+  const { data: cohorts } = await supabase
+    .from('cohorts')
+    .select('id, language, level, enrolled_count, status')
+    .eq('teacher_id', id);
+
+  // Retrieve weekly availability slots
+  const { data: availability } = await supabase
+    .from('teacher_availability')
+    .select('day_of_week, start_time, end_time')
+    .eq('teacher_id', id)
+    .order('day_of_week', { ascending: true })
+    .order('start_time', { ascending: true });
+
+  const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   const modalHtml = `
     <div class="m-hd">
@@ -1193,6 +1290,12 @@ window.openTeacherReview = function(id) {
       <button class="btn btn-out btn-sm" onclick="closeModal()">Close</button>
     </div>
     <div class="m-bd">
+      <div style="font-size:0.75rem;color:var(--dim);margin-bottom:18px;line-height:1.6;background:rgba(255,255,255,0.02);padding:12px;border-radius:8px;border:1px solid var(--bd);">
+        <div><strong>Teacher ID:</strong> <span class="mono">${t.id}</span></div>
+        <div><strong>User ID:</strong> <span class="mono">${t.user_id}</span></div>
+        <div><strong>Language:</strong> ${t.language || 'English'}</div>
+      </div>
+
       <div style="margin-bottom:18px;">
         <h4 style="font-size:0.75rem;text-transform:uppercase;color:var(--dim);margin-bottom:4px;">Teacher Bio</h4>
         <p style="font-size:0.88rem;line-height:1.6;background:rgba(255,255,255,0.02);padding:12px;border-radius:8px;border:1px solid var(--bd);">${t.bio || 'No bio written yet.'}</p>
@@ -1211,6 +1314,40 @@ window.openTeacherReview = function(id) {
           <label>Assign Rating (${t.rating || 0} ★)</label>
           <input type="range" id="edit-tch-rating" min="0" max="5" step="0.1" value="${t.rating || 0}" oninput="this.previousElementSibling.textContent = 'Assign Rating (' + this.value + ' ★)'">
         </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <h4 style="font-size:0.75rem;text-transform:uppercase;color:var(--dim);margin-bottom:8px;">Active Cohorts Taught</h4>
+        ${cohorts && cohorts.length > 0 ? cohorts.map(c => `
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border:1px solid var(--bd);border-radius:8px;margin-bottom:6px;">
+            <span class="badge badge-blue">${c.language} (${c.level})</span>
+            <span style="font-size:0.8rem;color:var(--dim);">${c.enrolled_count} students · Status: ${c.status}</span>
+          </div>
+        `).join('') : `<p style="font-size:0.82rem;color:var(--dim);">No active cohorts assigned</p>`}
+      </div>
+
+      <div style="margin-bottom:24px;">
+        <h4 style="font-size:0.75rem;text-transform:uppercase;color:var(--dim);margin-bottom:8px;">Weekly Availability</h4>
+        ${availability && availability.length > 0 ? `
+          <div style="display:flex;flex-wrap:wrap;gap:6px;">
+            ${availability.map(av => `
+              <span class="badge badge-dim">${DAYS[av.day_of_week]}: ${av.start_time.substring(0,5)} - ${av.end_time.substring(0,5)}</span>
+            `).join('')}
+          </div>
+        ` : `<p style="font-size:0.82rem;color:var(--dim);">No availability configured yet</p>`}
+      </div>
+
+      <div style="margin-bottom:24px; border-top:1px solid var(--bd); padding-top:20px;">
+        <h4 style="font-size:0.75rem;text-transform:uppercase;color:var(--dim);margin-bottom:12px;">Send Faculty Memo / Email (Resend)</h4>
+        <div class="form-field" style="margin-bottom:10px;">
+          <label>Subject</label>
+          <input type="text" id="promo-email-subject" placeholder="e.g., Upcoming curriculum updates or schedule adjustments...">
+        </div>
+        <div class="form-field" style="margin-bottom:12px;">
+          <label>Message Body</label>
+          <textarea id="promo-email-body" rows="4" style="background:rgba(255,255,255,0.03);border:1px solid var(--bd);border-radius:8px;padding:10px 14px;color:#fff;font-size:0.88rem;resize:vertical;" placeholder="Enter email body details..."></textarea>
+        </div>
+        <button class="btn btn-out btn-sm" onclick="sendPromoEmail('${t.id}')">✉️ Dispatch Memo</button>
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--bd);padding-top:20px;">
