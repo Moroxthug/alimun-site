@@ -599,11 +599,30 @@
     }
   }
 
+  // Translate a key to a plain string for JS-driven UI text (alerts, textContent, etc.)
+  // Usage: t('someKey') or t('someKey', 'Fallback if missing') or t('someKey', {name:'Sam'})
+  function t(key, fallbackOrVars) {
+    const translations = window.ALIMUN_TRANSLATIONS;
+    const lang = getActiveLang();
+    const langDict = (translations && (translations[lang] || translations['en'])) || {};
+    let value = langDict[key];
+    if (value === undefined) {
+      value = (typeof fallbackOrVars === 'string') ? fallbackOrVars : key;
+    }
+    if (fallbackOrVars && typeof fallbackOrVars === 'object') {
+      Object.keys(fallbackOrVars).forEach(k => {
+        value = value.replace(new RegExp(`\\{${k}\\}`, 'g'), fallbackOrVars[k]);
+      });
+    }
+    return value;
+  }
+
   // Global functions exposed
   window.i18nTranslateElement = translateElement;
   window.i18nTranslatePage = translatePage;
   window.i18nGetActiveLang = getActiveLang;
   window.i18nLanguages = LANGUAGES;
+  window.t = t;
 
   // Run on startup
   window.addEventListener('DOMContentLoaded', () => {

@@ -1,9 +1,11 @@
-<!DOCTYPE html><html lang="es" dir="ltr"><head>
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+<head>
 <meta charset="utf-8">
 <title>Teacher Dashboard – Alimun</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Anton&amp;display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 <!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
 <script src="https://unpkg.com/@daily-co/daily-js"></script>
@@ -33,11 +35,12 @@ function t(key, fallback) {
 <script src="../js/translations.js"></script>
 <script src="../js/i18n.js"></script>
 <style>
-:root{--g:#ceff65;--b:#080808;--sb:258px;--sbc:68px;--ease:cubic-bezier(.4,0,.2,1);--body:'Satoshi',sans-serif;--disp:'Anton',sans-serif;}
+@font-face{font-family:'Coolvetica Condensed';src:url('../fonts/coolvetica-condensed-rg.otf') format('opentype');font-weight:400 700;font-display:swap;}
+:root{--g:#ceff65;--b:#080808;--sb:258px;--sbc:68px;--ease:cubic-bezier(.4,0,.2,1);--body:'Satoshi',sans-serif;--disp:'Coolvetica Condensed','Anton',sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;}
-body{font-family:var(--body);color:var(--b);background:#f0efe9;}
-.sb{position:fixed;left:0;top:0;bottom:0;width:var(--sb);background:#fff;border-right:1px solid rgba(0,0,0,.07);display:flex;flex-direction:column;z-index:30;transition:width .22s var(--ease);overflow:visible;}
+body{font-family:var(--body);color:var(--b);background:#f8f8f8;}
+.sb{position:fixed;left:0;top:0;bottom:0;width:var(--sb);background:#eeeeec;border-right:1px solid rgba(0,0,0,.08);display:flex;flex-direction:column;z-index:30;transition:width .22s var(--ease);overflow:visible;}
 .sb-inner{width:100%;height:100%;overflow:hidden;display:flex;flex-direction:column;}
 .sb.col{width:var(--sbc);}
 .sb-top{display:flex;align-items:center;justify-content:space-between;padding:1.5rem 1.125rem 1.25rem;flex-shrink:0;min-height:72px;}
@@ -53,9 +56,9 @@ body{font-family:var(--body);color:var(--b);background:#f0efe9;}
 .sb.col .sb-sec span{opacity:0;max-width:0;}
 .sb-a{display:flex;align-items:center;gap:.7rem;padding:.6rem .75rem;border-radius:.5rem;color:#777;font-size:.83rem;font-weight:500;cursor:pointer;border:none;background:none;width:100%;text-align:left;white-space:nowrap;transition:background .15s,color .15s;margin-bottom:.06rem;position:relative;}
 .sb-a svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;}
-.sb-a:hover{background:#f5f4f0;color:var(--b);}
-.sb-a.on{background:var(--b);color:#fff;font-weight:700;}
-.sb-a.on svg{stroke:#fff;}
+.sb-a:hover{background:#fff;color:var(--b);}
+.sb-a.on{background:var(--b);color:var(--g);font-weight:700;}
+.sb-a.on svg{stroke:var(--g);}
 .sb-lbl{transition:opacity .15s,max-width .22s var(--ease);max-width:200px;overflow:hidden;}
 .sb.col .sb-lbl{opacity:0;max-width:0;}
 .sb.col .sb-a{justify-content:center;padding:.6rem 0;gap:0;}
@@ -952,48 +955,48 @@ body{font-family:var(--body);color:var(--b);background:#f0efe9;}
   <div class="sb-inner">
     <div class="sb-top">
       <div class="sb-lf">
-        <svg height="46" viewBox="220 350 1530 400" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%;"><path fill="#1a443c" d="M511.61,422.8c7.52-6.66,14.43-12.94,21.51-19.03,39.31-33.83,106.66-27.64,140.27,16.17,14.4,18.78,21.44,39.83,21.45,63.41.02,68.76.14,137.52.18,206.28,0,10.53-7.15,16.92-18.75,18.45-19.69,2.58-34.39-7.28-48.55-18.57-4.48-3.57-7.41-7.75-15.6-13.9-.71-.53-2.27-1.67-4.02-1.37-2.91.5-4.44,4.62-5.04,6.3-3.83,10.72-2.66,34.16-2.52,39.03.13,4.43.82,28.52-13.85,45.33-1.01,1.15-17.78,19.78-40.19,16.39-2.85-.43-13.79-2.49-21.95-11.42-5.45-5.96-8.82-13.82-9.4-22.82-.21-3.17-.03-6.37-1.29-9.8-.42,1.75-1.02,3.49-1.24,5.26-2.46,19.75-13.92,34.17-30.6,38.4-19.11,4.84-37.78-9.63-46.25-20.07-11.88-14.64-13.39-32.61-14-40.02-1.92-22.95,3.77-42.27-3.13-45.38-1.58-.71-3.3-.33-4.43.06-.95.79-2.33,1.94-3.99,3.32-17.56,14.46-27.1,20.26-34.43,25.12-8.37,5.55-18.26,5.32-27.89,3.79-11.98-1.9-17.17-8.02-17.24-20.62-.16-28.31-.11-56.63-.07-84.94.05-42.15-.22-84.31.36-126.46.49-35.59,29.27-73.93,62.39-86.42,41.32-15.59,88.94-3.66,115.38,30.44,1.15,1.49,2.58,2.76,2.89,3.09ZM513.63,706.58c.86-13.48,4.79-25.89,11.7-37.43,10.56-17.61,26.74-27.53,45.89-33.24,28.41-8.47,56.17-8.14,82.85,6.35,4.6,2.5,5.87,1.5,5.85-4.72-.1-51.72-.14-103.45-.4-155.17-.19-37.68-32.62-70.18-72.91-64.61-27.84,3.85-52.86,27.48-55.15,55.5-1.25,15.23-.67,30.61-.74,45.93-.19,38.1-.24,76.2-.43,114.3-.05,9.75-6.62,17.5-15.2,18.39-9.79,1.02-17.73-4.86-19.73-15.05-.69-3.5-.55-7.19-.56-10.79-.15-49.17.23-98.34-.57-147.5-.39-24.21-12.5-42.52-33.93-54-21.42-11.48-43.06-9.53-63.33,2.35-21.66,12.7-31.27,33.11-31.3,57.8-.03,30,.84,60,.91,90,.05,20.21-.62,40.41-.89,60.62-.03,2.4.43,4.8.71,7.65,8.18-3.19,15.28-6.63,22.76-8.76,23.5-6.68,46.7-4.34,69.68,3.11,25.86,8.38,42.75,25.36,50.28,51.5,1.69,5.87,3.01,11.85,4.5,17.78Z"></path><path fill="#d5af33" d="M453.39,586.88c10.72.03,19.04,7.83,19.11,17.91.07,11.01-8.28,19.4-19.25,19.34-11.3-.06-20.16-8.82-19.91-19.7.24-10.53,8.29-17.58,20.05-17.54Z"></path><path fill="#d5af33" d="M573.28,624.11c-11.23,1.24-18.87-10.64-18.97-18.33-.15-11.63,8.06-18.99,20.76-18.86,10.61.1,18.26,7.92,18.33,18.72.05,8.76-8.98,20.09-20.12,18.47Z"></path><path fill="#d5af33" d="M1080.39,450.87c10.72,0.03,19.04,7.83,19.11,17.91,0.07,11.01,-8.28,19.4,-19.25,19.34,-11.3,-0.06,-20.16,-8.82,-19.91,-19.7,0.24,-10.53,8.29,-17.58,20.05,-17.54Z"></path><path fill="#d5af33" d="M1125.41,469.66c11.17,0.03,19.83,8.16,19.91,18.66,0.07,11.47,-8.62,20.21,-20.05,20.15,-11.77,-0.06,-21,-9.19,-20.74,-20.52,0.25,-10.97,8.64,-18.31,20.89,-18.27Z"></path><path fill="#1a443c" d="M819.26,598.31l-23.46,71.04h-30.16l76.74-225.86h35.19l77.07,225.86h-31.16l-24.13-71.04h-80.09ZM893.31,575.52l-22.12-65.01c-5.03-14.74-8.38-28.15-11.73-41.22h-.67c-3.35,13.4-7.04,27.14-11.39,40.88l-22.12,65.34h68.02Z"></path><path fill="#1a443c" d="M985.8,431.43h29.49v237.92h-29.49v-237.92Z"></path><path fill="#1a443c" d="M1064.88,669.35v-162.19h29.49v162.19h-29.49Z"></path><path fill="#1a443c" d="M1143.29,551.06c0-16.75-.33-30.49-1.34-43.9h25.8l1.34,26.14h1.01c9.05-15.42,24.13-29.82,50.94-29.82,22.12,0,38.87,13.4,45.91,32.5h.67c5.03-9.05,11.39-16.08,18.1-21.11,9.72-7.37,20.44-11.39,35.86-11.39,21.45,0,53.28,14.07,53.28,70.37v95.5h-28.82v-91.82c0-31.16-11.39-49.93-35.19-49.93-16.75,0-29.82,12.4-34.85,26.81-1.34,4.02-2.35,9.38-2.35,14.74v100.19h-28.82v-97.18c0-25.8-11.39-44.57-33.84-44.57-18.43,0-31.83,14.74-36.53,29.49-1.68,4.36-2.35,9.38-2.35,14.41v97.85h-28.82v-118.29Z"></path><path fill="#1a443c" d="M1558.47,625.12c0,16.75.33,31.5,1.34,44.23h-26.14l-1.68-26.47h-.67c-7.71,13.07-24.8,30.16-53.62,30.16-25.47,0-55.96-14.07-55.96-71.04v-94.83h29.49v89.81c0,30.83,9.38,51.6,36.19,51.6,19.77,0,33.51-13.74,38.87-26.81,1.67-4.36,2.68-9.72,2.68-15.08v-99.52h29.49v117.95Z"></path><path fill="#1a443c" d="M1607.39,551.06c0-16.75-.33-30.49-1.34-43.9h26.14l1.67,26.81h.67c8.04-15.41,26.81-30.49,53.62-30.49,22.45,0,57.3,13.4,57.3,69.03v96.84h-29.49v-93.49c0-26.14-9.72-47.92-37.53-47.92-19.44,0-34.51,13.74-39.54,30.16-1.34,3.69-2.01,8.71-2.01,13.74v97.51h-29.49v-118.29Z"></path></svg>
+        <svg height="46" viewBox="220 350 1530 400" xmlns="http://www.w3.org/2000/svg" style="max-width: 100%;"><path fill="#1a443c" d="M511.61,422.8c7.52-6.66,14.43-12.94,21.51-19.03,39.31-33.83,106.66-27.64,140.27,16.17,14.4,18.78,21.44,39.83,21.45,63.41.02,68.76.14,137.52.18,206.28,0,10.53-7.15,16.92-18.75,18.45-19.69,2.58-34.39-7.28-48.55-18.57-4.48-3.57-7.41-7.75-15.6-13.9-.71-.53-2.27-1.67-4.02-1.37-2.91.5-4.44,4.62-5.04,6.3-3.83,10.72-2.66,34.16-2.52,39.03.13,4.43.82,28.52-13.85,45.33-1.01,1.15-17.78,19.78-40.19,16.39-2.85-.43-13.79-2.49-21.95-11.42-5.45-5.96-8.82-13.82-9.4-22.82-.21-3.17-.03-6.37-1.29-9.8-.42,1.75-1.02,3.49-1.24,5.26-2.46,19.75-13.92,34.17-30.6,38.4-19.11,4.84-37.78-9.63-46.25-20.07-11.88-14.64-13.39-32.61-14-40.02-1.92-22.95,3.77-42.27-3.13-45.38-1.58-.71-3.3-.33-4.43.06-.95.79-2.33,1.94-3.99,3.32-17.56,14.46-27.1,20.26-34.43,25.12-8.37,5.55-18.26,5.32-27.89,3.79-11.98-1.9-17.17-8.02-17.24-20.62-.16-28.31-.11-56.63-.07-84.94.05-42.15-.22-84.31.36-126.46.49-35.59,29.27-73.93,62.39-86.42,41.32-15.59,88.94-3.66,115.38,30.44,1.15,1.49,2.58,2.76,2.89,3.09ZM513.63,706.58c.86-13.48,4.79-25.89,11.7-37.43,10.56-17.61,26.74-27.53,45.89-33.24,28.41-8.47,56.17-8.14,82.85,6.35,4.6,2.5,5.87,1.5,5.85-4.72-.1-51.72-.14-103.45-.4-155.17-.19-37.68-32.62-70.18-72.91-64.61-27.84,3.85-52.86,27.48-55.15,55.5-1.25,15.23-.67,30.61-.74,45.93-.19,38.1-.24,76.2-.43,114.3-.05,9.75-6.62,17.5-15.2,18.39-9.79,1.02-17.73-4.86-19.73-15.05-.69-3.5-.55-7.19-.56-10.79-.15-49.17.23-98.34-.57-147.5-.39-24.21-12.5-42.52-33.93-54-21.42-11.48-43.06-9.53-63.33,2.35-21.66,12.7-31.27,33.11-31.3,57.8-.03,30,.84,60,.91,90,.05,20.21-.62,40.41-.89,60.62-.03,2.4.43,4.8.71,7.65,8.18-3.19,15.28-6.63,22.76-8.76,23.5-6.68,46.7-4.34,69.68,3.11,25.86,8.38,42.75,25.36,50.28,51.5,1.69,5.87,3.01,11.85,4.5,17.78Z"/><path fill="#d5af33" d="M453.39,586.88c10.72.03,19.04,7.83,19.11,17.91.07,11.01-8.28,19.4-19.25,19.34-11.3-.06-20.16-8.82-19.91-19.7.24-10.53,8.29-17.58,20.05-17.54Z"/><path fill="#d5af33" d="M573.28,624.11c-11.23,1.24-18.87-10.64-18.97-18.33-.15-11.63,8.06-18.99,20.76-18.86,10.61.1,18.26,7.92,18.33,18.72.05,8.76-8.98,20.09-20.12,18.47Z"/><path fill="#d5af33" d="M1080.39,450.87c10.72,0.03,19.04,7.83,19.11,17.91,0.07,11.01,-8.28,19.4,-19.25,19.34,-11.3,-0.06,-20.16,-8.82,-19.91,-19.7,0.24,-10.53,8.29,-17.58,20.05,-17.54Z"/><path fill="#d5af33" d="M1125.41,469.66c11.17,0.03,19.83,8.16,19.91,18.66,0.07,11.47,-8.62,20.21,-20.05,20.15,-11.77,-0.06,-21,-9.19,-20.74,-20.52,0.25,-10.97,8.64,-18.31,20.89,-18.27Z"/><path fill="#1a443c" d="M819.26,598.31l-23.46,71.04h-30.16l76.74-225.86h35.19l77.07,225.86h-31.16l-24.13-71.04h-80.09ZM893.31,575.52l-22.12-65.01c-5.03-14.74-8.38-28.15-11.73-41.22h-.67c-3.35,13.4-7.04,27.14-11.39,40.88l-22.12,65.34h68.02Z"/><path fill="#1a443c" d="M985.8,431.43h29.49v237.92h-29.49v-237.92Z"/><path fill="#1a443c" d="M1064.88,669.35v-162.19h29.49v162.19h-29.49Z"/><path fill="#1a443c" d="M1143.29,551.06c0-16.75-.33-30.49-1.34-43.9h25.8l1.34,26.14h1.01c9.05-15.42,24.13-29.82,50.94-29.82,22.12,0,38.87,13.4,45.91,32.5h.67c5.03-9.05,11.39-16.08,18.1-21.11,9.72-7.37,20.44-11.39,35.86-11.39,21.45,0,53.28,14.07,53.28,70.37v95.5h-28.82v-91.82c0-31.16-11.39-49.93-35.19-49.93-16.75,0-29.82,12.4-34.85,26.81-1.34,4.02-2.35,9.38-2.35,14.74v100.19h-28.82v-97.18c0-25.8-11.39-44.57-33.84-44.57-18.43,0-31.83,14.74-36.53,29.49-1.68,4.36-2.35,9.38-2.35,14.41v97.85h-28.82v-118.29Z"/><path fill="#1a443c" d="M1558.47,625.12c0,16.75.33,31.5,1.34,44.23h-26.14l-1.68-26.47h-.67c-7.71,13.07-24.8,30.16-53.62,30.16-25.47,0-55.96-14.07-55.96-71.04v-94.83h29.49v89.81c0,30.83,9.38,51.6,36.19,51.6,19.77,0,33.51-13.74,38.87-26.81,1.67-4.36,2.68-9.72,2.68-15.08v-99.52h29.49v117.95Z"/><path fill="#1a443c" d="M1607.39,551.06c0-16.75-.33-30.49-1.34-43.9h26.14l1.67,26.81h.67c8.04-15.41,26.81-30.49,53.62-30.49,22.45,0,57.3,13.4,57.3,69.03v96.84h-29.49v-93.49c0-26.14-9.72-47.92-37.53-47.92-19.44,0-34.51,13.74-39.54,30.16-1.34,3.69-2.01,8.71-2.01,13.74v97.51h-29.49v-118.29Z"/></svg>
       </div>
       <div class="sb-li">
-        <svg width="34" viewBox="340 380 340 420" xmlns="http://www.w3.org/2000/svg"><path fill="#1a443c" d="M511.61,422.8c7.52-6.66,14.43-12.94,21.51-19.03,39.31-33.83,106.66-27.64,140.27,16.17,14.4,18.78,21.44,39.83,21.45,63.41.02,68.76.14,137.52.18,206.28,0,10.53-7.15,16.92-18.75,18.45-19.69,2.58-34.39-7.28-48.55-18.57-4.48-3.57-7.41-7.75-15.6-13.9-.71-.53-2.27-1.67-4.02-1.37-2.91.5-4.44,4.62-5.04,6.3-3.83,10.72-2.66,34.16-2.52,39.03.13,4.43.82,28.52-13.85,45.33-1.01,1.15-17.78,19.78-40.19,16.39-2.85-.43-13.79-2.49-21.95-11.42-5.45-5.96-8.82-13.82-9.4-22.82-.21-3.17-.03-6.37-1.29-9.8-.42,1.75-1.02,3.49-1.24,5.26-2.46,19.75-13.92,34.17-30.6,38.4-19.11,4.84-37.78-9.63-46.25-20.07-11.88-14.64-13.39-32.61-14-40.02-1.92-22.95,3.77-42.27-3.13-45.38-1.58-.71-3.3-.33-4.43.06-.95.79-2.33,1.94-3.99,3.32-17.56,14.46-27.1,20.26-34.43,25.12-8.37,5.55-18.26,5.32-27.89,3.79-11.98-1.9-17.17-8.02-17.24-20.62-.16-28.31-.11-56.63-.07-84.94.05-42.15-.22-84.31.36-126.46.49-35.59,29.27-73.93,62.39-86.42,41.32-15.59,88.94-3.66,115.38,30.44,1.15,1.49,2.58,2.76,2.89,3.09ZM513.63,706.58c.86-13.48,4.79-25.89,11.7-37.43,10.56-17.61,26.74-27.53,45.89-33.24,28.41-8.47,56.17-8.14,82.85,6.35,4.6,2.5,5.87,1.5,5.85-4.72-.1-51.72-.14-103.45-.4-155.17-.19-37.68-32.62-70.18-72.91-64.61-27.84,3.85-52.86,27.48-55.15,55.5-1.25,15.23-.67,30.61-.74,45.93-.19,38.1-.24,76.2-.43,114.3-.05,9.75-6.62,17.5-15.2,18.39-9.79,1.02-17.73-4.86-19.73-15.05-.69-3.5-.55-7.19-.56-10.79-.15-49.17.23-98.34-.57-147.5-.39-24.21-12.5-42.52-33.93-54-21.42-11.48-43.06-9.53-63.33,2.35-21.66,12.7-31.27,33.11-31.3,57.8-.03,30,.84,60,.91,90,.05,20.21-.62,40.41-.89,60.62-.03,2.4.43,4.8.71,7.65,8.18-3.19,15.28-6.63,22.76-8.76,23.5-6.68,46.7-4.34,69.68,3.11,25.86,8.38,42.75,25.36,50.28,51.5,1.69,5.87,3.01,11.85,4.5,17.78Z"></path><path fill="#d5af33" d="M453.39,586.88c10.72.03,19.04,7.83,19.11,17.91.07,11.01-8.28,19.4-19.25,19.34-11.3-.06-20.16-8.82-19.91-19.7.24-10.53,8.29-17.58,20.05-17.54Z"></path><path fill="#d5af33" d="M573.28,624.11c-11.23,1.24-18.87-10.64-18.97-18.33-.15-11.63,8.06-18.99,20.76-18.86,10.61.1,18.26,7.92,18.33,18.72.05,8.76-8.98,20.09-20.12,18.47Z"></path><path fill="#d5af33" d="M1125.41,469.66c11.17,0.03,19.83,8.16,19.91,18.66,0.07,11.47,-8.62,20.21,-20.05,20.15,-11.77,-0.06,-21,-9.19,-20.74,-20.52,0.25,-10.97,8.64,-18.31,20.89,-18.27Z"></path><path fill="#d5af33" d="M1125.41,469.66c11.17,0.03,19.83,8.16,19.91,18.66,0.07,11.47,-8.62,20.21,-20.05,20.15,-11.77,-0.06,-21,-9.19,-20.74,-20.52,0.25,-10.97,8.64,-18.31,20.89,-18.27Z"></path></svg>
+        <svg width="34" viewBox="340 380 340 420" xmlns="http://www.w3.org/2000/svg"><path fill="#1a443c" d="M511.61,422.8c7.52-6.66,14.43-12.94,21.51-19.03,39.31-33.83,106.66-27.64,140.27,16.17,14.4,18.78,21.44,39.83,21.45,63.41.02,68.76.14,137.52.18,206.28,0,10.53-7.15,16.92-18.75,18.45-19.69,2.58-34.39-7.28-48.55-18.57-4.48-3.57-7.41-7.75-15.6-13.9-.71-.53-2.27-1.67-4.02-1.37-2.91.5-4.44,4.62-5.04,6.3-3.83,10.72-2.66,34.16-2.52,39.03.13,4.43.82,28.52-13.85,45.33-1.01,1.15-17.78,19.78-40.19,16.39-2.85-.43-13.79-2.49-21.95-11.42-5.45-5.96-8.82-13.82-9.4-22.82-.21-3.17-.03-6.37-1.29-9.8-.42,1.75-1.02,3.49-1.24,5.26-2.46,19.75-13.92,34.17-30.6,38.4-19.11,4.84-37.78-9.63-46.25-20.07-11.88-14.64-13.39-32.61-14-40.02-1.92-22.95,3.77-42.27-3.13-45.38-1.58-.71-3.3-.33-4.43.06-.95.79-2.33,1.94-3.99,3.32-17.56,14.46-27.1,20.26-34.43,25.12-8.37,5.55-18.26,5.32-27.89,3.79-11.98-1.9-17.17-8.02-17.24-20.62-.16-28.31-.11-56.63-.07-84.94.05-42.15-.22-84.31.36-126.46.49-35.59,29.27-73.93,62.39-86.42,41.32-15.59,88.94-3.66,115.38,30.44,1.15,1.49,2.58,2.76,2.89,3.09ZM513.63,706.58c.86-13.48,4.79-25.89,11.7-37.43,10.56-17.61,26.74-27.53,45.89-33.24,28.41-8.47,56.17-8.14,82.85,6.35,4.6,2.5,5.87,1.5,5.85-4.72-.1-51.72-.14-103.45-.4-155.17-.19-37.68-32.62-70.18-72.91-64.61-27.84,3.85-52.86,27.48-55.15,55.5-1.25,15.23-.67,30.61-.74,45.93-.19,38.1-.24,76.2-.43,114.3-.05,9.75-6.62,17.5-15.2,18.39-9.79,1.02-17.73-4.86-19.73-15.05-.69-3.5-.55-7.19-.56-10.79-.15-49.17.23-98.34-.57-147.5-.39-24.21-12.5-42.52-33.93-54-21.42-11.48-43.06-9.53-63.33,2.35-21.66,12.7-31.27,33.11-31.3,57.8-.03,30,.84,60,.91,90,.05,20.21-.62,40.41-.89,60.62-.03,2.4.43,4.8.71,7.65,8.18-3.19,15.28-6.63,22.76-8.76,23.5-6.68,46.7-4.34,69.68,3.11,25.86,8.38,42.75,25.36,50.28,51.5,1.69,5.87,3.01,11.85,4.5,17.78Z"/><path fill="#d5af33" d="M453.39,586.88c10.72.03,19.04,7.83,19.11,17.91.07,11.01-8.28,19.4-19.25,19.34-11.3-.06-20.16-8.82-19.91-19.7.24-10.53,8.29-17.58,20.05-17.54Z"/><path fill="#d5af33" d="M573.28,624.11c-11.23,1.24-18.87-10.64-18.97-18.33-.15-11.63,8.06-18.99,20.76-18.86,10.61.1,18.26,7.92,18.33,18.72.05,8.76-8.98,20.09-20.12,18.47Z"/><path fill="#d5af33" d="M1125.41,469.66c11.17,0.03,19.83,8.16,19.91,18.66,0.07,11.47,-8.62,20.21,-20.05,20.15,-11.77,-0.06,-21,-9.19,-20.74,-20.52,0.25,-10.97,8.64,-18.31,20.89,-18.27Z"/><path fill="#d5af33" d="M1125.41,469.66c11.17,0.03,19.83,8.16,19.91,18.66,0.07,11.47,-8.62,20.21,-20.05,20.15,-11.77,-0.06,-21,-9.19,-20.74,-20.52,0.25,-10.97,8.64,-18.31,20.89,-18.27Z"/></svg>
       </div>
     </div>
     <div id="alimun-lang-container" class="sb-lang-container"></div>
     <nav class="sb-nav">
-      <span class="sb-sec"><span data-i18n="teacher_sb_teach_section">Enseñar</span></span>
-      <button class="sb-a on" data-v="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg><span class="sb-lbl" data-i18n="teacher_sb_overview">Resumen</span></button>
-      <button class="sb-a" data-v="students"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 00-3-3.87"></path><path d="M16 3.13a4 4 0 010 7.75"></path></svg><span class="sb-lbl" data-i18n="teacher_sb_students">Mis Alumnos</span></button>
-      <button class="sb-a" data-v="assignments"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"></path><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"></path></svg><span class="sb-lbl" data-i18n="teacher_sb_assignments">Tareas</span></button>
-      <button class="sb-a" data-v="sessions"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg><span class="sb-lbl" data-i18n="teacher_sb_sessions">Sesiones en Vivo</span></button>
-      <button class="sb-a" data-v="payouts"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path></svg><span class="sb-lbl">Payouts</span></button>
-      <button class="sb-a" data-v="availability"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg><span class="sb-lbl">Availability</span></button>
-      <span class="sb-sec"><span data-i18n="teacher_sb_account_section">Cuenta</span></span>
-      <button class="sb-a" data-v="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path></svg><span class="sb-lbl" data-i18n="teacher_sb_settings">Ajustes</span></button>
+      <span class="sb-sec"><span data-i18n="teacher_sb_teach_section">&nbsp;Teach</span></span>
+      <button class="sb-a on" data-v="overview"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg><span class="sb-lbl" data-i18n="teacher_sb_overview">Overview</span></button>
+      <button class="sb-a" data-v="students"><svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg><span class="sb-lbl" data-i18n="teacher_sb_students">My students</span></button>
+      <button class="sb-a" data-v="assignments"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg><span class="sb-lbl" data-i18n="teacher_sb_assignments">Assignments</span></button>
+      <button class="sb-a" data-v="sessions"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="sb-lbl" data-i18n="teacher_sb_sessions">Sessions</span></button>
+      <button class="sb-a" data-v="payouts"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg><span class="sb-lbl" data-i18n="teacher_sb_payouts">Payouts</span></button>
+      <button class="sb-a" data-v="availability"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg><span class="sb-lbl" data-i18n="teacher_sb_availability">Availability</span></button>
+      <span class="sb-sec"><span data-i18n="teacher_sb_account_section">&nbsp;Account</span></span>
+      <button class="sb-a" data-v="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg><span class="sb-lbl" data-i18n="teacher_sb_settings">Settings</span></button>
     </nav>
     <div class="sb-bot">
       <div class="sb-role">
-        <div class="sb-role-l" data-i18n="teacher_sb_role_title">Docencia</div>
-        <div class="sb-role-v" data-i18n="tier_focused_name">Enfocado</div>
-        <div class="sb-role-s" data-i18n="teacher_sb_role_desc">20 alumnos · Español B1</div>
+        <div class="sb-role-l" data-i18n="teacher_sb_role_title">Teaching</div>
+        <div class="sb-role-v" data-i18n="tier_focused_name">Focused Practice</div>
+        <div class="sb-role-s" data-i18n="teacher_sb_role_desc">20 students · Spanish B1</div>
       </div>
       <div class="sb-user">
         <div class="sb-av" id="sb-user-av">ST</div>
         <div class="sb-ui">
           <div class="sb-un" id="sb-user-name">Sarah Thompson</div>
-          <div class="sb-us"><span data-i18n="role_teacher_title">Profesor</span> · <span id="sb-user-loc">Madrid, Spain</span></div>
+          <div class="sb-us"><span data-i18n="role_teacher_title">Teacher</span> · <span id="sb-user-loc">Madrid, Spain</span></div>
         </div>
       </div>
     </div>
   </div>
   <button class="sb-tgl" id="sb-tgl">
-    <svg id="tgl-ico" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    <svg id="tgl-ico" viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
   </button>
 </aside>
 
 <main class="main" id="main">
 <header class="mobile-hdr">
   <button class="mobile-hdr-btn" id="mobile-hamburger">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
   <!-- Custom logo text/svg for top mobile header -->
   <div style="font-family:var(--disp); font-size:1.2rem; color:var(--b); text-transform:uppercase; letter-spacing:0.05em; font-weight:700;">Alimun</div>
@@ -1012,10 +1015,10 @@ body{font-family:var(--body);color:var(--b);background:#f0efe9;}
     </div>
     <div class="classroom-actions">
       <button class="class-action-btn" id="classroom-toggle-size" title="Toggle Size" onclick="toggleClassroomSize()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
       </button>
       <button class="class-action-btn leave-btn" id="classroom-leave-btn" onclick="leaveClass()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         <span data-i18n="student_class_leave">Leave</span>
       </button>
     </div>
@@ -1029,7 +1032,7 @@ body{font-family:var(--body);color:var(--b);background:#f0efe9;}
     <div class="classroom-chat-panel collapsed" id="classroom-chat-panel">
       <div class="chat-toggle-header" onclick="toggleChatExpanded()">
         <span data-i18n="student_class_chat">Class Chat</span>
-        <svg id="chat-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        <svg id="chat-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div class="chat-messages-container" id="classroom-chat-messages">
         <!-- Messages will go here dynamically -->
@@ -1037,7 +1040,7 @@ body{font-family:var(--body);color:var(--b);background:#f0efe9;}
       <div class="chat-input-row">
         <input type="text" id="classroom-chat-input" placeholder="Type a message..." onkeydown="handleChatKey(event)">
         <button onclick="sendChatMessage()" class="chat-send-btn">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
     </div>
@@ -1046,23 +1049,23 @@ body{font-family:var(--body);color:var(--b);background:#f0efe9;}
   <!-- Utility / Multi-button Tools Row -->
   <div class="classroom-tools-row">
     <button class="tool-btn active" data-tab="transcription" onclick="switchClassroomTab('transcription')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
       <span data-i18n="tool_transcription">Transcription</span>
     </button>
     <button class="tool-btn" data-tab="files" onclick="switchClassroomTab('files')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       <span data-i18n="tool_files">Files</span>
     </button>
     <button class="tool-btn" onclick="triggerDailyScreenShare()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       <span data-i18n="tool_screenshare">Screen Share</span>
     </button>
     <button class="tool-btn" onclick="takeClassroomScreenshot()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
       <span data-i18n="tool_screenshot">Screenshot</span>
     </button>
     <button class="tool-btn" data-tab="interactive" onclick="switchClassroomTab('interactive')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       <span data-i18n="tool_interactive">Whiteboard</span>
     </button>
   </div>
@@ -1071,15 +1074,15 @@ body{font-family:var(--body);color:var(--b);background:#f0efe9;}
   <div class="classroom-tab-content">
     <div id="tab-transcription" class="tab-pane active">
       <div class="transcription-log" id="transcription-log">
-        <p class="trans-meta">Live transcription starting when class begins...</p>
+        <p class="trans-meta" data-i18n="teacher_trans_starting">Live transcription starting when class begins...</p>
       </div>
     </div>
     
     <div id="tab-files" class="tab-pane">
       <div class="files-container">
         <div class="file-upload-zone" id="file-dropzone" onclick="document.getElementById('file-upload-input').click()">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <p data-i18n="file_drag_drop">Drag &amp; drop files here, or click to upload</p>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p data-i18n="file_drag_drop">Drag & drop files here, or click to upload</p>
           <input type="file" id="file-upload-input" style="display:none" onchange="uploadClassroomFile(this)">
         </div>
         <div class="shared-files-list" id="shared-files-list">
@@ -1091,7 +1094,7 @@ body{font-family:var(--body);color:var(--b);background:#f0efe9;}
     <div id="tab-interactive" class="tab-pane">
       <div class="interactive-container">
         <div class="whiteboard-toolbar">
-          <button onclick="clearWhiteboard()">Clear</button>
+          <button onclick="clearWhiteboard()" data-i18n="btn_clear">Clear</button>
           <input type="color" id="whiteboard-color" value="#ceff65">
           <input type="range" id="whiteboard-size" min="1" max="10" value="3">
         </div>
@@ -1105,6 +1108,8 @@ body{font-family:var(--body);color:var(--b);background:#f0efe9;}
 
 <script>
 let STUDENTS = [];
+let PENDING_SUBS = [];
+let CLASS_ANALYTICS = { byCat: {}, total: 0, activeStudents: 0 };
 let PENDING = [];
 let TEACHER_ASGMT = [];
 let SESSIONS = [];
@@ -1188,42 +1193,54 @@ function nav(v) {
 }
 document.querySelectorAll('.sb-a').forEach(a=>a.addEventListener('click',()=>nav(a.dataset.v)));
 
-async function claude(prompt,sys){const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,messages:[{role:'user',content:prompt}],...(sys?{system:sys}:{})})});const d=await r.json();return(d.content||[]).map(b=>b.type==='text'?b.text:'').join('');}
+async function claude(prompt,sys){
+  // AI grading goes through our serverless proxy (/api/grade) which
+  // holds the Anthropic key. Direct browser calls always failed.
+  const sb = window.currentTeacher?.supabase;
+  const { data: { session } = {} } = sb ? await sb.auth.getSession() : { data: {} };
+  const r = await fetch('/api/grade', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {})
+    },
+    body: JSON.stringify({ prompt, system: sys })
+  });
+  if (!r.ok) throw new Error('AI grading unavailable (' + r.status + ')');
+  const d = await r.json();
+  return d.text || '';
+}
 const ov=document.getElementById('ov'),modal=document.getElementById('modal');
 ov.addEventListener('click',e=>{if(e.target===ov)closeModal();});
 function openModal(h){modal.innerHTML=h;ov.classList.add('open');}
 function closeModal(){ov.classList.remove('open');setTimeout(()=>modal.innerHTML='',280);}
 
 function getPendingSubmissions() {
-  const defaults = STUDENTS.filter(s => s.sub);
-  const dynamics = JSON.parse(localStorage.getItem('alimun:pending_grades') || '[]');
-  
-  const formattedDynamics = dynamics
-    .filter(d => STUDENTS.some(s => s.id === d.studentId))
-    .map(d => {
-      const studentInfo = STUDENTS.find(s => s.id === d.studentId) || {};
-      return {
-        n: d.studentName,
-        i: d.studentName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),
-        lvl: studentInfo.lvl || 'B2',
-        pct: studentInfo.pct || 75,
-        active: 'Just now',
-        streak: studentInfo.streak || 5,
-        sub: d.title,
-        subType: d.type,
-        subText: d.submissionText,
-        subTime: d.submittedAt || 'Just now',
-        hwId: d.hwId,
-        studentId: d.studentId,
-        dynamic: true
-      };
-    });
-  
-  return [...formattedDynamics, ...defaults];
+  // Grading queue built from Supabase assignment_submissions
+  // (loaded into PENDING_SUBS by initTeacherData).
+  return PENDING_SUBS.map(p => {
+    const name = p.student_profiles?.full_name || 'Student';
+    const studentInfo = STUDENTS.find(s => s.id === p.student_id) || {};
+    return {
+      n: name,
+      i: name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),
+      lvl: p.student_profiles?.level || studentInfo.lvl || '—',
+      pct: studentInfo.pct || 75,
+      active: 'Recently',
+      streak: studentInfo.streak || 0,
+      sub: p.assignments?.title || 'Submission',
+      subType: p.assignments?.type || 'Homework',
+      subText: p.submission_text,
+      subTime: getLocaleString(new Date(p.submitted_at), { day: 'numeric', month: 'short' }),
+      hwId: p.assignment_id,
+      studentId: p.student_id,
+      submissionId: p.id
+    };
+  });
 }
 
 function gradeModal(s){
-  openModal(`<div class="m-hd"><div class="m-ey">${s.subType} · ${s.n}</div><div class="m-title">${s.sub}</div></div><div class="m-bd"><div style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#aaa;margin-bottom:.5rem;">Student's submission · ${s.subTime}</div><div class="sub-text" style="background:#f5f4f0; padding:12px; border-radius:8px; font-size:13.5px; line-height:1.6; margin-bottom:15px; white-space:pre-wrap;">${s.subText}</div><button class="btn" id="grade-ai-btn" onclick="runGrade(this,'${s.n}','${s.subType}',\`${s.subText.replace(/`/g,"'")}\`, '${s.hwId || ''}', '${s.studentId || ''}')">Grade with AI</button><div id="grade-out"></div></div>`);
+  openModal(`<div class="m-hd"><div class="m-ey">${s.subType} · ${s.n}</div><div class="m-title">${s.sub}</div></div><div class="m-bd"><div style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#aaa;margin-bottom:.5rem;">Student's submission · ${s.subTime}</div><div class="sub-text" style="background:#f5f4f0; padding:12px; border-radius:8px; font-size:13.5px; line-height:1.6; margin-bottom:15px; white-space:pre-wrap;">${s.subText}</div><button class="btn" id="grade-ai-btn" onclick="runGrade(this,'${s.n}','${s.subType}',\`${s.subText.replace(/`/g,"'")}\`, '${s.hwId || ''}', '${s.studentId || ''}')">${t('teacher_grade_with_ai','Grade with AI')}</button><div id="grade-out"></div></div>`);
 }
 
 async function runGrade(btn,name,type,text,hwId,studentId){
@@ -1234,7 +1251,7 @@ async function runGrade(btn,name,type,text,hwId,studentId){
     const r=JSON.parse(raw.replace(/```json|```/g,'').trim());
     const escapedFeedback = JSON.stringify(r).replace(/"/g, '&quot;');
     
-    document.getElementById('grade-out').innerHTML=`<div style="margin-top:1.25rem;"><div class="g-res" style="margin:0;"><div class="g-top"><div class="g-score">${r.score}</div><div class="g-sum">${r.summary}</div></div><div class="g-bot"><div class="g-cols"><div class="str"><div class="g-col-h">Strengths</div><ul class="g-list">${r.strengths.map(s=>`<li>${s}</li>`).join('')}</ul></div><div class="imp"><div class="g-col-h">Work on next</div><ul class="g-list">${r.improvements.map(s=>`<li>${s}</li>`).join('')}</ul></div></div>${r.corrected_excerpt?`<div class="g-fix"><small>Example correction</small><p>"${r.corrected_excerpt}"</p></div>`:''}</div></div><div style="margin-top:1.25rem;display:flex;gap:.625rem;"><button class="btn" onclick="saveGrading('${studentId}', '${hwId}', ${r.score}, '${escapedFeedback}')">Send feedback to student</button><button class="btn out" onclick="closeModal()">Cancel</button></div></div>`;
+    document.getElementById('grade-out').innerHTML=`<div style="margin-top:1.25rem;"><div class="g-res" style="margin:0;"><div class="g-top"><div class="g-score">${r.score}</div><div class="g-sum">${r.summary}</div></div><div class="g-bot"><div class="g-cols"><div class="str"><div class="g-col-h">${t('teacher_grade_strengths','Strengths')}</div><ul class="g-list">${r.strengths.map(s=>`<li>${s}</li>`).join('')}</ul></div><div class="imp"><div class="g-col-h">${t('teacher_grade_work_on_next','Work on next')}</div><ul class="g-list">${r.improvements.map(s=>`<li>${s}</li>`).join('')}</ul></div></div>${r.corrected_excerpt?`<div class="g-fix"><small>${t('teacher_grade_example_correction','Example correction')}</small><p>"${r.corrected_excerpt}"</p></div>`:''}</div></div><div style="margin-top:1.25rem;display:flex;gap:.625rem;"><button class="btn" onclick="saveGrading('${studentId}', '${hwId}', ${r.score}, '${escapedFeedback}')">${t('teacher_send_feedback','Send feedback to student')}</button><button class="btn out" onclick="closeModal()">${t('teacher_cancel','Cancel')}</button></div></div>`;
   }catch(e){
     console.warn("Claude API failed, falling back to simulated grading:", e);
     const score = 82 + Math.floor(Math.random() * 14);
@@ -1247,33 +1264,43 @@ async function runGrade(btn,name,type,text,hwId,studentId){
     };
     const escapedFeedback = JSON.stringify(mockJson).replace(/"/g, '&quot;');
     
-    document.getElementById('grade-out').innerHTML=`<div style="margin-top:1.25rem;"><div class="g-res" style="margin:0;"><div class="g-top"><div class="g-score">${score}</div><div class="g-sum">${mockJson.summary}</div></div><div class="g-bot"><div class="g-cols"><div class="str"><div class="g-col-h">Strengths</div><ul class="g-list">${mockJson.strengths.map(s=>`<li>${s}</li>`).join('')}</ul></div><div class="imp"><div class="g-col-h">Work on next</div><ul class="g-list">${mockJson.improvements.map(s=>`<li>${s}</li>`).join('')}</ul></div></div><div class="g-fix"><small>Suggested improvement zone</small><p>"${mockJson.corrected_excerpt}"</p></div></div></div><div style="margin-top:1.25rem;display:flex;gap:.625rem;"><button class="btn" onclick="saveGrading('${studentId}', '${hwId}', ${score}, '${escapedFeedback}')">Send feedback to student</button><button class="btn out" onclick="closeModal()">Cancel</button></div></div>`;
+    document.getElementById('grade-out').innerHTML=`<div style="margin-top:1.25rem;"><div class="g-res" style="margin:0;"><div class="g-top"><div class="g-score">${score}</div><div class="g-sum">${mockJson.summary}</div></div><div class="g-bot"><div class="g-cols"><div class="str"><div class="g-col-h">${t('teacher_grade_strengths','Strengths')}</div><ul class="g-list">${mockJson.strengths.map(s=>`<li>${s}</li>`).join('')}</ul></div><div class="imp"><div class="g-col-h">${t('teacher_grade_work_on_next','Work on next')}</div><ul class="g-list">${mockJson.improvements.map(s=>`<li>${s}</li>`).join('')}</ul></div></div><div class="g-fix"><small>${t('teacher_grade_suggested_improvement','Suggested improvement zone')}</small><p>"${mockJson.corrected_excerpt}"</p></div></div></div><div style="margin-top:1.25rem;display:flex;gap:.625rem;"><button class="btn" onclick="saveGrading('${studentId}', '${hwId}', ${score}, '${escapedFeedback}')">${t('teacher_send_feedback','Send feedback to student')}</button><button class="btn out" onclick="closeModal()">${t('teacher_cancel','Cancel')}</button></div></div>`;
   }
 }
 
-function saveGrading(studentId, hwId, score, feedback) {
+async function saveGrading(studentId, hwId, score, feedback) {
   const fb = JSON.parse(feedback.replace(/&quot;/g, '"'));
-  
-  if (studentId && hwId) {
-    const graded = JSON.parse(localStorage.getItem('alimun:graded_homeworks') || '{}');
-    graded[`${studentId}:${hwId}`] = {
-      score: score,
-      feedback: `Score: ${score}%\nTeacher feedback:\n"${fb.summary}"\n\nStrengths:\n- ${fb.strengths.join('\n- ')}\n\nImprovements:\n- ${fb.improvements.join('\n- ')}`
-    };
-    localStorage.setItem('alimun:graded_homeworks', JSON.stringify(graded));
-    
-    let pending = JSON.parse(localStorage.getItem('alimun:pending_grades') || '[]');
-    pending = pending.filter(p => !(p.studentId === studentId && p.hwId === hwId));
-    localStorage.setItem('alimun:pending_grades', JSON.stringify(pending));
+  const feedbackText = `Score: ${score}%\nTeacher feedback:\n"${fb.summary}"\n\nStrengths:\n- ${fb.strengths.join('\n- ')}\n\nImprovements:\n- ${fb.improvements.join('\n- ')}`;
+
+  try {
+    if (studentId && hwId) {
+      const sb = window.currentTeacher.supabase;
+      const { error } = await sb
+        .from('assignment_submissions')
+        .update({
+          status: 'graded',
+          score: score,
+          feedback: feedbackText,
+          graded_at: new Date().toISOString()
+        })
+        .eq('assignment_id', hwId)
+        .eq('student_id', studentId);
+
+      if (error) throw error;
+      await initTeacherData();
+    }
+
+    closeModal();
+    if (document.querySelector('.sb-a[data-v="overview"]').classList.contains('on')) {
+      vOverview();
+    } else {
+      vAssignments();
+    }
+    alert("Feedback sent to student successfully!");
+  } catch (e) {
+    console.error('Failed to save grade:', e);
+    alert('Failed to send feedback: ' + e.message);
   }
-  
-  closeModal();
-  if (document.querySelector('.sb-a[data-v="overview"]').classList.contains('on')) {
-    vOverview();
-  } else {
-    vAssignments();
-  }
-  alert("Feedback sent to student successfully!");
 }
 
 async function vOverview(){
@@ -1331,10 +1358,9 @@ async function vOverview(){
     const enrolled    = nextSession.students || 0;
     const topicTitle  = nextSession.topic || (dict.live_session || 'Live Session');
 
-    // Teacher can join early as soon as the room URL exists—no 10-min gate
-    const joinBtnHtml = nextSession.daily_room_url
-      ? `<a href="#" onclick="handleTeacherJoin('${nextSession.daily_room_url}', '${nextSession.id}'); return false;" class="btn sm" data-i18n="teacher_action_start">${dict.teacher_action_start || 'Start session'}</a>`
-      : `<button class="btn sm" disabled title="${dict.teacher_room_pending || 'Room is being set up — check back closer to session time'}" style="opacity:.5;cursor:not-allowed;">${dict.teacher_action_start || 'Start session'}</button>`;
+    // Room is provisioned on demand by /api/join-session, so the
+    // teacher can always start (server enforces the joining window).
+    const joinBtnHtml = `<a href="#" onclick="handleTeacherJoin('${nextSession.daily_room_url || ''}', '${nextSession.id}'); return false;" class="btn sm" data-i18n="teacher_action_start">${dict.teacher_action_start || 'Start session'}</a>`;
 
     sessionCardHtml = `
       <div class="sess-card mb">
@@ -1384,11 +1410,11 @@ async function vOverview(){
     writeNotesCardHtml = `
       <div class="card mb" style="border: 1.5px solid var(--g); background: rgba(206, 255, 101, 0.06); padding: 1.375rem; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;">
         <div>
-          <div style="font-size: .63rem; letter-spacing: .12em; text-transform: uppercase; color: #777; margin-bottom: .25rem; font-weight: 700;">Action Required</div>
-          <div style="font-family: var(--disp); font-size: 1.35rem; text-transform: uppercase; margin-bottom: .25rem; color: var(--b);">Write Session Notes</div>
+          <div style="font-size: .63rem; letter-spacing: .12em; text-transform: uppercase; color: #777; margin-bottom: .25rem; font-weight: 700;">${t('teacher_action_required','Action Required')}</div>
+          <div style="font-family: var(--disp); font-size: 1.35rem; text-transform: uppercase; margin-bottom: .25rem; color: var(--b);">${t('teacher_write_session_notes','Write Session Notes')}</div>
           <div style="font-size: .83rem; color: #555;">The session <b>${topic}</b> (${dateLabel}) has passed. Write notes and notify students.</div>
         </div>
-        <button class="btn sm" onclick="openWriteNotesModal('${sessionNeedsNotes.id}')">Write Notes</button>
+        <button class="btn sm" onclick="openWriteNotesModal('${sessionNeedsNotes.id}')" data-i18n="teacher_write_notes">Write Notes</button>
       </div>
     `;
   }
@@ -1419,7 +1445,18 @@ async function vOverview(){
       </div>
       <div>
         <div class="sh"><span class="sec-t" data-i18n="teacher_student_activity">${dict.teacher_student_activity || 'Student activity'}</span><a class="sh-a" onclick="nav('students')" data-i18n="student_view_all">${dict.student_view_all || 'View all'}</a></div>
-        <div class="card">${STUDENTS.slice(0, 5).map(s => `<div class="stu-row"><div class="stu-av">${s.i}</div><div class="stu-info"><div class="stu-name">${s.n}</div><div class="stu-sub">${s.lvl} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : s.active}</div></div><div class="stu-prog"><div class="stu-pct">${s.pct}%</div><div class="stu-bar-wrap"><div class="stu-bar" style="width:${s.pct}%"></div></div></div></div>`).join('')}</div>
+        <div class="card">${STUDENTS.slice(0, 5).map(s => `<div class="stu-row"><div class="stu-av">${s.i}</div><div class="stu-info"><div class="stu-name">${s.n}</div><div class="stu-sub">${s.lvl} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : s.active}${s.exCount ? ` · ${s.exCount} ${dict.teacher_lbl_exercises || 'exercises'}` : ''}</div></div><div class="stu-prog"><div class="stu-pct">${s.pct}%</div><div class="stu-bar-wrap"><div class="stu-bar" style="width:${s.pct}%"></div></div></div></div>`).join('')}</div>
+        ${Object.keys(CLASS_ANALYTICS.byCat).length ? `
+        <div class="sh" style="margin-top:1.5rem;"><span class="sec-t" data-i18n="teacher_skills_title">${dict.teacher_skills_title || 'Class skills (30 days)'}</span></div>
+        <div class="card">
+          ${['grammar','vocabulary','listening','speaking','writing'].filter(c => CLASS_ANALYTICS.byCat[c] != null).map(c => `
+            <div style="display:flex;align-items:center;gap:12px;padding:6px 0;">
+              <span style="font-size:.8rem;width:90px;text-transform:capitalize;">${dict['skill_' + c] || c}</span>
+              <div style="flex:1;height:6px;border-radius:99px;background:rgba(0,0,0,.08);overflow:hidden;"><div style="height:100%;width:${CLASS_ANALYTICS.byCat[c]}%;border-radius:99px;background:linear-gradient(90deg,#94c105,var(--g));"></div></div>
+              <b style="font-size:.78rem;width:36px;text-align:right;">${CLASS_ANALYTICS.byCat[c]}%</b>
+            </div>`).join('')}
+          <div style="font-size:.72rem;color:#999;margin-top:8px;">${CLASS_ANALYTICS.total} ${dict.teacher_lbl_exercises_completed || 'exercises completed'} · ${CLASS_ANALYTICS.activeStudents} ${dict.teacher_lbl_active_this_week || 'students active this week'}</div>
+        </div>` : ''}
       </div>
     </div>
     <div style="height:2.5rem"></div>`;
@@ -1566,10 +1603,10 @@ function createAssignment(){
   const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
   const dict = translations[lang] || translations['en'] || {};
 
-  openModal(`<div class="m-hd"><div class="m-ey">Teacher Assistant</div><div class="m-title">Homework Generator Hub</div></div>
+  openModal(`<div class="m-hd"><div class="m-ey">${t('teacher_assistant_label','Teacher Assistant')}</div><div class="m-title">${t('teacher_hw_generator_hub','Homework Generator Hub')}</div></div>
   <div class="m-bd">
     <div class="field-row">
-      <label>Session Focus</label>
+      <label data-i18n="teacher_lbl_session_focus">Session Focus</label>
       <select id="hw-session-focus" onchange="updateHwTemplates()" style="width:100%; padding:0.75rem 1rem; border-radius:0.75rem; border:1.5px solid rgba(0,0,0,0.1); background:#fafaf8; outline:none;">
         <option value="Ser vs Estar">Ser vs. Estar (Spanish Grammar)</option>
         <option value="Subjunctive Mood">Subjunctive Mood (French Grammar)</option>
@@ -1580,49 +1617,49 @@ function createAssignment(){
     </div>
     
     <div style="display:flex; border-bottom:1px solid rgba(0,0,0,0.06); margin-bottom:15px; gap:10px;">
-      <button onclick="setHwMode('ai')" id="hw-tab-ai" class="btn sm" style="background:none; color:var(--b); border-bottom:2px solid var(--b); border-radius:0; padding:8px 0; font-weight:700;">Generate with AI</button>
-      <button onclick="setHwMode('premade')" id="hw-tab-premade" class="btn sm" style="background:none; color:#777; border-radius:0; padding:8px 0;">Select Pre-made</button>
+      <button onclick="setHwMode('ai')" id="hw-tab-ai" class="btn sm" style="background:none; color:var(--b); border-bottom:2px solid var(--b); border-radius:0; padding:8px 0; font-weight:700;" data-i18n="teacher_generate_with_ai_tab">Generate with AI</button>
+      <button onclick="setHwMode('premade')" id="hw-tab-premade" class="btn sm" style="background:none; color:#777; border-radius:0; padding:8px 0;" data-i18n="teacher_select_premade_tab">Select Pre-made</button>
       <button onclick="setHwMode('custom')" id="hw-tab-custom" class="btn sm" style="background:none; color:#777; border-radius:0; padding:8px 0;">Custom (Manual)</button>
     </div>
     
     <!-- Mode 1: AI Prompt -->
     <div id="hw-area-ai" style="display:block;">
       <div class="field-row">
-        <label>Describe what to generate</label>
+        <label data-i18n="teacher_lbl_describe_generate">Describe what to generate</label>
         <textarea id="ai-hw-prompt" placeholder="Ask AI to generate a homework. E.g.: 'Generate an intermediate Spanish essay writing prompt about plans for this weekend using both ser and estar.'" style="min-height:80px; width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:0.75rem; padding:0.75rem 1rem; font-family:inherit; outline:none; resize:vertical;"></textarea>
       </div>
-      <button class="btn sm" onclick="generateHwWithAI()" style="width:100%; justify-content:center;">Generate Homework with AI</button>
+      <button class="btn sm" onclick="generateHwWithAI()" style="width:100%; justify-content:center;" data-i18n="teacher_generate_hw_ai">Generate Homework with AI</button>
     </div>
     
     <!-- Mode 2: Pre-made Templates -->
     <div id="hw-area-premade" style="display:none;">
       <div class="field-row">
-        <label>Available Templates</label>
+        <label data-i18n="teacher_lbl_available_templates">Available Templates</label>
         <div id="hw-premade-list" style="display:flex; flex-direction:column; gap:8px; max-height:180px; overflow-y:auto; padding:2px;"></div>
       </div>
     </div>
     
     <!-- Mode 3: Custom Manual -->
     <div id="hw-area-custom" style="display:none;">
-      <div class="field-row"><label>Assignment Title</label><input type="text" id="cust-hw-title" placeholder="e.g. Write a brief autobiography" style="width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:0.75rem; padding:0.75rem; outline:none;"></div>
+      <div class="field-row"><label data-i18n="teacher_lbl_assignment_title">Assignment Title</label><input type="text" id="cust-hw-title" placeholder="e.g. Write a brief autobiography" style="width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:0.75rem; padding:0.75rem; outline:none;"></div>
       <div class="g2">
-        <div class="field-row"><label>Type</label><select id="cust-hw-type" style="width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:0.75rem; padding:0.75rem; outline:none;"><option>Essay</option><option>Homework</option><option>Speaking</option></select></div>
-        <div class="field-row"><label>Due date</label><input type="date" id="cust-hw-due" style="width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:0.75rem; padding:0.75rem; outline:none;"></div>
+        <div class="field-row"><label data-i18n="teacher_lbl_type">Type</label><select id="cust-hw-type" style="width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:0.75rem; padding:0.75rem; outline:none;"><option data-i18n="teacher_hw_type_essay">Essay</option><option data-i18n="teacher_hw_type_homework">Homework</option><option data-i18n="teacher_hw_type_speaking">Speaking</option></select></div>
+        <div class="field-row"><label data-i18n="lbl_due_date">Due date</label><input type="date" id="cust-hw-due" style="width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:0.75rem; padding:0.75rem; outline:none;"></div>
       </div>
-      <div class="field-row"><label>Instructions / Prompt</label><textarea id="cust-hw-prompt" placeholder="Write full instructions here..." style="min-height:80px; width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:0.75rem; padding:0.75rem; outline:none; resize:vertical;"></textarea></div>
+      <div class="field-row"><label data-i18n="teacher_lbl_instructions">Instructions / Prompt</label><textarea id="cust-hw-prompt" placeholder="Write full instructions here..." style="min-height:80px; width:100%; border:1.5px solid rgba(0,0,0,0.1); border-radius:0.75rem; padding:0.75rem; outline:none; resize:vertical;"></textarea></div>
     </div>
     
     <!-- Preview Box -->
     <div id="hw-preview-box" style="display:none; margin-top:15px; border:1.5px dashed var(--b); border-radius:12px; padding:14px; background:#fafaf9;">
-      <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#aaa; margin-bottom:4px;">Homework Preview</div>
+      <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.08em; color:#aaa; margin-bottom:4px;">${t('teacher_homework_preview','Homework Preview')}</div>
       <div style="font-family:var(--disp); font-size:1.1rem; margin-bottom:4px; text-transform:uppercase;" id="prev-hw-title"></div>
       <div style="font-size:11px; color:#aaa; margin-bottom:10px; font-family:var(--body);" id="prev-hw-type"></div>
       <div style="font-size:13px; line-height:1.5; color:#333; white-space:pre-wrap;" id="prev-hw-prompt"></div>
     </div>
     
     <div style="display:flex; gap:.625rem; margin-top:20px; border-top:1px solid rgba(0,0,0,0.06); padding-top:15px; justify-content:flex-end;">
-      <button class="btn out" onclick="closeModal()">Cancel</button>
-      <button class="btn" id="btn-assign-hw" onclick="assignHw()" disabled style="opacity:0.4; cursor:not-allowed;">Assign to Class</button>
+      <button class="btn out" onclick="closeModal()">${t('teacher_cancel','Cancel')}</button>
+      <button class="btn" id="btn-assign-hw" onclick="assignHw()" disabled style="opacity:0.4; cursor:not-allowed;">${t('teacher_assign_to_class','Assign to Class')}</button>
     </div>
   </div>`);
   
@@ -1677,12 +1714,12 @@ function updateHwTemplates() {
         <div style="font-weight:700; font-size:13px;">${t.title}</div>
         <div style="font-size:11px; color:#aaa; margin-top:2px;">${t.type} · ${t.prompt.substring(0, 50)}...</div>
       </div>
-      <button class="btn sm out">Select</button>
+      <button class="btn sm out" data-i18n="btn_select">Select</button>
     </div>
   `).join('');
   
   if (templates.length === 0) {
-    listEl.innerHTML = `<div style="font-size:12px; color:#bbb; text-align:center; padding:15px 0;">No templates for this focus yet.</div>`;
+    listEl.innerHTML = `<div style="font-size:12px; color:#bbb; text-align:center; padding:15px 0;">${t('teacher_no_templates','No templates for this focus yet.')}</div>`;
   }
 }
 
@@ -1716,7 +1753,7 @@ async function generateHwWithAI() {
   
   const aiArea = document.getElementById('hw-area-ai');
   const originalHtml = aiArea.innerHTML;
-  aiArea.innerHTML = `<div class="g-load" style="padding:15px 0;"><div class="g-spin"></div><p>Alimun AI generating custom homework...</p></div>`;
+  aiArea.innerHTML = `<div class="g-load" style="padding:15px 0;"><div class="g-spin"></div><p data-i18n="teacher_ai_generating_hw">Alimun AI generating custom homework...</p></div>`;
   
   setTimeout(() => {
     aiArea.innerHTML = originalHtml;
@@ -1794,27 +1831,45 @@ function assignHw() {
     hw.due = "Due in 3 days";
   }
   
-  // Save assignment to teacher's view list
-  const newAsgmt = {
-    id: TEACHER_ASGMT.length + 1,
-    name: hw.name,
-    type: hw.type,
-    due: hw.due,
-    submissions: 0,
-    total: 20
-  };
-  TEACHER_ASGMT.unshift(newAsgmt);
-  
-  // Add to shared localStorage homework assignments database
-  const list = JSON.parse(localStorage.getItem('alimun:assigned_homeworks') || '[]');
-  list.unshift(hw);
-  localStorage.setItem('alimun:assigned_homeworks', JSON.stringify(list));
-  
-  closeModal();
-  if (typeof vAssignments === 'function') {
-    vAssignments();
-  }
-  alert(`Homework "${hw.name}" assigned to all cohort students successfully!`);
+  // Persist to Supabase — one assignment row per active cohort so
+  // every enrolled student sees it on their dashboard.
+  (async () => {
+    try {
+      const sb = window.currentTeacher.supabase;
+      const teacherId = window.currentTeacher.profile.id;
+      const activeCohorts = (DB_COHORTS || []).filter(c => ['open','full'].includes(c.status));
+
+      if (activeCohorts.length === 0) {
+        alert('Create a classroom first — assignments are given to a class of students.');
+        return;
+      }
+
+      // Parse the due date if the custom form provided one
+      const dueInput = document.getElementById('cust-hw-due')?.value || null;
+      const dueDate = dueInput || new Date(Date.now() + 3*24*60*60*1000).toISOString().slice(0, 10);
+
+      const rows = activeCohorts.map(c => ({
+        cohort_id: c.id,
+        teacher_id: teacherId,
+        title: hw.name,
+        type: ['Homework','Essay','Speaking','Grammar','Vocabulary','Writing'].includes(hw.type) ? hw.type : 'Homework',
+        prompt: hw.prompt,
+        due_date: dueDate,
+        min_words: hw.minWords || 20
+      }));
+
+      const { error } = await sb.from('assignments').insert(rows);
+      if (error) throw error;
+
+      await initTeacherData();
+      closeModal();
+      if (typeof vAssignments === 'function') vAssignments();
+      alert(`Homework "${hw.name}" assigned to ${activeCohorts.length > 1 ? 'all your classes' : 'your class'} successfully!`);
+    } catch (e) {
+      console.error('Failed to save assignment:', e);
+      alert('Failed to assign homework: ' + e.message);
+    }
+  })();
 }
 
 function vSessions(){
@@ -1842,7 +1897,7 @@ function vSessions(){
         <div class="s-title" style="font-size:1.25rem;">${nextSession.topic}</div>
         <div class="s-meta" style="margin:1rem 0;"><span>${nextSession.students} ${dict.teacher_stats_students || 'students registered'}</span><span>60 ${dict.student_min || 'min'}</span></div>
         <div style="display:flex;gap:.5rem;">
-          ${nextSession.daily_room_url ? `<a href="#" onclick="handleTeacherJoin('${nextSession.daily_room_url}', '${nextSession.id}'); return false;" class="btn sm" data-i18n="teacher_action_start">${dict.teacher_action_start || 'Start session'}</a>` : `<button class="btn sm" disabled title="Daily.co room is provisioned 30 mins before the session starts.">${dict.teacher_action_start || 'Start session'}</button>`}
+          <a href="#" onclick="handleTeacherJoin('${nextSession.daily_room_url || ''}', '${nextSession.id}'); return false;" class="btn sm" data-i18n="teacher_action_start">${dict.teacher_action_start || 'Start session'}</a>
           <button class="btn ghost sm" data-i18n="teacher_btn_prepare_notes">${dict.teacher_btn_prepare_notes || 'Prepare notes'}</button>
         </div>
       </div>
@@ -1850,7 +1905,7 @@ function vSessions(){
   } else {
     upcomingHtml = `
       <div class="card dark" style="padding:2.25rem; text-align:center; color:rgba(255,255,255,0.5); display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:160px;">
-        <p style="font-size:.9rem; font-style:italic;">No upcoming sessions scheduled.</p>
+        <p style="font-size:.9rem; font-style:italic;" data-i18n="teacher_no_upcoming_sessions">No upcoming sessions scheduled.</p>
       </div>
     `;
   }
@@ -1869,12 +1924,13 @@ function vSessions(){
   `).join('');
 
   if (SESSIONS.length === 0) {
-    historyHtml = `<div style="font-size:.84rem; color:rgba(0,0,0,0.35); font-style:italic; text-align:center; padding:3rem 0;">No sessions found.</div>`;
+    historyHtml = `<div style="font-size:.84rem; color:rgba(0,0,0,0.35); font-style:italic; text-align:center; padding:3rem 0;">${t('teacher_no_sessions_found','No sessions found.')}</div>`;
   }
 
   document.getElementById('content').innerHTML=`
     <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.75rem;">
       <div><h1 class="pg-h1" data-i18n="teacher_sb_sessions">${dict.teacher_sb_sessions || 'Sessions'}</h1><p class="pg-sub">${cohortDescText}</p></div>
+      <button class="btn sm" onclick="openCreateClassroomModal()">+ ${t('teacher_create_classroom', 'Create classroom')}</button>
     </div>
     <div class="g2 mb" style="align-items:start;">
       <div>
@@ -2001,22 +2057,19 @@ async function initTeacherData() {
           } catch(e) {}
         }
 
-        const pendingGrades = JSON.parse(localStorage.getItem('alimun:pending_grades') || '[]');
-        const sub = pendingGrades.find(p => p.studentId === s.id);
-
         return {
           id: s.id,
           n: s.full_name,
           i: s.full_name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),
           lvl: s.level,
           pct: pct,
-          active: Math.random() > 0.3 ? 'Today' : 'Yesterday',
+          active: 'Recently',
           streak: streak,
-          sub: sub ? sub.title : null,
-          subType: sub ? sub.type : null,
-          subText: sub ? sub.submissionText : null,
-          subTime: sub ? (sub.submittedAt || 'Just now') : null,
-          hwId: sub ? sub.hwId : null,
+          sub: null,
+          subType: null,
+          subText: null,
+          subTime: null,
+          hwId: null,
           studentId: s.id
         };
       });
@@ -2075,36 +2128,111 @@ async function initTeacherData() {
         };
       });
     } else {
-      STUDENTS = defaultStudents;
-      SESSIONS = defaultSessions;
+      // No cohorts yet — show real empty states, not demo data
+      STUDENTS = [];
+      SESSIONS = [];
     }
 
-    // 4. Update Homework Assignments list from localStorage
-    const assigned = JSON.parse(localStorage.getItem('alimun:assigned_homeworks') || '[]');
-    const localAsgmts = assigned.map((hw) => {
-      const pendingGrades = JSON.parse(localStorage.getItem('alimun:pending_grades') || '[]');
-      const gradedHws = JSON.parse(localStorage.getItem('alimun:graded_homeworks') || '{}');
-      
-      const submissionsCount = pendingGrades.filter(p => p.hwId === hw.id).length + 
-                               Object.keys(gradedHws).filter(k => k.split(':')[1] === hw.id).length;
-                               
-      return {
-        id: hw.id,
-        name: hw.name,
-        type: hw.type,
-        due: hw.due || 'In 3 days',
-        submissions: submissionsCount,
-        total: STUDENTS.length || 20
-      };
-    });
+    // 4. Load assignments + submissions from Supabase
+    TEACHER_ASGMT = [];
+    PENDING_SUBS = [];
+    if (DB_COHORTS.length > 0) {
+      const cohortIds = DB_COHORTS.map(c => c.id);
 
-    TEACHER_ASGMT = [...localAsgmts, ...defaultTeacherAsgmts];
+      const { data: assignments, error: asgError } = await sb
+        .from('assignments')
+        .select('id, title, type, prompt, due_date, created_at, cohort_id, assignment_submissions ( id, status )')
+        .in('cohort_id', cohortIds)
+        .order('created_at', { ascending: false });
+
+      if (asgError) throw asgError;
+
+      TEACHER_ASGMT = (assignments || []).map(a => ({
+        id: a.id,
+        name: a.title,
+        type: a.type,
+        due: a.due_date ? ('Due: ' + getLocaleString(new Date(a.due_date), { day: 'numeric', month: 'short' })) : 'No due date',
+        submissions: (a.assignment_submissions || []).length,
+        total: STUDENTS.length || 0
+      }));
+
+      // Pending submissions → grading queue
+      const { data: pendingSubs, error: subsError } = await sb
+        .from('assignment_submissions')
+        .select('id, submission_text, submitted_at, student_id, assignment_id, student_profiles ( id, full_name, level ), assignments!inner ( id, title, type, cohort_id )')
+        .eq('status', 'pending')
+        .in('assignments.cohort_id', cohortIds)
+        .order('submitted_at', { ascending: true });
+
+      if (subsError) throw subsError;
+      PENDING_SUBS = pendingSubs || [];
+
+      // Attach the oldest pending submission to each student row
+      STUDENTS.forEach(st => {
+        const sub = PENDING_SUBS.find(p => p.student_id === st.id);
+        if (sub) {
+          st.sub = sub.assignments?.title || 'Submission';
+          st.subType = sub.assignments?.type || 'Homework';
+          st.subText = sub.submission_text;
+          st.subTime = getLocaleString(new Date(sub.submitted_at), { day: 'numeric', month: 'short' }) + ' · ' + getLocaleTimeString(new Date(sub.submitted_at), { hour: '2-digit', minute: '2-digit' });
+          st.hwId = sub.assignment_id;
+          st.submissionId = sub.id;
+        }
+      });
+
+      // 5. Real analytics from exercise_results (last 30 days)
+      CLASS_ANALYTICS = { byCat: {}, total: 0, activeStudents: 0 };
+      try {
+        const studentIds = STUDENTS.map(s => s.id);
+        if (studentIds.length > 0) {
+          const since = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+          const { data: results, error: resError } = await sb
+            .from('exercise_results')
+            .select('student_id, category, score, created_at')
+            .in('student_id', studentIds)
+            .gte('created_at', since)
+            .order('created_at', { ascending: false })
+            .limit(2000);
+          if (resError) throw resError;
+
+          const perStudent = {};
+          const perCat = {};
+          const activeSet = new Set();
+          const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+
+          (results || []).forEach(r => {
+            (perStudent[r.student_id] = perStudent[r.student_id] || []).push(r.score);
+            (perCat[r.category] = perCat[r.category] || []).push(r.score);
+            if (new Date(r.created_at).getTime() >= weekAgo) activeSet.add(r.student_id);
+          });
+
+          // Per-student overall % from real results (fallback: keep default)
+          STUDENTS.forEach(st => {
+            const scores = perStudent[st.id];
+            if (scores && scores.length) {
+              st.pct = Math.round(scores.reduce((a, b) => a + b, 0) / scores.length);
+              st.exCount = scores.length;
+            }
+            st.active = activeSet.has(st.id) ? 'Today' : st.active;
+          });
+
+          Object.keys(perCat).forEach(cat => {
+            const arr = perCat[cat];
+            CLASS_ANALYTICS.byCat[cat] = Math.round(arr.reduce((a, b) => a + b, 0) / arr.length);
+          });
+          CLASS_ANALYTICS.total = (results || []).length;
+          CLASS_ANALYTICS.activeStudents = activeSet.size;
+        }
+      } catch (e) {
+        console.warn('exercise_results analytics unavailable:', e.message);
+      }
+    }
 
   } catch (e) {
     console.error("Failed to load teacher dashboard data:", e);
-    STUDENTS = defaultStudents;
-    SESSIONS = defaultSessions;
-    TEACHER_ASGMT = defaultTeacherAsgmts;
+    STUDENTS = STUDENTS || [];
+    SESSIONS = SESSIONS || [];
+    TEACHER_ASGMT = TEACHER_ASGMT || [];
   }
 }
 
@@ -2485,6 +2613,166 @@ async function deleteAvailabilitySlot(slotId) {
 
 
 /* ══════════════════════════════════════════════════════
+   CLASSROOM (COHORT) CREATION — driven by availability
+   ══════════════════════════════════════════════════════ */
+const DAY_NAMES = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+async function openCreateClassroomModal() {
+  try {
+    const sb = window.currentTeacher.supabase;
+    const teacherId = window.currentTeacher.profile.id;
+
+    const { data: slots, error } = await sb
+      .from('teacher_availability')
+      .select('*')
+      .eq('teacher_id', teacherId)
+      .order('day_of_week');
+    if (error) throw error;
+
+    if (!slots || slots.length === 0) {
+      openModal(`
+        <div class="m-hd"><div class="m-ey">Create classroom</div><div class="m-title">Set your availability first</div></div>
+        <div class="m-bd">
+          <p style="font-size:.9rem;line-height:1.6;color:#555;">Classrooms are scheduled inside your weekly availability. Add at least one availability slot, then come back here.</p>
+          <div style="margin-top:1.25rem;display:flex;gap:.625rem;">
+            <button class="btn" onclick="closeModal();nav('availability');" data-i18n="teacher_go_to_availability">Go to Availability</button>
+            <button class="btn out" onclick="closeModal()">${t('teacher_cancel','Cancel')}</button>
+          </div>
+        </div>`);
+      return;
+    }
+
+    window._availSlots = slots;
+    const teacherLangs = window.currentTeacher.profile.languages || [];
+    const langOptions = (teacherLangs.length ? teacherLangs : ['Spanish','French','German','Italian','Portuguese','English','Arabic','Mandarin'])
+      .map(l => `<option value="${l}">${l}</option>`).join('');
+
+    // Sessions are 60 min: a day is offered only if a slot fits one
+    const availableDays = [...new Set(slots.map(s => s.day_of_week))];
+    const dayChecks = availableDays.map(d => `
+      <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(0,0,0,.1);border-radius:8px;cursor:pointer;font-size:.84rem;">
+        <input type="checkbox" class="cc-day" value="${DAY_NAMES[d]}" data-day="${d}" onchange="refreshClassroomTimes()"> ${DAY_NAMES[d]}
+      </label>`).join('');
+
+    openModal(`
+      <div class="m-hd"><div class="m-ey">New classroom</div><div class="m-title">Create Classroom</div></div>
+      <div class="m-bd" style="display:flex;flex-direction:column;gap:1rem;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;">
+          <div><label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_language">Language</label>
+            <select id="cc-language" style="width:100%;padding:.625rem;border:1px solid rgba(0,0,0,.12);border-radius:8px;font-family:inherit;">${langOptions}</select></div>
+          <div><label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_cefr_level">CEFR Level</label>
+            <select id="cc-level" style="width:100%;padding:.625rem;border:1px solid rgba(0,0,0,.12);border-radius:8px;font-family:inherit;">
+              ${['A1','A2','B1','B2','C1','C2'].map(l=>`<option>${l}</option>`).join('')}</select></div>
+          <div><label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="teacher_lbl_goal_track">Goal track</label>
+            <select id="cc-goal" style="width:100%;padding:.625rem;border:1px solid rgba(0,0,0,.12);border-radius:8px;font-family:inherit;">
+              ${['foundations','relocation','academic','professional','pleasure'].map(g=>`<option value="${g}">${g.charAt(0).toUpperCase()+g.slice(1)}</option>`).join('')}</select></div>
+          <div><label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_tier">Tier</label>
+            <select id="cc-tier" style="width:100%;padding:.625rem;border:1px solid rgba(0,0,0,.12);border-radius:8px;font-family:inherit;">
+              <option value="community">Community (35 max)</option>
+              <option value="focused" selected>Focused (17 max)</option>
+              <option value="intensive">Intensive (6 max)</option>
+              <option value="private">Private (1:1)</option></select></div>
+        </div>
+        <div><label class="lbl" style="display:block;margin-bottom:6px;">Days (from your availability)</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">${dayChecks}</div></div>
+        <div><label class="lbl" style="display:block;margin-bottom:6px;">Session time (60 min, must fit your slots)</label>
+          <select id="cc-time" style="width:100%;padding:.625rem;border:1px solid rgba(0,0,0,.12);border-radius:8px;font-family:inherit;">
+            <option value="">Select days first…</option></select></div>
+        <div><label class="lbl" style="display:block;margin-bottom:6px;">Description (optional)</label>
+          <textarea id="cc-desc" rows="2" style="width:100%;padding:.625rem;border:1px solid rgba(0,0,0,.12);border-radius:8px;font-family:inherit;resize:none;" placeholder="e.g. Conversational focus with weekly writing practice"></textarea></div>
+        <div style="display:flex;gap:.625rem;justify-content:flex-end;">
+          <button class="btn out" onclick="closeModal()">${t('teacher_cancel','Cancel')}</button>
+          <button class="btn" id="cc-submit" onclick="submitCreateClassroom()" data-i18n="teacher_create_classroom_btn">Create classroom</button>
+        </div>
+        <div id="cc-error" style="color:#dc2626;font-size:.8rem;"></div>
+      </div>`);
+  } catch (e) {
+    console.error(e);
+    alert('Could not load your availability: ' + e.message);
+  }
+}
+
+// Offer only start times (on the half hour) where a full 60-minute
+// session fits inside an availability slot on EVERY selected day.
+function refreshClassroomTimes() {
+  const slots = window._availSlots || [];
+  const checked = [...document.querySelectorAll('.cc-day:checked')].map(c => parseInt(c.dataset.day));
+  const sel = document.getElementById('cc-time');
+  if (checked.length === 0) {
+    sel.innerHTML = '<option value="">Select days first…</option>';
+    return;
+  }
+  const toMin = t => { const [h,m] = t.split(':').map(Number); return h*60+(m||0); };
+  const fmt = m => `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
+
+  let common = null;
+  checked.forEach(day => {
+    const daySlots = slots.filter(s => s.day_of_week === day);
+    const times = new Set();
+    daySlots.forEach(s => {
+      for (let t = Math.ceil(toMin(s.start_time)/30)*30; t + 60 <= toMin(s.end_time); t += 30) times.add(t);
+    });
+    common = common === null ? times : new Set([...common].filter(t => times.has(t)));
+  });
+
+  const list = [...(common || [])].sort((a,b)=>a-b);
+  sel.innerHTML = list.length
+    ? list.map(t => `<option value="${fmt(t)}">${fmt(t)} – ${fmt(t+60)}</option>`).join('')
+    : '<option value="" data-i18n="teacher_no_common_time">No common time fits all selected days</option>';
+}
+
+async function submitCreateClassroom() {
+  const errEl = document.getElementById('cc-error');
+  errEl.textContent = '';
+  const days = [...document.querySelectorAll('.cc-day:checked')].map(c => c.value);
+  const time = document.getElementById('cc-time').value;
+
+  if (days.length === 0) { errEl.textContent = 'Pick at least one day.'; return; }
+  if (!time) { errEl.textContent = 'Pick a session time that fits your availability.'; return; }
+
+  const btn = document.getElementById('cc-submit');
+  btn.disabled = true; btn.textContent = 'Creating…';
+
+  try {
+    const sb = window.currentTeacher.supabase;
+    const { data: { session } = {} } = await sb.auth.getSession();
+
+    const resp = await fetch('/api/create-cohort', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session?.access_token || ''}`
+      },
+      body: JSON.stringify({
+        language: document.getElementById('cc-language').value,
+        level: document.getElementById('cc-level').value,
+        goal_track: document.getElementById('cc-goal').value,
+        tier: document.getElementById('cc-tier').value,
+        description: document.getElementById('cc-desc').value.trim() || null,
+        schedule_days: days,
+        schedule_time: time,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+      })
+    });
+
+    const data = await resp.json();
+    if (!resp.ok) throw new Error(data.error || 'Classroom creation failed');
+
+    closeModal();
+    await initTeacherData();
+    nav('sessions');
+    alert(`Classroom created! ${data.sessionsGenerated || 0} sessions scheduled over the next 12 weeks.${data.warning ? '\n\nNote: ' + data.warning : ''}`);
+  } catch (e) {
+    console.error(e);
+    errEl.textContent = e.message;
+    btn.disabled = false; btn.textContent = 'Create classroom';
+  }
+}
+window.openCreateClassroomModal = openCreateClassroomModal;
+window.refreshClassroomTimes = refreshClassroomTimes;
+window.submitCreateClassroom = submitCreateClassroom;
+
+/* ══════════════════════════════════════════════════════
    STUDENT PROGRESS DETAILS & FEEDBACK LOGGING
    ══════════════════════════════════════════════════════ */
 async function openStudentProfileModal(studentId) {
@@ -2592,7 +2880,7 @@ async function openStudentProfileModal(studentId) {
           <div class="lbl" style="margin-bottom:8px;">Add Progress Note</div>
           <div style="display:flex;flex-direction:column;gap:8px;">
             <textarea id="new-feedback-text" placeholder="Add study guidance, focus points, or achievements..." style="width:100%;height:60px;padding:10px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:13px;resize:none;outline:none;background:#FAFAFA;"></textarea>
-            <button class="join-btn" style="font-size:11px;padding:6px 12px;align-self:flex-end;cursor:pointer;" onclick="submitStudentFeedback('${studentId}')">Save Note</button>
+            <button class="join-btn" style="font-size:11px;padding:6px 12px;align-self:flex-end;cursor:pointer;" onclick="submitStudentFeedback('${studentId}')" data-i18n="btn_save_note">Save Note</button>
           </div>
         </div>
 
@@ -2701,7 +2989,7 @@ function openWriteNotesModal(sessionId) {
   const modalHtml = `
     <div class="m-hd">
       <div class="m-ey">Cohort: ${session.cohort?.language || ''} ${session.cohort?.level || ''}</div>
-      <div class="m-title">Write Session Notes</div>
+      <div class="m-title">${t('teacher_write_session_notes','Write Session Notes')}</div>
     </div>
     <div class="m-bd" style="max-height: 70vh; overflow-y: auto; padding-top: 0.5rem;">
       <form id="session-notes-form" onsubmit="submitSessionNotes(event, '${sessionId}')">
@@ -2712,38 +3000,38 @@ function openWriteNotesModal(sessionId) {
         </div>
         
         <div class="field-row">
-          <label for="grammar-title">Grammar Focus Title</label>
+          <label for="grammar-title" data-i18n="teacher_lbl_grammar_focus_title">Grammar Focus Title</label>
           <input type="text" id="grammar-title" placeholder="e.g. Subjuntivo Presente introduction" required />
         </div>
         
         <div class="field-row">
-          <label for="grammar-explanation">Grammar Explanation</label>
+          <label for="grammar-explanation" data-i18n="teacher_lbl_grammar_explanation">Grammar Explanation</label>
           <textarea id="grammar-explanation" placeholder="Provide a brief explanation/rules of the grammar focus..." required style="min-height: 80px;"></textarea>
         </div>
         
         <div class="field-row">
-          <label for="exercises-done">Exercises Done</label>
+          <label for="exercises-done" data-i18n="teacher_lbl_exercises_done">Exercises Done</label>
           <textarea id="exercises-done" placeholder="Describe what activities the group practiced..." required style="min-height: 80px;"></textarea>
         </div>
         
         <div class="field-row">
-          <label for="homework-text">Homework Assignment</label>
+          <label for="homework-text" data-i18n="teacher_lbl_homework_assignment">Homework Assignment</label>
           <textarea id="homework-text" placeholder="Detail the homework assignment..." required style="min-height: 80px;"></textarea>
         </div>
         
         <div class="field-row">
-          <label for="homework-due-date">Homework Due Date</label>
+          <label for="homework-due-date" data-i18n="teacher_lbl_homework_due_date">Homework Due Date</label>
           <input type="date" id="homework-due-date" value="${nextDateStr}" required />
         </div>
         
         <div class="field-row">
-          <label for="teacher-note">Personal Note to Cohort</label>
+          <label for="teacher-note" data-i18n="teacher_lbl_personal_note">Personal Note to Cohort</label>
           <textarea id="teacher-note" placeholder="1-3 encouraging sentences to the class..." required style="min-height: 80px;"></textarea>
         </div>
         
         <div style="display: flex; gap: 0.75rem; margin-top: 1.5rem; justify-content: flex-end;">
-          <button type="button" class="btn out" onclick="closeModal()">Cancel</button>
-          <button type="submit" class="btn" id="notes-submit-btn">Publish Notes</button>
+          <button type="button" class="btn out" onclick="closeModal()">${t('teacher_cancel','Cancel')}</button>
+          <button type="submit" class="btn" id="notes-submit-btn" data-i18n="teacher_publish_notes">Publish Notes</button>
         </div>
       </form>
     </div>
@@ -2879,7 +3167,36 @@ const TRANSCRIPTIONS = {
 
 async function handleTeacherJoin(roomUrl, sessionId) {
   currentSessionId = sessionId;
-  
+
+  // Ask the server for the room + an owner meeting token.
+  // Rooms are private; joining without a token fails.
+  let joinUrl = roomUrl, joinToken = null;
+  try {
+    const sb = window.currentTeacher.supabase;
+    const { data: { session } = {} } = await sb.auth.getSession();
+    const resp = await fetch('/api/join-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session?.access_token || ''}`
+      },
+      body: JSON.stringify({ sessionId })
+    });
+    const data = await resp.json();
+    if (!resp.ok) {
+      alert(data.error || 'Could not open the classroom. Please try again.');
+      return;
+    }
+    joinUrl = data.url;
+    joinToken = data.token;
+  } catch (e) {
+    console.warn('join-session API unavailable, falling back to direct room URL:', e);
+    if (!joinUrl) {
+      alert('Could not open the classroom. Please try again closer to the session start.');
+      return;
+    }
+  }
+
   if (callFrame) {
     callFrame.destroy();
   }
@@ -2901,7 +3218,7 @@ async function handleTeacherJoin(roomUrl, sessionId) {
     showFullscreenButton: true
   });
 
-  await callFrame.join({ url: roomUrl });
+  await callFrame.join(joinToken ? { url: joinUrl, token: joinToken } : { url: joinUrl });
 
   // Initialize classroom features
   startSessionTimer();
@@ -3226,10 +3543,18 @@ window.submitSessionNotes = submitSessionNotes;
   });
 
   // ─ 2. Session check ─────────────────────────────────────────────────────────
-  const { data: { session } } = await _sb.auth.getSession();
+  let { data: { session } } = await _sb.auth.getSession();
+
+  // Localhost-only design preview: /teacher-dashboard.html?preview=1
+  const isLocalPreview = ['localhost','127.0.0.1'].includes(window.location.hostname)
+    && new URLSearchParams(window.location.search).has('preview');
+  if (isLocalPreview && (!session || !session.user?.user_metadata?.role)) {
+    session = { user: { id: 'preview-user', email: 'preview@alimun.com',
+      user_metadata: { role: 'teacher', full_name: 'Sarah Thompson' } } };
+  }
 
   if (!session) {
-    window.location.href = 'signin.html';
+    window.location.href = '../signin.html';
     return;
   }
 
@@ -3242,14 +3567,19 @@ window.submitSessionNotes = submitSessionNotes;
   }
 
   // ─ 4. Teacher profile status check ────────────────────────────────────────
-  const { data: profile } = await _sb
+  let { data: profile } = await _sb
     .from('teacher_profiles')
     .select('*')
     .eq('user_id', session.user.id)
     .single();
 
+  if (!profile && isLocalPreview) {
+    profile = { id: 'preview-teacher', full_name: 'Sarah Thompson',
+      location: 'Madrid, Spain', languages: ['Spanish'], status: 'approved' };
+  }
+
   if (!profile || profile.status !== 'approved') {
-    window.location.href = 'signin.html';
+    window.location.href = '../signin.html';
     return;
   }
 
@@ -3277,7 +3607,7 @@ window.submitSessionNotes = submitSessionNotes;
   // ─ 6. Wire sign-out ─────────────────────────────────────────────────────────
   window.__teacherSignOut = async function() {
     await _sb.auth.signOut();
-    window.location.href = 'signin.html';
+    window.location.href = '../signin.html';
   };
 
   // ─ 7. Fetch dynamic data & Boot dashboard ───────────────────────────────────
@@ -3294,8 +3624,9 @@ window.submitSessionNotes = submitSessionNotes;
       }
     } catch (e) { /* silent — non-critical background refresh */ }
   }, 5 * 60 * 1000);
-})();
+})().catch(e => {
+  console.error('[Teacher Dashboard] Boot failed:', e);
+});
 </script>
-
-
-</body></html>
+</body>
+</html>

@@ -93,6 +93,49 @@ module.exports = async function handler(req, res) {
   }
 
   try {
+    // 3b. Validate the schedule against the teacher's availability
+    //     Every chosen day/time must fall inside one of the teacher's
+    //     weekly availability slots (sessions last 60 minutes).
+    const { data: slots, error: slotsError } = await supabase
+      .from('teacher_availability')
+      .select('day_of_week, start_time, end_time')
+      .eq('teacher_id', teacher.id);
+
+    if (slotsError) throw slotsError;
+
+    if (!slots || slots.length === 0) {
+      return res.status(400).json({
+        error: 'No availability configured. Add your weekly availability before creating a classroom.'
+      });
+    }
+
+    const DAY_INDEX = {
+      sunday: 0, monday: 1, tuesday: 2, wednesday: 3,
+      thursday: 4, friday: 5, saturday: 6
+    };
+    const toMinutes = (t) => {
+      const [h, m] = String(t).split(':').map(Number);
+      return h * 60 + (m || 0);
+    };
+    const sessionStart = toMinutes(schedule_time);
+    const sessionEnd = sessionStart + 60;
+
+    const unavailableDays = schedule_days.filter((dayName) => {
+      const dayIdx = DAY_INDEX[String(dayName).trim().toLowerCase()];
+      if (dayIdx === undefined) return true;
+      return !slots.some((s) =>
+        s.day_of_week === dayIdx
+        && toMinutes(s.start_time) <= sessionStart
+        && sessionEnd <= toMinutes(s.end_time)
+      );
+    });
+
+    if (unavailableDays.length > 0) {
+      return res.status(400).json({
+        error: `Schedule conflicts with your availability on: ${unavailableDays.join(', ')}. Sessions are 60 minutes and must fit inside an availability slot.`
+      });
+    }
+
     // 4. Enforce active cohort limit (< 4 active cohorts)
     const { count, error: countError } = await supabase
       .from('cohorts')

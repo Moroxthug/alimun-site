@@ -1,4 +1,6 @@
-<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
 <meta charset="utf-8">
 <title>Dashboard — Alimun</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -13,21 +15,27 @@
 </script>
 <script src="../js/translations.js"></script>
 <script src="../js/i18n.js"></script>
-<link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=JetBrains+Mono:wght@400;600;700&amp;display=swap" rel="stylesheet">
-<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet">
 <style>
 /* ── TOKENS ─────────────────────────────────────────── */
+@font-face {
+  font-family: 'Coolvetica Condensed';
+  src: url('../fonts/coolvetica-condensed-rg.otf') format('opentype');
+  font-weight: 400 700;
+  font-display: swap;
+}
 :root {
-  --bg:      #F3F3EF;
+  --bg:      #F8F8F8;
   --card:    #FFFFFF;
   --card-bd: rgba(0,0,0,.07);
   --sh:      0 1px 3px rgba(0,0,0,.06), 0 6px 20px rgba(0,0,0,.05);
   --sh-sm:   0 1px 2px rgba(0,0,0,.06), 0 2px 8px rgba(0,0,0,.04);
   --r:       12px;
-  --sb:      #0D0D0D;
-  --sb-bd:   rgba(255,255,255,.07);
-  --sb-txt:  #F0F0F0;
-  --sb-dim:  rgba(255,255,255,.38);
+  --sb:      #EEEEEC;                 /* light "darker white" sidebar */
+  --sb-bd:   rgba(8,8,8,.09);
+  --sb-txt:  #0A0A0A;
+  --sb-dim:  rgba(8,8,8,.55);
   --lime:    #CEFF65;
   --lime-d:  #9BCB00;
   --ora:     #F97316;
@@ -37,7 +45,7 @@
   --bd:      rgba(0,0,0,.08);
   --ok:      #16A34A;
   --err:     #DC2626;
-  --anton:   'Anton', sans-serif;
+  --anton:   'Coolvetica Condensed', 'Anton', sans-serif;
   --mono:    'JetBrains Mono', monospace;
   --sans:    'Satoshi', system-ui, sans-serif;
 }
@@ -87,7 +95,6 @@ input::placeholder,textarea::placeholder{color:var(--dim);}
   height: 60px;
   max-width: 160px;
   width: auto;
-  filter: brightness(0) invert(1);
   display: block;
   margin-bottom: 24px;
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), height 0.3s;
@@ -102,7 +109,7 @@ input::placeholder,textarea::placeholder{color:var(--dim);}
   display: none;
   font-family: var(--anton);
   font-size: 24px;
-  color: var(--lime);
+  color: #1a443c;
   text-align: center;
   margin-bottom: 20px;
   line-height: 1;
@@ -130,7 +137,7 @@ input::placeholder,textarea::placeholder{color:var(--dim);}
 }
 .sb-level {
   font-size: 11px;
-  color: var(--lime);
+  color: #4c6600;
   font-family: var(--mono);
   margin-top: 2px;
   font-weight: 600;
@@ -147,17 +154,19 @@ nav {
   padding: 14px 0;
 }
 .nav-btn {
-  width: 100%;
+  width: calc(100% - 20px);
+  margin: 2px 10px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 9px 24px;
+  padding: 9px 14px;
   background: transparent;
   border: none;
   color: var(--sb-dim);
   font-size: 13px;
   font-family: var(--sans);
-  font-weight: 400;
+  font-weight: 500;
   text-align: left;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1), padding 0.22s;
   white-space: nowrap;
@@ -167,20 +176,20 @@ nav {
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .nav-btn.active {
-  background: var(--lime);
-  color: var(--txt);
+  background: var(--txt);
+  color: var(--lime);
   font-weight: 700;
 }
 .nav-btn:hover {
   color: var(--sb-txt);
-  background: rgba(255,255,255,.05);
+  background: rgba(255,255,255,.7);
 }
 .nav-btn:hover svg {
   transform: scale(1.1) translateX(2px);
 }
 .nav-btn.active:hover {
-  background: var(--lime);
-  color: var(--txt);
+  background: var(--txt);
+  color: var(--lime);
 }
 .nav-btn.active:hover svg {
   transform: scale(1.1);
@@ -215,7 +224,7 @@ nav {
 }
 .sb-foot-btn:hover {
   color: var(--sb-txt);
-  background: rgba(255,255,255,.05);
+  background: rgba(255,255,255,.7);
 }
 #sb.col .sb-foot-btn {
   font-size: 0 !important;
@@ -1009,7 +1018,30 @@ nav {
     padding: 8px;
     display: flex;
     align-items: center;
- <body>
+    justify-content: center;
+    border-radius: 8px;
+  }
+  #sb {
+    position: fixed;
+    left: -240px;
+    top: 0;
+    bottom: 0;
+    z-index: 120;
+    transition: left .25s cubic-bezier(.4,0,.2,1);
+  }
+  #sb.open { left: 0; }
+  .mobile-sb-overlay.open {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.4);
+    z-index: 110;
+  }
+  .sb-tgl { display: none; }
+}
+</style>
+</head>
+<body>
 <div id="app">
 <div class="mobile-sb-overlay" id="sb-overlay"></div>
 
@@ -1017,7 +1049,7 @@ nav {
 <aside id="sb">
   <div class="sb-inner">
     <div class="sb-head">
-      <img class="sb-logo" src="images/alimun.svg" alt="Alimun">
+      <img class="sb-logo" src="../images/alimun.svg" alt="Alimun">
       <div class="sb-logo-compact">A</div>
       <div class="sb-user">
         <div class="av sb-av" id="sb-av" style="background:#3B1F6A;width:36px;height:36px;font-size:11px;">SC</div>
@@ -1081,7 +1113,7 @@ nav {
   <button class="mobile-hdr-btn" id="mobile-hamburger">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
-  <img class="mobile-hdr-logo" src="images/alimun.svg" alt="Alimun">
+  <img class="mobile-hdr-logo" src="../images/alimun.svg" alt="Alimun">
   <div style="width:36px; height:36px; border-radius:50%; background:#3B1F6A; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11px; font-weight:700; color:#fff;" id="mobile-hdr-av">SC</div>
 </header>
 
@@ -1153,27 +1185,27 @@ nav {
   </style>
 
   <!-- Enrolled View -->
-  </head><body><div id="home-enrolled-view" style="display:none; flex-direction:column; gap:20px;">
+  <div id="home-enrolled-view" style="display:none; flex-direction:column; gap:20px;">
     <!-- Stats row -->
     <!-- DATA: replace with Supabase query: SELECT streak, weekly_avg, exercises_done, exercises_total, cohort_rank FROM student_stats WHERE student_id = $1 -->
     <div class="card no-pad" style="display:flex;">
       <div class="stat-cell">
-        <div class="lbl" style="margin-bottom:8px;">Streak</div>
+        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_streak">Streak</div>
         <div class="stat-val" data-metric="streak">14 days</div>
       </div>
       <div class="vdiv"></div>
       <div class="stat-cell">
-        <div class="lbl" style="margin-bottom:8px;">Weekly avg</div>
+        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_weekly_avg">Weekly avg</div>
         <div class="stat-val" data-metric="weekly-avg">87%</div>
       </div>
       <div class="vdiv"></div>
       <div class="stat-cell">
-        <div class="lbl" style="margin-bottom:8px;">Exercises</div>
+        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_exercises">Exercises</div>
         <div class="stat-val" data-metric="exercises">24 / 30</div>
       </div>
       <div class="vdiv"></div>
       <div class="stat-cell">
-        <div class="lbl" style="margin-bottom:8px;">Cohort rank</div>
+        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_cohort_rank">Cohort rank</div>
         <div class="stat-val" data-metric="rank">#3</div>
       </div>
     </div>
@@ -1191,16 +1223,18 @@ nav {
         <div class="nc-goal-badge" id="nc-goal-badge" style="display:none;"></div>
       </div>
       <div class="nc-right">
-        <button class="join-btn" id="join-class-btn" disabled="" style="opacity:0.5;cursor:not-allowed;" title="Opens 10 min before session">
-          Join Class
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        <button class="join-btn" id="join-class-btn" disabled
+          style="opacity:0.5;cursor:not-allowed;"
+          title="Opens 10 min before session">
+          <span data-i18n="student_join_class">Join Class</span>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </button>
         <div id="join-btn-label" style="font-size:10px;color:var(--dim);text-align:center;margin-top:6px;font-family:var(--mono);">Opens 10 min before</div>
       </div>
     </div>
     <!-- Empty state when no session is scheduled -->
     <div class="card no-pad" id="no-session-card" style="display:none;">
-      <div class="nc-empty-state">No sessions scheduled yet.<br>Your teacher will set up sessions soon.</div>
+      <div class="nc-empty-state" data-i18n-html="student_no_sessions">No sessions scheduled yet.<br>Your teacher will set up sessions soon.</div>
     </div>
 
     <!-- Bottom row: schedule + right column -->
@@ -1222,7 +1256,7 @@ nav {
         <!-- Activity chart -->
         <!-- DATA: replace with Supabase query: SELECT day_of_week, sessions_attended FROM weekly_activity WHERE student_id = $1 AND week_start = date_trunc('week', NOW()) -->
         <div class="card">
-          <div class="lbl" style="margin-bottom:16px;">This week</div>
+          <div class="lbl" style="margin-bottom:16px;" data-i18n="student_this_week">This week</div>
           <div class="week-bars" id="week-bars"></div>
           <div style="display:flex;gap:6px;margin-top:6px;" id="week-days"></div>
         </div>
@@ -1230,7 +1264,7 @@ nav {
         <!-- Your teacher card -->
         <!-- DATA: replace with Supabase query: SELECT teachers.name, teachers.bio, teachers.sessions_count, teachers.feedback_count, teachers.note FROM cohort_members JOIN teachers ON ... WHERE cohort_members.student_id = $1 AND cohort_members.role = 'teacher' -->
         <div class="card teacher-card" style="flex:1;">
-          <div class="lbl" style="margin-bottom:16px;">Your teacher</div>
+          <div class="lbl" style="margin-bottom:16px;" data-i18n="student_your_teacher">Your teacher</div>
           <div class="av-wrap" onclick="openTeacherProfileModal()" style="cursor:pointer; display:flex; gap:14px; align-items:center; margin-bottom:16px;">
             <div class="av" style="background:#3B1F6A;width:48px;height:48px;font-size:16px;">M</div>
             <div>
@@ -1242,21 +1276,21 @@ nav {
           <div class="teacher-stats">
             <div>
               <div class="teacher-stat-n" data-field="teacher-sessions">48</div>
-              <div class="teacher-stat-l">Sessions</div>
+              <div class="teacher-stat-l" data-i18n="student_teacher_sessions">Sessions</div>
             </div>
             <div>
               <div class="teacher-stat-n" data-field="teacher-feedbacks">5.0</div>
-              <div class="teacher-stat-l">Rating</div>
+              <div class="teacher-stat-l" data-i18n="student_teacher_rating">Rating</div>
             </div>
           </div>
-          <button class="join-btn" onclick="openExtraClassPaywall()" style="width:100%;margin-top:16px;justify-content:center;font-size:12px;padding:8px 16px;">Book 1-on-1 Class</button>
-          <button class="join-btn" onclick="openCohortSwitchModal()" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;padding:8px 16px;background:#FFF;border:1px solid var(--bd);color:var(--txt);cursor:pointer;">Change Class / Cohort</button>
+          <button class="join-btn" onclick="openExtraClassPaywall()" style="width:100%;margin-top:16px;justify-content:center;font-size:12px;padding:8px 16px;" data-i18n="student_book_1on1">Book 1-on-1 Class</button>
+          <button class="join-btn" onclick="openCohortSwitchModal()" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;padding:8px 16px;background:#FFF;border:1px solid var(--bd);color:var(--txt);cursor:pointer;" data-i18n="student_change_cohort">Change Class / Cohort</button>
         </div>
 
         <!-- Recent activity -->
         <!-- DATA: replace with Supabase query: SELECT action, subject, created_at FROM activity_log WHERE student_id = $1 ORDER BY created_at DESC LIMIT 3 -->
         <div class="card">
-          <div class="lbl" style="margin-bottom:12px;">Recent activity</div>
+          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_recent_activity">Recent activity</div>
           <div id="activity-list" style="display:flex;flex-direction:column;gap:10px;"></div>
         </div>
 
@@ -1270,8 +1304,8 @@ nav {
     <div class="card" style="padding: 24px; border-bottom: 2px solid var(--lime);">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
         <div>
-          <h1 style="font-family:var(--anton); font-size:32px; text-transform:uppercase; margin:0 0 4px 0; color:var(--txt); letter-spacing:-0.02em;">Class Discovery</h1>
-          <p style="font-size:13px; color:var(--dim); margin:0;">Find a class cohort matching your language goals and schedule preferences.</p>
+          <h1 style="font-family:var(--anton); font-size:32px; text-transform:uppercase; margin:0 0 4px 0; color:var(--txt); letter-spacing:-0.02em;" data-i18n="student_class_discovery">Class Discovery</h1>
+          <p style="font-size:13px; color:var(--dim); margin:0;" data-i18n="student_discovery_sub">Find a class cohort matching your language goals and schedule preferences.</p>
         </div>
         <div style="background:var(--bg); border:1px solid var(--bd); border-radius:8px; padding:10px 14px; font-size:12px; color:var(--txt); display:flex; gap:16px;">
           <div>🗣️ Target: <strong id="discovery-target-lang">-</strong></div>
@@ -1287,28 +1321,28 @@ nav {
       <div style="display:flex; gap:20px; flex-wrap:wrap; align-items:center;">
         <!-- Level adjacent filter toggle -->
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:500; color:var(--txt);">
-          <input type="checkbox" id="filter-adjacent" checked="" onchange="toggleDiscoveryFilter('adjacentLevels')" style="accent-color:var(--lime); width:16px; height:16px;">
-          Include adjacent levels (Stretch/Review)
+          <input type="checkbox" id="filter-adjacent" checked onchange="toggleDiscoveryFilter('adjacentLevels')" style="accent-color:var(--lime); width:16px; height:16px;">
+          <span data-i18n="student_filter_adjacent">Include adjacent levels (Stretch/Review)</span>
         </label>
 
         <!-- Goal track toggle -->
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:500; color:var(--txt);">
           <input type="checkbox" id="filter-all-goals" onchange="toggleDiscoveryFilter('showAllGoals')" style="accent-color:var(--lime); width:16px; height:16px;">
-          Show all goal tracks
+          <span data-i18n="student_filter_all_goals">Show all goal tracks</span>
         </label>
       </div>
 
       <!-- Schedule filter (days of week multi-select) -->
       <div>
-        <div style="font-size:11.5px; color:var(--dim); margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;">Filter by Available Days:</div>
+        <div style="font-size:11.5px; color:var(--dim); margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;" data-i18n="student_filter_days">Filter by Available Days:</div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="day-chip" id="chip-Monday" onclick="toggleDayFilter('Monday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;">Monday</button>
-          <button class="day-chip" id="chip-Tuesday" onclick="toggleDayFilter('Tuesday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;">Tuesday</button>
-          <button class="day-chip" id="chip-Wednesday" onclick="toggleDayFilter('Wednesday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;">Wednesday</button>
-          <button class="day-chip" id="chip-Thursday" onclick="toggleDayFilter('Thursday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;">Thursday</button>
-          <button class="day-chip" id="chip-Friday" onclick="toggleDayFilter('Friday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;">Friday</button>
-          <button class="day-chip" id="chip-Saturday" onclick="toggleDayFilter('Saturday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;">Saturday</button>
-          <button class="day-chip" id="chip-Sunday" onclick="toggleDayFilter('Sunday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;">Sunday</button>
+          <button class="day-chip" id="chip-Monday" onclick="toggleDayFilter('Monday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_monday">Monday</button>
+          <button class="day-chip" id="chip-Tuesday" onclick="toggleDayFilter('Tuesday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_tuesday">Tuesday</button>
+          <button class="day-chip" id="chip-Wednesday" onclick="toggleDayFilter('Wednesday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_wednesday">Wednesday</button>
+          <button class="day-chip" id="chip-Thursday" onclick="toggleDayFilter('Thursday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_thursday">Thursday</button>
+          <button class="day-chip" id="chip-Friday" onclick="toggleDayFilter('Friday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_friday">Friday</button>
+          <button class="day-chip" id="chip-Saturday" onclick="toggleDayFilter('Saturday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_saturday">Saturday</button>
+          <button class="day-chip" id="chip-Sunday" onclick="toggleDayFilter('Sunday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_sunday">Sunday</button>
         </div>
       </div>
     </div>
@@ -1318,7 +1352,7 @@ nav {
       <!-- Cards rendered dynamically -->
     </div>
   </div>
-
+</div>
 
 <!-- ── LIVE ── -->
 <div id="v-live" class="view">
@@ -1327,7 +1361,7 @@ nav {
     <div style="max-width:460px;width:100%;">
       <div class="lbl" style="margin-bottom:20px;text-align:center;">● Starting soon</div>
       <div style="text-align:center;font-family:var(--mono);font-size:56px;font-weight:800;color:var(--txt);letter-spacing:-0.04em;margin-bottom:4px;" id="live-count">02:14:39</div>
-      <div style="text-align:center;font-size:13px;color:var(--dim);margin-bottom:32px;">until class begins</div>
+      <div style="text-align:center;font-size:13px;color:var(--dim);margin-bottom:32px;" data-i18n="student_until_class_begins">until class begins</div>
       <div class="card" style="margin-bottom:20px;">
         <div style="display:flex;gap:16px;align-items:center;margin-bottom:20px;">
           <div class="av" style="background:#3B1F6A;width:52px;height:52px;font-size:18px;" id="live-teacher-av">M</div>
@@ -1338,7 +1372,7 @@ nav {
         </div>
         <div class="hdiv"></div>
         <div style="margin-top:20px;">
-          <div class="lbl" style="margin-bottom:12px;">Today's vocabulary</div>
+          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_todays_vocab">Today's vocabulary</div>
           <div class="vocab-row"><span class="vocab-fr">le subjonctif</span><span class="vocab-en">subjunctive mood</span></div>
           <div class="vocab-row"><span class="vocab-fr">bien que</span><span class="vocab-en">although</span></div>
           <div class="vocab-row"><span class="vocab-fr">il faut que</span><span class="vocab-en">it's necessary that</span></div>
@@ -1347,8 +1381,8 @@ nav {
       </div>
       <div style="text-align:center;font-size:12px;color:var(--dim);font-family:var(--mono);margin-bottom:16px;" id="live-waiting-count">8 / 12 classmates waiting</div>
       <button onclick="enterClass()" style="width:100%;padding:15px 0;background:var(--lime);color:var(--txt);border:none;border-radius:10px;font-family:var(--sans);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;">
-        Join Video Class
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+        <span data-i18n="student_join_video_class">Join Video Class</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
     </div>
   </div>
@@ -1373,16 +1407,16 @@ nav {
           <div class="cc-msg"><div class="cc-sender">Marie</div><div class="cc-bubble teacher">Savoir → que je sache. Pouvoir → que je puisse.</div></div>
         </div>
         <div style="padding:10px;border-top:1px solid rgba(255,255,255,.07);">
-          <div class="cc-input"><input type="text" placeholder="Message..."><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></div>
+          <div class="cc-input"><input type="text" placeholder="Message..."><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></div>
         </div>
       </div>
     </div>
     <div class="controls">
-      <button class="ctrl-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"></path><path d="M19 10v2a7 7 0 01-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg></button>
-      <button class="ctrl-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></button>
-      <button class="ctrl-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 00-2-2v0a2 2 0 00-2 2v0"></path><path d="M14 10.5V4a2 2 0 00-2-2v0a2 2 0 00-2 2v7"></path><path d="M10 10.5V6a2 2 0 00-2-2v0a2 2 0 00-2 2v8.5"></path><path d="M6 14v-1a4 4 0 014-4h.5"></path><path d="M8 21v-4a2 2 0 012-2h4a2 2 0 012 2v4"></path><path d="M6 21h12"></path></svg></button>
+      <button class="ctrl-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"/><path d="M19 10v2a7 7 0 01-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg></button>
+      <button class="ctrl-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></button>
+      <button class="ctrl-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 00-2-2v0a2 2 0 00-2 2v0"/><path d="M14 10.5V4a2 2 0 00-2-2v0a2 2 0 00-2 2v7"/><path d="M10 10.5V6a2 2 0 00-2-2v0a2 2 0 00-2 2v8.5"/><path d="M6 14v-1a4 4 0 014-4h.5"/><path d="M8 21v-4a2 2 0 012-2h4a2 2 0 012 2v4"/><path d="M6 21h12"/></svg></button>
       <div class="ctrl-div"></div>
-      <button class="leave-btn" onclick="leaveClass()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7 2 2 0 011.72 2v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.42 19.42 0 013.43 9.19 19.79 19.79 0 01.36 0.5a2 2 0 012-2.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.68 6l.01.01"></path><line x1="23" y1="1" x2="1" y2="23"></line></svg> Leave</button>
+      <button class="leave-btn" onclick="leaveClass()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7 2 2 0 011.72 2v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.42 19.42 0 013.43 9.19 19.79 19.79 0 01.36 0.5a2 2 0 012-2.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.68 6l.01.01"/><line x1="23" y1="1" x2="1" y2="23"/></svg> Leave</button>
     </div>
   </div>
 </div>
@@ -1392,8 +1426,8 @@ nav {
   <div class="cal-header">
     <div class="cal-month-label" id="cal-label">APRIL 2026</div>
     <div class="cal-nav-btns">
-      <button class="cal-nb" onclick="calNav(-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
-      <button class="cal-nb" onclick="calNav(1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
+      <button class="cal-nb" onclick="calNav(-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg></button>
+      <button class="cal-nb" onclick="calNav(1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></button>
     </div>
   </div>
   <!-- DATA: event type colors from typeColor map in source -->
@@ -1423,6 +1457,10 @@ nav {
     </div>
     <div class="prog-bar-wrap"><div class="prog-bar-fill" id="ex-bar" style="width:40%;"></div></div>
     <div style="font-family:var(--mono);font-size:12px;color:var(--dim);" id="ex-pct">40% done</div>
+    <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;">
+      <button id="btn-placement" onclick="startPlacementTest()" style="display:none;background:#fff;border:1px solid var(--bd);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;" data-i18n="student_ex_placement">Placement test</button>
+      <button id="btn-generate-ex" onclick="generateNewExercises()" style="background:var(--lime);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;" data-i18n="student_ex_generate">✨ New exercises</button>
+    </div>
   </div>
   <div class="ex-tabs" id="ex-tabs"></div>
   <div class="card no-pad" id="ex-list"></div>
@@ -1459,12 +1497,12 @@ nav {
   <div style="display:flex;justify-content:space-between;align-items:center;">
     <div>
       <div style="font-family:var(--anton);font-size:22px;color:var(--txt);letter-spacing:.04em;">TESTS</div>
-      <div style="font-size:12px;color:var(--dim);margin-top:4px;">Practice &amp; Exam Results</div>
+      <div style="font-size:12px;color:var(--dim);margin-top:4px;">Practice & Exam Results</div>
     </div>
     <div style="display:flex;align-items:center;gap:16px;">
       <svg width="88" height="88" viewBox="0 0 88 88" class="ring-svg">
-        <circle cx="44" cy="44" r="34" fill="none" stroke="var(--bd)" stroke-width="5"></circle>
-        <circle cx="44" cy="44" r="34" fill="none" stroke="var(--lime)" stroke-width="5" stroke-dasharray="142.6 213.6" stroke-dashoffset="53.4" stroke-linecap="round"></circle>
+        <circle cx="44" cy="44" r="34" fill="none" stroke="var(--bd)" stroke-width="5"/>
+        <circle cx="44" cy="44" r="34" fill="none" stroke="var(--lime)" stroke-width="5" stroke-dasharray="142.6 213.6" stroke-dashoffset="53.4" stroke-linecap="round"/>
         <text x="44" y="50" text-anchor="middle" fill="var(--txt)" font-size="16">68%</text>
       </svg>
       <div>
@@ -1484,7 +1522,7 @@ nav {
           <div style="font-family:var(--mono);font-size:11px;color:var(--dim);">30 min</div>
           <div style="font-family:var(--mono);font-size:11px;color:var(--dim);">25 Q</div>
         </div>
-        <button onclick="document.querySelector('.quiz-body').scrollIntoView({behavior:'smooth'})" style="padding:11px 20px;background:var(--lime);color:var(--txt);border:none;border-radius:8px;font-family:var(--sans);font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;">Start Practice <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg></button>
+        <button onclick="document.querySelector('.quiz-body').scrollIntoView({behavior:'smooth'})" style="padding:11px 20px;background:var(--lime);color:var(--txt);border:none;border-radius:8px;font-family:var(--sans);font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;">Start Practice <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></button>
       </div>
       <div class="card no-pad">
         <div class="quiz-head"><span class="quiz-q-meta">Practice Question</span><span class="quiz-timer" style="color:var(--dim);">Self-paced</span></div>
@@ -1522,7 +1560,7 @@ nav {
     <div class="chat-ft">
       <div class="chat-input-wrap">
         <input id="chat-in" type="text" placeholder="Message the class..." onkeydown="if(event.key==='Enter')sendChatMsg()">
-        <button class="chat-send" onclick="sendChatMsg()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button>
+        <button class="chat-send" onclick="sendChatMsg()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg></button>
       </div>
     </div>
   </div>
@@ -1538,16 +1576,16 @@ nav {
       <div class="lbl" style="margin-bottom:16px;">Profile Details</div>
       <div style="display:flex;flex-direction:column;gap:16px;">
         <div class="field-row">
-          <label class="lbl" style="display:block;margin-bottom:6px;">Full Name</label>
-          <input type="text" id="settings-name" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
+          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_full_name">Full Name</label>
+          <input type="text" id="settings-name" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;" />
         </div>
         <div class="field-row">
-          <label class="lbl" style="display:block;margin-bottom:6px;">Email Address</label>
-          <input type="email" id="settings-email" disabled="" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#F0F0F0;color:var(--dim);">
+          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_email_address">Email Address</label>
+          <input type="email" id="settings-email" disabled style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#F0F0F0;color:var(--dim);" />
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="field-row">
-            <label class="lbl" style="display:block;margin-bottom:6px;">Learning Language</label>
+            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_learning_language">Learning Language</label>
             <select id="settings-lang" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
               <option value="Spanish">Spanish</option>
               <option value="French">French</option>
@@ -1555,7 +1593,7 @@ nav {
             </select>
           </div>
           <div class="field-row">
-            <label class="lbl" style="display:block;margin-bottom:6px;">Current Level</label>
+            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_current_level">Current Level</label>
             <select id="settings-level" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
               <option value="A1">A1</option>
               <option value="A2">A2</option>
@@ -1568,45 +1606,45 @@ nav {
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="field-row">
-            <label class="lbl" style="display:block;margin-bottom:6px;">Timezone</label>
-            <input type="text" id="settings-timezone" placeholder="e.g. Europe/Rome" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
+            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_timezone">Timezone</label>
+            <input type="text" id="settings-timezone" placeholder="e.g. Europe/Rome" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;" />
           </div>
           <div class="field-row">
-            <label class="lbl" style="display:block;margin-bottom:6px;">Preferred Time Window</label>
+            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_preferred_time">Preferred Time Window</label>
             <div style="display:flex;gap:6px;align-items:center;">
-              <input type="time" id="settings-time-start" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
+              <input type="time" id="settings-time-start" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;" />
               <span style="font-size:12px;color:var(--dim);">to</span>
-              <input type="time" id="settings-time-end" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
+              <input type="time" id="settings-time-end" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;" />
             </div>
           </div>
         </div>
         <div class="field-row">
-          <label class="lbl" style="display:block;margin-bottom:6px;">Preferred Days</label>
+          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_preferred_days">Preferred Days</label>
           <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt);cursor:pointer;">
-              <input type="checkbox" class="settings-day-check" value="1"> Mon
+              <input type="checkbox" class="settings-day-check" value="1" /> Mon
             </label>
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt);cursor:pointer;">
-              <input type="checkbox" class="settings-day-check" value="2"> Tue
+              <input type="checkbox" class="settings-day-check" value="2" /> Tue
             </label>
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt);cursor:pointer;">
-              <input type="checkbox" class="settings-day-check" value="3"> Wed
+              <input type="checkbox" class="settings-day-check" value="3" /> Wed
             </label>
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt);cursor:pointer;">
-              <input type="checkbox" class="settings-day-check" value="4"> Thu
+              <input type="checkbox" class="settings-day-check" value="4" /> Thu
             </label>
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt);cursor:pointer;">
-              <input type="checkbox" class="settings-day-check" value="5"> Fri
+              <input type="checkbox" class="settings-day-check" value="5" /> Fri
             </label>
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt);cursor:pointer;">
-              <input type="checkbox" class="settings-day-check" value="6"> Sat
+              <input type="checkbox" class="settings-day-check" value="6" /> Sat
             </label>
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt);cursor:pointer;">
-              <input type="checkbox" class="settings-day-check" value="0"> Sun
+              <input type="checkbox" class="settings-day-check" value="0" /> Sun
             </label>
           </div>
         </div>
-        <button class="join-btn" onclick="saveSettings()" style="width:fit-content;margin-top:8px;">Save Profile</button>
+        <button class="join-btn" onclick="saveSettings()" style="width:fit-content;margin-top:8px;" data-i18n="student_save_profile">Save Profile</button>
       </div>
     </div>
     
@@ -1624,12 +1662,12 @@ nav {
     
     <!-- Sign Out -->
     <div>
-      <button class="join-btn" onclick="window.__signOut &amp;&amp; window.__signOut()" style="background:#FFF;border:1px solid #dc2626;color:#dc2626;">Sign Out</button>
+      <button class="join-btn" onclick="window.__signOut && window.__signOut()" style="background:#FFF;border:1px solid #dc2626;color:#dc2626;" data-i18n="btn_sign_out">Sign Out</button>
     </div>
   </div>
 </div>
 
- <!-- Close #main wrapper -->
+</main> <!-- Close #main wrapper -->
 
 <!-- ── CLASSROOM CONTAINER ─────────────────────────── -->
 <div id="live-incall" class="classroom-container">
@@ -1641,10 +1679,10 @@ nav {
     </div>
     <div class="classroom-actions">
       <button class="class-action-btn" id="classroom-toggle-size" title="Toggle Size" onclick="toggleClassroomSize()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"></path></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
       </button>
       <button class="class-action-btn leave-btn" id="classroom-leave-btn" onclick="leaveClass()">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
         <span data-i18n="student_class_leave">Leave</span>
       </button>
     </div>
@@ -1658,7 +1696,7 @@ nav {
     <div class="classroom-chat-panel collapsed" id="classroom-chat-panel">
       <div class="chat-toggle-header" onclick="toggleChatExpanded()">
         <span data-i18n="student_class_chat">Class Chat</span>
-        <svg id="chat-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
+        <svg id="chat-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
       </div>
       <div class="chat-messages-container" id="classroom-chat-messages">
         <!-- Messages will go here dynamically -->
@@ -1666,7 +1704,7 @@ nav {
       <div class="chat-input-row">
         <input type="text" id="classroom-chat-input" placeholder="Type a message..." onkeydown="handleChatKey(event)">
         <button onclick="sendChatMessage()" class="chat-send-btn">
-          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
         </button>
       </div>
     </div>
@@ -1675,23 +1713,23 @@ nav {
   <!-- Utility / Multi-button Tools Row -->
   <div class="classroom-tools-row">
     <button class="tool-btn active" data-tab="transcription" onclick="switchClassroomTab('transcription')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
       <span data-i18n="tool_transcription">Transcription</span>
     </button>
     <button class="tool-btn" data-tab="files" onclick="switchClassroomTab('files')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
       <span data-i18n="tool_files">Files</span>
     </button>
     <button class="tool-btn" onclick="triggerDailyScreenShare()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
       <span data-i18n="tool_screenshare">Screen Share</span>
     </button>
     <button class="tool-btn" onclick="takeClassroomScreenshot()">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
       <span data-i18n="tool_screenshot">Screenshot</span>
     </button>
     <button class="tool-btn" data-tab="interactive" onclick="switchClassroomTab('interactive')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
       <span data-i18n="tool_interactive">Whiteboard</span>
     </button>
   </div>
@@ -1707,8 +1745,8 @@ nav {
     <div id="tab-files" class="tab-pane">
       <div class="files-container">
         <div class="file-upload-zone" id="file-dropzone" onclick="document.getElementById('file-upload-input').click()">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <p data-i18n="file_drag_drop">Drag &amp; drop files here, or click to upload</p>
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <p data-i18n="file_drag_drop">Drag & drop files here, or click to upload</p>
           <input type="file" id="file-upload-input" style="display:none" onchange="uploadClassroomFile(this)">
         </div>
         <div class="shared-files-list" id="shared-files-list">
@@ -1759,7 +1797,7 @@ const RECENT_ACTIVITY = [
   ['Essay Submission', 'Graded and reviewed', '4 days ago']
 ];
 
-window.__signOut = async()=>{if(SB)await SB.auth.signOut();window.location.href='signin.html';};
+window.__signOut = async()=>{if(SB)await SB.auth.signOut();window.location.href = '../signin.html';};
 
 const defaultVocab = {
   Spanish: [
@@ -2622,6 +2660,11 @@ const EXERCISE_DATABASE = {
 };
 
 let EXERCISES = [];
+// Live classroom state (were implicit globals — reads before first
+// assignment threw ReferenceError and broke navigation)
+let liveSessionActive = false;
+let callFrame = null;
+let currentSessionId = null;
 let SESSION_NOTES = [];
 let PROGRESS_METRICS = [];
 
@@ -2648,9 +2691,18 @@ let VOCAB = [];
 (async()=>{
   const {createClient}=window.supabase;
   SB=createClient(CFG.url,CFG.key,{auth:{autoRefreshToken:true,persistSession:true,storageKey:'alimun-auth'}});
-  const {data:{session}}=await SB.auth.getSession();
-  if(!session){window.location.href='signin.html';return;}
-  
+  let {data:{session}}=await SB.auth.getSession();
+
+  // Localhost-only design preview: /student-dashboard.html?preview=1
+  const isLocalPreview = ['localhost','127.0.0.1'].includes(location.hostname)
+    && new URLSearchParams(location.search).has('preview');
+  if(isLocalPreview && (!session || !session.user?.user_metadata?.role)){
+    session = { user: { id:'preview-user', email:'preview@alimun.com',
+      user_metadata: { role:'student', full_name:'Sofia Chen' } } };
+  }
+
+  if(!session){window.location.href = '../signin.html';return;}
+
   const role=session.user?.user_metadata?.role||'';
   if(role!=='student'){
     window.location.href=role==='teacher'?'teacher-dashboard.html':role==='admin'?'admin.html':'signin.html';
@@ -2690,7 +2742,7 @@ let VOCAB = [];
   init();
 })();
 
-document.getElementById('logout-btn').onclick=async()=>{if(SB)await SB.auth.signOut();window.location.href='signin.html';};
+document.getElementById('logout-btn').onclick=async()=>{if(SB)await SB.auth.signOut();window.location.href = '../signin.html';};
 
 /* ══════════════════════════════════════════════════════
    ROUTER & NAVIGATION
@@ -2721,7 +2773,7 @@ function renderSessionNotes() {
             Published: ${dateStr} &bull; ${vocabCount} vocabulary words &bull; Homework due: ${n.due_date || 'N/A'}
           </div>
         </div>
-        <a href="${n.pdf_url}" target="_blank" class="btn" style="background:var(--lime); color:var(--txt); padding:6px 16px; font-size:11px; text-decoration:none; border-radius:20px; font-weight:700; text-transform:uppercase;">Download PDF</a>
+        <a href="${n.pdf_url}" target="_blank" class="btn" style="background:var(--lime); color:var(--txt); padding:6px 16px; font-size:11px; text-decoration:none; border-radius:20px; font-weight:700; text-transform:uppercase;">${xt('student_download_pdf','Download PDF')}</a>
       </div>
     `;
   }).join('');
@@ -2792,9 +2844,10 @@ function updateCountdowns(){
     if (lc) lc.textContent = t;
   }
 
-  // Join button gating: active if within 10 min of start AND room URL exists
+  // Join button gating: active within 10 min of start. The room itself
+  // is provisioned on demand by /api/join-session, so no URL needed here.
   if (btn) {
-    const canJoin = NEXT_CLASS.dailyRoomUrl && (now >= sessionMs - tenMinMs);
+    const canJoin = NEXT_CLASS.sessionId && (now >= sessionMs - tenMinMs);
     if (canJoin) {
       btn.disabled = false;
       btn.style.opacity = '1';
@@ -2806,12 +2859,8 @@ function updateCountdowns(){
       btn.style.opacity = '0.5';
       btn.style.cursor = 'not-allowed';
       btn.onclick = null;
-      if (!NEXT_CLASS.dailyRoomUrl) {
-        if (btnLbl) btnLbl.textContent = 'Room not yet ready';
-      } else {
-        const minsLeft = Math.ceil((sessionMs - tenMinMs - now) / 60000);
-        if (btnLbl) btnLbl.textContent = minsLeft > 0 ? `Opens in ${minsLeft} min` : 'Opens 10 min before';
-      }
+      const minsLeft = Math.ceil((sessionMs - tenMinMs - now) / 60000);
+      if (btnLbl) btnLbl.textContent = minsLeft > 0 ? `Opens in ${minsLeft} min` : 'Opens 10 min before';
     }
   }
 }
@@ -2856,62 +2905,77 @@ async function initData() {
     };
   });
 
-  const assignedHw = JSON.parse(localStorage.getItem('alimun:assigned_homeworks') || '[]');
-  const gradedHws = JSON.parse(localStorage.getItem('alimun:graded_homeworks') || '{}');
-  const pendingGrades = JSON.parse(localStorage.getItem('alimun:pending_grades') || '[]');
+  // ── Teacher-assigned homework from Supabase ──────────────
+  let hwExs = [];
+  let gradedSubs = [];
+  if (SB && USER.cohort_id) {
+    try {
+      const { data: assignments, error: asgError } = await SB
+        .from('assignments')
+        .select('id, title, type, prompt, due_date, min_words, created_at')
+        .eq('cohort_id', USER.cohort_id)
+        .order('created_at', { ascending: false });
+      if (asgError) throw asgError;
 
-  const hwExs = assignedHw.map(hw => {
-    const gradeInfo = gradedHws[`${USER.id}:${hw.id}`];
-    const isPending = pendingGrades.some(p => p.studentId === USER.id && p.hwId === hw.id);
-    const isSubmitted = isPending || !!gradeInfo;
-    const savedSubmission = localStorage.getItem(`alimun:hw_submission:${USER.id}:${hw.id}`) || '';
+      const { data: mySubs, error: subError } = await SB
+        .from('assignment_submissions')
+        .select('assignment_id, submission_text, status, score, feedback, submitted_at')
+        .eq('student_id', USER.id);
+      if (subError) throw subError;
 
-    return {
-      id: hw.id,
-      title: hw.name,
-      type: hw.type,
-      cat: 'homework',
-      diff: hw.type === 'Essay' ? 4 : hw.type === 'Speaking' ? 3 : 2,
-      time: hw.type === 'Essay' ? '25 min' : hw.type === 'Speaking' ? '5 min' : '10 min',
-      question: hw.prompt,
-      stem: hw.prompt,
-      done: isSubmitted,
-      isHw: true,
-      isPending: isPending,
-      gradedScore: gradeInfo ? gradeInfo.score : null,
-      feedback: gradeInfo ? gradeInfo.feedback : '',
-      userAnswer: savedSubmission,
-      minWords: hw.minWords || 20,
-      correctAnswer: hw.correctAnswer,
-      recorded: hw.type === 'Speaking' && savedSubmission ? true : false
-    };
-  });
+      const subByAsg = {};
+      (mySubs || []).forEach(s => { subByAsg[s.assignment_id] = s; });
+      gradedSubs = (mySubs || []).filter(s => s.status === 'graded');
+
+      hwExs = (assignments || []).map(hw => {
+        const sub = subByAsg[hw.id];
+        const isPending = sub && sub.status === 'pending';
+        const isGraded = sub && sub.status === 'graded';
+        return {
+          id: hw.id,
+          title: hw.title,
+          type: hw.type,
+          cat: 'homework',
+          diff: hw.type === 'Essay' ? 4 : hw.type === 'Speaking' ? 3 : 2,
+          time: hw.type === 'Essay' ? '25 min' : hw.type === 'Speaking' ? '5 min' : '10 min',
+          question: hw.prompt,
+          stem: hw.prompt,
+          due: hw.due_date,
+          done: !!sub,
+          isHw: true,
+          isPending: isPending,
+          gradedScore: isGraded ? sub.score : null,
+          feedback: isGraded ? (sub.feedback || '') : '',
+          userAnswer: sub ? sub.submission_text : '',
+          minWords: hw.min_words || 20,
+          recorded: hw.type === 'Speaking' && sub ? true : false
+        };
+      });
+    } catch (e) {
+      console.error('Failed to load assignments:', e);
+    }
+  }
 
   EXERCISES = [...hwExs, ...dbExs];
 
-  // Process newly graded homeworks into PROGRESS_METRICS
+  // Fold newly graded homework scores into PROGRESS_METRICS
   const addedHwMetrics = JSON.parse(localStorage.getItem(`alimun:added_hw_metrics:${USER.id}`) || '[]');
   let metricsChanged = false;
 
-  Object.keys(gradedHws).forEach(key => {
-    const [studentId, hwId] = key.split(':');
-    if (studentId === USER.id && !addedHwMetrics.includes(hwId)) {
-      const grade = gradedHws[key];
-      const hwInfo = assignedHw.find(h => h.id === hwId);
-      if (grade && hwInfo) {
-        let category = 'Homework';
-        if (hwInfo.type === 'Essay') category = 'Essays';
-        else if (hwInfo.type === 'Speaking') category = 'Speaking';
-
-        const metric = PROGRESS_METRICS.find(m => m.label === category);
-        if (metric) {
-          metric.data.push(grade.score);
-          if (metric.data.length > 8) metric.data.shift();
-          metricsChanged = true;
-        }
-        addedHwMetrics.push(hwId);
-      }
+  gradedSubs.forEach(sub => {
+    if (addedHwMetrics.includes(sub.assignment_id)) return;
+    const hwInfo = hwExs.find(h => h.id === sub.assignment_id);
+    if (!hwInfo || sub.score == null) return;
+    let category = 'Homework';
+    if (hwInfo.type === 'Essay') category = 'Essays';
+    else if (hwInfo.type === 'Speaking') category = 'Speaking';
+    const metric = PROGRESS_METRICS.find(m => m.label === category);
+    if (metric) {
+      metric.data.push(sub.score);
+      if (metric.data.length > 8) metric.data.shift();
+      metricsChanged = true;
     }
+    addedHwMetrics.push(sub.assignment_id);
   });
 
   if (metricsChanged) {
@@ -3319,7 +3383,7 @@ async function initCohortDiscovery() {
   
   // Show loading indicator
   const listEl = document.getElementById('discovery-cohorts-list');
-  if (listEl) listEl.innerHTML = `<div class="loading" style="grid-column:1/-1;">Loading available cohorts...</div>`;
+  if (listEl) listEl.innerHTML = `<div class="loading" style="grid-column:1/-1;">${xt('student_loading_cohorts','Loading available cohorts...')}</div>`;
   
   try {
     const studentLang = USER.profile?.language || 'French';
@@ -3477,7 +3541,7 @@ function renderCohortDiscoveryPage() {
       <div class="card" style="padding:48px; text-align:center; display:flex; flex-direction:column; align-items:center; gap:20px; border: 1.5px dashed var(--bd);">
         <div style="font-size:48px;">🛎️</div>
         <div>
-          <h2 style="font-family:var(--anton); font-size:24px; text-transform:uppercase; margin:0 0 8px 0; color:var(--txt);">No Matching Classes</h2>
+          <h2 style="font-family:var(--anton); font-size:24px; text-transform:uppercase; margin:0 0 8px 0; color:var(--txt);" data-i18n="student_no_matching_classes">No Matching Classes</h2>
           <p style="font-size:13.5px; color:var(--dim); max-width:400px; margin:0 auto; line-height:1.6;">
             We couldn't find any cohorts available for your profile and current filters yet. We'll notify you by email when a matching cohort opens.
           </p>
@@ -3580,9 +3644,9 @@ function renderCohortDiscoveryPage() {
                 <button onclick="closeTeacherPopover('${c.id}')" style="background:transparent; border:none; color:#FFF; font-size:14px; cursor:pointer;">×</button>
               </div>
               <div style="font-size:11px; line-height:1.5; color:#DDD; display:flex; flex-direction:column; gap:6px;">
-                <div>💼 <strong>Specialty:</strong> ${specialty}</div>
-                <div>🗣️ <strong>Languages:</strong> ${langList}</div>
-                <div>🎓 <strong>Delivered:</strong> ${sessions} sessions</div>
+                <div>💼 <strong>${xt('student_specialty','Specialty:')}</strong> ${specialty}</div>
+                <div>🗣️ <strong>${xt('student_languages','Languages:')}</strong> ${langList}</div>
+                <div>🎓 <strong>${xt('student_delivered','Delivered:')}</strong> ${sessions} sessions</div>
                 <div style="font-style:italic; margin-top:4px; color:#AAA; border-top:1px solid rgba(255,255,255,0.05); padding-top:4px;">"${bio}"</div>
               </div>
             </div>
@@ -3613,9 +3677,9 @@ function renderCohortDiscoveryPage() {
           
           <div style="margin-top:8px;">
             ${isFull ? `
-              <button class="join-btn" onclick="joinWaitlist('${c.id}')" style="width:100%; justify-content:center; background:#080808; border:1px solid #080808; color:#FFF; cursor:pointer;">Waitlist</button>
+              <button class="join-btn" onclick="joinWaitlist('${c.id}')" style="width:100%; justify-content:center; background:#080808; border:1px solid #080808; color:#FFF; cursor:pointer;">${xt('student_waitlist_btn','Waitlist')}</button>
             ` : `
-              <button class="join-btn" onclick="joinCohortDirect('${c.id}')" style="width:100%; justify-content:center; cursor:pointer;">Join cohort</button>
+              <button class="join-btn" onclick="joinCohortDirect('${c.id}')" style="width:100%; justify-content:center; cursor:pointer;">${xt('student_join_cohort_btn','Join cohort')}</button>
             `}
           </div>
         </div>
@@ -3649,7 +3713,7 @@ function toggleDayFilter(day) {
 async function optInNotifications() {
   const btn = window.event?.target;
   if (btn) {
-    btn.textContent = 'Opting in...';
+    btn.textContent = window.t('student_opting_in', 'Opting in...');
     btn.disabled = true;
   }
   try {
@@ -3657,19 +3721,19 @@ async function optInNotifications() {
       .from('student_profiles')
       .update({ waitlist_opt_in: true })
       .eq('id', USER.id);
-      
+
     if (error) throw error;
-    
+
     // Update local profile state
     if (USER.profile) USER.profile.waitlist_opt_in = true;
-    
-    alert("Successfully opted in! We'll email you the moment a matching cohort becomes available.");
-    if (btn) btn.innerHTML = '✓ Opted In for Updates';
+
+    alert(window.t('student_opt_in_success', "Successfully opted in! We'll email you the moment a matching cohort becomes available."));
+    if (btn) btn.innerHTML = '✓ ' + window.t('student_opted_in_updates', 'Opted In for Updates');
   } catch(e) {
     console.error(e);
-    alert("Failed to opt in: " + e.message);
+    alert(window.t('student_opt_in_fail', 'Failed to opt in: ') + e.message);
     if (btn) {
-      btn.textContent = 'Notify Me When Available';
+      btn.textContent = window.t('student_notify_when_available', 'Notify Me When Available');
       btn.disabled = false;
     }
   }
@@ -3685,7 +3749,7 @@ async function joinCohortDirect(cohortId) {
   try {
     const { data: { session } } = await SB.auth.getSession();
     if (!session) {
-      window.location.href = 'signin.html';
+      window.location.href = '../signin.html';
       return;
     }
 
@@ -3988,13 +4052,13 @@ function renderCalDetail(){
     const slice = upcoming.slice(0, 5);
     
     if (slice.length > 0) {
-      det.innerHTML=`<div class="lbl" style="margin-bottom:16px;">Coming Up</div>`+
+      det.innerHTML=`<div class="lbl" style="margin-bottom:16px;">${xt('student_coming_up','Coming Up')}</div>`+
         slice.map(item=>`<div class="upcoming-item">
           <div class="up-day" style="color:${TYPE_COLOR[item.ev.type]};">${item.day}</div>
           <div><div class="up-title">${item.ev.title}</div><div class="up-date">${item.dateStr}</div></div>
         </div>`).join('');
     } else {
-      det.innerHTML=`<div class="lbl" style="margin-bottom:16px;">Coming Up</div><div style="font-size:12px;color:var(--dim);text-align:center;padding:20px 0;">No upcoming events</div>`;
+      det.innerHTML=`<div class="lbl" style="margin-bottom:16px;">${xt('student_coming_up','Coming Up')}</div><div style="font-size:12px;color:var(--dim);text-align:center;padding:20px 0;">${xt('student_no_upcoming_events','No upcoming events')}</div>`;
     }
   }
 }
@@ -4044,7 +4108,7 @@ function selectMatchWord(index, side, word) {
       if (state.matched.length === ex.pairs.length) {
         ex.done = true;
         ex.gradedScore = 100;
-        updateProgressCategory(ex.cat, 100);
+        updateProgressCategory(ex.cat, 100, ex);
         saveExerciseState(ex);
         initHome();
         renderProgress();
@@ -4067,10 +4131,10 @@ function chooseMCQ(index, optIndex) {
   ex.done = true;
   if (optIndex === ex.correct) {
     ex.gradedScore = 100;
-    updateProgressCategory(ex.cat, 100);
+    updateProgressCategory(ex.cat, 100, ex);
   } else {
     ex.gradedScore = 0;
-    updateProgressCategory(ex.cat, 0);
+    updateProgressCategory(ex.cat, 0, ex);
   }
   saveExerciseState(ex);
   renderExercises();
@@ -4090,10 +4154,10 @@ function checkFIB(index) {
   const isCorrect = val.toLowerCase() === ex.correctAnswer.toLowerCase();
   if (isCorrect) {
     ex.gradedScore = 100;
-    updateProgressCategory(ex.cat, 100);
+    updateProgressCategory(ex.cat, 100, ex);
   } else {
     ex.gradedScore = 0;
-    updateProgressCategory(ex.cat, 0);
+    updateProgressCategory(ex.cat, 0, ex);
   }
   saveExerciseState(ex);
   renderExercises();
@@ -4125,10 +4189,10 @@ function checkListening(index) {
 
   if (isCorrect) {
     ex.gradedScore = 100;
-    updateProgressCategory(ex.cat, 100);
+    updateProgressCategory(ex.cat, 100, ex);
   } else {
     ex.gradedScore = 0;
-    updateProgressCategory(ex.cat, 0);
+    updateProgressCategory(ex.cat, 0, ex);
   }
   saveExerciseState(ex);
   renderExercises();
@@ -4159,7 +4223,7 @@ function runMockSpeaking(ex, index) {
         ex.gradedScore = 85 + Math.floor(Math.random() * 12);
         ex.feedback = `Pronunciation Score: ${ex.gradedScore}%\nFluency: Excellent. Native-like pacing.\nAccuracy: Good word alignment.\nNote: Make sure to stress the accented vowels. Good job!`;
         
-        updateProgressCategory(ex.cat, ex.gradedScore);
+        updateProgressCategory(ex.cat, ex.gradedScore, ex);
         saveExerciseState(ex);
         renderExercises();
         renderProgress();
@@ -4223,7 +4287,7 @@ function startSpeaking(index) {
         ex.done = true;
         ex.feedback = `Pronunciation Score: ${score}%\nFluency: Good pacing.\nDetected Speech: "${resultText}"\nExpected Speech: "${ex.expectedText || ex.stem}"\n\nNote: ${score >= 80 ? 'Excellent pronunciation!' : 'Try repeating it slowly, paying attention to vowel sounds.'}`;
         
-        updateProgressCategory(ex.cat, score);
+        updateProgressCategory(ex.cat, score, ex);
         saveExerciseState(ex);
         renderProgress();
         initHome();
@@ -4286,28 +4350,44 @@ function submitEssay(index) {
   ex.grading = true;
   ex.userAnswer = val;
   renderExercises();
-  
-  setTimeout(() => {
+
+  (async () => {
+    // AI grading via /api/grade (Gemini). Falls back to a generic
+    // rubric if the API is unavailable.
+    try {
+      const { data: { session } = {} } = await SB.auth.getSession();
+      const uiLang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
+      const resp = await fetch('/api/grade', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session?.access_token || ''}`
+        },
+        body: JSON.stringify({
+          json: true,
+          system: `You are a friendly ${USER.profile?.language || ''} language teacher grading a CEFR ${USER.profile?.level || 'A2'} student's writing. Write feedback in ${({en:'English',it:'Italian',es:'Spanish',fr:'French',de:'German',pt:'Portuguese',zh:'Simplified Chinese',ar:'Arabic',ma:'French'})[uiLang] || 'English'}. Be encouraging but concrete.`,
+          prompt: `Writing prompt: ${ex.stem || ex.question}\nGrading criteria: ${ex.criteria || 'grammar, vocabulary, structure'}\n\nStudent's text:\n"${val}"\n\nRespond ONLY with JSON: {"score": <0-100>, "feedback": "<3-4 sentences: what was good, 1-2 specific corrections, one tip>"}`
+        })
+      });
+      if (!resp.ok) throw new Error('grade API ' + resp.status);
+      const d = await resp.json();
+      const r = JSON.parse(String(d.text).replace(/```json|```/g, '').trim());
+      ex.gradedScore = Math.min(Math.max(Math.round(r.score) || 70, 0), 100);
+      ex.feedback = `Score: ${ex.gradedScore}%\n${r.feedback}`;
+    } catch (e) {
+      console.warn('AI grading unavailable, using generic feedback:', e);
+      ex.gradedScore = 80 + Math.floor(Math.random() * 18);
+      ex.feedback = `Score: ${ex.gradedScore}%\n${xt('student_ex_generic_feedback', 'Good work! Your structure and vocabulary fit your level. Review verb conjugations and small agreement details — your teacher will go deeper in the next session.')}`;
+    }
+
     ex.grading = false;
     ex.done = true;
-    ex.gradedScore = 80 + Math.floor(Math.random() * 18);
-    
-    let feedback = "";
-    if (USER.profile?.language === 'French') {
-      feedback = `Score: ${ex.gradedScore}%\nMarie Dubois (Teacher):\n"Excellent effort! Your use of vocabulary is very appropriate for the CEFR level. Watch your adjective agreements and make sure the verb conjugations align with the subject. Strong structure overall!"`;
-    } else if (USER.profile?.language === 'Spanish') {
-      feedback = `Score: ${ex.gradedScore}%\nTeacher feedback:\n"¡Muy bien hecho! Buen uso de los tiempos verbales. Presta atención a la acentuación de las palabras y al género de los sustantivos. ¡Sigue así!"`;
-    } else {
-      feedback = `Score: ${ex.gradedScore}%\nTeacher feedback:\n"Sehr gut! Gute Satzstruktur und passender Wortschatz. Achten Sie auf die Groß- und Kleinschreibung sowie die richtige Deklination der Adjektive."`;
-    }
-    ex.feedback = feedback;
-    
-    updateProgressCategory(ex.cat, ex.gradedScore);
+    updateProgressCategory(ex.cat, ex.gradedScore, ex);
     saveExerciseState(ex);
     renderExercises();
     renderProgress();
     initHome();
-  }, 2000);
+  })();
 }
 
 function submitHomework(index) {
@@ -4329,29 +4409,33 @@ function submitHomework(index) {
     val = ex.userAnswer || ex.stem;
   }
 
-  localStorage.setItem(`alimun:hw_submission:${USER.id}:${ex.id}`, val);
+  // Persist the submission so the teacher sees it in their grading queue
+  (async () => {
+    try {
+      if (!SB) throw new Error('Not connected');
+      const { error } = await SB
+        .from('assignment_submissions')
+        .upsert({
+          assignment_id: ex.id,
+          student_id: USER.id,
+          submission_text: val,
+          status: 'pending',
+          submitted_at: new Date().toISOString()
+        }, { onConflict: 'assignment_id,student_id' });
+      if (error) throw error;
 
-  const pending = JSON.parse(localStorage.getItem('alimun:pending_grades') || '[]');
-  if (!pending.some(p => p.studentId === USER.id && p.hwId === ex.id)) {
-    pending.unshift({
-      studentId: USER.id,
-      studentName: USER.name,
-      hwId: ex.id,
-      title: ex.title,
-      type: ex.type,
-      submissionText: val,
-      submittedAt: new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) + ' today'
-    });
-    localStorage.setItem('alimun:pending_grades', JSON.stringify(pending));
-  }
+      ex.done = true;
+      ex.isPending = true;
+      ex.userAnswer = val;
 
-  ex.done = true;
-  ex.isPending = true;
-  ex.userAnswer = val;
-
-  renderExercises();
-  initHome();
-  alert("Homework submitted successfully to the teacher!");
+      renderExercises();
+      initHome();
+      alert("Homework submitted successfully to the teacher!");
+    } catch (e) {
+      console.error('Failed to submit homework:', e);
+      alert('Could not submit your homework: ' + e.message);
+    }
+  })();
 }
 
 function saveExerciseState(ex) {
@@ -4364,7 +4448,7 @@ function saveExerciseState(ex) {
   localStorage.setItem(`alimun:completed_exercises:${USER.id}`, JSON.stringify(completed));
 }
 
-function updateProgressCategory(exCat, score) {
+function updateProgressCategory(exCat, score, exInfo) {
   let label = 'Homework';
   if (exCat === 'speaking') {
     label = 'Speaking';
@@ -4379,13 +4463,37 @@ function updateProgressCategory(exCat, score) {
     }
     localStorage.setItem(`alimun:progress_metrics:${USER.id}`, JSON.stringify(PROGRESS_METRICS));
   }
+  // Persist to Supabase so the teacher dashboard analytics see it
+  saveExerciseResult(exCat, score, exInfo);
+}
+
+function saveExerciseResult(category, score, exInfo) {
+  if (!SB || !USER.profile) return; // not signed in / no profile yet
+  const cat = ['grammar','vocabulary','listening','speaking','writing','homework','assessment'].includes(category) ? category : 'grammar';
+  SB.from('exercise_results').insert({
+    student_id: USER.id,
+    category: cat,
+    ex_type: exInfo?.type || null,
+    title: exInfo?.title || null,
+    score: Math.min(Math.max(Math.round(score), 0), 100)
+  }).then(({ error }) => {
+    if (error) console.warn('exercise_results insert failed:', error.message);
+  });
+}
+
+// Small i18n helper for dynamically-built UI
+function xt(key, fallback) {
+  const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
+  return (window.ALIMUN_TRANSLATIONS?.[lang]?.[key])
+    || (window.ALIMUN_TRANSLATIONS?.['en']?.[key])
+    || fallback;
 }
 
 function renderExerciseUI(ex, i) {
   if (ex.isHw) {
     if (ex.type === 'Essay' || ex.type === 'Homework') {
       return `
-        <div class="mcq-q">Instructions:</div>
+        <div class="mcq-q">${xt('student_instructions','Instructions:')}</div>
         <div class="mcq-stem" style="font-family:var(--sans); background: rgba(0,0,0,0.02); padding: 12px 16px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 16px; font-size:14px; line-height:1.6;">
           ${ex.question}
         </div>
@@ -4395,7 +4503,7 @@ function renderExerciseUI(ex, i) {
             <div style="font-weight: 700; color: var(--ora); display: flex; align-items: center; gap: 6px;">
               <span>⏳</span> Pending Teacher Grading
             </div>
-            <div style="font-weight: 600; color: var(--txt); margin-top: 4px;">Your Submission:</div>
+            <div style="font-weight: 600; color: var(--txt); margin-top: 4px;">${xt('student_your_submission','Your Submission:')}</div>
             <div style="font-family: var(--mono); background: #fff; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--bd); max-height: 120px; overflow-y: auto; color: var(--dim); line-height: 1.5;">${ex.userAnswer}</div>
           </div>
         ` : ex.gradedScore !== null ? `
@@ -4404,7 +4512,7 @@ function renderExerciseUI(ex, i) {
               <span>✓ Graded: ${ex.gradedScore}%</span>
             </div>
             <div>
-              <div style="font-weight: 700; color: var(--txt); margin-bottom: 4px;">Your Submission:</div>
+              <div style="font-weight: 700; color: var(--txt); margin-bottom: 4px;">${xt('student_your_submission','Your Submission:')}</div>
               <div style="font-family: var(--mono); background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--bd); max-height: 100px; overflow-y: auto; color: var(--dim); line-height: 1.5;">${ex.userAnswer}</div>
             </div>
             <div style="white-space: pre-line; color: var(--dim); line-height: 1.5; border-top: 1px solid var(--bd); padding-top: 8px; font-family: var(--sans);">${ex.feedback}</div>
@@ -4423,7 +4531,7 @@ function renderExerciseUI(ex, i) {
     
     if (ex.type === 'Speaking') {
       return `
-        <div class="mcq-q">Instructions:</div>
+        <div class="mcq-q">${xt('student_instructions','Instructions:')}</div>
         <div class="mcq-stem" style="font-family:var(--sans); background: rgba(0,0,0,0.02); padding: 12px 16px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 16px; font-size:14px; line-height:1.6;">
           ${ex.question}
         </div>
@@ -4437,12 +4545,12 @@ function renderExerciseUI(ex, i) {
               <span class="pulse-bar" style="animation-delay: 0.4s;"></span>
               <span class="pulse-bar" style="animation-delay: 0.5s;"></span>
             </div>
-            <div style="font-size: 12px; color: var(--ora); font-family: var(--mono); font-weight: 700;">RECORDING... SPEAK NOW</div>
+            <div style="font-size: 12px; color: var(--ora); font-family: var(--mono); font-weight: 700;">${xt('student_recording','RECORDING... SPEAK NOW')}</div>
           </div>
         ` : ex.transcribing ? `
           <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px;">
             <div class="spinner"></div>
-            <div style="font-size: 12px; color: var(--dim); font-family: var(--mono);">Transcribing audio...</div>
+            <div style="font-size: 12px; color: var(--dim); font-family: var(--mono);">${xt('student_transcribing','Transcribing audio...')}</div>
           </div>
         ` : ex.isPending ? `
           <div style="background: rgba(249,115,22,0.04); border: 1px solid rgba(249,115,22,0.2); border-radius: 8px; padding: 14px; font-size: 13px; display: flex; flex-direction: column; gap: 8px;">
@@ -4466,12 +4574,12 @@ function renderExerciseUI(ex, i) {
         ` : ex.recorded ? `
           <div style="display: flex; flex-direction: column; gap: 12px;" onclick="event.stopPropagation();">
             <div style="background: rgba(206,255,101,0.08); border: 1px solid var(--lime); border-radius: 8px; padding: 12px; font-size: 13px;">
-              <div style="font-weight: 700; color: var(--txt); margin-bottom: 4px;">Transcribed Speech:</div>
+              <div style="font-weight: 700; color: var(--txt); margin-bottom: 4px;">${xt('student_transcribed_speech','Transcribed Speech:')}</div>
               <div style="font-family: var(--mono); color: var(--dim);">"${ex.userAnswer}"</div>
             </div>
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
-              <button onclick="startSpeaking(${i});" class="join-btn" style="background:#f5f5f0; color:var(--txt); padding: 8px 16px; font-size: 12px;">Re-record</button>
-              <button onclick="submitHomework(${i});" class="join-btn" style="padding: 8px 16px; font-size: 12px;">Submit Homework</button>
+              <button onclick="startSpeaking(${i});" class="join-btn" style="background:#f5f5f0; color:var(--txt); padding: 8px 16px; font-size: 12px;">${xt('student_re_record','Re-record')}</button>
+              <button onclick="submitHomework(${i});" class="join-btn" style="padding: 8px 16px; font-size: 12px;">${xt('student_submit_homework','Submit Homework')}</button>
             </div>
           </div>
         ` : `
@@ -4485,7 +4593,7 @@ function renderExerciseUI(ex, i) {
               </svg>
             </button>
           </div>
-          <div style="text-align: center; font-size: 11px; color: var(--dim); margin-top: 8px;">Click to record microphone input</div>
+          <div style="text-align: center; font-size: 11px; color: var(--dim); margin-top: 8px;">${xt('student_click_to_record','Click to record microphone input')}</div>
         `}
       `;
     }
@@ -4528,7 +4636,7 @@ function renderExerciseUI(ex, i) {
       ` : `
         <div style="display: flex; gap: 10px; align-items: center;">
           <input type="text" id="fib-input-${i}" placeholder="Type your answer here..." style="flex: 1; padding: 10px 14px; border: 1px solid var(--bd); border-radius: 8px; font-family: var(--sans); font-size: 14px; background: #fff;" onkeydown="if(event.key==='Enter'){checkFIB(${i}); event.stopPropagation();}" onclick="event.stopPropagation();" />
-          <button class="join-btn" onclick="checkFIB(${i}); event.stopPropagation();" style="padding: 10px 18px;">Check</button>
+          <button class="join-btn" onclick="checkFIB(${i}); event.stopPropagation();" style="padding: 10px 18px;">${xt('student_check','Check')}</button>
         </div>
       `}
     `;
@@ -4546,7 +4654,7 @@ function renderExerciseUI(ex, i) {
       ` : `
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px;">
           <div style="display: flex; flex-direction: column; gap: 8px;">
-            <div class="lbl" style="text-align: center; margin-bottom: 4px;">Term</div>
+            <div class="lbl" style="text-align: center; margin-bottom: 4px;">${xt('student_term','Term')}</div>
             ${state.lefts.map(word => {
               const isMatched = state.matched.includes(word);
               const isSelected = state.selectedLeft === word;
@@ -4568,7 +4676,7 @@ function renderExerciseUI(ex, i) {
           </div>
           
           <div style="display: flex; flex-direction: column; gap: 8px;">
-            <div class="lbl" style="text-align: center; margin-bottom: 4px;">Meaning</div>
+            <div class="lbl" style="text-align: center; margin-bottom: 4px;">${xt('student_meaning','Meaning')}</div>
             ${state.rights.map(meaning => {
               const pair = ex.pairs.find(p => p.right === meaning);
               const isMatched = pair && state.matched.includes(pair.left);
@@ -4610,12 +4718,12 @@ function renderExerciseUI(ex, i) {
             <span class="pulse-bar" style="animation-delay: 0.4s;"></span>
             <span class="pulse-bar" style="animation-delay: 0.5s;"></span>
           </div>
-          <div style="font-size: 12px; color: var(--ora); font-family: var(--mono); font-weight: 700;">RECORDING... SPEAK NOW</div>
+          <div style="font-size: 12px; color: var(--ora); font-family: var(--mono); font-weight: 700;">${xt('student_recording','RECORDING... SPEAK NOW')}</div>
         </div>
       ` : ex.transcribing ? `
         <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 10px;">
           <div class="spinner"></div>
-          <div style="font-size: 12px; color: var(--dim); font-family: var(--mono);">Analyzing pronunciation...</div>
+          <div style="font-size: 12px; color: var(--dim); font-family: var(--mono);">${xt('student_analyzing_pronunciation','Analyzing pronunciation...')}</div>
         </div>
       ` : ex.done ? `
         <div style="background: rgba(22,163,74,0.04); border: 1px solid rgba(22,163,74,0.15); border-radius: 8px; padding: 14px; font-size: 13px;">
@@ -4635,7 +4743,7 @@ function renderExerciseUI(ex, i) {
             </svg>
           </button>
         </div>
-        <div style="text-align: center; font-size: 11px; color: var(--dim); margin-top: 8px;">Click to record microphone input</div>
+        <div style="text-align: center; font-size: 11px; color: var(--dim); margin-top: 8px;">${xt('student_click_to_record','Click to record microphone input')}</div>
       `}
     `;
   }
@@ -4648,12 +4756,12 @@ function renderExerciseUI(ex, i) {
       ${ex.grading ? `
         <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 0;">
           <div class="spinner"></div>
-          <div style="font-size: 12px; color: var(--dim); font-family: var(--mono);">Submitting essay to teacher for AI grading...</div>
+          <div style="font-size: 12px; color: var(--dim); font-family: var(--mono);">${xt('student_submitting_essay','Submitting essay to teacher for AI grading...')}</div>
         </div>
       ` : ex.done ? `
         <div style="background: rgba(22,163,74,0.04); border: 1px solid rgba(22,163,74,0.15); border-radius: 8px; padding: 14px; font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
           <div>
-            <div style="font-weight: 700; color: var(--txt); margin-bottom: 4px;">Your Submission:</div>
+            <div style="font-weight: 700; color: var(--txt); margin-bottom: 4px;">${xt('student_your_submission','Your Submission:')}</div>
             <div style="font-family: var(--mono); background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--bd); max-height: 120px; overflow-y: auto; color: var(--dim); line-height: 1.5;">${ex.userAnswer}</div>
           </div>
           <div style="white-space: pre-line; color: var(--dim); line-height: 1.5; border-top: 1px solid var(--bd); padding-top: 8px;">${ex.feedback}</div>
@@ -4663,7 +4771,7 @@ function renderExerciseUI(ex, i) {
           <textarea id="essay-text-${i}" oninput="countEssayWords(${i})" placeholder="Start typing here..." style="width: 100%; height: 120px; padding: 12px; border-radius: 8px; border: 1px solid var(--bd); font-family: var(--sans); font-size: 13px; resize: vertical; background: #fff;"></textarea>
           <div style="display: flex; justify-content: space-between; align-items: center;">
             <span id="essay-count-${i}" style="font-size: 11px; font-family: var(--mono); color: var(--dim);">0 / ${ex.minWords} words</span>
-            <button id="essay-submit-${i}" onclick="submitEssay(${i})" class="join-btn" disabled style="opacity: 0.5; padding: 8px 16px; font-size: 12px;">Submit Essay</button>
+            <button id="essay-submit-${i}" onclick="submitEssay(${i})" class="join-btn" disabled style="opacity: 0.5; padding: 8px 16px; font-size: 12px;">${xt('student_submit_essay','Submit Essay')}</button>
           </div>
         </div>
       `}
@@ -4688,7 +4796,7 @@ function renderExerciseUI(ex, i) {
       ` : `
         <div style="display: flex; gap: 10px; align-items: center;">
           <input type="text" id="fib-input-${i}" placeholder="Type what you hear..." style="flex: 1; padding: 10px 14px; border: 1px solid var(--bd); border-radius: 8px; font-family: var(--sans); font-size: 14px; background: #fff;" onkeydown="if(event.key==='Enter'){checkListening(${i}); event.stopPropagation();}" onclick="event.stopPropagation();" />
-          <button class="join-btn" onclick="checkListening(${i}); event.stopPropagation();" style="padding: 10px 18px;">Check</button>
+          <button class="join-btn" onclick="checkListening(${i}); event.stopPropagation();" style="padding: 10px 18px;">${xt('student_check','Check')}</button>
         </div>
       `}
     `;
@@ -4698,6 +4806,8 @@ function renderExerciseUI(ex, i) {
 }
 
 function renderExercises(){
+  const pb = document.getElementById('btn-placement');
+  if (pb) pb.style.display = placementDone() ? 'none' : '';
   const done=EXERCISES.filter(e=>e.done).length;
   const pct=Math.round(done/EXERCISES.length*100);
   document.getElementById('ex-count').innerHTML=`${done}<span style="font-size:14px;color:var(--dim);font-weight:400;"> / ${EXERCISES.length}</span>`;
@@ -4733,6 +4843,140 @@ function renderExercises(){
 
 function exSetFilter(f){exFilter=f;exExpanded=null;renderExercises();}
 function exToggle(i){exExpanded=exExpanded===i?null:i;renderExercises();}
+
+/* ══════════════════════════════════════════════════════
+   AI EXERCISE GENERATION & PLACEMENT TEST (Gemini)
+══════════════════════════════════════════════════════ */
+async function fetchGeneratedExercises(opts) {
+  const { data: { session } = {} } = await SB.auth.getSession();
+  const resp = await fetch('/api/generate-exercises', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session?.access_token || ''}`
+    },
+    body: JSON.stringify({
+      language: USER.profile?.language || 'Spanish',
+      level: USER.profile?.level || 'A2',
+      uiLang: window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en',
+      ...opts
+    })
+  });
+  const d = await resp.json();
+  if (!resp.ok) throw new Error(d.error || 'Generation failed');
+  return d.exercises;
+}
+
+async function generateNewExercises() {
+  const btn = document.getElementById('btn-generate-ex');
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = xt('student_ex_generating', 'Generating…');
+  try {
+    const fresh = await fetchGeneratedExercises({ count: 6 });
+    const newExs = fresh.map(ex => ({
+      ...ex,
+      done: false, userAnswer: null, gradedScore: null, feedback: ''
+    }));
+    // Prepend after homework items so teacher assignments stay on top
+    const hwCount = EXERCISES.filter(e => e.isHw).length;
+    EXERCISES.splice(hwCount, 0, ...newExs);
+    exFilter = 'all';
+    exExpanded = null;
+    renderExercises();
+  } catch (e) {
+    console.error(e);
+    alert(xt('student_ex_generate_failed', 'Could not generate new exercises right now. Please try again in a moment.'));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = orig;
+  }
+}
+
+/* ── Placement test: 8 questions, sets CEFR level ── */
+let PLACEMENT = null;
+
+function placementDone() {
+  return !!(USER.profile?.level && localStorage.getItem(`alimun:placement_done:${USER.id}`));
+}
+
+async function startPlacementTest() {
+  openModal(`<div style="padding:28px;text-align:center;">
+    <div style="font-family:var(--anton);font-size:22px;text-transform:uppercase;">${xt('student_placement_title', 'Placement Test')}</div>
+    <p style="font-size:13px;color:var(--dim);margin-top:10px;">${xt('student_placement_loading', 'Preparing your questions…')}</p>
+  </div>`);
+  try {
+    const qs = await fetchGeneratedExercises({
+      count: 8,
+      types: ['Multiple Choice'],
+      topic: 'placement assessment — questions must ramp in difficulty from A1 to C1'
+    });
+    PLACEMENT = { qs: qs.filter(q => Array.isArray(q.opts)), idx: 0, correct: 0 };
+    if (PLACEMENT.qs.length < 4) throw new Error('not enough questions');
+    renderPlacementQuestion();
+  } catch (e) {
+    console.error(e);
+    closeModal();
+    alert(xt('student_placement_failed', 'Could not start the placement test right now. Please try again later.'));
+  }
+}
+
+function renderPlacementQuestion() {
+  const q = PLACEMENT.qs[PLACEMENT.idx];
+  openModal(`<div style="padding:26px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <div style="font-family:var(--anton);font-size:18px;text-transform:uppercase;">${xt('student_placement_title', 'Placement Test')}</div>
+      <div style="font-family:var(--mono);font-size:12px;color:var(--dim);">${PLACEMENT.idx + 1} / ${PLACEMENT.qs.length}</div>
+    </div>
+    <div style="font-size:14px;margin-bottom:6px;">${q.question}</div>
+    ${q.stem ? `<div style="font-size:15px;font-weight:600;background:var(--bg);padding:12px;border-radius:10px;margin-bottom:14px;">${q.stem}</div>` : ''}
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      ${q.opts.map((o, i) => `<button onclick="answerPlacement(${i})" style="text-align:left;padding:11px 14px;border:1px solid var(--bd);border-radius:10px;background:#fff;font-size:14px;cursor:pointer;">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}
+    </div>
+  </div>`);
+}
+
+async function answerPlacement(i) {
+  const q = PLACEMENT.qs[PLACEMENT.idx];
+  if (i === q.correct) PLACEMENT.correct++;
+  PLACEMENT.idx++;
+  if (PLACEMENT.idx < PLACEMENT.qs.length) {
+    renderPlacementQuestion();
+    return;
+  }
+
+  // Score → CEFR level
+  const ratio = PLACEMENT.correct / PLACEMENT.qs.length;
+  const level = ratio < 0.25 ? 'A1' : ratio < 0.45 ? 'A2' : ratio < 0.65 ? 'B1' : ratio < 0.8 ? 'B2' : ratio < 0.95 ? 'C1' : 'C2';
+  const scorePct = Math.round(ratio * 100);
+
+  try {
+    if (USER.profile) {
+      const { error } = await SB.from('student_profiles').update({ level }).eq('id', USER.id);
+      if (error) throw error;
+      USER.profile.level = level;
+      const lvlEl = document.getElementById('sb-level');
+      if (lvlEl) lvlEl.textContent = `${level} ${USER.profile.language}`;
+    }
+    saveExerciseResult('assessment', scorePct, { type: 'Placement', title: 'Initial placement test' });
+    localStorage.setItem(`alimun:placement_done:${USER.id}`, level);
+  } catch (e) {
+    console.warn('Could not save placement level:', e);
+  }
+
+  openModal(`<div style="padding:30px;text-align:center;">
+    <div style="font-size:40px;margin-bottom:8px;">🎯</div>
+    <div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;">${xt('student_placement_result', 'Your level')}: ${level}</div>
+    <p style="font-size:13.5px;color:var(--dim);margin:12px 0 18px;">${PLACEMENT.correct} / ${PLACEMENT.qs.length} ${xt('student_placement_correct', 'correct answers')}. ${xt('student_placement_note', 'Your exercises and classes will now match this level.')}</p>
+    <button onclick="closeModal();initData().then(()=>{renderExercises();initHome();});" style="background:var(--lime);color:var(--txt);padding:12px 22px;border-radius:12px;font-weight:700;font-size:14px;">${xt('student_placement_start', 'Start practicing')} →</button>
+  </div>`);
+  const b = document.getElementById('btn-placement');
+  if (b) b.style.display = 'none';
+}
+
+window.generateNewExercises = generateNewExercises;
+window.startPlacementTest = startPlacementTest;
+window.answerPlacement = answerPlacement;
 
 /* ══════════════════════════════════════════════════════
    PROGRESS VIEW
@@ -4903,7 +5147,7 @@ function renderTests(){
   
   let actionHtml = '';
   if (quizAns !== null && !quizCompleted) {
-    actionHtml = `<button onclick="submitQuiz()" class="join-btn" style="margin-top:16px; width:100%; justify-content:center;">Check Answer</button>`;
+    actionHtml = `<button onclick="submitQuiz()" class="join-btn" style="margin-top:16px; width:100%; justify-content:center;">${xt('student_check_answer','Check Answer')}</button>`;
   } else if (quizCompleted) {
     const isCorrect = quizAns === q.correct;
     actionHtml = `
@@ -4912,7 +5156,7 @@ function renderTests(){
           ${isCorrect ? '✓ Correct!' : '✗ Incorrect'}
         </div>
         <div style="color: var(--dim); line-height: 1.5; margin-bottom: 10px;">${q.explanation}</div>
-        <button onclick="resetQuiz()" class="join-btn" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px 12px;">Try Another Question</button>
+        <button onclick="resetQuiz()" class="join-btn" style="width: 100%; justify-content: center; font-size: 12px; padding: 6px 12px;">${xt('student_try_another','Try Another Question')}</button>
       </div>
     `;
   }
@@ -5162,8 +5406,8 @@ function openTierUpgradeModal() {
   
   let modalContent = `
     <div style="padding: 24px 28px 0;">
-      <div class="lbl" style="margin-bottom:4px;">Membership Options</div>
-      <div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:12px;">Upgrade Your Plan</div>
+      <div class="lbl" style="margin-bottom:4px;">${xt('student_membership_options','Membership Options')}</div>
+      <div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:12px;">${xt('student_upgrade_your_plan','Upgrade Your Plan')}</div>
     </div>
     <div style="padding: 0 28px 24px;">
       <p style="font-size: 13px; color: var(--dim); margin-bottom: 20px; line-height: 1.5;">Select a new plan to unlock more live classes, individual guidance, and custom feedback.</p>
@@ -5171,7 +5415,7 @@ function openTierUpgradeModal() {
         ${options.map(o => `
           <div onclick="selectUpgradeTier('${o.id}')" id="up-tier-${o.id}" style="display: flex; justify-content: space-between; align-items: center; padding: 14px 18px; border: 2px solid ${currentTier === o.id ? 'var(--txt)' : 'var(--bd)'}; border-radius: 12px; cursor: pointer; transition: all 0.15s; background: ${currentTier === o.id ? 'rgba(0,0,0,0.01)' : '#fff'};">
             <div>
-              <div style="font-weight: 700; font-size: 14px; color: var(--txt);">${o.name} ${currentTier === o.id ? '<span style="font-size:10px; background: var(--txt); color: #fff; padding: 2px 6px; border-radius: 20px; margin-left: 6px; font-weight: normal; vertical-align: middle;">Current</span>' : ''}</div>
+              <div style="font-weight: 700; font-size: 14px; color: var(--txt);">${o.name} ${currentTier === o.id ? `<span style="font-size:10px; background: var(--txt); color: #fff; padding: 2px 6px; border-radius: 20px; margin-left: 6px; font-weight: normal; vertical-align: middle;">${xt('student_current_badge','Current')}</span>` : ''}</div>
               <div style="font-size: 11px; color: var(--dim); margin-top: 2px;">${o.desc}</div>
             </div>
             <div style="text-align: right; font-weight: 800; font-size: 15px; color: var(--txt);">${o.price}</div>
@@ -5179,8 +5423,8 @@ function openTierUpgradeModal() {
         `).join('')}
       </div>
       <div style="margin-top: 24px; display: flex; gap: 10px; justify-content: flex-end;">
-        <button class="join-btn" style="background:#FFF; border:1px solid var(--bd); color:var(--txt); cursor:pointer;" onclick="closeModal()">Cancel</button>
-        <button class="join-btn" id="btn-confirm-upgrade" onclick="confirmUpgrade()" disabled style="opacity: 0.4; cursor: not-allowed;">Upgrade Plan</button>
+        <button class="join-btn" style="background:#FFF; border:1px solid var(--bd); color:var(--txt); cursor:pointer;" onclick="closeModal()">${xt('student_cancel','Cancel')}</button>
+        <button class="join-btn" id="btn-confirm-upgrade" onclick="confirmUpgrade()" disabled style="opacity: 0.4; cursor: not-allowed;">${xt('student_upgrade_plan_btn','Upgrade Plan')}</button>
       </div>
     </div>
   `;
@@ -5349,11 +5593,11 @@ async function openCohortSwitchModal() {
   
   openModal(`
     <div style="padding: 24px 28px 0;">
-      <div class="lbl" style="margin-bottom:4px;">Class Assignment</div>
+      <div class="lbl" style="margin-bottom:4px;">${xt('student_class_assignment','Class Assignment')}</div>
       <div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:12px;">${titleText}</div>
     </div>
     <div style="padding: 0 28px 24px;" id="cohort-switch-content">
-      <div style="font-size:12px;color:var(--dim);margin-bottom:16px;">Loading available cohorts...</div>
+      <div style="font-size:12px;color:var(--dim);margin-bottom:16px;">${xt('student_loading_cohorts','Loading available cohorts...')}</div>
     </div>
   `);
   
@@ -5523,11 +5767,11 @@ async function refreshCohortSwitchList(lang, level) {
           </div>
           <div>
             ${isCurrent ? `
-              <span style="font-size: 11px; font-weight: 700; color: #080808; background: var(--g); padding: 4px 8px; border-radius: 4px;">Current</span>
+              <span style="font-size: 11px; font-weight: 700; color: #080808; background: var(--g); padding: 4px 8px; border-radius: 4px;">${xt('student_current_badge','Current')}</span>
             ` : isFull ? `
               <button class="join-btn" style="font-size: 11px; padding: 6px 12px; cursor:pointer; background: #080808; color: #fff; border: 1px solid #080808;" onclick="joinWaitlist('${c.id}')">Join waitlist</button>
             ` : `
-              <button class="join-btn" style="font-size: 11px; padding: 6px 12px; cursor:pointer;" onclick="switchCohort('${c.id}')">Switch</button>
+              <button class="join-btn" style="font-size: 11px; padding: 6px 12px; cursor:pointer;" onclick="switchCohort('${c.id}')">${xt('student_switch_btn','Switch')}</button>
             `}
           </div>
         </div>
@@ -5688,8 +5932,8 @@ async function handleClaimWaitlistOffer(cohortId, waitlistId) {
 
     openModal(`
       <div style="padding: 24px 28px 0;">
-        <div style="color:var(--g); font-family:var(--sans); font-size: 11px; font-weight:700; text-transform:uppercase; margin-bottom:4px; letter-spacing:0.1em;">Waitlist Offer</div>
-        <div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:12px;">Claim Your Spot</div>
+        <div style="color:var(--g); font-family:var(--sans); font-size: 11px; font-weight:700; text-transform:uppercase; margin-bottom:4px; letter-spacing:0.1em;">${xt('student_waitlist_offer','Waitlist Offer')}</div>
+        <div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:12px;">${xt('student_claim_your_spot','Claim Your Spot')}</div>
       </div>
       <div style="padding: 0 28px 24px;">
         <div style="font-size:13.5px;color:var(--txt);margin-bottom:16px;">
@@ -5699,8 +5943,8 @@ async function handleClaimWaitlistOffer(cohortId, waitlistId) {
           Time remaining to claim: <strong>${Math.max(0, Math.round((expiresAt - new Date()) / 1000 / 60 / 60))} hours</strong>.
         </div>
         <div style="display:flex; gap:10px; justify-content:flex-end;">
-          <button class="join-btn" style="background:#FFF; border:1px solid var(--bd); color:var(--txt); cursor:pointer;" onclick="closeModal()">Decline</button>
-          <button class="join-btn" onclick="executeClaimOffer('${cohortId}', '${waitlistId}')">Claim & Join Cohort</button>
+          <button class="join-btn" style="background:#FFF; border:1px solid var(--bd); color:var(--txt); cursor:pointer;" onclick="closeModal()">${xt('student_decline','Decline')}</button>
+          <button class="join-btn" onclick="executeClaimOffer('${cohortId}', '${waitlistId}')">${xt('student_claim_join_cohort','Claim & Join Cohort')}</button>
         </div>
       </div>
     `);
@@ -5777,7 +6021,7 @@ async function executeClaimOffer(cohortId, waitlistId) {
     console.error(e);
     alert("Failed to claim spot: " + e.message);
     if (btn) {
-      btn.textContent = 'Claim & Join Cohort';
+      btn.textContent = xt('student_claim_join_cohort','Claim & Join Cohort');
       btn.disabled = false;
     }
   }
@@ -5789,11 +6033,11 @@ async function executeClaimOffer(cohortId, waitlistId) {
 async function openTeacherProfileModal() {
   openModal(`
     <div style="padding: 24px 28px 0;">
-      <div class="lbl" style="margin-bottom:4px;">Teacher Profile</div>
-      <div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:12px;" id="teacher-profile-title">Loading Profile...</div>
+      <div class="lbl" style="margin-bottom:4px;">${xt('student_teacher_profile','Teacher Profile')}</div>
+      <div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:12px;" id="teacher-profile-title">${xt('student_loading_profile','Loading Profile...')}</div>
     </div>
     <div style="padding: 0 28px 24px;" id="teacher-profile-content">
-      <div style="font-size:12px;color:var(--dim);">Loading reviews and teacher info...</div>
+      <div style="font-size:12px;color:var(--dim);">${xt('student_loading_reviews','Loading reviews and teacher info...')}</div>
     </div>
   `);
 
@@ -5843,7 +6087,7 @@ async function openTeacherProfileModal() {
     
     const badgesHtml = (teacher.badges || []).map(b => `
       <span style="font-size:10px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;background:#ceff65;color:#080808;padding:2px 8px;border-radius:20px;display:inline-block;margin-right:6px;">${b}</span>
-    `).join('') || '<span style="font-size:11px;color:var(--dim);">No badges yet</span>';
+    `).join('') || `<span style="font-size:11px;color:var(--dim);">${xt('student_no_badges','No badges yet')}</span>`;
     
     const ratingVal = parseFloat(teacher.rating || 0).toFixed(1);
     
@@ -5862,11 +6106,11 @@ async function openTeacherProfileModal() {
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#fafaf8;padding:10px 14px;border-radius:8px;border:1px solid var(--bd);">
             <div>
-              <div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">Location</div>
+              <div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">${xt('student_location','Location')}</div>
               <div style="font-size:13px;font-weight:600;color:var(--txt);margin-top:2px;">${teacher.location || 'Madrid, Spain'}</div>
             </div>
             <div>
-              <div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">Experience</div>
+              <div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">${xt('student_experience','Experience')}</div>
               <div style="font-size:13px;font-weight:600;color:var(--txt);margin-top:2px;">${teacher.experience_years} years</div>
             </div>
           </div>
@@ -5886,7 +6130,7 @@ async function openTeacherProfileModal() {
             ` : `
               <div style="display:flex;flex-direction:column;gap:8px;">
                 <div style="display:flex;gap:6px;align-items:center;">
-                  <span style="font-size:13px;color:var(--txt);">Rating:</span>
+                  <span style="font-size:13px;color:var(--txt);">${xt('student_rating_label','Rating:')}</span>
                   <select id="new-review-rating" style="padding:6px 10px;border:1px solid var(--bd);border-radius:6px;font-size:13px;background:#FFF;cursor:pointer;">
                     <option value="5">5 Stars — Excellent</option>
                     <option value="4">4 Stars — Very Good</option>
@@ -5896,14 +6140,14 @@ async function openTeacherProfileModal() {
                   </select>
                 </div>
                 <textarea id="new-review-text" placeholder="Write a public review for this teacher..." style="width:100%;height:60px;padding:10px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:13px;resize:none;outline:none;background:#FAFAFA;"></textarea>
-                <button class="join-btn" style="font-size:11px;padding:6px 12px;align-self:flex-end;" onclick="submitTeacherReview('${teacherId}')">Submit Review</button>
+                <button class="join-btn" style="font-size:11px;padding:6px 12px;align-self:flex-end;" onclick="submitTeacherReview('${teacherId}')">${xt('student_submit_review','Submit Review')}</button>
               </div>
             `}
           </div>
         </div>
 
         <div style="border-top:1px solid var(--bd);padding-top:14px;">
-          <div class="lbl" style="margin-bottom:10px;">Student Reviews</div>
+          <div class="lbl" style="margin-bottom:10px;">${xt('student_student_reviews','Student Reviews')}</div>
           <div style="display:flex;flex-direction:column;gap:10px;max-height:160px;overflow-y:auto;padding-right:4px;">
             ${reviews.map(r => `
               <div style="border-bottom:1px solid rgba(0,0,0,0.04);padding-bottom:8px;">
@@ -5915,13 +6159,13 @@ async function openTeacherProfileModal() {
               </div>
             `).join('')}
             ${reviews.length === 0 ? `
-              <div style="font-size:12px;color:var(--dim);font-style:italic;text-align:center;padding:10px 0;">No reviews yet. Be the first to leave one!</div>
+              <div style="font-size:12px;color:var(--dim);font-style:italic;text-align:center;padding:10px 0;">${xt('student_no_reviews','No reviews yet. Be the first to leave one!')}</div>
             ` : ''}
           </div>
         </div>
         
         <div style="display:flex;justify-content:flex-end;">
-          <button class="join-btn" style="background:#FFF; border:1px solid var(--bd); color:var(--txt); cursor:pointer;" onclick="closeModal()">Close</button>
+          <button class="join-btn" style="background:#FFF; border:1px solid var(--bd); color:var(--txt); cursor:pointer;" onclick="closeModal()">${xt('student_close','Close')}</button>
         </div>
       </div>
     `;
@@ -5964,7 +6208,7 @@ async function submitTeacherReview(teacherId) {
     console.error(e);
     alert("Failed to submit review: " + e.message);
     if (btn) {
-      btn.textContent = 'Submit Review';
+      btn.textContent = xt('student_submit_review','Submit Review');
       btn.disabled = false;
     }
   }
@@ -5978,8 +6222,8 @@ window.submitTeacherReview = submitTeacherReview;
 function openExtraClassPaywall() {
   let modalContent = `
     <div style="padding: 24px 28px 0;">
-      <div class="lbl" style="margin-bottom:4px;">Weekly Limit Reached</div>
-      <div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:12px;">Book an Extra Private Class</div>
+      <div class="lbl" style="margin-bottom:4px;">${xt('student_weekly_limit_reached','Weekly Limit Reached')}</div>
+      <div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);margin-bottom:12px;border-bottom:1px solid var(--bd);padding-bottom:12px;">${xt('student_book_extra_private','Book an Extra Private Class')}</div>
     </div>
     <div style="padding: 0 28px 24px;">
       <div style="background: #fafaf8; border-radius: 12px; padding: 16px; margin-bottom: 20px; border: 1px solid var(--bd); display: flex; justify-content: space-between; align-items: center;">
@@ -5991,7 +6235,7 @@ function openExtraClassPaywall() {
       </div>
       
       <div style="display: flex; flex-direction: column; gap: 10px;">
-        <div class="lbl" style="border-bottom: 1px solid var(--bd); padding-bottom: 6px; margin-bottom: 4px;">Credit Card Details</div>
+        <div class="lbl" style="border-bottom: 1px solid var(--bd); padding-bottom: 6px; margin-bottom: 4px;">${xt('student_credit_card_details','Credit Card Details')}</div>
         
         <div style="display: flex; flex-direction: column; gap: 8px;">
           <input type="text" placeholder="Card number" value="4242  4242  4242  4242" disabled style="width:100%;background:#fafaf8;border:1px solid var(--bd);border-radius:8px;padding:10px 14px;font-family:monospace;font-size:14px;color:var(--txt);outline:none;" />
@@ -6003,7 +6247,7 @@ function openExtraClassPaywall() {
       </div>
 
       <div style="margin-top: 24px; display: flex; gap: 10px; justify-content: flex-end;">
-        <button class="join-btn" style="background:#FFF; border:1px solid var(--bd); color:var(--txt); cursor:pointer;" onclick="closeModal()">Cancel</button>
+        <button class="join-btn" style="background:#FFF; border:1px solid var(--bd); color:var(--txt); cursor:pointer;" onclick="closeModal()">${xt('student_cancel','Cancel')}</button>
         <button class="join-btn" id="btn-pay-extra" onclick="payExtraClass()">Confirm & Pay (€60)</button>
       </div>
     </div>
@@ -6112,7 +6356,34 @@ function init(){
 ══════════════════════════════════════════════════════ */
 async function handleStudentJoin(roomUrl, sessionId) {
   currentSessionId = sessionId;
-  
+
+  // Ask the server for the room + a meeting token (rooms are private)
+  let joinUrl = roomUrl, joinToken = null;
+  try {
+    const { data: { session } = {} } = await SB.auth.getSession();
+    const resp = await fetch('/api/join-session', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session?.access_token || ''}`
+      },
+      body: JSON.stringify({ sessionId })
+    });
+    const data = await resp.json();
+    if (!resp.ok) {
+      alert(data.error || 'Could not join the class. Please try again.');
+      return;
+    }
+    joinUrl = data.url;
+    joinToken = data.token;
+  } catch (e) {
+    console.warn('join-session API unavailable, falling back to direct room URL:', e);
+    if (!joinUrl) {
+      alert('Could not join the class. Please try again closer to the session start.');
+      return;
+    }
+  }
+
   if (callFrame) {
     callFrame.destroy();
   }
@@ -6134,7 +6405,7 @@ async function handleStudentJoin(roomUrl, sessionId) {
     showFullscreenButton: true
   });
 
-  await callFrame.join({ url: roomUrl });
+  await callFrame.join(joinToken ? { url: joinUrl, token: joinToken } : { url: joinUrl });
 
   // Log attendance — upsert so repeat joins are idempotent
   if (SB && sessionId && NEXT_CLASS.studentProfileId) {
@@ -6411,7 +6682,7 @@ async function loadSharedFiles() {
     item.className = 'file-item';
     item.innerHTML = `
       <span class="file-item-name">${f.name} (${f.size})</span>
-      <a class="file-item-dl" href="${f.url}" download onclick="alert('Downloading shared file...')">Download</a>
+      <a class="file-item-dl" href="${f.url}" download onclick="alert(xt('student_downloading_shared_file','Downloading shared file...'))">${xt('student_download','Download')}</a>
     `;
     listContainer.appendChild(item);
   });
@@ -6440,7 +6711,7 @@ async function uploadClassroomFile(input) {
       
       item.innerHTML = `
         <span class="file-item-name">${file.name}</span>
-        <span style="color:#22c55e;font-size:11px;font-weight:700;">Uploaded</span>
+        <span style="color:#22c55e;font-size:11px;font-weight:700;">${xt('student_uploaded','Uploaded')}</span>
       `;
       return;
     } catch (e) {
@@ -6451,7 +6722,7 @@ async function uploadClassroomFile(input) {
   setTimeout(() => {
     item.innerHTML = `
       <span class="file-item-name">${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
-      <a class="file-item-dl" href="#" onclick="alert('Downloading uploaded file...')">Download</a>
+      <a class="file-item-dl" href="#" onclick="alert(xt('student_downloading_uploaded_file','Downloading uploaded file...'))">${xt('student_download','Download')}</a>
     `;
   }, 1000);
 }
@@ -6484,6 +6755,5 @@ window.addEventListener('beforeunload', () => {
   }
 });
 </script>
-
-
-</body></html>
+</body>
+</html>
