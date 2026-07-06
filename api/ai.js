@@ -175,19 +175,147 @@ async function handleGenerateExercises(req, res) {
     .filter((t) => SUPPORTED_TYPES.includes(t));
   const instrLang = UI_LANG_NAMES[uiLang] || 'English';
 
-  const prompt = `Create ${n} varied, fun, engaging ${language} language exercises for a CEFR ${level} learner.${topic ? ` Theme: ${topic}.` : ''}
-Mix these types: ${wantedTypes.join(', ')}. At least 4 different types. Make them playful and practical (real-life situations, humor, mini-stories) while staying focused on ${language} at ${level} level.
+  // ── Retrieve rich user history context if authenticated ──
+  const authHeader = req.headers.authorization;
+  let studentLanguage = language;
+  let studentLevel = level;
+  let aiContext = '';
 
-Write questions/instructions and explanations in ${instrLang}. All exercise CONTENT (sentences, options, audio text, prompts) must be in ${language}.
+  const supabaseUrl = process.env.SUPABASE_URL;
+  const serviceKey  = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  
+  if (authHeader && authHeader.startsWith('Bearer ') && supabaseUrl && serviceKey) {
+    try {
+      const supabase = createClient(supabaseUrl, serviceKey, {
+        auth: { autoRefreshToken: false, persistSession: false },
+      });
+      const token = authHeader.split(' ')[1];
+      const { data: { user }, error: userErr } = await supabase.auth.getUser(token);
+      if (user && !userErr) {
+        // 1. Get profile
+        const { data: profile } = await supabase
+          .from('student_profiles')
+          .select('id, language, level')
+          .eq('user_id', user.id)
+          .single();
+
+        if (profile) {
+          studentLanguage = profile.language || studentLanguage;
+          studentLevel = profile.level || studentLevel;
+
+          // 2. Fetch recent exercise scores to spot weaknesses
+          const { data: results } = await supabase
+            .from('exercise_results')
+            .select('category, score, ex_type')
+            .eq('student_id', profile.id)
+            .order('created_at', { ascending: false })
+            .limit(20);
+
+          // 3. Fetch recent assignment submissions
+          const { data: submissions } = await supabase
+            .from('assignment_submissions')
+            .select('score, feedback, assignments(title, type)')
+            .eq('student_id', profile.id)
+            .order('submitted_at', { ascending: false })
+            .limit(10);
+
+          // 4. Fetch session notes (topics treated)
+          const { data: enrolls } = await supabase
+            .from('enrollments')
+            .select('cohort_id')
+            .eq('student_id', profile.id)
+            .eq('status', 'active');
+
+          let topicsTreated = [];
+          let grammarFocusList = [];
+          if (enrolls && enrolls.length > 0) {
+            const cohortIds = enrolls.map(e => e.cohort_id);
+            const { data: sessions } = await supabase
+              .from('sessions')
+              .select('id')
+              .in('cohort_id', cohortIds)
+              .eq('status', 'completed');
+
+            if (sessions && sessions.length > 0) {
+              const sessionIds = sessions.map(s => s.id);
+              const { data: notes } = await supabase
+                .from('session_notes')
+                .select('grammar_focus, vocabulary')
+                .in('session_id', sessionIds);
+
+              if (notes) {
+                notes.forEach(n => {
+                  if (n.grammar_focus) grammarFocusList.push(n.grammar_focus);
+                  if (Array.isArray(n.vocabulary)) {
+                    n.vocabulary.forEach(v => {
+                      if (v && typeof v === 'object' && v.term) {
+                        topicsTreated.push(v.term);
+                      } else if (typeof v === 'string') {
+                        topicsTreated.push(v);
+                      }
+                    });
+                  }
+                });
+              }
+            }
+          }
+
+          // Build context for AI prompt
+          let weakCategories = [];
+          let mistakesDesc = '';
+          if (results && results.length > 0) {
+            const catScores = {};
+            results.forEach(r => {
+              if (!catScores[r.category]) catScores[r.category] = [];
+              catScores[r.category].push(r.score);
+            });
+            const weakList = Object.keys(catScores).map(cat => {
+              const avg = catScores[cat].reduce((a,b)=>a+b, 0) / catScores[cat].length;
+              return { category: cat, avg };
+            }).filter(c => c.avg < 75);
+            
+            if (weakList.length > 0) {
+              weakCategories = weakList.map(w => `${w.category} (avg score: ${Math.round(w.avg)}%)`);
+            }
+          }
+
+          if (submissions && submissions.length > 0) {
+            const lowSubs = submissions.filter(s => s.score < 75);
+            if (lowSubs.length > 0) {
+              mistakesDesc = lowSubs.map(s => `- Class assignment '${s.assignments?.title || 'Homework'}' scored ${s.score}% with teacher feedback: "${s.feedback || ''}"`).join('\n');
+            }
+          }
+
+          aiContext = `
+Student Performance & Classroom Context:
+- Current language study: ${studentLanguage}
+- CEFR level: ${studentLevel}
+${weakCategories.length > 0 ? `- Weak/struggling areas requiring practice: ${weakCategories.join(', ')}` : ''}
+${mistakesDesc ? `- Low scores / teacher feedback on assignments:\n${mistakesDesc}` : ''}
+${grammarFocusList.length > 0 ? `- Recently treated grammar topics in class: ${grammarFocusList.slice(-4).join(', ')}` : ''}
+${topicsTreated.length > 0 ? `- Recently introduced vocabulary terms: ${topicsTreated.slice(-10).join(', ')}` : ''}
+`;
+        }
+      }
+    } catch (dbErr) {
+      console.warn('[AI API / generate-exercises] DB context query skipped/failed:', dbErr);
+    }
+  }
+
+  const prompt = `Create ${n} varied, fun, engaging ${studentLanguage} language exercises for a CEFR ${studentLevel} learner.${topic ? ` Theme: ${topic}.` : ''}
+${aiContext ? `Use the following student context to tailor the topics, vocabulary, grammar focus, and target areas requiring improvements: \n${aiContext}` : ''}
+Mix these types: ${wantedTypes.join(', ')}. At least 4 different types. Make them playful and practical (real-life situations, humor, mini-stories) while staying focused on ${studentLanguage} at ${studentLevel} level.
+
+Write questions/instructions and explanations in ${instrLang}. All exercise CONTENT (sentences, options, audio text, prompts) must be in ${studentLanguage}.
 
 Respond ONLY with a JSON array. Each element must follow EXACTLY one of these schemas:
 - Multiple Choice: {"type":"Multiple Choice","title":str,"diff":1-5,"time":"N min","cat":"grammar"|"vocabulary"|"listening"|"speaking"|"writing","question":str,"stem":str with ______ blank,"opts":[4 strings],"correct":index 0-3,"explanation":str}
 - Quiz: same schema as Multiple Choice but "type":"Multiple Choice" and a trivia/culture angle (still language-focused).
 - Fill in Blank: {"type":"Fill in Blank","title":str,"diff":1-5,"time":"N min","cat":...,"question":str,"stem":str with ______,"correctAnswer":single word or short phrase,"explanation":str}
-- Word Matching: {"type":"Word Matching","title":str,"diff":1-5,"time":"N min","cat":"vocabulary","question":str,"pairs":[{"left":${language} word,"right":${instrLang} meaning} x4]}
-- Listening: {"type":"Listening","title":str,"diff":1-5,"time":"N min","cat":"listening","question":str,"audioText":short ${language} sentence to be spoken aloud}
-- Speaking: {"type":"Speaking","title":str,"diff":1-5,"time":"N min","cat":"speaking","question":str,"stem":${language} sentence to read aloud,"expectedText":same sentence without punctuation/accents}
-- Essay: {"type":"Essay","title":str,"diff":2-5,"time":"N min","cat":"writing","question":str,"stem":writing prompt in ${language},"minWords":20-60,"criteria":str}`;
+- Word Matching: {"type":"Word Matching","title":str,"diff":1-5,"time":"N min","cat":"vocabulary","question":str,"pairs":[{"left":${studentLanguage} word,"right":${instrLang} meaning} x4]}
+- Listening: {"type":"Listening","title":str,"diff":1-5,"time":"N min","cat":"listening","question":str,"audioText":short ${studentLanguage} sentence to be spoken aloud}
+- Speaking: {"type":"Speaking","title":str,"diff":1-5,"time":"N min","cat":"speaking","question":str,"stem":${studentLanguage} sentence to read aloud,"expectedText":same sentence without punctuation/accents}
+- Essay: {"type":"Essay","title":str,"diff":2-5,"time":"N min","cat":"writing","question":str,"stem":writing prompt in ${studentLanguage},"minWords":20-60,"criteria":str}`;
 
   try {
     const raw = await callAI({ prompt, json: true, maxTokens: 8192, temperature: 0.9 });

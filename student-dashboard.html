@@ -13,8 +13,8 @@
     supabaseAnonKey: 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
   };
 </script>
-<script src="js/translations.js"></script>
-<script src="js/i18n.js"></script>
+<script src="js/translations.js" defer></script>
+<script src="js/i18n.js" defer></script>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&display=swap" rel="stylesheet">
 <style>
@@ -5459,27 +5459,30 @@ async function confirmUpgrade() {
   
   const btn = document.getElementById('btn-confirm-upgrade');
   if (btn) {
-    btn.textContent = 'Upgrading...';
+    btn.textContent = 'Redirecting...';
     btn.style.pointerEvents = 'none';
   }
   
   try {
-    const { error } = await SB
-      .from('student_profiles')
-      .update({ tier: tierId })
-      .eq('user_id', USER.profile.user_id);
-      
-    if (error) throw error;
+    const { createCheckout, getRegionalPriceId } = await import('/js/stripe/config.js');
+    const userCurrency = USER.profile?.currency || 'eur';
+    const priceId = getRegionalPriceId(tierId, 'monthly', userCurrency);
     
-    USER.tier = tierId;
-    if (USER.profile) USER.profile.tier = tierId;
-    
-    closeModal();
-    populateSettings();
-    alert("Plan upgraded successfully!");
+    await createCheckout({
+      priceId,
+      mode: 'subscription',
+      customerEmail: USER.email,
+      customerId: USER.profile?.user_id || USER.id,
+      successUrl: `${window.location.origin}/student-dashboard.html?checkout=success&tier=${tierId}`,
+      cancelUrl: `${window.location.origin}/student-dashboard.html?checkout=cancelled`
+    });
   } catch (e) {
-    console.error('Failed to update tier in DB:', e);
-    alert("Failed to upgrade plan: " + e.message);
+    console.error('Failed to redirect to checkout:', e);
+    alert("Failed to start upgrade: " + e.message);
+    if (btn) {
+      btn.textContent = 'Upgrade Plan';
+      btn.style.pointerEvents = 'auto';
+    }
   }
 }
 

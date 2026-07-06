@@ -259,9 +259,18 @@ export async function createCheckout({
     if (cohortId)       body.cohortId       = cohortId;
     if (customerEmail)  body.customerEmail   = customerEmail;
 
+    const headers = { 'Content-Type': 'application/json' };
+    const sb = window.SB || window.supabase;
+    if (sb) {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
+    }
+
     const resp = await fetch('/api/stripe/create-checkout', {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body:    JSON.stringify(body),
     });
 
@@ -290,9 +299,18 @@ export async function openBillingPortal(
   returnUrl = `${cfg.appUrl || window.location.origin}/student-dashboard.html`
 ) {
   try {
+    const headers = { 'Content-Type': 'application/json' };
+    const sb = window.SB || window.supabase;
+    if (sb) {
+      const { data: { session } } = await sb.auth.getSession();
+      if (session?.access_token) {
+        headers['Authorization'] = `Bearer ${session.access_token}`;
+      }
+    }
+
     const resp = await fetch('/api/stripe/billing-portal', {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body:    JSON.stringify({ returnUrl }),
     });
 
