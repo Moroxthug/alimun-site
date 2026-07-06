@@ -74,4 +74,9 @@ render the dashboards with a mock user — **localhost only**, inert in producti
   dashboards change.
 - `student_feedback` history is shown to students on their Progress view;
   teacher notes written pre-migration only existed in localStorage and are gone.
-- Payouts are still read-only (admin inserts rows manually).
+- Payouts are fully manageable via the Admin dashboard.
+
+## 8. Updates
+- Consolidated Stripe APIs to fit Hobby plan limits (< 12 serverless functions).
+- Assigned admin role to `bchysfpol@gmail.com`.
+
