@@ -4,6 +4,26 @@
   "cleanUrls": true,
   "routes": [
     {
+      "src": "/api/grade",
+      "dest": "/api/ai?action=grade"
+    },
+    {
+      "src": "/api/generate-exercises",
+      "dest": "/api/ai?action=generate-exercises"
+    },
+    {
+      "src": "/api/admin/approve-teacher",
+      "dest": "/api/admin/teacher?action=approve"
+    },
+    {
+      "src": "/api/admin/reject-teacher",
+      "dest": "/api/admin/teacher?action=reject"
+    },
+    {
+      "src": "/api/admin/notify-teacher-application",
+      "dest": "/api/admin/teacher?action=notify"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
