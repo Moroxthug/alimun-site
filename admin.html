@@ -817,7 +817,11 @@ let COHORTS = [];
     window.location.href = 'signin.html';
     return;
   }
-  const role = session.user?.user_metadata?.role || '';
+
+  // Force fetch fresh user data from server to bypass stale cached local JWT role
+  const { data: { user } } = await supabase.auth.getUser();
+  const role = user?.user_metadata?.role || user?.app_metadata?.role || '';
+
   if (role !== 'admin') {
     window.location.href = role === 'student' ? 'student-dashboard.html' : 
                           role === 'teacher' ? 'teacher-dashboard.html' : 'signin.html';
