@@ -307,10 +307,10 @@
     const activeCode = getActiveLang();
     const activeLang = LANGUAGES.find(l => l.code === activeCode) || LANGUAGES[0];
 
-    // Find the best container to put the selector in
     let container = null;
-    let insertionType = 'append'; // append or prepend or insertBefore
+    let insertionType = 'append';
 
+    const isDashboard = document.getElementById('sb') || document.querySelector('.sb') || document.getElementById('sidebar');
     const customLangContainer = document.getElementById('alimun-lang-container');
     const webflowNav = document.querySelector('.nav_wrap div[style*="display:flex"]');
     const leftNav = document.querySelector('.nav_menu-link-wrap.is-left');
@@ -318,7 +318,11 @@
     const sbTop = document.querySelector('.sb-top');
     const sbBot = document.querySelector('.sb-bot');
 
-    if (customLangContainer) {
+    if (isDashboard) {
+      // Find the main content area to position the switcher absolute top-right so it scrolls away naturally
+      container = document.getElementById('content') || document.getElementById('main') || document.body;
+      insertionType = 'append';
+    } else if (customLangContainer) {
       container = customLangContainer;
       insertionType = 'append';
     } else if (webflowNav) {
@@ -515,6 +519,18 @@
         #sb.col .sb-lang-container .alimun-i18n-btn .alimun-i18n-dropdown-arrow {
           display: none !important;
         }
+
+        /* Dashboard top-right positioning overrides */
+        .alimun-i18n-dropdown.is-dashboard {
+          position: absolute;
+          top: 1.8rem;
+          right: 2.25rem;
+          margin-right: 0;
+          z-index: 999;
+        }
+        #content, .main, #main {
+          position: relative;
+        }
       `;
       const style = document.createElement('style');
       style.id = 'alimun-i18n-styles';
@@ -527,6 +543,9 @@
     wrapper.className = 'alimun-i18n-dropdown';
     if (insertionType === 'float') {
       wrapper.classList.add('is-floating');
+    }
+    if (isDashboard) {
+      wrapper.classList.add('is-dashboard');
     }
 
     const isSidebar = (container.closest && (container.closest('.sb') || container.closest('#sb') || container.closest('.sb-top') || container.closest('.sb-bot') || container.closest('.sb-lang-container'))) || false;
