@@ -752,7 +752,7 @@ tr:hover td { background: rgba(8,8,8,0.01); }
     <div id="content">
       
       <!-- Eye Toggle for Financial Numbers -->
-      <button id="financial-mask-toggle" class="btn-eye" onclick="window.toggleFinancialsMask()" title="Toggle Financial visibility" style="position: absolute; top: 1.8rem; right: 6.8rem; z-index: 1000; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(8, 8, 8, 0.08); background: rgba(8, 8, 8, 0.04); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #080808; padding: 0; transition: all 0.2s ease;">
+      <button id="financial-mask-toggle" class="btn-eye" onclick="window.toggleFinancialsMask()" title="Toggle Financial visibility" style="position: absolute; top: 1.8rem; right: 7.6rem; z-index: 1000; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(8, 8, 8, 0.08); background: rgba(8, 8, 8, 0.04); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #080808; padding: 0; transition: all 0.2s ease;">
         <!-- Eye Icon (Open) -->
         <svg id="eye-icon-open" viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
           <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -1242,7 +1242,10 @@ function updateFinancialsVisibility() {
 
     elementsToMask.forEach(el => {
       const dom = document.getElementById(el.id);
-      if (dom) dom.textContent = '••••';
+      if (dom) {
+        const rawVal = el.valFn();
+        dom.textContent = rawVal.replace(/[0-9]/g, '*');
+      }
     });
   } else {
     if (openIcon) openIcon.style.display = 'block';
