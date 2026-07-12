@@ -845,11 +845,11 @@ tr:hover td { background: rgba(8,8,8,0.01); }
                   <span style="font-weight:700;" id="fin-gross">€0.00</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:0.83rem;">
-                  <span style="color:var(--dim)">Operating Costs (40%):</span>
+                  <span style="color:var(--dim)">Operating Costs (38.93%):</span>
                   <span style="font-weight:700; color:var(--err)" id="fin-op">-€0.00</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:0.83rem;">
-                  <span style="color:var(--dim)">Estimated Taxes (12%):</span>
+                  <span style="color:var(--dim)">Estimated Taxes (9%):</span>
                   <span style="font-weight:700; color:var(--ora)" id="fin-tax">-€0.00</span>
                 </div>
                 <div style="display:flex; justify-content:space-between; font-size:0.83rem; border-top: 1px solid var(--bd); padding-top: 8px;">
@@ -1229,9 +1229,9 @@ function updateFinancialsVisibility() {
   const elementsToMask = [
     { id: 'stat-rev', valFn: () => `€${Math.round(currentFinancialValues.volume).toLocaleString()}` },
     { id: 'fin-gross', valFn: () => `€${currentFinancialValues.volume.toFixed(2)}` },
-    { id: 'fin-op', valFn: () => `-€${(currentFinancialValues.volume * 0.40).toFixed(2)}` },
-    { id: 'fin-tax', valFn: () => `-€${(currentFinancialValues.volume * 0.12).toFixed(2)}` },
-    { id: 'fin-net', valFn: () => `€${(currentFinancialValues.volume * 0.48).toFixed(2)}` },
+    { id: 'fin-op', valFn: () => `-€${(currentFinancialValues.volume * 0.3893).toFixed(2)}` },
+    { id: 'fin-tax', valFn: () => `-€${(currentFinancialValues.volume * 0.09).toFixed(2)}` },
+    { id: 'fin-net', valFn: () => `€${(currentFinancialValues.volume * 0.5207).toFixed(2)}` },
     { id: 'stat-paid-amount', valFn: () => `€${currentFinancialValues.paid.toFixed(2)}` },
     { id: 'stat-pending-amount', valFn: () => `€${currentFinancialValues.pending.toFixed(2)}` }
   ];
