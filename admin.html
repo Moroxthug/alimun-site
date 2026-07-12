@@ -751,6 +751,28 @@ tr:hover td { background: rgba(8,8,8,0.01); }
   <main id="main" class="main">
     <div id="content">
       
+      <!-- Eye Toggle for Financial Numbers -->
+      <button id="financial-mask-toggle" class="btn-eye" onclick="window.toggleFinancialsMask()" title="Toggle Financial visibility" style="position: absolute; top: 1.8rem; right: 6.8rem; z-index: 1000; width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(8, 8, 8, 0.08); background: rgba(8, 8, 8, 0.04); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #080808; padding: 0; transition: all 0.2s ease;">
+        <!-- Eye Icon (Open) -->
+        <svg id="eye-icon-open" viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+          <circle cx="12" cy="12" r="3"></circle>
+        </svg>
+        <!-- Eye Icon (Closed/Slash) -->
+        <svg id="eye-icon-closed" viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="display: none;">
+          <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+          <line x1="1" y1="1" x2="23" y2="23"></line>
+        </svg>
+      </button>
+      <style>
+        .btn-eye:hover {
+          background: rgba(8, 8, 8, 0.08) !important;
+          border-color: rgba(8, 8, 8, 0.15) !important;
+          color: #000000 !important;
+        }
+      </style>
+      
+      
       <!-- HEADER -->
       <div class="pg-head">
         <div>
@@ -1192,6 +1214,53 @@ function openModal(html) {
   await loadLiveSessions();
 })();
 
+// ── MODULE: FINANCIAL MASKING ──
+let FINANCIALS_HIDDEN = localStorage.getItem('alimun-fin-hidden') === 'true';
+let currentFinancialValues = {
+  volume: 0,
+  paid: 0,
+  pending: 0
+};
+
+function updateFinancialsVisibility() {
+  const openIcon = document.getElementById('eye-icon-open');
+  const closedIcon = document.getElementById('eye-icon-closed');
+
+  const elementsToMask = [
+    { id: 'stat-rev', valFn: () => `€${Math.round(currentFinancialValues.volume).toLocaleString()}` },
+    { id: 'fin-gross', valFn: () => `€${currentFinancialValues.volume.toFixed(2)}` },
+    { id: 'fin-op', valFn: () => `-€${(currentFinancialValues.volume * 0.40).toFixed(2)}` },
+    { id: 'fin-tax', valFn: () => `-€${(currentFinancialValues.volume * 0.12).toFixed(2)}` },
+    { id: 'fin-net', valFn: () => `€${(currentFinancialValues.volume * 0.48).toFixed(2)}` },
+    { id: 'stat-paid-amount', valFn: () => `€${currentFinancialValues.paid.toFixed(2)}` },
+    { id: 'stat-pending-amount', valFn: () => `€${currentFinancialValues.pending.toFixed(2)}` }
+  ];
+
+  if (FINANCIALS_HIDDEN) {
+    if (openIcon) openIcon.style.display = 'none';
+    if (closedIcon) closedIcon.style.display = 'block';
+
+    elementsToMask.forEach(el => {
+      const dom = document.getElementById(el.id);
+      if (dom) dom.textContent = '••••';
+    });
+  } else {
+    if (openIcon) openIcon.style.display = 'block';
+    if (closedIcon) closedIcon.style.display = 'none';
+
+    elementsToMask.forEach(el => {
+      const dom = document.getElementById(el.id);
+      if (dom) dom.textContent = el.valFn();
+    });
+  }
+}
+
+window.toggleFinancialsMask = function() {
+  FINANCIALS_HIDDEN = !FINANCIALS_HIDDEN;
+  localStorage.setItem('alimun-fin-hidden', FINANCIALS_HIDDEN ? 'true' : 'false');
+  updateFinancialsVisibility();
+};
+
 // ── MODULE: OVERVIEW ──
 async function loadStats() {
   const { data: sData } = await supabase.from('student_profiles').select('id');
@@ -1222,31 +1291,17 @@ async function loadStats() {
     dbVolume = 10395.00; // Simulated Gross Volume
   }
 
-  document.getElementById('stat-rev').textContent = `€${Math.round(dbVolume).toLocaleString()}`;
+  // Save current financial values for masking toggles
+  currentFinancialValues.volume = dbVolume;
+  currentFinancialValues.paid = paidTotal;
+  currentFinancialValues.pending = pendingTotal;
+
   document.getElementById('stat-students').textContent = studentCount;
   document.getElementById('stat-teachers').textContent = teacherCount;
   document.getElementById('stat-cohorts').textContent = cohortCount;
 
-  // Calculate & render Financial Breakdown details
-  const opCosts = dbVolume * 0.40;
-  const taxes = dbVolume * 0.12;
-  const netProfit = dbVolume - opCosts - taxes;
-
-  const grossEl = document.getElementById('fin-gross');
-  const opEl = document.getElementById('fin-op');
-  const taxEl = document.getElementById('fin-tax');
-  const netEl = document.getElementById('fin-net');
-
-  if (grossEl) grossEl.textContent = `€${dbVolume.toFixed(2)}`;
-  if (opEl) opEl.textContent = `-€${opCosts.toFixed(2)}`;
-  if (taxEl) taxEl.textContent = `-€${taxes.toFixed(2)}`;
-  if (netEl) netEl.textContent = `€${netProfit.toFixed(2)}`;
-
-  // Render Payout overview metrics if DOM exists
-  const paidEl = document.getElementById('stat-paid-amount');
-  const pendEl = document.getElementById('stat-pending-amount');
-  if (paidEl) paidEl.textContent = `€${paidTotal.toFixed(2)}`;
-  if (pendEl) pendEl.textContent = `€${pendingTotal.toFixed(2)}`;
+  // Render text based on hidden mask state
+  updateFinancialsVisibility();
 }
 
 async function loadLiveSessions() {
