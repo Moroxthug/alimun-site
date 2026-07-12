@@ -312,8 +312,8 @@
     let insertionType = 'append'; // append or prepend or insertBefore
 
     const customLangContainer = document.getElementById('alimun-lang-container');
-    const leftNav = document.querySelector('.nav_menu-link-wrap.is-left');
     const webflowNav = document.querySelector('.nav_wrap div[style*="display:flex"]');
+    const leftNav = document.querySelector('.nav_menu-link-wrap.is-left');
     const topBar = document.querySelector('.topbar');
     const sbTop = document.querySelector('.sb-top');
     const sbBot = document.querySelector('.sb-bot');
@@ -321,12 +321,12 @@
     if (customLangContainer) {
       container = customLangContainer;
       insertionType = 'append';
-    } else if (leftNav) {
-      container = leftNav;
-      insertionType = 'prepend'; // Prepend to left nav wrapper (before tiers link)
     } else if (webflowNav) {
       container = webflowNav;
       insertionType = 'prepend'; // Insert before sign-in/get-started
+    } else if (leftNav) {
+      container = leftNav;
+      insertionType = 'prepend'; // Prepend to left nav wrapper (before tiers link)
     } else if (topBar) {
       container = topBar;
       insertionType = 'append';
@@ -356,67 +356,73 @@
           position: relative;
           display: inline-block;
           font-family: 'Satoshi', sans-serif;
-          font-size: 0.64rem; font-weight: 700; color: #080808; z-index: 9999; margin-right: 0.25rem;
+          font-size: 0.74rem; font-weight: 700; color: #080808; z-index: 9999; margin-right: 0.25rem;
         }
         .alimun-i18n-btn {
           display: flex;
           align-items: center;
-          gap: 0.3rem;
-          background: rgba(255, 255, 255, 0.6);
-          backdrop-filter: blur(10px);
-          -webkit-backdrop-filter: blur(10px);
-          border: 1px solid rgba(0, 0, 0, 0.12); border-radius: 5rem; padding: 0.28rem 0.55rem;
+          gap: 0.35rem;
+          background: rgba(8, 8, 8, 0.04);
+          border: 1px solid rgba(8, 8, 8, 0.08);
+          border-radius: 5rem;
+          padding: 0.38rem 0.75rem;
+          color: #080808;
           cursor: pointer;
           transition: all 0.2s ease;
           line-height: 1;
           user-select: none;
         }
         .alimun-i18n-btn:hover {
-          background: rgba(255, 255, 255, 0.9);
-          border-color: rgba(0, 0, 0, 0.4);
+          background: rgba(8, 8, 8, 0.08);
+          border-color: rgba(8, 8, 8, 0.15);
         }
         .alimun-i18n-dropdown-menu {
           position: absolute;
-          top: calc(100% + 0.5rem);
-          left: 0;
-          background: rgba(8, 8, 8, 0.94);
-          backdrop-filter: blur(12px);
-          -webkit-backdrop-filter: blur(12px);
-          border: 1px solid rgba(255, 255, 255, 0.15);
-          border-radius: 1rem;
-          padding: 0.5rem;
-          min-width: 140px;
-          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+          top: calc(100% + 0.4rem);
+          right: 0;
+          background: #ffffff;
+          border: 1px solid rgba(8, 8, 8, 0.08);
+          border-radius: 0.75rem;
+          padding: 0.35rem;
+          min-width: 130px;
+          box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
           display: none;
           flex-direction: column;
-          gap: 0.25rem;
+          gap: 0.15rem;
         }
         .alimun-i18n-dropdown-menu.show {
           display: flex;
+          animation: langFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes langFadeIn {
+          from { opacity: 0; transform: translateY(4px) scale(0.98); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
         }
         .alimun-i18n-item {
           display: flex;
           align-items: center;
-          gap: 0.5rem;
-          color: rgba(255, 255, 255, 0.8);
+          color: rgba(8, 8, 8, 0.75);
           padding: 0.45rem 0.75rem;
-          border-radius: 0.6rem;
+          border-radius: 0.5rem;
           cursor: pointer;
           transition: all 0.15s ease;
           text-decoration: none;
           line-height: 1;
+          font-weight: 600;
+          font-size: 0.74rem;
         }
         .alimun-i18n-item:hover {
-          background: rgba(255, 255, 255, 0.1);
-          color: #ceff65;
+          background: rgba(8, 8, 8, 0.04);
+          color: #080808;
         }
         .alimun-i18n-item.active {
-          background: #ceff65;
-          color: #080808;
+          background: #080808;
+          color: #ceff65;
           font-weight: 800;
         }
         .alimun-i18n-dropdown-arrow {
-          font-size: 0.55rem;
+          display: flex;
+          align-items: center;
           transition: transform 0.2s ease;
           opacity: 0.6;
         }
@@ -471,13 +477,13 @@
         .sb-lang-container .alimun-i18n-btn {
           width: 100%;
           justify-content: space-between;
-          background: #f5f4f0;
+          background: rgba(8, 8, 8, 0.04);
           border-color: rgba(0,0,0,0.08);
         }
         .sb-top .alimun-i18n-btn:hover,
         .sb-bot .alimun-i18n-btn:hover,
         .sb-lang-container .alimun-i18n-btn:hover {
-          background: #eae9e3;
+          background: rgba(8, 8, 8, 0.08);
         }
         .sb-top .alimun-i18n-dropdown-menu,
         .sb-bot .alimun-i18n-dropdown-menu,
@@ -487,26 +493,27 @@
           min-width: 100%;
         }
 
-        /* Student dashboard dark sidebar overrides */
+        /* Student dashboard sidebar overrides */
         #sb .sb-lang-container .alimun-i18n-btn {
-          background: rgba(255, 255, 255, 0.05);
-          border-color: rgba(255, 255, 255, 0.1);
-          color: #f0f0f0;
+          background: rgba(8, 8, 8, 0.04);
+          border-color: rgba(8, 8, 8, 0.08);
+          color: #080808;
         }
         #sb .sb-lang-container .alimun-i18n-btn:hover {
-          background: rgba(255, 255, 255, 0.1);
-          border-color: rgba(255, 255, 255, 0.2);
+          background: rgba(8, 8, 8, 0.08);
         }
 
         /* Collapsed sidebar language selector compact styling */
         .sb.col .sb-lang-container .alimun-i18n-btn,
         #sb.col .sb-lang-container .alimun-i18n-btn {
           justify-content: center;
-          padding: 0.28rem 0;
+          padding: 0.38rem 0;
         }
-        .sb.col .sb-lang-container .alimun-i18n-btn span:not(:first-child),
-        #sb.col .sb-lang-container .alimun-i18n-btn span:not(:first-child) {
-          display: none;
+        .sb.col .sb-lang-container .alimun-i18n-btn .lang-code,
+        #sb.col .sb-lang-container .alimun-i18n-btn .lang-code,
+        .sb.col .sb-lang-container .alimun-i18n-btn .alimun-i18n-dropdown-arrow,
+        #sb.col .sb-lang-container .alimun-i18n-btn .alimun-i18n-dropdown-arrow {
+          display: none !important;
         }
       `;
       const style = document.createElement('style');
@@ -533,8 +540,11 @@
     const btn = document.createElement('div');
     btn.className = 'alimun-i18n-btn';
     btn.innerHTML = `
-      <span>${activeLang.flag} ${activeLang.code.toUpperCase()}</span>
-      <span class="alimun-i18n-dropdown-arrow">▼</span>
+      <svg class="alimun-globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 13px; height: 13px; opacity: 0.75;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
+      <span class="lang-code">${activeLang.code.toUpperCase()}</span>
+      <span class="alimun-i18n-dropdown-arrow">
+        <svg viewBox="0 0 24 24" width="9" height="9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5; margin-left: 2px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+      </span>
     `;
 
     // Dropdown list
@@ -545,7 +555,6 @@
       const item = document.createElement('div');
       item.className = 'alimun-i18n-item' + (lang.code === activeCode ? ' active' : '');
       item.innerHTML = `
-        <span>${lang.flag}</span>
         <span>${lang.name}</span>
       `;
       item.addEventListener('click', () => {
