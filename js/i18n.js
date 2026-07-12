@@ -325,25 +325,10 @@
     } else if (customLangContainer) {
       container = customLangContainer;
       insertionType = 'append';
-    } else if (webflowNav) {
-      container = webflowNav;
-      insertionType = 'prepend'; // Insert before sign-in/get-started
-    } else if (leftNav) {
-      container = leftNav;
-      insertionType = 'prepend'; // Prepend to left nav wrapper (before tiers link)
-    } else if (topBar) {
-      container = topBar;
-      insertionType = 'append';
-    } else if (sbTop) {
-      container = sbTop;
-      insertionType = 'append';
-    } else if (sbBot) {
-      container = sbBot;
-      insertionType = 'prepend';
     } else {
-      // Fallback: floating in bottom-right corner
+      // Public pages: always append to body to float at top right, completely outside the header!
       container = document.body;
-      insertionType = 'float';
+      insertionType = 'append';
     }
 
     if (!container) return;
@@ -530,6 +515,15 @@
         }
         #content, .main, #main {
           position: relative;
+        }
+
+        /* Floating top-right on public pages */
+        body > .alimun-i18n-dropdown {
+          position: absolute;
+          top: 1.5rem;
+          right: 2rem;
+          margin-right: 0;
+          z-index: 99999;
         }
       `;
       const style = document.createElement('style');
