@@ -517,11 +517,11 @@
           position: relative;
         }
 
-        /* Floating top-right on public pages */
+        /* Floating top-right on public pages (below the 6rem height header navbar) */
         body > .alimun-i18n-dropdown {
           position: absolute;
-          top: 1.5rem;
-          right: 2rem;
+          top: 7.2rem;
+          right: 2.25rem;
           margin-right: 0;
           z-index: 99999;
         }
