@@ -114,6 +114,22 @@ body{font-family:var(--body);background:#f0efe9;min-height:100vh;display:flex;fl
 .billing-toggle button{border:none;background:transparent;font-family:var(--body);font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#aaa;padding:.4rem .9rem;border-radius:5rem;cursor:pointer;transition:all .18s;white-space:nowrap;}
 .billing-toggle button.active{background:#fff;color:var(--b);box-shadow:0 1px 6px rgba(0,0,0,.1);}
 .billing-save-badge{display:inline-flex;align-items:center;gap:.25rem;background:var(--g);color:var(--b);font-size:.6rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:.22rem .55rem;border-radius:5rem;}
+
+@media (max-width: 600px) {
+  .topbar { padding: 1rem; }
+  .center { padding: 1rem; }
+  .prog-top { padding: 1.25rem 1rem 0; }
+  .role-head { padding: 1.5rem 1rem 1rem; }
+  .role-grid { grid-template-columns: 1fr !important; gap: 0.75rem; padding: 0 1rem 1.5rem; }
+  .step-head { padding: 1.25rem 1rem 0; }
+  .step-title { margin-bottom: 1rem; padding-bottom: 1rem; font-size: 1.35rem; }
+  .step-body { padding: 0 1rem 1.5rem; }
+  .g2f { grid-template-columns: 1fr !important; gap: 0.75rem; }
+  .tier-grid { grid-template-columns: 1fr !important; gap: 0.75rem; }
+  .confirm-body { padding: 1.5rem 1rem; }
+  .level-grid { gap: 0.375rem; }
+  .lvl-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
+}
 </style>
 <!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>

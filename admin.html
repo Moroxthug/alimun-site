@@ -668,9 +668,108 @@ tr:hover td { background: rgba(8,8,8,0.01); }
   font-size: 9px;
   font-family: var(--mono);
 }
+
+/* ── MOBILE RESPONSIVE OVERRIDES ────────────────────── */
+.mobile-hdr {
+  display: none;
+}
+.mobile-sb-overlay {
+  display: none;
+}
+@media (max-width: 991px) {
+  .mobile-hdr {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    padding: 0 16px;
+    background: #ffffff;
+    border-bottom: 1px solid rgba(0,0,0,.07);
+    color: var(--b);
+    flex-shrink: 0;
+    z-index: 100;
+  }
+  .mobile-hdr-btn {
+    background: transparent;
+    color: var(--b);
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+  }
+  .mobile-hdr-btn:active {
+    background: rgba(0,0,0,0.05);
+  }
+  .mobile-hdr-logo {
+    height: 28px;
+  }
+  
+  /* Sidebar responsive positioning */
+  .sb {
+    position: fixed !important;
+    top: 0; left: 0; bottom: 0;
+    width: var(--sb) !important;
+    transform: translateX(-100%);
+    transition: transform 0.3s var(--ease) !important;
+    box-shadow: 0 0 20px rgba(0,0,0,0.15);
+    z-index: 1000;
+  }
+  .sb.open {
+    transform: translateX(0);
+  }
+  .sb-tgl {
+    display: none !important;
+  }
+  
+  /* Main content shifts */
+  .main {
+    margin-left: 0 !important;
+  }
+  #content {
+    padding: 16px 16px 80px !important;
+  }
+  
+  /* Overlay */
+  .mobile-sb-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.4);
+    backdrop-filter: blur(4px);
+    z-index: 998;
+  }
+  .mobile-sb-overlay.active {
+    display: block;
+  }
+
+  /* Grid layout reflows */
+  .g2, .g3, .g4 {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+  .stat-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 12px !important;
+  }
+  
+  /* Target nested inline grids */
+  div[style*="grid-template-columns: 1fr 1fr"],
+  div[style*="grid-template-columns:1fr 1fr"],
+  div[style*="grid-template-columns: 1fr 1fr;"],
+  div[style*="grid-template-columns:1fr 1fr;"] {
+    grid-template-columns: 1fr !important;
+  }
+}
+@media (max-width: 480px) {
+  .stat-row {
+    grid-template-columns: 1fr !important;
+  }
+}
 </style>
 </head>
 <body>
+<div class="mobile-sb-overlay" id="sb-overlay"></div>
 
 <div id="app">
   <!-- ── SIDEBAR ── -->
@@ -749,6 +848,13 @@ tr:hover td { background: rgba(8,8,8,0.01); }
 
   <!-- ── MAIN CONTENT ── -->
   <main id="main" class="main">
+    <header class="mobile-hdr">
+      <button class="mobile-hdr-btn" id="mobile-hamburger">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <img class="mobile-hdr-logo" src="images/alimun.svg" alt="Alimun" style="height:28px;">
+      <div style="width:36px; height:36px; border-radius:50%; background:var(--b); color:#fff; display:flex; align-items:center; justify-content:center; font-family:var(--mono); font-size:11px; font-weight:700;">AD</div>
+    </header>
     <div id="content">
       
       <!-- Eye Toggle for Financial Numbers -->
@@ -1146,6 +1252,36 @@ if (tgl) {
     main.classList.toggle('col');
   });
 }
+
+// Mobile drawer sidebar toggles
+const mobileHamburger = document.getElementById('mobile-hamburger');
+const sbOverlay = document.getElementById('sb-overlay');
+const sidebar = document.getElementById('sb');
+
+function closeMobileSidebar() {
+  if (sidebar) sidebar.classList.remove('open');
+  if (sbOverlay) sbOverlay.classList.remove('active');
+}
+
+if (mobileHamburger) {
+  mobileHamburger.addEventListener('click', () => {
+    if (sidebar) sidebar.classList.add('open');
+    if (sbOverlay) sbOverlay.classList.add('active');
+  });
+}
+
+if (sbOverlay) {
+  sbOverlay.addEventListener('click', closeMobileSidebar);
+}
+
+// Close mobile sidebar on nav click
+document.querySelectorAll('.sb-a').forEach(btn => {
+  btn.addEventListener('click', () => {
+    if (window.innerWidth < 992) {
+      closeMobileSidebar();
+    }
+  });
+});
 
 // Global Nav Function
 window.nav = function(tabName) {

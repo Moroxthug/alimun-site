@@ -3472,3 +3472,59 @@ blockquote {
   font-style: normal;
   font-display: swap;
 }
+
+/* ────────────────────────────────────────────────────── */
+/*  ANTIGRAVITY CUSTOM MOBILE RESPONSIVE OVERRIDES        */
+/* ────────────────────────────────────────────────────── */
+
+/* Mobile Landscape & Portrait (<767px) */
+@media screen and (max-width: 767px) {
+  #founding-cohort {
+    padding: 3rem 1.5rem 3rem !important;
+  }
+  #founding-cohort > div {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+  }
+  #founding-cohort div[style*="display:flex;gap:2.5rem"] {
+    gap: 1.5rem !important;
+    flex-wrap: wrap !important;
+  }
+  #founding-cohort div[style*="max-width:400px;"] {
+    max-width: 100% !important;
+  }
+  #founding-cohort div[style*="margin-top:2rem"] {
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 1rem !important;
+  }
+  #founding-cohort div[style*="margin-top:2rem"] a {
+    justify-content: center !important;
+    width: 100% !important;
+    text-align: center !important;
+  }
+}
+
+/* Mobile Portrait (<479px) */
+@media screen and (max-width: 479px) {
+  h1, .heading-style-h1 {
+    font-size: 2.25rem !important;
+  }
+  h2, .heading-style-h2 {
+    font-size: 1.8rem !important;
+  }
+  h3, .heading-style-h3 {
+    font-size: 1.45rem !important;
+  }
+  .nav_brand {
+    width: 7.5rem !important;
+  }
+  .nav_wrap a[href*="signup.html"] {
+    font-size: 0.65rem !important;
+    padding: 0.35rem 0.75rem !important;
+  }
+  .section, .section.is-location, .section.is-footer, .section.is-bottom-cta {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+}

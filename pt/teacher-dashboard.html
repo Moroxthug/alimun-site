@@ -920,7 +920,7 @@ body{font-family:var(--body);color:var(--b);background:#f8f8f8;}
   }
 
   /* Grid layout reflows */
-  .g2, .g3, .g4 {
+  .g2, .g3, .g4, .avail-grid {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
   }
@@ -943,6 +943,14 @@ body{font-family:var(--body);color:var(--b);background:#f8f8f8;}
   }
   .vid-cell {
     aspect-ratio: 16/9;
+  }
+
+  /* Target nested inline grids */
+  div[style*="grid-template-columns: 1fr 1fr"],
+  div[style*="grid-template-columns:1fr 1fr"],
+  div[style*="grid-template-columns: 1fr 1fr;"],
+  div[style*="grid-template-columns:1fr 1fr;"] {
+    grid-template-columns: 1fr !important;
   }
 }
 </style>
