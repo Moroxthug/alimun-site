@@ -3107,11 +3107,24 @@ async function initData() {
     CAL_DATA = {};
     VOCAB = defaultVocab[langKey] || defaultVocab['French'];
     MEMBERS = [
+      {i:'AI',name:'AI Tutor',role:'AI Assistant',col:'#ceff65',online:true},
       {i:'MD',name:'Marie Dubois',role:'Teacher',col:'#3B1F6A',online:true},
       {i:'SC',name:USER.name,role:'You',col:'#1B2E4A',online:true,me:true}
     ];
     const savedChat = localStorage.getItem(`alimun:chat:${USER.id}`);
-    CHAT_MSGS = savedChat ? JSON.parse(savedChat) : [...defaultChatMsgs];
+    if (savedChat) {
+      CHAT_MSGS = JSON.parse(savedChat);
+    } else {
+      const targetLang = USER.profile?.language || 'French';
+      const welcome = targetLang === 'Spanish' ? '¡Hola! ¿Cómo estás hoy? Estoy aquí para ayudarte a practicar español.' :
+                      targetLang === 'French' ? 'Bonjour! Comment ça va aujourd\'hui? Je suis là pour t\'aider à pratiquer le français.' :
+                      targetLang === 'German' ? 'Hallo! Wie geht es dir heute? Ich bin hier, um dir beim Deutschlernen zu helfen.' :
+                      'Hello! How can I help you practice today?';
+      CHAT_MSGS = [
+        {s:'AI Tutor', i:'AI', col:'#ceff65', t:welcome, time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}), me:false, ai:true}
+      ];
+      localStorage.setItem(`alimun:chat:${USER.id}`, JSON.stringify(CHAT_MSGS));
+    }
     populateSettings();
 
     // Toggle home sub-views
@@ -3415,10 +3428,29 @@ async function initData() {
         });
       });
     }
+    MEMBERS.unshift({
+      i: 'AI',
+      name: 'AI Tutor',
+      role: 'AI Assistant',
+      col: '#ceff65',
+      online: true
+    });
 
     // ─ 7. Load local storage states (Chat, Exercises, Tests) ─────────
     const savedChat = localStorage.getItem(`alimun:chat:${USER.id}`);
-    CHAT_MSGS = savedChat ? JSON.parse(savedChat) : [...defaultChatMsgs];
+    if (savedChat) {
+      CHAT_MSGS = JSON.parse(savedChat);
+    } else {
+      const targetLang = USER.profile?.language || 'Spanish';
+      const welcome = targetLang === 'Spanish' ? '¡Hola! ¿Cómo estás hoy? Estoy aquí para ayudarte a practicar español.' :
+                      targetLang === 'French' ? 'Bonjour! Comment ça va aujourd\'hui? Je suis là pour t\'aider à pratiquer le français.' :
+                      targetLang === 'German' ? 'Hallo! Wie geht es dir heute? Ich bin hier, um dir beim Deutschlernen zu helfen.' :
+                      'Hello! How can I help you practice today?';
+      CHAT_MSGS = [
+        {s:'AI Tutor', i:'AI', col:'#ceff65', t:welcome, time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}), me:false, ai:true}
+      ];
+      localStorage.setItem(`alimun:chat:${USER.id}`, JSON.stringify(CHAT_MSGS));
+    }
 
     // Build today schedule
     buildTodaySchedule();
@@ -4606,6 +4638,11 @@ function xt(key, fallback) {
     || fallback;
 }
 
+// Escape user/AI-provided text before inserting into innerHTML
+function escHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
 function renderExerciseUI(ex, i) {
   if (ex.isHw) {
     if (ex.type === 'Essay' || ex.type === 'Homework') {
@@ -5376,11 +5413,11 @@ function renderChat(){
   document.getElementById('member-list').innerHTML=MEMBERS.map(m=>`
     <div class="chat-mem-row${m.me?' me':''}">
       <div class="mem-av-wrap">
-        <div class="av" style="background:${m.col};width:28px;height:28px;font-size:10px;">${m.i}</div>
+        <div class="av" style="background:${m.col};width:28px;height:28px;font-size:10px;">${escHtml(m.i)}</div>
         <div class="mem-online" style="background:${m.online?'#16A34A':'rgba(0,0,0,.22)'}; border-color:${m.me?'rgba(0,0,0,.03)':'var(--card)'};"></div>
       </div>
       <div style="min-width:0;">
-        <div class="mem-name">${m.name.split(' ')[0]}</div>
+        <div class="mem-name">${escHtml(m.name.split(' ')[0])}</div>
         <div class="mem-role${m.role==='Teacher'?' teacher':''}">${m.role}</div>
       </div>
     </div>`).join('');
@@ -5389,25 +5426,127 @@ function renderChat(){
   document.getElementById('chat-date').textContent=now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   const msgs=document.getElementById('chat-msgs');
   msgs.innerHTML=`<div class="chat-ts">Session started · 09:00</div>`+
-    CHAT_MSGS.map(msg=>`
+    CHAT_MSGS.map((msg,msgIdx)=>`
       <div class="chat-msg${msg.me?' me':''}">
-        <div class="av" style="background:${msg.col};width:32px;height:32px;font-size:11px;">${msg.i}</div>
+        <div class="av" style="background:${msg.col};width:32px;height:32px;font-size:11px;">${escHtml(msg.i)}</div>
         <div style="max-width:65%;display:flex;flex-direction:column;align-items:${msg.me?'flex-end':'flex-start'};">
           <div class="chat-msg-meta">
-            <span class="chat-sender${msg.teacher?' teacher':''}">${msg.s}</span>
+            <span class="chat-sender${msg.teacher?' teacher':''}">${escHtml(msg.s)}</span>
             <span class="chat-time">${msg.time}</span>
+            ${msg.ai && !msg.typing ? `<button class="btn out sm" onclick="playChatMsg(${msgIdx})" style="background:none; border:none; color:#777; cursor:pointer; font-size:10px; padding:0; margin-left:6px; display:inline-flex; align-items:center;" title="${escHtml(xt('student_chat_speak_message','Speak message'))}">🔊</button>` : ''}
           </div>
-          <div class="chat-bub${msg.me?' me':msg.teacher?' teacher':' other'}">${msg.t}</div>
+          <div class="chat-bub${msg.me?' me':msg.teacher?' teacher':' other'}" style="${msg.typing ? 'font-style: italic; opacity: 0.7;' : ''}">${escHtml(msg.t)}</div>
+          ${msg.correction ? `
+            <div style="font-size:11px; background:#fef08a; color:#854d0e; padding:6px 10px; border-radius:6px; margin-top:6px; border-left:3px solid #ca8a04; align-self: flex-start; text-align: left; width: 100%;">
+              <div style="font-weight:700;">💡 ${escHtml(xt('student_chat_correction','Correction:'))}</div>
+              <div style="font-style:italic;">"${escHtml(msg.correction)}"</div>
+              ${msg.explanation ? `<div style="font-size:10px; opacity:0.85; margin-top:3px;">${escHtml(msg.explanation)}</div>` : ''}
+            </div>
+          ` : ''}
         </div>
       </div>`).join('');
   msgs.scrollTop=msgs.scrollHeight;
 }
-function sendChatMsg(){
+function playChatMsg(idx){
+  const m = CHAT_MSGS[idx];
+  if (m && m.t) playListeningAudio(m.t);
+}
+async function sendChatMsg(){
   const inp=document.getElementById('chat-in');
   const txt=inp.value.trim();if(!txt)return;
   inp.value='';
-  const me=MEMBERS.find(m=>m.me);
-  CHAT_MSGS.push({s:me.name.split(' ')[0],i:me.i,col:me.col,t:txt,time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),me:true});
+  const me=MEMBERS.find(m=>m.me) || { name: 'Student', i: 'ST', col: '#3B1F6A' };
+  
+  // 1. Add user message
+  const userMsg = {
+    s: me.name.split(' ')[0],
+    i: me.i,
+    col: me.col,
+    t: txt,
+    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+    me: true
+  };
+  CHAT_MSGS.push(userMsg);
+  localStorage.setItem(`alimun:chat:${USER.id}`, JSON.stringify(CHAT_MSGS));
+  renderChat();
+  
+  // 2. Add typing indicator
+  const typingMsg = {
+    s: 'AI Tutor',
+    i: 'AI',
+    col: '#ceff65',
+    t: xt('student_chat_ai_typing','Typing…'),
+    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+    me: false,
+    ai: true,
+    typing: true
+  };
+  CHAT_MSGS.push(typingMsg);
+  renderChat();
+  
+  try {
+    const { data: { session } = {} } = await SB.auth.getSession();
+    const targetLang = USER.profile?.language || 'French';
+    const targetLevel = USER.profile?.level || 'B2';
+    
+    const contextMsgs = CHAT_MSGS.filter(m => !m.typing).slice(-6);
+    const historyText = contextMsgs.map(m => `${m.me ? 'Student' : 'AI'}: ${m.t}`).join('\n');
+    
+    const systemPrompt = `You are a supportive, friendly native AI tutor at Alimun helping a student learn ${targetLang}. The student's current proficiency level is ${targetLevel}.
+Respond to the student's message in ${targetLang}. Keep your response to 2-3 natural sentences.
+Additionally, review the student's input for grammar, vocabulary, or spelling errors. If there is an error, provide a corrected version of their input and a brief, encouraging explanation in English.
+Respond ONLY with a JSON object in this format:
+{
+  "response": "Your response in the target language",
+  "correction": "Corrected sentence if there was a mistake, otherwise null",
+  "explanation": "Encouraging explanation of the correction in English, or null"
+}`;
+
+    const resp = await fetch('/api/grade', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${session?.access_token || ''}`
+      },
+      body: JSON.stringify({
+        json: true,
+        system: systemPrompt,
+        prompt: `Chat history:\n${historyText}\n\nLast student input: "${txt}"`
+      })
+    });
+    
+    if (!resp.ok) throw new Error('Failed to fetch AI response');
+    const resData = await resp.json();
+    const parsed = JSON.parse(resData.text.replace(/```json|```/g,'').trim());
+    
+    // Remove typing indicator and add real AI message
+    CHAT_MSGS.pop();
+    CHAT_MSGS.push({
+      s: 'AI Tutor',
+      i: 'AI',
+      col: '#ceff65',
+      t: parsed.response,
+      time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+      me: false,
+      ai: true,
+      correction: parsed.correction,
+      explanation: parsed.explanation
+    });
+    
+  } catch(err) {
+    console.error('AI Chat Error:', err);
+    CHAT_MSGS.pop();
+    CHAT_MSGS.push({
+      s: 'AI Tutor',
+      i: 'AI',
+      col: '#ceff65',
+      t: xt('student_chat_ai_error', "I'm sorry, I encountered a temporary connection issue. Could you repeat that?"),
+      time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+      me: false,
+      ai: true
+    });
+  }
+  
   localStorage.setItem(`alimun:chat:${USER.id}`, JSON.stringify(CHAT_MSGS));
   renderChat();
 }

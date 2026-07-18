@@ -920,15 +920,30 @@ body{font-family:var(--body);color:var(--b);background:#f8f8f8;}
   }
 
   /* Grid layout reflows */
-  .g2, .g3, .g4, .avail-grid {
+  .g2, .g3, .g4, .avail-grid, .g-cols, .time-select-row, .vocab-row {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
   }
-  
+
   .day-cards-grid {
     grid-template-columns: repeat(2, 1fr) !important;
   }
-  
+
+  .classroom-chat-panel {
+    position: fixed !important;
+    width: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+  }
+  .classroom-container.minimized {
+    width: calc(100vw - 40px) !important;
+    max-width: 340px !important;
+  }
+  .stat-row {
+    flex-direction: column !important;
+    gap: 12px !important;
+  }
+
   /* Video Grid and Call containers */
   .video-grid {
     grid-template-columns: 1fr !important;

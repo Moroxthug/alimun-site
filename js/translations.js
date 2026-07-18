@@ -1,5 +1,9 @@
 window.ALIMUN_TRANSLATIONS = {
   "en": {
+    "student_chat_speak_message": "Speak message",
+    "student_chat_correction": "Correction:",
+    "student_chat_ai_typing": "Typing…",
+    "student_chat_ai_error": "I'm sorry, I encountered a temporary connection issue. Could you repeat that?",
     "student_ex_generate": "✨ New exercises",
     "student_ex_generating": "Generating…",
     "student_ex_generate_failed": "Could not generate new exercises right now. Please try again in a moment.",
@@ -4865,6 +4869,10 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "بحاجة للمراجعة. راجع تصريفات القواعد."
   },
   "it": {
+    "student_chat_speak_message": "Ascolta il messaggio",
+    "student_chat_correction": "Correzione:",
+    "student_chat_ai_typing": "Sta scrivendo…",
+    "student_chat_ai_error": "Mi dispiace, ho avuto un problema temporaneo di connessione. Puoi ripetere?",
     "student_ex_generate": "✨ Nuovi esercizi",
     "student_ex_generating": "Generazione…",
     "student_ex_generate_failed": "Impossibile generare nuovi esercizi al momento. Riprova tra poco.",
