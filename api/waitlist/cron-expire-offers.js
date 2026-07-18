@@ -23,14 +23,20 @@ function getSupabaseAdmin() {
 }
 
 module.exports = async function (req, res) {
-  // Allow GET or POST for cron triggering
+  // Allow GET or POST for cron triggering.
+  // Vercel Cron authenticates with `Bearer ${CRON_SECRET}`; manual admin
+  // triggers may use ADMIN_SECRET — accept either when configured.
+  const cronSecret  = process.env.CRON_SECRET;
   const adminSecret = process.env.ADMIN_SECRET;
   const authHeader = req.headers.authorization;
-  
-  // Basic security check: if ADMIN_SECRET is configured, require authorization header
-  if (adminSecret && (!authHeader || authHeader !== `Bearer ${adminSecret}`)) {
-    console.warn('[Alimun Waitlist Cron] Unauthorized cron execution attempt');
-    return res.status(401).json({ error: 'Unauthorized' });
+
+  if (cronSecret || adminSecret) {
+    const ok = (cronSecret && authHeader === `Bearer ${cronSecret}`)
+            || (adminSecret && authHeader === `Bearer ${adminSecret}`);
+    if (!ok) {
+      console.warn('[Alimun Waitlist Cron] Unauthorized cron execution attempt');
+      return res.status(401).json({ error: 'Unauthorized' });
+    }
   }
 
   const supabase = getSupabaseAdmin();

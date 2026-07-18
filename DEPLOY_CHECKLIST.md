@@ -2,7 +2,50 @@
 
 Steps required to activate everything shipped in the dashboard overhaul.
 
-## 1. Database migrations (required)
+## 0. LAUNCH BLOCKERS (verified against production, July 18 2026)
+
+These are the only things standing between the current deployment and taking
+real customers. Everything in them is a dashboard action — the code is ready.
+
+### 0a. Stripe is in TEST mode on the live site (nobody can pay)
+The live signup page ships `pk_test_…` and test-mode price IDs. To go live:
+
+1. In the Stripe Dashboard (live mode), recreate the products/prices that exist
+   in test mode: 4 tiers × monthly/yearly (EUR) + AUD/MAD monthly variants +
+   founding member + one-on-one session + certificate. Copy each live
+   `price_…` ID.
+2. In `signup.html` (`window.ALIMUN_CONFIG`, ~line 139): replace
+   `stripePublishableKey` with the **live** `pk_live_…` key and every
+   `stripePrice…` value with the live price IDs. Mirror the same edit in each
+   locale copy (`it/signup.html`, `es/`, … — same config block).
+3. In Vercel → Project → Environment Variables (Production): set
+   `STRIPE_SECRET_KEY` (sk_live), `STRIPE_WEBHOOK_SECRET` (from a live-mode
+   webhook endpoint pointed at `https://alimun.com/api/webhooks/stripe`), and
+   all `STRIPE_PRICE_*` vars with the live IDs.
+4. Redeploy, then run ONE real checkout with a real card and refund it.
+   Confirm the webhook fires (check `webhook_logs` table) and the enrollment
+   is created.
+
+### 0b. AI is not configured in production (grading/exercises/chat all dead)
+`POST /api/grade` on production returns 501. Set **one** of these in Vercel
+Production env: `GEMINI_API_KEY` (primary) or `GROQ_API_KEY` (fallback
+provider, key already exists in local `.env`). Redeploy and re-test — the
+endpoint should return 401 (auth required) instead of 501.
+
+### 0c. Domain: apex redirects to www, but all SEO URLs use apex
+In Vercel → Project → Settings → Domains, set `alimun.com` as the primary
+domain (www.alimun.com redirects to it). All canonicals/sitemap/JSON-LD
+already point at the apex.
+
+### 0d. Post-launch essentials (need your accounts)
+- **Analytics**: none installed. Pick one (Plausible/GA4) and add the snippet.
+- **Google Search Console**: add the `alimun.com` property, submit
+  `https://alimun.com/sitemap.xml`.
+- **Resend email**: verified in code but untested in prod — trigger a teacher
+  application or waitlist offer once and confirm delivery.
+- **CRON_SECRET**: set in Vercel env so the two cron endpoints are locked.
+
+## 1. Database migrations (DONE — verified in production July 18 2026)
 Run in the Supabase SQL editor, **after** `schema.sql`, in this order:
 
 ```

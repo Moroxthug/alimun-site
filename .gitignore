@@ -17,3 +17,7 @@ dist/
 
 .vercel
 .env*
+
+# Claude Code session config / Windows artifacts
+.claude/
+nul

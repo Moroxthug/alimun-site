@@ -1,664 +1,1264 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:xhtml="http://www.w3.org/1999/xhtml">
-
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- HOMEPAGE                                                        -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
   <url>
     <loc>https://alimun.com/</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/"/>
     <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/"/>
     <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://alimun.com/it/</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/"/>
     <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/"/>
     <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>1.0</priority>
-  </url>
-  <url>
-    <loc>https://alimun.com/de/</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://alimun.com/es/</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/"/>
     <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/"/>
     <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://alimun.com/fr/</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/"/>
     <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/"/>
     <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/de/</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://alimun.com/pt/</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/"/>
     <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/"/>
     <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://alimun.com/zh/</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/"/>
     <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/"/>
     <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://alimun.com/ar/</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/"/>
     <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/"/>
     <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
     <loc>https://alimun.com/ma/</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
     <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/"/>
     <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/"/>
     <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/"/>
     <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/"/>
     <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/"/>
     <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- COURSE LANDING PAGES (Italian)                                  -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <url>
-    <loc>https://alimun.com/it/corsi-inglese-online.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corsi-inglese-online.html"/>
-    <lastmod>2026-07-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>1.0</priority>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/it/corsi-spagnolo-online.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corsi-spagnolo-online.html"/>
-    <lastmod>2026-07-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://alimun.com/about-us</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/about-us"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/about-us"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/about-us"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/about-us"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/about-us"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/about-us"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/it/corsi-francese-online.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corsi-francese-online.html"/>
-    <lastmod>2026-07-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://alimun.com/it/about-us</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/about-us"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/about-us"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/about-us"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/about-us"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/about-us"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/about-us"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/it/corsi-tedesco-online.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corsi-tedesco-online.html"/>
-    <lastmod>2026-07-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://alimun.com/es/about-us</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/about-us"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/about-us"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/about-us"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/about-us"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/about-us"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/about-us"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/it/corsi-portoghese-online.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corsi-portoghese-online.html"/>
-    <lastmod>2026-07-01</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.9</priority>
-  </url>
-
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- SERVICES                                                        -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <url>
-    <loc>https://alimun.com/services.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://alimun.com/fr/about-us</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/about-us"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/about-us"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/about-us"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/about-us"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/about-us"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/about-us"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/it/services.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://alimun.com/de/about-us</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/about-us"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/about-us"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/about-us"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/about-us"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/about-us"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/about-us"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/de/services.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/pt/about-us</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/about-us"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/about-us"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/about-us"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/about-us"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/about-us"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/about-us"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/es/services.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/zh/about-us</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/about-us"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/about-us"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/about-us"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/about-us"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/about-us"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/about-us"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/fr/services.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/ar/about-us</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/about-us"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/about-us"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/about-us"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/about-us"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/about-us"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/about-us"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/pt/services.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/ma/about-us</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/about-us"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/about-us"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/about-us"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/about-us"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/about-us"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/about-us"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/about-us"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/about-us"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/zh/services.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/careers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/careers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/careers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/careers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/careers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/careers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/careers"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/ar/services.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/it/careers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/careers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/careers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/careers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/careers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/careers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/careers"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/ma/services.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- TIERS / PRICING                                                 -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <url>
-    <loc>https://alimun.com/tiers.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://alimun.com/es/careers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/careers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/careers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/careers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/careers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/careers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/careers"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/it/tiers.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.9</priority>
+    <loc>https://alimun.com/fr/careers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/careers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/careers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/careers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/careers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/careers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/careers"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/de/tiers.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/de/careers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/careers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/careers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/careers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/careers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/careers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/careers"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/es/tiers.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/pt/careers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/careers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/careers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/careers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/careers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/careers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/careers"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/fr/tiers.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/zh/careers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/careers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/careers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/careers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/careers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/careers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/careers"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/pt/tiers.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/ar/careers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/careers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/careers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/careers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/careers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/careers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/careers"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/zh/tiers.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/ma/careers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/careers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/careers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/careers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/careers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/careers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/careers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/careers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/careers"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/ar/tiers.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/contact</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/contact"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/contact"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/contact"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/contact"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/contact"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/contact"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/ma/tiers.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- ABOUT US                                                        -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <url>
-    <loc>https://alimun.com/about-us.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/about-us.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/it/contact</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/contact"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/contact"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/contact"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/contact"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/contact"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/contact"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/it/about-us.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/about-us.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/about-us.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- CORPORATE                                                       -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <url>
-    <loc>https://alimun.com/corporate.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/corporate.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
+    <loc>https://alimun.com/es/contact</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/contact"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/contact"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/contact"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/contact"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/contact"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/contact"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/it/corporate.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/corporate.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/corporate.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- CONTACT                                                         -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <url>
-    <loc>https://alimun.com/contact.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/contact.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
+    <loc>https://alimun.com/fr/contact</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/contact"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/contact"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/contact"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/contact"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/contact"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/contact"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/it/contact.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/contact.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/contact.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- CAREERS                                                         -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <url>
-    <loc>https://alimun.com/careers.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/careers.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
+    <loc>https://alimun.com/de/contact</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/contact"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/contact"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/contact"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/contact"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/contact"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/contact"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/it/careers.html</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/careers.html"/>
-    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/careers.html"/>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <!-- LEGAL                                                           -->
-  <!-- ═══════════════════════════════════════════════════════════════ -->
-  <url>
-    <loc>https://alimun.com/cookies.html</loc>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://alimun.com/pt/contact</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/contact"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/contact"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/contact"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/contact"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/contact"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/contact"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/gdpr.html</loc>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://alimun.com/zh/contact</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/contact"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/contact"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/contact"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/contact"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/contact"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/contact"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
   <url>
-    <loc>https://alimun.com/terms.html</loc>
-    <lastmod>2026-06-26</lastmod>
-    <changefreq>yearly</changefreq>
-    <priority>0.3</priority>
+    <loc>https://alimun.com/ar/contact</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/contact"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/contact"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/contact"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/contact"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/contact"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/contact"/>
+    <lastmod>2026-07-18</lastmod>
   </url>
-
+  <url>
+    <loc>https://alimun.com/ma/contact</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/contact"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/contact"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/contact"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/contact"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/contact"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/contact"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/contact"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/contact"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/corporate</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corporate"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/corporate"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/corporate"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/corporate"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/corporate"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/corporate"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/it/corporate</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corporate"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/corporate"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/corporate"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/corporate"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/corporate"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/corporate"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/es/corporate</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corporate"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/corporate"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/corporate"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/corporate"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/corporate"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/corporate"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/fr/corporate</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corporate"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/corporate"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/corporate"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/corporate"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/corporate"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/corporate"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/de/corporate</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corporate"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/corporate"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/corporate"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/corporate"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/corporate"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/corporate"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/pt/corporate</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corporate"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/corporate"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/corporate"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/corporate"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/corporate"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/corporate"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/zh/corporate</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corporate"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/corporate"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/corporate"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/corporate"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/corporate"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/corporate"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/ar/corporate</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corporate"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/corporate"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/corporate"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/corporate"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/corporate"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/corporate"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/ma/corporate</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/corporate"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/corporate"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/corporate"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/corporate"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/corporate"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/corporate"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/corporate"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/corporate"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/services</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/it/services</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/es/services</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/fr/services</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/de/services</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/pt/services</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/zh/services</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/ar/services</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/ma/services</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/services"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/services"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/services"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/services"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/services"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/services"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/services"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/services"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/services"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/tiers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/it/tiers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/es/tiers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/fr/tiers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/de/tiers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/pt/tiers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/zh/tiers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/ar/tiers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/ma/tiers</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/tiers"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/tiers"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/tiers"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/tiers"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/tiers"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/tiers"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/tiers"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/tiers"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/cookies"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/cookies"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/cookies"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/cookies"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/cookies"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/cookies"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/it/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/cookies"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/cookies"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/cookies"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/cookies"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/cookies"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/cookies"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/es/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/cookies"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/cookies"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/cookies"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/cookies"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/cookies"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/cookies"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/fr/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/cookies"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/cookies"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/cookies"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/cookies"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/cookies"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/cookies"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/de/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/cookies"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/cookies"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/cookies"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/cookies"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/cookies"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/cookies"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/pt/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/cookies"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/cookies"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/cookies"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/cookies"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/cookies"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/cookies"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/zh/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/cookies"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/cookies"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/cookies"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/cookies"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/cookies"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/cookies"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/ar/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/cookies"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/cookies"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/cookies"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/cookies"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/cookies"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/cookies"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/ma/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/cookies"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/cookies"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/cookies"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/cookies"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/cookies"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/cookies"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/cookies"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/cookies"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/gdpr</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/gdpr"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/it/gdpr</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/gdpr"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/es/gdpr</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/gdpr"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/fr/gdpr</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/gdpr"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/de/gdpr</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/gdpr"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/pt/gdpr</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/gdpr"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/zh/gdpr</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/gdpr"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/ar/gdpr</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/gdpr"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/ma/gdpr</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/gdpr"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/gdpr"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/terms</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/terms"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/terms"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/terms"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/terms"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/terms"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/terms"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/it/terms</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/terms"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/terms"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/terms"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/terms"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/terms"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/terms"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/es/terms</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/terms"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/terms"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/terms"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/terms"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/terms"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/terms"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/fr/terms</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/terms"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/terms"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/terms"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/terms"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/terms"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/terms"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/de/terms</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/terms"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/terms"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/terms"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/terms"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/terms"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/terms"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/pt/terms</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/terms"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/terms"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/terms"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/terms"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/terms"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/terms"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/zh/terms</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/terms"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/terms"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/terms"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/terms"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/terms"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/terms"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/ar/terms</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/terms"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/terms"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/terms"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/terms"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/terms"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/terms"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
+  <url>
+    <loc>https://alimun.com/ma/terms</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="en" href="https://alimun.com/terms"/>
+    <xhtml:link rel="alternate" hreflang="it" href="https://alimun.com/it/terms"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://alimun.com/es/terms"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://alimun.com/fr/terms"/>
+    <xhtml:link rel="alternate" hreflang="de" href="https://alimun.com/de/terms"/>
+    <xhtml:link rel="alternate" hreflang="pt" href="https://alimun.com/pt/terms"/>
+    <xhtml:link rel="alternate" hreflang="zh" href="https://alimun.com/zh/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar" href="https://alimun.com/ar/terms"/>
+    <xhtml:link rel="alternate" hreflang="ar-MA" href="https://alimun.com/ma/terms"/>
+    <lastmod>2026-07-18</lastmod>
+  </url>
 </urlset>

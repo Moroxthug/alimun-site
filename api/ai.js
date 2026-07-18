@@ -104,15 +104,36 @@ async function callAI(opts) {
 
 async function requireAuth(req) {
   const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) return false;
+  if (!authHeader || !authHeader.startsWith('Bearer ')) return null;
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceKey  = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  if (!supabaseUrl || !serviceKey) return true; // can't verify — allow rather than break
+  if (!supabaseUrl || !serviceKey) return null; // fail closed — never expose the AI proxy unauthenticated
   const supabase = createClient(supabaseUrl, serviceKey, {
     auth: { autoRefreshToken: false, persistSession: false },
   });
   const { data, error } = await supabase.auth.getUser(authHeader.split(' ')[1]);
-  return !error && !!data?.user;
+  if (error || !data?.user) return null;
+  return data.user;
+}
+
+// ── Per-user rate limit (sliding window, per warm instance) ──
+// Not a hard global guarantee (resets on cold start, per-instance),
+// but curbs cost abuse from any single account without a DB round-trip.
+const RATE_WINDOW_MS = 10 * 60 * 1000;
+const RATE_MAX_CALLS = 30;
+const rateBuckets = new Map();
+
+function rateLimited(userId) {
+  const cutoff = Date.now() - RATE_WINDOW_MS;
+  const hits = (rateBuckets.get(userId) || []).filter((t) => t > cutoff);
+  if (hits.length >= RATE_MAX_CALLS) {
+    rateBuckets.set(userId, hits);
+    return true;
+  }
+  hits.push(Date.now());
+  if (rateBuckets.size > 5000) rateBuckets.clear();
+  rateBuckets.set(userId, hits);
+  return false;
 }
 
 // ── action=grade ────────────────────────────────────────────
@@ -122,8 +143,12 @@ async function handleGrade(req, res) {
     return res.status(501).json({ error: 'AI is not configured (set GEMINI_API_KEY, GROQ_API_KEY or ANTHROPIC_API_KEY)' });
   }
 
-  if (!(await requireAuth(req))) {
+  const user = await requireAuth(req);
+  if (!user) {
     return res.status(401).json({ error: 'Unauthorized' });
+  }
+  if (rateLimited(user.id)) {
+    return res.status(429).json({ error: 'Too many AI requests — please wait a few minutes and try again.' });
   }
 
   const { prompt, system, json } = req.body || {};
@@ -157,8 +182,12 @@ async function handleGenerateExercises(req, res) {
     return res.status(501).json({ error: 'AI is not configured (set GEMINI_API_KEY or GROQ_API_KEY)' });
   }
 
-  if (!(await requireAuth(req))) {
+  const user = await requireAuth(req);
+  if (!user) {
     return res.status(401).json({ error: 'Unauthorized' });
+  }
+  if (rateLimited(user.id)) {
+    return res.status(429).json({ error: 'Too many AI requests — please wait a few minutes and try again.' });
   }
 
   const {
@@ -175,23 +204,20 @@ async function handleGenerateExercises(req, res) {
     .filter((t) => SUPPORTED_TYPES.includes(t));
   const instrLang = UI_LANG_NAMES[uiLang] || 'English';
 
-  // ── Retrieve rich user history context if authenticated ──
-  const authHeader = req.headers.authorization;
+  // ── Retrieve rich user history context (user verified above) ──
   let studentLanguage = language;
   let studentLevel = level;
   let aiContext = '';
 
   const supabaseUrl = process.env.SUPABASE_URL;
   const serviceKey  = process.env.SUPABASE_SERVICE_ROLE_KEY;
-  
-  if (authHeader && authHeader.startsWith('Bearer ') && supabaseUrl && serviceKey) {
+
+  if (supabaseUrl && serviceKey) {
     try {
       const supabase = createClient(supabaseUrl, serviceKey, {
         auth: { autoRefreshToken: false, persistSession: false },
       });
-      const token = authHeader.split(' ')[1];
-      const { data: { user }, error: userErr } = await supabase.auth.getUser(token);
-      if (user && !userErr) {
+      {
         // 1. Get profile
         const { data: profile } = await supabase
           .from('student_profiles')
