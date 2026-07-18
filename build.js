@@ -249,7 +249,19 @@ languages.forEach(lang => {
       const style = $(el).attr('style');
       $(el).attr('style', rewriteStyleUrls(style));
     });
-    
+
+    // 6. Localize SEO meta: each language page must canonicalize to ITSELF,
+    // not to the English root page it was compiled from (clean URLs — vercel.json cleanUrls).
+    const pageName = templateFile.replace(/\.html$/, '');
+    const selfUrl = `https://alimun.com/${lang}/${pageName === 'index' ? '' : pageName}`;
+    $('link[rel="canonical"]').attr('href', selfUrl);
+    $('meta[property="og:url"]').attr('content', selfUrl);
+    $('meta[name="twitter:url"]').attr('content', selfUrl);
+    const OG_LOCALES = { it: 'it_IT', es: 'es_ES', fr: 'fr_FR', de: 'de_DE', pt: 'pt_PT', zh: 'zh_CN', ar: 'ar_AR', ma: 'ar_MA' };
+    if (OG_LOCALES[lang]) {
+      $('meta[property="og:locale"]').attr('content', OG_LOCALES[lang]);
+    }
+
     // Save the compiled HTML file
     const outputPath = path.join(langDir, templateFile);
     fs.writeFileSync(outputPath, $.html(), 'utf8');
