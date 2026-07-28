@@ -7,10 +7,13 @@
 <meta name="robots" content="noindex">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link href="css/auth-shell.css" rel="stylesheet">
 <style>
 :root{--g:#ceff65;--b:#080808;--body:'Satoshi',sans-serif;--disp:'Anton',sans-serif;}
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--body);background:#f0efe9;min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;-webkit-font-smoothing:antialiased;padding:2rem;}
+body{font-family:var(--body);background:#f0efe9;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
+
+.success-center{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;}
 
 /* Card */
 .card{background:#fff;border-radius:1.75rem;box-shadow:0 12px 60px rgba(0,0,0,.1);max-width:480px;width:100%;overflow:hidden;position:relative;}
@@ -58,12 +61,19 @@ body{font-family:var(--body);background:#f0efe9;min-height:100vh;display:flex;fl
   window.ALIMUN_CONFIG = {
     supabaseUrl:          'https://dgaiasmefcbrtzqwdyri.supabase.co',
     supabaseAnonKey:      'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
-    stripePublishableKey: 'pk_test_51TlpPSBSEHl9NbpEoDK36xbj5VKYSvmnvf27AdnK0JdFwbfGuF1lslFVzgZEkQRyLhZQoYwWFmrM9pThGYFk8GVG00TyJB6tTS',
   };
 </script>
 </head>
 <body>
 
+<div class="auth-topstrip">
+  <a href="index.html">
+    <img src="images/Alimun-Source-File-fixes.svg" alt="Alimun Logo">
+    <span data-i18n="signup_success_strip_label">Registration complete</span>
+  </a>
+</div>
+
+<div class="success-center">
 <div class="card" id="card">
 
   <!-- State: loading -->
@@ -105,6 +115,7 @@ body{font-family:var(--body);background:#f0efe9;min-height:100vh;display:flex;fl
   </div>
 
 </div><!-- /card -->
+</div><!-- /success-center -->
 
 <script type="module">
 import { supabase } from '/js/supabase/config.js';

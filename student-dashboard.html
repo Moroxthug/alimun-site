@@ -12,6 +12,29 @@
     supabaseUrl:     'https://dgaiasmefcbrtzqwdyri.supabase.co',
     supabaseAnonKey: 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
   };
+  // Stripe publishable key + price IDs are server-driven (see /api/stripe.js
+  // action=config) — needed by the "Upgrade plan" flow further down this page.
+  (async () => {
+    try {
+      const resp = await fetch('/api/stripe/config');
+      if (!resp.ok) { console.error('[Alimun] /api/stripe/config returned', resp.status); return; }
+      const remoteCfg = await resp.json();
+      Object.assign(window.ALIMUN_CONFIG, {
+        stripePublishableKey:            remoteCfg.stripePublishableKey,
+        stripePriceCommunityMonthly:     remoteCfg.prices?.communityMonthly,
+        stripePriceFocusedMonthly:       remoteCfg.prices?.focusedMonthly,
+        stripePriceIntensiveMonthly:     remoteCfg.prices?.intensiveMonthly,
+        stripePricePrivateMonthly:       remoteCfg.prices?.privateMonthly,
+        stripePriceCommunityYearly:      remoteCfg.prices?.communityYearly,
+        stripePriceFocusedYearly:        remoteCfg.prices?.focusedYearly,
+        stripePriceIntensiveYearly:      remoteCfg.prices?.intensiveYearly,
+        stripePricePrivateYearly:        remoteCfg.prices?.privateYearly,
+        stripePriceFoundingMember:       remoteCfg.prices?.foundingMember,
+      });
+    } catch (err) {
+      console.error('[Alimun] Failed to load Stripe config:', err);
+    }
+  })();
 </script>
 <script src="js/translations.js" defer></script>
 <script src="js/i18n.js" defer></script>

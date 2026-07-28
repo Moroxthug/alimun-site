@@ -4,15 +4,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&amp;display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Anton&amp;display=swap" rel="stylesheet">
+<link href="../css/auth-shell.css" rel="stylesheet">
 <style>
 :root { --g:#ceff65; --b:#080808; --body:'Satoshi',sans-serif; --disp:'Anton',sans-serif; }
 *{ box-sizing:border-box; margin:0; padding:0; }
 body{ font-family:var(--body); background:#f0efe9; min-height:100vh; display:flex; flex-direction:column; -webkit-font-smoothing:antialiased; }
-
-.topbar{ padding:1.5rem 2rem; display:flex; align-items:center; }
-.topbar a{ text-decoration:none; }
-
-.center{ flex:1; display:flex; align-items:center; justify-content:center; padding:2rem; }
 
 .card{
   background:#fff; border-radius:1.5rem;
@@ -20,28 +16,29 @@ body{ font-family:var(--body); background:#f0efe9; min-height:100vh; display:fle
   box-shadow:0 8px 40px rgba(0,0,0,.08);
   overflow:hidden;
 }
-.card-head{ padding:2rem 2rem 1.5rem; border-bottom:1px solid rgba(0,0,0,.07); }
-.card-eyebrow{ font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; color:#aaa; margin-bottom:.35rem; }
-.card-title{ font-family:var(--disp); font-size:1.875rem; text-transform:uppercase; line-height:1.05; }
+.card-head{ padding:1.5rem 1.75rem 1.125rem; border-bottom:1px solid rgba(0,0,0,.07); }
+.card-eyebrow{ font-size:.65rem; letter-spacing:.12em; text-transform:uppercase; color:#aaa; margin-bottom:.3rem; }
+.card-title{ font-family:var(--disp); font-size:1.5rem; text-transform:uppercase; line-height:1.05; }
 
-.tabs{ display:flex; gap:.375rem; margin-bottom:1.5rem; }
+.tabs{ display:flex; gap:.375rem; margin-bottom:1.125rem; }
 .tab{
   flex:1; padding:.6rem; border-radius:.625rem; border:1px solid rgba(0,0,0,.1);
   background:transparent; font-family:var(--body); font-size:.78rem; font-weight:700;
   text-transform:uppercase; letter-spacing:.05em; color:#aaa; cursor:pointer; transition:all .18s;
 }
+.tab:hover:not(.on){ border-color:rgba(0,0,0,.25); color:var(--b); }
 .tab.on{ background:var(--b); color:#fff; border-color:var(--b); }
 
-.card-body{ padding:1.75rem 2rem 2rem; }
+.card-body{ padding:1.375rem 1.75rem 1.5rem; }
 
-.field{ margin-bottom:1rem; }
+.field{ margin-bottom:.875rem; }
 .field label{ display:block; font-size:.72rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#888; margin-bottom:.5rem; }
 .field input{
   width:100%; background:#fafaf8; border:1.5px solid rgba(0,0,0,.1); border-radius:.75rem;
   padding:.875rem 1.125rem; font-family:var(--body); font-size:.9rem; color:var(--b); outline:none;
-  transition:border-color .18s;
+  transition:border-color .18s, box-shadow .18s;
 }
-.field input:focus{ border-color:var(--b); }
+.field input:focus{ border-color:var(--b); box-shadow:0 0 0 3px rgba(206,255,101,.35); }
 .field input::placeholder{ color:#ccc; }
 
 .signin-btn{
@@ -59,7 +56,10 @@ body{ font-family:var(--body); background:#f0efe9; min-height:100vh; display:fle
   padding:.65rem 1rem; font-size:.8rem; color:#dc2626; line-height:1.45;
 }
 
-.divider{ display:flex; align-items:center; gap:.875rem; margin:1.375rem 0; }
+.forgot-link{ display:block; text-align:right; font-size:.72rem; font-weight:600; color:#aaa; text-decoration:none; margin:-.5rem 0 1rem; transition:color .18s; }
+.forgot-link:hover{ color:var(--b); }
+
+.divider{ display:flex; align-items:center; gap:.875rem; margin:1.125rem 0; }
 .divider::before, .divider::after{ content:''; flex:1; height:1px; background:rgba(0,0,0,.08); }
 .divider span{ font-size:.72rem; color:#bbb; white-space:nowrap; }
 
@@ -72,12 +72,12 @@ body{ font-family:var(--body); background:#f0efe9; min-height:100vh; display:fle
 .google-btn:hover{ background:#f5f4f0; }
 .google-ico{ width:16px; height:16px; }
 
-.card-foot{ padding:1.25rem 2rem 1.75rem; border-top:1px solid rgba(0,0,0,.07); text-align:center; }
+.card-foot{ padding:1rem 1.75rem 1.375rem; border-top:1px solid rgba(0,0,0,.07); text-align:center; }
 .card-foot p{ font-size:.8rem; color:#aaa; }
 .card-foot a{ color:var(--b); font-weight:700; text-decoration:none; }
 .card-foot a:hover{ text-decoration:underline; }
 
-.footer{ padding:1.5rem 2rem; text-align:center; }
+.footer{ padding:.875rem 2rem; text-align:center; flex-shrink:0; }
 .footer p{ font-size:.75rem; color:#bbb; }
 .footer a{ color:#aaa; text-decoration:none; }
 .footer a:hover{ color:var(--b); }
@@ -106,8 +106,7 @@ body{ font-family:var(--body); background:#f0efe9; min-height:100vh; display:fle
 .status-back:hover{ color:var(--b); }
 
 @media (max-width: 480px) {
-  .topbar { padding: 1rem; }
-  .center { padding: 1rem; }
+  .auth-form-center { padding: 1rem; }
   .card-head { padding: 1.5rem 1rem 1.25rem; }
   .card-body { padding: 1.25rem 1rem 1.5rem; }
   .card-foot { padding: 1rem 1rem 1.25rem; }
@@ -127,46 +126,63 @@ body{ font-family:var(--body); background:#f0efe9; min-height:100vh; display:fle
 </head>
 <body>
 
-<div class="topbar">
-  <a href="index.html" style="display: block; height: 34px; overflow: hidden; width: 10.5625rem; position: relative;">
-    <img src="../images/Alimun-Source-File-fixes.svg" alt="Alimun Logo" style="width: 100%; height: auto; position: absolute; top: 50%; transform: translateY(-50%);">
-  </a>
-</div>
-
-<div class="center">
-  <div class="card">
-    <div class="card-head">
-      <div class="card-eyebrow" data-i18n="auth_signin_eyebrow">Willkommen zurück</div>
-      <div class="card-title" data-i18n="auth_signin_title">Anmelden</div>
+<div class="auth-shell">
+  <div class="auth-brand-panel">
+    <a class="auth-brand-logo" href="index.html"><img src="../images/Alimun-Source-File-fixes.svg" alt="Alimun Logo"></a>
+    <span class="auth-brand-tagline" data-i18n="signin_brand_tagline">Live cohorts. Real teachers. AI feedback.</span>
+    <div class="auth-brand-main">
+      <div class="auth-brand-eyebrow" data-i18n="cohort_eyebrow">Gründungskohorte — nur 200 Plätze</div>
+      <h1 class="auth-brand-headline" data-i18n-html="signin_brand_headline">WELCOME<br>BACK.</h1>
+      <p class="auth-brand-desc" data-i18n="signin_brand_desc">Pick up where you left off — your next live session is waiting.</p>
+      <div class="auth-stats">
+        <div class="auth-stat"><div class="auth-stat-num">100</div><div class="auth-stat-label" data-i18n="cohort_stats_joined">Schüler beigetreten</div></div>
+        <div class="auth-stat"><div class="auth-stat-num">6</div><div class="auth-stat-label" data-i18n="cohort_stats_teachers">Lehrer bereit</div></div>
+        <div class="auth-stat"><div class="auth-stat-num">100</div><div class="auth-stat-label" data-i18n="cohort_stats_left">Plätze übrig</div></div>
+      </div>
+      <div class="auth-progress">
+        <div class="auth-progress-labels"><span>0</span><span data-i18n="cohort_progress_label">100 von 200 Gründungsplätzen vergeben</span><span>200</span></div>
+        <div class="auth-progress-track"><div class="auth-progress-fill"></div></div>
+      </div>
     </div>
-    <div class="card-body">
-      <div class="tabs">
-        <button class="tab on" onclick="setRole('student',this)" data-i18n="auth_role_student">Ich bin Schüler</button>
-        <button class="tab" onclick="setRole('teacher',this)" data-i18n="auth_role_teacher">Ich bin Lehrer</button>
+  </div>
+  <div class="auth-form-panel">
+    <div class="auth-form-center">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-eyebrow" data-i18n="auth_signin_eyebrow">Willkommen zurück</div>
+          <div class="card-title" data-i18n="auth_signin_title">Anmelden</div>
+        </div>
+        <div class="card-body">
+          <div class="tabs">
+            <button class="tab on" onclick="setRole('student',this)" data-i18n="auth_role_student">Ich bin Schüler</button>
+            <button class="tab" onclick="setRole('teacher',this)" data-i18n="auth_role_teacher">Ich bin Lehrer</button>
+          </div>
+          <div class="field">
+            <label data-i18n="auth_email">E-Mail-Adresse</label>
+            <input type="email" placeholder="alex@example.com" id="email-input">
+          </div>
+          <div class="field">
+            <label data-i18n="auth_password">Passwort</label>
+            <input type="password" placeholder="••••••••" id="pw-input">
+          </div>
+          <a href="forgot-password.html" class="forgot-link" data-i18n="auth_forgot_password">Forgot password?</a>
+          <button class="signin-btn" id="signin-btn" onclick="signIn()" data-i18n="auth_btn_signin">Anmelden →</button>
+          <div class="error-msg" id="error-msg"></div>
+          <div class="divider"><span data-i18n="auth_or">oder</span></div>
+          <button class="google-btn">
+            <svg class="google-ico" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
+              <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
+              <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
+              <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
+            </svg>
+            <span data-i18n="auth_google_signin">Mit Google fortfahren</span>
+          </button>
+        </div>
+        <div class="card-foot">
+          <p data-i18n-html="auth_no_account_waitlist">Noch kein Konto? <a href="contact.html">Auf die Warteliste setzen →</a></p>
+        </div>
       </div>
-      <div class="field">
-        <label data-i18n="auth_email">E-Mail-Adresse</label>
-        <input type="email" placeholder="alex@example.com" id="email-input">
-      </div>
-      <div class="field">
-        <label data-i18n="auth_password">Passwort</label>
-        <input type="password" placeholder="••••••••" id="pw-input">
-      </div>
-      <button class="signin-btn" id="signin-btn" onclick="signIn()" data-i18n="auth_btn_signin">Anmelden →</button>
-      <div class="error-msg" id="error-msg"></div>
-      <div class="divider"><span data-i18n="auth_or">oder</span></div>
-      <button class="google-btn">
-        <svg class="google-ico" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"></path>
-          <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"></path>
-          <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"></path>
-          <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"></path>
-        </svg>
-        <span data-i18n="auth_google_signin">Mit Google fortfahren</span>
-      </button>
-    </div>
-    <div class="card-foot">
-      <p data-i18n-html="auth_no_account_waitlist">Noch kein Konto? <a href="contact.html">Auf die Warteliste setzen →</a></p>
     </div>
   </div>
 </div>

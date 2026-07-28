@@ -60,9 +60,9 @@ export const PLANS = {
   community: {
     name:           'Community',
     tagline:        '1 session/week · ~35 learners',
-    monthlyPrice:   17,
-    yearlyPrice:    290,
-    yearlyMonthly:  24,   // effective monthly when billed yearly (290/12 ≈ 24)
+    monthlyPrice:   24,
+    yearlyPrice:    240,
+    yearlyMonthly:  20,   // effective monthly when billed yearly (240/12 = 20)
     color:          '#f5f4f0',
     textColor:      '#080808',
     badge:          null,
@@ -84,7 +84,7 @@ export const PLANS = {
   focused: {
     name:           'Focused',
     tagline:        '2 sessions/week · ~17 learners',
-    monthlyPrice:   39,
+    monthlyPrice:   59,
     yearlyPrice:    590,
     yearlyMonthly:  49,   // effective monthly when billed yearly (590/12 ≈ 49)
     color:          '#080808',
@@ -110,9 +110,9 @@ export const PLANS = {
   intensive: {
     name:           'Intensive',
     tagline:        '3 sessions/week · ~6 learners + 1:1',
-    monthlyPrice:   69,
-    yearlyPrice:    990,
-    yearlyMonthly:  82,   // effective monthly when billed yearly (990/12 ≈ 82)
+    monthlyPrice:   109,
+    yearlyPrice:    1090,
+    yearlyMonthly:  91,   // effective monthly when billed yearly (1090/12 ≈ 90.83)
     color:          '#ceff65',
     textColor:      '#080808',
     badge:          null,
@@ -137,9 +137,9 @@ export const PLANS = {
   private: {
     name:           '1 on 1',
     tagline:        'Private sessions · Base 3 classes/week',
-    monthlyPrice:   179,
-    yearlyPrice:    1790,
-    yearlyMonthly:  149,  // effective monthly when billed yearly (1790/12 ≈ 149)
+    monthlyPrice:   269,
+    yearlyPrice:    2690,
+    yearlyMonthly:  224,  // effective monthly when billed yearly (2690/12 ≈ 224.17)
     color:          '#f5f4f0',
     textColor:      '#080808',
     badge:          'Maximum progress',

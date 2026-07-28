@@ -316,6 +316,28 @@ async function handleBillingPortal(req, res) {
   }
 }
 
+// Publishable, non-secret values only — safe to expose to any client.
+// This is the single source of truth for which Stripe mode (test/live) the
+// site is wired to: swap the underlying env vars in Vercel to flip modes,
+// nothing in the served HTML needs to change.
+function handleGetConfig(req, res) {
+  return res.status(200).json({
+    stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || '',
+    prices: {
+      communityMonthly: process.env.STRIPE_PRICE_COMMUNITY_MONTHLY || '',
+      focusedMonthly:   process.env.STRIPE_PRICE_FOCUSED_MONTHLY || '',
+      intensiveMonthly: process.env.STRIPE_PRICE_INTENSIVE_MONTHLY || '',
+      privateMonthly:   process.env.STRIPE_PRICE_PRIVATE_MONTHLY || '',
+      communityYearly:  process.env.STRIPE_PRICE_COMMUNITY_YEARLY || '',
+      focusedYearly:    process.env.STRIPE_PRICE_FOCUSED_YEARLY || '',
+      intensiveYearly:  process.env.STRIPE_PRICE_INTENSIVE_YEARLY || '',
+      privateYearly:    process.env.STRIPE_PRICE_PRIVATE_YEARLY || '',
+      foundingMember:   process.env.STRIPE_PRICE_FOUNDING_MEMBER || '',
+    },
+    foundingMemberFee: 29,
+  });
+}
+
 // ── Main handler ──
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || '*');
@@ -336,6 +358,9 @@ module.exports = async function handler(req, res) {
     case 'billing-portal':
       if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
       return handleBillingPortal(req, res);
+    case 'config':
+      if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+      return handleGetConfig(req, res);
     default:
       return res.status(400).json({ error: `Unknown action: ${action}` });
   }

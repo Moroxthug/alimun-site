@@ -58,11 +58,16 @@
         localStorage.setItem(STORAGE_KEY, urlLang);
       }
     } else {
-      const activeLang = getActiveLang();
-      if (activeLang !== 'en') {
-        const filename = parts.join('/') || 'index.html';
-        const targetPath = `/${activeLang}/${filename}`;
-        window.location.replace(window.location.origin + targetPath);
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isBot = /bot|googlebot|crawler|spider|robot|crawling|slurp|bing|yandex|baidu/i.test(userAgent);
+      
+      if (!isBot) {
+        const activeLang = getActiveLang();
+        if (activeLang !== 'en') {
+          const filename = parts.join('/') || '';
+          const targetPath = filename === '' ? `/${activeLang}/` : `/${activeLang}/${filename}`;
+          window.location.replace(window.location.origin + targetPath);
+        }
       }
     }
   })();

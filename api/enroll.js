@@ -121,6 +121,14 @@ module.exports = async function handler(req, res) {
       });
     }
 
+    // Check 2b: Language match — a student can only join a cohort teaching their target language
+    if (cohort.language !== student.language) {
+      return res.status(403).json({
+        error: 'language_mismatch',
+        message: `This cohort teaches ${cohort.language}, but your profile is set to learn ${student.language}.`
+      });
+    }
+
     // Check 3: Current enrollment
     if (student.enrolled_cohort_id) {
       return res.status(409).json({

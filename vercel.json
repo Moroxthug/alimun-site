@@ -40,6 +40,10 @@
       "dest": "/api/stripe?action=billing-portal"
     },
     {
+      "src": "/api/stripe/config",
+      "dest": "/api/stripe?action=config"
+    },
+    {
       "src": "/api/(.*)",
       "dest": "/api/$1"
     },
