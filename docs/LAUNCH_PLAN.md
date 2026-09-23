@@ -10,7 +10,7 @@ Alimun is a real product with real plumbing (Supabase, Stripe live mode, Daily.c
 
 ---
 
-## 2. What was fixed today (in this repo, uncommitted → branch `launch-hardening`)
+## 2. What was fixed today (commit `80d9bad` on branch `launch-hardening`, not yet merged or pushed)
 
 ### Backend (`/api`)
 | Area | Before | After |
