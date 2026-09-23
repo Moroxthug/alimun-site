@@ -137,7 +137,7 @@ const TIER_NAMES = {
   focused:   'Focused',
   intensive: 'Intensive',
   private:   '1 on 1',
-  onetoone:  '1 on 1',
+  founding_member: 'Founding Member',
   unknown:   'Alimun',
 };
 
@@ -185,48 +185,58 @@ async function init() {
 
     const session = await resp.json();
 
-    // 3. Verify payment actually succeeded
-    if (session.status !== 'complete' || session.paymentStatus !== 'paid') {
+    // 3. Verify payment actually succeeded.
+    //    Subscriptions report paymentStatus 'paid'; some one-time / trial
+    //    sessions only report status 'complete' — either counts as success.
+    const paid = session.paymentStatus === 'paid' || session.status === 'complete';
+    if (!paid) {
       showError(
-        `Your payment status is "${session.paymentStatus}". ` +
+        `Your payment status is "${session.paymentStatus || session.status}". ` +
         'If you believe this is an error, please contact support@alimun.com.'
       );
       return;
     }
 
-    // 4. Update student_profiles with subscription info
-    const supabaseUserId = session.metadata?.supabase_user_id;
-    const tier           = session.metadata?.tier || 'unknown';
-    const subscriptionId = session.subscriptionId;
+    // 4. Account activation (tier / subscription status / cohort) is done by
+    //    the Stripe webhook on the server. The browser must NOT write those
+    //    columns — a DB trigger rejects it. Nothing to update here.
 
-    if (supabaseUserId && subscriptionId) {
-      const { error: updateErr } = await supabase
-        .from('student_profiles')
-        .update({
-          stripe_subscription_id:     subscriptionId,
-          stripe_subscription_status: 'active',
-        })
-        .eq('user_id', supabaseUserId);
+    // 5. Personalise from the signed-in session (if any) and show success UI
+    const tier     = session.tier || 'unknown';
+    const tierName = TIER_NAMES[tier] || 'Alimun';
 
-      if (updateErr) {
-        // Non-fatal: payment succeeded, just log
-        console.warn('[Alimun] Could not update student_profiles:', updateErr.message);
-      }
+    let firstName = '';
+    let authSession = null;
+    try {
+      ({ data: { session: authSession } } = await supabase.auth.getSession());
+      const fullName = authSession?.user?.user_metadata?.full_name || '';
+      firstName = fullName.trim().split(/\s+/)[0] || '';
+    } catch (e) {
+      console.warn('[Alimun] Could not read auth session:', e);
     }
 
-    // 5. Show success UI
-    const tierName   = TIER_NAMES[tier] || 'Alimun';
-    const firstName  = session.customerEmail?.split('@')[0] || '';
-
     document.getElementById('success-title').textContent =
-      `You're in${firstName ? ', ' + firstName.charAt(0).toUpperCase() + firstName.slice(1) : ''}!`;
+      `You're in${firstName ? ', ' + firstName : ''}!`;
     document.getElementById('success-sub').textContent =
       `Your ${tierName} account is active. Get ready for your first live session — we'll be in touch shortly.`;
     document.getElementById('tier-pill-text').textContent =
       `${tierName} plan · Active`;
 
     showState('state-success');
-    startRedirectCountdown(3);
+
+    if (authSession) {
+      startRedirectCountdown(3);
+    } else {
+      // Payment succeeded (webhook activated the account) but the browser has
+      // no session — e.g. email confirmation pending or a different device.
+      const btn = document.getElementById('btn-dashboard');
+      btn.href = 'signin.html';
+      btn.textContent = 'Sign in →';
+      const note = document.querySelector('.redirect-note');
+      if (note) note.textContent = 'Sign in to open your dashboard.';
+      const bar = document.querySelector('.progress-bar-wrap');
+      if (bar) bar.style.display = 'none';
+    }
 
   } catch (err) {
     console.error('[Alimun] signup-success error:', err);

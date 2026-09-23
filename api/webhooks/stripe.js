@@ -3,13 +3,17 @@
  *  ALIMUN — POST /api/webhooks/stripe
  *  Vercel Serverless Function (Node.js runtime)
  *
- *  Stripe Webhook handler.
- *  - Verifies event signature using STRIPE_WEBHOOK_SECRET
- *  - Responds with 200 immediately to avoid timeouts
- *  - Logs all events to Supabase `webhook_logs` table
- *  - Processes events asynchronously to update user profile tiers,
- *    cancel subscriptions, log payment failures, send Resend emails,
- *    and grant session credits.
+ *  Stripe webhook handler — the ONLY writer of billing state
+ *  (student_profiles.tier / stripe_* columns, session_credits).
+ *
+ *  - Verifies the event signature with STRIPE_WEBHOOK_SECRET
+ *  - Idempotent via webhook_logs.event_id (unique)
+ *  - Processes the event BEFORE responding, so Vercel never
+ *    freezes the function mid-work. Stripe allows ~30s.
+ *  - Maps Stripe subscription statuses onto our enum
+ *    (active | past_due | cancelled)
+ *  - Cancels enrollments when a subscription ends, freeing the
+ *    cohort seat (trigger decrements enrolled_count)
  * ============================================================
  */
 
@@ -21,29 +25,47 @@ if (!STRIPE_KEY) {
 const stripe = require('stripe')(STRIPE_KEY || 'dummy_key_for_load_validation');
 const { createClient } = require('@supabase/supabase-js');
 
-// Price to tier mapping (synchronized with signup config)
-const PRICE_TO_TIER = {
-  [process.env.STRIPE_PRICE_COMMUNITY_MONTHLY]:      'community',
-  [process.env.STRIPE_PRICE_COMMUNITY_YEARLY]:       'community',
-  [process.env.STRIPE_PRICE_FOCUSED_MONTHLY]:        'focused',
-  [process.env.STRIPE_PRICE_FOCUSED_YEARLY]:         'focused',
-  [process.env.STRIPE_PRICE_INTENSIVE_MONTHLY]:      'intensive',
-  [process.env.STRIPE_PRICE_INTENSIVE_YEARLY]:       'intensive',
-  [process.env.STRIPE_PRICE_PRIVATE_MONTHLY]:        'private',
-  [process.env.STRIPE_PRICE_PRIVATE_YEARLY]:         'private',
-  [process.env.STRIPE_PRICE_COMMUNITY_MONTHLY_AUD]:  'community',
-  [process.env.STRIPE_PRICE_FOCUSED_MONTHLY_AUD]:    'focused',
-  [process.env.STRIPE_PRICE_INTENSIVE_MONTHLY_AUD]:  'intensive',
-  [process.env.STRIPE_PRICE_PRIVATE_MONTHLY_AUD]:    'private',
-  [process.env.STRIPE_PRICE_COMMUNITY_MONTHLY_MAD]:  'community',
-  [process.env.STRIPE_PRICE_FOCUSED_MONTHLY_MAD]:    'focused',
-  [process.env.STRIPE_PRICE_INTENSIVE_MONTHLY_MAD]:  'intensive',
-  [process.env.STRIPE_PRICE_PRIVATE_MONTHLY_MAD]:    'private',
-};
+const env = (k) => process.env[k] || '';
 
-/**
- * Initialise Supabase admin client (server-side only, uses service role key to bypass RLS).
- */
+const PRICE_TO_TIER = Object.fromEntries([
+  [env('STRIPE_PRICE_COMMUNITY_MONTHLY'),      'community'],
+  [env('STRIPE_PRICE_COMMUNITY_YEARLY'),       'community'],
+  [env('STRIPE_PRICE_FOCUSED_MONTHLY'),        'focused'],
+  [env('STRIPE_PRICE_FOCUSED_YEARLY'),         'focused'],
+  [env('STRIPE_PRICE_INTENSIVE_MONTHLY'),      'intensive'],
+  [env('STRIPE_PRICE_INTENSIVE_YEARLY'),       'intensive'],
+  [env('STRIPE_PRICE_PRIVATE_MONTHLY'),        'private'],
+  [env('STRIPE_PRICE_PRIVATE_YEARLY'),         'private'],
+  [env('STRIPE_PRICE_COMMUNITY_MONTHLY_AUD'),  'community'],
+  [env('STRIPE_PRICE_FOCUSED_MONTHLY_AUD'),    'focused'],
+  [env('STRIPE_PRICE_INTENSIVE_MONTHLY_AUD'),  'intensive'],
+  [env('STRIPE_PRICE_PRIVATE_MONTHLY_AUD'),    'private'],
+  [env('STRIPE_PRICE_COMMUNITY_MONTHLY_MAD'),  'community'],
+  [env('STRIPE_PRICE_FOCUSED_MONTHLY_MAD'),    'focused'],
+  [env('STRIPE_PRICE_INTENSIVE_MONTHLY_MAD'),  'intensive'],
+  [env('STRIPE_PRICE_PRIVATE_MONTHLY_MAD'),    'private'],
+].filter(([id]) => id));
+
+const VALID_TIERS = new Set(['community', 'focused', 'intensive', 'private']);
+
+/** Stripe subscription.status → student_profiles.stripe_subscription_status */
+function mapSubscriptionStatus(stripeStatus) {
+  switch (stripeStatus) {
+    case 'active':
+    case 'trialing':
+      return 'active';
+    case 'past_due':
+    case 'unpaid':
+    case 'incomplete':
+    case 'paused':
+      return 'past_due';
+    case 'canceled':
+    case 'incomplete_expired':
+    default:
+      return 'cancelled';
+  }
+}
+
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -57,14 +79,28 @@ function getSupabaseAdmin() {
 }
 
 /**
- * Read request stream chunks and concatenate into a raw request Buffer.
+ * Obtain the raw request body for signature verification.
+ * Vercel's Node helpers may have already consumed the stream and
+ * exposed `req.body`; handle every shape we can see.
  */
 async function getRawBody(req) {
+  if (Buffer.isBuffer(req.body)) return req.body;
+  if (typeof req.body === 'string') return Buffer.from(req.body, 'utf8');
+
   const chunks = [];
-  for await (const chunk of req) {
-    chunks.push(chunk);
+  try {
+    for await (const chunk of req) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+  } catch (_) { /* stream already consumed */ }
+  if (chunks.length) return Buffer.concat(chunks);
+
+  if (req.body && typeof req.body === 'object') {
+    // Last resort: helpers parsed JSON. Signature verification will only
+    // pass if Stripe's payload serialisation matches — log loudly so a
+    // 400 here is easy to diagnose (set NODEJS_HELPERS=0 if it persists).
+    console.warn('[Alimun Webhook] Raw body unavailable; falling back to re-serialised JSON body.');
+    return Buffer.from(JSON.stringify(req.body), 'utf8');
   }
-  return Buffer.concat(chunks);
+  return Buffer.alloc(0);
 }
 
 // ── Main webhook endpoint handler ─────────────────────────────
@@ -81,251 +117,237 @@ const handler = async function (req, res) {
     console.error('[Alimun Webhook] STRIPE_WEBHOOK_SECRET is not configured.');
     return res.status(500).json({ error: 'Webhook secret is not configured' });
   }
-
   if (!sig) {
-    console.error('[Alimun Webhook] Missing stripe-signature header.');
     return res.status(400).json({ error: 'Missing stripe-signature header' });
-  }
-
-  let rawBody;
-  try {
-    rawBody = await getRawBody(req);
-  } catch (err) {
-    console.error('[Alimun Webhook] Failed to read request body:', err);
-    return res.status(400).json({ error: 'Failed to read request body' });
   }
 
   let event;
   try {
+    const rawBody = await getRawBody(req);
     event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
   } catch (err) {
     console.error('[Alimun Webhook] Signature verification failed:', err.message);
-    return res.status(400).json({ error: `Webhook signature verification failed: ${err.message}` });
+    return res.status(400).json({ error: 'Webhook signature verification failed' });
   }
 
   const supabase = getSupabaseAdmin();
+  if (!supabase) {
+    // Tell Stripe to retry later rather than silently dropping the event.
+    return res.status(500).json({ error: 'Database unavailable' });
+  }
+
+  // 1. Idempotency: log first; duplicate event ids short-circuit.
   let logId = null;
+  {
+    const { data: logData, error: logError } = await supabase
+      .from('webhook_logs')
+      .insert({
+        event_id: event.id,
+        event_type: event.type,
+        payload: { id: event.id, type: event.type, created: event.created, livemode: event.livemode,
+                   object: event.data?.object?.object, object_id: event.data?.object?.id },
+        status: 'pending',
+      })
+      .select('id')
+      .single();
 
-  // 1. Log event immediately as 'pending' to Supabase (idempotency safety)
-  if (supabase) {
-    try {
-      const { data: logData, error: logError } = await supabase
-        .from('webhook_logs')
-        .insert({
-          event_id: event.id,
-          event_type: event.type,
-          payload: event,
-          status: 'pending'
-        })
-        .select('id')
-        .single();
-
-      if (logError) {
-        // Handle postgres unique constraint violation (duplicate event code: 23505)
-        if (logError.code === '23505') {
-          console.log(`[Alimun Webhook] Duplicate event ignored: ${event.id}`);
-          return res.status(200).json({ received: true, duplicate: true });
-        }
-        console.warn('[Alimun Webhook] Failed to create initial log in Supabase:', logError.message);
-      } else {
-        logId = logData.id;
+    if (logError) {
+      if (logError.code === '23505') {
+        return res.status(200).json({ received: true, duplicate: true });
       }
-    } catch (err) {
-      console.error('[Alimun Webhook] Error writing initial log:', err);
+      console.warn('[Alimun Webhook] Failed to create initial log:', logError.message);
+    } else {
+      logId = logData.id;
     }
   }
 
-  // 2. Respond to Stripe with 200 immediately to meet Stripe requirements
-  res.status(200).json({ received: true });
-
-  // 3. Process the event payload asynchronously
+  // 2. Process synchronously, then acknowledge.
   try {
     await processWebhookEvent(event, supabase);
-
-    // Update log status to 'processed'
-    if (supabase && logId) {
-      await supabase
-        .from('webhook_logs')
-        .update({ status: 'processed' })
-        .eq('id', logId);
+    if (logId) {
+      await supabase.from('webhook_logs').update({ status: 'processed' }).eq('id', logId);
     }
+    return res.status(200).json({ received: true });
   } catch (err) {
-    console.error(`[Alimun Webhook] Error processing event ${event.id}:`, err);
-
-    // Update log status to 'failed'
-    if (supabase && logId) {
+    console.error(`[Alimun Webhook] Error processing event ${event.id} (${event.type}):`, err);
+    if (logId) {
       await supabase
         .from('webhook_logs')
-        .update({
-          status: 'failed',
-          error_message: err.message || String(err)
-        })
+        .update({ status: 'failed', error_message: (err.message || String(err)).slice(0, 1000) })
         .eq('id', logId);
     }
+    // 500 → Stripe retries with backoff. The webhook_logs row stays
+    // ('failed') so the retry is not treated as a duplicate.
+    if (logId) await supabase.from('webhook_logs').delete().eq('id', logId);
+    return res.status(500).json({ error: 'Processing failed' });
   }
 };
 
-/**
- * Handle Stripe event types and trigger side effects
- */
+// ── Lookup helpers ────────────────────────────────────────────
+
+async function findStudentBySubscription(supabase, subscriptionId, stripeCustomerId) {
+  if (subscriptionId) {
+    const { data } = await supabase
+      .from('student_profiles')
+      .select('id, user_id, full_name, tier, stripe_subscription_status, enrolled_cohort_id')
+      .eq('stripe_subscription_id', subscriptionId)
+      .maybeSingle();
+    if (data) return data;
+  }
+  if (stripeCustomerId) {
+    const { data } = await supabase
+      .from('student_profiles')
+      .select('id, user_id, full_name, tier, stripe_subscription_status, enrolled_cohort_id')
+      .eq('stripe_customer_id', stripeCustomerId)
+      .maybeSingle();
+    if (data) return data;
+  }
+  return null;
+}
+
+/** End a student's active enrollment(s); the DB trigger frees the seat. */
+async function cancelActiveEnrollments(supabase, studentId) {
+  const { error } = await supabase
+    .from('enrollments')
+    .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+    .eq('student_id', studentId)
+    .eq('status', 'active');
+  if (error) throw new Error(`Failed to cancel enrollments: ${error.message}`);
+}
+
+// ── Event processing ──────────────────────────────────────────
+
 async function processWebhookEvent(event, supabase) {
   const object = event.data.object;
 
   switch (event.type) {
-    case 'checkout.session.completed': {
+    case 'checkout.session.completed':
+    case 'checkout.session.async_payment_succeeded': {
       const session = object;
+      if (session.payment_status !== 'paid' && session.status !== 'complete') {
+        console.log(`[Alimun Webhook] Checkout ${session.id} not paid yet (${session.payment_status}); waiting.`);
+        break;
+      }
       const metadata = session.metadata || {};
-      const supabaseUserId = metadata.supabase_user_id;
-
+      const supabaseUserId = metadata.supabase_user_id || session.client_reference_id;
       if (!supabaseUserId) {
-        console.warn(`[Alimun Webhook] No supabase_user_id in session metadata: ${session.id}`);
+        console.warn(`[Alimun Webhook] No supabase_user_id on checkout session ${session.id}`);
         break;
       }
 
-      const type = metadata.type;
-
-      if (type === 'certificate') {
-        await triggerCertificateGeneration(session, supabaseUserId);
-      } else if (type === 'session') {
-        await grantSessionCredits(session, supabaseUserId, supabase);
-      } else {
+      if (session.mode === 'subscription') {
         await handleSubscriptionCheckout(session, metadata, supabaseUserId, supabase);
+      } else {
+        await handleOneTimeCheckout(session, metadata, supabaseUserId, supabase);
       }
       break;
     }
 
+    case 'customer.subscription.created':
     case 'customer.subscription.updated': {
       const subscription = object;
-      const subscriptionId = subscription.id;
-      const stripeCustomerId = subscription.customer;
-      const status = subscription.status;
-      const metadata = subscription.metadata || {};
-
-      let { data: student, error: fetchError } = await supabase
-        .from('student_profiles')
-        .select('id, tier, stripe_subscription_status')
-        .eq('stripe_subscription_id', subscriptionId)
-        .single();
-
-      // Fallback search by stripe_customer_id
-      if (!student && stripeCustomerId) {
-        const { data: studentByCust } = await supabase
-          .from('student_profiles')
-          .select('id, tier, stripe_subscription_status')
-          .eq('stripe_customer_id', stripeCustomerId)
-          .single();
-        student = studentByCust;
-      }
-
+      const student = await findStudentBySubscription(supabase, subscription.id, subscription.customer);
       if (!student) {
-        console.warn(`[Alimun Webhook] Student profile not found for subscription ${subscriptionId}`);
+        console.warn(`[Alimun Webhook] No student for subscription ${subscription.id}`);
         break;
       }
 
-      const oldTier = student.tier;
-
-      // Resolve the new tier
-      let newTier = metadata.tier;
-      if (!newTier) {
-        const priceId = subscription.items?.data?.[0]?.price?.id;
-        if (priceId) {
-          newTier = PRICE_TO_TIER[priceId];
-        }
-      }
+      const status = mapSubscriptionStatus(subscription.status);
+      const priceId = subscription.items?.data?.[0]?.price?.id;
+      const newTier = (subscription.metadata?.tier && VALID_TIERS.has(subscription.metadata.tier))
+        ? subscription.metadata.tier
+        : PRICE_TO_TIER[priceId];
 
       const updates = {
+        stripe_subscription_id: subscription.id,
         stripe_subscription_status: status,
-        updated_at: new Date().toISOString()
+        updated_at: new Date().toISOString(),
       };
-
-      if (status === 'active' && newTier && newTier !== oldTier) {
+      if (status === 'active' && newTier && VALID_TIERS.has(newTier) && newTier !== student.tier) {
         updates.tier = newTier;
       }
 
-      const { error: updateError } = await supabase
-        .from('student_profiles')
-        .update(updates)
-        .eq('id', student.id);
+      const { error } = await supabase.from('student_profiles').update(updates).eq('id', student.id);
+      if (error) throw new Error(`Failed to update student profile: ${error.message}`);
 
-      if (updateError) {
-        throw new Error(`Failed to update student profile: ${updateError.message}`);
+      if (status === 'cancelled') {
+        await cancelActiveEnrollments(supabase, student.id);
+        await supabase.from('student_profiles').update({ enrolled_cohort_id: null }).eq('id', student.id);
       }
-      console.log(`[Alimun Webhook] Subscription updated for student ${student.id}. Status: ${status}, Tier: ${updates.tier || oldTier}`);
+      console.log(`[Alimun Webhook] Subscription ${subscription.id} → ${status}${updates.tier ? ', tier ' + updates.tier : ''}`);
       break;
     }
 
     case 'customer.subscription.deleted': {
       const subscription = object;
-      const subscriptionId = subscription.id;
-
-      const { data: student, error: fetchError } = await supabase
-        .from('student_profiles')
-        .select('id, user_id, full_name')
-        .eq('stripe_subscription_id', subscriptionId)
-        .single();
-
+      const student = await findStudentBySubscription(supabase, subscription.id, subscription.customer);
       if (!student) {
-        console.warn(`[Alimun Webhook] Student profile not found for subscription ${subscriptionId}`);
+        console.warn(`[Alimun Webhook] No student for subscription ${subscription.id}`);
         break;
       }
 
-      const { error: updateError } = await supabase
+      const { error } = await supabase
         .from('student_profiles')
         .update({
           stripe_subscription_status: 'cancelled',
           enrolled_cohort_id: null,
-          updated_at: new Date().toISOString()
+          updated_at: new Date().toISOString(),
         })
         .eq('id', student.id);
+      if (error) throw new Error(`Failed to mark subscription cancelled: ${error.message}`);
 
-      if (updateError) {
-        throw new Error(`Failed to update student profile to cancelled: ${updateError.message}`);
-      }
-
-      console.log(`[Alimun Webhook] Subscription cancelled for student ${student.id}. Dispatched cancellation email.`);
+      await cancelActiveEnrollments(supabase, student.id);
       await sendCancellationEmail(student, subscription);
+      break;
+    }
+
+    case 'invoice.paid':
+    case 'invoice.payment_succeeded': {
+      const invoice = object;
+      const subId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id;
+      const student = await findStudentBySubscription(supabase, subId, invoice.customer);
+      if (!student) break;
+      if (student.stripe_subscription_status !== 'active') {
+        const { error } = await supabase
+          .from('student_profiles')
+          .update({ stripe_subscription_status: 'active', updated_at: new Date().toISOString() })
+          .eq('id', student.id);
+        if (error) throw new Error(`Failed to reactivate after payment: ${error.message}`);
+        console.log(`[Alimun Webhook] Payment recovered for student ${student.id}`);
+      }
       break;
     }
 
     case 'invoice.payment_failed': {
       const invoice = object;
-      const stripeCustomerId = invoice.customer;
-      const attemptCount = invoice.attempt_count || 1;
-
-      const { data: student, error: fetchError } = await supabase
-        .from('student_profiles')
-        .select('id, user_id, full_name')
-        .eq('stripe_customer_id', stripeCustomerId)
-        .single();
-
+      const subId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id;
+      const student = await findStudentBySubscription(supabase, subId, invoice.customer);
       if (!student) {
-        console.warn(`[Alimun Webhook] Student profile not found for customer ${stripeCustomerId}`);
+        console.warn(`[Alimun Webhook] No student for customer ${invoice.customer}`);
         break;
       }
 
-      const isThirdFailure = attemptCount >= 3;
-      const newStatus = isThirdFailure ? 'cancelled' : 'past_due';
-
+      const attemptCount = invoice.attempt_count || 1;
+      const isFinalFailure = attemptCount >= 3;
       const updates = {
-        stripe_subscription_status: newStatus,
-        updated_at: new Date().toISOString()
+        stripe_subscription_status: isFinalFailure ? 'cancelled' : 'past_due',
+        updated_at: new Date().toISOString(),
       };
+      if (isFinalFailure) updates.enrolled_cohort_id = null;
 
-      if (isThirdFailure) {
-        updates.enrolled_cohort_id = null;
-      }
+      const { error } = await supabase.from('student_profiles').update(updates).eq('id', student.id);
+      if (error) throw new Error(`Failed to update on payment failure: ${error.message}`);
 
-      const { error: updateError } = await supabase
-        .from('student_profiles')
-        .update(updates)
-        .eq('id', student.id);
+      if (isFinalFailure) await cancelActiveEnrollments(supabase, student.id);
+      await sendPaymentFailedEmail(student, invoice, isFinalFailure);
+      break;
+    }
 
-      if (updateError) {
-        throw new Error(`Failed to update student profile on payment failure: ${updateError.message}`);
-      }
-
-      console.log(`[Alimun Webhook] Payment failed for student ${student.id} (attempt #${attemptCount}). Status: ${newStatus}`);
-      await sendPaymentFailedEmail(student, invoice, isThirdFailure);
+    case 'charge.refunded':
+    case 'charge.dispute.created': {
+      // Money went back out. Log loudly for the admin; product decision on
+      // access revocation is handled manually (see admin dashboard).
+      console.warn(`[Alimun Webhook] ${event.type} for charge ${object.id} customer ${object.customer} amount ${object.amount}`);
       break;
     }
 
@@ -334,253 +356,193 @@ async function processWebhookEvent(event, supabase) {
   }
 }
 
-/**
- * Call the generate-certificate endpoint on Alimun to start PDF generation.
- */
-async function triggerCertificateGeneration(session, supabaseUserId) {
-  const appUrl = process.env.APP_URL || 'https://alimun.com';
-  const url = `${appUrl}/api/generate-certificate`;
+/** Subscription checkout → activate tier. */
+async function handleSubscriptionCheckout(session, metadata, supabaseUserId, supabase) {
+  const stripeCustomerId = typeof session.customer === 'string' ? session.customer : session.customer?.id;
+  const stripeSubscriptionId = typeof session.subscription === 'string' ? session.subscription : session.subscription?.id;
 
-  console.log(`[Alimun Webhook] Triggering certificate generation for user ${supabaseUserId} at ${url}`);
-
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        userId:    supabaseUserId,
-        sessionId: session.id,
-        email:     session.customer_details?.email,
-        metadata:  session.metadata
-      })
-    });
-
-    if (!response.ok) {
-      const responseText = await response.text();
-      throw new Error(`HTTP ${response.status}: ${responseText}`);
-    }
-
-    console.log(`[Alimun Webhook] Certificate generation trigger succeeded for session ${session.id}`);
-  } catch (err) {
-    console.error(`[Alimun Webhook] Certificate generation request failed:`, err);
-    throw err;
+  let tier = metadata.tier;
+  if (!VALID_TIERS.has(tier) && stripeSubscriptionId) {
+    const sub = await stripe.subscriptions.retrieve(stripeSubscriptionId);
+    tier = PRICE_TO_TIER[sub.items?.data?.[0]?.price?.id];
   }
+  if (!VALID_TIERS.has(tier)) {
+    throw new Error(`Cannot resolve tier for checkout ${session.id} (metadata.tier=${metadata.tier})`);
+  }
+
+  const { data, error } = await supabase
+    .from('student_profiles')
+    .update({
+      stripe_customer_id: stripeCustomerId,
+      stripe_subscription_id: stripeSubscriptionId,
+      stripe_subscription_status: 'active',
+      tier,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('user_id', supabaseUserId)
+    .select('id');
+
+  if (error) throw new Error(`Failed to activate subscription: ${error.message}`);
+  if (!data || data.length === 0) throw new Error(`No student_profiles row for user ${supabaseUserId}`);
+
+  console.log(`[Alimun Webhook] Subscription tier '${tier}' activated for user ${supabaseUserId}`);
 }
 
-/**
- * Add a record of 1-on-1 session credits for the student.
- */
-async function grantSessionCredits(session, supabaseUserId, supabase) {
-  const { data: student, error: studentError } = await supabase
+/** One-time purchases: founding member fee, 1:1 session credit, certificate. */
+async function handleOneTimeCheckout(session, metadata, supabaseUserId, supabase) {
+  const type = metadata.type || 'unknown';
+  const { data: student, error } = await supabase
     .from('student_profiles')
     .select('id')
     .eq('user_id', supabaseUserId)
-    .single();
+    .maybeSingle();
+  if (error || !student) throw new Error(`No student_profiles row for user ${supabaseUserId}`);
 
-  if (studentError || !student) {
-    throw new Error(`Student profile not found for user ${supabaseUserId}: ${studentError?.message || 'Not found'}`);
+  const stripeCustomerId = typeof session.customer === 'string' ? session.customer : session.customer?.id;
+  if (stripeCustomerId) {
+    await supabase.from('student_profiles').update({ stripe_customer_id: stripeCustomerId }).eq('id', student.id);
   }
 
-  const credits = parseInt(session.metadata?.credits || '1', 10) || 1;
-
-  const { error: creditError } = await supabase
-    .from('session_credits')
-    .insert({
-      student_id:        student.id,
-      credits:           credits,
-      source:            'stripe_checkout_payment',
-      stripe_session_id: session.id
-    });
-
-  if (creditError) {
-    throw new Error(`Failed to grant session credits: ${creditError.message}`);
+  switch (type) {
+    case 'session': {
+      const credits = Math.max(1, parseInt(metadata.credits || '1', 10) || 1);
+      const { error: creditError } = await supabase.from('session_credits').insert({
+        student_id: student.id,
+        credits,
+        source: 'stripe_checkout_payment',
+        stripe_session_id: session.id,
+      });
+      if (creditError) throw new Error(`Failed to grant session credits: ${creditError.message}`);
+      console.log(`[Alimun Webhook] Granted ${credits} 1:1 credit(s) to student ${student.id}`);
+      break;
+    }
+    case 'founding_member': {
+      // The founding fee locks the founding price; access itself comes with
+      // the subscription. Record the purchase for the admin.
+      const { error: creditError } = await supabase.from('session_credits').insert({
+        student_id: student.id,
+        credits: 0,
+        source: 'founding_member_fee',
+        stripe_session_id: session.id,
+      });
+      if (creditError) throw new Error(`Failed to record founding fee: ${creditError.message}`);
+      console.log(`[Alimun Webhook] Founding member fee recorded for student ${student.id}`);
+      break;
+    }
+    case 'certificate': {
+      // Certificate generation is not implemented yet (no /api/generate-certificate).
+      const { error: certError } = await supabase.from('session_credits').insert({
+        student_id: student.id,
+        credits: 0,
+        source: 'certificate_purchase',
+        stripe_session_id: session.id,
+      });
+      if (certError) throw new Error(`Failed to record certificate purchase: ${certError.message}`);
+      console.warn(`[Alimun Webhook] Certificate purchased by ${student.id} — manual fulfilment required`);
+      break;
+    }
+    default:
+      throw new Error(`Unknown one-time purchase type '${type}' on session ${session.id}`);
   }
-
-  console.log(`[Alimun Webhook] Successfully granted ${credits} session credits to student profile ${student.id}`);
 }
 
-/**
- * Handle subscription profile association.
- */
-async function handleSubscriptionCheckout(session, metadata, supabaseUserId, supabase) {
-  const stripeCustomerId = session.customer;
-  const stripeSubscriptionId = session.subscription;
-  const tier = metadata.tier || 'unknown';
+// ── Email helpers (Resend) ────────────────────────────────────
 
-  const { error: updateError } = await supabase
-    .from('student_profiles')
-    .update({
-      stripe_customer_id:         stripeCustomerId,
-      stripe_subscription_id:     stripeSubscriptionId,
-      stripe_subscription_status: 'active',
-      tier:                       tier,
-      updated_at:                 new Date().toISOString()
-    })
-    .eq('user_id', supabaseUserId);
-
-  if (updateError) {
-    throw new Error(`Failed to associate subscription details to profile: ${updateError.message}`);
-  }
-
-  console.log(`[Alimun Webhook] Active subscription tier '${tier}' synced for user ${supabaseUserId}`);
-}
-
-/**
- * Send email cancellation warning using Resend REST API
- */
-async function sendCancellationEmail(student, subscription) {
-  if (!process.env.RESEND_API_KEY) {
-    console.warn('[Alimun Webhook] RESEND_API_KEY not configured. Skipping cancellation email.');
-    return;
-  }
-
-  let email = null;
+async function resolveStudentEmail(student, fallback) {
   const supabase = getSupabaseAdmin();
   if (supabase && student.user_id) {
     try {
-      const { data: userData } = await supabase.auth.admin.getUserById(student.user_id);
-      email = userData?.user?.email;
+      const { data } = await supabase.auth.admin.getUserById(student.user_id);
+      if (data?.user?.email) return data.user.email;
     } catch (e) {
-      console.warn('[Alimun Webhook] Failed to retrieve user email from Supabase:', e.message);
+      console.warn('[Alimun Webhook] Failed to resolve user email:', e.message);
     }
   }
+  return fallback || null;
+}
 
-  if (!email && subscription.customer) {
+async function sendResend({ to, subject, html }) {
+  if (!process.env.RESEND_API_KEY) {
+    console.warn('[Alimun Webhook] RESEND_API_KEY not configured. Skipping email.');
+    return;
+  }
+  const from = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ from, to, subject, html }),
+    });
+    if (!response.ok) {
+      console.error('[Alimun Webhook] Resend API error:', await response.text());
+    }
+  } catch (err) {
+    console.error('[Alimun Webhook] Resend dispatch failed:', err);
+  }
+}
+
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+async function sendCancellationEmail(student, subscription) {
+  let fallback = null;
+  if (subscription.customer) {
     try {
       const customer = await stripe.customers.retrieve(subscription.customer);
-      email = customer.email;
-    } catch (e) {
-      console.warn('[Alimun Webhook] Failed to retrieve customer email from Stripe:', e.message);
-    }
+      fallback = customer.email;
+    } catch (_) { /* ignore */ }
   }
+  const email = await resolveStudentEmail(student, fallback);
+  if (!email) return;
 
-  if (!email) {
-    console.error(`[Alimun Webhook] Could not determine recipient email for cancellation notice.`);
-    return;
-  }
+  const endDate = subscription.current_period_end
+    ? new Date(subscription.current_period_end * 1000).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
+    : 'today';
 
-  const endDate = new Date(subscription.current_period_end * 1000).toLocaleDateString('en-US', {
-    year:  'numeric',
-    month: 'long',
-    day:   'numeric'
+  await sendResend({
+    to: email,
+    subject: 'Your Alimun subscription has ended',
+    html: `<div style="font-family:sans-serif;color:#333;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;border:1px solid #f0f0f0;border-radius:8px;">
+      <h2 style="color:#080808;">Your subscription has ended</h2>
+      <p>Hi ${escapeHtml(student.full_name) || 'there'},</p>
+      <p>Your subscription has ended and your seat in your class has been released. Your access continues until <strong>${endDate}</strong>.</p>
+      <p>You can resubscribe at any time from your dashboard to rejoin a class.</p>
+      <p>Thank you for studying with us!</p>
+      <p>The Alimun Team</p>
+    </div>`,
   });
-
-  const emailFrom = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
-
-  try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-        'Content-Type':  'application/json'
-      },
-      body: JSON.stringify({
-        from:    emailFrom,
-        to:      email,
-        subject: 'Your subscription has ended',
-        html:    `<div style="font-family: sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #f0f0f0; border-radius: 8px;">
-                   <h2 style="color: #080808;">Your subscription has ended</h2>
-                   <p>Hi ${student.full_name || 'there'},</p>
-                   <p>Your subscription has ended. Your access continues until <strong>${endDate}</strong>.</p>
-                   <p>If you wish to continue learning with Alimun after this date, you can resubscribe at any time from your dashboard.</p>
-                   <p>Thank you for studying with us!</p>
-                   <p>Best regards,<br/>The Alimun Team</p>
-                 </div>`
-      })
-    });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error('[Alimun Webhook] Resend API response error:', errText);
-    } else {
-      console.log(`[Alimun Webhook] Subscription cancellation email sent to ${email}`);
-    }
-  } catch (err) {
-    console.error('[Alimun Webhook] Resend email dispatch failed:', err);
-  }
 }
 
-/**
- * Send payment failed warning or suspension email using Resend REST API
- */
-async function sendPaymentFailedEmail(student, invoice, isThirdFailure) {
-  if (!process.env.RESEND_API_KEY) {
-    console.warn('[Alimun Webhook] RESEND_API_KEY not configured. Skipping payment failed email.');
-    return;
-  }
+async function sendPaymentFailedEmail(student, invoice, isFinalFailure) {
+  const email = await resolveStudentEmail(student, invoice.customer_email);
+  if (!email) return;
 
-  let email = null;
-  const supabase = getSupabaseAdmin();
-  if (supabase && student.user_id) {
-    try {
-      const { data: userData } = await supabase.auth.admin.getUserById(student.user_id);
-      email = userData?.user?.email;
-    } catch (e) {
-      console.warn('[Alimun Webhook] Failed to retrieve user email from Supabase:', e.message);
-    }
-  }
+  const name = escapeHtml(student.full_name) || 'there';
+  const html = isFinalFailure
+    ? `<div style="font-family:sans-serif;color:#333;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;border:1px solid #f0f0f0;border-radius:8px;">
+        <h2 style="color:#ea4335;">Your Alimun subscription has been suspended</h2>
+        <p>Hi ${name},</p>
+        <p>We were unable to process your payment after 3 attempts. Your subscription has been cancelled and your class seat released.</p>
+        <p>To come back, log in to your dashboard, update your payment method and resubscribe.</p>
+        <p>The Alimun Team</p>
+      </div>`
+    : `<div style="font-family:sans-serif;color:#333;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;border:1px solid #f0f0f0;border-radius:8px;">
+        <h2 style="color:#080808;">Payment failed for your Alimun subscription</h2>
+        <p>Hi ${name},</p>
+        <p>We could not process your latest subscription payment. Please update your payment method in your dashboard's billing settings to keep your seat.</p>
+        <p>We will retry automatically in a few days.</p>
+        <p>The Alimun Team</p>
+      </div>`;
 
-  if (!email && invoice.customer_email) {
-    email = invoice.customer_email;
-  }
-
-  if (!email) {
-    console.error(`[Alimun Webhook] Could not determine recipient email for payment failure notice.`);
-    return;
-  }
-
-  const emailFrom = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
-  const subject = isThirdFailure ? 'Your subscription has been suspended' : 'Payment failed — Action required';
-
-  const htmlContent = isThirdFailure
-    ? `<div style="font-family: sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #f0f0f0; border-radius: 8px;">
-         <h2 style="color: #ea4335;">Your Alimun subscription has been suspended</h2>
-         <p>Hi ${student.full_name || 'there'},</p>
-         <p>We were unable to process your payment after 3 attempts. Your subscription has been cancelled and your access has been suspended.</p>
-         <p>To reactivate your account, please log in to your dashboard and update your payment method to resubscribe.</p>
-         <p>Best regards,<br/>The Alimun Team</p>
-       </div>`
-    : `<div style="font-family: sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #f0f0f0; border-radius: 8px;">
-         <h2 style="color: #080808;">Payment failed for your Alimun subscription</h2>
-         <p>Hi ${student.full_name || 'there'},</p>
-         <p>We were unable to process your recent subscription payment. Please update your payment method to keep your access active.</p>
-         <p>We will attempt to process the payment again in a few days. You can update your payment method in your dashboard's billing settings.</p>
-         <p>Best regards,<br/>The Alimun Team</p>
-       </div>`;
-
-  try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${process.env.RESEND_API_KEY}`,
-        'Content-Type':  'application/json'
-      },
-      body: JSON.stringify({
-        from:    emailFrom,
-        to:      email,
-        subject: subject,
-        html:    htmlContent
-      })
-    });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error('[Alimun Webhook] Resend API response error:', errText);
-    } else {
-      console.log(`[Alimun Webhook] Payment failed alert (suspension: ${isThirdFailure}) sent to ${email}`);
-    }
-  } catch (err) {
-    console.error('[Alimun Webhook] Resend email dispatch failed:', err);
-  }
+  await sendResend({
+    to: email,
+    subject: isFinalFailure ? 'Your subscription has been suspended' : 'Payment failed — action required',
+    html,
+  });
 }
-
-// Disable body parsing by default so we can fetch raw stream for signature verification
-handler.config = {
-  api: {
-    bodyParser: false,
-  },
-};
 
 module.exports = handler;

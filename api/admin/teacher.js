@@ -32,6 +32,36 @@ function getSupabaseAdmin() {
   });
 }
 
+const TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60; // approve/reject links valid for 7 days
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/** token = HMAC(secret, `${teacherId}:${action}:${exp}`) — bound to action and expiry. */
+function signActionToken(secret, teacherId, action, exp) {
+  return crypto.createHmac('sha256', secret).update(`${teacherId}:${action}:${exp}`).digest('hex');
+}
+
+function verifyActionToken(secret, teacherId, action, exp, token) {
+  const expNum = parseInt(exp, 10);
+  if (!Number.isFinite(expNum) || expNum < Math.floor(Date.now() / 1000)) return false;
+  const expected = signActionToken(secret, teacherId, action, expNum);
+  const a = Buffer.from(String(token || ''), 'utf8');
+  const b = Buffer.from(expected, 'utf8');
+  return a.length === b.length && crypto.timingSafeEqual(a, b);
+}
+
+/** Verify a Supabase JWT and return the auth user (or null). */
+async function getAuthUser(req, supabase) {
+  const authHeader = req.headers.authorization || '';
+  if (!authHeader.startsWith('Bearer ')) return null;
+  const { data, error } = await supabase.auth.getUser(authHeader.slice(7));
+  if (error || !data?.user) return null;
+  return data.user;
+}
+
 function renderErrorPage(res, message) {
   return res.status(400).send(`
     <!DOCTYPE html>
@@ -91,10 +121,10 @@ async function sendEmail(to, subject, html) {
 // ── action=approve ──────────────────────────────────────────
 
 async function handleApprove(req, res) {
-  const { token, teacher_id } = req.query || {};
+  const { token, teacher_id, exp } = req.query || {};
 
-  if (!token || !teacher_id) {
-    return renderErrorPage(res, 'Missing token or teacher_id parameters.');
+  if (!token || !teacher_id || !exp || !UUID_RE.test(String(teacher_id))) {
+    return renderErrorPage(res, 'Missing or invalid parameters.');
   }
 
   const adminSecret = process.env.ADMIN_SECRET;
@@ -103,14 +133,9 @@ async function handleApprove(req, res) {
     return renderErrorPage(res, 'Server environment error: Admin secret is missing.');
   }
 
-  const expectedToken = crypto
-    .createHmac('sha256', adminSecret)
-    .update(teacher_id)
-    .digest('hex');
-
-  if (token !== expectedToken) {
-    console.warn(`[Alimun Approve] Invalid token signature for teacher_id: ${teacher_id}`);
-    return renderErrorPage(res, 'Unauthorized action: Token signature verification failed.');
+  if (!verifyActionToken(adminSecret, teacher_id, 'approve', exp, token)) {
+    console.warn(`[Alimun Approve] Invalid or expired token for teacher_id: ${teacher_id}`);
+    return renderErrorPage(res, 'This approval link is invalid or has expired. Please approve from the admin dashboard.');
   }
 
   const supabase = getSupabaseAdmin();
@@ -155,7 +180,7 @@ async function handleApprove(req, res) {
             <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
           </div>
           <h1>Already Approved</h1>
-          <p>Teacher <strong>${profile.full_name}</strong> is already approved.</p>
+          <p>Teacher <strong>${escapeHtml(profile.full_name)}</strong> is already approved.</p>
           <a href="https://alimun.com" class="btn">Back to Alimun</a>
         </div>
       </body>
@@ -206,7 +231,7 @@ async function handleApprove(req, res) {
             <h1>Alimun</h1>
           </div>
           <div class="content">
-            <h2 style="color: #080808; margin-top: 0;">Congratulations, ${profile.full_name}!</h2>
+            <h2 style="color: #080808; margin-top: 0;">Congratulations, ${escapeHtml(profile.full_name)}!</h2>
             <p>Your application to join the Alimun teacher network has been approved.</p>
             <p>Your account is ready. You can now log in to the dashboard to set up your cohorts and welcome your first students.</p>
             <p>We've started you on the <strong>Focused</strong> tier level by default.</p>
@@ -249,7 +274,7 @@ async function handleApprove(req, res) {
           <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
         </div>
         <h1>Teacher Approved</h1>
-        <p>Teacher <strong>${profile.full_name}</strong> is now approved. A confirmation welcome email has been sent to <strong>${teacherEmail || 'their address'}</strong>.</p>
+        <p>Teacher <strong>${escapeHtml(profile.full_name)}</strong> is now approved. A confirmation welcome email has been sent to <strong>${escapeHtml(teacherEmail || 'their address')}</strong>.</p>
         <a href="https://alimun.com" class="btn">Back to Alimun</a>
       </div>
     </body>
@@ -260,10 +285,10 @@ async function handleApprove(req, res) {
 // ── action=reject ───────────────────────────────────────────
 
 async function handleReject(req, res) {
-  const { token, teacher_id } = req.query || {};
+  const { token, teacher_id, exp } = req.query || {};
 
-  if (!token || !teacher_id) {
-    return renderErrorPage(res, 'Missing token or teacher_id parameters.');
+  if (!token || !teacher_id || !exp || !UUID_RE.test(String(teacher_id))) {
+    return renderErrorPage(res, 'Missing or invalid parameters.');
   }
 
   const adminSecret = process.env.ADMIN_SECRET;
@@ -272,14 +297,9 @@ async function handleReject(req, res) {
     return renderErrorPage(res, 'Server environment error: Admin secret is missing.');
   }
 
-  const expectedToken = crypto
-    .createHmac('sha256', adminSecret)
-    .update(teacher_id)
-    .digest('hex');
-
-  if (token !== expectedToken) {
-    console.warn(`[Alimun Reject] Invalid token signature for teacher_id: ${teacher_id}`);
-    return renderErrorPage(res, 'Unauthorized action: Token signature verification failed.');
+  if (!verifyActionToken(adminSecret, teacher_id, 'reject', exp, token)) {
+    console.warn(`[Alimun Reject] Invalid or expired token for teacher_id: ${teacher_id}`);
+    return renderErrorPage(res, 'This link is invalid or has expired. Please act from the admin dashboard.');
   }
 
   const supabase = getSupabaseAdmin();
@@ -324,7 +344,7 @@ async function handleReject(req, res) {
             <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </div>
           <h1>Already Suspended</h1>
-          <p>Teacher <strong>${profile.full_name}</strong> has already been marked as suspended/rejected.</p>
+          <p>Teacher <strong>${escapeHtml(profile.full_name)}</strong> has already been marked as suspended/rejected.</p>
           <a href="https://alimun.com" class="btn">Back to Alimun</a>
         </div>
       </body>
@@ -374,13 +394,13 @@ async function handleReject(req, res) {
             <h1>Alimun</h1>
           </div>
           <div class="content">
-            <p>Dear ${profile.full_name},</p>
+            <p>Dear ${escapeHtml(profile.full_name)},</p>
             <p>Thank you for applying to Alimun. After review, we're unable to approve your application at this time.</p>
             <p>We appreciate your interest in our platform and wish you all the best in your teaching endeavors.</p>
             <p>Warm regards,<br/>The Alimun Team</p>
           </div>
           <div class="footer">
-            This email was sent to ${teacherEmail}.
+            This email was sent to ${escapeHtml(teacherEmail)}.
           </div>
         </div>
       </body>
@@ -414,7 +434,7 @@ async function handleReject(req, res) {
           <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </div>
         <h1>Teacher Rejected</h1>
-        <p>Teacher <strong>${profile.full_name}</strong> has been rejected and marked as suspended. A notification email has been sent to <strong>${teacherEmail || 'their address'}</strong>.</p>
+        <p>Teacher <strong>${escapeHtml(profile.full_name)}</strong> has been rejected and marked as suspended. A notification email has been sent to <strong>${escapeHtml(teacherEmail || 'their address')}</strong>.</p>
         <a href="https://alimun.com" class="btn">Back to Alimun</a>
       </div>
     </body>
@@ -430,12 +450,6 @@ async function handleNotify(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { teacher_id, full_name, languages, experience_years, specialty, bio } = req.body || {};
-
-  if (!teacher_id || !full_name) {
-    return res.status(400).json({ error: 'Missing required teacher profile fields' });
-  }
-
   const adminSecret = process.env.ADMIN_SECRET;
   if (!adminSecret) {
     console.error('[Alimun Admin Notification] ADMIN_SECRET is not configured.');
@@ -448,18 +462,43 @@ async function handleNotify(req, res) {
     return res.status(500).json({ error: 'Resend API key is not configured' });
   }
 
-  const signedToken = crypto
-    .createHmac('sha256', adminSecret)
-    .update(teacher_id)
-    .digest('hex');
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return res.status(500).json({ error: 'Server database connection error' });
+
+  // Only the applicant themself can trigger the notification, and the
+  // application data comes from their stored profile, not the request body.
+  const user = await getAuthUser(req, supabase);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+  const { data: profile, error: profileErr } = await supabase
+    .from('teacher_profiles')
+    .select('id, full_name, languages, experience_years, specialty, bio, status')
+    .eq('user_id', user.id)
+    .maybeSingle();
+  if (profileErr || !profile) {
+    return res.status(404).json({ error: 'Teacher profile not found' });
+  }
+  if (profile.status !== 'pending') {
+    return res.status(409).json({ error: 'Application already reviewed' });
+  }
+
+  const teacher_id = profile.id;
+  const full_name = escapeHtml(profile.full_name);
+  const experience_years = escapeHtml(profile.experience_years);
+  const specialty = escapeHtml(profile.specialty || '—');
+  const bio = escapeHtml(profile.bio || '');
+
+  const exp = Math.floor(Date.now() / 1000) + TOKEN_TTL_SECONDS;
+  const approveToken = signActionToken(adminSecret, teacher_id, 'approve', exp);
+  const rejectToken  = signActionToken(adminSecret, teacher_id, 'reject', exp);
 
   const appUrl = process.env.APP_URL || 'https://alimun.com';
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@alimun.com';
 
-  const approveUrl = `${appUrl}/api/admin/approve-teacher?token=${signedToken}&teacher_id=${teacher_id}`;
-  const rejectUrl = `${appUrl}/api/admin/reject-teacher?token=${signedToken}&teacher_id=${teacher_id}`;
+  const approveUrl = `${appUrl}/api/admin/approve-teacher?token=${approveToken}&teacher_id=${teacher_id}&exp=${exp}`;
+  const rejectUrl  = `${appUrl}/api/admin/reject-teacher?token=${rejectToken}&teacher_id=${teacher_id}&exp=${exp}`;
 
-  const langList = Array.isArray(languages) ? languages.join(', ') : (languages || 'None');
+  const langList = escapeHtml(Array.isArray(profile.languages) ? profile.languages.join(', ') : (profile.languages || 'None'));
 
   const htmlContent = `
     <!DOCTYPE html>
@@ -540,10 +579,10 @@ async function handleNotify(req, res) {
     if (!response.ok) {
       const errText = await response.text();
       console.error('[Alimun Admin Notification] Resend API error:', errText);
-      return res.status(502).json({ error: 'Failed to send notification email', details: errText });
+      return res.status(502).json({ error: 'Failed to send notification email' });
     }
 
-    console.log(`[Alimun Admin Notification] Sent application email for ${full_name} to ${adminEmail}`);
+    console.log(`[Alimun Admin Notification] Sent application email for teacher ${teacher_id}`);
     return res.status(200).json({ success: true });
   } catch (err) {
     console.error('[Alimun Admin Notification] Error:', err);

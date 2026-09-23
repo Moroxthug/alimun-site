@@ -3,20 +3,28 @@
  *  ALIMUN — GET/POST /api/cron-create-rooms
  *  Vercel Serverless Function (Node.js runtime)
  *
- *  Vercel Cron Job:
- *  - Checks for sessions starting in the next 30 minutes without a daily_room_url.
- *  - Calls Daily.co API to provision a secure video room.
- *  - Updates sessions table with daily_room_url.
+ *  Daily session-lifecycle cron (runs 00:00 UTC, see vercel.json):
+ *   1. Marks sessions that started > 90 min ago as `completed`
+ *      (nothing else ever moved them off `scheduled`/`live`).
+ *   2. Pre-provisions private Daily.co rooms for sessions in the
+ *      next 24 hours that don't have one yet. /api/join-session
+ *      still creates rooms on demand, so this is only a prefetch.
+ *
+ *  Auth: REQUIRES `Authorization: Bearer <CRON_SECRET>`. Fails
+ *  closed when CRON_SECRET is not configured.
  * ============================================================
  */
 
 const { createClient } = require('@supabase/supabase-js');
 
+const COMPLETE_AFTER_MIN = 90;   // must match the join window in join-session.js
+const PREFETCH_HOURS = 24;       // cron runs daily, so look a full day ahead
+
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!url || !key) {
-    console.error('[Cron Rooms API] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+    console.error('[Cron Sessions] Missing SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
     return null;
   }
   return createClient(url, key, {
@@ -24,12 +32,59 @@ function getSupabaseAdmin() {
   });
 }
 
-module.exports = async function handler(req, res) {
-  // Enforce Vercel CRON Auth if token is defined
+function isAuthorized(req) {
   const cronSecret = process.env.CRON_SECRET;
-  const authHeader = req.headers.authorization;
-  if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-    return res.status(401).json({ error: 'Unauthorized cron trigger' });
+  if (!cronSecret) return false; // fail closed
+  return req.headers.authorization === `Bearer ${cronSecret}`;
+}
+
+async function createDailyRoom(session, apiKey) {
+  const sessionStart = new Date(session.scheduled_at);
+  const expEpoch = Math.floor((sessionStart.getTime() + COMPLETE_AFTER_MIN * 60 * 1000) / 1000);
+  const roomName = `alimun-${session.id}`;
+
+  const dailyRes = await fetch('https://api.daily.co/v1/rooms', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      name: roomName,
+      privacy: 'private',
+      properties: {
+        exp: expEpoch,
+        eject_at_room_exp: true,
+        enable_recording: false,
+        max_participants: 40,
+      },
+    }),
+  });
+
+  if (dailyRes.ok) {
+    const data = await dailyRes.json();
+    return data?.url || null;
+  }
+
+  // Room may already exist (created by join-session or create-cohort) — reuse it.
+  if (dailyRes.status === 400) {
+    const lookup = await fetch(`https://api.daily.co/v1/rooms/${roomName}`, {
+      headers: { Authorization: `Bearer ${apiKey}` },
+    });
+    if (lookup.ok) {
+      const data = await lookup.json();
+      return data?.url || null;
+    }
+  }
+
+  const errText = await dailyRes.text();
+  console.error(`[Cron Sessions] Daily.co error for session ${session.id}:`, errText);
+  return null;
+}
+
+module.exports = async function handler(req, res) {
+  if (!isAuthorized(req)) {
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const supabase = getSupabaseAdmin();
@@ -37,95 +92,65 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Server database configuration error' });
   }
 
-  const dailyApiKey = process.env.DAILY_API_KEY;
-  if (!dailyApiKey) {
-    console.warn('[Cron Rooms API] DAILY_API_KEY is not defined in env');
-  }
+  const now = new Date();
+  const summary = { completed: 0, roomsCreated: 0, roomsFailed: 0 };
 
   try {
-    const now = new Date();
-    // Check sessions starting in the next 30 minutes (and not already started more than 10 mins ago)
-    const minStart = new Date(now.getTime() - 10 * 60 * 1000);
-    const maxStart = new Date(now.getTime() + 30 * 60 * 1000);
-
-    const { data: sessions, error: fetchError } = await supabase
+    // 1. Close out sessions that are over.
+    const completeBefore = new Date(now.getTime() - COMPLETE_AFTER_MIN * 60 * 1000);
+    const { data: completedRows, error: completeErr } = await supabase
       .from('sessions')
-      .select('id, scheduled_at')
-      .is('daily_room_url', null)
-      .gte('scheduled_at', minStart.toISOString())
-      .lte('scheduled_at', maxStart.toISOString())
-      .eq('status', 'scheduled');
-
-    if (fetchError) throw fetchError;
-
-    if (!sessions || sessions.length === 0) {
-      return res.status(200).json({ success: true, message: 'No sessions requiring room creation.' });
+      .update({ status: 'completed' })
+      .in('status', ['scheduled', 'live'])
+      .lt('scheduled_at', completeBefore.toISOString())
+      .select('id');
+    if (completeErr) {
+      console.error('[Cron Sessions] Failed to mark sessions completed:', completeErr);
+    } else {
+      summary.completed = completedRows?.length || 0;
     }
 
-    const results = [];
+    // 2. Prefetch rooms for the next 24h.
+    const dailyApiKey = process.env.DAILY_API_KEY;
+    if (!dailyApiKey) {
+      console.warn('[Cron Sessions] DAILY_API_KEY not set — skipping room prefetch');
+      return res.status(200).json({ success: true, ...summary, note: 'DAILY_API_KEY not set' });
+    }
 
-    for (const session of sessions) {
-      const sessionStart = new Date(session.scheduled_at);
-      // Expire room 90 minutes after session starts
-      const expEpoch = Math.floor((sessionStart.getTime() + 90 * 60 * 1000) / 1000);
-      const roomName = `alimun-${session.id}`;
+    const maxStart = new Date(now.getTime() + PREFETCH_HOURS * 60 * 60 * 1000);
+    const { data: sessions, error: fetchError } = await supabase
+      .from('sessions')
+      .select('id, scheduled_at, daily_room_url')
+      .eq('status', 'scheduled')
+      .gte('scheduled_at', now.toISOString())
+      .lte('scheduled_at', maxStart.toISOString());
+    if (fetchError) throw fetchError;
 
-      let roomUrl = `https://api.daily.co/mock-room/alimun-${session.id}`; // Fallback mock URL if API fails or API Key missing
+    for (const session of sessions || []) {
+      const hasRealRoom = session.daily_room_url && !session.daily_room_url.includes('/mock-room/');
+      if (hasRealRoom) continue;
 
-      if (dailyApiKey) {
-        try {
-          const dailyRes = await fetch('https://api.daily.co/v1/rooms', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${dailyApiKey}`
-            },
-            body: JSON.stringify({
-              name: roomName,
-              privacy: 'private',
-              properties: {
-                exp: expEpoch,
-                enable_recording: false
-              }
-            })
-          });
-
-          if (dailyRes.ok) {
-            const dailyData = await dailyRes.json();
-            if (dailyData?.url) {
-              roomUrl = dailyData.url;
-            }
-          } else {
-            const errText = await dailyRes.text();
-            console.error(`Daily.co API error for session ${session.id}:`, errText);
-            // We use the mock URL as safety fallback to avoid failing completely
-          }
-        } catch (dailyErr) {
-          console.error(`Failed to fetch Daily.co API for session ${session.id}:`, dailyErr);
-        }
+      const roomUrl = await createDailyRoom(session, dailyApiKey);
+      if (!roomUrl) {
+        summary.roomsFailed += 1;
+        continue; // never persist a fake URL — join-session will retry on demand
       }
 
-      // Update session with room URL
       const { error: updateError } = await supabase
         .from('sessions')
         .update({ daily_room_url: roomUrl })
         .eq('id', session.id);
-
       if (updateError) {
-        console.error(`Failed to update room URL for session ${session.id}:`, updateError);
+        console.error(`[Cron Sessions] Failed to store room URL for ${session.id}:`, updateError);
+        summary.roomsFailed += 1;
       } else {
-        results.push({ sessionId: session.id, roomUrl });
+        summary.roomsCreated += 1;
       }
     }
 
-    return res.status(200).json({
-      success: true,
-      message: `Created rooms for ${results.length} sessions.`,
-      rooms: results
-    });
-
+    return res.status(200).json({ success: true, ...summary });
   } catch (err) {
-    console.error('[Cron Rooms API] Execution error:', err);
-    return res.status(500).json({ error: 'Internal server error: ' + err.message });
+    console.error('[Cron Sessions] Execution error:', err);
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };

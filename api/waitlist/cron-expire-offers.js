@@ -4,7 +4,8 @@
  *  Vercel Serverless Function (Node.js runtime)
  *
  *  Cron endpoint to scan and process expired waitlist offers.
- *  Can be triggered by Vercel Cron or manual admin trigger.
+ *  Triggered by Vercel Cron (Bearer CRON_SECRET) or by an admin
+ *  (Bearer ADMIN_SECRET). FAILS CLOSED when neither secret is set.
  * ============================================================
  */
 
@@ -22,21 +23,19 @@ function getSupabaseAdmin() {
   });
 }
 
-module.exports = async function (req, res) {
-  // Allow GET or POST for cron triggering.
-  // Vercel Cron authenticates with `Bearer ${CRON_SECRET}`; manual admin
-  // triggers may use ADMIN_SECRET — accept either when configured.
-  const cronSecret  = process.env.CRON_SECRET;
+function isAuthorized(req) {
+  const cronSecret = process.env.CRON_SECRET;
   const adminSecret = process.env.ADMIN_SECRET;
-  const authHeader = req.headers.authorization;
+  const authHeader = req.headers.authorization || '';
+  if (cronSecret && authHeader === `Bearer ${cronSecret}`) return true;
+  if (adminSecret && authHeader === `Bearer ${adminSecret}`) return true;
+  return false;
+}
 
-  if (cronSecret || adminSecret) {
-    const ok = (cronSecret && authHeader === `Bearer ${cronSecret}`)
-            || (adminSecret && authHeader === `Bearer ${adminSecret}`);
-    if (!ok) {
-      console.warn('[Alimun Waitlist Cron] Unauthorized cron execution attempt');
-      return res.status(401).json({ error: 'Unauthorized' });
-    }
+module.exports = async function (req, res) {
+  if (!isAuthorized(req)) {
+    console.warn('[Alimun Waitlist Cron] Unauthorized cron execution attempt');
+    return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const supabase = getSupabaseAdmin();
@@ -45,17 +44,13 @@ module.exports = async function (req, res) {
   }
 
   try {
-    // Call the database function to process expired waitlist offers
     const { data, error } = await supabase.rpc('process_expired_offers');
-    
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
     console.log('[Alimun Waitlist Cron] Processed expired offers:', data);
     return res.status(200).json({ success: true, result: data });
   } catch (err) {
     console.error('[Alimun Waitlist Cron] Error executing cron:', err);
-    return res.status(500).json({ error: 'Internal Server Error', details: err.message });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 };

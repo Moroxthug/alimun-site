@@ -4,12 +4,47 @@
   "cleanUrls": true,
   "routes": [
     {
+      "src": "/(.*)",
+      "headers": {
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "SAMEORIGIN",
+        "Referrer-Policy": "strict-origin-when-cross-origin",
+        "Permissions-Policy": "camera=(self \"https://*.daily.co\"), microphone=(self \"https://*.daily.co\"), display-capture=(self \"https://*.daily.co\"), geolocation=(), payment=(self \"https://js.stripe.com\" \"https://checkout.stripe.com\")",
+        "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload"
+      },
+      "continue": true
+    },
+    {
+      "src": "/(supabase|\\.agents|mockups|node_modules|sandbox)(/.*)?",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
+      "src": "/(build|verify)\\.js",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
+      "src": "/(.*)\\.(md|sql|zip|lock)",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
+      "src": "/(package(-lock)?\\.json|vercel\\.json|verification-results\\.json|\\.env.*|\\.gitignore|\\.vercelignore)",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
       "src": "/api/grade",
       "dest": "/api/ai?action=grade"
     },
     {
       "src": "/api/generate-exercises",
       "dest": "/api/ai?action=generate-exercises"
+    },
+    {
+      "src": "/api/ai-usage",
+      "dest": "/api/ai?action=usage"
     },
     {
       "src": "/api/admin/approve-teacher",

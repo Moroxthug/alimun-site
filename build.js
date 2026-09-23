@@ -103,7 +103,8 @@ languages.forEach(lang => {
   const langDict = translations[lang] || {};
   
   htmlTemplates.forEach(templateFile => {
-    if (lang === 'it' && (templateFile === 'index.html' || templateFile === 'careers.html' || templateFile === 'careers-teachers-section.html')) {
+    // Hand-maintained Italian pages (manual copy + SEO cross-links) — never regenerate.
+    if (lang === 'it' && ['index.html', 'careers.html', 'careers-teachers-section.html', 'services.html'].includes(templateFile)) {
       console.log(`Skipping manual file for Italian: ${templateFile}`);
       return;
     }

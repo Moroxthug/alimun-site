@@ -151,18 +151,31 @@ export async function requireRole(requiredRole, redirectTo = '/signin.html') {
     return null;
   }
 
-  // Role is stored in app_metadata by the auth trigger / admin API.
-  // Falls back to raw_user_meta_data for legacy compatibility.
-  const role =
-    user.app_metadata?.role ||
-    user.user_metadata?.role ||
-    null;
+  const role = getUserRole(user);
 
   if (role !== requiredRole) {
     window.location.href = redirectTo;
     return null;
   }
   return user;
+}
+
+/**
+ * Resolve a user's role.
+ * - 'admin' is ONLY trusted from app_metadata (server-controlled; users can
+ *   edit their own user_metadata, so it must never grant admin).
+ * - 'student' / 'teacher' come from app_metadata (copied by the DB at signup)
+ *   with a user_metadata fallback for accounts created before that trigger.
+ * @param {import('@supabase/supabase-js').User|null} user
+ * @returns {'student'|'teacher'|'admin'|null}
+ */
+export function getUserRole(user) {
+  if (!user) return null;
+  const appRole  = user.app_metadata?.role || null;
+  if (appRole === 'admin') return 'admin';
+  const metaRole = user.user_metadata?.role || null;
+  const role = appRole || metaRole;
+  return role === 'student' || role === 'teacher' ? role : null;
 }
 
 /**

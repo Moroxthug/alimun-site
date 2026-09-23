@@ -3,7 +3,7 @@
 <title>Dashboard — Alimun</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://unpkg.com/@daily-co/daily-js"></script>
+<script src="https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js"></script>
 <script>
   window.CFG={url:'https://dgaiasmefcbrtzqwdyri.supabase.co',key:'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh'};
   window.ALIMUN_CONFIG = {
@@ -28,6 +28,8 @@
         stripePriceIntensiveYearly:      remoteCfg.prices?.intensiveYearly,
         stripePricePrivateYearly:        remoteCfg.prices?.privateYearly,
         stripePriceFoundingMember:       remoteCfg.prices?.foundingMember,
+        stripePriceOneOnOne:             remoteCfg.prices?.oneOnOneSession,
+        prices:                          remoteCfg.prices || {},
       });
     } catch (err) {
       console.error('[Alimun] Failed to load Stripe config:', err);
@@ -387,7 +389,6 @@ nav {
 /* ────────────────────────────────────────────────────── */
 #v-live.active{display:flex;flex-direction:column;padding:0;gap:0;}
 #live-prejoin{display:flex;align-items:center;justify-content:center;height:100%;padding:40px;}
-#live-incall{display:flex;flex-direction:column;height:100%;background:#080808;display:none;}
 .vocab-row{display:flex;justify-content:space-between;font-size:13px;padding:8px 0;border-bottom:1px solid var(--bd);}
 .vocab-row:last-child{border-bottom:none;}
 .vocab-fr{color:var(--txt);font-family:var(--mono);font-weight:600;}
@@ -1361,11 +1362,11 @@ nav {
         <div class="nc-goal-badge" id="nc-goal-badge" style="display:none;"></div>
       </div>
       <div class="nc-right">
-        <button class="join-btn" id="join-class-btn" disabled="" style="opacity:0.5;cursor:not-allowed;" title="Opens 10 min before session">
+        <button class="join-btn" id="join-class-btn" disabled="" style="opacity:0.5;cursor:not-allowed;" title="Opens 15 min before session">
           <span data-i18n="student_join_class">Entra in classe</span>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </button>
-        <div id="join-btn-label" style="font-size:10px;color:var(--dim);text-align:center;margin-top:6px;font-family:var(--mono);">Opens 10 min before</div>
+        <div id="join-btn-label" style="font-size:10px;color:var(--dim);text-align:center;margin-top:6px;font-family:var(--mono);">Opens 15 min before</div>
       </div>
     </div>
     <!-- Empty state when no session is scheduled -->
@@ -1516,43 +1517,10 @@ nav {
         </div>
       </div>
       <div style="text-align:center;font-size:12px;color:var(--dim);font-family:var(--mono);margin-bottom:16px;" id="live-waiting-count">8 / 12 classmates waiting</div>
-      <button onclick="enterClass()" style="width:100%;padding:15px 0;background:var(--lime);color:var(--txt);border:none;border-radius:10px;font-family:var(--sans);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;">
+      <button onclick="handleStudentJoin(NEXT_CLASS.dailyRoomUrl, NEXT_CLASS.sessionId)" style="width:100%;padding:15px 0;background:var(--lime);color:var(--txt);border:none;border-radius:10px;font-family:var(--sans);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;">
         <span data-i18n="student_join_video_class">Entra nella videolezione</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
       </button>
-    </div>
-  </div>
-  <!-- In-call state -->
-  <div id="live-incall" style="display:none;height:100%;flex-direction:column;background:#080808;">
-    <div style="flex:1;display:flex;padding:12px;gap:12px;">
-      <div style="flex:1;display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;">
-        <div class="vid-cell teacher"><div class="av" style="background:#3B1F6A;width:72px;height:72px;font-size:28px;" id="incall-teacher-av">M</div><div class="vid-role">TEACHER</div><div class="vid-label" id="incall-teacher-name">Marie Dubois</div></div>
-        <div class="vid-cell"><div class="av" style="background:#1B2E4A;width:36px;height:36px;font-size:13px;" id="incall-my-av">SC</div><div class="vid-label" id="incall-my-name">Sofia Chen</div></div>
-        <div class="vid-cell"><div class="av" style="background:#2E1E0A;width:36px;height:36px;font-size:13px;">AJ</div><div class="vid-label">Alex J.</div></div>
-        <div class="vid-cell"><div class="av" style="background:#2E0A1E;width:36px;height:36px;font-size:13px;">MK</div><div class="vid-label">Maria K.</div></div>
-        <div class="vid-cell"><div class="av" style="background:#0A2E1A;width:36px;height:36px;font-size:13px;">DL</div><div class="vid-label">David L.</div></div>
-      </div>
-      <div class="class-chat">
-        <div class="cc-head">CLASS CHAT</div>
-        <div class="cc-msgs">
-          <div class="cc-msg"><div class="cc-sender">Marie</div><div class="cc-bubble teacher">Bonjour ! Prêts pour le subjonctif ?</div></div>
-          <div class="cc-msg"><div class="cc-sender">Alex</div><div class="cc-bubble other">Prêt — mais du mal avec les irréguliers.</div></div>
-          <div class="cc-msg me"><div class="cc-sender">Sofia</div><div class="cc-bubble me">Moi aussi. Surtout 'être' et 'avoir'.</div></div>
-          <div class="cc-msg"><div class="cc-sender">Marie</div><div class="cc-bubble teacher">Il faut que je SOIS. Il faut que j'AIE. Notez-les.</div></div>
-          <div class="cc-msg"><div class="cc-sender">David</div><div class="cc-bubble other">Et 'savoir' et 'pouvoir' ?</div></div>
-          <div class="cc-msg"><div class="cc-sender">Marie</div><div class="cc-bubble teacher">Savoir → que je sache. Pouvoir → que je puisse.</div></div>
-        </div>
-        <div style="padding:10px;border-top:1px solid rgba(255,255,255,.07);">
-          <div class="cc-input"><input type="text" placeholder="Message..."><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></div>
-        </div>
-      </div>
-    </div>
-    <div class="controls">
-      <button class="ctrl-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 1a3 3 0 00-3 3v8a3 3 0 006 0V4a3 3 0 00-3-3z"></path><path d="M19 10v2a7 7 0 01-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg></button>
-      <button class="ctrl-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect x="1" y="5" width="15" height="14" rx="2" ry="2"></rect></svg></button>
-      <button class="ctrl-btn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 11V6a2 2 0 00-2-2v0a2 2 0 00-2 2v0"></path><path d="M14 10.5V4a2 2 0 00-2-2v0a2 2 0 00-2 2v7"></path><path d="M10 10.5V6a2 2 0 00-2-2v0a2 2 0 00-2 2v8.5"></path><path d="M6 14v-1a4 4 0 014-4h.5"></path><path d="M8 21v-4a2 2 0 012-2h4a2 2 0 012 2v4"></path><path d="M6 21h12"></path></svg></button>
-      <div class="ctrl-div"></div>
-      <button class="leave-btn" onclick="leaveClass()"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.68 13.31a16 16 0 003.41 2.6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7 2 2 0 011.72 2v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.42 19.42 0 013.43 9.19 19.79 19.79 0 01.36 0.5a2 2 0 012-2.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.68 6l.01.01"></path><line x1="23" y1="1" x2="1" y2="23"></line></svg> Leave</button>
     </div>
   </div>
 </div>
@@ -1806,7 +1774,7 @@ nav {
 </main> <!-- Close #main wrapper -->
 
 <!-- ── CLASSROOM CONTAINER ─────────────────────────── -->
-<div id="live-incall" class="classroom-container">
+<div id="classroom" class="classroom-container">
   <div class="classroom-header">
     <div class="classroom-title">
       <span class="live-dot"></span>
@@ -1920,8 +1888,8 @@ let NEXT_CLASS = {
   goalTrack: '',      // e.g. 'professional'
   cohortDesc: '',     // e.g. 'French B2'
 };
-let _attendanceId = null;     // session_attendance.id for left_at update
-let _attendanceTimeout = null; // 90-min auto-leave timer
+let _attendanceSessionId = null; // sessions.id whose attendance row gets left_at on leave
+let _attendanceTimeout = null;   // 90-min auto-leave timer
 let SCHEDULE = [];
 let WEEK_ACTIVITY = [0, 0, 0, 0, 0, 0, 0];
 const WEEK_TODAY = (new Date().getDay() + 6) % 7; // Monday-first
@@ -2801,6 +2769,26 @@ let EXERCISES = [];
 let liveSessionActive = false;
 let callFrame = null;
 let currentSessionId = null;
+let sessionTimerInterval = null;
+// Whiteboard state (classroom side panel)
+let whiteboardCanvas = null;
+let whiteboardCtx = null;
+let isDrawing = false;
+let drawColor = '#ceff65';
+let drawSize = 3;
+// Demo transcript lines shown in the classroom transcription panel
+const TRANSCRIPTIONS = {
+  en: [
+    'Welcome everyone, let\'s get started with today\'s session.',
+    'First, a quick review of what we covered last time.',
+    'Can anyone give me an example using this structure?',
+    'Good. Notice how the verb changes here.',
+    'Let\'s try a few more examples together.',
+    'I think I understand, but what about the irregular forms?',
+    'Great question. We\'ll look at those next.',
+    'Remember to practise these before our next class.'
+  ]
+};
 let SESSION_NOTES = [];
 let PROGRESS_METRICS = [];
 
@@ -2839,7 +2827,7 @@ let VOCAB = [];
 
   if(!session){window.location.href='signin.html';return;}
 
-  const role=session.user?.user_metadata?.role||'';
+  const role=session.user?.app_metadata?.role||session.user?.user_metadata?.role||'';
   if(role!=='student'){
     window.location.href=role==='teacher'?'teacher-dashboard.html':role==='admin'?'admin.html':'signin.html';
     return;
@@ -2927,7 +2915,7 @@ function goView(v){
   if(el)el.classList.add('active');
 
   // Handle PiP mode when switching away from 'live' view while in an active call
-  const incallContainer = document.getElementById('live-incall');
+  const incallContainer = document.getElementById('classroom');
   if (incallContainer && liveSessionActive) {
     if (v === 'live') {
       incallContainer.classList.remove('minimized');
@@ -2965,7 +2953,8 @@ function updateCountdowns(){
   const now = Date.now();
   const sessionMs = NEXT_CLASS.at.getTime();
   const diff = Math.max(0, sessionMs - now);
-  const tenMinMs = 10 * 60 * 1000;
+  const openBeforeMs = 15 * 60 * 1000; // Join opens 15 min before start
+  const openAfterMs  = 90 * 60 * 1000; // ...and stays open 90 min after start
 
   // Countdown display
   if (diff === 0) {
@@ -2980,10 +2969,10 @@ function updateCountdowns(){
     if (lc) lc.textContent = t;
   }
 
-  // Join button gating: active within 10 min of start. The room itself
-  // is provisioned on demand by /api/join-session, so no URL needed here.
+  // Join button gating: active from 15 min before start until 90 min after.
+  // The room itself is provisioned on demand by /api/join-session.
   if (btn) {
-    const canJoin = NEXT_CLASS.sessionId && (now >= sessionMs - tenMinMs);
+    const canJoin = NEXT_CLASS.sessionId && (now >= sessionMs - openBeforeMs) && (now <= sessionMs + openAfterMs);
     if (canJoin) {
       btn.disabled = false;
       btn.style.opacity = '1';
@@ -2995,8 +2984,8 @@ function updateCountdowns(){
       btn.style.opacity = '0.5';
       btn.style.cursor = 'not-allowed';
       btn.onclick = null;
-      const minsLeft = Math.ceil((sessionMs - tenMinMs - now) / 60000);
-      if (btnLbl) btnLbl.textContent = minsLeft > 0 ? `Opens in ${minsLeft} min` : 'Opens 10 min before';
+      const minsLeft = Math.ceil((sessionMs - openBeforeMs - now) / 60000);
+      if (btnLbl) btnLbl.textContent = now > sessionMs + openAfterMs ? 'Session ended' : minsLeft > 0 ? `Opens in ${minsLeft} min` : 'Opens 15 min before';
     }
   }
 }
@@ -3191,8 +3180,9 @@ async function initData() {
         )
       `)
       .eq('cohort_id', USER.cohort_id)
-      .eq('status', 'scheduled')
-      .gt('scheduled_at', new Date().toISOString())
+      .in('status', ['scheduled', 'live'])
+      // Keep sessions that started up to 90 min ago so live / late joins still work
+      .gt('scheduled_at', new Date(Date.now() - 90 * 60 * 1000).toISOString())
       .order('scheduled_at', { ascending: true })
       .limit(1);
 
@@ -3802,20 +3792,20 @@ function renderCohortDiscoveryPage() {
         <div style="display:flex; flex-direction:column; gap:10px;">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; position:relative;">
             <div>
-              <span class="teacher-link" onclick="toggleTeacherPopover(event, '${c.id}')">${teacherName}</span>
+              <span class="teacher-link" onclick="toggleTeacherPopover(event, '${c.id}')">${escHtml(teacherName)}</span>
               <span style="font-size:11.5px; color:var(--dim); margin-left:4px;">(${ratingStr})</span>
             </div>
             
             <div id="popover-${c.id}" class="teacher-popover" onclick="event.stopPropagation()">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:6px;">
-                <strong style="color:var(--lime); font-size:13.5px;">${teacherName}</strong>
+                <strong style="color:var(--lime); font-size:13.5px;">${escHtml(teacherName)}</strong>
                 <button onclick="closeTeacherPopover('${c.id}')" style="background:transparent; border:none; color:#FFF; font-size:14px; cursor:pointer;">×</button>
               </div>
               <div style="font-size:11px; line-height:1.5; color:#DDD; display:flex; flex-direction:column; gap:6px;">
-                <div>💼 <strong>${xt('student_specialty','Specialty:')}</strong> ${specialty}</div>
-                <div>🗣️ <strong>${xt('student_languages','Languages:')}</strong> ${langList}</div>
+                <div>💼 <strong>${xt('student_specialty','Specialty:')}</strong> ${escHtml(specialty)}</div>
+                <div>🗣️ <strong>${xt('student_languages','Languages:')}</strong> ${escHtml(langList)}</div>
                 <div>🎓 <strong>${xt('student_delivered','Delivered:')}</strong> ${sessions} sessions</div>
-                <div style="font-style:italic; margin-top:4px; color:#AAA; border-top:1px solid rgba(255,255,255,0.05); padding-top:4px;">"${bio}"</div>
+                <div style="font-style:italic; margin-top:4px; color:#AAA; border-top:1px solid rgba(255,255,255,0.05); padding-top:4px;">"${escHtml(bio)}"</div>
               </div>
             </div>
           </div>
@@ -3832,7 +3822,7 @@ function renderCohortDiscoveryPage() {
           </div>
 
           <div style="font-size:12.5px; color:var(--dim); line-height:1.5;">
-            ${c.description || 'No description available for this cohort.'}
+            ${escHtml(c.description || 'No description available for this cohort.')}
           </div>
         </div>
 
@@ -3937,37 +3927,42 @@ async function joinCohortDirect(cohortId) {
       if (data.error === 'payment_required') {
         const confirmPay = confirm("Active subscription required. Redirect to Stripe checkout for this cohort tier?");
         if (confirmPay) {
+          // Price IDs are server-driven (/api/stripe/config → window.ALIMUN_CONFIG)
+          const cfg = window.ALIMUN_CONFIG || {};
           const TIER_PRICE_IDS = {
-            community: 'price_1TlpdsBSEHl9NbpELtZfsCOh',
-            focused: 'price_1TlpduBSEHl9NbpEJxonS7fR',
-            intensive: 'price_1TlpdvBSEHl9NbpEmLTKnm4B',
-            private: 'price_1TlpdwBSEHl9NbpELiu2cUHm'
+            community: cfg.stripePriceCommunityMonthly,
+            focused:   cfg.stripePriceFocusedMonthly,
+            intensive: cfg.stripePriceIntensiveMonthly,
+            private:   cfg.stripePricePrivateMonthly
           };
-          const priceId = TIER_PRICE_IDS[data.tier] || TIER_PRICE_IDS.focused;
+          const tierKey = data.tier === 'onetoone' ? 'private' : data.tier;
+          const priceId = TIER_PRICE_IDS[tierKey] || TIER_PRICE_IDS.focused;
+          if (!priceId) throw new Error('Checkout is not available yet. Please try again in a moment.');
           const origin = window.location.origin;
-          
+
           const checkoutResp = await fetch('/api/create-checkout-session', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${session.access_token}`
+            },
             body: JSON.stringify({
               priceId: priceId,
-              email: USER.email,
-              customerId: USER.profile?.user_id || USER.id,
               customerName: USER.name,
+              cohortId: cohortId,
               successUrl: `${origin}/student-dashboard.html?checkout=success`,
               cancelUrl: `${origin}/student-dashboard.html?checkout=cancelled`,
             }),
           });
-          
+
           if (!checkoutResp.ok) {
-            const checkoutErr = await checkoutResp.json();
-            throw new Error(checkoutErr.error || 'Failed to initialize checkout');
+            const checkoutErr = await checkoutResp.json().catch(() => ({}));
+            throw new Error(checkoutErr.message || checkoutErr.error || 'Failed to initialize checkout');
           }
-          
+
           const checkoutData = await checkoutResp.json();
-          const { getStripe } = await import('/js/stripe/config.js');
-          const stripeInstance = await getStripe();
-          await stripeInstance.redirectToCheckout({ sessionId: checkoutData.sessionId });
+          if (!checkoutData.url) throw new Error('No checkout URL returned');
+          window.location.href = checkoutData.url;
           return;
         } else {
           if (btn) {
@@ -4149,27 +4144,20 @@ function initHome(){
 /* ══════════════════════════════════════════════════════
    LIVE VIEW
 ══════════════════════════════════════════════════════ */
-function enterClass(){
-  document.getElementById('live-prejoin').style.display='none';
-  const ic=document.getElementById('live-incall');
-  ic.style.display='flex';
-  ic.style.flexDirection='column';
-  
-  // Set incall name
-  document.getElementById('incall-my-name').textContent = USER.name;
-  document.getElementById('incall-my-av').textContent = USER.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-}
-function leaveClass(){
-  document.getElementById('live-incall').style.display='none';
-  document.getElementById('live-prejoin').style.display='flex';
-}
+// The real classroom overlay (#classroom) is opened by handleStudentJoin()
+// and closed by leaveClass() in the SESSION ATTENDANCE TRACKING section.
 
 /* ══════════════════════════════════════════════════════
    CALENDAR VIEW
 ══════════════════════════════════════════════════════ */
-let calYear=2026,calMonth=3; // April 2026 (0-indexed)
+const _calToday=new Date();
+let calYear=_calToday.getFullYear(),calMonth=_calToday.getMonth(); // current month (0-indexed)
 const MONTHS=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
-let calSel=16;
+let calSel=_calToday.getDate();
+// Calendar event type styling (brand palette)
+const TYPE_COLOR={class:'#9BCB00',hw:'#080808',assignment:'#080808',exam:'#dc2626',default:'#888'};
+const TYPE_BG={class:'rgba(206,255,101,0.25)',hw:'#eeeeec',assignment:'#eeeeec',exam:'rgba(220,38,38,0.08)',default:'#eeeeec'};
+const TYPE_LABEL={class:'Live Class',hw:'Homework',assignment:'Assignment',exam:'Exam',default:'Event'};
 
 function buildCal(){
   const fd=new Date(calYear,calMonth,1).getDay();
@@ -4543,9 +4531,15 @@ function submitEssay(index) {
       ex.gradedScore = Math.min(Math.max(Math.round(r.score) || 70, 0), 100);
       ex.feedback = `Score: ${ex.gradedScore}%\n${r.feedback}`;
     } catch (e) {
-      console.warn('AI grading unavailable, using generic feedback:', e);
-      ex.gradedScore = 80 + Math.floor(Math.random() * 18);
-      ex.feedback = `Score: ${ex.gradedScore}%\n${xt('student_ex_generic_feedback', 'Good work! Your structure and vocabulary fit your level. Review verb conjugations and small agreement details — your teacher will go deeper in the next session.')}`;
+      // No fake score: keep the submission editable and tell the student.
+      console.warn('AI grading unavailable:', e);
+      ex.grading = false;
+      ex.done = false;
+      ex.gradedScore = null;
+      ex.feedback = null;
+      renderExercises();
+      alert(xt('student_feedback_unavailable', 'Feedback unavailable right now. Your text is kept — please try submitting again in a moment.'));
+      return;
     }
 
     ex.grading = false;
@@ -4668,7 +4662,7 @@ function renderExerciseUI(ex, i) {
       return `
         <div class="mcq-q">${xt('student_instructions','Instructions:')}</div>
         <div class="mcq-stem" style="font-family:var(--sans); background: rgba(0,0,0,0.02); padding: 12px 16px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 16px; font-size:14px; line-height:1.6;">
-          ${ex.question}
+          ${escHtml(ex.question)}
         </div>
         
         ${ex.isPending ? `
@@ -4677,7 +4671,7 @@ function renderExerciseUI(ex, i) {
               <span>⏳</span> Pending Teacher Grading
             </div>
             <div style="font-weight: 600; color: var(--txt); margin-top: 4px;">${xt('student_your_submission','Your Submission:')}</div>
-            <div style="font-family: var(--mono); background: #fff; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--bd); max-height: 120px; overflow-y: auto; color: var(--dim); line-height: 1.5;">${ex.userAnswer}</div>
+            <div style="font-family: var(--mono); background: #fff; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--bd); max-height: 120px; overflow-y: auto; color: var(--dim); line-height: 1.5;">${escHtml(ex.userAnswer)}</div>
           </div>
         ` : ex.gradedScore !== null ? `
           <div style="background: rgba(22,163,74,0.04); border: 1px solid rgba(22,163,74,0.15); border-radius: 8px; padding: 14px; font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
@@ -4686,13 +4680,13 @@ function renderExerciseUI(ex, i) {
             </div>
             <div>
               <div style="font-weight: 700; color: var(--txt); margin-bottom: 4px;">${xt('student_your_submission','Your Submission:')}</div>
-              <div style="font-family: var(--mono); background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--bd); max-height: 100px; overflow-y: auto; color: var(--dim); line-height: 1.5;">${ex.userAnswer}</div>
+              <div style="font-family: var(--mono); background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--bd); max-height: 100px; overflow-y: auto; color: var(--dim); line-height: 1.5;">${escHtml(ex.userAnswer)}</div>
             </div>
-            <div style="white-space: pre-line; color: var(--dim); line-height: 1.5; border-top: 1px solid var(--bd); padding-top: 8px; font-family: var(--sans);">${ex.feedback}</div>
+            <div style="white-space: pre-line; color: var(--dim); line-height: 1.5; border-top: 1px solid var(--bd); padding-top: 8px; font-family: var(--sans);">${escHtml(ex.feedback)}</div>
           </div>
         ` : `
           <div style="display: flex; flex-direction: column; gap: 8px;" onclick="event.stopPropagation();">
-            <textarea id="essay-text-${i}" oninput="countEssayWords(${i})" placeholder="${ex.type === 'Essay' ? 'Type your essay here...' : 'Type your homework answers here...'}" style="width: 100%; height: 120px; padding: 12px; border-radius: 8px; border: 1px solid var(--bd); font-family: var(--sans); font-size: 13px; resize: vertical; background: #fff;">${ex.userAnswer || ''}</textarea>
+            <textarea id="essay-text-${i}" oninput="countEssayWords(${i})" placeholder="${ex.type === 'Essay' ? 'Type your essay here...' : 'Type your homework answers here...'}" style="width: 100%; height: 120px; padding: 12px; border-radius: 8px; border: 1px solid var(--bd); font-family: var(--sans); font-size: 13px; resize: vertical; background: #fff;">${escHtml(ex.userAnswer || '')}</textarea>
             <div style="display: flex; justify-content: space-between; align-items: center;">
               <span id="essay-count-${i}" style="font-size: 11px; font-family: var(--mono); color: var(--dim);">${ex.userAnswer ? ex.userAnswer.split(/\s+/).filter(w => w.length > 0).length : 0} / ${ex.minWords} words</span>
               <button id="essay-submit-${i}" onclick="submitHomework(${i})" class="join-btn" ${ex.type === 'Essay' && (!ex.userAnswer || ex.userAnswer.split(/\s+/).filter(w => w.length > 0).length < ex.minWords) ? 'disabled style="opacity: 0.5; padding: 8px 16px; font-size: 12px;"' : 'style="padding: 8px 16px; font-size: 12px;"'}>Submit Homework</button>
@@ -4706,7 +4700,7 @@ function renderExerciseUI(ex, i) {
       return `
         <div class="mcq-q">${xt('student_instructions','Instructions:')}</div>
         <div class="mcq-stem" style="font-family:var(--sans); background: rgba(0,0,0,0.02); padding: 12px 16px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 16px; font-size:14px; line-height:1.6;">
-          ${ex.question}
+          ${escHtml(ex.question)}
         </div>
         
         ${ex.recording ? `
@@ -4731,7 +4725,7 @@ function renderExerciseUI(ex, i) {
               <span>⏳</span> Pending Teacher Grading
             </div>
             <div style="font-weight: 600; color: var(--txt); margin-top: 4px;">Your Recorded Speech (Transcribed):</div>
-            <div style="font-family: var(--mono); background: #fff; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--bd); color: var(--dim); line-height: 1.5;">"${ex.userAnswer}"</div>
+            <div style="font-family: var(--mono); background: #fff; padding: 10px 14px; border-radius: 6px; border: 1px solid var(--bd); color: var(--dim); line-height: 1.5;">"${escHtml(ex.userAnswer)}"</div>
           </div>
         ` : ex.gradedScore !== null ? `
           <div style="background: rgba(22,163,74,0.04); border: 1px solid rgba(22,163,74,0.15); border-radius: 8px; padding: 14px; font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
@@ -4740,15 +4734,15 @@ function renderExerciseUI(ex, i) {
             </div>
             <div>
               <div style="font-weight: 700; color: var(--txt); margin-bottom: 4px;">Your Recorded Speech (Transcribed):</div>
-              <div style="font-family: var(--mono); background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--bd); color: var(--dim); line-height: 1.5;">"${ex.userAnswer}"</div>
+              <div style="font-family: var(--mono); background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--bd); color: var(--dim); line-height: 1.5;">"${escHtml(ex.userAnswer)}"</div>
             </div>
-            <div style="white-space: pre-line; color: var(--dim); line-height: 1.5; border-top: 1px solid var(--bd); padding-top: 8px; font-family: var(--sans);">${ex.feedback}</div>
+            <div style="white-space: pre-line; color: var(--dim); line-height: 1.5; border-top: 1px solid var(--bd); padding-top: 8px; font-family: var(--sans);">${escHtml(ex.feedback)}</div>
           </div>
         ` : ex.recorded ? `
           <div style="display: flex; flex-direction: column; gap: 12px;" onclick="event.stopPropagation();">
             <div style="background: rgba(206,255,101,0.08); border: 1px solid var(--lime); border-radius: 8px; padding: 12px; font-size: 13px;">
               <div style="font-weight: 700; color: var(--txt); margin-bottom: 4px;">${xt('student_transcribed_speech','Transcribed Speech:')}</div>
-              <div style="font-family: var(--mono); color: var(--dim);">"${ex.userAnswer}"</div>
+              <div style="font-family: var(--mono); color: var(--dim);">"${escHtml(ex.userAnswer)}"</div>
             </div>
             <div style="display: flex; gap: 10px; justify-content: flex-end;">
               <button onclick="startSpeaking(${i});" class="join-btn" style="background:#f5f5f0; color:var(--txt); padding: 8px 16px; font-size: 12px;">${xt('student_re_record','Re-record')}</button>
@@ -4774,8 +4768,8 @@ function renderExerciseUI(ex, i) {
 
   if (ex.type === 'Multiple Choice') {
     return `
-      <div class="mcq-q">${ex.question}</div>
-      <div class="mcq-stem" style="font-family:var(--mono); background: rgba(0,0,0,0.02); padding: 10px 14px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 12px;">"${ex.stem}"</div>
+      <div class="mcq-q">${escHtml(ex.question)}</div>
+      <div class="mcq-stem" style="font-family:var(--mono); background: rgba(0,0,0,0.02); padding: 10px 14px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 12px;">"${escHtml(ex.stem)}"</div>
       <div class="mcq-opts">
         ${ex.opts.map((o, j) => {
           let cls = '';
@@ -4783,12 +4777,12 @@ function renderExerciseUI(ex, i) {
             if (j === ex.correct) cls = ' correct';
             else if (ex.userAnswer === j) cls = ' wrong';
           }
-          return `<button class="mcq-opt${cls}" ${ex.done ? 'disabled' : ''} onclick="chooseMCQ(${i}, ${j}); event.stopPropagation();">${o}</button>`;
+          return `<button class="mcq-opt${cls}" ${ex.done ? 'disabled' : ''} onclick="chooseMCQ(${i}, ${j}); event.stopPropagation();">${escHtml(o)}</button>`;
         }).join('')}
       </div>
       ${ex.done ? `
         <div class="mcq-result" style="color:${ex.userAnswer === ex.correct ? 'var(--ok)' : 'var(--err)'}; margin-top: 12px; font-weight: 600;">
-          ${ex.userAnswer === ex.correct ? '✓ Correct.' : '✗ Incorrect.'} ${ex.explanation}
+          ${ex.userAnswer === ex.correct ? '✓ Correct.' : '✗ Incorrect.'} ${escHtml(ex.explanation)}
         </div>
       ` : ''}
     `;
@@ -4796,15 +4790,15 @@ function renderExerciseUI(ex, i) {
   
   if (ex.type === 'Fill in Blank') {
     return `
-      <div class="mcq-q">${ex.question}</div>
-      <div class="mcq-stem" style="font-family:var(--mono); background: rgba(0,0,0,0.02); padding: 10px 14px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 12px;">"${ex.stem}"</div>
+      <div class="mcq-q">${escHtml(ex.question)}</div>
+      <div class="mcq-stem" style="font-family:var(--mono); background: rgba(0,0,0,0.02); padding: 10px 14px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 12px;">"${escHtml(ex.stem)}"</div>
       
       ${ex.done ? `
         <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
-          <input type="text" value="${ex.userAnswer}" disabled style="flex:1; padding:10px 14px; border-radius:8px; border:1.5px solid ${ex.userAnswer.toLowerCase() === ex.correctAnswer.toLowerCase() ? 'var(--ok)' : 'var(--err)'}; background:#fff;" />
+          <input type="text" value="${escHtml(ex.userAnswer)}" disabled style="flex:1; padding:10px 14px; border-radius:8px; border:1.5px solid ${ex.userAnswer.toLowerCase() === ex.correctAnswer.toLowerCase() ? 'var(--ok)' : 'var(--err)'}; background:#fff;" />
         </div>
         <div class="mcq-result" style="color:${ex.userAnswer.toLowerCase() === ex.correctAnswer.toLowerCase() ? 'var(--ok)' : 'var(--err)'}; font-weight:600;">
-          ${ex.userAnswer.toLowerCase() === ex.correctAnswer.toLowerCase() ? '✓ Correct.' : '✗ Incorrect.'} Correct answer: "${ex.correctAnswer}". ${ex.explanation}
+          ${ex.userAnswer.toLowerCase() === ex.correctAnswer.toLowerCase() ? '✓ Correct.' : '✗ Incorrect.'} Correct answer: "${escHtml(ex.correctAnswer)}". ${escHtml(ex.explanation)}
         </div>
       ` : `
         <div style="display: flex; gap: 10px; align-items: center;">
@@ -4818,7 +4812,7 @@ function renderExerciseUI(ex, i) {
   if (ex.type === 'Word Matching') {
     const state = getOrInitMatchingState(i);
     return `
-      <div class="mcq-q">${ex.question}</div>
+      <div class="mcq-q">${escHtml(ex.question)}</div>
       
       ${ex.done ? `
         <div style="text-align: center; color: var(--ok); font-weight: 700; padding: 20px 0; font-size: 14px;">
@@ -4877,9 +4871,9 @@ function renderExerciseUI(ex, i) {
   
   if (ex.type === 'Speaking') {
     return `
-      <div class="mcq-q">${ex.question}</div>
+      <div class="mcq-q">${escHtml(ex.question)}</div>
       <div class="mcq-stem" style="font-family:var(--mono); background: rgba(0,0,0,0.02); padding: 12px 16px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 16px; font-size: 15px; text-align: center;">
-        "${ex.stem}"
+        "${escHtml(ex.stem)}"
       </div>
       
       ${ex.recording ? `
@@ -4903,7 +4897,7 @@ function renderExerciseUI(ex, i) {
           <div style="font-weight: 700; color: var(--ok); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
             <span>🎙️</span> Pronunciation Graded: ${ex.gradedScore}%
           </div>
-          <div style="white-space: pre-line; color: var(--dim); line-height: 1.5;">${ex.feedback}</div>
+          <div style="white-space: pre-line; color: var(--dim); line-height: 1.5;">${escHtml(ex.feedback)}</div>
         </div>
       ` : `
         <div style="display: flex; justify-content: center; padding: 10px;">
@@ -4923,8 +4917,8 @@ function renderExerciseUI(ex, i) {
   
   if (ex.type === 'Essay') {
     return `
-      <div class="mcq-q">${ex.question}</div>
-      <div class="mcq-stem" style="font-family:var(--mono); background: rgba(0,0,0,0.02); padding: 10px 14px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 12px;">"${ex.stem}"</div>
+      <div class="mcq-q">${escHtml(ex.question)}</div>
+      <div class="mcq-stem" style="font-family:var(--mono); background: rgba(0,0,0,0.02); padding: 10px 14px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 12px;">"${escHtml(ex.stem)}"</div>
       
       ${ex.grading ? `
         <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; padding: 20px 0;">
@@ -4935,9 +4929,9 @@ function renderExerciseUI(ex, i) {
         <div style="background: rgba(22,163,74,0.04); border: 1px solid rgba(22,163,74,0.15); border-radius: 8px; padding: 14px; font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
           <div>
             <div style="font-weight: 700; color: var(--txt); margin-bottom: 4px;">${xt('student_your_submission','Your Submission:')}</div>
-            <div style="font-family: var(--mono); background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--bd); max-height: 120px; overflow-y: auto; color: var(--dim); line-height: 1.5;">${ex.userAnswer}</div>
+            <div style="font-family: var(--mono); background: #fff; padding: 8px 12px; border-radius: 6px; border: 1px solid var(--bd); max-height: 120px; overflow-y: auto; color: var(--dim); line-height: 1.5;">${escHtml(ex.userAnswer)}</div>
           </div>
-          <div style="white-space: pre-line; color: var(--dim); line-height: 1.5; border-top: 1px solid var(--bd); padding-top: 8px;">${ex.feedback}</div>
+          <div style="white-space: pre-line; color: var(--dim); line-height: 1.5; border-top: 1px solid var(--bd); padding-top: 8px;">${escHtml(ex.feedback)}</div>
         </div>
       ` : `
         <div style="display: flex; flex-direction: column; gap: 8px;" onclick="event.stopPropagation();">
@@ -4952,7 +4946,7 @@ function renderExerciseUI(ex, i) {
   }
   if (ex.type === 'Listening') {
     return `
-      <div class="mcq-q">${ex.question}</div>
+      <div class="mcq-q">${escHtml(ex.question)}</div>
       <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
         <button onclick="playListeningAudio('${ex.audioText.replace(/'/g, "\\'")}'); event.stopPropagation();" class="join-btn" style="padding: 10px 18px; display: flex; align-items: center; gap: 8px;">
           <span>🔊</span> Play Audio
@@ -4961,10 +4955,10 @@ function renderExerciseUI(ex, i) {
       
       ${ex.done ? `
         <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 8px;">
-          <input type="text" value="${ex.userAnswer}" disabled style="flex:1; padding:10px 14px; border-radius:8px; border:1.5px solid ${ex.userAnswer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").replace(/\s+/g, " ").trim() === ex.audioText.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").replace(/\s+/g, " ").trim() ? 'var(--ok)' : 'var(--err)'}; background:#fff;" />
+          <input type="text" value="${escHtml(ex.userAnswer)}" disabled style="flex:1; padding:10px 14px; border-radius:8px; border:1.5px solid ${ex.userAnswer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").replace(/\s+/g, " ").trim() === ex.audioText.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").replace(/\s+/g, " ").trim() ? 'var(--ok)' : 'var(--err)'}; background:#fff;" />
         </div>
         <div class="mcq-result" style="color:${ex.userAnswer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").replace(/\s+/g, " ").trim() === ex.audioText.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").replace(/\s+/g, " ").trim() ? 'var(--ok)' : 'var(--err)'}; font-weight:600;">
-          ${ex.userAnswer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").replace(/\s+/g, " ").trim() === ex.audioText.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").replace(/\s+/g, " ").trim() ? '✓ Correct.' : '✗ Incorrect.'} Correct transcription: "${ex.audioText}".
+          ${ex.userAnswer.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").replace(/\s+/g, " ").trim() === ex.audioText.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?]/g, "").replace(/\s+/g, " ").trim() ? '✓ Correct.' : '✗ Incorrect.'} Correct transcription: "${escHtml(ex.audioText)}".
         </div>
       ` : `
         <div style="display: flex; gap: 10px; align-items: center;">
@@ -5002,7 +4996,7 @@ function renderExercises(){
         :`<div style="width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(0,0,0,.22);"></div>`}
       </div>
       <div style="flex:1;">
-        <div class="ex-title${ex.done?' done':''}">${ex.title}</div>
+        <div class="ex-title${ex.done?' done':''}">${escHtml(ex.title)}</div>
         <div class="ex-type">${ex.type}</div>
       </div>
       <div class="diff-bars">${Array.from({length:5}).map((_,d)=>`<div class="d-bar" style="height:${d<ex.diff?12:6}px;background:${d<ex.diff?(ex.done?'rgba(0,0,0,.15)':'rgba(0,0,0,.35)'):'rgba(0,0,0,.07)'};"></div>`).join('')}</div>
@@ -5101,8 +5095,8 @@ function renderPlacementQuestion() {
       <div style="font-family:var(--anton);font-size:18px;text-transform:uppercase;">${xt('student_placement_title', 'Placement Test')}</div>
       <div style="font-family:var(--mono);font-size:12px;color:var(--dim);">${PLACEMENT.idx + 1} / ${PLACEMENT.qs.length}</div>
     </div>
-    <div style="font-size:14px;margin-bottom:6px;">${q.question}</div>
-    ${q.stem ? `<div style="font-size:15px;font-weight:600;background:var(--bg);padding:12px;border-radius:10px;margin-bottom:14px;">${q.stem}</div>` : ''}
+    <div style="font-size:14px;margin-bottom:6px;">${escHtml(q.question)}</div>
+    ${q.stem ? `<div style="font-size:15px;font-weight:600;background:var(--bg);padding:12px;border-radius:10px;margin-bottom:14px;">${escHtml(q.stem)}</div>` : ''}
     <div style="display:flex;flex-direction:column;gap:8px;">
       ${q.opts.map((o, i) => `<button onclick="answerPlacement(${i})" style="text-align:left;padding:11px 14px;border:1px solid var(--bd);border-radius:10px;background:#fff;font-size:14px;cursor:pointer;">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}
     </div>
@@ -5255,7 +5249,7 @@ function renderProgress(){
               <div class="av" style="background:#3B1F6A;width:44px;height:44px;font-size:15px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;">${initials}</div>
               <div style="flex:1;">
                 <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;">
-                  <span>${teacherName} <span style="color:var(--dim);font-weight:400;font-size:12px;">· ${lblTeacherNote}</span></span>
+                  <span>${escHtml(teacherName)} <span style="color:var(--dim);font-weight:400;font-size:12px;">· ${lblTeacherNote}</span></span>
                   <span style="font-size:11px;color:var(--dim);font-weight:400;">${dateStr}</span>
                 </div>
                 <div style="font-size:13px;color:var(--dim);line-height:1.7;">"${f.feedback_text}"</div>
@@ -5314,7 +5308,7 @@ function renderTests(){
       } else {
         if (quizAns === i) cls = ' sel';
       }
-      return `<button class="quiz-opt${cls}" ${quizCompleted ? 'disabled' : ''} onclick="quizPick(${i})">${o}</button>`;
+      return `<button class="quiz-opt${cls}" ${quizCompleted ? 'disabled' : ''} onclick="quizPick(${i})">${escHtml(o)}</button>`;
     }).join('');
   }
   
@@ -5679,7 +5673,7 @@ function openTierUpgradeModal() {
     { id: 'community', name: 'Community', price: '€24/mo', desc: '35 learners · Live cohort' },
     { id: 'focused', name: 'Focused', price: '€59/mo', desc: '17 learners · Small groups' },
     { id: 'intensive', name: 'Intensive', price: '€109/mo', desc: '6 learners · Micro-group + 1:1' },
-    { id: 'onetoone', name: '1 on 1', price: '€269/mo', desc: 'Private sessions · 1 on 1' }
+    { id: 'private', name: '1 on 1', price: '€269/mo', desc: 'Private sessions · 1 on 1' }
   ];
   
   let modalContent = `
@@ -5746,11 +5740,10 @@ async function confirmUpgrade() {
     const userCurrency = USER.profile?.currency || 'eur';
     const priceId = getRegionalPriceId(tierId, 'monthly', userCurrency);
     
+    // createCheckout sends the Supabase bearer token; the server derives the customer from it.
     await createCheckout({
       priceId,
       mode: 'subscription',
-      customerEmail: USER.email,
-      customerId: USER.profile?.user_id || USER.id,
       successUrl: `${window.location.origin}/student-dashboard.html?checkout=success&tier=${tierId}`,
       cancelUrl: `${window.location.origin}/student-dashboard.html?checkout=cancelled`
     });
@@ -6037,7 +6030,7 @@ async function refreshCohortSwitchList(lang, level) {
         <div style="${cardStyle}">
           <div style="flex: 1;">
             <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:4px;">
-              <span style="font-weight: 700; font-size: 14.5px; color: var(--txt);">${teacherName}</span>
+              <span style="font-weight: 700; font-size: 14.5px; color: var(--txt);">${escHtml(teacherName)}</span>
               <span style="font-weight: 500; font-size: 11px; color: var(--dim);">(${ratingStr})</span>
               <span style="background:${c.match.bg}; color:${c.match.color}; padding:2px 8px; border-radius:100px; font-size:10px; font-weight:700; margin-left:4px;">${c.match.label}</span>
             </div>
@@ -6116,6 +6109,39 @@ async function joinWaitlist(cohortId) {
   }
 }
 
+// Shared POST /api/enroll helper. Enrollment writes (enrollments,
+// increment_enrollment, student_profiles.enrolled_cohort_id) are server-only now.
+async function enrollViaApi(body) {
+  const { data: { session } = {} } = await SB.auth.getSession();
+  if (!session) {
+    window.location.href = 'signin.html';
+    throw new Error('Not signed in');
+  }
+  const resp = await fetch('/api/enroll', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${session.access_token}`
+    },
+    body: JSON.stringify(body)
+  });
+  const data = await resp.json().catch(() => ({}));
+  return { resp, data };
+}
+
+function enrollErrorMessage(data) {
+  const map = {
+    payment_required:  'An active subscription is required for this cohort tier.',
+    tier_mismatch:     'This cohort is not available on your current plan.',
+    language_mismatch: 'This cohort teaches a different language than your profile.',
+    already_enrolled:  'You are already enrolled in this cohort.',
+    cohort_not_open:   'This cohort is not open for enrollment.',
+    cohort_full:       'This class cohort is already full!',
+    offer_expired:     'This waitlist offer has expired.'
+  };
+  return data?.message || map[data?.error] || data?.error || 'Enrollment failed';
+}
+
 async function switchCohort(targetCohortId) {
   const btn = window.event?.target;
   const originalText = btn ? btn.textContent : 'Switch';
@@ -6123,57 +6149,41 @@ async function switchCohort(targetCohortId) {
     btn.textContent = 'Switching...';
     btn.disabled = true;
   }
-  
+
   try {
-    // 1. Call atomic increment RPC
-    const { data: newCount, error: rpcError } = await SB.rpc('increment_enrollment', { cohort_id: targetCohortId });
-    if (rpcError) throw rpcError;
-    if (newCount === null) {
-      throw new Error("This class cohort is already full!");
+    const { resp, data } = await enrollViaApi({ cohort_id: targetCohortId, switch: true });
+
+    if (!resp.ok) {
+      if (data.error === 'cohort_full' || data.error === 'cohort_not_open') {
+        const joinWait = confirm(`${enrollErrorMessage(data)}\n\nWould you like to join the waitlist for this cohort?`);
+        if (joinWait) await joinWaitlist(targetCohortId);
+        if (btn) {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+        return;
+      }
+      if (data.error === 'payment_required') {
+        const goUpgrade = confirm(`${enrollErrorMessage(data)}\n\nWould you like to upgrade your plan?`);
+        if (goUpgrade) {
+          closeModal();
+          openTierUpgradeModal();
+          return;
+        }
+        if (btn) {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        }
+        return;
+      }
+      throw new Error(enrollErrorMessage(data));
     }
 
-    // 2. Terminate old active enrollment and add a new active enrollment
-    if (USER.cohort_id) {
-      const { data: oldEnrollments } = await SB
-        .from('enrollments')
-        .select('id')
-        .eq('student_id', USER.id)
-        .eq('cohort_id', USER.cohort_id)
-        .eq('status', 'active');
-        
-      if (oldEnrollments && oldEnrollments.length > 0) {
-        // Cancel old enrollment
-        await SB
-          .from('enrollments')
-          .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-          .eq('id', oldEnrollments[0].id);
-      }
-    }
-    
-    // Insert new enrollment
-    const { error: insertError } = await SB
-      .from('enrollments')
-      .insert({
-        student_id: USER.id,
-        cohort_id: targetCohortId,
-        status: 'active'
-      });
-      
-    if (insertError) throw insertError;
-    
-    // 3. Update student_profiles enrolled_cohort_id
-    const { error: profileError } = await SB
-      .from('student_profiles')
-      .update({ enrolled_cohort_id: targetCohortId })
-      .eq('id', USER.id);
-      
-    if (profileError) throw profileError;
-    
-    // Update local state
-    USER.cohort_id = targetCohortId;
-    if (USER.profile) USER.profile.enrolled_cohort_id = targetCohortId;
-    
-    alert("Successfully switched class cohort!");
+    // Update local state from the server response
+    USER.cohort_id = data.cohort_id || targetCohortId;
+    if (USER.profile) USER.profile.enrolled_cohort_id = USER.cohort_id;
+
+    alert(data.message || "Successfully switched class cohort!");
     closeModal();
     // Reload dashboard data
     await initData();
@@ -6241,60 +6251,27 @@ async function executeClaimOffer(cohortId, waitlistId) {
     btn.disabled = true;
   }
   try {
-    // 1. Call atomic increment RPC
-    const { data: newCount, error: rpcError } = await SB.rpc('increment_enrollment', { cohort_id: cohortId });
-    if (rpcError) throw rpcError;
-    if (newCount === null) {
-      throw new Error("This cohort is full! The reserved spot may have expired.");
-    }
-    
-    // 2. Terminate old active enrollment
-    if (USER.cohort_id) {
-      const { data: oldEnrollments } = await SB
-        .from('enrollments')
-        .select('id')
-        .eq('student_id', USER.id)
-        .eq('cohort_id', USER.cohort_id)
-        .eq('status', 'active');
-        
-      if (oldEnrollments && oldEnrollments.length > 0) {
-        await SB
-          .from('enrollments')
-          .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
-          .eq('id', oldEnrollments[0].id);
+    // The server validates the offer, claims the seat and clears the waitlist row.
+    const { resp, data } = await enrollViaApi({ cohort_id: cohortId, waitlist_id: waitlistId });
+
+    if (!resp.ok) {
+      if (data.error === 'offer_expired') {
+        throw new Error("This waitlist offer has expired. The reserved spot is no longer available.");
       }
+      if (data.error === 'cohort_full') {
+        throw new Error("This cohort is full! The reserved spot may have expired.");
+      }
+      throw new Error(enrollErrorMessage(data));
     }
-    
-    // 3. Insert new enrollment
-    const { error: insertError } = await SB
-      .from('enrollments')
-      .insert({
-        student_id: USER.id,
-        cohort_id: cohortId,
-        status: 'active'
-      });
-      
-    if (insertError) throw insertError;
-    
-    // 4. Update student profile
-    const { error: profileError } = await SB
-      .from('student_profiles')
-      .update({ enrolled_cohort_id: cohortId })
-      .eq('id', USER.id);
-      
-    if (profileError) throw profileError;
 
-    // 5. Delete waitlist record
-    await SB.from('cohort_waitlist').delete().eq('id', waitlistId);
-
-    // Update local state
-    USER.cohort_id = cohortId;
-    if (USER.profile) USER.profile.enrolled_cohort_id = cohortId;
+    // Update local state from the server response
+    USER.cohort_id = data.cohort_id || cohortId;
+    if (USER.profile) USER.profile.enrolled_cohort_id = USER.cohort_id;
 
     // Clean URL params
     window.history.replaceState({}, document.title, window.location.pathname);
 
-    alert("Successfully claimed waitlist spot and joined the cohort!");
+    alert(data.message || "Successfully claimed waitlist spot and joined the cohort!");
     closeModal();
     await initData();
     init();
@@ -6383,12 +6360,12 @@ async function openTeacherProfileModal() {
             <div style="margin-left:auto;">${badgesHtml}</div>
           </div>
           <div style="font-size:13.5px;color:var(--txt);line-height:1.6;margin-bottom:8px;">
-            ${teacher.bio || 'Native language teacher dedicated to student success.'}
+            ${escHtml(teacher.bio || 'Native language teacher dedicated to student success.')}
           </div>
           <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;background:#fafaf8;padding:10px 14px;border-radius:8px;border:1px solid var(--bd);">
             <div>
               <div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">${xt('student_location','Location')}</div>
-              <div style="font-size:13px;font-weight:600;color:var(--txt);margin-top:2px;">${teacher.location || 'Madrid, Spain'}</div>
+              <div style="font-size:13px;font-weight:600;color:var(--txt);margin-top:2px;">${escHtml(teacher.location || 'Madrid, Spain')}</div>
             </div>
             <div>
               <div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">${xt('student_experience','Experience')}</div>
@@ -6433,10 +6410,10 @@ async function openTeacherProfileModal() {
             ${reviews.map(r => `
               <div style="border-bottom:1px solid rgba(0,0,0,0.04);padding-bottom:8px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
-                  <span style="font-size:12.5px;font-weight:700;color:var(--txt);">${r.student_profiles?.full_name || 'Anonymous'}</span>
+                  <span style="font-size:12.5px;font-weight:700;color:var(--txt);">${escHtml(r.student_profiles?.full_name || 'Anonymous')}</span>
                   <span style="font-size:11px;color:var(--dim);">⭐ ${r.rating}</span>
                 </div>
-                <div style="font-size:12px;color:var(--dim);line-height:1.4;">${r.review_text || ''}</div>
+                <div style="font-size:12px;color:var(--dim);line-height:1.4;">${escHtml(r.review_text || '')}</div>
               </div>
             `).join('')}
             ${reviews.length === 0 ? `
@@ -6515,21 +6492,11 @@ function openExtraClassPaywall() {
         <div style="font-size: 18px; font-weight: 800; color: var(--txt);">€60</div>
       </div>
       
-      <div style="display: flex; flex-direction: column; gap: 10px;">
-        <div class="lbl" style="border-bottom: 1px solid var(--bd); padding-bottom: 6px; margin-bottom: 4px;">${xt('student_credit_card_details','Credit Card Details')}</div>
-        
-        <div style="display: flex; flex-direction: column; gap: 8px;">
-          <input type="text" placeholder="Card number" value="4242  4242  4242  4242" disabled style="width:100%;background:#fafaf8;border:1px solid var(--bd);border-radius:8px;padding:10px 14px;font-family:monospace;font-size:14px;color:var(--txt);outline:none;" />
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
-            <input type="text" placeholder="MM / YY" value="12 / 28" disabled style="width:100%;background:#fafaf8;border:1px solid var(--bd);border-radius:8px;padding:10px 14px;font-family:monospace;font-size:14px;color:var(--txt);outline:none;" />
-            <input type="text" placeholder="CVC" value="123" disabled style="width:100%;background:#fafaf8;border:1px solid var(--bd);border-radius:8px;padding:10px 14px;font-family:monospace;font-size:14px;color:var(--txt);outline:none;" />
-          </div>
-        </div>
-      </div>
+      <div style="font-size:12px;color:var(--dim);line-height:1.5;">You will be redirected to our secure Stripe checkout to complete the payment.</div>
 
       <div style="margin-top: 24px; display: flex; gap: 10px; justify-content: flex-end;">
         <button class="join-btn" style="background:#FFF; border:1px solid var(--bd); color:var(--txt); cursor:pointer;" onclick="closeModal()">${xt('student_cancel','Cancel')}</button>
-        <button class="join-btn" id="btn-pay-extra" onclick="payExtraClass()">Confirm & Pay (€60)</button>
+        <button class="join-btn" id="btn-pay-extra" onclick="payExtraClass()">Continue to payment (€60)</button>
       </div>
     </div>
   `;
@@ -6538,33 +6505,41 @@ function openExtraClassPaywall() {
 
 async function payExtraClass() {
   const btn = document.getElementById('btn-pay-extra');
+  const originalText = btn ? btn.textContent : 'Continue to payment (€60)';
   if (btn) {
-    btn.textContent = 'Processing payment...';
+    btn.textContent = 'Redirecting...';
     btn.style.pointerEvents = 'none';
   }
-  
-  try {
-    if (USER.profile) {
-      await SB
-        .from('session_credits')
-        .insert({
-          student_id: USER.id,
-          credits: 1,
-          source: 'stripe_paywall'
-        });
+
+  // Real Stripe Checkout (one-time). The credit is granted server-side by the
+  // Stripe webhook after payment — nothing is written from the browser here.
+  const priceId = window.ALIMUN_CONFIG?.prices?.oneOnOneSession || window.ALIMUN_CONFIG?.stripePriceOneOnOne;
+  if (!priceId) {
+    alert(xt('student_extra_class_unavailable', 'Extra private classes are not available for purchase yet. Please check back soon.'));
+    if (btn) {
+      btn.textContent = originalText;
+      btn.style.pointerEvents = 'auto';
     }
-  } catch (e) {
-    console.error('Failed to log session credit purchase in DB:', e);
+    return;
   }
-  
-  setTimeout(() => {
-    const extraKey = 'alimun:extra_classes:' + USER.id;
-    const currentExtra = parseInt(localStorage.getItem(extraKey) || '0');
-    localStorage.setItem(extraKey, String(currentExtra + 1));
-    
-    closeModal();
-    alert("Payment successful! One private session credit has been added to your account.");
-  }, 1200);
+
+  try {
+    const { createCheckout } = await import('/js/stripe/config.js');
+    const origin = window.location.origin;
+    await createCheckout({
+      priceId,
+      mode: 'payment',
+      successUrl: `${origin}/student-dashboard.html?checkout=credit`,
+      cancelUrl: `${origin}/student-dashboard.html`
+    });
+  } catch (e) {
+    console.error('Failed to start extra-class checkout:', e);
+    alert('Failed to start checkout: ' + e.message);
+    if (btn) {
+      btn.textContent = originalText;
+      btn.style.pointerEvents = 'auto';
+    }
+  }
 }
 
 /* ══════════════════════════════════════════════════════
@@ -6636,6 +6611,10 @@ function init(){
    SESSION ATTENDANCE TRACKING
 ══════════════════════════════════════════════════════ */
 async function handleStudentJoin(roomUrl, sessionId) {
+  if (!sessionId) {
+    alert(xt('student_no_session_to_join', 'There is no class session to join right now.'));
+    return;
+  }
   currentSessionId = sessionId;
 
   // Ask the server for the room + a meeting token (rooms are private)
@@ -6670,7 +6649,7 @@ async function handleStudentJoin(roomUrl, sessionId) {
   }
 
   // Show the classroom container overlay
-  const container = document.getElementById('live-incall');
+  const container = document.getElementById('classroom');
   container.classList.add('active');
   liveSessionActive = true;
 
@@ -6688,30 +6667,12 @@ async function handleStudentJoin(roomUrl, sessionId) {
 
   await callFrame.join(joinToken ? { url: joinUrl, token: joinToken } : { url: joinUrl });
 
-  // Log attendance — upsert so repeat joins are idempotent
+  // joined_at is recorded server-side by /api/join-session. We only remember
+  // which session we're in so leaveClass() can stamp left_at on our own row.
   if (SB && sessionId && NEXT_CLASS.studentProfileId) {
-    try {
-      const { data, error } = await SB
-        .from('session_attendance')
-        .upsert(
-          {
-            session_id:  sessionId,
-            student_id:  NEXT_CLASS.studentProfileId,
-            joined_at:   new Date().toISOString()
-          },
-          { onConflict: 'session_id,student_id', ignoreDuplicates: false }
-        )
-        .select('id')
-        .maybeSingle();
-
-      if (data) {
-        _attendanceId = data.id;
-        if (_attendanceTimeout) clearTimeout(_attendanceTimeout);
-        _attendanceTimeout = setTimeout(logAttendanceLeave, 90 * 60 * 1000);
-      }
-    } catch (e) {
-      console.warn('Attendance tracking error:', e);
-    }
+    _attendanceSessionId = sessionId;
+    if (_attendanceTimeout) clearTimeout(_attendanceTimeout);
+    _attendanceTimeout = setTimeout(logAttendanceLeave, 90 * 60 * 1000);
   }
 
   // Initialize classroom features
@@ -6728,7 +6689,7 @@ function leaveClass() {
     callFrame = null;
   }
 
-  const container = document.getElementById('live-incall');
+  const container = document.getElementById('classroom');
   container.classList.remove('active');
   container.classList.remove('minimized');
   liveSessionActive = false;
@@ -6742,7 +6703,7 @@ function leaveClass() {
 }
 
 function toggleClassroomSize() {
-  const container = document.getElementById('live-incall');
+  const container = document.getElementById('classroom');
   if (container.classList.contains('minimized')) {
     container.classList.remove('minimized');
     goView('live');
@@ -7009,32 +6970,19 @@ async function uploadClassroomFile(input) {
 }
 
 async function logAttendanceLeave() {
-  if (!SB || !_attendanceId) return;
+  if (!SB || !_attendanceSessionId || !NEXT_CLASS.studentProfileId) return;
   try {
+    // RLS allows a student to update left_at on their own attendance row
     await SB
       .from('session_attendance')
       .update({ left_at: new Date().toISOString() })
-      .eq('id', _attendanceId);
-    _attendanceId = null;
+      .eq('session_id', _attendanceSessionId)
+      .eq('student_id', NEXT_CLASS.studentProfileId);
+    _attendanceSessionId = null;
   } catch (e) {
     console.warn('Attendance leave error:', e);
   }
 }
-
-// Log leave when tab/browser closes
-window.addEventListener('beforeunload', () => {
-  if (_attendanceId && SB) {
-    const supaUrl = window.ALIMUN_CONFIG?.supabaseUrl;
-    const supaKey = window.ALIMUN_CONFIG?.supabaseAnonKey;
-    if (supaUrl && supaKey) {
-      const url = `${supaUrl}/rest/v1/session_attendance?id=eq.${_attendanceId}`;
-      const payload = JSON.stringify({ left_at: new Date().toISOString() });
-      navigator.sendBeacon
-        ? navigator.sendBeacon(url + '&apikey=' + supaKey, new Blob([payload], { type: 'application/json' }))
-        : null;
-    }
-  }
-});
 </script>
 
 

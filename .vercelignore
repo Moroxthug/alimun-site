@@ -1,0 +1,21 @@
+# Not uploaded to Vercel at all (never served, never needed by the build).
+# NOTE: package.json, build.js, js/translations.js and vercel.json ARE needed
+# by `npm run build` — they stay in the upload and are blocked from being
+# served by the 404 routes in vercel.json instead.
+
+.env*
+.vercel
+.claude
+.agents
+.git
+supabase/
+mockups/
+sandbox/
+*.md
+verify.js
+verification-results.json
+alimun-site.zip
+.vscode
+.DS_Store
+Thumbs.db
+nul

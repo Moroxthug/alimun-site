@@ -20,49 +20,55 @@
  */
 
 // ── Price IDs ─────────────────────────────────────────────────
-// Populated from window.ALIMUN_CONFIG (injected per-page)
-// or fall back to the placeholder strings for dev reference.
+// Populated from window.ALIMUN_CONFIG.prices — the object returned by
+// GET /api/stripe/config ({ communityMonthly, ..., regional: { aud, mad } }).
+// Pages that still inject the legacy flat cfg.stripePrice* keys keep working.
+// Placeholder strings remain only as a dev-time fallback.
 
 const cfg = window.ALIMUN_CONFIG || {};
+const prices   = cfg.prices || {};
+const regional = prices.regional || {};
+const aud = regional.aud || {};
+const mad = regional.mad || {};
 
 export const PRICE_IDS = {
   // EUR Monthly subscriptions
-  community_monthly:      cfg.stripePriceCommunityMonthly      || 'price_COMMUNITY_MONTHLY_ID',
-  focused_monthly:        cfg.stripePriceFocusedMonthly        || 'price_FOCUSED_MONTHLY_ID',
-  intensive_monthly:      cfg.stripePriceIntensiveMonthly      || 'price_INTENSIVE_MONTHLY_ID',
-  private_monthly:        cfg.stripePricePrivateMonthly        || 'price_PRIVATE_MONTHLY_ID',
+  community_monthly:      prices.communityMonthly || cfg.stripePriceCommunityMonthly || 'price_COMMUNITY_MONTHLY_ID',
+  focused_monthly:        prices.focusedMonthly   || cfg.stripePriceFocusedMonthly   || 'price_FOCUSED_MONTHLY_ID',
+  intensive_monthly:      prices.intensiveMonthly || cfg.stripePriceIntensiveMonthly || 'price_INTENSIVE_MONTHLY_ID',
+  private_monthly:        prices.privateMonthly   || cfg.stripePricePrivateMonthly   || 'price_PRIVATE_MONTHLY_ID',
 
   // EUR Yearly subscriptions
-  community_yearly:       cfg.stripePriceCommunityYearly       || 'price_COMMUNITY_YEARLY_ID',
-  focused_yearly:         cfg.stripePriceFocusedYearly         || 'price_FOCUSED_YEARLY_ID',
-  intensive_yearly:       cfg.stripePriceIntensiveYearly       || 'price_INTENSIVE_YEARLY_ID',
-  private_yearly:         cfg.stripePricePrivateYearly         || 'price_PRIVATE_YEARLY_ID',
+  community_yearly:       prices.communityYearly  || cfg.stripePriceCommunityYearly  || 'price_COMMUNITY_YEARLY_ID',
+  focused_yearly:         prices.focusedYearly    || cfg.stripePriceFocusedYearly    || 'price_FOCUSED_YEARLY_ID',
+  intensive_yearly:       prices.intensiveYearly  || cfg.stripePriceIntensiveYearly  || 'price_INTENSIVE_YEARLY_ID',
+  private_yearly:         prices.privateYearly    || cfg.stripePricePrivateYearly    || 'price_PRIVATE_YEARLY_ID',
 
   // One-time payments (EUR only)
-  oneonone_session:       cfg.stripePriceOneononeSession       || 'price_ONEONONE_SESSION_ID',
-  certificate:            cfg.stripePriceCertificate           || 'price_CERTIFICATE_ID',
+  founding_member:        prices.foundingMember   || cfg.stripePriceFoundingMember   || 'price_FOUNDING_MEMBER_ID',
+  oneonone_session:       prices.oneOnOneSession  || cfg.stripePriceOneononeSession  || 'price_ONEONONE_SESSION_ID',
+  certificate:            prices.certificate      || cfg.stripePriceCertificate      || 'price_CERTIFICATE_ID',
 
   // AUD Monthly (regional)
-  community_monthly_aud:  cfg.stripePriceCommunityMonthlyAud   || 'price_COMMUNITY_MONTHLY_AUD_ID',
-  focused_monthly_aud:    cfg.stripePriceFocusedMonthlyAud     || 'price_FOCUSED_MONTHLY_AUD_ID',
-  intensive_monthly_aud:  cfg.stripePriceIntensiveMonthlyAud   || 'price_INTENSIVE_MONTHLY_AUD_ID',
-  private_monthly_aud:    cfg.stripePricePrivateMonthlyAud     || 'price_PRIVATE_MONTHLY_AUD_ID',
+  community_monthly_aud:  aud.communityMonthly || cfg.stripePriceCommunityMonthlyAud || 'price_COMMUNITY_MONTHLY_AUD_ID',
+  focused_monthly_aud:    aud.focusedMonthly   || cfg.stripePriceFocusedMonthlyAud   || 'price_FOCUSED_MONTHLY_AUD_ID',
+  intensive_monthly_aud:  aud.intensiveMonthly || cfg.stripePriceIntensiveMonthlyAud || 'price_INTENSIVE_MONTHLY_AUD_ID',
+  private_monthly_aud:    aud.privateMonthly   || cfg.stripePricePrivateMonthlyAud   || 'price_PRIVATE_MONTHLY_AUD_ID',
 
   // MAD Monthly (regional)
-  community_monthly_mad:  cfg.stripePriceCommunityMonthlyMad   || 'price_COMMUNITY_MONTHLY_MAD_ID',
-  focused_monthly_mad:    cfg.stripePriceFocusedMonthlyMad     || 'price_FOCUSED_MONTHLY_MAD_ID',
-  intensive_monthly_mad:  cfg.stripePriceIntensiveMonthlyMad   || 'price_INTENSIVE_MONTHLY_MAD_ID',
-  private_monthly_mad:    cfg.stripePricePrivateMonthlyMad     || 'price_PRIVATE_MONTHLY_MAD_ID',
+  community_monthly_mad:  mad.communityMonthly || cfg.stripePriceCommunityMonthlyMad || 'price_COMMUNITY_MONTHLY_MAD_ID',
+  focused_monthly_mad:    mad.focusedMonthly   || cfg.stripePriceFocusedMonthlyMad   || 'price_FOCUSED_MONTHLY_MAD_ID',
+  intensive_monthly_mad:  mad.intensiveMonthly || cfg.stripePriceIntensiveMonthlyMad || 'price_INTENSIVE_MONTHLY_MAD_ID',
+  private_monthly_mad:    mad.privateMonthly   || cfg.stripePricePrivateMonthlyMad   || 'price_PRIVATE_MONTHLY_MAD_ID',
 };
 
 // ── Plan display metadata ─────────────────────────────────────
+// Amounts are NOT stored here — Stripe (via the price IDs above) is the
+// single source of truth. Pages that display prices keep their own copy.
 export const PLANS = {
   community: {
     name:           'Community',
     tagline:        '1 session/week · ~35 learners',
-    monthlyPrice:   24,
-    yearlyPrice:    240,
-    yearlyMonthly:  20,   // effective monthly when billed yearly (240/12 = 20)
     color:          '#f5f4f0',
     textColor:      '#080808',
     badge:          null,
@@ -84,9 +90,6 @@ export const PLANS = {
   focused: {
     name:           'Focused',
     tagline:        '2 sessions/week · ~17 learners',
-    monthlyPrice:   59,
-    yearlyPrice:    590,
-    yearlyMonthly:  49,   // effective monthly when billed yearly (590/12 ≈ 49)
     color:          '#080808',
     textColor:      '#ffffff',
     accentColor:    '#ceff65',
@@ -110,9 +113,6 @@ export const PLANS = {
   intensive: {
     name:           'Intensive',
     tagline:        '3 sessions/week · ~6 learners + 1:1',
-    monthlyPrice:   109,
-    yearlyPrice:    1090,
-    yearlyMonthly:  91,   // effective monthly when billed yearly (1090/12 ≈ 90.83)
     color:          '#ceff65',
     textColor:      '#080808',
     badge:          null,
@@ -137,9 +137,6 @@ export const PLANS = {
   private: {
     name:           '1 on 1',
     tagline:        'Private sessions · Base 3 classes/week',
-    monthlyPrice:   269,
-    yearlyPrice:    2690,
-    yearlyMonthly:  224,  // effective monthly when billed yearly (2690/12 ≈ 224.17)
     color:          '#f5f4f0',
     textColor:      '#080808',
     badge:          'Maximum progress',
@@ -232,11 +229,37 @@ export async function getStripe() {
   return _stripe;
 }
 
+// ── Session token helper ──────────────────────────────────────
+
+/**
+ * Returns the current Supabase access token, or null when signed out.
+ * Prefers a client the page exposed on window.SB; otherwise imports the
+ * shared app client (window.supabase is the UMD library, not a client).
+ * @returns {Promise<string|null>}
+ */
+async function getAccessToken() {
+  try {
+    let sb = window.SB;
+    if (!sb?.auth?.getSession) {
+      ({ supabase: sb } = await import('/js/supabase/config.js'));
+    }
+    const { data: { session } } = await sb.auth.getSession();
+    return session?.access_token || null;
+  } catch (err) {
+    console.warn('[Alimun] Could not read Supabase session:', err);
+    return null;
+  }
+}
+
 // ── Checkout helper ───────────────────────────────────────────
 
 /**
  * Create a Stripe Checkout session via your backend API
  * and redirect the user to Stripe's hosted checkout page.
+ *
+ * Requires a signed-in Supabase session: the API derives the customer
+ * (email / user id) from the Bearer token, so none of that is sent here.
+ * Stripe.js is NOT needed — the API returns a hosted-checkout URL.
  *
  * @param {Object} params
  * @param {string} params.priceId           - Stripe Price ID to charge
@@ -244,7 +267,7 @@ export async function getStripe() {
  * @param {string} [params.successUrl]      - Override success redirect URL
  * @param {string} [params.cancelUrl]       - Override cancel redirect URL
  * @param {string} [params.cohortId]        - Pass cohort ID as metadata
- * @param {string} [params.customerEmail]   - Pre-fill checkout email
+ * @param {string} [params.customerName]    - Optional display name for the Stripe customer
  */
 export async function createCheckout({
   priceId,
@@ -252,21 +275,23 @@ export async function createCheckout({
   successUrl = `${cfg.appUrl || window.location.origin}/student-dashboard.html?checkout=success`,
   cancelUrl  = `${cfg.appUrl || window.location.origin}/signup.html?checkout=cancelled`,
   cohortId   = null,
-  customerEmail = null,
+  customerName = null,
 } = {}) {
   try {
     const body = { priceId, mode, successUrl, cancelUrl };
-    if (cohortId)       body.cohortId       = cohortId;
-    if (customerEmail)  body.customerEmail   = customerEmail;
+    if (cohortId)      body.cohortId     = cohortId;
+    if (customerName)  body.customerName = customerName;
 
-    const headers = { 'Content-Type': 'application/json' };
-    const sb = window.SB || window.supabase;
-    if (sb) {
-      const { data: { session } } = await sb.auth.getSession();
-      if (session?.access_token) {
-        headers['Authorization'] = `Bearer ${session.access_token}`;
-      }
+    // Supabase session is mandatory — the API rejects unauthenticated calls.
+    const accessToken = await getAccessToken();
+    if (!accessToken) {
+      throw new Error('Please sign in first');
     }
+
+    const headers = {
+      'Content-Type':  'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    };
 
     const resp = await fetch('/api/stripe/create-checkout', {
       method:  'POST',
@@ -299,14 +324,14 @@ export async function openBillingPortal(
   returnUrl = `${cfg.appUrl || window.location.origin}/student-dashboard.html`
 ) {
   try {
-    const headers = { 'Content-Type': 'application/json' };
-    const sb = window.SB || window.supabase;
-    if (sb) {
-      const { data: { session } } = await sb.auth.getSession();
-      if (session?.access_token) {
-        headers['Authorization'] = `Bearer ${session.access_token}`;
-      }
+    const accessToken = await getAccessToken();
+    if (!accessToken) {
+      throw new Error('Please sign in first');
     }
+    const headers = {
+      'Content-Type':  'application/json',
+      'Authorization': `Bearer ${accessToken}`,
+    };
 
     const resp = await fetch('/api/stripe/billing-portal', {
       method:  'POST',

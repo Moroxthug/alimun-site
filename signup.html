@@ -211,6 +211,7 @@ try {
     cfg.stripePriceIntensiveYearly   = remoteCfg.prices?.intensiveYearly;
     cfg.stripePricePrivateYearly     = remoteCfg.prices?.privateYearly;
     cfg.stripePriceFoundingMember    = remoteCfg.prices?.foundingMember;
+    cfg.prices                       = remoteCfg.prices;   // consumed by /js/stripe/config.js
     if (remoteCfg.foundingMemberFee) cfg.foundingMemberFee = remoteCfg.foundingMemberFee;
   } else {
     console.error('[Alimun] /api/stripe/config returned', configResp.status);
@@ -255,7 +256,9 @@ const TIERS = [
     feats:['Everything in Focused','Near-private setting','Weekly 1-on-1 session','Custom learning path','Priority support'],
   },
   {
-    id:'onetoone', stripeId:'private', name:'1 on 1', size:'Private (Base 3 classes/week)',
+    // DB tier string is 'private' (matches student_profiles.tier + Stripe price keys);
+    // translations still use the legacy tier_onetoone_* keys.
+    id:'private', stripeId:'private', i18n:'onetoone', name:'1 on 1', size:'Private (Base 3 classes/week)',
     monthlyPrice: 269, yearlyPrice: 2690, yearlyMonthlyEq: 224,
     // 2 months free = 10 × €269 = €2690/yr → €224.17/mo
     badge:'Elite', featured:false,
@@ -323,6 +326,25 @@ function setLoading(btnId, loading, label = 'Continue →') {
   btn.textContent = loading ? 'Please wait…' : label;
   btn.style.opacity = loading ? '0.65' : '1';
   btn.style.cursor  = loading ? 'not-allowed' : 'pointer';
+}
+
+// Like showError but allows trusted markup (used for the "Sign in" link).
+function showErrorHTML(id, html) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.innerHTML = html;
+  el.style.display = 'block';
+}
+
+// JSON headers + Supabase Bearer token. Every /api/* call that acts on the
+// signed-in user needs this; the server derives the user from the token.
+async function authHeaders() {
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.access_token) throw new Error('Please sign in first.');
+  return {
+    'Content-Type':  'application/json',
+    'Authorization': `Bearer ${session.access_token}`,
+  };
 }
 
 // ── Render ───────────────────────────────────────────────────────────────────
@@ -417,6 +439,11 @@ window.saveDetails = async function() {
 
   setLoading('btn-details', true, 'Continue →');
 
+  // Browser timezone — harmless metadata the cohort-matching engine can use
+  // later. Lives in user_metadata only (no DB column).
+  let timezone = null;
+  try { timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch (_) {}
+
   const { data, error } = await supabase.auth.signUp({
     email:    fd.email,
     password: fd.pw,
@@ -424,21 +451,35 @@ window.saveDetails = async function() {
       data: {
         role:      fd.role,
         full_name: fd.name,
+        timezone,
       },
     },
   });
 
+  const alreadyHTML =
+    'This email is already registered. <a href="signin.html" style="font-weight:700;text-decoration:underline;">Already have an account? Sign in →</a>';
+
   if (error) {
     setLoading('btn-details', false, 'Continue →');
-    showError('err-details', error.message || 'Sign-up failed. Please try again.');
+    if (/already/i.test(error.message || '')) showErrorHTML('err-details', alreadyHTML);
+    else showError('err-details', error.message || 'Sign-up failed. Please try again.');
     return;
   }
 
-  // Guard: email confirmation enabled — Supabase may return user=null with no error.
-  // In that case the user exists but must verify their email first.
-  if (!data.user) {
+  // With email confirmation ON, Supabase returns an obfuscated user with no
+  // identities (instead of an error) when the email is already registered.
+  if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
     setLoading('btn-details', false, 'Continue →');
-    showError('err-details', 'Check your inbox — we\'ve sent a confirmation email. Verify it, then sign in.');
+    showErrorHTML('err-details', alreadyHTML);
+    return;
+  }
+
+  // Guard: email confirmation enabled — no session is issued until the link
+  // is clicked. The profile inserts below need a session (RLS), so stop here.
+  // The flow resumes at step 3 when they come back signed in (see Boot).
+  if (!data.user || !data.session) {
+    setLoading('btn-details', false, 'Continue →');
+    showError('err-details', 'Confirm your email, then sign in to finish — we\'ve sent a link to ' + fd.email + '.');
     return;
   }
 
@@ -660,39 +701,27 @@ window.completeFounding = async function() {
     return;
   }
 
-  let sessionId;
+  // The API derives the customer from the Bearer token and returns a hosted
+  // Checkout URL — no Stripe.js needed in the browser.
   try {
     const origin = window.location.origin;
     const resp = await fetch('/api/create-checkout-session', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await authHeaders(),
       body: JSON.stringify({
         priceId:      foundingPriceId,
-        email:        fd.email,
-        customerId:   userId,
         customerName: fd.name,
         successUrl:   `${origin}/signup-success.html?session_id={CHECKOUT_SESSION_ID}&founding=1`,
         cancelUrl:    `${origin}/signup.html?step=4`,
       }),
     });
-    if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error(e.error || `API ${resp.status}`); }
+    if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error(e.error || e.message || `API ${resp.status}`); }
     const data = await resp.json();
-    sessionId = data.sessionId;
-    if (!sessionId) throw new Error('No sessionId returned');
+    if (!data.url) throw new Error('No checkout URL returned');
+    window.location.href = data.url;
   } catch(err) {
     setLoading('btn-founding', false, 'Continue →');
     showError('err-founding', err.message || 'Could not start payment. Try again.');
-    return;
-  }
-
-  try {
-    const { getStripe } = await import('/js/stripe/config.js');
-    const stripe = await getStripe();
-    const { error: sErr } = await stripe.redirectToCheckout({ sessionId });
-    if (sErr) throw sErr;
-  } catch(sErr) {
-    setLoading('btn-founding', false, 'Continue →');
-    showError('err-founding', sErr.message || 'Could not redirect to payment.');
   }
 };
 
@@ -750,8 +779,8 @@ function renderTier() {
       id: t.id,
       featured: t.featured,
       badge: dict[badgeKey] || t.badge,
-      name: dict[`tier_${t.id}_name`] || t.name,
-      size: dict[`tier_${t.id}_size`] || t.size,
+      name: dict[`tier_${t.i18n || t.id}_name`] || t.name,
+      size: dict[`tier_${t.i18n || t.id}_size`] || t.size,
       displayPrice,
       priceSub,
       yearlyTotal: t.yearlyPrice,
@@ -883,17 +912,17 @@ window.completeStu = async function() {
     console.warn('[Alimun] Stripe price ID may be a placeholder:', selectedPriceId);
   }
 
-  // ── 3. Call /api/create-checkout-session ─────────────────────────────────
-  let sessionId;
+  // ── 3. Call /api/create-checkout-session and redirect ────────────────────
+  // The API requires the Supabase Bearer token (customer is derived from it)
+  // and returns { sessionId, url }. We navigate to the hosted Checkout URL —
+  // no Stripe.js / redirectToCheckout needed.
   try {
     const origin  = window.location.origin;
     const resp = await fetch('/api/create-checkout-session', {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: await authHeaders(),
       body: JSON.stringify({
-        priceId:    selectedPriceId,
-        email:      fd.email,
-        customerId: userId,            // Supabase user UUID
+        priceId:      selectedPriceId,
         customerName: fd.name,
         successUrl: `${origin}/signup-success.html?session_id={CHECKOUT_SESSION_ID}`,
         cancelUrl:  `${origin}/signup.html?step=4`,
@@ -902,31 +931,18 @@ window.completeStu = async function() {
 
     if (!resp.ok) {
       const errData = await resp.json().catch(() => ({}));
-      throw new Error(errData.error || `API error ${resp.status}`);
+      throw new Error(errData.error || errData.message || `API error ${resp.status}`);
     }
 
     const data = await resp.json();
-    sessionId = data.sessionId;
-    if (!sessionId) throw new Error('No sessionId returned from checkout API');
+    if (!data.url) throw new Error('No checkout URL returned from checkout API');
+    window.location.href = data.url;
   } catch (apiErr) {
     console.error('[Alimun] Checkout session API error:', apiErr);
     setLoading('btn-tier', false, 'Complete registration →');
     showError('err-tier', apiErr.message || 'Could not start payment. Please try again.');
-    return;
   }
-
-  // ── 4. Redirect to Stripe Checkout ───────────────────────────────────────
-  try {
-    const { getStripe } = await import('/js/stripe/config.js');
-    const stripeInstance = await getStripe();
-    const { error: stripeErr } = await stripeInstance.redirectToCheckout({ sessionId });
-    if (stripeErr) throw stripeErr;
-  } catch (stripeErr) {
-    console.error('[Alimun] Stripe redirectToCheckout error:', stripeErr);
-    setLoading('btn-tier', false, 'Complete registration →');
-    showError('err-tier', stripeErr.message || 'Could not redirect to payment. Please try again.');
-  }
-  // redirectToCheckout navigates away — no code runs after this on success
+  // Navigation to Stripe happens above — no code runs after this on success
 };
 
 // ── Step 5 (student): Confirmation ──────────────────────────────────────────
@@ -963,7 +979,7 @@ function renderStudentConfirm() {
   const translations = window.ALIMUN_TRANSLATIONS || {};
   const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
   const dict = translations[lang] || translations['en'] || {};
-  const localizedTierName = dict[`tier_${t.id}_name`] || t.name;
+  const localizedTierName = dict[`tier_${t.i18n || t.id}_name`] || t.name;
   const tierPrice = billing === 'yearly'
     ? `€${t.yearlyMonthlyEq}/mo (billed annually)`
     : `€${t.monthlyPrice}/mo`;
@@ -1064,22 +1080,17 @@ window.applyTeacher = async function() {
 
   const teacherId = insertedData?.[0]?.id || userId;
 
-  // Notify admin via Vercel serverless function
+  // Notify admin via Vercel serverless function.
+  // The API identifies the applicant from the Bearer token and reads the
+  // teacher_profiles row itself — the body is ignored, so send `{}`.
   try {
     await fetch('/api/admin/notify-teacher-application', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        teacher_id: teacherId,
-        full_name: fd.name,
-        languages: [fd.language],
-        experience_years: fd.experience_years,
-        specialty: fd.specialty,
-        bio: fd.bio,
-      }),
+      headers: await authHeaders(),
+      body: JSON.stringify({}),
     });
   } catch (err) {
-    console.error('[Alimun] Error notifying admin:', err);
+    console.error('[Alimun] Error notifying admin:', err, '(teacher_id', teacherId + ')');
   }
 
   step = 4;
@@ -1107,13 +1118,65 @@ function renderTeacherConfirm() {
 }
 
 // ── Boot ─────────────────────────────────────────────────────────────────────
-const urlParams = new URLSearchParams(window.location.search);
-const queryRole = urlParams.get('role');
-if (queryRole === 'teacher' || queryRole === 'student') {
-  fd.role = queryRole;
-  step = 2;
+const urlParams  = new URLSearchParams(window.location.search);
+const queryRole  = urlParams.get('role');
+const queryStep  = parseInt(urlParams.get('step') || '', 10);
+
+// Resume a half-finished signup. Steps 1-2 only create the auth user; if we
+// already have a session (email confirmed and signed in, or Stripe Checkout
+// cancelled back to ?step=4) skip straight to the profile steps.
+async function resumeFromSession() {
+  let session = null;
+  try { ({ data: { session } } = await supabase.auth.getSession()); } catch (_) {}
+  if (!session?.user) return false;
+
+  const user = session.user;
+  const role = user.app_metadata?.role || user.user_metadata?.role || '';
+  if (role !== 'student' && role !== 'teacher') return false;
+
+  newUserId = user.id;
+  fd.role   = role;
+  fd.name   = user.user_metadata?.full_name || fd.name;
+  fd.email  = user.email || fd.email;
+
+  if (role === 'teacher') {
+    const { data: tp } = await supabase
+      .from('teacher_profiles').select('id').eq('user_id', user.id).maybeSingle();
+    step = tp ? 4 : 3;          // already applied → confirmation screen
+    return true;
+  }
+
+  const { data: sp } = await supabase
+    .from('student_profiles')
+    .select('language, level, goal_track, tier')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (sp) {
+    // Profile exists (e.g. checkout cancelled). Without an explicit ?step=
+    // there is nothing to finish here — the dashboard owns the rest.
+    if (!(queryStep >= 3)) { window.location.href = 'student-dashboard.html'; return true; }
+    fd.language = sp.language   || fd.language;
+    fd.level    = sp.level      || fd.level;
+    fd.goal     = sp.goal_track || fd.goal;
+    fd.tier     = TIERS.some(t => t.id === sp.tier) ? sp.tier : '';
+  }
+
+  step = (queryStep >= 3 && queryStep <= totalSteps()) ? queryStep : 3;
+  return true;
 }
-render();
+
+(async () => {
+  const resumed = await resumeFromSession();
+  if (!resumed) {
+    if (queryRole === 'teacher' || queryRole === 'student') {
+      fd.role = queryRole;
+      step = 2;
+    }
+    // Without a session, steps ≥ 3 are impossible (no user yet) — ignore ?step
+  }
+  render();
+})();
 </script>
   <script src="js/cookies-banner.js" type="text/javascript"></script>
 </body>

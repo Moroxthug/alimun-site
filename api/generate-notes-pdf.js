@@ -99,8 +99,26 @@ function getSupabaseAdmin() {
   return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
 }
 
+const NOTES_BUCKET = 'session-notes-pdfs';           // must match the dashboards' uploads
+const SIGNED_URL_TTL = 60 * 60 * 24 * 365;           // 1 year: works for private buckets too
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/** Verify the caller's Supabase JWT and return { user, isAdmin }. */
+async function requireUser(req, supabase) {
+  const authHeader = req.headers.authorization || '';
+  if (!authHeader.startsWith('Bearer ')) return null;
+  const { data, error } = await supabase.auth.getUser(authHeader.slice(7));
+  if (error || !data?.user) return null;
+  const user = data.user;
+  return { user, isAdmin: user.app_metadata?.role === 'admin' };
+}
+
 module.exports = async function handler(req, res) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || 'https://alimun.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
@@ -108,10 +126,16 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { session_notes_id } = req.body || {};
-  if (!session_notes_id) return res.status(400).json({ error: 'Missing session_notes_id' });
+  if (!session_notes_id || !UUID_RE.test(String(session_notes_id))) {
+    return res.status(400).json({ error: 'Missing or invalid session_notes_id' });
+  }
 
   const supabase = getSupabaseAdmin();
   if (!supabase) return res.status(500).json({ error: 'Database client setup error' });
+
+  // Auth: only the cohort's teacher (or an admin) may publish notes.
+  const auth = await requireUser(req, supabase);
+  if (!auth) return res.status(401).json({ error: 'Unauthorized' });
 
   try {
     // 1. Fetch Session Notes & Cohort/Teacher info
@@ -137,11 +161,22 @@ module.exports = async function handler(req, res) {
       .eq('id', session_notes_id)
       .single();
 
-    if (notesError || !notes) return res.status(404).json({ error: 'Session notes not found' });
+    if (notesError || !notes || !notes.sessions?.cohorts) return res.status(404).json({ error: 'Session notes not found' });
 
     const session = notes.sessions;
     const cohort = session.cohorts;
     const teacherProfile = cohort.teacher_profiles;
+
+    if (!auth.isAdmin) {
+      const { data: callerTeacher } = await supabase
+        .from('teacher_profiles')
+        .select('id')
+        .eq('user_id', auth.user.id)
+        .maybeSingle();
+      if (!callerTeacher || callerTeacher.id !== cohort.teacher_id) {
+        return res.status(403).json({ error: 'You can only publish notes for your own classes' });
+      }
+    }
 
     // Calculate session number
     const { data: allSessions } = await supabase
@@ -187,7 +222,7 @@ module.exports = async function handler(req, res) {
     // 3. Upload to Supabase Storage Bucket
     const filePath = `cohort_${cohort.id}/session_${session.id}.pdf`;
     const { error: uploadError } = await supabase.storage
-      .from('session-notes')
+      .from(NOTES_BUCKET)
       .upload(filePath, buffer, {
         contentType: 'application/pdf',
         upsert: true
@@ -195,10 +230,12 @@ module.exports = async function handler(req, res) {
 
     if (uploadError) throw uploadError;
 
-    // Get public URL
-    const { data: { publicUrl } } = supabase.storage
-      .from('session-notes')
-      .getPublicUrl(filePath);
+    // Long-lived signed URL: works whether the bucket is public or private.
+    const { data: signed, error: signError } = await supabase.storage
+      .from(NOTES_BUCKET)
+      .createSignedUrl(filePath, SIGNED_URL_TTL);
+    if (signError || !signed?.signedUrl) throw (signError || new Error('Could not sign PDF URL'));
+    const publicUrl = signed.signedUrl;
 
     // 4. Update session notes with pdf_url and published_at
     const { error: updateError } = await supabase
@@ -221,21 +258,18 @@ module.exports = async function handler(req, res) {
     if (!enrollmentsError && enrollments && enrollments.length > 0) {
       const resendKey = process.env.RESEND_API_KEY;
       if (resendKey && !resendKey.includes('YOUR_RESEND_API_KEY')) {
-        const studentUserIds = enrollments.map(e => e.student_profiles?.user_id).filter(Boolean);
-
-        // Fetch emails from auth.users
-        const { data: authUsers } = await supabase.auth.admin.listUsers();
-        const userMap = {};
-        (authUsers?.users || []).forEach(u => {
-          userMap[u.id] = u.email;
-        });
+        const emailFrom = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
+        const dashboardUrl = `${process.env.APP_URL || 'https://alimun.com'}/student-dashboard.html`;
 
         const emailPromises = enrollments.map(async (e) => {
           const studentProfile = e.student_profiles;
-          const email = userMap[studentProfile.user_id];
+          if (!studentProfile?.user_id) return;
+          // Resolve each address directly (listUsers() only returns the first page).
+          const { data: authUser } = await supabase.auth.admin.getUserById(studentProfile.user_id);
+          const email = authUser?.user?.email;
           if (!email) return;
 
-          const emailSubject = `Session notes ready — ${cohort.language} ${cohort.level} ${sessionDate}`;
+          const emailSubject = `Session notes ready — ${cohort.language} ${cohort.level} ${sessionDate}`.replace(/[<>]/g, '');
           const emailHtml = `
             <!DOCTYPE html>
             <html>
@@ -257,21 +291,21 @@ module.exports = async function handler(req, res) {
                   <p>Session Notes Ready</p>
                 </div>
                 <div style="margin-top:20px;">
-                  <p>Hello ${studentProfile.full_name},</p>
-                  <p>Your session notes for <b>${cohort.language} ${cohort.level}</b> from <b>${sessionDate}</b> are now ready!</p>
+                  <p>Hello ${escapeHtml(studentProfile.full_name)},</p>
+                  <p>Your session notes for <b>${escapeHtml(cohort.language)} ${escapeHtml(cohort.level)}</b> from <b>${sessionDate}</b> are now ready!</p>
                   
                   <div style="background-color: #fafaf8; border-left: 4px solid #ceff65; padding: 15px; margin: 20px 0; border-radius: 4px;">
-                    <p style="margin:0 0 8px 0;"><strong>Grammar Focus:</strong> ${grammarTitle}</p>
+                    <p style="margin:0 0 8px 0;"><strong>Grammar Focus:</strong> ${escapeHtml(grammarTitle)}</p>
                     <p style="margin:0 0 8px 0;"><strong>Vocabulary learned:</strong> ${pdfData.vocabulary?.length || 0} words</p>
                     <p style="margin:0;"><strong>Homework due date:</strong> ${pdfData.dueDate || 'N/A'}</p>
                   </div>
 
                   <center>
-                    <a href="${publicUrl}" class="btn" target="_blank">Download Notes PDF</a>
+                    <a href="${dashboardUrl}" class="btn" target="_blank">Open in your dashboard</a>
                   </center>
                 </div>
                 <div class="footer">
-                  This is an automated notification from Alimun. Verify this certificate at alimun.com/verify/${notes.id}
+                  This is an automated notification from Alimun.
                 </div>
               </div>
             </body>
@@ -285,7 +319,7 @@ module.exports = async function handler(req, res) {
               'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-              from: 'Alimun <onboarding@resend.dev>', // Or verified Resend sender
+              from: emailFrom,
               to: email,
               subject: emailSubject,
               html: emailHtml
@@ -293,7 +327,7 @@ module.exports = async function handler(req, res) {
           });
         });
 
-        await Promise.all(emailPromises);
+        await Promise.allSettled(emailPromises);
       }
     }
 
@@ -305,6 +339,6 @@ module.exports = async function handler(req, res) {
 
   } catch (err) {
     console.error('[Generate PDF Notes Error]:', err);
-    return res.status(500).json({ error: 'Internal server error: ' + err.message });
+    return res.status(500).json({ error: 'Failed to generate session notes' });
   }
 };

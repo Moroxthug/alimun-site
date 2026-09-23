@@ -8,7 +8,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 <!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="https://unpkg.com/@daily-co/daily-js"></script>
+<script src="https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js"></script>
 <script>
 function getLocaleString(date, formatOptions = {}) {
   const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
@@ -25,6 +25,10 @@ function getLocaleTimeString(date, formatOptions = {}) {
 function t(key, fallback) {
   const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
   return (window.ALIMUN_TRANSLATIONS && window.ALIMUN_TRANSLATIONS[lang] && window.ALIMUN_TRANSLATIONS[lang][key]) || fallback;
+}
+// Escape student/teacher-supplied strings before they go into innerHTML
+function escapeHtml(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
   window.ALIMUN_CONFIG = {
@@ -153,13 +157,13 @@ body{font-family:var(--body);color:var(--b);background:#f8f8f8;}
 .sess-row:last-child{border-bottom:none;}
 .sess-dot2{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
 .sess-dot2.done{background:var(--g);}
-.sess-dot2.up{background:var(--b);animation:blink 1.4s ease infinite;}
+.sess-dot2.up,.sess-dot2.live{background:var(--b);animation:blink 1.4s ease infinite;}
 .sess-info2{flex:1;}
 .sess-topic2{font-size:.875rem;font-weight:600;}
 .sess-date2{font-size:.75rem;color:#aaa;margin-top:.04rem;}
 .sess-b2{font-size:.62rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:.18rem .5rem;border-radius:5rem;}
 .sess-b2.done{background:#f0fdf4;color:#15803d;}
-.sess-b2.up{background:var(--g);color:var(--b);}
+.sess-b2.up,.sess-b2.live{background:var(--g);color:var(--b);}
 .ov{position:fixed;inset:0;background:rgba(8,8,8,.6);backdrop-filter:blur(8px);z-index:50;display:flex;align-items:center;justify-content:center;padding:1.5rem;opacity:0;pointer-events:none;transition:opacity .25s;}
 .ov.open{opacity:1;pointer-events:all;}
 .modal{background:#fff;border-radius:1.75rem;width:100%;max-width:600px;max-height:90vh;overflow-y:auto;transform:translateY(16px) scale(.983);transition:transform .3s cubic-bezier(.215,.61,.355,1);box-shadow:0 40px 100px rgba(0,0,0,.24);}
@@ -1223,7 +1227,7 @@ async function claude(prompt,sys){
   // holds the Anthropic key. Direct browser calls always failed.
   const sb = window.currentTeacher?.supabase;
   const { data: { session } = {} } = sb ? await sb.auth.getSession() : { data: {} };
-  const r = await fetch('/api/grade', {
+  const r = await fetch('/api/ai?action=grade', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -1265,37 +1269,49 @@ function getPendingSubmissions() {
 }
 
 function gradeModal(s){
-  openModal(`<div class="m-hd"><div class="m-ey">${s.subType} · ${s.n}</div><div class="m-title">${s.sub}</div></div><div class="m-bd"><div style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#aaa;margin-bottom:.5rem;">Student's submission · ${s.subTime}</div><div class="sub-text" style="background:#f5f4f0; padding:12px; border-radius:8px; font-size:13.5px; line-height:1.6; margin-bottom:15px; white-space:pre-wrap;">${s.subText}</div><button class="btn" id="grade-ai-btn" onclick="runGrade(this,'${s.n}','${s.subType}',\`${s.subText.replace(/`/g,"'")}\`, '${s.hwId || ''}', '${s.studentId || ''}')">${t('teacher_grade_with_ai','Grade with AI')}</button><div id="grade-out"></div></div>`);
+  const subText = s.subText || '';
+  openModal(`<div class="m-hd"><div class="m-ey">${escapeHtml(s.subType)} · ${escapeHtml(s.n)}</div><div class="m-title">${escapeHtml(s.sub)}</div></div><div class="m-bd"><div style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#aaa;margin-bottom:.5rem;">Student's submission · ${escapeHtml(s.subTime)}</div><div class="sub-text" style="background:#f5f4f0; padding:12px; border-radius:8px; font-size:13.5px; line-height:1.6; margin-bottom:15px; white-space:pre-wrap;">${escapeHtml(subText)}</div><button class="btn" id="grade-ai-btn">${t('teacher_grade_with_ai','Grade with AI')}</button><div id="grade-out"></div></div>`);
+  // Handler attached in JS (not an onclick string) so quotes/backticks in the submission cannot break it
+  document.getElementById('grade-ai-btn').addEventListener('click', function(){ runGrade(this, s.n, s.subType, subText, s.hwId || '', s.studentId || ''); });
 }
 
 async function runGrade(btn,name,type,text,hwId,studentId){
   btn.disabled=true;btn.textContent='Grading…';
-  document.getElementById('grade-out').innerHTML=`<div class="g-load" style="margin-top:1.25rem;"><div class="g-spin"></div><p>Analysing ${name}'s ${type.toLowerCase()}…</p></div>`;
+  const out=document.getElementById('grade-out');
+  out.innerHTML=`<div class="g-load" style="margin-top:1.25rem;"><div class="g-spin"></div><p>Analysing ${escapeHtml(name)}'s ${escapeHtml(String(type||'').toLowerCase())}…</p></div>`;
   try{
-    const raw=await claude(`Student: ${name}\nSubmission:\n"${text}"\n\nGrade this fairly. Respond ONLY with raw JSON:\n{"score":<0-100>,"summary":"<one sentence>","strengths":["<point>","<point>"],"improvements":["<actionable point>","<actionable point>"],"corrected_excerpt":"<one corrected sentence or empty string>"}`,`You are an expert teacher grading a student's ${type.toLowerCase()} submission.`);
+    const raw=await claude(`Student: ${name}\nSubmission:\n"${text}"\n\nGrade this fairly. Respond ONLY with raw JSON:\n{"score":<0-100>,"summary":"<one sentence>","strengths":["<point>","<point>"],"improvements":["<actionable point>","<actionable point>"],"corrected_excerpt":"<one corrected sentence or empty string>"}`,`You are an expert teacher grading a student's ${String(type||'').toLowerCase()} submission.`);
     const r=JSON.parse(raw.replace(/```json|```/g,'').trim());
-    const escapedFeedback = JSON.stringify(r).replace(/"/g, '&quot;');
-    
-    document.getElementById('grade-out').innerHTML=`<div style="margin-top:1.25rem;"><div class="g-res" style="margin:0;"><div class="g-top"><div class="g-score">${r.score}</div><div class="g-sum">${r.summary}</div></div><div class="g-bot"><div class="g-cols"><div class="str"><div class="g-col-h">${t('teacher_grade_strengths','Strengths')}</div><ul class="g-list">${r.strengths.map(s=>`<li>${s}</li>`).join('')}</ul></div><div class="imp"><div class="g-col-h">${t('teacher_grade_work_on_next','Work on next')}</div><ul class="g-list">${r.improvements.map(s=>`<li>${s}</li>`).join('')}</ul></div></div>${r.corrected_excerpt?`<div class="g-fix"><small>${t('teacher_grade_example_correction','Example correction')}</small><p>"${r.corrected_excerpt}"</p></div>`:''}</div></div><div style="margin-top:1.25rem;display:flex;gap:.625rem;"><button class="btn" onclick="saveGrading('${studentId}', '${hwId}', ${r.score}, '${escapedFeedback}')">${t('teacher_send_feedback','Send feedback to student')}</button><button class="btn out" onclick="closeModal()">${t('teacher_cancel','Cancel')}</button></div></div>`;
+    const score=Number(r.score);
+    if(!Number.isFinite(score)) throw new Error('AI returned no score');
+    r.score=Math.max(0,Math.min(100,Math.round(score)));
+    r.strengths=Array.isArray(r.strengths)?r.strengths:[];
+    r.improvements=Array.isArray(r.improvements)?r.improvements:[];
+
+    out.innerHTML=`<div style="margin-top:1.25rem;"><div class="g-res" style="margin:0;"><div class="g-top"><div class="g-score">${r.score}</div><div class="g-sum">${escapeHtml(r.summary)}</div></div><div class="g-bot"><div class="g-cols"><div class="str"><div class="g-col-h">${t('teacher_grade_strengths','Strengths')}</div><ul class="g-list">${r.strengths.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul></div><div class="imp"><div class="g-col-h">${t('teacher_grade_work_on_next','Work on next')}</div><ul class="g-list">${r.improvements.map(x=>`<li>${escapeHtml(x)}</li>`).join('')}</ul></div></div>${r.corrected_excerpt?`<div class="g-fix"><small>${t('teacher_grade_example_correction','Example correction')}</small><p>"${escapeHtml(r.corrected_excerpt)}"</p></div>`:''}</div></div><div style="margin-top:1.25rem;display:flex;gap:.625rem;"><button class="btn" id="grade-send-btn">${t('teacher_send_feedback','Send feedback to student')}</button><button class="btn out" onclick="closeModal()">${t('teacher_cancel','Cancel')}</button></div></div>`;
+    // AI result stays in a JS variable; handler attached without an onclick string
+    document.getElementById('grade-send-btn').addEventListener('click',()=>saveGrading(studentId,hwId,r.score,r));
   }catch(e){
-    console.warn("Claude API failed, falling back to simulated grading:", e);
-    const score = 82 + Math.floor(Math.random() * 14);
-    const mockJson = {
-      score: score,
-      summary: "Good command of CEFR grammatical conventions and structure.",
-      strengths: ["Excellent choice of contextual vocabulary", "Well structured argumentation"],
-      improvements: ["Double check your spelling of irregular verbs", "Watch minor preposition agreements"],
-      corrected_excerpt: text.length > 50 ? text.substring(0, 50) + "..." : text
-    };
-    const escapedFeedback = JSON.stringify(mockJson).replace(/"/g, '&quot;');
-    
-    document.getElementById('grade-out').innerHTML=`<div style="margin-top:1.25rem;"><div class="g-res" style="margin:0;"><div class="g-top"><div class="g-score">${score}</div><div class="g-sum">${mockJson.summary}</div></div><div class="g-bot"><div class="g-cols"><div class="str"><div class="g-col-h">${t('teacher_grade_strengths','Strengths')}</div><ul class="g-list">${mockJson.strengths.map(s=>`<li>${s}</li>`).join('')}</ul></div><div class="imp"><div class="g-col-h">${t('teacher_grade_work_on_next','Work on next')}</div><ul class="g-list">${mockJson.improvements.map(s=>`<li>${s}</li>`).join('')}</ul></div></div><div class="g-fix"><small>${t('teacher_grade_suggested_improvement','Suggested improvement zone')}</small><p>"${mockJson.corrected_excerpt}"</p></div></div></div><div style="margin-top:1.25rem;display:flex;gap:.625rem;"><button class="btn" onclick="saveGrading('${studentId}', '${hwId}', ${score}, '${escapedFeedback}')">${t('teacher_send_feedback','Send feedback to student')}</button><button class="btn out" onclick="closeModal()">${t('teacher_cancel','Cancel')}</button></div></div>`;
+    console.warn('AI grading failed:',e);
+    btn.disabled=false;btn.textContent=t('teacher_grade_with_ai','Grade with AI');
+    // No fabricated score: let the teacher grade manually
+    out.innerHTML=`<div style="margin-top:1.25rem;"><div class="g-fix" style="margin:0 0 1rem;"><small>${t('teacher_ai_unavailable','AI feedback unavailable')}</small><p>${escapeHtml(e.message||'')}</p></div><div class="field-row"><label>${t('teacher_lbl_score','Score (0-100)')}</label><input type="number" id="grade-manual-score" min="0" max="100" placeholder="75"></div><div class="field-row"><label>${t('teacher_lbl_feedback','Feedback')}</label><textarea id="grade-manual-feedback" rows="4"></textarea></div><div style="display:flex;gap:.625rem;"><button class="btn" id="grade-send-btn">${t('teacher_send_feedback','Send feedback to student')}</button><button class="btn out" onclick="closeModal()">${t('teacher_cancel','Cancel')}</button></div></div>`;
+    document.getElementById('grade-send-btn').addEventListener('click',()=>{
+      const score=parseInt(document.getElementById('grade-manual-score').value,10);
+      const summary=document.getElementById('grade-manual-feedback').value.trim();
+      if(!Number.isFinite(score)||score<0||score>100||!summary){alert('Enter a score between 0 and 100 and some feedback.');return;}
+      saveGrading(studentId,hwId,score,{summary,strengths:[],improvements:[]});
+    });
   }
 }
 
 async function saveGrading(studentId, hwId, score, feedback) {
-  const fb = JSON.parse(feedback.replace(/&quot;/g, '"'));
-  const feedbackText = `Score: ${score}%\nTeacher feedback:\n"${fb.summary}"\n\nStrengths:\n- ${fb.strengths.join('\n- ')}\n\nImprovements:\n- ${fb.improvements.join('\n- ')}`;
+  const fb = typeof feedback === 'string' ? JSON.parse(feedback.replace(/&quot;/g, '"')) : (feedback || {});
+  const strengths = Array.isArray(fb.strengths) ? fb.strengths : [];
+  const improvements = Array.isArray(fb.improvements) ? fb.improvements : [];
+  let feedbackText = `Score: ${score}%\nTeacher feedback:\n"${fb.summary || ''}"`;
+  if (strengths.length) feedbackText += `\n\nStrengths:\n- ${strengths.join('\n- ')}`;
+  if (improvements.length) feedbackText += `\n\nImprovements:\n- ${improvements.join('\n- ')}`;
 
   try {
     if (studentId && hwId) {
@@ -1354,7 +1370,7 @@ async function vOverview(){
 
   // ── Derive next upcoming session from real SESSIONS data ───────────────
   const upcomingSessions = SESSIONS
-    .filter(s => s.status === 'up')
+    .filter(s => s.status === 'up' || s.status === 'live')
     .sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
   const nextSession = upcomingSessions[0] || null;
 
@@ -1385,13 +1401,15 @@ async function vOverview(){
 
     // Room is provisioned on demand by /api/join-session, so the
     // teacher can always start (server enforces the joining window).
-    const joinBtnHtml = `<a href="#" onclick="handleTeacherJoin('${nextSession.daily_room_url || ''}', '${nextSession.id}'); return false;" class="btn sm" data-i18n="teacher_action_start">${dict.teacher_action_start || 'Start session'}</a>`;
+    const isLiveNow   = nextSession.status === 'live';
+    const joinLabel   = isLiveNow ? (dict.teacher_action_join_live || 'Join live class') : (dict.teacher_action_start || 'Start session');
+    const joinBtnHtml = `<a href="#" onclick="handleTeacherJoin('${nextSession.daily_room_url || ''}', '${nextSession.id}'); return false;" class="btn sm"${isLiveNow ? '' : ' data-i18n="teacher_action_start"'}>${joinLabel}</a>`;
 
     sessionCardHtml = `
       <div class="sess-card mb">
         <div>
           <div class="s-badge"><span class="s-dot"></span><span>${dateLabel}</span></div>
-          <div class="s-title">${topicTitle}</div>
+          <div class="s-title">${escapeHtml(topicTitle)}</div>
           <div class="s-meta">
             <span><b>${enrolled} ${dict.teacher_stats_students || 'students registered'}</b></span>
             <span>${joinedCount} ${dict.teacher_lbl_joined || 'joined so far'}</span>
@@ -1466,11 +1484,11 @@ async function vOverview(){
     <div class="g2" style="align-items:start;">
       <div>
         <div class="sh"><span class="sec-t" data-i18n="teacher_pending_grades">${dict.teacher_pending_grades || 'Pending grades'}</span><a class="sh-a" onclick="nav('assignments')" data-i18n="student_view_all">${dict.student_view_all || 'View all'}</a></div>
-        ${pendingSubmissions.map(s => `<div class="sub-card" onclick="gradeModal(${JSON.stringify(s).replace(/"/g,'&quot;')})"><div class="s-av2">${s.i}</div><div class="s-info"><div class="s-name">${s.n}</div><div class="s-detail">${s.subType} · ${s.sub} · ${s.subTime}</div></div><button class="btn sm" data-i18n="teacher_action_grade">${dict.teacher_action_grade || 'Grade →'}</button></div>`).join('')}
+        ${pendingSubmissions.map(s => `<div class="sub-card" onclick="gradeModal(${escapeHtml(JSON.stringify(s))})"><div class="s-av2">${escapeHtml(s.i)}</div><div class="s-info"><div class="s-name">${escapeHtml(s.n)}</div><div class="s-detail">${escapeHtml(s.subType)} · ${escapeHtml(s.sub)} · ${escapeHtml(s.subTime)}</div></div><button class="btn sm" data-i18n="teacher_action_grade">${dict.teacher_action_grade || 'Grade →'}</button></div>`).join('')}
       </div>
       <div>
         <div class="sh"><span class="sec-t" data-i18n="teacher_student_activity">${dict.teacher_student_activity || 'Student activity'}</span><a class="sh-a" onclick="nav('students')" data-i18n="student_view_all">${dict.student_view_all || 'View all'}</a></div>
-        <div class="card">${STUDENTS.slice(0, 5).map(s => `<div class="stu-row"><div class="stu-av">${s.i}</div><div class="stu-info"><div class="stu-name">${s.n}</div><div class="stu-sub">${s.lvl} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : s.active}${s.exCount ? ` · ${s.exCount} ${dict.teacher_lbl_exercises || 'exercises'}` : ''}</div></div><div class="stu-prog"><div class="stu-pct">${s.pct}%</div><div class="stu-bar-wrap"><div class="stu-bar" style="width:${s.pct}%"></div></div></div></div>`).join('')}</div>
+        <div class="card">${STUDENTS.slice(0, 5).map(s => `<div class="stu-row"><div class="stu-av">${escapeHtml(s.i)}</div><div class="stu-info"><div class="stu-name">${escapeHtml(s.n)}</div><div class="stu-sub">${escapeHtml(s.lvl)} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : s.active}${s.exCount ? ` · ${s.exCount} ${dict.teacher_lbl_exercises || 'exercises'}` : ''}</div></div><div class="stu-prog"><div class="stu-pct">${s.pct}%</div><div class="stu-bar-wrap"><div class="stu-bar" style="width:${s.pct}%"></div></div></div></div>`).join('')}</div>
         ${Object.keys(CLASS_ANALYTICS.byCat).length ? `
         <div class="sh" style="margin-top:1.5rem;"><span class="sec-t" data-i18n="teacher_skills_title">${dict.teacher_skills_title || 'Class skills (30 days)'}</span></div>
         <div class="card">
@@ -1516,11 +1534,11 @@ function vStudents(){
     <div class="card">
       ${STUDENTS.map(s=>`
         <div class="stu-row">
-          <div class="stu-av">${s.i}</div>
-          <div class="stu-info"><div class="stu-name" style="cursor:pointer;text-decoration:underline;" onclick="openStudentProfileModal('${s.id}')">${s.n}</div><div class="stu-sub">${s.lvl} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : s.active} · 🔥 ${s.streak} ${dict.student_streak_label || 'day streak'}</div></div>
+          <div class="stu-av">${escapeHtml(s.i)}</div>
+          <div class="stu-info"><div class="stu-name" style="cursor:pointer;text-decoration:underline;" onclick="openStudentProfileModal('${s.id}')">${escapeHtml(s.n)}</div><div class="stu-sub">${escapeHtml(s.lvl)} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : s.active} · 🔥 ${s.streak} ${dict.student_streak_label || 'day streak'}</div></div>
           <div style="display:flex;align-items:center;gap:1.25rem;">
             <div style="text-align:right;"><div style="font-family:var(--disp);font-size:1.1rem;">${s.pct}%</div><div style="font-size:.68rem;color:#bbb;text-transform:uppercase;letter-spacing:.06em;">${overallText}</div><div class="stu-bar-wrap" style="margin-left:auto;"><div class="stu-bar" style="width:${s.pct}%"></div></div></div>
-            ${s.sub?`<button class="btn sm" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;" onclick="gradeModal(${JSON.stringify(s).replace(/"/g,'&quot;')})" data-i18n="teacher_action_grade">${dict.teacher_action_grade || 'Grade →'}</button>`:`<button class="btn out sm" onclick="openStudentProfileModal('${s.id}')" data-i18n="teacher_action_view">${dict.teacher_action_view || 'View'}</button>`}
+            ${s.sub?`<button class="btn sm" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;" onclick="gradeModal(${escapeHtml(JSON.stringify(s))})" data-i18n="teacher_action_grade">${dict.teacher_action_grade || 'Grade →'}</button>`:`<button class="btn out sm" onclick="openStudentProfileModal('${s.id}')" data-i18n="teacher_action_view">${dict.teacher_action_view || 'View'}</button>`}
           </div>
         </div>`).join('')}
     </div>
@@ -1770,45 +1788,51 @@ function selectPremadeHw(idx) {
 async function generateHwWithAI() {
   const promptInput = document.getElementById('ai-hw-prompt').value.trim();
   const sessionFocus = document.getElementById('hw-session-focus').value;
-  
+
   if (!promptInput) {
     alert("Please type a request for the AI assistant.");
     return;
   }
-  
+
   const aiArea = document.getElementById('hw-area-ai');
   const originalHtml = aiArea.innerHTML;
   aiArea.innerHTML = `<div class="g-load" style="padding:15px 0;"><div class="g-spin"></div><p data-i18n="teacher_ai_generating_hw">Alimun AI generating custom homework...</p></div>`;
-  
-  setTimeout(() => {
+
+  const cohort = (DB_COHORTS && DB_COHORTS[0]) || {};
+  const language = cohort.language || (window.currentTeacher?.profile?.languages || [])[0] || 'language';
+  const level = cohort.level || 'B1';
+  const restore = () => {
     aiArea.innerHTML = originalHtml;
-    
-    // Simulate AI Generation based on prompt
-    let title = "AI Homework: " + sessionFocus;
-    let type = "Essay";
-    let prompt = `Session Focus: ${sessionFocus}\n\nExercise Instructions:\n${promptInput}\n\nPlease submit your homework in the text box below.`;
-    
-    if (promptInput.toLowerCase().includes('speaking') || promptInput.toLowerCase().includes('oral') || promptInput.toLowerCase().includes('pronounce')) {
-      type = "Speaking";
-      title = "AI Speaking: " + sessionFocus;
-      prompt = `Focus: ${sessionFocus}\n\nRead the following passage aloud to practice your pacing and accent:\n"${promptInput}"`;
-    } else if (promptInput.toLowerCase().includes('grammar') || promptInput.toLowerCase().includes('drill') || promptInput.toLowerCase().includes('fill')) {
-      type = "Homework";
-      title = "AI Grammar Drill: " + sessionFocus;
-      prompt = `Focus: ${sessionFocus}\n\nComplete the grammar quiz:\n${promptInput}`;
-    }
-    
+    const el = document.getElementById('ai-hw-prompt');
+    if (el) el.value = promptInput;
+  };
+
+  try {
+    // Real call through the serverless AI proxy (POST /api/ai?action=grade); never simulated output
+    const text = (await claude(
+      `Write a homework assignment for ${language} ${level} students about: ${sessionFocus} — ${promptInput}. 120-200 words, numbered tasks.`,
+      'You write homework for a language class.'
+    ) || '').trim();
+    if (!text) throw new Error('Empty AI response');
+
     window.generatedHw = {
       id: "hw_" + Date.now(),
-      name: title,
-      type: type,
+      name: "AI Homework: " + sessionFocus,
+      type: "Homework",
       focus: sessionFocus,
-      prompt: prompt,
+      prompt: text,
       minWords: 20
     };
-    
-    showHwPreview(window.generatedHw);
-  }, 1600);
+    restore();
+    showHwPreview(window.generatedHw); // preview renders via textContent (escaped)
+  } catch (e) {
+    console.warn('AI homework generation failed:', e);
+    restore();
+    const err = document.createElement('div');
+    err.style.cssText = 'margin-top:10px;padding:10px 12px;border-radius:8px;background:#fef2f2;color:#b91c1c;font-size:12.5px;';
+    err.textContent = t('teacher_ai_hw_failed', 'AI generation failed') + ': ' + (e.message || 'unknown error');
+    aiArea.appendChild(err);
+  }
 }
 
 function showHwPreview(hw) {
@@ -1908,7 +1932,7 @@ function vSessions(){
   const completedText = dict['teacher_lbl_completed'] || 'Completed';
 
   // Get upcoming sessions sorted ascending (closest first)
-  const upcomingSessions = SESSIONS.filter(s => s.status === 'up').sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
+  const upcomingSessions = SESSIONS.filter(s => s.status === 'up' || s.status === 'live').sort((a, b) => new Date(a.scheduled_at) - new Date(b.scheduled_at));
   const nextSession = upcomingSessions[0];
 
   let upcomingHtml = '';
@@ -1919,10 +1943,10 @@ function vSessions(){
     upcomingHtml = `
       <div class="card dark" style="padding:1.75rem;">
         <div class="s-badge"><span class="s-dot"></span>${timeDisplay}</div>
-        <div class="s-title" style="font-size:1.25rem;">${nextSession.topic}</div>
+        <div class="s-title" style="font-size:1.25rem;">${escapeHtml(nextSession.topic)}</div>
         <div class="s-meta" style="margin:1rem 0;"><span>${nextSession.students} ${dict.teacher_stats_students || 'students registered'}</span><span>60 ${dict.student_min || 'min'}</span></div>
         <div style="display:flex;gap:.5rem;">
-          <a href="#" onclick="handleTeacherJoin('${nextSession.daily_room_url || ''}', '${nextSession.id}'); return false;" class="btn sm" data-i18n="teacher_action_start">${dict.teacher_action_start || 'Start session'}</a>
+          <a href="#" onclick="handleTeacherJoin('${nextSession.daily_room_url || ''}', '${nextSession.id}'); return false;" class="btn sm"${nextSession.status === 'live' ? '' : ' data-i18n="teacher_action_start"'}>${nextSession.status === 'live' ? (dict.teacher_action_join_live || 'Join live class') : (dict.teacher_action_start || 'Start session')}</a>
           <button class="btn ghost sm" data-i18n="teacher_btn_prepare_notes">${dict.teacher_btn_prepare_notes || 'Prepare notes'}</button>
         </div>
       </div>
@@ -1939,11 +1963,11 @@ function vSessions(){
     <div class="sess-row">
       <div class="sess-dot2 ${s.status}"></div>
       <div class="sess-info2">
-        <div class="sess-topic2">${s.topic}</div>
+        <div class="sess-topic2">${escapeHtml(s.topic)}</div>
         <div class="sess-date2">${s.date} • ${s.time} • ${s.students} ${dict.teacher_stats_students || 'students'}</div>
       </div>
       <span class="sess-b2 ${s.status}">
-        ${s.status === 'up' ? (dict.teacher_lbl_upcoming || 'Upcoming') : completedText}
+        ${s.status === 'live' ? (dict.teacher_lbl_live_now || 'Live now') : s.status === 'up' ? (dict.teacher_lbl_upcoming || 'Upcoming') : completedText}
       </span>
     </div>
   `).join('');
@@ -1976,8 +2000,8 @@ function vSessions(){
 }
 
 function vSettings(){
-  const t = window.currentTeacher || { name: 'Sarah Thompson', email: 'sarah.thompson@alimun.com', profile: { location: 'Madrid, Spain' } };
-  const loc = t.profile?.location || 'Madrid, Spain';
+  const tp = window.currentTeacher || { name: 'Sarah Thompson', email: 'sarah.thompson@alimun.com', profile: { location: 'Madrid, Spain' } };
+  const loc = tp.profile?.location || 'Madrid, Spain';
   
   const translations = window.ALIMUN_TRANSLATIONS || {};
   const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
@@ -1988,8 +2012,8 @@ function vSettings(){
     <div style="max-width:520px;">
       <div style="margin-bottom:1.75rem;"><div style="font-family:var(--disp);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:#aaa;margin-bottom:.875rem;" data-i18n="teacher_settings_profile">${dict.teacher_settings_profile || 'Profile'}</div>
         <div class="card">
-          <div class="field-row"><label data-i18n="teacher_settings_fullname">${dict.teacher_settings_fullname || 'Full name'}</label><input type="text" id="set-fullname" value="${t.name}"></div>
-          <div class="field-row"><label data-i18n="teacher_settings_email">${dict.teacher_settings_email || 'Email'}</label><input type="email" id="set-email" value="${t.email}"></div>
+          <div class="field-row"><label data-i18n="teacher_settings_fullname">${dict.teacher_settings_fullname || 'Full name'}</label><input type="text" id="set-fullname" value="${escapeHtml(tp.name)}"></div>
+          <div class="field-row"><label data-i18n="teacher_settings_email">${dict.teacher_settings_email || 'Email'}</label><input type="email" id="set-email" value="${escapeHtml(tp.email)}"></div>
           <div class="field-row"><label data-i18n="teacher_settings_location">${dict.teacher_settings_location || 'Teaching location'}</label><input type="text" id="set-location" value="${loc}"></div>
           <button class="btn out sm" onclick="saveSettings()" data-i18n="dash_save_changes">${dict.dash_save_changes || 'Save changes'}</button>
         </div>
@@ -2133,7 +2157,12 @@ async function initTeacherData() {
 
       SESSIONS = (sessions || []).map(s => {
         const d = new Date(s.scheduled_at);
-        const isFuture = d > Date.now();
+        const nowMs = Date.now();
+        const startMs = d.getTime();
+        const dbDone = s.status === 'completed' || s.status === 'cancelled';
+        // Joinable window: 15 min before start until 90 min after (status scheduled/live)
+        const inWindow = !dbDone && nowMs >= startMs - 15 * 60 * 1000 && nowMs <= startMs + 90 * 60 * 1000;
+        const uiStatus = dbDone ? 'done' : inWindow ? 'live' : (startMs > nowMs ? 'up' : 'done');
         // Split grammar focus by separator if it contains details
         const gFocus = s.session_notes?.grammar_focus || '';
         const topic = gFocus.split('\n\n')[0] || t('live_session', 'Live Session');
@@ -2145,7 +2174,7 @@ async function initTeacherData() {
           time: getLocaleTimeString(d, { hour: '2-digit', minute: '2-digit' }),
           topic: topic,
           students: s.cohorts?.enrolled_count || 0,
-          status: isFuture ? 'up' : 'done',
+          status: uiStatus,
           db_status: s.status,
           has_notes: !!s.session_notes,
           daily_room_url: s.daily_room_url,
@@ -2856,10 +2885,10 @@ async function openStudentProfileModal(studentId) {
     let feedbackListHtml = feedbacks.map(f => `
       <div style="border-bottom:1px solid rgba(0,0,0,0.04);padding-bottom:10px;margin-bottom:10px;">
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-bottom:4px;">
-          <span>By ${f.teacher_profiles?.full_name || 'Teacher'}</span>
+          <span>By ${escapeHtml(f.teacher_profiles?.full_name || 'Teacher')}</span>
           <span>${getLocaleString(new Date(f.created_at))}</span>
         </div>
-        <div style="font-size:12.5px;color:var(--txt);line-height:1.5;">"${f.feedback_text}"</div>
+        <div style="font-size:12.5px;color:var(--txt);line-height:1.5;">"${escapeHtml(f.feedback_text)}"</div>
       </div>
     `).join('');
     
@@ -2873,19 +2902,19 @@ async function openStudentProfileModal(studentId) {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;background:#fafaf8;padding:12px 16px;border-radius:8px;border:1px solid var(--bd);">
           <div>
             <div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">Target Language</div>
-            <div style="font-size:13.5px;font-weight:600;color:var(--txt);margin-top:2px;">${student.language}</div>
+            <div style="font-size:13.5px;font-weight:600;color:var(--txt);margin-top:2px;">${escapeHtml(student.language)}</div>
           </div>
           <div>
             <div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">CEFR Level</div>
-            <div style="font-size:13.5px;font-weight:600;color:var(--txt);margin-top:2px;">${student.level}</div>
+            <div style="font-size:13.5px;font-weight:600;color:var(--txt);margin-top:2px;">${escapeHtml(student.level)}</div>
           </div>
           <div>
             <div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">Goal Track</div>
-            <div style="font-size:13.5px;font-weight:600;color:var(--txt);margin-top:2px;text-transform:capitalize;">${student.goal_track}</div>
+            <div style="font-size:13.5px;font-weight:600;color:var(--txt);margin-top:2px;text-transform:capitalize;">${escapeHtml(student.goal_track)}</div>
           </div>
           <div>
             <div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">Subscription Tier</div>
-            <div style="font-size:13.5px;font-weight:600;color:var(--txt);margin-top:2px;text-transform:capitalize;">${student.tier === 'onetoone' ? '1 on 1' : student.tier}</div>
+            <div style="font-size:13.5px;font-weight:600;color:var(--txt);margin-top:2px;text-transform:capitalize;">${escapeHtml(student.tier === 'private' ? '1 on 1' : student.tier)}</div>
           </div>
         </div>
         
@@ -3122,11 +3151,12 @@ async function submitSessionNotes(event, sessionId) {
     if (sessionError) throw sessionError;
     
     // 3. Call PDF generation and Resend notification API
+    const { data: { session: authSession } = {} } = await window.currentTeacher.supabase.auth.getSession();
     const response = await fetch('/api/generate-notes-pdf', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${window.currentTeacher.session.access_token}`
+        'Authorization': `Bearer ${authSession?.access_token || window.currentTeacher.session?.access_token || ''}`
       },
       body: JSON.stringify({ session_notes_id: notesData.id })
     });
@@ -3573,7 +3603,7 @@ window.submitSessionNotes = submitSessionNotes;
   // Localhost-only design preview: /teacher-dashboard.html?preview=1
   const isLocalPreview = ['localhost','127.0.0.1'].includes(window.location.hostname)
     && new URLSearchParams(window.location.search).has('preview');
-  if (isLocalPreview && (!session || !session.user?.user_metadata?.role)) {
+  if (isLocalPreview && (!session || !(session.user?.app_metadata?.role || session.user?.user_metadata?.role))) {
     session = { user: { id: 'preview-user', email: 'preview@alimun.com',
       user_metadata: { role: 'teacher', full_name: 'Sarah Thompson' } } };
   }
@@ -3584,7 +3614,7 @@ window.submitSessionNotes = submitSessionNotes;
   }
 
   // ─ 3. Role check ───────────────────────────────────────────────────────────
-  const role = session.user?.user_metadata?.role || '';
+  const role = session.user?.app_metadata?.role || session.user?.user_metadata?.role || '';
   if (role !== 'teacher') {
     window.location.href = role === 'student' ? 'student-dashboard.html' :
                           role === 'admin' ? 'admin.html' : 'signin.html';
