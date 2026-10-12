@@ -267,7 +267,11 @@ window.signIn = async function() {
   if (error) {
     btn.disabled = false;
     btn.textContent = 'Sign in →';
-    showError('Invalid email or password. Please try again.');
+    if (/not confirmed/i.test(error.message || '')) {
+      showError('Please confirm your email first — check your inbox for the link we sent when you signed up.');
+    } else {
+      showError('Invalid email or password. Please try again.');
+    }
     return;
   }
 
@@ -283,7 +287,12 @@ window.signIn = async function() {
 
   /* 3 ── Student ───────────────────────────────────────── */
   if (userRole === 'student') {
-    window.location.href = 'student-dashboard.html';
+    // Email-confirmation signups reach here before the profile steps of
+    // signup.html were completed — send them back to finish instead of
+    // dropping them on an empty dashboard.
+    const { data: sp } = await supabase
+      .from('student_profiles').select('id').eq('user_id', data.user.id).maybeSingle();
+    window.location.href = sp ? 'student-dashboard.html' : 'signup.html';
     return;
   }
 
@@ -298,6 +307,12 @@ window.signIn = async function() {
       .single();
 
     const teacherName = profile?.full_name || data.user.user_metadata?.full_name;
+
+    // Account exists but the application was never submitted — resume signup.
+    if (!profile && profErr?.code === 'PGRST116') {
+      window.location.href = 'signup.html';
+      return;
+    }
 
     if (profile?.status === 'approved') {
       window.location.href = 'teacher-dashboard.html';

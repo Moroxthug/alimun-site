@@ -80,27 +80,35 @@ function getSupabaseAdmin() {
 
 /**
  * Obtain the raw request body for signature verification.
- * Vercel's Node helpers may have already consumed the stream and
- * exposed `req.body`; handle every shape we can see.
+ *
+ * Stripe signs the exact bytes it sent, so the body must NOT be parsed first.
+ * `config.api.bodyParser = false` (exported at the bottom) stops Vercel's
+ * helpers from consuming the stream; we then read it ourselves. The other
+ * branches are defensive for runtimes that hand us a pre-read body.
  */
 async function getRawBody(req) {
+  if (Buffer.isBuffer(req.rawBody)) return req.rawBody;
+  if (typeof req.rawBody === 'string') return Buffer.from(req.rawBody, 'utf8');
   if (Buffer.isBuffer(req.body)) return req.body;
   if (typeof req.body === 'string') return Buffer.from(req.body, 'utf8');
 
   const chunks = [];
-  try {
-    for await (const chunk of req) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  } catch (_) { /* stream already consumed */ }
+  for await (const chunk of req) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
   if (chunks.length) return Buffer.concat(chunks);
 
-  if (req.body && typeof req.body === 'object') {
-    // Last resort: helpers parsed JSON. Signature verification will only
-    // pass if Stripe's payload serialisation matches — log loudly so a
-    // 400 here is easy to diagnose (set NODEJS_HELPERS=0 if it persists).
-    console.warn('[Alimun Webhook] Raw body unavailable; falling back to re-serialised JSON body.');
-    return Buffer.from(JSON.stringify(req.body), 'utf8');
-  }
+  // Body was already parsed into an object: the original bytes are gone and a
+  // re-serialised copy will never match Stripe's signature.
+  console.error('[Alimun Webhook] Raw body unavailable (body already parsed); check config.api.bodyParser=false is honoured.');
   return Buffer.alloc(0);
+}
+
+/** Subscription id of an invoice (moved under `parent` in newer Stripe API versions). */
+function invoiceSubscriptionId(invoice) {
+  const direct = invoice.subscription;
+  if (direct) return typeof direct === 'string' ? direct : direct.id;
+  const nested = invoice.parent?.subscription_details?.subscription;
+  if (nested) return typeof nested === 'string' ? nested : nested.id;
+  return null;
 }
 
 // ── Main webhook endpoint handler ─────────────────────────────
@@ -153,9 +161,20 @@ const handler = async function (req, res) {
 
     if (logError) {
       if (logError.code === '23505') {
-        return res.status(200).json({ received: true, duplicate: true });
+        // Seen before. Only skip if it finished; a row stuck in 'pending' or
+        // 'failed' (function killed mid-run) must be reprocessed on retry.
+        const { data: existing } = await supabase
+          .from('webhook_logs').select('id, status').eq('event_id', event.id).maybeSingle();
+        if (existing?.status === 'processed') {
+          return res.status(200).json({ received: true, duplicate: true });
+        }
+        logId = existing?.id || null;
+        if (logId) {
+          await supabase.from('webhook_logs').update({ status: 'pending', error_message: null }).eq('id', logId);
+        }
+      } else {
+        console.warn('[Alimun Webhook] Failed to create initial log:', logError.message);
       }
-      console.warn('[Alimun Webhook] Failed to create initial log:', logError.message);
     } else {
       logId = logData.id;
     }
@@ -176,9 +195,7 @@ const handler = async function (req, res) {
         .update({ status: 'failed', error_message: (err.message || String(err)).slice(0, 1000) })
         .eq('id', logId);
     }
-    // 500 → Stripe retries with backoff. The webhook_logs row stays
-    // ('failed') so the retry is not treated as a duplicate.
-    if (logId) await supabase.from('webhook_logs').delete().eq('id', logId);
+    // 500 → Stripe retries with backoff; the 'failed' row is reprocessed.
     return res.status(500).json({ error: 'Processing failed' });
   }
 };
@@ -304,7 +321,7 @@ async function processWebhookEvent(event, supabase) {
     case 'invoice.paid':
     case 'invoice.payment_succeeded': {
       const invoice = object;
-      const subId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id;
+      const subId = invoiceSubscriptionId(invoice);
       const student = await findStudentBySubscription(supabase, subId, invoice.customer);
       if (!student) break;
       if (student.stripe_subscription_status !== 'active') {
@@ -320,7 +337,7 @@ async function processWebhookEvent(event, supabase) {
 
     case 'invoice.payment_failed': {
       const invoice = object;
-      const subId = typeof invoice.subscription === 'string' ? invoice.subscription : invoice.subscription?.id;
+      const subId = invoiceSubscriptionId(invoice);
       const student = await findStudentBySubscription(supabase, subId, invoice.customer);
       if (!student) {
         console.warn(`[Alimun Webhook] No student for customer ${invoice.customer}`);
@@ -499,8 +516,9 @@ async function sendCancellationEmail(student, subscription) {
   const email = await resolveStudentEmail(student, fallback);
   if (!email) return;
 
-  const endDate = subscription.current_period_end
-    ? new Date(subscription.current_period_end * 1000).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
+  const periodEnd = subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end;
+  const endDate = periodEnd
+    ? new Date(periodEnd * 1000).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
     : 'today';
 
   await sendResend({
@@ -546,3 +564,5 @@ async function sendPaymentFailedEmail(student, invoice, isFinalFailure) {
 }
 
 module.exports = handler;
+// Stripe signs the raw bytes — Vercel must not parse the body first.
+module.exports.config = { api: { bodyParser: false } };

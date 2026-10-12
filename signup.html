@@ -336,6 +336,20 @@ function showErrorHTML(id, html) {
   el.style.display = 'block';
 }
 
+// Pick the checkout currency from the visitor's timezone / locale.
+// Supported: eur (default), usd, cad, aud, mad.
+function checkoutCurrency() {
+  try {
+    const tz  = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    const loc = (navigator.language || '').toLowerCase();
+    if (/^America/(Toronto|Vancouver|Edmonton|Winnipeg|Halifax|St_Johns|Regina|Montreal|Moncton|Glace_Bay|Goose_Bay|Iqaluit|Whitehorse|Yellowknife)$/.test(tz) || /-ca$/.test(loc)) return 'cad';
+    if (/^Australia//.test(tz) || /-au$/.test(loc)) return 'aud';
+    if (tz === 'Africa/Casablanca' || /-ma$/.test(loc)) return 'mad';
+    if (/^America/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Indiana|Kentucky|Boise)/.test(tz) || tz === 'Pacific/Honolulu' || /-us$/.test(loc)) return 'usd';
+  } catch (_) {}
+  return undefined;
+}
+
 // JSON headers + Supabase Bearer token. Every /api/* call that acts on the
 // signed-in user needs this; the server derives the user from the token.
 async function authHeaders() {
@@ -448,6 +462,9 @@ window.saveDetails = async function() {
     email:    fd.email,
     password: fd.pw,
     options: {
+      // After clicking the confirmation link the user lands back here already
+      // signed in; resumeFromSession() (Boot) continues at the profile steps.
+      emailRedirectTo: `${window.location.origin}/signup.html`,
       data: {
         role:      fd.role,
         full_name: fd.name,
@@ -711,6 +728,7 @@ window.completeFounding = async function() {
       body: JSON.stringify({
         priceId:      foundingPriceId,
         customerName: fd.name,
+        currency:     checkoutCurrency(),
         successUrl:   `${origin}/signup-success.html?session_id={CHECKOUT_SESSION_ID}&founding=1`,
         cancelUrl:    `${origin}/signup.html?step=4`,
       }),
@@ -924,6 +942,7 @@ window.completeStu = async function() {
       body: JSON.stringify({
         priceId:      selectedPriceId,
         customerName: fd.name,
+        currency:     checkoutCurrency(),
         successUrl: `${origin}/signup-success.html?session_id={CHECKOUT_SESSION_ID}`,
         cancelUrl:  `${origin}/signup.html?step=4`,
       }),

@@ -2842,6 +2842,12 @@ let VOCAB = [];
     .eq('user_id', session.user.id)
     .maybeSingle();
 
+  if (!profile && !isLocalPreview) {
+    // Auth account without a student profile (signup not finished).
+    window.location.href = 'signup.html';
+    return;
+  }
+
   if (profile) {
     USER.profile = profile;
     USER.id = profile.id; // DB UUID

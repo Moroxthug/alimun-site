@@ -151,7 +151,7 @@ async function handleCreateCheckout(req, res) {
     return res.status(401).json({ error: 'Unauthorized. Sign in before starting checkout.' });
   }
 
-  const { priceId, customerName, successUrl, cancelUrl, cohortId } = body;
+  const { priceId, customerName, successUrl, cancelUrl, cohortId, currency } = body;
   if (!priceId || typeof priceId !== 'string') {
     return res.status(400).json({ error: 'priceId is required' });
   }
@@ -188,6 +188,12 @@ async function handleCreateCheckout(req, res) {
       billing_address_collection: 'auto',
       allow_promotion_codes: true,
     };
+
+    // Prices carry EUR (base) + USD/CAD/AUD/MAD currency options
+    // (supabase/setup-stripe-prices.js). EUR is the default.
+    if (typeof currency === 'string' && ['usd', 'cad', 'aud', 'mad'].includes(currency.toLowerCase())) {
+      sessionParams.currency = currency.toLowerCase();
+    }
 
     if (price.mode === 'subscription') {
       sessionParams.subscription_data = { metadata };
