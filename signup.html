@@ -148,6 +148,7 @@ body{font-family:var(--body);background:#f0efe9;min-height:100vh;display:flex;fl
     // nothing in this file needs to change.
   };
 </script>
+<script src="/js/currency.js"></script>
 <script src="js/translations.js" defer></script>
 <script src="js/i18n.js" defer></script>
 </head>
@@ -336,18 +337,20 @@ function showErrorHTML(id, html) {
   el.style.display = 'block';
 }
 
-// Pick the checkout currency from the visitor's timezone / locale.
-// Supported: eur (default), usd, cad, aud, mad.
+// Price display in the visitor's currency (js/currency.js; falls back to EUR).
+function money(eur) {
+  return window.AlimunCurrency ? window.AlimunCurrency.fmt(eur) : '€' + eur;
+}
+function yearlyEq(t) {
+  const AC = window.AlimunCurrency;
+  return AC ? AC.fmtNative(AC.perMonthFromYearly(t.yearlyPrice, t.yearlyMonthlyEq)) : '€' + t.yearlyMonthlyEq;
+}
+
+// Checkout currency = the one shown on the page (js/currency.js: ?cur=, saved choice,
+// timezone/locale). Supported: eur (default), usd, cad, aud, mad.
 function checkoutCurrency() {
-  try {
-    const tz  = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-    const loc = (navigator.language || '').toLowerCase();
-    if (/^America/(Toronto|Vancouver|Edmonton|Winnipeg|Halifax|St_Johns|Regina|Montreal|Moncton|Glace_Bay|Goose_Bay|Iqaluit|Whitehorse|Yellowknife)$/.test(tz) || /-ca$/.test(loc)) return 'cad';
-    if (/^Australia//.test(tz) || /-au$/.test(loc)) return 'aud';
-    if (tz === 'Africa/Casablanca' || /-ma$/.test(loc)) return 'mad';
-    if (/^America/(New_York|Chicago|Denver|Los_Angeles|Phoenix|Anchorage|Detroit|Indiana|Kentucky|Boise)/.test(tz) || tz === 'Pacific/Honolulu' || /-us$/.test(loc)) return 'usd';
-  } catch (_) {}
-  return undefined;
+  const code = window.AlimunCurrency && window.AlimunCurrency.code;
+  return code && code !== 'eur' ? code : undefined;
 }
 
 // JSON headers + Supabase Bearer token. Every /api/* call that acts on the
@@ -614,7 +617,7 @@ function renderFoundingOrWaitlist() {
             <div style="font-family:var(--disp);font-size:1rem;text-transform:uppercase;">Founding Member</div>
             <div style="font-size:.72rem;color:#888;">One-time reservation fee</div>
           </div>
-          <div style="margin-left:auto;font-family:var(--disp);font-size:1.375rem;">€${fee}</div>
+          <div style="margin-left:auto;font-family:var(--disp);font-size:1.375rem;">${money(fee)}</div>
         </div>
         <ul style="list-style:none;display:flex;flex-direction:column;gap:.3rem;padding-left:.125rem;">
           <li style="font-size:.78rem;color:#555;padding-left:.875rem;position:relative;"><span style="position:absolute;left:0;color:var(--b);font-weight:700;">✓</span>Guaranteed spot when ${langName} launches</li>
@@ -791,7 +794,7 @@ function renderTier() {
   const localizedTiers = TIERS.map(t => {
     const badgeKey = 'tier_badge_' + t.badge.toLowerCase().replace(/ /g, '');
     const isYearly = billing === 'yearly';
-    const displayPrice = isYearly ? `€${t.yearlyMonthlyEq}` : `€${t.monthlyPrice}`;
+    const displayPrice = isYearly ? yearlyEq(t) : money(t.monthlyPrice);
     const priceSub    = isYearly ? 'per month, billed yearly' : 'per month';
     return {
       id: t.id,
@@ -1000,8 +1003,8 @@ function renderStudentConfirm() {
   const dict = translations[lang] || translations['en'] || {};
   const localizedTierName = dict[`tier_${t.i18n || t.id}_name`] || t.name;
   const tierPrice = billing === 'yearly'
-    ? `€${t.yearlyMonthlyEq}/mo (billed annually)`
-    : `€${t.monthlyPrice}/mo`;
+    ? `${yearlyEq(t)}/mo (billed annually)`
+    : `${money(t.monthlyPrice)}/mo`;
 
   card.innerHTML = `
     <div class="confirm-body">
