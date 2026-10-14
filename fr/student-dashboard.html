@@ -3181,7 +3181,7 @@ async function initData() {
           level,
           goal_track,
           enrolled_count,
-          teacher_profiles (
+          teacher_profiles:teacher_public (
             full_name,
             bio,
             specialty,
@@ -3281,7 +3281,7 @@ async function initData() {
     const { data: cohortData } = await SB
       .from('cohorts')
       .select(`
-        teacher_profiles (
+        teacher_profiles:teacher_public (
           full_name,
           bio,
           specialty,
@@ -3426,10 +3426,9 @@ async function initData() {
 
     // ─ 6. Chat Members list ──────────────────────────────────────────
     MEMBERS = [];
+    // Names only: other students' rows are not readable (RLS).
     const { data: classmates } = await SB
-      .from('student_profiles')
-      .select('id, full_name, user_id')
-      .eq('enrolled_cohort_id', USER.cohort_id);
+      .rpc('cohort_classmates', { p_cohort_id: USER.cohort_id });
 
     if (cohortData && cohortData.teacher_profiles) {
       const tp = cohortData.teacher_profiles;
@@ -3443,7 +3442,7 @@ async function initData() {
     }
     if (classmates) {
       classmates.forEach(c => {
-        const isMe = c.user_id === USER.profile.user_id;
+        const isMe = c.is_me === true;
         MEMBERS.push({
           i: c.full_name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),
           name: c.full_name,
@@ -3491,7 +3490,7 @@ async function initData() {
         .select(`
           feedback_text,
           created_at,
-          teacher_profiles (
+          teacher_profiles:teacher_public (
             full_name
           )
         `)
@@ -3570,7 +3569,7 @@ async function initCohortDiscovery() {
       .from('cohorts')
       .select(`
         *,
-        teacher_profiles (
+        teacher_profiles:teacher_public (
           id,
           full_name,
           rating,
@@ -5940,7 +5939,7 @@ async function refreshCohortSwitchList(lang, level) {
       .from('cohorts')
       .select(`
         *,
-        teacher_profiles (
+        teacher_profiles:teacher_public (
           full_name,
           rating
         )
@@ -6332,9 +6331,9 @@ async function openTeacherProfileModal() {
     if (!cohort) throw new Error("Cohort not found");
     const teacherId = cohort.teacher_id;
     
-    // Fetch teacher profile
+    // Fetch the teacher's public profile (teacher_profiles is admin/self only)
     const { data: teacher, error: teacherError } = await SB
-      .from('teacher_profiles')
+      .from('teachers_public')
       .select('*')
       .eq('id', teacherId)
       .single();

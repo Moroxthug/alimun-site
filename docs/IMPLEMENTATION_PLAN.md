@@ -67,7 +67,7 @@ Every phase below is designed to be run in a **fresh Claude Code cloud session**
 
 | Phase | Name | Depends on | Status |
 |---|---|---|---|
-| 1 | Production reconciliation & database lockdown | — | not started |
+| 1 | Production reconciliation & database lockdown | — | applied to production 14 Oct (105/105 RLS, advisor 0 errors); owner items open (`docs/phase-1-db-lockdown.md`) |
 | 2 | Full code audit, threat model and automated safeguards | 1 | not started |
 | 3 | Functional platform end-to-end | 1, 2 (can overlap with 2) | not started |
 | 4 | Design mockups (locked to current homepage) | — (parallel with 1–3) | not started |
