@@ -17,7 +17,7 @@ jobs:
       PROJECT_REF: dgaiasmefcbrtzqwdyri
       GH_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: Fetch security and performance advisors
         run: |
           if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then echo "::warning::SUPABASE_ACCESS_TOKEN secret not set; skipping."; exit 0; fi
