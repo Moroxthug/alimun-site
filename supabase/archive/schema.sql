@@ -1,3 +1,15 @@
+-- ============================================================
+--  DO NOT RUN — superseded by migrations/202610141800_phase1_db_lockdown.sql
+--  and migrations/202610142200_phase2_audit_fixes.sql.
+--  Its is_admin() trusts user_metadata.role (any user could become
+--  admin) and its views run as their owner. A new environment needs
+--  the full history in the order of supabase/tests/run-local.sh,
+--  then every file in supabase/migrations/. (SQL-10)
+--  Kept as history only. supabase/tests/run-local.sh replays it on a
+--  throwaway LOCAL database to rebuild the pre-Phase-1 state; never run
+--  it on the production project.
+-- ============================================================
+
 -- =============================================================
 --  ALIMUN — Supabase Database Schema
 --  Single migration file: schema.sql

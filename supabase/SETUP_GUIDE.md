@@ -40,19 +40,20 @@ CAUTION: Never expose SUPABASE_SERVICE_ROLE_KEY in any browser-side code or publ
 
 ### 1.3 Run the Schema Migration
 
-1. In the Supabase dashboard, go to **SQL Editor -> New query**.
-2. Open `supabase/schema.sql` from this project.
-3. Paste the entire contents into the editor.
-4. Click **Run** (or Ctrl+Enter).
-5. Verify in **Table Editor** that all 9 tables appear:
+Do NOT run `supabase/schema.sql` on its own: it has moved to `supabase/archive/` and is unsafe alone (its `is_admin()` trusts user-editable metadata). The production schema is the archived history followed by every file in `supabase/migrations/`, in order. A fresh dump of the production schema to replace the archive is still to do (audit finding SQL-10).
+
+1. Rebuild and test locally first: `supabase/tests/run-local.sh` replays `supabase/archive/` in the right order, applies `supabase/migrations/` twice and runs `supabase/tests/rls.sql`.
+2. For a new Supabase project, run the same files in the same order in **SQL Editor -> New query** (the order is the list at the top of `run-local.sh`, then each file in `supabase/migrations/` by name).
+3. Never re-run an archived file on an existing project.
+4. Verify in **Table Editor** that all tables appear, including:
    - `student_profiles`, `teacher_profiles`, `cohorts`, `enrollments`,
      `sessions`, `session_notes`, `session_attendance`,
      `cohort_waitlist`, `teacher_payouts`
 
 ### 1.4 Run Seed Data (development only)
 
-1. In **SQL Editor -> New query**, paste the contents of `supabase/seed.sql`.
-2. Click **Run**.
+1. In **SQL Editor -> New query** of a local or throwaway project, run `set alimun.allow_seed = 'on';` and then the contents of `supabase/seed.sql` (it refuses to run without that setting).
+2. Seed users get random passwords; set one through the Auth admin API or a password-reset email.
 3. Verify rows exist in **Table Editor**.
 
 NOTE: In production, skip `seed.sql`. Seed data is for local dev and staging only.
@@ -454,7 +455,7 @@ NEVER put SUPABASE_SERVICE_ROLE_KEY, STRIPE_SECRET_KEY, RESEND_API_KEY, or WISE_
 
 ### Supabase
 - [ ] Project created in eu-central-1
-- [ ] schema.sql executed successfully -- all 9 tables visible
+- [ ] archive history + supabase/migrations applied in order -- all tables visible
 - [ ] RLS enabled on all tables (check Table Editor -> Policies)
 - [ ] Storage buckets: session-notes-pdfs, teacher-avatars, student-avatars
 - [ ] Auth email templates customised with Alimun branding

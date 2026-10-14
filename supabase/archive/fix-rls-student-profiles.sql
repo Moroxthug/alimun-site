@@ -1,4 +1,11 @@
 -- ============================================================
+--  DO NOT RUN — superseded by migrations/202610141800_phase1_db_lockdown.sql
+--  and migrations/202610142200_phase2_audit_fixes.sql.
+--  Re-running it drops the Phase 1 student_profiles policies. (SQL-10)
+--  Kept as history only.
+-- ============================================================
+
+-- ============================================================
 --  ALIMUN — Fix: Infinite recursion in student_profiles RLS
 --  Run this in: Supabase Dashboard → SQL Editor → New query
 --

@@ -9,6 +9,10 @@
 --  Idempotent: safe to re-run. Runs in a single transaction; any
 --  error rolls everything back.
 --
+--  Later migrations replace some of its functions (guards, teacher
+--  helpers). If you ever re-run this file, re-run every later file in
+--  supabase/migrations/ after it, in order.
+--
 --  What it does
 --   1. Pre-flight: aborts if no account has app_metadata.role = admin.
 --   2. Non-recursive RLS helpers (SECURITY DEFINER, search_path '').

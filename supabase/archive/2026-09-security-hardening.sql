@@ -1,4 +1,17 @@
 -- ============================================================
+--  DO NOT RUN — superseded by migrations/202610141800_phase1_db_lockdown.sql
+--  and migrations/202610142200_phase2_audit_fixes.sql.
+--  Re-running it would drop the Phase 1 cohort policies (teachers could
+--  insert/delete cohorts directly), lose the INSERT branches of the
+--  column guards, recreate v_ai_spend_daily without security_invoker
+--  and rewrite app_metadata.role from user-controlled user_metadata.
+--  It was never applied as-is; Phase 1 re-issued it. (SQL-02)
+--  Kept as history only. supabase/tests/run-local.sh replays it on a
+--  throwaway LOCAL database to rebuild the pre-Phase-1 state; never run
+--  it on the production project.
+-- ============================================================
+
+-- ============================================================
 --  ALIMUN — Security hardening migration (September 2026)
 --  Run in: Supabase Dashboard → SQL Editor, as one script.
 --  Idempotent: safe to re-run.

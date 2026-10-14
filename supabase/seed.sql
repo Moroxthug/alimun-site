@@ -6,16 +6,28 @@
 --
 --  NOTE: auth.users rows are normally created via Supabase Auth.
 --  For seeding in a local dev environment, we insert directly.
---  In production, create these users via the Supabase Auth API
---  and then run only the profile inserts below.
+--  Never run any part of this file in production: these accounts
+--  carry fake 'active' subscriptions (see SQL-01 in
+--  docs/audit/FINDINGS.md and maintenance/neutralise_seed_accounts.sql).
 -- =============================================================
 
 begin;
 
+-- Local development only. Refuses to run unless the session opts in,
+-- so it cannot be pasted into the production SQL Editor by mistake:
+--   set alimun.allow_seed = 'on';
+do $$
+begin
+  if coalesce(current_setting('alimun.allow_seed', true), '') <> 'on' then
+    raise exception 'seed.sql is for a local database only. Run: set alimun.allow_seed = ''on''; then re-run.';
+  end if;
+end $$;
+
 -- =============================================================
 --  STEP 1 — auth.users  (local dev only)
---  Using a fixed salt so passwords are deterministic.
---  Password for all seed users: "AlimunDev2026!"
+--  Each seed user gets a random password generated at run time; no
+--  password is stored in this file. To sign in locally, set one with
+--  the Auth admin API or a password-reset email.
 -- =============================================================
 
 -- Admin
@@ -34,7 +46,7 @@ insert into auth.users (
 ) values (
   '00000000-0000-0000-0000-000000000001',
   'admin@alimun.com',
-  crypt('AlimunDev2026!', gen_salt('bf')),
+  crypt(encode(gen_random_bytes(24), 'base64'), gen_salt('bf')),
   now(),
   now(),
   now(),
@@ -61,7 +73,7 @@ insert into auth.users (
 ) values (
   '00000000-0000-0000-0000-000000000002',
   'sofia@alimun.com',
-  crypt('AlimunDev2026!', gen_salt('bf')),
+  crypt(encode(gen_random_bytes(24), 'base64'), gen_salt('bf')),
   now(),
   now() - interval '6 months',
   now(),
@@ -88,7 +100,7 @@ insert into auth.users (
 ) values (
   '00000000-0000-0000-0000-000000000003',
   'lukas@alimun.com',
-  crypt('AlimunDev2026!', gen_salt('bf')),
+  crypt(encode(gen_random_bytes(24), 'base64'), gen_salt('bf')),
   now(),
   now() - interval '4 months',
   now(),
@@ -107,7 +119,7 @@ insert into auth.users (
 ) values (
   '00000000-0000-0000-0000-000000000004',
   'aisha@example.com',
-  crypt('AlimunDev2026!', gen_salt('bf')),
+  crypt(encode(gen_random_bytes(24), 'base64'), gen_salt('bf')),
   now(), now() - interval '45 days', now(),
   '{"provider":"email","providers":["email"],"role":"student"}',
   '{"full_name":"Aisha Ndiaye","role":"student"}',
@@ -122,7 +134,7 @@ insert into auth.users (
 ) values (
   '00000000-0000-0000-0000-000000000005',
   'marco@example.com',
-  crypt('AlimunDev2026!', gen_salt('bf')),
+  crypt(encode(gen_random_bytes(24), 'base64'), gen_salt('bf')),
   now(), now() - interval '30 days', now(),
   '{"provider":"email","providers":["email"],"role":"student"}',
   '{"full_name":"Marco Russo","role":"student"}',
@@ -137,7 +149,7 @@ insert into auth.users (
 ) values (
   '00000000-0000-0000-0000-000000000006',
   'yuki@example.com',
-  crypt('AlimunDev2026!', gen_salt('bf')),
+  crypt(encode(gen_random_bytes(24), 'base64'), gen_salt('bf')),
   now(), now() - interval '20 days', now(),
   '{"provider":"email","providers":["email"],"role":"student"}',
   '{"full_name":"Yuki Tanaka","role":"student"}',
@@ -152,7 +164,7 @@ insert into auth.users (
 ) values (
   '00000000-0000-0000-0000-000000000007',
   'omar@example.com',
-  crypt('AlimunDev2026!', gen_salt('bf')),
+  crypt(encode(gen_random_bytes(24), 'base64'), gen_salt('bf')),
   now(), now() - interval '15 days', now(),
   '{"provider":"email","providers":["email"],"role":"student"}',
   '{"full_name":"Omar Al-Farsi","role":"student"}',
@@ -167,7 +179,7 @@ insert into auth.users (
 ) values (
   '00000000-0000-0000-0000-000000000008',
   'camille@example.com',
-  crypt('AlimunDev2026!', gen_salt('bf')),
+  crypt(encode(gen_random_bytes(24), 'base64'), gen_salt('bf')),
   now(), now() - interval '10 days', now(),
   '{"provider":"email","providers":["email"],"role":"student"}',
   '{"full_name":"Camille Dubois","role":"student"}',
@@ -577,5 +589,5 @@ commit;
 --  Session notes: 2 (session 1 + session 5, both published)
 --  Payouts: 2 (1 paid, 1 pending) for Sofía
 --
---  All passwords: AlimunDev2026!
+--  Passwords: random, generated at run time (none stored here).
 -- =============================================================

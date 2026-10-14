@@ -1,4 +1,15 @@
 -- ============================================================
+--  DO NOT RUN — superseded by migrations/202610141800_phase1_db_lockdown.sql
+--  and migrations/202610142200_phase2_audit_fixes.sql.
+--  Re-running it recreates increment_enrollment and
+--  process_expired_offers as SECURITY DEFINER without search_path and
+--  lets closed cohorts be incremented. (SQL-10)
+--  Kept as history only. supabase/tests/run-local.sh replays it on a
+--  throwaway LOCAL database to rebuild the pre-Phase-1 state; never run
+--  it on the production project.
+-- ============================================================
+
+-- ============================================================
 --  ALIMUN — Cohort Waitlist and Scarcity Database Migration
 --  Run this in: Supabase Dashboard → SQL Editor
 -- ============================================================
