@@ -19,7 +19,7 @@
     "node": "22.x"
   },
   "devDependencies": {
-    "@playwright/test": "^1.56.1",
+    "@playwright/test": "^1.64.0",
     "cheerio": "^1.2.0"
   }
 }
