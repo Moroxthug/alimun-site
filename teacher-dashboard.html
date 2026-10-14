@@ -2858,7 +2858,7 @@ async function openStudentProfileModal(studentId) {
       .from('student_feedback')
       .select(`
         *,
-        teacher_profiles (
+        teacher_profiles:teacher_public (
           full_name
         )
       `)
