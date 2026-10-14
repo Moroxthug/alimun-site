@@ -1,5 +1,7 @@
 # Alimun — Launch & Platform Plan
 
+> **Superseded on 14 Oct 2026 by `docs/IMPLEMENTATION_PLAN.md`.** Kept for background (architecture, matching engine, curriculum). Note: the Phase 0 SQL below (`2026-09-security-hardening.sql`) was never applied to production.
+
 _Prepared 23 September 2026 from a full read of the repository, three parallel code audits (backend, app frontend, public site), and live probes of alimun.com and the Vercel project. Companion files: `supabase/2026-09-security-hardening.sql`, `supabase/cleanup-test-data.sql`, `.env.example`, `.vercelignore`, `vercel.json`._
 
 ---
