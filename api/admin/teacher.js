@@ -4,8 +4,10 @@
  *  Vercel Serverless Function (Node.js runtime)
  *
  *  Unified admin teacher handler. Responds to:
- *    ?action=approve  (GET) — approve a teacher profile
- *    ?action=reject   (GET) — reject a teacher profile
+ *    ?action=approve  (GET shows a confirm page, POST approves a pending teacher)
+ *    ?action=reject   (GET shows a confirm page, POST rejects a pending teacher)
+ *                     Email links are HMAC-signed and act only while the
+ *                     profile is still 'pending' (single use).
  *    ?action=notify   (POST) — send admin notification email
  *    ?action=set-status (POST, admin JWT) — approve/reject/suspend/reinstate
  *                       from the admin dashboard, optionally emailing the teacher
@@ -41,6 +43,14 @@ function escapeHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
+/**
+ * Key for the emailed approve/reject links. APPROVAL_LINK_SECRET keeps this key
+ * out of the database; ADMIN_SECRET is the fallback until it is configured.
+ */
+function linkSecret() {
+  return process.env.APPROVAL_LINK_SECRET || process.env.ADMIN_SECRET || '';
+}
+
 /** token = HMAC(secret, `${teacherId}:${action}:${exp}`) — bound to action and expiry. */
 function signActionToken(secret, teacherId, action, exp) {
   return crypto.createHmac('sha256', secret).update(`${teacherId}:${action}:${exp}`).digest('hex');
@@ -65,6 +75,8 @@ async function getAuthUser(req, supabase) {
 }
 
 function renderErrorPage(res, message) {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('Referrer-Policy', 'no-referrer');
   return res.status(400).send(`
     <!DOCTYPE html>
     <html lang="en">
@@ -90,7 +102,7 @@ function renderErrorPage(res, message) {
           <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </div>
         <h1>Action Failed</h1>
-        <p>${message}</p>
+        <p>${escapeHtml(message)}</p>
         <a href="https://alimun.com" class="btn">Back to Alimun</a>
       </div>
     </body>
@@ -98,46 +110,131 @@ function renderErrorPage(res, message) {
   `);
 }
 
+/** Plain-text subject: no CR/LF (header injection) and no angle brackets. */
+function cleanSubject(s) {
+  return String(s ?? '').replace(/[\r\n<>]+/g, ' ').trim().slice(0, 200);
+}
+
+/** Send through Resend. Returns true only when Resend accepted the message. */
 async function sendEmail(to, subject, html) {
   const resendKey = process.env.RESEND_API_KEY;
   if (!resendKey) {
     console.warn('[Alimun Admin] RESEND_API_KEY not configured. Skipping email.');
-    return;
+    return false;
   }
   const emailFrom = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
   try {
-    await fetch('https://api.resend.com/emails', {
+    const response = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${resendKey}`,
         'Content-Type':  'application/json'
       },
-      body: JSON.stringify({ from: emailFrom, to, subject, html })
+      body: JSON.stringify({ from: emailFrom, to, subject: cleanSubject(subject), html })
     });
-    console.log(`[Alimun Admin] Email sent to ${to}`);
+    if (!response.ok) {
+      console.error('[Alimun Admin] Resend rejected email:', response.status);
+      return false;
+    }
+    return true;
   } catch (err) {
-    console.error('[Alimun Admin] Failed to send email:', err);
+    console.error('[Alimun Admin] Failed to send email:', err.message);
+    return false;
   }
 }
 
-// ── action=approve ──────────────────────────────────────────
+// ── action=approve / action=reject (emailed links) ──────────
+// GET only renders a confirmation page (mail scanners that prefetch links
+// change nothing). The button POSTs the same signed token. The change is
+// applied only while the profile is still 'pending', with a conditional
+// update, so each link works once and cannot undo a later admin decision.
 
-async function handleApprove(req, res) {
-  const { token, teacher_id, exp } = req.query || {};
+const PAGE_STYLE = `
+        :root { --g: #ceff65; --b: #080808; --body: 'Satoshi', sans-serif; }
+        body { font-family: var(--body); background: #f0efe9; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 2rem; }
+        .card { background: #fff; border-radius: 1.5rem; box-shadow: 0 8px 40px rgba(0,0,0,.08); padding: 2.5rem; text-align: center; max-width: 440px; width: 100%; }
+        .ico { width: 56px; height: 56px; border-radius: 50%; background: var(--g); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.375rem; }
+        .ico.neutral { background: #eaeaea; }
+        .ico.bad { background: #fff0f0; border: 1.5px solid #fca5a5; }
+        .ico svg { width: 24px; height: 24px; stroke: var(--b); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+        .ico.bad svg { stroke: #dc2626; }
+        h1 { font-size: 1.5rem; font-weight: 900; margin-bottom: 0.5rem; color: var(--b); text-transform: uppercase; }
+        p { font-size: 0.875rem; color: #666; line-height: 1.6; margin-bottom: 1.875rem; }
+        form { margin: 0 0 1rem; }
+        .btn { display: inline-flex; align-items: center; justify-content: center; background: var(--b); color: #fff; font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .055em; border: none; border-radius: 5rem; padding: .75rem 1.5rem; cursor: pointer; text-decoration: none; font-family: inherit; }
+        .btn.primary { background: var(--g); color: var(--b); }`;
 
-  if (!token || !teacher_id || !exp || !UUID_RE.test(String(teacher_id))) {
+const ICON_CHECK = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>';
+const ICON_X = '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
+
+/** Admin result page. `bodyHtml` must already be escaped. */
+function renderPage(res, status, { title, heading, icoClass = '', icon = ICON_CHECK, bodyHtml, extraHtml = '' }) {
+  res.setHeader('Cache-Control', 'no-store');
+  res.setHeader('Referrer-Policy', 'no-referrer');
+  return res.status(status).send(`
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+      <meta charset="utf-8">
+      <title>${escapeHtml(title)} — Alimun Admin</title>
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <meta name="robots" content="noindex">
+      <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
+      <style>${PAGE_STYLE}
+      </style>
+    </head>
+    <body>
+      <div class="card">
+        <div class="ico ${icoClass}">${icon}</div>
+        <h1>${escapeHtml(heading)}</h1>
+        <p>${bodyHtml}</p>
+        ${extraHtml}
+        <a href="https://alimun.com" class="btn">Back to Alimun</a>
+      </div>
+    </body>
+    </html>
+  `);
+}
+
+function renderAlreadyReviewed(res, profile) {
+  const name = escapeHtml(profile.full_name);
+  if (profile.status === 'approved') {
+    return renderPage(res, 200, { title: 'Approved', heading: 'Already Approved',
+      bodyHtml: `Teacher <strong>${name}</strong> is already approved.` });
+  }
+  return renderPage(res, 200, { title: 'Suspended', heading: 'Already Suspended', icoClass: 'neutral', icon: ICON_X,
+    bodyHtml: `Teacher <strong>${name}</strong> has already been marked as suspended/rejected.` });
+}
+
+async function handleEmailDecision(req, res, action) {
+  const isPost = req.method === 'POST';
+  if (!isPost && req.method !== 'GET') {
+    res.setHeader('Allow', 'GET, POST');
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  let params = isPost ? (req.body || {}) : (req.query || {});
+  if (typeof params === 'string') {
+    params = Object.fromEntries(new URLSearchParams(params));
+  }
+  const token = String(params.token || '');
+  const teacher_id = String(params.teacher_id || '');
+  const exp = String(params.exp || '');
+  const label = action === 'approve' ? 'Approve' : 'Reject';
+
+  if (!token || !teacher_id || !exp || !UUID_RE.test(teacher_id) || !/^[0-9]{1,12}$/.test(exp) || !/^[0-9a-f]{64}$/i.test(token)) {
     return renderErrorPage(res, 'Missing or invalid parameters.');
   }
 
-  const adminSecret = process.env.ADMIN_SECRET;
-  if (!adminSecret) {
-    console.error('[Alimun Approve] ADMIN_SECRET is not configured.');
-    return renderErrorPage(res, 'Server environment error: Admin secret is missing.');
+  const secret = linkSecret();
+  if (!secret) {
+    console.error(`[Alimun ${label}] link secret is not configured.`);
+    return renderErrorPage(res, 'This link cannot be used right now. Please act from the admin dashboard.');
   }
 
-  if (!verifyActionToken(adminSecret, teacher_id, 'approve', exp, token)) {
-    console.warn(`[Alimun Approve] Invalid or expired token for teacher_id: ${teacher_id}`);
-    return renderErrorPage(res, 'This approval link is invalid or has expired. Please approve from the admin dashboard.');
+  if (!verifyActionToken(secret, teacher_id, action, exp, token)) {
+    console.warn(`[Alimun ${label}] Invalid or expired token for teacher_id: ${teacher_id}`);
+    return renderErrorPage(res, 'This link is invalid or has expired. Please act from the admin dashboard.');
   }
 
   const supabase = getSupabaseAdmin();
@@ -152,90 +249,71 @@ async function handleApprove(req, res) {
     .single();
 
   if (fetchErr || !profile) {
-    console.error('[Alimun Approve] Error fetching teacher profile:', fetchErr);
+    console.error(`[Alimun ${label}] Error fetching teacher profile:`, fetchErr?.message);
     return renderErrorPage(res, 'Teacher profile not found.');
   }
 
-  if (profile.status === 'approved') {
-    return res.status(200).send(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="utf-8">
-        <title>Approved — Alimun Admin</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
-        <style>
-          :root { --g: #ceff65; --b: #080808; --body: 'Satoshi', sans-serif; }
-          body { font-family: var(--body); background: #f0efe9; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 2rem; }
-          .card { background: #fff; border-radius: 1.5rem; box-shadow: 0 8px 40px rgba(0,0,0,.08); padding: 2.5rem; text-align: center; max-width: 440px; width: 100%; }
-          .ico { width: 56px; height: 56px; border-radius: 50%; background: var(--g); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.375rem; }
-          .ico svg { width: 24px; height: 24px; stroke: var(--b); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-          h1 { font-size: 1.5rem; font-weight: 900; margin-bottom: 0.5rem; color: var(--b); text-transform: uppercase; }
-          p { font-size: 0.875rem; color: #666; line-height: 1.6; margin-bottom: 1.875rem; }
-          .btn { display: inline-flex; align-items: center; justify-content: center; background: var(--b); color: #fff; font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .055em; border: none; border-radius: 5rem; padding: .75rem 1.5rem; cursor: pointer; text-decoration: none; }
-        </style>
-      </head>
-      <body>
-        <div class="card">
-          <div class="ico">
-            <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-          </div>
-          <h1>Already Approved</h1>
-          <p>Teacher <strong>${escapeHtml(profile.full_name)}</strong> is already approved.</p>
-          <a href="https://alimun.com" class="btn">Back to Alimun</a>
-        </div>
-      </body>
-      </html>
-    `);
+  // Single use: only a pending application can be decided from an email link.
+  if (profile.status !== 'pending') {
+    return renderAlreadyReviewed(res, profile);
   }
 
-  const { error: updateErr } = await supabase
+  const name = escapeHtml(profile.full_name);
+
+  if (!isPost) {
+    // Confirmation step. Nothing changes until the admin presses the button.
+    const form = `
+        <form method="POST" action="/api/admin/teacher?action=${action}">
+          <input type="hidden" name="token" value="${escapeHtml(token)}">
+          <input type="hidden" name="teacher_id" value="${escapeHtml(teacher_id)}">
+          <input type="hidden" name="exp" value="${escapeHtml(exp)}">
+          <button type="submit" class="btn ${action === 'approve' ? 'primary' : ''}">${label} Application</button>
+        </form>`;
+    return renderPage(res, 200, {
+      title: `${label} teacher`, heading: `${label} Application`,
+      icoClass: action === 'approve' ? '' : 'bad', icon: action === 'approve' ? ICON_CHECK : ICON_X,
+      bodyHtml: `Teacher <strong>${name}</strong>`,
+      extraHtml: form,
+    });
+  }
+
+  // Conditional update: succeeds only if the row is still pending right now.
+  const update = action === 'approve'
+    ? { status: 'approved', tier_level: 'focused' } // first approval starts on Focused, as in set-status
+    : { status: 'suspended' };
+  const { data: changed, error: updateErr } = await supabase
     .from('teacher_profiles')
-    .update({ status: 'approved', tier_level: 'focused' })
-    .eq('id', teacher_id);
+    .update(update)
+    .eq('id', teacher_id)
+    .eq('status', 'pending')
+    .select('id');
 
   if (updateErr) {
-    console.error('[Alimun Approve] Database update failed:', updateErr);
+    console.error(`[Alimun ${label}] Database update failed:`, updateErr.message);
     return renderErrorPage(res, 'Failed to update teacher profile status.');
+  }
+  if (!changed || changed.length === 0) {
+    const { data: now } = await supabase.from('teacher_profiles').select('full_name, status').eq('id', teacher_id).maybeSingle();
+    return renderAlreadyReviewed(res, now || profile);
   }
 
   const teacherEmail = await getTeacherEmail(supabase, profile.user_id);
+  let emailed = false;
   if (teacherEmail) {
-    await sendEmail(teacherEmail, `Welcome to Alimun, ${profile.full_name}! You're approved.`, approvedEmailHtml(profile.full_name));
+    emailed = action === 'approve'
+      ? await sendEmail(teacherEmail, `Welcome to Alimun, ${profile.full_name}! You're approved.`, approvedEmailHtml(profile.full_name))
+      : await sendEmail(teacherEmail, 'Teacher Application Update — Alimun', rejectedEmailHtml(profile.full_name, teacherEmail));
   }
+  const emailLine = emailed
+    ? ` A notification email has been sent to <strong>${escapeHtml(teacherEmail)}</strong>.`
+    : ' The notification email could not be sent.';
 
-  return res.status(200).send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <title>Approved — Alimun Admin</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
-      <style>
-        :root { --g: #ceff65; --b: #080808; --body: 'Satoshi', sans-serif; }
-        body { font-family: var(--body); background: #f0efe9; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 2rem; }
-        .card { background: #fff; border-radius: 1.5rem; box-shadow: 0 8px 40px rgba(0,0,0,.08); padding: 2.5rem; text-align: center; max-width: 440px; width: 100%; }
-        .ico { width: 56px; height: 56px; border-radius: 50%; background: var(--g); display: flex; align-items: center; justify-content: center; margin: 0 auto 1.375rem; }
-        .ico svg { width: 24px; height: 24px; stroke: var(--b); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-        h1 { font-size: 1.5rem; font-weight: 900; margin-bottom: 0.5rem; color: var(--b); text-transform: uppercase; }
-        p { font-size: 0.875rem; color: #666; line-height: 1.6; margin-bottom: 1.875rem; }
-        .btn { display: inline-flex; align-items: center; justify-content: center; background: var(--b); color: #fff; font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .055em; border: none; border-radius: 5rem; padding: .75rem 1.5rem; cursor: pointer; text-decoration: none; }
-      </style>
-    </head>
-    <body>
-      <div class="card">
-        <div class="ico">
-          <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <h1>Teacher Approved</h1>
-        <p>Teacher <strong>${escapeHtml(profile.full_name)}</strong> is now approved. A confirmation welcome email has been sent to <strong>${escapeHtml(teacherEmail || 'their address')}</strong>.</p>
-        <a href="https://alimun.com" class="btn">Back to Alimun</a>
-      </div>
-    </body>
-    </html>
-  `);
+  if (action === 'approve') {
+    return renderPage(res, 200, { title: 'Approved', heading: 'Teacher Approved',
+      bodyHtml: `Teacher <strong>${name}</strong> is now approved.${emailLine}` });
+  }
+  return renderPage(res, 200, { title: 'Rejected', heading: 'Teacher Rejected', icoClass: 'bad', icon: ICON_X,
+    bodyHtml: `Teacher <strong>${name}</strong> has been rejected and marked as suspended.${emailLine}` });
 }
 
 // ── Email bodies (shared by the email-link handlers and action=set-status) ──
@@ -356,125 +434,10 @@ async function getTeacherEmail(supabase, userId) {
   return null;
 }
 
-// ── action=reject ───────────────────────────────────────────
-
-async function handleReject(req, res) {
-  const { token, teacher_id, exp } = req.query || {};
-
-  if (!token || !teacher_id || !exp || !UUID_RE.test(String(teacher_id))) {
-    return renderErrorPage(res, 'Missing or invalid parameters.');
-  }
-
-  const adminSecret = process.env.ADMIN_SECRET;
-  if (!adminSecret) {
-    console.error('[Alimun Reject] ADMIN_SECRET is not configured.');
-    return renderErrorPage(res, 'Server environment error: Admin secret is missing.');
-  }
-
-  if (!verifyActionToken(adminSecret, teacher_id, 'reject', exp, token)) {
-    console.warn(`[Alimun Reject] Invalid or expired token for teacher_id: ${teacher_id}`);
-    return renderErrorPage(res, 'This link is invalid or has expired. Please act from the admin dashboard.');
-  }
-
-  const supabase = getSupabaseAdmin();
-  if (!supabase) {
-    return renderErrorPage(res, 'Server database connection error.');
-  }
-
-  const { data: profile, error: fetchErr } = await supabase
-    .from('teacher_profiles')
-    .select('full_name, user_id, status')
-    .eq('id', teacher_id)
-    .single();
-
-  if (fetchErr || !profile) {
-    console.error('[Alimun Reject] Error fetching teacher profile:', fetchErr);
-    return renderErrorPage(res, 'Teacher profile not found.');
-  }
-
-  if (profile.status === 'suspended') {
-    return res.status(200).send(`
-      <!DOCTYPE html>
-      <html lang="en">
-      <head>
-        <meta charset="utf-8">
-        <title>Suspended — Alimun Admin</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
-        <style>
-          :root { --b: #080808; --body: 'Satoshi', sans-serif; }
-          body { font-family: var(--body); background: #f0efe9; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 2rem; }
-          .card { background: #fff; border-radius: 1.5rem; box-shadow: 0 8px 40px rgba(0,0,0,.08); padding: 2.5rem; text-align: center; max-width: 440px; width: 100%; }
-          .ico { width: 56px; height: 56px; border-radius: 50%; background: #eaeaea; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.375rem; }
-          .ico svg { width: 24px; height: 24px; stroke: var(--b); fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-          h1 { font-size: 1.5rem; font-weight: 900; margin-bottom: 0.5rem; color: var(--b); text-transform: uppercase; }
-          p { font-size: 0.875rem; color: #666; line-height: 1.6; margin-bottom: 1.875rem; }
-          .btn { display: inline-flex; align-items: center; justify-content: center; background: var(--b); color: #fff; font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .055em; border: none; border-radius: 5rem; padding: .75rem 1.5rem; cursor: pointer; text-decoration: none; }
-        </style>
-      </head>
-      <body>
-        <div class="card">
-          <div class="ico">
-            <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-          </div>
-          <h1>Already Suspended</h1>
-          <p>Teacher <strong>${escapeHtml(profile.full_name)}</strong> has already been marked as suspended/rejected.</p>
-          <a href="https://alimun.com" class="btn">Back to Alimun</a>
-        </div>
-      </body>
-      </html>
-    `);
-  }
-
-  const { error: updateErr } = await supabase
-    .from('teacher_profiles')
-    .update({ status: 'suspended' })
-    .eq('id', teacher_id);
-
-  if (updateErr) {
-    console.error('[Alimun Reject] Database update failed:', updateErr);
-    return renderErrorPage(res, 'Failed to update teacher profile status.');
-  }
-
-  const teacherEmail = await getTeacherEmail(supabase, profile.user_id);
-  if (teacherEmail) {
-    await sendEmail(teacherEmail, 'Teacher Application Update — Alimun', rejectedEmailHtml(profile.full_name, teacherEmail));
-  }
-
-  return res.status(200).send(`
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="utf-8">
-      <title>Rejected — Alimun Admin</title>
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-      <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
-      <style>
-        :root { --b: #080808; --body: 'Satoshi', sans-serif; }
-        body { font-family: var(--body); background: #f0efe9; min-height: 100vh; display: flex; align-items: center; justify-content: center; margin: 0; padding: 2rem; }
-        .card { background: #fff; border-radius: 1.5rem; box-shadow: 0 8px 40px rgba(0,0,0,.08); padding: 2.5rem; text-align: center; max-width: 440px; width: 100%; }
-        .ico { width: 56px; height: 56px; border-radius: 50%; background: #fff0f0; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.375rem; border: 1.5px solid #fca5a5; }
-        .ico svg { width: 24px; height: 24px; stroke: #dc2626; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
-        h1 { font-size: 1.5rem; font-weight: 900; margin-bottom: 0.5rem; color: var(--b); text-transform: uppercase; }
-        p { font-size: 0.875rem; color: #666; line-height: 1.6; margin-bottom: 1.875rem; }
-        .btn { display: inline-flex; align-items: center; justify-content: center; background: var(--b); color: #fff; font-weight: 700; font-size: .78rem; text-transform: uppercase; letter-spacing: .055em; border: none; border-radius: 5rem; padding: .75rem 1.5rem; cursor: pointer; text-decoration: none; }
-      </style>
-    </head>
-    <body>
-      <div class="card">
-        <div class="ico">
-          <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </div>
-        <h1>Teacher Rejected</h1>
-        <p>Teacher <strong>${escapeHtml(profile.full_name)}</strong> has been rejected and marked as suspended. A notification email has been sent to <strong>${escapeHtml(teacherEmail || 'their address')}</strong>.</p>
-        <a href="https://alimun.com" class="btn">Back to Alimun</a>
-      </div>
-    </body>
-    </html>
-  `);
-}
-
 // ── action=notify ───────────────────────────────────────────
+
+const NOTIFY_COOLDOWN_MS = 24 * 60 * 60 * 1000;
+const notifyLog = new Map();
 
 async function handleNotify(req, res) {
   if (req.method !== 'POST') {
@@ -482,25 +445,28 @@ async function handleNotify(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const adminSecret = process.env.ADMIN_SECRET;
-  if (!adminSecret) {
-    console.error('[Alimun Admin Notification] ADMIN_SECRET is not configured.');
-    return res.status(500).json({ error: 'Admin secret is not configured' });
-  }
-
-  const resendKey = process.env.RESEND_API_KEY;
-  if (!resendKey) {
-    console.error('[Alimun Admin Notification] RESEND_API_KEY is not configured.');
-    return res.status(500).json({ error: 'Resend API key is not configured' });
-  }
-
   const supabase = getSupabaseAdmin();
-  if (!supabase) return res.status(500).json({ error: 'Server database connection error' });
+  if (!supabase) return res.status(500).json({ error: 'Internal Server Error' });
 
   // Only the applicant themself can trigger the notification, and the
   // application data comes from their stored profile, not the request body.
+  // Authenticate before anything else so config state is never revealed.
   const user = await getAuthUser(req, supabase);
   if (!user) return res.status(401).json({ error: 'Unauthorized' });
+
+  const adminSecret = linkSecret();
+  const resendKey = process.env.RESEND_API_KEY;
+  if (!adminSecret || !resendKey) {
+    console.error('[Alimun Admin Notification] link secret or RESEND_API_KEY is not configured.');
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+
+  // Best-effort repeat guard (per instance). A durable guard needs a
+  // notified_at column on teacher_profiles.
+  const lastNotified = notifyLog.get(user.id);
+  if (lastNotified && Date.now() - lastNotified < NOTIFY_COOLDOWN_MS) {
+    return res.status(429).json({ error: 'Application notification already sent' });
+  }
 
   const { data: profile, error: profileErr } = await supabase
     .from('teacher_profiles')
@@ -515,7 +481,8 @@ async function handleNotify(req, res) {
   }
 
   const teacher_id = profile.id;
-  const full_name = escapeHtml(profile.full_name);
+  const rawName = String(profile.full_name || '');
+  const full_name = escapeHtml(rawName);
   const experience_years = escapeHtml(profile.experience_years);
   const specialty = escapeHtml(profile.specialty || '—');
   const bio = escapeHtml(profile.bio || '');
@@ -527,8 +494,8 @@ async function handleNotify(req, res) {
   const appUrl = process.env.APP_URL || 'https://alimun.com';
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@alimun.com';
 
-  const approveUrl = `${appUrl}/api/admin/approve-teacher?token=${approveToken}&teacher_id=${teacher_id}&exp=${exp}`;
-  const rejectUrl  = `${appUrl}/api/admin/reject-teacher?token=${rejectToken}&teacher_id=${teacher_id}&exp=${exp}`;
+  const approveUrl = escapeHtml(`${appUrl}/api/admin/approve-teacher?token=${approveToken}&teacher_id=${encodeURIComponent(teacher_id)}&exp=${exp}`);
+  const rejectUrl  = escapeHtml(`${appUrl}/api/admin/reject-teacher?token=${rejectToken}&teacher_id=${encodeURIComponent(teacher_id)}&exp=${exp}`);
 
   const langList = escapeHtml(Array.isArray(profile.languages) ? profile.languages.join(', ') : (profile.languages || 'None'));
 
@@ -603,17 +570,19 @@ async function handleNotify(req, res) {
       body: JSON.stringify({
         from:    emailFrom,
         to:      adminEmail,
-        subject: `New teacher application — ${full_name}`,
+        subject: cleanSubject(`New teacher application — ${rawName}`),
         html:    htmlContent
       })
     });
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error('[Alimun Admin Notification] Resend API error:', errText);
+      console.error('[Alimun Admin Notification] Resend API error:', response.status, errText.slice(0, 500));
       return res.status(502).json({ error: 'Failed to send notification email' });
     }
 
+    notifyLog.set(user.id, Date.now());
+    if (notifyLog.size > 5000) notifyLog.clear();
     console.log(`[Alimun Admin Notification] Sent application email for teacher ${teacher_id}`);
     return res.status(200).json({ success: true });
   } catch (err) {
@@ -652,7 +621,7 @@ async function handleSetStatus(req, res) {
   const reason = String(body.reason || '').trim().slice(0, 2000);
 
   if (!SETTABLE_STATUSES.includes(status)) {
-    return res.status(400).json({ error: `Invalid status: ${status}` });
+    return res.status(400).json({ error: 'Invalid status' });
   }
   if (ids.length === 0 || ids.length > 50 || !ids.every((id) => UUID_RE.test(String(id)))) {
     return res.status(400).json({ error: 'teacher_ids must be 1-50 UUIDs' });
@@ -662,9 +631,10 @@ async function handleSetStatus(req, res) {
     .from('teacher_profiles')
     .select('id, full_name, user_id, status, tier_level')
     .in('id', ids);
-  if (fetchErr) return res.status(500).json({ error: fetchErr.message });
+  if (fetchErr) return res.status(500).json({ error: 'Could not load teacher profiles' });
 
   const results = [];
+  const emailJobs = [];
   for (const profile of profiles || []) {
     const previous = profile.status;
     if (previous === status) {
@@ -677,28 +647,31 @@ async function handleSetStatus(req, res) {
     if (status === 'approved' && previous === 'pending') update.tier_level = 'focused';
     const { error: updateErr } = await supabase.from('teacher_profiles').update(update).eq('id', profile.id);
     if (updateErr) {
-      results.push({ id: profile.id, error: updateErr.message });
+      console.error('[Alimun Admin] set-status update failed:', profile.id, updateErr.message);
+      results.push({ id: profile.id, error: 'Update failed' });
       continue;
     }
 
-    let emailed = false;
-    if (notify && status !== 'pending') {
-      const email = await getTeacherEmail(supabase, profile.user_id);
-      if (email) {
-        if (status === 'approved') {
-          await sendEmail(email, `Welcome to Alimun, ${profile.full_name}! You're approved.`, approvedEmailHtml(profile.full_name));
-        } else if (previous === 'pending') {
-          await sendEmail(email, 'Teacher Application Update — Alimun', rejectedEmailHtml(profile.full_name, email, reason));
-        } else {
-          await sendEmail(email, 'Your Alimun teacher account — Alimun', suspendedEmailHtml(profile.full_name, reason));
-        }
-        emailed = true;
-      }
-    }
-
-    console.log(`[Alimun Admin] ${user.email} set teacher ${profile.id} ${previous} -> ${status}`);
-    results.push({ id: profile.id, status, previous, changed: true, emailed });
+    console.log(`[Alimun Admin] admin ${user.id} set teacher ${profile.id} ${previous} -> ${status}`);
+    const entry = { id: profile.id, status, previous, changed: true, emailed: false };
+    results.push(entry);
+    if (notify && status !== 'pending') emailJobs.push({ entry, profile, previous });
   }
+
+  // Emails go out in parallel after all updates, so a large batch cannot time
+  // out halfway through the status changes. `emailed` is true only when
+  // Resend accepted the message.
+  await Promise.allSettled(emailJobs.map(async ({ entry, profile, previous }) => {
+    const email = await getTeacherEmail(supabase, profile.user_id);
+    if (!email) return;
+    if (status === 'approved') {
+      entry.emailed = await sendEmail(email, `Welcome to Alimun, ${profile.full_name}! You're approved.`, approvedEmailHtml(profile.full_name));
+    } else if (previous === 'pending') {
+      entry.emailed = await sendEmail(email, 'Teacher Application Update — Alimun', rejectedEmailHtml(profile.full_name, email, reason));
+    } else {
+      entry.emailed = await sendEmail(email, 'Your Alimun teacher account — Alimun', suspendedEmailHtml(profile.full_name, reason));
+    }
+  }));
 
   const missing = ids.filter((id) => !(profiles || []).some((p) => p.id === id));
   missing.forEach((id) => results.push({ id, error: 'Teacher profile not found' }));
@@ -715,12 +688,12 @@ module.exports = async function handler(req, res) {
     case 'set-status':
       return handleSetStatus(req, res);
     case 'approve':
-      return handleApprove(req, res);
+      return handleEmailDecision(req, res, 'approve');
     case 'reject':
-      return handleReject(req, res);
+      return handleEmailDecision(req, res, 'reject');
     case 'notify':
       return handleNotify(req, res);
     default:
-      return res.status(400).json({ error: `Unknown admin action: ${action}` });
+      return res.status(400).json({ error: 'Unknown admin action' });
   }
 };

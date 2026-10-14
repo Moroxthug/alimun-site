@@ -5,11 +5,34 @@
  *
  *  Sends an email to a waitlisted student via Resend when a
  *  spot opens up in their desired cohort.
- *  Authorized using the ADMIN_SECRET bearer token.
+ *  Called by the DB trigger via pg_net. Authorized with the
+ *  WAITLIST_WEBHOOK_SECRET bearer token (falls back to ADMIN_SECRET
+ *  until the dedicated secret is configured). Fails closed.
  * ============================================================
  */
 
+const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+/** Constant-time comparison of two strings (hashed first so lengths match). */
+function safeEqual(a, b) {
+  const ha = crypto.createHash('sha256').update(String(a)).digest();
+  const hb = crypto.createHash('sha256').update(String(b)).digest();
+  return crypto.timingSafeEqual(ha, hb);
+}
+
+function isAuthorized(req) {
+  const secret = process.env.WAITLIST_WEBHOOK_SECRET || process.env.ADMIN_SECRET;
+  if (!secret) return false; // fail closed
+  const authHeader = req.headers.authorization || '';
+  return safeEqual(authHeader, `Bearer ${secret}`);
+}
 
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
@@ -29,16 +52,14 @@ module.exports = async function (req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const adminSecret = process.env.ADMIN_SECRET;
-  const authHeader = req.headers.authorization;
-  if (!adminSecret || !authHeader || authHeader !== `Bearer ${adminSecret}`) {
+  if (!isAuthorized(req)) {
     console.warn('[Alimun Waitlist] Unauthorized email dispatch attempt');
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
   const { waitlist_id, cohort_id, student_id } = req.body || {};
-  if (!waitlist_id || !cohort_id || !student_id) {
-    return res.status(400).json({ error: 'Missing required parameters' });
+  if (![waitlist_id, cohort_id, student_id].every((v) => v && UUID_RE.test(String(v)))) {
+    return res.status(400).json({ error: 'Missing or invalid parameters' });
   }
 
   const supabase = getSupabaseAdmin();
@@ -49,10 +70,22 @@ module.exports = async function (req, res) {
   const resendKey = process.env.RESEND_API_KEY;
   if (!resendKey) {
     console.error('[Alimun Waitlist] RESEND_API_KEY is not configured.');
-    return res.status(500).json({ error: 'Resend API key is not configured' });
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
 
   try {
+    // 0. The waitlist row must belong to this student and cohort and hold a live offer.
+    const { data: entry, error: entryErr } = await supabase
+      .from('cohort_waitlist')
+      .select('id, student_id, cohort_id, offered_at, offer_expires_at')
+      .eq('id', waitlist_id)
+      .maybeSingle();
+    if (entryErr) throw new Error(`Failed to fetch waitlist entry: ${entryErr.message}`);
+    if (!entry || entry.student_id !== student_id || entry.cohort_id !== cohort_id ||
+        !entry.offered_at || !entry.offer_expires_at || new Date(entry.offer_expires_at).getTime() <= Date.now()) {
+      return res.status(409).json({ error: 'No active offer for this waitlist entry' });
+    }
+
     // 1. Fetch Student Profile and User Email
     const { data: student, error: studentErr } = await supabase
       .from('student_profiles')
@@ -91,14 +124,17 @@ module.exports = async function (req, res) {
       throw new Error(`Failed to fetch cohort details: ${cohortErr?.message}`);
     }
 
-    const teacherName = cohort.teacher_profiles?.full_name || 'Marie Dubois';
-    const scheduleDays = cohort.schedule_days.join(', ');
-    const scheduleTime = cohort.schedule_time || '18:00:00';
-    const timezone = cohort.timezone || 'UTC';
+    // Every value below is escaped: teacher and student names are user-editable.
+    const teacherName = escapeHtml(cohort.teacher_profiles?.full_name || 'your teacher');
+    const scheduleDays = escapeHtml((Array.isArray(cohort.schedule_days) ? cohort.schedule_days : []).join(', '));
+    const scheduleTime = escapeHtml(String(cohort.schedule_time || '').slice(0, 5));
+    const timezone = escapeHtml(cohort.timezone || 'UTC');
+    const studentName = escapeHtml(student.full_name);
+    const cohortLabel = escapeHtml(`${cohort.language || ''} ${cohort.level || ''}`.trim());
 
     const appUrl = process.env.APP_URL || 'https://alimun.com';
     const emailFrom = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
-    const claimUrl = `${appUrl}/student-dashboard.html?claim_cohort_id=${cohort_id}&waitlist_id=${waitlist_id}`;
+    const claimUrl = `${appUrl}/student-dashboard.html?claim_cohort_id=${encodeURIComponent(cohort_id)}&waitlist_id=${encodeURIComponent(waitlist_id)}`;
 
     // 3. Compile Alimun Branded Responsive HTML Email
     const htmlContent = `
@@ -132,7 +168,7 @@ module.exports = async function (req, res) {
               <h1>Alimun</h1>
             </div>
             <div class="content">
-              <p>Hi ${student.full_name},</p>
+              <p>Hi ${studentName},</p>
               <p>Good news! A spot has opened up in your desired language class cohort. As you were first on our waitlist, this spot is reserved for you for the next <strong>48 hours</strong>.</p>
               
               <div class="highlight-card">
@@ -140,7 +176,7 @@ module.exports = async function (req, res) {
                 
                 <div class="field">
                   <strong>Language & Level</strong>
-                  <span>${cohort.language} ${cohort.level}</span>
+                  <span>${cohortLabel}</span>
                 </div>
                 
                 <div class="field">
@@ -150,15 +186,15 @@ module.exports = async function (req, res) {
                 
                 <div class="field" style="margin-bottom: 0;">
                   <strong>Schedule</strong>
-                  <span>${scheduleDays} @ ${scheduleTime.slice(0, 5)} (${timezone})</span>
+                  <span>${scheduleDays} @ ${scheduleTime} (${timezone})</span>
                 </div>
               </div>
 
               <p>To claim your spot and complete your enrollment, please click the button below to sign in and join the cohort:</p>
 
-              <a href="${claimUrl}" class="action-btn">Claim Your Spot Now</a>
+              <a href="${escapeHtml(claimUrl)}" class="action-btn">Claim Your Spot Now</a>
               
-              <p class="warning-text">⚠️ Warning: If you do not claim this spot within 48 hours, it will automatically expire and be offered to the next student on the waitlist.</p>
+              <p class="warning-text">Warning: If you do not claim this spot within 48 hours, it will automatically expire and be offered to the next student on the waitlist.</p>
             </div>
             <div class="footer">
               This is an automated notification from Alimun Platform.
@@ -179,18 +215,18 @@ module.exports = async function (req, res) {
       body: JSON.stringify({
         from:    emailFrom,
         to:      studentEmail,
-        subject: `⏰ Action Required: A spot is open in your Alimun ${cohort.language} class!`,
+        subject: `Action Required: A spot is open in your Alimun ${cohort.language || ''} class!`.replace(/[\r\n<>]/g, ' '),
         html:    htmlContent
       })
     });
 
     if (!response.ok) {
       const errText = await response.text();
-      console.error('[Alimun Waitlist] Resend API error:', errText);
-      return res.status(502).json({ error: 'Failed to send notification email', details: errText });
+      console.error('[Alimun Waitlist] Resend API error:', response.status, errText.slice(0, 500));
+      return res.status(502).json({ error: 'Failed to send notification email' });
     }
 
-    console.log(`[Alimun Waitlist] Offered spot to ${studentEmail} (Waitlist: ${waitlist_id})`);
+    console.log(`[Alimun Waitlist] Offer email sent (Waitlist: ${waitlist_id})`);
     return res.status(200).json({ success: true });
   } catch (err) {
     console.error('[Alimun Waitlist] Error:', err);

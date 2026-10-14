@@ -15,6 +15,7 @@
  * ============================================================
  */
 
+const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 
 const COMPLETE_AFTER_MIN = 90;   // must match the join window in join-session.js
@@ -32,10 +33,17 @@ function getSupabaseAdmin() {
   });
 }
 
+/** Constant-time comparison of two strings (hashed first so lengths match). */
+function safeEqual(a, b) {
+  const ha = crypto.createHash('sha256').update(String(a)).digest();
+  const hb = crypto.createHash('sha256').update(String(b)).digest();
+  return crypto.timingSafeEqual(ha, hb);
+}
+
 function isAuthorized(req) {
   const cronSecret = process.env.CRON_SECRET;
   if (!cronSecret) return false; // fail closed
-  return req.headers.authorization === `Bearer ${cronSecret}`;
+  return safeEqual(req.headers.authorization || '', `Bearer ${cronSecret}`);
 }
 
 async function createDailyRoom(session, apiKey) {
@@ -52,11 +60,16 @@ async function createDailyRoom(session, apiKey) {
     body: JSON.stringify({
       name: roomName,
       privacy: 'private',
+      // Same properties as api/join-session.js so prefetched rooms behave identically.
       properties: {
         exp: expEpoch,
+        max_participants: 40,
+        enable_chat: true,
+        enable_screenshare: true,
+        enable_knocking: false,
+        start_video_off: false,
         eject_at_room_exp: true,
         enable_recording: false,
-        max_participants: 40,
       },
     }),
   });

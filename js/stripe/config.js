@@ -23,44 +23,70 @@
 // Populated from window.ALIMUN_CONFIG.prices — the object returned by
 // GET /api/stripe/config ({ communityMonthly, ..., regional: { aud, mad } }).
 // Pages that still inject the legacy flat cfg.stripePrice* keys keep working.
-// Placeholder strings remain only as a dev-time fallback.
+// Placeholder strings remain only as a dev-time fallback; createCheckout
+// refuses to send them.
+//
+// Values are resolved LAZILY (getters): pages fill window.ALIMUN_CONFIG
+// asynchronously, so reading it once at import time could freeze the
+// placeholders for the whole page load.
 
-const cfg = window.ALIMUN_CONFIG || {};
-const prices   = cfg.prices || {};
-const regional = prices.regional || {};
-const aud = regional.aud || {};
-const mad = regional.mad || {};
+const getCfg = () => window.ALIMUN_CONFIG || {};
+const PLACEHOLDER_PRICE_RE = /^price_[A-Z_]+_ID$/;
 
-export const PRICE_IDS = {
+function priceGetter(key, legacyKey, placeholder, region) {
+  return () => {
+    const c = getCfg();
+    const prices = c.prices || {};
+    const src = region ? ((prices.regional || {})[region] || {}) : prices;
+    return src[key] || c[legacyKey] || placeholder;
+  };
+}
+
+const PRICE_SOURCES = {
   // EUR Monthly subscriptions
-  community_monthly:      prices.communityMonthly || cfg.stripePriceCommunityMonthly || 'price_COMMUNITY_MONTHLY_ID',
-  focused_monthly:        prices.focusedMonthly   || cfg.stripePriceFocusedMonthly   || 'price_FOCUSED_MONTHLY_ID',
-  intensive_monthly:      prices.intensiveMonthly || cfg.stripePriceIntensiveMonthly || 'price_INTENSIVE_MONTHLY_ID',
-  private_monthly:        prices.privateMonthly   || cfg.stripePricePrivateMonthly   || 'price_PRIVATE_MONTHLY_ID',
+  community_monthly:      priceGetter('communityMonthly', 'stripePriceCommunityMonthly', 'price_COMMUNITY_MONTHLY_ID'),
+  focused_monthly:        priceGetter('focusedMonthly',   'stripePriceFocusedMonthly',   'price_FOCUSED_MONTHLY_ID'),
+  intensive_monthly:      priceGetter('intensiveMonthly', 'stripePriceIntensiveMonthly', 'price_INTENSIVE_MONTHLY_ID'),
+  private_monthly:        priceGetter('privateMonthly',   'stripePricePrivateMonthly',   'price_PRIVATE_MONTHLY_ID'),
 
   // EUR Yearly subscriptions
-  community_yearly:       prices.communityYearly  || cfg.stripePriceCommunityYearly  || 'price_COMMUNITY_YEARLY_ID',
-  focused_yearly:         prices.focusedYearly    || cfg.stripePriceFocusedYearly    || 'price_FOCUSED_YEARLY_ID',
-  intensive_yearly:       prices.intensiveYearly  || cfg.stripePriceIntensiveYearly  || 'price_INTENSIVE_YEARLY_ID',
-  private_yearly:         prices.privateYearly    || cfg.stripePricePrivateYearly    || 'price_PRIVATE_YEARLY_ID',
+  community_yearly:       priceGetter('communityYearly',  'stripePriceCommunityYearly',  'price_COMMUNITY_YEARLY_ID'),
+  focused_yearly:         priceGetter('focusedYearly',    'stripePriceFocusedYearly',    'price_FOCUSED_YEARLY_ID'),
+  intensive_yearly:       priceGetter('intensiveYearly',  'stripePriceIntensiveYearly',  'price_INTENSIVE_YEARLY_ID'),
+  private_yearly:         priceGetter('privateYearly',    'stripePricePrivateYearly',    'price_PRIVATE_YEARLY_ID'),
 
   // One-time payments (EUR only)
-  founding_member:        prices.foundingMember   || cfg.stripePriceFoundingMember   || 'price_FOUNDING_MEMBER_ID',
-  oneonone_session:       prices.oneOnOneSession  || cfg.stripePriceOneononeSession  || 'price_ONEONONE_SESSION_ID',
-  certificate:            prices.certificate      || cfg.stripePriceCertificate      || 'price_CERTIFICATE_ID',
+  founding_member:        priceGetter('foundingMember',   'stripePriceFoundingMember',   'price_FOUNDING_MEMBER_ID'),
+  oneonone_session:       priceGetter('oneOnOneSession',  'stripePriceOneononeSession',  'price_ONEONONE_SESSION_ID'),
+  certificate:            priceGetter('certificate',      'stripePriceCertificate',      'price_CERTIFICATE_ID'),
 
   // AUD Monthly (regional)
-  community_monthly_aud:  aud.communityMonthly || cfg.stripePriceCommunityMonthlyAud || 'price_COMMUNITY_MONTHLY_AUD_ID',
-  focused_monthly_aud:    aud.focusedMonthly   || cfg.stripePriceFocusedMonthlyAud   || 'price_FOCUSED_MONTHLY_AUD_ID',
-  intensive_monthly_aud:  aud.intensiveMonthly || cfg.stripePriceIntensiveMonthlyAud || 'price_INTENSIVE_MONTHLY_AUD_ID',
-  private_monthly_aud:    aud.privateMonthly   || cfg.stripePricePrivateMonthlyAud   || 'price_PRIVATE_MONTHLY_AUD_ID',
+  community_monthly_aud:  priceGetter('communityMonthly', 'stripePriceCommunityMonthlyAud', 'price_COMMUNITY_MONTHLY_AUD_ID', 'aud'),
+  focused_monthly_aud:    priceGetter('focusedMonthly',   'stripePriceFocusedMonthlyAud',   'price_FOCUSED_MONTHLY_AUD_ID',   'aud'),
+  intensive_monthly_aud:  priceGetter('intensiveMonthly', 'stripePriceIntensiveMonthlyAud', 'price_INTENSIVE_MONTHLY_AUD_ID', 'aud'),
+  private_monthly_aud:    priceGetter('privateMonthly',   'stripePricePrivateMonthlyAud',   'price_PRIVATE_MONTHLY_AUD_ID',   'aud'),
 
   // MAD Monthly (regional)
-  community_monthly_mad:  mad.communityMonthly || cfg.stripePriceCommunityMonthlyMad || 'price_COMMUNITY_MONTHLY_MAD_ID',
-  focused_monthly_mad:    mad.focusedMonthly   || cfg.stripePriceFocusedMonthlyMad   || 'price_FOCUSED_MONTHLY_MAD_ID',
-  intensive_monthly_mad:  mad.intensiveMonthly || cfg.stripePriceIntensiveMonthlyMad || 'price_INTENSIVE_MONTHLY_MAD_ID',
-  private_monthly_mad:    mad.privateMonthly   || cfg.stripePricePrivateMonthlyMad   || 'price_PRIVATE_MONTHLY_MAD_ID',
+  community_monthly_mad:  priceGetter('communityMonthly', 'stripePriceCommunityMonthlyMad', 'price_COMMUNITY_MONTHLY_MAD_ID', 'mad'),
+  focused_monthly_mad:    priceGetter('focusedMonthly',   'stripePriceFocusedMonthlyMad',   'price_FOCUSED_MONTHLY_MAD_ID',   'mad'),
+  intensive_monthly_mad:  priceGetter('intensiveMonthly', 'stripePriceIntensiveMonthlyMad', 'price_INTENSIVE_MONTHLY_MAD_ID', 'mad'),
+  private_monthly_mad:    priceGetter('privateMonthly',   'stripePricePrivateMonthlyMad',   'price_PRIVATE_MONTHLY_MAD_ID',   'mad'),
 };
+
+export const PRICE_IDS = {};
+for (const [k, get] of Object.entries(PRICE_SOURCES)) {
+  Object.defineProperty(PRICE_IDS, k, { get, enumerable: true });
+}
+
+/** Lazy { monthly, yearly, monthly_aud, monthly_mad } price map for one tier. */
+function planPriceIds(tier) {
+  const ids = {};
+  for (const [field, key] of [['monthly', `${tier}_monthly`], ['yearly', `${tier}_yearly`],
+                              ['monthly_aud', `${tier}_monthly_aud`], ['monthly_mad', `${tier}_monthly_mad`]]) {
+    Object.defineProperty(ids, field, { get: PRICE_SOURCES[key], enumerable: true });
+  }
+  return ids;
+}
 
 // ── Plan display metadata ─────────────────────────────────────
 // Amounts are NOT stored here — Stripe (via the price IDs above) is the
@@ -79,12 +105,7 @@ export const PLANS = {
       'Goal-specific curriculum',
       'Community chat access',
     ],
-    priceId: {
-      monthly:     PRICE_IDS.community_monthly,
-      yearly:      PRICE_IDS.community_yearly,
-      monthly_aud: PRICE_IDS.community_monthly_aud,
-      monthly_mad: PRICE_IDS.community_monthly_mad,
-    },
+    priceId: planPriceIds('community'),
   },
 
   focused: {
@@ -102,12 +123,7 @@ export const PLANS = {
       'Community chat access',
       'Monthly progress report',
     ],
-    priceId: {
-      monthly:     PRICE_IDS.focused_monthly,
-      yearly:      PRICE_IDS.focused_yearly,
-      monthly_aud: PRICE_IDS.focused_monthly_aud,
-      monthly_mad: PRICE_IDS.focused_monthly_mad,
-    },
+    priceId: planPriceIds('focused'),
   },
 
   intensive: {
@@ -126,12 +142,7 @@ export const PLANS = {
       'Monthly progress report',
       'Priority support',
     ],
-    priceId: {
-      monthly:     PRICE_IDS.intensive_monthly,
-      yearly:      PRICE_IDS.intensive_yearly,
-      monthly_aud: PRICE_IDS.intensive_monthly_aud,
-      monthly_mad: PRICE_IDS.intensive_monthly_mad,
-    },
+    priceId: planPriceIds('intensive'),
   },
 
   private: {
@@ -150,12 +161,7 @@ export const PLANS = {
       'Voice note feedback between sessions',
       'Priority support',
     ],
-    priceId: {
-      monthly:     PRICE_IDS.private_monthly,
-      yearly:      PRICE_IDS.private_yearly,
-      monthly_aud: PRICE_IDS.private_monthly_aud,
-      monthly_mad: PRICE_IDS.private_monthly_mad,
-    },
+    priceId: planPriceIds('private'),
   },
 };
 
@@ -188,8 +194,10 @@ export function getRegionalPriceId(tier, billing = 'monthly', currency = 'eur') 
     return plan.priceId[billing] || plan.priceId.monthly;
   }
 
-  const regionalKey = `monthly_${cur}`;
-  return plan.priceId[regionalKey] || plan.priceId.monthly;
+  // Unset regional prices fall back to the base price (its currency_options
+  // cover AUD/MAD; the server picks the currency).
+  const regional = plan.priceId[`monthly_${cur}`];
+  return (regional && !PLACEHOLDER_PRICE_RE.test(regional)) ? regional : plan.priceId.monthly;
 }
 
 // ── Stripe.js lazy loader ─────────────────────────────────────
@@ -203,7 +211,7 @@ let _stripe = null;
 export async function getStripe() {
   if (_stripe) return _stripe;
 
-  const publishableKey = cfg.stripePublishableKey;
+  const publishableKey = getCfg().stripePublishableKey;
   if (!publishableKey) {
     throw new Error(
       '[Alimun] window.ALIMUN_CONFIG.stripePublishableKey is not set.'
@@ -272,12 +280,15 @@ async function getAccessToken() {
 export async function createCheckout({
   priceId,
   mode = 'subscription',
-  successUrl = `${cfg.appUrl || window.location.origin}/student-dashboard.html?checkout=success`,
-  cancelUrl  = `${cfg.appUrl || window.location.origin}/signup.html?checkout=cancelled`,
+  successUrl = `${getCfg().appUrl || window.location.origin}/student-dashboard.html?checkout=success`,
+  cancelUrl  = `${getCfg().appUrl || window.location.origin}/signup.html?checkout=cancelled`,
   cohortId   = null,
   customerName = null,
 } = {}) {
   try {
+    if (!priceId || PLACEHOLDER_PRICE_RE.test(priceId)) {
+      throw new Error('Pricing is still loading or not configured. Please try again in a moment.');
+    }
     const body = { priceId, mode, successUrl, cancelUrl };
     if (cohortId)      body.cohortId     = cohortId;
     if (customerName)  body.customerName = customerName;
@@ -301,7 +312,13 @@ export async function createCheckout({
 
     if (!resp.ok) {
       const err = await resp.json().catch(() => ({}));
-      throw new Error(err.message || `Checkout API error ${resp.status}`);
+      const e = new Error(err.message || err.error || `Checkout API error ${resp.status}`);
+      // e.code === 'active_subscription' (with e.portal) means: send the
+      // student to the Billing Portal to change plan instead.
+      e.code = err.error || null;
+      e.portal = !!err.portal;
+      e.status = resp.status;
+      throw e;
     }
 
     const { url } = await resp.json();
@@ -321,7 +338,7 @@ export async function createCheckout({
  * @param {string} [returnUrl] - URL to return to after the portal session
  */
 export async function openBillingPortal(
-  returnUrl = `${cfg.appUrl || window.location.origin}/student-dashboard.html`
+  returnUrl = `${getCfg().appUrl || window.location.origin}/student-dashboard.html`
 ) {
   try {
     const accessToken = await getAccessToken();
@@ -341,7 +358,7 @@ export async function openBillingPortal(
 
     if (!resp.ok) {
       const err = await resp.json().catch(() => ({}));
-      throw new Error(err.message || `Billing portal API error ${resp.status}`);
+      throw new Error(err.message || err.error || `Billing portal API error ${resp.status}`);
     }
 
     const { url } = await resp.json();

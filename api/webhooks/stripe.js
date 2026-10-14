@@ -47,6 +47,7 @@ const PRICE_TO_TIER = Object.fromEntries([
 ].filter(([id]) => id));
 
 const VALID_TIERS = new Set(['community', 'focused', 'intensive', 'private']);
+const TIER_WEIGHTS = { community: 1, focused: 2, intensive: 3, private: 4 };
 
 /** Stripe subscription.status → student_profiles.stripe_subscription_status */
 function mapSubscriptionStatus(stripeStatus) {
@@ -82,23 +83,35 @@ function getSupabaseAdmin() {
  * Obtain the raw request body for signature verification.
  *
  * Stripe signs the exact bytes it sent, so the body must NOT be parsed first.
- * `config.api.bodyParser = false` (exported at the bottom) stops Vercel's
- * helpers from consuming the stream; we then read it ourselves. The other
- * branches are defensive for runtimes that hand us a pre-read body.
+ * This is a plain Vercel Node function: `config.api.bodyParser` (exported at
+ * the bottom) is a Next.js option and may be ignored, so the stream is read
+ * FIRST, before anything touches `req.body` (on Vercel, req.body is a lazy
+ * getter that parses JSON). Pre-read buffers/strings are accepted as a
+ * fallback. A body already parsed into an object cannot be verified, so the
+ * caller fails closed (400) and logs it.
  */
 async function getRawBody(req) {
   if (Buffer.isBuffer(req.rawBody)) return req.rawBody;
   if (typeof req.rawBody === 'string') return Buffer.from(req.rawBody, 'utf8');
-  if (Buffer.isBuffer(req.body)) return req.body;
-  if (typeof req.body === 'string') return Buffer.from(req.body, 'utf8');
 
-  const chunks = [];
-  for await (const chunk of req) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
-  if (chunks.length) return Buffer.concat(chunks);
+  if (!req.readableEnded && typeof req[Symbol.asyncIterator] === 'function') {
+    const chunks = [];
+    for await (const chunk of req) chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk));
+    if (chunks.length) return Buffer.concat(chunks);
+  }
 
-  // Body was already parsed into an object: the original bytes are gone and a
-  // re-serialised copy will never match Stripe's signature.
-  console.error('[Alimun Webhook] Raw body unavailable (body already parsed); check config.api.bodyParser=false is honoured.');
+  // Stream already consumed: only an untouched Buffer/string body is usable.
+  let body;
+  try { body = req.body; } catch { body = undefined; }
+  if (Buffer.isBuffer(body)) return body;
+  if (typeof body === 'string') return Buffer.from(body, 'utf8');
+
+  if (body && typeof body === 'object') {
+    // The original bytes are gone and a re-serialised copy will never match.
+    console.error('[Alimun Webhook] Raw body unavailable: request body was pre-parsed into an object. Disable body parsing for this function (e.g. NODEJS_HELPERS=0).');
+  } else {
+    console.error('[Alimun Webhook] Raw body unavailable: request stream was empty.');
+  }
   return Buffer.alloc(0);
 }
 
@@ -132,6 +145,9 @@ const handler = async function (req, res) {
   let event;
   try {
     const rawBody = await getRawBody(req);
+    if (!rawBody.length) {
+      return res.status(400).json({ error: 'Empty or unreadable request body' });
+    }
     event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
   } catch (err) {
     console.error('[Alimun Webhook] Signature verification failed:', err.message);
@@ -161,16 +177,28 @@ const handler = async function (req, res) {
 
     if (logError) {
       if (logError.code === '23505') {
-        // Seen before. Only skip if it finished; a row stuck in 'pending' or
-        // 'failed' (function killed mid-run) must be reprocessed on retry.
+        // Seen before. Skip if it finished. A 'failed' row, or a 'pending' row
+        // older than 2 minutes (function killed mid-run), is reclaimed
+        // atomically; a younger 'pending' row is still in flight in another
+        // invocation, so ask Stripe to retry later instead of double-processing.
         const { data: existing } = await supabase
           .from('webhook_logs').select('id, status').eq('event_id', event.id).maybeSingle();
         if (existing?.status === 'processed') {
           return res.status(200).json({ received: true, duplicate: true });
         }
-        logId = existing?.id || null;
-        if (logId) {
-          await supabase.from('webhook_logs').update({ status: 'pending', error_message: null }).eq('id', logId);
+        if (existing?.id) {
+          const staleBefore = new Date(Date.now() - 2 * 60 * 1000).toISOString();
+          const { data: claimed } = await supabase
+            .from('webhook_logs')
+            .update({ status: 'pending', error_message: null })
+            .eq('id', existing.id)
+            .neq('status', 'processed')
+            .or(`status.eq.failed,created_at.lt."${staleBefore}"`)
+            .select('id');
+          if (!claimed || claimed.length === 0) {
+            return res.status(409).json({ error: 'Event is already being processed' });
+          }
+          logId = existing.id;
         }
       } else {
         console.warn('[Alimun Webhook] Failed to create initial log:', logError.message);
@@ -202,11 +230,20 @@ const handler = async function (req, res) {
 
 // ── Lookup helpers ────────────────────────────────────────────
 
+const STUDENT_BILLING_COLUMNS = 'id, user_id, full_name, tier, stripe_subscription_id, stripe_subscription_status, enrolled_cohort_id';
+
+/**
+ * Find the student a subscription/invoice event belongs to.
+ * Matches on the stored subscription id first. The customer fallback is used
+ * only when the student has no live subscription stored (none, or the stored
+ * one is cancelled): events from an OLD or second subscription of the same
+ * customer must never overwrite the active one (APIP-01).
+ */
 async function findStudentBySubscription(supabase, subscriptionId, stripeCustomerId) {
   if (subscriptionId) {
     const { data } = await supabase
       .from('student_profiles')
-      .select('id, user_id, full_name, tier, stripe_subscription_status, enrolled_cohort_id')
+      .select(STUDENT_BILLING_COLUMNS)
       .eq('stripe_subscription_id', subscriptionId)
       .maybeSingle();
     if (data) return data;
@@ -214,10 +251,17 @@ async function findStudentBySubscription(supabase, subscriptionId, stripeCustome
   if (stripeCustomerId) {
     const { data } = await supabase
       .from('student_profiles')
-      .select('id, user_id, full_name, tier, stripe_subscription_status, enrolled_cohort_id')
+      .select(STUDENT_BILLING_COLUMNS)
       .eq('stripe_customer_id', stripeCustomerId)
       .maybeSingle();
-    if (data) return data;
+    if (data) {
+      const storedLive = data.stripe_subscription_id && data.stripe_subscription_status !== 'cancelled';
+      if (storedLive && subscriptionId && data.stripe_subscription_id !== subscriptionId) {
+        console.warn(`[Alimun Webhook] Ignoring event for subscription ${subscriptionId}: student ${data.id} has active subscription ${data.stripe_subscription_id}`);
+        return null;
+      }
+      return data;
+    }
   }
   return null;
 }
@@ -232,6 +276,28 @@ async function cancelActiveEnrollments(supabase, studentId) {
   if (error) throw new Error(`Failed to cancel enrollments: ${error.message}`);
 }
 
+/** After a tier decrease, end enrollments in cohorts above the new tier (APIP-04). */
+async function cancelEnrollmentsAboveTier(supabase, student, newTier) {
+  const newWeight = TIER_WEIGHTS[newTier] || 0;
+  const { data: rows, error } = await supabase
+    .from('enrollments')
+    .select('id, cohort_id, cohorts ( tier )')
+    .eq('student_id', student.id)
+    .eq('status', 'active');
+  if (error) throw new Error(`Failed to load enrollments: ${error.message}`);
+  const over = (rows || []).filter((r) => (TIER_WEIGHTS[r.cohorts?.tier] || 0) > newWeight);
+  if (!over.length) return;
+  const { error: cErr } = await supabase
+    .from('enrollments')
+    .update({ status: 'cancelled', cancelled_at: new Date().toISOString() })
+    .in('id', over.map((r) => r.id));
+  if (cErr) throw new Error(`Failed to cancel enrollments above tier: ${cErr.message}`);
+  if (over.some((r) => r.cohort_id === student.enrolled_cohort_id)) {
+    await supabase.from('student_profiles').update({ enrolled_cohort_id: null }).eq('id', student.id);
+  }
+  console.log(`[Alimun Webhook] Tier lowered to ${newTier}: released ${over.length} seat(s) for student ${student.id}`);
+}
+
 // ── Event processing ──────────────────────────────────────────
 
 async function processWebhookEvent(event, supabase) {
@@ -241,7 +307,10 @@ async function processWebhookEvent(event, supabase) {
     case 'checkout.session.completed':
     case 'checkout.session.async_payment_succeeded': {
       const session = object;
-      if (session.payment_status !== 'paid' && session.status !== 'complete') {
+      // Only money that has arrived grants anything. Delayed methods (SEPA,
+      // bank transfer...) complete with payment_status 'unpaid' and are
+      // granted later by checkout.session.async_payment_succeeded.
+      if (session.payment_status !== 'paid' && session.payment_status !== 'no_payment_required') {
         console.log(`[Alimun Webhook] Checkout ${session.id} not paid yet (${session.payment_status}); waiting.`);
         break;
       }
@@ -260,9 +329,17 @@ async function processWebhookEvent(event, supabase) {
       break;
     }
 
+    case 'checkout.session.async_payment_failed': {
+      // Delayed payment failed: nothing was granted for it, so nothing to undo.
+      console.warn(`[Alimun Webhook] Async payment failed for checkout ${object.id} (customer ${object.customer}); nothing granted.`);
+      break;
+    }
+
     case 'customer.subscription.created':
     case 'customer.subscription.updated': {
-      const subscription = object;
+      // Events can arrive out of order: apply the subscription's CURRENT
+      // state, not the payload snapshot (APIP-08).
+      const subscription = await stripe.subscriptions.retrieve(object.id);
       const student = await findStudentBySubscription(supabase, subscription.id, subscription.customer);
       if (!student) {
         console.warn(`[Alimun Webhook] No student for subscription ${subscription.id}`);
@@ -271,9 +348,10 @@ async function processWebhookEvent(event, supabase) {
 
       const status = mapSubscriptionStatus(subscription.status);
       const priceId = subscription.items?.data?.[0]?.price?.id;
-      const newTier = (subscription.metadata?.tier && VALID_TIERS.has(subscription.metadata.tier))
-        ? subscription.metadata.tier
-        : PRICE_TO_TIER[priceId];
+      // The current price decides the tier; metadata is copied at checkout and
+      // goes stale after a plan switch, so it is only a fallback (APIP-04).
+      const newTier = PRICE_TO_TIER[priceId]
+        || ((subscription.metadata?.tier && VALID_TIERS.has(subscription.metadata.tier)) ? subscription.metadata.tier : undefined);
 
       const updates = {
         stripe_subscription_id: subscription.id,
@@ -287,9 +365,13 @@ async function processWebhookEvent(event, supabase) {
       const { error } = await supabase.from('student_profiles').update(updates).eq('id', student.id);
       if (error) throw new Error(`Failed to update student profile: ${error.message}`);
 
-      if (status === 'cancelled') {
+      // Release the seat once Stripe has given up on the subscription
+      // (canceled/expired, or 'unpaid' after the dashboard retry schedule).
+      if (status === 'cancelled' || subscription.status === 'unpaid') {
         await cancelActiveEnrollments(supabase, student.id);
         await supabase.from('student_profiles').update({ enrolled_cohort_id: null }).eq('id', student.id);
+      } else if (updates.tier && (TIER_WEIGHTS[updates.tier] || 0) < (TIER_WEIGHTS[student.tier] || 0)) {
+        await cancelEnrollmentsAboveTier(supabase, student, updates.tier);
       }
       console.log(`[Alimun Webhook] Subscription ${subscription.id} → ${status}${updates.tier ? ', tier ' + updates.tier : ''}`);
       break;
@@ -344,19 +426,16 @@ async function processWebhookEvent(event, supabase) {
         break;
       }
 
-      const attemptCount = invoice.attempt_count || 1;
-      const isFinalFailure = attemptCount >= 3;
-      const updates = {
-        stripe_subscription_status: isFinalFailure ? 'cancelled' : 'past_due',
-        updated_at: new Date().toISOString(),
-      };
-      if (isFinalFailure) updates.enrolled_cohort_id = null;
-
-      const { error } = await supabase.from('student_profiles').update(updates).eq('id', student.id);
+      // Mark past_due only. Stripe's retry schedule decides when the
+      // subscription ends; the seat is released on customer.subscription.deleted
+      // (or updated to unpaid/canceled), not after a fixed attempt count (APIP-09).
+      const { error } = await supabase
+        .from('student_profiles')
+        .update({ stripe_subscription_status: 'past_due', updated_at: new Date().toISOString() })
+        .eq('id', student.id);
       if (error) throw new Error(`Failed to update on payment failure: ${error.message}`);
 
-      if (isFinalFailure) await cancelActiveEnrollments(supabase, student.id);
-      await sendPaymentFailedEmail(student, invoice, isFinalFailure);
+      await sendPaymentFailedEmail(student, invoice, false);
       break;
     }
 
@@ -364,7 +443,8 @@ async function processWebhookEvent(event, supabase) {
     case 'charge.dispute.created': {
       // Money went back out. Log loudly for the admin; product decision on
       // access revocation is handled manually (see admin dashboard).
-      console.warn(`[Alimun Webhook] ${event.type} for charge ${object.id} customer ${object.customer} amount ${object.amount}`);
+      // The webhook_logs row for this event keeps the id for the admin.
+      console.warn(`[Alimun Webhook] ${event.type} for charge ${object.charge || object.id} payment_intent ${object.payment_intent} customer ${object.customer} amount ${object.amount}`);
       break;
     }
 
@@ -378,11 +458,12 @@ async function handleSubscriptionCheckout(session, metadata, supabaseUserId, sup
   const stripeCustomerId = typeof session.customer === 'string' ? session.customer : session.customer?.id;
   const stripeSubscriptionId = typeof session.subscription === 'string' ? session.subscription : session.subscription?.id;
 
-  let tier = metadata.tier;
-  if (!VALID_TIERS.has(tier) && stripeSubscriptionId) {
+  let tier;
+  if (stripeSubscriptionId) {
     const sub = await stripe.subscriptions.retrieve(stripeSubscriptionId);
     tier = PRICE_TO_TIER[sub.items?.data?.[0]?.price?.id];
   }
+  if (!VALID_TIERS.has(tier)) tier = metadata.tier;
   if (!VALID_TIERS.has(tier)) {
     throw new Error(`Cannot resolve tier for checkout ${session.id} (metadata.tier=${metadata.tier})`);
   }
@@ -405,7 +486,11 @@ async function handleSubscriptionCheckout(session, metadata, supabaseUserId, sup
   console.log(`[Alimun Webhook] Subscription tier '${tier}' activated for user ${supabaseUserId}`);
 }
 
-/** One-time purchases: founding member fee, 1:1 session credit, certificate. */
+/**
+ * One-time purchases: founding member fee, 1:1 session credit, certificate.
+ * Writes are keyed on stripe_session_id (unique), so completed +
+ * async_payment_succeeded or a redelivery grant at most once (APIP-02).
+ */
 async function handleOneTimeCheckout(session, metadata, supabaseUserId, supabase) {
   const type = metadata.type || 'unknown';
   const { data: student, error } = await supabase
@@ -423,12 +508,12 @@ async function handleOneTimeCheckout(session, metadata, supabaseUserId, supabase
   switch (type) {
     case 'session': {
       const credits = Math.max(1, parseInt(metadata.credits || '1', 10) || 1);
-      const { error: creditError } = await supabase.from('session_credits').insert({
+      const { error: creditError } = await supabase.from('session_credits').upsert({
         student_id: student.id,
         credits,
         source: 'stripe_checkout_payment',
         stripe_session_id: session.id,
-      });
+      }, { onConflict: 'stripe_session_id', ignoreDuplicates: true });
       if (creditError) throw new Error(`Failed to grant session credits: ${creditError.message}`);
       console.log(`[Alimun Webhook] Granted ${credits} 1:1 credit(s) to student ${student.id}`);
       break;
@@ -436,24 +521,24 @@ async function handleOneTimeCheckout(session, metadata, supabaseUserId, supabase
     case 'founding_member': {
       // The founding fee locks the founding price; access itself comes with
       // the subscription. Record the purchase for the admin.
-      const { error: creditError } = await supabase.from('session_credits').insert({
+      const { error: creditError } = await supabase.from('session_credits').upsert({
         student_id: student.id,
         credits: 0,
         source: 'founding_member_fee',
         stripe_session_id: session.id,
-      });
+      }, { onConflict: 'stripe_session_id', ignoreDuplicates: true });
       if (creditError) throw new Error(`Failed to record founding fee: ${creditError.message}`);
       console.log(`[Alimun Webhook] Founding member fee recorded for student ${student.id}`);
       break;
     }
     case 'certificate': {
       // Certificate generation is not implemented yet (no /api/generate-certificate).
-      const { error: certError } = await supabase.from('session_credits').insert({
+      const { error: certError } = await supabase.from('session_credits').upsert({
         student_id: student.id,
         credits: 0,
         source: 'certificate_purchase',
         stripe_session_id: session.id,
-      });
+      }, { onConflict: 'stripe_session_id', ignoreDuplicates: true });
       if (certError) throw new Error(`Failed to record certificate purchase: ${certError.message}`);
       console.warn(`[Alimun Webhook] Certificate purchased by ${student.id} — manual fulfilment required`);
       break;

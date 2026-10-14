@@ -15,7 +15,10 @@
  *    atomic capacity via increment_enrollment RPC.
  *
  *  Direct client writes to `enrollments` / `increment_enrollment`
- *  are revoked in supabase/2026-09-security-hardening.sql.
+ *  are revoked by supabase/migrations/202610141800_phase1_db_lockdown.sql
+ *  (do NOT re-run the older 2026-09-security-hardening.sql, see SQL-02).
+ *  One active enrollment per student is enforced by a partial unique
+ *  index on enrollments(student_id) where status = 'active' (APIP-05).
  * ============================================================
  */
 
@@ -114,7 +117,12 @@ module.exports = async function handler(req, res) {
     // ── action=leave ───────────────────────────────────────
     if (action === 'leave') {
       if (!student.enrolled_cohort_id) {
-        return res.status(409).json({ error: 'not_enrolled', message: 'You are not in a class.' });
+        // Also clear a stray active enrollment the profile does not point to.
+        const { data: stray } = await supabase
+          .from('enrollments').select('id').eq('student_id', student.id).eq('status', 'active');
+        if (!stray || stray.length === 0) {
+          return res.status(409).json({ error: 'not_enrolled', message: 'You are not in a class.' });
+        }
       }
       await cancelActiveEnrollments(supabase, student.id);
       return res.status(200).json({ success: true, message: 'You have left your class.' });
@@ -197,19 +205,48 @@ module.exports = async function handler(req, res) {
     }
 
     // ── Enrollment transaction ─────────────────────────────
-    // Free the current seat first when switching (the trigger decrements
-    // the old cohort and may hand that seat to its waitlist).
-    if (student.enrolled_cohort_id && (wantSwitch || waitlist_id)) {
-      await cancelActiveEnrollments(supabase, student.id);
-    }
-
-    // Atomic capacity claim (SECURITY DEFINER RPC, service-role only).
+    // Atomic capacity claim FIRST (SECURITY DEFINER RPC, service-role only),
+    // so a switch never gives up the current seat before the new one is
+    // secured (APIP-06).
     const { data: newCount, error: rpcError } = await supabase
       .rpc('increment_enrollment', { cohort_id: cohort.id });
     if (rpcError || newCount === null) {
       console.warn('[Enroll API] increment_enrollment failed or full:', rpcError?.message);
       return res.status(409).json({ error: 'cohort_full', message: 'This class is full.' });
     }
+
+    // Then free the current seat when switching (the trigger decrements the
+    // old cohort and may hand that seat to its waitlist).
+    let previousEnrollmentIds = [];
+    const previousCohortId = student.enrolled_cohort_id;
+    if (previousCohortId && (wantSwitch || waitlist_id)) {
+      const { data: prevRows } = await supabase
+        .from('enrollments')
+        .select('id')
+        .eq('student_id', student.id)
+        .eq('status', 'active');
+      previousEnrollmentIds = (prevRows || []).map((r) => r.id);
+      try {
+        await cancelActiveEnrollments(supabase, student.id);
+      } catch (cancelErr) {
+        await supabase.rpc('decrement_enrollment', { cohort_id: cohort.id });
+        throw cancelErr;
+      }
+    }
+
+    // Best effort: give the old seat back if the new enrollment cannot be recorded.
+    const restorePrevious = async () => {
+      if (!previousEnrollmentIds.length) return;
+      const { error: rErr } = await supabase
+        .from('enrollments')
+        .update({ status: 'active', cancelled_at: null })
+        .in('id', previousEnrollmentIds);
+      if (!rErr) {
+        await supabase.from('student_profiles').update({ enrolled_cohort_id: previousCohortId }).eq('id', student.id);
+      } else {
+        console.error('[Enroll API] Could not restore previous enrollment:', rErr);
+      }
+    };
 
     // The enrollments trigger counts UPDATE cancelled→active and DELETE of an
     // active row, but NOT INSERT — increment_enrollment above is the single
@@ -228,9 +265,26 @@ module.exports = async function handler(req, res) {
       .select('id')
       .single();
     if (enrollError || !enrollRow) {
-      console.error('[Enroll API] Insert enrollment error:', enrollError);
       await supabase.rpc('decrement_enrollment', { cohort_id: cohort.id });
+      await restorePrevious();
+      if (enrollError?.code === '23505') {
+        // A parallel request already gave this student an active seat.
+        return res.status(409).json({ error: 'already_enrolled', message: "You're already in a class." });
+      }
+      console.error('[Enroll API] Insert enrollment error:', enrollError);
       return res.status(500).json({ error: 'Failed to record enrollment' });
+    }
+
+    // Defence in depth until the one-active-enrollment index exists: if a
+    // parallel request also enrolled this student, back this one out.
+    const { data: activeRows } = await supabase
+      .from('enrollments')
+      .select('id')
+      .eq('student_id', student.id)
+      .eq('status', 'active');
+    if ((activeRows || []).length > 1) {
+      await supabase.from('enrollments').update({ status: 'cancelled', cancelled_at: new Date().toISOString() }).eq('id', enrollRow.id);
+      return res.status(409).json({ error: 'already_enrolled', message: "You're already in a class." });
     }
 
     const { error: updateProfileError } = await supabase
@@ -239,7 +293,8 @@ module.exports = async function handler(req, res) {
       .eq('id', student.id);
     if (updateProfileError) {
       console.error('[Enroll API] Update student profile error:', updateProfileError);
-      await supabase.from('enrollments').update({ status: 'cancelled', cancelled_at: new Date().toISOString() }).eq('id', enrollRow?.id);
+      await supabase.from('enrollments').update({ status: 'cancelled', cancelled_at: new Date().toISOString() }).eq('id', enrollRow.id);
+      await restorePrevious();
       return res.status(500).json({ error: 'Failed to assign class to your profile' });
     }
 
