@@ -39,3 +39,18 @@ Not touched: `camille@example.com` (seed student, no subscription, never signed 
   - (g) `waitlist_webhook_secret` is not set yet, so the waitlist functions fall back to `admin_secret`.
 - Security advisor after applying: 0 errors. The warnings are the same by-design ones as Phase 1: RLS helpers callable by `authenticated`, `public_teacher_rows` by `anon`, and leaked-password protection, which needs the Pro plan.
 - The `rls.sql` suite was not re-run on production (it passed 162/162 locally).
+
+## 14 Oct 2026 — Vercel secrets set (owner instruction)
+
+Vercel project `alimun-site` (team `youssefbouchtaoui-4103s-projects`): added `CRON_SECRET`, `ADMIN_SECRET`, `WAITLIST_WEBHOOK_SECRET` and `APPROVAL_LINK_SECRET`. Each is a random 64-hex-character value of type `sensitive`, set for Production and Preview. None existed before this change.
+
+Database:
+- `app_settings.waitlist_webhook_secret` is set to the same value as Vercel `WAITLIST_WEBHOOK_SECRET`.
+- `app_settings.admin_secret` was overwritten with a random value that nothing uses. Deleting the row timed out in the connector. The waitlist functions read `waitlist_webhook_secret` first.
+
+The new values only apply to deployments created after this change, so production needs a redeploy (or the Phase 2 merge).
+
+Env audit, read-only:
+- Still missing in production: `RESEND_API_KEY` and `EMAIL_FROM_ADDRESS` (no email is sent), and any AI key (`GEMINI_API_KEY`, `GROQ_API_KEY` or `ANTHROPIC_API_KEY`).
+- `STRIPE_*` keys and `DAILY_API_KEY` are set for Production only.
+- Unused and safe to delete: `STRIPE_PRICE_ONEONONE_SESSION`, `STRIPE_PRICE_CERTIFICATE`, and every `*_AUD` and `*_MAD` price.
