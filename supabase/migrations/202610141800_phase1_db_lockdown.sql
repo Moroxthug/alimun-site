@@ -56,9 +56,10 @@ begin
   end if;
 end $$;
 
--- teacher_profiles.location is written by the teacher dashboard but is
--- not in schema.sql; make sure it exists so teachers_public can expose it.
+-- teacher_profiles.location / badges exist live but are not in schema.sql;
+-- make sure they exist so teachers_public can expose them.
 alter table public.teacher_profiles add column if not exists location text;
+alter table public.teacher_profiles add column if not exists badges text[];
 
 -- ─────────────────────────────────────────────────────────────
 -- 2. ROLE + RLS HELPERS
@@ -593,11 +594,11 @@ create policy ai_usage_select on public.ai_usage for select to authenticated
 create or replace function public.public_teacher_rows()
 returns table (
   id uuid, full_name text, languages text[], specialty text, bio text,
-  rating numeric, experience_years int, sessions_delivered int, location text
+  rating numeric, experience_years int, sessions_delivered int, location text, badges text[]
 )
 language sql stable security definer set search_path = '' as $$
   select tp.id, tp.full_name, tp.languages, tp.specialty, tp.bio,
-         tp.rating, tp.experience_years, tp.sessions_delivered, tp.location
+         tp.rating, tp.experience_years, tp.sessions_delivered, tp.location, tp.badges
   from public.teacher_profiles tp
   where tp.status = 'approved';
 $$;
@@ -782,6 +783,19 @@ drop policy if exists session_files_admin on storage.objects;
 create policy session_files_admin on storage.objects for all to authenticated
   using (bucket_id = 'session-notes-pdfs' and public.is_admin())
   with check (bucket_id = 'session-notes-pdfs' and public.is_admin());
+
+-- Legacy public bucket 'session-notes' (unused by the code, empty on 14 Oct)
+-- let any signed-in user upload, overwrite and delete. Make it private and
+-- admin-only.
+update storage.buckets set public = false where id = 'session-notes';
+drop policy if exists "Allow authenticated delete to session-notes" on storage.objects;
+drop policy if exists "Allow public read access to session-notes" on storage.objects;
+drop policy if exists "Allow authenticated upload to session-notes" on storage.objects;
+drop policy if exists "Allow authenticated update to session-notes" on storage.objects;
+drop policy if exists legacy_session_notes_admin on storage.objects;
+create policy legacy_session_notes_admin on storage.objects for all to authenticated
+  using (bucket_id = 'session-notes' and public.is_admin())
+  with check (bucket_id = 'session-notes' and public.is_admin());
 
 -- PostgREST: pick up teachers_public, teacher_public() and cohort_classmates().
 notify pgrst, 'reload schema';
