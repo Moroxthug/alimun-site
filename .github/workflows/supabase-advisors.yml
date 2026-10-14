@@ -1,0 +1,39 @@
+name: Supabase advisors (weekly)
+
+on:
+  schedule:
+    - cron: '23 6 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  advisors:
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_REF: dgaiasmefcbrtzqwdyri
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch security and performance advisors
+        run: |
+          if [ -z "$SUPABASE_ACCESS_TOKEN" ]; then echo "::warning::SUPABASE_ACCESS_TOKEN secret not set; skipping."; exit 0; fi
+          for kind in security performance; do
+            curl -sSf -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
+              "https://api.supabase.com/v1/projects/$PROJECT_REF/advisors/$kind" > "$kind.json"
+          done
+          # Known, accepted warnings (docs/audit/FINDINGS.md / phase-1 doc).
+          jq -s '[.[].lints[]? | select(.level == "ERROR" or .level == "WARN")
+                 | select(.name != "auth_leaked_password_protection")
+                 | {level, name, title, detail}]' security.json performance.json > findings.json
+          echo "count=$(jq length findings.json)" >> "$GITHUB_ENV"
+      - name: Open or update an issue
+        if: env.count != '' && env.count != '0'
+        run: |
+          title="Supabase advisors: ${count} warning(s)"
+          body=$(printf 'Weekly advisor run %s/%s/actions/runs/%s\n\n```json\n%s\n```' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" "$(jq . findings.json | head -c 60000)")
+          existing=$(gh issue list --state open --search 'in:title "Supabase advisors:"' --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then gh issue comment "$existing" --body "$body"; else gh issue create --title "$title" --body "$body"; fi

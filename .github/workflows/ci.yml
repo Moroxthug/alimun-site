@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  checks:
+    name: Syntax, build, function cap, links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - name: node --check on api/, js/ and every inline script
+        run: node scripts/ci/check-inline-scripts.js
+      - name: Serverless function cap (Vercel Hobby = 12)
+        run: node scripts/ci/check-function-count.js
+      - name: Build locales and require no diff
+        run: |
+          npm run build
+          git diff --exit-code --stat || { echo "::error::Locale copies are out of date. Run npm run build and commit the result."; exit 1; }
+      - name: Local links and sitemap
+        run: node scripts/ci/check-links.js
+
+  secrets:
+    name: gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Scan full history
+        run: |
+          curl -sSL https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz | tar -xz gitleaks
+          ./gitleaks git . --config .gitleaks.toml --redact --no-banner -v
+
+  dependencies:
+    name: npm audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm audit --omit=dev --audit-level=high
+
+  semgrep:
+    name: Semgrep
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: pip install semgrep==1.180.0
+      - name: Extract inline scripts from root HTML (locales are generated copies)
+        run: |
+          EXTRACT_DIR=.inline-js node scripts/ci/check-inline-scripts.js
+          find .inline-js -name '[a-z][a-z]__*' -delete
+      - name: House rules (escapeHtml on innerHTML, no service role in browser)
+        run: semgrep scan --metrics=off --error --config .semgrep/alimun.yml --exclude node_modules --exclude 'ar' --exclude 'de' --exclude 'es' --exclude 'fr' --exclude 'it' --exclude 'ma' --exclude 'pt' --exclude 'zh' --exclude js/webflow.js .
+      - name: Registry rules (blocking on ERROR severity)
+        run: semgrep scan --metrics=off --error --severity ERROR --config p/javascript --config p/xss --config p/secrets --exclude node_modules --exclude js/webflow.js --exclude 'ar' --exclude 'de' --exclude 'es' --exclude 'fr' --exclude 'it' --exclude 'ma' --exclude 'pt' --exclude 'zh' .
+
+  smoke:
+    name: Playwright smoke (preview mode)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - run: npx playwright test
+        env:
+          CI: '1'

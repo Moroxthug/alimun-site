@@ -17,11 +17,14 @@ rules:
           patterns:
             - pattern-not: escapeHtml(...)
             - pattern-not: escapeAttr(...)
+            - pattern-not: escHtml(...)
+            - pattern-not: escAttr(...)
             - pattern-not: safeUrl(...)
             - pattern-not: encodeURIComponent(...)
             - pattern-not: Number(...)
             - pattern-not: $N.toFixed(...)
             - pattern-not: t(...)
+            - pattern-not: xt(...)
   - id: service-role-in-browser
     message: Service-role key referenced outside api/. Only the publishable key may reach the browser.
     severity: ERROR
