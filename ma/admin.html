@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ma" dir="ltr"><head>
+<!DOCTYPE html><html lang="fr-MA" dir="ltr"><head>
 <meta charset="utf-8">
 <title>Admin Portal — Alimun</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -6,7 +6,7 @@
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700,900&amp;display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=JetBrains+Mono:wght@400;600;700&amp;display=swap" rel="stylesheet">
 <!-- Supabase CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
 <script src="../js/view-as.js"></script>
 <script>
   window.ALIMUN_CONFIG = {
@@ -1359,6 +1359,21 @@ function escapeHtml(v) {
 }
 // Only allow https room links in href attributes
 const safeHttpsUrl = u => (/^https:\/\//i.test(String(u || '')) ? String(u) : '');
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// Columns labelled "UTC" must render in UTC, not the admin's local timezone
+const fmtUtc = v => v ? new Date(v).toLocaleString(undefined, { timeZone: 'UTC' }) : '';
+// Settings whose values are credentials are masked in the table
+const isSecretKey = k => /secret|key|token|password/i.test(String(k || ''));
+// Disable a submit button while its request runs (prevents double inserts)
+function busyButton(selector, label) {
+  const btn = document.querySelector(selector);
+  if (!btn) return () => {};
+  if (btn.disabled) return null;
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = label || 'Saving…';
+  return () => { btn.disabled = false; btn.textContent = orig; };
+}
 
 // Sidebar Collapsible State
 const sb = document.getElementById('sb');
@@ -1454,7 +1469,7 @@ function openModal(html) {
   const { data: { user } } = await supabase.auth.getUser();
   // Admin is ONLY app_metadata.role (user_metadata is user-forgeable; never trust it for admin)
   if (user?.app_metadata?.role !== 'admin') {
-    const role = user?.app_metadata?.role || user?.user_metadata?.role || '';
+    const role = user?.app_metadata?.role || '';
     window.location.href = role === 'student' ? 'student-dashboard.html' :
                           role === 'teacher' ? 'teacher-dashboard.html' : 'signin.html';
     return;
@@ -1531,9 +1546,10 @@ window.toggleFinancialsMask = function() {
 
 // ── MODULE: OVERVIEW ──
 async function loadStats() {
-  const { data: sData } = await supabase.from('student_profiles').select('id');
-  const { data: tData } = await supabase.from('teacher_profiles').select('id').eq('status', 'approved');
-  const { data: cData } = await supabase.from('cohorts').select('id').in('status', ['open', 'full']);
+  // count: 'exact' + head avoids the PostgREST max_rows cap on .length counts
+  const { count: sCount } = await supabase.from('student_profiles').select('id', { count: 'exact', head: true });
+  const { count: tCount } = await supabase.from('teacher_profiles').select('id', { count: 'exact', head: true }).eq('status', 'approved');
+  const { count: cCount } = await supabase.from('cohorts').select('id', { count: 'exact', head: true }).in('status', ['open', 'full']);
   const { data: payouts } = await supabase.from('teacher_payouts').select('amount_eur, status');
 
   let paidTotal = 0;
@@ -1547,9 +1563,9 @@ async function loadStats() {
   }
 
   let dbVolume = (paidTotal + pendingTotal) * 1.5;
-  let studentCount = sData?.length || 0;
-  let teacherCount = tData?.length || 0;
-  let cohortCount = cData?.length || 0;
+  let studentCount = sCount || 0;
+  let teacherCount = tCount || 0;
+  let cohortCount = cCount || 0;
 
   // Save current financial values for masking toggles
   currentFinancialValues.volume = dbVolume;
@@ -1565,9 +1581,9 @@ async function loadStats() {
 }
 
 async function loadLiveSessions() {
-  // Today (local day), status scheduled/live only
-  const dayStart = new Date(); dayStart.setHours(0, 0, 0, 0);
-  const dayEnd = new Date(dayStart); dayEnd.setDate(dayEnd.getDate() + 1);
+  // Today (UTC day, matching the "UTC" column), status scheduled/live only
+  const dayStart = new Date(); dayStart.setUTCHours(0, 0, 0, 0);
+  const dayEnd = new Date(dayStart); dayEnd.setUTCDate(dayEnd.getUTCDate() + 1);
   const { data: sessions } = await supabase
     .from('sessions')
     .select('*, cohorts(language, level, tier)')
@@ -1585,7 +1601,7 @@ async function loadLiveSessions() {
   tbody.innerHTML = sessions.map(s => `
     <tr>
       <td><span class="pill bl">${escapeHtml(s.cohorts?.language || 'Lang')} ${escapeHtml(s.cohorts?.level || 'A1')} (${escapeHtml(s.cohorts?.tier || 'Focused')})</span></td>
-      <td class="mono">${new Date(s.scheduled_at).toLocaleString()}</td>
+      <td class="mono">${escapeHtml(fmtUtc(s.scheduled_at))}</td>
       <td>
         ${safeHttpsUrl(s.daily_room_url) ? `<a href="${escapeHtml(s.daily_room_url)}" target="_blank" rel="noopener" class="btn btn-sm">Join Room →</a>` : `<span style="color:var(--dim);">No URL</span>`}
       </td>
@@ -1683,6 +1699,7 @@ window.openStudentDetail = async function(id) {
           <select id="edit-std-tier">
             ${STUDENT_TIERS.map(tier => `<option value="${tier}" ${student.tier === tier ? 'selected' : ''}>${TIER_LABELS[tier]}</option>`).join('')}
           </select>
+          ${student.stripe_subscription_status === 'active' ? `<small style="color:var(--err); font-size:0.68rem; margin-top:2px;">This student has an active Stripe subscription. A manual tier change does not change Stripe and is reset by the next subscription update.</small>` : ''}
         </div>
       </div>
       
@@ -1711,7 +1728,7 @@ window.openStudentDetail = async function(id) {
 
       <div style="display:flex;justify-content:flex-end;gap:12px;border-top:1px solid rgba(0,0,0,0.06);padding-top:1.25rem;">
         <button class="btn btn-out" onclick="closeModal()">Cancel</button>
-        <button class="btn" onclick="saveStudentDetail('${student.id}', '${student.tier || ''}')">Save File</button>
+        <button class="btn" onclick="saveStudentDetail(${escapeHtml(JSON.stringify(String(student.id)))}, ${escapeHtml(JSON.stringify(String(student.tier || '')))})">Save File</button>
       </div>
     </div>
   `;
@@ -1734,10 +1751,11 @@ window.saveStudentDetail = async function(id, originalTier) {
   }
 
   // If tier changed, notify student via API
+  let emailFailed = false;
   if (tier !== originalTier) {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      await fetch('/api/send-admin-email', {
+      const resp = await fetch('/api/send-admin-email', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -1749,12 +1767,17 @@ window.saveStudentDetail = async function(id, originalTier) {
           tierName: tier.charAt(0).toUpperCase() + tier.slice(1)
         })
       });
+      if (!resp.ok) {
+        emailFailed = true;
+        console.warn('Tier notification email failed: HTTP', resp.status);
+      }
     } catch (err) {
+      emailFailed = true;
       console.warn('Could not dispatch automated upgrade notification:', err);
     }
   }
 
-  showToast("Student file updated successfully.");
+  showToast(emailFailed ? "Student file updated, but the notification email could not be sent." : "Student file updated successfully.");
   closeModal();
   await loadStudents();
 };
@@ -1822,14 +1845,17 @@ window.saveNewStudent = async function() {
   const tier = document.getElementById('add-std-tier').value;
   const goal_track = document.getElementById('add-std-track').value;
 
-  if (!user_id || !full_name) {
+  if (!UUID_RE.test(user_id) || !full_name) {
     alert("Please provide valid User UUID and Full Name.");
     return;
   }
 
+  const done = busyButton('button[onclick^="saveNewStudent"]');
+  if (!done) return;
   const { error } = await supabase
     .from('student_profiles')
     .insert({ user_id, full_name, language, level, goal_track, tier });
+  done();
 
   if (error) {
     alert("Failed to initialize profile: " + error.message);
@@ -2247,11 +2273,16 @@ window.saveNewTeacher = async function() {
   const language = document.getElementById('add-tch-lang').value.trim();
   const hourly_rate = parseFloat(document.getElementById('add-tch-rate').value) || 0;
 
-  if (!user_id || !full_name) {
+  if (!UUID_RE.test(user_id) || !full_name) {
     alert("Valid User ID and Faculty Name are required.");
     return;
   }
+  // The account's app_metadata.role is not changed here (service role only). If it is not
+  // already 'teacher', the person cannot open the teacher dashboard with this profile.
+  if (!confirm("This creates an approved teacher profile but does not change the account's role. The person can only use the teacher dashboard if their account role is already 'teacher'. Continue?")) return;
 
+  const done = busyButton('button[onclick^="saveNewTeacher"]');
+  if (!done) return;
   const { error } = await supabase
     .from('teacher_profiles')
     .insert({
@@ -2264,6 +2295,7 @@ window.saveNewTeacher = async function() {
       status: 'approved',
       bio: 'Directly registered faculty staff.'
     });
+  done();
 
   if (error) {
     alert("Could not insert faculty: " + error.message);
@@ -2338,6 +2370,12 @@ window.openCreateCohortModal = function() {
           </select>
         </div>
         <div class="field-row">
+          <label>Academic Track</label>
+          <select id="new-coh-track">
+            ${GOAL_TRACKS.map(g => `<option value="${g}" ${g === 'foundations' ? 'selected' : ''}>${cap(g)}</option>`).join('')}
+          </select>
+        </div>
+        <div class="field-row">
           <label>Billing Subscription Tier</label>
           <select id="new-coh-tier">
             <option value="community">Community</option>
@@ -2372,11 +2410,12 @@ window.saveNewCohort = async function() {
   const language = document.getElementById('new-coh-lang').value.trim();
   const level = document.getElementById('new-coh-level').value;
   const tier = document.getElementById('new-coh-tier').value;
+  const goal_track = document.getElementById('new-coh-track').value;
   const max_students = parseInt(document.getElementById('new-coh-max').value) || 10;
   const day = document.getElementById('new-coh-day').value.trim();
   const time = document.getElementById('new-coh-time').value.trim();
 
-  if (!day || !time || !language) {
+  if (!day || !time || !language || !UUID_RE.test(teacher_id) || !GOAL_TRACKS.includes(goal_track)) {
     alert("Please populate all parameters.");
     return;
   }
@@ -2397,6 +2436,9 @@ window.saveNewCohort = async function() {
   }
   const schedule_days = dayNames.map(d => cap(d.toLowerCase()));
 
+  const done = busyButton('button[onclick^="saveNewCohort"]', 'Provisioning…');
+  if (!done) return;
+
   // Insert Cohort row
   const { data: cohort, error } = await supabase
     .from('cohorts')
@@ -2404,6 +2446,7 @@ window.saveNewCohort = async function() {
       teacher_id,
       language,
       level,
+      goal_track,
       tier,
       max_students,
       schedule_days,
@@ -2415,6 +2458,7 @@ window.saveNewCohort = async function() {
     .single();
 
   if (error) {
+    done();
     alert("Cohort provisioning failed: " + error.message);
     return;
   }
@@ -2439,8 +2483,13 @@ window.saveNewCohort = async function() {
 
   const { error: sessErr } = await supabase.from('sessions').insert(sessions);
   if (sessErr) {
-    alert("Cohort provisioned successfully, but weekly sessions insert failed: " + sessErr.message);
+    // Roll back the cohort so a retry does not leave a cohort with no sessions behind
+    const { error: rbErr } = await supabase.from('cohorts').delete().eq('id', cohort.id);
+    done();
+    alert("Weekly sessions insert failed: " + sessErr.message +
+      (rbErr ? `\nThe new cohort ${cohort.id} could not be removed (${rbErr.message}); delete it before retrying.` : "\nThe new cohort was removed; you can retry."));
   } else {
+    done();
     showToast("Cohort provisioned with 12 initial weekly learning sessions.");
     closeModal();
     await loadCohorts();
@@ -2478,7 +2527,7 @@ function renderSessionsTable(list) {
         <span class="pill bl">${escapeHtml(s.cohorts ? s.cohorts.language + ' ' + s.cohorts.level : 'Legacy Class')}</span>
       </td>
       <td>${escapeHtml((s.cohorts && s.cohorts.teacher_profiles) ? s.cohorts.teacher_profiles.full_name : 'No Teacher Assigned')}</td>
-      <td class="mono">${new Date(s.scheduled_at).toLocaleString()}</td>
+      <td class="mono">${escapeHtml(fmtUtc(s.scheduled_at))}</td>
       <td>
         ${safeHttpsUrl(s.daily_room_url) ? `<a href="${escapeHtml(s.daily_room_url)}" target="_blank" rel="noopener" style="color:var(--b); font-weight:600;">Link URL</a>` : '<span style="color:var(--dim)">Not set</span>'}
       </td>
@@ -2554,6 +2603,15 @@ window.saveSessionChanges = async function(id) {
   const scheduled_at = document.getElementById('edit-sess-time').value.trim();
   const daily_room_url = document.getElementById('edit-sess-room').value.trim();
   const status = document.getElementById('edit-sess-status').value;
+
+  if (!scheduled_at || isNaN(new Date(scheduled_at).getTime())) {
+    alert("Scheduled time must be an ISO 8601 date, e.g. 2026-07-20T18:00:00Z.");
+    return;
+  }
+  if (daily_room_url && !safeHttpsUrl(daily_room_url)) {
+    alert("Room URL must start with https://");
+    return;
+  }
 
   const { error } = await supabase
     .from('sessions')
@@ -2640,7 +2698,7 @@ async function loadSettings() {
   tbody.innerHTML = SETTINGS.map(s => `
     <tr>
       <td class="mono font-weight-700">${escapeHtml(s.key)}</td>
-      <td class="mono">${escapeHtml(s.value)}</td>
+      <td class="mono">${isSecretKey(s.key) ? '••••••••' : escapeHtml(s.value)}</td>
       <td style="text-align:right; display:flex; justify-content:flex-end; gap:8px;">
         <button class="btn btn-out btn-sm" onclick="openEditSettingModal(${escapeHtml(JSON.stringify(String(s.key)))})">Edit</button>
         <button class="btn btn-err btn-sm" onclick="deleteSetting(${escapeHtml(JSON.stringify(String(s.key)))})">Delete</button>
@@ -2848,10 +2906,15 @@ async function loadPayouts() {
 }
 
 window.markPayoutPaid = async function(id) {
+  const p = PAYOUTS.find(x => x.id === id);
+  if (!confirm(`Mark this payout${p ? ` of €${p.amount_eur} to ${p.teacher_profiles?.full_name || 'this teacher'}` : ''} as paid?`)) return;
+  const done = busyButton(`button[onclick="markPayoutPaid('${id}')"]`);
+  if (!done) return;
   const { error } = await supabase
     .from('teacher_payouts')
     .update({ status: 'paid', paid_at: new Date().toISOString() })
     .eq('id', id);
+  done();
 
   if (error) {
     alert("Database update failed: " + error.message);
@@ -2917,6 +2980,8 @@ window.saveNewPayout = async function() {
     return;
   }
 
+  const done = busyButton('button[onclick^="saveNewPayout"]');
+  if (!done) return;
   const { error } = await supabase
     .from('teacher_payouts')
     .insert({
@@ -2927,6 +2992,7 @@ window.saveNewPayout = async function() {
       amount_eur,
       status: 'pending'
     });
+  done();
 
   if (error) {
     alert("Logging transaction failed: " + error.message);

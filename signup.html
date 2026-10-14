@@ -136,7 +136,7 @@ body{font-family:var(--body);background:#f0efe9;min-height:100vh;display:flex;fl
 }
 </style>
 <!-- Supabase CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
 <script>
   window.ALIMUN_CONFIG = {
     supabaseUrl:         'https://dgaiasmefcbrtzqwdyri.supabase.co',
@@ -304,6 +304,15 @@ Object.defineProperty(window, 'step', {
 window.render = () => render();
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
+function escapeHtml(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+// PostgREST/Postgres error text names tables, policies and constraints; keep it in
+// the console and show the caller's generic message instead.
+function dbErrorText(err, fallback) {
+  console.error('[Alimun] database error:', err);
+  return fallback;
+}
 function totalSteps() { return fd.role === 'teacher' ? 4 : 5; }
 function prog(s)       { return Math.round(((s - 1) / (totalSteps() - 1)) * 100); }
 function setWidth(w)   { card.className = 'card ' + w; }
@@ -432,8 +441,8 @@ function renderDetails() {
       <div class="step-title" data-i18n="signup_details_title">Create your account</div>
     </div>
     <div class="step-body">
-      <div class="field"><label data-i18n="auth_fullname">Full name</label><input id="f-name" type="text" placeholder="Alex Chen" value="${fd.name}"></div>
-      <div class="field"><label data-i18n="auth_email">Email address</label><input id="f-email" type="email" placeholder="alex@example.com" value="${fd.email}"></div>
+      <div class="field"><label data-i18n="auth_fullname">Full name</label><input id="f-name" type="text" placeholder="Alex Chen" value="${escapeHtml(fd.name)}"></div>
+      <div class="field"><label data-i18n="auth_email">Email address</label><input id="f-email" type="email" placeholder="alex@example.com" value="${escapeHtml(fd.email)}"></div>
       <div class="field"><label data-i18n="auth_password">Password</label><input id="f-pw" type="password" placeholder="At least 8 characters" data-i18n-placeholder="signup_pw_placeholder"></div>
       <div class="error-msg" id="err-details"></div>
       <div class="btn-row">
@@ -452,6 +461,10 @@ window.saveDetails = async function() {
 
   if (!fd.name)              { showError('err-details', 'Please enter your full name.');        return; }
   if (!fd.email)             { showError('err-details', 'Please enter your email address.');    return; }
+  // Account already created in this visit (user came back with "Back"): signUp
+  // again would fail with "already registered", so continue to the profile step.
+  if (newUserId) { step = 3; render(); return; }
+
   if (fd.pw.length < 8)     { showError('err-details', 'Password must be at least 8 characters.'); return; }
 
   setLoading('btn-details', true, 'Continue →');
@@ -587,14 +600,14 @@ window.proceedFromLanguage = function() {
 // ── Step 4 (student, coming-soon language): Founding member or waitlist ──────
 function renderFoundingOrWaitlist() {
   setWidth('card-xwide');
-  const langName   = fd.language;
-  const coupon     = langName.toLowerCase().replace(/\s+/g, '') + '10off';
+  const langName   = escapeHtml(fd.language);
+  const coupon     = escapeHtml(fd.language.toLowerCase().replace(/\s+/g, '') + '10off');
   const fee        = cfg.foundingMemberFee || 29;
 
   card.innerHTML = `
     ${progressHTML(4, 'signup_step_tier')}
     <div class="step-head">
-      <div class="step-ey">${langName} · ${fd.level}</div>
+      <div class="step-ey">${langName} · ${escapeHtml(fd.level)}</div>
       <div class="step-title">Reserve your spot</div>
     </div>
     <div class="step-body">
@@ -697,6 +710,14 @@ window.completeFounding = async function() {
     return;
   }
 
+  // Check checkout is possible before saving a founding_member tier (AUTH-01)
+  const foundingPriceId = cfg.stripePriceFoundingMember;
+  if (!foundingPriceId || foundingPriceId.includes('PLACEHOLDER')) {
+    setLoading('btn-founding', false, 'Continue →');
+    showError('err-founding', 'Founding member checkout is not configured yet. Please use the waitlist option or contact support.');
+    return;
+  }
+
   // Save profile with founding_member tier
   const { error: dbErr } = await supabase
     .from('student_profiles')
@@ -710,14 +731,7 @@ window.completeFounding = async function() {
     });
   if (dbErr && dbErr.code !== '23505') {
     setLoading('btn-founding', false, 'Continue →');
-    showError('err-founding', dbErr.message || 'Could not save profile. Please try again.');
-    return;
-  }
-
-  const foundingPriceId = cfg.stripePriceFoundingMember;
-  if (!foundingPriceId || foundingPriceId.includes('PLACEHOLDER')) {
-    setLoading('btn-founding', false, 'Continue →');
-    showError('err-founding', 'Founding member checkout is not configured yet. Please use the waitlist option or contact support.');
+    showError('err-founding', dbErrorText(dbErr, 'Could not save profile. Please try again.'));
     return;
   }
 
@@ -772,7 +786,7 @@ window.completeWaitlist = async function() {
     });
   if (dbErr && dbErr.code !== '23505') {
     setLoading('btn-founding', false, 'Continue →');
-    showError('err-founding', dbErr.message || 'Could not save your registration. Please try again.');
+    showError('err-founding', dbErrorText(dbErr, 'Could not save your registration. Please try again.'));
     return;
   }
 
@@ -914,7 +928,7 @@ window.completeStu = async function() {
   // Any other error is fatal.
   if (dbErr && dbErr.code !== '23505') {
     setLoading('btn-tier', false, 'Complete registration →');
-    showError('err-tier', dbErr.message || 'Could not save your profile. Please try again.');
+    showError('err-tier', dbErrorText(dbErr, 'Could not save your profile. Please try again.'));
     return;
   }
 
@@ -970,7 +984,7 @@ window.completeStu = async function() {
 // ── Step 5 (student): Confirmation ──────────────────────────────────────────
 function renderStudentConfirm() {
   setWidth('card-narrow');
-  const firstName = fd.name.split(' ')[0];
+  const firstName = escapeHtml(fd.name.split(' ')[0]);
 
   // ── Waitlist variant ────────────────────────────────────────────────────────
   if (fd.isWaitlist) {
@@ -980,11 +994,11 @@ function renderStudentConfirm() {
           <svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--b)" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
         <div class="confirm-title">You're on the list, ${firstName}!</div>
-        <div class="confirm-sub">We'll email you the moment <strong>${fd.language}</strong> classes open. No payment needed — your spot is reserved.</div>
+        <div class="confirm-sub">We'll email you the moment <strong>${escapeHtml(fd.language)}</strong> classes open. No payment needed — your spot is reserved.</div>
         <div class="tier-summary" style="flex-direction:column;gap:.5rem;align-items:flex-start;">
           <div class="tier-summary-l">Your 10% discount coupon</div>
           <div style="display:flex;align-items:center;gap:.625rem;">
-            <div style="font-family:var(--disp);font-size:1.1rem;letter-spacing:.06em;color:var(--b);background:var(--g);padding:.3rem .8rem;border-radius:.5rem;">${fd.couponCode}</div>
+            <div style="font-family:var(--disp);font-size:1.1rem;letter-spacing:.06em;color:var(--b);background:var(--g);padding:.3rem .8rem;border-radius:.5rem;">${escapeHtml(fd.couponCode)}</div>
             <div style="font-size:.72rem;color:#aaa;">Use this at checkout when we launch</div>
           </div>
         </div>
@@ -1013,7 +1027,7 @@ function renderStudentConfirm() {
       <div class="confirm-sub">Your Alimun account is ready. You've been placed on the waitlist for the ${localizedTierName} tier — you'll hear from us within 48 hours.</div>
       <div class="tier-summary">
         <div class="tier-summary-l">Selected tier</div>
-        <div class="tier-summary-v">${localizedTierName} · ${tierPrice}</div>
+        <div class="tier-summary-v">${escapeHtml(localizedTierName)} · ${tierPrice}</div>
       </div>
       <button class="btn" onclick="window.location.href='student-dashboard.html'">Go to your dashboard →</button>
     </div>`;
@@ -1031,8 +1045,7 @@ function renderTeaching() {
     <div class="step-body">
       <div class="field"><label data-i18n="signup_teach_lang_label">Language you teach</label>
         <select id="f-lang">
-          ${['Spanish','French','Portuguese','Italian','German','Mandarin','Japanese','Arabic']
-            .map(l => `<option${l === fd.language ? ' selected' : ''}>${l}</option>`).join('')}
+          ${LANGS.map(l => `<option${l === fd.language ? ' selected' : ''}>${l}</option>`).join('')}
         </select>
       </div>
       <div class="field"><label data-i18n="signup_teach_exp_label">Years of experience</label>
@@ -1047,9 +1060,9 @@ function renderTeaching() {
         </select>
       </div>
       <div class="field"><label data-i18n="signup_teach_spec_label">Teaching specialty</label>
-        <input id="f-spec" type="text" placeholder="e.g. DELE exam prep, business Spanish, conversational…" data-i18n-placeholder="signup_teach_spec_placeholder" value="${fd.specialty}"></div>
+        <input id="f-spec" type="text" placeholder="e.g. DELE exam prep, business Spanish, conversational…" data-i18n-placeholder="signup_teach_spec_placeholder" value="${escapeHtml(fd.specialty)}"></div>
       <div class="field"><label><span data-i18n="signup_teach_bio_label">Short bio</span> <span style="font-weight:400;color:#ccc;" data-i18n="signup_teach_bio_sub">(shown to students)</span></label>
-        <textarea id="f-bio" style="min-height:100px;resize:none;width:100%;background:#fafaf8;border:1.5px solid rgba(0,0,0,.1);border-radius:.75rem;padding:.8rem 1rem;font-family:var(--body);font-size:.9rem;color:var(--b);outline:none;" placeholder="Tell prospective students about your teaching style and experience…" data-i18n-placeholder="signup_teach_bio_placeholder">${fd.bio}</textarea>
+        <textarea id="f-bio" style="min-height:100px;resize:none;width:100%;background:#fafaf8;border:1.5px solid rgba(0,0,0,.1);border-radius:.75rem;padding:.8rem 1rem;font-family:var(--body);font-size:.9rem;color:var(--b);outline:none;" placeholder="Tell prospective students about your teaching style and experience…" data-i18n-placeholder="signup_teach_bio_placeholder">${escapeHtml(fd.bio)}</textarea>
       </div>
       <div class="error-msg" id="err-teach"></div>
       <div class="btn-row">
@@ -1064,7 +1077,12 @@ window.applyTeacher = async function() {
   fd.specialty        = (document.getElementById('f-spec')?.value || '').trim();
   fd.bio              = (document.getElementById('f-bio')?.value  || '').trim();
   fd.experience_years = parseInt(document.getElementById('f-exp')?.value || '3', 10);
-  fd.language         = document.getElementById('f-lang')?.value || 'Spanish';
+  fd.language         = document.getElementById('f-lang')?.value || '';
+
+  if (!LANGS.includes(fd.language)) {
+    showError('err-teach', 'Please choose the language you teach.');
+    return;
+  }
 
   if (!fd.specialty) {
     showError('err-teach', 'Please add a brief teaching specialty.');
@@ -1096,7 +1114,7 @@ window.applyTeacher = async function() {
 
   if (dbErr) {
     setLoading('btn-teach', false, 'Submit application →');
-    showError('err-teach', dbErr.message || 'Could not submit your application. Please try again.');
+    showError('err-teach', dbErrorText(dbErr, 'Could not submit your application. Please try again.'));
     return;
   }
 
@@ -1126,8 +1144,8 @@ function renderTeacherConfirm() {
     <div class="confirm-body">
       <div class="confirm-ico"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
       <div class="confirm-title" data-i18n="signup_teach_confirm_title">Application received</div>
-      <div class="confirm-sub" data-i18n-html="signup_teach_confirm_desc" data-i18n-var-name="${fd.name.split(' ')[0]}">
-        Thank you, ${fd.name.split(' ')[0]}! We'll review your teaching profile
+      <div class="confirm-sub" data-i18n-html="signup_teach_confirm_desc" data-i18n-var-name="${escapeHtml(fd.name.split(' ')[0])}">
+        Thank you, ${escapeHtml(fd.name.split(' ')[0])}! We'll review your teaching profile
         and get back to you within <strong>48 hours</strong>.
       </div>
       <div class="teacher-confirm">
@@ -1152,8 +1170,11 @@ async function resumeFromSession() {
   try { ({ data: { session } } = await supabase.auth.getSession()); } catch (_) {}
   if (!session?.user) return false;
 
-  const user = session.user;
-  const role = user.app_metadata?.role || user.user_metadata?.role || '';
+  // Role comes only from app_metadata (server-set). getUser() reads the current
+  // server copy, so a role the DB trigger set after signUp is seen here.
+  let user = session.user;
+  try { const { data } = await supabase.auth.getUser(); if (data?.user) user = data.user; } catch (_) {}
+  const role = user.app_metadata?.role || '';
   if (role !== 'student' && role !== 'teacher') return false;
 
   newUserId = user.id;

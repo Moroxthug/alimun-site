@@ -39,7 +39,7 @@ const htmlTemplates = rootFiles.filter(file => {
 console.log("HTML templates found in root:", htmlTemplates);
 
 // Helper to interpolate dynamic variables in translations (e.g. {name})
-function interpolateVariables($, el, text) {
+function interpolateVariables($, el, text, asHtml) {
   const matches = text.match(/\{[a-zA-Z0-9_]+\}/g);
   if (!matches) return text;
   let result = text;
@@ -47,10 +47,16 @@ function interpolateVariables($, el, text) {
     const varName = match.slice(1, -1);
     const attrVal = $(el).attr(`data-i18n-var-${varName}`);
     if (attrVal !== undefined && attrVal !== null) {
-      result = result.replace(match, attrVal);
+      // Variables are plain text; escape so data-i18n-html never re-parses them as markup.
+      const safe = asHtml ? escapeHtml(attrVal) : attrVal;
+      result = result.replace(match, () => safe);
     }
   });
   return result;
+}
+
+function escapeHtml(v) {
+  return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 }
 
 // Helper to rewrite relative paths to point to the parent directory (../)
@@ -114,8 +120,9 @@ languages.forEach(lang => {
     const htmlContent = fs.readFileSync(templatePath, 'utf8');
     const $ = cheerio.load(htmlContent);
     
-    // Set html attributes (lang & direction)
-    $('html').attr('lang', lang);
+    // Set html attributes (lang & direction). 'ma' is not a BCP 47 tag; its content is French.
+    const HTML_LANG = { ma: 'fr-MA' };
+    $('html').attr('lang', HTML_LANG[lang] || lang);
     if (lang === 'ar') {
       $('html').attr('dir', 'rtl');
     } else {
@@ -139,7 +146,7 @@ languages.forEach(lang => {
       const key = $(el).attr('data-i18n-html');
       let val = langDict[key];
       if (val !== undefined && val !== null) {
-        val = interpolateVariables($, el, val);
+        val = interpolateVariables($, el, val, true);
         $(el).html(val);
       }
     });
@@ -258,7 +265,7 @@ languages.forEach(lang => {
     $('link[rel="canonical"]').attr('href', selfUrl);
     $('meta[property="og:url"]').attr('content', selfUrl);
     $('meta[name="twitter:url"]').attr('content', selfUrl);
-    const OG_LOCALES = { it: 'it_IT', es: 'es_ES', fr: 'fr_FR', de: 'de_DE', pt: 'pt_PT', zh: 'zh_CN', ar: 'ar_AR', ma: 'ar_MA' };
+    const OG_LOCALES = { it: 'it_IT', es: 'es_ES', fr: 'fr_FR', de: 'de_DE', pt: 'pt_PT', zh: 'zh_CN', ar: 'ar_AR', ma: 'fr_MA' };
     if (OG_LOCALES[lang]) {
       $('meta[property="og:locale"]').attr('content', OG_LOCALES[lang]);
     }

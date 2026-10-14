@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="ma" dir="ltr"><head>
+<!DOCTYPE html><html lang="fr-MA" dir="ltr"><head>
 <meta charset="utf-8">
 <title>Dashboard — Alimun</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -13,7 +13,8 @@
   };
   // Stripe publishable key + price IDs are server-driven (see /api/stripe.js
   // action=config) — needed by the "Upgrade plan" flow further down this page.
-  (async () => {
+  // Callers await ALIMUN_CONFIG_READY before importing /js/stripe/config.js, which reads prices once on load.
+  window.ALIMUN_CONFIG_READY = (async () => {
     try {
       const resp = await fetch('/api/stripe/config');
       if (!resp.ok) { console.error('[Alimun] /api/stripe/config returned', resp.status); return; }
@@ -1421,7 +1422,7 @@ nav {
               <div class="teacher-stat-l" data-i18n="student_teacher_rating">Rating</div>
             </div>
           </div>
-          <button class="join-btn" onclick="openExtraClassPaywall()" style="width:100%;margin-top:16px;justify-content:center;font-size:12px;padding:8px 16px;" data-i18n="student_book_1on1">Book 1-on-1 Class</button>
+          <button class="join-btn" id="btn-book-1on1" onclick="openExtraClassPaywall()" style="width:100%;margin-top:16px;justify-content:center;font-size:12px;padding:8px 16px;" data-i18n="student_book_1on1">Book 1-on-1 Class</button>
           <button class="join-btn" onclick="openCohortSwitchModal()" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;padding:8px 16px;background:#FFF;border:1px solid var(--bd);color:var(--txt);cursor:pointer;" data-i18n="student_change_cohort">Change Class / Cohort</button>
         </div>
 
@@ -2821,9 +2822,10 @@ let VOCAB = [];
   // Localhost-only design preview: /student-dashboard.html?preview=1
   const isLocalPreview = ['localhost','127.0.0.1'].includes(location.hostname)
     && new URLSearchParams(location.search).has('preview');
-  if(isLocalPreview && (!session || !session.user?.user_metadata?.role)){
+  if(isLocalPreview && (!session || !session.user?.app_metadata?.role)){
     session = { user: { id:'preview-user', email:'preview@alimun.com',
-      user_metadata: { role:'student', full_name:'Sofia Chen' } } };
+      app_metadata: { role:'student' },
+      user_metadata: { full_name:'Sofia Chen' } } };
   }
 
   if(!session){window.location.href='signin.html';return;}
@@ -2832,7 +2834,8 @@ let VOCAB = [];
   const viewAs = window.AlimunViewAs ? await AlimunViewAs.resolve(SB, session, 'student') : null;
   if (viewAs && !viewAs.profile) { AlimunViewAs.renderEmpty('student'); return; }
 
-  const role=session.user?.app_metadata?.role||session.user?.user_metadata?.role||'';
+  // Routing uses app_metadata.role only; user_metadata is user-editable.
+  const role=session.user?.app_metadata?.role||'';
   if(!viewAs && role!=='student'){
     window.location.href=role==='teacher'?'teacher-dashboard.html':role==='admin'?'admin.html':'signin.html';
     return;
@@ -2880,6 +2883,12 @@ let VOCAB = [];
   // Fetch data & init
   await initData();
   init();
+  // Hide "Book 1-on-1 Class" when no one-off price is configured (the paywall could only say "not available").
+  Promise.resolve(window.ALIMUN_CONFIG_READY).then(() => {
+    const c = window.ALIMUN_CONFIG || {};
+    const b = document.getElementById('btn-book-1on1');
+    if (b && !(c.prices?.oneOnOneSession || c.stripePriceOneOnOne)) b.style.display = 'none';
+  });
   if (viewAs) AlimunViewAs.mountBar({ kind: 'student', sb: SB, profile });
 })();
 
@@ -2893,7 +2902,7 @@ function renderSessionNotes() {
   const section = document.getElementById('session-notes-section');
   if (!container || !section) return;
 
-  const notesWithPdfs = SESSION_NOTES.filter(n => n.pdf_url);
+  const notesWithPdfs = SESSION_NOTES.filter(n => safeHttpsUrl(n.pdf_url));
   if (notesWithPdfs.length === 0) {
     section.style.display = 'none';
     return;
@@ -2909,12 +2918,12 @@ function renderSessionNotes() {
     return `
       <div style="display:flex; align-items:center; justify-content:space-between; padding:16px 24px; border-bottom:1px solid var(--bd);">
         <div>
-          <div style="font-weight:700; font-size:14px; color:var(--txt);">${grammarTopic}</div>
+          <div style="font-weight:700; font-size:14px; color:var(--txt);">${escHtml(grammarTopic)}</div>
           <div style="font-size:11px; color:var(--dim); margin-top:2px;">
-            Published: ${dateStr} &bull; ${vocabCount} vocabulary words &bull; Homework due: ${n.due_date || 'N/A'}
+            Published: ${dateStr} &bull; ${vocabCount} vocabulary words &bull; Homework due: ${escHtml(n.due_date || 'N/A')}
           </div>
         </div>
-        <a href="${n.pdf_url}" target="_blank" class="btn" style="background:var(--lime); color:var(--txt); padding:6px 16px; font-size:11px; text-decoration:none; border-radius:20px; font-weight:700; text-transform:uppercase;">${xt('student_download_pdf','Download PDF')}</a>
+        <a href="${escHtml(safeHttpsUrl(n.pdf_url))}" target="_blank" rel="noopener noreferrer" class="btn" style="background:var(--lime); color:var(--txt); padding:6px 16px; font-size:11px; text-decoration:none; border-radius:20px; font-weight:700; text-transform:uppercase;">${xt('student_download_pdf','Download PDF')}</a>
       </div>
     `;
   }).join('');
@@ -3341,8 +3350,6 @@ async function initData() {
       const latestNote = allNotes.find(n => n.teacher_note);
       if (latestNote) {
         document.querySelector('[data-field="teacher-note"]').textContent = `"${latestNote.teacher_note}"`;
-        const progNote = document.querySelector('#v-progress .card div div div:last-child');
-        if (progNote) progNote.textContent = `"${latestNote.teacher_note}"`;
       }
       
       // Parse vocab from all session notes
@@ -3592,7 +3599,7 @@ async function initCohortDiscovery() {
     renderCohortDiscoveryPage();
   } catch(e) {
     console.error('[Discovery] Error:', e);
-    if (listEl) listEl.innerHTML = `<div style="color:var(--err);grid-column:1/-1;text-align:center;padding:24px;">Failed to load available classes: ${e.message}</div>`;
+    if (listEl) listEl.innerHTML = `<div style="color:var(--err);grid-column:1/-1;text-align:center;padding:24px;">Failed to load available classes: ${escHtml(e.message)}</div>`;
   }
 }
 
@@ -3742,12 +3749,12 @@ function renderCohortDiscoveryPage() {
     // Proximity badge
     const rel = getLevelRelation(c.level);
     const levelBadgeHtml = rel 
-      ? `<span class="badge-discovery" style="background:${rel.bg}; color:${rel.color};">${c.language} ${c.level} · ${rel.label}</span>`
-      : `<span class="badge-discovery" style="background:rgba(0,0,0,0.05); color:var(--dim);">${c.language} ${c.level}</span>`;
+      ? `<span class="badge-discovery" style="background:${rel.bg}; color:${rel.color};">${escHtml(c.language)} ${escHtml(c.level)} · ${escHtml(rel.label)}</span>`
+      : `<span class="badge-discovery" style="background:rgba(0,0,0,0.05); color:var(--dim);">${escHtml(c.language)} ${escHtml(c.level)}</span>`;
       
     // badges
-    const goalBadgeHtml = `<span class="badge-discovery" style="background:rgba(0,0,0,0.05); color:var(--txt); text-transform:capitalize;">🎯 ${c.goal_track}</span>`;
-    const tierBadgeHtml = `<span class="badge-discovery" style="background:rgba(206,255,101,0.15); color:var(--lime-d); text-transform:capitalize;">💎 ${c.tier}</span>`;
+    const goalBadgeHtml = `<span class="badge-discovery" style="background:rgba(0,0,0,0.05); color:var(--txt); text-transform:capitalize;">🎯 ${escHtml(c.goal_track)}</span>`;
+    const tierBadgeHtml = `<span class="badge-discovery" style="background:rgba(206,255,101,0.15); color:var(--lime-d); text-transform:capitalize;">💎 ${escHtml(c.tier)}</span>`;
 
     // Schedule
     const daysStr = c.schedule_days.join(' & ') || 'TBD';
@@ -3767,7 +3774,7 @@ function renderCohortDiscoveryPage() {
         }
       });
       if (localDays.length > 0) {
-        localScheduleStr = `<div style="font-size:11px; color:var(--dim); margin-top:2px;">📍 Local: ${localDays.join(' & ')} @ ${convertedTime}</div>`;
+        localScheduleStr = `<div style="font-size:11px; color:var(--dim); margin-top:2px;">📍 Local: ${escHtml(localDays.join(' & '))} @ ${escHtml(convertedTime)}</div>`;
       }
     }
 
@@ -3786,7 +3793,7 @@ function renderCohortDiscoveryPage() {
       spotsText = `${spotsLeft} spots left`;
       spotsStyle += ' color:#ea580c;';
     } else {
-      spotsText = `${c.enrolled_count} of ${c.max_students} spots filled`;
+      spotsText = `${Number(c.enrolled_count) || 0} of ${Number(c.max_students) || 20} spots filled`;
       spotsStyle += ' color:var(--dim);';
     }
     
@@ -3808,19 +3815,19 @@ function renderCohortDiscoveryPage() {
         <div style="display:flex; flex-direction:column; gap:10px;">
           <div style="display:flex; justify-content:space-between; align-items:flex-start; position:relative;">
             <div>
-              <span class="teacher-link" onclick="toggleTeacherPopover(event, '${c.id}')">${escHtml(teacherName)}</span>
+              <span class="teacher-link" onclick="toggleTeacherPopover(event, ${jsArg(c.id)})">${escHtml(teacherName)}</span>
               <span style="font-size:11.5px; color:var(--dim); margin-left:4px;">(${ratingStr})</span>
             </div>
             
-            <div id="popover-${c.id}" class="teacher-popover" onclick="event.stopPropagation()">
+            <div id="popover-${escHtml(c.id)}" class="teacher-popover" onclick="event.stopPropagation()">
               <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid rgba(255,255,255,0.15); padding-bottom:6px;">
                 <strong style="color:var(--lime); font-size:13.5px;">${escHtml(teacherName)}</strong>
-                <button onclick="closeTeacherPopover('${c.id}')" style="background:transparent; border:none; color:#FFF; font-size:14px; cursor:pointer;">×</button>
+                <button onclick="closeTeacherPopover(${jsArg(c.id)})" style="background:transparent; border:none; color:#FFF; font-size:14px; cursor:pointer;">×</button>
               </div>
               <div style="font-size:11px; line-height:1.5; color:#DDD; display:flex; flex-direction:column; gap:6px;">
                 <div>💼 <strong>${xt('student_specialty','Specialty:')}</strong> ${escHtml(specialty)}</div>
                 <div>🗣️ <strong>${xt('student_languages','Languages:')}</strong> ${escHtml(langList)}</div>
-                <div>🎓 <strong>${xt('student_delivered','Delivered:')}</strong> ${sessions} sessions</div>
+                <div>🎓 <strong>${xt('student_delivered','Delivered:')}</strong> ${Number(sessions) || 0} sessions</div>
                 <div style="font-style:italic; margin-top:4px; color:#AAA; border-top:1px solid rgba(255,255,255,0.05); padding-top:4px;">"${escHtml(bio)}"</div>
               </div>
             </div>
@@ -3833,7 +3840,7 @@ function renderCohortDiscoveryPage() {
           </div>
 
           <div style="font-size:12.5px; color:var(--txt); font-weight:600; margin-top:4px;">
-            📅 ${daysStr} · ${timeStr.slice(0,5)} (${c.timezone})
+            📅 ${escHtml(daysStr)} · ${escHtml(String(timeStr).slice(0,5))} (${escHtml(c.timezone)})
             ${localScheduleStr}
           </div>
 
@@ -3844,16 +3851,16 @@ function renderCohortDiscoveryPage() {
 
         <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
           <div style="display:flex; justify-content:space-between; align-items:center;">
-            <span style="${spotsStyle}">${spotsText}</span>
+            <span style="${spotsStyle}">${escHtml(spotsText)}</span>
             <span style="font-size:11px; color:var(--dim2); font-weight:600;">${fillPercent}% Full</span>
           </div>
           ${progressBarHtml}
           
           <div style="margin-top:8px;">
             ${isFull ? `
-              <button class="join-btn" onclick="joinWaitlist('${c.id}')" style="width:100%; justify-content:center; background:#080808; border:1px solid #080808; color:#FFF; cursor:pointer;">${xt('student_waitlist_btn','Waitlist')}</button>
+              <button class="join-btn" onclick="joinWaitlist(${jsArg(c.id)})" style="width:100%; justify-content:center; background:#080808; border:1px solid #080808; color:#FFF; cursor:pointer;">${xt('student_waitlist_btn','Waitlist')}</button>
             ` : `
-              <button class="join-btn" onclick="joinCohortDirect('${c.id}')" style="width:100%; justify-content:center; cursor:pointer;">${xt('student_join_cohort_btn','Join cohort')}</button>
+              <button class="join-btn" onclick="joinCohortDirect(${jsArg(c.id)})" style="width:100%; justify-content:center; cursor:pointer;">${xt('student_join_cohort_btn','Join cohort')}</button>
             `}
           </div>
         </div>
@@ -3944,6 +3951,7 @@ async function joinCohortDirect(cohortId) {
         const confirmPay = confirm("Active subscription required. Redirect to Stripe checkout for this cohort tier?");
         if (confirmPay) {
           // Price IDs are server-driven (/api/stripe/config → window.ALIMUN_CONFIG)
+          await window.ALIMUN_CONFIG_READY;
           const cfg = window.ALIMUN_CONFIG || {};
           const TIER_PRICE_IDS = {
             community: cfg.stripePriceCommunityMonthly,
@@ -3971,14 +3979,21 @@ async function joinCohortDirect(cohortId) {
             }),
           });
 
+          if (checkoutResp.status === 409) {
+            // Already subscribed: the server refuses a second subscription. Manage the plan in the billing portal.
+            const { openBillingPortal } = await import('/js/stripe/config.js');
+            await openBillingPortal(`${origin}/student-dashboard.html`);
+            return;
+          }
           if (!checkoutResp.ok) {
             const checkoutErr = await checkoutResp.json().catch(() => ({}));
             throw new Error(checkoutErr.message || checkoutErr.error || 'Failed to initialize checkout');
           }
 
           const checkoutData = await checkoutResp.json();
-          if (!checkoutData.url) throw new Error('No checkout URL returned');
-          window.location.href = checkoutData.url;
+          const checkoutUrl = safeHttpsUrl(checkoutData.url);
+          if (!checkoutUrl) throw new Error('No checkout URL returned');
+          window.location.href = checkoutUrl;
           return;
         } else {
           if (btn) {
@@ -4078,10 +4093,10 @@ function initHome(){
   const sb=document.getElementById('sched-body');
   sb.innerHTML=SCHEDULE.map(ev=>`
     <div class="sched-row">
-      <div class="sched-time">${ev.time}</div>
+      <div class="sched-time">${escHtml(ev.time)}</div>
       <div class="sched-pipe"></div>
-      <div class="sched-title">${ev.title}</div>
-      <div class="sched-tag ${ev.warn?'tag-hw':'tag-default'}">${ev.tag}</div>
+      <div class="sched-title">${escHtml(ev.title)}</div>
+      <div class="sched-tag ${ev.warn?'tag-hw':'tag-default'}">${escHtml(ev.tag)}</div>
     </div>`).join('');
 
   const days=['M','T','W','T','F','S','S'];
@@ -4095,8 +4110,8 @@ function initHome(){
   document.getElementById('activity-list').innerHTML=RECENT_ACTIVITY.map(([a,b,t])=>`
     <div class="activity-row">
       <svg class="activity-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-      <div class="activity-txt"><strong style="color:var(--txt);">${a}</strong> · ${b}</div>
-      <div class="activity-time">${t}</div>
+      <div class="activity-txt"><strong style="color:var(--txt);">${escHtml(a)}</strong> · ${escHtml(b)}</div>
+      <div class="activity-time">${escHtml(t)}</div>
     </div>`).join('');
 
   // DYNAMIC HOME METRICS BINDING
@@ -4204,7 +4219,7 @@ function renderCalDetail(){
   if(calSel&&CAL_DATA[key] && CAL_DATA[key].length > 0){
     det.innerHTML=`<div class="lbl" style="margin-bottom:16px;">${MONTHS[calMonth].charAt(0)+MONTHS[calMonth].slice(1).toLowerCase()} ${calSel}</div>`+
       CAL_DATA[key].map(ev=>`<div class="ev-card" style="background:${TYPE_BG[ev.type]};border:1px solid ${TYPE_COLOR[ev.type]}33;">
-        <div class="ev-title">${ev.title}</div>
+        <div class="ev-title">${escHtml(ev.title)}</div>
         <div class="ev-type" style="color:${TYPE_COLOR[ev.type]};">${TYPE_LABEL[ev.type]}</div>
       </div>`).join('');
   } else {
@@ -4227,7 +4242,7 @@ function renderCalDetail(){
       det.innerHTML=`<div class="lbl" style="margin-bottom:16px;">${xt('student_coming_up','Coming Up')}</div>`+
         slice.map(item=>`<div class="upcoming-item">
           <div class="up-day" style="color:${TYPE_COLOR[item.ev.type]};">${item.day}</div>
-          <div><div class="up-title">${item.ev.title}</div><div class="up-date">${item.dateStr}</div></div>
+          <div><div class="up-title">${escHtml(item.ev.title)}</div><div class="up-date">${escHtml(item.dateStr)}</div></div>
         </div>`).join('');
     } else {
       det.innerHTML=`<div class="lbl" style="margin-bottom:16px;">${xt('student_coming_up','Coming Up')}</div><div style="font-size:12px;color:var(--dim);text-align:center;padding:20px 0;">${xt('student_no_upcoming_events','No upcoming events')}</div>`;
@@ -4259,10 +4274,13 @@ function getOrInitMatchingState(index) {
   return window.matchingStates[index];
 }
 
-function selectMatchWord(index, side, word) {
+// wordIdx indexes state.lefts / state.rights so no word text is ever placed in an onclick string
+function selectMatchWord(index, side, wordIdx) {
   const state = getOrInitMatchingState(index);
   const ex = EXERCISES[index];
-  if (ex.done) return;
+  if (!ex || ex.done) return;
+  const word = (side === 'left' ? state.lefts : state.rights)[wordIdx];
+  if (word === undefined) return;
   
   if (side === 'left') {
     state.selectedLeft = state.selectedLeft === word ? null : word;
@@ -4393,7 +4411,7 @@ function runMockSpeaking(ex, index) {
       } else {
         ex.done = true;
         ex.gradedScore = 85 + Math.floor(Math.random() * 12);
-        ex.feedback = `Pronunciation Score: ${ex.gradedScore}%\nFluency: Excellent. Native-like pacing.\nAccuracy: Good word alignment.\nNote: Make sure to stress the accented vowels. Good job!`;
+        ex.feedback = `Pronunciation Score: ${escHtml(ex.gradedScore)}%\nFluency: Excellent. Native-like pacing.\nAccuracy: Good word alignment.\nNote: Make sure to stress the accented vowels. Good job!`;
         
         updateProgressCategory(ex.cat, ex.gradedScore, ex);
         saveExerciseState(ex);
@@ -4545,7 +4563,7 @@ function submitEssay(index) {
       const d = await resp.json();
       const r = JSON.parse(String(d.text).replace(/```json|```/g, '').trim());
       ex.gradedScore = Math.min(Math.max(Math.round(r.score) || 70, 0), 100);
-      ex.feedback = `Score: ${ex.gradedScore}%\n${r.feedback}`;
+      ex.feedback = `Score: ${escHtml(ex.gradedScore)}%\n${r.feedback}`;
     } catch (e) {
       // No fake score: keep the submission editable and tell the student.
       console.warn('AI grading unavailable:', e);
@@ -4671,10 +4689,23 @@ function xt(key, fallback) {
 function escHtml(s) {
   return String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
+// Only https URLs from data may go into href/src; anything else becomes ''
+function safeHttpsUrl(u) {
+  try { const x = new URL(String(u || '')); return x.protocol === 'https:' ? x.href : ''; } catch (_) { return ''; }
+}
+// Encode a value as a quoted JS string literal that is safe inside an HTML attribute (onclick="f(${jsArg(x)})")
+function jsArg(v) {
+  return escHtml(JSON.stringify(String(v ?? '')));
+}
+// UUID check for ids coming from the URL or data before they reach handlers
+function isUuid(v) {
+  return /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(String(v || ''));
+}
 
 function renderExerciseUI(ex, i) {
   if (ex.isHw) {
-    if (ex.type === 'Essay' || ex.type === 'Homework') {
+    // Every teacher assignment type except Speaking uses the text-answer form (Essay, Homework, Grammar, Vocabulary, Writing).
+    if (ex.type !== 'Speaking') {
       return `
         <div class="mcq-q">${xt('student_instructions','Instructions:')}</div>
         <div class="mcq-stem" style="font-family:var(--sans); background: rgba(0,0,0,0.02); padding: 12px 16px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 16px; font-size:14px; line-height:1.6;">
@@ -4692,7 +4723,7 @@ function renderExerciseUI(ex, i) {
         ` : ex.gradedScore !== null ? `
           <div style="background: rgba(22,163,74,0.04); border: 1px solid rgba(22,163,74,0.15); border-radius: 8px; padding: 14px; font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
             <div style="font-weight: 700; color: var(--ok); display: flex; align-items: center; gap: 6px; font-size: 14px;">
-              <span>✓ Graded: ${ex.gradedScore}%</span>
+              <span>✓ Graded: ${escHtml(ex.gradedScore)}%</span>
             </div>
             <div>
               <div style="font-weight: 700; color: var(--txt); margin-bottom: 4px;">${xt('student_your_submission','Your Submission:')}</div>
@@ -4704,7 +4735,7 @@ function renderExerciseUI(ex, i) {
           <div style="display: flex; flex-direction: column; gap: 8px;" onclick="event.stopPropagation();">
             <textarea id="essay-text-${i}" oninput="countEssayWords(${i})" placeholder="${ex.type === 'Essay' ? 'Type your essay here...' : 'Type your homework answers here...'}" style="width: 100%; height: 120px; padding: 12px; border-radius: 8px; border: 1px solid var(--bd); font-family: var(--sans); font-size: 13px; resize: vertical; background: #fff;">${escHtml(ex.userAnswer || '')}</textarea>
             <div style="display: flex; justify-content: space-between; align-items: center;">
-              <span id="essay-count-${i}" style="font-size: 11px; font-family: var(--mono); color: var(--dim);">${ex.userAnswer ? ex.userAnswer.split(/\s+/).filter(w => w.length > 0).length : 0} / ${ex.minWords} words</span>
+              <span id="essay-count-${i}" style="font-size: 11px; font-family: var(--mono); color: var(--dim);">${ex.userAnswer ? ex.userAnswer.split(/\s+/).filter(w => w.length > 0).length : 0} / ${escHtml(ex.minWords)} words</span>
               <button id="essay-submit-${i}" onclick="submitHomework(${i})" class="join-btn" ${ex.type === 'Essay' && (!ex.userAnswer || ex.userAnswer.split(/\s+/).filter(w => w.length > 0).length < ex.minWords) ? 'disabled style="opacity: 0.5; padding: 8px 16px; font-size: 12px;"' : 'style="padding: 8px 16px; font-size: 12px;"'}>Submit Homework</button>
             </div>
           </div>
@@ -4746,7 +4777,7 @@ function renderExerciseUI(ex, i) {
         ` : ex.gradedScore !== null ? `
           <div style="background: rgba(22,163,74,0.04); border: 1px solid rgba(22,163,74,0.15); border-radius: 8px; padding: 14px; font-size: 13px; display: flex; flex-direction: column; gap: 10px;">
             <div style="font-weight: 700; color: var(--ok); display: flex; align-items: center; gap: 6px; font-size: 14px;">
-              <span>✓ Graded: ${ex.gradedScore}%</span>
+              <span>✓ Graded: ${escHtml(ex.gradedScore)}%</span>
             </div>
             <div>
               <div style="font-weight: 700; color: var(--txt); margin-bottom: 4px;">Your Recorded Speech (Transcribed):</div>
@@ -4838,7 +4869,7 @@ function renderExerciseUI(ex, i) {
         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 10px;">
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <div class="lbl" style="text-align: center; margin-bottom: 4px;">${xt('student_term','Term')}</div>
-            ${state.lefts.map(word => {
+            ${state.lefts.map((word, wIdx) => {
               const isMatched = state.matched.includes(word);
               const isSelected = state.selectedLeft === word;
               let bg = '#fff';
@@ -4854,13 +4885,13 @@ function renderExerciseUI(ex, i) {
                 bg = 'rgba(206,255,101,0.1)';
                 bd = 'var(--lime)';
               }
-              return `<button onclick="selectMatchWord(${i}, 'left', '${word}'); event.stopPropagation();" style="padding: 10px; border-radius: 8px; border: 1px solid ${bd}; background: ${bg}; color: ${color}; cursor: ${cursor}; text-align: center; font-weight: 500; transition: all 0.15s;" ${isMatched ? 'disabled' : ''}>${word}</button>`;
+              return `<button onclick="selectMatchWord(${i}, 'left', ${wIdx}); event.stopPropagation();" style="padding: 10px; border-radius: 8px; border: 1px solid ${bd}; background: ${bg}; color: ${color}; cursor: ${cursor}; text-align: center; font-weight: 500; transition: all 0.15s;" ${isMatched ? 'disabled' : ''}>${escHtml(word)}</button>`;
             }).join('')}
           </div>
           
           <div style="display: flex; flex-direction: column; gap: 8px;">
             <div class="lbl" style="text-align: center; margin-bottom: 4px;">${xt('student_meaning','Meaning')}</div>
-            ${state.rights.map(meaning => {
+            ${state.rights.map((meaning, mIdx) => {
               const pair = ex.pairs.find(p => p.right === meaning);
               const isMatched = pair && state.matched.includes(pair.left);
               const isSelected = state.selectedRight === meaning;
@@ -4877,7 +4908,7 @@ function renderExerciseUI(ex, i) {
                 bg = 'rgba(206,255,101,0.1)';
                 bd = 'var(--lime)';
               }
-              return `<button onclick="selectMatchWord(${i}, 'right', '${meaning}'); event.stopPropagation();" style="padding: 10px; border-radius: 8px; border: 1px solid ${bd}; background: ${bg}; color: ${color}; cursor: ${cursor}; text-align: center; font-weight: 500; transition: all 0.15s;" ${isMatched ? 'disabled' : ''}>${meaning}</button>`;
+              return `<button onclick="selectMatchWord(${i}, 'right', ${mIdx}); event.stopPropagation();" style="padding: 10px; border-radius: 8px; border: 1px solid ${bd}; background: ${bg}; color: ${color}; cursor: ${cursor}; text-align: center; font-weight: 500; transition: all 0.15s;" ${isMatched ? 'disabled' : ''}>${escHtml(meaning)}</button>`;
             }).join('')}
           </div>
         </div>
@@ -4911,7 +4942,7 @@ function renderExerciseUI(ex, i) {
       ` : ex.done ? `
         <div style="background: rgba(22,163,74,0.04); border: 1px solid rgba(22,163,74,0.15); border-radius: 8px; padding: 14px; font-size: 13px;">
           <div style="font-weight: 700; color: var(--ok); display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
-            <span>🎙️</span> Pronunciation Graded: ${ex.gradedScore}%
+            <span>🎙️</span> Pronunciation Graded: ${escHtml(ex.gradedScore)}%
           </div>
           <div style="white-space: pre-line; color: var(--dim); line-height: 1.5;">${escHtml(ex.feedback)}</div>
         </div>
@@ -4953,7 +4984,7 @@ function renderExerciseUI(ex, i) {
         <div style="display: flex; flex-direction: column; gap: 8px;" onclick="event.stopPropagation();">
           <textarea id="essay-text-${i}" oninput="countEssayWords(${i})" placeholder="Start typing here..." style="width: 100%; height: 120px; padding: 12px; border-radius: 8px; border: 1px solid var(--bd); font-family: var(--sans); font-size: 13px; resize: vertical; background: #fff;"></textarea>
           <div style="display: flex; justify-content: space-between; align-items: center;">
-            <span id="essay-count-${i}" style="font-size: 11px; font-family: var(--mono); color: var(--dim);">0 / ${ex.minWords} words</span>
+            <span id="essay-count-${i}" style="font-size: 11px; font-family: var(--mono); color: var(--dim);">0 / ${escHtml(ex.minWords)} words</span>
             <button id="essay-submit-${i}" onclick="submitEssay(${i})" class="join-btn" disabled style="opacity: 0.5; padding: 8px 16px; font-size: 12px;">${xt('student_submit_essay','Submit Essay')}</button>
           </div>
         </div>
@@ -4964,7 +4995,7 @@ function renderExerciseUI(ex, i) {
     return `
       <div class="mcq-q">${escHtml(ex.question)}</div>
       <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
-        <button onclick="playListeningAudio('${ex.audioText.replace(/'/g, "\\'")}'); event.stopPropagation();" class="join-btn" style="padding: 10px 18px; display: flex; align-items: center; gap: 8px;">
+        <button onclick="playListeningAudio(EXERCISES[${i}]?.audioText || ''); event.stopPropagation();" class="join-btn" style="padding: 10px 18px; display: flex; align-items: center; gap: 8px;">
           <span>🔊</span> Play Audio
         </button>
       </div>
@@ -5013,10 +5044,10 @@ function renderExercises(){
       </div>
       <div style="flex:1;">
         <div class="ex-title${ex.done?' done':''}">${escHtml(ex.title)}</div>
-        <div class="ex-type">${ex.type}</div>
+        <div class="ex-type">${escHtml(ex.type)}</div>
       </div>
       <div class="diff-bars">${Array.from({length:5}).map((_,d)=>`<div class="d-bar" style="height:${d<ex.diff?12:6}px;background:${d<ex.diff?(ex.done?'rgba(0,0,0,.15)':'rgba(0,0,0,.35)'):'rgba(0,0,0,.07)'};"></div>`).join('')}</div>
-      <div class="ex-time">${ex.time}</div>
+      <div class="ex-time">${escHtml(ex.time)}</div>
     </div>
     <div class="mcq-expand${isExpanded?' open':''}">
       ${isExpanded ? renderExerciseUI(ex, globalIdx) : ''}
@@ -5114,7 +5145,7 @@ function renderPlacementQuestion() {
     <div style="font-size:14px;margin-bottom:6px;">${escHtml(q.question)}</div>
     ${q.stem ? `<div style="font-size:15px;font-weight:600;background:var(--bg);padding:12px;border-radius:10px;margin-bottom:14px;">${escHtml(q.stem)}</div>` : ''}
     <div style="display:flex;flex-direction:column;gap:8px;">
-      ${q.opts.map((o, i) => `<button onclick="answerPlacement(${i})" style="text-align:left;padding:11px 14px;border:1px solid var(--bd);border-radius:10px;background:#fff;font-size:14px;cursor:pointer;">${String.fromCharCode(65 + i)}. ${o}</button>`).join('')}
+      ${q.opts.map((o, i) => `<button onclick="answerPlacement(${i})" style="text-align:left;padding:11px 14px;border:1px solid var(--bd);border-radius:10px;background:#fff;font-size:14px;cursor:pointer;">${String.fromCharCode(65 + i)}. ${escHtml(o)}</button>`).join('')}
     </div>
   </div>`);
 }
@@ -5200,10 +5231,10 @@ function renderProgress(){
     const avg=Math.round(m.data.reduce((a,b)=>a+b,0)/m.data.length);
     return `<div class="prog-row">
       <div class="prog-label-area">
-        <div class="prog-cat">${m.label}</div>
+        <div class="prog-cat">${escHtml(m.label)}</div>
         <div style="display:flex;align-items:baseline;gap:8px;">
-          <span class="prog-score">${latest}</span>
-          <span class="prog-delta" style="color:${delta>0?'var(--ok)':'var(--err)'};">${delta>0?'+':''}${delta}</span>
+          <span class="prog-score">${escHtml(latest)}</span>
+          <span class="prog-delta" style="color:${delta>0?'var(--ok)':'var(--err)'};">${delta>0?'+':''}${escHtml(delta)}</span>
         </div>
       </div>
       <div class="mini-bars">${m.data.map((v,j)=>`<div class="mini-bar" style="height:${Math.max(((v-50)/50)*100,6)}%;background:${j===m.data.length-1?'var(--lime)':'rgba(0,0,0,.1)'};"></div>`).join('')}</div>
@@ -5242,7 +5273,7 @@ function renderProgress(){
                 <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;">
                   <span>${lblTeacherNoteCohort}</span>
                 </div>
-                <div style="font-size:13px;color:var(--dim);line-height:1.7;">"${latestText}"</div>
+                <div style="font-size:13px;color:var(--dim);line-height:1.7;">"${escHtml(latestText)}"</div>
               </div>
             </div>
           </div>
@@ -5262,13 +5293,13 @@ function renderProgress(){
         return `
           <div class="card" style="margin-bottom: 12px;">
             <div style="display:flex;gap:16px;align-items:flex-start;">
-              <div class="av" style="background:#3B1F6A;width:44px;height:44px;font-size:15px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;">${initials}</div>
+              <div class="av" style="background:#3B1F6A;width:44px;height:44px;font-size:15px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;">${escHtml(initials)}</div>
               <div style="flex:1;">
                 <div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;">
                   <span>${escHtml(teacherName)} <span style="color:var(--dim);font-weight:400;font-size:12px;">· ${lblTeacherNote}</span></span>
-                  <span style="font-size:11px;color:var(--dim);font-weight:400;">${dateStr}</span>
+                  <span style="font-size:11px;color:var(--dim);font-weight:400;">${escHtml(dateStr)}</span>
                 </div>
-                <div style="font-size:13px;color:var(--dim);line-height:1.7;">"${f.feedback_text}"</div>
+                <div style="font-size:13px;color:var(--dim);line-height:1.7;">"${escHtml(f.feedback_text)}"</div>
               </div>
             </div>
           </div>
@@ -5362,11 +5393,11 @@ function renderTests(){
     const translatedDate = xt(t.date, t.date);
     const translatedRemark = xt(t.remark, t.remark);
     return `<div class="result-row">
-      <div class="result-score" style="color:${col};">${t.score}</div>
+      <div class="result-score" style="color:${col};">${escHtml(t.score)}</div>
       <div>
-        <div class="result-topic">${translatedTopic}</div>
-        <div class="result-date">${translatedDate}</div>
-        <div class="result-remark">"${translatedRemark}"</div>
+        <div class="result-topic">${escHtml(translatedTopic)}</div>
+        <div class="result-date">${escHtml(translatedDate)}</div>
+        <div class="result-remark">"${escHtml(translatedRemark)}"</div>
       </div>
     </div>`;
   }).join('');
@@ -5442,12 +5473,12 @@ function renderChat(){
   document.getElementById('member-list').innerHTML=MEMBERS.map(m=>`
     <div class="chat-mem-row${m.me?' me':''}">
       <div class="mem-av-wrap">
-        <div class="av" style="background:${m.col};width:28px;height:28px;font-size:10px;">${escHtml(m.i)}</div>
+        <div class="av" style="background:${escHtml(m.col)};width:28px;height:28px;font-size:10px;">${escHtml(m.i)}</div>
         <div class="mem-online" style="background:${m.online?'#16A34A':'rgba(0,0,0,.22)'}; border-color:${m.me?'rgba(0,0,0,.03)':'var(--card)'};"></div>
       </div>
       <div style="min-width:0;">
         <div class="mem-name">${escHtml(m.name.split(' ')[0])}</div>
-        <div class="mem-role${m.role==='Teacher'?' teacher':''}">${m.role}</div>
+        <div class="mem-role${m.role==='Teacher'?' teacher':''}">${escHtml(m.role)}</div>
       </div>
     </div>`).join('');
 
@@ -5457,11 +5488,11 @@ function renderChat(){
   msgs.innerHTML=`<div class="chat-ts">Session started · 09:00</div>`+
     CHAT_MSGS.map((msg,msgIdx)=>`
       <div class="chat-msg${msg.me?' me':''}">
-        <div class="av" style="background:${msg.col};width:32px;height:32px;font-size:11px;">${escHtml(msg.i)}</div>
+        <div class="av" style="background:${escHtml(msg.col)};width:32px;height:32px;font-size:11px;">${escHtml(msg.i)}</div>
         <div style="max-width:65%;display:flex;flex-direction:column;align-items:${msg.me?'flex-end':'flex-start'};">
           <div class="chat-msg-meta">
             <span class="chat-sender${msg.teacher?' teacher':''}">${escHtml(msg.s)}</span>
-            <span class="chat-time">${msg.time}</span>
+            <span class="chat-time">${escHtml(msg.time)}</span>
             ${msg.ai && !msg.typing ? `<button class="btn out sm" onclick="playChatMsg(${msgIdx})" style="background:none; border:none; color:#777; cursor:pointer; font-size:10px; padding:0; margin-left:6px; display:inline-flex; align-items:center;" title="${escHtml(xt('student_chat_speak_message','Speak message'))}">🔊</button>` : ''}
           </div>
           <div class="chat-bub${msg.me?' me':msg.teacher?' teacher':' other'}" style="${msg.typing ? 'font-style: italic; opacity: 0.7;' : ''}">${escHtml(msg.t)}</div>
@@ -5741,6 +5772,17 @@ function selectUpgradeTier(tierId) {
   }
 }
 
+// True when the profile already has a live Stripe subscription (plan changes go through the billing portal).
+function hasActiveSubscription() {
+  const st = USER.profile?.stripe_subscription_status;
+  return !!USER.profile?.stripe_subscription_id && (st === 'active' || st === 'past_due' || st === 'trialing');
+}
+// create-checkout answers 409 when an active subscription already exists.
+function isSubscriptionConflict(err) {
+  const msg = String(err?.message || '');
+  return !!err && (err.status === 409 || /\b409\b/.test(msg) || /already (has|have) an active subscription|subscription_exists|active_subscription/i.test(msg));
+}
+
 async function confirmUpgrade() {
   const tierId = window.selectedUpgradeTierId;
   if (!tierId) return;
@@ -5751,18 +5793,37 @@ async function confirmUpgrade() {
     btn.style.pointerEvents = 'none';
   }
   
+  const returnUrl = `${window.location.origin}/student-dashboard.html`;
   try {
-    const { createCheckout, getRegionalPriceId } = await import('/js/stripe/config.js');
+    await window.ALIMUN_CONFIG_READY;
+    const { createCheckout, getRegionalPriceId, openBillingPortal } = await import('/js/stripe/config.js');
+
+    // An existing subscription is changed in the Stripe Customer Portal (plan switch with proration).
+    // A new Checkout here would start a second subscription and bill both (APIP-01 / STU-08).
+    if (hasActiveSubscription()) {
+      await openBillingPortal(returnUrl);
+      return;
+    }
+
     const userCurrency = USER.profile?.currency || 'eur';
     const priceId = getRegionalPriceId(tierId, 'monthly', userCurrency);
     
     // createCheckout sends the Supabase bearer token; the server derives the customer from it.
-    await createCheckout({
-      priceId,
-      mode: 'subscription',
-      successUrl: `${window.location.origin}/student-dashboard.html?checkout=success&tier=${tierId}`,
-      cancelUrl: `${window.location.origin}/student-dashboard.html?checkout=cancelled`
-    });
+    try {
+      await createCheckout({
+        priceId,
+        mode: 'subscription',
+        successUrl: `${window.location.origin}/student-dashboard.html?checkout=success&tier=${encodeURIComponent(tierId)}`,
+        cancelUrl: `${window.location.origin}/student-dashboard.html?checkout=cancelled`
+      });
+    } catch (checkoutErr) {
+      // Server refuses a second subscription with 409: send the student to the portal instead.
+      if (isSubscriptionConflict(checkoutErr)) {
+        await openBillingPortal(returnUrl);
+        return;
+      }
+      throw checkoutErr;
+    }
   } catch (e) {
     console.error('Failed to redirect to checkout:', e);
     alert("Failed to start upgrade: " + e.message);
@@ -5903,7 +5964,7 @@ async function openCohortSwitchModal() {
     console.error(e);
     const contentEl = document.getElementById('cohort-switch-content');
     if (contentEl) {
-      contentEl.innerHTML = `<div style="color:#dc2626;font-size:13px;">Error loading cohorts: ${e.message}</div>`;
+      contentEl.innerHTML = `<div style="color:#dc2626;font-size:13px;">Error loading cohorts: ${escHtml(e.message)}</div>`;
     }
   }
 }
@@ -5956,7 +6017,7 @@ async function refreshCohortSwitchList(lang, level) {
     if (!cohorts || cohorts.length === 0) {
       contentEl.innerHTML = `
         <div style="font-size:13.5px;color:var(--dim);text-align:center;padding:20px 0;">
-          No class cohorts available for ${lang} ${level} at this time.
+          No class cohorts available for ${escHtml(lang)} ${escHtml(level)} at this time.
         </div>
         <div style="margin-top: 16px; display: flex; justify-content: flex-end;">
           <button class="join-btn" style="background:#FFF; border:1px solid var(--bd); color:var(--txt); cursor:pointer;" onclick="closeModal()">${btnCancelText}</button>
@@ -6008,7 +6069,7 @@ async function refreshCohortSwitchList(lang, level) {
         spotsText = `${spotsLeft} spots left`;
         spotsStyle += ' color: #ea580c; font-weight: 600;';
       } else {
-        spotsText = `${c.enrolled_count} of ${c.max_students} spots filled`;
+        spotsText = `${Number(c.enrolled_count) || 0} of ${Number(c.max_students) || 20} spots filled`;
         spotsStyle += ' color: var(--dim);';
       }
       
@@ -6034,7 +6095,7 @@ async function refreshCohortSwitchList(lang, level) {
           }
         });
         if (localDays.length > 0) {
-          localScheduleStr = ` (Local: ${localDays.join(', ')} @ ${convertedTime})`;
+          localScheduleStr = ` (Local: ${escHtml(localDays.join(', '))} @ ${escHtml(convertedTime)})`;
         }
       }
 
@@ -6050,18 +6111,18 @@ async function refreshCohortSwitchList(lang, level) {
               <span style="font-weight: 500; font-size: 11px; color: var(--dim);">(${ratingStr})</span>
               <span style="background:${c.match.bg}; color:${c.match.color}; padding:2px 8px; border-radius:100px; font-size:10px; font-weight:700; margin-left:4px;">${c.match.label}</span>
             </div>
-            <div style="font-size: 11.5px; color: var(--dim); margin-top: 4px;">📅 Days: ${days}${localScheduleStr}</div>
-            <div style="font-size: 11.5px; color: var(--dim); margin-top: 2px;">🕒 Time: ${time} (${c.timezone})</div>
-            <div style="${spotsStyle}">👥 ${spotsText}</div>
+            <div style="font-size: 11.5px; color: var(--dim); margin-top: 4px;">📅 Days: ${escHtml(days)}${localScheduleStr}</div>
+            <div style="font-size: 11.5px; color: var(--dim); margin-top: 2px;">🕒 Time: ${escHtml(time)} (${escHtml(c.timezone)})</div>
+            <div style="${spotsStyle}">👥 ${escHtml(spotsText)}</div>
             ${progressBarHtml}
           </div>
           <div>
             ${isCurrent ? `
               <span style="font-size: 11px; font-weight: 700; color: #080808; background: var(--g); padding: 4px 8px; border-radius: 4px;">${xt('student_current_badge','Current')}</span>
             ` : isFull ? `
-              <button class="join-btn" style="font-size: 11px; padding: 6px 12px; cursor:pointer; background: #080808; color: #fff; border: 1px solid #080808;" onclick="joinWaitlist('${c.id}')">Join waitlist</button>
+              <button class="join-btn" style="font-size: 11px; padding: 6px 12px; cursor:pointer; background: #080808; color: #fff; border: 1px solid #080808;" onclick="joinWaitlist(${jsArg(c.id)})">Join waitlist</button>
             ` : `
-              <button class="join-btn" style="font-size: 11px; padding: 6px 12px; cursor:pointer;" onclick="switchCohort('${c.id}')">${xt('student_switch_btn','Switch')}</button>
+              <button class="join-btn" style="font-size: 11px; padding: 6px 12px; cursor:pointer;" onclick="switchCohort(${jsArg(c.id)})">${xt('student_switch_btn','Switch')}</button>
             `}
           </div>
         </div>
@@ -6215,6 +6276,11 @@ async function switchCohort(targetCohortId) {
 }
 
 async function handleClaimWaitlistOffer(cohortId, waitlistId) {
+  // Both values come from the URL: accept UUIDs only. The cohort is taken from the waitlist row, not the URL.
+  if (!isUuid(waitlistId)) {
+    alert("This waitlist offer is invalid, expired, or belongs to another account.");
+    return;
+  }
   try {
     const { data: waitlistRec, error: fetchErr } = await SB
       .from('cohort_waitlist')
@@ -6236,6 +6302,11 @@ async function handleClaimWaitlistOffer(cohortId, waitlistId) {
 
     const lang = waitlistRec.cohorts?.language || '';
     const level = waitlistRec.cohorts?.level || '';
+    const offerCohortId = waitlistRec.cohort_id;
+    if (!isUuid(offerCohortId) || (cohortId && cohortId !== offerCohortId)) {
+      alert("This waitlist offer is invalid, expired, or belongs to another account.");
+      return;
+    }
 
     openModal(`
       <div style="padding: 24px 28px 0;">
@@ -6244,17 +6315,19 @@ async function handleClaimWaitlistOffer(cohortId, waitlistId) {
       </div>
       <div style="padding: 0 28px 24px;">
         <div style="font-size:13.5px;color:var(--txt);margin-bottom:16px;">
-          Congratulations! An open spot in the <strong>${lang} ${level}</strong> class cohort is ready for you.
+          Congratulations! An open spot in the <strong>${escHtml(lang)} ${escHtml(level)}</strong> class cohort is ready for you.
         </div>
         <div style="font-size:12px;color:var(--dim);margin-bottom:20px;border-left:3px solid var(--g);padding-left:12px;">
           Time remaining to claim: <strong>${Math.max(0, Math.round((expiresAt - new Date()) / 1000 / 60 / 60))} hours</strong>.
         </div>
         <div style="display:flex; gap:10px; justify-content:flex-end;">
           <button class="join-btn" style="background:#FFF; border:1px solid var(--bd); color:var(--txt); cursor:pointer;" onclick="closeModal()">${xt('student_decline','Decline')}</button>
-          <button class="join-btn" onclick="executeClaimOffer('${cohortId}', '${waitlistId}')">${xt('student_claim_join_cohort','Claim & Join Cohort')}</button>
+          <button class="join-btn" id="btn-claim-offer">${xt('student_claim_join_cohort','Claim & Join Cohort')}</button>
         </div>
       </div>
     `);
+    const claimBtn = document.getElementById('btn-claim-offer');
+    if (claimBtn) claimBtn.addEventListener('click', () => executeClaimOffer(offerCohortId, waitlistRec.id));
   } catch (err) {
     console.error(err);
   }
@@ -6359,8 +6432,8 @@ async function openTeacherProfileModal() {
     const contentEl = document.getElementById('teacher-profile-content');
     if (!contentEl) return;
     
-    const badgesHtml = (teacher.badges || []).map(b => `
-      <span style="font-size:10px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;background:#ceff65;color:#080808;padding:2px 8px;border-radius:20px;display:inline-block;margin-right:6px;">${b}</span>
+    const badgesHtml = (Array.isArray(teacher.badges) ? teacher.badges : []).map(b => `
+      <span style="font-size:10px;font-weight:700;letter-spacing:0.04em;text-transform:uppercase;background:#ceff65;color:#080808;padding:2px 8px;border-radius:20px;display:inline-block;margin-right:6px;">${escHtml(b)}</span>
     `).join('') || `<span style="font-size:11px;color:var(--dim);">${xt('student_no_badges','No badges yet')}</span>`;
     
     const ratingVal = parseFloat(teacher.rating || 0).toFixed(1);
@@ -6371,7 +6444,7 @@ async function openTeacherProfileModal() {
       <div style="display:flex;flex-direction:column;gap:16px;">
         <div>
           <div style="display:flex;gap:12px;align-items:center;margin-bottom:10px;">
-            <div style="font-size:18px;font-weight:800;color:var(--txt);">⭐ ${ratingVal}</div>
+            <div style="font-size:18px;font-weight:800;color:var(--txt);">⭐ ${escHtml(ratingVal)}</div>
             <div style="font-size:12px;color:var(--dim);">${reviews.length} student reviews</div>
             <div style="margin-left:auto;">${badgesHtml}</div>
           </div>
@@ -6385,7 +6458,7 @@ async function openTeacherProfileModal() {
             </div>
             <div>
               <div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">${xt('student_experience','Experience')}</div>
-              <div style="font-size:13px;font-weight:600;color:var(--txt);margin-top:2px;">${teacher.experience_years} years</div>
+              <div style="font-size:13px;font-weight:600;color:var(--txt);margin-top:2px;">${escHtml(teacher.experience_years)} years</div>
             </div>
           </div>
         </div>
@@ -6396,10 +6469,10 @@ async function openTeacherProfileModal() {
             ${myReview ? `
               <div style="background:#f8f9fa;border-radius:8px;padding:12px;border:1px solid var(--bd);">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
-                  <span style="font-size:13px;font-weight:700;">⭐ ${myReview.rating} / 5</span>
+                  <span style="font-size:13px;font-weight:700;">⭐ ${escHtml(myReview.rating)} / 5</span>
                   <span style="font-size:11px;color:var(--dim);">${new Date(myReview.created_at).toLocaleDateString('en-GB')}</span>
                 </div>
-                <div style="font-size:12.5px;color:var(--txt);font-style:italic;">"${myReview.review_text || 'No comment left.'}"</div>
+                <div style="font-size:12.5px;color:var(--txt);font-style:italic;">"${escHtml(myReview.review_text || 'No comment left.')}"</div>
               </div>
             ` : `
               <div style="display:flex;flex-direction:column;gap:8px;">
@@ -6414,7 +6487,7 @@ async function openTeacherProfileModal() {
                   </select>
                 </div>
                 <textarea id="new-review-text" placeholder="Write a public review for this teacher..." style="width:100%;height:60px;padding:10px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:13px;resize:none;outline:none;background:#FAFAFA;"></textarea>
-                <button class="join-btn" style="font-size:11px;padding:6px 12px;align-self:flex-end;" onclick="submitTeacherReview('${teacherId}')">${xt('student_submit_review','Submit Review')}</button>
+                <button class="join-btn" style="font-size:11px;padding:6px 12px;align-self:flex-end;" onclick="submitTeacherReview(${jsArg(teacherId)})">${xt('student_submit_review','Submit Review')}</button>
               </div>
             `}
           </div>
@@ -6427,7 +6500,7 @@ async function openTeacherProfileModal() {
               <div style="border-bottom:1px solid rgba(0,0,0,0.04);padding-bottom:8px;">
                 <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:3px;">
                   <span style="font-size:12.5px;font-weight:700;color:var(--txt);">${escHtml(r.student_profiles?.full_name || 'Anonymous')}</span>
-                  <span style="font-size:11px;color:var(--dim);">⭐ ${r.rating}</span>
+                  <span style="font-size:11px;color:var(--dim);">⭐ ${escHtml(r.rating)}</span>
                 </div>
                 <div style="font-size:12px;color:var(--dim);line-height:1.4;">${escHtml(r.review_text || '')}</div>
               </div>
@@ -6449,7 +6522,7 @@ async function openTeacherProfileModal() {
     console.error(e);
     const contentEl = document.getElementById('teacher-profile-content');
     if (contentEl) {
-      contentEl.innerHTML = `<div style="color:#dc2626;font-size:13px;">Error loading teacher details: ${e.message}</div>`;
+      contentEl.innerHTML = `<div style="color:#dc2626;font-size:13px;">Error loading teacher details: ${escHtml(e.message)}</div>`;
     }
   }
 }
@@ -6529,6 +6602,7 @@ async function payExtraClass() {
 
   // Real Stripe Checkout (one-time). The credit is granted server-side by the
   // Stripe webhook after payment — nothing is written from the browser here.
+  await window.ALIMUN_CONFIG_READY;
   const priceId = window.ALIMUN_CONFIG?.prices?.oneOnOneSession || window.ALIMUN_CONFIG?.stripePriceOneOnOne;
   if (!priceId) {
     alert(xt('student_extra_class_unavailable', 'Extra private classes are not available for purchase yet. Please check back soon.'));
@@ -6573,7 +6647,7 @@ function init(){
   const urlParams = new URLSearchParams(window.location.search);
   const claimCohortId = urlParams.get('claim_cohort_id');
   const claimWaitlistId = urlParams.get('waitlist_id');
-  if (claimCohortId && claimWaitlistId) {
+  if (isUuid(claimCohortId) && isUuid(claimWaitlistId)) {
     setTimeout(() => {
       handleClaimWaitlistOffer(claimCohortId, claimWaitlistId);
     }, 1500);
@@ -6647,7 +6721,7 @@ async function handleStudentJoin(roomUrl, sessionId) {
     });
     const data = await resp.json();
     if (!resp.ok) {
-      alert(data.error || 'Could not join the class. Please try again.');
+      alert(data.message || data.error || 'Could not join the class. Please try again.');
       return;
     }
     joinUrl = data.url;
@@ -6658,6 +6732,13 @@ async function handleStudentJoin(roomUrl, sessionId) {
       alert('Could not join the class. Please try again closer to the session start.');
       return;
     }
+  }
+
+  // Room URLs come from data: only https is allowed into the Daily iframe.
+  joinUrl = safeHttpsUrl(joinUrl);
+  if (!joinUrl) {
+    alert('Could not join the class. Please try again.');
+    return;
   }
 
   if (callFrame) {
@@ -6681,7 +6762,14 @@ async function handleStudentJoin(roomUrl, sessionId) {
     showFullscreenButton: true
   });
 
-  await callFrame.join(joinToken ? { url: joinUrl, token: joinToken } : { url: joinUrl });
+  try {
+    await callFrame.join(joinToken ? { url: joinUrl, token: joinToken } : { url: joinUrl });
+  } catch (joinErr) {
+    console.error('Daily join failed:', joinErr);
+    leaveClass();
+    alert('Could not join the class. Please try again.');
+    return;
+  }
 
   // joined_at is recorded server-side by /api/join-session. We only remember
   // which session we're in so leaveClass() can stamp left_at on our own row.
@@ -6700,7 +6788,7 @@ async function handleStudentJoin(roomUrl, sessionId) {
 
 function leaveClass() {
   if (callFrame) {
-    callFrame.leave();
+    try { const lp = callFrame.leave(); if (lp && lp.catch) lp.catch(() => {}); } catch (_) {}
     callFrame.destroy();
     callFrame = null;
   }
@@ -6792,8 +6880,8 @@ function addChatMessage(sender, text, isMe) {
   const msgDiv = document.createElement('div');
   msgDiv.className = `cc-msg${isMe ? ' me' : ''}`;
   msgDiv.innerHTML = `
-    <div class="cc-sender">${sender}</div>
-    <div class="cc-bubble ${isMe ? 'me' : (sender === 'Teacher' ? 'teacher' : 'other')}">${text}</div>
+    <div class="cc-sender">${escHtml(sender)}</div>
+    <div class="cc-bubble ${isMe ? 'me' : (sender === 'Teacher' ? 'teacher' : 'other')}">${escHtml(text)}</div>
   `;
   container.appendChild(msgDiv);
   container.scrollTop = container.scrollHeight;
@@ -6856,8 +6944,8 @@ function startTranscriptSimulation() {
     row.className = 'trans-row';
     const speaker = index === 5 ? 'Sofia' : 'Teacher';
     row.innerHTML = `
-      <span class="trans-speaker">${speaker}:</span>
-      <span class="trans-text">${lines[index]}</span>
+      <span class="trans-speaker">${escHtml(speaker)}:</span>
+      <span class="trans-text">${escHtml(lines[index])}</span>
     `;
     log.appendChild(row);
     log.scrollTop = log.scrollHeight;
@@ -6939,8 +7027,8 @@ async function loadSharedFiles() {
     const item = document.createElement('div');
     item.className = 'file-item';
     item.innerHTML = `
-      <span class="file-item-name">${f.name} (${f.size})</span>
-      <a class="file-item-dl" href="${f.url}" download onclick="alert(xt('student_downloading_shared_file','Downloading shared file...'))">${xt('student_download','Download')}</a>
+      <span class="file-item-name">${escHtml(f.name)} (${escHtml(f.size)})</span>
+      <a class="file-item-dl" href="${escHtml(f.url === '#' ? '#' : safeHttpsUrl(f.url))}" download onclick="alert(xt('student_downloading_shared_file','Downloading shared file...'))">${xt('student_download','Download')}</a>
     `;
     listContainer.appendChild(item);
   });
@@ -6951,38 +7039,45 @@ async function uploadClassroomFile(input) {
   const file = input.files[0];
   const listContainer = document.getElementById('shared-files-list');
   
+  // Built with textContent: file.name is user-controlled.
   const item = document.createElement('div');
   item.className = 'file-item';
-  item.innerHTML = `
-    <span class="file-item-name" style="color:var(--lime);">${file.name} (Uploading...)</span>
-  `;
+  const nameEl = document.createElement('span');
+  nameEl.className = 'file-item-name';
+  nameEl.style.color = 'var(--lime)';
+  nameEl.textContent = `${file.name} (Uploading...)`;
+  item.appendChild(nameEl);
   listContainer.appendChild(item);
+
+  const showFailure = (msg) => {
+    nameEl.style.color = 'var(--err)';
+    nameEl.textContent = `${file.name}: ${msg || 'Upload failed'}`;
+  };
   
-  if (SB && currentSessionId) {
-    try {
-      const filePath = `shared/${currentSessionId}/${Date.now()}_${file.name}`;
-      const { data, error } = await SB.storage
-        .from('session-notes-pdfs')
-        .upload(filePath, file);
-        
-      if (error) throw error;
-      
-      item.innerHTML = `
-        <span class="file-item-name">${file.name}</span>
-        <span style="color:#22c55e;font-size:11px;font-weight:700;">${xt('student_uploaded','Uploaded')}</span>
-      `;
-      return;
-    } catch (e) {
-      console.warn('Supabase storage upload error, falling back to mock:', e);
-    }
+  if (!SB || !currentSessionId) {
+    showFailure('');
+    return;
   }
-  
-  setTimeout(() => {
-    item.innerHTML = `
-      <span class="file-item-name">${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
-      <a class="file-item-dl" href="#" onclick="alert(xt('student_downloading_uploaded_file','Downloading uploaded file...'))">${xt('student_download','Download')}</a>
-    `;
-  }, 1000);
+  try {
+    const safeName = String(file.name).replace(/[^\w.\-]+/g, '_');
+    const filePath = `shared/${currentSessionId}/${Date.now()}_${safeName}`;
+    const { error } = await SB.storage
+      .from('session-notes-pdfs')
+      .upload(filePath, file);
+      
+    if (error) throw error;
+    
+    nameEl.style.color = '';
+    nameEl.textContent = file.name;
+    const okEl = document.createElement('span');
+    okEl.style.cssText = 'color:#22c55e;font-size:11px;font-weight:700;';
+    okEl.textContent = xt('student_uploaded','Uploaded');
+    item.appendChild(okEl);
+  } catch (e) {
+    // Show the real error; never pretend the file was shared.
+    console.warn('Supabase storage upload error:', e);
+    showFailure(e && e.message);
+  }
 }
 
 async function logAttendanceLeave() {
