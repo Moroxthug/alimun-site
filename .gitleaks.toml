@@ -7,5 +7,5 @@ description = "Browser-safe publishable keys and documentation placeholders"
 regexes = [
   '''sb_publishable_[A-Za-z0-9_-]+''',
   '''pk_(live|test)_[A-Za-z0-9]+''',
-  '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.YOUR_[A-Z_]+''',
+  '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.(YOUR_[A-Z_]+|\.\.)''',
 ]
