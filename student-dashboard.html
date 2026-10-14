@@ -5,6 +5,7 @@
 <title>Dashboard — Alimun</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="js/view-as.js"></script>
 <script src="https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js"></script>
 <script>
   window.CFG={url:'https://dgaiasmefcbrtzqwdyri.supabase.co',key:'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh'};
@@ -2831,20 +2832,29 @@ let VOCAB = [];
 
   if(!session){window.location.href='signin.html';return;}
 
+  // Admins can open this dashboard as any student (js/view-as.js)
+  const viewAs = window.AlimunViewAs ? await AlimunViewAs.resolve(SB, session, 'student') : null;
+  if (viewAs && !viewAs.profile) { AlimunViewAs.renderEmpty('student'); return; }
+
   const role=session.user?.app_metadata?.role||session.user?.user_metadata?.role||'';
-  if(role!=='student'){
+  if(!viewAs && role!=='student'){
     window.location.href=role==='teacher'?'teacher-dashboard.html':role==='admin'?'admin.html':'signin.html';
     return;
   }
-  
-  USER={id:session.user.id,name:session.user.user_metadata?.full_name||'Student',email:session.user.email};
-  
+
+  USER = viewAs
+    ? {id:viewAs.profile.user_id,name:'Student',email:''}
+    : {id:session.user.id,name:session.user.user_metadata?.full_name||'Student',email:session.user.email};
+
   // Fetch real profile from student_profiles
-  const { data: profile, error } = await SB
-    .from('student_profiles')
-    .select('*')
-    .eq('user_id', session.user.id)
-    .maybeSingle();
+  let profile = viewAs?.profile;
+  if (!profile) {
+    ({ data: profile } = await SB
+      .from('student_profiles')
+      .select('*')
+      .eq('user_id', session.user.id)
+      .maybeSingle());
+  }
 
   if (!profile && !isLocalPreview) {
     // Auth account without a student profile (signup not finished).
@@ -2874,6 +2884,7 @@ let VOCAB = [];
   // Fetch data & init
   await initData();
   init();
+  if (viewAs) AlimunViewAs.mountBar({ kind: 'student', sb: SB, profile });
 })();
 
 document.getElementById('logout-btn').onclick=async()=>{if(SB)await SB.auth.signOut();window.location.href='signin.html';};

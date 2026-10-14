@@ -7,6 +7,8 @@
  *    ?action=approve  (GET) — approve a teacher profile
  *    ?action=reject   (GET) — reject a teacher profile
  *    ?action=notify   (POST) — send admin notification email
+ *    ?action=set-status (POST, admin JWT) — approve/reject/suspend/reinstate
+ *                       from the admin dashboard, optionally emailing the teacher
  *
  *  Legacy paths (via Vercel rewrites):
  *    /api/admin/approve-teacher → ?action=approve
@@ -198,55 +200,9 @@ async function handleApprove(req, res) {
     return renderErrorPage(res, 'Failed to update teacher profile status.');
   }
 
-  let teacherEmail = null;
-  try {
-    const { data: authUser, error: authErr } = await supabase.auth.admin.getUserById(profile.user_id);
-    if (!authErr && authUser?.user) {
-      teacherEmail = authUser.user.email;
-    }
-  } catch (authEx) {
-    console.warn('[Alimun Approve] Failed to fetch teacher auth email:', authEx);
-  }
-
+  const teacherEmail = await getTeacherEmail(supabase, profile.user_id);
   if (teacherEmail) {
-    const welcomeHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>Welcome to Alimun</title>
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f6f6f6; margin: 0; padding: 0; }
-          .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-          .header { background: #080808; padding: 30px; text-align: center; }
-          .header h1 { color: #ceff65; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-          .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
-          .btn { display: inline-block; background-color: #ceff65; color: #080808; text-decoration: none; padding: 14px 30px; border-radius: 30px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 20px; }
-          .footer { background: #fafafa; padding: 20px 30px; text-align: center; border-top: 1px solid #eeeeee; font-size: 12px; color: #aaaaaa; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1>Alimun</h1>
-          </div>
-          <div class="content">
-            <h2 style="color: #080808; margin-top: 0;">Congratulations, ${escapeHtml(profile.full_name)}!</h2>
-            <p>Your application to join the Alimun teacher network has been approved.</p>
-            <p>Your account is ready. You can now log in to the dashboard to set up your cohorts and welcome your first students.</p>
-            <p>We've started you on the <strong>Focused</strong> tier level by default.</p>
-            <center>
-              <a href="https://alimun.com/signin.html" class="btn">Access Dashboard</a>
-            </center>
-          </div>
-          <div class="footer">
-            If you have any questions, reply to this email or contact teacher support.
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
-    await sendEmail(teacherEmail, `Welcome to Alimun, ${profile.full_name}! You're approved.`, welcomeHtml);
+    await sendEmail(teacherEmail, `Welcome to Alimun, ${profile.full_name}! You're approved.`, approvedEmailHtml(profile.full_name));
   }
 
   return res.status(200).send(`
@@ -280,6 +236,124 @@ async function handleApprove(req, res) {
     </body>
     </html>
   `);
+}
+
+// ── Email bodies (shared by the email-link handlers and action=set-status) ──
+
+function approvedEmailHtml(fullName) {
+  return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Welcome to Alimun</title>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f6f6f6; margin: 0; padding: 0; }
+          .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+          .header { background: #080808; padding: 30px; text-align: center; }
+          .header h1 { color: #ceff65; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+          .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
+          .btn { display: inline-block; background-color: #ceff65; color: #080808; text-decoration: none; padding: 14px 30px; border-radius: 30px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 20px; }
+          .footer { background: #fafafa; padding: 20px 30px; text-align: center; border-top: 1px solid #eeeeee; font-size: 12px; color: #aaaaaa; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Alimun</h1>
+          </div>
+          <div class="content">
+            <h2 style="color: #080808; margin-top: 0;">Congratulations, ${escapeHtml(fullName)}!</h2>
+            <p>Your application to join the Alimun teacher network has been approved.</p>
+            <p>Your account is ready. You can now log in to the dashboard to set up your cohorts and welcome your first students.</p>
+            <p>We've started you on the <strong>Focused</strong> tier level by default.</p>
+            <center>
+              <a href="https://alimun.com/signin.html" class="btn">Access Dashboard</a>
+            </center>
+          </div>
+          <div class="footer">
+            If you have any questions, reply to this email or contact teacher support.
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+}
+
+function rejectedEmailHtml(fullName, email, reason) {
+  const reasonBlock = reason
+    ? `<p style="background:#fafafa;border-left:3px solid #080808;padding:12px;white-space:pre-wrap;">${escapeHtml(reason)}</p>`
+    : '';
+  return `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Alimun Application Update</title>
+        <style>
+          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f6f6f6; margin: 0; padding: 0; }
+          .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+          .header { background: #080808; padding: 30px; text-align: center; }
+          .header h1 { color: #ceff65; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
+          .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
+          .footer { background: #fafafa; padding: 20px 30px; text-align: center; border-top: 1px solid #eeeeee; font-size: 12px; color: #aaaaaa; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <h1>Alimun</h1>
+          </div>
+          <div class="content">
+            <p>Dear ${escapeHtml(fullName)},</p>
+            <p>Thank you for applying to Alimun. After review, we're unable to approve your application at this time.</p>
+            ${reasonBlock}
+            <p>We appreciate your interest in our platform and wish you all the best in your teaching endeavors.</p>
+            <p>Warm regards,<br/>The Alimun Team</p>
+          </div>
+          <div class="footer">
+            This email was sent to ${escapeHtml(email)}.
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+}
+
+function suspendedEmailHtml(fullName, reason) {
+  const reasonBlock = reason
+    ? `<p style="background:#fafafa;border-left:3px solid #080808;padding:12px;white-space:pre-wrap;">${escapeHtml(reason)}</p>`
+    : '';
+  return `
+      <!DOCTYPE html>
+      <html>
+      <head><meta charset="utf-8"><title>Alimun Account Update</title></head>
+      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background:#f6f6f6; margin:0; padding:0;">
+        <div style="max-width:600px; margin:40px auto; background:#fff; border-radius:16px; overflow:hidden;">
+          <div style="background:#080808; padding:30px; text-align:center;">
+            <h1 style="color:#ceff65; margin:0; font-size:24px; font-weight:800; letter-spacing:0.05em; text-transform:uppercase;">Alimun</h1>
+          </div>
+          <div style="padding:40px 30px; color:#333; line-height:1.6;">
+            <p>Dear ${escapeHtml(fullName)},</p>
+            <p>Your Alimun teacher account has been suspended, so you can no longer access the teacher dashboard.</p>
+            ${reasonBlock}
+            <p>If you believe this is a mistake, reply to this email and we'll look into it.</p>
+            <p>The Alimun Team</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `;
+}
+
+async function getTeacherEmail(supabase, userId) {
+  try {
+    const { data, error } = await supabase.auth.admin.getUserById(userId);
+    if (!error && data?.user) return data.user.email;
+  } catch (e) {
+    console.warn('[Alimun Admin] Failed to fetch teacher auth email:', e);
+  }
+  return null;
 }
 
 // ── action=reject ───────────────────────────────────────────
@@ -362,51 +436,9 @@ async function handleReject(req, res) {
     return renderErrorPage(res, 'Failed to update teacher profile status.');
   }
 
-  let teacherEmail = null;
-  try {
-    const { data: authUser, error: authErr } = await supabase.auth.admin.getUserById(profile.user_id);
-    if (!authErr && authUser?.user) {
-      teacherEmail = authUser.user.email;
-    }
-  } catch (authEx) {
-    console.warn('[Alimun Reject] Failed to fetch teacher auth email:', authEx);
-  }
-
+  const teacherEmail = await getTeacherEmail(supabase, profile.user_id);
   if (teacherEmail) {
-    const rejectHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>Alimun Application Update</title>
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f6f6f6; margin: 0; padding: 0; }
-          .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-          .header { background: #080808; padding: 30px; text-align: center; }
-          .header h1 { color: #ceff65; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-          .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
-          .footer { background: #fafafa; padding: 20px 30px; text-align: center; border-top: 1px solid #eeeeee; font-size: 12px; color: #aaaaaa; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1>Alimun</h1>
-          </div>
-          <div class="content">
-            <p>Dear ${escapeHtml(profile.full_name)},</p>
-            <p>Thank you for applying to Alimun. After review, we're unable to approve your application at this time.</p>
-            <p>We appreciate your interest in our platform and wish you all the best in your teaching endeavors.</p>
-            <p>Warm regards,<br/>The Alimun Team</p>
-          </div>
-          <div class="footer">
-            This email was sent to ${escapeHtml(teacherEmail)}.
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
-    await sendEmail(teacherEmail, 'Teacher Application Update — Alimun', rejectHtml);
+    await sendEmail(teacherEmail, 'Teacher Application Update — Alimun', rejectedEmailHtml(profile.full_name, teacherEmail));
   }
 
   return res.status(200).send(`
@@ -590,12 +622,98 @@ async function handleNotify(req, res) {
   }
 }
 
+// ── action=set-status ───────────────────────────────────────
+// Used by the admin dashboard. Caller must be signed in with
+// app_metadata.role === 'admin' (server-controlled; user_metadata is ignored).
+// Body: { teacher_ids: uuid[], status: 'approved'|'suspended'|'pending', notify?: bool, reason?: string }
+
+const SETTABLE_STATUSES = ['approved', 'suspended', 'pending'];
+
+async function handleSetStatus(req, res) {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return res.status(500).json({ error: 'Server database connection error' });
+
+  const user = await getAuthUser(req, supabase);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+  if (user.app_metadata?.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+
+  let body = req.body || {};
+  if (typeof body === 'string') {
+    try { body = JSON.parse(body || '{}'); } catch { return res.status(400).json({ error: 'Invalid JSON' }); }
+  }
+  const ids = Array.isArray(body.teacher_ids) ? body.teacher_ids : [body.teacher_id];
+  const status = String(body.status || '');
+  const notify = body.notify !== false;
+  const reason = String(body.reason || '').trim().slice(0, 2000);
+
+  if (!SETTABLE_STATUSES.includes(status)) {
+    return res.status(400).json({ error: `Invalid status: ${status}` });
+  }
+  if (ids.length === 0 || ids.length > 50 || !ids.every((id) => UUID_RE.test(String(id)))) {
+    return res.status(400).json({ error: 'teacher_ids must be 1-50 UUIDs' });
+  }
+
+  const { data: profiles, error: fetchErr } = await supabase
+    .from('teacher_profiles')
+    .select('id, full_name, user_id, status, tier_level')
+    .in('id', ids);
+  if (fetchErr) return res.status(500).json({ error: fetchErr.message });
+
+  const results = [];
+  for (const profile of profiles || []) {
+    const previous = profile.status;
+    if (previous === status) {
+      results.push({ id: profile.id, status, changed: false, emailed: false });
+      continue;
+    }
+
+    const update = { status };
+    // First approval starts on Focused (the welcome email says so), same as the email-link flow
+    if (status === 'approved' && previous === 'pending') update.tier_level = 'focused';
+    const { error: updateErr } = await supabase.from('teacher_profiles').update(update).eq('id', profile.id);
+    if (updateErr) {
+      results.push({ id: profile.id, error: updateErr.message });
+      continue;
+    }
+
+    let emailed = false;
+    if (notify && status !== 'pending') {
+      const email = await getTeacherEmail(supabase, profile.user_id);
+      if (email) {
+        if (status === 'approved') {
+          await sendEmail(email, `Welcome to Alimun, ${profile.full_name}! You're approved.`, approvedEmailHtml(profile.full_name));
+        } else if (previous === 'pending') {
+          await sendEmail(email, 'Teacher Application Update — Alimun', rejectedEmailHtml(profile.full_name, email, reason));
+        } else {
+          await sendEmail(email, 'Your Alimun teacher account — Alimun', suspendedEmailHtml(profile.full_name, reason));
+        }
+        emailed = true;
+      }
+    }
+
+    console.log(`[Alimun Admin] ${user.email} set teacher ${profile.id} ${previous} -> ${status}`);
+    results.push({ id: profile.id, status, previous, changed: true, emailed });
+  }
+
+  const missing = ids.filter((id) => !(profiles || []).some((p) => p.id === id));
+  missing.forEach((id) => results.push({ id, error: 'Teacher profile not found' }));
+
+  return res.status(200).json({ results });
+}
+
 // ── Main router ─────────────────────────────────────────────
 
 module.exports = async function handler(req, res) {
   const action = req.query.action || '';
 
   switch (action) {
+    case 'set-status':
+      return handleSetStatus(req, res);
     case 'approve':
       return handleApprove(req, res);
     case 'reject':

@@ -6,6 +6,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&amp;display=swap" rel="stylesheet">
 <!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../js/view-as.js"></script>
 <script src="https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js"></script>
 <script>
 function getLocaleString(date, formatOptions = {}) {
@@ -3611,37 +3612,48 @@ window.submitSessionNotes = submitSessionNotes;
     return;
   }
 
+  // Admins can open this dashboard as any teacher (js/view-as.js)
+  const viewAs = window.AlimunViewAs ? await AlimunViewAs.resolve(_sb, session, 'teacher') : null;
+  if (viewAs && !viewAs.profile) {
+    AlimunViewAs.renderEmpty('teacher');
+    return;
+  }
+
   // ─ 3. Role check ───────────────────────────────────────────────────────────
   const role = session.user?.app_metadata?.role || session.user?.user_metadata?.role || '';
-  if (role !== 'teacher') {
+  if (!viewAs && role !== 'teacher') {
     window.location.href = role === 'student' ? 'student-dashboard.html' :
                           role === 'admin' ? 'admin.html' : 'signin.html';
     return;
   }
 
   // ─ 4. Teacher profile status check ────────────────────────────────────────
-  let { data: profile } = await _sb
-    .from('teacher_profiles')
-    .select('*')
-    .eq('user_id', session.user.id)
-    .single();
+  let profile = viewAs?.profile;
+  if (!profile) {
+    ({ data: profile } = await _sb
+      .from('teacher_profiles')
+      .select('*')
+      .eq('user_id', session.user.id)
+      .single());
+  }
 
   if (!profile && isLocalPreview) {
     profile = { id: 'preview-teacher', full_name: 'Sarah Thompson',
       location: 'Madrid, Spain', languages: ['Spanish'], status: 'approved' };
   }
 
-  if (!profile || profile.status !== 'approved') {
+  // Admins may preview pending/suspended teachers too
+  if (!profile || (!viewAs && profile.status !== 'approved')) {
     window.location.href = 'signin.html';
     return;
   }
 
   // ─ 5. Expose global currentTeacher ─────────────────────────────────────────
   window.currentTeacher = {
-    id:       session.user.id,
-    email:    session.user.email,
+    id:       viewAs ? profile.user_id : session.user.id,
+    email:    viewAs ? '' : session.user.email,
     role:     'teacher',
-    name:     profile.full_name || session.user.user_metadata?.full_name || session.user.email,
+    name:     profile.full_name || (viewAs ? 'Teacher' : session.user.user_metadata?.full_name || session.user.email),
     profile:  profile,
     session:  session,
     supabase: _sb,
@@ -3666,6 +3678,7 @@ window.submitSessionNotes = submitSessionNotes;
   // ─ 7. Fetch dynamic data & Boot dashboard ───────────────────────────────────
   await initTeacherData();
   nav('overview');
+  if (viewAs) AlimunViewAs.mountBar({ kind: 'teacher', sb: _sb, profile });
 
   // ─ 8. 5-minute session data refresh ─────────────────────────────────────────
   setInterval(async () => {

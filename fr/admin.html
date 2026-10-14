@@ -7,6 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=JetBrains+Mono:wght@400;600;700&amp;display=swap" rel="stylesheet">
 <!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="../js/view-as.js"></script>
 <script>
   window.ALIMUN_CONFIG = {
     supabaseUrl:     'https://dgaiasmefcbrtzqwdyri.supabase.co',
@@ -512,6 +513,32 @@ tr:hover td { background: rgba(8,8,8,0.01); }
 .btn.err { background: rgba(220, 38, 38, 0.08); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.15); box-shadow: none;}
 .btn.err:hover { background: #dc2626; color: #fff; }
 .btn:disabled { background: #eae9e4; color: #bbb; cursor: not-allowed; box-shadow: none; transform: none; }
+/* Hyphenated aliases — most markup in this file uses btn-out / btn-sm / btn-err */
+.btn.btn-out { background: transparent; color: var(--b); border: 1.5px solid rgba(8,8,8,.12); box-shadow: none; }
+.btn.btn-out:hover { background: rgba(8,8,8,0.03); border-color: var(--b); }
+.btn.btn-sm { padding: .45rem .9rem; font-size: .68rem; }
+.btn.btn-err { background: rgba(220, 38, 38, 0.08); color: #dc2626; border: 1px solid rgba(220, 38, 38, 0.15); box-shadow: none; }
+.btn.btn-err:hover { background: #dc2626; color: #fff; }
+.pill.er { background: #fef2f2; color: #b91c1c; border: 1px solid rgba(185,28,28,0.15); }
+
+/* ── FACULTY REVIEW CONTROLS ─────────────────────────── */
+.seg { display: inline-flex; background: rgba(8,8,8,.05); border-radius: 5rem; padding: 3px; gap: 2px; flex-wrap: wrap; }
+.seg button { border: 0; background: transparent; font: 700 .68rem var(--sans); text-transform: uppercase; letter-spacing: .06em;
+  color: var(--dim); padding: .5rem .9rem; border-radius: 5rem; cursor: pointer; display: inline-flex; gap: .4rem; align-items: center; }
+.seg button.on { background: var(--b); color: var(--g); }
+.seg .n { font-family: var(--mono); font-size: .62rem; opacity: .8; }
+.sb-badge { margin-left: auto; background: #dc2626; color: #fff; font: 700 .6rem var(--mono); border-radius: 5rem;
+  padding: .2rem .45rem; min-width: 1.2rem; text-align: center; }
+.sb.col .sb-badge { position: absolute; top: 4px; right: 4px; }
+.sb-a { position: relative; }
+.bulk-bar { display: none; align-items: center; gap: 10px; background: #fafaf8; border: 1px solid rgba(0,0,0,.06);
+  border-radius: .75rem; padding: .6rem .9rem; margin-bottom: 1rem; font-size: .8rem; }
+.bulk-bar.on { display: flex; }
+.row-actions { display: inline-flex; gap: 6px; justify-content: flex-end; flex-wrap: wrap; }
+.alert-card { display: flex; align-items: center; justify-content: space-between; gap: 1rem; background: #fff7ed;
+  border: 1px solid rgba(194,65,12,0.2); border-radius: 1rem; padding: 1rem 1.25rem; margin-bottom: 1.5rem; font-size: .85rem; }
+.alert-card[hidden] { display: none; }
+td input[type="checkbox"], th input[type="checkbox"] { width: 16px; height: 16px; accent-color: #080808; cursor: pointer; }
 
 /* ── CONTROLS / TOOLBAR ──────────────────────────────── */
 .toolbar-row {
@@ -803,6 +830,7 @@ tr:hover td { background: rgba(8,8,8,0.01); }
         <button class="sb-a" id="btn-teachers" onclick="nav('teachers')">
           <svg viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
           <span class="sb-lbl">Faculty &amp; HR</span>
+          <span class="sb-badge" id="sb-pending-badge" hidden="">0</span>
         </button>
         <button class="sb-a" id="btn-cohorts" onclick="nav('cohorts')">
           <svg viewBox="0 0 24 24"><path d="M22 10v6M2 10v6M12 4L2 9l10 5 10-5-10-5-10-5zM12 14v6"></path></svg>
@@ -892,6 +920,10 @@ tr:hover td { background: rgba(8,8,8,0.01); }
 
       <!-- ── PANEL: OVERVIEW ── -->
       <section id="pnl-overview" class="panel on">
+        <div class="alert-card" id="pending-teacher-alert" hidden="">
+          <span><strong id="pending-teacher-alert-n">0</strong> teacher application(s) waiting for review.</span>
+          <button class="btn btn-sm" onclick="nav('teachers'); setTeacherFilter('pending');">Review now →</button>
+        </div>
         <div class="stat-row">
           <div class="stat-b hi">
             <div class="v" id="stat-rev">€0</div>
@@ -1027,44 +1059,46 @@ tr:hover td { background: rgba(8,8,8,0.01); }
       <!-- ── PANEL: TEACHERS ── -->
       <section id="pnl-teachers" class="panel">
         <div class="card">
-          <div class="card-header-flex">
-            <h2 class="card-title">Pending Faculty Registrations</h2>
-            <button class="btn btn-out" onclick="openAddTeacherModal()">+ Add Faculty Directly</button>
+          <div class="card-header-flex" style="flex-wrap:wrap; gap:12px;">
+            <div class="seg" id="teacher-filter">
+              <button data-f="pending" class="on" onclick="setTeacherFilter('pending')">Pending <span class="n" id="tc-pending">0</span></button>
+              <button data-f="approved" onclick="setTeacherFilter('approved')">Approved <span class="n" id="tc-approved">0</span></button>
+              <button data-f="suspended" onclick="setTeacherFilter('suspended')">Rejected / Suspended <span class="n" id="tc-suspended">0</span></button>
+              <button data-f="all" onclick="setTeacherFilter('all')">All <span class="n" id="tc-all">0</span></button>
+            </div>
+            <div class="toolbar-row">
+              <div class="search-bar">
+                <input type="text" id="teacher-search" placeholder="Search name, language, specialty..." oninput="renderTeachers()">
+              </div>
+              <button class="btn btn-out" onclick="openAddTeacherModal()">+ Add Faculty Directly</button>
+            </div>
           </div>
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Full Name</th>
-                  <th>Primary Language</th>
-                  <th>Experience Summary</th>
-                  <th>Specialty Scope</th>
-                  <th style="width:120px; text-align:right;">Review</th>
-                </tr>
-              </thead>
-              <tbody id="pending-teacher-rows">
-                <tr><td colspan="5" style="text-align:center;color:var(--dim);">Loading pending registrations...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
 
-        <div class="card">
-          <h2 class="card-title" style="margin-bottom:1.25rem;">Active Teaching Staff</h2>
+          <div class="bulk-bar" id="teacher-bulk-bar">
+            <strong id="teacher-bulk-count">0 selected</strong>
+            <span style="flex:1"></span>
+            <button class="btn btn-sm" id="bulk-approve" onclick="bulkTeacherStatus('approved')">Approve selected</button>
+            <button class="btn btn-err btn-sm" id="bulk-reject" onclick="bulkTeacherStatus('suspended')">Reject selected</button>
+            <button class="btn btn-out btn-sm" onclick="clearTeacherSelection()">Clear</button>
+          </div>
+
           <div class="table-wrap">
             <table>
               <thead>
                 <tr>
+                  <th style="width:32px;"><input type="checkbox" id="teacher-select-all" onchange="toggleAllTeachers(this.checked)" aria-label="Select all"></th>
                   <th>Full Name</th>
-                  <th>Languages Taught</th>
-                  <th>Average Rating</th>
+                  <th>Languages</th>
+                  <th>Experience</th>
                   <th>Specialty</th>
-                  <th>Hourly Rate</th>
-                  <th style="width:120px; text-align:right;">Actions</th>
+                  <th>Rate</th>
+                  <th>Status</th>
+                  <th>Applied</th>
+                  <th style="text-align:right;">Actions</th>
                 </tr>
               </thead>
-              <tbody id="approved-teacher-rows">
-                <tr><td colspan="6" style="text-align:center;color:var(--dim);">Loading faculty directory...</td></tr>
+              <tbody id="teacher-rows">
+                <tr><td colspan="9" style="text-align:center;color:var(--dim);">Loading faculty...</td></tr>
               </tbody>
             </table>
           </div>
@@ -1430,9 +1464,12 @@ function openModal(html) {
   document.getElementById('adm-avatar').textContent = session.user.email.substring(0,2).toUpperCase();
   document.body.style.opacity = '1';
 
+  window.AlimunViewAs?.mountBar({ kind: 'admin', sb: supabase });
+
   // Load bootstrap modules
   await loadStats();
   await loadLiveSessions();
+  await loadTeachers(); // pending-application badge + overview alert
 })();
 
 // ── MODULE: FINANCIAL MASKING ──
@@ -1580,7 +1617,10 @@ function renderStudentsTable(list) {
       <td><span class="pill ok">${escapeHtml(s.tier || '—')}</span></td>
       <td>${escapeHtml(s.goal_track || '—')}</td>
       <td style="text-align:right;">
-        <button class="btn btn-out btn-sm" onclick="openStudentDetail('${s.id}')">Manage</button>
+        <div class="row-actions">
+          <button class="btn btn-out btn-sm" onclick="viewAsStudent('${s.id}')" title="Open the student dashboard as this student">View as</button>
+          <button class="btn btn-out btn-sm" onclick="openStudentDetail('${s.id}')">Manage</button>
+        </div>
       </td>
     </tr>
   `).join('');
@@ -1839,51 +1879,196 @@ window.sendPromoEmail = async function(targetId) {
 };
 
 // ── MODULE: TEACHERS ──
-async function loadTeachers() {
-  const { data } = await supabase.from('teacher_profiles').select('*').order('created_at', { ascending: false });
-  TEACHERS = data || [];
-  
-  // Approved list shows approved only; everything else (pending/suspended/rejected) goes in the first table
-  const pending = TEACHERS.filter(t => t.status !== 'approved');
-  const approved = TEACHERS.filter(t => t.status === 'approved');
+let TEACHER_FILTER = 'pending';
+const TEACHER_SELECTED = new Set();
+const TEACHER_STATUS_PILL = { approved: 'ok', pending: 'dt', suspended: 'er' };
 
-  // Pending
-  const pendTbody = document.getElementById('pending-teacher-rows');
-  if (pending.length === 0) {
-    pendTbody.innerHTML = `<tr><td colspan="5" style="text-align:center;color:var(--dim);">No applications currently pending.</td></tr>`;
+async function loadTeachers() {
+  const { data, error } = await supabase.from('teacher_profiles').select('*').order('created_at', { ascending: false });
+  if (error) {
+    document.getElementById('teacher-rows').innerHTML =
+      `<tr><td colspan="9" style="text-align:center;color:var(--err);">Could not load faculty: ${escapeHtml(error.message)}</td></tr>`;
+    return;
+  }
+  TEACHERS = data || [];
+  updatePendingIndicators();
+  renderTeachers();
+}
+
+// Sidebar badge + overview alert for applications waiting on review
+function updatePendingIndicators() {
+  const counts = { pending: 0, approved: 0, suspended: 0, all: TEACHERS.length };
+  TEACHERS.forEach(t => { if (counts[t.status] !== undefined) counts[t.status]++; });
+  Object.entries(counts).forEach(([k, n]) => {
+    const el = document.getElementById(`tc-${k}`);
+    if (el) el.textContent = n;
+  });
+  const badge = document.getElementById('sb-pending-badge');
+  badge.textContent = counts.pending;
+  badge.hidden = counts.pending === 0;
+  document.getElementById('pending-teacher-alert-n').textContent = counts.pending;
+  document.getElementById('pending-teacher-alert').hidden = counts.pending === 0;
+}
+
+window.setTeacherFilter = function(f) {
+  TEACHER_FILTER = f;
+  document.querySelectorAll('#teacher-filter button').forEach(b => b.classList.toggle('on', b.dataset.f === f));
+  clearTeacherSelection();
+};
+
+function teacherActions(t) {
+  const btns = [];
+  if (t.status === 'pending') {
+    btns.push(`<button class="btn btn-sm" onclick="confirmTeacherStatus(['${t.id}'], 'approved')">Approve</button>`);
+    btns.push(`<button class="btn btn-err btn-sm" onclick="confirmTeacherStatus(['${t.id}'], 'suspended')">Reject</button>`);
+  } else if (t.status === 'approved') {
+    btns.push(`<button class="btn btn-out btn-sm" onclick="viewAsTeacher('${t.id}')" title="Open the teacher dashboard as this teacher">View as</button>`);
+  } else if (t.status === 'suspended') {
+    btns.push(`<button class="btn btn-out btn-sm" onclick="confirmTeacherStatus(['${t.id}'], 'approved')">Reinstate</button>`);
+  }
+  btns.push(`<button class="btn btn-out btn-sm" onclick="openTeacherReview('${t.id}')">${t.status === 'pending' ? 'Review' : 'Manage'}</button>`);
+  return `<div class="row-actions">${btns.join('')}</div>`;
+}
+
+window.renderTeachers = function() {
+  const q = (document.getElementById('teacher-search').value || '').toLowerCase().trim();
+  const list = TEACHERS.filter(t => TEACHER_FILTER === 'all' || t.status === TEACHER_FILTER)
+    .filter(t => !q || [t.full_name, t.specialty, ...(Array.isArray(t.languages) ? t.languages : [])]
+      .some(v => String(v || '').toLowerCase().includes(q)));
+
+  const tbody = document.getElementById('teacher-rows');
+  const empty = { pending: 'No applications waiting for review.', approved: 'No approved teachers.', suspended: 'No rejected or suspended teachers.', all: 'No teacher profiles yet.' };
+  if (list.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="9" style="text-align:center;color:var(--dim);">${q ? 'No teachers match your search.' : empty[TEACHER_FILTER]}</td></tr>`;
   } else {
-    pendTbody.innerHTML = pending.map(t => `
+    tbody.innerHTML = list.map(t => `
       <tr>
-        <td style="font-weight:700;">${escapeHtml(t.full_name)}${t.status !== 'pending' ? ` <span class="pill na">${escapeHtml(t.status)}</span>` : ''}</td>
-        <td>${escapeHtml(Array.isArray(t.languages) ? t.languages.join(', ') : 'None')}</td>
-        <td>${escapeHtml(t.experience_years ? t.experience_years + ' Years' : 'N/A')}</td>
-        <td>${escapeHtml(t.specialty || 'General')}</td>
-        <td style="text-align:right;">
-          <button class="btn btn-sm" onclick="openTeacherReview('${t.id}')">Review App</button>
-        </td>
+        <td><input type="checkbox" ${TEACHER_SELECTED.has(t.id) ? 'checked' : ''} onchange="toggleTeacherSelected('${t.id}', this.checked)" aria-label="Select ${escapeHtml(t.full_name)}"></td>
+        <td style="font-weight:700;">${escapeHtml(t.full_name)}</td>
+        <td>${escapeHtml(Array.isArray(t.languages) ? t.languages.join(', ') : '—')}</td>
+        <td>${escapeHtml(t.experience_years ? t.experience_years + ' yrs' : '—')}</td>
+        <td>${escapeHtml(t.specialty || '—')}</td>
+        <td class="mono">€${escapeHtml(t.hourly_rate || '0')}/hr</td>
+        <td><span class="pill ${TEACHER_STATUS_PILL[t.status] || 'na'}">${escapeHtml(t.status)}</span></td>
+        <td class="mono" style="font-size:.72rem;">${t.created_at ? new Date(t.created_at).toLocaleDateString() : '—'}</td>
+        <td style="text-align:right;">${teacherActions(t)}</td>
       </tr>
     `).join('');
   }
+  document.getElementById('teacher-select-all').checked = list.length > 0 && list.every(t => TEACHER_SELECTED.has(t.id));
+  updateTeacherBulkBar();
+};
 
-  // Approved
-  const apprTbody = document.getElementById('approved-teacher-rows');
-  if (approved.length === 0) {
-    apprTbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:var(--dim);">No approved faculty records.</td></tr>`;
-  } else {
-    apprTbody.innerHTML = approved.map(t => `
-      <tr>
-        <td style="font-weight:700;">${escapeHtml(t.full_name)}</td>
-        <td>${escapeHtml(Array.isArray(t.languages) ? t.languages.join(', ') : 'None')}</td>
-        <td class="mono">${escapeHtml(t.rating || '0.0')} ★</td>
-        <td>${escapeHtml(t.specialty || 'General')}</td>
-        <td style="font-weight:600;">€${escapeHtml(t.hourly_rate || '0.00')}/hr</td>
-        <td style="text-align:right;">
-          <button class="btn btn-out btn-sm" onclick="openTeacherReview('${t.id}')">Manage</button>
-        </td>
-      </tr>
-    `).join('');
+window.toggleTeacherSelected = function(id, on) {
+  on ? TEACHER_SELECTED.add(id) : TEACHER_SELECTED.delete(id);
+  updateTeacherBulkBar();
+};
+
+window.toggleAllTeachers = function(on) {
+  document.querySelectorAll('#teacher-rows input[type="checkbox"]').forEach(cb => {
+    cb.checked = on;
+    cb.dispatchEvent(new Event('change'));
+  });
+};
+
+window.clearTeacherSelection = function() {
+  TEACHER_SELECTED.clear();
+  renderTeachers();
+};
+
+function updateTeacherBulkBar() {
+  const n = TEACHER_SELECTED.size;
+  document.getElementById('teacher-bulk-bar').classList.toggle('on', n > 0);
+  document.getElementById('teacher-bulk-count').textContent = `${n} selected`;
+}
+
+window.bulkTeacherStatus = function(status) {
+  if (TEACHER_SELECTED.size) confirmTeacherStatus([...TEACHER_SELECTED], status);
+};
+
+window.viewAsTeacher = function(id) {
+  window.open(AlimunViewAs.pageUrl('teacher', id), '_blank');
+};
+window.viewAsStudent = function(id) {
+  window.open(AlimunViewAs.pageUrl('student', id), '_blank');
+};
+
+// Confirmation modal → POST /api/admin/teacher?action=set-status (emails are sent server-side)
+window.confirmTeacherStatus = function(ids, status) {
+  const people = ids.map(id => TEACHERS.find(t => t.id === id)).filter(Boolean);
+  if (!people.length) return;
+  const wasPending = people.every(t => t.status === 'pending');
+  const verb = status === 'approved' ? (wasPending ? 'Approve' : 'Reinstate')
+             : status === 'suspended' ? (wasPending ? 'Reject' : 'Suspend')
+             : 'Move to pending';
+  const names = people.map(t => escapeHtml(t.full_name)).join(', ');
+  const emailText = status === 'approved' ? 'Email them the welcome message'
+                  : wasPending ? 'Email them that the application was not approved' : 'Email them about the suspension';
+  const effect = status === 'approved'
+    ? 'They will appear on the public site and can sign in to the teacher dashboard.'
+    : status === 'suspended' ? 'They will be hidden from the public site and blocked from the teacher dashboard.'
+    : 'They will be hidden from the public site until reviewed again.';
+
+  openModal(`
+    <div class="m-hd">
+      <div>
+        <div class="m-ey">Faculty decision</div>
+        <div class="m-title">${verb} ${people.length > 1 ? people.length + ' teachers' : names}</div>
+      </div>
+      <button class="btn btn-out btn-sm" onclick="closeModal()">Cancel</button>
+    </div>
+    <div class="m-bd">
+      ${people.length > 1 ? `<p style="font-size:.8rem;color:var(--dim);margin-bottom:1rem;">${names}</p>` : ''}
+      <p style="font-size:.85rem;margin-bottom:1rem;">${effect}</p>
+      ${status === 'suspended' ? `
+        <div class="field-row" style="margin-bottom:1rem;">
+          <label>Reason (optional, included in the email)</label>
+          <textarea id="status-reason" rows="3" placeholder="e.g. We're not hiring for this language right now."></textarea>
+        </div>` : ''}
+      ${status !== 'pending' ? `
+        <label style="display:flex;gap:8px;align-items:center;font-size:.85rem;margin-bottom:1.25rem;cursor:pointer;">
+          <input type="checkbox" id="status-notify" checked style="width:16px;height:16px;accent-color:#080808;"> ${emailText}
+        </label>` : ''}
+      <div style="display:flex;justify-content:flex-end;gap:10px;border-top:1px solid rgba(0,0,0,0.06);padding-top:1.25rem;">
+        <button class="btn ${status === 'suspended' ? 'btn-err' : ''}" id="status-confirm-btn">${verb}</button>
+      </div>
+    </div>
+  `);
+  document.getElementById('status-confirm-btn').onclick = () => applyTeacherStatus(ids, status);
+};
+
+async function applyTeacherStatus(ids, status) {
+  const btn = document.getElementById('status-confirm-btn');
+  btn.disabled = true;
+  btn.textContent = 'Saving…';
+  const notify = document.getElementById('status-notify')?.checked ?? false;
+  const reason = document.getElementById('status-reason')?.value || '';
+
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+    const resp = await fetch('/api/admin/teacher?action=set-status', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token || ''}` },
+      body: JSON.stringify({ teacher_ids: ids, status, notify, reason }),
+    });
+    const out = await resp.json().catch(() => ({}));
+    if (!resp.ok) throw new Error(out.error || `HTTP ${resp.status}`);
+
+    const failed = (out.results || []).filter(r => r.error);
+    const emailed = (out.results || []).filter(r => r.emailed).length;
+    if (failed.length) alert(`Some updates failed:\n${failed.map(f => `${f.id}: ${f.error}`).join('\n')}`);
+    showToast(`Updated ${ids.length - failed.length} teacher(s) to ${status}${emailed ? ` · ${emailed} email(s) sent` : ''}.`);
+    closeModal();
+    TEACHER_SELECTED.clear();
+    await loadTeachers();
+    await loadStats();
+  } catch (e) {
+    alert('Status update failed: ' + e.message);
+    btn.disabled = false;
+    btn.textContent = 'Try again';
   }
 }
+
 
 window.openTeacherReview = async function(id) {
   const t = TEACHERS.find(x => x.id === id);
@@ -1906,7 +2091,7 @@ window.openTeacherReview = async function(id) {
       <div style="font-size:0.72rem;color:var(--dim);margin-bottom:1.25rem;line-height:1.6;background:#fafaf8;padding:12px;border-radius:8px;border:1px solid rgba(0,0,0,0.06);">
         <div><strong>Faculty UUID ID:</strong> <span class="mono">${escapeHtml(t.id)}</span></div>
         <div><strong>Supabase User UUID:</strong> <span class="mono">${escapeHtml(t.user_id)}</span></div>
-        <div><strong>Status:</strong> <span class="pill ok">${escapeHtml(t.status)}</span></div>
+        <div><strong>Status:</strong> <span class="pill ${TEACHER_STATUS_PILL[t.status] || 'na'}">${escapeHtml(t.status)}</span></div>
       </div>
 
       <div class="field-row" style="margin-bottom:12px;">
@@ -1936,8 +2121,9 @@ window.openTeacherReview = async function(id) {
         <div class="field-row span-2">
           <label>Faculty Tier</label>
           <select id="edit-tch-tier">
-            <option value="standard" ${t.tier_level==='standard'?'selected':''}>Standard Level</option>
-            <option value="premium" ${t.tier_level==='premium'?'selected':''}>Premium Level</option>
+            <option value="community" ${t.tier_level==='community'?'selected':''}>Community</option>
+            <option value="focused" ${!t.tier_level || t.tier_level==='focused'?'selected':''}>Focused</option>
+            <option value="intensive" ${t.tier_level==='intensive'?'selected':''}>Intensive</option>
           </select>
         </div>
       </div>
@@ -1974,12 +2160,16 @@ window.openTeacherReview = async function(id) {
       </div>
 
       <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid rgba(0,0,0,0.06);padding-top:1.25rem;">
-        <div>
+        <div class="row-actions" style="justify-content:flex-start;">
           ${t.status === 'pending' ? `
-            <button class="btn btn-err btn-sm" onclick="updateTeacherStatus('${t.id}', 'rejected')">Reject App</button>
-            <button class="btn btn-sm" onclick="updateTeacherStatus('${t.id}', 'approved')" style="margin-left:6px;">Approve Staff</button>
+            <button class="btn btn-sm" onclick="confirmTeacherStatus(['${t.id}'], 'approved')">Approve</button>
+            <button class="btn btn-err btn-sm" onclick="confirmTeacherStatus(['${t.id}'], 'suspended')">Reject</button>
+          ` : t.status === 'approved' ? `
+            <button class="btn btn-out btn-sm" onclick="viewAsTeacher('${t.id}')">View as teacher</button>
+            <button class="btn btn-err btn-sm" onclick="confirmTeacherStatus(['${t.id}'], 'suspended')">Suspend</button>
           ` : `
-            <span class="pill ok">Active Faculty Member</span>
+            <button class="btn btn-sm" onclick="confirmTeacherStatus(['${t.id}'], 'approved')">Reinstate</button>
+            <button class="btn btn-out btn-sm" onclick="confirmTeacherStatus(['${t.id}'], 'pending')">Move to pending</button>
           `}
         </div>
         <button class="btn" onclick="saveTeacherMetadata('${t.id}')">Save Profile Details</button>
@@ -1987,22 +2177,6 @@ window.openTeacherReview = async function(id) {
     </div>
   `;
   openModal(modalHtml);
-};
-
-window.updateTeacherStatus = async function(id, status) {
-  const { error } = await supabase
-    .from('teacher_profiles')
-    .update({ status })
-    .eq('id', id);
-
-  if (error) {
-    alert("Database update failed: " + error.message);
-  } else {
-    showToast(`Staff applicant status modified to ${status}.`);
-    closeModal();
-    await loadTeachers();
-    await loadStats();
-  }
 };
 
 window.saveTeacherMetadata = async function(id) {
