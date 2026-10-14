@@ -54,3 +54,13 @@ Env audit, read-only:
 - Still missing in production: `RESEND_API_KEY` and `EMAIL_FROM_ADDRESS` (no email is sent), and any AI key (`GEMINI_API_KEY`, `GROQ_API_KEY` or `ANTHROPIC_API_KEY`).
 - `STRIPE_*` keys and `DAILY_API_KEY` are set for Production only.
 - Unused and safe to delete: `STRIPE_PRICE_ONEONONE_SESSION`, `STRIPE_PRICE_CERTIFICATE`, and every `*_AUD` and `*_MAD` price.
+
+## 14 Oct 2026 — Production redeployed (owner instruction: "redeploy")
+
+The current production code (`main`, `9d6c0e5`) was redeployed with `vercel redeploy` so the new secrets apply. The new deployment is `alimun-site-fgg9xxrj3`, aliased to alimun.com.
+
+Smoke test (`scripts/ci/smoke-prod.sh`): all pass.
+- One transient connection error on `/supabase/schema.sql` returned 404 on three retries.
+- Both cron endpoints still return 401 without the secret. With `CRON_SECRET` they return 200, so this check ran each cron once, as the daily schedule does.
+
+The Phase 2 code fixes reach production when PR #2 is merged.
