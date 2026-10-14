@@ -23,3 +23,19 @@ Previous values, for undo:
 Unban: `update auth.users set banned_until = null where email in (…);` then restore the rows above.
 
 Not touched: `camille@example.com` (seed student, no subscription, never signed in), the suspended seed teachers, `admin@alimun.com` (already demoted in Phase 1).
+
+## 14 Oct 2026 — Phase 2 migration applied (owner instruction)
+
+`supabase/migrations/202610142200_phase2_audit_fixes.sql` was applied through the Supabase SQL connector in eight sections (the one-shot call timed out). Each section is idempotent and verified:
+- The old triggers were recreated with `create or replace trigger` instead of `drop` + `create`, and the existing policies were changed with `alter policy`. The resulting objects are the same as in the file.
+- Checked before applying: the code live on `main` only writes columns the new guards allow (student settings and opt-in, teacher name and location, session status, attendance `left_at`). Teacher signup gets `app_metadata.role` before the profile insert (`trg_set_app_role`).
+- Verify results:
+  - (a) the four teacher helpers require `approved`;
+  - (b) all 15 check constraints validated against existing rows, none left NOT VALID;
+  - (c) the 5 student columns and `teacher_profiles.notified_at` exist;
+  - (d) the policies are present;
+  - (e) both unique indexes were created, with no duplicates;
+  - (f) the bucket allows 15 MIME types;
+  - (g) `waitlist_webhook_secret` is not set yet, so the waitlist functions fall back to `admin_secret`.
+- Security advisor after applying: 0 errors. The warnings are the same by-design ones as Phase 1: RLS helpers callable by `authenticated`, `public_teacher_rows` by `anon`, and leaked-password protection, which needs the Pro plan.
+- The `rls.sql` suite was not re-run on production (it passed 162/162 locally).

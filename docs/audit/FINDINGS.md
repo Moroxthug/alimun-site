@@ -2,7 +2,7 @@
 
 Consolidated from the eight area reviews on 14 Oct 2026. The full write-up for each finding (scenario and fix) is in `raw/<area>.md` under the same ID. Status comes from the fix logs in `fixes/` (one per fixer, plus `round2.md`). **Partial** means one half of the fix is done (usually server or DB) and the rest is described in the log.
 
-**Status after fixes:** 96 Fixed, 8 Partial, 17 Deferred, 2 Not an issue. Every Critical and High is fixed. The Deferred items need copy, translations or owner decisions, or are Phase 3 feature work (Webflow forms, simulated dashboard data, enrol-after-payment, teacher timezone). The DB half of many fixes is in `supabase/migrations/202610142200_phase2_audit_fixes.sql`, which the owner still has to apply.
+**Status after fixes:** 96 Fixed, 8 Partial, 17 Deferred, 2 Not an issue. Every Critical and High is fixed. The Deferred items need copy, translations or owner decisions, or are Phase 3 feature work (Webflow forms, simulated dashboard data, enrol-after-payment, teacher timezone). The DB half of many fixes is in `supabase/migrations/202610142200_phase2_audit_fixes.sql`, which was applied to production on 14 Oct.
 
 Reviewers verified each finding by re-reading the code path. The lead session re-checked every Critical and High against the code. SQL-01 was confirmed with a read-only production query: `aisha@`, `marco@`, `omar@` and `yuki@example.com` hold `stripe_subscription_status = 'active'` with fake `sub_test_*` ids (`aisha@` and `marco@` last signed in in June), and `test-student@alimun.com` is `active` with no subscription id. None of them are banned. Whether the committed seed passwords still work was not tested.
 

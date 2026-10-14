@@ -25,9 +25,13 @@ jobs:
             curl -sSf -H "Authorization: Bearer $SUPABASE_ACCESS_TOKEN" \
               "https://api.supabase.com/v1/projects/$PROJECT_REF/advisors/$kind" > "$kind.json"
           done
-          # Known, accepted warnings (docs/audit/FINDINGS.md / phase-1 doc).
+          # Known, accepted warnings (docs/phase-1-db-lockdown.md): leaked-password
+          # protection needs Pro; the RLS helper functions are executable by
+          # signed-in users by design, and public_teacher_rows by anon.
           jq -s '[.[].lints[]? | select(.level == "ERROR" or .level == "WARN")
                  | select(.name != "auth_leaked_password_protection")
+                 | select(.name != "authenticated_security_definer_function_executable")
+                 | select(.name != "anon_security_definer_function_executable" or (.detail | test("public_teacher_rows") | not))
                  | {level, name, title, detail}]' security.json performance.json > findings.json
           echo "count=$(jq length findings.json)" >> "$GITHUB_ENV"
       - name: Open or update an issue

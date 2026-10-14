@@ -7,7 +7,9 @@
 --  side), APIP-05.
 --  See docs/audit/FINDINGS.md and docs/audit/fixes/sql.md.
 --
---  NOT APPLIED. The owner runs it as ONE script in Supabase →
+--  APPLIED to production 14 Oct 2026 (via the Supabase connector, in
+--  sections; see docs/audit/production-changes.md). For a fresh DB, run it
+--  as ONE script in Supabase →
 --  SQL Editor after the Phase 1 lockdown (202610141800). Idempotent:
 --  safe to re-run. Single transaction; any error rolls it all back.
 --
