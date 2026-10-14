@@ -21,3 +21,8 @@ dist/
 # Claude Code session config / Windows artifacts
 .claude/
 nul
+
+# CI scratch
+.inline-js/
+test-results/
+playwright-report/

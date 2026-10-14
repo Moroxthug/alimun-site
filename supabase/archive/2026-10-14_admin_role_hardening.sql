@@ -1,4 +1,14 @@
 -- ============================================================
+--  DO NOT RUN — superseded by migrations/202610141800_phase1_db_lockdown.sql
+--  and migrations/202610142200_phase2_audit_fixes.sql.
+--  Applied on 14 Oct. Re-running it would reinstate the deny-list
+--  teacher guard (trust fields writable again). (SQL-04, SQL-10)
+--  Kept as history only. supabase/tests/run-local.sh replays it on a
+--  throwaway LOCAL database to rebuild the pre-Phase-1 state; never run
+--  it on the production project.
+-- ============================================================
+
+-- ============================================================
 --  2026-10-14 — Admin role hardening
 --
 --  1. is_admin() trusted auth.jwt()->'user_metadata'->>'role'.

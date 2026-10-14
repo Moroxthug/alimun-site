@@ -14,6 +14,12 @@
  * SAME price id (checkout picks one via the `currency` param, see api/stripe.js).
  * Non-EUR amounts are approximate conversions rounded to clean numbers — edit AMOUNTS.
  * Amounts are in minor units (cents; MAD has 2 decimals in Stripe).
+ *
+ * NOT created here (manual in the Stripe dashboard until the owner sets the
+ * amounts): STRIPE_PRICE_ONEONONE_SESSION and STRIPE_PRICE_CERTIFICATE, both
+ * one-time EUR prices with the same USD/CAD/AUD/MAD currency_options. The
+ * separate STRIPE_PRICE_*_MONTHLY_AUD / _MAD env vars are optional: the base
+ * prices already carry AUD and MAD currency_options.
  */
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY || '');
 
@@ -49,6 +55,8 @@ async function price(lookupKey, productName, amounts, recurring) {
     unit_amount: amounts[0] * 100,
     currency_options: opts(amounts),
     lookup_key: lookupKey,
+    // An archived price may still hold this lookup_key; move it over.
+    transfer_lookup_key: true,
     ...(recurring ? { recurring: { interval: recurring } } : {}),
     product_data: { name: productName },
   });

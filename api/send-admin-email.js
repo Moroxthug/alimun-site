@@ -18,9 +18,20 @@ function getSupabaseAdmin() {
   });
 }
 
+function escapeHtml(s) {
+  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const EMAIL_TYPES = new Set(['tier-upgrade', 'promo']);
+// Tier emails are only sent for real classroom tiers (not e.g. 'waitlist').
+const TIERS = new Set(['community', 'focused', 'intensive', 'private']);
+const MAX_SUBJECT = 200;
+const MAX_BODY = 10000;
+
 module.exports = async function handler(req, res) {
   // CORS Headers
-  res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || '*');
+  res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || 'https://alimun.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
@@ -48,15 +59,26 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized: authentication exception' });
   }
 
-  const role = user.app_metadata?.role || user.user_metadata?.role || '';
-  if (role !== 'admin') {
+  // Admin comes from app_metadata only (user_metadata is user-writable).
+  if (user.app_metadata?.role !== 'admin') {
     return res.status(403).json({ error: 'Forbidden: admin access required' });
   }
 
   // 2. Parse body
   const { targetId, emailType, customSubject, customBody, tierName } = req.body || {};
-  if (!targetId || !emailType) {
-    return res.status(400).json({ error: 'Missing targetId or emailType' });
+  if (!targetId || !UUID_RE.test(String(targetId)) || !EMAIL_TYPES.has(emailType)) {
+    return res.status(400).json({ error: 'Missing or invalid targetId or emailType' });
+  }
+  if (emailType === 'tier-upgrade' && !TIERS.has(String(tierName || '').toLowerCase())) {
+    return res.status(400).json({ error: 'Invalid tierName' });
+  }
+  if (emailType === 'promo') {
+    if (typeof customBody !== 'string' || !customBody.trim() || customBody.length > MAX_BODY) {
+      return res.status(400).json({ error: 'Invalid customBody' });
+    }
+    if (customSubject != null && (typeof customSubject !== 'string' || customSubject.length > MAX_SUBJECT)) {
+      return res.status(400).json({ error: 'Invalid customSubject' });
+    }
   }
 
   try {
@@ -99,11 +121,13 @@ module.exports = async function handler(req, res) {
     }
 
     // 4. Build templates
-    let subject = customSubject || 'Update from Alimun';
+    // Subjects are plain text: strip CR/LF and angle brackets.
+    const cleanSubject = (v) => String(v).replace(/[\r\n<>]/g, ' ').trim().slice(0, MAX_SUBJECT);
+    let subject = cleanSubject(customSubject || 'Update from Alimun') || 'Update from Alimun';
     let emailHtml = '';
 
     if (emailType === 'tier-upgrade') {
-      subject = `Your Alimun classroom tier has been upgraded to ${tierName}!`;
+      subject = cleanSubject(`Your Alimun classroom tier has been upgraded to ${tierName}!`);
       emailHtml = `
         <!DOCTYPE html>
         <html>
@@ -125,10 +149,10 @@ module.exports = async function handler(req, res) {
               <p>Administrative Upgrade</p>
             </div>
             <div style="margin-top:24px;">
-              <p>Hello <b>${fullName}</b>,</p>
+              <p>Hello <b>${escapeHtml(fullName)}</b>,</p>
               <p>Your subscription tier has been modified directly by the Alimun Administration team. Your account has been upgraded to:</p>
               <center>
-                <div class="badge">${tierName}</div>
+                <div class="badge">${escapeHtml(tierName)}</div>
               </center>
               <p style="margin-top: 24px;">This tier is now active on your account without requiring credit card registration or subscription payments. Enjoy your live classes and interactive exercises!</p>
               <p>Log in to your dashboard to view your new capabilities.</p>
@@ -163,9 +187,9 @@ module.exports = async function handler(req, res) {
               <p>Admin Notification</p>
             </div>
             <div class="content">
-<p>Hello <b>${fullName}</b>,</p>
+<p>Hello <b>${escapeHtml(fullName)}</b>,</p>
 
-${customBody}
+${escapeHtml(customBody)}
             </div>
             <div class="footer">
               Sent by Alimun Administration. Contact support@alimun.com for inquiry.
@@ -179,13 +203,8 @@ ${customBody}
     // 5. Send via Resend
     const resendKey = process.env.RESEND_API_KEY;
     if (!resendKey || resendKey.includes('YOUR_RESEND_API_KEY')) {
-      console.warn('[Send Admin Email] Resend key is not configured, returning mock success.');
-      return res.status(200).json({
-        success: true,
-        message: 'Resend API key missing. Email details generated successfully.',
-        recipient: email,
-        subject
-      });
+      console.warn('[Send Admin Email] Resend key is not configured; nothing sent.');
+      return res.status(503).json({ error: 'Email delivery is not configured' });
     }
 
     const resendRes = await fetch('https://api.resend.com/emails', {
@@ -195,7 +214,7 @@ ${customBody}
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        from: 'Alimun <onboarding@resend.dev>',
+        from: process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>',
         to: email,
         subject: subject,
         html: emailHtml
@@ -204,15 +223,15 @@ ${customBody}
 
     if (resendRes.ok) {
       const resendData = await resendRes.json();
-      return res.status(200).json({ success: true, id: resendData.id, recipient: email });
+      return res.status(200).json({ success: true, id: resendData.id });
     } else {
       const errText = await resendRes.text();
-      console.error('[Send Admin Email] Resend failure:', errText);
-      return res.status(502).json({ error: 'Resend delivery failed: ' + errText });
+      console.error('[Send Admin Email] Resend failure:', resendRes.status, errText.slice(0, 500));
+      return res.status(502).json({ error: 'Email delivery failed' });
     }
 
   } catch (err) {
     console.error('[Send Admin Email] Endpoint exception:', err);
-    return res.status(500).json({ error: 'Internal server error: ' + err.message });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };

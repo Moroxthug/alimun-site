@@ -83,7 +83,7 @@ module.exports = async function handler(req, res) {
     // 2. Load session + cohort + teacher
     const { data: session, error: sessionError } = await supabase
       .from('sessions')
-      .select('id, scheduled_at, status, daily_room_url, cohort_id, cohorts ( id, teacher_id, language, level, teacher_profiles ( id, user_id, full_name ) )')
+      .select('id, scheduled_at, status, daily_room_url, cohort_id, cohorts ( id, teacher_id, language, level, teacher_profiles ( id, user_id, full_name, status ) )')
       .eq('id', sessionId)
       .maybeSingle();
 
@@ -92,7 +92,8 @@ module.exports = async function handler(req, res) {
     if (session.status === 'completed') return res.status(400).json({ error: 'This session has already ended' });
 
     const teacherProfile = session.cohorts?.teacher_profiles;
-    const isTeacher = !!teacherProfile && teacherProfile.user_id === user.id;
+    // A suspended (or pending) teacher is not treated as the class owner.
+    const isTeacher = !!teacherProfile && teacherProfile.user_id === user.id && teacherProfile.status === 'approved';
 
     // Or an actively enrolled, actively paying student?
     let studentProfile = null;
@@ -132,39 +133,48 @@ module.exports = async function handler(req, res) {
       return res.status(410).json({ error: 'ended', message: 'This session has already ended' });
     }
 
-    // 3. Ensure the Daily room exists
+    // 3. Ensure the Daily room exists and is valid for THIS join window.
+    //    The room name is always derived from the session id (the token is
+    //    scoped to it), and its expiry is refreshed on every join so a
+    //    rescheduled session or a room pre-created by the cron with a stale
+    //    exp/config stays joinable (APIP-12, APIO-12).
     const roomName = `alimun-${session.id}`;
     const expEpoch = Math.floor(endMs / 1000);
-    let roomUrl = session.daily_room_url;
-    if (!roomUrl || roomUrl.includes('/mock-room/')) roomUrl = null;
+    const roomProperties = {
+      exp: expEpoch,
+      max_participants: 40,
+      enable_chat: true,
+      enable_screenshare: true,
+      enable_knocking: false,
+      start_video_off: false,
+      eject_at_room_exp: true,
+    };
+    let roomUrl = null;
 
-    if (!roomUrl) {
-      const existing = await dailyFetch(`/rooms/${roomName}`);
-      if (existing.ok && existing.body?.url) {
-        roomUrl = existing.body.url;
-      } else {
-        const created = await dailyFetch('/rooms', {
-          method: 'POST',
-          body: JSON.stringify({
-            name: roomName,
-            privacy: 'private',
-            properties: {
-              exp: expEpoch,
-              max_participants: 40,
-              enable_chat: true,
-              enable_screenshare: true,
-              enable_knocking: false,
-              start_video_off: false,
-              eject_at_room_exp: true,
-            },
-          }),
-        });
-        if (!created.ok || !created.body?.url) {
-          console.error('[Join Session API] Daily room creation failed:', created.body);
-          return res.status(502).json({ error: 'Could not create the video room. Please try again.' });
-        }
+    const refreshed = await dailyFetch(`/rooms/${roomName}`, {
+      method: 'POST',
+      body: JSON.stringify({ properties: roomProperties }),
+    });
+    if (refreshed.ok && refreshed.body?.url) {
+      roomUrl = refreshed.body.url;
+    } else {
+      const created = await dailyFetch('/rooms', {
+        method: 'POST',
+        body: JSON.stringify({ name: roomName, privacy: 'private', properties: roomProperties }),
+      });
+      if (created.ok && created.body?.url) {
         roomUrl = created.body.url;
+      } else {
+        // Room exists but could not be updated: fall back to using it as is.
+        const existing = await dailyFetch(`/rooms/${roomName}`);
+        if (existing.ok && existing.body?.url) roomUrl = existing.body.url;
       }
+      if (!roomUrl) {
+        console.error('[Join Session API] Daily room refresh/creation failed:', refreshed.status, created.body);
+        return res.status(502).json({ error: 'Could not create the video room. Please try again.' });
+      }
+    }
+    if (roomUrl !== session.daily_room_url) {
       await supabase.from('sessions').update({ daily_room_url: roomUrl }).eq('id', session.id);
     }
 

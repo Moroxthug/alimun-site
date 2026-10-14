@@ -4,12 +4,20 @@
  *  Vercel Serverless Function (Node.js runtime)
  *
  *  Cron endpoint to scan and process expired waitlist offers.
- *  Triggered by Vercel Cron (Bearer CRON_SECRET) or by an admin
- *  (Bearer ADMIN_SECRET). FAILS CLOSED when neither secret is set.
+ *  Triggered by Vercel Cron (Bearer CRON_SECRET) only.
+ *  FAILS CLOSED when CRON_SECRET is not set.
  * ============================================================
  */
 
+const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+
+/** Constant-time comparison of two strings (hashed first so lengths match). */
+function safeEqual(a, b) {
+  const ha = crypto.createHash('sha256').update(String(a)).digest();
+  const hb = crypto.createHash('sha256').update(String(b)).digest();
+  return crypto.timingSafeEqual(ha, hb);
+}
 
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
@@ -25,11 +33,8 @@ function getSupabaseAdmin() {
 
 function isAuthorized(req) {
   const cronSecret = process.env.CRON_SECRET;
-  const adminSecret = process.env.ADMIN_SECRET;
-  const authHeader = req.headers.authorization || '';
-  if (cronSecret && authHeader === `Bearer ${cronSecret}`) return true;
-  if (adminSecret && authHeader === `Bearer ${adminSecret}`) return true;
-  return false;
+  if (!cronSecret) return false; // fail closed
+  return safeEqual(req.headers.authorization || '', `Bearer ${cronSecret}`);
 }
 
 module.exports = async function (req, res) {
@@ -48,7 +53,7 @@ module.exports = async function (req, res) {
     if (error) throw error;
 
     console.log('[Alimun Waitlist Cron] Processed expired offers:', data);
-    return res.status(200).json({ success: true, result: data });
+    return res.status(200).json({ success: true });
   } catch (err) {
     console.error('[Alimun Waitlist Cron] Error executing cron:', err);
     return res.status(500).json({ error: 'Internal Server Error' });

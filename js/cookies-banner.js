@@ -374,8 +374,20 @@
     });
   }
 
+  // Saved consent, or null when missing, unreadable (storage blocked) or corrupted.
+  function readConsent() {
+    try {
+      const raw = localStorage.getItem('alimun-cookie-consent');
+      if (!raw) return null;
+      const prefs = JSON.parse(raw);
+      return prefs && typeof prefs === 'object' ? prefs : null;
+    } catch (e) {
+      return null;
+    }
+  }
+
   function checkConsent() {
-    const consent = localStorage.getItem('alimun-cookie-consent');
+    const consent = readConsent();
     if (!consent) {
       // Show banner with delay for animations
       setTimeout(() => {
@@ -384,15 +396,14 @@
       }, 1000);
     } else {
       // Apply preferences immediately (e.g. disable analytics scripts if consent rejected)
-      applyConsent(JSON.parse(consent));
+      applyConsent(consent);
     }
   }
 
   function openModal() {
     // Pre-populate checkboxes from saved consent
-    const consent = localStorage.getItem('alimun-cookie-consent');
-    if (consent) {
-      const prefs = JSON.parse(consent);
+    const prefs = readConsent();
+    if (prefs) {
       document.getElementById('cookie-opt-analytics').checked = !!prefs.analytics;
       document.getElementById('cookie-opt-marketing').checked = !!prefs.marketing;
     } else {
@@ -414,7 +425,7 @@
     if (overlay) overlay.classList.remove('show');
 
     // Bring back banner if consent not yet submitted
-    const consent = localStorage.getItem('alimun-cookie-consent');
+    const consent = readConsent();
     if (!consent) {
       const banner = document.getElementById('alimun-cookie-banner');
       if (banner) banner.classList.add('show');
@@ -422,7 +433,7 @@
   }
 
   function saveConsent(prefs) {
-    localStorage.setItem('alimun-cookie-consent', JSON.stringify(prefs));
+    try { localStorage.setItem('alimun-cookie-consent', JSON.stringify(prefs)); } catch (e) { /* storage blocked */ }
     applyConsent(prefs);
     
     // Hide all popups

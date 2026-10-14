@@ -54,7 +54,7 @@ body{font-family:var(--body);background:#f0efe9;min-height:100vh;display:flex;fl
 </style>
 
 <!-- Supabase CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
 <script>
   window.ALIMUN_CONFIG = {
     supabaseUrl:          'https://dgaiasmefcbrtzqwdyri.supabase.co',
@@ -183,10 +183,10 @@ async function init() {
 
     const session = await resp.json();
 
-    // 3. Verify payment actually succeeded.
-    //    Subscriptions report paymentStatus 'paid'; some one-time / trial
-    //    sessions only report status 'complete' — either counts as success.
-    const paid = session.paymentStatus === 'paid' || session.status === 'complete';
+    // 3. Verify payment actually succeeded. Only payment_status counts:
+    //    async methods report status 'complete' with payment_status 'unpaid'
+    //    until the money arrives, so 'complete' alone is not success.
+    const paid = session.paymentStatus === 'paid' || session.paymentStatus === 'no_payment_required';
     if (!paid) {
       showError(
         `Your payment status is "${session.paymentStatus || session.status}". ` +
@@ -200,7 +200,8 @@ async function init() {
     //    columns — a DB trigger rejects it. Nothing to update here.
 
     // 5. Personalise from the signed-in session (if any) and show success UI
-    const tier     = session.tier || 'unknown';
+    const isFounding = session.type === 'founding_member';
+    const tier     = isFounding ? 'founding_member' : (session.tier || 'unknown');
     const tierName = TIER_NAMES[tier] || 'Alimun';
 
     let firstName = '';
@@ -215,10 +216,13 @@ async function init() {
 
     document.getElementById('success-title').textContent =
       `You're in${firstName ? ', ' + firstName : ''}!`;
-    document.getElementById('success-sub').textContent =
-      `Your ${tierName} account is active. Get ready for your first live session — we'll be in touch shortly.`;
+    // Founding members reserved a spot for a language that is not live yet:
+    // do not tell them the account is active or a live session is coming.
+    document.getElementById('success-sub').textContent = isFounding
+      ? `Your ${tierName} spot is reserved. We'll email you the moment classes open.`
+      : `Your ${tierName} account is active. Get ready for your first live session — we'll be in touch shortly.`;
     document.getElementById('tier-pill-text').textContent =
-      `${tierName} plan · Active`;
+      isFounding ? tierName : `${tierName} plan · Active`;
 
     showState('state-success');
 

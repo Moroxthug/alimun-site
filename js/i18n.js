@@ -17,6 +17,22 @@
     { code: 'zh', name: '中文', flag: '🇨🇳' },
     { code: 'ar', name: 'العربية', flag: '🇸🇦', isRTL: true }
   ];
+  // Every generated locale folder. 'ma' (Morocco, French content) is built by
+  // build.js but is not offered in the switcher; it must still be recognised as
+  // a locale prefix so /ma/ pages are not treated as English root pages.
+  const LOCALE_CODES = LANGUAGES.map(l => l.code).concat(['ma']);
+  // BCP 47 tag for <html lang> where the folder code is not one ('ma' content is French).
+  const HTML_LANG = { ma: 'fr-MA' };
+  // Auth and app pages carry tokens and parameters in the URL (password reset,
+  // email confirmation, waitlist claims, checkout returns, ?as=, ?preview=1):
+  // never auto-redirect them to a locale folder.
+  const NO_REDIRECT_PAGES = ['signin', 'signup', 'signup-success', 'forgot-password', 'reset-password',
+    'student-dashboard', 'teacher-dashboard', 'admin'];
+
+  function urlLangPrefix() {
+    const first = window.location.pathname.split('/').filter(p => p.length > 0)[0];
+    return first && LOCALE_CODES.includes(first) ? first : null;
+  }
 
   // Helper to get active language
   function getActiveLang() {
@@ -31,8 +47,13 @@
       console.error('Error detecting lang from domain:', e);
     }
 
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved && LANGUAGES.some(l => l.code === saved)) {
+    // 2. A locale folder in the URL wins over saved/browser preferences
+    const prefix = urlLangPrefix();
+    if (prefix) return prefix;
+
+    let saved = null;
+    try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) { /* storage blocked */ }
+    if (saved && LOCALE_CODES.includes(saved)) {
       return saved;
     }
     // Browser fallback
@@ -47,26 +68,28 @@
   (function initRouting() {
     const pathname = window.location.pathname;
     const parts = pathname.split('/').filter(p => p.length > 0);
-    const langCodes = LANGUAGES.map(l => l.code);
-    
-    const hasLangPrefix = parts.length > 0 && langCodes.includes(parts[0]);
+
+    const hasLangPrefix = parts.length > 0 && LOCALE_CODES.includes(parts[0]);
     const urlLang = hasLangPrefix ? parts[0] : 'en';
 
     if (hasLangPrefix) {
-      const savedLang = localStorage.getItem(STORAGE_KEY);
-      if (savedLang !== urlLang) {
-        localStorage.setItem(STORAGE_KEY, urlLang);
-      }
+      try {
+        if (localStorage.getItem(STORAGE_KEY) !== urlLang) localStorage.setItem(STORAGE_KEY, urlLang);
+      } catch (e) { /* storage blocked */ }
     } else {
       const userAgent = navigator.userAgent.toLowerCase();
       const isBot = /bot|googlebot|crawler|spider|robot|crawling|slurp|bing|yandex|baidu/i.test(userAgent);
-      
-      if (!isBot) {
+      const page = (parts[parts.length - 1] || '').replace(/\.html$/, '');
+      // Links that carry a payload (tokens, ids, return flags) must not be redirected:
+      // the locale copy would load without it. Such pages are still translated in place.
+      const hasPayload = window.location.search.length > 1 || window.location.hash.length > 1;
+
+      if (!isBot && !hasPayload && !NO_REDIRECT_PAGES.includes(page)) {
         const activeLang = getActiveLang();
         if (activeLang !== 'en') {
           const filename = parts.join('/') || '';
           const targetPath = filename === '' ? `/${activeLang}/` : `/${activeLang}/${filename}`;
-          window.location.replace(window.location.origin + targetPath);
+          window.location.replace(window.location.origin + targetPath + window.location.search + window.location.hash);
         }
       }
     }
@@ -75,7 +98,7 @@
   // Set direction and lang attributes
   function updateDocumentDirection(lang) {
     const active = LANGUAGES.find(l => l.code === lang);
-    document.documentElement.lang = lang;
+    document.documentElement.lang = HTML_LANG[lang] || lang;
     if (active && active.isRTL) {
       document.documentElement.dir = 'rtl';
       injectRTLStyles();
@@ -231,7 +254,7 @@
       const key = element.getAttribute('data-i18n-html');
       if (langDict[key]) {
         let value = langDict[key];
-        value = interpolateVariables(element, value);
+        value = interpolateVariables(element, value, true);
         element.innerHTML = value;
       }
     }
@@ -261,8 +284,14 @@
     }
   }
 
-  // Replace placeholders like {name} in translated values using data-i18n-var-* attributes
-  function interpolateVariables(element, text) {
+  function escapeHtml(v) {
+    return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  // Replace placeholders like {name} in translated values using data-i18n-var-* attributes.
+  // asHtml: the result goes into innerHTML, so the (already entity-decoded) attribute
+  // value is escaped again; variables are always plain text, never markup.
+  function interpolateVariables(element, text, asHtml) {
     const matches = text.match(/\{[a-zA-Z0-9_]+\}/g);
     if (!matches) return text;
 
@@ -271,7 +300,8 @@
       const varName = match.slice(1, -1);
       const attrVal = element.getAttribute(`data-i18n-var-${varName}`);
       if (attrVal !== null) {
-        result = result.replace(match, attrVal);
+        const safe = asHtml ? escapeHtml(attrVal) : attrVal;
+        result = result.replace(match, () => safe);
       }
     });
     return result;
@@ -557,6 +587,7 @@
     // Toggle button
     const btn = document.createElement('div');
     btn.className = 'alimun-i18n-btn';
+    // nosemgrep: innerhtml-template-without-escape -- constant markup only
     btn.innerHTML = `
       <svg class="alimun-globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 13px; height: 13px; opacity: 0.75;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
       <span class="lang-code">${activeLang.code.toUpperCase()}</span>
@@ -572,19 +603,18 @@
     LANGUAGES.forEach(lang => {
       const item = document.createElement('div');
       item.className = 'alimun-i18n-item' + (lang.code === activeCode ? ' active' : '');
+      // nosemgrep: innerhtml-template-without-escape -- constant markup only
       item.innerHTML = `
         <span>${lang.name}</span>
       `;
       item.addEventListener('click', () => {
-        localStorage.setItem(STORAGE_KEY, lang.code);
+        try { localStorage.setItem(STORAGE_KEY, lang.code); } catch (e) { /* storage blocked */ }
         
         // Calculate target subdirectory URL
         const pathname = window.location.pathname;
         const parts = pathname.split('/').filter(p => p.length > 0);
-        const langCodes = ['en', 'es', 'fr', 'de', 'pt', 'it', 'zh', 'ar'];
-        
         let filename = 'index.html';
-        if (parts.length > 0 && langCodes.includes(parts[0])) {
+        if (parts.length > 0 && LOCALE_CODES.includes(parts[0])) {
           filename = parts.slice(1).join('/') || 'index.html';
         } else {
           filename = parts.join('/') || 'index.html';
@@ -592,7 +622,7 @@
         
         // Perform clean directory redirect
         const targetPath = lang.code === 'en' ? `/${filename}` : `/${lang.code}/${filename}`;
-        window.location.href = window.location.origin + targetPath;
+        window.location.href = window.location.origin + targetPath + window.location.search + window.location.hash;
       });
       menu.appendChild(item);
     });

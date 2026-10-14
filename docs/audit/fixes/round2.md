@@ -1,0 +1,29 @@
+# Fix log: round 2 (lead, single editor)
+
+Worklist = the "needs:" lines in the six round-1 logs. Each item was checked against the current code first.
+Checks run after the edits: `npm run build` OK; `node scripts/ci/check-inline-scripts.js` OK (367 scripts); `node scripts/ci/check-function-count.js` OK (12/12); `node scripts/ci/check-links.js` OK; `node --check` on every api/ file OK; `supabase/tests/run-local.sh` on a throwaway local PostgreSQL 16: 162 passed, 0 failed (each migration run twice for idempotency). No production calls.
+
+item | status | what (file:line)
+---|---|---
+1 supabase-js pin (ADM-13/TEA-12) | done | student-dashboard.html:7, teacher-dashboard.html:10 now load `@supabase/supabase-js@2.108.2/dist/umd/supabase.js` with `integrity="sha384-nD3dwv4+…"` + `crossorigin`. Hash re-computed from jsdelivr with openssl and it matches.
+2a STU-09 not_eligible | done | student-dashboard.html:5068-5085 adds `aiResponseError`/`aiErrorMessage`. A 403 `reason:'not_eligible'` shows "AI practice is available with an active plan or class enrollment." (key `student_ai_not_eligible`), and a 429 shows a rate-limit message. Used by essay grading (4566/4579), exercise generation (5099/5123), the placement test (5154) and the AI tutor chat (5598/5623).
+2b APIO-12 claim expiry | done | student-dashboard.html:6318 refuses offers with no `offered_at`/`offer_expires_at` or an invalid date. 6351 re-checks the expiry when Claim is clicked, because the modal can stay open past the deadline. Server side was already done: api/enroll.js:186-197 answers 410 `offer_expired`.
+3 TEA-06 runGrade | done | `grade-submission` exists in api/ai.js:402 and returns `{text,result}`. teacher-dashboard.html:1286-1305: `runGrade` now POSTs `/api/ai?action=grade-submission {submission_id}` and uses `result`. The client no longer builds a prompt, and the manual-grade fallback is unchanged.
+4 APIP-13 createCheckout errors | done (config already done) | js/stripe/config.js createCheckout already set `status`, `code` (=err.error), `portal` and used the server text. Not changed. student-dashboard.html:5800-5804 `isSubscriptionConflict` now uses `status===409 / code==='active_subscription' / portal` only (no text matching). joinCohortDirect already checks `checkoutResp.status === 409`.
+5a APIO-05 approved teacher | skipped (already done) | api/generate-notes-pdf.js:183-191 already requires `status === 'approved'`.
+5b TEA-03 completed on publish | done | api/generate-notes-pdf.js:275-284: after a successful publish, a session that has started and is `scheduled`/`live` is set to `completed` (failure is logged only). The nightly cron is still the fallback.
+6a ADM-10 emailed | skipped (already done) | api/admin/teacher.js:119-143 `sendEmail` returns `response.ok`. That drives `emailed` (301-309, 656-672).
+6b AUTH-05 notify idempotency | done | Migration supabase/migrations/202610142200_phase2_audit_fixes.sql:68-71 adds `teacher_profiles.notified_at timestamptz` (idempotent). The insert guard resets it (:207), clients cannot update it (not in the allow-list), and verify query c2 is at :610. api/admin/teacher.js:484-522 claims the slot atomically (`update … set notified_at=now where notified_at is null or < now-24h`), returning 429 when already notified, and releases it if Resend fails. Before the migration is applied, an undefined-column error falls back to the per-instance guard.
+6c ADM-06 ?action=create | skipped (deferred) | admin.html does not call `api/admin/teacher?action=create`, so it stays deferred (client warning only, per pages.md).
+7 APIP-12 admin room URL | done | admin.html:2582-2583: the room URL is read-only, with a note that the server manages it. saveSessionChanges (2605-2617) no longer writes `daily_room_url`.
+8 APIO-12 cron room properties | skipped (already done) | api/cron-create-rooms.js:63-73 already matches join-session's properties (plus `enable_recording:false`), and the expiry window matches (90 min both).
+9 it/ hand-made pages | done | it/index.html, it/careers.html, it/careers-teachers-section.html, it/services.html: vvprocess/vvbootstrap script lines removed, `hreflang="ar-MA"`→`fr-MA` (index/careers/services; careers-teachers-section has no hreflang), and the footer brand link `../images/alimun.svg`→`index.html`.
+10a engines.node | done | package.json:19 and package-lock.json root entry: `"node": "22.x"`.
+10b .vercelignore fonts | skipped (not applicable) | .vercelignore has no font entries, so fonts/ is not excluded. Related real issue fixed: the unanchored `supabase/`, `mockups/` and `sandbox/` match at any depth under gitignore rules, so `supabase/` also excluded `js/supabase/config.js` (imported by signin, signup, admin and others). They are now anchored as `/supabase/`, `/mockups/`, `/sandbox/`, with a comment. The root folders stay excluded and vercel.json's 404 route still blocks them. Check on a preview deploy that `/js/supabase/config.js` is served.
+11 DEPLOY_CHECKLIST | done | DEPLOY_CHECKLIST.md §1 now lists `supabase/migrations/*` in filename order and says nothing in `supabase/archive/` may be run.
+12 AUTH-01 signup tier | skipped | signup.html sends only `'founding_member'` (which the guard deliberately keeps) and `'waitlist'` (the guard's forced value). `tier` is NOT NULL with no column default, and the migration is not applied yet, so dropping it would break signup today. The guard already neutralises any other value.
+
+Still open (owner or later):
+- Apply 202610142200_phase2_audit_fixes.sql in Supabase (now also adds `teacher_profiles.notified_at`).
+- Preview deploy: confirm `/js/supabase/config.js` and `fonts/` are served and the notes PDF renders on Node 22.
+- ADM-06 server `?action=create`; owner env items (`WAITLIST_WEBHOOK_SECRET`, `APPROVAL_LINK_SECRET`, removing `admin_secret` from app_settings); STU-20/TEA-14 translation keys. "needs:" lines outside this worklist were not re-verified here.

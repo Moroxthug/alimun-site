@@ -111,3 +111,16 @@ Not touched: user data (apart from the role metadata in step 3), `sync_cohort_en
 - **`user_metadata.role` fallbacks:** signup, the student and teacher dashboards and `js/supabase/config.js` fall back to `user_metadata.role` for routing only. Every account will have an `app_metadata.role` after the backfill.
 - **`/api/generate-notes-pdf` 500 (item 10):** the migration creates the bucket it uploads to, but the reported failure is `FUNCTION_INVOCATION_FAILED`, which happens before any upload. It is not diagnosed here; that is Phase 3 work.
 - **Dead helpers:** the query helpers in `js/supabase/config.js` are unused.
+
+## Status after apply (14 Oct)
+
+Applied and verified on production (see `docs/PROGRESS.md`). Owner items now:
+
+- **Test data:** done (option A, suspended + closed, nothing deleted).
+- **Leaked-password protection:** not available on the Supabase Free plan; accepted warning.
+- **`admin@alimun.com`:** demoted to student (it had never signed in).
+- **`ADMIN_SECRET`:** a new value was generated in the database. To make Vercel match it:
+  1. In Supabase → SQL Editor, run `select value from public.app_settings where key = 'admin_secret';` and copy the result.
+  2. In Vercel → Project → Settings → Environment Variables, set `ADMIN_SECRET` to that value (Production and Preview), then redeploy.
+  3. Approve/reject links in teacher-application emails sent before the change stop working; use the admin dashboard buttons instead.
+- **Vercel env check:** confirm `CRON_SECRET`, `RESEND_API_KEY`, `EMAIL_FROM_ADDRESS` and one AI key (`GEMINI_API_KEY`, `GROQ_API_KEY` or `ANTHROPIC_API_KEY`) are set. Delete the unused `STRIPE_PRICE_ONEONONE_SESSION`, `STRIPE_PRICE_CERTIFICATE`, `*_AUD` and `*_MAD` entries.

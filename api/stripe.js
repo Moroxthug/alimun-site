@@ -91,23 +91,26 @@ function safeReturnUrl(candidate, fallbackPath) {
   return origin + fallbackPath;
 }
 
+/** Load the caller's student_profiles row (null when missing). */
+async function loadStudentProfile(supabaseAdmin, user) {
+  if (!supabaseAdmin) return null;
+  const { data, error } = await supabaseAdmin
+    .from('student_profiles')
+    .select('id, stripe_customer_id, stripe_subscription_id, stripe_subscription_status, full_name')
+    .eq('user_id', user.id)
+    .maybeSingle();
+  if (error) throw new Error(`student profile lookup: ${error.message}`);
+  return data || null;
+}
+
 /**
- * Resolve the Stripe customer for a verified user:
+ * Resolve the Stripe customer for a verified user with a student profile:
  *  1. stored student_profiles.stripe_customer_id
  *  2. an existing Stripe customer tagged with this supabase_user_id
- *  3. create a new one (tagged), and persist it.
+ *  3. create a new one (tagged, idempotent per user), and persist it.
  */
-async function resolveStripeCustomer(supabaseAdmin, user, name) {
-  let profile = null;
-  if (supabaseAdmin) {
-    const { data } = await supabaseAdmin
-      .from('student_profiles')
-      .select('id, stripe_customer_id, full_name')
-      .eq('user_id', user.id)
-      .maybeSingle();
-    profile = data;
-    if (profile?.stripe_customer_id) return profile.stripe_customer_id;
-  }
+async function resolveStripeCustomer(supabaseAdmin, user, profile, name) {
+  if (profile?.stripe_customer_id) return profile.stripe_customer_id;
 
   const search = await stripe.customers.search({
     query: `metadata['supabase_user_id']:'${user.id}'`,
@@ -116,11 +119,14 @@ async function resolveStripeCustomer(supabaseAdmin, user, name) {
   let customerId = search.data?.[0]?.id;
 
   if (!customerId) {
+    // Idempotency key: customer search is eventually consistent, so parallel
+    // calls must not create duplicate customers. Params stay deterministic
+    // (name from the profile first) so a retry within 24h matches the key.
     const customer = await stripe.customers.create({
       email: user.email,
-      name: name || profile?.full_name || undefined,
+      name: profile?.full_name || name || undefined,
       metadata: { supabase_user_id: user.id, source: 'alimun_stripe_api' },
-    });
+    }, { idempotencyKey: `cust-${user.id}` });
     customerId = customer.id;
   }
 
@@ -160,14 +166,44 @@ async function handleCreateCheckout(req, res) {
     return res.status(400).json({ error: 'Unknown priceId' });
   }
 
-  const resolvedSuccessUrl = safeReturnUrl(successUrl, '/student-dashboard.html?checkout=success');
+  const safeCohortId = typeof cohortId === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cohortId) ? cohortId : '';
+  let resolvedSuccessUrl = safeReturnUrl(successUrl, '/student-dashboard.html?checkout=success');
   const resolvedCancelUrl  = safeReturnUrl(cancelUrl,  '/student-dashboard.html?checkout=cancelled');
-  const safeCohortId = typeof cohortId === 'string' && /^[0-9a-f-]{36}$/i.test(cohortId) ? cohortId : '';
+  // The webhook does not enrol; carry the cohort back so the dashboard can
+  // resume the join after payment (APIP-14).
+  if (safeCohortId) {
+    try {
+      const u = new URL(resolvedSuccessUrl);
+      u.searchParams.set('join', safeCohortId);
+      resolvedSuccessUrl = u.toString();
+    } catch { /* keep as is */ }
+  }
   const safeName = typeof customerName === 'string' ? customerName.slice(0, 120) : '';
 
+  const supabaseAdmin = getSupabaseAdmin();
+  if (!supabaseAdmin) {
+    return res.status(500).json({ error: 'Database service is unavailable' });
+  }
+
   try {
-    const supabaseAdmin = getSupabaseAdmin();
-    const stripeCustomerId = await resolveStripeCustomer(supabaseAdmin, user, safeName);
+    // A paid checkout needs a student profile, or the webhook cannot grant it.
+    const profile = await loadStudentProfile(supabaseAdmin, user);
+    if (!profile) {
+      return res.status(409).json({ error: 'profile_required', message: 'Complete your student profile before checkout.' });
+    }
+
+    // One subscription per student: plan changes go through the Billing
+    // Portal, never a second Checkout (APIP-01).
+    if (price.mode === 'subscription'
+        && ['active', 'past_due', 'trialing'].includes(profile.stripe_subscription_status)) {
+      return res.status(409).json({
+        error: 'active_subscription',
+        portal: true,
+        message: 'You already have a subscription. Manage or change your plan from billing.',
+      });
+    }
+
+    const stripeCustomerId = await resolveStripeCustomer(supabaseAdmin, user, profile, safeName);
 
     const metadata = {
       supabase_user_id: user.id,
@@ -251,7 +287,11 @@ async function handleBillingPortal(req, res) {
   const resolvedReturnUrl = safeReturnUrl(body.returnUrl, '/student-dashboard.html');
 
   try {
-    const stripeCustomerId = await resolveStripeCustomer(supabaseAdmin, user, '');
+    const profile = await loadStudentProfile(supabaseAdmin, user);
+    if (!profile) {
+      return res.status(409).json({ error: 'profile_required', message: 'Complete your student profile first.' });
+    }
+    const stripeCustomerId = await resolveStripeCustomer(supabaseAdmin, user, profile, '');
     const session = await stripe.billingPortal.sessions.create({
       customer: stripeCustomerId,
       return_url: resolvedReturnUrl,

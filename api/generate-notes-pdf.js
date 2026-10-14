@@ -8,17 +8,28 @@
 const React = require('react');
 const { Document, Page, Text, View, StyleSheet, Font, pdf } = require('@react-pdf/renderer');
 const { createClient } = require('@supabase/supabase-js');
+const path = require('path');
+const fs = require('fs');
 
-// Register Anton font for branding
-Font.register({
-  family: 'Anton',
-  src: 'https://fonts.gstatic.com/s/anton/v25/1Ptgg8zYS_SKggPNyCg.ttf'
-});
+// Header font: the bundled Coolvetica Condensed from fonts/ (the remote Anton
+// URL used before now returns 404 and made every render fail). If the file is
+// missing from the deployment, fall back to the built-in Helvetica-Bold so the
+// PDF still renders.
+const HEADER_FONT_PATH = path.join(__dirname, '..', 'fonts', 'coolvetica-condensed-rg.otf');
+let HEADER_FONT = 'Helvetica-Bold';
+try {
+  if (fs.existsSync(HEADER_FONT_PATH)) {
+    Font.register({ family: 'Coolvetica Condensed', src: HEADER_FONT_PATH });
+    HEADER_FONT = 'Coolvetica Condensed';
+  }
+} catch (e) {
+  console.error('[Generate PDF Notes] header font registration failed, using Helvetica-Bold');
+}
 
 const styles = StyleSheet.create({
   page: { padding: 30, fontFamily: 'Helvetica', fontSize: 10, lineHeight: 1.5, color: '#080808', backgroundColor: '#f0efe9' },
   header: { backgroundColor: '#080808', padding: 20, borderRadius: 8, marginBottom: 20 },
-  headerTitle: { fontFamily: 'Anton', fontSize: 26, color: '#ceff65', textTransform: 'uppercase', marginBottom: 5 },
+  headerTitle: { fontFamily: HEADER_FONT, fontSize: 26, color: '#ceff65', textTransform: 'uppercase', marginBottom: 5 },
   headerMeta: { color: '#ffffff', fontSize: 9, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' },
   section: { marginBottom: 15, padding: 15, backgroundColor: '#ffffff', borderRadius: 8 },
   sectionTitle: { fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase', borderBottom: '1px solid #080808', paddingBottom: 5, marginBottom: 8 },
@@ -151,6 +162,7 @@ module.exports = async function handler(req, res) {
             language,
             level,
             goal_track,
+            timezone,
             teacher_id,
             teacher_profiles (
               full_name
@@ -168,12 +180,13 @@ module.exports = async function handler(req, res) {
     const teacherProfile = cohort.teacher_profiles;
 
     if (!auth.isAdmin) {
+      // Only an approved teacher may publish; suspended/rejected teachers are refused.
       const { data: callerTeacher } = await supabase
         .from('teacher_profiles')
-        .select('id')
+        .select('id, status')
         .eq('user_id', auth.user.id)
         .maybeSingle();
-      if (!callerTeacher || callerTeacher.id !== cohort.teacher_id) {
+      if (!callerTeacher || callerTeacher.status !== 'approved' || callerTeacher.id !== cohort.teacher_id) {
         return res.status(403).json({ error: 'You can only publish notes for your own classes' });
       }
     }
@@ -194,13 +207,23 @@ module.exports = async function handler(req, res) {
     const grammarExplanation = parts.slice(1).join('\n\n') || '';
 
     // Date formatting
-    const d = new Date(session.scheduled_at);
-    const sessionDate = d.toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    // Date formatting in the cohort's own timezone (falls back to UTC on a bad zone).
+    const fmtDate = (value) => {
+      const opts = { day: 'numeric', month: 'long', year: 'numeric' };
+      try {
+        return new Date(value).toLocaleDateString('en-GB', { ...opts, timeZone: cohort.timezone || 'UTC' });
+      } catch (e) {
+        return new Date(value).toLocaleDateString('en-GB', { ...opts, timeZone: 'UTC' });
+      }
+    };
+    const sessionDate = fmtDate(session.scheduled_at);
+    // Students are emailed only on the first publish, so re-publishing cannot spam the class.
+    const isFirstPublish = !notes.published_at;
 
     // Prepare PDF Data
     const pdfData = {
       sessionDate,
-      teacherName: teacherProfile.full_name,
+      teacherName: teacherProfile?.full_name || '',
       cohortLang: cohort.language,
       cohortLevel: cohort.level,
       cohortGoal: cohort.goal_track,
@@ -210,7 +233,8 @@ module.exports = async function handler(req, res) {
       grammarExplanation,
       exercises: notes.exercises,
       homework: notes.homework,
-      dueDate: notes.due_date ? new Date(notes.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }) : '',
+      // due_date is a calendar date: format it as-is (UTC) so it never shifts a day.
+      dueDate: notes.due_date ? new Date(notes.due_date).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }) : '',
       teacherNote: notes.teacher_note,
       sessionNotesId: notes.id
     };
@@ -242,11 +266,22 @@ module.exports = async function handler(req, res) {
       .from('session_notes')
       .update({
         pdf_url: publicUrl,
-        published_at: new Date().toISOString()
+        published_at: notes.published_at || new Date().toISOString()
       })
       .eq('id', session_notes_id);
 
     if (updateError) throw updateError;
+
+    // 4b. Notes for a session that has started mean it took place: mark it completed
+    // (TEA-03; the client no longer does this, the nightly cron remains the fallback).
+    if (new Date(session.scheduled_at) <= new Date()) {
+      const { error: completeErr } = await supabase
+        .from('sessions')
+        .update({ status: 'completed' })
+        .eq('id', session.id)
+        .in('status', ['scheduled', 'live']);
+      if (completeErr) console.error('[Generate PDF Notes] Could not mark session completed:', completeErr.message);
+    }
 
     // 5. Notify enrolled students via Resend
     const { data: enrollments, error: enrollmentsError } = await supabase
@@ -255,7 +290,7 @@ module.exports = async function handler(req, res) {
       .eq('cohort_id', cohort.id)
       .eq('status', 'active');
 
-    if (!enrollmentsError && enrollments && enrollments.length > 0) {
+    if (isFirstPublish && !enrollmentsError && enrollments && enrollments.length > 0) {
       const resendKey = process.env.RESEND_API_KEY;
       if (resendKey && !resendKey.includes('YOUR_RESEND_API_KEY')) {
         const emailFrom = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
@@ -269,7 +304,7 @@ module.exports = async function handler(req, res) {
           const email = authUser?.user?.email;
           if (!email) return;
 
-          const emailSubject = `Session notes ready — ${cohort.language} ${cohort.level} ${sessionDate}`.replace(/[<>]/g, '');
+          const emailSubject = `Session notes ready — ${cohort.language} ${cohort.level} ${sessionDate}`.replace(/[<>\r\n]/g, '');
           const emailHtml = `
             <!DOCTYPE html>
             <html>
@@ -292,12 +327,12 @@ module.exports = async function handler(req, res) {
                 </div>
                 <div style="margin-top:20px;">
                   <p>Hello ${escapeHtml(studentProfile.full_name)},</p>
-                  <p>Your session notes for <b>${escapeHtml(cohort.language)} ${escapeHtml(cohort.level)}</b> from <b>${sessionDate}</b> are now ready!</p>
+                  <p>Your session notes for <b>${escapeHtml(cohort.language)} ${escapeHtml(cohort.level)}</b> from <b>${escapeHtml(sessionDate)}</b> are now ready!</p>
                   
                   <div style="background-color: #fafaf8; border-left: 4px solid #ceff65; padding: 15px; margin: 20px 0; border-radius: 4px;">
                     <p style="margin:0 0 8px 0;"><strong>Grammar Focus:</strong> ${escapeHtml(grammarTitle)}</p>
                     <p style="margin:0 0 8px 0;"><strong>Vocabulary learned:</strong> ${pdfData.vocabulary?.length || 0} words</p>
-                    <p style="margin:0;"><strong>Homework due date:</strong> ${pdfData.dueDate || 'N/A'}</p>
+                    <p style="margin:0;"><strong>Homework due date:</strong> ${escapeHtml(pdfData.dueDate || 'N/A')}</p>
                   </div>
 
                   <center>

@@ -1,0 +1,41 @@
+rules:
+  - id: innerhtml-template-without-escape
+    message: >-
+      Template literal assigned to an HTML sink. Wrap every interpolated value
+      in escapeHtml(...) (or a known-safe helper), or build the node with
+      textContent. See CLAUDE.md "Escaping".
+    severity: ERROR
+    languages: [javascript]
+    patterns:
+      - pattern-either:
+          - pattern: $EL.innerHTML = `...${$X}...`
+          - pattern: $EL.innerHTML += `...${$X}...`
+          - pattern: $EL.outerHTML = `...${$X}...`
+          - pattern: $EL.insertAdjacentHTML($POS, `...${$X}...`)
+      - metavariable-pattern:
+          metavariable: $X
+          patterns:
+            - pattern-not: escapeHtml(...)
+            - pattern-not: escapeAttr(...)
+            - pattern-not: escHtml(...)
+            - pattern-not: escAttr(...)
+            - pattern-not: safeUrl(...)
+            - pattern-not: encodeURIComponent(...)
+            - pattern-not: Number(...)
+            - pattern-not: $N.toFixed(...)
+            - pattern-not: t(...)
+            - pattern-not: xt(...)
+  - id: service-role-in-browser
+    message: Service-role key referenced outside api/. Only the publishable key may reach the browser.
+    severity: ERROR
+    languages: [javascript, html]
+    paths:
+      exclude: ["api/**", "supabase/**", "scripts/**", "docs/**"]
+    pattern-regex: (SUPABASE_SERVICE_ROLE|service_role|sb_secret_)
+  - id: user-metadata-role-for-authz
+    message: Never authorise on user_metadata.role; use app_metadata.role (CLAUDE.md "Roles").
+    severity: WARNING
+    languages: [javascript]
+    pattern-either:
+      - pattern: $U.user_metadata.role
+      - pattern: $U.user_metadata?.role

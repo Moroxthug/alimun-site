@@ -1,19 +1,24 @@
 User-agent: *
 Allow: /
 
-Disallow: /admin.html
-Disallow: /signin.html
-Disallow: /signup.html
-Disallow: /student-dashboard.html
-Disallow: /teacher-dashboard.html
-Disallow: /signup-success.html
-Disallow: /careers-teachers-section.html
-Disallow: /*/admin.html
-Disallow: /*/signin.html
-Disallow: /*/signup.html
-Disallow: /*/student-dashboard.html
-Disallow: /*/teacher-dashboard.html
-Disallow: /*/signup-success.html
-Disallow: /*/careers-teachers-section.html
+# Prefix rules: each covers the clean URL (/signin) and the .html file.
+Disallow: /admin
+Disallow: /signin
+Disallow: /signup
+Disallow: /signup-success
+Disallow: /student-dashboard
+Disallow: /teacher-dashboard
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /careers-teachers-section
+Disallow: /*/admin
+Disallow: /*/signin
+Disallow: /*/signup
+Disallow: /*/signup-success
+Disallow: /*/student-dashboard
+Disallow: /*/teacher-dashboard
+Disallow: /*/forgot-password
+Disallow: /*/reset-password
+Disallow: /*/careers-teachers-section
 
 Sitemap: https://alimun.com/sitemap.xml

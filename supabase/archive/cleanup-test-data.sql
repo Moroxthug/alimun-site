@@ -1,4 +1,11 @@
 -- ============================================================
+--  DO NOT RUN — superseded by maintenance/remove_test_data.sql and
+--  maintenance/neutralise_seed_accounts.sql (owner chooses an option
+--  there). This older script deletes production users with no preview
+--  step tied to the owner's decision. Kept as history only.
+-- ============================================================
+
+-- ============================================================
 --  ALIMUN — Remove the July 2026 test video cohort + test users
 --  (seeded in PRODUCTION by supabase/seed-test-video-session.js)
 --

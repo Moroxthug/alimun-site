@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Rebuild a throwaway local database that mimics production before Phase 1
-# (repo SQL history + the 14 Oct admin hardening), apply every migration in
+# (repo SQL history in supabase/archive/ + the 14 Oct admin hardening), apply every migration in
 # supabase/migrations, then run supabase/tests/rls.sql.
 #
 #   PGHOST=/path/to/socket PGPORT=54329 PGUSER=postgres supabase/tests/run-local.sh
@@ -22,7 +22,7 @@ echo "Pre-Phase-1 history"
 for f in schema.sql waitlist-fill-system.sql add-availability-assignments.sql \
          add-webhook-and-credits.sql add-exercise-results.sql generate-sessions-function.sql \
          fix-tier-constraint.sql 2026-10-14_admin_role_hardening.sql; do
-  run "supabase/$f"
+  run "supabase/archive/$f"
 done
 # The real admin account (pre-flight check in the lockdown migration).
 psql_q -d "$DB" -c "insert into auth.users (id, email, raw_app_meta_data) values (gen_random_uuid(), 'bchysfpol@gmail.com', '{\"role\":\"admin\"}')" >/dev/null

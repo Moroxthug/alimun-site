@@ -7,6 +7,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 
 // Minimal .env loader (no dotenv dependency in this project)
@@ -29,7 +30,9 @@ const supabase = createClient(SUPABASE_URL, SERVICE_KEY, {
 
 const TEACHER_EMAIL = 'test-teacher@alimun.com';
 const STUDENT_EMAIL = 'test-student@alimun.com';
-const TEST_PASSWORD = 'AlimunTest123!';
+// Random per run; printed once below. Only used when an account is
+// created, so existing accounts keep whatever password they have.
+const TEST_PASSWORD = crypto.randomBytes(18).toString('base64url');
 
 async function getOrCreateUser(email, password, meta) {
   // list + find first (admin API has no getUserByEmail in this SDK version)
@@ -45,7 +48,7 @@ async function getOrCreateUser(email, password, meta) {
     user_metadata: meta,
   });
   if (error) throw error;
-  return data.user;
+  return { ...data.user, created_now: true };
 }
 
 async function main() {
@@ -137,8 +140,8 @@ async function main() {
   console.log('\n✅ Test session ready.');
   console.log('Session starts at:', scheduledAt);
   console.log('\nLog in at signin.html with:');
-  console.log(`  Teacher: ${TEACHER_EMAIL} / ${TEST_PASSWORD}`);
-  console.log(`  Student: ${STUDENT_EMAIL} / ${TEST_PASSWORD}`);
+  console.log(`  Teacher: ${TEACHER_EMAIL} / ${teacherUser.created_now ? TEST_PASSWORD : '(existing account, password unchanged)'}`);
+  console.log(`  Student: ${STUDENT_EMAIL} / ${studentUser.created_now ? TEST_PASSWORD : '(existing account, password unchanged)'}`);
   console.log('\nThe "Join"/"Start session" button should appear on both dashboards within a couple minutes.');
 }
 

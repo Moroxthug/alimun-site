@@ -7,7 +7,7 @@
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 <!-- Supabase CDN -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
 <script src="js/view-as.js"></script>
 <script src="https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js"></script>
 <script>
@@ -30,6 +30,15 @@ function t(key, fallback) {
 // Escape student/teacher-supplied strings before they go into innerHTML
 function escapeHtml(v) {
   return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+// Safe JS string argument inside an inline on* attribute: JSON-quote, then HTML-escape
+function jsArg(v) {
+  return escapeHtml(JSON.stringify(String(v == null ? '' : v)));
+}
+// Parse a date-only 'YYYY-MM-DD' string as a local date (new Date('YYYY-MM-DD') is UTC midnight)
+function parseLocalDate(v) {
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(v || ''));
+  return m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(v);
 }
 
   window.ALIMUN_CONFIG = {
@@ -1144,6 +1153,7 @@ let PENDING = [];
 let TEACHER_ASGMT = [];
 let SESSIONS = [];
 let DB_COHORTS = [];
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 const defaultStudents=[
   {n:'Alex Chen',i:'AC',lvl:'B1',pct:71,active:'Today',streak:14,sub:'My Weekend Plans',subType:'Essay',subText:'Este fin de semana voy a visitar a mis amigos en Barcelona. También voy a comer en un restaurante famoso y voy a caminar por las Ramblas. Espero que haga buen tiempo porque quiero pasar tiempo al aire libre.',subTime:'2 hours ago'},
@@ -1223,7 +1233,7 @@ function nav(v) {
 }
 document.querySelectorAll('.sb-a').forEach(a=>a.addEventListener('click',()=>nav(a.dataset.v)));
 
-async function claude(prompt,sys){
+async function claude(prompt,sys,json){
   // AI grading goes through our serverless proxy (/api/grade) which
   // holds the Anthropic key. Direct browser calls always failed.
   const sb = window.currentTeacher?.supabase;
@@ -1234,7 +1244,7 @@ async function claude(prompt,sys){
       'Content-Type': 'application/json',
       ...(session?.access_token ? { 'Authorization': `Bearer ${session.access_token}` } : {})
     },
-    body: JSON.stringify({ prompt, system: sys })
+    body: JSON.stringify({ prompt, system: sys, json: !!json })
   });
   if (!r.ok) throw new Error('AI grading unavailable (' + r.status + ')');
   const d = await r.json();
@@ -1253,7 +1263,7 @@ function getPendingSubmissions() {
     const studentInfo = STUDENTS.find(s => s.id === p.student_id) || {};
     return {
       n: name,
-      i: name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),
+      i: String(name).split(' ').map(w=>w[0] || '').join('').toUpperCase().slice(0,2),
       lvl: p.student_profiles?.level || studentInfo.lvl || '—',
       pct: studentInfo.pct || 75,
       active: 'Recently',
@@ -1273,16 +1283,27 @@ function gradeModal(s){
   const subText = s.subText || '';
   openModal(`<div class="m-hd"><div class="m-ey">${escapeHtml(s.subType)} · ${escapeHtml(s.n)}</div><div class="m-title">${escapeHtml(s.sub)}</div></div><div class="m-bd"><div style="font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:#aaa;margin-bottom:.5rem;">Student's submission · ${escapeHtml(s.subTime)}</div><div class="sub-text" style="background:#f5f4f0; padding:12px; border-radius:8px; font-size:13.5px; line-height:1.6; margin-bottom:15px; white-space:pre-wrap;">${escapeHtml(subText)}</div><button class="btn" id="grade-ai-btn">${t('teacher_grade_with_ai','Grade with AI')}</button><div id="grade-out"></div></div>`);
   // Handler attached in JS (not an onclick string) so quotes/backticks in the submission cannot break it
-  document.getElementById('grade-ai-btn').addEventListener('click', function(){ runGrade(this, s.n, s.subType, subText, s.hwId || '', s.studentId || ''); });
+  document.getElementById('grade-ai-btn').addEventListener('click', function(){ runGrade(this, s.n, s.subType, s.submissionId || '', s.hwId || '', s.studentId || ''); });
 }
 
-async function runGrade(btn,name,type,text,hwId,studentId){
+async function runGrade(btn,name,type,submissionId,hwId,studentId){
   btn.disabled=true;btn.textContent='Grading…';
   const out=document.getElementById('grade-out');
   out.innerHTML=`<div class="g-load" style="margin-top:1.25rem;"><div class="g-spin"></div><p>Analysing ${escapeHtml(name)}'s ${escapeHtml(String(type||'').toLowerCase())}…</p></div>`;
   try{
-    const raw=await claude(`Student: ${name}\nSubmission:\n"${text}"\n\nGrade this fairly. Respond ONLY with raw JSON:\n{"score":<0-100>,"summary":"<one sentence>","strengths":["<point>","<point>"],"improvements":["<actionable point>","<actionable point>"],"corrected_excerpt":"<one corrected sentence or empty string>"}`,`You are an expert teacher grading a student's ${String(type||'').toLowerCase()} submission.`);
-    const r=JSON.parse(raw.replace(/```json|```/g,'').trim());
+    // The server loads the submission by id, builds the grading prompt and validates the JSON (TEA-06)
+    if(!submissionId) throw new Error('This submission has no id and cannot be graded by AI.');
+    const sb=window.currentTeacher?.supabase;
+    const { data: { session } = {} } = sb ? await sb.auth.getSession() : { data: {} };
+    const resp=await fetch('/api/ai?action=grade-submission',{
+      method:'POST',
+      headers:{'Content-Type':'application/json',...(session?.access_token?{'Authorization':`Bearer ${session.access_token}`}:{})},
+      body:JSON.stringify({submission_id:submissionId})
+    });
+    let d={};
+    try{d=await resp.json();}catch(_){d={};}
+    if(!resp.ok) throw new Error(d.error||('AI grading unavailable ('+resp.status+')'));
+    const r=d.result||JSON.parse(String(d.text||'').replace(/```json|```/g,'').trim());
     const score=Number(r.score);
     if(!Number.isFinite(score)) throw new Error('AI returned no score');
     r.score=Math.max(0,Math.min(100,Math.round(score)));
@@ -1361,7 +1382,7 @@ async function vOverview(){
 
   const greetKey   = h < 12 ? 'greet_morning' : h < 18 ? 'greet_afternoon' : 'greet_evening';
   const greet      = dict[greetKey] || (h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening');
-  const name       = window.currentTeacher ? window.currentTeacher.name.split(' ')[0] : 'Sarah';
+  const name       = window.currentTeacher ? String(window.currentTeacher.name || '').split(' ')[0] : '';
   const welcomeStr = (dict['teacher_welcome'] || 'Welcome back, {name}').replace('{name}', name);
 
   const locales = { en: 'en-GB', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-PT', zh: 'zh-CN', ar: 'ar-EG' };
@@ -1404,15 +1425,15 @@ async function vOverview(){
     // teacher can always start (server enforces the joining window).
     const isLiveNow   = nextSession.status === 'live';
     const joinLabel   = isLiveNow ? (dict.teacher_action_join_live || 'Join live class') : (dict.teacher_action_start || 'Start session');
-    const joinBtnHtml = `<a href="#" onclick="handleTeacherJoin('${nextSession.daily_room_url || ''}', '${nextSession.id}'); return false;" class="btn sm"${isLiveNow ? '' : ' data-i18n="teacher_action_start"'}>${joinLabel}</a>`;
+    const joinBtnHtml = `<a href="#" onclick="handleTeacherJoin(${jsArg(nextSession.daily_room_url || '')}, ${jsArg(nextSession.id)}); return false;" class="btn sm"${isLiveNow ? '' : ' data-i18n="teacher_action_start"'}>${joinLabel}</a>`;
 
     sessionCardHtml = `
       <div class="sess-card mb">
         <div>
-          <div class="s-badge"><span class="s-dot"></span><span>${dateLabel}</span></div>
+          <div class="s-badge"><span class="s-dot"></span><span>${escapeHtml(dateLabel)}</span></div>
           <div class="s-title">${escapeHtml(topicTitle)}</div>
           <div class="s-meta">
-            <span><b>${enrolled} ${dict.teacher_stats_students || 'students registered'}</b></span>
+            <span><b>${Number(enrolled) || 0} ${dict.teacher_stats_students || 'students registered'}</b></span>
             <span>${joinedCount} ${dict.teacher_lbl_joined || 'joined so far'}</span>
             <span>60 ${dict.student_min || 'min'}</span>
           </div>
@@ -1442,9 +1463,10 @@ async function vOverview(){
   }
 
   // ── Find if any session's scheduled_at has passed and has no notes yet ───────────
+  // Keyed on note existence, not on db_status (the nightly cron marks sessions completed)
   const sessionNeedsNotes = SESSIONS.find(s => {
     const isPast = new Date(s.scheduled_at) < now;
-    return isPast && !s.has_notes && s.db_status !== 'completed';
+    return isPast && !s.has_notes && s.db_status !== 'cancelled';
   });
 
   let writeNotesCardHtml = '';
@@ -1456,9 +1478,9 @@ async function vOverview(){
         <div>
           <div style="font-size: .63rem; letter-spacing: .12em; text-transform: uppercase; color: #777; margin-bottom: .25rem; font-weight: 700;">${t('teacher_action_required','Action Required')}</div>
           <div style="font-family: var(--disp); font-size: 1.35rem; text-transform: uppercase; margin-bottom: .25rem; color: var(--b);">${t('teacher_write_session_notes','Write Session Notes')}</div>
-          <div style="font-size: .83rem; color: #555;">The session <b>${topic}</b> (${dateLabel}) has passed. Write notes and notify students.</div>
+          <div style="font-size: .83rem; color: #555;">The session <b>${escapeHtml(topic)}</b> (${escapeHtml(dateLabel)}) has passed. Write notes and notify students.</div>
         </div>
-        <button class="btn sm" onclick="openWriteNotesModal('${sessionNeedsNotes.id}')" data-i18n="teacher_write_notes">Write Notes</button>
+        <button class="btn sm" onclick="openWriteNotesModal(${jsArg(sessionNeedsNotes.id)})" data-i18n="teacher_write_notes">Write Notes</button>
       </div>
     `;
   }
@@ -1466,12 +1488,13 @@ async function vOverview(){
   // Total students across all cohorts
   const totalStudents = STUDENTS.length || 0;
   // Sessions this week
-  const weekStart = new Date(); weekStart.setDate(weekStart.getDate() - weekStart.getDay());
-  const sessionsThisWeek = SESSIONS.filter(s => new Date(s.scheduled_at) >= weekStart).length;
+  const weekStart = new Date(); weekStart.setHours(0, 0, 0, 0); weekStart.setDate(weekStart.getDate() - weekStart.getDay());
+  const weekEnd = new Date(weekStart); weekEnd.setDate(weekEnd.getDate() + 7);
+  const sessionsThisWeek = SESSIONS.filter(s => { const d = new Date(s.scheduled_at); return d >= weekStart && d < weekEnd && s.db_status !== 'cancelled'; }).length;
 
   document.getElementById('content').innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:1.5rem;gap:1.5rem;">
-      <div><div style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#aaa;margin-bottom:.18rem;">${dateStr}</div><h1 class="pg-h1">${welcomeStr}</h1></div>
+      <div><div style="font-size:.7rem;letter-spacing:.12em;text-transform:uppercase;color:#aaa;margin-bottom:.18rem;">${dateStr}</div><h1 class="pg-h1">${escapeHtml(welcomeStr)}</h1></div>
       <button class="btn sm" style="flex-shrink:0;" onclick="createAssignment()" data-i18n="teacher_action_create">${dict.teacher_action_create || '+ Create new'}</button>
     </div>
     <div class="stat-row mb">
@@ -1489,15 +1512,15 @@ async function vOverview(){
       </div>
       <div>
         <div class="sh"><span class="sec-t" data-i18n="teacher_student_activity">${dict.teacher_student_activity || 'Student activity'}</span><a class="sh-a" onclick="nav('students')" data-i18n="student_view_all">${dict.student_view_all || 'View all'}</a></div>
-        <div class="card">${STUDENTS.slice(0, 5).map(s => `<div class="stu-row"><div class="stu-av">${escapeHtml(s.i)}</div><div class="stu-info"><div class="stu-name">${escapeHtml(s.n)}</div><div class="stu-sub">${escapeHtml(s.lvl)} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : s.active}${s.exCount ? ` · ${s.exCount} ${dict.teacher_lbl_exercises || 'exercises'}` : ''}</div></div><div class="stu-prog"><div class="stu-pct">${s.pct}%</div><div class="stu-bar-wrap"><div class="stu-bar" style="width:${s.pct}%"></div></div></div></div>`).join('')}</div>
+        <div class="card">${STUDENTS.slice(0, 5).map(s => `<div class="stu-row"><div class="stu-av">${escapeHtml(s.i)}</div><div class="stu-info"><div class="stu-name">${escapeHtml(s.n)}</div><div class="stu-sub">${escapeHtml(s.lvl)} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : escapeHtml(s.active)}${s.exCount ? ` · ${Number(s.exCount) || 0} ${dict.teacher_lbl_exercises || 'exercises'}` : ''}</div></div><div class="stu-prog"><div class="stu-pct">${Number(s.pct) || 0}%</div><div class="stu-bar-wrap"><div class="stu-bar" style="width:${Number(s.pct) || 0}%"></div></div></div></div>`).join('')}</div>
         ${Object.keys(CLASS_ANALYTICS.byCat).length ? `
         <div class="sh" style="margin-top:1.5rem;"><span class="sec-t" data-i18n="teacher_skills_title">${dict.teacher_skills_title || 'Class skills (30 days)'}</span></div>
         <div class="card">
           ${['grammar','vocabulary','listening','speaking','writing'].filter(c => CLASS_ANALYTICS.byCat[c] != null).map(c => `
             <div style="display:flex;align-items:center;gap:12px;padding:6px 0;">
               <span style="font-size:.8rem;width:90px;text-transform:capitalize;">${dict['skill_' + c] || c}</span>
-              <div style="flex:1;height:6px;border-radius:99px;background:rgba(0,0,0,.08);overflow:hidden;"><div style="height:100%;width:${CLASS_ANALYTICS.byCat[c]}%;border-radius:99px;background:linear-gradient(90deg,#94c105,var(--g));"></div></div>
-              <b style="font-size:.78rem;width:36px;text-align:right;">${CLASS_ANALYTICS.byCat[c]}%</b>
+              <div style="flex:1;height:6px;border-radius:99px;background:rgba(0,0,0,.08);overflow:hidden;"><div style="height:100%;width:${Number(CLASS_ANALYTICS.byCat[c]) || 0}%;border-radius:99px;background:linear-gradient(90deg,#94c105,var(--g));"></div></div>
+              <b style="font-size:.78rem;width:36px;text-align:right;">${Number(CLASS_ANALYTICS.byCat[c]) || 0}%</b>
             </div>`).join('')}
           <div style="font-size:.72rem;color:#999;margin-top:8px;">${CLASS_ANALYTICS.total} ${dict.teacher_lbl_exercises_completed || 'exercises completed'} · ${CLASS_ANALYTICS.activeStudents} ${dict.teacher_lbl_active_this_week || 'students active this week'}</div>
         </div>` : ''}
@@ -1531,15 +1554,15 @@ function vStudents(){
   const overallText = dict['teacher_lbl_overall'] || 'overall';
 
   document.getElementById('content').innerHTML=`
-    <div class="pg-head"><h1 class="pg-h1" data-i18n="teacher_sb_students">${dict.teacher_sb_students || 'My Students'}</h1><p class="pg-sub">20 ${enrolledText} · ${STUDENTS.filter(s=>s.active==='Today').length} ${activeTodayText}</p></div>
+    <div class="pg-head"><h1 class="pg-h1" data-i18n="teacher_sb_students">${dict.teacher_sb_students || 'My Students'}</h1><p class="pg-sub">${STUDENTS.length} ${enrolledText} · ${STUDENTS.filter(s=>s.active==='Today').length} ${activeTodayText}</p></div>
     <div class="card">
       ${STUDENTS.map(s=>`
         <div class="stu-row">
           <div class="stu-av">${escapeHtml(s.i)}</div>
-          <div class="stu-info"><div class="stu-name" style="cursor:pointer;text-decoration:underline;" onclick="openStudentProfileModal('${s.id}')">${escapeHtml(s.n)}</div><div class="stu-sub">${escapeHtml(s.lvl)} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : s.active} · 🔥 ${s.streak} ${dict.student_streak_label || 'day streak'}</div></div>
+          <div class="stu-info"><div class="stu-name" style="cursor:pointer;text-decoration:underline;" onclick="openStudentProfileModal(${jsArg(s.id)})">${escapeHtml(s.n)}</div><div class="stu-sub">${escapeHtml(s.lvl)} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : escapeHtml(s.active)} · 🔥 ${Number(s.streak) || 0} ${dict.student_streak_label || 'day streak'}</div></div>
           <div style="display:flex;align-items:center;gap:1.25rem;">
-            <div style="text-align:right;"><div style="font-family:var(--disp);font-size:1.1rem;">${s.pct}%</div><div style="font-size:.68rem;color:#bbb;text-transform:uppercase;letter-spacing:.06em;">${overallText}</div><div class="stu-bar-wrap" style="margin-left:auto;"><div class="stu-bar" style="width:${s.pct}%"></div></div></div>
-            ${s.sub?`<button class="btn sm" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;" onclick="gradeModal(${escapeHtml(JSON.stringify(s))})" data-i18n="teacher_action_grade">${dict.teacher_action_grade || 'Grade →'}</button>`:`<button class="btn out sm" onclick="openStudentProfileModal('${s.id}')" data-i18n="teacher_action_view">${dict.teacher_action_view || 'View'}</button>`}
+            <div style="text-align:right;"><div style="font-family:var(--disp);font-size:1.1rem;">${Number(s.pct) || 0}%</div><div style="font-size:.68rem;color:#bbb;text-transform:uppercase;letter-spacing:.06em;">${overallText}</div><div class="stu-bar-wrap" style="margin-left:auto;"><div class="stu-bar" style="width:${Number(s.pct) || 0}%"></div></div></div>
+            ${s.sub?`<button class="btn sm" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;" onclick="gradeModal(${escapeHtml(JSON.stringify(s))})" data-i18n="teacher_action_grade">${dict.teacher_action_grade || 'Grade →'}</button>`:`<button class="btn out sm" onclick="openStudentProfileModal(${jsArg(s.id)})" data-i18n="teacher_action_view">${dict.teacher_action_view || 'View'}</button>`}
           </div>
         </div>`).join('')}
     </div>
@@ -1565,15 +1588,15 @@ function vAssignments(){
       ${TEACHER_ASGMT.map(a=>`
         <div class="card" style="display:flex;align-items:center;gap:1rem;">
           <div style="flex:1;">
-            <div style="font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:#ccc;margin-bottom:.1rem;">${a.type}</div>
-            <div style="font-weight:700;font-size:.9rem;margin-bottom:.25rem;">${a.name}</div>
-            <div style="font-size:.78rem;color:#aaa;">${dueText} <b style="color:${a.due==='Overdue'?'#dc2626':a.due==='Today'?'#c2410c':'var(--b)'};">${a.due}</b></div>
+            <div style="font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;color:#ccc;margin-bottom:.1rem;">${escapeHtml(a.type)}</div>
+            <div style="font-weight:700;font-size:.9rem;margin-bottom:.25rem;">${escapeHtml(a.name)}</div>
+            <div style="font-size:.78rem;color:#aaa;">${dueText} <b style="color:${a.due==='Overdue'?'#dc2626':a.due==='Today'?'#c2410c':'var(--b)'};">${escapeHtml(a.due)}</b></div>
           </div>
           <div style="text-align:center;flex-shrink:0;">
-            <div style="font-family:var(--disp);font-size:1.25rem;">${a.submissions}/${a.total}</div>
+            <div style="font-family:var(--disp);font-size:1.25rem;">${Number(a.submissions) || 0}/${Number(a.total) || 0}</div>
             <div style="font-size:.65rem;color:#aaa;text-transform:uppercase;letter-spacing:.07em;">${submittedText}</div>
           </div>
-          <div class="prog-trk" style="width:80px;"><div class="prog-bar" data-p="${Math.round(a.submissions/a.total*100)}" style="background:${a.due==='Overdue'?'#dc2626':'var(--b)'}"></div></div>
+          <div class="prog-trk" style="width:80px;"><div class="prog-bar" data-p="${a.total ? Math.min(100, Math.round(a.submissions/a.total*100)) : 0}" style="background:${a.due==='Overdue'?'#dc2626':'var(--b)'}"></div></div>
           <button class="btn out sm" data-i18n="teacher_lbl_view_submissions">${viewSubmissionsText}</button>
         </div>`).join('')}
     </div>
@@ -1755,8 +1778,8 @@ function updateHwTemplates() {
   listEl.innerHTML = templates.map((t, idx) => `
     <div onclick="selectPremadeHw(${idx})" class="sub-card" style="margin-bottom:0; padding:10px 14px;">
       <div style="flex:1;">
-        <div style="font-weight:700; font-size:13px;">${t.title}</div>
-        <div style="font-size:11px; color:#aaa; margin-top:2px;">${t.type} · ${t.prompt.substring(0, 50)}...</div>
+        <div style="font-weight:700; font-size:13px;">${escapeHtml(t.title)}</div>
+        <div style="font-size:11px; color:#aaa; margin-top:2px;">${escapeHtml(t.type)} · ${escapeHtml(t.prompt.substring(0, 50))}...</div>
       </div>
       <button class="btn sm out" data-i18n="btn_select">Select</button>
     </div>
@@ -1883,6 +1906,8 @@ function assignHw() {
   
   // Persist to Supabase — one assignment row per active cohort so
   // every enrolled student sees it on their dashboard.
+  const assignBtn = document.getElementById('btn-assign-hw');
+  if (assignBtn) { if (assignBtn.dataset.busy === '1') return; assignBtn.dataset.busy = '1'; assignBtn.disabled = true; }
   (async () => {
     try {
       const sb = window.currentTeacher.supabase;
@@ -1918,6 +1943,8 @@ function assignHw() {
     } catch (e) {
       console.error('Failed to save assignment:', e);
       alert('Failed to assign homework: ' + e.message);
+    } finally {
+      if (assignBtn) { assignBtn.dataset.busy = ''; assignBtn.disabled = false; }
     }
   })();
 }
@@ -1943,12 +1970,12 @@ function vSessions(){
     
     upcomingHtml = `
       <div class="card dark" style="padding:1.75rem;">
-        <div class="s-badge"><span class="s-dot"></span>${timeDisplay}</div>
+        <div class="s-badge"><span class="s-dot"></span>${escapeHtml(timeDisplay)}</div>
         <div class="s-title" style="font-size:1.25rem;">${escapeHtml(nextSession.topic)}</div>
-        <div class="s-meta" style="margin:1rem 0;"><span>${nextSession.students} ${dict.teacher_stats_students || 'students registered'}</span><span>60 ${dict.student_min || 'min'}</span></div>
+        <div class="s-meta" style="margin:1rem 0;"><span>${Number(nextSession.students) || 0} ${dict.teacher_stats_students || 'students registered'}</span><span>60 ${dict.student_min || 'min'}</span></div>
         <div style="display:flex;gap:.5rem;">
-          <a href="#" onclick="handleTeacherJoin('${nextSession.daily_room_url || ''}', '${nextSession.id}'); return false;" class="btn sm"${nextSession.status === 'live' ? '' : ' data-i18n="teacher_action_start"'}>${nextSession.status === 'live' ? (dict.teacher_action_join_live || 'Join live class') : (dict.teacher_action_start || 'Start session')}</a>
-          <button class="btn ghost sm" data-i18n="teacher_btn_prepare_notes">${dict.teacher_btn_prepare_notes || 'Prepare notes'}</button>
+          <a href="#" onclick="handleTeacherJoin(${jsArg(nextSession.daily_room_url || '')}, ${jsArg(nextSession.id)}); return false;" class="btn sm"${nextSession.status === 'live' ? '' : ' data-i18n="teacher_action_start"'}>${nextSession.status === 'live' ? (dict.teacher_action_join_live || 'Join live class') : (dict.teacher_action_start || 'Start session')}</a>
+          <button class="btn ghost sm" onclick="openWriteNotesModal(${jsArg(nextSession.id)})" data-i18n="teacher_btn_prepare_notes">${dict.teacher_btn_prepare_notes || 'Prepare notes'}</button>
         </div>
       </div>
     `;
@@ -1960,18 +1987,33 @@ function vSessions(){
     `;
   }
 
-  let historyHtml = SESSIONS.map(s => `
+  const nowMs = Date.now();
+  let historyHtml = SESSIONS.map(s => {
+    // Notes action on every past, non-cancelled session: write if none, retry publish if unpublished
+    const isPast = new Date(s.scheduled_at).getTime() < nowMs;
+    let notesBtn = '';
+    if (isPast && s.db_status !== 'cancelled') {
+      if (!s.has_notes) {
+        notesBtn = `<button class="btn ghost sm" onclick="openWriteNotesModal(${jsArg(s.id)})" data-i18n="teacher_write_notes">${t('teacher_write_notes','Write Notes')}</button>`;
+      } else if (!s.notes_published) {
+        notesBtn = `<button class="btn ghost sm" onclick="openWriteNotesModal(${jsArg(s.id)})" data-i18n="teacher_publish_notes">${t('teacher_publish_notes','Publish Notes')}</button>`;
+      }
+    }
+    const st = ['live','up','done'].includes(s.status) ? s.status : 'done';
+    return `
     <div class="sess-row">
-      <div class="sess-dot2 ${s.status}"></div>
+      <div class="sess-dot2 ${st}"></div>
       <div class="sess-info2">
         <div class="sess-topic2">${escapeHtml(s.topic)}</div>
-        <div class="sess-date2">${s.date} • ${s.time} • ${s.students} ${dict.teacher_stats_students || 'students'}</div>
+        <div class="sess-date2">${escapeHtml(s.date)} • ${escapeHtml(s.time)} • ${Number(s.students) || 0} ${dict.teacher_stats_students || 'students'}</div>
       </div>
-      <span class="sess-b2 ${s.status}">
-        ${s.status === 'live' ? (dict.teacher_lbl_live_now || 'Live now') : s.status === 'up' ? (dict.teacher_lbl_upcoming || 'Upcoming') : completedText}
+      ${notesBtn}
+      <span class="sess-b2 ${st}">
+        ${st === 'live' ? (dict.teacher_lbl_live_now || 'Live now') : st === 'up' ? (dict.teacher_lbl_upcoming || 'Upcoming') : completedText}
       </span>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   if (SESSIONS.length === 0) {
     historyHtml = `<div style="font-size:.84rem; color:rgba(0,0,0,0.35); font-style:italic; text-align:center; padding:3rem 0;">${t('teacher_no_sessions_found','No sessions found.')}</div>`;
@@ -2001,8 +2043,8 @@ function vSessions(){
 }
 
 function vSettings(){
-  const tp = window.currentTeacher || { name: 'Sarah Thompson', email: 'sarah.thompson@alimun.com', profile: { location: 'Madrid, Spain' } };
-  const loc = tp.profile?.location || 'Madrid, Spain';
+  const tp = window.currentTeacher || { name: '', email: '', profile: {} };
+  const loc = tp.profile?.location || '';
   
   const translations = window.ALIMUN_TRANSLATIONS || {};
   const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
@@ -2014,8 +2056,8 @@ function vSettings(){
       <div style="margin-bottom:1.75rem;"><div style="font-family:var(--disp);font-size:.85rem;text-transform:uppercase;letter-spacing:.05em;color:#aaa;margin-bottom:.875rem;" data-i18n="teacher_settings_profile">${dict.teacher_settings_profile || 'Profile'}</div>
         <div class="card">
           <div class="field-row"><label data-i18n="teacher_settings_fullname">${dict.teacher_settings_fullname || 'Full name'}</label><input type="text" id="set-fullname" value="${escapeHtml(tp.name)}"></div>
-          <div class="field-row"><label data-i18n="teacher_settings_email">${dict.teacher_settings_email || 'Email'}</label><input type="email" id="set-email" value="${escapeHtml(tp.email)}"></div>
-          <div class="field-row"><label data-i18n="teacher_settings_location">${dict.teacher_settings_location || 'Teaching location'}</label><input type="text" id="set-location" value="${loc}"></div>
+          <div class="field-row"><label data-i18n="teacher_settings_email">${dict.teacher_settings_email || 'Email'}</label><input type="email" id="set-email" value="${escapeHtml(tp.email)}" readonly></div>
+          <div class="field-row"><label data-i18n="teacher_settings_location">${dict.teacher_settings_location || 'Teaching location'}</label><input type="text" id="set-location" value="${escapeHtml(loc)}"></div>
           <button class="btn out sm" onclick="saveSettings()" data-i18n="dash_save_changes">${dict.dash_save_changes || 'Save changes'}</button>
         </div>
       </div>
@@ -2070,6 +2112,11 @@ async function saveSettings() {
 async function initTeacherData() {
   const sb = window.currentTeacher.supabase;
   const teacherProfileId = window.currentTeacher.profile.id;
+  // Localhost ?preview=1 uses a non-UUID placeholder profile: skip DB queries
+  if (!UUID_RE.test(String(teacherProfileId || ''))) {
+    DB_COHORTS = []; STUDENTS = []; SESSIONS = []; TEACHER_ASGMT = []; PENDING_SUBS = [];
+    return;
+  }
 
   try {
     // 1. Fetch Cohorts
@@ -2085,9 +2132,10 @@ async function initTeacherData() {
       const cohortIds = DB_COHORTS.map(c => c.id);
 
       // 2. Fetch Students
+      // Only the columns this page renders; never stripe_* / billing columns
       const { data: students, error: studentsError } = await sb
         .from('student_profiles')
-        .select('*')
+        .select('id, full_name, level')
         .in('enrolled_cohort_id', cohortIds);
 
       if (studentsError) throw studentsError;
@@ -2109,8 +2157,8 @@ async function initTeacherData() {
 
         return {
           id: s.id,
-          n: s.full_name,
-          i: s.full_name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),
+          n: s.full_name || 'Student',
+          i: String(s.full_name || '').split(' ').map(w=>w[0] || '').join('').toUpperCase().slice(0,2),
           lvl: s.level,
           pct: pct,
           active: 'Recently',
@@ -2148,7 +2196,8 @@ async function initTeacherData() {
             vocabulary,
             exercises,
             teacher_note,
-            pdf_url
+            pdf_url,
+            published_at
           )
         `)
         .in('cohort_id', cohortIds)
@@ -2178,6 +2227,8 @@ async function initTeacherData() {
           status: uiStatus,
           db_status: s.status,
           has_notes: !!s.session_notes,
+          notes_published: !!s.session_notes?.published_at,
+          notes: s.session_notes || null,
           daily_room_url: s.daily_room_url,
           cohort: s.cohorts
         };
@@ -2206,7 +2257,7 @@ async function initTeacherData() {
         id: a.id,
         name: a.title,
         type: a.type,
-        due: a.due_date ? ('Due: ' + getLocaleString(new Date(a.due_date), { day: 'numeric', month: 'short' })) : 'No due date',
+        due: a.due_date ? ('Due: ' + getLocaleString(parseLocalDate(a.due_date), { day: 'numeric', month: 'short' })) : 'No due date',
         submissions: (a.assignment_submissions || []).length,
         total: STUDENTS.length || 0
       }));
@@ -2298,6 +2349,7 @@ async function vPayouts(){
 
   const sb = window.currentTeacher.supabase;
   const teacherId = window.currentTeacher.profile.id;
+  const isRealProfile = UUID_RE.test(String(teacherId || ''));
 
   document.getElementById('content').innerHTML = `
     <div class="pg-head">
@@ -2308,7 +2360,7 @@ async function vPayouts(){
 
   let payouts = [];
   let pendingEarnings = 0;
-  try {
+  if (isRealProfile) try {
     const { data, error } = await sb
       .from('teacher_payouts')
       .select('*')
@@ -2380,8 +2432,9 @@ async function vPayouts(){
         </thead>
         <tbody>
           ${payouts.map(p => {
-            const start = getLocaleString(new Date(p.period_start), {day:'numeric', month:'short', year:'numeric'});
-            const end = getLocaleString(new Date(p.period_end), {day:'numeric', month:'short', year:'numeric'});
+            const start = getLocaleString(parseLocalDate(p.period_start), {day:'numeric', month:'short', year:'numeric'});
+            const end = getLocaleString(parseLocalDate(p.period_end), {day:'numeric', month:'short', year:'numeric'});
+            const rowRate = p.hourly_rate != null && Number.isFinite(parseFloat(p.hourly_rate)) ? parseFloat(p.hourly_rate).toFixed(2) : null;
             const paidAt = p.paid_at ? getLocaleString(new Date(p.paid_at), {day:'numeric', month:'short', year:'numeric'}) : '—';
             const statusClass = p.status === 'paid' ? 'pill ok' : 'pill dt';
             const statusLabel = p.status === 'paid' ? t('payouts_status_paid', 'Paid') : t('payouts_status_pending', 'Pending');
@@ -2389,9 +2442,9 @@ async function vPayouts(){
             return `
               <tr style="border-bottom:1px solid rgba(0,0,0,0.04); transition:background 0.2s;">
                 <td style="padding:16px 20px; font-weight:600; color:var(--b);">${start} – ${end}</td>
-                <td style="padding:16px 20px;">${t('payouts_classes_count', '{count} classes').replace('{count}', p.sessions_count)}</td>
-                <td style="padding:16px 20px;">€${rate}</td>
-                <td style="padding:16px 20px; font-weight:700; color:var(--b);">€${parseFloat(p.amount_eur).toFixed(2)}</td>
+                <td style="padding:16px 20px;">${t('payouts_classes_count', '{count} classes').replace('{count}', Number(p.sessions_count) || 0)}</td>
+                <td style="padding:16px 20px;">${rowRate ? '€' + rowRate : '—'}</td>
+                <td style="padding:16px 20px; font-weight:700; color:var(--b);">€${(parseFloat(p.amount_eur) || 0).toFixed(2)}</td>
                 <td style="padding:16px 20px;"><span class="${statusClass}">${statusLabel}</span></td>
                 <td style="padding:16px 20px; color:#777;">${paidAt}</td>
               </tr>
@@ -2569,16 +2622,16 @@ async function vAvailability() {
           <div class="sec-t" style="font-size: 1rem; border-bottom: 1px solid rgba(0,0,0,0.06); padding-bottom: 0.75rem;">${dict.teacher_avail_active_slots || 'Your Active Weekly Slots'}</div>
           <div class="slots-list-container">
             ${slots.map(s => {
-              const startStr = s.start_time.slice(0, 5);
-              const endStr = s.end_time.slice(0, 5);
+              const startStr = escapeHtml(String(s.start_time || '').slice(0, 5));
+              const endStr = escapeHtml(String(s.end_time || '').slice(0, 5));
               const dayLabel = dict[`day_${s.day_of_week}`] || ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][s.day_of_week];
               return `
                 <div class="slot-item">
                   <div class="slot-day-info">
-                    <div class="slot-day-name">${dayLabel}</div>
+                    <div class="slot-day-name">${escapeHtml(dayLabel)}</div>
                     <div class="slot-time-pill">🕒 ${startStr} – ${endStr}</div>
                   </div>
-                  <button class="slot-remove-btn" onclick="deleteAvailabilitySlot('${s.id}')">${dict.teacher_avail_remove_btn || 'Remove'}</button>
+                  <button class="slot-remove-btn" onclick="deleteAvailabilitySlot(${jsArg(s.id)})">${dict.teacher_avail_remove_btn || 'Remove'}</button>
                 </div>
               `;
             }).join('')}
@@ -2594,7 +2647,7 @@ async function vAvailability() {
     document.getElementById('availability-content').innerHTML = html;
   } catch(e) {
     console.error(e);
-    document.getElementById('availability-content').innerHTML = `<div style="color:#dc2626;font-size:13px;">Error loading availability slots: ${e.message}</div>`;
+    document.getElementById('availability-content').innerHTML = `<div style="color:#dc2626;font-size:13px;">Error loading availability slots: ${escapeHtml(e.message)}</div>`;
   }
 }
 
@@ -2700,13 +2753,13 @@ async function openCreateClassroomModal() {
     window._availSlots = slots;
     const teacherLangs = window.currentTeacher.profile.languages || [];
     const langOptions = (teacherLangs.length ? teacherLangs : ['Spanish','French','German','Italian','Portuguese','English','Arabic','Mandarin'])
-      .map(l => `<option value="${l}">${l}</option>`).join('');
+      .map(l => `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join('');
 
     // Sessions are 60 min: a day is offered only if a slot fits one
     const availableDays = [...new Set(slots.map(s => s.day_of_week))];
     const dayChecks = availableDays.map(d => `
       <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(0,0,0,.1);border-radius:8px;cursor:pointer;font-size:.84rem;">
-        <input type="checkbox" class="cc-day" value="${DAY_NAMES[d]}" data-day="${d}" onchange="refreshClassroomTimes()"> ${DAY_NAMES[d]}
+        <input type="checkbox" class="cc-day" value="${escapeHtml(DAY_NAMES[d])}" data-day="${Number(d)}" onchange="refreshClassroomTimes()"> ${escapeHtml(DAY_NAMES[d])}
       </label>`).join('');
 
     openModal(`
@@ -2845,9 +2898,10 @@ async function openStudentProfileModal(studentId) {
     const sb = window.currentTeacher.supabase;
     
     // Fetch student profile
+    // Only the columns shown below; never stripe_* / billing columns
     const { data: student, error: studentError } = await sb
       .from('student_profiles')
-      .select('*')
+      .select('id, full_name, level, language, goal_track, tier')
       .eq('id', studentId)
       .single();
       
@@ -2887,7 +2941,7 @@ async function openStudentProfileModal(studentId) {
       <div style="border-bottom:1px solid rgba(0,0,0,0.04);padding-bottom:10px;margin-bottom:10px;">
         <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--dim);margin-bottom:4px;">
           <span>By ${escapeHtml(f.teacher_profiles?.full_name || 'Teacher')}</span>
-          <span>${getLocaleString(new Date(f.created_at))}</span>
+          <span>${escapeHtml(getLocaleString(new Date(f.created_at)))}</span>
         </div>
         <div style="font-size:12.5px;color:var(--txt);line-height:1.5;">"${escapeHtml(f.feedback_text)}"</div>
       </div>
@@ -2923,9 +2977,9 @@ async function openStudentProfileModal(studentId) {
         <div>
           <div class="lbl" style="margin-bottom:8px;">Performance Index</div>
           <div style="display:flex;align-items:center;gap:10px;">
-            <div style="font-size:24px;font-weight:800;color:var(--txt);">${avgScore}%</div>
+            <div style="font-size:24px;font-weight:800;color:var(--txt);">${Number(avgScore) || 0}%</div>
             <div style="flex:1;background:var(--bd);height:8px;border-radius:4px;overflow:hidden;">
-              <div style="background:var(--g);width:${avgScore}%;height:100%;"></div>
+              <div style="background:var(--g);width:${Number(avgScore) || 0}%;height:100%;"></div>
             </div>
           </div>
         </div>
@@ -2935,7 +2989,7 @@ async function openStudentProfileModal(studentId) {
           <div class="lbl" style="margin-bottom:8px;">Add Progress Note</div>
           <div style="display:flex;flex-direction:column;gap:8px;">
             <textarea id="new-feedback-text" placeholder="Add study guidance, focus points, or achievements..." style="width:100%;height:60px;padding:10px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:13px;resize:none;outline:none;background:#FAFAFA;"></textarea>
-            <button class="join-btn" style="font-size:11px;padding:6px 12px;align-self:flex-end;cursor:pointer;" onclick="submitStudentFeedback('${studentId}')" data-i18n="btn_save_note">Save Note</button>
+            <button class="join-btn" style="font-size:11px;padding:6px 12px;align-self:flex-end;cursor:pointer;" onclick="submitStudentFeedback(${jsArg(studentId)})" data-i18n="btn_save_note">Save Note</button>
           </div>
         </div>
 
@@ -2957,7 +3011,7 @@ async function openStudentProfileModal(studentId) {
     console.error(e);
     const contentEl = document.getElementById('student-modal-content');
     if (contentEl) {
-      contentEl.innerHTML = `<div style="color:#dc2626;font-size:13px;">Error loading student details: ${e.message}</div>`;
+      contentEl.innerHTML = `<div style="color:#dc2626;font-size:13px;">Error loading student details: ${escapeHtml(e.message)}</div>`;
     }
   }
 }
@@ -3012,9 +3066,9 @@ function addVocabRow(word='', def='', ex='') {
   row.className = 'vocab-row';
   row.style = 'display:grid; grid-template-columns:1.2fr 1.5fr 2fr auto; gap:0.5rem; align-items:center; margin-bottom:0.5rem;';
   row.innerHTML = `
-    <input type="text" placeholder="Word" class="vocab-word" value="${word.replace(/"/g, '&quot;')}" style="padding:0.5rem;" required />
-    <input type="text" placeholder="Definition" class="vocab-definition" value="${def.replace(/"/g, '&quot;')}" style="padding:0.5rem;" required />
-    <input type="text" placeholder="Example sentence" class="vocab-example" value="${ex.replace(/"/g, '&quot;')}" style="padding:0.5rem;" required />
+    <input type="text" placeholder="Word" class="vocab-word" value="${escapeHtml(word)}" style="padding:0.5rem;" required />
+    <input type="text" placeholder="Definition" class="vocab-definition" value="${escapeHtml(def)}" style="padding:0.5rem;" required />
+    <input type="text" placeholder="Example sentence" class="vocab-example" value="${escapeHtml(ex)}" style="padding:0.5rem;" required />
     <button type="button" class="btn out sm" onclick="this.parentElement.remove()" style="color:#dc2626; border-color:rgba(220,38,38,0.2); padding:0.5rem 0.75rem; min-width:auto;">✕</button>
   `;
   container.appendChild(row);
@@ -3031,23 +3085,25 @@ function openWriteNotesModal(sessionId) {
     
   const currentIdx = cohortSessions.findIndex(s => s.id === sessionId);
   let nextDateStr = '';
+  // Local calendar date (not the UTC date part of the timestamp)
+  const toLocalYmd = d => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   if (currentIdx !== -1 && currentIdx < cohortSessions.length - 1) {
     const nextSess = cohortSessions[currentIdx + 1];
-    nextDateStr = nextSess.scheduled_at.split('T')[0];
+    nextDateStr = toLocalYmd(new Date(nextSess.scheduled_at));
   } else {
     // Default to +7 days from this session
     const d = new Date(session.scheduled_at);
     d.setDate(d.getDate() + 7);
-    nextDateStr = d.toISOString().split('T')[0];
+    nextDateStr = toLocalYmd(d);
   }
 
   const modalHtml = `
     <div class="m-hd">
-      <div class="m-ey">Cohort: ${session.cohort?.language || ''} ${session.cohort?.level || ''}</div>
+      <div class="m-ey">Cohort: ${escapeHtml(session.cohort?.language || '')} ${escapeHtml(session.cohort?.level || '')}</div>
       <div class="m-title">${t('teacher_write_session_notes','Write Session Notes')}</div>
     </div>
     <div class="m-bd" style="max-height: 70vh; overflow-y: auto; padding-top: 0.5rem;">
-      <form id="session-notes-form" onsubmit="submitSessionNotes(event, '${sessionId}')">
+      <form id="session-notes-form" onsubmit="submitSessionNotes(event, ${jsArg(sessionId)})">
         <div class="field-row">
           <label>Vocabulary (Up to 10 words)</label>
           <div id="vocab-rows-container" style="margin-bottom: 0.75rem;"></div>
@@ -3076,7 +3132,7 @@ function openWriteNotesModal(sessionId) {
         
         <div class="field-row">
           <label for="homework-due-date" data-i18n="teacher_lbl_homework_due_date">Homework Due Date</label>
-          <input type="date" id="homework-due-date" value="${nextDateStr}" required />
+          <input type="date" id="homework-due-date" value="${escapeHtml(nextDateStr)}" required />
         </div>
         
         <div class="field-row">
@@ -3093,6 +3149,21 @@ function openWriteNotesModal(sessionId) {
   `;
   
   openModal(modalHtml);
+  // Existing (unpublished) note: prefill so the teacher can edit and retry publishing
+  const n = session.notes;
+  if (n) {
+    const vocab = Array.isArray(n.vocabulary) ? n.vocabulary : [];
+    vocab.slice(0, 10).forEach(v => addVocabRow(String(v?.word || ''), String(v?.definition || ''), String(v?.example || '')));
+    const gf = String(n.grammar_focus || '');
+    const cut = gf.indexOf('\n\n');
+    document.getElementById('grammar-title').value = cut === -1 ? gf : gf.slice(0, cut);
+    document.getElementById('grammar-explanation').value = cut === -1 ? '' : gf.slice(cut + 2);
+    document.getElementById('exercises-done').value = n.exercises || '';
+    document.getElementById('homework-text').value = n.homework || '';
+    if (n.due_date) document.getElementById('homework-due-date').value = n.due_date;
+    document.getElementById('teacher-note').value = n.teacher_note || '';
+    if (vocab.length) return;
+  }
   // Add a default vocabulary row
   addVocabRow();
 }
@@ -3126,10 +3197,12 @@ async function submitSessionNotes(event, sessionId) {
     // Combine title and explanation with \n\n
     const grammarFocus = `${grammarTitle}\n\n${grammarExplanation}`;
     
-    // 1. Insert into session_notes table
+    // 1. Upsert into session_notes (one note per session) so a failed publish can be retried.
+    // The session status is not changed here: the nightly cron completes sessions, and
+    // completing it from the client during class would lock out students who rejoin.
     const { data: notesData, error: notesError } = await sb
       .from('session_notes')
-      .insert({
+      .upsert({
         session_id: sessionId,
         vocabulary,
         grammar_focus: grammarFocus,
@@ -3137,21 +3210,13 @@ async function submitSessionNotes(event, sessionId) {
         homework,
         due_date: dueDate,
         teacher_note: teacherNote
-      })
+      }, { onConflict: 'session_id' })
       .select()
       .single();
       
     if (notesError) throw notesError;
     
-    // 2. Mark session status='completed'
-    const { error: sessionError } = await sb
-      .from('sessions')
-      .update({ status: 'completed' })
-      .eq('id', sessionId);
-      
-    if (sessionError) throw sessionError;
-    
-    // 3. Call PDF generation and Resend notification API
+    // 2. Call PDF generation and Resend notification API
     const { data: { session: authSession } = {} } = await window.currentTeacher.supabase.auth.getSession();
     const response = await fetch('/api/generate-notes-pdf', {
       method: 'POST',
@@ -3163,8 +3228,17 @@ async function submitSessionNotes(event, sessionId) {
     });
     
     if (!response.ok) {
-      const errRes = await response.json();
-      throw new Error(errRes.error || 'Failed to generate PDF / notify students');
+      // Error body may not be JSON (e.g. FUNCTION_INVOCATION_FAILED)
+      let errMsg = 'Failed to generate PDF / notify students';
+      try {
+        if ((response.headers.get('content-type') || '').includes('application/json')) {
+          const errRes = await response.json();
+          if (errRes && errRes.error) errMsg = errRes.error;
+        }
+      } catch (_) { /* keep default message */ }
+      // The note is saved; refresh so Sessions offers "Publish Notes" for a retry
+      initTeacherData().catch(() => {});
+      throw new Error(errMsg);
     }
     
     alert("Session notes successfully published and students notified!");
@@ -3238,9 +3312,9 @@ async function handleTeacherJoin(roomUrl, sessionId) {
       },
       body: JSON.stringify({ sessionId })
     });
-    const data = await resp.json();
+    const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
-      alert(data.error || 'Could not open the classroom. Please try again.');
+      alert(data.message || data.error || 'Could not open the classroom. Please try again.');
       return;
     }
     joinUrl = data.url;
@@ -3374,10 +3448,15 @@ function addChatMessage(sender, text, isMe) {
   
   const msgDiv = document.createElement('div');
   msgDiv.className = `cc-msg${isMe ? ' me' : ''}`;
-  msgDiv.innerHTML = `
-    <div class="cc-sender">${sender}</div>
-    <div class="cc-bubble ${isMe ? 'me' : (sender === 'Teacher' ? 'teacher' : 'other')}">${text}</div>
-  `;
+  // Built with textContent: sender (full_name) and message text are never parsed as HTML
+  const senderEl = document.createElement('div');
+  senderEl.className = 'cc-sender';
+  senderEl.textContent = sender;
+  const bubbleEl = document.createElement('div');
+  bubbleEl.className = `cc-bubble ${isMe ? 'me' : (sender === 'Teacher' ? 'teacher' : 'other')}`;
+  bubbleEl.textContent = text;
+  msgDiv.appendChild(senderEl);
+  msgDiv.appendChild(bubbleEl);
   container.appendChild(msgDiv);
   container.scrollTop = container.scrollHeight;
 }
@@ -3438,10 +3517,15 @@ function startTranscriptSimulation() {
     const row = document.createElement('div');
     row.className = 'trans-row';
     const speaker = index === 5 ? 'Sofia' : 'Teacher';
-    row.innerHTML = `
-      <span class="trans-speaker">${speaker}:</span>
-      <span class="trans-text">${lines[index]}</span>
-    `;
+    const spkEl = document.createElement('span');
+    spkEl.className = 'trans-speaker';
+    spkEl.textContent = speaker + ':';
+    const txtEl = document.createElement('span');
+    txtEl.className = 'trans-text';
+    txtEl.textContent = lines[index];
+    row.appendChild(spkEl);
+    row.appendChild(document.createTextNode(' '));
+    row.appendChild(txtEl);
     log.appendChild(row);
     log.scrollTop = log.scrollHeight;
     
@@ -3522,8 +3606,8 @@ async function loadSharedFiles() {
     const item = document.createElement('div');
     item.className = 'file-item';
     item.innerHTML = `
-      <span class="file-item-name">${f.name} (${f.size})</span>
-      <a class="file-item-dl" href="${f.url}" download onclick="alert('Downloading shared file...')">Download</a>
+      <span class="file-item-name">${escapeHtml(f.name)} (${escapeHtml(f.size)})</span>
+      <a class="file-item-dl" href="#" download onclick="alert('Downloading shared file...')">Download</a>
     `;
     listContainer.appendChild(item);
   });
@@ -3536,15 +3620,18 @@ async function uploadClassroomFile(input) {
   
   const item = document.createElement('div');
   item.className = 'file-item';
+  // file.name is attacker-controllable: always escaped
+  const safeName = escapeHtml(file.name);
   item.innerHTML = `
-    <span class="file-item-name" style="color:var(--g);">${file.name} (Uploading...)</span>
+    <span class="file-item-name" style="color:var(--g);">${safeName} (Uploading...)</span>
   `;
   listContainer.appendChild(item);
   
   const sb = window.currentTeacher?.supabase;
   if (sb && currentSessionId) {
     try {
-      const filePath = `shared/${currentSessionId}/${Date.now()}_${file.name}`;
+      const storageName = String(file.name || 'file').replace(/[^\w.\-]/g, '_').slice(0, 120);
+      const filePath = `shared/${currentSessionId}/${Date.now()}_${storageName}`;
       const { data, error } = await sb.storage
         .from('session-notes-pdfs')
         .upload(filePath, file);
@@ -3552,7 +3639,7 @@ async function uploadClassroomFile(input) {
       if (error) throw error;
       
       item.innerHTML = `
-        <span class="file-item-name">${file.name}</span>
+        <span class="file-item-name">${safeName}</span>
         <span style="color:#22c55e;font-size:11px;font-weight:700;">Uploaded</span>
       `;
       return;
@@ -3563,7 +3650,7 @@ async function uploadClassroomFile(input) {
   
   setTimeout(() => {
     item.innerHTML = `
-      <span class="file-item-name">${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+      <span class="file-item-name">${safeName} (${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
       <a class="file-item-dl" href="#" onclick="alert('Downloading uploaded file...')">Download</a>
     `;
   }, 1000);
@@ -3664,7 +3751,7 @@ window.submitSessionNotes = submitSessionNotes;
   // Populate sidebar user details
   const tName = window.currentTeacher.name;
   const initials = tName.split(' ').map(n=>n[0]).join('').toUpperCase().slice(0,2);
-  const location = profile.location || 'Madrid, Spain';
+  const location = profile.location || '';
   document.getElementById('sb-user-name').textContent = tName;
   document.getElementById('sb-user-av').textContent = initials;
   const mobAv = document.getElementById('mobile-hdr-av');

@@ -1,3 +1,12 @@
+-- ============================================================
+--  DO NOT RUN — superseded by migrations/202610141800_phase1_db_lockdown.sql
+--  and migrations/202610142200_phase2_audit_fixes.sql.
+--  Re-running it drops the pinned search_path. (SQL-10)
+--  Kept as history only. supabase/tests/run-local.sh replays it on a
+--  throwaway LOCAL database to rebuild the pre-Phase-1 state; never run
+--  it on the production project.
+-- ============================================================
+
 CREATE OR REPLACE FUNCTION public.generate_cohort_sessions(p_cohort_id UUID)
 RETURNS INT
 LANGUAGE plpgsql

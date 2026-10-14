@@ -16,9 +16,10 @@
     "stripe": "^16.0.0"
   },
   "engines": {
-    "node": ">=18"
+    "node": "22.x"
   },
   "devDependencies": {
+    "@playwright/test": "^1.56.1",
     "cheerio": "^1.2.0"
   }
 }

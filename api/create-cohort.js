@@ -6,14 +6,42 @@
  *  Handles secure cohort creation by teachers:
  *  - Verifies teacher's JWT token.
  *  - Checks teacher approval status.
- *  - Enforces active cohort limit (max 3 active cohorts).
+ *  - Validates every field (enums, teacher's languages, IANA timezone,
+ *    HH:MM time, unique weekdays, description length).
+ *  - Enforces active cohort limit (max 4 active cohorts).
  *  - Maps capacity (max_students) based on tier.
  *  - Inserts new cohort record.
- *  - Calls generate_cohort_sessions(cohort_id) to auto-schedule 12 weeks of sessions.
+ *  - Calls generate_cohort_sessions(cohort_id) to auto-schedule 12 weeks of sessions;
+ *    the cohort is deleted again if no sessions could be generated.
  * ============================================================
  */
 
 const { createClient } = require('@supabase/supabase-js');
+
+const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+const GOAL_TRACKS = ['relocation', 'academic', 'professional', 'pleasure', 'foundations'];
+const TIERS = ['community', 'focused', 'intensive', 'private'];
+// Languages offered at signup (signup.html LANGS).
+const LANGUAGES = ['English', 'German', 'Spanish', 'French', 'Portuguese', 'Italian', 'Mandarin', 'Japanese', 'Arabic'];
+const DAY_INDEX = {
+  sunday: 0, monday: 1, tuesday: 2, wednesday: 3,
+  thursday: 4, friday: 5, saturday: 6
+};
+const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+const MAX_ACTIVE_COHORTS = 4;
+const MAX_DESCRIPTION = 2000;
+
+let TIMEZONES = null;
+function isValidTimezone(tz) {
+  if (typeof tz !== 'string' || tz.length > 64 || !/^[A-Za-z][A-Za-z0-9_+\-]*(\/[A-Za-z0-9_+\-]+){0,2}$/.test(tz)) return false;
+  if (tz === 'UTC') return true;
+  if (!TIMEZONES) {
+    try { TIMEZONES = new Set(Intl.supportedValuesOf('timeZone')); } catch { TIMEZONES = new Set(); }
+  }
+  if (TIMEZONES.has(tz)) return true;
+  // Aliases (e.g. Asia/Calcutta) that the runtime still resolves.
+  try { new Intl.DateTimeFormat('en', { timeZone: tz }); return true; } catch { return false; }
+}
 
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
@@ -29,7 +57,7 @@ function getSupabaseAdmin() {
 
 module.exports = async function handler(req, res) {
   // CORS Headers
-  res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || '*');
+  res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || 'https://alimun.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
@@ -80,17 +108,48 @@ module.exports = async function handler(req, res) {
     return res.status(403).json({ error: 'Forbidden: Teacher status must be approved' });
   }
 
-  // 3. Parse input body
-  const { language, level, goal_track, tier, schedule_days, schedule_time, timezone, description } = req.body || {};
-  
+  // 3. Parse and validate input body
+  let body = req.body || {};
+  if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
+  const { language, level, goal_track, tier, schedule_days, schedule_time, timezone } = body;
+  const description = body.description == null ? null : body.description;
+
   if (!language || !level || !goal_track || !tier || !schedule_days || !schedule_time || !timezone) {
     return res.status(400).json({ error: 'Missing required cohort fields' });
   }
 
-  // Validations
-  if (!Array.isArray(schedule_days) || schedule_days.length === 0) {
-    return res.status(400).json({ error: 'Schedule days must be a non-empty array' });
+  if (!LEVELS.includes(level)) return res.status(400).json({ error: 'Invalid level' });
+  if (!GOAL_TRACKS.includes(goal_track)) return res.status(400).json({ error: 'Invalid goal track' });
+  if (!TIERS.includes(tier)) return res.status(400).json({ error: 'Invalid tier' });
+
+  // The language must be a supported one AND one this teacher teaches.
+  const teacherLanguages = Array.isArray(teacher.languages) ? teacher.languages : [];
+  if (typeof language !== 'string' || !LANGUAGES.includes(language)) {
+    return res.status(400).json({ error: 'Unsupported language' });
   }
+  if (!teacherLanguages.includes(language)) {
+    return res.status(403).json({ error: 'You can only open classes in a language on your teacher profile' });
+  }
+
+  if (!isValidTimezone(timezone)) {
+    return res.status(400).json({ error: 'Invalid timezone' });
+  }
+  if (typeof schedule_time !== 'string' || !TIME_RE.test(schedule_time)) {
+    return res.status(400).json({ error: 'Schedule time must be HH:MM' });
+  }
+  if (description !== null && (typeof description !== 'string' || description.length > MAX_DESCRIPTION)) {
+    return res.status(400).json({ error: `Description must be text of at most ${MAX_DESCRIPTION} characters` });
+  }
+
+  if (!Array.isArray(schedule_days) || schedule_days.length === 0 || schedule_days.length > 7) {
+    return res.status(400).json({ error: 'Schedule days must be a non-empty array of weekdays' });
+  }
+  const normalizedDays = schedule_days.map((d) => String(d).trim().toLowerCase());
+  if (normalizedDays.some((d) => DAY_INDEX[d] === undefined) || new Set(normalizedDays).size !== normalizedDays.length) {
+    return res.status(400).json({ error: 'Schedule days must be unique weekday names' });
+  }
+  // Store as Capitalised day names (what the dashboard sends).
+  const cleanDays = normalizedDays.map((d) => d.charAt(0).toUpperCase() + d.slice(1));
 
   try {
     // 3b. Validate the schedule against the teacher's availability
@@ -109,10 +168,6 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const DAY_INDEX = {
-      sunday: 0, monday: 1, tuesday: 2, wednesday: 3,
-      thursday: 4, friday: 5, saturday: 6
-    };
     const toMinutes = (t) => {
       const [h, m] = String(t).split(':').map(Number);
       return h * 60 + (m || 0);
@@ -120,8 +175,8 @@ module.exports = async function handler(req, res) {
     const sessionStart = toMinutes(schedule_time);
     const sessionEnd = sessionStart + 60;
 
-    const unavailableDays = schedule_days.filter((dayName) => {
-      const dayIdx = DAY_INDEX[String(dayName).trim().toLowerCase()];
+    const unavailableDays = cleanDays.filter((dayName) => {
+      const dayIdx = DAY_INDEX[dayName.toLowerCase()];
       if (dayIdx === undefined) return true;
       return !slots.some((s) =>
         s.day_of_week === dayIdx
@@ -145,8 +200,8 @@ module.exports = async function handler(req, res) {
 
     if (countError) throw countError;
 
-    if (count >= 4) {
-      return res.status(400).json({ error: 'Active cohort limit reached. You can have at most 4 active cohorts.' });
+    if (count >= MAX_ACTIVE_COHORTS) {
+      return res.status(400).json({ error: `Active cohort limit reached. You can have at most ${MAX_ACTIVE_COHORTS} active cohorts.` });
     }
 
     // 5. Map max students based on tier
@@ -166,8 +221,8 @@ module.exports = async function handler(req, res) {
         goal_track,
         tier,
         max_students: maxStudents,
-        description,
-        schedule_days,
+        description: description ? description.trim() : null,
+        schedule_days: cleanDays,
         schedule_time,
         timezone,
         status: 'open',
@@ -178,19 +233,28 @@ module.exports = async function handler(req, res) {
 
     if (insertError) throw insertError;
 
+    // Parallel requests can both pass the count check above: re-count now
+    // and back this cohort out if the limit was exceeded.
+    const { count: countAfter, error: countAfterError } = await supabase
+      .from('cohorts')
+      .select('*', { count: 'exact', head: true })
+      .eq('teacher_id', teacher.id)
+      .in('status', ['open', 'full']);
+    if (!countAfterError && countAfter > MAX_ACTIVE_COHORTS) {
+      await supabase.from('cohorts').delete().eq('id', newCohort.id);
+      return res.status(400).json({ error: `Active cohort limit reached. You can have at most ${MAX_ACTIVE_COHORTS} active cohorts.` });
+    }
+
     // 7. Auto-schedule 12 weeks of sessions using Supabase RPC
     const { data: sessionCount, error: rpcError } = await supabase
       .rpc('generate_cohort_sessions', { p_cohort_id: newCohort.id });
 
-    if (rpcError) {
-      console.error('[Create Cohort API] RPC Error generating sessions:', rpcError);
-      // We still created the cohort, but let the client know scheduling failed
-      return res.status(201).json({
-        success: true,
-        cohort: newCohort,
-        sessionsGenerated: 0,
-        warning: 'Cohort created but session auto-generation failed: ' + rpcError.message
-      });
+    if (rpcError || !(sessionCount > 0)) {
+      console.error('[Create Cohort API] Session generation failed; removing cohort', newCohort.id, rpcError || `count=${sessionCount}`);
+      // Never leave an open cohort without sessions listed to students.
+      const { error: delError } = await supabase.from('cohorts').delete().eq('id', newCohort.id);
+      if (delError) console.error('[Create Cohort API] Could not delete cohort after failed generation:', delError);
+      return res.status(500).json({ error: 'Could not schedule sessions for this classroom. Please try again.' });
     }
 
     const dailyApiKey = process.env.DAILY_API_KEY;
@@ -261,6 +325,6 @@ module.exports = async function handler(req, res) {
 
   } catch (err) {
     console.error('[Create Cohort API] Internal Error:', err);
-    return res.status(500).json({ error: 'Internal server error: ' + err.message });
+    return res.status(500).json({ error: 'Internal server error' });
   }
 };
