@@ -14,7 +14,8 @@
 --  What it does
 --   1. student_profiles: adds the settings/opt-in columns the
 --      dashboard already writes (timezone, preferred_time_start,
---      preferred_time_end, preferred_days, waitlist_opt_in).
+--      preferred_time_end, preferred_days, waitlist_opt_in), and
+--      teacher_profiles.notified_at (notify repeat guard, AUTH-05).
 --   2. Check constraints (length / charset) on names, locations,
 --      languages, time zones, bios, badges, experience_years, and
 --      the student tier list (folds in fix-tier-constraint.sql).
@@ -64,6 +65,10 @@ alter table public.student_profiles add column if not exists preferred_time_star
 alter table public.student_profiles add column if not exists preferred_time_end   time;
 alter table public.student_profiles add column if not exists preferred_days       int[];
 alter table public.student_profiles add column if not exists waitlist_opt_in      boolean not null default false;
+
+-- Durable repeat guard for /api/admin/teacher?action=notify (AUTH-05, APIO-10).
+-- Written by the API (service role) only; the column guard below keeps clients out.
+alter table public.teacher_profiles add column if not exists notified_at timestamptz;
 
 -- ─────────────────────────────────────────────────────────────
 -- 2. CHECK CONSTRAINTS
@@ -199,6 +204,7 @@ begin
     new.tier_level         := 'community';
     new.sessions_delivered := 0;
     new.badges             := null;
+    new.notified_at        := null;
     new.experience_years   := least(greatest(coalesce(new.experience_years, 0), 0), 60);
     return new;
   end if;
@@ -600,6 +606,10 @@ select column_name, data_type from information_schema.columns
 where table_schema = 'public' and table_name = 'student_profiles'
   and column_name in ('timezone', 'preferred_time_start', 'preferred_time_end', 'preferred_days', 'waitlist_opt_in')
 order by 1;
+
+-- c2) teacher_profiles.notified_at (expect 1 row)
+select column_name, data_type from information_schema.columns
+where table_schema = 'public' and table_name = 'teacher_profiles' and column_name = 'notified_at';
 
 -- d) Policies changed here
 select tablename, policyname, cmd from pg_policies

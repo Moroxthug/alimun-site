@@ -272,6 +272,17 @@ module.exports = async function handler(req, res) {
 
     if (updateError) throw updateError;
 
+    // 4b. Notes for a session that has started mean it took place: mark it completed
+    // (TEA-03; the client no longer does this, the nightly cron remains the fallback).
+    if (new Date(session.scheduled_at) <= new Date()) {
+      const { error: completeErr } = await supabase
+        .from('sessions')
+        .update({ status: 'completed' })
+        .eq('id', session.id)
+        .in('status', ['scheduled', 'live']);
+      if (completeErr) console.error('[Generate PDF Notes] Could not mark session completed:', completeErr.message);
+    }
+
     // 5. Notify enrolled students via Resend
     const { data: enrollments, error: enrollmentsError } = await supabase
       .from('enrollments')

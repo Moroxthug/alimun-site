@@ -2,15 +2,18 @@
 # NOTE: package.json, build.js, js/translations.js and vercel.json ARE needed
 # by `npm run build` — they stay in the upload and are blocked from being
 # served by the 404 routes in vercel.json instead.
+# Gitignore rules: a pattern without a leading or inner "/" matches at ANY
+# depth, so root-only folders are anchored with "/" (an unanchored
+# "supabase/" would also drop js/supabase/config.js).
 
 .env*
 .vercel
 .claude
 .agents
 .git
-supabase/
-mockups/
-sandbox/
+/supabase/
+/mockups/
+/sandbox/
 *.md
 verify.js
 verification-results.json

@@ -461,8 +461,7 @@ async function handleNotify(req, res) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 
-  // Best-effort repeat guard (per instance). A durable guard needs a
-  // notified_at column on teacher_profiles.
+  // Fast per-instance repeat guard; the durable guard is teacher_profiles.notified_at below.
   const lastNotified = notifyLog.get(user.id);
   if (lastNotified && Date.now() - lastNotified < NOTIFY_COOLDOWN_MS) {
     return res.status(429).json({ error: 'Application notification already sent' });
@@ -481,6 +480,47 @@ async function handleNotify(req, res) {
   }
 
   const teacher_id = profile.id;
+
+  // Durable repeat guard (AUTH-05): atomically claim the notification slot by
+  // stamping notified_at only when it is empty or older than the cooldown.
+  // Until the Phase 2 migration adds the column, this falls back to the
+  // per-instance guard above.
+  const claimedAt = new Date().toISOString();
+  const cooldownStart = new Date(Date.now() - NOTIFY_COOLDOWN_MS).toISOString();
+  let previousNotifiedAt = null;
+  let durableClaim = false;
+  {
+    const { data: prev, error: prevErr } = await supabase
+      .from('teacher_profiles').select('notified_at').eq('id', teacher_id).maybeSingle();
+    if (!prevErr) {
+      previousNotifiedAt = prev?.notified_at || null;
+      const { data: claimed, error: claimErr } = await supabase
+        .from('teacher_profiles')
+        .update({ notified_at: claimedAt })
+        .eq('id', teacher_id)
+        .or(`notified_at.is.null,notified_at.lt.${cooldownStart}`)
+        .select('id');
+      if (claimErr) {
+        console.error('[Alimun Admin Notification] notified_at claim failed:', claimErr.message);
+        return res.status(500).json({ error: 'Internal Server Error' });
+      }
+      if (!claimed || claimed.length === 0) {
+        return res.status(429).json({ error: 'Application notification already sent' });
+      }
+      durableClaim = true;
+    } else if (prevErr.code !== '42703' && !/notified_at/.test(prevErr.message || '')) {
+      console.error('[Alimun Admin Notification] notified_at lookup failed:', prevErr.message);
+      return res.status(500).json({ error: 'Internal Server Error' });
+    }
+  }
+  // Give the slot back when the email does not go out, so the applicant can retry.
+  const releaseClaim = async () => {
+    if (!durableClaim) return;
+    await supabase.from('teacher_profiles')
+      .update({ notified_at: previousNotifiedAt })
+      .eq('id', teacher_id).eq('notified_at', claimedAt);
+  };
+
   const rawName = String(profile.full_name || '');
   const full_name = escapeHtml(rawName);
   const experience_years = escapeHtml(profile.experience_years);
@@ -578,6 +618,7 @@ async function handleNotify(req, res) {
     if (!response.ok) {
       const errText = await response.text();
       console.error('[Alimun Admin Notification] Resend API error:', response.status, errText.slice(0, 500));
+      await releaseClaim();
       return res.status(502).json({ error: 'Failed to send notification email' });
     }
 
@@ -587,6 +628,7 @@ async function handleNotify(req, res) {
     return res.status(200).json({ success: true });
   } catch (err) {
     console.error('[Alimun Admin Notification] Error:', err);
+    await releaseClaim().catch(() => {});
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }

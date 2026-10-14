@@ -2577,7 +2577,8 @@ window.openSessionModal = function(id) {
         </div>
         <div class="field-row span-2">
           <label>Daily.co Room URL</label>
-          <input type="url" id="edit-sess-room" value="${escapeHtml(s.daily_room_url || '')}">
+          <input type="url" id="edit-sess-room" value="${escapeHtml(s.daily_room_url || '')}" readonly aria-readonly="true" style="background:#f0efe9;">
+          <small style="color:var(--dim); font-size:0.68rem; margin-top:2px;">Set by the server: join-session creates or refreshes the room on every join.</small>
         </div>
         <div class="field-row span-2">
           <label>Session Status</label>
@@ -2601,21 +2602,16 @@ window.openSessionModal = function(id) {
 
 window.saveSessionChanges = async function(id) {
   const scheduled_at = document.getElementById('edit-sess-time').value.trim();
-  const daily_room_url = document.getElementById('edit-sess-room').value.trim();
   const status = document.getElementById('edit-sess-status').value;
 
   if (!scheduled_at || isNaN(new Date(scheduled_at).getTime())) {
     alert("Scheduled time must be an ISO 8601 date, e.g. 2026-07-20T18:00:00Z.");
     return;
   }
-  if (daily_room_url && !safeHttpsUrl(daily_room_url)) {
-    alert("Room URL must start with https://");
-    return;
-  }
-
+  // daily_room_url is server-managed (api/join-session.js, APIP-12): not written here.
   const { error } = await supabase
     .from('sessions')
-    .update({ scheduled_at, daily_room_url: daily_room_url || null, status })
+    .update({ scheduled_at, status })
     .eq('id', id);
 
   if (error) {

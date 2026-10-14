@@ -45,18 +45,22 @@ already point at the apex.
   application or waitlist offer once and confirm delivery.
 - **CRON_SECRET**: set in Vercel env so the two cron endpoints are locked.
 
-## 1. Database migrations (DONE — verified in production July 18 2026)
-Run in the Supabase SQL editor, **after** `schema.sql`, in this order:
+## 1. Database migrations
+Schema changes now live in `supabase/migrations/` as timestamped,
+idempotent files. Run each one that is not yet applied, in filename order,
+as ONE script in Supabase → SQL Editor, then check the verify queries at the
+end of the file:
 
 ```
-supabase/add-availability-assignments.sql
-supabase/add-exercise-results.sql
+supabase/migrations/202610141800_phase1_db_lockdown.sql
+supabase/migrations/202610142200_phase2_audit_fixes.sql
 ```
 
-Creates the tables the dashboards now use (they were referenced but never
-existed): `teacher_availability`, `assignments`, `assignment_submissions`,
-`student_feedback`, `teacher_reviews` — all with RLS, plus a trigger that
-keeps `teacher_profiles.rating` in sync with reviews.
+**Do NOT run anything in `supabase/archive/`.** Those are the pre-migration
+files (`schema.sql`, `add-*.sql`, `fix-*.sql`, `waitlist-fill-system.sql`
+and others). They were applied to production long ago (July 2026) and
+re-running them can undo the lockdown policies; they are kept only as a
+record and for `supabase/tests/run-local.sh`.
 
 ## 2. Vercel environment variables
 | Variable | Needed for | Status |

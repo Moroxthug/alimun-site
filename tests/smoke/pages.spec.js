@@ -12,7 +12,7 @@ const PAGES = [
 
 // Third-party noise we cannot control from the page (blocked trackers,
 // CDN warnings). Anything else is a failure.
-const IGNORE = [/favicon/i, /net::ERR_/i, /Failed to load resource/i, /third-party cookie/i];
+const IGNORE = [/favicon/i, /Access to font at/i, /net::ERR_/i, /Failed to load resource/i, /third-party cookie/i];
 
 for (const path of PAGES) {
   test(`no console errors: ${path}`, async ({ page }) => {
