@@ -1034,6 +1034,7 @@ td input[type="checkbox"], th input[type="checkbox"] { width: 16px; height: 16px
               <div class="search-bar">
                 <input type="text" id="student-search" placeholder="Search student by name or email..." oninput="filterStudents()">
               </div>
+              <button class="btn btn-out" onclick="openEmailSignups()">Email signups</button>
               <button class="btn" onclick="openAddStudentModal()">+ Create Student</button>
             </div>
           </div>
@@ -2617,6 +2618,49 @@ window.setCohortStatus = async function(cohortId, status) {
   showToast(status === 'closed' ? 'Class closed to new students.' : 'Class reopened.');
   await loadCohorts();
   openCohortManage(cohortId);
+};
+
+// ── Email signups from the public forms (api/_lib/subscribe.js; admin RLS) ──
+window.openEmailSignups = async function() {
+  const { data, error } = await supabase
+    .from('email_signups')
+    .select('email, source, locale, page, created_at')
+    .order('created_at', { ascending: false })
+    .limit(2000);
+  window._emailSignups = data || [];
+  const rows = error
+    ? `<p style="color:var(--err);font-size:.8rem;">Could not load signups: ${escapeHtml(error.message)}</p>`
+    : (data || []).length === 0
+      ? '<p style="font-size:.8rem;color:var(--dim);">No signups yet.</p>'
+      : `<table style="width:100%;font-size:.78rem;"><thead><tr><th style="text-align:left;">Email</th><th style="text-align:left;">Form</th><th style="text-align:left;">Language</th><th style="text-align:left;">Date</th></tr></thead><tbody>
+          ${data.map(r => `<tr><td>${escapeHtml(r.email)}</td><td>${escapeHtml(r.source)}</td><td>${escapeHtml(r.locale || '')}</td><td class="mono">${escapeHtml(new Date(r.created_at).toLocaleDateString())}</td></tr>`).join('')}
+        </tbody></table>`;
+  openModal(`
+    <div class="m-hd">
+      <div>
+        <div class="m-ey">Website forms</div>
+        <div class="m-title">Email Signups (${Number((data || []).length)})</div>
+      </div>
+      <button class="btn btn-out btn-sm" onclick="closeModal()">Close</button>
+    </div>
+    <div class="m-bd">
+      <p style="font-size:.75rem;color:var(--dim);margin-bottom:1rem;">From the "Reserve your spot" and footer newsletter forms. These people asked for launch news; they have not created an account.</p>
+      <div style="max-height:55vh;overflow:auto;margin-bottom:1rem;">${rows}</div>
+      ${(data || []).length ? '<div style="display:flex;justify-content:flex-end;"><button class="btn" onclick="downloadEmailSignups()">Download CSV</button></div>' : ''}
+    </div>`);
+};
+
+window.downloadEmailSignups = function() {
+  // Quote every cell; a leading = + - @ would run as a formula in Excel, so prefix it.
+  const q = v => { let t = String(v ?? ''); if (/^[=+\-@]/.test(t)) t = "'" + t; return `"${t.replace(/"/g, '""')}"`; };
+  const csv = ['email,form,language,page,signed_up_at']
+    .concat((window._emailSignups || []).map(r => [r.email, r.source, r.locale, r.page, r.created_at].map(q).join(',')))
+    .join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+  a.download = `alimun-email-signups-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
 };
 
 // ── MODULE: SESSIONS ──
