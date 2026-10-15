@@ -25,6 +25,8 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - name: node --check on api/, js/ and every inline script
         run: node scripts/ci/check-inline-scripts.js
+      - name: Unit tests (strict CommonJS, like the Vercel runtime)
+        run: node --no-experimental-require-module --test 'tests/unit/*.test.js'
       - name: Serverless function cap (Vercel Hobby = 12)
         run: node scripts/ci/check-function-count.js
       - name: Build locales and require no diff
