@@ -7,6 +7,7 @@
 <!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
 <script src="../js/view-as.js"></script>
+<script src="../js/tz.js"></script>
 <script src="https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js"></script>
 <script>
 function getLocaleString(date, formatOptions = {}) {
@@ -2570,6 +2571,8 @@ async function vAvailability() {
       `;
     }).join('');
 
+    const browserTz = AlimunTZ.browserTimezone();
+    const otherZones = [...new Set(slots.map(s => s.timezone || 'UTC'))].filter(z => z !== browserTz);
     const startOptionsHtml = generateTimeOptions(window.startTime, 'start');
     const endOptionsHtml = generateTimeOptions(window.endTime, 'end');
 
@@ -2612,12 +2615,15 @@ async function vAvailability() {
             </div>
           </div>
           
+          <p style="font-size:0.75rem;color:var(--dim);margin:0;">Times are in your current timezone: <strong>${escapeHtml(browserTz)}</strong>.</p>
+
           <button class="btn" id="avail-add-btn" onclick="saveAvailabilitySlot()" style="justify-content:center;width:100%;margin-top:0.5rem;padding:0.875rem;font-size:0.75rem;">${dict.teacher_avail_add_btn || 'Add Available Hours'}</button>
         </div>
         
         <!-- Right: Slots list -->
         <div class="card" style="display:flex;flex-direction:column;gap:1.25rem;">
           <div class="sec-t" style="font-size: 1rem; border-bottom: 1px solid rgba(0,0,0,0.06); padding-bottom: 0.75rem;">${dict.teacher_avail_active_slots || 'Your Active Weekly Slots'}</div>
+          ${otherZones.length ? `<p style="font-size:0.75rem;color:var(--dim);margin:0;">Some slots were saved in ${escapeHtml(otherZones.join(', '))}, not your current timezone (${escapeHtml(browserTz)}). They still apply at those local times. Remove and re-add them if you have moved.</p>` : ''}
           <div class="slots-list-container">
             ${slots.map(s => {
               const startStr = escapeHtml(String(s.start_time || '').slice(0, 5));
@@ -2627,7 +2633,7 @@ async function vAvailability() {
                 <div class="slot-item">
                   <div class="slot-day-info">
                     <div class="slot-day-name">${escapeHtml(dayLabel)}</div>
-                    <div class="slot-time-pill">🕒 ${startStr} – ${endStr}</div>
+                    <div class="slot-time-pill">${startStr} – ${endStr} <span style="opacity:.6;">${escapeHtml(s.timezone || 'UTC')}</span></div>
                   </div>
                   <button class="slot-remove-btn" onclick="deleteAvailabilitySlot(${jsArg(s.id)})">${dict.teacher_avail_remove_btn || 'Remove'}</button>
                 </div>
@@ -2679,7 +2685,8 @@ async function saveAvailabilitySlot() {
         teacher_id: teacherId,
         day_of_week: dayVal,
         start_time: startVal,
-        end_time: endVal
+        end_time: endVal,
+        timezone: AlimunTZ.browserTimezone()
       });
       
     if (error) throw error;
@@ -2749,12 +2756,19 @@ async function openCreateClassroomModal() {
     }
 
     window._availSlots = slots;
+    // The class runs in the zone the availability was entered in (the most
+    // common one if slots were saved from different zones), not whatever
+    // zone this browser is in today.
+    const zoneCount = {};
+    slots.forEach(s => { const z = s.timezone || 'UTC'; zoneCount[z] = (zoneCount[z] || 0) + 1; });
+    window._classTz = Object.keys(zoneCount).sort((a, b) => zoneCount[b] - zoneCount[a])[0];
+    window._fitCache = {};
     const teacherLangs = window.currentTeacher.profile.languages || [];
     const langOptions = (teacherLangs.length ? teacherLangs : ['Spanish','French','German','Italian','Portuguese','English','Arabic','Mandarin'])
       .map(l => `<option value="${escapeHtml(l)}">${escapeHtml(l)}</option>`).join('');
 
-    // Sessions are 60 min: a day is offered only if a slot fits one
-    const availableDays = [...new Set(slots.map(s => s.day_of_week))];
+    // Sessions are 60 min: a day is offered only if a start time fits all 12 weeks
+    const availableDays = [1, 2, 3, 4, 5, 6, 0].filter(d => classroomFitTimes(d).size > 0);
     const dayChecks = availableDays.map(d => `
       <label style="display:flex;align-items:center;gap:8px;padding:8px 12px;border:1px solid rgba(0,0,0,.1);border-radius:8px;cursor:pointer;font-size:.84rem;">
         <input type="checkbox" class="cc-day" value="${escapeHtml(DAY_NAMES[d])}" data-day="${Number(d)}" onchange="refreshClassroomTimes()"> ${escapeHtml(DAY_NAMES[d])}
@@ -2780,8 +2794,8 @@ async function openCreateClassroomModal() {
               <option value="private">Private (1:1)</option></select></div>
         </div>
         <div><label class="lbl" style="display:block;margin-bottom:6px;">Days (from your availability)</label>
-          <div style="display:flex;flex-wrap:wrap;gap:8px;">${dayChecks}</div></div>
-        <div><label class="lbl" style="display:block;margin-bottom:6px;">Session time (60 min, must fit your slots)</label>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;">${dayChecks || '<p style="font-size:.84rem;color:#555;margin:0;">None of your slots fits a 60-minute session in every week of the next 12 (daylight-saving changes count). Make a slot longer, then try again.</p>'}</div></div>
+        <div><label class="lbl" style="display:block;margin-bottom:6px;">Session time in ${escapeHtml(window._classTz)} (60 min, must fit your slots)</label>
           <select id="cc-time" style="width:100%;padding:.625rem;border:1px solid rgba(0,0,0,.12);border-radius:8px;font-family:inherit;">
             <option value="">Select days first…</option></select></div>
         <div><label class="lbl" style="display:block;margin-bottom:6px;">Description (optional)</label>
@@ -2798,27 +2812,36 @@ async function openCreateClassroomModal() {
   }
 }
 
-// Offer only start times (on the half hour) where a full 60-minute
-// session fits inside an availability slot on EVERY selected day.
-function refreshClassroomTimes() {
+// Start times (on the half hour, in the class zone) where a 60-minute session
+// fits an availability slot in every one of the 12 weeks that will be
+// scheduled. Slots are read in their own zones (AlimunTZ.fitsSlot), so a
+// daylight-saving week that falls outside a slot rules that time out. The
+// server runs the same check in /api/create-cohort.
+function classroomFitTimes(day) {
+  const cache = window._fitCache || (window._fitCache = {});
+  if (cache[day]) return cache[day];
   const slots = window._availSlots || [];
+  const tz = window._classTz || 'UTC';
+  const times = new Set();
+  for (let t = 0; t + 60 <= 1440; t += 30) {
+    const occ = AlimunTZ.scheduleOccurrences([day], AlimunTZ.fmtMinutes(t), tz);
+    if (occ.length && occ.every(o => AlimunTZ.fitsSlot(o, 60, slots))) times.add(t);
+  }
+  return (cache[day] = times);
+}
+
+function refreshClassroomTimes() {
   const checked = [...document.querySelectorAll('.cc-day:checked')].map(c => parseInt(c.dataset.day));
   const sel = document.getElementById('cc-time');
   if (checked.length === 0) {
     sel.innerHTML = '<option value="">Select days first…</option>';
     return;
   }
-  const toMin = t => { const [h,m] = t.split(':').map(Number); return h*60+(m||0); };
-  const fmt = m => `${String(Math.floor(m/60)).padStart(2,'0')}:${String(m%60).padStart(2,'0')}`;
-
+  const fmt = AlimunTZ.fmtMinutes;
   let common = null;
   checked.forEach(day => {
-    const daySlots = slots.filter(s => s.day_of_week === day);
-    const times = new Set();
-    daySlots.forEach(s => {
-      for (let t = Math.ceil(toMin(s.start_time)/30)*30; t + 60 <= toMin(s.end_time); t += 30) times.add(t);
-    });
-    common = common === null ? times : new Set([...common].filter(t => times.has(t)));
+    const times = classroomFitTimes(day);
+    common = common === null ? new Set(times) : new Set([...common].filter(t => times.has(t)));
   });
 
   const list = [...(common || [])].sort((a,b)=>a-b);
@@ -2857,7 +2880,7 @@ async function submitCreateClassroom() {
         description: document.getElementById('cc-desc').value.trim() || null,
         schedule_days: days,
         schedule_time: time,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'
+        timezone: window._classTz || AlimunTZ.browserTimezone()
       })
     });
 
