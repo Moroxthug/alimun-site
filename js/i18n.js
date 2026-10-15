@@ -170,18 +170,6 @@
         right: auto !important;
         left: 2rem !important;
       }
-      html[dir="rtl"] #founding-cohort {
-        direction: rtl;
-      }
-      html[dir="rtl"] #founding-cohort h2 {
-        text-align: right !important;
-      }
-      html[dir="rtl"] #founding-cohort p {
-        text-align: right !important;
-      }
-      html[dir="rtl"] #founding-cohort div[style*="text-align:right"] {
-        text-align: left !important;
-      }
       /* Forms elements */
       html[dir="rtl"] .field label,
       html[dir="rtl"] .field-row label {

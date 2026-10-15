@@ -4,10 +4,12 @@
  *  Vercel Serverless Function (Node.js runtime)
  *
  *  Admin-only email gateway to send notifications and promotional emails via Resend.
+ *  ?action=subscribe is the one public action: the site's email signup forms.
  * ============================================================
  */
 
 const { createClient } = require('@supabase/supabase-js');
+const subscribe = require('./_lib/subscribe.js');
 
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
@@ -30,6 +32,9 @@ const MAX_SUBJECT = 200;
 const MAX_BODY = 10000;
 
 module.exports = async function handler(req, res) {
+  // Public email signup from the site forms (api/_lib/subscribe.js); no admin auth.
+  if (req.query && req.query.action === 'subscribe') return subscribe(req, res);
+
   // CORS Headers
   res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || 'https://alimun.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
