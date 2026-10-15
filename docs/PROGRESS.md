@@ -78,5 +78,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 2026-10-15 — Italian homepage: founding offer removed
 - `it/index.html` is hand-made (build.js skips it), so the earlier honesty pass missed it. Removed the founding-cohort section (100 joined, 6 teachers, 100/200 spots, 40% forever), pointed "Scopri di più" at the FAQ, and replaced the founding FAQ answer (page and schema) with the existing Italian `faq_a6` text.
 - The four hand-made Italian pages (`index`, `careers`, `services`, `careers-teachers-section`) now load `js/subscribe.js`, so their email forms save for real like the other languages.
-- Still open: the five Italian course landing pages (`it/corsi-*-online.html`) carry the founding offer throughout (section, price table, FAQ). Waiting for the owner.
 - Owner decision: Claude merges its own PRs once CI is green, then checks production.
+
+## 2026-10-15 — Italian course pages: founding offer removed
+- `it/corsi-{inglese,spagnolo,francese,tedesco,portoghese}-online.html` (hand-made): removed the founding-cohort section (100 joined, 6 teachers, 100/200 spots, 40% off), the founding FAQ (page and schema), the "Prezzo fondatore bloccato" comparison row, the "bloccati per sempre" pricing subtitle and labels, and the struck-through prices.
+- Owner decision: show the normal price. Stripe live charges EUR 24 / 59 / 109 / 269 a month, so those stay; the struck-through 34 / 79 / 149 / 349 were never charged and are gone.
+- Not changed, flagged to the owner: the 7-day trial and money-back wording, the student testimonials and the stats on these pages, the "sconti esclusivi per il lancio" newsletter line, and the struck-through prices on `tiers.html` in every language.
