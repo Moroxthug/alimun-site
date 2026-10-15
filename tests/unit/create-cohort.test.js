@@ -6,6 +6,7 @@ const assert = require('node:assert');
 const path = require('path');
 
 let SLOTS = [];
+let ROLE = 'teacher';
 const inserted = [];
 
 // Minimal chainable stand-in for the supabase-js query builder.
@@ -26,7 +27,7 @@ function query(table) {
   return q;
 }
 const fakeClient = {
-  auth: { getUser: async () => ({ data: { user: { id: 'user-1' } }, error: null }) },
+  auth: { getUser: async () => ({ data: { user: { id: 'user-1', app_metadata: { role: ROLE } } }, error: null }) },
   from: query,
   rpc: async () => ({ data: 12, error: null }),
 };
@@ -70,4 +71,33 @@ test('slots without a zone (pre-migration rows) are read as UTC', async () => {
   SLOTS = [{ day_of_week: 1, start_time: '09:00:00', end_time: '11:00:00' }];
   assert.strictEqual((await call({ ...base, schedule_time: '09:00', timezone: 'UTC' })).code, 201);
   assert.strictEqual((await call({ ...base, schedule_time: '09:00', timezone: 'Asia/Tokyo' })).code, 400);
+});
+
+const TEACHER = '11111111-2222-3333-4444-555555555555';
+
+test('a non-admin cannot create a class for another teacher', async () => {
+  ROLE = 'teacher';
+  const r = await call({ ...base, schedule_time: '09:00', timezone: 'UTC', teacher_id: TEACHER });
+  assert.strictEqual(r.code, 403);
+});
+
+test('admin: availability still applies unless explicitly overridden', async () => {
+  ROLE = 'admin';
+  SLOTS = [{ day_of_week: 1, start_time: '09:00:00', end_time: '11:00:00', timezone: 'UTC' }];
+  const blocked = await call({ ...base, schedule_time: '15:00', timezone: 'UTC', teacher_id: TEACHER });
+  assert.strictEqual(blocked.code, 400);
+
+  const forced = await call({ ...base, schedule_time: '15:00', timezone: 'UTC', teacher_id: TEACHER, skip_availability: true, max_students: 8 });
+  assert.strictEqual(forced.code, 201, JSON.stringify(forced.body));
+  assert.strictEqual(forced.body.availabilityOverridden, 12);
+  assert.match(forced.body.warning, /admin override/);
+  assert.strictEqual(inserted.at(-1).max_students, 8);
+  ROLE = 'teacher';
+});
+
+test('admin: bad max_students and bad teacher_id are rejected', async () => {
+  ROLE = 'admin';
+  assert.strictEqual((await call({ ...base, schedule_time: '09:00', timezone: 'UTC', teacher_id: TEACHER, max_students: 99 })).code, 400);
+  assert.strictEqual((await call({ ...base, schedule_time: '09:00', timezone: 'UTC', teacher_id: 'nope' })).code, 400);
+  ROLE = 'teacher';
 });
