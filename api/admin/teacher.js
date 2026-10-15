@@ -11,6 +11,8 @@
  *    ?action=notify   (POST) — send admin notification email
  *    ?action=set-status (POST, admin JWT) — approve/reject/suspend/reinstate
  *                       from the admin dashboard, optionally emailing the teacher
+ *    ?action=session-update | enrollment-move | enrollment-remove
+ *                       (POST, admin JWT) — class operations, see api/_lib/admin-ops.js
  *
  *  Legacy paths (via Vercel rewrites):
  *    /api/admin/approve-teacher → ?action=approve
@@ -21,6 +23,7 @@
 
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+const adminOps = require('../_lib/admin-ops.js');
 
 // ── Shared helpers ──────────────────────────────────────────
 
@@ -735,6 +738,13 @@ module.exports = async function handler(req, res) {
       return handleEmailDecision(req, res, 'reject');
     case 'notify':
       return handleNotify(req, res);
+    // Class operations (api/_lib/admin-ops.js)
+    case 'session-update':
+      return adminOps.sessionUpdate(req, res);
+    case 'enrollment-move':
+      return adminOps.enrollmentMove(req, res);
+    case 'enrollment-remove':
+      return adminOps.enrollmentRemove(req, res);
     default:
       return res.status(400).json({ error: 'Unknown admin action' });
   }

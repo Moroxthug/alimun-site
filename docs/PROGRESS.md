@@ -44,3 +44,13 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - Student dashboard: class times converted on the real next date (the old helper used a fixed June week, so times were an hour off from late October to March); profiles still on the 'UTC' default show times in the browser zone.
   - Smoke test fix: `serve` redirected `*.html?preview=1` to the clean URL and dropped the query, so the dashboard checks had only ever loaded `/signin`. They now use clean URLs, assert the final page, and stub Supabase REST (no live DB calls from tests).
   - Not changed: admin "create cohort" still stores 'UTC' and builds sessions in the browser; handled with the admin operations item.
+  - Merged as PR #11 (`2328b53`). The migration was applied by the owner in the SQL Editor after the merge (the connector timed out three times); for a few minutes adding slots and creating classes failed. Verified afterwards: column present, seed slots backfilled (Madrid ×5, Berlin ×2), bad zone rejected, REST API sees the column.
+- Branch `phase-3-admin-ops` (plan item 7, admin operations):
+  - Create class: the admin form now goes through `/api/create-cohort` in a new admin mode (`teacher_id`, optional `max_students` 1-35, optional `skip_availability` reported back as a warning). Same validation, timezone, `generate_cohort_sessions()` and Daily rooms as teachers get. The old path stored 'UTC' and built sessions in the browser.
+  - Class list: timezone shown; Manage opens the roster with Move (to another open class in the same language) and Remove, plus Close to new students / Reopen.
+  - Sessions: times shown in the class zone; Manage reschedules (date + time in the class zone, DST gaps and past times rejected) or cancels, with an optional message, emailing the active students (in their own zone when set) and the teacher. Replaces editing raw ISO timestamps and status.
+  - Server: `api/_lib/admin-ops.js` (`session-update`, `enrollment-move`, `enrollment-remove` on `/api/admin/teacher?action=`; admin JWT, conditional updates). The seat transaction moved from `api/enroll.js` to `api/_lib/seat.js` unchanged and is shared by students and admin. Still 12 functions.
+  - Tests: `tests/unit/seat.test.js`, `admin-ops.test.js`, admin cases in `create-cohort.test.js` (31 unit tests). Browser check of the admin screens with a fake admin session and stubbed APIs: no console errors, correct request bodies.
+  - View as: already read-only since Phase 2 (ADM-14), with a "Read-only preview" note in the bar; nothing to change.
+  - Payouts list: already present (log payout, mark paid); unchanged.
+  - Not verified on production: emails (Resend not configured yet; responses say "No email sent").
