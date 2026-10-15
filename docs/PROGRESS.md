@@ -74,3 +74,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 2026-10-15 — Careers: founding-teacher offer removed
 - `careers.html` slide `careers_sim_sub_3` said "standard is 30% or 25% locked forever for our first 10 founding teachers". That offer does not exist in the code, so the slide now only states the standard 30%, in every language (`js/translations.js`, regenerated locales, and the hand-made `it/careers.html`).
 - Checks: build, inline scripts, function count, links, 41 unit tests, 14 Playwright smoke tests.
+
+## 2026-10-15 — Italian homepage: founding offer removed
+- `it/index.html` is hand-made (build.js skips it), so the earlier honesty pass missed it. Removed the founding-cohort section (100 joined, 6 teachers, 100/200 spots, 40% forever), pointed "Scopri di più" at the FAQ, and replaced the founding FAQ answer (page and schema) with the existing Italian `faq_a6` text.
+- The four hand-made Italian pages (`index`, `careers`, `services`, `careers-teachers-section`) now load `js/subscribe.js`, so their email forms save for real like the other languages.
+- Still open: the five Italian course landing pages (`it/corsi-*-online.html`) carry the founding offer throughout (section, price table, FAQ). Waiting for the owner.
+- Owner decision: Claude merges its own PRs once CI is green, then checks production.
