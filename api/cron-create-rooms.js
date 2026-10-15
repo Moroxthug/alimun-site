@@ -10,6 +10,10 @@
  *      next 24 hours that don't have one yet. /api/join-session
  *      still creates rooms on demand, so this is only a prefetch.
  *
+ *  Step 1 also runs every 15 minutes inside the database (pg_cron,
+ *  migration 202610150400_phase3_cron). Each run is recorded in
+ *  public.cron_runs (api/_lib/cron-log.js).
+ *
  *  Auth: REQUIRES `Authorization: Bearer <CRON_SECRET>`. Fails
  *  closed when CRON_SECRET is not configured.
  * ============================================================
@@ -17,6 +21,7 @@
 
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+const { recordRun } = require('./_lib/cron-log.js');
 
 const COMPLETE_AFTER_MIN = 90;   // must match the join window in join-session.js
 const PREFETCH_HOURS = 24;       // cron runs daily, so look a full day ahead
@@ -127,6 +132,7 @@ module.exports = async function handler(req, res) {
     const dailyApiKey = process.env.DAILY_API_KEY;
     if (!dailyApiKey) {
       console.warn('[Cron Sessions] DAILY_API_KEY not set — skipping room prefetch');
+      await recordRun(supabase, 'vercel:cron-create-rooms', true, { ...summary, note: 'DAILY_API_KEY not set' });
       return res.status(200).json({ success: true, ...summary, note: 'DAILY_API_KEY not set' });
     }
 
@@ -161,9 +167,11 @@ module.exports = async function handler(req, res) {
       }
     }
 
+    await recordRun(supabase, 'vercel:cron-create-rooms', summary.roomsFailed === 0, summary);
     return res.status(200).json({ success: true, ...summary });
   } catch (err) {
     console.error('[Cron Sessions] Execution error:', err);
+    await recordRun(supabase, 'vercel:cron-create-rooms', false, { ...summary, error: String(err.message || err) });
     return res.status(500).json({ error: 'Internal server error' });
   }
 };

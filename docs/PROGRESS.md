@@ -54,3 +54,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - View as: already read-only since Phase 2 (ADM-14), with a "Read-only preview" note in the bar; nothing to change.
   - Payouts list: already present (log payout, mark paid); unchanged.
   - Not verified on production: emails (Resend not configured yet; responses say "No email sent").
+  - Merged as PR #12 (`1c13c75`) and deployed; production smoke test passes, the new admin actions answer 401 without a token.
+- Branch `phase-3-cron` (plan item 9, scheduled jobs):
+  - `supabase/migrations/202610150400_phase3_cron.sql`: `pg_cron` runs `run_lifecycle_jobs()` every 15 minutes (expire waitlist offers via `process_expired_offers()`, mark sessions completed 90 minutes after start). Vercel Hobby only allows daily crons, so offers could hold a seat up to 24 h longer before.
+  - `public.cron_runs` records every run (database and both Vercel crons via `api/_lib/cron-log.js`), admin-read only, kept 30 days. A `vercel:*` row after 00:00 UTC is the proof that `CRON_SECRET` is set in Vercel.
+  - Local: all migrations twice, `rls.sql` 162/162; lifecycle job on seeded data (past session completed, live and future untouched, expired offer removed, second run changes nothing, a student cannot read runs). Unit tests for the Vercel crons (fail closed, run recorded).
