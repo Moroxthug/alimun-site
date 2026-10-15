@@ -6,7 +6,11 @@
  */
 
 const React = require('react');
-const { Document, Page, Text, View, StyleSheet, Font, pdf } = require('@react-pdf/renderer');
+// @react-pdf/renderer v4 is ESM-only and its yoga-layout dependency uses
+// top-level await, so a top-level require() crashes the function at cold
+// start on Vercel (FUNCTION_INVOCATION_FAILED on every request). It is
+// loaded with import() on first use instead; see loadPdfKit() below.
+let Document, Page, Text, View, StyleSheet, Font, pdf, styles, HEADER_FONT;
 const { createClient } = require('@supabase/supabase-js');
 const path = require('path');
 const fs = require('fs');
@@ -16,34 +20,43 @@ const fs = require('fs');
 // missing from the deployment, fall back to the built-in Helvetica-Bold so the
 // PDF still renders.
 const HEADER_FONT_PATH = path.join(__dirname, '..', 'fonts', 'coolvetica-condensed-rg.otf');
-let HEADER_FONT = 'Helvetica-Bold';
-try {
-  if (fs.existsSync(HEADER_FONT_PATH)) {
-    Font.register({ family: 'Coolvetica Condensed', src: HEADER_FONT_PATH });
-    HEADER_FONT = 'Coolvetica Condensed';
-  }
-} catch (e) {
-  console.error('[Generate PDF Notes] header font registration failed, using Helvetica-Bold');
-}
 
-const styles = StyleSheet.create({
-  page: { padding: 30, fontFamily: 'Helvetica', fontSize: 10, lineHeight: 1.5, color: '#080808', backgroundColor: '#f0efe9' },
-  header: { backgroundColor: '#080808', padding: 20, borderRadius: 8, marginBottom: 20 },
-  headerTitle: { fontFamily: HEADER_FONT, fontSize: 26, color: '#ceff65', textTransform: 'uppercase', marginBottom: 5 },
-  headerMeta: { color: '#ffffff', fontSize: 9, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' },
-  section: { marginBottom: 15, padding: 15, backgroundColor: '#ffffff', borderRadius: 8 },
-  sectionTitle: { fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase', borderBottom: '1px solid #080808', paddingBottom: 5, marginBottom: 8 },
-  table: { display: 'table', width: 'auto', marginBottom: 10 },
-  tableRow: { margin: 'auto', flexDirection: 'row' },
-  tableRowAlternate: { margin: 'auto', flexDirection: 'row', backgroundColor: '#f5f4f0' },
-  tableColHeader: { width: '33.3%', borderStyle: 'solid', borderWidth: 0, borderBottomWidth: 1, borderColor: '#080808', padding: 5 },
-  tableCol: { width: '33.3%', padding: 5 },
-  tableCell: { fontSize: 8 },
-  bold: { fontWeight: 'bold' },
-  callout: { backgroundColor: '#ceff65', padding: 12, borderRadius: 8, marginTop: 10, borderLeftWidth: 4, borderLeftColor: '#080808' },
-  calloutText: { fontStyle: 'italic', color: '#080808' },
-  footer: { position: 'absolute', bottom: 30, left: 30, right: 30, textAlign: 'center', color: '#aaa', fontSize: 8 }
-});
+let pdfKitPromise = null;
+function loadPdfKit() {
+  if (!pdfKitPromise) {
+    pdfKitPromise = import('@react-pdf/renderer').then((m) => {
+      ({ Document, Page, Text, View, StyleSheet, Font, pdf } = m);
+      HEADER_FONT = 'Helvetica-Bold';
+      try {
+        if (fs.existsSync(HEADER_FONT_PATH)) {
+          Font.register({ family: 'Coolvetica Condensed', src: HEADER_FONT_PATH });
+          HEADER_FONT = 'Coolvetica Condensed';
+        }
+      } catch (e) {
+        console.error('[Generate PDF Notes] header font registration failed, using Helvetica-Bold');
+      }
+      styles = StyleSheet.create({
+        page: { padding: 30, fontFamily: 'Helvetica', fontSize: 10, lineHeight: 1.5, color: '#080808', backgroundColor: '#f0efe9' },
+        header: { backgroundColor: '#080808', padding: 20, borderRadius: 8, marginBottom: 20 },
+        headerTitle: { fontFamily: HEADER_FONT, fontSize: 26, color: '#ceff65', textTransform: 'uppercase', marginBottom: 5 },
+        headerMeta: { color: '#ffffff', fontSize: 9, display: 'flex', flexDirection: 'row', justifyContent: 'space-between' },
+        section: { marginBottom: 15, padding: 15, backgroundColor: '#ffffff', borderRadius: 8 },
+        sectionTitle: { fontSize: 12, fontWeight: 'bold', textTransform: 'uppercase', borderBottom: '1px solid #080808', paddingBottom: 5, marginBottom: 8 },
+        table: { display: 'table', width: 'auto', marginBottom: 10 },
+        tableRow: { margin: 'auto', flexDirection: 'row' },
+        tableRowAlternate: { margin: 'auto', flexDirection: 'row', backgroundColor: '#f5f4f0' },
+        tableColHeader: { width: '33.3%', borderStyle: 'solid', borderWidth: 0, borderBottomWidth: 1, borderColor: '#080808', padding: 5 },
+        tableCol: { width: '33.3%', padding: 5 },
+        tableCell: { fontSize: 8 },
+        bold: { fontWeight: 'bold' },
+        callout: { backgroundColor: '#ceff65', padding: 12, borderRadius: 8, marginTop: 10, borderLeftWidth: 4, borderLeftColor: '#080808' },
+        calloutText: { fontStyle: 'italic', color: '#080808' },
+        footer: { position: 'absolute', bottom: 30, left: 30, right: 30, textAlign: 'center', color: '#aaa', fontSize: 8 }
+      });
+    }).catch((e) => { pdfKitPromise = null; throw e; });
+  }
+  return pdfKitPromise;
+}
 
 const MyDocument = ({ data }) => {
   const { sessionDate, teacherName, cohortLang, cohortLevel, cohortGoal, sessionNum, vocabulary, grammarTitle, grammarExplanation, exercises, homework, dueDate, teacherNote, sessionNotesId } = data;
@@ -240,6 +253,7 @@ module.exports = async function handler(req, res) {
     };
 
     // 2. Generate PDF using React PDF Renderer
+    await loadPdfKit();
     const doc = React.createElement(MyDocument, { data: pdfData });
     const buffer = await pdf(doc).toBuffer();
 
@@ -377,3 +391,6 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: 'Failed to generate session notes' });
   }
 };
+
+// Exposed for tests/unit/notes-pdf.test.js (renders without the database).
+module.exports._test = { loadPdfKit, MyDocument, renderPdf: (data) => pdf(React.createElement(MyDocument, { data })).toBuffer() };
