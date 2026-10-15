@@ -6,6 +6,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
 <script src="js/view-as.js"></script>
+<script src="js/tz.js"></script>
 <script src="https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js"></script>
 <script>
   window.CFG={url:'https://dgaiasmefcbrtzqwdyri.supabase.co',key:'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh'};
@@ -3769,7 +3770,7 @@ function renderCohortDiscoveryPage() {
       const localDays = [];
       let convertedTime = '';
       c.schedule_days.forEach(d => {
-        const conv = convertCohortSchedule(d, c.schedule_time, c.timezone || 'Europe/Madrid', USER.profile.timezone || 'UTC');
+        const conv = convertCohortSchedule(d, c.schedule_time, c.timezone || 'UTC', studentTimezone(USER.profile));
         if (conv) {
           const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
           const localDayName = dayNames[conv.dayIndex];
@@ -5862,45 +5863,18 @@ async function confirmUpgrade() {
    ══════════════════════════════════════════════════════ */
 
 // Timezone and schedule conversion helper
+// Weekly class time (cohort zone) -> { dayIndex, time } in the student's zone,
+// using the class's next real date so daylight saving is applied correctly.
 function convertCohortSchedule(dayName, timeStr, fromTz, toTz) {
-  try {
-    const dayMap = { "sunday": 0, "monday": 1, "tuesday": 2, "wednesday": 3, "thursday": 4, "friday": 5, "saturday": 6 };
-    const dayIndex = dayMap[dayName.toLowerCase()];
-    if (dayIndex === undefined) return null;
+  const r = AlimunTZ.convertWeekly(dayName, timeStr || '00:00', fromTz || 'UTC', toTz || 'UTC');
+  return r ? { dayIndex: r.dayIndex, time: r.time } : null;
+}
 
-    // Base date (June 21, 2026 is Sunday)
-    const baseDay = 21 + dayIndex;
-    const [h, m, s] = timeStr.split(':').map(Number);
-    const date = new Date(Date.UTC(2026, 5, baseDay, h, m, s || 0));
-
-    // Get time in source timezone
-    const fromTzString = date.toLocaleString('en-US', { timeZone: fromTz, hour12: false });
-    const parts = fromTzString.match(/(\d+)\/(\d+)\/(\d+),\s+(\d+):(\d+):(\d+)/);
-    if (!parts) return null;
-    const [_, month, day, year, hour, minute, second] = parts.map(Number);
-
-    const localTime = Date.UTC(year, month - 1, day, hour, minute, second);
-    const utcTime = date.getTime();
-    const offsetFromTz = localTime - utcTime;
-
-    const sessionLocalTime = Date.UTC(2026, 5, baseDay, h, m, s || 0);
-    const sessionUtcTimestamp = sessionLocalTime - offsetFromTz;
-    const sessionDate = new Date(sessionUtcTimestamp);
-
-    // Convert to target timezone
-    const toTzString = sessionDate.toLocaleString('en-US', { timeZone: toTz, hour12: false });
-    const toParts = toTzString.match(/(\d+)\/(\d+)\/(\d+),\s+(\d+):(\d+):(\d+)/);
-    if (!toParts) return null;
-    const [__, toMonth, toDay, toYear, toHour, toMinute, toSecond] = toParts.map(Number);
-
-    const targetDayIndex = new Date(toYear, toMonth - 1, toDay).getDay();
-    const targetTime = `${String(toHour).padStart(2, '0')}:${String(toMinute).padStart(2, '0')}:${String(toSecond).padStart(2, '0')}`;
-
-    return { dayIndex: targetDayIndex, time: targetTime };
-  } catch (e) {
-    console.error("Error converting schedule:", e);
-    return null;
-  }
+// Zone to show class times in: the one set in Settings, or this browser's
+// zone while the profile is still on the 'UTC' default.
+function studentTimezone(profile) {
+  const tz = profile && profile.timezone;
+  return tz && tz !== 'UTC' && AlimunTZ.isValidTimezone(tz) ? tz : AlimunTZ.browserTimezone();
 }
 
 // Calculate compatibility grade
@@ -5908,8 +5882,8 @@ function calculateMatchScore(cohort, studentProfile) {
   const prefDays = studentProfile?.preferred_days || [];
   const prefStart = studentProfile?.preferred_time_start;
   const prefEnd = studentProfile?.preferred_time_end;
-  const studentTz = studentProfile?.timezone || 'UTC';
-  const cohortTz = cohort.timezone || 'Europe/Madrid';
+  const studentTz = studentTimezone(studentProfile);
+  const cohortTz = cohort.timezone || 'UTC';
 
   if (prefDays.length === 0 && !prefStart && !prefEnd) {
     return { score: 1, label: 'No Preferences Configured', color: '#777', bg: '#f5f4f0' };
@@ -6106,7 +6080,7 @@ async function refreshCohortSwitchList(lang, level) {
         const localDays = [];
         let convertedTime = '';
         c.schedule_days.forEach(d => {
-          const conv = convertCohortSchedule(d, c.schedule_time, c.timezone || 'Europe/Madrid', USER.profile.timezone || 'UTC');
+          const conv = convertCohortSchedule(d, c.schedule_time, c.timezone || 'UTC', studentTimezone(USER.profile));
           if (conv) {
             const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
             const localDayName = dayNames[conv.dayIndex];

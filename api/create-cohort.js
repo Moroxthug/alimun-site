@@ -17,6 +17,7 @@
  */
 
 const { createClient } = require('@supabase/supabase-js');
+const TZ = require('../js/tz.js');
 
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 const GOAL_TRACKS = ['relocation', 'academic', 'professional', 'pleasure', 'foundations'];
@@ -152,12 +153,15 @@ module.exports = async function handler(req, res) {
   const cleanDays = normalizedDays.map((d) => d.charAt(0).toUpperCase() + d.slice(1));
 
   try {
-    // 3b. Validate the schedule against the teacher's availability
-    //     Every chosen day/time must fall inside one of the teacher's
-    //     weekly availability slots (sessions last 60 minutes).
+    // 3b. Validate the schedule against the teacher's availability.
+    //     Slots are wall-clock times in the zone they were entered in;
+    //     the class is in `timezone`. Check every one of the 12 weeks of
+    //     sessions (the dates generate_cohort_sessions() will create), so a
+    //     daylight-saving shift that pushes a session outside a slot is
+    //     caught too. Sessions last 60 minutes.
     const { data: slots, error: slotsError } = await supabase
       .from('teacher_availability')
-      .select('day_of_week, start_time, end_time')
+      .select('day_of_week, start_time, end_time, timezone')
       .eq('teacher_id', teacher.id);
 
     if (slotsError) throw slotsError;
@@ -168,26 +172,15 @@ module.exports = async function handler(req, res) {
       });
     }
 
-    const toMinutes = (t) => {
-      const [h, m] = String(t).split(':').map(Number);
-      return h * 60 + (m || 0);
-    };
-    const sessionStart = toMinutes(schedule_time);
-    const sessionEnd = sessionStart + 60;
+    const dayIdx = cleanDays.map((d) => DAY_INDEX[d.toLowerCase()]);
+    const conflicts = TZ.scheduleOccurrences(dayIdx, schedule_time, timezone)
+      .filter((start) => !TZ.fitsSlot(start, 60, slots));
 
-    const unavailableDays = cleanDays.filter((dayName) => {
-      const dayIdx = DAY_INDEX[dayName.toLowerCase()];
-      if (dayIdx === undefined) return true;
-      return !slots.some((s) =>
-        s.day_of_week === dayIdx
-        && toMinutes(s.start_time) <= sessionStart
-        && sessionEnd <= toMinutes(s.end_time)
-      );
-    });
-
-    if (unavailableDays.length > 0) {
+    if (conflicts.length > 0) {
+      const fmt = (d) => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: timezone });
+      const shown = conflicts.slice(0, 3).map(fmt).join(', ') + (conflicts.length > 3 ? ` and ${conflicts.length - 3} more` : '');
       return res.status(400).json({
-        error: `Schedule conflicts with your availability on: ${unavailableDays.join(', ')}. Sessions are 60 minutes and must fit inside an availability slot.`
+        error: `Schedule conflicts with your availability on ${shown} (${schedule_time} ${timezone}). Sessions are 60 minutes and must fit inside an availability slot.`
       });
     }
 
