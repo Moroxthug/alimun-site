@@ -13,6 +13,11 @@
  *  - Inserts new cohort record.
  *  - Calls generate_cohort_sessions(cohort_id) to auto-schedule 12 weeks of sessions;
  *    the cohort is deleted again if no sessions could be generated.
+ *
+ *  Admin mode (caller has app_metadata.role = 'admin'): body.teacher_id
+ *  picks the teacher, body.max_students (1-35) overrides the tier
+ *  default, and body.skip_availability = true creates the class even if
+ *  it does not fit the teacher's availability (the response says so).
  * ============================================================
  */
 
@@ -29,6 +34,7 @@ const DAY_INDEX = {
   thursday: 4, friday: 5, saturday: 6
 };
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MAX_ACTIVE_COHORTS = 4;
 const MAX_DESCRIPTION = 2000;
 
@@ -94,12 +100,21 @@ module.exports = async function handler(req, res) {
     return res.status(401).json({ error: 'Unauthorized: Auth validation exception' });
   }
 
-  // 2. Fetch and check teacher profile
-  const { data: teacher, error: teacherError } = await supabase
-    .from('teacher_profiles')
-    .select('*')
-    .eq('user_id', user.id)
-    .maybeSingle();
+  let body = req.body || {};
+  if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
+
+  // 2. Fetch and check teacher profile (an admin may act for any teacher)
+  const isAdmin = user.app_metadata?.role === 'admin';
+  if (body.teacher_id != null && !isAdmin) {
+    return res.status(403).json({ error: 'Only an admin can create a class for another teacher' });
+  }
+  if (body.teacher_id != null && !UUID_RE.test(String(body.teacher_id))) {
+    return res.status(400).json({ error: 'Invalid teacher_id' });
+  }
+  const teacherQuery = supabase.from('teacher_profiles').select('*');
+  const { data: teacher, error: teacherError } = await (body.teacher_id != null
+    ? teacherQuery.eq('id', body.teacher_id)
+    : teacherQuery.eq('user_id', user.id)).maybeSingle();
 
   if (teacherError || !teacher) {
     return res.status(404).json({ error: 'Teacher profile not found' });
@@ -109,9 +124,16 @@ module.exports = async function handler(req, res) {
     return res.status(403).json({ error: 'Forbidden: Teacher status must be approved' });
   }
 
-  // 3. Parse and validate input body
-  let body = req.body || {};
-  if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
+  // 3. Validate input body
+  const adminMode = isAdmin && body.teacher_id != null;
+  const skipAvailability = adminMode && body.skip_availability === true;
+  let maxOverride = null;
+  if (adminMode && body.max_students != null) {
+    maxOverride = Number(body.max_students);
+    if (!Number.isInteger(maxOverride) || maxOverride < 1 || maxOverride > 35) {
+      return res.status(400).json({ error: 'max_students must be a whole number from 1 to 35' });
+    }
+  }
   const { language, level, goal_track, tier, schedule_days, schedule_time, timezone } = body;
   const description = body.description == null ? null : body.description;
 
@@ -166,7 +188,7 @@ module.exports = async function handler(req, res) {
 
     if (slotsError) throw slotsError;
 
-    if (!slots || slots.length === 0) {
+    if (!skipAvailability && (!slots || slots.length === 0)) {
       return res.status(400).json({
         error: 'No availability configured. Add your weekly availability before creating a classroom.'
       });
@@ -174,9 +196,9 @@ module.exports = async function handler(req, res) {
 
     const dayIdx = cleanDays.map((d) => DAY_INDEX[d.toLowerCase()]);
     const conflicts = TZ.scheduleOccurrences(dayIdx, schedule_time, timezone)
-      .filter((start) => !TZ.fitsSlot(start, 60, slots));
+      .filter((start) => !TZ.fitsSlot(start, 60, slots || []));
 
-    if (conflicts.length > 0) {
+    if (conflicts.length > 0 && !skipAvailability) {
       const fmt = (d) => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', timeZone: timezone });
       const shown = conflicts.slice(0, 3).map(fmt).join(', ') + (conflicts.length > 3 ? ` and ${conflicts.length - 3} more` : '');
       return res.status(400).json({
@@ -203,6 +225,7 @@ module.exports = async function handler(req, res) {
     else if (tier === 'focused') maxStudents = 17;
     else if (tier === 'intensive') maxStudents = 6;
     else if (tier === 'private') maxStudents = 1;
+    if (maxOverride !== null) maxStudents = maxOverride;
 
     // 6. Insert new cohort
     const { data: newCohort, error: insertError } = await supabase
@@ -310,10 +333,15 @@ module.exports = async function handler(req, res) {
       }
     }
 
+    const overridden = skipAvailability && conflicts.length > 0;
     return res.status(201).json({
       success: true,
       cohort: newCohort,
-      sessionsGenerated: sessionCount
+      sessionsGenerated: sessionCount,
+      ...(overridden ? {
+        availabilityOverridden: conflicts.length,
+        warning: `Created outside the teacher's availability for ${conflicts.length} of ${sessionCount} sessions (admin override).`,
+      } : {}),
     });
 
   } catch (err) {
