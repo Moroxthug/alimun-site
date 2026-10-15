@@ -70,3 +70,7 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - Signup: a language that is not live yet now goes straight to a single waitlist step (no EUR 29 option). Also removed the "10% off coupon" (e.g. `japanese10off`) from the waitlist card and confirmation: the Alimun Stripe account has no promotion codes, so the code would have been rejected at checkout. "Your spot is reserved" removed for the same reason.
   - Server: the founding price is no longer in the checkout allow-list or `/api/stripe?action=config`; `js/stripe/config.js` and the student dashboard no longer read it; admin can no longer set the `founding_member` tier. The webhook keeps its `founding_member` branch (comment added) so a checkout opened before the deploy is still recorded.
   - [OWNER] optional: archive the founding price in Stripe and remove `STRIPE_PRICE_FOUNDING_MEMBER` from Vercel. The DB tier check still allows `founding_member`; no rows use it.
+
+## 2026-10-15 — Careers: founding-teacher offer removed
+- `careers.html` slide `careers_sim_sub_3` said "standard is 30% or 25% locked forever for our first 10 founding teachers". That offer does not exist in the code, so the slide now only states the standard 30%, in every language (`js/translations.js`, regenerated locales, and the hand-made `it/careers.html`).
+- Checks: build, inline scripts, function count, links, 41 unit tests, 14 Playwright smoke tests.
