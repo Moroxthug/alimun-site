@@ -519,6 +519,8 @@ async function handleOneTimeCheckout(session, metadata, supabaseUserId, supabase
       break;
     }
     case 'founding_member': {
+      // No longer sold (removed 15 Oct 2026). Kept so a checkout opened before
+      // the removal is still recorded if it completes.
       // The founding fee locks the founding price; access itself comes with
       // the subscription. Record the purchase for the admin.
       const { error: creditError } = await supabase.from('session_credits').upsert({

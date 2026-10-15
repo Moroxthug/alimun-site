@@ -46,7 +46,7 @@ const PRICE_CATALOGUE = [
   { id: env('STRIPE_PRICE_FOCUSED_MONTHLY_MAD'),    mode: 'subscription', tier: 'focused' },
   { id: env('STRIPE_PRICE_INTENSIVE_MONTHLY_MAD'),  mode: 'subscription', tier: 'intensive' },
   { id: env('STRIPE_PRICE_PRIVATE_MONTHLY_MAD'),    mode: 'subscription', tier: 'private' },
-  { id: env('STRIPE_PRICE_FOUNDING_MEMBER'),        mode: 'payment',      type: 'founding_member' },
+  // The EUR 29 founding member fee was removed on 15 Oct 2026 (owner decision); it is no longer sold.
   { id: env('STRIPE_PRICE_ONEONONE_SESSION'),       mode: 'payment',      type: 'session' },
   { id: env('STRIPE_PRICE_CERTIFICATE'),            mode: 'payment',      type: 'certificate' },
 ].filter((p) => p.id);
@@ -320,7 +320,6 @@ function handleGetConfig(req, res) {
       focusedYearly:    env('STRIPE_PRICE_FOCUSED_YEARLY'),
       intensiveYearly:  env('STRIPE_PRICE_INTENSIVE_YEARLY'),
       privateYearly:    env('STRIPE_PRICE_PRIVATE_YEARLY'),
-      foundingMember:   env('STRIPE_PRICE_FOUNDING_MEMBER'),
       oneOnOneSession:  env('STRIPE_PRICE_ONEONONE_SESSION'),
       certificate:      env('STRIPE_PRICE_CERTIFICATE'),
       regional: {
@@ -338,7 +337,6 @@ function handleGetConfig(req, res) {
         },
       },
     },
-    foundingMemberFee: 29,
   });
 }
 
