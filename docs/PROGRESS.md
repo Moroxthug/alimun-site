@@ -44,3 +44,7 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - Student dashboard: class times converted on the real next date (the old helper used a fixed June week, so times were an hour off from late October to March); profiles still on the 'UTC' default show times in the browser zone.
   - Smoke test fix: `serve` redirected `*.html?preview=1` to the clean URL and dropped the query, so the dashboard checks had only ever loaded `/signin`. They now use clean URLs, assert the final page, and stub Supabase REST (no live DB calls from tests).
   - Not changed: admin "create cohort" still stores 'UTC' and builds sessions in the browser; handled with the admin operations item.
+- Branch `phase-3-cron` (plan item 9, scheduled jobs):
+  - `supabase/migrations/202610150400_phase3_cron.sql`: `pg_cron` runs `run_lifecycle_jobs()` every 15 minutes (expire waitlist offers via `process_expired_offers()`, mark sessions completed 90 minutes after start). Vercel Hobby only allows daily crons, so offers could hold a seat up to 24 h longer before.
+  - `public.cron_runs` records every run (database and both Vercel crons via `api/_lib/cron-log.js`), admin-read only, kept 30 days. A `vercel:*` row after 00:00 UTC is the proof that `CRON_SECRET` is set in Vercel.
+  - Local: all migrations twice, `rls.sql` 162/162; lifecycle job on seeded data (past session completed, live and future untouched, expired offer removed, second run changes nothing, a student cannot read runs). Unit tests for the Vercel crons (fail closed, run recorded).

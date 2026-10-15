@@ -3,7 +3,9 @@
  *  ALIMUN — GET/POST /api/waitlist/cron-expire-offers
  *  Vercel Serverless Function (Node.js runtime)
  *
- *  Cron endpoint to scan and process expired waitlist offers.
+ *  Cron endpoint to scan and process expired waitlist offers. Since Phase 3
+ *  the database also does this every 15 minutes (pg_cron, migration
+ *  202610150400_phase3_cron); this daily run is a backstop.
  *  Triggered by Vercel Cron (Bearer CRON_SECRET) only.
  *  FAILS CLOSED when CRON_SECRET is not set.
  * ============================================================
@@ -11,6 +13,7 @@
 
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+const { recordRun } = require('../_lib/cron-log.js');
 
 /** Constant-time comparison of two strings (hashed first so lengths match). */
 function safeEqual(a, b) {
@@ -53,9 +56,11 @@ module.exports = async function (req, res) {
     if (error) throw error;
 
     console.log('[Alimun Waitlist Cron] Processed expired offers:', data);
+    await recordRun(supabase, 'vercel:cron-expire-offers', true, data || null);
     return res.status(200).json({ success: true });
   } catch (err) {
     console.error('[Alimun Waitlist Cron] Error executing cron:', err);
+    await recordRun(supabase, 'vercel:cron-expire-offers', false, { error: String(err.message || err) });
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
