@@ -139,7 +139,6 @@ body{font-family:var(--body);background:#f0efe9;min-height:100vh;display:flex;fl
   window.ALIMUN_CONFIG = {
     supabaseUrl:         'https://dgaiasmefcbrtzqwdyri.supabase.co',
     supabaseAnonKey:     'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
-    foundingMemberFee:   29,  // € displayed in UI; overwritten below once /api/stripe/config responds
     // Stripe publishable key + price IDs are NOT hardcoded here — they're fetched
     // from /api/stripe/config below, which reads them from server env vars.
     // To switch between Stripe test and live mode, change the env vars in Vercel —
@@ -199,9 +198,7 @@ try {
     cfg.stripePriceFocusedYearly     = remoteCfg.prices?.focusedYearly;
     cfg.stripePriceIntensiveYearly   = remoteCfg.prices?.intensiveYearly;
     cfg.stripePricePrivateYearly     = remoteCfg.prices?.privateYearly;
-    cfg.stripePriceFoundingMember    = remoteCfg.prices?.foundingMember;
     cfg.prices                       = remoteCfg.prices;   // consumed by /js/stripe/config.js
-    if (remoteCfg.foundingMemberFee) cfg.foundingMemberFee = remoteCfg.foundingMemberFee;
   } else {
     console.error('[Alimun] /api/stripe/config returned', configResp.status);
   }
@@ -268,7 +265,6 @@ let fd   = {
   goal: 'foundations', // one of GOALS[].id — matches student_profiles.goal_track / cohort discovery
   tier:'', specialty:'', bio:'', experience_years:3, exp:'3–5',
   isWaitlist: false,   // true when student chose the free waitlist path
-  couponCode: '',      // e.g. 'portuguese10off'
 };
 // Must match the DB check constraint: goal_track in ('relocation','academic','professional','pleasure','foundations')
 const GOALS = [
@@ -371,7 +367,7 @@ function render() {
     else if (step === 4) {
       if (fd.role !== 'student')                       renderTeacherConfirm();
       else if (LIVE_LANGUAGES.includes(fd.language))  renderTier();
-      else                                             renderFoundingOrWaitlist();
+      else                                             renderWaitlist();
     }
     else if (step === 5) renderStudentConfirm();
     card.style.transition = 'opacity .2s';
@@ -585,182 +581,38 @@ window.proceedFromLanguage = function() {
   render();
 };
 
-// ── Step 4 (student, coming-soon language): Founding member or waitlist ──────
-function renderFoundingOrWaitlist() {
-  setWidth('card-xwide');
-  const langName   = escapeHtml(fd.language);
-  const coupon     = escapeHtml(fd.language.toLowerCase().replace(/\s+/g, '') + '10off');
-  const fee        = cfg.foundingMemberFee || 29;
+// ── Step 4 (student, coming-soon language): waitlist ──────────────────────────
+function renderWaitlist() {
+  setWidth('card-narrow');
+  const langName = escapeHtml(fd.language);
 
   card.innerHTML = `
     ${progressHTML(4, 'signup_step_tier')}
     <div class="step-head">
       <div class="step-ey">${langName} · ${escapeHtml(fd.level)}</div>
-      <div class="step-title">Reserve your spot</div>
+      <div class="step-title">Join the waitlist</div>
     </div>
     <div class="step-body">
-      <div style="background:#f5f4f0;border-radius:1rem;padding:1rem 1.25rem;margin-bottom:1.375rem;display:flex;align-items:center;gap:.75rem;">
-        <span style="font-size:1.5rem;">🚀</span>
-        <div>
-          <div style="font-weight:700;font-size:.85rem;color:var(--b);">${langName} classes are coming soon!</div>
-          <div style="font-size:.78rem;color:#888;margin-top:.15rem;">We're building cohorts now. Grab your seat before we open publicly.</div>
-        </div>
-      </div>
-
-      <!-- Option A: Founding member -->
-      <div id="opt-founding" onclick="selectFoundingOpt('founding')" style="border:2px solid rgba(0,0,0,.1);border-radius:1rem;padding:1.375rem;margin-bottom:.875rem;cursor:pointer;transition:all .2s;background:#fff;position:relative;">
-        <div style="position:absolute;top:.875rem;right:.875rem;width:20px;height:20px;border-radius:50%;background:var(--b);display:none;align-items:center;justify-content:center;" id="chk-founding">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <div style="display:flex;align-items:center;gap:.625rem;margin-bottom:.625rem;">
-          <span style="font-size:1.25rem;">🏆</span>
-          <div>
-            <div style="font-family:var(--disp);font-size:1rem;text-transform:uppercase;">Founding Member</div>
-            <div style="font-size:.72rem;color:#888;">One-time reservation fee</div>
-          </div>
-          <div style="margin-left:auto;font-family:var(--disp);font-size:1.375rem;">${money(fee)}</div>
-        </div>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:.3rem;padding-left:.125rem;">
-          <li style="font-size:.78rem;color:#555;padding-left:.875rem;position:relative;"><span style="position:absolute;left:0;color:var(--b);font-weight:700;">✓</span>Guaranteed spot when ${langName} launches</li>
-          <li style="font-size:.78rem;color:#555;padding-left:.875rem;position:relative;"><span style="position:absolute;left:0;color:var(--b);font-weight:700;">✓</span>Choose your tier before public sign-up opens</li>
-          <li style="font-size:.78rem;color:#555;padding-left:.875rem;position:relative;"><span style="position:absolute;left:0;color:var(--b);font-weight:700;">✓</span>Founding Member badge on your profile</li>
-          <li style="font-size:.78rem;color:#555;padding-left:.875rem;position:relative;"><span style="position:absolute;left:0;color:var(--b);font-weight:700;">✓</span>Full refund if we don't launch within 6 months</li>
-        </ul>
-      </div>
-
-      <!-- Option B: Free waitlist -->
-      <div id="opt-waitlist" onclick="selectFoundingOpt('waitlist')" style="border:1.5px solid rgba(0,0,0,.1);border-radius:1rem;padding:1.375rem;margin-bottom:1.375rem;cursor:pointer;transition:all .2s;background:#fff;position:relative;">
-        <div style="position:absolute;top:.875rem;right:.875rem;width:20px;height:20px;border-radius:50%;background:var(--b);display:none;align-items:center;justify-content:center;" id="chk-waitlist">
-          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-        </div>
-        <div style="display:flex;align-items:center;gap:.625rem;margin-bottom:.625rem;">
-          <span style="font-size:1.25rem;">📋</span>
-          <div>
-            <div style="font-family:var(--disp);font-size:1rem;text-transform:uppercase;">Join the Waitlist</div>
-            <div style="font-size:.72rem;color:#888;">Free — no commitment</div>
-          </div>
-          <div style="margin-left:auto;font-family:var(--disp);font-size:1.375rem;color:#aaa;">Free</div>
-        </div>
-        <ul style="list-style:none;display:flex;flex-direction:column;gap:.3rem;padding-left:.125rem;">
-          <li style="font-size:.78rem;color:#555;padding-left:.875rem;position:relative;"><span style="position:absolute;left:0;color:var(--b);font-weight:700;">✓</span>We'll email you the moment ${langName} opens</li>
-          <li style="font-size:.78rem;color:#555;padding-left:.875rem;position:relative;"><span style="position:absolute;left:0;color:var(--b);font-weight:700;">✓</span>10% off coupon: <strong style="color:var(--b);letter-spacing:.04em;">${coupon}</strong></li>
-          <li style="font-size:.78rem;color:#555;padding-left:.875rem;position:relative;"><span style="position:absolute;left:0;color:var(--b);font-weight:700;">✓</span>No payment needed today</li>
-        </ul>
-      </div>
-
-      <div class="error-msg" id="err-founding"></div>
+      <p style="font-size:.9rem;line-height:1.6;color:#555;margin:0 0 1rem;">${langName} classes are not open yet. Join the waitlist and we will email you when they open. There is nothing to pay today.</p>
+      <div class="error-msg" id="err-waitlist"></div>
       <div class="btn-row">
         <button class="btn out" onclick="step=3;render()">← Back</button>
-        <button class="btn" id="btn-founding" onclick="submitFoundingChoice()" disabled style="opacity:.4;cursor:not-allowed;">Continue →</button>
+        <button class="btn" id="btn-waitlist" onclick="completeWaitlist()">Join the waitlist →</button>
       </div>
     </div>`;
 }
 
-let _foundingChoice = null; // 'founding' | 'waitlist'
-
-window.selectFoundingOpt = function(opt) {
-  _foundingChoice = opt;
-  // Toggle visual selection
-  ['founding','waitlist'].forEach(o => {
-    const card = document.getElementById('opt-' + o);
-    const chk  = document.getElementById('chk-' + o);
-    if (o === opt) {
-      card.style.borderColor = 'var(--b)';
-      card.style.borderWidth = '2px';
-      chk.style.display = 'flex';
-    } else {
-      card.style.borderColor = 'rgba(0,0,0,.1)';
-      card.style.borderWidth = o === 'founding' ? '2px' : '1.5px';
-      chk.style.display = 'none';
-    }
-  });
-  const btn = document.getElementById('btn-founding');
-  btn.removeAttribute('disabled');
-  btn.style.opacity = '1';
-  btn.style.cursor  = 'pointer';
-};
-
-window.submitFoundingChoice = function() {
-  if (!_foundingChoice) return;
-  if (_foundingChoice === 'founding') completeFounding();
-  else completeWaitlist();
-};
-
-// ── Founding member: Stripe one-time checkout ─────────────────────────────────
-window.completeFounding = async function() {
-  clearError('err-founding');
-  setLoading('btn-founding', true, 'Continue →');
-
-  const userId = newUserId;
-  if (!userId) {
-    showError('err-founding', 'Session lost. Please go back and try again.');
-    setLoading('btn-founding', false, 'Continue →');
-    return;
-  }
-
-  // Check checkout is possible before saving a founding_member tier (AUTH-01)
-  const foundingPriceId = cfg.stripePriceFoundingMember;
-  if (!foundingPriceId || foundingPriceId.includes('PLACEHOLDER')) {
-    setLoading('btn-founding', false, 'Continue →');
-    showError('err-founding', 'Founding member checkout is not configured yet. Please use the waitlist option or contact support.');
-    return;
-  }
-
-  // Save profile with founding_member tier
-  const { error: dbErr } = await supabase
-    .from('student_profiles')
-    .insert({
-      user_id:    userId,
-      full_name:  fd.name,
-      language:   fd.language,
-      level:      fd.level,
-      goal_track: fd.goal,
-      tier:       'founding_member',
-    });
-  if (dbErr && dbErr.code !== '23505') {
-    setLoading('btn-founding', false, 'Continue →');
-    showError('err-founding', dbErrorText(dbErr, 'Could not save profile. Please try again.'));
-    return;
-  }
-
-  // The API derives the customer from the Bearer token and returns a hosted
-  // Checkout URL — no Stripe.js needed in the browser.
-  try {
-    const origin = window.location.origin;
-    const resp = await fetch('/api/create-checkout-session', {
-      method: 'POST',
-      headers: await authHeaders(),
-      body: JSON.stringify({
-        priceId:      foundingPriceId,
-        customerName: fd.name,
-        currency:     checkoutCurrency(),
-        successUrl:   `${origin}/signup-success.html?session_id={CHECKOUT_SESSION_ID}&founding=1`,
-        cancelUrl:    `${origin}/signup.html?step=4`,
-      }),
-    });
-    if (!resp.ok) { const e = await resp.json().catch(()=>({})); throw new Error(e.error || e.message || `API ${resp.status}`); }
-    const data = await resp.json();
-    if (!data.url) throw new Error('No checkout URL returned');
-    window.location.href = data.url;
-  } catch(err) {
-    setLoading('btn-founding', false, 'Continue →');
-    showError('err-founding', err.message || 'Could not start payment. Try again.');
-  }
-};
-
-// ── Waitlist: free signup, store in DB, show coupon ───────────────────────────
+// ── Waitlist: free signup, store in DB ─────────────────────────────────────────
 window.completeWaitlist = async function() {
-  clearError('err-founding');
-  setLoading('btn-founding', true, 'Continue →');
+  clearError('err-waitlist');
+  setLoading('btn-waitlist', true, 'Join the waitlist →');
 
   const userId = newUserId;
   if (!userId) {
-    showError('err-founding', 'Session lost. Please go back and try again.');
-    setLoading('btn-founding', false, 'Continue →');
+    showError('err-waitlist', 'Session lost. Please go back and try again.');
+    setLoading('btn-waitlist', false, 'Join the waitlist →');
     return;
   }
-
-  const coupon = fd.language.toLowerCase().replace(/\s+/g, '') + '10off';
 
   const { error: dbErr } = await supabase
     .from('student_profiles')
@@ -773,14 +625,13 @@ window.completeWaitlist = async function() {
       tier:       'waitlist',
     });
   if (dbErr && dbErr.code !== '23505') {
-    setLoading('btn-founding', false, 'Continue →');
-    showError('err-founding', dbErrorText(dbErr, 'Could not save your registration. Please try again.'));
+    setLoading('btn-waitlist', false, 'Join the waitlist →');
+    showError('err-waitlist', dbErrorText(dbErr, 'Could not save your registration. Please try again.'));
     return;
   }
 
   // Store on fd for the confirm screen
   fd.isWaitlist  = true;
-  fd.couponCode  = coupon;
   fd.tier        = 'waitlist';
   step = 5;
   render();
@@ -982,17 +833,7 @@ function renderStudentConfirm() {
           <svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--b)" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         </div>
         <div class="confirm-title">You're on the list, ${firstName}!</div>
-        <div class="confirm-sub">We'll email you the moment <strong>${escapeHtml(fd.language)}</strong> classes open. No payment needed — your spot is reserved.</div>
-        <div class="tier-summary" style="flex-direction:column;gap:.5rem;align-items:flex-start;">
-          <div class="tier-summary-l">Your 10% discount coupon</div>
-          <div style="display:flex;align-items:center;gap:.625rem;">
-            <div style="font-family:var(--disp);font-size:1.1rem;letter-spacing:.06em;color:var(--b);background:var(--g);padding:.3rem .8rem;border-radius:.5rem;">${escapeHtml(fd.couponCode)}</div>
-            <div style="font-size:.72rem;color:#aaa;">Use this at checkout when we launch</div>
-          </div>
-        </div>
-        <div style="font-size:.75rem;color:#bbb;line-height:1.6;margin-bottom:1.375rem;margin-top:-.5rem;">
-          We'll remind you of this code by email too.
-        </div>
+        <div class="confirm-sub">We'll email you when <strong>${escapeHtml(fd.language)}</strong> classes open. There is nothing to pay.</div>
         <button class="btn" onclick="window.location.href='student-dashboard.html'">Go to your dashboard →</button>
       </div>`;
     return;

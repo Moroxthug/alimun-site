@@ -56,7 +56,6 @@ const PRICE_SOURCES = {
   private_yearly:         priceGetter('privateYearly',    'stripePricePrivateYearly',    'price_PRIVATE_YEARLY_ID'),
 
   // One-time payments (EUR only)
-  founding_member:        priceGetter('foundingMember',   'stripePriceFoundingMember',   'price_FOUNDING_MEMBER_ID'),
   oneonone_session:       priceGetter('oneOnOneSession',  'stripePriceOneononeSession',  'price_ONEONONE_SESSION_ID'),
   certificate:            priceGetter('certificate',      'stripePriceCertificate',      'price_CERTIFICATE_ID'),
 
