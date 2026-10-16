@@ -92,3 +92,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 
 ## 2026-10-15 — Invented teacher team removed
 - Removed the "Meet our teachers" section (Sarah, Jessica, Martina, Kevin; not in `teacher_profiles`) from `about-us.html` and `careers-teachers-section.html` in every language (root, regenerated locales, hand-made `it/careers-teachers-section.html`). The `about_staff_*` translation keys are now unused. The teacher dashboard's preview-mode placeholder name is unchanged (only shown with `?preview=1` or before the real name loads).
+
+## 2026-10-16 — Stripe Customer Portal and webhook events (live account, no code change)
+- Vercel crons confirmed: `vercel:cron-create-rooms` and `vercel:cron-expire-offers` logged ok in `cron_runs` at about 00:40 UTC, so `CRON_SECRET` is set. Plan item 9 is done.
+- The live account had no Customer Portal configuration, so "Manage subscription" (`/api/stripe?action=billing-portal`) failed for every subscriber. Created `bpc_1UR6GQBg8L561PwNBlrWbcaI` ("Alimun default", is_default): update payment method, invoice history, cancel at period end with a reason, switch between the eight EUR prices (prorated), no customer detail edits (the email must stay in sync with Supabase), terms and privacy links, return to the student dashboard. The webhook maps the new price to the tier on `customer.subscription.updated`.
+- Live webhook `we_1TmNJLBg8L561PwNsSNLJ8VV` now also sends `charge.refunded` and `charge.dispute.created` (the handler logs them in `webhook_logs` for the admin).
+- Owner, still open: AI key, Vercel bypass secret for previews, Alimun Stripe sandbox for test-mode payments; Resend later.
