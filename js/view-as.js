@@ -115,10 +115,11 @@
       ({ data: profile } = await sb.from(TABLES[kind]).select('*').eq('id', wanted).maybeSingle());
     }
     if (!profile) {
-      let q = sb.from(TABLES[kind]).select('*').order('created_at', { ascending: false }).limit(1);
-      if (kind === 'teacher') q = q.eq('status', 'approved');
-      const { data } = await q;
-      profile = data?.[0] || null;
+      // Prefer an approved teacher; with none approved, open any teacher so
+      // the admin can still see the dashboard (the bar shows their status).
+      const latest = (q) => q.order('created_at', { ascending: false }).limit(1).then(({ data }) => data?.[0] || null);
+      if (kind === 'teacher') profile = await latest(sb.from(TABLES[kind]).select('*').eq('status', 'approved'));
+      if (!profile) profile = await latest(sb.from(TABLES[kind]).select('*'));
     }
     if (profile) store.set(kind, profile.id);
     return { profile };
@@ -203,7 +204,8 @@
   function renderEmpty(kind) {
     // nosemgrep: innerhtml-template-without-escape -- constant markup only
     document.body.innerHTML = `<div style="font:600 15px system-ui;padding:3rem;text-align:center;">
-      No ${kind} profiles exist yet. <a href="admin.html">Back to admin</a></div>`;
+      No ${kind} accounts exist yet, so there is nothing to preview. A ${kind} dashboard appears here as soon as one ${kind} has signed up.
+      <a href="admin.html">Back to admin</a></div>`;
   }
 
   window.AlimunViewAs = { isAdmin, resolve, mountBar, renderEmpty, pageUrl };

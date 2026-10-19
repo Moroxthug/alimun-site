@@ -2376,7 +2376,7 @@ const TIER_MAX = { community: 35, focused: 17, intensive: 6, private: 1 };
 window.openCreateCohortModal = function() {
   const approvedTeachers = TEACHERS.filter(t => t.status === 'approved');
   if (approvedTeachers.length === 0) {
-    alert('There is no approved teacher to create a class for.');
+    alert('A class needs an approved teacher, and none is approved yet. Open the Teachers tab and approve an applicant, or reinstate a suspended teacher, then create the class.');
     return;
   }
   const modalHtml = `
@@ -2534,6 +2534,14 @@ window.openCohortManage = async function(cohortId) {
     .eq('cohort_id', cohortId)
     .eq('status', 'active');
   const others = COHORTS.filter(o => o.id !== cohortId && o.language === c.language && o.status !== 'closed');
+  if (!STUDENTS.length) {
+    const { data: st } = await supabase.from('student_profiles').select('*').order('created_at', { ascending: false });
+    STUDENTS = st || [];
+  }
+  // Students learning this class's language who are not in it yet.
+  const addable = STUDENTS.filter(s => s.language === c.language && s.enrolled_cohort_id !== cohortId);
+  const addOptions = addable.map(s =>
+    `<option value="${escapeHtml(s.id)}">${escapeHtml(s.full_name || 'Student')} · ${escapeHtml(s.level || '?')} · ${escapeHtml(s.tier || 'no plan')}${s.enrolled_cohort_id ? ' (in another class)' : ''}</option>`).join('');
   const moveOptions = others.map(o =>
     `<option value="${escapeHtml(o.id)}">${escapeHtml(o.language)} ${escapeHtml(o.level)} · ${escapeHtml(o.teacher_profiles?.full_name || 'No teacher')} · ${escapeHtml((o.schedule_days || []).join(', '))} ${escapeHtml(String(o.schedule_time || '').slice(0,5))} ${escapeHtml(o.timezone || '')} (${Number(o.enrolled_count) || 0}/${Number(o.max_students) || 0})</option>`).join('');
 
@@ -2570,6 +2578,15 @@ window.openCohortManage = async function(cohortId) {
       <h4 style="font-size:0.68rem;text-transform:uppercase;color:var(--dim);margin-bottom:8px;font-weight:700;letter-spacing:.08em;">Students</h4>
       ${rows}
       ${others.length ? '' : `<p style="font-size:.75rem;color:var(--dim);">No other open ${escapeHtml(c.language)} class to move students to.</p>`}
+      <h4 style="font-size:0.68rem;text-transform:uppercase;color:var(--dim);margin:1.25rem 0 8px;font-weight:700;letter-spacing:.08em;">Add a student</h4>
+      ${c.status === 'closed'
+        ? '<p style="font-size:.75rem;color:var(--dim);">Reopen the class to add students.</p>'
+        : addable.length
+          ? `<div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;">
+              <select id="add-st" style="max-width:340px;">${addOptions}</select>
+              <button class="btn btn-out btn-sm" onclick="adminAddStudent('${escapeHtml(cohortId)}')">Add to class</button>
+            </div>`
+          : `<p style="font-size:.75rem;color:var(--dim);">No other students are learning ${escapeHtml(c.language)}. Students can also join open classes themselves from their dashboard.</p>`}
       <label style="display:flex;align-items:center;gap:8px;font-size:.8rem;margin:1rem 0 0;">
         <input type="checkbox" id="mv-notify" checked> Email the student about a move or removal
       </label>
@@ -2593,6 +2610,23 @@ window.adminMoveStudent = async function(studentId, fromCohortId) {
     showToast(`Student moved.${r.warning ? ' ' + r.warning : ''}${emailNote(r)}`);
     await loadCohorts();
     openCohortManage(fromCohortId);
+  } catch (e) { alert(e.message); }
+};
+
+window.adminAddStudent = async function(cohortId) {
+  const sel = document.getElementById('add-st');
+  if (!sel || !sel.value) return;
+  const st = STUDENTS.find(x => x.id === sel.value);
+  const note = st && st.enrolled_cohort_id ? ' They will leave their current class.' : '';
+  if (!confirm(`Add ${st ? st.full_name || 'this student' : 'this student'} to this class?${note}`)) return;
+  try {
+    const r = await adminPost('/api/admin/teacher?action=enrollment-move', {
+      student_id: sel.value, cohort_id: cohortId, notify: document.getElementById('mv-notify').checked,
+    });
+    showToast(`Student added.${r.warning ? ' ' + r.warning : ''}${emailNote(r)}`);
+    STUDENTS = [];
+    await loadCohorts();
+    openCohortManage(cohortId);
   } catch (e) { alert(e.message); }
 };
 
