@@ -19,5 +19,9 @@
   "src/blocks/03-services.html": {
     "sha256": "fcd457c148313f51d857fb4c08370867de672e8bbf6ed1b04882a9e955ac34ac",
     "approved": "2026-10-19 email section ok"
+  },
+  "src/blocks/04-cards.html": {
+    "sha256": "946ba157d2d80d14e2ae064c533c9754b26920c4bb262554b8e2e81f607d62a9",
+    "approved": "2026-10-19 cards ok"
   }
 }
