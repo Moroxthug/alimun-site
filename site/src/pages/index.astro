@@ -3,10 +3,12 @@
 import Base from '../layouts/Base.astro';
 import nav from '../blocks/01-nav.html?raw';
 import hero from '../blocks/02-hero.html?raw';
+import services from '../blocks/03-services.html?raw';
 ---
 <Base wfPage="68d948d13b6c9f2bbbac3ea7">
   <Fragment set:html={nav} />
   <main class="main-wrapper">
     <Fragment set:html={hero} />
+    <Fragment set:html={services} />
   </main>
 </Base>
