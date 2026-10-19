@@ -108,3 +108,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Vercel (owner approved): removed 10 dead variables (`STRIPE_PRICE_FOUNDING_MEMBER`, `STRIPE_PRICE_CERTIFICATE`, the eight `*_MONTHLY_AUD/MAD`; all pointed to another Stripe account) and redeployed. Dashboard upgrades in AUD/MAD now fall back to the EUR price, whose `currency_options` charge in the local currency. Stripe: founding product `prod_VQhjlLg7kdkTtO` archived.
 - `supabase/migrations/202610190100_cleanup_test_accounts.sql` (owner: "delete A and B, fix C"): deletes 11 junk and 11 demo accounts plus the Test Teacher's closed demo class; owner accounts `bchysfca@`, `bchysfpol@` lose unpaid tiers. MCP timed out (nothing applied); owner runs it in the SQL editor.
 - Admin: "View as teacher" opened an empty page because no teacher is approved; it now falls back to any teacher. "Create class" with no approved teacher explains what to do. Class screen has "Add a student" (any student learning that language; uses `enrollment-move`).
+
+## 2026-10-19 — Live classroom plan (planning only, no code)
+- Branch `classroom-plan`: `docs/classroom/PLAN.md` (codename ALCE). Covers architecture decisions (LiveKit, staged hosting from free to self-hosted EU VPS, Supabase Edge Functions instead of new Vercel functions, teacher-owned state, batch-first AI, FSRS, consent), the data model, the cost model, phases C0–C10 with acceptance checks and kickoff prompts, and decisions D1–D8 the owner owes.
+- No production, database or Vercel changes.
+- [OWNER]: review the plan; answer D1–D8; create the `alimun-classroom` repo, a LiveKit Cloud project and a Cloudflare account when C0 starts.
