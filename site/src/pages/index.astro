@@ -2,8 +2,11 @@
 // Homepage, rebuilt one element at a time. Only approved elements are added.
 import Base from '../layouts/Base.astro';
 import nav from '../blocks/01-nav.html?raw';
+import hero from '../blocks/02-hero.html?raw';
 ---
 <Base wfPage="68d948d13b6c9f2bbbac3ea7">
   <Fragment set:html={nav} />
-  <main class="main-wrapper"></main>
+  <main class="main-wrapper">
+    <Fragment set:html={hero} />
+  </main>
 </Base>

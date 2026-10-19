@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "sync": "node scripts/sync-assets.mjs",
-    "build": "node scripts/sync-assets.mjs && astro build",
+    "build": "node scripts/check-locked.mjs && node scripts/sync-assets.mjs && astro build",
     "dev": "node scripts/sync-assets.mjs && astro dev"
   },
   "dependencies": {

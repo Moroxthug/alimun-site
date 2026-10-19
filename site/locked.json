@@ -1,0 +1,6 @@
+{
+  "_note": "Blocks the owner approved. Build fails if one changes. Unlock only on the owner's request.",
+  "src/blocks/head.html": { "sha256": "6af1577d53ab180edd753b6941c98c278b18d257466729cfc0bba6111878a5cc", "approved": "2026-10-19 nav ok" },
+  "src/blocks/after-body.html": { "sha256": "736dc38e48d62d0ee713cd9dfeac4ef58ca3af22541c60e19565a5ea636cdb84", "approved": "2026-10-19 nav ok" },
+  "src/blocks/01-nav.html": { "sha256": "e42edcc53d3815c095c3407521907bbeb616e0ca4c03dc96b27d6b838c80c30e", "approved": "2026-10-19 nav ok" }
+}
