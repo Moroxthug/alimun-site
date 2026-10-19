@@ -15,5 +15,9 @@
   "src/blocks/02-hero.html": {
     "sha256": "633388ede20f6fbfc6f236c096a3082ecd07d2d06cc28d8a0428954599857f4b",
     "approved": "2026-10-19 hero ok"
+  },
+  "src/blocks/03-services.html": {
+    "sha256": "fcd457c148313f51d857fb4c08370867de672e8bbf6ed1b04882a9e955ac34ac",
+    "approved": "2026-10-19 email section ok"
   }
 }
