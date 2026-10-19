@@ -1,0 +1,13 @@
+{
+  "name": "alimun-site-astro",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "sync": "node scripts/sync-assets.mjs",
+    "build": "node scripts/sync-assets.mjs && astro build",
+    "dev": "node scripts/sync-assets.mjs && astro dev"
+  },
+  "dependencies": {
+    "astro": "5.18.2"
+  }
+}
