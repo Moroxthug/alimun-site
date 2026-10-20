@@ -153,3 +153,7 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Practice library: English A/B/C sets added (8 each: grammar MC x2, fill-in x2, word matching, speaking, listening, essay), same format as the German set.
 - Text-to-speech and speech recognition used fr-FR for English students; now per language (en-GB, es-ES, de-DE, fr-FR, it-IT).
 - Messages: member list shows only the AI tutor (owner decision).
+
+## 20 Oct 2026 - Teacher dashboard role check
+- Removed the user_metadata.role fallback from the teacher dashboard routing (CLAUDE.md rule); all three teachers have app_metadata.role = teacher, verified before the change.
+- English speech locale stays en-GB (Cambridge/IELTS standard), owner OK.

@@ -3718,9 +3718,9 @@ window.submitSessionNotes = submitSessionNotes;
   // Localhost-only design preview: /teacher-dashboard.html?preview=1
   const isLocalPreview = ['localhost','127.0.0.1'].includes(window.location.hostname)
     && new URLSearchParams(window.location.search).has('preview');
-  if (isLocalPreview && (!session || !(session.user?.app_metadata?.role || session.user?.user_metadata?.role))) {
+  if (isLocalPreview && (!session || !session.user?.app_metadata?.role)) {
     session = { user: { id: 'preview-user', email: 'preview@alimun.com',
-      user_metadata: { role: 'teacher', full_name: 'Sarah Thompson' } } };
+      app_metadata: { role: 'teacher' }, user_metadata: { full_name: 'Sarah Thompson' } } };
   }
 
   if (!session) {
@@ -3736,7 +3736,8 @@ window.submitSessionNotes = submitSessionNotes;
   }
 
   // ─ 3. Role check ───────────────────────────────────────────────────────────
-  const role = session.user?.app_metadata?.role || session.user?.user_metadata?.role || '';
+  // Routing uses app_metadata.role only; user_metadata is user-editable.
+  const role = session.user?.app_metadata?.role || '';
   if (!viewAs && role !== 'teacher') {
     window.location.href = role === 'student' ? 'student-dashboard.html' :
                           role === 'admin' ? 'admin.html' : 'signin.html';
