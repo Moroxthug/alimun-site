@@ -40,7 +40,7 @@
     }
   })();
 </script>
-<script src="../js/translations.js" defer=""></script>
+<script src="../js/i18n/en.js" defer=""></script><script src="../js/i18n/es.js" defer=""></script><script src="../js/i18n/en.app.js" defer=""></script><script src="../js/i18n/es.app.js" defer=""></script>
 <script src="../js/i18n.js" defer=""></script>
 <link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=JetBrains+Mono:wght@400;600;700&amp;display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&amp;display=swap" rel="stylesheet">
@@ -3063,8 +3063,10 @@ let VOCAB = [];
    AUTH GUARD & PROFILE FETCH
 ══════════════════════════════════════════════════════ */
 (async()=>{
-  // js/translations.js and js/i18n.js are deferred: wait for them so text built here is translated
+  // Translation files (js/i18n/) and js/i18n.js are deferred: wait for them, and for a
+  // language loaded on demand, so text built here is translated
   if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true }));
+  if (window.ALIMUN_I18N_READY) await window.ALIMUN_I18N_READY;
   const {createClient}=window.supabase;
   SB=createClient(CFG.url,CFG.key,{auth:{autoRefreshToken:true,persistSession:true,storageKey:'alimun-auth'}});
   let {data:{session}}=await SB.auth.getSession();

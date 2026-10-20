@@ -182,3 +182,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Teacher student popup: invented "Performance Index" (teacher's localStorage, default 75%) replaced by the real 30-day average from exercise_results; new "Between lessons" block: words in review, words learned, due today, built-in exercises done, last vocabulary review, last 5 exam/test results.
 - Teacher lesson notes: hint that the vocabulary becomes the students' flashcards, and a confirm before publishing notes with no vocabulary.
 - Translated en/fr/de/es/ma; demo data covers it.
+
+## 20 Oct 2026 - Translation file split per language
+- js/translations.js (500 KB, 144 KB gzip, all 9 languages, loaded by every page) stays the only file to edit; npm run build now writes js/i18n/<lang>.js (public text) and <lang>.app.js (dashboard-only text) via scripts/split-translations.js.
+- Pages load English + their folder language (French homepage: ~24 KB gzip instead of 144 KB); dashboards also load the .app files. js/i18n.js loads another active language on demand (root sign-in and dashboards are translated in place) and exposes ALIMUN_I18N_READY; dashboards wait for it.
+- Hand-made Italian pages updated by hand. CLAUDE.md rule added.

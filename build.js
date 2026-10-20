@@ -30,6 +30,9 @@ if (!translations) {
   process.exit(1);
 }
 
+// 1b. Per-language translation files that pages load (js/i18n/<lang>.js and <lang>.app.js)
+require('./scripts/split-translations')(__dirname, translations);
+
 // 2. Identify all languages to compile (excluding English since it is served at the root)
 const languages = Object.keys(translations).filter(lang => lang !== 'en');
 console.log("Languages to compile:", languages);
@@ -123,6 +126,13 @@ languages.forEach(lang => {
     const templatePath = path.join(__dirname, templateFile);
     const htmlContent = fs.readFileSync(templatePath, 'utf8');
     const $ = cheerio.load(htmlContent);
+
+    // Each page ships English (fallback) plus its own language: add this folder's files
+    // after the English ones (paths are made relative to the folder below).
+    ['', '.app'].forEach(kind => {
+      const en = $(`script[src="js/i18n/en${kind}.js"]`);
+      if (en.length) en.after(`<script src="js/i18n/${lang}${kind}.js" defer></script>`);
+    });
     
     // Set html attributes (lang & direction). 'ma' is not a BCP 47 tag; its content is French.
     const HTML_LANG = { ma: 'fr-MA' };

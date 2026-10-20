@@ -673,6 +673,32 @@
     return value;
   }
 
+  // Translations are split per language (js/i18n/<lang>.js, built from js/translations.js).
+  // A page ships English and its folder's language; root pages translated in place
+  // (sign-in, dashboards) may need another one, loaded here. Dashboards load the
+  // dashboard-only files too (.app.js). ALIMUN_I18N_READY resolves when the active
+  // language is available, so scripts can wait before building text.
+  function loadI18nFile(file) {
+    return new Promise((resolve) => {
+      const s = document.createElement('script');
+      s.src = '/js/i18n/' + file;
+      s.onload = resolve;
+      s.onerror = resolve;
+      document.head.appendChild(s);
+    });
+  }
+  window.ALIMUN_I18N_READY = (function () {
+    const lang = getActiveLang();
+    const need = [];
+    if (!(window.ALIMUN_I18N_LANGS || {})[lang]) need.push(lang + '.js');
+    const appPage = Object.keys(window.ALIMUN_I18N_APP_LANGS || {}).length > 0;
+    if (appPage && !(window.ALIMUN_I18N_APP_LANGS || {})[lang]) need.push(lang + '.app.js');
+    if (!need.length) return Promise.resolve();
+    return Promise.all(need.map(loadI18nFile)).then(() => {
+      if (document.readyState !== 'loading') translatePage();
+    });
+  })();
+
   // Global functions exposed
   window.i18nTranslateElement = translateElement;
   window.i18nTranslatePage = translatePage;

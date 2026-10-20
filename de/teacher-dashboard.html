@@ -46,7 +46,7 @@ function parseLocalDate(v) {
     supabaseAnonKey: 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
   };
 </script>
-<script src="../js/translations.js" defer=""></script>
+<script src="../js/i18n/en.js" defer=""></script><script src="../js/i18n/de.js" defer=""></script><script src="../js/i18n/en.app.js" defer=""></script><script src="../js/i18n/de.app.js" defer=""></script>
 <script src="../js/i18n.js" defer=""></script>
 <style>
 @font-face{font-family:'Coolvetica Condensed';src:url('fonts/coolvetica-condensed-rg.otf') format('opentype');font-weight:400 700;font-display:swap;}
@@ -3734,8 +3734,10 @@ window.submitSessionNotes = submitSessionNotes;
 
 /* ═══ AUTH GUARD + INIT ═══ */
 (async () => {
-  // js/translations.js and js/i18n.js are deferred: wait for them so text built here is translated
+  // Translation files (js/i18n/) and js/i18n.js are deferred: wait for them, and for a
+  // language loaded on demand, so text built here is translated
   if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true }));
+  if (window.ALIMUN_I18N_READY) await window.ALIMUN_I18N_READY;
   // ─ 1. Bootstrap Supabase client ─────────────────────────────────────────────────
   const { createClient } = window.supabase;
   const cfg = window.ALIMUN_CONFIG || {};

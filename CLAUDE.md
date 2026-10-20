@@ -9,6 +9,7 @@ Plan of record: `docs/IMPLEMENTATION_PLAN.md`. Public-site rebuild (Astro, same 
 
 ## Must-follow
 - **Root HTML is the source; locale folders are generated.** After editing any root `*.html`, run `npm run build` and commit the regenerated `ar de es fr it ma pt zh` copies. Locale-only hand-made pages are in `build.js`'s skip list.
+- **Translations.** Edit only `js/translations.js`. `npm run build` splits it into `js/i18n/<lang>.js` (public text) and `js/i18n/<lang>.app.js` (dashboard-only text); commit those generated files. Pages load English plus their folder's language; `js/i18n.js` fetches another active language on demand.
 - **Function cap.** `api/**/*.js` currently has 12 functions = Vercel Hobby limit. Do not add a new file under `api/`; add an `?action=` to an existing handler instead, unless the owner confirms the Pro plan.
 - **Roles.** Never trust `user_metadata` for authorisation. Admin = `app_metadata.role === 'admin'` (client gate and server check) and `public.is_admin()` in SQL. Every API action verifies the Supabase JWT server-side.
 - **Escaping.** Anything from the database, the user or the AI that goes into `innerHTML` passes through `escapeHtml`; URLs in `href/src` must be https and validated.
