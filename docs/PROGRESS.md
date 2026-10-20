@@ -116,3 +116,6 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 2026-10-20 — Rebuild Step 0: translated titles and descriptions
 - `scripts/meta-i18n.json` + `build.js`: the French, German and Spanish copies (and `ma`, which is French) of the 10 public pages get translated `<title>`, description, `og:` and `twitter:` tags; they were English on every language. Faithful translations of the current English; Italian and the other languages unchanged for now (owner focus: en, fr, de, es).
 - Noted, not changed: the homepage description says "Learn English, Spanish, French, Italian and more", but only English and German classes are open (`LIVE_LANGUAGES`).
+
+## 2026-10-20 — Fake classroom transcript removed
+- Owner decision: remove it. Both dashboards' live classroom played scripted lines ("Hello everyone! Welcome to our session today", "thank you Sofia!") as a "Transcription", and copied some into the class chat as if said. Removed the tab, the scripted lines and `startTranscriptSimulation()`; the classroom opens on Files. Real captions would be a separate feature.
