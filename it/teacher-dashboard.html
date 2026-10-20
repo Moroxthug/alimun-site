@@ -1086,11 +1086,7 @@ body{font-family:var(--body);color:var(--b);background:#f8f8f8;}
 
   <!-- Utility / Multi-button Tools Row -->
   <div class="classroom-tools-row">
-    <button class="tool-btn active" data-tab="transcription" onclick="switchClassroomTab('transcription')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-      <span data-i18n="tool_transcription">Trascrizione</span>
-    </button>
-    <button class="tool-btn" data-tab="files" onclick="switchClassroomTab('files')">
+    <button class="tool-btn active" data-tab="files" onclick="switchClassroomTab('files')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
       <span data-i18n="tool_files">File</span>
     </button>
@@ -1110,13 +1106,7 @@ body{font-family:var(--body);color:var(--b);background:#f8f8f8;}
 
   <!-- Classroom Tab Contents -->
   <div class="classroom-tab-content">
-    <div id="tab-transcription" class="tab-pane active">
-      <div class="transcription-log" id="transcription-log">
-        <p class="trans-meta" data-i18n="teacher_trans_starting">La trascrizione dal vivo inizierà quando la lezione avrà inizio...</p>
-      </div>
-    </div>
-    
-    <div id="tab-files" class="tab-pane">
+    <div id="tab-files" class="tab-pane active">
       <div class="files-container">
         <div class="file-upload-zone" id="file-dropzone" onclick="document.getElementById('file-upload-input').click()">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
@@ -3345,7 +3335,7 @@ async function submitSessionNotes(event, sessionId) {
 
 /* ══════════════════════════════════════════════════════
    INTERACTIVE CLASSROOM CORE LOGIC (TEACHER)
-   Daily.co Prebuilt, Whiteboard, Transcription, Files & Chat
+   Daily.co Prebuilt, Whiteboard, Files & Chat
 ══════════════════════════════════════════════════════ */
 let callFrame = null;
 let liveSessionActive = false;
@@ -3358,31 +3348,6 @@ let whiteboardCtx = null;
 let isDrawing = false;
 let drawColor = '#ceff65';
 let drawSize = 3;
-
-// Simulated transcription speaker catalog
-const SPEAKERS = ['Teacher', 'Sofia', 'Alex', 'Maria', 'David'];
-const TRANSCRIPTIONS = {
-  fr: [
-    "Bonjour à tous ! Bienvenue dans notre session aujourd'hui.",
-    "Aujourd'hui, nous allons étudier le subjonctif présent.",
-    "C'est un mode très important en français pour exprimer le doute, le désir ou la nécessité.",
-    "Par exemple : 'Il faut que je sache la vérité.'",
-    "Est-ce que quelqu'est prêt à me donner un autre exemple ?",
-    "Excellent exemple, merci Sofia ! 'Il faut que tu sois là.'",
-    "Faites attention aux verbes irréguliers comme 'être' (que je sois) et 'avoir' (que j'aie).",
-    "Notez ces structures dans votre cahier d'exercices."
-  ],
-  en: [
-    "Hello everyone! Welcome to our session today.",
-    "Today, we are going to study the subjunctive mood.",
-    "This is a very important mood in language learning for expressing doubt, desire, or necessity.",
-    "For example: 'It is necessary that I know the truth.'",
-    "Is anyone ready to give me another example?",
-    "Excellent example, thank you Sofia! 'It is necessary that you be there.'",
-    "Pay attention to irregular verbs like 'be' and 'have'.",
-    "Write down these structures in your exercise sheets."
-  ]
-};
 
 async function handleTeacherJoin(roomUrl, sessionId, bookingId) {
   currentSessionId = sessionId || null;
@@ -3441,7 +3406,6 @@ async function handleTeacherJoin(roomUrl, sessionId, bookingId) {
 
   // Initialize classroom features
   startSessionTimer();
-  startTranscriptSimulation();
   initWhiteboard();
   loadSharedFiles();
 }
@@ -3588,45 +3552,6 @@ async function takeClassroomScreenshot() {
   } catch (err) {
     console.warn("Screenshot capture skipped or rejected:", err);
   }
-}
-
-// Transcription simulator
-function startTranscriptSimulation() {
-  const log = document.getElementById('transcription-log');
-  if (!log) return;
-  log.innerHTML = '';
-  
-  const activeLang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
-  const lines = TRANSCRIPTIONS[activeLang] || TRANSCRIPTIONS['en'];
-  let index = 0;
-  
-  function addTranscriptLine() {
-    if (!liveSessionActive || index >= lines.length) return;
-    
-    const row = document.createElement('div');
-    row.className = 'trans-row';
-    const speaker = index === 5 ? 'Sofia' : 'Teacher';
-    const spkEl = document.createElement('span');
-    spkEl.className = 'trans-speaker';
-    spkEl.textContent = speaker + ':';
-    const txtEl = document.createElement('span');
-    txtEl.className = 'trans-text';
-    txtEl.textContent = lines[index];
-    row.appendChild(spkEl);
-    row.appendChild(document.createTextNode(' '));
-    row.appendChild(txtEl);
-    log.appendChild(row);
-    log.scrollTop = log.scrollHeight;
-    
-    if (index % 3 === 0) {
-      addChatMessage(speaker, lines[index], false);
-    }
-    
-    index++;
-    setTimeout(addTranscriptLine, 8000 + Math.random() * 4000);
-  }
-  
-  setTimeout(addTranscriptLine, 3000);
 }
 
 // Whiteboard Draw
