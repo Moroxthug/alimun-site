@@ -187,3 +187,6 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - js/translations.js (500 KB, 144 KB gzip, all 9 languages, loaded by every page) stays the only file to edit; npm run build now writes js/i18n/<lang>.js (public text) and <lang>.app.js (dashboard-only text) via scripts/split-translations.js.
 - Pages load English + their folder language (French homepage: ~24 KB gzip instead of 144 KB); dashboards also load the .app files. js/i18n.js loads another active language on demand (root sign-in and dashboards are translated in place) and exposes ALIMUN_I18N_READY; dashboards wait for it.
 - Hand-made Italian pages updated by hand. CLAUDE.md rule added.
+
+## 20 Oct 2026 - Sign-in 404 fixed
+- The occasional 404 was /favicon.ico: browsers request it on first visit when a page declares no icon. Added /favicon.ico (copy of images/favicon.ico) and the homepage icon links to the 11 pages without them (sign-in, sign-up, password pages, dashboards, admin, legal pages).
