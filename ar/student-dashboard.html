@@ -5480,7 +5480,8 @@ async function answerPlacement(i) {
       const lvlEl = document.getElementById('sb-level');
       if (lvlEl) lvlEl.textContent = `${level} ${USER.profile.language}`;
     }
-    saveExerciseResult('assessment', scorePct, { type: 'Placement', title: 'Initial placement test' });
+    // Adds the score to Tests and Progress right away and saves it to exercise_results
+    updateProgressCategory('assessment', scorePct, { type: 'Placement', title: xt('student_placement_title', 'Placement Test') });
     localStorage.setItem(`alimun:placement_done:${USER.id}`, level);
   } catch (e) {
     console.warn('Could not save placement level:', e);
@@ -6967,8 +6968,15 @@ async function otoApi(action, extra) {
   });
   let data = {};
   try { data = await resp.json(); } catch (_) {}
-  if (!resp.ok) throw new Error(data.message || data.error || 'Please try again.');
+  if (!resp.ok) throw new Error(otoErrorText(data));
   return data;
+}
+
+// Server messages come with a code (api/_lib/one-on-one.js); show them in the site language
+const otoReason = (part) => (part && part.reason ? xt(`student_oto_r_${part.reasonCode}`, part.reason) : '');
+function otoErrorText(data) {
+  if (data && data.error === 'not_allowed' && data.reasonCode) return xt(`student_oto_r_${data.reasonCode}`, data.message);
+  return xt(`student_oto_e_${data && data.error}`, (data && data.message) || xt('student_oto_e_server_error', 'Please try again.'));
 }
 
 function otoTime(iso) {
@@ -7208,13 +7216,13 @@ async function loadOneOnOne() {
       h += '<div style="font-size:12px;color:var(--dim);margin-bottom:10px;">'
         + escHtml(xt('student_oto_followup_desc', '20 minutes with your teacher on this week\'s lesson. Book it before')) + ' ' + escHtml(otoTime(f.window.to)) + '.</div>'
         + '<button class="join-btn" style="font-size:12px;padding:8px 16px;" onclick="openOtoPicker(\'followup\')">' + escHtml(xt('student_oto_book_followup', 'Book follow-up')) + '</button>';
-    } else h += '<div style="font-size:12px;color:var(--dim);">' + escHtml(f.reason || '') + '</div>';
+    } else h += '<div style="font-size:12px;color:var(--dim);">' + escHtml(otoReason(f)) + '</div>';
     parts.push(h);
   }
   if (OTO.credit) {
     let h = '<div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;">' + escHtml(xt('student_oto_credit_title', 'Private classes')) + '</div>'
       + '<div style="font-size:12px;color:var(--dim);margin-bottom:10px;">' + escHtml(xt('student_oto_credits_left', 'Credits left:')) + ' ' + escHtml(String(OTO.credit.credits))
-      + (OTO.credit.reason ? ' · ' + escHtml(OTO.credit.reason) : '') + '</div>';
+      + (OTO.credit.reason ? ' · ' + escHtml(otoReason(OTO.credit)) : '') + '</div>';
     if (OTO.credit.canBook) h += '<button class="join-btn" style="font-size:12px;padding:8px 16px;" onclick="openOtoPicker(\'credit\')">' + escHtml(xt('student_oto_book_private', 'Book a private class')) + '</button>';
     parts.push(h);
   }
@@ -7244,7 +7252,7 @@ async function openOtoPicker(kind) {
   const title = kind === 'followup' ? xt('student_oto_followup_title', 'Weekly 1:1 follow-up') : xt('student_oto_credit_title', 'Private class');
   const mins = part ? part.minutes : (kind === 'followup' ? 20 : 60);
   let list = '';
-  if (!part || !part.canBook) list = '<div style="font-size:13px;color:var(--dim);">' + escHtml((part && part.reason) || xt('student_oto_unavailable', 'Not available on your plan.')) + '</div>';
+  if (!part || !part.canBook) list = '<div style="font-size:13px;color:var(--dim);">' + escHtml(otoReason(part) || xt('student_oto_unavailable', 'Not available on your plan.')) + '</div>';
   else if (!slots.length) list = '<div style="font-size:13px;color:var(--dim);">' + escHtml(xt('student_oto_no_slots', 'Your teacher has no free times in this period. Please message your teacher.')) + '</div>';
   else {
     const byDay = {};

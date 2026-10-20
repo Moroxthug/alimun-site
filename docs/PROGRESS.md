@@ -190,3 +190,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 
 ## 20 Oct 2026 - Sign-in 404 fixed
 - The occasional 404 was /favicon.ico: browsers request it on first visit when a page declares no icon. Added /favicon.ico (copy of images/favicon.ico) and the homepage icon links to the 11 pages without them (sign-in, sign-up, password pages, dashboards, admin, legal pages).
+
+## 20 Oct 2026 - Placement score, admin bar and 1:1 messages translated
+- Placement test score goes through updateProgressCategory: shows under Tests and Progress at once (and is still saved to exercise_results).
+- api/_lib/one-on-one.js sends a reasonCode with each reason (not_active, no_teacher, before_first_lesson, booked, window_closed, before_lesson_end, join_class_first) and on not_allowed; error codes already existed. Dashboards show student_oto_r_* / student_oto_e_* / teacher_oto_e_* in the site language, English text as fallback. Unit tests assert the codes.
+- Admin bar (js/view-as.js) uses t() with va_* keys; all values escaped.
+- 43 keys added in en/fr/de/es/ma.

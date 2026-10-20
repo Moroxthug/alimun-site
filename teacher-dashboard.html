@@ -2093,7 +2093,7 @@ async function saveOtoNote(id) {
       body: JSON.stringify({ action: 'oto-note', id, note: text }),
     });
     const data = await resp.json().catch(() => ({}));
-    if (!resp.ok) throw new Error(data.message || data.error || 'Please try again.');
+    if (!resp.ok) throw new Error(t(`teacher_oto_e_${data.error}`, data.message || t('teacher_oto_e_server_error', 'Please try again.')));
     closeModal();
     loadTeacherOto();
   } catch (e) {

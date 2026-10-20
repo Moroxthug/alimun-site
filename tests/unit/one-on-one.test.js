@@ -113,12 +113,12 @@ test('status: Focused students get no follow-up; closed windows and existing boo
   assert.strictEqual((await call('status', {})).body.followup, null);
   reset({ lesson: { id: IDS.lesson, scheduled_at: '2030-01-01T18:00:00Z', status: 'completed' } });
   let r = await call('status', { kind: 'followup' });
-  assert.strictEqual(r.body.followup.canBook, false); assert.match(r.body.followup.reason, /window has closed/);
+  assert.strictEqual(r.body.followup.canBook, false); assert.match(r.body.followup.reason, /window has closed/); assert.strictEqual(r.body.followup.reasonCode, 'window_closed');
   reset({ existing: { id: IDS.booking, scheduled_at: '2030-01-08T09:00:00Z', status: 'booked' } });
   r = await call('status', { kind: 'followup' });
   assert.strictEqual(r.body.followup.canBook, false); assert.strictEqual(r.body.followup.booking.id, IDS.booking);
   reset({ lesson: null });
-  r = await call('status', {}); assert.match(r.body.followup.reason, /after your first lesson/);
+  r = await call('status', {}); assert.match(r.body.followup.reason, /after your first lesson/); assert.strictEqual(r.body.followup.reasonCode, 'before_first_lesson');
   reset({ student: { id: IDS.student, user_id: 'u-s', tier: 'intensive', stripe_subscription_status: 'past_due', enrolled_cohort_id: IDS.cohort } });
   r = await call('status', {}); assert.strictEqual(r.body.followup.canBook, false);
 });

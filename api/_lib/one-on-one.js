@@ -63,6 +63,23 @@ function candidateSlots({ from, to, minutes, step, availability, busy, now }) {
   return out;
 }
 
+// Why a booking is not possible. The code travels with the English text so the
+// dashboards can show it in the site language (student_oto_r_<code>).
+const REASONS = {
+  not_active: 'Your subscription is not active.',
+  no_teacher: 'Your class has no teacher at the moment.',
+  before_first_lesson: 'Your first follow-up opens after your first lesson.',
+  booked: 'You have booked this week\'s follow-up.',
+  window_closed: 'This week\'s follow-up window has closed. The next one opens after your next lesson.',
+  before_lesson_end: 'You can book the follow-up once the lesson has ended.',
+  join_class_first: 'Join a class first: private classes are booked with your class teacher.',
+};
+function setReason(part, code) {
+  if (part.reason) return;
+  part.reason = REASONS[code];
+  part.reasonCode = code;
+}
+
 const ERRORS = {
   slot_taken: [409, 'That time was just taken. Please choose another one.'],
   student_busy: [409, 'You already have a 1:1 at that time.'],
@@ -151,12 +168,12 @@ async function entitlement(supabase, student, now) {
   const out = { followup: null, credit: null, teacher: teacherOk ? { id: teacher.id, name: teacher.full_name || 'Your teacher' } : null };
 
   if (student.tier === 'intensive' && cohort?.tier === 'intensive') {
-    const f = { minutes: FOLLOWUP_MIN, canBook: false, reason: null, lesson: null, window: null, booking: null };
-    if (!active) f.reason = 'Your subscription is not active.';
-    else if (!teacherOk) f.reason = 'Your class has no teacher at the moment.';
+    const f = { minutes: FOLLOWUP_MIN, canBook: false, reason: null, reasonCode: null, lesson: null, window: null, booking: null };
+    if (!active) setReason(f, 'not_active');
+    else if (!teacherOk) setReason(f, 'no_teacher');
     const lesson = await lastLesson(supabase, cohort.id, now);
     if (!lesson) {
-      f.reason = f.reason || 'Your first follow-up opens after your first lesson.';
+      setReason(f, 'before_first_lesson');
     } else {
       const win = followupWindow(lesson.scheduled_at);
       const week = weekOf(new Date(lesson.scheduled_at));
@@ -165,9 +182,9 @@ async function entitlement(supabase, student, now) {
       const { data: existing } = await supabase.from('one_on_one_bookings')
         .select('id, scheduled_at, duration_minutes, status, teacher_note')
         .eq('student_id', student.id).eq('kind', 'followup').eq('week_of', week).neq('status', 'cancelled').maybeSingle();
-      if (existing) { f.booking = existing; f.reason = f.reason || 'You have booked this week\'s follow-up.'; }
-      else if (now > win.to.getTime()) f.reason = f.reason || 'This week\'s follow-up window has closed. The next one opens after your next lesson.';
-      else if (now < win.from.getTime()) f.reason = f.reason || 'You can book the follow-up once the lesson has ended.';
+      if (existing) { f.booking = existing; setReason(f, 'booked'); }
+      else if (now > win.to.getTime()) setReason(f, 'window_closed');
+      else if (now < win.from.getTime()) setReason(f, 'before_lesson_end');
       else if (!f.reason) f.canBook = true;
     }
     out.followup = f;
@@ -175,7 +192,9 @@ async function entitlement(supabase, student, now) {
 
   const credits = await creditCount(supabase, student.id);
   if (credits > 0) {
-    out.credit = { minutes: CREDIT_MIN, credits, canBook: active && teacherOk, reason: !teacherOk ? 'Join a class first: private classes are booked with your class teacher.' : (!active ? 'Your subscription is not active.' : null) };
+    out.credit = { minutes: CREDIT_MIN, credits, canBook: active && teacherOk, reason: null, reasonCode: null };
+    if (!teacherOk) setReason(out.credit, 'join_class_first');
+    else if (!active) setReason(out.credit, 'not_active');
   }
   return { ...out, cohort };
 }
@@ -213,7 +232,7 @@ async function book(req, res, { supabase, user, body, now = Date.now() }) {
   if (!student) return res.status(404).json({ error: 'not_student', message: 'Student profile not found.' });
   const ent = await entitlement(supabase, student, now);
   const part = ent[kind];
-  if (!part || !part.canBook) return res.status(403).json({ error: 'not_allowed', message: part?.reason || 'This booking is not available on your plan.' });
+  if (!part || !part.canBook) return res.status(403).json({ error: 'not_allowed', reasonCode: part?.reasonCode || null, message: part?.reason || 'This booking is not available on your plan.' });
   const slots = await freeSlots(supabase, kind, ent, now);
   if (!slots.includes(start.toISOString())) return res.status(409).json({ error: 'slot_taken', message: ERRORS.slot_taken[1] });
 
