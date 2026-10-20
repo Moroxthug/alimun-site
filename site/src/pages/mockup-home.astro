@@ -1,0 +1,27 @@
+---
+// MOCKUP for the owner's review, not a live page. Approved blocks (nav, hero,
+// banner, footer) are unchanged; m1-m3 are proposals built only from existing
+// site styles. Not linked from anywhere and marked noindex.
+import Base from '../layouts/Base.astro';
+import head from '../blocks/head.html?raw';
+import after from '../blocks/after-body.html?raw';
+import nav from '../blocks/01-nav.html?raw';
+import hero from '../blocks/02-hero.html?raw';
+import howItWorks from '../blocks/mockups/m1-how-it-works.html?raw';
+import plans from '../blocks/mockups/m2-plans.html?raw';
+import faq from '../blocks/mockups/m3-faq.html?raw';
+import bottomCta from '../blocks/06-bottom-cta.html?raw';
+import footer from '../blocks/07-footer.html?raw';
+const noindex = head.replace('<meta name="robots" content="index, follow">', '<meta name="robots" content="noindex, nofollow">');
+---
+<Base wfPage="68d948d13b6c9f2bbbac3ea7" head={noindex} after={after}>
+  <Fragment set:html={nav} />
+  <main class="main-wrapper">
+    <Fragment set:html={hero} />
+    <Fragment set:html={howItWorks} />
+    <Fragment set:html={plans} />
+    <Fragment set:html={faq} />
+    <Fragment set:html={bottomCta} />
+  </main>
+  <Fragment set:html={footer} />
+</Base>
