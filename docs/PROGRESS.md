@@ -148,3 +148,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Today's Session: vocabulary from the latest lesson notes (was hard-coded French); teacher name/avatar/topic placeholders cleared; "8 / 12 classmates waiting" removed.
 - Messages: title is the student's language + level + AI Tutor (it is an AI chat, classmates do not see it); no random online dots or colours; "Session started 09:00" and the Marie Dubois placeholder removed.
 - Practice library: languages without a set (English) no longer get the French exercises; they see only teacher homework. Owner to decide whether to write an English set.
+
+## 20 Oct 2026 - English practice set, AI-only chat list
+- Practice library: English A/B/C sets added (8 each: grammar MC x2, fill-in x2, word matching, speaking, listening, essay), same format as the German set.
+- Text-to-speech and speech recognition used fr-FR for English students; now per language (en-GB, es-ES, de-DE, fr-FR, it-IT).
+- Messages: member list shows only the AI tutor (owner decision).

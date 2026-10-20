@@ -1886,7 +1886,292 @@ const RECENT_ACTIVITY = [
 
 window.__signOut = async()=>{if(SB)await SB.auth.signOut();window.location.href='signin.html';};
 
+// Browser speech (text-to-speech and recognition) locale per course language
+const speechLang = (lang) => ({ English: 'en-GB', Spanish: 'es-ES', German: 'de-DE', French: 'fr-FR', Italian: 'it-IT' }[lang] || 'en-GB');
+
 const EXERCISE_DATABASE = {
+  English: {
+    A: [
+      {
+        type: 'Multiple Choice',
+        title: 'Present Simple: to be',
+        diff: 1,
+        time: '3 min',
+        cat: 'grammar',
+        question: 'Choose the correct form of "to be":',
+        stem: 'My sister ______ a nurse and she works in a hospital.',
+        opts: ['am', 'is', 'are', 'be'],
+        correct: 1,
+        explanation: 'With he, she, it or a singular noun ("my sister"), the present form of "to be" is "is".'
+      },
+      {
+        type: 'Multiple Choice',
+        title: 'Present Simple: Third Person',
+        diff: 1,
+        time: '3 min',
+        cat: 'grammar',
+        question: 'Choose the correct verb form:',
+        stem: 'Tom ______ to work by bus every morning.',
+        opts: ['go', 'goes', 'going', 'is go'],
+        correct: 1,
+        explanation: 'In the present simple, he/she/it takes an -s or -es ending: "he goes", "she works".'
+      },
+      {
+        type: 'Fill in Blank',
+        title: 'Articles: a / an',
+        diff: 1,
+        time: '2 min',
+        cat: 'grammar',
+        question: 'Fill in the blank with "a" or "an":',
+        stem: 'I eat ______ apple every day.',
+        correctAnswer: 'an',
+        explanation: 'Use "an" before a vowel sound ("an apple", "an hour") and "a" before a consonant sound ("a banana").'
+      },
+      {
+        type: 'Fill in Blank',
+        title: 'Prepositions of Time',
+        diff: 2,
+        time: '3 min',
+        cat: 'grammar',
+        question: 'Fill in the blank with the correct preposition (in, on, at):',
+        stem: 'The shop opens ______ nine o\'clock.',
+        correctAnswer: 'at',
+        explanation: 'Use "at" for clock times, "on" for days and dates, and "in" for months, years and parts of the day.'
+      },
+      {
+        type: 'Word Matching',
+        title: 'Everyday Opposites',
+        diff: 1,
+        time: '4 min',
+        cat: 'vocabulary',
+        question: 'Match each word with its opposite:',
+        pairs: [
+          { left: 'hot', right: 'cold' },
+          { left: 'early', right: 'late' },
+          { left: 'cheap', right: 'expensive' },
+          { left: 'open', right: 'closed' }
+        ]
+      },
+      {
+        type: 'Speaking',
+        title: 'Introducing Yourself',
+        diff: 1,
+        time: '3 min',
+        cat: 'speaking',
+        question: 'Read this introduction aloud:',
+        stem: 'Hello, my name is Anna. I live in London and I work in a bank.',
+        expectedText: 'Hello my name is Anna I live in London and I work in a bank'
+      },
+      {
+        type: 'Listening',
+        title: 'Listening: At the Café',
+        diff: 1,
+        time: '3 min',
+        cat: 'listening',
+        question: 'Listen to the audio and transcribe:',
+        audioText: 'Can I have a coffee with milk, please?'
+      },
+      {
+        type: 'Essay',
+        title: 'My Daily Routine',
+        diff: 2,
+        time: '15 min',
+        cat: 'writing',
+        question: 'Write a short text about your day (minimum 20 words):',
+        stem: 'Describe a normal day: what time you get up, what you do in the morning and afternoon, and what you do in the evening.',
+        minWords: 20,
+        criteria: 'present simple, time expressions, word order'
+      }
+    ],
+    B: [
+      {
+        type: 'Multiple Choice',
+        title: 'Present Perfect vs Past Simple',
+        diff: 3,
+        time: '5 min',
+        cat: 'grammar',
+        question: 'Choose the correct tense:',
+        stem: 'I ______ to Paris three times, but I have never been to Rome.',
+        opts: ['went', 'have been', 'was going', 'had go'],
+        correct: 1,
+        explanation: 'Use the present perfect for experiences in your life up to now, with no specific time ("three times", "never"). Use the past simple with a finished time ("last year").'
+      },
+      {
+        type: 'Multiple Choice',
+        title: 'Second Conditional',
+        diff: 3,
+        time: '5 min',
+        cat: 'grammar',
+        question: 'Choose the correct form to complete the conditional sentence:',
+        stem: 'If I ______ the lottery, I would buy a house by the sea.',
+        opts: ['win', 'won', 'will win', 'would win'],
+        correct: 1,
+        explanation: 'The second conditional talks about unreal or unlikely situations: "if" + past simple, then "would" + verb.'
+      },
+      {
+        type: 'Fill in Blank',
+        title: 'Relative Pronouns',
+        diff: 3,
+        time: '4 min',
+        cat: 'grammar',
+        question: 'Fill in the blank with the correct relative pronoun (who, which, where):',
+        stem: 'This is the restaurant ______ we had our first date.',
+        correctAnswer: 'where',
+        explanation: 'Use "where" for places, "who" for people and "which" for things.'
+      },
+      {
+        type: 'Fill in Blank',
+        title: 'Phrasal Verbs',
+        diff: 3,
+        time: '4 min',
+        cat: 'grammar',
+        question: 'Complete the phrasal verb with the correct particle (up, off, out):',
+        stem: 'Please turn ______ the lights when you leave the room.',
+        correctAnswer: 'off',
+        explanation: '"Turn off" means to stop a machine or light working. "Turn on" is the opposite.'
+      },
+      {
+        type: 'Word Matching',
+        title: 'Work Vocabulary',
+        diff: 2,
+        time: '5 min',
+        cat: 'vocabulary',
+        question: 'Match each work term with its meaning:',
+        pairs: [
+          { left: 'a deadline', right: 'the latest time to finish something' },
+          { left: 'a colleague', right: 'a person you work with' },
+          { left: 'a salary', right: 'money you earn for your job' },
+          { left: 'to resign', right: 'to leave your job by choice' }
+        ]
+      },
+      {
+        type: 'Speaking',
+        title: 'Making a Polite Request',
+        diff: 3,
+        time: '4 min',
+        cat: 'speaking',
+        question: 'Read this polite request aloud:',
+        stem: 'Excuse me, could you tell me how to get to the train station, please?',
+        expectedText: 'Excuse me could you tell me how to get to the train station please'
+      },
+      {
+        type: 'Listening',
+        title: 'Listening: Travel Plans',
+        diff: 3,
+        time: '4 min',
+        cat: 'listening',
+        question: 'Listen to the audio and transcribe:',
+        audioText: 'We are going to visit my grandparents next weekend if the weather is good.'
+      },
+      {
+        type: 'Essay',
+        title: 'A Place I Would Like to Visit',
+        diff: 3,
+        time: '20 min',
+        cat: 'writing',
+        question: 'Write a short text (minimum 40 words):',
+        stem: 'Describe a place you would like to visit. Explain why you want to go there and what you would do.',
+        minWords: 40,
+        criteria: 'conditionals, linking words, descriptive vocabulary'
+      }
+    ],
+    C: [
+      {
+        type: 'Multiple Choice',
+        title: 'Third Conditional',
+        diff: 4,
+        time: '5 min',
+        cat: 'grammar',
+        question: 'Choose the correct form to complete the sentence:',
+        stem: 'If she had left earlier, she ______ the train.',
+        opts: ['would catch', 'would have caught', 'had caught', 'will have caught'],
+        correct: 1,
+        explanation: 'The third conditional describes an unreal past: "if" + past perfect, then "would have" + past participle.'
+      },
+      {
+        type: 'Multiple Choice',
+        title: 'Inversion for Emphasis',
+        diff: 5,
+        time: '6 min',
+        cat: 'grammar',
+        question: 'Choose the grammatically correct sentence:',
+        opts: [
+          'Rarely I have seen such a beautiful view.',
+          'Rarely have I seen such a beautiful view.',
+          'Rarely I saw such a beautiful view.',
+          'Rarely did I have seen such a beautiful view.'
+        ],
+        correct: 1,
+        explanation: 'After negative or limiting adverbs at the start of a sentence ("rarely", "never", "seldom"), the auxiliary comes before the subject: "Rarely have I seen…".'
+      },
+      {
+        type: 'Fill in Blank',
+        title: 'Passive Voice',
+        diff: 4,
+        time: '4 min',
+        cat: 'grammar',
+        question: 'Complete the passive sentence with the correct form of "build":',
+        stem: 'The bridge was ______ in 1890 and is still in use today.',
+        correctAnswer: 'built',
+        explanation: 'The passive is formed with "be" + past participle. The past participle of "build" is "built".'
+      },
+      {
+        type: 'Fill in Blank',
+        title: 'Collocations',
+        diff: 4,
+        time: '4 min',
+        cat: 'vocabulary',
+        question: 'Fill in the verb that collocates with "a decision" (make, do, take):',
+        stem: 'After weeks of discussion, the board finally ______ a decision.',
+        correctAnswer: 'made',
+        explanation: 'In English we "make a decision". Other common "make" collocations: make a mistake, make progress, make an effort.'
+      },
+      {
+        type: 'Word Matching',
+        title: 'Idiomatic Expressions',
+        diff: 5,
+        time: '6 min',
+        cat: 'vocabulary',
+        question: 'Match each idiom with its meaning:',
+        pairs: [
+          { left: 'to beat around the bush', right: 'to avoid saying something directly' },
+          { left: 'to hit the nail on the head', right: 'to describe something exactly right' },
+          { left: 'once in a blue moon', right: 'very rarely' },
+          { left: 'to cut corners', right: 'to do something badly to save time or money' }
+        ]
+      },
+      {
+        type: 'Speaking',
+        title: 'Presenting an Argument',
+        diff: 5,
+        time: '5 min',
+        cat: 'speaking',
+        question: 'Read this argument aloud with clear pronunciation:',
+        stem: 'While remote work offers flexibility, it can also blur the boundaries between our professional and personal lives.',
+        expectedText: 'While remote work offers flexibility it can also blur the boundaries between our professional and personal lives'
+      },
+      {
+        type: 'Listening',
+        title: 'Listening: News Report',
+        diff: 5,
+        time: '5 min',
+        cat: 'listening',
+        question: 'Listen to the audio and transcribe:',
+        audioText: 'The government has announced new measures to reduce energy consumption over the coming decade.'
+      },
+      {
+        type: 'Essay',
+        title: 'Technology and Society',
+        diff: 5,
+        time: '30 min',
+        cat: 'writing',
+        question: 'Write a structured argumentative text (minimum 60 words):',
+        stem: 'Discuss the advantages and disadvantages of artificial intelligence in the workplace. Give your own opinion with reasons.',
+        minWords: 60,
+        criteria: 'complex sentences, linking devices, advanced vocabulary, clear structure'
+      }
+    ]
+  },
   Spanish: {
     A: [
       {
@@ -4276,7 +4561,7 @@ function playListeningAudio(text) {
   window.speechSynthesis.cancel();
   const langKey = USER.profile?.language || 'French';
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = langKey === 'Spanish' ? 'es-ES' : langKey === 'German' ? 'de-DE' : 'fr-FR';
+  utterance.lang = speechLang(langKey);
   utterance.rate = 0.85;
   window.speechSynthesis.speak(utterance);
 }
@@ -4353,7 +4638,7 @@ function startSpeaking(index) {
 
   const recognition = new SpeechRecognition();
   const langKey = USER.profile?.language || 'French';
-  recognition.lang = langKey === 'Spanish' ? 'es-ES' : langKey === 'German' ? 'de-DE' : 'fr-FR';
+  recognition.lang = speechLang(langKey);
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
@@ -5429,10 +5714,12 @@ function resetQuiz() {
    CHAT VIEW
 ══════════════════════════════════════════════════════ */
 function renderChat(){
-  document.getElementById('online-count').textContent = `${MEMBERS.length} ${MEMBERS.length === 1 ? 'member' : 'members'}`;
+  // Only the AI tutor answers here, so only the AI tutor is listed
+  const shown = MEMBERS.filter(m => m.role === 'AI Assistant');
+  document.getElementById('online-count').textContent = '';
   const chatTitle = document.getElementById('chat-title');
   if (chatTitle) chatTitle.textContent = `${USER.profile?.language || ''} ${USER.profile?.level || ''} · AI Tutor`.trim();
-  document.getElementById('member-list').innerHTML=MEMBERS.map(m=>`
+  document.getElementById('member-list').innerHTML=shown.map(m=>`
     <div class="chat-mem-row${m.me?' me':''}">
       <div class="mem-av-wrap">
         <div class="av" style="background:${escHtml(m.col)};width:28px;height:28px;font-size:10px;">${escHtml(m.i)}</div>
