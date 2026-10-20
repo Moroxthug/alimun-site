@@ -165,3 +165,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Removed more invented data: "Recent activity" (Vocabulary Quiz 90%...) is now the latest real scores; home schedule times were fixed at 09:00/18:00, now the real class time.
 - German teacher sidebar "Docent" -> "Unterricht". Tiers footer uses the same i18n keys as the homepage footer.
 - Not translated: the admin view bar (admin only), API error messages from the server (1:1 booking reasons), exercise content itself (it is in the language being learned).
+
+## 20 Oct 2026 - Vocabulary review + This week's plan
+- New table vocab_reviews (migration 202610201500, applied and verified: RLS on, select/insert/update own rows, teachers of the student and admin can read; no delete). The drop-policy lines time out in the connector, so policies were created directly.
+- Student home: words from the teacher's lesson notes are copied in and reviewed as flashcards (show meaning, I knew it / Not yet). Spaced repetition: 1, 3, 7, 14, 30 days; a miss comes back tomorrow. Each review session is saved as a vocabulary score (Progress).
+- Student home: "This week's plan" card: next lesson, homework due within 7 days, 1:1 follow-up (Intensive), vocabulary due, 3 practice exercises from the weakest skill (kept for the week). Each row links to the right place.
+- Translated (en/fr/de/es/ma); demo student has real-looking lesson words to try it.

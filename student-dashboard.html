@@ -373,6 +373,8 @@ nav {
 .tag-default{color:var(--dim);background:rgba(0,0,0,.05);border:1px solid var(--bd);}
 
 .right-col{flex:1;display:flex;flex-direction:column;gap:20px;}
+.left-col{flex:0 0 56%;display:flex;flex-direction:column;gap:20px;min-width:0;}
+.left-col .sched-card{flex:none;}
 .week-bars{display:flex;gap:6px;align-items:flex-end;height:44px;}
 .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
 .bar{width:100%;border-radius:4px 4px 0 0;}
@@ -1115,6 +1117,10 @@ nav {
   .right-col {
     width: 100% !important;
   }
+  .left-col {
+    flex: none !important;
+    width: 100% !important;
+  }
   .cal-grid-wrap {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
@@ -1381,12 +1387,23 @@ nav {
 
       <!-- Schedule card -->
       <!-- DATA: replace with Supabase query: SELECT title, starts_at, type FROM events WHERE date(starts_at) = CURRENT_DATE AND student_id = $1 ORDER BY starts_at -->
+      <div class="left-col">
       <div class="card no-pad sched-card">
         <div class="sched-head">
           <div class="sched-date" id="today-date"></div>
           <div class="sched-count" id="event-count"></div>
         </div>
         <div class="sched-body" id="sched-body"></div>
+      </div>
+
+      <!-- This week's plan (renderWeekPlan) -->
+      <div class="card no-pad sched-card" id="plan-card" style="display:none;">
+        <div class="sched-head">
+          <div class="sched-date" data-i18n="student_plan_title">This week's plan</div>
+          <div class="sched-count" id="plan-count"></div>
+        </div>
+        <div id="plan-body"></div>
+      </div>
       </div>
 
       <!-- Right column -->
@@ -3575,6 +3592,7 @@ async function initData() {
     
     // Render the downloadable PDF notes
     renderSessionNotes();
+    await syncVocabReviews(allNotes);
 
     if (allNotes && allNotes.length) {
       // Latest teacher note
@@ -5276,6 +5294,7 @@ function renderExercises(){
       ${isExpanded ? renderExerciseUI(ex, globalIdx) : ''}
     </div>`;
   }).join('');
+  if (typeof renderWeekPlan === 'function' && document.getElementById('plan-body')) renderWeekPlan();
 }
 
 function exSetFilter(f){exFilter=f;exExpanded=null;renderExercises();}
@@ -6921,6 +6940,209 @@ function otoBookingHtml(b, teacherName) {
   return h;
 }
 
+/* ══════════════════════════════════════════════════════
+   VOCABULARY REVIEW (spaced repetition, table vocab_reviews)
+   Words come from the vocabulary teachers add to session notes.
+   Box 0 = new or missed (due now / tomorrow); each "I knew it" moves the
+   word up a box and pushes the next review out: 1, 3, 7, 14, 30 days.
+══════════════════════════════════════════════════════ */
+let VOCAB_ITEMS = [];
+const VOCAB_DAYS = [1, 1, 3, 7, 14, 30];
+const VOCAB_SESSION_MAX = 20;
+let VR = null; // { queue, idx, knew, shown }
+
+const addDays = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return localDay(d); };
+const vocabDue = () => { const today = localDay(new Date()); return VOCAB_ITEMS.filter(v => v.due_on <= today); };
+
+// Copy new lesson words into vocab_reviews, then load the student's words
+async function syncVocabReviews(notes) {
+  VOCAB_ITEMS = [];
+  if (!SB || !USER.profile) return;
+  const rows = [];
+  const seen = new Set();
+  (notes || []).forEach(n => (Array.isArray(n.vocabulary) ? n.vocabulary : []).forEach(v => {
+    const word = String((v && v.word) || '').trim().slice(0, 200);
+    const key = word.toLowerCase();
+    if (!word || seen.has(key)) return;
+    seen.add(key);
+    rows.push({ student_id: USER.id, word, word_key: key,
+      definition: String(v.definition || '').trim().slice(0, 500) || null,
+      example: String(v.example || '').trim().slice(0, 500) || null,
+      source_note_id: n.id || null });
+  }));
+  try {
+    if (rows.length) await SB.from('vocab_reviews').upsert(rows, { onConflict: 'student_id,word_key', ignoreDuplicates: true });
+    const { data, error } = await SB.from('vocab_reviews')
+      .select('id, word, definition, example, box, due_on, correct_count, wrong_count')
+      .eq('student_id', USER.id).order('due_on', { ascending: true }).limit(1000);
+    if (error) throw error;
+    VOCAB_ITEMS = data || [];
+  } catch (e) {
+    console.warn('Vocabulary review unavailable:', e && e.message);
+  }
+}
+
+function startVocabReview() {
+  const due = vocabDue().slice(0, VOCAB_SESSION_MAX);
+  if (!due.length) return;
+  VR = { queue: due.sort(() => Math.random() - 0.5), idx: 0, knew: 0, shown: false };
+  renderVocabReview();
+}
+
+function renderVocabReview() {
+  if (!VR) return;
+  const total = VR.queue.length;
+  if (VR.idx >= total) {
+    const pct = Math.round((VR.knew / total) * 100);
+    updateProgressCategory('vocabulary', pct, { type: 'Vocabulary review', title: xt('student_vr_title', 'Vocabulary review') });
+    openModal(`<div style="padding:28px;text-align:center;">
+      <div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);">${escHtml(xt('student_vr_done_title', 'Review done'))}</div>
+      <p style="font-size:14px;color:var(--dim);margin:12px 0 20px;">${escHtml(xt('student_vr_done_desc', 'You knew {k} of {n} words. Missed words come back tomorrow.').replace('{k}', VR.knew).replace('{n}', total))}</p>
+      <button class="join-btn" style="justify-content:center;" onclick="closeModal()">${escHtml(xt('student_close', 'Close'))}</button>
+    </div>`);
+    VR = null;
+    renderWeekPlan();
+    initHome();
+    renderProgress();
+    return;
+  }
+  const v = VR.queue[VR.idx];
+  const answer = VR.shown
+    ? `<div style="font-size:15px;color:var(--txt);margin-top:14px;">${escHtml(v.definition || '')}</div>
+       ${v.example ? `<div class="teacher-quote" style="margin-top:12px;text-align:left;">${escHtml(v.example)}</div>` : ''}
+       <div style="display:flex;gap:8px;justify-content:center;margin-top:22px;">
+         <button class="join-btn" style="background:#FFF;border:1px solid var(--bd);color:var(--txt);" onclick="answerVocab(false)">${escHtml(xt('student_vr_not_yet', 'Not yet'))}</button>
+         <button class="join-btn" onclick="answerVocab(true)">${escHtml(xt('student_vr_knew', 'I knew it'))}</button>
+       </div>`
+    : `<div style="margin-top:22px;"><button class="join-btn" style="justify-content:center;" onclick="VR.shown=true;renderVocabReview()">${escHtml(xt('student_vr_show', 'Show meaning'))}</button></div>`;
+  openModal(`<div style="padding:28px;text-align:center;">
+    <div class="lbl" style="margin-bottom:18px;">${escHtml(xt('student_vr_title', 'Vocabulary review'))} · ${VR.idx + 1} / ${total}</div>
+    <div style="font-family:var(--anton);font-size:34px;color:var(--txt);letter-spacing:.02em;">${escHtml(v.word)}</div>
+    ${answer}
+  </div>`);
+}
+
+async function answerVocab(knew) {
+  if (!VR) return;
+  const v = VR.queue[VR.idx];
+  const box = knew ? Math.min((v.box || 0) + 1, 5) : 0;
+  const patch = { box, due_on: addDays(VOCAB_DAYS[box]), last_reviewed_at: new Date().toISOString(),
+    correct_count: (v.correct_count || 0) + (knew ? 1 : 0), wrong_count: (v.wrong_count || 0) + (knew ? 0 : 1) };
+  Object.assign(v, patch);
+  if (knew) VR.knew += 1;
+  VR.idx += 1;
+  VR.shown = false;
+  renderVocabReview();
+  try {
+    const { error } = await SB.from('vocab_reviews').update(patch).eq('id', v.id);
+    if (error) throw error;
+  } catch (e) {
+    console.warn('Vocabulary review not saved:', e && e.message);
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   THIS WEEK'S PLAN (home): next lesson, homework due, 1:1 follow-up,
+   vocabulary review and three exercises from the weakest skill.
+   Built only from data already loaded; the chosen exercises are kept
+   for the week in localStorage so finished ones show as done.
+══════════════════════════════════════════════════════ */
+const PRACTICE_CATS = ['grammar', 'vocabulary', 'listening', 'speaking', 'writing'];
+
+function weakestCategory() {
+  const sum = {}, n = {};
+  SCORES.forEach(r => { if (PRACTICE_CATS.includes(r.cat)) { sum[r.cat] = (sum[r.cat] || 0) + r.score; n[r.cat] = (n[r.cat] || 0) + 1; } });
+  const cats = Object.keys(n);
+  if (!cats.length) return null;
+  return cats.sort((a, b) => sum[a] / n[a] - sum[b] / n[b])[0];
+}
+
+function weekPracticePicks() {
+  const week = localDay((() => { const d = new Date(); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; })());
+  const key = `alimun:plan:${USER.id}:${week}`;
+  const lib = EXERCISES.filter(e => !e.isHw);
+  let titles = null;
+  try { titles = JSON.parse(localStorage.getItem(key) || 'null'); } catch (_) { titles = null; }
+  if (!Array.isArray(titles) || !titles.length || titles.some(t => !lib.find(e => e.title === t))) {
+    const weak = weakestCategory();
+    const open = lib.filter(e => !e.done);
+    const first = weak ? open.filter(e => e.cat === weak) : [];
+    const rest = open.filter(e => !first.includes(e));
+    titles = [...first, ...rest].slice(0, 3).map(e => e.title);
+    try { localStorage.setItem(key, JSON.stringify(titles)); } catch (_) { /* storage blocked */ }
+  }
+  return { weak: weakestCategory(), items: titles.map(t => lib.find(e => e.title === t)).filter(Boolean) };
+}
+
+function openExercise(ex) {
+  const idx = EXERCISES.indexOf(ex);
+  if (idx < 0) return;
+  exFilter = 'all';
+  exExpanded = idx;
+  goView('exercises');
+  renderExercises();
+}
+function openPlanExercise(i) { const pick = weekPracticePicks().items[i]; if (pick) openExercise(pick); }
+function openPlanHomework(id) { const hw = EXERCISES.find(e => e.isHw && e.id === id); if (hw) openExercise(hw); }
+
+function renderWeekPlan() {
+  const box = document.getElementById('plan-body');
+  const card = document.getElementById('plan-card');
+  if (!box || !card) return;
+  if (!USER.cohort_id) { card.style.display = 'none'; return; }
+  const rows = [];
+  const row = (done, text, action, onclick) => rows.push({ done, html: `<div class="sched-row" style="gap:14px;padding:14px 28px;">
+      <div style="width:18px;flex-shrink:0;display:flex;justify-content:center;">${done
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+        : '<div style="width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(0,0,0,.22);"></div>'}</div>
+      <div class="sched-title" style="flex:1;${done ? 'color:var(--dim);' : ''}">${text}</div>
+      ${action && !done ? `<button class="join-btn" style="font-size:11px;padding:6px 14px;" onclick="${onclick}">${escHtml(action)}</button>` : ''}
+    </div>` });
+
+  // 1. Next lesson
+  if (NEXT_CLASS.at) {
+    const when = NEXT_CLASS.at.toLocaleString(uiLocale(), { weekday: 'long', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    row(false, `${escHtml(xt('student_plan_lesson', 'Lesson'))}: <strong>${escHtml(when)}</strong>`, xt('student_plan_view', 'View'), "goView('live')");
+  }
+  // 2. Homework due in the next 7 days or overdue
+  const limit = addDays(7);
+  const monday = localDay((() => { const d = new Date(); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; })());
+  // Open homework due within 7 days (or overdue), plus homework due this week that is already handed in
+  const hws = EXERCISES.filter(e => e.isHw && e.due && e.due <= limit && (!e.done || e.due >= monday));
+  hws.forEach(h => row(!!h.done, `${escHtml(xt('student_cat_homework', 'Homework'))}: ${escHtml(h.title)} · <span style="color:var(--dim);">${escHtml(xt('student_plan_due', 'due'))} ${escHtml(new Date(h.due + 'T12:00:00').toLocaleDateString(uiLocale(), { day: 'numeric', month: 'short' }))}</span>`,
+    xt('student_plan_open', 'Open'), `openPlanHomework(${jsArg(h.id)})`));
+  // 3. 1:1 follow-up (Intensive)
+  const f = OTO && OTO.followup;
+  if (f && f.booking) {
+    row(true, `${escHtml(xt('student_oto_followup_title', 'Weekly 1:1 follow-up'))}: ${escHtml(otoTime(f.booking.scheduled_at))}`);
+  } else if (f && f.canBook) {
+    row(false, `${escHtml(xt('student_plan_book_followup', 'Book your 1:1 follow-up before'))} ${escHtml(otoTime(f.window.to))}`, xt('student_oto_book_followup', 'Book follow-up'), "openOtoPicker('followup')");
+  }
+  // 4. Vocabulary review
+  if (VOCAB_ITEMS.length) {
+    const due = vocabDue().length;
+    row(due === 0, due === 0 ? escHtml(xt('student_plan_vocab_done', 'Vocabulary review: nothing due today'))
+      : escHtml(xt('student_plan_vocab_due', 'Review {n} words from your lessons').replace('{n}', due)), xt('student_plan_start', 'Start'), 'startVocabReview()');
+  }
+  // 5. Practice from the weakest skill
+  const picks = weekPracticePicks();
+  picks.items.forEach((e, i) => row(!!e.done, `${escHtml(xt('student_plan_practice', 'Practice'))}: ${escHtml(e.title)} · <span style="color:var(--dim);">${escHtml(xt(`student_cat_${e.cat}`, e.cat))}</span>`,
+    xt('student_plan_open', 'Open'), `openPlanExercise(${i})`));
+
+  const done = rows.filter(r => r.done).length;
+  document.getElementById('plan-count').textContent = rows.length ? xt('student_plan_count', '{d} of {n} done').replace('{d}', done).replace('{n}', rows.length) : '';
+  const weakNote = picks.weak ? `<div style="padding:12px 28px 16px;font-size:12px;color:var(--dim);">${escHtml(xt('student_plan_weak_note', 'Practice is picked from your weakest skill: {s}.').replace('{s}', xt(`student_cat_${picks.weak}`, picks.weak)))}</div>` : '';
+  box.innerHTML = rows.length ? rows.map(r => r.html).join('') + weakNote
+    : `<div style="padding:16px 28px;font-size:13px;color:var(--dim);">${escHtml(xt('student_plan_empty', 'Nothing planned yet. Your lessons, homework and practice appear here.'))}</div>`;
+  card.style.display = '';
+}
+
+window.startVocabReview = startVocabReview;
+window.answerVocab = answerVocab;
+window.renderVocabReview = renderVocabReview;
+window.openPlanExercise = openPlanExercise;
+window.openPlanHomework = openPlanHomework;
+
 async function loadOneOnOne() {
   const card = document.getElementById('oto-card');
   const body = document.getElementById('oto-body');
@@ -6956,6 +7178,7 @@ async function loadOneOnOne() {
       + escHtml(b.kind === 'followup' ? xt('student_oto_followup_title', 'Weekly 1:1 follow-up') : xt('student_oto_credit_title', 'Private class')) + '</div>'
       + otoBookingHtml(b, teacherName));
   });
+  renderWeekPlan();
   if (!parts.length) { card.style.display = 'none'; return; }
   const html = parts.join('<div style="border-top:1px solid var(--bd);"></div>');
   body.innerHTML = html;
@@ -7024,6 +7247,7 @@ window.cancelOto = cancelOto;
 ══════════════════════════════════════════════════════ */
 function init(){
   initHome();
+  renderWeekPlan();
   buildCal();
   renderExercises();
   renderProgress();

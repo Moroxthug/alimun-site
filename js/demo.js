@@ -48,13 +48,21 @@
   const ME = STUDENTS[0];
   const studentRef = (s) => ({ id: s.id, full_name: s.full_name, level: s.level });
 
+  const DEMO_WORDS = [
+    [{ word: 'deadline', definition: 'the latest time to finish something', example: 'The deadline for the report is Friday.' },
+     { word: 'colleague', definition: 'a person you work with', example: 'My colleague helped me with the project.' }],
+    [{ word: 'to postpone', definition: 'to move an event to a later time', example: 'They postponed the meeting until Monday.' },
+     { word: 'reliable', definition: 'something or someone you can trust', example: 'She is a very reliable friend.' }],
+    [{ word: 'to look forward to', definition: 'to be happy about something in the future', example: 'I look forward to seeing you.' }],
+  ];
+
   const SESSIONS = [0, 1, 2, 3].map((w) => {
     const id = uid(30 + w);
     const s = { id, cohort_id: COHORT.id, scheduled_at: iso(lesson(w)), daily_room_url: null,
       status: w === 0 ? 'scheduled' : 'completed', created_at: iso(lesson(w) - 7 * day), cohorts: cohortRef, session_notes: null };
     if (w > 0) {
       s.session_notes = { id: uid(40 + w), session_id: id, grammar_focus: `Demo topic, week ${4 - w}`,
-        vocabulary: [{ word: 'demo', definition: 'sample word', example: 'This is a demo sentence.' }],
+        vocabulary: DEMO_WORDS[w - 1],
         exercises: 'Demo exercises', homework: 'Demo homework', due_date: date(lesson(w) + 5 * day),
         teacher_note: 'Demo note from the teacher.', pdf_url: null, published_at: iso(lesson(w) + 2 * 3600000),
         created_at: iso(lesson(w)), sessions: { id, scheduled_at: s.scheduled_at, cohort_id: COHORT.id } };
@@ -87,6 +95,7 @@
     teacher_reviews: [],
     cohorts: [COHORT],
     cohort_waitlist: [],
+    vocab_reviews: [],
     student_profiles: STUDENTS,
     sessions: SESSIONS,
     session_notes: SESSIONS.map((s) => s.session_notes).filter(Boolean),
@@ -112,6 +121,9 @@
   const rpcs = {
     cohort_classmates: () => STUDENTS.map((s) => ({ full_name: s.full_name, is_me: s.id === ME.id })),
   };
+
+  // Column defaults the database would fill in
+  const DEFAULTS = { vocab_reviews: { box: 0, due_on: date(now), correct_count: 0, wrong_count: 0 } };
 
   // ─ In-memory query builder (the subset of supabase-js the dashboards use) ─
   const get = (row, path) => path.split('.').reduce((v, k) => (v == null ? v : v[k]), row);
@@ -158,8 +170,8 @@
         const keys = String(opts.onConflict || '').split(',').map((k) => k.trim()).filter(Boolean);
         out = [].concat(payload).map((p) => {
           const existing = op === 'upsert' && keys.length && rows().find((r) => keys.every((k) => r[k] === p[k]));
-          if (existing) return Object.assign(existing, p);
-          const row = { id: newId(), created_at: iso(Date.now()), ...p };
+          if (existing) return opts.ignoreDuplicates ? existing : Object.assign(existing, p);
+          const row = { id: newId(), created_at: iso(Date.now()), ...(DEFAULTS[table] || {}), ...p };
           rows().push(row);
           return row;
         });
