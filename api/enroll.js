@@ -8,6 +8,7 @@
  *    - switching cohorts           { cohort_id, switch: true }
  *    - claiming a waitlist offer   { cohort_id, waitlist_id }
  *    - leaving a cohort            { action: 'leave' }
+ *    - 1:1 bookings                { action: 'oto-status' | 'oto-book' | 'oto-cancel' | 'oto-note' }
  *
  *  Server-side checks (never trust the client):
  *    active subscription, tier allowance, language match,
@@ -24,6 +25,7 @@
 
 const { createClient } = require('@supabase/supabase-js');
 const { cancelActiveEnrollments, takeSeat } = require('./_lib/seat.js');
+const oneOnOne = require('./_lib/one-on-one.js');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const TIER_WEIGHTS = { community: 1, focused: 2, intensive: 3, private: 4 };
@@ -87,6 +89,13 @@ module.exports = async function handler(req, res) {
   let body = req.body || {};
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
   const { cohort_id, waitlist_id, action } = body;
+
+  // 1:1 bookings (follow-ups and paid credits): api/_lib/one-on-one.js
+  const OTO = { 'oto-status': oneOnOne.status, 'oto-book': oneOnOne.book, 'oto-cancel': oneOnOne.cancel, 'oto-note': oneOnOne.note };
+  if (OTO[action]) {
+    try { return await OTO[action](req, res, { supabase, user, body }); }
+    catch (err) { console.error('[Enroll API] 1:1 error:', err); return res.status(500).json({ error: 'server_error', message: 'Please try again.' }); }
+  }
   const wantSwitch = body.switch === true;
 
   try {

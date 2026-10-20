@@ -11,7 +11,9 @@
  *  4. Issues a Daily meeting token (teacher = owner).
  *  5. Records attendance (session_attendance.joined_at) server-side.
  *
- *  Body:    { sessionId: "<uuid>" }
+ *  Body:    { sessionId: "<uuid>" }  or  { bookingId: "<uuid>" } for a 1:1
+ *           booking (one_on_one_bookings: the student, the teacher or an admin;
+ *           open 10 min before until 15 min after it ends).
  *  Returns: { url, token, role, sessionId, startsAt, endsAt }
  * ============================================================
  */
@@ -46,6 +48,60 @@ async function dailyFetch(path, options = {}) {
   return { ok: res.ok, status: res.status, body };
 }
 
+/** Private Daily room named `roomName`, valid until `expEpoch`, plus a meeting token. */
+async function roomAndToken(roomName, expEpoch, displayName, userId, isOwner) {
+  const properties = { exp: expEpoch, eject_at_room_exp: true, enable_recording: false, max_participants: 4 };
+  let url = null;
+  const refreshed = await dailyFetch(`/rooms/${roomName}`, { method: 'POST', body: JSON.stringify({ properties }) });
+  if (refreshed.ok && refreshed.body?.url) url = refreshed.body.url;
+  else {
+    const created = await dailyFetch('/rooms', { method: 'POST', body: JSON.stringify({ name: roomName, privacy: 'private', properties }) });
+    if (created.ok && created.body?.url) url = created.body.url;
+  }
+  if (!url) return null;
+  const tok = await dailyFetch('/meeting-tokens', {
+    method: 'POST',
+    body: JSON.stringify({ properties: { room_name: roomName, user_name: String(displayName).slice(0, 60), user_id: userId, is_owner: isOwner, exp: expEpoch } }),
+  });
+  if (!tok.ok || !tok.body?.token) return null;
+  return { url, token: tok.body.token };
+}
+
+const OTO_OPEN_BEFORE_MIN = 10;
+const OTO_CLOSE_AFTER_MIN = 15;
+
+async function joinBooking(res, supabase, user, isAdmin, bookingId) {
+  const { data: b } = await supabase
+    .from('one_on_one_bookings')
+    .select('id, kind, status, scheduled_at, duration_minutes, daily_room_url, teacher_profiles ( user_id, full_name, status ), student_profiles ( user_id, full_name, stripe_subscription_status )')
+    .eq('id', bookingId)
+    .maybeSingle();
+  if (!b) return res.status(404).json({ error: 'Booking not found' });
+  if (b.status === 'cancelled') return res.status(400).json({ error: 'This 1:1 was cancelled' });
+  const t = b.teacher_profiles; const st = b.student_profiles;
+  const isTeacher = !!t && t.user_id === user.id && t.status === 'approved';
+  const isStudent = !!st && st.user_id === user.id;
+  if (!isTeacher && !isStudent && !isAdmin) return res.status(403).json({ error: 'This 1:1 is not yours' });
+  if (isStudent && b.kind === 'followup' && st.stripe_subscription_status !== 'active') {
+    return res.status(402).json({ error: 'payment_required', message: 'Your subscription is not active. Update your billing to join.' });
+  }
+  const startMs = Date.parse(b.scheduled_at);
+  const endMs = startMs + (b.duration_minutes + OTO_CLOSE_AFTER_MIN) * 60000;
+  const now = Date.now();
+  if (now < startMs - OTO_OPEN_BEFORE_MIN * 60000) {
+    return res.status(425).json({ error: 'too_early', message: `The room opens ${OTO_OPEN_BEFORE_MIN} minutes before your 1:1`, startsAt: b.scheduled_at });
+  }
+  if (now > endMs) return res.status(410).json({ error: 'ended', message: 'This 1:1 has already ended' });
+  const name = isTeacher ? (t.full_name || 'Teacher') : isAdmin && !isStudent ? 'Alimun staff' : (st.full_name || 'Student');
+  const rt = await roomAndToken(`alimun-1on1-${b.id}`, Math.floor(endMs / 1000), name, user.id, isTeacher || (isAdmin && !isStudent));
+  if (!rt) return res.status(502).json({ error: 'Could not open the video room. Please try again.' });
+  if (rt.url !== b.daily_room_url) await supabase.from('one_on_one_bookings').update({ daily_room_url: rt.url }).eq('id', b.id);
+  return res.status(200).json({
+    url: rt.url, token: rt.token, role: isTeacher ? 'teacher' : isStudent ? 'student' : 'admin',
+    bookingId: b.id, startsAt: b.scheduled_at, endsAt: new Date(endMs).toISOString(),
+  });
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || 'https://alimun.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
@@ -74,7 +130,12 @@ module.exports = async function handler(req, res) {
 
   let body = req.body || {};
   if (typeof body === 'string') { try { body = JSON.parse(body); } catch { body = {}; } }
-  const { sessionId } = body;
+  const { sessionId, bookingId } = body;
+  if (bookingId !== undefined) {
+    if (!UUID_RE.test(String(bookingId))) return res.status(400).json({ error: 'Invalid bookingId' });
+    try { return await joinBooking(res, supabase, user, isAdmin, bookingId); }
+    catch (err) { console.error('[Join Session API] 1:1 error:', err); return res.status(500).json({ error: 'Internal server error' }); }
+  }
   if (!sessionId || !UUID_RE.test(String(sessionId))) {
     return res.status(400).json({ error: 'Missing or invalid sessionId' });
   }

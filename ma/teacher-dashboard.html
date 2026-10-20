@@ -1955,7 +1955,6 @@ function vSessions(){
 
   const cohortDescText = dict['teacher_lbl_live_cohort_desc'] || 'Live cohort sessions — Focused Practice group';
   const upcomingText = dict['teacher_lbl_upcoming'] || 'Upcoming';
-  const sessionTipsText = dict['teacher_lbl_session_tips'] || 'Session tips';
   const completedText = dict['teacher_lbl_completed'] || 'Completed';
 
   // Get upcoming sessions sorted ascending (closest first)
@@ -2029,17 +2028,86 @@ function vSessions(){
         ${upcomingHtml}
       </div>
       <div>
-        <div class="sh"><span class="sec-t">${sessionTipsText}</span></div>
-        <div class="card">
-          <p style="font-size:.84rem;line-height:1.7;color:#555;">3 students submitted this week's essay — review their common errors before the session to address them as a group. Alex and Sophie both struggled with por vs. para.</p>
-          <div style="margin-top:1rem;border-top:1px solid rgba(0,0,0,.06);padding-top:1rem;font-size:.84rem;line-height:1.7;color:#555;">Avg. quiz score this week: <b>71%</b> — grammar drills on ser/estar would be well-timed.</div>
-        </div>
+        <div class="sh"><span class="sec-t">${t('teacher_oto_title', '1:1 follow-ups')}</span></div>
+        <div class="card" id="oto-teacher"><p style="font-size:.84rem;line-height:1.7;color:#555;">${t('teacher_oto_loading', 'Loading...')}</p></div>
       </div>
     </div>
     <div class="sh"><span class="sec-t" data-i18n="student_session_history">${dict.student_session_history || 'Session history'}</span></div>
     <div class="card">${historyHtml}</div>
     <div style="height:2.5rem"></div>`;
+  loadTeacherOto();
 }
+
+/* 1:1 follow-ups (Intensive) and paid private classes booked with this teacher.
+   Read through RLS; the note is saved by /api/enroll?action=oto-note. */
+async function loadTeacherOto() {
+  const box = document.getElementById('oto-teacher');
+  const sb = window.currentTeacher && window.currentTeacher.supabase;
+  if (!box || !sb) return;
+  const since = new Date(Date.now() - 7 * 86400000).toISOString();
+  const { data, error } = await sb.from('one_on_one_bookings')
+    .select('id, kind, scheduled_at, duration_minutes, status, teacher_note, student_profiles ( full_name )')
+    .in('status', ['booked', 'completed']).gte('scheduled_at', since)
+    .order('scheduled_at', { ascending: true }).limit(30);
+  window.TEACHER_OTO = data || [];
+  if (error || !data || !data.length) {
+    box.innerHTML = '<p style="font-size:.84rem;line-height:1.7;color:#555;">' + escapeHtml(t('teacher_oto_empty', 'No 1:1 bookings this week. Intensive students book a 20-minute follow-up after their lesson from your availability.')) + '</p>';
+    return;
+  }
+  const now = Date.now();
+  const rows = data.map((b) => {
+    const start = Date.parse(b.scheduled_at);
+    const ended = now > start + (b.duration_minutes + 15) * 60000;
+    const when = new Date(b.scheduled_at).toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    const kind = b.kind === 'followup' ? t('teacher_oto_followup', 'Follow-up') : t('teacher_oto_private', 'Private class');
+    let actions = '';
+    if (b.status === 'booked' && !ended) actions += '<button class="btn sm" onclick="handleTeacherJoin(null, null, ' + jsArg(b.id) + ')">' + escapeHtml(t('teacher_oto_join', 'Join')) + '</button> ';
+    if (now >= start) actions += '<button class="btn sm" style="background:#fff;color:#080808;border:1px solid rgba(0,0,0,.12);" onclick="openOtoNote(' + jsArg(b.id) + ')">' + escapeHtml(b.teacher_note ? t('teacher_oto_edit_note', 'Edit note') : t('teacher_oto_write_note', 'Write note')) + '</button>';
+    return '<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(0,0,0,.06);">'
+      + '<div><div style="font-size:.86rem;font-weight:700;">' + escapeHtml((b.student_profiles && b.student_profiles.full_name) || t('teacher_oto_student', 'Student')) + '</div>'
+      + '<div style="font-size:.76rem;color:#777;">' + escapeHtml(when) + ' · ' + escapeHtml(String(b.duration_minutes)) + ' min · ' + escapeHtml(kind) + (b.status === 'completed' ? ' · ' + escapeHtml(t('teacher_oto_done', 'Done')) : '') + '</div></div>'
+      + '<div style="white-space:nowrap;">' + actions + '</div></div>';
+  }).join('');
+  box.innerHTML = rows;
+}
+
+function openOtoNote(id) {
+  const b = (window.TEACHER_OTO || []).find((x) => x.id === id);
+  const name = b && b.student_profiles && b.student_profiles.full_name ? b.student_profiles.full_name : t('teacher_oto_student', 'Student');
+  const html = '<div style="padding:1.5rem;">'
+    + '<div style="font-weight:800;font-size:1rem;margin-bottom:.25rem;">' + escapeHtml(t('teacher_oto_note_title', 'Follow-up note')) + ' · ' + escapeHtml(name) + '</div>'
+    + '<p style="font-size:.8rem;color:#777;margin:0 0 .75rem;">' + escapeHtml(t('teacher_oto_note_desc', 'What you worked on and what the student should practise next. The student sees this note in their dashboard.')) + '</p>'
+    + '<textarea id="oto-note-text" maxlength="4000" style="width:100%;min-height:140px;padding:.75rem;border:1px solid rgba(0,0,0,.12);border-radius:10px;font:inherit;">' + escapeHtml((b && b.teacher_note) || '') + '</textarea>'
+    + '<div id="oto-note-err" style="color:#c0392b;font-size:.8rem;margin:.5rem 0;"></div>'
+    + '<div style="display:flex;justify-content:flex-end;gap:.5rem;"><button class="btn sm" style="background:#fff;color:#080808;border:1px solid rgba(0,0,0,.12);" onclick="closeModal()">' + escapeHtml(t('teacher_cancel', 'Cancel')) + '</button>'
+    + '<button class="btn sm" id="oto-note-save" onclick="saveOtoNote(' + jsArg(id) + ')">' + escapeHtml(t('teacher_save', 'Save')) + '</button></div></div>';
+  openModal(html);
+}
+
+async function saveOtoNote(id) {
+  const text = (document.getElementById('oto-note-text') || {}).value || '';
+  const err = document.getElementById('oto-note-err');
+  const btn = document.getElementById('oto-note-save');
+  if (btn) btn.disabled = true;
+  try {
+    const sb = window.currentTeacher.supabase;
+    const { data: { session } = {} } = await sb.auth.getSession();
+    const resp = await fetch('/api/enroll', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token || ''}` },
+      body: JSON.stringify({ action: 'oto-note', id, note: text }),
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok) throw new Error(data.message || data.error || 'Please try again.');
+    closeModal();
+    loadTeacherOto();
+  } catch (e) {
+    if (err) err.textContent = e.message;
+    if (btn) btn.disabled = false;
+  }
+}
+window.openOtoNote = openOtoNote;
+window.saveOtoNote = saveOtoNote;
 
 function vSettings(){
   const tp = window.currentTeacher || { name: '', email: '', profile: {} };
@@ -3316,8 +3384,8 @@ const TRANSCRIPTIONS = {
   ]
 };
 
-async function handleTeacherJoin(roomUrl, sessionId) {
-  currentSessionId = sessionId;
+async function handleTeacherJoin(roomUrl, sessionId, bookingId) {
+  currentSessionId = sessionId || null;
 
   // Ask the server for the room + an owner meeting token.
   // Rooms are private; joining without a token fails.
@@ -3331,7 +3399,7 @@ async function handleTeacherJoin(roomUrl, sessionId) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${session?.access_token || ''}`
       },
-      body: JSON.stringify({ sessionId })
+      body: JSON.stringify(bookingId ? { bookingId } : { sessionId })
     });
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {

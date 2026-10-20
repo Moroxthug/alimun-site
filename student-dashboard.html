@@ -1430,6 +1430,12 @@ nav {
           <button class="join-btn" onclick="openCohortSwitchModal()" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;padding:8px 16px;background:#FFF;border:1px solid var(--bd);color:var(--txt);cursor:pointer;" data-i18n="student_change_cohort">Change Class / Cohort</button>
         </div>
 
+        <!-- 1:1 follow-ups and private classes (filled by loadOneOnOne) -->
+        <div class="card" id="oto-card" style="display:none;">
+          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_oto_title">Your 1:1</div>
+          <div id="oto-body" style="display:flex;flex-direction:column;gap:14px;"></div>
+        </div>
+
         <!-- Recent activity -->
         <!-- DATA: replace with Supabase query: SELECT action, subject, created_at FROM activity_log WHERE student_id = $1 ORDER BY created_at DESC LIMIT 3 -->
         <div class="card">
@@ -2887,6 +2893,7 @@ let VOCAB = [];
   // Fetch data & init
   await initData();
   init();
+  loadOneOnOne();
   // Hide "Book 1-on-1 Class" when no one-off price is configured (the paywall could only say "not available").
   Promise.resolve(window.ALIMUN_CONFIG_READY).then(() => {
     const c = window.ALIMUN_CONFIG || {};
@@ -6568,6 +6575,7 @@ window.openTeacherProfileModal = openTeacherProfileModal;
 window.submitTeacherReview = submitTeacherReview;
 
 function openExtraClassPaywall() {
+  if (OTO && OTO.credit && OTO.credit.credits > 0) { openOtoPicker('credit'); return; }
   let modalContent = `
     <div style="padding: 24px 28px 0;">
       <div class="lbl" style="margin-bottom:4px;">${xt('student_weekly_limit_reached','Weekly Limit Reached')}</div>
@@ -6632,6 +6640,142 @@ async function payExtraClass() {
     }
   }
 }
+
+/* ══════════════════════════════════════════════════════
+   1:1 FOLLOW-UPS (Intensive) AND PAID PRIVATE CLASSES
+   Server rules: api/_lib/one-on-one.js via /api/enroll?action=oto-*
+══════════════════════════════════════════════════════ */
+let OTO = null;
+
+async function otoApi(action, extra) {
+  const { data: { session } = {} } = await SB.auth.getSession();
+  const resp = await fetch('/api/enroll', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token || ''}` },
+    body: JSON.stringify(Object.assign({ action }, extra || {})),
+  });
+  let data = {};
+  try { data = await resp.json(); } catch (_) {}
+  if (!resp.ok) throw new Error(data.message || data.error || 'Please try again.');
+  return data;
+}
+
+function otoTime(iso) {
+  return new Date(iso).toLocaleString(undefined, {
+    timeZone: studentTimezone(USER && USER.profile), weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+  });
+}
+
+function otoBookingHtml(b, teacherName) {
+  let h = '<div style="font-size:12px;color:var(--dim);margin-bottom:10px;">' + escHtml(otoTime(b.scheduled_at)) + ' · '
+    + escHtml(String(b.duration_minutes || 20)) + ' min' + (teacherName ? ' · ' + escHtml(teacherName) : '') + '</div>';
+  if (b.status === 'booked') {
+    h += '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+      + '<button class="join-btn" style="font-size:12px;padding:8px 16px;" onclick="handleStudentJoin(null, null, ' + jsArg(b.id) + ')">' + escHtml(xt('student_oto_join', 'Join 1:1')) + '</button>'
+      + '<button class="join-btn" style="font-size:12px;padding:8px 16px;background:#FFF;border:1px solid var(--bd);color:var(--txt);" onclick="cancelOto(' + jsArg(b.id) + ')">' + escHtml(xt('student_oto_cancel', 'Cancel')) + '</button>'
+      + '</div>';
+  }
+  if (b.teacher_note) h += '<div class="teacher-quote" style="margin-top:10px;">' + escHtml(b.teacher_note) + '</div>';
+  return h;
+}
+
+async function loadOneOnOne() {
+  const card = document.getElementById('oto-card');
+  const body = document.getElementById('oto-body');
+  if (!card || !body || !SB) return;
+  try { OTO = await otoApi('oto-status'); } catch (_) { card.style.display = 'none'; return; }
+  const teacherName = OTO.teacher ? OTO.teacher.name : '';
+  const parts = [];
+  const f = OTO.followup;
+  if (f) {
+    let h = '<div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;">' + escHtml(xt('student_oto_followup_title', 'Weekly 1:1 follow-up')) + '</div>';
+    if (f.booking) h += otoBookingHtml(f.booking, teacherName);
+    else if (f.canBook) {
+      h += '<div style="font-size:12px;color:var(--dim);margin-bottom:10px;">'
+        + escHtml(xt('student_oto_followup_desc', '20 minutes with your teacher on this week\'s lesson. Book it before')) + ' ' + escHtml(otoTime(f.window.to)) + '.</div>'
+        + '<button class="join-btn" style="font-size:12px;padding:8px 16px;" onclick="openOtoPicker(\'followup\')">' + escHtml(xt('student_oto_book_followup', 'Book follow-up')) + '</button>';
+    } else h += '<div style="font-size:12px;color:var(--dim);">' + escHtml(f.reason || '') + '</div>';
+    parts.push(h);
+  }
+  if (OTO.credit) {
+    let h = '<div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;">' + escHtml(xt('student_oto_credit_title', 'Private classes')) + '</div>'
+      + '<div style="font-size:12px;color:var(--dim);margin-bottom:10px;">' + escHtml(xt('student_oto_credits_left', 'Credits left:')) + ' ' + escHtml(String(OTO.credit.credits))
+      + (OTO.credit.reason ? ' · ' + escHtml(OTO.credit.reason) : '') + '</div>';
+    if (OTO.credit.canBook) h += '<button class="join-btn" style="font-size:12px;padding:8px 16px;" onclick="openOtoPicker(\'credit\')">' + escHtml(xt('student_oto_book_private', 'Book a private class')) + '</button>';
+    parts.push(h);
+  }
+  // Upcoming private classes and recent follow-up notes (read through RLS).
+  const { data: rows } = await SB.from('one_on_one_bookings')
+    .select('id, kind, scheduled_at, duration_minutes, status, teacher_note')
+    .order('scheduled_at', { ascending: false }).limit(6);
+  const shown = new Set([f && f.booking ? f.booking.id : null]);
+  (rows || []).filter((b) => !shown.has(b.id) && b.status !== 'cancelled' && (b.status === 'booked' || b.teacher_note)).slice(0, 3).forEach((b) => {
+    parts.push('<div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;">'
+      + escHtml(b.kind === 'followup' ? xt('student_oto_followup_title', 'Weekly 1:1 follow-up') : xt('student_oto_credit_title', 'Private class')) + '</div>'
+      + otoBookingHtml(b, teacherName));
+  });
+  if (!parts.length) { card.style.display = 'none'; return; }
+  const html = parts.join('<div style="border-top:1px solid var(--bd);"></div>');
+  body.innerHTML = html;
+  card.style.display = '';
+}
+
+async function openOtoPicker(kind) {
+  openModal('<div style="padding:24px 28px;"><div class="loading">' + escHtml(xt('student_oto_loading', 'Finding free times...')) + '</div></div>');
+  let st;
+  try { st = await otoApi('oto-status', { kind }); } catch (e) { closeModal(); alert(e.message); return; }
+  const part = st[kind];
+  const slots = st.slots || [];
+  const title = kind === 'followup' ? xt('student_oto_followup_title', 'Weekly 1:1 follow-up') : xt('student_oto_credit_title', 'Private class');
+  const mins = part ? part.minutes : (kind === 'followup' ? 20 : 60);
+  let list = '';
+  if (!part || !part.canBook) list = '<div style="font-size:13px;color:var(--dim);">' + escHtml((part && part.reason) || xt('student_oto_unavailable', 'Not available on your plan.')) + '</div>';
+  else if (!slots.length) list = '<div style="font-size:13px;color:var(--dim);">' + escHtml(xt('student_oto_no_slots', 'Your teacher has no free times in this period. Please message your teacher.')) + '</div>';
+  else {
+    const byDay = {};
+    slots.forEach((iso) => {
+      const day = new Date(iso).toLocaleDateString(undefined, { timeZone: studentTimezone(USER && USER.profile), weekday: 'long', day: 'numeric', month: 'long' });
+      (byDay[day] = byDay[day] || []).push(iso);
+    });
+    Object.keys(byDay).forEach((day) => {
+      list += '<div style="font-size:12px;font-weight:700;color:var(--txt);margin:12px 0 6px;">' + escHtml(day) + '</div><div style="display:flex;flex-wrap:wrap;gap:6px;">';
+      byDay[day].forEach((iso) => {
+        const t = new Date(iso).toLocaleTimeString(undefined, { timeZone: studentTimezone(USER && USER.profile), hour: '2-digit', minute: '2-digit' });
+        list += '<button class="join-btn" style="font-size:12px;padding:6px 12px;background:#FFF;border:1px solid var(--bd);color:var(--txt);" onclick="bookOto(' + jsArg(kind) + ', ' + jsArg(iso) + ')">' + escHtml(t) + '</button>';
+      });
+      list += '</div>';
+    });
+  }
+  const html = '<div style="padding:24px 28px 0;">'
+    + '<div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);margin-bottom:6px;">' + escHtml(title) + '</div>'
+    + '<div style="font-size:12px;color:var(--dim);border-bottom:1px solid var(--bd);padding-bottom:12px;">' + escHtml(String(mins)) + ' min' + (st.teacher ? ' · ' + escHtml(st.teacher.name) : '')
+    + ' · ' + escHtml(xt('student_oto_times_in', 'Times shown in')) + ' ' + escHtml(studentTimezone(USER && USER.profile)) + '</div></div>'
+    + '<div style="padding:4px 28px 24px;max-height:60vh;overflow:auto;">' + list + '</div>'
+    + '<div style="padding:0 28px 24px;display:flex;justify-content:flex-end;"><button class="join-btn" style="background:#FFF;border:1px solid var(--bd);color:var(--txt);" onclick="closeModal()">' + escHtml(xt('student_cancel', 'Cancel')) + '</button></div>';
+  openModal(html);
+}
+
+async function bookOto(kind, iso) {
+  if (!confirm(xt('student_oto_confirm', 'Book this time?') + ' ' + otoTime(iso))) return;
+  try {
+    await otoApi('oto-book', { kind, start: iso });
+    closeModal();
+    await loadOneOnOne();
+  } catch (e) { alert(e.message); if (/taken/i.test(e.message)) openOtoPicker(kind); }
+}
+
+async function cancelOto(id) {
+  if (!confirm(xt('student_oto_cancel_confirm', 'Cancel this 1:1? A paid credit is returned if you cancel at least 24 hours before.'))) return;
+  try {
+    const r = await otoApi('oto-cancel', { id });
+    if (r.creditReturned) alert(xt('student_oto_credit_returned', 'Your credit has been returned.'));
+    await loadOneOnOne();
+  } catch (e) { alert(e.message); }
+}
+
+window.openOtoPicker = openOtoPicker;
+window.bookOto = bookOto;
+window.cancelOto = cancelOto;
 
 /* ══════════════════════════════════════════════════════
    INIT
@@ -6701,12 +6845,12 @@ function init(){
 /* ══════════════════════════════════════════════════════
    SESSION ATTENDANCE TRACKING
 ══════════════════════════════════════════════════════ */
-async function handleStudentJoin(roomUrl, sessionId) {
-  if (!sessionId) {
+async function handleStudentJoin(roomUrl, sessionId, bookingId) {
+  if (!sessionId && !bookingId) {
     alert(xt('student_no_session_to_join', 'There is no class session to join right now.'));
     return;
   }
-  currentSessionId = sessionId;
+  currentSessionId = sessionId || null;
 
   // Ask the server for the room + a meeting token (rooms are private)
   let joinUrl = roomUrl, joinToken = null;
@@ -6718,7 +6862,7 @@ async function handleStudentJoin(roomUrl, sessionId) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${session?.access_token || ''}`
       },
-      body: JSON.stringify({ sessionId })
+      body: JSON.stringify(bookingId ? { bookingId } : { sessionId })
     });
     const data = await resp.json();
     if (!resp.ok) {
@@ -6774,7 +6918,7 @@ async function handleStudentJoin(roomUrl, sessionId) {
 
   // joined_at is recorded server-side by /api/join-session. We only remember
   // which session we're in so leaveClass() can stamp left_at on our own row.
-  if (SB && sessionId && NEXT_CLASS.studentProfileId) {
+  if (SB && sessionId && !bookingId && NEXT_CLASS.studentProfileId) {
     _attendanceSessionId = sessionId;
     if (_attendanceTimeout) clearTimeout(_attendanceTimeout);
     _attendanceTimeout = setTimeout(logAttendanceLeave, 90 * 60 * 1000);
