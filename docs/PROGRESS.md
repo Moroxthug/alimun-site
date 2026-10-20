@@ -171,3 +171,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Student home: words from the teacher's lesson notes are copied in and reviewed as flashcards (show meaning, I knew it / Not yet). Spaced repetition: 1, 3, 7, 14, 30 days; a miss comes back tomorrow. Each review session is saved as a vocabulary score (Progress).
 - Student home: "This week's plan" card: next lesson, homework due within 7 days, 1:1 follow-up (Intensive), vocabulary due, 3 practice exercises from the weakest skill (kept for the week). Each row links to the right place.
 - Translated (en/fr/de/es/ma); demo student has real-looking lesson words to try it.
+
+## 20 Oct 2026 - Exam preparation (English, German)
+- js/exam-prep.js: practice tasks in the format of B2 First, C1 Advanced, IELTS (English) and Goethe B1, Goethe B2, telc B1 (German), 6-7 tasks each (cloze, word formation, transformations, True/False/Not Given, Lesen, Sprachbausteine, listening dictation, speaking phrases, essays with the exam word counts and criteria). Shown in Practice under "Exam prep" for students of that language; results count as Tests. A note says they are not official and Alimun is not affiliated with the exam boards.
+- Fixed: multiple-choice questions without an example sentence showed an empty quote box; Tests view refreshes when a test score is added.
+- French and Spanish (DELF/DALF, DELE) to add when those courses go on sale.

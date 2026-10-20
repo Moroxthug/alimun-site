@@ -3,6 +3,7 @@
 <title>Dashboard — Alimun</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
+<script src="../js/exam-prep.js"></script>
 <script src="../js/demo.js"></script>
 <script src="../js/view-as.js"></script>
 <script src="../js/tz.js"></script>
@@ -1585,6 +1586,7 @@ nav {
     </div>
   </div>
   <div class="ex-tabs" id="ex-tabs"></div>
+  <div id="ex-exam-note" style="display:none;font-size:12px;color:var(--dim);margin:0 0 12px;" data-i18n="student_exam_note">Exercices au format de chaque examen, rédigés par Alimun. Ce ne sont pas des documents officiels ; Alimun n'est affilié ni à Cambridge English, ni à IELTS, ni au Goethe-Institut, ni à telc.</div>
   <div class="card no-pad" id="ex-list"></div>
   
   <!-- Branded Session Notes Section -->
@@ -3281,7 +3283,7 @@ async function initData() {
   const levelVal = USER.profile?.level || 'B2';
   const levelKey = levelVal.startsWith('A') ? 'A' : levelVal.startsWith('B') ? 'B' : 'C';
   // No library for a language yet (e.g. English): show only teacher homework, never another language's set
-  const dbExercises = EXERCISE_DATABASE[langKey]?.[levelKey] || [];
+  const dbExercises = [...(EXERCISE_DATABASE[langKey]?.[levelKey] || []), ...examPrepTasks(langKey)];
 
 
   const completedEx = JSON.parse(localStorage.getItem(`alimun:completed_exercises:${USER.id}`) || '[]');
@@ -4486,7 +4488,12 @@ function renderCalDetail(){
    EXERCISES VIEW
 ══════════════════════════════════════════════════════ */
 let exFilter='all', exExpanded=null;
-const EX_CATS=['all','homework','grammar','vocabulary','listening','speaking','writing'];
+const EX_CATS=['all','homework','grammar','vocabulary','listening','speaking','writing','exam'];
+// Exam preparation tasks (js/exam-prep.js) as Practice exercises in the "exam" tab; results count as Tests
+function examPrepTasks(lang) {
+  const tracks = (window.ALIMUN_EXAM_PREP || {})[lang] || [];
+  return tracks.flatMap(tr => tr.tasks.map(t => ({ ...t, cat: 'exam', isExam: true, exam: tr.short, examLevel: tr.level, title: `${tr.short} · ${t.title}` })));
+}
 const EX_TYPE_KEYS = { 'multiple choice': 'student_extype_mc', 'fill in blank': 'student_extype_fill', 'word matching': 'student_extype_match', speaking: 'student_cat_speaking', listening: 'student_cat_listening', essay: 'student_extype_essay', writing: 'student_cat_writing', homework: 'student_cat_homework' };
 const exTypeLabel = (type) => { const k = EX_TYPE_KEYS[String(type || '').toLowerCase()]; return k ? xt(k, type) : (type || ''); };
 
@@ -4879,11 +4886,12 @@ function saveExerciseState(ex) {
 }
 
 function updateProgressCategory(exCat, score, exInfo) {
-  const cat = PROGRESS_LABELS[exCat] ? exCat : 'grammar';
+  const cat = exInfo?.isExam ? 'assessment' : (PROGRESS_LABELS[exCat] ? exCat : 'grammar');
   const now = new Date().toISOString();
   SCORES.push({ cat, score: Math.min(Math.max(Math.round(score), 0), 100), at: now, title: exInfo?.title || null, type: exInfo?.type || null });
   ACTIVITY_DAYS.add(localDay(now));
   buildProgressFromScores();
+  if (cat === 'assessment' && typeof renderTests === 'function') renderTests();
   // Persist to Supabase so the teacher dashboard analytics see it
   saveExerciseResult(cat, score, exInfo);
 }
@@ -5053,7 +5061,7 @@ function renderExerciseUI(ex, i) {
   if (ex.type === 'Multiple Choice') {
     return `
       <div class="mcq-q">${escHtml(ex.question)}</div>
-      <div class="mcq-stem" style="font-family:var(--mono); background: rgba(0,0,0,0.02); padding: 10px 14px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 12px;">"${escHtml(ex.stem)}"</div>
+      ${ex.stem ? `<div class="mcq-stem" style="font-family:var(--mono); background: rgba(0,0,0,0.02); padding: 10px 14px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 12px;">"${escHtml(ex.stem)}"</div>` : ''}
       <div class="mcq-opts">
         ${ex.opts.map((o, j) => {
           let cls = '';
@@ -5265,7 +5273,9 @@ function renderExercises(){
   document.getElementById('ex-bar').style.width=pct+'%';
   document.getElementById('ex-pct').textContent=`${pct}% ${xt('student_pct_done', 'done')}`;
 
-  document.getElementById('ex-tabs').innerHTML=EX_CATS.map(c=>`<button class="ex-tab${exFilter===c?' active':''}" onclick="exSetFilter('${c}')">${escHtml(xt(`student_cat_${c}`, c))}</button>`).join('');
+  const exNote = document.getElementById('ex-exam-note');
+  if (exNote) exNote.style.display = exFilter === 'exam' ? '' : 'none';
+  document.getElementById('ex-tabs').innerHTML=EX_CATS.filter(c => c !== 'exam' || EXERCISES.some(e => e.isExam)).map(c=>`<button class="ex-tab${exFilter===c?' active':''}" onclick="exSetFilter('${c}')">${escHtml(xt(`student_cat_${c}`, c))}</button>`).join('');
 
   const filtered=EXERCISES.filter(e=>exFilter==='all'||e.cat===exFilter);
   document.getElementById('ex-list').innerHTML=filtered.map((ex,i)=>{
@@ -7056,7 +7066,7 @@ function weakestCategory() {
 function weekPracticePicks() {
   const week = localDay((() => { const d = new Date(); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; })());
   const key = `alimun:plan:${USER.id}:${week}`;
-  const lib = EXERCISES.filter(e => !e.isHw);
+  const lib = EXERCISES.filter(e => !e.isHw && !e.isExam);
   let titles = null;
   try { titles = JSON.parse(localStorage.getItem(key) || 'null'); } catch (_) { titles = null; }
   if (!Array.isArray(titles) || !titles.length || titles.some(t => !lib.find(e => e.title === t))) {

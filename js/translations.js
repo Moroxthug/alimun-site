@@ -1,5 +1,7 @@
 window.ALIMUN_TRANSLATIONS = {
   "en": {
+    "student_exam_note": "Practice tasks in the format of each exam, written by Alimun. Not official exam material; Alimun is not affiliated with Cambridge English, IELTS, the Goethe-Institut or telc.",
+    "student_cat_exam": "Exam prep",
     "student_vr_title": "Vocabulary review",
     "student_vr_done_title": "Review done",
     "student_vr_done_desc": "You knew {k} of {n} words. Missed words come back tomorrow.",
@@ -970,6 +972,8 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "Needs review. Revise grammar conjugations."
   },
   "es": {
+    "student_exam_note": "Ejercicios con el formato de cada examen, creados por Alimun. No es material oficial; Alimun no está afiliado a Cambridge English, IELTS, el Goethe-Institut ni telc.",
+    "student_cat_exam": "Preparación de exámenes",
     "student_vr_title": "Repaso de vocabulario",
     "student_vr_done_title": "Repaso terminado",
     "student_vr_done_desc": "Sabías {k} de {n} palabras. Las que fallaste vuelven mañana.",
@@ -1925,6 +1929,8 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "Necesita repaso. Revisa las conjugaciones gramaticales."
   },
   "fr": {
+    "student_exam_note": "Exercices au format de chaque examen, rédigés par Alimun. Ce ne sont pas des documents officiels ; Alimun n'est affilié ni à Cambridge English, ni à IELTS, ni au Goethe-Institut, ni à telc.",
+    "student_cat_exam": "Préparation aux examens",
     "student_vr_title": "Révision du vocabulaire",
     "student_vr_done_title": "Révision terminée",
     "student_vr_done_desc": "Vous connaissiez {k} mots sur {n}. Les mots manqués reviennent demain.",
@@ -2880,6 +2886,8 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "Nécessite une révision. Révise les conjugations de grammaire."
   },
   "de": {
+    "student_exam_note": "Übungsaufgaben im Format der jeweiligen Prüfung, erstellt von Alimun. Kein offizielles Prüfungsmaterial; Alimun ist nicht mit Cambridge English, IELTS, dem Goethe-Institut oder telc verbunden.",
+    "student_cat_exam": "Prüfungsvorbereitung",
     "student_vr_title": "Wortschatz wiederholen",
     "student_vr_done_title": "Wiederholung beendet",
     "student_vr_done_desc": "Sie kannten {k} von {n} Wörtern. Nicht gewusste Wörter kommen morgen wieder.",
@@ -6700,6 +6708,8 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "Richiede ripasso. Rivedi le coniugazioni grammaticali."
   },
   "ma": {
+    "student_exam_note": "Exercices au format de chaque examen, rédigés par Alimun. Ce ne sont pas des documents officiels ; Alimun n'est affilié ni à Cambridge English, ni à IELTS, ni au Goethe-Institut, ni à telc.",
+    "student_cat_exam": "Préparation aux examens",
     "student_vr_title": "Révision du vocabulaire",
     "student_vr_done_title": "Révision terminée",
     "student_vr_done_desc": "Vous connaissiez {k} mots sur {n}. Les mots manqués reviennent demain.",
