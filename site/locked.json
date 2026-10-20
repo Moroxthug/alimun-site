@@ -23,5 +23,9 @@
   "src/blocks/04-cards.html": {
     "sha256": "946ba157d2d80d14e2ae064c533c9754b26920c4bb262554b8e2e81f607d62a9",
     "approved": "2026-10-19 cards ok"
+  },
+  "src/blocks/05-faq.html": {
+    "sha256": "0e62ae6cb45ddb270850ffaab572315f24ef2998be26c1e81d9fbf6885cd285b",
+    "approved": "2026-10-19 faq ok"
   }
 }
