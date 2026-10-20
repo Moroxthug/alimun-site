@@ -68,9 +68,9 @@ Every phase below is designed to be run in a **fresh Claude Code cloud session**
 | Phase | Name | Depends on | Status |
 |---|---|---|---|
 | 1 | Production reconciliation & database lockdown | — | applied to production 14 Oct (105/105 RLS, advisor 0 errors); owner items open (`docs/phase-1-db-lockdown.md`) |
-| 2 | Full code audit, threat model and automated safeguards | 1 | not started |
-| 3 | Functional platform end-to-end | 1, 2 (can overlap with 2) | not started |
-| 4 | Design mockups (locked to current homepage) | — (parallel with 1–3) | not started |
+| 2 | Full code audit, threat model and automated safeguards | 1 | done (see `docs/PROGRESS.md`; CI checks, semgrep, unit + smoke tests) |
+| 3 | Functional platform end-to-end | 1, 2 (can overlap with 2) | done except owner-blocked items, see "Phase 3 status" below |
+| 4 | Design: Astro 1:1 rebuild of the public site (replaces the mockup approach, see `docs/REBUILD_PLAN.md`) | — (parallel with 1–3) | homepage approved and locked; Tiers in progress |
 | 5 | Implement approved designs | 3, 4 + owner approval | not started |
 | 6 | SEO foundations (all markets) | 3 | not started |
 | 7 | SEO — Canada (EN + FR) | 6 | not started |
@@ -173,9 +173,33 @@ Phases 4 and 1–3 can run in separate cloud sessions at the same time; they tou
 **Kickoff prompt**
 > Read CLAUDE.md and docs/IMPLEMENTATION_PLAN.md (Phase 3 and §0). Branch `phase-3-functional`. Start by listing which of the Phase 3 items are blocked on [OWNER] steps and tell me exactly what to click. Then fix /api/generate-notes-pdf using Vercel runtime logs, and work through payments → enrollment → live class → emails → admin ops → honesty pass, verifying each on a Preview deployment with Stripe test mode before moving on.
 
+### Phase 3 status (20 Oct 2026)
+
+Done and live: notes PDF fix, cron jobs (observed in `cron_runs`), timezone-aware availability, enrollment/waitlist, live class tokens and attendance, admin operations (create class, move/add students, view-as with demo teacher/student), Stripe Customer Portal and 1:1 credit product, Intensive weekly 1:1 follow-ups, honesty pass (fake stats, teachers, testimonials, transcripts and dashboard numbers removed), dashboards translated (en/fr/de/es/ma), vocabulary review, weekly plan, exam prep (English, German), practice progress in the DB, translation files split per language.
+
+Still open (owner-blocked or owner-deferred):
+1. **Email (item 1):** Resend DNS records for alimun.com. Owner parked it.
+2. **Payments (item 3):** owner chose no Stripe sandbox; one live purchase + refund still to do. The scripted E2E acceptance (Stripe test mode on a Preview) is therefore not run.
+3. **AI (item 6):** `ai_usage` filling to be confirmed after the first real AI call.
+4. **Acceptance:** one real teacher applies and is approved end to end; not yet observed.
+5. **Supabase Auth:** leaked-password protection is off (Authentication → Policies).
+6. Owner copy/decisions: teacher vetting copy (`[COPY NEEDED]`), Community "small group" vs 35 seats, Focused weekly feedback, homepage language list, About timeline, paid follow-up price for lower tiers, AI taste for free accounts, review of `js/exam-prep.js`.
+
 ---
 
-## Phase 4 — Design mockups (locked to the current homepage)
+## Phase 4 — Design
+
+**Current approach (owner, 19–20 Oct 2026):** rebuild the public site in Astro with the same design, element by element, each element approved by the owner and then locked. Plan and rules: `docs/REBUILD_PLAN.md`. Branch `rebuild-astro`, folder `site/` (main merged in on 20 Oct). Preview: Vercel project `alimun-rebuild-preview` (https://alimun-rebuild-preview.vercel.app), deployed with the Vercel CLI from a copy of `site/dist` with `vercel.json` (cleanUrls, `X-Robots-Tag: noindex`); the session needs a Vercel token from the owner. No pull requests: work on `rebuild-astro`, nothing replaces the live site until a whole step is approved.
+
+State on 20 Oct:
+- Homepage: all 7 blocks approved and locked (`site/locked.json`).
+- Tiers page: navigation + first section built (`site/src/blocks/tiers/`), waiting for the owner's OK; then the banner and footer, then the remaining pages (REBUILD_PLAN step 1).
+- Homepage content mockups (how a class works, plans, factual FAQ) at `/mockup-home`, waiting for the owner's feedback.
+- To ask the owner: the locked `src/blocks/head.html` (and the Tiers head) still load `js/translations.js`; main now loads `js/i18n/en.js` (+ the folder language). Swapping the tag changes no visible text but touches a locked block, so it needs the owner's OK.
+
+The original mockup brief below is kept for reference.
+
+## Phase 4 (original brief) — Design mockups (locked to the current homepage)
 
 **Goal:** a set of static HTML mockups the owner can review, built only from elements that already exist on alimun.com.
 
@@ -203,7 +227,10 @@ Publish the index as a private claude.ai Artifact for review if the session can;
 
 **Acceptance:** the owner approves or comments per screen; a reviewer check (separate sub-agent with only `LOCKED_ELEMENTS.md` and the mockups) finds zero elements outside the locked inventory, zero emojis, zero eyebrow labels.
 
-**Kickoff prompt**
+**Kickoff prompt (current)**
+> Read CLAUDE.md, docs/IMPLEMENTATION_PLAN.md (Phase 4) and docs/REBUILD_PLAN.md. Work on branch `rebuild-astro` (folder `site/`), no pull requests. Show me the Tiers navigation and first section on the preview for approval, then continue element by element, locking each approved block in site/locked.json. Nothing invented: no new elements, eyebrow labels, emojis or stats; missing copy is [COPY NEEDED].
+
+**Kickoff prompt (original, superseded)**
 > Read CLAUDE.md and docs/IMPLEMENTATION_PLAN.md (Phase 4). Branch `phase-4-mockups`. First extract the locked element inventory from the live homepage (index.html, css/, fonts/, images/) into mockups/LOCKED_ELEMENTS.md and show it to me. Then build the mockups listed in Phase 4 using only those elements — no emojis, no eyebrow labels, no invented sections, stats or icons; where copy is missing write [COPY NEEDED]. Finish with an independent sub-agent check against the inventory and fix anything it flags.
 
 ---

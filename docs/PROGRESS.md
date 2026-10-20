@@ -196,3 +196,7 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - api/_lib/one-on-one.js sends a reasonCode with each reason (not_active, no_teacher, before_first_lesson, booked, window_closed, before_lesson_end, join_class_first) and on not_allowed; error codes already existed. Dashboards show student_oto_r_* / student_oto_e_* / teacher_oto_e_* in the site language, English text as fallback. Unit tests assert the codes.
 - Admin bar (js/view-as.js) uses t() with va_* keys; all values escaped.
 - 43 keys added in en/fr/de/es/ma.
+
+## 20 Oct 2026 - Ready for Phase 4
+- Plan updated: phase table (2 done, 3 done except owner-blocked items, 4 = Astro 1:1 rebuild in progress), "Phase 3 status" list of what is still open, Phase 4 current state and kickoff prompt.
+- main merged into `rebuild-astro` (clean, site builds, locked blocks unchanged) and pushed.
