@@ -4,7 +4,7 @@ Plan of record: `docs/IMPLEMENTATION_PLAN.md`. Public-site rebuild (Astro, same 
 
 ## Project
 - Static site (Webflow export, being cleaned up) + Vercel serverless functions in `api/` + Supabase (project `dgaiasmefcbrtzqwdyri`, eu-west-1) + Stripe (live) + Daily.co + Resend.
-- `main` auto-deploys to production at https://alimun.com. Work on a branch `phase-N-<slug>`, open a PR, merge only when the phase's acceptance checks pass.
+- `main` auto-deploys to production at https://alimun.com. **Owner decision (20 Oct 2026): no pull requests. Commit and push directly to `main`** after the local checks in "Verify before claiming done" pass, then confirm the change is live. Database changes: apply them yourself through the Supabase connector (it times out on large batches, so run one statement at a time) and verify; only hand SQL to the owner if that fails.
 - Owner and admin login: bchysfpol@gmail.com (admin via `app_metadata.role`).
 
 ## Must-follow
