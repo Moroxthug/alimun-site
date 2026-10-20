@@ -31,5 +31,9 @@
   "src/blocks/06-bottom-cta.html": {
     "sha256": "26eea6e3b61f9ec56d3764d3d64d253d19a53bd37f0991c0fbaf60a51c57df27",
     "approved": "2026-10-20 banner ok"
+  },
+  "src/blocks/07-footer.html": {
+    "sha256": "c3c410bd0db6d4ec1e5576fc6dc7395b0d8650daf64cb6b2c7a145b754c027dc",
+    "approved": "2026-10-20 footer ok"
   }
 }
