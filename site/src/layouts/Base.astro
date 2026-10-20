@@ -1,11 +1,9 @@
 ---
-// Page frame copied from the homepage export: <head>, the page wrapper and
-// the scripts at the end of <body> (jQuery, webflow.js animations, cookies).
-import head from '../blocks/head.html?raw';
-import afterBody from '../blocks/after-body.html?raw';
-
-interface Props { wfPage: string; lang?: string }
-const { wfPage, lang = 'en' } = Astro.props;
+// Page frame copied from the Webflow export: <head>, the page wrapper and the
+// closing scripts (jQuery, webflow.js animations, cookies). Each page passes
+// its own verbatim head and closing blocks.
+interface Props { wfPage: string; head: string; after: string; lang?: string }
+const { wfPage, head, after, lang = 'en' } = Astro.props;
 ---
 <!DOCTYPE html>
 <html data-wf-page={wfPage} data-wf-site="68d948d03b6c9f2bbbac3e5b" lang={lang}>
@@ -14,6 +12,6 @@ const { wfPage, lang = 'en' } = Astro.props;
   <div class="page-wrapper">
     <slot />
   </div>
-  <Fragment set:html={afterBody} />
+  <Fragment set:html={after} />
 </body>
 </html>
