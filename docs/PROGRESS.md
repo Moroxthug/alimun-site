@@ -108,3 +108,91 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Vercel (owner approved): removed 10 dead variables (`STRIPE_PRICE_FOUNDING_MEMBER`, `STRIPE_PRICE_CERTIFICATE`, the eight `*_MONTHLY_AUD/MAD`; all pointed to another Stripe account) and redeployed. Dashboard upgrades in AUD/MAD now fall back to the EUR price, whose `currency_options` charge in the local currency. Stripe: founding product `prod_VQhjlLg7kdkTtO` archived.
 - `supabase/migrations/202610190100_cleanup_test_accounts.sql` (owner: "delete A and B, fix C"): deletes 11 junk and 11 demo accounts plus the Test Teacher's closed demo class; owner accounts `bchysfca@`, `bchysfpol@` lose unpaid tiers. MCP timed out (nothing applied); owner runs it in the SQL editor.
 - Admin: "View as teacher" opened an empty page because no teacher is approved; it now falls back to any teacher. "Create class" with no approved teacher explains what to do. Class screen has "Add a student" (any student learning that language; uses `enrollment-move`).
+
+## 2026-10-20 — Rebuild proof done, plan written
+- Branch `rebuild-astro`, folder `site/`: the homepage rebuilt in Astro from verbatim Webflow blocks, approved element by element by the owner (nav, hero, email section, cards, FAQ, banner, footer) and locked in `site/locked.json`. Pixel comparisons match on desktop and phone. Preview: https://alimun-rebuild-preview.vercel.app (separate Vercel project).
+- `docs/REBUILD_PLAN.md`: steps 0-5 (language meta tags now; other pages; languages; switch-over; course pages; Search Console). Waiting for the owner's decisions listed at the end.
+
+## 2026-10-20 — Rebuild Step 0: translated titles and descriptions
+- `scripts/meta-i18n.json` + `build.js`: the French, German and Spanish copies (and `ma`, which is French) of the 10 public pages get translated `<title>`, description, `og:` and `twitter:` tags; they were English on every language. Faithful translations of the current English; Italian and the other languages unchanged for now (owner focus: en, fr, de, es).
+- Noted, not changed: the homepage description says "Learn English, Spanish, French, Italian and more", but only English and German classes are open (`LIVE_LANGUAGES`).
+
+## 2026-10-20 — 1:1 follow-ups (Intensive) and bookable private classes
+- Owner decisions: Intensive includes one 20-minute 1:1 follow-up per week on that week's lesson, booked within 3 days after the lesson from the class teacher's availability; unused follow-ups do not carry over; 1 on 1 unchanged; a paid follow-up for lower plans later, once the owner sets a price.
+- Found: the EUR 60 "1:1 class" could be bought but never booked (credits were stored and nothing used them). Credits now book a 60-minute slot with the class teacher within 14 days; cancelling 24 h ahead returns the credit.
+- `supabase/migrations/202610201200_one_on_one_bookings.sql`: `one_on_one_bookings` (read-only for the student, the teacher and admins), `book_one_on_one` / `cancel_one_on_one` (service role only; lock the teacher row so a slot cannot be double-booked; one follow-up per student per week; no clash with the teacher's group lessons). Tested on a local Postgres (rules, refunds, RLS, re-run).
+- `api/_lib/one-on-one.js` via `/api/enroll?action=oto-status|oto-book|oto-cancel|oto-note` (no new function); `/api/join-session` accepts `{ bookingId }` (private room, open 10 min before to 15 min after). Student dashboard: "Your 1:1" card, slot picker in the student's time zone, join/cancel, teacher notes; the 1:1 button books with a credit when there is one. Teacher dashboard: the hard-coded "Session tips" card (invented students and a 71% score) is replaced by the real 1:1 list with join and a follow-up note.
+- Not yet: emails for bookings and notes (need Resend); paid follow-up for Community/Focused (price needed). The live classroom also runs `startTranscriptSimulation()` (scripted fake transcript lines): flagged to the owner, not changed here.
+## 2026-10-20 — Fake classroom transcript removed
+- Owner decision: remove it. Both dashboards' live classroom played scripted lines ("Hello everyone! Welcome to our session today", "thank you Sofia!") as a "Transcription", and copied some into the class chat as if said. Removed the tab, the scripted lines and `startTranscriptSimulation()`; the classroom opens on Files. Real captions would be a separate feature.
+- Applied by Claude through the Supabase connector (statement by statement; whole-file runs time out): table, RLS, 3 read policies, indexes, both functions (service role only). Verified. Pushed straight to `main` (owner: no more pull requests; CLAUDE.md updated).
+
+## 20 Oct 2026 - Account cleanup applied
+- Owner ran the delete block in the Supabase SQL editor: the 22 junk/demo accounts (groups A and B) and the Test Teacher demo class are gone. 8 users remain.
+- C: bchysfca@ and bchysfpol@ moved to tier `waitlist` (tier is NOT NULL, so null was not possible). Admin role untouched.
+- Kept: the bchysf* owner accounts and passanthaitham@gmail.com (teacher, pending).
+
+## 20 Oct 2026 - Admin demo teacher
+- Admin opening the teacher dashboard now lands on "Demo teacher (sample data)": one class, 4 demo students, sessions, homework, grading queue, payouts, availability, 1:1 booking. Every screen and button works; changes live only in the tab (js/demo-teacher.js mocks the Supabase client and /api calls). Real teachers are still in the switcher, read-only.
+- Removed fake numbers from real teacher dashboards: "12 day streak" default (and the streak line), 68%/75% default scores, the hard-coded "20 students - Spanish B1" sidebar box (now the teacher's real class, hidden without one). Fixed "Due: Due:".
+
+## 20 Oct 2026 - Admin demo student
+- js/demo-teacher.js became js/demo.js: one sample world for both dashboards. Admin opening the student dashboard lands on "Demo student (sample data)" = Demo Student 1 (Intensive) in the demo teacher's class: next class, notes, homework (graded/pending/to do), progress, teacher note, classmates, 1:1 follow-up booked (cancel and rebook work), 1 private-class credit. Realtime and API calls are answered locally; only the switcher's people list and /api/stripe/config hit the server.
+- Student dashboard: teacher card no longer shows invented "48 sessions" / "5.0" rating.
+- Still fake on the real student dashboard (not touched): streak 15 days, cohort rank #3, French vocabulary on Today's Session, French test questions and "APR 28" assessment, Messages "French B2 - April 16, 2026" chat, Progress sample scores, teacher avatar "M".
+
+## 20 Oct 2026 - Student dashboard: fake data removed
+- Home stats: streak = consecutive days with activity (exercises, graded homework, lessons attended); weekly avg = all scores of the last 7 days; cohort rank removed (no real data).
+- Progress: rows built from exercise_results + graded homework (last 8 per category), empty state when none. Overall trend = last 30 days vs the 30 before; Teacher score = last graded homework. Removed the localStorage defaults (62..91 etc).
+- Tests: invented "End-of-month CEFR assessment APR 28" card and French sample results removed; results = assessment scores from exercise_results; practice quiz saves to the DB; added an English question; no question shown for languages without one.
+- Today's Session: vocabulary from the latest lesson notes (was hard-coded French); teacher name/avatar/topic placeholders cleared; "8 / 12 classmates waiting" removed.
+- Messages: title is the student's language + level + AI Tutor (it is an AI chat, classmates do not see it); no random online dots or colours; "Session started 09:00" and the Marie Dubois placeholder removed.
+- Practice library: languages without a set (English) no longer get the French exercises; they see only teacher homework. Owner to decide whether to write an English set.
+
+## 20 Oct 2026 - English practice set, AI-only chat list
+- Practice library: English A/B/C sets added (8 each: grammar MC x2, fill-in x2, word matching, speaking, listening, essay), same format as the German set.
+- Text-to-speech and speech recognition used fr-FR for English students; now per language (en-GB, es-ES, de-DE, fr-FR, it-IT).
+- Messages: member list shows only the AI tutor (owner decision).
+
+## 20 Oct 2026 - Teacher dashboard role check
+- Removed the user_metadata.role fallback from the teacher dashboard routing (CLAUDE.md rule); all three teachers have app_metadata.role = teacher, verified before the change.
+- English speech locale stays en-GB (Cambridge/IELTS standard), owner OK.
+
+## 20 Oct 2026 - Dashboard translations (fr/de/es)
+- Every text key used by the student and teacher dashboards now exists in en, fr, de, es and ma (French): 266 keys added per language, 96 English keys that only existed as code fallbacks added to en.
+- Dashboards wait for the deferred translation scripts before building text, so JS-built text (1:1 card, progress, stats, schedule) is translated, not only static labels.
+- Hard-coded English in the student dashboard moved to keys: next class / join button states, classmates enrolled, schedule, calendar legend, month and weekday names (Intl, site locale), exercise filters and types, chat role. Dates and times use the site language locale (en-GB, fr-FR, de-DE, es-ES, fr-MA).
+- Removed more invented data: "Recent activity" (Vocabulary Quiz 90%...) is now the latest real scores; home schedule times were fixed at 09:00/18:00, now the real class time.
+- German teacher sidebar "Docent" -> "Unterricht". Tiers footer uses the same i18n keys as the homepage footer.
+- Not translated: the admin view bar (admin only), API error messages from the server (1:1 booking reasons), exercise content itself (it is in the language being learned).
+
+## 20 Oct 2026 - Vocabulary review + This week's plan
+- New table vocab_reviews (migration 202610201500, applied and verified: RLS on, select/insert/update own rows, teachers of the student and admin can read; no delete). The drop-policy lines time out in the connector, so policies were created directly.
+- Student home: words from the teacher's lesson notes are copied in and reviewed as flashcards (show meaning, I knew it / Not yet). Spaced repetition: 1, 3, 7, 14, 30 days; a miss comes back tomorrow. Each review session is saved as a vocabulary score (Progress).
+- Student home: "This week's plan" card: next lesson, homework due within 7 days, 1:1 follow-up (Intensive), vocabulary due, 3 practice exercises from the weakest skill (kept for the week). Each row links to the right place.
+- Translated (en/fr/de/es/ma); demo student has real-looking lesson words to try it.
+
+## 20 Oct 2026 - Exam preparation (English, German)
+- js/exam-prep.js: practice tasks in the format of B2 First, C1 Advanced, IELTS (English) and Goethe B1, Goethe B2, telc B1 (German), 6-7 tasks each (cloze, word formation, transformations, True/False/Not Given, Lesen, Sprachbausteine, listening dictation, speaking phrases, essays with the exam word counts and criteria). Shown in Practice under "Exam prep" for students of that language; results count as Tests. A note says they are not official and Alimun is not affiliated with the exam boards.
+- Fixed: multiple-choice questions without an example sentence showed an empty quote box; Tests view refreshes when a test score is added.
+- French and Spanish (DELF/DALF, DELE) to add when those courses go on sale.
+
+## 20 Oct 2026 - Practice progress in the DB, teacher view of practice
+- New table practice_progress (migration 202610201700, applied and verified: RLS, own rows insert/update/select, teachers of the student and admin read, no delete). Built-in and exam exercises save done/answer/score there, so they stay finished on every device; progress kept only in a browser is copied up once on next load.
+- Teacher student popup: invented "Performance Index" (teacher's localStorage, default 75%) replaced by the real 30-day average from exercise_results; new "Between lessons" block: words in review, words learned, due today, built-in exercises done, last vocabulary review, last 5 exam/test results.
+- Teacher lesson notes: hint that the vocabulary becomes the students' flashcards, and a confirm before publishing notes with no vocabulary.
+- Translated en/fr/de/es/ma; demo data covers it.
+
+## 20 Oct 2026 - Translation file split per language
+- js/translations.js (500 KB, 144 KB gzip, all 9 languages, loaded by every page) stays the only file to edit; npm run build now writes js/i18n/<lang>.js (public text) and <lang>.app.js (dashboard-only text) via scripts/split-translations.js.
+- Pages load English + their folder language (French homepage: ~24 KB gzip instead of 144 KB); dashboards also load the .app files. js/i18n.js loads another active language on demand (root sign-in and dashboards are translated in place) and exposes ALIMUN_I18N_READY; dashboards wait for it.
+- Hand-made Italian pages updated by hand. CLAUDE.md rule added.
+
+## 20 Oct 2026 - Sign-in 404 fixed
+- The occasional 404 was /favicon.ico: browsers request it on first visit when a page declares no icon. Added /favicon.ico (copy of images/favicon.ico) and the homepage icon links to the 11 pages without them (sign-in, sign-up, password pages, dashboards, admin, legal pages).
+
+## 20 Oct 2026 - Placement score, admin bar and 1:1 messages translated
+- Placement test score goes through updateProgressCategory: shows under Tests and Progress at once (and is still saved to exercise_results).
+- api/_lib/one-on-one.js sends a reasonCode with each reason (not_active, no_teacher, before_first_lesson, booked, window_closed, before_lesson_end, join_class_first) and on not_allowed; error codes already existed. Dashboards show student_oto_r_* / student_oto_e_* / teacher_oto_e_* in the site language, English text as fallback. Unit tests assert the codes.
+- Admin bar (js/view-as.js) uses t() with va_* keys; all values escaped.
+- 43 keys added in en/fr/de/es/ma.

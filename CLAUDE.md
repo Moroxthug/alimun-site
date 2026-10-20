@@ -1,14 +1,15 @@
 # Alimun — working rules for Claude sessions
 
-Plan of record: `docs/IMPLEMENTATION_PLAN.md`. Progress log: `docs/PROGRESS.md` (append an entry at the end of every session).
+Plan of record: `docs/IMPLEMENTATION_PLAN.md`. Public-site rebuild (Astro, same design): `docs/REBUILD_PLAN.md`; blocks listed in `site/locked.json` are owner-approved and must not change without the owner's request. Progress log: `docs/PROGRESS.md` (append an entry at the end of every session).
 
 ## Project
 - Static site (Webflow export, being cleaned up) + Vercel serverless functions in `api/` + Supabase (project `dgaiasmefcbrtzqwdyri`, eu-west-1) + Stripe (live) + Daily.co + Resend.
-- `main` auto-deploys to production at https://alimun.com. Work on a branch `phase-N-<slug>`, open a PR, merge only when the phase's acceptance checks pass.
+- `main` auto-deploys to production at https://alimun.com. **Owner decision (20 Oct 2026): no pull requests. Commit and push directly to `main`** after the local checks in "Verify before claiming done" pass, then confirm the change is live. Database changes: apply them yourself through the Supabase connector (it times out on large batches, so run one statement at a time) and verify; only hand SQL to the owner if that fails.
 - Owner and admin login: bchysfpol@gmail.com (admin via `app_metadata.role`).
 
 ## Must-follow
 - **Root HTML is the source; locale folders are generated.** After editing any root `*.html`, run `npm run build` and commit the regenerated `ar de es fr it ma pt zh` copies. Locale-only hand-made pages are in `build.js`'s skip list.
+- **Translations.** Edit only `js/translations.js`. `npm run build` splits it into `js/i18n/<lang>.js` (public text) and `js/i18n/<lang>.app.js` (dashboard-only text); commit those generated files. Pages load English plus their folder's language; `js/i18n.js` fetches another active language on demand.
 - **Function cap.** `api/**/*.js` currently has 12 functions = Vercel Hobby limit. Do not add a new file under `api/`; add an `?action=` to an existing handler instead, unless the owner confirms the Pro plan.
 - **Roles.** Never trust `user_metadata` for authorisation. Admin = `app_metadata.role === 'admin'` (client gate and server check) and `public.is_admin()` in SQL. Every API action verifies the Supabase JWT server-side.
 - **Escaping.** Anything from the database, the user or the AI that goes into `innerHTML` passes through `escapeHtml`; URLs in `href/src` must be https and validated.

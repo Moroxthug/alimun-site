@@ -8,7 +8,8 @@
 --     The one class owned by "Test Teacher" (closed demo class) is
 --     deleted first because cohorts.teacher_id is ON DELETE RESTRICT.
 --  C. Owner accounts kept; bchysfca@ and bchysfpol@ lose the tier they
---     never paid for (tier -> null). Admin role is untouched.
+--     never paid for (tier -> 'waitlist';
+--     tier is NOT NULL). Admin role is untouched.
 --
 --  Everything linked to these users goes with them through the existing
 --  ON DELETE CASCADE keys (profiles, enrollments, attendance, AI usage,
@@ -43,18 +44,18 @@ where teacher_id in (select tp.id from public.teacher_profiles tp where tp.user_
 delete from auth.users where id in (select id from _doomed);
 
 -- C
-update public.student_profiles sp set tier = null, updated_at = now()
+update public.student_profiles sp set tier = 'waitlist', updated_at = now()
 from auth.users u
 where u.id = sp.user_id
   and lower(u.email) in ('bchysfca@gmail.com', 'bchysfpol@gmail.com')
   and sp.stripe_subscription_id is null
-  and sp.tier is not null;
+  and sp.tier <> 'waitlist';
 
 commit;
 
 -- ============================================================
 --  Verify (expect: 0 doomed users left, 30 - 22 = 8 users, the two
---  owner accounts with tier null, Passant still pending).
+--  owner accounts on tier 'waitlist', Passant still pending).
 -- ============================================================
 select count(*) as doomed_left from auth.users where lower(email) in (
   'ijoaijd@gmail.nedionoia', 'ijojoia@iojodsi.com', 'uijdioa@ijoid.com', 'iojjoa@miomo.com',

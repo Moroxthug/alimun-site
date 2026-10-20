@@ -1,11 +1,14 @@
 <!DOCTYPE html><html lang="pt" dir="ltr"><head>
 <meta charset="utf-8">
 <title>Teacher Dashboard – Alimun</title>
+  <link href="../images/favicon.ico" rel="shortcut icon" type="image/x-icon">
+  <link href="../images/webclip.png" rel="apple-touch-icon">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&amp;display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Anton&amp;display=swap" rel="stylesheet">
 <!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
+<script src="../js/demo.js"></script>
 <script src="../js/view-as.js"></script>
 <script src="../js/tz.js"></script>
 <script src="https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js"></script>
@@ -45,7 +48,7 @@ function parseLocalDate(v) {
     supabaseAnonKey: 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
   };
 </script>
-<script src="../js/translations.js" defer=""></script>
+<script src="../js/i18n/en.js" defer=""></script><script src="../js/i18n/pt.js" defer=""></script><script src="../js/i18n/en.app.js" defer=""></script><script src="../js/i18n/pt.app.js" defer=""></script>
 <script src="../js/i18n.js" defer=""></script>
 <style>
 @font-face{font-family:'Coolvetica Condensed';src:url('fonts/coolvetica-condensed-rg.otf') format('opentype');font-weight:400 700;font-display:swap;}
@@ -1012,10 +1015,10 @@ body{font-family:var(--body);color:var(--b);background:#f8f8f8;}
       <button class="sb-a" data-v="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path></svg><span class="sb-lbl" data-i18n="teacher_sb_settings">Configurações</span></button>
     </nav>
     <div class="sb-bot">
-      <div class="sb-role">
+      <div class="sb-role" id="sb-role" style="display:none;">
         <div class="sb-role-l" data-i18n="teacher_sb_role_title">Ensino</div>
-        <div class="sb-role-v" data-i18n="tier_focused_name">Focado</div>
-        <div class="sb-role-s" data-i18n="teacher_sb_role_desc">20 alunos · Espanhol B1</div>
+        <div class="sb-role-v" id="sb-role-v"></div>
+        <div class="sb-role-s" id="sb-role-s"></div>
       </div>
       <div class="sb-user">
         <div class="sb-av" id="sb-user-av">ST</div>
@@ -1086,11 +1089,7 @@ body{font-family:var(--body);color:var(--b);background:#f8f8f8;}
 
   <!-- Utility / Multi-button Tools Row -->
   <div class="classroom-tools-row">
-    <button class="tool-btn active" data-tab="transcription" onclick="switchClassroomTab('transcription')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-      <span data-i18n="tool_transcription">Transcription</span>
-    </button>
-    <button class="tool-btn" data-tab="files" onclick="switchClassroomTab('files')">
+    <button class="tool-btn active" data-tab="files" onclick="switchClassroomTab('files')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
       <span data-i18n="tool_files">Files</span>
     </button>
@@ -1110,13 +1109,7 @@ body{font-family:var(--body);color:var(--b);background:#f8f8f8;}
 
   <!-- Classroom Tab Contents -->
   <div class="classroom-tab-content">
-    <div id="tab-transcription" class="tab-pane active">
-      <div class="transcription-log" id="transcription-log">
-        <p class="trans-meta" data-i18n="teacher_trans_starting">Live transcription starting when class begins...</p>
-      </div>
-    </div>
-    
-    <div id="tab-files" class="tab-pane">
+    <div id="tab-files" class="tab-pane active">
       <div class="files-container">
         <div class="file-upload-zone" id="file-dropzone" onclick="document.getElementById('file-upload-input').click()">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
@@ -1264,7 +1257,7 @@ function getPendingSubmissions() {
       n: name,
       i: String(name).split(' ').map(w=>w[0] || '').join('').toUpperCase().slice(0,2),
       lvl: p.student_profiles?.level || studentInfo.lvl || '—',
-      pct: studentInfo.pct || 75,
+      pct: studentInfo.pct || 0,
       active: 'Recently',
       streak: studentInfo.streak || 0,
       sub: p.assignments?.title || 'Submission',
@@ -1558,7 +1551,7 @@ function vStudents(){
       ${STUDENTS.map(s=>`
         <div class="stu-row">
           <div class="stu-av">${escapeHtml(s.i)}</div>
-          <div class="stu-info"><div class="stu-name" style="cursor:pointer;text-decoration:underline;" onclick="openStudentProfileModal(${jsArg(s.id)})">${escapeHtml(s.n)}</div><div class="stu-sub">${escapeHtml(s.lvl)} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : escapeHtml(s.active)} · 🔥 ${Number(s.streak) || 0} ${dict.student_streak_label || 'day streak'}</div></div>
+          <div class="stu-info"><div class="stu-name" style="cursor:pointer;text-decoration:underline;" onclick="openStudentProfileModal(${jsArg(s.id)})">${escapeHtml(s.n)}</div><div class="stu-sub">${escapeHtml(s.lvl)} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : escapeHtml(s.active)}</div></div>
           <div style="display:flex;align-items:center;gap:1.25rem;">
             <div style="text-align:right;"><div style="font-family:var(--disp);font-size:1.1rem;">${Number(s.pct) || 0}%</div><div style="font-size:.68rem;color:#bbb;text-transform:uppercase;letter-spacing:.06em;">${overallText}</div><div class="stu-bar-wrap" style="margin-left:auto;"><div class="stu-bar" style="width:${Number(s.pct) || 0}%"></div></div></div>
             ${s.sub?`<button class="btn sm" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;" onclick="gradeModal(${escapeHtml(JSON.stringify(s))})" data-i18n="teacher_action_grade">${dict.teacher_action_grade || 'Grade →'}</button>`:`<button class="btn out sm" onclick="openStudentProfileModal(${jsArg(s.id)})" data-i18n="teacher_action_view">${dict.teacher_action_view || 'View'}</button>`}
@@ -1955,7 +1948,6 @@ function vSessions(){
 
   const cohortDescText = dict['teacher_lbl_live_cohort_desc'] || 'Live cohort sessions — Focused Practice group';
   const upcomingText = dict['teacher_lbl_upcoming'] || 'Upcoming';
-  const sessionTipsText = dict['teacher_lbl_session_tips'] || 'Session tips';
   const completedText = dict['teacher_lbl_completed'] || 'Completed';
 
   // Get upcoming sessions sorted ascending (closest first)
@@ -2029,17 +2021,86 @@ function vSessions(){
         ${upcomingHtml}
       </div>
       <div>
-        <div class="sh"><span class="sec-t">${sessionTipsText}</span></div>
-        <div class="card">
-          <p style="font-size:.84rem;line-height:1.7;color:#555;">3 students submitted this week's essay — review their common errors before the session to address them as a group. Alex and Sophie both struggled with por vs. para.</p>
-          <div style="margin-top:1rem;border-top:1px solid rgba(0,0,0,.06);padding-top:1rem;font-size:.84rem;line-height:1.7;color:#555;">Avg. quiz score this week: <b>71%</b> — grammar drills on ser/estar would be well-timed.</div>
-        </div>
+        <div class="sh"><span class="sec-t">${t('teacher_oto_title', '1:1 follow-ups')}</span></div>
+        <div class="card" id="oto-teacher"><p style="font-size:.84rem;line-height:1.7;color:#555;">${t('teacher_oto_loading', 'Loading...')}</p></div>
       </div>
     </div>
     <div class="sh"><span class="sec-t" data-i18n="student_session_history">${dict.student_session_history || 'Session history'}</span></div>
     <div class="card">${historyHtml}</div>
     <div style="height:2.5rem"></div>`;
+  loadTeacherOto();
 }
+
+/* 1:1 follow-ups (Intensive) and paid private classes booked with this teacher.
+   Read through RLS; the note is saved by /api/enroll?action=oto-note. */
+async function loadTeacherOto() {
+  const box = document.getElementById('oto-teacher');
+  const sb = window.currentTeacher && window.currentTeacher.supabase;
+  if (!box || !sb) return;
+  const since = new Date(Date.now() - 7 * 86400000).toISOString();
+  const { data, error } = await sb.from('one_on_one_bookings')
+    .select('id, kind, scheduled_at, duration_minutes, status, teacher_note, student_profiles ( full_name )')
+    .in('status', ['booked', 'completed']).gte('scheduled_at', since)
+    .order('scheduled_at', { ascending: true }).limit(30);
+  window.TEACHER_OTO = data || [];
+  if (error || !data || !data.length) {
+    box.innerHTML = '<p style="font-size:.84rem;line-height:1.7;color:#555;">' + escapeHtml(t('teacher_oto_empty', 'No 1:1 bookings this week. Intensive students book a 20-minute follow-up after their lesson from your availability.')) + '</p>';
+    return;
+  }
+  const now = Date.now();
+  const rows = data.map((b) => {
+    const start = Date.parse(b.scheduled_at);
+    const ended = now > start + (b.duration_minutes + 15) * 60000;
+    const when = new Date(b.scheduled_at).toLocaleString(undefined, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    const kind = b.kind === 'followup' ? t('teacher_oto_followup', 'Follow-up') : t('teacher_oto_private', 'Private class');
+    let actions = '';
+    if (b.status === 'booked' && !ended) actions += '<button class="btn sm" onclick="handleTeacherJoin(null, null, ' + jsArg(b.id) + ')">' + escapeHtml(t('teacher_oto_join', 'Join')) + '</button> ';
+    if (now >= start) actions += '<button class="btn sm" style="background:#fff;color:#080808;border:1px solid rgba(0,0,0,.12);" onclick="openOtoNote(' + jsArg(b.id) + ')">' + escapeHtml(b.teacher_note ? t('teacher_oto_edit_note', 'Edit note') : t('teacher_oto_write_note', 'Write note')) + '</button>';
+    return '<div style="display:flex;justify-content:space-between;gap:10px;align-items:center;padding:.6rem 0;border-bottom:1px solid rgba(0,0,0,.06);">'
+      + '<div><div style="font-size:.86rem;font-weight:700;">' + escapeHtml((b.student_profiles && b.student_profiles.full_name) || t('teacher_oto_student', 'Student')) + '</div>'
+      + '<div style="font-size:.76rem;color:#777;">' + escapeHtml(when) + ' · ' + escapeHtml(String(b.duration_minutes)) + ' min · ' + escapeHtml(kind) + (b.status === 'completed' ? ' · ' + escapeHtml(t('teacher_oto_done', 'Done')) : '') + '</div></div>'
+      + '<div style="white-space:nowrap;">' + actions + '</div></div>';
+  }).join('');
+  box.innerHTML = rows;
+}
+
+function openOtoNote(id) {
+  const b = (window.TEACHER_OTO || []).find((x) => x.id === id);
+  const name = b && b.student_profiles && b.student_profiles.full_name ? b.student_profiles.full_name : t('teacher_oto_student', 'Student');
+  const html = '<div style="padding:1.5rem;">'
+    + '<div style="font-weight:800;font-size:1rem;margin-bottom:.25rem;">' + escapeHtml(t('teacher_oto_note_title', 'Follow-up note')) + ' · ' + escapeHtml(name) + '</div>'
+    + '<p style="font-size:.8rem;color:#777;margin:0 0 .75rem;">' + escapeHtml(t('teacher_oto_note_desc', 'What you worked on and what the student should practise next. The student sees this note in their dashboard.')) + '</p>'
+    + '<textarea id="oto-note-text" maxlength="4000" style="width:100%;min-height:140px;padding:.75rem;border:1px solid rgba(0,0,0,.12);border-radius:10px;font:inherit;">' + escapeHtml((b && b.teacher_note) || '') + '</textarea>'
+    + '<div id="oto-note-err" style="color:#c0392b;font-size:.8rem;margin:.5rem 0;"></div>'
+    + '<div style="display:flex;justify-content:flex-end;gap:.5rem;"><button class="btn sm" style="background:#fff;color:#080808;border:1px solid rgba(0,0,0,.12);" onclick="closeModal()">' + escapeHtml(t('teacher_cancel', 'Cancel')) + '</button>'
+    + '<button class="btn sm" id="oto-note-save" onclick="saveOtoNote(' + jsArg(id) + ')">' + escapeHtml(t('teacher_save', 'Save')) + '</button></div></div>';
+  openModal(html);
+}
+
+async function saveOtoNote(id) {
+  const text = (document.getElementById('oto-note-text') || {}).value || '';
+  const err = document.getElementById('oto-note-err');
+  const btn = document.getElementById('oto-note-save');
+  if (btn) btn.disabled = true;
+  try {
+    const sb = window.currentTeacher.supabase;
+    const { data: { session } = {} } = await sb.auth.getSession();
+    const resp = await fetch('/api/enroll', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token || ''}` },
+      body: JSON.stringify({ action: 'oto-note', id, note: text }),
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok) throw new Error(t(`teacher_oto_e_${data.error}`, data.message || t('teacher_oto_e_server_error', 'Please try again.')));
+    closeModal();
+    loadTeacherOto();
+  } catch (e) {
+    if (err) err.textContent = e.message;
+    if (btn) btn.disabled = false;
+  }
+}
+window.openOtoNote = openOtoNote;
+window.saveOtoNote = saveOtoNote;
 
 function vSettings(){
   const tp = window.currentTeacher || { name: '', email: '', profile: {} };
@@ -2108,6 +2169,18 @@ async function saveSettings() {
 }
 
 /* ═══ DATA INITIALIZATION & PAYOUTS ═══ */
+// Sidebar "Teaching" box: the teacher's first open class, hidden when they have none
+function fillSidebarClass() {
+  const box = document.getElementById('sb-role');
+  if (!box) return;
+  const c = (DB_COHORTS || []).find(x => ['open', 'full'].includes(x.status)) || (DB_COHORTS || [])[0];
+  if (!c) { box.style.display = 'none'; return; }
+  const dict = (window.ALIMUN_TRANSLATIONS || {})[window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en'] || {};
+  document.getElementById('sb-role-v').textContent = dict[`tier_${c.tier}_name`] || c.tier || '';
+  document.getElementById('sb-role-s').textContent = `${Number(c.enrolled_count) || 0} ${dict.teacher_lbl_students || 'students'} · ${c.language || ''} ${c.level || ''}`.trim();
+  box.style.display = '';
+}
+
 async function initTeacherData() {
   const sb = window.currentTeacher.supabase;
   const teacherProfileId = window.currentTeacher.profile.id;
@@ -2143,9 +2216,9 @@ async function initTeacherData() {
         const streakKey = `alimun:streak:${s.id}`;
         const metricsKey = `alimun:progress_metrics:${s.id}`;
         
-        const streak = parseInt(localStorage.getItem(streakKey) || '12');
+        const streak = parseInt(localStorage.getItem(streakKey) || '0', 10) || 0;
         const metricsStr = localStorage.getItem(metricsKey);
-        let pct = 68; // default
+        let pct = 0; // until exercise results load
         if (metricsStr) {
           try {
             const metrics = JSON.parse(metricsStr);
@@ -2256,7 +2329,7 @@ async function initTeacherData() {
         id: a.id,
         name: a.title,
         type: a.type,
-        due: a.due_date ? ('Due: ' + getLocaleString(parseLocalDate(a.due_date), { day: 'numeric', month: 'short' })) : 'No due date',
+        due: a.due_date ? (getLocaleString(parseLocalDate(a.due_date), { day: 'numeric', month: 'short' })) : 'No due date',
         submissions: (a.assignment_submissions || []).length,
         total: STUDENTS.length || 0
       }));
@@ -2615,7 +2688,7 @@ async function vAvailability() {
             </div>
           </div>
           
-          <p style="font-size:0.75rem;color:var(--dim);margin:0;">Times are in your current timezone: <strong>${escapeHtml(browserTz)}</strong>.</p>
+          <p style="font-size:0.75rem;color:var(--dim);margin:0;">${escapeHtml(t('teacher_tz_hint', 'Times are in your current timezone:'))} <strong>${escapeHtml(browserTz)}</strong>.</p>
 
           <button class="btn" id="avail-add-btn" onclick="saveAvailabilitySlot()" style="justify-content:center;width:100%;margin-top:0.5rem;padding:0.875rem;font-size:0.75rem;">${dict.teacher_avail_add_btn || 'Add Available Hours'}</button>
         </div>
@@ -2947,16 +3020,38 @@ async function openStudentProfileModal(studentId) {
     const contentEl = document.getElementById('student-modal-content');
     if (!contentEl) return;
     
-    const metricsKey = `alimun:progress_metrics:${studentId}`;
-    const metricsStr = localStorage.getItem(metricsKey);
-    let avgScore = 75;
-    if (metricsStr) {
-      try {
-        const metrics = JSON.parse(metricsStr);
-        const sumLatest = metrics.reduce((acc, m) => acc + m.data[m.data.length - 1], 0);
-        avgScore = Math.round(sumLatest / metrics.length);
-      } catch(e) {}
-    }
+    // Between lessons: scores (30 days), vocabulary review and built-in practice
+    const since = new Date(Date.now() - 30 * 86400000).toISOString();
+    const [{ data: results }, { data: vocab }, { count: practiceDone }] = await Promise.all([
+      sb.from('exercise_results').select('category, score, title, created_at').eq('student_id', studentId)
+        .gte('created_at', since).order('created_at', { ascending: false }).limit(500),
+      sb.from('vocab_reviews').select('box, due_on, last_reviewed_at').eq('student_id', studentId).limit(1000),
+      sb.from('practice_progress').select('id', { count: 'exact', head: true }).eq('student_id', studentId).eq('done', true),
+    ]);
+    const scores = results || [];
+    const avgScore = scores.length ? Math.round(scores.reduce((a, r) => a + (Number(r.score) || 0), 0) / scores.length) : null;
+    const words = vocab || [];
+    const todayIso = new Date().toISOString().slice(0, 10);
+    const lastReview = words.map(w => w.last_reviewed_at).filter(Boolean).sort().pop();
+    const examResults = scores.filter(r => r.category === 'assessment').slice(0, 5);
+    const statCell = (n, label) => `<div><div style="font-size:18px;font-weight:800;color:var(--txt);">${escapeHtml(String(n))}</div><div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">${escapeHtml(label)}</div></div>`;
+    const betweenHtml = `
+        <div>
+          <div class="lbl" style="margin-bottom:8px;">${escapeHtml(t('teacher_between_lessons', 'Between lessons'))}</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:#fafaf8;padding:12px 16px;border-radius:8px;border:1px solid var(--bd);">
+            ${statCell(words.length, t('teacher_vocab_words', 'Words in review'))}
+            ${statCell(words.filter(w => w.box >= 4).length, t('teacher_vocab_learned', 'Words learned'))}
+            ${statCell(words.filter(w => w.due_on <= todayIso).length, t('teacher_vocab_due', 'Due today'))}
+            ${statCell(Number(practiceDone) || 0, t('teacher_practice_done', 'Exercises done'))}
+          </div>
+          <div style="font-size:11.5px;color:var(--dim);margin-top:6px;">${escapeHtml(lastReview
+            ? t('teacher_vocab_last_review', 'Last vocabulary review: {d}').replace('{d}', getLocaleString(new Date(lastReview), { day: 'numeric', month: 'short' }))
+            : t('teacher_vocab_never', 'No vocabulary review yet. Students review the words you add to your lesson notes.'))}</div>
+          ${examResults.length ? `<div style="margin-top:10px;">${examResults.map(r => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.04);">
+            <span style="color:var(--txt);">${escapeHtml(r.title || t('teacher_test', 'Test'))}</span>
+            <span style="color:var(--dim);white-space:nowrap;"><strong style="color:var(--txt);">${Number(r.score) || 0}%</strong> · ${escapeHtml(getLocaleString(new Date(r.created_at), { day: 'numeric', month: 'short' }))}</span>
+          </div>`).join('')}</div>` : ''}
+        </div>`;
     
     let feedbackListHtml = feedbacks.map(f => `
       <div style="border-bottom:1px solid rgba(0,0,0,0.04);padding-bottom:10px;margin-bottom:10px;">
@@ -2994,16 +3089,18 @@ async function openStudentProfileModal(studentId) {
           </div>
         </div>
         
-        <!-- Score -->
+        <!-- Average score, last 30 days (exercise_results) -->
         <div>
-          <div class="lbl" style="margin-bottom:8px;">Performance Index</div>
+          <div class="lbl" style="margin-bottom:8px;">${escapeHtml(t('teacher_avg_30', 'Average score, last 30 days'))}</div>
+          ${avgScore == null ? `<div style="font-size:12px;color:var(--dim);">${escapeHtml(t('teacher_no_scores', 'No scores in the last 30 days.'))}</div>` : `
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="font-size:24px;font-weight:800;color:var(--txt);">${Number(avgScore) || 0}%</div>
             <div style="flex:1;background:var(--bd);height:8px;border-radius:4px;overflow:hidden;">
               <div style="background:var(--g);width:${Number(avgScore) || 0}%;height:100%;"></div>
             </div>
-          </div>
+          </div>`}
         </div>
+        ${betweenHtml}
 
         <!-- Add Feedback Form -->
         <div style="border-top:1px solid var(--bd);padding-top:14px;">
@@ -3126,7 +3223,8 @@ function openWriteNotesModal(sessionId) {
     <div class="m-bd" style="max-height: 70vh; overflow-y: auto; padding-top: 0.5rem;">
       <form id="session-notes-form" onsubmit="submitSessionNotes(event, ${jsArg(sessionId)})">
         <div class="field-row">
-          <label>Vocabulary (Up to 10 words)</label>
+          <label>${escapeHtml(t('teacher_vocab_label', 'Vocabulary (up to 10 words)'))}</label>
+          <p style="font-size:0.75rem;color:var(--dim);margin:0 0 0.5rem;">${escapeHtml(t('teacher_vocab_hint', 'Students get these words as flashcards in their vocabulary review, so add the key words of the lesson with a short meaning and an example.'))}</p>
           <div id="vocab-rows-container" style="margin-bottom: 0.75rem;"></div>
           <button type="button" class="btn out sm" onclick="addVocabRow()">+ Add Word</button>
         </div>
@@ -3191,6 +3289,10 @@ function openWriteNotesModal(sessionId) {
 
 async function submitSessionNotes(event, sessionId) {
   event.preventDefault();
+  // Vocabulary feeds the students' review; remind before publishing without any
+  const hasVocab = Array.from(document.querySelectorAll('.vocab-row')).some(row =>
+    row.querySelector('.vocab-word').value.trim() && row.querySelector('.vocab-definition').value.trim());
+  if (!hasVocab && !confirm(t('teacher_vocab_confirm', 'You have not added any vocabulary (word and meaning). Your students review these words between lessons. Publish without vocabulary?'))) return;
   const submitBtn = document.getElementById('notes-submit-btn');
   submitBtn.disabled = true;
   submitBtn.textContent = 'Publishing...';
@@ -3277,7 +3379,7 @@ async function submitSessionNotes(event, sessionId) {
 
 /* ══════════════════════════════════════════════════════
    INTERACTIVE CLASSROOM CORE LOGIC (TEACHER)
-   Daily.co Prebuilt, Whiteboard, Transcription, Files & Chat
+   Daily.co Prebuilt, Whiteboard, Files & Chat
 ══════════════════════════════════════════════════════ */
 let callFrame = null;
 let liveSessionActive = false;
@@ -3291,33 +3393,8 @@ let isDrawing = false;
 let drawColor = '#ceff65';
 let drawSize = 3;
 
-// Simulated transcription speaker catalog
-const SPEAKERS = ['Teacher', 'Sofia', 'Alex', 'Maria', 'David'];
-const TRANSCRIPTIONS = {
-  fr: [
-    "Bonjour à tous ! Bienvenue dans notre session aujourd'hui.",
-    "Aujourd'hui, nous allons étudier le subjonctif présent.",
-    "C'est un mode très important en français pour exprimer le doute, le désir ou la nécessité.",
-    "Par exemple : 'Il faut que je sache la vérité.'",
-    "Est-ce que quelqu'est prêt à me donner un autre exemple ?",
-    "Excellent exemple, merci Sofia ! 'Il faut que tu sois là.'",
-    "Faites attention aux verbes irréguliers comme 'être' (que je sois) et 'avoir' (que j'aie).",
-    "Notez ces structures dans votre cahier d'exercices."
-  ],
-  en: [
-    "Hello everyone! Welcome to our session today.",
-    "Today, we are going to study the subjunctive mood.",
-    "This is a very important mood in language learning for expressing doubt, desire, or necessity.",
-    "For example: 'It is necessary that I know the truth.'",
-    "Is anyone ready to give me another example?",
-    "Excellent example, thank you Sofia! 'It is necessary that you be there.'",
-    "Pay attention to irregular verbs like 'be' and 'have'.",
-    "Write down these structures in your exercise sheets."
-  ]
-};
-
-async function handleTeacherJoin(roomUrl, sessionId) {
-  currentSessionId = sessionId;
+async function handleTeacherJoin(roomUrl, sessionId, bookingId) {
+  currentSessionId = sessionId || null;
 
   // Ask the server for the room + an owner meeting token.
   // Rooms are private; joining without a token fails.
@@ -3331,7 +3408,7 @@ async function handleTeacherJoin(roomUrl, sessionId) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${session?.access_token || ''}`
       },
-      body: JSON.stringify({ sessionId })
+      body: JSON.stringify(bookingId ? { bookingId } : { sessionId })
     });
     const data = await resp.json().catch(() => ({}));
     if (!resp.ok) {
@@ -3373,7 +3450,6 @@ async function handleTeacherJoin(roomUrl, sessionId) {
 
   // Initialize classroom features
   startSessionTimer();
-  startTranscriptSimulation();
   initWhiteboard();
   loadSharedFiles();
 }
@@ -3522,45 +3598,6 @@ async function takeClassroomScreenshot() {
   }
 }
 
-// Transcription simulator
-function startTranscriptSimulation() {
-  const log = document.getElementById('transcription-log');
-  if (!log) return;
-  log.innerHTML = '';
-  
-  const activeLang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
-  const lines = TRANSCRIPTIONS[activeLang] || TRANSCRIPTIONS['en'];
-  let index = 0;
-  
-  function addTranscriptLine() {
-    if (!liveSessionActive || index >= lines.length) return;
-    
-    const row = document.createElement('div');
-    row.className = 'trans-row';
-    const speaker = index === 5 ? 'Sofia' : 'Teacher';
-    const spkEl = document.createElement('span');
-    spkEl.className = 'trans-speaker';
-    spkEl.textContent = speaker + ':';
-    const txtEl = document.createElement('span');
-    txtEl.className = 'trans-text';
-    txtEl.textContent = lines[index];
-    row.appendChild(spkEl);
-    row.appendChild(document.createTextNode(' '));
-    row.appendChild(txtEl);
-    log.appendChild(row);
-    log.scrollTop = log.scrollHeight;
-    
-    if (index % 3 === 0) {
-      addChatMessage(speaker, lines[index], false);
-    }
-    
-    index++;
-    setTimeout(addTranscriptLine, 8000 + Math.random() * 4000);
-  }
-  
-  setTimeout(addTranscriptLine, 3000);
-}
-
 // Whiteboard Draw
 function initWhiteboard() {
   whiteboardCanvas = document.getElementById('classroom-whiteboard');
@@ -3699,6 +3736,10 @@ window.submitSessionNotes = submitSessionNotes;
 
 /* ═══ AUTH GUARD + INIT ═══ */
 (async () => {
+  // Translation files (js/i18n/) and js/i18n.js are deferred: wait for them, and for a
+  // language loaded on demand, so text built here is translated
+  if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true }));
+  if (window.ALIMUN_I18N_READY) await window.ALIMUN_I18N_READY;
   // ─ 1. Bootstrap Supabase client ─────────────────────────────────────────────────
   const { createClient } = window.supabase;
   const cfg = window.ALIMUN_CONFIG || {};
@@ -3712,9 +3753,9 @@ window.submitSessionNotes = submitSessionNotes;
   // Localhost-only design preview: /teacher-dashboard.html?preview=1
   const isLocalPreview = ['localhost','127.0.0.1'].includes(window.location.hostname)
     && new URLSearchParams(window.location.search).has('preview');
-  if (isLocalPreview && (!session || !(session.user?.app_metadata?.role || session.user?.user_metadata?.role))) {
+  if (isLocalPreview && (!session || !session.user?.app_metadata?.role)) {
     session = { user: { id: 'preview-user', email: 'preview@alimun.com',
-      user_metadata: { role: 'teacher', full_name: 'Sarah Thompson' } } };
+      app_metadata: { role: 'teacher' }, user_metadata: { full_name: 'Sarah Thompson' } } };
   }
 
   if (!session) {
@@ -3730,7 +3771,8 @@ window.submitSessionNotes = submitSessionNotes;
   }
 
   // ─ 3. Role check ───────────────────────────────────────────────────────────
-  const role = session.user?.app_metadata?.role || session.user?.user_metadata?.role || '';
+  // Routing uses app_metadata.role only; user_metadata is user-editable.
+  const role = session.user?.app_metadata?.role || '';
   if (!viewAs && role !== 'teacher') {
     window.location.href = role === 'student' ? 'student-dashboard.html' :
                           role === 'admin' ? 'admin.html' : 'signin.html';
@@ -3787,6 +3829,7 @@ window.submitSessionNotes = submitSessionNotes;
 
   // ─ 7. Fetch dynamic data & Boot dashboard ───────────────────────────────────
   await initTeacherData();
+  fillSidebarClass();
   nav('overview');
   if (viewAs) AlimunViewAs.mountBar({ kind: 'teacher', sb: _sb, profile });
 
@@ -3794,6 +3837,7 @@ window.submitSessionNotes = submitSessionNotes;
   setInterval(async () => {
     try {
       await initTeacherData();
+      fillSidebarClass();
       // Re-render overview if currently visible (refreshes attendance count & room URL)
       if (document.querySelector('.sb-a[data-v="overview"]')?.classList.contains('on')) {
         await vOverview();

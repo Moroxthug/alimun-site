@@ -1,8 +1,12 @@
 <!DOCTYPE html><html lang="fr" dir="ltr"><head>
 <meta charset="utf-8">
 <title>Dashboard — Alimun</title>
+  <link href="../images/favicon.ico" rel="shortcut icon" type="image/x-icon">
+  <link href="../images/webclip.png" rel="apple-touch-icon">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
+<script src="../js/exam-prep.js"></script>
+<script src="../js/demo.js"></script>
 <script src="../js/view-as.js"></script>
 <script src="../js/tz.js"></script>
 <script src="https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js"></script>
@@ -38,7 +42,7 @@
     }
   })();
 </script>
-<script src="../js/translations.js" defer=""></script>
+<script src="../js/i18n/en.js" defer=""></script><script src="../js/i18n/fr.js" defer=""></script><script src="../js/i18n/en.app.js" defer=""></script><script src="../js/i18n/fr.app.js" defer=""></script>
 <script src="../js/i18n.js" defer=""></script>
 <link href="https://fonts.googleapis.com/css2?family=Anton&amp;family=JetBrains+Mono:wght@400;600;700&amp;display=swap" rel="stylesheet">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,600,700&amp;display=swap" rel="stylesheet">
@@ -370,6 +374,8 @@ nav {
 .tag-default{color:var(--dim);background:rgba(0,0,0,.05);border:1px solid var(--bd);}
 
 .right-col{flex:1;display:flex;flex-direction:column;gap:20px;}
+.left-col{flex:0 0 56%;display:flex;flex-direction:column;gap:20px;min-width:0;}
+.left-col .sched-card{flex:none;}
 .week-bars{display:flex;gap:6px;align-items:flex-end;height:44px;}
 .bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;}
 .bar{width:100%;border-radius:4px 4px 0 0;}
@@ -1112,6 +1118,10 @@ nav {
   .right-col {
     width: 100% !important;
   }
+  .left-col {
+    flex: none !important;
+    width: 100% !important;
+  }
   .cal-grid-wrap {
     grid-template-columns: 1fr !important;
     gap: 16px !important;
@@ -1195,8 +1205,8 @@ nav {
       <div class="sb-user">
         <div class="av sb-av" id="sb-av" style="background:#3B1F6A;width:36px;height:36px;font-size:11px;">SC</div>
         <div>
-          <div class="sb-name" id="sb-name">Sofia Chen</div>
-          <div class="sb-level" id="sb-level">B2 French</div>
+          <div class="sb-name" id="sb-name"></div>
+          <div class="sb-level" id="sb-level"></div>
         </div>
       </div>
     </div>
@@ -1328,33 +1338,28 @@ nav {
   <!-- Enrolled View -->
   <div id="home-enrolled-view" style="display:none; flex-direction:column; gap:20px;">
     <!-- Stats row -->
-    <!-- DATA: replace with Supabase query: SELECT streak, weekly_avg, exercises_done, exercises_total, cohort_rank FROM student_stats WHERE student_id = $1 -->
+    <!-- Filled by initHome() from exercise_results, homework and attendance -->
     <div class="card no-pad" style="display:flex;">
       <div class="stat-cell">
-        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_streak">Streak</div>
-        <div class="stat-val" data-metric="streak">14 days</div>
+        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_streak">Série</div>
+        <div class="stat-val" data-metric="streak">–</div>
       </div>
       <div class="vdiv"></div>
       <div class="stat-cell">
-        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_weekly_avg">Weekly avg</div>
-        <div class="stat-val" data-metric="weekly-avg">87%</div>
+        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_weekly_avg">Moyenne hebdo</div>
+        <div class="stat-val" data-metric="weekly-avg">–</div>
       </div>
       <div class="vdiv"></div>
       <div class="stat-cell">
-        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_exercises">Exercises</div>
-        <div class="stat-val" data-metric="exercises">24 / 30</div>
-      </div>
-      <div class="vdiv"></div>
-      <div class="stat-cell">
-        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_cohort_rank">Cohort rank</div>
-        <div class="stat-val" data-metric="rank">#3</div>
+        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_exercises">Exercices</div>
+        <div class="stat-val" data-metric="exercises">–</div>
       </div>
     </div>
 
     <!-- Next class countdown —— Populated by initData() from Supabase -->
     <div class="card no-pad next-class-card" id="next-class-card">
       <div class="nc-left">
-        <div class="nc-label">● Next class</div>
+        <div class="nc-label" data-i18n="student_next_class">● Prochain cours</div>
         <div class="nc-count" id="countdown">--:--:--</div>
       </div>
       <div class="nc-mid">
@@ -1364,11 +1369,11 @@ nav {
         <div class="nc-goal-badge" id="nc-goal-badge" style="display:none;"></div>
       </div>
       <div class="nc-right">
-        <button class="join-btn" id="join-class-btn" disabled="" style="opacity:0.5;cursor:not-allowed;" title="Opens 15 min before session">
-          <span data-i18n="student_join_class">Join Class</span>
+        <button class="join-btn" id="join-class-btn" disabled="" style="opacity:0.5;cursor:not-allowed;" title="">
+          <span data-i18n="student_join_class">Rejoindre le cours</span>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </button>
-        <div id="join-btn-label" style="font-size:10px;color:var(--dim);text-align:center;margin-top:6px;font-family:var(--mono);">Opens 15 min before</div>
+        <div id="join-btn-label" style="font-size:10px;color:var(--dim);text-align:center;margin-top:6px;font-family:var(--mono);" data-i18n="student_opens_before">Ouvre 15 min avant</div>
       </div>
     </div>
     <!-- Empty state when no session is scheduled -->
@@ -1381,12 +1386,23 @@ nav {
 
       <!-- Schedule card -->
       <!-- DATA: replace with Supabase query: SELECT title, starts_at, type FROM events WHERE date(starts_at) = CURRENT_DATE AND student_id = $1 ORDER BY starts_at -->
+      <div class="left-col">
       <div class="card no-pad sched-card">
         <div class="sched-head">
-          <div class="sched-date" id="today-date">THURSDAY — 16 APRIL</div>
-          <div class="sched-count" id="event-count">4 events</div>
+          <div class="sched-date" id="today-date"></div>
+          <div class="sched-count" id="event-count"></div>
         </div>
         <div class="sched-body" id="sched-body"></div>
+      </div>
+
+      <!-- This week's plan (renderWeekPlan) -->
+      <div class="card no-pad sched-card" id="plan-card" style="display:none;">
+        <div class="sched-head">
+          <div class="sched-date" data-i18n="student_plan_title">Le plan de la semaine</div>
+          <div class="sched-count" id="plan-count"></div>
+        </div>
+        <div id="plan-body"></div>
+      </div>
       </div>
 
       <!-- Right column -->
@@ -1395,7 +1411,7 @@ nav {
         <!-- Activity chart -->
         <!-- DATA: replace with Supabase query: SELECT day_of_week, sessions_attended FROM weekly_activity WHERE student_id = $1 AND week_start = date_trunc('week', NOW()) -->
         <div class="card">
-          <div class="lbl" style="margin-bottom:16px;" data-i18n="student_this_week">This week</div>
+          <div class="lbl" style="margin-bottom:16px;" data-i18n="student_this_week">Cette semaine</div>
           <div class="week-bars" id="week-bars"></div>
           <div style="display:flex;gap:6px;margin-top:6px;" id="week-days"></div>
         </div>
@@ -1403,33 +1419,39 @@ nav {
         <!-- Your teacher card -->
         <!-- DATA: replace with Supabase query: SELECT teachers.name, teachers.bio, teachers.sessions_count, teachers.feedback_count, teachers.note FROM cohort_members JOIN teachers ON ... WHERE cohort_members.student_id = $1 AND cohort_members.role = 'teacher' -->
         <div class="card teacher-card" style="flex:1;">
-          <div class="lbl" style="margin-bottom:16px;" data-i18n="student_your_teacher">Your teacher</div>
+          <div class="lbl" style="margin-bottom:16px;" data-i18n="student_your_teacher">Votre enseignant</div>
           <div class="av-wrap" onclick="openTeacherProfileModal()" style="cursor:pointer; display:flex; gap:14px; align-items:center; margin-bottom:16px;">
-            <div class="av" style="background:#3B1F6A;width:48px;height:48px;font-size:16px;">M</div>
+            <div class="av" style="background:#3B1F6A;width:48px;height:48px;font-size:16px;" data-field="teacher-av"></div>
             <div>
-              <div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:2px; text-decoration:underline;" data-field="teacher-name">Marie Dubois</div>
-              <div style="font-size:12px;color:var(--dim);" data-field="teacher-bio">Native French · B1–C1 · Paris</div>
+              <div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:2px; text-decoration:underline;" data-field="teacher-name">–</div>
+              <div style="font-size:12px;color:var(--dim);" data-field="teacher-bio"></div>
             </div>
           </div>
-          <div class="teacher-quote" data-field="teacher-note">"Strong progress this week. Focus on oral fluency next."</div>
+          <div class="teacher-quote" data-field="teacher-note" style="display:none;"></div>
           <div class="teacher-stats">
             <div>
-              <div class="teacher-stat-n" data-field="teacher-sessions">48</div>
-              <div class="teacher-stat-l" data-i18n="student_teacher_sessions">Sessions</div>
+              <div class="teacher-stat-n" data-field="teacher-sessions">–</div>
+              <div class="teacher-stat-l" data-i18n="student_teacher_sessions">Cours</div>
             </div>
             <div>
-              <div class="teacher-stat-n" data-field="teacher-feedbacks">5.0</div>
-              <div class="teacher-stat-l" data-i18n="student_teacher_rating">Rating</div>
+              <div class="teacher-stat-n" data-field="teacher-feedbacks">–</div>
+              <div class="teacher-stat-l" data-i18n="student_teacher_rating">Note</div>
             </div>
           </div>
-          <button class="join-btn" id="btn-book-1on1" onclick="openExtraClassPaywall()" style="width:100%;margin-top:16px;justify-content:center;font-size:12px;padding:8px 16px;" data-i18n="student_book_1on1">Book 1-on-1 Class</button>
-          <button class="join-btn" onclick="openCohortSwitchModal()" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;padding:8px 16px;background:#FFF;border:1px solid var(--bd);color:var(--txt);cursor:pointer;" data-i18n="student_change_cohort">Change Class / Cohort</button>
+          <button class="join-btn" id="btn-book-1on1" onclick="openExtraClassPaywall()" style="width:100%;margin-top:16px;justify-content:center;font-size:12px;padding:8px 16px;" data-i18n="student_book_1on1">Réserver un cours 1:1</button>
+          <button class="join-btn" onclick="openCohortSwitchModal()" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;padding:8px 16px;background:#FFF;border:1px solid var(--bd);color:var(--txt);cursor:pointer;" data-i18n="student_change_cohort">Changer de classe</button>
+        </div>
+
+        <!-- 1:1 follow-ups and private classes (filled by loadOneOnOne) -->
+        <div class="card" id="oto-card" style="display:none;">
+          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_oto_title">Votre 1:1</div>
+          <div id="oto-body" style="display:flex;flex-direction:column;gap:14px;"></div>
         </div>
 
         <!-- Recent activity -->
         <!-- DATA: replace with Supabase query: SELECT action, subject, created_at FROM activity_log WHERE student_id = $1 ORDER BY created_at DESC LIMIT 3 -->
         <div class="card">
-          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_recent_activity">Recent activity</div>
+          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_recent_activity">Activité récente</div>
           <div id="activity-list" style="display:flex;flex-direction:column;gap:10px;"></div>
         </div>
 
@@ -1443,8 +1465,8 @@ nav {
     <div class="card" style="padding: 24px; border-bottom: 2px solid var(--lime);">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
         <div>
-          <h1 style="font-family:var(--anton); font-size:32px; text-transform:uppercase; margin:0 0 4px 0; color:var(--txt); letter-spacing:-0.02em;" data-i18n="student_class_discovery">Class Discovery</h1>
-          <p style="font-size:13px; color:var(--dim); margin:0;" data-i18n="student_discovery_sub">Find a class cohort matching your language goals and schedule preferences.</p>
+          <h1 style="font-family:var(--anton); font-size:32px; text-transform:uppercase; margin:0 0 4px 0; color:var(--txt); letter-spacing:-0.02em;" data-i18n="student_class_discovery">Trouver une classe</h1>
+          <p style="font-size:13px; color:var(--dim); margin:0;" data-i18n="student_discovery_sub">Trouvez une classe adaptée à vos objectifs et à vos disponibilités.</p>
         </div>
         <div style="background:var(--bg); border:1px solid var(--bd); border-radius:8px; padding:10px 14px; font-size:12px; color:var(--txt); display:flex; gap:16px;">
           <div>🗣️ Target: <strong id="discovery-target-lang">-</strong></div>
@@ -1461,27 +1483,27 @@ nav {
         <!-- Level adjacent filter toggle -->
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:500; color:var(--txt);">
           <input type="checkbox" id="filter-adjacent" checked="" onchange="toggleDiscoveryFilter('adjacentLevels')" style="accent-color:var(--lime); width:16px; height:16px;">
-          <span data-i18n="student_filter_adjacent">Include adjacent levels (Stretch/Review)</span>
+          <span data-i18n="student_filter_adjacent">Inclure les niveaux voisins (au-dessus / révision)</span>
         </label>
 
         <!-- Goal track toggle -->
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:500; color:var(--txt);">
           <input type="checkbox" id="filter-all-goals" onchange="toggleDiscoveryFilter('showAllGoals')" style="accent-color:var(--lime); width:16px; height:16px;">
-          <span data-i18n="student_filter_all_goals">Show all goal tracks</span>
+          <span data-i18n="student_filter_all_goals">Afficher tous les objectifs</span>
         </label>
       </div>
 
       <!-- Schedule filter (days of week multi-select) -->
       <div>
-        <div style="font-size:11.5px; color:var(--dim); margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;" data-i18n="student_filter_days">Filter by Available Days:</div>
+        <div style="font-size:11.5px; color:var(--dim); margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;" data-i18n="student_filter_days">Filtrer par jours disponibles :</div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="day-chip" id="chip-Monday" onclick="toggleDayFilter('Monday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_monday">Monday</button>
-          <button class="day-chip" id="chip-Tuesday" onclick="toggleDayFilter('Tuesday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_tuesday">Tuesday</button>
-          <button class="day-chip" id="chip-Wednesday" onclick="toggleDayFilter('Wednesday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_wednesday">Wednesday</button>
-          <button class="day-chip" id="chip-Thursday" onclick="toggleDayFilter('Thursday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_thursday">Thursday</button>
-          <button class="day-chip" id="chip-Friday" onclick="toggleDayFilter('Friday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_friday">Friday</button>
-          <button class="day-chip" id="chip-Saturday" onclick="toggleDayFilter('Saturday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_saturday">Saturday</button>
-          <button class="day-chip" id="chip-Sunday" onclick="toggleDayFilter('Sunday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_sunday">Sunday</button>
+          <button class="day-chip" id="chip-Monday" onclick="toggleDayFilter('Monday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_monday">Lundi</button>
+          <button class="day-chip" id="chip-Tuesday" onclick="toggleDayFilter('Tuesday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_tuesday">Mardi</button>
+          <button class="day-chip" id="chip-Wednesday" onclick="toggleDayFilter('Wednesday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_wednesday">Mercredi</button>
+          <button class="day-chip" id="chip-Thursday" onclick="toggleDayFilter('Thursday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_thursday">Jeudi</button>
+          <button class="day-chip" id="chip-Friday" onclick="toggleDayFilter('Friday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_friday">Vendredi</button>
+          <button class="day-chip" id="chip-Saturday" onclick="toggleDayFilter('Saturday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_saturday">Samedi</button>
+          <button class="day-chip" id="chip-Sunday" onclick="toggleDayFilter('Sunday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_sunday">Dimanche</button>
         </div>
       </div>
     </div>
@@ -1498,29 +1520,26 @@ nav {
   <!-- Pre-join state -->
   <div id="live-prejoin" style="display:flex;align-items:center;justify-content:center;height:100%;padding:40px;width:100%;">
     <div style="max-width:460px;width:100%;">
-      <div class="lbl" style="margin-bottom:20px;text-align:center;">● Starting soon</div>
-      <div style="text-align:center;font-family:var(--mono);font-size:56px;font-weight:800;color:var(--txt);letter-spacing:-0.04em;margin-bottom:4px;" id="live-count">02:14:39</div>
-      <div style="text-align:center;font-size:13px;color:var(--dim);margin-bottom:32px;" data-i18n="student_until_class_begins">until class begins</div>
+      <div class="lbl" style="margin-bottom:20px;text-align:center;" data-i18n="student_starting_soon">● Bientôt</div>
+      <div style="text-align:center;font-family:var(--mono);font-size:56px;font-weight:800;color:var(--txt);letter-spacing:-0.04em;margin-bottom:4px;" id="live-count">--:--:--</div>
+      <div style="text-align:center;font-size:13px;color:var(--dim);margin-bottom:32px;" data-i18n="student_until_class_begins">avant le début du cours</div>
       <div class="card" style="margin-bottom:20px;">
         <div style="display:flex;gap:16px;align-items:center;margin-bottom:20px;">
-          <div class="av" style="background:#3B1F6A;width:52px;height:52px;font-size:18px;" id="live-teacher-av">M</div>
+          <div class="av" style="background:#3B1F6A;width:52px;height:52px;font-size:18px;" id="live-teacher-av"></div>
           <div>
-            <div style="font-size:16px;font-weight:700;color:var(--txt);" id="live-teacher-name">Marie Dubois</div>
-            <div style="font-size:13px;color:var(--dim);margin-top:2px;" id="live-teacher-topic">Subjunctive Mood — Advanced · B2</div>
+            <div style="font-size:16px;font-weight:700;color:var(--txt);" id="live-teacher-name">–</div>
+            <div style="font-size:13px;color:var(--dim);margin-top:2px;" id="live-teacher-topic"></div>
           </div>
         </div>
         <div class="hdiv"></div>
         <div style="margin-top:20px;">
-          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_todays_vocab">Today's vocabulary</div>
-          <div class="vocab-row"><span class="vocab-fr">le subjonctif</span><span class="vocab-en">subjunctive mood</span></div>
-          <div class="vocab-row"><span class="vocab-fr">bien que</span><span class="vocab-en">although</span></div>
-          <div class="vocab-row"><span class="vocab-fr">il faut que</span><span class="vocab-en">it's necessary that</span></div>
-          <div class="vocab-row" style="border:none;"><span class="vocab-fr">à condition que</span><span class="vocab-en">provided that</span></div>
+          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_todays_vocab">Vocabulaire du jour</div>
+          <div id="live-vocab"></div>
         </div>
       </div>
-      <div style="text-align:center;font-size:12px;color:var(--dim);font-family:var(--mono);margin-bottom:16px;" id="live-waiting-count">8 / 12 classmates waiting</div>
+      <div style="text-align:center;font-size:12px;color:var(--dim);font-family:var(--mono);margin-bottom:16px;" id="live-waiting-count"></div>
       <button onclick="handleStudentJoin(NEXT_CLASS.dailyRoomUrl, NEXT_CLASS.sessionId)" style="width:100%;padding:15px 0;background:var(--lime);color:var(--txt);border:none;border-radius:10px;font-family:var(--sans);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;">
-        <span data-i18n="student_join_video_class">Join Video Class</span>
+        <span data-i18n="student_join_video_class">Rejoindre le cours vidéo</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
       </button>
     </div>
@@ -1530,7 +1549,7 @@ nav {
 <!-- ── CALENDAR ── -->
 <div id="v-calendar" class="view">
   <div class="cal-header">
-    <div class="cal-month-label" id="cal-label">APRIL 2026</div>
+    <div class="cal-month-label" id="cal-label"></div>
     <div class="cal-nav-btns">
       <button class="cal-nb" onclick="calNav(-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
       <button class="cal-nb" onclick="calNav(1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
@@ -1538,14 +1557,14 @@ nav {
   </div>
   <!-- DATA: event type colors from typeColor map in source -->
   <div class="cal-legend">
-    <div class="leg-item"><div class="leg-dot" style="background:#9BCB00;"></div>Live Class</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#F97316;"></div>Homework / Due</div>
-    <div class="leg-item"><div class="leg-dot" style="background:rgba(0,0,0,.45);"></div>Test</div>
-    <div class="leg-item"><div class="leg-dot" style="background:rgba(0,0,0,.3);"></div>1-on-1</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#9BCB00;"></div><span data-i18n="student_leg_class">Cours en direct</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:#F97316;"></div><span data-i18n="student_leg_hw">Devoir / Échéance</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:rgba(0,0,0,.45);"></div><span data-i18n="student_leg_test">Test</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:rgba(0,0,0,.3);"></div><span data-i18n="student_leg_oto">1:1</span></div>
   </div>
   <div class="cal-grid-wrap">
     <div class="card no-pad">
-      <div class="cal-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+      <div class="cal-dow" id="cal-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
       <div class="cal-days" id="cal-days"></div>
     </div>
     <div class="card cal-detail-card" id="cal-detail"></div>
@@ -1558,17 +1577,18 @@ nav {
   <!-- DATA: replace with Supabase: SELECT count(*) FILTER (WHERE done), count(*) FROM exercises WHERE student_id = $1 -->
   <div class="card" style="display:flex;align-items:center;gap:28px;">
     <div>
-      <div class="lbl" style="margin-bottom:8px;">Progress</div>
-      <div style="font-family:var(--mono);font-size:28px;font-weight:800;color:var(--txt);" id="ex-count">4<span style="font-size:14px;color:var(--dim);font-weight:400;"> / 10</span></div>
+      <div class="lbl" style="margin-bottom:8px;" data-i18n="student_sb_progress">Progrès</div>
+      <div style="font-family:var(--mono);font-size:28px;font-weight:800;color:var(--txt);" id="ex-count">–</div>
     </div>
     <div class="prog-bar-wrap"><div class="prog-bar-fill" id="ex-bar" style="width:40%;"></div></div>
-    <div style="font-family:var(--mono);font-size:12px;color:var(--dim);" id="ex-pct">40% done</div>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--dim);" id="ex-pct"></div>
     <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;">
-      <button id="btn-placement" onclick="startPlacementTest()" style="display:none;background:#fff;border:1px solid var(--bd);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;" data-i18n="student_ex_placement">Placement test</button>
-      <button id="btn-generate-ex" onclick="generateNewExercises()" style="background:var(--lime);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;" data-i18n="student_ex_generate">✨ New exercises</button>
+      <button id="btn-placement" onclick="startPlacementTest()" style="display:none;background:#fff;border:1px solid var(--bd);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;" data-i18n="student_ex_placement">Test de niveau</button>
+      <button id="btn-generate-ex" onclick="generateNewExercises()" style="background:var(--lime);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;" data-i18n="student_ex_generate">✨ Nouveaux exercices</button>
     </div>
   </div>
   <div class="ex-tabs" id="ex-tabs"></div>
+  <div id="ex-exam-note" style="display:none;font-size:12px;color:var(--dim);margin:0 0 12px;" data-i18n="student_exam_note">Exercices au format de chaque examen, rédigés par Alimun. Ce ne sont pas des documents officiels ; Alimun n'est affilié ni à Cambridge English, ni à IELTS, ni au Goethe-Institut, ni à telc.</div>
   <div class="card no-pad" id="ex-list"></div>
   
   <!-- Branded Session Notes Section -->
@@ -1582,19 +1602,19 @@ nav {
 
 <!-- ── PROGRESS ── -->
 <div id="v-progress" class="view">
-  <div style="font-family:var(--anton);font-size:22px;color:var(--txt);letter-spacing:.04em;">PROGRESS</div>
+  <div style="font-family:var(--anton);font-size:22px;color:var(--txt);letter-spacing:.04em;" data-i18n="student_sb_progress">Progrès</div>
   <!-- DATA: replace with Supabase: SELECT category, scores, avg FROM student_progress WHERE student_id = $1 -->
   <div class="card no-pad" id="prog-rows"></div>
   <div id="prog-feedback-container"></div>
   <!-- DATA: replace with Supabase aggregates -->
   <div class="card no-pad prog-summary">
-    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Overall trend</div><div class="prog-sum-val" style="color:var(--ok);">+12%</div><div class="prog-sum-sub">this month</div></div>
+    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;" data-i18n="student_prog_overall_trend">Tendance générale</div><div class="prog-sum-val" id="prog-trend-val">–</div><div class="prog-sum-sub" id="prog-trend-sub"></div></div>
     <div class="vdiv"></div>
-    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Best category</div><div class="prog-sum-val" id="prog-best-val" style="color:var(--txt);">Grammar</div><div class="prog-sum-sub" id="prog-best-sub">94% avg</div></div>
+    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;" data-i18n="student_prog_best_category">Meilleure catégorie</div><div class="prog-sum-val" id="prog-best-val" style="color:var(--txt);">–</div><div class="prog-sum-sub" id="prog-best-sub"></div></div>
     <div class="vdiv"></div>
-    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Needs focus</div><div class="prog-sum-val" id="prog-focus-val" style="color:var(--err);">Listening</div><div class="prog-sum-sub" id="prog-focus-sub">61% avg</div></div>
+    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;" data-i18n="student_prog_needs_focus">À travailler</div><div class="prog-sum-val" id="prog-focus-val" style="color:var(--err);">–</div><div class="prog-sum-sub" id="prog-focus-sub"></div></div>
     <div class="vdiv"></div>
-    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Teacher score</div><div class="prog-sum-val" style="color:var(--txt);">86%</div><div class="prog-sum-sub">last session</div></div>
+    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;" data-i18n="student_prog_teacher_score">Note de l'enseignant</div><div class="prog-sum-val" id="prog-teacher-val" style="color:var(--txt);">–</div><div class="prog-sum-sub" id="prog-teacher-sub"></div></div>
   </div>
 </div>
 
@@ -1609,32 +1629,21 @@ nav {
       <svg width="88" height="88" viewBox="0 0 88 88" class="ring-svg">
         <circle cx="44" cy="44" r="34" fill="none" stroke="var(--bd)" stroke-width="5"></circle>
         <circle cx="44" cy="44" r="34" fill="none" stroke="var(--lime)" stroke-width="5" stroke-dasharray="142.6 213.6" stroke-dashoffset="53.4" stroke-linecap="round"></circle>
-        <text x="44" y="50" text-anchor="middle" fill="var(--txt)" font-size="16">68%</text>
+        <text x="44" y="50" text-anchor="middle" fill="var(--txt)" font-size="16">–</text>
       </svg>
       <div>
         <div style="font-size:13px;font-weight:700;color:var(--txt);" data-i18n="student_overall_average">Moyenne générale</div>
-        <div style="font-size:11px;color:var(--dim);font-family:var(--mono);margin-top:2px;" data-i18n="student_overall_average_desc_initial">68% de moyenne générale</div>
+        <div style="font-size:11px;color:var(--dim);font-family:var(--mono);margin-top:2px;"></div>
       </div>
     </div>
   </div>
   <div class="test-grid">
     <div style="display:flex;flex-direction:column;gap:20px;">
-      <div class="card upcoming-test-card">
-        <div class="lbl" style="color:var(--lime-d);margin-bottom:8px;" data-i18n="student_upcoming_test_label">À venir</div>
-        <div style="font-family:var(--anton);font-size:20px;color:var(--txt);letter-spacing:.04em;margin-bottom:4px;" data-i18n="student_upcoming_test_title">FIN DE MOIS</div>
-        <div style="font-size:12px;color:var(--dim);margin-bottom:16px;" data-i18n="student_upcoming_test_desc">Évaluation CECRL · Tous les sujets</div>
-        <div style="display:flex;gap:16px;margin-bottom:20px;">
-          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);" data-i18n="student_upcoming_test_date">28 AVR</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);" data-i18n="student_upcoming_test_duration">30 min</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);" data-i18n="student_upcoming_test_questions">25 Q</div>
-        </div>
-        <button onclick="document.querySelector('.quiz-body').scrollIntoView({behavior:'smooth'})" style="padding:11px 20px;background:var(--lime);color:var(--txt);border:none;border-radius:8px;font-family:var(--sans);font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;" data-i18n="student_start_practice">Commencer l'entraînement</button>
-      </div>
-      <div class="card no-pad">
+      <div class="card no-pad" id="quiz-card">
         <div class="quiz-head"><span class="quiz-q-meta" data-i18n="student_practice_question_title">Question d'entraînement</span><span class="quiz-timer" style="color:var(--dim);" data-i18n="student_self_paced">Autonome</span></div>
         <div class="quiz-prog-bar"><div class="quiz-prog-fill" style="width:100%;"></div></div>
         <div class="quiz-body">
-          <div class="quiz-stem">"Il est important que tu ____ à l'heure."</div>
+          <div class="quiz-stem"></div>
           <div class="quiz-opts" id="quiz-opts"></div>
           <div id="quiz-action-area"></div>
         </div>
@@ -1642,7 +1651,6 @@ nav {
     </div>
     <div class="card">
       <div class="lbl" style="margin-bottom:16px;" data-i18n="student_results_title">Résultats</div>
-      <!-- DATA: replace with Supabase: SELECT topic, score, taken_at, teacher_remark FROM test_results WHERE student_id = $1 ORDER BY taken_at DESC -->
       <div id="test-results"></div>
     </div>
   </div>
@@ -1653,19 +1661,19 @@ nav {
   <div class="chat-members">
     <div class="chat-members-head">
       <div class="chat-mem-title" data-i18n="student_chat_members_title">Membres</div>
-      <div class="chat-mem-sub" id="online-count" data-i18n="student_chat_online_count">5 en ligne</div>
+      <div class="chat-mem-sub" id="online-count"></div>
     </div>
     <div class="chat-mem-list" id="member-list"></div>
   </div>
   <div class="chat-main">
     <div class="chat-main-head">
-      <div class="chat-main-title" data-i18n="student_chat_title">Français B2 — Chat de classe</div>
-      <div class="chat-main-date" id="chat-date" data-i18n="student_chat_date">16 avril 2026</div>
+      <div class="chat-main-title" id="chat-title"></div>
+      <div class="chat-main-date" id="chat-date"></div>
     </div>
     <div class="chat-msgs" id="chat-msgs"></div>
     <div class="chat-ft">
       <div class="chat-input-wrap">
-        <input id="chat-in" type="text" placeholder="Envoyer un message à la classe..." data-i18n-placeholder="student_chat_input_placeholder" onkeydown="if(event.key==='Enter')sendChatMsg()">
+        <input id="chat-in" type="text" placeholder="Message the AI tutor..." onkeydown="if(event.key==='Enter')sendChatMsg()">
         <button class="chat-send" onclick="sendChatMsg()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button>
       </div>
     </div>
@@ -1682,16 +1690,16 @@ nav {
       <div class="lbl" style="margin-bottom:16px;">Profile Details</div>
       <div style="display:flex;flex-direction:column;gap:16px;">
         <div class="field-row">
-          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_full_name">Full Name</label>
+          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_full_name">Nom complet</label>
           <input type="text" id="settings-name" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
         </div>
         <div class="field-row">
-          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_email_address">Email Address</label>
+          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_email_address">Adresse e-mail</label>
           <input type="email" id="settings-email" disabled="" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#F0F0F0;color:var(--dim);">
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="field-row">
-            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_learning_language">Learning Language</label>
+            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_learning_language">Langue apprise</label>
             <select id="settings-lang" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
               <option value="Spanish">Spanish</option>
               <option value="French">French</option>
@@ -1699,7 +1707,7 @@ nav {
             </select>
           </div>
           <div class="field-row">
-            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_current_level">Current Level</label>
+            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_current_level">Niveau actuel</label>
             <select id="settings-level" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
               <option value="A1">A1</option>
               <option value="A2">A2</option>
@@ -1712,11 +1720,11 @@ nav {
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="field-row">
-            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_timezone">Timezone</label>
+            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_timezone">Fuseau horaire</label>
             <input type="text" id="settings-timezone" placeholder="e.g. Europe/Rome" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
           </div>
           <div class="field-row">
-            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_preferred_time">Preferred Time Window</label>
+            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_preferred_time">Plage horaire préférée</label>
             <div style="display:flex;gap:6px;align-items:center;">
               <input type="time" id="settings-time-start" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
               <span style="font-size:12px;color:var(--dim);">to</span>
@@ -1725,7 +1733,7 @@ nav {
           </div>
         </div>
         <div class="field-row">
-          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_preferred_days">Preferred Days</label>
+          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_preferred_days">Jours préférés</label>
           <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt);cursor:pointer;">
               <input type="checkbox" class="settings-day-check" value="1"> Mon
@@ -1750,7 +1758,7 @@ nav {
             </label>
           </div>
         </div>
-        <button class="join-btn" onclick="saveSettings()" style="width:fit-content;margin-top:8px;" data-i18n="student_save_profile">Save Profile</button>
+        <button class="join-btn" onclick="saveSettings()" style="width:fit-content;margin-top:8px;" data-i18n="student_save_profile">Enregistrer le profil</button>
       </div>
     </div>
     
@@ -1768,7 +1776,7 @@ nav {
     
     <!-- Sign Out -->
     <div>
-      <button class="join-btn" onclick="window.__signOut &amp;&amp; window.__signOut()" style="background:#FFF;border:1px solid #dc2626;color:#dc2626;" data-i18n="btn_sign_out">Sign Out</button>
+      <button class="join-btn" onclick="window.__signOut &amp;&amp; window.__signOut()" style="background:#FFF;border:1px solid #dc2626;color:#dc2626;" data-i18n="btn_sign_out">Se déconnecter</button>
     </div>
   </div>
 </div>
@@ -1780,7 +1788,7 @@ nav {
   <div class="classroom-header">
     <div class="classroom-title">
       <span class="live-dot"></span>
-      <span id="class-title-text" data-i18n="student_class_live">Live Session</span>
+      <span id="class-title-text" data-i18n="student_class_live">Cours en direct</span>
       <span id="class-timer" class="class-timer">00:00</span>
     </div>
     <div class="classroom-actions">
@@ -1789,7 +1797,7 @@ nav {
       </button>
       <button class="class-action-btn leave-btn" id="classroom-leave-btn" onclick="leaveClass()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-        <span data-i18n="student_class_leave">Leave</span>
+        <span data-i18n="student_class_leave">Quitter</span>
       </button>
     </div>
   </div>
@@ -1801,7 +1809,7 @@ nav {
     <!-- Collapsible Chat Area -->
     <div class="classroom-chat-panel collapsed" id="classroom-chat-panel">
       <div class="chat-toggle-header" onclick="toggleChatExpanded()">
-        <span data-i18n="student_class_chat">Class Chat</span>
+        <span data-i18n="student_class_chat">Chat de la classe</span>
         <svg id="chat-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
       <div class="chat-messages-container" id="classroom-chat-messages">
@@ -1818,45 +1826,35 @@ nav {
 
   <!-- Utility / Multi-button Tools Row -->
   <div class="classroom-tools-row">
-    <button class="tool-btn active" data-tab="transcription" onclick="switchClassroomTab('transcription')">
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
-      <span data-i18n="tool_transcription">Transcription</span>
-    </button>
-    <button class="tool-btn" data-tab="files" onclick="switchClassroomTab('files')">
+    <button class="tool-btn active" data-tab="files" onclick="switchClassroomTab('files')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-      <span data-i18n="tool_files">Files</span>
+      <span data-i18n="tool_files">Fichiers</span>
     </button>
     <button class="tool-btn" onclick="triggerDailyScreenShare()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-      <span data-i18n="tool_screenshare">Screen Share</span>
+      <span data-i18n="tool_screenshare">Partage d'écran</span>
     </button>
     <button class="tool-btn" onclick="takeClassroomScreenshot()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-      <span data-i18n="tool_screenshot">Screenshot</span>
+      <span data-i18n="tool_screenshot">Capture d'écran</span>
     </button>
     <button class="tool-btn" data-tab="interactive" onclick="switchClassroomTab('interactive')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-      <span data-i18n="tool_interactive">Whiteboard</span>
+      <span data-i18n="tool_interactive">Tableau blanc</span>
     </button>
   </div>
 
   <!-- Classroom Tab Contents -->
   <div class="classroom-tab-content">
-    <div id="tab-transcription" class="tab-pane active">
-      <div class="transcription-log" id="transcription-log">
-        <p class="trans-meta">Live transcription starting when class begins...</p>
-      </div>
-    </div>
-    
-    <div id="tab-files" class="tab-pane">
+    <div id="tab-files" class="tab-pane active">
       <div class="files-container">
         <div class="file-upload-zone" id="file-dropzone" onclick="document.getElementById('file-upload-input').click()">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <p data-i18n="file_drag_drop">Drag &amp; drop files here, or click to upload</p>
+          <p data-i18n="file_drag_drop">Glissez-déposez des fichiers ici, ou cliquez pour les envoyer</p>
           <input type="file" id="file-upload-input" style="display:none" onchange="uploadClassroomFile(this)">
         </div>
         <div class="shared-files-list" id="shared-files-list">
-          <p class="file-meta" data-i18n="file_no_files">No shared files yet for this session.</p>
+          <p class="file-meta" data-i18n="file_no_files">Aucun fichier partagé pour ce cours pour le moment.</p>
         </div>
       </div>
     </div>
@@ -1896,43 +1894,301 @@ let SCHEDULE = [];
 let WEEK_ACTIVITY = [0, 0, 0, 0, 0, 0, 0];
 const WEEK_TODAY = (new Date().getDay() + 6) % 7; // Monday-first
 let CAL_DATA = {};
-const RECENT_ACTIVITY = [
-  ['Vocabulary Quiz', 'Completed with 90%', 'Yesterday'],
-  ['Pronunciation Practice', 'Completed with 85%', '2 days ago'],
-  ['Grammar Drill', 'Completed with 100%', '3 days ago'],
-  ['Essay Submission', 'Graded and reviewed', '4 days ago']
-];
+// Locale for dates/times built in JS, following the site language
+const UI_LOCALES = { en: 'en-GB', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-PT', zh: 'zh-CN', ar: 'ar-EG', it: 'it-IT', ma: 'fr-MA' };
+const uiLocale = () => UI_LOCALES[window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en'] || 'en-GB';
+// Monday-first one-letter weekday names in the site language (Jan 3 2000 was a Monday)
+const weekdayInitials = () => Array.from({ length: 7 }, (_, i) => new Date(2000, 0, 3 + i).toLocaleDateString(uiLocale(), { weekday: 'narrow' }));
+const monthsUpper = () => Array.from({ length: 12 }, (_, m) => new Date(2000, m, 1).toLocaleDateString(uiLocale(), { month: 'long' }).toUpperCase());
 
 window.__signOut = async()=>{if(SB)await SB.auth.signOut();window.location.href='signin.html';};
 
-const defaultVocab = {
-  Spanish: [
-    {es:'aprovechar',en:'to make the most of / to take advantage of'},
-    {es:'cotidiano',en:'everyday / daily'},
-    {es:'matiz',en:'nuance / shade of meaning'},
-    {es:'desenvolverse',en:'to manage / to get by in a situation'},
-    {es:'imprescindible',en:'essential / indispensable'},
-    {es:'convivir',en:'to coexist / to live alongside others'}
-  ],
-  French: [
-    {fr:'profiter de',en:'to take advantage of / to enjoy'},
-    {fr:'quotidien',en:'everyday / daily'},
-    {fr:'nuance',en:'nuance / shade of meaning'},
-    {fr:'se débrouiller',en:'to get by / to manage'},
-    {fr:'indispensable',en:'essential / indispensable'},
-    {fr:'coexister',en:'to coexist'}
-  ],
-  German: [
-    {de:'ausnutzen',en:'to make use of / to exploit'},
-    {de:'alltäglich',en:'everyday / daily'},
-    {de:'Nuance',en:'nuance / shade of meaning'},
-    {de:'zurechtkommen',en:'to cope / to get by'},
-    {de:'unerlässlich',en:'essential / indispensable'},
-    {de:'koexistieren',en:'to coexist'}
-  ]
-};
+// Browser speech (text-to-speech and recognition) locale per course language
+const speechLang = (lang) => ({ English: 'en-GB', Spanish: 'es-ES', German: 'de-DE', French: 'fr-FR', Italian: 'it-IT' }[lang] || 'en-GB');
 
 const EXERCISE_DATABASE = {
+  English: {
+    A: [
+      {
+        type: 'Multiple Choice',
+        title: 'Present Simple: to be',
+        diff: 1,
+        time: '3 min',
+        cat: 'grammar',
+        question: 'Choose the correct form of "to be":',
+        stem: 'My sister ______ a nurse and she works in a hospital.',
+        opts: ['am', 'is', 'are', 'be'],
+        correct: 1,
+        explanation: 'With he, she, it or a singular noun ("my sister"), the present form of "to be" is "is".'
+      },
+      {
+        type: 'Multiple Choice',
+        title: 'Present Simple: Third Person',
+        diff: 1,
+        time: '3 min',
+        cat: 'grammar',
+        question: 'Choose the correct verb form:',
+        stem: 'Tom ______ to work by bus every morning.',
+        opts: ['go', 'goes', 'going', 'is go'],
+        correct: 1,
+        explanation: 'In the present simple, he/she/it takes an -s or -es ending: "he goes", "she works".'
+      },
+      {
+        type: 'Fill in Blank',
+        title: 'Articles: a / an',
+        diff: 1,
+        time: '2 min',
+        cat: 'grammar',
+        question: 'Fill in the blank with "a" or "an":',
+        stem: 'I eat ______ apple every day.',
+        correctAnswer: 'an',
+        explanation: 'Use "an" before a vowel sound ("an apple", "an hour") and "a" before a consonant sound ("a banana").'
+      },
+      {
+        type: 'Fill in Blank',
+        title: 'Prepositions of Time',
+        diff: 2,
+        time: '3 min',
+        cat: 'grammar',
+        question: 'Fill in the blank with the correct preposition (in, on, at):',
+        stem: 'The shop opens ______ nine o\'clock.',
+        correctAnswer: 'at',
+        explanation: 'Use "at" for clock times, "on" for days and dates, and "in" for months, years and parts of the day.'
+      },
+      {
+        type: 'Word Matching',
+        title: 'Everyday Opposites',
+        diff: 1,
+        time: '4 min',
+        cat: 'vocabulary',
+        question: 'Match each word with its opposite:',
+        pairs: [
+          { left: 'hot', right: 'cold' },
+          { left: 'early', right: 'late' },
+          { left: 'cheap', right: 'expensive' },
+          { left: 'open', right: 'closed' }
+        ]
+      },
+      {
+        type: 'Speaking',
+        title: 'Introducing Yourself',
+        diff: 1,
+        time: '3 min',
+        cat: 'speaking',
+        question: 'Read this introduction aloud:',
+        stem: 'Hello, my name is Anna. I live in London and I work in a bank.',
+        expectedText: 'Hello my name is Anna I live in London and I work in a bank'
+      },
+      {
+        type: 'Listening',
+        title: 'Listening: At the Café',
+        diff: 1,
+        time: '3 min',
+        cat: 'listening',
+        question: 'Listen to the audio and transcribe:',
+        audioText: 'Can I have a coffee with milk, please?'
+      },
+      {
+        type: 'Essay',
+        title: 'My Daily Routine',
+        diff: 2,
+        time: '15 min',
+        cat: 'writing',
+        question: 'Write a short text about your day (minimum 20 words):',
+        stem: 'Describe a normal day: what time you get up, what you do in the morning and afternoon, and what you do in the evening.',
+        minWords: 20,
+        criteria: 'present simple, time expressions, word order'
+      }
+    ],
+    B: [
+      {
+        type: 'Multiple Choice',
+        title: 'Present Perfect vs Past Simple',
+        diff: 3,
+        time: '5 min',
+        cat: 'grammar',
+        question: 'Choose the correct tense:',
+        stem: 'I ______ to Paris three times, but I have never been to Rome.',
+        opts: ['went', 'have been', 'was going', 'had go'],
+        correct: 1,
+        explanation: 'Use the present perfect for experiences in your life up to now, with no specific time ("three times", "never"). Use the past simple with a finished time ("last year").'
+      },
+      {
+        type: 'Multiple Choice',
+        title: 'Second Conditional',
+        diff: 3,
+        time: '5 min',
+        cat: 'grammar',
+        question: 'Choose the correct form to complete the conditional sentence:',
+        stem: 'If I ______ the lottery, I would buy a house by the sea.',
+        opts: ['win', 'won', 'will win', 'would win'],
+        correct: 1,
+        explanation: 'The second conditional talks about unreal or unlikely situations: "if" + past simple, then "would" + verb.'
+      },
+      {
+        type: 'Fill in Blank',
+        title: 'Relative Pronouns',
+        diff: 3,
+        time: '4 min',
+        cat: 'grammar',
+        question: 'Fill in the blank with the correct relative pronoun (who, which, where):',
+        stem: 'This is the restaurant ______ we had our first date.',
+        correctAnswer: 'where',
+        explanation: 'Use "where" for places, "who" for people and "which" for things.'
+      },
+      {
+        type: 'Fill in Blank',
+        title: 'Phrasal Verbs',
+        diff: 3,
+        time: '4 min',
+        cat: 'grammar',
+        question: 'Complete the phrasal verb with the correct particle (up, off, out):',
+        stem: 'Please turn ______ the lights when you leave the room.',
+        correctAnswer: 'off',
+        explanation: '"Turn off" means to stop a machine or light working. "Turn on" is the opposite.'
+      },
+      {
+        type: 'Word Matching',
+        title: 'Work Vocabulary',
+        diff: 2,
+        time: '5 min',
+        cat: 'vocabulary',
+        question: 'Match each work term with its meaning:',
+        pairs: [
+          { left: 'a deadline', right: 'the latest time to finish something' },
+          { left: 'a colleague', right: 'a person you work with' },
+          { left: 'a salary', right: 'money you earn for your job' },
+          { left: 'to resign', right: 'to leave your job by choice' }
+        ]
+      },
+      {
+        type: 'Speaking',
+        title: 'Making a Polite Request',
+        diff: 3,
+        time: '4 min',
+        cat: 'speaking',
+        question: 'Read this polite request aloud:',
+        stem: 'Excuse me, could you tell me how to get to the train station, please?',
+        expectedText: 'Excuse me could you tell me how to get to the train station please'
+      },
+      {
+        type: 'Listening',
+        title: 'Listening: Travel Plans',
+        diff: 3,
+        time: '4 min',
+        cat: 'listening',
+        question: 'Listen to the audio and transcribe:',
+        audioText: 'We are going to visit my grandparents next weekend if the weather is good.'
+      },
+      {
+        type: 'Essay',
+        title: 'A Place I Would Like to Visit',
+        diff: 3,
+        time: '20 min',
+        cat: 'writing',
+        question: 'Write a short text (minimum 40 words):',
+        stem: 'Describe a place you would like to visit. Explain why you want to go there and what you would do.',
+        minWords: 40,
+        criteria: 'conditionals, linking words, descriptive vocabulary'
+      }
+    ],
+    C: [
+      {
+        type: 'Multiple Choice',
+        title: 'Third Conditional',
+        diff: 4,
+        time: '5 min',
+        cat: 'grammar',
+        question: 'Choose the correct form to complete the sentence:',
+        stem: 'If she had left earlier, she ______ the train.',
+        opts: ['would catch', 'would have caught', 'had caught', 'will have caught'],
+        correct: 1,
+        explanation: 'The third conditional describes an unreal past: "if" + past perfect, then "would have" + past participle.'
+      },
+      {
+        type: 'Multiple Choice',
+        title: 'Inversion for Emphasis',
+        diff: 5,
+        time: '6 min',
+        cat: 'grammar',
+        question: 'Choose the grammatically correct sentence:',
+        opts: [
+          'Rarely I have seen such a beautiful view.',
+          'Rarely have I seen such a beautiful view.',
+          'Rarely I saw such a beautiful view.',
+          'Rarely did I have seen such a beautiful view.'
+        ],
+        correct: 1,
+        explanation: 'After negative or limiting adverbs at the start of a sentence ("rarely", "never", "seldom"), the auxiliary comes before the subject: "Rarely have I seen…".'
+      },
+      {
+        type: 'Fill in Blank',
+        title: 'Passive Voice',
+        diff: 4,
+        time: '4 min',
+        cat: 'grammar',
+        question: 'Complete the passive sentence with the correct form of "build":',
+        stem: 'The bridge was ______ in 1890 and is still in use today.',
+        correctAnswer: 'built',
+        explanation: 'The passive is formed with "be" + past participle. The past participle of "build" is "built".'
+      },
+      {
+        type: 'Fill in Blank',
+        title: 'Collocations',
+        diff: 4,
+        time: '4 min',
+        cat: 'vocabulary',
+        question: 'Fill in the verb that collocates with "a decision" (make, do, take):',
+        stem: 'After weeks of discussion, the board finally ______ a decision.',
+        correctAnswer: 'made',
+        explanation: 'In English we "make a decision". Other common "make" collocations: make a mistake, make progress, make an effort.'
+      },
+      {
+        type: 'Word Matching',
+        title: 'Idiomatic Expressions',
+        diff: 5,
+        time: '6 min',
+        cat: 'vocabulary',
+        question: 'Match each idiom with its meaning:',
+        pairs: [
+          { left: 'to beat around the bush', right: 'to avoid saying something directly' },
+          { left: 'to hit the nail on the head', right: 'to describe something exactly right' },
+          { left: 'once in a blue moon', right: 'very rarely' },
+          { left: 'to cut corners', right: 'to do something badly to save time or money' }
+        ]
+      },
+      {
+        type: 'Speaking',
+        title: 'Presenting an Argument',
+        diff: 5,
+        time: '5 min',
+        cat: 'speaking',
+        question: 'Read this argument aloud with clear pronunciation:',
+        stem: 'While remote work offers flexibility, it can also blur the boundaries between our professional and personal lives.',
+        expectedText: 'While remote work offers flexibility it can also blur the boundaries between our professional and personal lives'
+      },
+      {
+        type: 'Listening',
+        title: 'Listening: News Report',
+        diff: 5,
+        time: '5 min',
+        cat: 'listening',
+        question: 'Listen to the audio and transcribe:',
+        audioText: 'The government has announced new measures to reduce energy consumption over the coming decade.'
+      },
+      {
+        type: 'Essay',
+        title: 'Technology and Society',
+        diff: 5,
+        time: '30 min',
+        cat: 'writing',
+        question: 'Write a structured argumentative text (minimum 60 words):',
+        stem: 'Discuss the advantages and disadvantages of artificial intelligence in the workplace. Give your own opinion with reasons.',
+        minWords: 60,
+        criteria: 'complex sentences, linking devices, advanced vocabulary, clear structure'
+      }
+    ]
+  },
   Spanish: {
     A: [
       {
@@ -2778,35 +3034,29 @@ let whiteboardCtx = null;
 let isDrawing = false;
 let drawColor = '#ceff65';
 let drawSize = 3;
-// Demo transcript lines shown in the classroom transcription panel
-const TRANSCRIPTIONS = {
-  en: [
-    'Welcome everyone, let\'s get started with today\'s session.',
-    'First, a quick review of what we covered last time.',
-    'Can anyone give me an example using this structure?',
-    'Good. Notice how the verb changes here.',
-    'Let\'s try a few more examples together.',
-    'I think I understand, but what about the irregular forms?',
-    'Great question. We\'ll look at those next.',
-    'Remember to practise these before our next class.'
-  ]
-};
 let SESSION_NOTES = [];
 let PROGRESS_METRICS = [];
 
-const defaultTestResults = [
-  {date:'Mar 28',topic:'Passé Composé',score:91,remark:'Excellent mastery. Watch être agreement.'},
-  {date:'Mar 14',topic:'Negation & Inversion',score:76,remark:'Rushed the inversion section. Slow down.'},
-  {date:'Feb 28',topic:'Futur Simple',score:58,remark:'Struggled with irregular stems.'},
-  {date:'Feb 14',topic:'Imparfait vs Passé Comp.',score:83,remark:'Good intuition. A few slips with habitual past.'},
-];
+// Every score the student has (exercise_results + graded homework), oldest first:
+// { cat, score, at, title, type }. Progress, tests and home stats are built from it.
+let SCORES = [];
+// Days (YYYY-MM-DD, local) with any activity: exercises, homework, lessons attended
+let ACTIVITY_DAYS = new Set();
+const PROGRESS_LABELS = { grammar: 'Grammar', vocabulary: 'Vocabulary', listening: 'Listening', speaking: 'Speaking',
+  writing: 'Writing', homework: 'Homework', assessment: 'Tests' };
+const localDay = (d) => { const x = new Date(d); return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`; };
+
+// Last 8 scores per category, in the order the dashboard has always shown them
+function buildProgressFromScores() {
+  const by = {};
+  SCORES.forEach(r => { (by[r.cat] = by[r.cat] || []).push(r.score); });
+  PROGRESS_METRICS = Object.keys(PROGRESS_LABELS).filter(c => by[c]).map(c => ({ label: xt(`student_cat_${c}`, PROGRESS_LABELS[c]), data: by[c].slice(-8) }));
+  TEST_RESULTS = SCORES.filter(r => r.cat === 'assessment').slice().reverse().map(r => ({
+    date: new Date(r.at).toLocaleDateString(uiLocale(), { day: 'numeric', month: 'short' }),
+    topic: r.title || 'Test', score: r.score, remark: '' }));
+}
 let TEST_RESULTS = [];
 
-const defaultChatMsgs = [
-  {s:'Marie',i:'MD',col:'#3B1F6A',t:"Bonjour ! Prêt pour le cours d'aujourd'hui ?",time:'09:02',teacher:true},
-  {s:'Sofia',i:'SC',col:'#1B2E4A',t:"Bonjour Marie ! Oui, tout à fait.",time:'09:04',me:true},
-  {s:'Marie',i:'MD',col:'#3B1F6A',t:"Super. Nous allons commencer bientôt.",time:'09:05',teacher:true}
-];
 let CHAT_MSGS = [];
 let MEMBERS = [];
 let VOCAB = [];
@@ -2815,6 +3065,10 @@ let VOCAB = [];
    AUTH GUARD & PROFILE FETCH
 ══════════════════════════════════════════════════════ */
 (async()=>{
+  // Translation files (js/i18n/) and js/i18n.js are deferred: wait for them, and for a
+  // language loaded on demand, so text built here is translated
+  if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true }));
+  if (window.ALIMUN_I18N_READY) await window.ALIMUN_I18N_READY;
   const {createClient}=window.supabase;
   SB=createClient(CFG.url,CFG.key,{auth:{autoRefreshToken:true,persistSession:true,storageKey:'alimun-auth'}});
   let {data:{session}}=await SB.auth.getSession();
@@ -2883,6 +3137,7 @@ let VOCAB = [];
   // Fetch data & init
   await initData();
   init();
+  loadOneOnOne();
   // Hide "Book 1-on-1 Class" when no one-off price is configured (the paywall could only say "not available").
   Promise.resolve(window.ALIMUN_CONFIG_READY).then(() => {
     const c = window.ALIMUN_CONFIG || {};
@@ -2911,8 +3166,8 @@ function renderSessionNotes() {
   section.style.display = 'block';
   container.innerHTML = notesWithPdfs.map(n => {
     const date = new Date(n.sessions?.scheduled_at || n.published_at);
-    const dateStr = date.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
-    const grammarTopic = n.grammar_focus?.split('\n\n')[0] || 'Live Class Session';
+    const dateStr = date.toLocaleDateString(uiLocale(), { day: 'numeric', month: 'long', year: 'numeric' });
+    const grammarTopic = n.grammar_focus?.split('\n\n')[0] || xt('student_live_class_session', 'Live Class Session');
     const vocabCount = Array.isArray(n.vocabulary) ? n.vocabulary.length : 0;
     
     return `
@@ -3004,14 +3259,14 @@ function updateCountdowns(){
       btn.style.opacity = '1';
       btn.style.cursor = 'pointer';
       btn.onclick = () => handleStudentJoin(NEXT_CLASS.dailyRoomUrl, NEXT_CLASS.sessionId);
-      if (btnLbl) btnLbl.textContent = diff === 0 ? 'Session is live' : 'Room is open';
+      if (btnLbl) btnLbl.textContent = diff === 0 ? xt('student_session_live', 'Session is live') : xt('student_room_open', 'Room is open');
     } else {
       btn.disabled = true;
       btn.style.opacity = '0.5';
       btn.style.cursor = 'not-allowed';
       btn.onclick = null;
       const minsLeft = Math.ceil((sessionMs - openBeforeMs - now) / 60000);
-      if (btnLbl) btnLbl.textContent = now > sessionMs + openAfterMs ? 'Session ended' : minsLeft > 0 ? `Opens in ${minsLeft} min` : 'Opens 15 min before';
+      if (btnLbl) btnLbl.textContent = now > sessionMs + openAfterMs ? xt('student_session_ended', 'Session ended') : minsLeft > 0 ? xt('student_opens_in', 'Opens in {n} min').replace('{n}', minsLeft) : xt('student_opens_before', 'Opens 15 min before');
     }
   }
 }
@@ -3031,30 +3286,44 @@ async function initData() {
   const langKey = USER.profile?.language || 'French';
   const levelVal = USER.profile?.level || 'B2';
   const levelKey = levelVal.startsWith('A') ? 'A' : levelVal.startsWith('B') ? 'B' : 'C';
-  const dbExercises = EXERCISE_DATABASE[langKey]?.[levelKey] || EXERCISE_DATABASE['French']['B'];
+  // No library for a language yet (e.g. English): show only teacher homework, never another language's set
+  const dbExercises = [...(EXERCISE_DATABASE[langKey]?.[levelKey] || []), ...examPrepTasks(langKey)];
 
-  // Load progress metrics from local storage or set defaults
-  const defaultMetrics = [
-    {label:'Tests',    data:[62,68,71,75,80,85,87,91]},
-    {label:'Homework', data:[70,72,75,73,80,82,88,90]},
-    {label:'Essays',   data:[55,60,65,63,70,72,75,78]},
-    {label:'Speaking', data:[50,54,58,60,62,65,68,70]},
-  ];
-  const savedMetrics = localStorage.getItem(`alimun:progress_metrics:${USER.id}`);
-  PROGRESS_METRICS = savedMetrics ? JSON.parse(savedMetrics) : defaultMetrics;
 
-  const completedEx = JSON.parse(localStorage.getItem(`alimun:completed_exercises:${USER.id}`) || '[]');
+  // Practice progress: the database (practice_progress) is the source; anything finished
+  // earlier on this device only (localStorage) is copied up once.
+  let remoteProgress = {};
+  if (SB && USER.profile) {
+    try {
+      const { data, error } = await SB.from('practice_progress')
+        .select('ex_key, done, user_answer, graded_score, feedback').eq('student_id', USER.id).limit(2000);
+      if (error) throw error;
+      (data || []).forEach(r => { remoteProgress[r.ex_key] = r; });
+    } catch (e) {
+      console.warn('Practice progress unavailable:', e && e.message);
+      remoteProgress = null;
+    }
+  }
+  let completedEx = [];
+  try { completedEx = JSON.parse(localStorage.getItem(`alimun:completed_exercises:${USER.id}`) || '[]'); } catch (_) { completedEx = []; }
+  const toUpload = [];
   const dbExs = dbExercises.map(ex => {
-    const isDone = completedEx.includes(ex.title);
-    const savedState = JSON.parse(localStorage.getItem(`alimun:ex_state:${USER.id}:${ex.title}`) || 'null');
-    return {
-      ...ex,
-      done: isDone,
-      userAnswer: savedState?.userAnswer !== undefined ? savedState.userAnswer : null,
-      gradedScore: savedState?.gradedScore !== undefined ? savedState.gradedScore : null,
-      feedback: savedState?.feedback || ''
-    };
+    const remote = remoteProgress && remoteProgress[practiceKey(ex)];
+    let savedState = null;
+    try { savedState = JSON.parse(localStorage.getItem(`alimun:ex_state:${USER.id}:${ex.title}`) || 'null'); } catch (_) { savedState = null; }
+    const item = remote
+      ? { ...ex, done: !!remote.done, userAnswer: remote.user_answer, gradedScore: remote.graded_score, feedback: remote.feedback || '' }
+      : { ...ex, done: completedEx.includes(ex.title),
+          userAnswer: savedState?.userAnswer !== undefined ? savedState.userAnswer : null,
+          gradedScore: savedState?.gradedScore !== undefined ? savedState.gradedScore : null,
+          feedback: savedState?.feedback || '' };
+    if (!remote && remoteProgress && item.done) toUpload.push(practiceRow(item));
+    return item;
   });
+  if (toUpload.length) {
+    SB.from('practice_progress').upsert(toUpload, { onConflict: 'student_id,ex_key' })
+      .then(({ error }) => { if (error) console.warn('Practice progress upload failed:', error.message); });
+  }
 
   // ── Teacher-assigned homework from Supabase ──────────────
   let hwExs = [];
@@ -3070,7 +3339,7 @@ async function initData() {
 
       const { data: mySubs, error: subError } = await SB
         .from('assignment_submissions')
-        .select('assignment_id, submission_text, status, score, feedback, submitted_at')
+        .select('assignment_id, submission_text, status, score, feedback, submitted_at, graded_at')
         .eq('student_id', USER.id);
       if (subError) throw subError;
 
@@ -3098,6 +3367,7 @@ async function initData() {
           gradedScore: isGraded ? sub.score : null,
           feedback: isGraded ? (sub.feedback || '') : '',
           userAnswer: sub ? sub.submission_text : '',
+          submittedAt: sub ? sub.submitted_at : null,
           minWords: hw.min_words || 20,
           recorded: hw.type === 'Speaking' && sub ? true : false
         };
@@ -3109,41 +3379,40 @@ async function initData() {
 
   EXERCISES = [...hwExs, ...dbExs];
 
-  // Fold newly graded homework scores into PROGRESS_METRICS
-  const addedHwMetrics = JSON.parse(localStorage.getItem(`alimun:added_hw_metrics:${USER.id}`) || '[]');
-  let metricsChanged = false;
-
-  gradedSubs.forEach(sub => {
-    if (addedHwMetrics.includes(sub.assignment_id)) return;
-    const hwInfo = hwExs.find(h => h.id === sub.assignment_id);
-    if (!hwInfo || sub.score == null) return;
-    let category = 'Homework';
-    if (hwInfo.type === 'Essay') category = 'Essays';
-    else if (hwInfo.type === 'Speaking') category = 'Speaking';
-    const metric = PROGRESS_METRICS.find(m => m.label === category);
-    if (metric) {
-      metric.data.push(sub.score);
-      if (metric.data.length > 8) metric.data.shift();
-      metricsChanged = true;
+  // Scores and activity from the database (exercise_results, graded homework, attendance)
+  SCORES = [];
+  ACTIVITY_DAYS = new Set();
+  if (SB && USER.profile) {
+    try {
+      const since = new Date(Date.now() - 180 * 86400000).toISOString();
+      const [{ data: results }, { data: attended }] = await Promise.all([
+        SB.from('exercise_results').select('category, score, title, ex_type, created_at')
+          .eq('student_id', USER.id).gte('created_at', since).order('created_at', { ascending: true }).limit(2000),
+        SB.from('session_attendance').select('joined_at').eq('student_id', USER.id).gte('joined_at', since),
+      ]);
+      (results || []).forEach(r => SCORES.push({ cat: r.category, score: Number(r.score) || 0, at: r.created_at, title: r.title, type: r.ex_type }));
+      (attended || []).forEach(a => { if (a.joined_at) ACTIVITY_DAYS.add(localDay(a.joined_at)); });
+    } catch (e) {
+      console.error('Failed to load progress:', e);
     }
-    addedHwMetrics.push(sub.assignment_id);
-  });
-
-  if (metricsChanged) {
-    localStorage.setItem(`alimun:progress_metrics:${USER.id}`, JSON.stringify(PROGRESS_METRICS));
-    localStorage.setItem(`alimun:added_hw_metrics:${USER.id}`, JSON.stringify(addedHwMetrics));
+    gradedSubs.forEach(sub => {
+      if (sub.score == null) return;
+      const hw = hwExs.find(h => h.id === sub.assignment_id);
+      SCORES.push({ cat: 'homework', score: Number(sub.score) || 0, at: sub.graded_at || sub.submitted_at, title: hw ? hw.title : 'Homework', type: hw ? hw.type : null });
+    });
+    hwExs.forEach(h => { if (h.done && h.submittedAt) ACTIVITY_DAYS.add(localDay(h.submittedAt)); });
+    SCORES.sort((a, b) => String(a.at).localeCompare(String(b.at)));
+    SCORES.forEach(r => { if (r.at) ACTIVITY_DAYS.add(localDay(r.at)); });
   }
-
-  const savedTests = localStorage.getItem(`alimun:test_results:${USER.id}`);
-  TEST_RESULTS = savedTests ? JSON.parse(savedTests) : [...defaultTestResults];
+  buildProgressFromScores();
 
   if (!USER.cohort_id) {
     CAL_DATA = {};
-    VOCAB = defaultVocab[langKey] || defaultVocab['French'];
+    VOCAB = [];
+    renderLiveVocab([]);
     MEMBERS = [
       {i:'AI',name:'AI Tutor',role:'AI Assistant',col:'#ceff65',online:true},
-      {i:'MD',name:'Marie Dubois',role:'Teacher',col:'#3B1F6A',online:true},
-      {i:'SC',name:USER.name,role:'You',col:'#1B2E4A',online:true,me:true}
+      {i:initialsOf(USER.name),name:USER.name,role:'You',col:'#1B2E4A',online:true,me:true}
     ];
     const savedChat = localStorage.getItem(`alimun:chat:${USER.id}`);
     if (savedChat) {
@@ -3155,7 +3424,7 @@ async function initData() {
                       targetLang === 'German' ? 'Hallo! Wie geht es dir heute? Ich bin hier, um dir beim Deutschlernen zu helfen.' :
                       'Hello! How can I help you practice today?';
       CHAT_MSGS = [
-        {s:'AI Tutor', i:'AI', col:'#ceff65', t:welcome, time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}), me:false, ai:true}
+        {s:'AI Tutor', i:'AI', col:'#ceff65', t:welcome, time:new Date().toLocaleTimeString(uiLocale(),{hour:'2-digit',minute:'2-digit'}), me:false, ai:true}
       ];
       localStorage.setItem(`alimun:chat:${USER.id}`, JSON.stringify(CHAT_MSGS));
     }
@@ -3232,11 +3501,12 @@ async function initData() {
       const cohortLang  = cohort.language  || langKey;
       const cohortLvl   = cohort.level     || levelVal;
       const goalTrack   = cohort.goal_track || '';
-      const topic       = nextSession.session_notes?.grammar_focus || 'Live Session';
+      const topic       = nextSession.session_notes?.grammar_focus || xt('student_class_live', 'Live Session');
       const count       = cohort.enrolled_count || 0;
 
       NEXT_CLASS.teacher   = `${teacherName} · ${cohortLang} ${cohortLvl}`;
-      NEXT_CLASS.topic     = `${topic} · ${count} classmate${count !== 1 ? 's' : ''} enrolled`;
+      const enrolledTxt = (count === 1 ? xt('student_classmate_enrolled', '{n} classmate enrolled') : xt('student_classmates_enrolled', '{n} classmates enrolled')).replace('{n}', count);
+      NEXT_CLASS.topic     = `${topic} · ${enrolledTxt}`;
       NEXT_CLASS.goalTrack = goalTrack;
       NEXT_CLASS.cohortDesc = `${cohortLang} ${cohortLvl}`;
 
@@ -3245,8 +3515,8 @@ async function initData() {
       if (emptyCard) emptyCard.style.display  = 'none';
 
       const sessionDate = NEXT_CLASS.at;
-      const dateLabel   = sessionDate.toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short' });
-      const timeLabel   = sessionDate.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' });
+      const dateLabel   = sessionDate.toLocaleDateString(uiLocale(), { weekday:'short', day:'numeric', month:'short' });
+      const timeLabel   = sessionDate.toLocaleTimeString(uiLocale(), { hour:'2-digit', minute:'2-digit' });
       const ncDate = document.getElementById('nc-date');
       if (ncDate) ncDate.textContent = `${dateLabel} · ${timeLabel}`;
 
@@ -3271,7 +3541,7 @@ async function initData() {
       const icTeacherAv    = document.getElementById('incall-teacher-av');
       if (lvTeacherName)  lvTeacherName.textContent  = teacherName;
       if (lvTeacherTopic) lvTeacherTopic.textContent = `${topic} · ${cohortLvl}`;
-      if (lvWaiting)      lvWaiting.textContent       = `${count} classmate${count !== 1 ? 's' : ''} enrolled`;
+      if (lvWaiting)      lvWaiting.textContent       = enrolledTxt;
       if (icTeacherName)  icTeacherName.textContent   = teacherName;
       const tInitials = teacherName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
       if (lvTeacherAv) lvTeacherAv.textContent = tInitials;
@@ -3304,9 +3574,11 @@ async function initData() {
     if (cohortData && cohortData.teacher_profiles) {
       const tp = cohortData.teacher_profiles;
       document.querySelector('[data-field="teacher-name"]').textContent = tp.full_name;
+      const tAv = document.querySelector('[data-field="teacher-av"]');
+      if (tAv) tAv.textContent = initialsOf(tp.full_name);
       document.querySelector('[data-field="teacher-bio"]').textContent = tp.specialty || tp.bio || `${langKey} Teacher`;
-      document.querySelector('[data-field="teacher-sessions"]').textContent = tp.sessions_delivered || 48;
-      document.querySelector('[data-field="teacher-feedbacks"]').textContent = tp.rating ? parseFloat(tp.rating).toFixed(1) : '5.0';
+      document.querySelector('[data-field="teacher-sessions"]').textContent = Number(tp.sessions_delivered) || 0;
+      document.querySelector('[data-field="teacher-feedbacks"]').textContent = tp.rating ? parseFloat(tp.rating).toFixed(1) : '–';
     }
 
     // ─ 3. Query Session Notes for Teacher Note & Vocab ──────────────
@@ -3344,13 +3616,19 @@ async function initData() {
     
     // Render the downloadable PDF notes
     renderSessionNotes();
+    await syncVocabReviews(allNotes);
 
     if (allNotes && allNotes.length) {
       // Latest teacher note
       const latestNote = allNotes.find(n => n.teacher_note);
       if (latestNote) {
-        document.querySelector('[data-field="teacher-note"]').textContent = `"${latestNote.teacher_note}"`;
+        const noteEl = document.querySelector('[data-field="teacher-note"]');
+        noteEl.textContent = `"${latestNote.teacher_note}"`;
+        noteEl.style.display = '';
       }
+      // Live pre-join: vocabulary from the latest notes that have some
+      const withVocab = allNotes.find(n => Array.isArray(n.vocabulary) && n.vocabulary.length);
+      renderLiveVocab(withVocab ? withVocab.vocabulary : []);
       
       // Parse vocab from all session notes
       let list = [];
@@ -3370,9 +3648,7 @@ async function initData() {
         return seen.has(k) ? false : seen.add(k);
       });
     }
-    if (VOCAB.length === 0) {
-      VOCAB = defaultVocab[langKey] || defaultVocab['French'];
-    }
+    if (!allNotes || !allNotes.length) renderLiveVocab([]);
 
     // ─ 4. Query All Sessions for Calendar ────────────────────────────
     const { data: calSessions } = await SB
@@ -3396,8 +3672,9 @@ async function initData() {
         if (!CAL_DATA[key]) CAL_DATA[key] = [];
         
         CAL_DATA[key].push({
-          title: s.session_notes?.grammar_focus || 'Live Class Session',
-          type: 'class'
+          title: s.session_notes?.grammar_focus || xt('student_live_class_session', 'Live Class Session'),
+          type: 'class',
+          at: s.scheduled_at
         });
 
         if (s.session_notes?.homework) {
@@ -3405,7 +3682,7 @@ async function initData() {
           const dueKey = `${dueD.getFullYear()}-${dueD.getMonth()}-${dueD.getDate()}`;
           if (!CAL_DATA[dueKey]) CAL_DATA[dueKey] = [];
           CAL_DATA[dueKey].push({
-            title: `Homework: ${s.session_notes.homework}`,
+            title: `${xt('student_cat_homework', 'Homework')}: ${s.session_notes.homework}`,
             type: 'hw'
           });
         }
@@ -3444,7 +3721,7 @@ async function initData() {
         name: tp.full_name,
         role: 'Teacher',
         col: '#3B1F6A',
-        online: true
+        online: false
       });
     }
     if (classmates) {
@@ -3454,8 +3731,8 @@ async function initData() {
           i: c.full_name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),
           name: c.full_name,
           role: isMe ? 'You' : 'Student',
-          col: isMe ? '#1B2E4A' : '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'),
-          online: isMe ? true : Math.random() > 0.4,
+          col: isMe ? '#1B2E4A' : '#3B1F6A',
+          online: isMe,
           me: isMe
         });
       });
@@ -3479,7 +3756,7 @@ async function initData() {
                       targetLang === 'German' ? 'Hallo! Wie geht es dir heute? Ich bin hier, um dir beim Deutschlernen zu helfen.' :
                       'Hello! How can I help you practice today?';
       CHAT_MSGS = [
-        {s:'AI Tutor', i:'AI', col:'#ceff65', t:welcome, time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}), me:false, ai:true}
+        {s:'AI Tutor', i:'AI', col:'#ceff65', t:welcome, time:new Date().toLocaleTimeString(uiLocale(),{hour:'2-digit',minute:'2-digit'}), me:false, ai:true}
       ];
       localStorage.setItem(`alimun:chat:${USER.id}`, JSON.stringify(CHAT_MSGS));
     }
@@ -3509,7 +3786,7 @@ async function initData() {
         if (feedbacks.length > 0) {
           const latestFeedback = feedbacks[0].feedback_text;
           const homeQuoteEl = document.querySelector('[data-field="teacher-note"]');
-          if (homeQuoteEl) homeQuoteEl.textContent = `"${latestFeedback}"`;
+          if (homeQuoteEl) { homeQuoteEl.textContent = `"${latestFeedback}"`; homeQuoteEl.style.display = ''; }
         }
       }
     } catch(err) {
@@ -3529,9 +3806,9 @@ function buildTodaySchedule() {
   
   todayEvs.forEach(ev => {
     SCHEDULE.push({
-      time: ev.type === 'class' ? '09:00' : '18:00',
+      time: ev.at ? new Date(ev.at).toLocaleTimeString(uiLocale(), { hour: '2-digit', minute: '2-digit' }) : '--:--',
       title: ev.title,
-      tag: ev.type === 'class' ? 'Live Class' : 'Homework',
+      tag: ev.type === 'class' ? xt('student_leg_class', 'Live Class') : xt('student_cat_homework', 'Homework'),
       warn: ev.type === 'hw'
     });
   });
@@ -3539,8 +3816,8 @@ function buildTodaySchedule() {
   if (SCHEDULE.length === 0) {
     SCHEDULE.push({
       time: '--:--',
-      title: 'No classes or deadlines today.',
-      tag: 'Free Day',
+      title: xt('student_free_day_title', 'No classes or deadlines today.'),
+      tag: xt('student_free_day', 'Free Day'),
       warn: false
     });
   }
@@ -4084,11 +4361,11 @@ window.closeTeacherPopover = closeTeacherPopover;
 ══════════════════════════════════════════════════════ */
 function initHome(){
   const now=new Date();
-  const dayName=now.toLocaleDateString('en-US',{weekday:'long'}).toUpperCase();
-  const dateStr=now.toLocaleDateString('en-US',{day:'numeric',month:'long'}).toUpperCase();
+  const dayName=now.toLocaleDateString(uiLocale(),{weekday:'long'}).toUpperCase();
+  const dateStr=now.toLocaleDateString(uiLocale(),{day:'numeric',month:'long'}).toUpperCase();
   const el=document.getElementById('today-date');
   if(el)el.textContent=`${dayName} — ${dateStr}`;
-  document.getElementById('event-count').textContent=`${SCHEDULE.length} events`;
+  document.getElementById('event-count').textContent=`${SCHEDULE.length} ${SCHEDULE.length === 1 ? xt('student_event', 'event') : xt('student_events', 'events')}`;
 
   const sb=document.getElementById('sched-body');
   sb.innerHTML=SCHEDULE.map(ev=>`
@@ -4099,7 +4376,7 @@ function initHome(){
       <div class="sched-tag ${ev.warn?'tag-hw':'tag-default'}">${escHtml(ev.tag)}</div>
     </div>`).join('');
 
-  const days=['M','T','W','T','F','S','S'];
+  const days=weekdayInitials();
   document.getElementById('week-bars').innerHTML=WEEK_ACTIVITY.map((v,i)=>`
     <div class="bar-wrap">
       <div class="bar" style="height:${Math.max(v*100,6)}%;border-radius:4px 4px 0 0;background:${i===WEEK_TODAY?'#CEFF65':v>0?'rgba(0,0,0,.12)':'rgba(0,0,0,.05)'};width:100%;"></div>
@@ -4107,7 +4384,18 @@ function initHome(){
   document.getElementById('week-days').innerHTML=days.map((d,i)=>`
     <div style="flex:1;text-align:center;font-family:var(--mono);font-size:9px;color:${i===WEEK_TODAY?'#9BCB00':'rgba(0,0,0,.22)'};font-weight:${i===WEEK_TODAY?700:400};">${d}</div>`).join('');
 
-  document.getElementById('activity-list').innerHTML=RECENT_ACTIVITY.map(([a,b,t])=>`
+  // Recent activity: the latest scores (exercises and graded homework)
+  const rtf = new Intl.RelativeTimeFormat(uiLocale(), { numeric: 'auto' });
+  const dayStart = (x) => { const d0 = new Date(x); d0.setHours(0, 0, 0, 0); return d0.getTime(); };
+  const recentActivity = SCORES.slice(-4).reverse().map(r => [
+    r.title || xt(`student_cat_${r.cat}`, PROGRESS_LABELS[r.cat] || r.cat),
+    `${xt('student_score', 'Score')}: ${r.score}%`,
+    rtf.format(Math.round((dayStart(r.at) - dayStart(Date.now())) / 86400000), 'day'),
+  ]);
+  if (!recentActivity.length) {
+    document.getElementById('activity-list').innerHTML = `<div class="activity-row"><div class="activity-txt">${escHtml(xt('student_activity_empty', 'Your exercises and graded homework appear here.'))}</div></div>`;
+  } else
+  document.getElementById('activity-list').innerHTML=recentActivity.map(([a,b,t])=>`
     <div class="activity-row">
       <svg class="activity-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       <div class="activity-txt"><strong style="color:var(--txt);">${escHtml(a)}</strong> · ${escHtml(b)}</div>
@@ -4124,51 +4412,22 @@ function initHome(){
     exMetricEl.textContent = `${doneCount} / ${totalCount}`;
   }
 
-  // 2. Weekly Average (Average of the latest values of each PROGRESS_METRICS category)
-  if (PROGRESS_METRICS.length > 0) {
-    const sumLatest = PROGRESS_METRICS.reduce((acc, m) => acc + m.data[m.data.length - 1], 0);
-    const avgLatest = Math.round(sumLatest / PROGRESS_METRICS.length);
-    const avgMetricEl = document.querySelector('[data-metric="weekly-avg"]');
-    if (avgMetricEl) {
-      avgMetricEl.textContent = `${avgLatest}%`;
-    }
-
-    // 3. Cohort Rank based on weekly average score
-    const rankEl = document.querySelector('[data-metric="rank"]');
-    if (rankEl) {
-      let rank = '#3';
-      if (avgLatest >= 90) rank = '#1';
-      else if (avgLatest >= 81) rank = '#2';
-      else if (avgLatest >= 70) rank = '#3';
-      else rank = '#4';
-      rankEl.textContent = rank;
-      localStorage.setItem(`alimun:cohort_rank:${USER.id}`, rank);
-    }
+  // 2. Weekly average: every score from the last 7 days
+  const weekAgo = Date.now() - 7 * 86400000;
+  const recent = SCORES.filter(r => Date.parse(r.at) >= weekAgo);
+  const avgMetricEl = document.querySelector('[data-metric="weekly-avg"]');
+  if (avgMetricEl) {
+    avgMetricEl.textContent = recent.length ? `${Math.round(recent.reduce((a, r) => a + r.score, 0) / recent.length)}%` : '–';
   }
 
-  // 4. Streak Days
-  let streak = parseInt(localStorage.getItem(`alimun:streak:${USER.id}`) || '14');
-  
-  // If user completed at least 1 exercise today, handle streak increment
-  const completionDateKey = `alimun:last_completion_date:${USER.id}`;
-  const lastCompDate = localStorage.getItem(completionDateKey);
-  const todayStr = new Date().toISOString().split('T')[0];
-  
-  if (doneCount > 0 && lastCompDate !== todayStr) {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yestStr = yesterday.toISOString().split('T')[0];
-    
-    if (lastCompDate === yestStr || !lastCompDate) {
-      streak += 1;
-    }
-    localStorage.setItem(`alimun:streak:${USER.id}`, String(streak));
-    localStorage.setItem(completionDateKey, todayStr);
-  }
-  
+  // 3. Streak: consecutive days with activity, counting back from today (or yesterday)
+  let streak = 0;
+  const d = new Date();
+  if (!ACTIVITY_DAYS.has(localDay(d))) d.setDate(d.getDate() - 1);
+  while (ACTIVITY_DAYS.has(localDay(d))) { streak += 1; d.setDate(d.getDate() - 1); }
   const streakEl = document.querySelector('[data-metric="streak"]');
   if (streakEl) {
-    streakEl.textContent = `${streak} days`;
+    streakEl.textContent = `${streak} ${streak === 1 ? xt('student_day', 'day') : xt('student_days', 'days')}`;
   }
 }
 
@@ -4183,19 +4442,20 @@ function initHome(){
 ══════════════════════════════════════════════════════ */
 const _calToday=new Date();
 let calYear=_calToday.getFullYear(),calMonth=_calToday.getMonth(); // current month (0-indexed)
-const MONTHS=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
 let calSel=_calToday.getDate();
 // Calendar event type styling (brand palette)
 const TYPE_COLOR={class:'#9BCB00',hw:'#080808',assignment:'#080808',exam:'#dc2626',default:'#888'};
 const TYPE_BG={class:'rgba(206,255,101,0.25)',hw:'#eeeeec',assignment:'#eeeeec',exam:'rgba(220,38,38,0.08)',default:'#eeeeec'};
-const TYPE_LABEL={class:'Live Class',hw:'Homework',assignment:'Assignment',exam:'Exam',default:'Event'};
+const TYPE_LABEL=new Proxy({class:['student_leg_class','Live Class'],hw:['student_cat_homework','Homework'],assignment:['student_assignment','Assignment'],exam:['student_leg_test','Test'],default:['student_event_label','Event']},{get:(o,k)=>xt(...(o[k]||o.default))});
 
 function buildCal(){
   const fd=new Date(calYear,calMonth,1).getDay();
   const start=(fd===0?6:fd-1); // Monday-first offset
   const days=new Date(calYear,calMonth+1,0).getDate();
   const today=new Date();
-  document.getElementById('cal-label').textContent=`${MONTHS[calMonth]} ${calYear}`;
+  const dow = document.getElementById('cal-dow');
+  if (dow) dow.innerHTML = weekdayInitials().map(d => `<span>${escHtml(d)}</span>`).join('');
+  document.getElementById('cal-label').textContent=`${monthsUpper()[calMonth]} ${calYear}`;
   const grid=document.getElementById('cal-days');
   grid.innerHTML='';
   for(let i=0;i<start;i++)grid.insertAdjacentHTML('beforeend','<div></div>');
@@ -4217,7 +4477,7 @@ function renderCalDetail(){
   const det=document.getElementById('cal-detail');
   const key = `${calYear}-${calMonth}-${calSel}`;
   if(calSel&&CAL_DATA[key] && CAL_DATA[key].length > 0){
-    det.innerHTML=`<div class="lbl" style="margin-bottom:16px;">${MONTHS[calMonth].charAt(0)+MONTHS[calMonth].slice(1).toLowerCase()} ${calSel}</div>`+
+    det.innerHTML=`<div class="lbl" style="margin-bottom:16px;">${monthsUpper()[calMonth].charAt(0)+monthsUpper()[calMonth].slice(1).toLowerCase()} ${calSel}</div>`+
       CAL_DATA[key].map(ev=>`<div class="ev-card" style="background:${TYPE_BG[ev.type]};border:1px solid ${TYPE_COLOR[ev.type]}33;">
         <div class="ev-title">${escHtml(ev.title)}</div>
         <div class="ev-type" style="color:${TYPE_COLOR[ev.type]};">${TYPE_LABEL[ev.type]}</div>
@@ -4231,7 +4491,7 @@ function renderCalDetail(){
       const evDate = new Date(y, m, d);
       if (evDate >= today) {
         CAL_DATA[k].forEach(ev => {
-          upcoming.push({ dateStr: `${MONTHS[m].slice(0,3)} ${d}`, day: d, ev });
+          upcoming.push({ dateStr: `${monthsUpper()[m].slice(0,3)} ${d}`, day: d, ev });
         });
       }
     });
@@ -4254,7 +4514,14 @@ function renderCalDetail(){
    EXERCISES VIEW
 ══════════════════════════════════════════════════════ */
 let exFilter='all', exExpanded=null;
-const EX_CATS=['all','homework','grammar','vocabulary','listening','speaking','writing'];
+const EX_CATS=['all','homework','grammar','vocabulary','listening','speaking','writing','exam'];
+// Exam preparation tasks (js/exam-prep.js) as Practice exercises in the "exam" tab; results count as Tests
+function examPrepTasks(lang) {
+  const tracks = (window.ALIMUN_EXAM_PREP || {})[lang] || [];
+  return tracks.flatMap(tr => tr.tasks.map(t => ({ ...t, cat: 'exam', isExam: true, exam: tr.short, examLevel: tr.level, title: `${tr.short} · ${t.title}` })));
+}
+const EX_TYPE_KEYS = { 'multiple choice': 'student_extype_mc', 'fill in blank': 'student_extype_fill', 'word matching': 'student_extype_match', speaking: 'student_cat_speaking', listening: 'student_cat_listening', essay: 'student_extype_essay', writing: 'student_cat_writing', homework: 'student_cat_homework' };
+const exTypeLabel = (type) => { const k = EX_TYPE_KEYS[String(type || '').toLowerCase()]; return k ? xt(k, type) : (type || ''); };
 
 function getOrInitMatchingState(index) {
   if (!window.matchingStates) window.matchingStates = {};
@@ -4359,7 +4626,7 @@ function playListeningAudio(text) {
   window.speechSynthesis.cancel();
   const langKey = USER.profile?.language || 'French';
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = langKey === 'Spanish' ? 'es-ES' : langKey === 'German' ? 'de-DE' : 'fr-FR';
+  utterance.lang = speechLang(langKey);
   utterance.rate = 0.85;
   window.speechSynthesis.speak(utterance);
 }
@@ -4436,7 +4703,7 @@ function startSpeaking(index) {
 
   const recognition = new SpeechRecognition();
   const langKey = USER.profile?.language || 'French';
-  recognition.lang = langKey === 'Spanish' ? 'es-ES' : langKey === 'German' ? 'de-DE' : 'fr-FR';
+  recognition.lang = speechLang(langKey);
   recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
@@ -4634,33 +4901,55 @@ function submitHomework(index) {
   })();
 }
 
+// Built-in exercises are keyed by course language + title (titles repeat across languages)
+const practiceKey = (ex) => `${USER.profile?.language || ''}:${ex.title}`.slice(0, 300);
+const practiceRow = (ex) => ({
+  student_id: USER.id,
+  ex_key: practiceKey(ex),
+  done: !!ex.done,
+  user_answer: ex.userAnswer === undefined ? null : ex.userAnswer,
+  graded_score: ex.gradedScore == null || isNaN(Number(ex.gradedScore)) ? null : Math.min(Math.max(Math.round(Number(ex.gradedScore)), 0), 100),
+  feedback: String(ex.feedback || '').slice(0, 8000) || null,
+  updated_at: new Date().toISOString(),
+});
+
 function saveExerciseState(ex) {
-  localStorage.setItem(`alimun:ex_state:${USER.id}:${ex.title}`, JSON.stringify({
-    userAnswer: ex.userAnswer,
-    gradedScore: ex.gradedScore,
-    feedback: ex.feedback
-  }));
-  const completed = EXERCISES.filter(e => e.done).map(e => e.title);
-  localStorage.setItem(`alimun:completed_exercises:${USER.id}`, JSON.stringify(completed));
+  try {
+    localStorage.setItem(`alimun:ex_state:${USER.id}:${ex.title}`, JSON.stringify({
+      userAnswer: ex.userAnswer,
+      gradedScore: ex.gradedScore,
+      feedback: ex.feedback
+    }));
+    const completed = EXERCISES.filter(e => e.done).map(e => e.title);
+    localStorage.setItem(`alimun:completed_exercises:${USER.id}`, JSON.stringify(completed));
+  } catch (_) { /* storage blocked: the database copy below still saves it */ }
+  // Teacher homework is saved in assignment_submissions; built-in exercises here
+  if (ex.isHw || !SB || !USER.profile) return;
+  SB.from('practice_progress').upsert(practiceRow(ex), { onConflict: 'student_id,ex_key' })
+    .then(({ error }) => { if (error) console.warn('Practice progress not saved:', error.message); });
 }
 
 function updateProgressCategory(exCat, score, exInfo) {
-  let label = 'Homework';
-  if (exCat === 'speaking') {
-    label = 'Speaking';
-  } else if (exCat === 'writing') {
-    label = 'Essays';
-  }
-  const metric = PROGRESS_METRICS.find(m => m.label === label);
-  if (metric) {
-    metric.data.push(score);
-    if (metric.data.length > 8) {
-      metric.data.shift();
-    }
-    localStorage.setItem(`alimun:progress_metrics:${USER.id}`, JSON.stringify(PROGRESS_METRICS));
-  }
+  const cat = exInfo?.isExam ? 'assessment' : (PROGRESS_LABELS[exCat] ? exCat : 'grammar');
+  const now = new Date().toISOString();
+  SCORES.push({ cat, score: Math.min(Math.max(Math.round(score), 0), 100), at: now, title: exInfo?.title || null, type: exInfo?.type || null });
+  ACTIVITY_DAYS.add(localDay(now));
+  buildProgressFromScores();
+  if (cat === 'assessment' && typeof renderTests === 'function') renderTests();
   // Persist to Supabase so the teacher dashboard analytics see it
-  saveExerciseResult(exCat, score, exInfo);
+  saveExerciseResult(cat, score, exInfo);
+}
+
+const initialsOf = (name) => String(name || '').split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+
+// "Today's vocabulary" on the live pre-join screen: words from the latest lesson notes
+function renderLiveVocab(list) {
+  const box = document.getElementById('live-vocab');
+  if (!box) return;
+  const words = (list || []).filter(v => v && v.word).slice(0, 6);
+  box.innerHTML = words.length
+    ? words.map((v, i) => `<div class="vocab-row"${i === words.length - 1 ? ' style="border:none;"' : ''}><span class="vocab-fr">${escHtml(v.word)}</span><span class="vocab-en">${escHtml(v.definition || '')}</span></div>`).join('')
+    : `<div style="font-size:13px;color:var(--dim);">${escHtml(xt('student_vocab_empty', 'Your teacher adds vocabulary to the notes after each lesson.'))}</div>`;
 }
 
 function saveExerciseResult(category, score, exInfo) {
@@ -4816,7 +5105,7 @@ function renderExerciseUI(ex, i) {
   if (ex.type === 'Multiple Choice') {
     return `
       <div class="mcq-q">${escHtml(ex.question)}</div>
-      <div class="mcq-stem" style="font-family:var(--mono); background: rgba(0,0,0,0.02); padding: 10px 14px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 12px;">"${escHtml(ex.stem)}"</div>
+      ${ex.stem ? `<div class="mcq-stem" style="font-family:var(--mono); background: rgba(0,0,0,0.02); padding: 10px 14px; border-radius: 8px; border: 1px dashed var(--bd); margin-bottom: 12px;">"${escHtml(ex.stem)}"</div>` : ''}
       <div class="mcq-opts">
         ${ex.opts.map((o, j) => {
           let cls = '';
@@ -5026,9 +5315,11 @@ function renderExercises(){
   const pct=Math.round(done/EXERCISES.length*100);
   document.getElementById('ex-count').innerHTML=`${done}<span style="font-size:14px;color:var(--dim);font-weight:400;"> / ${EXERCISES.length}</span>`;
   document.getElementById('ex-bar').style.width=pct+'%';
-  document.getElementById('ex-pct').textContent=pct+'% done';
+  document.getElementById('ex-pct').textContent=`${pct}% ${xt('student_pct_done', 'done')}`;
 
-  document.getElementById('ex-tabs').innerHTML=EX_CATS.map(c=>`<button class="ex-tab${exFilter===c?' active':''}" onclick="exSetFilter('${c}')">${c}</button>`).join('');
+  const exNote = document.getElementById('ex-exam-note');
+  if (exNote) exNote.style.display = exFilter === 'exam' ? '' : 'none';
+  document.getElementById('ex-tabs').innerHTML=EX_CATS.filter(c => c !== 'exam' || EXERCISES.some(e => e.isExam)).map(c=>`<button class="ex-tab${exFilter===c?' active':''}" onclick="exSetFilter('${c}')">${escHtml(xt(`student_cat_${c}`, c))}</button>`).join('');
 
   const filtered=EXERCISES.filter(e=>exFilter==='all'||e.cat===exFilter);
   document.getElementById('ex-list').innerHTML=filtered.map((ex,i)=>{
@@ -5044,7 +5335,7 @@ function renderExercises(){
       </div>
       <div style="flex:1;">
         <div class="ex-title${ex.done?' done':''}">${escHtml(ex.title)}</div>
-        <div class="ex-type">${escHtml(ex.type)}</div>
+        <div class="ex-type">${escHtml(exTypeLabel(ex.type))}</div>
       </div>
       <div class="diff-bars">${Array.from({length:5}).map((_,d)=>`<div class="d-bar" style="height:${d<ex.diff?12:6}px;background:${d<ex.diff?(ex.done?'rgba(0,0,0,.15)':'rgba(0,0,0,.35)'):'rgba(0,0,0,.07)'};"></div>`).join('')}</div>
       <div class="ex-time">${escHtml(ex.time)}</div>
@@ -5053,6 +5344,7 @@ function renderExercises(){
       ${isExpanded ? renderExerciseUI(ex, globalIdx) : ''}
     </div>`;
   }).join('');
+  if (typeof renderWeekPlan === 'function' && document.getElementById('plan-body')) renderWeekPlan();
 }
 
 function exSetFilter(f){exFilter=f;exExpanded=null;renderExercises();}
@@ -5188,7 +5480,8 @@ async function answerPlacement(i) {
       const lvlEl = document.getElementById('sb-level');
       if (lvlEl) lvlEl.textContent = `${level} ${USER.profile.language}`;
     }
-    saveExerciseResult('assessment', scorePct, { type: 'Placement', title: 'Initial placement test' });
+    // Adds the score to Tests and Progress right away and saves it to exercise_results
+    updateProgressCategory('assessment', scorePct, { type: 'Placement', title: xt('student_placement_title', 'Placement Test') });
     localStorage.setItem(`alimun:placement_done:${USER.id}`, level);
   } catch (e) {
     console.warn('Could not save placement level:', e);
@@ -5235,22 +5528,52 @@ function renderProgress(){
   const focusSubEl = document.getElementById('prog-focus-sub');
   
   if (bestValEl) bestValEl.textContent = highestLabel;
-  if (bestSubEl) bestSubEl.textContent = `${highestAvg}% avg`;
+  if (bestSubEl) bestSubEl.textContent = `${highestAvg}% ${xt('student_avg_suffix', 'avg')}`;
   if (focusValEl) focusValEl.textContent = lowestLabel;
-  if (focusSubEl) focusSubEl.textContent = `${lowestAvg}% avg`;
+  if (focusSubEl) focusSubEl.textContent = `${lowestAvg}% ${xt('student_avg_suffix', 'avg')}`;
 
+  // Overall trend: average of the last 30 days against the 30 days before
+  const trendVal = document.getElementById('prog-trend-val');
+  const trendSub = document.getElementById('prog-trend-sub');
+  if (trendVal) {
+    const avgOf = (from, to) => { const r = SCORES.filter(x => { const t = Date.parse(x.at); return t >= from && t < to; }); return r.length ? r.reduce((a, x) => a + x.score, 0) / r.length : null; };
+    const nowMs = Date.now(), m30 = 30 * 86400000;
+    const cur = avgOf(nowMs - m30, nowMs + 1), prev = avgOf(nowMs - 2 * m30, nowMs - m30);
+    if (cur == null || prev == null) { trendVal.textContent = '–'; trendVal.style.color = ''; if (trendSub) trendSub.textContent = ''; }
+    else {
+      const diff = Math.round(cur - prev);
+      trendVal.textContent = `${diff > 0 ? '+' : ''}${diff}%`;
+      trendVal.style.color = diff >= 0 ? 'var(--ok)' : 'var(--err)';
+      if (trendSub) trendSub.textContent = xt('student_prog_last_30', 'last 30 days');
+    }
+  }
+
+  // Teacher score: the latest homework the teacher graded
+  const lastGraded = SCORES.filter(r => r.cat === 'homework').slice(-1)[0];
+  const tVal = document.getElementById('prog-teacher-val');
+  const tSub = document.getElementById('prog-teacher-sub');
+  if (tVal) tVal.textContent = lastGraded ? `${lastGraded.score}%` : '–';
+  if (tSub) tSub.textContent = lastGraded ? xt('student_prog_last_graded', 'last graded homework') : '';
+
+  if (!PROGRESS_METRICS.length) {
+    if (bestValEl) bestValEl.textContent = '–';
+    if (bestSubEl) bestSubEl.textContent = '';
+    if (focusValEl) focusValEl.textContent = '–';
+    if (focusSubEl) focusSubEl.textContent = '';
+    document.getElementById('prog-rows').innerHTML = `<div style="padding:24px;text-align:center;color:var(--dim);font-size:13.5px;">${escHtml(xt('student_prog_empty', 'No scores yet. Your results appear here after your first exercise or graded homework.'))}</div>`;
+  } else
   document.getElementById('prog-rows').innerHTML=PROGRESS_METRICS.map((m,idx)=>{
     const latest=m.data[m.data.length-1];
-    const delta=latest-m.data[m.data.length-2];
+    const delta=m.data.length>1?latest-m.data[m.data.length-2]:0;
     const min=Math.min(...m.data),max=Math.max(...m.data);
-    const pts=m.data.map((v,i)=>`${(i/(m.data.length-1))*120},${36-((v-min)/(max-min||1))*36}`).join(' ');
+    const pts=m.data.map((v,i)=>`${m.data.length>1?(i/(m.data.length-1))*120:60},${36-((v-min)/(max-min||1))*36}`).join(' ');
     const avg=Math.round(m.data.reduce((a,b)=>a+b,0)/m.data.length);
     return `<div class="prog-row">
       <div class="prog-label-area">
         <div class="prog-cat">${escHtml(m.label)}</div>
         <div style="display:flex;align-items:baseline;gap:8px;">
           <span class="prog-score">${escHtml(latest)}</span>
-          <span class="prog-delta" style="color:${delta>0?'var(--ok)':'var(--err)'};">${delta>0?'+':''}${escHtml(delta)}</span>
+          ${m.data.length>1?`<span class="prog-delta" style="color:${delta>0?'var(--ok)':'var(--err)'};">${delta>0?'+':''}${escHtml(delta)}</span>`:''}
         </div>
       </div>
       <div class="mini-bars">${m.data.map((v,j)=>`<div class="mini-bar" style="height:${Math.max(((v-50)/50)*100,6)}%;background:${j===m.data.length-1?'var(--lime)':'rgba(0,0,0,.1)'};"></div>`).join('')}</div>
@@ -5258,7 +5581,7 @@ function renderProgress(){
         <polyline points="${pts}" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
       </svg>
       <div class="spark-avg-area">
-        <div class="spark-avg-lbl">8W AVG</div>
+        <div class="spark-avg-lbl">${escHtml(xt('student_prog_avg', 'Avg'))}</div>
         <div class="spark-avg-val">${avg}%</div>
       </div>
     </div>`;
@@ -5280,7 +5603,7 @@ function renderProgress(){
       // Fallback: If no notes in student_feedback table, show the latest cohort-wide session note if one exists
       const homeQuoteEl = document.querySelector('[data-field="teacher-note"]');
       const latestText = homeQuoteEl ? homeQuoteEl.textContent.trim().replace(/^"|"$/g, '') : '';
-      if (latestText && latestText !== 'Strong progress this week. Focus on oral fluency next.') {
+      if (latestText) {
         feedbackContainer.innerHTML = `
           <div class="card">
             <div style="display:flex;gap:16px;align-items:flex-start;">
@@ -5305,7 +5628,7 @@ function renderProgress(){
       feedbackContainer.innerHTML = feedbacks.map(f => {
         const teacherName = f.teacher_profiles?.full_name || 'Teacher';
         const initials = teacherName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-        const dateStr = new Date(f.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+        const dateStr = new Date(f.created_at).toLocaleDateString(uiLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
         return `
           <div class="card" style="margin-bottom: 12px;">
             <div style="display:flex;gap:16px;align-items:flex-start;">
@@ -5329,6 +5652,12 @@ function renderProgress(){
    TESTS VIEW
 ══════════════════════════════════════════════════════ */
 const QUIZ_QUESTIONS = {
+  English: {
+    stem: 'If I ______ more time, I would travel more.',
+    opts: ['had', 'have', 'would have', 'having'],
+    correct: 0,
+    explanation: 'The second conditional uses the past simple in the if-clause ("had") and "would" in the result clause.'
+  },
   Spanish: {
     stem: 'Es probable que ellos ______ mañana.',
     opts: ['vienen', 'vengan', 'vendrán', 'vinieron'],
@@ -5353,8 +5682,11 @@ let quizAns=null;
 let quizCompleted=false;
 
 function renderTests(){
-  const langKey = USER.profile?.language || 'French';
-  const q = QUIZ_QUESTIONS[langKey] || QUIZ_QUESTIONS['French'];
+  const langKey = USER.profile?.language || '';
+  const q = QUIZ_QUESTIONS[langKey];
+  const quizCard = document.getElementById('quiz-card');
+  if (quizCard) quizCard.style.display = q ? '' : 'none';
+  if (q) {
   
   const stemEl = document.querySelector('.quiz-stem');
   if (stemEl) {
@@ -5402,8 +5734,10 @@ function renderTests(){
   if (quizActionArea) {
     quizActionArea.innerHTML = actionHtml;
   }
+  }
 
-  document.getElementById('test-results').innerHTML=TEST_RESULTS.map(t=>{
+  document.getElementById('test-results').innerHTML = TEST_RESULTS.length ? '' : `<div style="padding:12px 0;color:var(--dim);font-size:13px;">${escHtml(xt('student_tests_empty', 'No test results yet.'))}</div>`;
+  if (TEST_RESULTS.length) document.getElementById('test-results').innerHTML=TEST_RESULTS.map(t=>{
     const col=t.score>=80?'var(--ok)':t.score>=65?'var(--ora)':'var(--err)';
     const translatedTopic = xt(t.topic, t.topic);
     const translatedDate = xt(t.date, t.date);
@@ -5413,7 +5747,7 @@ function renderTests(){
       <div>
         <div class="result-topic">${escHtml(translatedTopic)}</div>
         <div class="result-date">${escHtml(translatedDate)}</div>
-        <div class="result-remark">"${escHtml(translatedRemark)}"</div>
+        ${translatedRemark ? `<div class="result-remark">"${escHtml(translatedRemark)}"</div>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -5423,7 +5757,7 @@ function renderTests(){
   
   const ringText = document.querySelector('.ring-svg text');
   if (ringText) {
-    ringText.textContent = `${avgTestScore}%`;
+    ringText.textContent = TEST_RESULTS.length ? `${avgTestScore}%` : '–';
   }
   const ringCircle = document.querySelector('.ring-svg circle[stroke="var(--lime)"]');
   if (ringCircle) {
@@ -5436,7 +5770,7 @@ function renderTests(){
   
   const ringSub = document.querySelector('.ring-svg + div div:last-child');
   if (ringSub) {
-    ringSub.textContent = xt('{avg}% overall average', '{avg}% overall average').replace('{avg}', avgTestScore);
+    ringSub.textContent = TEST_RESULTS.length ? xt('{avg}% overall average', '{avg}% overall average').replace('{avg}', avgTestScore) : '';
   }
 }
 
@@ -5447,28 +5781,12 @@ function quizPick(i){
 }
 
 function submitQuiz() {
-  const langKey = USER.profile?.language || 'French';
-  const q = QUIZ_QUESTIONS[langKey] || QUIZ_QUESTIONS['French'];
+  const q = QUIZ_QUESTIONS[USER.profile?.language || ''];
+  if (!q) return;
   quizCompleted = true;
-  
   const score = quizAns === q.correct ? 100 : 0;
-  const newResult = {
-    date: 'Today',
-    topic: 'Le Subjonctif (Practice)',
-    score: score,
-    remark: quizAns === q.correct ? 'Perfect understanding of the grammar rule.' : 'Needs review. Revise grammar conjugations.'
-  };
-  
-  TEST_RESULTS.unshift(newResult);
-  localStorage.setItem(`alimun:test_results:${USER.id}`, JSON.stringify(TEST_RESULTS));
-  
-  const testMetric = PROGRESS_METRICS.find(m => m.label === 'Homework');
-  if (testMetric) {
-    testMetric.data.push(score);
-    if (testMetric.data.length > 8) testMetric.data.shift();
-    localStorage.setItem(`alimun:progress_metrics:${USER.id}`, JSON.stringify(PROGRESS_METRICS));
-  }
-  
+  updateProgressCategory('assessment', score, { type: 'Practice', title: 'Practice question' });
+
   renderTests();
   renderProgress();
   initHome();
@@ -5484,9 +5802,14 @@ function resetQuiz() {
    CHAT VIEW
 ══════════════════════════════════════════════════════ */
 function renderChat(){
-  const online=MEMBERS.filter(m=>m.online).length;
-  document.getElementById('online-count').textContent=online+' online';
-  document.getElementById('member-list').innerHTML=MEMBERS.map(m=>`
+  // Only the AI tutor answers here, so only the AI tutor is listed
+  const shown = MEMBERS.filter(m => m.role === 'AI Assistant');
+  document.getElementById('online-count').textContent = '';
+  const chatTitle = document.getElementById('chat-title');
+  if (chatTitle) chatTitle.textContent = `${USER.profile?.language || ''} ${USER.profile?.level || ''} · ${xt('student_chat_ai_tutor', 'AI Tutor')}`.trim();
+  const chatIn = document.getElementById('chat-in');
+  if (chatIn) chatIn.placeholder = xt('student_chat_placeholder_ai', 'Message the AI tutor...');
+  document.getElementById('member-list').innerHTML=shown.map(m=>`
     <div class="chat-mem-row${m.me?' me':''}">
       <div class="mem-av-wrap">
         <div class="av" style="background:${escHtml(m.col)};width:28px;height:28px;font-size:10px;">${escHtml(m.i)}</div>
@@ -5494,14 +5817,14 @@ function renderChat(){
       </div>
       <div style="min-width:0;">
         <div class="mem-name">${escHtml(m.name.split(' ')[0])}</div>
-        <div class="mem-role${m.role==='Teacher'?' teacher':''}">${escHtml(m.role)}</div>
+        <div class="mem-role${m.role==='Teacher'?' teacher':''}">${escHtml(m.role === 'AI Assistant' ? xt('student_ai_assistant', 'AI Assistant') : m.role)}</div>
       </div>
     </div>`).join('');
 
   const now=new Date();
-  document.getElementById('chat-date').textContent=now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('chat-date').textContent=now.toLocaleDateString(uiLocale(),{month:'long',day:'numeric',year:'numeric'});
   const msgs=document.getElementById('chat-msgs');
-  msgs.innerHTML=`<div class="chat-ts">Session started · 09:00</div>`+
+  msgs.innerHTML=''+
     CHAT_MSGS.map((msg,msgIdx)=>`
       <div class="chat-msg${msg.me?' me':''}">
         <div class="av" style="background:${escHtml(msg.col)};width:32px;height:32px;font-size:11px;">${escHtml(msg.i)}</div>
@@ -5539,7 +5862,7 @@ async function sendChatMsg(){
     i: me.i,
     col: me.col,
     t: txt,
-    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+    time: new Date().toLocaleTimeString(uiLocale(),{hour:'2-digit',minute:'2-digit'}),
     me: true
   };
   CHAT_MSGS.push(userMsg);
@@ -5552,7 +5875,7 @@ async function sendChatMsg(){
     i: 'AI',
     col: '#ceff65',
     t: xt('student_chat_ai_typing','Typing…'),
-    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+    time: new Date().toLocaleTimeString(uiLocale(),{hour:'2-digit',minute:'2-digit'}),
     me: false,
     ai: true,
     typing: true
@@ -5602,7 +5925,7 @@ Respond ONLY with a JSON object in this format:
       i: 'AI',
       col: '#ceff65',
       t: parsed.response,
-      time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+      time: new Date().toLocaleTimeString(uiLocale(),{hour:'2-digit',minute:'2-digit'}),
       me: false,
       ai: true,
       correction: parsed.correction,
@@ -5617,7 +5940,7 @@ Respond ONLY with a JSON object in this format:
       i: 'AI',
       col: '#ceff65',
       t: aiErrorMessage(err, xt('student_chat_ai_error', "I'm sorry, I encountered a temporary connection issue. Could you repeat that?")),
-      time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+      time: new Date().toLocaleTimeString(uiLocale(),{hour:'2-digit',minute:'2-digit'}),
       me: false,
       ai: true
     });
@@ -6564,6 +6887,7 @@ window.openTeacherProfileModal = openTeacherProfileModal;
 window.submitTeacherReview = submitTeacherReview;
 
 function openExtraClassPaywall() {
+  if (OTO && OTO.credit && OTO.credit.credits > 0) { openOtoPicker('credit'); return; }
   let modalContent = `
     <div style="padding: 24px 28px 0;">
       <div class="lbl" style="margin-bottom:4px;">${xt('student_weekly_limit_reached','Weekly Limit Reached')}</div>
@@ -6630,10 +6954,358 @@ async function payExtraClass() {
 }
 
 /* ══════════════════════════════════════════════════════
+   1:1 FOLLOW-UPS (Intensive) AND PAID PRIVATE CLASSES
+   Server rules: api/_lib/one-on-one.js via /api/enroll?action=oto-*
+══════════════════════════════════════════════════════ */
+let OTO = null;
+
+async function otoApi(action, extra) {
+  const { data: { session } = {} } = await SB.auth.getSession();
+  const resp = await fetch('/api/enroll', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session?.access_token || ''}` },
+    body: JSON.stringify(Object.assign({ action }, extra || {})),
+  });
+  let data = {};
+  try { data = await resp.json(); } catch (_) {}
+  if (!resp.ok) throw new Error(otoErrorText(data));
+  return data;
+}
+
+// Server messages come with a code (api/_lib/one-on-one.js); show them in the site language
+const otoReason = (part) => (part && part.reason ? xt(`student_oto_r_${part.reasonCode}`, part.reason) : '');
+function otoErrorText(data) {
+  if (data && data.error === 'not_allowed' && data.reasonCode) return xt(`student_oto_r_${data.reasonCode}`, data.message);
+  return xt(`student_oto_e_${data && data.error}`, (data && data.message) || xt('student_oto_e_server_error', 'Please try again.'));
+}
+
+function otoTime(iso) {
+  return new Date(iso).toLocaleString(uiLocale(), {
+    timeZone: studentTimezone(USER && USER.profile), weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
+  });
+}
+
+function otoBookingHtml(b, teacherName) {
+  let h = '<div style="font-size:12px;color:var(--dim);margin-bottom:10px;">' + escHtml(otoTime(b.scheduled_at)) + ' · '
+    + escHtml(String(b.duration_minutes || 20)) + ' min' + (teacherName ? ' · ' + escHtml(teacherName) : '') + '</div>';
+  if (b.status === 'booked') {
+    h += '<div style="display:flex;gap:8px;flex-wrap:wrap;">'
+      + '<button class="join-btn" style="font-size:12px;padding:8px 16px;" onclick="handleStudentJoin(null, null, ' + jsArg(b.id) + ')">' + escHtml(xt('student_oto_join', 'Join 1:1')) + '</button>'
+      + '<button class="join-btn" style="font-size:12px;padding:8px 16px;background:#FFF;border:1px solid var(--bd);color:var(--txt);" onclick="cancelOto(' + jsArg(b.id) + ')">' + escHtml(xt('student_oto_cancel', 'Cancel')) + '</button>'
+      + '</div>';
+  }
+  if (b.teacher_note) h += '<div class="teacher-quote" style="margin-top:10px;">' + escHtml(b.teacher_note) + '</div>';
+  return h;
+}
+
+/* ══════════════════════════════════════════════════════
+   VOCABULARY REVIEW (spaced repetition, table vocab_reviews)
+   Words come from the vocabulary teachers add to session notes.
+   Box 0 = new or missed (due now / tomorrow); each "I knew it" moves the
+   word up a box and pushes the next review out: 1, 3, 7, 14, 30 days.
+══════════════════════════════════════════════════════ */
+let VOCAB_ITEMS = [];
+const VOCAB_DAYS = [1, 1, 3, 7, 14, 30];
+const VOCAB_SESSION_MAX = 20;
+let VR = null; // { queue, idx, knew, shown }
+
+const addDays = (n) => { const d = new Date(); d.setDate(d.getDate() + n); return localDay(d); };
+const vocabDue = () => { const today = localDay(new Date()); return VOCAB_ITEMS.filter(v => v.due_on <= today); };
+
+// Copy new lesson words into vocab_reviews, then load the student's words
+async function syncVocabReviews(notes) {
+  VOCAB_ITEMS = [];
+  if (!SB || !USER.profile) return;
+  const rows = [];
+  const seen = new Set();
+  (notes || []).forEach(n => (Array.isArray(n.vocabulary) ? n.vocabulary : []).forEach(v => {
+    const word = String((v && v.word) || '').trim().slice(0, 200);
+    const key = word.toLowerCase();
+    if (!word || seen.has(key)) return;
+    seen.add(key);
+    rows.push({ student_id: USER.id, word, word_key: key,
+      definition: String(v.definition || '').trim().slice(0, 500) || null,
+      example: String(v.example || '').trim().slice(0, 500) || null,
+      source_note_id: n.id || null });
+  }));
+  try {
+    if (rows.length) await SB.from('vocab_reviews').upsert(rows, { onConflict: 'student_id,word_key', ignoreDuplicates: true });
+    const { data, error } = await SB.from('vocab_reviews')
+      .select('id, word, definition, example, box, due_on, correct_count, wrong_count')
+      .eq('student_id', USER.id).order('due_on', { ascending: true }).limit(1000);
+    if (error) throw error;
+    VOCAB_ITEMS = data || [];
+  } catch (e) {
+    console.warn('Vocabulary review unavailable:', e && e.message);
+  }
+}
+
+function startVocabReview() {
+  const due = vocabDue().slice(0, VOCAB_SESSION_MAX);
+  if (!due.length) return;
+  VR = { queue: due.sort(() => Math.random() - 0.5), idx: 0, knew: 0, shown: false };
+  renderVocabReview();
+}
+
+function renderVocabReview() {
+  if (!VR) return;
+  const total = VR.queue.length;
+  if (VR.idx >= total) {
+    const pct = Math.round((VR.knew / total) * 100);
+    updateProgressCategory('vocabulary', pct, { type: 'Vocabulary review', title: xt('student_vr_title', 'Vocabulary review') });
+    openModal(`<div style="padding:28px;text-align:center;">
+      <div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);">${escHtml(xt('student_vr_done_title', 'Review done'))}</div>
+      <p style="font-size:14px;color:var(--dim);margin:12px 0 20px;">${escHtml(xt('student_vr_done_desc', 'You knew {k} of {n} words. Missed words come back tomorrow.').replace('{k}', VR.knew).replace('{n}', total))}</p>
+      <button class="join-btn" style="justify-content:center;" onclick="closeModal()">${escHtml(xt('student_close', 'Close'))}</button>
+    </div>`);
+    VR = null;
+    renderWeekPlan();
+    initHome();
+    renderProgress();
+    return;
+  }
+  const v = VR.queue[VR.idx];
+  const answer = VR.shown
+    ? `<div style="font-size:15px;color:var(--txt);margin-top:14px;">${escHtml(v.definition || '')}</div>
+       ${v.example ? `<div class="teacher-quote" style="margin-top:12px;text-align:left;">${escHtml(v.example)}</div>` : ''}
+       <div style="display:flex;gap:8px;justify-content:center;margin-top:22px;">
+         <button class="join-btn" style="background:#FFF;border:1px solid var(--bd);color:var(--txt);" onclick="answerVocab(false)">${escHtml(xt('student_vr_not_yet', 'Not yet'))}</button>
+         <button class="join-btn" onclick="answerVocab(true)">${escHtml(xt('student_vr_knew', 'I knew it'))}</button>
+       </div>`
+    : `<div style="margin-top:22px;"><button class="join-btn" style="justify-content:center;" onclick="VR.shown=true;renderVocabReview()">${escHtml(xt('student_vr_show', 'Show meaning'))}</button></div>`;
+  openModal(`<div style="padding:28px;text-align:center;">
+    <div class="lbl" style="margin-bottom:18px;">${escHtml(xt('student_vr_title', 'Vocabulary review'))} · ${VR.idx + 1} / ${total}</div>
+    <div style="font-family:var(--anton);font-size:34px;color:var(--txt);letter-spacing:.02em;">${escHtml(v.word)}</div>
+    ${answer}
+  </div>`);
+}
+
+async function answerVocab(knew) {
+  if (!VR) return;
+  const v = VR.queue[VR.idx];
+  const box = knew ? Math.min((v.box || 0) + 1, 5) : 0;
+  const patch = { box, due_on: addDays(VOCAB_DAYS[box]), last_reviewed_at: new Date().toISOString(),
+    correct_count: (v.correct_count || 0) + (knew ? 1 : 0), wrong_count: (v.wrong_count || 0) + (knew ? 0 : 1) };
+  Object.assign(v, patch);
+  if (knew) VR.knew += 1;
+  VR.idx += 1;
+  VR.shown = false;
+  renderVocabReview();
+  try {
+    const { error } = await SB.from('vocab_reviews').update(patch).eq('id', v.id);
+    if (error) throw error;
+  } catch (e) {
+    console.warn('Vocabulary review not saved:', e && e.message);
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   THIS WEEK'S PLAN (home): next lesson, homework due, 1:1 follow-up,
+   vocabulary review and three exercises from the weakest skill.
+   Built only from data already loaded; the chosen exercises are kept
+   for the week in localStorage so finished ones show as done.
+══════════════════════════════════════════════════════ */
+const PRACTICE_CATS = ['grammar', 'vocabulary', 'listening', 'speaking', 'writing'];
+
+function weakestCategory() {
+  const sum = {}, n = {};
+  SCORES.forEach(r => { if (PRACTICE_CATS.includes(r.cat)) { sum[r.cat] = (sum[r.cat] || 0) + r.score; n[r.cat] = (n[r.cat] || 0) + 1; } });
+  const cats = Object.keys(n);
+  if (!cats.length) return null;
+  return cats.sort((a, b) => sum[a] / n[a] - sum[b] / n[b])[0];
+}
+
+function weekPracticePicks() {
+  const week = localDay((() => { const d = new Date(); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; })());
+  const key = `alimun:plan:${USER.id}:${week}`;
+  const lib = EXERCISES.filter(e => !e.isHw && !e.isExam);
+  let titles = null;
+  try { titles = JSON.parse(localStorage.getItem(key) || 'null'); } catch (_) { titles = null; }
+  if (!Array.isArray(titles) || !titles.length || titles.some(t => !lib.find(e => e.title === t))) {
+    const weak = weakestCategory();
+    const open = lib.filter(e => !e.done);
+    const first = weak ? open.filter(e => e.cat === weak) : [];
+    const rest = open.filter(e => !first.includes(e));
+    titles = [...first, ...rest].slice(0, 3).map(e => e.title);
+    try { localStorage.setItem(key, JSON.stringify(titles)); } catch (_) { /* storage blocked */ }
+  }
+  return { weak: weakestCategory(), items: titles.map(t => lib.find(e => e.title === t)).filter(Boolean) };
+}
+
+function openExercise(ex) {
+  const idx = EXERCISES.indexOf(ex);
+  if (idx < 0) return;
+  exFilter = 'all';
+  exExpanded = idx;
+  goView('exercises');
+  renderExercises();
+}
+function openPlanExercise(i) { const pick = weekPracticePicks().items[i]; if (pick) openExercise(pick); }
+function openPlanHomework(id) { const hw = EXERCISES.find(e => e.isHw && e.id === id); if (hw) openExercise(hw); }
+
+function renderWeekPlan() {
+  const box = document.getElementById('plan-body');
+  const card = document.getElementById('plan-card');
+  if (!box || !card) return;
+  if (!USER.cohort_id) { card.style.display = 'none'; return; }
+  const rows = [];
+  const row = (done, text, action, onclick) => rows.push({ done, html: `<div class="sched-row" style="gap:14px;padding:14px 28px;">
+      <div style="width:18px;flex-shrink:0;display:flex;justify-content:center;">${done
+        ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#16A34A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>'
+        : '<div style="width:14px;height:14px;border-radius:50%;border:1.5px solid rgba(0,0,0,.22);"></div>'}</div>
+      <div class="sched-title" style="flex:1;${done ? 'color:var(--dim);' : ''}">${text}</div>
+      ${action && !done ? `<button class="join-btn" style="font-size:11px;padding:6px 14px;" onclick="${onclick}">${escHtml(action)}</button>` : ''}
+    </div>` });
+
+  // 1. Next lesson
+  if (NEXT_CLASS.at) {
+    const when = NEXT_CLASS.at.toLocaleString(uiLocale(), { weekday: 'long', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+    row(false, `${escHtml(xt('student_plan_lesson', 'Lesson'))}: <strong>${escHtml(when)}</strong>`, xt('student_plan_view', 'View'), "goView('live')");
+  }
+  // 2. Homework due in the next 7 days or overdue
+  const limit = addDays(7);
+  const monday = localDay((() => { const d = new Date(); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; })());
+  // Open homework due within 7 days (or overdue), plus homework due this week that is already handed in
+  const hws = EXERCISES.filter(e => e.isHw && e.due && e.due <= limit && (!e.done || e.due >= monday));
+  hws.forEach(h => row(!!h.done, `${escHtml(xt('student_cat_homework', 'Homework'))}: ${escHtml(h.title)} · <span style="color:var(--dim);">${escHtml(xt('student_plan_due', 'due'))} ${escHtml(new Date(h.due + 'T12:00:00').toLocaleDateString(uiLocale(), { day: 'numeric', month: 'short' }))}</span>`,
+    xt('student_plan_open', 'Open'), `openPlanHomework(${jsArg(h.id)})`));
+  // 3. 1:1 follow-up (Intensive)
+  const f = OTO && OTO.followup;
+  if (f && f.booking) {
+    row(true, `${escHtml(xt('student_oto_followup_title', 'Weekly 1:1 follow-up'))}: ${escHtml(otoTime(f.booking.scheduled_at))}`);
+  } else if (f && f.canBook) {
+    row(false, `${escHtml(xt('student_plan_book_followup', 'Book your 1:1 follow-up before'))} ${escHtml(otoTime(f.window.to))}`, xt('student_oto_book_followup', 'Book follow-up'), "openOtoPicker('followup')");
+  }
+  // 4. Vocabulary review
+  if (VOCAB_ITEMS.length) {
+    const due = vocabDue().length;
+    row(due === 0, due === 0 ? escHtml(xt('student_plan_vocab_done', 'Vocabulary review: nothing due today'))
+      : escHtml(xt('student_plan_vocab_due', 'Review {n} words from your lessons').replace('{n}', due)), xt('student_plan_start', 'Start'), 'startVocabReview()');
+  }
+  // 5. Practice from the weakest skill
+  const picks = weekPracticePicks();
+  picks.items.forEach((e, i) => row(!!e.done, `${escHtml(xt('student_plan_practice', 'Practice'))}: ${escHtml(e.title)} · <span style="color:var(--dim);">${escHtml(xt(`student_cat_${e.cat}`, e.cat))}</span>`,
+    xt('student_plan_open', 'Open'), `openPlanExercise(${i})`));
+
+  const done = rows.filter(r => r.done).length;
+  document.getElementById('plan-count').textContent = rows.length ? xt('student_plan_count', '{d} of {n} done').replace('{d}', done).replace('{n}', rows.length) : '';
+  const weakNote = picks.weak ? `<div style="padding:12px 28px 16px;font-size:12px;color:var(--dim);">${escHtml(xt('student_plan_weak_note', 'Practice is picked from your weakest skill: {s}.').replace('{s}', xt(`student_cat_${picks.weak}`, picks.weak)))}</div>` : '';
+  box.innerHTML = rows.length ? rows.map(r => r.html).join('') + weakNote
+    : `<div style="padding:16px 28px;font-size:13px;color:var(--dim);">${escHtml(xt('student_plan_empty', 'Nothing planned yet. Your lessons, homework and practice appear here.'))}</div>`;
+  card.style.display = '';
+}
+
+window.startVocabReview = startVocabReview;
+window.answerVocab = answerVocab;
+window.renderVocabReview = renderVocabReview;
+window.openPlanExercise = openPlanExercise;
+window.openPlanHomework = openPlanHomework;
+
+async function loadOneOnOne() {
+  const card = document.getElementById('oto-card');
+  const body = document.getElementById('oto-body');
+  if (!card || !body || !SB) return;
+  try { OTO = await otoApi('oto-status'); } catch (_) { card.style.display = 'none'; return; }
+  const teacherName = OTO.teacher ? OTO.teacher.name : '';
+  const parts = [];
+  const f = OTO.followup;
+  if (f) {
+    let h = '<div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;">' + escHtml(xt('student_oto_followup_title', 'Weekly 1:1 follow-up')) + '</div>';
+    if (f.booking) h += otoBookingHtml(f.booking, teacherName);
+    else if (f.canBook) {
+      h += '<div style="font-size:12px;color:var(--dim);margin-bottom:10px;">'
+        + escHtml(xt('student_oto_followup_desc', '20 minutes with your teacher on this week\'s lesson. Book it before')) + ' ' + escHtml(otoTime(f.window.to)) + '.</div>'
+        + '<button class="join-btn" style="font-size:12px;padding:8px 16px;" onclick="openOtoPicker(\'followup\')">' + escHtml(xt('student_oto_book_followup', 'Book follow-up')) + '</button>';
+    } else h += '<div style="font-size:12px;color:var(--dim);">' + escHtml(otoReason(f)) + '</div>';
+    parts.push(h);
+  }
+  if (OTO.credit) {
+    let h = '<div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;">' + escHtml(xt('student_oto_credit_title', 'Private classes')) + '</div>'
+      + '<div style="font-size:12px;color:var(--dim);margin-bottom:10px;">' + escHtml(xt('student_oto_credits_left', 'Credits left:')) + ' ' + escHtml(String(OTO.credit.credits))
+      + (OTO.credit.reason ? ' · ' + escHtml(otoReason(OTO.credit)) : '') + '</div>';
+    if (OTO.credit.canBook) h += '<button class="join-btn" style="font-size:12px;padding:8px 16px;" onclick="openOtoPicker(\'credit\')">' + escHtml(xt('student_oto_book_private', 'Book a private class')) + '</button>';
+    parts.push(h);
+  }
+  // Upcoming private classes and recent follow-up notes (read through RLS).
+  const { data: rows } = await SB.from('one_on_one_bookings')
+    .select('id, kind, scheduled_at, duration_minutes, status, teacher_note')
+    .order('scheduled_at', { ascending: false }).limit(6);
+  const shown = new Set([f && f.booking ? f.booking.id : null]);
+  (rows || []).filter((b) => !shown.has(b.id) && b.status !== 'cancelled' && (b.status === 'booked' || b.teacher_note)).slice(0, 3).forEach((b) => {
+    parts.push('<div style="font-size:13px;font-weight:700;color:var(--txt);margin-bottom:4px;">'
+      + escHtml(b.kind === 'followup' ? xt('student_oto_followup_title', 'Weekly 1:1 follow-up') : xt('student_oto_credit_title', 'Private class')) + '</div>'
+      + otoBookingHtml(b, teacherName));
+  });
+  renderWeekPlan();
+  if (!parts.length) { card.style.display = 'none'; return; }
+  const html = parts.join('<div style="border-top:1px solid var(--bd);"></div>');
+  body.innerHTML = html;
+  card.style.display = '';
+}
+
+async function openOtoPicker(kind) {
+  openModal('<div style="padding:24px 28px;"><div class="loading">' + escHtml(xt('student_oto_loading', 'Finding free times...')) + '</div></div>');
+  let st;
+  try { st = await otoApi('oto-status', { kind }); } catch (e) { closeModal(); alert(e.message); return; }
+  const part = st[kind];
+  const slots = st.slots || [];
+  const title = kind === 'followup' ? xt('student_oto_followup_title', 'Weekly 1:1 follow-up') : xt('student_oto_credit_title', 'Private class');
+  const mins = part ? part.minutes : (kind === 'followup' ? 20 : 60);
+  let list = '';
+  if (!part || !part.canBook) list = '<div style="font-size:13px;color:var(--dim);">' + escHtml(otoReason(part) || xt('student_oto_unavailable', 'Not available on your plan.')) + '</div>';
+  else if (!slots.length) list = '<div style="font-size:13px;color:var(--dim);">' + escHtml(xt('student_oto_no_slots', 'Your teacher has no free times in this period. Please message your teacher.')) + '</div>';
+  else {
+    const byDay = {};
+    slots.forEach((iso) => {
+      const day = new Date(iso).toLocaleDateString(uiLocale(), { timeZone: studentTimezone(USER && USER.profile), weekday: 'long', day: 'numeric', month: 'long' });
+      (byDay[day] = byDay[day] || []).push(iso);
+    });
+    Object.keys(byDay).forEach((day) => {
+      list += '<div style="font-size:12px;font-weight:700;color:var(--txt);margin:12px 0 6px;">' + escHtml(day) + '</div><div style="display:flex;flex-wrap:wrap;gap:6px;">';
+      byDay[day].forEach((iso) => {
+        const t = new Date(iso).toLocaleTimeString(uiLocale(), { timeZone: studentTimezone(USER && USER.profile), hour: '2-digit', minute: '2-digit' });
+        list += '<button class="join-btn" style="font-size:12px;padding:6px 12px;background:#FFF;border:1px solid var(--bd);color:var(--txt);" onclick="bookOto(' + jsArg(kind) + ', ' + jsArg(iso) + ')">' + escHtml(t) + '</button>';
+      });
+      list += '</div>';
+    });
+  }
+  const html = '<div style="padding:24px 28px 0;">'
+    + '<div style="font-family:var(--anton);font-size:24px;text-transform:uppercase;color:var(--txt);margin-bottom:6px;">' + escHtml(title) + '</div>'
+    + '<div style="font-size:12px;color:var(--dim);border-bottom:1px solid var(--bd);padding-bottom:12px;">' + escHtml(String(mins)) + ' min' + (st.teacher ? ' · ' + escHtml(st.teacher.name) : '')
+    + ' · ' + escHtml(xt('student_oto_times_in', 'Times shown in')) + ' ' + escHtml(studentTimezone(USER && USER.profile)) + '</div></div>'
+    + '<div style="padding:4px 28px 24px;max-height:60vh;overflow:auto;">' + list + '</div>'
+    + '<div style="padding:0 28px 24px;display:flex;justify-content:flex-end;"><button class="join-btn" style="background:#FFF;border:1px solid var(--bd);color:var(--txt);" onclick="closeModal()">' + escHtml(xt('student_cancel', 'Cancel')) + '</button></div>';
+  openModal(html);
+}
+
+async function bookOto(kind, iso) {
+  if (!confirm(xt('student_oto_confirm', 'Book this time?') + ' ' + otoTime(iso))) return;
+  try {
+    await otoApi('oto-book', { kind, start: iso });
+    closeModal();
+    await loadOneOnOne();
+  } catch (e) { alert(e.message); if (/taken/i.test(e.message)) openOtoPicker(kind); }
+}
+
+async function cancelOto(id) {
+  if (!confirm(xt('student_oto_cancel_confirm', 'Cancel this 1:1? A paid credit is returned if you cancel at least 24 hours before.'))) return;
+  try {
+    const r = await otoApi('oto-cancel', { id });
+    if (r.creditReturned) alert(xt('student_oto_credit_returned', 'Your credit has been returned.'));
+    await loadOneOnOne();
+  } catch (e) { alert(e.message); }
+}
+
+window.openOtoPicker = openOtoPicker;
+window.bookOto = bookOto;
+window.cancelOto = cancelOto;
+
+/* ══════════════════════════════════════════════════════
    INIT
 ══════════════════════════════════════════════════════ */
 function init(){
   initHome();
+  renderWeekPlan();
   buildCal();
   renderExercises();
   renderProgress();
@@ -6697,12 +7369,12 @@ function init(){
 /* ══════════════════════════════════════════════════════
    SESSION ATTENDANCE TRACKING
 ══════════════════════════════════════════════════════ */
-async function handleStudentJoin(roomUrl, sessionId) {
-  if (!sessionId) {
+async function handleStudentJoin(roomUrl, sessionId, bookingId) {
+  if (!sessionId && !bookingId) {
     alert(xt('student_no_session_to_join', 'There is no class session to join right now.'));
     return;
   }
-  currentSessionId = sessionId;
+  currentSessionId = sessionId || null;
 
   // Ask the server for the room + a meeting token (rooms are private)
   let joinUrl = roomUrl, joinToken = null;
@@ -6714,7 +7386,7 @@ async function handleStudentJoin(roomUrl, sessionId) {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${session?.access_token || ''}`
       },
-      body: JSON.stringify({ sessionId })
+      body: JSON.stringify(bookingId ? { bookingId } : { sessionId })
     });
     const data = await resp.json();
     if (!resp.ok) {
@@ -6770,7 +7442,7 @@ async function handleStudentJoin(roomUrl, sessionId) {
 
   // joined_at is recorded server-side by /api/join-session. We only remember
   // which session we're in so leaveClass() can stamp left_at on our own row.
-  if (SB && sessionId && NEXT_CLASS.studentProfileId) {
+  if (SB && sessionId && !bookingId && NEXT_CLASS.studentProfileId) {
     _attendanceSessionId = sessionId;
     if (_attendanceTimeout) clearTimeout(_attendanceTimeout);
     _attendanceTimeout = setTimeout(logAttendanceLeave, 90 * 60 * 1000);
@@ -6778,7 +7450,6 @@ async function handleStudentJoin(roomUrl, sessionId) {
 
   // Initialize classroom features
   startSessionTimer();
-  startTranscriptSimulation();
   initWhiteboard();
   loadSharedFiles();
 }
@@ -6922,40 +7593,6 @@ async function takeClassroomScreenshot() {
   } catch (err) {
     console.warn("Screenshot capture skipped or rejected:", err);
   }
-}
-
-// Transcription simulator
-function startTranscriptSimulation() {
-  const log = document.getElementById('transcription-log');
-  if (!log) return;
-  log.innerHTML = '';
-  
-  const activeLang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
-  const lines = TRANSCRIPTIONS[activeLang] || TRANSCRIPTIONS['en'];
-  let index = 0;
-  
-  function addTranscriptLine() {
-    if (!liveSessionActive || index >= lines.length) return;
-    
-    const row = document.createElement('div');
-    row.className = 'trans-row';
-    const speaker = index === 5 ? 'Sofia' : 'Teacher';
-    row.innerHTML = `
-      <span class="trans-speaker">${escHtml(speaker)}:</span>
-      <span class="trans-text">${escHtml(lines[index])}</span>
-    `;
-    log.appendChild(row);
-    log.scrollTop = log.scrollHeight;
-    
-    if (index % 3 === 0) {
-      addChatMessage(speaker, lines[index], false);
-    }
-    
-    index++;
-    setTimeout(addTranscriptLine, 8000 + Math.random() * 4000);
-  }
-  
-  setTimeout(addTranscriptLine, 3000);
 }
 
 // Whiteboard Draw
