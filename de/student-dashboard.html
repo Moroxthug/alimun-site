@@ -1196,8 +1196,8 @@ nav {
       <div class="sb-user">
         <div class="av sb-av" id="sb-av" style="background:#3B1F6A;width:36px;height:36px;font-size:11px;">SC</div>
         <div>
-          <div class="sb-name" id="sb-name">Sofia Chen</div>
-          <div class="sb-level" id="sb-level">B2 French</div>
+          <div class="sb-name" id="sb-name"></div>
+          <div class="sb-level" id="sb-level"></div>
         </div>
       </div>
     </div>
@@ -1329,26 +1329,21 @@ nav {
   <!-- Enrolled View -->
   <div id="home-enrolled-view" style="display:none; flex-direction:column; gap:20px;">
     <!-- Stats row -->
-    <!-- DATA: replace with Supabase query: SELECT streak, weekly_avg, exercises_done, exercises_total, cohort_rank FROM student_stats WHERE student_id = $1 -->
+    <!-- Filled by initHome() from exercise_results, homework and attendance -->
     <div class="card no-pad" style="display:flex;">
       <div class="stat-cell">
         <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_streak">Streak</div>
-        <div class="stat-val" data-metric="streak">14 days</div>
+        <div class="stat-val" data-metric="streak">–</div>
       </div>
       <div class="vdiv"></div>
       <div class="stat-cell">
         <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_weekly_avg">Weekly avg</div>
-        <div class="stat-val" data-metric="weekly-avg">87%</div>
+        <div class="stat-val" data-metric="weekly-avg">–</div>
       </div>
       <div class="vdiv"></div>
       <div class="stat-cell">
         <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_exercises">Exercises</div>
-        <div class="stat-val" data-metric="exercises">24 / 30</div>
-      </div>
-      <div class="vdiv"></div>
-      <div class="stat-cell">
-        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_cohort_rank">Cohort rank</div>
-        <div class="stat-val" data-metric="rank">#3</div>
+        <div class="stat-val" data-metric="exercises">–</div>
       </div>
     </div>
 
@@ -1384,8 +1379,8 @@ nav {
       <!-- DATA: replace with Supabase query: SELECT title, starts_at, type FROM events WHERE date(starts_at) = CURRENT_DATE AND student_id = $1 ORDER BY starts_at -->
       <div class="card no-pad sched-card">
         <div class="sched-head">
-          <div class="sched-date" id="today-date">THURSDAY — 16 APRIL</div>
-          <div class="sched-count" id="event-count">4 events</div>
+          <div class="sched-date" id="today-date"></div>
+          <div class="sched-count" id="event-count"></div>
         </div>
         <div class="sched-body" id="sched-body"></div>
       </div>
@@ -1406,13 +1401,13 @@ nav {
         <div class="card teacher-card" style="flex:1;">
           <div class="lbl" style="margin-bottom:16px;" data-i18n="student_your_teacher">Your teacher</div>
           <div class="av-wrap" onclick="openTeacherProfileModal()" style="cursor:pointer; display:flex; gap:14px; align-items:center; margin-bottom:16px;">
-            <div class="av" style="background:#3B1F6A;width:48px;height:48px;font-size:16px;">M</div>
+            <div class="av" style="background:#3B1F6A;width:48px;height:48px;font-size:16px;" data-field="teacher-av"></div>
             <div>
-              <div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:2px; text-decoration:underline;" data-field="teacher-name">Marie Dubois</div>
-              <div style="font-size:12px;color:var(--dim);" data-field="teacher-bio">Native French · B1–C1 · Paris</div>
+              <div style="font-size:15px;font-weight:700;color:var(--txt);margin-bottom:2px; text-decoration:underline;" data-field="teacher-name">–</div>
+              <div style="font-size:12px;color:var(--dim);" data-field="teacher-bio"></div>
             </div>
           </div>
-          <div class="teacher-quote" data-field="teacher-note">"Strong progress this week. Focus on oral fluency next."</div>
+          <div class="teacher-quote" data-field="teacher-note" style="display:none;"></div>
           <div class="teacher-stats">
             <div>
               <div class="teacher-stat-n" data-field="teacher-sessions">–</div>
@@ -1506,26 +1501,23 @@ nav {
   <div id="live-prejoin" style="display:flex;align-items:center;justify-content:center;height:100%;padding:40px;width:100%;">
     <div style="max-width:460px;width:100%;">
       <div class="lbl" style="margin-bottom:20px;text-align:center;">● Starting soon</div>
-      <div style="text-align:center;font-family:var(--mono);font-size:56px;font-weight:800;color:var(--txt);letter-spacing:-0.04em;margin-bottom:4px;" id="live-count">02:14:39</div>
+      <div style="text-align:center;font-family:var(--mono);font-size:56px;font-weight:800;color:var(--txt);letter-spacing:-0.04em;margin-bottom:4px;" id="live-count">--:--:--</div>
       <div style="text-align:center;font-size:13px;color:var(--dim);margin-bottom:32px;" data-i18n="student_until_class_begins">until class begins</div>
       <div class="card" style="margin-bottom:20px;">
         <div style="display:flex;gap:16px;align-items:center;margin-bottom:20px;">
-          <div class="av" style="background:#3B1F6A;width:52px;height:52px;font-size:18px;" id="live-teacher-av">M</div>
+          <div class="av" style="background:#3B1F6A;width:52px;height:52px;font-size:18px;" id="live-teacher-av"></div>
           <div>
-            <div style="font-size:16px;font-weight:700;color:var(--txt);" id="live-teacher-name">Marie Dubois</div>
-            <div style="font-size:13px;color:var(--dim);margin-top:2px;" id="live-teacher-topic">Subjunctive Mood — Advanced · B2</div>
+            <div style="font-size:16px;font-weight:700;color:var(--txt);" id="live-teacher-name">–</div>
+            <div style="font-size:13px;color:var(--dim);margin-top:2px;" id="live-teacher-topic"></div>
           </div>
         </div>
         <div class="hdiv"></div>
         <div style="margin-top:20px;">
           <div class="lbl" style="margin-bottom:12px;" data-i18n="student_todays_vocab">Today's vocabulary</div>
-          <div class="vocab-row"><span class="vocab-fr">le subjonctif</span><span class="vocab-en">subjunctive mood</span></div>
-          <div class="vocab-row"><span class="vocab-fr">bien que</span><span class="vocab-en">although</span></div>
-          <div class="vocab-row"><span class="vocab-fr">il faut que</span><span class="vocab-en">it's necessary that</span></div>
-          <div class="vocab-row" style="border:none;"><span class="vocab-fr">à condition que</span><span class="vocab-en">provided that</span></div>
+          <div id="live-vocab"></div>
         </div>
       </div>
-      <div style="text-align:center;font-size:12px;color:var(--dim);font-family:var(--mono);margin-bottom:16px;" id="live-waiting-count">8 / 12 classmates waiting</div>
+      <div style="text-align:center;font-size:12px;color:var(--dim);font-family:var(--mono);margin-bottom:16px;" id="live-waiting-count"></div>
       <button onclick="handleStudentJoin(NEXT_CLASS.dailyRoomUrl, NEXT_CLASS.sessionId)" style="width:100%;padding:15px 0;background:var(--lime);color:var(--txt);border:none;border-radius:10px;font-family:var(--sans);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;">
         <span data-i18n="student_join_video_class">Join Video Class</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
@@ -1537,7 +1529,7 @@ nav {
 <!-- ── CALENDAR ── -->
 <div id="v-calendar" class="view">
   <div class="cal-header">
-    <div class="cal-month-label" id="cal-label">APRIL 2026</div>
+    <div class="cal-month-label" id="cal-label"></div>
     <div class="cal-nav-btns">
       <button class="cal-nb" onclick="calNav(-1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
       <button class="cal-nb" onclick="calNav(1)"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg></button>
@@ -1566,10 +1558,10 @@ nav {
   <div class="card" style="display:flex;align-items:center;gap:28px;">
     <div>
       <div class="lbl" style="margin-bottom:8px;">Progress</div>
-      <div style="font-family:var(--mono);font-size:28px;font-weight:800;color:var(--txt);" id="ex-count">4<span style="font-size:14px;color:var(--dim);font-weight:400;"> / 10</span></div>
+      <div style="font-family:var(--mono);font-size:28px;font-weight:800;color:var(--txt);" id="ex-count">–</div>
     </div>
     <div class="prog-bar-wrap"><div class="prog-bar-fill" id="ex-bar" style="width:40%;"></div></div>
-    <div style="font-family:var(--mono);font-size:12px;color:var(--dim);" id="ex-pct">40% done</div>
+    <div style="font-family:var(--mono);font-size:12px;color:var(--dim);" id="ex-pct"></div>
     <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;">
       <button id="btn-placement" onclick="startPlacementTest()" style="display:none;background:#fff;border:1px solid var(--bd);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;" data-i18n="student_ex_placement">Placement test</button>
       <button id="btn-generate-ex" onclick="generateNewExercises()" style="background:var(--lime);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;" data-i18n="student_ex_generate">✨ New exercises</button>
@@ -1595,13 +1587,13 @@ nav {
   <div id="prog-feedback-container"></div>
   <!-- DATA: replace with Supabase aggregates -->
   <div class="card no-pad prog-summary">
-    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Overall trend</div><div class="prog-sum-val" style="color:var(--ok);">+12%</div><div class="prog-sum-sub">this month</div></div>
+    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Overall trend</div><div class="prog-sum-val" id="prog-trend-val">–</div><div class="prog-sum-sub" id="prog-trend-sub"></div></div>
     <div class="vdiv"></div>
-    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Best category</div><div class="prog-sum-val" id="prog-best-val" style="color:var(--txt);">Grammar</div><div class="prog-sum-sub" id="prog-best-sub">94% avg</div></div>
+    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Best category</div><div class="prog-sum-val" id="prog-best-val" style="color:var(--txt);">–</div><div class="prog-sum-sub" id="prog-best-sub"></div></div>
     <div class="vdiv"></div>
-    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Needs focus</div><div class="prog-sum-val" id="prog-focus-val" style="color:var(--err);">Listening</div><div class="prog-sum-sub" id="prog-focus-sub">61% avg</div></div>
+    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Needs focus</div><div class="prog-sum-val" id="prog-focus-val" style="color:var(--err);">–</div><div class="prog-sum-sub" id="prog-focus-sub"></div></div>
     <div class="vdiv"></div>
-    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Teacher score</div><div class="prog-sum-val" style="color:var(--txt);">86%</div><div class="prog-sum-sub">last session</div></div>
+    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Teacher score</div><div class="prog-sum-val" id="prog-teacher-val" style="color:var(--txt);">–</div><div class="prog-sum-sub" id="prog-teacher-sub"></div></div>
   </div>
 </div>
 
@@ -1616,32 +1608,21 @@ nav {
       <svg width="88" height="88" viewBox="0 0 88 88" class="ring-svg">
         <circle cx="44" cy="44" r="34" fill="none" stroke="var(--bd)" stroke-width="5"></circle>
         <circle cx="44" cy="44" r="34" fill="none" stroke="var(--lime)" stroke-width="5" stroke-dasharray="142.6 213.6" stroke-dashoffset="53.4" stroke-linecap="round"></circle>
-        <text x="44" y="50" text-anchor="middle" fill="var(--txt)" font-size="16">68%</text>
+        <text x="44" y="50" text-anchor="middle" fill="var(--txt)" font-size="16">–</text>
       </svg>
       <div>
         <div style="font-size:13px;font-weight:700;color:var(--txt);" data-i18n="student_overall_average">Gesamtdurchschnitt</div>
-        <div style="font-size:11px;color:var(--dim);font-family:var(--mono);margin-top:2px;" data-i18n="student_overall_average_desc_initial">68% Gesamtdurchschnitt</div>
+        <div style="font-size:11px;color:var(--dim);font-family:var(--mono);margin-top:2px;"></div>
       </div>
     </div>
   </div>
   <div class="test-grid">
     <div style="display:flex;flex-direction:column;gap:20px;">
-      <div class="card upcoming-test-card">
-        <div class="lbl" style="color:var(--lime-d);margin-bottom:8px;" data-i18n="student_upcoming_test_label">Anstehend</div>
-        <div style="font-family:var(--anton);font-size:20px;color:var(--txt);letter-spacing:.04em;margin-bottom:4px;" data-i18n="student_upcoming_test_title">MONATSENDE</div>
-        <div style="font-size:12px;color:var(--dim);margin-bottom:16px;" data-i18n="student_upcoming_test_desc">GER-Bewertung · Alle Themen</div>
-        <div style="display:flex;gap:16px;margin-bottom:20px;">
-          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);" data-i18n="student_upcoming_test_date">28. APR.</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);" data-i18n="student_upcoming_test_duration">30 min</div>
-          <div style="font-family:var(--mono);font-size:11px;color:var(--dim);" data-i18n="student_upcoming_test_questions">25 F</div>
-        </div>
-        <button onclick="document.querySelector('.quiz-body').scrollIntoView({behavior:'smooth'})" style="padding:11px 20px;background:var(--lime);color:var(--txt);border:none;border-radius:8px;font-family:var(--sans);font-weight:700;font-size:13px;display:flex;align-items:center;gap:8px;" data-i18n="student_start_practice">Übung starten</button>
-      </div>
-      <div class="card no-pad">
+      <div class="card no-pad" id="quiz-card">
         <div class="quiz-head"><span class="quiz-q-meta" data-i18n="student_practice_question_title">Übungsfrage</span><span class="quiz-timer" style="color:var(--dim);" data-i18n="student_self_paced">Im eigenen Tempo</span></div>
         <div class="quiz-prog-bar"><div class="quiz-prog-fill" style="width:100%;"></div></div>
         <div class="quiz-body">
-          <div class="quiz-stem">"Il est important que tu ____ à l'heure."</div>
+          <div class="quiz-stem"></div>
           <div class="quiz-opts" id="quiz-opts"></div>
           <div id="quiz-action-area"></div>
         </div>
@@ -1649,7 +1630,6 @@ nav {
     </div>
     <div class="card">
       <div class="lbl" style="margin-bottom:16px;" data-i18n="student_results_title">Ergebnisse</div>
-      <!-- DATA: replace with Supabase: SELECT topic, score, taken_at, teacher_remark FROM test_results WHERE student_id = $1 ORDER BY taken_at DESC -->
       <div id="test-results"></div>
     </div>
   </div>
@@ -1660,19 +1640,19 @@ nav {
   <div class="chat-members">
     <div class="chat-members-head">
       <div class="chat-mem-title" data-i18n="student_chat_members_title">Mitglieder</div>
-      <div class="chat-mem-sub" id="online-count" data-i18n="student_chat_online_count">5 online</div>
+      <div class="chat-mem-sub" id="online-count"></div>
     </div>
     <div class="chat-mem-list" id="member-list"></div>
   </div>
   <div class="chat-main">
     <div class="chat-main-head">
-      <div class="chat-main-title" data-i18n="student_chat_title">Französisch B2 — Klassen-Chat</div>
-      <div class="chat-main-date" id="chat-date" data-i18n="student_chat_date">16. April 2026</div>
+      <div class="chat-main-title" id="chat-title"></div>
+      <div class="chat-main-date" id="chat-date"></div>
     </div>
     <div class="chat-msgs" id="chat-msgs"></div>
     <div class="chat-ft">
       <div class="chat-input-wrap">
-        <input id="chat-in" type="text" placeholder="Nachricht an die Klasse..." data-i18n-placeholder="student_chat_input_placeholder" onkeydown="if(event.key==='Enter')sendChatMsg()">
+        <input id="chat-in" type="text" placeholder="Message the AI tutor..." onkeydown="if(event.key==='Enter')sendChatMsg()">
         <button class="chat-send" onclick="sendChatMsg()"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button>
       </div>
     </div>
@@ -1901,33 +1881,6 @@ const RECENT_ACTIVITY = [
 ];
 
 window.__signOut = async()=>{if(SB)await SB.auth.signOut();window.location.href='signin.html';};
-
-const defaultVocab = {
-  Spanish: [
-    {es:'aprovechar',en:'to make the most of / to take advantage of'},
-    {es:'cotidiano',en:'everyday / daily'},
-    {es:'matiz',en:'nuance / shade of meaning'},
-    {es:'desenvolverse',en:'to manage / to get by in a situation'},
-    {es:'imprescindible',en:'essential / indispensable'},
-    {es:'convivir',en:'to coexist / to live alongside others'}
-  ],
-  French: [
-    {fr:'profiter de',en:'to take advantage of / to enjoy'},
-    {fr:'quotidien',en:'everyday / daily'},
-    {fr:'nuance',en:'nuance / shade of meaning'},
-    {fr:'se débrouiller',en:'to get by / to manage'},
-    {fr:'indispensable',en:'essential / indispensable'},
-    {fr:'coexister',en:'to coexist'}
-  ],
-  German: [
-    {de:'ausnutzen',en:'to make use of / to exploit'},
-    {de:'alltäglich',en:'everyday / daily'},
-    {de:'Nuance',en:'nuance / shade of meaning'},
-    {de:'zurechtkommen',en:'to cope / to get by'},
-    {de:'unerlässlich',en:'essential / indispensable'},
-    {de:'koexistieren',en:'to coexist'}
-  ]
-};
 
 const EXERCISE_DATABASE = {
   Spanish: {
@@ -2778,19 +2731,26 @@ let drawSize = 3;
 let SESSION_NOTES = [];
 let PROGRESS_METRICS = [];
 
-const defaultTestResults = [
-  {date:'Mar 28',topic:'Passé Composé',score:91,remark:'Excellent mastery. Watch être agreement.'},
-  {date:'Mar 14',topic:'Negation & Inversion',score:76,remark:'Rushed the inversion section. Slow down.'},
-  {date:'Feb 28',topic:'Futur Simple',score:58,remark:'Struggled with irregular stems.'},
-  {date:'Feb 14',topic:'Imparfait vs Passé Comp.',score:83,remark:'Good intuition. A few slips with habitual past.'},
-];
+// Every score the student has (exercise_results + graded homework), oldest first:
+// { cat, score, at, title, type }. Progress, tests and home stats are built from it.
+let SCORES = [];
+// Days (YYYY-MM-DD, local) with any activity: exercises, homework, lessons attended
+let ACTIVITY_DAYS = new Set();
+const PROGRESS_LABELS = { grammar: 'Grammar', vocabulary: 'Vocabulary', listening: 'Listening', speaking: 'Speaking',
+  writing: 'Writing', homework: 'Homework', assessment: 'Tests' };
+const localDay = (d) => { const x = new Date(d); return `${x.getFullYear()}-${String(x.getMonth() + 1).padStart(2, '0')}-${String(x.getDate()).padStart(2, '0')}`; };
+
+// Last 8 scores per category, in the order the dashboard has always shown them
+function buildProgressFromScores() {
+  const by = {};
+  SCORES.forEach(r => { (by[r.cat] = by[r.cat] || []).push(r.score); });
+  PROGRESS_METRICS = Object.keys(PROGRESS_LABELS).filter(c => by[c]).map(c => ({ label: PROGRESS_LABELS[c], data: by[c].slice(-8) }));
+  TEST_RESULTS = SCORES.filter(r => r.cat === 'assessment').slice().reverse().map(r => ({
+    date: new Date(r.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' }),
+    topic: r.title || 'Test', score: r.score, remark: '' }));
+}
 let TEST_RESULTS = [];
 
-const defaultChatMsgs = [
-  {s:'Marie',i:'MD',col:'#3B1F6A',t:"Bonjour ! Prêt pour le cours d'aujourd'hui ?",time:'09:02',teacher:true},
-  {s:'Sofia',i:'SC',col:'#1B2E4A',t:"Bonjour Marie ! Oui, tout à fait.",time:'09:04',me:true},
-  {s:'Marie',i:'MD',col:'#3B1F6A',t:"Super. Nous allons commencer bientôt.",time:'09:05',teacher:true}
-];
 let CHAT_MSGS = [];
 let MEMBERS = [];
 let VOCAB = [];
@@ -3016,17 +2976,9 @@ async function initData() {
   const langKey = USER.profile?.language || 'French';
   const levelVal = USER.profile?.level || 'B2';
   const levelKey = levelVal.startsWith('A') ? 'A' : levelVal.startsWith('B') ? 'B' : 'C';
-  const dbExercises = EXERCISE_DATABASE[langKey]?.[levelKey] || EXERCISE_DATABASE['French']['B'];
+  // No library for a language yet (e.g. English): show only teacher homework, never another language's set
+  const dbExercises = EXERCISE_DATABASE[langKey]?.[levelKey] || [];
 
-  // Load progress metrics from local storage or set defaults
-  const defaultMetrics = [
-    {label:'Tests',    data:[62,68,71,75,80,85,87,91]},
-    {label:'Homework', data:[70,72,75,73,80,82,88,90]},
-    {label:'Essays',   data:[55,60,65,63,70,72,75,78]},
-    {label:'Speaking', data:[50,54,58,60,62,65,68,70]},
-  ];
-  const savedMetrics = localStorage.getItem(`alimun:progress_metrics:${USER.id}`);
-  PROGRESS_METRICS = savedMetrics ? JSON.parse(savedMetrics) : defaultMetrics;
 
   const completedEx = JSON.parse(localStorage.getItem(`alimun:completed_exercises:${USER.id}`) || '[]');
   const dbExs = dbExercises.map(ex => {
@@ -3055,7 +3007,7 @@ async function initData() {
 
       const { data: mySubs, error: subError } = await SB
         .from('assignment_submissions')
-        .select('assignment_id, submission_text, status, score, feedback, submitted_at')
+        .select('assignment_id, submission_text, status, score, feedback, submitted_at, graded_at')
         .eq('student_id', USER.id);
       if (subError) throw subError;
 
@@ -3083,6 +3035,7 @@ async function initData() {
           gradedScore: isGraded ? sub.score : null,
           feedback: isGraded ? (sub.feedback || '') : '',
           userAnswer: sub ? sub.submission_text : '',
+          submittedAt: sub ? sub.submitted_at : null,
           minWords: hw.min_words || 20,
           recorded: hw.type === 'Speaking' && sub ? true : false
         };
@@ -3094,41 +3047,40 @@ async function initData() {
 
   EXERCISES = [...hwExs, ...dbExs];
 
-  // Fold newly graded homework scores into PROGRESS_METRICS
-  const addedHwMetrics = JSON.parse(localStorage.getItem(`alimun:added_hw_metrics:${USER.id}`) || '[]');
-  let metricsChanged = false;
-
-  gradedSubs.forEach(sub => {
-    if (addedHwMetrics.includes(sub.assignment_id)) return;
-    const hwInfo = hwExs.find(h => h.id === sub.assignment_id);
-    if (!hwInfo || sub.score == null) return;
-    let category = 'Homework';
-    if (hwInfo.type === 'Essay') category = 'Essays';
-    else if (hwInfo.type === 'Speaking') category = 'Speaking';
-    const metric = PROGRESS_METRICS.find(m => m.label === category);
-    if (metric) {
-      metric.data.push(sub.score);
-      if (metric.data.length > 8) metric.data.shift();
-      metricsChanged = true;
+  // Scores and activity from the database (exercise_results, graded homework, attendance)
+  SCORES = [];
+  ACTIVITY_DAYS = new Set();
+  if (SB && USER.profile) {
+    try {
+      const since = new Date(Date.now() - 180 * 86400000).toISOString();
+      const [{ data: results }, { data: attended }] = await Promise.all([
+        SB.from('exercise_results').select('category, score, title, ex_type, created_at')
+          .eq('student_id', USER.id).gte('created_at', since).order('created_at', { ascending: true }).limit(2000),
+        SB.from('session_attendance').select('joined_at').eq('student_id', USER.id).gte('joined_at', since),
+      ]);
+      (results || []).forEach(r => SCORES.push({ cat: r.category, score: Number(r.score) || 0, at: r.created_at, title: r.title, type: r.ex_type }));
+      (attended || []).forEach(a => { if (a.joined_at) ACTIVITY_DAYS.add(localDay(a.joined_at)); });
+    } catch (e) {
+      console.error('Failed to load progress:', e);
     }
-    addedHwMetrics.push(sub.assignment_id);
-  });
-
-  if (metricsChanged) {
-    localStorage.setItem(`alimun:progress_metrics:${USER.id}`, JSON.stringify(PROGRESS_METRICS));
-    localStorage.setItem(`alimun:added_hw_metrics:${USER.id}`, JSON.stringify(addedHwMetrics));
+    gradedSubs.forEach(sub => {
+      if (sub.score == null) return;
+      const hw = hwExs.find(h => h.id === sub.assignment_id);
+      SCORES.push({ cat: 'homework', score: Number(sub.score) || 0, at: sub.graded_at || sub.submitted_at, title: hw ? hw.title : 'Homework', type: hw ? hw.type : null });
+    });
+    hwExs.forEach(h => { if (h.done && h.submittedAt) ACTIVITY_DAYS.add(localDay(h.submittedAt)); });
+    SCORES.sort((a, b) => String(a.at).localeCompare(String(b.at)));
+    SCORES.forEach(r => { if (r.at) ACTIVITY_DAYS.add(localDay(r.at)); });
   }
-
-  const savedTests = localStorage.getItem(`alimun:test_results:${USER.id}`);
-  TEST_RESULTS = savedTests ? JSON.parse(savedTests) : [...defaultTestResults];
+  buildProgressFromScores();
 
   if (!USER.cohort_id) {
     CAL_DATA = {};
-    VOCAB = defaultVocab[langKey] || defaultVocab['French'];
+    VOCAB = [];
+    renderLiveVocab([]);
     MEMBERS = [
       {i:'AI',name:'AI Tutor',role:'AI Assistant',col:'#ceff65',online:true},
-      {i:'MD',name:'Marie Dubois',role:'Teacher',col:'#3B1F6A',online:true},
-      {i:'SC',name:USER.name,role:'You',col:'#1B2E4A',online:true,me:true}
+      {i:initialsOf(USER.name),name:USER.name,role:'You',col:'#1B2E4A',online:true,me:true}
     ];
     const savedChat = localStorage.getItem(`alimun:chat:${USER.id}`);
     if (savedChat) {
@@ -3289,6 +3241,8 @@ async function initData() {
     if (cohortData && cohortData.teacher_profiles) {
       const tp = cohortData.teacher_profiles;
       document.querySelector('[data-field="teacher-name"]').textContent = tp.full_name;
+      const tAv = document.querySelector('[data-field="teacher-av"]');
+      if (tAv) tAv.textContent = initialsOf(tp.full_name);
       document.querySelector('[data-field="teacher-bio"]').textContent = tp.specialty || tp.bio || `${langKey} Teacher`;
       document.querySelector('[data-field="teacher-sessions"]').textContent = Number(tp.sessions_delivered) || 0;
       document.querySelector('[data-field="teacher-feedbacks"]').textContent = tp.rating ? parseFloat(tp.rating).toFixed(1) : '–';
@@ -3334,8 +3288,13 @@ async function initData() {
       // Latest teacher note
       const latestNote = allNotes.find(n => n.teacher_note);
       if (latestNote) {
-        document.querySelector('[data-field="teacher-note"]').textContent = `"${latestNote.teacher_note}"`;
+        const noteEl = document.querySelector('[data-field="teacher-note"]');
+        noteEl.textContent = `"${latestNote.teacher_note}"`;
+        noteEl.style.display = '';
       }
+      // Live pre-join: vocabulary from the latest notes that have some
+      const withVocab = allNotes.find(n => Array.isArray(n.vocabulary) && n.vocabulary.length);
+      renderLiveVocab(withVocab ? withVocab.vocabulary : []);
       
       // Parse vocab from all session notes
       let list = [];
@@ -3355,9 +3314,7 @@ async function initData() {
         return seen.has(k) ? false : seen.add(k);
       });
     }
-    if (VOCAB.length === 0) {
-      VOCAB = defaultVocab[langKey] || defaultVocab['French'];
-    }
+    if (!allNotes || !allNotes.length) renderLiveVocab([]);
 
     // ─ 4. Query All Sessions for Calendar ────────────────────────────
     const { data: calSessions } = await SB
@@ -3429,7 +3386,7 @@ async function initData() {
         name: tp.full_name,
         role: 'Teacher',
         col: '#3B1F6A',
-        online: true
+        online: false
       });
     }
     if (classmates) {
@@ -3439,8 +3396,8 @@ async function initData() {
           i: c.full_name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2),
           name: c.full_name,
           role: isMe ? 'You' : 'Student',
-          col: isMe ? '#1B2E4A' : '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0'),
-          online: isMe ? true : Math.random() > 0.4,
+          col: isMe ? '#1B2E4A' : '#3B1F6A',
+          online: isMe,
           me: isMe
         });
       });
@@ -3494,7 +3451,7 @@ async function initData() {
         if (feedbacks.length > 0) {
           const latestFeedback = feedbacks[0].feedback_text;
           const homeQuoteEl = document.querySelector('[data-field="teacher-note"]');
-          if (homeQuoteEl) homeQuoteEl.textContent = `"${latestFeedback}"`;
+          if (homeQuoteEl) { homeQuoteEl.textContent = `"${latestFeedback}"`; homeQuoteEl.style.display = ''; }
         }
       }
     } catch(err) {
@@ -4109,51 +4066,22 @@ function initHome(){
     exMetricEl.textContent = `${doneCount} / ${totalCount}`;
   }
 
-  // 2. Weekly Average (Average of the latest values of each PROGRESS_METRICS category)
-  if (PROGRESS_METRICS.length > 0) {
-    const sumLatest = PROGRESS_METRICS.reduce((acc, m) => acc + m.data[m.data.length - 1], 0);
-    const avgLatest = Math.round(sumLatest / PROGRESS_METRICS.length);
-    const avgMetricEl = document.querySelector('[data-metric="weekly-avg"]');
-    if (avgMetricEl) {
-      avgMetricEl.textContent = `${avgLatest}%`;
-    }
-
-    // 3. Cohort Rank based on weekly average score
-    const rankEl = document.querySelector('[data-metric="rank"]');
-    if (rankEl) {
-      let rank = '#3';
-      if (avgLatest >= 90) rank = '#1';
-      else if (avgLatest >= 81) rank = '#2';
-      else if (avgLatest >= 70) rank = '#3';
-      else rank = '#4';
-      rankEl.textContent = rank;
-      localStorage.setItem(`alimun:cohort_rank:${USER.id}`, rank);
-    }
+  // 2. Weekly average: every score from the last 7 days
+  const weekAgo = Date.now() - 7 * 86400000;
+  const recent = SCORES.filter(r => Date.parse(r.at) >= weekAgo);
+  const avgMetricEl = document.querySelector('[data-metric="weekly-avg"]');
+  if (avgMetricEl) {
+    avgMetricEl.textContent = recent.length ? `${Math.round(recent.reduce((a, r) => a + r.score, 0) / recent.length)}%` : '–';
   }
 
-  // 4. Streak Days
-  let streak = parseInt(localStorage.getItem(`alimun:streak:${USER.id}`) || '14');
-  
-  // If user completed at least 1 exercise today, handle streak increment
-  const completionDateKey = `alimun:last_completion_date:${USER.id}`;
-  const lastCompDate = localStorage.getItem(completionDateKey);
-  const todayStr = new Date().toISOString().split('T')[0];
-  
-  if (doneCount > 0 && lastCompDate !== todayStr) {
-    const yesterday = new Date();
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yestStr = yesterday.toISOString().split('T')[0];
-    
-    if (lastCompDate === yestStr || !lastCompDate) {
-      streak += 1;
-    }
-    localStorage.setItem(`alimun:streak:${USER.id}`, String(streak));
-    localStorage.setItem(completionDateKey, todayStr);
-  }
-  
+  // 3. Streak: consecutive days with activity, counting back from today (or yesterday)
+  let streak = 0;
+  const d = new Date();
+  if (!ACTIVITY_DAYS.has(localDay(d))) d.setDate(d.getDate() - 1);
+  while (ACTIVITY_DAYS.has(localDay(d))) { streak += 1; d.setDate(d.getDate() - 1); }
   const streakEl = document.querySelector('[data-metric="streak"]');
   if (streakEl) {
-    streakEl.textContent = `${streak} days`;
+    streakEl.textContent = `${streak} ${streak === 1 ? 'day' : 'days'}`;
   }
 }
 
@@ -4630,22 +4558,25 @@ function saveExerciseState(ex) {
 }
 
 function updateProgressCategory(exCat, score, exInfo) {
-  let label = 'Homework';
-  if (exCat === 'speaking') {
-    label = 'Speaking';
-  } else if (exCat === 'writing') {
-    label = 'Essays';
-  }
-  const metric = PROGRESS_METRICS.find(m => m.label === label);
-  if (metric) {
-    metric.data.push(score);
-    if (metric.data.length > 8) {
-      metric.data.shift();
-    }
-    localStorage.setItem(`alimun:progress_metrics:${USER.id}`, JSON.stringify(PROGRESS_METRICS));
-  }
+  const cat = PROGRESS_LABELS[exCat] ? exCat : 'grammar';
+  const now = new Date().toISOString();
+  SCORES.push({ cat, score: Math.min(Math.max(Math.round(score), 0), 100), at: now, title: exInfo?.title || null, type: exInfo?.type || null });
+  ACTIVITY_DAYS.add(localDay(now));
+  buildProgressFromScores();
   // Persist to Supabase so the teacher dashboard analytics see it
-  saveExerciseResult(exCat, score, exInfo);
+  saveExerciseResult(cat, score, exInfo);
+}
+
+const initialsOf = (name) => String(name || '').split(' ').filter(Boolean).map(w => w[0]).join('').toUpperCase().slice(0, 2);
+
+// "Today's vocabulary" on the live pre-join screen: words from the latest lesson notes
+function renderLiveVocab(list) {
+  const box = document.getElementById('live-vocab');
+  if (!box) return;
+  const words = (list || []).filter(v => v && v.word).slice(0, 6);
+  box.innerHTML = words.length
+    ? words.map((v, i) => `<div class="vocab-row"${i === words.length - 1 ? ' style="border:none;"' : ''}><span class="vocab-fr">${escHtml(v.word)}</span><span class="vocab-en">${escHtml(v.definition || '')}</span></div>`).join('')
+    : `<div style="font-size:13px;color:var(--dim);">${escHtml(xt('student_vocab_empty', 'Your teacher adds vocabulary to the notes after each lesson.'))}</div>`;
 }
 
 function saveExerciseResult(category, score, exInfo) {
@@ -5224,18 +5155,48 @@ function renderProgress(){
   if (focusValEl) focusValEl.textContent = lowestLabel;
   if (focusSubEl) focusSubEl.textContent = `${lowestAvg}% avg`;
 
+  // Overall trend: average of the last 30 days against the 30 days before
+  const trendVal = document.getElementById('prog-trend-val');
+  const trendSub = document.getElementById('prog-trend-sub');
+  if (trendVal) {
+    const avgOf = (from, to) => { const r = SCORES.filter(x => { const t = Date.parse(x.at); return t >= from && t < to; }); return r.length ? r.reduce((a, x) => a + x.score, 0) / r.length : null; };
+    const nowMs = Date.now(), m30 = 30 * 86400000;
+    const cur = avgOf(nowMs - m30, nowMs + 1), prev = avgOf(nowMs - 2 * m30, nowMs - m30);
+    if (cur == null || prev == null) { trendVal.textContent = '–'; trendVal.style.color = ''; if (trendSub) trendSub.textContent = ''; }
+    else {
+      const diff = Math.round(cur - prev);
+      trendVal.textContent = `${diff > 0 ? '+' : ''}${diff}%`;
+      trendVal.style.color = diff >= 0 ? 'var(--ok)' : 'var(--err)';
+      if (trendSub) trendSub.textContent = 'last 30 days';
+    }
+  }
+
+  // Teacher score: the latest homework the teacher graded
+  const lastGraded = SCORES.filter(r => r.cat === 'homework').slice(-1)[0];
+  const tVal = document.getElementById('prog-teacher-val');
+  const tSub = document.getElementById('prog-teacher-sub');
+  if (tVal) tVal.textContent = lastGraded ? `${lastGraded.score}%` : '–';
+  if (tSub) tSub.textContent = lastGraded ? 'last graded homework' : '';
+
+  if (!PROGRESS_METRICS.length) {
+    if (bestValEl) bestValEl.textContent = '–';
+    if (bestSubEl) bestSubEl.textContent = '';
+    if (focusValEl) focusValEl.textContent = '–';
+    if (focusSubEl) focusSubEl.textContent = '';
+    document.getElementById('prog-rows').innerHTML = `<div style="padding:24px;text-align:center;color:var(--dim);font-size:13.5px;">${escHtml(xt('student_prog_empty', 'No scores yet. Your results appear here after your first exercise or graded homework.'))}</div>`;
+  } else
   document.getElementById('prog-rows').innerHTML=PROGRESS_METRICS.map((m,idx)=>{
     const latest=m.data[m.data.length-1];
-    const delta=latest-m.data[m.data.length-2];
+    const delta=m.data.length>1?latest-m.data[m.data.length-2]:0;
     const min=Math.min(...m.data),max=Math.max(...m.data);
-    const pts=m.data.map((v,i)=>`${(i/(m.data.length-1))*120},${36-((v-min)/(max-min||1))*36}`).join(' ');
+    const pts=m.data.map((v,i)=>`${m.data.length>1?(i/(m.data.length-1))*120:60},${36-((v-min)/(max-min||1))*36}`).join(' ');
     const avg=Math.round(m.data.reduce((a,b)=>a+b,0)/m.data.length);
     return `<div class="prog-row">
       <div class="prog-label-area">
         <div class="prog-cat">${escHtml(m.label)}</div>
         <div style="display:flex;align-items:baseline;gap:8px;">
           <span class="prog-score">${escHtml(latest)}</span>
-          <span class="prog-delta" style="color:${delta>0?'var(--ok)':'var(--err)'};">${delta>0?'+':''}${escHtml(delta)}</span>
+          ${m.data.length>1?`<span class="prog-delta" style="color:${delta>0?'var(--ok)':'var(--err)'};">${delta>0?'+':''}${escHtml(delta)}</span>`:''}
         </div>
       </div>
       <div class="mini-bars">${m.data.map((v,j)=>`<div class="mini-bar" style="height:${Math.max(((v-50)/50)*100,6)}%;background:${j===m.data.length-1?'var(--lime)':'rgba(0,0,0,.1)'};"></div>`).join('')}</div>
@@ -5243,7 +5204,7 @@ function renderProgress(){
         <polyline points="${pts}" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
       </svg>
       <div class="spark-avg-area">
-        <div class="spark-avg-lbl">8W AVG</div>
+        <div class="spark-avg-lbl">AVG</div>
         <div class="spark-avg-val">${avg}%</div>
       </div>
     </div>`;
@@ -5265,7 +5226,7 @@ function renderProgress(){
       // Fallback: If no notes in student_feedback table, show the latest cohort-wide session note if one exists
       const homeQuoteEl = document.querySelector('[data-field="teacher-note"]');
       const latestText = homeQuoteEl ? homeQuoteEl.textContent.trim().replace(/^"|"$/g, '') : '';
-      if (latestText && latestText !== 'Strong progress this week. Focus on oral fluency next.') {
+      if (latestText) {
         feedbackContainer.innerHTML = `
           <div class="card">
             <div style="display:flex;gap:16px;align-items:flex-start;">
@@ -5314,6 +5275,12 @@ function renderProgress(){
    TESTS VIEW
 ══════════════════════════════════════════════════════ */
 const QUIZ_QUESTIONS = {
+  English: {
+    stem: 'If I ______ more time, I would travel more.',
+    opts: ['had', 'have', 'would have', 'having'],
+    correct: 0,
+    explanation: 'The second conditional uses the past simple in the if-clause ("had") and "would" in the result clause.'
+  },
   Spanish: {
     stem: 'Es probable que ellos ______ mañana.',
     opts: ['vienen', 'vengan', 'vendrán', 'vinieron'],
@@ -5338,8 +5305,11 @@ let quizAns=null;
 let quizCompleted=false;
 
 function renderTests(){
-  const langKey = USER.profile?.language || 'French';
-  const q = QUIZ_QUESTIONS[langKey] || QUIZ_QUESTIONS['French'];
+  const langKey = USER.profile?.language || '';
+  const q = QUIZ_QUESTIONS[langKey];
+  const quizCard = document.getElementById('quiz-card');
+  if (quizCard) quizCard.style.display = q ? '' : 'none';
+  if (q) {
   
   const stemEl = document.querySelector('.quiz-stem');
   if (stemEl) {
@@ -5387,8 +5357,10 @@ function renderTests(){
   if (quizActionArea) {
     quizActionArea.innerHTML = actionHtml;
   }
+  }
 
-  document.getElementById('test-results').innerHTML=TEST_RESULTS.map(t=>{
+  document.getElementById('test-results').innerHTML = TEST_RESULTS.length ? '' : `<div style="padding:12px 0;color:var(--dim);font-size:13px;">${escHtml(xt('student_tests_empty', 'No test results yet.'))}</div>`;
+  if (TEST_RESULTS.length) document.getElementById('test-results').innerHTML=TEST_RESULTS.map(t=>{
     const col=t.score>=80?'var(--ok)':t.score>=65?'var(--ora)':'var(--err)';
     const translatedTopic = xt(t.topic, t.topic);
     const translatedDate = xt(t.date, t.date);
@@ -5398,7 +5370,7 @@ function renderTests(){
       <div>
         <div class="result-topic">${escHtml(translatedTopic)}</div>
         <div class="result-date">${escHtml(translatedDate)}</div>
-        <div class="result-remark">"${escHtml(translatedRemark)}"</div>
+        ${translatedRemark ? `<div class="result-remark">"${escHtml(translatedRemark)}"</div>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -5408,7 +5380,7 @@ function renderTests(){
   
   const ringText = document.querySelector('.ring-svg text');
   if (ringText) {
-    ringText.textContent = `${avgTestScore}%`;
+    ringText.textContent = TEST_RESULTS.length ? `${avgTestScore}%` : '–';
   }
   const ringCircle = document.querySelector('.ring-svg circle[stroke="var(--lime)"]');
   if (ringCircle) {
@@ -5421,7 +5393,7 @@ function renderTests(){
   
   const ringSub = document.querySelector('.ring-svg + div div:last-child');
   if (ringSub) {
-    ringSub.textContent = xt('{avg}% overall average', '{avg}% overall average').replace('{avg}', avgTestScore);
+    ringSub.textContent = TEST_RESULTS.length ? xt('{avg}% overall average', '{avg}% overall average').replace('{avg}', avgTestScore) : '';
   }
 }
 
@@ -5432,28 +5404,12 @@ function quizPick(i){
 }
 
 function submitQuiz() {
-  const langKey = USER.profile?.language || 'French';
-  const q = QUIZ_QUESTIONS[langKey] || QUIZ_QUESTIONS['French'];
+  const q = QUIZ_QUESTIONS[USER.profile?.language || ''];
+  if (!q) return;
   quizCompleted = true;
-  
   const score = quizAns === q.correct ? 100 : 0;
-  const newResult = {
-    date: 'Today',
-    topic: 'Le Subjonctif (Practice)',
-    score: score,
-    remark: quizAns === q.correct ? 'Perfect understanding of the grammar rule.' : 'Needs review. Revise grammar conjugations.'
-  };
-  
-  TEST_RESULTS.unshift(newResult);
-  localStorage.setItem(`alimun:test_results:${USER.id}`, JSON.stringify(TEST_RESULTS));
-  
-  const testMetric = PROGRESS_METRICS.find(m => m.label === 'Homework');
-  if (testMetric) {
-    testMetric.data.push(score);
-    if (testMetric.data.length > 8) testMetric.data.shift();
-    localStorage.setItem(`alimun:progress_metrics:${USER.id}`, JSON.stringify(PROGRESS_METRICS));
-  }
-  
+  updateProgressCategory('assessment', score, { type: 'Practice', title: 'Practice question' });
+
   renderTests();
   renderProgress();
   initHome();
@@ -5469,8 +5425,9 @@ function resetQuiz() {
    CHAT VIEW
 ══════════════════════════════════════════════════════ */
 function renderChat(){
-  const online=MEMBERS.filter(m=>m.online).length;
-  document.getElementById('online-count').textContent=online+' online';
+  document.getElementById('online-count').textContent = `${MEMBERS.length} ${MEMBERS.length === 1 ? 'member' : 'members'}`;
+  const chatTitle = document.getElementById('chat-title');
+  if (chatTitle) chatTitle.textContent = `${USER.profile?.language || ''} ${USER.profile?.level || ''} · AI Tutor`.trim();
   document.getElementById('member-list').innerHTML=MEMBERS.map(m=>`
     <div class="chat-mem-row${m.me?' me':''}">
       <div class="mem-av-wrap">
@@ -5486,7 +5443,7 @@ function renderChat(){
   const now=new Date();
   document.getElementById('chat-date').textContent=now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
   const msgs=document.getElementById('chat-msgs');
-  msgs.innerHTML=`<div class="chat-ts">Session started · 09:00</div>`+
+  msgs.innerHTML=''+
     CHAT_MSGS.map((msg,msgIdx)=>`
       <div class="chat-msg${msg.me?' me':''}">
         <div class="av" style="background:${escHtml(msg.col)};width:32px;height:32px;font-size:11px;">${escHtml(msg.i)}</div>

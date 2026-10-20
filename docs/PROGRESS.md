@@ -140,3 +140,11 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - js/demo-teacher.js became js/demo.js: one sample world for both dashboards. Admin opening the student dashboard lands on "Demo student (sample data)" = Demo Student 1 (Intensive) in the demo teacher's class: next class, notes, homework (graded/pending/to do), progress, teacher note, classmates, 1:1 follow-up booked (cancel and rebook work), 1 private-class credit. Realtime and API calls are answered locally; only the switcher's people list and /api/stripe/config hit the server.
 - Student dashboard: teacher card no longer shows invented "48 sessions" / "5.0" rating.
 - Still fake on the real student dashboard (not touched): streak 15 days, cohort rank #3, French vocabulary on Today's Session, French test questions and "APR 28" assessment, Messages "French B2 - April 16, 2026" chat, Progress sample scores, teacher avatar "M".
+
+## 20 Oct 2026 - Student dashboard: fake data removed
+- Home stats: streak = consecutive days with activity (exercises, graded homework, lessons attended); weekly avg = all scores of the last 7 days; cohort rank removed (no real data).
+- Progress: rows built from exercise_results + graded homework (last 8 per category), empty state when none. Overall trend = last 30 days vs the 30 before; Teacher score = last graded homework. Removed the localStorage defaults (62..91 etc).
+- Tests: invented "End-of-month CEFR assessment APR 28" card and French sample results removed; results = assessment scores from exercise_results; practice quiz saves to the DB; added an English question; no question shown for languages without one.
+- Today's Session: vocabulary from the latest lesson notes (was hard-coded French); teacher name/avatar/topic placeholders cleared; "8 / 12 classmates waiting" removed.
+- Messages: title is the student's language + level + AI Tutor (it is an AI chat, classmates do not see it); no random online dots or colours; "Session started 09:00" and the Marie Dubois placeholder removed.
+- Practice library: languages without a set (English) no longer get the French exercises; they see only teacher homework. Owner to decide whether to write an English set.
