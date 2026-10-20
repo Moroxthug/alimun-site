@@ -1332,17 +1332,17 @@ nav {
     <!-- Filled by initHome() from exercise_results, homework and attendance -->
     <div class="card no-pad" style="display:flex;">
       <div class="stat-cell">
-        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_streak">Streak</div>
+        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_streak">Racha</div>
         <div class="stat-val" data-metric="streak">–</div>
       </div>
       <div class="vdiv"></div>
       <div class="stat-cell">
-        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_weekly_avg">Weekly avg</div>
+        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_weekly_avg">Media semanal</div>
         <div class="stat-val" data-metric="weekly-avg">–</div>
       </div>
       <div class="vdiv"></div>
       <div class="stat-cell">
-        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_exercises">Exercises</div>
+        <div class="lbl" style="margin-bottom:8px;" data-i18n="student_stat_exercises">Ejercicios</div>
         <div class="stat-val" data-metric="exercises">–</div>
       </div>
     </div>
@@ -1350,7 +1350,7 @@ nav {
     <!-- Next class countdown —— Populated by initData() from Supabase -->
     <div class="card no-pad next-class-card" id="next-class-card">
       <div class="nc-left">
-        <div class="nc-label">● Next class</div>
+        <div class="nc-label" data-i18n="student_next_class">● Próxima clase</div>
         <div class="nc-count" id="countdown">--:--:--</div>
       </div>
       <div class="nc-mid">
@@ -1360,11 +1360,11 @@ nav {
         <div class="nc-goal-badge" id="nc-goal-badge" style="display:none;"></div>
       </div>
       <div class="nc-right">
-        <button class="join-btn" id="join-class-btn" disabled="" style="opacity:0.5;cursor:not-allowed;" title="Opens 15 min before session">
-          <span data-i18n="student_join_class">Join Class</span>
+        <button class="join-btn" id="join-class-btn" disabled="" style="opacity:0.5;cursor:not-allowed;" title="">
+          <span data-i18n="student_join_class">Unirse a la clase</span>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
         </button>
-        <div id="join-btn-label" style="font-size:10px;color:var(--dim);text-align:center;margin-top:6px;font-family:var(--mono);">Opens 15 min before</div>
+        <div id="join-btn-label" style="font-size:10px;color:var(--dim);text-align:center;margin-top:6px;font-family:var(--mono);" data-i18n="student_opens_before">Se abre 15 min antes</div>
       </div>
     </div>
     <!-- Empty state when no session is scheduled -->
@@ -1391,7 +1391,7 @@ nav {
         <!-- Activity chart -->
         <!-- DATA: replace with Supabase query: SELECT day_of_week, sessions_attended FROM weekly_activity WHERE student_id = $1 AND week_start = date_trunc('week', NOW()) -->
         <div class="card">
-          <div class="lbl" style="margin-bottom:16px;" data-i18n="student_this_week">This week</div>
+          <div class="lbl" style="margin-bottom:16px;" data-i18n="student_this_week">Esta semana</div>
           <div class="week-bars" id="week-bars"></div>
           <div style="display:flex;gap:6px;margin-top:6px;" id="week-days"></div>
         </div>
@@ -1399,7 +1399,7 @@ nav {
         <!-- Your teacher card -->
         <!-- DATA: replace with Supabase query: SELECT teachers.name, teachers.bio, teachers.sessions_count, teachers.feedback_count, teachers.note FROM cohort_members JOIN teachers ON ... WHERE cohort_members.student_id = $1 AND cohort_members.role = 'teacher' -->
         <div class="card teacher-card" style="flex:1;">
-          <div class="lbl" style="margin-bottom:16px;" data-i18n="student_your_teacher">Your teacher</div>
+          <div class="lbl" style="margin-bottom:16px;" data-i18n="student_your_teacher">Tu profesor</div>
           <div class="av-wrap" onclick="openTeacherProfileModal()" style="cursor:pointer; display:flex; gap:14px; align-items:center; margin-bottom:16px;">
             <div class="av" style="background:#3B1F6A;width:48px;height:48px;font-size:16px;" data-field="teacher-av"></div>
             <div>
@@ -1411,27 +1411,27 @@ nav {
           <div class="teacher-stats">
             <div>
               <div class="teacher-stat-n" data-field="teacher-sessions">–</div>
-              <div class="teacher-stat-l" data-i18n="student_teacher_sessions">Sessions</div>
+              <div class="teacher-stat-l" data-i18n="student_teacher_sessions">Clases</div>
             </div>
             <div>
               <div class="teacher-stat-n" data-field="teacher-feedbacks">–</div>
-              <div class="teacher-stat-l" data-i18n="student_teacher_rating">Rating</div>
+              <div class="teacher-stat-l" data-i18n="student_teacher_rating">Valoración</div>
             </div>
           </div>
-          <button class="join-btn" id="btn-book-1on1" onclick="openExtraClassPaywall()" style="width:100%;margin-top:16px;justify-content:center;font-size:12px;padding:8px 16px;" data-i18n="student_book_1on1">Book 1-on-1 Class</button>
-          <button class="join-btn" onclick="openCohortSwitchModal()" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;padding:8px 16px;background:#FFF;border:1px solid var(--bd);color:var(--txt);cursor:pointer;" data-i18n="student_change_cohort">Change Class / Cohort</button>
+          <button class="join-btn" id="btn-book-1on1" onclick="openExtraClassPaywall()" style="width:100%;margin-top:16px;justify-content:center;font-size:12px;padding:8px 16px;" data-i18n="student_book_1on1">Reservar clase 1:1</button>
+          <button class="join-btn" onclick="openCohortSwitchModal()" style="width:100%;margin-top:8px;justify-content:center;font-size:12px;padding:8px 16px;background:#FFF;border:1px solid var(--bd);color:var(--txt);cursor:pointer;" data-i18n="student_change_cohort">Cambiar de clase</button>
         </div>
 
         <!-- 1:1 follow-ups and private classes (filled by loadOneOnOne) -->
         <div class="card" id="oto-card" style="display:none;">
-          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_oto_title">Your 1:1</div>
+          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_oto_title">Tu 1:1</div>
           <div id="oto-body" style="display:flex;flex-direction:column;gap:14px;"></div>
         </div>
 
         <!-- Recent activity -->
         <!-- DATA: replace with Supabase query: SELECT action, subject, created_at FROM activity_log WHERE student_id = $1 ORDER BY created_at DESC LIMIT 3 -->
         <div class="card">
-          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_recent_activity">Recent activity</div>
+          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_recent_activity">Actividad reciente</div>
           <div id="activity-list" style="display:flex;flex-direction:column;gap:10px;"></div>
         </div>
 
@@ -1445,8 +1445,8 @@ nav {
     <div class="card" style="padding: 24px; border-bottom: 2px solid var(--lime);">
       <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
         <div>
-          <h1 style="font-family:var(--anton); font-size:32px; text-transform:uppercase; margin:0 0 4px 0; color:var(--txt); letter-spacing:-0.02em;" data-i18n="student_class_discovery">Class Discovery</h1>
-          <p style="font-size:13px; color:var(--dim); margin:0;" data-i18n="student_discovery_sub">Find a class cohort matching your language goals and schedule preferences.</p>
+          <h1 style="font-family:var(--anton); font-size:32px; text-transform:uppercase; margin:0 0 4px 0; color:var(--txt); letter-spacing:-0.02em;" data-i18n="student_class_discovery">Encuentra una clase</h1>
+          <p style="font-size:13px; color:var(--dim); margin:0;" data-i18n="student_discovery_sub">Encuentra una clase que encaje con tus objetivos y tu horario.</p>
         </div>
         <div style="background:var(--bg); border:1px solid var(--bd); border-radius:8px; padding:10px 14px; font-size:12px; color:var(--txt); display:flex; gap:16px;">
           <div>🗣️ Target: <strong id="discovery-target-lang">-</strong></div>
@@ -1463,27 +1463,27 @@ nav {
         <!-- Level adjacent filter toggle -->
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:500; color:var(--txt);">
           <input type="checkbox" id="filter-adjacent" checked="" onchange="toggleDiscoveryFilter('adjacentLevels')" style="accent-color:var(--lime); width:16px; height:16px;">
-          <span data-i18n="student_filter_adjacent">Include adjacent levels (Stretch/Review)</span>
+          <span data-i18n="student_filter_adjacent">Incluir niveles cercanos (superior / repaso)</span>
         </label>
 
         <!-- Goal track toggle -->
         <label style="display:flex; align-items:center; gap:8px; cursor:pointer; font-size:13px; font-weight:500; color:var(--txt);">
           <input type="checkbox" id="filter-all-goals" onchange="toggleDiscoveryFilter('showAllGoals')" style="accent-color:var(--lime); width:16px; height:16px;">
-          <span data-i18n="student_filter_all_goals">Show all goal tracks</span>
+          <span data-i18n="student_filter_all_goals">Mostrar todos los objetivos</span>
         </label>
       </div>
 
       <!-- Schedule filter (days of week multi-select) -->
       <div>
-        <div style="font-size:11.5px; color:var(--dim); margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;" data-i18n="student_filter_days">Filter by Available Days:</div>
+        <div style="font-size:11.5px; color:var(--dim); margin-bottom:8px; font-weight:600; text-transform:uppercase; letter-spacing:0.04em;" data-i18n="student_filter_days">Filtrar por días disponibles:</div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
-          <button class="day-chip" id="chip-Monday" onclick="toggleDayFilter('Monday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_monday">Monday</button>
-          <button class="day-chip" id="chip-Tuesday" onclick="toggleDayFilter('Tuesday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_tuesday">Tuesday</button>
-          <button class="day-chip" id="chip-Wednesday" onclick="toggleDayFilter('Wednesday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_wednesday">Wednesday</button>
-          <button class="day-chip" id="chip-Thursday" onclick="toggleDayFilter('Thursday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_thursday">Thursday</button>
-          <button class="day-chip" id="chip-Friday" onclick="toggleDayFilter('Friday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_friday">Friday</button>
-          <button class="day-chip" id="chip-Saturday" onclick="toggleDayFilter('Saturday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_saturday">Saturday</button>
-          <button class="day-chip" id="chip-Sunday" onclick="toggleDayFilter('Sunday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_sunday">Sunday</button>
+          <button class="day-chip" id="chip-Monday" onclick="toggleDayFilter('Monday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_monday">Lunes</button>
+          <button class="day-chip" id="chip-Tuesday" onclick="toggleDayFilter('Tuesday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_tuesday">Martes</button>
+          <button class="day-chip" id="chip-Wednesday" onclick="toggleDayFilter('Wednesday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_wednesday">Miércoles</button>
+          <button class="day-chip" id="chip-Thursday" onclick="toggleDayFilter('Thursday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_thursday">Jueves</button>
+          <button class="day-chip" id="chip-Friday" onclick="toggleDayFilter('Friday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_friday">Viernes</button>
+          <button class="day-chip" id="chip-Saturday" onclick="toggleDayFilter('Saturday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_saturday">Sábado</button>
+          <button class="day-chip" id="chip-Sunday" onclick="toggleDayFilter('Sunday')" style="background:#FFF; border:1px solid var(--bd); padding:6px 12px; font-size:12px; font-weight:500; border-radius:30px; cursor:pointer; transition:all 0.2s;" data-i18n="day_sunday">Domingo</button>
         </div>
       </div>
     </div>
@@ -1500,9 +1500,9 @@ nav {
   <!-- Pre-join state -->
   <div id="live-prejoin" style="display:flex;align-items:center;justify-content:center;height:100%;padding:40px;width:100%;">
     <div style="max-width:460px;width:100%;">
-      <div class="lbl" style="margin-bottom:20px;text-align:center;">● Starting soon</div>
+      <div class="lbl" style="margin-bottom:20px;text-align:center;" data-i18n="student_starting_soon">● Empieza pronto</div>
       <div style="text-align:center;font-family:var(--mono);font-size:56px;font-weight:800;color:var(--txt);letter-spacing:-0.04em;margin-bottom:4px;" id="live-count">--:--:--</div>
-      <div style="text-align:center;font-size:13px;color:var(--dim);margin-bottom:32px;" data-i18n="student_until_class_begins">until class begins</div>
+      <div style="text-align:center;font-size:13px;color:var(--dim);margin-bottom:32px;" data-i18n="student_until_class_begins">para que empiece la clase</div>
       <div class="card" style="margin-bottom:20px;">
         <div style="display:flex;gap:16px;align-items:center;margin-bottom:20px;">
           <div class="av" style="background:#3B1F6A;width:52px;height:52px;font-size:18px;" id="live-teacher-av"></div>
@@ -1513,13 +1513,13 @@ nav {
         </div>
         <div class="hdiv"></div>
         <div style="margin-top:20px;">
-          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_todays_vocab">Today's vocabulary</div>
+          <div class="lbl" style="margin-bottom:12px;" data-i18n="student_todays_vocab">Vocabulario de hoy</div>
           <div id="live-vocab"></div>
         </div>
       </div>
       <div style="text-align:center;font-size:12px;color:var(--dim);font-family:var(--mono);margin-bottom:16px;" id="live-waiting-count"></div>
       <button onclick="handleStudentJoin(NEXT_CLASS.dailyRoomUrl, NEXT_CLASS.sessionId)" style="width:100%;padding:15px 0;background:var(--lime);color:var(--txt);border:none;border-radius:10px;font-family:var(--sans);font-weight:700;font-size:15px;display:flex;align-items:center;justify-content:center;gap:8px;">
-        <span data-i18n="student_join_video_class">Join Video Class</span>
+        <span data-i18n="student_join_video_class">Unirse a la clase en vídeo</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
       </button>
     </div>
@@ -1537,14 +1537,14 @@ nav {
   </div>
   <!-- DATA: event type colors from typeColor map in source -->
   <div class="cal-legend">
-    <div class="leg-item"><div class="leg-dot" style="background:#9BCB00;"></div>Live Class</div>
-    <div class="leg-item"><div class="leg-dot" style="background:#F97316;"></div>Homework / Due</div>
-    <div class="leg-item"><div class="leg-dot" style="background:rgba(0,0,0,.45);"></div>Test</div>
-    <div class="leg-item"><div class="leg-dot" style="background:rgba(0,0,0,.3);"></div>1-on-1</div>
+    <div class="leg-item"><div class="leg-dot" style="background:#9BCB00;"></div><span data-i18n="student_leg_class">Clase en directo</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:#F97316;"></div><span data-i18n="student_leg_hw">Tarea / Entrega</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:rgba(0,0,0,.45);"></div><span data-i18n="student_leg_test">Prueba</span></div>
+    <div class="leg-item"><div class="leg-dot" style="background:rgba(0,0,0,.3);"></div><span data-i18n="student_leg_oto">1:1</span></div>
   </div>
   <div class="cal-grid-wrap">
     <div class="card no-pad">
-      <div class="cal-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
+      <div class="cal-dow" id="cal-dow"><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span><span>S</span></div>
       <div class="cal-days" id="cal-days"></div>
     </div>
     <div class="card cal-detail-card" id="cal-detail"></div>
@@ -1557,14 +1557,14 @@ nav {
   <!-- DATA: replace with Supabase: SELECT count(*) FILTER (WHERE done), count(*) FROM exercises WHERE student_id = $1 -->
   <div class="card" style="display:flex;align-items:center;gap:28px;">
     <div>
-      <div class="lbl" style="margin-bottom:8px;">Progress</div>
+      <div class="lbl" style="margin-bottom:8px;" data-i18n="student_sb_progress">Progreso</div>
       <div style="font-family:var(--mono);font-size:28px;font-weight:800;color:var(--txt);" id="ex-count">–</div>
     </div>
     <div class="prog-bar-wrap"><div class="prog-bar-fill" id="ex-bar" style="width:40%;"></div></div>
     <div style="font-family:var(--mono);font-size:12px;color:var(--dim);" id="ex-pct"></div>
     <div style="margin-left:auto;display:flex;gap:8px;flex-wrap:wrap;">
-      <button id="btn-placement" onclick="startPlacementTest()" style="display:none;background:#fff;border:1px solid var(--bd);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;" data-i18n="student_ex_placement">Placement test</button>
-      <button id="btn-generate-ex" onclick="generateNewExercises()" style="background:var(--lime);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;" data-i18n="student_ex_generate">✨ New exercises</button>
+      <button id="btn-placement" onclick="startPlacementTest()" style="display:none;background:#fff;border:1px solid var(--bd);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;" data-i18n="student_ex_placement">Prueba de nivel</button>
+      <button id="btn-generate-ex" onclick="generateNewExercises()" style="background:var(--lime);color:var(--txt);padding:9px 14px;border-radius:10px;font-size:12.5px;font-weight:700;" data-i18n="student_ex_generate">✨ Nuevos ejercicios</button>
     </div>
   </div>
   <div class="ex-tabs" id="ex-tabs"></div>
@@ -1581,19 +1581,19 @@ nav {
 
 <!-- ── PROGRESS ── -->
 <div id="v-progress" class="view">
-  <div style="font-family:var(--anton);font-size:22px;color:var(--txt);letter-spacing:.04em;">PROGRESS</div>
+  <div style="font-family:var(--anton);font-size:22px;color:var(--txt);letter-spacing:.04em;" data-i18n="student_sb_progress">Progreso</div>
   <!-- DATA: replace with Supabase: SELECT category, scores, avg FROM student_progress WHERE student_id = $1 -->
   <div class="card no-pad" id="prog-rows"></div>
   <div id="prog-feedback-container"></div>
   <!-- DATA: replace with Supabase aggregates -->
   <div class="card no-pad prog-summary">
-    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Overall trend</div><div class="prog-sum-val" id="prog-trend-val">–</div><div class="prog-sum-sub" id="prog-trend-sub"></div></div>
+    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;" data-i18n="student_prog_overall_trend">Tendencia general</div><div class="prog-sum-val" id="prog-trend-val">–</div><div class="prog-sum-sub" id="prog-trend-sub"></div></div>
     <div class="vdiv"></div>
-    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Best category</div><div class="prog-sum-val" id="prog-best-val" style="color:var(--txt);">–</div><div class="prog-sum-sub" id="prog-best-sub"></div></div>
+    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;" data-i18n="student_prog_best_category">Mejor categoría</div><div class="prog-sum-val" id="prog-best-val" style="color:var(--txt);">–</div><div class="prog-sum-sub" id="prog-best-sub"></div></div>
     <div class="vdiv"></div>
-    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Needs focus</div><div class="prog-sum-val" id="prog-focus-val" style="color:var(--err);">–</div><div class="prog-sum-sub" id="prog-focus-sub"></div></div>
+    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;" data-i18n="student_prog_needs_focus">A reforzar</div><div class="prog-sum-val" id="prog-focus-val" style="color:var(--err);">–</div><div class="prog-sum-sub" id="prog-focus-sub"></div></div>
     <div class="vdiv"></div>
-    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;">Teacher score</div><div class="prog-sum-val" id="prog-teacher-val" style="color:var(--txt);">–</div><div class="prog-sum-sub" id="prog-teacher-sub"></div></div>
+    <div class="prog-sum-cell"><div class="lbl" style="margin-bottom:8px;" data-i18n="student_prog_teacher_score">Nota del profesor</div><div class="prog-sum-val" id="prog-teacher-val" style="color:var(--txt);">–</div><div class="prog-sum-sub" id="prog-teacher-sub"></div></div>
   </div>
 </div>
 
@@ -1669,16 +1669,16 @@ nav {
       <div class="lbl" style="margin-bottom:16px;">Profile Details</div>
       <div style="display:flex;flex-direction:column;gap:16px;">
         <div class="field-row">
-          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_full_name">Full Name</label>
+          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_full_name">Nombre completo</label>
           <input type="text" id="settings-name" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
         </div>
         <div class="field-row">
-          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_email_address">Email Address</label>
+          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_email_address">Correo electrónico</label>
           <input type="email" id="settings-email" disabled="" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#F0F0F0;color:var(--dim);">
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="field-row">
-            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_learning_language">Learning Language</label>
+            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_learning_language">Idioma que aprendes</label>
             <select id="settings-lang" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
               <option value="Spanish">Spanish</option>
               <option value="French">French</option>
@@ -1686,7 +1686,7 @@ nav {
             </select>
           </div>
           <div class="field-row">
-            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_current_level">Current Level</label>
+            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_current_level">Nivel actual</label>
             <select id="settings-level" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
               <option value="A1">A1</option>
               <option value="A2">A2</option>
@@ -1699,11 +1699,11 @@ nav {
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
           <div class="field-row">
-            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_timezone">Timezone</label>
+            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="lbl_timezone">Zona horaria</label>
             <input type="text" id="settings-timezone" placeholder="e.g. Europe/Rome" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
           </div>
           <div class="field-row">
-            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_preferred_time">Preferred Time Window</label>
+            <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_preferred_time">Franja horaria preferida</label>
             <div style="display:flex;gap:6px;align-items:center;">
               <input type="time" id="settings-time-start" style="width:100%;padding:11px 14px;border:1px solid var(--bd);border-radius:8px;font-family:var(--sans);font-size:14px;background:#FAFAFA;">
               <span style="font-size:12px;color:var(--dim);">to</span>
@@ -1712,7 +1712,7 @@ nav {
           </div>
         </div>
         <div class="field-row">
-          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_preferred_days">Preferred Days</label>
+          <label class="lbl" style="display:block;margin-bottom:6px;" data-i18n="student_lbl_preferred_days">Días preferidos</label>
           <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:4px;">
             <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--txt);cursor:pointer;">
               <input type="checkbox" class="settings-day-check" value="1"> Mon
@@ -1737,7 +1737,7 @@ nav {
             </label>
           </div>
         </div>
-        <button class="join-btn" onclick="saveSettings()" style="width:fit-content;margin-top:8px;" data-i18n="student_save_profile">Save Profile</button>
+        <button class="join-btn" onclick="saveSettings()" style="width:fit-content;margin-top:8px;" data-i18n="student_save_profile">Guardar perfil</button>
       </div>
     </div>
     
@@ -1755,7 +1755,7 @@ nav {
     
     <!-- Sign Out -->
     <div>
-      <button class="join-btn" onclick="window.__signOut &amp;&amp; window.__signOut()" style="background:#FFF;border:1px solid #dc2626;color:#dc2626;" data-i18n="btn_sign_out">Sign Out</button>
+      <button class="join-btn" onclick="window.__signOut &amp;&amp; window.__signOut()" style="background:#FFF;border:1px solid #dc2626;color:#dc2626;" data-i18n="btn_sign_out">Cerrar sesión</button>
     </div>
   </div>
 </div>
@@ -1767,7 +1767,7 @@ nav {
   <div class="classroom-header">
     <div class="classroom-title">
       <span class="live-dot"></span>
-      <span id="class-title-text" data-i18n="student_class_live">Live Session</span>
+      <span id="class-title-text" data-i18n="student_class_live">Clase en directo</span>
       <span id="class-timer" class="class-timer">00:00</span>
     </div>
     <div class="classroom-actions">
@@ -1776,7 +1776,7 @@ nav {
       </button>
       <button class="class-action-btn leave-btn" id="classroom-leave-btn" onclick="leaveClass()">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
-        <span data-i18n="student_class_leave">Leave</span>
+        <span data-i18n="student_class_leave">Salir</span>
       </button>
     </div>
   </div>
@@ -1788,7 +1788,7 @@ nav {
     <!-- Collapsible Chat Area -->
     <div class="classroom-chat-panel collapsed" id="classroom-chat-panel">
       <div class="chat-toggle-header" onclick="toggleChatExpanded()">
-        <span data-i18n="student_class_chat">Class Chat</span>
+        <span data-i18n="student_class_chat">Chat de la clase</span>
         <svg id="chat-chevron" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </div>
       <div class="chat-messages-container" id="classroom-chat-messages">
@@ -1807,19 +1807,19 @@ nav {
   <div class="classroom-tools-row">
     <button class="tool-btn active" data-tab="files" onclick="switchClassroomTab('files')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
-      <span data-i18n="tool_files">Files</span>
+      <span data-i18n="tool_files">Archivos</span>
     </button>
     <button class="tool-btn" onclick="triggerDailyScreenShare()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-      <span data-i18n="tool_screenshare">Screen Share</span>
+      <span data-i18n="tool_screenshare">Compartir pantalla</span>
     </button>
     <button class="tool-btn" onclick="takeClassroomScreenshot()">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
-      <span data-i18n="tool_screenshot">Screenshot</span>
+      <span data-i18n="tool_screenshot">Captura de pantalla</span>
     </button>
     <button class="tool-btn" data-tab="interactive" onclick="switchClassroomTab('interactive')">
       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
-      <span data-i18n="tool_interactive">Whiteboard</span>
+      <span data-i18n="tool_interactive">Pizarra</span>
     </button>
   </div>
 
@@ -1829,11 +1829,11 @@ nav {
       <div class="files-container">
         <div class="file-upload-zone" id="file-dropzone" onclick="document.getElementById('file-upload-input').click()">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
-          <p data-i18n="file_drag_drop">Drag &amp; drop files here, or click to upload</p>
+          <p data-i18n="file_drag_drop">Arrastra archivos aquí o haz clic para subirlos</p>
           <input type="file" id="file-upload-input" style="display:none" onchange="uploadClassroomFile(this)">
         </div>
         <div class="shared-files-list" id="shared-files-list">
-          <p class="file-meta" data-i18n="file_no_files">No shared files yet for this session.</p>
+          <p class="file-meta" data-i18n="file_no_files">Aún no hay archivos compartidos en esta clase.</p>
         </div>
       </div>
     </div>
@@ -1873,12 +1873,12 @@ let SCHEDULE = [];
 let WEEK_ACTIVITY = [0, 0, 0, 0, 0, 0, 0];
 const WEEK_TODAY = (new Date().getDay() + 6) % 7; // Monday-first
 let CAL_DATA = {};
-const RECENT_ACTIVITY = [
-  ['Vocabulary Quiz', 'Completed with 90%', 'Yesterday'],
-  ['Pronunciation Practice', 'Completed with 85%', '2 days ago'],
-  ['Grammar Drill', 'Completed with 100%', '3 days ago'],
-  ['Essay Submission', 'Graded and reviewed', '4 days ago']
-];
+// Locale for dates/times built in JS, following the site language
+const UI_LOCALES = { en: 'en-GB', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-PT', zh: 'zh-CN', ar: 'ar-EG', it: 'it-IT', ma: 'fr-MA' };
+const uiLocale = () => UI_LOCALES[window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en'] || 'en-GB';
+// Monday-first one-letter weekday names in the site language (Jan 3 2000 was a Monday)
+const weekdayInitials = () => Array.from({ length: 7 }, (_, i) => new Date(2000, 0, 3 + i).toLocaleDateString(uiLocale(), { weekday: 'narrow' }));
+const monthsUpper = () => Array.from({ length: 12 }, (_, m) => new Date(2000, m, 1).toLocaleDateString(uiLocale(), { month: 'long' }).toUpperCase());
 
 window.__signOut = async()=>{if(SB)await SB.auth.signOut();window.location.href='signin.html';};
 
@@ -3029,9 +3029,9 @@ const localDay = (d) => { const x = new Date(d); return `${x.getFullYear()}-${St
 function buildProgressFromScores() {
   const by = {};
   SCORES.forEach(r => { (by[r.cat] = by[r.cat] || []).push(r.score); });
-  PROGRESS_METRICS = Object.keys(PROGRESS_LABELS).filter(c => by[c]).map(c => ({ label: PROGRESS_LABELS[c], data: by[c].slice(-8) }));
+  PROGRESS_METRICS = Object.keys(PROGRESS_LABELS).filter(c => by[c]).map(c => ({ label: xt(`student_cat_${c}`, PROGRESS_LABELS[c]), data: by[c].slice(-8) }));
   TEST_RESULTS = SCORES.filter(r => r.cat === 'assessment').slice().reverse().map(r => ({
-    date: new Date(r.at).toLocaleDateString(undefined, { day: 'numeric', month: 'short' }),
+    date: new Date(r.at).toLocaleDateString(uiLocale(), { day: 'numeric', month: 'short' }),
     topic: r.title || 'Test', score: r.score, remark: '' }));
 }
 let TEST_RESULTS = [];
@@ -3044,6 +3044,8 @@ let VOCAB = [];
    AUTH GUARD & PROFILE FETCH
 ══════════════════════════════════════════════════════ */
 (async()=>{
+  // js/translations.js and js/i18n.js are deferred: wait for them so text built here is translated
+  if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true }));
   const {createClient}=window.supabase;
   SB=createClient(CFG.url,CFG.key,{auth:{autoRefreshToken:true,persistSession:true,storageKey:'alimun-auth'}});
   let {data:{session}}=await SB.auth.getSession();
@@ -3141,8 +3143,8 @@ function renderSessionNotes() {
   section.style.display = 'block';
   container.innerHTML = notesWithPdfs.map(n => {
     const date = new Date(n.sessions?.scheduled_at || n.published_at);
-    const dateStr = date.toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' });
-    const grammarTopic = n.grammar_focus?.split('\n\n')[0] || 'Live Class Session';
+    const dateStr = date.toLocaleDateString(uiLocale(), { day: 'numeric', month: 'long', year: 'numeric' });
+    const grammarTopic = n.grammar_focus?.split('\n\n')[0] || xt('student_live_class_session', 'Live Class Session');
     const vocabCount = Array.isArray(n.vocabulary) ? n.vocabulary.length : 0;
     
     return `
@@ -3234,14 +3236,14 @@ function updateCountdowns(){
       btn.style.opacity = '1';
       btn.style.cursor = 'pointer';
       btn.onclick = () => handleStudentJoin(NEXT_CLASS.dailyRoomUrl, NEXT_CLASS.sessionId);
-      if (btnLbl) btnLbl.textContent = diff === 0 ? 'Session is live' : 'Room is open';
+      if (btnLbl) btnLbl.textContent = diff === 0 ? xt('student_session_live', 'Session is live') : xt('student_room_open', 'Room is open');
     } else {
       btn.disabled = true;
       btn.style.opacity = '0.5';
       btn.style.cursor = 'not-allowed';
       btn.onclick = null;
       const minsLeft = Math.ceil((sessionMs - openBeforeMs - now) / 60000);
-      if (btnLbl) btnLbl.textContent = now > sessionMs + openAfterMs ? 'Session ended' : minsLeft > 0 ? `Opens in ${minsLeft} min` : 'Opens 15 min before';
+      if (btnLbl) btnLbl.textContent = now > sessionMs + openAfterMs ? xt('student_session_ended', 'Session ended') : minsLeft > 0 ? xt('student_opens_in', 'Opens in {n} min').replace('{n}', minsLeft) : xt('student_opens_before', 'Opens 15 min before');
     }
   }
 }
@@ -3377,7 +3379,7 @@ async function initData() {
                       targetLang === 'German' ? 'Hallo! Wie geht es dir heute? Ich bin hier, um dir beim Deutschlernen zu helfen.' :
                       'Hello! How can I help you practice today?';
       CHAT_MSGS = [
-        {s:'AI Tutor', i:'AI', col:'#ceff65', t:welcome, time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}), me:false, ai:true}
+        {s:'AI Tutor', i:'AI', col:'#ceff65', t:welcome, time:new Date().toLocaleTimeString(uiLocale(),{hour:'2-digit',minute:'2-digit'}), me:false, ai:true}
       ];
       localStorage.setItem(`alimun:chat:${USER.id}`, JSON.stringify(CHAT_MSGS));
     }
@@ -3454,11 +3456,12 @@ async function initData() {
       const cohortLang  = cohort.language  || langKey;
       const cohortLvl   = cohort.level     || levelVal;
       const goalTrack   = cohort.goal_track || '';
-      const topic       = nextSession.session_notes?.grammar_focus || 'Live Session';
+      const topic       = nextSession.session_notes?.grammar_focus || xt('student_class_live', 'Live Session');
       const count       = cohort.enrolled_count || 0;
 
       NEXT_CLASS.teacher   = `${teacherName} · ${cohortLang} ${cohortLvl}`;
-      NEXT_CLASS.topic     = `${topic} · ${count} classmate${count !== 1 ? 's' : ''} enrolled`;
+      const enrolledTxt = (count === 1 ? xt('student_classmate_enrolled', '{n} classmate enrolled') : xt('student_classmates_enrolled', '{n} classmates enrolled')).replace('{n}', count);
+      NEXT_CLASS.topic     = `${topic} · ${enrolledTxt}`;
       NEXT_CLASS.goalTrack = goalTrack;
       NEXT_CLASS.cohortDesc = `${cohortLang} ${cohortLvl}`;
 
@@ -3467,8 +3470,8 @@ async function initData() {
       if (emptyCard) emptyCard.style.display  = 'none';
 
       const sessionDate = NEXT_CLASS.at;
-      const dateLabel   = sessionDate.toLocaleDateString(undefined, { weekday:'short', day:'numeric', month:'short' });
-      const timeLabel   = sessionDate.toLocaleTimeString(undefined, { hour:'2-digit', minute:'2-digit' });
+      const dateLabel   = sessionDate.toLocaleDateString(uiLocale(), { weekday:'short', day:'numeric', month:'short' });
+      const timeLabel   = sessionDate.toLocaleTimeString(uiLocale(), { hour:'2-digit', minute:'2-digit' });
       const ncDate = document.getElementById('nc-date');
       if (ncDate) ncDate.textContent = `${dateLabel} · ${timeLabel}`;
 
@@ -3493,7 +3496,7 @@ async function initData() {
       const icTeacherAv    = document.getElementById('incall-teacher-av');
       if (lvTeacherName)  lvTeacherName.textContent  = teacherName;
       if (lvTeacherTopic) lvTeacherTopic.textContent = `${topic} · ${cohortLvl}`;
-      if (lvWaiting)      lvWaiting.textContent       = `${count} classmate${count !== 1 ? 's' : ''} enrolled`;
+      if (lvWaiting)      lvWaiting.textContent       = enrolledTxt;
       if (icTeacherName)  icTeacherName.textContent   = teacherName;
       const tInitials = teacherName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
       if (lvTeacherAv) lvTeacherAv.textContent = tInitials;
@@ -3623,8 +3626,9 @@ async function initData() {
         if (!CAL_DATA[key]) CAL_DATA[key] = [];
         
         CAL_DATA[key].push({
-          title: s.session_notes?.grammar_focus || 'Live Class Session',
-          type: 'class'
+          title: s.session_notes?.grammar_focus || xt('student_live_class_session', 'Live Class Session'),
+          type: 'class',
+          at: s.scheduled_at
         });
 
         if (s.session_notes?.homework) {
@@ -3632,7 +3636,7 @@ async function initData() {
           const dueKey = `${dueD.getFullYear()}-${dueD.getMonth()}-${dueD.getDate()}`;
           if (!CAL_DATA[dueKey]) CAL_DATA[dueKey] = [];
           CAL_DATA[dueKey].push({
-            title: `Homework: ${s.session_notes.homework}`,
+            title: `${xt('student_cat_homework', 'Homework')}: ${s.session_notes.homework}`,
             type: 'hw'
           });
         }
@@ -3706,7 +3710,7 @@ async function initData() {
                       targetLang === 'German' ? 'Hallo! Wie geht es dir heute? Ich bin hier, um dir beim Deutschlernen zu helfen.' :
                       'Hello! How can I help you practice today?';
       CHAT_MSGS = [
-        {s:'AI Tutor', i:'AI', col:'#ceff65', t:welcome, time:new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}), me:false, ai:true}
+        {s:'AI Tutor', i:'AI', col:'#ceff65', t:welcome, time:new Date().toLocaleTimeString(uiLocale(),{hour:'2-digit',minute:'2-digit'}), me:false, ai:true}
       ];
       localStorage.setItem(`alimun:chat:${USER.id}`, JSON.stringify(CHAT_MSGS));
     }
@@ -3756,9 +3760,9 @@ function buildTodaySchedule() {
   
   todayEvs.forEach(ev => {
     SCHEDULE.push({
-      time: ev.type === 'class' ? '09:00' : '18:00',
+      time: ev.at ? new Date(ev.at).toLocaleTimeString(uiLocale(), { hour: '2-digit', minute: '2-digit' }) : '--:--',
       title: ev.title,
-      tag: ev.type === 'class' ? 'Live Class' : 'Homework',
+      tag: ev.type === 'class' ? xt('student_leg_class', 'Live Class') : xt('student_cat_homework', 'Homework'),
       warn: ev.type === 'hw'
     });
   });
@@ -3766,8 +3770,8 @@ function buildTodaySchedule() {
   if (SCHEDULE.length === 0) {
     SCHEDULE.push({
       time: '--:--',
-      title: 'No classes or deadlines today.',
-      tag: 'Free Day',
+      title: xt('student_free_day_title', 'No classes or deadlines today.'),
+      tag: xt('student_free_day', 'Free Day'),
       warn: false
     });
   }
@@ -4311,11 +4315,11 @@ window.closeTeacherPopover = closeTeacherPopover;
 ══════════════════════════════════════════════════════ */
 function initHome(){
   const now=new Date();
-  const dayName=now.toLocaleDateString('en-US',{weekday:'long'}).toUpperCase();
-  const dateStr=now.toLocaleDateString('en-US',{day:'numeric',month:'long'}).toUpperCase();
+  const dayName=now.toLocaleDateString(uiLocale(),{weekday:'long'}).toUpperCase();
+  const dateStr=now.toLocaleDateString(uiLocale(),{day:'numeric',month:'long'}).toUpperCase();
   const el=document.getElementById('today-date');
   if(el)el.textContent=`${dayName} — ${dateStr}`;
-  document.getElementById('event-count').textContent=`${SCHEDULE.length} events`;
+  document.getElementById('event-count').textContent=`${SCHEDULE.length} ${SCHEDULE.length === 1 ? xt('student_event', 'event') : xt('student_events', 'events')}`;
 
   const sb=document.getElementById('sched-body');
   sb.innerHTML=SCHEDULE.map(ev=>`
@@ -4326,7 +4330,7 @@ function initHome(){
       <div class="sched-tag ${ev.warn?'tag-hw':'tag-default'}">${escHtml(ev.tag)}</div>
     </div>`).join('');
 
-  const days=['M','T','W','T','F','S','S'];
+  const days=weekdayInitials();
   document.getElementById('week-bars').innerHTML=WEEK_ACTIVITY.map((v,i)=>`
     <div class="bar-wrap">
       <div class="bar" style="height:${Math.max(v*100,6)}%;border-radius:4px 4px 0 0;background:${i===WEEK_TODAY?'#CEFF65':v>0?'rgba(0,0,0,.12)':'rgba(0,0,0,.05)'};width:100%;"></div>
@@ -4334,7 +4338,18 @@ function initHome(){
   document.getElementById('week-days').innerHTML=days.map((d,i)=>`
     <div style="flex:1;text-align:center;font-family:var(--mono);font-size:9px;color:${i===WEEK_TODAY?'#9BCB00':'rgba(0,0,0,.22)'};font-weight:${i===WEEK_TODAY?700:400};">${d}</div>`).join('');
 
-  document.getElementById('activity-list').innerHTML=RECENT_ACTIVITY.map(([a,b,t])=>`
+  // Recent activity: the latest scores (exercises and graded homework)
+  const rtf = new Intl.RelativeTimeFormat(uiLocale(), { numeric: 'auto' });
+  const dayStart = (x) => { const d0 = new Date(x); d0.setHours(0, 0, 0, 0); return d0.getTime(); };
+  const recentActivity = SCORES.slice(-4).reverse().map(r => [
+    r.title || xt(`student_cat_${r.cat}`, PROGRESS_LABELS[r.cat] || r.cat),
+    `${xt('student_score', 'Score')}: ${r.score}%`,
+    rtf.format(Math.round((dayStart(r.at) - dayStart(Date.now())) / 86400000), 'day'),
+  ]);
+  if (!recentActivity.length) {
+    document.getElementById('activity-list').innerHTML = `<div class="activity-row"><div class="activity-txt">${escHtml(xt('student_activity_empty', 'Your exercises and graded homework appear here.'))}</div></div>`;
+  } else
+  document.getElementById('activity-list').innerHTML=recentActivity.map(([a,b,t])=>`
     <div class="activity-row">
       <svg class="activity-check" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
       <div class="activity-txt"><strong style="color:var(--txt);">${escHtml(a)}</strong> · ${escHtml(b)}</div>
@@ -4366,7 +4381,7 @@ function initHome(){
   while (ACTIVITY_DAYS.has(localDay(d))) { streak += 1; d.setDate(d.getDate() - 1); }
   const streakEl = document.querySelector('[data-metric="streak"]');
   if (streakEl) {
-    streakEl.textContent = `${streak} ${streak === 1 ? 'day' : 'days'}`;
+    streakEl.textContent = `${streak} ${streak === 1 ? xt('student_day', 'day') : xt('student_days', 'days')}`;
   }
 }
 
@@ -4381,19 +4396,20 @@ function initHome(){
 ══════════════════════════════════════════════════════ */
 const _calToday=new Date();
 let calYear=_calToday.getFullYear(),calMonth=_calToday.getMonth(); // current month (0-indexed)
-const MONTHS=['JANUARY','FEBRUARY','MARCH','APRIL','MAY','JUNE','JULY','AUGUST','SEPTEMBER','OCTOBER','NOVEMBER','DECEMBER'];
 let calSel=_calToday.getDate();
 // Calendar event type styling (brand palette)
 const TYPE_COLOR={class:'#9BCB00',hw:'#080808',assignment:'#080808',exam:'#dc2626',default:'#888'};
 const TYPE_BG={class:'rgba(206,255,101,0.25)',hw:'#eeeeec',assignment:'#eeeeec',exam:'rgba(220,38,38,0.08)',default:'#eeeeec'};
-const TYPE_LABEL={class:'Live Class',hw:'Homework',assignment:'Assignment',exam:'Exam',default:'Event'};
+const TYPE_LABEL=new Proxy({class:['student_leg_class','Live Class'],hw:['student_cat_homework','Homework'],assignment:['student_assignment','Assignment'],exam:['student_leg_test','Test'],default:['student_event_label','Event']},{get:(o,k)=>xt(...(o[k]||o.default))});
 
 function buildCal(){
   const fd=new Date(calYear,calMonth,1).getDay();
   const start=(fd===0?6:fd-1); // Monday-first offset
   const days=new Date(calYear,calMonth+1,0).getDate();
   const today=new Date();
-  document.getElementById('cal-label').textContent=`${MONTHS[calMonth]} ${calYear}`;
+  const dow = document.getElementById('cal-dow');
+  if (dow) dow.innerHTML = weekdayInitials().map(d => `<span>${escHtml(d)}</span>`).join('');
+  document.getElementById('cal-label').textContent=`${monthsUpper()[calMonth]} ${calYear}`;
   const grid=document.getElementById('cal-days');
   grid.innerHTML='';
   for(let i=0;i<start;i++)grid.insertAdjacentHTML('beforeend','<div></div>');
@@ -4415,7 +4431,7 @@ function renderCalDetail(){
   const det=document.getElementById('cal-detail');
   const key = `${calYear}-${calMonth}-${calSel}`;
   if(calSel&&CAL_DATA[key] && CAL_DATA[key].length > 0){
-    det.innerHTML=`<div class="lbl" style="margin-bottom:16px;">${MONTHS[calMonth].charAt(0)+MONTHS[calMonth].slice(1).toLowerCase()} ${calSel}</div>`+
+    det.innerHTML=`<div class="lbl" style="margin-bottom:16px;">${monthsUpper()[calMonth].charAt(0)+monthsUpper()[calMonth].slice(1).toLowerCase()} ${calSel}</div>`+
       CAL_DATA[key].map(ev=>`<div class="ev-card" style="background:${TYPE_BG[ev.type]};border:1px solid ${TYPE_COLOR[ev.type]}33;">
         <div class="ev-title">${escHtml(ev.title)}</div>
         <div class="ev-type" style="color:${TYPE_COLOR[ev.type]};">${TYPE_LABEL[ev.type]}</div>
@@ -4429,7 +4445,7 @@ function renderCalDetail(){
       const evDate = new Date(y, m, d);
       if (evDate >= today) {
         CAL_DATA[k].forEach(ev => {
-          upcoming.push({ dateStr: `${MONTHS[m].slice(0,3)} ${d}`, day: d, ev });
+          upcoming.push({ dateStr: `${monthsUpper()[m].slice(0,3)} ${d}`, day: d, ev });
         });
       }
     });
@@ -4453,6 +4469,8 @@ function renderCalDetail(){
 ══════════════════════════════════════════════════════ */
 let exFilter='all', exExpanded=null;
 const EX_CATS=['all','homework','grammar','vocabulary','listening','speaking','writing'];
+const EX_TYPE_KEYS = { 'multiple choice': 'student_extype_mc', 'fill in blank': 'student_extype_fill', 'word matching': 'student_extype_match', speaking: 'student_cat_speaking', listening: 'student_cat_listening', essay: 'student_extype_essay', writing: 'student_cat_writing', homework: 'student_cat_homework' };
+const exTypeLabel = (type) => { const k = EX_TYPE_KEYS[String(type || '').toLowerCase()]; return k ? xt(k, type) : (type || ''); };
 
 function getOrInitMatchingState(index) {
   if (!window.matchingStates) window.matchingStates = {};
@@ -5227,9 +5245,9 @@ function renderExercises(){
   const pct=Math.round(done/EXERCISES.length*100);
   document.getElementById('ex-count').innerHTML=`${done}<span style="font-size:14px;color:var(--dim);font-weight:400;"> / ${EXERCISES.length}</span>`;
   document.getElementById('ex-bar').style.width=pct+'%';
-  document.getElementById('ex-pct').textContent=pct+'% done';
+  document.getElementById('ex-pct').textContent=`${pct}% ${xt('student_pct_done', 'done')}`;
 
-  document.getElementById('ex-tabs').innerHTML=EX_CATS.map(c=>`<button class="ex-tab${exFilter===c?' active':''}" onclick="exSetFilter('${c}')">${c}</button>`).join('');
+  document.getElementById('ex-tabs').innerHTML=EX_CATS.map(c=>`<button class="ex-tab${exFilter===c?' active':''}" onclick="exSetFilter('${c}')">${escHtml(xt(`student_cat_${c}`, c))}</button>`).join('');
 
   const filtered=EXERCISES.filter(e=>exFilter==='all'||e.cat===exFilter);
   document.getElementById('ex-list').innerHTML=filtered.map((ex,i)=>{
@@ -5245,7 +5263,7 @@ function renderExercises(){
       </div>
       <div style="flex:1;">
         <div class="ex-title${ex.done?' done':''}">${escHtml(ex.title)}</div>
-        <div class="ex-type">${escHtml(ex.type)}</div>
+        <div class="ex-type">${escHtml(exTypeLabel(ex.type))}</div>
       </div>
       <div class="diff-bars">${Array.from({length:5}).map((_,d)=>`<div class="d-bar" style="height:${d<ex.diff?12:6}px;background:${d<ex.diff?(ex.done?'rgba(0,0,0,.15)':'rgba(0,0,0,.35)'):'rgba(0,0,0,.07)'};"></div>`).join('')}</div>
       <div class="ex-time">${escHtml(ex.time)}</div>
@@ -5436,9 +5454,9 @@ function renderProgress(){
   const focusSubEl = document.getElementById('prog-focus-sub');
   
   if (bestValEl) bestValEl.textContent = highestLabel;
-  if (bestSubEl) bestSubEl.textContent = `${highestAvg}% avg`;
+  if (bestSubEl) bestSubEl.textContent = `${highestAvg}% ${xt('student_avg_suffix', 'avg')}`;
   if (focusValEl) focusValEl.textContent = lowestLabel;
-  if (focusSubEl) focusSubEl.textContent = `${lowestAvg}% avg`;
+  if (focusSubEl) focusSubEl.textContent = `${lowestAvg}% ${xt('student_avg_suffix', 'avg')}`;
 
   // Overall trend: average of the last 30 days against the 30 days before
   const trendVal = document.getElementById('prog-trend-val');
@@ -5452,7 +5470,7 @@ function renderProgress(){
       const diff = Math.round(cur - prev);
       trendVal.textContent = `${diff > 0 ? '+' : ''}${diff}%`;
       trendVal.style.color = diff >= 0 ? 'var(--ok)' : 'var(--err)';
-      if (trendSub) trendSub.textContent = 'last 30 days';
+      if (trendSub) trendSub.textContent = xt('student_prog_last_30', 'last 30 days');
     }
   }
 
@@ -5461,7 +5479,7 @@ function renderProgress(){
   const tVal = document.getElementById('prog-teacher-val');
   const tSub = document.getElementById('prog-teacher-sub');
   if (tVal) tVal.textContent = lastGraded ? `${lastGraded.score}%` : '–';
-  if (tSub) tSub.textContent = lastGraded ? 'last graded homework' : '';
+  if (tSub) tSub.textContent = lastGraded ? xt('student_prog_last_graded', 'last graded homework') : '';
 
   if (!PROGRESS_METRICS.length) {
     if (bestValEl) bestValEl.textContent = '–';
@@ -5489,7 +5507,7 @@ function renderProgress(){
         <polyline points="${pts}" fill="none" stroke="rgba(0,0,0,.2)" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
       </svg>
       <div class="spark-avg-area">
-        <div class="spark-avg-lbl">AVG</div>
+        <div class="spark-avg-lbl">${escHtml(xt('student_prog_avg', 'Avg'))}</div>
         <div class="spark-avg-val">${avg}%</div>
       </div>
     </div>`;
@@ -5536,7 +5554,7 @@ function renderProgress(){
       feedbackContainer.innerHTML = feedbacks.map(f => {
         const teacherName = f.teacher_profiles?.full_name || 'Teacher';
         const initials = teacherName.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-        const dateStr = new Date(f.created_at).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' });
+        const dateStr = new Date(f.created_at).toLocaleDateString(uiLocale(), { day: 'numeric', month: 'short', year: 'numeric' });
         return `
           <div class="card" style="margin-bottom: 12px;">
             <div style="display:flex;gap:16px;align-items:flex-start;">
@@ -5714,7 +5732,9 @@ function renderChat(){
   const shown = MEMBERS.filter(m => m.role === 'AI Assistant');
   document.getElementById('online-count').textContent = '';
   const chatTitle = document.getElementById('chat-title');
-  if (chatTitle) chatTitle.textContent = `${USER.profile?.language || ''} ${USER.profile?.level || ''} · AI Tutor`.trim();
+  if (chatTitle) chatTitle.textContent = `${USER.profile?.language || ''} ${USER.profile?.level || ''} · ${xt('student_chat_ai_tutor', 'AI Tutor')}`.trim();
+  const chatIn = document.getElementById('chat-in');
+  if (chatIn) chatIn.placeholder = xt('student_chat_placeholder_ai', 'Message the AI tutor...');
   document.getElementById('member-list').innerHTML=shown.map(m=>`
     <div class="chat-mem-row${m.me?' me':''}">
       <div class="mem-av-wrap">
@@ -5723,12 +5743,12 @@ function renderChat(){
       </div>
       <div style="min-width:0;">
         <div class="mem-name">${escHtml(m.name.split(' ')[0])}</div>
-        <div class="mem-role${m.role==='Teacher'?' teacher':''}">${escHtml(m.role)}</div>
+        <div class="mem-role${m.role==='Teacher'?' teacher':''}">${escHtml(m.role === 'AI Assistant' ? xt('student_ai_assistant', 'AI Assistant') : m.role)}</div>
       </div>
     </div>`).join('');
 
   const now=new Date();
-  document.getElementById('chat-date').textContent=now.toLocaleDateString('en-US',{month:'long',day:'numeric',year:'numeric'});
+  document.getElementById('chat-date').textContent=now.toLocaleDateString(uiLocale(),{month:'long',day:'numeric',year:'numeric'});
   const msgs=document.getElementById('chat-msgs');
   msgs.innerHTML=''+
     CHAT_MSGS.map((msg,msgIdx)=>`
@@ -5768,7 +5788,7 @@ async function sendChatMsg(){
     i: me.i,
     col: me.col,
     t: txt,
-    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+    time: new Date().toLocaleTimeString(uiLocale(),{hour:'2-digit',minute:'2-digit'}),
     me: true
   };
   CHAT_MSGS.push(userMsg);
@@ -5781,7 +5801,7 @@ async function sendChatMsg(){
     i: 'AI',
     col: '#ceff65',
     t: xt('student_chat_ai_typing','Typing…'),
-    time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+    time: new Date().toLocaleTimeString(uiLocale(),{hour:'2-digit',minute:'2-digit'}),
     me: false,
     ai: true,
     typing: true
@@ -5831,7 +5851,7 @@ Respond ONLY with a JSON object in this format:
       i: 'AI',
       col: '#ceff65',
       t: parsed.response,
-      time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+      time: new Date().toLocaleTimeString(uiLocale(),{hour:'2-digit',minute:'2-digit'}),
       me: false,
       ai: true,
       correction: parsed.correction,
@@ -5846,7 +5866,7 @@ Respond ONLY with a JSON object in this format:
       i: 'AI',
       col: '#ceff65',
       t: aiErrorMessage(err, xt('student_chat_ai_error', "I'm sorry, I encountered a temporary connection issue. Could you repeat that?")),
-      time: new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false}),
+      time: new Date().toLocaleTimeString(uiLocale(),{hour:'2-digit',minute:'2-digit'}),
       me: false,
       ai: true
     });
@@ -6879,7 +6899,7 @@ async function otoApi(action, extra) {
 }
 
 function otoTime(iso) {
-  return new Date(iso).toLocaleString(undefined, {
+  return new Date(iso).toLocaleString(uiLocale(), {
     timeZone: studentTimezone(USER && USER.profile), weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit',
   });
 }
@@ -6952,13 +6972,13 @@ async function openOtoPicker(kind) {
   else {
     const byDay = {};
     slots.forEach((iso) => {
-      const day = new Date(iso).toLocaleDateString(undefined, { timeZone: studentTimezone(USER && USER.profile), weekday: 'long', day: 'numeric', month: 'long' });
+      const day = new Date(iso).toLocaleDateString(uiLocale(), { timeZone: studentTimezone(USER && USER.profile), weekday: 'long', day: 'numeric', month: 'long' });
       (byDay[day] = byDay[day] || []).push(iso);
     });
     Object.keys(byDay).forEach((day) => {
       list += '<div style="font-size:12px;font-weight:700;color:var(--txt);margin:12px 0 6px;">' + escHtml(day) + '</div><div style="display:flex;flex-wrap:wrap;gap:6px;">';
       byDay[day].forEach((iso) => {
-        const t = new Date(iso).toLocaleTimeString(undefined, { timeZone: studentTimezone(USER && USER.profile), hour: '2-digit', minute: '2-digit' });
+        const t = new Date(iso).toLocaleTimeString(uiLocale(), { timeZone: studentTimezone(USER && USER.profile), hour: '2-digit', minute: '2-digit' });
         list += '<button class="join-btn" style="font-size:12px;padding:6px 12px;background:#FFF;border:1px solid var(--bd);color:var(--txt);" onclick="bookOto(' + jsArg(kind) + ', ' + jsArg(iso) + ')">' + escHtml(t) + '</button>';
       });
       list += '</div>';

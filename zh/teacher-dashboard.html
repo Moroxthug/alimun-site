@@ -2686,7 +2686,7 @@ async function vAvailability() {
             </div>
           </div>
           
-          <p style="font-size:0.75rem;color:var(--dim);margin:0;">Times are in your current timezone: <strong>${escapeHtml(browserTz)}</strong>.</p>
+          <p style="font-size:0.75rem;color:var(--dim);margin:0;">${escapeHtml(t('teacher_tz_hint', 'Times are in your current timezone:'))} <strong>${escapeHtml(browserTz)}</strong>.</p>
 
           <button class="btn" id="avail-add-btn" onclick="saveAvailabilitySlot()" style="justify-content:center;width:100%;margin-top:0.5rem;padding:0.875rem;font-size:0.75rem;">${dict.teacher_avail_add_btn || 'Add Available Hours'}</button>
         </div>
@@ -3705,6 +3705,8 @@ window.submitSessionNotes = submitSessionNotes;
 
 /* ═══ AUTH GUARD + INIT ═══ */
 (async () => {
+  // js/translations.js and js/i18n.js are deferred: wait for them so text built here is translated
+  if (document.readyState === 'loading') await new Promise(r => document.addEventListener('DOMContentLoaded', r, { once: true }));
   // ─ 1. Bootstrap Supabase client ─────────────────────────────────────────────────
   const { createClient } = window.supabase;
   const cfg = window.ALIMUN_CONFIG || {};

@@ -157,3 +157,11 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 20 Oct 2026 - Teacher dashboard role check
 - Removed the user_metadata.role fallback from the teacher dashboard routing (CLAUDE.md rule); all three teachers have app_metadata.role = teacher, verified before the change.
 - English speech locale stays en-GB (Cambridge/IELTS standard), owner OK.
+
+## 20 Oct 2026 - Dashboard translations (fr/de/es)
+- Every text key used by the student and teacher dashboards now exists in en, fr, de, es and ma (French): 266 keys added per language, 96 English keys that only existed as code fallbacks added to en.
+- Dashboards wait for the deferred translation scripts before building text, so JS-built text (1:1 card, progress, stats, schedule) is translated, not only static labels.
+- Hard-coded English in the student dashboard moved to keys: next class / join button states, classmates enrolled, schedule, calendar legend, month and weekday names (Intl, site locale), exercise filters and types, chat role. Dates and times use the site language locale (en-GB, fr-FR, de-DE, es-ES, fr-MA).
+- Removed more invented data: "Recent activity" (Vocabulary Quiz 90%...) is now the latest real scores; home schedule times were fixed at 09:00/18:00, now the real class time.
+- German teacher sidebar "Docent" -> "Unterricht". Tiers footer uses the same i18n keys as the homepage footer.
+- Not translated: the admin view bar (admin only), API error messages from the server (1:1 booking reasons), exercise content itself (it is in the language being learned).
