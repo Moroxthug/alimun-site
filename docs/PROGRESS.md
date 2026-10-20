@@ -135,3 +135,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 20 Oct 2026 - Admin demo teacher
 - Admin opening the teacher dashboard now lands on "Demo teacher (sample data)": one class, 4 demo students, sessions, homework, grading queue, payouts, availability, 1:1 booking. Every screen and button works; changes live only in the tab (js/demo-teacher.js mocks the Supabase client and /api calls). Real teachers are still in the switcher, read-only.
 - Removed fake numbers from real teacher dashboards: "12 day streak" default (and the streak line), 68%/75% default scores, the hard-coded "20 students - Spanish B1" sidebar box (now the teacher's real class, hidden without one). Fixed "Due: Due:".
+
+## 20 Oct 2026 - Admin demo student
+- js/demo-teacher.js became js/demo.js: one sample world for both dashboards. Admin opening the student dashboard lands on "Demo student (sample data)" = Demo Student 1 (Intensive) in the demo teacher's class: next class, notes, homework (graded/pending/to do), progress, teacher note, classmates, 1:1 follow-up booked (cancel and rebook work), 1 private-class credit. Realtime and API calls are answered locally; only the switcher's people list and /api/stripe/config hit the server.
+- Student dashboard: teacher card no longer shows invented "48 sessions" / "5.0" rating.
+- Still fake on the real student dashboard (not touched): streak 15 days, cohort rank #3, French vocabulary on Today's Session, French test questions and "APR 28" assessment, Messages "French B2 - April 16, 2026" chat, Progress sample scores, teacher avatar "M".

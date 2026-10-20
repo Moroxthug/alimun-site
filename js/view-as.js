@@ -18,9 +18,9 @@
  *  admin.html calls AlimunViewAs.mountBar({ kind: 'admin', sb }).
  *
  *  The chosen person is remembered per tab (sessionStorage) and can
- *  be set explicitly with ?as=<profile id>. On the teacher dashboard
- *  ?as=demo (the default) opens a demo teacher with sample data held
- *  in memory (js/demo-teacher.js), so every screen can be tried.
+ *  be set explicitly with ?as=<profile id>. On the dashboards
+ *  ?as=demo (the default) opens a demo teacher or student with sample
+ *  data held in memory (js/demo.js), so every screen can be tried.
  * ============================================================
  */
 (function () {
@@ -104,7 +104,7 @@
     return id ? `${PAGES[kind]}?as=${encodeURIComponent(id)}` : PAGES[kind];
   }
 
-  const demoFor = (kind) => (kind === 'teacher' ? window.AlimunDemoTeacher : null);
+  const demoFor = (kind) => (window.AlimunDemo && window.AlimunDemo.profiles[kind] ? window.AlimunDemo : null);
   const validId = (kind, v) => !!v && (UUID_RE.test(v) || (!!demoFor(kind) && v === demoFor(kind).DEMO_ID));
 
   /** Returns null for non-admins, otherwise { profile, demo } (profile may be null if none exist). */
@@ -117,7 +117,7 @@
     if (demo && wanted === demo.DEMO_ID) {
       demo.install(sb);
       store.set(kind, demo.DEMO_ID);
-      return { profile: demo.profile, demo: true };
+      return { profile: demo.profiles[kind], demo: true };
     }
 
     enforceReadOnly(sb);
@@ -137,17 +137,21 @@
     return { profile };
   }
 
+  function withDemo(kind, real) {
+    const demo = demoFor(kind);
+    return demo ? [{ id: demo.DEMO_ID, label: `Demo ${kind} (sample data)` }, ...real] : real;
+  }
+
   async function listPeople(sb, kind) {
     // In the demo sb.from is the in-memory mock; the switcher still lists real people
     const from = sb.__alimunRealFrom || ((t) => sb.from(t));
     if (kind === 'teacher') {
       const { data } = await from('teacher_profiles').select('id, full_name, status').order('full_name');
       const real = (data || []).map((t) => ({ id: t.id, label: `${t.full_name || 'Unnamed'}${t.status !== 'approved' ? ` (${t.status})` : ''}` }));
-      const demo = demoFor('teacher');
-      return demo ? [{ id: demo.DEMO_ID, label: 'Demo teacher (sample data)' }, ...real] : real;
+      return withDemo('teacher', real);
     }
     const { data } = await from('student_profiles').select('id, full_name, language, level').order('full_name');
-    return (data || []).map((s) => ({ id: s.id, label: `${s.full_name || 'Unnamed'} · ${s.language || '?'} ${s.level || ''}`.trim() }));
+    return withDemo('student', (data || []).map((s) => ({ id: s.id, label: `${s.full_name || 'Unnamed'} · ${s.language || '?'} ${s.level || ''}`.trim() })));
   }
 
   const CSS = `
