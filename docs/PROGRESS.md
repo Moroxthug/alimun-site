@@ -131,3 +131,7 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Owner ran the delete block in the Supabase SQL editor: the 22 junk/demo accounts (groups A and B) and the Test Teacher demo class are gone. 8 users remain.
 - C: bchysfca@ and bchysfpol@ moved to tier `waitlist` (tier is NOT NULL, so null was not possible). Admin role untouched.
 - Kept: the bchysf* owner accounts and passanthaitham@gmail.com (teacher, pending).
+
+## 20 Oct 2026 - Admin demo teacher
+- Admin opening the teacher dashboard now lands on "Demo teacher (sample data)": one class, 4 demo students, sessions, homework, grading queue, payouts, availability, 1:1 booking. Every screen and button works; changes live only in the tab (js/demo-teacher.js mocks the Supabase client and /api calls). Real teachers are still in the switcher, read-only.
+- Removed fake numbers from real teacher dashboards: "12 day streak" default (and the streak line), 68%/75% default scores, the hard-coded "20 students - Spanish B1" sidebar box (now the teacher's real class, hidden without one). Fixed "Due: Due:".

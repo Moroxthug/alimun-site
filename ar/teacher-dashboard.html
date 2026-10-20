@@ -6,6 +6,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Anton&amp;display=swap" rel="stylesheet">
 <!-- Supabase CDN -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
+<script src="../js/demo-teacher.js"></script>
 <script src="../js/view-as.js"></script>
 <script src="../js/tz.js"></script>
 <script src="https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js"></script>
@@ -1012,10 +1013,10 @@ body{font-family:var(--body);color:var(--b);background:#f8f8f8;}
       <button class="sb-a" data-v="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path></svg><span class="sb-lbl" data-i18n="teacher_sb_settings">الإعدادات</span></button>
     </nav>
     <div class="sb-bot">
-      <div class="sb-role">
+      <div class="sb-role" id="sb-role" style="display:none;">
         <div class="sb-role-l" data-i18n="teacher_sb_role_title">التدريس</div>
-        <div class="sb-role-v" data-i18n="tier_focused_name">التركيز</div>
-        <div class="sb-role-s" data-i18n="teacher_sb_role_desc">20 طالباً · الإسبانية B1</div>
+        <div class="sb-role-v" id="sb-role-v"></div>
+        <div class="sb-role-s" id="sb-role-s"></div>
       </div>
       <div class="sb-user">
         <div class="sb-av" id="sb-user-av">ST</div>
@@ -1254,7 +1255,7 @@ function getPendingSubmissions() {
       n: name,
       i: String(name).split(' ').map(w=>w[0] || '').join('').toUpperCase().slice(0,2),
       lvl: p.student_profiles?.level || studentInfo.lvl || '—',
-      pct: studentInfo.pct || 75,
+      pct: studentInfo.pct || 0,
       active: 'Recently',
       streak: studentInfo.streak || 0,
       sub: p.assignments?.title || 'Submission',
@@ -1548,7 +1549,7 @@ function vStudents(){
       ${STUDENTS.map(s=>`
         <div class="stu-row">
           <div class="stu-av">${escapeHtml(s.i)}</div>
-          <div class="stu-info"><div class="stu-name" style="cursor:pointer;text-decoration:underline;" onclick="openStudentProfileModal(${jsArg(s.id)})">${escapeHtml(s.n)}</div><div class="stu-sub">${escapeHtml(s.lvl)} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : escapeHtml(s.active)} · 🔥 ${Number(s.streak) || 0} ${dict.student_streak_label || 'day streak'}</div></div>
+          <div class="stu-info"><div class="stu-name" style="cursor:pointer;text-decoration:underline;" onclick="openStudentProfileModal(${jsArg(s.id)})">${escapeHtml(s.n)}</div><div class="stu-sub">${escapeHtml(s.lvl)} · ${s.active === 'Today' ? (dict.student_upcoming_live || 'Active today') : escapeHtml(s.active)}</div></div>
           <div style="display:flex;align-items:center;gap:1.25rem;">
             <div style="text-align:right;"><div style="font-family:var(--disp);font-size:1.1rem;">${Number(s.pct) || 0}%</div><div style="font-size:.68rem;color:#bbb;text-transform:uppercase;letter-spacing:.06em;">${overallText}</div><div class="stu-bar-wrap" style="margin-left:auto;"><div class="stu-bar" style="width:${Number(s.pct) || 0}%"></div></div></div>
             ${s.sub?`<button class="btn sm" style="background:#fff7ed;color:#c2410c;border:1px solid #fed7aa;" onclick="gradeModal(${escapeHtml(JSON.stringify(s))})" data-i18n="teacher_action_grade">${dict.teacher_action_grade || 'Grade →'}</button>`:`<button class="btn out sm" onclick="openStudentProfileModal(${jsArg(s.id)})" data-i18n="teacher_action_view">${dict.teacher_action_view || 'View'}</button>`}
@@ -2166,6 +2167,18 @@ async function saveSettings() {
 }
 
 /* ═══ DATA INITIALIZATION & PAYOUTS ═══ */
+// Sidebar "Teaching" box: the teacher's first open class, hidden when they have none
+function fillSidebarClass() {
+  const box = document.getElementById('sb-role');
+  if (!box) return;
+  const c = (DB_COHORTS || []).find(x => ['open', 'full'].includes(x.status)) || (DB_COHORTS || [])[0];
+  if (!c) { box.style.display = 'none'; return; }
+  const dict = (window.ALIMUN_TRANSLATIONS || {})[window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en'] || {};
+  document.getElementById('sb-role-v').textContent = dict[`tier_${c.tier}_name`] || c.tier || '';
+  document.getElementById('sb-role-s').textContent = `${Number(c.enrolled_count) || 0} ${dict.teacher_lbl_students || 'students'} · ${c.language || ''} ${c.level || ''}`.trim();
+  box.style.display = '';
+}
+
 async function initTeacherData() {
   const sb = window.currentTeacher.supabase;
   const teacherProfileId = window.currentTeacher.profile.id;
@@ -2201,9 +2214,9 @@ async function initTeacherData() {
         const streakKey = `alimun:streak:${s.id}`;
         const metricsKey = `alimun:progress_metrics:${s.id}`;
         
-        const streak = parseInt(localStorage.getItem(streakKey) || '12');
+        const streak = parseInt(localStorage.getItem(streakKey) || '0', 10) || 0;
         const metricsStr = localStorage.getItem(metricsKey);
-        let pct = 68; // default
+        let pct = 0; // until exercise results load
         if (metricsStr) {
           try {
             const metrics = JSON.parse(metricsStr);
@@ -2314,7 +2327,7 @@ async function initTeacherData() {
         id: a.id,
         name: a.title,
         type: a.type,
-        due: a.due_date ? ('Due: ' + getLocaleString(parseLocalDate(a.due_date), { day: 'numeric', month: 'short' })) : 'No due date',
+        due: a.due_date ? (getLocaleString(parseLocalDate(a.due_date), { day: 'numeric', month: 'short' })) : 'No due date',
         submissions: (a.assignment_submissions || []).length,
         total: STUDENTS.length || 0
       }));
@@ -3780,6 +3793,7 @@ window.submitSessionNotes = submitSessionNotes;
 
   // ─ 7. Fetch dynamic data & Boot dashboard ───────────────────────────────────
   await initTeacherData();
+  fillSidebarClass();
   nav('overview');
   if (viewAs) AlimunViewAs.mountBar({ kind: 'teacher', sb: _sb, profile });
 
@@ -3787,6 +3801,7 @@ window.submitSessionNotes = submitSessionNotes;
   setInterval(async () => {
     try {
       await initTeacherData();
+      fillSidebarClass();
       // Re-render overview if currently visible (refreshes attendance count & room URL)
       if (document.querySelector('.sb-a[data-v="overview"]')?.classList.contains('on')) {
         await vOverview();

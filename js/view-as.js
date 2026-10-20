@@ -18,7 +18,9 @@
  *  admin.html calls AlimunViewAs.mountBar({ kind: 'admin', sb }).
  *
  *  The chosen person is remembered per tab (sessionStorage) and can
- *  be set explicitly with ?as=<profile id>.
+ *  be set explicitly with ?as=<profile id>. On the teacher dashboard
+ *  ?as=demo (the default) opens a demo teacher with sample data held
+ *  in memory (js/demo-teacher.js), so every screen can be tried.
  * ============================================================
  */
 (function () {
@@ -102,14 +104,24 @@
     return id ? `${PAGES[kind]}?as=${encodeURIComponent(id)}` : PAGES[kind];
   }
 
-  /** Returns null for non-admins, otherwise { profile } (profile may be null if none exist). */
+  const demoFor = (kind) => (kind === 'teacher' ? window.AlimunDemoTeacher : null);
+  const validId = (kind, v) => !!v && (UUID_RE.test(v) || (!!demoFor(kind) && v === demoFor(kind).DEMO_ID));
+
+  /** Returns null for non-admins, otherwise { profile, demo } (profile may be null if none exist). */
   async function resolve(sb, session, kind) {
     if (!isAdmin(session) || !TABLES[kind]) return null;
 
+    const fromUrl = new URLSearchParams(location.search).get('as');
+    const demo = demoFor(kind);
+    const wanted = [fromUrl, store.get(kind)].find((v) => validId(kind, v)) || (demo ? demo.DEMO_ID : null);
+    if (demo && wanted === demo.DEMO_ID) {
+      demo.install(sb);
+      store.set(kind, demo.DEMO_ID);
+      return { profile: demo.profile, demo: true };
+    }
+
     enforceReadOnly(sb);
 
-    const fromUrl = new URLSearchParams(location.search).get('as');
-    const wanted = [fromUrl, store.get(kind)].find((v) => v && UUID_RE.test(v)) || null;
     let profile = null;
     if (wanted) {
       ({ data: profile } = await sb.from(TABLES[kind]).select('*').eq('id', wanted).maybeSingle());
@@ -126,11 +138,15 @@
   }
 
   async function listPeople(sb, kind) {
+    // In the demo sb.from is the in-memory mock; the switcher still lists real people
+    const from = sb.__alimunRealFrom || ((t) => sb.from(t));
     if (kind === 'teacher') {
-      const { data } = await sb.from('teacher_profiles').select('id, full_name, status').order('full_name');
-      return (data || []).map((t) => ({ id: t.id, label: `${t.full_name || 'Unnamed'}${t.status !== 'approved' ? ` (${t.status})` : ''}` }));
+      const { data } = await from('teacher_profiles').select('id, full_name, status').order('full_name');
+      const real = (data || []).map((t) => ({ id: t.id, label: `${t.full_name || 'Unnamed'}${t.status !== 'approved' ? ` (${t.status})` : ''}` }));
+      const demo = demoFor('teacher');
+      return demo ? [{ id: demo.DEMO_ID, label: 'Demo teacher (sample data)' }, ...real] : real;
     }
-    const { data } = await sb.from('student_profiles').select('id, full_name, language, level').order('full_name');
+    const { data } = await from('student_profiles').select('id, full_name, language, level').order('full_name');
     return (data || []).map((s) => ({ id: s.id, label: `${s.full_name || 'Unnamed'} · ${s.language || '?'} ${s.level || ''}`.trim() }));
   }
 
@@ -175,7 +191,7 @@
       <span class="va-tag">Admin view</span>
       <div class="va-seg">${seg}</div>
       ${kind !== 'admin' ? `<select id="va-person" aria-label="Viewing as"><option>${esc(profile?.full_name || 'Loading…')}</option></select>
-      <span class="va-note">Read-only preview</span>` : ''}
+      <span class="va-note">${window.ALIMUN_DEMO ? 'Demo data, nothing is saved' : 'Read-only preview'}</span>` : ''}
       <button id="va-toggle" title="Minimise">–</button>`;
     document.body.appendChild(bar);
 
@@ -191,10 +207,10 @@
     const people = await listPeople(sb, kind);
     if (people.length) {
       select.innerHTML = people.map((p) =>
-        `<option value="${esc(p.id)}" ${p.id === profile?.id ? 'selected' : ''}>${esc(p.label)}</option>`).join('');
+        `<option value="${esc(p.id)}" ${(window.ALIMUN_DEMO ? p.id === 'demo' : p.id === profile?.id) ? 'selected' : ''}>${esc(p.label)}</option>`).join('');
     }
     select.onchange = () => {
-      if (!UUID_RE.test(select.value)) return;
+      if (!validId(kind, select.value)) return;
       store.set(kind, select.value);
       location.href = pageUrl(kind, select.value);
     };
