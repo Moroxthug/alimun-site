@@ -126,3 +126,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 2026-10-20 — Fake classroom transcript removed
 - Owner decision: remove it. Both dashboards' live classroom played scripted lines ("Hello everyone! Welcome to our session today", "thank you Sofia!") as a "Transcription", and copied some into the class chat as if said. Removed the tab, the scripted lines and `startTranscriptSimulation()`; the classroom opens on Files. Real captions would be a separate feature.
 - Applied by Claude through the Supabase connector (statement by statement; whole-file runs time out): table, RLS, 3 read policies, indexes, both functions (service role only). Verified. Pushed straight to `main` (owner: no more pull requests; CLAUDE.md updated).
+
+## 20 Oct 2026 - Account cleanup applied
+- Owner ran the delete block in the Supabase SQL editor: the 22 junk/demo accounts (groups A and B) and the Test Teacher demo class are gone. 8 users remain.
+- C: bchysfca@ and bchysfpol@ moved to tier `waitlist` (tier is NOT NULL, so null was not possible). Admin role untouched.
+- Kept: the bchysf* owner accounts and passanthaitham@gmail.com (teacher, pending).
