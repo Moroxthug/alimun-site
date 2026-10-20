@@ -3286,18 +3286,40 @@ async function initData() {
   const dbExercises = [...(EXERCISE_DATABASE[langKey]?.[levelKey] || []), ...examPrepTasks(langKey)];
 
 
-  const completedEx = JSON.parse(localStorage.getItem(`alimun:completed_exercises:${USER.id}`) || '[]');
+  // Practice progress: the database (practice_progress) is the source; anything finished
+  // earlier on this device only (localStorage) is copied up once.
+  let remoteProgress = {};
+  if (SB && USER.profile) {
+    try {
+      const { data, error } = await SB.from('practice_progress')
+        .select('ex_key, done, user_answer, graded_score, feedback').eq('student_id', USER.id).limit(2000);
+      if (error) throw error;
+      (data || []).forEach(r => { remoteProgress[r.ex_key] = r; });
+    } catch (e) {
+      console.warn('Practice progress unavailable:', e && e.message);
+      remoteProgress = null;
+    }
+  }
+  let completedEx = [];
+  try { completedEx = JSON.parse(localStorage.getItem(`alimun:completed_exercises:${USER.id}`) || '[]'); } catch (_) { completedEx = []; }
+  const toUpload = [];
   const dbExs = dbExercises.map(ex => {
-    const isDone = completedEx.includes(ex.title);
-    const savedState = JSON.parse(localStorage.getItem(`alimun:ex_state:${USER.id}:${ex.title}`) || 'null');
-    return {
-      ...ex,
-      done: isDone,
-      userAnswer: savedState?.userAnswer !== undefined ? savedState.userAnswer : null,
-      gradedScore: savedState?.gradedScore !== undefined ? savedState.gradedScore : null,
-      feedback: savedState?.feedback || ''
-    };
+    const remote = remoteProgress && remoteProgress[practiceKey(ex)];
+    let savedState = null;
+    try { savedState = JSON.parse(localStorage.getItem(`alimun:ex_state:${USER.id}:${ex.title}`) || 'null'); } catch (_) { savedState = null; }
+    const item = remote
+      ? { ...ex, done: !!remote.done, userAnswer: remote.user_answer, gradedScore: remote.graded_score, feedback: remote.feedback || '' }
+      : { ...ex, done: completedEx.includes(ex.title),
+          userAnswer: savedState?.userAnswer !== undefined ? savedState.userAnswer : null,
+          gradedScore: savedState?.gradedScore !== undefined ? savedState.gradedScore : null,
+          feedback: savedState?.feedback || '' };
+    if (!remote && remoteProgress && item.done) toUpload.push(practiceRow(item));
+    return item;
   });
+  if (toUpload.length) {
+    SB.from('practice_progress').upsert(toUpload, { onConflict: 'student_id,ex_key' })
+      .then(({ error }) => { if (error) console.warn('Practice progress upload failed:', error.message); });
+  }
 
   // ── Teacher-assigned homework from Supabase ──────────────
   let hwExs = [];
@@ -4875,14 +4897,32 @@ function submitHomework(index) {
   })();
 }
 
+// Built-in exercises are keyed by course language + title (titles repeat across languages)
+const practiceKey = (ex) => `${USER.profile?.language || ''}:${ex.title}`.slice(0, 300);
+const practiceRow = (ex) => ({
+  student_id: USER.id,
+  ex_key: practiceKey(ex),
+  done: !!ex.done,
+  user_answer: ex.userAnswer === undefined ? null : ex.userAnswer,
+  graded_score: ex.gradedScore == null || isNaN(Number(ex.gradedScore)) ? null : Math.min(Math.max(Math.round(Number(ex.gradedScore)), 0), 100),
+  feedback: String(ex.feedback || '').slice(0, 8000) || null,
+  updated_at: new Date().toISOString(),
+});
+
 function saveExerciseState(ex) {
-  localStorage.setItem(`alimun:ex_state:${USER.id}:${ex.title}`, JSON.stringify({
-    userAnswer: ex.userAnswer,
-    gradedScore: ex.gradedScore,
-    feedback: ex.feedback
-  }));
-  const completed = EXERCISES.filter(e => e.done).map(e => e.title);
-  localStorage.setItem(`alimun:completed_exercises:${USER.id}`, JSON.stringify(completed));
+  try {
+    localStorage.setItem(`alimun:ex_state:${USER.id}:${ex.title}`, JSON.stringify({
+      userAnswer: ex.userAnswer,
+      gradedScore: ex.gradedScore,
+      feedback: ex.feedback
+    }));
+    const completed = EXERCISES.filter(e => e.done).map(e => e.title);
+    localStorage.setItem(`alimun:completed_exercises:${USER.id}`, JSON.stringify(completed));
+  } catch (_) { /* storage blocked: the database copy below still saves it */ }
+  // Teacher homework is saved in assignment_submissions; built-in exercises here
+  if (ex.isHw || !SB || !USER.profile) return;
+  SB.from('practice_progress').upsert(practiceRow(ex), { onConflict: 'student_id,ex_key' })
+    .then(({ error }) => { if (error) console.warn('Practice progress not saved:', error.message); });
 }
 
 function updateProgressCategory(exCat, score, exInfo) {

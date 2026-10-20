@@ -176,3 +176,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - js/exam-prep.js: practice tasks in the format of B2 First, C1 Advanced, IELTS (English) and Goethe B1, Goethe B2, telc B1 (German), 6-7 tasks each (cloze, word formation, transformations, True/False/Not Given, Lesen, Sprachbausteine, listening dictation, speaking phrases, essays with the exam word counts and criteria). Shown in Practice under "Exam prep" for students of that language; results count as Tests. A note says they are not official and Alimun is not affiliated with the exam boards.
 - Fixed: multiple-choice questions without an example sentence showed an empty quote box; Tests view refreshes when a test score is added.
 - French and Spanish (DELF/DALF, DELE) to add when those courses go on sale.
+
+## 20 Oct 2026 - Practice progress in the DB, teacher view of practice
+- New table practice_progress (migration 202610201700, applied and verified: RLS, own rows insert/update/select, teachers of the student and admin read, no delete). Built-in and exam exercises save done/answer/score there, so they stay finished on every device; progress kept only in a browser is copied up once on next load.
+- Teacher student popup: invented "Performance Index" (teacher's localStorage, default 75%) replaced by the real 30-day average from exercise_results; new "Between lessons" block: words in review, words learned, due today, built-in exercises done, last vocabulary review, last 5 exam/test results.
+- Teacher lesson notes: hint that the vocabulary becomes the students' flashcards, and a confirm before publishing notes with no vocabulary.
+- Translated en/fr/de/es/ma; demo data covers it.

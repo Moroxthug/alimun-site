@@ -88,6 +88,8 @@
   const RESULTS = [];
   STUDENTS.forEach((s, i) => CATS.forEach((c, j) => RESULTS.push({ id: newId(), student_id: s.id, category: c,
     ex_type: 'demo', title: 'Demo exercise', score: 50 + ((i * 7 + j * 11) % 45), created_at: iso(now - (i + j) * day) })));
+  RESULTS.push({ id: newId(), student_id: STUDENTS[0].id, category: 'assessment', ex_type: 'Multiple Choice',
+    title: 'B2 First · Use of English 1: Multiple-choice cloze', score: 100, created_at: iso(now - 2 * day) });
 
   const tables = {
     teacher_profiles: [TEACHER],
@@ -95,7 +97,12 @@
     teacher_reviews: [],
     cohorts: [COHORT],
     cohort_waitlist: [],
-    vocab_reviews: [],
+    // Demo Student 1 has reviewed the first lesson's words; the rest come in from the notes
+    vocab_reviews: DEMO_WORDS[0].map((v, i) => ({ id: uid(200 + i), student_id: STUDENTS[0].id, word: v.word, word_key: v.word.toLowerCase(),
+      definition: v.definition, example: v.example, box: 4 - i, due_on: date(now + (4 - i) * day), correct_count: 4 - i, wrong_count: i,
+      last_reviewed_at: iso(now - day), created_at: iso(now - 14 * day) })),
+    practice_progress: [{ id: uid(210), student_id: STUDENTS[0].id, ex_key: 'English:Second Conditional', done: true, user_answer: 1,
+      graded_score: 100, feedback: null, updated_at: iso(now - 3 * day) }],
     student_profiles: STUDENTS,
     sessions: SESSIONS,
     session_notes: SESSIONS.map((s) => s.session_notes).filter(Boolean),

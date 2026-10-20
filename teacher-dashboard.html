@@ -3020,16 +3020,38 @@ async function openStudentProfileModal(studentId) {
     const contentEl = document.getElementById('student-modal-content');
     if (!contentEl) return;
     
-    const metricsKey = `alimun:progress_metrics:${studentId}`;
-    const metricsStr = localStorage.getItem(metricsKey);
-    let avgScore = 75;
-    if (metricsStr) {
-      try {
-        const metrics = JSON.parse(metricsStr);
-        const sumLatest = metrics.reduce((acc, m) => acc + m.data[m.data.length - 1], 0);
-        avgScore = Math.round(sumLatest / metrics.length);
-      } catch(e) {}
-    }
+    // Between lessons: scores (30 days), vocabulary review and built-in practice
+    const since = new Date(Date.now() - 30 * 86400000).toISOString();
+    const [{ data: results }, { data: vocab }, { count: practiceDone }] = await Promise.all([
+      sb.from('exercise_results').select('category, score, title, created_at').eq('student_id', studentId)
+        .gte('created_at', since).order('created_at', { ascending: false }).limit(500),
+      sb.from('vocab_reviews').select('box, due_on, last_reviewed_at').eq('student_id', studentId).limit(1000),
+      sb.from('practice_progress').select('id', { count: 'exact', head: true }).eq('student_id', studentId).eq('done', true),
+    ]);
+    const scores = results || [];
+    const avgScore = scores.length ? Math.round(scores.reduce((a, r) => a + (Number(r.score) || 0), 0) / scores.length) : null;
+    const words = vocab || [];
+    const todayIso = new Date().toISOString().slice(0, 10);
+    const lastReview = words.map(w => w.last_reviewed_at).filter(Boolean).sort().pop();
+    const examResults = scores.filter(r => r.category === 'assessment').slice(0, 5);
+    const statCell = (n, label) => `<div><div style="font-size:18px;font-weight:800;color:var(--txt);">${escapeHtml(String(n))}</div><div style="font-size:10px;color:var(--dim);text-transform:uppercase;font-weight:700;">${escapeHtml(label)}</div></div>`;
+    const betweenHtml = `
+        <div>
+          <div class="lbl" style="margin-bottom:8px;">${escapeHtml(t('teacher_between_lessons', 'Between lessons'))}</div>
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;background:#fafaf8;padding:12px 16px;border-radius:8px;border:1px solid var(--bd);">
+            ${statCell(words.length, t('teacher_vocab_words', 'Words in review'))}
+            ${statCell(words.filter(w => w.box >= 4).length, t('teacher_vocab_learned', 'Words learned'))}
+            ${statCell(words.filter(w => w.due_on <= todayIso).length, t('teacher_vocab_due', 'Due today'))}
+            ${statCell(Number(practiceDone) || 0, t('teacher_practice_done', 'Exercises done'))}
+          </div>
+          <div style="font-size:11.5px;color:var(--dim);margin-top:6px;">${escapeHtml(lastReview
+            ? t('teacher_vocab_last_review', 'Last vocabulary review: {d}').replace('{d}', getLocaleString(new Date(lastReview), { day: 'numeric', month: 'short' }))
+            : t('teacher_vocab_never', 'No vocabulary review yet. Students review the words you add to your lesson notes.'))}</div>
+          ${examResults.length ? `<div style="margin-top:10px;">${examResults.map(r => `<div style="display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:5px 0;border-bottom:1px solid rgba(0,0,0,0.04);">
+            <span style="color:var(--txt);">${escapeHtml(r.title || t('teacher_test', 'Test'))}</span>
+            <span style="color:var(--dim);white-space:nowrap;"><strong style="color:var(--txt);">${Number(r.score) || 0}%</strong> · ${escapeHtml(getLocaleString(new Date(r.created_at), { day: 'numeric', month: 'short' }))}</span>
+          </div>`).join('')}</div>` : ''}
+        </div>`;
     
     let feedbackListHtml = feedbacks.map(f => `
       <div style="border-bottom:1px solid rgba(0,0,0,0.04);padding-bottom:10px;margin-bottom:10px;">
@@ -3067,16 +3089,18 @@ async function openStudentProfileModal(studentId) {
           </div>
         </div>
         
-        <!-- Score -->
+        <!-- Average score, last 30 days (exercise_results) -->
         <div>
-          <div class="lbl" style="margin-bottom:8px;">Performance Index</div>
+          <div class="lbl" style="margin-bottom:8px;">${escapeHtml(t('teacher_avg_30', 'Average score, last 30 days'))}</div>
+          ${avgScore == null ? `<div style="font-size:12px;color:var(--dim);">${escapeHtml(t('teacher_no_scores', 'No scores in the last 30 days.'))}</div>` : `
           <div style="display:flex;align-items:center;gap:10px;">
             <div style="font-size:24px;font-weight:800;color:var(--txt);">${Number(avgScore) || 0}%</div>
             <div style="flex:1;background:var(--bd);height:8px;border-radius:4px;overflow:hidden;">
               <div style="background:var(--g);width:${Number(avgScore) || 0}%;height:100%;"></div>
             </div>
-          </div>
+          </div>`}
         </div>
+        ${betweenHtml}
 
         <!-- Add Feedback Form -->
         <div style="border-top:1px solid var(--bd);padding-top:14px;">
@@ -3199,7 +3223,8 @@ function openWriteNotesModal(sessionId) {
     <div class="m-bd" style="max-height: 70vh; overflow-y: auto; padding-top: 0.5rem;">
       <form id="session-notes-form" onsubmit="submitSessionNotes(event, ${jsArg(sessionId)})">
         <div class="field-row">
-          <label>Vocabulary (Up to 10 words)</label>
+          <label>${escapeHtml(t('teacher_vocab_label', 'Vocabulary (up to 10 words)'))}</label>
+          <p style="font-size:0.75rem;color:var(--dim);margin:0 0 0.5rem;">${escapeHtml(t('teacher_vocab_hint', 'Students get these words as flashcards in their vocabulary review, so add the key words of the lesson with a short meaning and an example.'))}</p>
           <div id="vocab-rows-container" style="margin-bottom: 0.75rem;"></div>
           <button type="button" class="btn out sm" onclick="addVocabRow()">+ Add Word</button>
         </div>
@@ -3264,6 +3289,10 @@ function openWriteNotesModal(sessionId) {
 
 async function submitSessionNotes(event, sessionId) {
   event.preventDefault();
+  // Vocabulary feeds the students' review; remind before publishing without any
+  const hasVocab = Array.from(document.querySelectorAll('.vocab-row')).some(row =>
+    row.querySelector('.vocab-word').value.trim() && row.querySelector('.vocab-definition').value.trim());
+  if (!hasVocab && !confirm(t('teacher_vocab_confirm', 'You have not added any vocabulary (word and meaning). Your students review these words between lessons. Publish without vocabulary?'))) return;
   const submitBtn = document.getElementById('notes-submit-btn');
   submitBtn.disabled = true;
   submitBtn.textContent = 'Publishing...';
