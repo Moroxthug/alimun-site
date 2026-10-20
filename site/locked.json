@@ -35,5 +35,21 @@
   "src/blocks/07-footer.html": {
     "sha256": "c3c410bd0db6d4ec1e5576fc6dc7395b0d8650daf64cb6b2c7a145b754c027dc",
     "approved": "2026-10-20 footer ok"
+  },
+  "src/blocks/tiers/head.html": {
+    "sha256": "fc33a67213b569a025bd3f97fda54508983b47140f9a3a3e371075921f977a04",
+    "approved": "2026-10-20 tiers nav ok"
+  },
+  "src/blocks/tiers/after.html": {
+    "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
+    "approved": "2026-10-20 tiers nav ok"
+  },
+  "src/blocks/tiers/nav.html": {
+    "sha256": "ef26ec0b92f647d689ec7fc465434f39fb1d58e39240160b22cd6150b094fc07",
+    "approved": "2026-10-20 tiers nav ok"
+  },
+  "src/blocks/tiers/s01.html": {
+    "sha256": "4480c6817ac81458de9a4e7bd56145e736fd3ff0c3aced9b50aaa2d43d60448c",
+    "approved": "2026-10-20 tiers section ok"
   }
 }
