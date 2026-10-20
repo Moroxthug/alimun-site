@@ -27,5 +27,9 @@
   "src/blocks/05-faq.html": {
     "sha256": "0e62ae6cb45ddb270850ffaab572315f24ef2998be26c1e81d9fbf6885cd285b",
     "approved": "2026-10-19 faq ok"
+  },
+  "src/blocks/06-bottom-cta.html": {
+    "sha256": "26eea6e3b61f9ec56d3764d3d64d253d19a53bd37f0991c0fbaf60a51c57df27",
+    "approved": "2026-10-20 banner ok"
   }
 }
