@@ -112,3 +112,7 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 2026-10-20 — Rebuild proof done, plan written
 - Branch `rebuild-astro`, folder `site/`: the homepage rebuilt in Astro from verbatim Webflow blocks, approved element by element by the owner (nav, hero, email section, cards, FAQ, banner, footer) and locked in `site/locked.json`. Pixel comparisons match on desktop and phone. Preview: https://alimun-rebuild-preview.vercel.app (separate Vercel project).
 - `docs/REBUILD_PLAN.md`: steps 0-5 (language meta tags now; other pages; languages; switch-over; course pages; Search Console). Waiting for the owner's decisions listed at the end.
+
+## 2026-10-20 — Rebuild Step 0: translated titles and descriptions
+- `scripts/meta-i18n.json` + `build.js`: the French, German and Spanish copies (and `ma`, which is French) of the 10 public pages get translated `<title>`, description, `og:` and `twitter:` tags; they were English on every language. Faithful translations of the current English; Italian and the other languages unchanged for now (owner focus: en, fr, de, es).
+- Noted, not changed: the homepage description says "Learn English, Spanish, French, Italian and more", but only English and German classes are open (`LIVE_LANGUAGES`).

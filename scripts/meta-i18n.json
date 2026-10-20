@@ -1,0 +1,39 @@
+{
+  "_note": "Translated <title> and description per page (build.js applies them to the locale copies). Faithful translations of the English tags in the root pages; keep them in sync when the English changes. 'ma' uses 'fr'.",
+  "fr": {
+    "index": { "title": "Alimun – Cours de langue en direct avec retours de l'IA", "desc": "Rejoignez des cours de langue en direct avec des enseignants experts et des retours générés par l'IA. Apprenez l'anglais, l'espagnol, le français, l'italien et plus encore." },
+    "about-us": { "title": "Notre histoire – Alimun", "desc": "Découvrez l'équipe derrière Alimun. Notre mission : rendre l'apprentissage des langues accessible, flexible et vraiment efficace grâce à des cours en direct, des enseignants experts et des retours de l'IA en temps réel." },
+    "careers": { "title": "Enseigner avec Alimun | Postes de professeur de langue", "desc": "Passionné(e) de langues ? Rejoignez Alimun comme enseignant(e) natif(ve) et animez des cours en direct pour des apprenants motivés du monde entier. Postulez dès aujourd'hui et aidez les élèves à parler avec assurance." },
+    "contact": { "title": "Contact – Alimun", "desc": "Des questions sur Alimun ? Contactez-nous ou rejoignez notre liste d'attente. Nous vous aidons à trouver la bonne formule et répondons à toutes vos questions." },
+    "corporate": { "title": "Formation linguistique pour entreprises | Alimun", "desc": "Développez les compétences linguistiques de votre équipe avec une formation en direct et structurée. Anglais, espagnol, français et plus, résultats mesurables, horaires flexibles pour toute taille d'entreprise." },
+    "services": { "title": "Formules et services d'apprentissage des langues | Alimun", "desc": "Community, Focused ou Intensive : choisissez votre formule. Sessions en direct, petits groupes, retours personnalisés de l'IA. Commencez à parler une nouvelle langue dès aujourd'hui." },
+    "tiers": { "title": "Formules d'accès – Alimun", "desc": "Des prix transparents pour chaque budget. Community, Focused, Intensive : choisissez votre formule d'apprentissage. Aucune carte bancaire requise." },
+    "terms": { "title": "Conditions générales – Alimun" },
+    "cookies": { "title": "Politique relative aux cookies – Alimun" },
+    "gdpr": { "title": "Politique de confidentialité RGPD – Alimun" }
+  },
+  "de": {
+    "index": { "title": "Alimun – Live-Sprachkurse mit KI-Feedback", "desc": "Nimm an Live-Sprachkursen mit erfahrenen Lehrkräften und KI-gestütztem Feedback teil. Lerne Englisch, Spanisch, Französisch, Italienisch und mehr." },
+    "about-us": { "title": "Unsere Geschichte – Alimun", "desc": "Lerne das Team hinter Alimun kennen. Unsere Mission: Sprachenlernen zugänglich, flexibel und wirklich wirksam machen – mit Live-Kursen, erfahrenen Lehrkräften und KI-Feedback in Echtzeit." },
+    "careers": { "title": "Unterrichten bei Alimun | Jobs für Sprachlehrkräfte", "desc": "Du liebst Sprachen? Unterrichte bei Alimun als muttersprachliche Lehrkraft und leite Live-Kurse für motivierte Lernende weltweit. Bewirb dich jetzt und hilf Lernenden, selbstbewusst zu sprechen." },
+    "contact": { "title": "Kontakt – Alimun", "desc": "Fragen zu Alimun? Melde dich bei uns oder trag dich in unsere Warteliste ein. Wir helfen dir, den passenden Plan zu finden, und beantworten alle deine Fragen." },
+    "corporate": { "title": "Sprachtraining für Unternehmen | Alimun", "desc": "Stärke die Sprachkenntnisse deines Teams mit strukturiertem Live-Training. Englisch, Spanisch, Französisch und mehr – messbare Ergebnisse, flexible Termine für Unternehmen jeder Größe." },
+    "services": { "title": "Sprachlernpläne und Leistungen | Alimun", "desc": "Community, Focused oder Intensive – wähle deinen Sprachlernplan. Live-Sitzungen, kleine Gruppen, persönliches KI-Feedback. Fang noch heute an, eine neue Sprache zu sprechen." },
+    "tiers": { "title": "Zugangsstufen – Alimun", "desc": "Transparente Preise für jedes Budget. Community, Focused, Intensive – wähle deine Lernstufe. Keine Kreditkarte nötig." },
+    "terms": { "title": "Allgemeine Geschäftsbedingungen – Alimun" },
+    "cookies": { "title": "Cookie-Richtlinie – Alimun" },
+    "gdpr": { "title": "DSGVO-Datenschutzerklärung – Alimun" }
+  },
+  "es": {
+    "index": { "title": "Alimun – Clases de idiomas en directo con feedback de IA", "desc": "Únete a clases de idiomas en directo con profesores expertos y feedback con IA. Aprende inglés, español, francés, italiano y más." },
+    "about-us": { "title": "Nuestra historia – Alimun", "desc": "Conoce al equipo detrás de Alimun. Nuestra misión: hacer que aprender idiomas sea accesible, flexible y realmente eficaz con clases en directo, profesores expertos y feedback de IA en tiempo real." },
+    "careers": { "title": "Enseña con Alimun | Empleo para profesores de idiomas", "desc": "¿Te apasionan los idiomas? Únete a Alimun como profesor nativo y dirige clases en directo para estudiantes motivados de todo el mundo. Postúlate hoy y ayuda a los estudiantes a hablar con confianza." },
+    "contact": { "title": "Contacto – Alimun", "desc": "¿Tienes preguntas sobre Alimun? Escríbenos o únete a nuestra lista de espera. Te ayudamos a encontrar el plan adecuado y respondemos a todo lo que necesites." },
+    "corporate": { "title": "Formación de idiomas para empresas | Alimun", "desc": "Mejora las competencias lingüísticas de tu equipo con formación en directo y estructurada. Inglés, español, francés y más: resultados medibles y horarios flexibles para empresas de cualquier tamaño." },
+    "services": { "title": "Planes y servicios para aprender idiomas | Alimun", "desc": "Community, Focused o Intensive: elige tu plan para aprender idiomas. Sesiones en directo, grupos reducidos y feedback personalizado de IA. Empieza a hablar un nuevo idioma hoy." },
+    "tiers": { "title": "Niveles de acceso – Alimun", "desc": "Precios transparentes para cada presupuesto. Community, Focused, Intensive: elige tu nivel de aprendizaje. Sin tarjeta de crédito." },
+    "terms": { "title": "Términos y condiciones – Alimun" },
+    "cookies": { "title": "Política de cookies – Alimun" },
+    "gdpr": { "title": "Política de privacidad RGPD – Alimun" }
+  }
+}
