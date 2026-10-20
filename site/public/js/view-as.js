@@ -18,7 +18,9 @@
  *  admin.html calls AlimunViewAs.mountBar({ kind: 'admin', sb }).
  *
  *  The chosen person is remembered per tab (sessionStorage) and can
- *  be set explicitly with ?as=<profile id>.
+ *  be set explicitly with ?as=<profile id>. On the dashboards
+ *  ?as=demo (the default) opens a demo teacher or student with sample
+ *  data held in memory (js/demo.js), so every screen can be tried.
  * ============================================================
  */
 (function () {
@@ -38,14 +40,16 @@
   }
 
   const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-  const READ_ONLY_MSG = 'Read-only in admin view';
+  // Text in the site language (js/i18n.js t()), English fallback
+  const tr = (key, fallback) => (typeof window.t === 'function' ? window.t(key, fallback) : fallback);
+  const readOnlyMsg = () => tr('va_read_only_msg', 'Read-only in admin view');
   const WRITE_METHODS = ['insert', 'update', 'upsert', 'delete'];
   const STORAGE_WRITES = ['upload', 'update', 'remove', 'move', 'copy', 'createSignedUploadUrl', 'uploadToSignedUrl'];
 
   // A chainable stand-in for a refused write: every builder method returns it,
   // and awaiting it resolves to a Supabase-style { data: null, error }.
   function refusedQuery() {
-    const result = { data: null, error: { message: READ_ONLY_MSG, code: 'view_as_read_only' }, count: null, status: 403 };
+    const result = { data: null, error: { message: readOnlyMsg(), code: 'view_as_read_only' }, count: null, status: 403 };
     const proxy = new Proxy(function () {}, {
       get(_t, prop) {
         if (prop === 'then') return (res, rej) => Promise.resolve(result).then(res, rej);
@@ -89,7 +93,7 @@
         let path = '';
         try { const u = new URL(url, location.href); if (u.origin === location.origin) path = u.pathname; } catch { /* ignore */ }
         if (path.startsWith('/api/') && method !== 'GET' && method !== 'HEAD') {
-          return Promise.resolve(new Response(JSON.stringify({ error: READ_ONLY_MSG }), {
+          return Promise.resolve(new Response(JSON.stringify({ error: readOnlyMsg() }), {
             status: 403, headers: { 'Content-Type': 'application/json' },
           }));
         }
@@ -102,14 +106,24 @@
     return id ? `${PAGES[kind]}?as=${encodeURIComponent(id)}` : PAGES[kind];
   }
 
-  /** Returns null for non-admins, otherwise { profile } (profile may be null if none exist). */
+  const demoFor = (kind) => (window.AlimunDemo && window.AlimunDemo.profiles[kind] ? window.AlimunDemo : null);
+  const validId = (kind, v) => !!v && (UUID_RE.test(v) || (!!demoFor(kind) && v === demoFor(kind).DEMO_ID));
+
+  /** Returns null for non-admins, otherwise { profile, demo } (profile may be null if none exist). */
   async function resolve(sb, session, kind) {
     if (!isAdmin(session) || !TABLES[kind]) return null;
 
+    const fromUrl = new URLSearchParams(location.search).get('as');
+    const demo = demoFor(kind);
+    const wanted = [fromUrl, store.get(kind)].find((v) => validId(kind, v)) || (demo ? demo.DEMO_ID : null);
+    if (demo && wanted === demo.DEMO_ID) {
+      demo.install(sb);
+      store.set(kind, demo.DEMO_ID);
+      return { profile: demo.profiles[kind], demo: true };
+    }
+
     enforceReadOnly(sb);
 
-    const fromUrl = new URLSearchParams(location.search).get('as');
-    const wanted = [fromUrl, store.get(kind)].find((v) => v && UUID_RE.test(v)) || null;
     let profile = null;
     if (wanted) {
       ({ data: profile } = await sb.from(TABLES[kind]).select('*').eq('id', wanted).maybeSingle());
@@ -125,13 +139,21 @@
     return { profile };
   }
 
+  function withDemo(kind, real) {
+    const demo = demoFor(kind);
+    return demo ? [{ id: demo.DEMO_ID, label: tr(`va_demo_${kind}`, `Demo ${kind} (sample data)`) }, ...real] : real;
+  }
+
   async function listPeople(sb, kind) {
+    // In the demo sb.from is the in-memory mock; the switcher still lists real people
+    const from = sb.__alimunRealFrom || ((t) => sb.from(t));
     if (kind === 'teacher') {
-      const { data } = await sb.from('teacher_profiles').select('id, full_name, status').order('full_name');
-      return (data || []).map((t) => ({ id: t.id, label: `${t.full_name || 'Unnamed'}${t.status !== 'approved' ? ` (${t.status})` : ''}` }));
+      const { data } = await from('teacher_profiles').select('id, full_name, status').order('full_name');
+      const real = (data || []).map((t) => ({ id: t.id, label: `${t.full_name || tr('va_unnamed', 'Unnamed')}${t.status !== 'approved' ? ` (${tr(`va_status_${t.status}`, t.status)})` : ''}` }));
+      return withDemo('teacher', real);
     }
-    const { data } = await sb.from('student_profiles').select('id, full_name, language, level').order('full_name');
-    return (data || []).map((s) => ({ id: s.id, label: `${s.full_name || 'Unnamed'} · ${s.language || '?'} ${s.level || ''}`.trim() }));
+    const { data } = await from('student_profiles').select('id, full_name, language, level').order('full_name');
+    return withDemo('student', (data || []).map((s) => ({ id: s.id, label: `${s.full_name || tr('va_unnamed', 'Unnamed')} · ${s.language || '?'} ${s.level || ''}`.trim() })));
   }
 
   const CSS = `
@@ -168,22 +190,22 @@
     bar.id = 'va-bar';
     const seg = ['admin', 'teacher', 'student'].map((k) => {
       const href = k === 'admin' ? PAGES.admin : pageUrl(k, store.get(k));
-      return `<a href="${esc(href)}" class="${k === kind ? 'on' : ''}">${k[0].toUpperCase() + k.slice(1)}</a>`;
+      return `<a href="${esc(href)}" class="${k === kind ? 'on' : ''}">${esc(tr(`va_${k}`, k[0].toUpperCase() + k.slice(1)))}</a>`;
     }).join('');
-    // nosemgrep: innerhtml-template-without-escape -- constant markup only
+    // nosemgrep: innerhtml-template-without-escape -- every value below goes through esc()
     bar.innerHTML = `
-      <span class="va-tag">Admin view</span>
+      <span class="va-tag">${esc(tr('va_admin_view', 'Admin view'))}</span>
       <div class="va-seg">${seg}</div>
-      ${kind !== 'admin' ? `<select id="va-person" aria-label="Viewing as"><option>${esc(profile?.full_name || 'Loading…')}</option></select>
-      <span class="va-note">Read-only preview</span>` : ''}
-      <button id="va-toggle" title="Minimise">–</button>`;
+      ${kind !== 'admin' ? `<select id="va-person" aria-label="${esc(tr('va_viewing_as', 'Viewing as'))}"><option>${esc(profile?.full_name || tr('va_loading', 'Loading…'))}</option></select>
+      <span class="va-note">${esc(window.ALIMUN_DEMO ? tr('va_demo_note', 'Demo data, nothing is saved') : tr('va_read_only', 'Read-only preview'))}</span>` : ''}
+      <button id="va-toggle" title="${esc(tr('va_minimise', 'Minimise'))}">–</button>`;
     document.body.appendChild(bar);
 
     const toggle = bar.querySelector('#va-toggle');
     toggle.onclick = () => {
       const min = bar.classList.toggle('va-min');
       toggle.textContent = min ? '+' : '–';
-      toggle.title = min ? 'Show admin view switcher' : 'Minimise';
+      toggle.title = min ? tr('va_show', 'Show admin view switcher') : tr('va_minimise', 'Minimise');
     };
 
     if (kind === 'admin') return;
@@ -191,10 +213,10 @@
     const people = await listPeople(sb, kind);
     if (people.length) {
       select.innerHTML = people.map((p) =>
-        `<option value="${esc(p.id)}" ${p.id === profile?.id ? 'selected' : ''}>${esc(p.label)}</option>`).join('');
+        `<option value="${esc(p.id)}" ${(window.ALIMUN_DEMO ? p.id === 'demo' : p.id === profile?.id) ? 'selected' : ''}>${esc(p.label)}</option>`).join('');
     }
     select.onchange = () => {
-      if (!UUID_RE.test(select.value)) return;
+      if (!validId(kind, select.value)) return;
       store.set(kind, select.value);
       location.href = pageUrl(kind, select.value);
     };
@@ -202,10 +224,10 @@
 
   /** Admin with no profile to show — explain instead of redirecting away. */
   function renderEmpty(kind) {
-    // nosemgrep: innerhtml-template-without-escape -- constant markup only
+    // nosemgrep: innerhtml-template-without-escape -- every value below goes through esc()
     document.body.innerHTML = `<div style="font:600 15px system-ui;padding:3rem;text-align:center;">
-      No ${kind} accounts exist yet, so there is nothing to preview. A ${kind} dashboard appears here as soon as one ${kind} has signed up.
-      <a href="admin.html">Back to admin</a></div>`;
+      ${esc(tr(`va_empty_${kind}`, `No ${kind} accounts exist yet, so there is nothing to preview. A ${kind} dashboard appears here as soon as one ${kind} has signed up.`))}
+      <a href="admin.html">${esc(tr('va_back', 'Back to admin'))}</a></div>`;
   }
 
   window.AlimunViewAs = { isAdmin, resolve, mountBar, renderEmpty, pageUrl };
