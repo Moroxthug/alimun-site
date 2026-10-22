@@ -87,5 +87,9 @@
   "src/blocks/services/s04.html": {
     "sha256": "64c68acb1e2f98990a09bca4cfccfc9fe3387afc2925cc4ada031777d4dcb401",
     "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers)"
+  },
+  "src/blocks/services/footer.html": {
+    "sha256": "52465a273ffae491c92de76cb03efb76b8497802341ead3f22bb84ba9d058344",
+    "approved": "2026-10-22 services footer ok, keys added (same as the Tiers footer, Services marked current)"
   }
 }
