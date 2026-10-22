@@ -111,5 +111,9 @@
   "src/blocks/about/s02.html": {
     "sha256": "ad7bba437d4790ca47cf5c035ab8dbc536d985658b340aebfef52bb5360f632e",
     "approved": "2026-10-22 about section 2 ok (owner wording, no eyebrow/timeline)"
+  },
+  "src/blocks/about/s02b-paths.html": {
+    "sha256": "72060b7128780b2007852120a175c1ec30796466965b2db1341ac297498898b4",
+    "approved": "2026-10-22 about photo section ok (learner/teacher, reveal + drift)"
   }
 }
