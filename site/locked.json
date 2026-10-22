@@ -59,5 +59,17 @@
   "src/blocks/tiers/footer.html": {
     "sha256": "2f7e22085395a99ca6cdc1780935604a90d4cb41a6946f263f2fee0f876e3c7d",
     "approved": "2026-10-22 tiers footer ok"
+  },
+  "src/blocks/services/head.html": {
+    "sha256": "016f7bd25ad0bc184233969dc99154649c4700636dce224c87438b5f0f785dfd",
+    "approved": "2026-10-22 services nav ok"
+  },
+  "src/blocks/services/after.html": {
+    "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
+    "approved": "2026-10-22 services nav ok"
+  },
+  "src/blocks/services/nav.html": {
+    "sha256": "94e08fbe2d6f623696e612fe4ab249b851019f6ff21081ef8335c15bd06fe661",
+    "approved": "2026-10-22 services nav ok"
   }
 }
