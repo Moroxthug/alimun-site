@@ -3,33 +3,22 @@
           .how_wrap { display: flex; gap: 4.5rem; align-items: flex-start; }
           .how_side { flex: 0 0 40%; position: sticky; top: 12vh; }
           .how_side .button { width: fit-content; }
-          .how_count { display: flex; align-items: baseline; gap: .5rem; margin-top: 3rem; font-family: Coolvetica Condensed, sans-serif; line-height: 1; }
-          .how_count-now { font-size: 11rem; }
-          .how_count-total { font-size: 2rem; opacity: .4; }
-          .how_bar { height: 4px; border-radius: 5rem; background-color: #0808081a; margin-top: 1.5rem; overflow: hidden; }
-          .how_bar-fill { height: 100%; width: 0; background-color: var(--green); border-radius: 5rem; transition: width .3s ease; }
-          .how_steps { flex: 1; position: relative; list-style: none; margin: 0; padding: 0 0 0 2.5rem; }
-          .how_line { position: absolute; left: 0; top: 0; bottom: 0; width: 2px; background-color: #0808081a; border-radius: 5rem; }
-          .how_line-fill { width: 100%; height: 0; background-color: var(--green); border-radius: 5rem; }
-          .how_step { padding: 3.5rem 0; opacity: .3; transform: translateY(1.5rem); transition: opacity .5s ease, transform .5s cubic-bezier(.215, .61, .355, 1); }
-          .how_step.is-seen { transform: none; }
-          .how_step.is-active { opacity: 1; }
-          .how_num { font-family: Coolvetica Condensed, sans-serif; font-size: 1.375rem; display: inline-block; padding: .1rem .7rem; border-radius: 5rem; background-color: #0808080d; transition: background-color .4s ease; }
-          .how_step.is-active .how_num { background-color: var(--green); }
-          .how_step h3 { margin: 1rem 0 .75rem; }
-          .how_step p { margin: 0; }
-          .how .list_wrap { margin: 1.25rem 0 0; }
-          .how .tag { color: var(--black); border-color: #08080833; }
+          .how_side .feature_visual { margin-top: 2.5rem; max-width: none; width: 100%; aspect-ratio: auto; height: 52vh; overflow: hidden; }
+          .how_blocks { flex: 1; padding: 6vh 0 20vh; }
+          .how_block { padding: 0 0 5rem; opacity: var(--how-o, .15); }
+          .how_block h3 { margin: 0 0 .75rem; transform: translateX(calc((1 - var(--how-o, .15)) * -1.5rem)); }
+          .how_block p { margin: 0; }
           .how_note { margin-top: 1rem !important; opacity: .6; }
           @media (max-width: 767px) {
             .how_wrap { flex-direction: column; gap: 2rem; }
             .how_side { position: static; flex: none; }
-            .how_count, .how_bar { display: none; }
-            .how_steps { padding-left: 1.5rem; }
-            .how_step { padding: 2rem 0; }
+            .how_side .feature_visual { height: auto; max-height: none; aspect-ratio: 4 / 3; }
+            .how_blocks { padding: 0 0 4vh; }
+            .how_block { padding-bottom: 3rem; }
           }
           @media (prefers-reduced-motion: reduce) {
-            .how_step, .how_bar-fill, .how_num { transition: none; transform: none; }
+            .how_block { opacity: 1 !important; }
+            .how_block h3 { transform: none !important; }
           }
         </style>
         <div class="container-large">
@@ -41,84 +30,48 @@
               <a href="signup.html" class="button w-inline-block">
                 <p data-i18n="services_tier_btn">Start today</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16">
               </a>
-              <div class="how_count" aria-hidden="true"><span class="how_count-now">01</span><span class="how_count-total">/ 06</span></div>
-              <div class="how_bar" aria-hidden="true"><div class="how_bar-fill"></div></div>
+              <div class="feature_visual shadow-card"><img src="images/edu_land_3.png" loading="lazy" alt="" class="img-cover"></div>
             </div>
-            <ol class="how_steps">
-              <li class="how_line" aria-hidden="true"><div class="how_line-fill"></div></li>
-              <li class="how_step">
-                <span class="how_num">01</span>
-                <h3 class="heading-style-h5" data-i18n="services_how_1_title">Find your level</h3>
-                <p class="text-size-medium" data-i18n="services_how_1_desc">A short placement test sets your level, from A1 to C1, and your exercises and classes match it.</p>
-              </li>
-              <li class="how_step">
-                <span class="how_num">02</span>
-                <h3 class="heading-style-h5" data-i18n="services_how_2_title">Learn live</h3>
-                <p class="text-size-medium" data-i18n="services_how_2_desc">Video classes with your teacher and the same group, on fixed days and at a fixed time every week.</p>
-              </li>
-              <li class="how_step">
-                <span class="how_num">03</span>
-                <h3 class="heading-style-h5" data-i18n="services_how_3_title">Keep the class with you</h3>
-                <p class="text-size-medium" data-i18n="services_how_3_desc">After each class your teacher shares the session notes, the new vocabulary and your homework.</p>
-              </li>
-              <li class="how_step">
-                <span class="how_num">04</span>
-                <h3 class="heading-style-h5" data-i18n="services_how_4_title">Hand in your assignments</h3>
-                <p class="text-size-medium" data-i18n="services_how_4_desc">Your teacher sets homework with a due date. You submit it in your dashboard and get it back graded: a score, what went well, what to work on next and an example correction.</p>
-              </li>
-              <li class="how_step">
-                <span class="how_num">05</span>
-                <h3 class="heading-style-h5" data-i18n="services_how_5_title">Practise whenever you want</h3>
-                <p class="text-size-medium" data-i18n="services_how_5_desc">A practice library at your level, with instant feedback, plus flashcards for the words from your lessons.</p>
-                <ul class="list_wrap">
-                  <li class="list_wrap-item"><div class="tag" data-i18n="services_how_ex_1">Multiple choice</div></li>
-                  <li class="list_wrap-item"><div class="tag" data-i18n="services_how_ex_2">Fill in the blank</div></li>
-                  <li class="list_wrap-item"><div class="tag" data-i18n="services_how_ex_3">Word matching</div></li>
-                  <li class="list_wrap-item"><div class="tag" data-i18n="services_how_ex_4">Listening</div></li>
-                  <li class="list_wrap-item"><div class="tag" data-i18n="services_how_ex_5">Speaking</div></li>
-                  <li class="list_wrap-item"><div class="tag" data-i18n="services_how_ex_6">Essay</div></li>
-                </ul>
-              </li>
-              <li class="how_step">
-                <span class="how_num">06</span>
-                <h3 class="heading-style-h5" data-i18n="services_how_6_title">Tests and exam preparation</h3>
-                <p class="text-size-medium" data-i18n="services_how_6_desc">Quizzes and tests are marked the moment you finish. Working towards a certificate? Practise tasks in the format of:</p>
-                <ul class="list_wrap">
-                  <li class="list_wrap-item"><div class="tag">B2 First</div></li>
-                  <li class="list_wrap-item"><div class="tag">C1 Advanced</div></li>
-                  <li class="list_wrap-item"><div class="tag">IELTS</div></li>
-                  <li class="list_wrap-item"><div class="tag">Goethe B1</div></li>
-                  <li class="list_wrap-item"><div class="tag">Goethe B2</div></li>
-                  <li class="list_wrap-item"><div class="tag">telc B1</div></li>
-                </ul>
+            <div class="how_blocks">
+              <div class="how_block">
+                <h3 class="heading-style-h3" data-i18n="services_how_1_title">Find your level</h3>
+                <p class="text-size-large" data-i18n="services_how_1_desc">A short placement test sets your level, from A1 to C1, and your exercises and classes match it.</p>
+              </div>
+              <div class="how_block">
+                <h3 class="heading-style-h3" data-i18n="services_how_2_title">Learn live</h3>
+                <p class="text-size-large" data-i18n="services_how_2_desc">Video classes with your teacher and the same group, on fixed days and at a fixed time every week.</p>
+              </div>
+              <div class="how_block">
+                <h3 class="heading-style-h3" data-i18n="services_how_3_title">Keep the class with you</h3>
+                <p class="text-size-large" data-i18n="services_how_3_desc">After each class your teacher shares the session notes, the new vocabulary and your homework.</p>
+              </div>
+              <div class="how_block">
+                <h3 class="heading-style-h3" data-i18n="services_how_4_title">Hand in your assignments</h3>
+                <p class="text-size-large" data-i18n="services_how_4_desc">Your teacher sets homework with a due date. You submit it in your dashboard and get it back graded, with a score, what went well, what to work on next and an example correction.</p>
+              </div>
+              <div class="how_block">
+                <h3 class="heading-style-h3" data-i18n="services_how_5_title">Practise whenever you want</h3>
+                <p class="text-size-large" data-i18n="services_how_5_desc">A practice library at your level, with multiple choice, fill-in-the-blank, word matching, listening, speaking and essay exercises, all with instant feedback, plus flashcards for the words from your lessons.</p>
+              </div>
+              <div class="how_block">
+                <h3 class="heading-style-h3" data-i18n="services_how_6_title">Tests and exam preparation</h3>
+                <p class="text-size-large" data-i18n="services_how_6_desc">Quizzes and tests are marked the moment you finish. Working towards a certificate? Practise tasks in the format of B2 First, C1 Advanced and IELTS for English, and Goethe B1, Goethe B2 and telc B1 for German.</p>
                 <p class="text-size-small how_note" data-i18n="services_how_6_note">Not official exam material. Alimun is not affiliated with the exam boards.</p>
-              </li>
-            </ol>
+              </div>
+            </div>
           </div>
         </div>
         <script>
-          // Highlights the step nearest the middle of the screen and fills the progress line and bar.
+          // Each block fades from pale to full ink as it rises to the reading line.
           (function () {
-            var root = document.currentScript.closest(".how");
-            var steps = [].slice.call(root.querySelectorAll(".how_step"));
-            var list = root.querySelector(".how_steps");
-            var lineFill = root.querySelector(".how_line-fill");
-            var barFill = root.querySelector(".how_bar-fill");
-            var count = root.querySelector(".how_count-now");
+            var blocks = [].slice.call(document.currentScript.closest(".how").querySelectorAll(".how_block"));
             function update() {
-              var mid = window.innerHeight * 0.55;
-              var active = 0;
-              steps.forEach(function (s, i) {
-                var r = s.getBoundingClientRect();
-                if (r.top < window.innerHeight * 0.9) s.classList.add("is-seen");
-                if (r.top < mid) active = i;
+              var vh = window.innerHeight;
+              blocks.forEach(function (b) {
+                var top = b.getBoundingClientRect().top;
+                var p = Math.min(1, Math.max(0, (vh * 0.9 - top) / (vh * 0.35)));
+                b.style.setProperty("--how-o", (0.15 + 0.85 * p).toFixed(3));
               });
-              steps.forEach(function (s, i) { s.classList.toggle("is-active", i === active); });
-              var lr = list.getBoundingClientRect();
-              var p = Math.min(1, Math.max(0, (mid - lr.top) / lr.height));
-              lineFill.style.height = (p * 100) + "%";
-              barFill.style.width = ((active + 1) / steps.length * 100) + "%";
-              count.textContent = String(active + 1).padStart(2, "0");
             }
             window.addEventListener("scroll", update, { passive: true });
             window.addEventListener("resize", update);
