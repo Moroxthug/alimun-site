@@ -1,70 +1,58 @@
       <section class="section wf">
         <style>
-          .wf { background-color: #f0efe9; color: var(--black); padding: 7rem 0; }
-          .wf_head { display: flex; flex-direction: column; gap: 1.5rem; margin-bottom: 4rem; }
-          .wf_head h2 { margin: 0; }
-          .wf_rotator { position: relative; height: 4.2em; font-family: Satoshi, sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; font-size: clamp(1.5rem, 3.4vw, 3rem); line-height: 1.3; }
+          .wf { padding: 6rem 0; }
+          .wf_wrap { display: grid; grid-template-columns: 5fr 7fr; gap: 4rem; align-items: center; }
+          .wf_head h2 { margin: 0 0 2rem; }
+          .wf_rotator { position: relative; height: 5.2em; font-family: Satoshi, sans-serif; font-weight: 800; text-transform: uppercase; letter-spacing: -0.02em; font-size: clamp(1.4rem, 2.3vw, 2.1rem); line-height: 1.3; }
           .wf_phrase { position: absolute; inset: 0 auto auto 0; opacity: 0; transform: translateY(.6em); transition: opacity .6s ease, transform .6s cubic-bezier(.215, .61, .355, 1); }
           .wf_phrase.is-on { opacity: 1; transform: none; }
-          .wf_phrase .alimun-cta-highlight { background-color: var(--green); border-radius: 5rem; padding: .05em .45em; }
-          .wf_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
-          .wf_card { background-color: var(--white); border-radius: 2.25rem; padding: 2.75rem; opacity: 0; transform: translateY(1.5rem); transition: opacity .7s ease, transform .7s cubic-bezier(.215, .61, .355, 1), box-shadow .4s ease; }
+          .wf_phrase .alimun-cta-highlight { display: inline; background-color: var(--green); border-radius: 5rem; padding: .05em .45em; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+          .wf_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+          .wf_card { background-color: var(--white); border-radius: 2.25rem; padding: 2rem; opacity: 0; transform: translateY(1.5rem); transition: opacity .7s ease, transform .7s cubic-bezier(.215, .61, .355, 1); }
           .wf_card.is-in { opacity: 1; transform: none; }
-          .wf_card.is-in:hover { transform: translateY(-.35rem); box-shadow: 0 40px 25px #0000000d, 0 20px 13px #0000000a, 0 8px 7px #00000008; }
+          .wf_card.is-in:hover { transform: translateY(-.35rem); }
           .wf_card:nth-child(2) { transition-delay: .1s; } .wf_card:nth-child(3) { transition-delay: .2s; } .wf_card:nth-child(4) { transition-delay: .3s; }
-          .wf_card h3 { margin: 0 0 1rem; }
+          .wf_card.is-in:hover { transition-delay: 0s; }
+          .wf_card h3 { margin: 0 0 .75rem; }
           .wf_card p { margin: 0; color: rgba(8, 8, 8, .7); }
           .wf_card.is-ink { background-color: var(--black); color: var(--white); }
           .wf_card.is-ink h3 { color: var(--green); }
           .wf_card.is-ink p { color: rgba(255, 255, 255, .75); }
-          .wf_price { margin-top: 1.5rem; background-color: var(--black); color: var(--white); border-radius: 3.125rem; padding: 2.5rem 3rem; display: flex; align-items: center; justify-content: space-between; gap: 2rem; }
-          .wf_price p { margin: 0; max-width: 40rem; }
-          .wf_price .button { flex: none; }
-          @media (max-width: 767px) {
-            .wf { padding: 5rem 0; }
-            .wf_rotator { height: 5.4em; }
-            .wf_grid { grid-template-columns: 1fr; }
-            .wf_card { padding: 2rem; }
-            .wf_price { flex-direction: column; align-items: flex-start; padding: 2rem; border-radius: 2.25rem; }
-          }
-          @media (prefers-reduced-motion: reduce) {
-            .wf_phrase, .wf_card { transition: none; transform: none; }
-            .wf_card { opacity: 1; }
-          }
+          @media (max-width: 991px) { .wf_wrap { grid-template-columns: 1fr; gap: 2.5rem; } }
+          @media (max-width: 767px) { .wf { padding: 4.5rem 0; } .wf_grid { grid-template-columns: 1fr; } .wf_card { padding: 1.75rem; } .wf_rotator { height: 4em; } }
+          @media (prefers-reduced-motion: reduce) { .wf_phrase, .wf_card { transition: none; transform: none; } .wf_card { opacity: 1; } }
         </style>
         <div class="container-large">
-          <div class="wf_head">
-            <h2 class="heading-style-h2" data-i18n="corporate_why_title">Workforce fluency</h2>
-            <div class="wf_rotator" aria-live="polite">
-              <div class="wf_phrase is-on" data-i18n-html="corp_slide_1">Relocating your <span class="alimun-cta-highlight">team abroad</span>?</div>
-              <div class="wf_phrase" data-i18n-html="corp_slide_2">Certificate preparation for <span class="alimun-cta-highlight">visas and work permits</span>.</div>
-              <div class="wf_phrase" data-i18n-html="corp_slide_3">Live classes with <span class="alimun-cta-highlight">experienced teachers</span>.</div>
-              <div class="wf_phrase" data-i18n-html="corp_slide_4">Lessons focused on <span class="alimun-cta-highlight">your workplace</span>.</div>
-              <div class="wf_phrase" data-i18n-html="corp_slide_5">AI feedback <span class="alimun-cta-highlight">between classes</span>.</div>
-              <div class="wf_phrase" data-i18n-html="corp_slide_6">A dedicated <span class="alimun-cta-highlight">company dashboard</span>.</div>
+          <div class="wf_wrap">
+            <div class="wf_head">
+              <h2 class="heading-style-h2" data-i18n="corporate_why_title">Workforce fluency</h2>
+              <div class="wf_rotator" aria-live="polite">
+                <div class="wf_phrase is-on" data-i18n-html="corp_slide_1">Relocating your <span class="alimun-cta-highlight">team abroad</span>?</div>
+                <div class="wf_phrase" data-i18n-html="corp_slide_2">Certificate preparation for <span class="alimun-cta-highlight">visas and work permits</span>.</div>
+                <div class="wf_phrase" data-i18n-html="corp_slide_3">Live classes with <span class="alimun-cta-highlight">experienced teachers</span>.</div>
+                <div class="wf_phrase" data-i18n-html="corp_slide_4">Lessons focused on <span class="alimun-cta-highlight">your workplace</span>.</div>
+                <div class="wf_phrase" data-i18n-html="corp_slide_5">AI feedback <span class="alimun-cta-highlight">between classes</span>.</div>
+                <div class="wf_phrase" data-i18n-html="corp_slide_6">A dedicated <span class="alimun-cta-highlight">company dashboard</span>.</div>
+              </div>
             </div>
-          </div>
-          <div class="wf_grid">
-            <div class="wf_card">
-              <h3 class="heading-style-h3" data-i18n="corp_why_1_title">Experienced teachers</h3>
-              <p class="text-size-medium" data-i18n="corp_why_1_desc">Live classes led by experienced teachers, in a private group for your company or one to one for managers.</p>
+            <div class="wf_grid">
+              <div class="wf_card shadow-card">
+                <h3 class="heading-style-h4" data-i18n="corp_why_1_title">Experienced teachers</h3>
+                <p class="text-size-regular" data-i18n="corp_why_1_desc">Live classes led by experienced teachers, in a private group for your company or one to one for managers.</p>
+              </div>
+              <div class="wf_card shadow-card">
+                <h3 class="heading-style-h4" data-i18n="corp_why_2_title">Workplace-focused lessons</h3>
+                <p class="text-size-regular" data-i18n="corp_why_2_desc">Lessons, notes and homework built around your field and the situations your team meets at work.</p>
+              </div>
+              <div class="wf_card shadow-card">
+                <h3 class="heading-style-h4" data-i18n="corp_why_3_title">Relocation and certificates</h3>
+                <p class="text-size-regular" data-i18n="corp_why_3_desc">Employees can start before they move. They practise in the format of IELTS, B2 First and C1 Advanced for English, and Goethe B1, Goethe B2 and telc B1 for German, the certificates many visas and work permits ask for. Not official exam material.</p>
+              </div>
+              <div class="wf_card shadow-card is-ink">
+                <h3 class="heading-style-h4" data-i18n="corp_why_4_title">Company dashboard</h3>
+                <p class="text-size-regular" data-i18n="corp_why_4_desc">Follow attendance, levels and progress for every employee in one place.</p>
+              </div>
             </div>
-            <div class="wf_card">
-              <h3 class="heading-style-h3" data-i18n="corp_why_2_title">Workplace-focused lessons</h3>
-              <p class="text-size-medium" data-i18n="corp_why_2_desc">Lessons, notes and homework built around your field and the situations your team meets at work.</p>
-            </div>
-            <div class="wf_card">
-              <h3 class="heading-style-h3" data-i18n="corp_why_3_title">Relocation and certificates</h3>
-              <p class="text-size-medium" data-i18n="corp_why_3_desc">Employees can start before they move. They practise in the format of IELTS, B2 First and C1 Advanced for English, and Goethe B1, Goethe B2 and telc B1 for German, the certificates many visas and work permits ask for. Not official exam material.</p>
-            </div>
-            <div class="wf_card is-ink">
-              <h3 class="heading-style-h3" data-i18n="corp_why_4_title">Company dashboard</h3>
-              <p class="text-size-medium" data-i18n="corp_why_4_desc">Follow attendance, levels and progress for every employee in one place.</p>
-            </div>
-          </div>
-          <div class="wf_price">
-            <p class="text-size-large" data-i18n="corp_price_desc">Pricing depends on the size of your team and what you need. Get in touch and we will put together a quote.</p>
-            <a href="contact.html" class="button w-inline-block"><p data-i18n="corp_contact_btn">Contact us</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16"></a>
           </div>
         </div>
         <script>
