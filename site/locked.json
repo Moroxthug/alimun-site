@@ -151,5 +151,21 @@
   "src/blocks/corporate/footer.html": {
     "sha256": "cd7c81fb26c4566b34031e6bb982fca66d36c04bc19e8304b813e2a26495ac66",
     "approved": "2026-10-22 corporate footer ok (Tiers keys, Corporate current)"
+  },
+  "src/blocks/careers/head.html": {
+    "sha256": "612ede65378f649c91eec5dc89626d527e005c98956d235c380365e3f6353ab4",
+    "approved": "2026-10-22 careers nav ok"
+  },
+  "src/blocks/careers/after.html": {
+    "sha256": "523f28966a5d2ada38b2b637016e6f7f5b74d3e0520a5e78a33bf2e17c145b74",
+    "approved": "2026-10-22 careers nav ok"
+  },
+  "src/blocks/careers/nav.html": {
+    "sha256": "eab70a23997186621a5a746683b12b943f671989311379279d989f6f759ce21f",
+    "approved": "2026-10-22 careers nav ok"
+  },
+  "src/blocks/careers/s01.html": {
+    "sha256": "5444a18666fe80e05b6e0e4d49316e25ea2c686f953827baa254d529d5c9542a",
+    "approved": "2026-10-22 careers hero ok (teaching video, accurate text)"
   }
 }

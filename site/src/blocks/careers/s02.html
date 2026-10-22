@@ -1,46 +1,93 @@
-      <section class="section" style="background-color: var(--light-grey); color: var(--black); padding: 6rem 0; border-bottom: 1px solid rgba(0,0,0,0.06);">
+      <section class="section wf">
+        <style>
+          .wf { padding: 6rem 0; }
+          .wf_head { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-bottom: 2.5rem; }
+          .wf_head h2 { margin: 0; }
+          .wf_head p { margin: 0; max-width: 26rem; color: rgba(8, 8, 8, .7); }
+          .wf_bento { display: grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: minmax(15rem, auto); gap: 1.25rem; }
+          .wf_tile { border-radius: 2.25rem; padding: 1.75rem; background-color: var(--white); opacity: 0; transform: translateY(3rem) scale(.95); transition: opacity .9s ease, transform 1s cubic-bezier(.215, .61, .355, 1); }
+          .wf_bento.is-in .wf_tile { opacity: 1; transform: translateY(var(--wf-shift, 0px)); }
+          .wf_bento.is-in .wf_tile:nth-child(2) { transition-delay: .15s; }
+          .wf_bento.is-in .wf_tile:nth-child(3) { transition-delay: .3s; }
+          .wf_bento.is-in .wf_tile:nth-child(4) { transition-delay: .45s; }
+          .wf_bento.is-in .wf_tile:nth-child(5) { transition-delay: .6s; }
+          .wf_bento.is-in .wf_tile:nth-child(6) { transition-delay: .75s; }
+          .wf_bento.is-in .wf_tile.is-hovered, .wf_bento.is-in .wf_tile.is-done { transition-delay: 0s; }
+          @media (hover: hover) { .wf_bento.is-in .wf_tile.is-done:not(.wf_photo):hover { transform: translateY(calc(var(--wf-shift, 0px) - .5rem)); } }
+          .wf_bento.is-in .wf_tile.is-done { transition: transform .25s ease-out, opacity .3s ease; }
+          .wf_photo { grid-column: 1 / 6; padding: 0; overflow: hidden; position: relative; clip-path: inset(100% 0 0 0 round 2.25rem); transition: clip-path 1.2s cubic-bezier(.215, .61, .355, 1), opacity .3s ease; transform: none; opacity: 1; }
+          .wf_bento.is-in .wf_photo { clip-path: inset(0 0 0 0 round 2.25rem); }
+          .wf_photo img { position: absolute; left: 0; top: 0; width: 100%; height: 120%; object-fit: cover; transform: translateY(var(--wf-y, -8%)) scale(var(--wf-z, 1.12)); transform-origin: center; }
+          .wf_photo { grid-row: 1 / 3; }
+          .wf_f1 { grid-column: 6 / 9; grid-row: 1; } .wf_f2 { grid-column: 9 / 13; grid-row: 1; }
+          .wf_f3 { grid-column: 6 / 10; grid-row: 2; } .wf_f4 { grid-column: 10 / 13; grid-row: 2; }
+          .wf_f1 { background-color: var(--green); }
+          .wf_f1 p { color: rgba(8, 8, 8, .8); }
+          .wf_tile h3 { margin: 0 0 .6rem; }
+          .wf_tile p { margin: 0; color: rgba(8, 8, 8, .7); }
+          .wf_ink { background-color: var(--black); color: var(--white); }
+          .wf_ink h3 { color: var(--green); }
+          .wf_ink p { color: rgba(255, 255, 255, .75); }
+          @media (max-width: 991px) {
+            .wf_head { flex-direction: column; align-items: flex-start; }
+            .wf_bento { grid-template-columns: 1fr 1fr; }
+            .wf_photo { grid-column: 1 / 3; grid-row: auto; aspect-ratio: 16 / 10; }
+            .wf_f1, .wf_f2, .wf_f3, .wf_f4 { grid-column: auto; grid-row: auto; }
+          }
+          @media (max-width: 767px) { .wf { padding: 4.5rem 0; } .wf_bento { grid-template-columns: 1fr; } .wf_photo { grid-column: auto; } }
+        </style>
         <div class="container-large">
-          <div class="wrap_flex is-align-top">
-            
-            <div class="max-width-440 sticky-wrapper" style="display: flex; flex-direction: column; gap: 2rem;">
-              <h2><span style="color: var(--black);" class="is-word is-1" data-i18n="careers_why_title">Why teach on Alimun?</span></h2>
-              
-              <!-- Kinetic Typography Publicity Container -->
-              <div class="publicity-slider-container">
-                <div class="kinetic-slide is-active" id="slide-0" data-i18n-html="careers_sim_sub_1">Tired of <span class="alimun-cta-highlight">not making enough money</span> from private 1:1 tutoring?</div>
-                <div class="kinetic-slide" id="slide-1" data-i18n-html="careers_sim_sub_2">Most platforms take up to <span class="alimun-cta-highlight" style="background:#ff6565; color:#fff; box-shadow:none;">33% commission</span> on your hard work.</div>
-                <div class="kinetic-slide" id="slide-2" data-i18n-html="careers_sim_sub_3">At Alimun, the standard is <span class="alimun-cta-highlight">30%</span>.</div>
-                <div class="kinetic-slide" id="slide-3" data-i18n-html="careers_sim_sub_4">Plus, our cohort model lets you teach up to <span class="alimun-cta-highlight">15 students</span> at once!</div>
-                <div class="kinetic-slide" id="slide-4" data-i18n-html="careers_sim_sub_5">Our AI assistant handles homework grading, so you can <span class="alimun-cta-highlight">focus on teaching</span>.</div>
-                <div class="kinetic-slide" id="slide-5" data-i18n-html="careers_sim_sub_6">Earn up to <span class="alimun-cta-highlight">€80/hour</span> with total scheduling flexibility.</div>
-                <div class="kinetic-slide" id="slide-6" style="display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1rem; width: 100%; text-align: center;">
-                  <img src="images/Alimun-Source-File-fixes.svg" alt="Alimun Logo" style="width: 200px; height: auto;">
-                  <div style="font-size: 0.8rem; font-weight: 700; color: #080808; letter-spacing: 0.12em; text-transform: uppercase; font-family: 'Satoshi', sans-serif;" data-i18n-html="careers_sim_sub_7">Speak fluently. For life. <span class="alimun-cta-highlight">Teach on Alimun</span>.</div>
-                </div>
-              </div>
+          <div class="wf_head">
+            <h2 class="heading-style-h2" data-i18n="car_why_title">Why teach on Alimun?</h2>
+          </div>
+          <div class="wf_bento">
+            <div class="wf_tile wf_photo shadow-card"><img src="images/careers_hero.jpg" loading="lazy" alt="A teacher leading a class"></div>
+            <div class="wf_tile wf_f1 shadow-card">
+              <h3 class="heading-style-h4" data-i18n="car_why_1_title">Teach a group</h3>
+              <p class="text-size-small" data-i18n="car_why_1_desc">Teach a structured group of about 6 to 35 learners instead of repeating the same private lesson again and again, and let the group practise together.</p>
             </div>
-            <div class="max-width-440 is-full-responsive">
-              <div style="display: flex; flex-direction: column; gap: 2.5rem;">
-                <div class="animate-on-scroll">
-                  <h3 class="heading-style-h4" style="color: var(--black); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;" data-i18n="careers_why_1_title">Cohort leverage</h3>
-                  <p class="text-size-medium" style="color: rgba(8,8,8,0.7); line-height: 1.6;" data-i18n="careers_why_1_desc">Say goodbye to repeating the same basic private lesson 20 times. Teach a structured group and let the cohort interact.</p>
-                </div>
-                <div class="animate-on-scroll">
-                  <h3 class="heading-style-h4" style="color: var(--black); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;" data-i18n="careers_why_2_title">AI Grading Assistant</h3>
-                  <p class="text-size-medium" style="color: rgba(8,8,8,0.7); line-height: 1.6;" data-i18n="careers_why_2_desc">Our AI handles vocabulary checking and grammar drills. You focus 100% on live communication and real-time feedback.</p>
-                </div>
-                <div class="animate-on-scroll">
-                  <h3 class="heading-style-h4" style="color: var(--black); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;" data-i18n="careers_why_3_title">Consistent Revenue</h3>
-                  <p class="text-size-medium" style="color: rgba(8,8,8,0.7); line-height: 1.6;" data-i18n="careers_why_3_desc">Get paid a stable base rate per active cohort. The more your cohorts grow, the more your earnings scale.</p>
-                </div>
-                <div class="animate-on-scroll">
-                  <h3 class="heading-style-h4" style="color: var(--black); font-size: 1.25rem; font-weight: 700; margin-bottom: 0.5rem;" data-i18n="careers_why_4_title">Flexible Hours</h3>
-                  <p class="text-size-medium" style="color: rgba(8,8,8,0.7); line-height: 1.6;" data-i18n="careers_why_4_desc">Set your own availability and cohort schedule. Teach from anywhere in the world.</p>
-                </div>
-              </div>
+            <div class="wf_tile wf_f2 shadow-card">
+              <h3 class="heading-style-h4" data-i18n="car_why_2_title">AI grading assistant</h3>
+              <p class="text-size-small" data-i18n="car_why_2_desc">The AI drafts homework grades and feedback for you to check and send, so your time goes into live conversation.</p>
+            </div>
+            <div class="wf_tile wf_f3 shadow-card">
+              <h3 class="heading-style-h4" data-i18n="car_why_3_title">Consistent revenue</h3>
+              <p class="text-size-small" data-i18n="car_why_3_desc">Get paid a stable base rate per active cohort. The more your cohorts grow, the more your earnings scale.</p>
+            </div>
+            <div class="wf_tile wf_f4 wf_ink shadow-card">
+              <h3 class="heading-style-h4" data-i18n="car_why_4_title">Flexible hours</h3>
+              <p class="text-size-small" data-i18n="car_why_4_desc">Set your own availability and cohort schedule. Teach from anywhere in the world.</p>
             </div>
           </div>
         </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".wf");
+            var bento = root.querySelector(".wf_bento");
+            var tiles = [].slice.call(root.querySelectorAll(".wf_tile:not(.wf_photo)"));
+            var img = root.querySelector(".wf_photo img");
+            // The tiles fly in one after another once the grid is well in view.
+            if ("IntersectionObserver" in window) {
+              var io = new IntersectionObserver(function (e) {
+                if (!e[0].isIntersecting) return;
+                bento.classList.add("is-in"); io.disconnect();
+                setTimeout(function () { root.querySelectorAll(".wf_tile").forEach(function (t) { t.classList.add("is-done"); }); }, 1900);
+              }, { threshold: 0.3 });
+              io.observe(bento);
+            } else { bento.classList.add("is-in"); }
+            // While the page scrolls, each tile moves at its own speed and the photo slowly zooms out.
+            var speeds = [150, -110, 90, -150];
+            function update() {
+              var r = bento.getBoundingClientRect(), vh = window.innerHeight;
+              var p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
+              var c = p - 0.5;
+              tiles.forEach(function (t, k) { t.style.setProperty("--wf-shift", (c * speeds[k % speeds.length]).toFixed(1) + "px"); });
+              img.style.setProperty("--wf-y", (-16 + p * 16).toFixed(2) + "%");
+              img.style.setProperty("--wf-z", (1.18 - p * 0.18).toFixed(3));
+            }
+            window.addEventListener("scroll", update, { passive: true });
+            window.addEventListener("resize", update);
+            update();
+          })();
+        </script>
       </section>
-
-      
