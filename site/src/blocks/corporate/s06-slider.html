@@ -2,7 +2,13 @@
         <style>
           /* The Workforce slideshow from the live page, as the closing banner. */
           .corp-slider { padding: 6rem 0 7rem; }
-          .corp-slider_wrap { max-width: 40rem; margin: 0 auto; }
+          .corp-slider_wrap { max-width: 64rem; margin: 0 auto; }
+          .corp-slider .publicity-slider-container { height: 24rem; }
+          .corp-slider .kinetic-slide { text-align: center; font-size: clamp(2rem, 4.6vw, 4.4rem); line-height: 1.25; }
+          .corp-slider .kinetic-slide .alimun-cta-highlight { display: inline; box-decoration-break: clone; -webkit-box-decoration-break: clone; line-height: 1.5; }
+          .corp-slider #slide-6 img { width: 22rem !important; max-width: 70vw; }
+          .corp-slider #slide-6 > div { font-size: 1.1rem !important; }
+          @media (max-width: 767px) { .corp-slider .publicity-slider-container { height: 20rem; } }
         </style>
         <div class="container-large">
           <div class="corp-slider_wrap">
