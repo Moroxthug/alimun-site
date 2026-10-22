@@ -119,5 +119,21 @@
   "src/blocks/about/footer.html": {
     "sha256": "cae4cd88f7edc335a45b438599b180269a79f7b99a840b617dba3220c2cde7b4",
     "approved": "2026-10-22 about footer ok (Tiers keys, About current)"
+  },
+  "src/blocks/corporate/head.html": {
+    "sha256": "bd2e873772f080163481842586c85f003f97a10e3f7ba44686c34f211711a472",
+    "approved": "2026-10-22 corporate nav ok"
+  },
+  "src/blocks/corporate/after.html": {
+    "sha256": "1bd0fd266ebf15ce610c44a53914f27a4e1b34a89d8ec231cdcdf14d8af30d5a",
+    "approved": "2026-10-22 corporate nav ok"
+  },
+  "src/blocks/corporate/nav.html": {
+    "sha256": "ae069a6b8b8e531756ac94ef85e034f2ab5543ecb6fcfaa098a3111b160ba763",
+    "approved": "2026-10-22 corporate nav ok"
+  },
+  "src/blocks/corporate/s01.html": {
+    "sha256": "2f4b17f27bb8877c402cfea8525f53761de4425a3879a0335437c838b27ebc3c",
+    "approved": "2026-10-22 corporate hero ok (owner text, Contact us, team-meeting video)"
   }
 }
