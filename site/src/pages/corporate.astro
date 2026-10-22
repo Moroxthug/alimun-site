@@ -6,13 +6,15 @@ import after from '../blocks/corporate/after.html?raw';
 import nav from '../blocks/corporate/nav.html?raw';
 import hero from '../blocks/corporate/s01.html?raw';
 import why from '../blocks/corporate/s02.html?raw';
-import priceCta from '../blocks/corporate/s05-price.html?raw';
+import contact from '../blocks/corporate/s02c-contact.html?raw';
+import bottomCta from '../blocks/tiers/s02.html?raw';
 ---
 <Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after}>
   <Fragment set:html={nav} />
   <main class="main-wrapper">
     <Fragment set:html={hero} />
     <Fragment set:html={why} />
-    <Fragment set:html={priceCta} />
+    <Fragment set:html={contact} />
+    <Fragment set:html={bottomCta} />
   </main>
 </Base>
