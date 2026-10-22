@@ -135,5 +135,17 @@
   "src/blocks/corporate/s01.html": {
     "sha256": "2f4b17f27bb8877c402cfea8525f53761de4425a3879a0335437c838b27ebc3c",
     "approved": "2026-10-22 corporate hero ok (owner text, Contact us, team-meeting video)"
+  },
+  "src/blocks/corporate/s02.html": {
+    "sha256": "d787114cb8261dbde8a03e810d2df25e360a66b040d62a67e4e2efadbcc844fd",
+    "approved": "2026-10-22 corporate workforce fluency ok (bento, scroll motion)"
+  },
+  "src/blocks/corporate/s02c-contact.html": {
+    "sha256": "1e9d02a3a6bcd193aee511866240ebec5359ec49bf53de00bbb642572b48b94a",
+    "approved": "2026-10-22 corporate contact CTA ok (lime card)"
+  },
+  "src/blocks/corporate/s06-slider.html": {
+    "sha256": "2992f2eeaa9939419fa422708f21c3b627c21376af8df824e8d7c4030241f546",
+    "approved": "2026-10-22 corporate closing slideshow ok (live words, bigger and centred)"
   }
 }
