@@ -171,5 +171,9 @@
   "src/blocks/careers/s02.html": {
     "sha256": "a1460ad5c254cfaeb0e8bcd088ab2d546a68f22d8426663c992bcaac9f3985e9",
     "approved": "2026-10-22 careers why teach ok (scroll row, flip cards, Pexels photos)"
+  },
+  "src/blocks/careers/s03.html": {
+    "sha256": "4898f56a0e1d23933683ba497268f5bf39dddbb9d186bcae682ef34a45e1da65",
+    "approved": "2026-10-22 Careers How to join, owner approved; heading, line and button slide in on scroll at owner request"
   }
 }
