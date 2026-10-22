@@ -103,5 +103,9 @@
   "src/blocks/about/nav.html": {
     "sha256": "aea367eab093f2eda11467cc193ccb499a8255fcf52b7af9e320abd2522a5ba3",
     "approved": "2026-10-22 about nav ok"
+  },
+  "src/blocks/about/s01.html": {
+    "sha256": "f061ebb9091e3099d03b2ee0edebffe3e70c3644ec8ba90af562b73e4be39ea0",
+    "approved": "2026-10-22 about hero ok (Start today button, online-class video below heading)"
   }
 }
