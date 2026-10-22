@@ -16,10 +16,6 @@
           .paths_card p { margin: 1rem 0 0; max-width: 34rem; }
           .paths .button { margin-top: 1.75rem; width: fit-content; }
           @media (max-width: 767px) { .paths_grid { grid-template-columns: 1fr; gap: 4rem; } .paths_img { aspect-ratio: 4 / 3.4; } }
-          @media (prefers-reduced-motion: reduce) {
-            .paths_img, .paths_card > :not(.paths_img) { clip-path: none; opacity: 1; transform: none; transition: none; }
-            .paths_img img { transform: none; height: 100%; }
-          }
         </style>
         <div class="container-large">
           <div class="paths_grid">
@@ -45,8 +41,7 @@
           (function () {
             var root = document.currentScript.closest(".paths");
             var cards = [].slice.call(root.querySelectorAll(".paths_card"));
-            var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-            if (reduce || !("IntersectionObserver" in window)) { cards.forEach(function (c) { c.classList.add("is-in"); }); return; }
+            if (!("IntersectionObserver" in window)) { cards.forEach(function (c) { c.classList.add("is-in"); }); return; }
             // Each photo opens from the bottom and its text follows, once, when the card comes into view.
             var io = new IntersectionObserver(function (entries) {
               entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });

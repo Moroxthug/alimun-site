@@ -140,11 +140,6 @@
           #explore .exp-flip_back p { margin: 0; }
           #explore .exp-slider_slide.is-flipped .exp-flip, #explore .exp-slider_slide:focus-visible .exp-flip { transform: rotateY(180deg); }
           @media (hover: hover) { #explore .exp-slider_slide:hover .exp-flip { transform: rotateY(180deg); } }
-          @media (prefers-reduced-motion: reduce) { #explore .exp-flip { transition: none; } }
-          @media (prefers-reduced-motion: reduce) {
-            #explore .exp-scroll { overflow-x: auto; }
-            #explore .exp-scroll_pin { position: static; }
-          }
         </style>
         <script>
           // Scroll-driven row: while the section is pinned, vertical scroll moves the cards sideways.
@@ -153,12 +148,10 @@
             var pin = section.querySelector(".exp-scroll_pin");
             var row = section.querySelector(".exp-scroll");
             var track = section.querySelector(".exp-scroll_track");
-            var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
             var travel = 0;
             function measure() {
               track.style.transform = "";
               section.style.height = "";
-              if (reduce.matches) return;
               var slides = track.children;
               var last = slides[slides.length - 1].getBoundingClientRect();
               travel = Math.max(0, last.right - row.getBoundingClientRect().right);
@@ -167,7 +160,7 @@
               update();
             }
             function update() {
-              if (reduce.matches || !travel) return;
+              if (!travel) return;
               var start = section.getBoundingClientRect().top + window.scrollY + parseFloat(getComputedStyle(section).paddingTop) - parseFloat(pin.style.top || 0);
               var p = Math.min(1, Math.max(0, (window.scrollY - start) / travel));
               track.style.transform = "translate3d(" + (-p * travel) + "px, 0, 0)";
