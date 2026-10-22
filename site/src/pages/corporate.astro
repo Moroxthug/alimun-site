@@ -1,0 +1,14 @@
+---
+// Corporate page, rebuilt one element at a time from its own blocks.
+import Base from '../layouts/Base.astro';
+import head from '../blocks/corporate/head.html?raw';
+import after from '../blocks/corporate/after.html?raw';
+import nav from '../blocks/corporate/nav.html?raw';
+import hero from '../blocks/corporate/s01.html?raw';
+---
+<Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after}>
+  <Fragment set:html={nav} />
+  <main class="main-wrapper">
+    <Fragment set:html={hero} />
+  </main>
+</Base>
