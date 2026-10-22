@@ -196,3 +196,10 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - api/_lib/one-on-one.js sends a reasonCode with each reason (not_active, no_teacher, before_first_lesson, booked, window_closed, before_lesson_end, join_class_first) and on not_allowed; error codes already existed. Dashboards show student_oto_r_* / student_oto_e_* / teacher_oto_e_* in the site language, English text as fallback. Unit tests assert the codes.
 - Admin bar (js/view-as.js) uses t() with va_* keys; all values escaped.
 - 43 keys added in en/fr/de/es/ma.
+
+## 20-22 Oct 2026 - Tiers rebuild (branch rebuild-astro)
+- Re-cut `site/src/blocks/tiers/head.html` and `footer.html` from the current `tiers.html` (now loads `js/i18n/en.js`, homepage footer i18n keys); added `js/i18n/en.js` to `site/public`.
+- Owner approved and locked: Tiers nav (with head and closing scripts) and the Access Tiers section. Pixel comparison 0 px on desktop and phone, phone menu included.
+- Added for review: the Tiers "Ready to learn?" banner (its own copy, not the homepage block: single-line heading, different i18n keys). 0 px difference at every frame of its loop when both pages have the same length.
+- Preview project `alimun-rebuild-preview` is connected to GitHub; pushes to `rebuild-astro` deploy it.
+- Next: owner approval of the banner, then the Tiers footer.
