@@ -6,11 +6,15 @@ import after from '../blocks/about/after.html?raw';
 import nav from '../blocks/about/nav.html?raw';
 import hero from '../blocks/about/s01.html?raw';
 import why from '../blocks/about/s02.html?raw';
+import langs from '../blocks/about/s03-languages.html?raw';
+import teach from '../blocks/about/s04-teach.html?raw';
 ---
 <Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after}>
   <Fragment set:html={nav} />
   <main class="main-wrapper">
     <Fragment set:html={hero} />
     <Fragment set:html={why} />
+    <Fragment set:html={langs} />
+    <Fragment set:html={teach} />
   </main>
 </Base>

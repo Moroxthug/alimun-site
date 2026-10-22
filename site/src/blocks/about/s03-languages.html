@@ -1,0 +1,54 @@
+      <section class="section langs">
+        <style>
+          .langs { overflow: clip; }
+          .langs_wrap { display: flex; flex-direction: column; align-items: center; text-align: center; }
+          .langs_title { font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-weight: 400; line-height: 1; font-size: clamp(3.5rem, 11vw, 10rem); margin: 0; transform: translateY(calc((1 - var(--langs-p, 1)) * 4rem)) scale(calc(.9 + var(--langs-p, 1) * .1)); opacity: calc(.2 + var(--langs-p, 1) * .8); }
+          .langs_pill { display: inline-flex; align-items: center; justify-content: center; vertical-align: bottom; background-color: var(--green); color: var(--black); border-radius: 5rem; padding: 0 .3em; height: 1.05em; overflow: hidden; position: relative; }
+          .langs_word { display: block; transition: transform .6s cubic-bezier(.215, .61, .355, 1), opacity .6s ease; }
+          .langs_word.is-out { transform: translateY(-110%); opacity: 0; }
+          .langs_word.is-in { transform: translateY(110%); opacity: 0; transition: none; }
+          .langs_text { max-width: 44rem; margin: 2.5rem auto 0; }
+          .langs .button { margin-top: 2rem; width: fit-content; }
+          @media (prefers-reduced-motion: reduce) {
+            .langs_title { transform: none; opacity: 1; }
+            .langs_word { transition: none; }
+          }
+        </style>
+        <div class="container-large">
+          <div class="langs_wrap">
+            <h2 class="langs_title"><span data-i18n="about_langs_learn">Learn</span> <span class="langs_pill"><span class="langs_word" data-words="English|German">English</span></span> <span data-i18n="about_langs_live">live</span></h2>
+            <p class="text-size-large langs_text" data-i18n="about_langs_desc">Classes are open in English and German. Spanish, French, Portuguese, Italian, Mandarin, Japanese and Arabic have a free waitlist, and we email you as soon as your language opens.</p>
+            <a href="signup.html" class="button w-inline-block">
+              <p data-i18n="services_tier_btn">Start today</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16">
+            </a>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".langs");
+            var title = root.querySelector(".langs_title");
+            var word = root.querySelector(".langs_word");
+            var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            // The heading rises and grows into place as the section scrolls in.
+            function update() {
+              var r = root.getBoundingClientRect(), vh = window.innerHeight;
+              var p = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.6)));
+              title.style.setProperty("--langs-p", p.toFixed(3));
+            }
+            if (!reduce) { window.addEventListener("scroll", update, { passive: true }); window.addEventListener("resize", update); update(); }
+            // The highlighted word swaps between the open languages.
+            var words = (word.getAttribute("data-words") || "").split("|"), i = 0;
+            if (words.length > 1) setInterval(function () {
+              i = (i + 1) % words.length;
+              if (reduce) { word.textContent = words[i]; return; }
+              word.classList.add("is-out");
+              setTimeout(function () {
+                word.textContent = words[i];
+                word.classList.remove("is-out"); word.classList.add("is-in");
+                void word.offsetWidth;
+                word.classList.remove("is-in");
+              }, 600);
+            }, 2600);
+          })();
+        </script>
+      </section>
