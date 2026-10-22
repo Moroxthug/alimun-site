@@ -115,5 +115,9 @@
   "src/blocks/about/s02b-paths.html": {
     "sha256": "72060b7128780b2007852120a175c1ec30796466965b2db1341ac297498898b4",
     "approved": "2026-10-22 about photo section ok (learner/teacher, reveal + drift)"
+  },
+  "src/blocks/about/footer.html": {
+    "sha256": "cae4cd88f7edc335a45b438599b180269a79f7b99a840b617dba3220c2cde7b4",
+    "approved": "2026-10-22 about footer ok (Tiers keys, About current)"
   }
 }
