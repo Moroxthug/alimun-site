@@ -1,5 +1,5 @@
       <section id="explore" class="section is-experience">
-        <div class="container-large">
+        <div class="container-large exp-scroll_pin">
           <div class="margin-bottom-64">
             <div data-w-id="f0443543-7ba6-cbc7-74ed-da3d58ab7911" class="wrap_flex is-align-top">
               <div class="max-width-250">
@@ -20,9 +20,9 @@
               </div>
             </div>
           </div>
-          <div data-delay="4000" data-animation="slide" class="exp-slider w-slider" data-autoplay="false" data-easing="ease" data-hide-arrows="false" data-disable-swipe="false" data-autoplay-limit="0" data-nav-spacing="3" data-duration="500" data-infinite="false">
-            <div class="exp-slider_mask w-slider-mask">
-              <div class="exp-slider_slide w-slide">
+          <div class="exp-slider exp-scroll">
+            <div class="exp-slider_mask exp-scroll_track">
+              <div class="exp-slider_slide">
                 <div class="exp-slider_item">
                   <div class="z-index-2">
                     <p class="text-size-medium" data-i18n="services_slide_1">Essay Grading</p>
@@ -30,7 +30,7 @@
                   <div class="exp-slider_overlay"></div>
                 </div>
               </div>
-              <div class="exp-slider_slide w-slide">
+              <div class="exp-slider_slide">
                 <div class="exp-slider_item">
                   <div class="z-index-2">
                     <p class="text-size-medium" data-i18n="services_slide_2">Test &amp; Quiz Grading</p>
@@ -38,7 +38,7 @@
                   <div class="exp-slider_overlay"></div>
                 </div>
               </div>
-              <div class="exp-slider_slide w-slide">
+              <div class="exp-slider_slide">
                 <div class="exp-slider_item">
                   <div class="z-index-2">
                     <p class="text-size-medium" data-i18n="services_slide_3">Homework Review</p>
@@ -46,7 +46,7 @@
                   <div class="exp-slider_overlay"></div>
                 </div>
               </div>
-              <div class="exp-slider_slide w-slide">
+              <div class="exp-slider_slide">
                 <div class="exp-slider_item">
                   <div class="z-index-2">
                     <p class="text-size-medium" data-i18n="services_slide_4">Speaking Practice</p>
@@ -54,7 +54,7 @@
                   <div class="exp-slider_overlay"></div>
                 </div>
               </div>
-              <div class="exp-slider_slide w-slide">
+              <div class="exp-slider_slide">
                 <div class="exp-slider_item">
                   <div class="z-index-2">
                     <p class="text-size-medium" data-i18n="services_slide_5">Error Correction</p>
@@ -62,7 +62,7 @@
                   <div class="exp-slider_overlay"></div>
                 </div>
               </div>
-              <div class="exp-slider_slide w-slide">
+              <div class="exp-slider_slide">
                 <div class="exp-slider_item">
                   <div class="z-index-2">
                     <p class="text-size-medium" data-i18n="services_slide_6">Vocabulary Review</p>
@@ -70,7 +70,7 @@
                   <div class="exp-slider_overlay"></div>
                 </div>
               </div>
-              <div class="exp-slider_slide w-slide">
+              <div class="exp-slider_slide">
                 <div class="exp-slider_item">
                   <div class="z-index-2">
                     <p class="text-size-medium" data-i18n="services_slide_7">Exam Prep</p>
@@ -78,7 +78,7 @@
                   <div class="exp-slider_overlay"></div>
                 </div>
               </div>
-              <div class="exp-slider_slide w-slide">
+              <div class="exp-slider_slide">
                 <div class="exp-slider_item">
                   <div class="z-index-2">
                     <p class="text-size-medium" data-i18n="services_slide_8">Placement Test</p>
@@ -87,15 +87,48 @@
                 </div>
               </div>
             </div>
-            <div class="exp-slider_arrow cc-left w-slider-arrow-left">
-              <div class="z-index-2 w-icon-slider-left"></div>
-              <div class="arrow_dot"></div>
-            </div>
-            <div class="exp-slider_arrow cc-right w-slider-arrow-right">
-              <div class="z-index-2 w-icon-slider-right"></div>
-              <div class="arrow_dot"></div>
-            </div>
-            <div class="hide w-slider-nav"></div>
           </div>
         </div>
+        <style>
+          #explore { overflow: clip; }
+          #explore .exp-scroll_pin { position: sticky; top: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
+          #explore .exp-scroll { padding-bottom: 0; }
+          #explore .exp-scroll_track { will-change: transform; }
+          @media (prefers-reduced-motion: reduce) {
+            #explore .exp-scroll { overflow-x: auto; }
+            #explore .exp-scroll_pin { position: static; }
+          }
+        </style>
+        <script>
+          // Scroll-driven row: while the section is pinned, vertical scroll moves the cards sideways.
+          (function () {
+            var section = document.getElementById("explore");
+            var pin = section.querySelector(".exp-scroll_pin");
+            var row = section.querySelector(".exp-scroll");
+            var track = section.querySelector(".exp-scroll_track");
+            var reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
+            var travel = 0;
+            function measure() {
+              track.style.transform = "";
+              section.style.height = "";
+              if (reduce.matches) return;
+              var slides = track.children;
+              var last = slides[slides.length - 1].getBoundingClientRect();
+              travel = Math.max(0, last.right - row.getBoundingClientRect().right);
+              pin.style.top = Math.min(0, window.innerHeight - pin.offsetHeight) + "px";
+              section.style.height = (section.offsetHeight + travel) + "px";
+              update();
+            }
+            function update() {
+              if (reduce.matches || !travel) return;
+              var start = section.getBoundingClientRect().top + window.scrollY + parseFloat(getComputedStyle(section).paddingTop) - parseFloat(pin.style.top || 0);
+              var p = Math.min(1, Math.max(0, (window.scrollY - start) / travel));
+              track.style.transform = "translate3d(" + (-p * travel) + "px, 0, 0)";
+            }
+            window.addEventListener("scroll", update, { passive: true });
+            window.addEventListener("resize", measure);
+            window.addEventListener("load", measure);
+            measure();
+          })();
+        </script>
       </section>
