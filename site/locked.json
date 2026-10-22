@@ -91,5 +91,17 @@
   "src/blocks/services/footer.html": {
     "sha256": "52465a273ffae491c92de76cb03efb76b8497802341ead3f22bb84ba9d058344",
     "approved": "2026-10-22 services footer ok, keys added (same as the Tiers footer, Services marked current)"
+  },
+  "src/blocks/about/head.html": {
+    "sha256": "82f9cab003e0d006d960b9f11d29f33dcff208712b4839b14b23789c10be3b96",
+    "approved": "2026-10-22 about nav ok"
+  },
+  "src/blocks/about/after.html": {
+    "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
+    "approved": "2026-10-22 about nav ok"
+  },
+  "src/blocks/about/nav.html": {
+    "sha256": "aea367eab093f2eda11467cc193ccb499a8255fcf52b7af9e320abd2522a5ba3",
+    "approved": "2026-10-22 about nav ok"
   }
 }
