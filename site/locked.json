@@ -55,5 +55,9 @@
   "src/blocks/tiers/s02.html": {
     "sha256": "2e015542f5dbbe646611be749d10f91283420b8f7cdf4c5ed287981787c4f82b",
     "approved": "2026-10-22 tiers banner ok"
+  },
+  "src/blocks/tiers/footer.html": {
+    "sha256": "2f7e22085395a99ca6cdc1780935604a90d4cb41a6946f263f2fee0f876e3c7d",
+    "approved": "2026-10-22 tiers footer ok"
   }
 }
