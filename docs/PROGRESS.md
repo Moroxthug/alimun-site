@@ -202,4 +202,4 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Owner approved and locked: Tiers nav (with head and closing scripts) and the Access Tiers section. Pixel comparison 0 px on desktop and phone, phone menu included.
 - Added for review: the Tiers "Ready to learn?" banner (its own copy, not the homepage block: single-line heading, different i18n keys). 0 px difference at every frame of its loop when both pages have the same length.
 - Preview now deploys from the separate repo `Moroxthug/alimun-rebuild-preview` (built `site/dist/` pushed to `main`) to https://alimun-rebuild-preview-1qdd.vercel.app. Pushes to `rebuild-astro` do not update it.
-- Next: owner approval of the banner, then the Tiers footer.
+- Owner approved and locked the banner (22 Oct). Added the Tiers footer for review (its own copy: Tiers marked current, Tiers form page id, no Launchory badge); 0 px desktop/phone/hover. With it the Tiers page equals the live tiers.html apart from whitespace and the two Webflow HTML comments.
