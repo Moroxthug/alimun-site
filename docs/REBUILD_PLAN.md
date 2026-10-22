@@ -1,7 +1,7 @@
 # Rebuild plan: public site in Astro, same design
 
 Status: proposed 20 Oct 2026, waiting for the owner's approval.
-Work branch: `rebuild-astro` (folder `site/`). Preview: https://alimun-rebuild-preview.vercel.app
+Work branch: `rebuild-astro` (folder `site/`). Preview: https://alimun-rebuild-preview-1qdd.vercel.app (Vercel project `alimun-rebuild-preview-1qdd`, deploys from the GitHub repo `Moroxthug/alimun-rebuild-preview`: run `npm run build` in `site/`, copy `site/dist/` into that repo with `vercel.json` `{"cleanUrls": true}`, push to `main`)
 
 ## Why
 
