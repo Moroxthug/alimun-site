@@ -75,5 +75,9 @@
   "src/blocks/services/s01.html": {
     "sha256": "d67528c5c241f507d52cdbbcfe81c9c6b188612a86f183e91a29cf2ecb47b3f6",
     "approved": "2026-10-22 services hero ok (live-class video, black and white)"
+  },
+  "src/blocks/services/s02.html": {
+    "sha256": "07419b2059b41d88d68aebb5d9a3b6e76394ebd0730792beafc2b945898ecf95",
+    "approved": "2026-10-22 services gallery ok"
   }
 }
