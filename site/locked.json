@@ -79,5 +79,9 @@
   "src/blocks/services/s02.html": {
     "sha256": "07419b2059b41d88d68aebb5d9a3b6e76394ebd0730792beafc2b945898ecf95",
     "approved": "2026-10-22 services gallery ok"
+  },
+  "src/blocks/services/s03.html": {
+    "sha256": "3a847243ba1132872e95aee5445a8e64ff1bbaa8d86a4aa2c51f0d08f775a395",
+    "approved": "2026-10-22 services AI features ok (8 cards, scroll row, flip copy, tags removed)"
   }
 }
