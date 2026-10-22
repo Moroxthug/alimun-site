@@ -1,4 +1,10 @@
       <section class="section is-hero">
+        <style>
+          /* Scroll transition: the card grows to full size, the video zooms out and the text drifts up as the page starts to scroll. */
+          .section.is-hero .hero_wrap { transform: scale(var(--hero-s, .9)); transform-origin: center top; will-change: transform; z-index: 3; }
+          .section.is-hero .hero_wrap video { transform: scale(var(--hero-z, 1.15)); }
+          .section.is-hero .hero_inner { transform: translateY(var(--hero-y, 0px)); opacity: var(--hero-o, 1); }
+        </style>
         <div data-w-id="03ed8e6b-3b81-745a-78d6-9b0187a7ce30" class="hero_wrap">
           <div data-poster-url="videos/pexels-8478103-live-class-poster-00001.jpg" data-video-urls="videos/pexels-8478103-live-class-transcode.mp4,videos/pexels-8478103-live-class-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="video_bg w-background-video w-background-video-atom"><video id="services-hero-video" autoplay="" loop="" style="background-image:url(&quot;videos/pexels-8478103-live-class-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
               <source src="videos/pexels-8478103-live-class-transcode.mp4" data-wf-ignore="true">
@@ -28,4 +34,19 @@
             </div>
           </div>
         </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".is-hero");
+            function update() {
+              var p = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.5)));
+              root.style.setProperty("--hero-s", (0.9 + p * 0.1).toFixed(3));
+              root.style.setProperty("--hero-z", (1.15 - p * 0.15).toFixed(3));
+              root.style.setProperty("--hero-y", (-p * 60).toFixed(1) + "px");
+              root.style.setProperty("--hero-o", (1 - p * 0.5).toFixed(3));
+            }
+            window.addEventListener("scroll", update, { passive: true });
+            window.addEventListener("resize", update);
+            update();
+          })();
+        </script>
       </section>

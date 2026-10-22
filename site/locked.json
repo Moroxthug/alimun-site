@@ -73,8 +73,8 @@
     "approved": "2026-10-22 services nav ok"
   },
   "src/blocks/services/s01.html": {
-    "sha256": "d67528c5c241f507d52cdbbcfe81c9c6b188612a86f183e91a29cf2ecb47b3f6",
-    "approved": "2026-10-22 services hero ok (live-class video, black and white)"
+    "sha256": "9e4238244d3a896372e36b37b472029a8c0e295da65d0375498c3445a32e9e6f",
+    "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere"
   },
   "src/blocks/services/s02.html": {
     "sha256": "07419b2059b41d88d68aebb5d9a3b6e76394ebd0730792beafc2b945898ecf95",
@@ -105,8 +105,8 @@
     "approved": "2026-10-22 about nav ok"
   },
   "src/blocks/about/s01.html": {
-    "sha256": "f061ebb9091e3099d03b2ee0edebffe3e70c3644ec8ba90af562b73e4be39ea0",
-    "approved": "2026-10-22 about hero ok (Start today button, online-class video below heading)"
+    "sha256": "4cb22f9325f53fdfb09eaddb283fb55c1d814990ef7ac906e0d822c9718b5f63",
+    "approved": "2026-10-22 about hero ok (Start today button, online-class video below heading) | 2026-10-22 owner: hero scroll transition everywhere"
   },
   "src/blocks/about/s02.html": {
     "sha256": "ad7bba437d4790ca47cf5c035ab8dbc536d985658b340aebfef52bb5360f632e",
@@ -133,8 +133,8 @@
     "approved": "2026-10-22 corporate nav ok"
   },
   "src/blocks/corporate/s01.html": {
-    "sha256": "2f4b17f27bb8877c402cfea8525f53761de4425a3879a0335437c838b27ebc3c",
-    "approved": "2026-10-22 corporate hero ok (owner text, Contact us, team-meeting video)"
+    "sha256": "0089022c6ef1f8e2416a836eeb5562f7f4063afaafa0388614d1d2117f4ac1a6",
+    "approved": "2026-10-22 corporate hero ok (owner text, Contact us, team-meeting video) | 2026-10-22 owner: hero scroll transition everywhere"
   },
   "src/blocks/corporate/s02.html": {
     "sha256": "d787114cb8261dbde8a03e810d2df25e360a66b040d62a67e4e2efadbcc844fd",
@@ -167,5 +167,9 @@
   "src/blocks/careers/s01.html": {
     "sha256": "400ebdbaf659a6a3b1f29b14c1e5e15f635baa3e9ea3e4b85023d24a1494b29f",
     "approved": "2026-10-22 careers hero ok (teaching video, accurate text) | 2026-10-22 owner: scroll transition on the hero (test on Careers)"
+  },
+  "src/blocks/careers/s02.html": {
+    "sha256": "a1460ad5c254cfaeb0e8bcd088ab2d546a68f22d8426663c992bcaac9f3985e9",
+    "approved": "2026-10-22 careers why teach ok (scroll row, flip cards, Pexels photos)"
   }
 }

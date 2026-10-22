@@ -3,6 +3,9 @@
           /* The photo sits below the heading instead of under it, as on About us. */
           .section.is-about-hero .about-visual_wrap { margin-top: 2rem; }
           @media (max-width: 767px) { .section.is-about-hero .about-visual_wrap { margin-top: 1.25rem; } }
+          .section.is-about-hero .about-visual_wrap { transform: scale(var(--hero-s, .9)); transform-origin: center top; will-change: transform; }
+          .section.is-about-hero .video_bg video { transform: scale(var(--hero-z, 1.15)); }
+          .section.is-about-hero .max-width-700 { transform: translateY(var(--hero-y, 0px)); opacity: var(--hero-o, 1); }
         </style>
         <div class="container-large">
           <div class="about-hero_wrap">
@@ -31,6 +34,22 @@
             </div>
           </div>
         </div>
+        <script>
+          // Scroll transition: the video frame grows to full size and the heading drifts up as the page starts to scroll.
+          (function () {
+            var root = document.currentScript.closest(".is-about-hero");
+            function update() {
+              var p = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.5)));
+              root.style.setProperty("--hero-s", (0.9 + p * 0.1).toFixed(3));
+              root.style.setProperty("--hero-z", (1.15 - p * 0.15).toFixed(3));
+              root.style.setProperty("--hero-y", (-p * 60).toFixed(1) + "px");
+              root.style.setProperty("--hero-o", (1 - p * 0.5).toFixed(3));
+            }
+            window.addEventListener("scroll", update, { passive: true });
+            window.addEventListener("resize", update);
+            update();
+          })();
+        </script>
       </section>
 
       <!-- Section 2: Advantages (Natural warm-grey background) -->
