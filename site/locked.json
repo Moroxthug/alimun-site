@@ -71,5 +71,9 @@
   "src/blocks/services/nav.html": {
     "sha256": "94e08fbe2d6f623696e612fe4ab249b851019f6ff21081ef8335c15bd06fe661",
     "approved": "2026-10-22 services nav ok"
+  },
+  "src/blocks/services/s01.html": {
+    "sha256": "d67528c5c241f507d52cdbbcfe81c9c6b188612a86f183e91a29cf2ecb47b3f6",
+    "approved": "2026-10-22 services hero ok (live-class video, black and white)"
   }
 }
