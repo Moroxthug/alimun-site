@@ -107,5 +107,9 @@
   "src/blocks/about/s01.html": {
     "sha256": "f061ebb9091e3099d03b2ee0edebffe3e70c3644ec8ba90af562b73e4be39ea0",
     "approved": "2026-10-22 about hero ok (Start today button, online-class video below heading)"
+  },
+  "src/blocks/about/s02.html": {
+    "sha256": "ad7bba437d4790ca47cf5c035ab8dbc536d985658b340aebfef52bb5360f632e",
+    "approved": "2026-10-22 about section 2 ok (owner wording, no eyebrow/timeline)"
   }
 }
