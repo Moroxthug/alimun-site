@@ -147,5 +147,9 @@
   "src/blocks/corporate/s06-slider.html": {
     "sha256": "2992f2eeaa9939419fa422708f21c3b627c21376af8df824e8d7c4030241f546",
     "approved": "2026-10-22 corporate closing slideshow ok (live words, bigger and centred)"
+  },
+  "src/blocks/corporate/footer.html": {
+    "sha256": "cd7c81fb26c4566b34031e6bb982fca66d36c04bc19e8304b813e2a26495ac66",
+    "approved": "2026-10-22 corporate footer ok (Tiers keys, Corporate current)"
   }
 }
