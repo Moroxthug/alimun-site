@@ -20,6 +20,7 @@ Plan of record: `docs/IMPLEMENTATION_PLAN.md`. Public-site rebuild (Astro, same 
 ## Design and copy rules
 - Only elements that exist on the current homepage: Coolvetica Condensed + Satoshi (`fonts/`), ink `#080808`, lime `#ceff65`, white, bone `#eeeeec` / `#f0efe9`, existing radii, images, logos and copy. No new colours, fonts, icon sets, illustrations, gradients or decorative elements without owner approval.
 - No emojis. No eyebrow/kicker labels above headings. No invented stats, testimonials, badges, logos or counters; numbers come from the database or are removed. Missing copy is written as `[COPY NEEDED]`, not invented.
+- **Banned (owner, 22 Oct 2026):** tags/chips/pills/badges (small outlined labels holding one word or name), numbered lists and numbered steps (01, 02, 03, "1 2 3 4", step counters like "04 / 06"), checklists and bullet lists of short items. Say it in sentences instead (e.g. "practice in the format of B2 First, C1 Advanced and IELTS"). This applies to new and redesigned sections; flag any that remain in existing blocks to the owner.
 
 ## Verify before claiming done
 - `npm run build` passes; inline scripts and `api/` files pass `node --check`.
