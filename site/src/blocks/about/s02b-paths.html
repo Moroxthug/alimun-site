@@ -1,0 +1,46 @@
+      <section class="section paths">
+        <style>
+          .paths_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; }
+          .paths_card { display: flex; flex-direction: column; opacity: 0; transform: translateY(2rem); transition: opacity .8s ease, transform .8s cubic-bezier(.215, .61, .355, 1); }
+          .paths_card.is-in { opacity: 1; transform: none; }
+          .paths_card:nth-child(2) { transition-delay: .15s; }
+          .paths_img { aspect-ratio: 4 / 5; border-radius: 2.25rem; overflow: hidden; }
+          .paths_img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+          .paths_card h2 { margin: 2rem 0 0; }
+          .paths_card p { margin: 1rem 0 0; max-width: 34rem; }
+          .paths .button { margin-top: 1.75rem; width: fit-content; }
+          @media (max-width: 767px) { .paths_grid { grid-template-columns: 1fr; gap: 4rem; } .paths_img { aspect-ratio: 4 / 3.4; } }
+          @media (prefers-reduced-motion: reduce) { .paths_card { opacity: 1; transform: none; transition: none; } }
+        </style>
+        <div class="container-large">
+          <div class="paths_grid">
+            <div class="paths_card">
+              <div class="paths_img shadow-card"><img src="images/pexels-learner-video-call-5486102.jpg" loading="lazy" alt="A learner on a video call, taking notes"></div>
+              <h2 class="heading-style-h3" data-i18n="about_learn_title">Learn English or German live</h2>
+              <p class="text-size-medium" data-i18n="about_learn_desc">Classes are open in English and German. Spanish, French, Portuguese, Italian, Mandarin, Japanese and Arabic have a free waitlist, and we email you as soon as your language opens.</p>
+              <a href="signup.html" class="button w-inline-block">
+                <p data-i18n="services_tier_btn">Start today</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16">
+              </a>
+            </div>
+            <div class="paths_card">
+              <div class="paths_img shadow-card"><img src="images/pexels-teacher-online-6267032.jpg" loading="lazy" alt="A teacher teaching an online class"></div>
+              <h2 class="heading-style-h3" data-i18n="about_teach_title">Teach with Alimun</h2>
+              <p class="text-size-medium" data-i18n="about_teach_desc">Are you a language teacher? We are building our teaching team. See how teaching at Alimun works and apply on our careers page.</p>
+              <a href="careers.html" class="button w-inline-block">
+                <p data-i18n="about_teach_btn">See careers</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16">
+              </a>
+            </div>
+          </div>
+        </div>
+        <script>
+          // Each card fades up once when it comes into view.
+          (function () {
+            var cards = document.currentScript.closest(".paths").querySelectorAll(".paths_card");
+            if (!("IntersectionObserver" in window)) { cards.forEach(function (c) { c.classList.add("is-in"); }); return; }
+            var io = new IntersectionObserver(function (entries) {
+              entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
+            }, { threshold: 0.2 });
+            cards.forEach(function (c) { io.observe(c); });
+          })();
+        </script>
+      </section>
