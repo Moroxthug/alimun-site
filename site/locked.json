@@ -165,7 +165,7 @@
     "approved": "2026-10-22 careers nav ok"
   },
   "src/blocks/careers/s01.html": {
-    "sha256": "5444a18666fe80e05b6e0e4d49316e25ea2c686f953827baa254d529d5c9542a",
-    "approved": "2026-10-22 careers hero ok (teaching video, accurate text)"
+    "sha256": "400ebdbaf659a6a3b1f29b14c1e5e15f635baa3e9ea3e4b85023d24a1494b29f",
+    "approved": "2026-10-22 careers hero ok (teaching video, accurate text) | 2026-10-22 owner: scroll transition on the hero (test on Careers)"
   }
 }
