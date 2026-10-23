@@ -248,3 +248,7 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 2026-10-22 — Careers: How to join locked, banner and footer added
 - How to join approved and locked (`careers/s03.html`). At the owner's request it now also animates on scroll: the heading and its line slide in from opposite sides, the current stage lifts, and the Apply as teacher button rises in.
 - Added the live "Ready to teach?" banner unchanged (`careers/s04.html`) and the footer in the same form as the other pages (Tiers footer keys, Careers marked current, Careers form page id). Both waiting for approval.
+
+## 2026-10-23 — Careers locked; Contact started
+- Careers banner and footer approved and locked; Careers page finished.
+- Contact cut into blocks (`site/src/blocks/contact/`), page `contact.astro` added: shared nav (Contact current), the live contact section unchanged, shared footer (Contact current, Contact form page id). Found: the contact form saves nothing (no handler, Webflow only shows "Thank you"), and the Instagram, LinkedIn and TikTok links (and the footer social icons) point to "#". Asked the owner.

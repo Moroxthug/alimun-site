@@ -175,5 +175,13 @@
   "src/blocks/careers/s03.html": {
     "sha256": "4898f56a0e1d23933683ba497268f5bf39dddbb9d186bcae682ef34a45e1da65",
     "approved": "2026-10-22 Careers How to join, owner approved; heading, line and button slide in on scroll at owner request"
+  },
+  "src/blocks/careers/s04.html": {
+    "sha256": "e8ca3f18664a4fe1a8581f4ddb4f747d5df7f3f4946339a4d78518f95311609d",
+    "approved": "2026-10-23 Careers Ready to teach banner, live, unchanged"
+  },
+  "src/blocks/careers/footer.html": {
+    "sha256": "537004a2b2345da34ea289c525c501fb6bb29fac2f1e4224fe35d1137c5ac8ba",
+    "approved": "2026-10-23 Careers footer, Tiers footer keys, Careers current"
   }
 }

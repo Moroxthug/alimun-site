@@ -1,0 +1,16 @@
+---
+// Contact page, rebuilt one element at a time from its own blocks.
+import Base from '../layouts/Base.astro';
+import head from '../blocks/contact/head.html?raw';
+import after from '../blocks/contact/after.html?raw';
+import nav from '../blocks/contact/nav.html?raw';
+import form from '../blocks/contact/s01.html?raw';
+import footer from '../blocks/contact/footer.html?raw';
+---
+<Base wfPage="68d948d23b6c9f2bbbac3eac" head={head} after={after}>
+  <Fragment set:html={nav} />
+  <main class="main-wrapper">
+    <Fragment set:html={form} />
+  </main>
+  <Fragment set:html={footer} />
+</Base>
