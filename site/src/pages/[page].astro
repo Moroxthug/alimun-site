@@ -33,7 +33,10 @@ const canon = `https://alimun.com/${S.site === 'en' ? '' : S.site + '/'}${c.slug
 const faqItems = S.faq(c);
 // The same questions and answers as structured data, so search engines can show them.
 const faqLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqItems.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) }).replace(/</g, '\\u003c');
-const head = fill(headTpl, { PAGE_TITLE: esc(S.pageTitle(c)), META_DESC: esc(S.metaDesc(c)), CANON: canon, LOCALE: S.locale, FAQ_LD: `  <script type="application/ld+json">${faqLd}</script>` });
+// Phones: room above the hero title for the floating language switcher (top right, from js/i18n.js).
+// RTL: keep the plan name "1 on 1" in Latin order inside right-to-left cards.
+const PAGE_CSS = `\n  <style>@media (max-width: 767px) { .section.is-about-hero.is-course .heading-style-h1 { margin-top: 2.25rem; } } [dir="rtl"] .pl .heading-style-h4 { unicode-bidi: plaintext; text-align: right; }</style>`;
+const head = fill(headTpl, { PAGE_TITLE: esc(S.pageTitle(c)), META_DESC: esc(S.metaDesc(c)), CANON: canon, LOCALE: S.locale, FAQ_LD: `  <script type="application/ld+json">${faqLd}</script>` }) + PAGE_CSS;
 const hero = fill(heroTpl, { ...UI, TITLE: esc(S.heroTitle(c)), VIDEO: c.video, DESC: esc(S.heroDesc(c)), CTA: esc(S.heroCta(c)), CTA_HREF: signup });
 const how = fill(howTpl, { ...UI, HOW_TITLE: esc(S.howTitle(c)), LIVE_DESC: esc(S.liveDesc(c)) });
 const levels = fill(levelsTpl, { ...UI, LV_TITLE: esc(S.levelsTitle(c)) });
