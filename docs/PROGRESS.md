@@ -313,3 +313,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `site/src/data/course-sites/ar.js`: six pages in /ar/ (right to left), written in Modern Standard Arabic for readers in the Gulf, Egypt, the Levant and North Africa. English and German are open. French, Spanish, Portuguese and Italian are waitlist pages. Slugs are ASCII transliterations (`dawrat-inglizi-online` etc.).
 - Course template: page-level style only, no locked block changed. On phones the hero title now clears the floating language switcher; this was already touching the title on the other course pages. On RTL pages, "1 on 1" keeps its Latin order.
 - Checked: build, Italian pages identical apart from the new style line, Playwright desktop and phone on all six pages (no errors or 404s, quiz all correct gives C1 7 of 7), screenshots reviewed for RTL.
+
+## 23 Oct 2026: Arabic live, English course pages (course pages step 6)
+- Arabic course pages live on alimun.com (main at a15e11a). Smoke checks pass, and all six /ar/ pages return 200 and are in the sitemap.
+- `site/src/data/course-sites/en.js`: five pages at the site root for English speakers, in US spelling as on the rest of the site. German (`german-course-online`) is open. Spanish, French, Italian and Portuguese (`<language>-course-online`) are waitlist pages. Only German exams are shown, since the site has no English course for English speakers.
+- Checked: build, Italian pages unchanged apart from the style line from step 5, no leftover words from other languages, Playwright desktop and phone on all five pages (no errors or 404s, quiz all correct gives C1 7 of 7).
