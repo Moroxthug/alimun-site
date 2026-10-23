@@ -1,8 +1,8 @@
 {
   "_note": "Blocks the owner approved. Build fails if one changes. Unlock only on the owner's request.",
   "src/blocks/head.html": {
-    "sha256": "6af1577d53ab180edd753b6941c98c278b18d257466729cfc0bba6111878a5cc",
-    "approved": "2026-10-19 nav ok"
+    "sha256": "ec1be5b7c27edb5399a2580c054ec52640c9d67d2f175a60e7299a5d230f45e7",
+    "approved": "2026-10-19 nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes)"
   },
   "src/blocks/after-body.html": {
     "sha256": "736dc38e48d62d0ee713cd9dfeac4ef58ca3af22541c60e19565a5ea636cdb84",
@@ -33,12 +33,12 @@
     "approved": "2026-10-20 banner ok"
   },
   "src/blocks/07-footer.html": {
-    "sha256": "c3c410bd0db6d4ec1e5576fc6dc7395b0d8650daf64cb6b2c7a145b754c027dc",
-    "approved": "2026-10-20 footer ok"
+    "sha256": "2f2b1daec4c022b6203c8decbf20238588c337235895cc6f231598dcd78ad06f",
+    "approved": "2026-10-20 footer ok; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/tiers/head.html": {
-    "sha256": "fc33a67213b569a025bd3f97fda54508983b47140f9a3a3e371075921f977a04",
-    "approved": "2026-10-20 tiers nav ok"
+    "sha256": "4a18de9c47152aa807701c2af336da13103866cf90b7e97d2a22f6367d33068b",
+    "approved": "2026-10-20 tiers nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes)"
   },
   "src/blocks/tiers/after.html": {
     "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
@@ -57,12 +57,12 @@
     "approved": "2026-10-22 tiers banner ok"
   },
   "src/blocks/tiers/footer.html": {
-    "sha256": "2f7e22085395a99ca6cdc1780935604a90d4cb41a6946f263f2fee0f876e3c7d",
-    "approved": "2026-10-22 tiers footer ok"
+    "sha256": "303367bf8098c3e15277804bd838c42df5002f3843f7e8a1ae56f3583b430b07",
+    "approved": "2026-10-22 tiers footer ok; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/services/head.html": {
-    "sha256": "016f7bd25ad0bc184233969dc99154649c4700636dce224c87438b5f0f785dfd",
-    "approved": "2026-10-22 services nav ok"
+    "sha256": "b9126e6f73bc6b902ba55783390d01f49b1972ad5b4d6d16f85370424ffec46d",
+    "approved": "2026-10-22 services nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes)"
   },
   "src/blocks/services/after.html": {
     "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
@@ -89,12 +89,12 @@
     "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed)"
   },
   "src/blocks/services/footer.html": {
-    "sha256": "52465a273ffae491c92de76cb03efb76b8497802341ead3f22bb84ba9d058344",
-    "approved": "2026-10-22 services footer ok, keys added (same as the Tiers footer, Services marked current)"
+    "sha256": "0680dc4cb329e04d034d1c2a6e2a50efff46095d0e1b06cfb02bd41d9c8c9c4f",
+    "approved": "2026-10-22 services footer ok, keys added (same as the Tiers footer, Services marked current); 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/about/head.html": {
-    "sha256": "82f9cab003e0d006d960b9f11d29f33dcff208712b4839b14b23789c10be3b96",
-    "approved": "2026-10-22 about nav ok"
+    "sha256": "9f3dfa8d7712bebf5813c755c93ec51526ded2f9b7e28ebc6c138753f76cb816",
+    "approved": "2026-10-22 about nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes)"
   },
   "src/blocks/about/after.html": {
     "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
@@ -117,12 +117,12 @@
     "approved": "2026-10-22 about photo section ok (learner/teacher, reveal + drift) | 2026-10-22 owner: animations always play (reduced-motion switch removed)"
   },
   "src/blocks/about/footer.html": {
-    "sha256": "cae4cd88f7edc335a45b438599b180269a79f7b99a840b617dba3220c2cde7b4",
-    "approved": "2026-10-22 about footer ok (Tiers keys, About current)"
+    "sha256": "09e3b94922d027139a8e396d8492280156c33b89580ec57f71ecc4e23bcef78f",
+    "approved": "2026-10-22 about footer ok (Tiers keys, About current); 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/corporate/head.html": {
-    "sha256": "bd2e873772f080163481842586c85f003f97a10e3f7ba44686c34f211711a472",
-    "approved": "2026-10-22 corporate nav ok"
+    "sha256": "a6fbff7011cc003c024cdc2f7171a3b148f952e558c01b98efdaf1196c5b2815",
+    "approved": "2026-10-22 corporate nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes)"
   },
   "src/blocks/corporate/after.html": {
     "sha256": "838c06364965a5530c13b451b6586fc9aef690f18c801a329f6c33e3bdfda3fb",
@@ -149,12 +149,12 @@
     "approved": "2026-10-22 corporate closing slideshow ok (live words, bigger and centred)"
   },
   "src/blocks/corporate/footer.html": {
-    "sha256": "cd7c81fb26c4566b34031e6bb982fca66d36c04bc19e8304b813e2a26495ac66",
-    "approved": "2026-10-22 corporate footer ok (Tiers keys, Corporate current)"
+    "sha256": "ba8a283302e3074e30a5711e763ed6716c1df6b9010ea152887c3024141a5875",
+    "approved": "2026-10-22 corporate footer ok (Tiers keys, Corporate current); 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/careers/head.html": {
-    "sha256": "612ede65378f649c91eec5dc89626d527e005c98956d235c380365e3f6353ab4",
-    "approved": "2026-10-22 careers nav ok"
+    "sha256": "d23641ab0a08865224f9d18e5ada630432de3056c0dd9a71b435a88fd31584f1",
+    "approved": "2026-10-22 careers nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes)"
   },
   "src/blocks/careers/after.html": {
     "sha256": "523f28966a5d2ada38b2b637016e6f7f5b74d3e0520a5e78a33bf2e17c145b74",
@@ -181,20 +181,20 @@
     "approved": "2026-10-23 Careers Ready to teach banner, live, unchanged"
   },
   "src/blocks/careers/footer.html": {
-    "sha256": "537004a2b2345da34ea289c525c501fb6bb29fac2f1e4224fe35d1137c5ac8ba",
-    "approved": "2026-10-23 Careers footer, Tiers footer keys, Careers current"
+    "sha256": "d34b873d41374613008a4763105dccc2f6c5158826256b31a47612aff222607f",
+    "approved": "2026-10-23 Careers footer, Tiers footer keys, Careers current; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/contact/nav.html": {
     "sha256": "4aa58d9fe1045b785a28ed3618e086158dda9e189e91a6bda98f059a0938272f",
     "approved": "2026-10-23 Contact nav, Contact current"
   },
   "src/blocks/contact/s01.html": {
-    "sha256": "47d59dc3882b693301b98ba10eeecd9eb25f6d7305d40d30c5a8047c7c3f1ab6",
-    "approved": "2026-10-23 Contact section: one screen on desktop, typing-desk video, accurate copy, form sends via ?action=contact"
+    "sha256": "bcdaaa8ac59ee36771e8e2cfdf11b83fccea69d259d486afdd11ea3ad22f1baf",
+    "approved": "2026-10-23 Contact section: one screen on desktop, typing-desk video, accurate copy, form sends via ?action=contact; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/contact/footer.html": {
-    "sha256": "a72ce2c54a2adf9b17fa05fb8f20e153d904f677b4d45f61736e7a97a34d7d1f",
-    "approved": "2026-10-23 Contact footer, Tiers footer keys, Contact current"
+    "sha256": "00907b96d11e68c36aa95683ca87904628722085dc0645516bd47b354b574039",
+    "approved": "2026-10-23 Contact footer, Tiers footer keys, Contact current; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/legal/404.html": {
     "sha256": "c66f8075ce8bb503403a6f6dc93d79a6b3078bf56e535f001bf0afa620774994",
@@ -209,8 +209,8 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
   },
   "src/blocks/legal/footer.html": {
-    "sha256": "a0c6af22d736c9caafdb8a505e3439a55d56c5629a64235c33142166b1e99ab9",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+    "sha256": "d29fb4299f64741ce00a9af867929c7f0c0e1969f849a3617b33ee2d01e35fa4",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/legal/gdpr.html": {
     "sha256": "ad0dcc1be6073a0a8c23755491f11880e19b0d509483bf7d6355e7e44b5b2db9",
@@ -221,16 +221,16 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
   },
   "src/blocks/legal/head-cookies.html": {
-    "sha256": "b35cb6d914be7aae43cb28e151f08862a3eaafb54585b9322f83b816fe61b885",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+    "sha256": "10c87bbb4fb7528fce2b9bb18da075fa150a8829277f1a04c4e61046fdcf3cf8",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-23 search descriptions and structured data made accurate (owner: yes)"
   },
   "src/blocks/legal/head-gdpr.html": {
-    "sha256": "c8125514a939ba3b2fbeb6ac321bed68a3430245708af670eed44ef20a9de692",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+    "sha256": "9ca5287762fd111d05fc320b1925745ecef166ef86c07b89a59bf64cd55e231d",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-23 search descriptions and structured data made accurate (owner: yes)"
   },
   "src/blocks/legal/head-terms.html": {
-    "sha256": "c96916cb0fcdd4debeb6f17bdcbcc7c1b949944522952b28d62de5a25d9f79d7",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+    "sha256": "0890d9e3567e460f5b96d2f51fa517b6545caf19c75407058a3e73c6004d0fe3",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-23 search descriptions and structured data made accurate (owner: yes)"
   },
   "src/blocks/legal/nav.html": {
     "sha256": "61344c240eaf3837a53fa3e6626abff026a98e3e57a6dfcbd46a5e7ee66458e1",

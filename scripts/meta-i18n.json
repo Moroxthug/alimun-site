@@ -3,246 +3,295 @@
   "fr": {
     "index": {
       "title": "Alimun – Cours de langue en direct avec retours de l'IA",
-      "desc": "Rejoignez des cours de langue en direct avec des enseignants experts et des retours générés par l'IA. Apprenez l'anglais, l'espagnol, le français, l'italien et plus encore."
+      "desc": "Des cours de langue en direct avec un professeur et le même groupe chaque semaine, et des retours de l'IA sur les devoirs et les exercices. Anglais et allemand ouverts ; d'autres langues sur liste d'attente gratuite."
     },
     "about-us": {
       "title": "Notre histoire – Alimun",
-      "desc": "Découvrez l'équipe derrière Alimun. Notre mission : rendre l'apprentissage des langues accessible, flexible et vraiment efficace grâce à des cours en direct, des enseignants experts et des retours de l'IA en temps réel."
+      "desc": "Pourquoi nous avons créé Alimun : une vraie préparation avec un professeur, à un prix accessible au plus grand nombre. Cours en direct en anglais et en allemand, avec des retours de l'IA entre les cours."
     },
     "careers": {
       "title": "Enseigner avec Alimun | Postes de professeur de langue",
-      "desc": "Passionné(e) de langues ? Rejoignez Alimun comme enseignant(e) natif(ve) et animez des cours en direct pour des apprenants motivés du monde entier. Postulez dès aujourd'hui et aidez les élèves à parler avec assurance."
+      "desc": "Enseignez en direct à des groupes d'environ 6 à 35 apprenants sur Alimun, avec un assistant IA qui prépare les notes et commentaires des devoirs, que vous vérifiez et envoyez. Fixez vos horaires et enseignez de partout."
     },
     "contact": {
       "title": "Contact – Alimun",
-      "desc": "Des questions sur Alimun ? Contactez-nous ou rejoignez notre liste d'attente. Nous vous aidons à trouver la bonne formule et répondons à toutes vos questions."
+      "desc": "Des questions sur les cours et les formules, sur l'enseignement avec Alimun ou sur des cours pour votre entreprise ? Écrivez-nous et nous vous répondrons par e-mail."
     },
     "corporate": {
       "title": "Formation linguistique pour entreprises | Alimun",
-      "desc": "Développez les compétences linguistiques de votre équipe avec une formation en direct et structurée. Anglais, espagnol, français et plus, résultats mesurables, horaires flexibles pour toute taille d'entreprise."
+      "desc": "Formation linguistique pour votre équipe et pour les personnes que vous faites venir : cours privés en direct avec des professeurs expérimentés, cours axés sur le travail, préparation aux certificats et tableau de bord entreprise. Demandez un devis."
     },
     "services": {
       "title": "Formules et services d'apprentissage des langues | Alimun",
-      "desc": "Community, Focused ou Intensive : choisissez votre formule. Sessions en direct, petits groupes, retours personnalisés de l'IA. Commencez à parler une nouvelle langue dès aujourd'hui."
+      "desc": "Comment fonctionne Alimun : test de niveau, cours en direct avec votre professeur à jours fixes, devoirs corrigés avec l'aide de l'IA, bibliothèque d'exercices avec retour immédiat et entraînement au format du B2 First, C1 Advanced, IELTS, Goethe et telc."
     },
     "tiers": {
       "title": "Formules d'accès – Alimun",
-      "desc": "Des prix transparents pour chaque budget. Community, Focused, Intensive : choisissez votre formule d'apprentissage. Aucune carte bancaire requise."
+      "desc": "Comparez les formules Community, Focused, Intensive et 1 à 1 selon la taille du groupe et l'attention, et choisissez celle qui correspond à votre budget et à vos objectifs. Changez quand vous voulez."
     },
     "terms": {
-      "title": "Conditions générales – Alimun"
+      "title": "Conditions générales – Alimun",
+      "desc": "Les conditions qui s'appliquent à l'utilisation du site, des cours en direct et des tableaux de bord Alimun, y compris la facturation, la résiliation et vos droits dans votre pays."
     },
     "cookies": {
-      "title": "Politique relative aux cookies – Alimun"
+      "title": "Politique relative aux cookies – Alimun",
+      "desc": "Quels cookies et technologies similaires Alimun utilise, pourquoi, et comment modifier vos choix."
     },
     "gdpr": {
-      "title": "Politique de confidentialité RGPD – Alimun"
+      "title": "Politique de confidentialité RGPD – Alimun",
+      "desc": "Comment Alimun collecte, utilise et protège vos données personnelles, et vos droits au titre du RGPD et des autres lois sur la vie privée."
     }
   },
   "de": {
     "index": {
       "title": "Alimun – Live-Sprachkurse mit KI-Feedback",
-      "desc": "Nimm an Live-Sprachkursen mit erfahrenen Lehrkräften und KI-gestütztem Feedback teil. Lerne Englisch, Spanisch, Französisch, Italienisch und mehr."
+      "desc": "Live-Sprachkurse mit einer Lehrkraft und derselben Gruppe jede Woche, dazu KI-Feedback zu Hausaufgaben und Übungen. Englisch und Deutsch sind geöffnet; weitere Sprachen mit kostenloser Warteliste."
     },
     "about-us": {
       "title": "Unsere Geschichte – Alimun",
-      "desc": "Lerne das Team hinter Alimun kennen. Unsere Mission: Sprachenlernen zugänglich, flexibel und wirklich wirksam machen – mit Live-Kursen, erfahrenen Lehrkräften und KI-Feedback in Echtzeit."
+      "desc": "Warum wir Alimun gegründet haben: echte Vorbereitung mit einer Lehrkraft, zu einem Preis, den sich mehr Menschen leisten können. Live-Kurse auf Englisch und Deutsch, mit KI-Feedback zwischen den Stunden."
     },
     "careers": {
       "title": "Unterrichten bei Alimun | Jobs für Sprachlehrkräfte",
-      "desc": "Du liebst Sprachen? Unterrichte bei Alimun als muttersprachliche Lehrkraft und leite Live-Kurse für motivierte Lernende weltweit. Bewirb dich jetzt und hilf Lernenden, selbstbewusst zu sprechen."
+      "desc": "Unterrichten Sie auf Alimun live Gruppen von etwa 6 bis 35 Lernenden, mit einem KI-Assistenten, der Noten und Feedback zu Hausaufgaben entwirft, die Sie prüfen und versenden. Eigene Zeiten, von überall."
     },
     "contact": {
       "title": "Kontakt – Alimun",
-      "desc": "Fragen zu Alimun? Melde dich bei uns oder trag dich in unsere Warteliste ein. Wir helfen dir, den passenden Plan zu finden, und beantworten alle deine Fragen."
+      "desc": "Fragen zu Kursen und Tarifen, zum Unterrichten bei Alimun oder zu Kursen für Ihr Unternehmen? Schreiben Sie uns, wir antworten per E-Mail."
     },
     "corporate": {
       "title": "Sprachtraining für Unternehmen | Alimun",
-      "desc": "Stärke die Sprachkenntnisse deines Teams mit strukturiertem Live-Training. Englisch, Spanisch, Französisch und mehr – messbare Ergebnisse, flexible Termine für Unternehmen jeder Größe."
+      "desc": "Sprachtraining für Ihr Team und für Mitarbeitende, die Sie versetzen: private Live-Kurse mit erfahrenen Lehrkräften, Unterricht mit Berufsbezug, Übungen für Zertifikate und ein Unternehmens-Dashboard. Fordern Sie ein Angebot an."
     },
     "services": {
       "title": "Sprachlernpläne und Leistungen | Alimun",
-      "desc": "Community, Focused oder Intensive – wähle deinen Sprachlernplan. Live-Sitzungen, kleine Gruppen, persönliches KI-Feedback. Fang noch heute an, eine neue Sprache zu sprechen."
+      "desc": "So funktioniert Alimun: Einstufungstest, Live-Kurse mit Ihrer Lehrkraft an festen Tagen, Hausaufgaben mit KI-Unterstützung bewertet, eine Übungsbibliothek mit sofortigem Feedback und Übungen im Format von B2 First, C1 Advanced, IELTS, Goethe und telc."
     },
     "tiers": {
       "title": "Zugangsstufen – Alimun",
-      "desc": "Transparente Preise für jedes Budget. Community, Focused, Intensive – wähle deine Lernstufe. Keine Kreditkarte nötig."
+      "desc": "Vergleichen Sie die Tarife Community, Focused, Intensive und 1 zu 1 nach Gruppengröße und Betreuung und wählen Sie den, der zu Ihrem Budget und Ihren Zielen passt. Jederzeit wechselbar."
     },
     "terms": {
-      "title": "Allgemeine Geschäftsbedingungen – Alimun"
+      "title": "Allgemeine Geschäftsbedingungen – Alimun",
+      "desc": "Die Bedingungen für die Nutzung der Alimun-Website, der Live-Kurse und der Dashboards, einschließlich Abrechnung, Kündigung und Ihrer Rechte in Ihrem Land."
     },
     "cookies": {
-      "title": "Cookie-Richtlinie – Alimun"
+      "title": "Cookie-Richtlinie – Alimun",
+      "desc": "Welche Cookies und ähnlichen Technologien Alimun verwendet, wofür und wie Sie Ihre Auswahl ändern."
     },
     "gdpr": {
-      "title": "DSGVO-Datenschutzerklärung – Alimun"
+      "title": "DSGVO-Datenschutzerklärung – Alimun",
+      "desc": "Wie Alimun Ihre personenbezogenen Daten erhebt, nutzt und schützt, und Ihre Rechte nach der DSGVO und anderen Datenschutzgesetzen."
     }
   },
   "es": {
     "index": {
       "title": "Alimun – Clases de idiomas en directo con feedback de IA",
-      "desc": "Únete a clases de idiomas en directo con profesores expertos y feedback con IA. Aprende inglés, español, francés, italiano y más."
+      "desc": "Clases de idiomas en directo con un profesor y el mismo grupo cada semana, más correcciones con IA en deberes y práctica. Inglés y alemán ya abiertos; más idiomas con lista de espera gratuita."
     },
     "about-us": {
       "title": "Nuestra historia – Alimun",
-      "desc": "Conoce al equipo detrás de Alimun. Nuestra misión: hacer que aprender idiomas sea accesible, flexible y realmente eficaz con clases en directo, profesores expertos y feedback de IA en tiempo real."
+      "desc": "Por qué creamos Alimun: una preparación real con un profesor, a un precio que más personas puedan pagar. Clases en directo en inglés y alemán, con correcciones de IA entre clases."
     },
     "careers": {
       "title": "Enseña con Alimun | Empleo para profesores de idiomas",
-      "desc": "¿Te apasionan los idiomas? Únete a Alimun como profesor nativo y dirige clases en directo para estudiantes motivados de todo el mundo. Postúlate hoy y ayuda a los estudiantes a hablar con confianza."
+      "desc": "Enseña en directo a grupos de unos 6 a 35 alumnos en Alimun, con un asistente de IA que prepara las notas y comentarios de los deberes para que los revises y envíes. Elige tu horario y enseña desde cualquier lugar."
     },
     "contact": {
       "title": "Contacto – Alimun",
-      "desc": "¿Tienes preguntas sobre Alimun? Escríbenos o únete a nuestra lista de espera. Te ayudamos a encontrar el plan adecuado y respondemos a todo lo que necesites."
+      "desc": "¿Preguntas sobre las clases y los planes, sobre enseñar con Alimun o sobre clases para tu empresa? Envíanos un mensaje y te responderemos por correo."
     },
     "corporate": {
       "title": "Formación de idiomas para empresas | Alimun",
-      "desc": "Mejora las competencias lingüísticas de tu equipo con formación en directo y estructurada. Inglés, español, francés y más: resultados medibles y horarios flexibles para empresas de cualquier tamaño."
+      "desc": "Formación en idiomas para tu equipo y para las personas que trasladas: clases privadas en directo con profesores experimentados, clases centradas en el trabajo, práctica para certificados y un panel para la empresa. Pide presupuesto."
     },
     "services": {
       "title": "Planes y servicios para aprender idiomas | Alimun",
-      "desc": "Community, Focused o Intensive: elige tu plan para aprender idiomas. Sesiones en directo, grupos reducidos y feedback personalizado de IA. Empieza a hablar un nuevo idioma hoy."
+      "desc": "Cómo funciona Alimun: prueba de nivel, clases en directo con tu profesor en días fijos, deberes corregidos con ayuda de IA, biblioteca de práctica con corrección al instante y práctica en formato de B2 First, C1 Advanced, IELTS, Goethe y telc."
     },
     "tiers": {
       "title": "Niveles de acceso – Alimun",
-      "desc": "Precios transparentes para cada presupuesto. Community, Focused, Intensive: elige tu nivel de aprendizaje. Sin tarjeta de crédito."
+      "desc": "Compara los planes Community, Focused, Intensive y 1 a 1 por tamaño de grupo y atención, y elige el que encaje con tu presupuesto y tus objetivos. Cambia cuando quieras."
     },
     "terms": {
-      "title": "Términos y condiciones – Alimun"
+      "title": "Términos y condiciones – Alimun",
+      "desc": "Las condiciones que se aplican al uso del sitio web, las clases en directo y los paneles de Alimun, incluida la facturación, la cancelación y tus derechos en tu país."
     },
     "cookies": {
-      "title": "Política de cookies – Alimun"
+      "title": "Política de cookies – Alimun",
+      "desc": "Qué cookies y tecnologías similares usa Alimun, para qué y cómo cambiar tus preferencias."
     },
     "gdpr": {
-      "title": "Política de privacidad RGPD – Alimun"
+      "title": "Política de privacidad RGPD – Alimun",
+      "desc": "Cómo Alimun recoge, usa y protege tus datos personales, y tus derechos según el RGPD y otras leyes de privacidad."
     }
   },
   "it": {
     "index": {
-      "title": "Alimun – Corsi di lingua dal vivo con feedback dell'IA"
+      "title": "Alimun – Corsi di lingua dal vivo con feedback dell'IA",
+      "desc": "Lezioni di lingua dal vivo con un insegnante e lo stesso gruppo ogni settimana, più il riscontro dell'IA su compiti ed esercizi. Inglese e tedesco già aperti; altre lingue con lista d'attesa gratuita."
     },
     "about-us": {
-      "title": "La nostra storia – Alimun"
+      "title": "La nostra storia – Alimun",
+      "desc": "Perché abbiamo creato Alimun: una preparazione vera con un insegnante, a un prezzo accessibile a più persone. Lezioni dal vivo in inglese e tedesco, con il riscontro dell'IA tra una lezione e l'altra."
     },
     "careers": {
-      "title": "Insegna con Alimun | Opportunità per insegnanti di lingue"
+      "title": "Insegna con Alimun | Opportunità per insegnanti di lingue",
+      "desc": "Insegna dal vivo a gruppi di circa 6-35 studenti su Alimun, con un assistente IA che prepara voti e commenti sui compiti che tu controlli e invii. Scegli i tuoi orari e insegna da qualsiasi luogo."
     },
     "contact": {
-      "title": "Contatti – Alimun"
+      "title": "Contatti – Alimun",
+      "desc": "Domande sulle lezioni e sui piani, sull'insegnamento con Alimun o sulle lezioni per la tua azienda? Scrivici e ti risponderemo via e-mail."
     },
     "corporate": {
-      "title": "Formazione linguistica aziendale | Alimun"
+      "title": "Formazione linguistica aziendale | Alimun",
+      "desc": "Formazione linguistica per il tuo team e per le persone che trasferisci: lezioni private dal vivo con insegnanti esperti, lezioni orientate al lavoro, pratica per le certificazioni e una dashboard aziendale. Chiedi un preventivo."
     },
     "services": {
-      "title": "Piani e servizi per imparare le lingue | Alimun"
+      "title": "Piani e servizi per imparare le lingue | Alimun",
+      "desc": "Come funziona Alimun: test di livello, lezioni dal vivo con il tuo insegnante in giorni fissi, compiti corretti con l'aiuto dell'IA, una libreria di esercizi con riscontro immediato e pratica nel formato di B2 First, C1 Advanced, IELTS, Goethe e telc."
     },
     "tiers": {
-      "title": "Piani di accesso – Alimun"
+      "title": "Piani di accesso – Alimun",
+      "desc": "Confronta i piani Community, Focused, Intensive e 1 a 1 per dimensione del gruppo e attenzione, e scegli quello adatto al tuo budget e ai tuoi obiettivi. Cambia quando vuoi."
     },
     "terms": {
-      "title": "Termini e condizioni – Alimun"
+      "title": "Termini e condizioni – Alimun",
+      "desc": "Le condizioni che si applicano all'uso del sito, delle lezioni dal vivo e delle dashboard di Alimun, inclusi fatturazione, disdetta e i tuoi diritti nel tuo Paese."
     },
     "cookies": {
-      "title": "Informativa sui cookie – Alimun"
+      "title": "Informativa sui cookie – Alimun",
+      "desc": "Quali cookie e tecnologie simili usa Alimun, perché e come modificare le tue scelte."
     },
     "gdpr": {
-      "title": "Informativa sulla privacy GDPR – Alimun"
+      "title": "Informativa sulla privacy GDPR – Alimun",
+      "desc": "Come Alimun raccoglie, usa e protegge i tuoi dati personali, e i tuoi diritti ai sensi del GDPR e di altre leggi sulla privacy."
     }
   },
   "pt": {
     "index": {
-      "title": "Alimun – Aulas de línguas ao vivo com feedback de IA"
+      "title": "Alimun – Aulas de línguas ao vivo com feedback de IA",
+      "desc": "Aulas de línguas ao vivo com um professor e o mesmo grupo todas as semanas, além de feedback de IA nos trabalhos e na prática. Inglês e alemão já abertos; mais línguas com lista de espera gratuita."
     },
     "about-us": {
-      "title": "A nossa história – Alimun"
+      "title": "A nossa história – Alimun",
+      "desc": "Porque criámos a Alimun: preparação real com um professor, a um preço que mais pessoas possam pagar. Aulas ao vivo em inglês e alemão, com feedback de IA entre as aulas."
     },
     "careers": {
-      "title": "Ensine com a Alimun | Oportunidades para professores de línguas"
+      "title": "Ensine com a Alimun | Oportunidades para professores de línguas",
+      "desc": "Ensine ao vivo grupos de cerca de 6 a 35 alunos na Alimun, com um assistente de IA que prepara as notas e comentários dos trabalhos para rever e enviar. Defina o seu horário e ensine de qualquer lugar."
     },
     "contact": {
-      "title": "Contacto – Alimun"
+      "title": "Contacto – Alimun",
+      "desc": "Dúvidas sobre as aulas e os planos, sobre ensinar com a Alimun ou sobre aulas para a sua empresa? Envie-nos uma mensagem e responderemos por e-mail."
     },
     "corporate": {
-      "title": "Formação linguística para empresas | Alimun"
+      "title": "Formação linguística para empresas | Alimun",
+      "desc": "Formação em línguas para a sua equipa e para as pessoas que transfere: aulas privadas ao vivo com professores experientes, aulas focadas no trabalho, prática para certificados e um painel da empresa. Peça um orçamento."
     },
     "services": {
-      "title": "Planos e serviços de aprendizagem de línguas | Alimun"
+      "title": "Planos e serviços de aprendizagem de línguas | Alimun",
+      "desc": "Como funciona a Alimun: teste de nível, aulas ao vivo com o seu professor em dias fixos, trabalhos corrigidos com ajuda de IA, uma biblioteca de prática com feedback imediato e prática no formato do B2 First, C1 Advanced, IELTS, Goethe e telc."
     },
     "tiers": {
-      "title": "Planos de acesso – Alimun"
+      "title": "Planos de acesso – Alimun",
+      "desc": "Compare os planos Community, Focused, Intensive e 1 para 1 por tamanho do grupo e atenção, e escolha o que se adapta ao seu orçamento e objetivos. Mude quando quiser."
     },
     "terms": {
-      "title": "Termos e condições – Alimun"
+      "title": "Termos e condições – Alimun",
+      "desc": "Os termos que se aplicam à utilização do site, das aulas ao vivo e dos painéis da Alimun, incluindo faturação, cancelamento e os seus direitos no seu país."
     },
     "cookies": {
-      "title": "Política de cookies – Alimun"
+      "title": "Política de cookies – Alimun",
+      "desc": "Que cookies e tecnologias semelhantes a Alimun usa, para quê e como alterar as suas escolhas."
     },
     "gdpr": {
-      "title": "Política de privacidade RGPD – Alimun"
+      "title": "Política de privacidade RGPD – Alimun",
+      "desc": "Como a Alimun recolhe, usa e protege os seus dados pessoais, e os seus direitos ao abrigo do RGPD e de outras leis de privacidade."
     }
   },
   "zh": {
     "index": {
-      "title": "Alimun – 直播语言课程与 AI 反馈"
+      "title": "Alimun – 直播语言课程与 AI 反馈",
+      "desc": "由老师带同一个小组每周上直播语言课，作业和练习还有 AI 反馈。英语和德语现已开课；更多语言可免费加入候补名单。"
     },
     "about-us": {
-      "title": "我们的故事 – Alimun"
+      "title": "我们的故事 – Alimun",
+      "desc": "我们为什么创办 Alimun：由老师带来真正的学习，价格让更多人负担得起。英语和德语直播课，课与课之间有 AI 反馈。"
     },
     "careers": {
-      "title": "加入 Alimun 任教 | 语言教师招聘"
+      "title": "加入 Alimun 任教 | 语言教师招聘",
+      "desc": "在 Alimun 为约 6 到 35 名学员的小组直播授课，AI 助手起草作业评分和评语，由你审核后发送。自定时间，随处教学。"
     },
     "contact": {
-      "title": "联系我们 – Alimun"
+      "title": "联系我们 – Alimun",
+      "desc": "对课程和套餐、在 Alimun 任教或企业课程有疑问？给我们留言，我们会通过电子邮件回复。"
     },
     "corporate": {
-      "title": "企业语言培训 | Alimun"
+      "title": "企业语言培训 | Alimun",
+      "desc": "为你的团队和外派员工提供语言培训：资深教师的私人直播课、以工作为中心的课程、证书题型练习和企业管理面板。联系我们获取报价。"
     },
     "services": {
-      "title": "语言学习套餐与服务 | Alimun"
+      "title": "语言学习套餐与服务 | Alimun",
+      "desc": "Alimun 如何运作：分级测试、固定日子与老师上直播课、在 AI 协助下批改作业、即时反馈的练习库，以及 B2 First、C1 Advanced、IELTS、Goethe 和 telc 题型练习。"
     },
     "tiers": {
-      "title": "课程套餐 – Alimun"
+      "title": "课程套餐 – Alimun",
+      "desc": "按小组规模和关注度比较 Community、Focused、Intensive 和一对一套餐，选择适合你预算和目标的那一个。随时可以更换。"
     },
     "terms": {
-      "title": "条款与条件 – Alimun"
+      "title": "条款与条件 – Alimun",
+      "desc": "适用于使用 Alimun 网站、直播课程和学习面板的条款，包括计费、取消以及你在所在国家的权利。"
     },
     "cookies": {
-      "title": "Cookie 政策 – Alimun"
+      "title": "Cookie 政策 – Alimun",
+      "desc": "Alimun 使用哪些 Cookie 及类似技术、用途是什么，以及如何更改你的选择。"
     },
     "gdpr": {
-      "title": "GDPR 隐私政策 – Alimun"
+      "title": "GDPR 隐私政策 – Alimun",
+      "desc": "Alimun 如何收集、使用和保护你的个人数据，以及你依据 GDPR 和其他隐私法律享有的权利。"
     }
   },
   "ar": {
     "index": {
-      "title": "ألمون – دورات لغات مباشرة مع ملاحظات الذكاء الاصطناعي"
+      "title": "ألمون – دورات لغات مباشرة مع ملاحظات الذكاء الاصطناعي",
+      "desc": "حصص لغات مباشرة مع معلّم والمجموعة نفسها كل أسبوع، مع ملاحظات الذكاء الاصطناعي على الواجبات والتمارين. الإنجليزية والألمانية متاحتان الآن، ولغات أخرى بقائمة انتظار مجانية."
     },
     "about-us": {
-      "title": "قصتنا – ألمون"
+      "title": "قصتنا – ألمون",
+      "desc": "لماذا أنشأنا ألمون: إعداد حقيقي مع معلّم، بسعر يستطيع تحمّله عدد أكبر من الناس. حصص مباشرة بالإنجليزية والألمانية، مع ملاحظات الذكاء الاصطناعي بين الحصص."
     },
     "careers": {
-      "title": "درّس مع ألمون | فرص عمل لمعلّمي اللغات"
+      "title": "درّس مع ألمون | فرص عمل لمعلّمي اللغات",
+      "desc": "درّس مباشرةً مجموعات من نحو 6 إلى 35 متعلّمًا على ألمون، مع مساعد ذكاء اصطناعي يُعدّ مسودة لدرجات الواجبات وملاحظاتها لتراجعها وترسلها. حدّد ساعاتك ودرّس من أي مكان."
     },
     "contact": {
-      "title": "اتصل بنا – ألمون"
+      "title": "اتصل بنا – ألمون",
+      "desc": "لديك أسئلة عن الحصص والباقات، أو عن التدريس مع ألمون، أو عن دروس لشركتك؟ أرسل لنا رسالة وسنردّ بالبريد الإلكتروني."
     },
     "corporate": {
-      "title": "تدريب لغوي للشركات | ألمون"
+      "title": "تدريب لغوي للشركات | ألمون",
+      "desc": "تدريب لغوي لفريقك وللموظفين الذين تنقلهم: حصص خاصة مباشرة مع معلّمين ذوي خبرة، ودروس تركّز على العمل، وتدريب على الشهادات، ولوحة تحكم للشركة. اطلب عرض سعر."
     },
     "services": {
-      "title": "باقات وخدمات تعلّم اللغات | ألمون"
+      "title": "باقات وخدمات تعلّم اللغات | ألمون",
+      "desc": "كيف يعمل ألمون: اختبار تحديد المستوى، حصص مباشرة مع معلّمك في أيام ثابتة، واجبات تُصحَّح بمساعدة الذكاء الاصطناعي، مكتبة تمارين بملاحظات فورية، وتدريب وفق نمط B2 First وC1 Advanced وIELTS وGoethe وtelc."
     },
     "tiers": {
-      "title": "باقات الاشتراك – ألمون"
+      "title": "باقات الاشتراك – ألمون",
+      "desc": "قارن باقات Community وFocused وIntensive والحصص الفردية حسب حجم المجموعة والاهتمام، واختر ما يناسب ميزانيتك وأهدافك. يمكنك التغيير في أي وقت."
     },
     "terms": {
-      "title": "الشروط والأحكام – ألمون"
+      "title": "الشروط والأحكام – ألمون",
+      "desc": "الشروط التي تنطبق على استخدامك لموقع ألمون وحصصه المباشرة ولوحات التحكم، بما في ذلك الفوترة والإلغاء وحقوقك في بلدك."
     },
     "cookies": {
-      "title": "سياسة ملفات تعريف الارتباط – ألمون"
+      "title": "سياسة ملفات تعريف الارتباط – ألمون",
+      "desc": "ما ملفات تعريف الارتباط والتقنيات المشابهة التي يستخدمها ألمون، ولماذا، وكيف تغيّر اختياراتك."
     },
     "gdpr": {
-      "title": "سياسة الخصوصية (GDPR) – ألمون"
+      "title": "سياسة الخصوصية (GDPR) – ألمون",
+      "desc": "كيف يجمع ألمون بياناتك الشخصية ويستخدمها ويحميها، وحقوقك بموجب اللائحة العامة لحماية البيانات وقوانين الخصوصية الأخرى."
     }
   }
 }

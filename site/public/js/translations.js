@@ -1,5 +1,6 @@
 window.ALIMUN_TRANSLATIONS = {
   "en": {
+    "footer_gdpr": "GDPR Policy",
     "about_why_1": "We built Alimun because we wanted to offer a new way to learn a language: real preparation with a teacher, at a price more people can afford.",
     "about_why_2": "Your teacher leads every class and plans what you learn. Between classes, AI gives you instant feedback on your essays and tests and helps your teacher grade your homework, so your teacher’s time goes into teaching and you keep practising at your own pace.",
     "about_learn_title": "Learn English or German live",
@@ -1098,6 +1099,7 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "Needs review. Revise grammar conjugations."
   },
   "es": {
+    "footer_gdpr": "Política RGPD",
     "about_why_1": "Creamos Alimun porque queríamos ofrecer una nueva forma de aprender un idioma: una preparación real con un profesor, a un precio que más personas puedan pagar.",
     "about_why_2": "Tu profesor dirige cada clase y planifica lo que aprendes. Entre clases, la IA te da correcciones al instante en tus redacciones y tests y ayuda a tu profesor a calificar tus deberes, para que el tiempo de tu profesor se dedique a enseñar y tú sigas practicando a tu ritmo.",
     "about_learn_title": "Aprende inglés o alemán en directo",
@@ -2181,6 +2183,7 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "Necesita repaso. Revisa las conjugaciones gramaticales."
   },
   "fr": {
+    "footer_gdpr": "Politique RGPD",
     "about_why_1": "Nous avons créé Alimun parce que nous voulions proposer une nouvelle façon d'apprendre une langue : une vraie préparation avec un professeur, à un prix accessible au plus grand nombre.",
     "about_why_2": "Votre professeur anime chaque cours et planifie ce que vous apprenez. Entre les cours, l'IA vous donne un retour immédiat sur vos rédactions et vos tests et aide votre professeur à corriger vos devoirs, pour que son temps soit consacré à l'enseignement et que vous continuiez à pratiquer à votre rythme.",
     "about_learn_title": "Apprenez l'anglais ou l'allemand en direct",
@@ -3264,6 +3267,7 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "Nécessite une révision. Révise les conjugations de grammaire."
   },
   "de": {
+    "footer_gdpr": "DSGVO-Datenschutzerklärung",
     "about_why_1": "Wir haben Alimun gegründet, weil wir eine neue Art des Sprachenlernens anbieten wollten: echte Vorbereitung mit einer Lehrkraft, zu einem Preis, den sich mehr Menschen leisten können.",
     "about_why_2": "Ihre Lehrkraft leitet jeden Kurs und plant, was Sie lernen. Zwischen den Kursen gibt Ihnen die KI sofortiges Feedback zu Ihren Aufsätzen und Tests und hilft Ihrer Lehrkraft beim Bewerten Ihrer Hausaufgaben, damit ihre Zeit in den Unterricht fließt und Sie in Ihrem eigenen Tempo weiterüben.",
     "about_learn_title": "Englisch oder Deutsch live lernen",
@@ -4347,6 +4351,7 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "Wiederholung erforderlich. Lerne die Grammatikkonjugationen."
   },
   "pt": {
+    "footer_gdpr": "Política RGPD",
     "about_why_1": "Criámos a Alimun porque queríamos oferecer uma nova forma de aprender uma língua: preparação real com um professor, a um preço que mais pessoas possam pagar.",
     "about_why_2": "O seu professor conduz cada aula e planeia o que aprende. Entre as aulas, a IA dá-lhe feedback imediato nas suas redações e testes e ajuda o professor a corrigir os trabalhos de casa, para que o tempo dele seja dedicado a ensinar e o aluno continue a praticar ao seu ritmo.",
     "about_learn_title": "Aprenda inglês ou alemão ao vivo",
@@ -5087,6 +5092,7 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "Precisa de revisão. Revise as conjugações gramaticais."
   },
   "zh": {
+    "footer_gdpr": "GDPR 隐私政策",
     "about_why_1": "我们创办 Alimun，是因为想提供一种全新的语言学习方式：由老师带来真正的备考与学习，而价格让更多人负担得起。",
     "about_why_2": "每节课都由老师主讲并规划你的学习内容。课与课之间，AI 会对你的作文和测试即时给出反馈，并协助老师批改作业，让老师把时间用在教学上，你也能按自己的节奏持续练习。",
     "about_learn_title": "在线直播学英语或德语",
@@ -5827,6 +5833,7 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "需要复习。温习语法变位。"
   },
   "ar": {
+    "footer_gdpr": "سياسة الخصوصية (GDPR)",
     "about_why_1": "أنشأنا ألمون لأننا أردنا تقديم طريقة جديدة لتعلّم اللغات: إعداد حقيقي مع معلّم، بسعر يستطيع تحمّله عدد أكبر من الناس.",
     "about_why_2": "يقود معلّمك كل حصة ويخطّط لما تتعلّمه. وبين الحصص، يمنحك الذكاء الاصطناعي ملاحظات فورية على مقالاتك واختباراتك ويساعد معلّمك في تصحيح واجباتك، ليذهب وقت المعلّم إلى التدريس وتواصل أنت التدرّب بالوتيرة التي تناسبك.",
     "about_learn_title": "تعلّم الإنجليزية أو الألمانية مباشرةً",
@@ -6567,6 +6574,7 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "بحاجة للمراجعة. راجع تصريفات القواعد."
   },
   "it": {
+    "footer_gdpr": "Informativa GDPR",
     "about_why_1": "Abbiamo creato Alimun perché volevamo offrire un nuovo modo di imparare una lingua: una preparazione vera con un insegnante, a un prezzo accessibile a più persone.",
     "about_why_2": "Il tuo insegnante guida ogni lezione e pianifica cosa impari. Tra una lezione e l'altra, l'IA ti dà un riscontro immediato su temi e test e aiuta il tuo insegnante a correggere i compiti, così il suo tempo va all'insegnamento e tu continui a esercitarti al tuo ritmo.",
     "about_learn_title": "Impara inglese o tedesco dal vivo",
@@ -7492,6 +7500,7 @@ window.ALIMUN_TRANSLATIONS = {
     "Needs review. Revise grammar conjugations.": "Richiede ripasso. Rivedi le coniugazioni grammaticali."
   },
   "ma": {
+    "footer_gdpr": "Politique RGPD",
     "about_why_1": "Nous avons créé Alimun parce que nous voulions proposer une nouvelle façon d'apprendre une langue : une vraie préparation avec un professeur, à un prix accessible au plus grand nombre.",
     "about_why_2": "Votre professeur anime chaque cours et planifie ce que vous apprenez. Entre les cours, l'IA vous donne un retour immédiat sur vos rédactions et vos tests et aide votre professeur à corriger vos devoirs, pour que son temps soit consacré à l'enseignement et que vous continuiez à pratiquer à votre rythme.",
     "about_learn_title": "Apprenez l'anglais ou l'allemand en direct",
