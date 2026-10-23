@@ -994,6 +994,9 @@ function renderTeacherConfirm() {
 const urlParams  = new URLSearchParams(window.location.search);
 const queryRole  = urlParams.get('role');
 const queryStep  = parseInt(urlParams.get('step') || '', 10);
+// Course pages link with ?language=German etc. so the language is already chosen.
+const queryLang  = urlParams.get('language');
+if (LANGS.includes(queryLang)) fd.language = queryLang;
 
 // Resume a half-finished signup. Steps 1-2 only create the auth user; if we
 // already have a session (email confirmed and signed in, or Stripe Checkout

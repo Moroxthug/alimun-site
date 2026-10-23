@@ -1,0 +1,56 @@
+---
+// Italian course pages: one template from approved blocks, filled per language.
+// Built at the site root and moved to /it/ by scripts/localize.mjs (Italian only).
+// English and German are open for enrolment; the others offer the free waitlist.
+import Base from '../layouts/Base.astro';
+import headTpl from '../blocks/course/head.html?raw';
+import heroTpl from '../blocks/course/hero.html?raw';
+import after from '../blocks/legal/after.html?raw';
+import nav from '../blocks/legal/nav.html?raw';
+import footer from '../blocks/legal/footer.html?raw';
+
+export function getStaticPaths() {
+  const open = (lang, name, video) => ({
+    lang, name, video, open: true,
+    pageTitle: `Corsi di ${name} online con lezioni dal vivo | Alimun`,
+    metaDesc: `Corsi di ${name} online in piccoli gruppi con un insegnante, in giorni e orari fissi ogni settimana, compiti corretti con l'aiuto dell'IA ed esercizi con correzione immediata. Da €24 al mese.`,
+    desc: "Lezioni dal vivo in video con un insegnante e lo stesso gruppo, in giorni fissi e alla stessa ora ogni settimana. Tra una lezione e l'altra ti eserciti con correzione immediata e il tuo insegnante corregge i compiti con l'aiuto dell'IA. Da €24 al mese.",
+    cta: 'Inizia ora',
+  });
+  const waitlist = (lang, name, video) => ({
+    lang, name, video, open: false,
+    pageTitle: `Corsi di ${name} online: lista d'attesa | Alimun`,
+    metaDesc: `Le lezioni di ${name} su Alimun apriranno presto. Iscriviti gratis alla lista d'attesa e ti scriveremo appena si aprono le classi.`,
+    desc: `Le classi di ${name} apriranno presto. Iscriviti gratis alla lista d'attesa: ti scriviamo appena si apre la tua lingua e oggi non paghi nulla. Nel frattempo puoi già seguire le lezioni di inglese e tedesco.`,
+    cta: "Unisciti alla lista d'attesa",
+  });
+  return [
+    { params: { slug: 'inglese-online' }, props: open('English', 'inglese', 'pexels-12156230-london') },
+    { params: { slug: 'tedesco-online' }, props: open('German', 'tedesco', 'pexels-29955338-berlin') },
+    { params: { slug: 'francese-online' }, props: waitlist('French', 'francese', 'pexels-4272751-paris') },
+    { params: { slug: 'spagnolo-online' }, props: waitlist('Spanish', 'spagnolo', 'pexels-20066590-barcelona') },
+    { params: { slug: 'portoghese-online' }, props: waitlist('Portuguese', 'portoghese', 'pexels-12890902-sintra') },
+  ];
+}
+
+const { slug } = Astro.params;
+const c = Astro.props;
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const fill = (tpl, values) => Object.entries(values).reduce((t, [k, v]) => t.split(`{{${k}}}`).join(v), tpl);
+
+const head = fill(headTpl, { PAGE_TITLE: esc(c.pageTitle), META_DESC: esc(c.metaDesc), SLUG: `corsi-${slug}` });
+const hero = fill(heroTpl, {
+  TITLE: esc(`Corsi di ${c.name} online`),
+  VIDEO: c.video,
+  DESC: esc(c.desc),
+  CTA: esc(c.cta),
+  CTA_HREF: `signup.html?role=student&amp;language=${c.lang}`,
+});
+---
+<Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang="it">
+  <Fragment set:html={nav} />
+  <main class="main-wrapper">
+    <Fragment set:html={hero} />
+  </main>
+  <Fragment set:html={footer} />
+</Base>

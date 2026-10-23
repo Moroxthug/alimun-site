@@ -25,7 +25,10 @@ const languages = Object.keys(translations).filter((l) => l !== 'en');
 const HREFLANG = { ma: 'fr-MA' };
 // Not public pages: the 404 has no language copies, the mockup is a work file.
 const SKIP = new Set(['404.html', 'mockup-home.html']);
-const pages = fs.readdirSync(dist).filter((f) => f.endsWith('.html') && !SKIP.has(f));
+const COURSE = /^corsi-/;
+const pages = fs.readdirSync(dist).filter((f) => f.endsWith('.html') && !SKIP.has(f) && !COURSE.test(f));
+// Italian course pages exist only in Italian: built at the root, moved to /it/.
+const coursePages = fs.readdirSync(dist).filter((f) => COURSE.test(f));
 
 const url = (lang, file) => {
   const name = file.replace(/\.html$/, '');
@@ -61,6 +64,17 @@ for (const file of pages) {
   }
 }
 
+for (const file of coursePages) {
+  const english = withEnglishFile(fs.readFileSync(path.join(dist, file), 'utf8'));
+  let html = localizePage(english, { lang: 'it', templateFile: file, langDict: translations.it || {}, META_I18N, META_LANG });
+  const $ = cheerio.load(html);
+  $('link[rel="alternate"][hreflang]').remove();
+  $('head').append(`\n  <link rel="alternate" hreflang="it" href="${url('it', file)}">\n`);
+  fs.writeFileSync(path.join(dist, 'it', file), $.html());
+  fs.rmSync(path.join(dist, file));
+  count++;
+}
+
 const today = new Date().toISOString().slice(0, 10);
 const entries = [];
 for (const file of pages) {
@@ -68,8 +82,9 @@ for (const file of pages) {
     .map(([h, u]) => `    <xhtml:link rel="alternate" hreflang="${h}" href="${u}"/>`).join('\n');
   for (const lang of ['en', ...languages]) entries.push(`  <url>\n    <loc>${url(lang, file)}</loc>\n${alts}\n    <lastmod>${today}</lastmod>\n  </url>`);
 }
+for (const file of coursePages) entries.push(`  <url>\n    <loc>${url('it', file)}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`);
 // Keep addresses the current sitemap lists that are not rebuilt yet (the Italian course pages).
-const covered = new Set(pages.flatMap((f) => ['en', ...languages].map((l) => url(l, f))));
+const covered = new Set([...pages.flatMap((f) => ['en', ...languages].map((l) => url(l, f))), ...coursePages.map((f) => url('it', f))]);
 const current = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
 for (const block of current.match(/<url>[\s\S]*?<\/url>/g) || []) {
   const loc = (block.match(/<loc>([^<]+)<\/loc>/) || [])[1];
