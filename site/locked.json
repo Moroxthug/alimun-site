@@ -259,5 +259,13 @@
   "src/blocks/course/exams.html": {
     "sha256": "874bf7069e2e3eec75731a64135c7306516bd0b9fb7cd695a6db54b54647ba09",
     "approved": "2026-10-23 Italian course pages: certificates accordion (owner: section ok)"
+  },
+  "src/blocks/course/guide.html": {
+    "sha256": "f48ce6560db2156fc5115c8d18865a9ed4c150d7aa384298c4985795dae43a4a",
+    "approved": "2026-10-23 Italian course pages: guide text with lime markers (owner: section ok)"
+  },
+  "src/data/course-guides.js": {
+    "sha256": "a6c56128e11f1e06a3b737e1b5dfbdcd36bc91bb19bf0a6fa5149b14f161d82b",
+    "approved": "2026-10-23 Italian course pages: guide text with lime markers (owner: section ok)"
   }
 }

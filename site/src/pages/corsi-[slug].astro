@@ -9,6 +9,7 @@ import howTpl from '../blocks/course/how.html?raw';
 import levelsTpl from '../blocks/course/levels.html?raw';
 import examsTpl from '../blocks/course/exams.html?raw';
 import guideTpl from '../blocks/course/guide.html?raw';
+import plansTpl from '../blocks/course/plans.html?raw';
 import { GUIDES } from '../data/course-guides.js';
 import after from '../blocks/legal/after.html?raw';
 import nav from '../blocks/legal/nav.html?raw';
@@ -91,6 +92,8 @@ const guide = fill(guideTpl, {
   GUIDE_LEAD: mark(g.lead),
   GUIDE_ROWS: g.rows.map(([h, ps]) => `          <div class="gd_row"><h3 class="heading-style-h4">${esc(h)}</h3><div class="gd_text">${ps.map((t) => `<p class="text-size-large">${mark(t)}</p>`).join('')}</div></div>`).join('\n'),
 });
+// Plans only where classes can be bought today.
+const plans = c.open ? fill(plansTpl, { CTA_HREF: `signup.html?role=student&amp;language=${c.lang}` }) : '';
 ---
 <Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang="it">
   <Fragment set:html={nav} />
@@ -100,6 +103,7 @@ const guide = fill(guideTpl, {
     <Fragment set:html={levels} />
     <Fragment set:html={exams} />
     <Fragment set:html={guide} />
+    <Fragment set:html={plans} />
   </main>
   <Fragment set:html={footer} />
 </Base>
