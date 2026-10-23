@@ -318,3 +318,16 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Arabic course pages live on alimun.com (main at a15e11a). Smoke checks pass, and all six /ar/ pages return 200 and are in the sitemap.
 - `site/src/data/course-sites/en.js`: five pages at the site root for English speakers, in US spelling as on the rest of the site. German (`german-course-online`) is open. Spanish, French, Italian and Portuguese (`<language>-course-online`) are waitlist pages. Only German exams are shown, since the site has no English course for English speakers.
 - Checked: build, Italian pages unchanged apart from the style line from step 5, no leftover words from other languages, Playwright desktop and phone on all five pages (no errors or 404s, quiz all correct gives C1 7 of 7).
+
+## 23 Oct 2026: English live, Morocco course pages (course pages step 7)
+- English course pages live on alimun.com (main at 1de72f8). Smoke checks pass, and the five root pages return 200 and are in the sitemap.
+- `site/src/data/course-sites/ma.js`: five original French-language pages in /ma/ for Moroccan users, not a translation of /fr/. They use "vous", as on the rest of /ma/.
+  - English (open): jobs, offshoring, remote work, IELTS for Canada and the UK.
+  - German (open): Ausbildung and work in Germany. B1 is the usual level for a training visa and A1 for joining a spouse. Health jobs often ask for B2.
+  - French (waitlist): studies in France, TCF/TEF/DELF.
+  - Spanish (waitlist): the north of Morocco and Spain as a partner.
+  - Italian (waitlist): the Moroccan community in Italy.
+  - Portuguese is left out for this audience.
+  - Slugs: `cours-<language>-en-ligne-maroc`. hreflang and html lang are fr-MA.
+- Checked: build, no leftover words from other languages, Playwright desktop and phone on all five pages (no errors, quiz C1 7 of 7).
+- Flag for the owner: the language switcher shows "EN" on every /ma/ page (existing behavior; `js/i18n.js` leaves 'ma' out of the menu on purpose).
