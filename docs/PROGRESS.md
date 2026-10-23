@@ -359,3 +359,17 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - Facts come from the existing plan text (group sizes, classes a week, weekly feedback, weekly one-to-one, prices). Prices still pass through `js/currency.js`.
 - Translations: 10 `home_groups_*` keys in all nine homepage languages (`js/translations.js`, regenerated `js/i18n/*`).
 - Checked: desktop, phone, Arabic (RTL; positions are measured, so the glide works in both directions, and "1 on 1" keeps its order) and Chinese. No errors.
+
+## 23 Oct 2026: homepage, dot row removed, new "Online language courses" section
+- Owner: remove the dot row from the group-size section; build the next section before the FAQ with SEO authority in mind.
+- `groups.html`: dot row removed (markup, styles, script).
+- New `site/src/blocks/home/languages.html`, "Online language courses":
+  - A list of course links beside a video card that stays in view. As each course reaches the middle of the screen, its city video wipes in and a lime marker sweeps behind its title.
+  - On phones the card sits at the top with a white strip above it.
+- SEO: `site/scripts/localize.mjs` writes the rows per site language from `src/data/course-sites/*.js`.
+  - Each homepage links to its own course pages, with the course title as anchor text (e.g. "Englischkurs online").
+  - Each homepage also gets an `ItemList` of `Course` items in JSON-LD (name, description, URL, provider).
+  - The Chinese homepage drops the section (no Chinese course pages yet).
+- Translations: `home_langs_title` and `home_langs_desc` in all nine languages.
+- `vercel.json`: no automatic builds for the rebuild-astro branch (owner yes), to save the daily build cap for the preview link and production.
+- Checked: desktop, phone and Arabic. Active video plays, no 404s, no errors.

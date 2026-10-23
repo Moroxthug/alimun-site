@@ -1,0 +1,94 @@
+      <section class="ln">
+        <style>
+          /* Online language courses: a list of course links beside a video card that stays in view. As each course
+             reaches the middle of the screen its city video wipes in and a lime marker sweeps behind its title.
+             The rows, links and videos are written per site language by scripts/localize.mjs from the course data. */
+          .ln { position: relative; padding: 8rem 0; background-color: var(--white); }
+          .ln_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+          .ln_head h2 { margin: 0; }
+          .ln_head p { margin: 1.25rem 0 0; max-width: 34rem; color: rgba(8, 8, 8, .7); }
+          .ln_list { list-style: none; margin: 3rem 0 0; padding: 0; }
+          .ln_row { display: flex; align-items: center; min-height: 30vh; border-top: 1px solid rgba(8, 8, 8, .12); }
+          .ln_row:last-child { border-bottom: 1px solid rgba(8, 8, 8, .12); }
+          .ln_link { display: block; width: 100%; padding: 2rem 0; color: var(--black); text-decoration: none; }
+          .ln_title { display: inline; font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-size: clamp(2.5rem, 4.4vw, 4.5rem); line-height: 1.05; letter-spacing: -.01em;
+            background-image: linear-gradient(var(--green), var(--green)); background-repeat: no-repeat; background-position: 0 88%; background-size: 0% 42%;
+            transition: background-size .8s cubic-bezier(.215, .61, .355, 1); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+          [dir="rtl"] .ln_title { background-position: 100% 88%; text-transform: none; }
+          .ln_go { display: flex; align-items: center; gap: .5rem; margin-top: 1rem; font-size: 1.125rem; transform: translateX(0); transition: transform .6s cubic-bezier(.215, .61, .355, 1); }
+          .ln_go img { width: 1rem; height: 1rem; }
+          [dir="rtl"] .ln_go img { transform: scaleX(-1); }
+          .ln_row.is-on .ln_title { background-size: 100% 42%; }
+          .ln_row.is-on .ln_go { transform: translateX(.75rem); }
+          [dir="rtl"] .ln_row.is-on .ln_go { transform: translateX(-.75rem); }
+          .ln_side { position: sticky; top: 14vh; }
+          .ln_media { position: relative; height: 72vh; border-radius: 3.125rem; overflow: hidden; background-color: var(--black); }
+          .ln_video { position: absolute; inset: 0; clip-path: inset(100% 0 0 0); transition: clip-path 1s cubic-bezier(.77, 0, .175, 1); }
+          .ln_video.is-on { clip-path: inset(0 0 0 0); z-index: 2; }
+          .ln_video.was-on { clip-path: inset(0 0 0 0); z-index: 1; }
+          .ln_video video { width: 100%; height: 100%; object-fit: cover; display: block; }
+          .ln_row { opacity: 0; transform: translateY(2.5rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .ln_row.is-in { opacity: 1; transform: none; }
+          @media (max-width: 767px) {
+            .ln { padding: 4.5rem 0; }
+            .ln_grid { grid-template-columns: 1fr; gap: 0; }
+            /* Phones: the card stays at the top with a white strip above it, so the list slides away under it. */
+            .ln_side { order: -1; top: 0; z-index: 3; padding: 5.5rem 0 1rem; background-color: var(--white); }
+            .ln_media { height: 30vh; border-radius: 2.25rem; }
+            .ln_head { margin-top: 1rem; }
+            .ln_list { margin-top: 1.5rem; }
+            .ln_row { min-height: 34vh; }
+            .ln_title { font-size: 2.6rem; }
+          }
+        </style>
+        <div class="container-large">
+          <div class="ln_grid">
+            <div>
+              <div class="ln_head">
+                <h2 class="heading-style-h2" data-i18n="home_langs_title">Online language courses</h2>
+                <p class="text-size-medium" data-i18n="home_langs_desc">Live classes with a teacher, from A1 to C2, with practice between classes. Choose your language to see how the course works, its levels, the certificates you can prepare for and the prices.</p>
+              </div>
+              <ul class="ln_list" data-course-list></ul>
+            </div>
+            <div class="ln_side"><div class="ln_media shadow-card" data-course-media aria-hidden="true"></div></div>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".ln");
+            var rows = [].slice.call(root.querySelectorAll(".ln_row")), media = [].slice.call(root.querySelectorAll(".ln_video"));
+            if (!rows.length) return;
+            var current = -1;
+            if ("IntersectionObserver" in window) {
+              var seen = new IntersectionObserver(function (entries) {
+                entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-in"); seen.unobserve(e.target); } });
+              }, { rootMargin: "0px 0px -10% 0px" });
+              rows.forEach(function (r) { seen.observe(r); });
+            } else rows.forEach(function (r) { r.classList.add("is-in"); });
+            function show(k) {
+              if (k === current) return;
+              var prev = current; current = k;
+              rows.forEach(function (r, i) { r.classList.toggle("is-on", i === k); });
+              media.forEach(function (m, i) {
+                var v = m.querySelector("video");
+                m.classList.toggle("is-on", i === k);
+                m.classList.toggle("was-on", i === prev);
+                if (i === k) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+              });
+              // Pause the clip that left once the wipe has covered it.
+              setTimeout(function () { media.forEach(function (m, i) { if (i !== current) { m.classList.remove("was-on"); m.querySelector("video").pause(); } }); }, 1000);
+            }
+            function update() {
+              var mid = window.innerHeight * (window.innerWidth < 768 ? .68 : .5), best = 0, dist = Infinity;
+              rows.forEach(function (r, i) {
+                var b = r.getBoundingClientRect(), d = Math.abs(b.top + b.height / 2 - mid);
+                if (d < dist) { dist = d; best = i; }
+              });
+              show(best);
+            }
+            window.addEventListener("scroll", update, { passive: true });
+            window.addEventListener("resize", update);
+            update();
+          })();
+        </script>
+      </section>

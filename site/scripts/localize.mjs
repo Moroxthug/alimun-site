@@ -56,14 +56,45 @@ function withEnglishFile(html) {
   return html.replace('<script src="js/i18n.js"', '<script src="js/i18n/en.js" defer></script>\n  <script src="js/i18n.js"');
 }
 
+// Homepage course list (src/blocks/home/languages.html): each site language links to its own course
+// pages, with their video and a structured-data list of the courses. Sites without course pages drop it.
+const courseSites = {};
+for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'course-sites')).filter((f) => f.endsWith('.js'))) {
+  const S = (await import(new URL(`../src/data/course-sites/${f}`, import.meta.url))).default;
+  courseSites[S.site] = S;
+}
+const coursePath = (S, c) => `/${S.site === 'en' ? '' : S.site + '/'}${c.slug}`;
+function withCourseList(html, lang) {
+  if (!html.includes('data-course-list')) return html;
+  const $ = cheerio.load(html);
+  const S = courseSites[lang];
+  if (!S) { $('section.ln').remove(); return $.html(); }
+  const list = $('[data-course-list]'), media = $('[data-course-media]');
+  for (const c of S.courses) {
+    const row = $('<li class="ln_row"><a class="ln_link"><span class="ln_title"></span><span class="ln_go"><span></span><img src="/images/icon-arrow-light.svg" alt=""></span></a></li>');
+    row.find('a').attr('href', coursePath(S, c));
+    row.find('.ln_title').text(S.heroTitle(c));
+    row.find('.ln_go > span').text(S.heroCta(c));
+    list.append(row);
+    const v = `/videos/${c.video}`;
+    media.append(`<div class="ln_video"><video muted loop playsinline preload="none" poster="${v}-poster-00001.jpg"><source src="${v}-transcode.mp4" type="video/mp4"><source src="${v}-transcode.webm" type="video/webm"></video></div>`);
+  }
+  const ld = { '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: S.courses.map((c, i) => ({
+    '@type': 'ListItem', position: i + 1, url: BASE + coursePath(S, c),
+    item: { '@type': 'Course', name: S.heroTitle(c), description: S.metaDesc(c), url: BASE + coursePath(S, c),
+      provider: { '@type': 'Organization', name: 'Alimun', sameAs: BASE } } })) };
+  $('head').append(`\n  <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>\n`);
+  return $.html();
+}
+
 let count = 0;
 for (const file of pages) {
   const english = withEnglishFile(fs.readFileSync(path.join(dist, file), 'utf8'));
-  fs.writeFileSync(path.join(dist, file), withAlternates(english, file));
+  fs.writeFileSync(path.join(dist, file), withAlternates(withCourseList(english, 'en'), file));
   for (const lang of languages) {
     fs.mkdirSync(path.join(dist, lang), { recursive: true });
     const html = localizePage(english, { lang, templateFile: file, langDict: translations[lang] || {}, META_I18N, META_LANG });
-    fs.writeFileSync(path.join(dist, lang, file), withAlternates(html, file));
+    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withCourseList(html, lang), file));
     count++;
   }
 }

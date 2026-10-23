@@ -1,17 +1,12 @@
       <section class="gs">
         <style>
-          /* Group size: the screen holds while four plan cards glide sideways with the scroll. Above them a row of
-             35 dots, one per person, collapses to the size of the group in view (35, 17, 6, then 1). The first dot,
-             in lime, is you. Each card's photo drifts slightly against the card for depth. */
+          /* Group size: the screen holds while four plan cards glide sideways with the scroll. Each card's photo drifts
+             slightly against the card for depth. */
           .gs { position: relative; height: 420vh; background-color: var(--white); }
           .gs_stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
           .gs_head { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: end; margin-bottom: 2.5rem; }
           .gs_head h2 { margin: 0; }
-          .gs_intro p { margin: 0 0 1.5rem; max-width: 34rem; color: rgba(8, 8, 8, .7); }
-          .gs_dots { display: flex; align-items: center; height: 1rem; }
-          .gs_dot { flex: none; width: .75rem; height: .75rem; margin-right: .5rem; border-radius: 50%; background-color: var(--black); transition: width .6s cubic-bezier(.215, .61, .355, 1), margin .6s cubic-bezier(.215, .61, .355, 1), transform .6s cubic-bezier(.215, .61, .355, 1), opacity .4s ease; }
-          .gs_dot.is-out { width: 0; margin-right: 0; transform: scale(0); opacity: 0; }
-          .gs_dot.is-you { background-color: var(--green); box-shadow: 0 0 0 1px var(--black) inset; }
+          .gs_intro p { margin: 0; max-width: 34rem; color: rgba(8, 8, 8, .7); }
           .gs_rail { position: relative; }
           .gs_track { display: flex; gap: 2rem; will-change: transform; }
           .gs_panel { flex: none; width: min(68rem, 74vw); display: grid; grid-template-columns: 1.1fr 1fr; border-radius: 3.125rem; background-color: var(--white); overflow: hidden; }
@@ -30,9 +25,7 @@
           @media (max-width: 767px) {
             .gs { height: 380vh; }
             .gs_head { grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.25rem; }
-            .gs_intro p { font-size: .95rem; margin-bottom: 1rem; }
-            .gs_dots { height: .6rem; }
-            .gs_dot { width: .45rem; height: .45rem; margin-right: .2rem; }
+            .gs_intro p { font-size: .95rem; }
             .gs_track { gap: 1rem; }
             .gs_panel { width: 84vw; grid-template-columns: 1fr; border-radius: 2.25rem; }
             .gs_img { height: 24vh; }
@@ -51,7 +44,6 @@
               <h2 class="heading-style-h2" data-i18n="home_groups_title">Choose the size of your group</h2>
               <div class="gs_intro">
                 <p class="text-size-medium" data-i18n="home_groups_desc">Every plan has live classes with a teacher on fixed days every week. The smaller the group, the more time you have to speak.</p>
-                <div class="gs_dots" aria-hidden="true"></div>
               </div>
             </div>
           </div>
@@ -103,9 +95,6 @@
           (function () {
             var root = document.currentScript.closest(".gs");
             var track = root.querySelector(".gs_track"), panels = [].slice.call(root.querySelectorAll(".gs_panel"));
-            var dotsBox = root.querySelector(".gs_dots"), dots = [];
-            for (var i = 0; i < 35; i++) { var d = document.createElement("i"); d.className = i ? "gs_dot" : "gs_dot is-you"; dotsBox.appendChild(d); dots.push(d); }
-            var current = -1;
             function update() {
               var range = root.offsetHeight - window.innerHeight;
               var p = Math.min(1, Math.max(0, -root.getBoundingClientRect().top / range));
@@ -118,13 +107,6 @@
               panels.forEach(function (panel, k) {
                 var off = Math.max(-1, Math.min(1, t * (panels.length - 1) - k));
                 panel.style.setProperty("--gs-shift", (off * 6).toFixed(2) + "%");
-              });
-              var k = Math.min(panels.length - 1, Math.round(t * (panels.length - 1)));
-              if (k === current) return;
-              current = k;
-              var size = +panels[k].getAttribute("data-size");
-              dots.forEach(function (d, i) {
-                d.classList.toggle("is-out", i >= size);
               });
             }
             window.addEventListener("scroll", update, { passive: true });
