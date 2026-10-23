@@ -87,14 +87,25 @@ function withCourseList(html, lang) {
   return $.html();
 }
 
+// Homepage FAQ (src/blocks/home/faq.html): FAQPage structured data from the questions and answers as
+// translated on that page, so each language version describes its own text.
+function withFaqLd(html) {
+  if (!html.includes('class="fq"')) return html;
+  const $ = cheerio.load(html);
+  const items = $('section.fq .fq_card').map((_, el) => ({ q: $(el).find('.fq_q').text().trim(), a: $(el).find('.fq_a').text().trim() })).get().filter((x) => x.q && x.a);
+  const ld = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: items.map((x) => ({ '@type': 'Question', name: x.q, acceptedAnswer: { '@type': 'Answer', text: x.a } })) };
+  $('head').append(`\n  <script type="application/ld+json">${JSON.stringify(ld).replace(/</g, '\\u003c')}</script>\n`);
+  return $.html();
+}
+
 let count = 0;
 for (const file of pages) {
   const english = withEnglishFile(fs.readFileSync(path.join(dist, file), 'utf8'));
-  fs.writeFileSync(path.join(dist, file), withAlternates(withCourseList(english, 'en'), file));
+  fs.writeFileSync(path.join(dist, file), withAlternates(withFaqLd(withCourseList(english, 'en')), file));
   for (const lang of languages) {
     fs.mkdirSync(path.join(dist, lang), { recursive: true });
     const html = localizePage(english, { lang, templateFile: file, langDict: translations[lang] || {}, META_I18N, META_LANG });
-    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withCourseList(html, lang), file));
+    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withFaqLd(withCourseList(html, lang)), file));
     count++;
   }
 }

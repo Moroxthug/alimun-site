@@ -1,8 +1,8 @@
 {
   "_note": "Blocks the owner approved. Build fails if one changes. Unlock only on the owner's request.",
   "src/blocks/head.html": {
-    "sha256": "e36b7659d94c92673ce2d735982b438ac71c176ee7f7b664d26599b68fc75366",
-    "approved": "2026-10-19 nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-23 FAQ answers made accurate (owner: faq ok)"
+    "sha256": "c56a5a0ea6760579a6c5abe0dcf6950e53d99090421ce3fbe318c6175c181899",
+    "approved": "2026-10-19 nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-23 FAQ answers made accurate (owner: faq ok); 2026-10-23 English-only FAQPage removed from the head graph (owner FAQ redo; each language now gets its own FAQPage from the FAQ section)"
   },
   "src/blocks/after-body.html": {
     "sha256": "736dc38e48d62d0ee713cd9dfeac4ef58ca3af22541c60e19565a5ea636cdb84",
@@ -15,10 +15,6 @@
   "src/blocks/02-hero.html": {
     "sha256": "7bbe81c46d0e8e64e78b8f1f0ea8dd77d81d574240bc1963fd5c842e1defc395",
     "approved": "2026-10-19 hero ok; 2026-10-23 video replaced on owner request (Pexels 3252922, group talking by a window)"
-  },
-  "src/blocks/05-faq.html": {
-    "sha256": "e62b5af708465f50067bdb4eb466cf1bb75d2a85386e1449f7ac41c744899cc0",
-    "approved": "2026-10-19 faq ok; 2026-10-23 FAQ answers made accurate (owner: faq ok)"
   },
   "src/blocks/06-bottom-cta.html": {
     "sha256": "26eea6e3b61f9ec56d3764d3d64d253d19a53bd37f0991c0fbaf60a51c57df27",

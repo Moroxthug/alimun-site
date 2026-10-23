@@ -382,3 +382,13 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - English is first in the homepage list; the switcher links it with the English course pages of every other site.
   - Homepage rows show only the language name.
 - Checked: the new page on desktop and phone (quiz C1 7 of 7, no errors or 404s).
+
+## 23 Oct 2026: homepage FAQ redone from scratch
+- Owner: redo the FAQ from scratch on a white background.
+- New `site/src/blocks/home/faq.html`, using the six approved questions and answers (existing translation keys):
+  - Flip cards in a 3/2/1-column grid. Each white card shows a question; click or tap and it turns over in 3D to show the answer on lime.
+  - The cards rise in one after another as the section comes into view.
+  - The contact link uses the lime marker; the `#faq` anchor (hero "Learn more") is kept.
+- Removed `05-faq.html` and its lock entry.
+- SEO: `localize.mjs` adds FAQPage JSON-LD per language from the translated cards. The English-only FAQPage in the shared head graph (which every language inherited untranslated) is removed; head lock hash updated with a note.
+- Checked: desktop, phone and Arabic. No answer overflows its card, no errors, one FAQPage per page.
