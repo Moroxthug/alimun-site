@@ -109,7 +109,7 @@ const art = ({ inglese: "l'", spagnolo: 'lo ' })[c.name] || 'il ';
 const quiz = fill(quizTpl, {
   QUIZ_DATA: JSON.stringify({
     title: `Scopri il tuo livello di ${c.name}`,
-    intro: `Dieci frasi da completare, dalla più semplice alla più difficile, in circa due minuti. Alla fine vedi una stima del tuo livello di ${c.name}.`,
+    intro: `Frasi da completare che diventano più difficili se rispondi bene e più facili se sbagli, in circa due minuti. Alla fine vedi una stima del tuo livello di ${c.name}.`,
     questions: QUIZ[c.lang],
     levels: LEVEL_TEXT,
     note: c.open
