@@ -393,3 +393,12 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - SEO: `localize.mjs` adds FAQPage JSON-LD per language from the translated cards. The English-only FAQPage in the shared head graph (which every language inherited untranslated) is removed; head lock hash updated with a note.
 - Checked: desktop, phone and Arabic. No answer overflows its card, no errors, one FAQPage per page.
 - Owner disliked the flip cards ("not these squares"). Replaced with the course-page FAQ layout exactly (question list on the left, answer card on the right, accordion on phones), with the answer card in white instead of lime. Contact line under the title with the lime marker; RTL alignment handled. FAQPage JSON-LD now reads `section.qa.is-home`. Checked: desktop, phone and Arabic, no errors.
+
+## 23 Oct 2026: homepage SEO text section
+- Owner: add a section purely for SEO to help the homepage rank.
+- New `site/src/blocks/home/learn.html`, "Learn a language online with a live teacher", placed before the FAQ.
+  - The heading stays on the left while five text blocks scroll on the right. Each block rises in and a lime marker sweeps across its key phrase.
+  - Topics: live online classes vs recorded videos, practice between classes, group classes at a fair price (group sizes, from €24), levels A1 to C2 with certificate formats, open and waitlist languages.
+  - All facts come from existing site copy.
+- Translations: 12 `home_seo_*` keys in all nine languages, written around each language's search terms ("Sprachen online lernen", "imparare una lingua online", ...). The language lists match each site's real courses (e.g. German site: English open; Spanish and French sites don't list their own language).
+- Checked: desktop, phone and Arabic, no errors.

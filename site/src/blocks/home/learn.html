@@ -1,0 +1,66 @@
+      <section class="sx">
+        <style>
+          /* Learn a language online: the main text of the homepage for search. The heading stays on the left while the
+             text blocks scroll on the right; each block rises in as it arrives and a lime marker sweeps across its key
+             phrase. Plain text in the HTML, translated per language. */
+          .sx { padding: 8rem 0; background-color: var(--white); }
+          .sx_grid { display: grid; grid-template-columns: 5fr 7fr; gap: 4rem; align-items: start; }
+          .sx_side { position: sticky; top: 8rem; }
+          .sx_side h2 { margin: 0; }
+          .sx_side p { margin: 1.25rem 0 0; max-width: 28rem; color: rgba(8, 8, 8, .7); }
+          .sx_row { padding: 2.5rem 0; border-top: 1px solid rgba(8, 8, 8, .12); opacity: 0; transform: translateY(2.5rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .sx_row:first-child { padding-top: 0; border-top: 0; }
+          .sx_row.is-in { opacity: 1; transform: none; }
+          .sx_row h3 { margin: 0 0 1rem; }
+          .sx_row p { margin: 0; max-width: 40rem; }
+          .sx_mark { background-image: linear-gradient(var(--green), var(--green)); background-repeat: no-repeat; background-position: 0 88%; background-size: 0% 45%; transition: background-size 1s cubic-bezier(.215, .61, .355, 1) .35s; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+          [dir="rtl"] .sx_mark { background-position: 100% 88%; }
+          .sx_row.is-in .sx_mark { background-size: 100% 45%; }
+          @media (max-width: 767px) {
+            .sx { padding: 4.5rem 0; }
+            .sx_grid { grid-template-columns: 1fr; gap: 2rem; }
+            .sx_side { position: static; }
+            .sx_row { padding: 2rem 0; }
+          }
+        </style>
+        <div class="container-large">
+          <div class="sx_grid">
+            <div class="sx_side">
+              <h2 class="heading-style-h2" data-i18n="home_seo_title">Learn a language online with a live teacher</h2>
+              <p class="text-size-medium" data-i18n="home_seo_intro">Alimun is an online language school where every course is built around live classes with a teacher. Here is how it works and what to expect.</p>
+            </div>
+            <div class="sx_rows">
+              <div class="sx_row">
+                <h3 class="heading-style-h3" data-i18n="home_seo_1_h">Live online classes, not recorded videos</h3>
+                <p class="text-size-large" data-i18n-html="home_seo_1_p">Every class is a live video lesson with a teacher and <span class="sx_mark">the same group of learners</span>, on fixed days at the same time each week. You speak from the first lesson, your teacher corrects you as you go, and after each class you get the session notes, the new vocabulary and your homework.</p>
+              </div>
+              <div class="sx_row">
+                <h3 class="heading-style-h3" data-i18n="home_seo_2_h">Practice between classes</h3>
+                <p class="text-size-large" data-i18n-html="home_seo_2_p">Between lessons you keep practicing with <span class="sx_mark">exercises at your level that are corrected instantly</span>, flashcards with the vocabulary from class and tasks in exam format. Your teacher sets the homework and returns it corrected with the help of AI, with a grade, your strengths and what to improve.</p>
+              </div>
+              <div class="sx_row">
+                <h3 class="heading-style-h3" data-i18n="home_seo_3_h">Group classes at a fair price</h3>
+                <p class="text-size-large" data-i18n-html="home_seo_3_p">In a group, <span class="sx_mark">the cost of each class is shared</span>, so live teaching costs far less than private tutoring. You choose how much attention you want: groups of about 35, 17 or 6 people, or private one-to-one classes, from €24 a month.</p>
+              </div>
+              <div class="sx_row">
+                <h3 class="heading-style-h3" data-i18n="home_seo_4_h">Every level from A1 to C2</h3>
+                <p class="text-size-large" data-i18n-html="home_seo_4_p">Courses follow the Common European Framework of Reference, from beginner to proficient. A short placement test <span class="sx_mark">puts you in the right group</span> between A1 and C1, so you do not repeat what you already know. You can also practice tasks in the format of B2 First, C1 Advanced and IELTS for English, and Goethe B1, Goethe B2 and telc B1 for German.</p>
+              </div>
+              <div class="sx_row">
+                <h3 class="heading-style-h3" data-i18n="home_seo_5_h">English and German now, more languages soon</h3>
+                <p class="text-size-large" data-i18n-html="home_seo_5_p">English and German classes are open today. French, Spanish, Italian and Portuguese are coming, and you can <span class="sx_mark">join their waitlist for free</span> to hear when they open. All you need is a computer or other device with a camera and a microphone: classes run in the browser and you can cancel at any time.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var rows = [].slice.call(document.currentScript.closest(".sx").querySelectorAll(".sx_row"));
+            if (!("IntersectionObserver" in window)) { rows.forEach(function (r) { r.classList.add("is-in"); }); return; }
+            var io = new IntersectionObserver(function (entries) {
+              entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
+            }, { rootMargin: "0px 0px -15% 0px" });
+            rows.forEach(function (r) { io.observe(r); });
+          })();
+        </script>
+      </section>
