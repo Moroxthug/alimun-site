@@ -14,13 +14,15 @@ export function getStaticPaths() {
     lang, name, video, open: true,
     pageTitle: `Corsi di ${name} online con lezioni dal vivo | Alimun`,
     metaDesc: `Corsi di ${name} online in piccoli gruppi con un insegnante, in giorni e orari fissi ogni settimana, compiti corretti con l'aiuto dell'IA ed esercizi con correzione immediata. Da €24 al mese.`,
-    desc: "Lezioni dal vivo in video con un insegnante e lo stesso gruppo, in giorni fissi e alla stessa ora ogni settimana. Tra una lezione e l'altra ti eserciti con correzione immediata e il tuo insegnante corregge i compiti con l'aiuto dell'IA. Da €24 al mese.",
+    overTitle: 'Lezioni dal vivo, ogni settimana',
+    desc: "Video lezioni con un insegnante e lo stesso gruppo, da circa 6 a 35 persone a seconda del piano, in giorni fissi e alla stessa ora. Tra una lezione e l'altra ti eserciti con correzione immediata e il tuo insegnante corregge i compiti con l'aiuto dell'IA. Livelli dalla A1 alla C2, da €24 al mese.",
     cta: 'Inizia ora',
   });
   const waitlist = (lang, name, video) => ({
     lang, name, video, open: false,
     pageTitle: `Corsi di ${name} online: lista d'attesa | Alimun`,
     metaDesc: `Le lezioni di ${name} su Alimun apriranno presto. Iscriviti gratis alla lista d'attesa e ti scriveremo appena si aprono le classi.`,
+    overTitle: 'Le classi aprono presto',
     desc: `Le classi di ${name} apriranno presto. Iscriviti gratis alla lista d'attesa: ti scriviamo appena si apre la tua lingua e oggi non paghi nulla. Nel frattempo puoi già seguire le lezioni di inglese e tedesco.`,
     cta: "Unisciti alla lista d'attesa",
   });
@@ -39,8 +41,14 @@ const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replac
 const fill = (tpl, values) => Object.entries(values).reduce((t, [k, v]) => t.split(`{{${k}}}`).join(v), tpl);
 
 const head = fill(headTpl, { PAGE_TITLE: esc(c.pageTitle), META_DESC: esc(c.metaDesc), SLUG: `corsi-${slug}` });
+const words = ['per il lavoro', 'per gli esami', "per trasferirti all'estero", 'per viaggiare'];
 const hero = fill(heroTpl, {
-  TITLE: esc(`Corsi di ${c.name} online`),
+  TITLE_1: esc(`Corsi di ${c.name}`),
+  TITLE_2: 'online',
+  LEAD: esc(`Impara ${({ inglese: "l'", spagnolo: 'lo ' })[c.name] || 'il '}${c.name}`),
+  WORD_1: esc(words[0]),
+  WORDS: JSON.stringify(words),
+  OVER_TITLE: esc(c.overTitle),
   VIDEO: c.video,
   DESC: esc(c.desc),
   CTA: esc(c.cta),
