@@ -267,5 +267,9 @@
   "src/data/course-guides.js": {
     "sha256": "a6c56128e11f1e06a3b737e1b5dfbdcd36bc91bb19bf0a6fa5149b14f161d82b",
     "approved": "2026-10-23 Italian course pages: guide text with lime markers (owner: section ok)"
+  },
+  "src/blocks/course/plans.html": {
+    "sha256": "2e0639a6dfc87df13d9ec287f2d79273fb2c237215945f82cca12bf75c3b647a",
+    "approved": "2026-10-23 Italian course pages: price ladder (owner: section ok)"
   }
 }

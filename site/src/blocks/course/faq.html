@@ -1,0 +1,59 @@
+      <section class="section qa">
+        <style>
+          /* FAQ: questions on the left slide in one after another; the answer to the selected question slides into a large card on the right. Stacked on phones. */
+          .qa { padding: 6rem 0 7rem; }
+          .qa_head { margin-bottom: 3rem; }
+          .qa_head h2 { margin: 0; }
+          .qa_wrap { display: grid; grid-template-columns: 5fr 6fr; gap: 2.5rem; align-items: start; }
+          .qa_list { display: flex; flex-direction: column; }
+          .qa_q { display: block; width: 100%; text-align: left; background: none; border: 0; border-top: 1px solid rgba(8, 8, 8, .12); padding: 1.35rem 0; cursor: pointer; color: rgba(8, 8, 8, .45); font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-size: clamp(1.35rem, 2vw, 1.75rem); line-height: 1.05; opacity: 0; transform: translateX(-2rem); transition: color .35s ease, opacity .6s ease, transform .7s cubic-bezier(.215, .61, .355, 1); }
+          .qa_list.is-in .qa_q { opacity: 1; transform: none; }
+          .qa_q.is-on { color: var(--black); }
+          .qa_q .qa_mobile { display: none; }
+          .qa_card { position: sticky; top: 8rem; min-height: 22rem; border-radius: 3.125rem; background-color: var(--green); padding: 3rem; overflow: hidden; }
+          .qa_a { position: absolute; left: 3rem; right: 3rem; top: 3rem; opacity: 0; transform: translateY(1.5rem); transition: opacity .45s ease, transform .55s cubic-bezier(.215, .61, .355, 1); pointer-events: none; }
+          .qa_a.is-on { position: relative; left: auto; right: auto; top: auto; opacity: 1; transform: none; pointer-events: auto; }
+          .qa_a h3 { margin: 0 0 1rem; }
+          .qa_a p { margin: 0; }
+          @media (max-width: 767px) {
+            .qa { padding: 4.5rem 0 5rem; }
+            .qa_wrap { grid-template-columns: 1fr; }
+            .qa_card { display: none; }
+            .qa_q { color: var(--black); }
+            .qa_q .qa_mobile { display: block; margin-top: .75rem; font-family: Satoshi, sans-serif; text-transform: none; font-size: 1rem; line-height: 1.6; color: rgba(8, 8, 8, .75); max-height: 0; overflow: hidden; transition: max-height .5s ease; }
+            .qa_q.is-on .qa_mobile { max-height: 20rem; }
+          }
+        </style>
+        <div class="container-large">
+          <div class="qa_head">
+            <h2 class="heading-style-h2">Domande frequenti</h2>
+          </div>
+          <div class="qa_wrap">
+            <div class="qa_list">
+{{QA_QUESTIONS}}
+            </div>
+            <div class="qa_card shadow-card" aria-live="polite">
+{{QA_ANSWERS}}
+            </div>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".qa"), list = root.querySelector(".qa_list");
+            var qs = [].slice.call(root.querySelectorAll(".qa_q")), as = [].slice.call(root.querySelectorAll(".qa_a"));
+            function show(k) {
+              qs.forEach(function (q, i) { q.classList.toggle("is-on", i === k); q.setAttribute("aria-expanded", i === k ? "true" : "false"); });
+              as.forEach(function (a, i) { a.classList.toggle("is-on", i === k); });
+            }
+            qs.forEach(function (q, i) {
+              q.addEventListener("mouseenter", function () { if (window.matchMedia("(hover: hover)").matches) show(i); });
+              q.addEventListener("click", function () { show(i); });
+              q.style.transitionDelay = "0s, " + (i * 0.08) + "s, " + (i * 0.08) + "s";
+            });
+            show(0);
+            if (!("IntersectionObserver" in window)) { list.classList.add("is-in"); return; }
+            var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { list.classList.add("is-in"); io.disconnect(); } }, { threshold: 0.2 });
+            io.observe(list);
+          })();
+        </script>
+      </section>

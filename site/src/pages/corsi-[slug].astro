@@ -10,6 +10,8 @@ import levelsTpl from '../blocks/course/levels.html?raw';
 import examsTpl from '../blocks/course/exams.html?raw';
 import guideTpl from '../blocks/course/guide.html?raw';
 import plansTpl from '../blocks/course/plans.html?raw';
+import faqTpl from '../blocks/course/faq.html?raw';
+import { courseFaq } from '../data/course-faq.js';
 import { GUIDES } from '../data/course-guides.js';
 import after from '../blocks/legal/after.html?raw';
 import nav from '../blocks/legal/nav.html?raw';
@@ -44,7 +46,10 @@ const c = Astro.props;
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const fill = (tpl, values) => Object.entries(values).reduce((t, [k, v]) => t.split(`{{${k}}}`).join(v), tpl);
 
-const head = fill(headTpl, { PAGE_TITLE: esc(c.pageTitle), META_DESC: esc(c.metaDesc), SLUG: `corsi-${slug}` });
+const faqItems = courseFaq(c);
+// The same questions and answers as structured data, so search engines can show them.
+const faqLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqItems.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) }).replace(/</g, '\\u003c');
+const head = fill(headTpl, { PAGE_TITLE: esc(c.pageTitle), META_DESC: esc(c.metaDesc), SLUG: `corsi-${slug}`, FAQ_LD: `  <script type="application/ld+json">${faqLd}</script>` });
 const hero = fill(heroTpl, {
   TITLE: esc(`Corsi di ${c.name} online`),
   VIDEO: c.video,
@@ -94,6 +99,10 @@ const guide = fill(guideTpl, {
 });
 // Plans only where classes can be bought today.
 const plans = c.open ? fill(plansTpl, { CTA_HREF: `signup.html?role=student&amp;language=${c.lang}` }) : '';
+const faq = fill(faqTpl, {
+  QA_QUESTIONS: faqItems.map(([q, a], i) => `              <button type="button" class="qa_q" aria-expanded="false">${esc(q)}<span class="qa_mobile">${esc(a)}</span></button>`).join('\n'),
+  QA_ANSWERS: faqItems.map(([q, a]) => `              <div class="qa_a"><h3 class="heading-style-h4">${esc(q)}</h3><p class="text-size-large">${esc(a)}</p></div>`).join('\n'),
+});
 ---
 <Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang="it">
   <Fragment set:html={nav} />
@@ -104,6 +113,7 @@ const plans = c.open ? fill(plansTpl, { CTA_HREF: `signup.html?role=student&amp;
     <Fragment set:html={exams} />
     <Fragment set:html={guide} />
     <Fragment set:html={plans} />
+    <Fragment set:html={faq} />
   </main>
   <Fragment set:html={footer} />
 </Base>
