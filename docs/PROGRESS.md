@@ -341,3 +341,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - The automatic redirect of root English pages uses the same list. If the saved language has no equivalent page, it stays on the page that was opened.
 - Checked: switcher and redirect cases in Playwright; student, teacher and admin dashboards (?preview=1), home, tiers and signup with no console errors; root `npm run build` passes.
 - Deploy note: alimun.com is served by the second Vercel project (youssefbouchtaoui). That project skipped the production build for a6843b2/e60f6f0 (two pushes a minute apart), while the abdul-edilizia project reported success. An empty commit (c07c4cc) re-triggered it. All five /ma/ pages, the switcher changes and the currency button removal are live and smoke-checked. If production ever lags behind a "success" status, check that project's deployment first.
+
+## 23 Oct 2026: homepage restyle, hero video
+- Owner: focus on the homepage restyle, starting with the hero, and replace its video.
+- `site/src/blocks/02-hero.html`: the abstract smoke clip is replaced by Pexels 3252922 (fauxels, a group of colleagues talking by a window), encoded to the site format as `videos/pexels-3252922-group-talk-*`. Lock hash updated with an approval note.
+- Alternative encoded and ready if the owner prefers it: Pexels 6381276 (Liza Summer, two women talking by a river with a bridge), `videos/pexels-6381276-bridge-talk-*`.
+- Waiting on owner approval before going live.
