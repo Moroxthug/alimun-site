@@ -125,8 +125,8 @@
     "approved": "2026-10-22 corporate nav ok"
   },
   "src/blocks/corporate/after.html": {
-    "sha256": "1bd0fd266ebf15ce610c44a53914f27a4e1b34a89d8ec231cdcdf14d8af30d5a",
-    "approved": "2026-10-22 corporate nav ok"
+    "sha256": "838c06364965a5530c13b451b6586fc9aef690f18c801a329f6c33e3bdfda3fb",
+    "approved": "2026-10-22 corporate nav ok; 2026-10-23 demo form now sends by email (bug fix: it faked success), no visual change"
   },
   "src/blocks/corporate/nav.html": {
     "sha256": "ae069a6b8b8e531756ac94ef85e034f2ab5543ecb6fcfaa098a3111b160ba763",
@@ -195,5 +195,53 @@
   "src/blocks/contact/footer.html": {
     "sha256": "a72ce2c54a2adf9b17fa05fb8f20e153d904f677b4d45f61736e7a97a34d7d1f",
     "approved": "2026-10-23 Contact footer, Tiers footer keys, Contact current"
+  },
+  "src/blocks/legal/404.html": {
+    "sha256": "c66f8075ce8bb503403a6f6dc93d79a6b3078bf56e535f001bf0afa620774994",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+  },
+  "src/blocks/legal/after.html": {
+    "sha256": "c85f5c10606408283be29c5ba8b942fe62e3e1c0306c86b20d1d59ff6d74df68",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+  },
+  "src/blocks/legal/cookies.html": {
+    "sha256": "e994f1be13bbb72b76bc9b850a891889a8b799f39cc7d39348200a435c95247c",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+  },
+  "src/blocks/legal/footer.html": {
+    "sha256": "a0c6af22d736c9caafdb8a505e3439a55d56c5629a64235c33142166b1e99ab9",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+  },
+  "src/blocks/legal/gdpr.html": {
+    "sha256": "ad0dcc1be6073a0a8c23755491f11880e19b0d509483bf7d6355e7e44b5b2db9",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+  },
+  "src/blocks/legal/head-404.html": {
+    "sha256": "b68a0b0f2bf1f0464b6bad60ee3a1383a86fb8ec6ec9f2bed8cc4c1218bc53fd",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+  },
+  "src/blocks/legal/head-cookies.html": {
+    "sha256": "b35cb6d914be7aae43cb28e151f08862a3eaafb54585b9322f83b816fe61b885",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+  },
+  "src/blocks/legal/head-gdpr.html": {
+    "sha256": "c8125514a939ba3b2fbeb6ac321bed68a3430245708af670eed44ef20a9de692",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+  },
+  "src/blocks/legal/head-terms.html": {
+    "sha256": "c96916cb0fcdd4debeb6f17bdcbcc7c1b949944522952b28d62de5a25d9f79d7",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+  },
+  "src/blocks/legal/nav.html": {
+    "sha256": "61344c240eaf3837a53fa3e6626abff026a98e3e57a6dfcbd46a5e7ee66458e1",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+  },
+  "src/blocks/legal/style.html": {
+    "sha256": "b017e90ea1b737c7586534d5998222e58dff5cd30ef77aeab683b82f2e83ffad",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+  },
+  "src/blocks/legal/terms.html": {
+    "sha256": "1a213dc0e89337b6788146d45f885bfa0cc4fb104dd82f8d611d7291742b2745",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
   }
 }

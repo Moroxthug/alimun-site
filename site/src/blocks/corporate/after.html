@@ -162,13 +162,19 @@
       submitBtn.disabled = true;
       submitBtn.querySelector('span').textContent = 'Submitting...';
 
-      setTimeout(() => {
-        form.style.display = 'none';
-        success.style.display = 'block';
-        
-        console.log('B2B Corporate Request submitted to corporate@alimun.com:');
-        console.log({ name, email, message });
-      }, 1000);
+      // Sent to the owner by email (same action as the contact form); it used to show success without sending.
+      fetch('/api/send-admin-email?action=contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ first_name: name, email: email, message: 'Corporate demo request' + String.fromCharCode(10, 10) + message, page: location.pathname }),
+      })
+        .then(function (r) { return r.json().catch(function () { return {}; }).then(function (d) { if (!r.ok || !d.ok) throw new Error(d.message || ''); }); })
+        .then(function () { form.style.display = 'none'; success.style.display = 'block'; })
+        .catch(function (err) {
+          alert(err.message || 'Something went wrong. Please try again later.');
+          submitBtn.disabled = false;
+          submitBtn.querySelector('span').textContent = 'Submit request →';
+        });
     }
 
     // Re-check localized content when language switcher is toggled

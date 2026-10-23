@@ -68,6 +68,7 @@ sections from two different Webflow pages on one new page needs that section's a
 such case is shown to the owner first.
 
 ### Step 2: all languages from the same blocks
+Status (23 Oct 2026): built. `site/scripts/localize.mjs` runs after `astro build` and makes every language from the English pages with the same rules as `build.js` (shared `scripts/localize-page.js`), adds hreflang links and writes `sitemap.xml`. Waiting for the owner on the English meta descriptions and the remaining untranslated footer links.
 - The blocks keep their translation keys (`data-i18n`). The build fills them from `js/translations.js`, the same
   way `build.js` does today, so every language gets exactly the same design.
 - New: translated `<title>`, description and social tags per page and language, `lang`/`dir` (Arabic right to
@@ -82,6 +83,7 @@ such case is shown to the owner first.
 - The app pages (sign in, sign up, dashboards, admin, password reset) are copied over unchanged. They are not part
   of the redesign.
 - Every current address keeps working (`/tiers`, `/tiers.html`, `/fr/tiers`, ...), so Google loses nothing.
+- `careers-teachers-section` (old copy of Careers, not rebuilt; owner 23 Oct 2026) redirects permanently to `/careers`, in every language folder.
 - Before switching: full smoke test of the current site against the preview (all pages, all languages, forms,
   signup, checkout button, dashboards load). Rollback = redeploy the previous version in Vercel (one click).
 
