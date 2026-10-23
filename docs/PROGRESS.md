@@ -376,3 +376,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Owner (23 Oct): the preview link kept failing on Vercel's daily build cap for the preview project, so from now on changes go straight to alimun.com (fast-forward `main`) for the owner to review there. The alimun-site project still accepted builds when the preview project was capped. Group-size section without the dot row and "Online language courses" are live (main at 7858ffc). Smoke checks pass.
 - Owner: "beautiful animation". Heading changed to "Language courses" (no "online") in all nine languages. Rows show the language name alone (capitalized, e.g. "Tedesco"); the full course name stays in the link title and in the JSON-LD course list.
 - Owner upgraded Vercel to Pro (23 Oct). The capped build went live right after (main at the "Redeploy after the Vercel Pro upgrade" commit). CLAUDE.md function rule updated: the 12-function cap is gone, but working handlers stay as they are.
+- Owner: English was missing from the English site, and the "Start now / Join the waitlist" lines should go from the homepage rows.
+  - New page `/english-course-online` (en.js, open), written for people learning English from any first language. English certificates (B2 First, C1 Advanced, IELTS). The certificate FAQ answer depends on the course.
+  - Waitlist texts now say English and German are open.
+  - English is first in the homepage list; the switcher links it with the English course pages of every other site.
+  - Homepage rows show only the language name.
+- Checked: the new page on desktop and phone (quiz C1 7 of 7, no errors or 404s).

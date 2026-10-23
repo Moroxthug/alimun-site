@@ -15,12 +15,7 @@
             background-image: linear-gradient(var(--green), var(--green)); background-repeat: no-repeat; background-position: 0 88%; background-size: 0% 42%;
             transition: background-size .8s cubic-bezier(.215, .61, .355, 1); -webkit-box-decoration-break: clone; box-decoration-break: clone; }
           [dir="rtl"] .ln_title { background-position: 100% 88%; text-transform: none; }
-          .ln_go { display: flex; align-items: center; gap: .5rem; margin-top: 1rem; font-size: 1.125rem; transform: translateX(0); transition: transform .6s cubic-bezier(.215, .61, .355, 1); }
-          .ln_go img { width: 1rem; height: 1rem; }
-          [dir="rtl"] .ln_go img { transform: scaleX(-1); }
           .ln_row.is-on .ln_title { background-size: 100% 42%; }
-          .ln_row.is-on .ln_go { transform: translateX(.75rem); }
-          [dir="rtl"] .ln_row.is-on .ln_go { transform: translateX(-.75rem); }
           .ln_side { position: sticky; top: 14vh; }
           .ln_media { position: relative; height: 72vh; border-radius: 3.125rem; overflow: hidden; background-color: var(--black); }
           .ln_video { position: absolute; inset: 0; clip-path: inset(100% 0 0 0); transition: clip-path 1s cubic-bezier(.77, 0, .175, 1); }

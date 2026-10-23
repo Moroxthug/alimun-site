@@ -71,11 +71,10 @@ function withCourseList(html, lang) {
   if (!S) { $('section.ln').remove(); return $.html(); }
   const list = $('[data-course-list]'), media = $('[data-course-media]');
   for (const c of S.courses) {
-    const row = $('<li class="ln_row"><a class="ln_link"><span class="ln_title"></span><span class="ln_go"><span></span><img src="/images/icon-arrow-light.svg" alt=""></span></a></li>');
+    const row = $('<li class="ln_row"><a class="ln_link"><span class="ln_title"></span></a></li>');
     // The row shows the language name alone (owner); the full course name stays in the link title and the list below.
     row.find('a').attr('href', coursePath(S, c)).attr('title', S.heroTitle(c));
     row.find('.ln_title').text(c.name.charAt(0).toLocaleUpperCase(S.locale.replace('_', '-')) + c.name.slice(1));
-    row.find('.ln_go > span').text(S.heroCta(c));
     list.append(row);
     const v = `/videos/${c.video}`;
     media.append(`<div class="ln_video"><video muted loop playsinline preload="none" poster="${v}-poster-00001.jpg"><source src="${v}-transcode.mp4" type="video/mp4"><source src="${v}-transcode.webm" type="video/webm"></video></div>`);
