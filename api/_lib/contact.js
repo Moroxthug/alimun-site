@@ -58,7 +58,7 @@ module.exports = async function contact(req, res) {
   const key = process.env.RESEND_API_KEY;
   if (!key || key.includes('YOUR_RESEND_API_KEY')) {
     console.error('[contact] RESEND_API_KEY missing');
-    return res.status(500).json({ error: 'server_error', message: 'Please try again later.' });
+    return res.status(500).json({ error: 'email_not_configured', message: 'Please try again later.' });
   }
 
   const name = `${firstName} ${lastName}`.trim();
@@ -81,7 +81,10 @@ module.exports = async function contact(req, res) {
         text,
       }),
     });
-    if (!r.ok) throw new Error(`Resend ${r.status}: ${(await r.text()).slice(0, 300)}`);
+    if (!r.ok) {
+      console.error('[contact] Resend', r.status, (await r.text()).slice(0, 300));
+      return res.status(502).json({ error: 'email_rejected', status: r.status, message: 'Please try again later.' });
+    }
     times.push(now); recent.set(ip, times);
     return res.status(200).json({ ok: true });
   } catch (err) {
