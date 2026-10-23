@@ -137,6 +137,33 @@ export const QUIZ = {
       ["Se não ___ chovido, teríamos ido à praia.", ["tivesse", "tinha", "teria", "houve"]],
     ],
   },
+  Italian: {
+    A1: [
+      ['Lei ___ una studentessa.', ['è', 'sono', 'sei', 'siamo']],
+      ['Noi ___ a Roma.', ['abitiamo', 'abitate', 'abitano', 'abito']],
+      ['Ho ___ fratello e due sorelle.', ['un', 'una', 'uno', 'dei']],
+    ],
+    A2: [
+      ['Ieri Maria ___ andata al cinema.', ['è', 'ha', 'era', 'sarà']],
+      ['Questo libro è ___ interessante di quello.', ['più', 'molto', 'troppo', 'così']],
+      ['A che ora ti ___ la mattina?', ['svegli', 'sveglia', 'sveglio', 'svegliamo']],
+    ],
+    B1: [
+      ['Quando ero piccolo, ___ spesso al mare.', ['andavo', 'sono andato', 'andrò', 'vado']],
+      ['Penso che lui ___ ragione.', ['abbia', 'ha', 'avrà', 'aveva']],
+      ['Il libro ___ ti ho parlato è esaurito.', ['di cui', 'che', 'il quale', 'dove']],
+    ],
+    B2: [
+      ['Se avessi tempo, ___ di più.', ['viaggerei', 'viaggio', 'viaggerò', 'viaggiavo']],
+      ['Benché ___ stanco, è uscito lo stesso.', ['fosse', 'era', 'è', 'sarà']],
+      ['Mi ha chiesto se ___ venire alla festa.', ['volessi', 'voglio', 'vorrò', 'vorresti']],
+    ],
+    C1: [
+      ["Se l'avessi saputo, ___ prima.", ['sarei venuto', 'verrei', 'venni', 'sono venuto']],
+      ['Qualunque cosa ___, ti sosterrò.', ['accada', 'accade', 'accadrà', 'accadeva']],
+      ['Non appena ___ la notizia, ci chiamò.', ['ebbe saputo', 'ha saputo', 'sapeva', 'saprà']],
+    ],
+  },
 };
 
 // Short description shown with the estimated level (same wording as the levels section).

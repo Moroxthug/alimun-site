@@ -285,7 +285,7 @@
     "approved": "2026-10-23 Italian course pages: adaptive level quiz with roulette result (owner: quiz ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
   },
   "src/data/course-quiz.js": {
-    "sha256": "504b975fb030743b76205f65346a5d82a930ea122ca783ae8387914bb8e26723",
-    "approved": "2026-10-23 Italian course pages: adaptive level quiz with roulette result (owner: quiz ok)"
+    "sha256": "c84b045ce8095d1e6a80a3895c96f5aebf11f817b9f15a610e13695f03d9ddb7",
+    "approved": "2026-10-23 Italian course pages: adaptive level quiz with roulette result (owner: quiz ok); 2026-10-23 Italian question bank added for the other site languages"
   }
 }
