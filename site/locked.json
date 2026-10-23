@@ -279,5 +279,13 @@
   "src/data/course-faq.js": {
     "sha256": "1dc7debcb9b4936627cf3fb3276ba9ca8b3ab4a9e5bb3e189df9f6cae5907d2b",
     "approved": "2026-10-23 Italian course pages: FAQ text (owner: section ok)"
+  },
+  "src/blocks/course/quiz.html": {
+    "sha256": "c2da23232587df37baffb345396a81007e3fc79d6fcd1b7ebcb72fffd81d4845",
+    "approved": "2026-10-23 Italian course pages: adaptive level quiz with roulette result (owner: quiz ok)"
+  },
+  "src/data/course-quiz.js": {
+    "sha256": "504b975fb030743b76205f65346a5d82a930ea122ca783ae8387914bb8e26723",
+    "approved": "2026-10-23 Italian course pages: adaptive level quiz with roulette result (owner: quiz ok)"
   }
 }

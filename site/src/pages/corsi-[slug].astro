@@ -12,6 +12,7 @@ import guideTpl from '../blocks/course/guide.html?raw';
 import plansTpl from '../blocks/course/plans.html?raw';
 import faqTpl from '../blocks/course/faq.html?raw';
 import quizTpl from '../blocks/course/quiz.html?raw';
+import bottomCta from '../blocks/tiers/s02.html?raw';
 import { QUIZ, LEVEL_TEXT } from '../data/course-quiz.js';
 import { courseFaq } from '../data/course-faq.js';
 import { GUIDES } from '../data/course-guides.js';
@@ -131,6 +132,7 @@ const quiz = fill(quizTpl, {
     <Fragment set:html={guide} />
     <Fragment set:html={plans} />
     <Fragment set:html={faq} />
+    <Fragment set:html={bottomCta} />
   </main>
   <Fragment set:html={quiz} />
   <Fragment set:html={footer} />
