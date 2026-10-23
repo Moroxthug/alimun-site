@@ -24,6 +24,11 @@ export async function getStaticPaths() {
 }
 
 const { S, c } = Astro.props;
+// The same course on the other sites, for the language switcher (js/i18n.js): course slugs differ
+// per language, so swapping the folder alone would lead to a missing page.
+const allSites = Object.values(import.meta.glob('../data/course-sites/*.js', { eager: true })).map((m) => m.default);
+const sameCourse = Object.fromEntries(allSites.flatMap((T) => T.courses.filter((k) => k.lang === c.lang).map((k) => [T.site, `/${T.site === 'en' ? '' : T.site + '/'}${k.slug}`])));
+const ALT = `\n  <script type="application/json" id="alimun-lang-alternates">${JSON.stringify(sameCourse)}</script>`;
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const fill = (tpl, values) => Object.entries(values).reduce((t, [k, v]) => t.split(`{{${k}}}`).join(v), tpl);
 const UI = Object.fromEntries(Object.entries(S.ui).map(([k, v]) => [k, esc(v)]));
@@ -36,7 +41,7 @@ const faqLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPa
 // Phones: room above the hero title for the floating language switcher (top right, from js/i18n.js).
 // RTL: keep the plan name "1 on 1" in Latin order inside right-to-left cards.
 const PAGE_CSS = `\n  <style>@media (max-width: 767px) { .section.is-about-hero.is-course .heading-style-h1 { margin-top: 2.25rem; } } [dir="rtl"] .pl .heading-style-h4 { unicode-bidi: plaintext; text-align: right; }</style>`;
-const head = fill(headTpl, { PAGE_TITLE: esc(S.pageTitle(c)), META_DESC: esc(S.metaDesc(c)), CANON: canon, LOCALE: S.locale, FAQ_LD: `  <script type="application/ld+json">${faqLd}</script>` }) + PAGE_CSS;
+const head = fill(headTpl, { PAGE_TITLE: esc(S.pageTitle(c)), META_DESC: esc(S.metaDesc(c)), CANON: canon, LOCALE: S.locale, FAQ_LD: `  <script type="application/ld+json">${faqLd}</script>` }) + PAGE_CSS + ALT;
 const hero = fill(heroTpl, { ...UI, TITLE: esc(S.heroTitle(c)), VIDEO: c.video, DESC: esc(S.heroDesc(c)), CTA: esc(S.heroCta(c)), CTA_HREF: signup });
 const how = fill(howTpl, { ...UI, HOW_TITLE: esc(S.howTitle(c)), LIVE_DESC: esc(S.liveDesc(c)) });
 const levels = fill(levelsTpl, { ...UI, LV_TITLE: esc(S.levelsTitle(c)) });

@@ -331,3 +331,12 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - Slugs: `cours-<language>-en-ligne-maroc`. hreflang and html lang are fr-MA.
 - Checked: build, no leftover words from other languages, Playwright desktop and phone on all five pages (no errors, quiz C1 7 of 7).
 - Flag for the owner: the language switcher shows "EN" on every /ma/ page (existing behavior; `js/i18n.js` leaves 'ma' out of the menu on purpose).
+
+## 23 Oct 2026: Morocco live, language switcher fixes, currency button removed
+- Owner: "ma ok", label the Morocco switcher, and remove the currency button.
+- `js/currency.js`: the floating currency select is removed (owner). Detection is unchanged: prices still show in the visitor's currency, `?cur=` still overrides, and checkout uses the shown currency.
+- `js/i18n.js`:
+  - The switcher shows "MA" on /ma/ pages instead of "EN".
+  - Course pages list the same course on the other sites (`#alimun-lang-alternates`, written by `site/src/pages/[page].astro`). The switcher goes there, or to that language's homepage when the site has no such course. Before this, switching language on a course page gave a 404 (for example /es/curso-de-ingles-online).
+  - The automatic redirect of root English pages uses the same list. If the saved language has no equivalent page, it stays on the page that was opened.
+- Checked: switcher and redirect cases in Playwright; student, teacher and admin dashboards (?preview=1), home, tiers and signup with no console errors; root `npm run build` passes.
