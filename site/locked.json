@@ -251,5 +251,9 @@
   "src/blocks/course/how.html": {
     "sha256": "496d8dd4ec9f838c9727bbb85ad9ff0ceca10da2e829be08b51a81c00ccd426d",
     "approved": "2026-10-23 Italian course pages: how the lessons work, stacking cards (owner: section ok)"
+  },
+  "src/blocks/course/levels.html": {
+    "sha256": "376da559a9d31a5ff6701acd41b09019cc81fca013038777f0cb90094513b695",
+    "approved": "2026-10-23 Italian course pages: CEFR levels showcase (owner: ok for now)"
   }
 }

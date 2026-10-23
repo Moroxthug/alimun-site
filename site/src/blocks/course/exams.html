@@ -1,0 +1,65 @@
+      <section class="section ex">
+        <style>
+          /* Certificates as a horizontal accordion: tall panels side by side; the open one widens to show what the exam tests and what it is for. The panels open in turn on their own and on hover or tap. */
+          .ex { padding: 6rem 0; }
+          .ex_head { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-bottom: 3rem; }
+          .ex_head h2 { margin: 0; }
+          .ex_head p { margin: 0; max-width: 28rem; color: rgba(8, 8, 8, .7); }
+          .ex_row { display: flex; gap: 1.25rem; height: min(34rem, 70vh); }
+          .ex_panel { position: relative; flex: 1; min-width: 0; border-radius: 3.125rem; overflow: hidden; background-color: var(--white); cursor: pointer; transition: flex .9s cubic-bezier(.215, .61, .355, 1); opacity: 0; transform: translateY(3rem); }
+          .ex_row.is-in .ex_panel { opacity: 1; transform: none; transition: flex .9s cubic-bezier(.215, .61, .355, 1), opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .ex_row.is-in .ex_panel:nth-child(2) { transition-delay: 0s, .15s, .15s; }
+          .ex_row.is-in .ex_panel:nth-child(3) { transition-delay: 0s, .3s, .3s; }
+          .ex_panel.is-open { flex: 3.2; }
+          .ex_panel.is-green { background-color: var(--green); }
+          .ex_panel.is-ink { background-color: var(--black); color: var(--white); }
+          .ex_name { position: absolute; left: 2.25rem; top: 2.5rem; right: 2.25rem; margin: 0; font-family: Coolvetica Condensed, sans-serif; font-weight: 400; text-transform: uppercase; line-height: .95; font-size: clamp(2rem, 3.6vw, 3.5rem); opacity: 0; transform: translateY(1rem); transition: opacity .5s ease, transform .6s ease; }
+          .ex_vname { position: absolute; left: 1.75rem; bottom: 2.25rem; margin: 0; font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; line-height: 1; font-size: clamp(1.75rem, 2.6vw, 2.75rem); white-space: nowrap; writing-mode: vertical-rl; transform: rotate(180deg); transition: opacity .4s ease; }
+          .ex_panel.is-open .ex_vname { opacity: 0; }
+          .ex_panel.is-ink .ex_vname { color: var(--green); }
+          .ex_panel.is-open .ex_name { opacity: 1; transform: none; transition-delay: .3s; }
+          .ex_body { position: absolute; left: 2.25rem; right: 2.25rem; bottom: 2.25rem; max-width: 36rem; opacity: 0; transform: translateY(1.5rem); transition: opacity .5s ease, transform .6s ease; pointer-events: none; }
+          .ex_panel.is-open .ex_body { opacity: 1; transform: none; transition-delay: .35s; }
+          .ex_body p { margin: 0; }
+          .ex_panel.is-ink .ex_name { color: var(--green); }
+          .ex_panel.is-ink .ex_body p { color: rgba(255, 255, 255, .8); }
+          .ex_note { margin: 1.5rem 0 0; color: rgba(8, 8, 8, .6); }
+          @media (max-width: 991px) {
+            .ex_head { flex-direction: column; align-items: flex-start; }
+            .ex_row { flex-direction: column; height: auto; }
+            .ex_panel, .ex_panel.is-open { flex: none; min-height: 0; }
+            .ex_name, .ex_panel.is-open .ex_name { position: static; opacity: 1; transform: none; padding: 2rem 1.75rem 0; font-size: 2.25rem !important; }
+            .ex_vname { display: none; }
+            .ex_body, .ex_panel.is-open .ex_body { position: static; opacity: 1; transform: none; padding: 1rem 1.75rem 2rem; max-width: none; }
+          }
+        </style>
+        <div class="container-large">
+          <div class="ex_head">
+            <h2 class="heading-style-h2">{{EX_TITLE}}</h2>
+            <p class="text-size-medium">{{EX_DESC}}</p>
+          </div>
+          <div class="ex_row">
+{{EX_PANELS}}
+          </div>
+          <p class="text-size-small ex_note">Non è materiale d'esame ufficiale. Alimun non è affiliata agli enti certificatori.</p>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".ex"), row = root.querySelector(".ex_row");
+            var panels = [].slice.call(root.querySelectorAll(".ex_panel")), open = 0, timer = null, hovering = false;
+            function show(k) { open = k; panels.forEach(function (p, i) { p.classList.toggle("is-open", i === k); }); }
+            function cycle() { clearInterval(timer); timer = setInterval(function () { if (!hovering) show((open + 1) % panels.length); }, 5000); }
+            panels.forEach(function (p, i) {
+              p.addEventListener("mouseenter", function () { hovering = true; show(i); });
+              p.addEventListener("mouseleave", function () { hovering = false; cycle(); });
+              p.addEventListener("click", function () { show(i); cycle(); });
+            });
+            show(0);
+            // The panels rise in once the row is in view, then start taking turns.
+            if ("IntersectionObserver" in window) {
+              var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { row.classList.add("is-in"); cycle(); io.disconnect(); } }, { threshold: 0.25 });
+              io.observe(row);
+            } else { row.classList.add("is-in"); cycle(); }
+          })();
+        </script>
+      </section>

@@ -7,6 +7,7 @@ import headTpl from '../blocks/course/head.html?raw';
 import heroTpl from '../blocks/course/hero.html?raw';
 import howTpl from '../blocks/course/how.html?raw';
 import levelsTpl from '../blocks/course/levels.html?raw';
+import examsTpl from '../blocks/course/exams.html?raw';
 import after from '../blocks/legal/after.html?raw';
 import nav from '../blocks/legal/nav.html?raw';
 import footer from '../blocks/legal/footer.html?raw';
@@ -53,6 +54,33 @@ const how = fill(howTpl, {
   LIVE_DESC: esc(`Video lezioni di ${c.name} con il tuo insegnante e lo stesso gruppo, in giorni fissi e alla stessa ora ogni settimana.`),
 });
 const levels = fill(levelsTpl, { LV_TITLE: esc(`I livelli di ${c.name} dalla A1 alla C2`) });
+const EXAMS = {
+  English: {
+    title: "Le certificazioni d'inglese",
+    desc: "Le certificazioni più richieste per lo studio, il lavoro e i visti. Su Alimun ti eserciti con prove nel loro stesso formato.",
+    panels: [
+      ['B2 First', "Il B2 First di Cambridge English certifica il livello B2 con quattro prove: Reading and Use of English, Writing, Listening e Speaking. È spesso richiesto da università, programmi Erasmus e datori di lavoro, e il certificato non ha scadenza."],
+      ['C1 Advanced', "Il C1 Advanced di Cambridge English certifica il livello C1 con le stesse quattro prove, più impegnative. Molte università e aziende lo accettano come prova di un inglese avanzato per studiare e lavorare in inglese."],
+      ['IELTS', "L'IELTS valuta Listening, Reading, Writing e Speaking con un punteggio da 0 a 9. Esiste nella versione Academic, per lo studio, e General Training, per il lavoro e l'immigrazione, ed è richiesto per i visti in paesi come Regno Unito, Australia e Canada."],
+    ],
+  },
+  German: {
+    title: 'Le certificazioni di tedesco',
+    desc: 'Le certificazioni più richieste per vivere, studiare e lavorare nei paesi di lingua tedesca. Su Alimun ti eserciti con prove nel loro stesso formato.',
+    panels: [
+      ['Goethe B1', "Il Goethe-Zertifikat B1 del Goethe-Institut verifica lettura, ascolto, scrittura e parlato, che puoi sostenere anche in moduli separati. È uno dei certificati più richiesti per vivere e lavorare in Germania."],
+      ['Goethe B2', "Il Goethe-Zertifikat B2 certifica un tedesco indipendente nelle stesse quattro competenze. È spesso richiesto per lavori qualificati e per l'accesso ad alcuni corsi di studio."],
+      ['telc B1', "Il telc Deutsch B1, noto come Zertifikat Deutsch, certifica il livello B1 ed è riconosciuto dalle autorità tedesche, per esempio nelle domande di cittadinanza."],
+    ],
+  },
+};
+const ex = EXAMS[c.lang];
+const tones = ['', ' is-green', ' is-ink'];
+const exams = ex ? fill(examsTpl, {
+  EX_TITLE: esc(ex.title),
+  EX_DESC: esc(ex.desc),
+  EX_PANELS: ex.panels.map(([name, text], i) => `            <div class="ex_panel shadow-card${tones[i]}"><p class="ex_vname" aria-hidden="true">${esc(name)}</p><h3 class="ex_name">${esc(name)}</h3><div class="ex_body"><p class="text-size-large">${esc(text)}</p></div></div>`).join('\n'),
+}) : '';
 ---
 <Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang="it">
   <Fragment set:html={nav} />
@@ -60,6 +88,7 @@ const levels = fill(levelsTpl, { LV_TITLE: esc(`I livelli di ${c.name} dalla A1 
     <Fragment set:html={hero} />
     <Fragment set:html={how} />
     <Fragment set:html={levels} />
+    <Fragment set:html={exams} />
   </main>
   <Fragment set:html={footer} />
 </Base>
