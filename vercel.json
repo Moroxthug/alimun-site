@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "git": { "deploymentEnabled": { "rebuild-astro": false } },
   "outputDirectory": ".",
   "buildCommand": "npm run build:site",
   "cleanUrls": true,
