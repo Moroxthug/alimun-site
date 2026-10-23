@@ -197,6 +197,13 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Admin bar (js/view-as.js) uses t() with va_* keys; all values escaped.
 - 43 keys added in en/fr/de/es/ma.
 
+## 20 Oct 2026 - Ready for Phase 4
+- Plan updated: phase table (2 done, 3 done except owner-blocked items, 4 = Astro 1:1 rebuild in progress), "Phase 3 status" list of what is still open, Phase 4 current state and kickoff prompt.
+- main merged into `rebuild-astro` (clean, site builds, locked blocks unchanged) and pushed.
+
+## 2026-10-23 — Contact form sends email
+- The contact form saved nothing (Webflow showed "Thank you!" only). Now `js/contact-form.js` posts to `/api/send-admin-email?action=contact` (`api/_lib/contact.js`), emailing the owner through Resend with the sender as reply-to; honeypot, length caps, per-instance rate limit; no new function. Live, but sending needs `RESEND_API_KEY` in Vercel production (currently missing, response `email_not_configured`).
+
 ## 20-22 Oct 2026 - Tiers rebuild (branch rebuild-astro)
 - Re-cut `site/src/blocks/tiers/head.html` and `footer.html` from the current `tiers.html` (now loads `js/i18n/en.js`, homepage footer i18n keys); added `js/i18n/en.js` to `site/public`.
 - Owner approved and locked: Tiers nav (with head and closing scripts) and the Access Tiers section. Pixel comparison 0 px on desktop and phone, phone menu included.
