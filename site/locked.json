@@ -247,5 +247,9 @@
   "src/blocks/course/hero.html": {
     "sha256": "a2a204f886268178e30bc1f24374c280838f3d655efdba52c5a918224eeb82cd",
     "approved": "2026-10-23 Italian course pages hero (Careers-style, city video per language), owner: hero ok"
+  },
+  "src/blocks/course/how.html": {
+    "sha256": "496d8dd4ec9f838c9727bbb85ad9ff0ceca10da2e829be08b51a81c00ccd426d",
+    "approved": "2026-10-23 Italian course pages: how the lessons work, stacking cards (owner: section ok)"
   }
 }

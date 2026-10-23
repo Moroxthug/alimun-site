@@ -1,0 +1,82 @@
+      <section class="lv">
+        <style>
+          /* CEFR levels: the screen holds while a giant level code changes with the scroll; its name and description slide in beside it and a lime bar fills across the six levels. */
+          .lv { position: relative; height: 520vh; }
+          .lv_stage { position: sticky; top: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+          .lv_head { margin-bottom: 3rem; }
+          .lv_head h2 { margin: 0; }
+          .lv_head p { margin: 1rem 0 0; max-width: 40rem; color: rgba(8, 8, 8, .7); }
+          .lv_body { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: center; }
+          .lv_codes, .lv_texts { position: relative; height: clamp(12rem, 30vh, 20rem); }
+          .lv_code { position: absolute; inset: 0; display: flex; align-items: center; font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; line-height: .8; font-size: clamp(10rem, 28vh, 20rem); letter-spacing: -.03em; opacity: 0; transform: translateY(40%); transition: opacity .5s ease, transform .6s cubic-bezier(.215, .61, .355, 1); }
+          .lv_code span { color: var(--green); -webkit-text-stroke: 2px var(--black); }
+          .lv_text { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; opacity: 0; transform: translateX(3rem); transition: opacity .5s ease, transform .6s cubic-bezier(.215, .61, .355, 1); }
+          .lv_text h3 { margin: 0 0 1rem; }
+          .lv_text p { margin: 0; max-width: 32rem; }
+          .lv_code.is-before { transform: translateY(-40%); }
+          .lv_text.is-before { transform: translateX(-3rem); }
+          .lv_code.is-on, .lv_text.is-on { opacity: 1; transform: none; }
+          .lv_track { position: relative; margin-top: 3rem; height: 4px; border-radius: 5rem; background-color: #0808081a; overflow: hidden; }
+          .lv_fill { height: 100%; width: calc(var(--lv-p, 0) * 100%); background-color: var(--green); border-radius: 5rem; }
+          @media (max-width: 767px) {
+            .lv { height: 480vh; }
+            .lv_head { margin-bottom: 1.5rem; }
+            .lv_body { grid-template-columns: 1fr; gap: 1rem; }
+            .lv_codes { height: 9rem; }
+            .lv_code { font-size: 9rem; }
+            .lv_texts { height: 14rem; }
+            .lv_text { justify-content: flex-start; }
+          }
+        </style>
+        <div class="lv_stage">
+          <div class="container-large">
+            <div class="lv_head">
+              <h2 class="heading-style-h2">{{LV_TITLE}}</h2>
+              <p class="text-size-medium">Il Quadro comune europeo di riferimento (QCER) descrive sei livelli di conoscenza di una lingua. Su Alimun ci sono classi per ogni livello e il test iniziale ti colloca dalla A1 alla C1.</p>
+            </div>
+            <div class="lv_body">
+              <div class="lv_codes" aria-hidden="true">
+                <div class="lv_code">A<span>1</span></div>
+                <div class="lv_code">A<span>2</span></div>
+                <div class="lv_code">B<span>1</span></div>
+                <div class="lv_code">B<span>2</span></div>
+                <div class="lv_code">C<span>1</span></div>
+                <div class="lv_code">C<span>2</span></div>
+              </div>
+              <div class="lv_texts">
+                <div class="lv_text"><h3 class="heading-style-h3">A1, livello base</h3><p class="text-size-large">Capisci e usi espressioni quotidiane e frasi molto semplici, sai presentarti e fare domande su informazioni personali, se l'altra persona parla lentamente e con chiarezza.</p></div>
+                <div class="lv_text"><h3 class="heading-style-h3">A2, livello elementare</h3><p class="text-size-large">Comunichi in situazioni semplici e abituali, come la famiglia, gli acquisti, il lavoro e il luogo in cui vivi, e descrivi con parole semplici il tuo ambiente.</p></div>
+                <div class="lv_text"><h3 class="heading-style-h3">B1, livello intermedio</h3><p class="text-size-large">Te la cavi nella maggior parte delle situazioni che si incontrano in viaggio, racconti esperienze, progetti e desideri e spieghi brevemente le tue opinioni.</p></div>
+                <div class="lv_text"><h3 class="heading-style-h3">B2, intermedio superiore</h3><p class="text-size-large">Capisci le idee principali di testi complessi, anche tecnici nel tuo campo, e parli con una scioltezza che rende naturale la conversazione con chi parla la lingua da sempre.</p></div>
+                <div class="lv_text"><h3 class="heading-style-h3">C1, livello avanzato</h3><p class="text-size-large">Usi la lingua in modo flessibile ed efficace per la vita sociale, lo studio e il lavoro, e scrivi testi chiari e ben strutturati su argomenti complessi.</p></div>
+                <div class="lv_text"><h3 class="heading-style-h3">C2, padronanza</h3><p class="text-size-large">Capisci con facilità quasi tutto ciò che leggi e ascolti e ti esprimi in modo spontaneo, scorrevole e preciso, cogliendo anche le sfumature di significato.</p></div>
+              </div>
+            </div>
+            <div class="lv_track" aria-hidden="true"><div class="lv_fill"></div></div>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".lv");
+            var codes = [].slice.call(root.querySelectorAll(".lv_code")), texts = [].slice.call(root.querySelectorAll(".lv_text"));
+            var current = -1;
+            function update() {
+              var r = root.getBoundingClientRect(), range = root.offsetHeight - window.innerHeight;
+              var p = Math.min(1, Math.max(0, -r.top / range));
+              root.style.setProperty("--lv-p", p.toFixed(3));
+              var k = Math.min(codes.length - 1, Math.floor(p * codes.length));
+              if (k === current) return;
+              current = k;
+              [codes, texts].forEach(function (list) {
+                list.forEach(function (el, i) {
+                  el.classList.toggle("is-on", i === k);
+                  el.classList.toggle("is-before", i < k);
+                });
+              });
+            }
+            window.addEventListener("scroll", update, { passive: true });
+            window.addEventListener("resize", update);
+            update();
+          })();
+        </script>
+      </section>

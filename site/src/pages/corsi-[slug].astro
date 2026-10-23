@@ -6,6 +6,7 @@ import Base from '../layouts/Base.astro';
 import headTpl from '../blocks/course/head.html?raw';
 import heroTpl from '../blocks/course/hero.html?raw';
 import howTpl from '../blocks/course/how.html?raw';
+import levelsTpl from '../blocks/course/levels.html?raw';
 import after from '../blocks/legal/after.html?raw';
 import nav from '../blocks/legal/nav.html?raw';
 import footer from '../blocks/legal/footer.html?raw';
@@ -51,12 +52,14 @@ const how = fill(howTpl, {
   HOW_TITLE: esc(`Come funzionano le lezioni di ${c.name}`),
   LIVE_DESC: esc(`Video lezioni di ${c.name} con il tuo insegnante e lo stesso gruppo, in giorni fissi e alla stessa ora ogni settimana.`),
 });
+const levels = fill(levelsTpl, { LV_TITLE: esc(`I livelli di ${c.name} dalla A1 alla C2`) });
 ---
 <Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang="it">
   <Fragment set:html={nav} />
   <main class="main-wrapper">
     <Fragment set:html={hero} />
     <Fragment set:html={how} />
+    <Fragment set:html={levels} />
   </main>
   <Fragment set:html={footer} />
 </Base>
