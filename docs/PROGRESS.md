@@ -373,3 +373,4 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Translations: `home_langs_title` and `home_langs_desc` in all nine languages.
 - `vercel.json`: no automatic builds for the rebuild-astro branch (owner yes), to save the daily build cap for the preview link and production.
 - Checked: desktop, phone and Arabic. Active video plays, no 404s, no errors.
+- Owner (23 Oct): the preview link kept failing on Vercel's daily build cap for the preview project, so from now on changes go straight to alimun.com (fast-forward `main`) for the owner to review there. The alimun-site project still accepted builds when the preview project was capped. Group-size section without the dot row and "Online language courses" are live (main at 7858ffc). Smoke checks pass.
