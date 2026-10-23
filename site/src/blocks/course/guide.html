@@ -9,6 +9,8 @@
           .gd_row h3 { margin: 0; max-width: 22rem; }
           .gd_text p { margin: 0; color: rgba(8, 8, 8, .78); }
           .gd_text p + p { margin-top: 1.25rem; }
+          /* Lime marker on key phrases, drawn across the words as the block rises in. */
+          .gd_mark { color: inherit; display: inline; padding: .05em .22em; margin: 0 -.22em; border-radius: 5rem; box-decoration-break: clone; -webkit-box-decoration-break: clone; background: linear-gradient(var(--green), var(--green)) no-repeat left center / calc(clamp(0, (var(--gd, 0) - .45) * 1.9, 1) * 100%) 100%; transition: background-size .2s linear; }
           .gd .gd_lead, .gd_row { opacity: calc(.12 + var(--gd, 0) * .88); transform: translateY(calc((1 - var(--gd, 0)) * 2.5rem)); }
           @media (max-width: 767px) {
             .gd { padding: 5rem 0; }
