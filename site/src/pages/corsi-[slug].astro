@@ -11,6 +11,8 @@ import examsTpl from '../blocks/course/exams.html?raw';
 import guideTpl from '../blocks/course/guide.html?raw';
 import plansTpl from '../blocks/course/plans.html?raw';
 import faqTpl from '../blocks/course/faq.html?raw';
+import quizTpl from '../blocks/course/quiz.html?raw';
+import { QUIZ, LEVEL_TEXT } from '../data/course-quiz.js';
 import { courseFaq } from '../data/course-faq.js';
 import { GUIDES } from '../data/course-guides.js';
 import after from '../blocks/legal/after.html?raw';
@@ -103,6 +105,21 @@ const faq = fill(faqTpl, {
   QA_QUESTIONS: faqItems.map(([q, a], i) => `              <button type="button" class="qa_q" aria-expanded="false">${esc(q)}<span class="qa_mobile">${esc(a)}</span></button>`).join('\n'),
   QA_ANSWERS: faqItems.map(([q, a]) => `              <div class="qa_a"><h3 class="heading-style-h4">${esc(q)}</h3><p class="text-size-large">${esc(a)}</p></div>`).join('\n'),
 });
+const art = ({ inglese: "l'", spagnolo: 'lo ' })[c.name] || 'il ';
+const quiz = fill(quizTpl, {
+  QUIZ_DATA: JSON.stringify({
+    title: `Scopri il tuo livello di ${c.name}`,
+    intro: `Dieci frasi da completare, dalla più semplice alla più difficile, in circa due minuti. Alla fine vedi una stima del tuo livello di ${c.name}.`,
+    questions: QUIZ[c.lang],
+    levels: LEVEL_TEXT,
+    note: c.open
+      ? "È una stima. Dopo l'iscrizione il test completo stabilisce il tuo livello e ti inserisce nella classe giusta."
+      : `È una stima. Quando le classi di ${c.name} apriranno, il test completo stabilirà il tuo livello e la classe giusta per te.`,
+    cta: c.open ? 'Registrati e fai il test completo' : "Unisciti alla lista d'attesa",
+    ctaHref: `signup.html?role=student&language=${c.lang}`,
+    arrow: '/images/icon-arrow-light.svg',
+  }).replace(/</g, '\\u003c'),
+});
 ---
 <Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang="it">
   <Fragment set:html={nav} />
@@ -115,5 +132,6 @@ const faq = fill(faqTpl, {
     <Fragment set:html={plans} />
     <Fragment set:html={faq} />
   </main>
+  <Fragment set:html={quiz} />
   <Fragment set:html={footer} />
 </Base>

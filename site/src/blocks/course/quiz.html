@@ -1,0 +1,89 @@
+      <div class="lq" id="level-quiz" role="dialog" aria-modal="true" aria-labelledby="lq-title" hidden>
+        <style>
+          /* Level quiz: the card springs up from the button that opened it over a blurred page; one question at a time slides in, a lime bar fills, then the estimated level appears with a prompt to sign up. */
+          .lq { position: fixed; inset: 0; z-index: 100000; display: flex; align-items: center; justify-content: center; padding: 1.25rem; }
+          .lq[hidden] { display: none; }
+          .lq_back { position: absolute; inset: 0; background-color: rgba(8, 8, 8, .35); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); opacity: 0; transition: opacity .4s ease; }
+          .lq.is-open .lq_back { opacity: 1; }
+          .lq_card { position: relative; width: 100%; max-width: 40rem; max-height: calc(100vh - 2.5rem); overflow: auto; background-color: var(--white); border-radius: 3.125rem; padding: 3rem; box-shadow: 0 30px 80px rgba(8, 8, 8, .25); transform-origin: var(--lq-ox, 50%) var(--lq-oy, 100%); transform: translate(var(--lq-x, 0), var(--lq-y, 3rem)) scale(.3); opacity: 0; transition: transform .7s cubic-bezier(.2, 1.2, .35, 1), opacity .35s ease; }
+          .lq.is-open .lq_card { transform: none; opacity: 1; }
+          .lq_close { position: absolute; top: 1.5rem; right: 2rem; background: none; border: 0; cursor: pointer; font-family: Satoshi, sans-serif; font-size: .875rem; color: rgba(8, 8, 8, .6); text-decoration: underline; }
+          .lq_body { padding-top: 1.75rem; }
+          .lq_title { margin: 0 0 1rem; font-family: Coolvetica Condensed, sans-serif; font-weight: 400; text-transform: uppercase; line-height: .95; font-size: clamp(2.25rem, 4vw, 3.25rem); }
+          .lq_text { margin: 0; color: rgba(8, 8, 8, .75); }
+          .lq_track { height: 4px; border-radius: 5rem; background-color: #0808081a; overflow: hidden; margin: 0 0 2rem; }
+          .lq_fill { height: 100%; width: 0; background-color: var(--green); border-radius: 5rem; transition: width .5s ease; }
+          .lq_step { animation: lqIn .5s cubic-bezier(.215, .61, .355, 1); }
+          @keyframes lqIn { from { opacity: 0; transform: translateX(2.5rem); } to { opacity: 1; transform: none; } }
+          .lq_prompt { margin: 0 0 .5rem; color: rgba(8, 8, 8, .6); font-size: .9rem; }
+          .lq_q { margin: 0 0 1.5rem; font-size: clamp(1.35rem, 2.4vw, 1.75rem); line-height: 1.3; }
+          .lq_opts { display: grid; gap: .75rem; }
+          .lq_opt { width: 100%; text-align: left; padding: 1rem 1.25rem; border-radius: 1rem; border: 1px solid #0808084d; background-color: var(--white); font-family: Satoshi, sans-serif; font-size: 1.05rem; color: var(--black); cursor: pointer; transition: background-color .25s ease, border-color .25s ease; }
+          .lq_opt:hover { border-color: var(--black); }
+          .lq_opt.is-picked { background-color: var(--green); border-color: var(--green); }
+          .lq_level { margin: 1.5rem 0; border-radius: 2.25rem; background-color: var(--white); display: flex; align-items: center; justify-content: center; height: 11rem; font-family: Coolvetica Condensed, sans-serif; font-size: 8rem; line-height: 1; animation: lqPop .8s cubic-bezier(.2, 1.2, .35, 1); }
+          @keyframes lqPop { from { opacity: 0; transform: scale(.6); } to { opacity: 1; transform: none; } }
+          .lq_actions { display: flex; flex-wrap: wrap; gap: .75rem; margin-top: 1.75rem; }
+          .lq_again { background: none; border: 0; cursor: pointer; font-family: Satoshi, sans-serif; font-size: .95rem; color: rgba(8, 8, 8, .7); text-decoration: underline; }
+          .lq_note { margin: 1rem 0 0; font-size: .9rem; color: rgba(8, 8, 8, .6); }
+          body.lq-lock { overflow: hidden; }
+          @media (max-width: 767px) { .lq_card { padding: 2.25rem 1.5rem; border-radius: 2.25rem; } .lq_level { height: 8.5rem; font-size: 6rem; } }
+        </style>
+        <div class="lq_back" data-lq-close></div>
+        <div class="lq_card">
+          <button type="button" class="lq_close" data-lq-close>Chiudi</button>
+          <div class="lq_body"></div>
+        </div>
+        <script type="application/json" id="level-quiz-data">{{QUIZ_DATA}}</script>
+        <script>
+          (function () {
+            var root = document.getElementById("level-quiz"), card = root.querySelector(".lq_card"), body = root.querySelector(".lq_body");
+            var D = JSON.parse(document.getElementById("level-quiz-data").textContent);
+            var LEVELS = ["A1", "A2", "B1", "B2", "C1"], i = 0, score = 0, opener = null, order = [];
+            function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
+            function shuffle(a) { a = a.slice(); for (var k = a.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)); var t = a[k]; a[k] = a[j]; a[j] = t; } return a; }
+            function intro() {
+              body.innerHTML = '<div class="lq_step"><h2 class="lq_title" id="lq-title">' + esc(D.title) + '</h2><p class="lq_text text-size-medium">' + esc(D.intro) + '</p><div class="lq_actions"><button type="button" class="button w-inline-block" data-lq-start><p>Inizia il quiz</p><img src="' + D.arrow + '" alt="" class="icon-16"></button></div></div>';
+            }
+            function question() {
+              var q = D.questions[i], opts = shuffle(q[1]);
+              body.innerHTML = '<div class="lq_track"><div class="lq_fill" style="width:' + (i / D.questions.length * 100) + '%"></div></div><div class="lq_step"><p class="lq_prompt">Completa la frase</p><p class="lq_q" id="lq-title">' + esc(q[0]) + '</p><div class="lq_opts">' +
+                opts.map(function (o) { return '<button type="button" class="lq_opt" data-lq-opt="' + esc(o) + '">' + esc(o) + '</button>'; }).join("") + '</div></div>';
+              requestAnimationFrame(function () { var f = body.querySelector(".lq_fill"); if (f) f.style.width = ((i + 1) / D.questions.length * 100) + "%"; });
+            }
+            function result() {
+              // Two questions per level: 0-2 right is A1, 3-4 A2, 5-6 B1, 7-8 B2, 9-10 C1.
+              var lv = LEVELS[Math.min(4, Math.floor(Math.max(0, score - 1) / 2))];
+              body.innerHTML = '<div class="lq_step"><p class="lq_prompt">La tua stima</p><div class="lq_level shadow-card" aria-label="Livello stimato ' + lv + '">' + lv + '</div><p class="lq_text text-size-medium">' + esc(D.levels[lv]) + '</p><p class="lq_note">' + esc(D.note) + '</p><div class="lq_actions"><a href="' + D.ctaHref + '" class="button w-inline-block"><p>' + esc(D.cta) + '</p><img src="' + D.arrow + '" alt="" class="icon-16"></a><button type="button" class="lq_again" data-lq-again>Rifai il quiz</button></div></div>';
+            }
+            function open(btn) {
+              opener = btn; i = 0; score = 0; intro();
+              // The card grows out of the button that opened it.
+              var r = btn.getBoundingClientRect(), cx = window.innerWidth / 2, cy = window.innerHeight / 2;
+              card.style.setProperty("--lq-x", (r.left + r.width / 2 - cx) + "px");
+              card.style.setProperty("--lq-y", (r.top + r.height / 2 - cy) + "px");
+              root.hidden = false; document.body.classList.add("lq-lock");
+              requestAnimationFrame(function () { requestAnimationFrame(function () { root.classList.add("is-open"); var s = root.querySelector("[data-lq-start]"); if (s) s.focus(); }); });
+            }
+            function close() {
+              root.classList.remove("is-open"); document.body.classList.remove("lq-lock");
+              setTimeout(function () { root.hidden = true; if (opener) opener.focus(); }, 450);
+            }
+            document.addEventListener("click", function (e) {
+              var t = e.target.closest("[data-quiz-open]");
+              if (t) { e.preventDefault(); open(t); }
+            });
+            root.addEventListener("click", function (e) {
+              if (e.target.closest("[data-lq-close]")) return close();
+              if (e.target.closest("[data-lq-start]") || e.target.closest("[data-lq-again]")) { i = 0; score = 0; return question(); }
+              var o = e.target.closest("[data-lq-opt]");
+              if (o && !body.querySelector(".is-picked")) {
+                o.classList.add("is-picked");
+                if (o.getAttribute("data-lq-opt") === D.questions[i][1][0]) score++;
+                setTimeout(function () { i++; if (i < D.questions.length) question(); else result(); }, 450);
+              }
+            });
+            document.addEventListener("keydown", function (e) { if (e.key === "Escape" && !root.hidden) close(); });
+          })();
+        </script>
+      </div>

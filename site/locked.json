@@ -245,16 +245,16 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
   },
   "src/blocks/course/hero.html": {
-    "sha256": "a2a204f886268178e30bc1f24374c280838f3d655efdba52c5a918224eeb82cd",
-    "approved": "2026-10-23 Italian course pages hero (Careers-style, city video per language), owner: hero ok"
+    "sha256": "c314e5a114a121ff79137a6146813281f8364525f44e8651cde8c302971c8328",
+    "approved": "2026-10-23 Italian course pages hero (Careers-style, city video per language), owner: hero ok; 2026-10-23 level quiz button added (owner: quiz ok)"
   },
   "src/blocks/course/how.html": {
     "sha256": "496d8dd4ec9f838c9727bbb85ad9ff0ceca10da2e829be08b51a81c00ccd426d",
     "approved": "2026-10-23 Italian course pages: how the lessons work, stacking cards (owner: section ok)"
   },
   "src/blocks/course/levels.html": {
-    "sha256": "376da559a9d31a5ff6701acd41b09019cc81fca013038777f0cb90094513b695",
-    "approved": "2026-10-23 Italian course pages: CEFR levels showcase (owner: ok for now)"
+    "sha256": "59bbd83065d831bbb93e8db492601d654ddc4c5f9de84083e020a45c33c19651",
+    "approved": "2026-10-23 Italian course pages: CEFR levels showcase (owner: ok for now); 2026-10-23 level quiz button added (owner: quiz ok)"
   },
   "src/blocks/course/exams.html": {
     "sha256": "874bf7069e2e3eec75731a64135c7306516bd0b9fb7cd695a6db54b54647ba09",
@@ -271,5 +271,13 @@
   "src/blocks/course/plans.html": {
     "sha256": "2e0639a6dfc87df13d9ec287f2d79273fb2c237215945f82cca12bf75c3b647a",
     "approved": "2026-10-23 Italian course pages: price ladder (owner: section ok)"
+  },
+  "src/blocks/course/faq.html": {
+    "sha256": "3d632a8c7bae0d2df06efb87de9c4aaebbde3e29fb02ef2f76d44fdbcf2c2563",
+    "approved": "2026-10-23 Italian course pages: FAQ (owner: section ok)"
+  },
+  "src/data/course-faq.js": {
+    "sha256": "1dc7debcb9b4936627cf3fb3276ba9ca8b3ab4a9e5bb3e189df9f6cae5907d2b",
+    "approved": "2026-10-23 Italian course pages: FAQ text (owner: section ok)"
   }
 }

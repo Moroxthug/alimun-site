@@ -17,10 +17,13 @@
           .lv_text.is-before { transform: translateX(-3rem); }
           .lv_code.is-on, .lv_text.is-on { opacity: 1; transform: none; }
           .lv_track { position: relative; margin-top: 3rem; height: 4px; border-radius: 5rem; background-color: #0808081a; overflow: hidden; }
+          .lv_cta { margin-top: 2rem; display: flex; justify-content: center; }
           .lv_fill { height: 100%; width: calc(var(--lv-p, 0) * 100%); background-color: var(--green); border-radius: 5rem; }
           @media (max-width: 767px) {
             .lv { height: 480vh; }
             .lv_head { margin-bottom: 1.5rem; }
+            .lv_head p { font-size: .95rem; }
+            .lv_cta { margin-top: 1.25rem; }
             .lv_body { grid-template-columns: 1fr; gap: 1rem; }
             .lv_codes { height: 11rem; border-radius: 2.25rem; }
             .lv_code { font-size: 8.5rem; }
@@ -53,6 +56,7 @@
               </div>
             </div>
             <div class="lv_track" aria-hidden="true"><div class="lv_fill"></div></div>
+            <div class="lv_cta"><button type="button" class="button w-inline-block" data-quiz-open><p>Scopri il tuo livello in due minuti</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16"></button></div>
           </div>
         </div>
         <script>
