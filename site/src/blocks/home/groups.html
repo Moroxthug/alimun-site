@@ -1,0 +1,135 @@
+      <section class="gs">
+        <style>
+          /* Group size: the screen holds while four plan cards glide sideways with the scroll. Above them a row of
+             35 dots, one per person, collapses to the size of the group in view (35, 17, 6, then 1). The first dot,
+             in lime, is you. Each card's photo drifts slightly against the card for depth. */
+          .gs { position: relative; height: 420vh; background-color: var(--white); }
+          .gs_stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
+          .gs_head { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: end; margin-bottom: 2.5rem; }
+          .gs_head h2 { margin: 0; }
+          .gs_intro p { margin: 0 0 1.5rem; max-width: 34rem; color: rgba(8, 8, 8, .7); }
+          .gs_dots { display: flex; align-items: center; height: 1rem; }
+          .gs_dot { flex: none; width: .75rem; height: .75rem; margin-right: .5rem; border-radius: 50%; background-color: var(--black); transition: width .6s cubic-bezier(.215, .61, .355, 1), margin .6s cubic-bezier(.215, .61, .355, 1), transform .6s cubic-bezier(.215, .61, .355, 1), opacity .4s ease; }
+          .gs_dot.is-out { width: 0; margin-right: 0; transform: scale(0); opacity: 0; }
+          .gs_dot.is-you { background-color: var(--green); box-shadow: 0 0 0 1px var(--black) inset; }
+          .gs_rail { position: relative; }
+          .gs_track { display: flex; gap: 2rem; will-change: transform; }
+          .gs_panel { flex: none; width: min(68rem, 74vw); display: grid; grid-template-columns: 1.1fr 1fr; border-radius: 3.125rem; background-color: var(--white); overflow: hidden; }
+          .gs_img { position: relative; overflow: hidden; height: clamp(18rem, 46vh, 30rem); }
+          .gs_img img { position: absolute; top: 0; left: -8%; width: 116%; height: 100%; object-fit: cover; transform: translateX(var(--gs-shift, 0%)); }
+          .gs_body { display: flex; flex-direction: column; justify-content: center; padding: 2.5rem 3rem; }
+          .gs_num { display: flex; align-items: flex-end; gap: 1rem; margin-bottom: 1.5rem; }
+          .gs_num strong { font-family: Coolvetica Condensed, sans-serif; font-weight: 400; line-height: .8; font-size: clamp(6rem, 16vh, 10rem); letter-spacing: -.02em; color: var(--black); }
+          .gs_num span { padding-bottom: .4rem; max-width: 10rem; font-size: 1rem; line-height: 1.2; color: rgba(8, 8, 8, .7); }
+          .gs_body h3 { margin: 0 0 .5rem; }
+          [dir="rtl"] .gs_body h3 { unicode-bidi: plaintext; text-align: right; }
+          .gs_price { margin: 0 0 1rem; }
+          .gs_price b { font-family: Coolvetica Condensed, sans-serif; font-weight: 400; font-size: 2rem; line-height: 1; }
+          .gs_body p.gs_desc { margin: 0; max-width: 26rem; }
+          .gs_cta { margin-top: 2.5rem; display: flex; justify-content: center; }
+          @media (max-width: 767px) {
+            .gs { height: 380vh; }
+            .gs_head { grid-template-columns: 1fr; gap: 1rem; margin-bottom: 1.25rem; }
+            .gs_intro p { font-size: .95rem; margin-bottom: 1rem; }
+            .gs_dots { height: .6rem; }
+            .gs_dot { width: .45rem; height: .45rem; margin-right: .2rem; }
+            .gs_track { gap: 1rem; }
+            .gs_panel { width: 84vw; grid-template-columns: 1fr; border-radius: 2.25rem; }
+            .gs_img { height: 24vh; }
+            .gs_body { padding: 1.25rem 1.5rem 1.5rem; }
+            .gs_num { margin-bottom: .75rem; }
+            .gs_num strong { font-size: 5rem; }
+            .gs_price { margin-bottom: .5rem; }
+            .gs_price b { font-size: 1.5rem; }
+            .gs_body p.gs_desc { font-size: .95rem; }
+            .gs_cta { margin-top: 1.25rem; }
+          }
+        </style>
+        <div class="gs_stage">
+          <div class="container-large">
+            <div class="gs_head">
+              <h2 class="heading-style-h2" data-i18n="home_groups_title">Choose the size of your group</h2>
+              <div class="gs_intro">
+                <p class="text-size-medium" data-i18n="home_groups_desc">Every plan has live classes with a teacher on fixed days every week. The smaller the group, the more time you have to speak.</p>
+                <div class="gs_dots" aria-hidden="true"></div>
+              </div>
+            </div>
+          </div>
+          <div class="gs_rail">
+            <div class="gs_track">
+              <div class="gs_panel shadow-card" data-size="35">
+                <div class="gs_img"><img src="images/pexels-august-de-richelieu-4260315-p-1080.jpg" srcset="images/pexels-august-de-richelieu-4260315-p-800.jpg 800w, images/pexels-august-de-richelieu-4260315-p-1080.jpg 1080w, images/pexels-august-de-richelieu-4260315-p-1600.jpg 1600w" sizes="(max-width: 767px) 90vw, 40vw" loading="lazy" alt=""></div>
+                <div class="gs_body">
+                  <div class="gs_num"><strong>35</strong><span class="text-size-small" data-i18n="home_groups_people">people in your group</span></div>
+                  <h3 class="heading-style-h3">Community</h3>
+                  <p class="gs_price"><b>€24</b> <span data-i18n="home_groups_month">a month</span></p>
+                  <p class="text-size-medium gs_desc" data-i18n="home_groups_1_desc">One live class a week in a group of about 35 people, with access to the community.</p>
+                </div>
+              </div>
+              <div class="gs_panel shadow-card" data-size="17">
+                <div class="gs_img"><img src="images/pexels-katerina-holmes-5905749-p-1080.jpg" srcset="images/pexels-katerina-holmes-5905749-p-800.jpg 800w, images/pexels-katerina-holmes-5905749-p-1080.jpg 1080w, images/pexels-katerina-holmes-5905749-p-1600.jpg 1600w" sizes="(max-width: 767px) 90vw, 40vw" loading="lazy" alt=""></div>
+                <div class="gs_body">
+                  <div class="gs_num"><strong>17</strong><span class="text-size-small" data-i18n="home_groups_people">people in your group</span></div>
+                  <h3 class="heading-style-h3">Focused</h3>
+                  <p class="gs_price"><b>€59</b> <span data-i18n="home_groups_month">a month</span></p>
+                  <p class="text-size-medium gs_desc" data-i18n="home_groups_2_desc">Two live classes a week in a group of about 17 people, with feedback on your work every week.</p>
+                </div>
+              </div>
+              <div class="gs_panel shadow-card" data-size="6">
+                <div class="gs_img"><img src="images/pexels-diimejii-3466163-p-1080.jpg" srcset="images/pexels-diimejii-3466163-p-800.jpg 800w, images/pexels-diimejii-3466163-p-1080.jpg 1080w, images/pexels-diimejii-3466163-p-1600.jpg 1600w" sizes="(max-width: 767px) 90vw, 40vw" loading="lazy" alt=""></div>
+                <div class="gs_body">
+                  <div class="gs_num"><strong>6</strong><span class="text-size-small" data-i18n="home_groups_people">people in your group</span></div>
+                  <h3 class="heading-style-h3">Intensive</h3>
+                  <p class="gs_price"><b>€109</b> <span data-i18n="home_groups_month">a month</span></p>
+                  <p class="text-size-medium gs_desc" data-i18n="home_groups_3_desc">Three live classes a week in a group of about 6 people, plus a one-to-one session every week.</p>
+                </div>
+              </div>
+              <div class="gs_panel shadow-card" data-size="1">
+                <div class="gs_img"><img src="images/pexels-julia-m-cameron-4145153-p-1080.jpg" srcset="images/pexels-julia-m-cameron-4145153-p-800.jpg 800w, images/pexels-julia-m-cameron-4145153-p-1080.jpg 1080w, images/pexels-julia-m-cameron-4145153-p-1600.jpg 1600w" sizes="(max-width: 767px) 90vw, 40vw" loading="lazy" alt=""></div>
+                <div class="gs_body">
+                  <div class="gs_num"><strong>1</strong><span class="text-size-small" data-i18n="home_groups_private">just you and your teacher</span></div>
+                  <h3 class="heading-style-h3">1 on 1</h3>
+                  <p class="gs_price"><b>€269</b> <span data-i18n="home_groups_month">a month</span></p>
+                  <p class="text-size-medium gs_desc" data-i18n="home_groups_4_desc">Private classes with your teacher, based on three classes a week, with extra classes available.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="gs_cta">
+            <a href="tiers.html" class="button w-inline-block"><p data-i18n="home_groups_cta">Compare the plans</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16"></a>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".gs");
+            var track = root.querySelector(".gs_track"), panels = [].slice.call(root.querySelectorAll(".gs_panel"));
+            var dotsBox = root.querySelector(".gs_dots"), dots = [];
+            for (var i = 0; i < 35; i++) { var d = document.createElement("i"); d.className = i ? "gs_dot" : "gs_dot is-you"; dotsBox.appendChild(d); dots.push(d); }
+            var current = -1;
+            function update() {
+              var range = root.offsetHeight - window.innerHeight;
+              var p = Math.min(1, Math.max(0, -root.getBoundingClientRect().top / range));
+              // Hold the first card briefly, glide through the rest, hold the last.
+              var t = Math.min(1, Math.max(0, (p - .08) / .84));
+              // Centre the card in view; measured positions make this work left to right and right to left.
+              var first = panels[0].offsetLeft, last = panels[panels.length - 1].offsetLeft;
+              var x = (window.innerWidth - panels[0].offsetWidth) / 2 - (first + t * (last - first));
+              track.style.transform = "translate3d(" + x + "px,0,0)";
+              panels.forEach(function (panel, k) {
+                var off = Math.max(-1, Math.min(1, t * (panels.length - 1) - k));
+                panel.style.setProperty("--gs-shift", (off * 6).toFixed(2) + "%");
+              });
+              var k = Math.min(panels.length - 1, Math.round(t * (panels.length - 1)));
+              if (k === current) return;
+              current = k;
+              var size = +panels[k].getAttribute("data-size");
+              dots.forEach(function (d, i) {
+                d.classList.toggle("is-out", i >= size);
+              });
+            }
+            window.addEventListener("scroll", update, { passive: true });
+            window.addEventListener("resize", update);
+            update();
+          })();
+        </script>
+      </section>

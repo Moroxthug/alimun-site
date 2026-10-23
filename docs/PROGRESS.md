@@ -347,3 +347,15 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `site/src/blocks/02-hero.html`: the abstract smoke clip is replaced by Pexels 3252922 (fauxels, a group of colleagues talking by a window), encoded to the site format as `videos/pexels-3252922-group-talk-*`. Lock hash updated with an approval note.
 - Alternative encoded and ready if the owner prefers it: Pexels 6381276 (Liza Summer, two women talking by a river with a bridge), `videos/pexels-6381276-bridge-talk-*`.
 - Waiting on owner approval before going live.
+- Hero approved ("hero ok") and live.
+
+## 23 Oct 2026: homepage, new group-size section
+- Owner: delete the black "Reserve your spot" newsletter band (the quiz is the call to action now) and the "Our services" section. Keep its images and build a new, useful, animated section.
+- Removed `03-services.html` (newsletter) and `04-cards.html` (services) from the homepage, the repo and `locked.json`.
+- New `site/src/blocks/home/groups.html`, "Choose the size of your group":
+  - The section pins and four plan cards glide sideways with the scroll (Community, Focused, Intensive, 1 on 1). Each card shows the group size, plan, price and one sentence, with one of the four retained photos drifting slightly for depth.
+  - A row of 35 dots above the cards collapses to the group size in view (35, 17, 6, 1). The first dot, in lime, is "you".
+  - The button goes to the pricing page.
+  - Facts come from the existing plan text (group sizes, classes a week, weekly feedback, weekly one-to-one, prices). Prices still pass through `js/currency.js`.
+- Translations: 10 `home_groups_*` keys in all nine homepage languages (`js/translations.js`, regenerated `js/i18n/*`).
+- Checked: desktop, phone, Arabic (RTL; positions are measured, so the glide works in both directions, and "1 on 1" keeps its order) and Chinese. No errors.
