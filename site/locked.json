@@ -255,5 +255,9 @@
   "src/blocks/course/levels.html": {
     "sha256": "376da559a9d31a5ff6701acd41b09019cc81fca013038777f0cb90094513b695",
     "approved": "2026-10-23 Italian course pages: CEFR levels showcase (owner: ok for now)"
+  },
+  "src/blocks/course/exams.html": {
+    "sha256": "874bf7069e2e3eec75731a64135c7306516bd0b9fb7cd695a6db54b54647ba09",
+    "approved": "2026-10-23 Italian course pages: certificates accordion (owner: section ok)"
   }
 }

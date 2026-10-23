@@ -8,6 +8,8 @@ import heroTpl from '../blocks/course/hero.html?raw';
 import howTpl from '../blocks/course/how.html?raw';
 import levelsTpl from '../blocks/course/levels.html?raw';
 import examsTpl from '../blocks/course/exams.html?raw';
+import guideTpl from '../blocks/course/guide.html?raw';
+import { GUIDES } from '../data/course-guides.js';
 import after from '../blocks/legal/after.html?raw';
 import nav from '../blocks/legal/nav.html?raw';
 import footer from '../blocks/legal/footer.html?raw';
@@ -81,6 +83,12 @@ const exams = ex ? fill(examsTpl, {
   EX_DESC: esc(ex.desc),
   EX_PANELS: ex.panels.map(([name, text], i) => `            <div class="ex_panel shadow-card${tones[i]}"><p class="ex_vname" aria-hidden="true">${esc(name)}</p><h3 class="ex_name">${esc(name)}</h3><div class="ex_body"><p class="text-size-large">${esc(text)}</p></div></div>`).join('\n'),
 }) : '';
+const g = GUIDES[c.lang];
+const guide = fill(guideTpl, {
+  GUIDE_TITLE: esc(g.title),
+  GUIDE_LEAD: esc(g.lead),
+  GUIDE_ROWS: g.rows.map(([h, ps]) => `          <div class="gd_row"><h3 class="heading-style-h4">${esc(h)}</h3><div class="gd_text">${ps.map((t) => `<p class="text-size-large">${esc(t)}</p>`).join('')}</div></div>`).join('\n'),
+});
 ---
 <Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang="it">
   <Fragment set:html={nav} />
@@ -89,6 +97,7 @@ const exams = ex ? fill(examsTpl, {
     <Fragment set:html={how} />
     <Fragment set:html={levels} />
     <Fragment set:html={exams} />
+    <Fragment set:html={guide} />
   </main>
   <Fragment set:html={footer} />
 </Base>
