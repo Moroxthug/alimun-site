@@ -402,3 +402,4 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - All facts come from existing site copy.
 - Translations: 12 `home_seo_*` keys in all nine languages, written around each language's search terms ("Sprachen online lernen", "imparare una lingua online", ...). The language lists match each site's real courses (e.g. German site: English open; Spanish and French sites don't list their own language).
 - Checked: desktop, phone and Arabic, no errors.
+- Fixed the German homepage meta description: it said English and German were open, but the German site offers only English (`scripts/meta-i18n.json`).
