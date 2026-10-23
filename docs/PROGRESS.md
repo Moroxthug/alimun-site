@@ -392,3 +392,4 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Removed `05-faq.html` and its lock entry.
 - SEO: `localize.mjs` adds FAQPage JSON-LD per language from the translated cards. The English-only FAQPage in the shared head graph (which every language inherited untranslated) is removed; head lock hash updated with a note.
 - Checked: desktop, phone and Arabic. No answer overflows its card, no errors, one FAQPage per page.
+- Owner disliked the flip cards ("not these squares"). Replaced with the course-page FAQ layout exactly (question list on the left, answer card on the right, accordion on phones), with the answer card in white instead of lime. Contact line under the title with the lime marker; RTL alignment handled. FAQPage JSON-LD now reads `section.qa.is-home`. Checked: desktop, phone and Arabic, no errors.

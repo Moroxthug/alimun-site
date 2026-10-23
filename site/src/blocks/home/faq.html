@@ -1,112 +1,77 @@
-      <section class="fq">
+      <section class="section qa is-home">
         <style>
-          /* FAQ as flip cards: each white card shows a question; click or tap and it turns over in 3D to show the
-             answer on a lime back. The cards rise into place one after another as the section comes into view.
-             Every answer is in the HTML, and scripts/localize.mjs adds FAQPage structured data per language. */
-          .fq { padding: 8rem 0; background-color: var(--white); }
-          .fq_head { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: end; margin-bottom: 3.5rem; }
-          .fq_head h2 { margin: 0; }
-          .fq_head p { margin: 0; max-width: 32rem; color: rgba(8, 8, 8, .7); }
-          .fq_head a { color: var(--black); text-decoration: none; background-image: linear-gradient(var(--green), var(--green)); background-repeat: no-repeat; background-position: 0 88%; background-size: 100% 45%; }
-          .fq_grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; perspective: 1600px; }
-          .fq_card { position: relative; display: block; width: 100%; min-height: 21rem; padding: 0; border: 0; background: none; cursor: pointer; text-align: inherit; font: inherit; color: inherit;
-            opacity: 0; transform: translateY(3rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
-          .fq_card.is-in { opacity: 1; transform: none; }
-          .fq_inner { position: absolute; inset: 0; transform-style: preserve-3d; transition: transform .9s cubic-bezier(.645, .045, .355, 1); }
-          .fq_card.is-open .fq_inner { transform: rotateY(180deg); }
-          .fq_face { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: space-between; padding: 2.25rem; border-radius: 3.125rem; -webkit-backface-visibility: hidden; backface-visibility: hidden; }
-          .fq_front { background-color: var(--white); }
-          .fq_back { background-color: var(--green); transform: rotateY(180deg); justify-content: center; }
-          .fq_q { margin: 0; font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-size: clamp(2rem, 2.7vw, 2.9rem); line-height: 1.02; }
-          [dir="rtl"] .fq_q { text-transform: none; }
-          .fq_turn { display: flex; justify-content: flex-end; }
-          .fq_turn img { width: 1.25rem; height: 1.25rem; transition: transform .5s cubic-bezier(.215, .61, .355, 1); }
-          .fq_card:hover .fq_turn img { transform: translateX(.4rem); }
-          [dir="rtl"] .fq_turn img { transform: scaleX(-1); }
-          [dir="rtl"] .fq_card:hover .fq_turn img { transform: scaleX(-1) translateX(.4rem); }
-          .fq_a { margin: 0; }
-          .fq_card:focus-visible { outline: 2px solid var(--black); outline-offset: 6px; border-radius: 3.125rem; }
-          @media (max-width: 991px) {
-            .fq_grid { grid-template-columns: repeat(2, 1fr); }
-          }
+          /* Homepage FAQ: the course-page FAQ layout (owner), with the answer card in white. Questions on the left slide in one
+             after another; the answer to the selected question slides into a large card on the right. Stacked on phones.
+             scripts/localize.mjs adds FAQPage structured data per language from the translated answers. */
+          .qa { padding: 6rem 0 7rem; }
+          .qa_head { margin-bottom: 3rem; }
+          .qa_head h2 { margin: 0; }
+          .qa_head p { margin: 1rem 0 0; max-width: 34rem; color: rgba(8, 8, 8, .7); }
+          .qa_head a { color: var(--black); text-decoration: none; background-image: linear-gradient(var(--green), var(--green)); background-repeat: no-repeat; background-position: 0 88%; background-size: 100% 45%; }
+          [dir="rtl"] .qa_q { transform: translateX(2rem); }
+          [dir="rtl"] .qa_list.is-in .qa_q { transform: none; }
+          [dir="rtl"] .qa_q { text-transform: none; }
+          .qa_wrap { display: grid; grid-template-columns: 5fr 6fr; gap: 2.5rem; align-items: start; }
+          .qa_list { display: flex; flex-direction: column; }
+          .qa_q { display: block; width: 100%; text-align: start; background: none; border: 0; border-top: 1px solid rgba(8, 8, 8, .12); padding: 1.35rem 0; cursor: pointer; color: rgba(8, 8, 8, .45); font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-size: clamp(1.35rem, 2vw, 1.75rem); line-height: 1.05; opacity: 0; transform: translateX(-2rem); transition: color .35s ease, opacity .6s ease, transform .7s cubic-bezier(.215, .61, .355, 1); }
+          .qa_list.is-in .qa_q { opacity: 1; transform: none; }
+          .qa_q.is-on { color: var(--black); }
+          .qa_q .qa_mobile { display: none; }
+          .qa_card { position: sticky; top: 8rem; min-height: 22rem; border-radius: 3.125rem; background-color: var(--white); padding: 3rem; overflow: hidden; }
+          .qa_a { position: absolute; left: 3rem; right: 3rem; top: 3rem; opacity: 0; transform: translateY(1.5rem); transition: opacity .45s ease, transform .55s cubic-bezier(.215, .61, .355, 1); pointer-events: none; }
+          .qa_a.is-on { position: relative; left: auto; right: auto; top: auto; opacity: 1; transform: none; pointer-events: auto; }
+          .qa_a h3 { margin: 0 0 1rem; }
+          .qa_a p { margin: 0; }
           @media (max-width: 767px) {
-            .fq { padding: 4.5rem 0; }
-            .fq_head { grid-template-columns: 1fr; gap: 1rem; margin-bottom: 2rem; }
-            .fq_grid { grid-template-columns: 1fr; gap: 1rem; }
-            .fq_card { min-height: 17rem; }
-            .fq_face { padding: 1.75rem; border-radius: 2.25rem; }
-            .fq_q { font-size: 1.9rem; }
+            .qa { padding: 4.5rem 0 5rem; }
+            .qa_wrap { grid-template-columns: 1fr; }
+            .qa_card { display: none; }
+            .qa_q { color: var(--black); }
+            .qa_q .qa_mobile { display: block; margin-top: .75rem; font-family: Satoshi, sans-serif; text-transform: none; font-size: 1rem; line-height: 1.6; color: rgba(8, 8, 8, .75); max-height: 0; overflow: hidden; transition: max-height .5s ease; }
+            .qa_q.is-on .qa_mobile { max-height: 20rem; }
           }
         </style>
         <div id="faq" class="container-large">
-          <div class="fq_head">
+          <div class="qa_head">
             <h2 class="heading-style-h2" data-i18n="faqs_title">FaQs</h2>
             <p class="text-size-medium" data-i18n-html="faqs_desc">Can’t find the answer you’re looking for? Send us a message through our <a href="contact.html" class="text-style-link">contact page</a>.</p>
           </div>
-          <div class="fq_grid">
-            <button type="button" class="fq_card" aria-expanded="false">
-              <span class="fq_inner">
-                <span class="fq_face fq_front shadow-card"><span class="fq_q" data-i18n="faq_q1">How can your classes be so affordable compared to private tutors?</span><span class="fq_turn"><img src="images/icon-arrow-light.svg" alt=""></span></span>
-                <span class="fq_face fq_back"><span class="fq_a text-size-medium" data-i18n="faq_a1">One teacher leads a group, so the cost of each class is shared. Between classes, AI gives instant feedback on your practice and helps your teacher grade homework.</span></span>
-              </span>
-            </button>
-            <button type="button" class="fq_card" aria-expanded="false">
-              <span class="fq_inner">
-                <span class="fq_face fq_front shadow-card"><span class="fq_q" data-i18n="faq_q2">Does a group class really improve my speaking fluency?</span><span class="fq_turn"><img src="images/icon-arrow-light.svg" alt=""></span></span>
-                <span class="fq_face fq_back"><span class="fq_a text-size-medium" data-i18n="faq_a2">Yes. Your teacher guides the conversation, gives everyone time to speak and corrects you live, in groups of about 6 to 35 depending on your tier.</span></span>
-              </span>
-            </button>
-            <button type="button" class="fq_card" aria-expanded="false">
-              <span class="fq_inner">
-                <span class="fq_face fq_front shadow-card"><span class="fq_q" data-i18n="faq_q3">What if I have an unpredictable schedule?</span><span class="fq_turn"><img src="images/icon-arrow-light.svg" alt=""></span></span>
-                <span class="fq_face fq_back"><span class="fq_a text-size-medium" data-i18n="faq_a3">Each class meets on fixed days at a fixed time every week, with the same teacher and group, so choose a class whose schedule fits you. Between classes you can practise whenever you want.</span></span>
-              </span>
-            </button>
-            <button type="button" class="fq_card" aria-expanded="false">
-              <span class="fq_inner">
-                <span class="fq_face fq_front shadow-card"><span class="fq_q" data-i18n="faq_q4">Who are the teachers?</span><span class="fq_turn"><img src="images/icon-arrow-light.svg" alt=""></span></span>
-                <span class="fq_face fq_back"><span class="fq_a text-size-medium" data-i18n="faq_a4">Every teacher applies with a CV, credentials and a 2-minute video, then leads a 30-minute practice session with a small group of active students before teaching.</span></span>
-              </span>
-            </button>
-            <button type="button" class="fq_card" aria-expanded="false">
-              <span class="fq_inner">
-                <span class="fq_face fq_front shadow-card"><span class="fq_q" data-i18n="faq_q5">What do I get with the subscription?</span><span class="fq_turn"><img src="images/icon-arrow-light.svg" alt=""></span></span>
-                <span class="fq_face fq_back"><span class="fq_a text-size-medium" data-i18n="faq_a5">Live classes with your teacher and group on your tier’s schedule, session notes, homework graded with AI help, and a practice library with instant feedback, flashcards and exam-format practice.</span></span>
-              </span>
-            </button>
-            <button type="button" class="fq_card" aria-expanded="false">
-              <span class="fq_inner">
-                <span class="fq_face fq_front shadow-card"><span class="fq_q" data-i18n="faq_q6">How do I sign up for membership?</span><span class="fq_turn"><img src="images/icon-arrow-light.svg" alt=""></span></span>
-                <span class="fq_face fq_back"><span class="fq_a text-size-medium" data-i18n="faq_a6">Sign up at alimun.com/signup, take the short placement test and choose your tier. Classes are open in English and German; for other languages, join the free waitlist and we email you when it opens.</span></span>
-              </span>
-            </button>
+          <div class="qa_wrap">
+            <div class="qa_list">
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="faq_q1">How can your classes be so affordable compared to private tutors?</span><span class="qa_mobile" data-i18n="faq_a1">One teacher leads a group, so the cost of each class is shared. Between classes, AI gives instant feedback on your practice and helps your teacher grade homework.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="faq_q2">Does a group class really improve my speaking fluency?</span><span class="qa_mobile" data-i18n="faq_a2">Yes. Your teacher guides the conversation, gives everyone time to speak and corrects you live, in groups of about 6 to 35 depending on your tier.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="faq_q3">What if I have an unpredictable schedule?</span><span class="qa_mobile" data-i18n="faq_a3">Each class meets on fixed days at a fixed time every week, with the same teacher and group, so choose a class whose schedule fits you. Between classes you can practise whenever you want.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="faq_q4">Who are the teachers?</span><span class="qa_mobile" data-i18n="faq_a4">Every teacher applies with a CV, credentials and a 2-minute video, then leads a 30-minute practice session with a small group of active students before teaching.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="faq_q5">What do I get with the subscription?</span><span class="qa_mobile" data-i18n="faq_a5">Live classes with your teacher and group on your tier’s schedule, session notes, homework graded with AI help, and a practice library with instant feedback, flashcards and exam-format practice.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="faq_q6">How do I sign up for membership?</span><span class="qa_mobile" data-i18n="faq_a6">Sign up at alimun.com/signup, take the short placement test and choose your tier. Classes are open in English and German; for other languages, join the free waitlist and we email you when it opens.</span></button>
+            </div>
+            <div class="qa_card shadow-card" aria-live="polite">
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="faq_q1">How can your classes be so affordable compared to private tutors?</h3><p class="text-size-large" data-i18n="faq_a1">One teacher leads a group, so the cost of each class is shared. Between classes, AI gives instant feedback on your practice and helps your teacher grade homework.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="faq_q2">Does a group class really improve my speaking fluency?</h3><p class="text-size-large" data-i18n="faq_a2">Yes. Your teacher guides the conversation, gives everyone time to speak and corrects you live, in groups of about 6 to 35 depending on your tier.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="faq_q3">What if I have an unpredictable schedule?</h3><p class="text-size-large" data-i18n="faq_a3">Each class meets on fixed days at a fixed time every week, with the same teacher and group, so choose a class whose schedule fits you. Between classes you can practise whenever you want.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="faq_q4">Who are the teachers?</h3><p class="text-size-large" data-i18n="faq_a4">Every teacher applies with a CV, credentials and a 2-minute video, then leads a 30-minute practice session with a small group of active students before teaching.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="faq_q5">What do I get with the subscription?</h3><p class="text-size-large" data-i18n="faq_a5">Live classes with your teacher and group on your tier’s schedule, session notes, homework graded with AI help, and a practice library with instant feedback, flashcards and exam-format practice.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="faq_q6">How do I sign up for membership?</h3><p class="text-size-large" data-i18n="faq_a6">Sign up at alimun.com/signup, take the short placement test and choose your tier. Classes are open in English and German; for other languages, join the free waitlist and we email you when it opens.</p></div>
+            </div>
           </div>
         </div>
         <script>
           (function () {
-            var root = document.currentScript.closest(".fq");
-            var cards = [].slice.call(root.querySelectorAll(".fq_card"));
-            cards.forEach(function (card) {
-              card.addEventListener("click", function () {
-                var open = !card.classList.contains("is-open");
-                card.classList.toggle("is-open", open);
-                card.setAttribute("aria-expanded", open ? "true" : "false");
-              });
+            var root = document.currentScript.closest(".qa"), list = root.querySelector(".qa_list");
+            var qs = [].slice.call(root.querySelectorAll(".qa_q")), as = [].slice.call(root.querySelectorAll(".qa_a"));
+            function show(k) {
+              qs.forEach(function (q, i) { q.classList.toggle("is-on", i === k); q.setAttribute("aria-expanded", i === k ? "true" : "false"); });
+              as.forEach(function (a, i) { a.classList.toggle("is-on", i === k); });
+            }
+            qs.forEach(function (q, i) {
+              q.addEventListener("mouseenter", function () { if (window.matchMedia("(hover: hover)").matches) show(i); });
+              q.addEventListener("click", function () { show(i); });
+              q.style.transitionDelay = "0s, " + (i * 0.08) + "s, " + (i * 0.08) + "s";
             });
-            if ("IntersectionObserver" in window) {
-              var seen = new IntersectionObserver(function (entries) {
-                entries.forEach(function (e) {
-                  if (!e.isIntersecting) return;
-                  var i = cards.indexOf(e.target);
-                  e.target.style.transitionDelay = (i % 3) * 0.12 + "s";
-                  e.target.classList.add("is-in");
-                  seen.unobserve(e.target);
-                  // Drop the stagger delay once the card is in, so flips respond at once.
-                  setTimeout(function () { e.target.style.transitionDelay = ""; }, 1200);
-                });
-              }, { rootMargin: "0px 0px -10% 0px" });
-              cards.forEach(function (c) { seen.observe(c); });
-            } else cards.forEach(function (c) { c.classList.add("is-in"); });
+            show(0);
+            if (!("IntersectionObserver" in window)) { list.classList.add("is-in"); return; }
+            var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { list.classList.add("is-in"); io.disconnect(); } }, { threshold: 0.2 });
+            io.observe(list);
           })();
         </script>
       </section>
