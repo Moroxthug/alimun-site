@@ -443,6 +443,8 @@
   }
 
   function applyConsent(prefs) {
+    // A Global Privacy Control signal always counts as a refusal of marketing cookies (Cookie Policy).
+    if (navigator.globalPrivacyControl) prefs = Object.assign({}, prefs, { marketing: false });
     console.log('[Alimun Cookie Consent Applied]:', prefs);
     window.ALIMUN_CONSENT = prefs;
     
