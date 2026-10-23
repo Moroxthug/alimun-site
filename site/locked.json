@@ -243,5 +243,9 @@
   "src/blocks/legal/terms.html": {
     "sha256": "1a213dc0e89337b6788146d45f885bfa0cc4fb104dd82f8d611d7291742b2745",
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+  },
+  "src/blocks/course/hero.html": {
+    "sha256": "a2a204f886268178e30bc1f24374c280838f3d655efdba52c5a918224eeb82cd",
+    "approved": "2026-10-23 Italian course pages hero (Careers-style, city video per language), owner: hero ok"
   }
 }
