@@ -1,0 +1,18 @@
+---
+// Legal page: shared nav and footer, the page's own text in one readable column.
+import Base from '../layouts/Base.astro';
+import head from '../blocks/legal/head-terms.html?raw';
+import after from '../blocks/legal/after.html?raw';
+import nav from '../blocks/legal/nav.html?raw';
+import style from '../blocks/legal/style.html?raw';
+import text from '../blocks/legal/terms.html?raw';
+import footer from '../blocks/legal/footer.html?raw';
+---
+<Base wfPage="68d948d23b6c9f2bbbac3ea9" head={head} after={after}>
+  <Fragment set:html={nav} />
+  <main class="main-wrapper">
+    <Fragment set:html={style} />
+    <Fragment set:html={text} />
+  </main>
+  <Fragment set:html={footer} />
+</Base>

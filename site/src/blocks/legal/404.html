@@ -1,0 +1,17 @@
+      <section class="notfound">
+        <style>
+          .notfound { min-height: calc(100vh - 6rem); display: flex; align-items: center; padding: 8rem 0 4rem; text-align: center; }
+          .notfound .container-large { width: 100%; }
+          .notfound h1 { margin: 0 0 1.25rem; }
+          .notfound p { margin: 0 auto; max-width: 26rem; color: rgba(8, 8, 8, .7); }
+          .notfound .button { margin: 2rem auto 0; width: fit-content; }
+          .notfound h1, .notfound p, .notfound .button { opacity: 0; transform: translateY(1.5rem); animation: notfoundRise .8s cubic-bezier(.215, .61, .355, 1) forwards; }
+          .notfound p { animation-delay: .15s; } .notfound .button { animation-delay: .3s; }
+          @keyframes notfoundRise { to { opacity: 1; transform: none; } }
+        </style>
+        <div class="container-large">
+          <h1 class="heading-style-h1" data-i18n="notfound_title">Page Not Found</h1>
+          <p class="text-size-medium" data-i18n="notfound_desc">The page you are looking for doesn't exist or has been moved</p>
+          <a href="index.html" class="button w-inline-block"><p data-i18n="notfound_btn">Back to homepage</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16"></a>
+        </div>
+      </section>

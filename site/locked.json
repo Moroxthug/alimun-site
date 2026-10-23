@@ -183,5 +183,17 @@
   "src/blocks/careers/footer.html": {
     "sha256": "537004a2b2345da34ea289c525c501fb6bb29fac2f1e4224fe35d1137c5ac8ba",
     "approved": "2026-10-23 Careers footer, Tiers footer keys, Careers current"
+  },
+  "src/blocks/contact/nav.html": {
+    "sha256": "4aa58d9fe1045b785a28ed3618e086158dda9e189e91a6bda98f059a0938272f",
+    "approved": "2026-10-23 Contact nav, Contact current"
+  },
+  "src/blocks/contact/s01.html": {
+    "sha256": "47d59dc3882b693301b98ba10eeecd9eb25f6d7305d40d30c5a8047c7c3f1ab6",
+    "approved": "2026-10-23 Contact section: one screen on desktop, typing-desk video, accurate copy, form sends via ?action=contact"
+  },
+  "src/blocks/contact/footer.html": {
+    "sha256": "a72ce2c54a2adf9b17fa05fb8f20e153d904f677b4d45f61736e7a97a34d7d1f",
+    "approved": "2026-10-23 Contact footer, Tiers footer keys, Contact current"
   }
 }
