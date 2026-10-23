@@ -40,7 +40,7 @@
         </style>
         <div class="lq_back" data-lq-close></div>
         <div class="lq_card">
-          <button type="button" class="lq_close" data-lq-close>Chiudi</button>
+          <button type="button" class="lq_close" data-lq-close>{{UI_Q_CLOSE}}</button>
           <div class="lq_body"></div>
         </div>
         <script type="application/json" id="level-quiz-data">{{QUIZ_DATA}}</script>
@@ -54,7 +54,7 @@
             function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]; }); }
             function shuffle(a) { a = a.slice(); for (var k = a.length - 1; k > 0; k--) { var j = Math.floor(Math.random() * (k + 1)); var t = a[k]; a[k] = a[j]; a[j] = t; } return a; }
             function intro() {
-              body.innerHTML = '<div class="lq_step"><h2 class="lq_title" id="lq-title">' + esc(D.title) + '</h2><p class="lq_text text-size-medium">' + esc(D.intro) + '</p><div class="lq_actions"><button type="button" class="button w-inline-block" data-lq-start><p>Inizia il quiz</p><img src="' + D.arrow + '" alt="" class="icon-16"></button></div></div>';
+              body.innerHTML = '<div class="lq_step"><h2 class="lq_title" id="lq-title">' + esc(D.title) + '</h2><p class="lq_text text-size-medium">' + esc(D.intro) + '</p><div class="lq_actions"><button type="button" class="button w-inline-block" data-lq-start><p>' + esc(D.start) + '</p><img src="' + D.arrow + '" alt="" class="icon-16"></button></div></div>';
             }
             // Adaptive: start at A1; a right answer moves the next question up a level, a wrong one down.
             // The quiz ends after MAX questions or when the level it needs has no questions left.
@@ -66,7 +66,7 @@
               used[lv].push(pick);
               current = { level: lv, q: bank[pick] };
               var opts = shuffle(current.q[1]);
-              body.innerHTML = '<div class="lq_track"><div class="lq_fill" style="width:' + (asked / MAX * 100) + '%"></div></div><div class="lq_step"><p class="lq_prompt">Completa la frase</p><p class="lq_q" id="lq-title">' + esc(current.q[0]) + '</p><div class="lq_opts">' +
+              body.innerHTML = '<div class="lq_track"><div class="lq_fill" style="width:' + (asked / MAX * 100) + '%"></div></div><div class="lq_step"><p class="lq_prompt">' + esc(D.prompt) + '</p><p class="lq_q" id="lq-title">' + esc(current.q[0]) + '</p><div class="lq_opts">' +
                 opts.map(function (o) { return '<button type="button" class="lq_opt" data-lq-opt="' + esc(o) + '">' + esc(o) + '</button>'; }).join("") + '</div></div>';
               requestAnimationFrame(function () { var f = body.querySelector(".lq_fill"); if (f) f.style.width = ((asked + 1) / MAX * 100) + "%"; });
             }
@@ -84,7 +84,7 @@
             }
             function result() {
               var target = estimate();
-              body.innerHTML = '<div class="lq_step"><div class="lq_level shadow-card" aria-live="polite"><span class="lq_code"></span></div><p class="lq_score">' + right + (right === 1 ? ' risposta giusta su ' : ' risposte giuste su ') + asked + '</p><div class="lq_after"><p class="lq_text text-size-medium">' + esc(D.levels[LEVELS[target]]) + '</p><p class="lq_note">' + esc(D.note) + '</p><div class="lq_actions"><a href="' + D.ctaHref + '" class="button w-inline-block"><p>' + esc(D.cta) + '</p><img src="' + D.arrow + '" alt="" class="icon-16"></a><button type="button" class="lq_again" data-lq-again>Rifai il quiz</button></div></div></div>';
+              body.innerHTML = '<div class="lq_step"><div class="lq_level shadow-card" aria-live="polite"><span class="lq_code"></span></div><p class="lq_score">' + right + ' ' + esc(right === 1 ? D.right1 : D.rightN) + ' ' + asked + '</p><div class="lq_after"><p class="lq_text text-size-medium">' + esc(D.levels[LEVELS[target]]) + '</p><p class="lq_note">' + esc(D.note) + '</p><div class="lq_actions"><a href="' + D.ctaHref + '" class="button w-inline-block"><p>' + esc(D.cta) + '</p><img src="' + D.arrow + '" alt="" class="icon-16"></a><button type="button" class="lq_again" data-lq-again>' + esc(D.again) + '</button></div></div></div>';
               // Roulette: the codes spin through twice, slowing down, and stop on the estimate.
               var code = body.querySelector(".lq_code"), box = body.querySelector(".lq_level");
               var steps = LEVELS.length * 2 + target, n = 0;

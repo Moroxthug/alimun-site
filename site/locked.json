@@ -245,20 +245,20 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
   },
   "src/blocks/course/hero.html": {
-    "sha256": "c314e5a114a121ff79137a6146813281f8364525f44e8651cde8c302971c8328",
-    "approved": "2026-10-23 Italian course pages hero (Careers-style, city video per language), owner: hero ok; 2026-10-23 level quiz button added (owner: quiz ok)"
+    "sha256": "5c0ff98a972c8a2a44ce68e3328c9f251b130a883876615bedb010c08a8b5603",
+    "approved": "2026-10-23 Italian course pages hero (Careers-style, city video per language), owner: hero ok; 2026-10-23 level quiz button added (owner: quiz ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
   },
   "src/blocks/course/how.html": {
-    "sha256": "496d8dd4ec9f838c9727bbb85ad9ff0ceca10da2e829be08b51a81c00ccd426d",
-    "approved": "2026-10-23 Italian course pages: how the lessons work, stacking cards (owner: section ok)"
+    "sha256": "9ea67c316fa402f241af5de574163edf07d2f4d20fa5c1cb4c9715183a9bc54e",
+    "approved": "2026-10-23 Italian course pages: how the lessons work, stacking cards (owner: section ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
   },
   "src/blocks/course/levels.html": {
-    "sha256": "59bbd83065d831bbb93e8db492601d654ddc4c5f9de84083e020a45c33c19651",
-    "approved": "2026-10-23 Italian course pages: CEFR levels showcase (owner: ok for now); 2026-10-23 level quiz button added (owner: quiz ok)"
+    "sha256": "bfb8190ea5f7b61ff323eb9c28fdc766d4f18a855d0b7b8e174e6426340c666e",
+    "approved": "2026-10-23 Italian course pages: CEFR levels showcase (owner: ok for now); 2026-10-23 level quiz button added (owner: quiz ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
   },
   "src/blocks/course/exams.html": {
-    "sha256": "874bf7069e2e3eec75731a64135c7306516bd0b9fb7cd695a6db54b54647ba09",
-    "approved": "2026-10-23 Italian course pages: certificates accordion (owner: section ok)"
+    "sha256": "9dc8b67fb9c79dfce536e505af82b3276ffce7dbc7fd9038516c793fbd1b1e8c",
+    "approved": "2026-10-23 Italian course pages: certificates accordion (owner: section ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
   },
   "src/blocks/course/guide.html": {
     "sha256": "f48ce6560db2156fc5115c8d18865a9ed4c150d7aa384298c4985795dae43a4a",
@@ -269,20 +269,20 @@
     "approved": "2026-10-23 Italian course pages: guide text with lime markers (owner: section ok)"
   },
   "src/blocks/course/plans.html": {
-    "sha256": "2e0639a6dfc87df13d9ec287f2d79273fb2c237215945f82cca12bf75c3b647a",
-    "approved": "2026-10-23 Italian course pages: price ladder (owner: section ok)"
+    "sha256": "473e565c9eb34c4d263596fb7b7251d4d308a1b81812828d0ece35b06892a357",
+    "approved": "2026-10-23 Italian course pages: price ladder (owner: section ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
   },
   "src/blocks/course/faq.html": {
-    "sha256": "3d632a8c7bae0d2df06efb87de9c4aaebbde3e29fb02ef2f76d44fdbcf2c2563",
-    "approved": "2026-10-23 Italian course pages: FAQ (owner: section ok)"
+    "sha256": "f0a00aecd5b5e7e4ecb75a04be5abde57e2e058f540a31aacfb8304c52f8e83f",
+    "approved": "2026-10-23 Italian course pages: FAQ (owner: section ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
   },
   "src/data/course-faq.js": {
     "sha256": "1dc7debcb9b4936627cf3fb3276ba9ca8b3ab4a9e5bb3e189df9f6cae5907d2b",
     "approved": "2026-10-23 Italian course pages: FAQ text (owner: section ok)"
   },
   "src/blocks/course/quiz.html": {
-    "sha256": "c2da23232587df37baffb345396a81007e3fc79d6fcd1b7ebcb72fffd81d4845",
-    "approved": "2026-10-23 Italian course pages: adaptive level quiz with roulette result (owner: quiz ok)"
+    "sha256": "5fc9c6ece94330474e68caf6fe47ec4726430d0816321dd06b04fb0228e65617",
+    "approved": "2026-10-23 Italian course pages: adaptive level quiz with roulette result (owner: quiz ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
   },
   "src/data/course-quiz.js": {
     "sha256": "504b975fb030743b76205f65346a5d82a930ea122ca783ae8387914bb8e26723",

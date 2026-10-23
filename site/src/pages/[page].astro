@@ -1,0 +1,87 @@
+---
+// Course pages for every site language: one template from approved blocks, filled from
+// src/data/course-sites/<site>.js. Built at the site root as course--<site>--<slug>.html
+// and moved to its address by scripts/localize.mjs (/<site>/<slug>, or /<slug> for English).
+import Base from '../layouts/Base.astro';
+import headTpl from '../blocks/course/head.html?raw';
+import heroTpl from '../blocks/course/hero.html?raw';
+import howTpl from '../blocks/course/how.html?raw';
+import levelsTpl from '../blocks/course/levels.html?raw';
+import examsTpl from '../blocks/course/exams.html?raw';
+import guideTpl from '../blocks/course/guide.html?raw';
+import plansTpl from '../blocks/course/plans.html?raw';
+import faqTpl from '../blocks/course/faq.html?raw';
+import quizTpl from '../blocks/course/quiz.html?raw';
+import bottomCta from '../blocks/tiers/s02.html?raw';
+import after from '../blocks/legal/after.html?raw';
+import nav from '../blocks/legal/nav.html?raw';
+import footer from '../blocks/legal/footer.html?raw';
+import { QUIZ } from '../data/course-quiz.js';
+
+export async function getStaticPaths() {
+  const sites = Object.values(import.meta.glob('../data/course-sites/*.js', { eager: true })).map((m) => m.default);
+  return sites.flatMap((S) => S.courses.map((c) => ({ params: { page: `course--${S.site}--${c.slug}` }, props: { S, c } })));
+}
+
+const { S, c } = Astro.props;
+const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const fill = (tpl, values) => Object.entries(values).reduce((t, [k, v]) => t.split(`{{${k}}}`).join(v), tpl);
+const UI = Object.fromEntries(Object.entries(S.ui).map(([k, v]) => [k, esc(v)]));
+const signup = `signup.html?role=student&amp;language=${c.lang}`;
+const canon = `https://alimun.com/${S.site === 'en' ? '' : S.site + '/'}${c.slug}`;
+
+const faqItems = S.faq(c);
+// The same questions and answers as structured data, so search engines can show them.
+const faqLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: faqItems.map(([q, a]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })) }).replace(/</g, '\\u003c');
+const head = fill(headTpl, { PAGE_TITLE: esc(S.pageTitle(c)), META_DESC: esc(S.metaDesc(c)), CANON: canon, LOCALE: S.locale, FAQ_LD: `  <script type="application/ld+json">${faqLd}</script>` });
+const hero = fill(heroTpl, { ...UI, TITLE: esc(S.heroTitle(c)), VIDEO: c.video, DESC: esc(S.heroDesc(c)), CTA: esc(S.heroCta(c)), CTA_HREF: signup });
+const how = fill(howTpl, { ...UI, HOW_TITLE: esc(S.howTitle(c)), LIVE_DESC: esc(S.liveDesc(c)) });
+const levels = fill(levelsTpl, { ...UI, LV_TITLE: esc(S.levelsTitle(c)) });
+const ex = S.exams[c.lang];
+const tones = ['', ' is-green', ' is-ink'];
+const exams = ex ? fill(examsTpl, {
+  ...UI,
+  EX_TITLE: esc(ex.title),
+  EX_DESC: esc(ex.desc),
+  EX_PANELS: ex.panels.map(([name, text], i) => `            <div class="ex_panel shadow-card${tones[i]}"><p class="ex_vname" aria-hidden="true">${esc(name)}</p><h3 class="ex_name">${esc(name)}</h3><div class="ex_body"><p class="text-size-large">${esc(text)}</p></div></div>`).join('\n'),
+}) : '';
+const g = S.guides[c.lang];
+// **phrase** in the guide text becomes a lime marker.
+const mark = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<mark class="gd_mark">$1</mark>');
+const guide = fill(guideTpl, {
+  GUIDE_TITLE: esc(g.title),
+  GUIDE_LEAD: mark(g.lead),
+  GUIDE_ROWS: g.rows.map(([h, ps]) => `          <div class="gd_row"><h3 class="heading-style-h4">${esc(h)}</h3><div class="gd_text">${ps.map((t) => `<p class="text-size-large">${mark(t)}</p>`).join('')}</div></div>`).join('\n'),
+});
+// Plans only where classes can be bought today.
+const plans = c.open ? fill(plansTpl, { ...UI, CTA_HREF: signup }) : '';
+const faq = fill(faqTpl, {
+  ...UI,
+  QA_QUESTIONS: faqItems.map(([q, a]) => `              <button type="button" class="qa_q" aria-expanded="false">${esc(q)}<span class="qa_mobile">${esc(a)}</span></button>`).join('\n'),
+  QA_ANSWERS: faqItems.map(([q, a]) => `              <div class="qa_a"><h3 class="heading-style-h4">${esc(q)}</h3><p class="text-size-large">${esc(a)}</p></div>`).join('\n'),
+});
+const Q = S.quiz;
+const quiz = fill(quizTpl, {
+  ...UI,
+  QUIZ_DATA: JSON.stringify({
+    title: Q.title(c), intro: Q.intro(c), questions: QUIZ[c.lang], levels: Q.levels, note: Q.note(c), cta: Q.cta(c),
+    ctaHref: `signup.html?role=student&language=${c.lang}`, arrow: '/images/icon-arrow-light.svg',
+    start: Q.start, prompt: Q.prompt, again: Q.again, right1: Q.right1, rightN: Q.rightN,
+  }).replace(/</g, '\\u003c'),
+});
+---
+<Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang={S.site}>
+  <Fragment set:html={nav} />
+  <main class="main-wrapper">
+    <Fragment set:html={hero} />
+    <Fragment set:html={how} />
+    <Fragment set:html={levels} />
+    <Fragment set:html={exams} />
+    <Fragment set:html={guide} />
+    <Fragment set:html={plans} />
+    <Fragment set:html={faq} />
+    <Fragment set:html={bottomCta} />
+  </main>
+  <Fragment set:html={quiz} />
+  <Fragment set:html={footer} />
+</Base>

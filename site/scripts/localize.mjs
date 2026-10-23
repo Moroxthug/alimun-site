@@ -25,10 +25,14 @@ const languages = Object.keys(translations).filter((l) => l !== 'en');
 const HREFLANG = { ma: 'fr-MA' };
 // Not public pages: the 404 has no language copies, the mockup is a work file.
 const SKIP = new Set(['404.html', 'mockup-home.html']);
-const COURSE = /^corsi-/;
+const COURSE = /^course--([a-z]{2})--(.+)\.html$/;
 const pages = fs.readdirSync(dist).filter((f) => f.endsWith('.html') && !SKIP.has(f) && !COURSE.test(f));
-// Italian course pages exist only in Italian: built at the root, moved to /it/.
-const coursePages = fs.readdirSync(dist).filter((f) => COURSE.test(f));
+// Course pages are written for one site language each: built at the root as
+// course--<site>--<slug>.html and moved to /<site>/<slug>.html (English stays at the root).
+const coursePages = fs.readdirSync(dist).filter((f) => COURSE.test(f)).map((f) => {
+  const [, site, slug] = f.match(COURSE);
+  return { built: f, site, file: slug + '.html' };
+});
 
 const url = (lang, file) => {
   const name = file.replace(/\.html$/, '');
@@ -64,14 +68,15 @@ for (const file of pages) {
   }
 }
 
-for (const file of coursePages) {
-  const english = withEnglishFile(fs.readFileSync(path.join(dist, file), 'utf8'));
-  let html = localizePage(english, { lang: 'it', templateFile: file, langDict: translations.it || {}, META_I18N, META_LANG });
+for (const p of coursePages) {
+  const english = withEnglishFile(fs.readFileSync(path.join(dist, p.built), 'utf8'));
+  const html = p.site === 'en' ? english
+    : localizePage(english, { lang: p.site, templateFile: p.file, langDict: translations[p.site] || {}, META_I18N, META_LANG });
   const $ = cheerio.load(html);
   $('link[rel="alternate"][hreflang]').remove();
-  $('head').append(`\n  <link rel="alternate" hreflang="it" href="${url('it', file)}">\n`);
-  fs.writeFileSync(path.join(dist, 'it', file), $.html());
-  fs.rmSync(path.join(dist, file));
+  $('head').append(`\n  <link rel="alternate" hreflang="${HREFLANG[p.site] || p.site}" href="${url(p.site, p.file)}">\n`);
+  fs.writeFileSync(path.join(dist, p.site === 'en' ? '' : p.site, p.file), $.html());
+  fs.rmSync(path.join(dist, p.built));
   count++;
 }
 
@@ -82,9 +87,9 @@ for (const file of pages) {
     .map(([h, u]) => `    <xhtml:link rel="alternate" hreflang="${h}" href="${u}"/>`).join('\n');
   for (const lang of ['en', ...languages]) entries.push(`  <url>\n    <loc>${url(lang, file)}</loc>\n${alts}\n    <lastmod>${today}</lastmod>\n  </url>`);
 }
-for (const file of coursePages) entries.push(`  <url>\n    <loc>${url('it', file)}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`);
+for (const p of coursePages) entries.push(`  <url>\n    <loc>${url(p.site, p.file)}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`);
 // Keep addresses the current sitemap lists that are not rebuilt yet (the Italian course pages).
-const covered = new Set([...pages.flatMap((f) => ['en', ...languages].map((l) => url(l, f))), ...coursePages.map((f) => url('it', f))]);
+const covered = new Set([...pages.flatMap((f) => ['en', ...languages].map((l) => url(l, f))), ...coursePages.map((p) => url(p.site, p.file))]);
 const current = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
 for (const block of current.match(/<url>[\s\S]*?<\/url>/g) || []) {
   const loc = (block.match(/<loc>([^<]+)<\/loc>/) || [])[1];
