@@ -34,6 +34,17 @@
     return first && LOCALE_CODES.includes(first) ? first : null;
   }
 
+  // Pages whose address differs per language (course pages) list their equivalents as
+  // {code: "/path"} in #alimun-lang-alternates. Returns that map, or null on other pages.
+  function langAlternates() {
+    const el = document.getElementById('alimun-lang-alternates');
+    if (!el) return null;
+    try {
+      const map = JSON.parse(el.textContent) || {};
+      return Object.fromEntries(Object.entries(map).filter(([, v]) => typeof v === 'string' && /^\/[a-z0-9\/-]*$/.test(v)));
+    } catch (e) { return {}; }
+  }
+
   // Helper to get active language
   function getActiveLang() {
     // 1. Detect from domain extension (TLD)
@@ -86,7 +97,11 @@
 
       if (!isBot && !hasPayload && !NO_REDIRECT_PAGES.includes(page)) {
         const activeLang = getActiveLang();
-        if (activeLang !== 'en') {
+        const alternates = langAlternates();
+        if (activeLang !== 'en' && alternates) {
+          // Only redirect to an existing equivalent; otherwise stay on the page that was opened.
+          if (alternates[activeLang]) window.location.replace(window.location.origin + alternates[activeLang] + window.location.hash);
+        } else if (activeLang !== 'en') {
           const filename = parts.join('/') || '';
           const targetPath = filename === '' ? `/${activeLang}/` : `/${activeLang}/${filename}`;
           window.location.replace(window.location.origin + targetPath + window.location.search + window.location.hash);
@@ -578,7 +593,7 @@
     // nosemgrep: innerhtml-template-without-escape -- constant markup only
     btn.innerHTML = `
       <svg class="alimun-globe-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 13px; height: 13px; opacity: 0.75;"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-      <span class="lang-code">${activeLang.code.toUpperCase()}</span>
+      <span class="lang-code">${(LOCALE_CODES.includes(activeCode) ? activeCode : activeLang.code).toUpperCase()}</span>
       <span class="alimun-i18n-dropdown-arrow">
         <svg viewBox="0 0 24 24" width="9" height="9" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="opacity: 0.5; margin-left: 2px;"><polyline points="6 9 12 15 18 9"></polyline></svg>
       </span>
@@ -608,8 +623,11 @@
           filename = parts.join('/') || 'index.html';
         }
         
-        // Perform clean directory redirect
-        const targetPath = lang.code === 'en' ? `/${filename}` : `/${lang.code}/${filename}`;
+        // Perform clean directory redirect. Pages whose address differs per language (course
+        // pages) list their equivalents; a language without one goes to its homepage.
+        let targetPath = lang.code === 'en' ? `/${filename}` : `/${lang.code}/${filename}`;
+        const alternates = langAlternates();
+        if (alternates) targetPath = alternates[lang.code] || (lang.code === 'en' ? '/' : `/${lang.code}/`);
         window.location.href = window.location.origin + targetPath + window.location.search + window.location.hash;
       });
       menu.appendChild(item);

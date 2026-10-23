@@ -3,8 +3,8 @@
  *
  * Detects the visitor's currency (eur | usd | cad | aud | mad), rewrites the
  * hardcoded "€NN" prices on the page to the SAME amounts configured in Stripe
- * (supabase/setup-stripe-prices.js — keep FIXED in sync), and adds a small
- * currency switcher. Checkout reads window.AlimunCurrency.code (signup.html).
+ * (supabase/setup-stripe-prices.js — keep FIXED in sync). There is no on-page
+ * switcher (owner, 23 Oct 2026); ?cur= still overrides. Checkout reads window.AlimunCurrency.code (signup.html).
  *
  * Priority: ?cur=cad  >  saved choice (localStorage)  >  timezone / locale  >  eur
  */
@@ -101,25 +101,8 @@
     });
   }
 
-  function addSwitcher() {
-    if (document.getElementById('alimun-currency')) return;
-    var s = document.createElement('select');
-    s.id = 'alimun-currency';
-    s.setAttribute('aria-label', 'Currency');
-    s.setAttribute('data-no-currency', '');
-    s.style.cssText = 'position:fixed;left:12px;bottom:12px;z-index:9998;padding:6px 10px;border-radius:999px;border:1px solid rgba(0,0,0,.15);background:#fff;color:#080808;font:600 12px/1 system-ui,sans-serif;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.12);';
-    ORDER.forEach(function (c) {
-      var o = document.createElement('option');
-      o.value = c; o.textContent = c.toUpperCase(); o.selected = c === code;
-      s.appendChild(o);
-    });
-    s.addEventListener('change', function () { window.AlimunCurrency.set(s.value); });
-    document.body.appendChild(s);
-  }
-
   function init() {
     rewrite(document.body);
-    addSwitcher();
     if (code !== 'eur' && window.MutationObserver) {
       var busy = false;
       new MutationObserver(function () {
