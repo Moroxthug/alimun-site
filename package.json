@@ -6,7 +6,8 @@
   "scripts": {
     "build": "node build.js",
     "dev": "echo 'Launching static server...'",
-    "deploy": "npx vercel --prod"
+    "deploy": "npx vercel --prod",
+    "build:site": "node build.js && npm --prefix site ci && npm --prefix site run build && node scripts/apply-rebuild.js"
   },
   "dependencies": {
     "@react-pdf/renderer": "^4.5.1",

@@ -1,6 +1,7 @@
 {
   "version": 2,
   "outputDirectory": ".",
+  "buildCommand": "npm run build:site",
   "cleanUrls": true,
   "routes": [
     {
@@ -21,7 +22,7 @@
       "continue": true
     },
     {
-      "src": "/(supabase|\\.agents|\\.github|\\.semgrep|scripts|docs|mockups|node_modules|sandbox)(/.*)?",
+      "src": "/(site|supabase|\\.agents|\\.github|\\.semgrep|scripts|docs|mockups|node_modules|sandbox)(/.*)?",
       "status": 404,
       "dest": "/404.html"
     },
@@ -87,6 +88,11 @@
     {
       "src": "/api/(.*)",
       "dest": "/api/$1"
+    },
+    {
+      "src": "/((?:ar|de|es|fr|it|ma|pt|zh)/)?careers-teachers-section(\\.html)?",
+      "headers": { "Location": "/$1careers" },
+      "status": 308
     },
     {
       "src": "/locations(.html)?",

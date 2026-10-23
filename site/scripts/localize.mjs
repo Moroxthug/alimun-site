@@ -68,6 +68,13 @@ for (const file of pages) {
     .map(([h, u]) => `    <xhtml:link rel="alternate" hreflang="${h}" href="${u}"/>`).join('\n');
   for (const lang of ['en', ...languages]) entries.push(`  <url>\n    <loc>${url(lang, file)}</loc>\n${alts}\n    <lastmod>${today}</lastmod>\n  </url>`);
 }
+// Keep addresses the current sitemap lists that are not rebuilt yet (the Italian course pages).
+const covered = new Set(pages.flatMap((f) => ['en', ...languages].map((l) => url(l, f))));
+const current = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
+for (const block of current.match(/<url>[\s\S]*?<\/url>/g) || []) {
+  const loc = (block.match(/<loc>([^<]+)<\/loc>/) || [])[1];
+  if (loc && !covered.has(loc)) entries.push('  ' + block.trim());
+}
 fs.writeFileSync(path.join(dist, 'sitemap.xml'),
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n        xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${entries.join('\n')}\n</urlset>\n`);
 fs.copyFileSync(path.join(root, 'robots.txt'), path.join(dist, 'robots.txt'));
