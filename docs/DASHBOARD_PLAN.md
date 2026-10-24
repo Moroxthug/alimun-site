@@ -34,7 +34,7 @@ The new dashboards are built next to the current ones and switched over only whe
 
 ## 3. Learning material
 - Course books for every language and every level, A1, A2, B1, B2, C1, C2: extensive, unit by unit, page by page. Six languages × six levels = 36 course books, about eight units each.
-- Content status (24 Oct 2026): pilots only. English B1 and German B1 unit 1; goal books German B1 for moving abroad and English B1 for work, unit 1 each. All drafts for native-teacher review. Order of production to agree with the owner (proposed: the levels and languages students sign up for first, starting with English and German A2 to B2).
+- Content status (24 Oct 2026): English and German A2, B1 and B2 course books complete, eight units each (48 units, about 2,500 lesson exercises plus a unit test per unit), explanations in eight languages; goal books German B1 for moving abroad and English B1 for work, unit 1 each. All drafts for native-teacher review (`docs/BOOK_REVIEW_NOTES.md`). Next, by the owner's order: the goal books for these levels, then the other four languages.
 - Every page is interactive: it teaches, then checks understanding with exercises on that page before moving on. Every unit ends with a unit test.
 - Goal extensions on top of the core books: moving abroad, work and career, study and exams, travel, solid foundations.
 - Focused material: verbs (conjugation tables, irregular verbs, tenses in context), grammar, vocabulary by theme and level, syntax and word order, wording and register (formal, informal, idioms, collocations), common mistakes per native language.

@@ -594,3 +594,13 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `js/app/data.js` reads `goal_track`; the sample account's goal is moving abroad. 13 new reader keys in nine languages. `docs/BOOKS.md`: goal books, explained table columns (`colN`), grouping exercises by topic.
 - Material for every level: the plan is 36 course books (six languages, A1 to C2) plus goal books; so far only the pilots exist. Production order to agree with the owner.
 - Checked locally: every lesson of the four books played through; phone tables shrink without widening the page (390 px stays 390 px) and open, zoom and close; goal shelf with French interface; no console errors.
+
+## 2026-10-24 — Course books: English and German A2 to B2 written
+- Owner: English and German A2 to B2 first.
+- Syllabus: four new books (English A2 and B2, German A2 and B2) and outlines for the remaining B1 units, eight units per book following the CEFR level. Units now live in `site/src/data/books/units/<book>/<unit>.js` (merged by `site/src/data/books/load.js`), so several writers can work at once.
+- `scripts/check-book.mjs <book>` checks a book against `docs/BOOKS.md` (exactly one gap per item, accepted answers, distinct options, drawings from the cast, no emojis or numbered lists, tests of at least eight questions). Every unit passes.
+- Written: all 48 units of the six books (46 new): English A2 435 lesson exercises, B1 409, B2 391; German A2 456, B1 386, B2 404; each unit has four lessons and a unit test of 12 to 16 questions. Drafted to a shared brief; a few ambiguous items fixed. Writers' doubts for the native teacher: `docs/BOOK_REVIEW_NOTES.md`.
+- Explanations translated into Spanish, French, German, Portuguese, Chinese, Arabic and Italian for every book (about 5,000 strings per language; nothing missing). Checked for markers and for text in the wrong language.
+- Reader: a book whose units are not written yet says so.
+- Checked locally: all 194 lessons and 48 unit tests played through page by page with the right answers (German interface), every test scores 100%, no locked page, no console errors, no untranslated keys.
+- Next (owner's order): goal books for A2 to B2, then the other four languages.
