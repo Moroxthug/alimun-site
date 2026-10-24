@@ -6,6 +6,13 @@
           .qa { padding: 6rem 0 7rem; }
           .qa_head { margin-bottom: 3rem; }
           .qa_head h2 { margin: 0; }
+          /* Tiers: the title and intro rise in and the answer card slides in from the side with the questions. */
+          .qa.is-tiers .qa_head > * { opacity: 0; transform: translateY(1.75rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .qa.is-tiers .qa_card { opacity: 0; transform: translateX(3rem); transition: opacity .8s ease .35s, transform 1s cubic-bezier(.215, .61, .355, 1) .35s; }
+          [dir="rtl"] .qa.is-tiers .qa_card { transform: translateX(-3rem); }
+          .qa.is-tiers:has(.qa_list.is-in) .qa_head > * { opacity: 1; transform: none; }
+          .qa.is-tiers:has(.qa_list.is-in) .qa_head > :nth-child(2) { transition-delay: .12s; }
+          .qa.is-tiers:has(.qa_list.is-in) .qa_card { opacity: 1; transform: none; }
           .qa_head p { margin: 1rem 0 0; max-width: 34rem; color: rgba(8, 8, 8, .7); }
           .qa_head a { color: var(--black); text-decoration: none; background-image: linear-gradient(var(--green), var(--green)); background-repeat: no-repeat; background-position: 0 88%; background-size: 100% 45%; }
           [dir="rtl"] .qa_q { transform: translateX(2rem); }

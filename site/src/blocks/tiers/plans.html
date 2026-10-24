@@ -19,9 +19,18 @@
           .tp_grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; align-items: stretch; }
           .tp_card { display: flex; flex-direction: column; border-radius: 3.125rem; overflow: hidden; background-color: var(--white); opacity: 0; transform: translateY(3rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
           .tp_card.is-in { opacity: 1; transform: none; }
-          .tp_img { aspect-ratio: 4 / 3; overflow: hidden; }
-          .tp_img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1.2s cubic-bezier(.215, .61, .355, 1); }
-          .tp_card:hover .tp_img img { transform: scale(1.05); }
+          /* Head: title, text and switch slide in one after another. */
+          .tp_head > div > *, .tp_bill > * { opacity: 0; transform: translateY(1.75rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .tp.is-in .tp_head > div > *, .tp.is-in .tp_bill > * { opacity: 1; transform: none; }
+          .tp.is-in .tp_head > div > :nth-child(2) { transition-delay: .12s; }
+          .tp.is-in .tp_bill > :nth-child(1) { transition-delay: .24s; }
+          .tp.is-in .tp_bill > :nth-child(2) { transition-delay: .34s; }
+          /* Photo: wipes open from the bottom and settles from a slight zoom, then drifts with the scroll. */
+          .tp_img { aspect-ratio: 4 / 3; overflow: hidden; clip-path: inset(100% 0 0 0); transition: clip-path 1.1s cubic-bezier(.77, 0, .175, 1) .15s; }
+          .tp_card.is-in .tp_img { clip-path: inset(0 0 0 0); }
+          .tp_img img { width: 100%; height: 115%; object-fit: cover; display: block; transform: translateY(var(--tp-drift, 0px)) scale(1.2); transition: transform 1.4s cubic-bezier(.215, .61, .355, 1); }
+          .tp_card.is-in .tp_img img { transform: translateY(var(--tp-drift, 0px)) scale(1); }
+          .tp_card.is-in:hover .tp_img img { transform: translateY(var(--tp-drift, 0px)) scale(1.05); }
           .tp_body { display: flex; flex-direction: column; flex: 1; padding: 1.75rem 1.75rem 2rem; }
           .tp_body h3 { margin: 0 0 .35rem; }
           [dir="rtl"] .tp_body h3 { unicode-bidi: plaintext; text-align: right; }
@@ -143,12 +152,38 @@
               b.addEventListener("click", function () { render(b.getAttribute("data-billing"), true); });
             });
             render("yearly", false);
-            if (!("IntersectionObserver" in window)) { cards.forEach(function (c) { c.classList.add("is-in"); }); return; }
+            // First appearance: each price counts up from zero to its value.
+            function countUp(card) {
+              var el = card.querySelector(".tp_amount span"), target = el.textContent, m = target.match(/^(\D*)([\d.,\s]+?)(\D*)$/);
+              if (!m) return;
+              var digits = m[2].replace(/[^\d]/g, ""), end = +digits, t0 = performance.now(), dur = 1100;
+              (function step(now) {
+                var k = Math.min(1, (now - t0) / dur), v = Math.round(end * (1 - Math.pow(1 - k, 3)));
+                el.textContent = k < 1 ? m[1] + v + m[3] : target;
+                if (k < 1) requestAnimationFrame(step);
+              })(t0);
+            }
+            // Photos drift a little against their cards while the section scrolls past.
+            function drift() {
+              var vh = window.innerHeight;
+              cards.forEach(function (c) {
+                var r = c.getBoundingClientRect(), mid = (r.top + r.height / 2 - vh / 2) / vh;
+                c.style.setProperty("--tp-drift", (Math.max(-1, Math.min(1, mid)) * -18).toFixed(1) + "px");
+              });
+            }
+            window.addEventListener("scroll", drift, { passive: true });
+            window.addEventListener("resize", drift);
+            drift();
+            if (!("IntersectionObserver" in window)) { root.classList.add("is-in"); cards.forEach(function (c) { c.classList.add("is-in"); }); return; }
+            var head = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { root.classList.add("is-in"); head.disconnect(); } }, { threshold: .2 });
+            head.observe(root.querySelector(".tp_head"));
             var io = new IntersectionObserver(function (entries) {
               entries.forEach(function (e) {
                 if (!e.isIntersecting) return;
-                e.target.style.transitionDelay = cards.indexOf(e.target) % 4 * 0.1 + "s";
+                var d = cards.indexOf(e.target) % 4 * 0.12;
+                e.target.style.transitionDelay = d + "s";
                 e.target.classList.add("is-in"); io.unobserve(e.target);
+                setTimeout(function () { countUp(e.target); }, d * 1000 + 300);
               });
             }, { rootMargin: "0px 0px -10% 0px" });
             cards.forEach(function (c) { io.observe(c); });

@@ -458,3 +458,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - Banner: the homepage banner with the level-quiz button (`home/banner.html` + `home/quiz.html`) replaces `tiers/s02.html` on this page; `tiers/s02.html` stays for the course pages.
   - Translations: 19 keys (`tiers_pc_*`, `tiers_faq_*`) in all nine languages.
   - Checked: desktop, phone, Arabic, Morocco in MAD (per-class figures, lines, yearly line), FAQ, quiz languages per site; no errors.
+- Owner: animate the Tiers sections.
+  - Plans: the head slides in item by item; each photo wipes open from the bottom and settles from a slight zoom, then drifts with the scroll; prices count up from zero on first view.
+  - What a live class costs: on desktop the section is held for 300vh and the scroll walks through the four plans (clicks still pick any plan). Text and card rise in, and the card pulses on each change.
+  - FAQ: title and intro rise in; the answer card slides in from the side with the questions.
+  - Checked: the pinned walk shows Community → Focused → Intensive → 1 on 1 with the right figures; prices land on €20/49/90/224; photos open; the FAQ card ends visible; no errors. Recordings made at desktop and phone size.

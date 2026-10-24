@@ -3,7 +3,21 @@
           /* What a live class costs: pick a plan and the price of one live class rolls to its value, worked out from
              the plan's monthly price and its classes per week over about 4.33 weeks a month (52 / 12). A second line
              gives the same figure on the yearly plan. Amounts go through js/currency.js when it is on the page. */
-          .pc { padding: 6rem 0 7rem; background-color: var(--white); }
+          .pc { position: relative; background-color: var(--white); }
+          .pc_stage { padding: 6rem 0 7rem; }
+          /* Desktop: the section holds while the scroll walks through the four plans; a click still picks any plan. */
+          @media (min-width: 992px) {
+            .pc { height: 300vh; }
+            .pc_stage { position: sticky; top: 0; height: 100vh; display: flex; align-items: center; padding: 0; }
+            .pc_stage > .container-large { width: 100%; }
+          }
+          .pc_text > *, .pc_card { opacity: 0; transform: translateY(2rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .pc.is-in .pc_text > *, .pc.is-in .pc_card { opacity: 1; transform: none; }
+          .pc.is-in .pc_text > :nth-child(2) { transition-delay: .12s; }
+          .pc.is-in .pc_text > :nth-child(3) { transition-delay: .24s; }
+          .pc.is-in .pc_card { transition-delay: .3s; }
+          .pc_card.is-pulse { animation: pcPulse .6s cubic-bezier(.215, .61, .355, 1); }
+          @keyframes pcPulse { 0% { transform: scale(1); } 40% { transform: scale(1.025); } 100% { transform: scale(1); } }
           .pc_grid { display: grid; grid-template-columns: 5fr 6fr; gap: 4rem; align-items: center; }
           .pc_text h2 { margin: 0; }
           .pc_text > p { margin: 1.25rem 0 2rem; max-width: 32rem; color: rgba(8, 8, 8, .7); }
@@ -23,10 +37,11 @@
             .pc_grid { grid-template-columns: 1fr; gap: 2.5rem; }
           }
           @media (max-width: 767px) {
-            .pc { padding: 4rem 0 4.5rem; }
+            .pc_stage { padding: 4rem 0 4.5rem; }
             .pc_card { border-radius: 2.25rem; padding: 2.5rem 1.5rem; }
           }
         </style>
+        <div class="pc_stage">
         <div class="container-large">
           <div class="pc_grid">
             <div class="pc_text">
@@ -51,6 +66,7 @@
           <span class="pc_tpl" data-i18n="tiers_pc_line_3">Three group classes and one one-to-one session a week, about 17 a month, for {price} a month.</span>
           <span class="pc_tpl" data-i18n="tiers_pc_line_4">Three private classes a week, about 13 a month, for {price} a month.</span>
           <span class="pc_tpl" data-i18n="tiers_pc_year">On the yearly plan: about {price} per class.</span>
+        </div>
         </div>
         <script>
           (function () {
@@ -89,8 +105,27 @@
               var bold = document.createElement("b"); bold.textContent = fmt(yearly, 2); line.appendChild(bold);
               line.appendChild(document.createTextNode(parts[1] || ""));
             }
-            btns.forEach(function (b) { b.addEventListener("click", function () { pick(b); }); });
+            var card = root.querySelector(".pc_card"), current = 0;
+            function choose(i) {
+              if (i === current && shown !== null) return;
+              current = i; pick(btns[i]);
+              card.classList.remove("is-pulse"); void card.offsetWidth; card.classList.add("is-pulse");
+            }
+            btns.forEach(function (b, i) { b.addEventListener("click", function () { choose(i); }); });
             pick(btns[0]);
+            // Desktop: scrolling through the held section moves through the plans in order.
+            function onScroll() {
+              if (window.innerWidth < 992) return;
+              var range = root.offsetHeight - window.innerHeight; if (range <= 0) return;
+              var p = Math.min(1, Math.max(0, -root.getBoundingClientRect().top / range));
+              var i = Math.min(btns.length - 1, Math.floor(p * btns.length));
+              if (i !== current) choose(i);
+            }
+            window.addEventListener("scroll", onScroll, { passive: true });
+            if ("IntersectionObserver" in window) {
+              var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { root.classList.add("is-in"); io.disconnect(); } }, { threshold: .25 });
+              io.observe(root.querySelector(".pc_grid"));
+            } else root.classList.add("is-in");
           })();
         </script>
       </section>
