@@ -1,0 +1,50 @@
+      <section class="cr">
+        <style>
+          /* Where to look before writing: three cards for learners, teachers and companies, each pointing to the page
+             that already answers most of their questions. The cards rise in one after another and lift on hover. */
+          .cr { padding: 6rem 0 7rem; background-color: var(--white); }
+          .cr_head { margin: 0 0 3rem; opacity: 0; transform: translateY(2rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .cr.is-in .cr_head { opacity: 1; transform: none; }
+          .cr_grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; }
+          .cr_card { display: flex; flex-direction: column; border-radius: 2.25rem; background-color: var(--white); padding: 2.25rem 2rem; opacity: 0; transform: translateY(3rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .cr.is-in .cr_card { opacity: 1; transform: none; }
+          .cr.is-in .cr_card:nth-child(2) { transition-delay: .15s; }
+          .cr.is-in .cr_card:nth-child(3) { transition-delay: .3s; }
+          .cr.is-done .cr_card { transition: transform .3s ease-out, background-color .3s ease; transition-delay: 0s; }
+          @media (hover: hover) { .cr.is-done .cr_card:hover { transform: translateY(-.5rem); background-color: var(--green); } }
+          .cr_card h3 { margin: 0 0 1rem; }
+          .cr_card > p { margin: 0 0 2rem; color: rgba(8, 8, 8, .75); }
+          .cr_card .button { margin-top: auto; width: fit-content; }
+          @media (max-width: 991px) { .cr_grid { grid-template-columns: 1fr; } }
+          @media (max-width: 767px) { .cr { padding: 4rem 0 5rem; } .cr_head { margin-bottom: 2rem; } }
+        </style>
+        <div class="container-large">
+          <h2 class="cr_head heading-style-h2" data-i18n="contact_routes_title">Looking for something specific?</h2>
+          <div class="cr_grid">
+            <div class="cr_card shadow-card">
+              <h3 class="heading-style-h4" data-i18n="contact_route_1_h">Learning a language</h3>
+              <p class="text-size-regular" data-i18n="contact_route_1_p">Plans, prices and what each plan includes are on the plans page, with answers to common questions about billing.</p>
+              <a href="tiers.html" class="button is-secondary w-inline-block"><p data-i18n="contact_route_1_btn">See plans and prices</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16"></a>
+            </div>
+            <div class="cr_card shadow-card">
+              <h3 class="heading-style-h4" data-i18n="contact_route_2_h">Teaching with Alimun</h3>
+              <p class="text-size-regular" data-i18n="contact_route_2_p">How teaching works, how you are paid and how to apply are on the careers page.</p>
+              <a href="careers.html" class="button is-secondary w-inline-block"><p data-i18n="about_teach_btn">See careers</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16"></a>
+            </div>
+            <div class="cr_card shadow-card">
+              <h3 class="heading-style-h4" data-i18n="contact_route_3_h">Training for your company</h3>
+              <p class="text-size-regular" data-i18n="contact_route_3_p">Private groups for your team, relocation and certificate practice are on the corporate page, where you can ask for a quote.</p>
+              <a href="corporate.html" class="button is-secondary w-inline-block"><p data-i18n="contact_route_3_btn">See corporate training</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16"></a>
+            </div>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".cr");
+            function go() { root.classList.add("is-in"); setTimeout(function () { root.classList.add("is-done"); }, 1300); }
+            if (!("IntersectionObserver" in window)) return go();
+            var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { go(); io.disconnect(); } }, { threshold: .2 });
+            io.observe(root);
+          })();
+        </script>
+      </section>

@@ -11,7 +11,6 @@
           /* Scroll transition, as on the other heroes: the visual settles to full size and the video eases out of its zoom. */
           .is-contact .contact_img { transform: scale(var(--hero-s, .94)); transform-origin: center top; will-change: transform; }
           .is-contact .contact_img video { transform: scale(var(--hero-z, 1.15)); }
-          .is-contact .contact_img h3, .is-contact .contact_img h3 + p { transform: translateY(var(--hero-y, 0px)); }
           /* Desktop: the whole section, heading to button, fits in one screen beside the video. */
           @media (min-width: 992px) {
             .section.is-contact .contact_content { min-height: calc(100vh - 6rem); padding: 2rem 4rem 2rem 0; display: flex; flex-direction: column; justify-content: center; }
@@ -65,11 +64,11 @@
                     <div class="form-field-wrapper"><label for="first_name" class="field-label" data-i18n="contact_first_name">First Name</label><input class="form-input w-input" maxlength="256" name="first_name" data-name="first_name" placeholder="First name" type="text" id="first_name" required="" data-i18n-placeholder="contact_first_name_placeholder"></div>
                     <div class="form-field-wrapper"><label for="last_name" class="field-label" data-i18n="contact_last_name">Last Name</label><input class="form-input w-input" maxlength="256" name="last_name" data-name="last_name" placeholder="Last Name" type="text" id="last_name" required="" data-i18n-placeholder="contact_last_name_placeholder"></div>
                     <div id="w-node-f9328d1e-f6eb-e53f-a657-8f7f2d9903ca-bbac3eac" class="form-field-wrapper"><label for="email-4" class="field-label" data-i18n="contact_email">Email</label><input class="form-input w-input" maxlength="256" name="email" data-name="email" placeholder="email@example.com" type="email" id="email-4" required="" data-i18n-placeholder="contact_email_placeholder"></div>
-                    <div id="w-node-dfd94c5b-bb36-d717-e1f0-923e707ac6b2-bbac3eac" class="form-field-wrapper"><label for="phone" class="field-label" data-i18n="contact_phone">Phone</label><input class="form-input w-input" maxlength="256" name="phone" data-name="phone" placeholder="Phone Number" type="tel" id="phone" required="" data-i18n-placeholder="contact_phone_placeholder"></div>
+                    <div id="w-node-dfd94c5b-bb36-d717-e1f0-923e707ac6b2-bbac3eac" class="form-field-wrapper"><label for="phone" class="field-label" data-i18n="contact_phone_optional">Phone (optional)</label><input class="form-input w-input" maxlength="256" name="phone" data-name="phone" placeholder="Phone Number" type="tel" id="phone" data-i18n-placeholder="contact_phone_placeholder"></div>
                     <div id="w-node-_4a5cd00f-24e1-de2d-39b4-27cd1c686482-bbac3eac" class="form-field-wrapper"><label for="message" class="field-label" data-i18n="contact_message">Message</label><textarea required="" placeholder="Message" maxlength="5000" id="message" name="message" data-name="message" class="form-input is-text-area w-input" data-i18n-placeholder="contact_message_placeholder"></textarea></div><input type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px;width:1px;height:1px;opacity:0"><input type="submit" data-wait="Please wait..." id="w-node-a6f7b92c-b9af-e09c-b528-4cd22faf67a2-bbac3eac" style="-webkit-transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="button w-button" value="Send Message" data-i18n-value="contact_submit">
                   </form>
                   <div class="w-form-done">
-                    <div data-i18n="newsletter_success">Thank you! Your submission has been received!</div>
+                    <div data-i18n="contact_sent">Thank you. Your message has been sent and we will reply by email.</div>
                   </div>
                   <div class="w-form-fail">
                     <div data-i18n="newsletter_error">Oops! Something went wrong while submitting the form.</div>
@@ -84,12 +83,6 @@
                     <source src="videos/pexels-6781972-typing-desk-transcode.webm" data-wf-ignore="true">
                   </video></div>
                 
-                <!-- Brand Overlay -->
-                <div style="position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(255,255,255,0.5); z-index: 2; padding: 2rem; text-align: center;">
-                  <img src="images/alimun-logo.svg" alt="Alimun Logo" style="width: clamp(100px, 12vw, 160px); height: auto; margin-bottom: 1.5rem;">
-                  <h3 style="color: #080808; font-family: 'Coolvetica Condensed', 'Satoshi', sans-serif; font-size: clamp(2.25rem, 4vw, 4rem); text-transform: uppercase; line-height: 1.05; margin: 0; letter-spacing: -0.01em;" data-i18n="contact_visual_title">Connect. Speak. Succeed.</h3>
-                  <p style="color: rgba(8,8,8,0.75); font-size: 1.1rem; max-width: 340px; margin-top: 0.75rem; font-family: 'Satoshi', sans-serif;" data-i18n="contact_visual_desc">Live classes in English and German, with more languages on the way.</p>
-                </div>
 
                 <div data-w-id="d5f6a4b2-9414-5c9e-4db8-6d4a9b945aee" style="-webkit-transform:translate3d(0%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0%, 0, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0)" class="contact_visual-mask"></div>
               </div>

@@ -137,8 +137,8 @@
     "approved": "2026-10-23 Contact nav, Contact current; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
   },
   "src/blocks/contact/s01.html": {
-    "sha256": "bcdaaa8ac59ee36771e8e2cfdf11b83fccea69d259d486afdd11ea3ad22f1baf",
-    "approved": "2026-10-23 Contact section: one screen on desktop, typing-desk video, accurate copy, form sends via ?action=contact; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
+    "sha256": "6a75fbc84bfc0e68c0bbc6aed26e9af3ca87f5f3ef0ae8a572751ed9f7950f4b",
+    "approved": "2026-10-23 Contact section: one screen on desktop, typing-desk video, accurate copy, form sends via ?action=contact; 2026-10-23 translation keys added (owner request), no visual change (owner: yes); 2026-10-24 text over the video removed, phone optional (the server never required it), success message says the message was sent (owner: go on with contact)"
   },
   "src/blocks/legal/404.html": {
     "sha256": "c66f8075ce8bb503403a6f6dc93d79a6b3078bf56e535f001bf0afa620774994",

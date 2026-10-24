@@ -506,3 +506,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - "Why teach on Alimun?" rebuilt on white: a pinned photo frame changes picture as each reason scrolls past (black background and flip cards removed). Pay text now matches the teacher dashboard (paid per class taught: base rate plus an amount per learner); hours text matches the weekly availability page.
 - "How to join" now matches the real application (language, experience, specialty, bio; reply by email within 48 hours; then set availability and teach). The CV, 2-minute video and audition claims were removed because the form does not ask for them.
 - New "Questions about teaching on Alimun" FAQ with FAQPage structured data, in all nine languages (German in the formal Sie form like the rest of the page).
+
+## 2026-10-24 — Contact page redo
+- Text and logo over the video removed (no text inside videos). Phone is now optional, as the server already treated it; the success message says the message was sent and that we reply by email.
+- New "Looking for something specific?" section: three cards pointing learners to plans and prices, teachers to careers and companies to corporate training, in all nine languages.
+- Social links (Instagram, LinkedIn, TikTok) still point to "#" until the owner sends the profile URLs.
