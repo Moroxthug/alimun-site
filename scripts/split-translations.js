@@ -9,8 +9,8 @@
  * load the .app files. js/i18n.js fetches another language on demand when the active
  * language differs from the folder (root pages that are translated in place).
  *
- * A key is dashboard-only when its name appears in a dashboard page and nowhere in the
- * other root pages or js/ files. Keys whose name appears nowhere (built dynamically,
+ * A key is dashboard-only when its name appears in a dashboard page or in the new dashboards'
+ * scripts (js/app/) and nowhere in the other root pages or js/ files. Keys whose name appears nowhere (built dynamically,
  * e.g. `student_cat_${c}`) stay in the public files so they are always available.
  * Run by build.js; the output is committed like the locale folders.
  */
@@ -24,7 +24,9 @@ module.exports = function splitTranslations(root, T) {
   const rootHtml = fs.readdirSync(root).filter((f) => f.endsWith('.html'));
   const jsFiles = fs.readdirSync(path.join(root, 'js'))
     .filter((f) => f.endsWith('.js') && f !== 'translations.js').map((f) => 'js/' + f);
-  const appSrc = APP_PAGES.filter((f) => rootHtml.includes(f)).map(read).join('\n');
+  const appJs = fs.existsSync(path.join(root, 'js', 'app'))
+    ? fs.readdirSync(path.join(root, 'js', 'app')).filter((f) => f.endsWith('.js')).map((f) => 'js/app/' + f) : [];
+  const appSrc = [...APP_PAGES.filter((f) => rootHtml.includes(f)), ...appJs].map(read).join('\n');
   const otherSrc = [...rootHtml.filter((f) => !APP_PAGES.includes(f)), ...jsFiles].map(read).join('\n');
 
   const allKeys = new Set(Object.values(T).flatMap((d) => Object.keys(d)));

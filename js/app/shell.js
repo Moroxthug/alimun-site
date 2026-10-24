@@ -1,14 +1,74 @@
-/* Alimun app shell (docs/DASHBOARD_PLAN.md, step 2): navigation, routing, the loader and the preview screens.
-   Sidebar on desktop, bottom bar plus a "More" sheet on phones. Screens marked for later steps show their
-   character and say which step builds them. */
+/* Alimun app shell (docs/DASHBOARD_PLAN.md, steps 2 and 3): navigation, routing, the loader, Home and the preview screens.
+   Sidebar on desktop, bottom bar plus a "More" sheet on phones. Home reads the signed-in student's data (js/app/data.js);
+   signed out, or with ?sample=1, it shows sample data. Screens marked for later steps show their character and say
+   which step builds them. All text comes from js/translations.js (app_* keys) except the design kit. */
 (function () {
   'use strict';
   var Cast = window.AlimunCast;
-  var S = window.ALIMUN_SAMPLE;
 
   function esc(s) {
-    return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; });
   }
+
+  /* ---------- Language ---------- */
+  var LANGS = ['en', 'es', 'fr', 'de', 'pt', 'it', 'zh', 'ar', 'ma'];
+  var LOCALES = { en: 'en-GB', es: 'es-ES', fr: 'fr-FR', de: 'de-DE', pt: 'pt-PT', it: 'it-IT', zh: 'zh-CN', ar: 'ar', ma: 'fr-MA' };
+  var lang = (function () {
+    var q = (location.search.match(/[?&]lang=([a-z]{2})/) || [])[1];
+    if (q && LANGS.indexOf(q) > -1) return q;
+    try { var s = localStorage.getItem('alimun-lang'); if (s && LANGS.indexOf(s) > -1) return s; } catch (e) { /* storage blocked */ }
+    var b = (navigator.language || 'en').slice(0, 2);
+    return LANGS.indexOf(b) > -1 ? b : 'en';
+  })();
+  var locale = LOCALES[lang];
+
+  function loadScript(src) {
+    return new Promise(function (resolve) {
+      var s = document.createElement('script');
+      s.src = src; s.onload = resolve; s.onerror = resolve;
+      document.head.appendChild(s);
+    });
+  }
+  function loadText() {
+    var files = ['/js/i18n/en.app.js'];
+    if (lang !== 'en') files.push('/js/i18n/' + lang + '.app.js');
+    return Promise.all(files.map(loadScript));
+  }
+
+  function t(key, vars) {
+    var T = window.ALIMUN_TRANSLATIONS || {};
+    var s = (T[lang] && T[lang][key]) || (T.en && T.en[key]) || key;
+    if (vars) s = s.replace(/\{(\w+)\}/g, function (m, k) { return vars[k] != null ? vars[k] : m; });
+    return s;
+  }
+  /* Plurals: the form for the language's plural category (zero, one, two, few, many), falling back to other.
+     Every form is written out so the translation split files them with the dashboard text. */
+  var PLURALS = {
+    app_home_days: ['app_home_days_zero', 'app_home_days_one', 'app_home_days_two', 'app_home_days_few', 'app_home_days_many', 'app_home_days_other'],
+    app_home_cards: ['app_home_cards_zero', 'app_home_cards_one', 'app_home_cards_two', 'app_home_cards_few', 'app_home_cards_many', 'app_home_cards_other'],
+    app_joke_streak: ['app_joke_streak_one', 'app_joke_streak_other']
+  };
+  var plural = window.Intl && Intl.PluralRules ? new Intl.PluralRules(locale) : null;
+  function tn(key, n, vars) {
+    var T = window.ALIMUN_TRANSLATIONS || {};
+    var cat = plural ? plural.select(n) : (n === 1 ? 'one' : 'other');
+    var k = PLURALS[key].filter(function (f) { return f === key + '_' + cat; })[0];
+    if (!k || !((T[lang] && T[lang][k]) || (T.en && T.en[k]))) k = key + '_other';
+    var v = { n: new Intl.NumberFormat(locale).format(n) };
+    for (var x in vars || {}) v[x] = vars[x];
+    return t(k, v);
+  }
+  function cap(s) { s = String(s || ''); return s.charAt(0).toLocaleUpperCase(locale) + s.slice(1); }
+  function languageName(english) {
+    var code = window.AlimunData && AlimunData.langCode(english);
+    try { if (code && Intl.DisplayNames) return cap(new Intl.DisplayNames([locale], { type: 'language' }).of(code)); } catch (e) { /* old browser */ }
+    return english || '';
+  }
+  function listOf(items) {
+    try { if (Intl.ListFormat) return new Intl.ListFormat(locale, { style: 'long', type: 'conjunction' }).format(items); } catch (e) { /* old browser */ }
+    return items.join(', ');
+  }
+  function fmt(d, o) { return new Intl.DateTimeFormat(locale, o).format(new Date(d)); }
 
   /* Line icons drawn for Alimun: 24px grid, 2px rounded strokes, same weight as the drawings */
   var P = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
@@ -29,45 +89,61 @@
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
     play: '<path d="M8 5.5v13l10.5-6.5z"/>'
   };
-  function icon(name) { return '<svg viewBox="0 0 24 24" ' + P + ' aria-hidden="true" focusable="false">' + ICONS[name] + '</svg>'; }
+  function icon(name) { return '<svg class="i-' + name + '" viewBox="0 0 24 24" ' + P + ' aria-hidden="true" focusable="false">' + ICONS[name] + '</svg>'; }
 
-  /* Every section of the student dashboard, in the order of the plan's build steps */
+  /* Every section of the student dashboard, in the order of the plan's build steps.
+     Text keys: app_nav_<id> (label), app_nav_<id>_short, app_soon_<id>_text and app_soon_<id>_bub. */
   var ROUTES = [
-    { id: 'home', label: 'Home', icon: 'home', group: 'learn' },
-    { id: 'book', label: 'Course book', short: 'Learn', icon: 'book', group: 'learn', step: 4, art: 'owl', tint: 'sun', bub: 'Psst: your course book opens here, page by page.', kind: 'say',
-      text: 'Course books for every level from A1 to C2, unit by unit. Every page teaches, then checks that you got it before you move on.' },
-    { id: 'practice', label: 'Practice', icon: 'practice', group: 'learn', step: 5, art: 'dog', tint: 'leaf', bub: 'Again! Again!', kind: 'say',
-      text: 'Exercises built from your own mistakes, flashcards with spaced review, quizzes and long practice sets, all with instant feedback.' },
-    { id: 'tests', label: 'Mock tests', short: 'Tests', icon: 'tests', group: 'learn', step: 8, art: 'dragon', tint: 'leaf', bub: 'Beat me in the mock test.', kind: 'say',
-      text: 'Practice in the format of IELTS, B2 First, C1 Advanced, Goethe, telc, DELE, DELF and CILS, plus the Alimun tests.' },
-    { id: 'library', label: 'Library', icon: 'library', group: 'learn', step: 9, art: 'teacup', tint: 'mint', bub: 'Fancy a cuppa and some listening?', kind: 'say',
-      text: 'Graded listening and reading for your level: dialogues, announcements, emails, articles and stories, each with its own exercises.' },
-    { id: 'classes', label: 'Classes', icon: 'classes', group: 'class', step: 10, art: 'mug', tint: 'leaf', bub: 'Refill, then class.', kind: 'think',
-      text: 'Join your live classes in one tap, keep the notes and the class vocabulary, and book one-to-one lessons with your teacher.' },
-    { id: 'homework', label: 'Homework', icon: 'homework', group: 'class', step: 11, art: 'monster', tint: 'coral', bub: 'I eat articles for breakfast.', kind: 'say',
-      text: 'Homework and essays from your teacher, with corrections and comments you can come back to.' },
-    { id: 'progress', label: 'Progress', icon: 'progress', group: 'class', step: 12, art: 'snail', tint: 'coral', bub: 'Slow and steady still counts.', kind: 'think',
-      text: 'Your level, your skills and the topics you have mastered, with the history of every test and class.' },
-    { id: 'messages', label: 'Messages', icon: 'messages', group: 'class', step: 13, art: 'alien', tint: 'mint', bub: 'Take me to your teacher.', kind: 'say',
-      text: 'Write to your teacher and your class, and get answers about homework and lessons.' },
-    { id: 'settings', label: 'Settings', icon: 'settings', group: 'account', step: 14, art: 'cat', tint: 'bone', bub: 'Five more minutes...', kind: 'think',
-      text: 'Your profile, languages, notifications, plan and billing.' },
-    { id: 'kit', label: 'Design kit', icon: 'kit', group: 'account' }
+    { id: 'home', label: 'app_nav_home', icon: 'home', group: 'learn' },
+    { id: 'book', label: 'app_nav_book', short: 'app_nav_book_short', icon: 'book', group: 'learn', step: 4, art: 'owl', tint: 'sun', kind: 'say', text: 'app_soon_book_text', bub: 'app_soon_book_bub' },
+    { id: 'practice', label: 'app_nav_practice', icon: 'practice', group: 'learn', step: 5, art: 'dog', tint: 'leaf', kind: 'say', text: 'app_soon_practice_text', bub: 'app_soon_practice_bub' },
+    { id: 'tests', label: 'app_nav_tests', short: 'app_nav_tests_short', icon: 'tests', group: 'learn', step: 8, art: 'dragon', tint: 'leaf', kind: 'say', text: 'app_soon_tests_text', bub: 'app_soon_tests_bub' },
+    { id: 'library', label: 'app_nav_library', icon: 'library', group: 'learn', step: 9, art: 'teacup', tint: 'mint', kind: 'say', text: 'app_soon_library_text', bub: 'app_soon_library_bub' },
+    { id: 'classes', label: 'app_nav_classes', icon: 'classes', group: 'class', step: 10, art: 'mug', tint: 'leaf', kind: 'think', text: 'app_soon_classes_text', bub: 'app_soon_classes_bub' },
+    { id: 'homework', label: 'app_nav_homework', icon: 'homework', group: 'class', step: 11, art: 'monster', tint: 'coral', kind: 'say', text: 'app_soon_homework_text', bub: 'app_soon_homework_bub' },
+    { id: 'progress', label: 'app_nav_progress', icon: 'progress', group: 'class', step: 12, art: 'snail', tint: 'coral', kind: 'think', text: 'app_soon_progress_text', bub: 'app_soon_progress_bub' },
+    { id: 'messages', label: 'app_nav_messages', icon: 'messages', group: 'class', step: 13, art: 'alien', tint: 'mint', kind: 'say', text: 'app_soon_messages_text', bub: 'app_soon_messages_bub' },
+    { id: 'settings', label: 'app_nav_settings', icon: 'settings', group: 'account', step: 14, art: 'cat', tint: 'bone', kind: 'think', text: 'app_soon_settings_text', bub: 'app_soon_settings_bub' },
+    { id: 'kit', label: 'app_nav_kit', icon: 'kit', group: 'account' }
   ];
+  var GROUPS = { learn: 'app_nav_group_learn', class: 'app_nav_group_class', account: 'app_nav_group_account' };
   var TINTS = { sun: 'var(--t-sun)', mint: 'var(--t-mint)', coral: 'var(--t-coral)', leaf: 'var(--t-lime)', bone: 'var(--bone)' };
   var BAR = ['home', 'book', 'practice', 'classes'];
   var byId = {}; ROUTES.forEach(function (r) { byId[r.id] = r; });
 
+  /* The course buddy for each language (docs/DASHBOARD_PLAN.md section 1) and its jokes */
+  var BUDDIES = { English: 'teacup', German: 'pretzel', French: 'croissant', Spanish: 'churro', Italian: 'pizza', Portuguese: 'nata' };
+  var JOKES = {
+    teacup: ['app_joke_teacup_1', 'app_joke_teacup_2', 'app_joke_teacup_3'],
+    pretzel: ['app_joke_pretzel_1', 'app_joke_pretzel_2', 'app_joke_pretzel_3'],
+    croissant: ['app_joke_croissant_1', 'app_joke_croissant_2', 'app_joke_croissant_3'],
+    churro: ['app_joke_churro_1', 'app_joke_churro_2', 'app_joke_churro_3'],
+    pizza: ['app_joke_pizza_1', 'app_joke_pizza_2', 'app_joke_pizza_3'],
+    nata: ['app_joke_nata_1', 'app_joke_nata_2', 'app_joke_nata_3']
+  };
+  var TIERS = { free: 'app_tier_free', waitlist: 'app_tier_waitlist', community: 'app_tier_community', focused: 'app_tier_focused',
+    intensive: 'app_tier_intensive', onetoone: 'app_tier_onetoone', private: 'app_tier_private', daily: 'app_tier_daily', founding_member: 'app_tier_founding' };
+  var UNPAID = { free: true, waitlist: true };
+
   var app, view, top, sheet, loadingScreen;
+  var D = null; /* what Home shows: real data or sample */
+  var mode = 'sample'; /* 'real', 'sample' (signed out), 'forced' (?sample=1), 'noprofile', 'error' */
+
+  function buddyOf(d) { return BUDDIES[d.profile.language] || 'teacup'; }
+  function firstName(n) { n = String(n || '').trim().split(/\s+/)[0] || ''; return cap(n); }
+  function initials(n) {
+    var p = String(n || '').trim().split(/\s+/).filter(Boolean);
+    return ((p[0] || '').charAt(0) + (p.length > 1 ? p[p.length - 1].charAt(0) : '')).toLocaleUpperCase(locale) || 'A';
+  }
+  function courseName(d) { return (languageName(d.profile.language) + ' ' + (d.profile.level || '')).trim(); }
 
   /* ---------- Navigation markup ---------- */
   function navLinks() {
-    var groups = { learn: 'Learn', class: 'With your teacher', account: 'Account' };
     var html = '';
-    Object.keys(groups).forEach(function (g) {
-      html += '<div class="nav__group"><div class="nav__label">' + groups[g] + '</div>';
+    Object.keys(GROUPS).forEach(function (g) {
+      html += '<div class="nav__group"><div class="nav__label">' + esc(t(GROUPS[g])) + '</div>';
       ROUTES.filter(function (r) { return r.group === g; }).forEach(function (r) {
-        html += '<a href="#/' + r.id + '" data-route="' + r.id + '">' + icon(r.icon) + '<span>' + esc(r.label) + '</span></a>';
+        html += '<a href="#/' + r.id + '" data-route="' + r.id + '">' + icon(r.icon) + '<span>' + esc(t(r.label)) + '</span></a>';
       });
       html += '</div>';
     });
@@ -75,103 +151,218 @@
   }
 
   function renderShell() {
-    var buddySvg = Cast.drawing(S.course.buddy);
+    var buddySvg = Cast.drawing(buddyOf(D));
+    var lng = languageName(D.profile.language);
     app.innerHTML =
-      '<a class="skip" href="#view">Skip to content</a>' +
-      '<aside class="side" aria-label="Main">' +
-        '<a class="brand" href="#/home" aria-label="Alimun home">' + Cast.book('idle') + Cast.wordmark() + '</a>' +
-        '<nav class="nav" aria-label="Sections">' + navLinks() + '</nav>' +
+      '<a class="skip" href="#view">' + esc(t('app_skip')) + '</a>' +
+      '<aside class="side" aria-label="' + esc(t('app_main')) + '">' +
+        '<a class="brand" href="#/home" aria-label="' + esc(t('app_home_link')) + '">' + Cast.book('idle') + Cast.wordmark() + '</a>' +
+        '<nav class="nav" aria-label="' + esc(t('app_sections')) + '">' + navLinks() + '</nav>' +
         '<div class="side__foot"><a class="buddy-card" href="#/book">' + buddySvg +
-          '<div><b>' + esc(S.course.language) + ' ' + esc(S.course.level) + '</b><small>' + esc(S.course.unit) + '</small></div></a></div>' +
+          '<div><b>' + esc(courseName(D)) + '</b><small>' + esc(t(TIERS[D.profile.tier] || 'app_tier_free')) + '</small></div></a></div>' +
       '</aside>' +
       '<div class="main">' +
         '<header class="top">' +
-          '<a class="top__brand" href="#/home" aria-label="Alimun home">' + Cast.book('idle') + Cast.wordmark() + '</a>' +
+          '<a class="top__brand" href="#/home" aria-label="' + esc(t('app_home_link')) + '">' + Cast.book('idle') + Cast.wordmark() + '</a>' +
           '<p class="top__title" aria-hidden="true"></p>' +
           '<div class="top__actions">' +
-            '<button class="course-btn" type="button" aria-label="Course: ' + esc(S.course.language) + '">' + buddySvg + '<span>' + esc(S.course.language) + '</span></button>' +
-            '<button class="icon-btn" type="button" aria-label="Notifications">' + icon('bell') + '</button>' +
-            '<button class="avatar" type="button" aria-label="Your account">' + esc(S.student.initials) + '</button>' +
+            '<button class="course-btn" type="button" aria-label="' + esc(t('app_course_label', { language: lng })) + '">' + buddySvg + '<span>' + esc(lng) + '</span></button>' +
+            '<button class="icon-btn" type="button" aria-label="' + esc(t('app_notifications')) + '">' + icon('bell') + '</button>' +
+            '<button class="avatar" type="button" aria-label="' + esc(t('app_account')) + '">' + esc(initials(D.profile.name)) + '</button>' +
           '</div>' +
         '</header>' +
         '<main class="view" id="view" tabindex="-1"></main>' +
       '</div>' +
-      '<nav class="bar" aria-label="Sections">' +
-        BAR.map(function (id) { var r = byId[id]; return '<a href="#/' + id + '" data-route="' + id + '">' + icon(r.icon) + '<span>' + esc(r.short || r.label) + '</span></a>'; }).join('') +
-        '<button type="button" data-more aria-haspopup="dialog" aria-expanded="false">' + icon('more') + '<span>More</span></button>' +
+      '<nav class="bar" aria-label="' + esc(t('app_sections')) + '">' +
+        BAR.map(function (id) { var r = byId[id]; return '<a href="#/' + id + '" data-route="' + id + '">' + icon(r.icon) + '<span>' + esc(t(r.short || r.label)) + '</span></a>'; }).join('') +
+        '<button type="button" data-more aria-haspopup="dialog" aria-expanded="false">' + icon('more') + '<span>' + esc(t('app_nav_more')) + '</span></button>' +
       '</nav>' +
       '<div class="sheet-scrim" data-close></div>' +
-      '<div class="sheet" role="dialog" aria-modal="true" aria-label="More sections"><div class="sheet__grip"></div><nav class="nav">' + navLinks() + '</nav></div>';
+      '<div class="sheet" role="dialog" aria-modal="true" aria-label="' + esc(t('app_more_sections')) + '"><div class="sheet__grip"></div><nav class="nav">' + navLinks() + '</nav></div>';
     view = app.querySelector('.view');
     top = app.querySelector('.top');
     sheet = app.querySelector('.sheet');
   }
 
-  /* ---------- Screens ---------- */
-  function greeting() {
+  /* ---------- Home ---------- */
+  var MIN = 60000, HOUR = 3600000, DAY = 86400000;
+
+  function greeting(name) {
     var h = new Date().getHours();
-    return h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+    var g = t(h < 12 ? 'app_greet_morning' : h < 18 ? 'app_greet_afternoon' : 'app_greet_evening');
+    return name ? t('app_greet_named', { greeting: g, name: name }) : g;
   }
-  function countdown(mins) {
-    var d = Math.floor(mins / 1440), h = Math.floor((mins % 1440) / 60);
-    return d > 0 ? 'Starts in ' + d + (d === 1 ? ' day' : ' days') + ' and ' + h + (h === 1 ? ' hour' : ' hours') : 'Starts in ' + h + (h === 1 ? ' hour' : ' hours');
+
+  /* "in 2 days", "in 3 hours", "in 20 minutes" */
+  function relative(ms) {
+    var rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'always' });
+    if (ms < HOUR) return rtf.format(Math.max(1, Math.round(ms / MIN)), 'minute');
+    if (ms < DAY) return rtf.format(Math.round(ms / HOUR), 'hour');
+    return rtf.format(Math.floor(ms / DAY), 'day');
+  }
+  /* "Today, 18:30", "Tomorrow, 18:30", "Thursday, 18:30", or with the date when it is more than a week away */
+  function classWhen(at) {
+    var d = new Date(at), today = new Date(); today.setHours(0, 0, 0, 0);
+    var days = Math.round((new Date(d).setHours(0, 0, 0, 0) - today) / DAY);
+    var time = fmt(d, { hour: '2-digit', minute: '2-digit' });
+    var day = days === 0 || days === 1 ? new Intl.RelativeTimeFormat(locale, { numeric: 'auto' }).format(days, 'day')
+      : fmt(d, days < 7 ? { weekday: 'long' } : { weekday: 'long', day: 'numeric', month: 'long' });
+    return t('app_home_when', { day: cap(day), time: time });
+  }
+
+  /* One joke a day, or the one that fits the moment */
+  function buddyLine(d) {
+    var s = d.streak, now = new Date();
+    if (d.nextClass && new Date(d.nextClass.at).toDateString() === now.toDateString()) return { key: 'app_joke_class_today', kind: 'say' };
+    if (s.days >= 3) return { text: tn('app_joke_streak', s.days), kind: 'say' };
+    if (s.lastActive && Date.now() - new Date(s.lastActive).getTime() > 7 * DAY) return { key: 'app_joke_away', kind: 'think' };
+    if (!s.lastActive) return { key: 'app_joke_first', kind: 'say' };
+    var pool = (JOKES[buddyOf(d)] || []).concat(now.getHours() < 12 ? ['app_joke_morning'] : now.getHours() >= 18 ? ['app_joke_evening'] : []);
+    var dayNo = Math.floor((now - new Date(now.getFullYear(), 0, 0)) / DAY);
+    return { key: pool[dayNo % pool.length], kind: dayNo % 2 ? 'think' : 'say' };
+  }
+
+  function nextClassCard(d) {
+    var c = d.nextClass, tier = d.profile.tier;
+    var head = '<section class="card card--forest' + (c ? '' : ' card--center') + ' span-8" style="--i:1" aria-labelledby="h-next">';
+    if (c) {
+      var start = new Date(c.at).getTime(), now = Date.now();
+      var open = c.live || (now >= start - 15 * MIN && now <= start + 90 * MIN);
+      var name = t('app_home_class_name', { course: (languageName(c.language) + ' ' + (c.level || '')).trim() });
+      var line = c.teacher ? t('app_home_class_with', { class: name, teacher: c.teacher }) : name;
+      var when = c.live ? t('app_home_live_now') : start > now ? t('app_home_starts', { when: relative(start - now) }) : t('app_home_started');
+      return head + '<p class="t-small" id="h-next">' + esc(t('app_home_next')) + '</p>' +
+        '<h2 class="t-h1" style="margin-top:10px">' + esc(classWhen(c.at)) + '</h2>' +
+        '<p class="t-lead" style="margin-top:12px">' + esc(t('app_home_class_line', { line: line, when: when })) + '</p>' +
+        '<div class="btn-row" style="margin-top:26px">' +
+          (open ? (d.sample ? '<button class="btn btn--lime" type="button" data-join>' + icon('play') + esc(t('app_home_join')) + '</button>'
+                            : '<a class="btn btn--lime" href="/student-dashboard.html" data-join-real>' + icon('play') + esc(t('app_home_join')) + '</a>') : '') +
+          '<a class="btn btn--ghost btn--on-forest" href="#/classes">' + esc(t('app_home_calendar')) + '</a></div>' +
+      '</section>';
+    }
+    /* No class yet: waiting for a class to open, on the free plan, or paid with nothing scheduled */
+    var k = tier === 'waitlist' ? ['app_home_forming_h', 'app_home_forming_p'] : tier === 'free' ? ['app_home_free_h', 'app_home_free_p'] : ['app_home_none_h', 'app_home_none_p'];
+    return head + '<div class="card__row card__row--split"><div>' +
+        '<p class="t-small" id="h-next">' + esc(t('app_home_next')) + '</p>' +
+        '<h2 class="t-h1" style="margin-top:10px">' + esc(t(k[0])) + '</h2>' +
+        '<p class="t-lead" style="margin-top:12px">' + esc(t(k[1], { course: courseName(d) })) + '</p></div>' +
+        '<div class="card__art card__art--lg">' + Cast.drawing('mug') + '</div></div>' +
+      '</section>';
+  }
+
+  function buddyStage(d) {
+    var b = buddyLine(d);
+    return '<section class="stage span-4" style="--i:2;background:var(--t-sun)" aria-label="' + esc(t('app_home_buddy')) + '">' +
+      '<div class="bub ' + b.kind + '">' + esc(b.text || t(b.key)) + '</div>' + Cast.drawing(buddyOf(d)) + '</section>';
+  }
+
+  function todayPlan(d) {
+    var items = [];
+    if (d.flashcardsDue > 0) items.push({ art: 'ghost', tint: 'coral', href: '#/practice', h: tn('app_home_cards', d.flashcardsDue), p: t('app_home_cards_p') });
+    if (d.homework.length) {
+      var hw = d.homework[0];
+      items.push({ art: 'monster', tint: 'mint', href: '#/homework', h: hw.titleKey ? t(hw.titleKey) : hw.title,
+        p: hw.due_date ? t('app_home_hw_due', { date: fmt(hw.due_date + 'T12:00:00', { weekday: 'long', day: 'numeric', month: 'long' }) }) : t('app_home_hw_nodate') });
+    }
+    if (d.topics && d.topics.length) items.push({ art: 'dragon', tint: 'sun', href: '#/practice', h: t('app_home_topic_h', { topic: d.topics[0] }), p: t('app_home_topic_p') });
+    if (!items.length) items.push({ art: 'sun', tint: 'leaf', href: '#/practice', h: t('app_home_clear_h'), p: t('app_home_clear_p') });
+    var span = items.length === 1 ? 12 : items.length === 2 ? 6 : 4;
+    return '<h2 class="t-h2 span-12 home__section" id="h-today" style="--i:3">' + esc(t('app_home_today_h')) + '</h2>' +
+      items.map(function (it, i) {
+        return '<a class="card card--' + it.tint + ' span-' + span + '" style="--i:' + (4 + i) + '" href="' + it.href + '">' +
+          '<div class="card__row"><div class="card__art">' + Cast.drawing(it.art) + '</div>' +
+          '<div><h3 class="t-h3">' + esc(it.h) + '</h3><p class="t-small" style="margin-top:8px">' + esc(it.p) + '</p></div></div></a>';
+      }).join('');
+  }
+
+  function streakCard(d) {
+    var s = d.streak;
+    var days = [];
+    for (var i = 0; i < 7; i++) days.push(fmt(new Date(s.monday).getTime() + i * DAY, { weekday: 'narrow' }));
+    var line = s.days === 0 ? 'app_home_streak_zero' : s.activeToday ? 'app_home_streak_done' : 'app_home_streak_keep';
+    return '<section class="card span-5" style="--i:7" aria-labelledby="h-streak">' +
+      '<div class="card__row"><div><p class="t-small" id="h-streak">' + esc(t('app_home_streak')) + '</p><div class="t-num" style="margin-top:6px">' + esc(tn('app_home_days', s.days)) + '</div></div>' +
+      '<div class="card__art card__art--end">' + Cast.drawing('snail') + '</div></div>' +
+      '<div class="week" role="img" aria-label="' + esc(t('app_home_week')) + '">' + s.week.map(function (on, i) { return '<span class="' + (on ? 'on' : '') + (i === s.todayIndex ? ' today' : '') + '">' + esc(days[i]) + '</span>'; }).join('') + '</div>' +
+      '<p class="t-small" style="margin-top:14px">' + esc(t(line)) + '</p>' +
+    '</section>';
+  }
+
+  function focusCard(d) {
+    var body, btn;
+    if (d.placement && d.topics && d.topics.length) {
+      /* Topic names in bold, joined the way the interface language joins a list */
+      var list = esc(listOf(d.topics.map(function (x) { return '\u0001' + x + '\u0002'; }))).replace(/\u0001/g, '<b>').replace(/\u0002/g, '</b>');
+      body = esc(t('app_home_focus_p', { level: d.placement.level })).replace('{topics}', list);
+      btn = '<a class="btn btn--ghost btn--sm" href="/level-test">' + esc(t('app_home_retake')) + '</a>';
+    } else if (d.placement) {
+      body = esc(t('app_home_focus_top', { level: d.placement.level }));
+      btn = '<a class="btn btn--ghost btn--sm" href="/level-test">' + esc(t('app_home_retake')) + '</a>';
+    } else {
+      body = esc(t('app_home_focus_none'));
+      btn = '<a class="btn btn--primary btn--sm" href="/level-test">' + esc(t('app_home_take')) + icon('arrow') + '</a>';
+    }
+    return '<section class="card span-7" style="--i:8" aria-labelledby="h-focus">' +
+      '<div class="card__row card__row--split"><div><h2 class="t-h2" id="h-focus">' + esc(t('app_home_focus_h')) + '</h2>' +
+      '<p class="t-body" style="margin-top:14px">' + body + '</p>' +
+      '<div class="btn-row" style="margin-top:20px">' + btn + '</div></div>' +
+      '<div class="card__art">' + Cast.drawing('owl') + '</div></div>' +
+    '</section>';
+  }
+
+  function planCard(d) {
+    var tier = d.profile.tier;
+    if (!UNPAID[tier]) return '';
+    var k = tier === 'waitlist' ? ['app_home_plan_wait_h', 'app_home_plan_wait_p'] : ['app_home_plan_free_h', 'app_home_plan_free_p'];
+    return '<section class="card card--lime span-12" style="--i:9" aria-labelledby="h-plan">' +
+      '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2" id="h-plan">' + esc(t(k[0])) + '</h2>' +
+      '<p class="t-body" style="margin-top:10px">' + esc(t(k[1])) + '</p></div>' +
+      '<a class="btn btn--primary" href="/tiers">' + esc(t('app_home_see_plans')) + '</a></div>' +
+    '</section>';
+  }
+
+  /* Why sample data is showing, with the way to your own */
+  function sampleNote() {
+    if (mode === 'real') return '';
+    var p, btn;
+    if (mode === 'forced') { p = t('app_sample_forced'); btn = '<a class="btn btn--primary btn--sm" href="' + location.pathname + location.hash + '">' + esc(t('app_sample_mine')) + '</a>'; }
+    else if (mode === 'noprofile') { p = t('app_sample_noprofile'); btn = ''; }
+    else if (mode === 'error') { p = t('app_sample_error'); btn = '<button class="btn btn--primary btn--sm" type="button" data-retry>' + esc(t('app_retry')) + '</button>'; }
+    else { p = t('app_sample_p'); btn = '<a class="btn btn--primary btn--sm" href="/signin.html">' + esc(t('app_sample_signin')) + '</a>'; }
+    return '<section class="card card--bone span-12 sample-note" style="--i:0" role="note">' +
+      '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:220px"><h2 class="t-h3">' + esc(t('app_sample_h')) + '</h2>' +
+      '<p class="t-small" style="margin-top:6px">' + esc(p) + '</p></div>' + btn + '</div></section>';
   }
 
   function homeView() {
-    var c = S.nextClass, k = S.course, st = S.streak;
-    var days = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
-    var tasks = S.today.map(function (t, i) {
-      return '<button class="card card--' + t.tint + ' span-4" style="--i:' + (i + 2) + '" type="button" data-sample-task>' +
-        '<div class="card__row"><div class="card__art">' + Cast.drawing(t.art) + '</div>' +
-        '<div><h3 class="t-h3">' + esc(t.title) + '</h3><p class="t-small" style="margin-top:8px">' + esc(t.detail) + '</p></div></div></button>';
-    }).join('');
+    var d = D;
     return '' +
-      '<div class="view__head"><div><h1 class="t-h1">' + greeting() + ', ' + esc(S.student.firstName) + '</h1>' +
-        '<p class="t-lead">A preview of the new dashboard with sample data. The Home screen itself is built in step 3; this one shows the shell, the cards and the motion.</p></div></div>' +
+      '<div class="view__head"><div><h1 class="t-h1">' + esc(greeting(firstName(d.profile.name))) + '</h1>' +
+        '<p class="t-lead">' + esc(cap(fmt(Date.now(), { weekday: 'long', day: 'numeric', month: 'long' }))) + '</p></div></div>' +
       '<div class="grid rise">' +
-        '<section class="card card--forest span-8" style="--i:0" aria-label="Next class">' +
-          '<p class="t-small">Your next class</p>' +
-          '<h2 class="t-h1" style="margin-top:10px">' + esc(c.when) + '</h2>' +
-          '<p class="t-lead" style="margin-top:12px">' + esc(c.title) + ' with ' + esc(c.teacher) + '. ' + countdown(c.inMinutes) + '.</p>' +
-          '<div class="btn-row" style="margin-top:26px"><button class="btn btn--lime" type="button" data-join>' + icon('play') + 'Join class</button>' +
-          '<a class="btn btn--ghost" href="#/classes" style="color:var(--bone);box-shadow:inset 0 0 0 2px rgba(240,239,233,.4)">See the calendar</a></div>' +
-        '</section>' +
-        '<section class="stage span-4" style="--i:1;background:var(--t-sun)" aria-label="Your buddy">' +
-          '<div class="bub think">Der, die, das... no wonder I am twisted.</div>' + Cast.drawing(k.buddy) +
-        '</section>' +
-        tasks +
-        '<section class="card span-5" style="--i:5" aria-label="Streak">' +
-          '<div class="card__row"><div><p class="t-small">Streak</p><div class="t-num" style="margin-top:6px">' + st.days + ' days</div></div>' +
-          '<div class="card__art" style="margin-left:auto">' + Cast.drawing('snail') + '</div></div>' +
-          '<div class="week" aria-hidden="true">' + st.week.map(function (on, i) { return '<span class="' + (on ? 'on' : '') + (i === st.todayIndex ? ' today' : '') + '">' + days[i] + '</span>'; }).join('') + '</div>' +
-          '<p class="t-small" style="margin-top:14px">Practise today to make it seven.</p>' +
-        '</section>' +
-        '<section class="card span-7" style="--i:6" aria-label="Course">' +
-          '<p class="t-small">' + esc(k.language) + ' ' + esc(k.level) + '</p>' +
-          '<h2 class="t-h2" style="margin-top:8px">' + esc(k.unit) + '</h2>' +
-          '<div class="meter" style="margin-top:20px" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + Math.round(k.unitProgress * 100) + '" aria-label="Unit progress"><i style="width:' + (k.unitProgress * 100) + '%"></i></div>' +
-          '<p class="t-body" style="margin-top:18px">' + esc(S.focus) + '</p>' +
-          '<div class="btn-row" style="margin-top:20px"><a class="btn btn--primary" href="#/book">Continue the unit' + icon('arrow') + '</a></div>' +
-        '</section>' +
-        '<section class="card card--lime span-12" style="--i:7" aria-label="Your plan">' +
-          '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2">You are on the free plan</h2>' +
-          '<p class="t-body" style="margin-top:10px">Live classes with a teacher, mock tests and full course books come with a paid plan.</p></div>' +
-          '<a class="btn btn--primary" href="/tiers">See the plans</a></div>' +
-        '</section>' +
+        sampleNote() +
+        nextClassCard(d) +
+        buddyStage(d) +
+        todayPlan(d) +
+        streakCard(d) +
+        focusCard(d) +
+        planCard(d) +
       '</div>';
   }
 
+  /* ---------- Screens built in later steps ---------- */
   function soonView(r) {
     return '' +
-      '<div class="view__head"><div><h1 class="t-h1">' + esc(r.label) + '</h1><p class="t-lead">' + esc(r.text) + '</p></div></div>' +
+      '<div class="view__head"><div><h1 class="t-h1">' + esc(t(r.label)) + '</h1><p class="t-lead">' + esc(t(r.text)) + '</p></div></div>' +
       '<div class="soon rise">' +
-        '<div class="stage" style="--i:0;background:' + TINTS[r.tint] + '"><div class="bub ' + r.kind + '">' + esc(r.bub) + '</div>' + Cast.drawing(r.art) + '</div>' +
-        '<div class="card" style="--i:1"><h2 class="t-h2">Built in step ' + r.step + '</h2>' +
-          '<p class="t-body">This screen is designed and built in its own step of the plan, after you confirm the look and the navigation.</p>' +
-          '<div class="btn-row"><a class="btn btn--primary" href="#/home">Back to Home</a><a class="btn btn--quiet" href="#/kit">Open the design kit</a></div></div>' +
+        '<div class="stage" style="--i:0;background:' + TINTS[r.tint] + '"><div class="bub ' + r.kind + '">' + esc(t(r.bub)) + '</div>' + Cast.drawing(r.art) + '</div>' +
+        '<div class="card" style="--i:1"><h2 class="t-h2">' + esc(t('app_soon_h', { step: r.step })) + '</h2>' +
+          '<p class="t-body">' + esc(t('app_soon_p')) + '</p>' +
+          '<div class="btn-row"><a class="btn btn--primary" href="#/home">' + esc(t('app_soon_back')) + '</a><a class="btn btn--quiet" href="#/kit">' + esc(t('app_soon_kit')) + '</a></div></div>' +
       '</div>';
   }
 
+  /* ---------- Design kit (internal reference, English only) ---------- */
   function kitView() {
     var colours = [
       ['Forest', '#1a443c', 'Logo, shell, primary buttons'], ['Gold', '#d5af33', 'Logo eyes, loader'], ['Lime', '#ceff65', 'Active state, highlights'],
@@ -225,6 +416,7 @@
       '<circle fill="#d5af33" cx="453" cy="605" r="19"/><circle fill="#d5af33" cx="574" cy="605" r="19"/></svg></div>';
   }
 
+
   /* ---------- Loader ---------- */
   function showLoader(message, ms) {
     loadingScreen.querySelector('p').textContent = message || '';
@@ -249,8 +441,8 @@
     var swap = function () {
       view.innerHTML = html;
       view.classList.remove('is-leaving');
-      document.title = r.label + ' – Alimun';
-      top.querySelector('.top__title').textContent = r.label;
+      document.title = t(r.label) + ' – Alimun';
+      top.querySelector('.top__title').textContent = t(r.label);
       app.querySelectorAll('[data-route]').forEach(function (a) {
         if (a.getAttribute('data-route') === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
       });
@@ -268,31 +460,65 @@
     if (open) { var a = sheet.querySelector('a'); if (a) a.focus(); }
   }
 
+  /* ---------- Data ---------- */
+  function sample() {
+    var s = window.ALIMUN_SAMPLE();
+    return window.AlimunData.topicLabels(s.placement.language, s.placement.topics, lang).then(function (labels) { s.topics = labels; return s; });
+  }
+  function loadData() {
+    if (/[?&]sample=1/.test(location.search)) { mode = 'forced'; return sample(); }
+    return window.AlimunData.load(lang).then(function (d) {
+      if (d && d.profile) { mode = 'real'; return d; }
+      mode = d ? 'noprofile' : 'sample';
+      return sample();
+    }, function (err) {
+      console.warn('[Alimun] Home data did not load', err && err.message);
+      mode = 'error';
+      return sample();
+    });
+  }
+
   /* ---------- Boot ---------- */
+  function start() {
+    renderShell();
+    render(routeFromHash(), false);
+  }
+
   function boot() {
     app = document.getElementById('app');
     loadingScreen = document.getElementById('loading');
-    renderShell();
-    render(routeFromHash(), false);
-
-    window.addEventListener('hashchange', function () { setSheet(false); var id = routeFromHash(); if (id !== current) render(id, true); });
-    window.addEventListener('scroll', function () { top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setSheet(false); });
-
-    app.addEventListener('click', function (e) {
-      var t = e.target.closest('[data-more],[data-close],[data-join],[data-demo-loader],[data-replay],[data-sample-task]');
-      if (!t) return;
-      if (t.hasAttribute('data-more')) setSheet(!document.body.classList.contains('is-sheet-open'));
-      else if (t.hasAttribute('data-close')) setSheet(false);
-      else if (t.hasAttribute('data-join')) showLoader('Connecting you to your class', 2200);
-      else if (t.hasAttribute('data-demo-loader')) showLoader('Opening your dashboard', 2200);
-      else if (t.hasAttribute('data-replay')) render('kit', false);
-      else if (t.hasAttribute('data-sample-task')) { t.animate([{ transform: 'scale(1)' }, { transform: 'scale(.97)' }, { transform: 'scale(1)' }], { duration: 260, easing: 'ease-out' }); }
-    });
+    document.documentElement.lang = lang === 'ma' ? 'fr-MA' : lang;
+    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
 
     var started = Date.now();
-    var ready = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
-    ready.then(function () { setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started))); });
+    var fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
+    loadText().then(function () {
+      loadingScreen.querySelector('p').textContent = t('app_loading_open');
+      return Promise.all([loadData(), fonts]);
+    }).then(function (res) {
+      D = res[0];
+      start();
+      setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
+    });
+
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current) render(id, true); });
+    window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
+
+    app.addEventListener('click', function (e) {
+      var el = e.target.closest('[data-more],[data-close],[data-join],[data-join-real],[data-demo-loader],[data-replay],[data-retry]');
+      if (!el) return;
+      if (el.hasAttribute('data-more')) setSheet(!document.body.classList.contains('is-sheet-open'));
+      else if (el.hasAttribute('data-close')) setSheet(false);
+      else if (el.hasAttribute('data-join')) showLoader(t('app_loading_join'), 2200);
+      else if (el.hasAttribute('data-join-real')) showLoader(t('app_loading_join'));
+      else if (el.hasAttribute('data-demo-loader')) showLoader(t('app_loading_open'), 2200);
+      else if (el.hasAttribute('data-replay')) render('kit', false);
+      else if (el.hasAttribute('data-retry')) {
+        showLoader(t('app_loading_open'));
+        loadData().then(function (d) { D = d; current = null; start(); hideLoader(); });
+      }
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

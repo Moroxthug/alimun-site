@@ -16,8 +16,8 @@ Owner, 24 Oct 2026: rebuild the dashboards from scratch, without the current one
 
 ## 2. Build steps (each confirmed by the owner before the next)
 1. Drawing style and cast. Done (approved with more variety).
-2. Look and navigation: app shell (sidebar on desktop, bottom bar on phones), type scale, cards, motion, loader. Live preview with sample data on alimun.com (noindex). Built, waiting for the owner: `/app/preview` (`app/preview.html`, `css/app.css`, `js/app/`).
-3. Home: next class, today's plan, streak, buddy, focus topics from the level test, free-plan nudge.
+2. Look and navigation: app shell (sidebar on desktop, bottom bar on phones), type scale, cards, motion, loader. Live preview with sample data on alimun.com (noindex). Done (approved): `/app/preview` (`app/preview.html`, `css/app.css`, `js/app/`).
+3. Home: next class, today's plan, streak, buddy, focus topics from the level test, free-plan nudge. Built, waiting for the owner: Home in `/app/preview` reads the signed-in student's own data (`js/app/data.js`); signed out or with `?sample=1` it shows sample data.
 4. Learning material reader: course books with interactive pages (see section 3).
 5. Exercise player: every exercise type (section 4) with animations and character reactions.
 6. Flashcards: creation and spaced review.

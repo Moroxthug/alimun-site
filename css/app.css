@@ -154,7 +154,7 @@ img, svg { display: block; }
   position: relative; background: var(--white); border-radius: var(--r-xl); padding: 28px; box-shadow: var(--shadow); overflow: hidden;
   transition: transform var(--t-mid) var(--ease), box-shadow var(--t-mid) var(--ease);
 }
-a.card, button.card { display: block; text-align: left; text-decoration: none; border: 0; cursor: pointer; width: 100%; }
+a.card, button.card { display: block; text-align: start; text-decoration: none; border: 0; cursor: pointer; width: 100%; }
 a.card:hover, button.card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
 a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 .card--forest { background: var(--forest); color: var(--bone); }
@@ -171,7 +171,7 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 /* A stage holds a drawing with its bubble, as on the approved boards */
 .stage { position: relative; border-radius: var(--r-xl); padding: 92px 20px 20px; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; min-height: 300px; }
 .stage > svg { width: 100%; height: 170px; overflow: visible; }
-.stage .bub { top: 16px; left: 18px; }
+.stage .bub { top: 16px; inset-inline-start: 18px; }
 
 /* ---------- Bubbles (hand-drawn) ---------- */
 .bub {
@@ -180,11 +180,11 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
   border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px; box-shadow: 4px 5px 0 var(--forest);
   animation: bubIn .8s var(--spring) both; z-index: 2;
 }
-.bub.say::after { content: ""; position: absolute; left: 30px; bottom: -12px; width: 16px; height: 16px; background: var(--white); border-right: 3px solid var(--forest); border-bottom: 3px solid var(--forest); transform: rotate(45deg); }
+.bub.say::after { content: ""; position: absolute; inset-inline-start: 30px; bottom: -12px; width: 16px; height: 16px; background: var(--white); border-right: 3px solid var(--forest); border-bottom: 3px solid var(--forest); transform: rotate(45deg); }
 .bub.think { border-radius: 40px; }
 .bub.think::before, .bub.think::after { content: ""; position: absolute; background: var(--white); border: 3px solid var(--forest); border-radius: 50%; }
-.bub.think::before { width: 16px; height: 16px; left: 26px; bottom: -24px; }
-.bub.think::after { width: 9px; height: 9px; left: 16px; bottom: -38px; }
+.bub.think::before { width: 16px; height: 16px; inset-inline-start: 26px; bottom: -24px; }
+.bub.think::after { width: 9px; height: 9px; inset-inline-start: 16px; bottom: -38px; }
 .bub--inline { position: relative; display: inline-block; }
 
 /* ---------- Buttons ---------- */
@@ -216,6 +216,7 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 .week span { aspect-ratio: 1; border-radius: 12px; background: var(--faint); display: grid; place-items: center; font-size: 12px; font-weight: 700; color: var(--muted); }
 .week span.on { background: var(--forest); color: var(--lime); }
 .week span.today { box-shadow: inset 0 0 0 2px var(--forest); color: var(--forest); }
+.week span.on.today { color: var(--lime); box-shadow: 0 0 0 3px var(--t-lime), 0 0 0 5px var(--forest); }
 
 /* ---------- Swatches and kit helpers ---------- */
 .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 14px; }
@@ -229,6 +230,19 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 .mood { border-radius: var(--r-lg); background: var(--bone); padding: 20px 12px 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; text-align: center; }
 .mood .book { width: 84px; height: 90px; overflow: visible; }
 .btn-row { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+
+/* ---------- Home (step 3) ---------- */
+.home__section { margin: 18px 0 -4px; }
+.card__row--split { align-items: center; justify-content: space-between; }
+.card__art--lg { width: 150px; height: 150px; }
+.card__art--end { margin-inline-start: auto; }
+.card--center { display: flex; flex-direction: column; justify-content: center; }
+.card--center > .card__row { width: 100%; }
+.btn--on-forest { color: var(--bone); box-shadow: inset 0 0 0 2px rgba(240, 239, 233, .4); }
+.btn--on-forest:hover { background: var(--bone); color: var(--forest); }
+.card b { font-weight: 700; }
+.sample-note .btn { flex: none; }
+[dir="rtl"] .i-arrow { transform: scaleX(-1); }
 
 /* ---------- Empty screens (sections built in later steps) ---------- */
 .soon { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gap); align-items: stretch; }
@@ -305,6 +319,7 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
   .grid > * { grid-column: 1 / -1; }
   .card { padding: 22px; border-radius: var(--r-lg); }
   .card__art { width: 92px; height: 92px; }
+  .card__art--lg { width: 104px; height: 104px; }
   .soon { grid-template-columns: 1fr; }
   .type-row { grid-template-columns: 1fr; gap: 6px; }
   .moods { grid-template-columns: repeat(2, 1fr); }
