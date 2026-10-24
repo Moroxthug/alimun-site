@@ -16,10 +16,6 @@
     "sha256": "7bbe81c46d0e8e64e78b8f1f0ea8dd77d81d574240bc1963fd5c842e1defc395",
     "approved": "2026-10-19 hero ok; 2026-10-23 video replaced on owner request (Pexels 3252922, group talking by a window)"
   },
-  "src/blocks/06-bottom-cta.html": {
-    "sha256": "26eea6e3b61f9ec56d3764d3d64d253d19a53bd37f0991c0fbaf60a51c57df27",
-    "approved": "2026-10-20 banner ok"
-  },
   "src/blocks/07-footer.html": {
     "sha256": "2f2b1daec4c022b6203c8decbf20238588c337235895cc6f231598dcd78ad06f",
     "approved": "2026-10-20 footer ok; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"

@@ -417,3 +417,10 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - Files: `images/favicon.svg`, `images/favicon-48.png`, `images/icon-192.png`, `images/icon-512.png`, `images/favicon.ico` (16/32/48, replaced in place), `images/webclip.png` (256, white, replaced) and a root `/favicon.ico`.
   - Every head (site blocks and root pages, 32 files) now links svg, png 48, ico and apple-touch with `?v=2` so browsers drop the cached Webflow icon.
 - Checked: dashboards, home, tiers and signup boot with no errors; root build passes.
+
+## 24 Oct 2026: homepage banner with the level quiz
+- Owner: the quiz is the call to action now; go on with the banner.
+- New `site/src/blocks/home/banner.html`: the approved course-page banner (`tiers/s02.html`, translated rotating phrases; the old homepage copy had them in English on every language) with the button changed to "Find out your level", which opens the quiz. Removed `06-bottom-cta.html` and its lock entry.
+- New `site/src/blocks/home/quiz.html`: the course-page quiz with a first step that asks which language to test. `localize.mjs` fills it per site from `course-sites/*.js` and `course-quiz.js` (the same questions and texts as each course page). The result links to signup with the language preselected. The Chinese homepage (no course pages) keeps a plain "Join Alimun" sign-up button and no quiz.
+- Translations: `home_quiz_btn`, `home_quiz_pick` in all nine languages.
+- Checked: desktop (German), phone (English) and Arabic (German) quiz runs end to end (C1 7 of 7, signup link with language); Chinese button goes to signup. No errors.

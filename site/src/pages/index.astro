@@ -9,7 +9,8 @@ import groups from '../blocks/home/groups.html?raw';
 import languages from '../blocks/home/languages.html?raw';
 import learn from '../blocks/home/learn.html?raw';
 import faq from '../blocks/home/faq.html?raw';
-import bottomCta from '../blocks/06-bottom-cta.html?raw';
+import bottomCta from '../blocks/home/banner.html?raw';
+import quiz from '../blocks/home/quiz.html?raw';
 import footer from '../blocks/07-footer.html?raw';
 ---
 <Base wfPage="68d948d13b6c9f2bbbac3ea7" head={head} after={after}>
@@ -22,5 +23,6 @@ import footer from '../blocks/07-footer.html?raw';
     <Fragment set:html={faq} />
     <Fragment set:html={bottomCta} />
   </main>
+  <Fragment set:html={quiz} />
   <Fragment set:html={footer} />
 </Base>

@@ -63,6 +63,7 @@ for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'course-sites')).f
   const S = (await import(new URL(`../src/data/course-sites/${f}`, import.meta.url))).default;
   courseSites[S.site] = S;
 }
+const { QUIZ } = await import(new URL('../src/data/course-quiz.js', import.meta.url));
 const coursePath = (S, c) => `/${S.site === 'en' ? '' : S.site + '/'}${c.slug}`;
 function withCourseList(html, lang) {
   if (!html.includes('data-course-list')) return html;
@@ -98,14 +99,39 @@ function withFaqLd(html) {
   return $.html();
 }
 
+// Homepage banner and level quiz (src/blocks/home/banner.html, quiz.html): the quiz asks which of this site's
+// course languages to test, then uses the same questions and texts as that course page. Sites without course
+// pages (Chinese) keep a plain sign-up button and drop the quiz.
+function withHomeQuiz(html, lang) {
+  if (!html.includes('data-home-quiz-root')) return html;
+  const S = courseSites[lang];
+  if (!S) {
+    const $ = cheerio.load(html);
+    $('[data-home-quiz-root]').remove();
+    const btn = $('[data-home-quiz]');
+    btn.replaceWith(`<a href="signup.html" class="button is-secondary w-inline-block"><p>${$('<p>').text((translations[lang] || {}).cta_btn_join_alimun || 'Join Alimun').html()}</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16"></a>`);
+    return $.html();
+  }
+  const Q = S.quiz, dict = translations[lang] || translations.en;
+  const name = (c) => c.name.charAt(0).toLocaleUpperCase(S.locale.replace('_', '-')) + c.name.slice(1);
+  const data = {
+    pickTitle: S.ui.UI_QUIZ_BTN, pickText: dict.home_quiz_pick || translations.en.home_quiz_pick,
+    common: { levels: Q.levels, arrow: '/images/icon-arrow-light.svg', start: Q.start, prompt: Q.prompt, again: Q.again, right1: Q.right1, rightN: Q.rightN },
+    langs: S.courses.map((c) => ({ lang: c.lang, name: name(c), title: Q.title(c), intro: Q.intro(c), note: Q.note(c), cta: Q.cta(c), ctaHref: `signup.html?role=student&language=${c.lang}` })),
+    questions: Object.fromEntries(S.courses.map((c) => [c.lang, QUIZ[c.lang]])),
+  };
+  const esc = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  return html.replace('{{QUIZ_DATA}}', JSON.stringify(data).replace(/</g, '\\u003c')).replace('{{UI_Q_CLOSE}}', esc(S.ui.UI_Q_CLOSE));
+}
+
 let count = 0;
 for (const file of pages) {
   const english = withEnglishFile(fs.readFileSync(path.join(dist, file), 'utf8'));
-  fs.writeFileSync(path.join(dist, file), withAlternates(withFaqLd(withCourseList(english, 'en')), file));
+  fs.writeFileSync(path.join(dist, file), withAlternates(withHomeQuiz(withFaqLd(withCourseList(english, 'en')), 'en'), file));
   for (const lang of languages) {
     fs.mkdirSync(path.join(dist, lang), { recursive: true });
     const html = localizePage(english, { lang, templateFile: file, langDict: translations[lang] || {}, META_I18N, META_LANG });
-    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withFaqLd(withCourseList(html, lang)), file));
+    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withHomeQuiz(withFaqLd(withCourseList(html, lang)), lang), file));
     count++;
   }
 }
