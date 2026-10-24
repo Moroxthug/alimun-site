@@ -1,1058 +1,315 @@
 <!DOCTYPE html><html lang="fr" dir="ltr"><head>
 <meta charset="utf-8">
-<title>Get Started – Alimun</title>
-  <link href="../images/favicon.ico" rel="shortcut icon" type="image/x-icon">
-  <link href="../images/webclip.png" rel="apple-touch-icon">
+<title>Create your account – Alimun</title>
+<link href="/images/favicon.svg?v=2" rel="icon" type="image/svg+xml"><link href="/images/favicon-48.png?v=2" rel="icon" type="image/png" sizes="48x48"><link href="/images/favicon.ico?v=2" rel="shortcut icon" type="image/x-icon"><link href="/images/webclip.png?v=2" rel="apple-touch-icon">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&amp;display=swap" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Anton&amp;display=swap" rel="stylesheet">
-<link href="../css/auth-shell.css" rel="stylesheet">
-<style>
-:root{--g:#ceff65;--b:#080808;--body:'Satoshi',sans-serif;--disp:'Anton',sans-serif;}
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:var(--body);background:#f0efe9;min-height:100vh;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased;}
-.signin-link{font-size:.8rem;font-weight:700;color:#aaa;text-decoration:none;transition:color .18s;}
-.signin-link:hover{color:var(--b);}
-.card{background:#fff;border-radius:1.5rem;box-shadow:0 8px 40px rgba(0,0,0,.08);overflow:hidden;width:100%;transition:max-width .3s ease;}
-.card-narrow{max-width:440px;}
-.card-wide{max-width:700px;}
-.card-xwide{max-width:520px;}
-
-/* PROGRESS */
-.prog-top{padding:1.625rem 2rem 0;}
-.prog-step{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:#bbb;margin-bottom:.625rem;}
-.prog-bar{height:3px;background:#f0efe9;border-radius:5rem;overflow:hidden;}
-.prog-fill{height:100%;background:var(--g);border-radius:5rem;transition:width .4s ease;}
-
-/* ROLE SELECTION */
-.role-head{padding:1.625rem 1.75rem 1.25rem;}
-.role-ey{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:#bbb;margin-bottom:.35rem;}
-.role-title{font-family:var(--disp);font-size:1.625rem;text-transform:uppercase;line-height:1.05;}
-.role-grid{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;padding:0 1.75rem 1.5rem;}
-.role-card{border:1.5px solid rgba(0,0,0,.1);border-radius:1rem;padding:1.25rem 1.125rem;cursor:pointer;transition:all .2s cubic-bezier(.25,.8,.25,1);background:#fff;position:relative;}
-.role-card:hover{border-color:var(--b);box-shadow:0 10px 24px rgba(0,0,0,.08);transform:translateY(-2.5px);}
-.role-arrow{position:absolute;top:1.5rem;right:1.375rem;width:26px;height:26px;border-radius:50%;background:#f5f4f0;display:flex;align-items:center;justify-content:center;opacity:0;transform:translateX(-4px);transition:all .2s;}
-.role-arrow svg{width:13px;height:13px;stroke:var(--b);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
-.role-card:hover .role-arrow{opacity:1;transform:translateX(0);}
-.role-ico{width:38px;height:38px;border-radius:.65rem;background:#f5f4f0;color:var(--b);margin-bottom:.875rem;display:flex;align-items:center;justify-content:center;transition:background .2s;}
-.role-card:hover .role-ico{background:var(--g);}
-.role-ico svg{width:22px;height:22px;}
-.role-name{font-family:var(--disp);font-size:1.125rem;text-transform:uppercase;margin-bottom:.3rem;}
-.role-desc{font-size:.78rem;color:#888;line-height:1.5;}
-
-/* FORM STEPS */
-.step-head{padding:1.25rem 1.75rem 0;}
-.step-ey{font-size:.65rem;letter-spacing:.12em;text-transform:uppercase;color:#bbb;margin-bottom:.3rem;}
-.step-title{font-family:var(--disp);font-size:1.375rem;text-transform:uppercase;line-height:1.05;margin-bottom:.875rem;border-bottom:1px solid rgba(0,0,0,.07);padding-bottom:.875rem;}
-.step-body{padding:0 1.75rem 1.75rem;}
-
-/* FIELDS */
-.field{margin-bottom:.875rem;}
-.field label{display:block;font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#888;margin-bottom:.45rem;}
-.field input,.field select,.field textarea{width:100%;background:#fafaf8;border:1.5px solid rgba(0,0,0,.1);border-radius:.75rem;padding:.8rem 1rem;font-family:var(--body);font-size:.9rem;color:var(--b);outline:none;transition:border-color .18s,box-shadow .18s;}
-.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--b);box-shadow:0 0 0 3px rgba(206,255,101,.35);}
-.field input::placeholder,.field textarea::placeholder{color:#ccc;}
-.field textarea{min-height:90px;resize:none;}
-.g2f{display:grid;grid-template-columns:1fr 1fr;gap:.875rem;}
-
-/* LEVEL BUTTONS */
-.level-grid{display:flex;gap:.5rem;flex-wrap:wrap;}
-.lvl-btn{padding:.5rem 1rem;border-radius:.5rem;border:1.5px solid rgba(0,0,0,.1);background:#fff;font-family:var(--body);font-size:.8rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;cursor:pointer;transition:all .16s;color:#aaa;}
-.lvl-btn.on{background:var(--b);color:#fff;border-color:var(--b);}
-.lvl-btn:hover:not(.on){border-color:rgba(0,0,0,.25);color:var(--b);}
-
-/* TIER CARDS */
-.tier-grid{display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:.875rem;}
-.tier-card{border:1.5px solid rgba(0,0,0,.1);border-radius:.875rem;padding:.875rem 1rem;cursor:pointer;transition:all .2s;position:relative;background:#fff;}
-.tier-card:hover{border-color:rgba(0,0,0,.25);box-shadow:0 3px 16px rgba(0,0,0,.07);}
-.tier-card.on{border-color:var(--b);border-width:2px;}
-.tier-check{position:absolute;top:.875rem;right:.875rem;width:20px;height:20px;border-radius:50%;background:var(--b);display:none;align-items:center;justify-content:center;}
-.tier-check svg{width:10px;height:10px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;}
-.tier-card.on .tier-check{display:flex;}
-.tier-badge{display:inline-block;font-size:.58rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;background:#f0efe9;color:#888;border-radius:.4rem;padding:.14rem .5rem;margin-bottom:.4rem;}
-.tier-name{font-family:var(--disp);font-size:.9rem;text-transform:uppercase;margin-bottom:.15rem;}
-.tier-size{font-size:.72rem;color:#aaa;margin-bottom:.5rem;}
-.tier-price{font-family:var(--disp);font-size:1.25rem;color:var(--b);line-height:1;}
-.tier-price-sub{font-size:.64rem;color:#bbb;margin-top:.1rem;}
-.tier-feats{list-style:none;margin-top:.5rem;display:flex;flex-direction:column;gap:.2rem;}
-.tier-feats li{font-size:.72rem;color:#555;padding-left:.875rem;position:relative;line-height:1.3;}
-.tier-feats li::before{content:'✓';position:absolute;left:0;color:var(--b);font-weight:700;}
-.tier-card.featured{border-color:var(--g);background:#fffff8;}
-.tier-card.on.featured{border-color:var(--b);}
-
-/* BTN */
-.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;background:var(--g);color:var(--b);font-family:var(--body);font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.055em;border:none;border-radius:5rem;padding:.75rem 1.5rem;cursor:pointer;transition:background .22s;width:100%;line-height:1;}
-.btn:hover{background:#b3e940;}
-.btn.out{background:transparent;color:#aaa;border:1px solid rgba(0,0,0,.12);}
-.btn.out:hover{color:var(--b);border-color:rgba(0,0,0,.25);background:#f5f4f0;}
-.btn-row{display:flex;gap:.625rem;margin-top:1rem;}
-.btn-row .btn{flex:1;}
-
-/* CONFIRM */
-.confirm-body{padding:1.875rem 1.75rem;}
-.confirm-ico{width:56px;height:56px;border-radius:50%;background:var(--g);display:flex;align-items:center;justify-content:center;margin:0 auto 1.375rem;}
-.confirm-ico svg{width:24px;height:24px;stroke:var(--b);fill:none;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;}
-.confirm-title{font-family:var(--disp);font-size:1.875rem;text-transform:uppercase;line-height:1.05;text-align:center;margin-bottom:.5rem;}
-.confirm-sub{font-size:.875rem;color:#888;text-align:center;line-height:1.6;margin-bottom:1.875rem;}
-.tier-summary{background:#f5f4f0;border-radius:.875rem;padding:1rem 1.25rem;margin-bottom:1.375rem;display:flex;justify-content:space-between;align-items:center;}
-.tier-summary-l{font-size:.78rem;color:#888;}
-.tier-summary-v{font-family:var(--disp);font-size:.95rem;text-transform:uppercase;}
-.teacher-confirm{background:#f5f4f0;border-radius:.875rem;padding:1.375rem;margin-bottom:1.375rem;}
-.teacher-confirm p{font-size:.84rem;color:#555;line-height:1.65;}
-.teacher-confirm strong{color:var(--b);}
-
-.footer{padding:.875rem 2rem;text-align:center;flex-shrink:0;}
-.footer p{font-size:.75rem;color:#ccc;}
-.footer a{color:#bbb;text-decoration:none;}
-.footer a:hover{color:var(--b);}
-
-/* Error message */
-.error-msg{
-  display:none; margin-top:.75rem;
-  background:#fff0f0; border:1px solid #fca5a5; border-radius:.625rem;
-  padding:.6rem .9rem; font-size:.79rem; color:#dc2626; line-height:1.4;
-}
-
-/* BILLING TOGGLE */
-.billing-toggle-wrap{display:flex;align-items:center;justify-content:center;gap:.75rem;margin-bottom:.875rem;}
-.billing-toggle{position:relative;display:inline-flex;background:#f0efe9;border-radius:5rem;padding:3px;gap:3px;}
-.billing-toggle button{border:none;background:transparent;font-family:var(--body);font-size:.72rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#aaa;padding:.4rem .9rem;border-radius:5rem;cursor:pointer;transition:all .18s;white-space:nowrap;}
-.billing-toggle button.active{background:#fff;color:var(--b);box-shadow:0 1px 6px rgba(0,0,0,.1);}
-.billing-save-badge{display:inline-flex;align-items:center;gap:.25rem;background:var(--g);color:var(--b);font-size:.6rem;font-weight:700;letter-spacing:.07em;text-transform:uppercase;padding:.22rem .55rem;border-radius:5rem;}
-
-@media (max-width: 600px) {
-  .auth-form-center { padding: 1rem; }
-  .prog-top { padding: 1.25rem 1rem 0; }
-  .role-head { padding: 1.5rem 1rem 1rem; }
-  .role-grid { grid-template-columns: 1fr !important; gap: 0.75rem; padding: 0 1rem 1.5rem; }
-  .step-head { padding: 1.25rem 1rem 0; }
-  .step-title { margin-bottom: 1rem; padding-bottom: 1rem; font-size: 1.35rem; }
-  .step-body { padding: 0 1rem 1.5rem; }
-  .g2f { grid-template-columns: 1fr !important; gap: 0.75rem; }
-  .tier-grid { grid-template-columns: 1fr !important; gap: 0.75rem; }
-  .confirm-body { padding: 1.5rem 1rem; }
-  .level-grid { gap: 0.375rem; }
-  .lvl-btn { padding: 0.4rem 0.8rem; font-size: 0.75rem; }
-}
-</style>
-<!-- Supabase CDN -->
+<meta name="robots" content="noindex, nofollow">
+<link href="../css/auth.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
 <script>
   window.ALIMUN_CONFIG = {
-    supabaseUrl:         'https://dgaiasmefcbrtzqwdyri.supabase.co',
-    supabaseAnonKey:     'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
-    // Stripe publishable key + price IDs are NOT hardcoded here — they're fetched
-    // from /api/stripe/config below, which reads them from server env vars.
-    // To switch between Stripe test and live mode, change the env vars in Vercel —
-    // nothing in this file needs to change.
+    supabaseUrl:     'https://dgaiasmefcbrtzqwdyri.supabase.co',
+    supabaseAnonKey: 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
   };
 </script>
-<script src="/js/currency.js"></script>
 <script src="../js/i18n/en.js" defer=""></script><script src="../js/i18n/fr.js" defer=""></script>
 <script src="../js/i18n.js" defer=""></script>
 </head>
 <body>
+<!--
+  Sign-up (owner, 24 Oct 2026). Learners arrive from the level test with their result saved in the browser
+  (alimun-level-result) and create an account; teachers (?role=teacher) fill in their teaching profile first.
+  After the email is confirmed the account continues on welcome.html (goal, timeframe, profile, payment or dashboard).
+  The confirmation link returns to this page (an address already allowed in Supabase), which forwards to welcome.html.
+-->
+<div class="au">
+  <main class="au_main">
+    <div class="au_top">
+      <a class="au_logo" href="index.html"><img src="../images/alimun-logo.svg" alt="Alimun"></a>
+      <span class="au_toplink"><span data-i18n="au_have_account">Vous avez déjà un compte ?</span> <a href="signin.html" data-i18n="au_signin">Se connecter</a></span>
+    </div>
 
-<div class="auth-shell">
-  <div class="auth-brand-panel">
-    <a class="auth-brand-logo" href="index.html"><img src="../images/Alimun-Source-File-fixes.svg" alt="Alimun Logo"></a>
-    <span class="auth-brand-tagline" data-i18n="signup_brand_tagline">Live cohorts. Real teachers. AI feedback.</span>
-    <div class="auth-brand-main">
-      <h1 class="auth-brand-headline" data-i18n-html="signup_brand_headline">LEARN WITH<br>LIVE COHORTS.</h1>
-      <p class="auth-brand-desc" data-i18n="signup_brand_desc">Small-group classes with real teachers, plus AI feedback between sessions.</p>
+    <div class="au_body">
+      <div class="au_box">
+
+        <!-- Learner: create the account -->
+        <section class="au_step" id="s-account" hidden="">
+          <h1 class="au_h1" data-i18n="au_save_title">Enregistrez votre résultat</h1>
+          <p class="au_lead" id="account-lead" data-i18n="au_save_lead">Créez votre compte gratuit pour conserver votre niveau et les points à travailler, et commencez à pratiquer.</p>
+          <form class="au_form" id="f-account" novalidate="">
+            <div class="au_field"><label for="a-name" data-i18n="au_name">Nom complet</label><input class="au_input" id="a-name" type="text" autocomplete="name" maxlength="100" required=""></div>
+            <div class="au_field"><label for="a-email" data-i18n="au_email">Adresse e-mail</label><input class="au_input" id="a-email" type="email" autocomplete="email" required=""></div>
+            <div class="au_field"><label for="a-pw" data-i18n="au_password">Mot de passe</label>
+              <div class="au_pw"><input class="au_input" id="a-pw" type="password" autocomplete="new-password" minlength="8" required="" placeholder="Au moins 8 caractères" data-i18n-placeholder="au_pw_hint"><button type="button" class="au_eye" data-eye="a-pw" data-i18n="au_show">Afficher</button></div>
+            </div>
+            <p class="au_msg" id="m-account" role="alert"></p>
+            <button type="submit" class="au_btn" id="b-account"><span data-i18n="au_create_free">Créer mon compte gratuit</span></button>
+            <p class="au_fine" data-i18n-html="au_terms_note">En créant un compte, vous acceptez les <a href="terms.html">Conditions</a> et la <a href="gdpr.html">Politique de confidentialité</a>.</p>
+          </form>
+          <p class="au_alt"><a href="level-test.html" id="retake" data-i18n="au_retake">Repasser le test de niveau</a></p>
+        </section>
+
+        <!-- Teacher: teaching profile, then the account -->
+        <section class="au_step" id="s-teach" hidden="">
+          <div class="au_prog"><span style="width:50%"></span></div>
+          <h1 class="au_h1" data-i18n="au_teach_title">Postuler pour enseigner</h1>
+          <p class="au_lead" data-i18n="au_teach_lead">Parlez-nous de votre enseignement. Nous lisons chaque candidature et répondons par e-mail sous 48 heures.</p>
+          <form class="au_form" id="f-teach" novalidate="">
+            <div class="au_field"><label for="t-lang" data-i18n="au_teach_lang">Langue que vous enseignez</label>
+              <select class="au_input" id="t-lang">
+                <option value="English" data-i18n="lang_english">Anglais</option><option value="German" data-i18n="lang_german">Allemand</option><option value="Spanish" data-i18n="lang_spanish">Espagnol</option><option value="French" data-i18n="lang_french">Français</option><option value="Portuguese" data-i18n="lang_portuguese">Portugais</option><option value="Italian" data-i18n="lang_italian">Italien</option><option value="Mandarin" data-i18n="lang_mandarin">Mandarin</option><option value="Japanese" data-i18n="lang_japanese">Japonais</option><option value="Arabic" data-i18n="lang_arabic">Arabe</option>
+              </select>
+            </div>
+            <div class="au_field"><label for="t-exp" data-i18n="au_teach_exp">Années d'expérience dans l'enseignement</label>
+              <select class="au_input" id="t-exp"><option value="1">1</option><option value="2">2</option><option value="3" selected="">3</option><option value="5">5</option><option value="7">7</option><option value="10">10+</option><option value="15">15+</option></select>
+            </div>
+            <div class="au_field"><label for="t-spec" data-i18n="au_teach_spec">Spécialité</label><input class="au_input" id="t-spec" type="text" maxlength="120" placeholder="par ex. préparation aux examens, anglais des affaires, conversation" data-i18n-placeholder="au_teach_spec_hint"></div>
+            <div class="au_field"><label for="t-bio" data-i18n="au_teach_bio">Courte biographie, visible par vos élèves</label><textarea class="au_input" id="t-bio" maxlength="1200"></textarea></div>
+            <p class="au_msg" id="m-teach" role="alert"></p>
+            <button type="submit" class="au_btn"><span data-i18n="au_continue">Continuer</span></button>
+          </form>
+        </section>
+
+        <section class="au_step" id="s-teach-account" hidden="">
+          <div class="au_prog"><span style="width:100%"></span></div>
+          <h1 class="au_h1" data-i18n="au_teach_account_title">Créez votre compte enseignant</h1>
+          <p class="au_lead" data-i18n="au_teach_account_lead">Il vous servira à suivre votre candidature puis, une fois celle-ci acceptée, à enseigner.</p>
+          <form class="au_form" id="f-teach-account" novalidate="">
+            <div class="au_field"><label for="ta-name" data-i18n="au_name">Nom complet</label><input class="au_input" id="ta-name" type="text" autocomplete="name" maxlength="100" required=""></div>
+            <div class="au_field"><label for="ta-email" data-i18n="au_email">Adresse e-mail</label><input class="au_input" id="ta-email" type="email" autocomplete="email" required=""></div>
+            <div class="au_field"><label for="ta-pw" data-i18n="au_password">Mot de passe</label>
+              <div class="au_pw"><input class="au_input" id="ta-pw" type="password" autocomplete="new-password" minlength="8" required="" placeholder="Au moins 8 caractères" data-i18n-placeholder="au_pw_hint"><button type="button" class="au_eye" data-eye="ta-pw" data-i18n="au_show">Afficher</button></div>
+            </div>
+            <p class="au_msg" id="m-teach-account" role="alert"></p>
+            <div class="au_actions">
+              <button type="button" class="au_btn is-ghost is-auto" id="b-teach-back"><span data-i18n="au_back">Retour</span></button>
+              <button type="submit" class="au_btn" id="b-teach-account"><span data-i18n="au_submit_application">Envoyer ma candidature</span></button>
+            </div>
+            <p class="au_fine" data-i18n-html="au_terms_note">En créant un compte, vous acceptez les <a href="terms.html">Conditions</a> et la <a href="gdpr.html">Politique de confidentialité</a>.</p>
+          </form>
+        </section>
+
+        <!-- Check your email -->
+        <section class="au_step" id="s-check" hidden="">
+          <p class="au_big" aria-hidden="true">@</p>
+          <h1 class="au_h1" data-i18n="au_check_title">Consultez votre boîte e-mail</h1>
+          <p class="au_lead"><span data-i18n="au_check_lead">Nous avons envoyé un lien de confirmation à</span> <b id="check-email"></b><span data-i18n="au_full_stop">.</span> <span data-i18n="au_check_lead2">Ouvrez-le sur cet appareil pour terminer la configuration de votre compte.</span></p>
+          <p class="au_msg" id="m-check" role="status"></p>
+          <div class="au_actions">
+            <button type="button" class="au_btn is-ghost" id="b-resend"><span data-i18n="au_resend">Renvoyer l'e-mail</span></button>
+          </div>
+          <p class="au_alt"><span data-i18n="au_check_spam">Aucun e-mail après quelques minutes ? Vérifiez vos courriers indésirables, ou</span> <button type="button" class="au_link" id="b-change-email" data-i18n="au_change_email">utilisez une autre adresse</button>.</p>
+        </section>
+
+      </div>
     </div>
-  </div>
-  <div class="auth-form-panel">
-    <div class="auth-form-center">
-      <div class="card card-narrow" id="card"><!-- rendered by JS --></div>
+
+    <div class="au_foot">
+      <a href="index.html" data-i18n="auth_back_to_alimun">← Retour à Alimun</a>
+      <a href="terms.html" data-i18n="auth_terms">Conditions</a>
+      <a href="gdpr.html" data-i18n="auth_gdpr">RGPD</a>
+      <a href="cookies.html" data-i18n="auth_cookies">Cookies</a>
+      <button type="button" id="open-cookie-settings" data-i18n="auth_manage_cookies">Gérer les cookies</button>
     </div>
-  </div>
+  </main>
+
+  <aside class="au_side" aria-hidden="true">
+    <div class="au_media">
+      <img id="side-img" src="../images/pexels-learner-video-call-5486102.jpg" alt="">
+      <div class="au_note au_hide" id="side-note">
+        <p class="au_note_level" id="n-level"></p>
+        <p class="au_note_name" id="n-name"></p>
+        <p id="n-text"></p>
+      </div>
+    </div>
+  </aside>
 </div>
 
-<div class="footer">
-  <p>
-    <a href="index.html" data-i18n="auth_back_to_alimun">← Retour à Alimun</a> &nbsp;·&nbsp;
-    <a href="terms.html" data-i18n="auth_terms">Conditions</a> &nbsp;·&nbsp;
-    <a href="cookies.html" data-i18n="auth_cookies">Cookies</a> &nbsp;·&nbsp;
-    <a href="gdpr.html" data-i18n="auth_gdpr">RGPD</a> &nbsp;·&nbsp;
-    <a href="#" id="open-cookie-settings" data-i18n="auth_manage_cookies">Gérer les cookies</a>
-  </p>
+<!-- Texts used by the script, translated like the rest of the page. -->
+<div hidden="">
+  <span data-i18n="au_save_lead_lang">Créez votre compte gratuit pour conserver votre niveau en {language} et les points à travailler, et commencez à pratiquer.</span>
+  <span data-i18n="au_note_topics">Nous commencerions par {topics}.</span>
+  <span data-i18n="lt_and">et</span>
+  <span data-i18n="lt_name_A1">Débutant</span><span data-i18n="lt_name_A2">Élémentaire</span><span data-i18n="lt_name_B1">Intermédiaire</span><span data-i18n="lt_name_B2">Intermédiaire avancé</span><span data-i18n="lt_name_C1">Avancé</span><span data-i18n="lt_name_C2">Maîtrise</span>
+  <span data-i18n="au_hide">Masquer</span>
+  <span data-i18n="au_err_name">Veuillez saisir votre nom.</span>
+  <span data-i18n="au_err_email">Veuillez saisir une adresse e-mail valide.</span>
+  <span data-i18n="au_err_pw">Votre mot de passe doit contenir au moins 8 caractères.</span>
+  <span data-i18n="au_err_exists">Un compte existe déjà avec cette adresse e-mail.</span>
+  <span data-i18n="au_err_generic">Une erreur s'est produite. Veuillez réessayer.</span>
+  <span data-i18n="au_err_spec">Veuillez indiquer votre spécialité d'enseignement.</span>
+  <span data-i18n="au_err_rate">Trop de tentatives pour le moment. Veuillez patienter quelques minutes, puis réessayer.</span>
+  <span data-i18n="au_resent">Envoyé. Il peut falloir une minute ou deux pour qu'il arrive.</span>
+  <span data-i18n="au_resend_wait">Vous pourrez le renvoyer dans {s} secondes.</span>
+  <span data-i18n="au_waiting">Veuillez patienter…</span>
 </div>
 
 <script type="module">
 import { supabase } from '/js/supabase/config.js';
 
-// ── Constants ────────────────────────────────────────────────────────────────
-const cfg = window.ALIMUN_CONFIG || {};
+const $ = (id) => document.getElementById(id);
+const t = (k) => { const el = document.querySelector(`[hidden] [data-i18n="${k}"]`); return el ? el.textContent : k; };
+const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+// Text set by this script: drop the element's translation key so js/i18n.js does not put the generic text back.
+const setText = (el, text) => { el.removeAttribute('data-i18n'); el.removeAttribute('data-i18n-html'); el.textContent = text; };
+const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+const WAITLIST_ONLY = ['Mandarin', 'Japanese', 'Arabic'];
+const TIERS = ['community', 'focused', 'intensive', 'private'];
+const params = new URLSearchParams(location.search);
+// The page's language folder (/fr/signup.html -> /fr/), so the following pages stay in that language.
+const base = location.pathname.replace(/[^/]*$/, '');
 
-// Stripe publishable key + price IDs are server-driven (see /api/stripe.js
-// action=config) so the client never hardcodes which Stripe mode is active.
-try {
-  const configResp = await fetch('/api/stripe/config');
-  if (configResp.ok) {
-    const remoteCfg = await configResp.json();
-    cfg.stripePublishableKey       = remoteCfg.stripePublishableKey;
-    cfg.stripePriceCommunityMonthly = remoteCfg.prices?.communityMonthly;
-    cfg.stripePriceFocusedMonthly    = remoteCfg.prices?.focusedMonthly;
-    cfg.stripePriceIntensiveMonthly  = remoteCfg.prices?.intensiveMonthly;
-    cfg.stripePricePrivateMonthly    = remoteCfg.prices?.privateMonthly;
-    cfg.stripePriceCommunityYearly   = remoteCfg.prices?.communityYearly;
-    cfg.stripePriceFocusedYearly     = remoteCfg.prices?.focusedYearly;
-    cfg.stripePriceIntensiveYearly   = remoteCfg.prices?.intensiveYearly;
-    cfg.stripePricePrivateYearly     = remoteCfg.prices?.privateYearly;
-    cfg.prices                       = remoteCfg.prices;   // consumed by /js/stripe/config.js
-  } else {
-    console.error('[Alimun] /api/stripe/config returned', configResp.status);
-  }
-} catch (err) {
-  console.error('[Alimun] Failed to load Stripe config:', err);
+function show(id) {
+  document.querySelectorAll('.au_step').forEach((s) => { s.hidden = s.id !== id; });
+  window.scrollTo(0, 0);
 }
-window.ALIMUN_CONFIG = cfg;
-
-// Stripe price IDs from ALIMUN_CONFIG (injected above)
-const PRICE_IDS = {
-  community_monthly:  cfg.stripePriceCommunityMonthly  || 'price_COMMUNITY_MONTHLY',
-  community_yearly:   cfg.stripePriceCommunityYearly   || 'price_COMMUNITY_YEARLY',
-  focused_monthly:    cfg.stripePriceFocusedMonthly    || 'price_FOCUSED_MONTHLY',
-  focused_yearly:     cfg.stripePriceFocusedYearly     || 'price_FOCUSED_YEARLY',
-  intensive_monthly:  cfg.stripePriceIntensiveMonthly  || 'price_INTENSIVE_MONTHLY',
-  intensive_yearly:   cfg.stripePriceIntensiveYearly   || 'price_INTENSIVE_YEARLY',
-  private_monthly:    cfg.stripePricePrivateMonthly    || 'price_PRIVATE_MONTHLY',
-  private_yearly:     cfg.stripePricePrivateYearly     || 'price_PRIVATE_YEARLY',
-};
-
-const TIERS = [
-  {
-    id:'community', stripeId:'community', name:'Community', size:'~35 learners',
-    monthlyPrice: 24,  yearlyPrice: 240,  yearlyMonthlyEq: 20,
-    // 2 months free = 10 × €24 = €240/yr → €20.00/mo
-    badge:'Popular', featured:false,
-    feats:['Live cohort sessions','Community access','Session notes & vocab PDF','Goal-specific curriculum'],
-  },
-  {
-    id:'focused', stripeId:'focused', name:'Focused', size:'~17 learners',
-    monthlyPrice: 59,  yearlyPrice: 590,  yearlyMonthlyEq: 49,
-    // 2 months free = 10 × €59 = €590/yr → €49.17/mo
-    badge:'Best value', featured:true,
-    feats:['Everything in Community','Smaller, focused groups','Weekly group feedback','AI essay grading','Monthly progress report'],
-  },
-  {
-    id:'intensive', stripeId:'intensive', name:'Intensive', size:'~6 learners + 1:1',
-    monthlyPrice: 109,  yearlyPrice: 1090,  yearlyMonthlyEq: 90,
-    // 2 months free = 10 × €109 = €1090/yr → €90.83/mo
-    badge:'Premium', featured:false,
-    feats:['Everything in Focused','Near-private setting','Weekly 1-on-1 session','Custom learning path','Priority support'],
-  },
-  {
-    // DB tier string is 'private' (matches student_profiles.tier + Stripe price keys);
-    // translations still use the legacy tier_onetoone_* keys.
-    id:'private', stripeId:'private', i18n:'onetoone', name:'1 on 1', size:'Private (Base 3 classes/week)',
-    monthlyPrice: 269, yearlyPrice: 2690, yearlyMonthlyEq: 224,
-    // 2 months free = 10 × €269 = €2690/yr → €224.17/mo
-    badge:'Elite', featured:false,
-    feats:['100% private sessions','Choose extra classes after limit','Fully custom curriculum','Dedicated teacher','Voice note feedback'],
-  },
-];
-// Languages available for live classes right now
-const LIVE_LANGUAGES = ['English', 'German'];
-// Full language list (English first as it is the flagship)
-const LANGS  = ['English','German','Spanish','French','Portuguese','Italian','Mandarin','Japanese','Arabic'];
-const LEVELS = ['A1','A2','B1','B2','C1','C2'];
-
-// ── State ────────────────────────────────────────────────────────────────────
-let step    = 1;
-let billing = 'yearly';  // 'monthly' | 'yearly' — default annual
-let fd   = {
-  role:'', name:'', email:'', pw:'', language:'English', level:'B1',
-  goal: 'foundations', // one of GOALS[].id — matches student_profiles.goal_track / cohort discovery
-  tier:'', specialty:'', bio:'', experience_years:3, exp:'3–5',
-  isWaitlist: false,   // true when student chose the free waitlist path
-};
-// Must match the DB check constraint: goal_track in ('relocation','academic','professional','pleasure','foundations')
-const GOALS = [
-  { id: 'foundations', label: 'Just starting out',        descKey: 'signup_goal_foundations' },
-  { id: 'professional', label: 'Career / work',            descKey: 'signup_goal_professional' },
-  { id: 'academic',     label: 'Exams / academic study',   descKey: 'signup_goal_academic' },
-  { id: 'relocation',   label: 'Moving abroad',            descKey: 'signup_goal_relocation' },
-  { id: 'pleasure',     label: 'Personal interest',        descKey: 'signup_goal_pleasure' },
-];
-let newUserId = null;   // filled after signUp succeeds
-
-const card = document.getElementById('card');
-
-// Expose mutable state on window so inline onclick="" handlers in
-// dynamically-rendered HTML can reach them (module scope is not global).
-window.fd     = fd;
-Object.defineProperty(window, 'step', {
-  get() { return step; },
-  set(v) { step = v; },
-});
-window.render = () => render();
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-function escapeHtml(v) {
-  return String(v == null ? '' : v).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
-// PostgREST/Postgres error text names tables, policies and constraints; keep it in
-// the console and show the caller's generic message instead.
-function dbErrorText(err, fallback) {
-  console.error('[Alimun] database error:', err);
-  return fallback;
-}
-function totalSteps() { return fd.role === 'teacher' ? 4 : 5; }
-function prog(s)       { return Math.round(((s - 1) / (totalSteps() - 1)) * 100); }
-function setWidth(w)   { card.className = 'card ' + w; }
-
-function showError(id, msg) {
-  let el = document.getElementById(id);
-  if (!el) return;
-  el.textContent = msg;
-  el.style.display = 'block';
-}
-function clearError(id) {
-  let el = document.getElementById(id);
-  if (!el) return;
-  el.style.display = 'none';
-  el.textContent = '';
-}
-function setLoading(btnId, loading, label = 'Continue →') {
-  const btn = document.getElementById(btnId);
-  if (!btn) return;
-  btn.disabled = loading;
-  btn.textContent = loading ? 'Please wait…' : label;
-  btn.style.opacity = loading ? '0.65' : '1';
-  btn.style.cursor  = loading ? 'not-allowed' : 'pointer';
+function msg(id, text, ok) { const el = $(id); el.textContent = text; el.classList.toggle('is-on', !!text); el.classList.toggle('is-ok', !!ok); }
+function busy(btn, on) { btn.disabled = on; if (on) { btn.dataset.label = btn.innerHTML; btn.textContent = t('au_waiting'); } else if (btn.dataset.label) btn.innerHTML = btn.dataset.label; }
+function errorText(err) {
+  const m = (err && err.message) || '';
+  if (/already/i.test(m)) return t('au_err_exists');
+  if (/rate|too many|seconds/i.test(m)) return t('au_err_rate');
+  return t('au_err_generic');
 }
 
-// Like showError but allows trusted markup (used for the "Sign in" link).
-function showErrorHTML(id, html) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  el.innerHTML = html;
-  el.style.display = 'block';
+document.querySelectorAll('[data-eye]').forEach((b) => b.addEventListener('click', () => {
+  const input = $(b.getAttribute('data-eye'));
+  if (input.type === 'password') { b.dataset.show = b.textContent; b.textContent = t('au_hide'); input.type = 'text'; }
+  else { b.textContent = b.dataset.show; input.type = 'password'; }
+}));
+
+// The level test result (level-test.html) or, for languages without a test, a waitlist choice.
+function readResult() {
+  let r = null;
+  try { r = JSON.parse(localStorage.getItem('alimun-level-result') || 'null'); } catch (e) {}
+  const wl = params.get('waitlist');
+  if (WAITLIST_ONLY.includes(wl)) r = { language: wl, level: null, waitlist: true };
+  if (r && typeof r.language === 'string' && (r.waitlist || LEVELS.includes(r.level))) return r;
+  return null;
 }
 
-// Price display in the visitor's currency (js/currency.js; falls back to EUR).
-function money(eur) {
-  return window.AlimunCurrency ? window.AlimunCurrency.fmt(eur) : '€' + eur;
-}
-function yearlyEq(t) {
-  const AC = window.AlimunCurrency;
-  return AC ? AC.fmtNative(AC.perMonthFromYearly(t.yearlyPrice, t.yearlyMonthlyEq)) : '€' + t.yearlyMonthlyEq;
-}
+// Plan chosen on the Tiers page, carried through the test: payment comes after the goal step.
+const intent = TIERS.includes(params.get('tier')) ? { tier: params.get('tier'), billing: params.get('billing') === 'yearly' ? 'yearly' : 'monthly' } : null;
 
-// Checkout currency = the one shown on the page (js/currency.js: ?cur=, saved choice,
-// timezone/locale). Supported: eur (default), usd, cad, aud, mad.
-function checkoutCurrency() {
-  const code = window.AlimunCurrency && window.AlimunCurrency.code;
-  return code && code !== 'eur' ? code : undefined;
+function paintNote(r) {
+  const note = $('side-note');
+  if (!r || !r.level) { note.classList.add('au_hide'); return; }
+  $('n-level').textContent = r.level;
+  $('n-name').textContent = t('lt_name_' + r.level);
+  const list = (r.topicLabels || []).slice(0, 3).map((x) => '<b>' + esc(x) + '</b>');
+  const joined = list.length > 1 ? list.slice(0, -1).join(', ') + ' ' + esc(t('lt_and')) + ' ' + list[list.length - 1] : (list[0] || '');
+  $('n-text').innerHTML = joined ? esc(t('au_note_topics')).replace('{topics}', joined) : '';
+  note.classList.remove('au_hide');
 }
 
-// JSON headers + Supabase Bearer token. Every /api/* call that acts on the
-// signed-in user needs this; the server derives the user from the token.
-async function authHeaders() {
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session?.access_token) throw new Error('Please sign in first.');
-  return {
-    'Content-Type':  'application/json',
-    'Authorization': `Bearer ${session.access_token}`,
-  };
-}
-
-// ── Render ───────────────────────────────────────────────────────────────────
-function render() {
-  card.style.opacity = '0';
-  setTimeout(() => {
-    if (step === 1) renderRole();
-    else if (step === 2) renderDetails();
-    else if (step === 3) fd.role === 'student' ? renderLanguage() : renderTeaching();
-    else if (step === 4) {
-      if (fd.role !== 'student')                       renderTeacherConfirm();
-      else if (LIVE_LANGUAGES.includes(fd.language))  renderTier();
-      else                                             renderWaitlist();
-    }
-    else if (step === 5) renderStudentConfirm();
-    card.style.transition = 'opacity .2s';
-    card.style.opacity    = '1';
-  }, 150);
-}
-
-function progressHTML(s, labelKey) {
-  const pct = prog(s);
-  const translations = window.ALIMUN_TRANSLATIONS || {};
-  const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
-  const dict = translations[lang] || translations['en'] || {};
-  const stepText = dict['signup_step_label'] || "Step {step} of {total} — {label}";
-  const labelText = dict[labelKey] || labelKey;
-  const formatted = stepText.replace('{step}', s).replace('{total}', totalSteps()).replace('{label}', labelText);
-  return `<div class="prog-top"><div class="prog-step">${formatted}</div><div class="prog-bar"><div class="prog-fill" style="width:${pct}%"></div></div></div>`;
-}
-
-// ── Step 1: Role selection ───────────────────────────────────────────────────
-function renderRole() {
-  setWidth('card-narrow');
-  card.innerHTML = `
-    <div class="role-head">
-      <div class="role-ey" data-i18n="signup_role_eyebrow">Welcome to Alimun</div>
-      <div class="role-title" data-i18n="signup_role_title">How will you use Alimun?</div>
-    </div>
-    <div class="role-grid">
-      <div class="role-card" onclick="pick('student')">
-        <div class="role-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-        <div class="role-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5 12 5l10 4.5-10 4.5-10-4.5Z"/><path d="M6.5 11.7v4c0 1.4 2.46 2.55 5.5 2.55s5.5-1.15 5.5-2.55v-4"/><path d="M21 10v5.5"/></svg></div>
-        <div class="role-name" data-i18n="role_student_title">Student</div>
-        <div class="role-desc" data-i18n="role_student_desc">I want to learn a language with live cohorts and AI-powered feedback.</div>
-      </div>
-      <div class="role-card" onclick="pick('teacher')">
-        <div class="role-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
-        <div class="role-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8"/><path d="M12 16v4"/><path d="M7 8.5h6M7 11.5h4"/></svg></div>
-        <div class="role-name" data-i18n="role_teacher_title">Teacher</div>
-        <div class="role-desc" data-i18n="role_teacher_desc">I want to teach on Alimun and lead live sessions for cohorts of learners.</div>
-      </div>
-    </div>
-    <div class="auth-switch" style="margin:0 2rem 1.75rem;">
-      <a href="signin.html" class="signin-link" data-i18n="auth_has_account_signin">Already have an account? Sign in →</a>
-    </div>`;
-}
-
-window.pick = function(role) { fd.role = role; step = 2; render(); };
-
-// ── Step 2: Account details + Supabase signUp ────────────────────────────────
-function renderDetails() {
-  setWidth('card-narrow');
-  card.innerHTML = `
-    ${progressHTML(2, 'signup_step_details')}
-    <div class="step-head">
-      <div class="step-ey" data-i18n="${fd.role === 'student' ? 'signup_student_account' : 'signup_teacher_account'}">${fd.role === 'student' ? 'Student' : 'Teacher'} account</div>
-      <div class="step-title" data-i18n="signup_details_title">Create your account</div>
-    </div>
-    <div class="step-body">
-      <div class="field"><label data-i18n="auth_fullname">Full name</label><input id="f-name" type="text" placeholder="Alex Chen" value="${escapeHtml(fd.name)}"></div>
-      <div class="field"><label data-i18n="auth_email">Email address</label><input id="f-email" type="email" placeholder="alex@example.com" value="${escapeHtml(fd.email)}"></div>
-      <div class="field"><label data-i18n="auth_password">Password</label><input id="f-pw" type="password" placeholder="At least 8 characters" data-i18n-placeholder="signup_pw_placeholder"></div>
-      <div class="error-msg" id="err-details"></div>
-      <div class="btn-row">
-        <button class="btn out" onclick="step=1;render()" data-i18n="signup_btn_back">← Back</button>
-        <button class="btn" id="btn-details" onclick="saveDetails()" data-i18n="signup_btn_continue">Continue →</button>
-      </div>
-    </div>`;
-  document.getElementById('f-name').focus();
-}
-
-window.saveDetails = async function() {
-  clearError('err-details');
-  fd.name  = document.getElementById('f-name').value.trim();
-  fd.email = document.getElementById('f-email').value.trim();
-  fd.pw    = document.getElementById('f-pw').value;
-
-  if (!fd.name)              { showError('err-details', 'Please enter your full name.');        return; }
-  if (!fd.email)             { showError('err-details', 'Please enter your email address.');    return; }
-  // Account already created in this visit (user came back with "Back"): signUp
-  // again would fail with "already registered", so continue to the profile step.
-  if (newUserId) { step = 3; render(); return; }
-
-  if (fd.pw.length < 8)     { showError('err-details', 'Password must be at least 8 characters.'); return; }
-
-  setLoading('btn-details', true, 'Continue →');
-
-  // Browser timezone — harmless metadata the cohort-matching engine can use
-  // later. Lives in user_metadata only (no DB column).
+let lastEmail = '';
+async function signUp({ name, email, pw, data, btn, msgId }) {
   let timezone = null;
-  try { timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch (_) {}
-
-  const { data, error } = await supabase.auth.signUp({
-    email:    fd.email,
-    password: fd.pw,
-    options: {
-      // After clicking the confirmation link the user lands back here already
-      // signed in; resumeFromSession() (Boot) continues at the profile steps.
-      emailRedirectTo: `${window.location.origin}/signup.html`,
-      data: {
-        role:      fd.role,
-        full_name: fd.name,
-        timezone,
-      },
-    },
+  try { timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || null; } catch (e) {}
+  busy(btn, true);
+  const { data: out, error } = await supabase.auth.signUp({
+    email, password: pw,
+    options: { emailRedirectTo: `${location.origin}/signup.html`, data: { full_name: name, timezone, ...data } },
   });
-
-  const alreadyHTML =
-    'This email is already registered. <a href="signin.html" style="font-weight:700;text-decoration:underline;">Already have an account? Sign in →</a>';
-
-  if (error) {
-    setLoading('btn-details', false, 'Continue →');
-    if (/already/i.test(error.message || '')) showErrorHTML('err-details', alreadyHTML);
-    else showError('err-details', error.message || 'Sign-up failed. Please try again.');
-    return;
-  }
-
-  // With email confirmation ON, Supabase returns an obfuscated user with no
-  // identities (instead of an error) when the email is already registered.
-  if (data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0) {
-    setLoading('btn-details', false, 'Continue →');
-    showErrorHTML('err-details', alreadyHTML);
-    return;
-  }
-
-  // Guard: email confirmation enabled — no session is issued until the link
-  // is clicked. The profile inserts below need a session (RLS), so stop here.
-  // The flow resumes at step 3 when they come back signed in (see Boot).
-  if (!data.user || !data.session) {
-    setLoading('btn-details', false, 'Continue →');
-    showError('err-details', 'Confirm your email, then sign in to finish — we\'ve sent a link to ' + fd.email + '.');
-    return;
-  }
-
-  // Store user id for later profile insert
-  newUserId = data.user.id;
-
-  step = 3;
-  render();
-};
-
-// ── Step 3 (student): Language + level ──────────────────────────────────────
-function renderLanguage() {
-  setWidth('card-xwide');
-  card.innerHTML = `
-    ${progressHTML(3, 'signup_step_language')}
-    <div class="step-head">
-      <div class="step-ey" data-i18n="signup_lang_eyebrow">Learning profile</div>
-      <div class="step-title" data-i18n="signup_lang_title">What are you learning?</div>
-    </div>
-    <div class="step-body">
-      <div class="field"><label data-i18n="signup_lang_label">Language</label>
-        <select id="f-lang" onchange="window.fd.language=this.value">
-          ${LANGS.map(l => `<option${l === fd.language ? ' selected' : ''}>${l}</option>`).join('')}
-        </select>
-      </div>
-      <div class="field">
-        <label data-i18n="signup_level_label">Your current level</label>
-        <div class="level-grid" id="lvl-grid">
-          ${LEVELS.map(l => `<button class="lvl-btn${l === fd.level ? ' on' : ''}" onclick="pickLevel('${l}',this)">${l}</button>`).join('')}
-        </div>
-        <div style="margin-top:.625rem;font-size:.75rem;color:#bbb;" id="lvl-desc" data-i18n="lvl_desc_${fd.level}">${levelDesc(fd.level)}</div>
-      </div>
-      <div class="field">
-        <label data-i18n="signup_goal_label">What's your main goal?</label>
-        <div class="level-grid" id="goal-grid">
-          ${GOALS.map(g => `<button class="lvl-btn${g.id === fd.goal ? ' on' : ''}" onclick="pickGoal('${g.id}',this)" data-i18n="${g.descKey}">${g.label}</button>`).join('')}
-        </div>
-      </div>
-      <div class="btn-row">
-        <button class="btn out" onclick="step=2;render()" data-i18n="signup_btn_back">← Back</button>
-        <button class="btn" onclick="proceedFromLanguage()" data-i18n="signup_btn_continue">Continue →</button>
-      </div>
-    </div>`;
+  busy(btn, false);
+  if (error) { msg(msgId, errorText(error)); return; }
+  // With email confirmation on, an existing email comes back as a user without identities.
+  if (out.user && Array.isArray(out.user.identities) && out.user.identities.length === 0) { msg(msgId, t('au_err_exists')); return; }
+  if (out.session) { location.href = base + 'welcome.html'; return; }
+  lastEmail = email;
+  $('check-email').textContent = email;
+  show('s-check');
 }
 
-window.pickGoal = function(id, el) {
-  fd.goal = id;
-  document.querySelectorAll('#goal-grid .lvl-btn').forEach(b => b.classList.remove('on'));
-  el.classList.add('on');
-};
-
-window.pickLevel = function(l, el) {
-  fd.level = l;
-  document.querySelectorAll('.lvl-btn').forEach(b => b.classList.remove('on'));
-  el.classList.add('on');
-  
-  const descEl = document.getElementById('lvl-desc');
-  descEl.setAttribute('data-i18n', `lvl_desc_${l}`);
-  if (window.i18nTranslateElement) {
-    window.i18nTranslateElement(descEl);
-  } else {
-    descEl.textContent = levelDesc(l);
-  }
-};
-
-function levelDesc(l) {
-  const m = {
-    A1: 'Complete beginner — just getting started',
-    A2: 'Elementary — can handle simple everyday exchanges',
-    B1: 'Intermediate — can navigate most situations while travelling',
-    B2: 'Upper intermediate — can interact with native speakers',
-    C1: 'Advanced — can express fluently and spontaneously',
-    C2: 'Proficient — near-native mastery',
-  };
-  return m[l] || '';
-}
-
-// Read language from select before routing (keeps fd in sync)
-window.proceedFromLanguage = function() {
-  fd.language = document.getElementById('f-lang')?.value || fd.language;
-  step = 4;
-  render();
-};
-
-// ── Step 4 (student, coming-soon language): waitlist ──────────────────────────
-function renderWaitlist() {
-  setWidth('card-narrow');
-  const langName = escapeHtml(fd.language);
-
-  card.innerHTML = `
-    ${progressHTML(4, 'signup_step_tier')}
-    <div class="step-head">
-      <div class="step-ey">${langName} · ${escapeHtml(fd.level)}</div>
-      <div class="step-title">Join the waitlist</div>
-    </div>
-    <div class="step-body">
-      <p style="font-size:.9rem;line-height:1.6;color:#555;margin:0 0 1rem;">${langName} classes are not open yet. Join the waitlist and we will email you when they open. There is nothing to pay today.</p>
-      <div class="error-msg" id="err-waitlist"></div>
-      <div class="btn-row">
-        <button class="btn out" onclick="step=3;render()">← Back</button>
-        <button class="btn" id="btn-waitlist" onclick="completeWaitlist()">Join the waitlist →</button>
-      </div>
-    </div>`;
-}
-
-// ── Waitlist: free signup, store in DB ─────────────────────────────────────────
-window.completeWaitlist = async function() {
-  clearError('err-waitlist');
-  setLoading('btn-waitlist', true, 'Join the waitlist →');
-
-  const userId = newUserId;
-  if (!userId) {
-    showError('err-waitlist', 'Session lost. Please go back and try again.');
-    setLoading('btn-waitlist', false, 'Join the waitlist →');
-    return;
-  }
-
-  const { error: dbErr } = await supabase
-    .from('student_profiles')
-    .insert({
-      user_id:    userId,
-      full_name:  fd.name,
-      language:   fd.language,
-      level:      fd.level,
-      goal_track: fd.goal,
-      tier:       'waitlist',
-    });
-  if (dbErr && dbErr.code !== '23505') {
-    setLoading('btn-waitlist', false, 'Join the waitlist →');
-    showError('err-waitlist', dbErrorText(dbErr, 'Could not save your registration. Please try again.'));
-    return;
-  }
-
-  // Store on fd for the confirm screen
-  fd.isWaitlist  = true;
-  fd.tier        = 'waitlist';
-  step = 5;
-  render();
-};
-
-// ── Step 4 (student): Tier selection + DB insert + Stripe ───────────────────
-function renderTier() {
-  setWidth('card-wide');
-  const translations = window.ALIMUN_TRANSLATIONS || {};
-  const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
-  const dict = translations[lang] || translations['en'] || {};
-
-  const localizedTiers = TIERS.map(t => {
-    const badgeKey = 'tier_badge_' + t.badge.toLowerCase().replace(/ /g, '');
-    const isYearly = billing === 'yearly';
-    const displayPrice = isYearly ? yearlyEq(t) : money(t.monthlyPrice);
-    const priceSub    = isYearly ? 'per month, billed yearly' : 'per month';
-    return {
-      id: t.id,
-      featured: t.featured,
-      badge: dict[badgeKey] || t.badge,
-      name: dict[`tier_${t.i18n || t.id}_name`] || t.name,
-      size: dict[`tier_${t.i18n || t.id}_size`] || t.size,
-      displayPrice,
-      priceSub,
-      yearlyTotal: t.yearlyPrice,
-      feats: t.feats.map(f => {
-        let key = '';
-        if (f.includes('Live cohort'))           key = 'tier_feat_live_cohort';
-        else if (f.includes('AI essay'))         key = 'tier_feat_ai_grading';
-        else if (f.includes('Weekly group'))     key = 'tier_feat_weekly_group_feedback';
-        else if (f.includes('Community access')) key = 'tier_feat_community_access';
-        else if (f.includes('Everything in Community') || f.includes('Everything in Daily')) key = 'tier_feat_everything_community';
-        else if (f.includes('Smaller, focused')) key = 'tier_feat_smaller_focused_groups';
-        else if (f.includes('Bi-weekly 1-on-1')) key = 'tier_feat_biweekly_one_on_one';
-        else if (f.includes('Priority AI'))      key = 'tier_feat_priority_ai';
-        else if (f.includes('Everything in Focused')) key = 'tier_feat_everything_focused';
-        else if (f.includes('Near-private'))     key = 'tier_feat_near_private';
-        else if (f.includes('Weekly 1-on-1'))    key = 'tier_feat_weekly_one_on_one';
-        else if (f.includes('Custom learning'))  key = 'tier_feat_custom_learning_path';
-        else if (f.includes('100% private'))     key = 'tier_feat_private_sessions';
-        else if (f.includes('Choose extra classes')) key = 'tier_feat_paywall_extra';
-        else if (f.includes('Fully custom curriculum')) key = 'tier_feat_custom_curriculum';
-        else if (f.includes('Daily AI feedback')) key = 'tier_feat_daily_ai_feedback';
-        else if (f.includes('Dedicated teacher')) key = 'tier_feat_dedicated_teacher';
-        else if (f.includes('Voice note'))       key = 'tier_feat_voice_note_feedback';
-        else if (f.includes('Monthly progress')) key = 'tier_feat_monthly_progress';
-        else if (f.includes('Priority support')) key = 'tier_feat_priority_support';
-        else if (f.includes('Session notes'))    key = 'tier_feat_session_notes';
-        else if (f.includes('Goal-specific'))    key = 'tier_feat_goal_curriculum';
-        return dict[key] || f;
-      })
-    };
+// ── Learner ─────────────────────────────────────────────────────────────────
+function startLearner(r) {
+  if (r.level) setText($('account-lead'), t('au_save_lead_lang').replace('{language}', languageName(r.language)));
+  paintNote(r);
+  const q = new URLSearchParams({ language: r.language });
+  if (intent) { q.set('tier', intent.tier); q.set('billing', intent.billing); }
+  $('retake').href = base + 'level-test.html?' + q.toString();
+  if (r.waitlist) $('retake').parentElement.classList.add('au_hide');
+  show('s-account');
+  $('f-account').addEventListener('submit', (e) => {
+    e.preventDefault(); msg('m-account', '');
+    const name = $('a-name').value.trim(), email = $('a-email').value.trim(), pw = $('a-pw').value;
+    if (!name) return msg('m-account', t('au_err_name'));
+    if (!EMAIL.test(email)) return msg('m-account', t('au_err_email'));
+    if (pw.length < 8) return msg('m-account', t('au_err_pw'));
+    const placement = r.level ? { language: r.language, level: r.level, skills: r.skills || null, topics: (r.topics || []).slice(0, 5), at: r.at || null } : { language: r.language, level: null, waitlist: true };
+    signUp({ name, email, pw, data: { role: 'student', onboarding: { placement, intent } }, btn: $('b-account'), msgId: 'm-account' });
   });
-
-  card.innerHTML = `
-    ${progressHTML(4, 'signup_step_tier')}
-    <div class="step-head">
-      <div class="step-ey">${fd.language} · ${fd.level}</div>
-      <div class="step-title" data-i18n="signup_tier_title">Choose your tier</div>
-    </div>
-    <div class="step-body">
-
-      <!-- Billing toggle -->
-      <div class="billing-toggle-wrap">
-        <div class="billing-toggle">
-          <button id="tog-monthly" class="${billing==='monthly'?'active':''}" onclick="setBilling('monthly')">Monthly</button>
-          <button id="tog-yearly"  class="${billing==='yearly' ?'active':''}" onclick="setBilling('yearly')">Annual</button>
-        </div>
-        <span class="billing-save-badge">💰 2 months free</span>
-      </div>
-
-      <div class="tier-grid">
-        ${localizedTiers.map(t => `
-          <div class="tier-card${t.featured ? ' featured' : ''}${fd.tier === t.id ? ' on' : ''}" id="tier-${t.id}" onclick="pickTier('${t.id}')">
-            <div class="tier-check"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-            <div class="tier-badge">${t.badge}</div>
-            <div class="tier-name">${t.name}</div>
-            <div class="tier-size">${t.size}</div>
-            <div class="tier-price">${t.displayPrice}<span style="font-size:.875rem;font-weight:400;color:#aaa;"> /mo</span></div>
-            <div class="tier-price-sub">${t.priceSub}</div>
-            <ul class="tier-feats">${t.feats.map(f => `<li>${f}</li>`).join('')}</ul>
-          </div>`).join('')}
-      </div>
-      <div class="error-msg" id="err-tier"></div>
-      <div class="btn-row">
-        <button class="btn out" onclick="step=3;render()" data-i18n="signup_btn_back">← Back</button>
-        <button class="btn" id="btn-tier" onclick="completeStu()" ${fd.tier ? '' : 'disabled'} style="${fd.tier ? '' : 'opacity:.4;cursor:not-allowed'}" data-i18n="signup_btn_complete">Complete registration →</button>
-      </div>
-    </div>`;
+}
+function languageName(lang) {
+  const codes = { English: 'en', German: 'de', French: 'fr', Spanish: 'es', Italian: 'it', Portuguese: 'pt', Mandarin: 'zh', Japanese: 'ja', Arabic: 'ar' };
+  try { const n = new Intl.DisplayNames([document.documentElement.lang || 'en'], { type: 'language' }).of(codes[lang]); if (n) return n; } catch (e) {}
+  return lang;
 }
 
-window.setBilling = function(cycle) {
-  billing = cycle;
-  // Re-render tier step preserving selection
-  renderTier();
-  card.style.opacity = '1';
-};
-
-window.pickTier = function(id) {
-  fd.tier = id;
-  document.querySelectorAll('.tier-card').forEach(c => c.classList.remove('on'));
-  document.getElementById('tier-' + id).classList.add('on');
-  const btn = document.getElementById('btn-tier');
-  btn.removeAttribute('disabled'); btn.style.opacity = '1'; btn.style.cursor = 'pointer';
-};
-
-window.completeStu = async function() {
-  if (!fd.tier) return;
-  clearError('err-tier');
-  setLoading('btn-tier', true, 'Complete registration →');
-
-  const userId = newUserId;
-  if (!userId) {
-    showError('err-tier', 'Session lost. Please go back and try again.');
-    setLoading('btn-tier', false, 'Complete registration →');
-    return;
-  }
-
-  // ── 1. Save student_profiles (insert; skip if already exists) ────────────
-  const { error: dbErr } = await supabase
-    .from('student_profiles')
-    .insert({
-      user_id:    userId,
-      full_name:  fd.name,
-      language:   fd.language,
-      level:      fd.level,
-      goal_track: fd.goal,
-      tier:       fd.tier,
-    });
-
-  // 23505 = unique_violation (row already exists) — safe to continue.
-  // Any other error is fatal.
-  if (dbErr && dbErr.code !== '23505') {
-    setLoading('btn-tier', false, 'Complete registration →');
-    showError('err-tier', dbErrorText(dbErr, 'Could not save your profile. Please try again.'));
-    return;
-  }
-
-  // ── 2. Resolve Stripe Price ID based on tier + billing cycle ──────────────
-  const tierObj = TIERS.find(t => t.id === fd.tier);
-  if (!tierObj) {
-    showError('err-tier', 'Unknown tier selected. Please try again.');
-    setLoading('btn-tier', false, 'Complete registration →');
-    return;
-  }
-
-  const priceKey = `${tierObj.stripeId}_${billing}`; // e.g. 'focused_yearly'
-  const selectedPriceId = PRICE_IDS[priceKey];
-  if (!selectedPriceId || selectedPriceId.startsWith('price_FOCUSED')) {
-    // Price ID looks like a placeholder — warn but still proceed in test mode
-    console.warn('[Alimun] Stripe price ID may be a placeholder:', selectedPriceId);
-  }
-
-  // ── 3. Call /api/create-checkout-session and redirect ────────────────────
-  // The API requires the Supabase Bearer token (customer is derived from it)
-  // and returns { sessionId, url }. We navigate to the hosted Checkout URL —
-  // no Stripe.js / redirectToCheckout needed.
-  try {
-    const origin  = window.location.origin;
-    const resp = await fetch('/api/create-checkout-session', {
-      method:  'POST',
-      headers: await authHeaders(),
-      body: JSON.stringify({
-        priceId:      selectedPriceId,
-        customerName: fd.name,
-        currency:     checkoutCurrency(),
-        successUrl: `${origin}/signup-success.html?session_id={CHECKOUT_SESSION_ID}`,
-        cancelUrl:  `${origin}/signup.html?step=4`,
-      }),
-    });
-
-    if (!resp.ok) {
-      const errData = await resp.json().catch(() => ({}));
-      throw new Error(errData.error || errData.message || `API error ${resp.status}`);
-    }
-
-    const data = await resp.json();
-    if (!data.url) throw new Error('No checkout URL returned from checkout API');
-    window.location.href = data.url;
-  } catch (apiErr) {
-    console.error('[Alimun] Checkout session API error:', apiErr);
-    setLoading('btn-tier', false, 'Complete registration →');
-    showError('err-tier', apiErr.message || 'Could not start payment. Please try again.');
-  }
-  // Navigation to Stripe happens above — no code runs after this on success
-};
-
-// ── Step 5 (student): Confirmation ──────────────────────────────────────────
-function renderStudentConfirm() {
-  setWidth('card-narrow');
-  const firstName = escapeHtml(fd.name.split(' ')[0]);
-
-  // ── Waitlist variant ────────────────────────────────────────────────────────
-  if (fd.isWaitlist) {
-    card.innerHTML = `
-      <div class="confirm-body">
-        <div class="confirm-ico" style="background:#f0efe9;">
-          <svg viewBox="0 0 24 24" width="24" height="24" stroke="var(--b)" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        </div>
-        <div class="confirm-title">You're on the list, ${firstName}!</div>
-        <div class="confirm-sub">We'll email you when <strong>${escapeHtml(fd.language)}</strong> classes open. There is nothing to pay.</div>
-        <button class="btn" onclick="window.location.href='student-dashboard.html'">Go to your dashboard →</button>
-      </div>`;
-    return;
-  }
-
-  // ── Normal (paid) variant ───────────────────────────────────────────────────
-  const t = TIERS.find(x => x.id === fd.tier) || TIERS[0];
-  const translations = window.ALIMUN_TRANSLATIONS || {};
-  const lang = window.i18nGetActiveLang ? window.i18nGetActiveLang() : 'en';
-  const dict = translations[lang] || translations['en'] || {};
-  const localizedTierName = dict[`tier_${t.i18n || t.id}_name`] || t.name;
-  const tierPrice = billing === 'yearly'
-    ? `${yearlyEq(t)}/mo (billed annually)`
-    : `${money(t.monthlyPrice)}/mo`;
-
-  card.innerHTML = `
-    <div class="confirm-body">
-      <div class="confirm-ico"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="confirm-title">Welcome, ${firstName}!</div>
-      <div class="confirm-sub">Your Alimun account is ready. You've been placed on the waitlist for the ${localizedTierName} tier — you'll hear from us within 48 hours.</div>
-      <div class="tier-summary">
-        <div class="tier-summary-l">Selected tier</div>
-        <div class="tier-summary-v">${escapeHtml(localizedTierName)} · ${tierPrice}</div>
-      </div>
-      <button class="btn" onclick="window.location.href='student-dashboard.html'">Go to your dashboard →</button>
-    </div>`;
+// ── Teacher ─────────────────────────────────────────────────────────────────
+let application = null;
+function startTeacher() {
+  $('side-img').src = 'images/pexels-teacher-online-6267032.jpg';
+  show('s-teach');
+  $('f-teach').addEventListener('submit', (e) => {
+    e.preventDefault(); msg('m-teach', '');
+    const specialty = $('t-spec').value.trim();
+    if (!specialty) return msg('m-teach', t('au_err_spec'));
+    application = { language: $('t-lang').value, experience_years: parseInt($('t-exp').value, 10) || 1, specialty, bio: $('t-bio').value.trim() };
+    show('s-teach-account');
+  });
+  $('b-teach-back').addEventListener('click', () => show('s-teach'));
+  $('f-teach-account').addEventListener('submit', (e) => {
+    e.preventDefault(); msg('m-teach-account', '');
+    const name = $('ta-name').value.trim(), email = $('ta-email').value.trim(), pw = $('ta-pw').value;
+    if (!name) return msg('m-teach-account', t('au_err_name'));
+    if (!EMAIL.test(email)) return msg('m-teach-account', t('au_err_email'));
+    if (pw.length < 8) return msg('m-teach-account', t('au_err_pw'));
+    signUp({ name, email, pw, data: { role: 'teacher', teacher_application: application }, btn: $('b-teach-account'), msgId: 'm-teach-account' });
+  });
 }
 
-// ── Step 3 (teacher): Teaching profile ──────────────────────────────────────
-function renderTeaching() {
-  setWidth('card-xwide');
-  card.innerHTML = `
-    ${progressHTML(3, 'signup_step_teaching')}
-    <div class="step-head">
-      <div class="step-ey" data-i18n="signup_teach_eyebrow">Teacher application</div>
-      <div class="step-title" data-i18n="signup_teach_title">Your teaching profile</div>
-    </div>
-    <div class="step-body">
-      <div class="field"><label data-i18n="signup_teach_lang_label">Language you teach</label>
-        <select id="f-lang">
-          ${LANGS.map(l => `<option${l === fd.language ? ' selected' : ''}>${l}</option>`).join('')}
-        </select>
-      </div>
-      <div class="field"><label data-i18n="signup_teach_exp_label">Years of experience</label>
-        <select id="f-exp">
-          <option value="1">1 year</option>
-          <option value="2">2 years</option>
-          <option value="3"${fd.experience_years===3?' selected':''}>3 years</option>
-          <option value="5"${fd.experience_years===5?' selected':''}>5 years</option>
-          <option value="7">7 years</option>
-          <option value="10">10+ years</option>
-          <option value="15">15+ years</option>
-        </select>
-      </div>
-      <div class="field"><label data-i18n="signup_teach_spec_label">Teaching specialty</label>
-        <input id="f-spec" type="text" placeholder="e.g. DELE exam prep, business Spanish, conversational…" data-i18n-placeholder="signup_teach_spec_placeholder" value="${escapeHtml(fd.specialty)}"></div>
-      <div class="field"><label><span data-i18n="signup_teach_bio_label">Short bio</span> <span style="font-weight:400;color:#ccc;" data-i18n="signup_teach_bio_sub">(shown to students)</span></label>
-        <textarea id="f-bio" style="min-height:100px;resize:none;width:100%;background:#fafaf8;border:1.5px solid rgba(0,0,0,.1);border-radius:.75rem;padding:.8rem 1rem;font-family:var(--body);font-size:.9rem;color:var(--b);outline:none;" placeholder="Tell prospective students about your teaching style and experience…" data-i18n-placeholder="signup_teach_bio_placeholder">${escapeHtml(fd.bio)}</textarea>
-      </div>
-      <div class="error-msg" id="err-teach"></div>
-      <div class="btn-row">
-        <button class="btn out" onclick="step=2;render()" data-i18n="signup_btn_back">← Back</button>
-        <button class="btn" id="btn-teach" onclick="applyTeacher()" data-i18n="signup_teach_btn_submit">Submit application →</button>
-      </div>
-    </div>`;
-}
+// ── Check your email ────────────────────────────────────────────────────────
+let wait = 0, timer = null;
+$('b-resend').addEventListener('click', async () => {
+  if (wait > 0 || !lastEmail) return;
+  const btn = $('b-resend');
+  busy(btn, true);
+  const { error } = await supabase.auth.resend({ type: 'signup', email: lastEmail, options: { emailRedirectTo: `${location.origin}/signup.html` } });
+  busy(btn, false);
+  if (error) return msg('m-check', errorText(error));
+  msg('m-check', t('au_resent'), true);
+  wait = 60; btn.disabled = true;
+  clearInterval(timer);
+  timer = setInterval(() => {
+    wait--;
+    if (wait <= 0) { clearInterval(timer); btn.disabled = false; msg('m-check', ''); }
+    else msg('m-check', t('au_resend_wait').replace('{s}', wait), true);
+  }, 1000);
+});
+$('b-change-email').addEventListener('click', () => show(params.get('role') === 'teacher' ? 's-teach-account' : 's-account'));
 
-window.applyTeacher = async function() {
-  clearError('err-teach');
-  fd.specialty        = (document.getElementById('f-spec')?.value || '').trim();
-  fd.bio              = (document.getElementById('f-bio')?.value  || '').trim();
-  fd.experience_years = parseInt(document.getElementById('f-exp')?.value || '3', 10);
-  fd.language         = document.getElementById('f-lang')?.value || '';
-
-  if (!LANGS.includes(fd.language)) {
-    showError('err-teach', 'Please choose the language you teach.');
-    return;
-  }
-
-  if (!fd.specialty) {
-    showError('err-teach', 'Please add a brief teaching specialty.');
-    return;
-  }
-
-  setLoading('btn-teach', true, 'Submit application →');
-
-  const userId = newUserId;
-  if (!userId) {
-    showError('err-teach', 'Session lost — please go back to step 1 and try again.');
-    setLoading('btn-teach', false, 'Submit application →');
-    return;
-  }
-
-  // INSERT into teacher_profiles
-  const { data: insertedData, error: dbErr } = await supabase
-    .from('teacher_profiles')
-    .insert({
-      user_id:          userId,
-      full_name:        fd.name,
-      languages:        [fd.language],   // stored as text[] per schema
-      experience_years: fd.experience_years,
-      specialty:        fd.specialty,
-      bio:              fd.bio,
-      status:           'pending',
-    })
-    .select();
-
-  if (dbErr) {
-    setLoading('btn-teach', false, 'Submit application →');
-    showError('err-teach', dbErrorText(dbErr, 'Could not submit your application. Please try again.'));
-    return;
-  }
-
-  const teacherId = insertedData?.[0]?.id || userId;
-
-  // Notify admin via Vercel serverless function.
-  // The API identifies the applicant from the Bearer token and reads the
-  // teacher_profiles row itself — the body is ignored, so send `{}`.
-  try {
-    await fetch('/api/admin/notify-teacher-application', {
-      method: 'POST',
-      headers: await authHeaders(),
-      body: JSON.stringify({}),
-    });
-  } catch (err) {
-    console.error('[Alimun] Error notifying admin:', err, '(teacher_id', teacherId + ')');
-  }
-
-  step = 4;
-  render();
-};
-
-// ── Step 4 (teacher): Confirmation ──────────────────────────────────────────
-function renderTeacherConfirm() {
-  setWidth('card-narrow');
-  card.innerHTML = `
-    <div class="confirm-body">
-      <div class="confirm-ico"><svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg></div>
-      <div class="confirm-title" data-i18n="signup_teach_confirm_title">Application received</div>
-      <div class="confirm-sub" data-i18n-html="signup_teach_confirm_desc" data-i18n-var-name="${escapeHtml(fd.name.split(' ')[0])}">
-        Thank you, ${escapeHtml(fd.name.split(' ')[0])}! We'll review your teaching profile
-        and get back to you within <strong>48 hours</strong>.
-      </div>
-      <div class="teacher-confirm">
-        <p data-i18n-html="signup_teach_confirm_body">Once approved, you'll be able to access your full teacher dashboard,
-        manage cohorts, and start earning. <strong>Keep an eye on your inbox.</strong></p>
-      </div>
-      <button class="btn" style="margin-bottom:.625rem;" onclick="window.location.href='index.html'" data-i18n="signup_teach_btn_home">Back to Alimun homepage</button>
-      <button class="btn out" onclick="window.location.href='signin.html'" data-i18n="signup_teach_btn_signin">Sign in to check status</button>
-    </div>`;
-}
-
-// ── Boot ─────────────────────────────────────────────────────────────────────
-const urlParams  = new URLSearchParams(window.location.search);
-const queryRole  = urlParams.get('role');
-const queryStep  = parseInt(urlParams.get('step') || '', 10);
-
-// Resume a half-finished signup. Steps 1-2 only create the auth user; if we
-// already have a session (email confirmed and signed in, or Stripe Checkout
-// cancelled back to ?step=4) skip straight to the profile steps.
-async function resumeFromSession() {
-  let session = null;
-  try { ({ data: { session } } = await supabase.auth.getSession()); } catch (_) {}
-  if (!session?.user) return false;
-
-  // Role comes only from app_metadata (server-set). getUser() reads the current
-  // server copy, so a role the DB trigger set after signUp is seen here.
-  let user = session.user;
-  try { const { data } = await supabase.auth.getUser(); if (data?.user) user = data.user; } catch (_) {}
-  const role = user.app_metadata?.role || '';
-  if (role !== 'student' && role !== 'teacher') return false;
-
-  newUserId = user.id;
-  fd.role   = role;
-  fd.name   = user.user_metadata?.full_name || fd.name;
-  fd.email  = user.email || fd.email;
-
-  if (role === 'teacher') {
-    const { data: tp } = await supabase
-      .from('teacher_profiles').select('id').eq('user_id', user.id).maybeSingle();
-    step = tp ? 4 : 3;          // already applied → confirmation screen
-    return true;
-  }
-
-  const { data: sp } = await supabase
-    .from('student_profiles')
-    .select('language, level, goal_track, tier')
-    .eq('user_id', user.id)
-    .maybeSingle();
-
-  if (sp) {
-    // Profile exists (e.g. checkout cancelled). Without an explicit ?step=
-    // there is nothing to finish here — the dashboard owns the rest.
-    if (!(queryStep >= 3)) { window.location.href = 'student-dashboard.html'; return true; }
-    fd.language = sp.language   || fd.language;
-    fd.level    = sp.level      || fd.level;
-    fd.goal     = sp.goal_track || fd.goal;
-    fd.tier     = TIERS.some(t => t.id === sp.tier) ? sp.tier : '';
-  }
-
-  step = (queryStep >= 3 && queryStep <= totalSteps()) ? queryStep : 3;
-  return true;
-}
-
+// ── Start ───────────────────────────────────────────────────────────────────
 (async () => {
-  const resumed = await resumeFromSession();
-  if (!resumed) {
-    if (queryRole === 'teacher' || queryRole === 'student') {
-      fd.role = queryRole;
-      step = 2;
-    }
-    // Without a session, steps ≥ 3 are impossible (no user yet) — ignore ?step
+  // Signed in already (back from the confirmation link, or a returning user): the welcome page takes over.
+  let session = null;
+  try { ({ data: { session } } = await supabase.auth.getSession()); } catch (e) {}
+  if (session && session.user) { location.replace(base + 'welcome.html'); return; }
+
+  if (params.get('role') === 'teacher') return startTeacher();
+  const r = readResult();
+  if (!r) {
+    // Learners start with the level test; the plan and language they picked come along.
+    const q = new URLSearchParams();
+    ['language', 'tier', 'billing'].forEach((k) => { if (params.get(k)) q.set(k, params.get(k)); });
+    location.replace(base + 'level-test.html' + (q.toString() ? '?' + q.toString() : ''));
+    return;
   }
-  render();
+  startLearner(r);
 })();
 </script>
-  <script src="../js/cookies-banner.js" type="text/javascript"></script>
+<script src="../js/cookies-banner.js" type="text/javascript"></script>
 
 
 </body></html>

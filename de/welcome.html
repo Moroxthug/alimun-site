@@ -1,0 +1,264 @@
+<!DOCTYPE html><html lang="de" dir="ltr"><head>
+<meta charset="utf-8">
+<title>Welcome – Alimun</title>
+<link href="/images/favicon.svg?v=2" rel="icon" type="image/svg+xml"><link href="/images/favicon-48.png?v=2" rel="icon" type="image/png" sizes="48x48"><link href="/images/favicon.ico?v=2" rel="shortcut icon" type="image/x-icon"><link href="/images/webclip.png?v=2" rel="apple-touch-icon">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<link href="../css/auth.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous"></script>
+<script>
+  window.ALIMUN_CONFIG = {
+    supabaseUrl:     'https://dgaiasmefcbrtzqwdyri.supabase.co',
+    supabaseAnonKey: 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
+  };
+</script>
+<script src="/js/currency.js"></script>
+<script src="../js/i18n/en.js" defer=""></script><script src="../js/i18n/de.js" defer=""></script>
+<script src="../js/i18n.js" defer=""></script>
+</head>
+<body>
+<!--
+  Welcome (owner, 24 Oct 2026): the first page after the email is confirmed.
+  Learners: their goal and the time they want to reach it, then the profile is created (free plan, or the waitlist
+  for languages not open yet) with the level test result, then the dashboard, or payment when they chose a plan on
+  the Tiers page. Teachers: the application saved at sign-up is filed and the admin is notified.
+-->
+<div class="au">
+  <main class="au_main">
+    <div class="au_top">
+      <a class="au_logo" href="index.html"><img src="../images/alimun-logo.svg" alt="Alimun"></a>
+      <button type="button" class="au_link" id="b-signout" data-i18n="au_signout">Abmelden</button>
+    </div>
+
+    <div class="au_body">
+      <div class="au_box is-wide">
+
+        <section class="au_step" id="s-load">
+          <div class="au_spin" aria-hidden="true"></div>
+          <p class="au_lead" data-i18n="au_loading">Einen Moment…</p>
+        </section>
+
+        <section class="au_step" id="s-goal" hidden="">
+          <div class="au_prog"><span style="width:50%"></span></div>
+          <h1 class="au_h1" id="hello" data-i18n="au_goal_title">Was möchten Sie erreichen?</h1>
+          <p class="au_lead" data-i18n="au_goal_lead">Ihre Übungen und später Ihr Unterricht richten sich danach.</p>
+          <div class="au_choices" style="margin-top:2rem" role="group" id="goals">
+            <button type="button" class="au_choice" data-v="relocation" aria-pressed="false"><strong data-i18n="au_goal_relocation">Ins Ausland ziehen</strong><span data-i18n="au_goal_relocation_d">Ankommen, sich zurechtfinden und den Alltag meistern</span></button>
+            <button type="button" class="au_choice" data-v="professional" aria-pressed="false"><strong data-i18n="au_goal_professional">Beruf und Karriere</strong><span data-i18n="au_goal_professional_d">Meetings, E-Mails, Vorstellungsgespräche und ein neuer Job</span></button>
+            <button type="button" class="au_choice" data-v="academic" aria-pressed="false"><strong data-i18n="au_goal_academic">Studieren oder eine Prüfung bestehen</strong><span data-i18n="au_goal_academic_d">Universität, Zertifikate und Visumsanforderungen</span></button>
+            <button type="button" class="au_choice" data-v="pleasure" aria-pressed="false"><strong data-i18n="au_goal_pleasure">Reisen und persönliches Interesse</strong><span data-i18n="au_goal_pleasure_d">Konversation, Kultur und Reisen</span></button>
+            <button type="button" class="au_choice" data-v="foundations" aria-pressed="false"><strong data-i18n="au_goal_foundations">Solide Grundlagen schaffen</strong><span data-i18n="au_goal_foundations_d">Grammatik und Wortschatz, Schritt für Schritt</span></button>
+          </div>
+          <div class="au_actions"><button type="button" class="au_btn" id="b-goal" disabled=""><span data-i18n="au_continue">Weiter</span></button></div>
+        </section>
+
+        <section class="au_step" id="s-time" hidden="">
+          <div class="au_prog"><span style="width:100%"></span></div>
+          <h1 class="au_h1" data-i18n="au_time_title">Bis wann möchten Sie Ihr Ziel erreichen?</h1>
+          <p class="au_lead" data-i18n="au_time_lead">Danach richten wir das Tempo Ihrer Übungen aus. Sie können es später ändern.</p>
+          <div class="au_choices" style="margin-top:2rem" role="group" id="times">
+            <button type="button" class="au_choice" data-v="3_months" aria-pressed="false"><strong data-i18n="au_time_3">In 3 Monaten</strong></button>
+            <button type="button" class="au_choice" data-v="6_months" aria-pressed="false"><strong data-i18n="au_time_6">In 6 Monaten</strong></button>
+            <button type="button" class="au_choice" data-v="1_year" aria-pressed="false"><strong data-i18n="au_time_12">Innerhalb eines Jahres</strong></button>
+            <button type="button" class="au_choice" data-v="no_deadline" aria-pressed="false"><strong data-i18n="au_time_none">Kein Termin</strong></button>
+          </div>
+          <p class="au_msg" id="m-time" role="alert" style="margin-top:1.5rem"></p>
+          <div class="au_actions">
+            <button type="button" class="au_btn is-ghost is-auto" id="b-time-back"><span data-i18n="au_back">Zurück</span></button>
+            <button type="button" class="au_btn" id="b-time" disabled=""><span id="b-time-label" data-i18n="au_to_dashboard">Zu meinem Dashboard</span></button>
+          </div>
+        </section>
+
+        <section class="au_step" id="s-pay" hidden="">
+          <div class="au_spin" aria-hidden="true"></div>
+          <h1 class="au_h1" data-i18n="au_pay_title">Weiterleitung zur Zahlung</h1>
+          <p class="au_lead" data-i18n="au_pay_lead">Die Zahlung wird sicher über Stripe abgewickelt. Danach kehren Sie hierher zurück.</p>
+          <p class="au_msg" id="m-pay" role="alert" style="margin-top:1.5rem"></p>
+          <div class="au_actions au_hide" id="pay-actions">
+            <button type="button" class="au_btn" id="b-pay-retry"><span data-i18n="au_try_again">Erneut versuchen</span></button>
+            <a class="au_btn is-ghost" href="student-dashboard.html"><span data-i18n="au_to_dashboard">Zu meinem Dashboard</span></a>
+          </div>
+        </section>
+
+        <section class="au_step" id="s-teacher" hidden="">
+          <p class="au_big" aria-hidden="true">48h</p>
+          <h1 class="au_h1" data-i18n="au_app_title">Bewerbung eingegangen</h1>
+          <p class="au_lead" data-i18n="au_app_lead">Vielen Dank. Wir lesen jede Bewerbung und antworten innerhalb von 48 Stunden per E-Mail. Nach Ihrer Freigabe melden Sie sich an, um Ihr Lehrkraft-Dashboard zu öffnen.</p>
+          <div class="au_actions"><a class="au_btn is-ghost" href="index.html"><span data-i18n="au_back_home">Zurück zu Alimun</span></a></div>
+        </section>
+
+        <section class="au_step" id="s-error" hidden="">
+          <h1 class="au_h1" data-i18n="au_err_title">Etwas ist schiefgelaufen</h1>
+          <p class="au_lead" id="err-text" data-i18n="au_err_lead">Wir konnten die Einrichtung Ihres Kontos nicht abschließen. Bitte versuchen Sie es erneut oder schreiben Sie uns über die Kontaktseite.</p>
+          <div class="au_actions">
+            <button type="button" class="au_btn" id="b-err-retry"><span data-i18n="au_try_again">Erneut versuchen</span></button>
+            <a class="au_btn is-ghost" href="contact.html"><span data-i18n="au_contact">Kontakt</span></a>
+          </div>
+        </section>
+
+      </div>
+    </div>
+
+    <div class="au_foot">
+      <a href="index.html" data-i18n="auth_back_to_alimun">← Zurück zu Alimun</a>
+      <a href="terms.html" data-i18n="auth_terms">Bedingungen</a>
+      <a href="gdpr.html" data-i18n="auth_gdpr">DSGVO</a>
+      <button type="button" id="open-cookie-settings" data-i18n="auth_manage_cookies">Cookies verwalten</button>
+    </div>
+  </main>
+  <aside class="au_side" aria-hidden="true">
+    <div class="au_media"><img id="side-img" src="../images/pexels-julia-m-cameron-4145153.jpg" alt=""></div>
+  </aside>
+</div>
+
+<div hidden="">
+  <span data-i18n="au_hello">Willkommen, {name}. Was möchten Sie erreichen?</span>
+  <span data-i18n="au_to_payment">Weiter zur Zahlung</span>
+</div>
+
+<script type="module">
+import { supabase, getUserRole } from '/js/supabase/config.js';
+
+const $ = (id) => document.getElementById(id);
+const t = (k) => { const el = document.querySelector(`[hidden] [data-i18n="${k}"]`); return el ? el.textContent : k; };
+// Text set by this script: drop the element's translation key so js/i18n.js does not put the generic text back.
+const setText = (el, text) => { el.removeAttribute('data-i18n'); el.removeAttribute('data-i18n-html'); el.textContent = text; };
+const base = location.pathname.replace(/[^/]*$/, '');
+const LIVE = ['English', 'German'];
+const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+const GOALS = ['relocation', 'academic', 'professional', 'pleasure', 'foundations'];
+
+function show(id) { document.querySelectorAll('.au_step').forEach((s) => { s.hidden = s.id !== id; }); window.scrollTo(0, 0); }
+function fail() { show('s-error'); }
+function choose(groupId, onPick) {
+  const btns = [...document.querySelectorAll(`#${groupId} .au_choice`)];
+  btns.forEach((b) => b.addEventListener('click', () => { btns.forEach((x) => x.setAttribute('aria-pressed', x === b ? 'true' : 'false')); onPick(b.dataset.v); }));
+}
+async function authHeaders() {
+  const { data: { session } } = await supabase.auth.getSession();
+  return { 'Content-Type': 'application/json', Authorization: `Bearer ${session?.access_token || ''}` };
+}
+
+$('b-signout').addEventListener('click', async () => { await supabase.auth.signOut(); location.href = base + 'index.html'; });
+$('b-err-retry').addEventListener('click', () => location.reload());
+
+let user = null, meta = {}, picked = { goal: null, time: null };
+
+// ── Teachers: file the application saved at sign-up ─────────────────────────
+async function teacher() {
+  $('side-img').src = 'images/pexels-teacher-online-6267032.jpg';
+  const { data: tp, error } = await supabase.from('teacher_profiles').select('id, status').eq('user_id', user.id).maybeSingle();
+  if (error) return fail();
+  if (tp && tp.status === 'approved') { location.replace(base + 'teacher-dashboard.html'); return; }
+  if (!tp) {
+    const app = meta.teacher_application;
+    if (!app || !app.language || !app.specialty) { location.replace(base + 'signup.html?role=teacher'); return; }
+    const { error: insErr } = await supabase.from('teacher_profiles').insert({
+      user_id: user.id, full_name: meta.full_name || user.email, languages: [String(app.language)],
+      experience_years: parseInt(app.experience_years, 10) || 1, specialty: String(app.specialty).slice(0, 120),
+      bio: String(app.bio || '').slice(0, 1200), status: 'pending',
+    });
+    if (insErr && insErr.code !== '23505') return fail();
+    try { await fetch('/api/admin/notify-teacher-application', { method: 'POST', headers: await authHeaders(), body: '{}' }); } catch (e) {}
+  }
+  show('s-teacher');
+}
+
+// ── Learners: goal, timeframe, profile, then dashboard or payment ────────────
+function placement() {
+  let p = meta.onboarding && meta.onboarding.placement;
+  if (!p || !p.language) {
+    try { const r = JSON.parse(localStorage.getItem('alimun-level-result') || 'null'); if (r && r.language) p = { language: r.language, level: r.level, skills: r.skills || null, topics: (r.topics || []).slice(0, 5), at: r.at || null }; } catch (e) {}
+  }
+  return p && typeof p.language === 'string' ? p : null;
+}
+
+async function learner() {
+  const { data: sp, error } = await supabase.from('student_profiles').select('id').eq('user_id', user.id).maybeSingle();
+  if (error) return fail();
+  if (sp) { location.replace(base + 'student-dashboard.html'); return; }
+  const p = placement();
+  if (!p) { location.replace(base + 'level-test.html'); return; }
+  const intent = meta.onboarding && meta.onboarding.intent;
+  const willPay = intent && LIVE.includes(p.language);
+  if (willPay) setText($('b-time-label'), t('au_to_payment'));
+  const first = String(meta.full_name || '').trim().split(/\s+/)[0];
+  if (first) setText($('hello'), t('au_hello').replace('{name}', first));
+
+  choose('goals', (v) => { picked.goal = v; $('b-goal').disabled = false; });
+  choose('times', (v) => { picked.time = v; $('b-time').disabled = false; });
+  $('b-goal').addEventListener('click', () => show('s-time'));
+  $('b-time-back').addEventListener('click', () => show('s-goal'));
+  $('b-time').addEventListener('click', async () => {
+    if (!GOALS.includes(picked.goal) || !picked.time) return;
+    $('b-time').disabled = true;
+    const row = {
+      user_id: user.id,
+      full_name: String(meta.full_name || user.email.split('@')[0]).slice(0, 100),
+      language: p.language,
+      level: LEVELS.includes(p.level) ? p.level : 'A1',
+      goal_track: picked.goal,
+      goal_timeframe: picked.time,
+      placement: p.level ? p : null,
+      tier: LIVE.includes(p.language) ? 'free' : 'waitlist',
+    };
+    if (meta.timezone) row.timezone = meta.timezone;
+    let { error: insErr } = await supabase.from('student_profiles').insert(row);
+    // An unknown browser time zone is refused by the database: keep the default instead.
+    if (insErr && insErr.code === '22023') { delete row.timezone; ({ error: insErr } = await supabase.from('student_profiles').insert(row)); }
+    if (insErr && insErr.code !== '23505') { $('b-time').disabled = false; return fail(); }
+    try { localStorage.removeItem('alimun-level-result'); } catch (e) {}
+    if (willPay) return pay(intent);
+    location.replace(base + 'student-dashboard.html');
+  });
+  show('s-goal');
+}
+
+async function pay(intent) {
+  show('s-pay');
+  $('pay-actions').classList.add('au_hide');
+  try {
+    const cfg = await fetch('/api/stripe/config').then((r) => r.json());
+    const key = intent.tier + (intent.billing === 'yearly' ? 'Yearly' : 'Monthly');
+    const priceId = cfg && cfg.prices && cfg.prices[key];
+    if (!priceId) throw new Error('price');
+    const code = window.AlimunCurrency && window.AlimunCurrency.code;
+    const resp = await fetch('/api/create-checkout-session', {
+      method: 'POST', headers: await authHeaders(),
+      body: JSON.stringify({
+        priceId, customerName: meta.full_name || '', currency: code && code !== 'eur' ? code : undefined,
+        successUrl: `${location.origin}${base}signup-success.html?session_id={CHECKOUT_SESSION_ID}`,
+        cancelUrl: `${location.origin}${base}student-dashboard.html`,
+      }),
+    });
+    const out = await resp.json().catch(() => ({}));
+    if (!resp.ok || !out.url) throw new Error('checkout');
+    location.href = out.url;
+  } catch (e) {
+    $('m-pay').textContent = document.querySelector('#s-error [data-i18n="au_err_lead"]').textContent;
+    $('m-pay').classList.add('is-on');
+    $('pay-actions').classList.remove('au_hide');
+  }
+  $('b-pay-retry').onclick = () => pay(intent);
+}
+
+// ── Start ───────────────────────────────────────────────────────────────────
+(async () => {
+  let session = null;
+  try { ({ data: { session } } = await supabase.auth.getSession()); } catch (e) {}
+  if (!session) { location.replace(base + 'signin.html'); return; }
+  // Role comes only from app_metadata (set by the database at sign-up); getUser() reads the server copy.
+  try { const { data } = await supabase.auth.getUser(); user = data && data.user; } catch (e) {}
+  if (!user) { location.replace(base + 'signin.html'); return; }
+  meta = user.user_metadata || {};
+  const role = getUserRole(user);
+  if (role === 'admin') { location.replace(base + 'admin.html'); return; }
+  if (role === 'teacher') return teacher();
+  if (role === 'student') return learner();
+  fail();
+})();
+</script>
+<script src="../js/cookies-banner.js" type="text/javascript"></script>
+
+
+</body></html>
