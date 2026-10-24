@@ -475,3 +475,4 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - No "toolkit" left on the page. US spelling for "Practice" in two English services texts.
 - Translations: 5 new keys in nine languages.
 - Checked: desktop, phone and Arabic; all 8 rows reveal; the line fills; the anchor scrolls to How it works; no errors.
+- Owner: the quote should stay (removing it left a big empty gap, because the hero section's height is built around it). Restored exactly as before in `services/s01.html` (structure identical to the previous version apart from the text changes); lock hash updated.

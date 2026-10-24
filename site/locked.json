@@ -45,8 +45,8 @@
     "approved": "2026-10-22 services nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
   },
   "src/blocks/services/s01.html": {
-    "sha256": "6cf63094567512128a42a0e4e9ce1bb2d6768518f6fa29ad9fec1cca3c80a26c",
-    "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor"
+    "sha256": "3e5aef873c87b9d547fb8c4c761239bab108fe278c50124f36419b01038ede0b",
+    "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 quote restored (owner)"
   },
   "src/blocks/services/s04.html": {
     "sha256": "dfd3cb850916dfd88a6553b58917753e5bcf0ada190a4090ac5eb3aa57f7c413",
