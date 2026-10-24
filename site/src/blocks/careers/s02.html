@@ -1,123 +1,82 @@
-      <section id="why-teach" class="section is-experience">
-        <div class="container-large exp-scroll_pin">
-          <div class="margin-bottom-64">
-            <div data-w-id="f0443543-7ba6-cbc7-74ed-da3d58ab7911" class="wrap_flex is-align-top">
-              <div class="max-width-250">
-                <h2><span class="is-word is-1" data-i18n="car_why_title">Why teach on Alimun?</span></h2>
-              </div>
+      <section id="why-teach" class="ct">
+        <style>
+          /* Why teach on Alimun, on white: the photo frame stays in view on the left and changes picture as each reason on
+             the right reaches the middle of the screen; each reason rises in and its title is marked in lime when active.
+             On phones every reason shows its own photo above it. */
+          .ct { padding: 7rem 0; background-color: var(--white); }
+          .ct_head { margin-bottom: 3.5rem; opacity: 0; transform: translateY(2rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .ct_head.is-in { opacity: 1; transform: none; }
+          .ct_head h2 { margin: 0; }
+          .ct_grid { display: grid; grid-template-columns: 5fr 6fr; gap: 4.5rem; align-items: start; }
+          .ct_frame { position: sticky; top: 7rem; aspect-ratio: 4 / 4.6; border-radius: 3.125rem; overflow: hidden; }
+          .ct_frame img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.08); transition: opacity .7s ease, transform 1.4s cubic-bezier(.215, .61, .355, 1); }
+          .ct_frame img.is-on { opacity: 1; transform: none; }
+          .ct_item { min-height: 62vh; display: flex; flex-direction: column; justify-content: center; padding: 2rem 0; opacity: .25; transform: translateY(2rem); transition: opacity .6s ease, transform .8s cubic-bezier(.215, .61, .355, 1); }
+          .ct_item.is-seen { transform: none; }
+          .ct_item.is-on { opacity: 1; }
+          .ct_item img { display: none; }
+          .ct_item h3 { margin: 0 0 1.25rem; align-self: flex-start; background-image: linear-gradient(var(--green), var(--green)); background-repeat: no-repeat; background-position: 0 88%; background-size: 0% 45%; transition: background-size .9s cubic-bezier(.215, .61, .355, 1) .15s; }
+          [dir="rtl"] .ct_item h3 { background-position: 100% 88%; }
+          .ct_item.is-on h3 { background-size: 100% 45%; }
+          .ct_item p { margin: 0; max-width: 34rem; color: rgba(8, 8, 8, .75); }
+          @media (max-width: 991px) {
+            .ct_grid { grid-template-columns: 1fr; gap: 0; }
+            .ct_frame { display: none; }
+            .ct_item { min-height: 0; opacity: 0; padding: 0 0 3rem; }
+            .ct_item.is-seen { opacity: 1; }
+            .ct_item img { display: block; width: 100%; aspect-ratio: 16 / 11; object-fit: cover; border-radius: 2.25rem; margin-bottom: 1.5rem; }
+            .ct_item h3 { background-size: 100% 45%; }
+          }
+          @media (max-width: 767px) { .ct { padding: 4.5rem 0 2rem; } .ct_head { margin-bottom: 2rem; } }
+        </style>
+        <div class="container-large">
+          <div class="ct_head"><h2 class="heading-style-h2" data-i18n="car_why_title">Why teach on Alimun?</h2></div>
+          <div class="ct_grid">
+            <div class="ct_frame shadow-card">
+              <img src="images/pexels-teacher-headset-6503001.jpg" alt="A teacher with a headset leading a class" class="is-on">
+              <img src="images/pexels-teacher-grading-6325963.jpg" loading="lazy" alt="A teacher reviewing work at a laptop">
+              <img src="images/pexels-teacher-smiling-5905754.jpg" loading="lazy" alt="A teacher smiling at a laptop">
+              <img src="images/pexels-teacher-home-7012254.jpg" loading="lazy" alt="A teacher working at a desk at home">
             </div>
-          </div>
-          <div class="exp-slider exp-scroll">
-            <div class="exp-slider_mask exp-scroll_track">
-              <div class="exp-slider_slide" tabindex="0">
-                <div class="exp-flip">
-                  <div class="exp-slider_item">
-                    <div class="z-index-2">
-                      <p class="text-size-medium" data-i18n="car_why_1_title">Teach a group</p>
-                    </div><img src="images/pexels-teacher-headset-6503001.jpg" loading="lazy" alt="A teacher with a headset leading a class" class="img-cover">
-                    <div class="exp-slider_overlay"></div>
-                  </div>
-                  <div class="exp-flip_back">
-                    <p class="text-size-medium exp-flip_title" data-i18n="car_why_1_title">Teach a group</p>
-                    <p class="text-size-small" data-i18n="car_why_1_desc">Teach a structured group of about 6 to 35 learners instead of repeating the same private lesson again and again, and let the group practise together.</p>
-                  </div>
-                </div>
+            <div class="ct_list">
+              <div class="ct_item is-on">
+                <img src="images/pexels-teacher-headset-6503001.jpg" loading="lazy" alt="">
+                <h3 class="heading-style-h3" data-i18n="car_why_1_title">Teach a group</h3>
+                <p class="text-size-large" data-i18n="car_why_1_desc">Teach a structured group of about 6 to 35 learners instead of repeating the same private lesson again and again, and let the group practise together.</p>
               </div>
-              <div class="exp-slider_slide" tabindex="0">
-                <div class="exp-flip">
-                  <div class="exp-slider_item">
-                    <div class="z-index-2">
-                      <p class="text-size-medium" data-i18n="car_why_2_title">Grading help</p>
-                    </div><img src="images/pexels-teacher-grading-6325963.jpg" loading="lazy" alt="A teacher reviewing work at a laptop" class="img-cover">
-                    <div class="exp-slider_overlay"></div>
-                  </div>
-                  <div class="exp-flip_back">
-                    <p class="text-size-medium exp-flip_title" data-i18n="car_why_2_title">Grading help</p>
-                    <p class="text-size-small" data-i18n="car_why_2_desc">Homework grades and feedback are drafted for you to check and send, so your time goes into live conversation.</p>
-                  </div>
-                </div>
+              <div class="ct_item">
+                <img src="images/pexels-teacher-grading-6325963.jpg" loading="lazy" alt="">
+                <h3 class="heading-style-h3" data-i18n="car_why_2_title">Grading help</h3>
+                <p class="text-size-large" data-i18n="car_why_2_desc">Homework grades and feedback are drafted for you to check and send, so your time goes into live conversation.</p>
               </div>
-              <div class="exp-slider_slide" tabindex="0">
-                <div class="exp-flip">
-                  <div class="exp-slider_item">
-                    <div class="z-index-2">
-                      <p class="text-size-medium" data-i18n="car_why_3_title">Consistent revenue</p>
-                    </div><img src="images/pexels-teacher-smiling-5905754.jpg" loading="lazy" alt="A teacher smiling at a laptop" class="img-cover">
-                    <div class="exp-slider_overlay"></div>
-                  </div>
-                  <div class="exp-flip_back">
-                    <p class="text-size-medium exp-flip_title" data-i18n="car_why_3_title">Consistent revenue</p>
-                    <p class="text-size-small" data-i18n="car_why_3_desc">Get paid a stable base rate per active cohort. The more your cohorts grow, the more your earnings scale.</p>
-                  </div>
-                </div>
+              <div class="ct_item">
+                <img src="images/pexels-teacher-smiling-5905754.jpg" loading="lazy" alt="">
+                <h3 class="heading-style-h3" data-i18n="car_why_3_title">Paid for every class</h3>
+                <p class="text-size-large" data-i18n="car_why_3_desc">You are paid for each class you teach: a base rate per class plus an amount for every learner in the group, so a larger group earns more. Your teacher dashboard shows your earnings and payouts.</p>
               </div>
-              <div class="exp-slider_slide" tabindex="0">
-                <div class="exp-flip">
-                  <div class="exp-slider_item">
-                    <div class="z-index-2">
-                      <p class="text-size-medium" data-i18n="car_why_4_title">Flexible hours</p>
-                    </div><img src="images/pexels-teacher-home-7012254.jpg" loading="lazy" alt="A teacher working at a desk at home" class="img-cover">
-                    <div class="exp-slider_overlay"></div>
-                  </div>
-                  <div class="exp-flip_back">
-                    <p class="text-size-medium exp-flip_title" data-i18n="car_why_4_title">Flexible hours</p>
-                    <p class="text-size-small" data-i18n="car_why_4_desc">Set your own availability and cohort schedule. Teach from anywhere in the world.</p>
-                  </div>
-                </div>
+              <div class="ct_item">
+                <img src="images/pexels-teacher-home-7012254.jpg" loading="lazy" alt="">
+                <h3 class="heading-style-h3" data-i18n="car_why_4_title">Flexible hours</h3>
+                <p class="text-size-large" data-i18n="car_why_4_desc">Set your weekly availability in your teacher dashboard and teach from wherever you are. All you need is a computer with a camera and a microphone.</p>
               </div>
             </div>
           </div>
         </div>
-        <style>
-          #why-teach { overflow: clip; }
-          #why-teach .exp-scroll_pin { position: sticky; top: 0; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; }
-          #why-teach .exp-scroll { padding-bottom: 0; }
-          #why-teach .exp-scroll_track { will-change: transform; }
-          @media (min-width: 768px) { #why-teach .exp-scroll_track { margin-left: 35%; } }
-          #why-teach .exp-slider_slide { perspective: 1200px; outline: none; }
-          #why-teach .exp-flip { position: relative; transform-style: preserve-3d; transition: transform .6s cubic-bezier(.215, .61, .355, 1); }
-          #why-teach .exp-flip > .exp-slider_item, #why-teach .exp-flip_back { backface-visibility: hidden; -webkit-backface-visibility: hidden; }
-          #why-teach .exp-flip_back { position: absolute; inset: 0; transform: rotateY(180deg); border-radius: 2.25rem; border: 1px solid #ffffff3d; background-color: var(--black); color: var(--white); padding: 1.5rem; display: flex; flex-direction: column; justify-content: flex-end; gap: .75rem; }
-          #why-teach .exp-flip_title { color: var(--green); margin: 0; }
-          #why-teach .exp-flip_back p { margin: 0; }
-          #why-teach .exp-slider_slide.is-flipped .exp-flip, #why-teach .exp-slider_slide:focus-visible .exp-flip { transform: rotateY(180deg); }
-          @media (hover: hover) { #why-teach .exp-slider_slide:hover .exp-flip { transform: rotateY(180deg); } }
-        </style>
         <script>
-          // Scroll-driven row: while the section is pinned, vertical scroll moves the cards sideways.
           (function () {
-            var section = document.getElementById("why-teach");
-            var pin = section.querySelector(".exp-scroll_pin");
-            var row = section.querySelector(".exp-scroll");
-            var track = section.querySelector(".exp-scroll_track");
-            var travel = 0;
-            function measure() {
-              track.style.transform = "";
-              section.style.height = "";
-              var slides = track.children;
-              var last = slides[slides.length - 1].getBoundingClientRect();
-              travel = Math.max(0, last.right - row.getBoundingClientRect().right);
-              pin.style.top = Math.min(0, window.innerHeight - pin.offsetHeight) + "px";
-              section.style.height = (section.offsetHeight + travel) + "px";
-              update();
+            var root = document.currentScript.closest(".ct");
+            var items = [].slice.call(root.querySelectorAll(".ct_item")), pics = [].slice.call(root.querySelectorAll(".ct_frame img"));
+            var head = root.querySelector(".ct_head");
+            function show(k) {
+              items.forEach(function (it, i) { it.classList.toggle("is-on", i === k); });
+              pics.forEach(function (p, i) { p.classList.toggle("is-on", i === k); });
             }
-            function update() {
-              if (!travel) return;
-              var start = section.getBoundingClientRect().top + window.scrollY + parseFloat(getComputedStyle(section).paddingTop) - parseFloat(pin.style.top || 0);
-              var p = Math.min(1, Math.max(0, (window.scrollY - start) / travel));
-              track.style.transform = "translate3d(" + (-p * travel) + "px, 0, 0)";
-            }
-            window.addEventListener("scroll", update, { passive: true });
-            window.addEventListener("resize", measure);
-            window.addEventListener("load", measure);
-            measure();
+            if (!("IntersectionObserver" in window)) { head.classList.add("is-in"); items.forEach(function (it) { it.classList.add("is-seen", "is-on"); }); return; }
+            new IntersectionObserver(function (e, o) { if (e[0].isIntersecting) { head.classList.add("is-in"); o.disconnect(); } }, { threshold: .5 }).observe(head);
+            var seen = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-seen"); seen.unobserve(e.target); } }); }, { rootMargin: "0px 0px -10% 0px" });
+            // The reason crossing the middle band of the screen is the active one.
+            var mid = new IntersectionObserver(function (es) { es.forEach(function (e) { if (e.isIntersecting) show(items.indexOf(e.target)); }); }, { rootMargin: "-45% 0px -45% 0px" });
+            items.forEach(function (it) { seen.observe(it); mid.observe(it); });
           })();
-          // Touch screens cannot hover: a tap turns the card over, another tap turns it back.
-          document.querySelectorAll("#why-teach .exp-slider_slide").forEach(function (slide) {
-            slide.addEventListener("click", function () {
-              if (window.matchMedia("(hover: hover)").matches) return;
-              slide.classList.toggle("is-flipped");
-            });
-          });
         </script>
       </section>

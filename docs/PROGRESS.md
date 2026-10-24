@@ -501,3 +501,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - New "Questions about Alimun" FAQ (school or app, who teaches, languages, level test, why groups cost less, teaching at Alimun) with FAQPage structured data, in all nine languages.
 - The old closing block was replaced by the homepage banner with the level quiz, like Tiers and Services.
 - Owner: a company dashboard is planned; the Corporate card comes back when it ships.
+
+## 2026-10-24 — Careers page redo
+- "Why teach on Alimun?" rebuilt on white: a pinned photo frame changes picture as each reason scrolls past (black background and flip cards removed). Pay text now matches the teacher dashboard (paid per class taught: base rate plus an amount per learner); hours text matches the weekly availability page.
+- "How to join" now matches the real application (language, experience, specialty, bio; reply by email within 48 hours; then set availability and teach). The CV, 2-minute video and audition claims were removed because the form does not ask for them.
+- New "Questions about teaching on Alimun" FAQ with FAQPage structured data, in all nine languages (German in the formal Sie form like the rest of the page).

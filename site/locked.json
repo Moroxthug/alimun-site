@@ -121,12 +121,12 @@
     "approved": "2026-10-22 careers hero ok (teaching video, accurate text) | 2026-10-22 owner: scroll transition on the hero (test on Careers); 2026-10-24 AI mentions removed (owner)"
   },
   "src/blocks/careers/s02.html": {
-    "sha256": "a027f0f518a84785ef32ee60f9452fb7a98eea3dc557ff3ba8a49fcdc59db014",
-    "approved": "2026-10-22 careers why teach ok (scroll row, flip cards, Pexels photos); 2026-10-24 AI mentions removed (owner)"
+    "sha256": "6253f1ee2a65e47310f19c37b446053d17e25882363e85eaafe6aaa17edebcfd",
+    "approved": "2026-10-22 careers why teach ok (scroll row, flip cards, Pexels photos); 2026-10-24 AI mentions removed (owner); 2026-10-24 rebuilt on white (sticky photo frame, reasons scroll past), flip cards and black background removed; pay and hours text matched to the teacher dashboard (owner: go on with careers)"
   },
   "src/blocks/careers/s03.html": {
-    "sha256": "4898f56a0e1d23933683ba497268f5bf39dddbb9d186bcae682ef34a45e1da65",
-    "approved": "2026-10-22 Careers How to join, owner approved; heading, line and button slide in on scroll at owner request"
+    "sha256": "73222d316c53e356c8fbb726ff198fbea1dc35aefeae159947db294407d6c50d",
+    "approved": "2026-10-22 Careers How to join, owner approved; heading, line and button slide in on scroll at owner request; 2026-10-24 steps matched to the real application (no CV, video or audition; reply within 48 hours) (owner: go on with careers)"
   },
   "src/blocks/careers/s04.html": {
     "sha256": "e8ca3f18664a4fe1a8581f4ddb4f747d5df7f3f4946339a4d78518f95311609d",
