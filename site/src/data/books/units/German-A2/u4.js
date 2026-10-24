@@ -127,7 +127,7 @@ export const UNIT = {
         [
           { t: 'text', md: 'To describe a flat, say how big it is, how many rooms it has and what it is like.' },
           { t: 'examples', items: [
-            { s: 'Die Wohnung hat drei Zimmer, eine Küche und ein Bad.', n: 'In Germany, *Zimmer* counts the bedrooms and the living room, not the kitchen and the bathroom.' },
+            { s: 'Die Wohnung hat drei Zimmer, eine Küche und ein Bad.', n: 'In Germany, *Zimmer* usually counts the bedrooms and the living room, not the kitchen and the bathroom.' },
             { s: 'Sie ist 75 Quadratmeter groß.', n: '*Quadratmeter* (m²): square metres.' },
             { s: 'Die Wohnung liegt im dritten Stock.', n: '*im ersten, zweiten, dritten Stock*: on the first, second, third floor. The ground floor is *das Erdgeschoss*.' },
             { s: 'Das Wohnzimmer ist hell, aber die Küche ist ein bisschen dunkel.', n: 'Useful adjectives: *hell / dunkel, groß / klein, ruhig / laut, modern / alt*.' },
@@ -143,10 +143,10 @@ export const UNIT = {
             ['die Garderobe', 'der Flur'],
           ] },
           { t: 'ex', kind: 'gap', h: 'Write the opposite.', items: [
-            { q: 'Die Küche ist nicht dunkel, sie ist ___.', a: ['hell'], why: '*dunkel ↔ hell*' },
-            { q: 'Unsere Straße ist nicht laut, sie ist ___.', a: ['ruhig', 'leise'], why: '*laut ↔ ruhig*' },
-            { q: 'Das Bad ist nicht groß, es ist ___.', a: ['klein'], why: '*groß ↔ klein*' },
-            { q: 'Das Haus ist nicht modern, es ist ___.', a: ['alt'], why: '*modern ↔ alt*' },
+            { q: 'Die Küche ist nicht dunkel, sie ist ___.', a: ['hell'], why: 'The opposite of *dunkel* is *hell*.' },
+            { q: 'Unsere Straße ist nicht laut, sie ist ___.', a: ['ruhig', 'leise'], why: 'The opposite of *laut* is *ruhig*.' },
+            { q: 'Das Bad ist nicht groß, es ist ___.', a: ['klein'], why: 'The opposite of *groß* is *klein*.' },
+            { q: 'Das Haus ist nicht modern, es ist ___.', a: ['alt'], why: 'The opposite of *modern* is *alt*.' },
           ] },
         ],
         [

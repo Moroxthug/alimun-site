@@ -46,7 +46,7 @@ export const UNIT = {
         [
           { t: 'ex', kind: 'choice', h: 'Which modal verb fits?', items: [
             { q: 'Im Museum ___ man nicht fotografieren. Das ist verboten.', o: ['darf', 'muss', 'will'], why: '*verboten* means not allowed: *nicht dürfen*.' },
-            { q: 'Ich habe Hunger. Ich ___ eine Pizza essen.', o: ['möchte', 'darf', 'muss'], why: 'A wish: *möchten*.' },
+            { q: 'Ich habe Hunger. Ich ___ eine Pizza essen.', o: ['möchte', 'darf', 'möchtest'], why: 'A wish: *möchten*. With *ich*: *möchte*.' },
             { q: 'Paula spielt seit zehn Jahren Klavier. Sie ___ sehr gut spielen.', o: ['kann', 'muss', 'darf'], why: 'She is able to play well: *können*.' },
             { q: 'Morgen habe ich eine Prüfung. Heute ___ ich lernen.', o: ['muss', 'darf', 'mag'], why: 'It is necessary: *müssen*.' },
           ] },

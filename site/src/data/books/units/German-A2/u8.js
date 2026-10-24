@@ -93,7 +93,7 @@ export const UNIT = {
             { s: 'Mit dem **alten** Auto fahren wir nicht mehr.', n: 'Dativ: always *-en*.' },
             { s: 'Die **bunten** Luftballons sind für die Party.', n: 'Plural: always *-en*.' },
           ] },
-          { t: 'tip', art: 'owl', md: 'A trick: if the article does not change from the Nominativ (*die → die*, *das → das*), the adjective keeps *-e*. If the article changes (*der → den*, *der → dem*) or the noun is plural, the adjective takes *-en*.' },
+          { t: 'tip', art: 'owl', md: 'A trick for the singular: if the article is the same as in the Nominativ (*die → die*, *das → das*), the adjective keeps *-e*. If the article changes (*der → den*, *der → dem*), the adjective takes *-en*. In the plural, it is always *-en*.' },
         ],
         [
           { t: 'ex', kind: 'gap', h: 'Write the adjective with the right ending.', items: [
@@ -242,7 +242,7 @@ export const UNIT = {
     ] },
     { t: 'ex', kind: 'order', h: 'Build the sentences.', items: [
       { a: 'Was schenkst du deiner Mutter?', why: 'Question word, verb, subject, then the person in the Dativ.' },
-      { a: 'Ich möchte dich zu meiner Party einladen.', why: '*möchte* in position 2, the infinitive *einladen* at the end.' },
+      { a: 'Soll ich etwas zur Party mitbringen?', why: 'A yes/no question starts with the verb. The infinitive *mitbringen* goes to the end.' },
       { a: 'Wem gehört das rote Fahrrad?', why: '*Wem?* first, then the verb and the subject.' },
     ] },
   ],

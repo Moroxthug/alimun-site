@@ -54,3 +54,15 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p1: "Kenji ___ sleeping" accepts *must*, *might*, *may*, *could be*; the reading says an upright piano weighs more than 200 kg.
 - u8 p3: *ask* is accepted next to *enquire* and *inquire*; *Yours sincerely* and *Yours faithfully* are labelled British usage.
 - Word-order items in this book sometimes rely on a comma or capital letter on a tile to be unique.
+
+## German A2
+- Word-order items: a few main clauses could also be built with a fronted word for emphasis (*Der Zug ist schneller als der Bus.*, *Ich lerne Deutsch, weil ich in Wien arbeite.*); most items are questions or imperatives so only one order works.
+- u1 reading, u3: use the Perfekt of common verbs before u6 teaches it.
+- u1 p3: the gap hint "(ihr, die Kollegen)" may read oddly.
+- u3 p1: container match (Tafel, Becher, Flasche, Dose, Scheibe): check no other pairing fits.
+- u3, u4: general facts (tip of five to ten percent, *Zimmer* excludes kitchen and bathroom, warm and cold rent, many young people live in a WG).
+- u5: du-imperative gaps also accept forms with -e (*Trinke*, *Bleibe*); the pharmacy leaflet uses generic, ibuprofen-like dosing.
+- u6: *Krankenpfleger/in*; the official title since 2020 is *Pflegefachmann/Pflegefachfrau*.
+- u7: *bei der Bank* is given for "where?" (*in der Bank* is also common); invented fare of 74 euros.
+- u8: *im Garten von meinem Bruder* (spoken) instead of the genitive; five-column adjective table; the reading previews endings after *ein* and possessives.
+- In reading lessons, choice questions are written in German (taught text), unlike the B1 model, where they are in English.

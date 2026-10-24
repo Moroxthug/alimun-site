@@ -217,7 +217,7 @@ export const UNIT = {
         ],
         [
           { t: 'ex', kind: 'choice', h: 'Read the email again and choose.', items: [
-            { q: 'Wer ist „ihr Mann“ im zweiten Absatz?', o: ['der Mann von Tante Leyla', 'der Mann von Samira', 'der Mann von Nadia'], why: '*Tante Leyla mit ihrem Mann*: *ihr* refers to Leyla.' },
+            { q: 'Tante Leyla ist mit „ihrem Mann“ gekommen. Wer ist das?', o: ['der Mann von Tante Leyla', 'der Mann von Samira', 'der Mann von Nadia'], why: '*Tante Leyla mit ihrem Mann*: *ihr* refers to Leyla.' },
             { q: 'Was hat der Vater von Samira und ihrem Bruder bekommen?', o: ['ein Fahrrad', 'einen Kuchen', 'ein Foto'], why: '*Von meinem Bruder und mir hat mein Vater ein Fahrrad bekommen.*' },
             { q: 'Was möchte Samira von Ana wissen?', o: ['Wie es Anas Familie geht.', 'Wo Anas Familie wohnt.', 'Wie alt Anas Vater ist.'], why: '*Wie geht es deiner Familie?* asks how the family is.' },
           ] },
@@ -231,7 +231,7 @@ export const UNIT = {
       { q: 'Ich besuche morgen ___ Onkel.', o: ['meinen', 'mein', 'meinem'], why: '*besuchen* takes the Akkusativ. *der Onkel*: *meinen*.' },
       { q: 'Wir fahren mit ___ Kindern ans Meer.', o: ['unseren', 'unsere', 'unser'], why: '*mit* + Dativ plural: *unseren*.' },
       { q: 'Mein Opa ___ eine Brille und einen Bart.', o: ['hat', 'ist', 'sind'], why: 'Nouns go with *haben*: *er hat*.' },
-      { q: 'Kinder, wo sind ___ Schuhe?', o: ['eure', 'euer', 'ihre'], why: 'You speak to the children (*ihr*). Plural: *eure*.' },
+      { q: 'Kinder, wo sind ___ Schuhe?', o: ['eure', 'euer', 'euren'], why: 'You speak to the children (*ihr*). Plural: *eure*.' },
     ] },
     { t: 'ex', kind: 'gap', h: 'Write the missing word.', items: [
       { q: 'Die Mutter von meiner Mutter ist meine ___.', a: ['Großmutter', 'Oma'], why: '*die Großmutter*, or *die Oma*.' },
