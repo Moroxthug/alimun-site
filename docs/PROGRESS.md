@@ -452,3 +452,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - The Careers Webflow interaction does not run on the Tiers page, so the initial-state inline styles were removed and the title, text and button have their own entrance animation.
   - The plans heading is now an H2 (one H1 per page).
 - Checked: desktop, phone, Arabic; title and button visible; the button scrolls to the plans; no errors.
+- Owner: "hero ok", then another section, the FAQ and the banner.
+  - New `tiers/perclass.html`, "What a live class costs": pick a plan and the price of one live class rolls to its value. It is the monthly price divided by classes per week × 52/12 (Community €5.50, Focused €6.80, Intensive €6.30 counting the weekly one-to-one, 1 on 1 €20.70), with a yearly-plan line (€4.60 / €5.70 / €5.20 / €17.20). Per-plan sentences say how many classes that is. Converted through `js/currency.js` and formatted per page language.
+  - New `tiers/faq.html`: the homepage FAQ layout (white answer card) with five pricing questions: cancel any time, how yearly works, changing plan, currency, waitlist. FAQPage JSON-LD per language (`localize.mjs` now matches `qa is-home*`).
+  - Banner: the homepage banner with the level-quiz button (`home/banner.html` + `home/quiz.html`) replaces `tiers/s02.html` on this page; `tiers/s02.html` stays for the course pages.
+  - Translations: 19 keys (`tiers_pc_*`, `tiers_faq_*`) in all nine languages.
+  - Checked: desktop, phone, Arabic, Morocco in MAD (per-class figures, lines, yearly line), FAQ, quiz languages per site; no errors.

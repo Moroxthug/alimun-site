@@ -91,7 +91,7 @@ function withCourseList(html, lang) {
 // Homepage FAQ (src/blocks/home/faq.html): FAQPage structured data from the questions and answers as
 // translated on that page, so each language version describes its own text.
 function withFaqLd(html) {
-  if (!html.includes('class="section qa is-home"')) return html;
+  if (!html.includes('class="section qa is-home')) return html;
   const $ = cheerio.load(html);
   const items = $('section.qa.is-home .qa_a').map((_, el) => ({ q: $(el).find('h3').text().trim(), a: $(el).find('p').text().trim() })).get().filter((x) => x.q && x.a);
   const ld = { '@context': 'https://schema.org', '@type': 'FAQPage', mainEntity: items.map((x) => ({ '@type': 'Question', name: x.q, acceptedAnswer: { '@type': 'Answer', text: x.a } })) };

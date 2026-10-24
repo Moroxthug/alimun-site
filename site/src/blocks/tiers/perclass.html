@@ -1,0 +1,96 @@
+      <section class="pc">
+        <style>
+          /* What a live class costs: pick a plan and the price of one live class rolls to its value, worked out from
+             the plan's monthly price and its classes per week over about 4.33 weeks a month (52 / 12). A second line
+             gives the same figure on the yearly plan. Amounts go through js/currency.js when it is on the page. */
+          .pc { padding: 6rem 0 7rem; background-color: var(--white); }
+          .pc_grid { display: grid; grid-template-columns: 5fr 6fr; gap: 4rem; align-items: center; }
+          .pc_text h2 { margin: 0; }
+          .pc_text > p { margin: 1.25rem 0 2rem; max-width: 32rem; color: rgba(8, 8, 8, .7); }
+          .pc_pick { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; max-width: 30rem; }
+          .pc_pick button { padding: 1rem 1.25rem; border-radius: 1rem; border: 1px solid rgba(8, 8, 8, .3); background-color: var(--white); font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-size: 1.35rem; text-align: start; color: var(--black); cursor: pointer; transition: background-color .3s ease, border-color .3s ease; }
+          .pc_pick button:hover { border-color: var(--black); }
+          .pc_pick button[aria-pressed="true"] { background-color: var(--green); border-color: var(--green); }
+          [dir="rtl"] .pc_pick button { unicode-bidi: plaintext; text-align: right; }
+          .pc_card { border-radius: 3.125rem; background-color: var(--white); padding: 3.5rem 3rem; text-align: center; }
+          .pc_num { font-family: Coolvetica Condensed, sans-serif; font-size: clamp(6rem, 13vw, 11rem); line-height: .9; letter-spacing: -.02em; }
+          .pc_unit { margin: 1rem 0 0; font-size: 1.25rem; }
+          .pc_line { margin: 1.75rem auto 0; max-width: 28rem; color: rgba(8, 8, 8, .7); }
+          .pc_year { margin: .75rem auto 0; max-width: 28rem; color: rgba(8, 8, 8, .7); }
+          .pc_year b { font-weight: 500; color: var(--black); background-image: linear-gradient(var(--green), var(--green)); background-repeat: no-repeat; background-position: 0 88%; background-size: 100% 45%; }
+          .pc_tpl { display: none; }
+          @media (max-width: 991px) {
+            .pc_grid { grid-template-columns: 1fr; gap: 2.5rem; }
+          }
+          @media (max-width: 767px) {
+            .pc { padding: 4rem 0 4.5rem; }
+            .pc_card { border-radius: 2.25rem; padding: 2.5rem 1.5rem; }
+          }
+        </style>
+        <div class="container-large">
+          <div class="pc_grid">
+            <div class="pc_text">
+              <h2 class="heading-style-h2" data-i18n="tiers_pc_title">What a live class costs</h2>
+              <p class="text-size-medium" data-i18n="tiers_pc_desc">Pick a plan to see the price of one live class, worked out from its monthly price and the classes you get in a month of about 4.3 weeks.</p>
+              <div class="pc_pick" role="group">
+                <button type="button" aria-pressed="true" data-m="24" data-y="240" data-w="1">Community</button>
+                <button type="button" aria-pressed="false" data-m="59" data-y="590" data-w="2">Focused</button>
+                <button type="button" aria-pressed="false" data-m="109" data-y="1090" data-w="4">Intensive</button>
+                <button type="button" aria-pressed="false" data-m="269" data-y="2690" data-w="3">1 on 1</button>
+              </div>
+            </div>
+            <div class="pc_card shadow-card" data-no-currency aria-live="polite">
+              <div class="pc_num">€5.50</div>
+              <p class="pc_unit" data-i18n="tiers_pc_unit">per live class</p>
+              <p class="pc_line text-size-medium"></p>
+              <p class="pc_year text-size-regular"></p>
+            </div>
+          </div>
+          <span class="pc_tpl" data-i18n="tiers_pc_line_1">One live class a week, about 4 a month, for {price} a month.</span>
+          <span class="pc_tpl" data-i18n="tiers_pc_line_2">Two live classes a week, about 9 a month, for {price} a month.</span>
+          <span class="pc_tpl" data-i18n="tiers_pc_line_3">Three group classes and one one-to-one session a week, about 17 a month, for {price} a month.</span>
+          <span class="pc_tpl" data-i18n="tiers_pc_line_4">Three private classes a week, about 13 a month, for {price} a month.</span>
+          <span class="pc_tpl" data-i18n="tiers_pc_year">On the yearly plan: about {price} per class.</span>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".pc");
+            var btns = [].slice.call(root.querySelectorAll(".pc_pick button")), num = root.querySelector(".pc_num");
+            var tplYear = root.querySelector('[data-i18n="tiers_pc_year"]');
+            var AC = window.AlimunCurrency, WEEKS = 52 / 12, shown = null, timer = null;
+            var lang = document.documentElement.lang || "en";
+            // Amount in the visitor's currency, with two decimals for per-class figures.
+            function conv(eur) { return AC ? AC.convert(eur) : eur; }
+            function fmt(n, decimals) {
+              var code = AC ? AC.code : "eur", txt;
+              try { txt = new Intl.NumberFormat(lang, { minimumFractionDigits: decimals, maximumFractionDigits: decimals }).format(n); } catch (e) { txt = n.toFixed(decimals); }
+              if (code === "mad") return txt + " MAD";
+              return (AC ? AC.symbol : "€") + txt;
+            }
+            function roll(to) {
+              var from = shown === null ? to : shown, t0 = performance.now(), dur = 700;
+              clearInterval(timer); cancelAnimationFrame(timer);
+              (function step(now) {
+                var k = Math.min(1, (now - t0) / dur), e = 1 - Math.pow(1 - k, 3);
+                num.textContent = fmt(from + (to - from) * e, 2);
+                if (k < 1) timer = requestAnimationFrame(step); else shown = to;
+              })(t0);
+            }
+            function pick(b) {
+              btns.forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+              var m = +b.getAttribute("data-m"), y = +b.getAttribute("data-y"), w = +b.getAttribute("data-w");
+              var perMonth = w * WEEKS;
+              roll(Math.round(conv(m) / perMonth * 10) / 10);
+              var tplLine = root.querySelector('[data-i18n="tiers_pc_line_' + (btns.indexOf(b) + 1) + '"]');
+              root.querySelector(".pc_line").textContent = tplLine.textContent.replace("{price}", fmt(conv(m), 0));
+              var yearly = Math.round(conv(y) / 12 / perMonth * 10) / 10;
+              var parts = tplYear.textContent.split("{price}");
+              var line = root.querySelector(".pc_year"); line.textContent = parts[0];
+              var bold = document.createElement("b"); bold.textContent = fmt(yearly, 2); line.appendChild(bold);
+              line.appendChild(document.createTextNode(parts[1] || ""));
+            }
+            btns.forEach(function (b) { b.addEventListener("click", function () { pick(b); }); });
+            pick(btns[0]);
+          })();
+        </script>
+      </section>
