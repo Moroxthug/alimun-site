@@ -29,3 +29,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: *sich verletzen* with accusative and dative (*dich* / *dir das Knie*), explained in the why.
 - u5 p1, p4: impersonal and marked passives (*Bei uns wird nicht ferngesehen*, *Bei mir wird die Zeitung gelesen*), on the edge of B1.
 - u5 p2: check every indirect-question choice has one right answer.
+- u6 p1: the tip says spoken German often uses the dative after *wegen* and *trotz*; only the genitive is taught.
+- u6 p4: station announcements are simplified.
+- u7 p2: in the word-order item *Wirst du mir beim Umzug helfen?*, *beim Umzug mir* is marginal but possible with emphasis.
+- u7 p3: waste bins (Biotonne, Papiertonne, Altglas) and the 25-cent deposit: true in general, differs by town.
+- u8 p3: customs (Nikolaus, Heiligabend, Fasching areas, national days 3 Oct, 26 Oct, 1 Aug): check the wording is not too absolute.
+- u8 p1: five-column adjective tables (they shrink to fit on phones and open full screen).
