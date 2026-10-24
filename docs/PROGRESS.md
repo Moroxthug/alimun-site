@@ -554,3 +554,4 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Home is a sample layout only (next class, buddy, today's tasks, streak, unit progress, free plan); the real Home is step 3. Other sections show their character and the step that builds them.
 - Files: `app/preview.html`, `css/app.css`, `js/app/cast.js` (generated from `docs/design/sources`), `js/app/shell.js`, `js/app/sample-data.js`.
 - For the owner to decide: the navigation icons are simple line icons drawn for Alimun in the same stroke as the drawings (no icon set); the text is English only until the look is confirmed, then it moves to `js/translations.js`.
+- Owner (24 Oct): look and navigation approved. The name next to the book is now the real wordmark from `images/alimun-logo.svg` (lowercase, gold i dot), not Coolvetica capitals; the book keeps its blinking eyes. Step 3 continues in a new conversation.

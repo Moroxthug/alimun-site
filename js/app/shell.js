@@ -79,14 +79,14 @@
     app.innerHTML =
       '<a class="skip" href="#view">Skip to content</a>' +
       '<aside class="side" aria-label="Main">' +
-        '<a class="brand" href="#/home">' + Cast.book('idle') + '<span>Alimun</span></a>' +
+        '<a class="brand" href="#/home" aria-label="Alimun home">' + Cast.book('idle') + Cast.wordmark() + '</a>' +
         '<nav class="nav" aria-label="Sections">' + navLinks() + '</nav>' +
         '<div class="side__foot"><a class="buddy-card" href="#/book">' + buddySvg +
           '<div><b>' + esc(S.course.language) + ' ' + esc(S.course.level) + '</b><small>' + esc(S.course.unit) + '</small></div></a></div>' +
       '</aside>' +
       '<div class="main">' +
         '<header class="top">' +
-          '<a class="top__brand" href="#/home" aria-label="Alimun home">' + Cast.book('idle') + '</a>' +
+          '<a class="top__brand" href="#/home" aria-label="Alimun home">' + Cast.book('idle') + Cast.wordmark() + '</a>' +
           '<p class="top__title" aria-hidden="true"></p>' +
           '<div class="top__actions">' +
             '<button class="course-btn" type="button" aria-label="Course: ' + esc(S.course.language) + '">' + buddySvg + '<span>' + esc(S.course.language) + '</span></button>' +
