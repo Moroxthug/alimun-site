@@ -521,3 +521,5 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Terms, Privacy Policy and Cookie Policy translated into Spanish, French (also used for Morocco), German, Portuguese, Italian, Chinese and Arabic (`site/src/blocks/legal/i18n/<lang>/`). Each starts with a note that the English version prevails unless local law says otherwise (Terms section 19 already said so).
 - Checked: same markup, links and `[COPY NEEDED]` placeholders as the English in every language; the "Manage Cookies" link is named as in each language's footer.
 - Still needed from the owner: registered office address, province of incorporation, EU and UK representatives, CNDP number, confirmation that the AI provider plans exclude training on customer content.
+
+- Owner (24 Oct): cookie banner stays as it is (Analytics switch and "Optional" label) until analytics is built.
