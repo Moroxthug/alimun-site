@@ -168,7 +168,9 @@
     var stop = nextStop(book);
     var mine = A.data().profile.language === book.language && A.data().profile.level === book.level;
     var lead, h, btn;
-    if (!stop) {
+    if (!w.length) {
+      h = t('app_book_none_h'); lead = t('app_book_soon_p'); btn = '';
+    } else if (!stop) {
       h = t('app_book_all_h'); lead = t('app_book_all_p'); btn = '';
     } else {
       h = share.done ? t('app_book_continue_h') : t('app_book_start_h');

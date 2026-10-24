@@ -33,3 +33,16 @@ export function localize(book, strings) {
   if (strings) visit(copy, (text, set) => { if (strings[text]) set(strings[text]); });
   return copy;
 }
+
+// The book with its written units: each unit file (units/<book>/<unit>.js, exporting UNIT) replaces the planned entry
+// with the same id. A unit's "plan" (the outline writers work from) is not served.
+export function assemble(book, units) {
+  const copy = JSON.parse(JSON.stringify(book));
+  copy.units = copy.units.map((u) => {
+    const w = units && units[u.id];
+    const out = w ? JSON.parse(JSON.stringify(w)) : u;
+    delete out.plan;
+    return out;
+  });
+  return copy;
+}
