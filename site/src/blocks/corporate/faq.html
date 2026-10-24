@@ -1,0 +1,84 @@
+      <section class="section qa is-home is-tiers is-corp">
+        <style>
+          /* Corporate FAQ: the Tiers FAQ layout and motion (homepage FAQ with a white answer card), with questions about training for companies. Questions on the left slide in one
+             after another; the answer to the selected question slides into a large card on the right. Stacked on phones.
+             scripts/localize.mjs adds FAQPage structured data per language from the translated answers. */
+          .qa { padding: 6rem 0 7rem; }
+          .qa_head { margin-bottom: 3rem; }
+          .qa_head h2 { margin: 0; }
+          /* Tiers: the title and intro rise in and the answer card slides in from the side with the questions. */
+          .qa.is-tiers .qa_head > * { opacity: 0; transform: translateY(1.75rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .qa.is-tiers .qa_card { opacity: 0; transform: translateX(3rem); transition: opacity .8s ease .35s, transform 1s cubic-bezier(.215, .61, .355, 1) .35s; }
+          [dir="rtl"] .qa.is-tiers .qa_card { transform: translateX(-3rem); }
+          .qa.is-tiers:has(.qa_list.is-in) .qa_head > * { opacity: 1; transform: none; }
+          .qa.is-tiers:has(.qa_list.is-in) .qa_head > :nth-child(2) { transition-delay: .12s; }
+          .qa.is-tiers:has(.qa_list.is-in) .qa_card { opacity: 1; transform: none; }
+          .qa_head p { margin: 1rem 0 0; max-width: 34rem; color: rgba(8, 8, 8, .7); }
+          .qa_head a { color: var(--black); text-decoration: none; background-image: linear-gradient(var(--green), var(--green)); background-repeat: no-repeat; background-position: 0 88%; background-size: 100% 45%; }
+          [dir="rtl"] .qa_q { transform: translateX(2rem); }
+          [dir="rtl"] .qa_list.is-in .qa_q { transform: none; }
+          [dir="rtl"] .qa_q { text-transform: none; }
+          .qa_wrap { display: grid; grid-template-columns: 5fr 6fr; gap: 2.5rem; align-items: start; }
+          .qa_list { display: flex; flex-direction: column; }
+          .qa_q { display: block; width: 100%; text-align: start; background: none; border: 0; border-top: 1px solid rgba(8, 8, 8, .12); padding: 1.35rem 0; cursor: pointer; color: rgba(8, 8, 8, .45); font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-size: clamp(1.35rem, 2vw, 1.75rem); line-height: 1.05; opacity: 0; transform: translateX(-2rem); transition: color .35s ease, opacity .6s ease, transform .7s cubic-bezier(.215, .61, .355, 1); }
+          .qa_list.is-in .qa_q { opacity: 1; transform: none; }
+          .qa_q.is-on { color: var(--black); }
+          .qa_q .qa_mobile { display: none; }
+          .qa_card { position: sticky; top: 8rem; min-height: 22rem; border-radius: 3.125rem; background-color: var(--white); padding: 3rem; overflow: hidden; }
+          .qa_a { position: absolute; left: 3rem; right: 3rem; top: 3rem; opacity: 0; transform: translateY(1.5rem); transition: opacity .45s ease, transform .55s cubic-bezier(.215, .61, .355, 1); pointer-events: none; }
+          .qa_a.is-on { position: relative; left: auto; right: auto; top: auto; opacity: 1; transform: none; pointer-events: auto; }
+          .qa_a h3 { margin: 0 0 1rem; }
+          .qa_a p { margin: 0; }
+          @media (max-width: 767px) {
+            .qa { padding: 4.5rem 0 5rem; }
+            .qa_wrap { grid-template-columns: 1fr; }
+            .qa_card { display: none; }
+            .qa_q { color: var(--black); }
+            .qa_q .qa_mobile { display: block; margin-top: .75rem; font-family: Satoshi, sans-serif; text-transform: none; font-size: 1rem; line-height: 1.6; color: rgba(8, 8, 8, .75); max-height: 0; overflow: hidden; transition: max-height .5s ease; }
+            .qa_q.is-on .qa_mobile { max-height: 20rem; }
+          }
+        </style>
+        <div class="container-large">
+          <div class="qa_head">
+            <h2 class="heading-style-h2" data-i18n="corp_faq_title">Questions about corporate training</h2>
+            <p class="text-size-medium" data-i18n-html="faqs_desc">Can’t find the answer you’re looking for? Send us a message through our <a href="contact.html" class="text-style-link">contact page</a>.</p>
+          </div>
+          <div class="qa_wrap">
+            <div class="qa_list">
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="corp_faq_q1">How much does corporate training cost?</span><span class="qa_mobile" data-i18n="corp_faq_a1">Pricing depends on the size of your team and what you need. Contact us and we will put together a quote.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="corp_faq_q2">Can the classes be only for our employees?</span><span class="qa_mobile" data-i18n="corp_faq_a2">Yes. Your employees learn in a private group for your company, and managers can also have one-to-one classes.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="corp_faq_q3">Which languages can our team learn?</span><span class="qa_mobile" data-i18n="corp_faq_a3">English and German classes are open today. French, Spanish, Italian and Portuguese are coming soon.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="corp_faq_q4">Can employees prepare for a language certificate?</span><span class="qa_mobile" data-i18n="corp_faq_a4">They can practice tasks in the format of IELTS, B2 First and C1 Advanced for English, and Goethe B1, Goethe B2 and telc B1 for German. This is practice in the exam format, not official exam material: the exam itself is taken with the official provider.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="corp_faq_q5">What do employees need to join?</span><span class="qa_mobile" data-i18n="corp_faq_a5">A computer or other device with a camera and a microphone. Classes run in the browser, so there is nothing to install.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="corp_faq_q6">How do we get started?</span><span class="qa_mobile" data-i18n="corp_faq_a6">Write to us through the contact page with the size of your team, the languages and what you need, and we will reply by email with a quote.</span></button>
+            </div>
+            <div class="qa_card shadow-card" aria-live="polite">
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="corp_faq_q1">How much does corporate training cost?</h3><p class="text-size-large" data-i18n="corp_faq_a1">Pricing depends on the size of your team and what you need. Contact us and we will put together a quote.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="corp_faq_q2">Can the classes be only for our employees?</h3><p class="text-size-large" data-i18n="corp_faq_a2">Yes. Your employees learn in a private group for your company, and managers can also have one-to-one classes.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="corp_faq_q3">Which languages can our team learn?</h3><p class="text-size-large" data-i18n="corp_faq_a3">English and German classes are open today. French, Spanish, Italian and Portuguese are coming soon.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="corp_faq_q4">Can employees prepare for a language certificate?</h3><p class="text-size-large" data-i18n="corp_faq_a4">They can practice tasks in the format of IELTS, B2 First and C1 Advanced for English, and Goethe B1, Goethe B2 and telc B1 for German. This is practice in the exam format, not official exam material: the exam itself is taken with the official provider.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="corp_faq_q5">What do employees need to join?</h3><p class="text-size-large" data-i18n="corp_faq_a5">A computer or other device with a camera and a microphone. Classes run in the browser, so there is nothing to install.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="corp_faq_q6">How do we get started?</h3><p class="text-size-large" data-i18n="corp_faq_a6">Write to us through the contact page with the size of your team, the languages and what you need, and we will reply by email with a quote.</p></div>
+            </div>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".qa"), list = root.querySelector(".qa_list");
+            var qs = [].slice.call(root.querySelectorAll(".qa_q")), as = [].slice.call(root.querySelectorAll(".qa_a"));
+            function show(k) {
+              qs.forEach(function (q, i) { q.classList.toggle("is-on", i === k); q.setAttribute("aria-expanded", i === k ? "true" : "false"); });
+              as.forEach(function (a, i) { a.classList.toggle("is-on", i === k); });
+            }
+            qs.forEach(function (q, i) {
+              q.addEventListener("mouseenter", function () { if (window.matchMedia("(hover: hover)").matches) show(i); });
+              q.addEventListener("click", function () { show(i); });
+              q.style.transitionDelay = "0s, " + (i * 0.08) + "s, " + (i * 0.08) + "s";
+            });
+            show(0);
+            if (!("IntersectionObserver" in window)) { list.classList.add("is-in"); return; }
+            var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { list.classList.add("is-in"); io.disconnect(); } }, { threshold: 0.2 });
+            io.observe(list);
+          })();
+        </script>
+      </section>

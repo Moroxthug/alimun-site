@@ -1,0 +1,69 @@
+      <section class="cs">
+        <style>
+          /* Corporate language training online: the main text of the page for search. Each topic is a full-width row:
+             its rule draws across, the heading slides in from the side, the text rises and a lime marker sweeps across
+             its key phrase. Plain text in the HTML, translated per language. */
+          .cs { padding: 7rem 0 6rem; background-color: var(--white); }
+          .cs_head { display: flex; align-items: flex-end; justify-content: space-between; gap: 3rem; margin-bottom: 3.5rem; }
+          .cs_head h2 { margin: 0; max-width: 40rem; }
+          .cs_head p { margin: 0; max-width: 26rem; color: rgba(8, 8, 8, .7); }
+          .cs_head > * { opacity: 0; transform: translateY(2rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .cs_head.is-in > * { opacity: 1; transform: none; }
+          .cs_head.is-in > :nth-child(2) { transition-delay: .15s; }
+          .cs_row { position: relative; display: grid; grid-template-columns: 4fr 7fr; gap: 3rem; padding: 2.5rem 0; }
+          .cs_row::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 1px; background-color: rgba(8, 8, 8, .15); transform: scaleX(0); transform-origin: left center; transition: transform 1.1s cubic-bezier(.215, .61, .355, 1); }
+          [dir="rtl"] .cs_row::before { transform-origin: right center; }
+          .cs_row h3 { margin: 0; opacity: 0; transform: translateX(-2.5rem); transition: opacity .8s ease .2s, transform .9s cubic-bezier(.215, .61, .355, 1) .2s; }
+          [dir="rtl"] .cs_row h3 { transform: translateX(2.5rem); }
+          .cs_row p { margin: 0; max-width: 42rem; opacity: 0; transform: translateY(1.75rem); transition: opacity .8s ease .35s, transform .9s cubic-bezier(.215, .61, .355, 1) .35s; }
+          .cs_row.is-in::before { transform: scaleX(1); }
+          .cs_row.is-in h3, .cs_row.is-in p { opacity: 1; transform: none; }
+          .cs_mark { background-image: linear-gradient(var(--green), var(--green)); background-repeat: no-repeat; background-position: 0 88%; background-size: 0% 45%; transition: background-size 1s cubic-bezier(.215, .61, .355, 1) .8s; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+          [dir="rtl"] .cs_mark { background-position: 100% 88%; }
+          .cs_row.is-in .cs_mark { background-size: 100% 45%; }
+          @media (max-width: 991px) {
+            .cs_head { flex-direction: column; align-items: flex-start; gap: 1.25rem; }
+            .cs_row { grid-template-columns: 1fr; gap: 1rem; }
+          }
+          @media (max-width: 767px) { .cs { padding: 4.5rem 0 4rem; } .cs_head { margin-bottom: 2rem; } .cs_row { padding: 2rem 0; } }
+        </style>
+        <div class="container-large">
+          <div class="cs_head">
+            <h2 class="heading-style-h2" data-i18n="corp_seo_title">Corporate language training online</h2>
+            <p class="text-size-medium" data-i18n="corp_seo_intro">Alimun teaches languages to teams in live online classes with a teacher. Here is how training for your company works.</p>
+          </div>
+          <div class="cs_rows">
+            <div class="cs_row">
+              <h3 class="heading-style-h4" data-i18n="corp_seo_1_h">A private group for your company</h3>
+              <p class="text-size-large" data-i18n-html="corp_seo_1_p">Your employees learn together in a private live class with a teacher, on fixed days at the same time each week, and managers can have <span class="cs_mark">one-to-one classes</span>. Classes run in the browser, so people join from the office, from home or from another country.</p>
+            </div>
+            <div class="cs_row">
+              <h3 class="heading-style-h4" data-i18n="corp_seo_2_h">Lessons about the work they do</h3>
+              <p class="text-size-large" data-i18n-html="corp_seo_2_p">The teacher builds lessons, notes and homework around <span class="cs_mark">your field and the situations your team meets at work</span>, such as meetings, calls, emails and presentations.</p>
+            </div>
+            <div class="cs_row">
+              <h3 class="heading-style-h4" data-i18n="corp_seo_3_h">Language training for relocation</h3>
+              <p class="text-size-large" data-i18n-html="corp_seo_3_p">Employees you relocate can <span class="cs_mark">start before they move</span> and keep going after they arrive, so they settle in and work in the new language sooner. English and German classes are open today, and French, Spanish, Italian and Portuguese are coming.</p>
+            </div>
+            <div class="cs_row">
+              <h3 class="heading-style-h4" data-i18n="corp_seo_4_h">Practice for work and visa certificates</h3>
+              <p class="text-size-large" data-i18n-html="corp_seo_4_p">Many visas and work permits ask for a language certificate. Employees can practice tasks in the format of <span class="cs_mark">IELTS, B2 First and C1 Advanced</span> for English, and Goethe B1, Goethe B2 and telc B1 for German. It is practice in the exam format, not official exam material.</p>
+            </div>
+            <div class="cs_row">
+              <h3 class="heading-style-h4" data-i18n="corp_seo_5_h">Practice between classes</h3>
+              <p class="text-size-large" data-i18n-html="corp_seo_5_p">Between lessons, employees keep practicing with <span class="cs_mark">exercises at their level that are corrected instantly</span> and flashcards with the vocabulary from class, and their teacher returns their homework corrected.</p>
+            </div>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".cs");
+            var els = [root.querySelector(".cs_head")].concat([].slice.call(root.querySelectorAll(".cs_row")));
+            if (!("IntersectionObserver" in window)) { els.forEach(function (r) { r.classList.add("is-in"); }); return; }
+            var io = new IntersectionObserver(function (entries) {
+              entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
+            }, { rootMargin: "0px 0px -15% 0px" });
+            els.forEach(function (r) { io.observe(r); });
+          })();
+        </script>
+      </section>

@@ -489,3 +489,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Kept: AI disclosures in Terms and the GDPR/privacy policy (required); dashboard text.
 - Check: scanning all 134 built public pages (legal excluded) finds 0 mentions in any language. Signup, signin and dashboards boot with no errors.
 - CLAUDE.md: new copy rule "No AI branding".
+
+## 2026-10-24 — Corporate page redo
+- Removed the invented "94% of assignments fail" stat and its red highlight, and the slides claiming built-in progress tracking and real-time attendance; the slideshow now says only true things and sits after the cards.
+- "Company dashboard" card removed (no such feature in the app, API or database) and replaced by a placement-level card; the card is white instead of black. The dashboard claim was also removed from the search descriptions in every language.
+- New sections: "Corporate language training online" (search text, animated rows) and a six-question corporate FAQ (FAQPage structured data). The lime "Let's talk about your team" card is now the closing banner.
+- All new copy translated into es, fr, de, pt, zh, ar, it, ma. No AI mentions.

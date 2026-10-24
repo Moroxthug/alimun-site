@@ -77,8 +77,8 @@
     "approved": "2026-10-22 about photo section ok (learner/teacher, reveal + drift) | 2026-10-22 owner: animations always play (reduced-motion switch removed)"
   },
   "src/blocks/corporate/head.html": {
-    "sha256": "f1e6d6c35bdba5f6a21a25b0b70a237778717e89db271c573eeb940ec9f7cd85",
-    "approved": "2026-10-22 corporate nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request)"
+    "sha256": "e78121e767d1757028c5cb52bf18937c478290e8da2bb3e217dd76ce3040948c",
+    "approved": "2026-10-22 corporate nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 company dashboard removed from the descriptions (feature does not exist; owner: go on with corporate)"
   },
   "src/blocks/corporate/after.html": {
     "sha256": "838c06364965a5530c13b451b6586fc9aef690f18c801a329f6c33e3bdfda3fb",
@@ -93,16 +93,16 @@
     "approved": "2026-10-22 corporate hero ok (owner text, Contact us, team-meeting video) | 2026-10-22 owner: hero scroll transition everywhere"
   },
   "src/blocks/corporate/s02.html": {
-    "sha256": "d787114cb8261dbde8a03e810d2df25e360a66b040d62a67e4e2efadbcc844fd",
-    "approved": "2026-10-22 corporate workforce fluency ok (bento, scroll motion)"
+    "sha256": "1053508af1a552b9ab1626028307c7f01eb9d1a90192a12a9648d6d0f63e3198",
+    "approved": "2026-10-22 corporate workforce fluency ok (bento, scroll motion); 2026-10-24 Company dashboard card replaced by placement level card, white instead of black (owner: go on with corporate)"
   },
   "src/blocks/corporate/s02c-contact.html": {
     "sha256": "1e9d02a3a6bcd193aee511866240ebec5359ec49bf53de00bbb642572b48b94a",
     "approved": "2026-10-22 corporate contact CTA ok (lime card)"
   },
   "src/blocks/corporate/s06-slider.html": {
-    "sha256": "46cb1aca7181d57d7aa27bbb51295276741feb2bf2d603979b4e1e645694f71e",
-    "approved": "2026-10-22 corporate closing slideshow ok (live words, bigger and centred); 2026-10-24 AI mentions removed (owner)"
+    "sha256": "4dcdc7d8c0531be8266c5df6fbb06e5ed4ef2b35435223cfeaf6df4f6fa46367",
+    "approved": "2026-10-22 corporate closing slideshow ok (live words, bigger and centred); 2026-10-24 AI mentions removed (owner); 2026-10-24 invented 94% stat, red colour and unverified tracking slides replaced with true lines; moved after the cards (owner: go on with corporate)"
   },
   "src/blocks/careers/head.html": {
     "sha256": "4af2ff1be8a69289952842f315beee34a4fb55ad642a3ddac06e46dad78ee61e",
