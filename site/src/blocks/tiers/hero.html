@@ -1,0 +1,60 @@
+      <section class="section is-about-hero">
+        <style>
+          /* The photo sits below the heading instead of under it, as on About us and Corporate. */
+          .section.is-about-hero .about-visual_wrap { margin-top: 2rem; }
+          @media (max-width: 767px) { .section.is-about-hero .about-visual_wrap { margin-top: 1.25rem; } }
+          /* Keep the student in frame when the video is cropped narrow. */
+          #tiers-hero-video { object-position: 38% 50%; }
+          /* Own entrance for the title, text and button (the Webflow interaction for this hero belongs to the Careers page). */
+          .th_in { display: inline-block; animation: thIn 1s cubic-bezier(.215, .61, .355, 1) both .15s; }
+          .section.is-about-hero .flex-center > * { animation: thIn 1s cubic-bezier(.215, .61, .355, 1) both .45s; }
+          @keyframes thIn { from { opacity: 0; transform: translateY(.5em); } to { opacity: 1; transform: none; } }
+          /* Scroll transition: the video frame grows to full size and the heading drifts up as the page starts to scroll. */
+          .section.is-about-hero .about-visual_wrap { transform: scale(var(--hero-s, .9)); transform-origin: center top; will-change: transform; }
+          .section.is-about-hero .video_bg video { transform: scale(var(--hero-z, 1.15)); }
+          .section.is-about-hero .max-width-700 { transform: translateY(var(--hero-y, 0px)); opacity: var(--hero-o, 1); }
+        </style>
+        <div class="container-large">
+          <div class="about-hero_wrap">
+            <div class="max-width-700">
+              <h1 class="heading-style-h1"><span class="is-word is-1 th_in" data-i18n="nav_tiers">tiers</span></h1>
+            </div>
+            <div class="about-visual_wrap">
+              <div class="video_box">
+                <div class="video_bg">
+                  <div data-poster-url="videos/pexels-4492697-online-lesson-poster-00001.jpg" data-video-urls="videos/pexels-4492697-online-lesson-transcode.mp4,videos/pexels-4492697-online-lesson-transcode.webm" data-autoplay="true" data-loop="true" data-wf-ignore="true" class="video_bg w-background-video w-background-video-atom"><video id="tiers-hero-video" autoplay="" loop="" style="background-image:url(&quot;videos/pexels-4492697-online-lesson-poster-00001.jpg&quot;)" muted="" playsinline="" data-wf-ignore="true" data-object-fit="cover">
+                      <source src="videos/pexels-4492697-online-lesson-transcode.mp4" data-wf-ignore="true">
+                      <source src="videos/pexels-4492697-online-lesson-transcode.webm" data-wf-ignore="true">
+                    </video></div>
+                </div>
+              </div>
+            </div>
+            <div class="w-layout-vflex flex-center">
+              <div class="max-width-800">
+                <p class="text-size-medium" data-i18n="tiers_hero_lead">Live language classes with a teacher, from €24 a month. Choose the size of your group and how often you meet, and switch plan as your goals change.</p>
+              </div>
+              <div class="margin-top-24">
+                <a href="#plans" class="button w-inline-block">
+                  <p data-i18n="tiers_hero_cta">See the plans</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16">
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".is-about-hero");
+            function update() {
+              var p = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.5)));
+              root.style.setProperty("--hero-s", (0.9 + p * 0.1).toFixed(3));
+              root.style.setProperty("--hero-z", (1.15 - p * 0.15).toFixed(3));
+              root.style.setProperty("--hero-y", (-p * 60).toFixed(1) + "px");
+              root.style.setProperty("--hero-o", (1 - p * 0.5).toFixed(3));
+            }
+            window.addEventListener("scroll", update, { passive: true });
+            window.addEventListener("resize", update);
+            update();
+          })();
+        </script>
+      </section>
+      

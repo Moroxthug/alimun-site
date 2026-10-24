@@ -447,3 +447,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `signup.html`: reads `tier` and `billing` from the URL and preselects them (checked against signup's TIERS ids; the plan step itself needs a session, so it was not driven end to end).
 - Translations: 17 `tiers_*` keys in all nine languages.
 - Checked: desktop, phone, Arabic; the switch updates prices, billing lines and links; no errors.
+- Owner: add a hero like the other pages before the plans.
+  - New `site/src/blocks/tiers/hero.html`, built from the Careers hero (same layout and scroll transition): title "Tiers" (`nav_tiers`), Pexels 4492697 (Artem Podrez, a student in an online lesson; `videos/pexels-4492697-online-lesson-*`), new text `tiers_hero_lead` and button "See the plans" (`tiers_hero_cta`, anchors to `#plans`).
+  - The Careers Webflow interaction does not run on the Tiers page, so the initial-state inline styles were removed and the title, text and button have their own entrance animation.
+  - The plans heading is now an H2 (one H1 per page).
+- Checked: desktop, phone, Arabic; title and button visible; the button scrolls to the plans; no errors.
