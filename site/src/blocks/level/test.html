@@ -21,6 +21,8 @@
           .lt_go { margin-top: 1.75rem; width: 100%; justify-content: center; border: 0; cursor: pointer; }
           .lt_go[disabled] { opacity: .4; cursor: not-allowed; }
           .lt_facts { margin: 1.25rem 0 0; font-size: .9rem; color: rgba(8, 8, 8, .6); }
+          .lt_wl { margin-top: .5rem; }
+          .lt_wl a { color: var(--black); }
 
           /* The test layer covers the page while it runs. */
           .lt_run { position: fixed; inset: 0; z-index: 9000; background-color: var(--white); display: flex; flex-direction: column; opacity: 0; transition: opacity .35s ease; }
@@ -133,6 +135,7 @@
               </div>
               <button type="button" class="button lt_go" disabled><span data-i18n="lt_start">Start the test</span></button>
               <p class="lt_facts" data-i18n="lt_facts">Free, no account needed. Your result appears as soon as you finish.</p>
+              <p class="lt_facts lt_wl"><span data-i18n="lt_waitlist">Learning Mandarin, Japanese or Arabic? Classes are not open yet:</span> <a href="signup.html?waitlist=Mandarin" data-wl="Mandarin">Mandarin</a>, <a href="signup.html?waitlist=Japanese" data-wl="Japanese">Japanese</a>, <a href="signup.html?waitlist=Arabic" data-wl="Arabic">Arabic</a>.</p>
             </div>
           </div>
 
@@ -229,6 +232,11 @@
                 langBtns.forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
                 go.disabled = false;
               });
+            });
+            // Waitlist links show the language names in the page's language too.
+            $$(".lt_wl a").forEach(function (a) {
+              var code = { Mandarin: "zh", Japanese: "ja", Arabic: "ar" }[a.getAttribute("data-wl")];
+              if (names && code) { var n = names.of(code); if (n) a.textContent = n.charAt(0).toLocaleUpperCase(uiLang) + n.slice(1); }
             });
             // ?language=German preselects the language (course pages and sign-up buttons pass it).
             var pre = new URLSearchParams(location.search).get("language");
@@ -390,7 +398,10 @@
                 var joined = list.length === 1 ? "<b>" + esc(list[0]) + "</b>" : list.slice(0, -1).map(function (t) { return "<b>" + esc(t) + "</b>"; }).join(", ") + " " + esc(tpl("lt_and")) + " <b>" + esc(list[list.length - 1]) + "</b>";
                 focus.innerHTML = esc(tpl("lt_focus_text")).replace("{topics}", joined);
               }
-              $(".lt_cta").setAttribute("href", "signup.html?from=test&language=" + encodeURIComponent(r.language));
+              // A plan chosen on the Tiers page (?tier=&billing=) comes along to sign-up, where payment follows the goal step.
+              var q = new URLSearchParams({ from: "test", language: r.language }), here = new URLSearchParams(location.search);
+              ["tier", "billing"].forEach(function (k) { if (here.get(k)) q.set(k, here.get(k)); });
+              $(".lt_cta").setAttribute("href", "signup.html?" + q.toString());
               requestAnimationFrame(function () { res.classList.add("is-in"); });
               // The level code rolls up through the scale and lands on the result while the segments fill.
               var code = $(".lt_lvl"), segs = $$(".lt_seg"), k = 0;

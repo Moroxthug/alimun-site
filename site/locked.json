@@ -9,8 +9,8 @@
     "approved": "2026-10-19 nav ok"
   },
   "src/blocks/01-nav.html": {
-    "sha256": "d41d546f4b5bd5970bb667fb9e91d5c47ace028096c101676d7806ff78439ace",
-    "approved": "2026-10-19 nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
+    "sha256": "ceb9d496127cd9f2b6fc0dace36adcf5c32b0451dfe4e6abc48a5bacdbb928fc",
+    "approved": "2026-10-19 nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/02-hero.html": {
     "sha256": "7bbe81c46d0e8e64e78b8f1f0ea8dd77d81d574240bc1963fd5c842e1defc395",
@@ -25,12 +25,12 @@
     "approved": "2026-10-20 tiers nav ok"
   },
   "src/blocks/tiers/nav.html": {
-    "sha256": "6a1e83bb2c50dbb6684ac52eb630739ac2bc0eff7efa4a81cb07980277b0a8b8",
-    "approved": "2026-10-20 tiers nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
+    "sha256": "9fe8c8d2644fc6694bc9df01ca3c0f6d7e6edf4e7222669db28208ec624e1428",
+    "approved": "2026-10-20 tiers nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/tiers/s02.html": {
-    "sha256": "2e015542f5dbbe646611be749d10f91283420b8f7cdf4c5ed287981787c4f82b",
-    "approved": "2026-10-22 tiers banner ok"
+    "sha256": "dd4309ab7aa17ad2ffb46ac0e454e36d1e7488f82287cfdc60d3b12917ae44b0",
+    "approved": "2026-10-22 tiers banner ok; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/services/head.html": {
     "sha256": "c974e7606cbc13511f9d207334158062c641ba650ca49db95af161c9b52d1634",
@@ -41,16 +41,16 @@
     "approved": "2026-10-22 services nav ok"
   },
   "src/blocks/services/nav.html": {
-    "sha256": "ccb8eee5a452fced70ec5299424f9fa303feb5cc4df6a5a9f66512d36e09e0c4",
-    "approved": "2026-10-22 services nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
+    "sha256": "fe247b8b20dc3c4c556f158d540fea4b1ca96574bb57fec6ed35ffcc1de9b73e",
+    "approved": "2026-10-22 services nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/services/s01.html": {
     "sha256": "96a37c9fd3332f01f3959dde731519c61d7d061d5e3adcfe447d21a180d2e701",
     "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 quote restored (owner); 2026-10-24 AI mentions removed (owner)"
   },
   "src/blocks/services/s04.html": {
-    "sha256": "dfd3cb850916dfd88a6553b58917753e5bcf0ada190a4090ac5eb3aa57f7c413",
-    "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed); 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor"
+    "sha256": "ca67580b92a3c3d2516e8fc93470e78ced3cb2f718de01900ca9de864d18de88",
+    "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed); 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/about/head.html": {
     "sha256": "d410609269347eb505774dea4e2ec80a33eb654a9f7d22b507e8a0ce2d1960ad",
@@ -61,20 +61,20 @@
     "approved": "2026-10-22 about nav ok"
   },
   "src/blocks/about/nav.html": {
-    "sha256": "96bfa5d2d22fadef60d9b863d70151f21df9cf4f4962a58950de3120a7deff9f",
-    "approved": "2026-10-22 about nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
+    "sha256": "fa50d31cf9f894d224e4d2de2dd6517dbb0705b4f0ae859e7b3cf28d04562700",
+    "approved": "2026-10-22 about nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/about/s01.html": {
-    "sha256": "04c312de3ef8cd37e2ce1b9f04ef9faf41d151a322246c1c85e1281eed09a6d1",
-    "approved": "2026-10-22 about hero ok (Start today button, online-class video below heading) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 AI mentions removed (owner)"
+    "sha256": "8b0162f5a9da234511806d0f86f8b5436442c637a48dcb71ebf9862d4cbbafaf",
+    "approved": "2026-10-22 about hero ok (Start today button, online-class video below heading) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 AI mentions removed (owner); 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/about/s02.html": {
     "sha256": "a5727e817278203a56aa66f3a7ec3916b04d7048fcfbef5bfcc4aba169f33d5d",
     "approved": "2026-10-22 about section 2 ok (owner wording, no eyebrow/timeline); 2026-10-24 AI mentions removed (owner); 2026-10-24 rebuilt on white (photo card reveal, text rises), same wording (owner: go on with about, no black bg)"
   },
   "src/blocks/about/s02b-paths.html": {
-    "sha256": "25646d3bbdcc356ca002b5b486c29e870725a48a1e81ed7eee3b8baeb4084904",
-    "approved": "2026-10-22 about photo section ok (learner/teacher, reveal + drift) | 2026-10-22 owner: animations always play (reduced-motion switch removed)"
+    "sha256": "d450bba6a0271afdd421cb366fc8d1a3225e830cfc2e1d766191a4438c24c692",
+    "approved": "2026-10-22 about photo section ok (learner/teacher, reveal + drift) | 2026-10-22 owner: animations always play (reduced-motion switch removed); 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/corporate/head.html": {
     "sha256": "e78121e767d1757028c5cb52bf18937c478290e8da2bb3e217dd76ce3040948c",
@@ -85,8 +85,8 @@
     "approved": "2026-10-22 corporate nav ok; 2026-10-23 demo form now sends by email (bug fix: it faked success), no visual change"
   },
   "src/blocks/corporate/nav.html": {
-    "sha256": "3fb89b2ed3e33985143191fc95e2bd63eb5eb5b9e882503f792c746cb06fd6ac",
-    "approved": "2026-10-22 corporate nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
+    "sha256": "3adad65ce7666e419379c34b04f5e3b5306ffa9122deb2b4c9470d39c859218c",
+    "approved": "2026-10-22 corporate nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/corporate/s01.html": {
     "sha256": "0089022c6ef1f8e2416a836eeb5562f7f4063afaafa0388614d1d2117f4ac1a6",
@@ -113,8 +113,8 @@
     "approved": "2026-10-22 careers nav ok"
   },
   "src/blocks/careers/nav.html": {
-    "sha256": "8542b004c3028340e2bcdae0665143e601a1c3360a38cf04cbf5826bc112c0c1",
-    "approved": "2026-10-22 careers nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
+    "sha256": "b9951e44fab57d8626faf18de97bfe8b967bd20db134a1cf432bb38e10b47196",
+    "approved": "2026-10-22 careers nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/careers/s01.html": {
     "sha256": "46b832972cb692df5816f2ff023e3f71246d0f7801d5abc5f0f283297686c800",
@@ -133,8 +133,8 @@
     "approved": "2026-10-23 Careers Ready to teach banner, live, unchanged"
   },
   "src/blocks/contact/nav.html": {
-    "sha256": "225313f52ab9c09997a44e789f165f08e0590394724deac1dc0549e21e79ff12",
-    "approved": "2026-10-23 Contact nav, Contact current; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
+    "sha256": "4de6d0681aaa6f0617bee6fb70d09a2f38695236ce1376aa0f52ec1aa0a5f839",
+    "approved": "2026-10-23 Contact nav, Contact current; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/contact/s01.html": {
     "sha256": "6a75fbc84bfc0e68c0bbc6aed26e9af3ca87f5f3ef0ae8a572751ed9f7950f4b",
@@ -173,8 +173,8 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request)"
   },
   "src/blocks/legal/nav.html": {
-    "sha256": "2e1a4f30484f1796340d1480165bed384ddc58de5709073fb0b99ff6ee431a1d",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
+    "sha256": "79ba913949067c8fe7de5d999486f40479d08ffa6200efa982dd4ef72e4d81f8",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/legal/style.html": {
     "sha256": "b017e90ea1b737c7586534d5998222e58dff5cd30ef77aeab683b82f2e83ffad",
@@ -185,16 +185,16 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
   },
   "src/blocks/course/hero.html": {
-    "sha256": "5c0ff98a972c8a2a44ce68e3328c9f251b130a883876615bedb010c08a8b5603",
-    "approved": "2026-10-23 Italian course pages hero (Careers-style, city video per language), owner: hero ok; 2026-10-23 level quiz button added (owner: quiz ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
+    "sha256": "339033737b0ec1abfda1d7a9ab74ac5e3043e1054cf5384180cc7fd1af685bca",
+    "approved": "2026-10-23 Italian course pages hero (Careers-style, city video per language), owner: hero ok; 2026-10-23 level quiz button added (owner: quiz ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified); 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/course/how.html": {
     "sha256": "9ea67c316fa402f241af5de574163edf07d2f4d20fa5c1cb4c9715183a9bc54e",
     "approved": "2026-10-23 Italian course pages: how the lessons work, stacking cards (owner: section ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
   },
   "src/blocks/course/levels.html": {
-    "sha256": "bfb8190ea5f7b61ff323eb9c28fdc766d4f18a855d0b7b8e174e6426340c666e",
-    "approved": "2026-10-23 Italian course pages: CEFR levels showcase (owner: ok for now); 2026-10-23 level quiz button added (owner: quiz ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
+    "sha256": "cc01640f71f209a78f800ef6f00bd932248a10482c804c1844e3e73d2601cf76",
+    "approved": "2026-10-23 Italian course pages: CEFR levels showcase (owner: ok for now); 2026-10-23 level quiz button added (owner: quiz ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified); 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/course/exams.html": {
     "sha256": "9dc8b67fb9c79dfce536e505af82b3276ffce7dbc7fd9038516c793fbd1b1e8c",
@@ -219,10 +219,6 @@
   "src/data/course-faq.js": {
     "sha256": "1dc7debcb9b4936627cf3fb3276ba9ca8b3ab4a9e5bb3e189df9f6cae5907d2b",
     "approved": "2026-10-23 Italian course pages: FAQ text (owner: section ok)"
-  },
-  "src/blocks/course/quiz.html": {
-    "sha256": "5fc9c6ece94330474e68caf6fe47ec4726430d0816321dd06b04fb0228e65617",
-    "approved": "2026-10-23 Italian course pages: adaptive level quiz with roulette result (owner: quiz ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
   },
   "src/data/course-quiz.js": {
     "sha256": "c84b045ce8095d1e6a80a3895c96f5aebf11f817b9f15a610e13695f03d9ddb7",

@@ -1,7 +1,7 @@
       <section class="tp" id="plans">
         <style>
           /* Plans and prices: a monthly / yearly switch and the four plans side by side. Switching rolls each price
-             to its new value; each card's button opens signup with that plan and billing already chosen.
+             to its new value; each card's button opens the level test with that plan and billing carried through to sign-up and payment.
              Prices go through js/currency.js when it is on the page, so they show in the visitor's currency. */
           .tp { padding: 6rem 0 7rem; background-color: var(--white); }
           .tp_head { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: end; margin-bottom: 3rem; }
@@ -83,7 +83,7 @@
                 <div class="tp_price" data-no-currency><span class="tp_amount"><span>€20</span></span><span class="tp_per text-size-regular" data-i18n="tiers_per_month">a month</span></div>
                 <p class="tp_billed" data-no-currency></p>
                 <p class="tp_desc text-size-medium" data-i18n="tiers_plan_1_desc">One live class a week, session notes with the new vocabulary, and access to the community.</p>
-                <a class="button w-inline-block tp_cta" href="signup.html?role=student&amp;tier=community&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
+                <a class="button w-inline-block tp_cta" href="level-test.html?tier=community&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
               </div>
             </div>
             <div class="tp_card shadow-card" data-tier="focused" data-m="59" data-y="590" data-ye="49">
@@ -94,7 +94,7 @@
                 <div class="tp_price" data-no-currency><span class="tp_amount"><span>€49</span></span><span class="tp_per text-size-regular" data-i18n="tiers_per_month">a month</span></div>
                 <p class="tp_billed" data-no-currency></p>
                 <p class="tp_desc text-size-medium" data-i18n="tiers_plan_2_desc">Two live classes a week in a smaller group, feedback on your work every week, essay feedback and a monthly progress report.</p>
-                <a class="button w-inline-block tp_cta" href="signup.html?role=student&amp;tier=focused&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
+                <a class="button w-inline-block tp_cta" href="level-test.html?tier=focused&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
               </div>
             </div>
             <div class="tp_card shadow-card" data-tier="intensive" data-m="109" data-y="1090" data-ye="90">
@@ -105,7 +105,7 @@
                 <div class="tp_price" data-no-currency><span class="tp_amount"><span>€90</span></span><span class="tp_per text-size-regular" data-i18n="tiers_per_month">a month</span></div>
                 <p class="tp_billed" data-no-currency></p>
                 <p class="tp_desc text-size-medium" data-i18n="tiers_plan_3_desc">Three live classes a week in a near-private group, a one-to-one session every week and a learning path made for you.</p>
-                <a class="button w-inline-block tp_cta" href="signup.html?role=student&amp;tier=intensive&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
+                <a class="button w-inline-block tp_cta" href="level-test.html?tier=intensive&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
               </div>
             </div>
             <div class="tp_card shadow-card" data-tier="private" data-m="269" data-y="2690" data-ye="224">
@@ -116,7 +116,7 @@
                 <div class="tp_price" data-no-currency><span class="tp_amount"><span>€224</span></span><span class="tp_per text-size-regular" data-i18n="tiers_per_month">a month</span></div>
                 <p class="tp_billed" data-no-currency></p>
                 <p class="tp_desc text-size-medium" data-i18n="tiers_plan_4_desc">Private classes with your own teacher, based on three classes a week, a curriculum built around you and extra classes when you need them.</p>
-                <a class="button w-inline-block tp_cta" href="signup.html?role=student&amp;tier=private&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
+                <a class="button w-inline-block tp_cta" href="level-test.html?tier=private&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
               </div>
             </div>
           </div>

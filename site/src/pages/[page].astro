@@ -11,12 +11,10 @@ import examsTpl from '../blocks/course/exams.html?raw';
 import guideTpl from '../blocks/course/guide.html?raw';
 import plansTpl from '../blocks/course/plans.html?raw';
 import faqTpl from '../blocks/course/faq.html?raw';
-import quizTpl from '../blocks/course/quiz.html?raw';
 import bottomCta from '../blocks/tiers/s02.html?raw';
 import after from '../blocks/legal/after.html?raw';
 import nav from '../blocks/legal/nav.html?raw';
 import footer from '../blocks/footer.html?raw';
-import { QUIZ } from '../data/course-quiz.js';
 
 export async function getStaticPaths() {
   const sites = Object.values(import.meta.glob('../data/course-sites/*.js', { eager: true })).map((m) => m.default);
@@ -32,7 +30,8 @@ const ALT = `\n  <script type="application/json" id="alimun-lang-alternates">${J
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const fill = (tpl, values) => Object.entries(values).reduce((t, [k, v]) => t.split(`{{${k}}}`).join(v), tpl);
 const UI = Object.fromEntries(Object.entries(S.ui).map(([k, v]) => [k, esc(v)]));
-const signup = `signup.html?role=student&amp;language=${c.lang}`;
+// Every way in starts with the level test for this language (sign-up follows the result).
+const testHref = `level-test.html?language=${c.lang}`;
 const canon = `https://alimun.com/${S.site === 'en' ? '' : S.site + '/'}${c.slug}`;
 
 const faqItems = S.faq(c);
@@ -42,9 +41,9 @@ const faqLd = JSON.stringify({ '@context': 'https://schema.org', '@type': 'FAQPa
 // RTL: keep the plan name "1 on 1" in Latin order inside right-to-left cards.
 const PAGE_CSS = `\n  <style>@media (max-width: 767px) { .section.is-about-hero.is-course .heading-style-h1 { margin-top: 2.25rem; } } [dir="rtl"] .pl .heading-style-h4 { unicode-bidi: plaintext; text-align: right; }</style>`;
 const head = fill(headTpl, { PAGE_TITLE: esc(S.pageTitle(c)), META_DESC: esc(S.metaDesc(c)), CANON: canon, LOCALE: S.locale, FAQ_LD: `  <script type="application/ld+json">${faqLd}</script>` }) + PAGE_CSS + ALT;
-const hero = fill(heroTpl, { ...UI, TITLE: esc(S.heroTitle(c)), VIDEO: c.video, DESC: esc(S.heroDesc(c)), CTA: esc(S.heroCta(c)), CTA_HREF: signup });
+const hero = fill(heroTpl, { ...UI, TITLE: esc(S.heroTitle(c)), VIDEO: c.video, DESC: esc(S.heroDesc(c)), CTA: esc(S.heroCta(c)), CTA_HREF: testHref, TEST_HREF: testHref });
 const how = fill(howTpl, { ...UI, HOW_TITLE: esc(S.howTitle(c)), LIVE_DESC: esc(S.liveDesc(c)) });
-const levels = fill(levelsTpl, { ...UI, LV_TITLE: esc(S.levelsTitle(c)) });
+const levels = fill(levelsTpl, { ...UI, LV_TITLE: esc(S.levelsTitle(c)), TEST_HREF: testHref });
 const ex = S.exams[c.lang];
 const tones = ['', ' is-green', ' is-ink'];
 const exams = ex ? fill(examsTpl, {
@@ -62,20 +61,11 @@ const guide = fill(guideTpl, {
   GUIDE_ROWS: g.rows.map(([h, ps]) => `          <div class="gd_row"><h3 class="heading-style-h4">${esc(h)}</h3><div class="gd_text">${ps.map((t) => `<p class="text-size-large">${mark(t)}</p>`).join('')}</div></div>`).join('\n'),
 });
 // Plans only where classes can be bought today.
-const plans = c.open ? fill(plansTpl, { ...UI, CTA_HREF: signup }) : '';
+const plans = c.open ? fill(plansTpl, { ...UI, CTA_HREF: testHref }) : '';
 const faq = fill(faqTpl, {
   ...UI,
   QA_QUESTIONS: faqItems.map(([q, a]) => `              <button type="button" class="qa_q" aria-expanded="false">${esc(q)}<span class="qa_mobile">${esc(a)}</span></button>`).join('\n'),
   QA_ANSWERS: faqItems.map(([q, a]) => `              <div class="qa_a"><h3 class="heading-style-h4">${esc(q)}</h3><p class="text-size-large">${esc(a)}</p></div>`).join('\n'),
-});
-const Q = S.quiz;
-const quiz = fill(quizTpl, {
-  ...UI,
-  QUIZ_DATA: JSON.stringify({
-    title: Q.title(c), intro: Q.intro(c), questions: QUIZ[c.lang], levels: Q.levels, note: Q.note(c), cta: Q.cta(c),
-    ctaHref: `signup.html?role=student&language=${c.lang}`, arrow: '/images/icon-arrow-light.svg',
-    start: Q.start, prompt: Q.prompt, again: Q.again, right1: Q.right1, rightN: Q.rightN,
-  }).replace(/</g, '\\u003c'),
 });
 ---
 <Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang={S.site}>
@@ -90,6 +80,5 @@ const quiz = fill(quizTpl, {
     <Fragment set:html={faq} />
     <Fragment set:html={bottomCta} />
   </main>
-  <Fragment set:html={quiz} />
   <Fragment set:html={footer} />
 </Base>

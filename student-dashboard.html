@@ -3113,8 +3113,8 @@ let VOCAB = [];
   }
 
   if (!profile && !isLocalPreview) {
-    // Auth account without a student profile (signup not finished).
-    window.location.href = 'signup.html';
+    // Auth account without a student profile (onboarding not finished): goal and timeframe come first.
+    window.location.href = 'welcome.html';
     return;
   }
 
@@ -3926,8 +3926,9 @@ function renderCohortDiscoveryPage() {
   const levels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
   const studentLevelIndex = levels.indexOf(studentLevel);
 
-  const tierWeights = { 'community': 1, 'focused': 2, 'intensive': 3, 'private': 4, 'waitlist': 0 };
-  const studentTierWeight = tierWeights[studentTier] || 2;
+  // Free and waitlist accounts have no live classes, so no class passes the tier filter until they upgrade.
+  const tierWeights = { 'free': 0, 'waitlist': 0, 'community': 1, 'focused': 2, 'intensive': 3, 'private': 4 };
+  const studentTierWeight = studentTier in tierWeights ? tierWeights[studentTier] : 2;
 
   function getLevelRelation(cohortLevel) {
     const idx = levels.indexOf(cohortLevel);
@@ -5972,7 +5973,7 @@ function populateSettings() {
   
   const tierNameEl = document.getElementById('settings-tier-name');
   if (tierNameEl) {
-    tierNameEl.textContent = USER.tier;
+    tierNameEl.textContent = USER.tier === 'free' ? xt('student_tier_free', 'Free') : USER.tier;
   }
 }
 

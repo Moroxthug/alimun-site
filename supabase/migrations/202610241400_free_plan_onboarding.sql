@@ -21,7 +21,8 @@ alter table public.student_profiles drop constraint if exists student_profiles_p
 alter table public.student_profiles add constraint student_profiles_placement_check
   check (placement is null or (jsonb_typeof(placement) = 'object' and pg_column_size(placement) <= 4096));
 
--- Browser inserts: tier may only be 'free' or 'waitlist' (anything else becomes 'free'); founding_member as before.
+-- Browser inserts: tier may only be 'free' or 'waitlist'; anything else becomes 'free'. founding_member is no longer
+-- sold (15 Oct 2026) and can no longer be chosen from the browser (owner, 24 Oct 2026).
 -- Browser updates: the learner may also change goal_timeframe and placement.
 create or replace function public.guard_student_profile_columns()
  returns trigger
@@ -45,7 +46,7 @@ begin
     new.stripe_subscription_id := null;
     new.stripe_subscription_status := null;
     new.enrolled_cohort_id := null;
-    if new.tier is distinct from 'founding_member' and new.tier is distinct from 'waitlist' then
+    if new.tier is distinct from 'waitlist' then
       new.tier := 'free';
     end if;
     return new;

@@ -530,3 +530,12 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `/level-test` page in every site language: language choice, full-screen test, result with level scale, per-skill scores and topics to work on; result saved in the browser (`alimun-level-result`) for sign-up. Search titles per language.
 - Not linked from the site yet; the "Create your free account" button still leads to the old sign-up until the new flow ships.
 - Migration written, not applied (awaiting owner): `supabase/migrations/202610241400_free_plan_onboarding.sql` (tier 'free', goal_timeframe, placement).
+
+## 2026-10-24 — New sign-up and onboarding flow, account pages redesigned
+- Flow (owner): any "Get started", plan, course or quiz button -> `/level-test` -> result -> `signup.html` (name, email, password; the result and any plan chosen on Tiers go into the sign-up metadata) -> confirm email -> `welcome.html` (goal and timeframe) -> profile created on the free plan (or the waitlist for languages not open) with the test result -> dashboard, or Stripe Checkout when a plan was chosen. Teachers: `signup.html?role=teacher` (teaching profile, then account) -> confirm email -> `welcome.html` files the application and notifies the admin.
+- The confirmation link still returns to `/signup.html` (already allowed in Supabase), which forwards signed-in users to `welcome.html`.
+- The short level quizzes on the homepage and course pages were removed; their buttons open the level test (`site/src/blocks/home/quiz.html`, `site/src/blocks/course/quiz.html` deleted).
+- One layout for all account pages (`css/auth.css`, site fonts and colours; Anton font and `css/auth-shell.css` removed): sign up, welcome, sign in, forgot and reset password, after payment. No eyebrows, badges, emoji, step counters or red; the sign-in Student/Teacher switch (it did nothing) is gone. All texts in nine languages.
+- Database applied (owner: yes): `202610241400_free_plan_onboarding.sql` (tier 'free', goal_timeframe, placement; browser inserts can no longer choose founding_member).
+- Student dashboard, minimal free mode: no profile -> welcome.html; free and waitlist accounts see no joinable live classes (fixed: waitlist was treated as Focused); settings show the plan as "Free". Full free mode (limits, mock tests, upgrade pop-up) comes with the dashboard work.
+- Still for the owner: set Resend as the SMTP sender in Supabase Auth so confirmation emails are not limited to a few per hour.

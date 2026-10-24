@@ -18,7 +18,7 @@
       "continue": true
     },
     {
-      "src": "/((ar|de|es|fr|it|ma|pt|zh)/)?(admin|signin|signup|signup-success|student-dashboard|teacher-dashboard|forgot-password|reset-password|careers-teachers-section)(\\.html)?",
+      "src": "/((ar|de|es|fr|it|ma|pt|zh)/)?(admin|signin|signup|signup-success|welcome|student-dashboard|teacher-dashboard|forgot-password|reset-password|careers-teachers-section)(\\.html)?",
       "headers": { "X-Robots-Tag": "noindex, nofollow" },
       "continue": true
     },
