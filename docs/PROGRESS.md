@@ -424,3 +424,4 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - New `site/src/blocks/home/quiz.html`: the course-page quiz with a first step that asks which language to test. `localize.mjs` fills it per site from `course-sites/*.js` and `course-quiz.js` (the same questions and texts as each course page). The result links to signup with the language preselected. The Chinese homepage (no course pages) keeps a plain "Join Alimun" sign-up button and no quiz.
 - Translations: `home_quiz_btn`, `home_quiz_pick` in all nine languages.
 - Checked: desktop (German), phone (English) and Arabic (German) quiz runs end to end (C1 7 of 7, signup link with language); Chinese button goes to signup. No errors.
+- Fix: the first push failed to build because `site/src/pages/mockup-home.astro` (work page, not published) still imported the deleted `06-bottom-cta.html`; it now imports `home/banner.html`. Production kept the previous deploy until the fix.
