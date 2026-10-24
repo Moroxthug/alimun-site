@@ -368,7 +368,7 @@
               var cap = LEVELS.indexOf(level) + 1, miss = {};
               answers.forEach(function (a) { if (!a.right && LEVELS.indexOf(a.level) <= cap) miss[a.topic] = (miss[a.topic] || 0) + 1; });
               var topics = Object.keys(miss).sort(function (x, y) { return miss[y] - miss[x]; }).slice(0, 3);
-              var result = { language: state.lang, level: level, skills: skills, topics: topics, topicLabels: topics.map(function (t) { return bank.topics[t] || t; }), answers: answers.length, at: new Date().toISOString() };
+              var result = { language: state.lang, level: level, skills: skills, topics: topics, topicLabels: topics.map(function (t) { var ui = (bank.topicsI18n || {})[uiLang === "ma" ? "fr" : uiLang] || {}; return ui[t] || bank.topics[t] || t; }), answers: answers.length, at: new Date().toISOString() };
               try { localStorage.setItem("alimun-level-result", JSON.stringify(result)); } catch (e) {}
               closeRun();
               show(result);

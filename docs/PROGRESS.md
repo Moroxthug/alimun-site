@@ -523,3 +523,10 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Still needed from the owner: registered office address, province of incorporation, EU and UK representatives, CNDP number, confirmation that the AI provider plans exclude training on customer content.
 
 - Owner (24 Oct): cookie banner stays as it is (Analytics switch and "Optional" label) until analytics is built.
+
+## 2026-10-24 — Level test (start of the new sign-up flow)
+- `docs/LEVEL_TEST.md`: adaptive placement test, 20 questions, A1 to C2, grammar, vocabulary and reading.
+- Six question banks (English, German, French, Spanish, Italian, Portuguese), 60 items each, in `site/src/data/level-test/`; topic names translated for every interface language (`topics-i18n.json`). Served as `/data/level-test/<Language>.json`.
+- `/level-test` page in every site language: language choice, full-screen test, result with level scale, per-skill scores and topics to work on; result saved in the browser (`alimun-level-result`) for sign-up. Search titles per language.
+- Not linked from the site yet; the "Create your free account" button still leads to the old sign-up until the new flow ships.
+- Migration written, not applied (awaiting owner): `supabase/migrations/202610241400_free_plan_onboarding.sql` (tier 'free', goal_timeframe, placement).
