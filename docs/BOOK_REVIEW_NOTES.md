@@ -22,6 +22,12 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p1: a future gap accepts *is starting*, *is going to start*, *starts*; check the list and the explanation.
 - u8 p2: two word-order items are conditionals; only the punctuation on the tiles fixes the clause order.
 
+- u2 p1: "Halfway up the hill we stopped ___ at the view": only the context rules out *looking*.
+- u3 p1: *must* and *have to* are both glossed as "necessary"; the external and internal difference is kept simple.
+- u3 p3: lost luggage: airlines paying back essentials is presented as common practice, not a rule.
+- u4 p1: conditionals are practised as a match instead of word order, because the clauses can swap.
+- u5 p2: "Most scientists agree that climate change is causing more extreme weather" stated as fact; u5 p4 Westbridge and its figures are fictional.
+
 ## German B1
 - u2 p4: Grace trained as *Bürokauffrau* (in Kenya); today's German title is *Kauffrau für Büromanagement*.
 - u3 p3: house-rule facts (quiet hours 22 to 6 or 7, Sundays and holidays) are given as general practice, not law.
@@ -35,3 +41,11 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p3: waste bins (Biotonne, Papiertonne, Altglas) and the 25-cent deposit: true in general, differs by town.
 - u8 p3: customs (Nikolaus, Heiligabend, Fasching areas, national days 3 Oct, 26 Oct, 1 Aug): check the wording is not too absolute.
 - u8 p1: five-column adjective tables (they shrink to fit on phones and open full screen).
+## English B2
+- u1 p1: present perfect simple and continuous items with *this week* and *recently*: check only one fits.
+- u1 p2: invented wrong prefixes (*inorganised*, *imorganised*); *unorganised* left out because it exists.
+- u2 p3: "In the end, I chose…" accepts only *in*.
+- u3 p1: a wrong option *will be completing* was replaced by *will have complete* (some speakers accept the continuous).
+- u3 p2: collocation gaps accept several verbs (gain or get experience, earn or make a living, got or received a promotion); check the *earn* and *do overtime* match pairs.
+- u4 test: *got her phone stolen* is accepted next to *had her phone stolen* (informal).
+- u4 reading: check the history of the fridge (ice houses, refrigerants, home fridges from the early twentieth century); "millions of emails are sent every minute" is vague.

@@ -124,7 +124,7 @@ export const UNIT = {
           { t: 'table', caption: 'Expressions for speculating', explain: ['head', 'col1'], quiz: true, head: ['Expression', 'Meaning', 'Example'], rows: [
             ['I bet…', 'I am fairly sure (informal)', 'I bet she’s forgotten our meeting.'],
             ['There’s no way…', 'It is impossible (informal)', 'There’s no way he ran ten kilometres in twenty minutes.'],
-            ['It looks as if / as though…', 'This is what it seems from what I can see', 'It looks as if it’s going to snow.'],
+            ['It looks as if / as though…', 'This is how it seems from what I can see', 'It looks as if it’s going to snow.'],
             ['be bound to…', 'It is certain to happen', 'They’re bound to be late. They always are.'],
             ['I doubt (that)…', 'I do not think so', 'I doubt she’ll call back today.'],
             ['I reckon…', 'I think (informal)', 'I reckon they’ve sold the house.'],
@@ -182,8 +182,8 @@ export const UNIT = {
         ],
         [
           { t: 'ex', kind: 'choice', h: 'Look at the deductions in the text.', items: [
-            { q: 'Why “can’t have been there for long”?', o: ['The wood was dry and the keys were clean.', 'There was a note inside it.', 'The path was too narrow.'], why: 'No dust and dry wood show it had not been outside long.' },
-            { q: 'Why is the students theory weak?', o: ['A piano like that is very heavy.', 'The students were on holiday.', 'Nobody heard any music.'], why: 'It weighs more than two hundred kilograms, so carrying it a kilometre is very hard.' },
+            { q: 'Why does the text say the piano “can’t have been there for long”?', o: ['The wood was dry and the keys were clean.', 'There was a note inside it.', 'The path was too narrow.'], why: 'No dust and dry wood show it had not been outside long.' },
+            { q: 'Why is the idea about the students weak?', o: ['A piano like that is very heavy.', 'The students were on holiday.', 'Nobody heard any music.'], why: 'It weighs more than two hundred kilograms, so carrying it a kilometre is very hard.' },
             { q: '“The artist might be watching.” How sure is the musician?', o: ['Not sure: it is only a possibility.', 'Completely sure.', 'Sure that it is not true.'], why: '*Might* + *be* + *-ing*: a possibility about the present.' },
           ] },
         ],

@@ -35,7 +35,7 @@ export const UNIT = {
             { q: 'By seven o’clock I ___ dinner, so we can eat as soon as you arrive.', o: ['’ll have cooked', '’ll be cooking', 'am cooking'], why: 'The cooking will be finished before seven: future perfect.' },
             { q: 'This time tomorrow, we ___ over the Atlantic.', o: ['’ll be flying', '’ll have flown', 'fly'], why: '*This time tomorrow*: an action in progress at that moment.' },
             { q: '___ the printer this afternoon? I need to print forty pages.', o: ['Will you be using', 'Will you have used', 'Are you use'], why: 'A polite question about someone’s plans: future continuous.' },
-            { q: 'She ___ her degree by next June.', o: ['will have completed', 'will be completing', 'completes'], why: '*By next June*: finished before that time, so the future perfect.' },
+            { q: 'She ___ her degree by next June.', o: ['will have completed', 'will have complete', 'has completed'], why: '*By next June*: finished before that time, so the future perfect.' },
           ] },
         ],
         [
@@ -190,7 +190,7 @@ export const UNIT = {
   ],
   test: [
     { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-      { q: 'By the time you read this email, I ___ the country.', o: ['’ll have left', '’ll be leaving', 'leave'], why: 'The leaving will be finished before you read it: future perfect.' },
+      { q: 'By the time you read this email, I ___ the country.', o: ['’ll have left', '’m leaving', 'leave'], why: 'The leaving will be finished before you read it: future perfect.' },
       { q: 'Don’t visit at two. I ___ an online lesson.', o: ['’ll be teaching', '’ll have taught', 'teach'], why: 'In progress at two: future continuous.' },
       { q: 'We need to ___ a decision about the new office soon.', o: ['make', 'do', 'take on'], why: 'We *make* a decision.' },
       { q: 'If we miss the ___, the client will be very unhappy.', o: ['deadline', 'notice', 'living'], why: 'We meet or miss a *deadline*.' },
