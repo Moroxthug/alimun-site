@@ -1,0 +1,157 @@
+      <section class="tp">
+        <style>
+          /* Plans and prices: a monthly / yearly switch and the four plans side by side. Switching rolls each price
+             to its new value; each card's button opens signup with that plan and billing already chosen.
+             Prices go through js/currency.js when it is on the page, so they show in the visitor's currency. */
+          .tp { padding: 9rem 0 7rem; background-color: var(--white); }
+          .tp_head { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: end; margin-bottom: 3rem; }
+          .tp_head h1 { margin: 0; }
+          .tp_head p { margin: 1.25rem 0 0; max-width: 34rem; color: rgba(8, 8, 8, .7); }
+          .tp_bill { justify-self: end; text-align: end; }
+          .tp_switch { position: relative; display: inline-grid; grid-template-columns: 1fr 1fr; padding: .3rem; border-radius: 5rem; background-color: var(--bone, #f0efe9); }
+          .tp_switch button { position: relative; z-index: 1; border: 0; background: none; padding: .7rem 1.5rem; font-family: Satoshi, sans-serif; font-size: 1rem; font-weight: 500; color: rgba(8, 8, 8, .6); cursor: pointer; transition: color .3s ease; }
+          .tp_switch button[aria-pressed="true"] { color: var(--black); }
+          .tp_knob { position: absolute; top: .3rem; bottom: .3rem; left: .3rem; width: calc(50% - .3rem); border-radius: 5rem; background-color: var(--white); box-shadow: 0 2px 10px rgba(8, 8, 8, .08); transition: transform .45s cubic-bezier(.645, .045, .355, 1); }
+          .tp[data-billing="yearly"] .tp_knob { transform: translateX(100%); }
+          [dir="rtl"] .tp[data-billing="yearly"] .tp_knob { transform: translateX(-100%); }
+          [dir="rtl"] .tp_knob { left: auto; right: .3rem; }
+          .tp_note { margin: .75rem 0 0; font-size: .95rem; color: rgba(8, 8, 8, .6); }
+          .tp_grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; align-items: stretch; }
+          .tp_card { display: flex; flex-direction: column; border-radius: 3.125rem; overflow: hidden; background-color: var(--white); opacity: 0; transform: translateY(3rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .tp_card.is-in { opacity: 1; transform: none; }
+          .tp_img { aspect-ratio: 4 / 3; overflow: hidden; }
+          .tp_img img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 1.2s cubic-bezier(.215, .61, .355, 1); }
+          .tp_card:hover .tp_img img { transform: scale(1.05); }
+          .tp_body { display: flex; flex-direction: column; flex: 1; padding: 1.75rem 1.75rem 2rem; }
+          .tp_body h3 { margin: 0 0 .35rem; }
+          [dir="rtl"] .tp_body h3 { unicode-bidi: plaintext; text-align: right; }
+          .tp_size { margin: 0 0 1.5rem; color: rgba(8, 8, 8, .6); }
+          .tp_price { display: flex; align-items: flex-end; gap: .5rem; height: 3.6rem; overflow: hidden; }
+          .tp_amount { position: relative; display: block; height: 3.6rem; font-family: Coolvetica Condensed, sans-serif; font-size: 3.6rem; line-height: 1; white-space: nowrap; }
+          .tp_amount span { display: block; transition: transform .55s cubic-bezier(.645, .045, .355, 1), opacity .4s ease; }
+          .tp_amount span.is-out { position: absolute; top: 0; left: 0; transform: translateY(-100%); opacity: 0; }
+          [dir="rtl"] .tp_amount span.is-out { left: auto; right: 0; }
+          .tp_amount span.is-in-start { transform: translateY(100%); opacity: 0; }
+          .tp_per { padding-bottom: .35rem; color: rgba(8, 8, 8, .7); }
+          .tp_billed { margin: .5rem 0 1.25rem; min-height: 1.5em; font-size: .95rem; color: rgba(8, 8, 8, .6); }
+          .tp_desc { margin: 0 0 1.75rem; flex: 1; }
+          .tp_cta { align-self: flex-start; white-space: nowrap; }
+          .tp_tpl { display: none; }
+          @media (max-width: 1199px) {
+            .tp_grid { grid-template-columns: repeat(2, 1fr); }
+          }
+          @media (max-width: 767px) {
+            .tp { padding: 7.5rem 0 4.5rem; }
+            .tp_head { grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 2rem; }
+            .tp_bill { justify-self: start; text-align: start; }
+            .tp_grid { grid-template-columns: 1fr; gap: 1rem; }
+            .tp_card { border-radius: 2.25rem; }
+          }
+        </style>
+        <div class="container-large">
+          <div class="tp_head">
+            <div>
+              <h1 class="heading-style-h1" data-i18n="tiers_plans_title">Plans and prices</h1>
+              <p class="text-size-medium" data-i18n="tiers_plans_desc">Every plan has live classes with a teacher on fixed days every week, practice with instant feedback and homework corrected by your teacher. The smaller the group, the more time you have to speak.</p>
+            </div>
+            <div class="tp_bill">
+              <div class="tp_switch" role="group">
+                <span class="tp_knob" aria-hidden="true"></span>
+                <button type="button" data-billing="monthly" aria-pressed="false" data-i18n="tiers_bill_monthly">Monthly</button>
+                <button type="button" data-billing="yearly" aria-pressed="true" data-i18n="tiers_bill_yearly">Yearly</button>
+              </div>
+              <p class="tp_note" data-i18n="tiers_bill_note">With the yearly plan you pay for ten months instead of twelve.</p>
+            </div>
+          </div>
+          <span class="tp_tpl" data-i18n="tiers_billed_yearly">{price} billed once a year</span>
+          <span class="tp_tpl" data-i18n="tiers_billed_monthly">Billed every month</span>
+          <div class="tp_grid">
+            <div class="tp_card shadow-card" data-tier="community" data-m="24" data-y="240" data-ye="20">
+              <div class="tp_img"><img src="images/edu_square_2-800.jpg" alt="" width="800" height="800" loading="lazy"></div>
+              <div class="tp_body">
+                <h3 class="heading-style-h3">Community</h3>
+                <p class="tp_size text-size-regular" data-i18n="tiers_size_1">About 35 people per group</p>
+                <div class="tp_price" data-no-currency><span class="tp_amount"><span>€20</span></span><span class="tp_per text-size-regular" data-i18n="tiers_per_month">a month</span></div>
+                <p class="tp_billed" data-no-currency></p>
+                <p class="tp_desc text-size-medium" data-i18n="tiers_plan_1_desc">One live class a week, session notes with the new vocabulary, and access to the community.</p>
+                <a class="button w-inline-block tp_cta" href="signup.html?role=student&amp;tier=community&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
+              </div>
+            </div>
+            <div class="tp_card shadow-card" data-tier="focused" data-m="59" data-y="590" data-ye="49">
+              <div class="tp_img"><img src="images/edu_square_3-800.jpg" alt="" width="800" height="800" loading="lazy"></div>
+              <div class="tp_body">
+                <h3 class="heading-style-h3">Focused</h3>
+                <p class="tp_size text-size-regular" data-i18n="tiers_size_2">About 17 people per group</p>
+                <div class="tp_price" data-no-currency><span class="tp_amount"><span>€49</span></span><span class="tp_per text-size-regular" data-i18n="tiers_per_month">a month</span></div>
+                <p class="tp_billed" data-no-currency></p>
+                <p class="tp_desc text-size-medium" data-i18n="tiers_plan_2_desc">Two live classes a week in a smaller group, feedback on your work every week, essays graded with the help of AI and a monthly progress report.</p>
+                <a class="button w-inline-block tp_cta" href="signup.html?role=student&amp;tier=focused&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
+              </div>
+            </div>
+            <div class="tp_card shadow-card" data-tier="intensive" data-m="109" data-y="1090" data-ye="90">
+              <div class="tp_img"><img src="images/edu_square_4-800.jpg" alt="" width="800" height="800" loading="lazy"></div>
+              <div class="tp_body">
+                <h3 class="heading-style-h3">Intensive</h3>
+                <p class="tp_size text-size-regular" data-i18n="tiers_size_3">About 6 people per group, plus a weekly one-to-one</p>
+                <div class="tp_price" data-no-currency><span class="tp_amount"><span>€90</span></span><span class="tp_per text-size-regular" data-i18n="tiers_per_month">a month</span></div>
+                <p class="tp_billed" data-no-currency></p>
+                <p class="tp_desc text-size-medium" data-i18n="tiers_plan_3_desc">Three live classes a week in a near-private group, a one-to-one session every week and a learning path made for you.</p>
+                <a class="button w-inline-block tp_cta" href="signup.html?role=student&amp;tier=intensive&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
+              </div>
+            </div>
+            <div class="tp_card shadow-card" data-tier="private" data-m="269" data-y="2690" data-ye="224">
+              <div class="tp_img"><img src="images/edu_square_1-800.jpg" alt="" width="800" height="800" loading="lazy"></div>
+              <div class="tp_body">
+                <h3 class="heading-style-h3">1 on 1</h3>
+                <p class="tp_size text-size-regular" data-i18n="tiers_size_4">Private, just you and your teacher</p>
+                <div class="tp_price" data-no-currency><span class="tp_amount"><span>€224</span></span><span class="tp_per text-size-regular" data-i18n="tiers_per_month">a month</span></div>
+                <p class="tp_billed" data-no-currency></p>
+                <p class="tp_desc text-size-medium" data-i18n="tiers_plan_4_desc">Private classes with your own teacher, based on three classes a week, a curriculum built around you and extra classes when you need them.</p>
+                <a class="button w-inline-block tp_cta" href="signup.html?role=student&amp;tier=private&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".tp");
+            var cards = [].slice.call(root.querySelectorAll(".tp_card"));
+            var tplYear = root.querySelector('[data-i18n="tiers_billed_yearly"]'), tplMonth = root.querySelector('[data-i18n="tiers_billed_monthly"]');
+            var AC = window.AlimunCurrency;
+            function money(eur) { return AC ? AC.fmt(eur) : "€" + eur; }
+            function perMonthYearly(y, ye) { return AC ? AC.fmtNative(AC.perMonthFromYearly(y, ye)) : "€" + ye; }
+            function render(billing, animate) {
+              root.setAttribute("data-billing", billing);
+              root.querySelectorAll(".tp_switch button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-billing") === billing ? "true" : "false"); });
+              cards.forEach(function (card) {
+                var m = +card.getAttribute("data-m"), y = +card.getAttribute("data-y"), ye = +card.getAttribute("data-ye");
+                var text = billing === "yearly" ? perMonthYearly(y, ye) : money(m);
+                var box = card.querySelector(".tp_amount"), old = box.querySelector("span:not(.is-out)");
+                if (!animate) { old.textContent = text; }
+                else if (old.textContent !== text) {
+                  var next = document.createElement("span"); next.textContent = text; next.className = "is-in-start";
+                  old.classList.add("is-out"); box.appendChild(next);
+                  requestAnimationFrame(function () { requestAnimationFrame(function () { next.className = ""; }); });
+                  setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 600);
+                }
+                card.querySelector(".tp_billed").textContent = billing === "yearly" ? tplYear.textContent.replace("{price}", money(y)) : tplMonth.textContent;
+                var a = card.querySelector(".tp_cta");
+                a.setAttribute("href", a.getAttribute("href").replace(/billing=(monthly|yearly)/, "billing=" + billing));
+              });
+            }
+            root.querySelectorAll(".tp_switch button").forEach(function (b) {
+              b.addEventListener("click", function () { render(b.getAttribute("data-billing"), true); });
+            });
+            render("yearly", false);
+            if (!("IntersectionObserver" in window)) { cards.forEach(function (c) { c.classList.add("is-in"); }); return; }
+            var io = new IntersectionObserver(function (entries) {
+              entries.forEach(function (e) {
+                if (!e.isIntersecting) return;
+                e.target.style.transitionDelay = cards.indexOf(e.target) % 4 * 0.1 + "s";
+                e.target.classList.add("is-in"); io.unobserve(e.target);
+              });
+            }, { rootMargin: "0px 0px -10% 0px" });
+            cards.forEach(function (c) { io.observe(c); });
+          })();
+        </script>
+      </section>

@@ -28,10 +28,6 @@
     "sha256": "6a1e83bb2c50dbb6684ac52eb630739ac2bc0eff7efa4a81cb07980277b0a8b8",
     "approved": "2026-10-20 tiers nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
   },
-  "src/blocks/tiers/s01.html": {
-    "sha256": "4480c6817ac81458de9a4e7bd56145e736fd3ff0c3aced9b50aaa2d43d60448c",
-    "approved": "2026-10-20 tiers section ok"
-  },
   "src/blocks/tiers/s02.html": {
     "sha256": "2e015542f5dbbe646611be749d10f91283420b8f7cdf4c5ed287981787c4f82b",
     "approved": "2026-10-22 tiers banner ok"

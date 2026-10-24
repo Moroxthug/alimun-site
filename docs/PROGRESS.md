@@ -436,3 +436,14 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Translations: `footer_legal_title` in nine languages.
 - Checked: desktop, phone, Arabic; Manage cookies opens the settings; newsletter form present; course links correct per language (home, careers, course pages, 404).
 - Owner: keep the social icons (links to follow). Restored in the footer's bottom row (X, YouTube, Facebook, Instagram), still `#` until the URLs arrive.
+
+## 24 Oct 2026: Tiers page, plans and prices
+- Owner: go on with the Tiers page.
+- Old section problems: "Start today" went to the Contact page, the plan cards were not links, no yearly prices, and text sat on top of the photos.
+- New `site/src/blocks/tiers/plans.html` replaces `tiers/s01.html` (deleted, lock entry removed). H1 "Plans and prices", monthly/yearly switch (yearly by default, as in signup), four cards with the plan photo (800 px JPEG versions of the edu_square PNGs, same plan-photo mapping as before), group size, price, billing line and one sentence.
+  - Prices: monthly €24/59/109/269; yearly per month €20/49/90/224 with totals €240/590/1090/2690, matching signup's TIERS. Values go through `js/currency.js`.
+  - Switching rolls each price to its new value.
+  - Each button opens `signup.html?role=student&tier=<id>&billing=<monthly|yearly>`.
+- `signup.html`: reads `tier` and `billing` from the URL and preselects them (checked against signup's TIERS ids; the plan step itself needs a session, so it was not driven end to end).
+- Translations: 17 `tiers_*` keys in all nine languages.
+- Checked: desktop, phone, Arabic; the switch updates prices, billing lines and links; no errors.
