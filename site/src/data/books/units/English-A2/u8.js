@@ -139,7 +139,7 @@ export const UNIT = {
             { who: 'David', s: 'Yes, I have. I went to Edinburgh two years ago.' },
             { who: 'Aylin', s: 'Did you like it?' },
             { who: 'David', s: 'I loved it. I visited the castle and walked a lot. What about you?' },
-            { who: 'Aylin', s: 'I’ve never been there, but my brother has gone there for a month to study.' },
+            { who: 'Aylin', s: 'I’ve never been there, but my brother has gone there to study. He’s there now.' },
           ] },
           { t: 'tip', art: 'owl', md: '*I have been to Edinburgh two years ago* is a mistake. With a finished time, use the past simple: *I went to Edinburgh two years ago*.' },
         ],
@@ -169,7 +169,7 @@ export const UNIT = {
           ] },
           { t: 'ex', kind: 'spot', h: 'Tap the verbs in the past simple.', items: [
             { s: 'Yes, I have. I [went] to Edinburgh two years ago.', why: '*Went* has a finished time, *two years ago*. *I have* is the present perfect.' },
-            { s: 'I loved it. I [visited] the castle and [walked] a lot.', why: '*Visited* and *walked* are past simple details about the trip. *Loved* is also past simple, so you can tap it too.' },
+            { s: 'I [loved] it. I [visited] the castle and [walked] a lot.', why: '*Loved*, *visited* and *walked* are past simple: they are details about the trip two years ago.' },
           ] },
         ],
       ],
