@@ -40,6 +40,10 @@
     "gdpr": {
       "title": "Politique de confidentialité RGPD – Alimun",
       "desc": "Comment Alimun collecte, utilise et protège vos données personnelles, et vos droits au titre du RGPD et des autres lois sur la vie privée."
+    },
+    "level-test": {
+      "title": "Test de niveau de langue gratuit en ligne | Alimun",
+      "desc": "Trouvez votre niveau en anglais, allemand, français, espagnol, italien ou portugais avec un test de niveau gratuit : 20 questions de grammaire, vocabulaire et lecture et votre niveau CECRL estimé de A1 à C2."
     }
   },
   "de": {
@@ -82,6 +86,10 @@
     "gdpr": {
       "title": "DSGVO-Datenschutzerklärung – Alimun",
       "desc": "Wie Alimun Ihre personenbezogenen Daten erhebt, nutzt und schützt, und Ihre Rechte nach der DSGVO und anderen Datenschutzgesetzen."
+    },
+    "level-test": {
+      "title": "Kostenloser Sprach-Einstufungstest online | Alimun",
+      "desc": "Finden Sie Ihr Niveau in Englisch, Deutsch, Französisch, Spanisch, Italienisch oder Portugiesisch mit einem kostenlosen Einstufungstest: 20 Fragen zu Grammatik, Wortschatz und Lesen, Ihr geschätztes GER-Niveau von A1 bis C2."
     }
   },
   "es": {
@@ -124,6 +132,10 @@
     "gdpr": {
       "title": "Política de privacidad RGPD – Alimun",
       "desc": "Cómo Alimun recoge, usa y protege tus datos personales, y tus derechos según el RGPD y otras leyes de privacidad."
+    },
+    "level-test": {
+      "title": "Prueba de nivel de idiomas gratis online | Alimun",
+      "desc": "Descubre tu nivel de inglés, alemán, francés, español, italiano o portugués con una prueba de nivel gratuita: 20 preguntas de gramática, vocabulario y lectura y tu nivel MCER estimado de A1 a C2."
     }
   },
   "it": {
@@ -166,6 +178,10 @@
     "gdpr": {
       "title": "Informativa sulla privacy GDPR – Alimun",
       "desc": "Come Alimun raccoglie, usa e protegge i tuoi dati personali, e i tuoi diritti ai sensi del GDPR e di altre leggi sulla privacy."
+    },
+    "level-test": {
+      "title": "Test di livello linguistico gratuito online | Alimun",
+      "desc": "Scopri il tuo livello di inglese, tedesco, francese, spagnolo, italiano o portoghese con un test di livello gratuito: 20 domande di grammatica, lessico e lettura e il tuo livello QCER stimato da A1 a C2."
     }
   },
   "pt": {
@@ -208,6 +224,10 @@
     "gdpr": {
       "title": "Política de privacidade RGPD – Alimun",
       "desc": "Como a Alimun recolhe, usa e protege os seus dados pessoais, e os seus direitos ao abrigo do RGPD e de outras leis de privacidade."
+    },
+    "level-test": {
+      "title": "Teste de nível de línguas grátis online | Alimun",
+      "desc": "Descubra o seu nível de inglês, alemão, francês, espanhol, italiano ou português com um teste de nível gratuito: 20 perguntas de gramática, vocabulário e leitura e o seu nível QECR estimado de A1 a C2."
     }
   },
   "zh": {
@@ -250,6 +270,10 @@
     "gdpr": {
       "title": "GDPR 隐私政策 – Alimun",
       "desc": "Alimun 如何收集、使用和保护你的个人数据，以及你依据 GDPR 和其他隐私法律享有的权利。"
+    },
+    "level-test": {
+      "title": "免费在线语言分级测试 | Alimun",
+      "desc": "免费分级测试，测出你的英语、德语、法语、西班牙语、意大利语或葡萄牙语水平：20 道语法、词汇和阅读题，给出 A1 到 C2 的 CEFR 估计水平。"
     }
   },
   "ar": {
@@ -292,6 +316,10 @@
     "gdpr": {
       "title": "سياسة الخصوصية (GDPR) – ألمون",
       "desc": "كيف يجمع ألمون بياناتك الشخصية ويستخدمها ويحميها، وحقوقك بموجب اللائحة العامة لحماية البيانات وقوانين الخصوصية الأخرى."
+    },
+    "level-test": {
+      "title": "اختبار مستوى اللغة المجاني عبر الإنترنت | Alimun",
+      "desc": "اكتشف مستواك في الإنجليزية أو الألمانية أو الفرنسية أو الإسبانية أو الإيطالية أو البرتغالية باختبار مستوى مجاني: 20 سؤالًا في القواعد والمفردات والقراءة، ومستواك التقديري من A1 إلى C2."
     }
   }
 }
