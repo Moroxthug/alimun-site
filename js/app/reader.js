@@ -1090,7 +1090,9 @@
   }
 
   /* Draws the screen for the route parts after #/book. Returns a promise. */
+  var mountNo = 0;
   function mount(view, parts, helpers) {
+    var my = ++mountNo;
     A = helpers; root = view; ctx = null;
     closeTable();
     bind();
@@ -1104,9 +1106,11 @@
         var book = r[0];
         var unit = book.units.filter(function (u) { return u.id === parts[1] && !u.planned; })[0];
         if (!unit) return { html: coverView(book), title: book.track === 'goal' ? book.title : bookName(book) };
+        if (my !== mountNo) return { stale: true };
         if (parts[2] === 'test') return { html: testView(book, unit), title: t('app_book_test') };
         var page = unit.pages.filter(function (p) { return p.id === parts[2]; })[0];
         if (!page) return { html: unitView(book, unit), title: unitTitle(book, unit) };
+        if (my !== mountNo) return { stale: true };
         startLesson(book, unit, page, +parts[3] || 0);
         if (ctx.at > ctx.seen && !isDone(book, unit, page)) ctx.at = 0;
         return { html: lessonView(), title: page.title, lesson: true };
@@ -1116,7 +1120,8 @@
       index = null;
       return { html: errorView(), title: t('app_nav_book') };
     }).then(function (res) {
-      if (root !== view) return res;
+      /* A newer navigation has started: its screen wins */
+      if (res.stale || my !== mountNo) return { stale: true };
       view.innerHTML = res.html;
       if (res.lesson) { updateBar(); afterSpread(); }
       return res;

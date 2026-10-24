@@ -462,7 +462,7 @@
       document.title = t(r.label) + ' – Alimun';
       if (id === 'book') {
         window.AlimunReader.mount(view, bookParts(), readerHelpers).then(function (res) {
-          if (current === 'book' && res && res.title) document.title = res.title + ' – Alimun';
+          if (current === 'book' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
       top.querySelector('.top__title').textContent = t(r.label);
