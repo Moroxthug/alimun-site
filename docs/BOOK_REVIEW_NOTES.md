@@ -21,3 +21,11 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p3: customs (kissing on both cheeks, paying in cash, tipping) are deliberately not tied to a country.
 - u8 p1: a future gap accepts *is starting*, *is going to start*, *starts*; check the list and the explanation.
 - u8 p2: two word-order items are conditionals; only the punctuation on the tiles fixes the clause order.
+
+## German B1
+- u2 p4: Grace trained as *Bürokauffrau* (in Kenya); today's German title is *Kauffrau für Büromanagement*.
+- u3 p3: house-rule facts (quiet hours 22 to 6 or 7, Sundays and holidays) are given as general practice, not law.
+- u4 p3: sick note "from the fourth day for many employers, some from the first"; *Versichertenkarte*; the electronic sick note is not mentioned.
+- u4 p2: *sich verletzen* with accusative and dative (*dich* / *dir das Knie*), explained in the why.
+- u5 p1, p4: impersonal and marked passives (*Bei uns wird nicht ferngesehen*, *Bei mir wird die Zeitung gelesen*), on the edge of B1.
+- u5 p2: check every indirect-question choice has one right answer.
