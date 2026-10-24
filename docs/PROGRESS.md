@@ -435,3 +435,4 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Removed the four social icons: all linked to "#". Owner to send real profile URLs.
 - Translations: `footer_legal_title` in nine languages.
 - Checked: desktop, phone, Arabic; Manage cookies opens the settings; newsletter form present; course links correct per language (home, careers, course pages, 404).
+- Owner: keep the social icons (links to follow). Restored in the footer's bottom row (X, YouTube, Facebook, Instagram), still `#` until the URLs arrive.

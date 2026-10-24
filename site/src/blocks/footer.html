@@ -24,6 +24,10 @@
         .ft.is-in .ft_col:nth-child(3) { transition-delay: .2s; }
         .ft_bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 5rem; padding-top: 1.5rem; border-top: 1px solid rgba(8, 8, 8, .12); color: rgba(8, 8, 8, .6); }
         .ft_bottom p { margin: 0; }
+        .ft_socials { list-style: none; display: flex; gap: 1rem; margin: 0; padding: 0; }
+        .ft_social { display: block; opacity: .75; transition: opacity .3s ease; }
+        .ft_social:hover { opacity: 1; }
+        .ft_social img { display: block; }
         @media (max-width: 991px) {
           .ft_top { grid-template-columns: 1fr; gap: 3rem; }
         }
@@ -83,6 +87,13 @@
         </div>
         <div class="ft_bottom">
           <p class="text-size-regular" data-i18n="footer_copyright">© 2026 Alimun. All rights reserved.</p>
+          <!-- Profile links pending from the owner (24 Oct 2026). -->
+          <ul class="ft_socials">
+            <li><a href="#" class="ft_social" aria-label="X"><img src="images/x-icon.svg" loading="lazy" alt="" class="icon-24"></a></li>
+            <li><a href="#" class="ft_social" aria-label="YouTube"><img src="images/yt-icon.svg" loading="lazy" alt="" class="icon-24"></a></li>
+            <li><a href="#" class="ft_social" aria-label="Facebook"><img src="images/fb-icon.svg" loading="lazy" alt="" class="icon-24"></a></li>
+            <li><a href="#" class="ft_social" aria-label="Instagram"><img src="images/ig-icon.svg" loading="lazy" alt="" class="icon-24"></a></li>
+          </ul>
           <a href="https://www.launchory.app/startups/alimun?ref=badge" target="_blank" rel="noopener noreferrer" style="display:inline-flex; align-items:center; line-height:0;"><img src="https://www.launchory.app/api/badge/alimun?theme=dark" alt="Featured on Launchory" width="120" height="27" loading="lazy" style="display:block; width:120px; height:27px; max-width:100%;"></a>
         </div>
       </div>
