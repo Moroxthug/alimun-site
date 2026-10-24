@@ -511,3 +511,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Text and logo over the video removed (no text inside videos). Phone is now optional, as the server already treated it; the success message says the message was sent and that we reply by email.
 - New "Looking for something specific?" section: three cards pointing learners to plans and prices, teachers to careers and companies to corporate training, in all nine languages.
 - Social links (Instagram, LinkedIn, TikTok) still point to "#" until the owner sends the profile URLs.
+
+## 2026-10-24 — Legal pages: accuracy
+- Cookie Policy: Google Analytics row removed (the site loads no analytics); it now says analytics cookies are not currently set, like marketing. The `alimun-currency` preference is listed.
+- Privacy Policy: teacher application data now matches the real form (language, experience, specialty, bio; payout details later); Google Analytics removed from the providers.
+- `site/scripts/localize.mjs`: legal pages use `src/blocks/legal/i18n/<lang>/<file>` when it exists (Moroccan pages use French). Translations in progress.

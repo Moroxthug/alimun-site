@@ -149,12 +149,12 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
   },
   "src/blocks/legal/cookies.html": {
-    "sha256": "e994f1be13bbb72b76bc9b850a891889a8b799f39cc7d39348200a435c95247c",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+    "sha256": "e19cad550822ab8f1a9496992f5ff56e86b403422eb32359db54be729e892c93",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 made accurate: no analytics cookies are set (Google Analytics removed), currency preference listed, teacher application fields match the real form (owner: go on with the legal pages)"
   },
   "src/blocks/legal/gdpr.html": {
-    "sha256": "ad0dcc1be6073a0a8c23755491f11880e19b0d509483bf7d6355e7e44b5b2db9",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+    "sha256": "8d65f08ee37fe049801fef75ec6becb4bef1215c879ff4fdd63f5ad467cdc870",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 made accurate: no analytics cookies are set (Google Analytics removed), currency preference listed, teacher application fields match the real form (owner: go on with the legal pages)"
   },
   "src/blocks/legal/head-404.html": {
     "sha256": "3d84ff380453d3d1497131d832eaeddd223f887b1dcead097660dfa3a95b45a1",

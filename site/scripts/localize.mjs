@@ -140,6 +140,18 @@ function withFooterCourses(html, lang) {
   return $.html();
 }
 
+// Legal pages (Terms, Privacy, Cookies): a language's own translation of the text, when one exists in
+// src/blocks/legal/i18n/<lang>/<file>, replaces the English text column. Moroccan pages use the French text.
+const LEGAL_LANG = { ma: 'fr' };
+function withLegalText(html, lang, file) {
+  if (!['terms.html', 'gdpr.html', 'cookies.html'].includes(file)) return html;
+  const src = path.join(site, 'src', 'blocks', 'legal', 'i18n', LEGAL_LANG[lang] || lang, file);
+  if (!fs.existsSync(src)) return html;
+  const $ = cheerio.load(html);
+  $('section.legal').replaceWith(fs.readFileSync(src, 'utf8'));
+  return $.html();
+}
+
 let count = 0;
 for (const file of pages) {
   const english = withEnglishFile(fs.readFileSync(path.join(dist, file), 'utf8'));
@@ -147,7 +159,7 @@ for (const file of pages) {
   for (const lang of languages) {
     fs.mkdirSync(path.join(dist, lang), { recursive: true });
     const html = localizePage(english, { lang, templateFile: file, langDict: translations[lang] || {}, META_I18N, META_LANG });
-    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withFooterCourses(withHomeQuiz(withFaqLd(withCourseList(html, lang)), lang), lang), file));
+    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withFooterCourses(withHomeQuiz(withFaqLd(withCourseList(withLegalText(html, lang, file), lang)), lang), lang), file));
     count++;
   }
 }
