@@ -66,3 +66,15 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7: *bei der Bank* is given for "where?" (*in der Bank* is also common); invented fare of 74 euros.
 - u8: *im Garten von meinem Bruder* (spoken) instead of the genitive; five-column adjective table; the reading previews endings after *ein* and possessives.
 - In reading lessons, choice questions are written in German (taught text), unlike the B1 model, where they are in English.
+
+## German B2
+- u1: five-column adjective tables; case names (Nominativ…) are marked as explanations and translated.
+- u2 p3: *in Frage kommen* (a tip says *infrage* is also correct); rough equivalents under the heading "Simpler form".
+- u3 p4: check the physics wording of the heat-pump reading.
+- u4 p1: *du seist* (Duden also allows *seiest*); u4 p2: choice items follow news style (Konjunktiv I, otherwise II or *würde*).
+- u4 p4, u1 p4: fictional town Hallberg and fictional people.
+- u5 p4: reading about Clara Schumann; facts checked (1819 Leipzig, first concert at nine, married 1840 with court permission, eight children, Brahms 1853, Frankfurt from 1878, died 1896, 100-mark note).
+- u6: German verb hints in brackets; *wärst* and *wärest* accepted.
+- u7: two *zwar … aber* word-order items rely on the capital letter of the first tile; "Was mich überzeugt hat, ___ die Kameraarbeit" offers *ist* (*war* also correct but not offered); the test has 12 questions.
+- u8 p2: modal particles (*eben*, *doch*): check each item has one answer; the test gap "dir ___ schon dreimal erklärt" accepts *doch* and *ja*.
+- Several word-order items rely on the capital letter of the first tile.
