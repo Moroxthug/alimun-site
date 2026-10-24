@@ -117,6 +117,29 @@
     return { done: d, total: n };
   }
   function bookName(b) { return (A.languageName(b.language) + ' ' + b.level).trim(); }
+  /* Goal books: a second book for what the learner wants to do with the language (goal_track from sign-up) */
+  var GOALS = { relocation: { key: 'app_goal_relocation', art: 'suitcase' }, professional: { key: 'app_goal_professional', art: 'mug' },
+    academic: { key: 'app_goal_academic', art: 'owl' }, pleasure: { key: 'app_goal_pleasure', art: 'sun' } };
+  function coreOf(b) { return (index || []).filter(function (x) { return x.track === 'core' && x.language === b.language && x.level === b.level; })[0]; }
+  function goalShelf(book) {
+    var mine = A.data().profile.goal;
+    var list = (index || []).filter(function (x) { return x.track === 'goal' && x.language === book.language && x.written > 0; });
+    list.sort(function (a, b) { return (b.goal === mine) - (a.goal === mine) || (a.level === book.level ? -1 : 1); });
+    var html = '<h2 class="t-h2 span-12 home__section" style="--i:3">' + esc(t('app_book_second_h')) + '</h2>' +
+      '<p class="t-body span-12" style="--i:3;margin-top:-6px">' + esc(t('app_book_second_p')) + '</p>';
+    var hasMine = list.some(function (x) { return x.goal === mine; });
+    list.forEach(function (g, i) {
+      var meta = GOALS[g.goal] || GOALS.pleasure;
+      html += '<a class="card span-6 goal-card' + (g.goal === mine ? ' is-mine' : '') + '" href="#/book/' + esc(g.id) + '" style="--i:' + (4 + i) + '"><div class="card__row"><div class="card__art">' + A.Cast.drawing(meta.art) + '</div><div>' +
+        '<h3 class="t-h2">' + esc(t(meta.key)) + '</h3><p class="t-small" style="margin-top:6px">' + esc(bookName(g)) + '</p>' +
+        (g.goal === mine ? '<p class="t-tiny">' + esc(t('app_book_your_goal')) + '</p>' : '') + '</div></div></a>';
+    });
+    if (mine && GOALS[mine] && !hasMine) {
+      html += '<div class="card card--bone span-6 goal-card is-planned" style="--i:' + (4 + list.length) + '"><div class="card__row"><div class="card__art">' + A.Cast.drawing(GOALS[mine].art) + '</div><div>' +
+        '<h3 class="t-h2">' + esc(t(GOALS[mine].key)) + '</h3><p class="t-small" style="margin-top:6px">' + esc(t('app_book_writing')) + '</p><p class="t-tiny">' + esc(t('app_book_your_goal')) + '</p></div></div></div>';
+    }
+    return list.length || (mine && GOALS[mine]) ? html : '';
+  }
   function meter(share) {
     var w = share.total ? Math.round(share.done / share.total * 100) : 0;
     return '<div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="' + w + '" aria-label="' + esc(t('app_book_progress')) + '"><i style="width:' + w + '%"></i></div>';
@@ -153,9 +176,10 @@
       lead = t('app_book_next_line', { unit: unitTitle(book, stop.unit), page: what });
       btn = '<a class="btn btn--lime" href="' + href(book, stop.unit, stop.page) + '">' + esc(share.done ? t('app_book_continue') : t('app_book_start')) + A.icon('arrow') + '</a>';
     }
-    var html = '' +
-      '<div class="view__head"><div><h1 class="t-h1">' + esc(bookName(book)) + '</h1><p class="t-lead">' + esc(t('app_book_lead')) + '</p></div>' +
-        '<div class="btn-row">' + explainSwitch(book) + (mine ? '' : '<a class="btn btn--ghost btn--sm" href="#/book/' + esc(A.myBookId()) + '">' + esc(t('app_book_mine')) + '</a>') + '</div></div>' +
+    var isGoal = book.track === 'goal', core = isGoal && coreOf(book);
+    var html = '' + (core ? backLink('#/book/' + core.id, bookName(core)) : '') +
+      '<div class="view__head"><div><h1 class="t-h1"' + (isGoal ? xA(book) : '') + '>' + esc(isGoal ? book.title : bookName(book)) + '</h1><p class="t-lead">' + esc(isGoal ? t('app_book_goal_lead', { course: bookName(book) }) : t('app_book_lead')) + '</p></div>' +
+        '<div class="btn-row">' + explainSwitch(book) + (mine || isGoal ? '' : '<a class="btn btn--ghost btn--sm" href="#/book/' + esc(A.myBookId()) + '">' + esc(t('app_book_mine')) + '</a>') + '</div></div>' +
       '<div class="grid rise">' +
         '<section class="card card--forest span-8 cover-card" style="--i:0" aria-labelledby="h-cont">' +
           '<h2 class="t-h1" id="h-cont">' + esc(h) + '</h2>' +
@@ -166,6 +190,7 @@
         '<section class="stage span-4" style="--i:1;background:var(--t-sun)" aria-label="' + esc(t('app_home_buddy')) + '">' +
           '<div class="bub say">' + esc(t(share.done ? 'app_book_bub_back' : 'app_book_bub_start')) + '</div>' + A.Cast.drawing(A.buddyFor(book.language)) + '</section>' +
         (book.review === 'draft' ? '<section class="card card--bone span-12 draft-note" style="--i:2" role="note"><h2 class="t-h3">' + esc(t('app_book_draft_h')) + '</h2><p class="t-small" style="margin-top:6px">' + esc(t('app_book_draft_p')) + '</p></section>' : '') +
+        (isGoal ? '' : goalShelf(book)) +
         '<h2 class="t-h2 span-12 home__section" style="--i:3">' + esc(t('app_book_units')) + '</h2>';
     book.units.forEach(function (u, i) {
       var style = ' style="--i:' + (4 + i) + '"';
@@ -229,11 +254,12 @@
         }).join('') + '</div>';
       case 'table': {
         var ex = b.explain || [];
+        var own = function (k) { return ex.indexOf('col' + k) > -1 ? '' : tA(book); };
         var head = '<thead><tr>' + b.head.map(function (h) { return '<th scope="col"' + (ex.indexOf('head') > -1 ? '' : tA(book)) + '>' + md(h) + '</th>'; }).join('') + '</tr></thead>';
         var rows = b.rows.map(function (r, ri) {
           return '<tr style="--k:' + ri + '">' + r.map(function (c, k) {
-            if (k === 0) return '<th scope="row"' + (ex.indexOf('col0') > -1 ? '' : tA(book)) + '>' + md(c) + '</th>';
-            return '<td' + tA(book) + '>' + (b.quiz ? '<button class="cell" type="button" data-act="cell" tabindex="-1">' + md(c) + '</button>' : md(c)) + '</td>';
+            if (k === 0) return '<th scope="row"' + own(0) + '>' + md(c) + '</th>';
+            return '<td' + own(k) + '>' + (b.quiz ? '<button class="cell" type="button" data-act="cell" tabindex="-1">' + md(c) + '</button>' : md(c)) + '</td>';
           }).join('') + '</tr>';
         }).join('');
         return '<figure class="rd-table' + (b.quiz ? ' is-quiz' : '') + '" data-table>' +
@@ -606,7 +632,76 @@
   function afterSpread() {
     var cur = root.querySelector('.spread:not([aria-hidden])') || root;
     cur.querySelectorAll('[data-dialogue]').forEach(playDialogue);
-    requestAnimationFrame(function () { drawLines(cur); });
+    requestAnimationFrame(function () { drawLines(cur); fitTables(cur); });
+  }
+
+  /* A table wider than its page is shrunk to fit, never widening the screen; tapping it opens it full screen */
+  function fitTables(scope) {
+    (scope || root).querySelectorAll('.rd-table__scroll').forEach(function (box) {
+      var tb = box.querySelector('table');
+      var old = box.querySelector('.rd-table__open');
+      if (old) old.remove();
+      box.classList.remove('is-fit'); box.removeAttribute('data-act'); box.removeAttribute('role'); box.removeAttribute('tabindex'); box.removeAttribute('aria-label');
+      tb.style.transform = ''; box.style.height = ''; tb.style.width = '';
+      /* Cells wrap first; only a table that still does not fit is shrunk */
+      var need = tb.offsetWidth, have = box.clientWidth;
+      if (need <= have + 1) return;
+      tb.style.width = need + 'px';
+      var k = have / need;
+      box.classList.add('is-fit');
+      tb.style.transform = 'scale(' + k + ')';
+      box.style.height = Math.ceil(tb.offsetHeight * k) + 'px';
+      box.setAttribute('data-act', 'enlarge'); box.setAttribute('role', 'button'); box.setAttribute('tabindex', '0');
+      box.setAttribute('aria-label', t('app_book_table_open'));
+      box.insertAdjacentHTML('beforeend', '<span class="rd-table__open" aria-hidden="true">' + A.icon('expand') + esc(t('app_book_table_open')) + '</span>');
+    });
+  }
+  var viewer = null;
+  function openTable(box) {
+    var fig = box.closest('[data-table]'), cap = fig.querySelector('figcaption');
+    var tb = box.querySelector('table').cloneNode(true);
+    tb.removeAttribute('style');
+    var wrap = document.createElement('div');
+    wrap.className = 'tv';
+    wrap.setAttribute('role', 'dialog'); wrap.setAttribute('aria-modal', 'true');
+    wrap.setAttribute('aria-label', cap ? cap.textContent : t('app_book_table_open'));
+    var book = ctx && ctx.book;
+    if (book) { wrap.setAttribute('lang', book.explainLang || 'en'); wrap.setAttribute('dir', book.explainLang === 'ar' ? 'rtl' : 'ltr'); }
+    wrap.innerHTML = '<div class="tv__top"><p class="tv__title">' + (cap ? cap.innerHTML : '') + '</p>' +
+      '<button class="icon-btn" type="button" data-act="zoom" data-z="-1" aria-label="' + esc(t('app_book_zoom_out')) + '">' + A.icon('minus') + '</button>' +
+      '<button class="icon-btn" type="button" data-act="zoom" data-z="1" aria-label="' + esc(t('app_book_zoom_in')) + '">' + A.icon('plus') + '</button>' +
+      '<button class="icon-btn" type="button" data-act="tvclose" aria-label="' + esc(t('app_book_table_close')) + '">' + A.icon('close') + '</button></div>' +
+      '<p class="t-tiny tv__hint">' + esc(t('app_book_table_hint')) + '</p>' +
+      '<div class="tv__body"><div class="rd-table' + (fig.classList.contains('is-hidden') ? ' is-quiz is-hidden' : '') + '"><div class="tv__zoom"></div></div></div>';
+    wrap.querySelector('.tv__zoom').appendChild(tb);
+    tb.querySelectorAll('.cell').forEach(function (c) { c.tabIndex = 0; });
+    root.appendChild(wrap);
+    document.documentElement.style.overflow = 'hidden';
+    viewer = { el: wrap, z: 1, back: box };
+    var body = wrap.querySelector('.tv__body'), pinch = null;
+    body.addEventListener('touchstart', function (e) {
+      if (e.touches.length === 2) pinch = { d: dist(e.touches), z: viewer.z };
+    }, { passive: true });
+    body.addEventListener('touchmove', function (e) {
+      if (!pinch || e.touches.length !== 2) return;
+      e.preventDefault();
+      setZoom(pinch.z * dist(e.touches) / pinch.d);
+    }, { passive: false });
+    body.addEventListener('touchend', function (e) { if (e.touches.length < 2) pinch = null; });
+    wrap.querySelector('[data-act="tvclose"]').focus();
+  }
+  function dist(tt) { return Math.hypot(tt[0].clientX - tt[1].clientX, tt[0].clientY - tt[1].clientY) || 1; }
+  function setZoom(z) {
+    if (!viewer) return;
+    viewer.z = Math.max(0.6, Math.min(3, z));
+    viewer.el.querySelector('.tv__zoom').style.zoom = viewer.z;
+  }
+  function closeTable() {
+    if (!viewer) return;
+    var back = viewer.back;
+    viewer.el.remove(); viewer = null;
+    document.documentElement.style.overflow = '';
+    if (back && back.isConnected) back.focus({ preventScroll: true });
   }
   function playDialogue(fig) {
     var lines = fig.querySelectorAll('.chat__line');
@@ -914,6 +1009,9 @@
         return;
       }
       if (act === 'cell') { el.classList.add('is-shown'); return; }
+      if (act === 'enlarge') { openTable(el); return; }
+      if (act === 'zoom') { setZoom(viewer.z * (+el.getAttribute('data-z') > 0 ? 1.25 : 0.8)); return; }
+      if (act === 'tvclose') { closeTable(); return; }
       if (act === 'replay') { playDialogue(el.closest('[data-dialogue]')); return; }
       if (!ctx) return;
       var bi = +el.getAttribute('data-b'), i = +el.getAttribute('data-i');
@@ -942,6 +1040,7 @@
     root.addEventListener('keydown', function (e) {
       var el = e.target;
       if (e.key === 'Enter' && ctx && el.classList.contains('gap-in')) { e.preventDefault(); if (ctx.kind === 'page') onCheck(+el.getAttribute('data-b')); }
+      if ((e.key === 'Enter' || e.key === ' ') && el.getAttribute('data-act') === 'enlarge') { e.preventDefault(); openTable(el); }
     });
     root.addEventListener('pointerdown', onPointerDown);
     window.addEventListener('pointermove', onPointerMove, { passive: false });
@@ -949,6 +1048,7 @@
     window.addEventListener('pointercancel', function () { if (drag && drag.ghost) { drag.ghost.remove(); drag.tile.classList.remove('is-dragging'); } drag = null; });
     /* Arrow keys turn the page (not while typing); swipes do too on touch screens */
     document.addEventListener('keydown', function (e) {
+      if (viewer) { if (e.key === 'Escape') closeTable(); return; }
       if (!ctx || ctx.kind !== 'page' || !root.querySelector('.lesson') || /INPUT|TEXTAREA/.test(e.target.tagName)) return;
       var rtl = document.documentElement.dir === 'rtl';
       if (e.key === 'ArrowRight') go(ctx.at + (rtl ? -1 : 1));
@@ -956,7 +1056,7 @@
     });
     var sw = null;
     root.addEventListener('touchstart', function (e) {
-      if (!ctx || ctx.kind !== 'page' || e.touches.length !== 1 || e.target.closest('.tile, .rd-table__scroll, input')) { sw = null; return; }
+      if (!ctx || ctx.kind !== 'page' || viewer || e.touches.length !== 1 || e.target.closest('.tile, input, .tv')) { sw = null; return; }
       sw = { x: e.touches[0].clientX, y: e.touches[0].clientY };
     }, { passive: true });
     root.addEventListener('touchend', function (e) {
@@ -967,7 +1067,7 @@
       var rtl = document.documentElement.dir === 'rtl';
       go(ctx.at + ((dx < 0) !== rtl ? 1 : -1));
     }, { passive: true });
-    window.addEventListener('resize', function () { if (ctx) drawLines(); });
+    window.addEventListener('resize', function () { if (ctx) { drawLines(); fitTables(); } });
   }
 
   /* ---------- Entry ---------- */
@@ -990,17 +1090,18 @@
   /* Draws the screen for the route parts after #/book. Returns a promise. */
   function mount(view, parts, helpers) {
     A = helpers; root = view; ctx = null;
+    closeTable();
     bind();
     document.body.classList.remove('is-reading');
     view.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div></div>';
     return loadIndex().then(function (list) {
       var id = parts[0] || A.myBookId();
       var entry = list.filter(function (b) { return b.id === id; })[0];
-      if (!entry) return { html: noneView(list.filter(function (b) { return b.written > 0; })), title: t('app_nav_book') };
+      if (!entry) return { html: noneView(list.filter(function (b) { return b.written > 0 && b.track === 'core'; })), title: t('app_nav_book') };
       return Promise.all([loadBook(id, explainCode(entry)), loadProgress(id)]).then(function (r) {
         var book = r[0];
         var unit = book.units.filter(function (u) { return u.id === parts[1] && !u.planned; })[0];
-        if (!unit) return { html: coverView(book), title: bookName(book) };
+        if (!unit) return { html: coverView(book), title: book.track === 'goal' ? book.title : bookName(book) };
         if (parts[2] === 'test') return { html: testView(book, unit), title: t('app_book_test') };
         var page = unit.pages.filter(function (p) { return p.id === parts[2]; })[0];
         if (!page) return { html: unitView(book, unit), title: unitTitle(book, unit) };

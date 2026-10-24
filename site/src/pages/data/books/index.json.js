@@ -4,6 +4,7 @@ const books = import.meta.glob('../../../data/books/*-*.js', { eager: true });
 export function GET() {
   const list = Object.values(books).map(({ BOOK }) => ({
     id: BOOK.id, language: BOOK.language, level: BOOK.level, review: BOOK.review,
+    track: BOOK.track || 'core', goal: BOOK.goal || null,
     written: BOOK.units.filter((u) => !u.planned).length, units: BOOK.units.length,
   }));
   return new Response(JSON.stringify({ books: list }), { headers: { 'Content-Type': 'application/json' } });

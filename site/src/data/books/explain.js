@@ -11,11 +11,12 @@ export function visit(book, fn) {
       at(b, 'caption');
       const ex = b.explain || [];
       if (ex.includes('head')) b.head.forEach((_, i) => at(b.head, i));
-      if (ex.includes('col0')) b.rows.forEach((r) => at(r, 0));
+      ex.filter((e) => /^col\d+$/.test(e)).forEach((e) => { const k = +e.slice(3); b.rows.forEach((r) => at(r, k)); });
     }
     if (b.t === 'dialogue') at(b, 'title');
     if (b.t === 'ex') { at(b, 'h'); (b.items || []).forEach((x) => at(x, 'why')); }
   };
+  at(book, 'title');
   book.units.forEach((u) => {
     at(u, 'title'); at(u, 'goal');
     (u.pages || []).forEach((p) => {

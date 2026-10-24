@@ -9,7 +9,7 @@ window.ALIMUN_SAMPLE = function () {
   for (var i = 0; i < todayIndex; i++) week[i] = 1;
   return {
     sample: true,
-    profile: { name: 'Sara Rossi', language: 'German', level: 'B1', tier: 'free' },
+    profile: { name: 'Sara Rossi', language: 'German', level: 'B1', tier: 'free', goal: 'relocation' },
     nextClass: { at: new Date(now + 2 * DAY + 150 * 60000).toISOString(), live: false, language: 'German', level: 'B1', teacher: 'Jonas' },
     flashcardsDue: 18,
     homework: [{ id: 'sample', titleKey: 'app_sample_hw', due_date: new Date(now + 3 * DAY).toISOString().slice(0, 10) }],

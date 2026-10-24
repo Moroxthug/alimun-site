@@ -62,7 +62,7 @@
     return c.auth.getSession().then(function (r) {
       var session = r.data && r.data.session;
       if (!session) return null;
-      return c.from('student_profiles').select('id, full_name, language, level, tier, placement, enrolled_cohort_id')
+      return c.from('student_profiles').select('id, full_name, language, level, tier, goal_track, placement, enrolled_cohort_id')
         .eq('user_id', session.user.id).maybeSingle().then(function (pr) {
           if (pr.error) throw pr.error;
           var p = pr.data;
@@ -132,7 +132,8 @@
           name: p.full_name || '',
           language: p.language || (placement && placement.language) || '',
           level: p.level || (placement && placement.level) || '',
-          tier: p.tier || 'free'
+          tier: p.tier || 'free',
+          goal: p.goal_track || null
         },
         nextClass: s ? {
           at: s.scheduled_at, live: s.status === 'live', language: co.language || p.language, level: co.level || p.level,

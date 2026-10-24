@@ -8,6 +8,7 @@ Step 4 of `docs/DASHBOARD_PLAN.md`. The reader is `js/app/reader.js`, inside the
 - Served as static JSON by the site build, one file per book and explanation language: `/data/books/<book>.<lang>.json` (`site/src/pages/data/books/[book].json.js`; a missing translation stays in English), and the list `/data/books/index.json`. `scripts/apply-rebuild.js` already copies `site/dist/data` to the deployment.
 - After changing a book: `node scripts/book-strings.mjs <book> <lang>` lists its explanations with the existing translations (empty for new or changed text); fill the gaps in the i18n file.
 - The reader opens the book that matches the student's course (`German` + `B1` -> `German-B1`). Without one it says the book is being written and links to the books that have written units.
+- Goal books: a second book for what the learner wants to do with the language, matching `goal_track` from sign-up (`relocation`, `professional`, `academic`, `pleasure`; `foundations` has the course book only). File `<Language>-<Level>-<goal>.js` with `track: 'goal'`, `goal` and a `title` (an explanation, translated). The course book's cover shows them under "A second book for your goal", the learner's own goal first; when theirs is not written yet it says so.
 
 ## Structure
 Book > unit > lesson > pages > blocks. A lesson (`pages[]` in the file, for history) is a few full-screen pages (`spreads`), turned one at a time. Explanations (titles, goals, text, notes, tips, instructions, table headings marked with `explain`, every `why`) show in the learner's language, with a switch to the language being learned; example sentences, exercise items, dialogue lines and reading texts stay in the language being learned. The reader's own text (buttons, feedback, "Unit 1") comes from `js/translations.js` (`app_book_*`).
@@ -31,7 +32,7 @@ export const BOOK = {
 Text fields accept `**bold**` and `*italic*`; everything else is escaped.
 - `{ t: 'text', md }` paragraphs (blank line between paragraphs).
 - `{ t: 'examples', items: [{ s, n }] }` example sentences; tapping one opens its note.
-- `{ t: 'table', caption, head: [...], rows: [[...]], explain: ['head', 'col0'], quiz: true }` the first cell of each row is its header; `explain` says which parts are explanations (translated); `quiz` adds "Test yourself", which hides the forms until tapped.
+- `{ t: 'table', caption, head: [...], rows: [[...]], explain: ['head', 'col0', 'col2'], quiz: true }` the first cell of each row is its header; `explain` says which parts are explanations (translated: the headings and any column `colN`); `quiz` adds "Test yourself", which hides the forms until tapped. A table wider than the page is shrunk to fit, never widening the screen, and opens full screen on tap, where it can be zoomed with two fingers or + and −.
 - `{ t: 'dialogue', title, lines: [{ who, s }] }` plays line by line like a chat.
 - `{ t: 'tip', art: 'owl', md }` a drawing with a speech bubble.
 - `{ t: 'reading', title, md }` a reading text.
@@ -56,4 +57,4 @@ In a lesson, answers are checked straight away with the book character's reactio
 - Signed out or sample data: this browser (`localStorage` key `alimun-book-progress`).
 
 ## Writing a unit
-Draft from the CEFR descriptors for the level, original text only. Each lesson teaches one thing over three to five pages: one or two teaching pages, then one exercise per page; every item has a `why`. Keep a page to what fits on one screen. The unit test mixes every page. Keep `review: 'draft'` until a native teacher has checked every page.
+Draft from the CEFR descriptors for the level, original text only. Each lesson teaches one thing over three to five pages, then checks it. Group exercises the way the topic makes sense: two short exercises on the same point share a page, a long one gets its own; a reading and its questions can sit together. Every item has a `why`. Keep a page to roughly one screen. The unit test mixes every page. Keep `review: 'draft'` until a native teacher has checked every page.
