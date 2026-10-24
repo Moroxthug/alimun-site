@@ -32,11 +32,11 @@ export default {
   ],
   pageTitle: (c) => c.open ? `Online ${c.name} course with live classes | Alimun` : `Online ${c.name} course: join the waitlist | Alimun`,
   metaDesc: (c) => c.open
-    ? `Online ${c.name} course in groups with a teacher, on fixed days and times every week, with homework corrected with the help of AI and exercises with instant feedback. From €24 a month.`
+    ? `Online ${c.name} course in groups with a teacher, on fixed days and times every week, with homework corrected by your teacher and exercises with instant feedback. From €24 a month.`
     : `${c.name} classes at Alimun are opening soon. Join the waitlist for free and we will email you as soon as they open.`,
   heroTitle: (c) => `Online ${c.name} course`,
   heroDesc: (c) => c.open
-    ? 'Live video classes with a teacher and the same group, on fixed days at the same time every week. Between classes you practice with instant feedback, and your teacher corrects your homework with the help of AI. From €24 a month.'
+    ? 'Live video classes with a teacher and the same group, on fixed days at the same time every week. Between classes you practice with instant feedback, and your teacher corrects your homework. From €24 a month.'
     : `${c.name} classes are opening soon. Join the waitlist for free: we email you as soon as your language opens, and you pay nothing today. In the meantime, English and German classes are already open.`,
   heroCta: (c) => c.open ? 'Start now' : 'Join the waitlist',
   howTitle: (c) => `How the ${c.name} classes work`,
@@ -209,7 +209,7 @@ export default {
     UI_HOW_2_T: 'Live classes',
     UI_HOW_2_A: 'A video class with two students on screen',
     UI_HOW_3_T: 'Corrected homework',
-    UI_HOW_3_D: 'Your teacher sets the homework and returns it corrected with the help of AI: the grade, your strengths, what to improve and a corrected example.',
+    UI_HOW_3_D: 'Your teacher sets the homework and returns it corrected: the grade, your strengths, what to improve and a corrected example.',
     UI_HOW_3_A: 'A teacher correcting homework at a computer',
     UI_HOW_4_T: 'Practice whenever you like',
     UI_HOW_4_D: 'Exercises at your level with instant feedback, flashcards with the vocabulary from class, and tasks in exam format.',

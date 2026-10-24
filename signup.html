@@ -157,10 +157,10 @@ body{font-family:var(--body);background:#f0efe9;min-height:100vh;display:flex;fl
 <div class="auth-shell">
   <div class="auth-brand-panel">
     <a class="auth-brand-logo" href="index.html"><img src="images/Alimun-Source-File-fixes.svg" alt="Alimun Logo"></a>
-    <span class="auth-brand-tagline" data-i18n="signup_brand_tagline">Live cohorts. Real teachers. AI feedback.</span>
+    <span class="auth-brand-tagline" data-i18n="signup_brand_tagline">Live classes. Real teachers. Instant practice feedback.</span>
     <div class="auth-brand-main">
       <h1 class="auth-brand-headline" data-i18n-html="signup_brand_headline">LEARN WITH<br>LIVE COHORTS.</h1>
-      <p class="auth-brand-desc" data-i18n="signup_brand_desc">Small-group classes with real teachers, plus AI feedback between sessions.</p>
+      <p class="auth-brand-desc" data-i18n="signup_brand_desc">Live group classes with real teachers, plus practice with instant feedback between sessions.</p>
     </div>
   </div>
   <div class="auth-form-panel">
@@ -235,7 +235,7 @@ const TIERS = [
     monthlyPrice: 59,  yearlyPrice: 590,  yearlyMonthlyEq: 49,
     // 2 months free = 10 × €59 = €590/yr → €49.17/mo
     badge:'Best value', featured:true,
-    feats:['Everything in Community','Smaller, focused groups','Weekly group feedback','AI essay grading','Monthly progress report'],
+    feats:['Everything in Community','Smaller, focused groups','Weekly group feedback','Essay feedback','Monthly progress report'],
   },
   {
     id:'intensive', stripeId:'intensive', name:'Intensive', size:'~6 learners + 1:1',
@@ -402,7 +402,7 @@ function renderRole() {
         <div class="role-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
         <div class="role-ico"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9.5 12 5l10 4.5-10 4.5-10-4.5Z"/><path d="M6.5 11.7v4c0 1.4 2.46 2.55 5.5 2.55s5.5-1.15 5.5-2.55v-4"/><path d="M21 10v5.5"/></svg></div>
         <div class="role-name" data-i18n="role_student_title">Student</div>
-        <div class="role-desc" data-i18n="role_student_desc">I want to learn a language with live cohorts and AI-powered feedback.</div>
+        <div class="role-desc" data-i18n="role_student_desc">I want to learn a language in live classes with a teacher.</div>
       </div>
       <div class="role-card" onclick="pick('teacher')">
         <div class="role-arrow"><svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
@@ -664,7 +664,7 @@ function renderTier() {
       feats: t.feats.map(f => {
         let key = '';
         if (f.includes('Live cohort'))           key = 'tier_feat_live_cohort';
-        else if (f.includes('AI essay'))         key = 'tier_feat_ai_grading';
+        else if (f.includes('Essay feedback'))   key = 'tier_feat_ai_grading';
         else if (f.includes('Weekly group'))     key = 'tier_feat_weekly_group_feedback';
         else if (f.includes('Community access')) key = 'tier_feat_community_access';
         else if (f.includes('Everything in Community') || f.includes('Everything in Daily')) key = 'tier_feat_everything_community';

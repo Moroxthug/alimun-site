@@ -29,11 +29,11 @@ export default {
   ],
   pageTitle: (c) => c.open ? `Cours ${c.de} en ligne, en direct avec un professeur | Alimun` : `Cours ${c.de} en ligne : liste d'attente | Alimun`,
   metaDesc: (c) => c.open
-    ? `Cours ${c.de} en ligne en groupe avec un professeur, à jours et heures fixes chaque semaine, devoirs corrigés avec l'aide de l'IA et exercices corrigés immédiatement. À partir de €24 par mois.`
+    ? `Cours ${c.de} en ligne en groupe avec un professeur, à jours et heures fixes chaque semaine, devoirs corrigés par ton professeur et exercices corrigés immédiatement. À partir de €24 par mois.`
     : `Les cours ${c.de} sur Alimun ouvriront bientôt. Inscris-toi gratuitement sur la liste d'attente et nous t'écrirons dès leur ouverture.`,
   heroTitle: (c) => `Cours ${c.de} en ligne`,
   heroDesc: (c) => c.open
-    ? "Des cours en direct en visio avec un professeur et le même groupe, à jours fixes et à la même heure chaque semaine. Entre deux cours, tu t'entraînes avec une correction immédiate et ton professeur corrige tes devoirs avec l'aide de l'IA. À partir de €24 par mois."
+    ? "Des cours en direct en visio avec un professeur et le même groupe, à jours fixes et à la même heure chaque semaine. Entre deux cours, tu t'entraînes avec une correction immédiate et ton professeur corrige tes devoirs. À partir de €24 par mois."
     : `Les cours ${c.de} ouvriront bientôt. Inscris-toi gratuitement sur la liste d'attente : nous t'écrivons dès l'ouverture et tu ne paies rien aujourd'hui. En attendant, tu peux déjà suivre les cours d'anglais et d'allemand.`,
   heroCta: (c) => c.open ? 'Commencer maintenant' : "Rejoindre la liste d'attente",
   howTitle: (c) => `Comment se passent les cours ${c.de}`,
@@ -195,7 +195,7 @@ export default {
     UI_HOW_2_T: 'Cours en direct',
     UI_HOW_2_A: "Un cours en visio avec deux élèves à l'écran",
     UI_HOW_3_T: 'Devoirs corrigés',
-    UI_HOW_3_D: "Ton professeur donne les devoirs et te les rend corrigés avec l'aide de l'IA : note, points forts, ce qu'il faut améliorer et un exemple de correction.",
+    UI_HOW_3_D: "Ton professeur donne les devoirs et te les rend corrigés : note, points forts, ce qu'il faut améliorer et un exemple de correction.",
     UI_HOW_3_A: 'Un professeur qui corrige des devoirs sur son ordinateur',
     UI_HOW_4_T: "Entraîne-toi quand tu veux",
     UI_HOW_4_D: "Des exercices à ton niveau avec correction immédiate, des cartes mémoire avec le vocabulaire des cours et des épreuves au format des examens.",

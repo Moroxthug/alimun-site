@@ -1,8 +1,8 @@
 {
   "_note": "Blocks the owner approved. Build fails if one changes. Unlock only on the owner's request.",
   "src/blocks/head.html": {
-    "sha256": "562c29d1662a1c9721de0555d1266fb6b63924076d742d2f4989b17b23b2b93c",
-    "approved": "2026-10-19 nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-23 FAQ answers made accurate (owner: faq ok); 2026-10-23 English-only FAQPage removed from the head graph (owner FAQ redo; each language now gets its own FAQPage from the FAQ section); 2026-10-24 homepage title (and og/twitter title) changed for search on owner request; 2026-10-24 Alimun book icon as favicon (owner request)"
+    "sha256": "3dc51bd7a2d228bfb85767e728ca5a9000053592cfc26362109a79e7f08728cc",
+    "approved": "2026-10-19 nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-23 FAQ answers made accurate (owner: faq ok); 2026-10-23 English-only FAQPage removed from the head graph (owner FAQ redo; each language now gets its own FAQPage from the FAQ section); 2026-10-24 homepage title (and og/twitter title) changed for search on owner request; 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 AI mentions removed from meta (owner)"
   },
   "src/blocks/after-body.html": {
     "sha256": "736dc38e48d62d0ee713cd9dfeac4ef58ca3af22541c60e19565a5ea636cdb84",
@@ -33,8 +33,8 @@
     "approved": "2026-10-22 tiers banner ok"
   },
   "src/blocks/services/head.html": {
-    "sha256": "ad5f140cd04ce70289829e155d3753fe71b315e38e275d31d403948c211b1390",
-    "approved": "2026-10-22 services nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request)"
+    "sha256": "c974e7606cbc13511f9d207334158062c641ba650ca49db95af161c9b52d1634",
+    "approved": "2026-10-22 services nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 AI mentions removed from meta (owner)"
   },
   "src/blocks/services/after.html": {
     "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
@@ -45,16 +45,16 @@
     "approved": "2026-10-22 services nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
   },
   "src/blocks/services/s01.html": {
-    "sha256": "3e5aef873c87b9d547fb8c4c761239bab108fe278c50124f36419b01038ede0b",
-    "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 quote restored (owner)"
+    "sha256": "96a37c9fd3332f01f3959dde731519c61d7d061d5e3adcfe447d21a180d2e701",
+    "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 quote restored (owner); 2026-10-24 AI mentions removed (owner)"
   },
   "src/blocks/services/s04.html": {
     "sha256": "dfd3cb850916dfd88a6553b58917753e5bcf0ada190a4090ac5eb3aa57f7c413",
     "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed); 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor"
   },
   "src/blocks/about/head.html": {
-    "sha256": "5efc5501383c16a26b2f7cfe379489c8a285550a8cc207b2d15e31183af3afb4",
-    "approved": "2026-10-22 about nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request)"
+    "sha256": "d410609269347eb505774dea4e2ec80a33eb654a9f7d22b507e8a0ce2d1960ad",
+    "approved": "2026-10-22 about nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 AI mentions removed from meta (owner)"
   },
   "src/blocks/about/after.html": {
     "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
@@ -65,12 +65,12 @@
     "approved": "2026-10-22 about nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
   },
   "src/blocks/about/s01.html": {
-    "sha256": "4cb22f9325f53fdfb09eaddb283fb55c1d814990ef7ac906e0d822c9718b5f63",
-    "approved": "2026-10-22 about hero ok (Start today button, online-class video below heading) | 2026-10-22 owner: hero scroll transition everywhere"
+    "sha256": "04c312de3ef8cd37e2ce1b9f04ef9faf41d151a322246c1c85e1281eed09a6d1",
+    "approved": "2026-10-22 about hero ok (Start today button, online-class video below heading) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 AI mentions removed (owner)"
   },
   "src/blocks/about/s02.html": {
-    "sha256": "ad7bba437d4790ca47cf5c035ab8dbc536d985658b340aebfef52bb5360f632e",
-    "approved": "2026-10-22 about section 2 ok (owner wording, no eyebrow/timeline)"
+    "sha256": "d1f7e2147975086a94d35d6694279d413b8f30c66ae5339c9ab4a7f57afae101",
+    "approved": "2026-10-22 about section 2 ok (owner wording, no eyebrow/timeline); 2026-10-24 AI mentions removed (owner)"
   },
   "src/blocks/about/s02b-paths.html": {
     "sha256": "25646d3bbdcc356ca002b5b486c29e870725a48a1e81ed7eee3b8baeb4084904",
@@ -101,12 +101,12 @@
     "approved": "2026-10-22 corporate contact CTA ok (lime card)"
   },
   "src/blocks/corporate/s06-slider.html": {
-    "sha256": "2992f2eeaa9939419fa422708f21c3b627c21376af8df824e8d7c4030241f546",
-    "approved": "2026-10-22 corporate closing slideshow ok (live words, bigger and centred)"
+    "sha256": "46cb1aca7181d57d7aa27bbb51295276741feb2bf2d603979b4e1e645694f71e",
+    "approved": "2026-10-22 corporate closing slideshow ok (live words, bigger and centred); 2026-10-24 AI mentions removed (owner)"
   },
   "src/blocks/careers/head.html": {
-    "sha256": "54308d2c9bd68ecd1823afc4a1a1c30fb031ecc6d1b2c312e16ab65c007c9ccf",
-    "approved": "2026-10-22 careers nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request)"
+    "sha256": "4af2ff1be8a69289952842f315beee34a4fb55ad642a3ddac06e46dad78ee61e",
+    "approved": "2026-10-22 careers nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 AI mentions removed from meta (owner)"
   },
   "src/blocks/careers/after.html": {
     "sha256": "523f28966a5d2ada38b2b637016e6f7f5b74d3e0520a5e78a33bf2e17c145b74",
@@ -117,12 +117,12 @@
     "approved": "2026-10-22 careers nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
   },
   "src/blocks/careers/s01.html": {
-    "sha256": "400ebdbaf659a6a3b1f29b14c1e5e15f635baa3e9ea3e4b85023d24a1494b29f",
-    "approved": "2026-10-22 careers hero ok (teaching video, accurate text) | 2026-10-22 owner: scroll transition on the hero (test on Careers)"
+    "sha256": "46b832972cb692df5816f2ff023e3f71246d0f7801d5abc5f0f283297686c800",
+    "approved": "2026-10-22 careers hero ok (teaching video, accurate text) | 2026-10-22 owner: scroll transition on the hero (test on Careers); 2026-10-24 AI mentions removed (owner)"
   },
   "src/blocks/careers/s02.html": {
-    "sha256": "a1460ad5c254cfaeb0e8bcd088ab2d546a68f22d8426663c992bcaac9f3985e9",
-    "approved": "2026-10-22 careers why teach ok (scroll row, flip cards, Pexels photos)"
+    "sha256": "a027f0f518a84785ef32ee60f9452fb7a98eea3dc557ff3ba8a49fcdc59db014",
+    "approved": "2026-10-22 careers why teach ok (scroll row, flip cards, Pexels photos); 2026-10-24 AI mentions removed (owner)"
   },
   "src/blocks/careers/s03.html": {
     "sha256": "4898f56a0e1d23933683ba497268f5bf39dddbb9d186bcae682ef34a45e1da65",

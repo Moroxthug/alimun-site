@@ -29,11 +29,11 @@ export default {
   ],
   pageTitle: (c) => c.open ? `${c.name}kurs online, live mit Lehrkraft | Alimun` : `${c.name}kurs online: Warteliste | Alimun`,
   metaDesc: (c) => c.open
-    ? `${c.name}kurs online in Gruppen mit einer Lehrkraft, an festen Tagen und Uhrzeiten jede Woche, Hausaufgaben mit KI-Unterstützung bewertet und Übungen mit sofortiger Korrektur. Ab €24 im Monat.`
+    ? `${c.name}kurs online in Gruppen mit einer Lehrkraft, an festen Tagen und Uhrzeiten jede Woche, Hausaufgaben, die Ihre Lehrkraft bewertet, und Übungen mit sofortiger Korrektur. Ab €24 im Monat.`
     : `Die ${c.name}kurse auf Alimun starten bald. Setzen Sie sich kostenlos auf die Warteliste, und wir schreiben Ihnen, sobald es losgeht.`,
   heroTitle: (c) => `${c.name}kurs online`,
   heroDesc: (c) => c.open
-    ? 'Live-Unterricht per Video mit einer Lehrkraft und derselben Gruppe, an festen Tagen und zur selben Uhrzeit jede Woche. Zwischen den Stunden üben Sie mit sofortiger Korrektur, und Ihre Lehrkraft bewertet Ihre Hausaufgaben mit KI-Unterstützung. Ab €24 im Monat.'
+    ? 'Live-Unterricht per Video mit einer Lehrkraft und derselben Gruppe, an festen Tagen und zur selben Uhrzeit jede Woche. Zwischen den Stunden üben Sie mit sofortiger Korrektur, und Ihre Lehrkraft bewertet Ihre Hausaufgaben. Ab €24 im Monat.'
     : `Die ${c.name}kurse starten bald. Setzen Sie sich kostenlos auf die Warteliste: Wir schreiben Ihnen, sobald Ihre Sprache startet, und Sie bezahlen heute nichts. Bis dahin können Sie bereits an den Englischkursen teilnehmen.`,
   heroCta: (c) => c.open ? 'Jetzt starten' : 'Auf die Warteliste',
   howTitle: (c) => `So läuft der ${c.name}unterricht ab`,
@@ -173,7 +173,7 @@ export default {
     UI_HOW_2_T: 'Live-Unterricht',
     UI_HOW_2_A: 'Videounterricht mit zwei Lernenden auf dem Bildschirm',
     UI_HOW_3_T: 'Bewertete Hausaufgaben',
-    UI_HOW_3_D: 'Ihre Lehrkraft stellt Hausaufgaben und gibt sie mit KI-Unterstützung bewertet zurück: Punktzahl, Stärken, nächste Schritte und ein Korrekturbeispiel.',
+    UI_HOW_3_D: 'Ihre Lehrkraft stellt Hausaufgaben und gibt sie bewertet zurück: Punktzahl, Stärken, nächste Schritte und ein Korrekturbeispiel.',
     UI_HOW_3_A: 'Eine Lehrkraft, die Hausaufgaben am Computer korrigiert',
     UI_HOW_4_T: 'Üben, wann Sie wollen',
     UI_HOW_4_D: 'Übungen auf Ihrem Niveau mit sofortiger Korrektur, Karteikarten mit dem Wortschatz aus dem Unterricht und Aufgaben im Prüfungsformat.',

@@ -476,3 +476,16 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Translations: 5 new keys in nine languages.
 - Checked: desktop, phone and Arabic; all 8 rows reveal; the line fills; the anchor scrolls to How it works; no errors.
 - Owner: the quote should stay (removing it left a big empty gap, because the hero section's height is built around it). Restored exactly as before in `services/s01.html` (structure identical to the previous version apart from the text changes); lock hash updated.
+
+## 24 Oct 2026: AI mentions removed from public copy
+- Owner: too many AI mentions; Alimun is not branded as an AI product.
+- Rewritten without AI, facts kept (teacher corrects homework; exercises and tests get instant feedback; teachers get drafted grades to check):
+  - 20 translation keys in all nine languages (about, careers, services slides, FAQ, signup role, home SEO text, tiers plan 2, services hero/tools, signup plan features, corporate slide, about hero).
+  - Inline English in 10 blocks, with lock hashes updated.
+  - The three course-page mentions in all eight course-site files.
+  - 28 Google descriptions in `scripts/meta-i18n.json` (index, about, careers, services × 7 languages).
+  - English meta and twitter descriptions and the organisation JSON-LD description in the heads.
+  - Signup/signin brand panel lines and signup's "AI essay grading" feature → "Essay feedback".
+- Kept: AI disclosures in Terms and the GDPR/privacy policy (required); dashboard text.
+- Check: scanning all 134 built public pages (legal excluded) finds 0 mentions in any language. Signup, signin and dashboards boot with no errors.
+- CLAUDE.md: new copy rule "No AI branding".

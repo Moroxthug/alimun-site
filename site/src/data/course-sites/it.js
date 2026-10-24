@@ -18,11 +18,11 @@ export default {
   ],
   pageTitle: (c) => c.open ? `Corsi di ${c.name} online con lezioni dal vivo | Alimun` : `Corsi di ${c.name} online: lista d'attesa | Alimun`,
   metaDesc: (c) => c.open
-    ? `Corsi di ${c.name} online in piccoli gruppi con un insegnante, in giorni e orari fissi ogni settimana, compiti corretti con l'aiuto dell'IA ed esercizi con correzione immediata. Da €24 al mese.`
+    ? `Corsi di ${c.name} online in piccoli gruppi con un insegnante, in giorni e orari fissi ogni settimana, compiti corretti dall'insegnante ed esercizi con correzione immediata. Da €24 al mese.`
     : `Le lezioni di ${c.name} su Alimun apriranno presto. Iscriviti gratis alla lista d'attesa e ti scriveremo appena si aprono le classi.`,
   heroTitle: (c) => `Corsi di ${c.name} online`,
   heroDesc: (c) => c.open
-    ? "Lezioni dal vivo in video con un insegnante e lo stesso gruppo, in giorni fissi e alla stessa ora ogni settimana. Tra una lezione e l'altra ti eserciti con correzione immediata e il tuo insegnante corregge i compiti con l'aiuto dell'IA. Da €24 al mese."
+    ? "Lezioni dal vivo in video con un insegnante e lo stesso gruppo, in giorni fissi e alla stessa ora ogni settimana. Tra una lezione e l'altra ti eserciti con correzione immediata e il tuo insegnante corregge i compiti. Da €24 al mese."
     : `Le classi di ${c.name} apriranno presto. Iscriviti gratis alla lista d'attesa: ti scriviamo appena si apre la tua lingua e oggi non paghi nulla. Nel frattempo puoi già seguire le lezioni di inglese e tedesco.`,
   heroCta: (c) => c.open ? 'Inizia ora' : "Unisciti alla lista d'attesa",
   howTitle: (c) => `Come funzionano le lezioni di ${c.name}`,
@@ -72,7 +72,7 @@ export default {
     UI_HOW_2_T: "Lezioni dal vivo",
     UI_HOW_2_A: "Una video lezione con due studenti sullo schermo",
     UI_HOW_3_T: "Compiti corretti",
-    UI_HOW_3_D: "Il tuo insegnante assegna i compiti e te li restituisce corretti con l'aiuto dell'IA: voto, punti di forza, cosa migliorare e un esempio di correzione.",
+    UI_HOW_3_D: "Il tuo insegnante assegna i compiti e te li restituisce corretti: voto, punti di forza, cosa migliorare e un esempio di correzione.",
     UI_HOW_3_A: "Un insegnante che corregge i compiti al computer",
     UI_HOW_4_T: "Pratica quando vuoi",
     UI_HOW_4_D: "Esercizi al tuo livello con correzione immediata, flashcard con le parole delle lezioni e prove nel formato degli esami.",

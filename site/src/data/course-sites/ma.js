@@ -32,11 +32,11 @@ export default {
   ],
   pageTitle: (c) => c.open ? `Cours ${c.de} en ligne au Maroc, en direct avec un professeur | Alimun` : `Cours ${c.de} en ligne au Maroc : liste d’attente | Alimun`,
   metaDesc: (c) => c.open
-    ? `Cours ${c.de} en ligne depuis le Maroc, en groupe avec un professeur, à jours et heures fixes chaque semaine, avec des devoirs corrigés à l’aide de l’IA et des exercices corrigés immédiatement. À partir de 24 € par mois.`
+    ? `Cours ${c.de} en ligne depuis le Maroc, en groupe avec un professeur, à jours et heures fixes chaque semaine, avec des devoirs corrigés par votre professeur et des exercices corrigés immédiatement. À partir de 24 € par mois.`
     : `Les cours ${c.de} d’Alimun ouvrent bientôt. Rejoignez gratuitement la liste d’attente et nous vous écrirons dès leur ouverture.`,
   heroTitle: (c) => `Cours ${c.de} en ligne`,
   heroDesc: (c) => c.open
-    ? 'Des cours en direct par vidéo avec un professeur et toujours le même groupe, à jours fixes et à la même heure chaque semaine, depuis chez vous au Maroc. Entre les cours, vous vous entraînez avec une correction immédiate et votre professeur corrige vos devoirs à l’aide de l’IA. À partir de 24 € par mois.'
+    ? 'Des cours en direct par vidéo avec un professeur et toujours le même groupe, à jours fixes et à la même heure chaque semaine, depuis chez vous au Maroc. Entre les cours, vous vous entraînez avec une correction immédiate et votre professeur corrige vos devoirs. À partir de 24 € par mois.'
     : `Les cours ${c.de} ouvrent bientôt. Rejoignez gratuitement la liste d’attente : nous vous écrivons dès l’ouverture de votre langue et vous ne payez rien aujourd’hui. En attendant, les cours d’anglais et d’allemand sont déjà ouverts.`,
   heroCta: (c) => c.open ? 'Commencer maintenant' : 'Rejoindre la liste d’attente',
   howTitle: (c) => `Comment se déroulent les cours ${c.de}`,
@@ -195,7 +195,7 @@ export default {
     UI_HOW_2_T: 'Cours en direct',
     UI_HOW_2_A: 'Un cours en vidéo avec deux élèves à l’écran',
     UI_HOW_3_T: 'Devoirs corrigés',
-    UI_HOW_3_D: 'Votre professeur donne les devoirs et vous les rend corrigés à l’aide de l’IA : la note, vos points forts, ce qu’il faut améliorer et un exemple corrigé.',
+    UI_HOW_3_D: 'Votre professeur donne les devoirs et vous les rend corrigés : la note, vos points forts, ce qu’il faut améliorer et un exemple corrigé.',
     UI_HOW_3_A: 'Un professeur corrige des devoirs sur son ordinateur',
     UI_HOW_4_T: 'Entraînez-vous quand vous voulez',
     UI_HOW_4_D: 'Des exercices à votre niveau avec une correction immédiate, des flashcards avec le vocabulaire des cours et des épreuves au format des examens.',

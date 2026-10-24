@@ -29,11 +29,11 @@ export default {
   ],
   pageTitle: (c) => c.open ? `Curso de ${c.name} online com aulas ao vivo | Alimun` : `Curso de ${c.name} online: lista de espera | Alimun`,
   metaDesc: (c) => c.open
-    ? `Curso de ${c.name} online em turmas com um professor, em dias e horários fixos toda semana, tarefas corrigidas com a ajuda da IA e exercícios com correção imediata. A partir de €24 por mês.`
+    ? `Curso de ${c.name} online em turmas com um professor, em dias e horários fixos toda semana, tarefas corrigidas pelo professor e exercícios com correção imediata. A partir de €24 por mês.`
     : `As turmas de ${c.name} na Alimun vão abrir em breve. Entre gratuitamente na lista de espera e avisaremos você assim que abrirem.`,
   heroTitle: (c) => `Curso de ${c.name} online`,
   heroDesc: (c) => c.open
-    ? 'Aulas ao vivo por vídeo com um professor e a mesma turma, em dias fixos e no mesmo horário toda semana. Entre uma aula e outra, você pratica com correção imediata e o seu professor corrige as tarefas com a ajuda da IA. A partir de €24 por mês.'
+    ? 'Aulas ao vivo por vídeo com um professor e a mesma turma, em dias fixos e no mesmo horário toda semana. Entre uma aula e outra, você pratica com correção imediata e o seu professor corrige as tarefas. A partir de €24 por mês.'
     : `As turmas de ${c.name} vão abrir em breve. Entre gratuitamente na lista de espera: avisamos você assim que a sua língua abrir e você não paga nada hoje. Enquanto isso, já pode fazer as aulas de inglês e alemão.`,
   heroCta: (c) => c.open ? 'Comece agora' : 'Entrar na lista de espera',
   howTitle: (c) => `Como funcionam as aulas de ${c.name}`,
@@ -193,7 +193,7 @@ export default {
     UI_HOW_2_T: 'Aulas ao vivo',
     UI_HOW_2_A: 'Uma aula por vídeo com dois alunos na tela',
     UI_HOW_3_T: 'Tarefas corrigidas',
-    UI_HOW_3_D: 'O seu professor passa as tarefas e devolve corrigidas com a ajuda da IA: nota, pontos fortes, o que melhorar e um exemplo de correção.',
+    UI_HOW_3_D: 'O seu professor passa as tarefas e devolve corrigidas: nota, pontos fortes, o que melhorar e um exemplo de correção.',
     UI_HOW_3_A: 'Um professor corrigindo tarefas no computador',
     UI_HOW_4_T: 'Pratique quando quiser',
     UI_HOW_4_D: 'Exercícios do seu nível com correção imediata, flashcards com o vocabulário das aulas e provas no formato dos exames.',

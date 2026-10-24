@@ -29,11 +29,11 @@ export default {
   ],
   pageTitle: (c) => c.open ? `Cursos de ${c.name} online con clases en directo | Alimun` : `Cursos de ${c.name} online: lista de espera | Alimun`,
   metaDesc: (c) => c.open
-    ? `Cursos de ${c.name} online en grupos con un profesor, en días y horarios fijos cada semana, deberes corregidos con ayuda de la IA y ejercicios con corrección inmediata. Desde €24 al mes.`
+    ? `Cursos de ${c.name} online en grupos con un profesor, en días y horarios fijos cada semana, deberes corregidos por tu profesor y ejercicios con corrección inmediata. Desde €24 al mes.`
     : `Las clases de ${c.name} en Alimun abrirán pronto. Apúntate gratis a la lista de espera y te escribiremos en cuanto abran.`,
   heroTitle: (c) => `Cursos de ${c.name} online`,
   heroDesc: (c) => c.open
-    ? 'Clases en directo por vídeo con un profesor y el mismo grupo, en días fijos y a la misma hora cada semana. Entre clase y clase practicas con corrección inmediata y tu profesor corrige los deberes con ayuda de la IA. Desde €24 al mes.'
+    ? 'Clases en directo por vídeo con un profesor y el mismo grupo, en días fijos y a la misma hora cada semana. Entre clase y clase practicas con corrección inmediata y tu profesor corrige los deberes. Desde €24 al mes.'
     : `Las clases de ${c.name} abrirán pronto. Apúntate gratis a la lista de espera: te escribimos en cuanto abra tu idioma y hoy no pagas nada. Mientras tanto, ya puedes seguir las clases de inglés y alemán.`,
   heroCta: (c) => c.open ? 'Empieza ahora' : 'Únete a la lista de espera',
   howTitle: (c) => `Cómo funcionan las clases de ${c.name}`,
@@ -198,7 +198,7 @@ export default {
     UI_HOW_2_T: 'Clases en directo',
     UI_HOW_2_A: 'Una clase por vídeo con dos estudiantes en la pantalla',
     UI_HOW_3_T: 'Deberes corregidos',
-    UI_HOW_3_D: 'Tu profesor pone los deberes y te los devuelve corregidos con ayuda de la IA: nota, puntos fuertes, qué mejorar y un ejemplo de corrección.',
+    UI_HOW_3_D: 'Tu profesor pone los deberes y te los devuelve corregidos: nota, puntos fuertes, qué mejorar y un ejemplo de corrección.',
     UI_HOW_3_A: 'Un profesor corrigiendo deberes en el ordenador',
     UI_HOW_4_T: 'Practica cuando quieras',
     UI_HOW_4_D: 'Ejercicios de tu nivel con corrección inmediata, tarjetas con el vocabulario de las clases y pruebas en el formato de los exámenes.',
