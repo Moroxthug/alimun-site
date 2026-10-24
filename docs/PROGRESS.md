@@ -495,3 +495,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - "Company dashboard" card removed (no such feature in the app, API or database) and replaced by a placement-level card; the card is white instead of black. The dashboard claim was also removed from the search descriptions in every language.
 - New sections: "Corporate language training online" (search text, animated rows) and a six-question corporate FAQ (FAQPage structured data). The lime "Let's talk about your team" card is now the closing banner.
 - All new copy translated into es, fr, de, pt, zh, ar, it, ma. No AI mentions.
+
+## 2026-10-24 — About page redo
+- "A Standard for Real Fluency" moved off the dark photo background: white section, photo in a rounded card that opens from the side and zooms out on scroll, text rises in. Same wording.
+- New "Questions about Alimun" FAQ (school or app, who teaches, languages, level test, why groups cost less, teaching at Alimun) with FAQPage structured data, in all nine languages.
+- The old closing block was replaced by the homepage banner with the level quiz, like Tiers and Services.
+- Owner: a company dashboard is planned; the Corporate card comes back when it ships.

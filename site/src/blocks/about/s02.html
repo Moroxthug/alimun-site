@@ -1,22 +1,48 @@
-      <section data-w-id="edacf3db-d746-a07d-9d0a-ba32c805a8af" class="section is-history">
-        <div class="parallax-wrap"><img src="images/education_cohort_poster.png" loading="lazy" alt="" class="parallax-img">
-          <div class="parallax-overlay is-full"></div>
-        </div>
-        <div class="z-index-2">
-          <div class="container-large">
-            <div data-w-id="a41fac32-d451-d387-ddeb-f99c2df28067" class="wrap_flex is-align-top">
-              <div class="max-width-440">
-                <h2><span class="is-word is-1" data-i18n="about_history_title">A Standard for Real Fluency</span></h2>
-              </div>
-              <div class="max-width-440 is-full-responsive">
-                <div class="text-color-lightgrey">
-                  <p style="-webkit-transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="text-size-medium" data-i18n="about_why_1">We built Alimun because we wanted to offer a new way to learn a language: real preparation with a teacher, at a price more people can afford.</p>
-                  <div class="margin-top-24">
-                    <p style="-webkit-transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-moz-transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);-ms-transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);transform:translate3d(0, 0.5em, 0) scale3d(1, 1, 1) rotateX(0) rotateY(0) rotateZ(0) skew(0, 0);opacity:0" class="text-size-medium" data-i18n="about_why_2">Your teacher leads every class and plans what you learn. Between classes you get instant feedback on your exercises and tests, and your teacher grades your homework, so you keep practicing at your own pace.</p>
-                  </div>
-                </div>
-              </div>
+      <section class="ah">
+        <style>
+          /* Why we built Alimun, on white: the photo opens from the side inside a rounded card and slowly zooms out while
+             the page scrolls; the heading and the two paragraphs rise in one after another. Owner wording. */
+          .ah { padding: 7rem 0; background-color: var(--white); }
+          .ah_grid { display: grid; grid-template-columns: 6fr 5fr; gap: 4.5rem; align-items: center; }
+          .ah_photo { position: relative; aspect-ratio: 4 / 3.4; border-radius: 3.125rem; overflow: hidden; clip-path: inset(0 100% 0 0 round 3.125rem); transition: clip-path 1.3s cubic-bezier(.215, .61, .355, 1); }
+          [dir="rtl"] .ah_photo { clip-path: inset(0 0 0 100% round 3.125rem); }
+          .ah.is-in .ah_photo { clip-path: inset(0 0 0 0 round 3.125rem); }
+          .ah_photo img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transform: scale(var(--ah-z, 1.15)); }
+          .ah_text > * { opacity: 0; transform: translateY(2rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .ah.is-in .ah_text > * { opacity: 1; transform: none; }
+          .ah.is-in .ah_text > :nth-child(1) { transition-delay: .35s; }
+          .ah.is-in .ah_text > :nth-child(2) { transition-delay: .5s; }
+          .ah.is-in .ah_text > :nth-child(3) { transition-delay: .65s; }
+          .ah_text h2 { margin: 0 0 2rem; }
+          .ah_text p { margin: 0; color: rgba(8, 8, 8, .75); }
+          .ah_text p + p { margin-top: 1.5rem; }
+          @media (max-width: 991px) { .ah_grid { grid-template-columns: 1fr; gap: 2.5rem; } }
+          @media (max-width: 767px) { .ah { padding: 4.5rem 0; } .ah_photo { border-radius: 2.25rem; } }
+        </style>
+        <div class="container-large">
+          <div class="ah_grid">
+            <div class="ah_photo shadow-card"><img src="images/education_cohort_poster.png" loading="lazy" alt="Learners in a live online class"></div>
+            <div class="ah_text">
+              <h2 class="heading-style-h2" data-i18n="about_history_title">A Standard for Real Fluency</h2>
+              <p class="text-size-large" data-i18n="about_why_1">We built Alimun because we wanted to offer a new way to learn a language: real preparation with a teacher, at a price more people can afford.</p>
+              <p class="text-size-large" data-i18n="about_why_2">Your teacher leads every class and plans what you learn. Between classes you get instant feedback on your exercises and tests, and your teacher grades your homework, so you keep practicing at your own pace.</p>
             </div>
           </div>
         </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".ah"), img = root.querySelector(".ah_photo img");
+            if ("IntersectionObserver" in window) {
+              var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { root.classList.add("is-in"); io.disconnect(); } }, { threshold: .25 });
+              io.observe(root.querySelector(".ah_grid"));
+            } else root.classList.add("is-in");
+            function update() {
+              var r = root.getBoundingClientRect(), vh = window.innerHeight;
+              var p = Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height)));
+              img.style.setProperty("--ah-z", (1.15 - p * 0.15).toFixed(3));
+            }
+            window.addEventListener("scroll", update, { passive: true });
+            update();
+          })();
+        </script>
       </section>

@@ -69,8 +69,8 @@
     "approved": "2026-10-22 about hero ok (Start today button, online-class video below heading) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 AI mentions removed (owner)"
   },
   "src/blocks/about/s02.html": {
-    "sha256": "d1f7e2147975086a94d35d6694279d413b8f30c66ae5339c9ab4a7f57afae101",
-    "approved": "2026-10-22 about section 2 ok (owner wording, no eyebrow/timeline); 2026-10-24 AI mentions removed (owner)"
+    "sha256": "a5727e817278203a56aa66f3a7ec3916b04d7048fcfbef5bfcc4aba169f33d5d",
+    "approved": "2026-10-22 about section 2 ok (owner wording, no eyebrow/timeline); 2026-10-24 AI mentions removed (owner); 2026-10-24 rebuilt on white (photo card reveal, text rises), same wording (owner: go on with about, no black bg)"
   },
   "src/blocks/about/s02b-paths.html": {
     "sha256": "25646d3bbdcc356ca002b5b486c29e870725a48a1e81ed7eee3b8baeb4084904",

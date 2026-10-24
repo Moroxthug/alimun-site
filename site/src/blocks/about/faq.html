@@ -1,0 +1,84 @@
+      <section class="section qa is-home is-tiers is-about">
+        <style>
+          /* About FAQ: the Tiers FAQ layout and motion (homepage FAQ with a white answer card), with questions about Alimun itself. Questions on the left slide in one
+             after another; the answer to the selected question slides into a large card on the right. Stacked on phones.
+             scripts/localize.mjs adds FAQPage structured data per language from the translated answers. */
+          .qa { padding: 6rem 0 7rem; }
+          .qa_head { margin-bottom: 3rem; }
+          .qa_head h2 { margin: 0; }
+          /* Tiers: the title and intro rise in and the answer card slides in from the side with the questions. */
+          .qa.is-tiers .qa_head > * { opacity: 0; transform: translateY(1.75rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .qa.is-tiers .qa_card { opacity: 0; transform: translateX(3rem); transition: opacity .8s ease .35s, transform 1s cubic-bezier(.215, .61, .355, 1) .35s; }
+          [dir="rtl"] .qa.is-tiers .qa_card { transform: translateX(-3rem); }
+          .qa.is-tiers:has(.qa_list.is-in) .qa_head > * { opacity: 1; transform: none; }
+          .qa.is-tiers:has(.qa_list.is-in) .qa_head > :nth-child(2) { transition-delay: .12s; }
+          .qa.is-tiers:has(.qa_list.is-in) .qa_card { opacity: 1; transform: none; }
+          .qa_head p { margin: 1rem 0 0; max-width: 34rem; color: rgba(8, 8, 8, .7); }
+          .qa_head a { color: var(--black); text-decoration: none; background-image: linear-gradient(var(--green), var(--green)); background-repeat: no-repeat; background-position: 0 88%; background-size: 100% 45%; }
+          [dir="rtl"] .qa_q { transform: translateX(2rem); }
+          [dir="rtl"] .qa_list.is-in .qa_q { transform: none; }
+          [dir="rtl"] .qa_q { text-transform: none; }
+          .qa_wrap { display: grid; grid-template-columns: 5fr 6fr; gap: 2.5rem; align-items: start; }
+          .qa_list { display: flex; flex-direction: column; }
+          .qa_q { display: block; width: 100%; text-align: start; background: none; border: 0; border-top: 1px solid rgba(8, 8, 8, .12); padding: 1.35rem 0; cursor: pointer; color: rgba(8, 8, 8, .45); font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-size: clamp(1.35rem, 2vw, 1.75rem); line-height: 1.05; opacity: 0; transform: translateX(-2rem); transition: color .35s ease, opacity .6s ease, transform .7s cubic-bezier(.215, .61, .355, 1); }
+          .qa_list.is-in .qa_q { opacity: 1; transform: none; }
+          .qa_q.is-on { color: var(--black); }
+          .qa_q .qa_mobile { display: none; }
+          .qa_card { position: sticky; top: 8rem; min-height: 22rem; border-radius: 3.125rem; background-color: var(--white); padding: 3rem; overflow: hidden; }
+          .qa_a { position: absolute; left: 3rem; right: 3rem; top: 3rem; opacity: 0; transform: translateY(1.5rem); transition: opacity .45s ease, transform .55s cubic-bezier(.215, .61, .355, 1); pointer-events: none; }
+          .qa_a.is-on { position: relative; left: auto; right: auto; top: auto; opacity: 1; transform: none; pointer-events: auto; }
+          .qa_a h3 { margin: 0 0 1rem; }
+          .qa_a p { margin: 0; }
+          @media (max-width: 767px) {
+            .qa { padding: 4.5rem 0 5rem; }
+            .qa_wrap { grid-template-columns: 1fr; }
+            .qa_card { display: none; }
+            .qa_q { color: var(--black); }
+            .qa_q .qa_mobile { display: block; margin-top: .75rem; font-family: Satoshi, sans-serif; text-transform: none; font-size: 1rem; line-height: 1.6; color: rgba(8, 8, 8, .75); max-height: 0; overflow: hidden; transition: max-height .5s ease; }
+            .qa_q.is-on .qa_mobile { max-height: 20rem; }
+          }
+        </style>
+        <div class="container-large">
+          <div class="qa_head">
+            <h2 class="heading-style-h2" data-i18n="about_faq_title">Questions about Alimun</h2>
+            <p class="text-size-medium" data-i18n-html="faqs_desc">Can’t find the answer you’re looking for? Send us a message through our <a href="contact.html" class="text-style-link">contact page</a>.</p>
+          </div>
+          <div class="qa_wrap">
+            <div class="qa_list">
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="about_faq_q1">Is Alimun a school or an app?</span><span class="qa_mobile" data-i18n="about_faq_a1">Alimun is an online language school. Every course is built around live classes with a teacher, and the exercises and flashcards on the platform are there for practice between classes.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="about_faq_q2">Who teaches the classes?</span><span class="qa_mobile" data-i18n="about_faq_a2">Experienced language teachers lead every live class, plan what you learn and correct your homework.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="about_faq_q3">Which languages can I learn?</span><span class="qa_mobile" data-i18n="about_faq_a3">English and German classes are open today. Spanish, French, Portuguese, Italian, Mandarin, Japanese and Arabic have a free waitlist, and we email you as soon as your language opens.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="about_faq_q4">How do I find my level?</span><span class="qa_mobile" data-i18n="about_faq_a4">A short placement test with questions from A1 up to C1 sets your level, so you join a group that matches it and do not repeat what you already know.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="about_faq_q5">Why do group classes cost less than private lessons?</span><span class="qa_mobile" data-i18n="about_faq_a5">One teacher leads a group, so the cost of each class is shared. You choose how much attention you want, from groups of about 35 people to private one-to-one classes.</span></button>
+              <button type="button" class="qa_q" aria-expanded="false"><span data-i18n="about_faq_q6">Can I teach at Alimun?</span><span class="qa_mobile" data-i18n="about_faq_a6">We are building our teaching team. If you are a language teacher, see how teaching at Alimun works and apply on our careers page.</span></button>
+            </div>
+            <div class="qa_card shadow-card" aria-live="polite">
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="about_faq_q1">Is Alimun a school or an app?</h3><p class="text-size-large" data-i18n="about_faq_a1">Alimun is an online language school. Every course is built around live classes with a teacher, and the exercises and flashcards on the platform are there for practice between classes.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="about_faq_q2">Who teaches the classes?</h3><p class="text-size-large" data-i18n="about_faq_a2">Experienced language teachers lead every live class, plan what you learn and correct your homework.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="about_faq_q3">Which languages can I learn?</h3><p class="text-size-large" data-i18n="about_faq_a3">English and German classes are open today. Spanish, French, Portuguese, Italian, Mandarin, Japanese and Arabic have a free waitlist, and we email you as soon as your language opens.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="about_faq_q4">How do I find my level?</h3><p class="text-size-large" data-i18n="about_faq_a4">A short placement test with questions from A1 up to C1 sets your level, so you join a group that matches it and do not repeat what you already know.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="about_faq_q5">Why do group classes cost less than private lessons?</h3><p class="text-size-large" data-i18n="about_faq_a5">One teacher leads a group, so the cost of each class is shared. You choose how much attention you want, from groups of about 35 people to private one-to-one classes.</p></div>
+              <div class="qa_a"><h3 class="heading-style-h4" data-i18n="about_faq_q6">Can I teach at Alimun?</h3><p class="text-size-large" data-i18n="about_faq_a6">We are building our teaching team. If you are a language teacher, see how teaching at Alimun works and apply on our careers page.</p></div>
+            </div>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".qa"), list = root.querySelector(".qa_list");
+            var qs = [].slice.call(root.querySelectorAll(".qa_q")), as = [].slice.call(root.querySelectorAll(".qa_a"));
+            function show(k) {
+              qs.forEach(function (q, i) { q.classList.toggle("is-on", i === k); q.setAttribute("aria-expanded", i === k ? "true" : "false"); });
+              as.forEach(function (a, i) { a.classList.toggle("is-on", i === k); });
+            }
+            qs.forEach(function (q, i) {
+              q.addEventListener("mouseenter", function () { if (window.matchMedia("(hover: hover)").matches) show(i); });
+              q.addEventListener("click", function () { show(i); });
+              q.style.transitionDelay = "0s, " + (i * 0.08) + "s, " + (i * 0.08) + "s";
+            });
+            show(0);
+            if (!("IntersectionObserver" in window)) { list.classList.add("is-in"); return; }
+            var io = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { list.classList.add("is-in"); io.disconnect(); } }, { threshold: 0.2 });
+            io.observe(list);
+          })();
+        </script>
+      </section>
