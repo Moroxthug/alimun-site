@@ -30,6 +30,8 @@ for (const d of fs.readdirSync(dist)) {
   if (/^[a-z]{2}$/.test(d) && fs.statSync(dir).isDirectory()) copyPages(dir, path.join(root, d));
 }
 fs.copyFileSync(path.join(dist, 'sitemap.xml'), path.join(root, 'sitemap.xml'));
+// Data the rebuilt pages load at run time (level test question banks).
+fs.cpSync(path.join(dist, 'data'), path.join(root, 'data'), { recursive: true });
 // The build's working copies are not part of the site; drop them so the deployment stays small.
 for (const d of ['dist', 'public', 'node_modules']) fs.rmSync(path.join(root, 'site', d), { recursive: true, force: true });
 console.log(`apply-rebuild: ${copied} rebuilt pages and sitemap.xml copied over the current site`);
