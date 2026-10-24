@@ -566,3 +566,4 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - The owner's account today: waitlist, English B1, no level test result, no activity. Home shows the class being formed, the teacup, nothing due, a streak of 0, the level test invitation and the plans card.
 - Checked: desktop and phone; English, Spanish, German, Chinese, Arabic and French; signed out, `?sample=1`, the owner's account and a paid account with a class about to start (simulated in the browser); no console errors and no untranslated keys. Every table Home reads checked under the owner's account in Supabase (row-level security allows each read).
 - Found, not fixed (old dashboard, out of scope): `student-dashboard.html` embeds `teacher_public`, but the view is `teachers_public`, so its next-class and cohort queries fail when a student has a class.
+- Owner (24 Oct): Home approved. Step 4 (learning material reader) continues in a new conversation.
