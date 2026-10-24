@@ -32,7 +32,7 @@ export const UNIT = {
         ],
         [
           { t: 'ex', kind: 'choice', h: 'Choose the correct words.', items: [
-            { q: 'Look at the sky. It ___ rain.', o: ['’s going to', 'going to', 'goes to'], why: 'We can see it will happen soon: *it is going to*. Do not forget *is*.' },
+            { q: 'Look at the sky. It ___ rain.', o: ['is going to', 'going to', 'goes to'], why: 'We can see it will happen soon: *it is going to*. Do not forget *is*.' },
             { q: 'We ___ going to buy a car this year. It’s too expensive.', o: ['aren’t', 'don’t', 'isn’t'], why: 'Negative of *going to*: *be* + *not*. *We* takes *aren’t*.' },
             { q: '___ she going to study medicine?', o: ['Is', 'Does', 'Are'], why: 'Questions with *going to* start with *be*. *She* takes *is*.' },
             { q: 'I’m going to ___ my grandmother at the weekend.', o: ['visit', 'visiting', 'visits'], why: 'After *going to*, use the base form: *visit*.' },

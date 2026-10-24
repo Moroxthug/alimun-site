@@ -18,7 +18,7 @@ export const UNIT = {
             { s: 'Die Nachrichten **werden** jeden Abend um acht **gesendet**.', n: 'Passive in the present: *werden* + participle.' },
             { s: 'Der Film **wurde** in Wien **gedreht**.', n: 'Passive in the Präteritum: *wurde* + participle.' },
             { s: 'Die Sendung **wird** von Lena Hoffmann **moderiert**.', n: 'If you want to say who does it: *von* + dative.' },
-            { s: 'In unserer Familie **wird** abends kein Fernsehen **geschaut**.', n: 'A passive without a subject is also possible. *Wird* is then singular.' },
+            { s: 'In unserer Familie **wird** abends nicht **ferngesehen**.', n: 'A passive without a subject is also possible. *Wird* is then singular.' },
           ] },
         ],
         [
@@ -30,15 +30,15 @@ export const UNIT = {
             ['ihr', 'werdet gefragt', 'wurdet gefragt'],
             ['sie / Sie', 'werden gefragt', 'wurden gefragt'],
           ] },
-          { t: 'text', md: 'Compare the active and the passive. The object of the active sentence becomes the subject of the passive sentence: *Der Sender zeigt **den Film**.* → ***Der Film** wird gezeigt.*' },
-          { t: 'tip', art: 'owl', md: 'Do not mix up *werden* + participle (passive) and *werden* + infinitive (future). *Das Spiel **wird gezeigt*** means it is shown. *Ich **werde** das Spiel **sehen*** means I will see it.' },
+          { t: 'text', md: 'Compare the active and the passive. The object of the active sentence becomes the subject of the passive sentence: *Der Sender zeigt den Film.* → *Der Film wird gezeigt.*' },
+          { t: 'tip', art: 'owl', md: 'Do not mix up *werden* + participle (passive) and *werden* + infinitive (future). *Das Spiel wird gezeigt* means it is shown. *Ich werde das Spiel sehen* means I will see it.' },
         ],
         [
           { t: 'ex', kind: 'choice', h: 'Choose the right form.', items: [
-            { q: 'Die Zeitung ___ jeden Morgen um sechs geliefert.', o: ['wird', 'werden', 'wurde gestern'], why: 'One newspaper, in the present: *wird*.' },
+            { q: 'Die Zeitung ___ jeden Morgen um sechs geliefert.', o: ['wird', 'werden', 'wirst'], why: 'One newspaper, in the present: *wird*.' },
             { q: 'Viele Serien ___ heute nur noch gestreamt.', o: ['werden', 'wird', 'wurden'], why: 'Plural subject, *heute*: present, *werden*.' },
             { q: 'Das Interview ___ letzte Woche aufgenommen.', o: ['wurde', 'wird', 'wurden'], why: '*Letzte Woche* is in the past, and *das Interview* is singular: *wurde*.' },
-            { q: 'Die Fotos wurden ___ einem jungen Fotografen gemacht.', o: ['von', 'mit', 'durch den'], why: 'The person who does it: *von* + dative.' },
+            { q: 'Die Fotos wurden ___ einem jungen Fotografen gemacht.', o: ['von', 'mit', 'bei'], why: 'The person who does it: *von* + dative.' },
             { q: 'Der Artikel wurde gestern ___.', o: ['veröffentlicht', 'veröffentlichen', 'veröffentlichte'], why: 'The passive needs the past participle at the end.' },
           ] },
         ],
@@ -86,10 +86,10 @@ export const UNIT = {
         ],
         [
           { t: 'ex', kind: 'choice', h: 'Choose the right word.', items: [
-            { q: 'Können Sie mir sagen, ___ der Kurs online ist?', o: ['ob', 'wenn', 'dass'], why: 'Is the course online? A yes or no question: *ob*.' },
-            { q: 'Ich weiß nicht, ___ das Konzert beginnt. Um acht?', o: ['wann', 'ob', 'was'], why: 'The question is about time: *wann*.' },
-            { q: 'Weißt du, ___ man den Fernseher einschaltet?', o: ['wie', 'ob', 'wer'], why: 'How do you switch it on? *Wie*.' },
-            { q: 'Er hat gefragt, ___ wir am Samstag Zeit haben.', o: ['ob', 'wann', 'wenn'], why: 'Do we have time? Yes or no: *ob*.' },
+            { q: 'Können Sie mir sagen, ___ der Kurs online ist?', o: ['ob', 'wenn', 'was'], why: 'Is the course online? A yes or no question: *ob*.' },
+            { q: 'Ich weiß nicht, ___ das Konzert beginnt. Um acht?', o: ['wann', 'wer', 'was'], why: 'The question is about time: *wann*.' },
+            { q: 'Weißt du, ___ man den Fernseher einschaltet?', o: ['wie', 'was', 'wer'], why: 'How do you switch it on? *Wie*.' },
+            { q: 'Er hat gefragt, ___ wir am Samstag Zeit haben.', o: ['ob', 'dass', 'wenn'], why: 'Do we have time? Yes or no: *ob*.' },
             { q: 'Kannst du mir erklären, ___ dieses Zeichen bedeutet?', o: ['was', 'ob', 'wo'], why: 'What does it mean? *Was*.' },
           ] },
         ],
@@ -153,7 +153,7 @@ export const UNIT = {
             ['das Handy', 'aufladen'],
           ] },
           { t: 'ex', kind: 'choice', h: 'Choose the right word.', items: [
-            { q: 'Ich sehe jeden Abend um acht die ___.', o: ['Nachrichten', 'Schlagzeile', 'Werbung'], why: '*die Nachrichten* is always plural when it means the news.' },
+            { q: 'Ich sehe jeden Abend um acht die ___.', o: ['Nachrichten', 'Schlagzeile', 'Beitrag'], why: '*die Nachrichten* is always plural when it means the news.' },
             { q: 'Vor dem Film gab es zehn Minuten ___.', o: ['Werbung', 'Sender', 'Abo'], why: 'Adverts before a film: *Werbung*.' },
             { q: 'Auf welchem ___ läuft das Spiel?', o: ['Sender', 'Beitrag', 'Schlagzeile'], why: 'The TV station: *der Sender*, dative *auf welchem Sender*.' },
             { q: 'Ohne Internet kann ich die Serie nicht ___.', o: ['streamen', 'teilen', 'kündigen'], why: 'To watch online: *streamen*.' },
@@ -169,13 +169,13 @@ export const UNIT = {
       art: 'ghost',
       spreads: [
         [
-          { t: 'reading', title: 'Umfrage: Wie nutzen Sie Medien?', md: 'Für unsere Stadtteilzeitung haben wir vier Menschen gefragt, wie sie Medien im Alltag nutzen.\n\n**Helga, 68, Rentnerin:** „Bei mir wird jeden Morgen die Zeitung gelesen, und zwar auf Papier. Abends sehe ich die Nachrichten im Fernsehen. Mein Enkel hat mir ein Tablet geschenkt, aber ich weiß noch nicht genau, wie alles funktioniert.“\n\n**Dario, 34, Krankenpfleger:** „Ich arbeite oft nachts, deshalb höre ich Podcasts in der Straßenbahn. Fernsehen habe ich gar nicht mehr. Filme und Serien streame ich am Wochenende.“\n\n**Yuki, 22, Studentin:** „Ich lese die Nachrichten fast nur in sozialen Netzwerken. Manchmal frage ich mich, ob die Informationen wirklich stimmen. Deshalb vergleiche ich wichtige Meldungen mit einer zweiten Quelle.“\n\n**Kwame, 45, Lehrer:** „Ich versuche, weniger Zeit am Handy zu verbringen. Seit einem Monat liegt es abends in der Küche, nicht im Schlafzimmer. Ich schlafe jetzt besser, obwohl ich am Anfang nervös war.“' },
+          { t: 'reading', title: 'Umfrage: Wie nutzen Sie Medien?', md: 'Für unsere Stadtteilzeitung haben wir vier Menschen gefragt, wie sie Medien im Alltag nutzen.\n\n**Helga, 68, Rentnerin:** „Bei mir wird jeden Morgen die Zeitung gelesen, und zwar auf Papier. Abends sehe ich die Nachrichten im Fernsehen. Mein Enkel hat mir ein Tablet geschenkt, aber ich weiß noch nicht genau, wie alles funktioniert.“\n\n**Dario, 34, Krankenpfleger:** „Ich arbeite oft nachts, deshalb höre ich Podcasts in der Straßenbahn. Einen Fernseher habe ich gar nicht mehr. Filme und Serien streame ich am Wochenende. Meine Kollegen schicken mir oft lustige Videos, aber dafür habe ich selten Zeit.“\n\n**Yuki, 22, Studentin:** „Ich lese die Nachrichten fast nur in sozialen Netzwerken. Manchmal frage ich mich, ob die Informationen wirklich stimmen. Deshalb vergleiche ich wichtige Meldungen mit einer zweiten Quelle.“\n\n**Kwame, 45, Lehrer:** „Ich versuche, weniger Zeit am Handy zu verbringen. Seit einem Monat liegt es abends in der Küche, nicht im Schlafzimmer. Ich schlafe jetzt besser, obwohl ich am Anfang nervös war.“' },
         ],
         [
           { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
             { q: 'Helga liest die Zeitung am Morgen.', a: 't', why: '*Bei mir wird jeden Morgen die Zeitung gelesen.*' },
             { q: 'Helga kann ihr Tablet schon sehr gut benutzen.', a: 'f', why: 'She does not yet know exactly how everything works.' },
-            { q: 'Dario sieht abends gern fern.', a: 'f', why: 'He does not have a TV any more.' },
+            { q: 'Dario hat einen Fernseher.', a: 'f', why: '*Einen Fernseher habe ich gar nicht mehr.*' },
             { q: 'Yuki prüft wichtige Meldungen mit einer zweiten Quelle.', a: 't', why: '*Deshalb vergleiche ich wichtige Meldungen mit einer zweiten Quelle.*' },
             { q: 'Yuki studiert Journalismus.', a: 'ng', why: 'The text says she is a student, but not what she studies.' },
             { q: 'Kwame schläft besser, seit das Handy in der Küche liegt.', a: 't', why: '*Ich schlafe jetzt besser.*' },
@@ -184,7 +184,7 @@ export const UNIT = {
         [
           { t: 'ex', kind: 'choice', h: 'Look at the language in the text.', items: [
             { q: '„Bei mir wird jeden Morgen die Zeitung gelesen“: what form is this?', o: ['The passive in the present.', 'The future.', 'The Präteritum.'], why: '*wird* + participle *gelesen*: passive, present.' },
-            { q: '„Ich frage mich, ob die Informationen wirklich stimmen“: why ob?', o: ['It is an indirect yes or no question.', 'It is a condition.', 'It gives a reason.'], why: 'Do the facts really agree? Yes or no: *ob*.' },
+            { q: '„Ich frage mich, ob die Informationen wirklich stimmen“: why ob?', o: ['It is an indirect yes or no question.', 'It is a condition.', 'It gives a reason.'], why: 'Is the information really correct? Yes or no: *ob*.' },
             { q: 'Who uses a podcast on the way to work?', o: ['Dario', 'Helga', 'Kwame'], why: 'Dario listens to podcasts on the tram.' },
           ] },
           { t: 'ex', kind: 'spot', h: 'Tap the conjugated verb at the end of the indirect question.', items: [
@@ -199,7 +199,7 @@ export const UNIT = {
     { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
       { q: 'Die Sendung ___ jeden Sonntag gezeigt.', o: ['wird', 'werden', 'wurden'], why: 'Singular, present: *wird*.' },
       { q: 'Das Buch wurde 2010 ___.', o: ['geschrieben', 'schreiben', 'schrieb'], why: 'Passive: *wurde* + past participle.' },
-      { q: 'Weißt du, ___ der Supermarkt sonntags offen ist?', o: ['ob', 'wenn', 'wann ob'], why: 'Is it open on Sundays? Yes or no: *ob*.' },
+      { q: 'Weißt du, ___ der Supermarkt sonntags offen ist?', o: ['ob', 'wenn', 'was'], why: 'Is it open on Sundays? Yes or no: *ob*.' },
       { q: 'Ich habe mein Abo ___, weil es zu teuer war.', o: ['gekündigt', 'geteilt', 'gestreamt'], why: '*ein Abo kündigen*: cancel a subscription.' },
       { q: 'Die ___ in der Zeitung war sehr groß: „Neue Brücke eröffnet“.', o: ['Schlagzeile', 'Werbung', 'Sendung'], why: 'A headline: *die Schlagzeile*.' },
     ] },

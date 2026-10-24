@@ -154,7 +154,7 @@ export const UNIT = {
         [
           { t: 'ex', kind: 'choice', h: 'Choose the correct form.', items: [
             { q: 'We ___ to Lisbon last summer.', o: ['went', 'have been', 'have gone'], why: '*Last summer* is a finished time: past simple.' },
-            { q: 'I ___ a camel. Have you?', o: ['’ve ridden', 'rode', 'ride'], why: 'An experience with no time: present perfect.' },
+            { q: 'I ___ a camel. Have you?', o: ['have ridden', 'rode', 'ride'], why: 'An experience with no time: present perfect.' },
             { q: 'When ___ you start this job?', o: ['did', 'have', 'has'], why: 'A question with *When* asks about a finished time: past simple.' },
             { q: 'She ___ her husband in 2015.', o: ['met', 'has met', 'have met'], why: '*In 2015* is a finished time: past simple.' },
             { q: '___ you ever lost your passport?', o: ['Have', 'Did', 'Were'], why: '*Ever* + experience: present perfect.' },

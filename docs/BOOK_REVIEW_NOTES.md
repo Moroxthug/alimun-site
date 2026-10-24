@@ -8,6 +8,10 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p1: "I’d like ___ orange juice" accepts *an* and *some*; the test gap "a ___ of milk" accepts carton, bottle, glass, jug.
 - u3: *fruit* is treated as uncountable.
 - u4 p2: *farther* is accepted next to *further*, though the table shows only *further*.
+- u6 p4: general health advice in the leaflet (a cold does not usually need a doctor, 7 to 8 hours of sleep); check the wording.
+- u5, u7: British forms (at the weekend, single and return ticket) with *one-way* and *canceled* also accepted in gaps.
+- u8 p3: the been/gone items have two options each.
+- u5 p1: the tip says the second *go* is often dropped in *I’m going to go to the beach*; check the wording.
 
 ## English B1
 - u6 p1: the reported-speech gaps accept only backshifted forms, although the tip says the present can stay when still true.

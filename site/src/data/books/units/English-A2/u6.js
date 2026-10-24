@@ -86,7 +86,7 @@ export const UNIT = {
             ['Question', 'Should I take a painkiller?'],
             ['Short answers', 'Yes, you should. / No, you shouldn’t.'],
           ] },
-          { t: 'tip', art: 'owl', md: '*You should to rest* and *She shoulds rest* are mistakes. For negative advice with *think*, say *I don’t think you should go*, not *I think you shouldn’t go*. The second one is possible, but the first is more natural.' },
+          { t: 'tip', art: 'owl', md: '*You should to rest* and *She shoulds rest* are mistakes. With *think*, we usually say *I don’t think you should go*. It sounds more natural than *I think you shouldn’t go*.' },
         ],
         [
           { t: 'ex', kind: 'choice', h: 'Choose the correct words.', items: [
@@ -223,7 +223,7 @@ export const UNIT = {
       { q: '___ (I / have to) bring my passport?', a: ['Do I have to'], why: 'Question: *Do* + *I* + *have to*.' },
     ] },
     { t: 'ex', kind: 'match', h: 'Match the problem and the advice.', pairs: [
-      ['I’ve got a headache.', 'You should take a painkiller and rest.'],
+      ['I’ve got a headache.', 'You should turn the loud music off.'],
       ['My eyes are tired.', 'You shouldn’t look at your phone so much.'],
       ['I’ve got a stomach ache.', 'You shouldn’t eat so fast.'],
       ['I can’t sleep at night.', 'You shouldn’t drink coffee in the evening.'],
