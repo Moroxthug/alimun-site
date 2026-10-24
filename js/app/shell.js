@@ -435,7 +435,7 @@
 
   /* What the course book reader (js/app/reader.js) uses from the shell */
   var readerHelpers = {
-    t: t, esc: esc, icon: icon, Cast: Cast, locale: locale, languageName: languageName, loaderInner: loaderInner,
+    t: t, esc: esc, icon: icon, Cast: Cast, lang: lang, locale: locale, cap: cap, languageName: languageName, loaderInner: loaderInner,
     data: function () { return D; }, mode: function () { return mode; }, myBookId: function () { return myBookId(); },
     buddyFor: function (language) { return BUDDIES[language] || 'teacup'; }, courseName: function () { return courseName(D); },
     rerender: function () { render('book', false); }
@@ -443,7 +443,7 @@
   function bookParts() { return location.hash.replace(/^#\/book\/?/, '').split('/').filter(Boolean); }
 
   /* ---------- Routing ---------- */
-  var current = null, currentHash = '';
+  var current = null;
   function routeFromHash() {
     var id = (location.hash.match(/^#\/([a-z]+)/) || [])[1];
     return byId[id] ? id : 'home';
@@ -454,6 +454,7 @@
     var swap = function () {
       view.innerHTML = html;
       view.classList.remove('is-leaving');
+      document.body.classList.remove('is-reading');
       document.title = t(r.label) + ' – Alimun';
       if (id === 'book') {
         window.AlimunReader.mount(view, bookParts(), readerHelpers).then(function (res) {
@@ -470,7 +471,6 @@
     };
     if (animate && current) { view.classList.add('is-leaving'); setTimeout(swap, 150); } else swap();
     current = id;
-    currentHash = location.hash;
   }
 
   function setSheet(open) {
@@ -520,7 +520,7 @@
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || (id === 'book' && location.hash !== currentHash)) render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book') render(id, true); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 
