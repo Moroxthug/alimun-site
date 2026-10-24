@@ -1,0 +1,126 @@
+      <section id="explore" class="tl">
+        <style>
+          /* Practice between classes: the learning tools in a zig-zag, photo on one side and text on the other,
+             alternating down the page. A lime line fills down the middle with the scroll; each photo wipes open
+             and its text slides in from the side as it arrives. Stacked on phones with the line at the edge. */
+          .tl { padding: 7rem 0 6rem; background-color: var(--white); }
+          .tl_head { max-width: 46rem; margin: 0 auto 5rem; text-align: center; }
+          .tl_head h2 { margin: 0; }
+          .tl_head p { margin: 1.25rem auto 0; color: rgba(8, 8, 8, .7); }
+          .tl_list { position: relative; }
+          .tl_line { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; margin-left: -1px; background-color: rgba(8, 8, 8, .1); }
+          .tl_fill { width: 100%; height: calc(var(--tl-p, 0) * 100%); background-color: var(--green); }
+          .tl_item { display: grid; grid-template-columns: 1fr 1fr; gap: 7rem; align-items: center; margin-bottom: 6rem; }
+          .tl_item:last-child { margin-bottom: 0; }
+          .tl_item:nth-child(even) .tl_img { order: 2; }
+          .tl_img { border-radius: 3.125rem; overflow: hidden; aspect-ratio: 4 / 3; clip-path: inset(100% 0 0 0); transition: clip-path 1.1s cubic-bezier(.77, 0, .175, 1); }
+          .tl_img img { width: 100%; height: 100%; object-fit: cover; display: block; transform: scale(1.18); transition: transform 1.5s cubic-bezier(.215, .61, .355, 1); }
+          .tl_text { opacity: 0; transform: translateX(3rem); transition: opacity .8s ease .25s, transform 1s cubic-bezier(.215, .61, .355, 1) .25s; }
+          .tl_item:nth-child(even) .tl_text { transform: translateX(-3rem); }
+          [dir="rtl"] .tl_text { transform: translateX(-3rem); }
+          [dir="rtl"] .tl_item:nth-child(even) .tl_text { transform: translateX(3rem); }
+          .tl_text h3 { margin: 0 0 1rem; }
+          .tl_text p { margin: 0; max-width: 30rem; }
+          .tl_item.is-in .tl_img { clip-path: inset(0 0 0 0); }
+          .tl_item.is-in .tl_img img { transform: scale(1); }
+          .tl_item.is-in .tl_text { opacity: 1; transform: none; }
+          .tl_head > * { opacity: 0; transform: translateY(1.75rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+          .tl.is-in .tl_head > * { opacity: 1; transform: none; }
+          .tl.is-in .tl_head > :nth-child(2) { transition-delay: .12s; }
+          @media (max-width: 767px) {
+            .tl { padding: 4.5rem 0; }
+            .tl_head { margin-bottom: 3rem; text-align: start; }
+            .tl_line { left: .5rem; }
+            [dir="rtl"] .tl_line { left: auto; right: .5rem; }
+            .tl_item { grid-template-columns: 1fr; gap: 1.5rem; margin-bottom: 3.5rem; padding-inline-start: 2rem; }
+            .tl_item:nth-child(even) .tl_img { order: 0; }
+            .tl_img { border-radius: 2.25rem; }
+            .tl_text, .tl_item:nth-child(even) .tl_text, [dir="rtl"] .tl_text, [dir="rtl"] .tl_item:nth-child(even) .tl_text { transform: translateY(1.5rem); }
+          }
+        </style>
+        <div class="container-large">
+          <div class="tl_head">
+            <h2 class="heading-style-h2" data-i18n="services_tools_title">Practice between classes</h2>
+            <p class="text-size-medium" data-i18n="services_tools_desc">Between live classes you keep going on your own. Exercises and tests are corrected the moment you answer, and your teacher corrects your homework with the help of AI.</p>
+          </div>
+          <div class="tl_list">
+            <div class="tl_line" aria-hidden="true"><div class="tl_fill"></div></div>
+              <div class="tl_item">
+                <div class="tl_img"><img src="images/pexels-6609359-tool.jpg" alt="" width="1000" height="750" loading="lazy"></div>
+                <div class="tl_text">
+                  <h3 class="heading-style-h3" data-i18n="services_slide_8">Placement Test</h3>
+                  <p class="text-size-large" data-i18n="services_slide_8_desc">Eight AI-generated questions from A1 up to C1. Your result sets your level, so your exercises and classes match it.</p>
+                </div>
+              </div>
+              <div class="tl_item">
+                <div class="tl_img"><img src="images/pexels-5905878-tool.jpg" alt="" width="1000" height="750" loading="lazy"></div>
+                <div class="tl_text">
+                  <h3 class="heading-style-h3" data-i18n="services_slide_2">Test &amp; Quiz Grading</h3>
+                  <p class="text-size-large" data-i18n="services_slide_2_desc">Multiple-choice, fill-in and word-matching exercises are marked as soon as you answer, with the correct answer and a short explanation of the rule.</p>
+                </div>
+              </div>
+              <div class="tl_item">
+                <div class="tl_img"><img src="images/pexels-4443122-tool.jpg" alt="" width="1000" height="750" loading="lazy"></div>
+                <div class="tl_text">
+                  <h3 class="heading-style-h3" data-i18n="services_slide_1">Essay Grading</h3>
+                  <p class="text-size-large" data-i18n="services_slide_1_desc">Submit a written answer and the AI scores it out of 100, with feedback on what worked, one or two specific corrections and one tip.</p>
+                </div>
+              </div>
+              <div class="tl_item">
+                <div class="tl_img"><img src="images/pexels-5553629-tool.jpg" alt="" width="1000" height="750" loading="lazy"></div>
+                <div class="tl_text">
+                  <h3 class="heading-style-h3" data-i18n="services_slide_3">Homework Review</h3>
+                  <p class="text-size-large" data-i18n="services_slide_3_desc">Your teacher grades your homework with help from AI (score, strengths, what to work on next, an example correction) and sends the feedback to your dashboard.</p>
+                </div>
+              </div>
+              <div class="tl_item">
+                <div class="tl_img"><img src="images/pexels-6599010-tool.jpg" alt="" width="1000" height="750" loading="lazy"></div>
+                <div class="tl_text">
+                  <h3 class="heading-style-h3" data-i18n="services_slide_4">Speaking Practice</h3>
+                  <p class="text-size-large" data-i18n="services_slide_4_desc">Read the sentence aloud. Speech recognition writes down what you said and shows how many of the expected words it heard.</p>
+                </div>
+              </div>
+              <div class="tl_item">
+                <div class="tl_img"><img src="images/pexels-5554277-tool.jpg" alt="" width="1000" height="750" loading="lazy"></div>
+                <div class="tl_text">
+                  <h3 class="heading-style-h3" data-i18n="services_slide_5">Error Correction</h3>
+                  <p class="text-size-large" data-i18n="services_slide_5_desc">Chat with the AI tutor in the language you’re learning. Each message is checked for grammar, vocabulary and spelling, and you see the corrected sentence with a short explanation.</p>
+                </div>
+              </div>
+              <div class="tl_item">
+                <div class="tl_img"><img src="images/pexels-8005029-tool.jpg" alt="" width="1000" height="750" loading="lazy"></div>
+                <div class="tl_text">
+                  <h3 class="heading-style-h3" data-i18n="services_slide_6">Vocabulary Review</h3>
+                  <p class="text-size-large" data-i18n="services_slide_6_desc">Words from your teacher’s lesson notes become flashcards. Words you know come back after 1, 3, 7, 14 and 30 days; words you miss come back the next day.</p>
+                </div>
+              </div>
+              <div class="tl_item">
+                <div class="tl_img"><img src="images/pexels-5554280-tool.jpg" alt="" width="1000" height="750" loading="lazy"></div>
+                <div class="tl_text">
+                  <h3 class="heading-style-h3" data-i18n="services_slide_7">Exam Prep</h3>
+                  <p class="text-size-large" data-i18n="services_slide_7_desc">Practice tasks in the format of B2 First, C1 Advanced and IELTS (English) and Goethe B1, Goethe B2 and telc B1 (German). Not official exam material; Alimun is not affiliated with the exam boards.</p>
+                </div>
+              </div>
+          </div>
+        </div>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".tl"), list = root.querySelector(".tl_list");
+            var items = [].slice.call(root.querySelectorAll(".tl_item"));
+            function fill() {
+              var r = list.getBoundingClientRect(), p = (window.innerHeight * .6 - r.top) / r.height;
+              list.style.setProperty("--tl-p", Math.max(0, Math.min(1, p)).toFixed(3));
+            }
+            window.addEventListener("scroll", fill, { passive: true });
+            window.addEventListener("resize", fill);
+            fill();
+            if (!("IntersectionObserver" in window)) { root.classList.add("is-in"); items.forEach(function (i) { i.classList.add("is-in"); }); return; }
+            var head = new IntersectionObserver(function (e) { if (e[0].isIntersecting) { root.classList.add("is-in"); head.disconnect(); } }, { threshold: .3 });
+            head.observe(root.querySelector(".tl_head"));
+            var io = new IntersectionObserver(function (entries) {
+              entries.forEach(function (e) { if (e.isIntersecting) { e.target.classList.add("is-in"); io.unobserve(e.target); } });
+            }, { rootMargin: "0px 0px -15% 0px" });
+            items.forEach(function (i) { io.observe(i); });
+          })();
+        </script>
+      </section>

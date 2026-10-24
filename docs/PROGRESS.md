@@ -463,3 +463,15 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
   - What a live class costs: on desktop the section is held for 300vh and the scroll walks through the four plans (clicks still pick any plan). Text and card rise in, and the card pulses on each change.
   - FAQ: title and intro rise in; the answer card slides in from the side with the questions.
   - Checked: the pinned walk shows Community → Focused → Intensive → 1 on 1 with the right figures; prices land on €20/49/90/224; photos open; the FAQ card ends visible; no errors. Recordings made at desktop and phone size.
+
+## 24 Oct 2026: Services page fixes (owner: points 1-9)
+- Hero (`services/s01.html`, layout and video kept as the owner asked): "Toolkit" becomes "Online language classes" (`services_hero_title_v2`). New accurate text (`services_hero_desc_v2`): live classes on fixed days; exercises and tests corrected instantly; homework corrected by the teacher with AI help. The old text claimed everything is "graded the moment you submit it". Button "See how it works" (`services_btn_how`) anchors to the How it works section (`id="how"` added to `services/s04.html`). The unattributed quote is removed.
+- Removed `services/s02.html` ("Our learning toolkit" floating photos) and `services/s03.html` (black "AI features" section with labels on AI-looking photos and the unverified "every tier includes" claim); lock entries removed.
+- New `services/tools.html`, "Practice between classes":
+  - The eight learning tools in a zig-zag of real Pexels photos (`images/pexels-<id>-tool.jpg`, 1000×750) and text beside them.
+  - A lime line fills down the middle with the scroll; photos wipe open and text slides in from the side.
+  - Uses the existing translated `services_slide_*` texts; no per-plan AI claims.
+- Banner: the level-quiz banner (`home/banner.html` + `home/quiz.html`).
+- No "toolkit" left on the page. US spelling for "Practice" in two English services texts.
+- Translations: 5 new keys in nine languages.
+- Checked: desktop, phone and Arabic; all 8 rows reveal; the line fills; the anchor scrolls to How it works; no errors.

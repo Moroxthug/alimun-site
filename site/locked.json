@@ -45,20 +45,12 @@
     "approved": "2026-10-22 services nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
   },
   "src/blocks/services/s01.html": {
-    "sha256": "9e4238244d3a896372e36b37b472029a8c0e295da65d0375498c3445a32e9e6f",
-    "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere"
-  },
-  "src/blocks/services/s02.html": {
-    "sha256": "07419b2059b41d88d68aebb5d9a3b6e76394ebd0730792beafc2b945898ecf95",
-    "approved": "2026-10-22 services gallery ok"
-  },
-  "src/blocks/services/s03.html": {
-    "sha256": "7c947b48a829209544b3ef906bffea3bff6396ef808ad6493b504b7e296857f6",
-    "approved": "2026-10-22 services AI features ok (8 cards, scroll row, flip copy, tags removed) | 2026-10-22 owner: animations always play (reduced-motion switch removed)"
+    "sha256": "6cf63094567512128a42a0e4e9ce1bb2d6768518f6fa29ad9fec1cca3c80a26c",
+    "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor"
   },
   "src/blocks/services/s04.html": {
-    "sha256": "add2e342e54d0838e292ade78f9670711bbce52290a1de301392d4dfb4a96001",
-    "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed)"
+    "sha256": "dfd3cb850916dfd88a6553b58917753e5bcf0ada190a4090ac5eb3aa57f7c413",
+    "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed); 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor"
   },
   "src/blocks/about/head.html": {
     "sha256": "5efc5501383c16a26b2f7cfe379489c8a285550a8cc207b2d15e31183af3afb4",
