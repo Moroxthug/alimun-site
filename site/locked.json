@@ -16,10 +16,6 @@
     "sha256": "7bbe81c46d0e8e64e78b8f1f0ea8dd77d81d574240bc1963fd5c842e1defc395",
     "approved": "2026-10-19 hero ok; 2026-10-23 video replaced on owner request (Pexels 3252922, group talking by a window)"
   },
-  "src/blocks/07-footer.html": {
-    "sha256": "2f2b1daec4c022b6203c8decbf20238588c337235895cc6f231598dcd78ad06f",
-    "approved": "2026-10-20 footer ok; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
-  },
   "src/blocks/tiers/head.html": {
     "sha256": "2089562ba342e7da00584bd309cc96c40c417d06330008e4085aefbd564f2a67",
     "approved": "2026-10-20 tiers nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request)"
@@ -39,10 +35,6 @@
   "src/blocks/tiers/s02.html": {
     "sha256": "2e015542f5dbbe646611be749d10f91283420b8f7cdf4c5ed287981787c4f82b",
     "approved": "2026-10-22 tiers banner ok"
-  },
-  "src/blocks/tiers/footer.html": {
-    "sha256": "303367bf8098c3e15277804bd838c42df5002f3843f7e8a1ae56f3583b430b07",
-    "approved": "2026-10-22 tiers footer ok; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/services/head.html": {
     "sha256": "ad5f140cd04ce70289829e155d3753fe71b315e38e275d31d403948c211b1390",
@@ -72,10 +64,6 @@
     "sha256": "add2e342e54d0838e292ade78f9670711bbce52290a1de301392d4dfb4a96001",
     "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed)"
   },
-  "src/blocks/services/footer.html": {
-    "sha256": "0680dc4cb329e04d034d1c2a6e2a50efff46095d0e1b06cfb02bd41d9c8c9c4f",
-    "approved": "2026-10-22 services footer ok, keys added (same as the Tiers footer, Services marked current); 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
-  },
   "src/blocks/about/head.html": {
     "sha256": "5efc5501383c16a26b2f7cfe379489c8a285550a8cc207b2d15e31183af3afb4",
     "approved": "2026-10-22 about nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request)"
@@ -99,10 +87,6 @@
   "src/blocks/about/s02b-paths.html": {
     "sha256": "25646d3bbdcc356ca002b5b486c29e870725a48a1e81ed7eee3b8baeb4084904",
     "approved": "2026-10-22 about photo section ok (learner/teacher, reveal + drift) | 2026-10-22 owner: animations always play (reduced-motion switch removed)"
-  },
-  "src/blocks/about/footer.html": {
-    "sha256": "09e3b94922d027139a8e396d8492280156c33b89580ec57f71ecc4e23bcef78f",
-    "approved": "2026-10-22 about footer ok (Tiers keys, About current); 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/corporate/head.html": {
     "sha256": "f1e6d6c35bdba5f6a21a25b0b70a237778717e89db271c573eeb940ec9f7cd85",
@@ -132,10 +116,6 @@
     "sha256": "2992f2eeaa9939419fa422708f21c3b627c21376af8df824e8d7c4030241f546",
     "approved": "2026-10-22 corporate closing slideshow ok (live words, bigger and centred)"
   },
-  "src/blocks/corporate/footer.html": {
-    "sha256": "ba8a283302e3074e30a5711e763ed6716c1df6b9010ea152887c3024141a5875",
-    "approved": "2026-10-22 corporate footer ok (Tiers keys, Corporate current); 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
-  },
   "src/blocks/careers/head.html": {
     "sha256": "54308d2c9bd68ecd1823afc4a1a1c30fb031ecc6d1b2c312e16ab65c007c9ccf",
     "approved": "2026-10-22 careers nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request)"
@@ -164,10 +144,6 @@
     "sha256": "e8ca3f18664a4fe1a8581f4ddb4f747d5df7f3f4946339a4d78518f95311609d",
     "approved": "2026-10-23 Careers Ready to teach banner, live, unchanged"
   },
-  "src/blocks/careers/footer.html": {
-    "sha256": "d34b873d41374613008a4763105dccc2f6c5158826256b31a47612aff222607f",
-    "approved": "2026-10-23 Careers footer, Tiers footer keys, Careers current; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
-  },
   "src/blocks/contact/nav.html": {
     "sha256": "225313f52ab9c09997a44e789f165f08e0590394724deac1dc0549e21e79ff12",
     "approved": "2026-10-23 Contact nav, Contact current; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request"
@@ -175,10 +151,6 @@
   "src/blocks/contact/s01.html": {
     "sha256": "bcdaaa8ac59ee36771e8e2cfdf11b83fccea69d259d486afdd11ea3ad22f1baf",
     "approved": "2026-10-23 Contact section: one screen on desktop, typing-desk video, accurate copy, form sends via ?action=contact; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
-  },
-  "src/blocks/contact/footer.html": {
-    "sha256": "00907b96d11e68c36aa95683ca87904628722085dc0645516bd47b354b574039",
-    "approved": "2026-10-23 Contact footer, Tiers footer keys, Contact current; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/legal/404.html": {
     "sha256": "c66f8075ce8bb503403a6f6dc93d79a6b3078bf56e535f001bf0afa620774994",
@@ -191,10 +163,6 @@
   "src/blocks/legal/cookies.html": {
     "sha256": "e994f1be13bbb72b76bc9b850a891889a8b799f39cc7d39348200a435c95247c",
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
-  },
-  "src/blocks/legal/footer.html": {
-    "sha256": "d29fb4299f64741ce00a9af867929c7f0c0e1969f849a3617b33ee2d01e35fa4",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-23 translation keys added (owner request), no visual change (owner: yes)"
   },
   "src/blocks/legal/gdpr.html": {
     "sha256": "ad0dcc1be6073a0a8c23755491f11880e19b0d509483bf7d6355e7e44b5b2db9",

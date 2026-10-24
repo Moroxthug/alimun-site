@@ -124,14 +124,30 @@ function withHomeQuiz(html, lang) {
   return html.replace('{{QUIZ_DATA}}', JSON.stringify(data).replace(/</g, '\\u003c')).replace('{{UI_Q_CLOSE}}', esc(S.ui.UI_Q_CLOSE));
 }
 
+// Shared footer (src/blocks/footer.html): its course column links to this site's course pages; sites
+// without course pages drop the column.
+function withFooterCourses(html, lang) {
+  if (!html.includes('data-footer-course-list')) return html;
+  const $ = cheerio.load(html);
+  const S = courseSites[lang];
+  if (!S) { $('[data-footer-courses]').remove(); return $.html(); }
+  const list = $('[data-footer-course-list]');
+  for (const c of S.courses) {
+    const li = $('<li><a class="ft_link"></a></li>');
+    li.find('a').attr('href', coursePath(S, c)).attr('title', S.heroTitle(c)).text(c.name.charAt(0).toLocaleUpperCase(S.locale.replace('_', '-')) + c.name.slice(1));
+    list.append(li);
+  }
+  return $.html();
+}
+
 let count = 0;
 for (const file of pages) {
   const english = withEnglishFile(fs.readFileSync(path.join(dist, file), 'utf8'));
-  fs.writeFileSync(path.join(dist, file), withAlternates(withHomeQuiz(withFaqLd(withCourseList(english, 'en')), 'en'), file));
+  fs.writeFileSync(path.join(dist, file), withAlternates(withFooterCourses(withHomeQuiz(withFaqLd(withCourseList(english, 'en')), 'en'), 'en'), file));
   for (const lang of languages) {
     fs.mkdirSync(path.join(dist, lang), { recursive: true });
     const html = localizePage(english, { lang, templateFile: file, langDict: translations[lang] || {}, META_I18N, META_LANG });
-    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withHomeQuiz(withFaqLd(withCourseList(html, lang)), lang), file));
+    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withFooterCourses(withHomeQuiz(withFaqLd(withCourseList(html, lang)), lang), lang), file));
     count++;
   }
 }
@@ -140,13 +156,17 @@ for (const p of coursePages) {
   const english = withEnglishFile(fs.readFileSync(path.join(dist, p.built), 'utf8'));
   const html = p.site === 'en' ? english
     : localizePage(english, { lang: p.site, templateFile: p.file, langDict: translations[p.site] || {}, META_I18N, META_LANG });
-  const $ = cheerio.load(html);
+  const $ = cheerio.load(withFooterCourses(html, p.site));
   $('link[rel="alternate"][hreflang]').remove();
   $('head').append(`\n  <link rel="alternate" hreflang="${HREFLANG[p.site] || p.site}" href="${url(p.site, p.file)}">\n`);
   fs.writeFileSync(path.join(dist, p.site === 'en' ? '' : p.site, p.file), $.html());
   fs.rmSync(path.join(dist, p.built));
   count++;
 }
+
+// The 404 page has no language copies but shares the footer.
+const notFound = path.join(dist, '404.html');
+if (fs.existsSync(notFound)) fs.writeFileSync(notFound, withFooterCourses(fs.readFileSync(notFound, 'utf8'), 'en'));
 
 const today = new Date().toISOString().slice(0, 10);
 const entries = [];

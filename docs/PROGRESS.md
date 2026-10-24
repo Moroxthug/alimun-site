@@ -425,3 +425,13 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Translations: `home_quiz_btn`, `home_quiz_pick` in all nine languages.
 - Checked: desktop (German), phone (English) and Arabic (German) quiz runs end to end (C1 7 of 7, signup link with language); Chinese button goes to signup. No errors.
 - Fix: the first push failed to build because `site/src/pages/mockup-home.astro` (work page, not published) still imported the deleted `06-bottom-cta.html`; it now imports `home/banner.html`. Production kept the previous deploy until the fix.
+
+## 24 Oct 2026: new shared footer
+- Owner: the footer needs more links, the logo instead of the written name, and a better look.
+- New `site/src/blocks/footer.html`, used by every rebuilt page (homepage, about, careers, contact, corporate, services, tiers, legal pages, 404, course pages). Replaces 8 diverging copies (deleted, lock entries removed).
+  - Logo image, footer line, newsletter form (unchanged markup, handled by `js/subscribe.js`).
+  - Three link columns: Language courses (this site's course pages, written per language by `localize.mjs`; dropped on Chinese), Alimun (Tiers, Services, Corporate, About, Careers, Contact), Legal (Terms, GDPR, Cookies, Manage cookies).
+  - Bottom row: copyright and the Launchory badge. Lime marker on link hover; columns rise in.
+- Removed the four social icons: all linked to "#". Owner to send real profile URLs.
+- Translations: `footer_legal_title` in nine languages.
+- Checked: desktop, phone, Arabic; Manage cookies opens the settings; newsletter form present; course links correct per language (home, careers, course pages, 404).
