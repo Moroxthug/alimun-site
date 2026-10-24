@@ -44,6 +44,24 @@
     "level-test": {
       "title": "Test de niveau de langue gratuit en ligne | Alimun",
       "desc": "Trouvez votre niveau en anglais, allemand, français, espagnol, italien ou portugais avec un test de niveau gratuit : 20 questions de grammaire, vocabulaire et lecture et votre niveau CECRL estimé de A1 à C2."
+    },
+    "signup": {
+      "title": "Créer votre compte – Alimun"
+    },
+    "signin": {
+      "title": "Se connecter – Alimun"
+    },
+    "welcome": {
+      "title": "Bienvenue – Alimun"
+    },
+    "forgot-password": {
+      "title": "Réinitialiser votre mot de passe – Alimun"
+    },
+    "reset-password": {
+      "title": "Choisir un nouveau mot de passe – Alimun"
+    },
+    "signup-success": {
+      "title": "Paiement – Alimun"
     }
   },
   "de": {
@@ -90,6 +108,24 @@
     "level-test": {
       "title": "Kostenloser Sprach-Einstufungstest online | Alimun",
       "desc": "Finden Sie Ihr Niveau in Englisch, Deutsch, Französisch, Spanisch, Italienisch oder Portugiesisch mit einem kostenlosen Einstufungstest: 20 Fragen zu Grammatik, Wortschatz und Lesen, Ihr geschätztes GER-Niveau von A1 bis C2."
+    },
+    "signup": {
+      "title": "Konto erstellen – Alimun"
+    },
+    "signin": {
+      "title": "Anmelden – Alimun"
+    },
+    "welcome": {
+      "title": "Willkommen – Alimun"
+    },
+    "forgot-password": {
+      "title": "Passwort zurücksetzen – Alimun"
+    },
+    "reset-password": {
+      "title": "Neues Passwort wählen – Alimun"
+    },
+    "signup-success": {
+      "title": "Zahlung – Alimun"
     }
   },
   "es": {
@@ -136,6 +172,24 @@
     "level-test": {
       "title": "Prueba de nivel de idiomas gratis online | Alimun",
       "desc": "Descubre tu nivel de inglés, alemán, francés, español, italiano o portugués con una prueba de nivel gratuita: 20 preguntas de gramática, vocabulario y lectura y tu nivel MCER estimado de A1 a C2."
+    },
+    "signup": {
+      "title": "Crea tu cuenta – Alimun"
+    },
+    "signin": {
+      "title": "Iniciar sesión – Alimun"
+    },
+    "welcome": {
+      "title": "Bienvenida – Alimun"
+    },
+    "forgot-password": {
+      "title": "Restablecer tu contraseña – Alimun"
+    },
+    "reset-password": {
+      "title": "Elige una nueva contraseña – Alimun"
+    },
+    "signup-success": {
+      "title": "Pago – Alimun"
     }
   },
   "it": {
@@ -182,6 +236,24 @@
     "level-test": {
       "title": "Test di livello linguistico gratuito online | Alimun",
       "desc": "Scopri il tuo livello di inglese, tedesco, francese, spagnolo, italiano o portoghese con un test di livello gratuito: 20 domande di grammatica, lessico e lettura e il tuo livello QCER stimato da A1 a C2."
+    },
+    "signup": {
+      "title": "Crea il tuo account – Alimun"
+    },
+    "signin": {
+      "title": "Accedi – Alimun"
+    },
+    "welcome": {
+      "title": "Benvenuto – Alimun"
+    },
+    "forgot-password": {
+      "title": "Reimposta la password – Alimun"
+    },
+    "reset-password": {
+      "title": "Scegli una nuova password – Alimun"
+    },
+    "signup-success": {
+      "title": "Pagamento – Alimun"
     }
   },
   "pt": {
@@ -228,6 +300,24 @@
     "level-test": {
       "title": "Teste de nível de línguas grátis online | Alimun",
       "desc": "Descubra o seu nível de inglês, alemão, francês, espanhol, italiano ou português com um teste de nível gratuito: 20 perguntas de gramática, vocabulário e leitura e o seu nível QECR estimado de A1 a C2."
+    },
+    "signup": {
+      "title": "Criar a sua conta – Alimun"
+    },
+    "signin": {
+      "title": "Iniciar sessão – Alimun"
+    },
+    "welcome": {
+      "title": "Boas-vindas – Alimun"
+    },
+    "forgot-password": {
+      "title": "Repor a palavra-passe – Alimun"
+    },
+    "reset-password": {
+      "title": "Escolher uma nova palavra-passe – Alimun"
+    },
+    "signup-success": {
+      "title": "Pagamento – Alimun"
     }
   },
   "zh": {
@@ -274,6 +364,24 @@
     "level-test": {
       "title": "免费在线语言分级测试 | Alimun",
       "desc": "免费分级测试，测出你的英语、德语、法语、西班牙语、意大利语或葡萄牙语水平：20 道语法、词汇和阅读题，给出 A1 到 C2 的 CEFR 估计水平。"
+    },
+    "signup": {
+      "title": "创建账户 – Alimun"
+    },
+    "signin": {
+      "title": "登录 – Alimun"
+    },
+    "welcome": {
+      "title": "欢迎 – Alimun"
+    },
+    "forgot-password": {
+      "title": "重置密码 – Alimun"
+    },
+    "reset-password": {
+      "title": "设置新密码 – Alimun"
+    },
+    "signup-success": {
+      "title": "付款 – Alimun"
     }
   },
   "ar": {
@@ -320,6 +428,24 @@
     "level-test": {
       "title": "اختبار مستوى اللغة المجاني عبر الإنترنت | Alimun",
       "desc": "اكتشف مستواك في الإنجليزية أو الألمانية أو الفرنسية أو الإسبانية أو الإيطالية أو البرتغالية باختبار مستوى مجاني: 20 سؤالًا في القواعد والمفردات والقراءة، ومستواك التقديري من A1 إلى C2."
+    },
+    "signup": {
+      "title": "أنشئ حسابك – Alimun"
+    },
+    "signin": {
+      "title": "تسجيل الدخول – Alimun"
+    },
+    "welcome": {
+      "title": "مرحبًا بك – Alimun"
+    },
+    "forgot-password": {
+      "title": "إعادة تعيين كلمة المرور – Alimun"
+    },
+    "reset-password": {
+      "title": "اختر كلمة مرور جديدة – Alimun"
+    },
+    "signup-success": {
+      "title": "الدفع – Alimun"
     }
   }
 }
