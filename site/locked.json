@@ -1,8 +1,8 @@
 {
   "_note": "Blocks the owner approved. Build fails if one changes. Unlock only on the owner's request.",
   "src/blocks/head.html": {
-    "sha256": "c56a5a0ea6760579a6c5abe0dcf6950e53d99090421ce3fbe318c6175c181899",
-    "approved": "2026-10-19 nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-23 FAQ answers made accurate (owner: faq ok); 2026-10-23 English-only FAQPage removed from the head graph (owner FAQ redo; each language now gets its own FAQPage from the FAQ section)"
+    "sha256": "c547b025c0714a70239fca7e7312780703345e9c9bc5567ca072e11c7d87c897",
+    "approved": "2026-10-19 nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-23 FAQ answers made accurate (owner: faq ok); 2026-10-23 English-only FAQPage removed from the head graph (owner FAQ redo; each language now gets its own FAQPage from the FAQ section); 2026-10-24 homepage title (and og/twitter title) changed for search on owner request"
   },
   "src/blocks/after-body.html": {
     "sha256": "736dc38e48d62d0ee713cd9dfeac4ef58ca3af22541c60e19565a5ea636cdb84",

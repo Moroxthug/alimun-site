@@ -2,7 +2,7 @@
   "_note": "Translated <title> and description per page (build.js applies them to the locale copies). Faithful translations of the English tags in the root pages; keep them in sync when the English changes. 'ma' uses 'fr'.",
   "fr": {
     "index": {
-      "title": "Alimun – Cours de langue en direct avec retours de l'IA",
+      "title": "Apprendre une langue en ligne en direct | Alimun",
       "desc": "Des cours de langue en direct avec un professeur et le même groupe chaque semaine, et des retours de l'IA sur les devoirs et les exercices. Anglais et allemand ouverts ; d'autres langues sur liste d'attente gratuite."
     },
     "about-us": {
@@ -44,7 +44,7 @@
   },
   "de": {
     "index": {
-      "title": "Alimun – Live-Sprachkurse mit KI-Feedback",
+      "title": "Sprachen online lernen mit Live-Unterricht | Alimun",
       "desc": "Live-Sprachkurse mit einer Lehrkraft und derselben Gruppe jede Woche, dazu KI-Feedback zu Hausaufgaben und Übungen. Englischkurse sind geöffnet; weitere Sprachen mit kostenloser Warteliste."
     },
     "about-us": {
@@ -86,7 +86,7 @@
   },
   "es": {
     "index": {
-      "title": "Alimun – Clases de idiomas en directo con feedback de IA",
+      "title": "Aprende idiomas online con clases en directo | Alimun",
       "desc": "Clases de idiomas en directo con un profesor y el mismo grupo cada semana, más correcciones con IA en deberes y práctica. Inglés y alemán ya abiertos; más idiomas con lista de espera gratuita."
     },
     "about-us": {
@@ -128,7 +128,7 @@
   },
   "it": {
     "index": {
-      "title": "Alimun – Corsi di lingua dal vivo con feedback dell'IA",
+      "title": "Imparare una lingua online con lezioni dal vivo | Alimun",
       "desc": "Lezioni di lingua dal vivo con un insegnante e lo stesso gruppo ogni settimana, più il riscontro dell'IA su compiti ed esercizi. Inglese e tedesco già aperti; altre lingue con lista d'attesa gratuita."
     },
     "about-us": {
@@ -170,7 +170,7 @@
   },
   "pt": {
     "index": {
-      "title": "Alimun – Aulas de línguas ao vivo com feedback de IA",
+      "title": "Aprenda idiomas online com aulas ao vivo | Alimun",
       "desc": "Aulas de línguas ao vivo com um professor e o mesmo grupo todas as semanas, além de feedback de IA nos trabalhos e na prática. Inglês e alemão já abertos; mais línguas com lista de espera gratuita."
     },
     "about-us": {
@@ -212,7 +212,7 @@
   },
   "zh": {
     "index": {
-      "title": "Alimun – 直播语言课程与 AI 反馈",
+      "title": "在线学语言，真人老师直播授课 | Alimun",
       "desc": "由老师带同一个小组每周上直播语言课，作业和练习还有 AI 反馈。英语和德语现已开课；更多语言可免费加入候补名单。"
     },
     "about-us": {
@@ -254,7 +254,7 @@
   },
   "ar": {
     "index": {
-      "title": "ألمون – دورات لغات مباشرة مع ملاحظات الذكاء الاصطناعي",
+      "title": "تعلّم اللغات أونلاين مع حصص مباشرة | ألمون",
       "desc": "حصص لغات مباشرة مع معلّم والمجموعة نفسها كل أسبوع، مع ملاحظات الذكاء الاصطناعي على الواجبات والتمارين. الإنجليزية والألمانية متاحتان الآن، ولغات أخرى بقائمة انتظار مجانية."
     },
     "about-us": {
