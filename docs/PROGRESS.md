@@ -544,3 +544,13 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Owner: rebuild the dashboards from scratch, step by step, each step confirmed. Plan and learning material roadmap in `docs/DASHBOARD_PLAN.md`; approved drawing palette added to `CLAUDE.md`.
 - Approved cast: the Alimun book character, the Alimun zoo, language buddies, fantasy and everyday friends, recoloured Open Doodles and Open Peeps with skin and hair tones, hand-drawn thought and speech bubbles with jokes, the owner's loader as the one loading animation. Boards: `docs/design/drawings-cast-1.png`, `docs/design/drawings-cast-2.png`; sources in `docs/design/sources/`.
 - Next (new conversation): step 2, look and navigation, as a live preview on alimun.com with sample data.
+
+## 2026-10-24 — Dashboards, step 2: look and navigation (built, waiting for the owner)
+- Live preview with sample data at `/app/preview` (noindex by meta tag and an `X-Robots-Tag` route for `/app/` in `vercel.json`; not linked anywhere). No sign-in, no database. Built next to the current dashboards, which are untouched.
+- Shell: forest sidebar on desktop (Learn, With your teacher, Account; the course buddy at the bottom), lime for the active section; on phones a floating forest bottom bar (Home, Learn, Practice, Classes, More) and a "More" sheet with every section. Sticky top bar with the course buddy, notifications and the account; the section name appears in it on scroll.
+- Design kit screen (`#/kit`): colours, type scale (Coolvetica Condensed for headings, Satoshi for text), cards (white, forest, tinted), buttons, progress bar, speech and thought bubbles, the five book character moods, the loader inline and full screen.
+- Motion: cards rise in one after another, screens fade between sections, tappable cards lift, bubbles pop in, the drawings keep their approved animations; everything calms down with reduced motion.
+- The owner's loader opens the dashboard and runs when joining a class (sample).
+- Home is a sample layout only (next class, buddy, today's tasks, streak, unit progress, free plan); the real Home is step 3. Other sections show their character and the step that builds them.
+- Files: `app/preview.html`, `css/app.css`, `js/app/cast.js` (generated from `docs/design/sources`), `js/app/shell.js`, `js/app/sample-data.js`.
+- For the owner to decide: the navigation icons are simple line icons drawn for Alimun in the same stroke as the drawings (no icon set); the text is English only until the look is confirmed, then it moves to `js/translations.js`.

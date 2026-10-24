@@ -23,6 +23,11 @@
       "continue": true
     },
     {
+      "src": "/app(/.*)?",
+      "headers": { "X-Robots-Tag": "noindex, nofollow" },
+      "continue": true
+    },
+    {
       "src": "/(site|supabase|\\.agents|\\.github|\\.semgrep|scripts|docs|mockups|node_modules|sandbox)(/.*)?",
       "status": 404,
       "dest": "/404.html"
