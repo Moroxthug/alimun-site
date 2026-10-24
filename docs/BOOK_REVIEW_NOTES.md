@@ -49,3 +49,8 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: collocation gaps accept several verbs (gain or get experience, earn or make a living, got or received a promotion); check the *earn* and *do overtime* match pairs.
 - u4 test: *got her phone stolen* is accepted next to *had her phone stolen* (informal).
 - u4 reading: check the history of the fridge (ice houses, refrigerants, home fridges from the early twentieth century); "millions of emails are sent every minute" is vague.
+- u5 p2: mixed-conditional gaps accept *would be working* and *would work*, *were* and *was*; the arguable wrong option *wouldn’t have been so tired today* was replaced.
+- u6: two opinion pieces of about 120 words each, with a "by …" line in each.
+- u7 p1: "Kenji ___ sleeping" accepts *must*, *might*, *may*, *could be*; the reading says an upright piano weighs more than 200 kg.
+- u8 p3: *ask* is accepted next to *enquire* and *inquire*; *Yours sincerely* and *Yours faithfully* are labelled British usage.
+- Word-order items in this book sometimes rely on a comma or capital letter on a tile to be unique.
