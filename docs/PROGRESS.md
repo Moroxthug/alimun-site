@@ -406,3 +406,14 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 
 ## 24 Oct 2026: homepage titles for search
 - Owner yes: homepage `<title>` (and og/twitter title) built on each language's main search phrase. English "Learn a Language Online with Live Classes | Alimun" (head.html, lock hash updated); other languages in `scripts/meta-i18n.json` (Morocco uses the French title).
+
+## 24 Oct 2026: header spacing, Alimun favicon
+- Header (owner: spacing not optimal; "Contact" touched "Get started", logo off centre). CSS in `css/youssefs-wondrous-site-e70724.webflow.css` (desktop only), plus class `nav_cta` on the Get started wrapper in the 8 nav blocks (lock hashes updated):
+  - Logo centred; the two link groups mirrored around it with even gaps (36 px at the logo, 32 px between links; tighter at 992-1199 px).
+  - Get started at the header's edge; header max-width 90rem.
+  - Old right-to-left margins from `js/i18n.js` neutralised.
+  - Measured in all nine languages at 992/1100/1200/1440 px: symmetric, button always clear (Chinese tightest at 16 px).
+- Favicon (owner: Google showed the Webflow "W"). The Alimun book cut from `Alimun-Source-File-fixes.svg` (wordmark and its i-dot removed):
+  - Files: `images/favicon.svg`, `images/favicon-48.png`, `images/icon-192.png`, `images/icon-512.png`, `images/favicon.ico` (16/32/48, replaced in place), `images/webclip.png` (256, white, replaced) and a root `/favicon.ico`.
+  - Every head (site blocks and root pages, 32 files) now links svg, png 48, ico and apple-touch with `?v=2` so browsers drop the cached Webflow icon.
+- Checked: dashboards, home, tiers and signup boot with no errors; root build passes.

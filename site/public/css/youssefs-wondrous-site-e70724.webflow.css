@@ -3528,3 +3528,26 @@ blockquote {
     padding-bottom: 2.5rem !important;
   }
 }
+
+/* Header spacing (owner, 24 Oct 2026): logo centred, the two link groups mirrored around it with even gaps,
+   Get started at the edge of the header instead of pushing the links off centre. Desktop only; tighter on
+   smaller laptops so the longest labels (French, Spanish, Chinese) still clear the button. */
+@media screen and (min-width: 992px) {
+  .nav_wrap { max-width: 90rem; padding-left: 3%; padding-right: 3%; }
+  .nav_wrap .nav_cta { position: absolute !important; right: 3%; top: 50%; transform: translateY(-50%); margin-right: 0 !important; }
+  [dir="rtl"] .nav_wrap .nav_cta { right: auto; left: 3%; }
+  .nav_menu-items-inner { grid-column-gap: calc(10.5625rem + 4.5rem); grid-row-gap: 0; }
+  .nav_menu-link-wrap { width: auto; grid-column-gap: 2rem; justify-content: flex-start; justify-self: stretch !important; }
+  .nav_menu-link-wrap.is-left { justify-content: flex-end; }
+  /* js/i18n.js adds right-to-left margins for the old header; the mirrored layout needs none. */
+  html[dir="rtl"] .nav_menu-items-inner > .nav_menu-link-wrap.is-left { margin-left: 0 !important; margin-right: 0 !important; }
+  html[dir="rtl"] body .nav_wrap div.nav_cta { margin-left: 0 !important; }
+  html[lang="zh"] .nav_menu-link-wrap { grid-column-gap: 1.5rem; }
+}
+@media screen and (min-width: 992px) and (max-width: 1199px) {
+  .nav_menu-items-inner { grid-column-gap: calc(10.5625rem + 2.5rem); }
+  .nav_menu-link-wrap { grid-column-gap: 1rem; }
+  .nav_link { font-size: 1rem; }
+  html[lang="zh"] .nav_link { font-size: .9rem; }
+  html[lang="zh"] .nav_menu-link-wrap { grid-column-gap: .75rem; }
+}
