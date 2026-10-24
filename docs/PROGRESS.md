@@ -516,3 +516,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Cookie Policy: Google Analytics row removed (the site loads no analytics); it now says analytics cookies are not currently set, like marketing. The `alimun-currency` preference is listed.
 - Privacy Policy: teacher application data now matches the real form (language, experience, specialty, bio; payout details later); Google Analytics removed from the providers.
 - `site/scripts/localize.mjs`: legal pages use `src/blocks/legal/i18n/<lang>/<file>` when it exists (Moroccan pages use French). Translations in progress.
+
+## 2026-10-24 — Legal pages: translations
+- Terms, Privacy Policy and Cookie Policy translated into Spanish, French (also used for Morocco), German, Portuguese, Italian, Chinese and Arabic (`site/src/blocks/legal/i18n/<lang>/`). Each starts with a note that the English version prevails unless local law says otherwise (Terms section 19 already said so).
+- Checked: same markup, links and `[COPY NEEDED]` placeholders as the English in every language; the "Manage Cookies" link is named as in each language's footer.
+- Still needed from the owner: registered office address, province of incorporation, EU and UK representatives, CNDP number, confirmation that the AI provider plans exclude training on customer content.
