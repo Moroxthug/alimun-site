@@ -1,6 +1,7 @@
-/* Alimun app: the signed-in student's data for Home (docs/DASHBOARD_PLAN.md, step 3).
-   Browser client with the publishable key; row-level security decides what each account can read.
-   No writes. Signed out, or with ?sample=1, the shell uses js/app/sample-data.js instead. */
+/* Alimun app: the signed-in student's data for Home (docs/DASHBOARD_PLAN.md, step 3) and course book progress (step 4).
+   Browser client with the publishable key; row-level security decides what each account can read and write.
+   The only write is the student's own book progress (practice_progress, ex_key "book:<book>:<unit>:<page or test>").
+   Signed out, or with ?sample=1, the shell uses js/app/sample-data.js instead. */
 (function () {
   'use strict';
   var URL = 'https://dgaiasmefcbrtzqwdyri.supabase.co';
@@ -127,6 +128,7 @@
       return {
         signedIn: true,
         profile: {
+          id: p.id,
           name: p.full_name || '',
           language: p.language || (placement && placement.language) || '',
           level: p.level || (placement && placement.level) || '',
@@ -145,7 +147,23 @@
     });
   }
 
+  /* Course book progress: one row per finished page or unit test */
+  function bookProgress(studentId, bookId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('practice_progress').select('ex_key, done, graded_score').eq('student_id', studentId)
+      .like('ex_key', 'book:' + bookId + ':%').limit(1000).then(rows);
+  }
+  function saveBook(studentId, key, rec) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('practice_progress').upsert({
+      student_id: studentId, ex_key: key, done: !!rec.done, graded_score: rec.score == null ? null : Math.round(rec.score),
+      user_answer: { v: 1 }, updated_at: new Date().toISOString()
+    }, { onConflict: 'student_id,ex_key' }).then(function (r) { if (r.error) throw r.error; });
+  }
+
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, signOut: signOut, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

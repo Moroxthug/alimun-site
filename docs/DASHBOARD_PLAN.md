@@ -18,7 +18,7 @@ Owner, 24 Oct 2026: rebuild the dashboards from scratch, without the current one
 1. Drawing style and cast. Done (approved with more variety).
 2. Look and navigation: app shell (sidebar on desktop, bottom bar on phones), type scale, cards, motion, loader. Live preview with sample data on alimun.com (noindex). Done (approved): `/app/preview` (`app/preview.html`, `css/app.css`, `js/app/`).
 3. Home: next class, today's plan, streak, buddy, focus topics from the level test, free-plan nudge. Done (approved): Home in `/app/preview` reads the signed-in student's own data (`js/app/data.js`); signed out or with `?sample=1` it shows sample data.
-4. Learning material reader: course books with interactive pages (see section 3).
+4. Learning material reader: course books with interactive pages (see section 3). Built, waiting for the owner: `#/book` in `/app/preview` (`js/app/reader.js`); format in `docs/BOOKS.md`; first units of English B1 and German B1 as drafts.
 5. Exercise player: every exercise type (section 4) with animations and character reactions.
 6. Flashcards: creation and spaced review.
 7. Quizzes and extensive practice sets.
@@ -39,7 +39,7 @@ The new dashboards are built next to the current ones and switched over only whe
 - Focused material: verbs (conjugation tables, irregular verbs, tenses in context), grammar, vocabulary by theme and level, syntax and word order, wording and register (formal, informal, idioms, collocations), common mistakes per native language.
 - Listening: graded audio (dialogues, announcements, interviews, talks) with exercises; reading: graded texts (notices, emails, articles, opinion, literature) with exercises.
 - Production pipeline: drafted from the CEFR descriptors and exam-board inventories, then reviewed by a native teacher before publishing. Original material only.
-- Data model (to design in step 4): course > level > unit > page > blocks (text, examples, tables, audio, image, exercise); tags for skill, topic, level, goal.
+- Data model (step 4, `docs/BOOKS.md`): book (language and level) > unit > page > blocks (text, examples, tables, dialogue, tip, reading, exercise; audio and image with step 9); tags for skill, topic, goal.
 
 ## 4. Exercises: huge variety
 Choose the answer; fill the gap (typed and drop-down); word bank; put words in order; build the sentence; match pairs; sort into groups; odd one out; true, false, not given; find and fix the mistake; transform the sentence; conjugate; word formation; collocations; dictation; listen and choose; listen and type; read and answer; highlight in the text; categorise; drag to the picture; crossword; word search; memory pairs; timed rounds; speaking: repeat and record (pronunciation), describe the picture, answer the question; writing: short answers, emails, essays.

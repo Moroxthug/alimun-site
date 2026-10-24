@@ -1,4 +1,5 @@
-/* Alimun app shell (docs/DASHBOARD_PLAN.md, steps 2 and 3): navigation, routing, the loader, Home and the preview screens.
+/* Alimun app shell (docs/DASHBOARD_PLAN.md, steps 2 to 4): navigation, routing, the loader, Home and the preview screens.
+   The course book (#/book/...) is drawn by js/app/reader.js with the helpers below.
    Sidebar on desktop, bottom bar plus a "More" sheet on phones. Home reads the signed-in student's data (js/app/data.js);
    signed out, or with ?sample=1, it shows sample data. Screens marked for later steps show their character and say
    which step builds them. All text comes from js/translations.js (app_* keys) except the design kit. */
@@ -87,6 +88,8 @@
     more: '<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',
     bell: '<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 21h4"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    back: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
+    check: '<path d="m5 12.5 4.5 4.5L19 7"/>',
     play: '<path d="M8 5.5v13l10.5-6.5z"/>'
   };
   function icon(name) { return '<svg class="i-' + name + '" viewBox="0 0 24 24" ' + P + ' aria-hidden="true" focusable="false">' + ICONS[name] + '</svg>'; }
@@ -95,7 +98,7 @@
      Text keys: app_nav_<id> (label), app_nav_<id>_short, app_soon_<id>_text and app_soon_<id>_bub. */
   var ROUTES = [
     { id: 'home', label: 'app_nav_home', icon: 'home', group: 'learn' },
-    { id: 'book', label: 'app_nav_book', short: 'app_nav_book_short', icon: 'book', group: 'learn', step: 4, art: 'owl', tint: 'sun', kind: 'say', text: 'app_soon_book_text', bub: 'app_soon_book_bub' },
+    { id: 'book', label: 'app_nav_book', short: 'app_nav_book_short', icon: 'book', group: 'learn' },
     { id: 'practice', label: 'app_nav_practice', icon: 'practice', group: 'learn', step: 5, art: 'dog', tint: 'leaf', kind: 'say', text: 'app_soon_practice_text', bub: 'app_soon_practice_bub' },
     { id: 'tests', label: 'app_nav_tests', short: 'app_nav_tests_short', icon: 'tests', group: 'learn', step: 8, art: 'dragon', tint: 'leaf', kind: 'say', text: 'app_soon_tests_text', bub: 'app_soon_tests_bub' },
     { id: 'library', label: 'app_nav_library', icon: 'library', group: 'learn', step: 9, art: 'teacup', tint: 'mint', kind: 'say', text: 'app_soon_library_text', bub: 'app_soon_library_bub' },
@@ -130,6 +133,7 @@
   var mode = 'sample'; /* 'real', 'sample' (signed out), 'forced' (?sample=1), 'noprofile', 'error' */
 
   function buddyOf(d) { return BUDDIES[d.profile.language] || 'teacup'; }
+  function myBookId() { return (D.profile.language || 'English') + '-' + (D.profile.level || 'A1'); }
   function firstName(n) { n = String(n || '').trim().split(/\s+/)[0] || ''; return cap(n); }
   function initials(n) {
     var p = String(n || '').trim().split(/\s+/).filter(Boolean);
@@ -429,19 +433,33 @@
     loadingScreen.setAttribute('aria-hidden', 'true');
   }
 
+  /* What the course book reader (js/app/reader.js) uses from the shell */
+  var readerHelpers = {
+    t: t, esc: esc, icon: icon, Cast: Cast, locale: locale, languageName: languageName, loaderInner: loaderInner,
+    data: function () { return D; }, mode: function () { return mode; }, myBookId: function () { return myBookId(); },
+    buddyFor: function (language) { return BUDDIES[language] || 'teacup'; }, courseName: function () { return courseName(D); },
+    rerender: function () { render('book', false); }
+  };
+  function bookParts() { return location.hash.replace(/^#\/book\/?/, '').split('/').filter(Boolean); }
+
   /* ---------- Routing ---------- */
-  var current = null;
+  var current = null, currentHash = '';
   function routeFromHash() {
     var id = (location.hash.match(/^#\/([a-z]+)/) || [])[1];
     return byId[id] ? id : 'home';
   }
   function render(id, animate) {
     var r = byId[id];
-    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : soonView(r);
+    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' ? '' : soonView(r);
     var swap = function () {
       view.innerHTML = html;
       view.classList.remove('is-leaving');
       document.title = t(r.label) + ' – Alimun';
+      if (id === 'book') {
+        window.AlimunReader.mount(view, bookParts(), readerHelpers).then(function (res) {
+          if (current === 'book' && res && res.title) document.title = res.title + ' – Alimun';
+        });
+      }
       top.querySelector('.top__title').textContent = t(r.label);
       app.querySelectorAll('[data-route]').forEach(function (a) {
         if (a.getAttribute('data-route') === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
@@ -452,6 +470,7 @@
     };
     if (animate && current) { view.classList.add('is-leaving'); setTimeout(swap, 150); } else swap();
     current = id;
+    currentHash = location.hash;
   }
 
   function setSheet(open) {
@@ -501,7 +520,7 @@
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current) render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || (id === 'book' && location.hash !== currentHash)) render(id, true); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 
