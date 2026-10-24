@@ -1,0 +1,19 @@
+.bub{position:absolute;max-width:230px;padding:12px 16px;background:#fff;border:3px solid #1a443c;font-family:Satoshi;font-weight:600;font-size:15px;line-height:1.3;color:#1a443c;border-radius:255px 18px 225px 18px/18px 225px 18px 255px;box-shadow:4px 5px 0 #1a443c;animation:bubIn .8s cubic-bezier(.3,1.5,.5,1) both;z-index:2}
+.bub.say::after{content:"";position:absolute;left:30px;bottom:-12px;width:16px;height:16px;background:#fff;border-right:3px solid #1a443c;border-bottom:3px solid #1a443c;transform:rotate(45deg)}
+.bub.think{border-radius:40px}
+.bub.think::before,.bub.think::after{content:"";position:absolute;background:#fff;border:3px solid #1a443c;border-radius:50%}
+.bub.think::before{width:16px;height:16px;left:26px;bottom:-24px}.bub.think::after{width:9px;height:9px;left:16px;bottom:-38px}
+@keyframes bubIn{from{opacity:0;transform:scale(.6) rotate(-6deg)}to{opacity:1;transform:none}}
+.stage{position:relative;border-radius:32px;padding:100px 20px 18px;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;min-height:340px}
+.stage svg{width:100%;height:190px;overflow:visible}
+.stage .bub{top:16px;left:18px}
+.role{margin-top:10px;font-size:14px;color:rgba(8,8,8,.7);text-align:center}
+.role b{display:block;font-family:'Coolvetica Condensed';font-weight:400;text-transform:uppercase;font-size:24px;color:#080808;line-height:1}
+.grid5{display:grid;grid-template-columns:repeat(5,1fr);gap:18px}.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.sway{animation:sway 3s ease-in-out infinite;transform-origin:50% 95%}@keyframes sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+.look{animation:look 4s ease-in-out infinite}@keyframes look{0%,40%,100%{transform:translateX(0)}50%,85%{transform:translateX(-6px)}}
+.bob{animation:bob 1.4s ease-in-out infinite}@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px) rotate(-2deg)}}
+.breathe{animation:breathe 3s ease-in-out infinite;transform-origin:50% 100%}@keyframes breathe{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.95)}}
+.zz text{animation:zz 3s ease-in-out infinite}.zz text:nth-child(2){animation-delay:.5s}.zz text:nth-child(3){animation-delay:1s}@keyframes zz{0%{opacity:0;transform:translateY(8px)}50%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
+.crawl{animation:crawl 6s ease-in-out infinite}@keyframes crawl{0%,100%{transform:translateX(-6px)}50%{transform:translateX(6px)}}
+.wag .tail{animation:wag .35s ease-in-out infinite alternate;transform-box:fill-box;transform-origin:0 100%}@keyframes wag{from{transform:rotate(-14deg)}to{transform:rotate(14deg)}}

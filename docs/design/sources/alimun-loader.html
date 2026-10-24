@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Alimun Loader — Colour</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #f4f2ec; display: flex; align-items: center; justify-content: center; min-height: 100vh; font-family: -apple-system, BlinkMacSystemFont, sans-serif; }
+    #__bundler_loading { position: fixed; bottom: 20px; right: 20px; font: 13px/1.4 -apple-system, BlinkMacSystemFont, sans-serif; color: #666; background: #fff; padding: 8px 14px; border-radius: 8px; box-shadow: 0 1px 4px rgba(0,0,0,0.12); z-index: 10000; }
+    #__bundler_thumbnail { position: fixed; inset: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; background: #f4f2ec; z-index: 9999; }
+    #__bundler_thumbnail svg { width: 100%; height: 100%; object-fit: contain; }
+    #__bundler_placeholder { color: #999; font-size: 14px; }
+  </style>
+  <noscript>
+    <style>#__bundler_loading { display: none; }</style>
+    <div style="position:fixed;bottom:12px;left:12px;font:13px/1.4 -apple-system,BlinkMacSystemFont,sans-serif;color:#999;background:rgba(255,255,255,0.9);padding:6px 12px;border-radius:6px;box-shadow:0 1px 4px rgba(0,0,0,0.08);z-index:10000;">
+      This page requires JavaScript to display.
+    </div>
+  </noscript>
+</head>
+<body>
+  <div id="__bundler_thumbnail">
+    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="100" cy="100" r="88" fill="none" stroke="#1a443c" stroke-width="2.5" stroke-dasharray="320 240" stroke-linecap="round"></circle>
+      <g transform="translate(100,100) scale(0.42) translate(-512,-582)">
+        <path fill="#1a443c" d="M511.61,422.8c7.52-6.66,14.43-12.94,21.51-19.03,39.31-33.83,106.66-27.64,140.27,16.17,14.4,18.78,21.44,39.83,21.45,63.41.02,68.76.14,137.52.18,206.28,0,10.53-7.15,16.92-18.75,18.45-19.69,2.58-34.39-7.28-48.55-18.57-4.48-3.57-7.41-7.75-15.6-13.9-.71-.53-2.27-1.67-4.02-1.37-2.91.5-4.44,4.62-5.04,6.3-3.83,10.72-2.66,34.16-2.52,39.03.13,4.43.82,28.52-13.85,45.33-1.01,1.15-17.78,19.78-40.19,16.39-2.85-.43-13.79-2.49-21.95-11.42-5.45-5.96-8.82-13.82-9.4-22.82-.21-3.17-.03-6.37-1.29-9.8-.42,1.75-1.02,3.49-1.24,5.26-2.46,19.75-13.92,34.17-30.6,38.4-19.11,4.84-37.78-9.63-46.25-20.07-11.88-14.64-13.39-32.61-14-40.02-1.92-22.95,3.77-42.27-3.13-45.38-1.58-.71-3.3-.33-4.43.06-.95.79-2.33,1.94-3.99,3.32-17.56,14.46-27.1,20.26-34.43,25.12-8.37,5.55-18.26,5.32-27.89,3.79-11.98-1.9-17.17-8.02-17.24-20.62-.16-28.31-.11-56.63-.07-84.94.05-42.15-.22-84.31.36-126.46.49-35.59,29.27-73.93,62.39-86.42,41.32-15.59,88.94-3.66,115.38,30.44,1.15,1.49,2.58,2.76,2.89,3.09ZM513.63,706.58c.86-13.48,4.79-25.89,11.7-37.43,10.56-17.61,26.74-27.53,45.89-33.24,28.41-8.47,56.17-8.14,82.85,6.35,4.6,2.5,5.87,1.5,5.85-4.72-.1-51.72-.14-103.45-.4-155.17-.19-37.68-32.62-70.18-72.91-64.61-27.84,3.85-52.86,27.48-55.15,55.5-1.25,15.23-.67,30.61-.74,45.93-.19,38.1-.24,76.2-.43,114.3-.05,9.75-6.62,17.5-15.2,18.39-9.79,1.02-17.73-4.86-19.73-15.05-.69-3.5-.55-7.19-.56-10.79-.15-49.17.23-98.34-.57-147.5-.39-24.21-12.5-42.52-33.93-54-21.42-11.48-43.06-9.53-63.33,2.35-21.66,12.7-31.27,33.11-31.3,57.8-.03,30,.84,60,.91,90,.05,20.21-.62,40.41-.89,60.62-.03,2.4.43,4.8.71,7.65,8.18-3.19,15.28-6.63,22.76-8.76,23.5-6.68,46.7-4.34,69.68,3.11,25.86,8.38,42.75,25.36,50.28,51.5,1.69,5.87,3.01,11.85,4.5,17.78Z"></path>
+        <circle fill="#d5af33" cx="453" cy="604" r="19"></circle>
+        <circle fill="#d5af33" cx="573" cy="606" r="19"></circle>
+      </g>
+    </svg>
+  </div>
+  <div id="__bundler_loading">Unpacking...</div>
+
+  <script>
+    
+document.addEventListener('DOMContentLoaded', async function() {
+  const loading = document.getElementById('__bundler_loading');
+  function setStatus(msg) { if (loading) loading.textContent = msg; }
+
+  // Error sink persists across replaceWith since it's on window, not the DOM.
+  window.addEventListener('error', function(e) {
+    var p = document.body || document.documentElement;
+    var d = document.getElementById('__bundler_err') || p.appendChild(document.createElement('div'));
+    d.id = '__bundler_err';
+    d.style.cssText = 'position:fixed;bottom:12px;left:12px;right:12px;font:12px/1.4 ui-monospace,monospace;background:#2a1215;color:#ff8a80;padding:10px 14px;border-radius:8px;border:1px solid #5c2b2e;z-index:99999;white-space:pre-wrap;max-height:40vh;overflow:auto';
+    d.textContent = (d.textContent ? d.textContent + String.fromCharCode(10) : '') +
+      '[bundle] ' + (e.message || e.type) +
+      (e.filename ? ' (' + e.filename.slice(0, 60) + ':' + e.lineno + ')' : '');
+  }, true);
+
+  try {
+    const manifestEl = document.querySelector('script[type="__bundler/manifest"]');
+    const templateEl = document.querySelector('script[type="__bundler/template"]');
+    if (!manifestEl || !templateEl) {
+      setStatus('Error: missing bundle data');
+      console.error('[bundler] Missing script tags — manifestEl:', !!manifestEl, 'templateEl:', !!templateEl);
+      return;
+    }
+
+    const manifest = JSON.parse(manifestEl.textContent);
+    let template = JSON.parse(templateEl.textContent);
+
+    const uuids = Object.keys(manifest);
+    setStatus('Unpacking ' + uuids.length + ' assets...');
+
+    const blobUrls = {};
+    await Promise.all(uuids.map(async (uuid) => {
+      const entry = manifest[uuid];
+      try {
+        const binaryStr = atob(entry.data);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+
+        let finalBytes = bytes;
+        if (entry.compressed) {
+          if (typeof DecompressionStream !== 'undefined') {
+            const ds = new DecompressionStream('gzip');
+            const writer = ds.writable.getWriter();
+            const reader = ds.readable.getReader();
+            writer.write(bytes);
+            writer.close();
+            const chunks = [];
+            let totalLen = 0;
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              chunks.push(value);
+              totalLen += value.length;
+            }
+            finalBytes = new Uint8Array(totalLen);
+            let offset = 0;
+            for (const chunk of chunks) { finalBytes.set(chunk, offset); offset += chunk.length; }
+          } else {
+            console.warn('DecompressionStream not available, asset ' + uuid + ' may not render');
+          }
+        }
+
+        blobUrls[uuid] = URL.createObjectURL(new Blob([finalBytes], { type: entry.mime }));
+      } catch (err) {
+        console.error('Failed to decode asset ' + uuid + ':', err);
+        blobUrls[uuid] = URL.createObjectURL(new Blob([], { type: entry.mime }));
+      }
+    }));
+
+    const extResEl = document.querySelector('script[type="__bundler/ext_resources"]');
+    const extResources = extResEl ? JSON.parse(extResEl.textContent) : [];
+    const resourceMap = {};
+    for (const entry of extResources) {
+      if (blobUrls[entry.uuid]) resourceMap[entry.id] = blobUrls[entry.uuid];
+    }
+
+    setStatus('Rendering...');
+    for (const uuid of uuids) template = template.split(uuid).join(blobUrls[uuid]);
+
+    // Strip integrity + crossorigin — blob URLs from a file:// document inherit
+    // a null origin, so crossorigin forces a CORS fetch that SRI then rejects.
+    // The manifest bytes are ours; SRI protects against CDN compromise, not this.
+    template = template.replace(/\s+integrity="[^"]*"/gi, '').replace(/\s+crossorigin="[^"]*"/gi, '');
+
+    const resourceScript = '<script>window.__resources = ' +
+      JSON.stringify(resourceMap).split('</' + 'script>').join('<\\/' + 'script>') +
+      ';</' + 'script>';
+    // Inject after <head> so the DOCTYPE stays first; prepending the script
+    // would push the parser into quirks mode. DOMParser always emits a <head>
+    // (synthesizing one if the source HTML omitted it) but may carry
+    // attributes through, so match the full opening tag. slice() rather than
+    // replace() keeps us clear of $-pattern substitution in resourceScript.
+    const headOpen = template.match(/<head[^>]*>/i);
+    if (headOpen) {
+      const i = headOpen.index + headOpen[0].length;
+      template = template.slice(0, i) + resourceScript + template.slice(i);
+    }
+
+    // Parse the template and swap the root element. Scripts inserted via
+    // DOMParser/replaceWith are inert per spec — re-create each with
+    // createElement so they execute, awaiting onload for src scripts to
+    // preserve ordering (React before ReactDOM before Babel before text/babel).
+    const doc = new DOMParser().parseFromString(template, 'text/html');
+    document.documentElement.replaceWith(doc.documentElement);
+    const dead = Array.from(document.scripts);
+    for (const old of dead) {
+      const s = document.createElement('script');
+      for (const a of old.attributes) s.setAttribute(a.name, a.value);
+      s.textContent = old.textContent;
+      // text/babel scripts with a src: fetch and inline. transformScriptTags
+      // does XHR against the src, but blob:null/ from a file:// origin is
+      // silently dropped. Inlining makes it a plain inline babel script,
+      // which transformScriptTags handles unconditionally.
+      if ((s.type === 'text/babel' || s.type === 'text/jsx') && s.src) {
+        const r = await fetch(s.src);
+        s.textContent = await r.text();
+        s.removeAttribute('src');
+      }
+      const p = s.src ? new Promise(function(r) { s.onload = s.onerror = r; }) : null;
+      old.replaceWith(s);
+      if (p) await p;
+    }
+    // Babel standalone auto-transforms type=text/babel on DOMContentLoaded,
+    // which fired before we swapped the document. Trigger manually if present.
+    if (window.Babel && typeof window.Babel.transformScriptTags === 'function') {
+      window.Babel.transformScriptTags();
+    }
+  } catch (err) {
+    setStatus('Error unpacking: ' + err.message);
+    console.error('Bundle unpack error:', err);
+  }
+});
+
+  </script>
+
+  <script type="__bundler/manifest">
+{}
+  </script>
+
+  <script type="__bundler/ext_resources">
+[]
+  </script>
+
+  <script type="__bundler/template">
+"<!DOCTYPE html>\n<html lang=\"en\"><head>\n<meta charset=\"UTF-8\">\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n<title>Alimun Loader — Colour<\u002Ftitle>\n<style>\n  :root {\n    --bg: #f4f2ec;         /* warm off-white */\n    --green: #1a443c;      /* brand forest green */\n    --gold: #d5af33;       /* brand gold */\n    --whirl-size: 296px;   /* orbit diameter around the 200px mark */\n    --ring: 2.5px;         /* whirl line thickness */\n  }\n  * { margin: 0; padding: 0; box-sizing: border-box; }\n  html, body { height: 100%; }\n  body {\n    background: var(--bg);\n    display: flex;\n    align-items: center;\n    justify-content: center;\n    overflow: hidden;\n  }\n\n  .loader {\n    position: relative;\n    width: var(--whirl-size);\n    height: var(--whirl-size);\n    display: grid;\n    place-items: center;\n  }\n\n  /* The logo mark — static, centered, brand colours */\n  .mark {\n    width: 200px;\n    height: 200px;\n    z-index: 2;\n  }\n  .mark svg { width: 100%; height: 100%; display: block; }\n\n  /* Whirl: rotating comet-tail arcs masked into thin rings */\n  .whirl {\n    position: absolute;\n    inset: 0;\n    border-radius: 50%;\n    -webkit-mask: radial-gradient(closest-side, transparent calc(100% - var(--ring)), #000 calc(100% - var(--ring)));\n            mask: radial-gradient(closest-side, transparent calc(100% - var(--ring)), #000 calc(100% - var(--ring)));\n  }\n  .whirl--outer {\n    background: conic-gradient(from 0deg,\n      transparent 0deg,\n      color-mix(in oklab, var(--green), transparent 92%) 70deg,\n      color-mix(in oklab, var(--green), transparent 55%) 200deg,\n      var(--green) 320deg,\n      transparent 360deg);\n    animation: spin 1.5s cubic-bezier(.62,.04,.4,.96) infinite;\n  }\n  /* Inner counter-rotating gold accent ring */\n  .whirl--inner {\n    inset: 26px;\n    --ring: 1.5px;\n    background: conic-gradient(from 180deg,\n      transparent 0deg,\n      transparent 220deg,\n      color-mix(in oklab, var(--gold), transparent 50%) 330deg,\n      transparent 360deg);\n    animation: spin-rev 2.6s linear infinite;\n    opacity: .9;\n  }\n\n  /* Leading dot riding the outer ring */\n  .spark {\n    position: absolute;\n    inset: 0;\n    z-index: 1;\n    animation: spin 1.5s cubic-bezier(.62,.04,.4,.96) infinite;\n  }\n  .spark::before {\n    content: \"\";\n    position: absolute;\n    top: calc(var(--ring) / -2 + 1px);\n    left: 50%;\n    width: 5px;\n    height: 5px;\n    margin-left: -2.5px;\n    border-radius: 50%;\n    background: var(--gold);\n  }\n\n  @keyframes spin     { to { transform: rotate(360deg); } }\n  @keyframes spin-rev { to { transform: rotate(-360deg); } }\n\n  @media (prefers-reduced-motion: reduce) {\n    .whirl--outer, .whirl--inner, .spark { animation-duration: 4s; animation-timing-function: linear; }\n  }\n<\u002Fstyle>\n<\u002Fhead>\n<body>\n  <div class=\"loader\" role=\"status\" aria-label=\"Loading\">\n    <div class=\"whirl whirl--outer\"><\u002Fdiv>\n    <div class=\"whirl whirl--inner\"><\u002Fdiv>\n    <div class=\"spark\"><\u002Fdiv>\n    <div class=\"mark\">\n      <svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"290 360 445 445\" aria-hidden=\"true\">\n        <path fill=\"#1a443c\" d=\"M511.61,422.8c7.52-6.66,14.43-12.94,21.51-19.03,39.31-33.83,106.66-27.64,140.27,16.17,14.4,18.78,21.44,39.83,21.45,63.41.02,68.76.14,137.52.18,206.28,0,10.53-7.15,16.92-18.75,18.45-19.69,2.58-34.39-7.28-48.55-18.57-4.48-3.57-7.41-7.75-15.6-13.9-.71-.53-2.27-1.67-4.02-1.37-2.91.5-4.44,4.62-5.04,6.3-3.83,10.72-2.66,34.16-2.52,39.03.13,4.43.82,28.52-13.85,45.33-1.01,1.15-17.78,19.78-40.19,16.39-2.85-.43-13.79-2.49-21.95-11.42-5.45-5.96-8.82-13.82-9.4-22.82-.21-3.17-.03-6.37-1.29-9.8-.42,1.75-1.02,3.49-1.24,5.26-2.46,19.75-13.92,34.17-30.6,38.4-19.11,4.84-37.78-9.63-46.25-20.07-11.88-14.64-13.39-32.61-14-40.02-1.92-22.95,3.77-42.27-3.13-45.38-1.58-.71-3.3-.33-4.43.06-.95.79-2.33,1.94-3.99,3.32-17.56,14.46-27.1,20.26-34.43,25.12-8.37,5.55-18.26,5.32-27.89,3.79-11.98-1.9-17.17-8.02-17.24-20.62-.16-28.31-.11-56.63-.07-84.94.05-42.15-.22-84.31.36-126.46.49-35.59,29.27-73.93,62.39-86.42,41.32-15.59,88.94-3.66,115.38,30.44,1.15,1.49,2.58,2.76,2.89,3.09ZM513.63,706.58c.86-13.48,4.79-25.89,11.7-37.43,10.56-17.61,26.74-27.53,45.89-33.24,28.41-8.47,56.17-8.14,82.85,6.35,4.6,2.5,5.87,1.5,5.85-4.72-.1-51.72-.14-103.45-.4-155.17-.19-37.68-32.62-70.18-72.91-64.61-27.84,3.85-52.86,27.48-55.15,55.5-1.25,15.23-.67,30.61-.74,45.93-.19,38.1-.24,76.2-.43,114.3-.05,9.75-6.62,17.5-15.2,18.39-9.79,1.02-17.73-4.86-19.73-15.05-.69-3.5-.55-7.19-.56-10.79-.15-49.17.23-98.34-.57-147.5-.39-24.21-12.5-42.52-33.93-54-21.42-11.48-43.06-9.53-63.33,2.35-21.66,12.7-31.27,33.11-31.3,57.8-.03,30,.84,60,.91,90,.05,20.21-.62,40.41-.89,60.62-.03,2.4.43,4.8.71,7.65,8.18-3.19,15.28-6.63,22.76-8.76,23.5-6.68,46.7-4.34,69.68,3.11,25.86,8.38,42.75,25.36,50.28,51.5,1.69,5.87,3.01,11.85,4.5,17.78Z\"><\u002Fpath>\n        <path fill=\"#d5af33\" d=\"M453.39,586.88c10.72.03,19.04,7.83,19.11,17.91.07,11.01-8.28,19.4-19.25,19.34-11.3-.06-20.16-8.82-19.91-19.7.24-10.53,8.29-17.58,20.05-17.54Z\"><\u002Fpath>\n        <path fill=\"#d5af33\" d=\"M573.28,624.11c-11.23,1.24-18.87-10.64-18.97-18.33-.15-11.63,8.06-18.99,20.76-18.86,10.61.1,18.26,7.92,18.33,18.72.05,8.76-8.98,20.09-20.12,18.47Z\"><\u002Fpath>\n      <\u002Fsvg>\n    <\u002Fdiv>\n  <\u002Fdiv>\n  \n\n<\u002Fbody><\u002Fhtml>"
+  </script>
+</body>
+</html>

@@ -539,3 +539,8 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Database applied (owner: yes): `202610241400_free_plan_onboarding.sql` (tier 'free', goal_timeframe, placement; browser inserts can no longer choose founding_member).
 - Student dashboard, minimal free mode: no profile -> welcome.html; free and waitlist accounts see no joinable live classes (fixed: waitlist was treated as Focused); settings show the plan as "Free". Full free mode (limits, mock tests, upgrade pop-up) comes with the dashboard work.
 - Still for the owner: set Resend as the SMTP sender in Supabase Auth so confirmation emails are not limited to a few per hour.
+
+## 2026-10-24 — Dashboards, step 1: drawing style (approved)
+- Owner: rebuild the dashboards from scratch, step by step, each step confirmed. Plan and learning material roadmap in `docs/DASHBOARD_PLAN.md`; approved drawing palette added to `CLAUDE.md`.
+- Approved cast: the Alimun book character, the Alimun zoo, language buddies, fantasy and everyday friends, recoloured Open Doodles and Open Peeps with skin and hair tones, hand-drawn thought and speech bubbles with jokes, the owner's loader as the one loading animation. Boards: `docs/design/drawings-cast-1.png`, `docs/design/drawings-cast-2.png`; sources in `docs/design/sources/`.
+- Next (new conversation): step 2, look and navigation, as a live preview on alimun.com with sample data.
