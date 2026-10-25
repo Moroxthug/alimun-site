@@ -26,11 +26,11 @@ export const UNIT = {
         [
           { t: 'text', md: 'Questions are part of every presentation. You do not need to know every answer. It is fine to check that you have understood the question, to ask for a moment, or to say that you will look into it.' },
           { t: 'dialogue', title: 'Nach dem Referat', lines: [
-            { who: 'Student', s: 'Sie haben gesagt, dass die Mieten vor allem in Großstädten steigen. Gilt das auch für kleinere Universitätsstädte?' },
+            { who: 'Dozentin', s: 'Sie haben gesagt, dass die Mieten vor allem in Großstädten steigen. Gilt das auch für kleinere Universitätsstädte?' },
             { who: 'Referentin', s: 'Danke für die Frage. Wenn ich Sie richtig verstehe, meinen Sie Städte mit einer großen Hochschule, aber wenigen Einwohnern?' },
-            { who: 'Student', s: 'Genau.' },
+            { who: 'Dozentin', s: 'Genau.' },
             { who: 'Referentin', s: 'Dazu habe ich keine genauen Daten gefunden. Ich kann das aber gern nachrecherchieren und es im Forum ergänzen.' },
-            { who: 'Dozent', s: 'Gute Idee. Gibt es weitere Fragen?' },
+            { who: 'Dozentin', s: 'Gute Idee. Gibt es weitere Fragen?' },
           ] },
           { t: 'examples', items: [
             { s: '**Wenn ich Sie richtig verstehe**, meinen Sie …', n: 'You check that you understood the question.' },
@@ -44,7 +44,7 @@ export const UNIT = {
             ['Damit komme ich zum nächsten Punkt.', 'leitet über'],
             ['Wie Sie auf dieser Folie sehen, …', 'verweist auf eine Folie'],
             ['Zusammenfassend lässt sich festhalten, …', 'fasst zusammen'],
-            ['Wenn ich Sie richtig verstehe, …', 'prüft eine Frage'],
+            ['Wenn ich Sie richtig verstehe, …', 'sichert das Verständnis'],
           ] },
           { t: 'ex', kind: 'choice', h: 'Choose the best reaction.', items: [
             { q: 'Eine Zuhörerin stellt eine Frage, die Sie auf der nächsten Folie beantworten.', o: ['Darf ich darauf gleich eingehen? Das kommt auf der nächsten Folie.', 'Das ist eine falsche Frage.', 'Warten Sie doch einfach ab!'], why: 'You postpone the question politely and explain why.' },

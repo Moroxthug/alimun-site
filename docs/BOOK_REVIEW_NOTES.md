@@ -215,3 +215,11 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p1: *claim* glossed as showing doubt (a simplification).
 - u2 p1: essay part names left as words to learn (not translated).
 - u3 p1 practice paragraph (91 words), u3 p3 model summaries and u6 p3 model long turn are short texts on purpose.
+
+## German B2, study and exams
+- u6: exam facts kept general; check against current Goethe B2, telc B2 and TestDaF formats.
+- u5 p2: citation forms (Keller 2021: 45) and *vgl.*, with a note that styles differ by subject.
+- u4: students use *du* with each other and *Sie* with the lecturer.
+- u6 p2 spot item marks a misplaced verb (*weil ich [habe] eine Frage*).
+- Gaps *zu einem klaren ___ kommen* and *zu dem ___ kommen* accept *Ergebnis* and *Schluss*.
+- Short secondary texts below 200 words on purpose (two summaries, a lecture announcement).
