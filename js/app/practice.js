@@ -3,8 +3,8 @@
    other kinds of exercise (a gap exercise can come back as a word bank, matching as memory cards or a crossword, word
    order with extra words), so the same item rarely looks the same twice. Answers the student got wrong, in lessons,
    tests or rounds, come back first and then at growing intervals; items not seen yet come next.
-   Item memory: this browser for now ("alimun-practice"); per-item results move to the database with the step 5
-   migration. A finished round is saved as practice_progress "practice:round:<date>" for a signed-in student (it counts
+   Item memory: practice_items for a signed-in student (merged with this browser's copy on the first visit, then
+   written on every answer); this browser only ("alimun-practice") otherwise, or while the table is not there. A finished round is saved as practice_progress "practice:round:<date>" for a signed-in student (it counts
    for the streak). "Every kind of exercise" plays a hand-written set (/data/practice/<set>.<lang>.json).
    Routes: #/practice, #/practice/round, #/practice/types. Interface text: app_pr_* and app_ex_* keys. */
 (function () {
@@ -21,8 +21,27 @@
   function esc(s) { return A.esc(s); }
 
   /* ---------- Item memory ---------- */
-  function readMem() { try { return JSON.parse(localStorage.getItem(MEM) || '{}') || {}; } catch (e) { return {}; } }
-  function writeMem(m) { try { localStorage.setItem(MEM, JSON.stringify(m)); } catch (e) { /* storage blocked */ } }
+  /* Signed in: one browser copy per student, kept in step with practice_items */
+  var who = null, synced = null, dbOff = false;
+  function memKey() { return who ? MEM + ':' + who : MEM; }
+  function readMem() { try { return JSON.parse(localStorage.getItem(memKey()) || '{}') || {}; } catch (e) { return {}; } }
+  function writeMem(m) { try { localStorage.setItem(memKey(), JSON.stringify(m)); } catch (e) { /* storage blocked */ } }
+  /* Called by the book reader and Practice with the shell helpers: who is answering, and their saved items */
+  function use(helpers) {
+    var id = helpers.mode() === 'real' && helpers.data().profile.id;
+    if (!id) { who = null; return Promise.resolve(); }
+    if (who === id && synced) return synced;
+    who = id;
+    synced = window.AlimunData.practiceItems(id).then(function (list) {
+      var m = readMem();
+      list.forEach(function (x) {
+        var at = Date.parse(x.last_at), mine = m[x.item_key];
+        if (!mine || mine.at < at) m[x.item_key] = { b: x.box, n: x.seen, w: x.wrong, at: at };
+      });
+      writeMem(m);
+    }, function (e) { dbOff = true; console.warn('[Alimun] Practice items not loaded', e && e.message); });
+    return synced;
+  }
   /* One answer to one item (first try): right moves it up a box, wrong sends it back to the first */
   function record(key, ok) {
     if (!key) return;
@@ -33,6 +52,9 @@
     else { r.b = 0; r.w++; }
     m[key] = r;
     writeMem(m);
+    if (who && !dbOff) {
+      window.AlimunData.savePracticeItem(who, key, r).catch(function (e) { dbOff = true; console.warn('[Alimun] Practice item not saved', e && e.message); });
+    }
   }
   function due(r, now) { return !r || r.at + BOXES[r.b] * DAY <= now; }
   /* Answers got wrong and due again */
@@ -332,7 +354,7 @@
     document.body.classList.remove('is-reading');
     view.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div></div>';
     var id = A.myBookId(), lang = explainLang();
-    return Promise.all([window.AlimunReader.open(helpers, id), loadSets()]).then(function (r) {
+    return Promise.all([window.AlimunReader.open(helpers, id), loadSets(), use(helpers)]).then(function (r) {
       var info = { book: r[0] && r[0].book, progress: r[0] && r[0].progress, set: typesSet(r[1], A.data().profile.language) };
       if (my !== mountNo) return { stale: true };
       if (parts[0] === 'types' && info.set) {
@@ -362,5 +384,5 @@
   }
 
   /* debug(): the blocks of the round on screen (used by scripts/play-books.js) */
-  window.AlimunPractice = { mount: mount, record: record, mistakesDue: mistakesDue, debug: function () { return R && R.ex.blocks; } };
+  window.AlimunPractice = { mount: mount, use: use, record: record, mistakesDue: mistakesDue, debug: function () { return R && R.ex.blocks; } };
 })();

@@ -164,7 +164,27 @@
     }, { onConflict: 'student_id,ex_key' }).then(function (r) { if (r.error) throw r.error; });
   }
 
+  /* Practice memory per item (practice_items, step 5): every item the student has answered */
+  function practiceItems(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('practice_items').select('item_key, box, seen, wrong, last_at').eq('student_id', studentId).limit(5000).then(rows);
+  }
+  function savePracticeItem(studentId, key, r) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('practice_items').upsert({
+      student_id: studentId, item_key: key, box: r.b, seen: r.n, wrong: r.w, last_at: new Date(r.at).toISOString()
+    }, { onConflict: 'student_id,item_key' }).then(function (x) { if (x.error) throw x.error; });
+  }
+  /* The signed-in user's access token, for /api calls (null when signed out) */
+  function token() {
+    var c = client();
+    if (!c) return Promise.resolve(null);
+    return c.auth.getSession().then(function (x) { return x.data && x.data.session ? x.data.session.access_token : null; });
+  }
+
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

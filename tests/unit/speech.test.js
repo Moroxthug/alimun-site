@@ -1,0 +1,59 @@
+// Run with: node --no-experimental-require-module --test 'tests/unit/*.test.js'
+// /api/speech: finding the audio in either Gemini response shape, WAV output, and the status action.
+const test = require('node:test');
+const assert = require('node:assert');
+const handler = require('../../api/speech.js');
+const { findAudio, toWav, speak } = handler._test;
+
+const pcm = Buffer.alloc(480, 1);
+function res() {
+  const r = { code: 0, body: null, headers: {} };
+  r.status = (c) => { r.code = c; return r; };
+  r.json = (b) => { r.body = b; return r; };
+  r.send = (b) => { r.body = b; return r; };
+  r.setHeader = (k, v) => { r.headers[k] = v; };
+  return r;
+}
+
+test('finds audio in an Interactions response and wraps raw PCM in a WAV header', () => {
+  const a = findAudio({ steps: [{ type: 'model_output', content: [{ type: 'audio', data: pcm.toString('base64'), mime_type: 'audio/l16' }] }] });
+  assert.ok(a);
+  const w = toWav(a);
+  assert.strictEqual(w.slice(0, 4).toString(), 'RIFF');
+  assert.strictEqual(w.readUInt32LE(24), 24000);
+  assert.strictEqual(w.length, 44 + pcm.length);
+});
+
+test('finds audio in a generateContent response and keeps the sample rate from the mime type', () => {
+  const a = findAudio({ candidates: [{ content: { parts: [{ inlineData: { mimeType: 'audio/L16;codec=pcm;rate=16000', data: pcm.toString('base64') } }] } }] });
+  assert.strictEqual(toWav(a).readUInt32LE(24), 16000);
+});
+
+test('a WAV from the API is passed through unchanged', () => {
+  const w = handler._test.wav(pcm, 24000);
+  assert.deepStrictEqual(toWav({ data: w.toString('base64'), mime: 'audio/wav' }), w);
+});
+
+test('falls back to generateContent when the Interactions call fails', async () => {
+  const calls = [];
+  global.fetch = async (url, opt) => {
+    calls.push({ url, body: JSON.parse(opt.body) });
+    if (url.endsWith('/interactions')) return { ok: false, status: 404, text: async () => '{"error":"not found"}' };
+    return { ok: true, status: 200, text: async () => JSON.stringify({ candidates: [{ content: { parts: [{ inlineData: { mimeType: 'audio/L16;rate=24000', data: pcm.toString('base64') } }] } }] }) };
+  };
+  const out = await speak({ model: 'gemini-3.8-flash-tts', turns: [{ speaker: 'A', text: 'Hallo' }, { speaker: 'B', text: 'Hi' }], voices: { A: 'Puck', B: 'Kore' }, style: '' });
+  assert.strictEqual(out.slice(0, 4).toString(), 'RIFF');
+  assert.strictEqual(calls.length, 2);
+  assert.deepStrictEqual(calls[0].body.generation_config.speech_config.speakers.map((s) => s.voice), ['Puck', 'Kore']);
+  assert.strictEqual(calls[1].body.generationConfig.speechConfig.multiSpeakerVoiceConfig.speakerVoiceConfigs.length, 2);
+});
+
+test('status says whether the key is set, and sample refuses without it', async () => {
+  delete process.env.GOOGLE_AI_API_KEY;
+  const r = res();
+  await handler({ query: { action: 'status' }, method: 'GET', headers: {} }, r);
+  assert.strictEqual(r.body.configured, false);
+  const r2 = res();
+  await handler({ query: { action: 'sample' }, method: 'POST', headers: {} }, r2);
+  assert.strictEqual(r2.code, 503);
+});

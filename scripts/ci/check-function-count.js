@@ -1,10 +1,11 @@
-// Vercel Hobby allows 12 serverless functions. Every .js file under api/
-// (outside _-prefixed helper folders/files) becomes one. Raise MAX only
-// after the owner moves the project to Pro.
+// Every .js file under api/ (outside _-prefixed helper folders/files) becomes
+// one serverless function. Hobby allowed 12; the owner moved the project to Pro
+// on 23 Oct 2026, so the cap is now a guard against splitting handlers for no
+// reason (CLAUDE.md, "Functions"), not a plan limit.
 const fs = require('fs');
 const path = require('path');
 
-const MAX = Number(process.env.MAX_FUNCTIONS || 12);
+const MAX = Number(process.env.MAX_FUNCTIONS || 20);
 const apiDir = path.resolve(__dirname, '..', '..', 'api');
 
 function walk(dir, out = []) {

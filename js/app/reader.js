@@ -687,6 +687,7 @@
   function mount(view, parts, helpers) {
     var my = ++mountNo;
     A = helpers; root = view; ctx = null;
+    if (window.AlimunPractice) window.AlimunPractice.use(helpers);
     closeTable();
     bind();
     document.body.classList.remove('is-reading');

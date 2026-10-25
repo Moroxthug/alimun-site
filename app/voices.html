@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Voices – Alimun</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link href="/images/favicon.svg?v=2" rel="icon" type="image/svg+xml">
+<link href="/css/app.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous" defer></script>
+<script>
+  window.ALIMUN_CONFIG = {
+    supabaseUrl:     'https://dgaiasmefcbrtzqwdyri.supabase.co',
+    supabaseAnonKey: 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh',
+  };
+</script>
+<script src="/js/app/voices.js" defer></script>
+<style>
+  .vpage { max-width: 1100px; margin: 0 auto; padding: 40px 16px 80px; }
+  .vc__s { margin: 10px 0 16px; font-size: 19px; }
+  .vc__grid { display: flex; flex-wrap: wrap; gap: 8px; }
+  .vc__dlg { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+  .vc__dlg .btn-row { margin-top: 12px; align-items: center; }
+  .vc select { font: inherit; padding: 6px 8px; border-radius: 10px; border: 1.5px solid var(--line); margin-inline-start: 6px; }
+  .btn.is-playing { background: var(--lime); color: var(--forest); }
+  .vtop { display: flex; flex-wrap: wrap; gap: 16px 28px; align-items: center; margin: 14px 0 26px; }
+  .vtop label { font-weight: 600; margin-inline-end: 14px; }
+</style>
+</head>
+<body>
+<!-- Voice comparison for the course audio (docs/DASHBOARD_PLAN.md, step 5). Admin only, not linked anywhere. -->
+<main class="vpage">
+  <h1 class="t-h1">Voices for the course books</h1>
+  <p class="t-lead">The same sentence and the same short dialogue in each course language, spoken by different voices. Tell Claude which ones you like for each language.</p>
+  <div class="vtop">
+    <div><span class="t-small">Model:</span>
+      <label><input type="radio" name="model" value="flash" checked> Flash (best quality)</label>
+      <label><input type="radio" name="model" value="lite"> Flash-Lite (cheaper)</label></div>
+    <p class="t-small" id="status" role="status" aria-live="polite">Loading…</p>
+  </div>
+  <div class="grid" id="voices"></div>
+</main>
+</body>
+</html>
