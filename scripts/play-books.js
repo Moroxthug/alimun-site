@@ -77,13 +77,13 @@ async function answer(page, b, gi) {
   const q = sel => page.locator('[data-block="' + gi + '"] ' + sel);
   const click = async sel => { const l = q(sel).first(); await l.click(); };
   switch (b.kind) {
-    case 'choice': case 'odd':
+    case 'choice': case 'odd': case 'hear':
       for (let i = 0; i < b.items.length; i++) await click('[data-act="pick"][data-i="' + i + '"][data-o="0"]');
       return;
     case 'tf':
       for (let i = 0; i < b.items.length; i++) await click('[data-act="pick"][data-i="' + i + '"][data-o="' + b.items[i].a + '"]');
       return;
-    case 'gap': case 'wordform': case 'transform':
+    case 'gap': case 'wordform': case 'transform': case 'heargap': case 'dictation':
       for (let i = 0; i < b.items.length; i++) await q('input[data-i="' + i + '"]').fill(b.items[i].a[0]);
       if (await q('[data-act="check"]').count()) await click('[data-act="check"]');
       return;

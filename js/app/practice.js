@@ -6,7 +6,10 @@
    Item memory: practice_items for a signed-in student (merged with this browser's copy on the first visit, then
    written on every answer); this browser only ("alimun-practice") otherwise, or while the table is not there. A finished round is saved as practice_progress "practice:round:<date>" for a signed-in student (it counts
    for the streak). "Every kind of exercise" plays a hand-written set (/data/practice/<set>.<lang>.json).
-   Routes: #/practice, #/practice/round, #/practice/types. Interface text: app_pr_* and app_ex_* keys. */
+   Listening: when the book's recordings exist (/data/audio, js/app/reader.js), "listen and choose", "listen and fill
+   the gap" and dictation are made from its example sentences and dialogue lines: one in each quick round and a
+   whole Listening round (#/practice/listen).
+   Routes: #/practice, #/practice/round, #/practice/listen, #/practice/types. Interface text: app_pr_* and app_ex_* keys. */
 (function () {
   'use strict';
   var A = null, root = null, R = null;
@@ -71,15 +74,19 @@
   function bare(w) { return String(w).replace(/^[„“"'(¿¡]+|[.,!?;:“”"')]+$/g, ''); }
 
   /* Every exercise in the units reached, with a key for each item */
-  function sources(book, progress) {
+  /* The written units the student has reached (at least the first two) */
+  function reached(book, progress) {
     var units = book.units.filter(function (u) { return !u.planned; });
     var reach = 0;
     units.forEach(function (u, i) {
       var any = u.pages.some(function (p) { var r = progress['book:' + book.id + ':' + u.id + ':' + p.id]; return r && r.done; });
       if (any) reach = i;
     });
+    return units.slice(0, Math.max(reach + 1, 2));
+  }
+  function sources(book, progress) {
     var out = [];
-    units.slice(0, Math.max(reach + 1, 2)).forEach(function (u) {
+    reached(book, progress).forEach(function (u) {
       u.pages.forEach(function (p) {
         var gi = 0;
         p.spreads.forEach(function (sp) {
@@ -164,16 +171,86 @@
     }
     return out;
   }
+  /* ---------- Listening: exercises made from the book's recordings (examples and dialogue lines) ---------- */
+  function wordsOf(t) { return String(t).split(/\s+/); }
+  function bareWord(w) { return w.replace(/^[^\p{L}\p{N}]+|[^\p{L}\p{N}]+$/gu, ''); }
+  function heard(book, progress, aud) {
+    if (!aud) return [];
+    var units = {}, out = [];
+    reached(book, progress).forEach(function (u) { units[u.id] = true; });
+    Object.keys(aud.items).forEach(function (k) {
+      var it = aud.items[k], n = wordsOf(it[3]).length;
+      if (!units[k.split(':')[0]] || !aud.done[it[0]] || n < 3 || n > 14 || it[3].length > 110) return;
+      out.push({ key: 'listen:' + book.id + ':' + k, text: it[3], src: aud.url(it[0]) });
+    });
+    return out;
+  }
+  function pickHeard(list, n, mem, now, test) {
+    var score = function (x) { var r = mem[x.key]; return (!r ? 2 : r.w && r.b < 2 && due(r, now) ? 5 : due(r, now) ? 1 : 0) + Math.random() * 1.5; };
+    return list.filter(test || function () { return true; }).map(function (x) { return { x: x, s: score(x) }; })
+      .sort(function (a, b) { return b.s - a.s; }).slice(0, n).map(function (y) { return y.x; });
+  }
+  /* A sentence with one word changed for a similar word from the book: same first letter or a close length */
+  function nearMiss(text, pool, avoid) {
+    var ws = wordsOf(text), idx = [];
+    ws.forEach(function (w, i) { if (i && bareWord(w).length >= 3) idx.push(i); });
+    for (var tries = 0; tries < 12 && idx.length; tries++) {
+      var i = idx[Math.floor(Math.random() * idx.length)], core = bareWord(ws[i]);
+      var cands = pool.filter(function (p) { return p.toLowerCase() !== core.toLowerCase() && (p[0].toLowerCase() === core[0].toLowerCase() || Math.abs(p.length - core.length) <= 1); });
+      if (!cands.length) continue;
+      var pick = cands[Math.floor(Math.random() * cands.length)];
+      if (core[0] === core[0].toUpperCase() && core[0] !== core[0].toLowerCase()) pick = pick[0].toUpperCase() + pick.slice(1);
+      var copy = ws.slice(); copy[i] = ws[i].replace(core, pick);
+      var out = copy.join(' ');
+      if (avoid.indexOf(out) === -1) return out;
+    }
+    return null;
+  }
+  function listenBlock(kind, list, mem, now) {
+    if (kind === 'dictation') {
+      var d = pickHeard(list, 2, mem, now, function (x) { return wordsOf(x.text).length <= 10; });
+      return d.length === 2 ? { b: { t: 'ex', kind: 'dictation', h: t('app_ex_h_dictation'), items: d.map(function (x) { return { src: x.src, a: [x.text], why: '' }; }) }, keys: d.map(function (x) { return x.key; }) } : null;
+    }
+    if (kind === 'heargap') {
+      var g = pickHeard(list, 3, mem, now), items = [];
+      g.forEach(function (x) {
+        var ws = wordsOf(x.text), best = -1;
+        ws.forEach(function (w, i) { if (i && bareWord(w).length >= 4 && (best < 0 || bareWord(w).length + Math.random() * 3 > bareWord(ws[best]).length)) best = i; });
+        if (best < 0) return;
+        var core = bareWord(ws[best]), copy = ws.slice();
+        copy[best] = ws[best].replace(core, '___');
+        items.push({ x: x, it: { src: x.src, q: copy.join(' '), a: [core], why: '' } });
+      });
+      return items.length >= 2 ? { b: { t: 'ex', kind: 'heargap', h: t('app_ex_h_heargap'), items: items.map(function (y) { return y.it; }) }, keys: items.map(function (y) { return y.x.key; }) } : null;
+    }
+    var pool = [];
+    list.forEach(function (x) { wordsOf(x.text).forEach(function (w) { w = bareWord(w); if (w.length >= 3 && pool.indexOf(w) === -1) pool.push(w); }); });
+    var c = pickHeard(list, 3, mem, now), its = [];
+    c.forEach(function (x) {
+      var o = [x.text], a = nearMiss(x.text, pool, o); if (a) o.push(a);
+      var b = nearMiss(x.text, pool, o); if (b) o.push(b);
+      if (o.length === 3) its.push({ x: x, it: { src: x.src, o: o, why: '' } });
+    });
+    return its.length >= 2 ? { b: { t: 'ex', kind: 'hear', h: t('app_ex_h_hear'), items: its.map(function (y) { return y.it; }) }, keys: its.map(function (y) { return y.x.key; }) } : null;
+  }
+  function listenRound(book, progress, aud) {
+    var list = heard(book, progress, aud), mem = readMem(), now = Date.now(), out = [];
+    if (list.length < 6) return [];
+    ['hear', 'heargap', 'dictation', Math.random() < 0.5 ? 'hear' : 'heargap'].forEach(function (k) { var bl = listenBlock(k, list, mem, now); if (bl) out.push(bl); });
+    return out;
+  }
+
   function choose(list) {
     var total = list.reduce(function (n, x) { return n + (x.w || 1); }, 0), r = Math.random() * total;
     for (var i = 0; i < list.length; i++) { r -= list[i].w || 1; if (r <= 0) return list[i]; }
     return list[list.length - 1];
   }
-  function buildRound(book, progress) {
+  function buildRound(book, progress, aud) {
     var pool = sources(book, progress), mem = readMem(), now = Date.now();
+    var list = heard(book, progress, aud), lb = list.length >= 6 && listenBlock(['hear', 'heargap', 'dictation'][Math.floor(Math.random() * 3)], list, mem, now);
     var ranked = pool.map(function (s) { return { s: s, w: weigh(s, mem, now) }; }).sort(function (a, b) { return b.w - a.w; });
     var round = [], used = {}, last = null, kinds = {};
-    for (var k = 0; k < ranked.length && round.length < ROUND; k++) {
+    for (var k = 0; k < ranked.length && round.length < ROUND - (lb ? 1 : 0); k++) {
       var src = ranked[k].s;
       if (used[src.key]) continue;
       var opts = remixes(src, pool, mem, now).filter(function (o) { return o.kind !== last && (kinds[o.kind] || 0) < 2; });
@@ -182,6 +259,7 @@
       used[src.key] = true; last = pick.kind; kinds[pick.kind] = (kinds[pick.kind] || 0) + 1;
       round.push({ b: pick.b, keys: pick.map.map(function (i) { return src.key + ':' + i; }) });
     }
+    if (lb) round.splice(1 + Math.floor(Math.random() * Math.max(1, round.length - 1)), 0, lb);
     return round;
   }
 
@@ -216,7 +294,12 @@
           '<h2 class="t-h2">' + esc(t('app_pr_mistakes_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(mist ? A.tn('app_pr_mistakes_n', mist) : t('app_pr_mistakes_none')) + '</p></div></div></section>' +
         (set ? '<a class="card span-6" href="#/practice/types" style="--i:3"><div class="card__row"><div class="card__art">' + A.Cast.drawing('owl') + '</div><div>' +
           '<h2 class="t-h2">' + esc(t('app_pr_types_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_types_p', { course: A.languageName(set.language) + ' ' + set.level })) + '</p></div></div></a>' : '') +
-        (signedIn() ? '' : '<p class="t-tiny span-12" style="--i:4;margin-top:4px">' + esc(t('app_pr_local')) + '</p>') +
+        (info.book ? (info.listen >= 6
+          ? '<a class="card card--mint span-12" href="#/practice/listen" style="--i:4"><div class="card__row"><div class="card__art">' + A.Cast.drawing('parrot') + '</div><div>' +
+            '<h2 class="t-h2">' + esc(t('app_pr_listen_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_listen_p')) + '</p></div></div></a>'
+          : '<section class="card card--bone span-12" style="--i:4"><div class="card__row"><div class="card__art">' + A.Cast.drawing('parrot') + '</div><div>' +
+            '<h2 class="t-h2">' + esc(t('app_pr_listen_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_listen_none')) + '</p></div></div></section>') : '') +
+        (signedIn() ? '' : '<p class="t-tiny span-12" style="--i:5;margin-top:4px">' + esc(t('app_pr_local')) + '</p>') +
       '</div>';
     return html;
   }
@@ -240,7 +323,7 @@
   function endHtml(turn) {
     var f = R.ex.firstTally(), score = f.total ? Math.round(f.right / f.total * 100) : 100;
     var pct = new Intl.NumberFormat(A.locale, { style: 'percent' }).format(score / 100);
-    var again = R.types ? '#/practice/types' : '#/practice/round';
+    var again = '#/practice/' + R.route;
     return '<article class="spread spread--end' + (turn ? ' turn-in-next' : '') + '" data-spread="end"' + R.xa + '>' +
       '<div class="end"><div class="end__art">' + A.Cast.drawing('dog') + '<div class="bub say end__bub">' + esc(t(score >= 80 ? 'app_pr_end_great' : 'app_pr_end_ok')) + '</div></div>' +
       '<h1 class="t-display">' + esc(t('app_pr_end_h')) + '</h1>' +
@@ -293,6 +376,7 @@
   }
   function next() {
     if (!R || !R.ex.done(R.at)) return;
+    EX().stopAudio();
     R.at++; R.mood = 'idle'; R.line = '';
     if (R.at === R.blocks.length) finish();
     show(true);
@@ -306,8 +390,8 @@
       window.AlimunData.saveBook(A.data().profile.id, key, { done: true, score: score }).catch(function (e) { console.warn('[Alimun] Practice round not saved', e && e.message); });
     }
   }
-  function startRound(blocks, keys, xa, ta, types) {
-    R = { blocks: blocks, keys: keys, at: 0, mood: 'idle', line: '', xa: xa, types: types, saved: false };
+  function startRound(blocks, keys, xa, ta, types, route) {
+    R = { blocks: blocks, keys: keys, at: 0, mood: 'idle', line: '', xa: xa, types: types, saved: false, route: route };
     R.ex = EX().create({ A: A, blocks: blocks, test: false, xa: xa, ta: ta, root: function () { return root; }, onAnswer: onAnswer,
       onItem: function (r) { var k = R.keys[r.bi] && R.keys[r.bi][r.i]; if (k) record(k, r.ok); } });
   }
@@ -350,26 +434,30 @@
   function mount(view, parts, helpers) {
     var my = ++mountNo;
     A = helpers; root = view; R = null;
+    if (EX()) EX().stopAudio();
     bind();
     document.body.classList.remove('is-reading');
     view.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div></div>';
     var id = A.myBookId(), lang = explainLang();
-    return Promise.all([window.AlimunReader.open(helpers, id), loadSets(), use(helpers)]).then(function (r) {
-      var info = { book: r[0] && r[0].book, progress: r[0] && r[0].progress, set: typesSet(r[1], A.data().profile.language) };
+    var noAudio = function () { return null; };
+    return Promise.all([window.AlimunReader.open(helpers, id), loadSets(), use(helpers), window.AlimunReader.audio(id).catch(noAudio)]).then(function (r) {
+      var info = { book: r[0] && r[0].book, progress: r[0] && r[0].progress, set: typesSet(r[1], A.data().profile.language), audio: r[3] };
+      info.listen = info.book ? heard(info.book, info.progress || {}, info.audio).length : 0;
       if (my !== mountNo) return { stale: true };
       if (parts[0] === 'types' && info.set) {
         return getJSON('/data/practice/' + encodeURIComponent(info.set.id + '.' + lang) + '.json').then(function (set) {
           var code = window.AlimunData.langCode(set.language) || 'en';
-          startRound(set.blocks.filter(function (b) { return b.t === 'ex'; }), [], attrs(lang, lang === 'ar'), attrs(code, false), true);
+          startRound(set.blocks.filter(function (b) { return b.t === 'ex'; }), [], attrs(lang, lang === 'ar'), attrs(code, false), true, 'types');
           return { html: roundView(), title: t('app_pr_types_h'), round: true };
         });
       }
-      if (parts[0] === 'round' && info.book) {
-        var round = buildRound(info.book, info.progress || {});
+      if ((parts[0] === 'round' || parts[0] === 'listen') && info.book) {
+        var listen = parts[0] === 'listen';
+        var round = listen ? listenRound(info.book, info.progress || {}, info.audio) : buildRound(info.book, info.progress || {}, info.audio);
         if (!round.length) return { html: emptyView(), title: t('app_nav_practice') };
         var code = window.AlimunData.langCode(info.book.language) || 'en', xl = info.book.explainLang || 'en';
-        startRound(round.map(function (x) { return x.b; }), round.map(function (x) { return x.keys; }), attrs(xl, xl === 'ar'), attrs(code, false), false);
-        return { html: roundView(), title: t('app_pr_round_h'), round: true };
+        startRound(round.map(function (x) { return x.b; }), round.map(function (x) { return x.keys; }), attrs(xl, xl === 'ar'), attrs(code, false), false, parts[0]);
+        return { html: roundView(), title: t(listen ? 'app_pr_listen_h' : 'app_pr_round_h'), round: true };
       }
       return { html: homeView(info), title: t('app_nav_practice') };
     }).catch(function (e) {

@@ -648,6 +648,16 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
   .mem { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
+/* Listening exercises */
+.hear-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 2px 0 12px; }
+.hear { gap: 8px; }
+.hear svg { width: 15px; height: 15px; fill: currentColor; }
+.hear.is-playing { background: var(--lime); color: var(--forest); box-shadow: inset 0 0 0 2px var(--forest); }
+.dict-diff { margin: 0 0 4px; font-weight: 700; }
+.dict-diff s { color: var(--coral); text-decoration-thickness: 2.5px; }
+.fb--no > div { font-size: 15.5px; line-height: 1.45; }
+.fb--no > div > span { color: var(--muted); }
+
 /* Feedback with the book character */
 .fb-slot:empty { display: none; }
 .fb-slot { outline: none; }

@@ -62,6 +62,7 @@ Added in step 5 (25 Oct 2026). One engine draws every kind everywhere: `js/app/e
 - `sort`: sort into groups; `groups: ['der', 'die', 'das']`, `items: [{ s: 'Tisch', g: 0, why }]`. Group names are in the language being learned unless `explain: ['groups']` marks them as explanations.
 - `memory`: memory pairs; `pairs: [[a, b], ...]`, three to eight pairs, every side different. Lessons and practice only, not unit tests.
 - `search`: word search; `words: ['bread', ...]`, four to eight single words. Lessons and practice only, not unit tests.
+- Listening (made by Practice from the course audio, not written in books yet): `hear` (listen and choose: `items: [{ src, o: [heard, other, other] }]`, the others differ by one word taken from the book), `heargap` (listen and write the missing word: `items: [{ src, q, a }]`) and `dictation` (listen and write the sentence: `items: [{ src, a: [sentence] }]`; punctuation and capitals do not count, and a wrong try shows the student's words with the wrong ones struck through). Every listening item has Listen and Slower (0.75×) buttons.
 
 Layout of a page: text and tips on one side, examples, tables, dialogues and readings on the other; a page with only exercises puts the book character beside them, reacting to each answer. Word tiles can be tapped or dragged; matched pairs are joined by a drawn line.
 

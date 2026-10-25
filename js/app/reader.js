@@ -801,7 +801,13 @@
     });
   }
   /* Another section is on screen: stop reacting to keys and clicks */
-  function reset() { ctx = null; closeTable(); stopAudio(); }
+  function reset() { ctx = null; closeTable(); stopAudio(); if (window.AlimunEx) window.AlimunEx.stopAudio(); }
+  /* For Practice: a book's audio plan with the files made so far, and the address of a file */
+  function audioFor(id) {
+    return loadAudio(id).then(function (a) {
+      return { items: a.items, done: a.done, url: function (h) { return SUPA_AUDIO + encodeURIComponent(id) + '/' + h + '.mp3'; } };
+    });
+  }
 
-  window.AlimunReader = { mount: mount, open: open, reset: reset };
+  window.AlimunReader = { mount: mount, open: open, reset: reset, audio: audioFor };
 })();

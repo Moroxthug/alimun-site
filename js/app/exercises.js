@@ -5,7 +5,8 @@
    Lesson mode: each answer is checked straight away, with the book character's reaction and the `why`; wrong answers
    can be tried again and "Show the answer" appears after two wrong tries. Test mode (test: true): nothing is checked
    until submit(), then every block shows the right answers.
-   Item kinds (choice, odd, tf, select, gap, wordform, transform, conjugate, crossword, order, build, spot, colloc, fix)
+   Item kinds (choice, odd, tf, select, gap, wordform, transform, conjugate, crossword, order, build, spot, colloc, fix,
+   and the listening kinds hear, heargap and dictation, which play course audio)
    are lists of items, each right or wrong on its own. Block kinds (match, bank, sort, memory, search) keep one state
    for the whole block. Interface text comes from js/translations.js (app_book_* and app_ex_* keys). */
 (function () {
@@ -138,6 +139,48 @@
     return '<input class="gap-in' + (wide ? ' gap-in--wide' : '') + '" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done"' + a +
       (wide ? '' : ' size="' + size + '"') + ' value="' + esc(x.done && x.shown ? it.a[0] : x.value) + '" aria-label="' + esc(t(S, 'app_book_your_answer')) + '"' + (locked ? ' readonly' : '') + S.ta + '>';
   }
+  /* ---------- Listening (course audio, step 5) ---------- */
+  var player = null, playingBtn = null;
+  function stopAudio() {
+    if (player) { player.pause(); player.onended = null; }
+    if (playingBtn) playingBtn.classList.remove('is-playing');
+    playingBtn = null;
+  }
+  function hear(btn) {
+    var again = playingBtn === btn;
+    stopAudio();
+    if (again) return;
+    player = player || new Audio();
+    player.src = btn.getAttribute('data-src');
+    player.playbackRate = +btn.getAttribute('data-rate') || 1;
+    playingBtn = btn; btn.classList.add('is-playing');
+    player.onended = function () { btn.classList.remove('is-playing'); if (playingBtn === btn) playingBtn = null; };
+    player.play().catch(stopAudio);
+  }
+  function hearHtml(S, src) {
+    return '<div class="hear-row"><button class="btn btn--primary btn--sm hear" type="button" data-act="hear" data-src="' + esc(src) + '">' + S.A.icon('play') + '<span>' + esc(t(S, 'app_ex_hear')) + '</span></button>' +
+      '<button class="btn btn--ghost btn--sm hear" type="button" data-act="hear" data-rate="0.75" data-src="' + esc(src) + '">' + esc(t(S, 'app_ex_slower')) + '</button></div>';
+  }
+  /* Dictation: words compared without punctuation or capitals */
+  function words2(s) { return norm(s).replace(/[^\p{L}\p{N}' ]+/gu, ' ').split(/\s+/).filter(Boolean); }
+  /* The student's words, the ones not in the sentence (in order) struck through */
+  function dictDiff(want, got) {
+    /* Compared without punctuation or capitals; shown as the student typed them */
+    var shown = String(got || '').trim().split(/\s+/).filter(function (w) { return words2(w).length; });
+    var a = words2(want), b = shown.map(function (w) { return words2(w).join(' '); }), m = [], i, j;
+    for (i = 0; i <= a.length; i++) { m.push([]); for (j = 0; j <= b.length; j++) m[i].push(0); }
+    for (i = a.length - 1; i >= 0; i--) for (j = b.length - 1; j >= 0; j--) m[i][j] = a[i] === b[j] ? m[i + 1][j + 1] + 1 : Math.max(m[i + 1][j], m[i][j + 1]);
+    var out = [], missing = 0;
+    i = 0; j = 0;
+    while (j < b.length) {
+      if (i < a.length && a[i] === b[j]) { out.push(esc(shown[j])); i++; j++; }
+      else if (i < a.length && m[i + 1][j] >= m[i][j + 1]) { i++; missing++; }
+      else { out.push('<s>' + esc(shown[j]) + '</s>'); j++; }
+    }
+    missing += a.length - i;
+    return { html: out.join(' '), missing: missing };
+  }
+
   var typed = {
     prep: function () { return {}; },
     right: function (b, it, x) { return accepts(it.a, x.value); },
@@ -216,6 +259,41 @@
         return '<div class="wf"><p class="ex-q"' + S.ta + '>' + parts[0] + typedInput(S, a, it, x, locked) + parts.slice(1).join('___') + '</p>' +
           '<span class="wf__base"' + S.ta + '>' + esc(upper(it.base)) + '</span></div>' +
           (!test && !x.done && x.tries >= 2 ? showLink(S, a) : '');
+      }
+    }),
+    /* Listen and choose the sentence you heard: `items: [{ src, o: [heard, other, other], why }]` */
+    hear: {
+      prep: function (it) { return { order: shuffle(it.o.length, true) }; },
+      isOpt: function (it, o) { return o === 0; },
+      right: function (b, it, x) { return x.picked === 0; },
+      answer: function (b, it) { return it.o[0]; },
+      ready: function (b, it, x) { return x.picked != null; },
+      hint: 'app_ex_hear_hint',
+      html: function (S, bi, i, b, it, x, test, review, locked) {
+        return hearHtml(S, it.src) + choiceOpts(S, bi, i, b, it, x, test, review, locked, x.order, function (o) { return md(it.o[o]); }, ' opts--stack', true);
+      }
+    },
+    /* Listen and write the missing word: `items: [{ src, q: 'with one ___', a: [word], why }]` */
+    heargap: Object.assign({}, typed, {
+      hint: 'app_ex_heargap_hint',
+      html: function (S, bi, i, b, it, x, test, review, locked) {
+        var a = ' data-b="' + bi + '" data-i="' + i + '"';
+        var parts = md(it.q).split('___');
+        return hearHtml(S, it.src) + '<p class="ex-q"' + S.ta + '>' + parts[0] + typedInput(S, a, it, x, locked) + parts.slice(1).join('___') + '</p>' +
+          (!test && !x.done && x.tries >= 2 ? showLink(S, a) : '');
+      }
+    }),
+    /* Dictation: listen and write the whole sentence; punctuation and capitals do not count. `items: [{ src, a: [sentence], why }]` */
+    dictation: Object.assign({}, typed, {
+      hint: 'app_ex_dict_hint',
+      right: function (b, it, x) { var v = words2(x.value).join(' '); return it.a.some(function (a) { return words2(a).join(' ') === v; }); },
+      wrong: function (S, b, it, x) {
+        var d = dictDiff(it.a[0], x.value);
+        return '<p class="dict-diff"' + S.ta + '>' + d.html + '</p><span' + S.xa + '>' + esc(d.missing ? t(S, 'app_ex_dict_missing') : t(S, 'app_ex_dict_wrong')) + '</span>';
+      },
+      html: function (S, bi, i, b, it, x, test, review, locked) {
+        var a = ' data-b="' + bi + '" data-i="' + i + '"';
+        return hearHtml(S, it.src) + typedInput(S, a, it, x, locked, true) + (!test && !x.done && x.tries >= 2 ? showLink(S, a) : '');
       }
     }),
     /* Rewrite the sentence; `cue` is the word to use or the start of the new sentence */
@@ -450,7 +528,7 @@
       fb = isRight(b, it, x) ? feedback(S, true, praise(S, bi, i), it.why) : feedback(S, false, t(S, 'app_book_answer_is_label'), it.why, K[b.kind].answer(b, it, x, S));
     } else if (!test) {
       if (x.done) fb = x.shown ? feedback(S, false, t(S, 'app_book_answer_is_label'), it.why, K[b.kind].answer(b, it, x, S)) : feedback(S, true, praise(S, bi, i), it.why);
-      else if (x.flash) fb = feedback(S, false, t(S, 'app_book_wrong'), '');
+      else if (x.flash) fb = K[b.kind].wrong ? '<div class="fb fb--no">' + S.A.Cast.book('think') + '<div>' + K[b.kind].wrong(S, b, it, x) + '</div></div>' : feedback(S, false, t(S, 'app_book_wrong'), '');
     }
     var locked = review || x.done;
     return K[b.kind].html(S, bi, i, b, it, x, test, review, locked) + '<div class="fb-slot" aria-live="polite">' + fb + '</div>';
@@ -1007,6 +1085,7 @@
 
   /* ---------- Events (the host forwards them) ---------- */
   function onAct(S, act, el) {
+    if (act === 'hear') { hear(el); return true; }
     var bi = +el.getAttribute('data-b'), i = +el.getAttribute('data-i');
     if (isNaN(bi) || !S.blocks[bi]) return false;
     switch (act) {
@@ -1134,7 +1213,7 @@
 
   window.AlimunEx = {
     create: create, md: md, esc: esc, shuffle: shuffle, norm: norm, seeded: seeded,
-    kinds: Object.keys(K), lessonOnly: LESSON_ONLY,
+    kinds: Object.keys(K), lessonOnly: LESSON_ONLY, stopAudio: stopAudio,
     pointerDown: pointerDown,
     /* True right after a drag ended, so the click it fires is ignored */
     swallowClick: function () { return suppress; }
