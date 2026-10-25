@@ -123,8 +123,9 @@
   function coreOf(b) { return (index || []).filter(function (x) { return x.track === 'core' && x.language === b.language && x.level === b.level; })[0]; }
   function goalShelf(book) {
     var mine = A.data().profile.goal;
-    var list = (index || []).filter(function (x) { return x.track === 'goal' && x.language === book.language && x.written > 0; });
-    list.sort(function (a, b) { return (b.goal === mine) - (a.goal === mine) || (a.level === book.level ? -1 : 1); });
+    /* Goal books for this course's language and level, the learner's own goal first */
+    var list = (index || []).filter(function (x) { return x.track === 'goal' && x.language === book.language && x.level === book.level && x.written > 0; });
+    list.sort(function (a, b) { return (b.goal === mine) - (a.goal === mine); });
     var html = '<h2 class="t-h2 span-12 home__section" style="--i:3">' + esc(t('app_book_second_h')) + '</h2>' +
       '<p class="t-body span-12" style="--i:3;margin-top:-6px">' + esc(t('app_book_second_p')) + '</p>';
     var hasMine = list.some(function (x) { return x.goal === mine; });
