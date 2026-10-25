@@ -26,7 +26,7 @@ export const UNIT = {
           ] },
         ],
         [
-          { t: 'dialogue', title: 'Beim Orthopäden', lines: [
+          { t: 'dialogue', title: 'In der orthopädischen Praxis', lines: [
             { who: 'Dr. Yılmaz', s: 'Die MRT-Bilder zeigen, dass der Meniskus im rechten Knie eingerissen ist. Ich würde Ihnen zu einer Arthroskopie raten.' },
             { who: 'Herr Mendes', s: 'Könnten Sie mir erklären, was bei diesem Eingriff genau gemacht wird?' },
             { who: 'Dr. Yılmaz', s: 'Wir machen zwei kleine Schnitte am Knie und führen eine Kamera ein. Dabei wird der beschädigte Teil des Meniskus entfernt oder genäht.' },

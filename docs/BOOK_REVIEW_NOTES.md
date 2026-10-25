@@ -238,3 +238,11 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3: company bikes described generally, no tax or legal details.
 - u5: "German feedback is direct" presented as a common view (*gilt bei vielen als*); check the tone.
 - u4 gap *Erfahrung ___ Marketing* accepts *im* and *in*.
+
+## German B2, moving abroad
+- u1 p3: the immigration office letter describes the old permit counting as valid until the decision (Fiktionsbescheinigung); check the wording.
+- u2: legal minimum of 20 days' holiday on a five-day week; two weeks' notice during probation.
+- u3: dental subsidy amounts invented (higher with a full Bonusheft, plan valid six months).
+- u4: social contributions "about half each" simplified; tax classes I, IV/IV, III/V; a job-related move as Werbungskosten.
+- u6: regional words (Swiss *Weggli*, *Ade*, Austrian *Paradeiser*, *Schlagobers*) and idioms (*Daumen drücken* / *Daumen halten*) need a native check.
+- Model documents below 200 words on purpose; main readings 205 to 249 words.
