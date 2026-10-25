@@ -300,10 +300,10 @@
     if (!c) return Promise.reject(new Error('Supabase did not load'));
     return c.rpc('my_threads').then(function (r) { if (r.error) throw r.error; return r.data || []; });
   }
-  function openThread(kind, cohortId, teacherId) {
+  function openThread(kind, cohortId, teacherId, studentId) {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.rpc('open_thread', { p_kind: kind, p_cohort: cohortId || null, p_student: null, p_teacher: teacherId || null }).then(function (r) { if (r.error) throw r.error; return r.data; });
+    return c.rpc('open_thread', { p_kind: kind, p_cohort: cohortId || null, p_student: studentId || null, p_teacher: teacherId || null }).then(function (r) { if (r.error) throw r.error; return r.data; });
   }
   function threadMessages(threadId, after) {
     var c = client();
@@ -327,6 +327,28 @@
     var c = client();
     if (!c) return Promise.resolve(null);
     return c.auth.getSession().then(function (x) { return x.data && x.data.session ? x.data.session.user.id : null; });
+  }
+  /* The teacher's side of messages (app/messages.html, until the teacher dashboard is rebuilt in step 15): the
+     signed-in approved teacher, their classes and each class's students (cohort_classmates) */
+  function teacherInbox() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.auth.getSession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session) return { signedIn: false };
+      return c.from('teacher_profiles').select('id, full_name, status').eq('user_id', session.user.id).maybeSingle().then(function (tr) {
+        var tp = tr.data;
+        if (!tp || tp.status !== 'approved') return { signedIn: true, teacher: null, me: session.user.id };
+        return c.from('cohorts').select('id, language, level').eq('teacher_id', tp.id).then(function (cr) {
+          if (cr.error) throw cr.error;
+          var cos = cr.data || [];
+          return Promise.all(cos.map(function (co) { return c.rpc('cohort_classmates', { p_cohort_id: co.id }).then(function (r) { return r.data || []; }); })).then(function (lists) {
+            cos.forEach(function (co, i) { co.students = lists[i]; });
+            return { signedIn: true, teacher: tp, me: session.user.id, cohorts: cos };
+          });
+        });
+      });
+    });
   }
   function classTeachers(cohortIds) {
     var c = client();
@@ -398,5 +420,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, teacherInbox: teacherInbox, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();
