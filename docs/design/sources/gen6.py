@@ -142,3 +142,28 @@ page = f'''<!DOCTYPE html>
 '''
 open('../../../app/drawings.html', 'w').write(page)
 print('app/drawings.html', len(page))
+
+# The dashboard's copy of the third cast: js/app/cast3.js (loaded after js/app/cast.js)
+js = '''/* Alimun app: the third cast, approved by the owner on 25 Oct 2026 (docs/DASHBOARD_PLAN.md, step 5).
+   Generated from docs/design/sources/cast3.json by gen6.py; do not edit the SVG by hand.
+   Sticker objects (picture exercises), ink-and-wash scenes (label the scene), paper-cut spots (dashboard sections)
+   and six tutors with five mouth shapes each (rest, m, e, a, o) for lip sync (js/app/lipsync.js). */
+(function () {
+  var C3 = ''' + json.dumps(c, ensure_ascii=False) + ''';
+  function clean(svg) { return (svg || '').replace('<svg', '<svg aria-hidden="true" focusable="false"'); }
+  var Cast = window.AlimunCast;
+  var base = Cast.drawing;
+  /* Cast.drawing() also finds the new objects and spots by name */
+  Cast.drawing = function (name) { return base(name) || clean(C3.sticker[name] || C3.paper[name]); };
+  Cast.object = function (name) { return clean(C3.sticker[name]); };
+  Cast.scene = function (name) { return clean(C3.wash[name]); };
+  Cast.spot = function (name) { return clean(C3.paper[name]); };
+  /* A tutor; the mouth shown is chosen by data-mouth on a parent (rest, m, e, a, o) */
+  Cast.tutor = function (name) { return clean(C3.tutors[name]); };
+  Cast.tutors = Object.keys(C3.tutors);
+  Cast.objects = Object.keys(C3.sticker);
+  Cast.scenes = Object.keys(C3.wash);
+})();
+'''
+open('../../../js/app/cast3.js', 'w').write(js)
+print('js/app/cast3.js', len(js))

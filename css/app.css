@@ -658,6 +658,36 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 .fb--no > div { font-size: 15.5px; line-height: 1.45; }
 .fb--no > div > span { color: var(--muted); }
 
+/* Picture exercises (third cast) */
+.pic { display: grid; grid-template-columns: 150px minmax(0, 1fr); gap: 18px; align-items: center; }
+.pic__art { background: var(--white); border-radius: var(--r-md); padding: 10px; box-shadow: inset 0 0 0 2px var(--line); }
+.pic__art svg { width: 100%; height: auto; display: block; }
+.lbl { position: relative; background: var(--white); border-radius: var(--r-md); box-shadow: inset 0 0 0 2px var(--line); margin-bottom: 14px; overflow: visible; }
+.lbl__art svg { width: 100%; height: auto; display: block; }
+.lbl__spot { position: absolute; transform: translate(-11px, -11px); display: flex; align-items: center; gap: 6px; padding: 0; border: 0; background: none; cursor: pointer; font: inherit; }
+.lbl__spot i { flex: none; width: 22px; height: 22px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 3px var(--forest), 0 4px 10px rgba(8, 8, 8, .2); animation: beacon 1.8s ease-in-out infinite; }
+@keyframes beacon { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.18); } }
+.lbl__spot span { padding: 4px 10px; border-radius: 10px; background: var(--white); box-shadow: 0 0 0 2px var(--forest), 0 6px 14px rgba(8, 8, 8, .12); font-weight: 700; font-size: 14.5px; white-space: nowrap; color: var(--forest); }
+.lbl__spot.is-left { flex-direction: row-reverse; transform: translate(calc(-100% + 11px), -11px); }
+.lbl__spot.is-sel i { background: var(--forest); box-shadow: 0 0 0 3px var(--lime), 0 0 0 6px var(--forest); animation: none; }
+.lbl__spot.is-right i { background: var(--forest); animation: none; }
+.lbl__spot.is-right span { background: var(--lime); animation: pop .45s var(--spring); }
+.lbl__spot.is-wrong i { background: var(--coral); animation: shake .4s var(--ease); }
+.lbl__spot.is-wrong span { background: var(--t-coral); box-shadow: 0 0 0 2px var(--coral); }
+.lbl__spot.is-over i { transform: scale(1.3); }
+.lbl__spot[disabled] { cursor: default; }
+@media (max-width: 599px) {
+  .pic { grid-template-columns: 1fr; }
+  .pic__art { max-width: 180px; }
+  .lbl__spot span { font-size: 12.5px; padding: 3px 7px; }
+}
+.soon__spot { width: 88px; margin-bottom: 10px; }
+.soon__spot svg { width: 100%; height: auto; display: block; }
+/* Tutors (lip sync) */
+.tutor-art .mo { display: none; }
+.tutor-art[data-mouth="rest"] .mo-rest, .tutor-art:not([data-mouth]) .mo-rest, .tutor-art[data-mouth="m"] .mo-m, .tutor-art[data-mouth="e"] .mo-e, .tutor-art[data-mouth="a"] .mo-a, .tutor-art[data-mouth="o"] .mo-o { display: inline; }
+.tutor-art .blink { animation: blink 4.2s infinite; transform-box: fill-box; transform-origin: center; }
+
 /* Feedback with the book character */
 .fb-slot:empty { display: none; }
 .fb-slot { outline: none; }

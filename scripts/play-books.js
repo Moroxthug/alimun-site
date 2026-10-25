@@ -24,6 +24,10 @@ const TYPES = { '.html': 'text/html', '.js': 'text/javascript', '.css': 'text/cs
 async function practiceJSON(name) {
   const lib = await import(path.join(ROOT, 'scripts/book-lib.mjs'));
   const { localize } = await import(path.join(ROOT, 'site/src/data/books/explain.js'));
+  if (name === 'pictures.json') {
+    const { OBJECTS, SCENES } = await import(path.join(ROOT, 'site/src/data/practice/pictures.js') + '?t=' + Date.now());
+    return JSON.stringify({ objects: OBJECTS, scenes: SCENES });
+  }
   if (name === 'index.json') {
     const sets = await Promise.all(lib.setIds().map(id => lib.loadSet(id)));
     return JSON.stringify({ sets: sets.map(s => ({ id: s.id, language: s.language, level: s.level, review: s.review, blocks: s.blocks.length })) });
@@ -77,7 +81,7 @@ async function answer(page, b, gi) {
   const q = sel => page.locator('[data-block="' + gi + '"] ' + sel);
   const click = async sel => { const l = q(sel).first(); await l.click(); };
   switch (b.kind) {
-    case 'choice': case 'odd': case 'hear':
+    case 'choice': case 'odd': case 'hear': case 'picture':
       for (let i = 0; i < b.items.length; i++) await click('[data-act="pick"][data-i="' + i + '"][data-o="0"]');
       return;
     case 'tf':
@@ -96,7 +100,7 @@ async function answer(page, b, gi) {
         for (let w = 0; w < n; w++) await click('[data-act="place"][data-i="' + i + '"][data-w="' + w + '"]');
       }
       return;
-    case 'bank':
+    case 'bank': case 'label':
       for (let i = 0; i < b.items.length; i++) {
         await click('[data-act="gapsel"][data-i="' + i + '"]');
         await click('[data-act="bankpick"][data-w="' + i + '"]');

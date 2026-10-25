@@ -233,6 +233,33 @@
     });
     return its.length >= 2 ? { b: { t: 'ex', kind: 'hear', h: t('app_ex_h_hear'), items: its.map(function (y) { return y.it; }) }, keys: its.map(function (y) { return y.x.key; }) } : null;
   }
+  /* ---------- Pictures: the third cast's objects and scenes, with words in the language being learned ---------- */
+  function pictureBlock(kind, language, pics, mem, now) {
+    if (!pics || !window.AlimunCast.object) return null;
+    var objs = Object.keys(pics.objects).filter(function (k) { return pics.objects[k][language]; });
+    if (kind === 'picture' && objs.length >= 3) {
+      var list = objs.map(function (k) { return { key: 'pic:' + language + ':' + k, k: k }; });
+      var chosen = pickHeard(list, 3, mem, now);
+      return { b: { t: 'ex', kind: 'picture', h: t('app_ex_h_picture'), items: chosen.map(function (x) {
+        var others = shuffleList(objs.filter(function (o) { return o !== x.k; })).slice(0, 2);
+        return { pic: x.k, o: [pics.objects[x.k][language]].concat(others.map(function (o) { return pics.objects[o][language]; })), why: '' };
+      }) }, keys: chosen.map(function (x) { return x.key; }) };
+    }
+    var scenes = Object.keys(pics.scenes);
+    if (kind === 'label' && scenes.length) {
+      var sc = scenes[Math.floor(Math.random() * scenes.length)];
+      var spots = pics.scenes[sc].filter(function (p) { return p.w[language]; });
+      var words = spots.map(function (p) { return p.w[language]; });
+      var extra = [];
+      scenes.forEach(function (o) { if (o !== sc) pics.scenes[o].forEach(function (p) { var w = p.w[language]; if (w && words.indexOf(w) === -1 && extra.indexOf(w) === -1) extra.push(w); }); });
+      return { b: { t: 'ex', kind: 'label', h: t('app_ex_h_label'), scene: sc, extra: shuffleList(extra).slice(0, 2),
+        items: spots.map(function (p) { return { x: p.x, y: p.y, a: p.w[language], why: '' }; }) },
+        keys: spots.map(function (p, i) { return 'scene:' + language + ':' + sc + ':' + i; }) };
+    }
+    return null;
+  }
+  function shuffleList(a) { return EX().shuffle(a.length).map(function (i) { return a[i]; }); }
+
   function listenRound(book, progress, aud) {
     var list = heard(book, progress, aud), mem = readMem(), now = Date.now(), out = [];
     if (list.length < 6) return [];
@@ -245,12 +272,14 @@
     for (var i = 0; i < list.length; i++) { r -= list[i].w || 1; if (r <= 0) return list[i]; }
     return list[list.length - 1];
   }
-  function buildRound(book, progress, aud) {
+  function buildRound(book, progress, aud, pics) {
     var pool = sources(book, progress), mem = readMem(), now = Date.now();
     var list = heard(book, progress, aud), lb = list.length >= 6 && listenBlock(['hear', 'heargap', 'dictation'][Math.floor(Math.random() * 3)], list, mem, now);
+    /* A picture exercise in about half the rounds */
+    var pb = Math.random() < 0.5 && pictureBlock(Math.random() < 0.5 ? 'picture' : 'label', book.language, pics, mem, now);
     var ranked = pool.map(function (s) { return { s: s, w: weigh(s, mem, now) }; }).sort(function (a, b) { return b.w - a.w; });
     var round = [], used = {}, last = null, kinds = {};
-    for (var k = 0; k < ranked.length && round.length < ROUND - (lb ? 1 : 0); k++) {
+    for (var k = 0; k < ranked.length && round.length < ROUND - (lb ? 1 : 0) - (pb ? 1 : 0); k++) {
       var src = ranked[k].s;
       if (used[src.key]) continue;
       var opts = remixes(src, pool, mem, now).filter(function (o) { return o.kind !== last && (kinds[o.kind] || 0) < 2; });
@@ -260,12 +289,14 @@
       round.push({ b: pick.b, keys: pick.map.map(function (i) { return src.key + ':' + i; }) });
     }
     if (lb) round.splice(1 + Math.floor(Math.random() * Math.max(1, round.length - 1)), 0, lb);
+    if (pb) round.splice(Math.floor(Math.random() * (round.length + 1)), 0, pb);
     return round;
   }
 
   /* ---------- Loading ---------- */
   function getJSON(url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error(url + ' ' + r.status); return r.json(); }); }
-  var sets = null;
+  var sets = null, pictures = null;
+  function loadPictures() { return pictures ? Promise.resolve(pictures) : getJSON('/data/practice/pictures.json').then(function (x) { pictures = x; return x; }, function () { return null; }); }
   function loadSets() { return sets ? Promise.resolve(sets) : getJSON('/data/practice/index.json').then(function (x) { sets = x.sets || []; return sets; }, function () { sets = []; return sets; }); }
   function explainLang() {
     var l = A.lang === 'ma' ? 'fr' : A.lang;
@@ -295,9 +326,9 @@
         (set ? '<a class="card span-6" href="#/practice/types" style="--i:3"><div class="card__row"><div class="card__art">' + A.Cast.drawing('owl') + '</div><div>' +
           '<h2 class="t-h2">' + esc(t('app_pr_types_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_types_p', { course: A.languageName(set.language) + ' ' + set.level })) + '</p></div></div></a>' : '') +
         (info.book ? (info.listen >= 6
-          ? '<a class="card card--mint span-12" href="#/practice/listen" style="--i:4"><div class="card__row"><div class="card__art">' + A.Cast.drawing('parrot') + '</div><div>' +
+          ? '<a class="card card--mint span-12" href="#/practice/listen" style="--i:4"><div class="card__row"><div class="card__art">' + (A.Cast.spot ? A.Cast.spot('headphones') : A.Cast.drawing('parrot')) + '</div><div>' +
             '<h2 class="t-h2">' + esc(t('app_pr_listen_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_listen_p')) + '</p></div></div></a>'
-          : '<section class="card card--bone span-12" style="--i:4"><div class="card__row"><div class="card__art">' + A.Cast.drawing('parrot') + '</div><div>' +
+          : '<section class="card card--bone span-12" style="--i:4"><div class="card__row"><div class="card__art">' + (A.Cast.spot ? A.Cast.spot('headphones') : A.Cast.drawing('parrot')) + '</div><div>' +
             '<h2 class="t-h2">' + esc(t('app_pr_listen_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_listen_none')) + '</p></div></div></section>') : '') +
         (signedIn() ? '' : '<p class="t-tiny span-12" style="--i:5;margin-top:4px">' + esc(t('app_pr_local')) + '</p>') +
       '</div>';
@@ -440,20 +471,23 @@
     view.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div></div>';
     var id = A.myBookId(), lang = explainLang();
     var noAudio = function () { return null; };
-    return Promise.all([window.AlimunReader.open(helpers, id), loadSets(), use(helpers), window.AlimunReader.audio(id).catch(noAudio)]).then(function (r) {
-      var info = { book: r[0] && r[0].book, progress: r[0] && r[0].progress, set: typesSet(r[1], A.data().profile.language), audio: r[3] };
+    return Promise.all([window.AlimunReader.open(helpers, id), loadSets(), use(helpers), window.AlimunReader.audio(id).catch(noAudio), loadPictures()]).then(function (r) {
+      var info = { book: r[0] && r[0].book, progress: r[0] && r[0].progress, set: typesSet(r[1], A.data().profile.language), audio: r[3], pictures: r[4] };
       info.listen = info.book ? heard(info.book, info.progress || {}, info.audio).length : 0;
       if (my !== mountNo) return { stale: true };
       if (parts[0] === 'types' && info.set) {
         return getJSON('/data/practice/' + encodeURIComponent(info.set.id + '.' + lang) + '.json').then(function (set) {
           var code = window.AlimunData.langCode(set.language) || 'en';
-          startRound(set.blocks.filter(function (b) { return b.t === 'ex'; }), [], attrs(lang, lang === 'ar'), attrs(code, false), true, 'types');
+          var blocks = set.blocks.filter(function (b) { return b.t === 'ex'; });
+          /* The picture exercises are built from the pictures' words, after the written set */
+          ['picture', 'label'].forEach(function (k) { var pb = pictureBlock(k, set.language, info.pictures, {}, Date.now()); if (pb) blocks.push(pb.b); });
+          startRound(blocks, [], attrs(lang, lang === 'ar'), attrs(code, false), true, 'types');
           return { html: roundView(), title: t('app_pr_types_h'), round: true };
         });
       }
       if ((parts[0] === 'round' || parts[0] === 'listen') && info.book) {
         var listen = parts[0] === 'listen';
-        var round = listen ? listenRound(info.book, info.progress || {}, info.audio) : buildRound(info.book, info.progress || {}, info.audio);
+        var round = listen ? listenRound(info.book, info.progress || {}, info.audio) : buildRound(info.book, info.progress || {}, info.audio, info.pictures);
         if (!round.length) return { html: emptyView(), title: t('app_nav_practice') };
         var code = window.AlimunData.langCode(info.book.language) || 'en', xl = info.book.explainLang || 'en';
         startRound(round.map(function (x) { return x.b; }), round.map(function (x) { return x.keys; }), attrs(xl, xl === 'ar'), attrs(code, false), false, parts[0]);

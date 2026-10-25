@@ -361,12 +361,15 @@
   }
 
   /* ---------- Screens built in later steps ---------- */
+  /* Paper-cut drawings of the third cast for the sections (js/app/cast3.js) */
+  var SPOTS = { library: 'books', classes: 'calendar', homework: 'pencil', progress: 'chart', messages: 'envelope', settings: 'plant' };
   function soonView(r) {
+    var spot = SPOTS[r.id] && Cast.spot ? '<div class="soon__spot">' + Cast.spot(SPOTS[r.id]) + '</div>' : '';
     return '' +
       '<div class="view__head"><div><h1 class="t-h1">' + esc(t(r.label)) + '</h1><p class="t-lead">' + esc(t(r.text)) + '</p></div></div>' +
       '<div class="soon rise">' +
         '<div class="stage" style="--i:0;background:' + TINTS[r.tint] + '"><div class="bub ' + r.kind + '">' + esc(t(r.bub)) + '</div>' + Cast.drawing(r.art) + '</div>' +
-        '<div class="card" style="--i:1"><h2 class="t-h2">' + esc(t('app_soon_h', { step: r.step })) + '</h2>' +
+        '<div class="card" style="--i:1">' + spot + '<h2 class="t-h2">' + esc(t('app_soon_h', { step: r.step })) + '</h2>' +
           '<p class="t-body">' + esc(t('app_soon_p')) + '</p>' +
           '<div class="btn-row"><a class="btn btn--primary" href="#/home">' + esc(t('app_soon_back')) + '</a><a class="btn btn--quiet" href="#/kit">' + esc(t('app_soon_kit')) + '</a></div></div>' +
       '</div>';

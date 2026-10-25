@@ -5,9 +5,9 @@
    Lesson mode: each answer is checked straight away, with the book character's reaction and the `why`; wrong answers
    can be tried again and "Show the answer" appears after two wrong tries. Test mode (test: true): nothing is checked
    until submit(), then every block shows the right answers.
-   Item kinds (choice, odd, tf, select, gap, wordform, transform, conjugate, crossword, order, build, spot, colloc, fix,
+   Item kinds (choice, odd, picture, tf, select, gap, wordform, transform, conjugate, crossword, order, build, spot, colloc, fix,
    and the listening kinds hear, heargap and dictation, which play course audio)
-   are lists of items, each right or wrong on its own. Block kinds (match, bank, sort, memory, search) keep one state
+   are lists of items, each right or wrong on its own. Block kinds (match, bank, label, sort, memory, search) keep one state
    for the whole block. Interface text comes from js/translations.js (app_book_* and app_ex_* keys). */
 (function () {
   'use strict';
@@ -212,6 +212,18 @@
       ready: function (b, it, x) { return x.picked != null; },
       html: function (S, bi, i, b, it, x, test, review, locked) {
         return choiceOpts(S, bi, i, b, it, x, test, review, locked, x.order, function (o) { return md(it.o[o]); }, ' opts--odd', true);
+      }
+    },
+    /* What is it? A drawing from the cast and words to choose from: `items: [{ pic: 'apple', o: [right, wrong, wrong], why }]` */
+    picture: {
+      prep: function (it) { return { order: shuffle(it.o.length, true) }; },
+      isOpt: function (it, o) { return o === 0; },
+      right: function (b, it, x) { return x.picked === 0; },
+      answer: function (b, it) { return it.o[0]; },
+      ready: function (b, it, x) { return x.picked != null; },
+      html: function (S, bi, i, b, it, x, test, review, locked) {
+        return '<div class="pic"><div class="pic__art">' + S.A.Cast.object(it.pic) + '</div>' +
+          choiceOpts(S, bi, i, b, it, x, test, review, locked, x.order, function (o) { return md(it.o[o]); }, ' opts--stack', true) + '</div>';
       }
     },
     tf: {
@@ -437,6 +449,17 @@
       tally: function (b, s) { return { right: b.items.filter(function (it, i) { return bankRight(s, it, s.items[i]); }).length, total: b.items.length }; },
       html: bankHtml
     },
+    /* Label the scene: tap a dot on the drawing, then its word (a word bank on a picture).
+       { scene: 'cafe', items: [{ x, y, a: 'die Tasse', why }], extra: [...] }, x and y in the 320 × 200 scene */
+    label: {
+      block: true, hint: 'app_ex_label_hint',
+      prep: function (b) { return K.bank.prep(b); },
+      ready: function (b, s) { return K.bank.ready(b, s); },
+      done: function (b, s) { return K.bank.done(b, s); },
+      first: function (b, s) { return K.bank.first(b, s); },
+      tally: function (b, s) { return K.bank.tally(b, s); },
+      html: labelHtml
+    },
     /* Sort into groups: tap a word, then its group */
     sort: {
       block: true, hint: 'app_ex_sort_hint',
@@ -617,6 +640,42 @@
         (!test && !x.done && x.tries >= 2 ? showLink(S, a + ' data-i="' + i + '"') : '') + '<div class="fb-slot" aria-live="polite">' + fb + '</div></div>';
     });
     return html + '</div>';
+  }
+
+  function labelHtml(S, bi, b, s, test, review) {
+    var a = ' data-b="' + bi + '"';
+    var used = {};
+    s.items.forEach(function (x) { if (x.picked != null) used[x.picked] = true; });
+    var html = review ? '' : '<p class="t-small ex__hint">' + esc(t(S, 'app_ex_label_hint')) + '</p>';
+    html += '<div class="lbl"' + S.ta + '><div class="lbl__art">' + S.A.Cast.scene(b.scene) + '</div>';
+    b.items.forEach(function (it, i) {
+      var x = s.items[i], ok = bankRight(s, it, x), word = x.picked != null ? s.bank[x.picked] : '';
+      var c = review ? (ok ? ' is-right' : ' is-wrong') : x.done ? ' is-right' : x.flash ? ' is-wrong' : '';
+      if (!review && !x.done && s.sel === i) c += ' is-sel';
+      var side = it.x > 220 ? ' is-left' : '';
+      html += '<button class="lbl__spot' + c + side + '" type="button" data-act="gapsel"' + a + ' data-i="' + i + '" data-drop style="left:' + (it.x / 3.2) + '%;top:' + (it.y / 2) + '%"' +
+        (review || x.done ? ' disabled' : '') + ' aria-label="' + esc(word || t(S, 'app_book_gap')) + '"><i aria-hidden="true"></i>' +
+        (word || (review && !ok) ? '<span>' + esc(review && !ok ? it.a : word) + '</span>' : '') + '</button>';
+    });
+    html += '</div>';
+    if (!review && !K.label.done(b, s)) {
+      html += '<div class="bank" role="group" aria-label="' + esc(t(S, 'app_ex_bank')) + '"' + S.ta + '>' + s.order.map(function (w, k) {
+        var u = used[w] && !test;
+        return '<button class="tile tile--bank' + (used[w] ? ' is-used' : '') + (s.bad === w ? ' is-bad' : '') + '" type="button" data-act="bankpick"' + a + ' data-w="' + w + '" data-drag style="--k:' + k + '"' +
+          (u ? ' disabled' : '') + '>' + esc(s.bank[w]) + '</button>';
+      }).join('') + '</div>';
+    }
+    var fb = '';
+    if (review) {
+      var wrong = b.items.filter(function (it, i) { return !bankRight(s, it, s.items[i]); });
+      fb = wrong.length ? feedback(S, false, t(S, 'app_book_answer_is_label'), '', wrong.map(function (it) { return it.a; }).join(', ')) : feedback(S, true, praise(S, bi, 0), '');
+    } else if (!test && s.last != null) {
+      var lx = s.items[s.last], lit = b.items[s.last];
+      if (lx.done) fb = lx.shown ? feedback(S, false, t(S, 'app_book_answer_is_label'), lit.why, lit.a) : feedback(S, true, praise(S, bi, s.last), lit.why);
+      else if (lx.flash) fb = feedback(S, false, t(S, 'app_book_wrong'), '');
+    }
+    if (!test && !review && s.last != null && !s.items[s.last].done && s.items[s.last].tries >= 2) fb += showLink(S, a + ' data-i="' + s.last + '"');
+    return html + '<div class="fb-slot" aria-live="polite">' + fb + '</div>';
   }
 
   function sortHtml(S, bi, b, s, test, review) {
@@ -895,7 +954,7 @@
   }
   function onShow(S, bi, i) {
     var b = S.blocks[bi], s = S.state[bi], x = s.items[i];
-    if (b.kind === 'bank') {
+    if (b.kind === 'bank' || b.kind === 'label') {
       var free = s.bank.map(function (w, k) { return k; }).filter(function (k) { return norm(s.bank[k]) === norm(b.items[i].a) && !s.items.some(function (y) { return y.picked === k; }); });
       x.picked = free.length ? free[0] : i;
       s.sel = nextGap(s, i);
@@ -1011,6 +1070,7 @@
       return;
     }
     var ok = norm(s.bank[w]) === norm(b.items[i].a);
+    s.last = i;
     if (ok) { x.picked = w; mark(S, bi, i, x, true); s.sel = nextGap(s, i); }
     else { mark(S, bi, i, x, false); s.bad = w; }
     rerender(S, bi);

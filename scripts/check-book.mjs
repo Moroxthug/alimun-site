@@ -4,9 +4,12 @@
 import { loadBook, loadSet, setIds } from './book-lib.mjs';
 
 const CAST = ['owl', 'parrot', 'cat', 'snail', 'dog', 'teacup', 'pretzel', 'croissant', 'pizza', 'churro', 'nata', 'dragon', 'alien', 'ghost', 'suitcase', 'cactus', 'mug', 'sun', 'monster'];
-const KINDS = ['choice', 'gap', 'order', 'match', 'tf', 'spot', 'odd', 'select', 'wordform', 'transform', 'conjugate', 'crossword', 'build', 'colloc', 'fix', 'bank', 'sort', 'memory', 'search'];
+const KINDS = ['choice', 'gap', 'order', 'match', 'tf', 'spot', 'odd', 'select', 'wordform', 'transform', 'conjugate', 'crossword', 'build', 'colloc', 'fix', 'bank', 'sort', 'memory', 'search', 'picture', 'label'];
 /* Games that only make sense with feedback straight away: not in unit tests */
 const LESSON_ONLY = ['memory', 'search'];
+/* Drawings of the third cast for picture exercises (docs/design/sources/cast3.py) */
+const OBJECTS = ['apple', 'bread', 'cheese', 'train', 'bus', 'bicycle', 'house', 'key', 'phone', 'umbrella', 'clock', 'ticket'];
+const SCENES = ['cafe', 'station', 'kitchen', 'park'];
 const EMOJI = /\p{Extended_Pictographic}/u;
 let problems = 0;
 
@@ -145,7 +148,8 @@ function exCheck(bad, w, b) {
     if (!Array.isArray(b.groups) || b.groups.length < 2 || b.groups.length > 4) bad(w, 'sort needs two to four groups');
     (b.groups || []).forEach((g) => str(w + ' group', g));
   }
-  if (b.kind === 'bank') {
+  if (b.kind === 'label' && !SCENES.includes(b.scene)) bad(w, `scene "${b.scene}" is not in the third cast`);
+  if (b.kind === 'bank' || b.kind === 'label') {
     const all = (b.items || []).map((it) => it.a).concat(b.extra || []);
     if (new Set(all.map((x) => String(x).toLowerCase())).size !== all.length) bad(w, 'bank words must all be different');
   }
@@ -173,6 +177,8 @@ function exCheck(bad, w, b) {
         if (!Array.isArray(it.a) || !it.a.length || it.a.some((k) => !it.o || k < 0 || k >= it.o.length)) bad(iw, 'a: the indexes of the right options');
         break;
       case 'bank': str(iw, it.q); oneGap(iw, it.q); str(iw + ' answer', it.a); break;
+      case 'picture': if (!OBJECTS.includes(it.pic)) bad(iw, `picture "${it.pic}" is not in the third cast`); options(iw, it.o); break;
+      case 'label': if (!(it.x >= 0 && it.x <= 320 && it.y >= 0 && it.y <= 200)) bad(iw, 'x 0 to 320, y 0 to 200'); str(iw + ' answer', it.a); break;
       case 'sort': str(iw, it.s); if (!Number.isInteger(it.g) || it.g < 0 || it.g >= (b.groups || []).length) bad(iw, `group ${it.g}`); break;
     }
   });
