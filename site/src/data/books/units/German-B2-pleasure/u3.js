@@ -110,7 +110,7 @@ export const UNIT = {
             { q: '___ weil der Film so ruhig ist, bleibt er lange im Kopf.', o: ['Gerade', 'Zwar', 'Trotzdem'], why: '*gerade weil*: exactly because. The quiet style is the reason it stays with you.' },
           ] },
           { t: 'ex', kind: 'gap', h: 'Write the missing word.', items: [
-            { q: 'Ich kann dir diese Serie nur ___. (empfehlen)', a: ['empfehlen'], why: '*Ich kann dir … nur empfehlen*: the infinitive goes to the end.' },
+            { q: 'Es ___ sich, den Film im Kino zu sehen. (lohnen)', a: ['lohnt'], why: '*es lohnt sich* + *zu* + infinitive: it is worth doing.' },
             { q: 'Zugegeben, der Anfang ist etwas langatmig. ___ lohnt sich das Buch.', a: ['Trotzdem'], why: '*Zugegeben … Trotzdem*: you admit a point, then disagree.' },
             { q: 'Das Album ist wirklich ___. Hör es dir an! (hören + wert)', a: ['hörenswert', 'hoerenswert'], why: 'Music is something you listen to: *hörenswert*.' },
           ] },

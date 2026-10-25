@@ -223,3 +223,11 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2 spot item marks a misplaced verb (*weil ich [habe] eine Frage*).
 - Gaps *zu einem klaren ___ kommen* and *zu dem ___ kommen* accept *Ergebnis* and *Schluss*.
 - Short secondary texts below 200 words on purpose (two summaries, a lecture announcement).
+
+## German B2, travel
+- u2: tipping stated as common practice (round up or about five to ten percent); the gesture example in the reading names no gesture.
+- u1 p1: the tip mentions *umso* beside *desto*; no gap needs it.
+- u6: *Höhepunkt* and *Highlight* both accepted; *verschlafen* used for a quiet courtyard; Baltic sunset "gegen vier" in January is approximate.
+- u4 p2: relative-pronoun table has 5 columns.
+- u5 p3: two opinion pieces total 214 words.
+- Invented names and titles (Marienbrück, „Die letzte Fähre“, „Was die Zitronen wissen“, „Die stille Insel“); check none is a real work or living person.
