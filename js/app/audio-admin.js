@@ -84,7 +84,7 @@
       token = s.access_token;
       /* The session token expires after an hour; keep it fresh while the tab works */
       sb.auth.onAuthStateChange(function (ev, ses) { if (ses) token = ses.access_token; });
-      return load().then(function () { btn.disabled = false; say('Press Start and keep this tab open. Several sentences go to Google in one request and are cut apart at the pauses, to fit Google's daily limit.'); });
+      return load().then(function () { btn.disabled = false; say('Press Start and keep this tab open. Several sentences go to Google in one request and are cut apart at the pauses, to fit Google’s daily limit.'); });
     }).catch(function (e) { say('Could not start: ' + e.message); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();
