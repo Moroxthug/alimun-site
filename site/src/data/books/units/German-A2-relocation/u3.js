@@ -43,7 +43,7 @@ export const UNIT = {
           { t: 'reading', title: 'Anzeige', md: '2-Zimmer-Wohnung, 55 m², Küche, Bad, Balkon. Kaltmiete 610 €, Nebenkosten 150 €. Frei ab 1. Dezember.' },
           { t: 'ex', kind: 'choice', h: 'Read the advert. Choose the answer.', items: [
             { q: 'Die Warmmiete ist ___.', o: ['760 €', '610 €', '460 €'], why: '*Kaltmiete* + *Nebenkosten* = *Warmmiete*: 610 + 150.' },
-            { q: 'Die Wohnung hat ___.', o: ['zwei Zimmer, eine Küche und ein Bad', 'zwei Zimmer mit Küche und Bad zusammen', 'ein Zimmer und eine Küche'], why: 'Kitchen and bathroom are not counted: two rooms plus kitchen and bathroom.' },
+            { q: 'Die Wohnung hat ___.', o: ['zwei Zimmer, eine Küche und ein Bad', 'ein Zimmer, eine Küche und ein Bad', 'zwei Zimmer, aber kein Bad'], why: 'Kitchen and bathroom are not counted: two rooms plus kitchen and bathroom.' },
             { q: 'Man kann ___ einziehen.', o: ['im Dezember', 'sofort', 'im Januar'], why: '*Frei ab 1. Dezember*: from 1 December.' },
           ] },
           { t: 'ex', kind: 'match', h: 'Where is it usually? Match the thing and the room.', pairs: [
@@ -170,7 +170,7 @@ export const UNIT = {
   test: [
     { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
       { q: 'Kaltmiete 500 €, Nebenkosten 130 €. Die Warmmiete ist ___.', o: ['630 €', '500 €', '370 €'], why: '500 + 130 = 630.' },
-      { q: 'Eine 3-Zimmer-Wohnung hat drei Zimmer, ___.', o: ['eine Küche und ein Bad', 'aber keine Küche und kein Bad', 'und die Küche ist ein Zimmer'], why: 'Kitchen and bathroom are not counted as rooms.' },
+      { q: 'Die Wohnung hat keine Möbel. Sie ist nicht ___.', o: ['möbliert', 'frei', 'warm'], why: '*möbliert*: with furniture.' },
       { q: 'Der Balkon ist groß. Ich möchte ___ sehen.', o: ['ihn', 'es', 'sie'], why: '*der Balkon*: *ihn*.' },
       { q: 'Ist die Wohnung noch frei?', o: ['Ja, Sie können sie am Montag sehen.', 'Ja, ich wohne gern hier.', 'Nein, sie hat einen Balkon.'], why: 'Yes, and the viewing time.' },
     ] },
@@ -182,7 +182,7 @@ export const UNIT = {
     ] },
     { t: 'ex', kind: 'order', h: 'Build the sentences.', items: [
       { a: 'Wann kann ich das Zimmer sehen?', why: '*kann* second, *sehen* at the end.' },
-      { a: 'Ist die Küche in der Wohnung?', why: 'A yes/no question: the verb first.' },
+      { a: 'Wie groß ist das Schlafzimmer?', why: '*Wie groß* first, then the verb *ist*.' },
       { a: 'Wie hoch ist die Kaution?', why: '*Wie hoch* + verb + subject.' },
     ] },
   ],

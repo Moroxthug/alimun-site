@@ -40,7 +40,7 @@ export const UNIT = {
           ] },
         ],
         [
-          { t: 'dialogue', title: 'Der erste Tag', lines: [
+          { t: 'dialogue', title: 'The first day', lines: [
             { who: 'Herr Wolf', s: 'Guten Morgen, Frau Haddad! Willkommen bei uns. Darf ich vorstellen? Das ist Frau Novak. Sie leitet die Buchhaltung.' },
             { who: 'Frau Novak', s: 'Guten Morgen, Frau Haddad. Schön, Sie kennenzulernen.' },
             { who: 'Leila Haddad', s: 'Freut mich auch. Ich bin die neue Assistentin im Vertrieb.' },
@@ -102,7 +102,7 @@ export const UNIT = {
           ] },
         ],
         [
-          { t: 'dialogue', title: 'In der Kaffeeküche', lines: [
+          { t: 'dialogue', title: 'A coffee break', lines: [
             { who: 'Mira', s: 'Hallo Tomasz! Du bist ja schon da. Wann hast du heute angefangen?' },
             { who: 'Tomasz', s: 'Um sechs. Ich habe diese Woche Frühschicht.' },
             { who: 'Mira', s: 'Oh, früh! Und wann hast du Feierabend?' },
@@ -182,7 +182,7 @@ export const UNIT = {
       { q: 'Halb vier am Nachmittag ist ___.', o: ['15.30 Uhr', '16.30 Uhr', '14.30 Uhr'], why: '*halb vier*: half an hour before four, so 15.30.' },
     ] },
     { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
-      { q: 'Meine Kollegin ist Verkäufer___. (woman)', a: ['in'], why: 'The form for women often ends in *-in*: *Verkäuferin*.' },
+      { q: 'Mein Kollege ist Verkäufer, und meine Kollegin ist ___.', a: ['Verkäuferin'], why: 'The form for women often ends in *-in*: *Verkäuferin*.' },
       { q: 'Ich arbeite ___ 8 bis 16 Uhr.', a: ['von'], why: '*von … bis …*' },
       { q: 'Wann ___ dein Kurs an? (anfangen)', a: ['fängt', 'faengt'], why: '*anfangen*: *er fängt … an*.' },
     ] },

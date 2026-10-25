@@ -123,7 +123,7 @@ export const UNIT = {
             ['take', 'a break'],
             ['set', 'a goal'],
             ['do', 'your homework'],
-            ['meet', 'the deadline'],
+            ['make', 'a plan'],
             ['revise', 'for the test'],
           ] },
           { t: 'ex', kind: 'gap', h: 'Complete with the correct form of be going to.', items: [

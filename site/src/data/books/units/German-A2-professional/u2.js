@@ -14,7 +14,7 @@ export const UNIT = {
       spreads: [
         [
           { t: 'text', md: 'In a German company, people usually answer the phone with the name of the company and their own name: *Lorenz GmbH, Petra Albers, guten Tag.* The caller then says who they are and who they want to speak to.' },
-          { t: 'dialogue', title: 'Ein Anruf', lines: [
+          { t: 'dialogue', title: 'A phone call', lines: [
             { who: 'Frau Albers', s: 'Lorenz GmbH, Petra Albers, guten Tag.' },
             { who: 'Herr Okafor', s: 'Guten Tag, hier ist Daniel Okafor von der Firma Weiss Bau. Kann ich bitte mit Herrn Schulz sprechen?' },
             { who: 'Frau Albers', s: 'Einen Moment, bitte. Ich verbinde Sie.' },
@@ -46,10 +46,10 @@ export const UNIT = {
         ],
         [
           { t: 'ex', kind: 'choice', h: 'What do you say?', items: [
-            { q: 'You want to speak to Herr Schulz.', o: ['Kann ich bitte mit Herrn Schulz sprechen?', 'Kann ich bitte mit Herr Schulz sprechen?', 'Ich verbinde Sie mit Herrn Schulz.'], why: 'After *mit*, *Herr* becomes *Herrn*. *Ich verbinde Sie* is what the other person says.' },
-            { q: 'You did not understand the name.', o: ['Können Sie das bitte wiederholen?', 'Einen Moment, ich verbinde Sie.', 'Hier ist Petra Albers.'], why: '*wiederholen*: to say it again.' },
-            { q: 'Your colleague is not in the office today.', o: ['Frau Roth ist leider nicht im Haus.', 'Frau Roth ist leider im Haus.', 'Frau Roth spricht gerade mit Ihnen.'], why: '*nicht im Haus*: not in the building.' },
-            { q: 'You answer the phone at work.', o: ['Lorenz GmbH, Petra Albers, guten Tag.', 'Hallo, wer ist da?', 'Ja?'], why: 'The name of the company, your name and a greeting.' },
+            { q: 'Sie möchten mit Herrn Schulz sprechen.', o: ['Kann ich bitte mit Herrn Schulz sprechen?', 'Kann ich bitte mit Herr Schulz sprechen?', 'Ich verbinde Sie mit Herrn Schulz.'], why: 'After *mit*, *Herr* becomes *Herrn*. *Ich verbinde Sie* is what the other person says.' },
+            { q: 'Sie haben den Namen nicht verstanden.', o: ['Können Sie das bitte wiederholen?', 'Einen Moment, ich verbinde Sie.', 'Hier ist Petra Albers.'], why: '*wiederholen*: to say it again.' },
+            { q: 'Ihre Kollegin Frau Roth ist heute nicht im Büro.', o: ['Frau Roth ist leider nicht im Haus.', 'Frau Roth ist leider im Haus.', 'Frau Roth spricht gerade mit Ihnen.'], why: '*nicht im Haus*: not in the building.' },
+            { q: 'Das Telefon im Büro klingelt. Sie sagen:', o: ['Lorenz GmbH, Petra Albers, guten Tag.', 'Hallo, wer ist da?', 'Ja?'], why: 'The name of the company, your name and a greeting.' },
           ] },
           { t: 'ex', kind: 'gap', h: 'Herr, Herrn or Frau?', items: [
             { q: 'Ich möchte bitte mit ___ Weber sprechen. (Herr)', a: ['Herrn'], why: 'After *mit*: *Herrn*.' },
@@ -80,7 +80,7 @@ export const UNIT = {
       art: 'mug',
       spreads: [
         [
-          { t: 'dialogue', title: 'Eine Nachricht', lines: [
+          { t: 'dialogue', title: 'A message', lines: [
             { who: 'Frau Albers', s: 'Kann ich etwas ausrichten?' },
             { who: 'Herr Okafor', s: 'Ja, gern. Sagen Sie Herrn Schulz bitte, dass die Lieferung erst am Freitag kommt.' },
             { who: 'Frau Albers', s: 'Die Lieferung kommt am Freitag. Gut. Soll er Sie zurückrufen?' },
@@ -173,16 +173,16 @@ export const UNIT = {
   ],
   test: [
     { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
-      { q: 'Your colleague is in a meeting. The caller wants to leave a message. You ask:', o: ['Kann ich etwas ausrichten?', 'Kann ich bitte mit ihm sprechen?', 'Wie ist Ihre Durchwahl?'], why: '*etwas ausrichten*: to pass on a message.' },
-      { q: 'The polite goodbye on the phone is:', o: ['Auf Wiederhören!', 'Auf Wiedersehen!', 'Bis gleich!'], why: 'On the phone you do not see the person: *Auf Wiederhören*.' },
-      { q: 'On the phone, people often say ___ instead of *zwei*.', o: ['zwo', 'zwanzig', 'zweite'], why: '*zwo* does not sound like *drei*.' },
+      { q: 'Ihr Kollege ist in einer Besprechung. Der Anrufer möchte eine Nachricht hinterlassen. Sie fragen:', o: ['Kann ich etwas ausrichten?', 'Kann ich bitte mit ihm sprechen?', 'Wie ist Ihre Durchwahl?'], why: '*etwas ausrichten*: to pass on a message.' },
+      { q: 'Am Ende von einem Telefonat sagen Sie:', o: ['Auf Wiederhören!', 'Guten Tag!', 'Herzlich willkommen!'], why: 'On the phone you hear the person: *Auf Wiederhören*.' },
+      { q: 'Am Telefon sagen viele Leute ___ statt *zwei*.', o: ['zwo', 'zwanzig', 'zweite'], why: '*zwo* does not sound like *drei*.' },
       { q: 'Ich verbinde Sie mit ___ Schulz.', o: ['Herrn', 'Herr', 'Herren'], why: 'After *mit*: *Herrn*.' },
     ] },
     { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
       { q: 'Herr Lang ist nicht da. Ich sage ___, dass Sie angerufen haben.', a: ['ihm'], why: '*Herr Lang* is *er*. Dativ: *ihm*.' },
       { q: 'Frau Okoye ist im Urlaub. Kann ich ___ etwas ausrichten?', a: ['ihr'], why: '*Frau Okoye* is *sie*. Dativ: *ihr*.' },
-      { q: 'Herr Weber ruft Sie morgen ___. (call back)', a: ['zurück'], why: '*zurückrufen*: *zurück* goes to the end.' },
-      { q: 'Meine ___ ist 214. (your short number in the company)', a: ['Durchwahl'], why: 'The *Durchwahl* is your own number inside the company.' },
+      { q: 'Herr Weber ruft Sie morgen ___. (zurückrufen)', a: ['zurück'], why: '*zurückrufen* is separable: *zurück* goes to the end.' },
+      { q: 'Vielen Dank für Ihren Anruf. Auf ___!', a: ['Wiederhören', 'Wiederhoeren'], why: 'The polite goodbye on the phone: *Auf Wiederhören*.' },
     ] },
     { t: 'ex', kind: 'order', h: 'Build the sentences.', items: [
       { a: 'Möchten Sie eine Nachricht hinterlassen?', why: '*möchten* first, *hinterlassen* at the end.' },

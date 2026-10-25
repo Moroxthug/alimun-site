@@ -33,10 +33,10 @@ export const UNIT = {
         ],
         [
           { t: 'ex', kind: 'choice', h: 'Choose the best greeting or ending.', items: [
-            { q: 'You write to an office. You do not know the name of the person.', o: ['Sehr geehrte Damen und Herren,', 'Liebe Damen und Herren,', 'Hallo zusammen,'], why: 'Formal, without a name: *Sehr geehrte Damen und Herren*.' },
-            { q: 'You write to a new customer, Herr Brandt.', o: ['Sehr geehrter Herr Brandt,', 'Sehr geehrte Herr Brandt,', 'Hallo Brandt,'], why: 'For a man: *Sehr geehrter*, with *-r*.' },
-            { q: 'You write to your colleague Ahmed. You say du to each other.', o: ['Hallo Ahmed,', 'Sehr geehrter Ahmed,', 'Sehr geehrter Herr Ahmed,'], why: '*Sehr geehrter* goes with *Herr* and the family name. For a colleague you say du to: *Hallo Ahmed* or *Lieber Ahmed*.' },
-            { q: 'The ending in an email to a new customer:', o: ['Mit freundlichen Grüßen', 'Liebe Grüße', 'Bis dann'], why: 'The usual formal ending.' },
+            { q: 'Sie schreiben an ein Amt. Sie kennen den Namen nicht.', o: ['Sehr geehrte Damen und Herren,', 'Liebe Damen und Herren,', 'Hallo zusammen,'], why: 'Formal, without a name: *Sehr geehrte Damen und Herren*.' },
+            { q: 'Sie schreiben an einen neuen Kunden, Herrn Brandt.', o: ['Sehr geehrter Herr Brandt,', 'Sehr geehrte Herr Brandt,', 'Hallo Brandt,'], why: 'For a man: *Sehr geehrter*, with *-r*.' },
+            { q: 'Sie schreiben an Ihren Kollegen Ahmed. Sie duzen sich.', o: ['Hallo Ahmed,', 'Sehr geehrter Ahmed,', 'Sehr geehrter Herr Ahmed,'], why: '*Sehr geehrter* goes with *Herr* and the family name. For a colleague you say du to: *Hallo Ahmed* or *Lieber Ahmed*.' },
+            { q: 'Das Ende einer E-Mail an einen neuen Kunden:', o: ['Mit freundlichen Grüßen', 'Liebe Grüße', 'Bis dann'], why: 'The usual formal ending.' },
           ] },
           { t: 'ex', kind: 'gap', h: 'Complete the greetings and the ending.', items: [
             { q: 'Sehr ___ Frau Weiß, (geehrt)', a: ['geehrte'], why: 'For a woman: *Sehr geehrte*.' },
@@ -80,8 +80,8 @@ export const UNIT = {
         ],
         [
           { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
-            { q: 'Können Sie ___ bitte die Liste schicken? (to me)', a: ['mir'], why: '*mir* is the Dativ of *ich*: to me.' },
-            { q: '___ Sie mir bitte helfen? (können, more polite)', a: ['Könnten', 'Koennten'], why: '*Könnten Sie …?* is softer than *Können Sie …?*' },
+            { q: 'Können Sie ___ bitte die Liste schicken? (ich)', a: ['mir'], why: '*mir* is the Dativ of *ich*: to me.' },
+            { q: '___ Sie mir bitte helfen? (können, Konjunktiv II)', a: ['Könnten', 'Koennten'], why: '*Könnten Sie …?* is softer than *Können Sie …?*' },
             { q: 'Vielen Dank ___ Ihre E-Mail.', a: ['für', 'fuer'], why: '*Danke für* + Akkusativ.' },
             { q: 'Ich freue mich ___ Ihre Antwort.', a: ['auf'], why: '*sich freuen auf*: to look forward to something.' },
           ] },
@@ -93,9 +93,9 @@ export const UNIT = {
         ],
         [
           { t: 'ex', kind: 'choice', h: 'What do you write?', items: [
-            { q: 'Your manager wants a report today. You can only send it tomorrow.', o: ['Leider kann ich Ihnen den Bericht erst morgen schicken.', 'Gern schicke ich Ihnen den Bericht heute.', 'Ich schicke Ihnen den Bericht nicht.'], why: '*Leider … erst morgen*: a polite no, with a new time.' },
-            { q: 'You send a file with your email.', o: ['Im Anhang finden Sie die Liste.', 'Ich freue mich auf die Liste.', 'Bei Fragen finden Sie die Liste.'], why: '*Im Anhang*: attached to the email.' },
-            { q: 'A customer wrote to you. Your first line:', o: ['vielen Dank für Ihre E-Mail.', 'vielen Dank für deine E-Mail.', 'danke für Ihre E-Mail, tschüss.'], why: 'To a customer: *Ihre*, polite. *tschüss* is too informal.' },
+            { q: 'Ihre Chefin möchte den Bericht heute. Sie können ihn erst morgen schicken.', o: ['Leider kann ich Ihnen den Bericht erst morgen schicken.', 'Gern schicke ich Ihnen den Bericht heute.', 'Ich schicke Ihnen den Bericht nicht.'], why: '*Leider … erst morgen*: a polite no, with a new time.' },
+            { q: 'Sie schicken eine Datei mit der E-Mail.', o: ['Im Anhang finden Sie die Liste.', 'Ich freue mich auf die Liste.', 'Bei Fragen finden Sie die Liste.'], why: '*Im Anhang*: attached to the email.' },
+            { q: 'Ein Kunde hat Ihnen geschrieben. Ihre erste Zeile:', o: ['vielen Dank für Ihre E-Mail.', 'vielen Dank für deine E-Mail.', 'danke für Ihre E-Mail, tschüss.'], why: 'To a customer: *Ihre*, polite. *tschüss* is too informal.' },
           ] },
         ],
       ],
@@ -142,16 +142,16 @@ export const UNIT = {
   ],
   test: [
     { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
-      { q: 'An email to a man you do not know well:', o: ['Sehr geehrter Herr Fischer,', 'Sehr geehrte Herr Fischer,', 'Lieber Fischer,'], why: 'For a man: *Sehr geehrter Herr* + family name.' },
+      { q: 'Eine formelle E-Mail an Herrn Fischer:', o: ['Sehr geehrter Herr Fischer,', 'Sehr geehrte Herr Fischer,', 'Lieber Fischer,'], why: 'For a man: *Sehr geehrter Herr* + family name.' },
       { q: 'The subject line of an email is the ___.', o: ['Betreff', 'Anhang', 'Angebot'], why: '*der Betreff*: the subject.' },
       { q: '___ Sie mir bitte die Rechnung schicken?', o: ['Könnten', 'Könnte', 'Kannst'], why: 'With *Sie*: *Könnten Sie …?* or *Können Sie …?*' },
-      { q: 'You do not know who will read your email. You write:', o: ['Sehr geehrte Damen und Herren,', 'Liebe Grüße,', 'Hallo Herr,'], why: 'The formal greeting without a name.' },
-      { q: 'A friendly ending for a colleague:', o: ['Viele Grüße', 'Sehr geehrte Grüße', 'Mit freundliche Grüßen'], why: '*Viele Grüße* is friendly. *Mit freundlichen Grüßen* needs *-en*.' },
+      { q: 'Sie wissen nicht, wer die E-Mail liest. Sie schreiben:', o: ['Sehr geehrte Damen und Herren,', 'Liebe Grüße,', 'Hallo Herr,'], why: 'The formal greeting without a name.' },
+      { q: 'Ein freundliches Ende für eine Kollegin:', o: ['Viele Grüße', 'Sehr geehrte Grüße', 'Mit freundliche Grüßen'], why: '*Viele Grüße* is friendly. *Mit freundlichen Grüßen* needs *-en*.' },
     ] },
     { t: 'ex', kind: 'gap', h: 'Complete the email.', items: [
       { q: 'Sehr ___ Frau Adeyemi, (geehrt)', a: ['geehrte'], why: 'For a woman: *Sehr geehrte*.' },
-      { q: 'vielen Dank für ___ E-Mail. (your, polite)', a: ['Ihre'], why: 'The polite *your*: *Ihre*, with a capital *I*.' },
-      { q: 'Im ___ finden Sie die Unterlagen. (the file with the email)', a: ['Anhang'], why: '*Im Anhang*: attached to the email.' },
+      { q: 'vielen Dank für ___ E-Mail. (Sie)', a: ['Ihre'], why: 'The polite *your*: *Ihre*, with a capital *I*.' },
+      { q: 'Im ___ finden Sie die Unterlagen. (die Datei mit der E-Mail)', a: ['Anhang'], why: '*Im Anhang*: attached to the email.' },
       { q: 'Leider ___ ich erst am Montag antworten. (können)', a: ['kann'], why: '*ich kann*, and the infinitive *antworten* goes to the end.' },
     ] },
     { t: 'ex', kind: 'order', h: 'Build the sentences.', items: [

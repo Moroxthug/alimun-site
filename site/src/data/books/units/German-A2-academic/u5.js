@@ -162,6 +162,7 @@ export const UNIT = {
       ['Welche Sprachen sprechen Sie?', 'Arabisch und Französisch.'],
       ['Warum lernen Sie Deutsch?', 'Weil ich hier studieren möchte.'],
       ['Wie finden Sie den Kurs?', 'Sehr gut, aber ein bisschen schnell.'],
+      ['Was machen Sie in Ihrer Freizeit?', 'Ich wandere gern in den Bergen.'],
     ] },
   ],
 };

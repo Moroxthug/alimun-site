@@ -124,7 +124,7 @@ export const UNIT = {
             { q: 'Der Elternabend ist am Nachmittag.', a: 'f', why: 'It starts at 19 o’clock, in the evening.' },
             { q: 'Beim Elternabend wählen die Eltern zwei Elternvertreter.', a: 't', why: '*Außerdem wählen wir zwei Elternvertreter.*' },
             { q: 'Die Klasse fährt mit dem Bus in den Tierpark.', a: 'f', why: 'They go by tram: *mit der Straßenbahn*.' },
-            { q: 'Die Kinder essen im Tierpark zu Mittag.', a: 'f', why: 'They are back at about 13 o’clock and only take breakfast and a drink.' },
+            { q: 'Der Eintritt in den Tierpark kostet nichts.', a: 'f', why: 'The class collects 4 euros per child for the entrance.' },
             { q: 'Herr Petersen unterrichtet auch Sport.', a: 'ng', why: 'The letter does not say which subjects he teaches.' },
           ] },
         ],
@@ -134,7 +134,7 @@ export const UNIT = {
             { q: 'Was bekommt das Kind für den Ausflug mit?', o: ['Frühstück, etwas zu trinken und passende Kleidung', 'ein Mittagessen und ein Fahrrad', 'nur ein Ticket für die Straßenbahn'], why: 'Breakfast, a drink and clothes for any weather.' },
             { q: 'Bis wann geben die Eltern den Abschnitt zurück?', o: ['bis Freitag', 'bis zum Elternabend', 'bis zum Ausflug'], why: '*… geben Sie ihn Ihrem Kind bis Freitag mit.*' },
           ] },
-          { t: 'ex', kind: 'spot', h: 'Tap the two school words for meetings and people.', items: [
+          { t: 'ex', kind: 'spot', h: 'Tap the word for the meeting and the word for the parents who speak for the class.', items: [
             { s: 'Beim [Elternabend] wählen wir zwei [Elternvertreter].', why: 'The *Elternabend* is the meeting, the *Elternvertreter* speak for the parents of the class.' },
           ] },
         ],

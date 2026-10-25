@@ -75,6 +75,8 @@ export const UNIT = {
         [
           { t: 'ex', kind: 'choice', h: 'The task: write to your classmate Ali. Say that you can’t come to class tomorrow, say why, and ask for the homework. Which message is best?', items: [
             { q: '', o: ['Hi Ali, I can’t come to class tomorrow because I have to work. Could you send me the homework, please? Thanks, Mia', 'Hi Ali, I can’t come to class tomorrow. Could you send me the homework, please? Thanks, Mia', 'Hi Ali, I can’t come to class tomorrow because I have to work. See you next week! Mia'], why: 'Only the first message has all three things. The second has no reason, and the third does not ask for the homework.' },
+          ] },
+          { t: 'ex', kind: 'choice', h: 'Choose the best answer.', items: [
             { q: 'The task says “25 words or more”. Which is best?', o: ['About 30 words that answer every point.', 'About 10 words that answer every point.', 'About 200 words about many things.'], why: 'Write enough words, answer every point, and then stop.' },
           ] },
           { t: 'ex', kind: 'gap', h: 'Complete the messages with one word.', items: [

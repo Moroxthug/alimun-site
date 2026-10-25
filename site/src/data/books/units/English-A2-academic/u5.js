@@ -20,6 +20,7 @@ export const UNIT = {
             ['Who do you live with?', 'My sister.', 'I live with my sister in a small flat.'],
             ['What do you do in your free time?', 'Music.', 'I play the guitar, and I often go to concerts.'],
             ['Why are you learning English?', 'For work.', 'I’m learning English because I need it for my job.'],
+            ['What are you going to do after this course?', 'Study.', 'I’m going to study business at university.'],
           ] },
         ],
         [

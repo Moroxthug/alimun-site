@@ -14,7 +14,7 @@ export const UNIT = {
       spreads: [
         [
           { t: 'text', md: 'In the UK, a family doctor is called a **GP**. The place where GPs work is a **surgery** or a **medical centre**. When you move to a new home, register with a surgery near you. You do this before you are ill, so it is easy to get help later.' },
-          { t: 'text', md: 'To register, you usually fill in a form at the surgery or online. Some surgeries also ask to see your passport or a letter with your address. Registering with a GP is free.' },
+          { t: 'text', md: 'To register, you usually fill in a form at the surgery or online. In England you do not need a passport or proof of address to register, but it can help to bring them. Registering with a GP is free.' },
           { t: 'tip', art: 'owl', md: 'In an emergency in the UK, for example when someone has a serious accident, phone *999*.' },
         ],
         [

@@ -101,3 +101,11 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3: "many universities have an official extension form" (general).
 - u6: "B1 exams such as B1 Preliminary"; "in many exams you hear recordings twice and lose no marks for wrong answers": check it is accurate and general; the email-to-Alex task follows the usual B1 format but is original.
 - House rules: u2 has "1st uni opened 1823" in a note option and u5 uses "Paragraph 1:" and "Paragraph 2:" labels; check against the no-numbered-lists rule.
+
+## English A2, moving abroad
+- u5 p1: registering with a GP reworded: in England no passport or proof of address is needed (it can help to bring them).
+- u5 p3: the leaflet says "phone 111" for urgent help (England, Scotland and Wales).
+- u5 p2 match: "You should call your GP" fits "a cough after three weeks" best but could fit others.
+- u1: invented postcodes could match real addresses; u1 p1 letter-sound guide is rough.
+- u2 p3: real places (Leeds, York, change at Selby) with invented times.
+- u6 p2: a phrase table where "say yes" and "say no politely" appear twice; reads close to a phrase list.

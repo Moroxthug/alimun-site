@@ -26,7 +26,7 @@ export const UNIT = {
           { t: 'tip', art: 'owl', md: 'From 1 to 19, add *-te*: *der vierte, der neunzehnte*. From 20, add *-ste*: *der zwanzigste*. Learn the special forms: *erste, dritte, siebte, achte*.' },
         ],
         [
-          { t: 'dialogue', title: 'Einen Termin finden', lines: [
+          { t: 'dialogue', title: 'Finding a time', lines: [
             { who: 'Frau Lehmann', s: 'Herr Diaz, wir müssen über das neue Projekt sprechen. Haben Sie diese Woche Zeit?' },
             { who: 'Herr Diaz', s: 'Diese Woche ist schwierig. Passt es Ihnen am Montag, dem 10. Juni?' },
             { who: 'Frau Lehmann', s: 'Am Montag habe ich leider schon einen Termin. Wie wäre es mit Dienstag?' },
@@ -111,9 +111,9 @@ export const UNIT = {
         ],
         [
           { t: 'ex', kind: 'choice', h: 'What do you say?', items: [
-            { q: 'You want to meet one day later.', o: ['Können wir den Termin auf morgen verschieben?', 'Können wir den Termin absagen?', 'Können wir den Termin vergessen?'], why: '*verschieben*: to move to another time.' },
-            { q: 'You cannot come and you do not want to give the reason.', o: ['Mir ist leider etwas dazwischengekommen.', 'Das passt mir gut.', 'Wie wäre es mit Freitag?'], why: 'This sentence says that something has come up, without details.' },
-            { q: 'A colleague cancels a meeting. You answer politely.', o: ['Kein Problem. Dann sprechen wir nächste Woche.', 'Das ist leider Ihr Problem.', 'Es tut mir leid, ich bin krank.'], why: '*Kein Problem* is friendly. Then suggest a new time.' },
+            { q: 'Sie möchten sich einen Tag später treffen.', o: ['Können wir den Termin auf morgen verschieben?', 'Können wir den Termin absagen?', 'Können wir den Termin vergessen?'], why: '*verschieben*: to move to another time.' },
+            { q: 'Sie können nicht kommen. Den Grund möchten Sie nicht sagen.', o: ['Mir ist leider etwas dazwischengekommen.', 'Das passt mir gut.', 'Wie wäre es mit Freitag?'], why: 'This sentence says that something has come up, without details.' },
+            { q: 'Eine Kollegin sagt ein Meeting ab. Sie antworten freundlich:', o: ['Kein Problem. Dann sprechen wir nächste Woche.', 'Das ist leider Ihr Problem.', 'Es tut mir leid, ich bin krank.'], why: '*Kein Problem* is friendly. Then suggest a new time.' },
           ] },
           { t: 'ex', kind: 'order', h: 'Build the sentences.', items: [
             { a: 'Können wir den Termin verschieben?', why: '*Können* first, *verschieben* at the end.' },
@@ -162,24 +162,24 @@ export const UNIT = {
     { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
       { q: 'Das Meeting ist am ___ April. (2.)', o: ['zweiten', 'zweite', 'zweiter'], why: 'After *am*: *-en*, *am zweiten*.' },
       { q: 'Passt ___ Montag um 9 Uhr?', o: ['Ihnen', 'Sie', 'Ihr'], why: '*passen* takes the Dativ: *Ihnen*.' },
-      { q: 'You cannot come at all. You ___ the appointment.', o: ['sagen … ab', 'verschieben', 'passen'], why: '*absagen*: to cancel. *Ich sage den Termin ab.*' },
-      { q: 'In a calendar invitation, *Zusagen* means:', o: ['Yes, I will come.', 'No, I cannot come.', 'Maybe.'], why: '*zusagen*: to say yes. *absagen*: to say no.' },
+      { q: 'Ich kann nicht kommen. Ich ___ den Termin leider ab.', o: ['sage', 'verschiebe', 'passe'], why: '*absagen*: to cancel. *ab* goes to the end.' },
+      { q: 'Sie klicken in einer Einladung auf *Zusagen*. Das heißt:', o: ['Ich komme.', 'Ich komme nicht.', 'Vielleicht komme ich.'], why: '*zusagen*: to say yes. *absagen*: to say no.' },
     ] },
     { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
       { q: 'Heute ist der ___ Oktober. (3.)', a: ['dritte'], why: '*der dritte*: a special form, no *-en* after *der*.' },
       { q: 'Wie wäre es ___ Donnerstag?', a: ['mit'], why: '*Wie wäre es mit …?*' },
       { q: 'Ich komme später, weil der Zug Verspätung ___. (haben)', a: ['hat'], why: 'After *weil*, the verb goes to the end.' },
-      { q: 'Können wir den Termin auf Freitag ___? (move)', a: ['verschieben'], why: '*verschieben auf*: to move to a new day.' },
+      { q: 'Ich kann am Montag nicht. Können wir den Termin auf Freitag ___?', a: ['verschieben'], why: '*verschieben auf*: to move to a new day.' },
     ] },
     { t: 'ex', kind: 'match', h: 'Match the phrase and the meaning.', pairs: [
-      ['Das passt mir gut.', 'Yes, that time is good for me.'],
-      ['Da kann ich leider nicht.', 'Sorry, that time is not possible for me.'],
-      ['Haben Sie am Freitag Zeit?', 'Are you free on Friday?'],
-      ['Es tut mir leid.', 'I am sorry.'],
+      ['Das passt mir gut.', 'Ja, da habe ich Zeit.'],
+      ['Da kann ich leider nicht.', 'Nein, da habe ich keine Zeit.'],
+      ['Haben Sie am Freitag Zeit?', 'Können Sie am Freitag?'],
+      ['Es tut mir leid.', 'Entschuldigung.'],
     ] },
     { t: 'ex', kind: 'order', h: 'Build the sentences.', items: [
       { a: 'Wie wäre es mit Dienstag?', why: 'A fixed phrase to suggest a day.' },
-      { a: 'Können wir den Termin verschieben?', why: '*Können* first, *verschieben* at the end.' },
+      { a: 'Können wir uns am Montag treffen?', why: '*Können* first, *uns* right after *wir*, *treffen* at the end.' },
     ] },
   ],
 };

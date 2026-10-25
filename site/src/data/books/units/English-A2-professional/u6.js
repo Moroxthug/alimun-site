@@ -13,7 +13,7 @@ export const UNIT = {
       art: 'dog',
       spreads: [
         [
-          { t: 'reading', title: 'Receptionist (full-time)', md: '**Hillside Medical Centre, Cardiff**\n\nWe are looking for a friendly receptionist to join our team.\n\nHours: Monday to Friday, 8 am to 4.30 pm\n\nThe job: you answer the phone, book appointments for patients and welcome them at the front desk.\n\nYou need good computer skills, good English and one year’s experience or more with customers.\n\nTo apply, send your CV and a short email to jobs@example.com.' },
+          { t: 'reading', title: 'Receptionist (full-time)', md: '**A medical centre in Cardiff**\n\nWe are looking for a friendly receptionist to join our team.\n\nHours: Monday to Friday, 8 am to 4.30 pm\n\nThe job: you answer the phone, book appointments for patients and welcome them at the front desk.\n\nYou need good computer skills, good English and one year’s experience or more with customers.\n\nTo apply, send your CV and a short email to jobs@example.com.' },
           { t: 'text', md: 'A **full-time** job is all week, usually about 35 to 40 hours. A **part-time** job is fewer hours. **Experience** is work you did before. **Skills** are things you can do well. To **apply** for a job means to ask for it in writing.' },
         ],
         [
@@ -40,7 +40,6 @@ export const UNIT = {
             ['a part-time job', '15 hours a week'],
             ['a temporary job', 'for three months only'],
             ['a permanent job', 'with no end date'],
-            ['a weekend job', 'Saturdays and Sundays'],
           ] },
         ],
         [
@@ -116,10 +115,10 @@ export const UNIT = {
       spreads: [
         [
           { t: 'reading', title: 'Café assistant (part-time)', md: 'A busy café in Leeds city centre.\n\nWeekends only: Saturday and Sunday, 9 am to 5 pm. You make coffee, serve customers and keep the café clean.\n\nNo experience needed: we give you training.\n\nCall Ellie on 0113 496 0921.' },
-          { t: 'reading', title: 'Warehouse team member (full-time)', md: 'Northgate Logistics, near Leeds.\n\nMonday to Friday, early or late shifts. You need a driving licence and one year’s experience in a warehouse.\n\nFree parking and a staff restaurant.\n\nApply online with your CV.' },
+          { t: 'reading', title: 'Warehouse team member (full-time)', md: 'Brackley Moor Deliveries, near Leeds.\n\nMonday to Friday, early or late shifts. You need a driving licence and one year’s experience in a warehouse.\n\nFree parking and a staff restaurant.\n\nApply online with your CV.' },
         ],
         [
-          { t: 'reading', title: 'Subject: Interview invitation', md: 'Dear Mr Mensah,\n\nThank you for your application for the job of warehouse team member. We would like to invite you to an interview on Tuesday 17 November at 11 am.\n\nThe interview takes about thirty minutes. Please bring your passport or another photo ID.\n\nPlease reply to this email to confirm the time. If the time is not good for you, call me on 0113 496 0388.\n\nKind regards,\nRachel Stone\nHR Assistant, Northgate Logistics' },
+          { t: 'reading', title: 'Subject: Interview invitation', md: 'Dear Mr Mensah,\n\nThank you for your application for the job of warehouse team member. We would like to invite you to an interview on Tuesday 17 November at 11 am.\n\nThe interview takes about thirty minutes. Please bring your passport or another photo ID.\n\nPlease reply to this email to confirm the time. If the time is not good for you, call me on 0113 496 0388.\n\nKind regards,\nRachel Stone\nHR Assistant, Brackley Moor Deliveries' },
           { t: 'ex', kind: 'tf', ng: true, h: 'Read the adverts and the email. True, false or not given?', items: [
             { q: 'The café job is from Monday to Friday.', a: 'f', why: 'It is *weekends only*.' },
             { q: 'You need experience for the café job.', a: 'f', why: '*No experience needed.*' },
@@ -148,7 +147,7 @@ export const UNIT = {
       { q: 'A job with 16 hours a week is ___.', o: ['part-time', 'full-time', 'overtime'], why: 'Only some hours: *part-time*.' },
       { q: 'I have five years’ ___ as a cook.', o: ['experience', 'experiences', 'an experience'], why: 'Work *experience* is uncountable.' },
       { q: 'From 2020 to 2023 I ___ in a factory.', o: ['worked', 'work', 'am working'], why: 'A finished job: past simple.' },
-      { q: 'What are your strengths? B: ___', o: ['I’m organised and I learn quickly.', 'I work in an office.', 'I’m from Ghana.'], why: 'Strengths are good things about you as a worker.' },
+      { q: 'A: What are your strengths? B: ___', o: ['I’m organised and I learn quickly.', 'I work in an office.', 'I’m from Ghana.'], why: 'Strengths are good things about you as a worker.' },
     ] },
     { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
       { q: 'I’d like to ___ for the job of receptionist.', a: ['apply'], why: '*Apply for* a job.' },
