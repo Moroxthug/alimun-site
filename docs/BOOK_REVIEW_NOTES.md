@@ -208,3 +208,10 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4: payslip figures are fictional examples, not real tax or National Insurance rates.
 - u5: what British speakers "really mean" softened with *often* and *not everyone*; check for stereotyping.
 - u1 p3 and u2 p3: letter-and-reply pairs counted as one reading (about 320 to 330 words together).
+
+## English B2, study and exams
+- u5: the report cites an invented earlier study and the examples use invented authors (Adeyemi 2024, Okoro 2021, Mendes 2020); check they cannot be mistaken for real references.
+- u6: exam facts stated plainly: B2 First long turn about a minute; IELTS up to two minutes after a minute to prepare; a wrong answer usually loses no marks.
+- u5 p1: *claim* glossed as showing doubt (a simplification).
+- u2 p1: essay part names left as words to learn (not translated).
+- u3 p1 practice paragraph (91 words), u3 p3 model summaries and u6 p3 model long turn are short texts on purpose.
