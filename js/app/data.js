@@ -244,6 +244,37 @@
     return c.from('session_attendance').update({ left_at: new Date().toISOString() }).eq('session_id', sessionId).eq('student_id', studentId).then(function () {});
   }
 
+  /* Homework (step 11): the assignments of the student's classes, the student's own submissions, the teacher's
+     feedback notes and the teachers' public names. Students can hand in and edit a submission while it is pending;
+     the database (trg_guard_submission_columns) keeps marks for teachers. */
+  function homework(studentId, cohortIds) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    var none = Promise.resolve({ data: [] }), ids = cohortIds || [];
+    return Promise.all([
+      ids.length ? c.from('assignments').select('id, cohort_id, teacher_id, title, type, prompt, due_date, min_words, created_at').in('cohort_id', ids).order('created_at', { ascending: false }).limit(200) : none,
+      c.from('assignment_submissions').select('id, assignment_id, submission_text, status, score, feedback, submitted_at, graded_at').eq('student_id', studentId).limit(500),
+      c.from('student_feedback').select('id, teacher_id, feedback_text, created_at').eq('student_id', studentId).order('created_at', { ascending: false }).limit(20)
+    ]).then(function (r) {
+      r.forEach(function (x) { if (x && x.error) throw x.error; });
+      var tids = {};
+      (r[0].data || []).concat(r[2].data || []).forEach(function (x) { if (x.teacher_id) tids[x.teacher_id] = true; });
+      var list = Object.keys(tids);
+      return (list.length ? c.from('teachers_public').select('id, full_name').in('id', list) : none).then(function (tr) {
+        var names = {};
+        (tr.data || []).forEach(function (x) { names[x.id] = x.full_name || ''; });
+        return { assignments: r[0].data || [], submissions: r[1].data || [], feedback: r[2].data || [], teachers: names };
+      });
+    });
+  }
+  function handIn(studentId, assignmentId, text) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('assignment_submissions').upsert({ assignment_id: assignmentId, student_id: studentId, submission_text: text, status: 'pending', submitted_at: new Date().toISOString() },
+      { onConflict: 'assignment_id,student_id' }).select('id, assignment_id, submission_text, status, score, feedback, submitted_at, graded_at').maybeSingle()
+      .then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+
   /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
   function libraryResults(studentId) {
     var c = client();
@@ -300,5 +331,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

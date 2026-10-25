@@ -54,6 +54,9 @@
     app_cl_minutes: ['app_cl_minutes_zero', 'app_cl_minutes_one', 'app_cl_minutes_two', 'app_cl_minutes_few', 'app_cl_minutes_many', 'app_cl_minutes_other'],
     app_cl_credits: ['app_cl_credits_zero', 'app_cl_credits_one', 'app_cl_credits_two', 'app_cl_credits_few', 'app_cl_credits_many', 'app_cl_credits_other'],
     app_cl_words_p: ['app_cl_words_p_zero', 'app_cl_words_p_one', 'app_cl_words_p_two', 'app_cl_words_p_few', 'app_cl_words_p_many', 'app_cl_words_p_other'],
+    app_hw_todo_n: ['app_hw_todo_n_zero', 'app_hw_todo_n_one', 'app_hw_todo_n_two', 'app_hw_todo_n_few', 'app_hw_todo_n_many', 'app_hw_todo_n_other'],
+    app_hw_late_n: ['app_hw_late_n_zero', 'app_hw_late_n_one', 'app_hw_late_n_two', 'app_hw_late_n_few', 'app_hw_late_n_many', 'app_hw_late_n_other'],
+    app_hw_words: ['app_hw_words_zero', 'app_hw_words_one', 'app_hw_words_two', 'app_hw_words_few', 'app_hw_words_many', 'app_hw_words_other'],
     app_lb_cards_added: ['app_lb_cards_added_zero', 'app_lb_cards_added_one', 'app_lb_cards_added_two', 'app_lb_cards_added_few', 'app_lb_cards_added_many', 'app_lb_cards_added_other'],
     app_mt_questions: ['app_mt_questions_zero', 'app_mt_questions_one', 'app_mt_questions_two', 'app_mt_questions_few', 'app_mt_questions_many', 'app_mt_questions_other'],
     app_mt_tasks: ['app_mt_tasks_zero', 'app_mt_tasks_one', 'app_mt_tasks_two', 'app_mt_tasks_few', 'app_mt_tasks_many', 'app_mt_tasks_other'],
@@ -288,7 +291,7 @@
     if (d.flashcardsDue > 0) items.push({ art: 'ghost', tint: 'coral', href: '#/cards/review', h: tn('app_home_cards', d.flashcardsDue), p: t('app_home_cards_p') });
     if (d.homework.length) {
       var hw = d.homework[0];
-      items.push({ art: 'monster', tint: 'mint', href: '#/homework', h: hw.titleKey ? t(hw.titleKey) : hw.title,
+      items.push({ art: 'monster', tint: 'mint', href: hw.titleKey ? '#/homework' : '#/homework/' + hw.id, h: hw.titleKey ? t(hw.titleKey) : hw.title,
         p: hw.due_date ? t('app_home_hw_due', { date: fmt(hw.due_date + 'T12:00:00', { weekday: 'long', day: 'numeric', month: 'long' }) }) : t('app_home_hw_nodate') });
     }
     if (d.topics && d.topics.length) items.push({ art: 'dragon', tint: 'sun', href: '#/practice', h: t('app_home_topic_h', { topic: d.topics[0] }), p: t('app_home_topic_p') });
@@ -472,6 +475,8 @@
   var testsHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('tests', false); } });
   var libraryHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('library', false); } });
   var classesHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('classes', false); } });
+  var homeworkHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('homework', false); } });
+  function homeworkParts() { return location.hash.replace(/^#\/homework\/?/, '').split('/').filter(Boolean); }
   function classesParts() { return location.hash.replace(/^#\/classes\/?/, '').split('/').filter(Boolean); }
   function libraryParts() { return location.hash.replace(/^#\/library\/?/, '').split('/').filter(Boolean); }
   function testsParts() { return location.hash.replace(/^#\/tests\/?/, '').split('/').filter(Boolean); }
@@ -487,12 +492,13 @@
   }
   function render(id, animate) {
     var r = byId[id];
-    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' ? '' : soonView(r);
+    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' ? '' : soonView(r);
     var swap = function () {
       if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
       if (id !== 'tests' && window.AlimunTests) window.AlimunTests.reset();
       if (window.AlimunLibrary) window.AlimunLibrary.reset();
       if (window.AlimunClasses) window.AlimunClasses.reset();
+      if (window.AlimunHomework) window.AlimunHomework.reset();
       view.innerHTML = html;
       view.classList.remove('is-leaving');
       document.body.classList.remove('is-reading');
@@ -505,6 +511,11 @@
       if (id === 'cards') {
         window.AlimunCards.mount(view, cardsParts(), cardsHelpers).then(function (res) {
           if (current === 'cards' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
+        });
+      }
+      if (id === 'homework') {
+        window.AlimunHomework.mount(view, homeworkParts(), homeworkHelpers).then(function (res) {
+          if (current === 'homework' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
       if (id === 'classes') {
@@ -586,7 +597,7 @@
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes') render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework') render(id, true); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 

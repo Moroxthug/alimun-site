@@ -1181,3 +1181,29 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
   .cl-live__frame { min-height: 62dvh; }
 }
 .cl-next .mt-confirm { margin-top: 16px; color: var(--ink); }
+
+/* ---------- Homework (step 11, js/app/homework.js) ---------- */
+.hw-list .qunits__list li > div span { color: var(--muted); font-weight: 500; }
+.hw-list .qunits__list li > div span.hw-late { color: #b0472f; font-weight: 700; }
+.hw-fb__row { padding: 14px 0; border-top: 1px solid var(--line); }
+.hw-fb__row:first-of-type { border-top: 0; }
+.hw-fb__row .t-small { margin: 0 0 6px; color: var(--muted); }
+.hw-fb__row p { margin: 0 0 8px; }
+.hw-body { display: grid; gap: 18px; }
+@media (min-width: 1100px) { .hw-body { grid-template-columns: minmax(0, .9fr) minmax(0, 1.1fr); align-items: start; } .hw-task { position: sticky; top: 96px; } }
+.hw-task .t-h3, .hw-edit .t-h3 { margin: 0 0 10px; }
+.hw-task .t-body p { margin: 0 0 10px; line-height: 1.6; }
+.hw-min { margin: 6px 0 0; color: var(--forest); font-weight: 700; }
+.hw-status { margin: -4px 0 12px; color: var(--forest); font-weight: 600; }
+.hw-in { min-height: 300px; }
+.hw-edit .wr-count { margin: 8px 0 0; }
+.hw-actions { margin-top: 16px; }
+.hw-edit [data-msg] .mt-confirm, .hw-edit [data-msg] .cl-flash { margin-top: 14px; }
+.hw-coach { margin-top: 14px; }
+.hw-coach q { font-weight: 700; color: var(--forest); }
+.hw-coach__good { margin: 0 0 6px; }
+.hw-coach__note { margin: 12px 0 0; color: var(--muted); }
+.hw-mark .t-num { margin: 8px 0 0; }
+.hw-mark__fb { margin-top: 14px; }
+.hw-mark__fb p { margin: 0 0 8px; }
+.hw-answer p { margin: 0 0 10px; line-height: 1.6; }
