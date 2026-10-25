@@ -186,3 +186,10 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3: salary usually stated as gross per year; 48.000 Euro is invented.
 - u5: workplace habits (birthday cake, *Mahlzeit!*, *Ausstand*) worded with *viele* or *manche*.
 - u6 p1: *da* not offered beside *weil*, *denn*, *deshalb*; u1 test options differ only in capital letters.
+
+## English B2, work
+- u1 and u6 overlap in topic with English B2 course book u3 (conditions in negotiation, a career-change interview); different situations and phrases used.
+- u2: reported speech always backshifts; keeping the present for facts still true is not taught.
+- u4: *recommend that* + base form taught beside *should*; both accepted. Proportion ranges for *the vast majority* and *almost all* overlap; exercises never offer both for one figure.
+- u3: cleft gap accepts *which* as well as *that*.
+- Figures in readings belong to fictional companies. u6 p1 model email (84 words) is a second text below the reading range.
