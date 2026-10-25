@@ -121,3 +121,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p3: invented letter from the Ausländerbehörde; check it sounds like a real office letter.
 - u4: "many contracts can be ended with one month's notice after the minimum term" (general); invented prices.
 - Word-order items that rely on a capitalised first word (*Anbei sende ich Ihnen …*).
+
+## English A2, work
+- Invented companies (Brightside Travel, Northway Hotels and others) may match real small firms; phone numbers use the UK ranges reserved for fiction, emails use example.com.
+- u4, u6: a weekday with a date (Thursday 12 November) is right for 2026 only.
+- u6: full-time "usually about 35 to 40 hours"; many UK CVs leave out the photo and date of birth (general).
+- u2: British *oh* and *double* for numbers; simplified letter sounds.
