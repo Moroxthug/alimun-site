@@ -604,3 +604,12 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Reader: a book whose units are not written yet says so.
 - Checked locally: all 194 lessons and 48 unit tests played through page by page with the right answers (German interface), every test scores 100%, no locked page, no console errors, no untranslated keys.
 - Next (owner's order): goal books for A2 to B2, then the other four languages.
+
+## 2026-10-25 — Goal books: English and German A2 to B2 written
+- Owner: start the goal books.
+- Written: all 24 goal books (English and German; A2, B1, B2; moving abroad, work, study and exams, travel), six units each, three lessons and a unit test per unit: 144 units, about 5,200 lesson exercises. The two B1 pilots were completed from their unit 1. Each book follows the level of its course book and teaches the language of real situations (registering, renting, the doctor, job interviews and meetings, seminars and exam tasks, travel and culture). Every book passes `scripts/check-book.mjs`.
+- Writers' doubts for the native teacher in `docs/BOOK_REVIEW_NOTES.md`: mostly practical facts stated generally (Anmeldung, deposit, statutory holiday, tax codes and classes, exam formats), invented figures, names and references, and generalisations about customs. Fixed directly: an invented email address moved to a reserved example domain; one Arabic explanation that had lost its subject.
+- Explanations translated into Spanish, French, German, Portuguese, Chinese, Arabic and Italian for every goal book; nothing missing; checked for markers and for text in the wrong language.
+- One commit took in B2 units still being drafted; they passed the checker and were completed in later commits.
+- Checked on production (https://alimun.com): every lesson and unit test of the 24 goal books played through with the right answers, with Arabic, Chinese and French interfaces (432 lessons, 144 tests), no locked page, no console errors.
+- Next (owner's order): the other four languages.
