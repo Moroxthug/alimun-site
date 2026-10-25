@@ -38,8 +38,8 @@
           return '<button class="btn btn--ghost btn--sm" type="button" data-play="s" data-voice="' + esc(v) + '">' + esc(v) + '</button>';
         }).join('') + '</div>' +
         '<div class="vc__dlg"><p class="t-small">' + x.d.map(function (d) { return '<b>' + d[0] + '</b> ' + esc(d[1]); }).join('<br>') + '</p>' +
-        '<div class="btn-row"><label class="t-small">A <select data-a>' + opts('Puck') + '</select></label>' +
-        '<label class="t-small">B <select data-b>' + opts('Kore') + '</select></label>' +
+        '<div class="btn-row"><label class="t-small">A <select data-a>' + opts('Charon') + '</select></label>' +
+        '<label class="t-small">B <select data-b>' + opts('Orus') + '</select></label>' +
         '<button class="btn btn--primary btn--sm" type="button" data-play="d">Play the dialogue</button></div></div>' +
         '</section>';
     }).join('');

@@ -34,18 +34,34 @@ test('a WAV from the API is passed through unchanged', () => {
   assert.deepStrictEqual(toWav({ data: w.toString('base64'), mime: 'audio/wav' }), w);
 });
 
-test('falls back to generateContent when the Interactions call fails', async () => {
+test('a single voice falls back to generateContent when the Interactions call fails', async () => {
   const calls = [];
   global.fetch = async (url, opt) => {
     calls.push({ url, body: JSON.parse(opt.body) });
     if (url.endsWith('/interactions')) return { ok: false, status: 404, text: async () => '{"error":"not found"}' };
     return { ok: true, status: 200, text: async () => JSON.stringify({ candidates: [{ content: { parts: [{ inlineData: { mimeType: 'audio/L16;rate=24000', data: pcm.toString('base64') } }] } }] }) };
   };
-  const out = await speak({ model: 'gemini-3.8-flash-tts', turns: [{ speaker: 'A', text: 'Hallo' }, { speaker: 'B', text: 'Hi' }], voices: { A: 'Puck', B: 'Kore' }, style: '' });
+  const out = await speak({ model: 'gemini-3.8-flash-tts', turns: [{ text: 'Hallo' }], voices: { _: 'Orus' }, style: '' });
   assert.strictEqual(out.slice(0, 4).toString(), 'RIFF');
   assert.strictEqual(calls.length, 2);
-  assert.deepStrictEqual(calls[0].body.generation_config.speech_config.speakers.map((s) => s.voice), ['Puck', 'Kore']);
-  assert.strictEqual(calls[1].body.generationConfig.speechConfig.multiSpeakerVoiceConfig.speakerVoiceConfigs.length, 2);
+  assert.strictEqual(calls[1].body.generationConfig.speechConfig.voiceConfig.prebuiltVoiceConfig.voiceName, 'Orus');
+});
+
+test('a dialogue is sent without "mode", and spoken line by line if the two-speaker request is refused', async () => {
+  const calls = [];
+  global.fetch = async (url, opt) => {
+    const body = JSON.parse(opt.body);
+    calls.push(body);
+    if (url.endsWith('/interactions') && !Array.isArray(body.generation_config.speech_config)) return { ok: false, status: 400, text: async () => '{"error":"no"}' };
+    const voice = body.generation_config.speech_config[0].voice;
+    return { ok: true, status: 200, text: async () => JSON.stringify({ steps: [{ content: [{ type: 'audio', data: Buffer.alloc(voice === 'Charon' ? 100 : 200, 1).toString('base64'), mime_type: 'audio/l16' }] }] }) };
+  };
+  const out = await speak({ model: 'gemini-3.8-flash-tts', turns: [{ speaker: 'A', text: 'Hallo' }, { speaker: 'B', text: 'Hi' }], voices: { A: 'Charon', B: 'Orus' }, style: '' });
+  assert.strictEqual(calls[0].generation_config.speech_config.mode, undefined);
+  assert.deepStrictEqual(calls[0].generation_config.speech_config.speakers.map((x) => x.voice), ['Charon', 'Orus']);
+  assert.deepStrictEqual(calls.slice(1).map((c) => c.generation_config.speech_config[0].voice), ['Charon', 'Orus']);
+  const gap = Math.round(24000 * 0.35) * 2;
+  assert.strictEqual(out.length, 44 + 100 + gap + 200);
 });
 
 test('status says whether the key is set, and sample refuses without it', async () => {

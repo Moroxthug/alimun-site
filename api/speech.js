@@ -88,8 +88,19 @@ async function callJSON(url, body) {
   return { ok: r.ok, status: r.status, json, text };
 }
 
-/* Interactions API first; generateContent as a fallback */
-async function speak({ model, turns, voices, style }) {
+/* PCM samples of a WAV (the "data" chunk) */
+function pcmOf(w) {
+  let at = 12;
+  while (at + 8 <= w.length) {
+    const id = w.toString('ascii', at, at + 4), size = w.readUInt32LE(at + 4);
+    if (id === 'data') return { pcm: w.slice(at + 8, at + 8 + size), rate: w.readUInt32LE(24) };
+    at += 8 + size + (size % 2);
+  }
+  return { pcm: w.slice(44), rate: 24000 };
+}
+
+/* One request: Interactions API first, generateContent as a fallback (single voice) */
+async function once({ model, turns, voices, style }, errors) {
   const multi = turns.length > 1 || !!turns[0].speaker;
   const interaction = {
     model,
@@ -102,27 +113,46 @@ async function speak({ model, turns, voices, style }) {
     response_format: { type: 'audio', mime_type: 'audio/wav' },
     generation_config: {
       speech_config: multi
-        ? { mode: 'conversational', speakers: Object.keys(voices).map((s) => ({ speaker: s, voice: voices[s] })) }
+        ? { speakers: Object.keys(voices).map((s) => ({ speaker: s, voice: voices[s] })) }
         : [{ voice: voices._ }],
     },
   };
   let r = await callJSON(BASE + '/interactions', interaction);
   let audio = r.ok && findAudio(r.json);
   if (audio) return toWav(audio);
-  const first = r;
+  errors.push('interactions ' + r.status + ' ' + String(r.text).slice(0, 300));
+  if (multi) return null;
 
-  const prompt = (style ? 'Say in a ' + style + ' way:\n' : '') + turns.map((t) => (t.speaker ? t.speaker + ': ' : '') + t.text).join('\n');
-  const speechConfig = multi
-    ? { multiSpeakerVoiceConfig: { speakerVoiceConfigs: Object.keys(voices).map((s) => ({ speaker: s, voiceConfig: { prebuiltVoiceConfig: { voiceName: voices[s] } } })) } }
-    : { voiceConfig: { prebuiltVoiceConfig: { voiceName: voices._ } } };
+  const prompt = (style ? 'Say in a ' + style + ' way:\n' : '') + turns[0].text;
   r = await callJSON(BASE + '/models/' + model + ':generateContent', {
     contents: [{ parts: [{ text: prompt }] }],
-    generationConfig: { responseModalities: ['AUDIO'], speechConfig },
+    generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voices._ } } } },
   });
   audio = r.ok && findAudio(r.json);
   if (audio) return toWav(audio);
+  errors.push('generateContent ' + r.status + ' ' + String(r.text).slice(0, 300));
+  return null;
+}
+
+/* A dialogue goes in one two-speaker request; if that is refused, each line is spoken with its own voice and joined */
+async function speak({ model, turns, voices, style }) {
+  const errors = [];
+  let out = await once({ model, turns, voices, style }, errors);
+  if (!out && turns[0].speaker) {
+    const parts = [];
+    for (const t of turns) {
+      const w = await once({ model, turns: [{ text: t.text }], voices: { _: voices[t.speaker] }, style }, errors);
+      if (!w) { parts.length = 0; break; }
+      parts.push(pcmOf(w));
+    }
+    if (parts.length) {
+      const rate = parts[0].rate, gap = Buffer.alloc(Math.round(rate * 0.35) * 2);
+      out = wav(Buffer.concat(parts.flatMap((p, i) => (i ? [gap, p.pcm] : [p.pcm]))), rate);
+    }
+  }
+  if (out) return out;
   const err = new Error('Speech request failed');
-  err.detail = { interactions: first.status + ' ' + String(first.text).slice(0, 300), generateContent: r.status + ' ' + String(r.text).slice(0, 300) };
+  err.detail = errors;
   throw err;
 }
 
@@ -169,4 +199,4 @@ module.exports = async function handler(req, res) {
   }
 };
 
-module.exports._test = { findAudio, toWav, speak, wav };
+module.exports._test = { findAudio, toWav, speak, wav, pcmOf };
