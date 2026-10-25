@@ -57,6 +57,13 @@
     app_hw_todo_n: ['app_hw_todo_n_zero', 'app_hw_todo_n_one', 'app_hw_todo_n_two', 'app_hw_todo_n_few', 'app_hw_todo_n_many', 'app_hw_todo_n_other'],
     app_hw_late_n: ['app_hw_late_n_zero', 'app_hw_late_n_one', 'app_hw_late_n_two', 'app_hw_late_n_few', 'app_hw_late_n_many', 'app_hw_late_n_other'],
     app_hw_words: ['app_hw_words_zero', 'app_hw_words_one', 'app_hw_words_two', 'app_hw_words_few', 'app_hw_words_many', 'app_hw_words_other'],
+    app_pg_words: ['app_pg_words_zero', 'app_pg_words_one', 'app_pg_words_two', 'app_pg_words_few', 'app_pg_words_many', 'app_pg_words_other'],
+    app_pg_words_of: ['app_pg_words_of_zero', 'app_pg_words_of_one', 'app_pg_words_of_two', 'app_pg_words_of_few', 'app_pg_words_of_many', 'app_pg_words_of_other'],
+    app_pg_days: ['app_pg_days_zero', 'app_pg_days_one', 'app_pg_days_two', 'app_pg_days_few', 'app_pg_days_many', 'app_pg_days_other'],
+    app_pg_n_answers: ['app_pg_n_answers_zero', 'app_pg_n_answers_one', 'app_pg_n_answers_two', 'app_pg_n_answers_few', 'app_pg_n_answers_many', 'app_pg_n_answers_other'],
+    app_pg_n_pieces: ['app_pg_n_pieces_zero', 'app_pg_n_pieces_one', 'app_pg_n_pieces_two', 'app_pg_n_pieces_few', 'app_pg_n_pieces_many', 'app_pg_n_pieces_other'],
+    app_pg_n_papers: ['app_pg_n_papers_zero', 'app_pg_n_papers_one', 'app_pg_n_papers_two', 'app_pg_n_papers_few', 'app_pg_n_papers_many', 'app_pg_n_papers_other'],
+    app_pg_n_hw: ['app_pg_n_hw_zero', 'app_pg_n_hw_one', 'app_pg_n_hw_two', 'app_pg_n_hw_few', 'app_pg_n_hw_many', 'app_pg_n_hw_other'],
     app_lb_cards_added: ['app_lb_cards_added_zero', 'app_lb_cards_added_one', 'app_lb_cards_added_two', 'app_lb_cards_added_few', 'app_lb_cards_added_many', 'app_lb_cards_added_other'],
     app_mt_questions: ['app_mt_questions_zero', 'app_mt_questions_one', 'app_mt_questions_two', 'app_mt_questions_few', 'app_mt_questions_many', 'app_mt_questions_other'],
     app_mt_tasks: ['app_mt_tasks_zero', 'app_mt_tasks_one', 'app_mt_tasks_two', 'app_mt_tasks_few', 'app_mt_tasks_many', 'app_mt_tasks_other'],
@@ -476,6 +483,7 @@
   var libraryHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('library', false); } });
   var classesHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('classes', false); } });
   var homeworkHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('homework', false); } });
+  var progressHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('progress', false); } });
   function homeworkParts() { return location.hash.replace(/^#\/homework\/?/, '').split('/').filter(Boolean); }
   function classesParts() { return location.hash.replace(/^#\/classes\/?/, '').split('/').filter(Boolean); }
   function libraryParts() { return location.hash.replace(/^#\/library\/?/, '').split('/').filter(Boolean); }
@@ -492,7 +500,7 @@
   }
   function render(id, animate) {
     var r = byId[id];
-    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' ? '' : soonView(r);
+    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' ? '' : soonView(r);
     var swap = function () {
       if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
       if (id !== 'tests' && window.AlimunTests) window.AlimunTests.reset();
@@ -512,6 +520,9 @@
         window.AlimunCards.mount(view, cardsParts(), cardsHelpers).then(function (res) {
           if (current === 'cards' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
+      }
+      if (id === 'progress') {
+        window.AlimunProgress.mount(view, [], progressHelpers);
       }
       if (id === 'homework') {
         window.AlimunHomework.mount(view, homeworkParts(), homeworkHelpers).then(function (res) {

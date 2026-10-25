@@ -26,7 +26,7 @@ Owner, 24 Oct 2026: rebuild the dashboards from scratch, without the current one
 9. Listening and reading library. Built, waiting for the owner (25 Oct 2026): Library (`#/library`, `js/app/library.js`, file format in `docs/LIBRARY.md`), decisions below ("Step 9 decisions").
 10. Live classes and calendar: joining, notes, class vocabulary, 1:1 bookings. Built, waiting for the owner (25 Oct 2026): Classes (`#/classes`, `js/app/classes.js`), decisions below ("Step 10 decisions").
 11. Homework, essays and teacher feedback. Built, waiting for the owner (25 Oct 2026): Homework (`#/homework`, `js/app/homework.js`), decisions below ("Step 11 decisions").
-12. Progress: skills, levels, topics, history.
+12. Progress: skills, levels, topics, history. Built, waiting for the owner (25 Oct 2026): Progress (`#/progress`, `js/app/progress.js`), decisions below ("Step 12 decisions").
 13. Messages.
 14. Settings, plan and billing; free-plan limits and the occasional upgrade pop-up.
 15. Teacher dashboard (section 6), then the admin pages, in the same step-by-step way.
@@ -66,6 +66,13 @@ The new dashboards are built next to the current ones and switched over only whe
 - Homework page: what is to do (due dates, late ones in words), what waits for the teacher, what is marked (score and feedback), and the teacher's general feedback notes. One page per assignment: the task, the editor with a word count against the teacher's minimum, the draft kept in the browser while writing, handing in confirmed in the page (with a warning when the answer is shorter than asked), changing it until it is marked, and the teacher's mark and feedback afterwards.
 - Speaking homework: the student records up to three minutes, the words are transcribed (`/api/ai?action=transcribe`) and can be corrected before they are handed in as text; the recording is not kept.
 - "Check before I hand it in" (writing, 15 words or more): up to four places to look at again, quoted with a hint, and one good point, in the student's language, through `/api/ai?action=grade` (students with a plan). It never rewrites the text or gives a mark; the teacher marks. Teachers' drafted marks stay in the teacher dashboard (step 15).
+
+## Step 12 decisions (owner, 25 Oct 2026: "go ahead with progress")
+- Everything is counted from what the student has done, nothing is estimated, and no database change: practice memory (every answer in lessons, tests and practice), practice_progress (book pages and unit tests, quizzes, mock papers, library pieces), session_attendance, assignment_submissions, vocab_reviews.
+- Level: the course level on the CEFR ladder, the level test's result, lessons done and unit tests passed in the course book. Words learned: flashcards in box 3 or higher.
+- Skills as the share of answers right: listening, speaking, reading, writing, grammar and words, each saying what it rests on ("18 answers, one mock test paper"); under ten answers' worth it says there is not enough yet instead of a number. A library piece counts like 12 answers, a marked homework like 10 and a mock paper like 20 in the share.
+- Topics: the course book's lessons (titles already translated) where the student is strongest and those to work on, from at least four answers each, with the level test's focus topics. The book's 550 topic tags have no translated names, so they are not shown.
+- History: active days in each of the last twelve weeks, and the latest milestones (unit tests, mock papers, library pieces, quizzes, marked homework, live classes).
 
 ## 3. Learning material
 - Course books for every language and every level, A1, A2, B1, B2, C1, C2: extensive, unit by unit, page by page. Six languages × six levels = 36 course books, about eight units each.

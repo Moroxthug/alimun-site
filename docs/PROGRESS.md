@@ -717,3 +717,10 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Screen: to do, waiting, marked, teacher's feedback; per assignment the task, editor with word count and minimum, browser draft, hand in and change while pending (confirmed in the page), the mark and feedback when graded; speaking homework recorded and transcribed; "Check before I hand it in" with quoted pointers, never a rewrite or a mark.
 - 69 `app_hw_*` keys in nine languages (Arabic plural forms).
 - Checked with sample homework: the lists, writing with the word count, the short-answer warning, handing in and the waiting state, a marked piece, speaking with a fake microphone and a stand-in transcription; desktop, no errors. Not checked from here: handing in for real (no assignments in the database yet) and the check through the AI service (signed-in student with a plan).
+
+## 2026-10-25 — Dashboards, step 12: progress (built, waiting for the owner)
+- Owner: go ahead with progress (homework to be tested after the teacher dashboard is redone). New section Progress (`#/progress`, `js/app/progress.js`), replacing the "soon" page. Decisions in `docs/DASHBOARD_PLAN.md` ("Step 12 decisions"). No database change.
+- `js/app/data.js` `progress()` (practice_progress rows, attendance, submissions with their type, flashcard boxes); `AlimunPractice.memory()` exposes the practice memory after `use()`.
+- Screen: level ladder, level test, course book lessons and unit tests; words learned; five skills with what each rests on (or "not enough to tell yet"); lessons to work on and strongest lessons (links to the lesson, practice round); the level test's focus topics; active days per week for twelve weeks; the latest milestones.
+- 53 `app_pg_*` keys in nine languages (Arabic plural forms).
+- Checked with sample progress: desktop English, phone Arabic, no errors, no page wider than the phone.

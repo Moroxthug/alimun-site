@@ -275,6 +275,24 @@
       .then(function (r) { if (r.error) throw r.error; return r.data; });
   }
 
+  /* Progress (step 12): what the student has done, for skills, levels and history: every practice_progress row
+     (book pages and tests, quizzes, mock tests, library), classes attended, homework handed in and marked (with
+     its type), and the flashcards' boxes */
+  function progress(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    var since = new Date(Date.now() - 120 * DAY).toISOString();
+    return Promise.all([
+      c.from('practice_progress').select('ex_key, done, graded_score, updated_at').eq('student_id', studentId).order('updated_at', { ascending: false }).limit(3000),
+      c.from('session_attendance').select('session_id, joined_at').eq('student_id', studentId).gte('joined_at', since).limit(500),
+      c.from('assignment_submissions').select('status, score, submitted_at, graded_at, assignments ( title, type )').eq('student_id', studentId).limit(500),
+      c.from('vocab_reviews').select('box, last_reviewed_at, due_on').eq('student_id', studentId).limit(5000)
+    ]).then(function (r) {
+      r.forEach(function (x) { if (x && x.error) throw x.error; });
+      return { rows: r[0].data || [], attendance: r[1].data || [], submissions: r[2].data || [], cards: r[3].data || [] };
+    });
+  }
+
   /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
   function libraryResults(studentId) {
     var c = client();
@@ -331,5 +349,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, progress: progress, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

@@ -828,5 +828,5 @@
   }
 
   /* debug(): the blocks of the round on screen (used by scripts/play-books.js) */
-  window.AlimunPractice = { mount: mount, use: use, record: record, mistakesDue: mistakesDue, transcriber: function (language) { return transcriber(language); }, debug: function () { return R && R.ex.blocks; }, clock: function () { return Q; } };
+  window.AlimunPractice = { mount: mount, use: use, record: record, mistakesDue: mistakesDue, memory: function () { return readMem(); }, transcriber: function (language) { return transcriber(language); }, debug: function () { return R && R.ex.blocks; }, clock: function () { return Q; } };
 })();
