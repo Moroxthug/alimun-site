@@ -28,7 +28,7 @@ Owner, 24 Oct 2026: rebuild the dashboards from scratch, without the current one
 11. Homework, essays and teacher feedback. Built, waiting for the owner (25 Oct 2026): Homework (`#/homework`, `js/app/homework.js`), decisions below ("Step 11 decisions").
 12. Progress: skills, levels, topics, history. Built, waiting for the owner (25 Oct 2026): Progress (`#/progress`, `js/app/progress.js`), decisions below ("Step 12 decisions").
 13. Messages. Built, waiting for the owner (25 Oct 2026): Messages (`#/messages`, `js/app/messages.js`); tables `supabase/migrations/202610251800_messages.sql`, applied on 25 Oct 2026 (owner's yes; finished by the owner in the SQL Editor) and verified; the teachers' side is `/app/messages` until step 15. Decisions below ("Step 13 decisions").
-14. Settings, plan and billing; free-plan limits and the occasional upgrade pop-up.
+14. Settings, plan and billing; free-plan limits and the occasional upgrade pop-up. Settings built, waiting for the owner (25 Oct 2026): Settings (`#/settings`, `js/app/settings.js`). Free-plan limits and the upgrade pop-up wait for the owner's decision. Decisions below ("Step 14 decisions").
 15. Teacher dashboard (section 6), then the admin pages, in the same step-by-step way.
 The new dashboards are built next to the current ones and switched over only when complete.
 
@@ -108,3 +108,8 @@ Choose the answer; fill the gap (typed and drop-down); word bank; put words in o
 
 ## 7. Quality bar
 Top-notch visual quality and content quality on every screen and every exercise; review by native teachers; huge variety so students do not get the same thing all the time.
+
+## Step 14 decisions (owner, 25 Oct 2026: "go ahead with settings")
+- One page, four parts. The plan: the plan's name and status as the payment webhook wrote them (never changed from the browser); subscribers open Stripe's billing portal (`/api/stripe?action=billing-portal`, address checked to be https on stripe.com) to change card, see invoices, change plan or cancel; free and waiting-list students are sent to the approved plans page `/tiers`; a plan given by hand shows no button. About you: name, course language and level (a change restarts the dashboard, because the book, practice and library follow it), why and by when, time zone, days and times that suit them for classes. These are exactly the columns the database's `guard_student_profile_columns` lets a student change; the database checks the values again. Dashboard language: this device only (`alimun-lang`). Account: new password (8 characters at least), sign out, and asking for the account to be deleted through the contact page (no self-service deletion).
+- No database change. Notifications are not on the page: there are no notification settings to keep yet.
+- Not built, waiting for the owner: what the free plan limits, and when (if ever) an upgrade pop-up appears.

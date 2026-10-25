@@ -486,6 +486,7 @@
   var homeworkHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('homework', false); } });
   var progressHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('progress', false); } });
   var messagesHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('messages', false); } });
+  var settingsHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('settings', false); } });
   function messagesParts() { return location.hash.replace(/^#\/messages\/?/, '').split('/').filter(Boolean); }
   function homeworkParts() { return location.hash.replace(/^#\/homework\/?/, '').split('/').filter(Boolean); }
   function classesParts() { return location.hash.replace(/^#\/classes\/?/, '').split('/').filter(Boolean); }
@@ -503,7 +504,7 @@
   }
   function render(id, animate) {
     var r = byId[id];
-    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' || id === 'messages' ? '' : soonView(r);
+    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' || id === 'messages' || id === 'settings' ? '' : soonView(r);
     var swap = function () {
       if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
       if (id !== 'tests' && window.AlimunTests) window.AlimunTests.reset();
@@ -529,6 +530,9 @@
         window.AlimunMessages.mount(view, messagesParts(), messagesHelpers).then(function (res) {
           if (current === 'messages' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
+      }
+      if (id === 'settings') {
+        window.AlimunSettings.mount(view, [], settingsHelpers);
       }
       if (id === 'progress') {
         window.AlimunProgress.mount(view, [], progressHelpers);

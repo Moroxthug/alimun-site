@@ -293,6 +293,36 @@
     });
   }
 
+  /* Settings (step 14): the student's own profile row and e-mail, and saving the fields a student may change (the
+     database's guard_student_profile_columns keeps tier and billing for the payment webhook) */
+  function settings() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.auth.getSession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session) return null;
+      return c.from('student_profiles').select('full_name, language, level, goal_track, goal_timeframe, timezone, preferred_days, preferred_time_start, preferred_time_end, tier, stripe_subscription_status, enrolled_cohort_id')
+        .eq('user_id', session.user.id).maybeSingle().then(function (r) {
+          if (r.error) throw r.error;
+          return { email: session.user.email || '', profile: r.data };
+        });
+    });
+  }
+  function saveProfile(patch) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.auth.getSession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session) throw new Error('Not signed in');
+      return c.from('student_profiles').update(Object.assign({}, patch, { updated_at: new Date().toISOString() })).eq('user_id', session.user.id).then(function (r) { if (r.error) throw r.error; });
+    });
+  }
+  function changePassword(pw) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.auth.updateUser({ password: pw }).then(function (r) { if (r.error) throw r.error; });
+  }
+
   /* Messages (step 13, supabase/migrations/202610251800_messages.sql): conversations through my_threads() and
      open_thread(); the database sets each sender's name and role and limits how fast messages can be sent */
   function myThreads() {
@@ -420,5 +450,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, teacherInbox: teacherInbox, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, teacherInbox: teacherInbox, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

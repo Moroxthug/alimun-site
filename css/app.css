@@ -1290,3 +1290,24 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
   .ms-main { min-height: 0; height: calc(100dvh - 200px); }
   .ms-msg { max-width: 88%; }
 }
+
+/* ---------- Settings (step 14, js/app/settings.js) ---------- */
+.st-form { display: grid; gap: 16px; margin-top: 18px; max-width: 760px; }
+.st-row { display: grid; gap: 16px; }
+@media (min-width: 700px) { .st-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.st-field { display: grid; gap: 6px; min-width: 0; margin: 0; padding: 0; border: 0; }
+.st-lbl { font-weight: 700; font-size: 15px; padding: 0; }
+.st-hint, .st-note { color: var(--muted); margin: 0; }
+.st-note { margin-top: -8px; }
+.st-in { width: 100%; min-width: 0; border: 0; border-radius: var(--r-sm); padding: 12px 14px; font: inherit; font-size: 16px; background: var(--white); box-shadow: inset 0 0 0 2px var(--line); outline: none; transition: box-shadow var(--t-fast); }
+.st-in:focus { box-shadow: inset 0 0 0 2px var(--forest); }
+.st-in:disabled { background: var(--bone); color: var(--muted); }
+.st-days { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px 16px; margin-top: 4px; }
+.st-day { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.st-day input { width: 20px; height: 20px; accent-color: var(--forest); margin: 0; }
+.st-msg { margin: 0; min-height: 1.4em; color: var(--forest); font-weight: 600; }
+.st-msg.is-bad { color: #b0472f; }
+.st-msg--light { color: var(--lime); margin-top: 12px; }
+.st-msg--light.is-bad { color: var(--coral); }
+.st-plan__p { margin: 10px 0 0; color: var(--on-forest); }
+.st-acc-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
