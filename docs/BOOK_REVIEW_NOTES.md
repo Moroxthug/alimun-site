@@ -78,3 +78,12 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7: two *zwar … aber* word-order items rely on the capital letter of the first tile; "Was mich überzeugt hat, ___ die Kameraarbeit" offers *ist* (*war* also correct but not offered); the test has 12 questions.
 - u8 p2: modal particles (*eben*, *doch*): check each item has one answer; the test gap "dir ___ schon dreimal erklärt" accepts *doch* and *ja*.
 - Several word-order items rely on the capital letter of the first tile.
+
+# Goal books
+
+## English A2, travel
+- Invented places: Brackwell station (u2), the town of Wexley (u5); real station names appear only on a departure board.
+- UK facts stated generally: cheaper tickets at quieter times, replacement buses during engineering work, free tap water in restaurants, service of about 10 per cent, pharmacists advise on small problems, 999 and 112.
+- u6: *I’ve lost…* taught as a fixed phrase before the course book's present perfect unit.
+- u2: in word order, only question order is accepted ("Is this the right train for Glasgow?").
+- Some wrong options are clearly wrong on purpose (e.g. "small and green the"); more plausible ones may be better.
