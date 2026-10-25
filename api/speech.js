@@ -8,7 +8,8 @@
  *    ?action=generate (POST, admin JWT) — { book }: makes the next missing course audio
  *                     files of a book (plan /data/audio/<book>.json, site/src/data/books/audio.js)
  *                     as MP3 in Supabase Storage course-audio/<book>/<hash>.mp3, with
- *                     <book>/manifest.json listing the files made; about 40 s per call, one request
+ *                     <book>/manifest.json listing the files made; sentences of one block with the same
+ *                     voice are spoken in one request and cut at the pauses; about 75 s per call, one request
  *                     every 6.7 s (TTS_PER_MINUTE, default 9) for Google's per-minute limit; a 429 ends the
  *                     call with retryAfter (seconds) for the admin page to wait.
  *    ?action=sample  (POST, admin JWT) — one sentence, or a two-speaker dialogue,
@@ -185,8 +186,8 @@ const GAP = Math.ceil(60000 / Math.max(1, +(process.env.TTS_PER_MINUTE || 9)));
 function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 const BOOK_RE = /^[A-Z][a-z]+-[ABC][12](-[a-z]+)?$/;
 
-async function mp3(w) {
-  const { pcm, rate } = pcmOf(w);
+async function mp3(w) { const { pcm, rate } = pcmOf(w); return mp3Pcm(pcm, rate); }
+async function mp3Pcm(pcm, rate) {
   const lame = await import('@breezystack/lamejs');
   const samples = new Int16Array(pcm.length >> 1);
   for (let i = 0; i < samples.length; i++) samples[i] = pcm.readInt16LE(i * 2);
@@ -210,7 +211,81 @@ async function readManifest(supabase, book) {
   try { const j = JSON.parse(Buffer.from(await data.arrayBuffer()).toString('utf8')); return j && j.done ? j : { done: {} }; } catch (e) { return { done: {} }; }
 }
 
-/* Makes the next missing files of a book, for up to about 40 seconds: { book, total, done, made, failed, seconds } */
+/* ---------- Several sentences in one request, cut apart at the pauses ----------
+   Google allows few requests a day on Tier 1, so the sentences of one block that share a voice and a style are
+   spoken in one request with long pauses between them, then cut at the N-1 longest silences. The cut is used only
+   when it is clear: the chosen pauses are much longer than any pause inside a sentence, and each piece's length fits
+   its text. Otherwise the sentences are spoken one by one. */
+const FRAME = 0.02;
+function frames(pcm, rate) {
+  const n = Math.floor(rate * FRAME), out = [];
+  for (let f = 0; (f + 1) * n * 2 <= pcm.length; f++) {
+    let sum = 0;
+    for (let i = 0; i < n; i++) { const v = pcm.readInt16LE((f * n + i) * 2); sum += v * v; }
+    out.push(Math.sqrt(sum / n));
+  }
+  return { rms: out, n };
+}
+function splitPcm(pcm, rate, texts) {
+  const N = texts.length;
+  if (N < 2) return [pcm];
+  const { rms, n } = frames(pcm, rate);
+  if (!rms.length) return null;
+  const max = Math.max.apply(null, rms), thr = Math.max(200, max * 0.04);
+  const quiet = rms.map((v) => v < thr);
+  /* Silent runs inside the speech (not the silence before the first word or after the last) */
+  let first = quiet.indexOf(false), last = quiet.lastIndexOf(false);
+  if (first < 0) return null;
+  const runs = [];
+  for (let f = first; f <= last; f++) {
+    if (!quiet[f]) continue;
+    let e = f;
+    while (e <= last && quiet[e]) e++;
+    runs.push({ a: f, b: e, len: e - f });
+    f = e;
+  }
+  const byLen = runs.slice().sort((x, y) => y.len - x.len);
+  const cuts = byLen.slice(0, N - 1);
+  if (cuts.length < N - 1 || cuts[cuts.length - 1].len < 15) return null;              /* pauses of 0.3 s at least */
+  const next = byLen[N - 1];
+  if (next && cuts[cuts.length - 1].len < next.len * 1.4) return null;                 /* not clearly longer than the rest */
+  cuts.sort((x, y) => x.a - y.a);
+  const pad = Math.round(0.12 / FRAME);
+  const bounds = [];
+  let from = first;
+  cuts.forEach((c) => { bounds.push([from, c.a]); from = c.b; });
+  bounds.push([from, last + 1]);
+  const pieces = bounds.map(([a, b]) => pcm.slice(Math.max(0, a - pad) * n * 2, Math.min(rms.length, b + pad) * n * 2));
+  /* Each piece's share of the time should be close to its share of the text */
+  const chars = texts.map((t) => Math.max(8, t.length)), totalC = chars.reduce((x, y) => x + y, 0);
+  const secs = bounds.map(([a, b]) => (b - a) * FRAME), totalS = secs.reduce((x, y) => x + y, 0);
+  for (let i = 0; i < N; i++) {
+    const r = (secs[i] / totalS) / (chars[i] / totalC);
+    if (r < 0.45 || r > 2.2) return null;
+  }
+  return pieces;
+}
+/* The sentences to speak together: same block, voice and style, at most 8 and 2,500 characters */
+function chunks(entries) {
+  const groups = new Map();
+  entries.forEach(([key, it]) => {
+    const g = key.split(':').slice(0, 3).join(':') + '|' + it[1] + '|' + it[2];
+    if (!groups.has(g)) groups.set(g, []);
+    groups.get(g).push(it);
+  });
+  const out = [];
+  groups.forEach((list) => {
+    let cur = [], len = 0;
+    list.forEach((it) => {
+      if (cur.length && (cur.length >= 8 || len + it[3].length > 2500)) { out.push(cur); cur = []; len = 0; }
+      cur.push(it); len += it[3].length;
+    });
+    if (cur.length) out.push(cur);
+  });
+  return out;
+}
+
+/* Makes the next missing files of a book, for up to about 75 seconds: { book, total, done, made, failed, seconds } */
 async function generate(req, res, supabase, body) {
   const book = String(body.book || '');
   if (!BOOK_RE.test(book)) return res.status(400).json({ error: 'Unknown book' });
@@ -222,26 +297,37 @@ async function generate(req, res, supabase, body) {
     const plan = await pr.json();
     await ensureBucket(supabase);
     const manifest = await readManifest(supabase, book);
-    const todo = [], seen = new Set();
-    Object.values(plan.items).forEach((it) => { if (!manifest.done[it[0]] && !seen.has(it[0])) { seen.add(it[0]); todo.push(it); } });
+    const entries = [], seen = new Set();
+    Object.entries(plan.items).forEach(([k, it]) => { if (!manifest.done[it[0]] && !seen.has(it[0])) { seen.add(it[0]); entries.push([k, it]); } });
+    const queue = chunks(entries);
     const made = [], failed = [];
-    let retryAfter = 0, last = 0, limitMessage = '';
+    let retryAfter = 0, last = 0, limitMessage = '', requests = 0, splitFailed = 0;
+    const save = async (h, pcm, rate) => {
+      const m = await mp3Pcm(pcm, rate);
+      const up = await supabase.storage.from(BUCKET).upload(book + '/' + h + '.mp3', m.buf, { contentType: 'audio/mpeg', cacheControl: '31536000', upsert: true });
+      if (up.error) throw up.error;
+      manifest.done[h] = m.seconds;
+      made.push(h);
+    };
     /* One request at a time, at most one every GAP ms, to stay under Google's requests-per-minute limit */
-    for (const [h, voice, style, text] of todo) {
-      if (Date.now() - t0 > 38000) break;
+    while (queue.length && Date.now() - t0 < 75000) {
+      const group = queue.shift();
       const wait = last + GAP - Date.now();
       if (wait > 0) await sleep(wait);
       last = Date.now();
+      requests++;
+      const style = group[0][2], voice = group[0][1];
       try {
-        const w = await speak({ model: plan.model || MODELS.flash, turns: [{ text }], voices: { _: voice }, style });
-        const m = await mp3(w);
-        const up = await supabase.storage.from(BUCKET).upload(book + '/' + h + '.mp3', m.buf, { contentType: 'audio/mpeg', cacheControl: '31536000', upsert: true });
-        if (up.error) throw up.error;
-        manifest.done[h] = m.seconds;
-        made.push(h);
+        const text = group.map((it) => it[3]).join('\n\n');
+        const w = await speak({ model: plan.model || MODELS.flash, turns: [{ text }], voices: { _: voice },
+          style: group.length > 1 ? style + ', with a long pause of about two seconds after each sentence' : style });
+        const { pcm, rate } = pcmOf(w);
+        const pieces = splitPcm(pcm, rate, group.map((it) => it[3]));
+        if (!pieces) { splitFailed++; group.forEach((it) => queue.unshift([it])); continue; }
+        for (let i = 0; i < group.length; i++) await save(group[i][0], pieces[i], rate);
       } catch (e) {
         if (e.rateLimited) { retryAfter = e.retryAfter; limitMessage = e.limitMessage; break; }
-        failed.push({ h, error: String(e.message || e).slice(0, 200), detail: e.detail || null });
+        failed.push({ h: group[0][0], error: String(e.message || e).slice(0, 200), detail: e.detail || null });
       }
     }
     /* The next call may start right away: keep the gap after this call's last request too */
@@ -254,7 +340,7 @@ async function generate(req, res, supabase, body) {
     }
     const total = new Set(Object.values(plan.items).map((it) => it[0])).size;
     const seconds = Object.values(manifest.done).reduce((a, b) => a + b, 0);
-    return res.status(200).json({ book, total, done: Object.keys(manifest.done).length, made: made.length, failed, seconds: Math.round(seconds), retryAfter, limitMessage });
+    return res.status(200).json({ book, total, done: Object.keys(manifest.done).length, made: made.length, failed, seconds: Math.round(seconds), retryAfter, limitMessage, requests, splitFailed });
   } catch (e) {
     console.error('[speech generate] ' + book + ': ' + e.message);
     return res.status(500).json({ error: 'generate_failed', detail: String(e.message || e).slice(0, 300) });
@@ -304,4 +390,4 @@ module.exports = async function handler(req, res) {
   }
 };
 
-module.exports._test = { findAudio, toWav, speak, wav, pcmOf, mp3 };
+module.exports._test = { findAudio, toWav, speak, wav, pcmOf, mp3, splitPcm, chunks };

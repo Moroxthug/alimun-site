@@ -5,7 +5,7 @@
   'use strict';
   var SUPA = 'https://dgaiasmefcbrtzqwdyri.supabase.co';
   var PRICE_MIN = 0.0135;  /* USD per minute of audio, gemini-3.8-flash-tts until 31 Dec 2026 */
-  var token = null, books = [], state = {}, running = false;
+  var token = null, books = [], state = {}, running = false, tally = { req: 0, made: 0, split: 0 };
   var list = document.getElementById('books'), status = document.getElementById('status'), btn = document.getElementById('go');
 
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -57,6 +57,11 @@
           setTimeout(step, j.retryAfter * 1000 + 1500);
           return;
         }
+        if (j.requests) {
+          tally.req += j.requests; tally.made += j.made; tally.split += j.splitFailed || 0;
+          say(new Date().toLocaleTimeString() + ': ' + b.id + ', ' + tally.made + ' recordings from ' + tally.req + ' requests to Google in this session' +
+            (tally.split ? ' (' + tally.split + ' groups had to be redone one by one)' : '') + '.');
+        }
         if (!j.made && j.failed.length) { s.fails = (s.fails || 0) + 1; s.err = j.failed[0].error + (j.failed[0].detail ? ' ' + JSON.stringify(j.failed[0].detail).slice(0, 200) : ''); }
         else { s.fails = 0; s.err = ''; }
         draw();
@@ -79,7 +84,7 @@
       token = s.access_token;
       /* The session token expires after an hour; keep it fresh while the tab works */
       sb.auth.onAuthStateChange(function (ev, ses) { if (ses) token = ses.access_token; });
-      return load().then(function () { btn.disabled = false; say('Press Start and keep this tab open. Google allows about 10 recordings a minute on this plan, so this takes a few hours.'); });
+      return load().then(function () { btn.disabled = false; say('Press Start and keep this tab open. Several sentences go to Google in one request and are cut apart at the pauses, to fit Google's daily limit.'); });
     }).catch(function (e) { say('Could not start: ' + e.message); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

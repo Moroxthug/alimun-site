@@ -89,3 +89,43 @@ test('a 429 from Google stops at once with the wait it asks for, without trying 
   await assert.rejects(speak({ model: 'gemini-3.8-flash-tts', turns: [{ text: 'Hallo' }], voices: { _: 'Orus' }, style: '' }), (e) => e.rateLimited && e.retryAfter === 42);
   assert.strictEqual(calls, 1);
 });
+
+/* Fake speech: each sentence is tone in words of 0.3 s with 0.12 s gaps inside, sentences separated by `gap` s of silence */
+function fakeSpeech(lens, gap, rate = 24000) {
+  const parts = [Buffer.alloc(Math.round(rate * 0.3) * 2)];
+  lens.forEach((sec, k) => {
+    for (let t = 0; t < sec; t += 0.42) {
+      const w = Buffer.alloc(Math.round(rate * 0.3) * 2);
+      for (let i = 0; i < w.length / 2; i++) w.writeInt16LE(Math.round(Math.sin(i / 7) * 9000), i * 2);
+      parts.push(w, Buffer.alloc(Math.round(rate * 0.12) * 2));
+    }
+    if (k < lens.length - 1) parts.push(Buffer.alloc(Math.round(rate * gap) * 2));
+  });
+  parts.push(Buffer.alloc(Math.round(rate * 0.3) * 2));
+  return Buffer.concat(parts);
+}
+
+test('several sentences in one recording are cut at the long pauses', () => {
+  const texts = ['Ich habe in Hamburg studiert.', 'Wir sind 2019 nach Wien gezogen und haben dort lange gewohnt.', 'Hast du schon einmal in einer WG gewohnt?'];
+  const pieces = handler._test.splitPcm(fakeSpeech([1.7, 3.6, 2.5], 1.6), 24000, texts);
+  assert.ok(pieces);
+  assert.strictEqual(pieces.length, 3);
+  const secs = pieces.map((p) => p.length / 2 / 24000);
+  assert.ok(secs[0] > 1.4 && secs[0] < 2.3, 'first ' + secs[0]);
+  assert.ok(secs[1] > 3.2 && secs[1] < 4.3, 'second ' + secs[1]);
+});
+
+test('no cut when the pauses between sentences are not clearly longer, or the lengths do not fit the text', () => {
+  const texts = ['One short line.', 'Another short line.', 'A third one.'];
+  assert.strictEqual(handler._test.splitPcm(fakeSpeech([1.5, 1.5, 1.5], 0.14), 24000, texts), null);
+  assert.strictEqual(handler._test.splitPcm(fakeSpeech([0.5, 5, 0.5], 1.6), 24000, ['A much longer first sentence than the others here.', 'Hi.', 'Ok.']), null);
+});
+
+test('sentences are grouped by block, voice and style, at most eight together', () => {
+  const it = (h, v, t) => [h, v, 's', t];
+  const entries = [];
+  for (let i = 0; i < 10; i++) entries.push(['u1:p1:2:' + i, it('h' + i, 'Orus', 'x')]);
+  entries.push(['u1:p1:5:0', it('d0', 'Kore', 'y')], ['u1:p1:5:1', it('d1', 'Orus', 'y')], ['u1:p1:5:2', it('d2', 'Kore', 'z')]);
+  const c = handler._test.chunks(entries).map((g) => g.map((x) => x[0]).join(','));
+  assert.deepStrictEqual(c, ['h0,h1,h2,h3,h4,h5,h6,h7', 'h8,h9', 'd0,d2', 'd1']);
+});
