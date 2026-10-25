@@ -112,3 +112,26 @@ export function testAudioPlan(test) {
   }));
   return { book: test.id, model: MODEL, items };
 }
+
+/* The audio plan of a library shelf (docs/LIBRARY.md, step 9), served at the same address as a book's: listening
+   pieces <piece>:r<recording>:l:<line> in voices that match the speakers, reading pieces read aloud by a narrator,
+   <piece>:read:p:<paragraph>. Listening comes first, so it is made first. */
+export function shelfAudioPlan(shelf) {
+  const items = {}, later = {};
+  const slow = /^A[12]$/.test(shelf.level);
+  const add = (to, key, voice, style, text) => {
+    const t = plain(text);
+    if (t) to[key] = [hashOf(voice, style, t), voice, style, t];
+  };
+  shelf.pieces.forEach((p) => {
+    if (p.kind === 'listen') (p.recs || []).forEach((r, ri) => {
+      const v = dialogueVoices(r.lines);
+      r.lines.forEach((ln, li) => add(items, `${p.id}:r${ri}:l:${li}`, v[ln.who], slow ? STYLE.slow : STYLE.talk, ln.s));
+    });
+    if (p.kind === 'read') {
+      const narrator = num(shelf.id + ':' + p.id) % 2 ? 'Orus' : 'Sulafat';
+      String(p.text.md || '').split(/\n\s*\n/).forEach((para, i) => add(later, `${p.id}:read:p:${i}`, narrator, slow ? STYLE.slow : STYLE.read, para));
+    }
+  });
+  return { book: shelf.id, model: MODEL, items: Object.assign(items, later) };
+}

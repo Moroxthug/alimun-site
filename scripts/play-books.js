@@ -84,7 +84,7 @@ async function answer(page, b, gi) {
     case 'choice': case 'odd': case 'hear': case 'picture':
       for (let i = 0; i < b.items.length; i++) await click('[data-act="pick"][data-i="' + i + '"][data-o="0"]');
       return;
-    case 'tf':
+    case 'tf': case 'pick':
       for (let i = 0; i < b.items.length; i++) await click('[data-act="pick"][data-i="' + i + '"][data-o="' + b.items[i].a + '"]');
       return;
     case 'gap': case 'wordform': case 'transform': case 'heargap': case 'dictation':

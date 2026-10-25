@@ -332,5 +332,12 @@
     });
   }
 
-  window.AlimunCards = { mount: mount, debug: function () { return { cards: cards, R: R }; } };
+  /* Words from elsewhere (the library, step 9): [{ word, definition, example }] -> how many new cards */
+  function addWords(helpers, rows) {
+    A = helpers;
+    return load().then(function () {
+      return add(rows.map(function (r) { return { word: plain(r.word), word_key: keyOf(r.word), definition: r.definition ? plain(r.definition) : null, example: r.example || null }; }));
+    });
+  }
+  window.AlimunCards = { mount: mount, addWords: addWords, debug: function () { return { cards: cards, R: R }; } };
 })();

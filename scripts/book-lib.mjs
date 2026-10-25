@@ -19,3 +19,10 @@ export async function loadSet(id) {
   return SET;
 }
 export function setIds() { return readdirSync(setDir).filter((f) => /^[A-Z].*-.*\.js$/.test(f)).map((f) => f.slice(0, -3)); }
+// Library shelves (site/src/data/library/<shelf>.js, docs/LIBRARY.md), for the scripts.
+export const libDir = fileURLToPath(new URL('../site/src/data/library/', import.meta.url));
+export async function loadShelf(id) {
+  const { SHELF } = await import(pathToFileURL(libDir + `${id}.js`).href + '?t=' + Date.now());
+  return SHELF;
+}
+export function shelfIds() { return readdirSync(libDir).filter((f) => /^[A-Z][a-z]+-[ABC][12]-library\.js$/.test(f)).map((f) => f.slice(0, -3)); }

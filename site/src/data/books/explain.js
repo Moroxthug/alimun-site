@@ -5,6 +5,11 @@
 export function visit(book, fn) {
   const at = (obj, key) => { if (typeof obj[key] === 'string' && obj[key].trim()) fn(obj[key], (v) => { obj[key] = v; }); };
   const block = blockVisitor(at);
+  /* Library shelves (docs/LIBRARY.md): each piece's summary, word meanings and exercises; titles stay in the language learned */
+  if (book.pieces) {
+    book.pieces.forEach((p) => { at(p, 'about'); (p.words || []).forEach((w) => at(w, 'n')); (p.blocks || []).forEach(block); });
+    return;
+  }
   at(book, 'title');
   if (book.blocks) { at(book, 'about'); book.blocks.forEach(block); return; }
   book.units.forEach((u) => {

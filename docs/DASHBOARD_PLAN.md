@@ -23,7 +23,7 @@ Owner, 24 Oct 2026: rebuild the dashboards from scratch, without the current one
 6. Flashcards: creation and spaced review. Built, waiting for the owner (25 Oct 2026): `#/cards` (`js/app/cards.js`) on the existing `vocab_reviews` table, same schedule as the class dashboard; decks from each unit reached (its matching exercises), words with pictures, the student's own cards, and the class words teachers add to session notes (copied in by the class dashboard until step 10); reviews turn the card over, then choose the word, then write it.
 7. Quizzes and extensive practice sets. Built, waiting for the owner (25 Oct 2026): a Quizzes section on `#/practice` (`js/app/practice.js`). Beat the clock (`#/practice/clock`, 90 seconds of quick choose and true-or-false questions from the units reached), a mixed quiz (`#/practice/quiz/mixed`, 15 questions from every unit reached), a 12-question quiz per unit (`#/practice/quiz/<unit>`), all checked at the end, and a long practice set per unit (`#/practice/set/<unit>`, 12 exercises with help along the way). Best scores are kept in `practice_progress` (`quiz:<book>:<unit|mixed|clock>`), and every answer feeds the practice memory so mistakes come back.
 8. Mock tests: certificate formats and Alimun tests (section 5). Built, waiting for the owner (25 Oct 2026): Mock tests (`#/tests`, `js/app/tests.js`, file format in `docs/TESTS.md`), decisions below ("Step 8 decisions").
-9. Listening and reading library.
+9. Listening and reading library. Built, waiting for the owner (25 Oct 2026): Library (`#/library`, `js/app/library.js`, file format in `docs/LIBRARY.md`), decisions below ("Step 9 decisions").
 10. Live classes and calendar: joining, notes, class vocabulary, 1:1 bookings.
 11. Homework, essays and teacher feedback.
 12. Progress: skills, levels, topics, history.
@@ -48,6 +48,12 @@ The new dashboards are built next to the current ones and switched over only whe
 - Listening recordings and the examiner's questions are course audio: the plan per test is `/data/audio/<id>.json`, made from `/app/audio` like the books (tick "Mock tests first" to make them before the remaining book audio). Until a recording exists the part offers its transcript. The exam's play count is kept (IELTS once, most others twice).
 - Results: practice_progress `mock:<test>:<paper>` with the score and the answers and marks (no database change); a finished paper counts for the streak. Signed out: this browser.
 - Not official material: every page says so, in the student's language. Instructions do not refer to question numbers, which are not shown.
+
+## Step 9 decisions (owner, 25 Oct 2026: "go ahead with the library")
+- One shelf per course language and level, ten pieces each: five to listen to (a conversation, an announcement, an interview, a talk, a podcast) and five to read (a notice, a message, an article, an opinion piece, a story). First shelves: English and German A2, B1 and B2 (60 pieces), drafts for native review. Files `site/src/data/library/<Language>-<Level>-library.js`, explanations translated in `site/src/data/library/i18n/` like the practice sets; check with `node scripts/check-library.mjs`.
+- The student sees the shelf of their language and level, and can switch level. Every piece has its words (meanings in the student's language, tap a marked word in a reading to see it, add them all to the flashcards in one tap) and three to five exercises in lesson mode, from the gist to the details to the language, with explanations straight away.
+- Listening: play as often as wanted, slower too; the line being spoken is marked; the transcript is hidden until asked for or until the exercises are done. Reading: "Listen while you read" when the text has been recorded. Recordings are course audio (`/data/audio/<shelf>.json`, listening first, then readings read aloud); until they exist, listening pieces show the transcript.
+- Results: practice_progress `lib:<shelf>:<piece>` (right first time); a finished piece counts for the streak. No database change.
 
 ## 3. Learning material
 - Course books for every language and every level, A1, A2, B1, B2, C1, C2: extensive, unit by unit, page by page. Six languages × six levels = 36 course books, about eight units each.

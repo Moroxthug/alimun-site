@@ -184,6 +184,12 @@
     return c.from('practice_progress').select('ex_key, graded_score').eq('student_id', studentId).like('ex_key', 'quiz:%').limit(500).then(rows);
   }
 
+  /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
+  function libraryResults(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('practice_progress').select('ex_key, graded_score').eq('student_id', studentId).like('ex_key', 'lib:%').limit(1000).then(rows);
+  }
   /* Mock tests (practice_progress rows "mock:<test>:<paper>", step 8): the score of each finished paper, and one
      paper's answers and marks (user_answer) */
   function mockResults(studentId) {
@@ -234,5 +240,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

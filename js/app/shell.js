@@ -48,6 +48,7 @@
     app_home_days: ['app_home_days_zero', 'app_home_days_one', 'app_home_days_two', 'app_home_days_few', 'app_home_days_many', 'app_home_days_other'],
     app_home_cards: ['app_home_cards_zero', 'app_home_cards_one', 'app_home_cards_two', 'app_home_cards_few', 'app_home_cards_many', 'app_home_cards_other'],
     app_joke_streak: ['app_joke_streak_one', 'app_joke_streak_other'],
+    app_lb_cards_added: ['app_lb_cards_added_zero', 'app_lb_cards_added_one', 'app_lb_cards_added_two', 'app_lb_cards_added_few', 'app_lb_cards_added_many', 'app_lb_cards_added_other'],
     app_mt_questions: ['app_mt_questions_zero', 'app_mt_questions_one', 'app_mt_questions_two', 'app_mt_questions_few', 'app_mt_questions_many', 'app_mt_questions_other'],
     app_mt_tasks: ['app_mt_tasks_zero', 'app_mt_tasks_one', 'app_mt_tasks_two', 'app_mt_tasks_few', 'app_mt_tasks_many', 'app_mt_tasks_other'],
     app_mt_plays_left: ['app_mt_plays_left_zero', 'app_mt_plays_left_one', 'app_mt_plays_left_two', 'app_mt_plays_left_few', 'app_mt_plays_left_many', 'app_mt_plays_left_other'],
@@ -463,6 +464,8 @@
   var practiceHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('practice', false); } });
   var cardsHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('cards', false); } });
   var testsHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('tests', false); } });
+  var libraryHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('library', false); } });
+  function libraryParts() { return location.hash.replace(/^#\/library\/?/, '').split('/').filter(Boolean); }
   function testsParts() { return location.hash.replace(/^#\/tests\/?/, '').split('/').filter(Boolean); }
   function cardsParts() { return location.hash.replace(/^#\/cards\/?/, '').split('/').filter(Boolean); }
   function practiceParts() { return location.hash.replace(/^#\/practice\/?/, '').split('/').filter(Boolean); }
@@ -476,10 +479,11 @@
   }
   function render(id, animate) {
     var r = byId[id];
-    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' ? '' : soonView(r);
+    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' ? '' : soonView(r);
     var swap = function () {
       if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
       if (id !== 'tests' && window.AlimunTests) window.AlimunTests.reset();
+      if (window.AlimunLibrary) window.AlimunLibrary.reset();
       view.innerHTML = html;
       view.classList.remove('is-leaving');
       document.body.classList.remove('is-reading');
@@ -492,6 +496,11 @@
       if (id === 'cards') {
         window.AlimunCards.mount(view, cardsParts(), cardsHelpers).then(function (res) {
           if (current === 'cards' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
+        });
+      }
+      if (id === 'library') {
+        window.AlimunLibrary.mount(view, libraryParts(), libraryHelpers).then(function (res) {
+          if (current === 'library' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
       if (id === 'tests') {
@@ -563,7 +572,7 @@
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests') render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library') render(id, true); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 

@@ -27,9 +27,11 @@
 
   function load() {
     /* Course books, then the mock tests (/data/tests/index.json, step 8): their recordings use the same folders by id */
-    return Promise.all([getJSON('/data/books/index.json'), getJSON('/data/tests/index.json')]).then(function (r) {
+    /* ... and the library shelves (/data/library/index.json, step 9) */
+    return Promise.all([getJSON('/data/books/index.json'), getJSON('/data/tests/index.json'), getJSON('/data/library/index.json')]).then(function (r) {
       var x = r[0], tests = (r[1] && r[1].tests || []).map(function (t) { return { id: t.id, test: true }; });
-      books = (x && x.books || []).filter(function (b) { return b.written > 0; }).concat(tests);
+      var shelves = (r[2] && r[2].shelves || []).map(function (s) { return { id: s.id, test: true }; });
+      books = (x && x.books || []).filter(function (b) { return b.written > 0; }).concat(tests, shelves);
       return Promise.all(books.map(function (b) {
         return Promise.all([getJSON('/data/audio/' + b.id + '.json'), getJSON(SUPA + '/storage/v1/object/public/course-audio/' + b.id + '/manifest.json?t=' + Date.now())]).then(function (r) {
           var plan = r[0], man = r[1] || { done: {} }, h = {};
