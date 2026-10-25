@@ -114,7 +114,7 @@ $$;
 -- Sender, name and time come from the database; 20 messages a minute at most
 create or replace function public.messages_before_insert() returns trigger
 language plpgsql security definer set search_path = public as $$
-declare me_t uuid; full text;
+declare me_t uuid; v_name text;
 begin
   new.sender_user := auth.uid();
   new.created_at := now();
@@ -129,11 +129,11 @@ begin
   else
     me_t := public.my_teacher_profile_id();
     if me_t is not null and exists (select 1 from public.message_threads t where t.id = new.thread_id and (t.teacher_id = me_t or (t.kind = 'class' and public.teaches_cohort(t.cohort_id)))) then
-      select coalesce(nullif(btrim(full_name), ''), 'Teacher') into full from public.teacher_profiles where id = me_t;
-      new.sender_role := 'teacher'; new.sender_name := full;
+      select coalesce(nullif(btrim(full_name), ''), 'Teacher') into v_name from public.teacher_profiles where id = me_t;
+      new.sender_role := 'teacher'; new.sender_name := v_name;
     else
-      select coalesce(nullif(split_part(btrim(full_name), ' ', 1), ''), 'Student') into full from public.student_profiles where user_id = new.sender_user limit 1;
-      new.sender_role := 'student'; new.sender_name := coalesce(full, 'Student');
+      select coalesce(nullif(split_part(btrim(full_name), ' ', 1), ''), 'Student') into v_name from public.student_profiles where user_id = new.sender_user limit 1;
+      new.sender_role := 'student'; new.sender_name := coalesce(v_name, 'Student');
     end if;
   end if;
   return new;
