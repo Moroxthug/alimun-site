@@ -231,3 +231,10 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: relative-pronoun table has 5 columns.
 - u5 p3: two opinion pieces total 214 words.
 - Invented names and titles (Marienbrück, „Die letzte Fähre“, „Was die Zitronen wissen“, „Die stille Insel“); check none is a real work or living person.
+
+## German B2, work
+- u1 and u3 use *bräuchten* (accepted by Duden); a stricter reviewer may prefer *würden … brauchen*.
+- u2 p2: Konjunktiv II replaces Konjunktiv I when it looks like the present (*sie hätten*).
+- u3: company bikes described generally, no tax or legal details.
+- u5: "German feedback is direct" presented as a common view (*gilt bei vielen als*); check the tone.
+- u4 gap *Erfahrung ___ Marketing* accepts *im* and *in*.
