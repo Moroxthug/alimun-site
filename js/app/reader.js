@@ -29,18 +29,6 @@
   function paras(s) {
     return String(s || '').split(/\n\s*\n/).map(function (p) { return '<p>' + md(p.trim()) + '</p>'; }).join('');
   }
-  function shuffle(n, avoidIdentity) {
-    var a = [], i, j, x;
-    for (i = 0; i < n; i++) a.push(i);
-    for (var tries = 0; tries < 8; tries++) {
-      for (i = n - 1; i > 0; i--) { j = Math.floor(Math.random() * (i + 1)); x = a[i]; a[i] = a[j]; a[j] = x; }
-      if (!avoidIdentity || n < 2 || a.some(function (v, k) { return v !== k; })) break;
-    }
-    return a;
-  }
-  function norm(s) {
-    return String(s || '').replace(/[‘’ʼ`´]/g, "'").replace(/\s+/g, ' ').trim().replace(/[.!?]+$/, '').toLocaleLowerCase();
-  }
   function pct(n) { return new Intl.NumberFormat(A.locale, { style: 'percent' }).format(n / 100); }
 
   /* ---------- Explanation language ---------- */
@@ -286,230 +274,20 @@
         return '<aside class="rd-tip"><div class="rd-tip__art">' + A.Cast.drawing(b.art || 'owl') + '</div><div class="bub say bub--inline rd-tip__bub">' + md(b.md) + '</div></aside>';
       case 'reading':
         return '<section class="rd-reading"' + tA(book) + '>' + (b.title ? '<h2 class="t-h2">' + esc(b.title) + '</h2>' : '') + paras(b.md) + '</section>';
-      case 'ex': return exHtml(gi);
+      case 'ex': return ctx.ex.html(gi);
       default: return '';
     }
   }
 
-  /* ---------- Exercises ---------- */
-  function spotTokens(s) {
-    var out = [], re = /\[([^\]]+)\]|([^\s\[\]]+)|(\s+)/g, m, k = 0;
-    while ((m = re.exec(s))) {
-      if (m[1]) out.push({ text: m[1], target: k++ });
-      else if (m[2]) out.push({ text: m[2], target: -1, word: /[\p{L}\p{N}]/u.test(m[2]) });
-      else out.push({ space: true });
-    }
-    return out;
-  }
-  function prepare(b) {
-    if (b.kind === 'match') {
-      return { lo: shuffle(b.pairs.length), ro: shuffle(b.pairs.length, true), sel: null, got: {}, gotR: {}, link: {}, err: {}, pairs: {}, flash: null };
-    }
-    return {
-      items: b.items.map(function (it) {
-        var s = { done: false, first: null, tries: 0, wrong: {}, picked: null, value: '', shown: false };
-        if (b.kind === 'choice') s.order = shuffle(it.o.length, true);
-        if (b.kind === 'order') { s.words = it.a.split(/\s+/); s.pool = shuffle(s.words.length, true); s.placed = []; }
-        if (b.kind === 'spot') { s.tokens = spotTokens(it.s); s.targets = s.tokens.filter(function (x) { return x.target > -1; }).length; s.found = {}; s.sel = {}; s.bad = null; }
-        return s;
-      })
-    };
-  }
-  function tfOptions(b) { return b.ng ? ['t', 'f', 'ng'] : ['t', 'f']; }
-  function tfLabel(v) { return t(v === 't' ? 'app_book_true' : v === 'f' ? 'app_book_false' : 'app_book_ng'); }
-  function rightAnswer(b, it, x) {
-    if (b.kind === 'choice') return it.o[0];
-    if (b.kind === 'tf') return tfLabel(it.a);
-    if (b.kind === 'gap') return it.a[0];
-    if (b.kind === 'spot') return x.tokens.filter(function (k) { return k.target > -1; }).map(function (k) { return k.text; }).join(', ');
-    return it.a;
-  }
-  function isRight(b, it, s) {
-    if (b.kind === 'choice') return s.picked === 0;
-    if (b.kind === 'tf') return s.picked === it.a;
-    if (b.kind === 'gap') { var v = norm(s.value); return it.a.some(function (a) { return norm(a) === v; }); }
-    if (b.kind === 'order') return s.placed.length === s.words.length && s.placed.map(function (w) { return s.words[w]; }).join(' ') === s.words.join(' ');
-    if (b.kind === 'spot') {
-      return s.tokens.every(function (k, i) { return k.space || (k.target > -1 ? !!s.sel[i] : !s.sel[i]); });
-    }
-    return false;
-  }
-  function matchRight(b, l, r) { return r != null && b.pairs[r][1] === b.pairs[l][1]; }
-  function answered(b, s) {
-    if (b.kind === 'match') return Object.keys(s.pairs).length === b.pairs.length;
-    return s.items.every(function (x) {
-      if (b.kind === 'gap') return norm(x.value) !== '';
-      if (b.kind === 'order') return x.placed.length === x.words.length;
-      if (b.kind === 'spot') return Object.keys(x.sel).length > 0;
-      return x.picked != null;
-    });
-  }
-  function blockDone(b, s) {
-    if (b.kind === 'match') return Object.keys(s.got).length === b.pairs.length;
-    return s.items.every(function (x) { return x.done; });
-  }
-  /* Right first time (lessons) */
-  function firstTally(b, s) {
-    if (b.kind === 'match') return { right: b.pairs.filter(function (p, l) { return s.got[l] && !s.err[l]; }).length, total: b.pairs.length };
-    return { right: s.items.filter(function (x) { return x.first === true; }).length, total: s.items.length };
-  }
-
+  /* ---------- Exercises (js/app/exercises.js) ---------- */
   var PRAISE = ['app_book_right_1', 'app_book_right_2', 'app_book_right_3'];
   function praise(b, i) { return t(PRAISE[(b + i) % 3]); }
-  function feedback(ok, text, why, answer) {
-    return '<div class="fb ' + (ok ? 'fb--ok' : 'fb--no') + '">' + A.Cast.book(ok ? 'happy' : 'think') +
-      '<p' + xA(ctx.book) + '><b>' + esc(text) + '</b>' + (answer ? ' <b' + tA(ctx.book) + '>' + md(answer) + '</b>' : '') + (why ? ' <span>' + md(why) + '</span>' : '') + '</p></div>';
-  }
-  function withGap(q, fill) {
-    var parts = md(q).split('___');
-    if (parts.length < 2) return md(q);
-    return parts[0] + '<span class="gap' + (fill ? ' is-filled' : '') + '">' + (fill ? md(fill) : '<span class="sr">' + esc(t('app_book_gap')) + '</span>') + '</span>' + parts.slice(1).join('___');
-  }
-
-  function exHtml(gi) {
-    var b = ctx.blocks[gi], s = ctx.state[gi];
-    var test = ctx.kind === 'test', review = test && ctx.result;
-    var html = '<section class="ex ex--' + b.kind + '" data-block="' + gi + '"><h3 class="ex__h">' + md(b.h) + '</h3>';
-    if (b.kind === 'match') html += matchHtml(gi, b, s, test, review);
-    else {
-      if (b.kind === 'order' && !review) html += '<p class="t-small ex__hint">' + esc(t('app_book_order_hint')) + '</p>';
-      if (b.kind === 'spot' && !review) html += '<p class="t-small ex__hint">' + esc(t('app_book_spot_hint')) + '</p>';
-      b.items.forEach(function (it, i) {
-        var x = s.items[i];
-        var cls = review ? (isRight(b, it, x) ? ' is-right' : ' is-wrong') : x.done ? ' is-right' : x.flash ? ' is-wrong' : '';
-        html += '<div class="ex-item' + cls + '" data-item="' + i + '" style="--k:' + i + '">' + itemHtml(gi, i, b, it, x, test, review) + '</div>';
-      });
-      if (!test && b.kind === 'gap' && !blockDone(b, s)) {
-        html += '<div class="btn-row ex__foot"><button class="btn btn--primary btn--sm" type="button" data-act="check" data-b="' + gi + '">' + esc(t('app_book_check')) + '</button></div>';
-      }
-    }
-    return html + '</section>';
-  }
-
-  function itemHtml(bi, i, b, it, x, test, review) {
-    var a = ' data-b="' + bi + '" data-i="' + i + '"', T = tA(ctx.book);
-    var html = '', fb = '';
-    if (review) {
-      fb = isRight(b, it, x) ? feedback(true, praise(bi, i), it.why) : feedback(false, t('app_book_answer_is_label'), it.why, rightAnswer(b, it, x));
-    } else if (!test) {
-      if (x.done) fb = x.shown ? feedback(false, t('app_book_answer_is_label'), it.why, rightAnswer(b, it, x)) : feedback(true, praise(bi, i), it.why);
-      else if (x.flash) fb = feedback(false, t('app_book_wrong'), '');
-    }
-    var locked = review || x.done;
-
-    if (b.kind === 'choice' || b.kind === 'tf') {
-      if (it.q) html += '<p class="ex-q"' + T + '>' + withGap(it.q, b.kind === 'choice' && ((x.done && !test) || (review && isRight(b, it, x))) ? it.o[0] : '') + '</p>';
-      var opts = b.kind === 'choice' ? x.order : tfOptions(b);
-      html += '<div class="opts' + (b.kind === 'tf' ? ' opts--tf' : '') + (it.q ? '' : ' opts--stack') + '" role="group" aria-label="' + esc(t('app_book_options')) + '">';
-      opts.forEach(function (o, k) {
-        var right = b.kind === 'choice' ? o === 0 : o === it.a;
-        var c = '';
-        if (review) c = right ? ' is-right' : x.picked === o ? ' is-wrong' : '';
-        else if (test) c = x.picked === o ? ' is-picked' : '';
-        else if (x.done) c = right ? ' is-right' : '';
-        else if (x.wrong[o]) c = ' is-wrong';
-        var dis = locked || (!test && x.wrong[o]);
-        html += '<button class="opt' + c + '" type="button" data-act="pick"' + a + ' data-o="' + o + '" style="--k:' + k + '"' + (dis ? ' disabled' : '') +
-          (test && !review ? ' aria-pressed="' + (x.picked === o) + '"' : '') + (b.kind === 'choice' ? T : '') + '>' + (b.kind === 'choice' ? md(it.o[o]) : esc(tfLabel(o))) + '</button>';
-      });
-      html += '</div>';
-    } else if (b.kind === 'gap') {
-      var parts = md(it.q).split('___');
-      var size = Math.max.apply(null, it.a.map(function (s) { return s.length; })) + 2;
-      var input = '<input class="gap-in" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" enterkeyhint="done"' + a +
-        ' size="' + size + '" value="' + esc(x.done && x.shown ? it.a[0] : x.value) + '" aria-label="' + esc(t('app_book_your_answer')) + '"' + (locked ? ' readonly' : '') + '>';
-      html += '<p class="ex-q"' + T + '>' + parts[0] + input + parts.slice(1).join('___') + '</p>';
-      if (!test && !x.done && x.tries >= 2) html += '<button class="linkish" type="button" data-act="show"' + a + '>' + esc(t('app_book_show')) + '</button>';
-    } else if (b.kind === 'order') {
-      var placed = x.done && x.shown ? x.words.map(function (w, k) { return k; }) : x.placed;
-      html += '<div class="ord-line' + (placed.length ? '' : ' is-empty') + '" data-line' + a + T + '>' +
-        placed.map(function (w) {
-          return '<button class="tile" type="button" data-act="unplace"' + a + ' data-w="' + w + '"' + (locked ? ' disabled' : '') + '>' + esc(x.words[w]) + '</button>';
-        }).join('') + '</div>';
-      if (!locked) {
-        html += '<div class="ord-pool" data-pool' + a + T + '>' + x.pool.map(function (w) {
-          var used = x.placed.indexOf(w) > -1;
-          return '<button class="tile' + (used ? ' is-used' : '') + '" type="button" data-act="place"' + a + ' data-w="' + w + '"' + (used ? ' disabled aria-hidden="true" tabindex="-1"' : '') + '>' + esc(x.words[w]) + '</button>';
-        }).join('') + '</div>';
-        if (!test && x.flash) {
-          html += '<div class="btn-row ex__foot"><button class="linkish" type="button" data-act="reset"' + a + '>' + esc(t('app_book_clear')) + '</button>' +
-            (x.tries >= 2 ? '<button class="linkish" type="button" data-act="show"' + a + '>' + esc(t('app_book_show')) + '</button>' : '') + '</div>';
-        }
-      }
-    } else if (b.kind === 'spot') {
-      html += '<p class="spot"' + T + '>' + x.tokens.map(function (k, ti) {
-        if (k.space) return ' ';
-        if (k.target === -1 && !k.word) return '<span>' + esc(k.text) + '</span>';
-        var c = '';
-        var showAll = review || (x.done && x.shown);
-        if (showAll) c = k.target > -1 ? (x.sel[ti] || x.shown ? ' is-found' : ' is-missed') : x.sel[ti] ? ' is-bad' : '';
-        else if (test) c = x.sel[ti] ? ' is-picked' : '';
-        else if (x.found[k.target] && k.target > -1) c = ' is-found';
-        else if (x.bad === ti) c = ' is-bad';
-        return '<button class="spot__w' + c + '" type="button" data-act="spot"' + a + ' data-t="' + ti + '"' + (locked ? ' disabled' : '') + '>' + esc(k.text) + '</button>';
-      }).join('') + '</p>';
-      if (!test && !x.done && x.tries >= 2) html += '<button class="linkish" type="button" data-act="show"' + a + '>' + esc(t('app_book_show')) + '</button>';
-    }
-    return html + '<div class="fb-slot" aria-live="polite">' + fb + '</div>';
-  }
-
-  function matchHtml(bi, b, s, test, review) {
-    var a = ' data-b="' + bi + '"', T = tA(ctx.book);
-    var html = '<p class="t-small ex__hint">' + esc(t('app_book_match_hint')) + '</p><div class="match" data-match="' + bi + '"' + T + '><svg class="match__lines" aria-hidden="true"></svg>';
-    html += '<div class="match__col">' + s.lo.map(function (l, k) {
-      var c = '', pairNo = '';
-      if (review) c = matchRight(b, l, s.pairs[l]) ? ' is-right' : ' is-wrong';
-      else if (test) { if (s.pairs[l] != null) { c = ' is-paired'; pairNo = ' data-pair="' + (k % 6) + '"'; } }
-      else if (s.got[l]) c = ' is-matched';
-      if (!review && s.sel === l) c += ' is-sel';
-      if (s.flash && s.flash.l === l) c += ' is-wrong';
-      var dis = review || (!test && s.got[l]);
-      return '<button class="tile tile--match' + c + '" type="button" data-act="mleft"' + a + ' data-l="' + l + '"' + pairNo + ' style="--k:' + k + '"' + (dis ? ' disabled' : '') + ' aria-pressed="' + (s.sel === l) + '">' + esc(b.pairs[l][0]) + '</button>';
-    }).join('') + '</div>';
-    html += '<div class="match__col">' + s.ro.map(function (r, k) {
-      var c = '', pairNo = '', owner = null;
-      Object.keys(s.pairs).forEach(function (l) { if (s.pairs[l] === r) owner = +l; });
-      if (review) c = owner != null ? (matchRight(b, owner, r) ? ' is-right' : ' is-wrong') : '';
-      else if (test) { if (owner != null) { c = ' is-paired'; pairNo = ' data-pair="' + (s.lo.indexOf(owner) % 6) + '"'; } }
-      else if (s.gotR[r]) c = ' is-matched';
-      if (s.flash && s.flash.r === r) c += ' is-wrong';
-      var dis = review || (!test && s.gotR[r]);
-      return '<button class="tile tile--match' + c + '" type="button" data-act="mright"' + a + ' data-r="' + r + '"' + pairNo + ' style="--k:' + k + '"' + (dis ? ' disabled' : '') + '>' + esc(b.pairs[r][1]) + '</button>';
-    }).join('') + '</div></div>';
-    var fb = '';
-    if (review) {
-      var wrong = b.pairs.filter(function (p, l) { return !matchRight(b, l, s.pairs[l]); });
-      fb = wrong.length ? feedback(false, t('app_book_answer_is_label'), '', wrong.map(function (p) { return p[0] + ' ' + p[1]; }).join(', ')) : feedback(true, praise(bi, 0), '');
-    } else if (!test && blockDone(b, s)) fb = feedback(true, praise(bi, 0), '', b.pairs.map(function (p) { return p[0] + ' ' + p[1]; }).join(', '));
-    else if (!test && s.flash) fb = feedback(false, t('app_book_wrong'), '');
-    return html + '<div class="fb-slot" aria-live="polite">' + fb + '</div>';
-  }
-
-  /* Lines between matched pairs, drawn in after each change */
-  function drawLines(scope) {
-    (scope || root).querySelectorAll('[data-match]').forEach(function (m) {
-      var bi = +m.getAttribute('data-match'), b = ctx && ctx.blocks[bi], s = ctx && ctx.state[bi];
-      var svg = m.querySelector('.match__lines');
-      if (!b || !svg) return;
-      var box = m.getBoundingClientRect();
-      svg.setAttribute('viewBox', '0 0 ' + box.width + ' ' + box.height);
-      var pairs = ctx.kind === 'test' ? s.pairs : s.link;
-      var had = svg.__had || {};
-      var now = {};
-      svg.innerHTML = Object.keys(pairs).map(function (l) {
-        var lb = m.querySelector('[data-l="' + l + '"]'), rb = m.querySelector('[data-r="' + pairs[l] + '"]');
-        if (!lb || !rb) return '';
-        var p = lb.getBoundingClientRect(), q = rb.getBoundingClientRect();
-        var x1 = p.right - box.left, y1 = p.top + p.height / 2 - box.top, x2 = q.left - box.left, y2 = q.top + q.height / 2 - box.top;
-        var mid = (x1 + x2) / 2;
-        var cls = ctx.result ? (matchRight(b, +l, pairs[l]) ? 'is-right' : 'is-wrong') : ctx.kind === 'test' ? 'is-paired p' + (s.lo.indexOf(+l) % 6) : 'is-matched';
-        var key = l + '-' + pairs[l];
-        now[key] = true;
-        return '<path class="' + cls + (had[key] ? '' : ' is-new') + '" d="M' + x1 + ' ' + y1 + ' C' + mid + ' ' + y1 + ' ' + mid + ' ' + y2 + ' ' + x2 + ' ' + y2 + '"/>' +
-          '<circle class="' + cls + '" cx="' + x1 + '" cy="' + y1 + '" r="4"/><circle class="' + cls + '" cx="' + x2 + '" cy="' + y2 + '" r="4"/>';
-      }).join('');
-      svg.__had = now;
-    });
+  /* Each answer also goes to the Practice memory (js/app/practice.js), so mistakes come back in practice rounds */
+  function session(blocks, test) {
+    var base = ctx.book.id + ':' + ctx.unit.id + ':' + (ctx.page ? ctx.page.id : 'test') + ':';
+    return window.AlimunEx.create({ A: A, blocks: blocks, test: test, xa: xA(ctx.book), ta: tA(ctx.book), root: function () { return root; },
+      onAnswer: afterPractice, onChange: refreshEnd,
+      onItem: function (r) { if (window.AlimunPractice) window.AlimunPractice.record(base + r.bi + ':' + r.i, r.ok); } });
   }
 
   /* ---------- Lessons: a few full pages, turned one at a time ---------- */
@@ -519,15 +297,16 @@
       spreads.push(sp.map(function (b) { blocks.push(b); return blocks.length - 1; }));
     });
     ctx = { kind: 'page', book: book, unit: unit, page: page, blocks: blocks, spreads: spreads, at: Math.max(0, Math.min(at || 0, spreads.length)),
-      state: blocks.map(function (b) { return b.t === 'ex' ? prepare(b) : null; }), key: keyOf(book, unit, page), saved: false, mood: 'idle', line: '' };
+      key: keyOf(book, unit, page), saved: false, mood: 'idle', line: '' };
+    ctx.ex = session(blocks, false);
     if (isDone(book, unit, page)) ctx.seen = spreads.length; else ctx.seen = 0;
   }
   function spreadOpen(si) {
-    return ctx.spreads[si].every(function (gi) { var b = ctx.blocks[gi]; return b.t !== 'ex' || blockDone(b, ctx.state[gi]); });
+    return ctx.spreads[si].every(function (gi) { return ctx.ex.done(gi); });
   }
   function canGo(si) { return si <= ctx.seen || spreadOpen(si - 1); }
   function lessonComplete() {
-    return ctx.blocks.every(function (b, i) { return b.t !== 'ex' || blockDone(b, ctx.state[i]); });
+    return ctx.ex.allDone();
   }
 
   function lessonView() {
@@ -627,15 +406,14 @@
   function finishLesson() {
     if (ctx.saved) return;
     ctx.saved = true;
-    var right = 0, total = 0;
-    ctx.blocks.forEach(function (b, i) { if (b.t === 'ex') { var f = firstTally(b, ctx.state[i]); right += f.right; total += f.total; } });
-    save(ctx.book.id, ctx.key, { done: true, score: total ? Math.round(right / total * 100) : 100 });
+    var f = ctx.ex.firstTally();
+    save(ctx.book.id, ctx.key, { done: true, score: f.total ? Math.round(f.right / f.total * 100) : 100 });
   }
   /* Things that run once a page is on screen: dialogues play, lines are drawn */
   function afterSpread() {
     var cur = root.querySelector('.spread:not([aria-hidden])') || root;
     cur.querySelectorAll('[data-dialogue]').forEach(playDialogue);
-    requestAnimationFrame(function () { drawLines(cur); fitTables(cur); });
+    requestAnimationFrame(function () { if (ctx && ctx.ex) ctx.ex.drawLines(cur); fitTables(cur); });
   }
 
   /* A table wider than its page is shrunk to fit, never widening the screen; tapping it opens it full screen */
@@ -735,8 +513,8 @@
   /* ---------- Unit test ---------- */
   function startTest(book, unit) {
     var blocks = unit.test;
-    ctx = { kind: 'test', book: book, unit: unit, page: null, blocks: blocks, state: blocks.map(function (b) { return b.t === 'ex' ? prepare(b) : null; }),
-      key: keyOf(book, unit, null), result: null };
+    ctx = { kind: 'test', book: book, unit: unit, page: null, blocks: blocks, key: keyOf(book, unit, null), result: null };
+    ctx.ex = session(blocks, true);
   }
   function testView(book, unit) {
     startTest(book, unit);
@@ -762,7 +540,7 @@
         '<button class="btn btn--primary" type="button" data-act="retake">' + esc(t('app_book_test_retake')) + '</button>' +
         '<a class="btn btn--quiet" href="' + href(ctx.book, ctx.unit) + '">' + esc(t('app_book_back_unit')) + '</a></div></section>';
     }
-    var ready = ctx.blocks.every(function (b, i) { return answered(b, ctx.state[i]); });
+    var ready = ctx.ex.allReady();
     return '<section class="card card--bone page-end">' +
       (ready ? '' : '<p class="t-small" style="margin-bottom:14px">' + esc(t('app_book_test_answer_all')) + '</p>') +
       '<button class="btn btn--primary" type="button" data-act="submit"' + (ready ? '' : ' disabled') + '>' + esc(t('app_book_test_submit')) + '</button></section>';
@@ -794,36 +572,6 @@
   }
 
   /* ---------- Interaction ---------- */
-  function rerender(bi) {
-    var el = root.querySelector('[data-block="' + bi + '"]');
-    if (!el) return;
-    var act = document.activeElement, sel = null;
-    if (act && el.contains(act)) {
-      sel = ['data-act', 'data-i', 'data-o', 'data-w', 'data-l', 'data-r', 'data-t'].filter(function (k) { return act.hasAttribute(k); })
-        .map(function (k) { return '[' + k + '="' + act.getAttribute(k) + '"]'; }).join('');
-      if (act.classList.contains('gap-in')) sel = '.gap-in[data-i="' + act.getAttribute('data-i') + '"]';
-    }
-    /* Remember where the word tiles were, so they glide to their new place */
-    var before = {};
-    el.querySelectorAll('.tile[data-w]:not(.is-used)').forEach(function (n) { before[n.getAttribute('data-i') + ':' + n.getAttribute('data-w')] = n.getBoundingClientRect(); });
-    el.outerHTML = exHtml(bi);
-    el = root.querySelector('[data-block="' + bi + '"]');
-    el.classList.add('is-settled');
-    if (!reduced) {
-      el.querySelectorAll('.tile[data-w]:not(.is-used)').forEach(function (n) {
-        var r0 = before[n.getAttribute('data-i') + ':' + n.getAttribute('data-w')];
-        if (!r0) return;
-        var r1 = n.getBoundingClientRect(), dx = r0.left - r1.left, dy = r0.top - r1.top;
-        if (!dx && !dy) return;
-        n.animate([{ transform: 'translate(' + dx + 'px,' + dy + 'px)' }, { transform: 'none' }], { duration: 320, easing: 'cubic-bezier(.2,.8,.2,1)' });
-      });
-    }
-    if (sel) {
-      var f = el.querySelector(sel + ':not([disabled])') || el.querySelector('button:not([disabled]):not(.is-used), input:not([readonly])') || el.querySelector('.fb-slot');
-      if (f) { if (f.classList.contains('fb-slot')) f.setAttribute('tabindex', '-1'); f.focus({ preventScroll: true }); }
-    }
-    drawLines(el);
-  }
   function refreshEnd() {
     if (ctx.kind === 'test') { var end = root.querySelector('[data-end]'); if (end) end.innerHTML = testEnd(); }
     else refreshNav();
@@ -841,99 +589,11 @@
     }
     if (lessonComplete()) finishLesson();
   }
-  function mark(x, ok) { if (ok) { x.done = true; x.flash = false; if (x.first === null) x.first = true; } else { x.tries++; x.first = false; x.flash = true; } }
-
-  function onPick(bi, i, o) {
-    var b = ctx.blocks[bi], x = ctx.state[bi].items[i], it = b.items[i];
-    if (ctx.result) return;
-    if (ctx.kind === 'test') { x.picked = o; rerender(bi); refreshEnd(); return; }
-    if (x.done) return;
-    x.picked = o;
-    var ok = isRight(b, it, x);
-    if (!ok) x.wrong[o] = true;
-    mark(x, ok);
-    rerender(bi);
-    afterPractice(bi, ok);
-  }
-  function onCheck(bi) {
-    var b = ctx.blocks[bi], s = ctx.state[bi], any = null;
-    s.items.forEach(function (x, i) {
-      if (x.done || norm(x.value) === '') return;
-      var ok = isRight(b, b.items[i], x);
-      mark(x, ok);
-      any = any === false ? false : ok;
-    });
-    rerender(bi);
-    afterPractice(bi, any);
-  }
-  function onShow(bi, i) {
-    var x = ctx.state[bi].items[i];
-    x.done = true; x.shown = true; x.first = false; x.flash = false;
-    rerender(bi);
-    afterPractice(bi, null);
-  }
-  function onPlace(bi, i, w, add, at) {
-    var b = ctx.blocks[bi], x = ctx.state[bi].items[i];
-    if (ctx.result || x.done) return;
-    x.placed = x.placed.filter(function (v) { return v !== w; });
-    if (add) { if (at == null || at > x.placed.length) at = x.placed.length; x.placed.splice(at, 0, w); }
-    x.flash = false;
-    var ok = null;
-    if (ctx.kind === 'page' && x.placed.length === x.words.length) { ok = isRight(b, b.items[i], x); mark(x, ok); }
-    rerender(bi);
-    if (ctx.kind === 'test') refreshEnd(); else if (ok !== null) afterPractice(bi, ok);
-  }
-  function onReset(bi, i) { var x = ctx.state[bi].items[i]; x.placed = []; x.flash = false; rerender(bi); }
-  function onSpot(bi, i, ti) {
-    var b = ctx.blocks[bi], x = ctx.state[bi].items[i], tok = x.tokens[ti];
-    if (ctx.result || x.done) return;
-    if (ctx.kind === 'test') { if (x.sel[ti]) delete x.sel[ti]; else x.sel[ti] = true; rerender(bi); refreshEnd(); return; }
-    var ok;
-    if (tok.target > -1) {
-      x.found[tok.target] = true; x.sel[ti] = true; x.bad = null; ok = true;
-      if (Object.keys(x.found).length === x.targets) { x.done = true; x.flash = false; if (x.first === null) x.first = true; }
-    } else { x.bad = ti; x.first = false; x.tries++; x.flash = true; ok = false; }
-    rerender(bi);
-    afterPractice(bi, ok);
-  }
-
-  function onMatch(bi, side, v) {
-    var b = ctx.blocks[bi], s = ctx.state[bi];
-    if (ctx.result) return;
-    s.flash = null;
-    if (side === 'l') {
-      if (ctx.kind === 'test' && s.pairs[v] != null && s.sel !== v) delete s.pairs[v];
-      s.sel = s.sel === v ? null : v;
-      rerender(bi);
-      if (ctx.kind === 'test') refreshEnd();
-      return;
-    }
-    if (s.sel == null) return;
-    var l = s.sel;
-    if (ctx.kind === 'test') {
-      Object.keys(s.pairs).forEach(function (k) { if (s.pairs[k] === v) delete s.pairs[k]; });
-      s.pairs[l] = v; s.sel = null;
-      rerender(bi); refreshEnd();
-      return;
-    }
-    var ok = matchRight(b, l, v) && !s.gotR[v];
-    if (ok) { s.got[l] = true; s.gotR[v] = true; s.link[l] = v; s.sel = null; }
-    else { s.err[l] = true; s.flash = { l: l, r: v }; s.sel = null; }
-    rerender(bi);
-    afterPractice(bi, ok);
-  }
 
   function onSubmit() {
-    var right = 0, total = 0;
-    ctx.blocks.forEach(function (b, i) {
-      var s = ctx.state[i];
-      if (b.kind === 'match') { b.pairs.forEach(function (p, l) { total++; if (matchRight(b, l, s.pairs[l])) right++; }); s.sel = null; }
-      else b.items.forEach(function (it, k) { total++; if (isRight(b, it, s.items[k])) right++; });
-    });
-    var score = total ? Math.round(right / total * 100) : 0;
+    var score = ctx.ex.submit();
     ctx.result = { score: score };
     save(ctx.book.id, ctx.key, { done: score >= PASS, score: score });
-    ctx.blocks.forEach(function (b, i) { rerender(i); });
     refreshEnd();
     var box = root.querySelector('[data-result]');
     box.innerHTML = resultHtml(score);
@@ -943,61 +603,11 @@
     card.focus({ preventScroll: true });
   }
 
-  /* Dragging word tiles into order (tapping works too) */
-  var drag = null, suppressClick = false;
-  function onPointerDown(e) {
-    var tile = e.target.closest('.ex--order .tile[data-w]');
-    if (!tile || tile.disabled || e.button > 0) return;
-    drag = { tile: tile, x: e.clientX, y: e.clientY, moved: false, ghost: null, id: e.pointerId };
-  }
-  function onPointerMove(e) {
-    if (!drag || e.pointerId !== drag.id) return;
-    var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
-    if (!drag.moved) {
-      if (Math.abs(dx) + Math.abs(dy) < 8) return;
-      drag.moved = true;
-      var r = drag.tile.getBoundingClientRect();
-      var g = drag.tile.cloneNode(true);
-      g.className = 'tile tile--ghost';
-      g.style.width = r.width + 'px'; g.style.left = r.left + 'px'; g.style.top = r.top + 'px';
-      document.body.appendChild(g);
-      drag.ghost = g; drag.ox = r.left; drag.oy = r.top;
-      drag.tile.classList.add('is-dragging');
-    }
-    e.preventDefault();
-    drag.ghost.style.transform = 'translate(' + dx + 'px,' + dy + 'px) rotate(-3deg)';
-    var line = drag.tile.closest('.ex-item').querySelector('[data-line]');
-    var r2 = line.getBoundingClientRect();
-    line.classList.toggle('is-over', e.clientX > r2.left && e.clientX < r2.right && e.clientY > r2.top - 20 && e.clientY < r2.bottom + 20);
-  }
-  function onPointerUp(e) {
-    if (!drag || e.pointerId !== drag.id) return;
-    var d = drag; drag = null;
-    if (!d.moved) return;
-    suppressClick = true; setTimeout(function () { suppressClick = false; }, 0);
-    d.ghost.remove();
-    d.tile.classList.remove('is-dragging');
-    var item = d.tile.closest('.ex-item'), line = item.querySelector('[data-line]');
-    line.classList.remove('is-over');
-    var bi = +d.tile.getAttribute('data-b'), i = +d.tile.getAttribute('data-i'), w = +d.tile.getAttribute('data-w');
-    var r = line.getBoundingClientRect();
-    var inLine = e.clientX > r.left && e.clientX < r.right && e.clientY > r.top - 20 && e.clientY < r.bottom + 20;
-    if (inLine) {
-      var at = 0;
-      line.querySelectorAll('.tile').forEach(function (n) {
-        if (+n.getAttribute('data-w') === w) return;
-        var q = n.getBoundingClientRect();
-        if (e.clientY > q.bottom || (e.clientY > q.top && e.clientX > q.left + q.width / 2)) at++;
-      });
-      onPlace(bi, i, w, true, at);
-    } else if (d.tile.closest('[data-line]')) onPlace(bi, i, w, false);
-  }
-
   function bind() {
     if (root.__reader) return;
     root.__reader = true;
     root.addEventListener('click', function (e) {
-      if (suppressClick) { e.preventDefault(); return; }
+      if (window.AlimunEx.swallowClick()) { e.preventDefault(); return; }
       var el = e.target.closest('[data-act]');
       if (!el || el.disabled) return;
       var act = el.getAttribute('data-act');
@@ -1017,38 +627,20 @@
       if (act === 'tvclose') { closeTable(); return; }
       if (act === 'replay') { playDialogue(el.closest('[data-dialogue]')); return; }
       if (!ctx) return;
-      var bi = +el.getAttribute('data-b'), i = +el.getAttribute('data-i');
       if (act === 'next') go(ctx.at + 1);
       else if (act === 'prev') go(ctx.at - 1);
-      else if (act === 'pick') { var o = el.getAttribute('data-o'); onPick(bi, i, /^\d+$/.test(o) ? +o : o); }
-      else if (act === 'check') onCheck(bi);
-      else if (act === 'show') onShow(bi, i);
-      else if (act === 'place') onPlace(bi, i, +el.getAttribute('data-w'), true);
-      else if (act === 'unplace') onPlace(bi, i, +el.getAttribute('data-w'), false);
-      else if (act === 'reset') onReset(bi, i);
-      else if (act === 'spot') onSpot(bi, i, +el.getAttribute('data-t'));
-      else if (act === 'mleft') onMatch(bi, 'l', +el.getAttribute('data-l'));
-      else if (act === 'mright') onMatch(bi, 'r', +el.getAttribute('data-r'));
       else if (act === 'submit') onSubmit();
       else if (act === 'retake') A.rerender();
+      else if (ctx.ex) ctx.ex.act(act, el);
     });
-    root.addEventListener('input', function (e) {
-      var el = e.target;
-      if (!ctx || !el.classList.contains('gap-in')) return;
-      var bi = +el.getAttribute('data-b'), x = ctx.state[bi].items[+el.getAttribute('data-i')];
-      x.value = el.value;
-      if (x.flash) { x.flash = false; var item = el.closest('.ex-item'); if (item) { item.classList.remove('is-wrong'); item.querySelector('.fb-slot').innerHTML = ''; } }
-      if (ctx.kind === 'test') refreshEnd();
-    });
+    root.addEventListener('input', function (e) { if (ctx && ctx.ex) ctx.ex.input(e.target); });
+    root.addEventListener('change', function (e) { if (ctx && ctx.ex) ctx.ex.change(e.target); });
     root.addEventListener('keydown', function (e) {
       var el = e.target;
-      if (e.key === 'Enter' && ctx && el.classList.contains('gap-in')) { e.preventDefault(); if (ctx.kind === 'page') onCheck(+el.getAttribute('data-b')); }
+      if (ctx && ctx.ex && ctx.ex.keydown(e)) return;
       if ((e.key === 'Enter' || e.key === ' ') && el.getAttribute('data-act') === 'enlarge') { e.preventDefault(); openTable(el); }
     });
-    root.addEventListener('pointerdown', onPointerDown);
-    window.addEventListener('pointermove', onPointerMove, { passive: false });
-    window.addEventListener('pointerup', onPointerUp);
-    window.addEventListener('pointercancel', function () { if (drag && drag.ghost) { drag.ghost.remove(); drag.tile.classList.remove('is-dragging'); } drag = null; });
+    root.addEventListener('pointerdown', function (e) { if (ctx && ctx.ex) window.AlimunEx.pointerDown(ctx.ex, e); });
     /* Arrow keys turn the page (not while typing); swipes do too on touch screens */
     document.addEventListener('keydown', function (e) {
       if (viewer) { if (e.key === 'Escape') closeTable(); return; }
@@ -1059,7 +651,7 @@
     });
     var sw = null;
     root.addEventListener('touchstart', function (e) {
-      if (!ctx || ctx.kind !== 'page' || viewer || e.touches.length !== 1 || e.target.closest('.tile, input, .tv')) { sw = null; return; }
+      if (!ctx || ctx.kind !== 'page' || viewer || e.touches.length !== 1 || e.target.closest('.tile, input, select, .tv, .mem, .ws')) { sw = null; return; }
       sw = { x: e.touches[0].clientX, y: e.touches[0].clientY };
     }, { passive: true });
     root.addEventListener('touchend', function (e) {
@@ -1070,7 +662,7 @@
       var rtl = document.documentElement.dir === 'rtl';
       go(ctx.at + ((dx < 0) !== rtl ? 1 : -1));
     }, { passive: true });
-    window.addEventListener('resize', function () { if (ctx) { drawLines(); fitTables(); } });
+    window.addEventListener('resize', function () { if (ctx) { if (ctx.ex) ctx.ex.drawLines(); fitTables(); } });
   }
 
   /* ---------- Entry ---------- */
@@ -1129,5 +721,17 @@
     });
   }
 
-  window.AlimunReader = { mount: mount };
+  /* For the Practice screen: a book in the learner's explanation language, with its progress (null if there is no such book) */
+  function open(helpers, id) {
+    A = helpers;
+    return loadIndex().then(function (list) {
+      var entry = list.filter(function (b) { return b.id === id; })[0];
+      if (!entry) return null;
+      return Promise.all([loadBook(id, explainCode(entry)), loadProgress(id)]).then(function (r) { return { book: r[0], progress: r[1] }; });
+    });
+  }
+  /* Another section is on screen: stop reacting to keys and clicks */
+  function reset() { ctx = null; closeTable(); }
+
+  window.AlimunReader = { mount: mount, open: open, reset: reset };
 })();

@@ -12,3 +12,10 @@ export async function loadBook(id) {
   return { book: assemble(BOOK, units), raw: BOOK, units };
 }
 export async function explainVisit() { return (await import(url('explain.js'))).visit; }
+// Practice sets (site/src/data/practice/<set>.js), for the scripts.
+export const setDir = fileURLToPath(new URL('../site/src/data/practice/', import.meta.url));
+export async function loadSet(id) {
+  const { SET } = await import(pathToFileURL(setDir + `${id}.js`).href + '?t=' + Date.now());
+  return SET;
+}
+export function setIds() { return readdirSync(setDir).filter((f) => /^[A-Z].*-.*\.js$/.test(f)).map((f) => f.slice(0, -3)); }

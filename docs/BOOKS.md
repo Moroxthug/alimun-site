@@ -48,9 +48,32 @@ Audio and image blocks come with the listening and reading library (step 9).
 - `tf`: `ng: true` adds "not given"; `items: [{ q, a: 't' | 'f' | 'ng', why }]`.
 - `spot`: tap the words in a text; `items: [{ s: 'I [went] there and [took] a class.', why }]`, the words to find in brackets.
 
+Added in step 5 (25 Oct 2026). One engine draws every kind everywhere: `js/app/exercises.js`. `node scripts/check-book.mjs` knows them all.
+- `odd`: odd one out; `items: [{ o: [odd, other, other, other], why }]`, the first option is the odd one.
+- `select`: a drop-down in the gap; `items: [{ q, o: [right, wrong, wrong], why }]`, one `___`.
+- `wordform`: word formation; `items: [{ q, base: 'happy', a: ['unhappy'], why }]`, `base` shown in capitals beside the sentence.
+- `transform`: rewrite the sentence; `items: [{ q: 'original sentence', cue: 'for', a: [accepted sentences], why }]`. When `cue` is the start of the new sentence, the answer counts with or without it.
+- `conjugate`: a verb table; `verb`, `tense` (explanation), `rows: [['I', 'have gone|’ve gone'], ['she', 'has gone|’s gone'], ...]`, other accepted answers after `|`, an optional `why` third.
+- `crossword`: `words: [{ a: 'passport', clue: 'The document you show at the border.' }]`, four to eight single words; the clue is in the language being learned. The grid is laid out by the engine.
+- `build`: build the sentence with extra words that do not belong; `items: [{ a: 'The sentence.', extra: ['did', 'yet'], why }]`.
+- `colloc`: which words go with the key word; `items: [{ key: 'make', o: ['a mistake', 'homework', ...], a: [indexes of the right ones], why }]`.
+- `fix`: find and fix the mistake; `items: [{ s: 'I have [saw] it.', a: ['seen'], why }]`, exactly one word or phrase in brackets.
+- `bank`: word bank; `extra: [distractors]`, `items: [{ q, a: 'word', why }]`, one `___` each; every bank word different.
+- `sort`: sort into groups; `groups: ['der', 'die', 'das']`, `items: [{ s: 'Tisch', g: 0, why }]`. Group names are in the language being learned unless `explain: ['groups']` marks them as explanations.
+- `memory`: memory pairs; `pairs: [[a, b], ...]`, three to eight pairs, every side different. Lessons and practice only, not unit tests.
+- `search`: word search; `words: ['bread', ...]`, four to eight single words. Lessons and practice only, not unit tests.
+
 Layout of a page: text and tips on one side, examples, tables, dialogues and readings on the other; a page with only exercises puts the book character beside them, reacting to each answer. Word tiles can be tapped or dragged; matched pairs are joined by a drawn line.
 
 In a lesson, answers are checked straight away with the book character's reaction and the `why`; wrong options can be tried again, and after two wrong tries "Show the answer" appears. The next page opens when every exercise on the page is done; the lesson ends with a celebration page. A unit test shows nothing until "Check my test"; 70% passes the unit.
+
+## Practice sets
+Hand-written rounds for the Practice screen (`js/app/practice.js`): `site/src/data/practice/<set>.js` exports `SET = { id, language, level, review, title, about, blocks: [exercise blocks] }`, served as `/data/practice/<set>.<lang>.json` and `/data/practice/index.json`. Explanations (`h`, every `why`, `tense`, groups marked `explain`) are translated in `site/src/data/practice/i18n/<set>.<lang>.json` like the books (`node scripts/book-strings.mjs --set <set> <lang>`). Check with `node scripts/check-book.mjs --sets`. The `<Language>-<Level>-types` set holds one exercise of every kind and is the "Every kind of exercise" round.
+
+Practice rounds also remix the course book: a gap exercise can come back as a word bank, a multiple choice with a gap as a drop-down, word order with two extra words, matching as memory pairs, and matching whose left side is single words as a crossword or a word search. Each item keeps its key (`<book>:<unit>:<lesson or test>:<block>:<item>`) so its mistakes are remembered across lessons, tests and rounds.
+
+## Playing the books
+`node scripts/play-books.js [book ids] [--units=N] [--lang=ar] [--phone] [--practice] [--rounds=N]` serves this checkout, plays every lesson and unit test with the right answers (unit tests must score 100%), and with `--practice` the "Every kind of exercise" round and N generated rounds. Book data comes from alimun.com; practice sets come from this checkout.
 
 ## Progress
 - Signed in: `practice_progress`, one row per finished lesson or test, `ex_key = book:<book>:<unit>:<lesson>` or `book:<book>:<unit>:test`, `done`, `graded_score` (pages: share right first time; tests: best score). No database change; the existing row-level security lets students write their own rows and their teachers read them. The Home streak already counts these rows.

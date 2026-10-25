@@ -47,7 +47,8 @@
   var PLURALS = {
     app_home_days: ['app_home_days_zero', 'app_home_days_one', 'app_home_days_two', 'app_home_days_few', 'app_home_days_many', 'app_home_days_other'],
     app_home_cards: ['app_home_cards_zero', 'app_home_cards_one', 'app_home_cards_two', 'app_home_cards_few', 'app_home_cards_many', 'app_home_cards_other'],
-    app_joke_streak: ['app_joke_streak_one', 'app_joke_streak_other']
+    app_joke_streak: ['app_joke_streak_one', 'app_joke_streak_other'],
+    app_pr_mistakes_n: ['app_pr_mistakes_n_zero', 'app_pr_mistakes_n_one', 'app_pr_mistakes_n_two', 'app_pr_mistakes_n_few', 'app_pr_mistakes_n_many', 'app_pr_mistakes_n_other']
   };
   var plural = window.Intl && Intl.PluralRules ? new Intl.PluralRules(locale) : null;
   function tn(key, n, vars) {
@@ -88,6 +89,7 @@
     more: '<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',
     bell: '<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 21h4"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    down: '<path d="M12 5v14M6 13l6 6 6-6"/>',
     back: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
     check: '<path d="m5 12.5 4.5 4.5L19 7"/>',
     expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
@@ -442,8 +444,11 @@
     t: t, esc: esc, icon: icon, Cast: Cast, lang: lang, locale: locale, cap: cap, languageName: languageName, loaderInner: loaderInner,
     data: function () { return D; }, mode: function () { return mode; }, myBookId: function () { return myBookId(); },
     buddyFor: function (language) { return BUDDIES[language] || 'teacup'; }, courseName: function () { return courseName(D); },
-    rerender: function () { render('book', false); }
+    rerender: function () { render('book', false); }, tn: function (k, n) { return tn(k, n); }
   };
+  /* The Practice screen (js/app/practice.js) uses the same helpers */
+  var practiceHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('practice', false); } });
+  function practiceParts() { return location.hash.replace(/^#\/practice\/?/, '').split('/').filter(Boolean); }
   function bookParts() { return location.hash.replace(/^#\/book\/?/, '').split('/').filter(Boolean); }
 
   /* ---------- Routing ---------- */
@@ -454,8 +459,9 @@
   }
   function render(id, animate) {
     var r = byId[id];
-    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' ? '' : soonView(r);
+    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' ? '' : soonView(r);
     var swap = function () {
+      if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
       view.innerHTML = html;
       view.classList.remove('is-leaving');
       document.body.classList.remove('is-reading');
@@ -463,6 +469,11 @@
       if (id === 'book') {
         window.AlimunReader.mount(view, bookParts(), readerHelpers).then(function (res) {
           if (current === 'book' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
+        });
+      }
+      if (id === 'practice') {
+        window.AlimunPractice.mount(view, practiceParts(), practiceHelpers).then(function (res) {
+          if (current === 'practice' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
       top.querySelector('.top__title').textContent = t(r.label);
@@ -524,7 +535,7 @@
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book') render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice') render(id, true); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 

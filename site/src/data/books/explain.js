@@ -4,7 +4,22 @@
 // visit(book, fn): fn(text, set) for every explanation; set(newText) replaces it.
 export function visit(book, fn) {
   const at = (obj, key) => { if (typeof obj[key] === 'string' && obj[key].trim()) fn(obj[key], (v) => { obj[key] = v; }); };
-  const block = (b) => {
+  const block = blockVisitor(at);
+  at(book, 'title');
+  if (book.blocks) { at(book, 'about'); book.blocks.forEach(block); return; }
+  book.units.forEach((u) => {
+    at(u, 'title'); at(u, 'goal');
+    (u.pages || []).forEach((p) => {
+      at(p, 'title'); at(p, 'about');
+      (p.spreads || []).forEach((s) => s.forEach(block));
+    });
+    (u.test || []).forEach(block);
+  });
+}
+
+// The explanations inside one block (practice sets have blocks instead of units).
+function blockVisitor(at) {
+  return (b) => {
     if (b.t === 'text' || b.t === 'tip') at(b, 'md');
     if (b.t === 'examples') b.items.forEach((x) => at(x, 'n'));
     if (b.t === 'table') {
@@ -14,17 +29,14 @@ export function visit(book, fn) {
       ex.filter((e) => /^col\d+$/.test(e)).forEach((e) => { const k = +e.slice(3); b.rows.forEach((r) => at(r, k)); });
     }
     if (b.t === 'dialogue') at(b, 'title');
-    if (b.t === 'ex') { at(b, 'h'); (b.items || []).forEach((x) => at(x, 'why')); }
+    if (b.t === 'ex') {
+      at(b, 'h'); at(b, 'tense');
+      (b.items || []).forEach((x) => at(x, 'why'));
+      (b.rows || []).forEach((r) => at(r, 2));
+      (b.words || []).forEach((w) => { if (typeof w === 'object') at(w, 'why'); });
+      if ((b.explain || []).includes('groups')) (b.groups || []).forEach((_, i) => at(b.groups, i));
+    }
   };
-  at(book, 'title');
-  book.units.forEach((u) => {
-    at(u, 'title'); at(u, 'goal');
-    (u.pages || []).forEach((p) => {
-      at(p, 'title'); at(p, 'about');
-      (p.spreads || []).forEach((s) => s.forEach(block));
-    });
-    (u.test || []).forEach(block);
-  });
 }
 
 // A copy of the book with its explanations in one language (missing translations stay in English).
