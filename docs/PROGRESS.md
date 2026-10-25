@@ -736,6 +736,6 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 2026-10-25 — Dashboards, step 14: settings, plan and billing (built, waiting for the owner)
 - Owner: go ahead with settings (messages to be tested once a student is in a class). New section Settings (`#/settings`, `js/app/settings.js`), replacing the "soon" page. Decisions in `docs/DASHBOARD_PLAN.md` ("Step 14 decisions"). No database change.
 - `js/app/data.js`: `settings()`, `saveProfile()`, `changePassword()`.
-- 56 `app_st_*` keys in nine languages.
+- 57 `app_st_*` keys in nine languages.
 - Checked: sample mode on desktop (English) and phone (Arabic), no errors, nothing wider than the phone; the exact save the page sends, run as a real student account inside a rolled-back transaction, is accepted by the row rules and the column guard. Not checked from here: the billing portal (needs a subscriber) and a real password change.
 - Open for the owner: free-plan limits and the upgrade pop-up.
