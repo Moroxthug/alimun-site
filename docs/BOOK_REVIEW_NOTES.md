@@ -109,3 +109,15 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1: invented postcodes could match real addresses; u1 p1 letter-sound guide is rough.
 - u2 p3: real places (Leeds, York, change at Selby) with invented times.
 - u6 p2: a phrase table where "say yes" and "say no politely" appear twice; reads close to a phrase list.
+
+## English A2, study and exams
+- u2 p1: rough meanings for *how often* words; u5 p2: "I don’t think … are boring" called more natural (a style point).
+- u3 p1: tip says not to write *Dear Teacher* and that UK adult learners often use the teacher's first name.
+- u3, u4: invented prices for fictional schools; u4 test: check the "Lost: black umbrella … call Tom" notice reads only one way.
+- u6: writing task format like A2 Key, not official; "questions often follow the order of the text" stated generally.
+
+## German B1, moving abroad
+- Facts checked: 116 117 and 112, the E-Rezept on the card, the electronic sick note from the fourth day, the Basiskonto for everyone living legally in the EU, a Kita place from the first birthday, Grundschule four years (six in some states).
+- u2 p3: invented letter from the Ausländerbehörde; check it sounds like a real office letter.
+- u4: "many contracts can be ended with one month's notice after the minimum term" (general); invented prices.
+- Word-order items that rely on a capitalised first word (*Anbei sende ich Ihnen …*).
