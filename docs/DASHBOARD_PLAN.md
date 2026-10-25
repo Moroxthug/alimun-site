@@ -24,7 +24,7 @@ Owner, 24 Oct 2026: rebuild the dashboards from scratch, without the current one
 7. Quizzes and extensive practice sets. Built, waiting for the owner (25 Oct 2026): a Quizzes section on `#/practice` (`js/app/practice.js`). Beat the clock (`#/practice/clock`, 90 seconds of quick choose and true-or-false questions from the units reached), a mixed quiz (`#/practice/quiz/mixed`, 15 questions from every unit reached), a 12-question quiz per unit (`#/practice/quiz/<unit>`), all checked at the end, and a long practice set per unit (`#/practice/set/<unit>`, 12 exercises with help along the way). Best scores are kept in `practice_progress` (`quiz:<book>:<unit|mixed|clock>`), and every answer feeds the practice memory so mistakes come back.
 8. Mock tests: certificate formats and Alimun tests (section 5). Built, waiting for the owner (25 Oct 2026): Mock tests (`#/tests`, `js/app/tests.js`, file format in `docs/TESTS.md`), decisions below ("Step 8 decisions").
 9. Listening and reading library. Built, waiting for the owner (25 Oct 2026): Library (`#/library`, `js/app/library.js`, file format in `docs/LIBRARY.md`), decisions below ("Step 9 decisions").
-10. Live classes and calendar: joining, notes, class vocabulary, 1:1 bookings.
+10. Live classes and calendar: joining, notes, class vocabulary, 1:1 bookings. Built, waiting for the owner (25 Oct 2026): Classes (`#/classes`, `js/app/classes.js`), decisions below ("Step 10 decisions").
 11. Homework, essays and teacher feedback.
 12. Progress: skills, levels, topics, history.
 13. Messages.
@@ -54,6 +54,12 @@ The new dashboards are built next to the current ones and switched over only whe
 - The student sees the shelf of their language and level, and can switch level. Every piece has its words (meanings in the student's language, tap a marked word in a reading to see it, add them all to the flashcards in one tap) and three to five exercises in lesson mode, from the gist to the details to the language, with explanations straight away.
 - Listening: play as often as wanted, slower too; the line being spoken is marked; the transcript is hidden until asked for or until the exercises are done. Reading: "Listen while you read" when the text has been recorded. Recordings are course audio (`/data/audio/<shelf>.json`, listening first, then readings read aloud); until they exist, listening pieces show the transcript.
 - Results: practice_progress `lib:<shelf>:<piece>` (right first time); a finished piece counts for the streak. No database change.
+
+## Step 10 decisions (owner, 25 Oct 2026: "go ahead with live classes and calendar")
+- No new tables or functions: classes, notes, homework and 1:1s are read through row-level security like the class dashboard; joining uses `/api/join-session` (room and token, attendance recorded there; leaving stamps `left_at`), 1:1 booking, cancelling and free times use `/api/enroll?action=oto-status|oto-book|oto-cancel` (rules in `api/_lib/one-on-one.js`).
+- Classes page: the next class or 1:1 with Join (open from 15 minutes before until 90 minutes after the start), a countdown and "Add to my calendar" (an .ics file of what is coming); the classes coming up; a month calendar with classes, homework due dates and 1:1s, a day's list under it; the weekly follow-up and private classes (why booking is not possible when it is not, free times by day, booking confirmed in the page, cancelling until two hours before); the teacher's notes after each class (teacher's note, what was done, homework, words, PDF); the class words, copied into the flashcards like the class dashboard does.
+- The classroom opens inside the dashboard (`#/classes/live/<session>`, 1:1s `#/classes/live/b/<booking>`): Daily Prebuilt with the words of the last class beside it. Home's Join now opens it. The class dashboard's whiteboard and shared files are not in the new classroom yet (Daily Prebuilt has chat and screen sharing).
+- Times in the student's time zone (`student_profiles.timezone`, else the device's). Students without a class are sent to the class dashboard to find one, until that step is rebuilt.
 
 ## 3. Learning material
 - Course books for every language and every level, A1, A2, B1, B2, C1, C2: extensive, unit by unit, page by page. Six languages × six levels = 36 course books, about eight units each.

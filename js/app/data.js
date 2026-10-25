@@ -62,7 +62,7 @@
     return c.auth.getSession().then(function (r) {
       var session = r.data && r.data.session;
       if (!session) return null;
-      return c.from('student_profiles').select('id, full_name, language, level, tier, goal_track, placement, enrolled_cohort_id')
+      return c.from('student_profiles').select('id, full_name, language, level, tier, goal_track, placement, enrolled_cohort_id, timezone')
         .eq('user_id', session.user.id).maybeSingle().then(function (pr) {
           if (pr.error) throw pr.error;
           var p = pr.data;
@@ -73,12 +73,14 @@
   }
 
   function loadFor(c, p, lang) {
+    var cohortsOf = [];
     var since = new Date(Date.now() - 70 * DAY).toISOString();
     var today = dayKey(Date.now());
 
     return c.from('enrollments').select('cohort_id').eq('student_id', p.id).eq('status', 'active').then(function (er) {
       var cohorts = rows(er).map(function (e) { return e.cohort_id; });
       if (p.enrolled_cohort_id && cohorts.indexOf(p.enrolled_cohort_id) === -1) cohorts.push(p.enrolled_cohort_id);
+      cohortsOf = cohorts.slice();
 
       var next = cohorts.length ? c.from('sessions')
         .select('id, scheduled_at, status, cohorts ( language, level, teacher_id )')
@@ -100,6 +102,7 @@
         topicLabels(p.placement && p.placement.language || p.language, p.placement && p.placement.topics, lang)
       ]);
     }).then(function (res) {
+      res.cohorts = cohortsOf;
       /* The teacher's public name (teachers_public is a view over a function, so it cannot be embedded above) */
       var tid = res[0] && !res[0].error && res[0].data && res[0].data[0] && res[0].data[0].cohorts && res[0].data[0].cohorts.teacher_id;
       if (!tid) return res;
@@ -133,10 +136,12 @@
           language: p.language || (placement && placement.language) || '',
           level: p.level || (placement && placement.level) || '',
           tier: p.tier || 'free',
-          goal: p.goal_track || null
+          goal: p.goal_track || null,
+          timezone: p.timezone || null,
+          cohorts: res.cohorts || []
         },
         nextClass: s ? {
-          at: s.scheduled_at, live: s.status === 'live', language: co.language || p.language, level: co.level || p.level,
+          id: s.id, at: s.scheduled_at, live: s.status === 'live', language: co.language || p.language, level: co.level || p.level,
           teacher: res.teacher || ''
         } : null,
         flashcardsDue: res[3].count || 0,
@@ -182,6 +187,61 @@
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
     return c.from('practice_progress').select('ex_key, graded_score').eq('student_id', studentId).like('ex_key', 'quiz:%').limit(500).then(rows);
+  }
+
+  /* Live classes (step 10): the student's classes from 60 days back to 90 days ahead, their published notes (with
+     the class words), homework due dates, 1:1 bookings, attendance and the teachers' public names. Read through
+     row-level security, like the class dashboard. */
+  function classes(studentId, cohortIds) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    var from = new Date(Date.now() - 60 * DAY).toISOString(), to = new Date(Date.now() + 90 * DAY).toISOString();
+    var none = Promise.resolve({ data: [] });
+    var ids = cohortIds || [];
+    return Promise.all([
+      ids.length ? c.from('cohorts').select('id, language, level, tier, teacher_id, schedule_days, schedule_time, timezone').in('id', ids) : none,
+      ids.length ? c.from('sessions').select('id, cohort_id, scheduled_at, status').in('cohort_id', ids).gte('scheduled_at', from).lte('scheduled_at', to).order('scheduled_at', { ascending: true }).limit(300) : none,
+      ids.length ? c.from('session_notes').select('id, session_id, vocabulary, grammar_focus, exercises, homework, due_date, teacher_note, pdf_url, published_at, sessions!inner ( id, scheduled_at, cohort_id )')
+        .in('sessions.cohort_id', ids).not('published_at', 'is', null).order('published_at', { ascending: false }).limit(100) : none,
+      ids.length ? c.from('assignments').select('id, cohort_id, title, due_date').in('cohort_id', ids).not('due_date', 'is', null).gte('due_date', from.slice(0, 10)).limit(200) : none,
+      c.from('one_on_one_bookings').select('id, kind, scheduled_at, duration_minutes, status, teacher_note, teacher_id').eq('student_id', studentId).gte('scheduled_at', from).order('scheduled_at', { ascending: true }).limit(100),
+      c.from('session_attendance').select('session_id, joined_at').eq('student_id', studentId).gte('joined_at', from)
+    ]).then(function (r) {
+      r.forEach(function (x) { if (x && x.error) throw x.error; });
+      var cohorts = r[0].data || [];
+      var tids = {};
+      cohorts.forEach(function (co) { if (co.teacher_id) tids[co.teacher_id] = true; });
+      (r[4].data || []).forEach(function (b) { if (b.teacher_id) tids[b.teacher_id] = true; });
+      var list = Object.keys(tids);
+      return (list.length ? c.from('teachers_public').select('id, full_name').in('id', list) : none).then(function (tr) {
+        var names = {};
+        (tr.data || []).forEach(function (x) { names[x.id] = x.full_name || ''; });
+        return { cohorts: cohorts, sessions: r[1].data || [], notes: r[2].data || [], homework: r[3].data || [], bookings: r[4].data || [], attended: (r[5].data || []).map(function (x) { return x.session_id; }), teachers: names };
+      });
+    });
+  }
+  /* Class words from the notes into the flashcards (vocab_reviews), a word already there kept as it is */
+  function syncClassWords(studentId, notes) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    var seen = {}, out = [];
+    (notes || []).forEach(function (n) {
+      (Array.isArray(n.vocabulary) ? n.vocabulary : []).forEach(function (v) {
+        var word = String((v && v.word) || '').trim().slice(0, 200), key = word.toLowerCase();
+        if (!word || seen[key]) return;
+        seen[key] = true;
+        out.push({ student_id: studentId, word: word, word_key: key, definition: String(v.definition || '').trim().slice(0, 500) || null,
+          example: String(v.example || '').trim().slice(0, 500) || null, source_note_id: n.id || null });
+      });
+    });
+    if (!out.length) return Promise.resolve(0);
+    return c.from('vocab_reviews').upsert(out, { onConflict: 'student_id,word_key', ignoreDuplicates: true }).then(function (x) { if (x.error) throw x.error; return out.length; });
+  }
+  /* Leaving a class: the student's own attendance row gets left_at (joined_at is set by /api/join-session) */
+  function leftClass(studentId, sessionId) {
+    var c = client();
+    if (!c) return Promise.resolve();
+    return c.from('session_attendance').update({ left_at: new Date().toISOString() }).eq('session_id', sessionId).eq('student_id', studentId).then(function () {});
   }
 
   /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
@@ -240,5 +300,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

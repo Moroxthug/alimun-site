@@ -48,6 +48,12 @@
     app_home_days: ['app_home_days_zero', 'app_home_days_one', 'app_home_days_two', 'app_home_days_few', 'app_home_days_many', 'app_home_days_other'],
     app_home_cards: ['app_home_cards_zero', 'app_home_cards_one', 'app_home_cards_two', 'app_home_cards_few', 'app_home_cards_many', 'app_home_cards_other'],
     app_joke_streak: ['app_joke_streak_one', 'app_joke_streak_other'],
+    app_cl_in_min: ['app_cl_in_min_zero', 'app_cl_in_min_one', 'app_cl_in_min_two', 'app_cl_in_min_few', 'app_cl_in_min_many', 'app_cl_in_min_other'],
+    app_cl_in_h: ['app_cl_in_h_zero', 'app_cl_in_h_one', 'app_cl_in_h_two', 'app_cl_in_h_few', 'app_cl_in_h_many', 'app_cl_in_h_other'],
+    app_cl_in_days: ['app_cl_in_days_zero', 'app_cl_in_days_one', 'app_cl_in_days_two', 'app_cl_in_days_few', 'app_cl_in_days_many', 'app_cl_in_days_other'],
+    app_cl_minutes: ['app_cl_minutes_zero', 'app_cl_minutes_one', 'app_cl_minutes_two', 'app_cl_minutes_few', 'app_cl_minutes_many', 'app_cl_minutes_other'],
+    app_cl_credits: ['app_cl_credits_zero', 'app_cl_credits_one', 'app_cl_credits_two', 'app_cl_credits_few', 'app_cl_credits_many', 'app_cl_credits_other'],
+    app_cl_words_p: ['app_cl_words_p_zero', 'app_cl_words_p_one', 'app_cl_words_p_two', 'app_cl_words_p_few', 'app_cl_words_p_many', 'app_cl_words_p_other'],
     app_lb_cards_added: ['app_lb_cards_added_zero', 'app_lb_cards_added_one', 'app_lb_cards_added_two', 'app_lb_cards_added_few', 'app_lb_cards_added_many', 'app_lb_cards_added_other'],
     app_mt_questions: ['app_mt_questions_zero', 'app_mt_questions_one', 'app_mt_questions_two', 'app_mt_questions_few', 'app_mt_questions_many', 'app_mt_questions_other'],
     app_mt_tasks: ['app_mt_tasks_zero', 'app_mt_tasks_one', 'app_mt_tasks_two', 'app_mt_tasks_few', 'app_mt_tasks_many', 'app_mt_tasks_other'],
@@ -257,7 +263,7 @@
         '<p class="t-lead" style="margin-top:12px">' + esc(t('app_home_class_line', { line: line, when: when })) + '</p>' +
         '<div class="btn-row" style="margin-top:26px">' +
           (open ? (d.sample ? '<button class="btn btn--lime" type="button" data-join>' + icon('play') + esc(t('app_home_join')) + '</button>'
-                            : '<a class="btn btn--lime" href="/student-dashboard.html" data-join-real>' + icon('play') + esc(t('app_home_join')) + '</a>') : '') +
+                            : '<a class="btn btn--lime" href="' + (c.id ? '#/classes/live/' + esc(c.id) : '#/classes') + '" data-join-real>' + icon('play') + esc(t('app_home_join')) + '</a>') : '') +
           '<a class="btn btn--ghost btn--on-forest" href="#/classes">' + esc(t('app_home_calendar')) + '</a></div>' +
       '</section>';
     }
@@ -465,6 +471,8 @@
   var cardsHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('cards', false); } });
   var testsHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('tests', false); } });
   var libraryHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('library', false); } });
+  var classesHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('classes', false); } });
+  function classesParts() { return location.hash.replace(/^#\/classes\/?/, '').split('/').filter(Boolean); }
   function libraryParts() { return location.hash.replace(/^#\/library\/?/, '').split('/').filter(Boolean); }
   function testsParts() { return location.hash.replace(/^#\/tests\/?/, '').split('/').filter(Boolean); }
   function cardsParts() { return location.hash.replace(/^#\/cards\/?/, '').split('/').filter(Boolean); }
@@ -479,11 +487,12 @@
   }
   function render(id, animate) {
     var r = byId[id];
-    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' ? '' : soonView(r);
+    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' ? '' : soonView(r);
     var swap = function () {
       if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
       if (id !== 'tests' && window.AlimunTests) window.AlimunTests.reset();
       if (window.AlimunLibrary) window.AlimunLibrary.reset();
+      if (window.AlimunClasses) window.AlimunClasses.reset();
       view.innerHTML = html;
       view.classList.remove('is-leaving');
       document.body.classList.remove('is-reading');
@@ -496,6 +505,11 @@
       if (id === 'cards') {
         window.AlimunCards.mount(view, cardsParts(), cardsHelpers).then(function (res) {
           if (current === 'cards' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
+        });
+      }
+      if (id === 'classes') {
+        window.AlimunClasses.mount(view, classesParts(), classesHelpers).then(function (res) {
+          if (current === 'classes' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
       if (id === 'library') {
@@ -572,7 +586,7 @@
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library') render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes') render(id, true); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 
@@ -582,7 +596,7 @@
       if (el.hasAttribute('data-more')) setSheet(!document.body.classList.contains('is-sheet-open'));
       else if (el.hasAttribute('data-close')) setSheet(false);
       else if (el.hasAttribute('data-join')) showLoader(t('app_loading_join'), 2200);
-      else if (el.hasAttribute('data-join-real')) showLoader(t('app_loading_join'));
+      else if (el.hasAttribute('data-join-real')) showLoader(t('app_loading_join'), 1600);
       else if (el.hasAttribute('data-demo-loader')) showLoader(t('app_loading_open'), 2200);
       else if (el.hasAttribute('data-replay')) render('kit', false);
       else if (el.hasAttribute('data-retry')) {

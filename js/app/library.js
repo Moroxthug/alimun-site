@@ -144,8 +144,9 @@
     document.body.classList.remove('is-reading');
     var html = '<div class="lb">' +
       '<a class="rd-back" href="#/library/' + esc(S.id) + '">' + A.icon('back') + '<span>' + esc(t('app_lb_back', { shelf: A.languageName(S.language) + ' ' + S.level })) + '</span></a>' +
-      '<div class="view__head"><div><p class="t-small lb-genre">' + esc(t('app_lb_meta', { genre: genre(x.genre), n: x.minutes })) + '</p>' +
-      '<h1 class="t-h1"' + R.ta + '>' + esc(x.title) + '</h1><p class="t-lead"' + R.xa + '>' + md(x.about) + '</p></div></div>' +
+      '<div class="view__head"><div>' +
+      '<h1 class="t-h1"' + R.ta + '>' + esc(x.title) + '</h1><p class="t-lead"' + R.xa + '>' + md(x.about) + '</p>' +
+      '<p class="t-small lb-genre">' + esc(t('app_lb_meta', { genre: genre(x.genre), n: x.minutes })) + '</p></div></div>' +
       '<div class="lb-body">';
     html += '<div class="lb-mat">' + (x.kind === 'listen' ? playerHtml() + scriptHtml() : readHtml()) + wordsHtml() + '</div>';
     html += '<div class="lb-qs"><h2 class="t-h2">' + esc(t('app_lb_ex_h')) + '</h2>' + x.blocks.map(function (b, i) { return '<div class="rd-block" style="--i:' + (i + 1) + '">' + R.ex.html(i) + '</div>'; }).join('') +
