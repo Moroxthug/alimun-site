@@ -177,6 +177,26 @@
       student_id: studentId, item_key: key, box: r.b, seen: r.n, wrong: r.w, last_at: new Date(r.at).toISOString()
     }, { onConflict: 'student_id,item_key' }).then(function (x) { if (x.error) throw x.error; });
   }
+  /* Flashcards (vocab_reviews, step 6): the student's cards, new cards (a word already there is kept), a review */
+  function cards(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('vocab_reviews').select('id, word, word_key, definition, example, box, due_on, correct_count, wrong_count, last_reviewed_at')
+      .eq('student_id', studentId).order('due_on', { ascending: true }).limit(3000).then(rows);
+  }
+  function addCards(studentId, list) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('vocab_reviews').upsert(list.map(function (r) {
+      return { student_id: studentId, word: r.word, word_key: r.word_key, definition: r.definition || null, example: r.example || null };
+    }), { onConflict: 'student_id,word_key', ignoreDuplicates: true }).then(function (x) { if (x.error) throw x.error; });
+  }
+  function updateCard(id, patch) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('vocab_reviews').update(patch).eq('id', id).then(function (x) { if (x.error) throw x.error; });
+  }
+
   /* The signed-in user's access token, for /api calls (null when signed out) */
   function token() {
     var c = client();
@@ -186,5 +206,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

@@ -48,6 +48,10 @@
     app_home_days: ['app_home_days_zero', 'app_home_days_one', 'app_home_days_two', 'app_home_days_few', 'app_home_days_many', 'app_home_days_other'],
     app_home_cards: ['app_home_cards_zero', 'app_home_cards_one', 'app_home_cards_two', 'app_home_cards_few', 'app_home_cards_many', 'app_home_cards_other'],
     app_joke_streak: ['app_joke_streak_one', 'app_joke_streak_other'],
+    app_fc_due: ['app_fc_due_zero', 'app_fc_due_one', 'app_fc_due_two', 'app_fc_due_few', 'app_fc_due_many', 'app_fc_due_other'],
+    app_fc_words: ['app_fc_words_zero', 'app_fc_words_one', 'app_fc_words_two', 'app_fc_words_few', 'app_fc_words_many', 'app_fc_words_other'],
+    app_fc_add_rest: ['app_fc_add_rest_zero', 'app_fc_add_rest_one', 'app_fc_add_rest_two', 'app_fc_add_rest_few', 'app_fc_add_rest_many', 'app_fc_add_rest_other'],
+    app_fc_mine: ['app_fc_mine_zero', 'app_fc_mine_one', 'app_fc_mine_two', 'app_fc_mine_few', 'app_fc_mine_many', 'app_fc_mine_other'],
     app_pr_mistakes_n: ['app_pr_mistakes_n_zero', 'app_pr_mistakes_n_one', 'app_pr_mistakes_n_two', 'app_pr_mistakes_n_few', 'app_pr_mistakes_n_many', 'app_pr_mistakes_n_other']
   };
   var plural = window.Intl && Intl.PluralRules ? new Intl.PluralRules(locale) : null;
@@ -90,6 +94,7 @@
     bell: '<path d="M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15z"/><path d="M10 21h4"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
     down: '<path d="M12 5v14M6 13l6 6 6-6"/>',
+    cards: '<rect x="3.5" y="7" width="13" height="13" rx="2.5"/><path d="M8 4h10.5a2 2 0 0 1 2 2v10.5"/>',
     back: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
     check: '<path d="m5 12.5 4.5 4.5L19 7"/>',
     expand: '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
@@ -106,6 +111,7 @@
     { id: 'home', label: 'app_nav_home', icon: 'home', group: 'learn' },
     { id: 'book', label: 'app_nav_book', short: 'app_nav_book_short', icon: 'book', group: 'learn' },
     { id: 'practice', label: 'app_nav_practice', icon: 'practice', group: 'learn', step: 5, art: 'dog', tint: 'leaf', kind: 'say', text: 'app_soon_practice_text', bub: 'app_soon_practice_bub' },
+    { id: 'cards', label: 'app_nav_cards', icon: 'cards', group: 'learn' },
     { id: 'tests', label: 'app_nav_tests', short: 'app_nav_tests_short', icon: 'tests', group: 'learn', step: 8, art: 'dragon', tint: 'leaf', kind: 'say', text: 'app_soon_tests_text', bub: 'app_soon_tests_bub' },
     { id: 'library', label: 'app_nav_library', icon: 'library', group: 'learn', step: 9, art: 'teacup', tint: 'mint', kind: 'say', text: 'app_soon_library_text', bub: 'app_soon_library_bub' },
     { id: 'classes', label: 'app_nav_classes', icon: 'classes', group: 'class', step: 10, art: 'mug', tint: 'leaf', kind: 'think', text: 'app_soon_classes_text', bub: 'app_soon_classes_bub' },
@@ -268,7 +274,7 @@
 
   function todayPlan(d) {
     var items = [];
-    if (d.flashcardsDue > 0) items.push({ art: 'ghost', tint: 'coral', href: '#/practice', h: tn('app_home_cards', d.flashcardsDue), p: t('app_home_cards_p') });
+    if (d.flashcardsDue > 0) items.push({ art: 'ghost', tint: 'coral', href: '#/cards/review', h: tn('app_home_cards', d.flashcardsDue), p: t('app_home_cards_p') });
     if (d.homework.length) {
       var hw = d.homework[0];
       items.push({ art: 'monster', tint: 'mint', href: '#/homework', h: hw.titleKey ? t(hw.titleKey) : hw.title,
@@ -451,6 +457,8 @@
   };
   /* The Practice screen (js/app/practice.js) uses the same helpers */
   var practiceHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('practice', false); } });
+  var cardsHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('cards', false); } });
+  function cardsParts() { return location.hash.replace(/^#\/cards\/?/, '').split('/').filter(Boolean); }
   function practiceParts() { return location.hash.replace(/^#\/practice\/?/, '').split('/').filter(Boolean); }
   function bookParts() { return location.hash.replace(/^#\/book\/?/, '').split('/').filter(Boolean); }
 
@@ -462,7 +470,7 @@
   }
   function render(id, animate) {
     var r = byId[id];
-    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' ? '' : soonView(r);
+    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' ? '' : soonView(r);
     var swap = function () {
       if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
       view.innerHTML = html;
@@ -472,6 +480,11 @@
       if (id === 'book') {
         window.AlimunReader.mount(view, bookParts(), readerHelpers).then(function (res) {
           if (current === 'book' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
+        });
+      }
+      if (id === 'cards') {
+        window.AlimunCards.mount(view, cardsParts(), cardsHelpers).then(function (res) {
+          if (current === 'cards' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
       if (id === 'practice') {
@@ -538,7 +551,7 @@
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice') render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards') render(id, true); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 
