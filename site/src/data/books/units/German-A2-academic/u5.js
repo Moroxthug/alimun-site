@@ -132,6 +132,8 @@ export const UNIT = {
             { q: 'Yusuf findet die Aussprache schwer.', a: 'f', why: '*die Aussprache finde ich leicht*.' },
             { q: 'Marta kommt aus Polen.', a: 'ng', why: 'The conversation does not say where Marta comes from.' },
           ] },
+        ],
+        [
           { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
             { q: 'Was ist „Feierabend“?', o: ['die Zeit nach der Arbeit', 'ein Fest am Abend', 'der letzte Tag im Kurs'], why: 'Marta explains it: *die Zeit nach der Arbeit*.' },
             { q: 'Warum ist der Kurs für Marta manchmal anstrengend?', o: ['Sie arbeitet vorher acht Stunden.', 'Der Kurs ist sehr früh am Morgen.', 'Die Artikel sind nicht logisch.'], why: 'Her reason with *weil*: she works eight hours before the course.' },

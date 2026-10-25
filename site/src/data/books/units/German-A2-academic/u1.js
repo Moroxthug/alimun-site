@@ -26,7 +26,6 @@ export const UNIT = {
           { t: 'tip', art: 'owl', md: 'In many courses the teacher says *ihr* to the group and *du* to one learner: *Lest den Text. Hört zu.* and *Lies bitte vor.* In exams the instructions usually use *Sie*.' },
         ],
         [
-          { t: 'text', md: 'It is normal not to understand everything. These questions help you in every lesson. Learn them by heart.' },
           { t: 'examples', items: [
             { s: 'Wie **sagt man** „pen“ auf Deutsch?', n: 'You know the word in another language and want the German word.' },
             { s: 'Was **bedeutet** „Hausaufgabe“?', n: 'You want to know the meaning of a German word.' },
@@ -35,8 +34,6 @@ export const UNIT = {
             { s: 'Können Sie bitte **langsamer** sprechen?', n: '*langsamer* means more slowly.' },
             { s: 'Ich habe das nicht **verstanden**.', n: 'The Perfekt of *verstehen*: *ich habe … verstanden*.' },
           ] },
-        ],
-        [
           { t: 'dialogue', title: 'In the German lesson', lines: [
             { who: 'Frau Yılmaz', s: 'Öffnen Sie bitte das Buch auf Seite 24.' },
             { who: 'Tomás', s: 'Entschuldigung, auf welcher Seite?' },
@@ -46,7 +43,6 @@ export const UNIT = {
             { who: 'Amira', s: 'Danke. Und wie schreibt man das?' },
             { who: 'Frau Yılmaz', s: 'S-T-U-N-D-E-N-P-L-A-N. Mit großem S, denn es ist ein Nomen.' },
           ] },
-          { t: 'tip', art: 'owl', md: 'All German nouns start with a capital letter: *der Stundenplan, die Hausaufgabe, das Buch*. When you ask for a spelling, listen for *groß* (capital) and *klein* (small).' },
         ],
         [
           { t: 'ex', kind: 'match', h: 'What do you say? Match the situation and the question.', pairs: [

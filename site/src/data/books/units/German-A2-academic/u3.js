@@ -25,6 +25,11 @@ export const UNIT = {
             ['Ending', 'Mit freundlichen Grüßen', 'Viele Grüße'],
           ] },
           { t: 'text', md: 'Use *Sehr geehrte …* when you do not know the person. *Liebe Frau Weber* is fine for a teacher you know. In both cases you say *Sie* to the teacher.' },
+          { t: 'ex', kind: 'choice', h: 'Which one fits the email?', items: [
+            { q: 'Sie schreiben an eine Sprachschule. Sie kennen den Namen der Person nicht.', o: ['Sehr geehrte Damen und Herren,', 'Liebe Frau Weber,', 'Hallo Leute,'], why: 'For a school or office with no name: *Sehr geehrte Damen und Herren*.' },
+            { q: 'Ein formelles Ende für die E-Mail:', o: ['Mit freundlichen Grüßen', 'Bis dann!', 'Tschüss'], why: '*Mit freundlichen Grüßen* is the usual formal ending.' },
+            { q: 'Sehr geehrter Herr Kaya, ___', o: ['ich habe eine Frage zum Kurs.', 'Ich habe eine Frage zum Kurs.', 'ich habe eine frage zum Kurs.'], why: 'After the greeting the line starts with a small letter, but nouns like *Frage* keep their capital letter.' },
+          ] },
         ],
         [
           { t: 'text', md: 'Give your reason with **weil**. In a *weil* clause the conjugated verb goes to the **end**. With a modal verb, the modal verb is last: *…, weil ich arbeiten **muss**.*' },
@@ -33,13 +38,6 @@ export const UNIT = {
             { s: 'Ich komme später, weil mein Zug Verspätung **hat**.', n: '*Verspätung haben*: to be late (trains and buses).' },
             { s: 'Ich fehle morgen, weil mein Sohn krank **ist**.', n: '*fehlen*: not to be in class.' },
             { s: 'Ich kann nicht zum Kurs kommen, weil ich länger arbeiten **muss**.', n: 'The modal verb *muss* comes after the infinitive *arbeiten*.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Which one fits the email?', items: [
-            { q: 'Sie schreiben an eine Sprachschule. Sie kennen den Namen der Person nicht.', o: ['Sehr geehrte Damen und Herren,', 'Liebe Frau Weber,', 'Hallo Leute,'], why: 'For a school or office with no name: *Sehr geehrte Damen und Herren*.' },
-            { q: 'Ein formelles Ende für die E-Mail:', o: ['Mit freundlichen Grüßen', 'Bis dann!', 'Tschüss'], why: '*Mit freundlichen Grüßen* is the usual formal ending.' },
-            { q: 'Sehr geehrter Herr Kaya, ___', o: ['ich habe eine Frage zum Kurs.', 'Ich habe eine Frage zum Kurs.', 'ich habe eine frage zum Kurs.'], why: 'After the greeting the line starts with a small letter, but nouns like *Frage* keep their capital letter.' },
           ] },
           { t: 'ex', kind: 'gap', h: 'Complete the reasons. The verb goes to the end.', items: [
             { q: 'Ich komme nicht, weil ich einen Arzttermin ___. (haben)', a: ['habe'], why: '*ich habe*, at the end of the *weil* clause.' },

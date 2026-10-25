@@ -140,3 +140,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: emergencies in the UK countryside: 999 or 112, police then Mountain Rescue, or the Coastguard on the coast (checked).
 - u2 p1: "I’ve never been to Scotland" takes "Haven’t you?" (*Have you?* is also heard, not offered).
 - u6 reading: idioms *my heart sank*, *You’d better come with me*; check they suit B1.
+
+## German A2, travel
+- Facts stated generally: tip of about 5 to 10 percent, *Stimmt so*, not every restaurant takes cards, allergen information on request, ID at hotel check-in, often no tickets on board local trains, the pharmacy *Notdienst* list on the door, 112.
+- Real places in invented situations (building work between Hannover and Celle, *Halt in Fulda entfällt*, Bodensee, Lindau, Konstanz); invented town Lindenau is also a Leipzig district; *Hotel Lindenhof* is a common name.
+- u5 accepts *offen* with *geöffnet*; u6 accepts *übel* with *schlecht*.
+- Some items preview grammar above the A2 course book (*Wissen Sie, wo … ist?*, *nächste*, relative clauses with *an dem*).

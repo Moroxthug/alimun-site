@@ -148,7 +148,6 @@ export const UNIT = {
     { t: 'ex', kind: 'tf', h: 'True or false?', items: [
       { q: 'In einer Multiple-Choice-Aufgabe kreuzt man bei jeder Frage nur eine Lösung an.', a: 't', why: '*Es gibt nur eine richtige Lösung.*' },
       { q: 'Bei „ca. 30 Wörter“ ist ein Text mit 80 Wörtern gut.', a: 'f', why: '*ca.* means about. 80 words is much too long.' },
-      { q: 'An eine Freundin schreibt man „Liebe Lena“ und „du“.', a: 't', why: 'To a friend: *Liebe …* and *du*.' },
     ] },
     { t: 'ex', kind: 'match', h: 'Match the words with the same meaning.', pairs: [
       ['günstig', 'nicht teuer'],
