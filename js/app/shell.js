@@ -64,6 +64,7 @@
     app_pg_n_pieces: ['app_pg_n_pieces_zero', 'app_pg_n_pieces_one', 'app_pg_n_pieces_two', 'app_pg_n_pieces_few', 'app_pg_n_pieces_many', 'app_pg_n_pieces_other'],
     app_pg_n_papers: ['app_pg_n_papers_zero', 'app_pg_n_papers_one', 'app_pg_n_papers_two', 'app_pg_n_papers_few', 'app_pg_n_papers_many', 'app_pg_n_papers_other'],
     app_pg_n_hw: ['app_pg_n_hw_zero', 'app_pg_n_hw_one', 'app_pg_n_hw_two', 'app_pg_n_hw_few', 'app_pg_n_hw_many', 'app_pg_n_hw_other'],
+    app_ms_new: ['app_ms_new_zero', 'app_ms_new_one', 'app_ms_new_two', 'app_ms_new_few', 'app_ms_new_many', 'app_ms_new_other'],
     app_lb_cards_added: ['app_lb_cards_added_zero', 'app_lb_cards_added_one', 'app_lb_cards_added_two', 'app_lb_cards_added_few', 'app_lb_cards_added_many', 'app_lb_cards_added_other'],
     app_mt_questions: ['app_mt_questions_zero', 'app_mt_questions_one', 'app_mt_questions_two', 'app_mt_questions_few', 'app_mt_questions_many', 'app_mt_questions_other'],
     app_mt_tasks: ['app_mt_tasks_zero', 'app_mt_tasks_one', 'app_mt_tasks_two', 'app_mt_tasks_few', 'app_mt_tasks_many', 'app_mt_tasks_other'],
@@ -484,6 +485,8 @@
   var classesHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('classes', false); } });
   var homeworkHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('homework', false); } });
   var progressHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('progress', false); } });
+  var messagesHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('messages', false); } });
+  function messagesParts() { return location.hash.replace(/^#\/messages\/?/, '').split('/').filter(Boolean); }
   function homeworkParts() { return location.hash.replace(/^#\/homework\/?/, '').split('/').filter(Boolean); }
   function classesParts() { return location.hash.replace(/^#\/classes\/?/, '').split('/').filter(Boolean); }
   function libraryParts() { return location.hash.replace(/^#\/library\/?/, '').split('/').filter(Boolean); }
@@ -500,13 +503,14 @@
   }
   function render(id, animate) {
     var r = byId[id];
-    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' ? '' : soonView(r);
+    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' || id === 'messages' ? '' : soonView(r);
     var swap = function () {
       if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
       if (id !== 'tests' && window.AlimunTests) window.AlimunTests.reset();
       if (window.AlimunLibrary) window.AlimunLibrary.reset();
       if (window.AlimunClasses) window.AlimunClasses.reset();
       if (window.AlimunHomework) window.AlimunHomework.reset();
+      if (window.AlimunMessages) window.AlimunMessages.reset();
       view.innerHTML = html;
       view.classList.remove('is-leaving');
       document.body.classList.remove('is-reading');
@@ -519,6 +523,11 @@
       if (id === 'cards') {
         window.AlimunCards.mount(view, cardsParts(), cardsHelpers).then(function (res) {
           if (current === 'cards' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
+        });
+      }
+      if (id === 'messages') {
+        window.AlimunMessages.mount(view, messagesParts(), messagesHelpers).then(function (res) {
+          if (current === 'messages' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
       if (id === 'progress') {
@@ -608,7 +617,7 @@
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework') render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'messages') render(id, true); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 

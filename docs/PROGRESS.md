@@ -724,3 +724,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Screen: level ladder, level test, course book lessons and unit tests; words learned; five skills with what each rests on (or "not enough to tell yet"); lessons to work on and strongest lessons (links to the lesson, practice round); the level test's focus topics; active days per week for twelve weeks; the latest milestones.
 - 53 `app_pg_*` keys in nine languages (Arabic plural forms).
 - Checked with sample progress: desktop English, phone Arabic, no errors, no page wider than the phone.
+
+## 2026-10-25 — Dashboards, step 13: messages (screen built; tables wait for the owner's yes)
+- Owner: go ahead with messages. The class dashboard's chat was only kept in the browser, so there was nothing to build on: new migration `supabase/migrations/202610251800_messages.sql` (message_threads, messages, message_reads; can_see_thread(), open_thread(), my_threads(); triggers set the sender and limit 20 messages a minute; RLS), NOT applied yet: shown to the owner first, as the project rules ask.
+- New section Messages (`#/messages`, `js/app/messages.js`), replacing the "soon" page; `js/app/data.js` myThreads, openThread, threadMessages, sendMessage, markRead, userId, classTeachers. Until the tables exist the page says messages are almost ready.
+- 28 `app_ms_*` keys in nine languages (Arabic plural forms).
+- Checked with sample conversations: list, opening, sending (Enter, Shift+Enter for a new line), HTML typed in a message shown as text, desktop and phone (the bottom bar steps aside in a conversation), no errors.

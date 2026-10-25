@@ -27,7 +27,7 @@ Owner, 24 Oct 2026: rebuild the dashboards from scratch, without the current one
 10. Live classes and calendar: joining, notes, class vocabulary, 1:1 bookings. Built, waiting for the owner (25 Oct 2026): Classes (`#/classes`, `js/app/classes.js`), decisions below ("Step 10 decisions").
 11. Homework, essays and teacher feedback. Built, waiting for the owner (25 Oct 2026): Homework (`#/homework`, `js/app/homework.js`), decisions below ("Step 11 decisions").
 12. Progress: skills, levels, topics, history. Built, waiting for the owner (25 Oct 2026): Progress (`#/progress`, `js/app/progress.js`), decisions below ("Step 12 decisions").
-13. Messages.
+13. Messages. Built, waiting for the owner (25 Oct 2026): Messages (`#/messages`, `js/app/messages.js`); the tables (`supabase/migrations/202610251800_messages.sql`) wait for the owner's yes before they are applied. Decisions below ("Step 13 decisions").
 14. Settings, plan and billing; free-plan limits and the occasional upgrade pop-up.
 15. Teacher dashboard (section 6), then the admin pages, in the same step-by-step way.
 The new dashboards are built next to the current ones and switched over only when complete.
@@ -73,6 +73,11 @@ The new dashboards are built next to the current ones and switched over only whe
 - Skills as the share of answers right: listening, speaking, reading, writing, grammar and words, each saying what it rests on ("18 answers, one mock test paper"); under ten answers' worth it says there is not enough yet instead of a number. A library piece counts like 12 answers, a marked homework like 10 and a mock paper like 20 in the share.
 - Topics: the course book's lessons (titles already translated) where the student is strongest and those to work on, from at least four answers each, with the level test's focus topics. The book's 550 topic tags have no translated names, so they are not shown.
 - History: active days in each of the last twelve weeks, and the latest milestones (unit tests, mock papers, library pieces, quizzes, marked homework, live classes).
+
+## Step 13 decisions (owner, 25 Oct 2026: "go ahead with messages")
+- The class dashboard's chat was never stored (browser only, with a simulated tutor), so messages need tables: conversations (one per class with its students and teacher, one per student and class teacher), messages and read marks, with row-level security and three database functions (who may see a conversation, opening one, the list with unread counts). Names and roles of senders are set by the database (students by first name), 20 messages a minute at most, admins can read everything and hide a message.
+- The screen: conversations on the left (class and teacher, last message, "2 new"), the conversation on the right (phone: one or the other), day separators, the teacher marked, own messages on the right; plain text only (escaped, line breaks kept); new messages fetched every 8 seconds while a conversation is open; reading marks it read. Until the tables exist the page says messages are almost ready.
+- Teachers reply from their dashboard; the teacher dashboard is rebuilt in step 15.
 
 ## 3. Learning material
 - Course books for every language and every level, A1, A2, B1, B2, C1, C2: extensive, unit by unit, page by page. Six languages × six levels = 36 course books, about eight units each.

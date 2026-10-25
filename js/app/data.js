@@ -293,6 +293,55 @@
     });
   }
 
+  /* Messages (step 13, supabase/migrations/202610251800_messages.sql): conversations through my_threads() and
+     open_thread(); the database sets each sender's name and role and limits how fast messages can be sent */
+  function myThreads() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.rpc('my_threads').then(function (r) { if (r.error) throw r.error; return r.data || []; });
+  }
+  function openThread(kind, cohortId, teacherId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.rpc('open_thread', { p_kind: kind, p_cohort: cohortId || null, p_student: null, p_teacher: teacherId || null }).then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function threadMessages(threadId, after) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    var q = c.from('messages').select('id, sender_user, sender_role, sender_name, body, created_at').eq('thread_id', threadId);
+    if (after) q = q.gt('created_at', after);
+    return q.order('created_at', { ascending: false }).limit(after ? 100 : 80).then(function (r) { if (r.error) throw r.error; return (r.data || []).reverse(); });
+  }
+  function sendMessage(threadId, body) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('messages').insert({ thread_id: threadId, body: body }).select('id, sender_user, sender_role, sender_name, body, created_at').maybeSingle()
+      .then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function markRead(threadId) {
+    var c = client();
+    if (!c) return Promise.resolve();
+    return c.from('message_reads').upsert({ thread_id: threadId, last_read_at: new Date().toISOString() }, { onConflict: 'thread_id,user_id' }).then(function () {});
+  }
+  function userId() {
+    var c = client();
+    if (!c) return Promise.resolve(null);
+    return c.auth.getSession().then(function (x) { return x.data && x.data.session ? x.data.session.user.id : null; });
+  }
+  function classTeachers(cohortIds) {
+    var c = client();
+    if (!c || !cohortIds || !cohortIds.length) return Promise.resolve([]);
+    return c.from('cohorts').select('id, language, level, teacher_id').in('id', cohortIds).then(function (r) {
+      if (r.error) throw r.error;
+      var cos = r.data || [], ids = cos.map(function (x) { return x.teacher_id; }).filter(Boolean);
+      return (ids.length ? c.from('teachers_public').select('id, full_name').in('id', ids) : Promise.resolve({ data: [] })).then(function (tr) {
+        var names = {};
+        (tr.data || []).forEach(function (x) { names[x.id] = x.full_name || ''; });
+        return cos.map(function (co) { return { cohort: co, teacherName: names[co.teacher_id] || '' }; });
+      });
+    });
+  }
+
   /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
   function libraryResults(studentId) {
     var c = client();
@@ -349,5 +398,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, progress: progress, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();
