@@ -56,6 +56,7 @@
     app_pg_n_pieces: ['app_pg_n_pieces_zero', 'app_pg_n_pieces_one', 'app_pg_n_pieces_two', 'app_pg_n_pieces_few', 'app_pg_n_pieces_many', 'app_pg_n_pieces_other'],
     app_pg_n_papers: ['app_pg_n_papers_zero', 'app_pg_n_papers_one', 'app_pg_n_papers_two', 'app_pg_n_papers_few', 'app_pg_n_papers_many', 'app_pg_n_papers_other'],
     app_pg_n_hw: ['app_pg_n_hw_zero', 'app_pg_n_hw_one', 'app_pg_n_hw_two', 'app_pg_n_hw_few', 'app_pg_n_hw_many', 'app_pg_n_hw_other'],
+    app_ts_r_idle: ['app_ts_r_idle_zero', 'app_ts_r_idle_one', 'app_ts_r_idle_two', 'app_ts_r_idle_few', 'app_ts_r_idle_many', 'app_ts_r_idle_other'],
     app_tc_created_n: ['app_tc_created_n_zero', 'app_tc_created_n_one', 'app_tc_created_n_two', 'app_tc_created_n_few', 'app_tc_created_n_many', 'app_tc_created_n_other'],
     app_t_oto_notes_n: ['app_t_oto_notes_n_zero', 'app_t_oto_notes_n_one', 'app_t_oto_notes_n_two', 'app_t_oto_notes_n_few', 'app_t_oto_notes_n_many', 'app_t_oto_notes_n_other']
   };

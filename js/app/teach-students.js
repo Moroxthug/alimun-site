@@ -123,7 +123,7 @@
     var out = [], c = inClass(st, co), idle = st.last ? Date.now() - new Date(st.last).getTime() : null;
     var joinedLongAgo = !st.since || Date.now() - new Date(st.since).getTime() > 7 * DAY;
     if (idle == null && joinedLongAgo) out.push(t('app_ts_r_never'));
-    else if (idle != null && idle > 7 * DAY) out.push(t('app_ts_r_idle', { n: Math.floor(idle / DAY) }));
+    else if (idle != null && idle > 7 * DAY) out.push(A.tn('app_ts_r_idle', Math.floor(idle / DAY)));
     if (c.missedTwo) out.push(t('app_ts_r_missed'));
     if (c.late.length === 1) out.push(t('app_ts_r_late_one', { title: c.late[0].title }));
     else if (c.late.length > 1) out.push(t('app_ts_r_late_n', { n: c.late.length }));
