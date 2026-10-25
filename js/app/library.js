@@ -189,13 +189,18 @@
   }
   /* The first time each word of the piece appears in the text (outside tags) becomes a button with its meaning */
   function markWords(h, marked) {
-    (R.x.words || []).forEach(function (w, k) {
+    /* Longer phrases first, so a short word never breaks up a phrase that contains it */
+    (R.x.words || []).map(function (w, k) { return k; }).sort(function (a, b) { return String(R.x.words[b].w).length - String(R.x.words[a].w).length; }).forEach(function (k) {
+      var w = R.x.words[k];
       if (marked[k]) return;
       var word = esc(String(w.w).replace(/\*/g, ''));
       var re = new RegExp('(^|[^\\p{L}\\p{N}])(' + word.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')(?=[^\\p{L}\\p{N}]|$)', 'iu');
-      var parts = h.split(/(<[^>]+>)/), done = false;
+      var parts = h.split(/(<[^>]+>)/), done = false, inside = false;
       h = parts.map(function (seg) {
-        if (done || seg.charAt(0) === '<') return seg;
+        /* Never inside a word already marked (a phrase can contain another word of the list) */
+        if (seg.indexOf('<button class="gl"') === 0) inside = true;
+        else if (seg === '</button>') inside = false;
+        if (done || inside || seg.charAt(0) === '<') return seg;
         return seg.replace(re, function (m, pre, hit) { done = true; return pre + '<button class="gl" type="button" data-gl="' + k + '" aria-expanded="false">' + hit + '</button>'; });
       }).join('');
       if (done) marked[k] = true;
