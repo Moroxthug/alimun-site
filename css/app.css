@@ -516,10 +516,10 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 /* Course audio in the reader (step 5) */
 .rd-exrow { display: flex; align-items: flex-start; gap: 10px; }
 .rd-exrow > .rd-ex { flex: 1; min-width: 0; }
-.say { flex: none; width: 44px; height: 44px; margin-top: 6px; border: 0; border-radius: 50%; background: var(--forest); color: var(--lime); display: grid; place-items: center; cursor: pointer; transition: transform var(--t-fast) var(--spring), background var(--t-fast); }
-.say svg { width: 18px; height: 18px; fill: currentColor; }
-.say:hover { transform: scale(1.08); }
-.say.is-playing { background: var(--lime); color: var(--forest); animation: pulse 1.2s ease-in-out infinite; }
+.rd-say { flex: none; width: 44px; height: 44px; margin-top: 6px; border: 0; border-radius: 50%; background: var(--forest); color: var(--lime); display: grid; place-items: center; cursor: pointer; transition: transform var(--t-fast) var(--spring), background var(--t-fast); }
+.rd-say svg { width: 18px; height: 18px; fill: currentColor; }
+.rd-say:hover { transform: scale(1.08); }
+.rd-say.is-playing { background: var(--lime); color: var(--forest); animation: pulse 1.2s ease-in-out infinite; }
 .rd-exrow.is-speaking .rd-ex { box-shadow: inset 0 0 0 2px var(--forest); }
 .listen { margin-top: 14px; gap: 8px; }
 .listen svg { width: 16px; height: 16px; fill: currentColor; }

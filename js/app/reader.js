@@ -300,7 +300,7 @@
             : '<button class="rd-ex is-tap" type="button" data-act="why" aria-expanded="false" style="--k:' + k + '"><span class="rd-ex__s"' + tA(book) + '>' + md(x.s) + '</span>' +
               '<span class="rd-ex__hint">' + esc(t('app_book_why_tap')) + '</span><span class="rd-ex__n"><span>' + md(x.n) + '</span></span></button>';
           var src = audioSrc(gi, k);
-          return src ? '<div class="rd-exrow" style="--k:' + k + '"><button class="say" type="button" data-act="say" data-src="' + esc(src) + '" aria-label="' + esc(t('app_book_play')) + '">' + A.icon('play') + '</button>' + ex + '</div>' : ex;
+          return src ? '<div class="rd-exrow" style="--k:' + k + '"><button class="rd-say" type="button" data-act="say" data-src="' + esc(src) + '" aria-label="' + esc(t('app_book_play')) + '">' + A.icon('play') + '</button>' + ex + '</div>' : ex;
         }).join('') + '</div>';
       case 'table': {
         var ex = b.explain || [];
