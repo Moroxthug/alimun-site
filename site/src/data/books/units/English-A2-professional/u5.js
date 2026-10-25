@@ -161,9 +161,9 @@ export const UNIT = {
   test: [
     { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
       { q: 'A customer comes in. You say: ___', o: ['How can I help you?', 'What is your problem?', 'What do you want?'], why: '*How can I help you?* is friendly and polite.' },
-      { q: 'Would you like a coffee while you wait? B: ___', o: ['Yes, please.', 'Yes, I would like.', 'Yes, I like.'], why: 'Answer an offer with *Yes, please* or *No, thanks*.' },
+      { q: 'A: Would you like a coffee while you wait? B: ___', o: ['Yes, please.', 'Yes, I would like.', 'Yes, I like.'], why: 'Answer an offer with *Yes, please* or *No, thanks*.' },
       { q: 'The machine is broken. It ___.', o: ['doesn’t work', 'isn’t work', 'not works'], why: '*It doesn’t work*: present simple negative.' },
-      { q: 'I ___ call you back in ten minutes.', o: ['’ll', '’m', '’d'], why: '*I’ll* + verb: a promise.' },
+      { q: 'I ___ call you back in ten minutes.', o: ['will', 'am', 'have'], why: '*I will* (*I’ll*) + verb: a promise.' },
     ] },
     { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
       { q: 'Let ___ check that for you.', a: ['me'], why: '*Let me* + verb.' },
@@ -173,7 +173,7 @@ export const UNIT = {
     ] },
     { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
       { a: 'How can I help you?', why: 'Question word + *can* + *I* + verb.' },
-      { a: 'Please take a seat over there.', why: '*Take a seat* means *sit down*.' },
+      { a: 'Have you got it in large?', why: '*Have you got…?* asks if the shop has something.' },
     ] },
     { t: 'ex', kind: 'tf', h: 'Is this a good way to talk to a customer? True or false?', items: [
       { q: 'A customer has a problem. You say: I’m very sorry about that.', a: 't', why: 'Say sorry first.' },
