@@ -144,8 +144,8 @@ export const UNIT = {
             { q: 'Am Samstag haben zwei Personen bedient.', a: 'f', why: '*nur eine Person hat bedient*.' },
             { q: 'Die Bäckerei hat am Samstag eine neue Kollegin.', a: 'ng', why: 'The answer says a colleague was ill and that three people will work on Saturdays. It does not say if there is a new colleague.' },
           ] },
-          { t: 'ex', kind: 'spot', h: 'Tap the two words in the answer that say sorry.', items: [
-            { s: 'Liebe Frau M., vielen Dank für Ihre Bewertung. Es tut uns sehr [leid]! Wir hoffen, Sie besuchen uns bald [wieder].', why: '' },
+          { t: 'ex', kind: 'spot', h: 'Tap the word for thanks and the word for sorry.', items: [
+            { s: 'Liebe Frau M., vielen [Dank] für Ihre Bewertung. Es tut uns sehr [leid]!', why: '*Vielen Dank* says thank you. *Es tut uns leid* says sorry for the team.' },
           ] },
         ],
         [

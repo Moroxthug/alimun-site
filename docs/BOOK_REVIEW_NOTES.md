@@ -134,3 +134,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1, u2: a sort code has six digits and an account number eight.
 - u3 p2: a CV with short list-style lines (as real CVs look); check against the no-lists rule.
 - Word-order items "Could you please confirm that you can attend?" and "Could you tell me what homework he has missed?"; u4 gap accepts *was charged* and *have been charged*.
+
+## English B1, travel
+- u3 p2: tipping customs stated generally (about 10% in UK restaurants, 15 to 20% in the USA, usually none in Japan); u3 p1: regional dishes (Cornish pasty, scone, Irish stew, Welsh cake, haggis).
+- u5 p2: emergencies in the UK countryside: 999 or 112, police then Mountain Rescue, or the Coastguard on the coast (checked).
+- u2 p1: "I’ve never been to Scotland" takes "Haven’t you?" (*Have you?* is also heard, not offered).
+- u6 reading: idioms *my heart sank*, *You’d better come with me*; check they suit B1.
