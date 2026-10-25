@@ -49,6 +49,7 @@
     app_t_unread_n: ['app_t_unread_n_zero', 'app_t_unread_n_one', 'app_t_unread_n_two', 'app_t_unread_n_few', 'app_t_unread_n_many', 'app_t_unread_n_other'],
     app_t_students_n: ['app_t_students_n_zero', 'app_t_students_n_one', 'app_t_students_n_two', 'app_t_students_n_few', 'app_t_students_n_many', 'app_t_students_n_other'],
     app_t_classes_n: ['app_t_classes_n_zero', 'app_t_classes_n_one', 'app_t_classes_n_two', 'app_t_classes_n_few', 'app_t_classes_n_many', 'app_t_classes_n_other'],
+    app_tc_created_n: ['app_tc_created_n_zero', 'app_tc_created_n_one', 'app_tc_created_n_two', 'app_tc_created_n_few', 'app_tc_created_n_many', 'app_tc_created_n_other'],
     app_t_oto_notes_n: ['app_t_oto_notes_n_zero', 'app_t_oto_notes_n_one', 'app_t_oto_notes_n_two', 'app_t_oto_notes_n_few', 'app_t_oto_notes_n_many', 'app_t_oto_notes_n_other']
   };
   var plural = window.Intl && Intl.PluralRules ? new Intl.PluralRules(locale) : null;
@@ -86,8 +87,16 @@
     settings: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
     more: '<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
+    back: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>',
+    minus: '<path d="M5 12h14"/>',
     play: '<path d="M8 5.5v13l10.5-6.5z"/>'
   };
+  function loaderInner() {
+    return '<div class="whirl whirl--outer"></div><div class="whirl whirl--inner"></div><div class="spark"></div>' +
+      '<div class="mark"><svg viewBox="290 360 445 445" aria-hidden="true">' + Cast.logoPath +
+      '<circle fill="#d5af33" cx="453" cy="605" r="19"/><circle fill="#d5af33" cx="574" cy="605" r="19"/></svg></div>';
+  }
   function icon(name) { return '<svg class="i-' + name + '" viewBox="0 0 24 24" ' + P + ' aria-hidden="true" focusable="false">' + ICONS[name] + '</svg>'; }
 
   /* ---------- Sections ---------- */
@@ -230,7 +239,7 @@
     }
     if (w.length) items.push({ art: 'monster', tint: 'coral', href: '#/homework', h: tn('app_t_grade_n', w.length), p: t('app_t_grade_p', { name: firstName(w[0].student), when: relative(new Date(w[0].at).getTime() - Date.now()) }) });
     if (D.unread) items.push({ art: 'alien', tint: 'sun', href: '#/messages', h: tn('app_t_unread_n', D.unread), p: t('app_t_unread_p') });
-    if (od.length) items.push({ art: 'mug', tint: 'leaf', href: '#/classes', h: tn('app_t_oto_notes_n', od.length), p: t('app_t_oto_notes_p', { name: firstName(od[0].student) }) });
+    if (od.length) items.push({ art: 'mug', tint: 'leaf', href: '#/classes/oto/' + od[0].id, h: tn('app_t_oto_notes_n', od.length), p: t('app_t_oto_notes_p', { name: firstName(od[0].student) }) });
     if (!items.length) items.push({ art: 'sun', tint: 'leaf', href: '#/material', h: t('app_t_clear_h'), p: t('app_t_clear_p') });
     var span = items.length === 1 ? 12 : items.length === 3 ? 4 : 6;
     return '<h2 class="t-h2 span-12 home__section" style="--i:3">' + esc(t('app_t_todo_h')) + '</h2>' +
@@ -340,6 +349,16 @@
     if (open) { var a = sheet.querySelector('a'); if (a) a.focus(); }
   }
 
+  /* ---------- Sections drawn by their own files ---------- */
+  /* Helpers for js/app/teach-classes.js and the parts after it */
+  var helpers = {
+    t: t, tn: tn, esc: esc, icon: icon, Cast: Cast, lang: lang, locale: locale, cap: cap, languageName: languageName, listOf: listOf, fmt: fmt,
+    loaderInner: loaderInner, dayName: dayName, relative: relative, className: className, weekday: weekday, browserZone: browserZone,
+    mode: function () { return mode; }, rerender: function () { render(current, false); }
+  };
+  var MODULES = { classes: function () { return window.AlimunTeachClasses; } };
+  function partsOf(id) { return location.hash.replace(new RegExp('^#\\/' + id + '\\/?'), '').split('/').filter(Boolean); }
+
   /* ---------- Routing ---------- */
   var current = null;
   function routeFromHash() {
@@ -348,11 +367,14 @@
   }
   function render(id, animate) {
     var r = byId[id];
-    var html = mode === 'pending' ? pendingView() : id === 'today' ? todayView() : soonView(r);
+    var mod = mode !== 'pending' && MODULES[id] ? MODULES[id]() : null;
+    var html = mode === 'pending' ? pendingView() : id === 'today' ? todayView() : mod ? '' : soonView(r);
     var swap = function () {
+      Object.keys(MODULES).forEach(function (k) { var m = MODULES[k](); if (m) m.reset(); });
       view.innerHTML = html;
       view.classList.remove('is-leaving');
       document.title = t(r.label) + ' – Alimun';
+      if (mod) mod.mount(view, partsOf(id), helpers).then(function (res) { if (current === id && res && !res.stale && res.title) document.title = res.title + ' – Alimun'; });
       top.querySelector('.top__title').textContent = t(r.label);
       app.querySelectorAll('[data-route]').forEach(function (a) {
         if (a.getAttribute('data-route') === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
@@ -426,7 +448,7 @@
       start();
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current) render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || MODULES[id]) render(id, true); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
     /* Today is drawn from the data loaded at the start: refresh it every five minutes so counts and Start stay right */

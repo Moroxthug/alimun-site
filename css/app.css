@@ -1317,10 +1317,33 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 .tt-week__day { margin: 14px 0 2px; color: var(--muted); font-weight: 700; }
 .tt-row { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 14px; align-items: baseline; padding: 12px 0; border-top: 1px solid var(--line); color: inherit; text-decoration: none; }
 .tt-week__day + .tt-row, .tt-week > .tt-row:first-child { border-top: 0; }
-.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
+a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .tt-row__time { font-weight: 700; color: var(--forest); font-variant-numeric: tabular-nums; }
 .tt-row b { display: block; font-weight: 700; }
 .tt-row small { display: block; color: var(--muted); font-size: 14px; margin-top: 2px; }
 .avatar { text-decoration: none; }
 .tt-row--wide { grid-template-columns: 130px minmax(0, 1fr); }
 @media (max-width: 520px) { .tt-row, .tt-row--wide { grid-template-columns: 1fr; gap: 2px; } }
+
+/* ---------- Teacher dashboard, Classes (step 15 part 2, js/app/teach-classes.js) ---------- */
+.tc-open-note { margin: 12px 0 0; color: var(--on-forest); }
+.tc-row-btn { margin-top: 10px; }
+.tc-row-link { display: inline-block; margin-top: 6px; font-size: 14px; }
+.tc-past .tt-row { grid-template-columns: 130px minmax(0, 1fr) auto; align-items: center; }
+@media (max-width: 520px) { .tc-past .tt-row { grid-template-columns: 1fr; } .tc-past .tt-row .btn { justify-self: start; } }
+.tc-flash { margin: -6px 0 18px; }
+.tc-ta { resize: vertical; min-height: 84px; line-height: 1.5; }
+.tc-words { display: grid; gap: 10px; margin-top: 8px; }
+.tc-word { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr) auto; gap: 8px; align-items: center; }
+@media (max-width: 700px) { .tc-word { grid-template-columns: minmax(0, 1fr) auto; } .tc-word [name="w_word"] { grid-column: 1; } .tc-word__x { grid-column: 2; grid-row: 1; } .tc-word [name="w_def"], .tc-word [name="w_ex"] { grid-column: 1 / -1; } }
+.tc-word__x { padding-inline: 12px; }
+.tc-pub { align-self: start; position: sticky; top: 96px; }
+.tc-pub .t-body, .tc-pub .t-small { color: var(--on-forest); }
+.tc-slot { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; padding: 2px 0; }
+.tc-slot b { display: inline; }
+.tc-slot small { color: var(--muted); }
+.tc-side { display: flex; flex-direction: column; min-height: 0; }
+.tc-msgs { flex: none; height: 300px; border-radius: 16px; padding: 12px; margin-bottom: 10px; }
+.tc-side .ms-form { display: flex; gap: 8px; align-items: flex-end; }
+@media (min-width: 1100px) { .cl-live__body:has(.tc-side) { grid-template-columns: minmax(0, 1fr) 340px; } }
+.tc-side .ms-form { padding: 0; border: 0; }

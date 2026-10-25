@@ -80,7 +80,8 @@ const MyDocument = ({ data }) => {
           React.createElement(Text, null, `Date: ${sessionDate}`)
         )
       ),
-      React.createElement(View, { style: styles.section },
+      // Sections the teacher left empty are left out (only the grammar title is required)
+      vocabRows.length > 0 ? React.createElement(View, { style: styles.section },
         React.createElement(Text, { style: styles.sectionTitle }, 'Vocabulary List'),
         React.createElement(View, { style: styles.table },
           React.createElement(View, { style: styles.tableRow },
@@ -90,27 +91,27 @@ const MyDocument = ({ data }) => {
           ),
           vocabRows
         )
-      ),
+      ) : null,
       React.createElement(View, { style: styles.section },
         React.createElement(Text, { style: styles.sectionTitle }, 'Grammar Focus'),
         React.createElement(Text, { style: [styles.bold, { marginBottom: 4 }] }, grammarTitle),
-        React.createElement(Text, null, grammarExplanation)
+        grammarExplanation ? React.createElement(Text, null, grammarExplanation) : null
       ),
-      React.createElement(View, { style: styles.section },
+      exercises ? React.createElement(View, { style: styles.section },
         React.createElement(Text, { style: styles.sectionTitle }, 'Exercises Done'),
         React.createElement(Text, null, exercises)
-      ),
-      React.createElement(View, { style: styles.section },
+      ) : null,
+      homework ? React.createElement(View, { style: styles.section },
         React.createElement(Text, { style: styles.sectionTitle }, 'Homework Assignment'),
         React.createElement(Text, null, homework),
-        React.createElement(View, { style: { marginTop: 8, backgroundColor: '#f0efe9', padding: 6, borderRadius: 4 } },
+        dueDate ? React.createElement(View, { style: { marginTop: 8, backgroundColor: '#f0efe9', padding: 6, borderRadius: 4 } },
           React.createElement(Text, { style: styles.bold }, `Due Date: ${dueDate}`)
-        )
-      ),
-      React.createElement(View, { style: styles.callout },
+        ) : null
+      ) : null,
+      teacherNote ? React.createElement(View, { style: styles.callout },
         React.createElement(Text, { style: [styles.bold, { marginBottom: 2 }] }, 'Teacher\'s Note:'),
         React.createElement(Text, { style: styles.calloutText }, `"${teacherNote}"`)
-      ),
+      ) : null,
       React.createElement(Text, { style: styles.footer }, `Verify at alimun.com/verify/${sessionNotesId}`)
     )
   );

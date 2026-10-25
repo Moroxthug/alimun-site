@@ -441,6 +441,82 @@
     });
   }
 
+  /* Teacher dashboard, Classes (step 15, part 2): the approved teacher's classes, class dates four weeks back to
+     twelve ahead with their notes and how many students joined, 1:1s, and availability. */
+  function teacherClasses() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.auth.getSession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session) return { signedIn: false };
+      return c.from('teacher_profiles').select('id, full_name, status, languages').eq('user_id', session.user.id).maybeSingle().then(function (tr) {
+        if (tr.error) throw tr.error;
+        var tp = tr.data;
+        if (!tp || tp.status !== 'approved') return { signedIn: true, teacher: null };
+        var now = Date.now(), from = new Date(now - 28 * DAY).toISOString(), to = new Date(now + 84 * DAY).toISOString();
+        return c.from('cohorts').select('id, language, level, goal_track, tier, max_students, enrolled_count, schedule_days, schedule_time, timezone, status')
+          .eq('teacher_id', tp.id).order('created_at', { ascending: true }).then(function (cr) {
+            var cos = rows(cr), ids = cos.map(function (co) { return co.id; });
+            var none = Promise.resolve({ data: [] });
+            return Promise.all([
+              ids.length ? c.from('sessions').select('id, cohort_id, scheduled_at, status, session_notes(id, vocabulary, grammar_focus, exercises, homework, due_date, teacher_note, pdf_url, published_at)')
+                .in('cohort_id', ids).gte('scheduled_at', from).lte('scheduled_at', to).order('scheduled_at', { ascending: true }) : none,
+              c.from('one_on_one_bookings').select('id, kind, scheduled_at, duration_minutes, status, teacher_note, student_profiles(full_name)')
+                .eq('teacher_id', tp.id).in('status', ['booked', 'completed']).gte('scheduled_at', from).lte('scheduled_at', to).order('scheduled_at', { ascending: true }).limit(200),
+              c.from('teacher_availability').select('id, day_of_week, start_time, end_time, timezone').eq('teacher_id', tp.id).order('day_of_week').order('start_time')
+            ]).then(function (res) {
+              var sessions = rows(res[0]).map(function (s) {
+                var n = Array.isArray(s.session_notes) ? s.session_notes[0] : s.session_notes;
+                return { id: s.id, cohortId: s.cohort_id, at: s.scheduled_at, status: s.status, notes: n || null, joined: 0 };
+              });
+              var past = sessions.filter(function (s) { return new Date(s.at).getTime() < now; }).map(function (s) { return s.id; });
+              return (past.length ? c.from('session_attendance').select('session_id').in('session_id', past).not('joined_at', 'is', null).limit(5000) : none).then(function (ar) {
+                var n = {};
+                (ar.data || []).forEach(function (a) { n[a.session_id] = (n[a.session_id] || 0) + 1; });
+                sessions.forEach(function (s) { s.joined = n[s.id] || 0; });
+                var oto = rows(res[1]).map(function (b) {
+                  return { id: b.id, kind: b.kind, at: b.scheduled_at, minutes: b.duration_minutes || 20, status: b.status, note: b.teacher_note || '', student: (b.student_profiles || {}).full_name || '' };
+                });
+                return { signedIn: true, teacher: tp, cohorts: cos, sessions: sessions, oto: oto, slots: rows(res[2]) };
+              });
+            });
+          });
+      });
+    });
+  }
+  /* The teacher's notes for a class date: saved as a draft (one row per date); publishing goes through the server,
+     which makes the PDF, sets published_at and emails the class the first time */
+  function saveNotes(sessionId, n) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    var row = { session_id: sessionId, vocabulary: n.vocabulary || [], grammar_focus: n.grammar_focus || '', exercises: n.exercises || null,
+      homework: n.homework || null, due_date: n.due_date || null, teacher_note: n.teacher_note || null };
+    return c.from('session_notes').upsert(row, { onConflict: 'session_id' }).select('id, vocabulary, grammar_focus, exercises, homework, due_date, teacher_note, pdf_url, published_at').single()
+      .then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  /* POST to one of the site's functions with the signed-in user's token; rejects with the server's error text */
+  function api(path, body) {
+    return token().then(function (tok) {
+      return fetch(path, { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (tok || '') }, body: JSON.stringify(body) });
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) { var e = new Error(j.error || j.message || String(r.status)); e.status = r.status; e.body = j; throw e; } return j; });
+    });
+  }
+  function publishNotes(notesId) { return api('/api/generate-notes-pdf', { session_notes_id: notesId }); }
+  function otoNote(id, note) { return api('/api/enroll', { action: 'oto-note', id: id, note: note }); }
+  function createClass(body) { return api('/api/create-cohort', body); }
+  function addSlot(teacherId, day, start, end, tz) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('teacher_availability').insert({ teacher_id: teacherId, day_of_week: day, start_time: start + ':00', end_time: end + ':00', timezone: tz })
+      .select('id, day_of_week, start_time, end_time, timezone').single().then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function removeSlot(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('teacher_availability').delete().eq('id', id).then(function (r) { if (r.error) throw r.error; });
+  }
+
   /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
   function libraryResults(studentId) {
     var c = client();
@@ -497,5 +573,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, teacherToday: teacherToday, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, teacherInbox: teacherInbox, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, teacherToday: teacherToday, teacherClasses: teacherClasses, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, teacherInbox: teacherInbox, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

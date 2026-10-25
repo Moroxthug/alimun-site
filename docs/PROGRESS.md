@@ -746,3 +746,11 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Today: next class with Start, to do, the next seven days, your classes, homework waiting longest; pending teachers see a review screen; other sections say which part builds them, with a link to the current teacher dashboard for real teachers.
 - `app_t_*` keys (English first, then eight languages).
 - Checked with the sample teacher: desktop English, phone Arabic, no errors, nothing wider than the phone. Not checked from here: a real teacher account (none to sign in with).
+
+## 2026-10-25 — Dashboards, step 15 part 2: teacher Classes (built after the owner approved the plan)
+- Owner: from now on each teacher part is planned in detail first; approved the Classes plan and both database changes.
+- Database: `sessions_update_teacher` dropped (the owner ran the drop in the SQL Editor after the connector's confirmation timed out). Checking the tables properly showed guards already in place (`guard_session_columns`: only status from a browser; `guard_session_note_columns`: published time and PDF only from the server); a duplicate notes trigger added by mistake that day was removed again. Verified: no teacher update rule; a real teacher account sees its 8 class dates and changes none (rolled back).
+- `js/app/teach-classes.js` (timetable, classroom with the class conversation, notes with draft saving and publishing, 1:1 notes, create a class, availability); `AlimunData` teacherClasses, saveNotes, publishNotes, otoNote, createClass, addSlot, removeSlot; `/app/teach` loads `js/tz.js`.
+- `api/generate-notes-pdf.js`: sections left empty are left out of the PDF (only the grammar point is required now); both a minimal and a full PDF render locally.
+- `app_tc_*` keys (English first, then eight languages).
+- Checked with the sample teacher: every screen and flow on desktop English and phone Arabic, no errors. Not checked from here: a real class (all three classes in the database are closed, with no dates ahead).
