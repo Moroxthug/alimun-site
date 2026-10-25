@@ -200,3 +200,11 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6: simplified adjective-order rule.
 - u3 and u5 have two readings each, together above 320 words; some order items rely on the comma attached to a tile.
 - All places, titles and people invented.
+
+## English B2, moving abroad
+- UK facts stated generally, to confirm: 5.6 weeks of statutory holiday, written statement of terms from day one, prescription charges in England (free elsewhere in the UK), workplace pension auto-enrolment, BR and emergency tax codes, deposit protection.
+- u2: tenancy types and notice rules not named, because renting law in England is changing.
+- u3: the medicine and its leaflet are invented; check the wording raises no concern as medical advice.
+- u4: payslip figures are fictional examples, not real tax or National Insurance rates.
+- u5: what British speakers "really mean" softened with *often* and *not everyone*; check for stereotyping.
+- u1 p3 and u2 p3: letter-and-reply pairs counted as one reading (about 320 to 330 words together).
