@@ -217,7 +217,7 @@
     html += '<div data-picker></div>';
     if (past.length) {
       html += '<h3 class="t-h3 cl-oto__notes-h">' + esc(t('app_cl_oto_notes_h')) + '</h3>' + past.map(function (b) {
-        return '<div class="cl-note-mini"><p class="t-small"><b>' + esc(when(b.scheduled_at)) + '</b></p><p class="t-body">' + esc(b.teacher_note) + '</p></div>';
+        return '<div class="cl-note-mini"><p class="t-small"><b>' + esc(when(b.scheduled_at)) + '</b></p><p class="t-body" dir="auto">' + esc(b.teacher_note) + '</p></div>';
       }).join('');
     }
     return html + '</section>';
@@ -290,7 +290,7 @@
   /* ---------- Notes and words ---------- */
   function safeUrl(u) { try { var x = new URL(String(u)); return x.protocol === 'https:' ? x.href : ''; } catch (e) { return ''; } }
   function notesHtml() {
-    var ta = ' lang="' + (window.AlimunData.langCode((C.cohorts[0] || {}).language) || 'en') + '"';
+    var ta = ' lang="' + (window.AlimunData.langCode((C.cohorts[0] || {}).language) || 'en') + '" dir="ltr"';
     var list = C.notes.slice(0, 12);
     var html = '<section class="card span-12 cl-notes" style="--i:5" aria-labelledby="h-notes"><h2 class="t-h2" id="h-notes">' + esc(t('app_cl_notes_h')) + '</h2>';
     if (!list.length) return html + '<p class="t-body" style="margin-top:8px">' + esc(t('app_cl_notes_none')) + '</p></section>';
@@ -338,7 +338,7 @@
     var item = kind === 'b' ? C.bookings.filter(function (b) { return b.id === id; })[0] : C.sessions.filter(function (s) { return s.id === id; })[0];
     var title = !item ? t('app_cl_class') : kind === 'b' ? t(item.kind === 'followup' ? 'app_cl_oto_followup' : 'app_cl_oto_private') : cohortName(item.cohort_id);
     var latest = C.notes.filter(function (n) { return Array.isArray(n.vocabulary) && n.vocabulary.length; })[0];
-    var ta = ' lang="' + (window.AlimunData.langCode((C.cohorts[0] || {}).language) || 'en') + '"';
+    var ta = ' lang="' + (window.AlimunData.langCode((C.cohorts[0] || {}).language) || 'en') + '" dir="ltr"';
     return '<div class="cl-live"><div class="cl-live__top"><a class="rd-back" href="#/classes">' + A.icon('back') + '<span>' + esc(t('app_cl_leave')) + '</span></a>' +
       '<h1 class="t-h2">' + esc(title) + '</h1></div>' +
       '<div class="cl-live__body"><div class="cl-live__frame" data-frame><div class="cl-live__wait"><div class="loader" style="--w:64px" aria-hidden="true">' + A.loaderInner() + '</div><p class="t-body" data-livemsg>' + esc(t('app_cl_joining')) + '</p></div></div>' +
