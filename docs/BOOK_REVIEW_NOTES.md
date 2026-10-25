@@ -193,3 +193,10 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4: *recommend that* + base form taught beside *should*; both accepted. Proportion ranges for *the vast majority* and *almost all* overlap; exercises never offer both for one figure.
 - u3: cleft gap accepts *which* as well as *that*.
 - Figures in readings belong to fictional companies. u6 p1 model email (84 words) is a second text below the reading range.
+
+## English B2, travel
+- u2: customs stated as generalisations (shoes off in many homes in Japan, tipping in the US, bowing, thumbs up rude in some countries); the dialogue raises and softens a stereotype about Finns; the reading treats British polite refusals (*I'll bear it in mind*, *You must come round some time*). Check the tone.
+- u4: British ways of saying years (*nineteen oh five*, *two thousand and eight*); test gap *mid-___ century* accepts *19th* or *nineteenth*.
+- u6: simplified adjective-order rule.
+- u3 and u5 have two readings each, together above 320 words; some order items rely on the comma attached to a tile.
+- All places, titles and people invented.
