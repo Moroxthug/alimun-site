@@ -12,7 +12,11 @@
    Speaking (#/practice/speak): the student's tutor (one of the six, kept in this browser) says sentences from the
    book, with the mouth following the recording when there is one; the student records each sentence and
    /api/ai?action=transcribe (Groq Whisper) turns it into text, compared word by word.
-   Routes: #/practice, #/practice/round, #/practice/listen, #/practice/speak, #/practice/types. Interface text: app_pr_* and app_ex_* keys. */
+   Quizzes (step 7): a unit quiz (12 questions) or a mixed quiz (15, every unit reached), checked at the end with the
+   engine's test mode; Beat the clock (90 seconds of quick multiple-choice and true-or-false questions); a long
+   practice set per unit (12 exercises). Best scores: practice_progress "quiz:<book>:<unit|mixed|clock>".
+   Routes: #/practice, #/practice/round, #/practice/listen, #/practice/speak, #/practice/types,
+   #/practice/quiz/<unit|mixed>, #/practice/set/<unit>, #/practice/clock. Interface text: app_pr_* and app_ex_* keys. */
 (function () {
   'use strict';
   var A = null, root = null, R = null;
@@ -341,6 +345,196 @@
     return round;
   }
 
+  /* ---------- Quizzes and long practice sets (step 7) ---------- */
+  /* Best scores: practice_progress "quiz:<book>:<scope>" when signed in, this browser otherwise ("alimun-quiz") */
+  var QUIZ = 'alimun-quiz', scores = null;
+  function loadScores() {
+    if (scores) return Promise.resolve(scores);
+    var local = {};
+    try { local = JSON.parse(localStorage.getItem(QUIZ) || '{}') || {}; } catch (e) { local = {}; }
+    if (!signedIn()) { scores = local; return Promise.resolve(scores); }
+    return window.AlimunData.quizScores(A.data().profile.id).then(function (list) {
+      scores = {};
+      list.forEach(function (r) { scores[r.ex_key] = r.graded_score; });
+      return scores;
+    }, function () { scores = local; return scores; });
+  }
+  function saveScore(key, score) {
+    var best = Math.max(scores && scores[key] != null ? scores[key] : -1, score);
+    if (scores) scores[key] = best;
+    if (signedIn()) {
+      window.AlimunData.saveBook(A.data().profile.id, key, { done: true, score: best }).catch(function (e) { console.warn('[Alimun] Score not saved', e && e.message); });
+    } else {
+      try { localStorage.setItem(QUIZ, JSON.stringify(scores)); } catch (e) { /* storage blocked */ }
+    }
+    return best;
+  }
+  var NO_TEST = { memory: true, search: true, speak: true };
+  function blockItems(b) { return b.pairs ? b.pairs.length : b.words ? b.words.length : b.items ? b.items.length : 0; }
+  /* A quiz: exercises from one unit (or every unit reached), checked at the end, about n questions */
+  function quizRound(book, progress, unitId, n, pics) {
+    var pool = sources(book, progress).filter(function (s) { return !unitId || s.unit === unitId; }), mem = readMem(), now = Date.now();
+    var ranked = shuffleList(pool).map(function (s) { return { s: s, w: weigh(s, mem, now) }; }).sort(function (a, b) { return b.w - a.w; });
+    var out = [], total = 0, last = null, kinds = {};
+    for (var k = 0; k < ranked.length && total < n; k++) {
+      var src = ranked[k].s;
+      var opts = remixes(src, pool, mem, now).filter(function (o) { return !NO_TEST[o.kind] && o.kind !== last && (kinds[o.kind] || 0) < 3; });
+      if (!opts.length) continue;
+      var pick = choose(opts), b = pick.b;
+      /* At most three questions from one exercise, so the quiz stays varied */
+      if (b.items && b.items.length > 3) { b = Object.assign({}, b, { items: b.items.slice(0, 3) }); pick.map = pick.map.slice(0, 3); }
+      last = pick.kind; kinds[pick.kind] = (kinds[pick.kind] || 0) + 1; total += blockItems(b);
+      out.push({ b: b, keys: pick.map.map(function (i) { return src.key + ':' + i; }) });
+    }
+    if (!unitId && pics && Math.random() < 0.6) { var pb = pictureBlock('picture', book.language, pics, mem, now); if (pb) out.splice(Math.floor(Math.random() * out.length), 0, pb); }
+    return out;
+  }
+  /* A long practice set: a whole unit, twelve exercises, with help along the way */
+  function setRound(book, progress, unitId, aud, pics) {
+    var keep = ROUND;
+    ROUND = 12;
+    var all = sources(book, progress), mem = readMem(), now = Date.now();
+    var pool = all.filter(function (s) { return s.unit === unitId; });
+    var ranked = pool.map(function (s) { return { s: s, w: weigh(s, mem, now) }; }).sort(function (a, b) { return b.w - a.w; });
+    var round = [], last = null, kinds = {};
+    for (var k = 0; k < ranked.length && round.length < ROUND; k++) {
+      var src = ranked[k].s;
+      var opts = remixes(src, all, mem, now).filter(function (o) { return o.kind !== last && (kinds[o.kind] || 0) < 3; });
+      if (!opts.length) continue;
+      var pick = choose(opts);
+      last = pick.kind; kinds[pick.kind] = (kinds[pick.kind] || 0) + 1;
+      round.push({ b: pick.b, keys: pick.map.map(function (i) { return src.key + ':' + i; }) });
+    }
+    ROUND = keep;
+    return round;
+  }
+
+  /* Beat the clock: one quick question after another for 90 seconds (multiple choice and true or false from the book) */
+  var CLOCK_S = 90, Q = null;
+  function clockPool(book, progress) {
+    var out = [];
+    sources(book, progress).forEach(function (src) {
+      var b = src.b;
+      if (b.kind === 'choice') b.items.forEach(function (it, i) { if (it.o.length >= 2 && it.o.every(function (o) { return String(o).length <= 60; })) out.push({ key: src.key + ':' + i, q: it.q || '', o: it.o, right: 0, why: it.why }); });
+      if (b.kind === 'tf') b.items.forEach(function (it, i) { if (it.q && it.q.length <= 160) out.push({ key: src.key + ':' + i, q: it.q, tf: b.ng ? ['t', 'f', 'ng'] : ['t', 'f'], right: it.a, why: it.why }); });
+    });
+    return shuffleList(out);
+  }
+  function clockView() {
+    document.body.classList.add('is-reading');
+    return '<div class="lesson qc">' +
+      '<div class="lesson__top"><a class="rd-back" href="#/practice">' + A.icon('back') + '<span>' + esc(t('app_nav_practice')) + '</span></a><p class="qc__time t-h2" data-time aria-live="off"></p></div>' +
+      '<div class="lesson__bar qc__bar" aria-hidden="true"><i></i></div><div class="qc__stage" data-qcstage></div></div>';
+  }
+  function clockQuestion() {
+    var it = Q.list[Q.at % Q.list.length], ta = Q.ta;
+    var opts = it.tf ? it.tf.map(function (v) { return { v: v, label: t(v === 't' ? 'app_book_true' : v === 'f' ? 'app_book_false' : 'app_book_ng'), target: false }; })
+      : EX().shuffle(it.o.length).map(function (k) { return { v: k, label: it.o[k], target: true }; });
+    Q.cur = { it: it, opts: opts };
+    var q = it.q ? EX().md(it.q).split('___').join('<span class="gap">&nbsp;</span>') : '';
+    return '<div class="qc__q">' + (q ? '<p class="qc__text"' + ta + '>' + q + '</p>' : '<p class="t-body">' + esc(t('app_qz_which')) + '</p>') +
+      '<div class="opts opts--stack">' + opts.map(function (o, k) {
+        return '<button class="opt" type="button" data-qc="' + k + '"' + (o.target ? ta : '') + '><span class="qc__key" aria-hidden="true">' + (k + 1) + '</span>' + EX().md(o.label) + '</button>';
+      }).join('') + '</div></div>';
+  }
+  function clockStart(book, progress, code) {
+    var list = clockPool(book, progress);
+    Q = { list: list, at: 0, right: 0, wrong: 0, left: CLOCK_S * 1000, started: false, ta: ' lang="' + code + '" dir="ltr"', book: book.id, key: 'quiz:' + book.id + ':clock', timer: 0, busy: false };
+    return list.length >= 10;
+  }
+  function clockDraw() {
+    var st = root.querySelector('[data-qcstage]');
+    if (!st) return;
+    if (!Q.started) {
+      st.innerHTML = '<div class="end"><div class="end__art">' + A.Cast.drawing('sun') + '<div class="bub say end__bub">' + esc(t('app_qz_clock_ready')) + '</div></div>' +
+        '<h1 class="t-display">' + esc(t('app_qz_clock_h')) + '</h1><p class="t-lead">' + esc(t('app_qz_clock_p')) + '</p>' +
+        (scores && scores[Q.key] != null ? '<p class="t-body">' + esc(t('app_qz_best_n', { n: scores[Q.key] })) + '</p>' : '') +
+        '<div class="btn-row" style="margin-top:22px;justify-content:center"><button class="btn btn--lime" type="button" data-qcgo>' + esc(t('app_qz_clock_go')) + A.icon('arrow') + '</button></div></div>';
+      return;
+    }
+    st.innerHTML = clockQuestion();
+  }
+  function clockTick() {
+    var now = Date.now();
+    Q.left = Math.max(0, Q.end - now);
+    var el = root.querySelector('[data-time]'), bar = root.querySelector('.qc__bar i');
+    if (!el) { clearInterval(Q.timer); return; }
+    el.textContent = t('app_qz_clock_left', { s: Math.ceil(Q.left / 1000) });
+    el.classList.toggle('is-low', Q.left < 15000);
+    if (bar) bar.style.width = (100 - Q.left / (CLOCK_S * 10)) + '%';
+    if (Q.left <= 0) clockEnd();
+  }
+  function clockGo() {
+    Q.started = true; Q.end = Date.now() + CLOCK_S * 1000;
+    Q.timer = setInterval(clockTick, 200);
+    clockTick(); clockDraw();
+  }
+  function clockAnswer(k) {
+    if (!Q || Q.busy || Q.left <= 0) return;
+    var cur = Q.cur, o = cur.opts[k], ok = o.v === cur.it.right;
+    Q.busy = true;
+    record(cur.it.key, ok);
+    if (ok) Q.right++; else Q.wrong++;
+    var btns = root.querySelectorAll('[data-qc]');
+    btns.forEach(function (b, n) { var v = cur.opts[n].v; if (v === cur.it.right) b.classList.add('is-right'); else if (n === k) b.classList.add('is-wrong'); b.disabled = true; });
+    var score = root.querySelector('[data-time]');
+    if (score) score.classList.add(ok ? 'is-up' : 'is-down');
+    setTimeout(function () {
+      if (score) score.classList.remove('is-up', 'is-down');
+      Q.busy = false; Q.at++;
+      if (Q.left > 0) clockDraw();
+    }, ok ? 280 : 900);
+  }
+  function clockEnd() {
+    clearInterval(Q.timer);
+    if (Q.done) return;
+    Q.done = true;
+    var before = scores && scores[Q.key] != null ? scores[Q.key] : -1;
+    saveScore(Q.key, Q.right);
+    if (Q.right > 0 && signedIn()) window.AlimunData.saveBook(A.data().profile.id, 'practice:round:' + new Date().toISOString().slice(0, 10), { done: true, score: 100 }).catch(function () {});
+    var st = root.querySelector('[data-qcstage]');
+    if (!st) return;
+    st.innerHTML = '<div class="end"><div class="end__art">' + A.Cast.drawing('dog') + '<div class="bub say end__bub">' + esc(t(Q.right > before && before >= 0 ? 'app_qz_clock_record' : 'app_qz_clock_end_bub')) + '</div></div>' +
+      '<h1 class="t-display">' + esc(t('app_qz_clock_end_h')) + '</h1><p class="t-lead">' + esc(A.tn('app_qz_clock_end_p', Q.right)) + '</p>' +
+      '<div class="btn-row" style="margin-top:26px;justify-content:center"><a class="btn btn--primary" href="#/practice/clock" data-again>' + esc(t('app_qz_again_clock')) + A.icon('arrow') + '</a>' +
+      '<a class="btn btn--quiet" href="#/practice">' + esc(t('app_pr_back')) + '</a></div></div>';
+  }
+
+  /* A quiz on screen: every question on one page, checked at the end with the engine's test mode */
+  function quizView(title, intro) {
+    document.body.classList.remove('is-reading');
+    return '<div class="qz">' +
+      '<a class="rd-back" href="#/practice">' + A.icon('back') + '<span>' + esc(t('app_nav_practice')) + '</span></a>' +
+      '<div class="view__head"><div><h1 class="t-h1">' + esc(title) + '</h1><p class="t-lead">' + esc(intro) + '</p></div></div>' +
+      '<div data-result></div>' +
+      '<article class="paper rise"' + R.xa + '>' + R.ex.blocks.map(function (b, i) { return '<div class="rd-block" style="--i:' + (i + 1) + '">' + R.ex.html(i) + '</div>'; }).join('') + '</article>' +
+      '<div data-end>' + quizEnd() + '</div></div>';
+  }
+  function quizEnd() {
+    if (R.result != null) return '<section class="card card--bone page-end"><div class="btn-row"><a class="btn btn--primary" href="#/practice/' + R.route + '" data-again>' + esc(t('app_qz_again')) + '</a><a class="btn btn--quiet" href="#/practice">' + esc(t('app_pr_back')) + '</a></div></section>';
+    var ready = R.ex.allReady();
+    return '<section class="card card--bone page-end">' + (ready ? '' : '<p class="t-small" style="margin-bottom:14px">' + esc(t('app_qz_answer_all')) + '</p>') +
+      '<button class="btn btn--primary" type="button" data-act="qsubmit"' + (ready ? '' : ' disabled') + '>' + esc(t('app_qz_submit')) + '</button></section>';
+  }
+  function quizSubmit() {
+    var score = R.ex.submit();
+    R.result = score;
+    var res = R.ex.results();
+    res.forEach(function (x) { var k = R.keys[x.bi] && R.keys[x.bi][x.i]; if (k) record(k, x.ok); });
+    var right = res.filter(function (x) { return x.ok; }).length;
+    var before = scores && scores[R.scoreKey] != null ? scores[R.scoreKey] : -1;
+    saveScore(R.scoreKey, score);
+    if (signedIn()) window.AlimunData.saveBook(A.data().profile.id, 'practice:round:' + new Date().toISOString().slice(0, 10), { done: true, score: score }).catch(function () {});
+    var pct = new Intl.NumberFormat(A.locale, { style: 'percent' }).format(score / 100);
+    var box = root.querySelector('[data-result]');
+    box.innerHTML = '<section class="card card--forest test-result" tabindex="-1" aria-live="polite"><div class="card__row"><div class="card__art test-result__art">' + A.Cast.book(score >= 90 ? 'wow' : score >= 60 ? 'happy' : 'think') + '</div><div>' +
+      '<p class="t-num">' + esc(pct) + '</p><h2 class="t-h2" style="margin-top:10px">' + esc(t('app_qz_score', { right: right, total: res.length })) + '</h2>' +
+      '<p class="t-body" style="margin-top:8px">' + esc(t(score > before && before >= 0 ? 'app_qz_better' : score >= 80 ? 'app_qz_great' : 'app_qz_keep')) + '</p></div></div></section>';
+    root.querySelector('[data-end]').innerHTML = quizEnd();
+    window.scrollTo({ top: Math.max(0, box.getBoundingClientRect().top + window.scrollY - 90), behavior: reduced ? 'auto' : 'smooth' });
+    box.querySelector('.test-result').focus({ preventScroll: true });
+  }
+
   /* ---------- Loading ---------- */
   function getJSON(url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error(url + ' ' + r.status); return r.json(); }); }
   var sets = null, pictures = null;
@@ -378,6 +572,7 @@
             '<h2 class="t-h2">' + esc(t('app_pr_listen_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_listen_p')) + '</p></div></div></a>'
           : '<section class="card card--bone span-12" style="--i:4"><div class="card__row"><div class="card__art">' + (A.Cast.spot ? A.Cast.spot('headphones') : A.Cast.drawing('parrot')) + '</div><div>' +
             '<h2 class="t-h2">' + esc(t('app_pr_listen_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_listen_none')) + '</p></div></div></section>') : '') +
+        (info.book ? quizHome(info) : '') +
         (info.book && A.Cast.tutor ? '<section class="card span-12 speak-card" style="--i:5"><div class="speak-card__top"><div>' +
           '<h2 class="t-h2">' + esc(t('app_pr_speak_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_speak_p')) + '</p></div>' +
           '<a class="btn btn--primary" href="#/practice/speak">' + esc(t('app_pr_speak_start')) + A.icon('arrow') + '</a></div>' +
@@ -388,6 +583,27 @@
         (signedIn() ? '' : '<p class="t-tiny span-12" style="--i:6;margin-top:4px">' + esc(t('app_pr_local')) + '</p>') +
       '</div>';
     return html;
+  }
+
+  function quizHome(info) {
+    var book = info.book, best = function (k) { return scores && scores[k] != null ? scores[k] : null; };
+    var pct = function (n) { return new Intl.NumberFormat(A.locale, { style: 'percent' }).format(n / 100); };
+    var xl = book.explainLang || 'en', xa = ' lang="' + xl + '" dir="' + (xl === 'ar' ? 'rtl' : 'ltr') + '"';
+    var clock = best('quiz:' + book.id + ':clock'), mixed = best('quiz:' + book.id + ':mixed');
+    var html = '<h2 class="t-h2 span-12 home__section" style="--i:5">' + esc(t('app_qz_h')) + '</h2>' +
+      '<a class="card card--sun span-6 qcard" href="#/practice/clock" style="--i:5"><div class="card__row"><div class="card__art">' + A.Cast.drawing('sun') + '</div><div>' +
+        '<h3 class="t-h2">' + esc(t('app_qz_clock_h')) + '</h3><p class="t-body" style="margin-top:8px">' + esc(t('app_qz_clock_p')) + '</p>' +
+        (clock != null ? '<p class="t-small qcard__best">' + esc(t('app_qz_best_n', { n: clock })) + '</p>' : '') + '</div></div></a>' +
+      '<a class="card card--leaf span-6 qcard" href="#/practice/quiz/mixed" style="--i:5"><div class="card__row"><div class="card__art">' + A.Cast.drawing('dragon') + '</div><div>' +
+        '<h3 class="t-h2">' + esc(t('app_qz_mixed_h')) + '</h3><p class="t-body" style="margin-top:8px">' + esc(t('app_qz_mixed_p')) + '</p>' +
+        (mixed != null ? '<p class="t-small qcard__best">' + esc(t('app_qz_best', { score: pct(mixed) })) + '</p>' : '') + '</div></div></a>' +
+      '<section class="card span-12 qunits" style="--i:5"><h3 class="t-h2">' + esc(t('app_qz_units_h')) + '</h3><p class="t-body" style="margin-top:6px">' + esc(t('app_qz_unit_p')) + '</p><ul class="qunits__list">';
+    reached(book, info.progress || {}).forEach(function (u) {
+      var b = best('quiz:' + book.id + ':' + u.id);
+      html += '<li><div' + xa + '><b>' + esc(t('app_book_unit_title', { n: book.units.indexOf(u) + 1, title: u.title })) + '</b>' + (b != null ? '<span>' + esc(t('app_qz_best', { score: pct(b) })) + '</span>' : '') + '</div>' +
+        '<a class="btn btn--primary btn--sm" href="#/practice/quiz/' + esc(u.id) + '">' + esc(t('app_qz_unit_quiz')) + '</a><a class="btn btn--ghost btn--sm" href="#/practice/set/' + esc(u.id) + '">' + esc(t('app_qz_unit_set')) + '</a></li>';
+    });
+    return html + '</ul></section>';
   }
 
   function roundView() {
@@ -476,9 +692,10 @@
       window.AlimunData.saveBook(A.data().profile.id, key, { done: true, score: score }).catch(function (e) { console.warn('[Alimun] Practice round not saved', e && e.message); });
     }
   }
-  function startRound(blocks, keys, xa, ta, types, route, transcribe) {
-    R = { blocks: blocks, keys: keys, at: 0, mood: 'idle', line: '', xa: xa, types: types, saved: false, route: route };
-    R.ex = EX().create({ A: A, blocks: blocks, test: false, xa: xa, ta: ta, root: function () { return root; }, onAnswer: onAnswer, transcribe: transcribe,
+  function startRound(blocks, keys, xa, ta, types, route, transcribe, test) {
+    R = { blocks: blocks, keys: keys, at: 0, mood: 'idle', line: '', xa: xa, types: types, saved: false, route: route, result: null };
+    R.ex = EX().create({ A: A, blocks: blocks, test: !!test, xa: xa, ta: ta, root: function () { return root; }, onAnswer: onAnswer, transcribe: transcribe,
+      onChange: function () { var end = root.querySelector('[data-end]'); if (end && R.result == null) end.innerHTML = quizEnd(); },
       onItem: function (r) { var k = R.keys[r.bi] && R.keys[r.bi][r.i]; if (k) record(k, r.ok); } });
   }
   function attrs(code, rtl) { return ' lang="' + code + '" dir="' + (rtl ? 'rtl' : 'ltr') + '"'; }
@@ -505,6 +722,16 @@
         root.querySelectorAll('[data-tutor]').forEach(function (b) { var on = b === pick; b.classList.toggle('is-on', on); b.setAttribute('aria-checked', String(on)); });
         return;
       }
+      var qc = e.target.closest('[data-qc], [data-qcgo]');
+      if (qc && Q && root.querySelector('.qc')) { if (qc.hasAttribute('data-qcgo')) clockGo(); else clockAnswer(+qc.getAttribute('data-qc')); return; }
+      if (e.target.closest('[data-again]') && root.querySelector('.qc, .qz')) { e.preventDefault(); A.rerender(); return; }
+      if (R && root.querySelector('.qz')) {
+        if (EX().swallowClick()) { e.preventDefault(); return; }
+        var qe = e.target.closest('[data-act]');
+        if (!qe || qe.disabled) return;
+        if (qe.getAttribute('data-act') === 'qsubmit') quizSubmit(); else R.ex.act(qe.getAttribute('data-act'), qe);
+        return;
+      }
       if (!R || !root.querySelector('.pr')) return;
       if (EX().swallowClick()) { e.preventDefault(); return; }
       var el = e.target.closest('[data-act], [data-again]');
@@ -514,11 +741,17 @@
       if (act === 'next') next();
       else R.ex.act(act, el);
     });
-    root.addEventListener('input', function (e) { if (R && root.querySelector('.pr')) R.ex.input(e.target); });
-    root.addEventListener('change', function (e) { if (R && root.querySelector('.pr')) R.ex.change(e.target); });
-    root.addEventListener('keydown', function (e) { if (R && root.querySelector('.pr')) R.ex.keydown(e); });
-    root.addEventListener('pointerdown', function (e) { if (R && root.querySelector('.pr')) EX().pointerDown(R.ex, e); });
-    window.addEventListener('resize', function () { if (R && root.querySelector('.pr')) R.ex.drawLines(); });
+    root.addEventListener('input', function (e) { if (R && root.querySelector('.pr, .qz')) R.ex.input(e.target); });
+    root.addEventListener('change', function (e) { if (R && root.querySelector('.pr, .qz')) R.ex.change(e.target); });
+    root.addEventListener('keydown', function (e) { if (R && root.querySelector('.pr, .qz')) R.ex.keydown(e); });
+    root.addEventListener('pointerdown', function (e) { if (R && root.querySelector('.pr, .qz')) EX().pointerDown(R.ex, e); });
+    window.addEventListener('resize', function () { if (R && root.querySelector('.pr, .qz')) R.ex.drawLines(); });
+    /* Beat the clock: keys 1 to 3 answer */
+    document.addEventListener('keydown', function (e) {
+      if (!Q || !Q.started || Q.done || !root.querySelector('.qc')) return;
+      var n = +e.key;
+      if (n >= 1 && n <= 3 && Q.cur && Q.cur.opts[n - 1]) { e.preventDefault(); clockAnswer(n - 1); }
+    });
   }
 
   /* ---------- Entry ---------- */
@@ -526,6 +759,7 @@
   function mount(view, parts, helpers) {
     var my = ++mountNo;
     A = helpers; root = view; R = null;
+    if (Q) { clearInterval(Q.timer); Q = null; }
     if (EX()) EX().stopAudio();
     bind();
     document.body.classList.remove('is-reading');
@@ -546,6 +780,31 @@
           return { html: roundView(), title: t('app_pr_types_h'), round: true };
         });
       }
+      if (parts[0] === 'clock' && info.book) {
+        Q = null;
+        if (!clockStart(info.book, info.progress || {}, window.AlimunData.langCode(info.book.language) || 'en')) return { html: emptyView(), title: t('app_nav_practice') };
+        return loadScores().then(function () { return { html: clockView(), title: t('app_qz_clock_h'), clock: true }; });
+      }
+      if ((parts[0] === 'quiz' || parts[0] === 'set') && parts[1] && info.book) {
+        var unit = parts[1] === 'mixed' ? null : info.book.units.filter(function (u) { return u.id === parts[1] && !u.planned; })[0];
+        if (parts[1] !== 'mixed' && !unit) return { html: homeView(info), title: t('app_nav_practice') };
+        var c2 = window.AlimunData.langCode(info.book.language) || 'en', x2 = info.book.explainLang || 'en';
+        var unitName = unit ? t('app_book_unit_title', { n: info.book.units.indexOf(unit) + 1, title: unit.title }) : '';
+        if (parts[0] === 'set') {
+          var sr = setRound(info.book, info.progress || {}, unit.id, info.audio, info.pictures);
+          if (!sr.length) return { html: emptyView(), title: t('app_nav_practice') };
+          startRound(sr.map(function (x) { return x.b; }), sr.map(function (x) { return x.keys; }), attrs(x2, x2 === 'ar'), attrs(c2, false), false, 'set/' + unit.id, transcriber(info.book.language));
+          return { html: roundView(), title: t('app_qz_set_h', { unit: unitName }), round: true };
+        }
+        var qr = quizRound(info.book, info.progress || {}, unit && unit.id, unit ? 12 : 15, info.pictures);
+        if (!qr.length) return { html: emptyView(), title: t('app_nav_practice') };
+        return loadScores().then(function () {
+          startRound(qr.map(function (x) { return x.b; }), qr.map(function (x) { return x.keys; }), attrs(x2, x2 === 'ar'), attrs(c2, false), false, 'quiz/' + parts[1], null, true);
+          R.scoreKey = 'quiz:' + info.book.id + ':' + (unit ? unit.id : 'mixed');
+          var title = unit ? t('app_qz_unit_title', { unit: unitName }) : t('app_qz_mixed_h');
+          return { html: quizView(title, t('app_qz_intro')), title: title, quiz: true };
+        });
+      }
       if ((parts[0] === 'round' || parts[0] === 'listen' || parts[0] === 'speak') && info.book) {
         var listen = parts[0] === 'listen', speak = parts[0] === 'speak';
         var round = speak ? speakRound(info.book, info.progress || {}, info.audio) : listen ? listenRound(info.book, info.progress || {}, info.audio) : buildRound(info.book, info.progress || {}, info.audio, info.pictures);
@@ -554,7 +813,7 @@
         startRound(round.map(function (x) { return x.b; }), round.map(function (x) { return x.keys; }), attrs(xl, xl === 'ar'), attrs(code, false), false, parts[0], transcriber(info.book.language));
         return { html: roundView(), title: t(speak ? 'app_pr_speak_h' : listen ? 'app_pr_listen_h' : 'app_pr_round_h'), round: true };
       }
-      return { html: homeView(info), title: t('app_nav_practice') };
+      return loadScores().then(function () { return { html: homeView(info), title: t('app_nav_practice') }; });
     }).catch(function (e) {
       console.warn('[Alimun] Practice did not load', e && e.message);
       return { html: errorView(), title: t('app_nav_practice') };
@@ -562,10 +821,12 @@
       if (res.stale || my !== mountNo) return { stale: true };
       view.innerHTML = res.html;
       if (res.round) show(false);
+      if (res.clock) clockDraw();
+      if (res.quiz) R.ex.drawLines();
       return res;
     });
   }
 
   /* debug(): the blocks of the round on screen (used by scripts/play-books.js) */
-  window.AlimunPractice = { mount: mount, use: use, record: record, mistakesDue: mistakesDue, debug: function () { return R && R.ex.blocks; } };
+  window.AlimunPractice = { mount: mount, use: use, record: record, mistakesDue: mistakesDue, debug: function () { return R && R.ex.blocks; }, clock: function () { return Q; } };
 })();

@@ -759,6 +759,24 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
   .fc__face { padding: 22px 16px; }
   .own__form { grid-template-columns: 1fr; }
 }
+/* Quizzes (step 7) */
+.qcard__best { margin-top: 10px; font-weight: 700; color: var(--forest); }
+.qunits__list { list-style: none; margin: 14px 0 0; padding: 0; }
+.qunits__list li { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding: 12px 0; border-top: 1px solid var(--line); }
+.qunits__list li > div { flex: 1; min-width: 200px; display: flex; flex-direction: column; }
+.qunits__list li > div span { color: var(--forest); font-size: var(--fs-small); font-weight: 600; }
+.qz .paper { margin-top: 0; }
+.qc__time { margin: 0; font-variant-numeric: tabular-nums; color: var(--forest); transition: color var(--t-fast), transform var(--t-fast) var(--spring); }
+.qc__time.is-low { color: #c0392b; }
+.qc__time.is-up { transform: scale(1.15); }
+.qc__time.is-down { animation: shake .4s var(--ease); }
+.qc .lesson__top { display: flex; justify-content: space-between; align-items: center; }
+.qc__bar i { transition: width .2s linear; }
+.qc__stage { max-width: 640px; margin: 28px auto 0; }
+.qc__q { animation: rise .25s var(--ease) both; }
+.qc__text { font-size: 22px; line-height: 1.5; margin: 0 0 18px; }
+.qc__key { display: inline-grid; place-items: center; width: 24px; height: 24px; margin-inline-end: 10px; border-radius: 50%; background: var(--bone); font-size: 13px; font-weight: 800; color: var(--muted); }
+.qc .opt { animation: none; }
 /* Tutors (lip sync) */
 .tutor-art .mo { display: none; }
 .tutor-art[data-mouth="rest"] .mo-rest, .tutor-art:not([data-mouth]) .mo-rest, .tutor-art[data-mouth="m"] .mo-m, .tutor-art[data-mouth="e"] .mo-e, .tutor-art[data-mouth="a"] .mo-a, .tutor-art[data-mouth="o"] .mo-o { display: inline; }

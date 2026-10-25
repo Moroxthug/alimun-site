@@ -90,6 +90,19 @@
       return { right: right, total: total };
     };
     S.submit = function () { return submit(S); };
+    /* After submit(): every item right or wrong, [{ bi, i, ok }] (i: the item, or the pair for matching) */
+    S.results = function () {
+      var out = [];
+      S.blocks.forEach(function (b, bi) {
+        if (b.t !== 'ex' || !K[b.kind]) return;
+        var s = S.state[bi];
+        if (b.kind === 'match') b.pairs.forEach(function (p, l) { out.push({ bi: bi, i: l, ok: matchRight(b, l, s.pairs[l]) }); });
+        else if (b.kind === 'bank' || b.kind === 'label') b.items.forEach(function (it, i) { out.push({ bi: bi, i: i, ok: bankRight(s, it, s.items[i]) }); });
+        else if (b.kind === 'sort') b.items.forEach(function (it, i) { out.push({ bi: bi, i: i, ok: s.items[i].picked === it.g }); });
+        else if (!K[b.kind].block) b.items.forEach(function (it, i) { out.push({ bi: bi, i: i, ok: isRight(b, it, s.items[i]) }); });
+      });
+      return out;
+    };
     S.act = function (act, el) { return onAct(S, act, el); };
     S.input = function (el) { return onInput(S, el); };
     S.change = function (el) { return onChange(S, el); };

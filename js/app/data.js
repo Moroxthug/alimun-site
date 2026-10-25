@@ -177,6 +177,13 @@
       student_id: studentId, item_key: key, box: r.b, seen: r.n, wrong: r.w, last_at: new Date(r.at).toISOString()
     }, { onConflict: 'student_id,item_key' }).then(function (x) { if (x.error) throw x.error; });
   }
+  /* Quiz scores (practice_progress rows "quiz:<book>:<scope>", step 7): best score per quiz */
+  function quizScores(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('practice_progress').select('ex_key, graded_score').eq('student_id', studentId).like('ex_key', 'quiz:%').limit(500).then(rows);
+  }
+
   /* Flashcards (vocab_reviews, step 6): the student's cards, new cards (a word already there is kept), a review */
   function cards(studentId) {
     var c = client();
@@ -206,5 +213,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

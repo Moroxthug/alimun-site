@@ -52,6 +52,7 @@
     app_fc_words: ['app_fc_words_zero', 'app_fc_words_one', 'app_fc_words_two', 'app_fc_words_few', 'app_fc_words_many', 'app_fc_words_other'],
     app_fc_add_rest: ['app_fc_add_rest_zero', 'app_fc_add_rest_one', 'app_fc_add_rest_two', 'app_fc_add_rest_few', 'app_fc_add_rest_many', 'app_fc_add_rest_other'],
     app_fc_mine: ['app_fc_mine_zero', 'app_fc_mine_one', 'app_fc_mine_two', 'app_fc_mine_few', 'app_fc_mine_many', 'app_fc_mine_other'],
+    app_qz_clock_end_p: ['app_qz_clock_end_p_zero', 'app_qz_clock_end_p_one', 'app_qz_clock_end_p_two', 'app_qz_clock_end_p_few', 'app_qz_clock_end_p_many', 'app_qz_clock_end_p_other'],
     app_pr_mistakes_n: ['app_pr_mistakes_n_zero', 'app_pr_mistakes_n_one', 'app_pr_mistakes_n_two', 'app_pr_mistakes_n_few', 'app_pr_mistakes_n_many', 'app_pr_mistakes_n_other']
   };
   var plural = window.Intl && Intl.PluralRules ? new Intl.PluralRules(locale) : null;
