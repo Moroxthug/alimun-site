@@ -112,6 +112,9 @@ function limited(r) {
   const m = /retry in ([\d.]+)\s*s/i.exec(r.text || '');
   const err = new Error('rate_limited');
   err.rateLimited = true;
+  let msg = '';
+  try { msg = JSON.parse(r.text).error.message; } catch (e) { msg = String(r.text || ''); }
+  err.limitMessage = String(msg).slice(0, 300);
   err.retryAfter = Math.min(120, Math.ceil(m ? +m[1] : 60));
   throw err;
 }
@@ -222,7 +225,7 @@ async function generate(req, res, supabase, body) {
     const todo = [], seen = new Set();
     Object.values(plan.items).forEach((it) => { if (!manifest.done[it[0]] && !seen.has(it[0])) { seen.add(it[0]); todo.push(it); } });
     const made = [], failed = [];
-    let retryAfter = 0, last = 0;
+    let retryAfter = 0, last = 0, limitMessage = '';
     /* One request at a time, at most one every GAP ms, to stay under Google's requests-per-minute limit */
     for (const [h, voice, style, text] of todo) {
       if (Date.now() - t0 > 38000) break;
@@ -237,7 +240,7 @@ async function generate(req, res, supabase, body) {
         manifest.done[h] = m.seconds;
         made.push(h);
       } catch (e) {
-        if (e.rateLimited) { retryAfter = e.retryAfter; break; }
+        if (e.rateLimited) { retryAfter = e.retryAfter; limitMessage = e.limitMessage; break; }
         failed.push({ h, error: String(e.message || e).slice(0, 200), detail: e.detail || null });
       }
     }
@@ -251,7 +254,7 @@ async function generate(req, res, supabase, body) {
     }
     const total = new Set(Object.values(plan.items).map((it) => it[0])).size;
     const seconds = Object.values(manifest.done).reduce((a, b) => a + b, 0);
-    return res.status(200).json({ book, total, done: Object.keys(manifest.done).length, made: made.length, failed, seconds: Math.round(seconds), retryAfter });
+    return res.status(200).json({ book, total, done: Object.keys(manifest.done).length, made: made.length, failed, seconds: Math.round(seconds), retryAfter, limitMessage });
   } catch (e) {
     console.error('[speech generate] ' + book + ': ' + e.message);
     return res.status(500).json({ error: 'generate_failed', detail: String(e.message || e).slice(0, 300) });

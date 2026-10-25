@@ -53,7 +53,7 @@
         if (j.retryAfter) {
           /* Google's per-minute limit: wait and carry on, it is not a failure */
           draw();
-          say('Google allows a few recordings a minute on this plan; waiting ' + j.retryAfter + ' seconds, then carrying on.');
+          say(new Date().toLocaleTimeString() + ': Google asked to wait, so waiting ' + j.retryAfter + ' seconds, then carrying on. Google said: ' + (j.limitMessage || 'rate limit'));
           setTimeout(step, j.retryAfter * 1000 + 1500);
           return;
         }
