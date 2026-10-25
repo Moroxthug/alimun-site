@@ -485,15 +485,15 @@
   }
   function markHtml(m) {
     if (!m) return '';
-    if (m.wait) return '<div class="mark is-wait"><div class="loader" style="--w:34px" aria-hidden="true">' + A.loaderInner() + '</div><p class="t-small">' + esc(t('app_mt_marking')) + '</p></div>';
-    if (m.note) return '<div class="mark is-note"><p class="t-small">' + esc(t(m.note)) + '</p></div>';
-    return '<div class="mark"><h4 class="t-h3">' + esc(t('app_mt_marks_h')) + '</h4>' +
+    if (m.wait) return '<div class="mt-mark is-wait"><div class="loader" style="--w:34px" aria-hidden="true">' + A.loaderInner() + '</div><p class="t-small">' + esc(t('app_mt_marking')) + '</p></div>';
+    if (m.note) return '<div class="mt-mark is-note"><p class="t-small">' + esc(t(m.note)) + '</p></div>';
+    return '<div class="mt-mark"><h4 class="t-h3">' + esc(t('app_mt_marks_h')) + '</h4>' +
       m.criteria.map(function (c) {
-        return '<div class="mark__row"><div class="mark__top"><b>' + esc(c.name) + '</b><span>' + esc(t('app_mt_mark_n', { score: c.score, max: m.max })) + '</span></div>' +
+        return '<div class="mt-mark__row"><div class="mt-mark__top"><b>' + esc(c.name) + '</b><span>' + esc(t('app_mt_mark_n', { score: c.score, max: m.max })) + '</span></div>' +
           '<div class="meter" aria-hidden="true"><i style="width:' + Math.round(c.score / m.max * 100) + '%"></i></div>' + (c.comment ? '<p class="t-small">' + esc(c.comment) + '</p>' : '') + '</div>';
       }).join('') +
-      (m.summary ? '<p class="t-body mark__sum">' + esc(m.summary) + '</p>' : '') +
-      (m.better ? '<div class="mark__better"><p class="t-small"><b>' + esc(t('app_mt_better_h')) + '</b></p><p class="t-body" lang="' + esc(window.AlimunData.langCode(P.T.language) || 'en') + '">' + esc(m.better) + '</p></div>' : '') +
+      (m.summary ? '<p class="t-body mt-mark__sum">' + esc(m.summary) + '</p>' : '') +
+      (m.better ? '<div class="mt-mark__better"><p class="t-small"><b>' + esc(t('app_mt_better_h')) + '</b></p><p class="t-body" lang="' + esc(window.AlimunData.langCode(P.T.language) || 'en') + '">' + esc(m.better) + '</p></div>' : '') +
       '<p class="t-tiny">' + esc(t('app_mt_marks_note')) + '</p></div>';
   }
   function markOne(j) {

@@ -1042,18 +1042,18 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 .talk-notes { background: var(--white); border-radius: var(--r-md); padding: 14px 18px; margin: 0 0 12px; text-align: center; }
 .talk-notes p { margin: 4px 0; font-weight: 600; }
 .mark-slot:empty { display: none; }
-.mark { margin-top: 12px; background: var(--white); border-radius: var(--r-md); padding: 16px 18px; box-shadow: inset 0 0 0 2px var(--forest); }
-.mark.is-wait, .mark.is-note { display: flex; align-items: center; gap: 12px; box-shadow: inset 0 0 0 1px var(--line); }
-.mark .t-h3 { margin: 0 0 10px; font-size: 19px; }
-.mark__row { padding: 8px 0; border-top: 1px solid var(--line); }
-.mark__row:first-of-type { border-top: 0; }
-.mark__top { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
-.mark__top span { color: var(--forest); font-weight: 700; font-variant-numeric: tabular-nums; }
-.mark__row .t-small { margin: 6px 0 0; }
-.mark__sum { margin: 10px 0 0; }
-.mark__better { margin-top: 10px; background: var(--t-lime); border-radius: var(--r-sm); padding: 10px 14px; }
-.mark__better p { margin: 0; }
-.mark .t-tiny { margin: 10px 0 0; color: var(--muted); }
+.mt-mark { margin-top: 12px; background: var(--white); border-radius: var(--r-md); padding: 16px 18px; box-shadow: inset 0 0 0 2px var(--forest); }
+.mt-mark.is-wait, .mt-mark.is-note { display: flex; align-items: center; gap: 12px; box-shadow: inset 0 0 0 1px var(--line); }
+.mt-mark .t-h3 { margin: 0 0 10px; font-size: 19px; }
+.mt-mark__row { padding: 8px 0; border-top: 1px solid var(--line); }
+.mt-mark__row:first-of-type { border-top: 0; }
+.mt-mark__top { display: flex; justify-content: space-between; gap: 10px; margin-bottom: 6px; }
+.mt-mark__top span { color: var(--forest); font-weight: 700; font-variant-numeric: tabular-nums; }
+.mt-mark__row .t-small { margin: 6px 0 0; }
+.mt-mark__sum { margin: 10px 0 0; }
+.mt-mark__better { margin-top: 10px; background: var(--t-lime); border-radius: var(--r-sm); padding: 10px 14px; }
+.mt-mark__better p { margin: 0; }
+.mt-mark .t-tiny { margin: 10px 0 0; color: var(--muted); }
 .model { margin-top: 10px; }
 .model summary { cursor: pointer; font-weight: 700; color: var(--forest); }
 .model > div { margin-top: 8px; background: var(--white); border-radius: var(--r-md); padding: 14px 18px; }
