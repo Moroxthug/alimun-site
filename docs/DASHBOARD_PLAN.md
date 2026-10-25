@@ -19,7 +19,7 @@ Owner, 24 Oct 2026: rebuild the dashboards from scratch, without the current one
 2. Look and navigation: app shell (sidebar on desktop, bottom bar on phones), type scale, cards, motion, loader. Live preview with sample data on alimun.com (noindex). Done (approved): `/app/preview` (`app/preview.html`, `css/app.css`, `js/app/`).
 3. Home: next class, today's plan, streak, buddy, focus topics from the level test, free-plan nudge. Done (approved): Home in `/app/preview` reads the signed-in student's own data (`js/app/data.js`); signed out or with `?sample=1` it shows sample data.
 4. Learning material reader: course books with interactive pages (see section 3). Built, waiting for the owner: `#/book` in `/app/preview` (`js/app/reader.js`); format in `docs/BOOKS.md`; first units of English B1 and German B1 as drafts. Second version after the owner's feedback: lessons of full pages turned like a book, explanations in the learner's language with a switch, more interaction.
-5. Exercise player: every exercise type (section 4) with animations and character reactions.
+5. Exercise player: every exercise type (section 4) with animations and character reactions. Started 25 Oct 2026; decisions below ("Step 5 decisions").
 6. Flashcards: creation and spaced review.
 7. Quizzes and extensive practice sets.
 8. Mock tests: certificate formats and Alimun tests (section 5).
@@ -31,6 +31,14 @@ Owner, 24 Oct 2026: rebuild the dashboards from scratch, without the current one
 14. Settings, plan and billing; free-plan limits and the occasional upgrade pop-up.
 15. Teacher dashboard (section 6), then the admin pages, in the same step-by-step way.
 The new dashboards are built next to the current ones and switched over only when complete.
+
+## Step 5 decisions (owner, 25 Oct 2026: "do what is best")
+- Player: one shared exercise engine (`js/app/exercises.js`, moved out of `reader.js`) used by the book pages, unit tests and a new Practice screen (`#/practice`). Practice serves short mixed rounds built from the student's level, goal, level-test topics and past mistakes, drawn from the book item banks, with no repeat until the bank runs out. Quizzes, long practice sets and timed rounds stay in step 7.
+- Item results: a new table for per-item attempts (item id, right or wrong, answer, time) so mistakes come back spaced and the Practice round can be personalised. Migration under `supabase/migrations/`, row-level security like `practice_progress`.
+- Audio: generated once per sentence and stored as files, never live, so each sentence costs once and plays instantly. Groq's text-to-speech (Orpheus) only has English and Saudi Arabic and caps requests at 200 characters, so it cannot voice the German, French, Spanish, Italian and Portuguese books. Before choosing, a comparison page with the same sentences in every language from Google Cloud (Chirp 3 HD voices) and ElevenLabs (multilingual); the owner picks by ear. Several voices per language so dialogue speakers differ. Needs an API key from the owner for the chosen service. Files go to Supabase Storage (public bucket for course audio).
+- Speaking: Groq Whisper (`whisper-large-v3`, already on the Groq account) transcribes the recording in the language being learned; the player compares it with the expected sentence word by word and shows what was heard, with the missed words marked. Open answers ("answer the question", "describe the picture") get short feedback from the existing Groq text model through `/api/ai`. Recordings are sent, transcribed and discarded, not stored. Whisper is forgiving of accents, so this checks words, not true pronunciation; a pronunciation score (for example Azure Pronunciation Assessment) can come later if the owner wants it.
+- Drawings: the approved cast stays, plus new drawings in more styles and a wider range (people in everyday scenes, places, objects for picture exercises, small spot drawings across every dashboard screen), all SVG in the repo, in the approved palette, shown to the owner on a board before use.
+- Build order inside step 5: shared engine and the remaining text exercise types first (word bank, drop-down gap, build the sentence, sort into groups, odd one out, find and fix the mistake, transform, conjugate, word formation, collocations, highlight, categorise, crossword, word search, memory pairs), then the drawing board and picture types, then audio (after the owner picks a voice), then speaking.
 
 ## 3. Learning material
 - Course books for every language and every level, A1, A2, B1, B2, C1, C2: extensive, unit by unit, page by page. Six languages × six levels = 36 course books, about eight units each.
