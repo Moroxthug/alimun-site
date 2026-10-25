@@ -171,3 +171,18 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3: regional dishes (Maultaschen, Käsespätzle, Labskaus with beetroot, Currywurst); tipping 5 to 10 percent, *Stimmt so*, tap water not always served automatically, some places cash only.
 - u6: Plusquamperfekt and *nachdem* at the upper edge of B1.
 - Items needing context: *desto*/*umso* (both accepted in the test gap; only *desto* offered in u1 p1), *sich freuen auf* or *über*, *sollten* against *dürfen*.
+
+## German A2, moving abroad
+- u1: the Anmeldung described as usually within two weeks of moving in and free of charge; please confirm.
+- u1 p3, u2 p3, u3 p1: short authentic texts (form, departure display, one-line advert) are below the A2 reading length on purpose; main readings are 101 to 114 words.
+- u4: bottle deposit given as usually 25 cents for cans and single-use bottles; the machine notice says bottles go in base first (most machines, not all).
+- u5: 112 for emergencies and 116117 for the out-of-hours doctor; *Krankschreibung* kept general.
+- Answers to check for a single solution: u3 p1 match *das Sofa / das Wohnzimmer*, u4 p1 *eine Flasche Wasser*, u2 p1 gap *steigen Sie dort ___* (only *um*).
+
+## German B1, work
+- u1 p2 and u3 order items with a movable *leider* or time phrase rely on the capital letter of the first tile.
+- u2: newer city spelling alphabet in the tip, traditional names in the dialogue.
+- u2 p3 and u4: gender-neutral *Teilnehmende*, *Mitarbeitende*; check house style.
+- u3: salary usually stated as gross per year; 48.000 Euro is invented.
+- u5: workplace habits (birthday cake, *Mahlzeit!*, *Ausstand*) worded with *viele* or *manche*.
+- u6 p1: *da* not offered beside *weil*, *denn*, *deshalb*; u1 test options differ only in capital letters.
