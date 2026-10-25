@@ -75,7 +75,7 @@ export const UNIT = {
           ] },
         ],
         [
-          { t: 'text', md: 'Many students also use symbols: an arrow (→) for a result, a plus (+) for an advantage, a minus (−) for a disadvantage and = for *is* or *means*. Here are sentences from lectures and good notes for them.' },
+          { t: 'text', md: 'Many students also use symbols: an arrow (→) for a result, a plus (+) for an advantage, a minus (−) for a disadvantage and an equals sign (=) for a definition. Here are sentences from lectures and good notes for them.' },
           { t: 'examples', items: [
             { s: 'Viele Studierende arbeiten neben dem Studium, weil die Mieten hoch sind.', n: 'Notes: *viele Stud. jobben, Grund: hohe Mieten*' },
             { s: 'Das Fahrrad hat viele Vorteile, zum Beispiel ist es billig und gesund.', n: 'Notes: *Fahrrad: + billig, + gesund*' },

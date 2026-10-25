@@ -87,3 +87,10 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6: *I’ve lost…* taught as a fixed phrase before the course book's present perfect unit.
 - u2: in word order, only question order is accepted ("Is this the right train for Glasgow?").
 - Some wrong options are clearly wrong on purpose (e.g. "small and green the"); more plausible ones may be better.
+
+## English B1, work
+- u2 p1: on the phone *this is* is taught and *I am* rejected (a phone convention, not grammar).
+- u4 test: *rose* against *raised* and *rised*; check it fits B1.
+- u5 test: "anything nice ___ the weekend" accepts *at* and *over*, not American *on*.
+- u6: *sorry about* is the answer, *sorry for* is mentioned as also correct; the complaint and reply readings are about 140 words each.
+- Invented companies (Northfield Office Supplies, Parkside Design): check they do not exist; real cities Leeds, York and Hull in a fictional project.
