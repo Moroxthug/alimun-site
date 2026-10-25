@@ -10,6 +10,8 @@
  *    - grade-submission    teacher/admin: grade a stored assignment
  *                          submission with a server-built prompt
  *    - usage               caller's own AI usage + spend (admins: everyone's)
+ *    - transcribe          speaking practice: a recording of one sentence → text
+ *                          (Groq Whisper, not stored), same access and caps
  *
  *  Access: AI actions are limited to admins, approved teachers and
  *  students with an active subscription or an active enrollment.
@@ -656,6 +658,54 @@ Respond ONLY with a JSON array. Each element must follow EXACTLY one of these sc
 
 // ── action=usage ────────────────────────────────────────────
 
+// ── transcribe: speaking practice (step 5) ─────────────────
+// The student's recording of one sentence, turned into text by Groq Whisper in the language being learned.
+// Body: { audio: base64, mime: 'audio/webm' | 'audio/mp4' | 'audio/ogg' | 'audio/wav', language: 'en' | 'de' | ... }.
+// The recording is sent to Groq and not stored. Cost: $0.04 per hour of audio, at least 10 seconds per call.
+const WHISPER_MODEL = 'whisper-large-v3-turbo';
+const WHISPER_USD_PER_SEC = 0.04 / 3600;
+const SPEAK_LANGS = ['en', 'de', 'fr', 'es', 'it', 'pt'];
+const SPEAK_MIMES = { 'audio/webm': 'webm', 'audio/mp4': 'mp4', 'audio/ogg': 'ogg', 'audio/wav': 'wav', 'audio/mpeg': 'mp3' };
+async function handleTranscribe(req, res, supabase, user) {
+  if (!process.env.GROQ_API_KEY) return res.status(501).json({ error: 'Speech recognition is not configured' });
+  const body = req.body && typeof req.body === 'object' ? req.body : (() => { try { return JSON.parse(req.body || '{}'); } catch (e) { return null; } })();
+  if (!body) return res.status(400).json({ error: 'Invalid JSON' });
+  const mime = String(body.mime || '').split(';')[0].trim().toLowerCase();
+  const language = String(body.language || '');
+  if (!SPEAK_MIMES[mime]) return res.status(400).json({ error: 'Unsupported audio type' });
+  if (!SPEAK_LANGS.includes(language)) return res.status(400).json({ error: 'Unsupported language' });
+  const audio = Buffer.from(String(body.audio || ''), 'base64');
+  if (audio.length < 800) return res.status(400).json({ error: 'Recording too short' });
+  if (audio.length > 2 * 1024 * 1024) return res.status(413).json({ error: 'Recording too long' });
+
+  const quota = await reserveQuota(supabase, user.id, 'transcribe', 30 * WHISPER_USD_PER_SEC);
+  if (!quota.ok) return quotaRefusal(res, quota.reason);
+  const t0 = Date.now();
+  try {
+    const form = new FormData();
+    form.append('file', new Blob([audio], { type: mime }), 'speech.' + SPEAK_MIMES[mime]);
+    form.append('model', WHISPER_MODEL);
+    form.append('language', language);
+    form.append('response_format', 'verbose_json');
+    form.append('temperature', '0');
+    const r = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
+      method: 'POST', headers: { Authorization: `Bearer ${process.env.GROQ_API_KEY}` }, body: form,
+    });
+    const d = await r.json().catch(() => ({}));
+    if (!r.ok) throw new Error('Groq transcription failed (' + r.status + '): ' + JSON.stringify(d).slice(0, 200));
+    const seconds = Math.max(10, Number(d.duration) || 10);
+    await supabase.from('ai_usage').update({
+      provider: 'groq', model: WHISPER_MODEL, input_tokens: 0, output_tokens: 0,
+      cost_usd: Math.round(seconds * WHISPER_USD_PER_SEC * 1e6) / 1e6, latency_ms: Date.now() - t0, success: true, error: null,
+    }).eq('id', quota.id);
+    return res.status(200).json({ text: String(d.text || '').trim().slice(0, 500) });
+  } catch (e) {
+    console.error('[AI API] transcribe:', e.message);
+    await supabase.from('ai_usage').update({ success: false, cost_usd: 0, latency_ms: Date.now() - t0, error: String(e.message).slice(0, 300) }).eq('id', quota.id);
+    return res.status(502).json({ error: 'Speech recognition failed' });
+  }
+}
+
 async function handleUsage(req, res, supabase, user) {
   const isAdmin = user.app_metadata?.role === 'admin';
   const days = Math.min(Math.max(parseInt(req.query.days) || 30, 1), 90);
@@ -729,7 +779,7 @@ module.exports = async function handler(req, res) {
   if (!providerConfigured()) {
     return res.status(501).json({ error: 'AI is not configured' });
   }
-  if (!['grade', 'generate-exercises', 'grade-submission'].includes(action)) {
+  if (!['grade', 'generate-exercises', 'grade-submission', 'transcribe'].includes(action)) {
     return res.status(400).json({ error: 'Unknown action' });
   }
   if (burstLimited(user.id)) {
@@ -750,6 +800,8 @@ module.exports = async function handler(req, res) {
       return handleGenerateExercises(req, res, supabase, user);
     case 'grade-submission':
       return handleGradeSubmission(req, res, supabase, user);
+    case 'transcribe':
+      return handleTranscribe(req, res, supabase, user);
     default:
       return res.status(400).json({ error: 'Unknown action' });
   }

@@ -9,7 +9,10 @@
    Listening: when the book's recordings exist (/data/audio, js/app/reader.js), "listen and choose", "listen and fill
    the gap" and dictation are made from its example sentences and dialogue lines: one in each quick round and a
    whole Listening round (#/practice/listen).
-   Routes: #/practice, #/practice/round, #/practice/listen, #/practice/types. Interface text: app_pr_* and app_ex_* keys. */
+   Speaking (#/practice/speak): the student's tutor (one of the six, kept in this browser) says sentences from the
+   book, with the mouth following the recording when there is one; the student records each sentence and
+   /api/ai?action=transcribe (Groq Whisper) turns it into text, compared word by word.
+   Routes: #/practice, #/practice/round, #/practice/listen, #/practice/speak, #/practice/types. Interface text: app_pr_* and app_ex_* keys. */
 (function () {
   'use strict';
   var A = null, root = null, R = null;
@@ -181,7 +184,7 @@
     Object.keys(aud.items).forEach(function (k) {
       var it = aud.items[k], n = wordsOf(it[3]).length;
       if (!units[k.split(':')[0]] || !aud.done[it[0]] || n < 3 || n > 14 || it[3].length > 110) return;
-      out.push({ key: 'listen:' + book.id + ':' + k, text: it[3], src: aud.url(it[0]) });
+      out.push({ key: 'listen:' + book.id + ':' + k, text: it[3], src: aud.url(it[0]), voice: it[1] });
     });
     return out;
   }
@@ -260,6 +263,51 @@
   }
   function shuffleList(a) { return EX().shuffle(a.length).map(function (i) { return a[i]; }); }
 
+  /* ---------- Speaking: the tutor says a sentence (with its recording when there is one), the student says it ---------- */
+  var TUTOR = 'alimun-tutor';
+  var WOMEN = ['lena', 'mei', 'sofia'], WOMEN_VOICES = ['Sulafat', 'Kore', 'Aoede', 'Leda', 'Vindemiatrix'];
+  function myTutor() { try { var x = localStorage.getItem(TUTOR); return window.AlimunCast.tutors && window.AlimunCast.tutors.indexOf(x) > -1 ? x : 'lena'; } catch (e) { return 'lena'; } }
+  function setTutor(x) { try { localStorage.setItem(TUTOR, x); } catch (e) { /* storage blocked */ } }
+  function speakRound(book, progress, aud) {
+    var tutor = myTutor(), woman = WOMEN.indexOf(tutor) > -1, mem = readMem(), now = Date.now();
+    /* Sentences in a voice that matches the tutor first, then sentences of the book without a recording */
+    var voiced = heard(book, progress, aud).filter(function (x) { return (WOMEN_VOICES.indexOf(x.voice) > -1) === woman && wordsOf(x.text).length <= 12; });
+    var list = pickHeard(voiced, 4, mem, now).map(function (x) { return { key: 'speak:' + x.key.slice(7), text: x.text, src: x.src }; });
+    if (list.length < 4) {
+      var plain = [];
+      reached(book, progress).forEach(function (u) {
+        u.pages.forEach(function (p) { p.spreads.forEach(function (sp) { sp.forEach(function (b) {
+          if (b.t === 'examples') b.items.forEach(function (x) { var tx = String(x.s).replace(/\*\*?/g, '').trim(); var n = wordsOf(tx).length; if (n >= 3 && n <= 12) plain.push({ key: 'speak:' + book.id + ':' + tx.slice(0, 80), text: tx }); });
+        }); }); });
+      });
+      list = list.concat(pickHeard(plain, 4 - list.length, mem, now));
+    }
+    if (!list.length) return [];
+    return [{ b: { t: 'ex', kind: 'speak', h: t('app_ex_h_speak'), tutor: tutor, items: list.map(function (x) { return { src: x.src || '', a: x.text, why: '' }; }) },
+      keys: list.map(function (x) { return x.key; }) }];
+  }
+  function blobBase64(blob) {
+    return new Promise(function (ok, no) { var r = new FileReader(); r.onload = function () { ok(String(r.result).split(',')[1] || ''); }; r.onerror = no; r.readAsDataURL(blob); });
+  }
+  /* The recording to text, through /api/ai?action=transcribe (signed in, same access and caps as the other AI features) */
+  function transcriber(language) {
+    var code = window.AlimunData.langCode(language) || 'en';
+    return function (blob) {
+      if (!signedIn()) return Promise.reject({ note: 'app_ex_speak_signin' });
+      return Promise.all([window.AlimunData.token(), blobBase64(blob)]).then(function (r) {
+        return fetch('/api/ai?action=transcribe', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + r[0] },
+          body: JSON.stringify({ audio: r[1], mime: blob.type || 'audio/webm', language: code }) });
+      }).then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (j) {
+          if (res.status === 403) throw { note: 'app_ex_speak_plan' };
+          if (res.status === 429) throw { note: 'app_ex_speak_limit' };
+          if (!res.ok) throw { note: 'app_ex_speak_error' };
+          return j.text || '';
+        });
+      }, function (e) { throw e && e.note ? e : { note: 'app_ex_speak_error' }; });
+    };
+  }
+
   function listenRound(book, progress, aud) {
     var list = heard(book, progress, aud), mem = readMem(), now = Date.now(), out = [];
     if (list.length < 6) return [];
@@ -330,7 +378,14 @@
             '<h2 class="t-h2">' + esc(t('app_pr_listen_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_listen_p')) + '</p></div></div></a>'
           : '<section class="card card--bone span-12" style="--i:4"><div class="card__row"><div class="card__art">' + (A.Cast.spot ? A.Cast.spot('headphones') : A.Cast.drawing('parrot')) + '</div><div>' +
             '<h2 class="t-h2">' + esc(t('app_pr_listen_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_listen_none')) + '</p></div></div></section>') : '') +
-        (signedIn() ? '' : '<p class="t-tiny span-12" style="--i:5;margin-top:4px">' + esc(t('app_pr_local')) + '</p>') +
+        (info.book && A.Cast.tutor ? '<section class="card span-12 speak-card" style="--i:5"><div class="speak-card__top"><div>' +
+          '<h2 class="t-h2">' + esc(t('app_pr_speak_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_speak_p')) + '</p></div>' +
+          '<a class="btn btn--primary" href="#/practice/speak">' + esc(t('app_pr_speak_start')) + A.icon('arrow') + '</a></div>' +
+          '<div class="tutors" role="radiogroup" aria-label="' + esc(t('app_pr_tutor')) + '">' + A.Cast.tutors.map(function (k) {
+            var on = k === myTutor();
+            return '<button class="tutor-pick tutor-art' + (on ? ' is-on' : '') + '" type="button" role="radio" aria-checked="' + on + '" data-tutor="' + k + '" data-mouth="rest" aria-label="' + esc(k.charAt(0).toUpperCase() + k.slice(1)) + '">' + A.Cast.tutor(k) + '<span>' + esc(k.charAt(0).toUpperCase() + k.slice(1)) + '</span></button>';
+          }).join('') + '</div></section>' : '') +
+        (signedIn() ? '' : '<p class="t-tiny span-12" style="--i:6;margin-top:4px">' + esc(t('app_pr_local')) + '</p>') +
       '</div>';
     return html;
   }
@@ -421,9 +476,9 @@
       window.AlimunData.saveBook(A.data().profile.id, key, { done: true, score: score }).catch(function (e) { console.warn('[Alimun] Practice round not saved', e && e.message); });
     }
   }
-  function startRound(blocks, keys, xa, ta, types, route) {
+  function startRound(blocks, keys, xa, ta, types, route, transcribe) {
     R = { blocks: blocks, keys: keys, at: 0, mood: 'idle', line: '', xa: xa, types: types, saved: false, route: route };
-    R.ex = EX().create({ A: A, blocks: blocks, test: false, xa: xa, ta: ta, root: function () { return root; }, onAnswer: onAnswer,
+    R.ex = EX().create({ A: A, blocks: blocks, test: false, xa: xa, ta: ta, root: function () { return root; }, onAnswer: onAnswer, transcribe: transcribe,
       onItem: function (r) { var k = R.keys[r.bi] && R.keys[r.bi][r.i]; if (k) record(k, r.ok); } });
   }
   function attrs(code, rtl) { return ' lang="' + code + '" dir="' + (rtl ? 'rtl' : 'ltr') + '"'; }
@@ -444,6 +499,12 @@
     if (root.__practice) return;
     root.__practice = true;
     root.addEventListener('click', function (e) {
+      var pick = e.target.closest('[data-tutor]');
+      if (pick && !root.querySelector('.pr')) {
+        setTutor(pick.getAttribute('data-tutor'));
+        root.querySelectorAll('[data-tutor]').forEach(function (b) { var on = b === pick; b.classList.toggle('is-on', on); b.setAttribute('aria-checked', String(on)); });
+        return;
+      }
       if (!R || !root.querySelector('.pr')) return;
       if (EX().swallowClick()) { e.preventDefault(); return; }
       var el = e.target.closest('[data-act], [data-again]');
@@ -485,13 +546,13 @@
           return { html: roundView(), title: t('app_pr_types_h'), round: true };
         });
       }
-      if ((parts[0] === 'round' || parts[0] === 'listen') && info.book) {
-        var listen = parts[0] === 'listen';
-        var round = listen ? listenRound(info.book, info.progress || {}, info.audio) : buildRound(info.book, info.progress || {}, info.audio, info.pictures);
+      if ((parts[0] === 'round' || parts[0] === 'listen' || parts[0] === 'speak') && info.book) {
+        var listen = parts[0] === 'listen', speak = parts[0] === 'speak';
+        var round = speak ? speakRound(info.book, info.progress || {}, info.audio) : listen ? listenRound(info.book, info.progress || {}, info.audio) : buildRound(info.book, info.progress || {}, info.audio, info.pictures);
         if (!round.length) return { html: emptyView(), title: t('app_nav_practice') };
         var code = window.AlimunData.langCode(info.book.language) || 'en', xl = info.book.explainLang || 'en';
-        startRound(round.map(function (x) { return x.b; }), round.map(function (x) { return x.keys; }), attrs(xl, xl === 'ar'), attrs(code, false), false, parts[0]);
-        return { html: roundView(), title: t(listen ? 'app_pr_listen_h' : 'app_pr_round_h'), round: true };
+        startRound(round.map(function (x) { return x.b; }), round.map(function (x) { return x.keys; }), attrs(xl, xl === 'ar'), attrs(code, false), false, parts[0], transcriber(info.book.language));
+        return { html: roundView(), title: t(speak ? 'app_pr_speak_h' : listen ? 'app_pr_listen_h' : 'app_pr_round_h'), round: true };
       }
       return { html: homeView(info), title: t('app_nav_practice') };
     }).catch(function (e) {

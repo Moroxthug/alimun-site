@@ -683,6 +683,27 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 }
 .soon__spot { width: 88px; margin-bottom: 10px; }
 .soon__spot svg { width: 100%; height: auto; display: block; }
+/* Speaking */
+.speak-tutor { width: 150px; margin: 0 auto 6px; }
+.speak-tutor svg { width: 100%; height: auto; display: block; }
+.speak-s { margin: 0 0 12px; font-size: 20px; line-height: 1.6; }
+.sw { border-radius: 6px; padding: 0 2px; transition: background var(--t-mid) var(--ease); }
+.sw.is-ok { background: var(--lime); color: var(--forest); font-weight: 700; }
+.sw.is-miss { box-shadow: inset 0 -3px 0 var(--coral); }
+.rec { gap: 9px; }
+.rec i { width: 12px; height: 12px; border-radius: 50%; background: var(--coral); box-shadow: 0 0 0 2px var(--white); }
+.rec.is-rec { background: var(--coral); color: var(--ink); }
+.rec.is-rec i { background: var(--white); animation: beacon .9s ease-in-out infinite; }
+.speak-heard { margin: 4px 0 0; color: var(--muted); }
+.speak-heard q { color: var(--ink); font-weight: 600; }
+.speak-note { margin: 6px 0 0; color: var(--forest); font-weight: 600; }
+.speak-card__top { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: flex-start; justify-content: space-between; }
+.tutors { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 10px; margin-top: 18px; }
+.tutor-pick { border: 0; padding: 8px 6px 10px; border-radius: var(--r-md); background: var(--bone); cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 4px; font-weight: 700; font-size: 14px; transition: background var(--t-fast), box-shadow var(--t-fast), transform var(--t-fast) var(--spring); }
+.tutor-pick svg { width: 100%; max-width: 110px; height: auto; display: block; }
+.tutor-pick:hover { transform: translateY(-2px); }
+.tutor-pick.is-on { background: var(--t-lime); box-shadow: inset 0 0 0 3px var(--forest); }
+@media (max-width: 699px) { .tutors { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 /* Tutors (lip sync) */
 .tutor-art .mo { display: none; }
 .tutor-art[data-mouth="rest"] .mo-rest, .tutor-art:not([data-mouth]) .mo-rest, .tutor-art[data-mouth="m"] .mo-m, .tutor-art[data-mouth="e"] .mo-e, .tutor-art[data-mouth="a"] .mo-a, .tutor-art[data-mouth="o"] .mo-o { display: inline; }

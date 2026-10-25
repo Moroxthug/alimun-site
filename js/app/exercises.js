@@ -6,13 +6,13 @@
    can be tried again and "Show the answer" appears after two wrong tries. Test mode (test: true): nothing is checked
    until submit(), then every block shows the right answers.
    Item kinds (choice, odd, picture, tf, select, gap, wordform, transform, conjugate, crossword, order, build, spot, colloc, fix,
-   and the listening kinds hear, heargap and dictation, which play course audio)
+   the listening kinds hear, heargap and dictation, which play course audio, and speak, which records the student)
    are lists of items, each right or wrong on its own. Block kinds (match, bank, label, sort, memory, search) keep one state
    for the whole block. Interface text comes from js/translations.js (app_book_* and app_ex_* keys). */
 (function () {
   'use strict';
   var reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var LESSON_ONLY = { memory: true, search: true };
+  var LESSON_ONLY = { memory: true, search: true, speak: true };
 
   /* ---------- Helpers ---------- */
   function esc(s) {
@@ -77,6 +77,7 @@
       A: o.A, test: !!o.test, result: null, xa: o.xa || '', ta: o.ta || '', root: o.root,
       onAnswer: o.onAnswer || function () {}, onChange: o.onChange || function () {}, onItem: o.onItem || function () {}
     };
+    S.transcribe = o.transcribe || null;   /* (blob) => Promise of text, or rejected with { note: <text key> } */
     S.blocks = o.blocks.map(normalize);
     S.state = S.blocks.map(function (b) { return b.t === 'ex' ? prepare(S, b) : null; });
     S.html = function (bi) { return exHtml(S, bi); };
@@ -179,6 +180,36 @@
     }
     missing += a.length - i;
     return { html: out.join(' '), missing: missing };
+  }
+
+  /* ---------- Speaking: the student says the sentence; the host turns the recording into text (opts.transcribe) ---------- */
+  var rec = null;   /* { S, bi, i, mr, stream, chunks, timer } while recording */
+  function recMime() {
+    var list = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+    for (var k = 0; k < list.length; k++) if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(list[k])) return list[k];
+    return '';
+  }
+  function stopRec() {
+    if (!rec) return;
+    clearTimeout(rec.timer);
+    if (rec.mr && rec.mr.state !== 'inactive') rec.mr.stop();
+  }
+  /* Words of the sentence heard in the transcript, in order */
+  function spokenMatch(want, got) {
+    var a = words2(want), b = words2(got), m = [], i, j;
+    for (i = 0; i <= a.length; i++) { m.push([]); for (j = 0; j <= b.length; j++) m[i].push(0); }
+    for (i = a.length - 1; i >= 0; i--) for (j = b.length - 1; j >= 0; j--) m[i][j] = a[i] === b[j] ? m[i + 1][j + 1] + 1 : Math.max(m[i + 1][j], m[i][j + 1]);
+    var hit = [], n = 0;
+    i = 0; j = 0;
+    while (i < a.length && j < b.length) {
+      if (a[i] === b[j]) { hit[i] = true; n++; i++; j++; }
+      else if (m[i + 1][j] >= m[i][j + 1]) i++; else j++;
+    }
+    return { hit: hit, n: n, total: a.length };
+  }
+  function spokenRight(want, got) {
+    var r = spokenMatch(want, got);
+    return r.total ? (r.total <= 4 ? r.n === r.total : r.n / r.total >= 0.8) : false;
   }
 
   var typed = {
@@ -308,6 +339,39 @@
         return hearHtml(S, it.src) + typedInput(S, a, it, x, locked, true) + (!test && !x.done && x.tries >= 2 ? showLink(S, a) : '');
       }
     }),
+    /* Speaking: listen to the tutor (when the sentence has audio), then say it. `tutor` on the block,
+       `items: [{ src?, a: sentence }]`. Lessons and practice only. */
+    speak: {
+      prep: function () { return { heard: '', state: '' }; },
+      right: function (b, it, x) { return spokenRight(it.a, x.heard); },
+      answer: function (b, it) { return it.a; },
+      ready: function (b, it, x) { return !!x.heard; },
+      hint: 'app_ex_speak_hint',
+      top: function (S, b) { return '<div class="speak-tutor tutor-art" data-mouth="rest" data-tutor-of="' + esc(b.tutor || '') + '">' + (S.A.Cast.tutor ? S.A.Cast.tutor(b.tutor || 'lena') : '') + '</div>'; },
+      html: function (S, bi, i, b, it, x, test, review, locked) {
+        var a = ' data-b="' + bi + '" data-i="' + i + '"';
+        var m = x.heard ? spokenMatch(it.a, x.heard) : null;
+        var words = String(it.a).split(/\s+/), k = 0;
+        var said = words.map(function (w) {
+          var core = words2(w).length;
+          var cls = m && core ? (m.hit[k] ? ' is-ok' : ' is-miss') : '';
+          if (core) k += core;
+          return '<span class="sw' + cls + '">' + esc(w) + '</span>';
+        }).join(' ');
+        var recording = rec && rec.S === S && rec.bi === bi && rec.i === i;
+        var html = '<p class="speak-s"' + S.ta + '>' + said + '</p>';
+        if (!locked) {
+          html += '<div class="hear-row">' + (it.src ? '<button class="btn btn--ghost btn--sm hear" type="button" data-act="speakhear"' + a + ' data-src="' + esc(it.src) + '">' + S.A.icon('play') + '<span>' + esc(t(S, 'app_ex_hear')) + '</span></button>' : '') +
+            '<button class="btn btn--primary btn--sm rec' + (recording ? ' is-rec' : '') + '" type="button" data-act="rec"' + a + (x.state === 'wait' ? ' disabled' : '') + '><i aria-hidden="true"></i><span>' +
+            esc(t(S, recording ? 'app_ex_rec_stop' : x.state === 'wait' ? 'app_ex_rec_wait' : 'app_ex_rec')) + '</span></button></div>';
+        }
+        if (x.heard) html += '<p class="t-small speak-heard"' + S.xa + '>' + esc(t(S, 'app_ex_speak_heard')) + ' <q' + S.ta + '>' + esc(x.heard) + '</q></p>';
+        if (x.note) html += '<p class="t-small speak-note"' + S.xa + '>' + esc(t(S, x.note)) + '</p>';
+        /* Skip after two tries, or at once when recording cannot work here (signed out, no plan, no microphone, daily limit) */
+        if (!x.done && (x.tries >= 2 || /signin|plan|mic|limit/.test(x.note || ''))) html += '<button class="linkish" type="button" data-act="show"' + a + '>' + esc(t(S, 'app_ex_skip')) + '</button>';
+        return html;
+      }
+    },
     /* Rewrite the sentence; `cue` is the word to use or the start of the new sentence */
     transform: Object.assign({}, typed, {
       /* The answer may be written with or without the words given at the start */
@@ -1144,8 +1208,55 @@
   }
 
   /* ---------- Events (the host forwards them) ---------- */
+  /* The tutor says the sentence, the mouth following the sound */
+  function speakHear(S, el) {
+    var again = playingBtn === el;
+    stopAudio();
+    if (again) return;
+    player = player || new Audio();
+    player.crossOrigin = 'anonymous';
+    player.src = el.getAttribute('data-src');
+    player.playbackRate = 1;
+    playingBtn = el; el.classList.add('is-playing');
+    var face = el.closest('.ex').querySelector('.speak-tutor');
+    var unfollow = face && window.AlimunLipsync ? window.AlimunLipsync.follow(player, face) : function () {};
+    player.onended = function () { el.classList.remove('is-playing'); if (playingBtn === el) playingBtn = null; unfollow(); };
+    player.play().catch(function () { stopAudio(); unfollow(); });
+  }
+  function onRec(S, bi, i) {
+    var x = S.state[bi].items[i];
+    if (rec && rec.S === S && rec.bi === bi && rec.i === i) { stopRec(); return; }
+    stopRec(); stopAudio();
+    if (!S.transcribe) { x.note = 'app_ex_speak_error'; rerender(S, bi); return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { x.note = 'app_ex_speak_mic'; rerender(S, bi); return; }
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      var mime = recMime(), mr = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
+      var r = rec = { S: S, bi: bi, i: i, mr: mr, stream: stream, chunks: [] };
+      mr.ondataavailable = function (e) { if (e.data && e.data.size) r.chunks.push(e.data); };
+      mr.onstop = function () {
+        stream.getTracks().forEach(function (tr) { tr.stop(); });
+        if (rec === r) rec = null;
+        var blob = new Blob(r.chunks, { type: (mr.mimeType || mime || 'audio/webm').split(';')[0] });
+        x.state = 'wait'; x.note = ''; rerender(S, bi);
+        S.transcribe(blob).then(function (text) {
+          x.state = ''; x.heard = text || '…';
+          var ok = spokenRight(S.blocks[bi].items[i].a, x.heard);
+          x.note = ok ? '' : 'app_ex_speak_try';
+          mark(S, bi, i, x, ok);
+          rerender(S, bi); after(S, bi, ok);
+        }, function (e) {
+          x.state = ''; x.note = (e && e.note) || 'app_ex_speak_error'; rerender(S, bi);
+        });
+      };
+      mr.start();
+      r.timer = setTimeout(stopRec, 15000);
+      x.note = ''; rerender(S, bi);
+    }, function () { x.note = 'app_ex_speak_mic'; rerender(S, bi); });
+  }
+
   function onAct(S, act, el) {
     if (act === 'hear') { hear(el); return true; }
+    if (act === 'speakhear') { speakHear(S, el); return true; }
     var bi = +el.getAttribute('data-b'), i = +el.getAttribute('data-i');
     if (isNaN(bi) || !S.blocks[bi]) return false;
     switch (act) {
@@ -1159,6 +1270,7 @@
       case 'toggle': onToggle(S, bi, i, +el.getAttribute('data-o')); return true;
       case 'fixtap': onFixTap(S, bi, i, +el.getAttribute('data-t')); return true;
       case 'fixok': onFixOk(S, bi, i); return true;
+      case 'rec': onRec(S, bi, i); return true;
       case 'mleft': onMatch(S, bi, 'l', +el.getAttribute('data-l')); return true;
       case 'mright': onMatch(S, bi, 'r', +el.getAttribute('data-r')); return true;
       case 'gapsel': onGapSel(S, bi, i); return true;
@@ -1273,7 +1385,7 @@
 
   window.AlimunEx = {
     create: create, md: md, esc: esc, shuffle: shuffle, norm: norm, seeded: seeded,
-    kinds: Object.keys(K), lessonOnly: LESSON_ONLY, stopAudio: stopAudio,
+    kinds: Object.keys(K), lessonOnly: LESSON_ONLY, stopAudio: function () { stopAudio(); stopRec(); }, spokenRight: spokenRight,
     pointerDown: pointerDown,
     /* True right after a drag ended, so the click it fires is ignored */
     swallowClick: function () { return suppress; }
