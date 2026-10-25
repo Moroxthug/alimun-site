@@ -517,6 +517,106 @@
     return c.from('teacher_availability').delete().eq('id', id).then(function (r) { if (r.error) throw r.error; });
   }
 
+  /* Teacher dashboard, Students (step 15, part 3): the approved teacher's students (active enrolments in their classes,
+     and anyone with a 1:1 with them), with what is needed for the list and the "needs attention" rules: last activity,
+     class dates of the last eight weeks and who joined them, homework set and handed in, flashcards learned.
+     Never payment columns. Row-level security limits every read to the teacher's own students. */
+  function teacherStudents() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.auth.getSession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session) return { signedIn: false };
+      return c.from('teacher_profiles').select('id, full_name, status').eq('user_id', session.user.id).maybeSingle().then(function (tr) {
+        if (tr.error) throw tr.error;
+        var tp = tr.data;
+        if (!tp || tp.status !== 'approved') return { signedIn: true, teacher: null };
+        return c.from('cohorts').select('id, language, level, goal_track, tier, max_students, enrolled_count, status').eq('teacher_id', tp.id).order('created_at', { ascending: true }).then(function (cr) {
+          var cos = rows(cr), ids = cos.map(function (co) { return co.id; }), none = Promise.resolve({ data: [] });
+          var now = Date.now(), since = new Date(now - 56 * DAY).toISOString();
+          return Promise.all([
+            ids.length ? c.from('enrollments').select('student_id, cohort_id, enrolled_at, student_profiles(id, full_name, level, language)').in('cohort_id', ids).eq('status', 'active') : none,
+            c.from('one_on_one_bookings').select('student_id, scheduled_at, student_profiles(id, full_name, level, language)').eq('teacher_id', tp.id).in('status', ['booked', 'completed']).limit(500),
+            ids.length ? c.from('sessions').select('id, cohort_id, scheduled_at, status').in('cohort_id', ids).gte('scheduled_at', since).lte('scheduled_at', new Date(now).toISOString()).neq('status', 'cancelled').order('scheduled_at', { ascending: true }) : none,
+            ids.length ? c.from('assignments').select('id, cohort_id, title, type, due_date, created_at').in('cohort_id', ids).order('created_at', { ascending: false }).limit(300) : none
+          ]).then(function (r) {
+            var students = {}, add = function (p, cohortId, since) {
+              if (!p || !p.id) return;
+              var s = students[p.id] = students[p.id] || { id: p.id, name: p.full_name || '', level: p.level || '', language: p.language || '', cohorts: [], since: since, oto: false };
+              if (cohortId) { s.cohorts.push(cohortId); if (since && (!s.since || since < s.since)) s.since = since; } else s.oto = true;
+            };
+            rows(r[0]).forEach(function (e) { add(e.student_profiles, e.cohort_id, e.enrolled_at); });
+            rows(r[1]).forEach(function (b) { add(b.student_profiles, null, null); });
+            var sids = Object.keys(students), sessions = rows(r[2]), asg = rows(r[3]);
+            var sesIds = sessions.map(function (s) { return s.id; }), asgIds = asg.map(function (a) { return a.id; });
+            if (!sids.length) return { signedIn: true, teacher: tp, cohorts: cos, students: [], sessions: sessions, assignments: asg };
+            var since90 = new Date(now - 90 * DAY).toISOString();
+            return Promise.all([
+              sesIds.length ? c.from('session_attendance').select('session_id, student_id').in('session_id', sesIds).not('joined_at', 'is', null).limit(5000) : none,
+              asgIds.length ? c.from('assignment_submissions').select('assignment_id, student_id, status, score, submitted_at').in('assignment_id', asgIds).limit(5000) : none,
+              c.from('practice_progress').select('student_id, updated_at').in('student_id', sids).gte('updated_at', since90).order('updated_at', { ascending: false }).limit(5000),
+              c.from('practice_items').select('student_id, last_at').in('student_id', sids).gte('last_at', since90).order('last_at', { ascending: false }).limit(5000),
+              c.from('vocab_reviews').select('student_id, box, last_reviewed_at').in('student_id', sids).limit(20000)
+            ]).then(function (q) {
+              var att = rows(q[0]), subs = rows(q[1]);
+              sids.forEach(function (id) { var s = students[id]; s.last = null; s.learned = 0; s.cards = 0; });
+              var seen = function (id, at) { var s = students[id]; if (s && at && (!s.last || at > s.last)) s.last = at; };
+              rows(q[2]).forEach(function (x) { seen(x.student_id, x.updated_at); });
+              rows(q[3]).forEach(function (x) { seen(x.student_id, x.last_at); });
+              rows(q[4]).forEach(function (x) { var s = students[x.student_id]; if (!s) return; s.cards++; if (x.box >= 3) s.learned++; seen(x.student_id, x.last_reviewed_at); });
+              subs.forEach(function (x) { seen(x.student_id, x.submitted_at); });
+              return { signedIn: true, teacher: tp, cohorts: cos, students: sids.map(function (id) { return students[id]; }), sessions: sessions, attendance: att, assignments: asg, submissions: subs };
+            });
+          });
+        });
+      });
+    });
+  }
+  /* One student for the teacher: the profile (no payment columns), what the Progress page counts, practice memory,
+     flashcards and the teachers' notes (private ones included: the teacher can read them, the student cannot) */
+  function teacherStudent(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('student_profiles').select('id, full_name, level, language, goal_track, placement').eq('id', studentId).maybeSingle(),
+      progress(studentId),
+      practiceItems(studentId),
+      c.from('student_feedback').select('id, teacher_id, feedback_text, is_private, created_at').eq('student_id', studentId).order('created_at', { ascending: false }).limit(100),
+      c.from('vocab_reviews').select('due_on').eq('student_id', studentId).lte('due_on', new Date().toISOString().slice(0, 10)).limit(5000)
+    ]).then(function (r) {
+      if (r[0].error) throw r[0].error;
+      if (!r[0].data) return null;
+      var notes = rows(r[3]), tids = notes.map(function (n) { return n.teacher_id; }).filter(function (v, i, a) { return v && a.indexOf(v) === i; });
+      return (tids.length ? c.from('teachers_public').select('id, full_name').in('id', tids) : Promise.resolve({ data: [] })).then(function (tr) {
+        var names = {};
+        (tr.data || []).forEach(function (x) { names[x.id] = x.full_name || ''; });
+        notes.forEach(function (n) { n.author = names[n.teacher_id] || ''; });
+        return { profile: r[0].data, progress: r[1], items: r[2], notes: notes, due: (r[4].data || []).length };
+      });
+    });
+  }
+  /* A class's practice answers, for where the class struggles */
+  function classItems(studentIds) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    if (!studentIds.length) return Promise.resolve({ items: [], book: [] });
+    return Promise.all([
+      c.from('practice_items').select('student_id, item_key, seen, wrong').in('student_id', studentIds).gt('seen', 0).limit(20000),
+      c.from('practice_progress').select('student_id, ex_key, done, graded_score').in('student_id', studentIds).like('ex_key', 'book:%').limit(20000)
+    ]).then(function (r) { return { items: rows(r[0]), book: rows(r[1]) }; });
+  }
+  function addStudentNote(teacherId, studentId, text, isPrivate) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('student_feedback').insert({ teacher_id: teacherId, student_id: studentId, feedback_text: text, is_private: !!isPrivate })
+      .select('id, teacher_id, feedback_text, is_private, created_at').single().then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function deleteStudentNote(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('student_feedback').delete().eq('id', id).then(function (r) { if (r.error) throw r.error; });
+  }
+
   /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
   function libraryResults(studentId) {
     var c = client();
@@ -573,5 +673,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, teacherToday: teacherToday, teacherClasses: teacherClasses, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, teacherInbox: teacherInbox, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, teacherInbox: teacherInbox, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

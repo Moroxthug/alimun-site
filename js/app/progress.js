@@ -264,5 +264,7 @@
     });
   }
 
-  window.AlimunProgress = { mount: mount, compute: compute };
+  /* The teacher dashboard (js/app/teach-students.js) shows a student the same counts: use() sets its helpers */
+  window.AlimunProgress = { mount: mount, compute: compute, bookProgress: bookProgress, weeks: weeks, milestones: milestones, basis: basis, testName: testName,
+    SKILLS: SKILLS, MIN_ANSWERS: MIN_ANSWERS, use: function (h) { A = h; } };
 })();

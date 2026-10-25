@@ -754,3 +754,10 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `api/generate-notes-pdf.js`: sections left empty are left out of the PDF (only the grammar point is required now); both a minimal and a full PDF render locally.
 - `app_tc_*` keys (English first, then eight languages).
 - Checked with the sample teacher: every screen and flow on desktop English and phone Arabic, no errors. Not checked from here: a real class (all three classes in the database are closed, with no dates ahead).
+
+## 2026-10-25 — Dashboards, step 15 part 3: teacher Students (built after the owner approved the plan)
+- Owner: go ahead; notes stay visible to students, the attention rules are fine, add private notes as well.
+- Database: `supabase/migrations/202610252200_private_teacher_notes.sql` (the connector's confirmation timed out; the owner ran it in the SQL Editor). Verified with real accounts in a rolled-back transaction: with a visible and a private note, the student reads only the visible one and the teacher both.
+- `js/app/teach-students.js`; `AlimunData` teacherStudents, teacherStudent, classItems, addStudentNote, deleteStudentNote; `js/app/progress.js` exposes its counting for the teacher view; `/app/teach` loads progress.js.
+- `app_ts_*` keys (English first, then eight languages).
+- Checked with sample students on desktop English and phone Arabic: list with needs attention, a class (attendance table, weak lessons from the real German B1 book), a student with skills, lessons, homework, activity and notes (adding a private note), no errors. Not checked from here: real students (none enrolled in a class right now).
