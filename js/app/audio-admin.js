@@ -50,6 +50,13 @@
       .then(function (j) {
         var s = state[b.id];
         s.total = j.total; s.done = j.done; s.seconds = j.seconds;
+        if (j.retryAfter) {
+          /* Google's per-minute limit: wait and carry on, it is not a failure */
+          draw();
+          say('Google allows a few recordings a minute on this plan; waiting ' + j.retryAfter + ' seconds, then carrying on.');
+          setTimeout(step, j.retryAfter * 1000 + 1500);
+          return;
+        }
         if (!j.made && j.failed.length) { s.fails = (s.fails || 0) + 1; s.err = j.failed[0].error + (j.failed[0].detail ? ' ' + JSON.stringify(j.failed[0].detail).slice(0, 200) : ''); }
         else { s.fails = 0; s.err = ''; }
         draw();
@@ -72,7 +79,7 @@
       token = s.access_token;
       /* The session token expires after an hour; keep it fresh while the tab works */
       sb.auth.onAuthStateChange(function (ev, ses) { if (ses) token = ses.access_token; });
-      return load().then(function () { btn.disabled = false; say('Press Start and keep this tab open. Each call makes about 40 seconds of files.'); });
+      return load().then(function () { btn.disabled = false; say('Press Start and keep this tab open. Google allows about 10 recordings a minute on this plan, so this takes a few hours.'); });
     }).catch(function (e) { say('Could not start: ' + e.message); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

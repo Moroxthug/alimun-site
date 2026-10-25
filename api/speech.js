@@ -8,7 +8,9 @@
  *    ?action=generate (POST, admin JWT) — { book }: makes the next missing course audio
  *                     files of a book (plan /data/audio/<book>.json, site/src/data/books/audio.js)
  *                     as MP3 in Supabase Storage course-audio/<book>/<hash>.mp3, with
- *                     <book>/manifest.json listing the files made; about 40 s per call.
+ *                     <book>/manifest.json listing the files made; about 40 s per call, one request
+ *                     every 6.7 s (TTS_PER_MINUTE, default 9) for Google's per-minute limit; a 429 ends the
+ *                     call with retryAfter (seconds) for the admin page to wait.
  *    ?action=sample  (POST, admin JWT) — one sentence, or a two-speaker dialogue,
  *                     spoken by Gemini text-to-speech; returns audio/wav.
  *        { text, voice, model?: 'flash' | 'lite', style? }
@@ -103,6 +105,17 @@ function pcmOf(w) {
   return { pcm: w.slice(44), rate: 24000 };
 }
 
+/* Google's rate limit (Tier 1: 10 requests a minute for the TTS models): stop at once and say when to try again,
+   instead of spending the next request on the fallback */
+function limited(r) {
+  if (r.status !== 429) return;
+  const m = /retry in ([\d.]+)\s*s/i.exec(r.text || '');
+  const err = new Error('rate_limited');
+  err.rateLimited = true;
+  err.retryAfter = Math.min(120, Math.ceil(m ? +m[1] : 60));
+  throw err;
+}
+
 /* One request: Interactions API first, generateContent as a fallback (single voice) */
 async function once({ model, turns, voices, style }, errors) {
   const multi = turns.length > 1 || !!turns[0].speaker;
@@ -124,6 +137,7 @@ async function once({ model, turns, voices, style }, errors) {
   let r = await callJSON(BASE + '/interactions', interaction);
   let audio = r.ok && findAudio(r.json);
   if (audio) return toWav(audio);
+  limited(r);
   errors.push('interactions ' + r.status + ' ' + String(r.text).slice(0, 300));
   if (multi) return null;
 
@@ -134,6 +148,7 @@ async function once({ model, turns, voices, style }, errors) {
   });
   audio = r.ok && findAudio(r.json);
   if (audio) return toWav(audio);
+  limited(r);
   errors.push('generateContent ' + r.status + ' ' + String(r.text).slice(0, 300));
   return null;
 }
@@ -162,6 +177,9 @@ async function speak({ model, turns, voices, style }) {
 
 /* ---------- Course audio: files for the sentences of a book ---------- */
 const BUCKET = 'course-audio';
+/* Milliseconds between two requests to Google: 6.5 s keeps under 10 a minute (raise TTS_PER_MINUTE after a tier upgrade) */
+const GAP = Math.ceil(60000 / Math.max(1, +(process.env.TTS_PER_MINUTE || 9)));
+function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 const BOOK_RE = /^[A-Z][a-z]+-[ABC][12](-[a-z]+)?$/;
 
 async function mp3(w) {
@@ -204,23 +222,28 @@ async function generate(req, res, supabase, body) {
     const todo = [], seen = new Set();
     Object.values(plan.items).forEach((it) => { if (!manifest.done[it[0]] && !seen.has(it[0])) { seen.add(it[0]); todo.push(it); } });
     const made = [], failed = [];
-    let next = 0;
-    const worker = async () => {
-      while (next < todo.length && Date.now() - t0 < 38000) {
-        const [h, voice, style, text] = todo[next++];
-        try {
-          const w = await speak({ model: plan.model || MODELS.flash, turns: [{ text }], voices: { _: voice }, style });
-          const m = await mp3(w);
-          const up = await supabase.storage.from(BUCKET).upload(book + '/' + h + '.mp3', m.buf, { contentType: 'audio/mpeg', cacheControl: '31536000', upsert: true });
-          if (up.error) throw up.error;
-          manifest.done[h] = m.seconds;
-          made.push(h);
-        } catch (e) {
-          failed.push({ h, error: String(e.message || e).slice(0, 200), detail: e.detail || null });
-        }
+    let retryAfter = 0, last = 0;
+    /* One request at a time, at most one every GAP ms, to stay under Google's requests-per-minute limit */
+    for (const [h, voice, style, text] of todo) {
+      if (Date.now() - t0 > 38000) break;
+      const wait = last + GAP - Date.now();
+      if (wait > 0) await sleep(wait);
+      last = Date.now();
+      try {
+        const w = await speak({ model: plan.model || MODELS.flash, turns: [{ text }], voices: { _: voice }, style });
+        const m = await mp3(w);
+        const up = await supabase.storage.from(BUCKET).upload(book + '/' + h + '.mp3', m.buf, { contentType: 'audio/mpeg', cacheControl: '31536000', upsert: true });
+        if (up.error) throw up.error;
+        manifest.done[h] = m.seconds;
+        made.push(h);
+      } catch (e) {
+        if (e.rateLimited) { retryAfter = e.retryAfter; break; }
+        failed.push({ h, error: String(e.message || e).slice(0, 200), detail: e.detail || null });
       }
-    };
-    await Promise.all([worker(), worker(), worker()]);
+    }
+    /* The next call may start right away: keep the gap after this call's last request too */
+    const rest = last + GAP - Date.now();
+    if (!retryAfter && rest > 0) await sleep(rest);
     if (made.length) {
       manifest.updated = new Date().toISOString();
       const up = await supabase.storage.from(BUCKET).upload(book + '/manifest.json', Buffer.from(JSON.stringify(manifest)), { contentType: 'application/json', cacheControl: '30', upsert: true });
@@ -228,7 +251,7 @@ async function generate(req, res, supabase, body) {
     }
     const total = new Set(Object.values(plan.items).map((it) => it[0])).size;
     const seconds = Object.values(manifest.done).reduce((a, b) => a + b, 0);
-    return res.status(200).json({ book, total, done: Object.keys(manifest.done).length, made: made.length, failed, seconds: Math.round(seconds) });
+    return res.status(200).json({ book, total, done: Object.keys(manifest.done).length, made: made.length, failed, seconds: Math.round(seconds), retryAfter });
   } catch (e) {
     console.error('[speech generate] ' + book + ': ' + e.message);
     return res.status(500).json({ error: 'generate_failed', detail: String(e.message || e).slice(0, 300) });

@@ -82,3 +82,10 @@ test('MP3 encoding of a WAV: a smaller file and the length in seconds', async ()
   assert.ok(m.buf.length > 1000 && m.buf.length < pcm2.length / 4);
   assert.ok(m.buf[0] === 0xff || m.buf.slice(0, 3).toString() === 'ID3');
 });
+
+test('a 429 from Google stops at once with the wait it asks for, without trying the fallback', async () => {
+  let calls = 0;
+  global.fetch = async () => { calls++; return { ok: false, status: 429, text: async () => '{"error":{"message":"Rate limit exceeded ... Please retry in 42s or upgrade"}}' }; };
+  await assert.rejects(speak({ model: 'gemini-3.8-flash-tts', turns: [{ text: 'Hallo' }], voices: { _: 'Orus' }, style: '' }), (e) => e.rateLimited && e.retryAfter === 42);
+  assert.strictEqual(calls, 1);
+});
