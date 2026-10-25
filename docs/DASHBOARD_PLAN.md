@@ -28,8 +28,8 @@ Owner, 24 Oct 2026: rebuild the dashboards from scratch, without the current one
 11. Homework, essays and teacher feedback. Built, waiting for the owner (25 Oct 2026): Homework (`#/homework`, `js/app/homework.js`), decisions below ("Step 11 decisions").
 12. Progress: skills, levels, topics, history. Built, waiting for the owner (25 Oct 2026): Progress (`#/progress`, `js/app/progress.js`), decisions below ("Step 12 decisions").
 13. Messages. Built, waiting for the owner (25 Oct 2026): Messages (`#/messages`, `js/app/messages.js`); tables `supabase/migrations/202610251800_messages.sql`, applied on 25 Oct 2026 (owner's yes; finished by the owner in the SQL Editor) and verified; the teachers' side is `/app/messages` until step 15. Decisions below ("Step 13 decisions").
-14. Settings, plan and billing; free-plan limits and the occasional upgrade pop-up. Settings built, waiting for the owner (25 Oct 2026): Settings (`#/settings`, `js/app/settings.js`). Free-plan limits and the upgrade pop-up wait for the owner's decision. Decisions below ("Step 14 decisions").
-15. Teacher dashboard (section 6), then the admin pages, in the same step-by-step way.
+14. Settings, plan and billing; free-plan limits and the occasional upgrade pop-up. Settings built, waiting for the owner (25 Oct 2026): Settings (`#/settings`, `js/app/settings.js`). Owner, 25 Oct 2026: no free-plan limits and no upgrade pop-up for now. Decisions below ("Step 14 decisions").
+15. Teacher dashboard (section 6), then the admin pages, in the same step-by-step way. Started 25 Oct 2026 at `/app/teach` (`app/teach.html`, `js/app/teach.js`), in six parts, each confirmed by the owner ("Step 15 decisions"). Part 1 built, waiting for the owner.
 The new dashboards are built next to the current ones and switched over only when complete.
 
 ## Step 5 decisions (owner, 25 Oct 2026: "do what is best")
@@ -112,4 +112,14 @@ Top-notch visual quality and content quality on every screen and every exercise;
 ## Step 14 decisions (owner, 25 Oct 2026: "go ahead with settings")
 - One page, four parts. The plan: the plan's name and status as the payment webhook wrote them (never changed from the browser); subscribers open Stripe's billing portal (`/api/stripe?action=billing-portal`, address checked to be https on stripe.com) to change card, see invoices, change plan or cancel; free and waiting-list students are sent to the approved plans page `/tiers`; a plan given by hand shows no button. About you: name, course language and level (a change restarts the dashboard, because the book, practice and library follow it), why and by when, time zone, days and times that suit them for classes. These are exactly the columns the database's `guard_student_profile_columns` lets a student change; the database checks the values again. Dashboard language: this device only (`alimun-lang`). Account: new password (8 characters at least), sign out, and asking for the account to be deleted through the contact page (no self-service deletion).
 - No database change. Notifications are not on the page: there are no notification settings to keep yet.
-- Not built, waiting for the owner: what the free plan limits, and when (if ever) an upgrade pop-up appears.
+- Owner, 25 Oct 2026: no limits for now, so no upgrade pop-up.
+
+## Step 15 decisions (owner, 25 Oct 2026: "go ahead with the teacher dashboard")
+- Built at `/app/teach` next to `/teacher-dashboard`, same look as the student dashboard, and switched over only when complete. Everything the current page does is kept (inventory taken on 25 Oct 2026); its stand-ins are not (the fixed 73% class average, the pretend chat, the sample files, the "View submissions" button that did nothing).
+- Parts, each shown to the owner before the next:
+  1. The shell and Today: the next class with Start (15 minutes before to 90 after), what needs doing (class notes not yet published, homework waiting for a mark, unread messages, 1:1 follow-up notes), the next seven days, the teacher's classes, the homework waiting longest. A teacher still being reviewed sees that, instead of being sent to the sign-in page.
+  2. Classes: timetable, the classroom (Daily, with the class conversation from step 13 in place of the pretend chat), class notes with words and the PDF, 1:1 follow-ups and their notes, creating a class, availability.
+  3. Students: each class and each student from real data (book, practice and its mistakes, mock tests, library, homework, words), the teacher's notes.
+  4. Homework: setting it (written, from a book lesson, a library piece or a mock paper), every submission, marking with drafted feedback the teacher checks before it is sent.
+  5. Material: exercises, quizzes and tests made by the teacher or drafted from a topic, a text or the class's mistakes, for a class or one student, checked before they are sent (needs a new table, shown to the owner first).
+  6. Messages, payouts, settings; then `/teacher-dashboard` moves to the new page.

@@ -1311,3 +1311,16 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 .st-msg--light.is-bad { color: var(--coral); }
 .st-plan__p { margin: 10px 0 0; color: var(--on-forest); }
 .st-acc-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+
+/* ---------- Teacher dashboard (step 15, js/app/teach.js) ---------- */
+.tt-week { display: grid; margin-top: 10px; }
+.tt-week__day { margin: 14px 0 2px; color: var(--muted); font-weight: 700; }
+.tt-row { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 14px; align-items: baseline; padding: 12px 0; border-top: 1px solid var(--line); color: inherit; text-decoration: none; }
+.tt-week__day + .tt-row, .tt-week > .tt-row:first-child { border-top: 0; }
+.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
+.tt-row__time { font-weight: 700; color: var(--forest); font-variant-numeric: tabular-nums; }
+.tt-row b { display: block; font-weight: 700; }
+.tt-row small { display: block; color: var(--muted); font-size: 14px; margin-top: 2px; }
+.avatar { text-decoration: none; }
+.tt-row--wide { grid-template-columns: 130px minmax(0, 1fr); }
+@media (max-width: 520px) { .tt-row, .tt-row--wide { grid-template-columns: 1fr; gap: 2px; } }

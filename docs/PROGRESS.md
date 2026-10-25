@@ -739,3 +739,10 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - 57 `app_st_*` keys in nine languages.
 - Checked: sample mode on desktop (English) and phone (Arabic), no errors, nothing wider than the phone; the exact save the page sends, run as a real student account inside a rolled-back transaction, is accepted by the row rules and the column guard. Not checked from here: the billing portal (needs a subscriber) and a real password change.
 - Open for the owner: free-plan limits and the upgrade pop-up.
+
+## 2026-10-25 — Dashboards, step 15 part 1: teacher dashboard shell and Today (built, waiting for the owner)
+- Owner: no free-plan limits for now; go ahead with the teacher dashboard. Inventory of the current `/teacher-dashboard` taken first; plan in six parts in `docs/DASHBOARD_PLAN.md` ("Step 15 decisions").
+- New page `/app/teach` (`app/teach.html`, `js/app/teach.js`), `AlimunData.teacherToday()` in `js/app/data.js` (classes, sessions two weeks either side with their notes, pending homework, 1:1s, unread messages; row-level security as before). No database change.
+- Today: next class with Start, to do, the next seven days, your classes, homework waiting longest; pending teachers see a review screen; other sections say which part builds them, with a link to the current teacher dashboard for real teachers.
+- `app_t_*` keys (English first, then eight languages).
+- Checked with the sample teacher: desktop English, phone Arabic, no errors, nothing wider than the phone. Not checked from here: a real teacher account (none to sign in with).
