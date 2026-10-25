@@ -146,3 +146,10 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - Real places in invented situations (building work between Hannover and Celle, *Halt in Fulda entfällt*, Bodensee, Lindau, Konstanz); invented town Lindenau is also a Leipzig district; *Hotel Lindenhof* is a common name.
 - u5 accepts *offen* with *geöffnet*; u6 accepts *übel* with *schlecht*.
 - Some items preview grammar above the A2 course book (*Wissen Sie, wo … ist?*, *nächste*, relative clauses with *an dem*).
+
+## German A2, study and exams
+- u6: A2 exams like Goethe A2 and telc A2 have four parts; a writing task of about 30 to 40 words on three points (check against the current formats).
+- u2 p1: frequency words with rough percentages (*immer* 100 %, *oft* 60 % …) used as teaching aids.
+- u3: *Liebes Team,* as the friendly greeting next to *Sehr geehrte Damen und Herren,*.
+- Word-order items rely on capitals and commas (*Ich komme später, weil ich einen Termin habe.*); slightly above A2: *trotzdem*, *Wer …, kann …*.
+- Dialogue titles are in English here (translated as explanations); the B1 model uses German titles.
