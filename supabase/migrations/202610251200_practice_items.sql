@@ -7,7 +7,7 @@
 --  view of each student's difficulties.
 --  item_key = "<book>:<unit>:<lesson or test>:<block>:<item>".
 --  Until this is applied, the dashboard keeps the same data in the browser.
---  Idempotent. NOT YET APPLIED: waiting for the owner.
+--  Idempotent. Applied to production on 25 Oct 2026 (owner, SQL Editor).
 -- ============================================================
 
 create table if not exists public.practice_items (
