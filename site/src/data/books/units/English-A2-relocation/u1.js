@@ -210,7 +210,7 @@ export const UNIT = {
     ] },
     { t: 'ex', kind: 'match', h: 'Match the words on the form and the answers.', pairs: [
       ['Surname', 'Chen'],
-      ['Postcode', 'G12 8QQ'],
+      ['Postcode', 'G41 3HT'],
       ['Date of birth', '30/01/1987'],
       ['Nationality', 'Chinese'],
     ] },

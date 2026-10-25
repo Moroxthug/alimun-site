@@ -110,7 +110,7 @@ export const UNIT = {
             { who: 'Nadia', s: 'Ja, das stimmt. Vor allem die Hauptdarstellerin.' },
           ] },
           { t: 'ex', kind: 'tf', h: 'Think about the dialogue. True or false?', items: [
-            { q: 'Nadia hat der Film sehr gut gefallen.', a: 'f', why: '*Ehrlich gesagt war er nicht mein Fall.*' },
+            { q: 'Der Film hat Nadia sehr gut gefallen.', a: 'f', why: '*Ehrlich gesagt war er nicht mein Fall.*' },
             { q: 'Ben findet das Ende gut.', a: 't', why: '*Mir hat das Ende gut gefallen.*' },
             { q: 'Beide finden die Musik zu laut.', a: 't', why: 'Nadia says it was too loud, and Ben agrees: *Da hast du recht.*' },
             { q: 'Nadia findet die Hauptdarstellerin schlecht.', a: 'f', why: 'She agrees the actors were impressive, *vor allem die Hauptdarstellerin*.' },

@@ -98,11 +98,11 @@ export const UNIT = {
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Choose the word that fits.', items: [
+          { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
             { q: 'Ich habe die Klausur verpasst, ___ mein Zug Verspätung hatte.', o: ['weil', 'deshalb', 'trotzdem'], why: 'The verb *hatte* is at the end, so you need *weil*.' },
             { q: 'Mein Zug hatte Verspätung. ___ habe ich die Klausur verpasst.', o: ['Deshalb', 'Weil', 'Obwohl'], why: 'The verb *habe* comes directly after the gap: *Deshalb habe ich …*' },
             { q: 'Ich möchte in Ihre Sprechstunde kommen, ___ ich eine Frage zum Thema habe.', o: ['da', 'deshalb', 'aber'], why: 'The verb *habe* is at the end: *da* gives the reason like *weil*.' },
-            { q: 'Which request is polite?', o: ['Könnten Sie mir bitte sagen, ob die Klausur schon korrigiert ist?', 'Sagen Sie mir sofort, ob die Klausur schon korrigiert ist.', 'Ich will wissen, ob die Klausur schon korrigiert ist!'], why: 'Konjunktiv II and *bitte* make the request polite.' },
+            { q: '', o: ['Könnten Sie mir bitte sagen, ob die Klausur schon korrigiert ist?', 'Sagen Sie mir sofort, ob die Klausur schon korrigiert ist.', 'Ich will wissen, ob die Klausur schon korrigiert ist!'], why: 'Konjunktiv II and *bitte* make the request polite.' },
           ] },
         ],
       ],
@@ -146,7 +146,7 @@ export const UNIT = {
   ],
   test: [
     { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
-      { q: 'Which greeting fits an email to a professor?', o: ['Sehr geehrte Frau Professorin Weber,', 'Hi Frau Weber,', 'Hallo Weber,'], why: 'Formal: *Sehr geehrte Frau* + title + name.' },
+      { q: '', o: ['Sehr geehrte Frau Professorin Weber,', 'Hi Frau Weber,', 'Hallo Weber,'], why: 'Formal: *Sehr geehrte Frau* + title + name.' },
       { q: '___ es möglich, einen Termin zu bekommen?', o: ['Wäre', 'Hätte', 'Würde'], why: 'The fixed phrase is *Wäre es möglich, … zu …?*' },
       { q: 'Mein Bus hatte Verspätung. ___ komme ich zu spät.', o: ['Deshalb', 'Weil', 'Da'], why: 'The verb *komme* comes directly after the gap: *Deshalb*.' },
       { q: 'Die Datei finden Sie im ___.', o: ['Anhang', 'Betreff', 'Gruß'], why: 'A file that comes with an email is *im Anhang*.' },

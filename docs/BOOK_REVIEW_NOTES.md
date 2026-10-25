@@ -94,3 +94,10 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 test: "anything nice ___ the weekend" accepts *at* and *over*, not American *on*.
 - u6: *sorry about* is the answer, *sorry for* is mentioned as also correct; the complaint and reply readings are about 140 words each.
 - Invented companies (Northfield Office Supplies, Parkside Design): check they do not exist; real cities Leeds, York and Hull in a fictional project.
+
+## English B1, study and exams
+- u1: *enroll* accepted next to *enrol*; u2: "In ___, I would like to repeat the main points" accepts *conclusion*, *summary*, *short*.
+- u2: note-taking example with → and % and an invented figure; u5: fact or opinion as two-option choices.
+- u3: "many universities have an official extension form" (general).
+- u6: "B1 exams such as B1 Preliminary"; "in many exams you hear recordings twice and lose no marks for wrong answers": check it is accurate and general; the email-to-Alex task follows the usual B1 format but is original.
+- House rules: u2 has "1st uni opened 1823" in a note option and u5 uses "Paragraph 1:" and "Paragraph 2:" labels; check against the no-numbered-lists rule.
