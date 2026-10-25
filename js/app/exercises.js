@@ -83,6 +83,7 @@
     S.html = function (bi) { return exHtml(S, bi); };
     S.done = function (bi) { var b = S.blocks[bi]; return b.t !== 'ex' || blockDone(b, S.state[bi]); };
     S.allDone = function () { return S.blocks.every(function (b, i) { return S.done(i); }); };
+    S.ready = function (bi) { var b = S.blocks[bi]; return b.t !== 'ex' || answered(b, S.state[bi]); };
     S.allReady = function () { return S.blocks.every(function (b, i) { return b.t !== 'ex' || answered(b, S.state[i]); }); };
     S.firstTally = function () {
       var right = 0, total = 0;
@@ -99,6 +100,7 @@
         if (b.kind === 'match') b.pairs.forEach(function (p, l) { out.push({ bi: bi, i: l, ok: matchRight(b, l, s.pairs[l]) }); });
         else if (b.kind === 'bank' || b.kind === 'label') b.items.forEach(function (it, i) { out.push({ bi: bi, i: i, ok: bankRight(s, it, s.items[i]) }); });
         else if (b.kind === 'sort') b.items.forEach(function (it, i) { out.push({ bi: bi, i: i, ok: s.items[i].picked === it.g }); });
+        else if (b.kind === 'cloze') b.items.forEach(function (it, i) { out.push({ bi: bi, i: i, ok: clozeRight(b, it, s.items[i]) }); });
         else if (!K[b.kind].block) b.items.forEach(function (it, i) { out.push({ bi: bi, i: i, ok: isRight(b, it, s.items[i]) }); });
       });
       return out;
@@ -204,7 +206,7 @@
   }
   function stopRec() {
     if (!rec) return;
-    clearTimeout(rec.timer);
+    clearTimeout(rec.timer); clearInterval(rec.tick);
     if (rec.mr && rec.mr.state !== 'inactive') rec.mr.stop();
   }
   /* Words of the sentence heard in the transcript, in order */
@@ -388,9 +390,15 @@
     /* Rewrite the sentence; `cue` is the word to use or the start of the new sentence */
     transform: Object.assign({}, typed, {
       /* The answer may be written with or without the words given at the start */
-      right: function (b, it, x) { return accepts(it.a, x.value) || (!!it.cue && accepts(it.a, it.cue + ' ' + x.value)); },
+      right: function (b, it, x) { return accepts(it.a, x.value) || (!!it.cue && !it.gap && accepts(it.a, it.cue + ' ' + x.value)); },
       html: function (S, bi, i, b, it, x, test, review, locked) {
         var a = ' data-b="' + bi + '" data-i="' + i + '"';
+        /* Key word transformation (tests): the original, the key word, then the second sentence with a gap for the answer */
+        if (it.gap) {
+          var gp = md(it.gap).split('___');
+          return '<p class="ex-q tf-src"' + S.ta + '>' + md(it.q) + '</p><p class="kwt__key"' + S.ta + '>' + esc(upper(it.cue || '')) + '</p>' +
+            '<p class="ex-q"' + S.ta + '>' + gp[0] + typedInput(S, a, it, x, locked) + gp.slice(1).join('___') + '</p>';
+        }
         return '<p class="ex-q tf-src"' + S.ta + '>' + md(it.q) + '</p>' +
           (it.cue ? '<p class="tf-cue"' + S.ta + '>' + S.A.icon('arrow') + '<span>' + md(it.cue) + '</span></p>' : '') +
           typedInput(S, a, it, x, locked, true) +
@@ -503,7 +511,59 @@
       }
     },
 
+    /* Questions answered from one fixed list (tests): `opts: [...]`, `items: [{ q, a: index, why }]`. Short options are the
+       buttons; longer ones are listed once with letters and the buttons show the letters. */
+    pick: {
+      prep: function () { return {}; },
+      isOpt: function (it, o) { return o === it.a; },
+      right: function (b, it, x) { return x.picked === it.a; },
+      answer: function (b, it) { return pickLong(b) ? LETTERS[it.a] + ': ' + b.opts[it.a] : b.opts[it.a]; },
+      ready: function (b, it, x) { return x.picked != null; },
+      top: function (S, b) {
+        if (!pickLong(b)) return '';
+        return '<dl class="pick-list"' + S.ta + '>' + b.opts.map(function (o, k) { return '<div><dt>' + LETTERS[k] + '</dt><dd>' + md(o) + '</dd></div>'; }).join('') + '</dl>';
+      },
+      html: function (S, bi, i, b, it, x, test, review, locked) {
+        var long = pickLong(b);
+        return '<p class="ex-q"' + S.ta + '>' + md(it.q) + '</p>' +
+          choiceOpts(S, bi, i, b, it, x, test, review, locked, b.opts.map(function (o, k) { return k; }), function (o) { return long ? LETTERS[o] : md(b.opts[o]); }, long ? ' opts--letters' : ' opts--pick', !long);
+      }
+    },
+
     /* ----- Block kinds ----- */
+    /* A continuous text with gaps (tests): `text` with {} for each gap; items: { o: [right, ...] } (drop-down),
+       { a: [accepted] } (typed), { base, a } (word formation), or { a: index } into the block's shared `opts` (letters) */
+    cloze: {
+      block: true,
+      prep: function (b) { return { items: b.items.map(function (it) { return Object.assign(itemState(), it.o ? { order: shuffle(it.o.length, true) } : {}); }) }; },
+      ready: function (b, s) { return s.items.every(function (x, i) { return clozeAnswered(b, b.items[i], x); }); },
+      done: function (b, s) { return s.items.every(function (x) { return x.done; }); },
+      first: function (b, s) { return { right: s.items.filter(function (x) { return x.first === true; }).length, total: s.items.length }; },
+      tally: function (b, s) { return { right: b.items.filter(function (it, i) { return clozeRight(b, it, s.items[i]); }).length, total: b.items.length }; },
+      html: clozeHtml
+    },
+    /* A writing task (tests): `items: [{ task, min, max, model }]`, `choose: true` when the student writes one of them.
+       Not marked by the engine: the host marks it after submit() and puts the result in S.marks['<block>-<item>'] */
+    write: {
+      block: true, manual: true,
+      prep: function (b) { return { items: b.items.map(function () { return { value: '' }; }), pick: b.choose ? null : 0 }; },
+      ready: function (b, s) { return b.choose ? s.pick != null && wordCount(s.items[s.pick].value) > 0 : s.items.every(function (x) { return wordCount(x.value) > 0; }); },
+      done: function (b, s) { return K.write.ready(b, s); },
+      first: function () { return { right: 0, total: 0 }; },
+      tally: function () { return { right: 0, total: 0 }; },
+      html: writeHtml
+    },
+    /* A speaking task (tests): the examiner's question (`src`: its recording), then the student records up to `secs`
+       seconds; the words are transcribed (opts.transcribe) and marked by the host like writing */
+    talk: {
+      block: true, manual: true,
+      prep: function (b) { return { items: b.items.map(function () { return { heard: '', state: '', note: '' }; }) }; },
+      ready: function (b, s) { return s.items.every(function (x) { return !!x.heard; }); },
+      done: function (b, s) { return K.talk.ready(b, s); },
+      first: function () { return { right: 0, total: 0 }; },
+      tally: function () { return { right: 0, total: 0 }; },
+      html: talkHtml
+    },
     match: {
       block: true, hint: 'app_book_match_hint',
       prep: function (b) { return { lo: shuffle(b.pairs.length), ro: shuffle(b.pairs.length, true), sel: null, got: {}, gotR: {}, link: {}, err: {}, pairs: {}, flash: null }; },
@@ -572,6 +632,97 @@
   function orderRight(b, it, s) { return s.placed.length === s.words.length && s.placed.map(function (w) { return s.all[w]; }).join(' ') === s.words.join(' '); }
   function matchRight(b, l, r) { return r != null && b.pairs[r][1] === b.pairs[l][1]; }
   function bankRight(s, it, x) { return x.picked != null && norm(s.bank[x.picked]) === norm(it.a); }
+  var LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  function pickLong(b) { return b.opts.some(function (o) { return String(o).length > 24; }); }
+  function clozeRight(b, it, x) { return b.opts || it.o ? x.picked === (b.opts ? it.a : 0) : accepts(it.a, x.value); }
+  function clozeAnswered(b, it, x) { return b.opts || it.o ? x.picked != null : norm(x.value) !== ''; }
+  function clozeAnswer(b, it) { return b.opts ? LETTERS[it.a] : it.o ? it.o[0] : it.a[0]; }
+  function wordCount(s) { return String(s || '').trim().split(/\s+/).filter(function (w) { return /[\p{L}\p{N}]/u.test(w); }).length; }
+
+  function clozeHtml(S, bi, b, s, test, review) {
+    var g = 0;
+    var paras = String(b.text).split(/\n\s*\n/).map(function (p) {
+      return '<p>' + md(p).split('{}').map(function (seg, k) {
+        if (!k) return seg;
+        var i = g++, it = b.items[i], x = s.items[i], a = ' data-b="' + bi + '" data-i="' + i + '"';
+        var cls = review ? (clozeRight(b, it, x) ? ' is-right' : ' is-wrong') : '', ctl;
+        if (b.opts || it.o) {
+          var list = b.opts ? b.opts.map(function (o, n) { return n; }) : x.order;
+          ctl = '<span class="sel-wrap cz' + cls + '"><select class="gap-sel"' + a + (review ? ' disabled' : '') + ' aria-label="' + esc(t(S, 'app_book_your_answer')) + '">' +
+            '<option value=""' + (x.picked == null ? ' selected' : '') + '>…</option>' +
+            list.map(function (o) { return '<option value="' + o + '"' + (x.picked === o ? ' selected' : '') + '>' + esc(b.opts ? LETTERS[o] : it.o[o]) + '</option>'; }).join('') + '</select></span>';
+        } else {
+          ctl = '<span class="cz' + cls + '">' + typedInput(S, a, it, x, review) + (it.base ? '<span class="cz__base">' + esc(upper(it.base)) + '</span>' : '') + '</span>';
+        }
+        if (review && !clozeRight(b, it, x)) ctl += '<b class="cz__fix">' + esc(clozeAnswer(b, it)) + '</b>';
+        return ctl + seg;
+      }).join('') + '</p>';
+    }).join('');
+    var html = '<div class="cloze"' + S.ta + '>' + paras + '</div>';
+    if (b.opts) html += '<dl class="pick-list"' + S.ta + '>' + b.opts.map(function (o, k) { return '<div><dt>' + LETTERS[k] + '</dt><dd>' + md(o) + '</dd></div>'; }).join('') + '</dl>';
+    if (review) {
+      html += '<div class="cz-why">' + b.items.map(function (it, i) {
+        var ok = clozeRight(b, it, s.items[i]);
+        return '<p class="cz-why__row ' + (ok ? 'is-right' : 'is-wrong') + '"><b' + S.ta + '>' + esc(clozeAnswer(b, it)) + '</b> <span>' + md(it.why || '') + '</span></p>';
+      }).join('') + '</div>';
+    }
+    return html;
+  }
+
+  function writeHtml(S, bi, b, s, test, review) {
+    var html = '';
+    if (b.choose && !review) {
+      html += '<div class="wr-choose">' + b.items.map(function (it, i) {
+        return '<button class="wr-task' + (s.pick === i ? ' is-picked' : '') + '" type="button" data-act="wrpick" data-b="' + bi + '" data-i="' + i + '" aria-pressed="' + (s.pick === i) + '"' + S.ta + '>' +
+          '<span class="wr-task__md">' + mdBlock(it.task) + '</span></button>';
+      }).join('') + '</div>';
+    }
+    b.items.forEach(function (it, i) {
+      if (b.choose && s.pick !== i) return;
+      var x = s.items[i], n = wordCount(x.value), a = ' data-b="' + bi + '" data-i="' + i + '"';
+      html += '<div class="wr">';
+      if (!b.choose || review) html += '<div class="wr-brief"' + S.ta + '>' + mdBlock(it.task) + '</div>';
+      if (review) html += '<div class="wr-text"' + S.ta + '>' + (x.value ? String(x.value).trim().split(/\n\s*\n/).map(function (p) { return '<p>' + esc(p).replace(/\n/g, '<br>') + '</p>'; }).join('') : '<p class="t-small">' + esc(t(S, 'app_mt_not_written')) + '</p>') + '</div>';
+      else html += '<textarea class="write-in" rows="12"' + a + ' aria-label="' + esc(t(S, 'app_book_your_answer')) + '" spellcheck="false"' + S.ta + '>' + esc(x.value) + '</textarea>';
+      html += '<p class="t-small wr-count' + (n && (n < it.min || n > it.max) ? ' is-off' : '') + '" data-wc="' + bi + '-' + i + '">' + esc(t(S, 'app_mt_words', { n: n, min: it.min, max: it.max })) + '</p>';
+      if (review) html += markSlot(S, bi, i, it);
+      html += '</div>';
+    });
+    return html;
+  }
+  /* Paragraphs of task text (already escaped by md) */
+  function mdBlock(s) { return String(s).split(/\n\s*\n/).map(function (p) { return '<p>' + md(p).replace(/\n/g, '<br>') + '</p>'; }).join(''); }
+  function markSlot(S, bi, i, it) {
+    var m = S.marks && S.marks[bi + '-' + i];
+    return '<div class="mark-slot" data-mark="' + bi + '-' + i + '">' + (m || '') + '</div>' +
+      (it.model ? '<details class="model"><summary>' + esc(t(S, 'app_mt_model')) + '</summary><div' + S.ta + '>' + mdBlock(it.model) + '</div></details>' : '');
+  }
+
+  function talkHtml(S, bi, b, s, test, review) {
+    var html = '<div class="talk-tutor tutor-art" data-mouth="rest">' + (S.A.Cast.tutor ? S.A.Cast.tutor(b.tutor || 'arthur') : '') + '</div>';
+    b.items.forEach(function (it, i) {
+      var x = s.items[i], a = ' data-b="' + bi + '" data-i="' + i + '"';
+      var recording = rec && rec.S === S && rec.bi === bi && rec.i === i;
+      html += '<div class="talk-item ex-item" data-item="' + i + '">';
+      html += '<p class="talk-q"' + S.ta + '>' + md(it.q) + '</p>';
+      var scenes = it.scenes || (it.scene ? [it.scene] : []);
+      if (scenes.length && S.A.Cast.scene) html += '<div class="talk-scene' + (scenes.length > 1 ? ' talk-scene--two' : '') + '">' + scenes.map(function (k) { return '<div>' + S.A.Cast.scene(k) + '</div>'; }).join('') + '</div>';
+      if (it.notes && it.notes.length) html += '<div class="talk-notes"' + S.ta + '>' + it.notes.map(function (n) { return '<p>' + md(n) + '</p>'; }).join('') + '</div>';
+      if (!review) {
+        html += '<div class="hear-row">' + (it.src ? '<button class="btn btn--ghost btn--sm hear" type="button" data-act="speakhear"' + a + ' data-src="' + esc(it.src) + '">' + S.A.icon('play') + '<span>' + esc(t(S, 'app_mt_examiner')) + '</span></button>' : '') +
+          '<button class="btn btn--primary btn--sm rec' + (recording ? ' is-rec' : '') + '" type="button" data-act="talkrec"' + a + (x.state === 'wait' ? ' disabled' : '') + '><i aria-hidden="true"></i><span>' +
+          esc(t(S, recording ? 'app_ex_rec_stop' : x.state === 'wait' ? 'app_ex_rec_wait' : x.heard ? 'app_mt_rec_again' : 'app_ex_rec')) + '</span></button>' +
+          '<span class="t-small talk-time" data-rt="' + bi + '-' + i + '">' + esc(t(S, 'app_mt_secs', { n: it.secs })) + '</span></div>';
+        if (it.prep) html += '<p class="t-small"' + S.xa + '>' + esc(t(S, 'app_mt_prep', { n: it.prep })) + '</p>';
+      }
+      if (x.heard) html += '<p class="t-small speak-heard"' + S.xa + '>' + esc(t(S, 'app_ex_speak_heard')) + ' <q' + S.ta + '>' + esc(x.heard) + '</q></p>';
+      else if (review) html += '<p class="t-small"' + S.xa + '>' + esc(t(S, 'app_mt_not_said')) + '</p>';
+      if (x.note) html += '<p class="t-small speak-note"' + S.xa + '>' + esc(t(S, x.note)) + '</p>';
+      if (review) html += markSlot(S, bi, i, it);
+      html += '</div>';
+    });
+    return html;
+  }
 
   function prepare(S, b) {
     var k = K[b.kind];
@@ -1231,7 +1382,7 @@
     player.src = el.getAttribute('data-src');
     player.playbackRate = 1;
     playingBtn = el; el.classList.add('is-playing');
-    var face = el.closest('.ex').querySelector('.speak-tutor');
+    var face = el.closest('.ex').querySelector('.speak-tutor, .talk-tutor');
     var unfollow = face && window.AlimunLipsync ? window.AlimunLipsync.follow(player, face) : function () {};
     player.onended = function () { el.classList.remove('is-playing'); if (playingBtn === el) playingBtn = null; unfollow(); };
     player.play().catch(function () { stopAudio(); unfollow(); });
@@ -1267,6 +1418,40 @@
     }, function () { x.note = 'app_ex_speak_mic'; rerender(S, bi); });
   }
 
+  /* A speaking task in a test: record up to `secs` seconds (at most 120), then keep the transcript */
+  function onTalk(S, bi, i) {
+    var x = S.state[bi].items[i], it = S.blocks[bi].items[i];
+    if (S.result) return;
+    if (rec && rec.S === S && rec.bi === bi && rec.i === i) { stopRec(); return; }
+    stopRec(); stopAudio();
+    if (!S.transcribe) { x.note = 'app_ex_speak_error'; rerender(S, bi); return; }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { x.note = 'app_ex_speak_mic'; rerender(S, bi); return; }
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      var mime = recMime(), mr = mime ? new MediaRecorder(stream, { mimeType: mime, audioBitsPerSecond: 32000 }) : new MediaRecorder(stream);
+      var limit = Math.min(240, it.secs || 60), t0 = Date.now();
+      var r = rec = { S: S, bi: bi, i: i, mr: mr, stream: stream, chunks: [] };
+      mr.ondataavailable = function (e) { if (e.data && e.data.size) r.chunks.push(e.data); };
+      mr.onstop = function () {
+        clearInterval(r.tick);
+        stream.getTracks().forEach(function (tr) { tr.stop(); });
+        if (rec === r) rec = null;
+        var blob = new Blob(r.chunks, { type: (mr.mimeType || mime || 'audio/webm').split(';')[0] });
+        x.state = 'wait'; x.note = ''; rerender(S, bi);
+        S.transcribe(blob).then(function (text) {
+          x.state = ''; x.heard = String(text || '').trim() || '…';
+          rerender(S, bi); after(S, bi);
+        }, function (e) { x.state = ''; x.note = (e && e.note) || 'app_ex_speak_error'; rerender(S, bi); });
+      };
+      mr.start();
+      r.timer = setTimeout(stopRec, limit * 1000);
+      r.tick = setInterval(function () {
+        var el = S.root().querySelector('[data-rt="' + bi + '-' + i + '"]');
+        if (el) el.textContent = t(S, 'app_mt_secs_left', { n: Math.max(0, limit - Math.round((Date.now() - t0) / 1000)) });
+      }, 500);
+      x.note = ''; rerender(S, bi);
+    }, function () { x.note = 'app_ex_speak_mic'; rerender(S, bi); });
+  }
+
   function onAct(S, act, el) {
     if (act === 'hear') { hear(el); return true; }
     if (act === 'speakhear') { speakHear(S, el); return true; }
@@ -1284,6 +1469,8 @@
       case 'fixtap': onFixTap(S, bi, i, +el.getAttribute('data-t')); return true;
       case 'fixok': onFixOk(S, bi, i); return true;
       case 'rec': onRec(S, bi, i); return true;
+      case 'talkrec': onTalk(S, bi, i); return true;
+      case 'wrpick': S.state[bi].pick = i; rerender(S, bi); after(S, bi); { var ta = S.root().querySelector('[data-block="' + bi + '"] .write-in'); if (ta) ta.focus({ preventScroll: true }); } return true;
       case 'mleft': onMatch(S, bi, 'l', +el.getAttribute('data-l')); return true;
       case 'mright': onMatch(S, bi, 'r', +el.getAttribute('data-r')); return true;
       case 'gapsel': onGapSel(S, bi, i); return true;
@@ -1296,6 +1483,15 @@
     }
   }
   function onInput(S, el) {
+    if (el.classList.contains('write-in')) {
+      var wb = +el.getAttribute('data-b'), wi = +el.getAttribute('data-i'), wx = S.state[wb] && S.state[wb].items[wi];
+      if (!wx) return false;
+      wx.value = el.value;
+      var it = S.blocks[wb].items[wi], n = wordCount(el.value), c = S.root().querySelector('[data-wc="' + wb + '-' + wi + '"]');
+      if (c) { c.textContent = t(S, 'app_mt_words', { n: n, min: it.min, max: it.max }); c.classList.toggle('is-off', !!n && (n < it.min || n > it.max)); }
+      S.onChange();
+      return true;
+    }
     if (!el.classList.contains('gap-in')) return false;
     var bi = +el.getAttribute('data-b'), s = S.state[bi];
     if (!s) return false;
@@ -1398,7 +1594,7 @@
 
   window.AlimunEx = {
     create: create, md: md, esc: esc, shuffle: shuffle, norm: norm, seeded: seeded,
-    kinds: Object.keys(K), lessonOnly: LESSON_ONLY, stopAudio: function () { stopAudio(); stopRec(); }, spokenRight: spokenRight,
+    kinds: Object.keys(K), lessonOnly: LESSON_ONLY, manual: { write: true, talk: true }, wordCount: wordCount, stopAudio: function () { stopAudio(); stopRec(); }, spokenRight: spokenRight,
     pointerDown: pointerDown,
     /* True right after a drag ended, so the click it fires is ignored */
     swallowClick: function () { return suppress; }

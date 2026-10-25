@@ -85,3 +85,30 @@ export function audioPlan(book) {
   });
   return { book: book.id, model: MODEL, items };
 }
+
+/* The audio plan of a mock test (docs/TESTS.md, step 8), served at the same address as a book's:
+   listening recordings <paper>:<part>:r<recording>:<line>, and the examiner's questions in Speaking
+   <paper>:<part>:q:<block>.<item> in the test's examiner voice */
+const EXAM = {
+  rec: 'a recording for a language exam: natural speech at a natural pace, clear',
+  slow: 'a recording for a language exam for learners: natural speech, clear and at a calm pace',
+  examiner: 'a friendly language examiner speaking clearly at a calm, natural pace',
+};
+export function testAudioPlan(test) {
+  const items = {};
+  const style = /^A[12]$/.test(test.level) || (test.format === 'alimun' && test.level === 'B1') ? EXAM.slow : EXAM.rec;
+  const add = (key, voice, st, text) => {
+    const t = plain(text);
+    if (t) items[key] = [hashOf(voice, st, t), voice, st, t];
+  };
+  test.papers.forEach((p) => p.parts.forEach((pt) => {
+    (pt.recs || []).forEach((r, ri) => {
+      const v = dialogueVoices(r.lines);
+      r.lines.forEach((ln, li) => add(`${p.id}:${pt.id}:r${ri}:${li}`, v[ln.who], style, ln.s));
+    });
+    pt.blocks.forEach((b, bi) => {
+      if (b.kind === 'talk') b.items.forEach((it, i) => add(`${p.id}:${pt.id}:q:${bi}.${i}`, test.examiner, EXAM.examiner, it.q));
+    });
+  }));
+  return { book: test.id, model: MODEL, items };
+}

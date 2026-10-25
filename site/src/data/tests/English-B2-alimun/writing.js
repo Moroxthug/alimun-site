@@ -1,0 +1,18 @@
+// Alimun test, English B2: Writing. Draft for native-teacher review.
+export const PAPER = {
+  id: 'writing', title: 'Writing', minutes: 45,
+  parts: [
+    {
+      id: 'p1', ref: 'Task 1', title: 'An essay or a formal email',
+      about: 'Choose one task. Write 180 to 220 words in an appropriate style.',
+      blocks: [
+        { t: 'ex', kind: 'write', marking: 'alimun', choose: true, h: 'Choose one of the tasks and write your answer.', items: [
+          { task: '**An essay.** Your class has been discussing city life. Your teacher has asked you to write an essay on the question below.\n\n*Should private cars be banned from city centres?*\n\nIn your essay, write about the effect on the environment and on local businesses, and add an idea of your own. Give reasons for your opinion.', min: 180, max: 220,
+            model: 'In many cities, the centre is crowded with traffic for most of the day. Some people believe the only solution is to ban private cars altogether, while others argue that this would cause more problems than it solves.\n\nThe environmental case for a ban is strong. Fewer cars would mean cleaner air, less noise and safer streets for cyclists and pedestrians. Cities that have already closed central streets to traffic have often found that people quickly get used to walking or taking public transport.\n\nHowever, local businesses are understandably worried. Shop owners fear that customers who are used to driving into town will simply go to large out-of-town shopping centres instead. Deliveries could also become more difficult and expensive.\n\nA further point is fairness. A complete ban could make life harder for elderly and disabled people, who may depend on a car to reach doctors and shops.\n\nOn balance, I believe that cars should be restricted rather than banned outright. If public transport were cheaper and more frequent, and if exceptions were made for deliveries and for people with limited mobility, most residents would accept the change. In my view, a gradual approach, starting with a few car-free days a month, would give both businesses and residents time to adapt.' },
+          { task: '**A formal email.** You recently went on a two-day course organised by a local college, but you were disappointed with it. Write an email to the course manager, Ms Patel.\n\nExplain why you chose the course, describe what went wrong, and say what you would like the college to do.', min: 180, max: 220,
+            model: 'Dear Ms Patel,\n\nI am writing to express my disappointment with the weekend course in digital photography which I attended at your college on 14 and 15 March.\n\nI chose this course because the description on your website promised small groups and a full day of practical work outdoors. As I am planning to start a small photography business, I was particularly keen to receive individual advice on my own work.\n\nUnfortunately, the course did not meet these expectations. There were twenty-six participants rather than the maximum of twelve mentioned online, which meant that the tutor had very little time for each of us. In addition, the outdoor session was cancelled at short notice and replaced with a lecture, so we had almost no opportunity to practise. Finally, several of the cameras provided were not working properly, and nobody was available to replace them.\n\nI appreciate that unexpected problems can occur. However, I feel that the course I received was significantly different from the one that was advertised. I would therefore be grateful if you could offer me either a partial refund or a free place on a future course with a smaller group.\n\nI look forward to hearing from you.\n\nYours sincerely,\nLeila Rahman' },
+        ] },
+      ],
+    },
+  ],
+};

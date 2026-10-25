@@ -184,6 +184,27 @@
     return c.from('practice_progress').select('ex_key, graded_score').eq('student_id', studentId).like('ex_key', 'quiz:%').limit(500).then(rows);
   }
 
+  /* Mock tests (practice_progress rows "mock:<test>:<paper>", step 8): the score of each finished paper, and one
+     paper's answers and marks (user_answer) */
+  function mockResults(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('practice_progress').select('ex_key, graded_score, updated_at').eq('student_id', studentId).like('ex_key', 'mock:%').limit(500).then(rows);
+  }
+  function mockResult(studentId, key) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('practice_progress').select('user_answer').eq('student_id', studentId).eq('ex_key', key).maybeSingle().then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function saveMock(studentId, key, score, answer) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('practice_progress').upsert({
+      student_id: studentId, ex_key: key, done: true, graded_score: score == null ? null : Math.round(score),
+      user_answer: answer, updated_at: new Date().toISOString()
+    }, { onConflict: 'student_id,ex_key' }).then(function (r) { if (r.error) throw r.error; });
+  }
+
   /* Flashcards (vocab_reviews, step 6): the student's cards, new cards (a word already there is kept), a review */
   function cards(studentId) {
     var c = client();
@@ -213,5 +234,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

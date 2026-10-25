@@ -1,0 +1,60 @@
+// Alimun test German B2, paper Sprachbausteine (docs/TESTS.md). Draft for native-teacher review.
+export const PAPER = {
+  id: 'sprache', title: 'Sprachbausteine: Grammatik und Wortschatz', minutes: 30,
+  parts: [
+    { id: 'p1', ref: 'Teil 1', title: 'Eine Pressemitteilung',
+      about: 'Lesen Sie den Text. Welches Wort passt in die Lücke?',
+      blocks: [
+        { t: 'ex', kind: 'cloze', h: 'Wählen Sie das richtige Wort.',
+          text: '{} der steigenden Zahl von Radfahrern plant die Stadt, ihr Radwegenetz in den nächsten Jahren deutlich auszubauen. Bevor die Pläne beschlossen werden, {} jedoch die Bürgerinnen und Bürger beteiligt werden. Die Bürgermeisterin betonte, es {} ihr wichtig, alle Interessen zu berücksichtigen.\n\nAb dem 1. März können Vorschläge auf einer Online-Plattform eingereicht werden. {} Personen ohne Internetzugang liegen Fragebögen im Rathaus aus. {} der Auswertung, die voraussichtlich drei Monate dauern wird, sollen die Ergebnisse öffentlich vorgestellt werden.\n\nKritik kommt vom Einzelhandel: Man befürchte, dass durch den Wegfall von Parkplätzen weniger Kunden in die Innenstadt kämen. Die Verwaltung hält dagegen, Studien zeigten, {} Radfahrer zwar pro Einkauf weniger ausgeben, {} aber häufiger einkaufen.\n\n{} die Finanzierung angeht, rechnet die Stadt mit Fördermitteln des Landes. Ein Teil der Kosten {} jedoch aus dem städtischen Haushalt getragen werden müssen. Die endgültige Entscheidung {} im Herbst vom Stadtrat getroffen.',
+          items: [
+            { o: ['Angesichts', 'Trotz', 'Statt', 'Anstelle'], why: '*Angesichts* + Genitiv nennt den Anlass: Weil es mehr Radfahrer gibt, baut die Stadt aus.' },
+            { o: ['sollen', 'haben', 'sind', 'wurden'], why: 'Passiv mit Modalverb: *sollen* + Partizip II + *werden*.' },
+            { o: ['sei', 'seien', 'sein', 'gewesen'], why: 'Indirekte Rede mit Konjunktiv I: *es sei ihr wichtig*.' },
+            { o: ['Für', 'Von', 'Bei', 'Mit'], why: 'Die Fragebögen sind *für* Personen ohne Internetzugang gedacht.' },
+            { o: ['Nach', 'Vor', 'Seit', 'Während'], why: 'Erst wenn die Auswertung fertig ist, werden die Ergebnisse vorgestellt: *nach der Auswertung*.' },
+            { o: ['dass', 'ob', 'wenn', 'weil'], why: '*Studien zeigen, dass …* leitet den Inhalt der Studien ein.' },
+            { o: ['dafür', 'sondern', 'sowohl', 'weder'], why: 'Der Gegensatz zu *zwar* lautet hier *dafür … aber*: weniger pro Einkauf, dafür häufiger.' },
+            { o: ['Was', 'Wie', 'Wenn', 'Ob'], why: 'Die feste Wendung lautet: *Was … angeht*.' },
+            { o: ['wird', 'werden', 'wurde', 'worden'], why: 'Futur I im Passiv mit Modalverb, Subjekt *ein Teil* (Singular): *wird getragen werden müssen*.' },
+            { o: ['wird', 'hat', 'macht', 'gibt'], why: 'Passiv Präsens: *Die Entscheidung wird getroffen.*' },
+          ] },
+      ] },
+    { id: 'p2', ref: 'Teil 2', title: 'Wortbildung',
+      about: 'Lesen Sie den Text. Bilden Sie aus dem Wort in Großbuchstaben ein Wort, das in die Lücke passt.',
+      blocks: [
+        { t: 'ex', kind: 'cloze', h: 'Schreiben Sie das passende Wort.',
+          text: 'Wer zu einem Vorstellungsgespräch eingeladen wird, sollte sich {} vorbereiten. Dazu gehört zunächst die {} nach Informationen über das Unternehmen: Welche Produkte stellt es her, wie groß ist es, und wer sind die wichtigsten {}?\n\nAuch die eigenen Stärken sollte man genau kennen. Personalverantwortliche fragen gern nach Situationen, in denen man ein Problem {} gelöst hat. Wer hier konkrete Beispiele nennt, wirkt deutlich {} als jemand, der nur allgemeine Eigenschaften aufzählt. Viele Bewerber haben zudem unrealistische {} vom Gehalt.\n\nSchließlich spielt auch die {} eine große Rolle: Wer zu spät kommt, hinterlässt selten einen guten Eindruck. Und eine kurze, {} Nachricht nach dem Gespräch kann am Ende den Unterschied machen.',
+          items: [
+            { base: 'GRUND', a: ['gründlich', 'gruendlich'], why: 'Ein Adverb zu *vorbereiten*: *der Grund → gründlich*.' },
+            { base: 'SUCHEN', a: ['Suche'], why: 'Nach dem Artikel *die* braucht man ein Nomen: *suchen → die Suche*.' },
+            { base: 'KONKURRIEREN', a: ['Konkurrenten'], why: 'Nach *die wichtigsten* braucht man Personen im Plural: *die Konkurrenten*.' },
+            { base: 'ERFOLG', a: ['erfolgreich'], why: 'Ein Adverb zu *gelöst*: *der Erfolg → erfolgreich*.' },
+            { base: 'ÜBERZEUGEN', a: ['überzeugender', 'ueberzeugender'], why: 'Vor *als* steht der Komparativ des Partizips: *überzeugend → überzeugender*.' },
+            { base: 'VORSTELLEN', a: ['Vorstellungen'], why: 'Nach *unrealistische* braucht man ein Nomen im Plural: *die Vorstellungen*.' },
+            { base: 'PÜNKTLICH', a: ['Pünktlichkeit', 'Puenktlichkeit'], why: 'Aus dem Adjektiv wird mit *-keit* ein Nomen: *die Pünktlichkeit*.' },
+            { base: 'FREUND', a: ['freundliche'], why: 'Ein Adjektiv vor *Nachricht* (feminin, nach *eine*): *freundliche*.' },
+          ] },
+      ] },
+    { id: 'p3', ref: 'Teil 3', title: 'Sätze umformen und Ausdrücke',
+      about: 'Ergänzen Sie den zweiten Satz so, dass er dasselbe bedeutet wie der erste. Benutzen Sie das Wort in Großbuchstaben. Ordnen Sie dann die Nomen den passenden Verben zu.',
+      blocks: [
+        { t: 'ex', kind: 'transform', h: 'Ergänzen Sie den zweiten Satz mit dem Wort in Großbuchstaben.', items: [
+          { q: 'Man muss den Antrag bis Freitag einreichen.', cue: 'WERDEN', gap: 'Der Antrag muss bis Freitag ___.', a: ['eingereicht werden'], why: 'Passiv mit Modalverb: Partizip II + *werden* am Ende.' },
+          { q: 'Der Sprecher sagte: „Wir haben keine andere Wahl.“', cue: 'HÄTTEN', gap: 'Der Sprecher sagte, sie ___.', a: ['hätten keine andere Wahl', 'haetten keine andere Wahl'], why: 'Der Konjunktiv I *sie haben* klingt wie der Indikativ, deshalb nimmt man den Konjunktiv II *hätten*.' },
+          { q: 'Nachdem sie das Studium abgeschlossen hatte, zog sie nach Wien.', cue: 'NACH', gap: '___ zog sie nach Wien.', a: ['Nach dem Abschluss des Studiums', 'Nach Abschluss des Studiums', 'Nach dem Abschluss ihres Studiums', 'Nach Abschluss ihres Studiums'], why: 'Nominalstil: *abschließen → der Abschluss*, mit Genitiv: *nach dem Abschluss des Studiums*.' },
+          { q: 'Ich habe es nicht gewusst, deshalb bin ich nicht früher gekommen.', cue: 'GEWUSST', gap: 'Wenn ich es ___, wäre ich früher gekommen.', a: ['gewusst hätte', 'gewusst haette'], why: 'Irreale Bedingung in der Vergangenheit: Konjunktiv II Plusquamperfekt, *gewusst hätte*.' },
+          { q: 'Der Vertrag lässt sich nicht kündigen.', cue: 'KANN', gap: 'Der Vertrag ___ werden.', a: ['kann nicht gekündigt'], why: '*Sich lassen* + Infinitiv ist eine Alternative zum Passiv mit *können*: *kann nicht gekündigt werden*.' },
+          { q: 'Er spricht nicht nur Englisch, sondern auch Spanisch.', cue: 'SOWOHL', gap: 'Er spricht ___ Spanisch.', a: ['sowohl Englisch als auch'], why: 'Der zweiteilige Konnektor lautet *sowohl … als auch*.' },
+        ] },
+        { t: 'ex', kind: 'match', h: 'Welches Verb passt zu welchem Nomen?', pairs: [
+          ['eine Entscheidung', 'treffen'],
+          ['Kritik', 'üben'],
+          ['einen Antrag', 'stellen'],
+          ['Rücksicht', 'nehmen'],
+          ['eine Rolle', 'spielen'],
+          ['einen Beitrag', 'leisten'],
+        ] },
+      ] },
+  ],
+};

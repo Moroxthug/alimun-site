@@ -26,8 +26,10 @@
   }
 
   function load() {
-    return getJSON('/data/books/index.json').then(function (x) {
-      books = (x && x.books || []).filter(function (b) { return b.written > 0; });
+    /* Course books, then the mock tests (/data/tests/index.json, step 8): their recordings use the same folders by id */
+    return Promise.all([getJSON('/data/books/index.json'), getJSON('/data/tests/index.json')]).then(function (r) {
+      var x = r[0], tests = (r[1] && r[1].tests || []).map(function (t) { return { id: t.id, test: true }; });
+      books = (x && x.books || []).filter(function (b) { return b.written > 0; }).concat(tests);
       return Promise.all(books.map(function (b) {
         return Promise.all([getJSON('/data/audio/' + b.id + '.json'), getJSON(SUPA + '/storage/v1/object/public/course-audio/' + b.id + '/manifest.json?t=' + Date.now())]).then(function (r) {
           var plan = r[0], man = r[1] || { done: {} }, h = {};
@@ -42,7 +44,9 @@
 
   function step() {
     if (!running) return;
-    var b = books.filter(function (x) { var s = state[x.id]; return s && s.done < s.total && (s.fails || 0) < 3; })[0];
+    var first = document.getElementById('tests-first').checked;
+    var b = books.filter(function (x) { var s = state[x.id]; return s && s.done < s.total && (s.fails || 0) < 3; })
+      .sort(function (p, q) { return first ? (q.test ? 1 : 0) - (p.test ? 1 : 0) : 0; })[0];
     if (!b) { running = false; btn.textContent = 'Start'; say('Finished: every book has its audio, or the remaining files failed three times (see the books marked in bold).'); return; }
     say('Working on ' + b.id + '…');
     fetch('/api/speech?action=generate', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token }, body: JSON.stringify({ book: b.id }) })
