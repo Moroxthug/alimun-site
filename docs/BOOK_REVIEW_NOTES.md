@@ -159,3 +159,15 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p1: "tap the words" targets are whole sentences.
 - u6: B1 exams usually test four skills and often include planning something with a partner (general; fits Goethe B1 and telc B1?).
 - Word-order items *Das finde ich nicht so gut.* and *Könnten Sie mir das Formular schicken?*; dialogue titles in English.
+
+## German A2, work
+- u2: an invented email address moved to a reserved example domain; phone numbers use real area codes (0421 Bremen, 08382 Lindau); spelling alphabets (traditional and the newer city list) described generally.
+- u4: *am Montag, dem 10. Juni* and *den 10. Juni* both called common.
+- u6: older job title *Bürokaufmann/Bürokauffrau* (now *Kaufmann/Kauffrau für Büromanagement*).
+- Fixed phrases above A2 (*Ich kümmere mich sofort darum*, *Mir ist etwas dazwischengekommen*); choice questions in simple German; dialogue titles in English.
+
+## German B1, travel
+- Facts checked and stated generally: Weißwurst before noon, wild camping usually not allowed, many museums closed on Mondays, 112 across the EU, cheap long-distance tickets usually tied to one train, bike tickets on regional trains.
+- u3: regional dishes (Maultaschen, Käsespätzle, Labskaus with beetroot, Currywurst); tipping 5 to 10 percent, *Stimmt so*, tap water not always served automatically, some places cash only.
+- u6: Plusquamperfekt and *nachdem* at the upper edge of B1.
+- Items needing context: *desto*/*umso* (both accepted in the test gap; only *desto* offered in u1 p1), *sich freuen auf* or *über*, *sollten* against *dürfen*.

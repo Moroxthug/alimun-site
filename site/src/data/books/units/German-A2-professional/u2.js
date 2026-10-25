@@ -41,7 +41,7 @@ export const UNIT = {
             { s: 'Mein Name ist Okafor: **O** wie Otto, **K** wie Kaufmann …', n: 'You spell your name letter by letter.' },
             { s: 'Meine Nummer ist null vier **zwo** eins …', n: '*zwo* means *zwei*. It is easier to understand on the phone.' },
             { s: 'Meine **Durchwahl** ist 214.', n: 'A *Durchwahl* is your own short number inside the company.' },
-            { s: 'Meine E-Mail-Adresse ist d.okafor@weiss-bau.de.', n: 'Say *@* like the English word *at*, *.* as *Punkt* and *-* as *Bindestrich*.' },
+            { s: 'Meine E-Mail-Adresse ist d.okafor@weiss-bau.example.', n: 'Say *@* like the English word *at*, *.* as *Punkt* and *-* as *Bindestrich*.' },
           ] },
         ],
         [
