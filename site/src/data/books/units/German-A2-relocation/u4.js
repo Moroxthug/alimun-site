@@ -90,7 +90,7 @@ export const UNIT = {
         [
           { t: 'text', md: 'Many bottles and cans have a deposit, the **Pfand**. You pay it when you buy the drink. You get it back when you bring the empty bottle or can back to a shop. There is a machine for this in most supermarkets. It gives you a receipt, the **Pfandbon**, and you give it to the cashier.' },
           { t: 'examples', items: [
-            { s: 'Auf die Dose sind **25 Cent Pfand**.', n: 'For cans and plastic bottles you use once, the *Pfand* is usually 25 cents.' },
+            { s: 'Die Dose hat **25 Cent Pfand**.', n: 'For cans and plastic bottles you use once, the *Pfand* is usually 25 cents.' },
             { s: 'Wo ist der **Pfandautomat**?', n: 'The machine for empty bottles. It is also called *Leergutautomat*.' },
             { s: 'Ich bringe die leeren Flaschen **zurück**.', n: '*zurückbringen* is separable: *zurück* at the end.' },
           ] },
@@ -111,7 +111,7 @@ export const UNIT = {
         [
           { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
             { q: 'Zahlen Sie ___ oder mit Karte?', a: ['bar'], why: '*bar zahlen*: to pay in cash.' },
-            { q: 'Auf die Dose sind 25 Cent ___.', a: ['Pfand'], why: 'The deposit for bottles and cans: *Pfand*.' },
+            { q: 'Die Dose hat 25 Cent ___.', a: ['Pfand'], why: 'The deposit for bottles and cans: *Pfand*.' },
             { q: 'Am Sonntag ___ die meisten Geschäfte geschlossen. (sein)', a: ['sind'], why: '*die meisten Geschäfte* is plural: *sind*.' },
           ] },
           { t: 'ex', kind: 'order', h: 'Build the questions.', items: [
@@ -129,7 +129,7 @@ export const UNIT = {
       art: 'snail',
       spreads: [
         [
-          { t: 'reading', title: 'Frischemarkt am Lindenplatz', md: '**Öffnungszeiten**\nMontag bis Samstag: 7 bis 21 Uhr\nSonntag und Feiertage: geschlossen\n24. und 31. Dezember: 7 bis 14 Uhr\n\n**Angebote der Woche**\ngültig von Montag, 12.10., bis Samstag, 17.10.\n\nBananen, 1 kg: 1,29 €\nFrische Hähnchenbrust, 500 g: 4,99 €\nMineralwasser, 6 Flaschen zu je 1,5 Liter: 2,94 € plus 1,50 € Pfand\nJoghurt, 150-g-Becher: 0,39 €. Drei Becher kaufen, nur zwei bezahlen!\nBrot vom Bäcker, 750 g: 2,49 €\n\n**Neu bei uns:** Sie können jetzt an allen Kassen mit Karte zahlen, auch kleine Beträge.' },
+          { t: 'reading', title: 'Frischemarkt am Lindenplatz', md: '**Öffnungszeiten**\nMontag bis Samstag: 7 bis 21 Uhr\nSonntag und Feiertage: geschlossen\nAm 24. und 31. Dezember: 7 bis 14 Uhr\n\n**Angebote der Woche**\ngültig von Montag, 12.10., bis Samstag, 17.10.\n\nBananen, 1 kg: 1,29 €\nFrische Hähnchenbrust, 500 g: 4,99 €\nMineralwasser, 6 Flaschen zu je 1,5 Liter: 2,94 € plus 1,50 € Pfand\nJoghurt, 150-g-Becher: 0,39 €. Drei Becher kaufen, nur zwei bezahlen!\nBrot vom Bäcker, 750 g: 2,49 €\n\n**Neu bei uns:** Sie können jetzt an allen Kassen mit Karte zahlen, auch kleine Beträge.' },
           { t: 'ex', kind: 'tf', ng: true, h: 'Read the sign and the offers. True, false or not given?', items: [
             { q: 'Am Sonntag ist der Markt geschlossen.', a: 't', why: '*Sonntag und Feiertage: geschlossen.*' },
             { q: 'Das Angebot für Bananen gilt auch am Sonntag, 18.10.', a: 'f', why: 'The offers are valid until Saturday, 17.10.' },
@@ -170,7 +170,7 @@ export const UNIT = {
       { q: 'Entschuldigung, wo ___ ich Milch? (finden)', a: ['finde'], why: '*ich finde*.' },
       { q: 'Ich ___ gern 300 Gramm Käse. (haben, polite)', a: ['hätte', 'haette'], why: '*Ich hätte gern …*' },
       { q: 'Brauchen Sie den ___? (Kasse + Bon)', a: ['Kassenbon'], why: 'The receipt: *der Kassenbon*.' },
-      { q: '2,99 €: zwei Euro neunund___', a: ['neunzig'], why: '99 cents: *neunundneunzig*.' },
+      { q: 'Möchten Sie eine ___? – Nein, danke, ich habe eine Tasche dabei.', a: ['Tüte', 'Plastiktüte', 'Einkaufstüte'], why: 'A bag from the shop: *die Tüte*. It usually costs money.' },
     ] },
     { t: 'ex', kind: 'order', h: 'Build the sentences.', items: [
       { a: 'Kann ich mit Karte zahlen?', why: '*kann* first, *zahlen* at the end.' },

@@ -65,6 +65,10 @@ export const UNIT = {
             { s: 'Is it OK **if I** put pictures on the walls?', n: 'A polite way to ask for permission.' },
             { s: 'What are the neighbours like?', n: 'A direct question is fine too. It is just less formal.' },
           ] },
+          { t: 'ex', kind: 'order', h: 'Build polite questions for the viewing.', items: [
+            { a: 'Could you tell me how much the rent is?', why: 'Indirect question: *the rent is* at the end.' },
+            { a: 'Do you know if the flat has parking?', why: '*Do you know if* + subject + verb.' },
+          ] },
         ],
         [
           { t: 'dialogue', title: 'At the viewing', lines: [
@@ -158,7 +162,7 @@ export const UNIT = {
     { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
       { q: 'Do you know ___ the rent includes water?', a: ['if', 'whether'], why: 'A yes/no question inside a question: *if* or *whether*.' },
       { q: 'You pay a ___ at the start, and you get it back if there is no damage.', a: ['deposit'], why: 'The *deposit* comes back at the end.' },
-      { q: 'Would it be possible to ___ a viewing on Saturday?', a: ['arrange', 'book', 'have'], why: '*arrange* or *book a viewing*.' },
+      { q: 'Would it be possible to ___ a viewing on Saturday?', a: ['arrange', 'book', 'have', 'organise', 'organize'], why: '*arrange* or *book a viewing*.' },
       { q: 'If you want to leave, you must give two months’ ___ in writing.', a: ['notice'], why: '*give notice*: say that you are going to leave.' },
     ] },
     { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [

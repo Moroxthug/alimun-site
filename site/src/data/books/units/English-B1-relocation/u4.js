@@ -115,7 +115,7 @@ export const UNIT = {
         ],
         [
           { t: 'text', md: 'In a complaint email, give your account number in the subject line, then the facts and what you want.' },
-          { t: 'tip', art: 'owl', md: 'If a company does not solve your complaint, you can often take it to an independent *ombudsman*, for example for energy or phone services. The company has to tell you how.' },
+          { t: 'tip', art: 'owl', md: 'If a company does not solve your complaint, you can often take it to an independent *ombudsman*, for example for energy or phone services. The company can tell you how.' },
           { t: 'ex', kind: 'gap', h: 'Complete the complaint.', items: [
             { q: 'I am writing to complain ___ my internet connection.', a: ['about'], why: '*complain about* something.' },
             { q: 'I ___ (charge) twice for the same month.', a: ['was charged', 'have been charged', '’ve been charged'], why: 'Passive: the company charged me. Past simple or present perfect.' },

@@ -40,9 +40,11 @@ export const UNIT = {
           ] },
         ],
         [
-          { t: 'ex', kind: 'spot', h: 'Tap the sentence that is asked for.', items: [
-            { s: '[Eine Lerngruppe hilft beim Lernen.] Man kann Fragen stellen und sich gegenseitig den Stoff erklären. Außerdem ist man motivierter, wenn die anderen auch lernen.', why: 'Find the topic sentence: it gives the main idea. The other sentences support it.' },
-            { s: 'Man kann Fragen stellen und sich gegenseitig den Stoff erklären. Außerdem ist man motivierter. [Deshalb sollte jeder eine Lerngruppe suchen.]', why: 'Find the concluding sentence: *Deshalb* shows the result of the reasons before it.' },
+          { t: 'ex', kind: 'spot', h: 'Tap the topic sentence.', items: [
+            { s: '[Eine Lerngruppe hilft beim Lernen.] Man kann Fragen stellen und sich gegenseitig den Stoff erklären. Außerdem ist man motivierter, wenn die anderen auch lernen.', why: 'The topic sentence gives the main idea. The other sentences support it.' },
+          ] },
+          { t: 'ex', kind: 'spot', h: 'Tap the concluding sentence.', items: [
+            { s: 'Man kann Fragen stellen und sich gegenseitig den Stoff erklären. Außerdem ist man motivierter. [Deshalb sollte jeder eine Lerngruppe suchen.]', why: '*Deshalb* shows the result of the reasons before it.' },
           ] },
           { t: 'ex', kind: 'gap', h: 'Complete the phrases for a paragraph.', items: [
             { q: 'Ein Beispiel ___ ist die Mensa.', a: ['dafür'], why: '*Ein Beispiel dafür ist …*: an example of what you said before.' },
@@ -154,7 +156,7 @@ export const UNIT = {
     ] },
     { t: 'ex', kind: 'order', h: 'Build the sentences.', items: [
       { a: 'Trotzdem habe ich die Prüfung bestanden.', why: '*Trotzdem* + verb *habe* + subject *ich*; the participle *bestanden* at the end.' },
-      { a: 'Deshalb bin ich nicht zur Vorlesung gekommen.', why: '*Deshalb* + verb *bin* + subject *ich*; the participle *gekommen* at the end.' },
+      { a: 'Deshalb habe ich mich krankgemeldet.', why: '*Deshalb* + verb *habe* + subject *ich*, then the reflexive pronoun *mich*; the participle at the end.' },
     ] },
     { t: 'ex', kind: 'match', h: 'Match the two sentences.', pairs: [
       ['Ich war sehr müde.', 'Deshalb ging ich früh ins Bett.'],

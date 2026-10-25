@@ -106,7 +106,7 @@ export const UNIT = {
             { q: 'Could you let me know if she has ___ (miss) any homework?', a: ['missed'], why: 'Present perfect: *has* + past participle.' },
           ] },
           { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'My son was absent because he was ill.', why: 'Main sentence first, then *because* + the reason.' },
+            { a: 'Could you tell me what homework he has missed?', why: 'Indirect question: *he has missed* in statement order.' },
             { a: 'Thank you for your understanding.', why: 'A polite last line.' },
           ] },
         ],

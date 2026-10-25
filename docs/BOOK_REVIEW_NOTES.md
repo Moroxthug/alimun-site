@@ -127,3 +127,10 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4, u6: a weekday with a date (Thursday 12 November) is right for 2026 only.
 - u6: full-time "usually about 35 to 40 hours"; many UK CVs leave out the photo and date of birth (general).
 - u2: British *oh* and *double* for numbers; simplified letter sounds.
+
+## English B1, moving abroad
+- UK facts checked and stated generally: deposit of at most five weeks' rent in England, right-to-rent checks, the 14-day cooling-off period, GP registration without proof of address in England; check the ombudsman, school start age, half-term and term-time absence wording.
+- u1: no tenancy type is named (the Renters' Rights Act changes this in England); the summary says "two months' notice in writing" for this one flat.
+- u1, u2: a sort code has six digits and an account number eight.
+- u3 p2: a CV with short list-style lines (as real CVs look); check against the no-lists rule.
+- Word-order items "Could you please confirm that you can attend?" and "Could you tell me what homework he has missed?"; u4 gap accepts *was charged* and *have been charged*.

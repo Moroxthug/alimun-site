@@ -117,7 +117,7 @@ export const UNIT = {
           { t: 'ex', kind: 'gap', h: 'Complete the sentences with one word.', items: [
             { q: 'Put your money away. It’s my ___ today.', a: ['treat'], why: '*It’s my treat*: I will pay for you.' },
             { q: 'Is service ___ in the price?', a: ['included'], why: '*Is service included?* asks if the tip is already in the bill.' },
-            { q: 'Can we ___ a few dishes? Then we can try more things.', a: ['share'], why: '*share* dishes: everyone eats a little of each.' },
+            { q: 'Can we ___ (eat together) a few dishes? Then everyone can try a little of each.', a: ['share'], why: '*share* dishes: everyone eats a little of each.' },
           ] },
         ],
       ],
