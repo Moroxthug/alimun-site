@@ -72,6 +72,9 @@ Hand-written rounds for the Practice screen (`js/app/practice.js`): `site/src/da
 
 Practice rounds also remix the course book: a gap exercise can come back as a word bank, a multiple choice with a gap as a drop-down, word order with two extra words, matching as memory pairs, and matching whose left side is single words as a crossword or a word search. Each item keeps its key (`<book>:<unit>:<lesson or test>:<block>:<item>`) so its mistakes are remembered across lessons, tests and rounds.
 
+## Course audio
+Examples, dialogue lines and reading paragraphs are spoken once and stored (owner's voices: narrators Sulafat and Orus; dialogue speakers get a voice that matches their name or role). `site/src/data/books/audio.js` decides the voice and style of each item and serves `/data/audio/<book>.json`: `items: { "<unit>:<lesson>:<block>:<item>": [hash, voice, style, text] }`. The hash covers model, voice, style and text, so a changed sentence gets a new file and the old one is simply no longer used. Files: Supabase Storage `course-audio/<book>/<hash>.mp3`, listed in `course-audio/<book>/manifest.json`; made from `/app/audio` (admin). New speaker names in dialogues: add them to the women's or men's list in `audio.js` (unknown names and roles get the gender that contrasts with the other speaker).
+
 ## Playing the books
 `node scripts/play-books.js [book ids] [--units=N] [--lang=ar] [--phone] [--practice] [--rounds=N]` serves this checkout, plays every lesson and unit test with the right answers (unit tests must score 100%), and with `--practice` the "Every kind of exercise" round and N generated rounds. Book data comes from alimun.com; practice sets come from this checkout.
 

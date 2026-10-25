@@ -5,6 +5,10 @@
  *
  *  Voices for the course material (docs/DASHBOARD_PLAN.md, step 5).
  *    ?action=status  (GET)  — { configured } : is GOOGLE_AI_API_KEY set. No cost.
+ *    ?action=generate (POST, admin JWT) — { book }: makes the next missing course audio
+ *                     files of a book (plan /data/audio/<book>.json, site/src/data/books/audio.js)
+ *                     as MP3 in Supabase Storage course-audio/<book>/<hash>.mp3, with
+ *                     <book>/manifest.json listing the files made; about 40 s per call.
  *    ?action=sample  (POST, admin JWT) — one sentence, or a two-speaker dialogue,
  *                     spoken by Gemini text-to-speech; returns audio/wav.
  *        { text, voice, model?: 'flash' | 'lite', style? }
@@ -156,10 +160,85 @@ async function speak({ model, turns, voices, style }) {
   throw err;
 }
 
+/* ---------- Course audio: files for the sentences of a book ---------- */
+const BUCKET = 'course-audio';
+const BOOK_RE = /^[A-Z][a-z]+-[ABC][12](-[a-z]+)?$/;
+
+async function mp3(w) {
+  const { pcm, rate } = pcmOf(w);
+  const lame = await import('@breezystack/lamejs');
+  const samples = new Int16Array(pcm.length >> 1);
+  for (let i = 0; i < samples.length; i++) samples[i] = pcm.readInt16LE(i * 2);
+  const enc = new lame.Mp3Encoder(1, rate, 40);
+  const out = [];
+  for (let i = 0; i < samples.length; i += 1152 * 20) { const b = enc.encodeBuffer(samples.subarray(i, i + 1152 * 20)); if (b.length) out.push(Buffer.from(b)); }
+  const end = enc.flush();
+  if (end.length) out.push(Buffer.from(end));
+  return { buf: Buffer.concat(out), seconds: Math.round(samples.length / rate * 10) / 10 };
+}
+
+async function ensureBucket(supabase) {
+  const { data } = await supabase.storage.getBucket(BUCKET);
+  if (data) return;
+  const { error } = await supabase.storage.createBucket(BUCKET, { public: true, allowedMimeTypes: ['audio/mpeg', 'application/json'], fileSizeLimit: '20MB' });
+  if (error && !/exists/i.test(error.message)) throw error;
+}
+async function readManifest(supabase, book) {
+  const { data } = await supabase.storage.from(BUCKET).download(book + '/manifest.json');
+  if (!data) return { done: {} };
+  try { const j = JSON.parse(Buffer.from(await data.arrayBuffer()).toString('utf8')); return j && j.done ? j : { done: {} }; } catch (e) { return { done: {} }; }
+}
+
+/* Makes the next missing files of a book, for up to about 40 seconds: { book, total, done, made, failed, seconds } */
+async function generate(req, res, supabase, body) {
+  const book = String(body.book || '');
+  if (!BOOK_RE.test(book)) return res.status(400).json({ error: 'Unknown book' });
+  const t0 = Date.now();
+  try {
+    const host = req.headers['x-forwarded-host'] || req.headers.host || 'alimun.com';
+    const pr = await fetch('https://' + host + '/data/audio/' + encodeURIComponent(book) + '.json');
+    if (!pr.ok) return res.status(404).json({ error: 'No audio plan for ' + book });
+    const plan = await pr.json();
+    await ensureBucket(supabase);
+    const manifest = await readManifest(supabase, book);
+    const todo = [], seen = new Set();
+    Object.values(plan.items).forEach((it) => { if (!manifest.done[it[0]] && !seen.has(it[0])) { seen.add(it[0]); todo.push(it); } });
+    const made = [], failed = [];
+    let next = 0;
+    const worker = async () => {
+      while (next < todo.length && Date.now() - t0 < 38000) {
+        const [h, voice, style, text] = todo[next++];
+        try {
+          const w = await speak({ model: plan.model || MODELS.flash, turns: [{ text }], voices: { _: voice }, style });
+          const m = await mp3(w);
+          const up = await supabase.storage.from(BUCKET).upload(book + '/' + h + '.mp3', m.buf, { contentType: 'audio/mpeg', cacheControl: '31536000', upsert: true });
+          if (up.error) throw up.error;
+          manifest.done[h] = m.seconds;
+          made.push(h);
+        } catch (e) {
+          failed.push({ h, error: String(e.message || e).slice(0, 200), detail: e.detail || null });
+        }
+      }
+    };
+    await Promise.all([worker(), worker(), worker()]);
+    if (made.length) {
+      manifest.updated = new Date().toISOString();
+      const up = await supabase.storage.from(BUCKET).upload(book + '/manifest.json', Buffer.from(JSON.stringify(manifest)), { contentType: 'application/json', cacheControl: '30', upsert: true });
+      if (up.error) throw up.error;
+    }
+    const total = new Set(Object.values(plan.items).map((it) => it[0])).size;
+    const seconds = Object.values(manifest.done).reduce((a, b) => a + b, 0);
+    return res.status(200).json({ book, total, done: Object.keys(manifest.done).length, made: made.length, failed, seconds: Math.round(seconds) });
+  } catch (e) {
+    console.error('[speech generate] ' + book + ': ' + e.message);
+    return res.status(500).json({ error: 'generate_failed', detail: String(e.message || e).slice(0, 300) });
+  }
+}
+
 module.exports = async function handler(req, res) {
   const action = String((req.query && req.query.action) || '');
-  if (action === 'status') return res.status(200).json({ configured: !!process.env.GOOGLE_AI_API_KEY, models: MODELS, voices: VOICES });
-  if (action !== 'sample') return res.status(404).json({ error: 'Unknown action' });
+  if (action === 'status') return res.status(200).json({ configured: !!process.env.GOOGLE_AI_API_KEY, models: MODELS, voices: VOICES, bucket: BUCKET });
+  if (action !== 'sample' && action !== 'generate') return res.status(404).json({ error: 'Unknown action' });
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
   if (!process.env.GOOGLE_AI_API_KEY) return res.status(503).json({ error: 'speech_not_configured' });
 
@@ -169,10 +248,10 @@ module.exports = async function handler(req, res) {
   const { data, error } = auth.startsWith('Bearer ') ? await supabase.auth.getUser(auth.slice(7)) : { data: null, error: true };
   if (error || !data || !data.user) return res.status(401).json({ error: 'Unauthorized' });
   if (!data.user.app_metadata || data.user.app_metadata.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
-  if (tooMany()) return res.status(429).json({ error: 'Too many requests, wait a minute' });
-
   const body = parseBody(req);
   if (!body) return res.status(400).json({ error: 'Invalid JSON' });
+  if (action === 'generate') return generate(req, res, supabase, body);
+  if (tooMany()) return res.status(429).json({ error: 'Too many requests, wait a minute' });
   const model = MODELS[body.model] || MODELS.flash;
   const style = cleanText(body.style).slice(0, 80);
   let turns, voices;
@@ -199,4 +278,4 @@ module.exports = async function handler(req, res) {
   }
 };
 
-module.exports._test = { findAudio, toWav, speak, wav, pcmOf };
+module.exports._test = { findAudio, toWav, speak, wav, pcmOf, mp3 };

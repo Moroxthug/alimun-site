@@ -232,6 +232,63 @@
     return html;
   }
 
+  /* ---------- Course audio (step 5): /data/audio/<book>.json and the files made so far ---------- */
+  var SUPA_AUDIO = 'https://dgaiasmefcbrtzqwdyri.supabase.co/storage/v1/object/public/course-audio/';
+  var audio = {};   /* by book id: { items, done } (empty when there is no audio yet) */
+  function loadAudio(id) {
+    if (audio[id]) return Promise.resolve(audio[id]);
+    var get = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
+    return Promise.all([get('/data/audio/' + encodeURIComponent(id) + '.json'), get(SUPA_AUDIO + encodeURIComponent(id) + '/manifest.json')]).then(function (r) {
+      audio[id] = { items: (r[0] && r[0].items) || {}, done: (r[1] && r[1].done) || {} };
+      return audio[id];
+    });
+  }
+  /* The file for an item of the lesson on screen, if it has been made */
+  function audioSrc(gi, i) {
+    var a = ctx && ctx.page && audio[ctx.book.id];
+    if (!a) return '';
+    var it = a.items[ctx.unit.id + ':' + ctx.page.id + ':' + gi + ':' + i];
+    return it && a.done[it[0]] ? SUPA_AUDIO + encodeURIComponent(ctx.book.id) + '/' + it[0] + '.mp3' : '';
+  }
+  var player = null, queue = null;
+  function stopAudio() {
+    if (player) { player.pause(); player.onended = null; }
+    if (queue) { queue.list.forEach(function (x) { if (x.el) x.el.classList.remove('is-speaking'); }); if (queue.btn) queue.btn.classList.remove('is-playing'); }
+    queue = null;
+  }
+  /* Plays files one after another; each element is marked while it is spoken */
+  function playList(list, btn, before) {
+    var same = queue && queue.btn === btn;
+    stopAudio();
+    if (same) return;
+    player = player || new Audio();
+    queue = { list: list, btn: btn, at: 0 };
+    btn.classList.add('is-playing');
+    var q = queue;
+    var next = function () {
+      if (queue !== q) return;
+      if (q.at > 0 && q.list[q.at - 1].el) q.list[q.at - 1].el.classList.remove('is-speaking');
+      if (q.at >= q.list.length) { btn.classList.remove('is-playing'); queue = null; return; }
+      var x = q.list[q.at++];
+      if (before) before(x);
+      if (x.el) x.el.classList.add('is-speaking');
+      player.src = x.src;
+      player.onended = function () { setTimeout(next, 250); };
+      player.play().catch(function () { stopAudio(); });
+    };
+    next();
+  }
+  /* Listen to a whole dialogue (lines appear as they are spoken) or a reading (paragraph by paragraph) */
+  function listen(btn) {
+    var box = btn.closest('[data-dialogue], [data-reading]');
+    var els = Array.prototype.slice.call(box.querySelectorAll('[data-src]'));
+    if (box.hasAttribute('data-dialogue') && !(queue && queue.btn === btn)) {
+      clearTimeout(box.__timer);
+      els.forEach(function (l) { l.classList.remove('is-on', 'is-typing'); });
+    }
+    playList(els.map(function (el) { return { src: el.getAttribute('data-src'), el: el }; }), btn, function (x) { x.el.classList.add('is-on'); });
+  }
+
   /* ---------- Teaching blocks ---------- */
   function blockHtml(b, gi) {
     var book = ctx.book;
@@ -239,9 +296,11 @@
       case 'text': return '<div class="rd-text">' + paras(b.md) + '</div>';
       case 'examples':
         return '<div class="rd-examples">' + b.items.map(function (x, k) {
-          if (!x.n) return '<div class="rd-ex"><p class="rd-ex__s"' + tA(book) + '>' + md(x.s) + '</p></div>';
-          return '<button class="rd-ex is-tap" type="button" data-act="why" aria-expanded="false" style="--k:' + k + '"><span class="rd-ex__s"' + tA(book) + '>' + md(x.s) + '</span>' +
-            '<span class="rd-ex__hint">' + esc(t('app_book_why_tap')) + '</span><span class="rd-ex__n"><span>' + md(x.n) + '</span></span></button>';
+          var ex = !x.n ? '<div class="rd-ex"><p class="rd-ex__s"' + tA(book) + '>' + md(x.s) + '</p></div>'
+            : '<button class="rd-ex is-tap" type="button" data-act="why" aria-expanded="false" style="--k:' + k + '"><span class="rd-ex__s"' + tA(book) + '>' + md(x.s) + '</span>' +
+              '<span class="rd-ex__hint">' + esc(t('app_book_why_tap')) + '</span><span class="rd-ex__n"><span>' + md(x.n) + '</span></span></button>';
+          var src = audioSrc(gi, k);
+          return src ? '<div class="rd-exrow" style="--k:' + k + '"><button class="say" type="button" data-act="say" data-src="' + esc(src) + '" aria-label="' + esc(t('app_book_play')) + '">' + A.icon('play') + '</button>' + ex + '</div>' : ex;
         }).join('') + '</div>';
       case 'table': {
         var ex = b.explain || [];
@@ -265,15 +324,22 @@
         return '<figure class="rd-dialogue" data-dialogue>' + (b.title ? '<figcaption>' + md(b.title) + '</figcaption>' : '') +
           '<div class="chat"' + tA(book) + '>' + b.lines.map(function (l, k) {
             var side = who.indexOf(l.who) % 2;
-            return '<div class="chat__line chat__line--' + side + '" style="--k:' + k + '"><span class="chat__who" aria-hidden="true">' + esc(l.who.charAt(0)) + '</span>' +
+            var src = audioSrc(gi, k);
+            return '<div class="chat__line chat__line--' + side + '" style="--k:' + k + '"' + (src ? ' data-src="' + esc(src) + '"' : '') + '><span class="chat__who" aria-hidden="true">' + esc(l.who.charAt(0)) + '</span>' +
               '<p><b>' + esc(l.who) + '</b><span>' + md(l.s) + '</span></p></div>';
           }).join('') + '</div>' +
-          '<button class="linkish" type="button" data-act="replay">' + esc(t('app_book_replay')) + '</button></figure>';
+          (b.lines.every(function (l, k) { return audioSrc(gi, k); })
+            ? '<button class="btn btn--primary btn--sm listen" type="button" data-act="listen">' + A.icon('play') + '<span>' + esc(t('app_book_listen')) + '</span></button>'
+            : '<button class="linkish" type="button" data-act="replay">' + esc(t('app_book_replay')) + '</button>') + '</figure>';
       }
       case 'tip':
         return '<aside class="rd-tip"><div class="rd-tip__art">' + A.Cast.drawing(b.art || 'owl') + '</div><div class="bub say bub--inline rd-tip__bub">' + md(b.md) + '</div></aside>';
       case 'reading':
-        return '<section class="rd-reading"' + tA(book) + '>' + (b.title ? '<h2 class="t-h2">' + esc(b.title) + '</h2>' : '') + paras(b.md) + '</section>';
+        var ps = String(b.md || '').split(/\n\s*\n/);
+        var heard = ps.every(function (p, k) { return !p.trim() || audioSrc(gi, k); });
+        return '<section class="rd-reading" data-reading' + tA(book) + '>' + (b.title ? '<h2 class="t-h2">' + esc(b.title) + '</h2>' : '') +
+          (heard ? '<button class="btn btn--primary btn--sm listen" type="button" data-act="listen">' + A.icon('play') + '<span>' + esc(t('app_book_listen')) + '</span></button>' : '') +
+          ps.map(function (p, k) { var src = heard && audioSrc(gi, k); return '<p' + (src ? ' data-src="' + esc(src) + '"' : '') + '>' + md(p.trim()) + '</p>'; }).join('') + '</section>';
       case 'ex': return ctx.ex.html(gi);
       default: return '';
     }
@@ -381,6 +447,7 @@
 
   function go(si) {
     if (!ctx || ctx.kind !== 'page' || si < 0 || si > ctx.spreads.length || si === ctx.at) return;
+    stopAudio();
     if (si > ctx.at && !canGo(si)) return;
     var dir = si > ctx.at ? 'next' : 'prev';
     ctx.seen = Math.max(ctx.seen, si);
@@ -626,6 +693,8 @@
       if (act === 'zoom') { setZoom(viewer.z * (+el.getAttribute('data-z') > 0 ? 1.25 : 0.8)); return; }
       if (act === 'tvclose') { closeTable(); return; }
       if (act === 'replay') { playDialogue(el.closest('[data-dialogue]')); return; }
+      if (act === 'say') { playList([{ src: el.getAttribute('data-src'), el: el.closest('.rd-exrow') }], el); return; }
+      if (act === 'listen') { listen(el); return; }
       if (!ctx) return;
       if (act === 'next') go(ctx.at + 1);
       else if (act === 'prev') go(ctx.at - 1);
@@ -686,7 +755,7 @@
   var mountNo = 0;
   function mount(view, parts, helpers) {
     var my = ++mountNo;
-    A = helpers; root = view; ctx = null;
+    A = helpers; root = view; ctx = null; stopAudio();
     if (window.AlimunPractice) window.AlimunPractice.use(helpers);
     closeTable();
     bind();
@@ -696,7 +765,7 @@
       var id = parts[0] || A.myBookId();
       var entry = list.filter(function (b) { return b.id === id; })[0];
       if (!entry) return { html: noneView(list.filter(function (b) { return b.written > 0 && b.track === 'core'; })), title: t('app_nav_book') };
-      return Promise.all([loadBook(id, explainCode(entry)), loadProgress(id)]).then(function (r) {
+      return Promise.all([loadBook(id, explainCode(entry)), loadProgress(id), loadAudio(id)]).then(function (r) {
         var book = r[0];
         var unit = book.units.filter(function (u) { return u.id === parts[1] && !u.planned; })[0];
         if (!unit) return { html: coverView(book), title: book.track === 'goal' ? book.title : bookName(book) };
@@ -732,7 +801,7 @@
     });
   }
   /* Another section is on screen: stop reacting to keys and clicks */
-  function reset() { ctx = null; closeTable(); }
+  function reset() { ctx = null; closeTable(); stopAudio(); }
 
   window.AlimunReader = { mount: mount, open: open, reset: reset };
 })();

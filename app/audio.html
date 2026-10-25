@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Course audio – Alimun</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<link href="/images/favicon.svg?v=2" rel="icon" type="image/svg+xml">
+<link href="/css/app.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.108.2/dist/umd/supabase.js" integrity="sha384-nD3dwv4+ZqdYnmZKe/249ImlV04om7xTCcsoSeQYI+RO+XlKPoqAWaJR1M5SJH9p" crossorigin="anonymous" defer></script>
+<script src="/js/app/audio-admin.js" defer></script>
+<style>
+  .apage { max-width: 1100px; margin: 0 auto; padding: 40px 16px 80px; }
+  .atop { display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; margin: 16px 0 26px; }
+  .au .meter { margin: 12px 0 8px; }
+</style>
+</head>
+<body>
+<!-- Course audio generation (docs/DASHBOARD_PLAN.md, step 5). Admin only, not linked anywhere. -->
+<main class="apage">
+  <h1 class="t-h1">Course audio</h1>
+  <p class="t-lead">Every example, dialogue and reading of the course books, spoken once and stored. Sulafat and Orus narrate; the other voices play the people in the dialogues.</p>
+  <div class="atop"><button class="btn btn--primary" id="go" type="button" disabled>Start</button>
+    <p class="t-body" id="sum"></p></div>
+  <p class="t-small" id="status" role="status" aria-live="polite">Loading…</p>
+  <div class="grid" id="books" style="margin-top:18px"></div>
+</main>
+</body>
+</html>

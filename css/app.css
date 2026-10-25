@@ -513,6 +513,22 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 .spot__w.is-bad { background: var(--t-coral); box-shadow: inset 0 0 0 2px var(--coral); animation: shake .4s var(--ease); }
 .spot__w.is-missed { box-shadow: inset 0 -3px 0 var(--coral); font-weight: 700; }
 
+/* Course audio in the reader (step 5) */
+.rd-exrow { display: flex; align-items: flex-start; gap: 10px; }
+.rd-exrow > .rd-ex { flex: 1; min-width: 0; }
+.say { flex: none; width: 44px; height: 44px; margin-top: 6px; border: 0; border-radius: 50%; background: var(--forest); color: var(--lime); display: grid; place-items: center; cursor: pointer; transition: transform var(--t-fast) var(--spring), background var(--t-fast); }
+.say svg { width: 18px; height: 18px; fill: currentColor; }
+.say:hover { transform: scale(1.08); }
+.say.is-playing { background: var(--lime); color: var(--forest); animation: pulse 1.2s ease-in-out infinite; }
+.rd-exrow.is-speaking .rd-ex { box-shadow: inset 0 0 0 2px var(--forest); }
+.listen { margin-top: 14px; gap: 8px; }
+.listen svg { width: 16px; height: 16px; fill: currentColor; }
+.listen.is-playing { background: var(--lime); color: var(--forest); }
+.rd-reading .listen { margin: 0 0 14px; }
+.chat__line.is-speaking p { box-shadow: 0 0 0 2.5px var(--forest), 0 4px 12px rgba(8, 8, 8, .05); }
+.rd-reading p.is-speaking { background: var(--t-lime); border-radius: 8px; box-shadow: 0 0 0 6px var(--t-lime); }
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(206, 255, 101, .7); } 50% { box-shadow: 0 0 0 8px rgba(206, 255, 101, 0); } }
+
 /* Exercise types added in step 5 (js/app/exercises.js) */
 .opts--odd .opt { min-width: 92px; text-align: center; }
 .opt--sm { min-height: 42px; padding: 8px 16px; font-size: 15.5px; }

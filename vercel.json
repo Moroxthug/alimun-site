@@ -117,6 +117,9 @@
     },
     "api/admin/teacher.js": {
       "maxDuration": 30
+    },
+    "api/speech.js": {
+      "maxDuration": 60
     }
   },
   "crons": [

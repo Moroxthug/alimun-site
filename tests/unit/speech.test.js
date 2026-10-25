@@ -73,3 +73,12 @@ test('status says whether the key is set, and sample refuses without it', async 
   await handler({ query: { action: 'sample' }, method: 'POST', headers: {} }, r2);
   assert.strictEqual(r2.code, 503);
 });
+
+test('MP3 encoding of a WAV: a smaller file and the length in seconds', async () => {
+  const pcm2 = Buffer.alloc(24000 * 2 * 2);
+  for (let i = 0; i < pcm2.length / 2; i++) pcm2.writeInt16LE(Math.round(Math.sin(i / 8) * 6000), i * 2);
+  const m = await handler._test.mp3(handler._test.wav(pcm2, 24000));
+  assert.strictEqual(m.seconds, 2);
+  assert.ok(m.buf.length > 1000 && m.buf.length < pcm2.length / 4);
+  assert.ok(m.buf[0] === 0xff || m.buf.slice(0, 3).toString() === 'ID3');
+});
