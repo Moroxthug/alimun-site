@@ -153,3 +153,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3: *Liebes Team,* as the friendly greeting next to *Sehr geehrte Damen und Herren,*.
 - Word-order items rely on capitals and commas (*Ich komme später, weil ich einen Termin habe.*); slightly above A2: *trotzdem*, *Wer …, kann …*.
 - Dialogue titles are in English here (translated as explanations); the B1 model uses German titles.
+
+## German B1, study and exams
+- u3: lecturers as *Frau Prof. Kaya* and *Frau Professorin Kaya*; u4: the terms *Themensatz* and *Schlusssatz*.
+- u4 p1: "tap the words" targets are whole sentences.
+- u6: B1 exams usually test four skills and often include planning something with a partner (general; fits Goethe B1 and telc B1?).
+- Word-order items *Das finde ich nicht so gut.* and *Könnten Sie mir das Formular schicken?*; dialogue titles in English.

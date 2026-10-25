@@ -129,7 +129,7 @@ export const UNIT = {
       art: 'snail',
       spreads: [
         [
-          { t: 'reading', title: 'Frischemarkt am Lindenplatz', md: '**Öffnungszeiten**\nMontag bis Samstag: 7 bis 21 Uhr\nSonntag und Feiertage: geschlossen\nAm 24. und 31. Dezember: 7 bis 14 Uhr\n\n**Angebote der Woche**\ngültig von Montag, 12.10., bis Samstag, 17.10.\n\nBananen, 1 kg: 1,29 €\nFrische Hähnchenbrust, 500 g: 4,99 €\nMineralwasser, 6 Flaschen zu je 1,5 Liter: 2,94 € plus 1,50 € Pfand\nJoghurt, 150-g-Becher: 0,39 €. Drei Becher kaufen, nur zwei bezahlen!\nBrot vom Bäcker, 750 g: 2,49 €\n\n**Neu bei uns:** Sie können jetzt an allen Kassen mit Karte zahlen, auch kleine Beträge.' },
+          { t: 'reading', title: 'Frischemarkt am Lindenplatz', md: '**Öffnungszeiten**\nMontag bis Samstag: 7 bis 21 Uhr\nSonntag und Feiertage: geschlossen\nAm 24. und 31. Dezember: 7 bis 14 Uhr\n\n**Angebote der Woche**\ngültig von Montag, 12.10., bis Samstag, 17.10.\n\nBananen, 1 kg: 1,29 €\nFrische Hähnchenbrust, 500 g: 4,99 €\nMineralwasser, 6 Flaschen zu je 1,5 Liter: 2,94 € plus 1,50 € Pfand\nJoghurt, 150-g-Becher: 0,39 €. Drei Becher kaufen, nur zwei bezahlen!\nBrot vom Bäcker, 750 g: 2,49 €\nÄpfel aus der Region, 2-kg-Beutel: 2,99 €\n\n**Neu bei uns:** Sie können jetzt an allen Kassen mit Karte zahlen, auch kleine Beträge. Bitte bringen Sie Ihre eigene Tasche mit: Eine Tüte kostet bei uns 20 Cent.' },
           { t: 'ex', kind: 'tf', ng: true, h: 'Read the sign and the offers. True, false or not given?', items: [
             { q: 'Am Sonntag ist der Markt geschlossen.', a: 't', why: '*Sonntag und Feiertage: geschlossen.*' },
             { q: 'Das Angebot für Bananen gilt auch am Sonntag, 18.10.', a: 'f', why: 'The offers are valid until Saturday, 17.10.' },
@@ -139,7 +139,7 @@ export const UNIT = {
           ] },
         ],
         [
-          { t: 'reading', title: 'Leergut: So geht’s', md: 'Stellen Sie die Flaschen einzeln und mit dem Boden zuerst in die Öffnung. Bitte drücken Sie Flaschen und Dosen nicht zusammen: Das Pfandzeichen muss man gut lesen können. Kästen stellen Sie unten auf das Band.\n\nAm Ende drücken Sie auf die grüne Taste. Dann bekommen Sie einen Pfandbon. Den Bon geben Sie an der Kasse ab. Sie möchten das Pfand spenden? Dann drücken Sie auf die rote Taste.\n\nGlas ohne Pfand gehört nicht in den Automaten. Bitte bringen Sie es zum Altglascontainer.' },
+          { t: 'reading', title: 'Leergut: So geht’s', md: 'Stellen Sie die Flaschen einzeln und mit dem Boden zuerst in die Öffnung. Bitte drücken Sie Flaschen und Dosen nicht zusammen: Das Pfandzeichen muss man gut lesen können. Kästen stellen Sie unten auf das Band. Der Automat nimmt nur Flaschen und Dosen mit Pfandzeichen.\n\nAm Ende drücken Sie auf die grüne Taste. Dann bekommen Sie einen Pfandbon. Den Bon geben Sie an der Kasse ab. Sie möchten das Pfand spenden? Dann drücken Sie auf die rote Taste.\n\nGlas ohne Pfand gehört nicht in den Automaten. Bitte bringen Sie es zum Altglascontainer. Gibt es ein Problem? Dann drücken Sie auf die Klingel. Ein Mitarbeiter kommt dann zu Ihnen.' },
           { t: 'ex', kind: 'tf', h: 'Read the notice. True or false?', items: [
             { q: 'Man soll die Dosen zuerst zusammendrücken.', a: 'f', why: '*Bitte drücken Sie … nicht zusammen*: the machine must read the sign.' },
             { q: 'Kästen stellt man unten auf das Band.', a: 't', why: '*Kästen stellen Sie unten auf das Band.*' },

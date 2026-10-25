@@ -122,10 +122,6 @@ export const UNIT = {
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Give directions. Write the verb.', items: [
-            { q: '___ Sie hier geradeaus. (gehen)', a: ['Gehen'], why: 'A polite request: the verb first, then *Sie*.' },
-            { q: '___ Sie die erste Straße links. (nehmen)', a: ['Nehmen'], why: '*Nehmen Sie …*: the same form as the infinitive.' },
-          ] },
           { t: 'ex', kind: 'order', h: 'Build the questions.', items: [
             { a: 'Wie komme ich zur Haltestelle?', why: 'Question word, verb, *ich*, then *zur Haltestelle*.' },
             { a: 'Wie weit ist es bis zum Bahnhof?', why: '*Wie weit* asks about the distance. *bis zum*: as far as the station.' },
@@ -154,7 +150,7 @@ export const UNIT = {
           ] },
         ],
         [
-          { t: 'reading', title: 'Bauarbeiten: Linie 4', md: 'Liebe Fahrgäste,\n\nwegen Bauarbeiten fährt die Straßenbahn Linie 4 vom 12. bis zum 25. Oktober nur zwischen Hauptbahnhof und Marktplatz. Zwischen Marktplatz und Waldfriedhof fahren Busse. Bitte steigen Sie am Marktplatz in den Ersatzbus um. Die Haltestelle für den Ersatzbus ist in der Bahnhofstraße, gegenüber vom Rathaus.\n\nDie Busse fahren alle zehn Minuten, nach 20 Uhr alle zwanzig Minuten. Bitte planen Sie mehr Zeit ein: Die Fahrt dauert etwa 15 Minuten länger.\n\nIhre Fahrkarte gilt auch im Ersatzbus. Fahrräder dürfen leider nicht im Ersatzbus mitfahren.\n\nWir bitten um Ihr Verständnis.\nIhre Stadtwerke' },
+          { t: 'reading', title: 'Bauarbeiten: Linie 4', md: 'Liebe Fahrgäste,\n\nwegen Bauarbeiten fährt die Straßenbahn Linie 4 vom 12. bis zum 25. Oktober nur zwischen Hauptbahnhof und Marktplatz. Zwischen Marktplatz und Waldfriedhof fahren Busse. Bitte steigen Sie am Marktplatz in den Ersatzbus um. Die Haltestelle für den Ersatzbus ist in der Bahnhofstraße, gegenüber vom Rathaus.\n\nDie Busse fahren alle zehn Minuten, nach 20 Uhr alle zwanzig Minuten. Bitte planen Sie mehr Zeit ein: Die Fahrt dauert etwa 15 Minuten länger.\n\nIhre Fahrkarte gilt auch im Ersatzbus. Fahrräder dürfen leider nicht im Ersatzbus mitfahren. Ab dem 26. Oktober fährt die Straßenbahn wieder normal.\n\nWir bitten um Ihr Verständnis.\nIhre Stadtwerke' },
           { t: 'ex', kind: 'tf', ng: true, h: 'Read the notice. True, false or not given?', items: [
             { q: 'Im Oktober fährt die Linie 4 zwei Wochen lang nicht bis zum Waldfriedhof.', a: 't', why: 'From 12 to 25 October it only goes between *Hauptbahnhof* and *Marktplatz*.' },
             { q: 'Am Marktplatz müssen die Fahrgäste umsteigen.', a: 't', why: '*Bitte steigen Sie am Marktplatz in den Ersatzbus um.*' },

@@ -56,7 +56,6 @@ export const UNIT = {
             { q: 'Woher ___ du? (kommen)', a: ['kommst'], why: '*du kommst*: ending *-st*.' },
             { q: 'Wie geht es ___? (Sie)', a: ['Ihnen'], why: 'Polite: *Wie geht es Ihnen?*' },
             { q: 'Wie geht es ___? (du)', a: ['dir'], why: 'Informal: *Wie geht es dir?*' },
-            { q: 'Wohnen ___ auch hier im Haus? (polite)', a: ['Sie'], why: 'The polite *Sie* always has a capital *S*.' },
           ] },
           { t: 'ex', kind: 'order', h: 'Build the questions.', items: [
             { a: 'Seit wann wohnen Sie in diesem Haus?', why: '*Seit wann* first, then the verb *wohnen* and *Sie*.' },
@@ -76,7 +75,7 @@ export const UNIT = {
           { t: 'table', caption: 'Inviting and replying', explain: ['head'], head: ['Invitation', 'Yes', 'No'], rows: [
             ['Hast du Lust auf einen Kaffee?', 'Ja, gern!', 'Leider kann ich nicht.'],
             ['Hast du am Samstag Zeit?', 'Ja, da habe ich Zeit.', 'Nein, am Samstag arbeite ich.'],
-            ['Hast du Lust, mit uns zu grillen?', 'Super, ich komme gern!', 'Schade, da bin ich nicht da.'],
+            ['Hast du Lust, mit uns zu grillen?', 'Super, ich komme gern!', 'Schade, da bin ich leider nicht in der Stadt.'],
             ['Möchten Sie morgen zum Kaffee kommen?', 'Sehr gern, vielen Dank!', 'Das ist sehr nett, aber leider habe ich keine Zeit.'],
           ] },
         ],
@@ -114,7 +113,7 @@ export const UNIT = {
           { t: 'ex', kind: 'order', h: 'Build the sentences.', items: [
             { a: 'Hast du Lust auf einen Kaffee?', why: 'The verb *hast* first, then *du*, then *Lust auf* + Akkusativ.' },
             { a: 'Soll ich etwas mitbringen?', why: '*soll* first, *mitbringen* at the end.' },
-            { a: 'Kommst du mit ins Kino?', why: '*mitkommen* is separable: *mit* goes after *du*.' },
+            { a: 'Um wie viel Uhr beginnt die Party?', why: '*Um wie viel Uhr* first, then the verb and the subject.' },
           ] },
         ],
       ],
@@ -127,7 +126,7 @@ export const UNIT = {
       spreads: [
         [
           { t: 'text', md: 'In Germany, neighbours often take in parcels for each other when someone is not at home. Then they leave a short note.' },
-          { t: 'reading', title: 'Eine Nachricht von Frau Hoffmann', md: 'Liebe Frau Saleh,\n\nheute Vormittag war der Paketbote da. Sie waren nicht zu Hause, deshalb habe ich ein Paket für Sie angenommen. Es ist ziemlich groß und schwer. Sie können es heute ab 18 Uhr bei mir abholen. Morgen bin ich den ganzen Tag bei meiner Tochter, aber am Donnerstag bin ich wieder da.\n\nÜbrigens: Am Freitag kommt der Hausmeister und repariert die Haustür. Dann ist die Tür von 9 bis 12 Uhr offen. Bitte lassen Sie keine Fahrräder und keinen Kinderwagen im Flur stehen, er braucht dort Platz.\n\nHerzliche Grüße\nGisela Hoffmann, 1. Stock' },
+          { t: 'reading', title: 'Eine Nachricht von Frau Hoffmann', md: 'Liebe Frau Saleh,\n\nheute Vormittag war der Paketbote da. Sie waren nicht zu Hause, deshalb habe ich ein Paket für Sie angenommen. Es ist ziemlich groß und schwer. Sie können es heute ab 18 Uhr bei mir abholen. Klingeln Sie bitte zweimal, meine Klingel ist sehr leise. Morgen bin ich den ganzen Tag bei meiner Tochter, aber am Donnerstag bin ich wieder da.\n\nÜbrigens: Am Freitag kommt der Hausmeister und repariert die Haustür. Dann ist die Tür von 9 bis 12 Uhr offen. Bitte lassen Sie keine Fahrräder und keinen Kinderwagen im Flur stehen, er braucht dort Platz.\n\nHerzliche Grüße\nGisela Hoffmann, 1. Stock' },
           { t: 'ex', kind: 'tf', ng: true, h: 'Read the note. True, false or not given?', items: [
             { q: 'Frau Hoffmann hat ein Paket für Frau Saleh.', a: 't', why: '*… habe ich ein Paket für Sie angenommen.*' },
             { q: 'Frau Saleh kann das Paket morgen abholen.', a: 'f', why: 'Tomorrow Frau Hoffmann is at her daughter’s. Today from 6 pm or on Thursday.' },
@@ -137,7 +136,7 @@ export const UNIT = {
           ] },
         ],
         [
-          { t: 'reading', title: 'Einladung zur Einweihungsparty', md: 'Hallo zusammen,\n\nwir haben es geschafft: Die Kisten sind ausgepackt, die Lampen hängen und die Küche funktioniert! Darum möchten wir mit euch unsere neue Wohnung feiern.\n\nDie Party ist am Samstag, 14. November, ab 19 Uhr im Kastanienweg 5, 3. Stock links. Bitte bei Brandt klingeln.\n\nGetränke und Pizza haben wir. Wenn ihr wollt, bringt einen Salat oder einen Nachtisch mit. Kinder sind herzlich willkommen, für sie gibt es ein Zimmer mit Spielen.\n\nWir haben auch unsere Nachbarn eingeladen. Ab 22 Uhr machen wir die Musik leiser.\n\nBitte sagt uns bis Mittwoch, ob ihr kommt.\n\nWir freuen uns auf euch!\nMalik und Sarah' },
+          { t: 'reading', title: 'Einladung zur Einweihungsparty', md: 'Hallo zusammen,\n\nwir haben es geschafft: Die Kisten sind ausgepackt, die Lampen hängen und die Küche funktioniert! Darum möchten wir mit euch unsere neue Wohnung feiern.\n\nDie Party ist am Samstag, 14. November, ab 19 Uhr im Kastanienweg 5, 3. Stock links. Bitte bei Brandt klingeln.\n\nGetränke und Pizza haben wir. Wenn ihr wollt, bringt einen Salat oder einen Nachtisch mit. Kinder sind herzlich willkommen, für sie gibt es ein Zimmer mit Spielen.\n\nWir haben auch unsere Nachbarn eingeladen. Ab 22 Uhr machen wir die Musik leiser. Der Bus 12 hält direkt vor dem Haus.\n\nBitte sagt uns bis Mittwoch, ob ihr kommt.\n\nWir freuen uns auf euch!\nMalik und Sarah' },
           { t: 'ex', kind: 'tf', h: 'Read the invitation. True or false?', items: [
             { q: 'Die Party ist am Samstagabend.', a: 't', why: 'Saturday from 7 pm.' },
             { q: 'Die Gäste sollen Getränke mitbringen.', a: 'f', why: '*Getränke und Pizza haben wir.* A salad or a dessert is welcome.' },
