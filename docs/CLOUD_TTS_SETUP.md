@@ -1,5 +1,14 @@
 # Google Cloud Text-to-Speech for the course audio: set-up steps
 
+What actually worked, 26 Oct 2026 (step by step with the owner): the project behind the Gemini key
+(`gen-lang-client-0145644888`) already had billing; Cloud Text-to-Speech and Agent Platform (Vertex AI) were switched
+on; the key's own account `ais-gemini-key-c9974f8ca7f7419@32038621207.iam.gserviceaccount.com` got the role
+"Agent Platform user" (Vertex AI was renamed Agent Platform). The test on `/app/audio` then showed that API keys cannot
+be used: Vertex refused the key (API_KEY_SERVICE_BLOCKED, the key restriction would not save in the console) and Cloud
+Text-to-Speech does not accept API keys for these voices (CREDENTIALS_MISSING). So the server signs in as that service
+account with its JSON key in `GOOGLE_CLOUD_TTS_KEY` (step 4 and 5 below); the general steps follow.
+
+
 Why: Google's Gemini API (the key in Vercel as `GOOGLE_AI_API_KEY`) allows 100 voice requests a day for the voice
 model on the current plan, so the course audio at `/app/audio` would take weeks. Google Cloud Text-to-Speech offers the
 same Gemini voices (Orus, Sulafat and the others), with style instructions and two-voice dialogues, at about 150

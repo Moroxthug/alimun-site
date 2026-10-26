@@ -208,21 +208,53 @@ async function speak({ model, turns, voices, style }) {
 const CLOUD_MODELS = ['gemini-2.5-flash-tts', 'gemini-3.1-flash-tts-preview', 'gemini-2.5-pro-tts'];
 const GCP_PROJECT = process.env.GOOGLE_CLOUD_PROJECT || 'gen-lang-client-0145644888';
 const TEST_TEXT = 'Hello! This is a test of the Alimun course voices, spoken through Google Cloud.';
+
+/* GOOGLE_CLOUD_TTS_KEY can hold a service account's JSON key (docs/CLOUD_TTS_SETUP.md): the server then signs in as
+   that account (a signed JWT exchanged for an access token, kept for 50 minutes), which Vertex AI and Cloud
+   Text-to-Speech both accept, unlike API keys. The key never leaves the server. */
+let cloudToken = null;
+function serviceAccount() {
+  const raw = process.env.GOOGLE_CLOUD_TTS_KEY || '';
+  if (!/^\s*\{/.test(raw)) return null;
+  try { const j = JSON.parse(raw); return j.client_email && j.private_key ? j : null; } catch (e) { return null; }
+}
+async function accessToken(sa) {
+  if (cloudToken && cloudToken.exp > Date.now() + 60000) return cloudToken.value;
+  const crypto = require('crypto');
+  const b64 = (o) => Buffer.from(typeof o === 'string' ? o : JSON.stringify(o)).toString('base64url');
+  const now = Math.floor(Date.now() / 1000);
+  const head = b64({ alg: 'RS256', typ: 'JWT' });
+  const claim = b64({ iss: sa.client_email, scope: 'https://www.googleapis.com/auth/cloud-platform', aud: 'https://oauth2.googleapis.com/token', iat: now, exp: now + 3600 });
+  const sig = crypto.createSign('RSA-SHA256').update(head + '.' + claim).sign(sa.private_key).toString('base64url');
+  const r = await fetch('https://oauth2.googleapis.com/token', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({ grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion: head + '.' + claim + '.' + sig }).toString() });
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok || !j.access_token) throw new Error('Google sign-in for the service account failed: ' + (j.error_description || j.error || r.status));
+  cloudToken = { value: j.access_token, exp: Date.now() + 50 * 60000 };
+  return cloudToken.value;
+}
+/* The headers for a Google Cloud call: the service account's token when its key is set, else the API key */
+async function cloudHeaders() {
+  const sa = serviceAccount();
+  if (sa) return { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await accessToken(sa), 'x-goog-user-project': sa.project_id || GCP_PROJECT };
+  return { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GOOGLE_CLOUD_TTS_KEY || process.env.GOOGLE_AI_API_KEY };
+}
 async function cloudTest(res, body) {
   const model = CLOUD_MODELS.includes(body.model) ? body.model : CLOUD_MODELS[0];
   const voice = VOICES.includes(body.voice) ? body.voice : 'Orus';
-  const key = process.env.GOOGLE_CLOUD_TTS_KEY || process.env.GOOGLE_AI_API_KEY;
+  const sa = serviceAccount(), project = sa && sa.project_id || GCP_PROJECT;
+  const headers = await cloudHeaders();
   const vertexBody = { contents: [{ role: 'user', parts: [{ text: 'Say clearly and warmly, like a friendly language teacher: ' + TEST_TEXT }] }],
     generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } } };
   const tries = [
-    ['vertex-global', 'https://aiplatform.googleapis.com/v1/projects/' + GCP_PROJECT + '/locations/global/publishers/google/models/' + model + ':generateContent', vertexBody],
+    ['vertex-global', 'https://aiplatform.googleapis.com/v1/projects/' + project + '/locations/global/publishers/google/models/' + model + ':generateContent', vertexBody],
     ['vertex-publisher', 'https://aiplatform.googleapis.com/v1/publishers/google/models/' + model + ':generateContent', vertexBody],
     ['cloud-tts', 'https://texttospeech.googleapis.com/v1/text:synthesize', { input: { prompt: 'Read this clearly and warmly, like a friendly language teacher.', text: TEST_TEXT },
       voice: { languageCode: 'en-US', name: voice, modelName: model }, audioConfig: { audioEncoding: 'LINEAR16' } }],
   ];
   const refused = [];
   for (const [via, url, payload] of tries) {
-    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(payload) });
+    const r = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload) });
     const text = await r.text();
     let json = null;
     try { json = JSON.parse(text); } catch (e) { /* not JSON */ }
@@ -238,7 +270,7 @@ async function cloudTest(res, body) {
     const reason = (g.details || []).map((d) => d.reason).filter(Boolean).join(', ');
     refused.push({ via, status: r.status, message: String(g.message || text).slice(0, 300), reason });
   }
-  return res.status(502).json({ error: 'cloud_refused', model, voice, refused });
+  return res.status(502).json({ error: 'cloud_refused', model, voice, signedIn: !!sa, refused });
 }
 
 /* ---------- Course audio: files for the sentences of a book ---------- */
@@ -462,4 +494,4 @@ module.exports = async function handler(req, res) {
   }
 };
 
-module.exports._test = { findAudio, toWav, speak, wav, pcmOf, mp3, splitPcm, chunks, retrySeconds, limited };
+module.exports._test = { findAudio, toWav, speak, wav, pcmOf, mp3, splitPcm, chunks, retrySeconds, limited, cloudTest, serviceAccount };
