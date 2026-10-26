@@ -8,6 +8,8 @@
  *                        reason?, notify? (default true) }
  *   enrollment-move    { student_id, cohort_id, notify? }
  *   enrollment-remove  { student_id, notify? }
+ *   class-update       { cohort_id, max_students? (1-35, not below the students in it), description? }
+ *   waitlist-offer     { waitlist_id }  offer the place now: 48 hours, the same email as the automatic offer
  *
  * Emails go to the class's active students and its teacher (session-update)
  * or to the student (move/remove). Without RESEND_API_KEY the change still
@@ -17,6 +19,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const TZ = require('../../js/tz.js');
 const { cancelActiveEnrollments, takeSeat } = require('./seat.js');
+const { sendOfferEmail } = require('./waitlist-offer-email.js');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const DATE_RE = /^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/;
@@ -297,6 +300,120 @@ async function enrollmentRemove(req, res) {
   return res.status(200).json(result);
 }
 
+// ── class-update ────────────────────────────────────────────
+// Seats and description. Done here rather than as a browser update so the seats are checked against the students in
+// the class at the moment of saving, never below them, and the status is set in the same update. The status follows the seats as auto_close_full_cohort() does: full when every seat is taken, and a
+// full class with nobody waiting opens again (with people waiting it stays full, for the admin to offer the place).
+
+async function classUpdate(req, res) {
+  const g = await adminGate(req, res);
+  if (!g) return;
+  const { supabase, body } = g;
+  if (!UUID_RE.test(String(body.cohort_id || ''))) return res.status(400).json({ error: 'Invalid cohort_id' });
+
+  const { data: cohort, error: cErr } = await supabase
+    .from('cohorts')
+    .select('id, status, enrolled_count, max_students, description')
+    .eq('id', body.cohort_id)
+    .maybeSingle();
+  if (cErr) throw cErr;
+  if (!cohort) return res.status(404).json({ error: 'Class not found' });
+
+  const patch = {};
+  if (body.max_students != null) {
+    const n = Number(body.max_students);
+    if (!Number.isInteger(n) || n < 1 || n > 35) return res.status(400).json({ error: 'Seats must be a whole number from 1 to 35.' });
+    if (n < (cohort.enrolled_count || 0)) {
+      return res.status(409).json({ error: `There are already ${cohort.enrolled_count} students in this class. Move or remove students first.` });
+    }
+    patch.max_students = n;
+  }
+  if (Object.prototype.hasOwnProperty.call(body, 'description')) {
+    if (body.description != null && typeof body.description !== 'string') return res.status(400).json({ error: 'Invalid description' });
+    const d = String(body.description || '').trim();
+    if (d.length > 2000) return res.status(400).json({ error: 'The description can be at most 2000 characters.' });
+    patch.description = d || null;
+  }
+  if (!Object.keys(patch).length) return res.status(400).json({ error: 'Nothing to change' });
+
+  if (patch.max_students != null && (cohort.status === 'open' || cohort.status === 'full')) {
+    if ((cohort.enrolled_count || 0) >= patch.max_students) patch.status = 'full';
+    else if (cohort.status === 'full') {
+      const { count } = await supabase.from('cohort_waitlist').select('id', { count: 'exact', head: true }).eq('cohort_id', cohort.id);
+      if (!count) patch.status = 'open';
+    }
+  }
+
+  // Conditional on the seat count we checked, so a student joining meanwhile cannot leave the class over capacity.
+  const { data: changed, error: uErr } = await supabase
+    .from('cohorts')
+    .update(patch)
+    .eq('id', cohort.id)
+    .eq('enrolled_count', cohort.enrolled_count)
+    .select('id, status, enrolled_count, max_students, description');
+  if (uErr) throw uErr;
+  if (!changed || changed.length === 0) return res.status(409).json({ error: 'The class changed in the meantime. Reload and try again.' });
+  return res.status(200).json({ success: true, cohort: changed[0] });
+}
+
+// ── waitlist-offer ──────────────────────────────────────────
+// The admin offers the place now instead of waiting for a seat to free up (process_opened_spot() offers it then).
+// Only when the class has a seat that no live offer already holds, since the student takes it through
+// /api/enroll, whose increment_enrollment() refuses a class with no free seat.
+
+async function waitlistOffer(req, res) {
+  const g = await adminGate(req, res);
+  if (!g) return;
+  const { supabase, body } = g;
+  if (!UUID_RE.test(String(body.waitlist_id || ''))) return res.status(400).json({ error: 'Invalid waitlist_id' });
+
+  const { data: entry, error: eErr } = await supabase
+    .from('cohort_waitlist')
+    .select('id, cohort_id, student_id, offered_at, offer_expires_at, cohorts ( id, status, enrolled_count, max_students )')
+    .eq('id', body.waitlist_id)
+    .maybeSingle();
+  if (eErr) throw eErr;
+  if (!entry || !entry.cohorts) return res.status(404).json({ error: 'This person is no longer on the waiting list.' });
+  const now = new Date();
+  if (entry.offer_expires_at && new Date(entry.offer_expires_at) > now) {
+    return res.status(409).json({ error: 'They already have an offer that has not run out.' });
+  }
+  const cohort = entry.cohorts;
+  if (cohort.status !== 'open' && cohort.status !== 'full') return res.status(409).json({ error: 'The class is closed. Reopen it first.' });
+
+  const { count: held, error: hErr } = await supabase
+    .from('cohort_waitlist')
+    .select('id', { count: 'exact', head: true })
+    .eq('cohort_id', cohort.id)
+    .gt('offer_expires_at', now.toISOString());
+  if (hErr) throw hErr;
+  const free = (cohort.max_students || 0) - (cohort.enrolled_count || 0) - (held || 0);
+  if (free < 1) {
+    return res.status(409).json({ error: 'There is no free seat in this class' + (held ? ` (${held} already offered)` : '') + '. Add a seat or move a student first.' });
+  }
+
+  const expires = new Date(now.getTime() + 48 * 3600000);
+  // Conditional on there being no live offer, so two admins cannot both offer it.
+  const { data: changed, error: uErr } = await supabase
+    .from('cohort_waitlist')
+    .update({ offered_at: now.toISOString(), offer_expires_at: expires.toISOString() })
+    .eq('id', entry.id)
+    .or(`offer_expires_at.is.null,offer_expires_at.lte.${now.toISOString()}`)
+    .select('id');
+  if (uErr) throw uErr;
+  if (!changed || changed.length === 0) return res.status(409).json({ error: 'The waiting list changed in the meantime. Reload and try again.' });
+
+  const result = { success: true, offered_at: now.toISOString(), offer_expires_at: expires.toISOString(), emailConfigured: emailConfigured(), emailed: false };
+  if (result.emailConfigured) {
+    try {
+      result.emailed = await sendOfferEmail(supabase, { waitlist_id: entry.id, cohort_id: entry.cohort_id, student_id: entry.student_id });
+    } catch (err) {
+      console.error('[Admin ops] Offer email failed:', err.message);
+    }
+  }
+  return res.status(200).json(result);
+}
+
 /** Wrap a handler so unexpected errors become a 500 instead of a crash. */
 function safe(fn) {
   return async (req, res) => {
@@ -313,4 +430,6 @@ module.exports = {
   sessionUpdate: safe(sessionUpdate),
   enrollmentMove: safe(enrollmentMove),
   enrollmentRemove: safe(enrollmentRemove),
+  classUpdate: safe(classUpdate),
+  waitlistOffer: safe(waitlistOffer),
 };

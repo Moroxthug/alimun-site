@@ -3,7 +3,9 @@
    homework unmarked for more than a week, automatic jobs that failed or stopped), the numbers counted from the
    database, today's classes with a way into each room, AI spend this month and the jobs' last week. Sections of later
    parts say which part builds them. Only an admin (app_metadata.role, checked again by the database's is_admin()) sees
-   real data; signed out, or with ?sample=1, a sample; any other account is told the page is not for them. */
+   real data; signed out, or with ?sample=1, a sample; any other account is told the page is not for them.
+   Part 2 (js/app/admin-people.js): students and teachers. Part 3 (js/app/admin-classes.js, js/app/admin-teaching.js):
+   classes, schedule, waiting list and messages. */
 (function () {
   'use strict';
   var Cast = window.AlimunCast;
@@ -195,7 +197,9 @@
   function hideLoader() { loadingScreen.classList.add('is-done'); loadingScreen.setAttribute('aria-hidden', 'true'); }
   function setSheet(open) { document.body.classList.toggle('is-sheet-open', open); app.querySelector('[data-more]').setAttribute('aria-expanded', String(open)); if (open) { var a = sheet.querySelector('a'); if (a) a.focus(); } }
   function routeFromHash() { var id = (location.hash.match(/^#\/([a-z]+)/) || [])[1]; return byId[id] ? id : 'overview'; }
-  var MODULES = { students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; } };
+  var MODULES = { students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; },
+    classes: function () { return window.AlimunAdminClasses; }, schedule: function () { return window.AlimunAdminSchedule; },
+    waiting: function () { return window.AlimunAdminWaiting; }, messages: function () { return window.AlimunAdminMessages; } };
   function helpers() {
     return { esc: esc, fmt: fmt, num: num, cap: cap, plural: plural, relative: relative, className: className, icon: icon, Cast: Cast, loaderInner: loaderInner,
       mode: function () { return mode; }, rerender: function () { render(current, false); } };

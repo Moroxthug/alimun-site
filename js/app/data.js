@@ -970,6 +970,87 @@
   function adminEmail(targetId, subject, body) { return api('/api/send-admin-email', { targetId: targetId, emailType: 'promo', customSubject: subject, customBody: body }); }
   function adminPlanEmail(targetId, tier) { return api('/api/send-admin-email', { targetId: targetId, emailType: 'tier-upgrade', tierName: tier }); }
 
+  /* Admin pages, part 3: classes, schedule, waiting list, messages. Reads go through the row rules (is_admin());
+     creating a class, seats, moving and removing students, changing a class date and offering a place go through the
+     admin server actions, which check the admin again and send the emails. */
+  var CLASS_COLS = 'id, teacher_id, language, level, goal_track, tier, max_students, description, schedule_days, schedule_time, timezone, status, enrolled_count, created_at, teacher_profiles(full_name)';
+  function adminClasses() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('cohorts').select(CLASS_COLS).order('created_at', { ascending: false }).limit(1000),
+      c.from('teacher_profiles').select('id, full_name, languages').eq('status', 'approved').order('full_name').limit(1000),
+      c.from('cohort_waitlist').select('cohort_id, offer_expires_at').limit(5000),
+      c.from('sessions').select('cohort_id, scheduled_at').eq('status', 'scheduled').gte('scheduled_at', new Date().toISOString()).order('scheduled_at', { ascending: true }).limit(5000)
+    ]).then(function (r) {
+      if (r[0].error) throw r[0].error;
+      return { classes: rows(r[0]), teachers: rows(r[1]), waiting: rows(r[2]), upcoming: rows(r[3]) };
+    });
+  }
+  /* One class: who is in it, who waits for it, every date, and the students who could be added (same language) */
+  function adminClassFile(id, language) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('cohorts').select(CLASS_COLS).eq('id', id).maybeSingle(),
+      c.from('enrollments').select('id, enrolled_at, student_profiles(id, full_name, level, tier, language, stripe_subscription_status)').eq('cohort_id', id).eq('status', 'active').order('enrolled_at', { ascending: true }),
+      c.from('cohort_waitlist').select('id, added_at, offered_at, offer_expires_at, student_profiles(id, full_name, level, tier)').eq('cohort_id', id).order('added_at', { ascending: true }),
+      c.from('sessions').select('id, scheduled_at, status').eq('cohort_id', id).order('scheduled_at', { ascending: true }).limit(500),
+      c.from('student_profiles').select('id, full_name, level, tier, enrolled_cohort_id').eq('language', language).order('full_name').limit(2000),
+      c.from('cohorts').select('id, language, level, tier, status, enrolled_count, max_students, schedule_days, schedule_time, timezone, teacher_profiles(full_name)').eq('language', language).in('status', ['open', 'full']).limit(200)
+    ]).then(function (r) {
+      if (r[0].error) throw r[0].error;
+      return { klass: r[0].data, roster: rows(r[1]), waiting: rows(r[2]), sessions: rows(r[3]), students: rows(r[4]), others: rows(r[5]).filter(function (o) { return o.id !== id; }) };
+    });
+  }
+  function adminTeacherSlots(teacherId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('teacher_availability').select('day_of_week, start_time, end_time, timezone').eq('teacher_id', teacherId).order('day_of_week').order('start_time').then(rows);
+  }
+  function adminCreateClass(body) { return api('/api/create-cohort', body); }
+  function adminClassUpdate(id, patch) { return api('/api/admin/teacher?action=class-update', Object.assign({ cohort_id: id }, patch)); }
+  function adminMoveStudent(studentId, cohortId, notify) { return api('/api/admin/teacher?action=enrollment-move', { student_id: studentId, cohort_id: cohortId, notify: !!notify }); }
+  function adminRemoveStudent(studentId, notify) { return api('/api/admin/teacher?action=enrollment-remove', { student_id: studentId, notify: !!notify }); }
+  /* Class dates from `since` to `until` (ISO), with their class and teacher */
+  function adminSchedule(since, until) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('sessions').select('id, cohort_id, scheduled_at, status, cohorts(id, language, level, tier, timezone, status, enrolled_count, teacher_profiles(full_name))')
+      .gte('scheduled_at', since).lt('scheduled_at', until).order('scheduled_at', { ascending: true }).limit(5000).then(rows);
+  }
+  function adminSessionUpdate(body) { return api('/api/admin/teacher?action=session-update', body); }
+  function adminWaitlist() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('cohort_waitlist').select('id, cohort_id, added_at, offered_at, offer_expires_at, student_profiles(id, full_name, level, tier, stripe_subscription_status), cohorts(id, language, level, tier, status, enrolled_count, max_students, schedule_days, schedule_time, timezone, teacher_profiles(full_name))')
+      .order('added_at', { ascending: true }).limit(5000).then(rows);
+  }
+  function adminWaitlistRemove(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('cohort_waitlist').delete().eq('id', id).select('id').then(function (r) { if (r.error) throw r.error; if (!(r.data || []).length) throw new Error('They were no longer on the waiting list'); });
+  }
+  function adminWaitlistOffer(id) { return api('/api/admin/teacher?action=waitlist-offer', { waitlist_id: id }); }
+  /* Every conversation (an admin can see them all through can_see_thread()); hidden messages included for admins */
+  function adminThreads() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('message_threads').select('id, kind, cohort_id, last_message_at, created_at, cohorts(language, level, tier, teacher_profiles(full_name)), student_profiles(full_name), teacher_profiles(full_name)')
+      .order('last_message_at', { ascending: false, nullsFirst: false }).limit(2000).then(rows);
+  }
+  function adminThreadMessages(threadId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('messages').select('id, sender_role, sender_name, body, created_at, hidden_at').eq('thread_id', threadId).order('created_at', { ascending: false }).limit(500)
+      .then(function (r) { return rows(r).reverse(); });
+  }
+  function adminHideMessage(id, hide) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('messages').update({ hidden_at: hide ? new Date().toISOString() : null }).eq('id', id).select('id, hidden_at').single().then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+
   /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
   function libraryResults(studentId) {
     var c = client();
@@ -1026,5 +1107,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, adminClasses: adminClasses, adminClassFile: adminClassFile, adminTeacherSlots: adminTeacherSlots, adminCreateClass: adminCreateClass, adminClassUpdate: adminClassUpdate, adminMoveStudent: adminMoveStudent, adminRemoveStudent: adminRemoveStudent, adminSchedule: adminSchedule, adminSessionUpdate: adminSessionUpdate, adminWaitlist: adminWaitlist, adminWaitlistRemove: adminWaitlistRemove, adminWaitlistOffer: adminWaitlistOffer, adminThreads: adminThreads, adminThreadMessages: adminThreadMessages, adminHideMessage: adminHideMessage, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

@@ -16,7 +16,7 @@
  *                     approved profile, and a sign-in link is emailed
  *    ?action=emails (POST, admin JWT) — the sign-in email of up to 500 accounts
  *                     (they live in Supabase Auth, which the browser cannot read)
- *    ?action=session-update | enrollment-move | enrollment-remove
+ *    ?action=session-update | enrollment-move | enrollment-remove | class-update | waitlist-offer
  *                       (POST, admin JWT) — class operations, see api/_lib/admin-ops.js
  *
  *  Legacy paths (via Vercel rewrites):
@@ -867,6 +867,10 @@ module.exports = async function handler(req, res) {
       return adminOps.enrollmentMove(req, res);
     case 'enrollment-remove':
       return adminOps.enrollmentRemove(req, res);
+    case 'class-update':
+      return adminOps.classUpdate(req, res);
+    case 'waitlist-offer':
+      return adminOps.waitlistOffer(req, res);
     default:
       return res.status(400).json({ error: 'Unknown admin action' });
   }
