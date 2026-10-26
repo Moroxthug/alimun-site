@@ -1,0 +1,5 @@
+  'german-cases-neuschwanstein': { src: '/images/blog/german-cases-neuschwanstein.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/neuschwanstein-castle-NLTLN9CQVK' },
+  'german-cases-bicycle-basket': { src: '/images/blog/german-cases-bicycle-basket.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/bicycle-bike-Y2KCFMGHD1' },
+  'german-cases-coffee-table': { src: '/images/blog/german-cases-coffee-table.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/coffee-table-L4SNGYZWL4' },
+  'german-cases-bakery-bread': { src: '/images/blog/german-cases-bakery-bread.jpg', w: 960, h: 720, source: 'https://stocksnap.io/photo/bread-bakery-EA1243E167' },
+  'german-cases-red-umbrella': { src: '/images/blog/german-cases-red-umbrella.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/red-umbrella-45JIYYO371' },
