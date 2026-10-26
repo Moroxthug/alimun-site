@@ -129,3 +129,11 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] Phone (iPhone Safari, Android Chrome): the same, with the screen on.
 - [ ] Admin, AI spend: "Tutor live calls (estimate)" rows; compare with Google AI Studio's billing after a few calls.
 
+## AI tutor, part 7 B and C (the board in the call, the lesson digest)
+- [ ] Ask "how do you spell ...?": the word is written letter by letter on the board while the tutor says it.
+- [ ] While explaining, the tutor writes a title, a line with bold words, a correction or a small table, and clears the board for a new point.
+- [ ] "Test me": an exercise appears on the board; answer it; the tutor comments on your results by voice.
+- [ ] With Azure on: "let's practise pronouncing a sentence": the card appears; "Hear it slowly" makes the tutor say it slowly; "Say it" records (the tutor does not answer meanwhile), the words are marked and the tutor helps with the sound that was off.
+- [ ] A student with class notes published in the last two weeks: early in the call the tutor offers to go over that lesson (grammar focus, words, homework without doing it). The written tutor knows it too.
+- [ ] Past sessions: the call's transcript shows the lines, the exercises set and the sentences to say.
+
