@@ -3,7 +3,7 @@ export default {
   key: 'en-ex-b2', site: 'en', slug: 'english-exercise-b2-conditionals', kind: 'exercise', course: 'English', level: 'B2',
   draw: 'cat', tint: 'lime', published: '2026-10-26',
   title: 'English exercise: conditionals (B2)',
-  metaTitle: 'Conditionals exercise for B2 English: zero to mixed (free) – Alimun',
+  metaTitle: 'Conditionals exercise for B2 English learners (free) – Alimun',
   desc: 'Twelve free questions for B2 learners of English on zero, first, second, third and mixed conditionals, with an explanation for every answer.',
   lead: 'Choose the right verb form in each if sentence. You see straight away if you are right, and why.',
   instructions: 'Choose the right form.',
