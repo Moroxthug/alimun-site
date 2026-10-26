@@ -37,7 +37,7 @@
       '<p class="t-lead" style="margin-top:12px">' + esc(t('app_tp_month_p', { classes: A.tn('app_t_classes_taught_n', d.classes.length), oto: A.tn('app_tp_oto_n', d.oto.length) })) + '</p>' +
       (d.classes.length ? '<div class="tt-week th-wait">' + d.cohorts.filter(function (c) { return perClass[c.id]; }).map(function (c) {
         return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(String(perClass[c.id])) + '</span><span><b>' + esc(A.className(c)) + '</b></span></div>';
-      }).join('') + (d.oto.length ? '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(String(d.oto.length)) + '</span><span><b>' + esc(t('app_tp_oto_line', { follow: follow, priv: priv })) + '</b></span></div>' : '') + '</div>' : '') +
+      }).join('') + (d.oto.length ? '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(String(d.oto.length)) + '</span><span><b>' + esc(A.cap(t('app_tp_oto_line', { follow: follow, priv: priv }))) + '</b></span></div>' : '') + '</div>' : '') +
       '<p class="t-small tp-note">' + esc(t('app_tp_month_note')) + '</p></section>' +
       '<section class="stage span-4" style="--i:1;background:var(--t-sun)" aria-hidden="true"><div class="bub think">' + esc(t('app_t_soon_payouts_bub')) + '</div>' + A.Cast.drawing('suitcase') + '</section>';
     html += '<section class="card span-12" style="--i:2" aria-labelledby="h-paid"><h2 class="t-h2" id="h-paid">' + esc(t('app_tp_paid_h')) + '</h2>';
