@@ -128,7 +128,7 @@ Recordings are sent to Groq (listening) or Azure (scoring) and discarded; they a
 - 13: going over a lesson uses the student's normal tutor minutes; it is offered until the class's next lesson.
 - 14: the owner's full sentence: going over a lesson with the tutor afterwards "creates a better learning program" (the reason for part 5b; nothing more to decide).
 - Part 3 continues in a new session (owner's request).
-- Part 3 built on 27 Oct 2026 (`docs/PROGRESS.md`): the voice uses the course audio's model on Google Cloud (`gemini-3.1-flash-tts-preview`, about $0.03 a minute of speech; `TUTOR_TTS_MODEL` can switch to `gemini-2.5-flash-tts` at half the price if the owner hears no difference). The Privacy and Terms paragraphs are drafted in `docs/AI_TUTOR_LEGAL_PARAGRAPHS.patch` and wait for the owner to unlock those blocks.
+- Part 3 built on 27 Oct 2026 (`docs/PROGRESS.md`): the voice uses the course audio's model on Google Cloud (`gemini-3.1-flash-tts-preview`, about $0.03 a minute of speech; `TUTOR_TTS_MODEL` can switch to `gemini-2.5-flash-tts` at half the price if the owner hears no difference). The Privacy and Terms paragraphs on the tutor are published (owner: "apply it and update lock"), with a [COPY NEEDED] for legal review. Part 4 continues in a new session.
 
 ## 10. Questions only the owner can answer
 1. What counts as tutor time: the whole active session (recommended: what the student sees and understands), or only the time the tutor is speaking (about a third of a session, so 10 minutes would last much longer)?
