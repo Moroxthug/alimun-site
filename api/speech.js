@@ -11,7 +11,7 @@
  *                     as MP3 in Supabase Storage course-audio/<book>/<hash>.mp3, with
  *                     <book>/manifest.json listing the files made. With a Google Cloud model in the plan
  *                     (gemini-3.1-flash-tts-preview, owner 26 Oct 2026) each sentence is one Vertex AI request as
- *                     the service account, up to TTS_CLOUD_PER_MINUTE (default 30) a minute. With a Gemini API
+ *                     the service account, up to TTS_CLOUD_PER_MINUTE (default 120) a minute, 8 at a time. With a Gemini API
  *                     model, sentences of one block with the same
  *                     voice are spoken in one request and cut at the pauses; about 75 s per call, one request
  *                     every 6.7 s (TTS_PER_MINUTE, default 9) for Google's per-minute limit; a 429 ends the
@@ -309,8 +309,10 @@ async function cloudTest(res, body) {
 const BUCKET = 'course-audio';
 /* Milliseconds between two requests to Google: 6.5 s keeps under 10 a minute (raise TTS_PER_MINUTE after a tier upgrade) */
 const GAP = Math.ceil(60000 / Math.max(1, +(process.env.TTS_PER_MINUTE || 9)));
-/* Through Google Cloud (Vertex AI) the limit is per minute only: TTS_CLOUD_PER_MINUTE, default 30 */
-const CLOUD_GAP = Math.ceil(60000 / Math.max(1, +(process.env.TTS_CLOUD_PER_MINUTE || 30)));
+/* Through Google Cloud (Vertex AI) there is no fixed limit for the preview model (Google's shared pool): up to
+   TTS_CLOUD_PER_MINUTE requests a minute (default 120), TTS_CLOUD_PARALLEL of them at the same time (default 8) */
+const CLOUD_GAP = Math.ceil(60000 / Math.max(1, +(process.env.TTS_CLOUD_PER_MINUTE || 120)));
+const CLOUD_PARALLEL = Math.min(20, Math.max(1, +(process.env.TTS_CLOUD_PARALLEL || 8)));
 function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 const BOOK_RE = /^[A-Z][a-z]+-[ABC][12](-[a-z]+)?$/;
 
@@ -441,8 +443,30 @@ async function generate(req, res, supabase, body) {
       manifest.done[h] = m.seconds;
       made.push(h);
     };
-    /* One request at a time, at most one every GAP ms, to stay under Google's requests-per-minute limit */
-    while (queue.length && Date.now() - t0 < 75000) {
+    /* Google Cloud: several sentences at once, starts spaced CLOUD_GAP apart; a refusal stops every worker */
+    let next = 0;
+    const worker = async () => {
+      while (queue.length && !retryAfter && Date.now() - t0 < 75000) {
+        const group = queue.shift();
+        const slot = Math.max(next, Date.now());
+        next = slot + gap;
+        if (slot > Date.now()) await sleep(slot - Date.now());
+        if (retryAfter) return;
+        last = Math.max(last, Date.now());
+        requests++;
+        try {
+          const w = await speakVertex({ model: plan.model, voice: group[0][1], style: group[0][2], text: group[0][3] });
+          const { pcm, rate } = pcmOf(w);
+          await save(group[0][0], pcm, rate);
+        } catch (e) {
+          if (e.rateLimited) { if (!retryAfter) { retryAfter = e.retryAfter; limitMessage = e.limitMessage; daily = e.daily; resetAt = e.resetAt; } return; }
+          failed.push({ h: group[0][0], error: String(e.message || e).slice(0, 200), detail: e.detail || null });
+        }
+      }
+    };
+    if (cloud) await Promise.all(Array.from({ length: CLOUD_PARALLEL }, worker));
+    /* Gemini API: one request at a time, at most one every GAP ms, to stay under Google's requests-per-minute limit */
+    while (!cloud && queue.length && Date.now() - t0 < 75000) {
       const group = queue.shift();
       const wait = last + gap - Date.now();
       if (wait > 0) await sleep(wait);
@@ -450,12 +474,6 @@ async function generate(req, res, supabase, body) {
       requests++;
       const style = group[0][2], voice = group[0][1];
       try {
-        if (cloud) {
-          const w = await speakVertex({ model: plan.model, voice, style, text: group[0][3] });
-          const { pcm, rate } = pcmOf(w);
-          await save(group[0][0], pcm, rate);
-          continue;
-        }
         const text = group.map((it) => it[3]).join('\n\n');
         const w = await speak({ model: plan.model || MODELS.flash, turns: [{ text }], voices: { _: voice },
           style: group.length > 1 ? style + ', with a long pause of about two seconds after each sentence' : style });
