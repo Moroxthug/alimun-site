@@ -30,3 +30,4 @@ playwright-report/
 # Blog pages are generated at deploy time (site/ build, docs/BLOG_PLAN.md)
 /blog/
 /*/blog/
+/mock-blog/
