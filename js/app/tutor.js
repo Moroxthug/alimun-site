@@ -19,8 +19,12 @@
    Part 7: the live call. When the server says it is configured, the Tutor page lets the student pick one of the six
    tutors (each with its own voice) and "Talk with ..." opens #/tutor/live, run by js/app/tutor-live.js; writing to the
    tutor stays as the other way in.
+   Part 5: at the end of a session (written or live) the summary says how many words went into the flashcards and links
+   to the practice the tutor left in Practice ("From your tutor", js/app/practice.js).
+   Part 5b: #/tutor/lesson/<notes id> (from Home and Classes, once the teacher published the class notes): the same page
+   with the lesson to go over; writing or calling then starts from that lesson (the server checks it is the student's).
    Sample (signed out or ?sample=1): a short scripted session in German, nothing is sent.
-   Routes: #/tutor, #/tutor/session, #/tutor/live, #/tutor/past/<id>. Interface text: app_tu_* keys. */
+   Routes: #/tutor, #/tutor/session, #/tutor/live, #/tutor/past/<id>, #/tutor/lesson/<id>. Interface text: app_tu_* keys. */
 (function () {
   'use strict';
   var A = null, root = null, mountNo = 0;
@@ -462,13 +466,16 @@
   }
   function startLive() {
     unlock(); forgetAudio();
-    window.AlimunTutorLive.want({ tutor: window.AlimunTutorLive.myTutor(), sample: !!S.sample, seconds: S.status.seconds ? S.status.seconds.total : 0 });
+    window.AlimunTutorLive.want({ tutor: window.AlimunTutorLive.myTutor(), sample: !!S.sample, seconds: S.status.seconds ? S.status.seconds.total : 0, lesson: S.lesson || null });
     location.hash = '#/tutor/live';
   }
   function homeView() {
     var s = S.status, sec = s.seconds || {}, plan = s.plan || {}, none = (sec.total || 0) <= 0;
     var buddy = A.Cast.drawing(A.buddyFor(A.data().profile.language)), liveOn = liveReady();
     var html = '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_nav_tutor')) + '</h1><p class="t-lead">' + esc(t('app_tu_lead2')) + '</p></div></div><div class="grid rise">';
+    /* Part 5b: going over a class lesson */
+    if (S.lesson) html += '<section class="card card--sun span-12" style="--i:0" aria-labelledby="tu-lesson"><h2 class="t-h2" id="tu-lesson">' + esc(t('app_tu_lesson_h')) + '</h2>' +
+      '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_lesson_p')) + '</p><div class="btn-row" style="margin-top:12px"><a class="btn btn--quiet btn--sm" href="#/tutor">' + esc(t('app_tu_lesson_not')) + '</a></div></section>';
     if (liveOn) html += liveCard(none);
     html += '<section class="card span-7" style="--i:0" aria-labelledby="tu-left"><h2 class="t-h2" id="tu-left">' + esc(t('app_tu_left_h')) + '</h2>' +
       '<p class="t-num" style="margin-top:8px">' + esc(mins(sec.total)) + '</p><div class="tt-week" style="margin-top:12px">' +
@@ -532,13 +539,19 @@
     return out;
   }
   function resultText(x) { return x.pron ? t('app_tu_pron_said', { score: x.pron.score }) : t('app_tu_results', { right: x.right, total: x.total }); }
+  /* Part 5: what the session left: new flashcards and the practice in Practice */
+  function afterHtml(x) {
+    if (!x || (!x.cards && !(x.set && x.set.id))) return '';
+    return '<div class="tu-after">' + (x.cards ? '<p class="t-body">' + esc(t('app_tu_after_cards', { n: new Intl.NumberFormat(A.locale).format(x.cards) })) + ' <a class="linkish" href="#/cards">' + esc(t('app_tu_after_cards_go')) + '</a></p>' : '') +
+      (x.set && x.set.id ? '<p class="t-body">' + esc(t('app_tu_after_set')) + '</p><div class="btn-row" style="margin-top:8px"><a class="btn btn--primary btn--sm" href="#/practice/tutor/' + esc(x.set.id) + '">' + esc(t('app_tu_after_set_go')) + '</a></div>' : '') + '</div>';
+  }
   function summaryHtml() {
     var x = S.summary || {};
     return '<div class="tu-sum"><h3 class="t-h3">' + esc(t('app_tu_sum_h')) + '</h3>' + (x.title ? '<p class="t-body" dir="auto"><b>' + esc(x.title) + '</b></p>' : '') +
       (x.summary ? '<p class="t-body" dir="auto">' + esc(x.summary) + '</p>' : '<p class="t-body">' + esc(t('app_tu_sum_none')) + '</p>') +
       ((x.words || []).length ? '<h4 class="t-h3" style="margin-top:12px">' + esc(t('app_tu_words_h')) + '</h4><div class="tt-week">' + x.words.map(function (w) {
         return '<div class="tt-row tt-row--wide"><span class="tt-row__time"' + ta() + '>' + esc(w.w) + '</span><span><small dir="auto">' + esc(w.m || '') + '</small></span></div>';
-      }).join('') + '</div>' : '') + '</div>';
+      }).join('') + '</div>' : '') + afterHtml(x) + '</div>';
   }
   function pastView(x, msgs) {
     var html = '<a class="rd-back" href="#/tutor">' + A.icon('back') + '<span>' + esc(t('app_nav_tutor')) + '</span></a>' +
@@ -579,6 +592,7 @@
     if (r === 'unheard' || r === 'audio_short') return 'app_tu_err_unheard';
     if (r === 'pron' || r === 'pron_off') return 'app_tu_err_pron';
     if (r === 'pron_closed') return 'app_tu_err_pron_closed';
+    if (r === 'lesson_closed') return 'app_tu_lesson_closed';
     return r === 'no_time' ? 'app_tu_none_left' : r === 'budget' ? 'app_tu_err_budget' : r === 'ended' ? 'app_tu_err_ended' : r === 'email' ? 'app_tu_email' : r === 'not_configured' ? 'app_tu_closed' : e && e.status === 429 ? 'app_tu_err_fast' : 'app_tu_err';
   }
 
@@ -591,7 +605,7 @@
       setTimeout(function () { S.session = { id: 'sample' }; S.messages = [sampleMsg('tutor', SAMPLE_OPEN)]; S.board = SAMPLE_OPEN.board.slice(); S.fresh = S.board.length; S.seconds = S.status.seconds.total; prepareExercise(); history.replaceState(null, '', '#/tutor/session'); draw(); }, 700);
       return;
     }
-    D().tutorStart(A.lang).then(function (r) {
+    D().tutorStart(A.lang, S.lesson).then(function (r) {
       S.session = r.session; S.messages = r.messages || []; S.board = r.board || []; S.seconds = r.seconds; S.ended = false; S.summary = null; S.fresh = r.resumed ? 0 : S.board.length;
       prepareExercise();
       if (location.hash !== '#/tutor/session') history.replaceState(null, '', '#/tutor/session');
@@ -652,7 +666,7 @@
   function end() {
     if (S.busy) return;
     stopRec(true); stopVoice();
-    if (S.sample) { S.ended = true; S.summary = { title: 'Perfekt mit haben und sein', summary: 'You practised the Perfekt with haben and sein and got most of the exercise right. Next time: separable verbs in the Perfekt.', words: [{ w: 'aufstehen', m: 'to get up' }, { w: 'gefahren', m: 'driven, gone (by vehicle)' }] }; draw(); return; }
+    if (S.sample) { S.ended = true; S.summary = { title: 'Perfekt mit haben und sein', summary: 'You practised the Perfekt with haben and sein and got most of the exercise right. Next time: separable verbs in the Perfekt.', words: [{ w: 'aufstehen', m: 'to get up' }, { w: 'gefahren', m: 'driven, gone (by vehicle)' }], cards: 2, set: { id: 'sample' } }; draw(); return; }
     busy(true);
     D().tutorEnd(S.session.id).then(function (r) {
       S.ended = true; S.summary = r; S.seconds = r.seconds; S.ex = null; busy(false);
@@ -660,7 +674,7 @@
   }
   function home() {
     stopRec(true); forgetAudio();
-    S.session = null; S.messages = []; S.board = []; S.ex = null; S.exMsg = null; S.ended = false; S.summary = null; S.error = null; S.tries = 0;
+    S.session = null; S.messages = []; S.board = []; S.ex = null; S.exMsg = null; S.ended = false; S.summary = null; S.error = null; S.tries = 0; S.lesson = null;
     location.hash = '#/tutor';
   }
   function askForget() {
@@ -753,6 +767,7 @@
       var keep = S && S.session && !S.ended ? S : null;
       S = keep || { messages: [], board: [], audio: {} };
       S.status = h.status; S.sessions = h.sessions; S.memory = h.memory; S.sample = !!h.sample;
+      S.lesson = parts[0] === 'lesson' && /^[\w-]{1,40}$/.test(parts[1] || '') ? parts[1] : null;
       if (S.session && !S.ended) { location.replace('#/tutor/session'); return {}; }
       draw();
       return {};
@@ -765,5 +780,5 @@
 
   /* Shared with the live call (js/app/tutor-live.js): the board's lines, the pronunciation card's body, the recording helpers */
   window.AlimunTutor = { mount: mount, kit: { opHtml: function (o, isNew) { return opHtml(o, isNew); }, pronBody: function (s, r, mine) { return pronBody(s, r, mine); },
-    toWav: toWav, blobBase64: blobBase64, recMime: recMime, ta: function () { return ta(); } } };
+    toWav: toWav, blobBase64: blobBase64, recMime: recMime, ta: function () { return ta(); }, afterHtml: function (x) { return afterHtml(x); } } };
 })();

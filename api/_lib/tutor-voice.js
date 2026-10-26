@@ -76,6 +76,8 @@ const VOICE_STYLE = 'a warm, patient language teacher speaking clearly, at a nat
 const SLOW_STYLE = 'a patient language teacher modelling pronunciation: slowly and very clearly, with a short pause between words, natural sounds and stress';
 const VOICE_TIMEOUT_MS = 15000;
 const MAX_SAY = 800;
+/* Part 5: the listening left in Practice, a text of up to about 200 words read in one go */
+const MAX_LONG = 1600, LONG_TIMEOUT_MS = 45000;
 
 function voiceConfigured() { return !!gv.serviceAccount(); }
 
@@ -93,17 +95,18 @@ async function voiceName(supabase) {
   return name;
 }
 
-/** The tutor's text as MP3; opts.slow says it slowly (part 4). Throws { code: 'budget' | 'unavailable' | 'voice' }. */
+/** The tutor's text as MP3; opts.slow says it slowly (part 4), opts.long reads a listening text (part 5).
+ *  Throws { code: 'budget' | 'unavailable' | 'voice' }. */
 async function speak(supabase, userId, text, opts) {
-  const slow = !!(opts && opts.slow);
-  const say = String(text || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim().slice(0, MAX_SAY);
+  const slow = !!(opts && opts.slow), long = !!(opts && opts.long);
+  const say = String(text || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim().slice(0, long ? MAX_LONG : MAX_SAY);
   const rate = VOICE_USD_PER_SEC[VOICE_MODEL] || 20 * 25 / 1e6;
   // About 14 characters a second of speech, half that when slow
   const row = await brain.reserve(supabase, userId, 'tutor_voice', Math.ceil(say.length / (slow ? 7 : 14) + 2) * rate);
   const voice = await voiceName(supabase);
   const t0 = Date.now();
   try {
-    const w = await gv.speakVertex({ model: VOICE_MODEL, voice, style: slow ? SLOW_STYLE : VOICE_STYLE, text: say, timeoutMs: VOICE_TIMEOUT_MS });
+    const w = await gv.speakVertex({ model: VOICE_MODEL, voice, style: slow ? SLOW_STYLE : VOICE_STYLE, text: say, timeoutMs: long ? LONG_TIMEOUT_MS : VOICE_TIMEOUT_MS });
     const m = await gv.mp3(w);
     const textTokens = Math.ceil(say.length / 4);
     await supabase.from('ai_usage').update({

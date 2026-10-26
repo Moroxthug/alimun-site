@@ -178,7 +178,16 @@
         c.from('session_attendance').select('joined_at').eq('student_id', p.id).gte('joined_at', since),
         topicLabels(p.placement && p.placement.language || p.language, p.placement && p.placement.topics, lang),
         c.from('cohort_waitlist').select('id, cohort_id, offer_expires_at, cohorts ( language, level, tier, teacher_profiles:teacher_public ( full_name ) )')
-          .eq('student_id', p.id).gt('offer_expires_at', new Date().toISOString()).order('offer_expires_at', { ascending: true }).limit(1)
+          .eq('student_id', p.id).gt('offer_expires_at', new Date().toISOString()).order('offer_expires_at', { ascending: true }).limit(1),
+        /* The Tutor card (AI tutor, part 5): the stored balance, what the tutor suggested last time */
+        c.from('tutor_time').select('free_seconds, plan_seconds, credit_seconds').eq('student_id', p.id).maybeSingle(),
+        c.from('tutor_memory').select('notes').eq('student_id', p.id).maybeSingle(),
+        c.from('tutor_sessions').select('id, started_at, title, summary').eq('student_id', p.id).not('summary', 'is', null).order('started_at', { ascending: false }).limit(1),
+        /* Part 5b: the latest class notes, and the classes' recent lessons, for "Go over the lesson with your tutor" */
+        cohorts.length ? c.from('session_notes').select('id, grammar_focus, published_at, sessions!inner ( scheduled_at, cohort_id )').in('sessions.cohort_id', cohorts)
+          .not('published_at', 'is', null).gte('published_at', new Date(Date.now() - 14 * DAY).toISOString()).order('published_at', { ascending: false }).limit(1) : null,
+        cohorts.length ? c.from('sessions').select('cohort_id, scheduled_at, status').in('cohort_id', cohorts).gte('scheduled_at', new Date(Date.now() - 15 * DAY).toISOString())
+          .lte('scheduled_at', new Date().toISOString()).limit(100) : null
       ]);
     }).then(function (res) {
       res.cohorts = cohortsOf;
@@ -236,7 +245,17 @@
         homework: openHw,
         streak: streakFrom(stamps),
         placement: placement,
-        topics: placement ? res[8] : []
+        topics: placement ? res[8] : [],
+        tutor: (function () {
+          var tt = res[10] && !res[10].error ? res[10].data : null, mem = res[11] && !res[11].error && res[11].data ? res[11].data.notes || {} : {};
+          var last = res[12] && !res[12].error ? (res[12].data || [])[0] : null;
+          /* No row yet: the free 10 minutes are given the first time the Tutor is opened */
+          return { seconds: tt ? (tt.free_seconds || 0) + (tt.plan_seconds || 0) + (tt.credit_seconds || 0) : 600, fresh: !tt, next: mem.next || '', last: last || null };
+        })(),
+        lesson: (function () {
+          var n = res[13] && !res[13].error ? (res[13].data || [])[0] : null;
+          return n && lessonOpen(n, res[14] && !res[14].error ? res[14].data : []) ? { id: n.id, at: n.sessions.scheduled_at, grammar: n.grammar_focus || '' } : null;
+        })()
       };
     });
   }
@@ -1065,7 +1084,8 @@
   }
   /* Part 2: a session goes through the server; past sessions, transcripts and memory are the student's own rows (an admin
      viewing as the student reads that student's rows) */
-  function tutorStart(ui) { return api('/api/tutor?action=start', { ui: ui }); }
+  /* lesson (part 5b): the class notes to go over, checked on the server against the student's classes */
+  function tutorStart(ui, lesson) { return api('/api/tutor?action=start', lesson ? { ui: ui, lesson: lesson } : { ui: ui }); }
   function tutorTurn(body) { return api('/api/tutor?action=turn', body); }
   function tutorEnd(sessionId) { return api('/api/tutor?action=end', { session: sessionId }); }
   /* The tutor's voice for one of its messages (part 3), or with slow the sentence it set to say, spoken slowly (part 4):
@@ -1109,6 +1129,44 @@
     return Promise.resolve().then(function () {
       return c.from('tutor_memory').select('notes, updated_at').eq('student_id', id).maybeSingle().then(function (r) { if (r.error) throw r.error; return r.data || { notes: {} }; });
     });
+  }
+  /* Part 5: what the tutor left in Practice ("From your tutor"), newest first, with the student's best scores
+     (practice_progress tutor:<id>, tutor:<id>:listen, tutor:<id>:speak) and the writing check (tutor:<id>:write) */
+  function tutorSets(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('tutor_sets').select('id, session_id, title, language, level, items, created_at').eq('student_id', studentId).order('created_at', { ascending: false }).limit(12),
+      c.from('practice_progress').select('ex_key, done, graded_score, user_answer, feedback').eq('student_id', studentId).like('ex_key', 'tutor:%').limit(200)
+    ]).then(function (r) {
+      if (r[0].error) throw r[0].error;
+      var res = {};
+      rows(r[1]).forEach(function (x) { res[x.ex_key] = x; });
+      return (r[0].data || []).map(function (s) {
+        var k = 'tutor:' + s.id;
+        s.result = res[k] || null; s.listenResult = res[k + ':listen'] || null; s.speakResult = res[k + ':speak'] || null; s.writeResult = res[k + ':write'] || null;
+        return s;
+      });
+    });
+  }
+  /* The listening of a set in the tutor's voice: a signed https link to the MP3, valid for an hour */
+  function tutorSetAudio(setId) { return api('/api/tutor?action=set-audio', { set: setId }); }
+  /* The writing task of a set: pointers from /api/ai?action=homework-check (the task is read on the server) */
+  function tutorWritingCheck(setId, text, ui) { return api('/api/ai?action=homework-check', { tutor_set: setId, text: String(text).slice(0, 6000), ui: ui }).then(function (j) { return j.result; }); }
+  function saveTutorWriting(studentId, setId, text, result) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('practice_progress').upsert({
+      student_id: studentId, ex_key: 'tutor:' + setId + ':write', done: true, graded_score: null,
+      user_answer: { text: String(text).slice(0, 6000) }, feedback: JSON.stringify(result || {}).slice(0, 8000), updated_at: new Date().toISOString()
+    }, { onConflict: 'student_id,ex_key' }).then(function (r) { if (r.error) throw r.error; });
+  }
+  /* Part 5b: whether published class notes can still be gone over with the tutor: at most 14 days old and until the
+     class's next lesson has started (owner, question 13). sessions: the class's sessions; the server checks it again. */
+  function lessonOpen(note, sessions) {
+    var s = note && note.sessions, at = Date.parse(s && s.scheduled_at || note && note.published_at), now = Date.now();
+    if (!note || !note.published_at || !(now - at < 14 * DAY)) return false;
+    return !(sessions || []).some(function (x) { return x.cohort_id === s.cohort_id && x.status !== 'cancelled' && Date.parse(x.scheduled_at) > at && Date.parse(x.scheduled_at) <= now; });
   }
   function adminTutorGrant(studentId, minutes, note) { return api('/api/tutor?action=admin-grant', { student: studentId, minutes: minutes, note: note }); }
   function adminTutorMinutes() {
@@ -1353,7 +1411,7 @@
   function cards(studentId) {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.from('vocab_reviews').select('id, word, word_key, definition, example, box, due_on, correct_count, wrong_count, last_reviewed_at')
+    return c.from('vocab_reviews').select('id, word, word_key, definition, example, source, box, due_on, correct_count, wrong_count, last_reviewed_at')
       .eq('student_id', studentId).order('due_on', { ascending: true }).limit(3000).then(rows);
   }
   function addCards(studentId, list) {
@@ -1378,5 +1436,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { tutorStatus: tutorStatus, tutorStart: tutorStart, tutorTurn: tutorTurn, tutorVoice: tutorVoice, tutorPronounce: tutorPronounce, tutorLiveStart: tutorLiveStart, tutorLiveTick: tutorLiveTick, tutorLiveBoard: tutorLiveBoard, tutorLiveAnswer: tutorLiveAnswer, tutorEnd: tutorEnd, tutorForget: tutorForget, tutorSessions: tutorSessions, tutorSession: tutorSession, tutorMemory: tutorMemory, adminTutorGrant: adminTutorGrant, adminTutorMinutes: adminTutorMinutes, adminTutorMinutesSet: adminTutorMinutesSet, checkout: checkout, billingPortal: billingPortal, findClasses: findClasses, findClass: findClass, myWaitlist: myWaitlist, joinWaitlist: joinWaitlist, leaveWaitlist: leaveWaitlist, setWaitlistOptIn: setWaitlistOptIn, enroll: enroll, myTeachers: myTeachers, reviewState: reviewState, saveReview: saveReview, viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, adminClasses: adminClasses, adminClassFile: adminClassFile, adminTeacherSlots: adminTeacherSlots, adminCreateClass: adminCreateClass, adminClassUpdate: adminClassUpdate, adminMoveStudent: adminMoveStudent, adminRemoveStudent: adminRemoveStudent, adminSchedule: adminSchedule, adminSessionUpdate: adminSessionUpdate, adminWaitlist: adminWaitlist, adminWaitlistRemove: adminWaitlistRemove, adminWaitlistOffer: adminWaitlistOffer, adminThreads: adminThreads, adminThreadMessages: adminThreadMessages, adminHideMessage: adminHideMessage, adminPayouts: adminPayouts, adminRecordPayout: adminRecordPayout, adminPayoutUpdate: adminPayoutUpdate, adminPayoutDelete: adminPayoutDelete, adminAiUsage: adminAiUsage, adminAiFailures: adminAiFailures, adminSettings: adminSettings, adminSettingSet: adminSettingSet, adminReviews: adminReviews, adminReviewDelete: adminReviewDelete, adminJobs: adminJobs, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftHomework: draftHomework, draftSet: draftSet, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { tutorSets: tutorSets, tutorSetAudio: tutorSetAudio, tutorWritingCheck: tutorWritingCheck, saveTutorWriting: saveTutorWriting, lessonOpen: lessonOpen, tutorStatus: tutorStatus, tutorStart: tutorStart, tutorTurn: tutorTurn, tutorVoice: tutorVoice, tutorPronounce: tutorPronounce, tutorLiveStart: tutorLiveStart, tutorLiveTick: tutorLiveTick, tutorLiveBoard: tutorLiveBoard, tutorLiveAnswer: tutorLiveAnswer, tutorEnd: tutorEnd, tutorForget: tutorForget, tutorSessions: tutorSessions, tutorSession: tutorSession, tutorMemory: tutorMemory, adminTutorGrant: adminTutorGrant, adminTutorMinutes: adminTutorMinutes, adminTutorMinutesSet: adminTutorMinutesSet, checkout: checkout, billingPortal: billingPortal, findClasses: findClasses, findClass: findClass, myWaitlist: myWaitlist, joinWaitlist: joinWaitlist, leaveWaitlist: leaveWaitlist, setWaitlistOptIn: setWaitlistOptIn, enroll: enroll, myTeachers: myTeachers, reviewState: reviewState, saveReview: saveReview, viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, adminClasses: adminClasses, adminClassFile: adminClassFile, adminTeacherSlots: adminTeacherSlots, adminCreateClass: adminCreateClass, adminClassUpdate: adminClassUpdate, adminMoveStudent: adminMoveStudent, adminRemoveStudent: adminRemoveStudent, adminSchedule: adminSchedule, adminSessionUpdate: adminSessionUpdate, adminWaitlist: adminWaitlist, adminWaitlistRemove: adminWaitlistRemove, adminWaitlistOffer: adminWaitlistOffer, adminThreads: adminThreads, adminThreadMessages: adminThreadMessages, adminHideMessage: adminHideMessage, adminPayouts: adminPayouts, adminRecordPayout: adminRecordPayout, adminPayoutUpdate: adminPayoutUpdate, adminPayoutDelete: adminPayoutDelete, adminAiUsage: adminAiUsage, adminAiFailures: adminAiFailures, adminSettings: adminSettings, adminSettingSet: adminSettingSet, adminReviews: adminReviews, adminReviewDelete: adminReviewDelete, adminJobs: adminJobs, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftHomework: draftHomework, draftSet: draftSet, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

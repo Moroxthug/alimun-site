@@ -356,6 +356,32 @@
     '</section>';
   }
 
+  /* AI tutor, part 5: the time left (the stored balance) and what the tutor suggested last time */
+  function tutorCard(d) {
+    var x = d.tutor;
+    if (!x) return '';
+    var left = new Intl.NumberFormat(locale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(Math.floor((x.seconds || 0) / 60));
+    var line = x.next ? t('app_home_tu_next', { next: x.next }) : x.last && x.last.title ? t('app_home_tu_last', { title: x.last.title }) : t('app_home_tu_none');
+    return '<section class="card card--mint span-' + (d.lesson ? 7 : 12) + '" style="--i:9" aria-labelledby="h-tutor">' +
+      '<div class="card__row card__row--split"><div><h2 class="t-h2" id="h-tutor">' + esc(t('app_home_tu_h')) + '</h2>' +
+      '<p class="t-small" style="margin-top:10px">' + esc(t('app_home_tu_left')) + '</p><div class="t-num" style="margin-top:6px">' + esc(left) + '</div>' +
+      '<p class="t-body" style="margin-top:12px" dir="auto">' + esc(line) + '</p>' +
+      '<div class="btn-row" style="margin-top:18px"><a class="btn btn--primary btn--sm" href="#/tutor">' + esc(t('app_home_tu_go')) + icon('arrow') + '</a>' +
+      (x.last && x.last.id ? '<a class="btn btn--ghost btn--sm" href="#/tutor/past/' + esc(x.last.id) + '">' + esc(t('app_home_tu_past')) + '</a>' : '') + '</div></div>' +
+      '<div class="card__art">' + Cast.drawing(buddyOf(d)) + '</div></div></section>';
+  }
+  /* Part 5b: once the teacher has published the class notes, until the class's next lesson */
+  function lessonCard(d) {
+    var l = d.lesson;
+    if (!l) return '';
+    var today = new Date(l.at).toDateString() === new Date().toDateString();
+    var code = (window.AlimunData && window.AlimunData.langCode(d.profile.language)) || 'en';
+    return '<section class="card card--sun span-5" style="--i:10" aria-labelledby="h-lesson"><h2 class="t-h2" id="h-lesson">' + esc(t(today ? 'app_home_lesson_today_h' : 'app_home_lesson_h')) + '</h2>' +
+      (l.grammar ? '<p class="t-body" style="margin-top:10px"><b lang="' + esc(code) + '">' + esc(l.grammar) + '</b></p>' : '') +
+      '<p class="t-small" style="margin-top:8px">' + esc(t('app_home_lesson_p', { date: fmt(l.at, { weekday: 'long', day: 'numeric', month: 'long' }) })) + '</p>' +
+      '<div class="btn-row" style="margin-top:16px"><a class="btn btn--primary btn--sm" href="#/tutor/lesson/' + esc(l.id) + '">' + esc(t('app_lesson_go')) + '</a></div></section>';
+  }
+
   function planCard(d) {
     var tier = d.profile.tier;
     if (!UNPAID[tier]) return '';
@@ -393,6 +419,8 @@
         todayPlan(d) +
         streakCard(d) +
         focusCard(d) +
+        tutorCard(d) +
+        lessonCard(d) +
         planCard(d) +
       '</div>';
   }

@@ -759,6 +759,11 @@
     if (!k) return html + '</section>';
     if (k.block) return html + k.html(S, bi, b, s, test, review) + '</section>';
     if (k.hint && !review) html += '<p class="t-small ex__hint">' + esc(t(S, k.hint)) + '</p>';
+    /* A listening for the whole block (the tutor's practice, AI tutor part 5): `src` its audio, `script` its text shown
+       once the block is done; `read` the text to read when there is no audio, with `note` saying why */
+    if (b.note) html += '<p class="t-small ex__hint">' + esc(t(S, b.note)) + '</p>';
+    if (b.src) html += hearHtml(S, b.src);
+    if (b.read) html += '<div class="ex-read"' + S.ta + '>' + mdBlock(b.read) + '</div>';
     if (k.top) html += k.top(S, b, bi, s);
     html += '<div class="ex-items">';
     b.items.forEach(function (it, i) {
@@ -770,6 +775,7 @@
     if (!test && k.check && !blockDone(b, s)) {
       html += '<div class="btn-row ex__foot"><button class="btn btn--primary btn--sm" type="button" data-act="check" data-b="' + bi + '">' + esc(t(S, 'app_book_check')) + '</button></div>';
     }
+    if (b.script && blockDone(b, s)) html += '<details class="model"><summary>' + esc(t(S, 'app_ex_read_text')) + '</summary><div' + S.ta + '>' + mdBlock(b.script) + '</div></details>';
     return html + '</section>';
   }
 

@@ -15,6 +15,9 @@ window.ALIMUN_SAMPLE = function () {
     homework: [{ id: 'sample', titleKey: 'app_sample_hw', due_date: new Date(now + 3 * DAY).toISOString().slice(0, 10) }],
     streak: { days: Math.max(todayIndex, 1) + 4, week: week, todayIndex: todayIndex, activeToday: false, lastActive: new Date(now - DAY).toISOString(), monday: monday },
     placement: { language: 'German', level: 'B1', topics: ['word-order', 'prepositions', 'separable-verbs'] },
-    topics: null
+    topics: null,
+    /* AI tutor, part 5: the Tutor card; part 5b: the class lesson to go over (the sample class's notes, js/app/classes.js) */
+    tutor: { seconds: 3120, fresh: false, next: 'Separable verbs in the Perfekt.', last: { id: 'x1', started_at: new Date(now - 2 * DAY).toISOString(), title: 'Weil and dass', summary: 'You practised word order after weil and dass and wrote three sentences about your job.' } },
+    lesson: { id: 'n1', at: new Date(now - 4 * DAY).toISOString(), grammar: 'Nebensätze mit weil und obwohl' }
   };
 };

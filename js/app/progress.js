@@ -12,6 +12,7 @@
    History: active days in each of the last twelve weeks, and the latest milestones. Words: flashcards learned.
    Sources: practice memory (js/app/practice.js), practice_progress, session_attendance, assignment_submissions,
    vocab_reviews (js/app/data.js progress()), the course book (js/app/reader.js), library shelves for piece kinds.
+   Sessions with the tutor (AI tutor, part 5): the latest sessions with their summaries, each opening #/tutor/past/<id>.
    Sample data when signed out. Route: #/progress. Interface text: app_pg_* keys. */
 (function () {
   'use strict';
@@ -136,6 +137,7 @@
     for (i = 0; i < 84; i++) if ((i * 7) % 5 < 3) stamps.push(ago(i));
     return { sample: true, memory: mem, rows: rows, attendance: [{ joined_at: ago(4) }, { joined_at: ago(6) }, { joined_at: ago(11) }],
       submissions: [{ status: 'graded', score: 86, graded_at: ago(7), assignments: { title: 'Eine E-Mail an den Vermieter', type: 'Writing' } }],
+      tutor: [{ id: 'x1', started_at: ago(2), seconds_used: 540, title: 'Weil and dass', summary: 'You practised word order after weil and dass and wrote three sentences about your job.' }],
       cards: [{ box: 4 }, { box: 3 }, { box: 3 }, { box: 1 }, { box: 0 }, { box: 5 }, { box: 2 }, { box: 3 }], stamps: stamps, libKinds: {}, libTitles: {} };
   }
   function load() {
@@ -143,9 +145,10 @@
     var bookP = window.AlimunReader ? window.AlimunReader.open(A, id).catch(function () { return null; }) : Promise.resolve(null);
     if (!signedIn()) return bookP.then(function (b) { var s = sample(b && b.book); s.book = b && b.book; return s; });
     var me = signedIn();
-    return Promise.all([bookP, window.AlimunData.progress(me), window.AlimunPractice ? window.AlimunPractice.use(A).then(function () { return window.AlimunPractice.memory(); }) : {}]).then(function (r) {
+    return Promise.all([bookP, window.AlimunData.progress(me), window.AlimunPractice ? window.AlimunPractice.use(A).then(function () { return window.AlimunPractice.memory(); }) : {},
+      window.AlimunData.tutorSessions(me).catch(function () { return []; })]).then(function (r) {
       var d = r[1];
-      d.book = r[0] && r[0].book; d.memory = r[2] || {};
+      d.book = r[0] && r[0].book; d.memory = r[2] || {}; d.tutor = r[3] || [];
       d.stamps = d.rows.map(function (x) { return x.updated_at; }).concat(d.attendance.map(function (x) { return x.joined_at; }), d.submissions.map(function (x) { return x.submitted_at; }), d.cards.map(function (x) { return x.last_reviewed_at; }));
       /* Library pieces: their kind (listening or reading) and title, from their shelves */
       var shelves = {};
@@ -235,6 +238,17 @@
       return '<li><div><b>' + esc(m.text) + '</b><span>' + esc(new Intl.DateTimeFormat(A.locale, { day: 'numeric', month: 'long' }).format(new Date(m.at))) + '</span></div>' + (m.score != null ? '<span class="pg-rate">' + esc(pct(m.score)) + '</span>' : '') + '</li>';
     }).join('') + '</ul>' : '<p class="t-body" style="margin-top:12px">' + esc(t('app_pg_recent_none')) + '</p>';
     html += '</section>';
+
+    /* Sessions with the tutor */
+    var ts = (d.tutor || []).slice(0, 6);
+    html += '<section class="card span-12 pg-tutor" style="--i:6" aria-labelledby="h-tutor"><h2 class="t-h2" id="h-tutor">' + esc(t('app_pg_tutor_h')) + '</h2>' +
+      (ts.length ? '<ul class="qunits__list">' + ts.map(function (x) {
+        var when = new Intl.DateTimeFormat(A.locale, { day: 'numeric', month: 'long' }).format(new Date(x.started_at));
+        var mins = new Intl.NumberFormat(A.locale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(Math.max(1, Math.round((x.seconds_used || 0) / 60)));
+        return '<li><div><b dir="auto">' + esc(x.title || t('app_tu_untitled')) + '</b><span>' + esc(new Intl.ListFormat(A.locale, { type: 'unit', style: 'short' }).format([when, mins])) + '</span>' + (x.summary ? '<span dir="auto">' + esc(x.summary) + '</span>' : '') + '</div>' +
+          '<a class="btn btn--ghost btn--sm" href="#/tutor/past/' + esc(x.id) + '">' + esc(t('app_pg_open')) + '</a></li>';
+      }).join('') + '</ul>' : '<p class="t-body" style="margin-top:8px">' + esc(t('app_pg_tutor_none')) + '</p>') +
+      '<div class="btn-row" style="margin-top:12px"><a class="btn btn--primary btn--sm" href="#/tutor">' + esc(t('app_home_tu_go')) + '</a></div></section>';
     if (d.sample) html += '<p class="t-tiny span-12">' + esc(t('app_pg_sample')) + '</p>';
     return html + '</div>';
   }

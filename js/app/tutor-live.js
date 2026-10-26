@@ -342,7 +342,7 @@
     if (!supported()) { fail('app_tl_unsupported'); return; }
     prime();
     var mic = L.micAsk;
-    D().tutorLiveStart({ tutor: tutor, ui: A.lang }).then(function (pass) {
+    D().tutorLiveStart(opts.lesson ? { tutor: tutor, ui: A.lang, lesson: opts.lesson } : { tutor: tutor, ui: A.lang }).then(function (pass) {
       /* Ended while connecting: the session just opened is closed again */
       if (!L || L.ending) { D().tutorEnd(pass.session.id).catch(function () {}); return; }
       L.session = pass.session.id; L.fresh = pass.fresh; L.seconds = pass.seconds; clock();
@@ -362,7 +362,7 @@
       });
     }, function (e) {
       var r = e && e.body && e.body.reason;
-      fail(r === 'no_time' ? 'app_tu_none_left' : r === 'budget' ? 'app_tu_err_budget' : r === 'email' ? 'app_tu_email' : e && e.status === 429 ? 'app_tu_err_fast' : 'app_tl_failed');
+      fail(r === 'no_time' ? 'app_tu_none_left' : r === 'lesson_closed' ? 'app_tu_lesson_closed' : r === 'budget' ? 'app_tu_err_budget' : r === 'email' ? 'app_tu_email' : e && e.status === 429 ? 'app_tu_err_fast' : 'app_tl_failed');
     });
   }
   function fail(key, why) {
@@ -447,7 +447,7 @@
     };
     step();
   }
-  var SAMPLE_SUMMARY = { title: 'Das Wochenende im Perfekt', summary: 'You talked about your weekend and practised word order after Am Wochenende. Next time: separable verbs in the Perfekt.', words: [{ w: 'ins Kino gehen', m: 'to go to the cinema' }] };
+  var SAMPLE_SUMMARY = { title: 'Das Wochenende im Perfekt', summary: 'You talked about your weekend and practised word order after Am Wochenende. Next time: separable verbs in the Perfekt.', words: [{ w: 'ins Kino gehen', m: 'to go to the cinema' }], cards: 1, set: { id: 'sample' } };
   function runSample() {
     var i = 0;
     L.started = true; L.seconds = 3120;
@@ -496,7 +496,7 @@
       (x.summary ? '<p class="t-body" style="margin-top:6px" dir="auto">' + esc(x.summary) + '</p>' : '') +
       ((x.words || []).length ? '<h3 class="t-h3" style="margin-top:14px">' + esc(t('app_tu_words_h')) + '</h3><div class="tt-week">' + x.words.map(function (w) {
         return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(w.w) + '</span><span><small dir="auto">' + esc(w.m || '') + '</small></span></div>';
-      }).join('') + '</div>' : '') +
+      }).join('') + '</div>' : '') + (window.AlimunTutor && window.AlimunTutor.kit.afterHtml ? window.AlimunTutor.kit.afterHtml(x) : '') +
       '<div class="btn-row" style="margin-top:16px"><a class="btn btn--primary" href="#/tutor">' + esc(t('app_tu_back')) + '</a></div></section>';
   }
   function draw() {
