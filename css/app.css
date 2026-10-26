@@ -1596,6 +1596,9 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .cl-note__tutor p { flex: 1; min-width: 200px; }
 .tu-after { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); display: grid; gap: 6px; }
 .tu-after p { margin: 0; }
+/* Part 6: the plans and the packs when the time is used up, at the end of a session or a call */
+.tu-out { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); }
+.tl-sum .tu-out { margin-top: 16px; }
 .ex-read { background: var(--t-mint); border-radius: var(--r-md); padding: 14px 18px; margin: 10px 0 14px; }
 .ex-read p { margin: 0 0 8px; line-height: 1.6; }
 .ex-read p:last-child { margin-bottom: 0; }

@@ -497,6 +497,8 @@
       ((x.words || []).length ? '<h3 class="t-h3" style="margin-top:14px">' + esc(t('app_tu_words_h')) + '</h3><div class="tt-week">' + x.words.map(function (w) {
         return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(w.w) + '</span><span><small dir="auto">' + esc(w.m || '') + '</small></span></div>';
       }).join('') + '</div>' : '') + (window.AlimunTutor && window.AlimunTutor.kit.afterHtml ? window.AlimunTutor.kit.afterHtml(x) : '') +
+      /* Part 6: a call that ran out of time ends with the plans and the packs */
+      ((L.failed || L.note) === 'app_tu_none_left' && !L.sample && window.AlimunTutor && window.AlimunTutor.kit.outHtml ? window.AlimunTutor.kit.outHtml() : '') +
       '<div class="btn-row" style="margin-top:16px"><a class="btn btn--primary" href="#/tutor">' + esc(t('app_tu_back')) + '</a></div></section>';
   }
   function draw() {

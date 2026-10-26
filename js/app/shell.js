@@ -657,10 +657,13 @@
 
   /* Coming back from Stripe (step 16): ?checkout=success|cancelled|credit, with ?join=<class> when a class needed the
      plan. The address is cleaned, the class opened, and a paid plan that the payment webhook has not recorded yet is
-     checked again for half a minute. */
+     checked again for half a minute. ?checkout=tutor&session_id=<checkout> (tutor time, docs/AI_TUTOR_PLAN.md part 6):
+     the minutes are looked for in the student's own time ledger until the webhook has added them. */
+  var stripeCheckout = null;
   function fromStripe() {
     var q = new URLSearchParams(location.search), c = q.get('checkout'), join = q.get('join');
-    if (!/^(success|cancelled|credit)$/.test(c || '')) return null;
+    if (!/^(success|cancelled|credit|tutor)$/.test(c || '')) return null;
+    stripeCheckout = /^cs_(live|test)_[A-Za-z0-9]{10,200}$/.test(q.get('session_id') || '') ? q.get('session_id') : null;
     ['checkout', 'join', 'session_id', 'tier'].forEach(function (k) { q.delete(k); });
     var hash = c === 'success' && /^[0-9a-f-]{36}$/i.test(join || '') ? '#/classes/find/' + join : location.hash;
     history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : '') + hash);
@@ -670,6 +673,7 @@
     var show = function (text) { var box = app.querySelector('[data-appnote]'); if (box) box.innerHTML = '<p class="t-body cl-flash">' + esc(text) + '</p>'; };
     if (c === 'cancelled') return show(t('app_pl_back_cancelled'));
     if (c === 'credit') return show(t('app_pl_back_credit'));
+    if (c === 'tutor') return tutorBack(show);
     if (mode !== 'real' || D.profile.paying) return show(t('app_pl_back_success'));
     show(t('app_pl_back_success') + ' ' + t('app_pl_confirming'));
     var tries = 0;
@@ -680,6 +684,23 @@
           else if (++tries < 8) again();
         }, function () { if (++tries < 8) again(); });
       }, 4000);
+    })();
+  }
+
+  function tutorBack(show) {
+    if (mode !== 'real' || !stripeCheckout) return show(t('app_tu_back_bought'));
+    show(t('app_tu_back_bought') + ' ' + t('app_tu_back_adding'));
+    var tries = 0;
+    (function again() {
+      setTimeout(function () {
+        window.AlimunData.tutorPurchase(stripeCheckout).then(function (row) {
+          if (row) {
+            if (location.hash.indexOf('#/tutor') === 0) render(routeFromHash(), false);
+            show(t('app_tu_back_added', { time: new Intl.NumberFormat(locale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(Math.round(row.seconds / 60)) }));
+          } else if (++tries < 10) again();
+          else show(t('app_tu_back_bought') + ' ' + t('app_tu_back_slow'));
+        }, function () { if (++tries < 10) again(); });
+      }, 3000);
     })();
   }
 

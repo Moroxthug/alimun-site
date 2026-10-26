@@ -8,7 +8,9 @@
  *                              10 minutes (given the first time), this month's plan
  *                              minutes and bought or added time; the plan's monthly
  *                              minutes and when they renew. Brings the balance up to
- *                              date (public.tutor_refresh).
+ *                              date (public.tutor_refresh). Part 6: also when the
+ *                              soonest bought minutes expire and each plan's
+ *                              monthly minutes (the out-of-time screen).
  *    POST ?action=admin-grant  (admin JWT) — { student, minutes, note }: adds (or
  *                              removes, never below zero) bought-or-added time for a
  *                              student, written to the time ledger with the admin.
@@ -84,6 +86,7 @@ const live = require('./_lib/tutor-live.js');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MAX_GRANT_MINUTES = 600;
+const PAID_TIERS = ['community', 'focused', 'intensive', 'private'];
 
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
@@ -130,9 +133,21 @@ async function handleStatus(req, res, supabase, user) {
     console.error('[Tutor] refresh failed:', error?.message);
     return res.status(500).json({ error: 'Could not load your tutor time' });
   }
-  const { data: m } = await supabase.from('tutor_plan_minutes').select('minutes_per_month').eq('tier', profile.tier).maybeSingle();
+  const [{ data: allMinutes }, { data: lots }] = await Promise.all([
+    supabase.from('tutor_plan_minutes').select('tier, minutes_per_month'),
+    supabase.from('tutor_credit_lots').select('left_seconds, expires_at').eq('student_id', profile.id).gt('left_seconds', 0)
+      .not('expires_at', 'is', null).order('expires_at', { ascending: true }).limit(1),
+  ]);
+  const m = (allMinutes || []).find((x) => x.tier === profile.tier);
+  const plans = {};
+  (allMinutes || []).forEach((x) => { if (PAID_TIERS.includes(x.tier)) plans[x.tier] = x.minutes_per_month; });
+  const soon = (lots || [])[0];
   return res.status(200).json({
     seconds: balanceOf(t),
+    // Part 6: bought time expires 12 months after the purchase; the lot that expires first
+    expiring: soon ? { seconds: soon.left_seconds, at: soon.expires_at } : null,
+    // The monthly minutes of each plan, for the out-of-time screen
+    plans,
     plan: {
       tier: profile.tier,
       minutes_per_month: m?.minutes_per_month || 0,

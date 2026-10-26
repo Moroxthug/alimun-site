@@ -8,7 +8,8 @@
  *    - POST ?action=create-checkout   (auth required)
  *    - GET  ?action=retrieve-session  (public, non-sensitive fields only)
  *    - POST ?action=billing-portal    (auth required)
- *    - GET  ?action=prices            the amounts of the main prices, read from Stripe (public, cached an hour)
+ *    - GET  ?action=prices            the amounts of the main prices, read from Stripe (public, cached an hour),
+ *                                     and the tutor time packs with their minutes (api/_lib/tutor-packs.js)
  *    - GET  ?action=config            (public, publishable values only)
  *
  *  Security notes:
@@ -25,6 +26,7 @@
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
 const stripe = require('stripe')(STRIPE_KEY || 'dummy_key_for_load_validation');
 const { createClient } = require('@supabase/supabase-js');
+const tutorPacks = require('./_lib/tutor-packs.js');
 
 const env = (k) => process.env[k] || '';
 
@@ -50,6 +52,8 @@ const PRICE_CATALOGUE = [
   // The EUR 29 founding member fee was removed on 15 Oct 2026 (owner decision); it is no longer sold.
   { id: env('STRIPE_PRICE_ONEONONE_SESSION'),       mode: 'payment',      type: 'session' },
   { id: env('STRIPE_PRICE_CERTIFICATE'),            mode: 'payment',      type: 'certificate' },
+  // Tutor time (docs/AI_TUTOR_PLAN.md, part 6): minutes added by the webhook, read from the price, never the browser
+  ...tutorPacks.packs().map((p) => ({ id: p.id, mode: 'payment', type: 'tutor_time' })),
 ].filter((p) => p.id);
 
 const PRICE_BY_ID = Object.fromEntries(PRICE_CATALOGUE.map((p) => [p.id, p]));
@@ -169,7 +173,13 @@ async function handleCreateCheckout(req, res) {
 
   const safeCohortId = typeof cohortId === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cohortId) ? cohortId : '';
   let resolvedSuccessUrl = safeReturnUrl(successUrl, '/app?checkout=success');
-  const resolvedCancelUrl  = safeReturnUrl(cancelUrl,  '/app?checkout=cancelled');
+  let resolvedCancelUrl  = safeReturnUrl(cancelUrl,  '/app?checkout=cancelled');
+  // Tutor time comes back to the Tutor, with the checkout id so the dashboard can see when the minutes are added
+  // (Stripe fills in {CHECKOUT_SESSION_ID}).
+  if (price.type === 'tutor_time') {
+    resolvedSuccessUrl = appOrigin() + '/app?checkout=tutor&session_id={CHECKOUT_SESSION_ID}#/tutor';
+    resolvedCancelUrl = appOrigin() + '/app?checkout=cancelled#/tutor';
+  }
   // The webhook does not enrol; carry the cohort back so the dashboard can
   // resume the join after payment (APIP-14).
   if (safeCohortId) {
@@ -350,17 +360,21 @@ const PRICE_KEYS = {
   intensiveYearly: 'STRIPE_PRICE_INTENSIVE_YEARLY', privateYearly: 'STRIPE_PRICE_PRIVATE_YEARLY',
   oneOnOneSession: 'STRIPE_PRICE_ONEONONE_SESSION',
 };
+const TUTOR_PACKS = Object.fromEntries(tutorPacks.packs().map((p) => [p.key, p]));
 let pricesCache = null;
 async function handleGetPrices(req, res) {
   if (!pricesCache || Date.now() - pricesCache.at > 3600000) {
     const out = {};
-    await Promise.all(Object.keys(PRICE_KEYS).map(async (k) => {
-      const id = env(PRICE_KEYS[k]);
+    const keys = Object.keys(PRICE_KEYS).concat(Object.keys(TUTOR_PACKS));
+    await Promise.all(keys.map(async (k) => {
+      const pack = TUTOR_PACKS[k];
+      const id = pack ? pack.id : env(PRICE_KEYS[k]);
       if (!id) return;
       try {
         const p = await stripe.prices.retrieve(id);
         if (p && p.active && p.unit_amount != null) {
           out[k] = { id, amount: p.unit_amount, currency: p.currency, interval: p.recurring ? p.recurring.interval : null };
+          if (pack) out[k].minutes = tutorPacks.minutesOf(pack, p);
         }
       } catch (err) {
         console.error('[Alimun] price lookup failed for', k, err.message);

@@ -24,6 +24,9 @@
    Part 5b: #/tutor/lesson/<notes id> (from Home and Classes, once the teacher published the class notes): the same page
    with the lesson to go over; writing or calling then starts from that lesson (the server checks it is the student's).
    Sample (signed out or ?sample=1): a short scripted session in German, nothing is sent.
+   Part 6: paid time. When the time is used up (and only then: no upgrade pop-up), the Tutor shows when the plan's minutes
+   come back, the plans with their monthly minutes and the packs of minutes to buy once (js/app/plans.js, Stripe Checkout;
+   the webhook adds the minutes, which last 12 months). The same offer closes a written session or a call that ran out.
    Routes: #/tutor, #/tutor/session, #/tutor/live, #/tutor/past/<id>, #/tutor/lesson/<id>. Interface text: app_tu_* keys. */
 (function () {
   'use strict';
@@ -361,7 +364,7 @@
   /* ---------- Sample ---------- */
   function sampleStatus() {
     var renews = new Date(); renews = new Date(Date.UTC(renews.getUTCFullYear(), renews.getUTCMonth() + 1, 1)).toISOString();
-    return { seconds: { free: 600, plan: 2520, credit: 0, total: 3120 }, plan: { tier: 'focused', minutes_per_month: 60, granted_seconds: 3600, renews_at: renews }, open: true, listen: true, voice: true, pron: true, live: true, sample: true };
+    return { seconds: { free: 600, plan: 2520, credit: 0, total: 3120 }, plan: { tier: 'focused', minutes_per_month: 60, granted_seconds: 3600, renews_at: renews }, plans: { community: 30, focused: 60, intensive: 120, private: 120 }, open: true, listen: true, voice: true, pron: true, live: true, sample: true };
   }
   var SAMPLE_OPEN = {
     text: 'Hallo! Heute üben wir das Perfekt mit haben oder sein, denn das war in deinen Übungen oft schwierig.',
@@ -469,6 +472,40 @@
     window.AlimunTutorLive.want({ tutor: window.AlimunTutorLive.myTutor(), sample: !!S.sample, seconds: S.status.seconds ? S.status.seconds.total : 0, lesson: S.lesson || null });
     location.hash = '#/tutor/live';
   }
+  /* ---------- Part 6: out of time ---------- */
+  var PAID = ['community', 'focused', 'intensive', 'private'];
+  function loadPacks() {
+    if (!S || S.packs || S.packsAsk || !window.AlimunPlans) return;
+    S.packsAsk = true;
+    window.AlimunPlans.tutorPacks(A).then(function (p) { S.packs = p; }, function () { S.packs = []; }).then(function () {
+      if (root) root.querySelectorAll('[data-tu-out]').forEach(function (el) { el.innerHTML = outInner(); });
+    });
+  }
+  function outInner() {
+    var s = S.status || {}, plan = s.plan || {}, packs = S.packs || [], html = '<h2 class="t-h2">' + esc(t('app_tu_out_h')) + '</h2>';
+    if (plan.granted_seconds && plan.renews_at) html += '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_out_renews', { date: day(plan.renews_at) })) + '</p>';
+    else {
+      var items = PAID.filter(function (k) { return s.plans && s.plans[k]; }).map(function (k) { return t('app_tu_out_plan_item', { time: mins(s.plans[k] * 60), plan: '\u2068' + t('app_tier_' + k) + '\u2069' }); });
+      if (items.length) html += '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_out_plans', { list: A.listOf(items) })) + '</p>';
+    }
+    if (packs.length) html += '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_out_packs')) + '</p>';
+    html += '<div class="btn-row" style="margin-top:14px">' + packs.map(function (x, i) {
+      return '<button class="btn btn--' + (i ? 'ghost' : 'primary') + '" type="button" data-tu="buy" data-price="' + esc(x.id) + '">' + esc(t('app_tu_out_buy', { time: mins(x.minutes * 60), price: x.price })) + '</button>';
+    }).join('') + '<a class="btn btn--' + (packs.length ? 'quiet' : 'primary') + '" href="#/settings/plans">' + esc(t('app_tu_see_plans')) + '</a></div>' +
+      '<p class="t-small st-msg" data-tu-buymsg aria-live="polite"></p>';
+    return html;
+  }
+  /* The offer, in a card on the Tutor page or inside the end of a session or a call */
+  function outHtml(inside) {
+    if (S && S.status && S.status.viewing) return '';
+    loadPacks();
+    return inside ? '<div class="tu-out" data-tu-out>' + outInner() + '</div>'
+      : '<section class="card card--sun span-12" style="--i:0" data-tu-out aria-live="polite">' + outInner() + '</section>';
+  }
+  function buy(b) {
+    var msg = b.closest('[data-tu-out]').querySelector('[data-tu-buymsg]');
+    window.AlimunPlans.buyTutor(A, b, msg, b.getAttribute('data-price'));
+  }
   function homeView() {
     var s = S.status, sec = s.seconds || {}, plan = s.plan || {}, none = (sec.total || 0) <= 0;
     var buddy = A.Cast.drawing(A.buddyFor(A.data().profile.language)), liveOn = liveReady();
@@ -476,16 +513,18 @@
     /* Part 5b: going over a class lesson */
     if (S.lesson) html += '<section class="card card--sun span-12" style="--i:0" aria-labelledby="tu-lesson"><h2 class="t-h2" id="tu-lesson">' + esc(t('app_tu_lesson_h')) + '</h2>' +
       '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_lesson_p')) + '</p><div class="btn-row" style="margin-top:12px"><a class="btn btn--quiet btn--sm" href="#/tutor">' + esc(t('app_tu_lesson_not')) + '</a></div></section>';
+    if (none) html += outHtml(false);
     if (liveOn) html += liveCard(none);
     html += '<section class="card span-7" style="--i:0" aria-labelledby="tu-left"><h2 class="t-h2" id="tu-left">' + esc(t('app_tu_left_h')) + '</h2>' +
       '<p class="t-num" style="margin-top:8px">' + esc(mins(sec.total)) + '</p><div class="tt-week" style="margin-top:12px">' +
       row(mins(sec.free), t('app_tu_free')) +
       (plan.granted_seconds ? row(mins(sec.plan), plan.renews_at ? t('app_tu_plan', { date: day(plan.renews_at) }) : t('app_tu_plan_nodate')) : '') +
       (sec.credit ? row(mins(sec.credit), t('app_tu_credit')) : '') + '</div>' +
+      (s.expiring && s.expiring.seconds ? '<p class="t-small" style="margin-top:12px">' + esc(t('app_tu_credit_until', { time: mins(s.expiring.seconds), date: day(s.expiring.at) })) + '</p>' : '') +
       (plan.granted_seconds ? '' : '<p class="t-small" style="margin-top:12px">' + esc(t('app_tu_plan_none')) + '</p>') +
       (s.viewing ? '<p class="t-tiny" style="margin-top:12px">' + esc(t('app_tu_viewing')) + '</p>'
         : '<div class="btn-row" style="margin-top:16px"><button class="btn ' + (liveOn ? 'btn--ghost' : 'btn--primary') + '" type="button" data-tu="start"' + (none || !s.open ? ' disabled' : '') + '>' + esc(t(liveOn ? 'app_tl_write' : 'app_tu_start')) + '</button>' +
-          (none ? '<a class="btn btn--ghost" href="#/settings/plans">' + esc(t('app_tu_see_plans')) + '</a>' : '') + '</div>' +
+          '</div>' +
           '<p class="t-small st-msg" data-tu-msg aria-live="polite">' + esc(none ? t('app_tu_none_left') : !s.open ? t('app_tu_closed') : S.error ? t(S.error) : '') + '</p>') + '</section>';
     html += '<section class="stage span-5" style="--i:1;background:var(--t-mint)" aria-hidden="true"><div class="bub say">' + esc(t('app_tu_bub2')) + '</div>' + buddy + '</section>';
     html += '<section class="card span-7" style="--i:2" aria-labelledby="tu-past"><h2 class="t-h2" id="tu-past">' + esc(t('app_tu_past_h')) + '</h2>' +
@@ -551,7 +590,7 @@
       (x.summary ? '<p class="t-body" dir="auto">' + esc(x.summary) + '</p>' : '<p class="t-body">' + esc(t('app_tu_sum_none')) + '</p>') +
       ((x.words || []).length ? '<h4 class="t-h3" style="margin-top:12px">' + esc(t('app_tu_words_h')) + '</h4><div class="tt-week">' + x.words.map(function (w) {
         return '<div class="tt-row tt-row--wide"><span class="tt-row__time"' + ta() + '>' + esc(w.w) + '</span><span><small dir="auto">' + esc(w.m || '') + '</small></span></div>';
-      }).join('') + '</div>' : '') + afterHtml(x) + '</div>';
+      }).join('') + '</div>' : '') + afterHtml(x) + ((S.seconds || 0) <= 0 && !S.sample ? outHtml(true) : '') + '</div>';
   }
   function pastView(x, msgs) {
     var html = '<a class="rd-back" href="#/tutor">' + A.icon('back') + '<span>' + esc(t('app_nav_tutor')) + '</span></a>' +
@@ -717,6 +756,7 @@
       else if (act === 'voice') toggleVoice();
       else if (act === 'pick') pick(b);
       else if (act === 'live') startLive();
+      else if (act === 'buy') buy(b);
     });
     /* Leaving the session stops the voice and drops a recording in progress */
     window.addEventListener('hashchange', function () {
@@ -780,5 +820,5 @@
 
   /* Shared with the live call (js/app/tutor-live.js): the board's lines, the pronunciation card's body, the recording helpers */
   window.AlimunTutor = { mount: mount, kit: { opHtml: function (o, isNew) { return opHtml(o, isNew); }, pronBody: function (s, r, mine) { return pronBody(s, r, mine); },
-    toWav: toWav, blobBase64: blobBase64, recMime: recMime, ta: function () { return ta(); }, afterHtml: function (x) { return afterHtml(x); } } };
+    toWav: toWav, blobBase64: blobBase64, recMime: recMime, ta: function () { return ta(); }, afterHtml: function (x) { return afterHtml(x); }, outHtml: function () { return S ? outHtml(true) : ''; } } };
 })();
