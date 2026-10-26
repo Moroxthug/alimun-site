@@ -11,6 +11,11 @@
  *    ?action=notify   (POST) — send admin notification email
  *    ?action=set-status (POST, admin JWT) — approve/reject/suspend/reinstate
  *                       from the admin dashboard, optionally emailing the teacher
+ *    ?action=invite (POST, admin JWT) — invite a student or teacher by email: the
+ *                     account is created with its role, a teacher also gets an
+ *                     approved profile, and a sign-in link is emailed
+ *    ?action=emails (POST, admin JWT) — the sign-in email of up to 500 accounts
+ *                     (they live in Supabase Auth, which the browser cannot read)
  *    ?action=session-update | enrollment-move | enrollment-remove
  *                       (POST, admin JWT) — class operations, see api/_lib/admin-ops.js
  *
@@ -724,6 +729,119 @@ async function handleSetStatus(req, res) {
   return res.status(200).json({ results });
 }
 
+// ── action=invite ───────────────────────────────────────────
+// Admin pages, part 2 (docs/DASHBOARD_PLAN.md): replaces "Create student" and
+// "Add faculty", which needed an existing login id and never set the role.
+
+const INVITE_ROLES = ['student', 'teacher'];
+const INVITE_LANGUAGES = ['English', 'German', 'Spanish', 'French', 'Portuguese', 'Italian', 'Mandarin', 'Japanese', 'Arabic'];
+const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
+
+function inviteEmailHtml(fullName, role, link) {
+  const what = role === 'teacher'
+    ? 'Alimun has opened a teacher account for you. Use the button below to sign in for the first time; then set a password in Settings.'
+    : 'Alimun has opened a student account for you. Use the button below to sign in for the first time, take the short level test and start learning.';
+  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Your Alimun account</title></head>
+<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f6f6f6;margin:0;padding:0">
+<div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden">
+<div style="background:#080808;padding:30px;text-align:center"><h1 style="color:#ceff65;margin:0;font-size:24px;font-weight:800;letter-spacing:.05em;text-transform:uppercase">Alimun</h1></div>
+<div style="padding:40px 30px;color:#333333;line-height:1.6">
+<h2 style="color:#080808;margin-top:0">Hello ${escapeHtml(fullName)},</h2>
+<p>${what}</p>
+<p style="text-align:center"><a href="${escapeHtml(link)}" style="display:inline-block;background:#ceff65;color:#080808;text-decoration:none;padding:14px 30px;border-radius:30px;font-weight:700;font-size:14px">Sign in to Alimun</a></p>
+<p style="font-size:13px;color:#777777">The link works once and expires after a day. If it has expired, use "Forgot password" on the sign-in page with this email address.</p>
+</div></div></body></html>`;
+}
+
+async function handleInvite(req, res) {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return res.status(500).json({ error: 'Server database connection error' });
+  const user = await getAuthUser(req, supabase);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+  if (user.app_metadata?.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+
+  let body = req.body || {};
+  if (typeof body === 'string') {
+    try { body = JSON.parse(body || '{}'); } catch { return res.status(400).json({ error: 'Invalid JSON' }); }
+  }
+  const email = String(body.email || '').trim().toLowerCase();
+  const role = String(body.role || '');
+  const fullName = String(body.full_name || '').trim();
+  const language = String(body.language || '');
+  const specialty = String(body.specialty || '').trim();
+  if (!EMAIL_RE.test(email) || email.length > 200) return res.status(400).json({ error: 'Invalid email address' });
+  if (!INVITE_ROLES.includes(role)) return res.status(400).json({ error: 'Role must be student or teacher' });
+  if (!fullName || fullName.length > 100 || /[<>\u0000-\u001f]/.test(fullName)) return res.status(400).json({ error: 'Write a name of up to 100 characters, without < or >' });
+  if (role === 'teacher' && !INVITE_LANGUAGES.includes(language)) return res.status(400).json({ error: 'Choose the language the teacher teaches' });
+  if (specialty.length > 200 || /[<>]/.test(specialty)) return res.status(400).json({ error: 'Specialty: up to 200 characters, without < or >' });
+
+  // The account is created by the invite link itself; the role goes into app_metadata (never user_metadata alone).
+  const origin = 'https://alimun.com';
+  const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
+    type: 'invite', email,
+    options: { data: { full_name: fullName, role }, redirectTo: `${origin}/welcome.html` },
+  });
+  if (linkErr || !linkData?.user) {
+    const taken = /already|registered|exists/i.test(linkErr?.message || '');
+    return res.status(taken ? 409 : 500).json({ error: taken ? 'An account with this email already exists' : 'The account could not be created' });
+  }
+  const invited = linkData.user;
+  const { error: roleErr } = await supabase.auth.admin.updateUserById(invited.id, { app_metadata: { role } });
+  if (roleErr) {
+    console.error('[Alimun Admin] invite: role not set', roleErr.message);
+    return res.status(500).json({ error: 'The account was created but its role was not set. Try again or set it in Supabase.' });
+  }
+  if (role === 'teacher') {
+    const { error: tpErr } = await supabase.from('teacher_profiles').insert({
+      user_id: invited.id, full_name: fullName, languages: [language], specialty: specialty || null,
+      status: 'approved', tier_level: 'focused', experience_years: 0,
+    });
+    if (tpErr && tpErr.code !== '23505') {
+      console.error('[Alimun Admin] invite: teacher profile', tpErr.message);
+      return res.status(500).json({ error: 'The account was created but the teacher profile was not' });
+    }
+  }
+  const link = linkData.properties?.action_link || '';
+  const emailed = link ? await sendEmail(email, 'Your Alimun account', inviteEmailHtml(fullName, role, link)) : false;
+  console.log(`[Alimun Admin] admin ${user.id} invited ${role} ${invited.id} (emailed: ${emailed})`);
+  // Without email the admin gets the link to pass on by hand
+  return res.status(200).json({ success: true, user_id: invited.id, role, emailed, link: emailed ? undefined : link });
+}
+
+// ── action=emails ───────────────────────────────────────────
+
+async function handleEmails(req, res) {
+  if (req.method !== 'POST') {
+    res.setHeader('Allow', 'POST');
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+  const supabase = getSupabaseAdmin();
+  if (!supabase) return res.status(500).json({ error: 'Server database connection error' });
+  const user = await getAuthUser(req, supabase);
+  if (!user) return res.status(401).json({ error: 'Unauthorized' });
+  if (user.app_metadata?.role !== 'admin') return res.status(403).json({ error: 'Admins only' });
+  let body = req.body || {};
+  if (typeof body === 'string') {
+    try { body = JSON.parse(body || '{}'); } catch { return res.status(400).json({ error: 'Invalid JSON' }); }
+  }
+  const ids = Array.isArray(body.user_ids) ? body.user_ids.filter((id) => UUID_RE.test(String(id))) : [];
+  if (!ids.length || ids.length > 500) return res.status(400).json({ error: 'user_ids must be 1-500 UUIDs' });
+  const want = new Set(ids);
+  const emails = {};
+  // Accounts are listed page by page; stop once every id asked for is found
+  for (let page = 1; page <= 20 && Object.keys(emails).length < want.size; page++) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage: 1000 });
+    if (error) return res.status(500).json({ error: 'Could not read the accounts' });
+    (data?.users || []).forEach((u) => { if (want.has(u.id)) emails[u.id] = u.email || ''; });
+    if (!data?.users || data.users.length < 1000) break;
+  }
+  return res.status(200).json({ emails });
+}
+
 // ── Main router ─────────────────────────────────────────────
 
 module.exports = async function handler(req, res) {
@@ -732,6 +850,10 @@ module.exports = async function handler(req, res) {
   switch (action) {
     case 'set-status':
       return handleSetStatus(req, res);
+    case 'invite':
+      return handleInvite(req, res);
+    case 'emails':
+      return handleEmails(req, res);
     case 'approve':
       return handleEmailDecision(req, res, 'approve');
     case 'reject':

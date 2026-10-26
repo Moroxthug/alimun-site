@@ -98,7 +98,7 @@ document.querySelectorAll('[data-eye]').forEach((b) => b.addEventListener('click
 // Where a signed-in account goes next.
 async function route(user) {
   const role = getUserRole(user);
-  if (role === 'admin') { location.href = base + 'admin.html'; return true; }
+  if (role === 'admin') { location.href = '/app/admin'; return true; }
   if (role === 'student') {
     const { data: sp } = await supabase.from('student_profiles').select('id').eq('user_id', user.id).maybeSingle();
     location.href = base + (sp ? 'student-dashboard.html' : 'welcome.html');
@@ -107,7 +107,7 @@ async function route(user) {
   if (role === 'teacher') {
     const { data: tp } = await supabase.from('teacher_profiles').select('status').eq('user_id', user.id).maybeSingle();
     if (!tp) { location.href = base + 'welcome.html'; return true; }
-    if (tp.status === 'approved') { location.href = base + 'teacher-dashboard.html'; return true; }
+    if (tp.status === 'approved') { location.href = '/app/teach'; return true; }
     // Not approved yet: no session is kept, and the status is shown instead.
     await supabase.auth.signOut();
     show(tp.status === 'suspended' ? 's-suspended' : 's-pending');

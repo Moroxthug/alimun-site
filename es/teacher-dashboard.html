@@ -1,8 +1,7 @@
 <!DOCTYPE html><html lang="es" dir="ltr"><head>
 <meta charset="utf-8">
 <title>Teacher Dashboard – Alimun</title>
-  <link href="../images/favicon.ico" rel="shortcut icon" type="image/x-icon">
-  <link href="../images/webclip.png" rel="apple-touch-icon">
+  <link href="/images/favicon.svg?v=2" rel="icon" type="image/svg+xml"><link href="/images/favicon-48.png?v=2" rel="icon" type="image/png" sizes="48x48"><link href="/images/favicon.ico?v=2" rel="shortcut icon" type="image/x-icon"><link href="/images/webclip.png?v=2" rel="apple-touch-icon">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&amp;display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Anton&amp;display=swap" rel="stylesheet">
@@ -1011,6 +1010,7 @@ body{font-family:var(--body);color:var(--b);background:#f8f8f8;}
       <button class="sb-a" data-v="sessions"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg><span class="sb-lbl" data-i18n="teacher_sb_sessions">Sesiones en Vivo</span></button>
       <button class="sb-a" data-v="payouts"><svg viewBox="0 0 24 24"><line x1="12" y1="1" x2="12" y2="23"></line><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"></path></svg><span class="sb-lbl" data-i18n="teacher_sb_payouts">Pagos</span></button>
       <button class="sb-a" data-v="availability"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg><span class="sb-lbl" data-i18n="teacher_sb_availability">Disponibilidad</span></button>
+      <a class="sb-a" href="/app/messages"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"></path></svg><span class="sb-lbl" data-i18n="teacher_sb_messages">Mensajes</span></a>
       <span class="sb-sec"><span data-i18n="teacher_sb_account_section">Cuenta</span></span>
       <button class="sb-a" data-v="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"></path></svg><span class="sb-lbl" data-i18n="teacher_sb_settings">Ajustes</span></button>
     </nav>
@@ -1223,7 +1223,7 @@ function nav(v) {
 
   setTimeout(() => { VIEWS[v](); el.style.opacity = '1'; }, 150);
 }
-document.querySelectorAll('.sb-a').forEach(a=>a.addEventListener('click',()=>nav(a.dataset.v)));
+document.querySelectorAll('.sb-a[data-v]').forEach(a=>a.addEventListener('click',()=>nav(a.dataset.v)));
 
 async function claude(prompt,sys,json){
   // AI grading goes through our serverless proxy (/api/grade) which
@@ -3763,7 +3763,12 @@ window.submitSessionNotes = submitSessionNotes;
     return;
   }
 
-  // Admins can open this dashboard as any teacher (js/view-as.js)
+  // Admins now view a teacher's dashboard from the new admin pages (/app/teach?as=<id>, read-only)
+  if (session.user?.app_metadata?.role === 'admin') {
+    const as = new URLSearchParams(location.search).get('as') || '';
+    location.replace(/^[0-9a-f-]{36}$/i.test(as) ? '/app/teach?as=' + as : '/app/admin#/teachers');
+    return;
+  }
   const viewAs = window.AlimunViewAs ? await AlimunViewAs.resolve(_sb, session, 'teacher') : null;
   if (viewAs && !viewAs.profile) {
     AlimunViewAs.renderEmpty('teacher');
@@ -3778,6 +3783,8 @@ window.submitSessionNotes = submitSessionNotes;
                           role === 'admin' ? 'admin.html' : 'signin.html';
     return;
   }
+  // Teachers now use the new dashboard (docs/DASHBOARD_PLAN.md, step 15, switched over 26 Oct 2026).
+  if (!viewAs) { window.location.replace('/app/teach'); return; }
 
   // ─ 4. Teacher profile status check ────────────────────────────────────────
   let profile = viewAs?.profile;

@@ -254,7 +254,7 @@ async function pay(intent) {
   if (!user) { location.replace(base + 'signin.html'); return; }
   meta = user.user_metadata || {};
   const role = getUserRole(user);
-  if (role === 'admin') { location.replace(base + 'admin.html'); return; }
+  if (role === 'admin') { location.replace('/app/admin'); return; }
   if (role === 'teacher') return teacher();
   if (role === 'student') return learner();
   fail();

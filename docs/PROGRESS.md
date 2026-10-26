@@ -788,3 +788,11 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Inventory of the current `admin.html` taken first (sections, calls, server checks, invented figures, gaps).
 - `/app/admin` (`app/admin.html`, `js/app/admin.js`), `AlimunData.adminOverview()`. No database change. Every table the Overview reads checked readable by the real admin account (rolled back, read only).
 - Checked with the sample: desktop and phone, no errors.
+
+## 2026-10-26 — Admin pages, part 2: People
+- Owner: go ahead with part 2.
+- `js/app/admin-people.js` (Students, a student's file, email signups with CSV, Teachers with status tabs and bulk approve, reject, suspend and reinstate, a teacher's file, invite by email); `AlimunData` adminStudents, adminTeachers, adminStudentFile, adminTeacherFile, adminSave, adminSignups, adminEmails, adminInvite, adminTeacherStatus, adminEmail, adminPlanEmail; `api/admin/teacher.js` actions `invite` and `emails` (admin JWT checked on the server).
+- Read-only view-as for the new dashboards in `js/app/data.js` (`?as=<profile id>`, admins only; writes, functions, password change and non-GET API calls refused; a bar back to the admin file).
+- Old pages: `/admin.html` forwards to `/app/admin` (kept at `?old=1` until parts 3 and 4); `/teacher-dashboard` forwards admins to the new view-as; sign-in and welcome send admins to `/app/admin`. Smoke test now expects `/admin` to end on `/app/admin`.
+- No database change. Checked in the database: admins pass the profile column guards, the update rules allow admins, and every value the forms send fits the table checks.
+- Checked with the sample on desktop and phone: lists, search and filters, files, saving, status changes with the confirm step, invite, CSV download, view-as pages load; no errors. Smoke tests: 14 of 14. Not checked from here: real invites, emails and status changes (`docs/TESTING_CHECKLIST.md`).

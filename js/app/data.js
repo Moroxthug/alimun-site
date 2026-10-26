@@ -13,8 +13,85 @@
   function client() {
     if (!sb && window.supabase && window.supabase.createClient) {
       sb = window.supabase.createClient(URL, KEY, { auth: { autoRefreshToken: true, persistSession: true, storageKey: 'alimun-auth' } });
+      if (AS) viewAs(sb);
     }
     return sb;
+  }
+
+  /* ---------- An admin viewing someone's dashboard (admin pages, part 2) ----------
+     /app/teach?as=<teacher profile id> or /app/preview?as=<student profile id>, opened by a signed-in admin: the
+     dashboard is drawn for that person (reads run as the admin, whom every row rule lets read), and nothing can be
+     changed: inserts, updates, upserts, deletes, functions that write, password changes and every non-GET call to
+     /api answer "read-only". For anyone who is not an admin the parameter is ignored. */
+  var AS = (location.search.match(/[?&]as=([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})/i) || [])[1] || null;
+  var AS_KIND = /^\/app\/teach/.test(location.pathname) ? 'teacher' : 'student';
+  var VA = null;
+  var READ_RPCS = { my_threads: true, cohort_classmates: true };
+  function readOnly() {
+    var p = Promise.resolve({ data: null, error: { message: 'Read-only: an admin is viewing this dashboard', code: 'view_as_read_only' } });
+    var px = new Proxy(function () {}, {
+      get: function (_, k) { if (k === 'then') return p.then.bind(p); if (k === 'catch') return p.catch.bind(p); if (k === 'finally') return p.finally.bind(p); return function () { return px; }; },
+      apply: function () { return px; }
+    });
+    return px;
+  }
+  function viewAs(c) {
+    var from = c.from.bind(c), rpc = c.rpc.bind(c), fetch0 = window.fetch.bind(window);
+    c.from = function (t) {
+      var q = from(t);
+      if (!VA) return q;
+      return { select: q.select.bind(q), insert: readOnly, update: readOnly, upsert: readOnly, delete: readOnly };
+    };
+    c.rpc = function (name, args) { return VA && !READ_RPCS[name] ? readOnly() : rpc(name, args); };
+    var updateUser = c.auth.updateUser.bind(c.auth);
+    c.auth.updateUser = function (x) { return VA ? readOnly() : updateUser(x); };
+    window.fetch = function (u, o) {
+      var method = String((o && o.method) || 'GET').toUpperCase(), path = String(u && u.url || u);
+      if (VA && method !== 'GET' && /^(\/|https:\/\/alimun\.com\/)api\//.test(path)) {
+        return Promise.resolve(new Response(JSON.stringify({ error: 'Read-only: an admin is viewing this dashboard' }), { status: 403, headers: { 'Content-Type': 'application/json' } }));
+      }
+      return fetch0(u, o);
+    };
+  }
+  /* The signed-in session, or for an admin viewing someone, a session that names that person (the access token stays
+     the admin's, so row rules still see an admin). Every function below asks this, never c.auth.getSession(). */
+  var found = null;
+  function mySession() {
+    var c = client();
+    return c.auth.getSession().then(function (x) {
+      var s = x.data && x.data.session;
+      if (!AS || !s || (s.user.app_metadata || {}).role !== 'admin') return x;
+      if (!found) {
+        var table = AS_KIND === 'teacher' ? 'teacher_profiles' : 'student_profiles';
+        found = c.from(table).select('id, user_id, full_name').eq('id', AS).maybeSingle().then(function (r) {
+          if (r.error || !r.data) return null;
+          var t = r.data;
+          var cos = AS_KIND === 'teacher' ? c.from('cohorts').select('id').eq('teacher_id', t.id) : c.from('enrollments').select('cohort_id').eq('student_id', t.id).eq('status', 'active');
+          return cos.then(function (cr) {
+            VA = { kind: AS_KIND, id: t.id, userId: t.user_id, name: t.full_name || '', cohorts: (cr.data || []).map(function (y) { return y.id || y.cohort_id; }) };
+            viewAsBar();
+            return VA;
+          });
+        });
+      }
+      return found.then(function (v) {
+        if (!v) return x;
+        var user = Object.assign({}, s.user, { id: v.userId, email: '', app_metadata: { role: v.kind }, user_metadata: {} });
+        return { data: { session: Object.assign({}, s, { user: user }) }, error: null };
+      });
+    });
+  }
+  function viewAsBar() {
+    var put = function () {
+      if (document.querySelector('.va-bar')) return;
+      var bar = document.createElement('div');
+      bar.className = 'va-bar'; bar.setAttribute('role', 'status');
+      bar.innerHTML = 'Viewing as <b></b>, read-only. Nothing here can be saved or sent. <a href="/app/admin#/' + (VA.kind === 'teacher' ? 'teachers/' : 'students/') + encodeURIComponent(VA.id) + '">Back to admin</a>';
+      bar.querySelector('b').textContent = VA.name;
+      document.body.appendChild(bar);
+      document.body.classList.add('is-viewing-as');
+    };
+    if (document.body) put(); else document.addEventListener('DOMContentLoaded', put);
   }
 
   /* Local calendar day (browser time zone) as YYYY-MM-DD */
@@ -59,7 +136,7 @@
   function load(lang) {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.auth.getSession().then(function (r) {
+    return mySession().then(function (r) {
       var session = r.data && r.data.session;
       if (!session) return null;
       return c.from('student_profiles').select('id, full_name, language, level, tier, goal_track, placement, enrolled_cohort_id, timezone')
@@ -318,7 +395,7 @@
   function settings() {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.auth.getSession().then(function (x) {
+    return mySession().then(function (x) {
       var session = x.data && x.data.session;
       if (!session) return null;
       return c.from('student_profiles').select('full_name, language, level, goal_track, goal_timeframe, timezone, preferred_days, preferred_time_start, preferred_time_end, tier, stripe_subscription_status, enrolled_cohort_id')
@@ -331,7 +408,7 @@
   function saveProfile(patch) {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.auth.getSession().then(function (x) {
+    return mySession().then(function (x) {
       var session = x.data && x.data.session;
       if (!session) throw new Error('Not signed in');
       return c.from('student_profiles').update(Object.assign({}, patch, { updated_at: new Date().toISOString() })).eq('user_id', session.user.id).then(function (r) { if (r.error) throw r.error; });
@@ -348,7 +425,13 @@
   function myThreads() {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.rpc('my_threads').then(function (r) { if (r.error) throw r.error; return r.data || []; });
+    return mySession().then(function () { return c.rpc('my_threads'); }).then(function (r) {
+      if (r.error) throw r.error;
+      var list = r.data || [];
+      /* Viewing as someone: an admin can see every conversation, so keep only that person's */
+      if (VA) list = list.filter(function (th) { return VA.kind === 'teacher' ? th.teacher_id === VA.id || (th.kind === 'class' && VA.cohorts.indexOf(th.cohort_id) > -1) : th.student_id === VA.id || (th.kind === 'class' && VA.cohorts.indexOf(th.cohort_id) > -1); });
+      return list;
+    });
   }
   function openThread(kind, cohortId, teacherId, studentId) {
     var c = client();
@@ -376,7 +459,7 @@
   function userId() {
     var c = client();
     if (!c) return Promise.resolve(null);
-    return c.auth.getSession().then(function (x) { return x.data && x.data.session ? x.data.session.user.id : null; });
+    return mySession().then(function (x) { return x.data && x.data.session ? x.data.session.user.id : null; });
   }
   function classTeachers(cohortIds) {
     var c = client();
@@ -398,7 +481,7 @@
   function teacherToday() {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.auth.getSession().then(function (x) {
+    return mySession().then(function (x) {
       var session = x.data && x.data.session;
       if (!session) return { signedIn: false };
       var role = (session.user.app_metadata || {}).role || null;
@@ -444,7 +527,7 @@
   function teacherClasses() {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.auth.getSession().then(function (x) {
+    return mySession().then(function (x) {
       var session = x.data && x.data.session;
       if (!session) return { signedIn: false };
       return c.from('teacher_profiles').select('id, full_name, status, languages').eq('user_id', session.user.id).maybeSingle().then(function (tr) {
@@ -522,7 +605,7 @@
   function teacherStudents() {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.auth.getSession().then(function (x) {
+    return mySession().then(function (x) {
       var session = x.data && x.data.session;
       if (!session) return { signedIn: false };
       return c.from('teacher_profiles').select('id, full_name, status').eq('user_id', session.user.id).maybeSingle().then(function (tr) {
@@ -620,7 +703,7 @@
   function teacherHomework() {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.auth.getSession().then(function (x) {
+    return mySession().then(function (x) {
       var session = x.data && x.data.session;
       if (!session) return { signedIn: false };
       return c.from('teacher_profiles').select('id, full_name, status').eq('user_id', session.user.id).maybeSingle().then(function (tr) {
@@ -739,7 +822,7 @@
   function teacherPayouts() {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.auth.getSession().then(function (x) {
+    return mySession().then(function (x) {
       var session = x.data && x.data.session;
       if (!session) return { signedIn: false };
       return c.from('teacher_profiles').select('id, full_name, status').eq('user_id', session.user.id).maybeSingle().then(function (tr) {
@@ -765,7 +848,7 @@
   function teacherProfile() {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.auth.getSession().then(function (x) {
+    return mySession().then(function (x) {
       var session = x.data && x.data.session;
       if (!session) return { signedIn: false };
       return c.from('teacher_profiles').select('id, full_name, location, bio, specialty, languages, status').eq('user_id', session.user.id).maybeSingle().then(function (r) {
@@ -777,7 +860,7 @@
   function saveTeacherProfile(patch) {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.auth.getSession().then(function (x) {
+    return mySession().then(function (x) {
       var session = x.data && x.data.session;
       if (!session) throw new Error('Not signed in');
       return c.from('teacher_profiles').update(patch).eq('user_id', session.user.id).select('id').single().then(function (r) { if (r.error) throw r.error; });
@@ -790,7 +873,7 @@
   function adminOverview() {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.auth.getSession().then(function (x) {
+    return mySession().then(function (x) {
       var session = x.data && x.data.session;
       if (!session) return { signedIn: false };
       if ((session.user.app_metadata || {}).role !== 'admin') return { signedIn: true, admin: false, role: (session.user.app_metadata || {}).role || null };
@@ -819,6 +902,73 @@
       });
     });
   }
+
+  /* Admin pages, part 2: people. Admins read and change these through the row rules (is_admin()); emails, invites,
+     teacher status changes and messages to people go through the admin server actions, which check the admin again. */
+  function adminStudents() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('student_profiles').select('id, user_id, full_name, language, level, tier, goal_track, stripe_subscription_status, enrolled_cohort_id, created_at').order('created_at', { ascending: false }).limit(2000),
+      c.from('cohorts').select('id, language, level, tier, status, teacher_profiles(full_name)').limit(500)
+    ]).then(function (r) { return { students: rows(r[0]), cohorts: rows(r[1]) }; });
+  }
+  function adminTeachers() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('teacher_profiles').select('id, user_id, full_name, languages, experience_years, specialty, bio, location, hourly_rate, rating, tier_level, status, created_at, sessions_delivered').order('created_at', { ascending: false }).limit(1000),
+      c.from('cohorts').select('id, teacher_id, language, level, tier, status, enrolled_count, max_students').limit(1000)
+    ]).then(function (r) { return { teachers: rows(r[0]), cohorts: rows(r[1]) }; });
+  }
+  /* One student's file: their profile in full (payment status included), classes, homework, teachers' notes, and how
+     active they have been, without the dashboard's own counting (the admin opens the dashboard for that) */
+  function adminStudentFile(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    var since = new Date(Date.now() - 90 * DAY).toISOString();
+    return Promise.all([
+      c.from('student_profiles').select('*').eq('id', id).maybeSingle(),
+      c.from('enrollments').select('id, status, enrolled_at, cancelled_at, cohorts(id, language, level, tier, status, teacher_profiles(full_name))').eq('student_id', id).order('enrolled_at', { ascending: false }),
+      c.from('assignment_submissions').select('status, score, submitted_at, assignments(title)').eq('student_id', id).order('submitted_at', { ascending: false }).limit(20),
+      c.from('student_feedback').select('feedback_text, is_private, created_at, teacher_id').eq('student_id', id).order('created_at', { ascending: false }).limit(20),
+      c.from('practice_progress').select('ex_key, updated_at').eq('student_id', id).gte('updated_at', since).order('updated_at', { ascending: false }).limit(2000),
+      c.from('vocab_reviews').select('box').eq('student_id', id).limit(5000),
+      c.from('one_on_one_bookings').select('kind, scheduled_at, status, teacher_profiles(full_name)').eq('student_id', id).order('scheduled_at', { ascending: false }).limit(10)
+    ]).then(function (r) {
+      if (r[0].error) throw r[0].error;
+      return { profile: r[0].data, enrollments: rows(r[1]), submissions: rows(r[2]), notes: rows(r[3]), activity: rows(r[4]), cards: rows(r[5]), oto: rows(r[6]) };
+    });
+  }
+  function adminTeacherFile(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('teacher_profiles').select('*').eq('id', id).maybeSingle(),
+      c.from('cohorts').select('id, language, level, tier, status, enrolled_count, max_students, schedule_days, schedule_time, timezone').eq('teacher_id', id),
+      c.from('teacher_availability').select('day_of_week, start_time, end_time, timezone').eq('teacher_id', id).order('day_of_week').order('start_time'),
+      c.from('teacher_reviews').select('rating, review_text, created_at').eq('teacher_id', id).order('created_at', { ascending: false }).limit(10),
+      c.from('teacher_payouts').select('period_start, period_end, amount_eur, status').eq('teacher_id', id).order('period_start', { ascending: false }).limit(6)
+    ]).then(function (r) {
+      if (r[0].error) throw r[0].error;
+      return { profile: r[0].data, cohorts: rows(r[1]), slots: rows(r[2]), reviews: rows(r[3]), payouts: rows(r[4]) };
+    });
+  }
+  function adminSave(table, id, patch) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from(table).update(patch).eq('id', id).select('id').single().then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function adminSignups() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('email_signups').select('email, source, locale, page, created_at').order('created_at', { ascending: false }).limit(2000).then(rows);
+  }
+  function adminEmails(userIds) { return api('/api/admin/teacher?action=emails', { user_ids: userIds }).then(function (j) { return j.emails || {}; }); }
+  function adminInvite(body) { return api('/api/admin/teacher?action=invite', body); }
+  function adminTeacherStatus(ids, status, notify, reason) { return api('/api/admin/teacher?action=set-status', { teacher_ids: ids, status: status, notify: !!notify, reason: reason || '' }); }
+  function adminEmail(targetId, subject, body) { return api('/api/send-admin-email', { targetId: targetId, emailType: 'promo', customSubject: subject, customBody: body }); }
+  function adminPlanEmail(targetId, tier) { return api('/api/send-admin-email', { targetId: targetId, emailType: 'tier-upgrade', tierName: tier }); }
 
   /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
   function libraryResults(studentId) {
@@ -871,10 +1021,10 @@
   function token() {
     var c = client();
     if (!c) return Promise.resolve(null);
-    return c.auth.getSession().then(function (x) { return x.data && x.data.session ? x.data.session.access_token : null; });
+    return mySession().then(function (x) { return x.data && x.data.session ? x.data.session.access_token : null; });
   }
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, adminOverview: adminOverview, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

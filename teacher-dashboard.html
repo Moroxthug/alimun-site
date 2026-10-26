@@ -3765,7 +3765,12 @@ window.submitSessionNotes = submitSessionNotes;
     return;
   }
 
-  // Admins can open this dashboard as any teacher (js/view-as.js)
+  // Admins now view a teacher's dashboard from the new admin pages (/app/teach?as=<id>, read-only)
+  if (session.user?.app_metadata?.role === 'admin') {
+    const as = new URLSearchParams(location.search).get('as') || '';
+    location.replace(/^[0-9a-f-]{36}$/i.test(as) ? '/app/teach?as=' + as : '/app/admin#/teachers');
+    return;
+  }
   const viewAs = window.AlimunViewAs ? await AlimunViewAs.resolve(_sb, session, 'teacher') : null;
   if (viewAs && !viewAs.profile) {
     AlimunViewAs.renderEmpty('teacher');
@@ -3780,8 +3785,7 @@ window.submitSessionNotes = submitSessionNotes;
                           role === 'admin' ? 'admin.html' : 'signin.html';
     return;
   }
-  // Teachers now use the new dashboard (docs/DASHBOARD_PLAN.md, step 15, switched over 26 Oct 2026). This page stays
-  // for admins viewing a teacher read-only (view-as) until the admin pages are rebuilt.
+  // Teachers now use the new dashboard (docs/DASHBOARD_PLAN.md, step 15, switched over 26 Oct 2026).
   if (!viewAs) { window.location.replace('/app/teach'); return; }
 
   // ─ 4. Teacher profile status check ────────────────────────────────────────

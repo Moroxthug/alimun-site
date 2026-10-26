@@ -9,14 +9,14 @@ const PAGES = [
   // drops the query string, which silently turned these into /signin checks.
   '/student-dashboard?preview=1',
   '/teacher-dashboard?preview=1',
-  // Admin has no preview mode: without an admin session it must send you to sign in.
+  // The old admin page forwards to the new admin pages (26 Oct 2026), which load with sample data when signed out.
   '/admin?preview=1',
 ];
 const EXPECT_PATH = {
   '/student-dashboard?preview=1': '/student-dashboard',
   // Teachers are sent to the new teacher dashboard (step 15, 26 Oct 2026); it must load there with no errors.
   '/teacher-dashboard?preview=1': '/app/teach',
-  '/admin?preview=1': '/signin',
+  '/admin?preview=1': '/app/admin',
 };
 
 // Third-party noise we cannot control from the page (blocked trackers,

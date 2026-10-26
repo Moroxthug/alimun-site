@@ -165,7 +165,7 @@
       '<div class="soon rise"><div class="stage" style="--i:0;background:var(--t-sun)"><div class="bub think">On my list.</div>' + Cast.drawing('cat') + '</div>' +
       '<div class="card" style="--i:1"><h2 class="t-h2">Comes in part ' + r.part + ' of the admin pages</h2><p class="t-body">Each part is shown to you and approved before the next one is built.' +
       (mode === 'real' ? ' Until then this is on the current admin page.' : '') + '</p><div class="btn-row"><a class="btn btn--primary" href="#/overview">Back to the overview</a>' +
-      (mode === 'real' ? '<a class="btn btn--quiet" href="/admin.html">Open the current admin page</a>' : '') + '</div></div></div>';
+      (mode === 'real' ? '<a class="btn btn--quiet" href="/admin.html?old=1">Open the current admin page</a>' : '') + '</div></div></div>';
   }
   function deniedView() {
     var to = D.role === 'teacher' ? '/app/teach' : D.role === 'student' ? '/student-dashboard.html' : '/';
@@ -195,7 +195,7 @@
   function hideLoader() { loadingScreen.classList.add('is-done'); loadingScreen.setAttribute('aria-hidden', 'true'); }
   function setSheet(open) { document.body.classList.toggle('is-sheet-open', open); app.querySelector('[data-more]').setAttribute('aria-expanded', String(open)); if (open) { var a = sheet.querySelector('a'); if (a) a.focus(); } }
   function routeFromHash() { var id = (location.hash.match(/^#\/([a-z]+)/) || [])[1]; return byId[id] ? id : 'overview'; }
-  var MODULES = {};
+  var MODULES = { students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; } };
   function helpers() {
     return { esc: esc, fmt: fmt, num: num, cap: cap, plural: plural, relative: relative, className: className, icon: icon, Cast: Cast, loaderInner: loaderInner,
       mode: function () { return mode; }, rerender: function () { render(current, false); } };

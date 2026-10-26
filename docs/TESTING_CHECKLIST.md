@@ -36,3 +36,14 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] After admin part 2, the old teacher dashboard and old admin page forward to the new pages.
 - [ ] Overview: the numbers match the database; "Open the room" opens today's class room as an admin.
 - [ ] View as a teacher or a student (read-only): nothing can be saved, sent or booked.
+
+## Admin part 2, People
+- [ ] Students list: search by email finds the right student; filters by plan, language and class.
+- [ ] A student's file matches their own dashboard; changing level, goal and plan saves; the plan email arrives for a paid plan only.
+- [ ] A paying student's plan changed here is set back by the next Stripe update (expected; the warning says so).
+- [ ] Writing to a student and to a teacher: the email arrives.
+- [ ] Approving, rejecting (with a reason) and suspending teachers, one and several: status changes and the emails arrive.
+- [ ] A teacher's file: languages, rate and level save; the teacher sees the change in their Settings.
+- [ ] Invite a student and a teacher by email: the email arrives, the link signs them in, the student goes to the level test and the teacher to /app/teach.
+- [ ] Email signups CSV opens correctly in a spreadsheet.
+- [ ] /admin.html forwards to /app/admin; /admin.html?old=1 still opens the old page for classes and payouts until parts 3 and 4.
