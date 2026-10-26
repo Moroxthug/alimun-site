@@ -16,7 +16,11 @@
    engine's test mode; Beat the clock (90 seconds of quick multiple-choice and true-or-false questions); a long
    practice set per unit (12 exercises). Best scores: practice_progress "quiz:<book>:<unit|mixed|clock>".
    Routes: #/practice, #/practice/round, #/practice/listen, #/practice/speak, #/practice/types,
-   #/practice/quiz/<unit|mixed>, #/practice/set/<unit>, #/practice/clock. Interface text: app_pr_* and app_ex_* keys. */
+   #/practice/quiz/<unit|mixed>, #/practice/set/<unit>, #/practice/clock. Interface text: app_pr_* and app_ex_* keys.
+   From your teacher (step 15, part 5): exercise sets a teacher sent to the student or their class (teacher_sets),
+   played like a practice set; each answer goes into the practice memory ("tset:<set>:set:<block>:<item>"), the
+   score into practice_progress "set:<set>" (homework made from a set is marked from it), and #/practice/teacher/<set>/again
+   plays only the items answered wrong last time. Routes: #/practice/teacher/<set>[/again]. */
 (function () {
   'use strict';
   var A = null, root = null, R = null;
@@ -545,6 +549,47 @@
     return ['en', 'es', 'fr', 'de', 'pt', 'zh', 'ar', 'it'].indexOf(l) > -1 ? l : 'en';
   }
   function signedIn() { return A.mode() === 'real' && A.data().profile.id; }
+  /* The teacher's sets for this student (signed out: one sample set) */
+  function loadTeacherSets() {
+    if (signedIn()) return window.AlimunData.mySets(signedIn()).catch(function () { return []; });
+    var de = (A.data().profile.language || 'German') === 'German';
+    return Promise.resolve([{ id: 'sample', title: de ? 'Das Wetter' : 'The weather', language: de ? 'German' : 'English', level: 'B1', sent_at: new Date().toISOString(), result: null, sample: true,
+      blocks: de ? [
+        { t: 'ex', kind: 'gap', h: 'Ergänzen Sie das Verb.', items: [{ q: 'Heute ___ es den ganzen Tag.', a: ['regnet'], why: 'regnen: es regnet' }, { q: 'Morgen ___ die Sonne.', a: ['scheint'], why: 'scheinen: die Sonne scheint' }] },
+        { t: 'ex', kind: 'match', h: 'Was passt zusammen?', pairs: [['der Schnee', 'snow'], ['der Wind', 'wind'], ['das Gewitter', 'thunderstorm']] }
+      ] : [
+        { t: 'ex', kind: 'gap', h: 'Complete with the verb.', items: [{ q: 'It ___ all day yesterday.', a: ['rained'], why: 'Past simple: rained' }, { q: 'The sun ___ tomorrow.', a: ['will shine', "'ll shine"], why: 'A prediction: will shine' }] },
+        { t: 'ex', kind: 'match', h: 'Match the words.', pairs: [['snow', 'neve'], ['wind', 'vento'], ['thunderstorm', 'temporale']] }
+      ] }]);
+  }
+  /* A teacher's set as a round: every item, or (again) only those answered wrong last time */
+  function teacherRound(set, again) {
+    var mem = readMem(), out = [];
+    (set.blocks || []).forEach(function (b, bi) {
+      if (!b || b.t !== 'ex' || !EX().kinds || EX().kinds.indexOf(b.kind) < 0) return;
+      var base = 'tset:' + set.id + ':set:' + bi + ':';
+      if (b.items && !again) { out.push({ b: b, keys: b.items.map(function (x, i) { return base + i; }) }); return; }
+      if (b.items) {
+        var ids = b.items.map(function (x, i) { return i; }).filter(function (i) { var r = mem[base + i]; return r && r.w && r.b < 2; });
+        if (!ids.length || ['bank', 'sort', 'label'].indexOf(b.kind) > -1 && ids.length < 2) return;
+        out.push({ b: Object.assign({}, b, { items: ids.map(function (i) { return b.items[i]; }) }), keys: ids.map(function (i) { return base + i; }) });
+      } else if (!again) out.push({ b: b, keys: [] });
+    });
+    return out;
+  }
+  function teacherSection(list) {
+    if (!list || !list.length) return '';
+    var pct = function (n) { return new Intl.NumberFormat(A.locale, { style: 'percent' }).format(n / 100); };
+    var mem = readMem();
+    return '<h2 class="t-h2 span-12 home__section" style="--i:2">' + esc(t('app_pr_teacher_h')) + '</h2>' + list.map(function (x, i) {
+      var n = (x.blocks || []).length, again = (x.blocks || []).some(function (b, bi) { return (b.items || []).some(function (it, ii) { var r = mem['tset:' + x.id + ':set:' + bi + ':' + ii]; return r && r.w && r.b < 2; }); });
+      var res = x.result && x.result.done ? t('app_pr_teacher_score', { score: pct(x.result.graded_score || 0) }) : t('app_pr_teacher_new');
+      return '<section class="card card--mint span-6" style="--i:' + (2 + i % 4) + '"><div class="card__row"><div class="card__art">' + A.Cast.drawing('owl') + '</div><div>' +
+        '<h3 class="t-h2" lang="' + esc(window.AlimunData.langCode(x.language) || 'en') + '">' + esc(x.title) + '</h3><p class="t-body" style="margin-top:6px">' + esc(A.tn('app_pr_teacher_n', n) + '. ' + res) + '</p>' +
+        '<div class="btn-row" style="margin-top:14px"><a class="btn btn--primary btn--sm" href="#/practice/teacher/' + esc(x.id) + '">' + esc(t(x.result && x.result.done ? 'app_pr_teacher_again' : 'app_pr_start')) + '</a>' +
+        (again ? '<a class="btn btn--ghost btn--sm" href="#/practice/teacher/' + esc(x.id) + '/again">' + esc(t('app_pr_teacher_mistakes')) + '</a>' : '') + '</div></div></div></section>';
+    }).join('');
+  }
   function typesSet(list, language) {
     return list.filter(function (s) { return s.language === language && /-types$/.test(s.id); })[0] || list.filter(function (s) { return /-types$/.test(s.id); })[0] || null;
   }
@@ -565,6 +610,7 @@
         '<section class="stage span-4" style="--i:1;background:var(--t-lime)" aria-hidden="true"><div class="bub say">' + esc(t(mist ? 'app_pr_bub_mistakes' : 'app_pr_bub')) + '</div>' + A.Cast.drawing('dog') + '</section>' +
         '<section class="card span-6" style="--i:2"><div class="card__row"><div class="card__art">' + A.Cast.drawing('ghost') + '</div><div>' +
           '<h2 class="t-h2">' + esc(t('app_pr_mistakes_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(mist ? A.tn('app_pr_mistakes_n', mist) : t('app_pr_mistakes_none')) + '</p></div></div></section>' +
+        teacherSection(info.tsets) +
         (set ? '<a class="card span-6" href="#/practice/types" style="--i:3"><div class="card__row"><div class="card__art">' + A.Cast.drawing('owl') + '</div><div>' +
           '<h2 class="t-h2">' + esc(t('app_pr_types_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_types_p', { course: A.languageName(set.language) + ' ' + set.level })) + '</p></div></div></a>' : '') +
         (info.book ? (info.listen >= 6
@@ -687,6 +733,8 @@
     if (R.saved || R.types) return;
     R.saved = true;
     var f = R.ex.firstTally(), score = f.total ? Math.round(f.right / f.total * 100) : 100;
+    /* A teacher's set, played in full: its score (the best so far) for the teacher and for homework made from it */
+    if (R.setId && !R.again && signedIn()) window.AlimunData.saveBook(A.data().profile.id, 'set:' + R.setId, { done: true, score: Math.max(score, R.best || 0) }).catch(function (e) { console.warn('[Alimun] Set score not saved', e && e.message); });
     if (signedIn()) {
       var key = 'practice:round:' + new Date().toISOString().slice(0, 10);
       window.AlimunData.saveBook(A.data().profile.id, key, { done: true, score: score }).catch(function (e) { console.warn('[Alimun] Practice round not saved', e && e.message); });
@@ -766,8 +814,8 @@
     view.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div></div>';
     var id = A.myBookId(), lang = explainLang();
     var noAudio = function () { return null; };
-    return Promise.all([window.AlimunReader.open(helpers, id), loadSets(), use(helpers), window.AlimunReader.audio(id).catch(noAudio), loadPictures()]).then(function (r) {
-      var info = { book: r[0] && r[0].book, progress: r[0] && r[0].progress, set: typesSet(r[1], A.data().profile.language), audio: r[3], pictures: r[4] };
+    return Promise.all([window.AlimunReader.open(helpers, id), loadSets(), use(helpers), window.AlimunReader.audio(id).catch(noAudio), loadPictures(), loadTeacherSets()]).then(function (r) {
+      var info = { book: r[0] && r[0].book, progress: r[0] && r[0].progress, set: typesSet(r[1], A.data().profile.language), audio: r[3], pictures: r[4], tsets: r[5] || [] };
       info.listen = info.book ? heard(info.book, info.progress || {}, info.audio).length : 0;
       if (my !== mountNo) return { stale: true };
       if (parts[0] === 'types' && info.set) {
@@ -779,6 +827,17 @@
           startRound(blocks, [], attrs(lang, lang === 'ar'), attrs(code, false), true, 'types');
           return { html: roundView(), title: t('app_pr_types_h'), round: true };
         });
+      }
+      if (parts[0] === 'teacher' && parts[1]) {
+        var ts = info.tsets.filter(function (x) { return x.id === parts[1]; })[0];
+        if (!ts) return { html: homeView(info), title: t('app_nav_practice') };
+        var again = parts[2] === 'again', tr = teacherRound(ts, again);
+        if (!tr.length) tr = teacherRound(ts, false);
+        if (!tr.length) return { html: emptyView(), title: t('app_nav_practice') };
+        var tc = window.AlimunData.langCode(ts.language) || 'en';
+        startRound(tr.map(function (x) { return x.b; }), tr.map(function (x) { return x.keys; }), attrs(lang, lang === 'ar'), attrs(tc, false), false, 'teacher/' + ts.id + (again ? '/again' : ''), null);
+        R.setId = ts.sample ? null : ts.id; R.again = again; R.best = ts.result && ts.result.graded_score || 0;
+        return { html: roundView(), title: ts.title, round: true };
       }
       if (parts[0] === 'clock' && info.book) {
         Q = null;

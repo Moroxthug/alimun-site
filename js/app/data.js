@@ -694,6 +694,68 @@
   function draftFeedback(submissionId) { return api('/api/ai?action=grade-submission', { submission_id: submissionId }); }
   function draftTask(prompt, system) { return api('/api/ai?action=grade', { prompt: prompt, system: system, json: true }); }
 
+  /* Teacher dashboard, Material (step 15, part 5; supabase/migrations/202610261200_teacher_sets.sql): the teacher's own
+     exercise sets, who each was sent to, and the results of those students (practice_progress "set:<id>") */
+  function teacherSets() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return teacherHomework().then(function (h) {
+      if (!h || !h.teacher) return h;
+      return c.from('teacher_sets').select('id, title, language, level, blocks, created_at, updated_at').eq('teacher_id', h.teacher.id).order('updated_at', { ascending: false }).limit(200).then(function (sr) {
+        var sets = rows(sr), ids = sets.map(function (x) { return x.id; }), none = Promise.resolve({ data: [] });
+        var sids = h.students.map(function (x) { return x.id; });
+        return Promise.all([
+          ids.length ? c.from('teacher_set_targets').select('id, set_id, cohort_id, student_id, sent_at').in('set_id', ids) : none,
+          ids.length && sids.length ? c.from('practice_progress').select('student_id, ex_key, done, graded_score, updated_at').in('ex_key', ids.map(function (i) { return 'set:' + i; })).in('student_id', sids).limit(5000) : none
+        ]).then(function (r) {
+          h.sets = sets; h.targets = rows(r[0]); h.results = rows(r[1]);
+          return h;
+        });
+      });
+    });
+  }
+  function saveSet(row) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    var body = { title: row.title, language: row.language, level: row.level, blocks: row.blocks, updated_at: new Date().toISOString() };
+    var q = row.id ? c.from('teacher_sets').update(body).eq('id', row.id) : c.from('teacher_sets').insert(Object.assign({ teacher_id: row.teacher_id }, body));
+    return q.select('id, title, language, level, blocks, created_at, updated_at').single().then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function deleteSet(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('teacher_sets').delete().eq('id', id).then(function (r) { if (r.error) throw r.error; });
+  }
+  function sendSet(setId, cohortId, studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('teacher_set_targets').insert({ set_id: setId, cohort_id: cohortId || null, student_id: studentId || null }).select('id, set_id, cohort_id, student_id, sent_at').single()
+      .then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function unsendSet(targetId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('teacher_set_targets').delete().eq('id', targetId).then(function (r) { if (r.error) throw r.error; });
+  }
+  /* The student's side: the sets their teachers sent to them or their classes, with their own results */
+  function mySets(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('teacher_set_targets').select('set_id, sent_at').order('sent_at', { ascending: false }).limit(200).then(function (tr) {
+      var tg = rows(tr), ids = tg.map(function (x) { return x.set_id; }).filter(function (v, i, a) { return a.indexOf(v) === i; });
+      if (!ids.length) return [];
+      return Promise.all([
+        c.from('teacher_sets').select('id, teacher_id, title, language, level, blocks').in('id', ids),
+        c.from('practice_progress').select('ex_key, done, graded_score').eq('student_id', studentId).in('ex_key', ids.map(function (i) { return 'set:' + i; }))
+      ]).then(function (r) {
+        var res = {}; rows(r[1]).forEach(function (x) { res[x.ex_key.slice(4)] = x; });
+        var sent = {}; tg.forEach(function (x) { if (!sent[x.set_id]) sent[x.set_id] = x.sent_at; });
+        return rows(r[0]).map(function (s) { s.sent_at = sent[s.id]; s.result = res[s.id] || null; return s; })
+          .sort(function (a, b) { return String(b.sent_at).localeCompare(String(a.sent_at)); });
+      });
+    });
+  }
+
   /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
   function libraryResults(studentId) {
     var c = client();
@@ -750,5 +812,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, teacherInbox: teacherInbox, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, teacherInbox: teacherInbox, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

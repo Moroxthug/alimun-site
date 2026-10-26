@@ -1382,3 +1382,26 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .th-score { max-width: 160px; }
 [data-kindbox] { display: grid; gap: 16px; }
 .hw-body .card > .t-h3 + .hw-answer { margin-top: 12px; }
+
+/* ---------- Teacher dashboard, Material (step 15 part 5, js/app/teach-material.js) ---------- */
+.tm-layout { display: grid; gap: 18px; }
+@media (min-width: 1100px) { .tm-layout { grid-template-columns: minmax(0, 1fr) 340px; align-items: start; } .tm-side { position: sticky; top: 96px; } }
+.tm-main, .tm-side { display: grid; gap: 18px; min-width: 0; }
+.tm-block { display: grid; gap: 12px; }
+.tm-block__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap; }
+.tm-block__tools { display: flex; gap: 6px; }
+.tm-rows { display: grid; gap: 12px; }
+.tm-row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: start; padding: 14px; border-radius: var(--r-sm); background: var(--bone); }
+.tm-row__fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 8px 10px; min-width: 0; }
+.tm-f { display: grid; gap: 4px; min-width: 0; font-size: 13px; font-weight: 600; color: var(--muted); }
+.tm-f--wide { grid-column: 1 / -1; }
+.tm-f .st-in { padding: 10px 12px; font-size: 15px; }
+.tm-issue { margin: 0; color: #b0472f; font-weight: 600; grid-column: 1 / -1; }
+.tm-issue:empty { display: none; }
+.tm-add__row { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.tm-add__row .st-in { flex: 1; min-width: 200px; }
+.tm-src { display: grid; gap: 8px; margin: 12px 0; }
+.tm-save .t-body { color: var(--on-forest); }
+.tm-del { justify-self: start; font-size: 14px; }
+.tm-try { max-width: 900px; }
+.st-field[hidden], .st-row[hidden] { display: none; }

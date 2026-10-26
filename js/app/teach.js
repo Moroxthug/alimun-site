@@ -58,6 +58,9 @@
     app_pg_n_hw: ['app_pg_n_hw_zero', 'app_pg_n_hw_one', 'app_pg_n_hw_two', 'app_pg_n_hw_few', 'app_pg_n_hw_many', 'app_pg_n_hw_other'],
     app_ts_r_idle: ['app_ts_r_idle_zero', 'app_ts_r_idle_one', 'app_ts_r_idle_two', 'app_ts_r_idle_few', 'app_ts_r_idle_many', 'app_ts_r_idle_other'],
     app_hw_words: ['app_hw_words_zero', 'app_hw_words_one', 'app_hw_words_two', 'app_hw_words_few', 'app_hw_words_many', 'app_hw_words_other'],
+    app_pr_teacher_n: ['app_pr_teacher_n_zero', 'app_pr_teacher_n_one', 'app_pr_teacher_n_two', 'app_pr_teacher_n_few', 'app_pr_teacher_n_many', 'app_pr_teacher_n_other'],
+    app_tm2_problems: ['app_tm2_problems_zero', 'app_tm2_problems_one', 'app_tm2_problems_two', 'app_tm2_problems_few', 'app_tm2_problems_many', 'app_tm2_problems_other'],
+    app_tm2_drafted_n: ['app_tm2_drafted_n_zero', 'app_tm2_drafted_n_one', 'app_tm2_drafted_n_two', 'app_tm2_drafted_n_few', 'app_tm2_drafted_n_many', 'app_tm2_drafted_n_other'],
     app_tc_created_n: ['app_tc_created_n_zero', 'app_tc_created_n_one', 'app_tc_created_n_two', 'app_tc_created_n_few', 'app_tc_created_n_many', 'app_tc_created_n_other'],
     app_t_oto_notes_n: ['app_t_oto_notes_n_zero', 'app_t_oto_notes_n_one', 'app_t_oto_notes_n_two', 'app_t_oto_notes_n_few', 'app_t_oto_notes_n_many', 'app_t_oto_notes_n_other']
   };
@@ -365,7 +368,7 @@
     loaderInner: loaderInner, dayName: dayName, relative: relative, className: className, weekday: weekday, browserZone: browserZone,
     mode: function () { return mode; }, rerender: function () { render(current, false); }
   };
-  var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; }, homework: function () { return window.AlimunTeachHomework; } };
+  var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; }, homework: function () { return window.AlimunTeachHomework; }, material: function () { return window.AlimunTeachMaterial; } };
   function partsOf(id) { return location.hash.replace(new RegExp('^#\\/' + id + '\\/?'), '').split('/').filter(Boolean); }
 
   /* ---------- Routing ---------- */

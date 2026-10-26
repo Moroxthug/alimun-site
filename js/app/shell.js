@@ -57,6 +57,7 @@
     app_hw_todo_n: ['app_hw_todo_n_zero', 'app_hw_todo_n_one', 'app_hw_todo_n_two', 'app_hw_todo_n_few', 'app_hw_todo_n_many', 'app_hw_todo_n_other'],
     app_hw_late_n: ['app_hw_late_n_zero', 'app_hw_late_n_one', 'app_hw_late_n_two', 'app_hw_late_n_few', 'app_hw_late_n_many', 'app_hw_late_n_other'],
     app_hw_words: ['app_hw_words_zero', 'app_hw_words_one', 'app_hw_words_two', 'app_hw_words_few', 'app_hw_words_many', 'app_hw_words_other'],
+    app_pr_teacher_n: ['app_pr_teacher_n_zero', 'app_pr_teacher_n_one', 'app_pr_teacher_n_two', 'app_pr_teacher_n_few', 'app_pr_teacher_n_many', 'app_pr_teacher_n_other'],
     app_pg_words: ['app_pg_words_zero', 'app_pg_words_one', 'app_pg_words_two', 'app_pg_words_few', 'app_pg_words_many', 'app_pg_words_other'],
     app_pg_words_of: ['app_pg_words_of_zero', 'app_pg_words_of_one', 'app_pg_words_of_two', 'app_pg_words_of_few', 'app_pg_words_of_many', 'app_pg_words_of_other'],
     app_pg_days: ['app_pg_days_zero', 'app_pg_days_one', 'app_pg_days_two', 'app_pg_days_few', 'app_pg_days_many', 'app_pg_days_other'],
