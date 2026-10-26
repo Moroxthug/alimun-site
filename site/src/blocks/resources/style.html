@@ -94,6 +94,14 @@
   @media (max-width: 991px) { .rs-top, .rs-buddy { grid-template-columns: 1fr; } .rs-today, .rs-cats, .rs-ff, .rs-prints { grid-template-columns: 1fr 1fr; } .rs-clock { grid-template-columns: auto 1fr; } .rs-clock .bm-btn { grid-column: 1 / -1; } }
   @media (max-width: 640px) { .rs-top { padding-top: 150px; } .rs-today, .rs-cats, .rs-ff, .rs-prints { grid-template-columns: 1fr; } .rs-clock { grid-template-columns: 1fr; justify-items: start; } .rs-end { grid-template-columns: 1fr; padding: 24px; } .rs-play > div svg { width: 64px; height: 64px; } }
 
+  /* Level ladders on the hub: per language, one small card per level */
+  .rs-ladder { background: #fff; border-radius: 32px; box-shadow: 0 20px 60px rgba(8,8,8,.08); padding: 24px 26px; margin-bottom: 16px; }
+  .rs-lh { font-size: 26px; margin-bottom: 14px; }
+  .rs-rungs { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  .rs-rung { border-radius: 22px; padding: 16px 18px; text-decoration: none; color: inherit; display: flex; flex-direction: column; gap: 6px; min-height: 120px; transition: transform .3s cubic-bezier(.3,1.4,.5,1); }
+  .rs-rung:hover { transform: translateY(-6px) rotate(-1deg); }
+  .rs-rung .rs-lc { font-family: "Coolvetica Condensed", sans-serif; font-size: 44px; line-height: 1; color: #1a443c; }
+  .rs-rt { font-size: 14px; line-height: 1.4; color: rgba(8,8,8,.75); }
   /* Resource pages: the header card beside a big drawing, the activity on white beside a side card, the about text */
   .rs-top.is-item { grid-template-columns: 1.5fr 1fr; }
   .rs-meta { margin: 0 !important; font-size: 14px !important; color: rgba(8,8,8,.55) !important; }

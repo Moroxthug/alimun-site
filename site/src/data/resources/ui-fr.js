@@ -2,7 +2,7 @@
 // `daily`: words, examples, unscramble words and tongue twisters stay in the language being learned;
 // meanings and clues are in French.
 export default {
-  locale: 'fr_FR', home: 'Accueil', back: 'Ressources', slugBase: 'ressources',
+  locale: 'fr_FR', home: 'Accueil', back: 'Ressources', slugBase: 'ressources', kindSlugs: { exercise: 'exercices', quiz: 'quiz' }, byLevel: (k) => `${k} par niveau`, seeAll: 'Tout voir', quizRung: '10 questions',
   title: 'Ressources', metaTitle: "Exercices, quiz et jeux gratuits en anglais et en allemand – Alimun",
   metaDesc: "Exercices, quiz, jeux et fiches à imprimer gratuits pour apprendre l'anglais et l'allemand. Sans inscription : joue, entraîne-toi et télécharge.",
   lead: "Exercices, quiz, jeux et fiches à imprimer gratuits pour apprendre l'anglais et l'allemand. Sans inscription, il suffit de jouer.",

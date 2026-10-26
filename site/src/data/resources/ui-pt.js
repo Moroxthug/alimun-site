@@ -2,7 +2,7 @@
 // Same keys as `en` in ui.js. Words, clues and examples in the language being learned stay in that language;
 // meanings and clues are in Portuguese.
 export default {
-  locale: 'pt_BR', home: 'Início', back: 'Recursos', slugBase: 'recursos',
+  locale: 'pt_BR', home: 'Início', back: 'Recursos', slugBase: 'recursos', kindSlugs: { exercise: 'exercicios', quiz: 'quizzes' }, byLevel: (k) => `${k} por nível`, seeAll: 'Ver todos', quizRung: '10 perguntas',
   title: 'Recursos', metaTitle: 'Exercícios, quizzes e jogos grátis de inglês e alemão – Alimun',
   metaDesc: 'Exercícios, quizzes, jogos e materiais para imprimir grátis para quem aprende inglês e alemão. Sem cadastro: jogue, pratique e baixe.',
   lead: 'Exercícios, quizzes, jogos e materiais para imprimir grátis para quem aprende inglês e alemão. Sem cadastro, é só jogar.',

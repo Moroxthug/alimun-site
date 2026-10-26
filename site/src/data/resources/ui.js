@@ -4,7 +4,7 @@
 // Words, clues and examples in the language being learned stay in that language; meanings are in the reader's language.
 export default {
   en: {
-    locale: 'en_US', home: 'Home', back: 'Resources', slugBase: 'resources',
+    locale: 'en_US', home: 'Home', back: 'Resources', slugBase: 'resources', kindSlugs: { exercise: 'exercises', quiz: 'quizzes' }, byLevel: (k) => `${k} by level`, seeAll: 'See all', quizRung: '10 questions',
     title: 'Resources', metaTitle: 'Free English and German exercises, quizzes and games – Alimun',
     metaDesc: 'Free exercises, quizzes, games and printables for learners of English and German. No sign-up: play, practise and download.',
     lead: 'Free exercises, quizzes, games and printables for learners of English and German. No sign-up, just play.',

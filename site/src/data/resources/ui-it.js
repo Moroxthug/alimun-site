@@ -1,7 +1,7 @@
 // Resources hub text for the Italian site (/it/). Same keys as `en` in ui.js.
 // `daily`: words, clues' answers and examples in the language being learned stay in that language; meanings and clues are in Italian.
 export default {
-  locale: 'it_IT', home: 'Home', back: 'Risorse', slugBase: 'risorse',
+  locale: 'it_IT', home: 'Home', back: 'Risorse', slugBase: 'risorse', kindSlugs: { exercise: 'esercizi', quiz: 'quiz' }, byLevel: (k) => `${k} per livello`, seeAll: 'Vedi tutti', quizRung: '10 domande',
   title: 'Risorse', metaTitle: 'Esercizi, quiz e giochi gratis di inglese e tedesco – Alimun',
   metaDesc: 'Esercizi, quiz, giochi e schede da stampare gratis per chi impara inglese e tedesco. Senza registrazione: gioca, esercitati e scarica.',
   lead: 'Esercizi, quiz, giochi e schede da stampare gratis per chi impara inglese e tedesco. Senza registrazione, inizia a giocare.',

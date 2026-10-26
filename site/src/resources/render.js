@@ -13,6 +13,7 @@ const KIND_DRAW = { exercise: ['owl', 'mint'], quiz: ['parrot', 'sun'], reading:
 export const prefix = (site) => (site === 'en' ? '/' : `/${site}/`);
 export const hubPath = (site, ui) => `${prefix(site)}${ui.slugBase}`;
 export const itemPath = (r, ui) => `${hubPath(r.site, ui)}/${r.slug}`;
+export const kindPath = (site, ui, k) => `${hubPath(site, ui)}/${ui.kindSlugs[k]}`;
 export const pdfPath = (r) => `/downloads/${r.site}/${r.slug}.pdf`;
 const levelTest = (site, course) => `${prefix(site)}level-test${course ? '?language=' + course : ''}`;
 const metaLine = (r, ui) => [ui.kinds[r.kind][0], r.course ? ui.courses[r.course] : '', r.level].filter(Boolean).map(esc).join(', ');
@@ -27,7 +28,7 @@ export function card(r, ui) {
 export function hub(site, list, ui) {
   const of = (k) => list.filter((r) => r.kind === k);
   const quiz = of('quiz')[0], game = of('game')[0], fun = of('fun')[0];
-  const catHref = (k) => (k === 'level' ? levelTest(site) : of(k).length === 1 ? itemPath(of(k)[0], ui) : `#${k}`);
+  const catHref = (k) => (k === 'level' ? levelTest(site) : of(k).length === 1 ? itemPath(of(k)[0], ui) : k === 'printable' ? '#printable' : kindPath(site, ui, k));
   const cats = [...KINDS.filter((k) => of(k).length), 'level'];
   const today = { English: ui.daily.English, German: ui.daily.German, labels: { right: ui.right, almost: ui.almost } };
   return `<div class="bm"><div class="bm-wrap">` +
@@ -45,8 +46,28 @@ export function hub(site, list, ui) {
     (game ? head2(ui.ffTitle, ui.ffLead, `<a class="bm-btn is-ghost" href="${itemPath(game, ui)}">${esc(ui.ffPlay)}</a>`) + `<div class="rs-ff">${game.cards.slice(0, 6).map((c) => flipCard(c, ui)).join('')}</div>` : '') +
     (fun ? head2(ui.buddyTitle) + `<div class="rs-buddy rv"><div><p class="bm-d rs-bh">${esc(ui.buddyHead)}</p><p class="rs-bt">${esc(ui.buddyText)}</p><div class="rs-line">${['teacup', 'pretzel', 'croissant', 'pizza', 'churro', 'nata'].map((d) => draw(d)).join('')}</div></div>${buddyBox(fun, ui, site)}</div>` : '') +
     (of('printable').length ? head2(ui.printTitle, ui.printLead, '', 'printable') + `<div class="rs-prints">${of('printable').map((r) => `<a class="rs-paper rv" href="${itemPath(r, ui)}"><div class="rs-sheet">${draw(r.draw)}<p class="bm-d">${esc(r.title)}</p><p>${esc(r.desc)}</p><span class="rs-go">${esc(ui.download)}</span></div></a>`).join('')}</div>` : '') +
-    KINDS.filter((k) => !['printable'].includes(k) && of(k).length > 1).map((k) => head2(ui.kinds[k][0], ui.kinds[k][1], '', k) + `<div class="rs-cats">${of(k).map((r) => card(r, ui)).join('')}</div>`).join('') +
+    ['exercise', 'quiz'].filter((k) => of(k).length > 1).map((k) => head2(ui.byLevel(ui.kinds[k][0]), ui.kinds[k][1], `<a class="bm-btn is-ghost" href="${kindPath(site, ui, k)}">${esc(ui.seeAll)}</a>`, k) + ladders(of(k), ui)).join('') +
     endCard(site, ui, quiz) + `</div></div>`;
+}
+
+/* Level ladders: for each language being learned, one small card per level (A1 to C1) */
+const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+const byLevel = (a, b) => LEVELS.indexOf(String(a.level).slice(0, 2)) - LEVELS.indexOf(String(b.level).slice(0, 2));
+const rungText = (r, ui) => r.topic || (r.kind === 'quiz' ? ui.quizRung : String(r.title).replace(/^[^:]*:\s*/, '').replace(/\s*\([^)]*\)\s*$/, ''));
+function ladders(items, ui) {
+  return ['English', 'German'].filter((c) => items.some((r) => r.course === c)).map((c) =>
+    `<div class="rs-ladder rv"><p class="bm-d rs-lh">${esc(ui.courses[c])}</p><div class="rs-rungs">${items.filter((r) => r.course === c).sort(byLevel).map((r, i) =>
+      `<a class="rs-rung t-${['mint', 'sun', 'coral', 'lime'][i % 4]}" href="${itemPath(r, ui)}"><span class="rs-lc">${esc(String(r.level).slice(0, 2))}</span><span class="rs-rt">${esc(rungText(r, ui))}</span></a>`).join('')}</div></div>`).join('');
+}
+
+/* A page per kind (all exercises, all quizzes), by language being learned and level */
+export function kindPage(site, k, list, ui) {
+  const items = list.filter((r) => r.kind === k);
+  return `<div class="bm"><div class="bm-wrap">` +
+    `<div class="rs-top is-item"><div class="bm-hello"><div><p class="bm-crumb"><a href="${hubPath(site, ui)}">${esc(ui.back)}</a></p><h1>${esc(ui.kinds[k][0])}</h1><p>${esc(ui.kinds[k][1])}</p></div>` +
+    `<p class="rs-meta">${esc(ui.free)}</p></div><div class="rs-play is-item t-${KIND_DRAW[k][1]}">${draw(KIND_DRAW[k][0], 'rs-big')}</div></div>` +
+    ['English', 'German'].filter((c) => items.some((r) => r.course === c)).map((c) => head2(ui.courses[c]) + `<div class="rs-cats">${items.filter((r) => r.course === c).sort(byLevel).map((r) => card(r, ui)).join('')}</div>`).join('') +
+    endCard(site, ui, list.find((r) => r.kind === 'quiz')) + `</div></div>`;
 }
 
 function flipCard(c, ui) {
