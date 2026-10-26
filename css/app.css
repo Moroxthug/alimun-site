@@ -1535,10 +1535,25 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .tu-hear:disabled { opacity: .55; cursor: default; }
 .tu-sum { padding: 16px 20px; border-top: 1px solid var(--line); overflow-y: auto; }
 .tu-sum .t-body { margin-top: 6px; }
+/* Saying a sentence (part 4): the sentence with each word marked, the three scores, the sound that was off */
+.tu-pron { margin-top: 22px; padding: 24px clamp(18px, 3vw, 32px); max-width: none; color: var(--ink); }
+.tu-pron .t-body { margin-top: 8px; }
+.tu-pron .tu-rec { margin: 10px 0 0; }
+.tu-pron__s { margin: 10px 0 0; font-size: 24px; line-height: 1.6; }
+.tu-pw { border-radius: 6px; padding: 0 3px; }
+.tu-pw.is-ok { color: var(--forest); background: var(--t-mint); }
+.tu-pw.is-diff { background: var(--t-coral); text-decoration: underline wavy var(--coral); text-decoration-thickness: 2px; text-underline-offset: 6px; }
+.tu-pw.is-missed { color: rgba(8, 8, 8, .4); text-decoration: underline dotted rgba(8, 8, 8, .35); text-underline-offset: 6px; }
+.tu-pron__scores { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 16px; }
+.tu-pron__scores p { margin: 0; display: flex; flex-direction: column; gap: 2px; }
+.tu-pron__n { font-family: 'Coolvetica Condensed', Satoshi, sans-serif; font-size: 40px; line-height: 1; color: var(--forest); }
+.tu-pron__scores small { font-size: 13px; line-height: 1.35; color: rgba(8, 8, 8, .62); }
+.tu-pron [data-tu="pron-rec"][aria-pressed="true"] { background: var(--forest); color: var(--bone); }
 @media (max-width: 899px) {
   .tu-grid { grid-template-columns: minmax(0, 1fr); }
   .tu-chat { position: static; max-height: none; }
   .tu-msgs { max-height: 60vh; }
   .tu-op--title { font-size: 28px; } .tu-op--write { font-size: 18px; }
+  .tu-pron__s { font-size: 20px; } .tu-pron__n { font-size: 32px; } .tu-pron__scores { gap: 10px; }
 }
 @media (prefers-reduced-motion: reduce) { .tu-op.is-new { animation: none; } }

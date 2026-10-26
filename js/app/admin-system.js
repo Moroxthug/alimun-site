@@ -12,7 +12,7 @@
   'use strict';
   var A = null, root = null, PO = null, AI = null, SY = null, FLASH = '';
   var DAY = 86400000, MIN = 60000;
-  var FEATURES = { grade: 'Exercise answers checked (closed)', 'homework-check': 'Homework checked before handing in', 'mark-mock': 'Mock tests marked', 'draft-homework': 'Homework tasks drafted', 'draft-set': 'Exercise sets drafted', tutor_turn: 'Tutor replies', tutor_summary: 'Tutor session summaries', tutor_listen: 'Tutor listening (speech to text)', tutor_voice: 'Tutor voice', 'generate-exercises': 'Exercises drafted', 'grade-submission': 'Homework marked', transcribe: 'Speaking transcribed', 'draft-feedback': 'Feedback drafted', 'draft-task': 'Homework tasks drafted' };
+  var FEATURES = { grade: 'Exercise answers checked (closed)', 'homework-check': 'Homework checked before handing in', 'mark-mock': 'Mock tests marked', 'draft-homework': 'Homework tasks drafted', 'draft-set': 'Exercise sets drafted', tutor_turn: 'Tutor replies', tutor_summary: 'Tutor session summaries', tutor_listen: 'Tutor listening (speech to text)', tutor_voice: 'Tutor voice', tutor_pron: 'Tutor pronunciation scoring', 'generate-exercises': 'Exercises drafted', 'grade-submission': 'Homework marked', transcribe: 'Speaking transcribed', 'draft-feedback': 'Feedback drafted', 'draft-task': 'Homework tasks drafted' };
 
   function esc(s) { return A.esc(s); }
   function real() { return A.mode() === 'real'; }

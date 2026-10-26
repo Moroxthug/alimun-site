@@ -108,3 +108,12 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] With 1 minute left, the closing reply stays written and is not spoken.
 - [ ] Admin, System: set tutor_voice to Sulafat; within a minute the next reply speaks in Sulafat. Set it back to Orus.
 - [ ] Admin, AI spend: Tutor listening and Tutor voice appear with their cost.
+
+## AI tutor, part 4 (pronunciation; needs AZURE_SPEECH_KEY and AZURE_SPEECH_REGION in Vercel, steps in docs/AZURE_SPEECH_SETUP.md)
+- [ ] Ask the tutor to practise pronunciation: a card "Say this sentence aloud" appears on the board with the sentence, "Say it" and "Hear it slowly".
+- [ ] "Hear it slowly" plays the sentence slowly in the tutor's voice; a second tap replays it without asking the server again.
+- [ ] "Say it", read the sentence, "Stop and send": the words are marked (green said well, coral said differently, faded missed), accuracy, fluency and completeness appear, and for English a sound such as /θ/ is named under a word said differently.
+- [ ] Leave out a word on purpose: it shows faded and the tutor mentions it; the tutor sets the sentence again until the score is good, then moves on and the card goes.
+- [ ] On a phone (iPhone Safari and Android Chrome), after allowing the microphone, the same works.
+- [ ] Say nothing: "Nothing was heard" and no time is taken.
+- [ ] Admin, AI spend: Tutor pronunciation scoring appears with its cost; Azure's portal shows the same audio time.

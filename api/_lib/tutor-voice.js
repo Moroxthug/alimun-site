@@ -72,6 +72,8 @@ const VOICE_MODEL = process.env.TUTOR_TTS_MODEL || 'gemini-3.1-flash-tts-preview
 const VOICE_USD_PER_SEC = { 'gemini-3.1-flash-tts-preview': 20 * 25 / 1e6, 'gemini-2.5-flash-tts': 10 * 25 / 1e6, 'gemini-2.5-pro-tts': 20 * 25 / 1e6 };
 const VOICE_USD_PER_TEXT_TOKEN = 1 / 1e6;
 const VOICE_STYLE = 'a warm, patient language teacher speaking clearly, at a natural conversational pace';
+/* Part 4: the sentence to say aloud, slowly, so the student can hear each sound and repeat it */
+const SLOW_STYLE = 'a patient language teacher modelling pronunciation: slowly and very clearly, with a short pause between words, natural sounds and stress';
 const VOICE_TIMEOUT_MS = 15000;
 const MAX_SAY = 800;
 
@@ -91,16 +93,17 @@ async function voiceName(supabase) {
   return name;
 }
 
-/** The tutor's text as MP3. Throws { code: 'budget' | 'unavailable' | 'voice' }. */
-async function speak(supabase, userId, text) {
+/** The tutor's text as MP3; opts.slow says it slowly (part 4). Throws { code: 'budget' | 'unavailable' | 'voice' }. */
+async function speak(supabase, userId, text, opts) {
+  const slow = !!(opts && opts.slow);
   const say = String(text || '').replace(/\*\*/g, '').replace(/\s+/g, ' ').trim().slice(0, MAX_SAY);
   const rate = VOICE_USD_PER_SEC[VOICE_MODEL] || 20 * 25 / 1e6;
-  // About 14 characters a second of speech
-  const row = await brain.reserve(supabase, userId, 'tutor_voice', Math.ceil(say.length / 14 + 2) * rate);
+  // About 14 characters a second of speech, half that when slow
+  const row = await brain.reserve(supabase, userId, 'tutor_voice', Math.ceil(say.length / (slow ? 7 : 14) + 2) * rate);
   const voice = await voiceName(supabase);
   const t0 = Date.now();
   try {
-    const w = await gv.speakVertex({ model: VOICE_MODEL, voice, style: VOICE_STYLE, text: say, timeoutMs: VOICE_TIMEOUT_MS });
+    const w = await gv.speakVertex({ model: VOICE_MODEL, voice, style: slow ? SLOW_STYLE : VOICE_STYLE, text: say, timeoutMs: VOICE_TIMEOUT_MS });
     const m = await gv.mp3(w);
     const textTokens = Math.ceil(say.length / 4);
     await supabase.from('ai_usage').update({

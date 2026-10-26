@@ -11,6 +11,11 @@
    After each reply the tutor's words are spoken (/api/tutor?action=voice: the server's stored text, once per message,
    Orus or Sulafat through Google Cloud) and kept in the page to hear again. The voice can be turned off (remembered in
    this browser); if Google refuses or is slow, the reply simply stays written. The voice stops when the time runs out.
+   Part 4: pronunciation, shown only when the server says it is configured (Azure). A tutor reply can set a sentence to
+   say aloud; it appears on the board with "Say it" and "Hear it slowly" (the tutor's voice, slowly, once per sentence).
+   The recording is turned into 16 kHz mono WAV in the page and sent to /api/tutor?action=pronounce, which scores it and
+   drops it; the board marks each word (said well, said differently, missed), names the sound that was off where Azure
+   gives it, and shows accuracy, fluency and completeness; the tutor answers and sets the sentence again until it is right.
    Sample (signed out or ?sample=1): a short scripted session in German, nothing is sent.
    Routes: #/tutor, #/tutor/session, #/tutor/past/<id>. Interface text: app_tu_* keys. */
 (function () {
@@ -36,6 +41,7 @@
   function voiceOn() { try { return localStorage.getItem(VOICE_KEY) !== 'off'; } catch (e) { return true; } }
   function setVoiceOn(on) { try { if (on) localStorage.removeItem(VOICE_KEY); else localStorage.setItem(VOICE_KEY, 'off'); } catch (e) { /* kept for this visit only */ } }
   function voiceReady() { return !!(S && S.status && S.status.voice); }
+  function pronReady() { return !!(S && S.status && S.status.pron); }
   function listenReady() { return !!(S && S.status && (S.status.listen || S.sample)); }
   /* One audio element for the whole session. Started once inside a tap (with a moment of silence) so that phones let
      the replies play by themselves afterwards. */
@@ -95,6 +101,7 @@
       var box = root.querySelector('[data-hear-for="' + (window.CSS && CSS.escape ? CSS.escape(m.id) : m.id) + '"]');
       if (box) box.innerHTML = hearHtml(m);
     });
+    var sb = root.querySelector('[data-slow-box]'); if (sb) sb.innerHTML = slowHtml();
     var v = root.querySelector('[data-tu="voice"]');
     if (v) { v.textContent = t(voiceOn() ? 'app_tu_voice_off' : 'app_tu_voice_on'); v.setAttribute('aria-pressed', voiceOn() ? 'true' : 'false'); }
     var n = root.querySelector('[data-tu-note]'); if (n) n.textContent = S.note ? t(S.note) : '';
@@ -147,23 +154,27 @@
   /* The form while recording: the button stops and sends, writing waits, the seconds left are read out */
   function recUi() {
     if (!root || !S) return;
-    var b = root.querySelector('[data-tu="rec"]'), send = root.querySelector('[data-tu-send]'), inp = root.querySelector('#tu-in'), line = root.querySelector('[data-tu-rec]');
-    var on = !!S.rec;
-    if (b) { b.textContent = t(on ? 'app_tu_rec_stop' : 'app_tu_speak'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.disabled = !!S.busy || (on && S.rec.starting); }
+    var b = root.querySelector('[data-tu="rec"]'), p = root.querySelector('[data-tu="pron-rec"]'), send = root.querySelector('[data-tu-send]'), inp = root.querySelector('#tu-in');
+    var on = !!S.rec, mode = on ? S.rec.mode : null, left = on && S.rec.t0 ? t('app_tu_rec_left', { n: Math.max(0, REC_MAX - Math.round((Date.now() - S.rec.t0) / 1000)) }) : '';
+    if (b) { b.textContent = t(mode === 'turn' ? 'app_tu_rec_stop' : 'app_tu_speak'); b.setAttribute('aria-pressed', mode === 'turn' ? 'true' : 'false'); b.disabled = !!S.busy || mode === 'pron' || (on && S.rec.starting); }
+    if (p) { p.textContent = t(mode === 'pron' ? 'app_tu_rec_stop' : p.getAttribute('data-label')); p.setAttribute('aria-pressed', mode === 'pron' ? 'true' : 'false'); p.disabled = !!S.busy || mode === 'turn' || (on && S.rec.starting); }
     if (send) send.disabled = on || !!S.busy;
     if (inp) inp.disabled = on;
-    if (line) line.textContent = on && S.rec.t0 ? t('app_tu_rec_left', { n: Math.max(0, REC_MAX - Math.round((Date.now() - S.rec.t0) / 1000)) }) : '';
+    var line = root.querySelector('[data-tu-rec]'); if (line) line.textContent = mode === 'turn' ? left : '';
+    var pl = root.querySelector('[data-tu-prec]'); if (pl) pl.textContent = mode === 'pron' ? left : '';
   }
-  function startRec() {
+  /* mode: 'turn' (talking to the tutor) or 'pron' (saying the sentence on the board, msg is its message) */
+  function startRec(mode, msg) {
     if (!S || S.busy || S.ended || S.rec) return;
+    mode = mode || 'turn';
     stopVoice(); unlock(); showErr(null); S.note = null; hearUi();
     if (S.sample) {
-      var sr = S.rec = { sample: true, t0: Date.now() };
+      var sr = S.rec = { sample: true, t0: Date.now(), mode: mode, msg: msg };
       sr.timer = setTimeout(function () { stopRec(); }, 2500); sr.tick = setInterval(recUi, 500);
       recUi(); return;
     }
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { showErr('app_tu_err_mic'); return; }
-    var r = S.rec = { starting: true, chunks: [] };
+    var r = S.rec = { starting: true, chunks: [], mode: mode, msg: msg };
     recUi();
     navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
       if (!S || S.rec !== r || r.cancel) { stream.getTracks().forEach(function (x) { x.stop(); }); if (S && S.rec === r) S.rec = null; recUi(); return; }
@@ -179,7 +190,8 @@
         if (S && S.rec === r) S.rec = null;
         recUi();
         if (r.cancel || !S || !S.session) return;
-        sendSpoken(new Blob(r.chunks, { type: (mr.mimeType || mime || 'audio/webm').split(';')[0] }));
+        var blob = new Blob(r.chunks, { type: (mr.mimeType || mime || 'audio/webm').split(';')[0] });
+        if (r.mode === 'pron') sendPron(blob, r.msg); else sendSpoken(blob);
       };
       mr.start();
       r.timer = setTimeout(function () { stopRec(); }, REC_MAX * 1000);
@@ -193,7 +205,7 @@
     if (cancel) r.cancel = true;
     if (r.sample) {
       clearTimeout(r.timer); clearInterval(r.tick); S.rec = null; recUi();
-      if (!cancel) sendSpoken(null);
+      if (!cancel) { if (r.mode === 'pron') sendPron(null, r.msg); else sendSpoken(null); }
       return;
     }
     if (r.mr && r.mr.state !== 'inactive') r.mr.stop();
@@ -215,10 +227,130 @@
     }).then(function (r) { if (S && S.session === session) afterTurn(r, true); }, function (e) { if (S && S.session === session) turnFailed(e, true); });
   }
 
+  /* ---------- Saying the sentence (part 4) ---------- */
+  /* The recording as 16 kHz mono 16-bit WAV, the one form Azure takes from every browser's recorder */
+  function toWav(blob) {
+    var AC = window.AudioContext || window.webkitAudioContext, OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    if (!AC || !OAC) return Promise.reject(new Error('no audio'));
+    return blob.arrayBuffer().then(function (buf) {
+      var ac = new AC();
+      return new Promise(function (ok, no) { ac.decodeAudioData(buf, ok, no); }).then(function (ab) {
+        if (ac.close) ac.close();
+        var n = Math.min(Math.ceil(ab.duration * 16000), REC_MAX * 16000), off = new OAC(1, Math.max(n, 1), 16000), src = off.createBufferSource();
+        src.buffer = ab; src.connect(off.destination); src.start(0);
+        return off.startRendering();
+      });
+    }).then(function (out) {
+      var pcm = out.getChannelData(0), b = new DataView(new ArrayBuffer(44 + pcm.length * 2));
+      var w = function (o, x) { for (var i = 0; i < x.length; i++) b.setUint8(o + i, x.charCodeAt(i)); };
+      w(0, 'RIFF'); b.setUint32(4, 36 + pcm.length * 2, true); w(8, 'WAVE'); w(12, 'fmt '); b.setUint32(16, 16, true); b.setUint16(20, 1, true); b.setUint16(22, 1, true);
+      b.setUint32(24, 16000, true); b.setUint32(28, 32000, true); b.setUint16(32, 2, true); b.setUint16(34, 16, true); w(36, 'data'); b.setUint32(40, pcm.length * 2, true);
+      for (var i = 0; i < pcm.length; i++) { var v = Math.max(-1, Math.min(1, pcm[i])); b.setInt16(44 + i * 2, v < 0 ? v * 0x8000 : v * 0x7fff, true); }
+      return new Blob([b.buffer], { type: 'audio/wav' });
+    });
+  }
+  function sendPron(blob, msgId) {
+    if (!S || S.busy || S.ended) return;
+    if (blob && blob.size < 800) { showErr('app_tu_err_unheard'); return; }
+    S.error = null;
+    S.messages.push({ id: 'pending', role: 'student', spoken: true, waiting: true });
+    busy(true);
+    if (S.sample) {
+      var good = (S.tries = (S.tries || 0) + 1) > 1, said = sampleMsg('student', { text: SAMPLE_PRON_TEXT, result: { message: msgId, pron: good ? SAMPLE_PRON_GOOD : SAMPLE_PRON_FIRST } });
+      var next = good ? SAMPLE_PRON_DONE : SAMPLE_PRON_AGAIN;
+      setTimeout(function () { afterTurn({ mine: said, message: sampleMsg('tutor', next), board: S.board.concat(next.board), seconds: S.seconds - 25 }, true); }, 1200);
+      return;
+    }
+    var session = S.session;
+    toWav(blob).then(function (wav) {
+      if (wav.size > 44 + REC_MAX * 32000 + 64) throw { body: { reason: 'audio_long' } };
+      return blobBase64(wav);
+    }, function () { throw { body: { reason: 'audio_type' } }; }).then(function (b64) {
+      return D().tutorPronounce({ session: session.id, message: msgId, audio: b64, mime: 'audio/wav' });
+    }).then(function (r) { if (S && S.session === session) afterTurn(r, true); }, function (e) { if (S && S.session === session) turnFailed(e, true); });
+  }
+  /* The sentence open to say: the latest tutor message, when it set one */
+  function openPron() { var m = lastTutor(); return m && m.pron ? m : null; }
+  function pronOf(id) { var m = S.messages.filter(function (x) { return x.id === id; })[0]; return m && m.pron || ''; }
+  /* The latest attempt: shown on the board for the open sentence, or until the next turn when the tutor has moved on */
+  function lastAttempt() {
+    for (var i = S.messages.length - 1; i >= 0; i--) {
+      var m = S.messages[i];
+      if (m.role !== 'student' || m.waiting) continue;
+      if (!(m.result && m.result.pron)) return null;
+      var open = openPron();
+      return !open || pronOf(m.result.message) === open.pron ? m : null;
+    }
+    return null;
+  }
+  function slowHtml() {
+    var m = openPron();
+    if (!m || S.sample) return '';
+    var key = 'slow:' + m.id, has = S.audio && S.audio[key];
+    if (!has && (!voiceReady() || S.ended || m.slow_voiced || (S.seconds || 0) <= 0)) return '';
+    return '<button class="btn btn--ghost btn--sm" type="button" data-tu="slow" data-id="' + esc(m.id) + '"' + (S.vload === key ? ' disabled aria-busy="true"' : '') + '>' +
+      esc(t(S.playing === key ? 'app_tu_listen_stop' : 'app_tu_pron_slow')) + '</button>';
+  }
+  function hearSlow(id) {
+    var key = 'slow:' + id;
+    if (S.playing === key) { stopVoice(); hearUi(); return; }
+    unlock();
+    if (S.audio && S.audio[key]) { play(key); return; }
+    if (S.vload) return;
+    var session = S.session, m = S.messages.filter(function (x) { return x.id === id; })[0];
+    if (!m) return;
+    S.vload = key; hearUi();
+    D().tutorVoice(session.id, id, true).then(function (blob) {
+      if (!S || S.session !== session) return;
+      S.vload = null; m.slow_voiced = true;
+      S.audio = S.audio || {}; S.audio[key] = URL.createObjectURL(blob);
+      if (!S.rec && !S.busy) play(key); else hearUi();
+    }, function (e) {
+      if (!S || S.session !== session) return;
+      S.vload = null;
+      var r = e && e.body && e.body.reason;
+      if (r === 'voiced' || r === 'no_time' || r === 'ended') m.slow_voiced = true; else S.note = 'app_tu_voice_failed';
+      hearUi();
+    });
+  }
+  /* The sentence with each word marked as the score found it */
+  function markedHtml(sentence, attempt) {
+    var words = attempt && attempt.words;
+    if (!words || !words.length) return esc(sentence);
+    return words.map(function (w) {
+      var cls = w.s === 'ok' ? 'is-ok' : w.s === 'diff' ? 'is-diff' : w.s === 'missed' ? 'is-missed' : '';
+      return cls ? '<span class="tu-pw ' + cls + '">' + esc(w.t) + '</span>' : esc(w.t);
+    }).join(' ');
+  }
+  function pronHtml() {
+    var open = openPron(), at = lastAttempt(), r = at && at.result.pron;
+    if (!open && !r) return '';
+    var said = r ? pronOf(at.result.message) || r.sentence || '' : '', sentence = open ? open.pron : said || (r.words || []).map(function (w) { return w.t; }).join(' ');
+    var mine = r && (!said || said === sentence);
+    var html = '<div class="paper tu-pron" data-tu-pron><h3 class="t-h3">' + esc(t(open ? 'app_tu_pron_h' : 'app_tu_pron_last')) + '</h3>' +
+      '<p class="tu-pron__s"' + ta() + '>' + markedHtml(sentence, mine ? r : null) + '</p>';
+    if (r) {
+      var diff = (r.words || []).filter(function (w) { return w.s === 'diff'; }), missed = (r.words || []).filter(function (w) { return w.s === 'missed'; });
+      html += '<div class="tu-pron__scores">' + [['accuracy', 'app_tu_pron_acc'], ['fluency', 'app_tu_pron_flu'], ['completeness', 'app_tu_pron_comp']].map(function (x) {
+        return r[x[0]] == null ? '' : '<p><span class="tu-pron__n">' + esc(String(r[x[0]])) + '</span><small>' + esc(t(x[1])) + '</small></p>';
+      }).join('') + '</div>';
+      html += '<p class="t-body">' + esc(t(!diff.length && !missed.length ? 'app_tu_pron_all_ok' : missed.length ? 'app_tu_pron_key_missed' : 'app_tu_pron_key')) + '</p>';
+      diff.filter(function (w) { return w.sound; }).slice(0, 3).forEach(function (w) {
+        html += '<p class="t-body">' + esc(t('app_tu_pron_sound', { word: '\u2068' + w.t.replace(/[^\p{L}\p{N}'’-]+/gu, '') + '\u2069', sound: '\u2068/' + w.sound + '/\u2069' })) + '</p>';
+      });
+    }
+    if (open && !S.ended && pronReady()) {
+      var label = mine ? 'app_tu_pron_again' : 'app_tu_pron_say';
+      html += '<div class="btn-row" style="margin-top:14px"><button class="btn btn--primary btn--sm" type="button" data-tu="pron-rec" data-id="' + esc(open.id) + '" data-label="' + label + '" aria-pressed="false"' + (S.busy ? ' disabled' : '') + '>' + esc(t(label)) + '</button>' +
+        '<span data-slow-box>' + slowHtml() + '</span></div><p class="t-small tu-rec" data-tu-prec aria-live="polite"></p>';
+    }
+    return html + '</div>';
+  }
+
   /* ---------- Sample ---------- */
   function sampleStatus() {
     var renews = new Date(); renews = new Date(Date.UTC(renews.getUTCFullYear(), renews.getUTCMonth() + 1, 1)).toISOString();
-    return { seconds: { free: 600, plan: 2520, credit: 0, total: 3120 }, plan: { tier: 'focused', minutes_per_month: 60, granted_seconds: 3600, renews_at: renews }, open: true, listen: true, voice: true, sample: true };
+    return { seconds: { free: 600, plan: 2520, credit: 0, total: 3120 }, plan: { tier: 'focused', minutes_per_month: 60, granted_seconds: 3600, renews_at: renews }, open: true, listen: true, voice: true, pron: true, sample: true };
   }
   var SAMPLE_OPEN = {
     text: 'Hallo! Heute üben wir das Perfekt mit haben oder sein, denn das war in deinen Übungen oft schwierig.',
@@ -234,10 +366,23 @@
     board: [{ op: 'fix', wrong: 'Ich habe nach Hause gegangen.', right: 'Ich bin nach Hause gegangen.' }, { op: 'write', text: 'Am Wochenende **bin** ich ... / **habe** ich ...' }]
   };
   var SAMPLE_SPOKEN = {
-    text: 'Super, das hast du richtig gesagt! Ins Kino gehen nimmt sein. Was hast du gesehen?',
-    board: [{ op: 'write', text: 'Ich **bin** ins Kino **gegangen**.' }]
+    text: 'Super, das hast du richtig gesagt! Ins Kino gehen nimmt sein. Sag jetzt diesen Satz laut, ich höre zu.',
+    board: [{ op: 'write', text: 'Ich **bin** ins Kino **gegangen**.' }],
+    pron: 'Am Wochenende bin ich ins Kino gegangen.'
   };
-  function sampleMsg(role, x) { return { id: 's' + Math.random().toString(36).slice(2), role: role, text: x.text || '', board: x.board || [], exercise: x.exercise || null, result: x.result || null, at: new Date().toISOString() }; }
+  var SAMPLE_PRON_TEXT = 'Am Wochenende bin ich ins Kino gegangen.';
+  var SAMPLE_PRON_FIRST = { sentence: SAMPLE_PRON_TEXT, score: 74, accuracy: 71, fluency: 82, completeness: 100, extra: 0, words: [{ t: 'Am', s: 'ok' }, { t: 'Wochenende', s: 'diff', sound: 'x' }, { t: 'bin', s: 'ok' }, { t: 'ich', s: 'ok' }, { t: 'ins', s: 'ok' }, { t: 'Kino', s: 'ok' }, { t: 'gegangen.', s: 'diff', sound: 'ŋ' }] };
+  var SAMPLE_PRON_GOOD = { sentence: SAMPLE_PRON_TEXT, score: 93, accuracy: 92, fluency: 95, completeness: 100, extra: 0, words: SAMPLE_PRON_FIRST.words.map(function (w) { return { t: w.t, s: 'ok' }; }) };
+  var SAMPLE_PRON_AGAIN = {
+    text: 'Schon gut! Das ch in Wochenende kommt hinten aus dem Hals, wie in Bach, und am Ende von gegangen bleibt die Zunge hinten: ng, ohne g. Noch einmal, bitte.',
+    board: [{ op: 'write', text: 'Wo**ch**enende, wie Ba**ch**' }, { op: 'write', text: 'gegan**gen**: ng, ohne g am Ende' }],
+    pron: 'Am Wochenende bin ich ins Kino gegangen.'
+  };
+  var SAMPLE_PRON_DONE = {
+    text: 'Perfekt, jetzt klingt es ganz natürlich! Welchen Film hast du gesehen?',
+    board: [{ op: 'note', text: 'Your ch and ng were clear this time.' }]
+  };
+  function sampleMsg(role, x) { return { id: 's' + Math.random().toString(36).slice(2), role: role, text: x.text || '', board: x.board || [], exercise: x.exercise || null, result: x.result || null, pron: x.pron || null, at: new Date().toISOString() }; }
 
   /* ---------- The whiteboard ---------- */
   function md(s) { return EX().md(s); }
@@ -329,7 +474,7 @@
         : (voiceReady() ? '<button class="btn btn--quiet btn--sm" type="button" data-tu="voice" aria-pressed="' + (voiceOn() ? 'true' : 'false') + '">' + esc(t(voiceOn() ? 'app_tu_voice_off' : 'app_tu_voice_on')) + '</button>' : '') +
           '<button class="btn btn--ghost btn--sm" type="button" data-tu="end"' + (S.busy ? ' disabled' : '') + '>' + esc(t('app_tu_end')) + '</button>') + '</div></div>';
     html += '<div class="tu-grid">';
-    html += '<section class="tu-board" aria-labelledby="tu-board-h"><h2 class="sr" id="tu-board-h">' + esc(t('app_tu_board_h')) + '</h2><div class="tu-board__ops" data-tu-board aria-live="polite">' + boardHtml(S.fresh) + '</div>' + exHtml() + '</section>';
+    html += '<section class="tu-board" aria-labelledby="tu-board-h"><h2 class="sr" id="tu-board-h">' + esc(t('app_tu_board_h')) + '</h2><div class="tu-board__ops" data-tu-board aria-live="polite">' + boardHtml(S.fresh) + '</div>' + exHtml() + pronHtml() + '</section>';
     html += '<section class="tu-chat card" aria-labelledby="tu-chat-h"><h2 class="sr" id="tu-chat-h">' + esc(t('app_tu_chat_h')) + '</h2>' +
       '<div class="tu-chat__face" aria-hidden="true">' + A.Cast.drawing(A.buddyFor(A.data().profile.language)) + '</div>' +
       '<div class="ms-msgs tu-msgs" data-tu-msgs>' + msgsHtml() + '</div>' +
@@ -345,12 +490,13 @@
     var out = S.messages.map(function (m) {
       if (m.role === 'tutor') return m.text ? '<div class="ms-msg is-teacher"><div class="ms-bub"' + ta() + '>' + esc(m.text) + '<span class="tu-hear-box" data-hear-for="' + esc(m.id) + '">' + hearHtml(m) + '</span></div></div>' : '';
       if (m.waiting) return '<div class="ms-msg is-me"><div class="ms-bub tu-wait">' + loader(28) + '<span class="sr">' + esc(t('app_tu_rec_sending')) + '</span></div></div>';
-      if (m.result) return '<div class="ms-msg is-me"><div class="ms-bub">' + esc(t('app_tu_results', { right: m.result.right, total: m.result.total })) + '</div></div>';
+      if (m.result) return '<div class="ms-msg is-me"><div class="ms-bub">' + esc(resultText(m.result)) + '</div></div>';
       return '<div class="ms-msg is-me"><div class="ms-bub" dir="auto">' + esc(m.text) + '</div></div>';
     }).join('');
     if (S.busy) out += '<div class="ms-msg is-teacher"><div class="ms-bub tu-wait">' + loader(28) + '<span class="sr">' + esc(t('app_tu_thinking')) + '</span></div></div>';
     return out;
   }
+  function resultText(x) { return x.pron ? t('app_tu_pron_said', { score: x.pron.score }) : t('app_tu_results', { right: x.right, total: x.total }); }
   function summaryHtml() {
     var x = S.summary || {};
     return '<div class="tu-sum"><h3 class="t-h3">' + esc(t('app_tu_sum_h')) + '</h3>' + (x.title ? '<p class="t-body" dir="auto"><b>' + esc(x.title) + '</b></p>' : '') +
@@ -368,8 +514,8 @@
       }).join('') + '</div>' : '') + '</section>';
     html += '<section class="tu-board span-5" style="--i:1"><div class="tu-board__ops">' + ((x.board || []).length ? x.board.map(function (o) { return opHtml(o, false); }).join('') : '<p class="tu-op tu-op--empty">' + esc(t('app_tu_board_empty')) + '</p>') + '</div></section>';
     html += '<section class="card span-12" style="--i:2"><h2 class="t-h2">' + esc(t('app_tu_transcript_h')) + '</h2>' + (msgs.length ? '<div class="ms-msgs tu-msgs tu-msgs--past">' + msgs.map(function (m) {
-      if (m.role === 'tutor') return '<div class="ms-msg is-teacher"><div class="ms-bub"' + ta() + '>' + esc(m.text || '') + (m.exercise ? '<br><small>' + esc(t('app_tu_set_ex')) + '</small>' : '') + '</div></div>';
-      return '<div class="ms-msg is-me"><div class="ms-bub" dir="auto">' + esc(m.result ? t('app_tu_results', { right: m.result.right, total: m.result.total }) : m.text || '') + '</div></div>';
+      if (m.role === 'tutor') return '<div class="ms-msg is-teacher"><div class="ms-bub"' + ta() + '>' + esc(m.text || '') + (m.exercise ? '<br><small>' + esc(t('app_tu_set_ex')) + '</small>' : '') + (m.pron ? '<br><small>' + esc(t('app_tu_pron_set', { sentence: m.pron })) + '</small>' : '') + '</div></div>';
+      return '<div class="ms-msg is-me"><div class="ms-bub" dir="auto">' + esc(m.result ? resultText(m.result) : m.text || '') + '</div></div>';
     }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_transcript_gone')) + '</p>') + '</section>';
     return html + '</div>';
   }
@@ -395,6 +541,8 @@
     var r = e && e.body && e.body.reason;
     if (r === 'listen' || r === 'listen_off' || r === 'audio_type' || r === 'audio_long') return 'app_tu_err_listen';
     if (r === 'unheard' || r === 'audio_short') return 'app_tu_err_unheard';
+    if (r === 'pron' || r === 'pron_off') return 'app_tu_err_pron';
+    if (r === 'pron_closed') return 'app_tu_err_pron_closed';
     return r === 'no_time' ? 'app_tu_none_left' : r === 'budget' ? 'app_tu_err_budget' : r === 'ended' ? 'app_tu_err_ended' : r === 'email' ? 'app_tu_email' : r === 'not_configured' ? 'app_tu_closed' : e && e.status === 429 ? 'app_tu_err_fast' : 'app_tu_err';
   }
 
@@ -418,9 +566,11 @@
   function busy(on) { S.busy = on; draw(); }
   function afterTurn(r, mine) {
     if (mine) S.messages[S.messages.length - 1] = r.mine || S.messages[S.messages.length - 1];
-    S.messages.push(r.message);
+    /* A scored attempt can come back without the tutor's answer (the score stays and the sentence stays open) */
+    if (r.message) S.messages.push(r.message);
+    else S.error = r.reply_error === 'budget' ? 'app_tu_err_budget' : 'app_tu_err';
     /* The lines this reply added (after its last "clear") are written in with the board's animation */
-    var ops = r.message.board || [], last = -1;
+    var ops = r.message && r.message.board || [], last = -1;
     ops.forEach(function (o, i) { if (o.op === 'clear') last = i; });
     S.board = r.board || S.board; S.fresh = ops.length - last - 1;
     S.seconds = r.seconds;
@@ -428,10 +578,10 @@
     prepareExercise();
     busy(false);
     /* Back to writing, unless the tutor has just set an exercise */
-    var inp = !S.ex && root.querySelector('#tu-in'); if (inp) inp.focus({ preventScroll: true });
+    var inp = !S.ex && !openPron() && root.querySelector('#tu-in'); if (inp) inp.focus({ preventScroll: true });
     /* The tutor speaks the reply, unless the time has run out (the closing reply stays written) */
     if (r.ended || (r.seconds || 0) <= 0) stopVoice();
-    else if (voiceOn()) fetchVoice(r.message, true);
+    else if (voiceOn() && r.message) fetchVoice(r.message, true);
   }
   function turnFailed(e, rollback) {
     if (rollback) S.messages.pop();
@@ -474,7 +624,7 @@
   }
   function home() {
     stopRec(true); forgetAudio();
-    S.session = null; S.messages = []; S.board = []; S.ex = null; S.exMsg = null; S.ended = false; S.summary = null; S.error = null;
+    S.session = null; S.messages = []; S.board = []; S.ex = null; S.exMsg = null; S.ended = false; S.summary = null; S.error = null; S.tries = 0;
     location.hash = '#/tutor';
   }
   function askForget() {
@@ -510,7 +660,9 @@
       else if (act === 'ask-forget') askForget();
       else if (act === 'no-forget') draw();
       else if (act === 'forget') forget(b);
-      else if (act === 'rec') { if (S.rec) stopRec(); else startRec(); }
+      else if (act === 'rec') { if (S.rec) stopRec(); else startRec('turn'); }
+      else if (act === 'pron-rec') { if (S.rec) stopRec(); else startRec('pron', b.getAttribute('data-id')); }
+      else if (act === 'slow') hearSlow(b.getAttribute('data-id'));
       else if (act === 'hear') hear(b.getAttribute('data-id'));
       else if (act === 'voice') toggleVoice();
     });
