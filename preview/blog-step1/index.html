@@ -130,8 +130,7 @@ body {
   .bm-card img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; }
   .bm-card .bm-in { padding: 22px 24px 26px; display: flex; flex-direction: column; gap: 10px; flex: 1; }
   .bm-meta { font-size: 13px; color: rgba(8,8,8,.58); display: flex; align-items: center; gap: 8px; }
-  .bm-meta i { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-  .bm-card h3 { font-size: 26px; }
+    .bm-card h3 { font-size: 26px; }
   .bm-card p { margin: 0; color: rgba(8,8,8,.68); line-height: 1.55; font-size: 15px; }
   .bm-card .bm-go { margin-top: auto; padding-top: 6px; font-weight: 700; font-size: 14px; color: var(--forest); }
   .bm-lead img { aspect-ratio: 16 / 9; }
@@ -152,6 +151,59 @@ body {
   .bm-cta p { margin: 8px 0 0; color: var(--forest); }
   .bm-cta svg { width: 110px; height: 110px; flex: none; }
   .bm-more { display: flex; justify-content: center; margin-top: 28px; }
+
+  /* Motion: the dashboard's drawing animations, plus entrances, scroll reveals and hovers */
+  .sway { animation: sway 3s ease-in-out infinite; transform-origin: 50% 95%; } @keyframes sway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+  .look { animation: look 4s ease-in-out infinite; } @keyframes look { 0%, 40%, 100% { transform: translateX(0); } 50%, 85% { transform: translateX(-6px); } }
+  .bob { animation: bob 1.4s ease-in-out infinite; } @keyframes bob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px) rotate(-2deg); } }
+  .breathe { animation: breathe 3s ease-in-out infinite; transform-origin: 50% 100%; } @keyframes breathe { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(.95); } }
+  .zz text { animation: zz 3s ease-in-out infinite; } .zz text:nth-child(2) { animation-delay: .5s; } .zz text:nth-child(3) { animation-delay: 1s; }
+  @keyframes zz { 0% { opacity: 0; transform: translateY(8px); } 50% { opacity: 1; } 100% { opacity: 0; transform: translateY(-10px); } }
+  .crawl { animation: crawl 6s ease-in-out infinite; } @keyframes crawl { 0%, 100% { transform: translateX(-6px); } 50% { transform: translateX(6px); } }
+  .wag .tail { animation: wag .35s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 0 100%; } @keyframes wag { from { transform: rotate(-14deg); } to { transform: rotate(14deg); } }
+  .float { animation: float 3.2s ease-in-out infinite; } @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+  .book--idle [class="eye"], .book--idle .eye { animation: blink 4s infinite; transform-origin: center; transform-box: fill-box; }
+  @keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+
+  @keyframes bmUp { from { opacity: 0; transform: translateY(28px); } to { opacity: 1; transform: none; } }
+  @keyframes bmPop { 0% { opacity: 0; transform: scale(.85) rotate(-2deg); } 70% { opacity: 1; transform: scale(1.03); } 100% { opacity: 1; transform: none; } }
+  @keyframes bmBub { from { opacity: 0; transform: scale(.6) rotate(-6deg); } to { opacity: 1; transform: none; } }
+  @keyframes bmWiggle { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-8deg) scale(1.08); } 60% { transform: rotate(6deg) scale(1.05); } }
+  @keyframes bmPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(26, 68, 60, .35); } 50% { box-shadow: 0 0 0 10px rgba(26, 68, 60, 0); } }
+  .bm-hello { animation: bmUp .8s cubic-bezier(.2,.8,.2,1) both; }
+  .bm-hello h1 { animation: bmUp .8s .15s cubic-bezier(.2,.8,.2,1) both; }
+  .bm-hello p { animation: bmUp .8s .3s cubic-bezier(.2,.8,.2,1) both; }
+  .bm-search { animation: bmUp .8s .45s cubic-bezier(.2,.8,.2,1) both; }
+  .bm-buddy { animation: bmPop .9s .2s cubic-bezier(.2,.8,.2,1) both; }
+  .bm-bub { animation: bmBub .6s 1s cubic-bezier(.3,1.5,.5,1) both; transform-origin: 20% 100%; }
+  .bm-buddy .book { animation: float 3.2s ease-in-out infinite; }
+  .bm-search input { transition: border-color .25s, box-shadow .25s; }
+  .bm-search input:focus { outline: none; border-color: var(--forest); box-shadow: 0 0 0 4px rgba(206,255,101,.6); }
+  .bm-btn { transition: transform .25s cubic-bezier(.3,1.5,.5,1), background-color .25s; }
+  .bm-btn:hover { transform: translateY(-2px) scale(1.03); }
+  .bm-cta .bm-btn { animation: bmPulse 2.4s ease-in-out infinite; }
+  .bm-cta svg { animation: bob 1.8s ease-in-out infinite; }
+  .bm-band .bm-hl svg { animation: float 3.4s ease-in-out infinite; }
+  .bm-sec:hover svg { animation: bmWiggle .6s ease-in-out; }
+  .bm-card { position: relative; }
+  .bm-card .bm-ph { overflow: hidden; }
+  .bm-card img { transition: transform 1s cubic-bezier(.2,.8,.2,1); }
+  .bm-card:hover img { transform: scale(1.06); }
+  .bm-mini img { transition: transform .8s cubic-bezier(.2,.8,.2,1); }
+  .bm-mini:hover img { transform: scale(1.06) rotate(-1deg); }
+  .bm-go { background-image: linear-gradient(#ceff65, #ceff65); background-repeat: no-repeat; background-position: 0 90%; background-size: 0% 40%; transition: background-size .4s cubic-bezier(.2,.8,.2,1); align-self: flex-start; }
+  .bm-card:hover .bm-go { background-size: 100% 40%; }
+  .bm-h h2 span { background-image: linear-gradient(#ceff65, #ceff65); background-repeat: no-repeat; background-position: 0 88%; background-size: 0% 38%; transition: background-size .9s .2s cubic-bezier(.2,.8,.2,1); padding: 0 .1em; }
+  .rv.is-in .bm-h h2 span, .bm-h.rv.is-in h2 span { background-size: 100% 38%; }
+  .rv { opacity: 0; transform: translateY(32px); transition: opacity .8s ease, transform .9s cubic-bezier(.2,.8,.2,1); }
+  .rv.is-in { opacity: 1; transform: none; }
+  .bm-sec.rv { transition: opacity .7s ease, transform .8s cubic-bezier(.3,1.4,.5,1); transform: translateY(32px) scale(.92); }
+  .bm-sec.rv.is-in { transform: none; }
+  .bm-sec.rv.is-in:hover { transform: translateY(-4px); }
+  .bm-card.rv.is-in:hover { transform: translateY(-4px); }
+  /* After the entrance, hovers respond quickly again */
+  .bm-card.is-done, .bm-sec.is-done, .bm-mini.is-done { transition: transform .28s cubic-bezier(.2,.8,.2,1), box-shadow .28s; }
+  @media (prefers-reduced-motion: reduce) { .bm *, .bm *::before { animation: none !important; transition: none !important; } .rv { opacity: 1; transform: none; } }
   @media (max-width: 991px) { .bm-top, .bm-top2 { grid-template-columns: 1fr; } .bm-secs { grid-template-columns: repeat(3, 1fr); } .bm-grid { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 640px) { .bm-wrap { padding: 0 16px; } .bm-top { padding-top: 110px; } .bm-secs { grid-template-columns: 1fr 1fr; } .bm-grid { grid-template-columns: 1fr; } .bm-cta { flex-direction: column; align-items: flex-start; } .bm-band { padding: 20px; } .bm-mini { grid-template-columns: 96px 1fr; } .bm-mini img { width: 96px; height: 84px; } }
 </style>
@@ -164,53 +216,53 @@ body {
     <div class="bm-buddy"><div class="bm-bub">Something new to read every week.</div><div data-draw="book"></div></div>
   </div>
 
-  <div class="bm-h"><div><h2>Sections</h2></div></div>
+  <div class="bm-h rv"><div><h2><span>Sections</span></h2></div></div>
   <div class="bm-secs">
-    <a class="bm-sec t-mint" href="#"><div data-draw="owl"></div><p class="bm-d">Levels and certificates</p><span>3 articles</span></a>
-    <a class="bm-sec t-sun" href="#"><div data-draw="parrot"></div><p class="bm-d">Grammar</p><span>2 articles</span></a>
-    <a class="bm-sec t-coral" href="#"><div data-draw="cat"></div><p class="bm-d">Vocabulary</p><span>1 article</span></a>
-    <a class="bm-sec t-lime" href="#"><div data-draw="teacup"></div><p class="bm-d">How to learn</p><span>3 articles</span></a>
-    <a class="bm-sec t-mint" href="#"><div data-draw="dragon"></div><p class="bm-d">Exams</p><span>2 articles</span></a>
-    <a class="bm-sec t-sun" href="#"><div data-draw="suitcase"></div><p class="bm-d">Living abroad</p><span>2 articles</span></a>
+    <a class="bm-sec rv t-mint" href="#"><div data-draw="owl"></div><p class="bm-d">Levels and certificates</p><span>3 articles</span></a>
+    <a class="bm-sec rv t-sun" href="#"><div data-draw="parrot"></div><p class="bm-d">Grammar</p><span>2 articles</span></a>
+    <a class="bm-sec rv t-coral" href="#"><div data-draw="cat"></div><p class="bm-d">Vocabulary</p><span>1 article</span></a>
+    <a class="bm-sec rv t-lime" href="#"><div data-draw="teacup"></div><p class="bm-d">How to learn</p><span>3 articles</span></a>
+    <a class="bm-sec rv t-mint" href="#"><div data-draw="dragon"></div><p class="bm-d">Exams</p><span>2 articles</span></a>
+    <a class="bm-sec rv t-sun" href="#"><div data-draw="suitcase"></div><p class="bm-d">Living abroad</p><span>2 articles</span></a>
   </div>
 
-  <div class="bm-h"><div><h2>Top stories</h2></div></div>
+  <div class="bm-h rv"><div><h2><span>Top stories</span></h2></div></div>
   <div class="bm-top2">
-    <a class="bm-card bm-lead" href="#"><img src="/preview/blog-step1/img/41.jpg" alt=""><div class="bm-in"><p class="bm-meta"><i style="background:#9fd6c7"></i>Exams, English, 9 min read</p><h3>IELTS or Cambridge: which English certificate should you take?</h3><p>Both prove your English and both are recognized worldwide. They work differently, and the right one depends on what you need it for: a visa, a university or your CV.</p><span class="bm-go">Read the article</span></div></a>
+    <a class="bm-card rv bm-lead" href="#"><img src="/preview/blog-step1/img/41.jpg" alt=""><div class="bm-in"><p class="bm-meta">Exams, English, 9 min read</p><h3>IELTS or Cambridge: which English certificate should you take?</h3><p>Both prove your English and both are recognized worldwide. They work differently, and the right one depends on what you need it for: a visa, a university or your CV.</p><span class="bm-go">Read the article</span></div></a>
     <div class="bm-side">
-      <a class="bm-mini" href="#"><img src="/preview/blog-step1/img/21.jpg" alt=""><div><p class="bm-meta"><i style="background:#9fd6c7"></i>Levels, English</p><h3>English levels A1 to C2, explained</h3></div></a>
-      <a class="bm-mini" href="#"><img src="/preview/blog-step1/img/12.jpg" alt=""><div><p class="bm-meta"><i style="background:#ffd166"></i>Grammar, German</p><h3>German articles der, die, das: how to get them right</h3></div></a>
-      <a class="bm-mini" href="#"><img src="/preview/blog-step1/img/25.jpg" alt=""><div><p class="bm-meta"><i style="background:#ceff65"></i>How to learn, English</p><h3>How long does it take to learn English?</h3></div></a>
+      <a class="bm-mini rv" href="#"><img src="/preview/blog-step1/img/21.jpg" alt=""><div><p class="bm-meta">Levels, English</p><h3>English levels A1 to C2, explained</h3></div></a>
+      <a class="bm-mini rv" href="#"><img src="/preview/blog-step1/img/12.jpg" alt=""><div><p class="bm-meta">Grammar, German</p><h3>German articles der, die, das: how to get them right</h3></div></a>
+      <a class="bm-mini rv" href="#"><img src="/preview/blog-step1/img/25.jpg" alt=""><div><p class="bm-meta">How to learn, English</p><h3>How long does it take to learn English?</h3></div></a>
     </div>
   </div>
 
-  <div class="bm-h"><div><h2>Latest</h2><p>New articles first.</p></div></div>
+  <div class="bm-h rv"><div><h2><span>Latest</span></h2><p>New articles first.</p></div></div>
   <div class="bm-grid">
-    <a class="bm-card" href="#"><img src="/preview/blog-step1/img/30.jpg" alt=""><div class="bm-in"><p class="bm-meta"><i style="background:#ffd166"></i>Grammar, English, 11 min read</p><h3>Present perfect or past simple?</h3><p>The difference explained with everyday examples, the signal words, and a short exercise.</p><span class="bm-go">Read the article</span></div></a>
-    <a class="bm-card" href="#"><img src="/preview/blog-step1/img/10.jpg" alt=""><div class="bm-in"><p class="bm-meta"><i style="background:#9fd6c7"></i>Exams, German, 10 min read</p><h3>Goethe certificates from A1 to C2</h3><p>What each exam tests, who asks for which level, and how to prepare.</p><span class="bm-go">Read the article</span></div></a>
-    <a class="bm-card" href="#"><img src="/preview/blog-step1/img/45.jpg" alt=""><div class="bm-in"><p class="bm-meta"><i style="background:#ceff65"></i>How to learn, 8 min read</p><h3>How to practise speaking between classes</h3><p>Small daily habits that keep your speaking moving, alone or with a partner.</p><span class="bm-go">Read the article</span></div></a>
+    <a class="bm-card rv" href="#"><img src="/preview/blog-step1/img/30.jpg" alt=""><div class="bm-in"><p class="bm-meta">Grammar, English, 11 min read</p><h3>Present perfect or past simple?</h3><p>The difference explained with everyday examples, the signal words, and a short exercise.</p><span class="bm-go">Read the article</span></div></a>
+    <a class="bm-card rv" href="#"><img src="/preview/blog-step1/img/10.jpg" alt=""><div class="bm-in"><p class="bm-meta">Exams, German, 10 min read</p><h3>Goethe certificates from A1 to C2</h3><p>What each exam tests, who asks for which level, and how to prepare.</p><span class="bm-go">Read the article</span></div></a>
+    <a class="bm-card rv" href="#"><img src="/preview/blog-step1/img/45.jpg" alt=""><div class="bm-in"><p class="bm-meta">How to learn, 8 min read</p><h3>How to practise speaking between classes</h3><p>Small daily habits that keep your speaking moving, alone or with a partner.</p><span class="bm-go">Read the article</span></div></a>
   </div>
-  <div class="bm-more"><a class="bm-btn is-ghost" href="#">More articles</a></div>
+  <div class="bm-more rv"><a class="bm-btn is-ghost" href="#">More articles</a></div>
 
-  <div class="bm-band t-mint">
-    <div class="bm-h"><div class="bm-hl"><div data-draw="suitcase"></div><div><h2>Living abroad</h2><p>The language you need to study and work in another country.</p></div></div><a class="bm-btn is-ghost" href="#">See all</a></div>
+  <div class="bm-band rv t-mint">
+    <div class="bm-h rv"><div class="bm-hl"><div data-draw="suitcase"></div><div><h2><span>Living abroad</span></h2><p>The language you need to study and work in another country.</p></div></div><a class="bm-btn is-ghost" href="#">See all</a></div>
     <div class="bm-grid">
-      <a class="bm-card" href="#"><img src="/preview/blog-step1/img/3.jpg" alt=""><div class="bm-in"><p class="bm-meta"><i style="background:#ffd166"></i>Living abroad, German, 12 min read</p><h3>German for working in Germany</h3><p>The levels employers and visas ask for, from official sources.</p><span class="bm-go">Read the article</span></div></a>
-      <a class="bm-card" href="#"><img src="/preview/blog-step1/img/43.jpg" alt=""><div class="bm-in"><p class="bm-meta"><i style="background:#ffd166"></i>Living abroad, English, 10 min read</p><h3>Studying in the UK: the English you need</h3><p>Entry requirements, certificates and what lectures are really like.</p><span class="bm-go">Read the article</span></div></a>
-      <a class="bm-card" href="#"><img src="/preview/blog-step1/img/22.jpg" alt=""><div class="bm-in"><p class="bm-meta"><i style="background:#ffd166"></i>Living abroad, 7 min read</p><h3>Working remotely for a company abroad</h3><p>The English you use every day in calls, chats and emails.</p><span class="bm-go">Read the article</span></div></a>
+      <a class="bm-card rv" href="#"><img src="/preview/blog-step1/img/3.jpg" alt=""><div class="bm-in"><p class="bm-meta">Living abroad, German, 12 min read</p><h3>German for working in Germany</h3><p>The levels employers and visas ask for, from official sources.</p><span class="bm-go">Read the article</span></div></a>
+      <a class="bm-card rv" href="#"><img src="/preview/blog-step1/img/43.jpg" alt=""><div class="bm-in"><p class="bm-meta">Living abroad, English, 10 min read</p><h3>Studying in the UK: the English you need</h3><p>Entry requirements, certificates and what lectures are really like.</p><span class="bm-go">Read the article</span></div></a>
+      <a class="bm-card rv" href="#"><img src="/preview/blog-step1/img/22.jpg" alt=""><div class="bm-in"><p class="bm-meta">Living abroad, 7 min read</p><h3>Working remotely for a company abroad</h3><p>The English you use every day in calls, chats and emails.</p><span class="bm-go">Read the article</span></div></a>
     </div>
   </div>
 
-  <div class="bm-band t-coral">
-    <div class="bm-h"><div class="bm-hl"><div data-draw="teacup"></div><div><h2>How to learn</h2><p>Habits, routines and choosing the right way to study.</p></div></div><a class="bm-btn is-ghost" href="#">See all</a></div>
+  <div class="bm-band rv t-coral">
+    <div class="bm-h rv"><div class="bm-hl"><div data-draw="teacup"></div><div><h2><span>How to learn</span></h2><p>Habits, routines and choosing the right way to study.</p></div></div><a class="bm-btn is-ghost" href="#">See all</a></div>
     <div class="bm-grid">
-      <a class="bm-card" href="#"><img src="/preview/blog-step1/img/53.jpg" alt=""><div class="bm-in"><p class="bm-meta"><i style="background:#ceff65"></i>How to learn, 9 min read</p><h3>Group or private lessons?</h3><p>What you gain in a group, what a private teacher adds, and how to choose.</p><span class="bm-go">Read the article</span></div></a>
-      <a class="bm-card" href="#"><img src="/preview/blog-step1/img/39.jpg" alt=""><div class="bm-in"><p class="bm-meta"><i style="background:#ceff65"></i>How to learn, 8 min read</p><h3>Listening practice that actually works</h3><p>From podcasts to films: how to listen so that you understand more each week.</p><span class="bm-go">Read the article</span></div></a>
-      <a class="bm-card" href="#"><img src="/preview/blog-step1/img/16.jpg" alt=""><div class="bm-in"><p class="bm-meta"><i style="background:#ceff65"></i>How to learn, 7 min read</p><h3>Keeping a language diary</h3><p>Five minutes of writing a day, and how your teacher can use it.</p><span class="bm-go">Read the article</span></div></a>
+      <a class="bm-card rv" href="#"><img src="/preview/blog-step1/img/53.jpg" alt=""><div class="bm-in"><p class="bm-meta">How to learn, 9 min read</p><h3>Group or private lessons?</h3><p>What you gain in a group, what a private teacher adds, and how to choose.</p><span class="bm-go">Read the article</span></div></a>
+      <a class="bm-card rv" href="#"><img src="/preview/blog-step1/img/39.jpg" alt=""><div class="bm-in"><p class="bm-meta">How to learn, 8 min read</p><h3>Listening practice that actually works</h3><p>From podcasts to films: how to listen so that you understand more each week.</p><span class="bm-go">Read the article</span></div></a>
+      <a class="bm-card rv" href="#"><img src="/preview/blog-step1/img/16.jpg" alt=""><div class="bm-in"><p class="bm-meta">How to learn, 7 min read</p><h3>Keeping a language diary</h3><p>Five minutes of writing a day, and how your teacher can use it.</p><span class="bm-go">Read the article</span></div></a>
     </div>
   </div>
 
-  <div class="bm-cta"><div><h2>Find out your level in a few minutes</h2><p>The level test places you from A1 to C1, then shows the class that fits you.</p></div><div style="display:flex;align-items:center;gap:20px"><div data-draw="owl"></div><a class="bm-btn" href="#">Take the level test</a></div></div>
+  <div class="bm-cta rv"><div><h2><span>Find out your level in a few minutes</span></h2><p>The level test places you from A1 to C1, then shows the class that fits you.</p></div><div style="display:flex;align-items:center;gap:20px"><div data-draw="owl"></div><a class="bm-btn" href="#">Take the level test</a></div></div>
 </div></div>
 <script src="/js/app/cast.js"></script>
 <script>
@@ -218,6 +270,20 @@ body {
     var n = el.getAttribute('data-draw');
     el.outerHTML = n === 'book' ? window.AlimunCast.book('idle') : window.AlimunCast.drawing(n);
   });
+
+  (function () {
+    var els = [].slice.call(document.querySelectorAll('.bm .rv'));
+    if (!('IntersectionObserver' in window)) { els.forEach(function (e) { e.classList.add('is-in'); }); return; }
+    var io = new IntersectionObserver(function (list) {
+      list.forEach(function (x) { if (x.isIntersecting) { var t = x.target; t.classList.add('is-in'); io.unobserve(t); setTimeout(function () { t.classList.add('is-done'); t.style.transitionDelay = ''; }, 1500); } });
+    }, { threshold: 0.15, rootMargin: '0px 0px -6% 0px' });
+    els.forEach(function (e) {
+      var sib = e.parentNode ? [].filter.call(e.parentNode.children, function (c) { return c.classList.contains('rv'); }) : [];
+      var i = sib.indexOf(e);
+      if (i > 0) e.style.transitionDelay = Math.min(i, 6) * 0.08 + 's';
+      io.observe(e);
+    });
+  })();
 </script>
 </main>
       <footer class="ft">
