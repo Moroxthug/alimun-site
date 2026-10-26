@@ -13,13 +13,32 @@
  *                              removes, never below zero) bought-or-added time for a
  *                              student, written to the time ledger with the admin.
  *
+ *  Part 2: the written tutor beside a whiteboard (api/_lib/tutor-brain.js holds
+ *  the instructions, the provider call and the checks on every reply).
+ *    POST ?action=start   { ui } — resumes the open session if its last turn was
+ *                         under 10 minutes ago, otherwise closes it and starts one;
+ *                         402 no_time when nothing is left. Returns the session,
+ *                         its messages and the board.
+ *    POST ?action=turn    { session, text } or { session, answer: { message, results } }
+ *                         — one student turn and the tutor's reply. Charges the time
+ *                         since the previous turn (5 to 90 seconds); when the time
+ *                         runs out the reply is the closing one and the session ends.
+ *                         If the tutor cannot answer, the seconds come back.
+ *    POST ?action=end     { session } — ends it: the summary, the words and the
+ *                         tutor's memory are written.
+ *    POST ?action=forget  — deletes what the tutor remembers and every session.
+ *                         Past sessions, transcripts and the memory are read by
+ *                         the dashboard straight from the database (own rows).
+ *
  *  Time is counted and taken only here, through the database functions of
  *  supabase/migrations/202610262000_tutor_time.sql (service role); the browser
- *  only reads its own balance.
+ *  only reads its own balance. Sessions, transcripts and memory:
+ *  supabase/migrations/202610262200_tutor_sessions.sql.
  * ============================================================
  */
 
 const { createClient } = require('@supabase/supabase-js');
+const brain = require('./_lib/tutor-brain.js');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MAX_GRANT_MINUTES = 600;
@@ -80,7 +99,7 @@ async function handleStatus(req, res, supabase, user) {
       period: t.plan_period,
       renews_at: nextMonthUtc(),
     },
-    open: false, // the tutor itself opens with part 2
+    open: brain.configured(),
   });
 }
 
@@ -113,6 +132,248 @@ async function handleAdminGrant(req, res, supabase, user) {
   return res.status(200).json({ added_seconds: added || 0, seconds: t ? balanceOf(t) : null });
 }
 
+// ── Sessions (part 2) ───────────────────────────────────────
+
+const UI_LANGS = ['en', 'es', 'fr', 'ma', 'de', 'pt', 'zh', 'ar', 'it'];
+const IDLE_MS = 10 * 60 * 1000;       // a session with no turn for 10 minutes is over
+const MIN_CHARGE = 5, MAX_CHARGE = 90; // seconds charged per turn: the time since the previous one, within these bounds
+const HISTORY = 16;                    // messages of the session the tutor sees again
+const MAX_TEXT = 1200;                 // characters a student may write in one turn
+
+/* A few turns a minute per student and server instance, on top of the time it costs */
+const recentTurns = new Map();
+function tooFast(userId) {
+  const now = Date.now(), hits = (recentTurns.get(userId) || []).filter((t) => t > now - 60000);
+  if (hits.length >= 20) { recentTurns.set(userId, hits); return true; }
+  hits.push(now); recentTurns.set(userId, hits);
+  return false;
+}
+
+async function studentOf(supabase, user) {
+  const { data, error } = await supabase.from('student_profiles')
+    .select('id, full_name, language, level, goal_track, goal_timeframe, placement').eq('user_id', user.id).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+function clean(s, n) { return String(s == null ? '' : s).replace(/[\u0000-\u0008\u000b-\u001f]+/g, ' ').replace(/<\/?(school|student)[^>]*>/gi, '').trim().slice(0, n); }
+function totalOf(t) { return (t.free_seconds || 0) + (t.plan_seconds || 0) + (t.credit_seconds || 0); }
+
+/** A stored message as the browser sees it */
+function outMessage(m) {
+  return { id: m.id, role: m.role, text: m.text || '', board: m.board || [], exercise: m.exercise || null, result: m.result || null, at: m.created_at };
+}
+/** A stored message as the model sees it again */
+function forModel(m) {
+  if (m.role === 'tutor') return { role: 'assistant', content: JSON.stringify({ say: m.text || '', board: m.board || [], exercise: m.exercise || null }).slice(0, 4000) };
+  if (m.result && m.result.lines) return { role: 'user', content: 'My answers to the exercise: ' + m.result.lines.join(' ') };
+  return { role: 'user', content: m.text || '' };
+}
+function schoolNote(text) { return { role: 'user', content: '<school>' + text + '</school>' }; }
+
+async function sessionOf(supabase, profileId, id) {
+  if (!UUID_RE.test(String(id || ''))) return null;
+  const { data } = await supabase.from('tutor_sessions').select('*').eq('id', id).eq('student_id', profileId).maybeSingle();
+  return data || null;
+}
+async function messagesOf(supabase, sessionId, limit) {
+  const { data } = await supabase.from('tutor_messages').select('id, role, text, board, exercise, result, created_at')
+    .eq('session_id', sessionId).order('created_at', { ascending: false }).limit(limit);
+  return (data || []).reverse();
+}
+async function balance(supabase, profileId) {
+  const { data } = await supabase.from('tutor_time').select('free_seconds, plan_seconds, credit_seconds').eq('student_id', profileId).maybeSingle();
+  return data ? totalOf(data) : 0;
+}
+
+function brainError(res, e) {
+  if (e && e.code === 'budget') return res.status(503).json({ error: 'The tutor is resting for today. Please come back tomorrow.', reason: 'budget' });
+  console.error('[Tutor] model:', e && (e.code + ' ' + (e.message || '')));
+  return res.status(502).json({ error: 'The tutor could not answer. Please try again.', reason: e && e.code === 'unreadable' ? 'unreadable' : 'provider' });
+}
+
+/** One reply from the tutor: instructions and brief built here, the session's last messages, then the task. Checked. */
+async function tutorReply(supabase, user, profile, session, history, notes) {
+  const sys = brain.systemFor(session, await brain.brief(supabase, profile));
+  const msgs = history.map(forModel).concat(notes.map(schoolNote));
+  // The conversation must start with a user turn for every provider
+  while (msgs.length && msgs[0].role !== 'user') msgs.shift();
+  const raw = await brain.callModel(supabase, user.id, 'tutor_turn', sys + '\nLines inside <school> tags come from Alimun\'s system: follow them.', msgs, { maxTokens: 2500, temperature: 0.6 });
+  const reply = brain.cleanReply(raw);
+  if (!reply) throw { code: 'unreadable' };
+  return reply;
+}
+async function saveReply(supabase, session, profileId, reply, extra) {
+  const { data: msg, error } = await supabase.from('tutor_messages').insert({
+    session_id: session.id, student_id: profileId, role: 'tutor', text: reply.say, board: reply.board, exercise: reply.exercise,
+  }).select('id, role, text, board, exercise, result, created_at').single();
+  if (error) throw error;
+  const board = brain.applyBoard(session.board, reply.board);
+  await supabase.from('tutor_sessions').update(Object.assign({ board, last_turn_at: new Date().toISOString() }, extra || {})).eq('id', session.id);
+  return { msg: outMessage(msg), board };
+}
+
+/** Ends a session: the summary, words and memory are written when there was a conversation. Never throws. */
+async function finish(supabase, user, session) {
+  const patch = { ended_at: session.ended_at || new Date().toISOString() };
+  let out = null;
+  try {
+    if (session.turns > 0 && !session.summary) {
+      const msgs = await messagesOf(supabase, session.id, 60);
+      const transcript = msgs.map((m) => (m.role === 'tutor' ? 'Tutor: ' + (m.text || '') + (m.exercise ? ' [exercise: ' + m.exercise.kind + ']' : '')
+        : 'Student: ' + (m.result && m.result.lines ? m.result.lines.join(' ') : m.text || ''))).join('\n').slice(-12000);
+      const { data: mem } = await supabase.from('tutor_memory').select('notes').eq('student_id', session.student_id).maybeSingle();
+      const raw = await brain.callModel(supabase, user.id, 'tutor_summary', 'You write short, accurate session notes for a language school. Reply with JSON only.',
+        [{ role: 'user', content: brain.summaryPrompt(session, transcript, mem && mem.notes) }], { maxTokens: 2000, temperature: 0.3 });
+      out = brain.cleanSummary(raw);
+      Object.assign(patch, { title: out.title, summary: out.summary, topics: out.topics, words: out.words });
+      await supabase.from('tutor_memory').upsert({ student_id: session.student_id, notes: out.memory, updated_at: new Date().toISOString() }, { onConflict: 'student_id' });
+    }
+  } catch (e) {
+    console.error('[Tutor] summary failed:', e && (e.code || e.message));
+  }
+  await supabase.from('tutor_sessions').update(patch).eq('id', session.id);
+  return out;
+}
+
+// ── start ───────────────────────────────────────────────────
+
+async function handleStart(req, res, supabase, user) {
+  if (!brain.configured()) return res.status(501).json({ error: 'The tutor is not configured', reason: 'not_configured' });
+  if (!user.email_confirmed_at) return res.status(403).json({ error: 'Confirm your email first', reason: 'email' });
+  const body = parseBody(req) || {};
+  const ui = UI_LANGS.includes(body.ui) ? body.ui : 'en';
+  let profile;
+  try { profile = await studentOf(supabase, user); } catch (e) { return res.status(500).json({ error: 'Could not load your profile' }); }
+  if (!profile) return res.status(404).json({ error: 'No student profile', reason: 'no_profile' });
+  if (tooFast(user.id)) return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
+
+  const { data: open } = await supabase.from('tutor_sessions').select('*').eq('student_id', profile.id).is('ended_at', null).maybeSingle();
+  if (open && Date.now() - Date.parse(open.last_turn_at) < IDLE_MS) {
+    const msgs = await messagesOf(supabase, open.id, 40);
+    return res.status(200).json({ session: { id: open.id, started_at: open.started_at }, messages: msgs.map(outMessage), board: open.board || [], seconds: await balance(supabase, profile.id), resumed: true });
+  }
+  if (open) await finish(supabase, user, open);
+
+  const { data: t, error: rErr } = await supabase.rpc('tutor_refresh', { p_student: profile.id });
+  if (rErr || !t) return res.status(500).json({ error: 'Could not load your tutor time' });
+  if (totalOf(t) <= 0) return res.status(402).json({ error: 'No tutor time left', reason: 'no_time' });
+
+  const level = String(profile.level || '').slice(0, 2) || null;
+  const { data: session, error: sErr } = await supabase.from('tutor_sessions')
+    .insert({ student_id: profile.id, language: profile.language || 'English', level, ui }).select('*').single();
+  if (sErr) return res.status(409).json({ error: 'A session is already open. Please reload.', reason: 'open' });
+
+  const { data: ch } = await supabase.rpc('tutor_charge', { p_student: profile.id, p_seconds: MIN_CHARGE, p_session: session.id });
+  const charged = ch && ch[0] ? ch[0].charged : 0;
+  try {
+    const { data: lastDone } = await supabase.from('tutor_sessions').select('id').eq('student_id', profile.id).not('ended_at', 'is', null).limit(1);
+    const reply = await tutorReply(supabase, user, profile, session, [], [brain.openingTask(!(lastDone && lastDone.length))]);
+    const saved = await saveReply(supabase, session, profile.id, reply, { seconds_used: charged });
+    return res.status(200).json({ session: { id: session.id, started_at: session.started_at }, messages: [saved.msg], board: saved.board, seconds: ch && ch[0] ? ch[0].remaining : totalOf(t) });
+  } catch (e) {
+    // Nothing happened: the session goes and the seconds come back
+    await supabase.from('tutor_sessions').delete().eq('id', session.id);
+    if (charged > 0) await supabase.rpc('tutor_add_credit', { p_student: profile.id, p_seconds: charged, p_reason: 'refund', p_stripe_session: null, p_note: 'tutor did not answer', p_by: null });
+    return brainError(res, e);
+  }
+}
+
+// ── turn ────────────────────────────────────────────────────
+
+async function handleTurn(req, res, supabase, user) {
+  if (!brain.configured()) return res.status(501).json({ error: 'The tutor is not configured', reason: 'not_configured' });
+  const body = parseBody(req) || {};
+  let profile;
+  try { profile = await studentOf(supabase, user); } catch (e) { return res.status(500).json({ error: 'Could not load your profile' }); }
+  if (!profile) return res.status(404).json({ error: 'No student profile' });
+  if (tooFast(user.id)) return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
+  const session = await sessionOf(supabase, profile.id, body.session);
+  if (!session) return res.status(404).json({ error: 'Session not found' });
+  if (session.ended_at || Date.now() - Date.parse(session.last_turn_at) >= IDLE_MS) {
+    if (!session.ended_at) await finish(supabase, user, session);
+    return res.status(409).json({ error: 'This session has ended.', reason: 'ended' });
+  }
+
+  // What the student sends: a message, or their results on the exercise of one of the tutor's messages
+  const row = { session_id: session.id, student_id: profile.id, role: 'student' };
+  if (body.answer && typeof body.answer === 'object') {
+    const { data: ex } = UUID_RE.test(String(body.answer.message || '')) ? await supabase.from('tutor_messages').select('id, exercise')
+      .eq('id', body.answer.message).eq('session_id', session.id).eq('role', 'tutor').maybeSingle() : { data: null };
+    if (!ex || !ex.exercise) return res.status(400).json({ error: 'No such exercise' });
+    const results = Array.isArray(body.answer.results) ? body.answer.results : [];
+    const items = ex.exercise.items || ex.exercise.pairs || [];
+    const lines = items.map((it, i) => {
+      const r = results.find((x) => x && Number(x.i) === i);
+      const what = Array.isArray(it) ? it[0] + ' = ' + it[1] : it.q || it.s || (Array.isArray(it.o) ? it.o.join(' / ') : it.a) || '';
+      return `"${clean(what, 120)}": ${!r ? 'not answered' : r.ok ? 'right first time' : 'wrong at first' + (r.given ? ' (wrote "' + clean(r.given, 80) + '")' : '')}.`;
+    });
+    row.result = { message: ex.id, right: results.filter((x) => x && x.ok).length, total: items.length, lines };
+  } else {
+    const text = clean(body.text, MAX_TEXT);
+    if (!text) return res.status(400).json({ error: 'Write something first' });
+    row.text = text;
+  }
+
+  // The time since the previous turn, within 5 to 90 seconds
+  const gap = Math.round((Date.now() - Date.parse(session.last_turn_at)) / 1000);
+  const want = Math.max(MIN_CHARGE, Math.min(MAX_CHARGE, gap));
+  const { data: ch, error: cErr } = await supabase.rpc('tutor_charge', { p_student: profile.id, p_seconds: want, p_session: session.id });
+  if (cErr || !ch || !ch[0]) return res.status(500).json({ error: 'Could not count your time' });
+  const { charged, remaining } = ch[0];
+  if (charged <= 0) {
+    await finish(supabase, user, session);
+    return res.status(402).json({ error: 'No tutor time left', reason: 'no_time' });
+  }
+
+  const { data: saved, error: mErr } = await supabase.from('tutor_messages').insert(row).select('id, role, text, board, exercise, result, created_at').single();
+  if (mErr) return res.status(500).json({ error: 'Could not save your message' });
+  const closing = remaining <= 0;
+  try {
+    const history = await messagesOf(supabase, session.id, HISTORY);
+    const reply = await tutorReply(supabase, user, profile, session, history, closing ? [brain.CLOSING_TASK] : []);
+    if (closing) reply.exercise = null;
+    const out = await saveReply(supabase, session, profile.id, reply, { seconds_used: session.seconds_used + charged, turns: session.turns + 1 });
+    let summary = null;
+    if (closing) summary = await finish(supabase, user, Object.assign({}, session, { turns: session.turns + 1 }));
+    return res.status(200).json({ mine: outMessage(saved), message: out.msg, board: out.board, seconds: remaining, ended: closing, summary });
+  } catch (e) {
+    await supabase.from('tutor_messages').delete().eq('id', saved.id);
+    await supabase.rpc('tutor_add_credit', { p_student: profile.id, p_seconds: charged, p_reason: 'refund', p_stripe_session: null, p_note: 'tutor did not answer', p_by: null });
+    return brainError(res, e);
+  }
+}
+
+// ── end ─────────────────────────────────────────────────────
+
+async function handleEnd(req, res, supabase, user) {
+  const body = parseBody(req) || {};
+  let profile;
+  try { profile = await studentOf(supabase, user); } catch (e) { return res.status(500).json({ error: 'Could not load your profile' }); }
+  if (!profile) return res.status(404).json({ error: 'No student profile' });
+  const session = await sessionOf(supabase, profile.id, body.session);
+  if (!session) return res.status(404).json({ error: 'Session not found' });
+  if (session.ended_at) return res.status(200).json({ title: session.title, summary: session.summary, words: session.words, seconds: await balance(supabase, profile.id) });
+  // The last stretch since the previous turn, up to 90 seconds
+  const gap = Math.min(MAX_CHARGE, Math.round((Date.now() - Date.parse(session.last_turn_at)) / 1000));
+  if (gap >= 1 && Date.now() - Date.parse(session.last_turn_at) < IDLE_MS) {
+    const { data: ch } = await supabase.rpc('tutor_charge', { p_student: profile.id, p_seconds: gap, p_session: session.id });
+    if (ch && ch[0]) await supabase.from('tutor_sessions').update({ seconds_used: session.seconds_used + ch[0].charged }).eq('id', session.id);
+  }
+  const out = await finish(supabase, user, session);
+  return res.status(200).json({ title: out && out.title, summary: out && out.summary, words: out ? out.words : [], seconds: await balance(supabase, profile.id) });
+}
+
+// ── forgetting ──────────────────────────────────────────────
+
+async function handleForget(req, res, supabase, user) {
+  const profile = await studentOf(supabase, user).catch(() => null);
+  if (!profile) return res.status(404).json({ error: 'No student profile' });
+  const a = await supabase.from('tutor_memory').delete().eq('student_id', profile.id);
+  const b = await supabase.from('tutor_sessions').delete().eq('student_id', profile.id);
+  if (a.error || b.error) return res.status(500).json({ error: 'Could not delete everything. Please try again.' });
+  return res.status(200).json({ ok: true });
+}
+
 // ── Router ──────────────────────────────────────────────────
 
 module.exports = async function handler(req, res) {
@@ -134,6 +395,11 @@ module.exports = async function handler(req, res) {
   if (action === 'admin-grant') {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return handleAdminGrant(req, res, supabase, user);
+  }
+  const POST = { start: handleStart, turn: handleTurn, end: handleEnd, forget: handleForget };
+  if (POST[action]) {
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+    return POST[action](req, res, supabase, user);
   }
   return res.status(400).json({ error: 'Unknown action' });
 };

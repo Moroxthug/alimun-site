@@ -185,8 +185,8 @@
     var html = '';
     Object.keys(GROUPS).forEach(function (g) {
       html += '<div class="nav__group"><div class="nav__label">' + esc(t(GROUPS[g])) + '</div>';
-      /* The design kit is an internal reference, and the tutor opens with part 2 of its plan: not in a real student's menu */
-      ROUTES.filter(function (r) { return r.group === g && !((r.id === 'kit' || r.id === 'tutor') && mode === 'real'); }).forEach(function (r) {
+      /* The design kit is an internal reference: not in a real student's menu */
+      ROUTES.filter(function (r) { return r.group === g && !(r.id === 'kit' && mode === 'real'); }).forEach(function (r) {
         html += '<a href="#/' + r.id + '" data-route="' + r.id + '">' + icon(r.icon) + '<span>' + esc(t(r.label)) + '</span></a>';
       });
       html += '</div>';
@@ -496,7 +496,8 @@
   var progressHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('progress', false); } });
   var messagesHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('messages', false); } });
   var settingsHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('settings', false); } });
-  var tutorHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('tutor', false); } });
+  var tutorHelpers = Object.assign({}, readerHelpers, { listOf: listOf, rerender: function () { render('tutor', false); } });
+  function tutorParts() { return location.hash.replace(/^#\/tutor\/?/, '').split('/').filter(Boolean); }
   function messagesParts() { return location.hash.replace(/^#\/messages\/?/, '').split('/').filter(Boolean); }
   function homeworkParts() { return location.hash.replace(/^#\/homework\/?/, '').split('/').filter(Boolean); }
   function classesParts() { return location.hash.replace(/^#\/classes\/?/, '').split('/').filter(Boolean); }
@@ -548,7 +549,7 @@
         window.AlimunProgress.mount(view, [], progressHelpers);
       }
       if (id === 'tutor') {
-        window.AlimunTutor.mount(view, [], tutorHelpers);
+        window.AlimunTutor.mount(view, tutorParts(), tutorHelpers);
       }
       if (id === 'homework') {
         window.AlimunHomework.mount(view, homeworkParts(), homeworkHelpers).then(function (res) {
@@ -671,7 +672,7 @@
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'messages' || id === 'settings') render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'messages' || id === 'settings' || id === 'tutor') render(id, true); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 

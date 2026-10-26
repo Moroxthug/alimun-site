@@ -92,3 +92,11 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] A student opens /app#/tutor: 10 free minutes, plus the plan's minutes for the month on a paid plan, with the renewal date.
 - [ ] Admin, a student's file: the Tutor time card shows the same balance; adding 15 minutes shows them as added, and the student sees them after reloading; removing more than they have stops at zero.
 - [ ] Admin, System: changing a plan's tutor minutes is kept after reloading.
+
+## AI tutor, part 2 (written tutor)
+- [ ] A student opens Tutor and starts a session: the tutor greets them by name, writes on the board and asks a question or sets an exercise, in the language they learn.
+- [ ] Answering the exercise on the board sends the results by itself and the tutor reacts to them; writing a sentence with a mistake gets a correction on the board.
+- [ ] The time left goes down by about the time spent; leaving for another section and coming back keeps the session; after 10 minutes without writing a new session starts.
+- [ ] End the session: a summary and the words appear; the session shows under past sessions and "What your tutor remembers" fills in; Forget everything empties both.
+- [ ] With 1 minute left, the next reply says goodbye and the session ends; Start is then disabled.
+- [ ] Admin, AI spend: Tutor replies and Tutor session summaries appear with their cost.

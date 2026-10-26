@@ -1494,3 +1494,42 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .pl-msg { margin-top: 10px; }
 .pl-msg:empty { display: none; }
 .rd-listen { display: inline-flex; flex-wrap: wrap; gap: 8px; }
+
+/* ---------- Tutor (js/app/tutor.js; docs/AI_TUTOR_PLAN.md, part 2) ---------- */
+.tu-head { align-items: flex-end; }
+.tu-grid { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(300px, 1fr); gap: 20px; align-items: start; }
+.tu-board { background: var(--forest); color: var(--bone); border-radius: var(--r-xl); padding: 28px clamp(20px, 3vw, 36px); min-height: 360px; box-shadow: var(--shadow); }
+.tu-board__ops { display: flex; flex-direction: column; gap: 12px; }
+.tu-op { margin: 0; }
+.tu-op--title { font-family: 'Coolvetica Condensed', Satoshi, sans-serif; font-weight: 400; font-size: 34px; line-height: 1; color: var(--lime); text-transform: none; }
+.tu-op--write { font-size: 20px; line-height: 1.45; }
+.tu-op--write b, .tu-op--table b { color: var(--lime); font-weight: 700; }
+.tu-op--note { font-size: 15.5px; color: var(--on-forest); border-inline-start: 3px solid var(--mint); padding-inline-start: 12px; }
+.tu-op--fix { font-size: 19px; }
+.tu-op--fix s { color: var(--coral); text-decoration-thickness: 2px; }
+.tu-op--fix b { color: var(--lime); }
+.tu-op--table table { border-collapse: collapse; width: 100%; font-size: 16px; }
+.tu-op--table th { text-align: start; color: var(--lime); font-weight: 700; padding: 6px 10px; border-bottom: 2px solid rgba(240, 239, 233, .3); }
+.tu-op--table td { padding: 6px 10px; border-bottom: 1px solid rgba(240, 239, 233, .14); vertical-align: top; }
+.tu-op--empty { color: var(--on-forest); }
+.tu-op.is-new { animation: tu-write .7s var(--ease) both; }
+.tu-op.is-new:nth-child(2) { animation-delay: .25s; } .tu-op.is-new:nth-child(3) { animation-delay: .5s; } .tu-op.is-new:nth-child(4) { animation-delay: .75s; }
+.tu-op.is-new:nth-child(5) { animation-delay: 1s; } .tu-op.is-new:nth-child(n+6) { animation-delay: 1.25s; }
+@keyframes tu-write { from { clip-path: inset(0 100% 0 0); opacity: .3; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
+[dir="rtl"] .tu-op.is-new { animation-name: tu-write-rtl; }
+@keyframes tu-write-rtl { from { clip-path: inset(0 0 0 100%); opacity: .3; } to { clip-path: inset(0 0 0 0); opacity: 1; } }
+.tu-ex { margin-top: 22px; padding: 28px clamp(18px, 3vw, 32px); max-width: none; color: var(--ink); }
+.tu-chat { display: flex; flex-direction: column; padding: 0; overflow: hidden; max-height: calc(100vh - 160px); min-height: 420px; position: sticky; top: 20px; }
+.tu-chat__face { width: 84px; margin: 14px auto 0; }
+.tu-msgs { min-height: 200px; }
+.tu-msgs--past { max-height: none; margin-top: 12px; border-radius: var(--r-md); }
+.tu-wait { display: flex; align-items: center; min-height: 40px; }
+.tu-sum { padding: 16px 20px; border-top: 1px solid var(--line); overflow-y: auto; }
+.tu-sum .t-body { margin-top: 6px; }
+@media (max-width: 899px) {
+  .tu-grid { grid-template-columns: minmax(0, 1fr); }
+  .tu-chat { position: static; max-height: none; }
+  .tu-msgs { max-height: 60vh; }
+  .tu-op--title { font-size: 28px; } .tu-op--write { font-size: 18px; }
+}
+@media (prefers-reduced-motion: reduce) { .tu-op.is-new { animation: none; } }
