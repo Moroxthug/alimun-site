@@ -37,6 +37,8 @@
         { id: 'a1', type: 'Essay', title: de ? 'Mein Traumberuf' : 'My dream job', prompt: de ? 'Schreiben Sie über Ihren Traumberuf. Warum gefällt er Ihnen? Was muss man dafür lernen? Benutzen Sie mindestens zwei Nebensätze mit weil oder dass.' : 'Write about your dream job. Why do you like it? What do you need to learn for it? Use at least two sentences with because or although.', due_date: day(2), min_words: 80, teacher_id: 't1', created_at: new Date(Date.now() - DAY).toISOString() },
         { id: 'a2', type: 'Speaking', title: de ? 'Meine Wohnung' : 'My flat', prompt: de ? 'Beschreiben Sie Ihre Wohnung: die Zimmer, was Ihnen gefällt und was nicht. Sprechen Sie etwa eine Minute.' : 'Describe your flat: the rooms, what you like and what you do not. Speak for about a minute.', due_date: day(5), min_words: null, teacher_id: 't1', created_at: new Date(Date.now() - 2 * DAY).toISOString() },
         { id: 'a3', type: 'Grammar', title: de ? 'Perfekt mit sein oder haben' : 'Past simple or present perfect', prompt: de ? 'Schreiben Sie fünf Sätze über Ihr letztes Wochenende im Perfekt.' : 'Write five sentences about last weekend.', due_date: day(-3), min_words: 40, teacher_id: 't1', created_at: new Date(Date.now() - 9 * DAY).toISOString() },
+        { id: 'a5', type: 'Homework', title: de ? 'Wechselpräpositionen' : 'Present perfect: ever and never', prompt: '', due_date: day(4), min_words: 0, teacher_id: 't1', created_at: new Date(Date.now() - DAY / 2).toISOString(),
+          material: de ? { kind: 'book', key: 'book:German-B1:u2:p1', title: 'Wechselpräpositionen' } : { kind: 'book', key: 'book:English-B1:u1:p1', title: 'Present perfect' } },
         { id: 'a4', type: 'Writing', title: de ? 'Eine E-Mail an den Vermieter' : 'An email to your landlord', prompt: de ? 'Die Heizung ist kaputt. Schreiben Sie eine höfliche E-Mail.' : 'The heating is broken. Write a polite email.', due_date: day(-8), min_words: 60, teacher_id: 't1', created_at: new Date(Date.now() - 14 * DAY).toISOString() }
       ],
       submissions: [
@@ -51,8 +53,24 @@
   function load() {
     if (!signedIn()) return Promise.resolve(sample());
     var p = A.data().profile;
-    return window.AlimunData.homework(p.id, p.cohorts || []);
+    return window.AlimunData.homework(p.id, p.cohorts || []).then(function (h) {
+      /* Book lessons, library pieces and mock papers set as homework: record the ones finished since the last visit */
+      var open = h.assignments.filter(function (a) { return a.material && !h.submissions.some(function (s) { return s.assignment_id === a.id; }); });
+      if (!open.length) return h;
+      return Promise.all(open.slice(0, 20).map(function (a) { return window.AlimunData.completeMaterial(a.id).catch(function () { return { done: false }; }); })).then(function (r) {
+        return r.some(function (x) { return x && x.done; }) ? window.AlimunData.homework(p.id, p.cohorts || []) : h;
+      });
+    });
   }
+  /* Where a piece of homework from the course material opens in the dashboard */
+  function materialHref(m) {
+    var p = String(m && m.key || '').split(':');
+    if (m.kind === 'book' && p.length === 4) return '#/book/' + encodeURIComponent(p[1]) + '/' + encodeURIComponent(p[2]) + '/' + encodeURIComponent(p[3]);
+    if (m.kind === 'lib' && p.length === 3) return '#/library/' + encodeURIComponent(p[1]) + '/' + encodeURIComponent(p[2]);
+    if (m.kind === 'mock' && p.length === 3) return '#/tests/' + encodeURIComponent(p[1]) + '/' + encodeURIComponent(p[2]);
+    return null;
+  }
+  var OPEN = { book: 'app_hw_open_book', lib: 'app_hw_open_lib', mock: 'app_hw_open_mock' };
   function subOf(id) { return H.submissions.filter(function (s) { return s.assignment_id === id; })[0] || null; }
   function readDraft(id) { try { return localStorage.getItem(DRAFT + (signedIn() || 'guest') + ':' + id) || ''; } catch (e) { return ''; } }
   function writeDraft(id, v) { try { if (v) localStorage.setItem(DRAFT + (signedIn() || 'guest') + ':' + id, v); else localStorage.removeItem(DRAFT + (signedIn() || 'guest') + ':' + id); } catch (e) { /* storage blocked */ } }
@@ -116,7 +134,13 @@
       '<div class="view__head"><div><h1 class="t-h1"' + ta + '>' + esc(a.title) + '</h1><p class="t-lead">' + esc(typeName(a) + (a.due_date ? ', ' + t('app_hw_due', { date: dateText(a.due_date) }) : '') + (H.teachers[a.teacher_id] ? ', ' + t('app_hw_from', { name: H.teachers[a.teacher_id] }) : '')) + '</p></div></div>' +
       '<div class="hw-body"><section class="card hw-task"><h2 class="t-h3">' + esc(t('app_hw_task_h')) + '</h2><div class="t-body"' + ta + '>' + paras(a.prompt || a.title) + '</div>' +
       (a.min_words ? '<p class="t-small hw-min">' + esc(t('app_hw_min', { n: a.min_words })) + '</p>' : '') + '</section>';
-    if (graded) {
+    if (a.material && !graded) {
+      var href = materialHref(a.material);
+      html += '<section class="card card--forest hw-mark"><h2 class="t-h2">' + esc(t('app_hw_mat_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_hw_mat_p')) + '</p>' +
+        (href ? '<div class="btn-row" style="margin-top:18px"><a class="btn btn--lime" href="' + href + '">' + esc(t(OPEN[a.material.kind])) + A.icon('arrow') + '</a></div>' : '') + '</section>';
+    } else if (graded && a.material) {
+      html += '<section class="card card--forest hw-mark"><h2 class="t-h2">' + esc(t('app_hw_mat_done')) + '</h2>' + (s.score != null ? '<p class="t-num">' + esc(t('app_hw_score', { score: s.score })) + '</p>' : '') + '</section>';
+    } else if (graded) {
       html += '<section class="card card--forest hw-mark"><h2 class="t-h2">' + esc(t('app_hw_marked')) + '</h2>' + (s.score != null ? '<p class="t-num">' + esc(t('app_hw_score', { score: s.score })) + '</p>' : '') +
         (s.feedback ? '<div class="t-body hw-mark__fb" dir="auto">' + paras(s.feedback) + '</div>' : '') + '</section>' +
         '<section class="card"><h2 class="t-h3">' + esc(t('app_hw_your_answer')) + '</h2><div class="hw-answer t-body"' + ta + '>' + paras(s.submission_text) + '</div></section>';

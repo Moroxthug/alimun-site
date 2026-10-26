@@ -254,7 +254,7 @@
     var level = String(p.level || '').slice(0, 2), placed = p.placement && p.placement.level;
     var html = '<a class="rd-back" href="#/students">' + A.icon('back') + '<span>' + esc(t('app_t_nav_students')) + '</span></a>' +
       '<div class="view__head"><div><h1 class="t-h1">' + esc(p.full_name || '') + '</h1><p class="t-lead">' + esc([co.id ? A.className(co) : '', GOALS[p.goal_track] ? t(GOALS[p.goal_track]) : '', st ? A.cap(lastLine(st)) : ''].filter(Boolean).join('. ') + '.') + '</p></div>' +
-      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/messages">' + esc(t('app_ts_message')) + '</a><a class="btn btn--ghost btn--sm" href="#/homework">' + esc(t('app_ts_set_hw')) + '</a></div></div><div class="grid rise">';
+      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/messages">' + esc(t('app_ts_message')) + '</a><a class="btn btn--ghost btn--sm" href="#/homework/new/student/' + esc(p.id) + '">' + esc(t('app_ts_set_hw')) + '</a></div></div><div class="grid rise">';
     if (st && co.id) { var r = reasons(st, co); if (r.length) html += '<section class="card card--coral span-12" style="--i:0"><h2 class="t-h3">' + esc(t('app_ts_att_h')) + '</h2><p class="t-body" style="margin-top:6px">' + esc(r.join('. ') + '.') + '</p></section>'; }
 
     html += '<section class="card card--forest span-8 pg-level" style="--i:1" aria-labelledby="h-level"><h2 class="t-h1" id="h-level">' + esc(t('app_ts_level_h', { course: A.languageName(p.language) + ' ' + level })) + '</h2>' +

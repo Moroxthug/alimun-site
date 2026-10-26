@@ -57,6 +57,7 @@
     app_pg_n_papers: ['app_pg_n_papers_zero', 'app_pg_n_papers_one', 'app_pg_n_papers_two', 'app_pg_n_papers_few', 'app_pg_n_papers_many', 'app_pg_n_papers_other'],
     app_pg_n_hw: ['app_pg_n_hw_zero', 'app_pg_n_hw_one', 'app_pg_n_hw_two', 'app_pg_n_hw_few', 'app_pg_n_hw_many', 'app_pg_n_hw_other'],
     app_ts_r_idle: ['app_ts_r_idle_zero', 'app_ts_r_idle_one', 'app_ts_r_idle_two', 'app_ts_r_idle_few', 'app_ts_r_idle_many', 'app_ts_r_idle_other'],
+    app_hw_words: ['app_hw_words_zero', 'app_hw_words_one', 'app_hw_words_two', 'app_hw_words_few', 'app_hw_words_many', 'app_hw_words_other'],
     app_tc_created_n: ['app_tc_created_n_zero', 'app_tc_created_n_one', 'app_tc_created_n_two', 'app_tc_created_n_few', 'app_tc_created_n_many', 'app_tc_created_n_other'],
     app_t_oto_notes_n: ['app_t_oto_notes_n_zero', 'app_t_oto_notes_n_one', 'app_t_oto_notes_n_two', 'app_t_oto_notes_n_few', 'app_t_oto_notes_n_many', 'app_t_oto_notes_n_other']
   };
@@ -245,7 +246,7 @@
       var s = nd[nd.length - 1];
       items.push({ art: 'pencil', tint: 'mint', href: '#/classes/notes/' + s.id, h: tn('app_t_notes_n', nd.length), p: t('app_t_notes_p', { class: className(cohortOf(s.cohortId)), day: dayName(s.at) }) });
     }
-    if (w.length) items.push({ art: 'monster', tint: 'coral', href: '#/homework', h: tn('app_t_grade_n', w.length), p: t('app_t_grade_p', { name: firstName(w[0].student), when: relative(new Date(w[0].at).getTime() - Date.now()) }) });
+    if (w.length) items.push({ art: 'monster', tint: 'coral', href: '#/homework/mark/' + w[0].id, h: tn('app_t_grade_n', w.length), p: t('app_t_grade_p', { name: firstName(w[0].student), when: relative(new Date(w[0].at).getTime() - Date.now()) }) });
     if (D.unread) items.push({ art: 'alien', tint: 'sun', href: '#/messages', h: tn('app_t_unread_n', D.unread), p: t('app_t_unread_p') });
     if (od.length) items.push({ art: 'mug', tint: 'leaf', href: '#/classes/oto/' + od[0].id, h: tn('app_t_oto_notes_n', od.length), p: t('app_t_oto_notes_p', { name: firstName(od[0].student) }) });
     if (!items.length) items.push({ art: 'sun', tint: 'leaf', href: '#/material', h: t('app_t_clear_h'), p: t('app_t_clear_p') });
@@ -299,7 +300,7 @@
     if (!w.length) return '';
     return '<section class="card span-12" style="--i:10" aria-labelledby="h-wait"><div class="card__row card__row--split"><div style="flex:1;min-width:0"><h2 class="t-h2" id="h-wait">' + esc(t('app_t_wait_h')) + '</h2>' +
       '<div class="tt-week">' + w.slice(0, 4).map(function (s) {
-        return '<a class="tt-row tt-row--wide" href="#/homework/' + esc(s.id) + '"><span class="tt-row__time">' + esc(cap(relative(new Date(s.at).getTime() - Date.now()))) + '</span>' +
+        return '<a class="tt-row tt-row--wide" href="#/homework/mark/' + esc(s.id) + '"><span class="tt-row__time">' + esc(cap(relative(new Date(s.at).getTime() - Date.now()))) + '</span>' +
           '<span><b>' + esc(s.student) + '</b><small>' + esc(s.title) + '</small></span></a>';
       }).join('') + '</div></div><div class="card__art card__art--lg">' + Cast.drawing('monster') + '</div></div></section>';
   }
@@ -364,7 +365,7 @@
     loaderInner: loaderInner, dayName: dayName, relative: relative, className: className, weekday: weekday, browserZone: browserZone,
     mode: function () { return mode; }, rerender: function () { render(current, false); }
   };
-  var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; } };
+  var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; }, homework: function () { return window.AlimunTeachHomework; } };
   function partsOf(id) { return location.hash.replace(new RegExp('^#\\/' + id + '\\/?'), '').split('/').filter(Boolean); }
 
   /* ---------- Routing ---------- */

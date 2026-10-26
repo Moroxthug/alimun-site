@@ -251,8 +251,21 @@
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
     var none = Promise.resolve({ data: [] }), ids = cohortIds || [];
+    var cols = 'id, cohort_id, student_id, teacher_id, title, type, prompt, due_date, min_words, material, created_at';
+    /* The class's homework (not set for one other student; row-level security hides those) and homework set for this
+       student alone (a 1:1 student's has no class) */
+    var both = Promise.all([
+      ids.length ? c.from('assignments').select(cols).in('cohort_id', ids).order('created_at', { ascending: false }).limit(200) : none,
+      c.from('assignments').select(cols).eq('student_id', studentId).order('created_at', { ascending: false }).limit(100)
+    ]).then(function (r) {
+      r.forEach(function (x) { if (x && x.error) throw x.error; });
+      var seen = {}, out = [];
+      (r[0].data || []).concat(r[1].data || []).forEach(function (a) { if (!seen[a.id]) { seen[a.id] = true; out.push(a); } });
+      out.sort(function (a, b) { return String(b.created_at).localeCompare(String(a.created_at)); });
+      return { data: out };
+    });
     return Promise.all([
-      ids.length ? c.from('assignments').select('id, cohort_id, teacher_id, title, type, prompt, due_date, min_words, created_at').in('cohort_id', ids).order('created_at', { ascending: false }).limit(200) : none,
+      both,
       c.from('assignment_submissions').select('id, assignment_id, submission_text, status, score, feedback, submitted_at, graded_at').eq('student_id', studentId).limit(500),
       c.from('student_feedback').select('id, teacher_id, feedback_text, created_at').eq('student_id', studentId).order('created_at', { ascending: false }).limit(20)
     ]).then(function (r) {
@@ -266,6 +279,13 @@
         return { assignments: r[0].data || [], submissions: r[1].data || [], feedback: r[2].data || [], teachers: names };
       });
     });
+  }
+  /* Homework that is a book lesson, library piece or mock paper: recorded as handed in and marked once the student
+     has finished it (complete_material_homework checks their practice; supabase/migrations/202610260900_teacher_homework.sql) */
+  function completeMaterial(assignmentId) {
+    var c = client();
+    if (!c) return Promise.resolve({ done: false });
+    return c.rpc('complete_material_homework', { p_assignment: assignmentId }).then(function (r) { if (r.error) throw r.error; return r.data || { done: false }; });
   }
   function handIn(studentId, assignmentId, text) {
     var c = client();
@@ -617,6 +637,63 @@
     return c.from('student_feedback').delete().eq('id', id).then(function (r) { if (r.error) throw r.error; });
   }
 
+  /* Teacher dashboard, Homework (step 15, part 4): the approved teacher's classes and students (class enrolments and
+     1:1 students), the homework they set and every submission to it */
+  function teacherHomework() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.auth.getSession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session) return { signedIn: false };
+      return c.from('teacher_profiles').select('id, full_name, status').eq('user_id', session.user.id).maybeSingle().then(function (tr) {
+        if (tr.error) throw tr.error;
+        var tp = tr.data;
+        if (!tp || tp.status !== 'approved') return { signedIn: true, teacher: null };
+        return c.from('cohorts').select('id, language, level, goal_track, tier, status').eq('teacher_id', tp.id).order('created_at', { ascending: true }).then(function (cr) {
+          var cos = rows(cr), ids = cos.map(function (co) { return co.id; }), none = Promise.resolve({ data: [] });
+          return Promise.all([
+            ids.length ? c.from('enrollments').select('student_id, cohort_id, enrolled_at, student_profiles(id, full_name, level, language)').in('cohort_id', ids).eq('status', 'active') : none,
+            c.from('one_on_one_bookings').select('student_id, student_profiles(id, full_name, level, language)').eq('teacher_id', tp.id).in('status', ['booked', 'completed']).limit(500),
+            c.from('assignments').select('id, cohort_id, student_id, title, type, prompt, due_date, min_words, material, created_at').eq('teacher_id', tp.id).order('created_at', { ascending: false }).limit(300)
+          ]).then(function (r) {
+            var students = {};
+            rows(r[0]).forEach(function (e) { var p = e.student_profiles; if (!p) return; var s = students[p.id] = students[p.id] || { id: p.id, name: p.full_name || '', level: p.level, language: p.language, cohorts: [], since: e.enrolled_at }; s.cohorts.push(e.cohort_id); });
+            rows(r[1]).forEach(function (b) { var p = b.student_profiles; if (!p || students[p.id]) return; students[p.id] = { id: p.id, name: p.full_name || '', level: p.level, language: p.language, cohorts: [], oto: true }; });
+            var asg = rows(r[2]), aids = asg.map(function (a) { return a.id; });
+            return (aids.length ? c.from('assignment_submissions').select('id, assignment_id, student_id, submission_text, status, score, feedback, submitted_at, graded_at').in('assignment_id', aids).limit(5000) : none).then(function (sr) {
+              return { signedIn: true, teacher: tp, cohorts: cos, students: Object.keys(students).map(function (k) { return students[k]; }), assignments: asg, submissions: rows(sr) };
+            });
+          });
+        });
+      });
+    });
+  }
+  function createHomework(row) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('assignments').insert(row).select('id, cohort_id, student_id, title, type, prompt, due_date, min_words, material, created_at').single()
+      .then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function updateHomework(id, patch) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('assignments').update(patch).eq('id', id).select('id').single().then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function deleteHomework(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('assignments').delete().eq('id', id).then(function (r) { if (r.error) throw r.error; });
+  }
+  /* Marking: by the submission's id; the database lets the homework's teacher set status, mark and feedback only */
+  function markSubmission(id, score, feedback) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('assignment_submissions').update({ status: 'graded', score: score, feedback: feedback, graded_at: new Date().toISOString() }).eq('id', id)
+      .select('id, status, score, feedback, graded_at').single().then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function draftFeedback(submissionId) { return api('/api/ai?action=grade-submission', { submission_id: submissionId }); }
+  function draftTask(prompt, system) { return api('/api/ai?action=grade', { prompt: prompt, system: system, json: true }); }
+
   /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
   function libraryResults(studentId) {
     var c = client();
@@ -673,5 +750,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, teacherInbox: teacherInbox, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, teacherInbox: teacherInbox, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

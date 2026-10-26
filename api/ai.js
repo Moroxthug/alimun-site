@@ -412,7 +412,7 @@ async function handleGradeSubmission(req, res, supabase, user) {
 
   const { data: sub, error: subErr } = await supabase
     .from('assignment_submissions')
-    .select('id, submission_text, assignments(title, type, prompt, cohort_id, cohorts(teacher_id, language, level))')
+    .select('id, submission_text, student_profiles(language, level), assignments(title, type, prompt, cohort_id, teacher_id, cohorts(teacher_id, language, level))')
     .eq('id', submission_id)
     .maybeSingle();
   if (subErr) return res.status(500).json({ error: 'Could not load submission' });
@@ -421,14 +421,17 @@ async function handleGradeSubmission(req, res, supabase, user) {
   if (role !== 'admin') {
     const { data: tp, error: tpErr } = await supabase
       .from('teacher_profiles').select('id, status').eq('user_id', user.id).maybeSingle();
-    if (tpErr || !tp || tp.status !== 'approved' || tp.id !== sub.assignments.cohorts?.teacher_id) {
+    // The teacher who set the homework, or the teacher of its class (homework for a 1:1 student has no class)
+    const owners = [sub.assignments.teacher_id, sub.assignments.cohorts?.teacher_id].filter(Boolean);
+    if (tpErr || !tp || tp.status !== 'approved' || !owners.includes(tp.id)) {
       return res.status(403).json({ error: 'Forbidden' });
     }
   }
 
   const a = sub.assignments;
+  const course = a.cohorts || sub.student_profiles || {};
   const text = String(sub.submission_text || '').slice(0, MAX_PROMPT_CHARS);
-  const prompt = `Grade one student submission for a ${clip(a.cohorts?.language, 40)} class at CEFR ${LEVELS.has(a.cohorts?.level) ? a.cohorts.level : 'unknown'} level.
+  const prompt = `Grade one student submission for a ${clip(course.language, 40)} class at CEFR ${LEVELS.has(course.level) ? course.level : 'unknown'} level.
 Assignment type: ${clip(a.type, 40)}
 Assignment title: ${clip(a.title, 120)}
 Assignment instructions: ${clip(a.prompt, 1000)}

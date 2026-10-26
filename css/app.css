@@ -1366,3 +1366,19 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .ts-notelist .is-private .tt-row__time { color: var(--muted); }
 .ts-note__text { display: block; line-height: 1.55; }
 .ts-del { margin-top: 6px; font-size: 14px; }
+
+/* ---------- Teacher dashboard, Homework (step 15 part 4, js/app/teach-homework.js) ---------- */
+.th-wait .tt-row { border-color: rgba(240, 239, 233, .16); color: var(--bone); }
+.th-wait .tt-row__time { color: var(--lime); }
+.th-wait .tt-row small { color: var(--on-forest); }
+.th-kinds { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px 18px; margin-top: 4px; }
+.th-draft { align-self: start; position: sticky; top: 96px; }
+.th-draft[hidden] { display: none; }
+.th-in { grid-template-columns: 110px minmax(0, 1fr) auto; align-items: center; }
+@media (max-width: 520px) { .th-in { grid-template-columns: 1fr; } .th-in .btn { justify-self: start; } }
+.th-sub { margin: 20px 0 6px; }
+.th-late { color: #b0472f; font-weight: 600; }
+.th-mark { align-self: start; }
+.th-score { max-width: 160px; }
+[data-kindbox] { display: grid; gap: 16px; }
+.hw-body .card > .t-h3 + .hw-answer { margin-top: 12px; }
