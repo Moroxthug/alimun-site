@@ -117,3 +117,15 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] On a phone (iPhone Safari and Android Chrome), after allowing the microphone, the same works.
 - [ ] Say nothing: "Nothing was heard" and no time is taken.
 - [ ] Admin, AI spend: Tutor pronunciation scoring appears with its cost; Azure's portal shows the same audio time.
+
+## AI tutor, part 7 A (the live call; admins only until app_settings tutor_live is all)
+- [ ] Tutor page: the six tutors to pick from, "Talk with ..." follows the pick and is remembered after a reload (shared with Practice's speaking tutor).
+- [ ] "Talk with Arthur": the browser asks for the microphone once, Arthur greets you by name within about two seconds, in Orus, his mouth moving with the voice.
+- [ ] Talk naturally: answers come in about a second; talking over Arthur stops him; a grammar mistake is repeated back correctly; a mispronounced word is corrected now and then, not every time.
+- [ ] Captions show both sides; Mute stops him hearing you ("Your microphone is off"); Unmute works.
+- [ ] Each tutor speaks in its own voice (Lena Sulafat, Mei Kore, Sofia Aoede, Arthur Orus, Kofi Charon, Omar Puck).
+- [ ] A call longer than 10 minutes carries on by itself (a new pass), without starting over.
+- [ ] End the call: the summary and the words appear; the session is in Past sessions; the time left went down by about the call's length.
+- [ ] Phone (iPhone Safari, Android Chrome): the same, with the screen on.
+- [ ] Admin, AI spend: "Tutor live calls (estimate)" rows; compare with Google AI Studio's billing after a few calls.
+

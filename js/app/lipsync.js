@@ -2,7 +2,9 @@
    AlimunLipsync.follow(audio, el): while the audio plays, sets data-mouth on el to one of the tutor's five mouth
    shapes (m, e, a, o; rest when silent), chosen about every 70 ms from loudness and how often the wave crosses zero.
    The audio must allow it (same origin, or crossOrigin="anonymous" with CORS, as Supabase Storage does).
-   Returns a function that stops following. */
+   Returns a function that stops following.
+   AlimunLipsync.followAnalyser(analyser, el): the same for sound that is not an audio element (the live tutor's voice,
+   played through Web Audio): el's mouth follows what passes through the AnalyserNode; silence closes it. */
 (function () {
   'use strict';
   var ctx = null, sources = typeof WeakMap === 'function' ? new WeakMap() : null;
@@ -31,5 +33,28 @@
     raf = requestAnimationFrame(tick);
     return function () { on = false; cancelAnimationFrame(raf); el.setAttribute('data-mouth', 'rest'); };
   }
-  window.AlimunLipsync = { follow: follow };
+  /* The mouth shape for one frame of sound */
+  function shapeOf(buf, prev) {
+    var sum = 0, zc = 0;
+    for (var i = 0; i < buf.length; i++) { sum += buf[i] * buf[i]; if (i && (buf[i] > 0) !== (buf[i - 1] > 0)) zc++; }
+    var rms = Math.sqrt(sum / buf.length), z = zc / buf.length;
+    if (rms < 0.006) return 'rest';
+    return rms < 0.012 ? 'm' : z > 0.14 ? 'e' : rms < 0.04 ? (prev === 'e' ? 'o' : 'e') : rms > 0.09 ? 'a' : (Math.random() < 0.5 ? 'o' : 'a');
+  }
+  function followAnalyser(an, el) {
+    var buf = new Float32Array(an.fftSize), last = 0, shape = 'rest', raf = 0, on = true;
+    var tick = function (ts) {
+      if (!on) return;
+      if (ts - last > 70) {
+        last = ts;
+        an.getFloatTimeDomainData(buf);
+        shape = shapeOf(buf, shape);
+        el.setAttribute('data-mouth', shape);
+      }
+      raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+    return function () { on = false; cancelAnimationFrame(raf); el.setAttribute('data-mouth', 'rest'); };
+  }
+  window.AlimunLipsync = { follow: follow, followAnalyser: followAnalyser };
 })();
