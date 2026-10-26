@@ -98,6 +98,20 @@
       .catch(function (e) { var s = state[b.id]; s.fails = (s.fails || 0) + 1; s.err = e.message; draw(); later(step, 3000); });
   }
 
+  /* Google Cloud Text-to-Speech test: plays the sentence, or shows Google's refusal (no key ever reaches this page) */
+  var cloudBtn = document.getElementById('cloud-try'), cloudMsg = document.getElementById('cloud-msg'), cloudAudio = document.getElementById('cloud-audio');
+  cloudBtn.addEventListener('click', function () {
+    cloudBtn.disabled = true; cloudMsg.textContent = 'Asking Google Cloud…'; cloudAudio.hidden = true;
+    fetch('/api/speech?action=cloud-test', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ model: document.getElementById('cloud-model').value, voice: document.getElementById('cloud-voice').value }) })
+      .then(function (r) {
+        if (r.ok) return r.blob().then(function (b) { cloudAudio.src = URL.createObjectURL(b); cloudAudio.hidden = false; cloudAudio.play().catch(function () {}); cloudMsg.textContent = 'It works: Google Cloud spoke the sentence.'; });
+        return r.json().catch(function () { return {}; }).then(function (j) { cloudMsg.textContent = 'Google Cloud refused (' + (j.status || r.status) + '): ' + (j.message || j.error || 'no detail') + (j.reason ? ' [' + j.reason + ']' : ''); });
+      })
+      .catch(function (e) { cloudMsg.textContent = 'The test did not run: ' + e.message; })
+      .then(function () { cloudBtn.disabled = false; });
+  });
+
   btn.addEventListener('click', function () {
     running = !running;
     btn.textContent = running ? 'Pause' : 'Start';
@@ -114,7 +128,7 @@
       /* The session token expires after an hour; keep it fresh while the tab works */
       sb.auth.onAuthStateChange(function (ev, ses) { if (ses) token = ses.access_token; });
       return load().then(function () {
-        btn.disabled = false;
+        btn.disabled = false; cloudBtn.disabled = false;
         var at = resetAt();
         say(at ? 'Google\u2019s daily limit is used up until ' + new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (in ' + hm(at - Date.now()) + '). Press Start and keep this tab open: it carries on by itself then.'
           : 'Press Start and keep this tab open. Several sentences go to Google in one request and are cut apart at the pauses, to fit Google\u2019s daily limit.');

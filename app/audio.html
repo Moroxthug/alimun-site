@@ -24,6 +24,12 @@
     <label class="t-small"><input type="checkbox" id="tests-first"> Mock tests and library first</label>
     <p class="t-body" id="sum"></p></div>
   <p class="t-small" id="status" role="status" aria-live="polite">Loading…</p>
+  <section class="card" style="margin-top:18px"><h2 class="t-h3">Google Cloud voices (test)</h2>
+    <p class="t-small" style="margin-top:4px">One sentence through Google Cloud Text-to-Speech, to check the set-up in docs/CLOUD_TTS_SETUP.md. Costs a fraction of a cent.</p>
+    <div class="atop" style="margin-top:10px"><select class="st-in" id="cloud-model" aria-label="Model"><option value="gemini-2.5-flash-tts">Gemini 2.5 Flash TTS</option><option value="gemini-3.1-flash-tts-preview">Gemini 3.1 Flash TTS (preview)</option></select>
+      <select class="st-in" id="cloud-voice" aria-label="Voice"><option>Orus</option><option>Sulafat</option></select>
+      <button class="btn btn--ghost" id="cloud-try" type="button" disabled>Try</button></div>
+    <p class="t-small" id="cloud-msg" role="status" aria-live="polite"></p><audio id="cloud-audio" controls hidden></audio></section>
   <div class="grid" id="books" style="margin-top:18px"></div>
 </main>
 </body>

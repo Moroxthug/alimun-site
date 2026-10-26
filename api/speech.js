@@ -13,6 +13,10 @@
  *                     every 6.7 s (TTS_PER_MINUTE, default 9) for Google's per-minute limit; a 429 ends the
  *                     call with retryAfter (seconds), and daily + resetAt when it is Google's daily limit, for the
  *                     admin page to wait (minutes) or stop until the reset (hours).
+ *    ?action=cloud-test (POST, admin JWT) — { model, voice }: one sentence through Google Cloud Text-to-Speech
+ *                     (texttospeech.googleapis.com, the same Gemini voices without the Gemini API's daily limit),
+ *                     with the key in GOOGLE_CLOUD_TTS_KEY if set, else GOOGLE_AI_API_KEY; returns audio/mpeg, or
+ *                     Google's refusal so the owner's set-up can be checked (docs/CLOUD_TTS_SETUP.md).
  *    ?action=sample  (POST, admin JWT) — one sentence, or a two-speaker dialogue,
  *                     spoken by Gemini text-to-speech; returns audio/wav.
  *        { text, voice, model?: 'flash' | 'lite', style? }
@@ -197,6 +201,34 @@ async function speak({ model, turns, voices, style }) {
   throw err;
 }
 
+/* ---------- Google Cloud Text-to-Speech (step by step with the owner, 26 Oct 2026) ---------- */
+const CLOUD_MODELS = ['gemini-2.5-flash-tts', 'gemini-3.1-flash-tts-preview', 'gemini-2.5-pro-tts'];
+async function cloudTest(res, body) {
+  const model = CLOUD_MODELS.includes(body.model) ? body.model : CLOUD_MODELS[0];
+  const voice = VOICES.includes(body.voice) ? body.voice : 'Orus';
+  const key = process.env.GOOGLE_CLOUD_TTS_KEY || process.env.GOOGLE_AI_API_KEY;
+  const r = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
+    body: JSON.stringify({
+      input: { prompt: 'Read this clearly and warmly, like a friendly language teacher.', text: 'Hello! This is a test of the Alimun course voices, spoken through Google Cloud.' },
+      voice: { languageCode: 'en-US', name: voice, modelName: model },
+      audioConfig: { audioEncoding: 'MP3' },
+    }),
+  });
+  const text = await r.text();
+  let json = null;
+  try { json = JSON.parse(text); } catch (e) { /* not JSON */ }
+  if (r.ok && json && json.audioContent) {
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('Cache-Control', 'no-store');
+    return res.status(200).send(Buffer.from(json.audioContent, 'base64'));
+  }
+  const g = json && json.error || {};
+  const reason = (g.details || []).map((d) => d.reason).filter(Boolean).join(', ');
+  return res.status(502).json({ error: 'cloud_refused', status: r.status, message: String(g.message || text).slice(0, 400), reason, model, voice });
+}
+
 /* ---------- Course audio: files for the sentences of a book ---------- */
 const BUCKET = 'course-audio';
 /* Milliseconds between two requests to Google: 6.5 s keeps under 10 a minute (raise TTS_PER_MINUTE after a tier upgrade) */
@@ -374,7 +406,7 @@ async function generate(req, res, supabase, body) {
 module.exports = async function handler(req, res) {
   const action = String((req.query && req.query.action) || '');
   if (action === 'status') return res.status(200).json({ configured: !!process.env.GOOGLE_AI_API_KEY, models: MODELS, voices: VOICES, bucket: BUCKET });
-  if (action !== 'sample' && action !== 'generate') return res.status(404).json({ error: 'Unknown action' });
+  if (action !== 'sample' && action !== 'generate' && action !== 'cloud-test') return res.status(404).json({ error: 'Unknown action' });
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
   if (!process.env.GOOGLE_AI_API_KEY) return res.status(503).json({ error: 'speech_not_configured' });
 
@@ -387,6 +419,10 @@ module.exports = async function handler(req, res) {
   const body = parseBody(req);
   if (!body) return res.status(400).json({ error: 'Invalid JSON' });
   if (action === 'generate') return generate(req, res, supabase, body);
+  if (action === 'cloud-test') {
+    if (tooMany()) return res.status(429).json({ error: 'Too many requests, wait a minute' });
+    try { return await cloudTest(res, body); } catch (e) { return res.status(502).json({ error: 'cloud_failed', message: String(e.message || e).slice(0, 300) }); }
+  }
   if (tooMany()) return res.status(429).json({ error: 'Too many requests, wait a minute' });
   const model = MODELS[body.model] || MODELS.flash;
   const style = cleanText(body.style).slice(0, 80);
