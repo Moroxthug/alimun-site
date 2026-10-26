@@ -54,7 +54,9 @@
       enrollments: s.enrolled_cohort_id ? [{ id: 'e1', status: 'active', enrolled_at: ago(30), cohorts: cohortOf(ST.cohorts, s.enrolled_cohort_id) }] : [],
       submissions: [{ status: 'graded', score: 82, submitted_at: ago(4), assignments: { title: 'Ein Brief an den Vermieter' } }, { status: 'pending', score: null, submitted_at: ago(1), assignments: { title: 'Mein Wochenende' } }],
       notes: [{ feedback_text: 'Very good role play with the landlord.', is_private: false, created_at: ago(6) }, { feedback_text: 'Moving flat this month, a little tired.', is_private: true, created_at: ago(2) }],
-      activity: act, cards: cards, oto: [] };
+      activity: act, cards: cards, oto: [],
+      tutor: { free_seconds: 330, plan_seconds: 2700, plan_granted: 3600, plan_period: new Date().toISOString().slice(0, 7), credit_seconds: 0 },
+      tutorLog: [{ seconds: -270, bucket: 'free', reason: 'use', created_at: ago(2) }, { seconds: -900, bucket: 'plan', reason: 'use', created_at: ago(3) }, { seconds: 3600, bucket: 'plan', reason: 'plan_month', note: new Date().toISOString().slice(0, 7), created_at: ago(20) }, { seconds: 600, bucket: 'free', reason: 'free_grant', created_at: ago(21) }] };
   }
   function sampleTeachers() {
     var now = Date.now(), ago = function (d) { return new Date(now - d * DAY).toISOString(); };
@@ -166,8 +168,47 @@
     html += '<section class="card span-6" style="--i:4"><h2 class="t-h2">Teachers’ notes</h2>' + (f.notes.length ? '<div class="tt-week">' + f.notes.map(function (n) {
       return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(day(n.created_at)) + '</span><span><span class="ts-note__text" dir="auto">' + esc(n.feedback_text) + '</span><small>' + esc(n.is_private ? 'Private: the student does not see it' : 'The student sees it') + '</small></span></div>';
     }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No notes yet.</p>') + '</section>';
-    html += mailForm(p.id, 'span-6', 5);
+    html += tutorCard(p.id, f);
+    html += mailForm(p.id, 'span-12', 6);
     return html + sampleLine() + '</div>';
+  }
+  /* Tutor time (docs/AI_TUTOR_PLAN.md, part 1): the stored balance, its latest changes, and adding or removing minutes
+     (bought-or-added time, which never expires) through /api/tutor?action=admin-grant */
+  var LEDGER = { free_grant: 'Free minutes given', plan_month: 'Plan minutes for the month', plan_change: 'Plan changed', expire: 'Last month’s plan minutes ended',
+    use: 'Used with the tutor', purchase: 'Bought', refund: 'Refunded', admin: 'Changed by an admin' };
+  var BUCKET = { free: 'free minutes', plan: 'plan minutes', credit: 'added or bought' };
+  function mins(sec) { var m = Math.round(Math.abs(sec || 0) / 6) / 10; return (sec < 0 ? '−' : '') + m + ' min'; }
+  function tutorCard(id, f) {
+    var tt = f.tutor, log = f.tutorLog || [];
+    var html = '<section class="card span-6" style="--i:5" aria-labelledby="h-tutor"><h2 class="t-h2" id="h-tutor">Tutor time</h2>';
+    if (!tt) html += '<p class="t-body" style="margin-top:8px">They have not opened the tutor yet; their free 10 minutes are given the first time they do.</p>';
+    else html += '<div class="tt-week">' + row(mins(tt.free_seconds + tt.plan_seconds + tt.credit_seconds), 'Left in all') + row(mins(tt.free_seconds), 'Free minutes') +
+      row(mins(tt.plan_seconds), 'Plan minutes for ' + (tt.plan_period || 'this month') + ', of ' + mins(tt.plan_granted)) + row(mins(tt.credit_seconds), 'Added or bought, never expire') + '</div>';
+    if (log.length) html += '<h3 class="t-h3" style="margin-top:16px">Latest changes</h3><div class="tt-week">' + log.map(function (l) {
+      return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc((l.seconds > 0 ? '+' : '') + mins(l.seconds)) + '</span><span><b>' + esc(LEDGER[l.reason] || l.reason) + '</b><small>' + esc((BUCKET[l.bucket] || l.bucket) + ', ' + day(l.created_at) + (l.note ? ', ' + l.note : '')) + '</small></span></div>';
+    }).join('') + '</div>';
+    html += '<form class="st-form" style="max-width:none;margin-top:16px" data-tgrant="' + esc(id) + '">' +
+      '<div class="st-row">' + field('Minutes', '<input class="st-in" type="number" name="minutes" min="-600" max="600" step="1" required>', 'Up to 600. A negative number removes added or bought minutes, never below zero.') +
+      field('Why', '<input class="st-in" name="note" maxlength="300" dir="auto">') + '</div>' +
+      '<div class="btn-row"><button class="btn btn--ghost btn--sm" type="submit">Change their tutor time</button></div><p class="t-small st-msg" data-msg="tgrant" aria-live="polite"></p></form>';
+    return html + '</section>';
+  }
+  function grantTutor(form) {
+    var id = form.getAttribute('data-tgrant'), fd = new FormData(form), minutes = parseInt(fd.get('minutes'), 10), note = String(fd.get('note') || '').trim();
+    if (!minutes || Math.abs(minutes) > 600) { say('[data-msg="tgrant"]', 'Write a whole number of minutes between −600 and 600, not 0.', true); return; }
+    if (!real()) { say('[data-msg="tgrant"]', 'Saved. (Sample: nothing was saved.)'); return; }
+    var btn = form.querySelector('[type="submit"]'); btn.disabled = true;
+    window.AlimunData.adminTutorGrant(id, minutes, note).then(function (r) {
+      btn.disabled = false;
+      var done = r.added_seconds ? (r.added_seconds > 0 ? 'Added ' : 'Removed ') + mins(Math.abs(r.added_seconds)) + '.' : 'Nothing changed: they have no added or bought minutes to remove.';
+      /* Only the tutor card is drawn again, with the balance and changes read back from the database */
+      return window.AlimunData.adminStudentFile(id).then(function (f) {
+        FILE = f;
+        var card = root.querySelector('[aria-labelledby="h-tutor"]');
+        if (card) card.outerHTML = tutorCard(id, f);
+        say('[data-msg="tgrant"]', done);
+      });
+    }, function (e) { btn.disabled = false; say('[data-msg="tgrant"]', 'That did not work: ' + ((e && e.message) || 'please try again') + '.', true); });
   }
   function row(big, small) { return '<div class="tt-row ad-kv"><span class="tt-row__time">' + esc(big) + '</span><span><small>' + esc(small) + '</small></span></div>'; }
   function mailForm(id, span, i) {
@@ -370,6 +411,7 @@
       else if (f.hasAttribute('data-tfile')) { e.preventDefault(); saveTeacher(f); }
       else if (f.hasAttribute('data-mail')) { e.preventDefault(); sendMail(f); }
       else if (f.hasAttribute('data-invite')) { e.preventDefault(); invite(f); }
+      else if (f.hasAttribute('data-tgrant')) { e.preventDefault(); grantTutor(f); }
     });
     root.addEventListener('click', function (e) {
       var b = e.target.closest('[data-ask],[data-ask1],[data-do],[data-cancel],[data-csv],[data-copy]');

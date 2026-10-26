@@ -68,7 +68,8 @@
     return { reviews: [
       { id: 'r1', rating: 5, review_text: 'Clear, patient and fun. I finally understand the cases.', created_at: ago(60 * 24 * 9), teacher_id: 't1', teacher_profiles: { full_name: 'Ana Weber' }, student_profiles: { id: 's1', full_name: 'Lukas Brandt' } },
       { id: 'r2', rating: 2, review_text: 'Visit <b>cheap-essays.example</b> for answers', created_at: ago(60 * 24 * 2), teacher_id: 't2', teacher_profiles: { full_name: 'James Hall' }, student_profiles: { id: 's3', full_name: 'Sara Rossi' } }],
-      settings: [{ key: 'admin_secret', secret: true, value: null }, { key: 'api_url', secret: false, value: 'https://alimun.com' }, { key: 'waitlist_webhook_secret', secret: true, value: null }], jobs: jobs };
+      settings: [{ key: 'admin_secret', secret: true, value: null }, { key: 'api_url', secret: false, value: 'https://alimun.com' }, { key: 'waitlist_webhook_secret', secret: true, value: null }], jobs: jobs,
+      tutorMinutes: [['community', 30], ['focused', 60], ['intensive', 120], ['private', 120], ['onetoone', 120], ['daily', 120]].map(function (x) { return { tier: x[0], minutes_per_month: x[1] }; }) };
   }
 
   /* ---------- Payouts ---------- */
@@ -248,7 +249,7 @@
   /* ---------- System ---------- */
   var RF = { teacher: '', stars: '' };
   function systemView() {
-    var html = flash() + '<div class="view__head"><div><h1 class="t-h1">System</h1><p class="t-lead">Reviews, app settings and the automatic jobs.</p></div>' +
+    var html = flash() + '<div class="view__head"><div><h1 class="t-h1">System</h1><p class="t-lead">Reviews, app settings, tutor minutes and the automatic jobs.</p></div>' +
       '<div class="btn-row"><a class="btn btn--ghost btn--sm" href="#/students/signups">Email signups</a></div></div><div class="grid rise">';
     var teachers = SY.reviews.map(function (r) { return r.teacher_profiles && r.teacher_profiles.full_name; }).filter(function (v, i, a) { return v && a.indexOf(v) === i; }).sort();
     html += '<section class="card span-12" style="--i:0" aria-labelledby="h-rev"><h2 class="t-h2" id="h-rev">Reviews</h2><p class="t-small" style="margin-top:4px">' + esc(A.plural(SY.reviews.length, 'review', 'reviews') + ' from students. They show on the teachers’ public profiles; deleting one updates the teacher’s rating.') + '</p>' +
@@ -260,8 +261,35 @@
         return '<div class="ad-item"><div class="tt-row ad-act ad-act--2"><span><b class="ad-key">' + esc(s.key) + '</b><small class="ad-pre">' + esc((s.secret ? 'Set, hidden. ' : (s.value || '(empty)') + '. ') + (SETTING_NOTE[s.key] || '')) + '</small></span>' +
           '<span class="btn-row ad-act__btns"><button class="btn btn--ghost btn--sm" type="button" data-askset="' + esc(s.key) + '">' + (s.secret ? 'Replace' : 'Change') + '</button></span></div><div data-box="' + esc(s.key) + '"></div></div>';
       }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No settings.</p>') + '</section>';
+    html += tutorMinutesHtml();
     html += jobsHtml();
     return html + sampleLine() + '</div>';
+  }
+  /* Tutor minutes per plan and month (docs/AI_TUTOR_PLAN.md, part 1; table tutor_plan_minutes). A change counts for
+     each student the next time their balance is brought up to date: a new allowance minus what they used this month. */
+  var TUTOR_TIERS = [['community', 'Community'], ['focused', 'Focused'], ['intensive', 'Intensive'], ['private', '1 on 1'], ['onetoone', '1 on 1 (old)'], ['daily', 'Daily (old)']];
+  function tutorMinutesHtml() {
+    var by = {}; (SY.tutorMinutes || []).forEach(function (m) { by[m.tier] = m.minutes_per_month; });
+    return '<form class="card span-12 st-form" style="--i:2;max-width:none;margin-top:0" data-tmin aria-labelledby="h-tmin"><h2 class="t-h2" id="h-tmin">Tutor minutes per plan</h2>' +
+      '<p class="t-small" style="margin-top:4px">Minutes each plan gives every calendar month; unused minutes do not carry over. A paid plan counts while its subscription is active, or when you set the plan by hand. Free accounts get 10 minutes once.</p>' +
+      '<div class="st-row">' + TUTOR_TIERS.map(function (x) {
+        return field(x[1], '<input class="st-in" type="number" name="' + x[0] + '" min="0" max="10000" step="5" value="' + esc(by[x[0]] != null ? by[x[0]] : 0) + '" required>');
+      }).join('') + '</div><div class="btn-row"><button class="btn btn--primary btn--sm" type="submit">Save</button></div><p class="t-small st-msg" data-msg aria-live="polite"></p></form>';
+  }
+  function saveTutorMinutes(form) {
+    var fd = new FormData(form), msg = form.querySelector('[data-msg]'), by = {}, changes = [];
+    (SY.tutorMinutes || []).forEach(function (m) { by[m.tier] = m.minutes_per_month; });
+    TUTOR_TIERS.forEach(function (x) {
+      var v = parseInt(fd.get(x[0]), 10);
+      if (!(v >= 0 && v <= 10000)) return;
+      if (v !== by[x[0]]) changes.push([x[0], v]);
+    });
+    if (!changes.length) { say(msg, 'Nothing changed.'); return; }
+    var apply = function () { changes.forEach(function (c) { var m = (SY.tutorMinutes || []).filter(function (y) { return y.tier === c[0]; })[0]; if (m) m.minutes_per_month = c[1]; }); };
+    if (!real()) { apply(); say(msg, 'Saved. (Sample: nothing was saved.)'); return; }
+    var btn = form.querySelector('[type="submit"]'); btn.disabled = true;
+    changes.reduce(function (p, c) { return p.then(function () { return window.AlimunData.adminTutorMinutesSet(c[0], c[1]); }); }, Promise.resolve())
+      .then(function () { apply(); btn.disabled = false; say(msg, 'Saved.'); }, function (e) { btn.disabled = false; say(msg, 'That did not work: ' + errText(e) + '.', true); });
   }
   var SETTING_NOTE = {
     api_url: 'The site’s address, used by the database to send waiting-list offers.',
@@ -342,7 +370,10 @@
       else if (t.hasAttribute('data-pteacher')) payoutDefaults();
       else if (t.hasAttribute('data-pdate')) payoutCount();
     });
-    root.addEventListener('submit', function (e) { if (e.target.hasAttribute('data-newpay')) { e.preventDefault(); recordPayout(e.target); } });
+    root.addEventListener('submit', function (e) {
+      if (e.target.hasAttribute('data-newpay')) { e.preventDefault(); recordPayout(e.target); }
+      else if (e.target.hasAttribute('data-tmin')) { e.preventDefault(); saveTutorMinutes(e.target); }
+    });
     root.addEventListener('click', function (e) {
       var b = e.target.closest('[data-askpaid],[data-dopaid],[data-askamount],[data-doamount],[data-askdel],[data-dodel],[data-askrev],[data-dorev],[data-askset],[data-doset],[data-cancel]');
       if (!b || b.disabled) return;
@@ -376,7 +407,7 @@
         go = (real() ? Promise.all([window.AlimunData.adminAiUsage(days), window.AlimunData.adminAiFailures(days)]).then(function (r) { return Object.assign(r[0], { failures: r[1] }); }) : Promise.resolve(sampleAi(days)))
           .then(function (d) { AI = d; return { html: aiView(days), title: 'AI spend' }; });
       } else {
-        go = (SY && !real() ? Promise.resolve(SY) : real() ? Promise.all([window.AlimunData.adminReviews(), window.AlimunData.adminSettings(), window.AlimunData.adminJobs()]).then(function (r) { return { reviews: r[0], settings: r[1], jobs: r[2] }; }) : Promise.resolve(sampleSystem()))
+        go = (SY && !real() ? Promise.resolve(SY) : real() ? Promise.all([window.AlimunData.adminReviews(), window.AlimunData.adminSettings(), window.AlimunData.adminJobs(), window.AlimunData.adminTutorMinutes().catch(function () { return []; })]).then(function (r) { return { reviews: r[0], settings: r[1], jobs: r[2], tutorMinutes: r[3] }; }) : Promise.resolve(sampleSystem()))
           .then(function (d) { SY = d; return { html: systemView(), title: 'System' }; });
       }
       return go.then(function (res) {

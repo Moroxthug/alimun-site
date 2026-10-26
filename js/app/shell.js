@@ -113,6 +113,7 @@
     homework: '<path d="M14.5 4.5 19.5 9.5 9 20H4v-5z"/><path d="m12.5 6.5 5 5"/>',
     progress: '<path d="M4 20V13M10 20V8M16 20v-5M20 20H3"/><path d="m14.5 6.5 3-3 3 3M17.5 3.5V11"/>',
     messages: '<path d="M20 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.2A8 8 0 1 1 20 12z"/>',
+    tutor: '<rect x="3" y="4" width="18" height="12" rx="2.5"/><path d="M8 20h8M12 16v4M7.5 9.5h5M7.5 12h3"/>',
     settings: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
     kit: '<circle cx="8" cy="8" r="3.5"/><rect x="13" y="4.5" width="7" height="7" rx="2"/><path d="M4.5 19.5 8 13.5l3.5 6z"/><circle cx="16.5" cy="16.5" r="3.5"/>',
     more: '<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',
@@ -137,6 +138,7 @@
     { id: 'book', label: 'app_nav_book', short: 'app_nav_book_short', icon: 'book', group: 'learn' },
     { id: 'practice', label: 'app_nav_practice', icon: 'practice', group: 'learn', step: 5, art: 'dog', tint: 'leaf', kind: 'say', text: 'app_soon_practice_text', bub: 'app_soon_practice_bub' },
     { id: 'cards', label: 'app_nav_cards', icon: 'cards', group: 'learn' },
+    { id: 'tutor', label: 'app_nav_tutor', icon: 'tutor', group: 'learn' },
     { id: 'tests', label: 'app_nav_tests', short: 'app_nav_tests_short', icon: 'tests', group: 'learn', step: 8, art: 'dragon', tint: 'leaf', kind: 'say', text: 'app_soon_tests_text', bub: 'app_soon_tests_bub' },
     { id: 'library', label: 'app_nav_library', icon: 'library', group: 'learn', step: 9, art: 'teacup', tint: 'mint', kind: 'say', text: 'app_soon_library_text', bub: 'app_soon_library_bub' },
     { id: 'classes', label: 'app_nav_classes', icon: 'classes', group: 'class', step: 10, art: 'mug', tint: 'leaf', kind: 'think', text: 'app_soon_classes_text', bub: 'app_soon_classes_bub' },
@@ -183,8 +185,8 @@
     var html = '';
     Object.keys(GROUPS).forEach(function (g) {
       html += '<div class="nav__group"><div class="nav__label">' + esc(t(GROUPS[g])) + '</div>';
-      /* The design kit is an internal reference: not in a real student's menu */
-      ROUTES.filter(function (r) { return r.group === g && !(r.id === 'kit' && mode === 'real'); }).forEach(function (r) {
+      /* The design kit is an internal reference, and the tutor opens with part 2 of its plan: not in a real student's menu */
+      ROUTES.filter(function (r) { return r.group === g && !((r.id === 'kit' || r.id === 'tutor') && mode === 'real'); }).forEach(function (r) {
         html += '<a href="#/' + r.id + '" data-route="' + r.id + '">' + icon(r.icon) + '<span>' + esc(t(r.label)) + '</span></a>';
       });
       html += '</div>';
@@ -494,6 +496,7 @@
   var progressHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('progress', false); } });
   var messagesHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('messages', false); } });
   var settingsHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('settings', false); } });
+  var tutorHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('tutor', false); } });
   function messagesParts() { return location.hash.replace(/^#\/messages\/?/, '').split('/').filter(Boolean); }
   function homeworkParts() { return location.hash.replace(/^#\/homework\/?/, '').split('/').filter(Boolean); }
   function classesParts() { return location.hash.replace(/^#\/classes\/?/, '').split('/').filter(Boolean); }
@@ -511,7 +514,7 @@
   }
   function render(id, animate) {
     var r = byId[id];
-    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' || id === 'messages' || id === 'settings' ? '' : soonView(r);
+    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' || id === 'messages' || id === 'settings' || id === 'tutor' ? '' : soonView(r);
     var swap = function () {
       if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
       if (id !== 'tests' && window.AlimunTests) window.AlimunTests.reset();
@@ -543,6 +546,9 @@
       }
       if (id === 'progress') {
         window.AlimunProgress.mount(view, [], progressHelpers);
+      }
+      if (id === 'tutor') {
+        window.AlimunTutor.mount(view, [], tutorHelpers);
       }
       if (id === 'homework') {
         window.AlimunHomework.mount(view, homeworkParts(), homeworkHelpers).then(function (res) {

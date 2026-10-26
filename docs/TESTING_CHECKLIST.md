@@ -87,3 +87,8 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] A mock test's Writing and Speaking papers: after finishing, the drafted marks appear with the exam's criteria.
 - [ ] A teacher: a homework task drafted from a topic fills the form; an exercise set drafted from a topic, a pasted text and a class's mistakes adds checked exercises.
 - [ ] Admin, AI spend: the new features show as "Homework checked before handing in", "Mock tests marked", "Homework tasks drafted" and "Exercise sets drafted".
+
+## AI tutor, part 1 (tutor time)
+- [ ] A student opens /app#/tutor: 10 free minutes, plus the plan's minutes for the month on a paid plan, with the renewal date.
+- [ ] Admin, a student's file: the Tutor time card shows the same balance; adding 15 minutes shows them as added, and the student sees them after reloading; removing more than they have stops at zero.
+- [ ] Admin, System: changing a plan's tutor minutes is kept after reloading.
