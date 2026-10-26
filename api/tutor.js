@@ -255,6 +255,28 @@ async function saveReply(supabase, session, profileId, reply, extra) {
   return { msg: outMessage(msg), board };
 }
 
+/**
+ * A live call's time its pass covered that no tick counted (a closed tab, a lost connection, a browser that stopped
+ * ticking): charged before the session is reopened, ended or closed for being idle, so skipping ticks gains nothing.
+ */
+async function chargeUnticked(supabase, profileId, session) {
+  if (!session.live_until) return 0;
+  const until = Math.min(Date.now(), Date.parse(session.live_until));
+  const secs = Math.round((until - Date.parse(session.last_turn_at)) / 1000);
+  if (!(secs >= 1)) return 0;
+  const { data: ch } = await supabase.rpc('tutor_charge', { p_student: profileId, p_seconds: Math.min(secs, live.PASS_SECONDS), p_session: session.id });
+  const charged = ch && ch[0] ? ch[0].charged : 0;
+  session.seconds_used = (session.seconds_used || 0) + charged;
+  session.last_turn_at = new Date(until).toISOString();
+  await supabase.from('tutor_sessions').update({ seconds_used: session.seconds_used, last_turn_at: session.last_turn_at }).eq('id', session.id);
+  return charged;
+}
+/** Closes a session found idle or left open: the uncounted time of a live call first, then the summary */
+async function closeStale(supabase, user, profileId, session) {
+  await chargeUnticked(supabase, profileId, session);
+  return finish(supabase, user, session);
+}
+
 /** Ends a session: the summary, words and memory are written when there was a conversation. Never throws. */
 async function finish(supabase, user, session) {
   const patch = { ended_at: session.ended_at || new Date().toISOString() };
@@ -295,7 +317,7 @@ async function handleStart(req, res, supabase, user) {
     const msgs = await messagesOf(supabase, open.id, 40);
     return res.status(200).json({ session: { id: open.id, started_at: open.started_at }, messages: msgs.map(outMessage), board: open.board || [], seconds: await balance(supabase, profile.id), resumed: true });
   }
-  if (open) await finish(supabase, user, open);
+  if (open) await closeStale(supabase, user, profile.id, open);
 
   const { data: t, error: rErr } = await supabase.rpc('tutor_refresh', { p_student: profile.id });
   if (rErr || !t) return res.status(500).json({ error: 'Could not load your tutor time' });
@@ -348,7 +370,7 @@ async function handleTurn(req, res, supabase, user) {
   const session = await sessionOf(supabase, profile.id, body.session);
   if (!session) return res.status(404).json({ error: 'Session not found' });
   if (session.ended_at || Date.now() - Date.parse(session.last_turn_at) >= IDLE_MS) {
-    if (!session.ended_at) await finish(supabase, user, session);
+    if (!session.ended_at) await closeStale(supabase, user, profile.id, session);
     return res.status(409).json({ error: 'This session has ended.', reason: 'ended' });
   }
 
@@ -417,9 +439,10 @@ async function handleEnd(req, res, supabase, user) {
   const session = await sessionOf(supabase, profile.id, body.session);
   if (!session) return res.status(404).json({ error: 'Session not found' });
   if (session.ended_at) return res.status(200).json({ title: session.title, summary: session.summary, words: session.words, seconds: await balance(supabase, profile.id) });
-  // The last stretch since the previous turn, up to 90 seconds
+  // A live call: everything since the last tick that its pass covered; a written session: the last stretch, up to 90 seconds
+  if (session.live_until) await chargeUnticked(supabase, profile.id, session);
   const gap = Math.min(MAX_CHARGE, Math.round((Date.now() - Date.parse(session.last_turn_at)) / 1000));
-  if (gap >= 1 && Date.now() - Date.parse(session.last_turn_at) < IDLE_MS) {
+  if (!session.live_until && gap >= 1 && Date.now() - Date.parse(session.last_turn_at) < IDLE_MS) {
     const { data: ch } = await supabase.rpc('tutor_charge', { p_student: profile.id, p_seconds: gap, p_session: session.id });
     if (ch && ch[0]) await supabase.from('tutor_sessions').update({ seconds_used: session.seconds_used + ch[0].charged }).eq('id', session.id);
   }
@@ -483,7 +506,7 @@ async function handlePronounce(req, res, supabase, user) {
   const session = await sessionOf(supabase, profile.id, body.session);
   if (!session) return res.status(404).json({ error: 'Session not found' });
   if (session.ended_at || Date.now() - Date.parse(session.last_turn_at) >= IDLE_MS) {
-    if (!session.ended_at) await finish(supabase, user, session);
+    if (!session.ended_at) await closeStale(supabase, user, profile.id, session);
     return res.status(409).json({ error: 'This session has ended.', reason: 'ended' });
   }
   // The sentence comes from the database: the session's latest tutor message, which must have set one
@@ -593,15 +616,9 @@ async function handleLiveStart(req, res, supabase, user) {
   if (open && now - lastAt(open) < IDLE_MS) {
     session = open;
     // Time the previous pass covered that no tick counted (a closed tab, a lost connection, skipped ticks)
-    if (open.live_until) {
-      const unticked = Math.round((Math.min(now, Date.parse(open.live_until)) - Date.parse(open.last_turn_at)) / 1000);
-      if (unticked >= 1) {
-        const { data: ch } = await supabase.rpc('tutor_charge', { p_student: profile.id, p_seconds: Math.min(unticked, live.PASS_SECONDS), p_session: open.id });
-        charged = ch && ch[0] ? ch[0].charged : 0;
-      }
-    }
+    await chargeUnticked(supabase, profile.id, open);
   } else {
-    if (open) await finish(supabase, user, open);
+    if (open) await closeStale(supabase, user, profile.id, open);
     const { data: t, error: rErr } = await supabase.rpc('tutor_refresh', { p_student: profile.id });
     if (rErr || !t) return res.status(500).json({ error: 'Could not load your tutor time' });
     if (totalOf(t) <= 0) return res.status(402).json({ error: 'No tutor time left', reason: 'no_time' });

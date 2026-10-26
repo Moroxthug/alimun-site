@@ -136,4 +136,5 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] With Azure on: "let's practise pronouncing a sentence": the card appears; "Hear it slowly" makes the tutor say it slowly; "Say it" records (the tutor does not answer meanwhile), the words are marked and the tutor helps with the sound that was off.
 - [ ] A student with class notes published in the last two weeks: early in the call the tutor offers to go over that lesson (grammar focus, words, homework without doing it). The written tutor knows it too.
 - [ ] Past sessions: the call's transcript shows the lines, the exercises set and the sentences to say.
+- [ ] Stay silent: after about 1 minute 45 seconds "Are you still there?" appears; "I'm still here" keeps the call; 2 minutes of silence hang up with the end screen, and the time stops counting.
 
