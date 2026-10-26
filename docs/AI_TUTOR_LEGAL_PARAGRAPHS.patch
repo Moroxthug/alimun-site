@@ -1,24 +1,24 @@
 diff --git a/site/src/blocks/legal/gdpr.html b/site/src/blocks/legal/gdpr.html
-index cfb503a..0f71e61 100644
+index cfb503a..aaa55d5 100644
 --- a/site/src/blocks/legal/gdpr.html
 +++ b/site/src/blocks/legal/gdpr.html
 @@ -46,6 +46,7 @@
              <h2>4. AI Processing</h2>
              <p>To generate exercises and draft feedback, we send the relevant text (for example the exercise or your homework, your level and language) to AI providers acting as our processors: Google (Gemini), Anthropic and Groq. We do not sell this content, and we instruct our providers not to use it to train their models where their services allow it. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
              <p>We do not make decisions based solely on automated processing that produce legal or similarly significant effects on you. Homework grades drafted by AI are reviewed and sent by your teacher, and automated practice scores do not affect your account, billing or access. You may ask a person to review any automated result by contacting us.</p>
-+            <p>The practice tutor in the student dashboard works the same way. What you write or say in a tutor session is sent to Groq, with your level, the language you learn and a short summary of your learning on Alimun, to produce the tutor's replies. When you speak to the tutor, your recording is sent to Groq to be turned into text and is then discarded; we never store recordings. The tutor's replies are turned into speech by Google Cloud. Tutor conversations are kept for 90 days; session summaries and what the tutor remembers about you are kept until you delete them on the Tutor page or close your account. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
++            <p>The practice tutor in the student dashboard works the same way. What you write or say in a tutor session is sent to Groq, with your level, the language you learn and a short summary of your learning on Alimun, to produce the tutor's replies. When you speak to the tutor, your recording is sent to Groq to be turned into text and is then discarded; we never store recordings. The tutor's replies are turned into speech by Google Cloud. Tutor conversations are kept for 90 days; session summaries and what the tutor remembers about you are kept until you delete them on the Tutor page or close your account. Learners under 16 may use the tutor only with a parent's authorisation. [COPY NEEDED: legal review of this paragraph, the parental authorisation for under-16s (the consent layer is built later), including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
            </div>
  
            <div class="legal-section">
 diff --git a/site/src/blocks/legal/i18n/ar/gdpr.html b/site/src/blocks/legal/i18n/ar/gdpr.html
-index 49a802c..23fb854 100644
+index 49a802c..79c0f38 100644
 --- a/site/src/blocks/legal/i18n/ar/gdpr.html
 +++ b/site/src/blocks/legal/i18n/ar/gdpr.html
 @@ -47,6 +47,7 @@
              <h2>4. المعالجة بواسطة الذكاء الاصطناعي</h2>
              <p>لإنشاء التمارين وصياغة مسودات الملاحظات، نرسل النص ذا الصلة (مثل التمرين أو واجبك المنزلي، ومستواك ولغتك) إلى مزوّدي خدمات الذكاء الاصطناعي الذين يعملون بصفتهم معالجين للبيانات لحسابنا: Google (Gemini) وAnthropic وGroq. ولا نبيع هذا المحتوى، ونوجّه مزوّدينا بعدم استخدامه لتدريب نماذجهم حيثما تسمح خدماتهم بذلك. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
              <p>لا نتخذ قرارات تستند حصرًا إلى المعالجة الآلية وتُنتج آثارًا قانونية أو آثارًا مماثلة في أهميتها بالنسبة إليك. فدرجات الواجبات المنزلية التي يصوغ الذكاء الاصطناعي مسوداتها يراجعها معلمك ويرسلها، ولا تؤثر درجات التمارين الآلية في حسابك أو فوترتك أو إمكانية وصولك. ويمكنك أن تطلب مراجعة أي نتيجة آلية من قِبل شخص بالتواصل معنا.</p>
-+            <p>يعمل المدرّس التدريبي في لوحة الطالب بالطريقة نفسها. يُرسَل ما تكتبه أو تقوله في جلسة مع المدرّس إلى Groq، مع مستواك واللغة التي تتعلمها وملخص قصير لتعلّمك على Alimun، لإنتاج ردود المدرّس. عندما تتحدث إلى المدرّس، يُرسَل تسجيلك إلى Groq لتحويله إلى نص ثم يُحذف؛ ولا نحتفظ بالتسجيلات أبدًا. تحوّل Google Cloud ردود المدرّس إلى صوت. تُحفظ المحادثات مع المدرّس لمدة 90 يومًا؛ وتُحفظ ملخصات الجلسات وما يتذكره المدرّس عنك إلى أن تحذفها في صفحة المدرّس أو تغلق حسابك. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
++            <p>يعمل المدرّس التدريبي في لوحة الطالب بالطريقة نفسها. يُرسَل ما تكتبه أو تقوله في جلسة مع المدرّس إلى Groq، مع مستواك واللغة التي تتعلمها وملخص قصير لتعلّمك على Alimun، لإنتاج ردود المدرّس. عندما تتحدث إلى المدرّس، يُرسَل تسجيلك إلى Groq لتحويله إلى نص ثم يُحذف؛ ولا نحتفظ بالتسجيلات أبدًا. تحوّل Google Cloud ردود المدرّس إلى صوت. تُحفظ المحادثات مع المدرّس لمدة 90 يومًا؛ وتُحفظ ملخصات الجلسات وما يتذكره المدرّس عنك إلى أن تحذفها في صفحة المدرّس أو تغلق حسابك. لا يجوز للمتعلمين دون سن 16 عامًا استخدام المدرّس إلا بإذن أحد الوالدين. [COPY NEEDED: legal review of this paragraph, the parental authorisation for under-16s (the consent layer is built later), including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
            </div>
  
            <div class="legal-section">
@@ -35,14 +35,14 @@ index a6ceb66..b0560f1 100644
  
            <div class="legal-section">
 diff --git a/site/src/blocks/legal/i18n/de/gdpr.html b/site/src/blocks/legal/i18n/de/gdpr.html
-index 4bb37f8..f9afa6d 100644
+index 4bb37f8..f966a15 100644
 --- a/site/src/blocks/legal/i18n/de/gdpr.html
 +++ b/site/src/blocks/legal/i18n/de/gdpr.html
 @@ -47,6 +47,7 @@
              <h2>4. KI-Verarbeitung</h2>
              <p>Um Übungen zu erstellen und Feedback zu entwerfen, senden wir den jeweiligen Text (zum Beispiel die Übung oder Ihre Hausaufgabe, Ihr Niveau und Ihre Sprache) an KI-Anbieter, die als unsere Auftragsverarbeiter tätig sind: Google (Gemini), Anthropic und Groq. Wir verkaufen diese Inhalte nicht und weisen unsere Anbieter an, sie nicht zum Training ihrer Modelle zu verwenden, soweit ihre Dienste dies ermöglichen. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
              <p>Wir treffen keine ausschließlich auf einer automatisierten Verarbeitung beruhenden Entscheidungen, die Ihnen gegenüber rechtliche Wirkung entfalten oder Sie in ähnlicher Weise erheblich beeinträchtigen. Von KI entworfene Hausaufgabenbewertungen werden von Ihrer Lehrkraft geprüft und versendet, und automatisierte Übungspunktzahlen wirken sich nicht auf Ihr Konto, Ihre Abrechnung oder Ihren Zugang aus. Sie können verlangen, dass eine Person ein automatisiertes Ergebnis überprüft, indem Sie uns kontaktieren.</p>
-+            <p>Der Übungstutor im Schüler-Dashboard funktioniert auf die gleiche Weise. Was Sie in einer Tutor-Sitzung schreiben oder sagen, wird zusammen mit Ihrem Niveau, der Sprache, die Sie lernen, und einer kurzen Zusammenfassung Ihres Lernens bei Alimun an Groq gesendet, um die Antworten des Tutors zu erstellen. Wenn Sie mit dem Tutor sprechen, wird Ihre Aufnahme an Groq gesendet, in Text umgewandelt und anschließend verworfen; wir speichern niemals Aufnahmen. Die Antworten des Tutors werden von Google Cloud in Sprache umgewandelt. Gespräche mit dem Tutor werden 90 Tage lang aufbewahrt; Sitzungszusammenfassungen und das, was sich der Tutor über Sie merkt, bleiben gespeichert, bis Sie sie auf der Tutor-Seite löschen oder Ihr Konto schließen. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
++            <p>Der Übungstutor im Schüler-Dashboard funktioniert auf die gleiche Weise. Was Sie in einer Tutor-Sitzung schreiben oder sagen, wird zusammen mit Ihrem Niveau, der Sprache, die Sie lernen, und einer kurzen Zusammenfassung Ihres Lernens bei Alimun an Groq gesendet, um die Antworten des Tutors zu erstellen. Wenn Sie mit dem Tutor sprechen, wird Ihre Aufnahme an Groq gesendet, in Text umgewandelt und anschließend verworfen; wir speichern niemals Aufnahmen. Die Antworten des Tutors werden von Google Cloud in Sprache umgewandelt. Gespräche mit dem Tutor werden 90 Tage lang aufbewahrt; Sitzungszusammenfassungen und das, was sich der Tutor über Sie merkt, bleiben gespeichert, bis Sie sie auf der Tutor-Seite löschen oder Ihr Konto schließen. Lernende unter 16 Jahren dürfen den Tutor nur mit der Erlaubnis eines Elternteils nutzen. [COPY NEEDED: legal review of this paragraph, the parental authorisation for under-16s (the consent layer is built later), including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
            </div>
  
            <div class="legal-section">
@@ -59,14 +59,14 @@ index 4e220a9..f818237 100644
  
            <div class="legal-section">
 diff --git a/site/src/blocks/legal/i18n/es/gdpr.html b/site/src/blocks/legal/i18n/es/gdpr.html
-index d5d7bcd..6b7863a 100644
+index d5d7bcd..e7d2401 100644
 --- a/site/src/blocks/legal/i18n/es/gdpr.html
 +++ b/site/src/blocks/legal/i18n/es/gdpr.html
 @@ -47,6 +47,7 @@
              <h2>4. Tratamiento mediante IA</h2>
              <p>Para generar ejercicios y redactar borradores de comentarios, enviamos el texto pertinente (por ejemplo, el ejercicio o los deberes del usuario, su nivel y su idioma) a proveedores de IA que actúan como nuestros encargados del tratamiento: Google (Gemini), Anthropic y Groq. No vendemos este contenido e indicamos a nuestros proveedores que no lo utilicen para entrenar sus modelos cuando sus servicios lo permiten. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
              <p>No tomamos decisiones basadas únicamente en el tratamiento automatizado que produzcan efectos jurídicos en el usuario o le afecten significativamente de modo similar. Las calificaciones de los deberes redactadas por la IA son revisadas y enviadas por el profesor, y las puntuaciones automáticas de práctica no afectan a la cuenta, la facturación ni el acceso. El usuario puede solicitar que una persona revise cualquier resultado automatizado poniéndose en contacto con nosotros.</p>
-+            <p>El tutor de práctica del panel del estudiante funciona del mismo modo. Lo que escribes o dices en una sesión con el tutor se envía a Groq, junto con tu nivel, el idioma que aprendes y un breve resumen de tu aprendizaje en Alimun, para generar las respuestas del tutor. Cuando hablas con el tutor, tu grabación se envía a Groq para convertirla en texto y después se descarta; nunca guardamos las grabaciones. Google Cloud convierte en voz las respuestas del tutor. Las conversaciones con el tutor se conservan 90 días; los resúmenes de las sesiones y lo que el tutor recuerda de ti se conservan hasta que los borres en la página del Tutor o cierres tu cuenta. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
++            <p>El tutor de práctica del panel del estudiante funciona del mismo modo. Lo que escribes o dices en una sesión con el tutor se envía a Groq, junto con tu nivel, el idioma que aprendes y un breve resumen de tu aprendizaje en Alimun, para generar las respuestas del tutor. Cuando hablas con el tutor, tu grabación se envía a Groq para convertirla en texto y después se descarta; nunca guardamos las grabaciones. Google Cloud convierte en voz las respuestas del tutor. Las conversaciones con el tutor se conservan 90 días; los resúmenes de las sesiones y lo que el tutor recuerda de ti se conservan hasta que los borres en la página del Tutor o cierres tu cuenta. Los menores de 16 años solo pueden usar el tutor con la autorización de uno de sus padres. [COPY NEEDED: legal review of this paragraph, the parental authorisation for under-16s (the consent layer is built later), including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
            </div>
  
            <div class="legal-section">
@@ -83,14 +83,14 @@ index 721a158..ba9f1d6 100644
  
            <div class="legal-section">
 diff --git a/site/src/blocks/legal/i18n/fr/gdpr.html b/site/src/blocks/legal/i18n/fr/gdpr.html
-index 1966fcc..3e07965 100644
+index 1966fcc..78ed212 100644
 --- a/site/src/blocks/legal/i18n/fr/gdpr.html
 +++ b/site/src/blocks/legal/i18n/fr/gdpr.html
 @@ -47,6 +47,7 @@
              <h2>4. Traitement par l'IA</h2>
              <p>Pour générer des exercices et préparer des commentaires, nous transmettons le texte pertinent (par exemple l'exercice ou votre devoir, votre niveau et votre langue) à des fournisseurs d'IA agissant en tant que sous-traitants : Google (Gemini), Anthropic et Groq. Nous ne vendons pas ce contenu et nous demandons à nos fournisseurs de ne pas l'utiliser pour entraîner leurs modèles lorsque leurs services le permettent. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
              <p>Nous ne prenons aucune décision fondée exclusivement sur un traitement automatisé produisant des effets juridiques vous concernant ou vous affectant de manière significative de façon similaire. Les notes des devoirs préparées par l'IA sont vérifiées et envoyées par votre enseignant, et les scores d'entraînement automatisés n'ont aucune incidence sur votre compte, votre facturation ou votre accès. Vous pouvez demander qu'une personne réexamine tout résultat automatisé en nous contactant.</p>
-+            <p>Le tuteur d'entraînement du tableau de bord élève fonctionne de la même manière. Ce que vous écrivez ou dites pendant une séance avec le tuteur est envoyé à Groq, avec votre niveau, la langue que vous apprenez et un bref résumé de votre apprentissage sur Alimun, afin de produire les réponses du tuteur. Lorsque vous parlez au tuteur, votre enregistrement est envoyé à Groq pour être transcrit en texte, puis supprimé ; nous ne conservons jamais les enregistrements. Les réponses du tuteur sont converties en voix par Google Cloud. Les conversations avec le tuteur sont conservées 90 jours ; les résumés des séances et ce que le tuteur retient de vous sont conservés jusqu'à ce que vous les supprimiez sur la page Tuteur ou fermiez votre compte. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
++            <p>Le tuteur d'entraînement du tableau de bord élève fonctionne de la même manière. Ce que vous écrivez ou dites pendant une séance avec le tuteur est envoyé à Groq, avec votre niveau, la langue que vous apprenez et un bref résumé de votre apprentissage sur Alimun, afin de produire les réponses du tuteur. Lorsque vous parlez au tuteur, votre enregistrement est envoyé à Groq pour être transcrit en texte, puis supprimé ; nous ne conservons jamais les enregistrements. Les réponses du tuteur sont converties en voix par Google Cloud. Les conversations avec le tuteur sont conservées 90 jours ; les résumés des séances et ce que le tuteur retient de vous sont conservés jusqu'à ce que vous les supprimiez sur la page Tuteur ou fermiez votre compte. Les apprenants de moins de 16 ans ne peuvent utiliser le tuteur qu'avec l'autorisation d'un parent. [COPY NEEDED: legal review of this paragraph, the parental authorisation for under-16s (the consent layer is built later), including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
            </div>
  
            <div class="legal-section">
@@ -107,14 +107,14 @@ index 839dd1d..92cc05d 100644
  
            <div class="legal-section">
 diff --git a/site/src/blocks/legal/i18n/it/gdpr.html b/site/src/blocks/legal/i18n/it/gdpr.html
-index b87dfe8..bd5dbb0 100644
+index b87dfe8..eb01bf2 100644
 --- a/site/src/blocks/legal/i18n/it/gdpr.html
 +++ b/site/src/blocks/legal/i18n/it/gdpr.html
 @@ -47,6 +47,7 @@
              <h2>4. Trattamento mediante intelligenza artificiale</h2>
              <p>Per generare esercizi e predisporre bozze di feedback, inviamo il testo pertinente (ad esempio l'esercizio o il compito dell'Utente, il suo livello e la lingua) a fornitori di intelligenza artificiale che agiscono in qualità di nostri responsabili del trattamento: Google (Gemini), Anthropic e Groq. Non vendiamo tali contenuti e, ove i loro servizi lo consentano, istruiamo i nostri fornitori a non utilizzarli per addestrare i propri modelli. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
              <p>Non adottiamo decisioni basate unicamente su un trattamento automatizzato che producano effetti giuridici o che incidano in modo analogo significativamente sull'Utente. Le valutazioni dei compiti predisposte dall'intelligenza artificiale sono riviste e inviate dall'insegnante, e i punteggi automatizzati delle esercitazioni non incidono sull'account, sulla fatturazione o sull'accesso dell'Utente. L'Utente può chiedere che qualsiasi risultato automatizzato sia riesaminato da una persona contattandoci.</p>
-+            <p>Il tutor di esercitazione nella dashboard dello studente funziona allo stesso modo. Ciò che scrivi o dici in una sessione con il tutor viene inviato a Groq, insieme al tuo livello, alla lingua che studi e a un breve riepilogo del tuo apprendimento su Alimun, per produrre le risposte del tutor. Quando parli con il tutor, la tua registrazione viene inviata a Groq per essere trascritta e poi eliminata; non conserviamo mai le registrazioni. Le risposte del tutor vengono trasformate in voce da Google Cloud. Le conversazioni con il tutor sono conservate per 90 giorni; i riepiloghi delle sessioni e ciò che il tutor ricorda di te sono conservati finché non li elimini nella pagina Tutor o chiudi il tuo account. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
++            <p>Il tutor di esercitazione nella dashboard dello studente funziona allo stesso modo. Ciò che scrivi o dici in una sessione con il tutor viene inviato a Groq, insieme al tuo livello, alla lingua che studi e a un breve riepilogo del tuo apprendimento su Alimun, per produrre le risposte del tutor. Quando parli con il tutor, la tua registrazione viene inviata a Groq per essere trascritta e poi eliminata; non conserviamo mai le registrazioni. Le risposte del tutor vengono trasformate in voce da Google Cloud. Le conversazioni con il tutor sono conservate per 90 giorni; i riepiloghi delle sessioni e ciò che il tutor ricorda di te sono conservati finché non li elimini nella pagina Tutor o chiudi il tuo account. Gli studenti con meno di 16 anni possono usare il tutor solo con l'autorizzazione di un genitore. [COPY NEEDED: legal review of this paragraph, the parental authorisation for under-16s (the consent layer is built later), including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
            </div>
  
            <div class="legal-section">
@@ -131,14 +131,14 @@ index 609350d..35c7f52 100644
  
            <div class="legal-section">
 diff --git a/site/src/blocks/legal/i18n/pt/gdpr.html b/site/src/blocks/legal/i18n/pt/gdpr.html
-index b9f0e08..e9696e6 100644
+index b9f0e08..af13498 100644
 --- a/site/src/blocks/legal/i18n/pt/gdpr.html
 +++ b/site/src/blocks/legal/i18n/pt/gdpr.html
 @@ -47,6 +47,7 @@
              <h2>4. Tratamento por IA</h2>
              <p>Para gerar exercícios e preparar propostas de feedback, enviamos o texto relevante (por exemplo, o exercício ou o seu trabalho de casa, o seu nível e a sua língua) a fornecedores de IA que atuam como nossos subcontratantes: Google (Gemini), Anthropic e Groq. Não vendemos este conteúdo e instruímos os nossos fornecedores a não o utilizarem para treinar os seus modelos, sempre que os respetivos serviços o permitam. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
              <p>Não tomamos decisões baseadas exclusivamente no tratamento automatizado que produzam efeitos jurídicos ou que o afetem de forma similarmente significativa. As classificações dos trabalhos de casa preparadas por IA são revistas e enviadas pelo seu professor, e as pontuações automatizadas da prática não afetam a sua conta, a faturação ou o acesso. Pode solicitar que uma pessoa reveja qualquer resultado automatizado, contactando-nos.</p>
-+            <p>O tutor de prática do painel do aluno funciona da mesma forma. O que escreve ou diz numa sessão com o tutor é enviado à Groq, juntamente com o seu nível, a língua que aprende e um breve resumo da sua aprendizagem na Alimun, para produzir as respostas do tutor. Quando fala com o tutor, a sua gravação é enviada à Groq para ser convertida em texto e é depois eliminada; nunca guardamos gravações. As respostas do tutor são convertidas em voz pela Google Cloud. As conversas com o tutor são guardadas durante 90 dias; os resumos das sessões e o que o tutor recorda sobre si são guardados até que os apague na página do Tutor ou encerre a sua conta. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
++            <p>O tutor de prática do painel do aluno funciona da mesma forma. O que escreve ou diz numa sessão com o tutor é enviado à Groq, juntamente com o seu nível, a língua que aprende e um breve resumo da sua aprendizagem na Alimun, para produzir as respostas do tutor. Quando fala com o tutor, a sua gravação é enviada à Groq para ser convertida em texto e é depois eliminada; nunca guardamos gravações. As respostas do tutor são convertidas em voz pela Google Cloud. As conversas com o tutor são guardadas durante 90 dias; os resumos das sessões e o que o tutor recorda sobre si são guardados até que os apague na página do Tutor ou encerre a sua conta. Os alunos com menos de 16 anos só podem usar o tutor com a autorização de um dos pais. [COPY NEEDED: legal review of this paragraph, the parental authorisation for under-16s (the consent layer is built later), including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
            </div>
  
            <div class="legal-section">
@@ -155,14 +155,14 @@ index 4d96bb3..2ae1b28 100644
  
            <div class="legal-section">
 diff --git a/site/src/blocks/legal/i18n/zh/gdpr.html b/site/src/blocks/legal/i18n/zh/gdpr.html
-index 252748c..4e7121d 100644
+index 252748c..76b45b0 100644
 --- a/site/src/blocks/legal/i18n/zh/gdpr.html
 +++ b/site/src/blocks/legal/i18n/zh/gdpr.html
 @@ -47,6 +47,7 @@
              <h2>4. AI 处理</h2>
              <p>为生成练习和草拟反馈，我们会将相关文本（例如练习或您的作业、您的水平和语言）发送给作为我们处理者的 AI 服务商：Google (Gemini)、Anthropic 和 Groq。我们不出售该等内容，并在服务商的服务允许的情况下，指示其不得使用该等内容训练其模型。[COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
              <p>我们不会仅基于自动化处理作出对您产生法律效力或类似重大影响的决定。由 AI 草拟的作业评分由您的教师审核并发送，自动生成的练习分数不影响您的账户、账单或访问权限。您可以联系我们，要求由人工复核任何自动化结果。</p>
-+            <p>学生面板中的练习辅导老师也以同样方式运作。你在辅导课中写下或说出的内容，会连同你的级别、你所学的语言以及你在 Alimun 学习情况的简短摘要一起发送给 Groq，用于生成辅导老师的回复。当你对辅导老师说话时，你的录音会发送给 Groq 转写为文字，随后即被丢弃；我们从不保存录音。辅导老师的回复由 Google Cloud 转换为语音。与辅导老师的对话保留 90 天；课程总结以及辅导老师记住的关于你的信息会一直保留，直到你在辅导页面删除它们或关闭账户。 [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
++            <p>学生面板中的练习辅导老师也以同样方式运作。你在辅导课中写下或说出的内容，会连同你的级别、你所学的语言以及你在 Alimun 学习情况的简短摘要一起发送给 Groq，用于生成辅导老师的回复。当你对辅导老师说话时，你的录音会发送给 Groq 转写为文字，随后即被丢弃；我们从不保存录音。辅导老师的回复由 Google Cloud 转换为语音。与辅导老师的对话保留 90 天；课程总结以及辅导老师记住的关于你的信息会一直保留，直到你在辅导页面删除它们或关闭账户。 未满 16 岁的学员须经家长授权方可使用辅导老师。 [COPY NEEDED: legal review of this paragraph, the parental authorisation for under-16s (the consent layer is built later), including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
            </div>
  
            <div class="legal-section">
