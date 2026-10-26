@@ -112,6 +112,23 @@ The student brief, built on the server for each turn: the profile (language, lev
 ## 9. Privacy
 Recordings are sent to Groq (listening) or Azure (scoring) and discarded; they are never stored. Transcripts, summaries and the memory are stored for the time the owner chooses (question 6). The Privacy page and Terms (which keep their AI disclosures) need a paragraph on the tutor and on Microsoft Azure and Google Cloud as processors before part 3 goes live; the text is written as `[COPY NEEDED]` for the owner or their lawyer.
 
+## 10a. The owner's answers (26 Oct 2026: "just go with your recommendations")
+- 1: tutor time is the whole active session, measured by the server between turns (as built in parts 1 and 2).
+- 2: the free 10 minutes are given once per account.
+- 3: Community 30, Focused 60, Intensive 120, 1 on 1 120 minutes per calendar month, unused minutes lost (editable on the admin's System page).
+- 4: time credits in packs of 30 and 120 minutes, prices set in Stripe by the owner; bought minutes expire after 12 months; students on the free plan may buy them; the offer appears only when the time is used up, inside the Tutor.
+- 5: students only. Learners under 16 and parental consent: no recommendation was made; still the owner's and their lawyer's call.
+- 6: transcripts kept 90 days; summaries and the memory until the student clears them; teachers see nothing (as built).
+- 7: one voice for the tutor in every language: Orus (the owner's favourite with Charon, and the course's main narrator), with Sulafat as the alternative the owner can compare by ear in part 3; spoken through Google Cloud on the same key and model as the course audio (`api/speech.js`, `docs/CLOUD_TTS_SETUP.md`).
+- 8: no live speech-to-speech mode for now.
+- 9: public pages do not mention the tutor until the owner gives wording.
+- 10: Google Cloud is set up (course audio); Azure is needed for part 4 (pronunciation), not part 3.
+- 11: the tutor keeps its own board; tldraw stays a classroom decision.
+- 12: Groq gpt-oss-120b first (as built).
+- 13: going over a lesson uses the student's normal tutor minutes; it is offered until the class's next lesson.
+- 14: still open (the owner's message was cut off).
+- Part 3 continues in a new session (owner's request).
+
 ## 10. Questions only the owner can answer
 1. What counts as tutor time: the whole active session (recommended: what the student sees and understands), or only the time the tutor is speaking (about a third of a session, so 10 minutes would last much longer)?
 2. The free 10 minutes: once per account (recommended), or every month? Also for students on a plan before their plan minutes start?

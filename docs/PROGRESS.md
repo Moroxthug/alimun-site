@@ -896,3 +896,6 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 26 Oct 2026: course audio faster on Google Cloud
 
 - The owner's quotas page shows no Agent Platform limit for gemini-3.1-flash-tts (only the old Gemini API route has fixed numbers), so the preview model runs on Google's shared pool. `api/speech.js` now sends up to 8 sentences at the same time (`TTS_CLOUD_PARALLEL`) and up to 120 a minute (`TTS_CLOUD_PER_MINUTE`, was 30, and requests went one at a time, so the real pace was lower). A refusal from Google stops every request of that call and returns the wait, as before. Checked against a stand-in Google with 4 s per answer: 148 files in one 79 s call, 8 at once at most; a 429 stops the call with retryAfter.
+
+## 2026-10-26 — AI tutor: the owner's answers; part 3 handed to a new session
+- Owner: "just go with your recommendations, proceed with step 3 in new convo". The answers are recorded in `docs/AI_TUTOR_PLAN.md` section 10a (questions 5 and 14 remain open). Part 3 (voice) continues in a new session.
