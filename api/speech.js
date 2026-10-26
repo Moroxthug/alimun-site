@@ -208,7 +208,8 @@ async function speak({ model, turns, voices, style }) {
    at the project's global endpoint and then the publisher endpoint; Cloud Text-to-Speech is tried last. */
 const CLOUD_MODELS = ['gemini-2.5-flash-tts', 'gemini-3.1-flash-tts-preview', 'gemini-2.5-pro-tts'];
 const GCP_PROJECT = process.env.GOOGLE_CLOUD_PROJECT || 'gen-lang-client-0145644888';
-const TEST_TEXT = 'Hello! This is a test of the Alimun course voices, spoken through Google Cloud.';
+const TEST_TEXT = 'Hi, I\u2019m calling about the flat on Park Road. Is it still available? I\u2019d love to see it this week, maybe on Thursday after work.';
+const TEST_STYLE = 'Speak naturally, at a normal conversational pace, clearly and warmly.';
 
 /* GOOGLE_CLOUD_TTS_KEY can hold a service account's JSON key (docs/CLOUD_TTS_SETUP.md): the server then signs in as
    that account (a signed JWT exchanged for an access token, kept for 50 minutes), which Vertex AI and Cloud
@@ -245,12 +246,12 @@ async function cloudTest(res, body) {
   const voice = VOICES.includes(body.voice) ? body.voice : 'Orus';
   const sa = serviceAccount(), project = sa && sa.project_id || GCP_PROJECT;
   const headers = await cloudHeaders();
-  const vertexBody = { contents: [{ role: 'user', parts: [{ text: 'Say clearly and warmly, like a friendly language teacher: ' + TEST_TEXT }] }],
+  const vertexBody = { contents: [{ role: 'user', parts: [{ text: TEST_STYLE + '\n' + TEST_TEXT }] }],
     generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } } };
   const tries = [
     ['vertex-global', 'https://aiplatform.googleapis.com/v1/projects/' + project + '/locations/global/publishers/google/models/' + model + ':generateContent', vertexBody],
     ['vertex-publisher', 'https://aiplatform.googleapis.com/v1/publishers/google/models/' + model + ':generateContent', vertexBody],
-    ['cloud-tts', 'https://texttospeech.googleapis.com/v1/text:synthesize', { input: { prompt: 'Read this clearly and warmly, like a friendly language teacher.', text: TEST_TEXT },
+    ['cloud-tts', 'https://texttospeech.googleapis.com/v1/text:synthesize', { input: { prompt: TEST_STYLE, text: TEST_TEXT },
       voice: { languageCode: 'en-US', name: voice, modelName: model }, audioConfig: { audioEncoding: 'LINEAR16' } }],
   ];
   const refused = [];
