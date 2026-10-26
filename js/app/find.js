@@ -65,7 +65,7 @@
     return ds.length > 0 && ds.every(function (d) { return mine.indexOf(WD[new Intl.DateTimeFormat('en-US', { weekday: 'short', timeZone: zone() }).format(d)]) > -1; });
   }
   function course(c) { return A.languageName(c.language) + ' ' + c.level; }
-  function planName(tier) { return t('app_tier_' + tier); }
+  function planName(tier) { return '\u2068' + t('app_tier_' + tier) + '\u2069'; }
   function seatsLeft(c) { return Math.max(0, (c.max_students || 0) - (c.enrolled_count || 0)); }
   function teacherName(c) { return c.teacher_profiles && c.teacher_profiles.full_name || ''; }
 
@@ -162,7 +162,7 @@
       out = live ? '<p class="t-body fd-state">' + esc(t('app_fd_offer_p', { course: course(c), name: teacherName(c), when: when(w.offer_expires_at) })) + '</p><div class="btn-row"><a class="btn btn--lime" href="#/classes/offer/' + esc(w.id) + '">' + esc(t('app_fd_offer_take')) + '</a></div>'
         : '<p class="t-body fd-state">' + esc(t('app_fd_wait_on', { date: fmt(w.added_at, { day: 'numeric', month: 'long' }) })) + '</p><div class="btn-row">' + btn('unwait', 'app_fd_wait_leave', 'on-forest') + '</div>';
     } else if (!planOk) {
-      out = '<p class="t-body fd-state">' + esc(t('app_fd_need_plan', { plan: planName(c.tier) })) + '</p><div class="btn-row"><a class="btn btn--lime" href="/tiers">' + esc(t('app_fd_see_plans')) + '</a></div>';
+      out = '<p class="t-body fd-state">' + esc(t('app_fd_need_plan', { plan: planName(c.tier) })) + '</p><div class="btn-row"><a class="btn btn--lime" href="#/settings/plans/' + esc(c.id) + '/' + esc(c.tier) + '">' + esc(t('app_fd_see_plans')) + '</a></div>';
     } else if (full) {
       out = '<p class="t-body fd-state">' + esc(t('app_fd_full_p')) + '</p><div class="btn-row">' + btn('wait', 'app_fd_wait_join') + '</div>';
     } else if (mine.length) {

@@ -61,7 +61,7 @@ async function sendOfferEmail(supabase, { waitlist_id, cohort_id, student_id }) 
 
   const appUrl = process.env.APP_URL || 'https://alimun.com';
   const emailFrom = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
-  const claimUrl = `${appUrl}/student-dashboard.html?claim_cohort_id=${encodeURIComponent(cohort_id)}&waitlist_id=${encodeURIComponent(waitlist_id)}`;
+  const claimUrl = `${appUrl}/app#/classes/offer/${encodeURIComponent(waitlist_id)}`;
 
   // 3. Compile Alimun Branded Responsive HTML Email
   const htmlContent = `

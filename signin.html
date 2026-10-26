@@ -97,13 +97,17 @@ document.querySelectorAll('[data-eye]').forEach((b) => b.addEventListener('click
   else { b.textContent = b.dataset.show; input.type = 'password'; }
 }));
 
-// Where a signed-in account goes next.
+// Where a signed-in account goes next. ?next= only ever leads back into the students' dashboard (/app and a #/section).
+function nextInApp() {
+  const n = new URLSearchParams(location.search).get('next') || '';
+  return /^\/app(#\/[A-Za-z0-9\/_-]*)?$/.test(n) ? n : '/app';
+}
 async function route(user) {
   const role = getUserRole(user);
   if (role === 'admin') { location.href = '/app/admin'; return true; }
   if (role === 'student') {
     const { data: sp } = await supabase.from('student_profiles').select('id').eq('user_id', user.id).maybeSingle();
-    location.href = base + (sp ? 'student-dashboard.html' : 'welcome.html');
+    location.href = sp ? nextInApp() : base + 'welcome.html';
     return true;
   }
   if (role === 'teacher') {

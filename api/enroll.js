@@ -247,7 +247,7 @@ module.exports = async function handler(req, res) {
               <h2 style="color:#080808;margin-top:0;">Welcome aboard, ${escapeHtml(student.full_name)}!</h2>
               <p>You have joined the <strong>${escapeHtml(cohort.language)} ${escapeHtml(cohort.level)} (${escapeHtml(cohort.goal_track)})</strong> class with <strong>${escapeHtml(teacherName)}</strong>.</p>
               <p>Your next session is <strong>${escapeHtml(whenStr)}</strong>. The classroom opens in your dashboard 15 minutes before start.</p>
-              <p style="text-align:center;"><a href="${appUrl}/student-dashboard.html" style="display:inline-block;background:#ceff65;color:#080808;text-decoration:none;padding:14px 30px;border-radius:30px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:20px;">Go to dashboard</a></p>
+              <p style="text-align:center;"><a href="${appUrl}/app#/classes" style="display:inline-block;background:#ceff65;color:#080808;text-decoration:none;padding:14px 30px;border-radius:30px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:20px;">Go to dashboard</a></p>
             </div>
             <div style="background:#fafafa;padding:20px 30px;text-align:center;border-top:1px solid #eee;font-size:12px;color:#aaa;">Questions? Just reply to this email.</div>
           </div></body></html>`,

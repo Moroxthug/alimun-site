@@ -76,7 +76,7 @@
           <p class="au_msg" id="m-pay" role="alert" style="margin-top:1.5rem"></p>
           <div class="au_actions au_hide" id="pay-actions">
             <button type="button" class="au_btn" id="b-pay-retry"><span data-i18n="au_try_again">Riprova</span></button>
-            <a class="au_btn is-ghost" href="student-dashboard.html"><span data-i18n="au_to_dashboard">Vai alla mia dashboard</span></a>
+            <a class="au_btn is-ghost" href="/app"><span data-i18n="au_to_dashboard">Vai alla mia dashboard</span></a>
           </div>
         </section>
 
@@ -176,7 +176,7 @@ function placement() {
 async function learner() {
   const { data: sp, error } = await supabase.from('student_profiles').select('id').eq('user_id', user.id).maybeSingle();
   if (error) return fail();
-  if (sp) { location.replace(base + 'student-dashboard.html'); return; }
+  if (sp) { location.replace('/app'); return; }
   const p = placement();
   if (!p) { location.replace(base + 'level-test.html'); return; }
   const intent = meta.onboarding && meta.onboarding.intent;
@@ -209,7 +209,7 @@ async function learner() {
     if (insErr && insErr.code !== '23505') { $('b-time').disabled = false; return fail(); }
     try { localStorage.removeItem('alimun-level-result'); } catch (e) {}
     if (willPay) return pay(intent);
-    location.replace(base + 'student-dashboard.html');
+    location.replace('/app');
   });
   show('s-goal');
 }
@@ -228,7 +228,7 @@ async function pay(intent) {
       body: JSON.stringify({
         priceId, customerName: meta.full_name || '', currency: code && code !== 'eur' ? code : undefined,
         successUrl: `${location.origin}${base}signup-success.html?session_id={CHECKOUT_SESSION_ID}`,
-        cancelUrl: `${location.origin}${base}student-dashboard.html`,
+        cancelUrl: `${location.origin}/app?checkout=cancelled`,
       }),
     });
     const out = await resp.json().catch(() => ({}));

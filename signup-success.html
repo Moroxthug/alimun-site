@@ -36,14 +36,14 @@
           <h1 class="au_h1" id="ok-title" data-i18n="au_pay_ok_title">You are in</h1>
           <p class="au_lead" id="ok-lead"></p>
           <div class="au_prog" style="margin:2rem 0 0"><span id="ok-bar"></span></div>
-          <div class="au_actions"><a class="au_btn" id="b-dash" href="student-dashboard.html"><span data-i18n="au_to_dashboard">Go to my dashboard</span></a></div>
+          <div class="au_actions"><a class="au_btn" id="b-dash" href="/app"><span data-i18n="au_to_dashboard">Go to my dashboard</span></a></div>
         </section>
         <section class="au_step" id="s-fail" hidden>
           <h1 class="au_h1" data-i18n="au_pay_fail_title">We could not confirm your payment</h1>
           <p class="au_lead" data-i18n-html="au_pay_fail_lead">The payment may have been cancelled or is still being processed. If you were charged, write to <a href="mailto:support@alimun.com">support@alimun.com</a> and we will sort it out.</p>
           <div class="au_actions">
             <a class="au_btn" href="tiers.html"><span data-i18n="au_see_plans">See the plans</span></a>
-            <a class="au_btn is-ghost" href="student-dashboard.html"><span data-i18n="au_to_dashboard">Go to my dashboard</span></a>
+            <a class="au_btn is-ghost" href="/app"><span data-i18n="au_to_dashboard">Go to my dashboard</span></a>
           </div>
         </section>
       </div>
@@ -95,7 +95,7 @@ const PLAN_KEY = { community: 'tier_community_name', focused: 'tier_focused_name
     if (!session) { $('b-dash').href = base + 'signin.html'; setText($('b-dash').querySelector('span'), t('au_signin')); return; }
     // On to the dashboard after a few seconds.
     const bar = $('ok-bar'), start = performance.now(), ms = 4000;
-    (function tick(now) { const k = Math.min(1, (now - start) / ms); bar.style.width = (k * 100) + '%'; if (k < 1) requestAnimationFrame(tick); else location.href = base + 'student-dashboard.html'; })(start);
+    (function tick(now) { const k = Math.min(1, (now - start) / ms); bar.style.width = (k * 100) + '%'; if (k < 1) requestAnimationFrame(tick); else location.href = '/app'; })(start);
   } catch (e) { show('s-fail'); }
 })();
 </script>

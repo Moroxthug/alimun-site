@@ -183,7 +183,8 @@
     var html = '';
     Object.keys(GROUPS).forEach(function (g) {
       html += '<div class="nav__group"><div class="nav__label">' + esc(t(GROUPS[g])) + '</div>';
-      ROUTES.filter(function (r) { return r.group === g; }).forEach(function (r) {
+      /* The design kit is an internal reference: not in a real student's menu */
+      ROUTES.filter(function (r) { return r.group === g && !(r.id === 'kit' && mode === 'real'); }).forEach(function (r) {
         html += '<a href="#/' + r.id + '" data-route="' + r.id + '">' + icon(r.icon) + '<span>' + esc(t(r.label)) + '</span></a>';
       });
       html += '</div>';
@@ -212,6 +213,7 @@
             '<button class="avatar" type="button" aria-label="' + esc(t('app_account')) + '">' + esc(initials(D.profile.name)) + '</button>' +
           '</div>' +
         '</header>' +
+        '<div class="app-note" data-appnote role="status" aria-live="polite"></div>' +
         '<main class="view" id="view" tabindex="-1"></main>' +
       '</div>' +
       '<nav class="bar" aria-label="' + esc(t('app_sections')) + '">' +
@@ -359,7 +361,7 @@
     return '<section class="card card--lime span-12" style="--i:9" aria-labelledby="h-plan">' +
       '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2" id="h-plan">' + esc(t(k[0])) + '</h2>' +
       '<p class="t-body" style="margin-top:10px">' + esc(t(k[1])) + '</p></div>' +
-      '<a class="btn btn--primary" href="/tiers">' + esc(t('app_home_see_plans')) + '</a></div>' +
+      '<a class="btn btn--primary" href="#/settings/plans">' + esc(t('app_home_see_plans')) + '</a></div>' +
     '</section>';
   }
 
@@ -537,7 +539,7 @@
         });
       }
       if (id === 'settings') {
-        window.AlimunSettings.mount(view, [], settingsHelpers);
+        window.AlimunSettings.mount(view, location.hash.replace(/^#\/settings\/?/, '').split('/').filter(Boolean), settingsHelpers);
       }
       if (id === 'progress') {
         window.AlimunProgress.mount(view, [], progressHelpers);
@@ -590,11 +592,18 @@
     var s = window.ALIMUN_SAMPLE();
     return window.AlimunData.topicLabels(s.placement.language, s.placement.topics, lang).then(function (labels) { s.topics = labels; return s; });
   }
+  /* /app is the students' dashboard (step 16): signed out goes to sign-in (and back here after), teachers and admins to
+     their own pages, a student without a profile to the welcome steps. The sample only with ?sample=1. */
+  function away(to) { location.replace(to); return new Promise(function () {}); }
   function loadData() {
     if (/[?&]sample=1/.test(location.search)) { mode = 'forced'; return sample(); }
     return window.AlimunData.load(lang).then(function (d) {
       if (d && d.profile) { mode = 'real'; return d; }
-      mode = d ? 'noprofile' : 'sample';
+      if (!d) return away('/signin?next=' + encodeURIComponent('/app' + (/^#\/[A-Za-z0-9\/_-]*$/.test(location.hash) ? location.hash : '')));
+      if (d.role === 'teacher') return away('/app/teach');
+      if (d.role === 'admin') return away('/app/admin');
+      if (d.role === 'student' || !d.role) return away('/welcome');
+      mode = 'noprofile';
       return sample();
     }, function (err) {
       console.warn('[Alimun] Home data did not load', err && err.message);
@@ -605,8 +614,38 @@
 
   /* ---------- Boot ---------- */
   function start() {
+    var back = fromStripe();
     renderShell();
     render(routeFromHash(), false);
+    if (back) stripeNote(back);
+  }
+
+  /* Coming back from Stripe (step 16): ?checkout=success|cancelled|credit, with ?join=<class> when a class needed the
+     plan. The address is cleaned, the class opened, and a paid plan that the payment webhook has not recorded yet is
+     checked again for half a minute. */
+  function fromStripe() {
+    var q = new URLSearchParams(location.search), c = q.get('checkout'), join = q.get('join');
+    if (!/^(success|cancelled|credit)$/.test(c || '')) return null;
+    ['checkout', 'join', 'session_id', 'tier'].forEach(function (k) { q.delete(k); });
+    var hash = c === 'success' && /^[0-9a-f-]{36}$/i.test(join || '') ? '#/classes/find/' + join : location.hash;
+    history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : '') + hash);
+    return c;
+  }
+  function stripeNote(c) {
+    var show = function (text) { var box = app.querySelector('[data-appnote]'); if (box) box.innerHTML = '<p class="t-body cl-flash">' + esc(text) + '</p>'; };
+    if (c === 'cancelled') return show(t('app_pl_back_cancelled'));
+    if (c === 'credit') return show(t('app_pl_back_credit'));
+    if (mode !== 'real' || D.profile.paying) return show(t('app_pl_back_success'));
+    show(t('app_pl_back_success') + ' ' + t('app_pl_confirming'));
+    var tries = 0;
+    (function again() {
+      setTimeout(function () {
+        window.AlimunData.load(lang).then(function (d) {
+          if (d && d.profile && d.profile.paying) { D = d; renderShell(); render(routeFromHash(), false); show(t('app_pl_confirmed')); }
+          else if (++tries < 8) again();
+        }, function () { if (++tries < 8) again(); });
+      }, 4000);
+    })();
   }
 
   function boot() {
@@ -626,7 +665,7 @@
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'messages') render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'messages' || id === 'settings') render(id, true); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 

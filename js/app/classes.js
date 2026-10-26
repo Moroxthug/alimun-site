@@ -219,6 +219,11 @@
         (reasonText(st.credit) ? '<p class="t-small cl-oto__why">' + esc(reasonText(st.credit)) + '</p>' : '') + '</div>' +
         (st.credit.canBook ? '<button class="btn btn--primary btn--sm" type="button" data-cl="pick" data-kind="credit">' + esc(t('app_cl_book')) + '</button>' : '') + '</div>';
     }
+    /* One more private class, paid once through Stripe (js/app/plans.js); the price is Stripe's */
+    if (st.teacher && window.AlimunPlans) {
+      html += '<div class="cl-oto__row"><div><h3 class="t-h3">' + esc(t('app_pl_buy_h')) + '</h3><p class="t-body">' + esc(t('app_pl_buy_extra_p')) + '</p><p class="t-small st-msg" data-buymsg aria-live="polite"></p></div>' +
+        '<button class="btn btn--ghost btn--sm" type="button" data-cl="buy" data-buylabel>' + esc(t('app_pl_buy_extra_np')) + '</button></div>';
+    }
     html += '<div data-picker></div>';
     if (past.length) {
       html += '<h3 class="t-h3 cl-oto__notes-h">' + esc(t('app_cl_oto_notes_h')) + '</h3>' + past.map(function (b) {
@@ -327,7 +332,7 @@
     upcoming().forEach(function (n) {
       var title = n.type === 'class' ? cohortName(n.cohort) : t(n.kind === 'followup' ? 'app_cl_oto_followup' : 'app_cl_oto_private');
       lines.push('BEGIN:VEVENT', 'UID:' + n.id + '@alimun.com', 'DTSTAMP:' + stamp(new Date().toISOString()), 'DTSTART:' + stamp(n.at), 'DTEND:' + stamp(new Date(Date.parse(n.at) + n.minutes * MIN).toISOString()),
-        'SUMMARY:Alimun: ' + String(title).replace(/[,;\\]/g, ' '), 'URL:https://alimun.com/app/preview#/classes', 'END:VEVENT');
+        'SUMMARY:Alimun: ' + String(title).replace(/[,;\\]/g, ' '), 'URL:https://alimun.com/app#/classes', 'END:VEVENT');
     });
     lines.push('END:VCALENDAR');
     var a = document.createElement('a');
@@ -423,6 +428,7 @@
       else if (a === 'cancelno') el.closest('[data-cancelbox]').innerHTML = '';
       else if (a === 'cancelyes') cancel(el.getAttribute('data-id'), el);
       else if (a === 'ics') ics();
+      else if (a === 'buy' && window.AlimunPlans) AlimunPlans.buyExtra(A, el, root.querySelector('[data-buymsg]'));
     });
     /* The countdown and the Join button follow the clock */
     setInterval(function () {
@@ -477,6 +483,8 @@
     }).then(function (res) {
       if (res.stale || my !== mountNo) return { stale: true };
       view.innerHTML = res.html;
+      var buy = view.querySelector('[data-buylabel]');
+      if (buy && window.AlimunPlans) AlimunPlans.extraLabel(A).then(function (l) { if (buy.isConnected) buy.textContent = l; });
       if (res.live) join(res.live.kind, res.live.id);
       if (FLASH && root.querySelector('.cl-up, .cl-oto')) {
         var where = root.querySelector('.cl-oto') || root.querySelector('.cl-up');

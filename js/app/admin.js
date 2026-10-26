@@ -169,7 +169,7 @@
       '</p><div class="btn-row"><a class="btn btn--primary" href="#/overview">Back to the overview</a></div></div></div>';
   }
   function deniedView() {
-    var to = D.role === 'teacher' ? '/app/teach' : D.role === 'student' ? '/student-dashboard.html' : '/';
+    var to = D.role === 'teacher' ? '/app/teach' : D.role === 'student' ? '/app' : '/';
     return '<div class="soon rise"><div class="stage" style="--i:0;background:var(--t-coral)"><div class="bub think">Staff only, I’m afraid.</div>' + Cast.drawing('cat') + '</div>' +
       '<div class="card" style="--i:1"><h2 class="t-h2">This page is for Alimun’s administrators</h2><p class="t-body">Your account does not have access to it.</p><div class="btn-row"><a class="btn btn--primary" href="' + to + '">Go to your dashboard</a></div></div></div>';
   }

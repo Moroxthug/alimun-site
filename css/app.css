@@ -1479,3 +1479,17 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .fd-msg:empty { display: none; }
 .fd-stars { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 6px; }
 .fd-confirm { margin-top: 14px; }
+
+/* Choosing a plan (js/app/plans.js) and the note after Stripe */
+.app-note { padding: 0 40px; max-width: 1320px; width: 100%; }
+.app-note:empty { display: none; }
+@media (max-width: 899px) { .app-note { padding: 0 16px; } }
+.pl-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; margin-top: 16px; }
+.pl-card { display: grid; gap: 8px; align-content: start; padding: 18px; border-radius: var(--r-md); background: var(--bone); }
+.pl-card .btn { justify-self: start; margin-top: 6px; }
+.pl-card.is-needed { background: var(--t-lime); }
+.pl-card.is-mine { outline: 2px solid var(--forest); outline-offset: -2px; }
+.pl-price { color: var(--forest); }
+.pl-note { font-weight: 700; color: var(--forest); }
+.pl-msg { margin-top: 10px; }
+.pl-msg:empty { display: none; }

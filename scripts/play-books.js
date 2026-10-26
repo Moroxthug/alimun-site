@@ -1,4 +1,4 @@
-/* Plays course books in /app/preview with the right answers, the way a student would (docs/BOOKS.md).
+/* Plays course books in /app with the right answers, the way a student would (docs/BOOKS.md).
    Every lesson is turned page by page to its end page and every unit test must score 100%.
    Serves this checkout on a local port; /data/* comes from alimun.com unless --data=local (site build output in site/dist).
    Usage: node scripts/play-books.js [book ids...] [--units=N] [--lang=de] [--phone] [--practice]
@@ -60,7 +60,7 @@ function serve() {
       return;
     }
     if (p.startsWith('/data/')) p = '/site/dist' + p;
-    if (p === '/app/preview') p = '/app/preview.html';
+    if (p === '/app' || p === '/app/') p = '/app/index.html';
     const f = path.join(ROOT, p);
     if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); return res.end(); }
     res.writeHead(200, { 'content-type': TYPES[path.extname(f)] || 'application/octet-stream' });
@@ -213,7 +213,7 @@ async function playRound(page, url, errors, label) {
 
 async function main() {
   const server = await serve();
-  const base = 'http://localhost:' + server.address().port + '/app/preview?sample=1&lang=' + LANG;
+  const base = 'http://localhost:' + server.address().port + '/app?sample=1&lang=' + LANG;
   /* The project's own Playwright may want another browser build; fall back to the one installed on the machine */
   const browser = await chromium.launch().catch(() => chromium.launch({ executablePath: '/opt/pw-browsers/chromium' }));
   const context = await browser.newContext(flag('phone') ? { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true } : { viewport: { width: 1280, height: 900 } });

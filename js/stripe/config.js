@@ -279,7 +279,7 @@ async function getAccessToken() {
 export async function createCheckout({
   priceId,
   mode = 'subscription',
-  successUrl = `${getCfg().appUrl || window.location.origin}/student-dashboard.html?checkout=success`,
+  successUrl = `${getCfg().appUrl || window.location.origin}/app?checkout=success`,
   cancelUrl  = `${getCfg().appUrl || window.location.origin}/signup.html?checkout=cancelled`,
   cohortId   = null,
   customerName = null,
@@ -337,7 +337,7 @@ export async function createCheckout({
  * @param {string} [returnUrl] - URL to return to after the portal session
  */
 export async function openBillingPortal(
-  returnUrl = `${getCfg().appUrl || window.location.origin}/student-dashboard.html`
+  returnUrl = `${getCfg().appUrl || window.location.origin}/app#/settings`
 ) {
   try {
     const accessToken = await getAccessToken();

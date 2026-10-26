@@ -8,6 +8,7 @@
  *    - POST ?action=create-checkout   (auth required)
  *    - GET  ?action=retrieve-session  (public, non-sensitive fields only)
  *    - POST ?action=billing-portal    (auth required)
+ *    - GET  ?action=prices            the amounts of the main prices, read from Stripe (public, cached an hour)
  *    - GET  ?action=config            (public, publishable values only)
  *
  *  Security notes:
@@ -167,8 +168,8 @@ async function handleCreateCheckout(req, res) {
   }
 
   const safeCohortId = typeof cohortId === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cohortId) ? cohortId : '';
-  let resolvedSuccessUrl = safeReturnUrl(successUrl, '/student-dashboard.html?checkout=success');
-  const resolvedCancelUrl  = safeReturnUrl(cancelUrl,  '/student-dashboard.html?checkout=cancelled');
+  let resolvedSuccessUrl = safeReturnUrl(successUrl, '/app?checkout=success');
+  const resolvedCancelUrl  = safeReturnUrl(cancelUrl,  '/app?checkout=cancelled');
   // The webhook does not enrol; carry the cohort back so the dashboard can
   // resume the join after payment (APIP-14).
   if (safeCohortId) {
@@ -284,7 +285,7 @@ async function handleBillingPortal(req, res) {
     return res.status(500).json({ error: 'Database service is unavailable' });
   }
 
-  const resolvedReturnUrl = safeReturnUrl(body.returnUrl, '/student-dashboard.html');
+  const resolvedReturnUrl = safeReturnUrl(body.returnUrl, '/app#/settings');
 
   try {
     const profile = await loadStudentProfile(supabaseAdmin, user);
@@ -340,6 +341,37 @@ function handleGetConfig(req, res) {
   });
 }
 
+// The amount, currency and period of each main price, read from Stripe so the dashboard shows what Stripe will
+// charge (no amounts are written in the site). Public: prices are not secret. Cached per instance for an hour.
+const PRICE_KEYS = {
+  communityMonthly: 'STRIPE_PRICE_COMMUNITY_MONTHLY', focusedMonthly: 'STRIPE_PRICE_FOCUSED_MONTHLY',
+  intensiveMonthly: 'STRIPE_PRICE_INTENSIVE_MONTHLY', privateMonthly: 'STRIPE_PRICE_PRIVATE_MONTHLY',
+  communityYearly: 'STRIPE_PRICE_COMMUNITY_YEARLY', focusedYearly: 'STRIPE_PRICE_FOCUSED_YEARLY',
+  intensiveYearly: 'STRIPE_PRICE_INTENSIVE_YEARLY', privateYearly: 'STRIPE_PRICE_PRIVATE_YEARLY',
+  oneOnOneSession: 'STRIPE_PRICE_ONEONONE_SESSION',
+};
+let pricesCache = null;
+async function handleGetPrices(req, res) {
+  if (!pricesCache || Date.now() - pricesCache.at > 3600000) {
+    const out = {};
+    await Promise.all(Object.keys(PRICE_KEYS).map(async (k) => {
+      const id = env(PRICE_KEYS[k]);
+      if (!id) return;
+      try {
+        const p = await stripe.prices.retrieve(id);
+        if (p && p.active && p.unit_amount != null) {
+          out[k] = { id, amount: p.unit_amount, currency: p.currency, interval: p.recurring ? p.recurring.interval : null };
+        }
+      } catch (err) {
+        console.error('[Alimun] price lookup failed for', k, err.message);
+      }
+    }));
+    pricesCache = { at: Date.now(), prices: out };
+  }
+  res.setHeader('Cache-Control', 'public, max-age=600, s-maxage=3600');
+  return res.status(200).json({ prices: pricesCache.prices });
+}
+
 // ── Main handler ──
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || 'https://alimun.com');
@@ -367,6 +399,9 @@ module.exports = async function handler(req, res) {
     case 'config':
       if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
       return handleGetConfig(req, res);
+    case 'prices':
+      if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+      return handleGetPrices(req, res);
     default:
       return res.status(400).json({ error: 'Unknown action' });
   }

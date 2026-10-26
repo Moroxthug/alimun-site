@@ -8,7 +8,7 @@
                               suspend or reinstate one or several (with the emails of /api/admin/teacher set-status)
    #/teachers/<id>            a teacher's file: profile, languages, rate and level, classes, availability, reviews,
                               payouts; status; email them; open their dashboard read-only
-   View-as opens /app/preview?as=<id> or /app/teach?as=<id>, where js/app/data.js blocks every write. */
+   View-as opens /app?as=<id> or /app/teach?as=<id>, where js/app/data.js blocks every write. */
 (function () {
   'use strict';
   var A = null, root = null, ST = null, TE = null, EMAILS = {}, FILE = null;
@@ -138,7 +138,7 @@
     var days = {}; f.activity.forEach(function (a) { days[String(a.updated_at).slice(0, 10)] = true; });
     var last = f.activity[0] && f.activity[0].updated_at, learned = f.cards.filter(function (c) { return c.box >= 3; }).length;
     var html = back('#/students', 'Students') + '<div class="view__head"><div><h1 class="t-h1">' + esc(p.full_name || '') + '</h1><p class="t-lead">' + esc([email, p.language + ' ' + (p.level || ''), 'Joined ' + day(p.created_at)].filter(Boolean).join('. ') + '.') + '</p></div>' +
-      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="/app/preview?as=' + esc(p.id) + '" target="_blank" rel="noopener">Open their dashboard, read-only</a></div></div><div class="grid rise">';
+      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="/app?as=' + esc(p.id) + '" target="_blank" rel="noopener">Open their dashboard, read-only</a></div></div><div class="grid rise">';
     var paid = p.stripe_subscription_status === 'active';
     html += '<form class="card span-7 st-form" style="--i:0;max-width:none;margin-top:0" data-sfile="' + esc(p.id) + '"><h2 class="t-h2">Plan and level</h2>' +
       '<p class="t-body">' + esc((PLANS[p.tier] || p.tier) + '. ' + (PAY[p.stripe_subscription_status] || 'No subscription') + '.') + '</p>' +

@@ -309,7 +309,7 @@ module.exports = async function handler(req, res) {
       const resendKey = process.env.RESEND_API_KEY;
       if (resendKey && !resendKey.includes('YOUR_RESEND_API_KEY')) {
         const emailFrom = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
-        const dashboardUrl = `${process.env.APP_URL || 'https://alimun.com'}/student-dashboard.html`;
+        const dashboardUrl = `${process.env.APP_URL || 'https://alimun.com'}/app#/classes`;
 
         const emailPromises = enrollments.map(async (e) => {
           const studentProfile = e.student_profiles;

@@ -71,3 +71,13 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] A student whose plan is too small, or who has no plan, is told which plan they need.
 - [ ] "Email me when a class opens" is kept after reloading.
 - [ ] After a first class, the student reviews the teacher; the review shows on the class page for other students and in the admin's System page.
+
+## Student dashboard switch-over, part 2 (plans, payments, /app)
+- [ ] Signing in as a student lands on /app; signed out, /app#/classes asks to sign in and comes back to Classes.
+- [ ] A free student chooses a plan in Settings, pays in Stripe (test card if Stripe is in test mode), comes back to /app with "Thank you", and the plan shows as active within half a minute.
+- [ ] Choosing a plan from a class that needs it: after paying, that class opens and "Join this class" works.
+- [ ] Cancelling at Stripe comes back with "Nothing was charged".
+- [ ] A paying student's "Change your plan" opens Stripe's billing page, which returns to Settings.
+- [ ] Buying one private class from Classes: the credit appears after paying.
+- [ ] An old waiting-list email link (/student-dashboard.html?claim_cohort_id=…&waitlist_id=…) opens the offer in /app.
+- [ ] The admin's "Open their dashboard, read-only" opens /app?as=<id>.

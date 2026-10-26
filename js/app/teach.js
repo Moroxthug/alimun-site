@@ -314,7 +314,7 @@
     if (mode === 'real') return '';
     var p, btn = '';
     if (mode === 'forced') { p = t('app_t_sample_forced'); btn = '<a class="btn btn--primary btn--sm" href="' + location.pathname + location.hash + '">' + esc(t('app_t_sample_mine')) + '</a>'; }
-    else if (mode === 'noprofile') { p = t('app_t_sample_noprofile'); btn = '<a class="btn btn--primary btn--sm" href="/app/preview">' + esc(t('app_t_sample_student')) + '</a>'; }
+    else if (mode === 'noprofile') { p = t('app_t_sample_noprofile'); btn = '<a class="btn btn--primary btn--sm" href="/app">' + esc(t('app_t_sample_student')) + '</a>'; }
     else if (mode === 'admin') p = t('app_t_sample_admin');
     else if (mode === 'error') { p = t('app_sample_error'); btn = '<button class="btn btn--primary btn--sm" type="button" data-retry>' + esc(t('app_retry')) + '</button>'; }
     else { p = t('app_t_sample_p'); btn = '<a class="btn btn--primary btn--sm" href="/signin.html">' + esc(t('app_sample_signin')) + '</a>'; }
