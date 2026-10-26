@@ -41,4 +41,9 @@ export default {
   'present-perfect-passports': { src: '/images/blog/present-perfect-passports.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/passport-table-VZTYVVUYZB' },
   'present-perfect-traveler-harbor': { src: '/images/blog/present-perfect-traveler-harbor.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/woman-luggage-6G6KF3CXPL' },
   'present-perfect-weekly-planner': { src: '/images/blog/present-perfect-weekly-planner.jpg', w: 960, h: 720, source: 'https://stocksnap.io/photo/calendar-diary-3FOSIEZDTW' },
+  'practise-speaking-microphone': { src: '/images/blog/practise-speaking-microphone.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/microphone-music-8KQC04JDT0' },
+  'practise-speaking-earphones-walk': { src: '/images/blog/practise-speaking-earphones-walk.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/smartphone-mobile-2ZHFKWXCTQ' },
+  'practise-speaking-park-picnic': { src: '/images/blog/practise-speaking-park-picnic.jpg', w: 960, h: 720, source: 'https://stocksnap.io/photo/people-men-LTKV70U67U' },
+  'practise-speaking-friends-walking': { src: '/images/blog/practise-speaking-friends-walking.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/women-walking-B5TSAOJN9V' },
+  'practise-speaking-phone-call': { src: '/images/blog/practise-speaking-phone-call.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/phone-call-6WFSVFZQ9F' },
 };

@@ -11,7 +11,7 @@ export default {
   updated: '2026-10-26',
   title: 'Cómo practicar inglés hablado entre clase y clase',
   metaTitle: 'Cómo practicar inglés hablado solo y con otras personas – Alimun',
-  desc: 'Shadowing, hablar solo, grabarte, leer en voz alta, tándems y frases preparadas: cómo practicar la expresión oral en inglés entre clases, y con qué frecuencia.',
+  desc: 'Shadowing, hablar solo, grabarte, leer en voz alta, tándems y frases preparadas: cómo practicar inglés hablado entre clases y con qué frecuencia.',
   lead: 'Casi todo el mundo entiende más inglés del que es capaz de decir, y esa distancia solo se acorta de una manera: **hablando**. La buena noticia es que no necesitas a alguien con quien conversar todos los días. Aquí tienes cómo practicar solo y con otras personas entre clase y clase, qué dice la investigación sobre cada método y cuánto tiempo hace falta de verdad.',
   photo: 'practise-speaking-microphone',
   sticker: { draw: 'parrot', say: '¡Repite conmigo, en voz alta!' },

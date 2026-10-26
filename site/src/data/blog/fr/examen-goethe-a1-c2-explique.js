@@ -15,7 +15,7 @@ export default {
   metaTitle: 'Examen Goethe A1 à C2 : épreuves, note de passage, validité – Alimun',
   desc: "Comment fonctionne le Goethe-Zertifikat de Start Deutsch 1 à C2 : les quatre modules, la durée, le seuil de 60 %, la validité et le niveau exigé pour un visa, la nationalité ou la fac.",
   lead: "Le Goethe-Zertifikat est l'examen d'allemand le plus connu au monde, avec un examen pour chaque niveau de A1 à C2. Savoir **comment il est construit, comment il est noté et quel niveau il te faut vraiment** t'évite de réserver le mauvais examen, ou le bon trop tôt.",
-  photo: 'goethe-certificates-HEADER',
+  photo: 'goethe-certificates-reading-room',
   sticker: { draw: 'owl', say: 'Sechzig Punkte : module réussi.' },
   facts: [
     { n: 6, unit: 'niveaux', text: 'un examen par niveau, de A1 (Start Deutsch 1) à C2 (Großes Deutsches Sprachdiplom)' },
@@ -45,7 +45,7 @@ export default {
     { p: "La lecture et l'écoute sont corrigées avec des items justes ou faux. Au B1, par exemple, chacun des deux modules compte **30 items**, et le nombre de bonnes réponses est converti en une note sur 100. Les textes vont des panneaux, messages courts et petites annonces à l'A1 jusqu'aux articles, rapports et textes longs et exigeants au C1 et au C2. À l'écoute, tu entends des annonces, des conversations, des émissions de radio et des exposés, et tu notes tes réponses pendant l'écoute." },
     { h3: 'Schreiben' },
     { p: "Dans le module d'écrit, tu rédiges des textes pour un vrai lecteur. Au B1, il y a trois tâches : un e-mail personnel d'environ 80 mots, un court avis sur un sujet d'environ 80 mots et un message formel d'environ 40 mots, par exemple pour t'excuser auprès du formateur d'un cours. Aux niveaux supérieurs, les textes deviennent plus longs et plus formels. Chaque texte est **corrigé par deux évaluateurs** selon des critères fixes : réalisation de la tâche, cohérence, vocabulaire et structures grammaticales." },
-    { figure: { photo: 'goethe-certificates-FIG1', alt: 'FIG1 ALT', caption: 'FIG1 CAPTION' } },
+    { figure: { photo: 'goethe-certificates-writing-notebook', alt: "Une main qui écrit au stylo dans un carnet ouvert", caption: "Au B1, tu rédiges trois textes en 60 minutes : prends un instant pour organiser chacun avant de commencer." } },
     { h3: 'Sprechen' },
     { p: "L'oral se passe en direct, avec **deux examinateurs** : l'un mène l'entretien, les deux évaluent. À l'A1, tu parles dans un petit groupe de quatre candidats au maximum ; de l'A2 au C1, tu parles en général avec un partenaire, et au C2 tu passes l'épreuve seul. Au B1, vous organisez d'abord quelque chose ensemble, puis chacun fait une courte présentation sur un thème, et enfin tu réponds à des questions sur ta présentation. Tu as **15 minutes de préparation** au B1, au B2 et au C2, et 20 minutes au C1 ; à l'A1 et à l'A2, il n'y a pas de temps de préparation." },
 
@@ -86,7 +86,7 @@ export default {
     { h: 'Le certificat Goethe expire-t-il ?' },
     { p: "Non. Le Goethe-Institut indique que ses certificats sont **valables sans limite de durée**, et ils ne portent pas de date d'expiration. Ce qui peut changer, c'est la règle de l'organisme qui le reçoit. Certaines universités, entreprises et administrations n'acceptent que des certificats récents, et certains programmes de bourses ou de cours fixent leurs propres délais : lis bien l'exigence avant d'envoyer un certificat qui date de quelques années." },
     { p: "Les certificats sont délivrés sur papier ou en PDF numérique, selon le centre, et les employeurs ou les administrations peuvent vérifier qu'un certificat est authentique sur **goethe.de/verify**. Si tu perds un certificat papier, le centre où tu t'étais inscrit peut délivrer un duplicata payant, mais seulement dans les 10 ans qui suivent l'examen." },
-    { figure: { photo: 'goethe-certificates-FIG2', alt: 'FIG2 ALT', caption: 'FIG2 CAPTION' } },
+    { figure: { photo: 'goethe-certificates-papers-on-desk', alt: "Un homme assis à un bureau avec une feuille manuscrite devant lui", caption: "Le certificat Goethe n’expire pas, mais l’organisme qui le reçoit peut en demander un récent." } },
 
     { h: 'Qui accepte quel niveau' },
     { p: "Le droit allemand utilise des mots fixes pour les niveaux de langue et les définit avec le CECRL. L'article 2 de la loi sur le séjour (Aufenthaltsgesetz) précise que des connaissances **einfache** (simples) de l'allemand correspondent à l'A1, hinreichende (adéquates) à l'A2, **ausreichende** (suffisantes) au B1, gute (bonnes) au B2, et que celui qui beherrscht (maîtrise) l'allemand est au C1. Quand tu lis une exigence en allemand, ces mots te donnent le niveau." },
@@ -94,11 +94,11 @@ export default {
     { p: "Un conjoint qui s'installe en Allemagne pour rejoindre son partenaire doit en général prouver qu'il sait **communiquer en allemand au moins de façon simple**, ce que la loi assimile à l'A1, et le prouver avant d'entrer dans le pays. Les ambassades allemandes citent comme preuves valables Start Deutsch 1 du Goethe-Institut ou de telc et l'ÖSD Zertifikat A1. Il existe des exceptions, par exemple pour les conjoints de titulaires de la carte bleue européenne et de chercheurs : consulte la page de la représentation allemande qui traite ton visa. Et si le conjoint que tu rejoins est un citoyen de l'UE qui vit en Allemagne, un Français par exemple, cette exigence ne s'applique pas." },
     { h3: 'Nationalité allemande : B1' },
     { p: "Pour être naturalisé, il faut des connaissances suffisantes en allemand, et la loi sur la nationalité précise que c'est le cas si tu remplis les exigences d'un **examen de langue de niveau B1**. Le Goethe-Zertifikat B1 est une façon de le prouver. Comme l'examen B1 est modulaire, demande d'abord au service des naturalisations s'il accepte des certificats de modules séparés ou s'il veut les quatre compétences sur un seul certificat." },
-    { figure: { photo: 'goethe-certificates-FIG3', alt: 'FIG3 ALT', caption: 'FIG3 CAPTION' } },
+    { figure: { photo: 'goethe-certificates-group-planning', alt: "Plusieurs personnes autour d’une table qui organisent un projet avec des stylos et une grande feuille", caption: "Organiser quelque chose ensemble est la première tâche de l’oral du B1, le niveau que la loi allemande demande aux nouveaux citoyens." } },
     { h3: 'Université : niveau C1, souvent avec le TestDaF ou la DSH' },
     { p: "Pour un cursus enseigné en allemand, chaque université fixe ses propres exigences, formation par formation. Selon uni-assist, qui traite les candidatures pour de nombreuses universités allemandes, toutes les universités acceptent la DSH, le TestDaF, les certificats du Goethe-Institut et le DSD de la Kultusministerkonferenz, mais **le niveau demandé varie**." },
     { p: "Les preuves standard pour l'admission sont une DSH de niveau DSH-2, le **TestDaF avec au moins TDN 4** dans les quatre parties, le Goethe-Zertifikat C2 : Großes Deutsches Sprachdiplom et le telc Deutsch C1 Hochschule. Le Goethe-Zertifikat C1 est accepté par de nombreuses universités au moment de la candidature, ou pour s'inscrire à leur propre DSH, et certaines formations l'acceptent comme preuve à lui seul. Consulte la page d'admission de ta formation pour la liste exacte." },
-    { figure: { photo: 'goethe-certificates-FIG4', alt: 'FIG4 ALT', caption: 'FIG4 CAPTION' } },
+    { figure: { photo: 'goethe-certificates-university-building', alt: "La façade en pierre d’un bâtiment universitaire historique avec des lanternes à l’entrée", caption: "Chaque université allemande indique les certificats de langue qu’elle accepte, souvent formation par formation." } },
     { h3: 'Travail' },
     { p: "Les employeurs décident eux-mêmes du niveau qu'ils demandent, et les professions réglementées et les procédures de visa ont leurs propres règles. Le certificat Goethe est utile ici parce qu'il **indique directement le niveau** : un employeur qui lit Goethe-Zertifikat B2 sait ce que cela signifie sans tableau de correspondance." },
 

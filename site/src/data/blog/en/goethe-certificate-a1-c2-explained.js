@@ -15,7 +15,7 @@ export default {
   metaTitle: 'Goethe-Zertifikat A1 to C2: format, pass mark, validity – Alimun',
   desc: 'How the Goethe-Zertifikat works from Start Deutsch 1 to C2: the four modules, exam length, the 60% pass mark, validity, and which level a visa, passport or university needs.',
   lead: "The Goethe-Zertifikat is the best-known German exam in the world, with one exam for each level from A1 to C2. Knowing **how it is built, how it is scored and which level you actually need** saves you from booking the wrong exam, or booking the right one too early.",
-  photo: 'goethe-certificates-HEADER',
+  photo: 'goethe-certificates-reading-room',
   sticker: { draw: 'owl', say: 'Sechzig Punkte, und das Modul ist bestanden.' },
   facts: [
     { n: 6, unit: 'levels', text: 'one exam per level, from A1 (Start Deutsch 1) to C2 (Großes Deutsches Sprachdiplom)' },
@@ -45,7 +45,7 @@ export default {
     { p: "Reading and listening are marked with items that are either right or wrong. At B1, for example, each of the two modules has **30 items**, and the number of correct answers is converted into a score out of 100. The texts move from notices, short messages and ads at A1 to articles, reports and long, demanding texts at C1 and C2. In the listening module you hear announcements, conversations, radio programs and talks, and you mark your answers while you listen." },
     { h3: 'Schreiben' },
     { p: "In the writing module you write texts for a real reader. At B1 there are three tasks: a personal email of about 80 words, a short opinion on a topic of about 80 words, and a polite message of about 40 words, for example to apologize to a course leader. At higher levels the texts get longer and more formal. Each text is **marked by two graders** against fixed criteria for task completion, coherence, vocabulary and grammatical structures." },
-    { figure: { photo: 'goethe-certificates-FIG1', alt: 'FIG1 ALT', caption: 'FIG1 CAPTION' } },
+    { figure: { photo: 'goethe-certificates-writing-notebook', alt: "A hand writing with a pen in an open notebook", caption: "At B1 you write three texts in 60 minutes, so plan each one briefly before you start." } },
     { h3: 'Sprechen' },
     { p: "The speaking test is live, with **two examiners**: one leads the conversation, and both assess. At A1 you speak in a small group of up to four candidates; from A2 to C1 you usually speak with one partner, and at C2 you take the test alone. At B1, you first plan something together with your partner, then each of you gives a short presentation on a topic, and finally you answer questions about it. You get **15 minutes to prepare** at B1, B2 and C2, and 20 minutes at C1; at A1 and A2 there is no preparation time." },
 
@@ -86,7 +86,7 @@ export default {
     { h: 'Does the Goethe certificate expire?' },
     { p: "No. The Goethe-Institut says its certificates are **valid indefinitely**, and there is no expiry date on them. What can change is the rule of the organization that receives it. Some universities, employers and offices accept only recent certificates, and some scholarship and course programs set their own time limits, so read the requirement before you send a certificate that is several years old." },
     { p: "Certificates are issued on paper or as a digital PDF, depending on the exam center, and employers or offices can check that a certificate is genuine at **goethe.de/verify**. If you lose a paper certificate, the exam center where you registered can issue a replacement for a fee, but only within 10 years of the exam." },
-    { figure: { photo: 'goethe-certificates-FIG2', alt: 'FIG2 ALT', caption: 'FIG2 CAPTION' } },
+    { figure: { photo: 'goethe-certificates-papers-on-desk', alt: "A man at a desk with a handwritten sheet of paper in front of him", caption: "A Goethe certificate has no expiry date, but the office that receives it may ask for a recent one." } },
 
     { h: 'Who accepts which level' },
     { p: "German law uses fixed words for language levels, and it defines them in the CEFR. Section 2 of the Residence Act says that **einfache** (simple) knowledge of German means A1, hinreichende (adequate) means A2, **ausreichende** (sufficient) means B1, gute (good) means B2, and someone who beherrscht (masters) German is at C1. When you read a requirement in German, these words tell you the level." },
@@ -94,11 +94,11 @@ export default {
     { p: "A spouse who moves to Germany to join a partner generally has to show that they can **communicate in German at least in a simple way**, which the law equates with A1, and has to show it before entering the country. German embassies name Start Deutsch 1 from the Goethe-Institut or from telc, and the ÖSD Zertifikat A1, as accepted proof. There are exceptions, for example for the spouses of EU Blue Card holders and researchers, so check the page of the German mission that handles your visa." },
     { h3: 'German citizenship: B1' },
     { p: "To be naturalized, you need sufficient knowledge of German, and the Nationality Act says this is met when you fulfill the requirements of a **B1 language exam**. A Goethe-Zertifikat B1 is one way to show it. Since the B1 exam is modular, ask your naturalization office in advance whether it accepts separate module certificates or wants all four skills on one certificate." },
-    { figure: { photo: 'goethe-certificates-FIG3', alt: 'FIG3 ALT', caption: 'FIG3 CAPTION' } },
+    { figure: { photo: 'goethe-certificates-group-planning', alt: "Several people around a table, planning together with pens and a large sheet of paper", caption: "Planning something together is the first task of the B1 speaking test, the level German law asks of new citizens." } },
     { h3: 'University: C1 level, often with TestDaF or the DSH' },
     { p: "For a degree taught in German, universities set their own requirements, course by course. According to uni-assist, which processes applications for many German universities, all universities accept the DSH, TestDaF, the Goethe-Institut's certificates and the DSD of the Kultusministerkonferenz, but **the level they ask for varies**." },
     { p: "The standard proofs for admission are a DSH at level DSH-2, **TestDaF with at least TDN 4** in all four parts, the Goethe-Zertifikat C2: Großes Deutsches Sprachdiplom and telc Deutsch C1 Hochschule. A Goethe-Zertifikat C1 is accepted by many universities when you apply, or as the entry ticket to the university's own DSH, and some programs accept it as proof on its own. Read the admission page of your course for the exact list." },
-    { figure: { photo: 'goethe-certificates-FIG4', alt: 'FIG4 ALT', caption: 'FIG4 CAPTION' } },
+    { figure: { photo: 'goethe-certificates-university-building', alt: "The stone front of a historic university building with lanterns at the gate", caption: "Each German university lists the language certificates it accepts, often course by course." } },
     { h3: 'Work' },
     { p: "Employers decide for themselves what level they want, and regulated professions and visa routes have their own rules. Here the Goethe certificate is useful because it **names the level directly**: an employer who reads Goethe-Zertifikat B2 knows what that means without a conversion table." },
 
