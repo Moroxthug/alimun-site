@@ -5,7 +5,7 @@
    parts say which part builds them. Only an admin (app_metadata.role, checked again by the database's is_admin()) sees
    real data; signed out, or with ?sample=1, a sample; any other account is told the page is not for them.
    Part 2 (js/app/admin-people.js): students and teachers. Part 3 (js/app/admin-classes.js, js/app/admin-teaching.js):
-   classes, schedule, waiting list and messages. */
+   classes, schedule, waiting list and messages. Part 4 (js/app/admin-system.js): payouts, AI spend and the system. */
 (function () {
   'use strict';
   var Cast = window.AlimunCast;
@@ -62,7 +62,7 @@
     { id: 'messages', label: 'Messages', icon: 'messages', group: 'Teaching', part: 3, text: 'Read conversations and hide a message if needed.' },
     { id: 'payouts', label: 'Payouts', icon: 'payouts', group: 'Money and system', part: 4, text: 'Record what teachers are paid, beside the classes they taught.' },
     { id: 'ai', label: 'AI spend', icon: 'ai', group: 'Money and system', part: 4, text: 'Calls and cost by day, by feature and by person.' },
-    { id: 'system', label: 'System', icon: 'system', group: 'Money and system', part: 4, text: 'Reviews, app settings, email signups and the automatic jobs.' }
+    { id: 'system', label: 'System', icon: 'system', group: 'Money and system', part: 4, text: 'Reviews, app settings and the automatic jobs.' }
   ];
   var byId = {}; ROUTES.forEach(function (r) { byId[r.id] = r; });
   var BAR = ['overview', 'students', 'teachers', 'classes'];
@@ -166,8 +166,7 @@
     return '<div class="view__head"><div><h1 class="t-h1">' + esc(r.label) + '</h1><p class="t-lead">' + esc(r.text) + '</p></div></div>' +
       '<div class="soon rise"><div class="stage" style="--i:0;background:var(--t-sun)"><div class="bub think">On my list.</div>' + Cast.drawing('cat') + '</div>' +
       '<div class="card" style="--i:1"><h2 class="t-h2">Comes in part ' + r.part + ' of the admin pages</h2><p class="t-body">Each part is shown to you and approved before the next one is built.' +
-      (mode === 'real' ? ' Until then this is on the current admin page.' : '') + '</p><div class="btn-row"><a class="btn btn--primary" href="#/overview">Back to the overview</a>' +
-      (mode === 'real' ? '<a class="btn btn--quiet" href="/admin.html?old=1">Open the current admin page</a>' : '') + '</div></div></div>';
+      '</p><div class="btn-row"><a class="btn btn--primary" href="#/overview">Back to the overview</a></div></div></div>';
   }
   function deniedView() {
     var to = D.role === 'teacher' ? '/app/teach' : D.role === 'student' ? '/student-dashboard.html' : '/';
@@ -199,9 +198,10 @@
   function routeFromHash() { var id = (location.hash.match(/^#\/([a-z]+)/) || [])[1]; return byId[id] ? id : 'overview'; }
   var MODULES = { students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; },
     classes: function () { return window.AlimunAdminClasses; }, schedule: function () { return window.AlimunAdminSchedule; },
-    waiting: function () { return window.AlimunAdminWaiting; }, messages: function () { return window.AlimunAdminMessages; } };
+    waiting: function () { return window.AlimunAdminWaiting; }, messages: function () { return window.AlimunAdminMessages; },
+    payouts: function () { return window.AlimunAdminPayouts; }, ai: function () { return window.AlimunAdminAi; }, system: function () { return window.AlimunAdminSystem; } };
   function helpers() {
-    return { esc: esc, fmt: fmt, num: num, cap: cap, plural: plural, relative: relative, className: className, icon: icon, Cast: Cast, loaderInner: loaderInner,
+    return { esc: esc, fmt: fmt, num: num, cap: cap, plural: plural, relative: relative, className: className, icon: icon, Cast: Cast, loaderInner: loaderInner, jobs: JOBS,
       mode: function () { return mode; }, rerender: function () { render(current, false); } };
   }
   function partsOf(id) { return location.hash.replace(new RegExp('^#\\/' + id + '\\/?'), '').split('/').filter(Boolean); }

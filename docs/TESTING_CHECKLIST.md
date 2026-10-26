@@ -46,7 +46,7 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] A teacher's file: languages, rate and level save; the teacher sees the change in their Settings.
 - [ ] Invite a student and a teacher by email: the email arrives, the link signs them in, the student goes to the level test and the teacher to /app/teach.
 - [ ] Email signups CSV opens correctly in a spreadsheet.
-- [ ] /admin.html forwards to /app/admin; /admin.html?old=1 still opens the old page for classes and payouts until parts 3 and 4.
+- [ ] /admin.html and /admin.html?old=1 both forward to /app/admin.
 
 ## Admin part 3, Classes, Schedule, Waiting list, Messages
 - [ ] Create a class for a teacher: 12 weeks of dates appear in Schedule and in the teacher's dashboard; a class outside their availability is refused unless the box is ticked.
@@ -56,4 +56,11 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] Schedule: cancelling a date and moving one; the students and the teacher get the email with the new time in their own timezone; "Open the room" for today's class.
 - [ ] Waiting list: offering a place by hand when a seat is free (the student gets the usual offer email and can take the place within 48 hours); offering is refused when no seat is free; taking someone off the list.
 - [ ] Messages: a conversation reads the same as for its student and teacher; a hidden message disappears for them and comes back when shown again.
-- [ ] /admin.html?old=1 is only needed for payouts until part 4.
+
+## Admin part 4, Payouts, AI spend, System
+- [ ] Payouts: the classes counted for a period match the teacher's own Payouts page; recording, changing and deleting a pending payout; marking paid sends the teacher the email and they see it as paid.
+- [ ] AI spend: the totals match Overview for this month; people are shown by name; failures appear after a failed call.
+- [ ] Reviews: deleting one removes it from the teacher's public profile and updates their rating.
+- [ ] App settings: replacing waitlist_webhook_secret together with Vercel's WAITLIST_WEBHOOK_SECRET keeps the waiting-list offer emails working.
+- [ ] Automatic jobs: a late or failed job shows in red here and on Overview.
+- [ ] After trying part 4 with the real account: tell Claude to delete the old admin page's code.
