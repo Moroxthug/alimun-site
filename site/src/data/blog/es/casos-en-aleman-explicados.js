@@ -12,7 +12,7 @@ export default {
   metaTitle: 'Casos en alemán explicados: acusativo, dativo y genitivo – Alimun',
   desc: 'Para qué sirve cada caso alemán, cómo encontrarlo con wer, wen, wem y wessen, los verbos con dativo, las preposiciones por caso, wo o wohin y los errores típicos.',
   lead: 'El alemán usa cuatro casos para mostrar quién hace qué a quién. Son ellos los que deciden si dices der, den, dem o des, ich, mich o mir. Al principio parece muchísimo, pero **unas pocas preguntas y algunos grupos de verbos y preposiciones** cubren casi todo lo que vas a necesitar.',
-  photo: 'german-cases-heidelberg-old-town',
+  photo: 'german-cases-neuschwanstein',
   sticker: { draw: 'dog', say: 'Wem gehört der Hund? ¡Mir! Eso es dativo.' },
   facts: [
     { n: 4, unit: 'casos', text: 'nominativo, acusativo, dativo y genitivo, que encuentras con wer, wen, wem y wessen' },
@@ -161,7 +161,7 @@ export default {
     { h: 'El genitivo en el alemán de cada día' },
     { p: 'El genitivo indica a quién pertenece algo, como nuestro “de”. En el alemán escrito lo encuentras por todas partes: das Auto meines Vaters (el coche de mi padre), die Farbe des Hauses, die Geschichte der Stadt. Los nombres propios simplemente añaden -s, **sin apóstrofo**: Annas Buch, Peters Wohnung.' },
     { p: 'En genitivo singular, los masculinos y neutros llevan terminación. Los sustantivos cortos suelen tomar -es (des Mannes, des Kindes, des Schlosses), los más largos -s (des Lehrers, des Fahrrads), y los que terminan en -s, -ß o -z necesitan -es (des Hauses). **Los femeninos y los plurales no llevan terminación** en genitivo: die Farbe der Tür, die Zimmer der Kinder.' },
-    { figure: { photo: 'german-cases-neuschwanstein', alt: 'El castillo de Neuschwanstein sobre una colina boscosa encima del campo bávaro', caption: 'Die Türme des Schlosses, las torres del castillo: des Schlosses es genitivo, y el neutro das Schloss añade -es.' } },
+    { figure: { photo: 'german-cases-bakery-bread', alt: 'El mostrador de una panadería con cestas de pan y panecillos recién hechos bajo una luz cálida', caption: 'Der Duft des Brotes, el olor del pan: des Brotes es genitivo, y el neutro das Brot añade -es.' } },
     { p: 'En la lengua hablada, muchos alemanes sustituyen el genitivo de posesión por **von y el dativo**: das Auto von meinem Vater en lugar de das Auto meines Vaters. Las dos formas son correctas; el genitivo suena más formal y es lo que se espera por escrito. El genitivo también sobrevive en expresiones fijas como eines Tages (un día) y letzten Endes (al fin y al cabo).' },
     { p: 'El caso después de wegen (a causa de) es un debate de largo recorrido. El Duden registra wegen con genitivo, como en **wegen des schlechten Wetters**, y señala que el dativo, como en wegen dem Kind, es estándar en la lengua hablada pero se considera coloquial por escrito. Para redacciones, correos de trabajo y exámenes, usa el genitivo después de wegen, trotz, während y statt.' },
     { p: 'El debate incluso dio título a un libro de gran éxito. En 2004, el periodista Bastian Sick reunió sus columnas sobre la lengua en Der Dativ ist dem Genitiv sein Tod, un juego de palabras construido sobre una forma coloquial que sustituye el genitivo por un dativo y un posesivo.' },

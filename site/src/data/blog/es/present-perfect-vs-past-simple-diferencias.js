@@ -11,7 +11,7 @@ export default {
   updated: '2026-10-26',
   title: 'Present perfect o past simple: cuándo usar cada uno',
   metaTitle: 'Present perfect y past simple: diferencias y ejemplos – Alimun',
-  desc: 'Cuándo el inglés usa I have done y cuándo I did: tiempo terminado y no terminado, ever y never, just, already y yet, for y since, been y gone, EE. UU. y Reino Unido.',
+  desc: 'Cuándo el inglés usa I have done y cuándo I did: tiempo terminado o no, ever y never, just, already y yet, for y since, been y gone, EE. UU. y Reino Unido.',
   lead: "He visto o vi: en español ya dudamos según dónde vivas. El inglés elige en cada frase, y **la elección depende del tiempo que tienes en mente**: un momento terminado, o un periodo que llega hasta ahora.",
   photo: 'present-perfect-alarm-clock',
   sticker: { draw: 'suitcase', say: "She's gone to London. Vuelve el lunes." },

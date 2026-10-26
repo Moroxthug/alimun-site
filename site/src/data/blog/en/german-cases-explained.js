@@ -12,7 +12,7 @@ export default {
   metaTitle: 'German cases explained: accusative, dative and genitive – Alimun',
   desc: 'What each German case does, how to find it with wer, wen, wem and wessen, dative verbs, prepositions by case, wo or wohin, and the mistakes to avoid.',
   lead: "German uses four cases to show who does what to whom. They decide whether you say der, den, dem or des, ich, mich or mir. It feels like a lot at first, but **a handful of questions and a few groups of verbs and prepositions** cover most of what you will ever need.",
-  photo: 'german-cases-heidelberg-old-town',
+  photo: 'german-cases-neuschwanstein',
   sticker: { draw: 'dog', say: 'Wem gehört der Hund? Mir! That is the dative.' },
   facts: [
     { n: 4, unit: 'cases', text: 'nominative, accusative, dative and genitive, found with wer, wen, wem and wessen' },
@@ -161,7 +161,7 @@ export default {
     { h: 'The genitive in everyday German' },
     { p: "The genitive shows who something belongs to, like the English “of” or 's. In written German you find it everywhere: das Auto meines Vaters, die Farbe des Hauses, die Geschichte der Stadt. Names simply add -s, **without an apostrophe**: Annas Buch, Peters Wohnung." },
     { p: "Masculine and neuter nouns take an ending in the genitive singular. Short nouns often take -es (des Mannes, des Kindes, des Schlosses), longer ones -s (des Lehrers, des Fahrrads), and nouns ending in -s, -ß or -z need -es (des Hauses). **Feminine nouns and plurals take no ending** in the genitive: die Farbe der Tür, die Zimmer der Kinder." },
-    { figure: { photo: 'german-cases-neuschwanstein', alt: 'Neuschwanstein Castle on a wooded hill above the Bavarian countryside', caption: 'Die Türme des Schlosses: des Schlosses is genitive, and the neuter noun das Schloss adds -es.' } },
+    { figure: { photo: 'german-cases-bakery-bread', alt: 'A bakery counter with baskets of fresh bread and rolls under a warm lamp', caption: 'Der Duft des Brotes, the smell of the bread: des Brotes is genitive, and the neuter noun das Brot adds -es.' } },
     { p: "In everyday speech, many Germans replace the possessive genitive with **von and the dative**: das Auto von meinem Vater instead of das Auto meines Vaters. Both are correct; the genitive sounds more formal and is expected in writing. The genitive also survives in fixed expressions such as eines Tages (one day) and letzten Endes (in the end)." },
     { p: "The case after wegen (because of) is a long-running debate. Duden lists wegen with the genitive, as in **wegen des schlechten Wetters**, and notes that the dative, as in wegen dem Kind, is standard in speech but counts as colloquial in writing. For essays, emails at work and exams, use the genitive after wegen, trotz, während and statt." },
     { p: "The debate even gave a bestselling book its title. In 2004 the journalist Bastian Sick published a collection of his language columns as Der Dativ ist dem Genitiv sein Tod, a joke built on a colloquial construction that replaces the genitive with a dative and a possessive." },
