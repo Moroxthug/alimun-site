@@ -1469,3 +1469,13 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .va-bar { position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%); z-index: 90; max-width: calc(100% - 32px); padding: 10px 18px; border-radius: 999px; background: var(--ink); color: var(--bone); font-size: 14px; box-shadow: var(--shadow); text-align: center; }
 .va-bar a { color: var(--lime); font-weight: 700; margin-inline-start: 8px; }
 @media (max-width: 899px) { body.is-viewing-as .va-bar { bottom: 92px; } }
+
+/* Finding a class (js/app/find.js) */
+.fd-filter { max-width: 280px; margin-bottom: 6px; }
+.fd-row small.fd-fit { color: var(--forest); font-weight: 700; }
+.fd-seats { margin: 10px 0 16px; color: var(--on-forest); }
+.fd-state { margin: 4px 0 14px; }
+.fd-msg { margin-top: 10px; color: var(--on-forest); }
+.fd-msg:empty { display: none; }
+.fd-stars { display: flex; flex-wrap: wrap; gap: 10px 22px; margin-top: 6px; }
+.fd-confirm { margin-top: 14px; }

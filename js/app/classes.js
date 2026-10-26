@@ -105,12 +105,14 @@
 
   function pageView() {
     var up = upcoming(), next = up[0];
-    var html = '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_nav_classes')) + '</h1><p class="t-lead">' + esc(t('app_cl_lead')) + '</p></div>' +
+    var html = (window.AlimunFind ? AlimunFind.takeFlash() : '') + '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_nav_classes')) + '</h1><p class="t-lead">' + esc(t('app_cl_lead')) + '</p></div>' +
       '<p class="t-small cl-zone">' + esc(t('app_cl_zone', { zone: zone().replace(/_/g, ' ') })) + '</p></div><div class="grid rise">';
+    var offer = A.data().offer;
+    if (offer && window.AlimunFind) html += AlimunFind.offerHtml(offer, 0);
     if (!C.cohorts.length && !C.bookings.length) {
       html += '<section class="stage span-4" style="--i:0;background:var(--t-mint)" aria-hidden="true"><div class="bub think">' + esc(t('app_cl_none_bub')) + '</div>' + A.Cast.drawing('mug') + '</section>' +
         '<section class="card span-8" style="--i:1"><h2 class="t-h2">' + esc(t('app_cl_none_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_cl_none_p')) + '</p>' +
-        '<div class="btn-row" style="margin-top:20px"><a class="btn btn--primary" href="/student-dashboard">' + esc(t('app_cl_find')) + A.icon('arrow') + '</a></div></section>';
+        '<div class="btn-row" style="margin-top:20px"><a class="btn btn--primary" href="#/classes/find">' + esc(t('app_cl_find')) + A.icon('arrow') + '</a></div></section>';
     } else {
       html += nextHtml(next);
       html += '<section class="stage span-4" style="--i:1;background:var(--t-lime)" aria-hidden="true"><div class="bub say">' + esc(t(next && joinable(next.at, next.minutes) ? 'app_cl_bub_now' : 'app_cl_bub')) + '</div>' + A.Cast.drawing('mug') + '</section>';
@@ -119,6 +121,9 @@
       html += otoHtml();
       html += notesHtml();
       html += wordsHtml();
+      var mine = C.cohorts.filter(function (co) { return (A.data().profile.cohorts || []).indexOf(co.id) > -1; })[0] || (C.sample ? C.cohorts[0] : null);
+      if (mine && window.AlimunFind) html += AlimunFind.yourClassHtml(mine, C.teachers[mine.teacher_id] || '', 7);
+      else if (window.AlimunFind) html += '<section class="card card--bone span-12" style="--i:7"><div class="card__row" style="flex-wrap:wrap"><p class="t-body" style="flex:1;min-width:220px">' + esc(t('app_fd_no_group')) + '</p><a class="btn btn--ghost btn--sm" href="#/classes/find">' + esc(t('app_cl_find')) + '</a></div></section>';
     }
     if (C.sample) html += '<p class="t-tiny span-12" style="margin-top:4px">' + esc(t('app_cl_sample')) + '</p>';
     return html + '</div>';
@@ -437,7 +442,21 @@
     A = helpers; root = view;
     leave();
     bind();
+    if (window.AlimunFind) AlimunFind.bind(view, helpers);
     document.body.classList.remove('is-reading');
+    /* Finding a class, an offered place and reviews live in js/app/find.js */
+    if (window.AlimunFind && AlimunFind.routes.indexOf(parts[0]) > -1) {
+      view.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div></div>';
+      return AlimunFind.mount(view, parts, helpers).then(function (res) {
+        if (my !== mountNo) return { stale: true };
+        view.innerHTML = res.html;
+        return res;
+      }, function (e) {
+        console.warn('[Alimun] Finding a class did not load', e && e.message);
+        if (my === mountNo) view.innerHTML = errorView();
+        return { title: t('app_nav_classes') };
+      });
+    }
     view.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div></div>';
     var keep = C && { month: C.month, day: C.day };
     return load().then(function (d) {

@@ -63,3 +63,11 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] Reviews: deleting one removes it from the teacher's public profile and updates their rating.
 - [ ] App settings: replacing waitlist_webhook_secret together with Vercel's WAITLIST_WEBHOOK_SECRET keeps the waiting-list offer emails working.
 - [ ] Automatic jobs: a late or failed job shows in red here and on Overview.
+
+## Student dashboard switch-over, part 1 (finding a class)
+- [ ] A paying student without a class finds the open classes of their language, joins one, and sees it in Classes and on Home; the teacher sees them in their class.
+- [ ] Switching to another class and leaving a class: the seat is freed and offered to the first person waiting.
+- [ ] A full class: joining its waiting list; an offer by email (automatic or from the admin page) shows on Home and Classes, "Take the place" puts the student in the class; an expired offer says so.
+- [ ] A student whose plan is too small, or who has no plan, is told which plan they need.
+- [ ] "Email me when a class opens" is kept after reloading.
+- [ ] After a first class, the student reviews the teacher; the review shows on the class page for other students and in the admin's System page.

@@ -139,7 +139,7 @@
     return mySession().then(function (r) {
       var session = r.data && r.data.session;
       if (!session) return null;
-      return c.from('student_profiles').select('id, full_name, language, level, tier, goal_track, placement, enrolled_cohort_id, timezone')
+      return c.from('student_profiles').select('id, full_name, language, level, tier, goal_track, placement, enrolled_cohort_id, timezone, stripe_subscription_status, waitlist_opt_in, preferred_days')
         .eq('user_id', session.user.id).maybeSingle().then(function (pr) {
           if (pr.error) throw pr.error;
           var p = pr.data;
@@ -176,7 +176,9 @@
         c.from('practice_progress').select('updated_at').eq('student_id', p.id).gte('updated_at', since),
         c.from('exercise_results').select('created_at').eq('student_id', p.id).gte('created_at', since),
         c.from('session_attendance').select('joined_at').eq('student_id', p.id).gte('joined_at', since),
-        topicLabels(p.placement && p.placement.language || p.language, p.placement && p.placement.topics, lang)
+        topicLabels(p.placement && p.placement.language || p.language, p.placement && p.placement.topics, lang),
+        c.from('cohort_waitlist').select('id, cohort_id, offer_expires_at, cohorts ( language, level, tier, teacher_profiles:teacher_public ( full_name ) )')
+          .eq('student_id', p.id).gt('offer_expires_at', new Date().toISOString()).order('offer_expires_at', { ascending: true }).limit(1)
       ]);
     }).then(function (res) {
       res.cohorts = cohortsOf;
@@ -215,8 +217,17 @@
           tier: p.tier || 'free',
           goal: p.goal_track || null,
           timezone: p.timezone || null,
-          cohorts: res.cohorts || []
+          cohorts: res.cohorts || [],
+          paying: p.stripe_subscription_status === 'active',
+          waitlistOptIn: !!p.waitlist_opt_in,
+          days: p.preferred_days || []
         },
+        offer: (function (o) {
+          o = o && !o.error && o.data && o.data[0];
+          if (!o || !o.cohorts) return null;
+          return { id: o.id, cohort: o.cohort_id, until: o.offer_expires_at, language: o.cohorts.language, level: o.cohorts.level, tier: o.cohorts.tier,
+            teacher: o.cohorts.teacher_profiles && o.cohorts.teacher_profiles.full_name || '' };
+        })(res[9]),
         nextClass: s ? {
           id: s.id, at: s.scheduled_at, live: s.status === 'live', language: co.language || p.language, level: co.level || p.level,
           teacher: res.teacher || ''
@@ -228,6 +239,92 @@
         topics: placement ? res[8] : []
       };
     });
+  }
+
+  /* Step 16, part 1: finding a class, the waiting list and reviews (docs/DASHBOARD_PLAN.md, "Step 16 decisions").
+     Classes a student can see are open or full ones (cohorts_select); their dates are not visible before joining, so the
+     next dates are worked out from the timetable. Joining, switching, leaving and taking an offered place go through
+     /api/enroll, which checks the plan, the language and the seats on the server. */
+  var FIND_COLS = 'id, language, level, tier, goal_track, description, schedule_days, schedule_time, timezone, status, enrolled_count, max_students, teacher_id, ' +
+    'teacher_profiles:teacher_public ( id, full_name, specialty, bio, rating, experience_years, sessions_delivered, location )';
+  function findClasses(language) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('cohorts').select(FIND_COLS).eq('language', language).in('status', ['open', 'full']).order('level').limit(200).then(rows);
+  }
+  function findClass(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('cohorts').select(FIND_COLS).eq('id', id).maybeSingle().then(function (r) {
+      if (r.error) throw r.error;
+      if (!r.data) return null;
+      return teacherReviews(r.data.teacher_id).then(function (rv) { r.data.reviews = rv; return r.data; });
+    });
+  }
+  function teacherReviews(teacherId) {
+    var c = client();
+    if (!teacherId || !c) return Promise.resolve([]);
+    return c.from('teacher_reviews').select('rating, review_text, created_at').eq('teacher_id', teacherId).order('created_at', { ascending: false }).limit(20).then(rows);
+  }
+  function myWaitlist(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('cohort_waitlist').select('id, cohort_id, added_at, offered_at, offer_expires_at, cohorts ( ' + FIND_COLS + ' )').eq('student_id', studentId).order('added_at').then(rows);
+  }
+  function joinWaitlist(studentId, cohortId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('cohort_waitlist').insert({ student_id: studentId, cohort_id: cohortId }).select('id').single().then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function leaveWaitlist(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('cohort_waitlist').delete().eq('id', id).then(function (r) { if (r.error) throw r.error; });
+  }
+  function setWaitlistOptIn(studentId, on) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('student_profiles').update({ waitlist_opt_in: !!on }).eq('id', studentId).then(function (r) { if (r.error) throw r.error; });
+  }
+  /* body: { cohort_id } to join, { cohort_id, switch: true } to switch, { cohort_id, waitlist_id } to take an offered
+     place, { action: 'leave' } to leave. Errors carry the server's code (payment_required, tier_mismatch, ...) */
+  function enroll(body) {
+    return api('/api/enroll', body).catch(function (e) { e.code = e.body && e.body.error || e.status; throw e; });
+  }
+  /* The teachers who taught the student: their classes (now and before) and their 1:1s */
+  function myTeachers(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('enrollments').select('cohort_id').eq('student_id', studentId),
+      c.from('one_on_one_bookings').select('teacher_id').eq('student_id', studentId).eq('status', 'completed')
+    ]).then(function (r) {
+      var ids = {}; rows(r[1]).forEach(function (b) { if (b.teacher_id) ids[b.teacher_id] = true; });
+      var cos = rows(r[0]).map(function (e) { return e.cohort_id; });
+      return (cos.length ? c.from('cohorts').select('teacher_id').in('id', cos).then(rows) : Promise.resolve([])).then(function (list) {
+        list.forEach(function (x) { if (x.teacher_id) ids[x.teacher_id] = true; });
+        var all = Object.keys(ids);
+        return all.length ? c.from('teachers_public').select('id, full_name').in('id', all).then(rows) : [];
+      });
+    });
+  }
+  /* A review can be written once the teacher has taught the student (was_taught_by, checked again by the row rules) */
+  function reviewState(studentId, teacherId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.rpc('was_taught_by', { p_teacher_id: teacherId }),
+      c.from('teacher_reviews').select('id, rating, review_text').eq('student_id', studentId).eq('teacher_id', teacherId).maybeSingle(),
+      c.from('teachers_public').select('id, full_name').eq('id', teacherId).maybeSingle()
+    ]).then(function (r) {
+      return { allowed: !r[0].error && r[0].data === true, review: r[1].data || null, teacher: r[2].data || null };
+    });
+  }
+  function saveReview(studentId, teacherId, rating, text) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('teacher_reviews').upsert({ student_id: studentId, teacher_id: teacherId, rating: rating, review_text: text || null }, { onConflict: 'teacher_id,student_id' })
+      .select('id').single().then(function (r) { if (r.error) throw r.error; });
   }
 
   /* Course book progress: one row per finished page or unit test */
@@ -1197,5 +1294,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, adminClasses: adminClasses, adminClassFile: adminClassFile, adminTeacherSlots: adminTeacherSlots, adminCreateClass: adminCreateClass, adminClassUpdate: adminClassUpdate, adminMoveStudent: adminMoveStudent, adminRemoveStudent: adminRemoveStudent, adminSchedule: adminSchedule, adminSessionUpdate: adminSessionUpdate, adminWaitlist: adminWaitlist, adminWaitlistRemove: adminWaitlistRemove, adminWaitlistOffer: adminWaitlistOffer, adminThreads: adminThreads, adminThreadMessages: adminThreadMessages, adminHideMessage: adminHideMessage, adminPayouts: adminPayouts, adminRecordPayout: adminRecordPayout, adminPayoutUpdate: adminPayoutUpdate, adminPayoutDelete: adminPayoutDelete, adminAiUsage: adminAiUsage, adminAiFailures: adminAiFailures, adminSettings: adminSettings, adminSettingSet: adminSettingSet, adminReviews: adminReviews, adminReviewDelete: adminReviewDelete, adminJobs: adminJobs, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { findClasses: findClasses, findClass: findClass, myWaitlist: myWaitlist, joinWaitlist: joinWaitlist, leaveWaitlist: leaveWaitlist, setWaitlistOptIn: setWaitlistOptIn, enroll: enroll, myTeachers: myTeachers, reviewState: reviewState, saveReview: saveReview, viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, adminClasses: adminClasses, adminClassFile: adminClassFile, adminTeacherSlots: adminTeacherSlots, adminCreateClass: adminCreateClass, adminClassUpdate: adminClassUpdate, adminMoveStudent: adminMoveStudent, adminRemoveStudent: adminRemoveStudent, adminSchedule: adminSchedule, adminSessionUpdate: adminSessionUpdate, adminWaitlist: adminWaitlist, adminWaitlistRemove: adminWaitlistRemove, adminWaitlistOffer: adminWaitlistOffer, adminThreads: adminThreads, adminThreadMessages: adminThreadMessages, adminHideMessage: adminHideMessage, adminPayouts: adminPayouts, adminRecordPayout: adminRecordPayout, adminPayoutUpdate: adminPayoutUpdate, adminPayoutDelete: adminPayoutDelete, adminAiUsage: adminAiUsage, adminAiFailures: adminAiFailures, adminSettings: adminSettings, adminSettingSet: adminSettingSet, adminReviews: adminReviews, adminReviewDelete: adminReviewDelete, adminJobs: adminJobs, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

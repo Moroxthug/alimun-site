@@ -75,7 +75,9 @@
     app_fc_add_rest: ['app_fc_add_rest_zero', 'app_fc_add_rest_one', 'app_fc_add_rest_two', 'app_fc_add_rest_few', 'app_fc_add_rest_many', 'app_fc_add_rest_other'],
     app_fc_mine: ['app_fc_mine_zero', 'app_fc_mine_one', 'app_fc_mine_two', 'app_fc_mine_few', 'app_fc_mine_many', 'app_fc_mine_other'],
     app_qz_clock_end_p: ['app_qz_clock_end_p_zero', 'app_qz_clock_end_p_one', 'app_qz_clock_end_p_two', 'app_qz_clock_end_p_few', 'app_qz_clock_end_p_many', 'app_qz_clock_end_p_other'],
-    app_pr_mistakes_n: ['app_pr_mistakes_n_zero', 'app_pr_mistakes_n_one', 'app_pr_mistakes_n_two', 'app_pr_mistakes_n_few', 'app_pr_mistakes_n_many', 'app_pr_mistakes_n_other']
+    app_pr_mistakes_n: ['app_pr_mistakes_n_zero', 'app_pr_mistakes_n_one', 'app_pr_mistakes_n_two', 'app_pr_mistakes_n_few', 'app_pr_mistakes_n_many', 'app_pr_mistakes_n_other'],
+    app_fd_seats: ['app_fd_seats_zero', 'app_fd_seats_one', 'app_fd_seats_two', 'app_fd_seats_few', 'app_fd_seats_many', 'app_fd_seats_other'],
+    app_fd_years: ['app_fd_years_zero', 'app_fd_years_one', 'app_fd_years_two', 'app_fd_years_few', 'app_fd_years_many', 'app_fd_years_other']
   };
   var plural = window.Intl && Intl.PluralRules ? new Intl.PluralRules(locale) : null;
   function tn(key, n, vars) {
@@ -284,7 +286,8 @@
     return head + '<div class="card__row card__row--split"><div>' +
         '<p class="t-small" id="h-next">' + esc(t('app_home_next')) + '</p>' +
         '<h2 class="t-h1" style="margin-top:10px">' + esc(t(k[0])) + '</h2>' +
-        '<p class="t-lead" style="margin-top:12px">' + esc(t(k[1], { course: courseName(d) })) + '</p></div>' +
+        '<p class="t-lead" style="margin-top:12px">' + esc(t(k[1], { course: courseName(d) })) + '</p>' +
+        '<div class="btn-row" style="margin-top:20px"><a class="btn btn--lime" href="#/classes/find">' + esc(t('app_fd_title')) + '</a></div></div>' +
         '<div class="card__art card__art--lg">' + Cast.drawing('mug') + '</div></div>' +
       '</section>';
   }
@@ -380,6 +383,7 @@
         '<p class="t-lead">' + esc(cap(fmt(Date.now(), { weekday: 'long', day: 'numeric', month: 'long' }))) + '</p></div></div>' +
       '<div class="grid rise">' +
         sampleNote() +
+        (d.offer && window.AlimunFind ? AlimunFind.offerCard(d.offer, readerHelpers) : '') +
         nextClassCard(d) +
         buddyStage(d) +
         todayPlan(d) +
