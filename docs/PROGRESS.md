@@ -899,3 +899,4 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 
 ## 2026-10-26 — AI tutor: the owner's answers; part 3 handed to a new session
 - Owner: "just go with your recommendations, proceed with step 3 in new convo". The answers are recorded in `docs/AI_TUTOR_PLAN.md` section 10a (questions 5 and 14 remain open). Part 3 (voice) continues in a new session.
+- Owner, later the same day: question 5, under-16s need a mandatory parental authorisation, through a consent layer to be built later; question 14, the lesson review "creates a better learning program". Both recorded in `docs/AI_TUTOR_PLAN.md` section 10a; no question is left open.

@@ -117,7 +117,7 @@ Recordings are sent to Groq (listening) or Azure (scoring) and discarded; they a
 - 2: the free 10 minutes are given once per account.
 - 3: Community 30, Focused 60, Intensive 120, 1 on 1 120 minutes per calendar month, unused minutes lost (editable on the admin's System page).
 - 4: time credits in packs of 30 and 120 minutes, prices set in Stripe by the owner; bought minutes expire after 12 months; students on the free plan may buy them; the offer appears only when the time is used up, inside the Tutor.
-- 5: students only. Learners under 16 and parental consent: no recommendation was made; still the owner's and their lawyer's call.
+- 5: students only. Learners under 16 may use the tutor, but only after a parent's authorisation: a consent layer with mandatory parental authorisation for under-16s will be built later (owner, 26 Oct 2026). Until it exists, the tutor is not advertised to under-16s.
 - 6: transcripts kept 90 days; summaries and the memory until the student clears them; teachers see nothing (as built).
 - 7: one voice for the tutor in every language: Orus (the owner's favourite with Charon, and the course's main narrator), with Sulafat as the alternative the owner can compare by ear in part 3; spoken through Google Cloud on the same key and model as the course audio (`api/speech.js`, `docs/CLOUD_TTS_SETUP.md`).
 - 8: no live speech-to-speech mode for now.
@@ -126,7 +126,7 @@ Recordings are sent to Groq (listening) or Azure (scoring) and discarded; they a
 - 11: the tutor keeps its own board; tldraw stays a classroom decision.
 - 12: Groq gpt-oss-120b first (as built).
 - 13: going over a lesson uses the student's normal tutor minutes; it is offered until the class's next lesson.
-- 14: still open (the owner's message was cut off).
+- 14: the owner's full sentence: going over a lesson with the tutor afterwards "creates a better learning program" (the reason for part 5b; nothing more to decide).
 - Part 3 continues in a new session (owner's request).
 
 ## 10. Questions only the owner can answer
