@@ -782,3 +782,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Switch-over: `signin.html` sends approved teachers to `/app/teach`; `teacher-dashboard.html` sends teachers there (admins in view-as stay on it until the admin pages are rebuilt). `tests/smoke/pages.spec.js` expects `/teacher-dashboard?preview=1` to end on `/app/teach`.
 - `app_tp_*` and `app_tst_*` keys (English first, then eight languages).
 - Checked: the three sections with the sample teacher on desktop English and phone Arabic, sending a class message, starting a private conversation, payouts, saving settings; no errors. Smoke tests: 14 of 14 pass (run here with Chromium at `/opt/pw-browsers/chromium` through a temporary config, because the project's Playwright expects another browser build; not a project change). Not checked from here: a real teacher signing in and landing on `/app/teach`.
+
+## 2026-10-26 — Admin pages, part 1: shell and Overview
+- Owner: go ahead with the admin pages; on the questions (accounts, language, old pages), "go with what is best and keep it in mind for testing". Decisions recorded in `docs/DASHBOARD_PLAN.md`; new `docs/TESTING_CHECKLIST.md` lists everything to try with real accounts, across the dashboards and the admin pages.
+- Inventory of the current `admin.html` taken first (sections, calls, server checks, invented figures, gaps).
+- `/app/admin` (`app/admin.html`, `js/app/admin.js`), `AlimunData.adminOverview()`. No database change. Every table the Overview reads checked readable by the real admin account (rolled back, read only).
+- Checked with the sample: desktop and phone, no errors.

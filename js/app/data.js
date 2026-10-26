@@ -784,6 +784,42 @@
     });
   }
 
+  /* Admin (docs/DASHBOARD_PLAN.md, step 15, admin part 1): who is signed in, and for an admin (app_metadata.role, checked
+     again by every row rule through is_admin()) the Overview's counts, today's classes, old unmarked homework, AI spend
+     this month and the automatic jobs' last week. */
+  function adminOverview() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.auth.getSession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session) return { signedIn: false };
+      if ((session.user.app_metadata || {}).role !== 'admin') return { signedIn: true, admin: false, role: (session.user.app_metadata || {}).role || null };
+      var now = new Date(), day0 = new Date(now); day0.setHours(0, 0, 0, 0);
+      var day1 = new Date(day0.getTime() + DAY), week = new Date(now.getTime() + 7 * DAY), month0 = new Date(now.getFullYear(), now.getMonth(), 1);
+      var n = function (q) { return q.then(function (r) { if (r.error) throw r.error; return r.count || 0; }); };
+      var head = { count: 'exact', head: true };
+      return Promise.all([
+        n(c.from('student_profiles').select('id', head)),
+        n(c.from('student_profiles').select('id', head).eq('stripe_subscription_status', 'active')),
+        n(c.from('teacher_profiles').select('id', head).eq('status', 'approved')),
+        c.from('teacher_profiles').select('id, full_name, languages, created_at').eq('status', 'pending').order('created_at', { ascending: true }).limit(20),
+        n(c.from('cohorts').select('id', head).in('status', ['open', 'full'])),
+        n(c.from('enrollments').select('id', head).eq('status', 'active')),
+        n(c.from('cohort_waitlist').select('id', head)),
+        n(c.from('sessions').select('id', head).neq('status', 'cancelled').gte('scheduled_at', now.toISOString()).lt('scheduled_at', week.toISOString())),
+        c.from('sessions').select('id, scheduled_at, status, cohorts(id, language, level, tier, enrolled_count, teacher_profiles(full_name))').neq('status', 'cancelled')
+          .gte('scheduled_at', day0.toISOString()).lt('scheduled_at', day1.toISOString()).order('scheduled_at', { ascending: true }),
+        c.from('assignment_submissions').select('id, submitted_at, assignments(title, teacher_id)').eq('status', 'pending').lt('submitted_at', new Date(now.getTime() - 7 * DAY).toISOString()).limit(200),
+        c.from('v_ai_spend_daily').select('day, calls, cost_usd, failures').gte('day', month0.toISOString().slice(0, 10)),
+        c.from('cron_runs').select('job, ran_at, ok').gte('ran_at', new Date(now.getTime() - 7 * DAY).toISOString()).order('ran_at', { ascending: false }).limit(3000)
+      ]).then(function (r) {
+        return { signedIn: true, admin: true, email: session.user.email || '',
+          counts: { students: r[0], paying: r[1], teachers: r[2], pending: (r[3].data || []).length, classes: r[4], enrolled: r[5], waiting: r[6], week: r[7] },
+          applications: rows(r[3]), today: rows(r[8]), oldHomework: rows(r[9]), ai: rows(r[10]), jobs: rows(r[11]) };
+      });
+    });
+  }
+
   /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
   function libraryResults(studentId) {
     var c = client();
@@ -840,5 +876,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, adminOverview: adminOverview, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

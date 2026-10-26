@@ -1411,3 +1411,17 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .tms .tm-start { display: grid; gap: 6px; padding: 12px; margin-top: 6px; border-top: 1px solid var(--line); }
 .tp-note { margin: 16px 0 0; color: var(--on-forest); }
 .tp-row { grid-template-columns: 130px minmax(0, 1fr); }
+
+/* ---------- Admin (step 15, admin pages, js/app/admin.js) ---------- */
+.ad-att { grid-template-columns: minmax(0, 1fr); }
+.ad-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; margin-top: 14px; }
+.ad-tile { display: grid; gap: 2px; padding: 16px; border-radius: var(--r-md); background: var(--bone); color: inherit; text-decoration: none; transition: transform var(--t-fast) var(--ease); }
+.ad-tile:hover { transform: translateY(-2px); }
+.ad-tile b { font-weight: 700; }
+.ad-tile small { color: var(--muted); font-size: 13px; }
+.ad-today { grid-template-columns: 84px minmax(0, 1fr) auto; align-items: center; }
+@media (max-width: 520px) { .ad-today { grid-template-columns: 1fr; } .ad-today .btn { justify-self: start; } }
+.ad-job { grid-template-columns: minmax(0, 1fr); }
+.ad-job.is-bad b { color: #b0472f; }
+.ad-msg { margin: 10px 0 0; color: #b0472f; }
+.ad-msg:empty { display: none; }
