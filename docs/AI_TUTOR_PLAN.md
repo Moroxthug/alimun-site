@@ -1,0 +1,131 @@
+# Alimun AI tutor — plan (26 Oct 2026, waiting for the owner)
+
+Nothing here is built yet. Each part below is shown to the owner and confirmed before the next starts, like the dashboard steps (`docs/DASHBOARD_PLAN.md`). The owner's vision and earlier decisions are in `docs/DASHBOARD_PLAN.md`, "AI tutor". Prices were read from the providers' own pages on 26 Oct 2026 (sources at the end); they are in US dollars and change, so `api/tutor.js` keeps them in one table like `PRICING` in `api/ai.js`.
+
+## 1. What the student gets
+The Tutor is a section of the student dashboard (`#/tutor`). The student opens a session and the tutor greets them by name, remembers what they did last time, and proposes what to work on today, picked from where they struggle most. A session is a conversation beside a whiteboard:
+
+- The tutor writes on the board while it explains (a rule, an example sentence with the important words highlighted, a table of endings), and sets exercises on the board for the student to complete there: gaps to fill, words to put in order, choosing, matching, a sentence to correct, a sentence to say aloud.
+- The student answers on the board (typing into the gaps, tapping, dragging) or by speaking. The tutor checks, explains the mistake, and moves on or tries again with a similar item.
+- The student can talk to the tutor (tap to talk) or type. The tutor answers in writing and, while time lasts, aloud.
+- Pronunciation practice: the tutor asks the student to say a word or a sentence, scores how it was said, shows which words and sounds were off, says them slowly, and asks again until it is right.
+- At the end the tutor sums up what was practised, adds the new and missed words to the student's flashcards, and leaves a short set of exercises, a listening, a speaking and a writing task in Practice for later.
+- A clock shows the time left. Free accounts get 10 minutes; paid plans more each month; extra time can be bought.
+
+The face is the student's language buddy from the approved drawings (tea for English, Brezel for German, croissant for French, churro for Spanish, pizza for Italian, pastel de nata for Portuguese), with its reactions; the dashboard calls it "Tutor". Public pages do not mention it as AI (open question 9).
+
+## 2. Architecture in one paragraph
+Turn by turn, every turn through our server, so the server decides who may talk, how much time is left, what the tutor is told, and what it costs. The student's voice is recorded in the browser and sent to `/api/tutor`; the server turns it into text (Groq Whisper, already used by Practice), builds the tutor's instructions from server-side text plus the student's own data (never instructions from the browser), asks the text model for a reply in a fixed JSON shape (what to say, what to write on the board, which exercise to set), checks the exercises with the same checks as the book items, stores the turn, charges the time, and returns it. The browser draws the board and asks for the voice of that reply (`?action=voice`, server text only, never free text from the browser). A reply takes about two to four seconds, which suits a tutor that writes on the board and a learner who thinks before answering. A live speech-to-speech mode (Gemini Live) would answer faster but gives the server much less control; it is kept as a later option (section 5 and question 8).
+
+## 3. Parts (each shown to the owner before the next)
+
+**Part 0. Close the "grade" action.** Four places still send instructions written in the browser to `/api/ai?action=grade`: the homework check before handing in (`js/app/homework.js`), mock test marking (`js/app/tests.js`), and the teacher's drafts of homework and exercise sets (`js/app/data.js` `draftTask`, used by `teach-homework.js` and `teach-material.js`). Each gets its own action in `api/ai.js` with the instructions on the server: `homework-check` (assignment id and text), `mark-mock` (test id, part and answers; the marking scheme read from the test file on the server), `draft-homework` and `draft-set` (topic, language, level, kinds). Then `grade` answers 410 and the smoke test in `docs/IMPLEMENTATION_PLAN.md` §11 changes from `action=grade` to one of the new actions. No database change. This is independent of the tutor and can go first.
+
+**Part 1. Time: the meter, the free 10 minutes, the balance.** Database (section 4), the server's time functions, `?action=status`, the clock in the dashboard, the admin's view and a manual "add minutes" on a student's file (`/app/admin`). Nothing to talk to yet; this is the foundation every later part charges against.
+
+**Part 2. The tutor in writing, with the board.** `#/tutor` (`js/app/tutor.js`) and the board (`js/app/board.js`), `?action=start|turn|end`, the student brief built from the dashboard's data, exercises on the board using the shared engine (`js/app/exercises.js`), session summaries and the memory. Typed conversation only. The board is our own (section 6).
+
+**Part 3. Voice.** Tap to talk (Groq Whisper in the language being learned, with the student's own language allowed when they ask for help) and the tutor speaking (Google Cloud Text-to-Speech, section 5). The voice is chosen per language from the course voices (Sulafat and Orus, question 7). Speaking stops when the time runs out; writing on the board stops too (one closing reply).
+
+**Part 4. Pronunciation.** Azure pronunciation assessment on a sentence the tutor set: accuracy, fluency and completeness, the words marked in the sentence (said well, said differently, missed), the sound that was off where Azure gives it, the tutor saying it slowly, and practice loops. Recordings are scored and discarded, never stored.
+
+**Part 5. Connected to the dashboard.** Words from the session go into the flashcards (`vocab_reviews`); the exercises left after a session appear in Practice as "From your tutor" (with `/again` like teacher sets); a listening (tutor's voice reading a short text the tutor wrote, with questions), a speaking task and a writing task (handed to the homework check from part 0, not to a teacher); Home gets a Tutor card (time left, what the tutor suggested last time); Progress lists past sessions with their summaries.
+
+**Part 6. Paid time.** Monthly minutes per plan, time credits bought in Stripe Checkout (one payment, like the private class), the webhook adding them, the "out of time" screen with the plans and the credits. The owner said on 25 Oct 2026 "no upgrade pop-up for now", so the offer appears only when the time is used up, inside the Tutor (question 4).
+
+**Later, not in this plan:** reading handwriting on the board (a picture of the student's writing sent to a vision model), the shared board with "Live classroom v2" (section 6), live speech-to-speech conversation (section 5).
+
+## 4. Database (one migration per part, idempotent, ending with a verify query, shown to the owner before it is applied)
+All tables have row-level security: a student reads only their own rows; nothing is written from the browser; writes go through the server (service role) and `security definer` functions whose `execute` is revoked from `anon` and `authenticated`. Admins read everything through `public.is_admin()`.
+
+Part 1, `supabase/migrations/2026MMDDHHMM_tutor_time.sql`:
+- `tutor_plan_minutes` (tier text primary key, minutes_per_month int): the allowance per plan, editable by the admin. Proposed values in question 3; `free` is 0 here because the free 10 minutes are a one-time grant.
+- `tutor_time` (student_id primary key → student_profiles, free_seconds, plan_seconds, plan_period text such as `2026-11`, credit_seconds, updated_at): the three buckets. The free 10 minutes (600 seconds) are added the first time the student opens the Tutor (one row per student, so once only).
+- `tutor_time_ledger` (id, student_id, seconds (+ added, − used), bucket `free | plan | credit`, reason `free_grant | plan_month | purchase | use | refund | admin`, session_id, stripe_session_id unique, note, created_at): every change, append-only, so any balance can be explained.
+- `tutor_refresh(student)`: if the plan period has changed (calendar month UTC, or the Stripe billing period, question 3), sets `plan_seconds` to the plan's allowance (unused plan minutes do not carry over; free and bought time do).
+- `tutor_charge(session, seconds)`: locks the student's `tutor_time` row, takes the seconds from the plan minutes first, then the free minutes, then bought time, writes the ledger rows, adds them to the session, and returns what is left. One transaction, so two tabs cannot spend the same minute.
+- `tutor_add_credit(student, seconds, stripe_session_id)`: used by the webhook; a repeated webhook does nothing (unique `stripe_session_id`).
+
+Part 2, `..._tutor_sessions.sql`:
+- `tutor_sessions` (id, student_id, language, level, started_at, last_turn_at, ended_at, seconds_used, turns, summary text, topics jsonb, words jsonb, board jsonb (the last board, to reopen it), keep_until).
+- `tutor_messages` (id, session_id, role `student | tutor`, text, board jsonb, exercise jsonb, result jsonb, created_at): the transcript. Deleted with its session at `keep_until` by a daily job (`cron_runs` like the other jobs); the length is question 6.
+- `tutor_memory` (student_id primary key, notes jsonb, at most 4 KB, updated_at): what the tutor remembers between sessions: goals and interests the student mentioned, recurring mistakes, words learned, what was practised, what to do next. Rewritten at the end of each session from the summary. The student can read it and clear it in Settings; clearing also deletes the transcripts.
+
+Part 5: `vocab_reviews.source text` (`tutor` for words the tutor added; existing rows stay null) and `tutor_sets` (id, student_id, session_id, title, items jsonb, created_at) for the exercises left in Practice; best scores reuse `practice_progress` (`tutor:<id>`).
+
+Part 6: no new table; the Stripe prices are Vercel variables like the others.
+
+AI cost rows keep going to `public.ai_usage` (actions `tutor_turn`, `tutor_listen`, `tutor_voice`, `tutor_pron`, `tutor_summary`), so the admin's AI spend page shows the tutor with no change.
+
+## 5. Providers, costs and limits
+
+| Job | Provider and model | Price | Limits that matter |
+|---|---|---|---|
+| Tutor's thinking (text) | Groq `openai/gpt-oss-120b` (already on the account, `GROQ_API_KEY`) | $0.15 per million input tokens ($0.075 cached), $0.60 per million output | Organisation-wide per model; developer tier about 1,000 requests and 250,000–300,000 tokens a minute (to read on the account's limits page) |
+| Fallback or quality upgrade | Gemini 3.8 Flash (`GOOGLE_AI_API_KEY`) | $0.75 input, $3.75 output per million until 31 Dec 2026, then $1.50 and $7.50 | Tier 1 limits on the Gemini API |
+| Student's speech to text | Groq `whisper-large-v3-turbo` (already used by Practice) | $0.04 per hour of audio, at least 10 seconds per request | Audio seconds per hour on the account's limits page |
+| Tutor's voice | Google Cloud Text-to-Speech, `gemini-2.5-flash-tts` (same voice names as the course audio: Sulafat, Orus, Kore, Charon…) | $0.50 per million text tokens, $10 per million audio tokens; 25 tokens a second, so $0.015 per minute of tutor speech | 150 requests a minute per project; 5,000 bytes of text a request; the `eu` region; German, French, Spanish, Italian, Brazilian Portuguese and US English generally available, European Portuguese and British English in preview |
+| Pronunciation score | Azure AI Speech, pronunciation assessment (scripted, short-audio REST, up to 30 seconds) | Billed as standard real-time speech to text: $1.00 per hour of audio (West Europe); some sources add $0.30 an hour for the assessment, to confirm on the first invoice | Covers en-US, en-GB, de-DE, fr-FR, es-ES, it-IT, pt-PT, pt-BR among 33 locales; the deepest detail (sounds, prosody) is richest for English, to check per language in part 4 |
+
+Why these:
+- Text: gpt-oss-120b is fast and about five times cheaper than Gemini 3.8 Flash per turn. Part 2 starts with a test set of 20 tutor exchanges in each of the six languages, judged by the owner; if the German, Italian or Portuguese replies fall short, the tutor switches to Gemini Flash (the provider switch already exists in `api/ai.js`) at about $0.016 instead of $0.003 per minute.
+- Voice: the Gemini API route used by the course audio (`gemini-3.8-flash-tts`) allows 100 requests a day on Tier 1, which one student could use up. Cloud Text-to-Speech has the same voices at 150 requests a minute; the course audio is moving to it too (`docs/CLOUD_TTS_SETUP.md`), so both share one key and one quota, and course audio generation pauses while students are using the tutor if the quota gets tight. Google's docs say the 3.8 voice models are not offered through Cloud Text-to-Speech, so the tutor uses `gemini-2.5-flash-tts` there; the owner listens to both in part 3 to hear whether the difference matters. The other route is a higher Gemini API tier, which Google grants by past spend. ElevenLabs was ruled out by the owner on 25 Oct 2026 (cost).
+- Pronunciation: Whisper only says which words it understood; Azure scores how they were said, in all six languages. It needs an Azure account (question 10).
+- Gemini Live (speech in, speech out, $0.005 a minute in and $0.018 a minute out, plus the text context each turn) would feel more like a phone call, but the browser talks to Google directly, so the server cannot check each turn or count the time exactly, sessions stop at 15 minutes, and pronunciation scoring would still need Azure. Kept as a later "conversation mode" if the owner wants it once the turn-by-turn tutor is tried.
+
+Estimated cost of one minute of tutoring (three tutor replies, half of the minute spoken by the tutor, two short recordings by the student): text $0.003 (Groq) or $0.016 (Gemini Flash), listening $0.0002, voice $0.0075, pronunciation $0.006 when practising it. So about $0.01 to $0.03 a minute: the free 10 minutes cost Alimun about $0.10 to $0.30 per student, an hour about $0.60 to $1.80. These are estimates; part 2 and 3 measure the real figure from `ai_usage` and the plan values are set from it.
+
+Vercel variables: `GOOGLE_CLOUD_TTS_KEY`, the same Google Cloud key the course audio will use (owner's steps in `docs/CLOUD_TTS_SETUP.md`), and new: `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION`, `STRIPE_PRICE_TUTOR_*` (part 6), `TUTOR_DAILY_BUDGET_USD`. None reaches the browser.
+
+## 6. The board
+The dashboards are plain JavaScript without React or a build step, and tldraw needs React and, since its version 4, a paid licence key for production use (price by quote; the free hobby key keeps a "Made with tldraw" mark). The tutor's board needs fewer things than a free drawing tool: written lines that appear as if written, highlights, tables, the exercise blocks of our own engine, the student's answers, and free drawing with the finger or a pen. So the tutor gets its own board (`js/app/board.js`) in the site's fonts and colours, built on SVG, with a small board format (JSON operations: write, highlight, table, exercise, clear, ink) that the server produces and stores. "Live classroom v2" can later use the same format, or tldraw if the owner licenses it for the classroom; nothing in the tutor depends on that choice (question 11).
+
+The tutor's board text follows the site rules: sentences, no numbered steps, no bullet lists of short items, no emojis, no chips. That is part of the tutor's instructions and of the server's check of each reply.
+
+## 7. Server actions (`api/tutor.js`, a new function: a clearly separate feature)
+Every action verifies the Supabase JWT on the server and the role in `app_metadata`; students only (admins too, for testing, with their time counted like a student's); the instructions are constants in the file; everything from the student, the database or the model that the browser shows goes through `escapeHtml`.
+
+- `GET ?action=status`: time left in each bucket, the plan's monthly minutes, whether the tutor and the voice are configured, an open session to resume.
+- `POST ?action=start`: refreshes the plan minutes, refuses with 402 `no_time` if nothing is left, closes any session left open, creates the session, builds the brief, returns the opening reply.
+- `POST ?action=turn` `{ session, text | audio, answer }`: one student turn (typed, spoken, or an answer on the board) and the tutor's reply `{ say, board, exercise, check }`.
+- `POST ?action=voice` `{ session, message }`: the audio of a stored tutor message (OGG Opus, small), once per message; refused when no time is left.
+- `POST ?action=pronounce` `{ session, message, audio }`: scores the student saying the sentence set in that tutor message (the reference text comes from the database, not the browser).
+- `POST ?action=end` `{ session }`: charges the last gap, writes the summary, the words, the memory and the sets for Practice.
+- `GET ?action=sessions`, `GET ?action=session&id=`: past sessions with summaries, and the transcript while it is kept.
+- `GET ?action=memory`, `POST ?action=forget`: what the tutor remembers; clearing it and the transcripts.
+- `POST ?action=admin-grant` `{ student, minutes, note }`: admin only, written to the ledger.
+- `api/stripe.js` `create-checkout` accepts `type: 'tutor_time'` with the pack's price; `api/webhooks/stripe.js` gets `case 'tutor_time'` calling `tutor_add_credit` with the minutes from the price's metadata (set in Stripe, read on the server, never from the browser).
+
+The student brief, built on the server for each turn: the profile (language, level, goal, timeframe, the student's own language for explanations), the level test's focus topics (`placement`), the items most often wrong in `practice_items`, the lessons reached and their scores (`practice_progress`), cards due and often missed (`vocab_reviews`), the latest homework feedback and mock test criteria, the memory notes and the last three session summaries, then the current session's last twelve messages. All of it is passed as data between delimiters, with the rule that nothing inside it is an instruction. The brief is the same at the start of each turn, so Groq's prompt cache halves its cost.
+
+## 8. Counting and enforcing the time on the server
+- What counts (question 1): the time the student spends in an active session, measured by the server between turns. Each turn charges the seconds since the previous turn of that session, at most 90 seconds (so a student who walks away is not charged for it), and at least 5 seconds; a session with no turn for 10 minutes is closed and the next turn starts a new one. Speaking, listening and the board are not counted separately; the student sees one clock.
+- The browser's clock only shows; it never decides. Before each turn, voice or score request the server calls `tutor_charge`; with nothing left it answers 402 `no_time` and the tutor neither speaks nor writes. When the time runs out during a turn, that reply is delivered and is the closing one ("we have to stop here…") with the summary.
+- The free 10 minutes are granted once per student profile, the first time the Tutor is opened, after the email is confirmed (sign-up already requires it). Plan minutes are refreshed from `student_profiles.tier` and `stripe_subscription_status = 'active'` (the webhook keeps them current), so a cancelled plan stops adding minutes.
+- Spend guards on top of the time: the tutor's rows in `ai_usage` count against a separate daily tutor budget (`TUTOR_DAILY_BUDGET_USD`), so a busy tutor can never stop homework marking and the other AI features, which keep `AI_DAILY_BUDGET_USD`; each reply has a token ceiling; a turn's recording is at most 30 seconds; at most 20 turns a minute per student; the 150-a-minute voice limit is shared, so a voice request that Google refuses is retried once and otherwise the reply stays written only (the time is charged anyway, since the student still had the turn).
+- The current access rule for AI features (`aiEligible` in `api/ai.js`: a paid plan or an active class) does not apply to the tutor: the tutor's rule is "a student with time left".
+
+## 9. Privacy
+Recordings are sent to Groq (listening) or Azure (scoring) and discarded; they are never stored. Transcripts, summaries and the memory are stored for the time the owner chooses (question 6). The Privacy page and Terms (which keep their AI disclosures) need a paragraph on the tutor and on Microsoft Azure and Google Cloud as processors before part 3 goes live; the text is written as `[COPY NEEDED]` for the owner or their lawyer.
+
+## 10. Questions only the owner can answer
+1. What counts as tutor time: the whole active session (recommended: what the student sees and understands), or only the time the tutor is speaking (about a third of a session, so 10 minutes would last much longer)?
+2. The free 10 minutes: once per account (recommended), or every month? Also for students on a plan before their plan minutes start?
+3. Monthly minutes per plan and the period. Proposal to react to: Community 30, Focused 60, Intensive 120, 1 on 1 120, refreshed each calendar month, unused minutes lost. Or the Stripe billing period instead of the calendar month?
+4. Time credits: which packs and prices (for example 30 and 120 minutes; at the estimated $0.01 to $0.03 a minute the cost is small next to any price), do bought minutes expire (proposal: after 12 months), and may students on the free plan buy them without a plan? Where may the offer appear: only when the time is used up (proposal), or also on Home and in Settings?
+5. Who gets the tutor: students only (proposal), or teachers too to try it? Children: is the tutor open to learners under 16, and does it need a parent's consent?
+6. Memory and transcripts: how long are transcripts kept (proposal: 90 days; summaries and the memory until the student clears them or closes the account)? Do the student's teachers see the tutor's summaries of their students (useful for classes), the transcripts, or nothing?
+7. The voice: one voice for the tutor in every language (Orus or Sulafat), the buddy's own voice per language, or the student's choice? Is `gemini-2.5-flash-tts` acceptable after listening, or worth a higher Gemini API tier for the 3.8 voices?
+8. Later live conversation mode (Gemini Live): wanted after trying the turn-by-turn tutor, or not?
+9. Public pages: the plans list tutor minutes, but public copy may not mention AI, and it must not suggest a human. What wording does the owner want on `/tiers` and the plans screen (for example "practice sessions with your language buddy, with instant feedback")? Until then the public pages do not mention the tutor at all.
+10. Accounts: the Google Cloud Text-to-Speech key from `docs/CLOUD_TTS_SETUP.md` serves the tutor too (its $30 budget alert would need raising once students use the tutor); and an Azure account with a Speech resource in West Europe; the keys go into Vercel by the owner.
+11. The board: is the tutor's own board fine, leaving tldraw (and its licence) to the "Live classroom v2" decision?
+12. Text model: start on Groq and move to Gemini Flash only if the owner's language check finds the replies weak (proposal), or start on Gemini Flash for quality?
+
+## Sources (read 26 Oct 2026)
+- Gemini API pricing: https://ai.google.dev/gemini-api/docs/pricing
+- Cloud Text-to-Speech pricing: https://cloud.google.com/text-to-speech/pricing; Gemini-TTS models, languages and regions: https://docs.cloud.google.com/text-to-speech/docs/gemini-tts; quotas: https://docs.cloud.google.com/text-to-speech/quotas
+- Live API session limits and ephemeral tokens: https://ai.google.dev/gemini-api/docs/live-api/capabilities, https://ai.google.dev/gemini-api/docs/ephemeral-tokens
+- Azure Speech: prices from the Azure retail price list (`prices.azure.com`, West Europe: S1 speech to text $1.00 an hour); pronunciation assessment languages: https://learn.microsoft.com/en-us/azure/ai-services/speech-service/language-support?tabs=pronunciation-assessment; pricing page: https://azure.microsoft.com/en-us/pricing/details/speech/
+- Groq: https://console.groq.com/docs/rate-limits; prices from Groq's model pages as quoted by https://www.morphllm.com/groq-pricing (Groq's own pricing page now redirects)
+- tldraw licence: https://tldraw.dev/sdk-features/license-key, https://tldraw.dev/pricing

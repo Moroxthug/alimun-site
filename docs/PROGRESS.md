@@ -853,3 +853,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `js/app/audio-admin.js`: on the daily limit the page stops asking Google, shows the reset time, remembers it in the browser (a reopened tab waits too) and carries on by itself at the reset; Pause cancels the wait.
 - Checked: the limit messages (daily by message, daily by RetryInfo, per minute, unexplained) give the right waits; the page with a stand-in admin session and a stand-in voice API makes one request, then waits five hours without asking again, also after reopening; smoke tests 16 of 16.
 - `docs/CLOUD_TTS_SETUP.md`: the owner's steps to set up Google Cloud Text-to-Speech (same Gemini voices, about 150 requests a minute); once the key is in Vercel, `/api/speech` is switched to it.
+
+## 2026-10-26 — AI tutor planned (nothing built)
+- Owner: plan the AI tutor first, build after approval. Plan in `docs/AI_TUTOR_PLAN.md`, linked from `docs/DASHBOARD_PLAN.md` ("AI tutor").
+- Proposed: turn by turn through a new `api/tutor.js` (Groq gpt-oss-120b for the replies, Groq Whisper for listening, Google Cloud Text-to-Speech `gemini-2.5-flash-tts` for the voice at 150 requests a minute, Azure pronunciation assessment for the six languages), our own SVG board in the dashboard's format, the time counted by the server between turns and taken from plan, free and bought minutes in one locked transaction, a separate daily tutor budget. Part 0 closes `?action=grade` by moving its four callers to server-built prompts.
+- Provider prices and limits read from Google's, Microsoft's and Groq's pages on 26 Oct 2026; an estimated $0.01 to $0.03 per tutoring minute. Twelve questions for the owner at the end of the plan.
+- No code or database change.
