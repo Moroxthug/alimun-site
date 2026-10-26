@@ -120,3 +120,24 @@ Suggested order: Italian, Spanish, French and Portuguese readers learning Englis
 - "The design of the blog page now is more likeable": the blog page follows the mockup at `/preview/blog-step1/` (public nav and footer; dashboard look inside: bone page, white rounded cards, soft tinted section cards with the drawing cast, forest pill buttons, lime call-to-action card; no dots before article details; animated entrances, scroll reveals, drawing motion, hovers). Built for real after step 2 is approved.
 - Step 2, the article page: mockup at `/preview/article-step2/` (title card beside a new photo with a drawing sticker, facts that count up, a sticky side card with reading progress and the "Test my knowledge" and "Join now" calls, the article on white paper with photos inside the text, tables, a lime mid-article call, an instant quiz, FAQ, keep reading, a lime end card). Articles are long (about 2,000 to 3,000 words) and each has its own new photos (CC0, StockSnap via Openverse; Unsplash blocks automated downloads). "Animate more" is the direction.
 - Resources (owner): a second section beside the blog for free material: exercises, instant quizzes (no live events for now), reading and listening, printables, fun things that make people check Alimun out, and the level test. Everything free with no sign-up, with "Join now" and "Test my knowledge" calls. Address `/resources` (translated per language like the blog). Planned step by step after the blog: hub mockup first, then one example of each kind.
+
+## Article file format (third design)
+
+`site/src/data/blog/<site>/<slug>.js`, one per language, `export default { ... }`:
+
+- `key` (same in every language), `site`, `slug` (keyword-rich, in the site's language, lowercase ASCII with hyphens), `section` (`levels`, `grammar`, `vocabulary`, `learn`, `exams`, `abroad`), `course` (`English` or `German`), `published`, `updated` (YYYY-MM-DD).
+- `title`, `metaTitle` (ends " – Alimun", about 60 to 65 characters), `desc` (meta description, about 150 characters), `lead` (two or three sentences).
+- `photo`: an id from `site/src/data/blog/photos.js` (the header photo). `sticker`: `{ draw, say }`: a drawing from the cast (owl, parrot, cat, snail, dog, teacup, pretzel, croissant, pizza, churro, nata, dragon, alien, ghost, suitcase, cactus, mug, sun, monster) and a short speech bubble.
+- `facts`: four `{ n, unit, text }` (a number that counts up, an optional word after it) or `{ label, text }` (a short phrase); true facts from the article only.
+- `blocks`, in reading order:
+  - `{ take: { title, text, draw } }` the short answer, first;
+  - `{ h }` section heading, `{ h3 }` sub-heading, `{ p }` paragraph (`**phrase**` is the lime marker, one to three per paragraph);
+  - `{ figure: { photo, alt, caption } }` a photo inside the text (ids from photos.js, each used once in the whole blog);
+  - `{ panels: [[name, text], [name, text]] }` two options side by side;
+  - `{ table: { head, rows, note } }`; `{ quote }` one short sentence shown large;
+  - `{ note: { title, text, draw } }` a tinted tip card with a drawing;
+  - `{ levels: [[code, name, text], ...] }`, `{ examples: [[sentence, gloss], ...] }`, `{ mistakes: [[wrong, right, why], ...] }`;
+  - `{ cta: true }` where the lime "Test my knowledge / Join now" card goes (once, around the middle).
+- `quiz`: six to eight `{ q, options: [four], a: index, why }`, answerable from the article.
+- `faq`: three to five `[question, answer]`; `related`: keys of other articles; `sources`: `[label, https url]`.
+- Rules: about 2,000 to 3,000 words of body text; facts only, checked against the sources; no bullet lists, numbered steps or chips; no AI mentions; no emojis; US spelling on the English site.

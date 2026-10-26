@@ -29,5 +29,12 @@ playwright-report/
 
 # Blog pages are generated at deploy time (site/ build, docs/BLOG_PLAN.md)
 /blog/
-/*/blog/
+/it/blog/
+/es/blog/
+/fr/blog/
+/pt/blog/
+/de/blog/
+/ar/blog/
+/zh/blog/
+/ma/blog/
 /mock-blog/
