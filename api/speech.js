@@ -4,7 +4,8 @@
  *  Vercel Serverless Function (Node.js runtime)
  *
  *  Voices for the course material (docs/DASHBOARD_PLAN.md, step 5).
- *    ?action=status  (GET)  — { configured } : is GOOGLE_AI_API_KEY set. No cost.
+ *    ?action=status  (GET)  — { configured, cloudAccount } : is GOOGLE_AI_API_KEY set, and does GOOGLE_CLOUD_TTS_KEY hold
+ *                     a service account's JSON key (yes or no only). No cost.
  *    ?action=generate (POST, admin JWT) — { book }: makes the next missing course audio
  *                     files of a book (plan /data/audio/<book>.json, site/src/data/books/audio.js)
  *                     as MP3 in Supabase Storage course-audio/<book>/<hash>.mp3, with
@@ -449,7 +450,7 @@ async function generate(req, res, supabase, body) {
 
 module.exports = async function handler(req, res) {
   const action = String((req.query && req.query.action) || '');
-  if (action === 'status') return res.status(200).json({ configured: !!process.env.GOOGLE_AI_API_KEY, models: MODELS, voices: VOICES, bucket: BUCKET });
+  if (action === 'status') return res.status(200).json({ configured: !!process.env.GOOGLE_AI_API_KEY, cloudAccount: !!serviceAccount(), models: MODELS, voices: VOICES, bucket: BUCKET });
   if (action !== 'sample' && action !== 'generate' && action !== 'cloud-test') return res.status(404).json({ error: 'Unknown action' });
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
   if (!process.env.GOOGLE_AI_API_KEY) return res.status(503).json({ error: 'speech_not_configured' });
