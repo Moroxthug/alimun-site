@@ -13,7 +13,7 @@ export default {
   updated: '2026-10-26',
   title: 'Che livello di tedesco serve per lavorare in Germania?',
   metaTitle: 'Che livello di tedesco serve per lavorare in Germania? – Alimun',
-  desc: 'Cosa chiede la legge tedesca a cittadini UE e non UE, il livello per infermieri e medici, i certificati accettati e cosa si aspettano davvero i datori di lavoro.',
+  desc: 'Cosa chiede la legge tedesca a cittadini UE e non UE, il livello per infermieri e medici, i certificati accettati e cosa si aspettano i datori di lavoro.',
   lead: "Non esiste una risposta unica, perché la legge tedesca chiede cose diverse a persone diverse. Da cittadino italiano non ti serve nessun certificato, chi ha la Carta blu UE può partire senza tedesco e un medico deve dimostrare il tedesco specialistico a livello C1. **Il visto fissa il minimo, ma è il lavoro a decidere il livello vero**, e in questa guida trovi entrambe le cose.",
   photo: 'german-for-work-heidelberg-rooftops',
   sticker: { draw: 'suitcase', say: 'In valigia: passaporto, contratto e certificato B1.' },
@@ -110,7 +110,7 @@ export default {
 
     { h: 'Quali certificati sono accettati' },
     { p: "Per il visto, il Ministero degli Esteri tedesco accetta solo certificati basati su un esame standardizzato secondo gli standard dell'Association of Language Testers in Europe (ALTE). Al momento indica **Goethe-Institut, telc, Österreichisches Sprachdiplom (ÖSD), TestDaF** (solo dal B2), ECL e Deutsches Sprachdiplom (DSD), ovunque sia stato sostenuto l'esame. Di regola, la data dell'esame non dovrebbe risalire a più di un anno prima." },
-    { p: "I certificati di altre scuole di lingua non sono accettati per il visto, nemmeno quelli di scuole autorizzate ai corsi di integrazione. L'eccezione sono gli esami di lingua specialistica rilasciati da un istituto autorizzato. Datori di lavoro e uffici di riconoscimento possono avere elenchi propri, come mostra l'esempio degli infermieri, quindi **leggi l'elenco prima di prenotare l'esame**, non dopo. Il Goethe-Institut e telc hanno sedi d'esame anche in Italia." },
+    { p: "I certificati di altre scuole di lingua non sono accettati per il visto, nemmeno quelli di scuole autorizzate ai corsi di integrazione. L'eccezione sono gli esami di lingua specialistica rilasciati da un istituto autorizzato. Datori di lavoro e uffici di riconoscimento possono avere elenchi propri, come mostra l'esempio degli infermieri, quindi **leggi l'elenco prima di prenotare l'esame**, non dopo. Il Goethe-Institut ha sedi anche in Italia." },
     { note: { title: 'Moduli e date', text: "Alcuni esami sono divisi in moduli che puoi superare separatamente. Per il visto, se hai ripetuto un modulo, il Ministero degli Esteri considera **la data del modulo superato più vecchio**. Pianifica l'esame vicino alla domanda, così il certificato è ancora recente.", draw: 'snail' } },
 
     { h: 'I corsi di tedesco offerti dallo Stato' },
