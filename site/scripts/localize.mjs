@@ -151,7 +151,17 @@ function withFaqLd(html) {
 
 // Shared footer (src/blocks/footer.html): its course column links to this site's course pages; sites
 // without course pages drop the column.
+// Footer "Blog" link (src/blocks/footer.html): kept only in languages that have a blog.
+function withFooterBlog(html, lang) {
+  if (!html.includes('data-footer-blog')) return html;
+  const $ = cheerio.load(html);
+  if (blogList(lang).length) $('[data-footer-blog] a').attr('href', `${lang === 'en' ? '/' : '/' + lang + '/'}blog`);
+  else $('[data-footer-blog]').remove();
+  $('[data-footer-blog]').removeAttr('data-footer-blog');
+  return $.html();
+}
 function withFooterCourses(html, lang) {
+  html = withFooterBlog(html, lang);
   if (!html.includes('data-footer-course-list')) return html;
   const $ = cheerio.load(html);
   const S = courseSites[lang];
