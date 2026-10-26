@@ -1,11 +1,26 @@
 /* Alimun: course audio, admin only and not linked (docs/DASHBOARD_PLAN.md, step 5). Shows how much of each book is
    voiced and, with Start, keeps calling /api/speech?action=generate book after book while this tab stays open.
+   Google's per-minute limit: wait the seconds it asks. Its daily limit: stop asking until the reset, then carry on.
    Files: Supabase Storage course-audio/<book>/<hash>.mp3, listed in <book>/manifest.json. Interface in English. */
 (function () {
   'use strict';
   var SUPA = 'https://dgaiasmefcbrtzqwdyri.supabase.co';
   var PRICE_MIN = 0.0135;  /* USD per minute of audio, gemini-3.8-flash-tts until 31 Dec 2026 */
-  var token = null, books = [], state = {}, running = false, tally = { req: 0, made: 0, split: 0 };
+  var token = null, books = [], state = {}, running = false, tally = { req: 0, made: 0, split: 0 }, timer = null;
+  /* Google's daily limit: when it resets (remembered in this browser, so a reopened tab waits instead of asking) */
+  var RESET_KEY = 'alimun-audio-reset';
+  function resetAt() { try { var v = +localStorage.getItem(RESET_KEY); return v > Date.now() ? v : 0; } catch (e) { return 0; } }
+  function hm(ms) { var m = Math.max(1, Math.round(ms / 60000)); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + (m % 60) + ' min'; }
+  function later(fn, ms) { clearTimeout(timer); timer = setTimeout(fn, ms); }
+  /* Waits for the daily reset (checked every minute, so a sleeping laptop catches up), then carries on */
+  function waitForReset() {
+    var at = resetAt();
+    if (!running) return;
+    if (!at) { step(); return; }
+    say('Google\u2019s daily limit is used up (it allows 100 voice requests a day on the current plan). Carrying on by itself at ' +
+      new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (in ' + hm(at - Date.now()) + ') if this tab stays open. Nothing is asked of Google until then.');
+    later(waitForReset, Math.min(60000, at - Date.now() + 1000));
+  }
   var list = document.getElementById('books'), status = document.getElementById('status'), btn = document.getElementById('go');
 
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -56,30 +71,38 @@
       .then(function (j) {
         var s = state[b.id];
         s.total = j.total; s.done = j.done; s.seconds = j.seconds;
+        if (j.retryAfter && j.daily) {
+          /* Google's daily limit: no point asking again before it resets */
+          draw();
+          try { localStorage.setItem(RESET_KEY, String(Date.parse(j.resetAt) + 60000)); } catch (e) { /* private mode */ }
+          waitForReset();
+          return;
+        }
         if (j.retryAfter) {
           /* Google's per-minute limit: wait and carry on, it is not a failure */
           draw();
           say(new Date().toLocaleTimeString() + ': Google asked to wait, so waiting ' + j.retryAfter + ' seconds, then carrying on. Google said: ' + (j.limitMessage || 'rate limit'));
-          setTimeout(step, j.retryAfter * 1000 + 1500);
+          later(step, j.retryAfter * 1000 + 1500);
           return;
         }
         if (j.requests) {
           tally.req += j.requests; tally.made += j.made; tally.split += j.splitFailed || 0;
           say(new Date().toLocaleTimeString() + ': ' + b.id + ', ' + tally.made + ' recordings from ' + tally.req + ' requests to Google in this session' +
-            (tally.split ? ' (' + tally.split + ' groups had to be redone one by one)' : '') + '.');
+            (tally.split ? ' (' + tally.split + ' groups could not be cut at the pauses and were redone in halves)' : '') + '.');
         }
         if (!j.made && j.failed.length) { s.fails = (s.fails || 0) + 1; s.err = j.failed[0].error + (j.failed[0].detail ? ' ' + JSON.stringify(j.failed[0].detail).slice(0, 200) : ''); }
         else { s.fails = 0; s.err = ''; }
         draw();
-        setTimeout(step, 300);
+        later(step, 300);
       })
-      .catch(function (e) { var s = state[b.id]; s.fails = (s.fails || 0) + 1; s.err = e.message; draw(); setTimeout(step, 3000); });
+      .catch(function (e) { var s = state[b.id]; s.fails = (s.fails || 0) + 1; s.err = e.message; draw(); later(step, 3000); });
   }
 
   btn.addEventListener('click', function () {
     running = !running;
     btn.textContent = running ? 'Pause' : 'Start';
-    if (running) step(); else say('Paused. Start again whenever you like; nothing is lost.');
+    clearTimeout(timer);
+    if (running) waitForReset(); else say('Paused. Start again whenever you like; nothing is lost.');
   });
 
   function boot() {
@@ -90,7 +113,12 @@
       token = s.access_token;
       /* The session token expires after an hour; keep it fresh while the tab works */
       sb.auth.onAuthStateChange(function (ev, ses) { if (ses) token = ses.access_token; });
-      return load().then(function () { btn.disabled = false; say('Press Start and keep this tab open. Several sentences go to Google in one request and are cut apart at the pauses, to fit Google’s daily limit.'); });
+      return load().then(function () {
+        btn.disabled = false;
+        var at = resetAt();
+        say(at ? 'Google\u2019s daily limit is used up until ' + new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (in ' + hm(at - Date.now()) + '). Press Start and keep this tab open: it carries on by itself then.'
+          : 'Press Start and keep this tab open. Several sentences go to Google in one request and are cut apart at the pauses, to fit Google\u2019s daily limit.');
+      });
     }).catch(function (e) { say('Could not start: ' + e.message); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

@@ -11,7 +11,8 @@
  *                     <book>/manifest.json listing the files made; sentences of one block with the same
  *                     voice are spoken in one request and cut at the pauses; about 75 s per call, one request
  *                     every 6.7 s (TTS_PER_MINUTE, default 9) for Google's per-minute limit; a 429 ends the
- *                     call with retryAfter (seconds) for the admin page to wait.
+ *                     call with retryAfter (seconds), and daily + resetAt when it is Google's daily limit, for the
+ *                     admin page to wait (minutes) or stop until the reset (hours).
  *    ?action=sample  (POST, admin JWT) — one sentence, or a two-speaker dialogue,
  *                     spoken by Gemini text-to-speech; returns audio/wav.
  *        { text, voice, model?: 'flash' | 'lite', style? }
@@ -106,17 +107,34 @@ function pcmOf(w) {
   return { pcm: w.slice(44), rate: 24000 };
 }
 
-/* Google's rate limit (Tier 1: 10 requests a minute for the TTS models): stop at once and say when to try again,
-   instead of spending the next request on the fallback */
+/* Google's rate limit. Two kinds: per minute (Tier 1: 10 requests a minute for the TTS models), which passes in
+   seconds, and per day (Tier 1: 100 requests a day), which passes at the daily reset, hours away. The wait comes from
+   Google's RetryInfo (retryDelay "80727s") or its message ("retry in 22h25m27s" or "retry in 41.2s"); a daily limit is
+   recognised by its quota id or message, or by a wait over 15 minutes. Stop at once and say when to try again. */
+function retrySeconds(text, json) {
+  const details = (json && json.error && json.error.details) || [];
+  for (const d of details) {
+    const m = d && d.retryDelay && /^([\d.]+)s$/.exec(String(d.retryDelay));
+    if (m) return Math.ceil(+m[1]);
+  }
+  const m = /retry in\s+((?:[\d.]+h)?\s*(?:[\d.]+m)?\s*(?:[\d.]+s)?)/i.exec(text || '');
+  if (!m || !m[1].trim()) return 0;
+  const part = (u) => { const x = new RegExp('([\\d.]+)' + u).exec(m[1]); return x ? +x[1] : 0; };
+  return Math.ceil(part('h') * 3600 + part('m') * 60 + part('s'));
+}
 function limited(r) {
   if (r.status !== 429) return;
-  const m = /retry in ([\d.]+)\s*s/i.exec(r.text || '');
   const err = new Error('rate_limited');
   err.rateLimited = true;
   let msg = '';
-  try { msg = JSON.parse(r.text).error.message; } catch (e) { msg = String(r.text || ''); }
+  try { msg = r.json.error.message || ''; } catch (e) { msg = String(r.text || ''); }
   err.limitMessage = String(msg).slice(0, 300);
-  err.retryAfter = Math.min(120, Math.ceil(m ? +m[1] : 60));
+  const wait = retrySeconds(r.text, r.json);
+  const quotaIds = JSON.stringify((r.json && r.json.error && r.json.error.details) || []);
+  err.daily = /per ?day/i.test(msg) || /PerDay/.test(quotaIds) || wait > 15 * 60;
+  err.retryAfter = err.daily ? Math.max(wait, 60) : wait ? Math.min(120, Math.max(wait, 10)) : 60;
+  if (err.daily && !wait) err.retryAfter = 3600;
+  err.resetAt = new Date(Date.now() + err.retryAfter * 1000).toISOString();
   throw err;
 }
 
@@ -301,7 +319,7 @@ async function generate(req, res, supabase, body) {
     Object.entries(plan.items).forEach(([k, it]) => { if (!manifest.done[it[0]] && !seen.has(it[0])) { seen.add(it[0]); entries.push([k, it]); } });
     const queue = chunks(entries);
     const made = [], failed = [];
-    let retryAfter = 0, last = 0, limitMessage = '', requests = 0, splitFailed = 0;
+    let retryAfter = 0, last = 0, limitMessage = '', requests = 0, splitFailed = 0, daily = false, resetAt = null;
     const save = async (h, pcm, rate) => {
       const m = await mp3Pcm(pcm, rate);
       const up = await supabase.storage.from(BUCKET).upload(book + '/' + h + '.mp3', m.buf, { contentType: 'audio/mpeg', cacheControl: '31536000', upsert: true });
@@ -323,10 +341,16 @@ async function generate(req, res, supabase, body) {
           style: group.length > 1 ? style + ', with a long pause of about two seconds after each sentence' : style });
         const { pcm, rate } = pcmOf(w);
         const pieces = splitPcm(pcm, rate, group.map((it) => it[3]));
-        if (!pieces) { splitFailed++; group.forEach((it) => queue.unshift([it])); continue; }
+        /* Not clearly cut: try again in two halves (two requests) rather than one request per sentence */
+        if (!pieces) {
+          splitFailed++;
+          if (group.length >= 4) { const h = Math.ceil(group.length / 2); queue.unshift(group.slice(0, h), group.slice(h)); }
+          else group.slice().reverse().forEach((it) => queue.unshift([it]));
+          continue;
+        }
         for (let i = 0; i < group.length; i++) await save(group[i][0], pieces[i], rate);
       } catch (e) {
-        if (e.rateLimited) { retryAfter = e.retryAfter; limitMessage = e.limitMessage; break; }
+        if (e.rateLimited) { retryAfter = e.retryAfter; limitMessage = e.limitMessage; daily = e.daily; resetAt = e.resetAt; break; }
         failed.push({ h: group[0][0], error: String(e.message || e).slice(0, 200), detail: e.detail || null });
       }
     }
@@ -340,7 +364,7 @@ async function generate(req, res, supabase, body) {
     }
     const total = new Set(Object.values(plan.items).map((it) => it[0])).size;
     const seconds = Object.values(manifest.done).reduce((a, b) => a + b, 0);
-    return res.status(200).json({ book, total, done: Object.keys(manifest.done).length, made: made.length, failed, seconds: Math.round(seconds), retryAfter, limitMessage, requests, splitFailed });
+    return res.status(200).json({ book, total, done: Object.keys(manifest.done).length, made: made.length, failed, seconds: Math.round(seconds), retryAfter, limitMessage, daily, resetAt, requests, splitFailed });
   } catch (e) {
     console.error('[speech generate] ' + book + ': ' + e.message);
     return res.status(500).json({ error: 'generate_failed', detail: String(e.message || e).slice(0, 300) });
@@ -390,4 +414,4 @@ module.exports = async function handler(req, res) {
   }
 };
 
-module.exports._test = { findAudio, toWav, speak, wav, pcmOf, mp3, splitPcm, chunks };
+module.exports._test = { findAudio, toWav, speak, wav, pcmOf, mp3, splitPcm, chunks, retrySeconds, limited };

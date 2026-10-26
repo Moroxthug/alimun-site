@@ -846,3 +846,10 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 2026-10-26 — Course audio limit checked; AI tutor vision recorded
 - Course audio (`/app/audio`): Google's Gemini API allows 100 text-to-speech requests a day for `gemini-3.8-flash-tts` on Tier 1. The page does not recognise the daily limit (it reads "retry in 22h…" as 60 seconds, caps waits at two minutes, and asks again every minute), and a group whose pauses cannot be cut is redone one sentence at a time, spending up to eight of the day's requests. 217 of 5,455 files done. Options given to the owner: fix the page (recognise the daily limit, resume at the reset, redo groups in halves), or move generation to Google Cloud Text-to-Speech (same Gemini voices, about 150 requests a minute, set-up by the owner). Waiting for the owner's answer; nothing changed.
 - AI tutor: the owner's vision recorded in `docs/DASHBOARD_PLAN.md` ("AI tutor") for its own planning session.
+
+## 2026-10-26 — Course audio page: Google's daily limit
+- Owner: fix the page, and write the Cloud set-up steps.
+- `api/speech.js`: the wait is read from Google's RetryInfo or its message ("22h25m27s" included); a daily limit (quota id, "per day", or a wait over 15 minutes) is reported as `daily` with `resetAt` and no longer capped at two minutes; a group whose pauses cannot be cut is redone in two halves instead of one request per sentence.
+- `js/app/audio-admin.js`: on the daily limit the page stops asking Google, shows the reset time, remembers it in the browser (a reopened tab waits too) and carries on by itself at the reset; Pause cancels the wait.
+- Checked: the limit messages (daily by message, daily by RetryInfo, per minute, unexplained) give the right waits; the page with a stand-in admin session and a stand-in voice API makes one request, then waits five hours without asking again, also after reopening; smoke tests 16 of 16.
+- `docs/CLOUD_TTS_SETUP.md`: the owner's steps to set up Google Cloud Text-to-Speech (same Gemini voices, about 150 requests a minute); once the key is in Vercel, `/api/speech` is switched to it.
