@@ -130,6 +130,7 @@ Recordings are sent to Groq (listening) or Azure (scoring) and discarded; they a
 - 13: going over a lesson uses the student's normal tutor minutes; it is offered until the class's next lesson.
 - 14: the owner's full sentence: going over a lesson with the tutor afterwards "creates a better learning program" (the reason for part 5b; nothing more to decide).
 - Part 3 continues in a new session (owner's request).
+- Part 5 (connected to the dashboard) continues in a new session (owner, 26 Oct 2026: "go with part 5 on a new convo"); part 6 (paid time) after it.
 - Part 3 built on 27 Oct 2026 (`docs/PROGRESS.md`): the voice uses the course audio's model on Google Cloud (`gemini-3.1-flash-tts-preview`, about $0.03 a minute of speech; `TUTOR_TTS_MODEL` can switch to `gemini-2.5-flash-tts` at half the price if the owner hears no difference). The Privacy and Terms paragraphs on the tutor are published (owner: "apply it and update lock"), with a [COPY NEEDED] for legal review. Part 4 continues in a new session.
 - Part 4 built on 27 Oct 2026 (`docs/PROGRESS.md`): pronunciation through Azure, hidden until `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` are in Vercel (owner's steps in `docs/AZURE_SPEECH_SETUP.md`). The Privacy and Terms sentences naming Microsoft Azure are published (owner: "yes"), with the legal review still marked [COPY NEEDED].
 
