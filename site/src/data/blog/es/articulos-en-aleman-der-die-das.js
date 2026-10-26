@@ -1,0 +1,73 @@
+// Template: grammar. Standard German grammar: noun gender patterns, definite article by case.
+export default {
+  key: 'german-articles',
+  site: 'es',
+  slug: 'articulos-en-aleman-der-die-das',
+  template: 'grammar',
+  course: 'German',
+  theme: 'grammar',
+  cover: 'Der Die Das',
+  coverSub: 'Los patrones que hacen que los artículos alemanes sean previsibles más a menudo de lo que crees.',
+  tone: 'white',
+  published: '2026-10-26',
+  updated: '2026-10-26',
+  title: 'Los artículos en alemán der, die, das: cómo acertar',
+  metaTitle: 'Artículos en alemán der, die, das: reglas y ejercicios – Alimun',
+  desc: 'Por qué el alemán tiene tres artículos determinados, las terminaciones que indican el género, cómo cambia el artículo según el caso y un ejercicio para comprobarlo.',
+  lead: 'El alemán tiene tres artículos determinados y al principio parecen elegidos al azar. Lo son menos de lo que parece: **muchos sustantivos muestran su género en la terminación**, y unos pocos hábitos hacen el resto.',
+  blocks: [
+    { h: 'Tres géneros, un solo plural' },
+    { p: 'Todo sustantivo alemán es **masculino (der), femenino (die) o neutro (das)**. El género pertenece a la palabra, no a la cosa: una chica es «das Mädchen», neutro, por su terminación. En plural los tres usan el mismo artículo, **die**.' },
+    { examples: [
+      ['**der** Tisch, **die** Lampe, **das** Buch', 'la mesa, la lámpara, el libro'],
+      ['**die** Tische, **die** Lampen, **die** Bücher', 'las mesas, las lámparas, los libros'],
+    ] },
+    { h: 'Terminaciones que indican el género' },
+    { p: 'No puedes adivinar todos los sustantivos, pero estas terminaciones se cumplen en la gran mayoría de las palabras que las llevan, con pocas excepciones como der Irrtum. Apréndelas una vez y sabrás el artículo de muchas palabras desde la primera vez que las veas.' },
+    { table: {
+      head: ['Artículo', 'Terminaciones y grupos típicos', 'Ejemplos'],
+      rows: [
+        ['die', '-ung, -heit, -keit, -schaft, -ion, -tät', 'die Zeitung, die Freiheit, die Möglichkeit, die Freundschaft, die Nation, die Universität'],
+        ['das', '-chen, -lein (cosas pequeñas), la mayoría de los sustantivos en -um', 'das Mädchen, das Büchlein, das Zentrum, das Museum'],
+        ['der', 'días, meses, estaciones; la mayoría de los sustantivos en -ling y -ismus', 'der Montag, der Januar, der Sommer, der Frühling, der Tourismus'],
+      ],
+    } },
+    { note: { title: 'Sustantivos compuestos', text: 'Un sustantivo compuesto toma el género de su **última parte**: das Haus y die Tür forman **die Haustür**, la puerta de casa; krank (enfermo) y das Haus forman **das Krankenhaus**, el hospital.' } },
+    { h: 'El artículo cambia según el caso' },
+    { p: 'El artículo también indica la función del sustantivo en la frase. El sujeto va en nominativo, el complemento directo en acusativo y las palabras que siguen a preposiciones como mit, bei o von en dativo. En acusativo **solo cambia el masculino**: der pasa a ser den.' },
+    { table: {
+      head: ['Caso', 'Masculino', 'Femenino', 'Neutro', 'Plural'],
+      rows: [
+        ['Nominativo', 'der', 'die', 'das', 'die'],
+        ['Acusativo', 'den', 'die', 'das', 'die'],
+        ['Dativo', 'dem', 'der', 'dem', 'den'],
+        ['Genitivo', 'des', 'der', 'des', 'der'],
+      ],
+    } },
+    { examples: [
+      ['**Der** Hund schläft.', 'El perro duerme. (sujeto, nominativo)'],
+      ['Ich sehe **den** Hund.', 'Veo al perro. (complemento directo, acusativo)'],
+      ['Ich gehe mit **dem** Hund spazieren.', 'Saco a pasear al perro. (después de mit, dativo)'],
+    ] },
+    { h: 'Errores frecuentes' },
+    { mistakes: [
+      ['Der Mädchen lacht.', '**Das** Mädchen lacht.', 'Los sustantivos terminados en -chen son siempre neutros, aunque se refieran a una persona.'],
+      ['Ich sehe der Mann.', 'Ich sehe **den** Mann.', 'El complemento directo de sehen va en acusativo, y el masculino der pasa a ser den.'],
+      ['Ich spiele mit die Kinder.', 'Ich spiele mit **den** Kindern.', 'Mit siempre rige dativo: el artículo plural es den y el sustantivo añade -n.'],
+    ] },
+    { h: 'Cómo fijar los artículos' },
+    { p: '**Aprende siempre cada sustantivo con su artículo**, como una sola unidad: no «Tisch», sino «der Tisch». Dilo en voz alta, escríbelo con el artículo en tus tarjetas y agrupa las palabras nuevas por género. En unas semanas el artículo correcto empieza a sonar bien, que es exactamente como lo saben los nativos.' },
+    { quiz: [
+      { q: '___ Zeitung liegt auf dem Tisch.', options: ['Der', 'Die', 'Das'], a: 1, why: 'Zeitung termina en -ung, así que es femenino: die Zeitung.' },
+      { q: '___ Mädchen spielt im Garten.', options: ['Der', 'Die', 'Das'], a: 2, why: 'Los sustantivos en -chen son neutros: das Mädchen.' },
+      { q: 'Am Montag sehe ich ___ Lehrer.', options: ['der', 'den', 'dem'], a: 1, why: 'Lehrer es masculino y complemento directo, así que va en acusativo: den Lehrer.' },
+      { q: 'Ich fahre mit ___ Kindern ans Meer.', options: ['die', 'der', 'den'], a: 2, why: 'Mit rige dativo, y el artículo del dativo plural es den.' },
+    ] },
+  ],
+  faq: [
+    ['¿Hay una regla para cada sustantivo alemán?', 'No. Las terminaciones y los grupos cubren muchos sustantivos, pero para el resto aprendes el artículo junto con la palabra. Por eso es tan importante aprender los sustantivos con der, die o das.'],
+    ['¿Por qué Mädchen es neutro?', 'Por la terminación -chen, que hace neutro a un sustantivo sea cual sea su significado. El género gramatical sigue la forma de la palabra, no a la persona o la cosa.'],
+    ['¿Los alemanes se equivocan con los artículos?', 'Los nativos rara vez lo hacen con palabras comunes, aunque algunos sustantivos varían según la región, como das Cola o die Cola. Para quien aprende, las formas estándar de arriba son siempre seguras.'],
+  ],
+  related: ['cefr-english', 'how-long-english', 'ielts-or-cambridge'],
+};

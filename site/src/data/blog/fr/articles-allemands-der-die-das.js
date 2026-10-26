@@ -1,0 +1,73 @@
+// Template: grammar. Standard German grammar: noun gender patterns, definite article by case.
+export default {
+  key: 'german-articles',
+  site: 'fr',
+  slug: 'articles-allemands-der-die-das',
+  template: 'grammar',
+  course: 'German',
+  theme: 'grammar',
+  cover: 'Der Die Das',
+  coverSub: "Les régularités qui rendent les articles allemands prévisibles plus souvent que tu ne le crois.",
+  tone: 'white',
+  published: '2026-10-26',
+  updated: '2026-10-26',
+  title: 'Les articles allemands der, die, das : comment ne plus se tromper',
+  metaTitle: 'Articles allemands der, die, das : règles et exercices – Alimun',
+  desc: "Pourquoi l'allemand a trois articles définis, les terminaisons qui révèlent le genre, comment l'article change selon le cas, et un court exercice pour te tester.",
+  lead: "L'allemand a trois articles définis et, au début, ils semblent choisis au hasard. Ils le sont moins qu'il n'y paraît : **beaucoup de noms révèlent leur genre par leur terminaison**, et quelques habitudes font le reste.",
+  blocks: [
+    { h: 'Trois genres, un seul pluriel' },
+    { p: "Chaque nom allemand est **masculin (der), féminin (die) ou neutre (das)**. Le genre appartient au mot, pas à la chose : une jeune fille se dit « das Mädchen », au neutre, à cause de sa terminaison. Au pluriel, les trois genres prennent le même article, **die**." },
+    { examples: [
+      ['**der** Tisch, **die** Lampe, **das** Buch', 'la table, la lampe, le livre'],
+      ['**die** Tische, **die** Lampen, **die** Bücher', 'les tables, les lampes, les livres'],
+    ] },
+    { h: 'Les terminaisons qui révèlent le genre' },
+    { p: "Tu ne peux pas deviner le genre de tous les noms, mais ces terminaisons valent pour la grande majorité des mots qui les portent, à quelques exceptions près comme der Irrtum. Apprends-les une fois et tu connaîtras l'article de nombreux mots dès la première fois que tu les verras." },
+    { table: {
+      head: ['Article', 'Terminaisons et groupes typiques', 'Exemples'],
+      rows: [
+        ['die', '-ung, -heit, -keit, -schaft, -ion, -tät', 'die Zeitung, die Freiheit, die Möglichkeit, die Freundschaft, die Nation, die Universität'],
+        ['das', '-chen, -lein (petites choses), la plupart des noms en -um', 'das Mädchen, das Büchlein, das Zentrum, das Museum'],
+        ['der', 'jours, mois, saisons ; la plupart des noms en -ling et -ismus', 'der Montag, der Januar, der Sommer, der Frühling, der Tourismus'],
+      ],
+    } },
+    { note: { title: 'Les noms composés', text: "Un nom composé prend le genre de sa **dernière partie** : das Haus et die Tür donnent **die Haustür**, la porte d'entrée ; krank (malade) et das Haus donnent **das Krankenhaus**, l'hôpital." } },
+    { h: "L'article change selon le cas" },
+    { p: "L'article indique aussi la fonction du nom dans la phrase. Le sujet est au nominatif, le complément d'objet direct à l'accusatif, et les mots après des prépositions comme mit, bei ou von au datif. À l'accusatif, **seul le masculin change** : der devient den." },
+    { table: {
+      head: ['Cas', 'Masculin', 'Féminin', 'Neutre', 'Pluriel'],
+      rows: [
+        ['Nominatif', 'der', 'die', 'das', 'die'],
+        ['Accusatif', 'den', 'die', 'das', 'die'],
+        ['Datif', 'dem', 'der', 'dem', 'den'],
+        ['Génitif', 'des', 'der', 'des', 'der'],
+      ],
+    } },
+    { examples: [
+      ['**Der** Hund schläft.', "Le chien dort. (sujet, nominatif)"],
+      ['Ich sehe **den** Hund.', "Je vois le chien. (complément d'objet direct, accusatif)"],
+      ['Ich gehe mit **dem** Hund spazieren.', 'Je promène le chien. (après mit, datif)'],
+    ] },
+    { h: 'Les erreurs fréquentes' },
+    { mistakes: [
+      ['Der Mädchen lacht.', '**Das** Mädchen lacht.', "Les noms en -chen sont toujours neutres, même quand ils désignent une personne."],
+      ['Ich sehe der Mann.', 'Ich sehe **den** Mann.', "Le complément d'objet direct de sehen est à l'accusatif, et le masculin der devient den."],
+      ['Ich spiele mit die Kinder.', 'Ich spiele mit **den** Kindern.', "Mit est toujours suivi du datif : l'article pluriel est den, et le nom prend un -n."],
+    ] },
+    { h: 'Comment retenir les articles' },
+    { p: "**Apprends toujours un nom avec son article**, comme un tout : pas « Tisch » mais « der Tisch ». Dis-le à voix haute, note-le avec l'article sur tes flashcards et regroupe les nouveaux mots par genre. En quelques semaines, le bon article commence à sonner juste, et c'est exactement ainsi que les natifs le savent." },
+    { quiz: [
+      { q: '___ Zeitung liegt auf dem Tisch.', options: ['Der', 'Die', 'Das'], a: 1, why: 'Zeitung se termine en -ung, donc il est féminin : die Zeitung.' },
+      { q: '___ Mädchen spielt im Garten.', options: ['Der', 'Die', 'Das'], a: 2, why: 'Les noms en -chen sont neutres : das Mädchen.' },
+      { q: 'Am Montag sehe ich ___ Lehrer.', options: ['der', 'den', 'dem'], a: 1, why: "Lehrer est masculin et complément d'objet direct, donc à l'accusatif : den Lehrer." },
+      { q: 'Ich fahre mit ___ Kindern ans Meer.', options: ['die', 'der', 'den'], a: 2, why: "Mit est suivi du datif, et l'article du datif pluriel est den." },
+    ] },
+  ],
+  faq: [
+    ['Existe-t-il une règle pour chaque nom allemand ?', "Non. Les terminaisons et les groupes couvrent beaucoup de noms, mais pour les autres tu apprends l'article avec le mot. C'est pour cela qu'il est si important d'apprendre les noms avec der, die ou das."],
+    ['Pourquoi Mädchen est-il neutre ?', "À cause de la terminaison -chen, qui rend un nom neutre quel que soit ce qu'il désigne. Le genre grammatical suit la forme du mot, pas la personne ou la chose."],
+    ['Les Allemands se trompent-ils d\'article ?', "Les natifs se trompent rarement avec les mots courants, même si quelques noms varient selon les régions, comme das Cola ou die Cola. Quand tu apprends l'allemand, les formes standard ci-dessus sont toujours sûres."],
+  ],
+  related: ['cefr-english', 'how-long-english', 'ielts-or-cambridge'],
+};
