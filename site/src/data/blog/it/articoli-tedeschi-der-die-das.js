@@ -1,0 +1,73 @@
+// Template: grammar. Standard German grammar: noun gender patterns, definite article by case.
+export default {
+  key: 'german-articles',
+  site: 'it',
+  slug: 'articoli-tedeschi-der-die-das',
+  template: 'grammar',
+  course: 'German',
+  theme: 'grammar',
+  cover: 'Der Die Das',
+  coverSub: "Gli schemi che rendono gli articoli tedeschi prevedibili più spesso di quanto pensi.",
+  tone: 'white',
+  published: '2026-10-26',
+  updated: '2026-10-26',
+  title: 'Articoli tedeschi der, die, das: come usarli bene',
+  metaTitle: 'Articoli tedeschi der, die, das: regole ed esercizi – Alimun',
+  desc: "Perché il tedesco ha tre articoli determinativi, le desinenze che rivelano il genere, come cambia l'articolo con i casi e un breve esercizio per metterti alla prova.",
+  lead: "Il tedesco ha tre articoli determinativi e all'inizio sembrano messi a caso. Lo sono meno di quanto sembri: **molti sostantivi rivelano il genere dalla desinenza**, e qualche abitudine fa il resto.",
+  blocks: [
+    { h: 'Tre generi, un solo plurale' },
+    { p: "Ogni sostantivo tedesco è **maschile (der), femminile (die) o neutro (das)**. Il genere appartiene alla parola, non alla cosa: una ragazza è \"das Mädchen\", neutro, per via della desinenza. Al plurale tutti e tre usano lo stesso articolo, **die**." },
+    { examples: [
+      ['**der** Tisch, **die** Lampe, **das** Buch', 'il tavolo, la lampada, il libro'],
+      ['**die** Tische, **die** Lampen, **die** Bücher', 'i tavoli, le lampade, i libri'],
+    ] },
+    { h: 'Le desinenze che rivelano il genere' },
+    { p: "Non puoi indovinare ogni sostantivo, ma queste desinenze valgono per la grande maggioranza delle parole che le hanno, con poche eccezioni come der Irrtum. Imparale una volta e saprai l'articolo di molte parole la prima volta che le vedi." },
+    { table: {
+      head: ['Articolo', 'Desinenze e gruppi tipici', 'Esempi'],
+      rows: [
+        ['die', '-ung, -heit, -keit, -schaft, -ion, -tät', 'die Zeitung, die Freiheit, die Möglichkeit, die Freundschaft, die Nation, die Universität'],
+        ['das', '-chen, -lein (cose piccole), la maggior parte dei sostantivi in -um', 'das Mädchen, das Büchlein, das Zentrum, das Museum'],
+        ['der', 'giorni, mesi, stagioni; la maggior parte dei sostantivi in -ling e -ismus', 'der Montag, der Januar, der Sommer, der Frühling, der Tourismus'],
+      ],
+    } },
+    { note: { title: 'Sostantivi composti', text: "Un sostantivo composto prende il genere della sua **ultima parte**: das Haus e die Tür formano **die Haustür**, la porta di casa; krank (malato) e das Haus formano **das Krankenhaus**, l'ospedale." } },
+    { h: "L'articolo cambia con il caso" },
+    { p: "L'articolo mostra anche il ruolo del sostantivo nella frase. Il soggetto va al nominativo, il complemento oggetto all'accusativo e le parole dopo preposizioni come mit, bei o von al dativo. All'accusativo **cambia solo il maschile**: der diventa den." },
+    { table: {
+      head: ['Caso', 'Maschile', 'Femminile', 'Neutro', 'Plurale'],
+      rows: [
+        ['Nominativo', 'der', 'die', 'das', 'die'],
+        ['Accusativo', 'den', 'die', 'das', 'die'],
+        ['Dativo', 'dem', 'der', 'dem', 'den'],
+        ['Genitivo', 'des', 'der', 'des', 'der'],
+      ],
+    } },
+    { examples: [
+      ['**Der** Hund schläft.', 'Il cane dorme. (soggetto, nominativo)'],
+      ['Ich sehe **den** Hund.', 'Vedo il cane. (complemento oggetto, accusativo)'],
+      ['Ich gehe mit **dem** Hund spazieren.', 'Porto a spasso il cane. (dopo mit, dativo)'],
+    ] },
+    { h: 'Errori frequenti' },
+    { mistakes: [
+      ['Der Mädchen lacht.', '**Das** Mädchen lacht.', "I sostantivi in -chen sono sempre neutri, anche quando indicano una persona."],
+      ['Ich sehe der Mann.', 'Ich sehe **den** Mann.', "Il complemento oggetto di sehen va all'accusativo, e il maschile der diventa den."],
+      ['Ich spiele mit die Kinder.', 'Ich spiele mit **den** Kindern.', "Mit regge sempre il dativo: l'articolo plurale è den e il sostantivo aggiunge -n."],
+    ] },
+    { h: 'Come fissare gli articoli' },
+    { p: "**Impara sempre un sostantivo insieme al suo articolo**, come un'unica cosa: non \"Tisch\" ma \"der Tisch\". Dillo ad alta voce, scrivilo con l'articolo sulle tue flashcard e raggruppa le parole nuove per genere. Nel giro di qualche settimana l'articolo giusto comincia a suonare giusto, ed è proprio così che lo sanno i madrelingua." },
+    { quiz: [
+      { q: '___ Zeitung liegt auf dem Tisch.', options: ['Der', 'Die', 'Das'], a: 1, why: "Zeitung finisce in -ung, quindi è femminile: die Zeitung." },
+      { q: '___ Mädchen spielt im Garten.', options: ['Der', 'Die', 'Das'], a: 2, why: "I sostantivi in -chen sono neutri: das Mädchen." },
+      { q: 'Am Montag sehe ich ___ Lehrer.', options: ['der', 'den', 'dem'], a: 1, why: "Lehrer è maschile ed è il complemento oggetto, quindi accusativo: den Lehrer." },
+      { q: 'Ich fahre mit ___ Kindern ans Meer.', options: ['die', 'der', 'den'], a: 2, why: "Mit regge il dativo, e l'articolo del dativo plurale è den." },
+    ] },
+  ],
+  faq: [
+    ['Esiste una regola per ogni sostantivo tedesco?', "No. Desinenze e gruppi coprono molti sostantivi, ma per gli altri impari l'articolo insieme alla parola. Ecco perché è così importante imparare i sostantivi insieme a der, die o das."],
+    ['Perché Mädchen è neutro?', "Per via della desinenza -chen, che rende neutro un sostantivo qualunque cosa indichi. Il genere grammaticale segue la forma della parola, non la persona o la cosa."],
+    ['I tedeschi sbagliano gli articoli?', "Con le parole comuni i madrelingua sbagliano raramente, anche se alcuni sostantivi cambiano da regione a regione, come das Cola o die Cola. Per chi impara, le forme standard qui sopra sono sempre sicure."],
+  ],
+  related: ['cefr-english', 'how-long-english', 'ielts-or-cambridge'],
+};

@@ -25,9 +25,17 @@ if (!fs.existsSync(path.join(dist, 'index.html'))) {
   process.exit(1);
 }
 copyPages(dist, root);
+// Blog pages (docs/BLOG_PLAN.md): /blog and /<lang>/blog.
+function copyBlog(from, to) {
+  const dir = path.join(from, 'blog');
+  if (!fs.existsSync(dir)) return;
+  fs.mkdirSync(path.join(to, 'blog'), { recursive: true });
+  copyPages(dir, path.join(to, 'blog'));
+}
+copyBlog(dist, root);
 for (const d of fs.readdirSync(dist)) {
   const dir = path.join(dist, d);
-  if (/^[a-z]{2}$/.test(d) && fs.statSync(dir).isDirectory()) copyPages(dir, path.join(root, d));
+  if (/^[a-z]{2}$/.test(d) && fs.statSync(dir).isDirectory()) { copyPages(dir, path.join(root, d)); copyBlog(dir, path.join(root, d)); }
 }
 fs.copyFileSync(path.join(dist, 'sitemap.xml'), path.join(root, 'sitemap.xml'));
 // Data the rebuilt pages load at run time (level test question banks).

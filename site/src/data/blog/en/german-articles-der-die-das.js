@@ -1,0 +1,73 @@
+// Template: grammar. Standard German grammar: noun gender patterns, definite article by case.
+export default {
+  key: 'german-articles',
+  site: 'en',
+  slug: 'german-articles-der-die-das',
+  template: 'grammar',
+  course: 'German',
+  theme: 'grammar',
+  cover: 'Der Die Das',
+  coverSub: 'The patterns that make German articles predictable more often than you think.',
+  tone: 'white',
+  published: '2026-10-26',
+  updated: '2026-10-26',
+  title: 'German articles der, die, das: how to get them right',
+  metaTitle: 'German articles der, die, das: rules, patterns and practice – Alimun',
+  desc: 'Why German has three words for "the", the endings that tell you the gender, how the article changes by case, and a short exercise to check yourself.',
+  lead: 'German has three words for "the" and they seem random at first. They are less random than they look: **many nouns show their gender in their ending**, and a few habits make the rest stick.',
+  blocks: [
+    { h: 'Three genders, one plural' },
+    { p: 'Every German noun is **masculine (der), feminine (die) or neuter (das)**. The gender belongs to the word, not to the thing: a girl is "das Mädchen", neuter, because of its ending. In the plural all three use the same article, **die**.' },
+    { examples: [
+      ['**der** Tisch, **die** Lampe, **das** Buch', 'the table, the lamp, the book'],
+      ['**die** Tische, **die** Lampen, **die** Bücher', 'the tables, the lamps, the books'],
+    ] },
+    { h: 'Endings that tell you the gender' },
+    { p: 'You cannot guess every noun, but these endings hold for the vast majority of words that have them, with only a few exceptions such as der Irrtum. Learn them once and you will know the article of many words the first time you see them.' },
+    { table: {
+      head: ['Article', 'Typical endings and groups', 'Examples'],
+      rows: [
+        ['die', '-ung, -heit, -keit, -schaft, -ion, -tät', 'die Zeitung, die Freiheit, die Möglichkeit, die Freundschaft, die Nation, die Universität'],
+        ['das', '-chen, -lein (small things), most nouns in -um', 'das Mädchen, das Büchlein, das Zentrum, das Museum'],
+        ['der', 'days, months, seasons; most nouns in -ling and -ismus', 'der Montag, der Januar, der Sommer, der Frühling, der Tourismus'],
+      ],
+    } },
+    { note: { title: 'Compound nouns', text: 'A compound noun takes the gender of its **last part**: das Haus and die Tür make **die Haustür**, the front door; krank (sick) and das Haus make **das Krankenhaus**, the hospital.' } },
+    { h: 'The article changes with the case' },
+    { p: 'The article also shows the noun\'s role in the sentence. The subject is in the nominative, the direct object in the accusative, and words after prepositions such as mit, bei or von in the dative. Only the **masculine changes in the accusative**: der becomes den.' },
+    { table: {
+      head: ['Case', 'Masculine', 'Feminine', 'Neuter', 'Plural'],
+      rows: [
+        ['Nominative', 'der', 'die', 'das', 'die'],
+        ['Accusative', 'den', 'die', 'das', 'die'],
+        ['Dative', 'dem', 'der', 'dem', 'den'],
+        ['Genitive', 'des', 'der', 'des', 'der'],
+      ],
+    } },
+    { examples: [
+      ['**Der** Hund schläft.', 'The dog is sleeping. (subject, nominative)'],
+      ['Ich sehe **den** Hund.', 'I see the dog. (object, accusative)'],
+      ['Ich gehe mit **dem** Hund spazieren.', 'I am walking the dog. (after mit, dative)'],
+    ] },
+    { h: 'Common mistakes' },
+    { mistakes: [
+      ['Der Mädchen lacht.', '**Das** Mädchen lacht.', 'Nouns ending in -chen are always neuter, even when they mean a person.'],
+      ['Ich sehe der Mann.', 'Ich sehe **den** Mann.', 'The direct object of sehen is in the accusative, and masculine der becomes den.'],
+      ['Ich spiele mit die Kinder.', 'Ich spiele mit **den** Kindern.', 'Mit always takes the dative: the plural article is den, and the noun adds -n.'],
+    ] },
+    { h: 'How to make articles stick' },
+    { p: '**Always learn a noun with its article**, as one unit: not "Tisch" but "der Tisch". Say it aloud, write it in your flashcards with the article, and group new words by gender. Within a few weeks the right article starts to sound right, which is exactly how native speakers know it.' },
+    { quiz: [
+      { q: '___ Zeitung liegt auf dem Tisch.', options: ['Der', 'Die', 'Das'], a: 1, why: 'Zeitung ends in -ung, so it is feminine: die Zeitung.' },
+      { q: '___ Mädchen spielt im Garten.', options: ['Der', 'Die', 'Das'], a: 2, why: 'Nouns in -chen are neuter: das Mädchen.' },
+      { q: 'Am Montag sehe ich ___ Lehrer.', options: ['der', 'den', 'dem'], a: 1, why: 'Lehrer is masculine and the direct object, so accusative: den Lehrer.' },
+      { q: 'Ich fahre mit ___ Kindern ans Meer.', options: ['die', 'der', 'den'], a: 2, why: 'Mit takes the dative, and the dative plural article is den.' },
+    ] },
+  ],
+  faq: [
+    ['Is there a rule for every German noun?', 'No. Endings and groups cover many nouns, but for the rest you learn the article with the word. That is why learning nouns together with der, die or das matters so much.'],
+    ['Why is Mädchen neuter?', 'Because of the ending -chen, which makes a noun neuter whatever it refers to. Grammatical gender follows the form of the word, not the person or thing.'],
+    ['Do Germans make mistakes with articles?', 'Native speakers rarely do with common words, though a few nouns vary by region, such as das Cola or die Cola. For a learner, the standard forms above are always safe.'],
+  ],
+  related: ['cefr-english', 'how-long-english', 'ielts-or-cambridge'],
+};

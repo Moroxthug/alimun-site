@@ -64,6 +64,56 @@ for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'course-sites')).f
   courseSites[S.site] = S;
 }
 const coursePath = (S, c) => `/${S.site === 'en' ? '' : S.site + '/'}${c.slug}`;
+
+// Blog (docs/BLOG_PLAN.md): articles per site language, the interface text and the card markup, for the blog
+// pages built by src/pages/blog/[p].astro and for the reading strip added before the bottom banner of every page.
+const BLOG_UI = (await import(new URL('../src/data/blog/ui.js', import.meta.url))).default;
+const blogRender = await import(new URL('../src/blog/render.js', import.meta.url));
+const blogCards = fs.readFileSync(path.join(site, 'src', 'blocks', 'blog', 'cards.html'), 'utf8');
+const blogArticles = [];
+for (const d of fs.readdirSync(path.join(site, 'src', 'data', 'blog'), { withFileTypes: true }).filter((e) => e.isDirectory())) {
+  for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'blog', d.name)).filter((f) => f.endsWith('.js'))) {
+    blogArticles.push((await import(new URL(`../src/data/blog/${d.name}/${f}`, import.meta.url))).default);
+  }
+}
+const blogList = (lang) => blogArticles.filter((a) => a.site === lang).sort((x, y) => (y.published + y.slug).localeCompare(x.published + x.slug));
+// The three articles of the strip: the language's chosen ones (ui.stripPicks), then the newest.
+function stripArticles(lang) {
+  const list = blogList(lang), picks = (BLOG_UI[lang] && BLOG_UI[lang].stripPicks) || [];
+  return [...picks.map((k) => list.find((a) => a.key === k)).filter(Boolean), ...list.filter((a) => !picks.includes(a.key))].slice(0, 3);
+}
+function withBlogStrip(html, lang) {
+  const ui = BLOG_UI[lang], list = ui ? stripArticles(lang) : [];
+  if (!list.length || html.includes('class="section bl-strip"')) return html;
+  const $ = cheerio.load(html);
+  const markup = blogRender.strip(list, ui, lang).replace('<div class="container-large">', '<div class="container-large">' + blogCards);
+  const banner = $('section.is-bottom-cta').first();
+  if (banner.length) banner.before(markup + '\n');
+  else if ($('footer').length) $('footer').first().before(markup + '\n');
+  else return html;
+  return $.html();
+}
+// Blog pages sit one folder deeper than the others: every relative address becomes a root address
+// (pages with the language folder, assets at the root).
+function absolutize(html, lang) {
+  const $ = cheerio.load(html);
+  const pre = lang === 'en' ? '/' : `/${lang}/`;
+  const fix = (v) => {
+    if (!v) return v;
+    const t = v.trim();
+    if (/^(https?:|\/\/|\/|#|mailto:|tel:|javascript:|data:)/i.test(t)) return t;
+    if (t.startsWith('../')) return '/' + t.replace(/^(\.\.\/)+/, '');
+    const m = t.match(/^([\w-]+)\.html([?#].*)?$/);
+    if (m) return (m[1] === 'index' ? pre : pre + m[1]) + (m[2] || '');
+    return '/' + t;
+  };
+  for (const [sel, attr] of [['[href]', 'href'], ['[src]', 'src'], ['[poster]', 'poster'], ['form[action]', 'action']]) {
+    $(sel).each((_, el) => { if (el.tagName !== 'link' || attr !== 'href' || !/^(canonical|alternate)$/.test($(el).attr('rel'))) $(el).attr(attr, fix($(el).attr(attr))); });
+  }
+  $('[srcset]').each((_, el) => { $(el).attr('srcset', $(el).attr('srcset').split(',').map((p) => { const [u, ...r] = p.trim().split(/\s+/); return [fix(u), ...r].join(' '); }).join(', ')); });
+  $('[style]').each((_, el) => { $(el).attr('style', $(el).attr('style').replace(/url\(['"]?([^'")]+)['"]?\)/gi, (m0, u) => `url('${fix(u)}')`)); });
+  return $.html();
+}
 function withCourseList(html, lang) {
   if (!html.includes('data-course-list')) return html;
   const $ = cheerio.load(html);
@@ -130,11 +180,11 @@ function withLegalText(html, lang, file) {
 let count = 0;
 for (const file of pages) {
   const english = withEnglishFile(fs.readFileSync(path.join(dist, file), 'utf8'));
-  fs.writeFileSync(path.join(dist, file), withAlternates(withFooterCourses(withFaqLd(withCourseList(english, 'en')), 'en'), file));
+  fs.writeFileSync(path.join(dist, file), withAlternates(withBlogStrip(withFooterCourses(withFaqLd(withCourseList(english, 'en')), 'en'), 'en'), file));
   for (const lang of languages) {
     fs.mkdirSync(path.join(dist, lang), { recursive: true });
     const html = localizePage(english, { lang, templateFile: file, langDict: translations[lang] || {}, META_I18N, META_LANG });
-    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withFooterCourses(withFaqLd(withCourseList(withLegalText(html, lang, file), lang)), lang), file));
+    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withBlogStrip(withFooterCourses(withFaqLd(withCourseList(withLegalText(html, lang, file), lang)), lang), lang), file));
     count++;
   }
 }
@@ -143,12 +193,45 @@ for (const p of coursePages) {
   const english = withEnglishFile(fs.readFileSync(path.join(dist, p.built), 'utf8'));
   const html = p.site === 'en' ? english
     : localizePage(english, { lang: p.site, templateFile: p.file, langDict: translations[p.site] || {}, META_I18N, META_LANG });
-  const $ = cheerio.load(withFooterCourses(html, p.site));
+  const $ = cheerio.load(withBlogStrip(withFooterCourses(html, p.site), p.site));
   $('link[rel="alternate"][hreflang]').remove();
   $('head').append(`\n  <link rel="alternate" hreflang="${HREFLANG[p.site] || p.site}" href="${url(p.site, p.file)}">\n`);
   fs.writeFileSync(path.join(dist, p.site === 'en' ? '' : p.site, p.file), $.html());
   fs.rmSync(path.join(dist, p.built));
   count++;
+}
+
+// Blog pages: built as blog/<site>--<name>.html, translated like the other pages, moved to /blog/<name>
+// (English) or /<site>/blog/<name>, with root addresses, hreflang between translations and the language file.
+const blogEntries = [];
+const blogDir = path.join(dist, 'blog');
+if (fs.existsSync(blogDir)) {
+  for (const f of fs.readdirSync(blogDir).filter((f) => /^[a-z]{2}--[a-z0-9-]+\.html$/.test(f))) {
+    const [, lang, name] = f.match(/^([a-z]{2})--([a-z0-9-]+)\.html$/);
+    let html = fs.readFileSync(path.join(blogDir, f), 'utf8');
+    if (lang !== 'en') html = localizePage(html, { lang, templateFile: 'blog-' + name + '.html', langDict: translations[lang] || {}, META_I18N, META_LANG });
+    html = absolutize(withFooterCourses(html, lang), lang);
+    const $ = cheerio.load(html);
+    const self = `${BASE}/${lang === 'en' ? '' : lang + '/'}blog${name === 'index' ? '' : '/' + name}`;
+    $('link[rel="canonical"]').attr('href', self);
+    $('meta[property="og:url"]').attr('content', self);
+    if (lang !== 'en' && !$(`script[src="/js/i18n/${lang}.js"]`).length) $('script[src="/js/i18n/en.js"]').after(`<script src="/js/i18n/${lang}.js" defer></script>`);
+    let alts = {};
+    try { alts = JSON.parse($('#alimun-lang-alternates').text() || '{}'); } catch (e) { alts = {}; }
+    $('link[rel="alternate"][hreflang]').remove();
+    const links = Object.entries(alts).map(([l, p]) => `<link rel="alternate" hreflang="${HREFLANG[l] || l}" href="${BASE}${p}">`);
+    if (alts.en) links.unshift(`<link rel="alternate" hreflang="x-default" href="${BASE}${alts.en}">`);
+    $('head').append('\n  ' + links.join('\n  ') + '\n');
+    const outDir = path.join(dist, lang === 'en' ? '' : lang, 'blog');
+    fs.mkdirSync(outDir, { recursive: true });
+    fs.writeFileSync(path.join(outDir, name + '.html'), $.html());
+    fs.rmSync(path.join(blogDir, f));
+    const xl = Object.entries(alts).map(([l, p]) => `    <xhtml:link rel="alternate" hreflang="${HREFLANG[l] || l}" href="${BASE}${p}"/>`).join('\n');
+    const a = blogArticles.find((x) => x.site === lang && x.slug === name);
+    const mod = a ? a.updated : blogList(lang).map((x) => x.updated).sort().pop();
+    blogEntries.push(`  <url>\n    <loc>${self}</loc>\n${xl ? xl + '\n' : ''}    <lastmod>${mod}</lastmod>\n  </url>`);
+    count++;
+  }
 }
 
 // The 404 page has no language copies but shares the footer.
@@ -162,6 +245,7 @@ for (const file of pages) {
     .map(([h, u]) => `    <xhtml:link rel="alternate" hreflang="${h}" href="${u}"/>`).join('\n');
   for (const lang of ['en', ...languages]) entries.push(`  <url>\n    <loc>${url(lang, file)}</loc>\n${alts}\n    <lastmod>${today}</lastmod>\n  </url>`);
 }
+entries.push(...blogEntries);
 for (const p of coursePages) entries.push(`  <url>\n    <loc>${url(p.site, p.file)}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`);
 // Keep addresses the current sitemap lists that are not rebuilt yet (the Italian course pages).
 const covered = new Set([...pages.flatMap((f) => ['en', ...languages].map((l) => url(l, f))), ...coursePages.map((p) => url(p.site, p.file))]);
