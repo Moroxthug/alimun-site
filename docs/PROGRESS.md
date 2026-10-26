@@ -814,3 +814,6 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - No database change, no new server action. Checked as the admin account in a rolled-back transaction: recording, changing and marking a payout paid work; deleting a paid one with the pending-only filter removes nothing; settings, completed classes, job runs and AI usage readable.
 - Checked with sample data on desktop and phone: every screen, recording a payout with the count and the overlap warning, changing, marking paid, deleting, AI spend for 7 and 30 days, deleting a review (HTML in it shown as text), changing api_url (an http address refused), the secret field is a password field; /admin.html and /admin.html?old=1 end on /app/admin; no console errors, nothing wider than the phone. Smoke tests: 14 of 14.
 - Not checked from here: real payouts emails, real AI usage (none recorded yet) and reviews (none yet); see `docs/TESTING_CHECKLIST.md`.
+
+## 2026-10-26 — Locale pages regenerated
+- Owner: commit the locale pages as their own change. The stored `ar de es fr it ma pt zh` copies of 92 pages were behind their root pages (titles, descriptions, favicons, corporate slides); committed the unchanged output of `npm run build`. Production builds the same pages itself, so the live site does not change.
