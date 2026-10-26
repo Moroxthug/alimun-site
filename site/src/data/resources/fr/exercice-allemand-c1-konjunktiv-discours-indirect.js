@@ -3,7 +3,7 @@ export default {
   key: 'de-ex-c1', site: 'fr', slug: 'exercice-allemand-c1-konjunktiv-discours-indirect', kind: 'exercise', course: 'German', level: 'C1',
   draw: 'dragon', tint: 'lime', published: '2026-10-26',
   title: "Exercice d'allemand : Konjunktiv II et Konjunktiv I (C1)",
-  metaTitle: 'Exercice allemand Konjunktiv I et II, discours indirect (C1) – Alimun',
+  metaTitle: 'Exercice allemand Konjunktiv I et II, discours indirect C1 – Alimun',
   desc: "Douze questions gratuites sur le Konjunktiv II et le Konjunktiv I au discours indirect pour le niveau C1 en allemand, avec correction immédiate et explications.",
   lead: "Choisis la bonne forme du subjonctif dans chaque phrase. Tu vois tout de suite si tu as juste, et pourquoi.",
   instructions: 'Choisis la bonne forme du verbe.',
