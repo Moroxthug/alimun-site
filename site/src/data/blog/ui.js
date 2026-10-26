@@ -4,6 +4,8 @@
 // Section drawings and tints come from src/blog/render.js (SECTIONS).
 export default {
   en: {
+    bubbles: ['Pick a section, or search for what you need.', 'New here? Start with the levels.', 'Every article ends with a quick quiz.'],
+    hints: ['IELTS', 'der die das', 'B2 level', 'how long'],
     featured: 'ielts-or-cambridge',
     sectionSlugs: { levels: 'levels-and-certificates', grammar: 'grammar', vocabulary: 'vocabulary', learn: 'how-to-learn', exams: 'exams', abroad: 'living-abroad' },
     locale: 'en_US', home: 'Home', back: 'Blog', blogTitle: 'Blog',
@@ -35,6 +37,8 @@ export default {
     all: 'All articles', strip: 'From the blog', courses: { English: 'English', German: 'German' },
   },
   it: {
+    bubbles: ['Scegli una sezione, o cerca quello che ti serve.', 'Sei nuovo? Inizia dai livelli.', 'Ogni articolo finisce con un quiz veloce.'],
+    hints: ['IELTS', 'der die das', 'livello B2', 'quanto tempo'],
     featured: 'ielts-or-cambridge',
     sectionSlugs: { levels: 'livelli-e-certificazioni', grammar: 'grammatica', vocabulary: 'vocabolario', learn: 'come-studiare', exams: 'esami', abroad: 'vivere-all-estero' },
     locale: 'it_IT', home: 'Home', back: 'Blog', blogTitle: 'Blog',
@@ -66,6 +70,8 @@ export default {
     all: 'Tutti gli articoli', strip: 'Dal blog', courses: { English: 'Inglese', German: 'Tedesco' },
   },
   es: {
+    bubbles: ['Elige una sección o busca lo que necesitas.', '¿Eres nuevo? Empieza por los niveles.', 'Cada artículo termina con un quiz rápido.'],
+    hints: ['IELTS', 'der die das', 'nivel B2', 'cuánto tiempo'],
     featured: 'ielts-or-cambridge',
     sectionSlugs: { levels: 'niveles-y-certificados', grammar: 'gramatica', vocabulary: 'vocabulario', learn: 'como-aprender', exams: 'examenes', abroad: 'vivir-en-el-extranjero' },
     locale: 'es_ES', home: 'Inicio', back: 'Blog', blogTitle: 'Blog',
@@ -97,6 +103,8 @@ export default {
     all: 'Todos los artículos', strip: 'Del blog', courses: { English: 'Inglés', German: 'Alemán' },
   },
   fr: {
+    bubbles: ['Choisis une rubrique, ou cherche ce dont tu as besoin.', 'Nouveau ici ? Commence par les niveaux.', 'Chaque article finit par un petit quiz.'],
+    hints: ['IELTS', 'der die das', 'niveau B2', 'combien de temps'],
     featured: 'ielts-or-cambridge',
     sectionSlugs: { levels: 'niveaux-et-certifications', grammar: 'grammaire', vocabulary: 'vocabulaire', learn: 'apprendre', exams: 'examens', abroad: 'vivre-a-l-etranger' },
     locale: 'fr_FR', home: 'Accueil', back: 'Blog', blogTitle: 'Blog',
@@ -128,6 +136,8 @@ export default {
     all: 'Tous les articles', strip: 'Sur le blog', courses: { English: 'Anglais', German: 'Allemand' },
   },
   pt: {
+    bubbles: ['Escolha uma seção ou procure o que você precisa.', 'Chegou agora? Comece pelos níveis.', 'Todo artigo termina com um quiz rápido.'],
+    hints: ['IELTS', 'der die das', 'nível B2', 'quanto tempo'],
     featured: 'ielts-or-cambridge',
     sectionSlugs: { levels: 'niveis-e-certificados', grammar: 'gramatica', vocabulary: 'vocabulario', learn: 'como-aprender', exams: 'exames', abroad: 'morar-no-exterior' },
     locale: 'pt_BR', home: 'Início', back: 'Blog', blogTitle: 'Blog',

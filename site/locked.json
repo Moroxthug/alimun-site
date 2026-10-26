@@ -225,12 +225,12 @@
     "approved": "2026-10-23 Italian course pages: adaptive level quiz with roulette result (owner: quiz ok); 2026-10-23 Italian question bank added for the other site languages"
   },
   "src/blog/render.js": {
-    "sha256": "2a4f2e91758852ddea55bfcababe34b0995501937355d6dc470b53f287aab40a",
-    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
+    "sha256": "f6a55c6373884636ae502b0749c8825a8907b31d02b6606693026936d9351fcf",
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\"); 2026-10-26 more motion on the blog home (owner: \"animate the blog page as well\")"
   },
   "src/blocks/blog/style.html": {
-    "sha256": "38142d790c99d3dc687c6ce8b99d61230fa1cfc130224f9f9c2d48ff90914632",
-    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
+    "sha256": "8f0f0414b1f53bccfc97988777eb4e4a503c01305e3e1b7c5eb29967bb1f3fab",
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\"); 2026-10-26 more motion on the blog home (owner: \"animate the blog page as well\")"
   },
   "src/blocks/blog/cards.html": {
     "sha256": "2c62b721205e077819bcc3812f505e9b777e10a6a8b9b2e1a4753521ae734e22",

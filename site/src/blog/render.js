@@ -83,13 +83,13 @@ export function home(site, list, ui) {
   const secs = ORDER.filter((id) => bySection(id).length);
   const fp = photo(featured.photo);
   return `<div class="bm"><div class="bm-wrap">` +
-    `<div class="bm-top"><div class="bm-hello"><div><h1>${esc(ui.blogTitle)}</h1><p>${esc(ui.blogLead)}</p></div>` +
-    `<form class="bm-search" role="search" data-search-form><input type="search" placeholder="${esc(ui.search)}" aria-label="${esc(ui.search)}"><button class="bm-btn" type="submit">${esc(ui.searchBtn)}</button></form></div>` +
-    `<div class="bm-buddy"><div class="bm-bub">${esc(ui.bubble)}</div>${draw('book', 'bm-book')}</div></div>` +
-    `<div class="bm-results" data-results hidden><div class="bm-grid"></div><p class="bm-none" hidden>${esc(ui.noResults)}</p></div>` +
+    `<div class="bm-top"><div class="bm-hello"><div><h1 data-letters>${esc(ui.blogTitle)}</h1><p>${esc(ui.blogLead)}</p></div>` +
+    `<form class="bm-search" role="search" data-search-form><input type="search" placeholder="${esc(ui.search)}" aria-label="${esc(ui.search)}" data-hints="${esc(JSON.stringify((ui.hints || []).map((h) => ui.search + ': ' + h)))}"><button class="bm-btn" type="submit">${esc(ui.searchBtn)}</button></form></div>` +
+    `<div class="bm-buddy"><div class="bm-bub" data-bubbles="${esc(JSON.stringify(ui.bubbles || [ui.bubble]))}">${esc(ui.bubble)}</div>${draw('book', 'bm-book')}</div></div>` +
+    `<div class="bm-results" data-results hidden><div class="bm-grid"></div><p class="bm-none" hidden>${esc(ui.noResults)}</p></div><template data-pool>${all.map((a) => card(a, ui)).join('')}</template>` +
     `<div data-browse>` +
     head2(ui.sectionsTitle) +
-    `<div class="bm-secs">${secs.map((id) => `<a class="bm-sec rv t-${SECTIONS[id].tint}" href="${sectionPath(site, ui, id)}">${draw(SECTIONS[id].draw)}<span class="bm-d">${esc(ui.sections[id][0])}</span><span class="bm-n">${esc(ui.count(bySection(id).length))}</span></a>`).join('')}</div>` +
+    `<div class="bm-secs">${secs.map((id) => `<a class="bm-sec rv t-${SECTIONS[id].tint}" href="${sectionPath(site, ui, id)}">${draw(SECTIONS[id].draw)}<span class="bm-d">${esc(ui.sections[id][0])}</span><span class="bm-n">${esc(ui.count(bySection(id).length)).replace(String(bySection(id).length), `<span data-count="${bySection(id).length}">0</span>`)}</span></a>`).join('')}</div>` +
     head2(ui.topTitle) +
     `<div class="bm-top2"><a class="bm-card bm-lead rv" href="${articlePath(featured)}"><span class="bm-ph"><img src="${fp.src}" loading="lazy" alt=""></span><span class="bm-in"><span class="bm-meta">${meta(featured, ui)}</span><span class="bm-t">${esc(featured.title)}</span><span class="bm-x">${esc(plain(featured.lead))}</span><span class="bm-go">${esc(ui.read)}</span></span></a>` +
     `<div class="bm-side">${top.slice(1).map((a) => mini(a, ui)).join('')}</div></div>` +

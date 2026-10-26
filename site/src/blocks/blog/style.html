@@ -206,9 +206,34 @@
           @keyframes arShake { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-7px); } 50% { transform: translateX(6px); } 75% { transform: translateX(-3px); } }
           @keyframes arPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(26, 68, 60, .35); } 50% { box-shadow: 0 0 0 12px rgba(26, 68, 60, 0); } }
           @keyframes arBurst { 0% { transform: translate(0, 0) scale(1); opacity: 1; } 100% { transform: translate(var(--x), var(--y)) scale(.4); opacity: 0; } }
+
+          /* More motion on the blog home (owner: "animate the blog page as well"): the title drops in letter by letter,
+             the speech bubble types its lines in turn, the search box suggests searches, the book jumps while you type,
+             cards tilt towards the pointer, the lead photo slowly drifts, section counts count up, buttons get a shine. */
+          .bm-hello h1 .l { display: inline-block; opacity: 0; transform: translateY(-.6em) rotate(-8deg); animation: bmDrop .8s cubic-bezier(.3, 1.6, .5, 1) forwards; }
+          .bm-bub.is-typing::after { content: ""; display: inline-block; width: 2px; height: 1em; margin-left: 2px; vertical-align: -2px; background: #1a443c; animation: bmCaret .8s steps(1) infinite; }
+          .bm-buddy .book.is-jump { animation: bmJump .5s cubic-bezier(.3, 1.6, .5, 1); }
+          .bm-tilt { transform-style: preserve-3d; will-change: transform; }
+          .bm-lead .bm-ph img { animation: bmKen 16s ease-in-out infinite alternate; }
+          .bm-card:hover .bm-ph img { animation-play-state: paused; }
+          .bm-secs .bm-sec:nth-child(2n) svg { animation: float 3.6s .4s ease-in-out infinite; }
+          .bm-secs .bm-sec:nth-child(2n+1) svg { animation: float 3.2s ease-in-out infinite; }
+          .bm-sec:hover svg { animation: bmWiggle .6s ease-in-out; }
+          .bm-mini.rv { transform: translateX(40px); } .bm-mini.rv.is-in { transform: none; }
+          .bm-btn { position: relative; overflow: hidden; }
+          .bm-btn::after { content: ""; position: absolute; top: 0; left: -60%; width: 40%; height: 100%; background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .45), transparent); transform: skewX(-20deg); animation: bmShine 4.5s ease-in-out infinite; pointer-events: none; }
+          .bm-btn.is-ghost::after { background: linear-gradient(100deg, transparent, rgba(206, 255, 101, .55), transparent); }
+          .bm-cta { position: relative; overflow: hidden; }
+          .bm-cta::before { content: ""; position: absolute; width: 340px; height: 340px; right: -90px; top: -150px; border-radius: 50%; background: rgba(255, 255, 255, .35); animation: bmBlob 9s ease-in-out infinite alternate; pointer-events: none; }
+          @keyframes bmDrop { 60% { opacity: 1; transform: translateY(.08em) rotate(2deg); } 100% { opacity: 1; transform: none; } }
+          @keyframes bmCaret { 50% { opacity: 0; } }
+          @keyframes bmJump { 40% { transform: translateY(-18px) rotate(-4deg); } }
+          @keyframes bmKen { from { transform: scale(1.02) translate(0, 0); } to { transform: scale(1.12) translate(-2%, -2%); } }
+          @keyframes bmShine { 0%, 70% { left: -60%; } 100% { left: 130%; } }
+          @keyframes bmBlob { from { transform: translate(0, 0) scale(1); } to { transform: translate(-60px, 40px) scale(1.2); } }
           @media (prefers-reduced-motion: reduce) {
             .bm *, .ar *, .bm *::after, .ar *::after { animation: none !important; transition: none !important; }
-            .rv, .pop, .ar-pan, .ar-table tbody tr, .ar-quote span, .ar-title h1 .w, .ar-sticker, .ar-bub { opacity: 1 !important; transform: none !important; }
+            .rv, .pop, .ar-pan, .ar-table tbody tr, .ar-quote span, .ar-title h1 .w, .ar-sticker, .ar-bub, .bm-hello h1 .l { opacity: 1 !important; transform: none !important; }
             .ar-photo, .ar-fig .ar-img { clip-path: none !important; }
           }
           @media (max-width: 991px) {
@@ -267,13 +292,43 @@
               }, { threshold: 0.15, rootMargin: "0px 0px -6% 0px" }) : null;
               [].forEach.call(document.querySelectorAll(".ar-two, .ar-table, .ar-quote, .ar-fig, .ar-facts .pop"), function (e) { if (io) io.observe(e); else e.classList.add("is-in"); });
               [].forEach.call(document.querySelectorAll(".ar-table tbody tr"), function (e, i) { e.style.transitionDelay = (0.2 + (i % 8) * 0.08) + "s"; });
+
+              /* Blog home motion */
+              var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+              var t1 = document.querySelector("[data-letters]");
+              if (t1 && !calm) t1.innerHTML = t1.textContent.split("").map(function (ch, i) { var s = document.createElement("span"); s.className = "l"; s.style.animationDelay = (0.15 + i * 0.07).toFixed(2) + "s"; s.textContent = ch === " " ? "\u00a0" : ch; return s.outerHTML; }).join("");
+              var bub = document.querySelector("[data-bubbles]");
+              if (bub && !calm) {
+                var lines = JSON.parse(bub.getAttribute("data-bubbles")), li = 0;
+                var type = function (txt, done) { var n = 0; bub.classList.add("is-typing"); (function step() { bub.textContent = txt.slice(0, n); if (n++ < txt.length) setTimeout(step, 32); else { bub.classList.remove("is-typing"); done && done(); } })(); };
+                var cycle = function () { setTimeout(function () { li = (li + 1) % lines.length; type(lines[li], cycle); }, 4200); };
+                setTimeout(function () { type(lines[0], cycle); }, 1300);
+              }
+              var hintIn = document.querySelector("[data-hints]");
+              if (hintIn && !calm) {
+                var hints = JSON.parse(hintIn.getAttribute("data-hints")), base = hintIn.getAttribute("placeholder"), hi = 0;
+                var typeHint = function () {
+                  if (hintIn.value || document.activeElement === hintIn) { setTimeout(typeHint, 3000); return; }
+                  var h = hints[hi % hints.length], n = 0; hi++;
+                  (function step() { hintIn.setAttribute("placeholder", h.slice(0, n)); if (n++ < h.length) setTimeout(step, 55); else setTimeout(function () { hintIn.setAttribute("placeholder", base); setTimeout(typeHint, 2600); }, 1800); })();
+                };
+                if (hints.length) setTimeout(typeHint, 2500);
+                var book = document.querySelector(".bm-buddy .book");
+                hintIn.addEventListener("input", function () { if (!book) return; book.classList.remove("is-jump"); void book.getBoundingClientRect(); book.classList.add("is-jump"); });
+              }
+              if (!calm && window.matchMedia("(hover: hover)").matches) [].forEach.call(document.querySelectorAll(".bm-sec, .bm-card, .bm-mini"), function (el) {
+                el.classList.add("bm-tilt");
+                el.addEventListener("mousemove", function (e) { if (!el.classList.contains("is-done")) return; var r = el.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; el.style.transform = "perspective(900px) rotateY(" + (x * 7).toFixed(2) + "deg) rotateX(" + (-y * 7).toFixed(2) + "deg) translateY(-5px)"; });
+                el.addEventListener("mouseleave", function () { el.style.transform = ""; });
+              });
+              [].forEach.call(document.querySelectorAll(".bm-secs .bm-sec"), function (e) { if (io) io.observe(e); });
               /* Blog home: "More articles" and search over the cards */
               var more = document.querySelector("[data-more]");
               if (more) more.addEventListener("click", function () { document.querySelector("[data-more-list]").classList.add("is-open"); more.parentNode.remove(); });
               var form = document.querySelector("[data-search-form]");
               if (form) {
                 var input = form.querySelector("input"), res = document.querySelector("[data-results]"), browse = document.querySelector("[data-browse]"), grid = res.querySelector(".bm-grid"), none = res.querySelector(".bm-none");
-                var pool = {}; [].forEach.call(document.querySelectorAll(".bm-card[data-search]"), function (c) { pool[c.getAttribute("href")] = c; });
+                var pool = {}, tpl = document.querySelector("[data-pool]"); [].forEach.call((tpl ? tpl.content : document).querySelectorAll(".bm-card[data-search]"), function (c) { pool[c.getAttribute("href")] = c; });
                 var run = function () {
                   var q = input.value.trim().toLowerCase();
                   if (!q) { res.hidden = true; browse.hidden = false; return; }
