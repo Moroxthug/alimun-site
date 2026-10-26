@@ -9,6 +9,9 @@
    /api/tutor?action=live-board, which checks and stores them; the board writes the lines in with the written tutor's
    animation (js/app/tutor.js kit), plays exercises with the shared engine (results to live-answer, then told to the
    tutor) and shows the pronunciation card (recorded from the call's microphone, scored by ?action=pronounce live).
+   Silence: after 2 minutes with nobody speaking (5 while an exercise or the sentence card is open), the call hangs up
+   by itself, with "Are you still there?" 15 seconds before, so neither the student's minutes nor Google's listening run
+   on while nobody is there.
    Sample (signed out or ?sample=1): a scripted call, nothing is sent and the microphone is not used.
    Interface text: app_tl_* keys. */
 (function () {
@@ -16,6 +19,7 @@
   var A = null, root = null, L = null;   /* L: the call's state */
   var TICK_MS = 30000, IN_RATE = 16000, OUT_RATE = 24000, CHUNK = 1600;   /* 100 ms of microphone per message */
   var TUTOR_KEY = 'alimun-tutor';
+  var IDLE_MS = 120000, IDLE_BOARD_MS = 300000, IDLE_WARN_MS = 15000;
   function t(k, v) { return A.t(k, v); }
   function esc(s) { return A.esc(s); }
   function D() { return window.AlimunData; }
@@ -128,10 +132,11 @@
     }
     if (m.sessionResumptionUpdate) { if (m.sessionResumptionUpdate.resumable && m.sessionResumptionUpdate.newHandle) L.handle = m.sessionResumptionUpdate.newHandle; return; }
     if (m.goAway) { renew('goaway'); return; }
-    if (m.toolCall) { boardCalls((m.toolCall.functionCalls || []).slice(0, 4)); return; }
+    if (m.toolCall) { awake(); boardCalls((m.toolCall.functionCalls || []).slice(0, 4)); return; }
     var c = m.serverContent;
     if (!c) return;
     if (c.interrupted) { stopPlayback(); flush('tutor'); setState('listening'); }
+    if (c.inputTranscription || c.outputTranscription || c.modelTurn) awake();
     if (c.inputTranscription && c.inputTranscription.text) { if (L.cur.tutor) flush('tutor'); L.cur.student += c.inputTranscription.text; captions(); }
     if (c.outputTranscription && c.outputTranscription.text) { if (L.cur.student) flush('student'); L.cur.tutor += c.outputTranscription.text; captions(); }
     (c.modelTurn && c.modelTurn.parts || []).forEach(function (p) {
@@ -295,6 +300,22 @@
     sendText('Say the sentence on the board slowly and clearly, once, then invite the student to record it.', true);
   }
 
+  /* ---------- Silence ---------- */
+  function awake() { if (!L) return; L.activeAt = Date.now(); if (L.idleWarn) { L.idleWarn = false; idleUi(); } }
+  function checkIdle() {
+    if (!L || L.ended || L.ending || !L.started || L.sample) return;
+    var limit = L.ex || L.pronMsg && !L.pronResult || L.prec || L.pbusy ? IDLE_BOARD_MS : IDLE_MS, quiet = Date.now() - (L.activeAt || Date.now());
+    if (L.playing && L.playing.length) { awake(); return; }
+    if (quiet >= limit) { end('app_tl_idle_end'); return; }
+    var warn = quiet >= limit - IDLE_WARN_MS;
+    if (warn !== !!L.idleWarn) { L.idleWarn = warn; idleUi(); }
+  }
+  function idleUi() {
+    var el = root && root.querySelector('[data-tl-idle]');
+    if (!el) return;
+    el.hidden = !L.idleWarn;
+  }
+
   /* ---------- Time ---------- */
   function tick() {
     if (!L || L.sample || !L.session) return Promise.resolve();
@@ -330,6 +351,7 @@
           if (!L || L.ending) return;
           connect(pass);
           L.ticker = setInterval(tick, TICK_MS);
+          L.activeAt = Date.now(); L.idleTimer = setInterval(checkIdle, 5000);
           L.face = root && root.querySelector('[data-tl-face]');
           if (L.face && window.AlimunLipsync && window.AlimunLipsync.followAnalyser) L.unfollow = window.AlimunLipsync.followAnalyser(L.an, L.face);
         });
@@ -352,7 +374,7 @@
   }
   function teardown() {
     if (!L) return;
-    clearInterval(L.ticker); clearTimeout(L.renewTimer); clearTimeout(L.sampleTimer);
+    clearInterval(L.ticker); clearInterval(L.idleTimer); clearTimeout(L.renewTimer); clearTimeout(L.sampleTimer);
     if (L.prec) { clearTimeout(L.prec.timer); if (L.prec.mr && L.prec.mr.state !== 'inactive') { L.prec.mr.onstop = null; L.prec.mr.stop(); } L.prec = null; }
     if (L.unfollow) L.unfollow();
     if (L.ws) { try { L.ws.close(); } catch (e) { /* gone */ } }
@@ -485,7 +507,8 @@
         '<button class="btn btn--primary btn--sm" type="button" data-tl="end"' + (L.ending ? ' disabled' : '') + '>' + esc(t('app_tl_end')) + '</button></div>') + '</div>';
     var stage = '<section class="tl-stage" data-state="' + esc(L.state) + '" aria-labelledby="tl-name"><div class="tl-face tutor-art" data-tl-face data-mouth="rest" aria-hidden="true">' + (A.Cast.tutor ? A.Cast.tutor(L.tutor) : '') + '</div>' +
       '<h2 class="t-h2 tl-name" id="tl-name">' + esc(name) + '</h2>' +
-      '<p class="t-body tl-state" data-tl-state aria-live="polite">' + (L.ended ? '' : (L.state === 'connecting' || L.state === 'ending' ? loader(22) : '') + '<span>' + esc(stateText()) + '</span>') + '</p></section>';
+      '<p class="t-body tl-state" data-tl-state aria-live="polite">' + (L.ended ? '' : (L.state === 'connecting' || L.state === 'ending' ? loader(22) : '') + '<span>' + esc(stateText()) + '</span>') + '</p>' +
+      (L.ended ? '' : '<div class="tl-idle" data-tl-idle role="alert"' + (L.idleWarn ? '' : ' hidden') + '><p class="t-body">' + esc(t('app_tl_idle_warn')) + '</p><button class="btn btn--primary btn--sm" type="button" data-tl="here">' + esc(t('app_tl_still_here')) + '</button></div>') + '</section>';
     var board = '<section class="tu-board tl-board" aria-labelledby="tl-board-h"><h2 class="sr" id="tl-board-h">' + esc(t('app_tu_board_h')) + '</h2><div data-tl-board>' + boardHtml() + '</div></section>';
     html += '<div class="tl-grid">' + board + '<div class="tl-side">' + stage +
       (L.ended ? summaryHtml() : '<section class="card tl-captions" aria-labelledby="tl-cap-h"><h2 class="t-h3" id="tl-cap-h">' + esc(t('app_tl_captions_h')) + '</h2><div class="ms-msgs tl-lines" data-tl-lines aria-live="polite"></div></section>') + '</div></div>';
@@ -505,6 +528,7 @@
     document.addEventListener('click', function (e) {
       if (!root || !root.contains(e.target)) return;
       var exEl = e.target.closest('[data-tl-ex]');
+      if (L && root.contains(e.target)) awake();
       if (exEl && L && L.ex) {
         if (EX().swallowClick && EX().swallowClick()) { e.preventDefault(); return; }
         var a = e.target.closest('[data-act]');
@@ -516,12 +540,13 @@
       var act = b.getAttribute('data-tl');
       if (act === 'end') end();
       else if (act === 'mute') toggleMute();
+      else if (act === 'here') awake();
       else if (act === 'prec') pronRecord();
       else if (act === 'pslow') pronSlow();
     });
     var inEx = function (e) { return root && L && L.ex && root.contains(e.target) && e.target.closest('[data-tl-ex]'); };
     document.addEventListener('keydown', function (e) { if (inEx(e)) L.ex.keydown(e); });
-    document.addEventListener('input', function (e) { if (inEx(e)) L.ex.input(e.target); });
+    document.addEventListener('input', function (e) { if (inEx(e)) { awake(); L.ex.input(e.target); } });
     document.addEventListener('change', function (e) { if (inEx(e)) L.ex.change(e.target); });
     document.addEventListener('pointerdown', function (e) { if (inEx(e)) EX().pointerDown(L.ex, e); });
     /* Leaving the call's page ends the call: the microphone is never left open */

@@ -1577,6 +1577,9 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .tl-lines .is-partial .ms-bub { opacity: .7; }
 .tl-empty { padding: 4px 4px; color: var(--muted); }
 .tl-sum { align-self: start; }
+.tl-idle { margin-top: 12px; padding: 12px 14px; border-radius: var(--r-md); background: var(--t-sun); display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.tl-idle[hidden] { display: none; }
+.tl-idle .t-body { margin: 0; }
 @media (max-width: 899px) {
   .tl-grid { grid-template-columns: minmax(0, 1fr); }
   .tl-side { position: static; order: -1; }
