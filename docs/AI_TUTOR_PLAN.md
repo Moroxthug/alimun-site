@@ -141,7 +141,7 @@ Recordings are sent to Groq (listening) or Azure (scoring) and discarded; they a
 7. The voice: one voice for the tutor in every language (Orus or Sulafat), the buddy's own voice per language, or the student's choice? Is `gemini-2.5-flash-tts` acceptable after listening, or worth a higher Gemini API tier for the 3.8 voices?
 8. Later live conversation mode (Gemini Live): wanted after trying the turn-by-turn tutor, or not?
 9. Public pages: the plans list tutor minutes, but public copy may not mention AI, and it must not suggest a human. What wording does the owner want on `/tiers` and the plans screen (for example "practice sessions with your language buddy, with instant feedback")? Until then the public pages do not mention the tutor at all.
-10. Accounts: the Google Cloud Text-to-Speech key from `docs/CLOUD_TTS_SETUP.md` serves the tutor too (its $30 budget alert would need raising once students use the tutor); and an Azure account with a Speech resource in West Europe; the keys go into Vercel by the owner.
+10. Accounts: the Google Cloud Text-to-Speech key from `docs/CLOUD_TTS_SETUP.md` serves the tutor too (its $30 budget alert would need raising once students use the tutor); and an Azure account with a Speech resource in an EU region (North Europe, set up 26 Oct 2026); the keys go into Vercel by the owner.
 11. The board: is the tutor's own board fine, leaving tldraw (and its licence) to the "Live classroom v2" decision?
 12. Text model: start on Groq and move to Gemini Flash only if the owner's language check finds the replies weak (proposal), or start on Gemini Flash for quality?
 
