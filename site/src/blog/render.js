@@ -1,147 +1,160 @@
-// Blog: the article templates, the blog home and the reading strip (docs/BLOG_PLAN.md).
-// Shared by src/pages/blog/[p].astro (pages) and scripts/localize.mjs (the strip on every page).
-// Second design (owner, 26 Oct 2026): white pages built on the approved patterns of the site: the course
-// hero (title, video in a rounded frame), the About split (photo beside text), the homepage course list
-// (big title rows beside a photo that changes) and white cards with rounded photos. No black backgrounds.
-// Every value from the data files is escaped; **phrase** becomes the lime marker used on course pages.
+// Blog: blog home, section pages, article page and the reading strip (docs/BLOG_PLAN.md, third design,
+// approved by the owner on 26 Oct 2026 from /preview/blog-step1 and /preview/article-step2: "lock it in").
+// Public nav and footer, dashboard look inside: bone page, white rounded cards, soft tinted cards with the
+// drawing cast (drawn in the browser by js/app/cast.js from data-draw), forest buttons, lime markers and cards.
+// Shared by src/pages/blog/[p].astro and scripts/localize.mjs (the strip on every page). Every value from the
+// data files is escaped; **phrase** becomes the lime marker. Links are root-relative with the language folder.
 
-import MEDIA from '../data/blog/media.js';
+import PHOTOS from '../data/blog/photos.js';
 
 export const esc = (s) => String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-export const mark = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<mark class="bl-mark">$1</mark>');
-const plain = (t) => esc(String(t || '').replace(/\*\*/g, ''));
-const ARROW = '<img src="/images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16">';
+export const mark = (t) => esc(t).replace(/\*\*(.+?)\*\*/g, '<span class="ar-mark">$1</span>');
+const plain = (t) => String(t || '').replace(/\*\*/g, '');
+const json = (o) => JSON.stringify(o).replace(/</g, '\\u003c');
+
+export const SECTIONS = {
+  levels: { draw: 'owl', tint: 'mint' },
+  grammar: { draw: 'parrot', tint: 'sun' },
+  vocabulary: { draw: 'cat', tint: 'coral' },
+  learn: { draw: 'teacup', tint: 'lime' },
+  exams: { draw: 'dragon', tint: 'mint' },
+  abroad: { draw: 'suitcase', tint: 'sun' },
+};
+const ORDER = ['levels', 'grammar', 'vocabulary', 'learn', 'exams', 'abroad'];
 
 export const prefix = (site) => (site === 'en' ? '/' : `/${site}/`);
 export const articlePath = (a) => `${prefix(a.site)}blog/${a.slug}`;
 export const blogPath = (site) => `${prefix(site)}blog`;
-export const videoOf = (key) => MEDIA[key] || MEDIA._home;
-export const posterOf = (key) => `/videos/${videoOf(key)}-poster-00001.jpg`;
+export const sectionPath = (site, ui, id) => `${blogPath(site)}/${ui.sectionSlugs[id]}`;
+const levelTest = (site, course) => `${prefix(site)}level-test${course ? '?language=' + course : ''}`;
+const photo = (id) => PHOTOS[id] || { src: '/images/blog/journal-and-coffee.jpg', w: 960, h: 640 };
+const draw = (name, cls = '') => `<div class="${cls}" data-draw="${esc(name)}" aria-hidden="true"></div>`;
 
-/* Words of the article's own text, for the reading time */
-export function minutes(a) {
+/* Words of the article's text, for the reading time */
+function words(a) {
   const parts = [a.lead];
-  for (const b of a.blocks) parts.push(b.h, b.p, b.quote, b.note && b.note.text, b.verdict && b.verdict.text,
-    ...(b.table ? b.table.rows.flat() : []), ...(b.examples || []).flat(), ...(b.mistakes || []).flat(),
-    ...(b.panels || []).flat(), ...(b.levels || []).flat(), ...(b.quiz || []).map((q) => q.q + ' ' + q.why));
+  for (const b of a.blocks) {
+    parts.push(b.h, b.h3, b.p, b.quote, b.take && b.take.text, b.note && b.note.text, b.figure && b.figure.caption,
+      ...(b.table ? [...b.table.head, ...b.table.rows.flat()] : []), ...(b.panels || []).flat(), ...(b.levels || []).flat(),
+      ...(b.examples || []).flat(), ...(b.mistakes || []).flat());
+  }
   for (const [q, x] of a.faq || []) parts.push(q, x);
-  const words = parts.filter(Boolean).join(' ').split(/\s+/).length;
-  return Math.max(2, Math.round(words / 200));
+  return parts.filter(Boolean).join(' ').split(/\s+/).length;
 }
-
+export const minutes = (a) => Math.max(2, Math.round(words(a) / 220));
 export function dateText(ui, iso) {
   return new Intl.DateTimeFormat(ui.locale.replace('_', '-'), { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(iso + 'T00:00:00Z'));
 }
-const metaLine = (a, ui) => `${esc(ui.courses[a.course])}, ${esc(ui.themes[a.theme])}, ${esc(ui.min(minutes(a)))}`;
+const meta = (a, ui) => `${esc(ui.sections[a.section][0])}, ${esc(ui.courses[a.course])}, ${esc(ui.min(minutes(a)))}`;
+const sorted = (list) => list.slice().sort((x, y) => (y.published + y.slug).localeCompare(x.published + x.slug));
 
-/* ---------- Cards: rounded photo, then the title (the strip, "Keep reading") ---------- */
-export function card(a, ui) {
-  return `<a class="bl-card bl-rise" href="${articlePath(a)}">` +
-    `<span class="bl-card_photo shadow-card"><img src="${posterOf(a.key)}" loading="lazy" alt=""></span>` +
-    `<span class="bl-card_meta">${metaLine(a, ui)}</span>` +
-    `<span class="bl-card_title">${esc(a.title)}</span>` +
-    `<span class="bl-card_desc">${esc(a.desc)}</span>` +
-    `<span class="bl-card_go">${esc(ui.read)}</span></a>`;
+/* ---------- Cards ---------- */
+export function card(a, ui, cls = '') {
+  const p = photo(a.photo);
+  return `<a class="bm-card rv${cls}" href="${articlePath(a)}" data-search="${esc((a.title + ' ' + a.desc + ' ' + ui.sections[a.section][0]).toLowerCase())}">` +
+    `<span class="bm-ph"><img src="${p.src}" width="${p.w}" height="${p.h}" loading="lazy" alt=""></span>` +
+    `<span class="bm-in"><span class="bm-meta">${meta(a, ui)}</span><span class="bm-t">${esc(a.title)}</span>` +
+    `<span class="bm-x">${esc(a.desc)}</span><span class="bm-go">${esc(ui.read)}</span></span></a>`;
+}
+function mini(a, ui) {
+  const p = photo(a.photo);
+  return `<a class="bm-mini rv" href="${articlePath(a)}"><img src="${p.src}" loading="lazy" alt=""><span><span class="bm-meta">${esc(ui.sections[a.section][0])}, ${esc(ui.courses[a.course])}</span><span class="bm-t">${esc(a.title)}</span></span></a>`;
 }
 
-/* The strip shown before the bottom banner on every public page of a language with articles */
+/* The strip shown before the bottom banner of every public page in a language with articles */
 export function strip(list, ui, site) {
   if (!list.length) return '';
   return `<section class="section bl-strip"><div class="container-large">` +
-    `<div class="bl-strip_head"><h2 class="heading-style-h2">${esc(ui.strip)}</h2><a class="button is-secondary w-inline-block" href="${blogPath(site)}"><p>${esc(ui.all)}</p>${ARROW}</a></div>` +
-    `<div class="bl-cards">${list.slice(0, 3).map((a) => card(a, ui)).join('')}</div></div></section>`;
+    `<div class="bl-strip_head"><h2 class="heading-style-h2">${esc(ui.strip)}</h2><a class="button is-secondary w-inline-block" href="${blogPath(site)}"><p>${esc(ui.all)}</p><img src="/images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16"></a></div>` +
+    `<div class="bm bm-grid">${list.slice(0, 3).map((a) => card(a, ui)).join('')}</div></div></section>`;
 }
 
-/* ---------- Article blocks ---------- */
-function block(b, ui) {
-  if (b.h) return `<h2 class="heading-style-h3 bl-h bl-rise">${esc(b.h)}</h2>`;
-  if (b.p) return `<p class="text-size-large bl-p bl-rise">${mark(b.p)}</p>`;
-  if (b.quote) return `<p class="bl-quote bl-rise">${mark(b.quote)}</p>`;
-  if (b.note) return `<div class="bl-note bl-rise"><p class="bl-note_title">${esc(b.note.title)}</p><p class="text-size-medium">${mark(b.note.text)}</p></div>`;
-  if (b.table) {
-    const t = b.table;
-    return `<div class="bl-table bl-rise"><table><thead><tr>${t.head.map((h) => `<th scope="col">${esc(h)}</th>`).join('')}</tr></thead>` +
-      `<tbody>${t.rows.map((r) => `<tr>${r.map((c, i) => i === 0 ? `<th scope="row">${mark(c)}</th>` : `<td>${mark(c)}</td>`).join('')}</tr>`).join('')}</tbody></table>` +
-      (t.note ? `<p class="text-size-small bl-table_note">${esc(t.note)}</p>` : '') + `</div>`;
-  }
-  if (b.levels) return `<div class="bl-levels">${b.levels.map(([code, name, text]) =>
-    `<div class="bl-level shadow-card bl-rise"><p class="bl-level_code"><span>${esc(code)}</span></p><p class="bl-level_name">${esc(name)}</p><p class="text-size-small">${mark(text)}</p></div>`).join('')}</div>`;
-  if (b.panels) return `<div class="bl-panels">${b.panels.map(([name, text]) =>
-    `<div class="bl-panel shadow-card bl-rise"><p class="bl-panel_name"><span>${esc(name)}</span></p><p class="text-size-medium">${mark(text)}</p></div>`).join('')}</div>`;
-  if (b.examples) return `<div class="bl-examples bl-rise">${b.examples.map(([s, tr]) =>
-    `<div class="bl-example"><p class="bl-example_s">${mark(s)}</p>${tr ? `<p class="bl-example_t">${esc(tr)}</p>` : ''}</div>`).join('')}</div>`;
-  if (b.mistakes) return `<div class="bl-mistakes bl-rise">${b.mistakes.map(([wrong, right, why]) =>
-    `<div class="bl-mistake"><p class="bl-mistake_w"><span class="bl-sr">${esc(ui.wrongLabel)}: </span><s>${esc(wrong)}</s></p><p class="bl-mistake_r"><span class="bl-sr">${esc(ui.rightLabel)}: </span>${mark(right)}</p><p class="text-size-small bl-mistake_why">${mark(why)}</p></div>`).join('')}</div>`;
-  if (b.quiz) return `<div class="bl-quiz shadow-card bl-rise" data-bl-quiz><h2 class="heading-style-h3 bl-quiz_title">${esc(ui.tryIt)}</h2>${b.quiz.map((q) =>
-    `<div class="bl-q" data-a="${Number(q.a)}"><p class="bl-q_text">${mark(q.q)}</p><div class="bl-q_opts">${q.options.map((o, i) =>
-      `<button type="button" class="bl-opt" data-i="${i}">${esc(o)}</button>`).join('')}</div><p class="bl-q_why" aria-live="polite" data-ok="${esc(ui.correct)}" data-no="${esc(ui.notQuite)}" data-why="${esc(q.why)}"></p></div>`).join('')}</div>`;
-  if (b.verdict) return `<div class="bl-verdict shadow-card bl-rise"><p class="bl-verdict_title">${esc(b.verdict.title)}</p><p class="text-size-large">${mark(b.verdict.text)}</p></div>`;
-  return '';
-}
-
-/* ---------- Article page parts ---------- */
-const video = (name) => `<div class="video_box"><div class="video_bg"><div class="video_bg w-background-video w-background-video-atom"><video autoplay loop muted playsinline poster="/videos/${name}-poster-00001.jpg" style="background-image:url(&quot;/videos/${name}-poster-00001.jpg&quot;)" data-object-fit="cover"><source src="/videos/${name}-transcode.mp4"><source src="/videos/${name}-transcode.webm"></video></div></div></div>`;
-
-/* Hero: the course pages' hero (title, then the video in a rounded frame that grows as the page scrolls) */
-export function hero(a, ui) {
-  const meta = `${esc(ui.by)} ${esc(a.author || ui.author)}, ${esc(ui.updated)} ${esc(dateText(ui, a.updated))}, ${esc(ui.min(minutes(a)))}`;
-  return `<section class="section is-about-hero bl-hero"><div class="container-large"><div class="about-hero_wrap">` +
-    `<a class="bl-back" href="${blogPath(a.site)}">${esc(ui.back)}</a>` +
-    `<div class="bl-hero_title"><h1 class="heading-style-h1">${esc(a.title)}</h1></div>` +
-    `<div class="about-visual_wrap">${video(videoOf(a.key))}</div>` +
-    `<div class="bl-hero_text"><p class="bl-lead">${mark(a.lead)}</p><p class="bl-meta">${meta}</p></div>` +
-    `</div></div>${HERO_SCRIPT}</section>`;
-}
-const HERO_SCRIPT = `<script>(function () { var root = document.currentScript.closest(".bl-hero"); function update() { var p = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.5))); root.style.setProperty("--hero-s", (0.9 + p * 0.1).toFixed(3)); root.style.setProperty("--hero-z", (1.15 - p * 0.15).toFixed(3)); } window.addEventListener("scroll", update, { passive: true }); window.addEventListener("resize", update); update(); })();</script>`;
-
-/* Body: one reading column */
-export function body(a, ui) {
-  const sources = a.sources && a.sources.length
-    ? `<p class="text-size-small bl-sources">${esc(ui.sources)}: ${a.sources.map(([label, url]) => /^https:\/\//.test(url) ? `<a href="${esc(url)}" rel="noopener" target="_blank">${esc(label)}</a>` : esc(label)).join(', ')}.</p>` : '';
-  return `<section class="section bl-body is-${a.template}"><div class="container-large"><article class="bl-text">` +
-    `${a.blocks.map((b) => block(b, ui)).join('')}${sources}</article></div></section>`;
-}
-
-/* The course, after the FAQ, in the About layout (photo beside the text) */
-export function courseSection(a, ui, course) {
-  if (!course) return '';
-  return `<section class="section bl-split bl-course"><div class="container-large"><div class="bl-split_grid">` +
-      `<div class="bl-split_photo shadow-card"><img src="/videos/${MEDIA['_' + a.course] || MEDIA._home}-poster-00001.jpg" loading="lazy" alt=""></div>` +
-      `<div class="bl-split_text"><h2 class="heading-style-h2">${esc(course.title)}</h2><p class="text-size-large">${esc(course.text)}</p>` +
-      `<div class="bl-split_btns"><a class="button w-inline-block" href="${course.href}"><p>${esc(ui.courseCta)}</p>${ARROW}</a>` +
-      `<a class="button is-secondary w-inline-block" href="${course.testHref}"><p>${esc(ui.testCta)}</p>${ARROW}</a></div></div></div></div></section>`;
-}
-
-export function keepReading(list, ui) {
-  if (!list.length) return '';
-  return `<section class="section bl-more"><div class="container-large"><h2 class="heading-style-h2 bl-more_title">${esc(ui.keep)}</h2>` +
-    `<div class="bl-cards">${list.slice(0, 3).map((a) => card(a, ui)).join('')}</div></div></section>`;
-}
+const ctaCard = (site, ui) => `<div class="bm-cta rv"><div><h2>${esc(ui.ctaTitle)}</h2><p>${esc(ui.ctaText)}</p></div>` +
+  `<div class="bm-cta_r">${draw('owl')}<a class="bm-btn" href="${levelTest(site)}">${esc(ui.levelTest)}</a></div></div>`;
+const head2 = (title, lead, right = '') => `<div class="bm-h rv"><div><h2><span>${esc(title)}</span></h2>${lead ? `<p>${esc(lead)}</p>` : ''}</div>${right}</div>`;
 
 /* ---------- Blog home ---------- */
 export function home(site, list, ui) {
-  const sorted = list.slice().sort((x, y) => (y.published + y.slug).localeCompare(x.published + x.slug));
-  const featured = sorted.find((a) => a.key === ui.featured) || sorted[0];
-  const courses = [...new Set(sorted.map((a) => a.course))];
-  const heroBlock = `<section class="section is-about-hero bl-hero is-home"><div class="container-large"><div class="about-hero_wrap">` +
-    `<div class="bl-hero_title"><h1 class="heading-style-h1">${esc(ui.blogTitle)}</h1></div>` +
-    `<div class="about-visual_wrap">${video(MEDIA._home)}</div>` +
-    `<div class="bl-hero_text"><p class="bl-lead">${esc(ui.blogLead)}</p></div></div></div>${HERO_SCRIPT}</section>`;
-  const feat = featured
-    ? `<section class="section bl-split bl-featured"><div class="container-large"><div class="bl-split_grid">` +
-      `<a class="bl-split_photo shadow-card" href="${articlePath(featured)}" tabindex="-1" aria-hidden="true"><img src="${posterOf(featured.key)}" loading="lazy" alt=""></a>` +
-      `<div class="bl-split_text"><p class="bl-split_meta">${metaLine(featured, ui)}</p><h2 class="heading-style-h2"><a href="${articlePath(featured)}">${esc(featured.title)}</a></h2>` +
-      `<p class="text-size-large">${plain(featured.lead)}</p><div class="bl-split_btns"><a class="button w-inline-block" href="${articlePath(featured)}"><p>${esc(ui.read)}</p>${ARROW}</a></div></div></div></div></section>`
-    : '';
-  const lists = courses.map((c) => {
-    const items = sorted.filter((a) => a.course === c);
-    return `<section class="section bl-index"><div class="container-large"><div class="bl-index_grid"><div>` +
-      `<div class="bl-index_head"><h2 class="heading-style-h2">${esc(ui.courseHeading(ui.courses[c]))}</h2><p class="text-size-medium">${esc(ui.courseLead[c] || '')}</p></div>` +
-      `<ul class="bl-index_list">${items.map((a, i) => `<li class="bl-index_row${i === 0 ? ' is-on' : ''}" data-i="${i}"><a class="bl-index_link" href="${articlePath(a)}"><span class="bl-index_title">${esc(a.title)}</span><span class="bl-index_meta">${metaLine(a, ui)}</span></a></li>`).join('')}</ul></div>` +
-      `<div class="bl-index_side"><div class="bl-index_media shadow-card" aria-hidden="true">${items.map((a, i) => `<img class="bl-index_img${i === 0 ? ' is-on' : ''}" src="${posterOf(a.key)}" loading="lazy" alt="">`).join('')}</div></div>` +
-      `</div></div></section>`;
-  }).join('');
-  return heroBlock + feat + lists;
+  const all = sorted(list);
+  const featured = all.find((a) => a.key === ui.featured) || all[0];
+  const top = [featured, ...all.filter((a) => a !== featured)].slice(0, 4);
+  const latest = all.filter((a) => !top.includes(a));
+  const bySection = (id) => all.filter((a) => a.section === id);
+  const secs = ORDER.filter((id) => bySection(id).length);
+  const fp = photo(featured.photo);
+  return `<div class="bm"><div class="bm-wrap">` +
+    `<div class="bm-top"><div class="bm-hello"><div><h1>${esc(ui.blogTitle)}</h1><p>${esc(ui.blogLead)}</p></div>` +
+    `<form class="bm-search" role="search" data-search-form><input type="search" placeholder="${esc(ui.search)}" aria-label="${esc(ui.search)}"><button class="bm-btn" type="submit">${esc(ui.searchBtn)}</button></form></div>` +
+    `<div class="bm-buddy"><div class="bm-bub">${esc(ui.bubble)}</div>${draw('book', 'bm-book')}</div></div>` +
+    `<div class="bm-results" data-results hidden><div class="bm-grid"></div><p class="bm-none" hidden>${esc(ui.noResults)}</p></div>` +
+    `<div data-browse>` +
+    head2(ui.sectionsTitle) +
+    `<div class="bm-secs">${secs.map((id) => `<a class="bm-sec rv t-${SECTIONS[id].tint}" href="${sectionPath(site, ui, id)}">${draw(SECTIONS[id].draw)}<span class="bm-d">${esc(ui.sections[id][0])}</span><span class="bm-n">${esc(ui.count(bySection(id).length))}</span></a>`).join('')}</div>` +
+    head2(ui.topTitle) +
+    `<div class="bm-top2"><a class="bm-card bm-lead rv" href="${articlePath(featured)}"><span class="bm-ph"><img src="${fp.src}" loading="lazy" alt=""></span><span class="bm-in"><span class="bm-meta">${meta(featured, ui)}</span><span class="bm-t">${esc(featured.title)}</span><span class="bm-x">${esc(plain(featured.lead))}</span><span class="bm-go">${esc(ui.read)}</span></span></a>` +
+    `<div class="bm-side">${top.slice(1).map((a) => mini(a, ui)).join('')}</div></div>` +
+    (latest.length ? head2(ui.latestTitle, ui.latestLead) + `<div class="bm-grid" data-more-list>${latest.map((a, i) => card(a, ui, i >= 6 ? ' is-more' : '')).join('')}</div>` +
+      (latest.length > 6 ? `<div class="bm-more rv"><button class="bm-btn is-ghost" type="button" data-more>${esc(ui.more)}</button></div>` : '') : '') +
+    secs.filter((id) => bySection(id).length >= 3).map((id) => `<div class="bm-band rv t-${SECTIONS[id].tint}"><div class="bm-h"><div class="bm-hl">${draw(SECTIONS[id].draw)}<div><h2><span>${esc(ui.sections[id][0])}</span></h2><p>${esc(ui.sections[id][1])}</p></div></div>` +
+      `<a class="bm-btn is-ghost" href="${sectionPath(site, ui, id)}">${esc(ui.seeAll)}</a></div><div class="bm-grid">${bySection(id).slice(0, 3).map((a) => card(a, ui)).join('')}</div></div>`).join('') +
+    `</div>` + ctaCard(site, ui) + `</div></div>`;
+}
+
+/* ---------- Section page ---------- */
+export function section(site, id, list, ui) {
+  const items = sorted(list.filter((a) => a.section === id));
+  return `<div class="bm"><div class="bm-wrap">` +
+    `<div class="bm-top is-section"><div class="bm-hello t-${SECTIONS[id].tint}"><div><p class="bm-crumb"><a href="${blogPath(site)}">${esc(ui.back)}</a></p><h1>${esc(ui.sections[id][0])}</h1><p>${esc(ui.sections[id][1])}</p></div></div>` +
+    `<div class="bm-buddy t-white">${draw(SECTIONS[id].draw, 'bm-secdraw')}</div></div>` +
+    head2(ui.count(items.length)) + `<div class="bm-grid">${items.map((a) => card(a, ui)).join('')}</div>` +
+    ctaCard(site, ui) + `</div></div>`;
+}
+
+/* ---------- Article ---------- */
+const TINTS = ['mint', 'sun', 'coral', 'lime'];
+function block(b, ui, site, a) {
+  if (b.take) return `<div class="ar-take rv t-lime">${draw(b.take.draw || 'owl')}<p class="ar-d">${esc(b.take.title)}</p><p>${mark(b.take.text)}</p></div>`;
+  if (b.h) return `<h2 class="rv"><span>${esc(b.h)}</span></h2>`;
+  if (b.h3) return `<h3 class="rv">${esc(b.h3)}</h3>`;
+  if (b.p) return `<p class="rv">${mark(b.p)}</p>`;
+  if (b.figure) { const p = photo(b.figure.photo); return `<figure class="ar-fig rv"><div class="ar-img"><img src="${p.src}" width="${p.w}" height="${p.h}" loading="lazy" alt="${esc(b.figure.alt)}"></div>${b.figure.caption ? `<figcaption>${esc(b.figure.caption)}</figcaption>` : ''}</figure>`; }
+  if (b.panels) return `<div class="ar-two">${b.panels.map(([n, t], i) => `<div class="ar-pan t-${i % 2 ? 'sun' : 'mint'}"><p class="ar-d">${esc(n)}</p><p>${mark(t)}</p></div>`).join('')}</div>`;
+  if (b.table) return `<div class="ar-table rv"><table><thead><tr>${b.table.head.map((h) => `<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>` +
+    b.table.rows.map((r) => `<tr>${r.map((c, i) => i === 0 ? `<th scope="row">${mark(c)}</th>` : `<td>${mark(c)}</td>`).join('')}</tr>`).join('') + `</tbody></table>${b.table.note ? `<p class="ar-tnote">${esc(b.table.note)}</p>` : ''}</div>`;
+  if (b.quote) return `<p class="ar-quote" data-qwords>${esc(plain(b.quote))}</p>`;
+  if (b.note) return `<div class="ar-note rv t-${b.note.tint || 'sun'}">${draw(b.note.draw || 'teacup')}<div><p class="ar-d">${esc(b.note.title)}</p><p>${mark(b.note.text)}</p></div></div>`;
+  if (b.levels) return `<div class="ar-levels">${b.levels.map(([c, n, t], i) => `<div class="ar-level pop t-${TINTS[i % 4]}"><p class="ar-code">${esc(c)}</p><p class="ar-lname">${esc(n)}</p><p>${mark(t)}</p></div>`).join('')}</div>`;
+  if (b.examples) return `<div class="ar-ex rv">${b.examples.map(([s, g]) => `<div><p class="ar-exs">${mark(s)}</p>${g ? `<p class="ar-exg">${esc(g)}</p>` : ''}</div>`).join('')}</div>`;
+  if (b.mistakes) return `<div class="ar-mis rv">${b.mistakes.map(([w, r, why]) => `<div class="ar-mi"><p class="ar-w"><span class="ar-sr">${esc(ui.wrongLabel)}: </span><s>${esc(w)}</s></p><p class="ar-r"><span class="ar-sr">${esc(ui.rightLabel)}: </span>${mark(r)}</p><p class="ar-why2">${mark(why)}</p></div>`).join('')}</div>`;
+  if (b.cta) return `<div class="ar-mid rv">${draw('teacup')}<div><p class="ar-d">${esc(ui.midTitle)}</p><p>${esc(ui.midText)}</p><div class="ar-btns">` +
+    (a.quiz && a.quiz.length ? `<a class="ar-btn" href="#quiz">${esc(ui.test)}</a>` : '') + `<a class="ar-btn is-ghost" href="${levelTest(site, a.course)}">${esc(ui.join)}</a></div></div></div>`;
+  return '';
+}
+
+export function article(a, ui, related) {
+  const site = a.site, p = photo(a.photo), mins = minutes(a), q = a.quiz || [];
+  const join = levelTest(site, a.course);
+  const facts = (a.facts || []).slice(0, 4).map((f, i) => `<div class="ar-fact pop t-${TINTS[i % 4]}"><p class="ar-d">${f.n != null ? `<span data-count="${Number(f.n)}">0</span>${f.unit ? ' ' + esc(f.unit) : ''}` : esc(f.label)}</p><p>${esc(f.text)}</p></div>`).join('');
+  const quiz = q.length ? `<div class="ar-quiz rv" id="quiz"><div class="ar-quiz-top">${draw('parrot')}<div><p class="ar-d">${esc(ui.quizTitle)}</p><p class="ar-ql">${esc(ui.quizLead)}</p></div></div>` +
+    `<div class="ar-qbar"><i></i></div><div class="ar-qs"></div><div class="ar-score" hidden><p class="ar-d"><span data-score>0</span> / ${q.length}</p><p>${esc(ui.scoreText)}</p>` +
+    `<div class="ar-btns is-center"><a class="ar-btn" href="${join}">${esc(ui.join)}</a><button class="ar-btn is-ghost" type="button" data-again>${esc(ui.again)}</button></div></div>` +
+    `<script type="application/json" class="ar-quiz-data">${json({ q: q.map((x) => [x.q, x.options, x.a, x.why]), ok: ui.correct, no: ui.notQuite })}</script></div>` : '';
+  const faq = a.faq && a.faq.length ? `<h2 class="rv"><span>${esc(ui.faqTitle)}</span></h2><div class="ar-faq rv">${a.faq.map(([qq, x]) => `<details><summary>${esc(qq)}</summary><p>${mark(x)}</p></details>`).join('')}</div>` : '';
+  const sources = a.sources && a.sources.length ? `<p class="ar-src">${esc(ui.sources)}: ${a.sources.map(([l, u]) => /^https:\/\//.test(u) ? `<a href="${esc(u)}" target="_blank" rel="noopener">${esc(l)}</a>` : esc(l)).join(', ')}.</p>` : '';
+  return `<div class="ar-bar" aria-hidden="true"></div><div class="ar bm" data-minutes="${mins}"><div class="ar-wrap">` +
+    `<header class="ar-head"><div class="ar-title"><p class="ar-crumb"><a href="${blogPath(site)}">${esc(ui.back)}</a> &nbsp;/&nbsp; <a href="${sectionPath(site, ui, a.section)}">${esc(ui.sections[a.section][0])}</a></p>` +
+    `<h1 data-words>${esc(a.title)}</h1><p class="ar-lead">${mark(a.lead)}</p>` +
+    `<div class="ar-by">${draw('book')}<p><b>${esc(a.author || ui.author)}</b><br>${esc(ui.updated)} ${esc(dateText(ui, a.updated))}, ${esc(ui.min(mins))}</p></div></div>` +
+    `<div class="ar-photo"><img src="${p.src}" width="${p.w}" height="${p.h}" alt="${esc(a.photoAlt || '')}"><div class="ar-sticker">${a.sticker && a.sticker.say ? `<div class="ar-bub">${esc(a.sticker.say)}</div>` : ''}${draw((a.sticker && a.sticker.draw) || 'owl')}</div></div></header>` +
+    (facts ? `<div class="ar-facts">${facts}</div>` : '') +
+    `<div class="ar-body"><aside class="ar-side"><div class="ar-prog"><svg class="ar-ring" viewBox="0 0 70 70" aria-hidden="true"><circle class="bg" cx="35" cy="35" r="30"/><circle class="fg" cx="35" cy="35" r="30"/></svg><div><p class="ar-d"><span data-left>${mins}</span> ${esc(ui.minShort)}</p><p>${esc(ui.leftToRead)}</p></div></div>` +
+    (q.length ? `<div class="ar-act t-sun">${draw('parrot')}<p class="ar-d">${esc(ui.quizTitle)}</p><p>${esc(ui.quizSide(q.length))}</p><a class="ar-btn" href="#quiz">${esc(ui.quizStart)}</a></div>` : '') +
+    `<div class="ar-act t-mint">${draw('snail')}<p class="ar-d">${esc(ui.joinTitle)}</p><p>${esc(ui.joinText)}</p><a class="ar-btn is-ghost" href="${join}">${esc(ui.join)}</a></div></aside>` +
+    `<article class="ar-paper">${a.blocks.map((b) => block(b, ui, site, a)).join('')}${quiz}${faq}${sources}</article></div>` +
+    (related.length ? `<div class="bm-h rv"><div><h2><span>${esc(ui.keep)}</span></h2></div></div><div class="bm-grid">${related.slice(0, 3).map((r) => card(r, ui)).join('')}</div>` : '') +
+    `<div class="ar-end rv"><div><h2>${esc(ui.endTitle)}</h2><p>${esc(ui.endText)}</p><div class="ar-btns"><a class="ar-btn" href="${join}">${esc(ui.join)}</a>` +
+    (q.length ? `<a class="ar-btn is-ghost" href="#quiz">${esc(ui.test)}</a>` : '') + `</div></div><div class="ar-cast">${draw('owl')}${draw('parrot')}${draw('snail')}</div></div>` +
+    `</div></div>`;
 }
 
 /* ---------- Structured data ---------- */
@@ -149,20 +162,21 @@ const BASE = 'https://alimun.com';
 export function articleLd(a, ui, lang) {
   const url = BASE + articlePath(a);
   const graph = [
-    { '@type': 'Article', headline: a.title, description: a.desc, inLanguage: lang, datePublished: a.published, dateModified: a.updated,
+    { '@type': 'Article', headline: a.title, description: a.desc, inLanguage: lang, datePublished: a.published, dateModified: a.updated, wordCount: words(a),
       author: a.authorUrl ? { '@type': 'Person', name: a.author, url: a.authorUrl } : { '@type': 'Organization', name: 'Alimun', url: BASE },
       publisher: { '@type': 'Organization', name: 'Alimun', url: BASE, logo: { '@type': 'ImageObject', url: BASE + '/images/webclip.png' } },
-      image: BASE + posterOf(a.key), mainEntityOfPage: url },
+      image: BASE + photo(a.photo).src, mainEntityOfPage: url },
     { '@type': 'BreadcrumbList', itemListElement: [
       { '@type': 'ListItem', position: 1, name: ui.home, item: BASE + prefix(a.site) },
       { '@type': 'ListItem', position: 2, name: ui.back, item: BASE + blogPath(a.site) },
-      { '@type': 'ListItem', position: 3, name: a.title, item: url }] },
+      { '@type': 'ListItem', position: 3, name: ui.sections[a.section][0], item: BASE + sectionPath(a.site, ui, a.section) },
+      { '@type': 'ListItem', position: 4, name: a.title, item: url }] },
   ];
-  if (a.faq && a.faq.length) graph.push({ '@type': 'FAQPage', mainEntity: a.faq.map(([q, x]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: x.replace(/\*\*/g, '') } })) });
-  return JSON.stringify({ '@context': 'https://schema.org', '@graph': graph }).replace(/</g, '\\u003c');
+  if (a.faq && a.faq.length) graph.push({ '@type': 'FAQPage', mainEntity: a.faq.map(([q, x]) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: plain(x) } })) });
+  return json({ '@context': 'https://schema.org', '@graph': graph });
 }
-export function homeLd(site, list, ui) {
-  return JSON.stringify({ '@context': 'https://schema.org', '@type': 'Blog', name: ui.blogTitle, description: ui.metaDesc, url: BASE + blogPath(site),
+export function listLd(name, desc, url, list) {
+  return json({ '@context': 'https://schema.org', '@type': 'CollectionPage', name, description: desc, url: BASE + url,
     publisher: { '@type': 'Organization', name: 'Alimun', url: BASE },
-    blogPost: list.map((a) => ({ '@type': 'BlogPosting', headline: a.title, url: BASE + articlePath(a), datePublished: a.published, image: BASE + posterOf(a.key) })) }).replace(/</g, '\\u003c');
+    hasPart: list.map((a) => ({ '@type': 'BlogPosting', headline: a.title, url: BASE + articlePath(a), datePublished: a.published, image: BASE + photo(a.photo).src })) });
 }

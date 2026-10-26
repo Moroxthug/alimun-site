@@ -1,61 +1,60 @@
 ---
-// Blog (docs/BLOG_PLAN.md): the blog home and every article for each site language with articles.
-// Built as blog/<site>--index.html and blog/<site>--<slug>.html, then moved to /blog, /blog/<slug>,
-// /<site>/blog and /<site>/blog/<slug> by scripts/localize.mjs (which also translates nav and footer).
-// Templates (guide, explainer, grammar, compare) are in src/blog/render.js; articles in src/data/blog/<site>/.
+// Blog (docs/BLOG_PLAN.md, third design): the blog home, a page per section and every article, for each site
+// language with articles. Built as blog/<site>--index.html, blog/<site>--<section slug>.html and
+// blog/<site>--<article slug>.html, then moved to /blog, /blog/<name>, /<site>/blog and /<site>/blog/<name> by
+// scripts/localize.mjs (which also translates nav and footer). Markup in src/blog/render.js; articles in
+// src/data/blog/<site>/; interface text in src/data/blog/ui.js.
 import Base from '../../layouts/Base.astro';
 import headTpl from '../../blocks/blog/head.html?raw';
 import style from '../../blocks/blog/style.html?raw';
 import cards from '../../blocks/blog/cards.html?raw';
-import faqTpl from '../../blocks/course/faq.html?raw';
-import bottomCta from '../../blocks/tiers/s02.html?raw';
 import after from '../../blocks/legal/after.html?raw';
 import nav from '../../blocks/legal/nav.html?raw';
 import footer from '../../blocks/footer.html?raw';
 import UI from '../../data/blog/ui.js';
-import { esc, mark, hero, body, courseSection, keepReading, home, articleLd, homeLd, articlePath, blogPath, prefix } from '../../blog/render.js';
+import PHOTOS from '../../data/blog/photos.js';
+import { esc, home, section, article, articleLd, listLd, articlePath, blogPath, sectionPath, SECTIONS } from '../../blog/render.js';
 
 export async function getStaticPaths() {
   const articles = Object.values(import.meta.glob('../../data/blog/*/*.js', { eager: true })).map((m) => m.default);
-  const sites = Object.values(import.meta.glob('../../data/course-sites/*.js', { eager: true })).map((m) => m.default);
-  const bySite = (s) => articles.filter((a) => a.site === s);
   const paths = [];
   for (const site of Object.keys(UI)) {
-    const list = bySite(site);
+    const list = articles.filter((a) => a.site === site);
     if (!list.length) continue;
-    paths.push({ params: { p: `${site}--index` }, props: { site, list, articles, sites } });
-    for (const a of list) paths.push({ params: { p: `${site}--${a.slug}` }, props: { site, a, list, articles, sites } });
+    paths.push({ params: { p: `${site}--index` }, props: { site, list, articles } });
+    for (const id of Object.keys(SECTIONS)) {
+      if (list.some((a) => a.section === id)) paths.push({ params: { p: `${site}--${UI[site].sectionSlugs[id]}` }, props: { site, list, articles, sectionId: id } });
+    }
+    for (const a of list) paths.push({ params: { p: `${site}--${a.slug}` }, props: { site, a, list, articles } });
   }
   return paths;
 }
 
-const { site, a, list, articles, sites } = Astro.props;
+const { site, a, list, articles, sectionId } = Astro.props;
 const ui = UI[site];
-const S = sites.find((x) => x.site === site);
-const lang = site === 'en' ? 'en' : site;
+const lang = site;
 const fill = (tpl, values) => Object.entries(values).reduce((t, [k, v]) => t.split(`{{${k}}}`).join(v), tpl);
 const json = (o) => JSON.stringify(o).replace(/</g, '\\u003c');
+const ogImage = (id) => 'https://alimun.com' + ((PHOTOS[id] && PHOTOS[id].src) || '/images/alimun-og.jpg');
 
 let head, main;
 if (a) {
-  const canon = 'https://alimun.com' + articlePath(a);
   // The same article in the other languages, for the language switcher and the redirect (js/i18n.js).
   const alts = Object.fromEntries(articles.filter((x) => x.key === a.key).map((x) => [x.site, articlePath(x)]));
-  const c = S && S.courses.find((k) => k.lang === a.course);
-  const course = c ? { title: S.heroTitle(c), text: S.heroDesc(c), href: `${prefix(site)}${c.slug}`, testHref: `${prefix(site)}level-test?language=${c.lang}` } : null;
-  const related = [...a.related.map((k) => list.find((x) => x.key === k)).filter(Boolean), ...list.filter((x) => x !== a && !a.related.includes(x.key))].filter((x) => x !== a);
-  head = fill(headTpl, { PAGE_TITLE: esc(a.metaTitle || `${a.title} – Alimun`), META_DESC: esc(a.desc), CANON: canon, LOCALE: ui.locale, OG_TYPE: 'article', LD: articleLd(a, ui, lang) })
+  const related = [...(a.related || []).map((k) => list.find((x) => x.key === k)).filter(Boolean), ...list.filter((x) => x !== a && !(a.related || []).includes(x.key))].filter((x) => x !== a);
+  head = fill(headTpl, { PAGE_TITLE: esc(a.metaTitle || `${a.title} – Alimun`), META_DESC: esc(a.desc), CANON: 'https://alimun.com' + articlePath(a), LOCALE: ui.locale, OG_TYPE: 'article', LD: articleLd(a, ui, lang) })
+    .replace('https://alimun.com/images/alimun-og.jpg', ogImage(a.photo))
     + `\n  <script type="application/json" id="alimun-lang-alternates">${json(alts)}</script>`;
-  const faq = a.faq && a.faq.length ? fill(faqTpl, {
-    UI_FAQ_TITLE: esc(S && S.ui && S.ui.UI_FAQ_TITLE || 'FAQ'),
-    QA_QUESTIONS: a.faq.map(([q, x]) => `              <button type="button" class="qa_q" aria-expanded="false">${esc(q)}<span class="qa_mobile">${mark(x)}</span></button>`).join('\n'),
-    QA_ANSWERS: a.faq.map(([q, x]) => `              <div class="qa_a"><h3 class="heading-style-h4">${esc(q)}</h3><p class="text-size-large">${mark(x)}</p></div>`).join('\n'),
-  }) : '';
-  main = style + cards + hero(a, ui) + body(a, ui) + faq + courseSection(a, ui, course) + keepReading(related, ui);
+  main = style + cards + article(a, ui, related);
+} else if (sectionId) {
+  const name = ui.sections[sectionId][0], url = sectionPath(site, ui, sectionId);
+  const alts = Object.fromEntries(Object.keys(UI).filter((s) => articles.some((x) => x.site === s && x.section === sectionId)).map((s) => [s, sectionPath(s, UI[s], sectionId)]));
+  head = fill(headTpl, { PAGE_TITLE: esc(`${ui.sectionTitle(name)} – Alimun`), META_DESC: esc(ui.sectionMetaDesc(name, ui.sections[sectionId][1])), CANON: 'https://alimun.com' + url, LOCALE: ui.locale, OG_TYPE: 'website', LD: listLd(name, ui.sections[sectionId][1], url, list.filter((x) => x.section === sectionId)) })
+    + `\n  <script type="application/json" id="alimun-lang-alternates">${json(alts)}</script>`;
+  main = style + cards + section(site, sectionId, list, ui);
 } else {
-  const canon = 'https://alimun.com' + blogPath(site);
   const alts = Object.fromEntries(Object.keys(UI).filter((s) => articles.some((x) => x.site === s)).map((s) => [s, blogPath(s)]));
-  head = fill(headTpl, { PAGE_TITLE: esc(ui.metaTitle), META_DESC: esc(ui.metaDesc), CANON: canon, LOCALE: ui.locale, OG_TYPE: 'website', LD: homeLd(site, list, ui) })
+  head = fill(headTpl, { PAGE_TITLE: esc(ui.metaTitle), META_DESC: esc(ui.metaDesc), CANON: 'https://alimun.com' + blogPath(site), LOCALE: ui.locale, OG_TYPE: 'website', LD: listLd(ui.metaTitle, ui.metaDesc, blogPath(site), list) })
     + `\n  <script type="application/json" id="alimun-lang-alternates">${json(alts)}</script>`;
   main = style + cards + home(site, list, ui);
 }
@@ -64,7 +63,6 @@ if (a) {
   <Fragment set:html={nav} />
   <main class="main-wrapper">
     <Fragment set:html={main} />
-    <Fragment set:html={bottomCta} />
   </main>
   <Fragment set:html={footer} />
 </Base>
