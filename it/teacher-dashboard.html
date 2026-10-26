@@ -3780,7 +3780,7 @@ window.submitSessionNotes = submitSessionNotes;
   const role = session.user?.app_metadata?.role || '';
   if (!viewAs && role !== 'teacher') {
     window.location.href = role === 'student' ? 'student-dashboard.html' :
-                          role === 'admin' ? 'admin.html' : 'signin.html';
+                          role === 'admin' ? '/app/admin' : 'signin.html';
     return;
   }
   // Teachers now use the new dashboard (docs/DASHBOARD_PLAN.md, step 15, switched over 26 Oct 2026).

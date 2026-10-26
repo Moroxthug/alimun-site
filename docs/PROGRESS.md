@@ -817,3 +817,7 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 
 ## 2026-10-26 — Locale pages regenerated
 - Owner: commit the locale pages as their own change. The stored `ar de es fr it ma pt zh` copies of 92 pages were behind their root pages (titles, descriptions, favicons, corporate slides); committed the unchanged output of `npm run build`. Production builds the same pages itself, so the live site does not change.
+
+## 2026-10-26 — Old admin page deleted
+- Owner: delete the old admin page's code. `admin.html` (about 3,200 lines) is now a short page that forwards to `/app/admin`, keeping any `#/section`; its locale copies regenerated. The old dashboards send admins to `/app/admin` directly, the old view-as bar (`js/view-as.js`) links back there, and `scripts/split-translations.js` no longer lists `admin.html` as a dashboard page (no translation key was used only by it; the `js/i18n` files did not change).
+- Checked: `npm run build`; `/admin.html`, `/admin.html?old=1#/payouts` and `/de/admin.html#/system` end on `/app/admin` with the section kept; smoke tests 14 of 14.

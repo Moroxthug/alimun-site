@@ -3094,7 +3094,7 @@ let VOCAB = [];
   // Routing uses app_metadata.role only; user_metadata is user-editable.
   const role=session.user?.app_metadata?.role||'';
   if(!viewAs && role!=='student'){
-    window.location.href=role==='teacher'?'teacher-dashboard.html':role==='admin'?'admin.html':'signin.html';
+    window.location.href=role==='teacher'?'teacher-dashboard.html':role==='admin'?'/app/admin':'signin.html';
     return;
   }
 

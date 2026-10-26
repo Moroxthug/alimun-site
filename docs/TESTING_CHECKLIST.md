@@ -63,4 +63,3 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] Reviews: deleting one removes it from the teacher's public profile and updates their rating.
 - [ ] App settings: replacing waitlist_webhook_secret together with Vercel's WAITLIST_WEBHOOK_SECRET keeps the waiting-list offer emails working.
 - [ ] Automatic jobs: a late or failed job shows in red here and on Overview.
-- [ ] After trying part 4 with the real account: tell Claude to delete the old admin page's code.

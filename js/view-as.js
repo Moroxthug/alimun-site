@@ -15,7 +15,7 @@
  *  Dashboards call:
  *    const va = await AlimunViewAs.resolve(sb, session, 'teacher' | 'student');
  *    if (va) { ...boot with va.profile...; AlimunViewAs.mountBar({ kind, sb, profile: va.profile }); }
- *  admin.html calls AlimunViewAs.mountBar({ kind: 'admin', sb }).
+ *  The old admin page called AlimunViewAs.mountBar({ kind: 'admin', sb }).
  *
  *  The chosen person is remembered per tab (sessionStorage) and can
  *  be set explicitly with ?as=<profile id>. On the dashboards
@@ -24,7 +24,7 @@
  * ============================================================
  */
 (function () {
-  const PAGES = { admin: 'admin.html', teacher: 'teacher-dashboard.html', student: 'student-dashboard.html' };
+  const PAGES = { admin: '/app/admin', teacher: 'teacher-dashboard.html', student: 'student-dashboard.html' };
   const TABLES = { teacher: 'teacher_profiles', student: 'student_profiles' };
   const storeKey = (kind) => `alimun-view-as-${kind}`;
 
@@ -227,7 +227,7 @@
     // nosemgrep: innerhtml-template-without-escape -- every value below goes through esc()
     document.body.innerHTML = `<div style="font:600 15px system-ui;padding:3rem;text-align:center;">
       ${esc(tr(`va_empty_${kind}`, `No ${kind} accounts exist yet, so there is nothing to preview. A ${kind} dashboard appears here as soon as one ${kind} has signed up.`))}
-      <a href="admin.html">${esc(tr('va_back', 'Back to admin'))}</a></div>`;
+      <a href="/app/admin">${esc(tr('va_back', 'Back to admin'))}</a></div>`;
   }
 
   window.AlimunViewAs = { isAdmin, resolve, mountBar, renderEmpty, pageUrl };

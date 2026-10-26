@@ -17,7 +17,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const APP_PAGES = ['student-dashboard.html', 'teacher-dashboard.html', 'admin.html'];
+const APP_PAGES = ['student-dashboard.html', 'teacher-dashboard.html'];
 
 module.exports = function splitTranslations(root, T) {
   const read = (f) => fs.readFileSync(path.join(root, f), 'utf8');
