@@ -16,8 +16,11 @@
    The recording is turned into 16 kHz mono WAV in the page and sent to /api/tutor?action=pronounce, which scores it and
    drops it; the board marks each word (said well, said differently, missed), names the sound that was off where Azure
    gives it, and shows accuracy, fluency and completeness; the tutor answers and sets the sentence again until it is right.
+   Part 7: the live call. When the server says it is configured, the Tutor page lets the student pick one of the six
+   tutors (each with its own voice) and "Talk with ..." opens #/tutor/live, run by js/app/tutor-live.js; writing to the
+   tutor stays as the other way in.
    Sample (signed out or ?sample=1): a short scripted session in German, nothing is sent.
-   Routes: #/tutor, #/tutor/session, #/tutor/past/<id>. Interface text: app_tu_* keys. */
+   Routes: #/tutor, #/tutor/session, #/tutor/live, #/tutor/past/<id>. Interface text: app_tu_* keys. */
 (function () {
   'use strict';
   var A = null, root = null, mountNo = 0;
@@ -350,7 +353,7 @@
   /* ---------- Sample ---------- */
   function sampleStatus() {
     var renews = new Date(); renews = new Date(Date.UTC(renews.getUTCFullYear(), renews.getUTCMonth() + 1, 1)).toISOString();
-    return { seconds: { free: 600, plan: 2520, credit: 0, total: 3120 }, plan: { tier: 'focused', minutes_per_month: 60, granted_seconds: 3600, renews_at: renews }, open: true, listen: true, voice: true, pron: true, sample: true };
+    return { seconds: { free: 600, plan: 2520, credit: 0, total: 3120 }, plan: { tier: 'focused', minutes_per_month: 60, granted_seconds: 3600, renews_at: renews }, open: true, listen: true, voice: true, pron: true, live: true, sample: true };
   }
   var SAMPLE_OPEN = {
     text: 'Hallo! Heute üben wir das Perfekt mit haben oder sein, denn das war in deinen Übungen oft schwierig.',
@@ -431,10 +434,35 @@
   }
 
   /* ---------- Views ---------- */
+  function liveReady() { return !!(S && S.status && S.status.live && window.AlimunTutorLive && A.Cast.tutor && !S.status.viewing); }
+  function cap(k) { return k.charAt(0).toUpperCase() + k.slice(1); }
+  /* The live call: the six tutors to pick from and the call button */
+  function liveCard(none) {
+    var L = window.AlimunTutorLive, mine = L.myTutor();
+    return '<section class="card span-12 speak-card" style="--i:0" aria-labelledby="tl-pick-h"><div class="speak-card__top"><div>' +
+      '<h2 class="t-h2" id="tl-pick-h">' + esc(t('app_tl_pick_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_tl_pick_p')) + '</p></div>' +
+      '<button class="btn btn--primary" type="button" data-tu="live"' + (none ? ' disabled' : '') + '>' + esc(t('app_tl_call', { name: cap(mine) })) + '</button></div>' +
+      '<div class="tutors" role="radiogroup" aria-label="' + esc(t('app_tl_pick_h')) + '">' + A.Cast.tutors.map(function (k) {
+        var on = k === mine;
+        return '<button class="tutor-pick tutor-art' + (on ? ' is-on' : '') + '" type="button" role="radio" aria-checked="' + on + '" data-tu="pick" data-tutor="' + esc(k) + '" data-mouth="rest" aria-label="' + esc(cap(k)) + '">' + A.Cast.tutor(k) + '<span>' + esc(cap(k)) + '</span></button>';
+      }).join('') + '</div>' + (none ? '<p class="t-small" style="margin-top:10px">' + esc(t('app_tu_none_left')) + '</p>' : '') + '</section>';
+  }
+  function pick(b) {
+    var k = b.getAttribute('data-tutor');
+    window.AlimunTutorLive.setTutor(k);
+    root.querySelectorAll('[data-tu="pick"]').forEach(function (x) { var on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-checked', on ? 'true' : 'false'); });
+    var go = root.querySelector('[data-tu="live"]'); if (go) go.textContent = t('app_tl_call', { name: cap(k) });
+  }
+  function startLive() {
+    unlock(); forgetAudio();
+    window.AlimunTutorLive.want({ tutor: window.AlimunTutorLive.myTutor(), sample: !!S.sample, seconds: S.status.seconds ? S.status.seconds.total : 0 });
+    location.hash = '#/tutor/live';
+  }
   function homeView() {
     var s = S.status, sec = s.seconds || {}, plan = s.plan || {}, none = (sec.total || 0) <= 0;
-    var buddy = A.Cast.drawing(A.buddyFor(A.data().profile.language));
+    var buddy = A.Cast.drawing(A.buddyFor(A.data().profile.language)), liveOn = liveReady();
     var html = '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_nav_tutor')) + '</h1><p class="t-lead">' + esc(t('app_tu_lead2')) + '</p></div></div><div class="grid rise">';
+    if (liveOn) html += liveCard(none);
     html += '<section class="card span-7" style="--i:0" aria-labelledby="tu-left"><h2 class="t-h2" id="tu-left">' + esc(t('app_tu_left_h')) + '</h2>' +
       '<p class="t-num" style="margin-top:8px">' + esc(mins(sec.total)) + '</p><div class="tt-week" style="margin-top:12px">' +
       row(mins(sec.free), t('app_tu_free')) +
@@ -442,7 +470,7 @@
       (sec.credit ? row(mins(sec.credit), t('app_tu_credit')) : '') + '</div>' +
       (plan.granted_seconds ? '' : '<p class="t-small" style="margin-top:12px">' + esc(t('app_tu_plan_none')) + '</p>') +
       (s.viewing ? '<p class="t-tiny" style="margin-top:12px">' + esc(t('app_tu_viewing')) + '</p>'
-        : '<div class="btn-row" style="margin-top:16px"><button class="btn btn--primary" type="button" data-tu="start"' + (none || !s.open ? ' disabled' : '') + '>' + esc(t('app_tu_start')) + '</button>' +
+        : '<div class="btn-row" style="margin-top:16px"><button class="btn ' + (liveOn ? 'btn--ghost' : 'btn--primary') + '" type="button" data-tu="start"' + (none || !s.open ? ' disabled' : '') + '>' + esc(t(liveOn ? 'app_tl_write' : 'app_tu_start')) + '</button>' +
           (none ? '<a class="btn btn--ghost" href="#/settings/plans">' + esc(t('app_tu_see_plans')) + '</a>' : '') + '</div>' +
           '<p class="t-small st-msg" data-tu-msg aria-live="polite">' + esc(none ? t('app_tu_none_left') : !s.open ? t('app_tu_closed') : S.error ? t(S.error) : '') + '</p>') + '</section>';
     html += '<section class="stage span-5" style="--i:1;background:var(--t-mint)" aria-hidden="true"><div class="bub say">' + esc(t('app_tu_bub2')) + '</div>' + buddy + '</section>';
@@ -665,6 +693,8 @@
       else if (act === 'slow') hearSlow(b.getAttribute('data-id'));
       else if (act === 'hear') hear(b.getAttribute('data-id'));
       else if (act === 'voice') toggleVoice();
+      else if (act === 'pick') pick(b);
+      else if (act === 'live') startLive();
     });
     /* Leaving the session stops the voice and drops a recording in progress */
     window.addEventListener('hashchange', function () {
@@ -696,6 +726,11 @@
     var my = ++mountNo;
     A = helpers; root = view_;
     bind();
+    /* The live call (part 7) */
+    if (parts[0] === 'live' && window.AlimunTutorLive) {
+      window.AlimunTutorLive.mount(view_, helpers, { sample: !signedIn(), seconds: S && S.status && S.status.seconds ? S.status.seconds.total : 0 });
+      return Promise.resolve({});
+    }
     /* A session keeps going while the student moves around the dashboard and comes back */
     if (parts[0] === 'session' && S && S.session) { draw(); return Promise.resolve({}); }
     if (parts[0] === 'past' && parts[1]) {

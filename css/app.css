@@ -1556,4 +1556,26 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
   .tu-op--title { font-size: 28px; } .tu-op--write { font-size: 18px; }
   .tu-pron__s { font-size: 20px; } .tu-pron__n { font-size: 32px; } .tu-pron__scores { gap: 10px; }
 }
-@media (prefers-reduced-motion: reduce) { .tu-op.is-new { animation: none; } }
+/* The live call (js/app/tutor-live.js; part 7): the tutor's face beside what was said */
+.tl-grid { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(300px, 1fr); gap: 20px; align-items: start; }
+.tl-stage { background: var(--t-mint); border-radius: var(--r-xl); padding: 28px 24px 24px; text-align: center; min-height: 420px; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.tl-face { width: min(300px, 70%); }
+.tl-face svg { width: 100%; height: auto; display: block; }
+.tl-stage[data-state="speaking"] .tl-face { animation: tl-nod 2.4s var(--ease) infinite; }
+@keyframes tl-nod { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.tl-name { margin-top: 10px; }
+.tl-state { margin-top: 6px; min-height: 28px; display: flex; align-items: center; justify-content: center; gap: 10px; color: var(--forest); font-weight: 700; }
+.tl-captions { padding: 18px 0 0; display: flex; flex-direction: column; max-height: calc(100vh - 160px); min-height: 420px; position: sticky; top: 20px; overflow: hidden; }
+.tl-captions > h2 { padding: 0 20px 10px; }
+.tl-lines { flex: 1; min-height: 240px; }
+.tl-lines .is-partial .ms-bub { opacity: .7; }
+.tl-empty { padding: 4px 4px; color: var(--muted); }
+.tl-sum { align-self: start; }
+@media (max-width: 899px) {
+  .tl-grid { grid-template-columns: minmax(0, 1fr); }
+  .tl-stage { min-height: 0; padding: 20px 16px; }
+  .tl-face { width: min(200px, 60%); }
+  .tl-captions { position: static; min-height: 0; max-height: none; }
+  .tl-lines { max-height: 45vh; }
+}
+@media (prefers-reduced-motion: reduce) { .tu-op.is-new { animation: none; } .tl-stage[data-state="speaking"] .tl-face { animation: none; } }

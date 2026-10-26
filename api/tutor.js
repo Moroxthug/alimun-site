@@ -39,6 +39,14 @@
  *                         turn and the tutor answers it like any turn (praise, the sound to work on, the sentence again
  *                         until it is right). 402 no_time when no time is left; the turn's time counts it.
  *    POST ?action=voice   { session, message, slow: true } — the sentence to say, spoken slowly; once per message.
+ *  Part 7: the live call (api/_lib/tutor-live.js): the student talks with the tutor they picked through Google's
+ *  Gemini Live API, the browser holding a one-use pass whose setup (instructions, voice) is built here and locked.
+ *    POST ?action=live-start { tutor, ui, session?, handle? } — opens (or reopens) the session and returns the pass,
+ *                         at most 10 minutes and never past the time left; 402 no_time when nothing is left. Reopening
+ *                         charges any time the previous pass covered that ticks did not.
+ *    POST ?action=live-tick  { session, lines } — every 30 seconds of the call: charges the time since the last tick
+ *                         (at most 45 seconds), stores what was said (Google's transcripts) and answers { seconds }, or
+ *                         { stop: 'no_time' | 'budget' } to end the call.
  *    POST ?action=end     { session } — ends it: the summary, the words and the
  *                         tutor's memory are written.
  *    POST ?action=forget  — deletes what the tutor remembers and every session.
@@ -56,6 +64,7 @@ const { createClient } = require('@supabase/supabase-js');
 const brain = require('./_lib/tutor-brain.js');
 const voice = require('./_lib/tutor-voice.js');
 const pron = require('./_lib/tutor-pron.js');
+const live = require('./_lib/tutor-live.js');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MAX_GRANT_MINUTES = 600;
@@ -120,6 +129,7 @@ async function handleStatus(req, res, supabase, user) {
     listen: voice.listenConfigured(),
     voice: voice.voiceConfigured(),
     pron: pron.configured(),
+    live: live.configured() && brain.configured() && await liveAllowed(supabase, user),
   });
 }
 
@@ -516,6 +526,144 @@ async function handlePronounce(req, res, supabase, user) {
   }
 }
 
+// ── live call (part 7) ──────────────────────────────────────
+
+const LIVE_TICK_MAX = 45;  // seconds charged per tick at most (ticks come every 30 seconds)
+
+/* Who may call: admins always; students when app_settings tutor_live is 'all' (the owner switches it on once the
+   Privacy page names the live call). Read at most once a minute. */
+let liveSetting = null;
+async function liveAllowed(supabase, user) {
+  if (user.app_metadata?.role === 'admin') return true;
+  if (!liveSetting || liveSetting.at < Date.now() - 60000) {
+    let v = 'admins';
+    try { const { data } = await supabase.from('app_settings').select('value').eq('key', 'tutor_live').maybeSingle(); v = String(data && data.value || 'admins').trim().toLowerCase(); } catch (e) { /* admins only */ }
+    liveSetting = { at: Date.now(), value: v };
+  }
+  return liveSetting.value === 'all';
+}
+
+/** Records the estimated cost of live seconds under the tutor's daily budget. Throws { code: 'budget' | 'unavailable' }. */
+async function liveCost(supabase, userId, seconds) {
+  const cost = Math.round(seconds * live.LIVE_USD_PER_SEC * 1e6) / 1e6;
+  const row = await brain.reserve(supabase, userId, 'tutor_live', cost);
+  await supabase.from('ai_usage').update({ provider: 'gemini', model: live.LIVE_MODEL + ' (estimate)', input_tokens: 0, output_tokens: 0, cost_usd: cost, success: true, error: null }).eq('id', row.id);
+}
+
+async function handleLiveStart(req, res, supabase, user) {
+  if (!live.configured() || !brain.configured()) return res.status(501).json({ error: 'The live tutor is not configured', reason: 'live_off' });
+  if (!(await liveAllowed(supabase, user))) return res.status(403).json({ error: 'The live tutor is not open yet', reason: 'live_off' });
+  if (!user.email_confirmed_at) return res.status(403).json({ error: 'Confirm your email first', reason: 'email' });
+  const body = parseBody(req) || {};
+  const ui = UI_LANGS.includes(body.ui) ? body.ui : 'en';
+  const tutor = live.tutorOf(body.tutor);
+  let profile;
+  try { profile = await studentOf(supabase, user); } catch (e) { return res.status(500).json({ error: 'Could not load your profile' }); }
+  if (!profile) return res.status(404).json({ error: 'No student profile', reason: 'no_profile' });
+  if (tooFast(user.id)) return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
+
+  const now = Date.now();
+  let session = null, created = false, charged = 0;
+  const { data: open } = await supabase.from('tutor_sessions').select('*').eq('student_id', profile.id).is('ended_at', null).maybeSingle();
+  const lastAt = (x) => Math.max(Date.parse(x.last_turn_at), x.live_until ? Math.min(now, Date.parse(x.live_until)) : 0);
+  if (open && now - lastAt(open) < IDLE_MS) {
+    session = open;
+    // Time the previous pass covered that no tick counted (a closed tab, a lost connection, skipped ticks)
+    if (open.live_until) {
+      const unticked = Math.round((Math.min(now, Date.parse(open.live_until)) - Date.parse(open.last_turn_at)) / 1000);
+      if (unticked >= 1) {
+        const { data: ch } = await supabase.rpc('tutor_charge', { p_student: profile.id, p_seconds: Math.min(unticked, live.PASS_SECONDS), p_session: open.id });
+        charged = ch && ch[0] ? ch[0].charged : 0;
+      }
+    }
+  } else {
+    if (open) await finish(supabase, user, open);
+    const { data: t, error: rErr } = await supabase.rpc('tutor_refresh', { p_student: profile.id });
+    if (rErr || !t) return res.status(500).json({ error: 'Could not load your tutor time' });
+    if (totalOf(t) <= 0) return res.status(402).json({ error: 'No tutor time left', reason: 'no_time' });
+    const level = String(profile.level || '').slice(0, 2) || null;
+    const { data: s, error: sErr } = await supabase.from('tutor_sessions')
+      .insert({ student_id: profile.id, language: profile.language || 'English', level, ui, tutor, mode: 'live' }).select('*').single();
+    if (sErr) return res.status(409).json({ error: 'A session is already open. Please reload.', reason: 'open' });
+    session = s; created = true;
+    const { data: ch } = await supabase.rpc('tutor_charge', { p_student: profile.id, p_seconds: MIN_CHARGE, p_session: session.id });
+    charged = ch && ch[0] ? ch[0].charged : 0;
+  }
+  const remaining = await balance(supabase, profile.id);
+  const undo = async () => {
+    if (created) {
+      await supabase.from('tutor_sessions').delete().eq('id', session.id);
+      if (charged > 0) await supabase.rpc('tutor_add_credit', { p_student: profile.id, p_seconds: charged, p_reason: 'refund', p_stripe_session: null, p_note: 'live call did not start', p_by: null });
+    }
+  };
+  if (remaining <= 0) {
+    await supabase.from('tutor_sessions').update({ seconds_used: (session.seconds_used || 0) + charged, live_until: null }).eq('id', session.id);
+    await finish(supabase, user, session);
+    return res.status(402).json({ error: 'No tutor time left', reason: 'no_time' });
+  }
+
+  try {
+    await liveCost(supabase, user.id, created ? MIN_CHARGE : Math.max(charged, 1));
+    const history = created ? '' : (await messagesOf(supabase, session.id, 12)).map((m) => (m.role === 'tutor' ? 'Tutor: ' : 'Student: ') +
+      clean(m.result && m.result.pron ? pron.forTutor(m.result.pron) : m.result && m.result.lines ? m.result.lines.join(' ') : m.text, 400)).join('\n');
+    const instructions = live.instructionsFor(session, await brain.brief(supabase, profile), tutor, history);
+    const pass = await live.token({ instructions, tutor, handle: live.cleanHandle(body.handle), seconds: remaining + 60 });
+    await supabase.from('tutor_sessions').update({
+      tutor, mode: 'live', live_until: pass.expires, last_turn_at: new Date().toISOString(), seconds_used: (session.seconds_used || 0) + charged,
+    }).eq('id', session.id);
+    return res.status(200).json({ session: { id: session.id, started_at: session.started_at }, fresh: created, token: pass.token, url: pass.url, model: pass.model,
+      tutor, voice: pass.voice, expires: pass.expires, pass_seconds: pass.seconds, seconds: remaining });
+  } catch (e) {
+    await undo();
+    if (e && e.code === 'budget') return brainError(res, e);
+    console.error('[Tutor] live start:', e && (e.code + ' ' + (e.message || '')));
+    return res.status(502).json({ error: 'The live call could not start. Please try again or write to your tutor.', reason: 'live' });
+  }
+}
+
+async function handleLiveTick(req, res, supabase, user) {
+  const body = parseBody(req) || {};
+  let profile;
+  try { profile = await studentOf(supabase, user); } catch (e) { return res.status(500).json({ error: 'Could not load your profile' }); }
+  if (!profile) return res.status(404).json({ error: 'No student profile' });
+  if (tooFast(user.id)) return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
+  const session = await sessionOf(supabase, profile.id, body.session);
+  if (!session) return res.status(404).json({ error: 'Session not found' });
+  if (session.ended_at) return res.status(409).json({ error: 'This session has ended.', reason: 'ended' });
+  const now = Date.now();
+  if (!session.live_until || now > Date.parse(session.live_until) + 60000) return res.status(409).json({ error: 'The live call has ended.', reason: 'ended' });
+
+  const gap = Math.round((now - Date.parse(session.last_turn_at)) / 1000);
+  let charged = 0, remaining = null;
+  if (gap >= 1) {
+    const { data: ch, error: cErr } = await supabase.rpc('tutor_charge', { p_student: profile.id, p_seconds: Math.min(gap, LIVE_TICK_MAX), p_session: session.id });
+    if (cErr || !ch || !ch[0]) return res.status(500).json({ error: 'Could not count your time' });
+    charged = ch[0].charged; remaining = ch[0].remaining;
+  } else remaining = await balance(supabase, profile.id);
+
+  const lines = live.cleanLines(body.lines);
+  if (lines.length) {
+    const t0 = now - lines.length;
+    await supabase.from('tutor_messages').insert(lines.map((l, i) => ({
+      session_id: session.id, student_id: profile.id, role: l.role, text: l.text, spoken: true, created_at: new Date(t0 + i).toISOString(),
+    })));
+  }
+  const turns = session.turns + lines.filter((l) => l.role === 'student').length;
+  await supabase.from('tutor_sessions').update({ seconds_used: session.seconds_used + charged, turns, last_turn_at: new Date(now).toISOString() }).eq('id', session.id);
+
+  let stop = null;
+  if (charged > 0) {
+    try { await liveCost(supabase, user.id, charged); } catch (e) { if (e && e.code === 'budget') stop = 'budget'; }
+  }
+  if (remaining <= 0) stop = 'no_time';
+  if (stop) {
+    await supabase.from('tutor_sessions').update({ live_until: null }).eq('id', session.id);
+    const summary = stop === 'no_time' ? await finish(supabase, user, Object.assign({}, session, { turns })) : null;
+    return res.status(200).json({ seconds: Math.max(0, remaining), stop, summary });
+  }
+  return res.status(200).json({ seconds: remaining });
+}
+
 // ── forgetting ──────────────────────────────────────────────
 
 async function handleForget(req, res, supabase, user) {
@@ -549,7 +697,7 @@ module.exports = async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return handleAdminGrant(req, res, supabase, user);
   }
-  const POST = { start: handleStart, turn: handleTurn, voice: handleVoice, pronounce: handlePronounce, end: handleEnd, forget: handleForget };
+  const POST = { start: handleStart, turn: handleTurn, voice: handleVoice, pronounce: handlePronounce, 'live-start': handleLiveStart, 'live-tick': handleLiveTick, end: handleEnd, forget: handleForget };
   if (POST[action]) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return POST[action](req, res, supabase, user);
