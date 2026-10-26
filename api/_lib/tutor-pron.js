@@ -2,7 +2,8 @@
  * Pronunciation (docs/AI_TUTOR_PLAN.md, part 4), used by api/tutor.js.
  *  - The tutor sets a sentence to say aloud (tutor_messages.pron, written by the server from the tutor's checked reply).
  *  - score: the student's recording of that sentence, scored by Azure AI Speech pronunciation assessment (scripted,
- *    REST for short audio, at most 30 seconds, the Speech resource in West Europe): accuracy, fluency and completeness,
+ *    REST for short audio, at most 30 seconds, the Speech resource in North Europe, Ireland,
+ *    named by AZURE_SPEECH_REGION): accuracy, fluency and completeness,
  *    and for each word of the sentence whether it was said well, said differently or missed, with the sound that was
  *    off where Azure names it. The recording is sent to Azure and dropped: it is never stored. Cost in ai_usage as
  *    tutor_pron, under the tutor's daily budget (tutor-brain.js reserve).
@@ -16,7 +17,7 @@ const brain = require('./tutor-brain.js');
 const LOCALES = { English: 'en-US', German: 'de-DE', French: 'fr-FR', Spanish: 'es-ES', Italian: 'it-IT', Portuguese: 'pt-PT' };
 /* Azure names the sounds in IPA for US English only; elsewhere a sound is named when Azure gives a name */
 const IPA_LOCALES = ['en-US'];
-/* Billed as standard real-time speech to text, $1.00 an hour (West Europe), plus up to $0.30 an hour for the assessment */
+/* Billed as standard real-time speech to text, about $1.00 an hour (EU regions), plus up to $0.30 an hour for the assessment */
 const PRON_USD_PER_SEC = 1.3 / 3600;
 const MAX_SECONDS = 30;
 const MAX_BYTES = 44 + 16000 * 2 * MAX_SECONDS + 1024; // 30 seconds of 16 kHz mono 16-bit, with room for the header
