@@ -225,23 +225,23 @@
     "approved": "2026-10-23 Italian course pages: adaptive level quiz with roulette result (owner: quiz ok); 2026-10-23 Italian question bank added for the other site languages"
   },
   "src/blog/render.js": {
-    "sha256": "5bf734074da81f87f96d0cad5369a2cfacbcf489168e479e7278275784d90d39",
-    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds)"
+    "sha256": "2a4f2e91758852ddea55bfcababe34b0995501937355d6dc470b53f287aab40a",
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
   },
   "src/blocks/blog/style.html": {
-    "sha256": "feea6ac72538c4d79d813b995991fd72c7defee61eb01acd6c0d601ed7c7d3db",
-    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds)"
+    "sha256": "38142d790c99d3dc687c6ce8b99d61230fa1cfc130224f9f9c2d48ff90914632",
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
   },
   "src/blocks/blog/cards.html": {
-    "sha256": "14dc79a116e303e6371e432984e0d526542e1750b699a30484d291d5bb7485fb",
-    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds)"
+    "sha256": "2c62b721205e077819bcc3812f505e9b777e10a6a8b9b2e1a4753521ae734e22",
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
   },
   "src/blocks/blog/head.html": {
     "sha256": "3198431e1742984c37fd5b64c4aa3f73e55afa078d603ecbd7948a436b054575",
-    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds)"
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
   },
   "src/pages/blog/[p].astro": {
-    "sha256": "4477832cf57eb8419b02f418fba56ca27b659f4f6b0051f99600421b920d5c5e",
-    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds)"
+    "sha256": "c57a9df04217ca544432acfdd2ea7c09facf68c04eae18ba2f01d4907300a07a",
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
   }
 }

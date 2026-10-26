@@ -4,6 +4,7 @@
 // Section drawings and tints come from src/blog/render.js (SECTIONS).
 export default {
   en: {
+    featured: 'ielts-or-cambridge',
     sectionSlugs: { levels: 'levels-and-certificates', grammar: 'grammar', vocabulary: 'vocabulary', learn: 'how-to-learn', exams: 'exams', abroad: 'living-abroad' },
     locale: 'en_US', home: 'Home', back: 'Blog', blogTitle: 'Blog',
     blogLead: 'Clear answers for learners of English and German: levels, certificates, grammar, and how to keep going between classes.',
@@ -34,6 +35,7 @@ export default {
     all: 'All articles', strip: 'From the blog', courses: { English: 'English', German: 'German' },
   },
   it: {
+    featured: 'ielts-or-cambridge',
     sectionSlugs: { levels: 'livelli-e-certificazioni', grammar: 'grammatica', vocabulary: 'vocabolario', learn: 'come-studiare', exams: 'esami', abroad: 'vivere-all-estero' },
     locale: 'it_IT', home: 'Home', back: 'Blog', blogTitle: 'Blog',
     blogLead: "Risposte chiare per chi impara l'inglese e il tedesco: livelli, certificazioni, grammatica e come andare avanti tra una lezione e l'altra.",
@@ -64,6 +66,7 @@ export default {
     all: 'Tutti gli articoli', strip: 'Dal blog', courses: { English: 'Inglese', German: 'Tedesco' },
   },
   es: {
+    featured: 'ielts-or-cambridge',
     sectionSlugs: { levels: 'niveles-y-certificados', grammar: 'gramatica', vocabulary: 'vocabulario', learn: 'como-aprender', exams: 'examenes', abroad: 'vivir-en-el-extranjero' },
     locale: 'es_ES', home: 'Inicio', back: 'Blog', blogTitle: 'Blog',
     blogLead: 'Respuestas claras para quien aprende inglés y alemán: niveles, certificados, gramática y cómo seguir avanzando entre clase y clase.',
@@ -94,6 +97,7 @@ export default {
     all: 'Todos los artículos', strip: 'Del blog', courses: { English: 'Inglés', German: 'Alemán' },
   },
   fr: {
+    featured: 'ielts-or-cambridge',
     sectionSlugs: { levels: 'niveaux-et-certifications', grammar: 'grammaire', vocabulary: 'vocabulaire', learn: 'apprendre', exams: 'examens', abroad: 'vivre-a-l-etranger' },
     locale: 'fr_FR', home: 'Accueil', back: 'Blog', blogTitle: 'Blog',
     blogLead: "Des réponses claires pour apprendre l'anglais et l'allemand : niveaux, certifications, grammaire, et comment continuer à progresser entre deux cours.",
@@ -124,6 +128,7 @@ export default {
     all: 'Tous les articles', strip: 'Sur le blog', courses: { English: 'Anglais', German: 'Allemand' },
   },
   pt: {
+    featured: 'ielts-or-cambridge',
     sectionSlugs: { levels: 'niveis-e-certificados', grammar: 'gramatica', vocabulary: 'vocabulario', learn: 'como-aprender', exams: 'exames', abroad: 'morar-no-exterior' },
     locale: 'pt_BR', home: 'Início', back: 'Blog', blogTitle: 'Blog',
     blogLead: 'Respostas claras para quem estuda inglês e alemão: níveis, certificados, gramática e como continuar avançando entre uma aula e outra.',
