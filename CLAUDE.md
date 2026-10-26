@@ -1,6 +1,6 @@
 # Alimun — working rules for Claude sessions
 
-Plan of record: `docs/IMPLEMENTATION_PLAN.md`. Public-site rebuild (Astro, same design): `docs/REBUILD_PLAN.md`; blocks listed in `site/locked.json` are owner-approved and must not change without the owner's request. Progress log: `docs/PROGRESS.md` (append an entry at the end of every session).
+Plan of record: `docs/IMPLEMENTATION_PLAN.md`. Public-site rebuild (Astro, same design): `docs/REBUILD_PLAN.md`; blocks listed in `site/locked.json` are owner-approved and must not change without the owner's request. Progress log: `docs/PROGRESS.md` (append an entry at the end of every session). Blog: `docs/BLOG_PLAN.md` (new articles are data files using one of the four locked templates).
 
 ## Project
 - Static site (Webflow export, being cleaned up) + Vercel serverless functions in `api/` + Supabase (project `dgaiasmefcbrtzqwdyri`, eu-west-1) + Stripe (live) + Daily.co + Resend.

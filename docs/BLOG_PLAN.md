@@ -1,6 +1,6 @@
 # Blog and SEO plan
 
-Status: proposed 26 Oct 2026, waiting for the owner. Nothing is built until the owner approves the templates and answers the questions at the end.
+Status: built 26 Oct 2026 after the owner's answers (below). Templates locked in `site/locked.json` on the owner's request.
 
 ## Where SEO stands today (checked on the live site, 26 Oct 2026)
 
@@ -88,3 +88,23 @@ Suggested order: Italian, Spanish, French and Portuguese readers learning Englis
 - Which site languages first: recommended Italian, Spanish, French, Portuguese and English.
 - Free practice pages: yes or no, and how much of the books and library can be public?
 - Search Console: can you share the export, or give access?
+
+## The owner's answers (26 Oct 2026)
+
+- Address `/blog` in every language; first languages English, Italian, Spanish, French and Portuguese.
+- Author: the owner said "a random name for now". Not done: an invented person as author would mislead readers and search engines. Articles say "Alimun team" (per language) until the owner gives a real name; `author` and `authorUrl` in an article file set a real person.
+- Claude writes the articles (facts only, sources listed). Free practice pages: yes, a small set, possibly with new content (to plan).
+- "Trending" strip before the bottom banner on every page: built as "From the blog". There are no reading counts yet, so it shows chosen articles (`stripPicks` in `src/data/blog/ui.js`), then the newest; it can switch to real counts later.
+- Keep the Alimun style; lock the templates and reuse them for every new article.
+
+## How to add an article (every session)
+
+- One file per language in `site/src/data/blog/<site>/<slug>.js`, same `key` for the translations of one article (hreflang and the language switcher follow it). Copy the shape of an existing article of the same template.
+- `template` is one of the four locked templates in `site/src/blog/render.js`:
+  - `guide`: long-form how-to (cover word on ink or lime, text, notes, quotes, tables).
+  - `explainer`: levels and certificates (level cards, wide tables, FAQ).
+  - `grammar`: rule explained with examples, common mistakes and a "Try it" exercise.
+  - `compare`: two options side by side (split cover, two panels, table, verdict).
+- Blocks: `h`, `p`, `quote`, `note`, `table`, `levels`, `panels`, `examples`, `mistakes`, `quiz`, `verdict`; `**phrase**` is the lime marker. No bullet lists, numbered steps or chips; no AI mentions; facts only, with `sources`.
+- Interface text per language: `site/src/data/blog/ui.js`. A new site language needs its `ui` entry.
+- The build (`npm --prefix site run build`) makes `/blog`, `/blog/<slug>`, `/<site>/blog[/<slug>]`, adds them to `sitemap.xml` and puts the strip on every page of that language. The pages are generated at deploy time and not committed.
