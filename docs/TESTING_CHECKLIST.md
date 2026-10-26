@@ -81,3 +81,9 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] Buying one private class from Classes: the credit appears after paying.
 - [ ] An old waiting-list email link (/student-dashboard.html?claim_cohort_id=…&waitlist_id=…) opens the offer in /app.
 - [ ] The admin's "Open their dashboard, read-only" opens /app?as=<id>.
+
+## AI tutor, part 0 (server-built AI actions)
+- [ ] A student with a plan: Homework, a written task of 15 words or more, "Check before I hand it in" shows the pointers in the dashboard's language.
+- [ ] A mock test's Writing and Speaking papers: after finishing, the drafted marks appear with the exam's criteria.
+- [ ] A teacher: a homework task drafted from a topic fills the form; an exercise set drafted from a topic, a pasted text and a class's mistakes adds checked exercises.
+- [ ] Admin, AI spend: the new features show as "Homework checked before handing in", "Mock tests marked", "Homework tasks drafted" and "Exercise sets drafted".

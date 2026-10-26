@@ -22,7 +22,7 @@ expect 404 "$BASE/package.json"
 expect 401 "$BASE/api/cron-create-rooms"
 expect 401 "$BASE/api/waitlist/cron-expire-offers"
 expect 401 -X POST "$BASE/api/admin/teacher?action=set-status"
-expect 401 -X POST "$BASE/api/ai?action=grade" -H 'content-type: application/json' -d '{}'
+expect 401 -X POST "$BASE/api/ai?action=homework-check" -H 'content-type: application/json' -d '{}'
 
 cfg=$(curl -s --max-time 20 "$BASE/api/stripe?action=config")
 if echo "$cfg" | grep -q 'pk_live_'; then echo "ok   stripe config has pk_live_"; else echo "FAIL stripe config: ${cfg:0:200}"; fail=1; fi

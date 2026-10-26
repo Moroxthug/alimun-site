@@ -277,7 +277,7 @@ curl -s -o /dev/null -w "%{http_code}\n" https://alimun.com/supabase/schema.sql 
 curl -s -o /dev/null -w "%{http_code}\n" https://alimun.com/DEPLOY_CHECKLIST.md      # 404
 # api
 curl -s -o /dev/null -w "%{http_code}\n" https://alimun.com/api/cron-create-rooms   # 401
-curl -s -X POST https://alimun.com/api/ai?action=grade -d '{}' -H 'content-type: application/json' -w "\n%{http_code}\n"   # 401 (was 501 = no AI key)
+curl -s -X POST https://alimun.com/api/ai?action=homework-check -d '{}' -H 'content-type: application/json' -w "\n%{http_code}\n"   # 401 (was 501 = no AI key)
 curl -s https://alimun.com/api/stripe?action=config | head -c 200                    # pk_live_… + prices
 curl -s -X POST https://alimun.com/api/create-checkout-session -d '{"priceId":"x"}' -H 'content-type: application/json'  # 401
 ```
