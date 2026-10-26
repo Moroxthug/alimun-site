@@ -1493,3 +1493,4 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .pl-note { font-weight: 700; color: var(--forest); }
 .pl-msg { margin-top: 10px; }
 .pl-msg:empty { display: none; }
+.rd-listen { display: inline-flex; flex-wrap: wrap; gap: 8px; }

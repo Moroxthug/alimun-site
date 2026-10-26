@@ -9,7 +9,10 @@
  *    ?action=generate (POST, admin JWT) — { book }: makes the next missing course audio
  *                     files of a book (plan /data/audio/<book>.json, site/src/data/books/audio.js)
  *                     as MP3 in Supabase Storage course-audio/<book>/<hash>.mp3, with
- *                     <book>/manifest.json listing the files made; sentences of one block with the same
+ *                     <book>/manifest.json listing the files made. With a Google Cloud model in the plan
+ *                     (gemini-3.1-flash-tts-preview, owner 26 Oct 2026) each sentence is one Vertex AI request as
+ *                     the service account, up to TTS_CLOUD_PER_MINUTE (default 30) a minute. With a Gemini API
+ *                     model, sentences of one block with the same
  *                     voice are spoken in one request and cut at the pauses; about 75 s per call, one request
  *                     every 6.7 s (TTS_PER_MINUTE, default 9) for Google's per-minute limit; a 429 ends the
  *                     call with retryAfter (seconds), and daily + resetAt when it is Google's daily limit, for the
@@ -241,6 +244,33 @@ async function cloudHeaders() {
   if (sa) return { 'Content-Type': 'application/json', Authorization: 'Bearer ' + await accessToken(sa), 'x-goog-user-project': sa.project_id || GCP_PROJECT };
   return { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GOOGLE_CLOUD_TTS_KEY || process.env.GOOGLE_AI_API_KEY };
 }
+/* One sentence in a Gemini voice through Vertex AI, signed in as the service account. The route that answered is
+   remembered for the next sentences. Google's limits come back as rate_limited errors (see limited()). */
+let vertexRoute = 0;
+async function speakVertex({ model, voice, style, text }) {
+  const sa = serviceAccount(), project = sa && sa.project_id || GCP_PROJECT;
+  const headers = await cloudHeaders();
+  const urls = ['https://aiplatform.googleapis.com/v1/projects/' + project + '/locations/global/publishers/google/models/' + model + ':generateContent',
+    'https://aiplatform.googleapis.com/v1/publishers/google/models/' + model + ':generateContent'];
+  const body = JSON.stringify({ contents: [{ role: 'user', parts: [{ text: (style ? 'Read this aloud (style: ' + style + '):\n' : '') + text }] }],
+    generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } } });
+  const errors = [];
+  for (let n = 0; n < urls.length; n++) {
+    const i = (vertexRoute + n) % urls.length;
+    const r = await fetch(urls[i], { method: 'POST', headers, body });
+    const raw = await r.text();
+    let json = null;
+    try { json = JSON.parse(raw); } catch (e) { /* not JSON */ }
+    const audio = r.ok && findAudio(json);
+    if (audio) { vertexRoute = i; return toWav(audio); }
+    limited({ status: r.status, text: raw, json });
+    errors.push(r.status + ' ' + String(json && json.error && json.error.message || raw).slice(0, 200));
+  }
+  const err = new Error('Speech request failed');
+  err.detail = errors;
+  throw err;
+}
+
 async function cloudTest(res, body) {
   const model = CLOUD_MODELS.includes(body.model) ? body.model : CLOUD_MODELS[0];
   const voice = VOICES.includes(body.voice) ? body.voice : 'Orus';
@@ -279,6 +309,8 @@ async function cloudTest(res, body) {
 const BUCKET = 'course-audio';
 /* Milliseconds between two requests to Google: 6.5 s keeps under 10 a minute (raise TTS_PER_MINUTE after a tier upgrade) */
 const GAP = Math.ceil(60000 / Math.max(1, +(process.env.TTS_PER_MINUTE || 9)));
+/* Through Google Cloud (Vertex AI) the limit is per minute only: TTS_CLOUD_PER_MINUTE, default 30 */
+const CLOUD_GAP = Math.ceil(60000 / Math.max(1, +(process.env.TTS_CLOUD_PER_MINUTE || 30)));
 function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 const BOOK_RE = /^[A-Z][a-z]+-[ABC][12](-[a-z]+)?$/;
 
@@ -395,7 +427,11 @@ async function generate(req, res, supabase, body) {
     const manifest = await readManifest(supabase, book);
     const entries = [], seen = new Set();
     Object.entries(plan.items).forEach(([k, it]) => { if (!manifest.done[it[0]] && !seen.has(it[0])) { seen.add(it[0]); entries.push([k, it]); } });
-    const queue = chunks(entries);
+    /* Through Google Cloud there is no daily limit: one sentence per request, spoken as it is, never cut */
+    const cloud = CLOUD_MODELS.includes(plan.model) && !!serviceAccount();
+    if (CLOUD_MODELS.includes(plan.model) && !cloud) return res.status(503).json({ error: 'cloud_not_configured', detail: 'GOOGLE_CLOUD_TTS_KEY is not set' });
+    const gap = cloud ? CLOUD_GAP : GAP;
+    const queue = cloud ? entries.map(([, it]) => [it]) : chunks(entries);
     const made = [], failed = [];
     let retryAfter = 0, last = 0, limitMessage = '', requests = 0, splitFailed = 0, daily = false, resetAt = null;
     const save = async (h, pcm, rate) => {
@@ -408,12 +444,18 @@ async function generate(req, res, supabase, body) {
     /* One request at a time, at most one every GAP ms, to stay under Google's requests-per-minute limit */
     while (queue.length && Date.now() - t0 < 75000) {
       const group = queue.shift();
-      const wait = last + GAP - Date.now();
+      const wait = last + gap - Date.now();
       if (wait > 0) await sleep(wait);
       last = Date.now();
       requests++;
       const style = group[0][2], voice = group[0][1];
       try {
+        if (cloud) {
+          const w = await speakVertex({ model: plan.model, voice, style, text: group[0][3] });
+          const { pcm, rate } = pcmOf(w);
+          await save(group[0][0], pcm, rate);
+          continue;
+        }
         const text = group.map((it) => it[3]).join('\n\n');
         const w = await speak({ model: plan.model || MODELS.flash, turns: [{ text }], voices: { _: voice },
           style: group.length > 1 ? style + ', with a long pause of about two seconds after each sentence' : style });
@@ -433,7 +475,7 @@ async function generate(req, res, supabase, body) {
       }
     }
     /* The next call may start right away: keep the gap after this call's last request too */
-    const rest = last + GAP - Date.now();
+    const rest = last + gap - Date.now();
     if (!retryAfter && rest > 0) await sleep(rest);
     if (made.length) {
       manifest.updated = new Date().toISOString();
@@ -496,4 +538,4 @@ module.exports = async function handler(req, res) {
   }
 };
 
-module.exports._test = { findAudio, toWav, speak, wav, pcmOf, mp3, splitPcm, chunks, retrySeconds, limited, cloudTest, serviceAccount };
+module.exports._test = { findAudio, toWav, speak, wav, pcmOf, mp3, splitPcm, chunks, retrySeconds, limited, cloudTest, serviceAccount, speakVertex, generate };

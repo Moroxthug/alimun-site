@@ -877,3 +877,11 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 
 ## 2026-10-26 — Google Cloud voices, set up step by step with the owner
 - In the project behind the Gemini key (`gen-lang-client-0145644888`): Cloud Text-to-Speech and Agent Platform (Vertex AI) on; the key's service account given "Agent Platform user". The admin test on `/app/audio` (`/api/speech?action=cloud-test`) showed API keys cannot reach the Gemini voices there (Vertex: the key restriction would not save in the console, API_KEY_SERVICE_BLOCKED; Cloud Text-to-Speech: API keys not supported). The owner put the service account's JSON key in Vercel as `GOOGLE_CLOUD_TTS_KEY`; the server signs in with it (signed JWT for an access token, kept 50 minutes). `?action=status` now says whether that key is present (yes or no only).
+
+## 2026-10-26 — Course audio on Google Cloud, natural pace
+- Owner: Gemini 3.1 Flash TTS (preview), Sulafat and Orus narrate, go ahead. The owner found the voices slow: measured on the 124 files of English A2 Academic, examples 95 words a minute, dialogues 121, readings 141 (natural speech about 150), because every style asked for a slow or calm pace and groups were spoken with long pauses to be cut.
+- `site/src/data/books/audio.js`: model `gemini-3.1-flash-tts-preview`, every style at a natural pace (A1 and A2 "natural, unhurried"; mock tests the same). New model and styles mean new file names, so every file is made again, the 217 made before included (they stay in storage, unused).
+- `api/speech.js`: with a Cloud model in the plan and the service account key present, each sentence is one Vertex AI request as the service account (no pause trick, no cutting), up to `TTS_CLOUD_PER_MINUTE` (default 30) a minute; Google's per-minute limit is waited out as before. Checked against a stand-in Google and database: one request per sentence in the right voice, MP3 and manifest saved, a 429 stops the call with the wait.
+- Course book reader: "Slower" (three quarters of the speed) next to each Listen button, like the exercises and the library already had; mock tests stay at exam speed.
+- `/app/audio`: texts and the cost estimate for the new model (about $0.03 a minute; the library, about 8 to 9 hours, roughly $16).
+- Until the files are made again, the reader hides the play buttons of the sentences not yet made.

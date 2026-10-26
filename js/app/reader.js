@@ -262,6 +262,7 @@
     stopAudio();
     if (same) return;
     player = player || new Audio();
+    var rate = +btn.getAttribute('data-rate') || 1;
     queue = { list: list, btn: btn, at: 0 };
     btn.classList.add('is-playing');
     var q = queue;
@@ -273,6 +274,7 @@
       if (before) before(x);
       if (x.el) x.el.classList.add('is-speaking');
       player.src = x.src;
+      player.playbackRate = rate;
       player.onended = function () { setTimeout(next, 250); };
       player.play().catch(function () { stopAudio(); });
     };
@@ -288,6 +290,9 @@
     }
     playList(els.map(function (el) { return { src: el.getAttribute('data-src'), el: el }; }), btn, function (x) { x.el.classList.add('is-on'); });
   }
+
+  /* The same dialogue or reading at three quarters of the speed (recordings are made at a natural pace) */
+  function slowerBtn() { return '<button class="btn btn--ghost btn--sm listen" type="button" data-act="listen" data-rate="0.75">' + esc(t('app_ex_slower')) + '</button>'; }
 
   /* ---------- Teaching blocks ---------- */
   function blockHtml(b, gi) {
@@ -329,7 +334,7 @@
               '<p><b>' + esc(l.who) + '</b><span>' + md(l.s) + '</span></p></div>';
           }).join('') + '</div>' +
           (b.lines.every(function (l, k) { return audioSrc(gi, k); })
-            ? '<button class="btn btn--primary btn--sm listen" type="button" data-act="listen">' + A.icon('play') + '<span>' + esc(t('app_book_listen')) + '</span></button>'
+            ? '<span class="rd-listen"><button class="btn btn--primary btn--sm listen" type="button" data-act="listen">' + A.icon('play') + '<span>' + esc(t('app_book_listen')) + '</span></button>' + slowerBtn() + '</span>'
             : '<button class="linkish" type="button" data-act="replay">' + esc(t('app_book_replay')) + '</button>') + '</figure>';
       }
       case 'tip':
@@ -338,7 +343,7 @@
         var ps = String(b.md || '').split(/\n\s*\n/);
         var heard = ps.every(function (p, k) { return !p.trim() || audioSrc(gi, k); });
         return '<section class="rd-reading" data-reading' + tA(book) + '>' + (b.title ? '<h2 class="t-h2">' + esc(b.title) + '</h2>' : '') +
-          (heard ? '<button class="btn btn--primary btn--sm listen" type="button" data-act="listen">' + A.icon('play') + '<span>' + esc(t('app_book_listen')) + '</span></button>' : '') +
+          (heard ? '<span class="rd-listen"><button class="btn btn--primary btn--sm listen" type="button" data-act="listen">' + A.icon('play') + '<span>' + esc(t('app_book_listen')) + '</span></button>' + slowerBtn() + '</span>' : '') +
           ps.map(function (p, k) { var src = heard && audioSrc(gi, k); return '<p' + (src ? ' data-src="' + esc(src) + '"' : '') + '>' + md(p.trim()) + '</p>'; }).join('') + '</section>';
       case 'ex': return ctx.ex.html(gi);
       default: return '';

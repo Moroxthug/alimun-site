@@ -2,19 +2,21 @@
 // The site build serves this plan as /data/audio/<book>.json; /api/speech?action=generate makes the missing files
 // (Gemini text-to-speech, MP3) into Supabase Storage course-audio/<book>/<hash>.mp3, and the reader plays them.
 // Owner (25 Oct 2026): main voices Sulafat (woman) and Orus (man); the rest of the shortlist for other speakers.
+// Owner (26 Oct 2026): Gemini 3.1 Flash TTS (preview) through Google Cloud, everything at a natural pace (the old slow,
+// calm styles sounded unnatural); learners slow the audio down themselves with the player's Slower button.
 // Item keys follow the reader: <unit>:<lesson id or "test">:<block index in the lesson>:<item> (examples: item;
 // dialogue: line; reading: paragraph).
 import { createHash } from 'node:crypto';
 
-export const MODEL = 'gemini-3.8-flash-tts';
+export const MODEL = 'gemini-3.1-flash-tts-preview';
 export const FEMALE = ['Sulafat', 'Kore', 'Aoede', 'Leda', 'Vindemiatrix'];
 export const MALE = ['Orus', 'Charon', 'Puck', 'Achird', 'Sadaltager'];
 
 const STYLE = {
-  slow: 'clear and natural, at a slow, calm pace for learners',
-  calm: 'clear and natural, at a calm pace for learners',
-  talk: 'a natural everyday conversation, clear and at a calm pace',
-  read: 'reading aloud clearly and naturally, at a calm pace',
+  slow: 'clear and natural, at a natural, unhurried pace',
+  calm: 'clear and natural, at a natural pace',
+  talk: 'a natural everyday conversation at a natural pace',
+  read: 'reading aloud clearly and naturally, at a natural pace',
 };
 
 /* Speakers' genders: names and roles used in the dialogues. Unknown ones ("Receptionist", "Sam") take the
@@ -91,8 +93,8 @@ export function audioPlan(book) {
    <paper>:<part>:q:<block>.<item> in the test's examiner voice */
 const EXAM = {
   rec: 'a recording for a language exam: natural speech at a natural pace, clear',
-  slow: 'a recording for a language exam for learners: natural speech, clear and at a calm pace',
-  examiner: 'a friendly language examiner speaking clearly at a calm, natural pace',
+  slow: 'a recording for a language exam for learners: natural speech, clear, at a natural, unhurried pace',
+  examiner: 'a friendly language examiner speaking clearly at a natural pace',
 };
 export function testAudioPlan(test) {
   const items = {};

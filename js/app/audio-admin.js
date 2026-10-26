@@ -5,7 +5,7 @@
 (function () {
   'use strict';
   var SUPA = 'https://dgaiasmefcbrtzqwdyri.supabase.co';
-  var PRICE_MIN = 0.0135;  /* USD per minute of audio, gemini-3.8-flash-tts until 31 Dec 2026 */
+  var PRICE_MIN = 0.03;  /* USD per minute of audio: gemini-3.1-flash-tts-preview on Google Cloud, $20 per million audio tokens, 25 a second */
   var token = null, books = [], state = {}, running = false, tally = { req: 0, made: 0, split: 0 }, timer = null;
   /* Google's daily limit: when it resets (remembered in this browser, so a reopened tab waits instead of asking) */
   var RESET_KEY = 'alimun-audio-reset';
@@ -133,7 +133,7 @@
         btn.disabled = false; cloudBtn.disabled = false;
         var at = resetAt();
         say(at ? 'Google\u2019s daily limit is used up until ' + new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (in ' + hm(at - Date.now()) + '). Press Start and keep this tab open: it carries on by itself then.'
-          : 'Press Start and keep this tab open. Several sentences go to Google in one request and are cut apart at the pauses, to fit Google\u2019s daily limit.');
+          : 'Press Start and keep this tab open. Each sentence is spoken by Google Cloud (Gemini 3.1 Flash TTS) at a natural pace; Google\u2019s per-minute limit is waited out by itself.');
       });
     }).catch(function (e) { say('Could not start: ' + e.message); });
   }
