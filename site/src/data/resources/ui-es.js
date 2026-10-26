@@ -1,7 +1,7 @@
 // Resources hub text for the Spanish site (/es/), same keys as `en` in ui.js.
 // Words, clues and examples in the language being learned stay in that language; meanings are in Spanish.
 export default {
-  locale: 'es_ES', home: 'Inicio', back: 'Recursos', slugBase: 'recursos', kindSlugs: { exercise: 'ejercicios', quiz: 'quizzes' }, byLevel: (k) => `${k} por nivel`, seeAll: 'Ver todos', quizRung: '10 preguntas',
+  locale: 'es_ES', home: 'Inicio', back: 'Recursos', slugBase: 'recursos', kindSlugs: { exercise: 'ejercicios', quiz: 'quizzes', game: 'juegos', fun: 'para-divertirse' }, byLevel: (k) => `${k} por nivel`, seeAll: 'Ver todos', quizRung: '10 preguntas',
   title: 'Recursos', metaTitle: 'Ejercicios, quizzes y juegos gratis de inglés y alemán – Alimun',
   metaDesc: 'Ejercicios, quizzes, juegos y fichas para imprimir gratis para quien aprende inglés y alemán. Sin registro: juega, practica y descarga.',
   lead: 'Ejercicios, quizzes, juegos y fichas para imprimir gratis para quien aprende inglés y alemán. Sin registro, solo tienes que jugar.',

@@ -1,0 +1,37 @@
+// Resource: game. German idioms: what each one really means. Idioms stay German; glosses, options and explanations are in Portuguese. Meanings checked against Duden and DWDS.
+export default {
+  key: 'german-idioms', site: 'pt', slug: 'jogo-expressoes-alemas', kind: 'game', course: 'German', level: 'Todos os níveis',
+  draw: 'pretzel', tint: 'sun', published: '2026-10-27',
+  title: 'Jogo de expressões alemãs: tomates nos olhos?',
+  metaTitle: 'Jogo de expressões alemãs: 10 ditados explicados – Alimun',
+  desc: 'Um jogo grátis com dez expressões alemãs do dia a dia, de Tomaten auf den Augen a Ich verstehe nur Bahnhof. Adivinhe o que cada uma significa e vire as cartas.',
+  lead: 'Os alemães dizem que têm tomates nos olhos e que só entendem "estação de trem". Adivinhe o que dez expressões do dia a dia significam de verdade.',
+  instructions: 'O que a expressão significa de verdade?',
+  about: [
+    'Expressões idiomáticas são frases cujo significado não é a soma das suas palavras. O alemão tem muitas, e várias falam de comida, de animais e de cerveja.',
+    'Você vai ouvir todas elas em conversas do dia a dia. Aprenda o significado junto com a frase inteira e use-as com amigos, não em um e-mail formal.',
+  ],
+  items: [
+    { q: 'Tomaten auf den Augen haben (ter tomates nos olhos)', options: ['não ver algo óbvio', 'estar muito cansado', 'ter chorado', 'estar apaixonado'], a: 0, why: 'Hast du Tomaten auf den Augen? quer dizer "Você não está vendo? Está bem na sua frente."' },
+    { q: 'Ich verstehe nur Bahnhof (só entendo "estação de trem")', options: ['quero ir para casa', 'não entendo nada', 'estou com pressa', 'estou perdido na cidade'], a: 1, why: 'Quer dizer que você não entende absolutamente nada, como o nosso "isso para mim é grego".' },
+    { q: 'Schwein haben (ter um porco)', options: ['ser bagunceiro', 'comer demais', 'ter sorte', 'ser grosseiro'], a: 2, why: 'Na Alemanha o porco é um símbolo de sorte: Da hast du aber Schwein gehabt! quer dizer "Que sorte você teve!"' },
+    { q: 'Das ist nicht mein Bier (essa não é a minha cerveja)', options: ['eu não bebo', 'isso não é da minha conta', 'esse não é o meu pedido', 'eu não gosto disso'], a: 1, why: 'Quer dizer "isso não é problema meu" ou "isso não é da minha conta".' },
+    { q: 'Die Daumen drücken (apertar os polegares)', options: ['torcer por alguém', 'contar alguma coisa', 'pedir carona', 'reclamar'], a: 0, why: 'Os alemães apertam os polegares onde nós cruzamos os dedos: Ich drücke dir die Daumen! quer dizer "Estou torcendo por você!"' },
+    { q: 'Ins Fettnäpfchen treten (pisar no potinho de gordura)', options: ['cozinhar mal', 'escorregar no gelo', 'dar uma bola fora', 'engordar'], a: 2, why: 'Quer dizer dizer ou fazer algo constrangedor sem querer, como o nosso "dar uma bola fora" ou "pisar na bola".' },
+    { q: 'Jemandem auf den Keks gehen (andar no biscoito de alguém)', options: ['roubar alguém', 'dar nos nervos de alguém', 'fazer uma surpresa para alguém', 'visitar alguém'], a: 1, why: 'Du gehst mir auf den Keks! quer dizer "Você está me dando nos nervos!"' },
+    { q: 'Da steppt der Bär (lá o urso sapateia)', options: ['lá é perigoso', 'lá faz muito frio', 'lá a festa está animada', 'lá é chato'], a: 2, why: 'Descreve um lugar onde está acontecendo muita coisa, como uma festa que está bombando.' },
+    { q: 'Hals- und Beinbruch! (quebra de pescoço e de perna!)', options: ['Cuidado!', 'Boa sorte!', 'Melhoras!', 'Vai embora!'], a: 1, why: 'É um jeito de desejar boa sorte, como o "break a leg" do inglês ou o "merda" que se diz no teatro.' },
+    { q: 'Jemandem einen Bären aufbinden (amarrar um urso em alguém)', options: ['dar um abraço em alguém', 'dar um emprego a alguém', 'contar uma lorota para alguém', 'assustar alguém'], a: 2, why: 'Quer dizer fazer alguém acreditar em algo que não é verdade, como "contar uma lorota" ou "passar a perna em alguém".' },
+  ],
+  pairs: [
+    ['Tomaten auf den Augen haben', 'Não ver algo óbvio'],
+    ['Ich verstehe nur Bahnhof', 'Não entendo nada'],
+    ['Schwein haben', 'Ter sorte'],
+    ['Das ist nicht mein Bier', 'Não é da minha conta'],
+    ['Die Daumen drücken', 'Cruzar os dedos'],
+    ['Ins Fettnäpfchen treten', 'Dar uma bola fora'],
+    ['Auf den Keks gehen', 'Dar nos nervos'],
+    ['Da steppt der Bär', 'A festa está animada'],
+  ],
+  related: ['german-compounds', 'false-friends', 'de-quiz-a2'],
+};

@@ -1,0 +1,37 @@
+// Resource: game. English idioms: what each one really means. Meanings checked against Cambridge and Merriam-Webster.
+export default {
+  key: 'english-idioms', site: 'es', slug: 'expresiones-en-ingles-juego', kind: 'game', course: 'English', level: 'Todos los niveles',
+  draw: 'teacup', tint: 'mint', published: '2026-10-27',
+  title: 'Juego de expresiones en inglés: ¿llueven gatos y perros?',
+  metaTitle: 'Juego de expresiones en inglés: 10 frases explicadas – Alimun',
+  desc: 'Un juego gratis con diez expresiones comunes en inglés, de a piece of cake a spill the beans. Adivina qué significa de verdad cada una y gira las tarjetas.',
+  lead: 'A piece of cake, under the weather, spill the beans. Adivina qué significan de verdad diez expresiones del inglés de todos los días.',
+  instructions: '¿Qué significa de verdad la expresión?',
+  about: [
+    'Las expresiones idiomáticas son frases cuyo significado es distinto del de sus palabras. Los nativos las usan constantemente, al hablar, en las películas y en las canciones.',
+    'Aprende cada expresión como una frase entera, con un ejemplo de cuándo se usa. Casi todas son informales, así que guárdalas para los amigos y no para textos formales.',
+  ],
+  items: [
+    { q: "It's a piece of cake.", options: ['Es muy fácil.', 'Es una pequeña recompensa.', 'Está riquísimo.', 'No es suficiente.'], a: 0, why: 'A piece of cake es algo muy fácil de hacer, como nuestro «es pan comido»: The test was a piece of cake.' },
+    { q: 'I feel a bit under the weather.', options: ['Tengo frío.', 'Me siento un poco mal.', 'Me pone triste la lluvia.', 'Estoy harto del trabajo.'], a: 1, why: 'Under the weather significa estar un poco enfermo, no encontrarse muy bien.' },
+    { q: 'Come on, spill the beans!', options: ['¡Limpia este desastre!', '¡Date prisa!', '¡Cuéntame el secreto!', '¡Ponte a cocinar!'], a: 2, why: 'To spill the beans es contar algo que era secreto, como nuestro «soltarlo» o «desembuchar».' },
+    { q: "It's raining cats and dogs.", options: ['Está lloviendo muchísimo.', 'Está un poco nublado.', 'Las calles están llenas de ruido.', 'El tiempo no para de cambiar.'], a: 0, why: 'Raining cats and dogs significa llover a cántaros.' },
+    { q: 'That new phone cost an arm and a leg.', options: ['Fue una ganga.', 'Costó carísimo.', 'Fue difícil de encontrar.', 'Fue un regalo.'], a: 1, why: 'To cost an arm and a leg es costar un ojo de la cara.' },
+    { q: "I'm going to hit the sack.", options: ['Me voy al gimnasio.', 'Me voy de compras.', 'Me voy a dormir.', 'Lo voy a dejar.'], a: 2, why: 'To hit the sack es una forma informal de decir que te vas a la cama.' },
+    { q: 'We see each other once in a blue moon.', options: ['todas las noches', 'muy de vez en cuando', 'solo en verano', 'una vez al mes'], a: 1, why: 'Once in a blue moon significa muy de vez en cuando.' },
+    { q: "Relax, I'm just pulling your leg.", options: ['Te estoy tomando el pelo.', 'Te estoy ayudando a levantarte.', 'Estoy enfadado contigo.', 'Te estoy pidiendo un favor.'], a: 0, why: "To pull someone's leg es tomarle el pelo a alguien, decirle algo falso en broma." },
+    { q: 'Who let the cat out of the bag?', options: ['¿Quién se dejó la puerta abierta?', '¿Quién contó el secreto?', '¿Quién empezó la discusión?', '¿Quién se olvidó de la compra?'], a: 1, why: 'To let the cat out of the bag es revelar un secreto sin querer, como «irse de la lengua».' },
+    { q: 'The ball is in your court now.', options: ['Has perdido.', 'Deberías hacer más deporte.', 'Ahora te toca a ti decidir o actuar.', 'Tienes que pedir perdón.'], a: 2, why: 'The ball is in your court significa que ahora te toca a ti actuar o tomar una decisión.' },
+  ],
+  pairs: [
+    ['A piece of cake', 'Muy fácil'],
+    ['Under the weather', 'Un poco enfermo'],
+    ['Spill the beans', 'Contar un secreto'],
+    ['Raining cats and dogs', 'Llover a cántaros'],
+    ['Cost an arm and a leg', 'Costar un ojo de la cara'],
+    ['Hit the sack', 'Irse a la cama'],
+    ['Once in a blue moon', 'Muy de vez en cuando'],
+    ["Pull someone's leg", 'Tomarle el pelo a alguien'],
+  ],
+  related: ['british-american', 'false-friends', 'en-quiz-b2'],
+};

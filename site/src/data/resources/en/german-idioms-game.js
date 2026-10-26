@@ -1,0 +1,37 @@
+// Resource: game. German idioms: what each one really means. Meanings checked against Duden and DWDS.
+export default {
+  key: 'german-idioms', site: 'en', slug: 'german-idioms-game', kind: 'game', course: 'German', level: 'All levels',
+  draw: 'pretzel', tint: 'sun', published: '2026-10-27',
+  title: 'German idioms game: tomatoes on your eyes?',
+  metaTitle: 'German idioms game: 10 funny expressions explained – Alimun',
+  desc: 'A free game with ten everyday German idioms, from Tomaten auf den Augen to Ich verstehe nur Bahnhof. Guess what each one means, then flip the cards.',
+  lead: 'Germans say they have tomatoes on their eyes and that they only understand "train station". Guess what ten everyday idioms really mean.',
+  instructions: 'What does the idiom really mean?',
+  about: [
+    'Idioms are expressions whose meaning is not the sum of their words. German has plenty of them, and many involve food, animals and beer.',
+    'You will hear all of these in everyday conversation. Learn the meaning together with the whole phrase, and use them with friends rather than in a formal email.',
+  ],
+  items: [
+    { q: 'Tomaten auf den Augen haben (to have tomatoes on your eyes)', options: ['to miss something obvious', 'to be very tired', 'to have cried', 'to be in love'], a: 0, why: 'Hast du Tomaten auf den Augen? means "Can\'t you see it? It\'s right in front of you."' },
+    { q: 'Ich verstehe nur Bahnhof (I only understand "train station")', options: ['I want to go home', "I don't understand a thing", 'I am in a hurry', 'I am lost in the city'], a: 1, why: 'It means you understand nothing at all, a bit like "it\'s all Greek to me".' },
+    { q: 'Schwein haben (to have a pig)', options: ['to be messy', 'to eat too much', 'to be lucky', 'to be rude'], a: 2, why: 'In German the pig is a symbol of luck: Da hast du aber Schwein gehabt! means "You were really lucky!"' },
+    { q: 'Das ist nicht mein Bier (that is not my beer)', options: ['I do not drink', 'that is not my business', 'that is not my order', 'I do not like it'], a: 1, why: 'It means "that is not my problem" or "none of my business".' },
+    { q: 'Die Daumen drücken (to press the thumbs)', options: ['to keep your fingers crossed', 'to count something', 'to hitchhike', 'to complain'], a: 0, why: 'Germans press their thumbs where English speakers cross their fingers: Ich drücke dir die Daumen!' },
+    { q: 'Ins Fettnäpfchen treten (to step into the little pot of fat)', options: ['to cook badly', 'to slip on ice', 'to put your foot in it', 'to gain weight'], a: 2, why: 'It means saying or doing something embarrassing by accident, like "to put your foot in it".' },
+    { q: 'Jemandem auf den Keks gehen (to walk on someone\'s cookie)', options: ['to steal from someone', 'to get on someone\'s nerves', 'to surprise someone', 'to visit someone'], a: 1, why: 'Du gehst mir auf den Keks! means "You are getting on my nerves!"' },
+    { q: 'Da steppt der Bär (there the bear tap-dances)', options: ['it is dangerous there', 'it is very cold there', 'it is a lively party there', 'it is boring there'], a: 2, why: 'It describes a place where there is a lot going on, like a great party.' },
+    { q: 'Hals- und Beinbruch! (neck and leg break!)', options: ['Be careful!', 'Good luck!', 'Get well soon!', 'Go away!'], a: 1, why: 'It is a way of wishing someone good luck, like "break a leg" in English.' },
+    { q: 'Jemandem einen Bären aufbinden (to tie a bear onto someone)', options: ['to give someone a hug', 'to give someone a job', 'to tell someone a tall tale', 'to scare someone'], a: 2, why: 'It means making someone believe something that is not true, like "to pull someone\'s leg".' },
+  ],
+  pairs: [
+    ['Tomaten auf den Augen haben', 'Not to see something obvious'],
+    ['Ich verstehe nur Bahnhof', 'I don\'t understand a thing'],
+    ['Schwein haben', 'To be lucky'],
+    ['Das ist nicht mein Bier', 'That is not my business'],
+    ['Die Daumen drücken', 'To keep your fingers crossed'],
+    ['Ins Fettnäpfchen treten', 'To put your foot in it'],
+    ['Auf den Keks gehen', 'To get on someone\'s nerves'],
+    ['Da steppt der Bär', 'It is a lively party'],
+  ],
+  related: ['german-compounds', 'false-friends', 'de-quiz-a2'],
+};

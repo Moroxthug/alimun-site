@@ -1,0 +1,37 @@
+// Resource: game. German words with no one-word English translation. Meanings checked against Duden and DWDS.
+export default {
+  key: 'untranslatable-german', site: 'en', slug: 'untranslatable-german-words-game', kind: 'game', course: 'German', level: 'All levels',
+  draw: 'ghost', tint: 'mint', published: '2026-10-27',
+  title: 'Untranslatable German words: the game',
+  metaTitle: 'Untranslatable German words game: Fernweh and more – Alimun',
+  desc: 'A free game with German words English has no single word for: Fernweh, Kummerspeck, Fremdschämen, Feierabend. Guess what each one means.',
+  lead: 'German has one word for the weight you put on from eating when you are sad. Guess the meaning of ten words English needs a whole sentence for.',
+  instructions: 'What does the word mean?',
+  about: [
+    'Every language packs some ideas into a single word that others need a phrase for. German does it often, because it can join words together freely.',
+    'These words are real and used every day, which makes them a great way to sound natural and to start a conversation with German speakers.',
+  ],
+  items: [
+    { q: 'Fernweh', options: ['a longing for faraway places', 'fear of flying', 'homesickness', 'a long journey'], a: 0, why: 'Fernweh is the opposite of Heimweh (homesickness): you long to be far away.' },
+    { q: 'Kummerspeck', options: ['a sad song', 'weight gained from eating when you are sad', 'old bacon', 'a bad mood in the morning'], a: 1, why: 'Literally grief bacon: the extra weight from comfort eating.' },
+    { q: 'Fremdschämen', options: ['being shy with strangers', 'feeling ashamed of your accent', 'feeling embarrassed for someone else', 'fear of foreigners'], a: 2, why: 'Fremdschämen is cringing on behalf of someone who is embarrassing themselves.' },
+    { q: 'Feierabend', options: ['a birthday party', 'a public holiday', 'New Year\'s Eve', 'the end of the working day'], a: 3, why: 'Feierabend is the end of the working day and the free time after it: Schönen Feierabend!' },
+    { q: 'Verschlimmbessern', options: ['to make something worse while trying to improve it', 'to repair something', 'to complain a lot', 'to forget an appointment'], a: 0, why: 'A mix of verschlimmern (make worse) and verbessern (improve).' },
+    { q: 'Torschlusspanik', options: ['fear of closed doors', 'the fear that time is running out to do something', 'panic before a football match', 'stage fright'], a: 1, why: 'Literally gate-closing panic: the worry that it is getting too late, for example to marry or change career.' },
+    { q: 'Treppenwitz', options: ['a joke about stairs', 'a clumsy fall', 'the perfect reply you think of too late', 'a joke nobody understands'], a: 2, why: 'Literally staircase joke: the clever answer that comes to you on the way out.' },
+    { q: 'Schnapsidee', options: ['a great business plan', 'a recipe for liqueur', 'a hangover', 'a crazy idea that seems good at the time'], a: 3, why: 'A schnaps idea is a silly plan, the kind you might have after a drink.' },
+    { q: 'Ohrwurm', options: ['a song you cannot get out of your head', 'an ear infection', 'a loud neighbor', 'a whisper'], a: 0, why: 'Literally ear worm: a catchy song that keeps playing in your head.' },
+    { q: 'Backpfeifengesicht', options: ['a cheerful face', 'a face that seems to ask for a slap', 'a face covered in flour', 'a baby face'], a: 1, why: 'A rude, funny word for a face you would like to slap. Best kept for jokes among friends.' },
+  ],
+  pairs: [
+    ['Fernweh', 'A longing for faraway places'],
+    ['Kummerspeck', 'Weight from eating when you are sad'],
+    ['Fremdschämen', 'Feeling embarrassed for someone else'],
+    ['Feierabend', 'The end of the working day'],
+    ['Verschlimmbessern', 'To make worse by trying to improve'],
+    ['Torschlusspanik', 'The fear that time is running out'],
+    ['Treppenwitz', 'The perfect reply, thought of too late'],
+    ['Ohrwurm', 'A song stuck in your head'],
+  ],
+  related: ['german-idioms', 'german-compounds', 'false-friends'],
+};

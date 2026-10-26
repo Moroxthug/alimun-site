@@ -28,7 +28,7 @@ export async function getStaticPaths() {
     if (!list.length) continue;
     paths.push({ params: { p: `${site}--index` }, props: { site, list, all } });
     for (const r of list) paths.push({ params: { p: `${site}--${r.slug}` }, props: { site, r, list, all } });
-    for (const k of ['exercise', 'quiz']) if (list.filter((r) => r.kind === k).length > 1) paths.push({ params: { p: `${site}--${UIs[site].kindSlugs[k]}` }, props: { site, list, all, kind: k } });
+    for (const k of ['exercise', 'quiz', 'game', 'fun']) if (list.filter((r) => r.kind === k).length > 1) paths.push({ params: { p: `${site}--${UIs[site].kindSlugs[k]}` }, props: { site, list, all, kind: k } });
   }
   return paths;
 }
@@ -67,8 +67,9 @@ if (r) {
   main = blogStyle + cards + style + item(r, ui, related, lib);
 } else if (kind) {
   const url = kindPath(site, ui, kind), items = list.filter((x) => x.kind === kind);
+  const kTitle = kind === 'exercise' || kind === 'quiz' ? ui.byLevel(ui.kinds[kind][0]) : ui.kinds[kind][0];
   const alts = Object.fromEntries(Object.keys(UI).filter((s2) => all.filter((x) => x.site === s2 && x.kind === kind).length > 1).map((s2) => [s2, kindPath(s2, UI[s2], kind)]));
-  head = fill(headTpl, { PAGE_TITLE: esc(`${ui.byLevel(ui.kinds[kind][0])} – Alimun`), META_DESC: esc(`${ui.kinds[kind][1]} ${ui.free}.`), CANON: 'https://alimun.com' + url, LOCALE: ui.locale, OG_TYPE: 'website', LD: hubLd(site, items, { ...ui, title: ui.byLevel(ui.kinds[kind][0]), metaDesc: ui.kinds[kind][1], slugBase: ui.slugBase }).replace(JSON.stringify('https://alimun.com' + hubPath(site, ui)), JSON.stringify('https://alimun.com' + url)) })
+  head = fill(headTpl, { PAGE_TITLE: esc(`${kTitle} – Alimun`), META_DESC: esc(`${ui.kinds[kind][1]} ${ui.free}.`), CANON: 'https://alimun.com' + url, LOCALE: ui.locale, OG_TYPE: 'website', LD: hubLd(site, items, { ...ui, title: kTitle, metaDesc: ui.kinds[kind][1], slugBase: ui.slugBase }).replace(JSON.stringify('https://alimun.com' + hubPath(site, ui)), JSON.stringify('https://alimun.com' + url)) })
     + `\n  <script type="application/json" id="alimun-lang-alternates">${json(alts)}</script>`;
   main = blogStyle + cards + style + kindPage(site, kind, list, ui);
 } else {

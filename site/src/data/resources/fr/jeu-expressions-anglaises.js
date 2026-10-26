@@ -1,0 +1,37 @@
+// Resource: game. English idioms: what each one really means. Meanings checked against Cambridge and Merriam-Webster.
+export default {
+  key: 'english-idioms', site: 'fr', slug: 'jeu-expressions-anglaises', kind: 'game', course: 'English', level: 'Tous niveaux',
+  draw: 'teacup', tint: 'mint', published: '2026-10-27',
+  title: 'Jeu des expressions anglaises : il pleut vraiment des chats et des chiens ?',
+  metaTitle: 'Jeu des expressions anglaises : 10 idiomes expliqués – Alimun',
+  desc: "Un jeu gratuit avec dix expressions anglaises courantes, de a piece of cake à spill the beans. Devine leur vrai sens, puis retourne les cartes.",
+  lead: "A piece of cake, under the weather, spill the beans. Devine ce que veulent vraiment dire dix expressions anglaises du quotidien.",
+  instructions: "Que veut vraiment dire cette expression ?",
+  about: [
+    "Une expression idiomatique, c'est une expression dont le sens est différent de celui de ses mots. Les anglophones en utilisent tout le temps, dans les conversations, les films et les chansons.",
+    "Apprends chaque expression en entier, avec un exemple de situation où on l'utilise. La plupart sont familières : garde-les pour tes amis plutôt que pour un écrit formel.",
+  ],
+  items: [
+    { q: "It's a piece of cake.", options: ["C'est très facile.", "C'est une petite récompense.", "C'est délicieux.", "Ce n'est pas assez."], a: 0, why: "A piece of cake, c'est quelque chose de très facile, comme « c'est du gâteau » : The test was a piece of cake." },
+    { q: 'I feel a bit under the weather.', options: ["J'ai un peu froid.", 'Je suis un peu malade.', 'La pluie me rend triste.', "J'en ai assez du travail."], a: 1, why: "Under the weather veut dire un peu malade, pas dans son assiette." },
+    { q: 'Come on, spill the beans!', options: ['Nettoie ce bazar !', 'Dépêche-toi !', 'Dis-moi le secret !', 'Commence à cuisiner !'], a: 2, why: "To spill the beans, c'est révéler un secret, comme « vendre la mèche »." },
+    { q: "It's raining cats and dogs.", options: ['Il pleut très fort.', 'Il y a quelques nuages.', 'Les rues sont bruyantes.', "Le temps n'arrête pas de changer."], a: 0, why: "Raining cats and dogs veut dire qu'il pleut très fort, comme « il pleut des cordes »." },
+    { q: 'That new phone cost an arm and a leg.', options: ["C'était une bonne affaire.", 'Il a coûté très cher.', 'Il était difficile à trouver.', "C'était un cadeau."], a: 1, why: "To cost an arm and a leg, c'est coûter extrêmement cher, comme « coûter les yeux de la tête »." },
+    { q: "I'm going to hit the sack.", options: ['Je vais à la salle de sport.', 'Je vais faire les courses.', 'Je vais me coucher.', 'Je vais démissionner.'], a: 2, why: "To hit the sack est une façon familière de dire qu'on va se coucher." },
+    { q: 'We see each other once in a blue moon.', options: ['tous les soirs', 'très rarement', "seulement l'été", 'une fois par mois'], a: 1, why: "Once in a blue moon veut dire très rarement, comme « tous les trente-six du mois »." },
+    { q: "Relax, I'm just pulling your leg.", options: ['Je te taquine.', "Je t'aide à te relever.", "Je suis fâché contre toi.", 'Je te demande un service.'], a: 0, why: "To pull someone's leg, c'est taquiner quelqu'un en lui racontant une chose fausse pour rire, comme « faire marcher quelqu'un »." },
+    { q: 'Who let the cat out of the bag?', options: ['Qui a laissé la porte ouverte ?', 'Qui a révélé le secret ?', 'Qui a commencé la dispute ?', 'Qui a oublié les courses ?'], a: 1, why: "To let the cat out of the bag, c'est révéler un secret par erreur." },
+    { q: "The ball is in your court now.", options: ['Tu as perdu.', 'Tu devrais faire plus de sport.', "C'est à toi de décider ou d'agir.", 'Tu dois t\'excuser.'], a: 2, why: "The ball is in your court veut dire que c'est à toi d'agir ou de décider, comme « la balle est dans ton camp »." },
+  ],
+  pairs: [
+    ['A piece of cake', 'Très facile'],
+    ['Under the weather', 'Un peu malade'],
+    ['Spill the beans', 'Révéler un secret'],
+    ['Raining cats and dogs', 'Pleuvoir très fort'],
+    ['Cost an arm and a leg', 'Très cher'],
+    ['Hit the sack', 'Aller se coucher'],
+    ['Once in a blue moon', 'Très rarement'],
+    ["Pull someone's leg", "Taquiner quelqu'un"],
+  ],
+  related: ['british-american', 'false-friends', 'en-quiz-b2'],
+};

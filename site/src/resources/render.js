@@ -27,7 +27,8 @@ export function card(r, ui) {
 /* ---------- Hub ---------- */
 export function hub(site, list, ui) {
   const of = (k) => list.filter((r) => r.kind === k);
-  const quiz = of('quiz')[0], game = of('game')[0], fun = of('fun')[0];
+  const quiz = of('quiz')[0], game = of('game').find((r) => r.cards) || of('game')[0], fun = of('fun').find((r) => r.key === 'buddy-quiz') || of('fun')[0];
+  const seeAll = (k) => (of(k).length > 1 ? `<a class="bm-btn is-ghost" href="${kindPath(site, ui, k)}">${esc(ui.seeAll)}</a>` : '');
   const catHref = (k) => (k === 'level' ? levelTest(site) : of(k).length === 1 ? itemPath(of(k)[0], ui) : k === 'printable' ? '#printable' : kindPath(site, ui, k));
   const cats = [...KINDS.filter((k) => of(k).length), 'level'];
   const today = { English: ui.daily.English, German: ui.daily.German, labels: { right: ui.right, almost: ui.almost } };
@@ -43,8 +44,8 @@ export function hub(site, list, ui) {
     head2(ui.allTitle, ui.allLead) +
     `<div class="rs-cats">${cats.map((k) => `<a class="rs-cat rv t-${KIND_DRAW[k][1]}" href="${catHref(k)}"><div><p class="bm-d">${esc(ui.kinds[k][0])}</p><p>${esc(ui.kinds[k][1])}</p></div>${draw(KIND_DRAW[k][0])}<span class="rs-go">${esc(ui.kinds[k][2])}</span></a>`).join('')}</div>` +
     (quiz ? head2(ui.clockTitle) + `<div class="rs-clock rv" data-clock="${esc(JSON.stringify(ui.clockFlash))}"><div class="rs-ring"><svg viewBox="0 0 130 130" aria-hidden="true"><circle class="bg" cx="65" cy="65" r="55"/><circle class="fg" cx="65" cy="65" r="55" data-ring/></svg><b data-secs>60</b></div><div><p class="bm-d">${esc(ui.clockHead)}</p><p>${esc(ui.clockText)}</p><p class="rs-flash" data-flash>${esc(ui.clockFlash[0])}</p></div><a class="bm-btn" href="${itemPath(quiz, ui)}">${esc(ui.clockPlay)}</a></div>` : '') +
-    (game ? head2(ui.ffTitle, ui.ffLead, `<a class="bm-btn is-ghost" href="${itemPath(game, ui)}">${esc(ui.ffPlay)}</a>`) + `<div class="rs-ff">${game.cards.slice(0, 6).map((c) => flipCard(c, ui)).join('')}</div>` : '') +
-    (fun ? head2(ui.buddyTitle) + `<div class="rs-buddy rv"><div><p class="bm-d rs-bh">${esc(ui.buddyHead)}</p><p class="rs-bt">${esc(ui.buddyText)}</p><div class="rs-line">${['teacup', 'pretzel', 'croissant', 'pizza', 'churro', 'nata'].map((d) => draw(d)).join('')}</div></div>${buddyBox(fun, ui, site)}</div>` : '') +
+    (game && game.cards ? head2(ui.ffTitle, ui.ffLead, `<div class="rs-btns"><a class="bm-btn is-ghost" href="${itemPath(game, ui)}">${esc(ui.ffPlay)}</a>${seeAll('game')}</div>`) + `<div class="rs-ff">${game.cards.slice(0, 6).map((c) => flipCard(c, ui)).join('')}</div>` : '') +
+    (fun ? head2(ui.buddyTitle, '', seeAll('fun')) + `<div class="rs-buddy rv"><div><p class="bm-d rs-bh">${esc(ui.buddyHead)}</p><p class="rs-bt">${esc(ui.buddyText)}</p><div class="rs-line">${['teacup', 'pretzel', 'croissant', 'pizza', 'churro', 'nata'].map((d) => draw(d)).join('')}</div></div>${buddyBox(fun, ui, site)}</div>` : '') +
     (of('printable').length ? head2(ui.printTitle, ui.printLead, '', 'printable') + `<div class="rs-prints">${of('printable').map((r) => `<a class="rs-paper rv" href="${itemPath(r, ui)}"><div class="rs-sheet">${draw(r.draw)}<p class="bm-d">${esc(r.title)}</p><p>${esc(r.desc)}</p><span class="rs-go">${esc(ui.download)}</span></div></a>`).join('')}</div>` : '') +
     ['exercise', 'quiz'].filter((k) => of(k).length > 1).map((k) => head2(ui.byLevel(ui.kinds[k][0]), ui.kinds[k][1], `<a class="bm-btn is-ghost" href="${kindPath(site, ui, k)}">${esc(ui.seeAll)}</a>`, k) + ladders(of(k), ui)).join('') +
     endCard(site, ui, quiz) + `</div></div>`;
@@ -67,6 +68,7 @@ export function kindPage(site, k, list, ui) {
     `<div class="rs-top is-item"><div class="bm-hello"><div><p class="bm-crumb"><a href="${hubPath(site, ui)}">${esc(ui.back)}</a></p><h1>${esc(ui.kinds[k][0])}</h1><p>${esc(ui.kinds[k][1])}</p></div>` +
     `<p class="rs-meta">${esc(ui.free)}</p></div><div class="rs-play is-item t-${KIND_DRAW[k][1]}">${draw(KIND_DRAW[k][0], 'rs-big')}</div></div>` +
     ['English', 'German'].filter((c) => items.some((r) => r.course === c)).map((c) => head2(ui.courses[c]) + `<div class="rs-cats">${items.filter((r) => r.course === c).sort(byLevel).map((r) => card(r, ui)).join('')}</div>`).join('') +
+    (items.some((r) => !r.course) ? `<div class="rs-cats">${items.filter((r) => !r.course).map((r) => card(r, ui)).join('')}</div>` : '') +
     endCard(site, ui, list.find((r) => r.kind === 'quiz')) + `</div></div>`;
 }
 
@@ -74,8 +76,12 @@ function flipCard(c, ui) {
   const [word, , looks, means, say] = c;
   return `<div class="rs-flip rv" data-flip tabindex="0" role="button"><div class="rs-flip-in"><div class="rs-face front"><span class="rs-pair">${esc(word)} <i>≠</i> ${esc(looks)}</span></div><div class="rs-face back"><p><b>${esc(word)}</b> = ${esc(means)}. ${esc(looks)} = <b>${esc(say)}</b></p></div></div></div>`;
 }
+/* Any other game: a plain card, its front and its back */
+function flipPair([front, back]) {
+  return `<div class="rs-flip rv" data-flip tabindex="0" role="button"><div class="rs-flip-in"><div class="rs-face front"><span class="rs-pair">${esc(front)}</span></div><div class="rs-face back"><p>${esc(back)}</p></div></div></div>`;
+}
 function buddyBox(r, ui, site) {
-  return `<div class="rs-bq" data-bq><script type="application/json" class="rs-bq-data">${json({ q: r.buddy.questions, res: r.buddy.results, youAre: ui.youAre('{}'), join: ui.join, joinHref: levelTest(site), again: ui.again, share: ui.share, copied: ui.copied, url: 'https://alimun.com' + itemPath(r, ui) })}</script></div>`;
+  return `<div class="rs-bq" data-bq><script type="application/json" class="rs-bq-data">${json({ q: r.buddy.questions, res: r.buddy.results, youAre: r.youAre || ui.youAre('{}'), join: ui.join, joinHref: levelTest(site), again: ui.again, share: ui.share, copied: ui.copied, url: 'https://alimun.com' + itemPath(r, ui) })}</script></div>`;
 }
 function endCard(site, ui, quiz) {
   return `<div class="rs-end rv"><div><h2>${esc(ui.endTitle)}</h2><p>${esc(ui.endText)}</p><div class="rs-btns"><a class="bm-btn" href="${levelTest(site)}">${esc(ui.join)}</a>${quiz ? `<a class="bm-btn is-ghost" href="${itemPath(quiz, ui)}">${esc(ui.test)}</a>` : ''}</div></div><div class="rs-line">${draw('owl')}${draw('parrot')}${draw('cat')}${draw('snail')}</div></div>`;
@@ -102,6 +108,10 @@ function activity(r, ui, lib) {
         (s.table ? `<div class="ar-table is-in"><table><thead><tr>${s.table.head.map((h) => `<th scope="col">${esc(h)}</th>`).join('')}</tr></thead><tbody>${s.table.rows.map((row) => `<tr>${row.map((c, i) => i === 0 ? `<th scope="row">${esc(c)}</th>` : `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody></table></div>` : '') +
         (s.levels ? `<div class="rs-levels">${s.levels.map(([c, n, t], i) => `<div class="rs-lv t-${['mint', 'sun', 'coral', 'lime'][i % 4]}"><p class="rs-lc">${esc(c)}</p><p class="rs-ln">${esc(n)}</p><p>${esc(t)}</p></div>`).join('')}</div>` : '') +
         (s.p ? `<p class="rs-sp">${esc(s.p)}</p>` : '')).join('')}<p class="rs-foot">alimun.com</p></div>`;
+  }
+  if (r.kind === 'game' && r.items) {
+    return `<p class="rs-ins">${esc(r.instructions)}</p>` + quizBox(choiceData(r.items, ui, { shuffle: true, join: ui.join, joinHref: levelTest(r.site, r.course) })) +
+      (r.pairs ? `<div class="rs-ff is-page">${r.pairs.map(flipPair).join('')}</div>` : '');
   }
   if (r.kind === 'game') {
     const items = r.cards.map((c, i) => {

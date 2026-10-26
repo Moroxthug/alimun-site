@@ -1,0 +1,37 @@
+// Resource: game. English idioms: what each one really means. Sentences stay English; options and explanations are in Portuguese. Meanings checked against Cambridge and Merriam-Webster.
+export default {
+  key: 'english-idioms', site: 'pt', slug: 'jogo-expressoes-idiomaticas-ingles', kind: 'game', course: 'English', level: 'Todos os níveis',
+  draw: 'teacup', tint: 'mint', published: '2026-10-27',
+  title: 'Jogo de expressões em inglês: chove gatos e cachorros?',
+  metaTitle: 'Jogo de expressões idiomáticas em inglês: 10 explicadas – Alimun',
+  desc: 'Um jogo grátis com dez expressões idiomáticas comuns em inglês, de a piece of cake a spill the beans. Adivinhe o que cada uma significa e vire as cartas.',
+  lead: 'A piece of cake, under the weather, spill the beans. Adivinhe o que dez expressões do dia a dia em inglês significam de verdade.',
+  instructions: 'O que a expressão significa de verdade?',
+  about: [
+    'Expressões idiomáticas são frases cujo significado é diferente do significado das suas palavras. Os falantes nativos usam o tempo todo, em conversas, filmes e músicas.',
+    'Aprenda cada expressão como uma frase inteira, com um exemplo de quando as pessoas a usam. A maioria é informal, então guarde para os amigos e não para textos formais.',
+  ],
+  items: [
+    { q: "It's a piece of cake.", options: ['É muito fácil.', 'É uma pequena recompensa.', 'É uma delícia.', 'Não é suficiente.'], a: 0, why: 'A piece of cake é algo muito fácil de fazer, uma moleza: The test was a piece of cake.' },
+    { q: 'I feel a bit under the weather.', options: ['Estou com frio.', 'Estou meio indisposto.', 'Estou triste por causa da chuva.', 'Estou muito cansado do trabalho.'], a: 1, why: 'Under the weather quer dizer meio doente, indisposto.' },
+    { q: 'Come on, spill the beans!', options: ['Limpe essa bagunça!', 'Anda logo!', 'Conta o segredo!', 'Começa a cozinhar!'], a: 2, why: 'Spill the beans é contar um segredo, como o nosso "abrir o bico".' },
+    { q: "It's raining cats and dogs.", options: ['Está chovendo muito forte.', 'Está um pouco nublado.', 'As ruas estão barulhentas.', 'O tempo não para de mudar.'], a: 0, why: 'Raining cats and dogs quer dizer chover muito forte, como o nosso "chover canivetes".' },
+    { q: 'That new phone cost an arm and a leg.', options: ['Foi uma pechincha.', 'Foi caríssimo.', 'Foi difícil de encontrar.', 'Foi um presente.'], a: 1, why: 'Cost an arm and a leg é custar muito caro, como o nosso "custar os olhos da cara".' },
+    { q: "I'm going to hit the sack.", options: ['Vou para a academia.', 'Vou fazer compras.', 'Vou dormir.', 'Vou desistir.'], a: 2, why: 'Hit the sack é um jeito informal de dizer que você vai para a cama.' },
+    { q: 'We see each other once in a blue moon.', options: ['toda noite', 'muito raramente', 'só no verão', 'uma vez por mês'], a: 1, why: 'Once in a blue moon quer dizer muito raramente, como o nosso "de vez em nunca".' },
+    { q: "Relax, I'm just pulling your leg.", options: ['Estou brincando com você.', 'Estou ajudando você a levantar.', 'Estou irritado com você.', 'Estou pedindo um favor.'], a: 0, why: "Pull someone's leg é brincar com alguém contando algo que não é verdade, como tirar sarro." },
+    { q: 'Who let the cat out of the bag?', options: ['Quem deixou a porta aberta?', 'Quem contou o segredo?', 'Quem começou a briga?', 'Quem esqueceu as compras?'], a: 1, why: 'Let the cat out of the bag é revelar um segredo sem querer, como o nosso "dar com a língua nos dentes".' },
+    { q: 'The ball is in your court now.', options: ['Você perdeu.', 'Você deveria praticar mais esporte.', 'Agora é a sua vez de decidir ou agir.', 'Você precisa pedir desculpas.'], a: 2, why: 'The ball is in your court quer dizer que agora é a sua vez de agir ou de tomar uma decisão: a bola está com você.' },
+  ],
+  pairs: [
+    ['A piece of cake', 'Muito fácil'],
+    ['Under the weather', 'Meio indisposto'],
+    ['Spill the beans', 'Contar um segredo'],
+    ['Raining cats and dogs', 'Chovendo muito forte'],
+    ['Cost an arm and a leg', 'Muito caro'],
+    ['Hit the sack', 'Ir dormir'],
+    ['Once in a blue moon', 'Muito raramente'],
+    ["Pull someone's leg", 'Brincar com alguém'],
+  ],
+  related: ['british-american', 'false-friends', 'en-quiz-b2'],
+};

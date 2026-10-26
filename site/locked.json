@@ -245,15 +245,15 @@
     "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
   },
   "src/resources/render.js": {
-    "sha256": "087f94b729e81cb3ffcd0a991cf61ec35585c71e920a9def04c14d002405cf99",
-    "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\")"
+    "sha256": "7ce5428c9a2aa1ba911542eb744cf5997b9346bc819c90e6463da37417eea26f",
+    "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\"); 2026-10-27 games and fun: any question set for games, flip cards from pairs, pages for all games and all fun quizzes (owner: \"more resources now, games and fun stuff\")"
   },
   "src/blocks/resources/style.html": {
     "sha256": "2a3d7c96d5e18b2b251f6ff4b5815103c92af7dd151fdaf65162ba07cebcce26",
     "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\")"
   },
   "src/pages/resources/[p].astro": {
-    "sha256": "510e67cb3f48020792d4e0d4144aef725ade6085fca1bf39c87690ffe4b7de04",
-    "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\")"
+    "sha256": "ab45462f47854a3fcf50c040d5fb39f95bf539d4e577191e664adc37abe977ee",
+    "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\"); 2026-10-27 games and fun: any question set for games, flip cards from pairs, pages for all games and all fun quizzes (owner: \"more resources now, games and fun stuff\")"
   }
 }

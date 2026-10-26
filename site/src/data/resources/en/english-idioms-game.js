@@ -1,0 +1,37 @@
+// Resource: game. English idioms: what each one really means. Meanings checked against Cambridge and Merriam-Webster.
+export default {
+  key: 'english-idioms', site: 'en', slug: 'english-idioms-game', kind: 'game', course: 'English', level: 'All levels',
+  draw: 'teacup', tint: 'mint', published: '2026-10-27',
+  title: 'English idioms game: is it really raining cats and dogs?',
+  metaTitle: 'English idioms game: 10 common expressions explained – Alimun',
+  desc: 'A free game with ten common English idioms, from a piece of cake to spill the beans. Guess what each one really means, then flip the cards.',
+  lead: 'A piece of cake, under the weather, spill the beans. Guess what ten everyday English idioms really mean.',
+  instructions: 'What does the idiom really mean?',
+  about: [
+    'Idioms are expressions whose meaning is different from the meaning of their words. Native speakers use them all the time, in conversation, films and songs.',
+    'Learn each idiom as a whole phrase, with an example of when people use it. Most of these are informal, so keep them for friends rather than formal writing.',
+  ],
+  items: [
+    { q: "It's a piece of cake.", options: ["It's very easy.", "It's a small reward.", "It's delicious.", "It's not enough."], a: 0, why: 'A piece of cake is something very easy to do: The test was a piece of cake.' },
+    { q: 'I feel a bit under the weather.', options: ['I feel cold.', 'I feel slightly ill.', 'I feel sad about the rain.', 'I feel very tired of work.'], a: 1, why: 'Under the weather means slightly ill, not very well.' },
+    { q: 'Come on, spill the beans!', options: ['Clean up the mess!', 'Hurry up!', 'Tell me the secret!', 'Start cooking!'], a: 2, why: 'To spill the beans is to tell people something secret.' },
+    { q: "It's raining cats and dogs.", options: ["It's raining very heavily.", "It's a little cloudy.", 'The streets are noisy.', 'The weather keeps changing.'], a: 0, why: 'Raining cats and dogs means raining very hard.' },
+    { q: 'That new phone cost an arm and a leg.', options: ['It was a bargain.', 'It was very expensive.', 'It was hard to find.', 'It was a gift.'], a: 1, why: 'To cost an arm and a leg is to be extremely expensive.' },
+    { q: "I'm going to hit the sack.", options: ["I'm going to the gym.", "I'm going to go shopping.", "I'm going to bed.", "I'm going to quit."], a: 2, why: 'To hit the sack is an informal way of saying you are going to bed.' },
+    { q: 'We see each other once in a blue moon.', options: ['every night', 'very rarely', 'only in summer', 'once a month'], a: 1, why: 'Once in a blue moon means very rarely.' },
+    { q: "Relax, I'm just pulling your leg.", options: ["I'm joking with you.", "I'm helping you up.", "I'm annoyed with you.", "I'm asking for a favor."], a: 0, why: "To pull someone's leg is to tease them by telling them something untrue as a joke." },
+    { q: 'Who let the cat out of the bag?', options: ['Who left the door open?', 'Who told the secret?', 'Who started the argument?', 'Who forgot the shopping?'], a: 1, why: 'To let the cat out of the bag is to reveal a secret by mistake.' },
+    { q: "The ball is in your court now.", options: ['You have lost.', 'You should play more sport.', "It's your turn to decide or act.", 'You need to apologize.'], a: 2, why: 'The ball is in your court means it is your turn to take action or make a decision.' },
+  ],
+  pairs: [
+    ['A piece of cake', 'Very easy'],
+    ['Under the weather', 'Slightly ill'],
+    ['Spill the beans', 'Tell a secret'],
+    ['Raining cats and dogs', 'Raining very heavily'],
+    ['Cost an arm and a leg', 'Very expensive'],
+    ['Hit the sack', 'Go to bed'],
+    ['Once in a blue moon', 'Very rarely'],
+    ["Pull someone's leg", 'Joke with someone'],
+  ],
+  related: ['british-american', 'false-friends', 'en-quiz-b2'],
+};

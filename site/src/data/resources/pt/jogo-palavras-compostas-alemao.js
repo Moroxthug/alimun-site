@@ -1,0 +1,37 @@
+// Resource: game. German compound nouns and their literal meanings. German words stay German; glosses, options and explanations are in Portuguese. Checked against Duden.
+export default {
+  key: 'german-compounds', site: 'pt', slug: 'jogo-palavras-compostas-alemao', kind: 'game', course: 'German', level: 'Todos os níveis',
+  draw: 'cat', tint: 'lime', published: '2026-10-27',
+  title: 'Jogo de palavras compostas em alemão: o que é um sapato de mão?',
+  metaTitle: 'Jogo de palavras compostas em alemão: Handschuh e mais – Alimun',
+  desc: 'Um jogo grátis com palavras compostas alemãs engraçadas: um sapato de mão é uma luva e um animal preguiçoso é um bicho-preguiça. Adivinhe dez palavras.',
+  lead: 'O alemão cria palavras novas juntando palavras antigas. Um sapato de mão é uma luva e um animal preguiçoso é um bicho-preguiça. Você adivinha as outras?',
+  instructions: 'O que é?',
+  about: [
+    'O alemão junta substantivos para formar palavras novas, e a última parte sempre define o gênero da palavra: der Handschuh por causa de der Schuh.',
+    'Quando você conhece as partes, muitas palavras longas se explicam sozinhas. Por isso as palavras compostas são um dos jeitos mais divertidos de aumentar o seu vocabulário em alemão.',
+  ],
+  items: [
+    { q: 'Handschuh (mão + sapato)', options: ['uma luva', 'um chinelo', 'um anel', 'uma meia'], a: 0, why: 'der Handschuh = a luva: um sapato para a mão.' },
+    { q: 'Faultier (preguiçoso + animal)', options: ['um gato', 'um bicho-preguiça', 'uma tartaruga', 'um coala'], a: 1, why: 'das Faultier = o bicho-preguiça.' },
+    { q: 'Kühlschrank (frio + armário)', options: ['uma bolsa térmica', 'um porão', 'uma geladeira', 'um ar-condicionado'], a: 2, why: 'der Kühlschrank = a geladeira.' },
+    { q: 'Schildkröte (escudo + sapo)', options: ['uma rã', 'um caranguejo', 'um besouro', 'uma tartaruga'], a: 3, why: 'die Schildkröte = a tartaruga: um sapo com um escudo.' },
+    { q: 'Glühbirne (brilho + pera)', options: ['uma lâmpada', 'uma vela', 'uma pera madura', 'uma lanterna'], a: 0, why: 'die Glühbirne = a lâmpada, com o formato de uma pera que brilha.' },
+    { q: 'Stinktier (fedor + animal)', options: ['um porco', 'um gambá', 'uma cabra', 'um rato'], a: 1, why: 'das Stinktier = o gambá.' },
+    { q: 'Staubsauger (pó + sugador)', options: ['uma vassoura', 'um espanador', 'um aspirador de pó', 'um ventilador'], a: 2, why: 'der Staubsauger = o aspirador de pó.' },
+    { q: 'Flugzeug (voo + coisa)', options: ['um pássaro', 'uma pipa', 'um avião', 'um drone'], a: 2, why: 'das Flugzeug = o avião: uma coisa para voar.' },
+    { q: 'Nacktschnecke (nu + caracol)', options: ['uma lesma', 'uma minhoca', 'um caracol filhote', 'uma enguia'], a: 0, why: 'die Nacktschnecke = a lesma: um caracol sem casca.' },
+    { q: 'Drahtesel (arame + burro)', options: ['um robô', 'uma cerca', 'uma bicicleta', 'um trator'], a: 2, why: 'der Drahtesel é um jeito brincalhão de dizer bicicleta: um burro feito de arame.' },
+  ],
+  pairs: [
+    ['der Handschuh: mão + sapato', 'a luva'],
+    ['das Faultier: preguiçoso + animal', 'o bicho-preguiça'],
+    ['der Kühlschrank: frio + armário', 'a geladeira'],
+    ['die Schildkröte: escudo + sapo', 'a tartaruga'],
+    ['die Glühbirne: brilho + pera', 'a lâmpada'],
+    ['das Stinktier: fedor + animal', 'o gambá'],
+    ['der Staubsauger: pó + sugador', 'o aspirador de pó'],
+    ['die Nacktschnecke: nu + caracol', 'a lesma'],
+  ],
+  related: ['german-idioms', 'de-articles-a1', 'de-articles-sheet'],
+};

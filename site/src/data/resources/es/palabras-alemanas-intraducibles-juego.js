@@ -1,0 +1,37 @@
+// Resource: game. German words with no one-word Spanish translation. Meanings checked against Duden and DWDS.
+export default {
+  key: 'untranslatable-german', site: 'es', slug: 'palabras-alemanas-intraducibles-juego', kind: 'game', course: 'German', level: 'Todos los niveles',
+  draw: 'ghost', tint: 'mint', published: '2026-10-27',
+  title: 'Palabras alemanas intraducibles: el juego',
+  metaTitle: 'Palabras alemanas intraducibles, el juego: Fernweh y más – Alimun',
+  desc: 'Un juego gratis con palabras alemanas que no tienen equivalente en español: Fernweh, Kummerspeck, Fremdschämen, Feierabend. Adivina qué significa cada una.',
+  lead: 'El alemán tiene una palabra para los kilos que ganas comiendo cuando estás triste. Adivina el significado de diez palabras que en español necesitan una frase entera.',
+  instructions: '¿Qué significa la palabra?',
+  about: [
+    'Todos los idiomas meten algunas ideas en una sola palabra que otros necesitan explicar con una frase. El alemán lo hace a menudo, porque puede unir palabras con total libertad.',
+    'Estas palabras son reales y se usan a diario, así que son una forma estupenda de sonar natural y de empezar una conversación con alguien que habla alemán.',
+  ],
+  items: [
+    { q: 'Fernweh', options: ['las ganas de viajar a lugares lejanos', 'el miedo a volar', 'la nostalgia de casa', 'un viaje largo'], a: 0, why: 'Fernweh es lo contrario de Heimweh (la nostalgia de casa): deseas estar lejos.' },
+    { q: 'Kummerspeck', options: ['una canción triste', 'los kilos que ganas comiendo cuando estás triste', 'el tocino viejo', 'el mal humor por la mañana'], a: 1, why: 'Literalmente «tocino de la pena»: el peso que ganas comiendo para consolarte.' },
+    { q: 'Fremdschämen', options: ['ser tímido con los desconocidos', 'tener vergüenza de tu acento', 'sentir vergüenza ajena', 'tener miedo a los extranjeros'], a: 2, why: 'Fremdschämen es pasar vergüenza por alguien que está haciendo el ridículo. En español sí lo decimos: vergüenza ajena.' },
+    { q: 'Feierabend', options: ['una fiesta de cumpleaños', 'un día festivo', 'la Nochevieja', 'el final de la jornada laboral'], a: 3, why: 'Feierabend es el final de la jornada de trabajo y el tiempo libre que viene después: Schönen Feierabend!' },
+    { q: 'Verschlimmbessern', options: ['empeorar algo al intentar mejorarlo', 'reparar algo', 'quejarse mucho', 'olvidarse de una cita'], a: 0, why: 'Es una mezcla de verschlimmern (empeorar) y verbessern (mejorar). Como el «peor el remedio que la enfermedad».' },
+    { q: 'Torschlusspanik', options: ['el miedo a las puertas cerradas', 'el miedo a que se acabe el tiempo para hacer algo', 'los nervios antes de un partido de fútbol', 'el miedo escénico'], a: 1, why: 'Literalmente «pánico al cierre de la puerta»: la preocupación de que se haga demasiado tarde, por ejemplo para casarte o cambiar de profesión.' },
+    { q: 'Treppenwitz', options: ['un chiste sobre escaleras', 'una caída tonta', 'la respuesta perfecta que se te ocurre demasiado tarde', 'un chiste que nadie entiende'], a: 2, why: 'Literalmente «chiste de escalera»: la respuesta ingeniosa que se te ocurre cuando ya te vas.' },
+    { q: 'Schnapsidee', options: ['un gran plan de negocio', 'una receta de licor', 'una resaca', 'una locura que en el momento parece buena idea'], a: 3, why: 'Una «idea de aguardiente» es un plan disparatado, de los que se te ocurren después de una copa.' },
+    { q: 'Ohrwurm', options: ['una canción que no te puedes quitar de la cabeza', 'una otitis', 'un vecino ruidoso', 'un susurro'], a: 0, why: 'Literalmente «gusano de oreja»: una canción pegadiza que no deja de sonar en tu cabeza.' },
+    { q: 'Backpfeifengesicht', options: ['una cara alegre', 'una cara que parece pedir una bofetada', 'una cara llena de harina', 'una cara de bebé'], a: 1, why: 'Una palabra grosera y graciosa para una cara a la que darías una bofetada. Mejor guardarla para bromas entre amigos.' },
+  ],
+  pairs: [
+    ['Fernweh', 'Ganas de viajar lejos'],
+    ['Kummerspeck', 'Kilos por comer cuando estás triste'],
+    ['Fremdschämen', 'Sentir vergüenza ajena'],
+    ['Feierabend', 'El final de la jornada laboral'],
+    ['Verschlimmbessern', 'Empeorar algo al intentar mejorarlo'],
+    ['Torschlusspanik', 'Miedo a que se acabe el tiempo'],
+    ['Treppenwitz', 'La respuesta perfecta, demasiado tarde'],
+    ['Ohrwurm', 'Una canción metida en la cabeza'],
+  ],
+  related: ['german-idioms', 'german-compounds', 'false-friends'],
+};
