@@ -129,7 +129,7 @@ Recordings are sent to Groq (listening) or Azure (scoring) and discarded; they a
 - 14: the owner's full sentence: going over a lesson with the tutor afterwards "creates a better learning program" (the reason for part 5b; nothing more to decide).
 - Part 3 continues in a new session (owner's request).
 - Part 3 built on 27 Oct 2026 (`docs/PROGRESS.md`): the voice uses the course audio's model on Google Cloud (`gemini-3.1-flash-tts-preview`, about $0.03 a minute of speech; `TUTOR_TTS_MODEL` can switch to `gemini-2.5-flash-tts` at half the price if the owner hears no difference). The Privacy and Terms paragraphs on the tutor are published (owner: "apply it and update lock"), with a [COPY NEEDED] for legal review. Part 4 continues in a new session.
-- Part 4 built on 27 Oct 2026 (`docs/PROGRESS.md`): pronunciation through Azure, hidden until `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` are in Vercel (owner's steps in `docs/AZURE_SPEECH_SETUP.md`). The Privacy and Terms sentences naming Microsoft Azure are drafted in `docs/AI_TUTOR_LEGAL_AZURE.md`, waiting for the owner's yes (locked blocks).
+- Part 4 built on 27 Oct 2026 (`docs/PROGRESS.md`): pronunciation through Azure, hidden until `AZURE_SPEECH_KEY` and `AZURE_SPEECH_REGION` are in Vercel (owner's steps in `docs/AZURE_SPEECH_SETUP.md`). The Privacy and Terms sentences naming Microsoft Azure are published (owner: "yes"), with the legal review still marked [COPY NEEDED].
 
 ## 10. Questions only the owner can answer
 1. What counts as tutor time: the whole active session (recommended: what the student sees and understands), or only the time the tutor is speaking (about a third of a session, so 10 minutes would last much longer)?

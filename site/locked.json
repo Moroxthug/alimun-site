@@ -153,8 +153,8 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 made accurate: no analytics cookies are set (Google Analytics removed), currency preference listed, teacher application fields match the real form (owner: go on with the legal pages)"
   },
   "src/blocks/legal/gdpr.html": {
-    "sha256": "af779a8a2fdc93e7acc153949c83e437988ed28a0492fa5de42478e5c167435c",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 made accurate: no analytics cookies are set (Google Analytics removed), currency preference listed, teacher application fields match the real form (owner: go on with the legal pages); 2026-10-27 tutor paragraph added (owner: \"apply it and update lock\"): Groq for text and listening, Google Cloud for the voice, recordings not stored, transcripts 90 days, under-16s only with a parent’s authorisation; legal review marked [COPY NEEDED]"
+    "sha256": "b12a7e922da6046c468f93d3b932e6fc17e8bf9cf749a2aad290a49231598d4a",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 made accurate: no analytics cookies are set (Google Analytics removed), currency preference listed, teacher application fields match the real form (owner: go on with the legal pages); 2026-10-27 tutor paragraph added (owner: \"apply it and update lock\"): Groq for text and listening, Google Cloud for the voice, recordings not stored, transcripts 90 days, under-16s only with a parent’s authorisation; legal review marked [COPY NEEDED]; 2026-10-27 Microsoft Azure added for the tutor’s pronunciation scoring (owner: \"yes\"): recordings scored and discarded, scores kept"
   },
   "src/blocks/legal/head-404.html": {
     "sha256": "3d84ff380453d3d1497131d832eaeddd223f887b1dcead097660dfa3a95b45a1",
@@ -181,8 +181,8 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
   },
   "src/blocks/legal/terms.html": {
-    "sha256": "ebd9954b92a9fe41dd93296613b3227ba073c31f45c83edd26fa6f935fe2f7cb",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-27 tutor paragraph added (owner: \"apply it and update lock\"): Groq for text and listening, Google Cloud for the voice, recordings not stored, transcripts 90 days, under-16s only with a parent’s authorisation; legal review marked [COPY NEEDED]"
+    "sha256": "5ab782737d772e988c68d3abb58a9004d6c4959cb904fdb543693d2a1af6b21f",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-27 tutor paragraph added (owner: \"apply it and update lock\"): Groq for text and listening, Google Cloud for the voice, recordings not stored, transcripts 90 days, under-16s only with a parent’s authorisation; legal review marked [COPY NEEDED]; 2026-10-27 Microsoft Azure added for the tutor’s pronunciation scoring (owner: \"yes\"): recordings scored and discarded, scores kept"
   },
   "src/blocks/course/hero.html": {
     "sha256": "339033737b0ec1abfda1d7a9ab74ac5e3043e1054cf5384180cc7fd1af685bca",
