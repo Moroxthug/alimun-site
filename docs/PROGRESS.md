@@ -900,3 +900,7 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 2026-10-26 — AI tutor: the owner's answers; part 3 handed to a new session
 - Owner: "just go with your recommendations, proceed with step 3 in new convo". The answers are recorded in `docs/AI_TUTOR_PLAN.md` section 10a (questions 5 and 14 remain open). Part 3 (voice) continues in a new session.
 - Owner, later the same day: question 5, under-16s need a mandatory parental authorisation, through a consent layer to be built later; question 14, the lesson review "creates a better learning program". Both recorded in `docs/AI_TUTOR_PLAN.md` section 10a; no question is left open.
+
+## 26 Oct 2026: server functions moved to Dublin
+
+- The live site showed every `api/` function running in Washington, D.C. (`x-vercel-id: iad1`, Vercel's default for new projects) while the database is in Ireland. Owner's yes: `vercel.json` now sets `"regions": ["dub1"]`, so functions run next to Supabase (faster, and personal data stays in the EU). Pages are unaffected (served from Vercel's worldwide cache).
