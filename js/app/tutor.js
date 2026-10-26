@@ -6,6 +6,11 @@
    student has answered every item, the results go back to the tutor as their turn. /api/tutor?action=start|turn|end;
    past sessions, transcripts and what the tutor remembers are read straight from the database (the student's own rows),
    and "Forget everything" goes through /api/tutor?action=forget.
+   Part 3: voice. "Speak" records the student (at most 30 seconds); the recording goes to /api/tutor?action=turn, where
+   Groq Whisper writes it down in the language being learned and drops it; the words appear as the student's message.
+   After each reply the tutor's words are spoken (/api/tutor?action=voice: the server's stored text, once per message,
+   Orus or Sulafat through Google Cloud) and kept in the page to hear again. The voice can be turned off (remembered in
+   this browser); if Google refuses or is slow, the reply simply stays written. The voice stops when the time runs out.
    Sample (signed out or ?sample=1): a short scripted session in German, nothing is sent.
    Routes: #/tutor, #/tutor/session, #/tutor/past/<id>. Interface text: app_tu_* keys. */
 (function () {
@@ -26,10 +31,194 @@
   function row(big, small) { return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(big) + '</span><span><small>' + esc(small) + '</small></span></div>'; }
   function loader(w) { return '<div class="loader" style="--w:' + (w || 72) + 'px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div>'; }
 
+  /* ---------- Voice (part 3) ---------- */
+  var VOICE_KEY = 'alimun.tutor.voice', REC_MAX = 30;
+  function voiceOn() { try { return localStorage.getItem(VOICE_KEY) !== 'off'; } catch (e) { return true; } }
+  function setVoiceOn(on) { try { if (on) localStorage.removeItem(VOICE_KEY); else localStorage.setItem(VOICE_KEY, 'off'); } catch (e) { /* kept for this visit only */ } }
+  function voiceReady() { return !!(S && S.status && S.status.voice); }
+  function listenReady() { return !!(S && S.status && (S.status.listen || S.sample)); }
+  /* One audio element for the whole session. Started once inside a tap (with a moment of silence) so that phones let
+     the replies play by themselves afterwards. */
+  var player = null, silent = null;
+  function audioEl() {
+    if (player) return player;
+    player = new Audio();
+    var done = function () { if (S && S.playing && (player.paused || player.ended)) { S.playing = null; hearUi(); } };
+    player.addEventListener('ended', done); player.addEventListener('pause', done);
+    return player;
+  }
+  function unlock() {
+    var p = audioEl();
+    if (p.__unlocked || (S && S.playing)) return;
+    p.__unlocked = true;
+    if (!silent) {
+      var n = 400, b = new DataView(new ArrayBuffer(44 + n * 2)), w = function (o, x) { for (var i = 0; i < x.length; i++) b.setUint8(o + i, x.charCodeAt(i)); };
+      w(0, 'RIFF'); b.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt '); b.setUint32(16, 16, true); b.setUint16(20, 1, true); b.setUint16(22, 1, true);
+      b.setUint32(24, 8000, true); b.setUint32(28, 16000, true); b.setUint16(32, 2, true); b.setUint16(34, 16, true); w(36, 'data'); b.setUint32(40, n * 2, true);
+      silent = URL.createObjectURL(new Blob([b.buffer], { type: 'audio/wav' }));
+    }
+    p.src = silent;
+    var r = p.play(); if (r && r.catch) r.catch(function () { /* nothing to hear */ });
+  }
+  function play(id) {
+    var url = S.audio && S.audio[id];
+    if (!url) return;
+    var p = audioEl();
+    p.src = url; S.playing = id;
+    var r = p.play();
+    if (r && r.catch) r.catch(function () { if (S && S.playing === id) { S.playing = null; hearUi(); } });
+    hearUi();
+  }
+  function stopVoice() {
+    if (player && !player.paused) player.pause();
+    if (S) S.playing = null;
+  }
+  function forgetAudio() {
+    stopVoice();
+    if (S && S.audio) Object.keys(S.audio).forEach(function (k) { URL.revokeObjectURL(S.audio[k]); });
+    if (S) { S.audio = {}; S.vload = null; }
+  }
+  /* The latest tutor message, the only one whose voice can still be asked for */
+  function lastTutor() { for (var i = S.messages.length - 1; i >= 0; i--) if (S.messages[i].role === 'tutor') return S.messages[i]; return null; }
+  function hearHtml(m) {
+    var has = S.audio && S.audio[m.id];
+    var can = has || (voiceReady() && !S.sample && !S.ended && !m.voiced && (S.seconds || 0) > 0 && m.text && lastTutor() === m);
+    if (!can) return '';
+    var label = S.vload === m.id ? 'app_tu_listen' : S.playing === m.id ? 'app_tu_listen_stop' : 'app_tu_listen';
+    return '<button class="tu-hear" type="button" data-tu="hear" data-id="' + esc(m.id) + '"' + (S.vload === m.id ? ' disabled aria-busy="true"' : '') + '>' + esc(t(label)) + '</button>';
+  }
+  /* Only the listen buttons change: what the student is typing stays */
+  function hearUi() {
+    if (!root || !S || !S.session) return;
+    S.messages.forEach(function (m) {
+      if (m.role !== 'tutor') return;
+      var box = root.querySelector('[data-hear-for="' + (window.CSS && CSS.escape ? CSS.escape(m.id) : m.id) + '"]');
+      if (box) box.innerHTML = hearHtml(m);
+    });
+    var v = root.querySelector('[data-tu="voice"]');
+    if (v) { v.textContent = t(voiceOn() ? 'app_tu_voice_off' : 'app_tu_voice_on'); v.setAttribute('aria-pressed', voiceOn() ? 'true' : 'false'); }
+    var n = root.querySelector('[data-tu-note]'); if (n) n.textContent = S.note ? t(S.note) : '';
+  }
+  /* Asks the server for a message's voice once, keeps it in the page, and plays it if asked to */
+  function fetchVoice(m, autoplay) {
+    if (S.sample || !voiceReady() || !m || !m.text || m.voiced || (S.audio && S.audio[m.id]) || S.vload) return;
+    var session = S.session;
+    S.vload = m.id; hearUi();
+    D().tutorVoice(session.id, m.id).then(function (blob) {
+      if (!S || S.session !== session) return;
+      S.vload = null; m.voiced = true;
+      S.audio = S.audio || {};
+      S.audio[m.id] = URL.createObjectURL(blob);
+      if (autoplay && voiceOn() && lastTutor() === m && !S.rec && !S.busy) play(m.id); else hearUi();
+    }, function (e) {
+      if (!S || S.session !== session) return;
+      S.vload = null;
+      var r = e && e.body && e.body.reason;
+      if (r === 'voiced') m.voiced = true;
+      else if (r === 'no_time' || r === 'ended') { m.voiced = true; }
+      else S.note = 'app_tu_voice_failed';
+      hearUi();
+    });
+  }
+  function hear(id) {
+    if (S.playing === id) { stopVoice(); hearUi(); return; }
+    unlock();
+    if (S.audio && S.audio[id]) { play(id); return; }
+    var m = S.messages.filter(function (x) { return x.id === id; })[0];
+    if (m) fetchVoice(m, true);
+  }
+  function toggleVoice() {
+    var on = !voiceOn();
+    setVoiceOn(on);
+    if (!on) stopVoice();
+    hearUi();
+  }
+
+  /* ---------- Speaking to the tutor ---------- */
+  function recMime() {
+    var list = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+    for (var k = 0; k < list.length; k++) if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(list[k])) return list[k];
+    return '';
+  }
+  function blobBase64(blob) {
+    return new Promise(function (ok, no) { var r = new FileReader(); r.onload = function () { ok(String(r.result).split(',')[1] || ''); }; r.onerror = no; r.readAsDataURL(blob); });
+  }
+  function showErr(key) { S.error = key; var el = root && root.querySelector('[data-tu-err]'); if (el) el.textContent = key ? t(key) : ''; }
+  /* The form while recording: the button stops and sends, writing waits, the seconds left are read out */
+  function recUi() {
+    if (!root || !S) return;
+    var b = root.querySelector('[data-tu="rec"]'), send = root.querySelector('[data-tu-send]'), inp = root.querySelector('#tu-in'), line = root.querySelector('[data-tu-rec]');
+    var on = !!S.rec;
+    if (b) { b.textContent = t(on ? 'app_tu_rec_stop' : 'app_tu_speak'); b.setAttribute('aria-pressed', on ? 'true' : 'false'); b.disabled = !!S.busy || (on && S.rec.starting); }
+    if (send) send.disabled = on || !!S.busy;
+    if (inp) inp.disabled = on;
+    if (line) line.textContent = on && S.rec.t0 ? t('app_tu_rec_left', { n: Math.max(0, REC_MAX - Math.round((Date.now() - S.rec.t0) / 1000)) }) : '';
+  }
+  function startRec() {
+    if (!S || S.busy || S.ended || S.rec) return;
+    stopVoice(); unlock(); showErr(null); S.note = null; hearUi();
+    if (S.sample) {
+      var sr = S.rec = { sample: true, t0: Date.now() };
+      sr.timer = setTimeout(function () { stopRec(); }, 2500); sr.tick = setInterval(recUi, 500);
+      recUi(); return;
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { showErr('app_tu_err_mic'); return; }
+    var r = S.rec = { starting: true, chunks: [] };
+    recUi();
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      if (!S || S.rec !== r || r.cancel) { stream.getTracks().forEach(function (x) { x.stop(); }); if (S && S.rec === r) S.rec = null; recUi(); return; }
+      var mime = recMime(), mr;
+      try { mr = mime ? new MediaRecorder(stream, { mimeType: mime, audioBitsPerSecond: 32000 }) : new MediaRecorder(stream); } catch (e) {
+        stream.getTracks().forEach(function (x) { x.stop(); }); S.rec = null; showErr('app_tu_err_mic'); recUi(); return;
+      }
+      r.starting = false; r.mr = mr; r.stream = stream; r.t0 = Date.now();
+      mr.ondataavailable = function (e) { if (e.data && e.data.size) r.chunks.push(e.data); };
+      mr.onstop = function () {
+        clearTimeout(r.timer); clearInterval(r.tick);
+        stream.getTracks().forEach(function (x) { x.stop(); });
+        if (S && S.rec === r) S.rec = null;
+        recUi();
+        if (r.cancel || !S || !S.session) return;
+        sendSpoken(new Blob(r.chunks, { type: (mr.mimeType || mime || 'audio/webm').split(';')[0] }));
+      };
+      mr.start();
+      r.timer = setTimeout(function () { stopRec(); }, REC_MAX * 1000);
+      r.tick = setInterval(recUi, 500);
+      recUi();
+    }, function () { if (S && S.rec === r) S.rec = null; showErr('app_tu_err_mic'); recUi(); });
+  }
+  function stopRec(cancel) {
+    var r = S && S.rec;
+    if (!r) return;
+    if (cancel) r.cancel = true;
+    if (r.sample) {
+      clearTimeout(r.timer); clearInterval(r.tick); S.rec = null; recUi();
+      if (!cancel) sendSpoken(null);
+      return;
+    }
+    if (r.mr && r.mr.state !== 'inactive') r.mr.stop();
+    else if (r.starting && cancel) { S.rec = null; recUi(); }
+  }
+  function sendSpoken(blob) {
+    if (!S || S.busy || S.ended) return;
+    if (blob && blob.size < 800) { showErr('app_tu_err_unheard'); return; }
+    S.error = null;
+    S.messages.push({ id: 'pending', role: 'student', spoken: true, waiting: true });
+    busy(true);
+    if (S.sample) {
+      setTimeout(function () { afterTurn({ mine: sampleMsg('student', { text: 'Am Wochenende bin ich ins Kino gegangen.' }), message: sampleMsg('tutor', SAMPLE_SPOKEN), board: S.board.concat(SAMPLE_SPOKEN.board), seconds: S.seconds - 30 }, true); }, 1100);
+      return;
+    }
+    var session = S.session;
+    blobBase64(blob).then(function (b64) {
+      return D().tutorTurn({ session: session.id, audio: b64, mime: blob.type || 'audio/webm' });
+    }).then(function (r) { if (S && S.session === session) afterTurn(r, true); }, function (e) { if (S && S.session === session) turnFailed(e, true); });
+  }
+
   /* ---------- Sample ---------- */
   function sampleStatus() {
     var renews = new Date(); renews = new Date(Date.UTC(renews.getUTCFullYear(), renews.getUTCMonth() + 1, 1)).toISOString();
-    return { seconds: { free: 600, plan: 2520, credit: 0, total: 3120 }, plan: { tier: 'focused', minutes_per_month: 60, granted_seconds: 3600, renews_at: renews }, open: true, sample: true };
+    return { seconds: { free: 600, plan: 2520, credit: 0, total: 3120 }, plan: { tier: 'focused', minutes_per_month: 60, granted_seconds: 3600, renews_at: renews }, open: true, listen: true, voice: true, sample: true };
   }
   var SAMPLE_OPEN = {
     text: 'Hallo! Heute üben wir das Perfekt mit haben oder sein, denn das war in deinen Übungen oft schwierig.',
@@ -43,6 +232,10 @@
   var SAMPLE_REPLY = {
     text: 'Sehr gut! Schreib mir jetzt einen Satz über dein Wochenende, im Perfekt.',
     board: [{ op: 'fix', wrong: 'Ich habe nach Hause gegangen.', right: 'Ich bin nach Hause gegangen.' }, { op: 'write', text: 'Am Wochenende **bin** ich ... / **habe** ich ...' }]
+  };
+  var SAMPLE_SPOKEN = {
+    text: 'Super, das hast du richtig gesagt! Ins Kino gehen nimmt sein. Was hast du gesehen?',
+    board: [{ op: 'write', text: 'Ich **bin** ins Kino **gegangen**.' }]
   };
   function sampleMsg(role, x) { return { id: 's' + Math.random().toString(36).slice(2), role: role, text: x.text || '', board: x.board || [], exercise: x.exercise || null, result: x.result || null, at: new Date().toISOString() }; }
 
@@ -133,21 +326,25 @@
   function sessionView() {
     var html = '<div class="view__head tu-head"><div><h1 class="t-h1">' + esc(t('app_nav_tutor')) + '</h1><p class="t-lead" data-tu-left>' + esc(t('app_tu_left_n', { time: mins(S.seconds) })) + '</p></div>' +
       '<div class="btn-row">' + (S.ended ? '<button class="btn btn--primary btn--sm" type="button" data-tu="home">' + esc(t('app_tu_back')) + '</button>'
-        : '<button class="btn btn--ghost btn--sm" type="button" data-tu="end"' + (S.busy ? ' disabled' : '') + '>' + esc(t('app_tu_end')) + '</button>') + '</div></div>';
+        : (voiceReady() ? '<button class="btn btn--quiet btn--sm" type="button" data-tu="voice" aria-pressed="' + (voiceOn() ? 'true' : 'false') + '">' + esc(t(voiceOn() ? 'app_tu_voice_off' : 'app_tu_voice_on')) + '</button>' : '') +
+          '<button class="btn btn--ghost btn--sm" type="button" data-tu="end"' + (S.busy ? ' disabled' : '') + '>' + esc(t('app_tu_end')) + '</button>') + '</div></div>';
     html += '<div class="tu-grid">';
     html += '<section class="tu-board" aria-labelledby="tu-board-h"><h2 class="sr" id="tu-board-h">' + esc(t('app_tu_board_h')) + '</h2><div class="tu-board__ops" data-tu-board aria-live="polite">' + boardHtml(S.fresh) + '</div>' + exHtml() + '</section>';
     html += '<section class="tu-chat card" aria-labelledby="tu-chat-h"><h2 class="sr" id="tu-chat-h">' + esc(t('app_tu_chat_h')) + '</h2>' +
       '<div class="tu-chat__face" aria-hidden="true">' + A.Cast.drawing(A.buddyFor(A.data().profile.language)) + '</div>' +
       '<div class="ms-msgs tu-msgs" data-tu-msgs>' + msgsHtml() + '</div>' +
-      (S.ended ? summaryHtml() : '<form class="ms-form" data-tu-form><label class="sr" for="tu-in">' + esc(t('app_tu_write')) + '</label><textarea id="tu-in" class="ms-in" rows="2" maxlength="1200" placeholder="' + esc(t('app_tu_write')) + '"' + ta() + '></textarea>' +
-        '<button class="btn btn--primary" type="submit" data-tu-send' + (S.busy ? ' disabled' : '') + '>' + esc(t('app_tu_send')) + '</button></form>') +
-      '<p class="t-small ms-err" data-tu-err aria-live="assertive">' + esc(S.error ? t(S.error) : '') + '</p></section></div>';
+      (S.ended ? summaryHtml() : '<form class="ms-form tu-form" data-tu-form><label class="sr" for="tu-in">' + esc(t('app_tu_write')) + '</label><textarea id="tu-in" class="ms-in" rows="2" maxlength="1200" placeholder="' + esc(t('app_tu_write')) + '"' + ta() + '></textarea>' +
+        (listenReady() ? '<button class="btn btn--ghost" type="button" data-tu="rec" aria-pressed="false"' + (S.busy ? ' disabled' : '') + '>' + esc(t('app_tu_speak')) + '</button>' : '') +
+        '<button class="btn btn--primary" type="submit" data-tu-send' + (S.busy ? ' disabled' : '') + '>' + esc(t('app_tu_send')) + '</button></form>' +
+        '<p class="t-small tu-rec" data-tu-rec aria-live="polite"></p>') +
+      '<p class="t-small ms-err" data-tu-err aria-live="assertive">' + esc(S.error ? t(S.error) : '') + '</p><p class="t-tiny tu-note" data-tu-note aria-live="polite">' + esc(S.note ? t(S.note) : '') + '</p></section></div>';
     if (S.sample) html += '<p class="t-tiny" style="margin-top:12px">' + esc(t('app_tu_sample')) + '</p>';
     return html;
   }
   function msgsHtml() {
     var out = S.messages.map(function (m) {
-      if (m.role === 'tutor') return m.text ? '<div class="ms-msg is-teacher"><div class="ms-bub"' + ta() + '>' + esc(m.text) + '</div></div>' : '';
+      if (m.role === 'tutor') return m.text ? '<div class="ms-msg is-teacher"><div class="ms-bub"' + ta() + '>' + esc(m.text) + '<span class="tu-hear-box" data-hear-for="' + esc(m.id) + '">' + hearHtml(m) + '</span></div></div>' : '';
+      if (m.waiting) return '<div class="ms-msg is-me"><div class="ms-bub tu-wait">' + loader(28) + '<span class="sr">' + esc(t('app_tu_rec_sending')) + '</span></div></div>';
       if (m.result) return '<div class="ms-msg is-me"><div class="ms-bub">' + esc(t('app_tu_results', { right: m.result.right, total: m.result.total })) + '</div></div>';
       return '<div class="ms-msg is-me"><div class="ms-bub" dir="auto">' + esc(m.text) + '</div></div>';
     }).join('');
@@ -183,22 +380,28 @@
   /* ---------- Drawing ---------- */
   function draw() {
     if (!root) return;
-    var inSession = !!S.session;
+    var inSession = !!S.session, was = root.querySelector('#tu-in'), draft = was ? was.value : '';
     root.innerHTML = inSession ? sessionView() : homeView();
+    /* What the student was writing stays when the view is redrawn (a spoken turn, a reply arriving) */
+    var inp = draft && root.querySelector('#tu-in'); if (inp) inp.value = draft;
     if (inSession) {
       var box = root.querySelector('[data-tu-msgs]'); if (box) box.scrollTop = box.scrollHeight;
       if (S.ex) S.ex.after(root.querySelector('[data-tu-ex]'));
     }
     S.fresh = 0;
+    recUi();
   }
   function errKey(e) {
     var r = e && e.body && e.body.reason;
+    if (r === 'listen' || r === 'listen_off' || r === 'audio_type' || r === 'audio_long') return 'app_tu_err_listen';
+    if (r === 'unheard' || r === 'audio_short') return 'app_tu_err_unheard';
     return r === 'no_time' ? 'app_tu_none_left' : r === 'budget' ? 'app_tu_err_budget' : r === 'ended' ? 'app_tu_err_ended' : r === 'email' ? 'app_tu_email' : r === 'not_configured' ? 'app_tu_closed' : e && e.status === 429 ? 'app_tu_err_fast' : 'app_tu_err';
   }
 
   /* ---------- Actions ---------- */
   function start(btn) {
-    btn.disabled = true; S.error = null;
+    btn.disabled = true; S.error = null; S.note = null;
+    unlock(); forgetAudio();
     var msg = root.querySelector('[data-tu-msg]'); if (msg) msg.innerHTML = loader(28);
     if (S.sample) {
       setTimeout(function () { S.session = { id: 'sample' }; S.messages = [sampleMsg('tutor', SAMPLE_OPEN)]; S.board = SAMPLE_OPEN.board.slice(); S.fresh = S.board.length; S.seconds = S.status.seconds.total; prepareExercise(); history.replaceState(null, '', '#/tutor/session'); draw(); }, 700);
@@ -209,6 +412,7 @@
       prepareExercise();
       if (location.hash !== '#/tutor/session') history.replaceState(null, '', '#/tutor/session');
       draw();
+      if (!r.resumed && voiceOn()) fetchVoice(lastTutor(), true);
     }, function (e) { S.error = errKey(e); btn.disabled = false; if (msg) msg.textContent = t(S.error); });
   }
   function busy(on) { S.busy = on; draw(); }
@@ -225,6 +429,9 @@
     busy(false);
     /* Back to writing, unless the tutor has just set an exercise */
     var inp = !S.ex && root.querySelector('#tu-in'); if (inp) inp.focus({ preventScroll: true });
+    /* The tutor speaks the reply, unless the time has run out (the closing reply stays written) */
+    if (r.ended || (r.seconds || 0) <= 0) stopVoice();
+    else if (voiceOn()) fetchVoice(r.message, true);
   }
   function turnFailed(e, rollback) {
     if (rollback) S.messages.pop();
@@ -234,12 +441,16 @@
   }
   function send(form) {
     var inp = form.querySelector('textarea'), text = String(inp.value || '').trim().slice(0, 1200);
-    if (!text || S.busy || S.ended) return;
-    S.error = null;
+    if (!text || S.busy || S.ended || S.rec) return;
+    S.error = null; unlock(); stopVoice();
     S.messages.push({ id: 'pending', role: 'student', text: text });
+    inp.value = '';
     busy(true);
     if (S.sample) { setTimeout(function () { afterTurn({ message: sampleMsg('tutor', SAMPLE_REPLY), board: S.board.concat(SAMPLE_REPLY.board), seconds: S.seconds - 30 }, false); }, 900); return; }
-    D().tutorTurn({ session: S.session.id, text: text }).then(function (r) { afterTurn(r, true); }, function (e) { turnFailed(e, true); });
+    D().tutorTurn({ session: S.session.id, text: text }).then(function (r) { afterTurn(r, true); }, function (e) {
+      turnFailed(e, true);
+      var i = root.querySelector('#tu-in'); if (i && !i.value) i.value = text;
+    });
   }
   function sendResults() {
     if (!S.ex || !S.exMsg || S.busy || S.ended) return;
@@ -254,6 +465,7 @@
   }
   function end() {
     if (S.busy) return;
+    stopRec(true); stopVoice();
     if (S.sample) { S.ended = true; S.summary = { title: 'Perfekt mit haben und sein', summary: 'You practised the Perfekt with haben and sein and got most of the exercise right. Next time: separable verbs in the Perfekt.', words: [{ w: 'aufstehen', m: 'to get up' }, { w: 'gefahren', m: 'driven, gone (by vehicle)' }] }; draw(); return; }
     busy(true);
     D().tutorEnd(S.session.id).then(function (r) {
@@ -261,6 +473,7 @@
     }, function (e) { S.error = errKey(e); busy(false); });
   }
   function home() {
+    stopRec(true); forgetAudio();
     S.session = null; S.messages = []; S.board = []; S.ex = null; S.exMsg = null; S.ended = false; S.summary = null; S.error = null;
     location.hash = '#/tutor';
   }
@@ -297,6 +510,13 @@
       else if (act === 'ask-forget') askForget();
       else if (act === 'no-forget') draw();
       else if (act === 'forget') forget(b);
+      else if (act === 'rec') { if (S.rec) stopRec(); else startRec(); }
+      else if (act === 'hear') hear(b.getAttribute('data-id'));
+      else if (act === 'voice') toggleVoice();
+    });
+    /* Leaving the session stops the voice and drops a recording in progress */
+    window.addEventListener('hashchange', function () {
+      if (S && location.hash.indexOf('#/tutor/session') !== 0) { stopRec(true); stopVoice(); }
     });
     root.addEventListener('submit', function (e) { if (e.target.hasAttribute('data-tu-form')) { e.preventDefault(); send(e.target); } });
     root.addEventListener('keydown', function (e) {
@@ -336,7 +556,7 @@
     return loadHome().then(function (h) {
       if (my !== mountNo) return {};
       var keep = S && S.session && !S.ended ? S : null;
-      S = keep || { messages: [], board: [] };
+      S = keep || { messages: [], board: [], audio: {} };
       S.status = h.status; S.sessions = h.sessions; S.memory = h.memory; S.sample = !!h.sample;
       if (S.session && !S.ended) { location.replace('#/tutor/session'); return {}; }
       draw();

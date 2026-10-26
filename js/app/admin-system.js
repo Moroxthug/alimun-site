@@ -12,7 +12,7 @@
   'use strict';
   var A = null, root = null, PO = null, AI = null, SY = null, FLASH = '';
   var DAY = 86400000, MIN = 60000;
-  var FEATURES = { grade: 'Exercise answers checked (closed)', 'homework-check': 'Homework checked before handing in', 'mark-mock': 'Mock tests marked', 'draft-homework': 'Homework tasks drafted', 'draft-set': 'Exercise sets drafted', tutor_turn: 'Tutor replies', tutor_summary: 'Tutor session summaries', 'generate-exercises': 'Exercises drafted', 'grade-submission': 'Homework marked', transcribe: 'Speaking transcribed', 'draft-feedback': 'Feedback drafted', 'draft-task': 'Homework tasks drafted' };
+  var FEATURES = { grade: 'Exercise answers checked (closed)', 'homework-check': 'Homework checked before handing in', 'mark-mock': 'Mock tests marked', 'draft-homework': 'Homework tasks drafted', 'draft-set': 'Exercise sets drafted', tutor_turn: 'Tutor replies', tutor_summary: 'Tutor session summaries', tutor_listen: 'Tutor listening (speech to text)', tutor_voice: 'Tutor voice', 'generate-exercises': 'Exercises drafted', 'grade-submission': 'Homework marked', transcribe: 'Speaking transcribed', 'draft-feedback': 'Feedback drafted', 'draft-task': 'Homework tasks drafted' };
 
   function esc(s) { return A.esc(s); }
   function real() { return A.mode() === 'real'; }
@@ -68,7 +68,7 @@
     return { reviews: [
       { id: 'r1', rating: 5, review_text: 'Clear, patient and fun. I finally understand the cases.', created_at: ago(60 * 24 * 9), teacher_id: 't1', teacher_profiles: { full_name: 'Ana Weber' }, student_profiles: { id: 's1', full_name: 'Lukas Brandt' } },
       { id: 'r2', rating: 2, review_text: 'Visit <b>cheap-essays.example</b> for answers', created_at: ago(60 * 24 * 2), teacher_id: 't2', teacher_profiles: { full_name: 'James Hall' }, student_profiles: { id: 's3', full_name: 'Sara Rossi' } }],
-      settings: [{ key: 'admin_secret', secret: true, value: null }, { key: 'api_url', secret: false, value: 'https://alimun.com' }, { key: 'waitlist_webhook_secret', secret: true, value: null }], jobs: jobs,
+      settings: [{ key: 'admin_secret', secret: true, value: null }, { key: 'api_url', secret: false, value: 'https://alimun.com' }, { key: 'tutor_voice', secret: false, value: 'Orus' }, { key: 'waitlist_webhook_secret', secret: true, value: null }], jobs: jobs,
       tutorMinutes: [['community', 30], ['focused', 60], ['intensive', 120], ['private', 120], ['onetoone', 120], ['daily', 120]].map(function (x) { return { tier: x[0], minutes_per_month: x[1] }; }) };
   }
 
@@ -256,7 +256,7 @@
       (SY.reviews.length ? '<div class="ad-filters" style="margin-top:12px"><select class="st-in" data-rf="teacher" aria-label="Teacher">' + opt('', 'Every teacher', RF.teacher) + teachers.map(function (t) { return opt(t, t, RF.teacher); }).join('') + '</select>' +
         '<select class="st-in" data-rf="stars" aria-label="Stars">' + opt('', 'Any rating', RF.stars) + [1, 2, 3, 4, 5].map(function (n) { return opt(n, n + ' of 5', RF.stars); }).join('') + '</select></div>' : '') +
       '<div data-rrows>' + reviewRowsHtml() + '</div></section>';
-    html += '<section class="card span-12" style="--i:1" aria-labelledby="h-set"><h2 class="t-h2" id="h-set">App settings</h2><p class="t-small" style="margin-top:4px">Values the database uses to reach the site. Secret values are never shown here; you can only replace them.</p>' +
+    html += '<section class="card span-12" style="--i:1" aria-labelledby="h-set"><h2 class="t-h2" id="h-set">App settings</h2><p class="t-small" style="margin-top:4px">Values the database uses to reach the site, and tutor_voice: the tutor’s voice in every language, Orus or Sulafat. Secret values are never shown here; you can only replace them.</p>' +
       (SY.settings.length ? '<div class="tt-week">' + SY.settings.map(function (s) {
         return '<div class="ad-item"><div class="tt-row ad-act ad-act--2"><span><b class="ad-key">' + esc(s.key) + '</b><small class="ad-pre">' + esc((s.secret ? 'Set, hidden. ' : (s.value || '(empty)') + '. ') + (SETTING_NOTE[s.key] || '')) + '</small></span>' +
           '<span class="btn-row ad-act__btns"><button class="btn btn--ghost btn--sm" type="button" data-askset="' + esc(s.key) + '">' + (s.secret ? 'Replace' : 'Change') + '</button></span></div><div data-box="' + esc(s.key) + '"></div></div>';

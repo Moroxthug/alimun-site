@@ -1524,6 +1524,15 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .tu-msgs { min-height: 200px; }
 .tu-msgs--past { max-height: none; margin-top: 12px; border-radius: var(--r-md); }
 .tu-wait { display: flex; align-items: center; min-height: 40px; }
+.tu-form { flex-wrap: wrap; justify-content: flex-end; }
+.tu-form .ms-in { flex: 1 1 100%; }
+.tu-form [data-tu="rec"][aria-pressed="true"] { background: var(--forest); color: var(--bone); }
+.tu-rec, .tu-note { margin: 0 18px 10px; }
+.tu-rec:empty, .tu-note:empty { display: none; }
+.tu-hear-box { display: block; }
+.tu-hear-box:empty { display: none; }
+.tu-hear { margin-top: 6px; padding: 0; border: 0; background: none; font: inherit; font-size: 13.5px; font-weight: 700; color: var(--forest); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.tu-hear:disabled { opacity: .55; cursor: default; }
 .tu-sum { padding: 16px 20px; border-top: 1px solid var(--line); overflow-y: auto; }
 .tu-sum .t-body { margin-top: 6px; }
 @media (max-width: 899px) {

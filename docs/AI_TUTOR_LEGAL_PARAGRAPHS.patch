@@ -1,0 +1,192 @@
+diff --git a/site/src/blocks/legal/gdpr.html b/site/src/blocks/legal/gdpr.html
+index cfb503a..0f71e61 100644
+--- a/site/src/blocks/legal/gdpr.html
++++ b/site/src/blocks/legal/gdpr.html
+@@ -46,6 +46,7 @@
+             <h2>4. AI Processing</h2>
+             <p>To generate exercises and draft feedback, we send the relevant text (for example the exercise or your homework, your level and language) to AI providers acting as our processors: Google (Gemini), Anthropic and Groq. We do not sell this content, and we instruct our providers not to use it to train their models where their services allow it. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
+             <p>We do not make decisions based solely on automated processing that produce legal or similarly significant effects on you. Homework grades drafted by AI are reviewed and sent by your teacher, and automated practice scores do not affect your account, billing or access. You may ask a person to review any automated result by contacting us.</p>
++            <p>The practice tutor in the student dashboard works the same way. What you write or say in a tutor session is sent to Groq, with your level, the language you learn and a short summary of your learning on Alimun, to produce the tutor's replies. When you speak to the tutor, your recording is sent to Groq to be turned into text and is then discarded; we never store recordings. The tutor's replies are turned into speech by Google Cloud. Tutor conversations are kept for 90 days; session summaries and what the tutor remembers about you are kept until you delete them on the Tutor page or close your account. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/ar/gdpr.html b/site/src/blocks/legal/i18n/ar/gdpr.html
+index 49a802c..23fb854 100644
+--- a/site/src/blocks/legal/i18n/ar/gdpr.html
++++ b/site/src/blocks/legal/i18n/ar/gdpr.html
+@@ -47,6 +47,7 @@
+             <h2>4. المعالجة بواسطة الذكاء الاصطناعي</h2>
+             <p>لإنشاء التمارين وصياغة مسودات الملاحظات، نرسل النص ذا الصلة (مثل التمرين أو واجبك المنزلي، ومستواك ولغتك) إلى مزوّدي خدمات الذكاء الاصطناعي الذين يعملون بصفتهم معالجين للبيانات لحسابنا: Google (Gemini) وAnthropic وGroq. ولا نبيع هذا المحتوى، ونوجّه مزوّدينا بعدم استخدامه لتدريب نماذجهم حيثما تسمح خدماتهم بذلك. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
+             <p>لا نتخذ قرارات تستند حصرًا إلى المعالجة الآلية وتُنتج آثارًا قانونية أو آثارًا مماثلة في أهميتها بالنسبة إليك. فدرجات الواجبات المنزلية التي يصوغ الذكاء الاصطناعي مسوداتها يراجعها معلمك ويرسلها، ولا تؤثر درجات التمارين الآلية في حسابك أو فوترتك أو إمكانية وصولك. ويمكنك أن تطلب مراجعة أي نتيجة آلية من قِبل شخص بالتواصل معنا.</p>
++            <p>يعمل المدرّس التدريبي في لوحة الطالب بالطريقة نفسها. يُرسَل ما تكتبه أو تقوله في جلسة مع المدرّس إلى Groq، مع مستواك واللغة التي تتعلمها وملخص قصير لتعلّمك على Alimun، لإنتاج ردود المدرّس. عندما تتحدث إلى المدرّس، يُرسَل تسجيلك إلى Groq لتحويله إلى نص ثم يُحذف؛ ولا نحتفظ بالتسجيلات أبدًا. تحوّل Google Cloud ردود المدرّس إلى صوت. تُحفظ المحادثات مع المدرّس لمدة 90 يومًا؛ وتُحفظ ملخصات الجلسات وما يتذكره المدرّس عنك إلى أن تحذفها في صفحة المدرّس أو تغلق حسابك. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/ar/terms.html b/site/src/blocks/legal/i18n/ar/terms.html
+index a6ceb66..b0560f1 100644
+--- a/site/src/blocks/legal/i18n/ar/terms.html
++++ b/site/src/blocks/legal/i18n/ar/terms.html
+@@ -28,6 +28,7 @@
+             <h2>3. ميزات الذكاء الاصطناعي</h2>
+             <p>تستخدم أجزاء من الخدمة ذكاءً اصطناعيًا تقدّمه أطراف ثالثة لإنشاء التمارين، وصياغة مسودات درجات الواجبات المنزلية والملاحظات، وتصحيح الاختبارات القصيرة، واقتراح التصويبات. وقد تكون مخرجات الذكاء الاصطناعي ناقصة أو غير دقيقة أو غير ملائمة. ويراجع معلمك درجات الواجبات المنزلية والملاحظات التي يصوغ الذكاء الاصطناعي مسوداتها قبل إرسالها، غير أن الملاحظات الفورية على تمارين التدريب آلية ولا يراجعها شخص.</p>
+             <p>تُقدَّم مخرجات الذكاء الاصطناعي لأغراض التعلم فقط. وهي ليست استشارة مهنية أو قانونية أو متعلقة بالهجرة أو طبية أو أكاديمية، ولا ينبغي لك الاعتماد عليها أساسًا وحيدًا لأي قرار مهم. ويجب عليك عدم استخدام ميزات الذكاء الاصطناعي لإنتاج محتوى غير قانوني أو ضار أو مضلل، أو لمحاولة استخراج النماذج أو التعليمات الأساسية، أو لإثقالها أو إساءة استخدامها. ويجوز لنا فرض حدود على الاستخدام.</p>
++            <p>تتضمن لوحة الطالب مدرّسًا تدريبيًا: برنامجًا آليًا يكتب على سبورة، ويضع التمارين، ويستمع إليك ويتحدث. إنه ليس شخصًا، ولا يراجع أي معلم جلساته. تحسب خوادمنا وقت المدرّس ما دامت الجلسة نشطة، ويتوقف المدرّس عندما تنفد دقائقك المتاحة. تُستخدم التسجيلات التي تجريها للمدرّس فقط لتحويل كلامك إلى نص، ولا يتم حفظها. [COPY NEEDED: legal review of this paragraph.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/de/gdpr.html b/site/src/blocks/legal/i18n/de/gdpr.html
+index 4bb37f8..f9afa6d 100644
+--- a/site/src/blocks/legal/i18n/de/gdpr.html
++++ b/site/src/blocks/legal/i18n/de/gdpr.html
+@@ -47,6 +47,7 @@
+             <h2>4. KI-Verarbeitung</h2>
+             <p>Um Übungen zu erstellen und Feedback zu entwerfen, senden wir den jeweiligen Text (zum Beispiel die Übung oder Ihre Hausaufgabe, Ihr Niveau und Ihre Sprache) an KI-Anbieter, die als unsere Auftragsverarbeiter tätig sind: Google (Gemini), Anthropic und Groq. Wir verkaufen diese Inhalte nicht und weisen unsere Anbieter an, sie nicht zum Training ihrer Modelle zu verwenden, soweit ihre Dienste dies ermöglichen. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
+             <p>Wir treffen keine ausschließlich auf einer automatisierten Verarbeitung beruhenden Entscheidungen, die Ihnen gegenüber rechtliche Wirkung entfalten oder Sie in ähnlicher Weise erheblich beeinträchtigen. Von KI entworfene Hausaufgabenbewertungen werden von Ihrer Lehrkraft geprüft und versendet, und automatisierte Übungspunktzahlen wirken sich nicht auf Ihr Konto, Ihre Abrechnung oder Ihren Zugang aus. Sie können verlangen, dass eine Person ein automatisiertes Ergebnis überprüft, indem Sie uns kontaktieren.</p>
++            <p>Der Übungstutor im Schüler-Dashboard funktioniert auf die gleiche Weise. Was Sie in einer Tutor-Sitzung schreiben oder sagen, wird zusammen mit Ihrem Niveau, der Sprache, die Sie lernen, und einer kurzen Zusammenfassung Ihres Lernens bei Alimun an Groq gesendet, um die Antworten des Tutors zu erstellen. Wenn Sie mit dem Tutor sprechen, wird Ihre Aufnahme an Groq gesendet, in Text umgewandelt und anschließend verworfen; wir speichern niemals Aufnahmen. Die Antworten des Tutors werden von Google Cloud in Sprache umgewandelt. Gespräche mit dem Tutor werden 90 Tage lang aufbewahrt; Sitzungszusammenfassungen und das, was sich der Tutor über Sie merkt, bleiben gespeichert, bis Sie sie auf der Tutor-Seite löschen oder Ihr Konto schließen. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/de/terms.html b/site/src/blocks/legal/i18n/de/terms.html
+index 4e220a9..f818237 100644
+--- a/site/src/blocks/legal/i18n/de/terms.html
++++ b/site/src/blocks/legal/i18n/de/terms.html
+@@ -28,6 +28,7 @@
+             <h2>3. KI-Funktionen</h2>
+             <p>Teile des Dienstes nutzen künstliche Intelligenz von Drittanbietern, um Übungen zu erstellen, Hausaufgabenbewertungen und Feedback zu entwerfen, Quizze zu bewerten und Korrekturen vorzuschlagen. KI-Ausgaben können unvollständig, unzutreffend oder unangemessen sein. Von KI entworfene Hausaufgabenbewertungen und Rückmeldungen werden von Ihrer Lehrkraft geprüft, bevor sie versendet werden; das sofortige Feedback zu Übungsaufgaben erfolgt jedoch automatisiert und wird nicht von einer Person überprüft.</p>
+             <p>KI-Ausgaben werden ausschließlich zu Lernzwecken bereitgestellt. Sie stellen keine fachliche, rechtliche, einwanderungsrechtliche, medizinische oder akademische Beratung dar, und Sie sollten sich nicht als alleinige Grundlage für wichtige Entscheidungen auf sie verlassen. Sie dürfen die KI-Funktionen nicht nutzen, um rechtswidrige, schädliche oder irreführende Inhalte zu erzeugen, um zu versuchen, die zugrunde liegenden Modelle oder Prompts zu extrahieren, oder um sie zu überlasten oder zu missbrauchen. Wir können Nutzungsbeschränkungen festlegen.</p>
++            <p>Das Schüler-Dashboard enthält einen Übungstutor: ein automatisiertes Programm, das an eine Tafel schreibt, Übungen stellt, Ihnen zuhört und spricht. Es ist keine Person, und seine Sitzungen werden nicht von einer Lehrkraft geprüft. Die Tutor-Zeit wird von unseren Servern gezählt, solange eine Sitzung aktiv ist, und der Tutor hört auf, wenn Ihre verfügbaren Minuten aufgebraucht sind. Aufnahmen, die Sie für den Tutor machen, werden nur verwendet, um Ihre Sprache in Text umzuwandeln, und nicht gespeichert. [COPY NEEDED: legal review of this paragraph.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/es/gdpr.html b/site/src/blocks/legal/i18n/es/gdpr.html
+index d5d7bcd..6b7863a 100644
+--- a/site/src/blocks/legal/i18n/es/gdpr.html
++++ b/site/src/blocks/legal/i18n/es/gdpr.html
+@@ -47,6 +47,7 @@
+             <h2>4. Tratamiento mediante IA</h2>
+             <p>Para generar ejercicios y redactar borradores de comentarios, enviamos el texto pertinente (por ejemplo, el ejercicio o los deberes del usuario, su nivel y su idioma) a proveedores de IA que actúan como nuestros encargados del tratamiento: Google (Gemini), Anthropic y Groq. No vendemos este contenido e indicamos a nuestros proveedores que no lo utilicen para entrenar sus modelos cuando sus servicios lo permiten. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
+             <p>No tomamos decisiones basadas únicamente en el tratamiento automatizado que produzcan efectos jurídicos en el usuario o le afecten significativamente de modo similar. Las calificaciones de los deberes redactadas por la IA son revisadas y enviadas por el profesor, y las puntuaciones automáticas de práctica no afectan a la cuenta, la facturación ni el acceso. El usuario puede solicitar que una persona revise cualquier resultado automatizado poniéndose en contacto con nosotros.</p>
++            <p>El tutor de práctica del panel del estudiante funciona del mismo modo. Lo que escribes o dices en una sesión con el tutor se envía a Groq, junto con tu nivel, el idioma que aprendes y un breve resumen de tu aprendizaje en Alimun, para generar las respuestas del tutor. Cuando hablas con el tutor, tu grabación se envía a Groq para convertirla en texto y después se descarta; nunca guardamos las grabaciones. Google Cloud convierte en voz las respuestas del tutor. Las conversaciones con el tutor se conservan 90 días; los resúmenes de las sesiones y lo que el tutor recuerda de ti se conservan hasta que los borres en la página del Tutor o cierres tu cuenta. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/es/terms.html b/site/src/blocks/legal/i18n/es/terms.html
+index 721a158..ba9f1d6 100644
+--- a/site/src/blocks/legal/i18n/es/terms.html
++++ b/site/src/blocks/legal/i18n/es/terms.html
+@@ -28,6 +28,7 @@
+             <h2>3. Funciones de IA</h2>
+             <p>Algunas partes del Servicio utilizan inteligencia artificial proporcionada por terceros para generar ejercicios, redactar borradores de calificaciones y comentarios de los deberes, corregir cuestionarios y sugerir correcciones. Los resultados de la IA pueden ser incompletos, inexactos o inapropiados. Las calificaciones y los comentarios de los deberes redactados por la IA son revisados por el profesor antes de su envío, pero los comentarios instantáneos sobre los ejercicios de práctica son automáticos y no los revisa ninguna persona.</p>
+             <p>Los resultados de la IA se proporcionan únicamente con fines de aprendizaje. No constituyen asesoramiento profesional, jurídico, migratorio, médico ni académico, y no deben utilizarse como único fundamento de ninguna decisión importante. Está prohibido utilizar las funciones de IA para generar contenido ilícito, dañino o engañoso, para intentar extraer los modelos o las instrucciones (prompts) subyacentes, o para sobrecargarlas o hacer un uso indebido de ellas. Podemos aplicar límites de uso.</p>
++            <p>El panel del estudiante incluye un tutor de práctica: un programa automatizado que escribe en una pizarra, propone ejercicios, te escucha y habla. No es una persona y sus sesiones no las revisa un profesor. Nuestros servidores cuentan el tiempo del tutor mientras una sesión está activa, y el tutor se detiene cuando se agotan tus minutos disponibles. Las grabaciones que haces para el tutor solo se usan para convertir tu voz en texto y no se guardan. [COPY NEEDED: legal review of this paragraph.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/fr/gdpr.html b/site/src/blocks/legal/i18n/fr/gdpr.html
+index 1966fcc..3e07965 100644
+--- a/site/src/blocks/legal/i18n/fr/gdpr.html
++++ b/site/src/blocks/legal/i18n/fr/gdpr.html
+@@ -47,6 +47,7 @@
+             <h2>4. Traitement par l'IA</h2>
+             <p>Pour générer des exercices et préparer des commentaires, nous transmettons le texte pertinent (par exemple l'exercice ou votre devoir, votre niveau et votre langue) à des fournisseurs d'IA agissant en tant que sous-traitants : Google (Gemini), Anthropic et Groq. Nous ne vendons pas ce contenu et nous demandons à nos fournisseurs de ne pas l'utiliser pour entraîner leurs modèles lorsque leurs services le permettent. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
+             <p>Nous ne prenons aucune décision fondée exclusivement sur un traitement automatisé produisant des effets juridiques vous concernant ou vous affectant de manière significative de façon similaire. Les notes des devoirs préparées par l'IA sont vérifiées et envoyées par votre enseignant, et les scores d'entraînement automatisés n'ont aucune incidence sur votre compte, votre facturation ou votre accès. Vous pouvez demander qu'une personne réexamine tout résultat automatisé en nous contactant.</p>
++            <p>Le tuteur d'entraînement du tableau de bord élève fonctionne de la même manière. Ce que vous écrivez ou dites pendant une séance avec le tuteur est envoyé à Groq, avec votre niveau, la langue que vous apprenez et un bref résumé de votre apprentissage sur Alimun, afin de produire les réponses du tuteur. Lorsque vous parlez au tuteur, votre enregistrement est envoyé à Groq pour être transcrit en texte, puis supprimé ; nous ne conservons jamais les enregistrements. Les réponses du tuteur sont converties en voix par Google Cloud. Les conversations avec le tuteur sont conservées 90 jours ; les résumés des séances et ce que le tuteur retient de vous sont conservés jusqu'à ce que vous les supprimiez sur la page Tuteur ou fermiez votre compte. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/fr/terms.html b/site/src/blocks/legal/i18n/fr/terms.html
+index 839dd1d..92cc05d 100644
+--- a/site/src/blocks/legal/i18n/fr/terms.html
++++ b/site/src/blocks/legal/i18n/fr/terms.html
+@@ -28,6 +28,7 @@
+             <h2>3. Fonctionnalités d'IA</h2>
+             <p>Certaines parties du Service utilisent une intelligence artificielle fournie par des tiers pour générer des exercices, préparer des propositions de notes et de commentaires sur les devoirs, corriger des quiz et suggérer des corrections. Les résultats produits par l'IA peuvent être incomplets, inexacts ou inappropriés. Les notes et commentaires sur les devoirs préparés par l'IA sont vérifiés par votre enseignant avant leur envoi, mais le retour instantané sur les exercices d'entraînement est automatisé et n'est pas relu par une personne.</p>
+             <p>Les résultats produits par l'IA sont fournis uniquement à des fins d'apprentissage. Ils ne constituent pas un conseil professionnel, juridique, en matière d'immigration, médical ou académique, et vous ne devez pas vous y fier comme seul fondement d'une décision importante. Vous ne devez pas utiliser les fonctionnalités d'IA pour générer des contenus illicites, préjudiciables ou trompeurs, pour tenter d'extraire les modèles ou les instructions sous-jacents, ni pour les surcharger ou en faire un usage abusif. Nous pouvons appliquer des limites d'utilisation.</p>
++            <p>Le tableau de bord élève comprend un tuteur d'entraînement : un programme automatisé qui écrit sur un tableau, propose des exercices, vous écoute et parle. Ce n'est pas une personne, et ses séances ne sont pas relues par un professeur. Le temps passé avec le tuteur est compté par nos serveurs tant qu'une séance est active, et le tuteur s'arrête lorsque vos minutes disponibles sont épuisées. Les enregistrements que vous faites pour le tuteur servent uniquement à transcrire votre voix en texte et ne sont pas conservés. [COPY NEEDED: legal review of this paragraph.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/it/gdpr.html b/site/src/blocks/legal/i18n/it/gdpr.html
+index b87dfe8..bd5dbb0 100644
+--- a/site/src/blocks/legal/i18n/it/gdpr.html
++++ b/site/src/blocks/legal/i18n/it/gdpr.html
+@@ -47,6 +47,7 @@
+             <h2>4. Trattamento mediante intelligenza artificiale</h2>
+             <p>Per generare esercizi e predisporre bozze di feedback, inviamo il testo pertinente (ad esempio l'esercizio o il compito dell'Utente, il suo livello e la lingua) a fornitori di intelligenza artificiale che agiscono in qualità di nostri responsabili del trattamento: Google (Gemini), Anthropic e Groq. Non vendiamo tali contenuti e, ove i loro servizi lo consentano, istruiamo i nostri fornitori a non utilizzarli per addestrare i propri modelli. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
+             <p>Non adottiamo decisioni basate unicamente su un trattamento automatizzato che producano effetti giuridici o che incidano in modo analogo significativamente sull'Utente. Le valutazioni dei compiti predisposte dall'intelligenza artificiale sono riviste e inviate dall'insegnante, e i punteggi automatizzati delle esercitazioni non incidono sull'account, sulla fatturazione o sull'accesso dell'Utente. L'Utente può chiedere che qualsiasi risultato automatizzato sia riesaminato da una persona contattandoci.</p>
++            <p>Il tutor di esercitazione nella dashboard dello studente funziona allo stesso modo. Ciò che scrivi o dici in una sessione con il tutor viene inviato a Groq, insieme al tuo livello, alla lingua che studi e a un breve riepilogo del tuo apprendimento su Alimun, per produrre le risposte del tutor. Quando parli con il tutor, la tua registrazione viene inviata a Groq per essere trascritta e poi eliminata; non conserviamo mai le registrazioni. Le risposte del tutor vengono trasformate in voce da Google Cloud. Le conversazioni con il tutor sono conservate per 90 giorni; i riepiloghi delle sessioni e ciò che il tutor ricorda di te sono conservati finché non li elimini nella pagina Tutor o chiudi il tuo account. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/it/terms.html b/site/src/blocks/legal/i18n/it/terms.html
+index 609350d..35c7f52 100644
+--- a/site/src/blocks/legal/i18n/it/terms.html
++++ b/site/src/blocks/legal/i18n/it/terms.html
+@@ -28,6 +28,7 @@
+             <h2>3. Funzionalità di intelligenza artificiale</h2>
+             <p>Alcune parti del Servizio utilizzano sistemi di intelligenza artificiale forniti da terzi per generare esercizi, predisporre bozze di valutazioni e feedback sui compiti, correggere quiz e suggerire correzioni. I risultati generati dall'intelligenza artificiale possono essere incompleti, inesatti o inappropriati. Le valutazioni e i feedback sui compiti predisposti dall'intelligenza artificiale sono verificati dall'insegnante prima dell'invio, mentre il feedback immediato sugli esercizi di pratica è automatizzato e non è rivisto da una persona.</p>
+             <p>I risultati generati dall'intelligenza artificiale sono forniti esclusivamente a fini di apprendimento. Non costituiscono consulenza professionale, legale, in materia di immigrazione, medica o accademica e l'Utente non deve farvi affidamento come unica base per decisioni importanti. L'Utente non deve utilizzare le funzionalità di intelligenza artificiale per generare contenuti illeciti, dannosi o ingannevoli, per tentare di estrarre i modelli o i prompt sottostanti, né per sovraccaricarle o farne un uso improprio. Potremo applicare limiti di utilizzo.</p>
++            <p>La dashboard dello studente include un tutor di esercitazione: un programma automatico che scrive su una lavagna, propone esercizi, ti ascolta e parla. Non è una persona e le sue sessioni non vengono riviste da un insegnante. Il tempo con il tutor viene conteggiato dai nostri server finché una sessione è attiva, e il tutor si ferma quando i tuoi minuti disponibili finiscono. Le registrazioni che fai per il tutor servono solo a trasformare la tua voce in testo e non vengono conservate. [COPY NEEDED: legal review of this paragraph.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/pt/gdpr.html b/site/src/blocks/legal/i18n/pt/gdpr.html
+index b9f0e08..e9696e6 100644
+--- a/site/src/blocks/legal/i18n/pt/gdpr.html
++++ b/site/src/blocks/legal/i18n/pt/gdpr.html
+@@ -47,6 +47,7 @@
+             <h2>4. Tratamento por IA</h2>
+             <p>Para gerar exercícios e preparar propostas de feedback, enviamos o texto relevante (por exemplo, o exercício ou o seu trabalho de casa, o seu nível e a sua língua) a fornecedores de IA que atuam como nossos subcontratantes: Google (Gemini), Anthropic e Groq. Não vendemos este conteúdo e instruímos os nossos fornecedores a não o utilizarem para treinar os seus modelos, sempre que os respetivos serviços o permitam. [COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
+             <p>Não tomamos decisões baseadas exclusivamente no tratamento automatizado que produzam efeitos jurídicos ou que o afetem de forma similarmente significativa. As classificações dos trabalhos de casa preparadas por IA são revistas e enviadas pelo seu professor, e as pontuações automatizadas da prática não afetam a sua conta, a faturação ou o acesso. Pode solicitar que uma pessoa reveja qualquer resultado automatizado, contactando-nos.</p>
++            <p>O tutor de prática do painel do aluno funciona da mesma forma. O que escreve ou diz numa sessão com o tutor é enviado à Groq, juntamente com o seu nível, a língua que aprende e um breve resumo da sua aprendizagem na Alimun, para produzir as respostas do tutor. Quando fala com o tutor, a sua gravação é enviada à Groq para ser convertida em texto e é depois eliminada; nunca guardamos gravações. As respostas do tutor são convertidas em voz pela Google Cloud. As conversas com o tutor são guardadas durante 90 dias; os resumos das sessões e o que o tutor recorda sobre si são guardados até que os apague na página do Tutor ou encerre a sua conta. [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/pt/terms.html b/site/src/blocks/legal/i18n/pt/terms.html
+index 4d96bb3..2ae1b28 100644
+--- a/site/src/blocks/legal/i18n/pt/terms.html
++++ b/site/src/blocks/legal/i18n/pt/terms.html
+@@ -28,6 +28,7 @@
+             <h2>3. Funcionalidades de IA</h2>
+             <p>Partes do Serviço utilizam inteligência artificial fornecida por terceiros para gerar exercícios, preparar propostas de classificações e de feedback dos trabalhos de casa, corrigir questionários e sugerir correções. Os resultados gerados por IA podem ser incompletos, inexatos ou inadequados. As classificações e o feedback dos trabalhos de casa preparados por IA são verificados pelo seu professor antes de serem enviados, mas o feedback instantâneo dos exercícios práticos é automatizado e não é revisto por uma pessoa.</p>
+             <p>Os resultados gerados por IA são fornecidos exclusivamente para fins de aprendizagem. Não constituem aconselhamento profissional, jurídico, de imigração, médico ou académico, e não deve basear-se neles como fundamento único de qualquer decisão importante. Não pode utilizar as funcionalidades de IA para gerar conteúdos ilícitos, nocivos ou enganosos, para tentar extrair os modelos ou instruções subjacentes, nem para os sobrecarregar ou utilizar indevidamente. Podemos aplicar limites de utilização.</p>
++            <p>O painel do aluno inclui um tutor de prática: um programa automatizado que escreve num quadro, propõe exercícios, ouve-o e fala. Não é uma pessoa, e as suas sessões não são revistas por um professor. O tempo com o tutor é contado pelos nossos servidores enquanto uma sessão está ativa, e o tutor para quando os seus minutos disponíveis se esgotam. As gravações que faz para o tutor são usadas apenas para converter a sua voz em texto e não são guardadas. [COPY NEEDED: legal review of this paragraph.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/zh/gdpr.html b/site/src/blocks/legal/i18n/zh/gdpr.html
+index 252748c..4e7121d 100644
+--- a/site/src/blocks/legal/i18n/zh/gdpr.html
++++ b/site/src/blocks/legal/i18n/zh/gdpr.html
+@@ -47,6 +47,7 @@
+             <h2>4. AI 处理</h2>
+             <p>为生成练习和草拟反馈，我们会将相关文本（例如练习或您的作业、您的水平和语言）发送给作为我们处理者的 AI 服务商：Google (Gemini)、Anthropic 和 Groq。我们不出售该等内容，并在服务商的服务允许的情况下，指示其不得使用该等内容训练其模型。[COPY NEEDED: confirm that the AI keys used in production are on paid plans whose terms exclude training on customer content.]</p>
+             <p>我们不会仅基于自动化处理作出对您产生法律效力或类似重大影响的决定。由 AI 草拟的作业评分由您的教师审核并发送，自动生成的练习分数不影响您的账户、账单或访问权限。您可以联系我们，要求由人工复核任何自动化结果。</p>
++            <p>学生面板中的练习辅导老师也以同样方式运作。你在辅导课中写下或说出的内容，会连同你的级别、你所学的语言以及你在 Alimun 学习情况的简短摘要一起发送给 Groq，用于生成辅导老师的回复。当你对辅导老师说话时，你的录音会发送给 Groq 转写为文字，随后即被丢弃；我们从不保存录音。辅导老师的回复由 Google Cloud 转换为语音。与辅导老师的对话保留 90 天；课程总结以及辅导老师记住的关于你的信息会一直保留，直到你在辅导页面删除它们或关闭账户。 [COPY NEEDED: legal review of this paragraph, including Google Cloud as a processor and the transfers to Groq and Google Cloud.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/i18n/zh/terms.html b/site/src/blocks/legal/i18n/zh/terms.html
+index b28142f..a55d089 100644
+--- a/site/src/blocks/legal/i18n/zh/terms.html
++++ b/site/src/blocks/legal/i18n/zh/terms.html
+@@ -28,6 +28,7 @@
+             <h2>3. AI 功能</h2>
+             <p>本服务的部分内容使用第三方提供的人工智能来生成练习、草拟作业评分和反馈、批改小测验以及提出修改建议。AI 输出可能不完整、不准确或不恰当。由 AI 草拟的作业评分和反馈在发送前会经您的教师审核，但练习题的即时反馈是自动生成的，不经人工审核。</p>
+             <p>AI 输出仅供学习之用。它不构成专业、法律、移民、医疗或学术建议，您不应将其作为任何重要决定的唯一依据。您不得利用 AI 功能生成违法、有害或误导性内容，不得试图提取其底层模型或提示词，亦不得使其过载或滥用该等功能。我们可能设置使用限制。</p>
++            <p>学生面板包含一位练习辅导老师：一个会在白板上书写、布置练习、听你说话并开口讲话的自动化程序。它不是真人，其课程也不会由老师审阅。课程进行期间，辅导时间由我们的服务器计算；当你的可用分钟数用完时，辅导老师会停止。你为辅导老师录制的音频仅用于将你的语音转换为文字，不会被保存。 [COPY NEEDED: legal review of this paragraph.]</p>
+           </div>
+ 
+           <div class="legal-section">
+diff --git a/site/src/blocks/legal/terms.html b/site/src/blocks/legal/terms.html
+index b798088..e15a42b 100644
+--- a/site/src/blocks/legal/terms.html
++++ b/site/src/blocks/legal/terms.html
+@@ -27,6 +27,7 @@
+             <h2>3. AI Features</h2>
+             <p>Parts of the Service use artificial intelligence provided by third parties to generate exercises, draft homework grades and feedback, mark quizzes and suggest corrections. AI output can be incomplete, inaccurate or inappropriate. Homework grades and feedback drafted by AI are checked by your teacher before they are sent, but instant feedback on practice exercises is automated and is not reviewed by a person.</p>
+             <p>AI output is provided for learning purposes only. It is not professional, legal, immigration, medical or academic advice, and you should not rely on it as the sole basis for any important decision. You must not use the AI features to generate unlawful, harmful or misleading content, to attempt to extract the underlying models or prompts, or to overload or misuse them. We may apply usage limits.</p>
++            <p>The student dashboard includes a practice tutor: an automated program that writes on a board, sets exercises, listens to you and speaks. It is not a person, and its sessions are not reviewed by a teacher. Tutor time is counted by our servers while a session is active, and the tutor stops when your available minutes run out. Recordings you make for the tutor are used only to turn your speech into text and are not stored. [COPY NEEDED: legal review of this paragraph.]</p>
+           </div>
+ 
+           <div class="legal-section">

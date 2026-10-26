@@ -100,3 +100,11 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] End the session: a summary and the words appear; the session shows under past sessions and "What your tutor remembers" fills in; Forget everything empties both.
 - [ ] With 1 minute left, the next reply says goodbye and the session ends; Start is then disabled.
 - [ ] Admin, AI spend: Tutor replies and Tutor session summaries appear with their cost.
+
+## AI tutor, part 3 (voice)
+- [ ] In a session, the tutor's first message and each reply are spoken in Orus after a moment; "Listen" plays a reply again; "Turn the voice off" stops it and stays off after reloading the page.
+- [ ] "Speak", say a sentence in the language you learn, "Stop and send": your words appear as your message and the tutor answers them (also on a phone, after allowing the microphone).
+- [ ] Refuse the microphone: a message says to allow it or write instead; writing still works.
+- [ ] With 1 minute left, the closing reply stays written and is not spoken.
+- [ ] Admin, System: set tutor_voice to Sulafat; within a minute the next reply speaks in Sulafat. Set it back to Orus.
+- [ ] Admin, AI spend: Tutor listening and Tutor voice appear with their cost.

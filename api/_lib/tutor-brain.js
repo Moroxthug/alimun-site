@@ -82,13 +82,11 @@ async function callAnthropic(system, messages, maxTokens, temperature) {
 function startOfTodayUtc() { const d = new Date(); d.setUTCHours(0, 0, 0, 0); return d.toISOString(); }
 
 /**
- * One JSON reply. The cost is reserved in ai_usage before the call (so parallel calls count) and checked against the
- * daily tutor budget, which is separate from the other AI features' budget. Fails closed. Returns the parsed object.
- * Throws { code: 'budget' | 'unavailable' | 'provider' | 'unreadable' }.
+ * Reserves an estimated cost in ai_usage under action (so parallel calls count) and checks the tutor's daily budget,
+ * separate from the other AI features' budget. Fails closed. Returns the row ({ id }) to settle once the real cost is
+ * known. Throws { code: 'budget' | 'unavailable' }. Used for the tutor's replies, listening and voice.
  */
-async function callModel(supabase, userId, action, system, messages, { maxTokens = 2048, temperature = 0.6 } = {}) {
-  const chars = system.length + messages.reduce((n, m) => n + m.content.length, 0);
-  const est = costOf(plannedModel(), Math.ceil(chars / 3), maxTokens);
+async function reserve(supabase, userId, action, est) {
   const { data: row, error: insErr } = await supabase.from('ai_usage')
     .insert({ user_id: userId, action, cost_usd: est, success: false, error: 'in_progress' }).select('id').single();
   if (insErr || !row) throw { code: 'unavailable', message: insErr?.message };
@@ -111,6 +109,17 @@ async function callModel(supabase, userId, action, system, messages, { maxTokens
     await supabase.from('ai_usage').delete().eq('id', row.id);
     throw { code: 'unavailable', message: e && e.message };
   }
+  return row;
+}
+
+/**
+ * One JSON reply. The cost is reserved in ai_usage before the call (so parallel calls count) and checked against the
+ * daily tutor budget, which is separate from the other AI features' budget. Fails closed. Returns the parsed object.
+ * Throws { code: 'budget' | 'unavailable' | 'provider' | 'unreadable' }.
+ */
+async function callModel(supabase, userId, action, system, messages, { maxTokens = 2048, temperature = 0.6 } = {}) {
+  const chars = system.length + messages.reduce((n, m) => n + m.content.length, 0);
+  const row = await reserve(supabase, userId, action, costOf(plannedModel(), Math.ceil(chars / 3), maxTokens));
 
   const t0 = Date.now();
   let res;
@@ -350,4 +359,4 @@ function cleanSummary(r) {
   };
 }
 
-module.exports = { configured, callModel, brief, systemFor, openingTask, CLOSING_TASK, summaryPrompt, cleanReply, cleanExercise, cleanBoard, applyBoard, cleanSummary, LANG_NAMES };
+module.exports = { configured, reserve, callModel, brief, systemFor, openingTask, CLOSING_TASK, summaryPrompt, cleanReply, cleanExercise, cleanBoard, applyBoard, cleanSummary, LANG_NAMES };

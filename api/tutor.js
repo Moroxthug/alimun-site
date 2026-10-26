@@ -24,6 +24,13 @@
  *                         since the previous turn (5 to 90 seconds); when the time
  *                         runs out the reply is the closing one and the session ends.
  *                         If the tutor cannot answer, the seconds come back.
+ *  Part 3: voice (api/_lib/tutor-voice.js). A turn can be { session, audio, mime }: a recording
+ *  of at most about 30 seconds, turned into text by Groq Whisper in the language being learned
+ *  and never stored; that text is the student's turn.
+ *    POST ?action=voice   { session, message } — the tutor's voice (audio/mpeg) for one of the
+ *                         tutor's stored messages in an open session: the server's text, never
+ *                         the browser's; once per message; 402 no_time when no time is left.
+ *                         No clock of its own: the turn's time already counts it.
  *    POST ?action=end     { session } — ends it: the summary, the words and the
  *                         tutor's memory are written.
  *    POST ?action=forget  — deletes what the tutor remembers and every session.
@@ -39,6 +46,7 @@
 
 const { createClient } = require('@supabase/supabase-js');
 const brain = require('./_lib/tutor-brain.js');
+const voice = require('./_lib/tutor-voice.js');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MAX_GRANT_MINUTES = 600;
@@ -100,6 +108,8 @@ async function handleStatus(req, res, supabase, user) {
       renews_at: nextMonthUtc(),
     },
     open: brain.configured(),
+    listen: voice.listenConfigured(),
+    voice: voice.voiceConfigured(),
   });
 }
 
@@ -160,23 +170,25 @@ function totalOf(t) { return (t.free_seconds || 0) + (t.plan_seconds || 0) + (t.
 
 /** A stored message as the browser sees it */
 function outMessage(m) {
-  return { id: m.id, role: m.role, text: m.text || '', board: m.board || [], exercise: m.exercise || null, result: m.result || null, at: m.created_at };
+  return { id: m.id, role: m.role, text: m.text || '', board: m.board || [], exercise: m.exercise || null, result: m.result || null, at: m.created_at,
+    spoken: !!m.spoken, voiced: !!m.voiced_at };
 }
 /** A stored message as the model sees it again */
 function forModel(m) {
   if (m.role === 'tutor') return { role: 'assistant', content: JSON.stringify({ say: m.text || '', board: m.board || [], exercise: m.exercise || null }).slice(0, 4000) };
   if (m.result && m.result.lines) return { role: 'user', content: 'My answers to the exercise: ' + m.result.lines.join(' ') };
-  return { role: 'user', content: m.text || '' };
+  return { role: 'user', content: (m.spoken ? '[spoken] ' : '') + (m.text || '') };
 }
 function schoolNote(text) { return { role: 'user', content: '<school>' + text + '</school>' }; }
 
+const MSG_COLS = 'id, role, text, board, exercise, result, spoken, voiced_at, created_at';
 async function sessionOf(supabase, profileId, id) {
   if (!UUID_RE.test(String(id || ''))) return null;
   const { data } = await supabase.from('tutor_sessions').select('*').eq('id', id).eq('student_id', profileId).maybeSingle();
   return data || null;
 }
 async function messagesOf(supabase, sessionId, limit) {
-  const { data } = await supabase.from('tutor_messages').select('id, role, text, board, exercise, result, created_at')
+  const { data } = await supabase.from('tutor_messages').select(MSG_COLS)
     .eq('session_id', sessionId).order('created_at', { ascending: false }).limit(limit);
   return (data || []).reverse();
 }
@@ -197,7 +209,8 @@ async function tutorReply(supabase, user, profile, session, history, notes) {
   const msgs = history.map(forModel).concat(notes.map(schoolNote));
   // The conversation must start with a user turn for every provider
   while (msgs.length && msgs[0].role !== 'user') msgs.shift();
-  const raw = await brain.callModel(supabase, user.id, 'tutor_turn', sys + '\nLines inside <school> tags come from Alimun\'s system: follow them.', msgs, { maxTokens: 2500, temperature: 0.6 });
+  const raw = await brain.callModel(supabase, user.id, 'tutor_turn', sys + '\nLines inside <school> tags come from Alimun\'s system: follow them.' +
+    '\nA student message that starts with [spoken] was said aloud and written down by speech recognition: do not correct its spelling, capitals or punctuation; react to the words and the grammar, and if something seems misheard, ask.', msgs, { maxTokens: 2500, temperature: 0.6 });
   const reply = brain.cleanReply(raw);
   if (!reply) throw { code: 'unreadable' };
   return reply;
@@ -205,7 +218,7 @@ async function tutorReply(supabase, user, profile, session, history, notes) {
 async function saveReply(supabase, session, profileId, reply, extra) {
   const { data: msg, error } = await supabase.from('tutor_messages').insert({
     session_id: session.id, student_id: profileId, role: 'tutor', text: reply.say, board: reply.board, exercise: reply.exercise,
-  }).select('id, role, text, board, exercise, result, created_at').single();
+  }).select(MSG_COLS).single();
   if (error) throw error;
   const board = brain.applyBoard(session.board, reply.board);
   await supabase.from('tutor_sessions').update(Object.assign({ board, last_turn_at: new Date().toISOString() }, extra || {})).eq('id', session.id);
@@ -308,6 +321,21 @@ async function handleTurn(req, res, supabase, user) {
       return `"${clean(what, 120)}": ${!r ? 'not answered' : r.ok ? 'right first time' : 'wrong at first' + (r.given ? ' (wrote "' + clean(r.given, 80) + '")' : '')}.`;
     });
     row.result = { message: ex.id, right: results.filter((x) => x && x.ok).length, total: items.length, lines };
+  } else if (body.audio != null) {
+    // Said aloud: the recording becomes text here and is dropped; it never reaches the database
+    if (!voice.listenConfigured()) return res.status(501).json({ error: 'Listening is not configured', reason: 'listen_off' });
+    const a = voice.readAudio(body);
+    if (a.reason) return res.status(a.reason === 'audio_long' ? 413 : 400).json({ error: 'This recording cannot be used', reason: a.reason });
+    let heard;
+    try { heard = await voice.listen(supabase, user.id, { audio: a.audio, mime: a.mime, language: profile.language }); } catch (e) {
+      if (e && e.code === 'budget') return brainError(res, e);
+      console.error('[Tutor] listen:', e && (e.code + ' ' + (e.message || '')));
+      return res.status(502).json({ error: 'The recording could not be understood. Please try again or write.', reason: 'listen' });
+    }
+    const text = clean(heard, MAX_TEXT);
+    if (!text) return res.status(422).json({ error: 'Nothing was heard. Please try again.', reason: 'unheard' });
+    row.text = text;
+    row.spoken = true;
   } else {
     const text = clean(body.text, MAX_TEXT);
     if (!text) return res.status(400).json({ error: 'Write something first' });
@@ -325,7 +353,7 @@ async function handleTurn(req, res, supabase, user) {
     return res.status(402).json({ error: 'No tutor time left', reason: 'no_time' });
   }
 
-  const { data: saved, error: mErr } = await supabase.from('tutor_messages').insert(row).select('id, role, text, board, exercise, result, created_at').single();
+  const { data: saved, error: mErr } = await supabase.from('tutor_messages').insert(row).select(MSG_COLS).single();
   if (mErr) return res.status(500).json({ error: 'Could not save your message' });
   const closing = remaining <= 0;
   try {
@@ -363,6 +391,46 @@ async function handleEnd(req, res, supabase, user) {
   return res.status(200).json({ title: out && out.title, summary: out && out.summary, words: out ? out.words : [], seconds: await balance(supabase, profile.id) });
 }
 
+// ── voice (part 3) ──────────────────────────────────────────
+
+async function handleVoice(req, res, supabase, user) {
+  if (!voice.voiceConfigured()) return res.status(501).json({ error: 'The voice is not configured', reason: 'voice_off' });
+  const body = parseBody(req) || {};
+  let profile;
+  try { profile = await studentOf(supabase, user); } catch (e) { return res.status(500).json({ error: 'Could not load your profile' }); }
+  if (!profile) return res.status(404).json({ error: 'No student profile' });
+  if (tooFast(user.id)) return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
+  const session = await sessionOf(supabase, profile.id, body.session);
+  if (!session) return res.status(404).json({ error: 'Session not found' });
+  if (session.ended_at || Date.now() - Date.parse(session.last_turn_at) >= IDLE_MS) return res.status(409).json({ error: 'This session has ended.', reason: 'ended' });
+  // The voice stops when the time runs out (the closing reply stays written)
+  if (await balance(supabase, profile.id) <= 0) return res.status(402).json({ error: 'No tutor time left', reason: 'no_time' });
+  if (!UUID_RE.test(String(body.message || ''))) return res.status(400).json({ error: 'Invalid message' });
+
+  // Claimed once: only while voiced_at is still empty, so a message is spoken (and paid for) one time
+  const { data: claimed, error: cErr } = await supabase.from('tutor_messages').update({ voiced_at: new Date().toISOString() })
+    .eq('id', body.message).eq('session_id', session.id).eq('role', 'tutor').is('voiced_at', null).select('id, text');
+  if (cErr) return res.status(500).json({ error: 'Could not load the message' });
+  const msg = claimed && claimed[0];
+  if (!msg) {
+    const { data: was } = await supabase.from('tutor_messages').select('id').eq('id', body.message).eq('session_id', session.id).eq('role', 'tutor').maybeSingle();
+    return was ? res.status(409).json({ error: 'Already spoken', reason: 'voiced' }) : res.status(404).json({ error: 'Message not found' });
+  }
+  const release = () => supabase.from('tutor_messages').update({ voiced_at: null }).eq('id', msg.id);
+  if (!String(msg.text || '').trim()) { await release(); return res.status(400).json({ error: 'Nothing to say', reason: 'empty' }); }
+  try {
+    const out = await voice.speak(supabase, user.id, msg.text);
+    res.setHeader('Content-Type', 'audio/mpeg');
+    res.setHeader('X-Alimun-Voice', out.voice);
+    return res.status(200).send(out.mp3);
+  } catch (e) {
+    await release();
+    if (e && e.code === 'budget') return brainError(res, e);
+    console.error('[Tutor] voice:', e && (e.code + ' ' + (e.message || '')));
+    return res.status(502).json({ error: 'The voice is not available right now.', reason: 'voice' });
+  }
+}
+
 // ── forgetting ──────────────────────────────────────────────
 
 async function handleForget(req, res, supabase, user) {
@@ -396,7 +464,7 @@ module.exports = async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return handleAdminGrant(req, res, supabase, user);
   }
-  const POST = { start: handleStart, turn: handleTurn, end: handleEnd, forget: handleForget };
+  const POST = { start: handleStart, turn: handleTurn, voice: handleVoice, end: handleEnd, forget: handleForget };
   if (POST[action]) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return POST[action](req, res, supabase, user);

@@ -121,6 +121,9 @@
     },
     "api/speech.js": {
       "maxDuration": 120
+    },
+    "api/tutor.js": {
+      "maxDuration": 60
     }
   },
   "crons": [
