@@ -13,7 +13,7 @@ import after from '../../blocks/legal/after.html?raw';
 import nav from '../../blocks/legal/nav.html?raw';
 import footer from '../../blocks/footer.html?raw';
 import UI from '../../data/blog/ui.js';
-import { esc, mark, hero, body, keepReading, home, articleLd, homeLd, articlePath, blogPath, prefix } from '../../blog/render.js';
+import { esc, mark, hero, body, courseSection, keepReading, home, articleLd, homeLd, articlePath, blogPath, prefix } from '../../blog/render.js';
 
 export async function getStaticPaths() {
   const articles = Object.values(import.meta.glob('../../data/blog/*/*.js', { eager: true })).map((m) => m.default);
@@ -51,7 +51,7 @@ if (a) {
     QA_QUESTIONS: a.faq.map(([q, x]) => `              <button type="button" class="qa_q" aria-expanded="false">${esc(q)}<span class="qa_mobile">${mark(x)}</span></button>`).join('\n'),
     QA_ANSWERS: a.faq.map(([q, x]) => `              <div class="qa_a"><h3 class="heading-style-h4">${esc(q)}</h3><p class="text-size-large">${mark(x)}</p></div>`).join('\n'),
   }) : '';
-  main = style + cards + hero(a, ui) + body(a, ui, course) + faq + keepReading(related, ui);
+  main = style + cards + hero(a, ui) + body(a, ui) + faq + courseSection(a, ui, course) + keepReading(related, ui);
 } else {
   const canon = 'https://alimun.com' + blogPath(site);
   const alts = Object.fromEntries(Object.keys(UI).filter((s) => articles.some((x) => x.site === s)).map((s) => [s, blogPath(s)]));

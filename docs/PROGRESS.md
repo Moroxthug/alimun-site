@@ -937,3 +937,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Blog home at `/blog` and `/<it|es|fr|pt>/blog`: featured article, then articles by course language. "From the blog" strip with three articles before the bottom banner of every public page in those languages (chosen, not "trending": no reading counts yet).
 - Four articles in five languages (20 pages): English levels A1 to C2, how long it takes to learn English (Cambridge guided learning hours), German articles der/die/das, IELTS or Cambridge. Facts with sources; author "Alimun team" until the owner names a real person (an invented name was not used).
 - Built in `scripts/localize.mjs` (root addresses, hreflang between translations, language file, sitemap with lastmod) and copied by `scripts/apply-rebuild.js`; generated pages are not committed. Checked: 32 pages load with no console errors, right `lang`, no unwanted redirects, 106 internal links with no 404, desktop and phone screenshots.
+
+## 26 Oct 2026: blog redesigned (owner: the first design was "nothing like the work we have done", no black backgrounds)
+
+- Article and blog home rebuilt on the site's approved patterns: course hero with the article's video in a rounded frame, one white reading column, white level and comparison cards with lime markers, bone notes and examples, the course in the About split, white photo cards for "Keep reading" and the strip; blog home with About-style hero, featured article beside its photo, articles as title rows beside a changing photo (homepage course list). Pictures from the site's videos (`site/src/data/blog/media.js`). Templates re-locked with the new design.
+- `CLAUDE.md`: no black backgrounds on new or redesigned public pages (owner).
+- Search Console export (16 months): 38 clicks, 2,684 impressions, almost all for "alimun"; no topic queries yet, so the next articles are chosen from what Alimun teaches.

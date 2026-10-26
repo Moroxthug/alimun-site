@@ -97,14 +97,20 @@ Suggested order: Italian, Spanish, French and Portuguese readers learning Englis
 - "Trending" strip before the bottom banner on every page: built as "From the blog". There are no reading counts yet, so it shows chosen articles (`stripPicks` in `src/data/blog/ui.js`), then the newest; it can switch to real counts later.
 - Keep the Alimun style; lock the templates and reuse them for every new article.
 
+## Second design (owner, 26 Oct 2026: "the blog page looks absolutely horrible ... i hate it")
+
+- The first design (black and lime typographic cards, a black course card beside the text) was replaced the same day. Now: the course pages' hero (centred title, the article's video in a rounded frame that grows on scroll), one white reading column, the FAQ, the course in the About layout (photo beside text), and white cards with rounded photos. The blog home has the About-style hero, a featured article beside its photo, then the articles as big title rows beside a photo that changes, like the homepage course list. Pictures per article come from the site's own videos (`site/src/data/blog/media.js`).
+- Rule added to `CLAUDE.md`: no black backgrounds on public pages.
+
 ## How to add an article (every session)
 
+- Pick its video in `site/src/data/blog/media.js` (by `key`).
 - One file per language in `site/src/data/blog/<site>/<slug>.js`, same `key` for the translations of one article (hreflang and the language switcher follow it). Copy the shape of an existing article of the same template.
 - `template` is one of the four locked templates in `site/src/blog/render.js`:
-  - `guide`: long-form how-to (cover word on ink or lime, text, notes, quotes, tables).
+  - `guide`: long-form how-to (text, notes, quotes, tables).
   - `explainer`: levels and certificates (level cards, wide tables, FAQ).
   - `grammar`: rule explained with examples, common mistakes and a "Try it" exercise.
-  - `compare`: two options side by side (split cover, two panels, table, verdict).
+  - `compare`: two options side by side (two panels, table, a lime verdict card).
 - Blocks: `h`, `p`, `quote`, `note`, `table`, `levels`, `panels`, `examples`, `mistakes`, `quiz`, `verdict`; `**phrase**` is the lime marker. No bullet lists, numbered steps or chips; no AI mentions; facts only, with `sources`.
 - Interface text per language: `site/src/data/blog/ui.js`. A new site language needs its `ui` entry.
 - The build (`npm --prefix site run build`) makes `/blog`, `/blog/<slug>`, `/<site>/blog[/<slug>]`, adds them to `sitemap.xml` and puts the strip on every page of that language. The pages are generated at deploy time and not committed.
