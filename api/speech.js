@@ -13,10 +13,10 @@
  *                     every 6.7 s (TTS_PER_MINUTE, default 9) for Google's per-minute limit; a 429 ends the
  *                     call with retryAfter (seconds), and daily + resetAt when it is Google's daily limit, for the
  *                     admin page to wait (minutes) or stop until the reset (hours).
- *    ?action=cloud-test (POST, admin JWT) — { model, voice }: one sentence through Google Cloud Text-to-Speech
- *                     (texttospeech.googleapis.com, the same Gemini voices without the Gemini API's daily limit),
- *                     with the key in GOOGLE_CLOUD_TTS_KEY if set, else GOOGLE_AI_API_KEY; returns audio/mpeg, or
- *                     Google's refusal so the owner's set-up can be checked (docs/CLOUD_TTS_SETUP.md).
+ *    ?action=cloud-test (POST, admin JWT) — { model, voice }: one sentence in a Gemini voice through Google Cloud
+ *                     (Vertex AI, then Cloud Text-to-Speech; no daily limit), with GOOGLE_CLOUD_TTS_KEY if set, else
+ *                     GOOGLE_AI_API_KEY; returns audio/mpeg (X-Alimun-Via says which route worked), or each route's
+ *                     refusal so the owner's set-up can be checked (docs/CLOUD_TTS_SETUP.md).
  *    ?action=sample  (POST, admin JWT) — one sentence, or a two-speaker dialogue,
  *                     spoken by Gemini text-to-speech; returns audio/wav.
  *        { text, voice, model?: 'flash' | 'lite', style? }
@@ -201,32 +201,44 @@ async function speak({ model, turns, voices, style }) {
   throw err;
 }
 
-/* ---------- Google Cloud Text-to-Speech (step by step with the owner, 26 Oct 2026) ---------- */
+/* ---------- Google Cloud voices (step by step with the owner, 26 Oct 2026) ----------
+   The key in Vercel is bound to a service account, and such keys only reach the Gemini API and Vertex AI (Agent
+   Platform), so the Gemini voices are tried through Vertex AI generateContent (per-minute limits, no daily cap),
+   at the project's global endpoint and then the publisher endpoint; Cloud Text-to-Speech is tried last. */
 const CLOUD_MODELS = ['gemini-2.5-flash-tts', 'gemini-3.1-flash-tts-preview', 'gemini-2.5-pro-tts'];
+const GCP_PROJECT = process.env.GOOGLE_CLOUD_PROJECT || 'gen-lang-client-0145644888';
+const TEST_TEXT = 'Hello! This is a test of the Alimun course voices, spoken through Google Cloud.';
 async function cloudTest(res, body) {
   const model = CLOUD_MODELS.includes(body.model) ? body.model : CLOUD_MODELS[0];
   const voice = VOICES.includes(body.voice) ? body.voice : 'Orus';
   const key = process.env.GOOGLE_CLOUD_TTS_KEY || process.env.GOOGLE_AI_API_KEY;
-  const r = await fetch('https://texttospeech.googleapis.com/v1/text:synthesize', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key },
-    body: JSON.stringify({
-      input: { prompt: 'Read this clearly and warmly, like a friendly language teacher.', text: 'Hello! This is a test of the Alimun course voices, spoken through Google Cloud.' },
-      voice: { languageCode: 'en-US', name: voice, modelName: model },
-      audioConfig: { audioEncoding: 'MP3' },
-    }),
-  });
-  const text = await r.text();
-  let json = null;
-  try { json = JSON.parse(text); } catch (e) { /* not JSON */ }
-  if (r.ok && json && json.audioContent) {
-    res.setHeader('Content-Type', 'audio/mpeg');
-    res.setHeader('Cache-Control', 'no-store');
-    return res.status(200).send(Buffer.from(json.audioContent, 'base64'));
+  const vertexBody = { contents: [{ role: 'user', parts: [{ text: 'Say clearly and warmly, like a friendly language teacher: ' + TEST_TEXT }] }],
+    generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } } };
+  const tries = [
+    ['vertex-global', 'https://aiplatform.googleapis.com/v1/projects/' + GCP_PROJECT + '/locations/global/publishers/google/models/' + model + ':generateContent', vertexBody],
+    ['vertex-publisher', 'https://aiplatform.googleapis.com/v1/publishers/google/models/' + model + ':generateContent', vertexBody],
+    ['cloud-tts', 'https://texttospeech.googleapis.com/v1/text:synthesize', { input: { prompt: 'Read this clearly and warmly, like a friendly language teacher.', text: TEST_TEXT },
+      voice: { languageCode: 'en-US', name: voice, modelName: model }, audioConfig: { audioEncoding: 'LINEAR16' } }],
+  ];
+  const refused = [];
+  for (const [via, url, payload] of tries) {
+    const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': key }, body: JSON.stringify(payload) });
+    const text = await r.text();
+    let json = null;
+    try { json = JSON.parse(text); } catch (e) { /* not JSON */ }
+    const audio = r.ok && json && (json.audioContent ? { data: json.audioContent, mime: 'audio/wav' } : findAudio(json));
+    if (audio) {
+      const m = await mp3(toWav(audio));
+      res.setHeader('Content-Type', 'audio/mpeg');
+      res.setHeader('Cache-Control', 'no-store');
+      res.setHeader('X-Alimun-Via', via);
+      return res.status(200).send(m.buf);
+    }
+    const g = json && json.error || {};
+    const reason = (g.details || []).map((d) => d.reason).filter(Boolean).join(', ');
+    refused.push({ via, status: r.status, message: String(g.message || text).slice(0, 300), reason });
   }
-  const g = json && json.error || {};
-  const reason = (g.details || []).map((d) => d.reason).filter(Boolean).join(', ');
-  return res.status(502).json({ error: 'cloud_refused', status: r.status, message: String(g.message || text).slice(0, 400), reason, model, voice });
+  return res.status(502).json({ error: 'cloud_refused', model, voice, refused });
 }
 
 /* ---------- Course audio: files for the sentences of a book ---------- */

@@ -105,8 +105,10 @@
     fetch('/api/speech?action=cloud-test', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
       body: JSON.stringify({ model: document.getElementById('cloud-model').value, voice: document.getElementById('cloud-voice').value }) })
       .then(function (r) {
-        if (r.ok) return r.blob().then(function (b) { cloudAudio.src = URL.createObjectURL(b); cloudAudio.hidden = false; cloudAudio.play().catch(function () {}); cloudMsg.textContent = 'It works: Google Cloud spoke the sentence.'; });
-        return r.json().catch(function () { return {}; }).then(function (j) { cloudMsg.textContent = 'Google Cloud refused (' + (j.status || r.status) + '): ' + (j.message || j.error || 'no detail') + (j.reason ? ' [' + j.reason + ']' : ''); });
+        if (r.ok) return r.blob().then(function (b) { cloudAudio.src = URL.createObjectURL(b); cloudAudio.hidden = false; cloudAudio.play().catch(function () {}); cloudMsg.textContent = 'It works: Google Cloud spoke the sentence (route: ' + (r.headers.get('X-Alimun-Via') || '?') + ').'; });
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          cloudMsg.textContent = 'Google Cloud refused. ' + ((j.refused || []).map(function (x) { return x.via + ' ' + x.status + ': ' + x.message + (x.reason ? ' [' + x.reason + ']' : ''); }).join(' | ') || j.message || j.error || 'No detail.');
+        });
       })
       .catch(function (e) { cloudMsg.textContent = 'The test did not run: ' + e.message; })
       .then(function () { cloudBtn.disabled = false; });
