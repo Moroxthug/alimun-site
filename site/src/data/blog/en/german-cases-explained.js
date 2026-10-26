@@ -166,7 +166,7 @@ export default {
     { p: "The case after wegen (because of) is a long-running debate. Duden lists wegen with the genitive, as in **wegen des schlechten Wetters**, and notes that the dative, as in wegen dem Kind, is standard in speech but counts as colloquial in writing. For essays, emails at work and exams, use the genitive after wegen, trotz, während and statt." },
     { p: "The debate even gave a bestselling book its title. In 2004 the journalist Bastian Sick published a collection of his language columns as Der Dativ ist dem Genitiv sein Tod, a joke built on a colloquial construction that replaces the genitive with a dative and a possessive." },
     { quote: 'Der Dativ ist dem Genitiv sein Tod.' },
-    { figure: { photo: 'german-cases-red-umbrella', alt: 'A person holding a red umbrella on a city street at night in the rain', caption: 'Wegen des Regens bleiben wir zu Hause: the genitive is what you write, while wegen dem Regen is what you will often hear.' } },
+    { figure: { photo: 'german-cases-red-umbrella', alt: 'A red umbrella seen from above on a wide stone pavement', caption: 'Wegen des Regens bleiben wir zu Hause: the genitive is what you write, while wegen dem Regen is what you will often hear.' } },
 
     { h: 'The n-declension: when the noun changes too' },
     { p: "Most nouns stay the same in every case except the genitive -s and the dative plural -n. A small group of masculine nouns, called the **n-declension** or weak nouns, add -n or -en in every form except the nominative singular. Many of them end in -e and name people or animals: der Kollege, der Junge, der Kunde, der Löwe. Others include der Student, der Mensch and der Herr." },

@@ -1,5 +1,5 @@
 // Photos for the blog (owner, 26 Oct 2026: new photos, one set per article, never reused).
-// All CC0 from StockSnap (found through Openverse): free for commercial use, no credit required; the source is kept here.
+// All CC0 (or public domain): from StockSnap (found through Openverse) and, where marked, Wikimedia Commons. Free for commercial use, no credit required; the source is kept here.
 export default {
   'london-big-ben-night': { src: '/images/blog/london-big-ben-night.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/bigben-london-P3IB71W6GW' },
   'writing-at-desk': { src: '/images/blog/writing-at-desk.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/business-working-NCESTM3SB0' },
@@ -46,4 +46,9 @@ export default {
   'goethe-certificates-writing-notebook': { src: '/images/blog/goethe-certificates-writing-notebook.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/woman-writing-FFSUL8TZD3' },
   'goethe-certificates-reading-room': { src: '/images/blog/goethe-certificates-reading-room.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/architecture-building-4B1IQUY1C3' },
   'goethe-certificates-papers-on-desk': { src: '/images/blog/goethe-certificates-papers-on-desk.jpg', w: 960, h: 640, source: 'https://stocksnap.io/photo/work-papers-FL8F0JKTMA' },
+  'german-cases-neuschwanstein': { src: '/images/blog/german-cases-neuschwanstein.jpg', w: 960, h: 654, source: 'https://commons.wikimedia.org/wiki/File:Neuschwanstein_Castle_2024-02.jpg' },
+  'german-cases-red-umbrella': { src: '/images/blog/german-cases-red-umbrella.jpg', w: 960, h: 640, source: 'https://commons.wikimedia.org/wiki/File:Red_umbrella_-_Flickr_-_darko149.jpg' },
+  'german-cases-bicycle-basket': { src: '/images/blog/german-cases-bicycle-basket.jpg', w: 600, h: 400, source: 'https://stocksnap.io/photo/bicycle-bike-Y2KCFMGHD1' },
+  'german-cases-coffee-table': { src: '/images/blog/german-cases-coffee-table.jpg', w: 600, h: 400, source: 'https://stocksnap.io/photo/coffee-table-L4SNGYZWL4' },
+  'german-cases-bakery-bread': { src: '/images/blog/german-cases-bakery-bread.jpg', w: 600, h: 450, source: 'https://stocksnap.io/photo/bread-bakery-EA1243E167' },
 };

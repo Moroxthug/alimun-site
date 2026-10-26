@@ -166,7 +166,7 @@ export default {
     { p: 'O caso depois de wegen (por causa de) é um debate antigo. O Duden registra wegen com genitivo, como em **wegen des schlechten Wetters**, e observa que o dativo, como em wegen dem Kind, é padrão na fala, mas na escrita é considerado coloquial. Em redações, e-mails de trabalho e provas, use o genitivo depois de wegen, trotz, während e statt.' },
     { p: 'O debate deu até título a um livro de grande sucesso. Em 2004, o jornalista Bastian Sick reuniu suas colunas sobre a língua em Der Dativ ist dem Genitiv sein Tod, um trocadilho construído sobre uma forma coloquial que troca o genitivo por um dativo e um possessivo.' },
     { quote: 'Der Dativ ist dem Genitiv sein Tod.' },
-    { figure: { photo: 'german-cases-red-umbrella', alt: 'Uma pessoa com um guarda-chuva vermelho numa rua da cidade à noite, na chuva', caption: 'Wegen des Regens bleiben wir zu Hause: o genitivo é o que você escreve, enquanto wegen dem Regen é o que você vai ouvir muito.' } },
+    { figure: { photo: 'german-cases-red-umbrella', alt: 'Um guarda-chuva vermelho visto de cima sobre um amplo calçamento de pedra', caption: 'Wegen des Regens bleiben wir zu Hause: o genitivo é o que você escreve, enquanto wegen dem Regen é o que você vai ouvir muito.' } },
 
     { h: 'A declinação em -n: quando o substantivo também muda' },
     { p: 'A maioria dos substantivos fica igual em todos os casos, tirando o -s do genitivo e o -n do dativo plural. Um pequeno grupo de masculinos, a chamada **declinação fraca** ou n-Deklination, ganha -n ou -en em todas as formas, menos no nominativo singular. Muitos terminam em -e e indicam pessoas ou animais: der Kollege, der Junge, der Kunde, der Löwe. Der Student, der Mensch e der Herr também fazem parte do grupo.' },
