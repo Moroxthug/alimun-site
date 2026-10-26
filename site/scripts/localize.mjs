@@ -76,6 +76,9 @@ for (const d of fs.readdirSync(path.join(site, 'src', 'data', 'blog'), { withFil
     blogArticles.push((await import(new URL(`../src/data/blog/${d.name}/${f}`, import.meta.url))).default);
   }
 }
+const RES_UI_FOOT = { en: (await import(new URL('../src/data/resources/ui.js', import.meta.url))).default.en };
+for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'resources')).filter((f) => /^ui-[a-z]{2}\.js$/.test(f))) RES_UI_FOOT[f.slice(3, 5)] = (await import(new URL(`../src/data/resources/${f}`, import.meta.url))).default;
+const resList = (lang) => fs.existsSync(path.join(site, 'src', 'data', 'resources', lang)) ? fs.readdirSync(path.join(site, 'src', 'data', 'resources', lang)).filter((f) => f.endsWith('.js')) : [];
 const blogList = (lang) => blogArticles.filter((a) => a.site === lang).sort((x, y) => (y.published + y.slug).localeCompare(x.published + x.slug));
 // The three articles of the strip: the language's chosen ones (ui.stripPicks), then the newest.
 function stripArticles(lang) {
@@ -153,11 +156,16 @@ function withFaqLd(html) {
 // without course pages drop the column.
 // Footer "Blog" link (src/blocks/footer.html): kept only in languages that have a blog.
 function withFooterBlog(html, lang) {
-  if (!html.includes('data-footer-blog')) return html;
+  if (!html.includes('data-footer-blog') && !html.includes('data-footer-resources')) return html;
   const $ = cheerio.load(html);
   if (blogList(lang).length) $('[data-footer-blog] a').attr('href', `${lang === 'en' ? '/' : '/' + lang + '/'}blog`);
   else $('[data-footer-blog]').remove();
   $('[data-footer-blog]').removeAttr('data-footer-blog');
+  // Resources: the language's own address and name, only where that language has resources.
+  const ru = RES_UI_FOOT[lang];
+  if (ru && resList(lang).length) $('[data-footer-resources] a').attr('href', `${lang === 'en' ? '/' : '/' + lang + '/'}${ru.slugBase}`).text(ru.title);
+  else $('[data-footer-resources]').remove();
+  $('[data-footer-resources]').removeAttr('data-footer-resources');
   return $.html();
 }
 function withFooterCourses(html, lang) {
@@ -211,18 +219,32 @@ for (const p of coursePages) {
   count++;
 }
 
-// Blog pages: built as blog/<site>--<name>.html, translated like the other pages, moved to /blog/<name>
-// (English) or /<site>/blog/<name>, with root addresses, hreflang between translations and the language file.
+// Blog and Resources pages: built as <dir>/<site>--<name>.html, translated like the other pages, moved to
+// /<base>/<name> (English) or /<site>/<base>/<name>, where <base> is "blog" or the language's Resources address
+// (resources, risorse, recursos, ressources), with root addresses, hreflang between translations and the
+// language file. Resources: docs/BLOG_PLAN.md, "Resources".
+const RES_UI = { en: (await import(new URL('../src/data/resources/ui.js', import.meta.url))).default.en };
+for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'resources')).filter((f) => /^ui-[a-z]{2}\.js$/.test(f))) {
+  RES_UI[f.slice(3, 5)] = (await import(new URL(`../src/data/resources/${f}`, import.meta.url))).default;
+}
+const resItems = [];
+for (const d of fs.readdirSync(path.join(site, 'src', 'data', 'resources'), { withFileTypes: true }).filter((e) => e.isDirectory())) {
+  for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'resources', d.name)).filter((f) => f.endsWith('.js'))) {
+    resItems.push((await import(new URL(`../src/data/resources/${d.name}/${f}`, import.meta.url))).default);
+  }
+}
 const blogEntries = [];
-const blogDir = path.join(dist, 'blog');
-if (fs.existsSync(blogDir)) {
-  for (const f of fs.readdirSync(blogDir).filter((f) => /^[a-z]{2}--[a-z0-9-]+\.html$/.test(f))) {
+function movePages(dirName, baseOf, lastmodOf) {
+  const dir = path.join(dist, dirName);
+  if (!fs.existsSync(dir)) return;
+  for (const f of fs.readdirSync(dir).filter((f) => /^[a-z]{2}--[a-z0-9-]+\.html$/.test(f))) {
     const [, lang, name] = f.match(/^([a-z]{2})--([a-z0-9-]+)\.html$/);
-    let html = fs.readFileSync(path.join(blogDir, f), 'utf8');
-    if (lang !== 'en') html = localizePage(html, { lang, templateFile: 'blog-' + name + '.html', langDict: translations[lang] || {}, META_I18N, META_LANG });
+    const base = baseOf(lang);
+    let html = fs.readFileSync(path.join(dir, f), 'utf8');
+    if (lang !== 'en') html = localizePage(html, { lang, templateFile: dirName + '-' + name + '.html', langDict: translations[lang] || {}, META_I18N, META_LANG });
     html = absolutize(withFooterCourses(html, lang), lang);
     const $ = cheerio.load(html);
-    const self = `${BASE}/${lang === 'en' ? '' : lang + '/'}blog${name === 'index' ? '' : '/' + name}`;
+    const self = `${BASE}/${lang === 'en' ? '' : lang + '/'}${base}${name === 'index' ? '' : '/' + name}`;
     $('link[rel="canonical"]').attr('href', self);
     $('meta[property="og:url"]').attr('content', self);
     if (lang !== 'en' && !$(`script[src="/js/i18n/${lang}.js"]`).length) $('script[src="/js/i18n/en.js"]').after(`<script src="/js/i18n/${lang}.js" defer></script>`);
@@ -232,17 +254,24 @@ if (fs.existsSync(blogDir)) {
     const links = Object.entries(alts).map(([l, p]) => `<link rel="alternate" hreflang="${HREFLANG[l] || l}" href="${BASE}${p}">`);
     if (alts.en) links.unshift(`<link rel="alternate" hreflang="x-default" href="${BASE}${alts.en}">`);
     $('head').append('\n  ' + links.join('\n  ') + '\n');
-    const outDir = path.join(dist, lang === 'en' ? '' : lang, 'blog');
+    const outDir = path.join(dist, lang === 'en' ? '' : lang, base);
     fs.mkdirSync(outDir, { recursive: true });
     fs.writeFileSync(path.join(outDir, name + '.html'), $.html());
-    fs.rmSync(path.join(blogDir, f));
+    fs.rmSync(path.join(dir, f));
     const xl = Object.entries(alts).map(([l, p]) => `    <xhtml:link rel="alternate" hreflang="${HREFLANG[l] || l}" href="${BASE}${p}"/>`).join('\n');
-    const a = blogArticles.find((x) => x.site === lang && x.slug === name);
-    const mod = a ? a.updated : blogList(lang).map((x) => x.updated).sort().pop();
-    blogEntries.push(`  <url>\n    <loc>${self}</loc>\n${xl ? xl + '\n' : ''}    <lastmod>${mod}</lastmod>\n  </url>`);
+    blogEntries.push(`  <url>\n    <loc>${self}</loc>\n${xl ? xl + '\n' : ''}    <lastmod>${lastmodOf(lang, name)}</lastmod>\n  </url>`);
     count++;
   }
+  if (fs.existsSync(dir) && !fs.readdirSync(dir).length) fs.rmSync(dir, { recursive: true });
 }
+movePages('blog', () => 'blog', (lang, name) => {
+  const a = blogArticles.find((x) => x.site === lang && x.slug === name);
+  return a ? a.updated : blogList(lang).map((x) => x.updated).sort().pop();
+});
+movePages('resources', (lang) => RES_UI[lang].slugBase, (lang, name) => {
+  const r = resItems.find((x) => x.site === lang && x.slug === name);
+  return r ? r.published : resItems.filter((x) => x.site === lang).map((x) => x.published).sort().pop();
+});
 
 // The 404 page has no language copies but shares the footer.
 const notFound = path.join(dist, '404.html');

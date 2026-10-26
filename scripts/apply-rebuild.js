@@ -25,12 +25,17 @@ if (!fs.existsSync(path.join(dist, 'index.html'))) {
   process.exit(1);
 }
 copyPages(dist, root);
-// Blog pages (docs/BLOG_PLAN.md): /blog and /<lang>/blog.
+// Blog and Resources pages (docs/BLOG_PLAN.md): every page folder the build made, such as /blog, /resources,
+// /it/blog and /it/risorse (assets, data and language folders are handled elsewhere).
+const NOT_PAGES = new Set(['css', 'js', 'images', 'fonts', 'videos', 'data', '_astro', 'downloads']);
 function copyBlog(from, to) {
-  const dir = path.join(from, 'blog');
-  if (!fs.existsSync(dir)) return;
-  fs.mkdirSync(path.join(to, 'blog'), { recursive: true });
-  copyPages(dir, path.join(to, 'blog'));
+  for (const d of fs.readdirSync(from)) {
+    const dir = path.join(from, d);
+    if (NOT_PAGES.has(d) || /^[a-z]{2}$/.test(d) || !fs.statSync(dir).isDirectory()) continue;
+    if (!fs.readdirSync(dir).some((f) => f.endsWith('.html'))) continue;
+    fs.mkdirSync(path.join(to, d), { recursive: true });
+    copyPages(dir, path.join(to, d));
+  }
 }
 copyBlog(dist, root);
 for (const d of fs.readdirSync(dist)) {

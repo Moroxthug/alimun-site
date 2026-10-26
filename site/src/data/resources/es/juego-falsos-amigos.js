@@ -1,0 +1,30 @@
+// Resource: game. Cards: [word, language of the word, what it looks like in Spanish, what it really means,
+// how to say what it looks like in that language]. The game asks what each word really means.
+export default {
+  key: 'false-friends', site: 'es', slug: 'juego-falsos-amigos', kind: 'game', course: null, level: 'Todos los niveles',
+  draw: 'dragon', tint: 'coral', published: '2026-10-26',
+  title: 'Juego de falsos amigos: palabras que te engañan',
+  metaTitle: 'Juego de falsos amigos en inglés, alemán, italiano y más – Alimun',
+  desc: 'Un juego gratis con falsos amigos del inglés, el alemán, el italiano, el francés y el portugués: palabras que parecen españolas y significan otra cosa.',
+  lead: 'Palabras que parecen españolas pero significan otra cosa. Adivina qué significa de verdad cada una y dale la vuelta a la tarjeta para comprobarlo.',
+  instructions: '¿Qué significa de verdad la palabra?',
+  about: [
+    'Los falsos amigos son palabras que se parecen a una palabra de otro idioma, por cómo se escriben o cómo suenan, pero significan algo distinto. Son de los errores más frecuentes, y más graciosos, de quien aprende un idioma.',
+    'Juega y luego dale la vuelta a las tarjetas para ver la palabra que de verdad necesitas.',
+  ],
+  cards: [
+    ['embarrassed', 'inglés', 'embarazada', 'avergonzado', 'pregnant'],
+    ['Rat', 'alemán', 'rata', 'consejo', 'die Ratte'],
+    ['burro', 'italiano', 'burro', 'mantequilla', 'asino'],
+    ['library', 'inglés', 'librería', 'biblioteca', 'bookshop'],
+    ['polvo', 'portugués', 'polvo', 'pulpo', 'pó'],
+    ['Chef', 'alemán', 'chef', 'jefe', 'der Koch'],
+    ['carpet', 'inglés', 'carpeta', 'alfombra', 'folder'],
+    ['camera', 'italiano', 'cámara', 'habitación', 'macchina fotografica'],
+    ['large', 'francés', 'largo', 'ancho', 'long'],
+    ['esquisito', 'portugués', 'exquisito', 'raro, extraño', 'delicioso'],
+    ['Mantel', 'alemán', 'mantel', 'abrigo', 'die Tischdecke'],
+    ['constipated', 'inglés', 'constipado', 'estreñido', 'to have a cold'],
+  ],
+  related: ['buddy-quiz', 'de-articles-a1', 'en-quiz-b1'],
+};

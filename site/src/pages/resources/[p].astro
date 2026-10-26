@@ -1,0 +1,79 @@
+---
+// Resources (docs/BLOG_PLAN.md, "Resources"): the hub and one page per resource, for each site language with
+// resources. Built as resources/<site>--index.html and resources/<site>--<slug>.html, then moved to
+// /<slugBase>[/<slug>] (English) or /<site>/<slugBase>[/<slug>] by scripts/localize.mjs.
+// Markup in src/resources/render.js; items in src/data/resources/<site>/; text in src/data/resources/ui*.js.
+import Base from '../../layouts/Base.astro';
+import headTpl from '../../blocks/blog/head.html?raw';
+import blogStyle from '../../blocks/blog/style.html?raw';
+import cards from '../../blocks/blog/cards.html?raw';
+import style from '../../blocks/resources/style.html?raw';
+import after from '../../blocks/legal/after.html?raw';
+import nav from '../../blocks/legal/nav.html?raw';
+import footer from '../../blocks/footer.html?raw';
+import UI_EN from '../../data/resources/ui.js';
+import { esc, hub, item, itemLd, hubLd, itemPath, hubPath } from '../../resources/render.js';
+
+const UI_OTHER = Object.values(import.meta.glob('../../data/resources/ui-*.js', { eager: true })).map((m) => m.default);
+const UI = { ...UI_EN };
+for (const u of UI_OTHER) UI[u.locale.slice(0, 2)] = u;
+
+export async function getStaticPaths() {
+  const UIs = { ...UI_EN };
+  for (const m of Object.values(import.meta.glob('../../data/resources/ui-*.js', { eager: true }))) UIs[m.default.locale.slice(0, 2)] = m.default;
+  const all = Object.values(import.meta.glob('../../data/resources/*/*.js', { eager: true })).map((m) => m.default);
+  const paths = [];
+  for (const site of Object.keys(UIs)) {
+    const list = all.filter((r) => r.site === site);
+    if (!list.length) continue;
+    paths.push({ params: { p: `${site}--index` }, props: { site, list, all } });
+    for (const r of list) paths.push({ params: { p: `${site}--${r.slug}` }, props: { site, r, list, all } });
+  }
+  return paths;
+}
+
+const { site, r, list, all } = Astro.props;
+const ui = UI[site];
+const fill = (tpl, values) => Object.entries(values).reduce((t, [k, v]) => t.split(`{{${k}}}`).join(v), tpl);
+const json = (o) => JSON.stringify(o).replace(/</g, '\\u003c');
+
+// Reading resources: text, words and questions from the dashboard library, explanations in the site's language.
+const shelves = import.meta.glob('../../data/library/*-library.js', { eager: true });
+const libI18n = import.meta.glob('../../data/library/i18n/*.json', { eager: true });
+function library(res) {
+  if (!res || res.kind !== 'reading') return null;
+  const mod = Object.entries(shelves).find(([k]) => k.endsWith(`/${res.library}.js`));
+  if (!mod) return null;
+  const piece = mod[1].SHELF.pieces.find((x) => x.id === res.piece);
+  const dictEntry = Object.entries(libI18n).find(([k]) => k.endsWith(`/${res.library}.${site}.json`));
+  const dict = dictEntry ? (dictEntry[1].default || dictEntry[1]) : {};
+  const tr = (s) => (site === 'en' ? s : dict[s] || s);
+  const items = [];
+  for (const b of piece.blocks || []) {
+    if (b.kind === 'choice') for (const it of b.items) items.push({ q: it.q, options: it.o, a: 0, why: tr(String(it.why || '').replace(/\*/g, '')) });
+    if (b.kind === 'pick') for (const it of b.items) items.push({ q: it.q, options: b.opts, a: it.a, why: tr(String(it.why || '').replace(/\*/g, '')) });
+  }
+  return { title: piece.title, text: piece.text.md, words: piece.words.map((w) => [w.w, tr(w.n)]), items };
+}
+
+let head, main;
+const alternates = (key) => Object.fromEntries(Object.keys(UI).map((s) => [s, all.find((x) => x.site === s && (key ? x.key === key : true))]).filter(([, x]) => x).map(([s, x]) => [s, key ? itemPath(x, UI[s]) : hubPath(s, UI[s])]));
+if (r) {
+  const related = [...(r.related || []).map((k) => list.find((x) => x.key === k)).filter(Boolean), ...list.filter((x) => x !== r && !(r.related || []).includes(x.key))].filter((x) => x !== r);
+  head = fill(headTpl, { PAGE_TITLE: esc(r.metaTitle || `${r.title} – Alimun`), META_DESC: esc(r.desc), CANON: 'https://alimun.com' + itemPath(r, ui), LOCALE: ui.locale, OG_TYPE: 'website', LD: itemLd(r, ui) })
+    + `\n  <script type="application/json" id="alimun-lang-alternates">${json(alternates(r.key))}</script>`;
+  const lib = library(r);
+  main = blogStyle + cards + style + item(r, ui, related, lib);
+} else {
+  head = fill(headTpl, { PAGE_TITLE: esc(ui.metaTitle), META_DESC: esc(ui.metaDesc), CANON: 'https://alimun.com' + hubPath(site, ui), LOCALE: ui.locale, OG_TYPE: 'website', LD: hubLd(site, list, ui) })
+    + `\n  <script type="application/json" id="alimun-lang-alternates">${json(alternates(null))}</script>`;
+  main = blogStyle + cards + style + hub(site, list, ui);
+}
+---
+<Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang={site}>
+  <Fragment set:html={nav} />
+  <main class="main-wrapper">
+    <Fragment set:html={main} />
+  </main>
+  <Fragment set:html={footer} />
+</Base>

@@ -1,0 +1,30 @@
+// Resource: game. Cards: [word, language of the word, the French word it looks like, what it really means,
+// how to say the French look-alike in that language]. The game asks what each word really means.
+export default {
+  key: 'false-friends', site: 'fr', slug: 'jeu-faux-amis', kind: 'game', course: null, level: 'Tous niveaux',
+  draw: 'dragon', tint: 'coral', published: '2026-10-26',
+  title: 'Jeu des faux amis : les mots qui te piègent',
+  metaTitle: 'Jeu des faux amis : anglais, allemand, espagnol, italien – Alimun',
+  desc: "Un jeu gratuit de faux amis anglais, allemands, espagnols, italiens et portugais : des mots qui ressemblent au français mais veulent dire autre chose.",
+  lead: "Des mots qui ressemblent à du français mais qui veulent dire autre chose. Devine leur vrai sens, puis retourne la carte pour voir.",
+  instructions: 'Que veut vraiment dire ce mot ?',
+  about: [
+    "Les faux amis sont des mots qui ressemblent à un mot d'une autre langue, à l'écrit ou à l'oral, mais qui ont un sens différent. Ils sont à l'origine de certaines des erreurs les plus courantes, et les plus drôles, quand on apprend une langue.",
+    "Joue, puis retourne les cartes pour voir le mot dont tu as vraiment besoin.",
+  ],
+  cards: [
+    ['embarazada', 'espagnol', 'embarrassée', 'enceinte', 'avergonzada'],
+    ['Gymnasium', 'allemand', 'gymnase', 'lycée', 'die Turnhalle'],
+    ['actually', 'anglais', 'actuellement', 'en fait', 'currently'],
+    ['puxe', 'portugais', 'poussez', 'tirez', 'empurre'],
+    ['Konkurs', 'allemand', 'concours', 'faillite', 'der Wettbewerb'],
+    ['constipado', 'espagnol', 'constipé', 'enrhumé', 'estreñido'],
+    ['eventually', 'anglais', 'éventuellement', 'finalement', 'possibly'],
+    ['camera', 'italien', 'caméra', 'chambre', 'videocamera'],
+    ['library', 'anglais', 'librairie', 'bibliothèque', 'bookshop'],
+    ['Prospekt', 'allemand', 'prospect', 'dépliant, brochure', 'der potenzielle Kunde'],
+    ['sensible', 'anglais', 'sensible', 'raisonnable', 'sensitive'],
+    ['pasta', 'portugais', 'pâtes', 'dossier, porte-documents', 'massa'],
+  ],
+  related: ['buddy-quiz', 'de-articles-a1', 'en-quiz-b1'],
+};
