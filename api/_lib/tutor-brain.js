@@ -155,6 +155,18 @@ async function loadBook(id) {
 }
 function one(s, n) { return String(s == null ? '' : s).replace(/[\u0000-\u001f<>]+/g, ' ').replace(/\s+/g, ' ').trim().slice(0, n); }
 
+/** The latest published class notes in the last 14 days for one of the student's active classes, or null */
+async function lastLesson(supabase, studentId, since) {
+  try {
+    const { data: en } = await supabase.from('enrollments').select('cohort_id').eq('student_id', studentId).eq('status', 'active');
+    const ids = (en || []).map((e) => e.cohort_id).filter(Boolean);
+    if (!ids.length) return null;
+    const { data } = await supabase.from('session_notes').select('vocabulary, grammar_focus, exercises, homework, due_date, teacher_note, published_at, sessions!inner ( scheduled_at, cohort_id )')
+      .in('sessions.cohort_id', ids).not('published_at', 'is', null).gte('published_at', since).order('published_at', { ascending: false }).limit(1);
+    return data && data[0] || null;
+  } catch (e) { return null; }
+}
+
 /** The brief: the student's profile, weakest course book lessons, often missed words, the latest teacher feedback,
  *  what the tutor remembers and the last sessions' summaries. Each read is optional: a failed one is left out. */
 async function brief(supabase, profile) {
@@ -162,13 +174,17 @@ async function brief(supabase, profile) {
   const level = LEVELS.includes(String(profile.level || '').slice(0, 2)) ? String(profile.level).slice(0, 2) : null;
   const bookId = level ? `${profile.language}-${level}` : null;
   const q = (p) => p.then((r) => (r.error ? null : r.data), () => null);
-  const [items, words, subs, mem, past, book] = await Promise.all([
+  const since = new Date(Date.now() - 14 * 86400000).toISOString();
+  const [items, words, subs, mem, past, book, lesson, oto] = await Promise.all([
     q(supabase.from('practice_items').select('item_key, seen, wrong').eq('student_id', id).gt('seen', 0).limit(3000)),
     q(supabase.from('vocab_reviews').select('word, wrong_count').eq('student_id', id).gt('wrong_count', 0).order('wrong_count', { ascending: false }).limit(10)),
     q(supabase.from('assignment_submissions').select('feedback, score, graded_at, assignments(title)').eq('student_id', id).eq('status', 'graded').order('graded_at', { ascending: false }).limit(2)),
     q(supabase.from('tutor_memory').select('notes').eq('student_id', id).maybeSingle()),
     q(supabase.from('tutor_sessions').select('started_at, title, summary').eq('student_id', id).not('summary', 'is', null).order('started_at', { ascending: false }).limit(3)),
     bookId ? loadBook(bookId) : Promise.resolve(null),
+    lastLesson(supabase, id, since),
+    q(supabase.from('one_on_one_bookings').select('scheduled_at, teacher_note').eq('student_id', id).eq('status', 'completed').not('teacher_note', 'is', null)
+      .gte('scheduled_at', since).order('scheduled_at', { ascending: false }).limit(1)),
   ]);
 
   const lines = [];
@@ -198,6 +214,15 @@ async function brief(supabase, profile) {
   if (subs && subs.length) {
     for (const s of subs) if (s.feedback) lines.push(`Teacher's feedback on "${one(s.assignments?.title, 60)}"${s.score != null ? ' (' + s.score + '%)' : ''}: ${one(s.feedback, 300)}`);
   }
+  // The latest lesson with a teacher (part 5b): what the teacher published to the class, or the 1:1 note
+  if (lesson) {
+    const voc = (Array.isArray(lesson.vocabulary) ? lesson.vocabulary : []).slice(0, 12).map((v) => one(v && (v.word || v.w), 40)).filter(Boolean);
+    lines.push(`Latest class with the teacher (${String(lesson.sessions && lesson.sessions.scheduled_at || lesson.published_at).slice(0, 10)}): ` + [
+      lesson.grammar_focus ? 'grammar focus: ' + one(lesson.grammar_focus, 200) : '', voc.length ? 'words: ' + voc.join(', ') : '',
+      lesson.exercises ? 'exercises done: ' + one(lesson.exercises, 200) : '', lesson.homework ? 'homework: ' + one(lesson.homework, 200) + (lesson.due_date ? ' (due ' + lesson.due_date + ')' : '') : '',
+      lesson.teacher_note ? "teacher's note: " + one(lesson.teacher_note, 300) : ''].filter(Boolean).join('; '));
+  }
+  if (oto && oto[0] && oto[0].teacher_note) lines.push(`Latest 1:1 lesson (${String(oto[0].scheduled_at).slice(0, 10)}), the teacher's note: ${one(oto[0].teacher_note, 400)}`);
   if (mem && mem.notes && Object.keys(mem.notes).length) lines.push('What you remember about the student: ' + one(JSON.stringify(mem.notes), 1500));
   if (past && past.length) lines.push('Last sessions: ' + past.map((p) => `${String(p.started_at).slice(0, 10)}: ${one(p.summary, 300)}`).join(' | '));
   return lines.join('\n');
@@ -245,7 +270,7 @@ Reply with one JSON object only: {"say": "...", "board": [...], "exercise": null
 "board" is a list of at most 6 operations added to what is already on the board:
 {"op":"clear"} wipes the board; {"op":"title","text":"..."}; {"op":"write","text":"one line, **bold** for key words"};
 {"op":"note","text":"a short explanation, may be in ${ui}"}; {"op":"fix","wrong":"the student's words","right":"the corrected words"};
-{"op":"table","rows":[["...","..."],...]} with 2 to 6 rows of 2 to 4 short cells.
+{"op":"table","rows":[["...","..."],...]} with 2 to 6 rows of 2 to 4 short cells; {"op":"spell","text":"a word"} writes one word letter by letter (when the student asks how to spell it or it is tricky).
 ${EX_FORMAT}`;
 }
 function openingTask(fresh) {
@@ -282,6 +307,7 @@ function cleanBoard(ops) {
     if (!o || typeof o !== 'object') continue;
     if (o.op === 'clear') out.push({ op: 'clear' });
     else if (o.op === 'title' || o.op === 'write' || o.op === 'note') { const t = txt(o.text, o.op === 'title' ? 120 : 300); if (t) out.push({ op: o.op, text: t }); }
+    else if (o.op === 'spell') { const t = txt(o.text, 40); if (t && /\p{L}/u.test(t)) out.push({ op: 'spell', text: t }); }
     else if (o.op === 'fix') { const w = txt(o.wrong, 200), r = txt(o.right, 200); if (w && r) out.push({ op: 'fix', wrong: w, right: r }); }
     else if (o.op === 'table' && Array.isArray(o.rows)) {
       const rows = o.rows.slice(0, 6).filter(Array.isArray).map((r) => r.slice(0, 4).map((c) => txt(String(c == null ? '' : c), 60)));

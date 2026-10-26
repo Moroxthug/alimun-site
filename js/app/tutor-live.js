@@ -5,6 +5,10 @@
    24 kHz voice as it arrives, the tutor's mouth following the sound (js/app/lipsync.js followAnalyser). Google's
    transcripts show as captions and go to /api/tutor?action=live-tick every 30 seconds, which also counts the time and
    ends the call when it runs out. The pass is renewed before it expires and when Google asks (session resumption).
+   Part 7 B, the board in the call: Google's function calls (board_write, set_exercise, say_this) go to
+   /api/tutor?action=live-board, which checks and stores them; the board writes the lines in with the written tutor's
+   animation (js/app/tutor.js kit), plays exercises with the shared engine (results to live-answer, then told to the
+   tutor) and shows the pronunciation card (recorded from the call's microphone, scored by ?action=pronounce live).
    Sample (signed out or ?sample=1): a scripted call, nothing is sent and the microphone is not used.
    Interface text: app_tl_* keys. */
 (function () {
@@ -15,6 +19,8 @@
   function t(k, v) { return A.t(k, v); }
   function esc(s) { return A.esc(s); }
   function D() { return window.AlimunData; }
+  function K() { return window.AlimunTutor && window.AlimunTutor.kit; }
+  function EX() { return window.AlimunEx; }
   function cap(k) { return k.charAt(0).toUpperCase() + k.slice(1); }
   function tutors() { return (window.AlimunCast && window.AlimunCast.tutors) || ['lena']; }
   function myTutor() { try { var x = localStorage.getItem(TUTOR_KEY); return tutors().indexOf(x) > -1 ? x : 'lena'; } catch (e) { return 'lena'; } }
@@ -122,6 +128,7 @@
     }
     if (m.sessionResumptionUpdate) { if (m.sessionResumptionUpdate.resumable && m.sessionResumptionUpdate.newHandle) L.handle = m.sessionResumptionUpdate.newHandle; return; }
     if (m.goAway) { renew('goaway'); return; }
+    if (m.toolCall) { boardCalls((m.toolCall.functionCalls || []).slice(0, 4)); return; }
     var c = m.serverContent;
     if (!c) return;
     if (c.interrupted) { stopPlayback(); flush('tutor'); setState('listening'); }
@@ -160,6 +167,134 @@
     });
   }
 
+  /* ---------- The board (part 7 B) ---------- */
+  /* A line from the system to the tutor (Alimun's own words) or the student's result passed on as their turn */
+  function sendText(text, system) {
+    send({ clientContent: { turns: [{ role: 'user', parts: [{ text: system ? '<school>' + text + '</school>' : text }] }], turnComplete: true } });
+  }
+  function toolAnswer(results) {
+    send({ toolResponse: { functionResponses: results.map(function (x) { return { id: x.id, name: x.name, response: x.ok ? { result: 'shown on the board' } : { error: x.error || 'not shown' } }; }) } });
+  }
+  function boardCalls(calls) {
+    if (!calls.length) return;
+    var plain = calls.map(function (c) { return { id: c.id, name: c.name, args: c.args || {} }; });
+    D().tutorLiveBoard({ session: L.session, calls: plain }).then(function (r) {
+      if (!L || L.ended) return;
+      applyBoard(r.messages || [], r.board);
+      toolAnswer(r.results || []);
+    }, function () {
+      if (L && !L.ended) toolAnswer(plain.map(function (c) { return { id: c.id, name: c.name, ok: false, error: 'The board is not available right now; go on talking.' }; }));
+    });
+  }
+  /* New board messages: the lines written in, an exercise played, a sentence to say */
+  function applyBoard(messages, board) {
+    var added = 0;
+    messages.forEach(function (m) {
+      var ops = m.board || [], last = -1;
+      ops.forEach(function (o, i) { if (o.op === 'clear') last = i; });
+      added = last > -1 ? ops.length - last - 1 : added + ops.length;
+      if (m.exercise) prepareExercise(m);
+      if (m.pron) { L.pronMsg = m; L.pronResult = null; }
+    });
+    L.board = board || L.board; L.newOps = added;
+    boardUi();
+  }
+  function prepareExercise(m) {
+    L.exMsg = m.id; L.got = [];
+    L.ex = EX().create({ A: A, blocks: [m.exercise], xa: '', ta: K().ta(), root: function () { return root; },
+      onItem: function (r) {
+        var x = L.ex.state[0] && L.ex.state[0].items && L.ex.state[0].items[r.i];
+        L.got.push({ i: r.i, ok: !!r.ok, given: !r.ok && x && x.value ? String(x.value).slice(0, 80) : undefined });
+      },
+      onAnswer: function () { if (L.ex && L.ex.done(0)) setTimeout(exerciseDone, 900); } });
+  }
+  function exerciseDone() {
+    if (!L || !L.ex || L.ended) return;
+    var got = L.got || [], items = L.ex.state[0] && L.ex.state[0].items ? L.ex.state[0].items.length : (L.ex.blocks[0].pairs || []).length, msg = L.exMsg;
+    L.ex = null; L.exMsg = null; boardUi();
+    if (L.sample) { sampleSay(SAMPLE_AFTER_EX); return; }
+    D().tutorLiveAnswer({ session: L.session, answer: { message: msg, results: got } }).then(function (r) {
+      if (L && !L.ended && r && r.tell) sendText(r.tell);
+    }, function () {
+      if (L && !L.ended) sendText('I finished the exercise on the board: ' + got.filter(function (g) { return g.ok; }).length + ' of ' + items + ' right first time.');
+    });
+  }
+  function boardHtml() {
+    var b = L.board || [], from = b.length - (L.newOps || 0);
+    var ops = b.length ? b.map(function (o, i) { return K().opHtml(o, i >= from); }).join('') : '<p class="tu-op tu-op--empty">' + esc(t('app_tu_board_empty')) + '</p>';
+    var html = '<div class="tu-board__ops" aria-live="polite">' + ops + '</div>';
+    if (L.ex) html += '<div class="paper tu-ex" data-tl-ex>' + L.ex.html(0) + '</div>';
+    if (L.pronMsg) {
+      var r = L.pronResult;
+      html += '<div class="paper tu-pron"><h3 class="t-h3">' + esc(t(r ? 'app_tu_pron_last' : 'app_tu_pron_h')) + '</h3>' + K().pronBody(L.pronMsg.pron, r, !!r);
+      if (!L.ended) {
+        var rec = !!L.prec, label = rec ? 'app_tu_rec_stop' : r ? 'app_tu_pron_again' : 'app_tu_pron_say';
+        html += '<div class="btn-row" style="margin-top:14px"><button class="btn btn--primary btn--sm" type="button" data-tl="prec" aria-pressed="' + rec + '"' + (L.pbusy ? ' disabled aria-busy="true"' : '') + '>' + esc(t(label)) + '</button>' +
+          '<button class="btn btn--ghost btn--sm" type="button" data-tl="pslow"' + (rec || L.pbusy ? ' disabled' : '') + '>' + esc(t('app_tu_pron_slow')) + '</button></div>' +
+          '<p class="t-small tu-rec" data-tl-prec aria-live="polite">' + (L.pnote ? esc(t(L.pnote)) : '') + '</p>';
+      }
+      html += '</div>';
+    }
+    return html;
+  }
+  function boardUi() {
+    var el = root && root.querySelector('[data-tl-board]');
+    if (!el) return;
+    el.innerHTML = boardHtml();
+    L.newOps = 0;
+    if (L.ex) L.ex.after(el.querySelector('[data-tl-ex]'));
+  }
+  /* Saying the card's sentence: recorded from the call's microphone (the tutor does not hear it meanwhile), scored, told */
+  var PREC_MAX = 30;
+  function pronRecord() {
+    if (!L || L.ended || L.pbusy) return;
+    if (L.prec) { if (L.prec.mr && L.prec.mr.state !== 'inactive') L.prec.mr.stop(); else pronStop(null); return; }
+    L.pnote = null;
+    if (L.sample) { L.prec = { sample: true }; boardUi(); stateUi(); L.prec.timer = setTimeout(function () { pronStop(null); }, 2500); return; }
+    if (!L.stream || !window.MediaRecorder) { L.pnote = 'app_tu_err_mic'; boardUi(); return; }
+    var mime = K().recMime(), chunks = [], mr;
+    try { mr = mime ? new MediaRecorder(L.stream, { mimeType: mime }) : new MediaRecorder(L.stream); } catch (e) { L.pnote = 'app_tu_err_mic'; boardUi(); return; }
+    L.prec = { mr: mr }; L.wasMuted = L.muted; L.muted = true;
+    send({ realtimeInput: { audioStreamEnd: true } });
+    mr.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+    mr.onstop = function () { pronStop(new Blob(chunks, { type: (mr.mimeType || mime || 'audio/webm').split(';')[0] })); };
+    mr.start();
+    L.prec.timer = setTimeout(function () { if (mr.state !== 'inactive') mr.stop(); }, PREC_MAX * 1000);
+    boardUi(); stateUi();
+  }
+  function pronStop(blob) {
+    if (!L || !L.prec) return;
+    clearTimeout(L.prec.timer);
+    var wasSample = L.prec.sample; L.prec = null;
+    if (!wasSample) L.muted = !!L.wasMuted;
+    L.pbusy = true; boardUi(); stateUi();
+    if (wasSample) {
+      setTimeout(function () { if (!L) return; L.pbusy = false; L.pronResult = SAMPLE_PRON; boardUi(); sampleSay(SAMPLE_AFTER_PRON); }, 1000);
+      return;
+    }
+    var msg = L.pronMsg;
+    K().toWav(blob).then(function (wav) { return K().blobBase64(wav); }).then(function (b64) {
+      return D().tutorPronounce({ session: L.session, message: msg.id, audio: b64, mime: 'audio/wav', live: true });
+    }).then(function (r) {
+      if (!L || L.ended) return;
+      L.pbusy = false;
+      if (L.pronMsg === msg) L.pronResult = r.mine && r.mine.result && r.mine.result.pron;
+      boardUi();
+      if (r.tell) sendText(r.tell);
+    }, function (e) {
+      if (!L) return;
+      L.pbusy = false;
+      var why = e && e.body && e.body.reason;
+      L.pnote = why === 'unheard' || why === 'audio_short' ? 'app_tu_err_unheard' : why === 'pron_closed' ? 'app_tu_err_pron_closed' : why === 'no_time' ? 'app_tu_none_left' : 'app_tu_err_pron';
+      boardUi();
+    });
+  }
+  function pronSlow() {
+    if (!L || L.ended || !L.pronMsg) return;
+    if (L.sample) { sampleSay(['tutor', 'Am — Wo-chen-en-de — bin — ich — ins — Ki-no — ge-gan-gen.']); return; }
+    sendText('Say the sentence on the board slowly and clearly, once, then invite the student to record it.', true);
+  }
+
   /* ---------- Time ---------- */
   function tick() {
     if (!L || L.sample || !L.session) return Promise.resolve();
@@ -179,7 +314,8 @@
   function start(tutor, opts) {
     var sample = !!opts.sample;
     L = Object.assign(L || {}, { tutor: tutor, sample: sample, state: 'connecting', lines: [], queue: [], cur: { student: '', tutor: '' }, playing: [], seconds: opts.seconds || 0,
-      started: false, ending: false, ended: false, muted: false, note: null, summary: null, handle: null, session: null, fresh: true, failed: null, renewing: false, head: 0 });
+      started: false, ending: false, ended: false, muted: false, note: null, summary: null, handle: null, session: null, fresh: true, failed: null, renewing: false, head: 0,
+      board: [], newOps: 0, ex: null, exMsg: null, got: [], pronMsg: null, pronResult: null, prec: null });
     draw();
     if (sample) { runSample(); return; }
     if (!supported()) { fail('app_tl_unsupported'); return; }
@@ -217,6 +353,7 @@
   function teardown() {
     if (!L) return;
     clearInterval(L.ticker); clearTimeout(L.renewTimer); clearTimeout(L.sampleTimer);
+    if (L.prec) { clearTimeout(L.prec.timer); if (L.prec.mr && L.prec.mr.state !== 'inactive') { L.prec.mr.onstop = null; L.prec.mr.stop(); } L.prec = null; }
     if (L.unfollow) L.unfollow();
     if (L.ws) { try { L.ws.close(); } catch (e) { /* gone */ } }
     L.ws = null; L.ready = false;
@@ -252,12 +389,42 @@
 
   /* ---------- Sample ---------- */
   var SAMPLE_LINES = [
-    ['tutor', 'Hallo Sam! Schön, dich zu sehen. Wollen wir heute über dein Wochenende sprechen?'],
+    ['tutor', 'Hallo Sam! Schön, dich zu sehen. Wollen wir heute über dein Wochenende sprechen?', { board: [{ op: 'title', text: 'Mein Wochenende' }] }],
     ['student', 'Ja, gerne. Am Wochenende ich bin ins Kino gegangen.'],
-    ['tutor', 'Super! Am Wochenende bin ich ins Kino gegangen. Das Verb kommt an zweite Stelle. Was hast du gesehen?'],
-    ['student', 'Einen Film über Berlin.'],
-    ['tutor', 'Toll! Sag mal Berlin, mit einem klaren e: Ber-lin. Und wie war der Film?']
+    ['tutor', 'Super! Am Wochenende bin ich ins Kino gegangen. Das Verb kommt an zweite Stelle. Was hast du gesehen?', { board: [{ op: 'fix', wrong: 'Am Wochenende ich bin ins Kino gegangen.', right: 'Am Wochenende bin ich ins Kino gegangen.' }, { op: 'note', text: 'After a time phrase at the start, the verb comes second.' }] }],
+    ['student', 'Einen Film über Berlin. Wie schreibt man Wochenende?'],
+    ['tutor', 'So: W, o, c, h, e, n, e, n, d, e. Jetzt üben wir die Wortstellung kurz auf der Tafel.', { board: [{ op: 'spell', text: 'Wochenende' }], exercise: { t: 'ex', kind: 'choice', h: 'Was passt? Das Verb steht an zweiter Stelle.', items: [
+      { q: 'Am Samstag ___ lange geschlafen.', o: ['habe ich', 'ich habe', 'ich hat'], why: 'Am Samstag zuerst, dann das Verb.' }, { q: 'Gestern ___ ins Kino gegangen.', o: ['bin ich', 'ich bin', 'ich habe'], why: 'Gestern zuerst, dann das Verb: bin ich.' }, { q: 'Am Sonntag ___ gekocht.', o: ['haben wir', 'wir haben', 'wir sind'], why: 'Am Sonntag zuerst, dann das Verb.' }] } }]
   ];
+  var SAMPLE_AFTER_EX = ['tutor', 'Sehr gut! Jetzt sag bitte diesen Satz laut, ich höre genau hin.', { pron: 'Am Wochenende bin ich ins Kino gegangen.' }];
+  var SAMPLE_PRON = { sentence: 'Am Wochenende bin ich ins Kino gegangen.', score: 78, accuracy: 74, fluency: 85, completeness: 100, extra: 0, words: [{ t: 'Am', s: 'ok' }, { t: 'Wochenende', s: 'diff', sound: 'x' }, { t: 'bin', s: 'ok' }, { t: 'ich', s: 'ok' }, { t: 'ins', s: 'ok' }, { t: 'Kino', s: 'ok' }, { t: 'gegangen.', s: 'ok' }] };
+  var SAMPLE_AFTER_PRON = ['tutor', 'Schon gut! Das ch in Wochenende kommt weiter hinten, wie in Bach. Noch einmal?'];
+  /* One scripted tutor line in the sample: said word by word, with its board */
+  function sampleSay(line, then) {
+    if (!L || L.ending) return;
+    var words = line[1].split(' '), w = 0, extra = line[2] || {};
+    if (line[0] === 'tutor') setState('speaking');
+    if (extra.board || extra.exercise || extra.pron) {
+      var m = { id: 'sx' + Math.random().toString(36).slice(2), board: extra.board || [], exercise: extra.exercise || null, pron: extra.pron || null };
+      var b = L.board.slice(); (m.board || []).forEach(function (o) { if (o.op === 'clear') b = []; else b.push(o); });
+      applyBoard([m], b);
+    }
+    var step = function () {
+      if (!L || L.ending) return;
+      if (w < words.length) {
+        L.cur[line[0]] += (w ? ' ' : '') + words[w++]; captions();
+        var face = root && root.querySelector('[data-tl-face]');
+        if (face && line[0] === 'tutor') face.setAttribute('data-mouth', ['a', 'e', 'o', 'm', 'e', 'a'][w % 6]);
+        L.sampleTimer = setTimeout(step, line[0] === 'tutor' ? 220 : 180);
+      } else {
+        flush(line[0]);
+        var face2 = root && root.querySelector('[data-tl-face]'); if (face2) face2.setAttribute('data-mouth', 'rest');
+        setState('listening'); L.seconds -= 20; clock();
+        if (then) L.sampleTimer = setTimeout(then, 900);
+      }
+    };
+    step();
+  }
   var SAMPLE_SUMMARY = { title: 'Das Wochenende im Perfekt', summary: 'You talked about your weekend and practised word order after Am Wochenende. Next time: separable verbs in the Perfekt.', words: [{ w: 'ins Kino gehen', m: 'to go to the cinema' }] };
   function runSample() {
     var i = 0;
@@ -265,23 +432,7 @@
     setTimeout(function () { if (L && !L.ending) { setState('listening'); draw(); next(); } }, 900);
     function next() {
       if (!L || L.ending || i >= SAMPLE_LINES.length) return;
-      var line = SAMPLE_LINES[i++], words = line[1].split(' '), w = 0;
-      if (line[0] === 'tutor') setState('speaking');
-      var step = function () {
-        if (!L || L.ending) return;
-        if (w < words.length) {
-          L.cur[line[0]] += (w ? ' ' : '') + words[w++]; captions();
-          var face = root && root.querySelector('[data-tl-face]');
-          if (face && line[0] === 'tutor') face.setAttribute('data-mouth', ['a', 'e', 'o', 'm', 'e', 'a'][w % 6]);
-          L.sampleTimer = setTimeout(step, line[0] === 'tutor' ? 260 : 200);
-        } else {
-          flush(line[0]);
-          var face2 = root && root.querySelector('[data-tl-face]'); if (face2) face2.setAttribute('data-mouth', 'rest');
-          setState('listening'); L.seconds -= 20; clock();
-          L.sampleTimer = setTimeout(next, 900);
-        }
-      };
-      step();
+      sampleSay(SAMPLE_LINES[i++], next);
     }
   }
 
@@ -290,13 +441,14 @@
     if (!L || L.ending) return;
     if (L.state === s) return;
     L.state = s;
-    var el = root && root.querySelector('[data-tl-state]');
-    if (el) el.textContent = stateText();
+    stateUi();
     var st = root && root.querySelector('.tl-stage'); if (st) st.setAttribute('data-state', s);
   }
+  function stateUi() { var el = root && root.querySelector('[data-tl-state]'); if (el && L && !L.ended) el.innerHTML = '<span>' + esc(stateText()) + '</span>'; }
   function stateText() {
     var name = cap(L.tutor);
     if (L.note) return t(L.note);
+    if (L.prec) return t('app_tl_recording');
     if (L.muted) return t('app_tl_muted');
     return L.state === 'speaking' ? t('app_tl_speaking', { name: name }) : L.state === 'listening' ? t('app_tl_listening', { name: name }) : L.state === 'ending' ? t('app_tl_ending') : t('app_tl_connecting');
   }
@@ -331,14 +483,16 @@
     var html = '<div class="view__head tu-head"><div><h1 class="t-h1">' + esc(t('app_tl_h', { name: name })) + '</h1><p class="t-lead" data-tl-left>' + esc(t('app_tu_left_n', { time: mins(L.seconds) })) + '</p></div>' +
       (L.ended ? '' : '<div class="btn-row">' + (on ? '<button class="btn btn--quiet btn--sm" type="button" data-tl="mute" aria-pressed="' + (L.muted ? 'true' : 'false') + '">' + esc(t(L.muted ? 'app_tl_unmute' : 'app_tl_mute')) + '</button>' : '') +
         '<button class="btn btn--primary btn--sm" type="button" data-tl="end"' + (L.ending ? ' disabled' : '') + '>' + esc(t('app_tl_end')) + '</button></div>') + '</div>';
-    html += '<div class="tl-grid">';
-    html += '<section class="tl-stage" data-state="' + esc(L.state) + '" aria-labelledby="tl-name"><div class="tl-face tutor-art" data-tl-face data-mouth="rest" aria-hidden="true">' + (A.Cast.tutor ? A.Cast.tutor(L.tutor) : '') + '</div>' +
+    var stage = '<section class="tl-stage" data-state="' + esc(L.state) + '" aria-labelledby="tl-name"><div class="tl-face tutor-art" data-tl-face data-mouth="rest" aria-hidden="true">' + (A.Cast.tutor ? A.Cast.tutor(L.tutor) : '') + '</div>' +
       '<h2 class="t-h2 tl-name" id="tl-name">' + esc(name) + '</h2>' +
       '<p class="t-body tl-state" data-tl-state aria-live="polite">' + (L.ended ? '' : (L.state === 'connecting' || L.state === 'ending' ? loader(22) : '') + '<span>' + esc(stateText()) + '</span>') + '</p></section>';
-    html += L.ended ? summaryHtml() : '<section class="card tl-captions" aria-labelledby="tl-cap-h"><h2 class="t-h3" id="tl-cap-h">' + esc(t('app_tl_captions_h')) + '</h2><div class="ms-msgs tl-lines" data-tl-lines aria-live="polite"></div></section>';
-    html += '</div>';
+    var board = '<section class="tu-board tl-board" aria-labelledby="tl-board-h"><h2 class="sr" id="tl-board-h">' + esc(t('app_tu_board_h')) + '</h2><div data-tl-board>' + boardHtml() + '</div></section>';
+    html += '<div class="tl-grid">' + board + '<div class="tl-side">' + stage +
+      (L.ended ? summaryHtml() : '<section class="card tl-captions" aria-labelledby="tl-cap-h"><h2 class="t-h3" id="tl-cap-h">' + esc(t('app_tl_captions_h')) + '</h2><div class="ms-msgs tl-lines" data-tl-lines aria-live="polite"></div></section>') + '</div></div>';
     if (L.sample) html += '<p class="t-tiny" style="margin-top:12px">' + esc(t('app_tu_sample')) + '</p>';
     root.innerHTML = html;
+    L.newOps = 0;
+    if (L.ex) L.ex.after(root.querySelector('[data-tl-ex]'));
     if (!L.ended) captions();
     var face = root.querySelector('[data-tl-face]');
     if (face && L.an && window.AlimunLipsync && !L.ended) { if (L.unfollow) L.unfollow(); L.unfollow = window.AlimunLipsync.followAnalyser(L.an, face); }
@@ -350,12 +504,26 @@
     if (bound) return; bound = true;
     document.addEventListener('click', function (e) {
       if (!root || !root.contains(e.target)) return;
+      var exEl = e.target.closest('[data-tl-ex]');
+      if (exEl && L && L.ex) {
+        if (EX().swallowClick && EX().swallowClick()) { e.preventDefault(); return; }
+        var a = e.target.closest('[data-act]');
+        if (a && !a.disabled) L.ex.act(a.getAttribute('data-act'), a);
+        return;
+      }
       var b = e.target.closest('[data-tl]');
       if (!b || b.disabled) return;
       var act = b.getAttribute('data-tl');
       if (act === 'end') end();
       else if (act === 'mute') toggleMute();
+      else if (act === 'prec') pronRecord();
+      else if (act === 'pslow') pronSlow();
     });
+    var inEx = function (e) { return root && L && L.ex && root.contains(e.target) && e.target.closest('[data-tl-ex]'); };
+    document.addEventListener('keydown', function (e) { if (inEx(e)) L.ex.keydown(e); });
+    document.addEventListener('input', function (e) { if (inEx(e)) L.ex.input(e.target); });
+    document.addEventListener('change', function (e) { if (inEx(e)) L.ex.change(e.target); });
+    document.addEventListener('pointerdown', function (e) { if (inEx(e)) EX().pointerDown(L.ex, e); });
     /* Leaving the call's page ends the call: the microphone is never left open */
     window.addEventListener('hashchange', function () { if (L && !L.ended && location.hash.indexOf('#/tutor/live') !== 0) end(); });
     window.addEventListener('pagehide', function () { if (L && !L.ended && L.session) { L.ending = true; teardown(); } });

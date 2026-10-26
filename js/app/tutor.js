@@ -325,13 +325,9 @@
       return cls ? '<span class="tu-pw ' + cls + '">' + esc(w.t) + '</span>' : esc(w.t);
     }).join(' ');
   }
-  function pronHtml() {
-    var open = openPron(), at = lastAttempt(), r = at && at.result.pron;
-    if (!open && !r) return '';
-    var said = r ? pronOf(at.result.message) || r.sentence || '' : '', sentence = open ? open.pron : said || (r.words || []).map(function (w) { return w.t; }).join(' ');
-    var mine = r && (!said || said === sentence);
-    var html = '<div class="paper tu-pron" data-tu-pron><h3 class="t-h3">' + esc(t(open ? 'app_tu_pron_h' : 'app_tu_pron_last')) + '</h3>' +
-      '<p class="tu-pron__s"' + ta() + '>' + markedHtml(sentence, mine ? r : null) + '</p>';
+  /* The sentence (its words marked when the attempt was on it), and with an attempt the scores and the sounds that were off */
+  function pronBody(sentence, r, mine) {
+    var html = '<p class="tu-pron__s"' + ta() + '>' + markedHtml(sentence, mine ? r : null) + '</p>';
     if (r) {
       var diff = (r.words || []).filter(function (w) { return w.s === 'diff'; }), missed = (r.words || []).filter(function (w) { return w.s === 'missed'; });
       html += '<div class="tu-pron__scores">' + [['accuracy', 'app_tu_pron_acc'], ['fluency', 'app_tu_pron_flu'], ['completeness', 'app_tu_pron_comp']].map(function (x) {
@@ -342,6 +338,14 @@
         html += '<p class="t-body">' + esc(t('app_tu_pron_sound', { word: '\u2068' + w.t.replace(/[^\p{L}\p{N}'’-]+/gu, '') + '\u2069', sound: '\u2068/' + w.sound + '/\u2069' })) + '</p>';
       });
     }
+    return html;
+  }
+  function pronHtml() {
+    var open = openPron(), at = lastAttempt(), r = at && at.result.pron;
+    if (!open && !r) return '';
+    var said = r ? pronOf(at.result.message) || r.sentence || '' : '', sentence = open ? open.pron : said || (r.words || []).map(function (w) { return w.t; }).join(' ');
+    var mine = r && (!said || said === sentence);
+    var html = '<div class="paper tu-pron" data-tu-pron><h3 class="t-h3">' + esc(t(open ? 'app_tu_pron_h' : 'app_tu_pron_last')) + '</h3>' + pronBody(sentence, r, mine);
     if (open && !S.ended && pronReady()) {
       var label = mine ? 'app_tu_pron_again' : 'app_tu_pron_say';
       html += '<div class="btn-row" style="margin-top:14px"><button class="btn btn--primary btn--sm" type="button" data-tu="pron-rec" data-id="' + esc(open.id) + '" data-label="' + label + '" aria-pressed="false"' + (S.busy ? ' disabled' : '') + '>' + esc(t(label)) + '</button>' +
@@ -394,6 +398,9 @@
     if (o.op === 'title') return '<h3 class="tu-op tu-op--title' + c + '"' + ta() + '>' + md(o.text) + '</h3>';
     if (o.op === 'write') return '<p class="tu-op tu-op--write' + c + '"' + ta() + '>' + md(o.text) + '</p>';
     if (o.op === 'note') return '<p class="tu-op tu-op--note' + c + '" dir="auto">' + md(o.text) + '</p>';
+    if (o.op === 'spell') return '<p class="tu-op tu-op--spell' + c + '"' + ta() + ' aria-label="' + esc(o.text) + '">' + Array.from(String(o.text)).map(function (ch, i) {
+      return ch === ' ' ? '<span class="tu-sp tu-sp--gap" aria-hidden="true"> </span>' : '<span class="tu-sp" style="--i:' + i + '" aria-hidden="true">' + esc(ch) + '</span>';
+    }).join('') + '</p>';
     if (o.op === 'fix') return '<p class="tu-op tu-op--fix' + c + '"' + ta() + '><s>' + esc(o.wrong) + '</s> <span aria-hidden="true">→</span> <b>' + esc(o.right) + '</b></p>';
     if (o.op === 'table') return '<div class="tu-op tu-op--table' + c + '"><table' + ta() + '>' + o.rows.map(function (r, i) {
       return '<tr>' + r.map(function (cell) { return i ? '<td>' + md(cell) + '</td>' : '<th>' + md(cell) + '</th>'; }).join('') + '</tr>';
@@ -542,6 +549,7 @@
       }).join('') + '</div>' : '') + '</section>';
     html += '<section class="tu-board span-5" style="--i:1"><div class="tu-board__ops">' + ((x.board || []).length ? x.board.map(function (o) { return opHtml(o, false); }).join('') : '<p class="tu-op tu-op--empty">' + esc(t('app_tu_board_empty')) + '</p>') + '</div></section>';
     html += '<section class="card span-12" style="--i:2"><h2 class="t-h2">' + esc(t('app_tu_transcript_h')) + '</h2>' + (msgs.length ? '<div class="ms-msgs tu-msgs tu-msgs--past">' + msgs.map(function (m) {
+      if (m.role === 'tutor' && !m.text && !m.exercise && !m.pron) return '';
       if (m.role === 'tutor') return '<div class="ms-msg is-teacher"><div class="ms-bub"' + ta() + '>' + esc(m.text || '') + (m.exercise ? '<br><small>' + esc(t('app_tu_set_ex')) + '</small>' : '') + (m.pron ? '<br><small>' + esc(t('app_tu_pron_set', { sentence: m.pron })) + '</small>' : '') + '</div></div>';
       return '<div class="ms-msg is-me"><div class="ms-bub" dir="auto">' + esc(m.result ? resultText(m.result) : m.text || '') + '</div></div>';
     }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_transcript_gone')) + '</p>') + '</section>';
@@ -755,5 +763,7 @@
     });
   }
 
-  window.AlimunTutor = { mount: mount };
+  /* Shared with the live call (js/app/tutor-live.js): the board's lines, the pronunciation card's body, the recording helpers */
+  window.AlimunTutor = { mount: mount, kit: { opHtml: function (o, isNew) { return opHtml(o, isNew); }, pronBody: function (s, r, mine) { return pronBody(s, r, mine); },
+    toWav: toWav, blobBase64: blobBase64, recMime: recMime, ta: function () { return ta(); } } };
 })();

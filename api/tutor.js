@@ -47,6 +47,14 @@
  *    POST ?action=live-tick  { session, lines } — every 30 seconds of the call: charges the time since the last tick
  *                         (at most 45 seconds), stores what was said (Google's transcripts) and answers { seconds }, or
  *                         { stop: 'no_time' | 'budget' } to end the call.
+ *  Part 7 B: the board in the call. Google's function calls go through the server before they reach the board:
+ *    POST ?action=live-board  { session, calls: [{ id, name, args }] } — board_write, set_exercise, say_this checked
+ *                         like the written tutor's replies, stored as tutor messages, the board updated; answers
+ *                         { results, messages, board }. No time of its own (the ticks count the call).
+ *    POST ?action=live-answer { session, answer: { message, results } } — the student's results on a board exercise,
+ *                         stored as their turn; answers { tell }, the line the browser passes on to the tutor.
+ *    POST ?action=pronounce   with live: true — scores the sentence of a say_this card and answers { mine, tell }
+ *                         without a written reply and without charging (the call's ticks count the time).
  *    POST ?action=end     { session } — ends it: the summary, the words and the
  *                         tutor's memory are written.
  *    POST ?action=forget  — deletes what the tutor remembers and every session.
@@ -315,6 +323,21 @@ async function handleStart(req, res, supabase, user) {
 
 // ── turn ────────────────────────────────────────────────────
 
+/** The student's results on the exercise of one of the session's tutor messages, as stored and told to the tutor, or null */
+async function exerciseResult(supabase, session, answer) {
+  const { data: ex } = UUID_RE.test(String(answer.message || '')) ? await supabase.from('tutor_messages').select('id, exercise')
+    .eq('id', answer.message).eq('session_id', session.id).eq('role', 'tutor').maybeSingle() : { data: null };
+  if (!ex || !ex.exercise) return null;
+  const results = Array.isArray(answer.results) ? answer.results.slice(0, 10) : [];
+  const items = ex.exercise.items || ex.exercise.pairs || [];
+  const lines = items.map((it, i) => {
+    const r = results.find((x) => x && Number(x.i) === i);
+    const what = Array.isArray(it) ? it[0] + ' = ' + it[1] : it.q || it.s || (Array.isArray(it.o) ? it.o.join(' / ') : it.a) || '';
+    return `"${clean(what, 120)}": ${!r ? 'not answered' : r.ok ? 'right first time' : 'wrong at first' + (r.given ? ' (wrote "' + clean(r.given, 80) + '")' : '')}.`;
+  });
+  return { message: ex.id, right: results.filter((x) => x && x.ok).length, total: items.length, lines };
+}
+
 async function handleTurn(req, res, supabase, user) {
   if (!brain.configured()) return res.status(501).json({ error: 'The tutor is not configured', reason: 'not_configured' });
   const body = parseBody(req) || {};
@@ -332,17 +355,8 @@ async function handleTurn(req, res, supabase, user) {
   // What the student sends: a message, or their results on the exercise of one of the tutor's messages
   const row = { session_id: session.id, student_id: profile.id, role: 'student' };
   if (body.answer && typeof body.answer === 'object') {
-    const { data: ex } = UUID_RE.test(String(body.answer.message || '')) ? await supabase.from('tutor_messages').select('id, exercise')
-      .eq('id', body.answer.message).eq('session_id', session.id).eq('role', 'tutor').maybeSingle() : { data: null };
-    if (!ex || !ex.exercise) return res.status(400).json({ error: 'No such exercise' });
-    const results = Array.isArray(body.answer.results) ? body.answer.results : [];
-    const items = ex.exercise.items || ex.exercise.pairs || [];
-    const lines = items.map((it, i) => {
-      const r = results.find((x) => x && Number(x.i) === i);
-      const what = Array.isArray(it) ? it[0] + ' = ' + it[1] : it.q || it.s || (Array.isArray(it.o) ? it.o.join(' / ') : it.a) || '';
-      return `"${clean(what, 120)}": ${!r ? 'not answered' : r.ok ? 'right first time' : 'wrong at first' + (r.given ? ' (wrote "' + clean(r.given, 80) + '")' : '')}.`;
-    });
-    row.result = { message: ex.id, right: results.filter((x) => x && x.ok).length, total: items.length, lines };
+    row.result = await exerciseResult(supabase, session, body.answer);
+    if (!row.result) return res.status(400).json({ error: 'No such exercise' });
   } else if (body.audio != null) {
     // Said aloud: the recording becomes text here and is dropped; it never reaches the database
     if (!voice.listenConfigured()) return res.status(501).json({ error: 'Listening is not configured', reason: 'listen_off' });
@@ -474,8 +488,11 @@ async function handlePronounce(req, res, supabase, user) {
   }
   // The sentence comes from the database: the session's latest tutor message, which must have set one
   if (!UUID_RE.test(String(body.message || ''))) return res.status(400).json({ error: 'Invalid message' });
-  const { data: latest } = await supabase.from('tutor_messages').select('id, pron').eq('session_id', session.id).eq('role', 'tutor')
-    .order('created_at', { ascending: false }).limit(1);
+  // In a live call the transcript lines come after the card, so the open sentence is the latest one set
+  const liveMode = body.live === true && session.mode === 'live';
+  let q = supabase.from('tutor_messages').select('id, pron').eq('session_id', session.id).eq('role', 'tutor');
+  if (liveMode) q = q.not('pron', 'is', null);
+  const { data: latest } = await q.order('created_at', { ascending: false }).limit(1);
   const target = latest && latest[0];
   if (!target || target.id !== body.message || !target.pron) return res.status(409).json({ error: 'This sentence is no longer open', reason: 'pron_closed' });
   const a = pron.readWav(body);
@@ -492,6 +509,13 @@ async function handlePronounce(req, res, supabase, user) {
     return res.status(502).json({ error: 'Your pronunciation could not be scored. Please try again.', reason: 'pron' });
   }
 
+  if (liveMode) {
+    const { data: savedLive, error: lErr } = await supabase.from('tutor_messages').insert({
+      session_id: session.id, student_id: profile.id, role: 'student', text: clean(scored.heard, MAX_TEXT), spoken: true, result: { message: target.id, pron: scored },
+    }).select(MSG_COLS).single();
+    if (lErr) return res.status(500).json({ error: 'Could not save your attempt' });
+    return res.status(200).json({ mine: outMessage(savedLive), tell: pron.forTutor(scored), seconds: await balance(supabase, profile.id) });
+  }
   // The time since the previous turn, within 5 to 90 seconds, like any turn
   const gap = Math.round((Date.now() - Date.parse(session.last_turn_at)) / 1000);
   const { data: ch, error: cErr } = await supabase.rpc('tutor_charge', { p_student: profile.id, p_seconds: Math.max(MIN_CHARGE, Math.min(MAX_CHARGE, gap)), p_session: session.id });
@@ -606,8 +630,9 @@ async function handleLiveStart(req, res, supabase, user) {
     await liveCost(supabase, user.id, created ? MIN_CHARGE : Math.max(charged, 1));
     const history = created ? '' : (await messagesOf(supabase, session.id, 12)).map((m) => (m.role === 'tutor' ? 'Tutor: ' : 'Student: ') +
       clean(m.result && m.result.pron ? pron.forTutor(m.result.pron) : m.result && m.result.lines ? m.result.lines.join(' ') : m.text, 400)).join('\n');
-    const instructions = live.instructionsFor(session, await brain.brief(supabase, profile), tutor, history);
-    const pass = await live.token({ instructions, tutor, handle: live.cleanHandle(body.handle), seconds: remaining + 60 });
+    const pronDrill = pron.configured();
+    const instructions = live.instructionsFor(session, await brain.brief(supabase, profile), tutor, history, pronDrill);
+    const pass = await live.token({ instructions, tutor, handle: live.cleanHandle(body.handle), seconds: remaining + 60, pronDrill });
     await supabase.from('tutor_sessions').update({
       tutor, mode: 'live', live_until: pass.expires, last_turn_at: new Date().toISOString(), seconds_used: (session.seconds_used || 0) + charged,
     }).eq('id', session.id);
@@ -664,6 +689,65 @@ async function handleLiveTick(req, res, supabase, user) {
   return res.status(200).json({ seconds: remaining });
 }
 
+/** An open live session of this student for board and answer calls, or a response already sent */
+async function liveSession(req, res, supabase, user) {
+  const body = parseBody(req) || {};
+  let profile;
+  try { profile = await studentOf(supabase, user); } catch (e) { res.status(500).json({ error: 'Could not load your profile' }); return null; }
+  if (!profile) { res.status(404).json({ error: 'No student profile' }); return null; }
+  if (tooFast(user.id)) { res.status(429).json({ error: 'Too many requests. Please wait a moment.' }); return null; }
+  const session = await sessionOf(supabase, profile.id, body.session);
+  if (!session) { res.status(404).json({ error: 'Session not found' }); return null; }
+  if (session.ended_at || !session.live_until || Date.now() > Date.parse(session.live_until) + 60000) { res.status(409).json({ error: 'The live call has ended.', reason: 'ended' }); return null; }
+  return { body, profile, session };
+}
+
+async function handleLiveBoard(req, res, supabase, user) {
+  const ctx = await liveSession(req, res, supabase, user);
+  if (!ctx) return;
+  const { body, profile, session } = ctx;
+  const calls = (Array.isArray(body.calls) ? body.calls : []).slice(0, 4);
+  if (!calls.length) return res.status(400).json({ error: 'No board calls' });
+  const results = [], messages = [];
+  let board = session.board || [];
+  for (const c of calls) {
+    const id = String(c && c.id || '').slice(0, 100), name = String(c && c.name || ''), args = c && typeof c.args === 'object' && c.args ? c.args : {};
+    let row = null, error = null;
+    if (name === 'board_write') {
+      const ops = brain.cleanBoard(args.ops);
+      if (ops.length) row = { board: ops }; else error = 'Nothing could be written: use the operations as described.';
+    } else if (name === 'set_exercise') {
+      const ex = brain.cleanExercise(live.exerciseOf(args));
+      if (ex) row = { board: [], exercise: ex }; else error = 'The exercise did not pass the checks: 3 to 5 items in the format described, with the right answers.';
+    } else if (name === 'say_this') {
+      const sentence = pron.configured() ? pron.cleanSentence(args.sentence) : '';
+      if (sentence) row = { board: [], pron: sentence }; else error = pron.configured() ? 'Use one sentence of at most 15 words, with letters and no markup.' : 'Pronunciation scoring is not available.';
+    } else error = 'Unknown tool.';
+    if (row) {
+      const { data: msg, error: mErr } = await supabase.from('tutor_messages').insert(Object.assign({ session_id: session.id, student_id: profile.id, role: 'tutor', text: null }, row)).select(MSG_COLS).single();
+      if (mErr) { results.push({ id, name, ok: false, error: 'Could not save it.' }); continue; }
+      board = brain.applyBoard(board, row.board || []);
+      messages.push(outMessage(msg));
+      results.push({ id, name, ok: true });
+    } else results.push({ id, name, ok: false, error });
+  }
+  if (messages.length) await supabase.from('tutor_sessions').update({ board }).eq('id', session.id);
+  return res.status(200).json({ results, messages, board });
+}
+
+async function handleLiveAnswer(req, res, supabase, user) {
+  const ctx = await liveSession(req, res, supabase, user);
+  if (!ctx) return;
+  const { body, profile, session } = ctx;
+  if (!body.answer || typeof body.answer !== 'object') return res.status(400).json({ error: 'No answer' });
+  const result = await exerciseResult(supabase, session, body.answer);
+  if (!result) return res.status(400).json({ error: 'No such exercise' });
+  const { data: saved, error } = await supabase.from('tutor_messages').insert({ session_id: session.id, student_id: profile.id, role: 'student', result }).select(MSG_COLS).single();
+  if (error) return res.status(500).json({ error: 'Could not save your answers' });
+  await supabase.from('tutor_sessions').update({ turns: session.turns + 1 }).eq('id', session.id);
+  return res.status(200).json({ mine: outMessage(saved), tell: `The student finished the exercise on the board: ${result.right} of ${result.total} right first time. ` + result.lines.join(' ') });
+}
+
 // ── forgetting ──────────────────────────────────────────────
 
 async function handleForget(req, res, supabase, user) {
@@ -697,7 +781,7 @@ module.exports = async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return handleAdminGrant(req, res, supabase, user);
   }
-  const POST = { start: handleStart, turn: handleTurn, voice: handleVoice, pronounce: handlePronounce, 'live-start': handleLiveStart, 'live-tick': handleLiveTick, end: handleEnd, forget: handleForget };
+  const POST = { start: handleStart, turn: handleTurn, voice: handleVoice, pronounce: handlePronounce, 'live-start': handleLiveStart, 'live-tick': handleLiveTick, 'live-board': handleLiveBoard, 'live-answer': handleLiveAnswer, end: handleEnd, forget: handleForget };
   if (POST[action]) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return POST[action](req, res, supabase, user);
