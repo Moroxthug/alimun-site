@@ -149,7 +149,7 @@ async function teacher() {
   $('side-img').src = 'images/pexels-teacher-online-6267032.jpg';
   const { data: tp, error } = await supabase.from('teacher_profiles').select('id, status').eq('user_id', user.id).maybeSingle();
   if (error) return fail();
-  if (tp && tp.status === 'approved') { location.replace(base + 'teacher-dashboard.html'); return; }
+  if (tp && tp.status === 'approved') { location.replace('/app/teach'); return; }
   if (!tp) {
     const app = meta.teacher_application;
     if (!app || !app.language || !app.specialty) { location.replace(base + 'signup.html?role=teacher'); return; }

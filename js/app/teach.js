@@ -342,8 +342,7 @@
         '<div class="stage" style="--i:0;background:' + TINTS[r.tint] + '"><div class="bub ' + r.kind + '">' + esc(t(r.bub)) + '</div>' + Cast.drawing(r.art) + '</div>' +
         '<div class="card" style="--i:1">' + spot + '<h2 class="t-h2">' + esc(t('app_t_soon_h', { part: r.part })) + '</h2>' +
           '<p class="t-body">' + esc(t('app_t_soon_p')) + '</p>' +
-          '<div class="btn-row"><a class="btn btn--primary" href="#/today">' + esc(t('app_t_soon_back')) + '</a>' +
-          (mode === 'real' ? '<a class="btn btn--quiet" href="/teacher-dashboard">' + esc(t('app_t_soon_old')) + '</a>' : '') + '</div></div>' +
+          '<div class="btn-row"><a class="btn btn--primary" href="#/today">' + esc(t('app_t_soon_back')) + '</a></div></div>' +
       '</div>';
   }
 
