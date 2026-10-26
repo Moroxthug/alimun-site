@@ -173,19 +173,20 @@
     return html + sampleLine() + '</div>';
   }
   /* Tutor time (docs/AI_TUTOR_PLAN.md, part 1): the stored balance, its latest changes, and adding or removing minutes
-     (bought-or-added time, which never expires) through /api/tutor?action=admin-grant */
-  var LEDGER = { free_grant: 'Free minutes given', plan_month: 'Plan minutes for the month', plan_change: 'Plan changed', expire: 'Last month’s plan minutes ended',
+     (added time, which never expires; bought time expires 12 months after the purchase, part 6) through /api/tutor?action=admin-grant */
+  var LEDGER = { free_grant: 'Free minutes given', plan_month: 'Plan minutes for the month', plan_change: 'Plan changed', expire: 'Minutes ended',
     use: 'Used with the tutor', purchase: 'Bought', refund: 'Refunded', admin: 'Changed by an admin' };
   var BUCKET = { free: 'free minutes', plan: 'plan minutes', credit: 'added or bought' };
   function mins(sec) { var m = Math.round(Math.abs(sec || 0) / 6) / 10; return (sec < 0 ? '−' : '') + m + ' min'; }
+  function ledgerName(l) { return l.reason === 'expire' ? (l.bucket === 'credit' ? 'Bought minutes expired after 12 months' : 'Last month’s plan minutes ended') : LEDGER[l.reason] || l.reason; }
   function tutorCard(id, f) {
     var tt = f.tutor, log = f.tutorLog || [];
     var html = '<section class="card span-6" style="--i:5" aria-labelledby="h-tutor"><h2 class="t-h2" id="h-tutor">Tutor time</h2>';
     if (!tt) html += '<p class="t-body" style="margin-top:8px">They have not opened the tutor yet; their free 10 minutes are given the first time they do.</p>';
     else html += '<div class="tt-week">' + row(mins(tt.free_seconds + tt.plan_seconds + tt.credit_seconds), 'Left in all') + row(mins(tt.free_seconds), 'Free minutes') +
-      row(mins(tt.plan_seconds), 'Plan minutes for ' + (tt.plan_period || 'this month') + ', of ' + mins(tt.plan_granted)) + row(mins(tt.credit_seconds), 'Added or bought, never expire') + '</div>';
+      row(mins(tt.plan_seconds), 'Plan minutes for ' + (tt.plan_period || 'this month') + ', of ' + mins(tt.plan_granted)) + row(mins(tt.credit_seconds), 'Added or bought (bought minutes expire after 12 months)') + '</div>';
     if (log.length) html += '<h3 class="t-h3" style="margin-top:16px">Latest changes</h3><div class="tt-week">' + log.map(function (l) {
-      return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc((l.seconds > 0 ? '+' : '') + mins(l.seconds)) + '</span><span><b>' + esc(LEDGER[l.reason] || l.reason) + '</b><small>' + esc((BUCKET[l.bucket] || l.bucket) + ', ' + day(l.created_at) + (l.note ? ', ' + l.note : '')) + '</small></span></div>';
+      return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc((l.seconds > 0 ? '+' : '') + mins(l.seconds)) + '</span><span><b>' + esc(ledgerName(l)) + '</b><small>' + esc((BUCKET[l.bucket] || l.bucket) + ', ' + day(l.created_at) + (l.note ? ', ' + l.note : '')) + '</small></span></div>';
     }).join('') + '</div>';
     html += '<form class="st-form" style="max-width:none;margin-top:16px" data-tgrant="' + esc(id) + '">' +
       '<div class="st-row">' + field('Minutes', '<input class="st-in" type="number" name="minutes" min="-600" max="600" step="1" required>', 'Up to 600. A negative number removes added or bought minutes, never below zero.') +

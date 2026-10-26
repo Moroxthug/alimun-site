@@ -1,7 +1,8 @@
 /* Alimun app: flashcards (docs/DASHBOARD_PLAN.md, step 6).
    Cards are words to remember: from the course book (the vocabulary of each unit reached, taken from its matching
    exercises), words with pictures (the third cast's objects), the words teachers add to class notes (copied in by the
-   class dashboard) and the student's own cards. Spaced review in vocab_reviews, the same schedule as the class
+   class dashboard), the words of tutor sessions (vocab_reviews.source "tutor", marked "From your tutor") and the
+   student's own cards. Spaced review in vocab_reviews, the same schedule as the class
    dashboard: box 0 to 5, next review after 1, 1, 3, 7, 14 and 30 days; a miss sends the card back to box 0 and it
    comes back once more in the same session. Reviews change form with the box: turn the card over (new words), choose
    the word, then write it. Signed out or with sample data, the cards live in this browser ("alimun-cards").
@@ -136,7 +137,8 @@
         '<input class="mine__find" type="search" placeholder="' + esc(t('app_fc_find')) + '" aria-label="' + esc(t('app_fc_find')) + '" data-find></div><ul class="mine__list">' +
         list.map(function (c) {
           var aside = c.due_on >= ASIDE;
-          return '<li data-word="' + esc(c.word_key) + '"' + (aside ? ' class="is-aside"' : '') + '><div><b' + info.ta + '>' + esc(c.word) + '</b>' + (c.definition ? '<span>' + esc(c.definition) + '</span>' : '') + '</div>' +
+          return '<li data-word="' + esc(c.word_key) + '"' + (aside ? ' class="is-aside"' : '') + '><div><b' + info.ta + '>' + esc(c.word) + '</b>' + (c.definition ? '<span>' + esc(c.definition) + '</span>' : '') +
+            (c.source === 'tutor' ? '<span class="t-tiny mine__from">' + esc(t('app_fc_from_tutor')) + '</span>' : '') + '</div>' +
             '<span class="mine__box" aria-label="' + esc(t('app_fc_level', { n: c.box || 0 })) + '">' + [0, 1, 2, 3, 4].map(function (k) { return '<i' + (k < (c.box || 0) ? ' class="on"' : '') + '></i>'; }).join('') + '</span>' +
             '<button class="linkish" type="button" data-aside="' + esc(c.id) + '">' + esc(t(aside ? 'app_fc_back' : 'app_fc_aside')) + '</button></li>';
         }).join('') + '</ul></section>';

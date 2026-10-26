@@ -138,3 +138,10 @@ Started 26 Oct 2026. Tick each item when it has been tried with real accounts.
 - [ ] Past sessions: the call's transcript shows the lines, the exercises set and the sentences to say.
 - [ ] Stay silent: after about 1 minute 45 seconds "Are you still there?" appears; "I'm still here" keeps the call; 2 minutes of silence hang up with the end screen, and the time stops counting.
 
+## AI tutor, part 6 (paid time; needs the two tutor prices in Stripe and STRIPE_PRICE_TUTOR_30 and STRIPE_PRICE_TUTOR_120 in Vercel)
+- [ ] A student with time left: the Tutor page shows no offer to buy anything.
+- [ ] A student with no time left (an admin can remove their minutes on the student's file): the Tutor page shows "Your tutor time is used up", when the plan's minutes come back (on a plan) or the plans with their monthly minutes (free plan), and the two packs with Stripe's prices.
+- [ ] Buy the 30-minute pack with a real card: Stripe Checkout opens; after paying you are back on the Tutor with "Thank you for your purchase", then within a few seconds "We added 30 minutes to your tutor time", and the page shows them with the date they last until.
+- [ ] Admin, the student's file: the ledger shows "Bought" with "30 minutes bought". Stripe, Developers, Webhooks: the event was answered 200; "Resend" it: the minutes are not added twice.
+- [ ] Cancel on Stripe's page: back on the Tutor with "cancelled", nothing added.
+- [ ] Run out of time during a written session and during a call: the end of the session shows the same offer.

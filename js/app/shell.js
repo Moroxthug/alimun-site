@@ -356,6 +356,32 @@
     '</section>';
   }
 
+  /* AI tutor, part 5: the time left (the stored balance) and what the tutor suggested last time */
+  function tutorCard(d) {
+    var x = d.tutor;
+    if (!x) return '';
+    var left = new Intl.NumberFormat(locale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(Math.floor((x.seconds || 0) / 60));
+    var line = x.next ? t('app_home_tu_next', { next: x.next }) : x.last && x.last.title ? t('app_home_tu_last', { title: x.last.title }) : t('app_home_tu_none');
+    return '<section class="card card--mint span-' + (d.lesson ? 7 : 12) + '" style="--i:9" aria-labelledby="h-tutor">' +
+      '<div class="card__row card__row--split"><div><h2 class="t-h2" id="h-tutor">' + esc(t('app_home_tu_h')) + '</h2>' +
+      '<p class="t-small" style="margin-top:10px">' + esc(t('app_home_tu_left')) + '</p><div class="t-num" style="margin-top:6px">' + esc(left) + '</div>' +
+      '<p class="t-body" style="margin-top:12px" dir="auto">' + esc(line) + '</p>' +
+      '<div class="btn-row" style="margin-top:18px"><a class="btn btn--primary btn--sm" href="#/tutor">' + esc(t('app_home_tu_go')) + icon('arrow') + '</a>' +
+      (x.last && x.last.id ? '<a class="btn btn--ghost btn--sm" href="#/tutor/past/' + esc(x.last.id) + '">' + esc(t('app_home_tu_past')) + '</a>' : '') + '</div></div>' +
+      '<div class="card__art">' + Cast.drawing(buddyOf(d)) + '</div></div></section>';
+  }
+  /* Part 5b: once the teacher has published the class notes, until the class's next lesson */
+  function lessonCard(d) {
+    var l = d.lesson;
+    if (!l) return '';
+    var today = new Date(l.at).toDateString() === new Date().toDateString();
+    var code = (window.AlimunData && window.AlimunData.langCode(d.profile.language)) || 'en';
+    return '<section class="card card--sun span-5" style="--i:10" aria-labelledby="h-lesson"><h2 class="t-h2" id="h-lesson">' + esc(t(today ? 'app_home_lesson_today_h' : 'app_home_lesson_h')) + '</h2>' +
+      (l.grammar ? '<p class="t-body" style="margin-top:10px"><b lang="' + esc(code) + '">' + esc(l.grammar) + '</b></p>' : '') +
+      '<p class="t-small" style="margin-top:8px">' + esc(t('app_home_lesson_p', { date: fmt(l.at, { weekday: 'long', day: 'numeric', month: 'long' }) })) + '</p>' +
+      '<div class="btn-row" style="margin-top:16px"><a class="btn btn--primary btn--sm" href="#/tutor/lesson/' + esc(l.id) + '">' + esc(t('app_lesson_go')) + '</a></div></section>';
+  }
+
   function planCard(d) {
     var tier = d.profile.tier;
     if (!UNPAID[tier]) return '';
@@ -393,6 +419,8 @@
         todayPlan(d) +
         streakCard(d) +
         focusCard(d) +
+        tutorCard(d) +
+        lessonCard(d) +
         planCard(d) +
       '</div>';
   }
@@ -629,10 +657,13 @@
 
   /* Coming back from Stripe (step 16): ?checkout=success|cancelled|credit, with ?join=<class> when a class needed the
      plan. The address is cleaned, the class opened, and a paid plan that the payment webhook has not recorded yet is
-     checked again for half a minute. */
+     checked again for half a minute. ?checkout=tutor&session_id=<checkout> (tutor time, docs/AI_TUTOR_PLAN.md part 6):
+     the minutes are looked for in the student's own time ledger until the webhook has added them. */
+  var stripeCheckout = null;
   function fromStripe() {
     var q = new URLSearchParams(location.search), c = q.get('checkout'), join = q.get('join');
-    if (!/^(success|cancelled|credit)$/.test(c || '')) return null;
+    if (!/^(success|cancelled|credit|tutor)$/.test(c || '')) return null;
+    stripeCheckout = /^cs_(live|test)_[A-Za-z0-9]{10,200}$/.test(q.get('session_id') || '') ? q.get('session_id') : null;
     ['checkout', 'join', 'session_id', 'tier'].forEach(function (k) { q.delete(k); });
     var hash = c === 'success' && /^[0-9a-f-]{36}$/i.test(join || '') ? '#/classes/find/' + join : location.hash;
     history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : '') + hash);
@@ -642,6 +673,7 @@
     var show = function (text) { var box = app.querySelector('[data-appnote]'); if (box) box.innerHTML = '<p class="t-body cl-flash">' + esc(text) + '</p>'; };
     if (c === 'cancelled') return show(t('app_pl_back_cancelled'));
     if (c === 'credit') return show(t('app_pl_back_credit'));
+    if (c === 'tutor') return tutorBack(show);
     if (mode !== 'real' || D.profile.paying) return show(t('app_pl_back_success'));
     show(t('app_pl_back_success') + ' ' + t('app_pl_confirming'));
     var tries = 0;
@@ -652,6 +684,23 @@
           else if (++tries < 8) again();
         }, function () { if (++tries < 8) again(); });
       }, 4000);
+    })();
+  }
+
+  function tutorBack(show) {
+    if (mode !== 'real' || !stripeCheckout) return show(t('app_tu_back_bought'));
+    show(t('app_tu_back_bought') + ' ' + t('app_tu_back_adding'));
+    var tries = 0;
+    (function again() {
+      setTimeout(function () {
+        window.AlimunData.tutorPurchase(stripeCheckout).then(function (row) {
+          if (row) {
+            if (location.hash.indexOf('#/tutor') === 0) render(routeFromHash(), false);
+            show(t('app_tu_back_added', { time: new Intl.NumberFormat(locale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(Math.round(row.seconds / 60)) }));
+          } else if (++tries < 10) again();
+          else show(t('app_tu_back_bought') + ' ' + t('app_tu_back_slow'));
+        }, function () { if (++tries < 10) again(); });
+      }, 3000);
     })();
   }
 

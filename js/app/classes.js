@@ -57,8 +57,8 @@
       : [[{ word: 'landlord', definition: 'the owner of a flat you rent' }, { word: 'deposit', definition: 'money you pay before you move in' }], [{ word: 'to apply for', definition: 'to ask formally for a job' }, { word: 'shortlist', definition: 'the final list of candidates' }]];
     var sessions = [], notes = [];
     [-13, -11, -6, -4, 1, 3, 8, 10, 15, 17].forEach(function (n, i) { sessions.push({ id: 's' + i, cohort_id: 'c1', scheduled_at: day(n), status: n < 0 ? 'completed' : 'scheduled' }); });
-    notes.push({ id: 'n1', session_id: 's3', vocabulary: words[1], grammar_focus: de ? 'Nebensätze mit weil und obwohl' : 'Linking ideas: although and because', homework: de ? 'Schreiben Sie eine kurze Bewerbung (80 Wörter).' : 'Write a short job application (80 words).', due_date: day(2).slice(0, 10), teacher_note: de ? 'Sehr gute Fragen heute. Achten Sie auf das Verb am Ende.' : 'Great questions today. Watch the word order after although.', pdf_url: null, published_at: day(-4), sessions: { scheduled_at: day(-4) } });
-    notes.push({ id: 'n2', session_id: 's2', vocabulary: words[0], grammar_focus: de ? 'Wohnungssuche: Fragen stellen' : 'Asking about a flat', homework: null, due_date: null, teacher_note: null, exercises: de ? 'Rollenspiel: ein Anruf beim Vermieter.' : 'Role play: calling a landlord.', pdf_url: null, published_at: day(-6), sessions: { scheduled_at: day(-6) } });
+    notes.push({ id: 'n1', session_id: 's3', vocabulary: words[1], grammar_focus: de ? 'Nebensätze mit weil und obwohl' : 'Linking ideas: although and because', homework: de ? 'Schreiben Sie eine kurze Bewerbung (80 Wörter).' : 'Write a short job application (80 words).', due_date: day(2).slice(0, 10), teacher_note: de ? 'Sehr gute Fragen heute. Achten Sie auf das Verb am Ende.' : 'Great questions today. Watch the word order after although.', pdf_url: null, published_at: day(-4), sessions: { scheduled_at: day(-4), cohort_id: 'c1' } });
+    notes.push({ id: 'n2', session_id: 's2', vocabulary: words[0], grammar_focus: de ? 'Wohnungssuche: Fragen stellen' : 'Asking about a flat', homework: null, due_date: null, teacher_note: null, exercises: de ? 'Rollenspiel: ein Anruf beim Vermieter.' : 'Role play: calling a landlord.', pdf_url: null, published_at: day(-6), sessions: { scheduled_at: day(-6), cohort_id: 'c1' } });
     return {
       cohorts: [{ id: 'c1', language: A.data().profile.language || 'German', level: A.data().profile.level || 'B1', tier: 'intensive', teacher_id: 't1' }],
       sessions: sessions, notes: notes,
@@ -305,10 +305,13 @@
     var html = '<section class="card span-12 cl-notes" style="--i:5" aria-labelledby="h-notes"><h2 class="t-h2" id="h-notes">' + esc(t('app_cl_notes_h')) + '</h2>';
     if (!list.length) return html + '<p class="t-body" style="margin-top:8px">' + esc(t('app_cl_notes_none')) + '</p></section>';
     html += '<p class="t-body" style="margin-top:6px">' + esc(t('app_cl_notes_p')) + '</p>';
+    /* AI tutor, part 5b: the latest notes can be gone over with the tutor until the class's next lesson */
+    var review = list.filter(function (n) { return window.AlimunData.lessonOpen(n, C.sessions); })[0];
     return html + list.map(function (n, i) {
       var at = n.sessions && n.sessions.scheduled_at || n.published_at, pdf = n.pdf_url && safeUrl(n.pdf_url);
       var words = Array.isArray(n.vocabulary) ? n.vocabulary.filter(function (v) { return v && v.word; }) : [];
       return '<details class="cl-note"' + (i === 0 ? ' open' : '') + '><summary><b>' + esc(fmt(at, { weekday: 'long', day: 'numeric', month: 'long' })) + '</b>' + (n.grammar_focus ? '<span' + ta + '>' + esc(n.grammar_focus) + '</span>' : '') + '</summary><div class="cl-note__body">' +
+        (review === n ? '<div class="cl-note__tutor"><p class="t-body">' + esc(t('app_cl_lesson_p')) + '</p><a class="btn btn--primary btn--sm" href="#/tutor/lesson/' + esc(n.id) + '">' + esc(t('app_lesson_go')) + '</a></div>' : '') +
         (n.teacher_note ? '<div class="cl-note__teacher"><h4>' + esc(t('app_cl_note_teacher')) + '</h4><p' + ta + '>' + esc(n.teacher_note) + '</p></div>' : '') +
         (n.exercises ? '<div><h4>' + esc(t('app_cl_note_ex')) + '</h4><p' + ta + '>' + esc(n.exercises) + '</p></div>' : '') +
         (n.homework ? '<div><h4>' + esc(t('app_cl_note_hw')) + '</h4><p' + ta + '>' + esc(n.homework) + (n.due_date ? ' <span class="t-small">' + esc(t('app_cl_due', { date: new Intl.DateTimeFormat(A.locale, { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(n.due_date + 'T12:00:00Z')) })) + '</span>' : '') + '</p></div>' : '') +

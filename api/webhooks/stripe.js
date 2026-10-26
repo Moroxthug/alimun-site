@@ -4,7 +4,8 @@
  *  Vercel Serverless Function (Node.js runtime)
  *
  *  Stripe webhook handler — the ONLY writer of billing state
- *  (student_profiles.tier / stripe_* columns, session_credits).
+ *  (student_profiles.tier / stripe_* columns, session_credits,
+ *  bought tutor time through public.tutor_add_credit).
  *
  *  - Verifies the event signature with STRIPE_WEBHOOK_SECRET
  *  - Idempotent via webhook_logs.event_id (unique)
@@ -24,6 +25,7 @@ if (!STRIPE_KEY) {
 
 const stripe = require('stripe')(STRIPE_KEY || 'dummy_key_for_load_validation');
 const { createClient } = require('@supabase/supabase-js');
+const tutorPacks = require('../_lib/tutor-packs.js');
 
 const env = (k) => process.env[k] || '';
 
@@ -487,8 +489,8 @@ async function handleSubscriptionCheckout(session, metadata, supabaseUserId, sup
 }
 
 /**
- * One-time purchases: founding member fee, 1:1 session credit, certificate.
- * Writes are keyed on stripe_session_id (unique), so completed +
+ * One-time purchases: founding member fee, 1:1 session credit, certificate,
+ * tutor time. Writes are keyed on stripe_session_id (unique), so completed +
  * async_payment_succeeded or a redelivery grant at most once (APIP-02).
  */
 async function handleOneTimeCheckout(session, metadata, supabaseUserId, supabase) {
@@ -543,6 +545,26 @@ async function handleOneTimeCheckout(session, metadata, supabaseUserId, supabase
       }, { onConflict: 'stripe_session_id', ignoreDuplicates: true });
       if (certError) throw new Error(`Failed to record certificate purchase: ${certError.message}`);
       console.warn(`[Alimun Webhook] Certificate purchased by ${student.id} — manual fulfilment required`);
+      break;
+    }
+    case 'tutor_time': {
+      // Tutor time (docs/AI_TUTOR_PLAN.md, part 6): the minutes come from the pack's price as Stripe has it, never
+      // from metadata the checkout carried. tutor_add_credit adds nothing for a checkout id it has seen, and the
+      // minutes bought expire after 12 months (supabase/migrations/202610271400_tutor_paid_time.sql).
+      const items = await stripe.checkout.sessions.listLineItems(session.id, { limit: 10 });
+      let minutes = 0;
+      for (const item of items.data || []) {
+        const pack = tutorPacks.packByPrice(item.price?.id);
+        if (pack) minutes += tutorPacks.minutesOf(pack, item.price) * Math.max(1, item.quantity || 1);
+      }
+      if (!minutes) throw new Error(`No tutor time pack in checkout ${session.id}`);
+      minutes = Math.min(minutes, tutorPacks.MAX_MINUTES);
+      const { data: added, error: tErr } = await supabase.rpc('tutor_add_credit', {
+        p_student: student.id, p_seconds: minutes * 60, p_reason: 'purchase',
+        p_stripe_session: session.id, p_note: `${minutes} minutes bought`, p_by: null,
+      });
+      if (tErr) throw new Error(`Failed to add tutor time: ${tErr.message}`);
+      console.log(`[Alimun Webhook] ${added ? minutes + ' tutor minute(s) added' : 'Tutor time already added'} for student ${student.id}`);
       break;
     }
     default:

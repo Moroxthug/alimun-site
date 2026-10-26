@@ -4,6 +4,8 @@
                                       needs a bigger plan, the plans that include it are marked and the class is joined
                                       after paying (?join=). Students who already pay change plan in Stripe's billing page.
    Buying a private class (one payment, a 1:1 credit added by the payment webhook) starts from Classes: buyExtra().
+   Buying tutor time (docs/AI_TUTOR_PLAN.md, part 6: one payment, the minutes added by the webhook, back to the Tutor
+   with ?checkout=tutor) starts from the Tutor when the time is used up: tutorPacks(), buyTutor().
    Coming back from Stripe (?checkout=success|cancelled|credit) is shown by returnNote() in js/app/shell.js.
    Sample (signed out or ?sample=1): nothing is charged. Interface text: app_pl_* keys. */
 (function () {
@@ -106,6 +108,27 @@
       location.href = u.href;
     }).catch(function (e) { btn.disabled = false; show('app_pl_err', true); console.warn('[Alimun] Extra class checkout', e && e.message); });
   }
+  /* Tutor time packs as Stripe has them: [{ key, id, minutes, price }], the smallest first (none until the owner sets them) */
+  function tutorPacks(helpers) {
+    A = helpers;
+    return prices().then(function (pr) {
+      return ['tutor30', 'tutor120'].filter(function (k) { return pr[k] && pr[k].minutes; }).map(function (k) {
+        return { key: k, id: pr[k].id, minutes: pr[k].minutes, price: money(pr[k]) };
+      }).sort(function (a, b) { return a.minutes - b.minutes; });
+    });
+  }
+  /* One tutor time pack, paid once; the server picks where Stripe sends the student back (the Tutor) */
+  function buyTutor(helpers, btn, msgEl, priceId) {
+    A = helpers;
+    var show = function (k, bad) { if (msgEl) { msgEl.textContent = t(k); msgEl.classList.toggle('is-bad', !!bad); } };
+    if (!real()) { show('app_pl_sample'); return; }
+    btn.disabled = true; show('app_pl_going');
+    window.AlimunData.checkout({ priceId: priceId, mode: 'payment', customerName: P().name || '' }).then(function (r) {
+      var u = new URL(r.url);
+      if (u.protocol !== 'https:' || !/(^|\.)stripe\.com$/.test(u.hostname)) throw new Error('unexpected checkout address');
+      location.href = u.href;
+    }).catch(function (e) { btn.disabled = false; show('app_pl_err', true); console.warn('[Alimun] Tutor time checkout', e && e.message); });
+  }
   /* The label of the "buy a private class" button, with Stripe's price once known */
   function extraLabel(helpers) {
     A = helpers;
@@ -130,5 +153,5 @@
     var classId = /^[0-9a-f-]{36}$/i.test(parts[1] || '') ? parts[1] : '', need = WEIGHT[parts[2]] ? parts[2] : '';
     return prices().then(function () { return { html: view(classId, need), title: t('app_pl_title') }; });
   }
-  window.AlimunPlans = { mount: mount, buyExtra: buyExtra, extraLabel: extraLabel };
+  window.AlimunPlans = { mount: mount, buyExtra: buyExtra, extraLabel: extraLabel, tutorPacks: tutorPacks, buyTutor: buyTutor };
 })();

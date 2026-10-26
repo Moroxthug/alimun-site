@@ -20,7 +20,13 @@
    From your teacher (step 15, part 5): exercise sets a teacher sent to the student or their class (teacher_sets),
    played like a practice set; each answer goes into the practice memory ("tset:<set>:set:<block>:<item>"), the
    score into practice_progress "set:<set>" (homework made from a set is marked from it), and #/practice/teacher/<set>/again
-   plays only the items answered wrong last time. Routes: #/practice/teacher/<set>[/again]. */
+   plays only the items answered wrong last time. Routes: #/practice/teacher/<set>[/again].
+   From your tutor (AI tutor, part 5): what the tutor left after a session (tutor_sets): its exercises played like a
+   teacher's set (answers in the practice memory as "tutor:<set>:set:<block>:<item>", the best score in practice_progress
+   "tutor:<set>", /again for the mistakes), a listening (the tutor's text read in the tutor's voice, /api/tutor
+   ?action=set-audio, with questions; best score "tutor:<set>:listen"), sentences to say (best "tutor:<set>:speak") and a
+   writing task checked like homework before handing it in (/api/ai?action=homework-check with the set; kept as
+   "tutor:<set>:write"). Routes: #/practice/tutor/<set>[/again|/listen|/speak|/write]. */
 (function () {
   'use strict';
   var A = null, root = null, R = null;
@@ -298,13 +304,16 @@
     return new Promise(function (ok, no) { var r = new FileReader(); r.onload = function () { ok(String(r.result).split(',')[1] || ''); }; r.onerror = no; r.readAsDataURL(blob); });
   }
   /* The recording to text, through /api/ai?action=transcribe (signed in, same access and caps as the other AI features) */
-  function transcriber(language) {
+  /* tutorSet: the speaking task of the student's own tutor set, which allows it without a plan (api/ai.js) */
+  function transcriber(language, tutorSet) {
     var code = window.AlimunData.langCode(language) || 'en';
     return function (blob) {
       if (!signedIn()) return Promise.reject({ note: 'app_ex_speak_signin' });
       return Promise.all([window.AlimunData.token(), blobBase64(blob)]).then(function (r) {
+        var body = { audio: r[1], mime: blob.type || 'audio/webm', language: code };
+        if (tutorSet) body.tutor_set = tutorSet;
         return fetch('/api/ai?action=transcribe', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + r[0] },
-          body: JSON.stringify({ audio: r[1], mime: blob.type || 'audio/webm', language: code }) });
+          body: JSON.stringify(body) });
       }).then(function (res) {
         return res.json().catch(function () { return {}; }).then(function (j) {
           if (res.status === 403) throw { note: 'app_ex_speak_plan' };
@@ -562,12 +571,33 @@
         { t: 'ex', kind: 'match', h: 'Match the words.', pairs: [['snow', 'neve'], ['wind', 'vento'], ['thunderstorm', 'temporale']] }
       ] }]);
   }
-  /* A teacher's set as a round: every item, or (again) only those answered wrong last time */
-  function teacherRound(set, again) {
+  /* What the tutor left after its sessions (signed out: one sample set) */
+  function loadTutorSets() {
+    if (signedIn()) return window.AlimunData.tutorSets(signedIn()).catch(function () { return []; });
+    var de = (A.data().profile.language || 'German') === 'German';
+    return Promise.resolve([{ id: 'sample', title: de ? 'Perfekt mit haben und sein' : 'The past simple', language: de ? 'German' : 'English', level: 'B1', created_at: new Date(Date.now() - 2 * 86400000).toISOString(), sample: true,
+      result: { done: true, graded_score: 75 }, listenResult: null, speakResult: null, writeResult: null,
+      items: de ? {
+        blocks: [{ t: 'ex', kind: 'gap', h: 'Ergänzen Sie haben oder sein.', items: [{ q: 'Ich ___ gestern ins Kino gegangen.', a: ['bin'], why: 'gehen: Bewegung, also sein' }, { q: 'Wir ___ einen Film gesehen.', a: ['haben'], why: 'sehen: haben' }, { q: 'Sie ___ um sieben Uhr aufgestanden.', a: ['ist'], why: 'aufstehen: sein' }] },
+          { t: 'ex', kind: 'choice', h: 'Was ist richtig?', items: [{ q: 'Am Wochenende ___ ich lange geschlafen.', o: ['habe', 'bin', 'hat'], why: 'schlafen: haben' }, { q: 'Er ___ nach Berlin gefahren.', o: ['ist', 'hat', 'sind'], why: 'fahren: sein' }] }],
+        listen: { text: 'Am Samstag bin ich früh aufgestanden. Ich habe mit meiner Schwester gefrühstückt, und dann sind wir mit dem Fahrrad zum See gefahren. Dort haben wir lange gesprochen und Kaffee getrunken. Am Abend bin ich müde, aber glücklich nach Hause gekommen.',
+          block: { t: 'ex', kind: 'tf', h: 'Richtig oder falsch?', items: [{ q: 'Die Person ist spät aufgestanden.', a: 'f', why: 'Sie ist früh aufgestanden.' }, { q: 'Sie sind mit dem Fahrrad gefahren.', a: 't', why: 'mit dem Fahrrad zum See' }, { q: 'Am Abend war die Person müde.', a: 't', why: 'müde, aber glücklich' }] } },
+        speak: ['Am Wochenende bin ich ins Kino gegangen.', 'Wir haben einen lustigen Film gesehen.', 'Danach sind wir nach Hause gefahren.'],
+        write: { task: 'Schreiben Sie einer Freundin eine kurze Nachricht über Ihr letztes Wochenende. Was haben Sie gemacht?', min: 40, max: 80 }
+      } : {
+        blocks: [{ t: 'ex', kind: 'gap', h: 'Complete with the past simple.', items: [{ q: 'Yesterday I ___ (go) to the cinema.', a: ['went'], why: 'go: went' }, { q: 'We ___ (see) a funny film.', a: ['saw'], why: 'see: saw' }, { q: 'She ___ (get up) at seven.', a: ['got up'], why: 'get up: got up' }] }],
+        listen: { text: 'On Saturday I got up early. I had breakfast with my sister, and then we cycled to the lake. We talked for a long time and drank coffee there. In the evening I came home tired but happy.',
+          block: { t: 'ex', kind: 'tf', h: 'True or false?', items: [{ q: 'The person got up late.', a: 'f', why: 'They got up early.' }, { q: 'They went to the lake by bike.', a: 't', why: 'we cycled to the lake' }, { q: 'In the evening the person was tired.', a: 't', why: 'tired but happy' }] } },
+        speak: ['Last weekend I went to the cinema.', 'We saw a really funny film.', 'Then we went home by bus.'],
+        write: { task: 'Write a short message to a friend about your last weekend. What did you do?', min: 40, max: 80 }
+      } }]);
+  }
+  /* A teacher's set (or a tutor's, prefix "tutor") as a round: every item, or (again) only those answered wrong last time */
+  function teacherRound(set, again, prefix) {
     var mem = readMem(), out = [];
     (set.blocks || []).forEach(function (b, bi) {
       if (!b || b.t !== 'ex' || !EX().kinds || EX().kinds.indexOf(b.kind) < 0) return;
-      var base = 'tset:' + set.id + ':set:' + bi + ':';
+      var base = (prefix || 'tset') + ':' + set.id + ':set:' + bi + ':';
       if (b.items && !again) { out.push({ b: b, keys: b.items.map(function (x, i) { return base + i; }) }); return; }
       if (b.items) {
         var ids = b.items.map(function (x, i) { return i; }).filter(function (i) { var r = mem[base + i]; return r && r.w && r.b < 2; });
@@ -590,6 +620,68 @@
         (again ? '<a class="btn btn--ghost btn--sm" href="#/practice/teacher/' + esc(x.id) + '/again">' + esc(t('app_pr_teacher_mistakes')) + '</a>' : '') + '</div></div></div></section>';
     }).join('');
   }
+  function tutorAgain(x) {
+    var mem = readMem();
+    return ((x.items && x.items.blocks) || []).some(function (b, bi) { return (b.items || []).some(function (it, ii) { var r = mem['tutor:' + x.id + ':set:' + bi + ':' + ii]; return r && r.w && r.b < 2; }); });
+  }
+  function tutorSection(list) {
+    if (!list || !list.length) return '';
+    var pct = function (n) { return new Intl.NumberFormat(A.locale, { style: 'percent' }).format(n / 100); };
+    var date = function (iso) { return new Intl.DateTimeFormat(A.locale, { day: 'numeric', month: 'long' }).format(new Date(iso)); };
+    return '<h2 class="t-h2 span-12 home__section" style="--i:2">' + esc(t('app_pr_tutor_h')) + '</h2>' + list.slice(0, 4).map(function (x, i) {
+      var it = x.items || {}, n = (it.blocks || []).length, href = '#/practice/tutor/' + esc(x.id);
+      var lines = [t('app_pr_tutor_left', { date: date(x.created_at) })];
+      if (n) lines.push(A.tn('app_pr_teacher_n', n) + '. ' + (x.result && x.result.done ? t('app_pr_teacher_score', { score: pct(x.result.graded_score || 0) }) : t('app_pr_teacher_new')) + '.');
+      if (x.listenResult && x.listenResult.done) lines.push(t('app_pr_tutor_listen_best', { score: pct(x.listenResult.graded_score || 0) }));
+      if (x.speakResult && x.speakResult.done) lines.push(t('app_pr_tutor_speak_best', { score: pct(x.speakResult.graded_score || 0) }));
+      if (x.writeResult && x.writeResult.done) lines.push(t('app_pr_tutor_written'));
+      return '<section class="card card--sun span-6" style="--i:' + (2 + i % 4) + '"><div class="card__row"><div class="card__art">' + A.Cast.drawing(A.buddyFor(x.language)) + '</div><div>' +
+        '<h3 class="t-h2" dir="auto">' + esc(x.title) + '</h3>' + lines.map(function (l, k) { return '<p class="' + (k ? 't-small' : 't-body') + '" style="margin-top:6px">' + esc(l) + '</p>'; }).join('') +
+        '<div class="btn-row" style="margin-top:14px">' +
+          (n ? '<a class="btn btn--primary btn--sm" href="' + href + '">' + esc(t(x.result && x.result.done ? 'app_pr_teacher_again' : 'app_pr_tutor_start')) + '</a>' : '') +
+          (n && tutorAgain(x) ? '<a class="btn btn--ghost btn--sm" href="' + href + '/again">' + esc(t('app_pr_teacher_mistakes')) + '</a>' : '') +
+          (it.listen ? '<a class="btn btn--ghost btn--sm" href="' + href + '/listen">' + esc(t('app_pr_tutor_listen')) + '</a>' : '') +
+          (it.speak && it.speak.length && A.Cast.tutor ? '<a class="btn btn--ghost btn--sm" href="' + href + '/speak">' + esc(t('app_pr_tutor_speak')) + '</a>' : '') +
+          (it.write ? '<a class="btn btn--ghost btn--sm" href="' + href + '/write">' + esc(t('app_pr_tutor_write')) + '</a>' : '') +
+        '</div></div></div></section>';
+    }).join('');
+  }
+  /* The tutor's writing task: the student writes, and the text is checked like homework before handing it in */
+  var W = null;
+  function writeView(ts) {
+    var it = ts.items.write, code = window.AlimunData.langCode(ts.language) || 'en';
+    var prev = ts.writeResult && ts.writeResult.user_answer && ts.writeResult.user_answer.text || '';
+    var fb = null; try { fb = ts.writeResult && ts.writeResult.feedback ? JSON.parse(ts.writeResult.feedback) : null; } catch (e) { fb = null; }
+    W = { set: ts, text: prev, min: it.min, max: it.max };
+    return '<a class="rd-back" href="#/practice">' + A.icon('back') + '<span>' + esc(t('app_nav_practice')) + '</span></a>' +
+      '<div class="view__head"><div><h1 class="t-h1" dir="auto">' + esc(ts.title) + '</h1><p class="t-lead">' + esc(t('app_pr_tutor_write_h')) + '</p></div></div>' +
+      '<div class="grid rise"><section class="card span-12 tw" style="--i:0"><div class="wr-brief" lang="' + esc(code) + '" dir="ltr"><p>' + esc(it.task) + '</p></div>' +
+      '<label class="sr" for="tw-in">' + esc(t('app_book_your_answer')) + '</label><textarea id="tw-in" class="write-in" rows="10" data-tw-text spellcheck="false" lang="' + esc(code) + '" dir="ltr">' + esc(prev) + '</textarea>' +
+      '<p class="t-small wr-count" data-tw-count>' + esc(t('app_mt_words', { n: EX().wordCount(prev), min: it.min, max: it.max })) + '</p>' +
+      '<div class="btn-row" style="margin-top:12px"><button class="btn btn--primary" type="button" data-tw="check"' + (EX().wordCount(prev) >= 15 ? '' : ' disabled') + '>' + esc(t('app_pr_tutor_write_check')) + '</button></div>' +
+      '<div data-tw-out aria-live="polite">' + (fb ? checkHtml(fb, code) : '') + '</div></section></div>';
+  }
+  function checkHtml(j, code) {
+    var look = (Array.isArray(j.look) ? j.look : []).slice(0, 4);
+    return '<div class="mt-mark hw-coach">' + (j.good ? '<p class="t-body hw-coach__good" dir="auto">' + esc(String(j.good).slice(0, 400)) + '</p>' : '') +
+      look.map(function (l) { return '<div class="mt-mark__row"><p class="t-body"><q lang="' + esc(code) + '">' + esc(String(l.quote || '').slice(0, 200)) + '</q></p><p class="t-small" dir="auto">' + esc(String(l.hint || '').slice(0, 300)) + '</p></div>'; }).join('') +
+      '<p class="t-tiny">' + esc(t('app_pr_tutor_write_note')) + '</p></div>';
+  }
+  function writeCheck(btn) {
+    var box = root.querySelector('[data-tw-out]'), ts = W.set, text = W.text, code = window.AlimunData.langCode(ts.language) || 'en';
+    btn.disabled = true;
+    box.innerHTML = '<div class="mt-mark is-wait"><div class="loader" style="--w:34px" aria-hidden="true">' + A.loaderInner() + '</div><p class="t-small">' + esc(t('app_hw_coach_wait')) + '</p></div>';
+    var got = ts.sample ? new Promise(function (ok) { setTimeout(function () { ok({ good: 'Your message is friendly and easy to follow.', look: [{ quote: text.split(/\s+/).slice(0, 3).join(' '), hint: 'Check whether the verb needs haben or sein here.' }] }); }, 700); })
+      : window.AlimunData.tutorWritingCheck(ts.id, text, A.lang);
+    got.then(function (j) {
+      if (!W || W.set !== ts) return;
+      box.innerHTML = checkHtml(j || {}, code); btn.disabled = false;
+      if (!ts.sample) window.AlimunData.saveTutorWriting(signedIn(), ts.id, text, j).catch(function (e) { console.warn('[Alimun] Writing not saved', e && e.message); });
+    }, function (e) {
+      if (!W || W.set !== ts) return;
+      box.innerHTML = '<p class="t-small hw-coach__note">' + esc(t(e && e.status === 429 ? 'app_hw_coach_limit' : 'app_pr_tutor_write_error')) + '</p>'; btn.disabled = false;
+    });
+  }
   function typesSet(list, language) {
     return list.filter(function (s) { return s.language === language && /-types$/.test(s.id); })[0] || list.filter(function (s) { return /-types$/.test(s.id); })[0] || null;
   }
@@ -611,6 +703,7 @@
         '<section class="card span-6" style="--i:2"><div class="card__row"><div class="card__art">' + A.Cast.drawing('ghost') + '</div><div>' +
           '<h2 class="t-h2">' + esc(t('app_pr_mistakes_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(mist ? A.tn('app_pr_mistakes_n', mist) : t('app_pr_mistakes_none')) + '</p></div></div></section>' +
         teacherSection(info.tsets) +
+        tutorSection(info.tutor) +
         (set ? '<a class="card span-6" href="#/practice/types" style="--i:3"><div class="card__row"><div class="card__art">' + A.Cast.drawing('owl') + '</div><div>' +
           '<h2 class="t-h2">' + esc(t('app_pr_types_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_types_p', { course: A.languageName(set.language) + ' ' + set.level })) + '</p></div></div></a>' : '') +
         (info.book ? (info.listen >= 6
@@ -734,7 +827,7 @@
     R.saved = true;
     var f = R.ex.firstTally(), score = f.total ? Math.round(f.right / f.total * 100) : 100;
     /* A teacher's set, played in full: its score (the best so far) for the teacher and for homework made from it */
-    if (R.setId && !R.again && signedIn()) window.AlimunData.saveBook(A.data().profile.id, 'set:' + R.setId, { done: true, score: Math.max(score, R.best || 0) }).catch(function (e) { console.warn('[Alimun] Set score not saved', e && e.message); });
+    if (R.bestKey && !R.again && signedIn()) window.AlimunData.saveBook(A.data().profile.id, R.bestKey, { done: true, score: Math.max(score, R.best || 0) }).catch(function (e) { console.warn('[Alimun] Set score not saved', e && e.message); });
     if (signedIn()) {
       var key = 'practice:round:' + new Date().toISOString().slice(0, 10);
       window.AlimunData.saveBook(A.data().profile.id, key, { done: true, score: score }).catch(function (e) { console.warn('[Alimun] Practice round not saved', e && e.message); });
@@ -764,6 +857,8 @@
     if (root.__practice) return;
     root.__practice = true;
     root.addEventListener('click', function (e) {
+      var tw = e.target.closest('[data-tw]');
+      if (tw && W && !tw.disabled) { writeCheck(tw); return; }
       var pick = e.target.closest('[data-tutor]');
       if (pick && !root.querySelector('.pr')) {
         setTutor(pick.getAttribute('data-tutor'));
@@ -789,7 +884,16 @@
       if (act === 'next') next();
       else R.ex.act(act, el);
     });
-    root.addEventListener('input', function (e) { if (R && root.querySelector('.pr, .qz')) R.ex.input(e.target); });
+    root.addEventListener('input', function (e) {
+      if (W && e.target.hasAttribute('data-tw-text')) {
+        W.text = e.target.value;
+        var n = EX().wordCount(W.text), c = root.querySelector('[data-tw-count]'), b = root.querySelector('[data-tw="check"]');
+        if (c) { c.textContent = t('app_mt_words', { n: n, min: W.min, max: W.max }); c.classList.toggle('is-off', !!n && (n < W.min || n > W.max)); }
+        if (b) b.disabled = n < 15;
+        return;
+      }
+      if (R && root.querySelector('.pr, .qz')) R.ex.input(e.target);
+    });
     root.addEventListener('change', function (e) { if (R && root.querySelector('.pr, .qz')) R.ex.change(e.target); });
     root.addEventListener('keydown', function (e) { if (R && root.querySelector('.pr, .qz')) R.ex.keydown(e); });
     root.addEventListener('pointerdown', function (e) { if (R && root.querySelector('.pr, .qz')) EX().pointerDown(R.ex, e); });
@@ -814,8 +918,9 @@
     view.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div></div>';
     var id = A.myBookId(), lang = explainLang();
     var noAudio = function () { return null; };
-    return Promise.all([window.AlimunReader.open(helpers, id), loadSets(), use(helpers), window.AlimunReader.audio(id).catch(noAudio), loadPictures(), loadTeacherSets()]).then(function (r) {
-      var info = { book: r[0] && r[0].book, progress: r[0] && r[0].progress, set: typesSet(r[1], A.data().profile.language), audio: r[3], pictures: r[4], tsets: r[5] || [] };
+    W = null;
+    return Promise.all([window.AlimunReader.open(helpers, id), loadSets(), use(helpers), window.AlimunReader.audio(id).catch(noAudio), loadPictures(), loadTeacherSets(), loadTutorSets()]).then(function (r) {
+      var info = { book: r[0] && r[0].book, progress: r[0] && r[0].progress, set: typesSet(r[1], A.data().profile.language), audio: r[3], pictures: r[4], tsets: r[5] || [], tutor: r[6] || [] };
       info.listen = info.book ? heard(info.book, info.progress || {}, info.audio).length : 0;
       if (my !== mountNo) return { stale: true };
       if (parts[0] === 'types' && info.set) {
@@ -836,8 +941,38 @@
         if (!tr.length) return { html: emptyView(), title: t('app_nav_practice') };
         var tc = window.AlimunData.langCode(ts.language) || 'en';
         startRound(tr.map(function (x) { return x.b; }), tr.map(function (x) { return x.keys; }), attrs(lang, lang === 'ar'), attrs(tc, false), false, 'teacher/' + ts.id + (again ? '/again' : ''), null);
-        R.setId = ts.sample ? null : ts.id; R.again = again; R.best = ts.result && ts.result.graded_score || 0;
+        R.bestKey = ts.sample ? null : 'set:' + ts.id; R.again = again; R.best = ts.result && ts.result.graded_score || 0;
         return { html: roundView(), title: ts.title, round: true };
+      }
+      if (parts[0] === 'tutor' && parts[1]) {
+        var us = info.tutor.filter(function (x) { return x.id === parts[1]; })[0];
+        if (!us) return { html: homeView(info), title: t('app_nav_practice') };
+        var it = us.items || {}, uc = window.AlimunData.langCode(us.language) || 'en', what = parts[2] || '';
+        if (what === 'write' && it.write) return { html: writeView(us), title: us.title };
+        if (what === 'speak' && it.speak && it.speak.length) {
+          var sb = { t: 'ex', kind: 'speak', h: t('app_ex_h_speak'), tutor: myTutor(), items: it.speak.map(function (x) { return { src: '', a: x, why: '' }; }) };
+          startRound([sb], [it.speak.map(function (x, i) { return 'tutor:' + us.id + ':speak:' + i; })], attrs(lang, lang === 'ar'), attrs(uc, false), false, 'tutor/' + us.id + '/speak', transcriber(us.language, us.sample ? null : us.id));
+          R.bestKey = us.sample ? null : 'tutor:' + us.id + ':speak'; R.best = us.speakResult && us.speakResult.graded_score || 0;
+          return { html: roundView(), title: us.title, round: true };
+        }
+        if (what === 'listen' && it.listen) {
+          /* The tutor's voice reads the text; when it cannot, the text is shown to read instead */
+          var audio = us.sample ? Promise.resolve(null) : window.AlimunData.tutorSetAudio(us.id).then(function (r) { return r && /^https:\/\//.test(r.url || '') ? r.url : null; }, function () { return null; });
+          return audio.then(function (url) {
+            if (my !== mountNo) return { stale: true };
+            var lb = Object.assign({}, it.listen.block, url ? { src: url, script: it.listen.text } : { read: it.listen.text, note: 'app_pr_tutor_listen_off' });
+            if (us.sample) { lb.read = it.listen.text; lb.note = 'app_pr_tutor_listen_sample'; }
+            startRound([lb], [(lb.items || []).map(function (x, i) { return 'tutor:' + us.id + ':listen:' + i; })], attrs(lang, lang === 'ar'), attrs(uc, false), false, 'tutor/' + us.id + '/listen', null);
+            R.bestKey = us.sample ? null : 'tutor:' + us.id + ':listen'; R.best = us.listenResult && us.listenResult.graded_score || 0;
+            return { html: roundView(), title: us.title, round: true };
+          });
+        }
+        var uagain = what === 'again', ur = teacherRound({ id: us.id, blocks: it.blocks || [] }, uagain, 'tutor');
+        if (!ur.length) ur = teacherRound({ id: us.id, blocks: it.blocks || [] }, false, 'tutor');
+        if (!ur.length) return { html: emptyView(), title: t('app_nav_practice') };
+        startRound(ur.map(function (x) { return x.b; }), ur.map(function (x) { return x.keys; }), attrs(lang, lang === 'ar'), attrs(uc, false), false, 'tutor/' + us.id + (uagain ? '/again' : ''), null);
+        R.bestKey = us.sample ? null : 'tutor:' + us.id; R.again = uagain; R.best = us.result && us.result.graded_score || 0;
+        return { html: roundView(), title: us.title, round: true };
       }
       if (parts[0] === 'clock' && info.book) {
         Q = null;
