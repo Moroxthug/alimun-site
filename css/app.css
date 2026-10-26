@@ -1405,3 +1405,9 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .tm-del { justify-self: start; font-size: 14px; }
 .tm-try { max-width: 900px; }
 .st-field[hidden], .st-row[hidden] { display: none; }
+
+/* ---------- Teacher dashboard, Messages, Payouts, Settings (step 15 part 6) ---------- */
+.tms .ms-conv { grid-template-columns: minmax(0, 1fr) auto; }
+.tms .tm-start { display: grid; gap: 6px; padding: 12px; margin-top: 6px; border-top: 1px solid var(--line); }
+.tp-note { margin: 16px 0 0; color: var(--on-forest); }
+.tp-row { grid-template-columns: 130px minmax(0, 1fr); }

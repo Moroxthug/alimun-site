@@ -3780,6 +3780,9 @@ window.submitSessionNotes = submitSessionNotes;
                           role === 'admin' ? 'admin.html' : 'signin.html';
     return;
   }
+  // Teachers now use the new dashboard (docs/DASHBOARD_PLAN.md, step 15, switched over 26 Oct 2026). This page stays
+  // for admins viewing a teacher read-only (view-as) until the admin pages are rebuilt.
+  if (!viewAs) { window.location.replace('/app/teach'); return; }
 
   // ─ 4. Teacher profile status check ────────────────────────────────────────
   let profile = viewAs?.profile;

@@ -378,28 +378,6 @@
     if (!c) return Promise.resolve(null);
     return c.auth.getSession().then(function (x) { return x.data && x.data.session ? x.data.session.user.id : null; });
   }
-  /* The teacher's side of messages (app/messages.html, until the teacher dashboard is rebuilt in step 15): the
-     signed-in approved teacher, their classes and each class's students (cohort_classmates) */
-  function teacherInbox() {
-    var c = client();
-    if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.auth.getSession().then(function (x) {
-      var session = x.data && x.data.session;
-      if (!session) return { signedIn: false };
-      return c.from('teacher_profiles').select('id, full_name, status').eq('user_id', session.user.id).maybeSingle().then(function (tr) {
-        var tp = tr.data;
-        if (!tp || tp.status !== 'approved') return { signedIn: true, teacher: null, me: session.user.id };
-        return c.from('cohorts').select('id, language, level').eq('teacher_id', tp.id).then(function (cr) {
-          if (cr.error) throw cr.error;
-          var cos = cr.data || [];
-          return Promise.all(cos.map(function (co) { return c.rpc('cohort_classmates', { p_cohort_id: co.id }).then(function (r) { return r.data || []; }); })).then(function (lists) {
-            cos.forEach(function (co, i) { co.students = lists[i]; });
-            return { signedIn: true, teacher: tp, me: session.user.id, cohorts: cos };
-          });
-        });
-      });
-    });
-  }
   function classTeachers(cohortIds) {
     var c = client();
     if (!c || !cohortIds || !cohortIds.length) return Promise.resolve([]);
@@ -756,6 +734,56 @@
     });
   }
 
+  /* Teacher dashboard, Payouts (step 15, part 6): payouts recorded by Alimun (admins write them), and this month's
+     classes marked as done and 1:1s completed. No amount is worked out in the browser (owner, 26 Oct 2026). */
+  function teacherPayouts() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.auth.getSession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session) return { signedIn: false };
+      return c.from('teacher_profiles').select('id, full_name, status').eq('user_id', session.user.id).maybeSingle().then(function (tr) {
+        if (tr.error) throw tr.error;
+        var tp = tr.data;
+        if (!tp || tp.status !== 'approved') return { signedIn: true, teacher: null };
+        var first = new Date(); first.setDate(1); first.setHours(0, 0, 0, 0);
+        return c.from('cohorts').select('id, language, level, tier').eq('teacher_id', tp.id).then(function (cr) {
+          var cos = rows(cr), ids = cos.map(function (co) { return co.id; }), none = Promise.resolve({ data: [] });
+          return Promise.all([
+            c.from('teacher_payouts').select('id, period_start, period_end, sessions_count, amount_eur, status, paid_at').eq('teacher_id', tp.id).order('period_start', { ascending: false }).limit(100),
+            ids.length ? c.from('sessions').select('id, cohort_id, scheduled_at').in('cohort_id', ids).eq('status', 'completed').gte('scheduled_at', first.toISOString()).lte('scheduled_at', new Date().toISOString()) : none,
+            c.from('one_on_one_bookings').select('id, kind, scheduled_at, duration_minutes').eq('teacher_id', tp.id).eq('status', 'completed').gte('scheduled_at', first.toISOString())
+          ]).then(function (r) {
+            return { signedIn: true, teacher: tp, cohorts: cos, payouts: rows(r[0]), classes: rows(r[1]), oto: rows(r[2]), since: first.toISOString() };
+          });
+        });
+      });
+    });
+  }
+  /* Teacher dashboard, Settings: the teacher's profile and e-mail; the database (guard_teacher_profile_admin_fields)
+     lets a teacher change only name, location, bio and specialty */
+  function teacherProfile() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.auth.getSession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session) return { signedIn: false };
+      return c.from('teacher_profiles').select('id, full_name, location, bio, specialty, languages, status').eq('user_id', session.user.id).maybeSingle().then(function (r) {
+        if (r.error) throw r.error;
+        return { signedIn: true, email: session.user.email || '', teacher: r.data };
+      });
+    });
+  }
+  function saveTeacherProfile(patch) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.auth.getSession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session) throw new Error('Not signed in');
+      return c.from('teacher_profiles').update(patch).eq('user_id', session.user.id).select('id').single().then(function (r) { if (r.error) throw r.error; });
+    });
+  }
+
   /* Library (practice_progress rows "lib:<shelf>:<piece>", step 9): the best result of each piece */
   function libraryResults(studentId) {
     var c = client();
@@ -812,5 +840,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { load: load, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, teacherInbox: teacherInbox, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { load: load, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

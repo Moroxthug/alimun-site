@@ -109,7 +109,7 @@ async function route(user) {
   if (role === 'teacher') {
     const { data: tp } = await supabase.from('teacher_profiles').select('status').eq('user_id', user.id).maybeSingle();
     if (!tp) { location.href = base + 'welcome.html'; return true; }
-    if (tp.status === 'approved') { location.href = base + 'teacher-dashboard.html'; return true; }
+    if (tp.status === 'approved') { location.href = '/app/teach'; return true; }
     // Not approved yet: no session is kept, and the status is shown instead.
     await supabase.auth.signOut();
     show(tp.status === 'suspended' ? 's-suspended' : 's-pending');

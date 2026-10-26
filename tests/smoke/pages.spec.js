@@ -14,7 +14,8 @@ const PAGES = [
 ];
 const EXPECT_PATH = {
   '/student-dashboard?preview=1': '/student-dashboard',
-  '/teacher-dashboard?preview=1': '/teacher-dashboard',
+  // Teachers are sent to the new teacher dashboard (step 15, 26 Oct 2026); it must load there with no errors.
+  '/teacher-dashboard?preview=1': '/app/teach',
   '/admin?preview=1': '/signin',
 };
 

@@ -61,6 +61,9 @@
     app_pr_teacher_n: ['app_pr_teacher_n_zero', 'app_pr_teacher_n_one', 'app_pr_teacher_n_two', 'app_pr_teacher_n_few', 'app_pr_teacher_n_many', 'app_pr_teacher_n_other'],
     app_tm2_problems: ['app_tm2_problems_zero', 'app_tm2_problems_one', 'app_tm2_problems_two', 'app_tm2_problems_few', 'app_tm2_problems_many', 'app_tm2_problems_other'],
     app_tm2_drafted_n: ['app_tm2_drafted_n_zero', 'app_tm2_drafted_n_one', 'app_tm2_drafted_n_two', 'app_tm2_drafted_n_few', 'app_tm2_drafted_n_many', 'app_tm2_drafted_n_other'],
+    app_t_classes_taught_n: ['app_t_classes_taught_n_zero', 'app_t_classes_taught_n_one', 'app_t_classes_taught_n_two', 'app_t_classes_taught_n_few', 'app_t_classes_taught_n_many', 'app_t_classes_taught_n_other'],
+    app_tp_oto_n: ['app_tp_oto_n_zero', 'app_tp_oto_n_one', 'app_tp_oto_n_two', 'app_tp_oto_n_few', 'app_tp_oto_n_many', 'app_tp_oto_n_other'],
+    app_ms_new: ['app_ms_new_zero', 'app_ms_new_one', 'app_ms_new_two', 'app_ms_new_few', 'app_ms_new_many', 'app_ms_new_other'],
     app_tc_created_n: ['app_tc_created_n_zero', 'app_tc_created_n_one', 'app_tc_created_n_two', 'app_tc_created_n_few', 'app_tc_created_n_many', 'app_tc_created_n_other'],
     app_t_oto_notes_n: ['app_t_oto_notes_n_zero', 'app_t_oto_notes_n_one', 'app_t_oto_notes_n_two', 'app_t_oto_notes_n_few', 'app_t_oto_notes_n_many', 'app_t_oto_notes_n_other']
   };
@@ -368,7 +371,8 @@
     loaderInner: loaderInner, dayName: dayName, relative: relative, className: className, weekday: weekday, browserZone: browserZone,
     mode: function () { return mode; }, rerender: function () { render(current, false); }
   };
-  var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; }, homework: function () { return window.AlimunTeachHomework; }, material: function () { return window.AlimunTeachMaterial; } };
+  var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; }, homework: function () { return window.AlimunTeachHomework; }, material: function () { return window.AlimunTeachMaterial; },
+    messages: function () { return window.AlimunTeachMessages; }, payouts: function () { return window.AlimunTeachPayouts; }, settings: function () { return window.AlimunTeachSettings; } };
   function partsOf(id) { return location.hash.replace(new RegExp('^#\\/' + id + '\\/?'), '').split('/').filter(Boolean); }
 
   /* ---------- Routing ---------- */
