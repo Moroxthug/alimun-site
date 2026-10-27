@@ -1090,3 +1090,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: personal infinitive; check Vi-os sair / Vi-os saírem and the Brazil remark.
 - u2 p3: futuro do conjuntivo and combined pronouns (mo, to, lho, no-lo); native check.
 - u2 p4: the conversation is invented; roles only.
+- u3 p1: diminutives, augmentatives, pejoratives; check tempão, ricaço, livreco and the meaning shifts (portão, caixote, cartão).
+- u3 p2: prefixes and hyphen rules of the Acordo Ortográfico (antissocial, anti-higiénico, pré-história, ultrarrápido); native check.
+- u3 p3: parasynthetic verbs and compounds; check the plural of arranha-céus and guarda-chuva.
+- u3 p4: the essay is invented.
