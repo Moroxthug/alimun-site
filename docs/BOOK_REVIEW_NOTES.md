@@ -1182,3 +1182,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: narrative voice and tone; check the tone words (wry, detached, sardonic).
 - u8 p3: point, evidence, explanation; check the advice on tense and quotations.
 - u8 p4: the story and the critical note are invented.
+
+## French C2
+- u1 p1: connotation of near-synonyms (contempler, fixer, épier, svelte, maigre, radin, économe); native check.
+- u1 p2: collocations and fixed pairs; check the "not natural" column.
+- u1 p3: euphemism and litotes; check ce n'est pas rien and plan de sauvegarde de l'emploi.
+- u1 p4: the essay is invented; the protest is fictional.
