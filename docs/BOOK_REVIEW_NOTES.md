@@ -728,3 +728,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: *che*, *cui*, *dove* and *quello che*; *dove* accepted as well as *in cui* for places.
 - u5 p3: formal register (*Gentile …, Le scrivo per …, Cordiali saluti*); capital *Le / La* in formal writing; fictional phone number 055 555 0123.
 - u5 p4: the job advert and cover e-mail are invented; e-mail addresses at example.com; no real hotel or person named.
+- u6 p1: *si impersonale* and *si passivo* with the verb agreeing with a plural object; *ci si* with reflexive verbs; *si è lavorato*, *si sono venduti*.
+- u6 p2: passive with *essere* and *venire*, *da* for the agent, *andare* for necessity (*va compilato*); *essere* chosen in the passato prossimo.
+- u6 p3: reported speech with the tense shifts after a past reporting verb; time words (*il giorno dopo*, *lì*); please check the accepted answers in the transform item with *il giorno seguente*.
+- u6 p4: the news item about a library is invented and general; the comment is signed with a first name only.
