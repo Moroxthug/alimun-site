@@ -114,10 +114,10 @@ export const UNIT = {
         ],
         [
           { t: 'ex', kind: 'gap', h: 'Write the subjunctive.', items: [
-            { q: 'Je veux que tu te ___ . (reposer)', a: ['reposes'], why: '*que tu te reposes*' },
+            { q: 'Je veux que tu te___. (reposer)', a: ['reposes'], why: '*que tu te reposes*' },
             { q: 'Il vaut mieux que nous ___ tôt. (partir)', a: ['partions'], why: '*que nous partions*' },
             { q: 'Je t’aide pour que tu ___ à l’heure. (finir)', a: ['finisses'], why: '*que tu finisses*' },
-            { q: 'Il part avant qu’elle ___ . (venir)', a: ['vienne'], why: '*qu’elle vienne*' },
+            { q: 'Il part avant qu’elle___. (venir)', a: ['vienne'], why: '*qu’elle vienne*' },
             { q: 'Il faut que je ___ la vérité. (savoir)', a: ['sache'], why: '*que je sache*' },
             { q: 'Je souhaite que vous ___ bien. (dormir)', a: ['dormiez'], why: '*que vous dormiez*' },
           ] },
@@ -135,9 +135,9 @@ export const UNIT = {
             { q: 'Il part. Il mange. (avant de)', cue: 'Il part', a: ['Il part avant de manger.'], why: 'Same subject: *avant de* + infinitive.' },
           ] },
           { t: 'ex', kind: 'fix', h: 'Find the mistake and write the right word.', items: [
-            { s: 'Je veux que tu [reposes] te.', a: ['te reposes'], why: 'Reflexive pronoun first: *que tu te reposes*.' },
+            { s: 'Je veux que tu te [repose].', a: ['reposes'], why: '*que tu te reposes*' },
             { s: 'Il part avant que nous [arrivons].', a: ['arrivions'], why: 'After *avant que*: the subjunctive.' },
-            { s: 'Je veux que je [pars] demain.', a: ['partir'], why: 'Same subject: use the infinitive: *Je veux partir demain.*' },
+            { s: 'Je veux que tu [pars] tôt.', a: ['partes'], why: 'After *vouloir que*: the subjunctive *que tu partes*.' },
           ] },
         ],
       ],
@@ -183,9 +183,9 @@ export const UNIT = {
             { q: 'Tu dois manger ce fruit.', cue: 'Mange', a: ['Mange-le.'], why: 'The pronoun goes after the verb with a hyphen.' },
           ] },
           { t: 'ex', kind: 'select', h: 'Choose the right command.', items: [
-            { q: 'You are tired, a friend says: « ___ . »', o: ['Repose-toi', 'Te repose', 'Reposes-te'], why: '*Repose-toi.*' },
-            { q: 'A friend gives you a sweet you do not want: « Non, ___ . »', o: ['ne le mange pas', 'ne mange le pas', 'ne mange pas le'], why: 'Negative: the pronoun goes before.' },
-            { q: 'You want something from a friend: « ___ la clé. »', o: ['Donne-moi', 'Moi donne', 'Donne-me'], why: '*Donne-moi la clé.*' },
+            { q: 'Vous êtes fatigué. Un ami dit : « ___. »', o: ['Repose-toi', 'Te repose', 'Reposes-te'], why: '*Repose-toi.*' },
+            { q: 'Un ami vous offre un bonbon que vous ne voulez pas : « Non, ___. »', o: ['ne le mange pas', 'ne mange le pas', 'ne mange pas le'], why: 'Negative: the pronoun goes before.' },
+            { q: 'Vous voulez la clé. Vous dites à un ami : « ___ la clé. »', o: ['Donne-moi', 'Moi donne', 'Donne-me'], why: '*Donne-moi la clé.*' },
           ] },
         ],
         [
