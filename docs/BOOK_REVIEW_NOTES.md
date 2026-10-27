@@ -978,3 +978,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: cualquiera que sea, quienquiera que, dondequiera que, pase lo que pase and the other repeated-verb expressions.
 - u8 p3: cause and effect, de ahí que + subjunctive; hay quien takes the indicative; abstract vocabulary.
 - u8 p4: the essay is invented; check debió de ser as a guess.
+
+## German C1
+- u1 p1: Mittelfeld order (pronouns, dative before accusative, te-ka-mo-lo). Native check.
+- u1 p2: Vorfeld and Nachfeld; the remark on spoken afterthoughts.
+- u1 p3: es ist … der, was … ist, wer … der; sein agrees with the noun after was.
+- u1 p4: the speech is invented.
