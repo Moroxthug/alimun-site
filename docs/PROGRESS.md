@@ -1185,3 +1185,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `node scripts/check-book.mjs Spanish-C1` passes. Review notes under `## Spanish C1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (the units use readings, with no named speakers beyond fictional first names).
 - Spanish C1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is C2 for every language.
 - Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: English C2
+- Written alone, one unit per commit: `site/src/data/books/English-C2.js` (syllabus) and `units/English-C2/u1.js` to `u8.js` (eight units, four lessons and a unit test each). English with British and American notes. Units: precision and nuance, style and rhythm, irony and wordplay, academic and critical writing, varieties of English, advanced grammar, rhetoric, literature and criticism.
+- `node scripts/check-book.mjs English-C2` passes. Review notes under `## English C2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names.
+- The "C2 for every language" line in `docs/WRITING_BOOKS.md` now says English is done; the other five languages follow.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.

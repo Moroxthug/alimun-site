@@ -1178,3 +1178,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: rhetorical devices; check the chiasmus example (Work to live; don't live to work).
 - u7 p3: framing and loaded language; native check on the connotation labels.
 - u7 p4: the speech and commentary are invented; the park and the town are fictional.
+- u8 p1: figurative language; native check on the effect statements.
+- u8 p2: narrative voice and tone; check the tone words (wry, detached, sardonic).
+- u8 p3: point, evidence, explanation; check the advice on tense and quotations.
+- u8 p4: the story and the critical note are invented.
