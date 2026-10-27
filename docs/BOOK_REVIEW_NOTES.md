@@ -1208,3 +1208,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: plain language rewrites; check the 20-word guideline and that the obligation is kept.
 - u6 p3: obligation, right, prohibition and condition; check à défaut de and faute de.
 - u6 p4: the contract clause is invented; no real contract is quoted.
+- u7 p1: ethos, pathos, logos; examples are original.
+- u7 p2: rhetorical devices; check the chiasmus example (Travailler pour vivre, non vivre pour travailler).
+- u7 p3: framing and loaded language; native check on the connotation labels (plan social, plan de sauvegarde de l'emploi, régime).
+- u7 p4: the speech and commentary are invented; the garden and the town are fictional.
