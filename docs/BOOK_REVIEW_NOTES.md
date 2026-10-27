@@ -1170,3 +1170,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: informal words and politeness styles; check the generalisations about British and American politeness.
 - u5 p3: legal English and plain English rewrites; check the plain versions keep the meaning.
 - u5 p4: the conversation is invented; Fiona, Dwight, Mia and Anil are fictional.
+- u6 p1: mandative subjunctive and formulaic phrases; check the British should alternative and far be it from me.
+- u6 p2: absolute constructions and reduced clauses; native check on the example register.
+- u6 p3: modals and aspect (will for habit, shall, dare, needn't); check the register notes.
+- u6 p4: the story is invented.
