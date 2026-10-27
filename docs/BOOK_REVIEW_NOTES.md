@@ -800,3 +800,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: frequency words and *nunca* without *não*; *estar a* + infinitive (Brazil: *estar* + gerund).
 - u6 p3: *querer* and *poder*, *ter de*; the weather with *estar*, and a tip that Brazil also says *Faz calor*; please check *Combinado!* in the second dialogue.
 - u6 p4: the notices are invented; address at example.com.
+- u7 p1: *ficar* for location, *aqui / ali / lá*; *paragem* in Portugal and *ponto* in Brazil.
+- u7 p2: *ir a* with contractions, *ir para casa / para o trabalho*, *de autocarro*, *a pé*; the ticket dialogue price (18,50 euros) and times are invented.
+- u7 p3: directions with the tu form (*segue, vira*) and the polite form (*siga, vire*); *vá* for *ir*.
+- u7 p4: the Coimbra guide only says the city has an old university; the metro notice is invented.
