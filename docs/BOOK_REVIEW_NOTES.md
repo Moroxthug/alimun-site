@@ -1324,3 +1324,7 @@ u1 p1: near-synonyms for looking and thinness (olhar, fitar, observar, contempla
 u1 p2: collocations and fixed pairs (gravemente ferido, erro crasso, generalização precipitada, mais cedo ou mais tarde, são e salvo, pouco a pouco).
 u1 p3: euphemism and litotes (faleceu, partiu, não é mau, não é pouco); check the European Portuguese register.
 u1 p4: invented essay on the words we choose; no real author or quotation.
+u2 p1: sentence variety and parallel structure; native teacher to check the examples read naturally.
+u2 p2: cohesion (este último, o primeiro … o segundo, o que, tal, nominal resumption, ellipsis).
+u2 p3: punctuation for effect, with « » as the quotation marks of Portugal; the comma examples (Vamos comer, crianças) are classic and safe.
+u2 p4: invented magazine essay on slow living.
