@@ -600,3 +600,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p3: national days (France 14 July, Belgium 21 July, Switzerland 1 August, Quebec 24 June) and Fête de la musique (21 June) are general facts; please verify.
 - u7 p3: passé simple recognised only (fut, eut, alla, fit, prit, arrivèrent); no forms to write.
 - u7 p4: the complaint letter is invented; hotels and dates are fictional.
+- u8 p1: espérer que + indicative (future) against souhaiter / vouloir que + subjunctive stated as a rule.
+- u8 p2: gerund formation (nous-form minus -ons + -ant) with être / avoir / savoir irregular; used for simultaneous action and manner.
+- u8 p3: past conditional (j’aurais dû, j’aurais pu) and si + plus-que-parfait + past conditional.
+- u8 p4: the letter and the text about a decision are invented.
