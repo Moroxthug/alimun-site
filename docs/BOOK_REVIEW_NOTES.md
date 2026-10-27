@@ -1060,3 +1060,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: prefixes and suffixes and the gender they give.
 - u3 p3: parasynthetic verbs, compounds and their plurals, loanwords; check capolavoro and cassaforte plurals.
 - u3 p4: the essay is invented.
+- u4 p1: three registers; Lei, voi in the south, tu. Native check.
+- u4 p2: anguria, cocomero, melone d'acqua; natel in Ticino; mica, già, magari, boh, dai.
+- u4 p3: idioms and proverbs; check piove a catinelle and essere al verde.
+- u4 p4: the conversation is invented; Bologna, Rome, Milan and Palermo are real cities.
