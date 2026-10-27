@@ -1012,3 +1012,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: zwar … aber, gleichwohl, immerhin, zumindest; rhetorical devices.
 - u8 p3: phrases for taking the floor, interrupting, agreeing and disagreeing.
 - u8 p4: the commentary is invented.
+
+## French C1
+- u1 p1: passé simple forms; spoken against written use. Native check.
+- u1 p2: imparfait, passé simple and passé antérieur in narration.
+- u1 p3: imparfait and plus-que-parfait du subjonctif, with modern equivalents.
+- u1 p4: the literary extract is invented.
