@@ -804,3 +804,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: *ir a* with contractions, *ir para casa / para o trabalho*, *de autocarro*, *a pé*; the ticket dialogue price (18,50 euros) and times are invented.
 - u7 p3: directions with the tu form (*segue, vira*) and the polite form (*siga, vire*); *vá* for *ir*.
 - u7 p4: the Coimbra guide only says the city has an old university; the metro notice is invented.
+- u8 p1: clothes, colour agreement (*azul / azuis*, *cor-de-rosa* invariable), este / esse / aquele; *camisola* as a jumper in Portugal.
+- u8 p2: shop phrases; *levo-o / -a / -os / -as* with the pronoun after the verb (Portugal), a tip on the Brazilian way; please check *Fica bem?* in the dialogue.
+- u8 p3: *ir* + infinitive without *a* (Portugal) and time words; *O que vais fazer …?*
+- u8 p4: the sale advert and Clara's message are invented; prices are made up.
