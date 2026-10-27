@@ -1,0 +1,222 @@
+<!--TUTOR-->
+<section class="tu">
+  <div class="container-large">
+    <div class="tu_grid">
+      <div class="tu_text">
+        <h2 class="heading-style-h2 tu_rise">An AI tutor between classes</h2>
+        <p class="tu_lead tu_rise">Your live classes with a teacher stay at the heart of the course. Between them, your AI tutor <span class="tu_mark">supports what you learn</span>: it greets you by name, remembers what you worked on last time and proposes what to practise today.</p>
+        <div class="tu_rows">
+          <div class="tu_row tu_rise"><p class="tu_h">It checks your pronunciation</p><p>Say a word or a sentence: it shows which words and sounds were off, says them slowly and asks you to try again.</p></div>
+          <div class="tu_row tu_rise"><p class="tu_h">You talk, it answers</p><p>Like a call: it answers in about a second and writes on a whiteboard as it explains, then sets you exercises and checks them on the spot.</p></div>
+          <div class="tu_row tu_rise"><p class="tu_h">It goes over your lesson</p><p>After a live class, review it with your tutor. New and missed words go to your flashcards.</p></div>
+        </div>
+        <div class="tu_rise"><a href="/signup" class="button w-button" style="display:inline-flex;width:auto;padding-left:2rem;padding-right:2rem">Start with 10 free minutes</a></div>
+      </div>
+      <div class="tu_stage" data-tu>
+        <div class="tu_face tutor-art" data-mouth="rest" data-tutor="lena"></div>
+        <p class="tu_name">Lena <span data-tu-st>is ready</span></p>
+        <div class="tu_wave" data-tu-wave><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+        <p class="tu_ask" data-tu-ask>Say this sentence for me.</p>
+        <p class="tu_say" data-tu-say><span>I'd</span> <span>like</span> <span>a</span> <span>glass</span> <span>of</span> <span>water,</span> <span>please</span></p>
+        <p class="tu_slow" data-tu-slow><b data-tu-sw>wa · ter</b> <span data-tu-tx>Almost. Listen, then say “water” again.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+<!--/TUTOR-->
+<!--TRY-->
+<div class="tr" data-try>
+  <p class="tr_q">She ___ to work every day.</p>
+  <div class="tr_opts"><button type="button" data-ok="0">go</button><button type="button" data-ok="1">goes</button><button type="button" data-ok="0">going</button></div>
+  <p class="tr_why" aria-live="polite">Try it: pick the right word.</p>
+  <div class="tr_cards"><button type="button" class="tr_fc"><span class="f">Fernweh</span><span class="b">A longing for faraway places</span></button><button type="button" class="tr_fc"><span class="f">Commute</span><span class="b">The journey to work and back</span></button><button type="button" class="tr_fc"><span class="f">Feierabend</span><span class="b">The end of the working day</span></button></div>
+</div>
+<!--/TRY-->
+<!--ASSETS-->
+<style>
+  /* MOCKUP D (owner, 27 Oct 2026): today's homepage exactly as it is, with the dashboard brought in as touches: the
+     cast appearing at chosen moments, things to try, the AI tutor in the homepage's own layout (named as AI on the
+     owner's one-time permission). Not linked, noindex. */
+  :root { --tu-ease: cubic-bezier(.16, 1, .3, 1); }
+  /* Speech bubble, as in the dashboard */
+  .dk-bub { position: absolute; padding: .7rem 1rem; background: #fff; border: 3px solid #1a443c; color: #1a443c; font: 600 .95rem/1.3 Satoshi, sans-serif; border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px; white-space: nowrap; min-height: 1.3em; transform-origin: 85% 110%; animation: dkBub .6s 1.8s var(--tu-ease) both; z-index: 5; }
+  .dk-char { position: absolute; z-index: 5; pointer-events: none; }
+  .dk-char svg { width: 100%; height: 100%; filter: drop-shadow(0 10px 18px rgba(8, 8, 8, .18)); }
+  /* Hero: the owl joins the video */
+  .video_box { position: relative; }
+  .dk-hero { right: 3%; bottom: -3%; width: 19%; aspect-ratio: 1; height: auto; animation: dkPeek 1s 1.4s var(--tu-ease) both; }
+  .dk-hero-bub { right: 17%; bottom: 17%; font-size: clamp(.8rem, 1.5vw, 1.35rem); padding: .6em 1em; }
+  /* Group panels: a buddy peeks out of each photo; the number counts up */
+  .gs_img { position: relative; }
+  .dk-gs { right: 1.5rem; bottom: -.6rem; width: 7.5rem; height: 7.5rem; transform: translateY(40%) scale(.6); opacity: 0; transition: transform .9s var(--tu-ease), opacity .5s; }
+  .gs_panel.dk-in .dk-gs { transform: none; opacity: 1; }
+  /* Languages: each language's buddy pops up beside the title when its row lights up */
+  .ln_link { position: relative; }
+  .dk-food { display: inline-block; width: clamp(3.5rem, 5vw, 5.5rem); height: clamp(3.5rem, 5vw, 5.5rem); margin-left: .75rem; vertical-align: -.35em; opacity: 0; transform: translateY(30%) scale(.4) rotate(-14deg); transition: opacity .4s, transform .8s cubic-bezier(.3, 1.5, .5, 1); }
+  .dk-food svg { width: 100%; height: 100%; }
+  .ln_row.is-on .dk-food { opacity: 1; transform: none; }
+  /* FAQ: the parrot by the heading */
+  .qa_head { position: relative; }
+  .dk-faq { right: 0; top: -1rem; width: 8rem; height: 8rem; opacity: 0; transform: translateY(20px) scale(.8); transition: opacity .6s, transform .9s var(--tu-ease); }
+  .qa_head.dk-in .dk-faq { opacity: 1; transform: none; }
+  /* Banner: the buddies peek up from the bottom edge */
+  .section.is-bottom-cta { position: relative; overflow: hidden; }
+  .dk-line { position: absolute; left: 50%; bottom: -1.2rem; transform: translateX(-50%); display: flex; gap: clamp(.5rem, 2vw, 2rem); z-index: 6; pointer-events: none; }
+  .dk-line > div { width: clamp(3.5rem, 7vw, 6.5rem); height: clamp(3.5rem, 7vw, 6.5rem); transform: translateY(110%); transition: transform .9s cubic-bezier(.3, 1.4, .5, 1); }
+  .dk-line.dk-in > div { transform: translateY(0); }
+  .dk-line > div svg { width: 100%; height: 100%; }
+
+  /* AI tutor section: the homepage's own layout (heading and rows on the left, a large rounded frame on the right) */
+  .tu { padding: 8rem 0; background-color: var(--white, #fff); }
+  .tu_grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; }
+  .tu_text { display: flex; flex-direction: column; gap: 1.5rem; }
+  .tu_text h2 { margin: 0; }
+  .tu_lead { margin: 0; max-width: 34rem; color: rgba(8, 8, 8, .7); }
+  .tu_mark { background-image: linear-gradient(var(--green, #ceff65), var(--green, #ceff65)); background-repeat: no-repeat; background-position: 0 88%; background-size: 0% 45%; transition: background-size 1s .5s var(--tu-ease); }
+  .tu.is-in .tu_mark { background-size: 100% 45%; }
+  .tu_rows { border-top: 1px solid rgba(8, 8, 8, .12); }
+  .tu_row { padding: 1.25rem 0; border-bottom: 1px solid rgba(8, 8, 8, .12); }
+  .tu_row p { margin: 0; max-width: 34rem; color: rgba(8, 8, 8, .7); }
+  .tu_row .tu_h { font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-size: 1.6rem; line-height: 1.05; color: #080808; margin-bottom: .4rem; }
+  .tu_rise { opacity: 0; transform: translateY(2.5rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
+  .tu.is-in .tu_rise { opacity: 1; transform: none; }
+  .tu.is-in .tu_rise:nth-child(2) { transition-delay: .1s; } .tu.is-in .tu_rows .tu_rise:nth-child(1) { transition-delay: .2s; } .tu.is-in .tu_rows .tu_rise:nth-child(2) { transition-delay: .3s; } .tu.is-in .tu_rows .tu_rise:nth-child(3) { transition-delay: .4s; } .tu.is-in .tu_text > .tu_rise:last-child { transition-delay: .5s; }
+  .tu_stage { position: relative; height: 72vh; min-height: 34rem; border-radius: 3.125rem; background-color: #f0efe9; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 3rem; clip-path: inset(100% 0 0 0 round 3.125rem); transition: clip-path 1.2s cubic-bezier(.77, 0, .175, 1); }
+  .tu.is-in .tu_stage { clip-path: inset(0 0 0 0 round 3.125rem); }
+  .tu_face { width: clamp(9rem, 14vw, 13rem); height: clamp(9rem, 14vw, 13rem); border-radius: 50%; background: #eaf6f2; display: grid; place-items: center; overflow: hidden; position: relative; transition: box-shadow .3s; }
+  .tu_face svg { width: 92%; height: 92%; }
+  .tu_stage.is-talk .tu_face { box-shadow: 0 0 0 .5rem rgba(206, 255, 101, .9); animation: tuRing 1.2s ease-in-out infinite; }
+  .tu_name { margin: 1.25rem 0 0; font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-size: 1.6rem; }
+  .tu_name span { font-family: Satoshi, sans-serif; text-transform: none; font-size: 1rem; color: rgba(8, 8, 8, .55); margin-left: .35rem; }
+  .tu_wave { display: flex; align-items: center; justify-content: center; gap: 4px; height: 2.2rem; margin: .75rem 0 1.5rem; }
+  .tu_wave i { width: 4px; height: 4px; border-radius: 4px; background: #1a443c; opacity: .25; transition: height .1s, opacity .3s; }
+  .tu_stage.is-listen .tu_wave i { opacity: 1; }
+  .tu_ask { margin: 0 0 .75rem; color: rgba(8, 8, 8, .6); min-height: 1.5em; transition: opacity .4s; }
+  .tu_say { margin: 0; font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-size: clamp(2rem, 3.4vw, 3.4rem); line-height: 1.1; }
+  .tu_say span { position: relative; display: inline-block; color: rgba(8, 8, 8, .3); transition: color .4s; }
+  .tu_say span.ok { color: #080808; }
+  .tu_say span.ok::after, .tu_say span.off::after { content: ""; position: absolute; left: 0; right: 0; bottom: .02em; height: .14em; border-radius: .1em; transform-origin: 0 50%; animation: tuLine .5s var(--tu-ease) both; z-index: -1; }
+  .tu_say span.ok::after { background: #ceff65; }
+  .tu_say span.off { color: #b8513a; }
+  .tu_say span.off::after { background: #ff9f8a; }
+  .tu_slow { margin: 1.5rem 0 0; min-height: 2.6rem; display: flex; gap: .9rem; align-items: center; justify-content: center; flex-wrap: wrap; opacity: 0; transform: translateY(10px); transition: opacity .5s, transform .6s var(--tu-ease); }
+  .tu_slow.is-on { opacity: 1; transform: none; }
+  .tu_slow b { font: 400 1.5rem Coolvetica Condensed, sans-serif; text-transform: uppercase; letter-spacing: .16em; background: #fff; border-radius: 5rem; padding: .35rem 1.1rem; color: #1a443c; white-space: nowrap; }
+  .tu_slow span { color: rgba(8, 8, 8, .65); }
+
+  /* Try it: inside "Practice between classes" */
+  .tr { margin-top: 1.75rem; max-width: 40rem; background: #f0efe9; border-radius: 1.75rem; padding: 1.5rem; }
+  .tr_q { margin: 0 0 1rem; font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-size: 1.75rem; line-height: 1.05; }
+  .tr_opts { display: flex; gap: .6rem; }
+  .tr_opts button { flex: 1; height: 3.25rem; border-radius: 1rem; border: 2px solid transparent; background: #fff; font: 700 1.05rem Satoshi, sans-serif; cursor: pointer; transition: transform .25s, border-color .25s, background .25s; }
+  .tr_opts button:hover { transform: translateY(-2px); border-color: #1a443c; }
+  .tr_opts button.is-right { background: #ceff65; border-color: #1a443c; animation: trPop .5s; }
+  .tr_opts button.is-wrong { background: #fdeee9; border-color: #ff9f8a; animation: trShake .4s; }
+  .tr_why { margin: .8rem 0 0; font-size: .95rem; color: #1a443c; min-height: 1.4em; }
+  .tr_cards { display: flex; gap: .6rem; margin-top: 1rem; }
+  .tr_fc { flex: 1; position: relative; height: 5.25rem; border: 0; padding: 0; background: none; cursor: pointer; perspective: 800px; }
+  .tr_fc span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: .5rem; border-radius: 1rem; backface-visibility: hidden; transition: transform .6s var(--tu-ease); }
+  .tr_fc .f { background: #fff; font: 400 1.4rem Coolvetica Condensed, sans-serif; text-transform: uppercase; }
+  .tr_fc .b { background: #ceff65; font: 700 .85rem/1.3 Satoshi, sans-serif; transform: rotateY(180deg); }
+  .tr_fc.is-flip .f { transform: rotateY(-180deg); } .tr_fc.is-flip .b { transform: rotateY(0); }
+  .dk-burst { position: fixed; width: 9px; height: 9px; border-radius: 50%; pointer-events: none; z-index: 2000; animation: dkBurst .8s cubic-bezier(.2, .8, .2, 1) forwards; }
+
+  /* The cast's own motion (as in the dashboard) */
+  .tutor-art .mo { display: none; }
+  .tutor-art[data-mouth="rest"] .mo-rest, .tutor-art:not([data-mouth]) .mo-rest, .tutor-art[data-mouth="m"] .mo-m, .tutor-art[data-mouth="e"] .mo-e, .tutor-art[data-mouth="a"] .mo-a, .tutor-art[data-mouth="o"] .mo-o { display: inline; }
+  .tutor-art .blink { animation: dkBlink 4.2s infinite; transform-box: fill-box; transform-origin: center; }
+  .sway { animation: dkSway 3s ease-in-out infinite; transform-origin: 50% 95%; } .bob { animation: dkBob 1.8s ease-in-out infinite; } .float { animation: dkBob 3.2s ease-in-out infinite; }
+  .breathe { animation: dkBreathe 3s ease-in-out infinite; transform-origin: 50% 100%; } .look { animation: dkLook 4s ease-in-out infinite; } .crawl { animation: dkCrawl 6s ease-in-out infinite; }
+  .wag .tail { animation: dkWag .35s ease-in-out infinite alternate; transform-box: fill-box; transform-origin: 0 100%; }
+  @keyframes dkBlink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(.1); } }
+  @keyframes dkSway { 0%, 100% { transform: rotate(-3deg); } 50% { transform: rotate(3deg); } }
+  @keyframes dkBob { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+  @keyframes dkBreathe { 50% { transform: scaleY(.96); } } @keyframes dkLook { 0%, 40%, 100% { transform: translateX(0); } 50%, 85% { transform: translateX(3px); } }
+  @keyframes dkCrawl { 0%, 100% { transform: translateX(-4px); } 50% { transform: translateX(4px); } } @keyframes dkWag { to { transform: rotate(12deg); } }
+  @keyframes dkPeek { from { opacity: 0; transform: translateY(60%) rotate(-10deg); } to { opacity: 1; transform: none; } }
+  @keyframes dkBub { from { opacity: 0; transform: scale(.5) rotate(-6deg); } to { opacity: 1; transform: none; } }
+  @keyframes tuRing { 50% { box-shadow: 0 0 0 .9rem rgba(206, 255, 101, .45); } }
+  @keyframes tuLine { from { transform: scaleX(0); } }
+  @keyframes trPop { 40% { transform: scale(1.06); } } @keyframes trShake { 25% { transform: translateX(-6px); } 75% { transform: translateX(5px); } }
+  @keyframes dkBurst { from { transform: translate(0, 0) scale(1); opacity: 1; } to { transform: translate(var(--x), var(--y)) scale(.3); opacity: 0; } }
+  @media (prefers-reduced-motion: reduce) { .dk-char, .dk-bub, .dk-food, .dk-line > div, .tu_rise, .tu_stage { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; clip-path: none !important; } }
+  @media (max-width: 767px) {
+    .tu { padding: 4.5rem 0; } .tu_grid { grid-template-columns: 1fr; gap: 2.5rem; } .tu_stage { height: auto; min-height: 30rem; padding: 2rem 1.25rem; border-radius: 2.25rem; }
+    .dk-hero-bub { display: none; } .dk-gs { width: 5rem; height: 5rem; right: 1rem; } .dk-faq { width: 5.5rem; height: 5.5rem; top: -3rem; }
+    .tr { padding: 1.1rem; } .tr_q { font-size: 1.4rem; } .tr_fc .f { font-size: 1.1rem; }
+  }
+</style>
+<script src="/js/app/cast.js"></script>
+<script src="/js/app/cast3.js"></script>
+<script>
+  (function () {
+    var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    var $ = function (s, r) { return (r || document).querySelector(s); }, $$ = function (s, r) { return [].slice.call((r || document).querySelectorAll(s)); };
+    function go() {
+      var C = window.AlimunCast; if (!C) return;
+      var char = function (name, cls) { var d = document.createElement("div"); d.className = "dk-char " + cls; d.setAttribute("aria-hidden", "true"); d.innerHTML = C.drawing(name) || ""; return d; };
+      var seen = function (el, cb, opt) { if (!("IntersectionObserver" in window) || calm) { cb(); return; } var o = new IntersectionObserver(function (l) { if (l[0].isIntersecting) { o.disconnect(); cb(); } }, opt || { threshold: 0.3 }); o.observe(el); };
+      /* In-page links keep working from this preview address */
+      $$('a[href^="#"]').forEach(function (a) { a.setAttribute("href", location.pathname + a.getAttribute("href")); });
+
+      /* Hero: the owl joins the video and talks */
+      var box = $(".video_box");
+      if (box) {
+        box.appendChild(char("owl", "dk-hero"));
+        var bub = document.createElement("div"); bub.className = "dk-bub dk-hero-bub"; bub.textContent = "Live classes with a teacher."; box.appendChild(bub);
+        var lines = ["Live classes with a teacher.", "The same group every week.", "You speak from the first lesson.", "From A1 to C2."], li = 0;
+        if (!calm) setInterval(function () { li = (li + 1) % lines.length; var t = lines[li], n = 0; (function step() { bub.textContent = t.slice(0, n) || " "; if (n++ < t.length) setTimeout(step, 34); })(); }, 4200);
+      }
+      /* Group panels: a buddy per plan; the group size counts up */
+      var buds = ["parrot", "cat", "dog", "owl"];
+      $$(".gs_panel").forEach(function (p, i) {
+        var img = $(".gs_img", p); if (img) img.appendChild(char(buds[i % 4], "dk-gs"));
+        var num = $(".gs_num strong", p), to = num ? parseInt(num.textContent, 10) : 0;
+        if ("IntersectionObserver" in window && !calm) {
+          var o = new IntersectionObserver(function (l) { if (l[0].isIntersecting) { o.disconnect(); p.classList.add("dk-in"); if (num && to > 1) { var t0 = performance.now(); (function step(n) { var k = Math.min(1, (n - t0) / 1100); num.textContent = Math.max(1, Math.round(to * (1 - Math.pow(1 - k, 3)))); if (k < 1) requestAnimationFrame(step); })(t0); } } }, { threshold: 0.55 });
+          o.observe(p);
+        } else p.classList.add("dk-in");
+      });
+      /* Languages: the food buddies */
+      var foods = { english: "teacup", german: "pretzel", spanish: "churro", french: "croissant", italian: "pizza", portuguese: "nata" };
+      $$(".ln_link").forEach(function (a) { var k = (a.getAttribute("href") || "").replace(/^.*\//, "").split("-")[0]; var f = foods[k]; var t = $(".ln_title", a); if (f && t) { var s = document.createElement("span"); s.className = "dk-food"; s.setAttribute("aria-hidden", "true"); s.innerHTML = C.drawing(f) || ""; t.parentNode.insertBefore(s, t.nextSibling); } });
+      /* FAQ: the parrot */
+      var qh = $(".qa_head"); if (qh) { qh.appendChild(char("parrot", "dk-faq")); seen(qh, function () { qh.classList.add("dk-in"); }); }
+      /* Banner: the buddies peek up */
+      var cta = $(".section.is-bottom-cta");
+      if (cta) { var line = document.createElement("div"); line.className = "dk-line"; ["teacup", "pretzel", "churro", "croissant", "pizza", "nata"].forEach(function (f, i) { var d = document.createElement("div"); d.style.transitionDelay = (i * 0.08) + "s"; d.innerHTML = C.drawing(f) || ""; line.appendChild(d); }); cta.appendChild(line); seen(cta, function () { line.classList.add("dk-in"); }); }
+
+      /* Try it */
+      var tr = $("[data-try]");
+      if (tr) {
+        var why = $(".tr_why", tr), opts = $$(".tr_opts button", tr);
+        opts.forEach(function (b) { b.addEventListener("click", function () { opts.forEach(function (o) { o.classList.remove("is-right", "is-wrong"); }); var ok = b.getAttribute("data-ok") === "1"; b.classList.add(ok ? "is-right" : "is-wrong"); why.textContent = ok ? "Correct. With he, she and it, the present simple adds -s: she goes." : "Not quite. With she, the verb adds -s. Try again."; if (ok && !calm) burst(b); }); });
+        $$(".tr_fc", tr).forEach(function (f) { f.addEventListener("click", function () { f.classList.toggle("is-flip"); }); });
+      }
+      function burst(el) { var r = el.getBoundingClientRect(), cs = ["#ceff65", "#ffd166", "#9fd6c7", "#ff9f8a", "#1a443c"]; for (var i = 0; i < 16; i++) { var d = document.createElement("i"), a = Math.random() * Math.PI * 2, s = 50 + Math.random() * 70; d.className = "dk-burst"; d.style.left = (r.left + r.width / 2) + "px"; d.style.top = (r.top + r.height / 2) + "px"; d.style.background = cs[i % 5]; d.style.setProperty("--x", Math.cos(a) * s + "px"); d.style.setProperty("--y", Math.sin(a) * s + "px"); document.body.appendChild(d); setTimeout(d.remove.bind(d), 850); } }
+
+      /* AI tutor: the section rises in, then Lena runs a pronunciation round */
+      var tu = $(".tu"), stg = $("[data-tu]");
+      if (tu && stg) {
+        $$("[data-tutor]", tu).forEach(function (el) { el.innerHTML = C.tutor ? C.tutor(el.getAttribute("data-tutor")) : ""; });
+        var face = $(".tu_face", stg), st = $("[data-tu-st]", stg), bars = $$("[data-tu-wave] i", stg), words = $$("[data-tu-say] span", stg), slow = $("[data-tu-slow]", stg), sw = $("[data-tu-sw]", stg), tx = $("[data-tu-tx]", stg), ask = $("[data-tu-ask]", stg), wave = 0;
+        var mouth = function (ms) { var s = ["e", "a", "o", "m", "a", "e", "o", "a"], k = 0; stg.classList.add("is-talk"); var t = setInterval(function () { face.setAttribute("data-mouth", s[k++ % s.length]); }, 95); setTimeout(function () { clearInterval(t); face.setAttribute("data-mouth", "rest"); stg.classList.remove("is-talk"); }, ms); };
+        var listen = function (on) { stg.classList.toggle("is-listen", on); clearInterval(wave); if (on) { st.textContent = "is listening"; wave = setInterval(function () { bars.forEach(function (b) { b.style.height = (4 + Math.random() * 28).toFixed(0) + "px"; }); }, 100); } else bars.forEach(function (b) { b.style.height = "4px"; }); };
+        var run = function () {
+          words.forEach(function (w) { w.className = ""; }); slow.classList.remove("is-on"); ask.textContent = "Say this sentence for me."; st.textContent = "is speaking"; mouth(1800);
+          setTimeout(function () { listen(true); }, 2200);
+          setTimeout(function () { listen(false); st.textContent = "is checking each word"; }, 4700);
+          words.forEach(function (w, i) { setTimeout(function () { w.className = i === 5 ? "off" : "ok"; }, 5000 + i * 170); });
+          setTimeout(function () { sw.textContent = "wa · ter"; tx.textContent = "Almost. Listen, then say “water” again."; slow.classList.add("is-on"); st.textContent = "is speaking"; mouth(2200); }, 6500);
+          setTimeout(function () { listen(true); }, 9000);
+          setTimeout(function () { listen(false); words[5].className = "ok"; sw.textContent = "Well done"; tx.textContent = "Clear and natural. Next, a new sentence."; st.textContent = "is speaking"; mouth(1500); }, 10800);
+          setTimeout(function () { st.textContent = "is ready"; }, 12600);
+          setTimeout(run, 15000);
+        };
+        seen(tu, function () { tu.classList.add("is-in"); if (!calm) setTimeout(run, 1400); else { words.forEach(function (w, i) { w.className = i === 5 ? "off" : "ok"; }); slow.classList.add("is-on"); } }, { threshold: 0.25 });
+      }
+    }
+    if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", go); else go();
+  })();
+</script>
+<!--/ASSETS-->
