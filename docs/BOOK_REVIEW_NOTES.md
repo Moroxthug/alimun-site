@@ -808,3 +808,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: shop phrases; *levo-o / -a / -os / -as* with the pronoun after the verb (Portugal), a tip on the Brazilian way; please check *Fica bem?* in the dialogue.
 - u8 p3: *ir* + infinitive without *a* (Portugal) and time words; *O que vais fazer …?*
 - u8 p4: the sale advert and Clara's message are invented; prices are made up.
+
+## Portuguese A2
+- u1 p1: *ser* for character and *estar* for today; *acho que* + indicative; *trabalhador / trabalhadora*.
+- u1 p2: *mais … do que / que*, *tão … como*, irregular *melhor, pior, maior, menor*; the fix item accepts *do que* and *que*.
+- u1 p3: direct object pronouns after the verb (Portugal), *-lo / -la* after infinitives, *-no / -na* after nasal endings, and before the verb after *não, também, quem*.
+- u1 p4: the letter about the colleague Miguel is invented.
