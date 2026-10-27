@@ -1284,3 +1284,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: narrative voice and tone; check the terms.
 - u8 p3: the comentario de texto structure and the advice on tense and quotations.
 - u8 p4: the story and critical note are invented.
+
+## Italian C2
+- u1 p1: connotation of near-synonyms (contemplare, fissare, scorgere, scheletrico, tirchio, testardo); native check, and the regional note on tirchio and spilorcio.
+- u1 p2: collocations and fixed pairs; check the "not natural" column and the remark on raggiungere un compromesso.
+- u1 p3: euphemism and litotes (non è una cosa da poco, ci ha lasciati, esuberi); native check.
+- u1 p4: the essay is invented; the demonstration is fictional.
