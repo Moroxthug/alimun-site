@@ -910,3 +910,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: visto que, devido a, graças a, por culpa de, por isso, consequentemente.
 - u8 p3: abstract nouns, há quem + conjuntivo, caber a.
 - u8 p4: essay is invented; check the dermos form (futuro do conjuntivo of dar).
+
+## English A1
+- u1 p1: greetings; the tip on How do you do? and What's up? Native check.
+- u1 p2: be, short forms and short answers (Yes, I am).
+- u1 p3: alphabet respelling (zed or zee), numbers to 20, nationalities; the British and English tip.
+- u1 p4: profiles are invented.
