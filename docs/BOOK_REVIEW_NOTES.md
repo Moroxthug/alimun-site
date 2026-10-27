@@ -638,3 +638,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: future, future perfect, conditional and near future for predictions; *d’ici là*.
 - u8 p3: typical learner mistakes (malgré que, plus bon, participle agreement, si il, a / à) collected in one table.
 - u8 p4: the essay and the letter are original; no statistics.
+
+## Italian A1
+- u1 p1: *buongiorno* used until the early afternoon and *buonasera* after; check how you teach the switch.
+- u1 p2: nationalities in -co / -go (tedesco, svizzero) and their feminine; plurals only in the tip.
+- u1 p3: the alphabet table omits foreign letters (j, k, w, x, y); phone number in the dialogue is fictional.
+- New speaker roles and names added to audio.js: Segretaria, Giulia (women), Paolo (man).
