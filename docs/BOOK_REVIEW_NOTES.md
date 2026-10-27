@@ -596,3 +596,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: subjunctive after vouloir que, il vaut mieux que, avant que, pour que; extra forms for prendre, venir, savoir, vouloir, dormir.
 - u6 p3: imperative with pronouns (repose-toi, mange-le, donne-moi) and negative order; check the hyphen and *moi / toi* rule.
 - u6 p4: the sleep advice and the doctor’s advice are general and contain no statistics.
+- u7 p2: reported speech with tense shifts (present to imparfait, passé composé to plus-que-parfait, future to conditional) and time words (demain to le lendemain).
+- u7 p3: national days (France 14 July, Belgium 21 July, Switzerland 1 August, Quebec 24 June) and Fête de la musique (21 June) are general facts; please verify.
+- u7 p3: passé simple recognised only (fut, eut, alla, fit, prit, arrivèrent); no forms to write.
+- u7 p4: the complaint letter is invented; hotels and dates are fictional.
