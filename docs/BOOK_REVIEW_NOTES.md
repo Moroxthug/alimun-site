@@ -716,3 +716,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: agreement of the participle with *ne* for a quantity (*Ne ho mangiate due*) is taught as the rule; please confirm for the level that *Ne ho mangiato due* should not be accepted in the choice item.
 - u2 p3: *glie-* forms, *gliel’ho* and *gliele ho date* (no elision before *le*), imperative *mandamelo*, *me ne vado*.
 - u2 p4: the parcel chat is invented; no real shops or couriers named.
+- u3 p1: condizionale presente of regular verbs; *Mi piacerebbe* and *prenderei* as polite orders at a bar.
+- u3 p2: *Potrebbe / Le dispiacerebbe* for polite requests with *Lei*; *Mi daresti* accepted as the only answer in the transform item.
+- u3 p3: first look at the condizionale passato (*avrei dovuto*, *sarebbe arrivato*) used for advice and reported plans; kept very short for B1.
+- u3 p4: the course e-mail and its reply are invented; address at example.com, price and dates are made up.
