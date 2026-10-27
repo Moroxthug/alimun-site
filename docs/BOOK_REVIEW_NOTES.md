@@ -604,3 +604,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: gerund formation (nous-form minus -ons + -ant) with être / avoir / savoir irregular; used for simultaneous action and manner.
 - u8 p3: past conditional (j’aurais dû, j’aurais pu) and si + plus-que-parfait + past conditional.
 - u8 p4: the letter and the text about a decision are invented.
+
+## French B2
+- u1 p1: passé simple recognised (forms for 3rd person singular and plural of common verbs); never produced in exercises.
+- u1 p2: lequel / auquel / duquel against dont; *avec qui* allowed for people.
+- u1 p3: *à peine … que* with inversion; participle clauses with ayant / étant / voyant.
+- u1 p4: the short story and the travel anecdote are original.
