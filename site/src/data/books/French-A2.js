@@ -1,0 +1,19 @@
+// French A2 course book (docs/BOOKS.md). Draft: reviewed by a native teacher before it is published.
+// Units are written in units/French-A2/<unit>.js; until then each entry here is planned, with its outline.
+// Explanations in English, translated in i18n/French-A2.<lang>.json (French included).
+export const BOOK = {
+  id: 'French-A2',
+  language: 'French',
+  level: 'A2',
+  review: 'draft',
+  units: [
+    { id: 'u1', title: 'People and relationships', planned: true, plan: { goal: 'Describe people and their character, compare them and talk about relationships.', lessons: ['Character and appearance; adjectives of personality; trouver and penser que', 'Comparing: plus … que, moins … que, aussi … que; meilleur and mieux', 'The direct object pronouns le, la, l’, les (Je le connais. Tu la vois ?)', 'Reading: a letter to a friend about a new colleague'] } },
+    { id: 'u2', title: 'What did you do?', planned: true, plan: { goal: 'Tell a short story about last week and put events in order.', lessons: ['The passé composé: a review of avoir and être, with irregular participles (mis, dit, ouvert, appris, compris)', 'Reflexive verbs in the passé composé (Je me suis levé tôt.); agreement with the subject', 'Time and sequence: d’abord, ensuite, puis, enfin; il y a, depuis, pendant', 'Reading: an e-mail about a busy week'] } },
+    { id: 'u3', title: 'Experiences and childhood', planned: true, plan: { goal: 'Talk about what you used to do and what you have already done.', lessons: ['The imparfait: forms, with être, avoir, habiter, faire', 'Using the imparfait for habits and descriptions (Quand j’étais petit, …)', 'Passé composé or imparfait: an event and its background; déjà, jamais, pas encore', 'Reading: two people remember their school days'] } },
+    { id: 'u4', title: 'Food, shopping and recipes', planned: true, plan: { goal: 'Shop for food, follow a simple recipe and say how much you need.', lessons: ['Quantities (un peu de, beaucoup de, assez de, 200 grammes de); il faut', 'The pronoun en (J’en veux deux. Il y en a.)', 'Following and giving a recipe with the imperative and the pronouns; kitchen verbs', 'Reading: a recipe and a shop leaflet'] } },
+    { id: 'u5', title: 'Health', planned: true, plan: { goal: 'Say what hurts, make a doctor’s appointment and understand simple advice.', lessons: ['The body; avoir mal à; the doctor and the pharmacy', 'devoir and il faut + infinitive; advice with vous devriez; the imperative with pronouns', 'Making an appointment by phone; expressing a wish and an excuse', 'Reading: a leaflet from a pharmacy and an appointment confirmation'] } },
+    { id: 'u6', title: 'Work and everyday life', planned: true, plan: { goal: 'Talk about jobs, phone calls and daily tasks at work.', lessons: ['Jobs and workplaces; il / elle est + job; the CV in short sentences', 'The indirect object pronouns lui and leur; téléphoner, écrire, répondre, donner', 'On the phone: Allô, Je voudrais parler à …, Pouvez-vous répéter ? ; leaving a message', 'Reading: a job advert and a short work e-mail'] } },
+    { id: 'u7', title: 'Travel and weather', planned: true, plan: { goal: 'Plan a trip, book a hotel and talk about the weather.', lessons: ['Places and prepositions: à, en, au, aux with cities and countries; venir de', 'Booking a hotel and a train; the near future with aller + infinitive', 'The weather and the seasons; il fait, il y a; comparing places', 'Reading: a hotel confirmation and a postcard'] } },
+    { id: 'u8', title: 'Celebrations and the future', planned: true, plan: { goal: 'Talk about celebrations, invite people and say what you will do.', lessons: ['Celebrations and traditions; inviting, accepting and declining', 'The simple future of regular verbs and the most common irregular ones (serai, aurai, irai, ferai)', 'si + present + future (Si j’ai le temps, je viendrai.); making plans and promises', 'Reading: an invitation card and an e-mail reply'] } },
+  ],
+};
