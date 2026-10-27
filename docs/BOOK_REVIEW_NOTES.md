@@ -860,3 +860,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: presente do conjuntivo built from the *eu* form, irregular verbs including *dê, deem, vá, vão, haja*; spelling changes of *-car, -çar, -gar*.
 - u4 p3: *espero / quero / lamento / receio / é importante que* + subjunctive, the infinitive for the same subject, *talvez* and *pode ser que* + subjunctive.
 - u4 p4: the forum posts are invented, with first names only.
+- u5 p1: interview vocabulary; *há / desde* with the present and *durante* with the perfeito; *a tempo inteiro* (Brazil: *em tempo integral*).
+- u5 p2: *que, quem, onde, o que, o qual, cujo*; *quem* only after a preposition and for people; please confirm the tip about speech.
+- u5 p3: formal register of Portugal (*Exmo. Senhor, Venho por este meio, Agradeço desde já a atenção dispensada, Com os melhores cumprimentos*) and titles (*Dr., Eng.*); fictional phone number 210 555 0123.
+- u5 p4: the job advert and cover e-mail (Clara Moreira) are invented; e-mail addresses at example.com.
