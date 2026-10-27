@@ -902,3 +902,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: nouns in place of verbs; efetuar, apresentar, solicitar collocations.
 - u6 p3: formal letter phrases; Portugal against Brazil closings in the tip.
 - u6 p4: complaint and reply are invented (name, date, company).
+- u7 p1: vocabulary of books, film and exhibitions; personagem is feminine; realizador against diretor. Native check.
+- u7 p2: qualquer que seja, quem quer que, onde quer que, seja como for, por muito que.
+- u7 p3: review markers (no fundo, no geral, em suma, ainda assim).
+- u7 p4: exhibition review is invented; no real museum is named.
