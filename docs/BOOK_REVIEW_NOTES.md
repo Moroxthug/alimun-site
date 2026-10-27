@@ -758,3 +758,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: congiuntivo in relative clauses (wanted but not known, superlative, unico, nessuno); *C’è un negozio che venda questo?* kept as a question about an unknown shop.
 - u4 p3: restrictive and appositive clauses with commas, *il che*, *cosa che*, and reduced relative clauses with the participle; the present participle (*aventi diritto*) is only mentioned.
 - u4 p4: the article about a harbour district is invented and general; no real city named.
+- u5 p1: media vocabulary and collocations (diffondere/smentire/verificare); *fare informazione* explained as to do journalism.
+- u5 p2: *fare / lasciare / farsi* + infinitive and *andare* + participle for necessity; the participle with a pronoun (*l’ho fatta riparare*) is left out on purpose.
+- u5 p3: discourse markers (*del resto, in effetti, d’altronde, anzi, tuttavia, insomma, in fondo*); please check the tip on *anzi*.
+- u5 p4: the opinion article and the reader’s reply are invented and general; the reply is signed with a first name only.
