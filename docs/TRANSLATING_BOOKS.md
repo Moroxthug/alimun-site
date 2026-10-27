@@ -21,12 +21,4 @@ exact English text. Languages: es fr de pt it zh ar (Moroccan pages use fr).
 - No emojis. Do not add or drop information.
 
 ## Missing (27 Oct 2026)
-- it: English-C1-pleasure
-- zh: German-A1-academic, German-A1-pleasure, Spanish-A1-academic, Spanish-A1-pleasure, Spanish-A2-academic,
-  Spanish-A2-pleasure, Spanish-B1-professional, Spanish-B1-academic, Spanish-B1-pleasure, English-C1-professional,
-  English-C1-academic, English-C1-pleasure
-- ar: English-C1, German-A1-relocation, German-A1-professional, German-A1-academic, German-A1-pleasure,
-  Spanish-A1-professional, Spanish-A1-academic, Spanish-A1-pleasure, Spanish-A2-professional, Spanish-A2-academic,
-  Spanish-A2-pleasure, Spanish-B1-relocation, Spanish-B1-professional, Spanish-B1-academic, Spanish-B1-pleasure,
-  English-C1-relocation, English-C1-professional, English-C1-academic, English-C1-pleasure
-Until a file exists, those learners see the explanations in English.
+None. Every book has an explanation file in it, zh and ar. If a new book is added, list its missing files here.
