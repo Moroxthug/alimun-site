@@ -746,3 +746,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: future and futuro anteriore for guesses (*sarà, avrà perso*); please check the sort item *Saranno le sei* as a guess.
 - u1 p3: passato remoto of regular and ten irregular verbs (lui/lei and loro); tip on north and centre/south use in speech; *credé* and *credette* both listed.
 - u1 p4: the tale of Gino and the bridge is invented; no real place named.
+- u2 p1: congiuntivo passato after opinion, feeling and possibility; *Credo che Anna sia già uscita* kept as the only defensible choice against the indicative.
+- u2 p2: congiuntivo trapassato and condizionale passato in one table; *Avrei voluto venire* and a future seen from the past (*sarebbe venuto*).
+- u2 p3: four kinds of if, including the mixed type; a tip says the imperfetto in both parts (*Se lo sapevo, venivo*) is informal.
+- u2 p4: the letter is invented; Lisbon is named as a city only.
