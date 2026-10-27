@@ -1264,3 +1264,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: absolute participle and gerund; check Terminada la reunión and El tiempo permitiéndolo.
 - u3 p3: mood after quizá, a lo mejor, como si, aunque; check the capaz que remark.
 - u3 p4: the story is invented.
+- u4 p1: hedges and boosters (supuestamente, presuntamente, cabe suponer); native check.
+- u4 p2: reporting verbs (sostener, plantear, conceder, alegar); check alegar and the false friend note on pretender.
+- u4 p3: evaluation and signposting; check si bien + indicative.
+- u4 p4: the literature review is invented; no real studies or authors are cited.
