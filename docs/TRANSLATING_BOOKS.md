@@ -21,4 +21,4 @@ exact English text. Languages: es fr de pt it zh ar (Moroccan pages use fr).
 - No emojis. Do not add or drop information.
 
 ## Missing (27 Oct 2026)
-None. Every book has an explanation file in it, zh and ar. If a new book is added, list its missing files here.
+None. Every book has an explanation file in every language (Italian, Chinese and Arabic included). If a new book is added, list its missing files here.
