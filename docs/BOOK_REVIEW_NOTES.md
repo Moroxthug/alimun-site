@@ -796,3 +796,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: reflexive pronoun after the verb in statements and before it in negatives and questions with a question word; the choice items mark the Brazilian order (*Me levanto*) as wrong for Portugal, so please confirm that is the right call at A1.
 - u5 p3: fazer, ir, sair, ver, pôr; *veem* without circumflex (new spelling), *vês / vê* with accent.
 - u5 p4: the baker's day is invented; Manuel is a made-up name.
+- u6 p1: *gostar de* with the contractions *do, da, dos*; *eu também / eu também não*.
+- u6 p2: frequency words and *nunca* without *não*; *estar a* + infinitive (Brazil: *estar* + gerund).
+- u6 p3: *querer* and *poder*, *ter de*; the weather with *estar*, and a tip that Brazil also says *Faz calor*; please check *Combinado!* in the second dialogue.
+- u6 p4: the notices are invented; address at example.com.
