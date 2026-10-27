@@ -788,3 +788,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: regular present of -ar, -er, -ir (falar, comer, abrir); *viver* as an -er verb in the sort item.
 - u3 p3: *Queria …, se faz favor*, *bica* and *galão* explained as common names; prices with *euros e cêntimos*; please check the tip on *uma bica* against *um café*.
 - u3 p4: the menu of Café da Praça and its prices are invented; the shopping list is invented.
+- u4 p1: *há* and *ter* for rooms; T1, T2 and T3 explained; *casa de banho* in Portugal and *banheiro* in Brazil.
+- u4 p2: *estar* for place against *ser*; *há* for a new thing and *está* for a known thing.
+- u4 p3: prepositions of place with the contractions *no, na, do, da, ao, à*; *em frente de* used (Portugal also says *em frente a*).
+- u4 p4: the flat advert (Coimbra, rent in euros) and the e-mail are invented; address at example.com.
