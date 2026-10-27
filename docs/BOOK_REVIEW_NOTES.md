@@ -1098,3 +1098,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: Portugal, Brazil, Africa; check machimbombo (Mozambique), bué (Angola) and the note on rapariga.
 - u4 p3: idioms and proverbs; check each against a Portuguese source.
 - u4 p4: the conversation is invented; Inês, Rafael and Domingos are fictional.
+- u5 p1: formal prepositional phrases (no âmbito de, ao abrigo de, por força de, a fim de). Native check.
+- u5 p2: passive with se, deferir/indeferir, proceder a; check the note on deferir and diferir.
+- u5 p3: request and reply formulas (Venho por este meio, Agradeço que me seja enviado); check the closing formulas for Portugal.
+- u5 p4: the letters are invented; Luís Neves is fictional.
