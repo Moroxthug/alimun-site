@@ -1022,3 +1022,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: celui qui, quiconque, n'importe lequel, chacun, l'un et l'autre.
 - u2 p3: agreement of the past participle (avoir, être, pronominal, en).
 - u2 p4: the article on spelling reform is invented.
+- u3 p1: three registers in words and syntax; Quebec, Belgian and Swiss remarks. Native check.
+- u3 p2: verlan, shortened words, anglicisms and recommended French terms (courriel, mot-dièse, infox).
+- u3 p3: openings and closings by situation; tu and vous.
+- u3 p4: the three messages are invented.
