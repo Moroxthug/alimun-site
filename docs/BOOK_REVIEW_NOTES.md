@@ -1000,3 +1000,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: participle attributes and their relative clauses; zu + Partizip I.
 - u5 p3: strength of verbs for results, hedges, Konjunktiv I in quotations.
 - u5 p4: the study is invented and has no figures.
+- u6 p1: inseparable prefixes ver-, ent-, er-, zer-, be-; über-, um-, durch- separable against inseparable. Native check.
+- u6 p2: suffixes and gender, linking sounds in compounds; -nis gender note.
+- u6 p3: Denglisch and false anglicisms (Handy, Beamer, Smoking, Oldtimer); Natel in Switzerland; word field of sagen.
+- u6 p4: the essay is invented; the quoted verb downloadet is in quotation marks on purpose.
