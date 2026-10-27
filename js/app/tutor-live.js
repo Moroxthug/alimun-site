@@ -12,6 +12,9 @@
    Silence: after 2 minutes with nobody speaking (5 while an exercise or the sentence card is open), the call hangs up
    by itself, with "Are you still there?" 15 seconds before, so neither the student's minutes nor Google's listening run
    on while nobody is there.
+   On a phone the call fills the screen while it is on (.tl-wrap.is-live): the tutor's face large while you talk, the board
+   sliding up over it when the tutor writes, sets an exercise or a sentence to say (and down again when it is wiped), the
+   last captions under it and Mute, the board and End in a bar at the bottom. Wider screens keep the board beside the face.
    Sample (signed out or ?sample=1): a scripted call, nothing is sent and the microphone is not used.
    Interface text: app_tl_* keys. */
 (function () {
@@ -202,8 +205,23 @@
       if (m.pron) { L.pronMsg = m; L.pronResult = null; }
     });
     L.board = board || L.board; L.newOps = added;
-    boardUi();
+    /* On a phone the board comes up when the tutor uses it, and goes away when it is wiped and nothing is left on it */
+    if (added > 0 || messages.some(function (m) { return m.exercise || m.pron; })) L.boardOpen = true;
+    if (!hasBoard()) L.boardOpen = false;
+    var card = messages.some(function (m) { return m.exercise || m.pron; });
+    boardUi(); layoutUi();
+    if (window.requestAnimationFrame) requestAnimationFrame(function () { revealNew(card); });
   }
+  /* On a phone the board scrolls to what was just added: the exercise or the sentence card, else the first new line */
+  function revealNew(card) {
+    var board = root && root.querySelector('.tl-wrap.is-live[data-board="open"] .tl-board');
+    var el = board && (card && board.querySelector('.tu-ex, .tu-pron') || board.querySelector('.tu-op.is-new'));
+    if (!el) return;
+    var top = el.getBoundingClientRect().top - board.getBoundingClientRect().top + board.scrollTop - 12;
+    var calm = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    board.scrollTo({ top: Math.max(0, top), behavior: calm ? 'auto' : 'smooth' });
+  }
+  function hasBoard() { return !!(L && ((L.board && L.board.length) || L.ex || L.pronMsg)); }
   function prepareExercise(m) {
     L.exMsg = m.id; L.got = [];
     L.ex = EX().create({ A: A, blocks: [m.exercise], xa: '', ta: K().ta(), root: function () { return root; },
@@ -216,7 +234,7 @@
   function exerciseDone() {
     if (!L || !L.ex || L.ended) return;
     var got = L.got || [], items = L.ex.state[0] && L.ex.state[0].items ? L.ex.state[0].items.length : (L.ex.blocks[0].pairs || []).length, msg = L.exMsg;
-    L.ex = null; L.exMsg = null; boardUi();
+    L.ex = null; L.exMsg = null; if (!hasBoard()) L.boardOpen = false; boardUi(); layoutUi();
     if (L.sample) { sampleSay(SAMPLE_AFTER_EX); return; }
     D().tutorLiveAnswer({ session: L.session, answer: { message: msg, results: got } }).then(function (r) {
       if (L && !L.ended && r && r.tell) sendText(r.tell);
@@ -336,7 +354,7 @@
     var sample = !!opts.sample;
     L = Object.assign(L || {}, { tutor: tutor, sample: sample, state: 'connecting', lines: [], queue: [], cur: { student: '', tutor: '' }, playing: [], seconds: opts.seconds || 0,
       started: false, ending: false, ended: false, muted: false, note: null, summary: null, handle: null, session: null, fresh: true, failed: null, renewing: false, head: 0,
-      board: [], newOps: 0, ex: null, exMsg: null, got: [], pronMsg: null, pronResult: null, prec: null });
+      board: [], newOps: 0, ex: null, exMsg: null, got: [], pronMsg: null, pronResult: null, prec: null, boardOpen: false });
     draw();
     if (sample) { runSample(); return; }
     if (!supported()) { fail('app_tl_unsupported'); return; }
@@ -390,6 +408,7 @@
   function end(noteKey, serverEnded) {
     if (!L || L.ending) return;
     L.ending = true; L.note = noteKey || null;
+    document.documentElement.classList.remove('tl-incall');
     flush('student'); flush('tutor');
     teardown();
     L.state = 'ending'; draw();
@@ -501,10 +520,20 @@
       ((L.failed || L.note) === 'app_tu_none_left' && !L.sample && window.AlimunTutor && window.AlimunTutor.kit.outHtml ? window.AlimunTutor.kit.outHtml() : '') +
       '<div class="btn-row" style="margin-top:16px"><a class="btn btn--primary" href="#/tutor">' + esc(t('app_tu_back')) + '</a></div></section>';
   }
+  function live() { return !!(L && !L.ended && !L.ending && !L.failed); }
+  /* The phone layout: full screen while the call is on, the board up or down (the CSS applies it below 900px only) */
+  function layoutUi() {
+    document.documentElement.classList.toggle('tl-incall', live());
+    var w = root && root.querySelector('.tl-wrap');
+    if (!w || !L) return;
+    w.setAttribute('data-board', L.boardOpen && hasBoard() ? 'open' : 'closed');
+    var b = w.querySelector('.tl-bar [data-tl="board"]');
+    if (b) { b.hidden = !hasBoard(); b.setAttribute('aria-expanded', L.boardOpen && hasBoard() ? 'true' : 'false'); }
+  }
   function draw() {
     if (!root || !L) return;
     var name = cap(L.tutor), on = L.started && !L.ended;
-    var html = '<div class="view__head tu-head"><div><h1 class="t-h1">' + esc(t('app_tl_h', { name: name })) + '</h1><p class="t-lead" data-tl-left>' + esc(t('app_tu_left_n', { time: mins(L.seconds) })) + '</p></div>' +
+    var html = '<div class="tl-wrap' + (live() ? ' is-live' : '') + '" data-board="closed"><div class="view__head tu-head"><div><h1 class="t-h1">' + esc(t('app_tl_h', { name: name })) + '</h1><p class="t-lead" data-tl-left>' + esc(t('app_tu_left_n', { time: mins(L.seconds) })) + '</p></div>' +
       (L.ended ? '' : '<div class="btn-row">' + (on ? '<button class="btn btn--quiet btn--sm" type="button" data-tl="mute" aria-pressed="' + (L.muted ? 'true' : 'false') + '">' + esc(t(L.muted ? 'app_tl_unmute' : 'app_tl_mute')) + '</button>' : '') +
         '<button class="btn btn--primary btn--sm" type="button" data-tl="end"' + (L.ending ? ' disabled' : '') + '>' + esc(t('app_tl_end')) + '</button></div>') + '</div>';
     var stage = '<section class="tl-stage" data-state="' + esc(L.state) + '" aria-labelledby="tl-name"><div class="tl-face tutor-art" data-tl-face data-mouth="rest" aria-hidden="true">' + (A.Cast.tutor ? A.Cast.tutor(L.tutor) : '') + '</div>' +
@@ -514,8 +543,13 @@
     var board = '<section class="tu-board tl-board" aria-labelledby="tl-board-h"><h2 class="sr" id="tl-board-h">' + esc(t('app_tu_board_h')) + '</h2><div data-tl-board>' + boardHtml() + '</div></section>';
     html += '<div class="tl-grid">' + board + '<div class="tl-side">' + stage +
       (L.ended ? summaryHtml() : '<section class="card tl-captions" aria-labelledby="tl-cap-h"><h2 class="t-h3" id="tl-cap-h">' + esc(t('app_tl_captions_h')) + '</h2><div class="ms-msgs tl-lines" data-tl-lines aria-live="polite"></div></section>') + '</div></div>';
-    if (L.sample) html += '<p class="t-tiny" style="margin-top:12px">' + esc(t('app_tu_sample')) + '</p>';
+    if (live()) html += '<div class="tl-bar">' + (on ? '<button class="btn btn--quiet" type="button" data-tl="mute" aria-pressed="' + (L.muted ? 'true' : 'false') + '">' + esc(t(L.muted ? 'app_tl_unmute' : 'app_tl_mute')) + '</button>' : '') +
+      '<button class="btn btn--quiet" type="button" data-tl="board" aria-expanded="false" hidden>' + esc(t('app_tu_board_h')) + '</button>' +
+      '<button class="btn btn--primary" type="button" data-tl="end">' + esc(t('app_tl_end')) + '</button></div>';
+    if (L.sample) html += '<p class="t-tiny tl-sample" style="margin-top:12px">' + esc(t('app_tu_sample')) + '</p>';
+    html += '</div>';
     root.innerHTML = html;
+    layoutUi();
     L.newOps = 0;
     if (L.ex) L.ex.after(root.querySelector('[data-tl-ex]'));
     if (!L.ended) captions();
@@ -542,6 +576,7 @@
       var act = b.getAttribute('data-tl');
       if (act === 'end') end();
       else if (act === 'mute') toggleMute();
+      else if (act === 'board') { L.boardOpen = !L.boardOpen; layoutUi(); }
       else if (act === 'here') awake();
       else if (act === 'prec') pronRecord();
       else if (act === 'pslow') pronSlow();
