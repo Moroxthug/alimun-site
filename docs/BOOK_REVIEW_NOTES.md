@@ -1106,3 +1106,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: se + futuro do conjuntivo, fosse como fosse, quer … quer, mal + perfeito; native check.
 - u6 p3: spoken imperfeito hypotheses marked as spoken only; quem me dera and oxalá.
 - u6 p4: the debate is invented; roles only.
+- u7 p1: connectors contudo, todavia, no entanto, aliás, com efeito, em suma. Native check.
+- u7 p2: concession and refutation; check the mood after é verdade que and the sense of nem por isso.
+- u7 p3: rhetorical figures; litotes examples need a native check.
+- u7 p4: the commentary is invented; the library and the council are fictional.
