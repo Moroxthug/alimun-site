@@ -648,3 +648,8 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: no article with singular unmodified family nouns (mia sorella) but *i miei fratelli*, and *la loro* always with the article.
 - u2 p3: plurals in -co / -ca (simpatici, simpatiche) and -e adjectives; c’è / ci sono.
 - u2 p4: the message and names are invented.
+- u3 p1: the definite article table (il, lo, l’, la, i, gli, le) and plurals; l’uovo / le uova as the only irregular plural taught.
+- u3 p2: partitive (del, della, dei …) is optional in speech; *mi piace / mi piacciono* introduced before u6.
+- u3 p3: bar customs (pay at the cassa, prices al banco / al tavolo) are general; prices invented.
+- u3 p4: menu prices are invented.
+- New speaker role added to audio.js: Barista (man's voice).
