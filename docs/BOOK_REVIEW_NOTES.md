@@ -552,3 +552,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p1: imparfait stem rule (nous form minus -ons) with être as the only exception; check wording.
 - u3 p3: passé composé versus imparfait explained as event versus background; *pendant que* only in a tip.
 - u3 p4: *institutrice* used for the school teacher (France now says *maîtresse* or *professeure des écoles*).
+- u4 p2: *en* taught for du / de la / des and quantities; the rule that *aimer* takes le / la / l’ (not en) is stated in a tip.
+- u4 p3: the dialogue uses imperatives with pronouns (*casse-les*, *fais-la cuire*) before they are taught; glossed by context.
+- u4 p4: prices in the leaflet are invented.
+- New speaker role added to audio.js: Marchand (man's voice).
