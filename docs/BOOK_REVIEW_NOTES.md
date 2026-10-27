@@ -834,3 +834,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: *há* + time and *desde* with the present, *durante* with the perfeito.
 - u6 p3: phone phrases of Portugal (*Estou?*, *Fala o …*, *Quer deixar recado?*); a tip mentions *Alô?* in Brazil.
 - u6 p4: the job advert and the e-mail (Rafael Costa, Lisbon) are invented; address at example.com.
+- u7 p1: *em / a / de* with cities and countries (*no Brasil, ao Brasil, do Brasil*); *vir* with *vêm*; a tip on *ir para*.
+- u7 p2: hotel and train phrases; *o cais* mentioned for the platform in Portugal and *a plataforma* in Brazil; please confirm.
+- u7 p3: weather with *estar* and *fazer*, *Estão vinte graus*, comparisons; *Está chovendo* mentioned as Brazilian.
+- u7 p4: the hotel confirmation (price, hours) and the postcard are invented; the Algarve is named as a region only.
