@@ -1166,3 +1166,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: reporting verbs (contend, posit, concede, allege); check the strength ranking.
 - u4 p3: evaluation and signposting; native check on the sample-size examples.
 - u4 p4: the literature review is invented; no real studies or authors are cited.
+- u5 p1: British, American, Australian, Indian and Scottish features; native check on prepone, do the needful, arvo, ken.
+- u5 p2: informal words and politeness styles; check the generalisations about British and American politeness.
+- u5 p3: legal English and plain English rewrites; check the plain versions keep the meaning.
+- u5 p4: the conversation is invented; Fiona, Dwight, Mia and Anil are fictional.
