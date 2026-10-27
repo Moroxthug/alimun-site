@@ -1120,3 +1120,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: adjective position and meaning (gran hombre, viejo amigo, pobre hombre, cierta noticia); check each pair.
 - u1 p3: free indirect speech, historic present, raya dialogue; native check.
 - u1 p4: the extract is invented; the 1998 flood is fictional.
+- u2 p1: double pronouns and leísmo; check the RAE remarks and the Latin America note.
+- u2 p2: mood after no es que, el hecho de que, no porque; native check on el hecho de que.
+- u2 p3: futuro de subjuntivo in fixed phrases; recognition only.
+- u2 p4: the conversation is invented; roles only.
