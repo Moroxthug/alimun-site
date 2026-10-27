@@ -940,3 +940,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: weather, months, seasons (northern hemisphere); autumn only, with fall in a tip would be worth adding.
 - u7 p3: present continuous, -ing spelling, contrast with the present simple.
 - u7 p4: the two messages are invented; the seaside is not named.
+- u8 p1: transport, by + transport, timetable questions; tube against subway. Native check.
+- u8 p2: single and return (British) against one-way and round-trip; phrases for not understanding.
+- u8 p3: imperatives and directions; ordinals first to third.
+- u8 p4: the message and the directions are invented; Leeds is a real city, the street names are not.
