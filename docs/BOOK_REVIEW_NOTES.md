@@ -818,3 +818,27 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: irregular perfeito of fazer, ter, estar, ver, dizer, pôr, vir, ler, dar; tip on *vimos* (ver in the past, vir in the present); reflexive verbs with the pronoun after the verb.
 - u2 p3: *ontem, há + time* (Portugal; *atrás* is Brazilian), *primeiro, depois, finalmente*.
 - u2 p4: the e-mail about a busy week is invented.
+- u3 p1: imperfeito of regular verbs and ser, ter, vir, pôr; *ir* regular (*ia*); accent in the *nós* forms.
+- u3 p2: habits, descriptions, age, weather, *costumar* and *havia*.
+- u3 p3: perfeito against imperfeito, *já / nunca / ainda não* with the perfeito; the gap on weather accepts *estava* and *fazia*.
+- u3 p4: the two school memories (Rui and Clara) are invented; Viseu is named as a place only.
+- u4 p1: quantities with *de*, *meio / meia*, *quanto / quantos*; *muito* and *pouco* agree with the noun.
+- u4 p2: *me, te, lhe, nos, lhes* and the contractions *mo, to, lho, lha*; pronoun before the verb after *não, já, também, nunca* and question words; please check the dialogue *Já lho dei ontem*.
+- u4 p3: imperative of tu (the *ele* form) and você (present subjunctive form), negative tu *não mexas*, pronouns after the verb (*corta-a*).
+- u4 p4: the soup recipe and the market leaflet (prices, hours) are invented; no real market named.
+- u5 p1: body words, *dói-me / doem-me* agreeing with the part of the body, *dor de / dor nas costas*, the pronoun before the verb after *não* and question words.
+- u5 p2: *ter de* for a need, *dever* and *devias* for advice, *é melhor* + infinitive; please check *devias* as the softer form.
+- u5 p3: phone phrases for an appointment (*Queria marcar uma consulta*, *Para quando?*, *Quinta não posso*); *Estou? / Está lá?* mentioned as the phone greeting.
+- u5 p4: the pharmacy leaflet and the confirmation (Dra. Silva, times, *cartão de utente*) are invented.
+- u6 p1: jobs without an article after *ser*; *num / numa*; feminine forms of jobs; *Sei usar o computador*.
+- u6 p2: *há* + time and *desde* with the present, *durante* with the perfeito.
+- u6 p3: phone phrases of Portugal (*Estou?*, *Fala o …*, *Quer deixar recado?*); a tip mentions *Alô?* in Brazil.
+- u6 p4: the job advert and the e-mail (Rafael Costa, Lisbon) are invented; address at example.com.
+- u7 p1: *em / a / de* with cities and countries (*no Brasil, ao Brasil, do Brasil*); *vir* with *vêm*; a tip on *ir para*.
+- u7 p2: hotel and train phrases; *o cais* mentioned for the platform in Portugal and *a plataforma* in Brazil; please confirm.
+- u7 p3: weather with *estar* and *fazer*, *Estão vinte graus*, comparisons; *Está chovendo* mentioned as Brazilian.
+- u7 p4: the hotel confirmation (price, hours) and the postcard are invented; the Algarve is named as a region only.
+- u8 p1: months and dates (*no dia doze de março*), *Parabéns / Feliz aniversário*, invitations; *Feliz Ano Novo* named as Brazilian.
+- u8 p2: futuro simples of regular verbs and eleven irregular stems; a tip says speech often uses *ir* + infinitive.
+- u8 p3: *se* + present for plans (the future subjunctive *Se chover* is only previewed in a tip for B1); *prometo, pretendo, espero*.
+- u8 p4: the invitation card and the reply (Ana, Pedro) are invented; address at example.com.

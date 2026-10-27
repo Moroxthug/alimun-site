@@ -1120,6 +1120,12 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `node scripts/check-book.mjs Portuguese-A1` passes. Review notes under `## Portuguese A1` in `docs/BOOK_REVIEW_NOTES.md`. New speaker role in `site/src/data/books/audio.js`: Empregado (man).
 - Portuguese A1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Portuguese A2.
 - Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Portuguese A2
+- Written alone, one unit per commit: `site/src/data/books/Portuguese-A2.js` (syllabus) and `units/Portuguese-A2/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). European Portuguese, with Brazilian differences noted in tips. Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs Portuguese-A2` passes. Review notes under `## Portuguese A2` in `docs/BOOK_REVIEW_NOTES.md`. New speaker role in `site/src/data/books/audio.js`: Secretária (woman).
+- Portuguese A2 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Portuguese B1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
 ## 27 Oct 2026 — Mockup D: showcase of the dashboard, video slots set, store badges
 - Owner: "more animations please, and showcase everything new we got, the practice, mock tests, exercises ... the 2 videos will be one of how alimun dashboard etc will be from pc and mobile, the other showcasing the ai tutor. also, put somewhere the download from playstore and apple store logos, i will send you later the links".
 - After the plans: a moving band of words (Live classes, Practice, Mock tests, Flashcards, AI tutor, Homework, Library) with buddies between them, faster while scrolling. Then "Everything you need between classes": seven rows (live classes, course book, practice rounds, mock tests, flashcards, library, homework and progress, facts from the js/app module headers) beside a sticky screen that plays a small animated preview of the row in view and changes tint.
