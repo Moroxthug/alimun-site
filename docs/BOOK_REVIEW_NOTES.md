@@ -246,3 +246,265 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4: social contributions "about half each" simplified; tax classes I, IV/IV, III/V; a job-related move as Werbungskosten.
 - u6: regional words (Swiss *Weggli*, *Ade*, Austrian *Paradeiser*, *Schlagobers*) and idioms (*Daumen drücken* / *Daumen halten*) need a native check.
 - Model documents below 200 words on purpose; main readings 205 to 249 words.
+
+## German A1
+- u5 p1: table gives everyday 8:00/20:00 as just "acht"; "acht Uhr"?
+- u5 p3: "Um halb vier im Café?" taken as 15:30 in the true/false item; natural?
+- u6 p1: vowel change for essen and treffen (isst, triffst) beside fahren, lesen, sprechen; too much for one A1 page?
+- u6 p3: "der Regenschirm" in the picture item, "Schirm" in the gap; use one word?
+- u7 p2: "bis zur Ampel", "neben der Bank" (dative) as fixed phrases before the dative is taught.
+- u7 p3: ticket times and prices are invented examples.
+- u8 p1: war and hatte before the Perfekt; order and wording for A1?
+- u8 p2: -et rule shown with "reden -> geredet"; too rare?
+- u8 p3: "Der Film hat mir gut gefallen" as an unexplained chunk; "ein ruhiges Wochenende" adjective ending above A1.
+- u8 p4: reading has "geschienen", "geregnet", not taught (read only).
+- u1 p3: English-style letter names in the "Say" column.
+- u1 p3: Morocco's languages "Arabisch, Tamazight, Französisch".
+- u2 p1: "Ich habe einen Bruder" as a fixed phrase before the Akkusativ.
+- u2 p3: "fleißig / faul", "lustig / ernst" as opposites.
+- u4 p1: "im Wohnzimmer", "in der Küche" as phrases without the Dativ; der Topf, der Wasserkocher in the label exercise.
+- u4 p3-p4: rents above 100 written as digits.
+- u4 test: "billig" and "günstig" both accepted.
+
+## Spanish A2
+- u5 p1: the tip on leísmo ("A Juan le veo" accepted in Spain); check wording.
+- u5 p2: freír -> fríe, calentar -> calienta in the imperative table; too much for A2?
+- u5 p3: "una lata de" collocation item (tomate, atún, sardinas right; lechuga, leche fresca wrong); clear enough?
+- u5 p4: the reading uses "dale la vuelta" (le) before le is taught in u8.
+- u6 p1: "dolor de muelas" in the plural; natural?
+- u6 p3: "Siéntese", "Debería quedarse" in the doctor dialogue, not taught.
+- u7 p2: should "bañandonos" without the accent be accepted?
+- u7 p3: "¡Que disfruten de su estancia!" subjunctive set phrase.
+- u8 p3: "¿Se te antoja…?" for Mexico; confirm.
+- u8 p4: festivals reading (Fallas, twelve grapes); check facts and level.
+- u1 p1: *es rico / está rico* (rich / tasty) shown; keep or only *está rico* for food?
+- u1 p3-p4: *nos conocimos* as a set phrase before the indefinido (u2).
+- u2 p2: "La fiesta ___ fantástico" has *fue* as the answer; *estuvo* is also natural (not an option).
+- u3 p3: *Esta mañana hablé*, *Nunca estuve* marked wrong "as people speak in Spain"; framing OK given Latin America?
+- u3 p4: reading mixes indefinido and perfecto in one sentence; natural?
+- u3 p4: one option uses *Le han llamado* (leísmo); *Lo han llamado*?
+- u4 p1: *iba a misa* as a family habit; culturally fine?
+- u4 p4: *se vendía de todo* (taught in u5) and *judías* (Spain only).
+
+## Spanish A1
+- u5 p1: note "In Spain, lunch is often quite late": a general claim about culture; keep or cut?
+- u5 p2: vestirse, despertarse as vocabulary before the vowel-change lesson.
+- u6 p3: "dale" / "está bien" in Latin America; check.
+- u7 p2: "coger el autobús" in Spain, "tomar" in Latin America; tactful wording?
+- u7 p4: reading uses usted commands baje / vaya, not taught.
+- u8 p2: "¿Puedo probármelo?" pronoun on the infinitive, only in a tip; too early for A1?
+- u8 p1: rosa and naranja "usually do not change"; ese for far things in everyday speech.
+- u1 p3: "i griega, ye" for y; both names?
+- u2 p1: age gap for 31 accepts only "treinta y un" (before años); too strict?
+- u2 p3: *mayor* as the polite word instead of *viejo*.
+- u2 p4: reading words not taught (gafas, divertida, cumpleaños).
+- u3 p1: *el agua* feminine with *el*; too much for A1?
+- u3 p3: "¿Qué les pongo?" to two customers while the table has "le".
+- u4 p1: kitchen words *la olla*, *el hervidor* (from pictures.js).
+
+## English C1
+- u1 p1: "will have been teaching" and "will have taught" both accepted; both right?
+- u1 p3: collocation answers (fully independent right; deeply shy, highly shy wrong).
+- u2 p2: "was to have" + participle may be too literary; the gap cue "(be to / take)" is awkward.
+- u3 p2: "quite good" given in its British sense (American: very good).
+- u4 p1: "didn't need to usually means I did not do it" is a simplification.
+- u4 p2: supposedly and allegedly suggest more doubt than reportedly; confirm.
+- u4 test: both adverb positions accepted in "may well (already) have (already) left".
+- u4 p4: the reading's figures belong to an invented company (Hartwell & Rowe).
+- u5 p1: "Some of the data is alleged..." singular data.
+- u5 p3: "It cannot be ruled out that…" under "Possible".
+- u6 p1: future condition with past result example; "If the company ___ (be) to close" accepts was and were.
+- u6 p2: "I wish he would be more patient" only for refusal; too strict?
+- u7 p1: informal forms in the register table (*or so*, *mind you*).
+- u7 test: order item with two sentences.
+- u8 p1: "is ___ to open" accepts due, set, expected, scheduled.
+- u8 p4: "Most of the world's people already live in cities" stated as a fact; soften?
+
+## Spanish A1, work
+- u1 p1: "Buenos días until about two o'clock in Spain"; fair rule?
+- u1 p2: tip on two kisses or a handshake at work.
+- u2 p1: *la dependienta* rather than *la dependiente*.
+- u2 p2: *el operario* natural for a factory worker at A1?
+- u3 p1: gap "Como ___ una y media": *Como* (I eat) may confuse.
+- u4 p1: phone numbers one digit at a time or in pairs, accurate for Spain?
+- u4 p2: "Adiós, buenos días" as a phone goodbye; *Te llamo* before object pronouns.
+- u5 p2, u6 p2: fixed phrases with pronouns (¿Me dejas…?, ¿Puedes ayudarme?, ¿Te va bien?).
+- u6 p1: "in August many companies in Spain work less"; check.
+- u6 p3: *¿Les va bien…?* in very polite emails in Spain; check.
+
+## Spanish B1
+- u5 p2: "Niños, lávense las manos" as ustedes (in Spain adults usually say "lavaos").
+- u5 p1: "sentaos", "levantaos" taught; colloquial "sentaros" not mentioned.
+- u7 p1: "Dijo que fue al cine" accepted beside "había ido"; how strict?
+- u7 p2: "se habla catalán y castellano" (many say "se hablan"); confirm.
+- u7 p3: "¡Qué fuerte!" labelled very informal, Spain only.
+- u8 p1: "la casa ___ nació mi abuelo" accepts donde, en la que, en que.
+- u8 p4: reading has subjunctive uses not taught (recognition only).
+- u1 p1: "Cuando salimos del cine, ___ (llover)" accepts llovía / estaba lloviendo, not llovió.
+- u3 p2: colloc "me da": igual, vergüenza right beside miedo, pena.
+- u4 p3: "Trabajo como / de camarera"; "¿Cuándo empezaría el contrato?"
+- u4 p4: advert wording "sueldo según convenio", "con don de gentes", mention of euskera.
+
+## German A1, work
+- u1 p1: "mein erster Tag" (ordinal) as a fixed phrase.
+- u1 p2: English sound hints for letters (E "ay", J "yot", W "vay", Z "tset").
+- u2 p2: im/in der + place as fixed phrases before the dative; "bei" + company in a tip.
+- u3 p1: everyday form for 17.00 given as "fünf"; natural?
+- u4 p1: "Herrn Braun" -n only mentioned in a why.
+- u4 p2, u5 p2: mich, mir in fixed phrases (für mich, Können Sie mir helfen?).
+- u6 p1: "Mein Büro ist Zimmer 4."; natural?
+
+## German A1, moving abroad
+- u1 p1, p3: Dativ in fixed phrases ("Wie geht es Ihnen?", "auf dem Router").
+- u2 p2: date of birth said "Der 3. Mai 1996" without ordinals taught.
+- u4 p3: ticket prices and the "Kurzstrecke" rule are invented, kept general.
+- u5 p3: 116 117 and 112 stated as real German numbers; confirm.
+- u5 p1: "Krankmeldung", "Rezept" given without the system behind them.
+
+## German A1, travel
+- u1 p2: letter names written as they sound (eh, jott, üpsilon, tsett); usual spelling instead?
+- u1 p1: Grüß Gott and Grüezi tip; accurate?
+- u3 p1: "Zwei Kaffee, bitte" without a plural ending.
+- u3 p2: tipping tip ("Stimmt so", some cafés cash only).
+- u4 p1: "Gehen Sie links" or "nach links" / "Biegen Sie links ab"?
+- u4 p3: stamping tickets only in some cities.
+- u5 p1: "auf" for open beside "offen", "geöffnet"; too colloquial?
+- u6 p1: "die Magnete" and "einen Magneten"; both fine?
+- u6 p3: postcard has Perfekt forms taught only in the last unit (reading only).
+
+## German A1, study and exams
+- u1 p1: "unterrichtet den Kurs" uses the definite accusative (A1 teaches only ein/kein).
+- u2 p1: Ihr/Ihre as a fixed polite phrase.
+- u2 p2: "der 12.03.1998" read aloud with an ordinal and a year; keep written only?
+- u2 p2: "zwo" for 2 on the phone; common enough?
+- u5 p2: short forms (S., Ü, HA, z. B., Min.) as met in German courses?
+- u6: description of the A1 exam parts kept general; check against the current format.
+
+## Spanish A1, travel
+- u1 p3: airport signs *Recogida de equipajes*, *Aseos*; natural for Spain?
+- u3 p2: Latin American bills sometimes include the tip; wording general?
+- u4 p1: *billete sencillo* in the reading against *de ida* in the lesson.
+- u5 p1: "Es la una menos diez" for 12:50.
+- u5 p2: *hacer fotos* (Spain) vs *tomar fotos* (Latin America); no note yet.
+- u6 p2: lo/la/los/las taught only through *llevarse*.
+
+## Spanish A1, study and exams
+- u1 p1: tú/vosotros commands (abrid, escuchad) taught only to understand.
+- u1 p2, u4 p2: tú with teachers at language schools, usted at first at universities; fair?
+- u2 p1: two surnames, the father's first, as a general statement.
+- u2 p2: *matrícula* (Spain) vs *inscripción* (Latin America).
+- u3 p3: *el salón* for a classroom in many Latin American countries.
+- u6 p1-p2: the four DELE A1 part names given as facts; 20 to 30 words for the message task.
+
+## Spanish A2, work
+- u1 p1: "la dependiente" accepted beside "la dependienta".
+- u1 p2: "las dieciséis treinta" for 16:30 in timetables.
+- u2 p1: phone numbers read in groups; is this how Spain reads them?
+- u2 p2: "llámelo" or "llámele" (leísmo) for Spain; u6 p3 "conocerlo" or "conocerle".
+- u3 p2: "Quedo a la espera de su respuesta" too formal for A2?
+- u4 p3: calendar labels "Acepta / Rechaza / Quizás".
+- u6 p2: CV gives "Bachillerato" for a Lisbon school qualification.
+- General: unaccented answer variants accepted (Podria, razon, habeis), following the German umlaut variants; wanted for Spanish?
+
+## Spanish A1, moving abroad
+- u1 p1: "Buenas tardes until about eight or nine" in Spain.
+- u2 p2-p3: "Necesito empadronarme"; the simplified padrón form and letter wording.
+- u3 p2: "están a un euro veinte el kilo" (estar a for prices) at A1.
+- u4 p1: "Cambie de tren" or "Haga transbordo".
+- u5 p2: me duele as a fixed phrase; "una gripa" (Mexico), "un resfrío" (Argentina, Chile).
+- u6 p3: reading uses "escribidme" (vosotros imperative with a pronoun).
+
+## Spanish A2, moving abroad
+- u1 p1: spelling Haddad "hache, a, de, de, a, de" or "dos des"?
+- u1 p3: padrón form and appointment letter simplified (paperwork varies by town).
+- u2 p1: invented fares; *abono mensual*, *billete sencillo* natural?
+- u3 p1: adverts usually count bedrooms; *luz* for electricity.
+- u4 p2: general statements on paid bags, midday and Sunday closing.
+- u5 p3: prescriptions stored on the health card (varies by region); *justificante para su empresa*.
+- u6 p1: two kisses in Spain, one in much of Latin America.
+- u6 p3: vosotros commands with pronouns (*traed*, *decidnos*) above A2.
+
+## Spanish A2, travel
+- u1 p1: *¿A qué estamos hoy?* beside *¿Qué día es hoy?*
+- u3 p1: check-in/check-out words (*registrarse*, *dejar la habitación*, *hacer el check-out*).
+- u4 p2: about ten per cent tip usual in many Latin American countries.
+- u5 p2: gaps accept perfecto and indefinido for *hoy* to allow Latin American use; right?
+- u5 p3: formal commands in the reading (*Pasee*, *descubra*).
+- u6 p2: *tengo resfriado* marked wrong; *estoy mareado* meaning.
+- u6 p1: *me he dejado la chaqueta* (mainly Spain).
+
+## Spanish A2, study and exams
+- u1 p1: "Abrid el libro por la página 12" or "en la página".
+- u1 p2: subject names capitalised (Estudio Informática)?
+- u2 p1: "seguido" for "a menudo" in some Latin American countries.
+- u4 p1: abbreviations (L-V, sáb., 1.ª pl., máx., aprox.).
+- u4 p2: "hacer apuntes" marked wrong (tomar apuntes).
+- u6 p1-p2: DELE A2 part names and instruction style; 30 to 40 words for the writing task.
+
+## Spanish B1, work
+- u1 p1: "Te escribo por lo de la reunión" as the neutral first line.
+- u2 test: "no ___ oye bien" accepts "se le" and "se".
+- u3 p2: 15-day notice period and "unos 30.000 euros brutos al año" as examples.
+- u5 p2: "Le llamo mañana" (leísmo) for usted.
+- u5 p3: general claims about working hours, lunch at two to three, sweets on your birthday.
+
+## All Spanish books (decision for the owner)
+- Writers accepted unaccented answer variants (Podria, razon, habeis; trabaje for trabajé) following the German umlaut variants. Some are other real verb forms (trabaje is a subjunctive). Keep or remove for Spanish?
+
+## Spanish B1, moving abroad
+- u1 p1: fianza "often one month"; extra guarantee.
+- u1 p3: padrón text (free, owner's authorisation) general enough?
+- u2, u6: "les agradecería que me confirmaran" (imperfect subjunctive) taught as fixed phrases.
+- u2 p2: "vaya a la cita" or "acuda"; u3 p1: "escucharle los pulmones" or "auscultarle".
+- u3 p2: sick note sent electronically in Spain; "baja / alta".
+- u5 p1: recycling container colours "usual in many Spanish towns".
+- u6 p1: school stages and admission "often in spring"; u6 p3: vosotros to families in a school letter.
+
+## Spanish B1, study and exams
+- u1 p1: *clase teórica* / *prácticas* for lecture / seminar.
+- u2 p2: short forms (*s.*, *n.º*) and student-note forms *q / xq / tb*.
+- u3 p1: *Solicitud de prórroga*, *justificante médico* for a student.
+- u4 p2: *aunque* only with the indicative; note on the subjunctive?
+- u6: last lesson is speaking (photo description, opinions), as in the English and German models; station announcement with Zaragoza and Lleida trains.
+
+## English C1, work
+- u3 p1: "That's an interesting idea." = "I am not sure I like it." too sweeping?
+- u4 p2: "That + should is more common in British English".
+- u5 p1: *be set to* = "likely, because everything is in place"; test accepts expected, likely.
+- u6 p3: "dressed up as" explained as "make it look better than it is".
+
+## English C1, moving abroad
+- u1 p2: *query about* marked wrong.
+- u2 p2: general statements on mediation, arbitration, ombudsman (often free, often binding).
+- u3 p1: after *It has been proposed that*, *moves* accepted beside *should move*, *move*.
+- u4 p2: *mustn't have* wrong for past deduction (can't, couldn't).
+- u5 p1: claims about British understatement and *quite*.
+
+## Spanish B1, travel
+- u1 p1: Madrid–Granada ticket office scene is made up; realistic?
+- u2 p1: tú with strangers of similar age in Spain, usted more common in Latin America.
+- u3 p2: tipping facts (not expected in Spain; 10–15% in Mexico and many Latin American countries).
+- u3 p2: Spain / Latin America word sort is a simplification (papa also in the Canaries and Andalucía).
+- u4 p2: perfecto and indefinido mixed for a film seen today.
+- u5 p2: wild camping not allowed in many Spanish natural parks.
+
+## English C1, travel
+- u1 p2: inversion after place phrases with stand, lie, come, rise, grow.
+- u2 p1: regional examples (arvo, grand, wee, prepone); American past simple with just and yet.
+- u2 p3: more people use English as a second language than as a first, stated generally.
+- u3 p1: wordform base PUNGENCY -> pungent (unusual direction).
+- u5 p1: "for the third day ___" accepts "in a row" although the instruction says one word.
+- u5 p2: the "hard to beat" egg pun may not survive translation.
+- u6 p1: "dependant" accepted for "dependent".
+
+## English C1, study and exams
+- u1 p3: "a well-known review of active learning" unnamed; must not read as a real study.
+- u2 p1: transform answers accept only listed hedges; add variants?
+- u4 p2: tense advice for citing (present for views, past for one study) varies by subject.
+- u6 p1: key word transformations ask for the whole sentence, not a 2-5 word gap.
+- u6 test: "Under no circumstances ___ students use" accepts should, may, can, must.
+- All cited authors and studies invented.
+
+## Translations of the new books (27 Oct 2026)
+- Several existing German-book translation files (`*.de.json`) keep English values in meaning columns (body parts, "I like drinking tea."); the new A1 files give German meanings instead.
+- Explanations of the 25 new books were translated by helper agents into seven languages; checked for missing strings, markers and gaps, not yet read by native speakers.
