@@ -1268,3 +1268,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: reporting verbs (sostener, plantear, conceder, alegar); check alegar and the false friend note on pretender.
 - u4 p3: evaluation and signposting; check si bien + indicative.
 - u4 p4: the literature review is invented; no real studies or authors are cited.
+- u5 p1: discourse markers (bueno, pues, o sea, vale, es que, a ver); native check on the glosses.
+- u5 p2: spoken contractions (pa', to', na', cansao) and tú/usted; check the Caribbean s-aspiration remark.
+- u5 p3: regional words (guay, mola, chévere, chido, bacán, copado, cuate, mande); check each against its region and the seseo and yeísmo notes.
+- u5 p4: the conversation is invented; Carmen, Rodrigo and Lucía are fictional.
