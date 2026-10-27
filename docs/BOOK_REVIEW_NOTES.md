@@ -661,3 +661,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: present tense for -are / -ere / -ire with the -isc- group (finire); spelling of cercare and mangiare.
 - u5 p3: reflexive verbs with mi, ti, si, ci, vi, si.
 - u5 p4: the week planner and message are invented; time written 12,30 as in Italy.
+- u6 p1: piacere shown as mi piace / mi piacciono with the subject agreement explained simply; anche a me / neanche a me.
+- u6 p2: sapere + infinitive for skills versus potere for possibility; the four modal verbs in one table.
+- u6 p3: invitation phrases (Ti va di …?, Volentieri, Mi dispiace, non posso); weather phrases use fa / c’è / piove / nevica.
+- u6 p4: the club and café notices are invented.
