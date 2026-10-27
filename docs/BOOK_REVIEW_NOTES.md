@@ -830,3 +830,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: *ter de* for a need, *dever* and *devias* for advice, *é melhor* + infinitive; please check *devias* as the softer form.
 - u5 p3: phone phrases for an appointment (*Queria marcar uma consulta*, *Para quando?*, *Quinta não posso*); *Estou? / Está lá?* mentioned as the phone greeting.
 - u5 p4: the pharmacy leaflet and the confirmation (Dra. Silva, times, *cartão de utente*) are invented.
+- u6 p1: jobs without an article after *ser*; *num / numa*; feminine forms of jobs; *Sei usar o computador*.
+- u6 p2: *há* + time and *desde* with the present, *durante* with the perfeito.
+- u6 p3: phone phrases of Portugal (*Estou?*, *Fala o …*, *Quer deixar recado?*); a tip mentions *Alô?* in Brazil.
+- u6 p4: the job advert and the e-mail (Rafael Costa, Lisbon) are invented; address at example.com.
