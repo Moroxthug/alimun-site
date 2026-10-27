@@ -1038,3 +1038,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: il n'en reste pas moins que, force est de constater, on a beau, encore faut-il que.
 - u6 p3: structure of a commentary; rhetorical question, litote, antithesis, hyperbole.
 - u6 p4: the commentary is invented.
+- u7 p1: everyday idioms; Belgian il drache in the tip. Native check.
+- u7 p2: proverbs, similes, metaphors; the similes are neutral on purpose.
+- u7 p3: homophones, puns (au courant, filet), irony; phonetic symbols in the table.
+- u7 p4: the humorous column is invented.
