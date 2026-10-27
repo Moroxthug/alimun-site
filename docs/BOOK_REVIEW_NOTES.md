@@ -1344,3 +1344,7 @@ u6 p1: legal words (o senhorio, o arrendatário, supramencionado, a contar de, s
 u6 p2: why legal Portuguese is dense and how to simplify it (passive to active, noun to verb); the plain rewrites must keep the legal meaning.
 u6 p3: obligation, right, prohibition and condition (fica obrigado a, tem a faculdade de, é proibido, desde que, salvo se, caso) with the subjunctive.
 u6 p4: invented lease clause with a plain-language version; not a real contract.
+u7 p1: ethos, pathos, logos with Portuguese examples; native review of the example sentences.
+u7 p2: anáfora, antítese, quiasmo, gradação, pergunta retórica, metáfora continuada.
+u7 p3: framing and loaded words (corte, racionalização, turba, povo); check connotations with a native speaker.
+u7 p4: invented speech by a mayor of an imaginary city, with a commentary; no real speaker or quotation.

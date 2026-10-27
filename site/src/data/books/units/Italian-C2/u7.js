@@ -189,7 +189,7 @@ export const UNIT = {
       { q: 'Non possiamo restare indifferenti.', cue: 'Possiamo davvero', a: ['Possiamo davvero restare indifferenti?'], why: 'A rhetorical question.' },
     ] },
     { t: 'ex', kind: 'fix', h: 'Find and fix the problem.', items: [
-      { s: '“Vogliamo scuole. Vogliamo case. Vogliamo lavoro.” è un [chiasmo].', a: ['anafora', 'un’anafora'], why: 'Repeated opening words make an anaphora.' },
+      { s: '“Vogliamo scuole. Vogliamo case. Vogliamo lavoro.” è [un chiasmo].', a: ['un’anafora'], why: 'Repeated opening words make an anaphora.' },
       { s: 'Una [massa] di cittadini ha firmato la petizione. (neutral)', a: ['gruppo'], why: '*Massa* is loaded; *gruppo* is neutral.' },
     ] },
   ],
