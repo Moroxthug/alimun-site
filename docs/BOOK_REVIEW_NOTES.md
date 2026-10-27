@@ -1052,3 +1052,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: trapassato remoto and imperfetto narrativo.
 - u1 p3: participio assoluto, free indirect speech, inverted dialogue tags.
 - u1 p4: the extract is invented.
+- u2 p1: dislocation left and right; agreement of the participle with lo, la, li, le. Native check.
+- u2 p2: cleft sentences; sono io che ho against ha.
+- u2 p3: neostandard features and what to avoid in writing; the remark about Tuscany.
+- u2 p4: the speech is invented.
