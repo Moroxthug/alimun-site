@@ -1306,3 +1306,7 @@ u5 p1: discourse markers (allora, insomma, cioè, ecco, praticamente, tipo, no?)
 u5 p2: truncations and elisions (po', 'sto, 'na, mo', vabbè, boh); informal register only; taboo language is explained, not taught.
 u5 p3: regional voices (north, Tuscan gorgia, Roman, Neapolitan, Sicilian) and friendly words pischello, guagliò, picciotto; native review of the regional claims needed.
 u5 p4: invented conversation between speakers from Milan, Rome and Naples.
+u6 p1: legal words (il locatore, il conduttore, suddetto, summenzionato, a decorrere da, fatto salvo); native or legal reviewer to check the terms.
+u6 p2: why legal Italian is dense and how to simplify it (passive to active, noun to verb); the plain rewrites must keep the legal meaning.
+u6 p3: obligation, right, prohibition and condition (è tenuto a, ha facoltà di, è vietato, purché, salvo che, qualora) with the subjunctive.
+u6 p4: invented lease clause with a plain-language version; not a real contract.
