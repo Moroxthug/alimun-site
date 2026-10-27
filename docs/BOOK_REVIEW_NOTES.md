@@ -1290,3 +1290,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: collocations and fixed pairs; check the "not natural" column and the remark on raggiungere un compromesso.
 - u1 p3: euphemism and litotes (non è una cosa da poco, ci ha lasciati, esuberi); native check.
 - u1 p4: the essay is invented; the demonstration is fictional.
+- u2 p1: parallelism and periodic sentences; the example sentences are original.
+- u2 p2: pronouns, quest'ultimo, ciò, nominal resumption; native check on the notes on ne and ci.
+- u2 p3: punctuation and Italian rules (colon, guillemets, comma before ma); check the Swiss remark.
+- u2 p4: the essay is invented.
