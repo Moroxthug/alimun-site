@@ -356,7 +356,7 @@
   /* Each answer also goes to the Practice memory (js/app/practice.js), so mistakes come back in practice rounds */
   function session(blocks, test) {
     var base = ctx.book.id + ':' + ctx.unit.id + ':' + (ctx.page ? ctx.page.id : 'test') + ':';
-    return window.AlimunEx.create({ A: A, blocks: blocks, test: test, xa: xA(ctx.book), ta: tA(ctx.book), root: function () { return root; },
+    return window.AlimunEx.create({ A: A, blocks: blocks, test: test, level: ctx.book.level, xa: xA(ctx.book), ta: tA(ctx.book), root: function () { return root; },
       onAnswer: afterPractice, onChange: refreshEnd,
       onItem: function (r) { if (window.AlimunPractice) window.AlimunPractice.record(base + r.bi + ':' + r.i, r.ok); } });
   }

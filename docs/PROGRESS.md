@@ -1056,6 +1056,70 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Colour: plan cards tinted mint, sun, coral and light lime; FAQ answer card light lime with a drifting glow; tutor frame sun with drifting mint and coral glows; a buddy in a tinted circle beside each "learn online" row. Motion: a lime marker sweeps under the last words of every section heading as it arrives.
 - Product videos: slot 1 after the plans ("See Alimun in action"), slot 2 before the FAQ ("Take a look inside"); large rounded frames that grow to full size as they reach the middle, pulsing lime play button, placeholder images and [COPY NEEDED] lines until the owner's videos and descriptions arrive.
 
+## 2026-10-27 — Course books: German A1, Spanish A1 to B1, English C1 (25 books)
+- Owner: "do german a1, spanish a1 a2 b1 english c1 etc". Written: five course books (German A1, Spanish A1, A2, B1, English C1; eight units each, four lessons and a unit test per unit) and their four goal books each (moving abroad, work, study and exams, travel; six units each): 25 books, 160 units, drafts for native-teacher review. Spanish books teach the Spanish of Spain and say where Latin America differs. Every book passes `scripts/check-book.mjs`. Writers' doubts in `docs/BOOK_REVIEW_NOTES.md`.
+- `site/src/data/books/audio.js`: Spanish roles (Camarero, Taquillera, Doctora and others) and Señor/Señora get matching voices; the audio plans of the existing 30 books are unchanged (checked by hash).
+- Explanations translated by helper agents: Spanish, French, German and Portuguese for all 25 books; Italian 24 (English C1 travel missing); Chinese 13 (the five course books and some goal books); Arabic 6 (English C1 and most goal books missing). Missing translations show in English. Each file checked for missing strings, markers and gaps.
+- Owner, on accents: forgiving up to B1, then half right. `js/app/exercises.js`: in Spanish exercises up to B1 a typed answer without written accents (á é í ó ú ü; ñ is a letter) counts as right and the feedback shows the accented form ("Watch the accents:"); from B2 it counts as wrong with "Almost! Check the accents." (true half points would need the scores to take fractions; no Spanish B2 book exists yet). `reader.js` passes the book level. Two `app_ex_accent_*` keys in nine languages; `tests/unit/accents.test.js`.
+- Not done: audio for the 25 books (from `/app/audio`), the 32 missing translations, native review.
+- Cost: the writing and translating ran as many parallel agents and used a large share of the owner's weekly limit; the owner was not told the size first. Next time: give the size and an estimate before starting work of this scale.
+- Checked: `npm run build`, `npm run build:site` (earlier in the session), unit tests 99 of 99, `node --check`.
+- Course audio for the 25 new books made by the owner from `/app/audio` (new spending limit, default $12, `js/app/audio-admin.js`): every file present, 373 minutes, about $11.19 at $0.03 a minute (estimate was $10.40).
+
+## 2026-10-27 — Course book: French A1
+- Written alone, one unit per commit: `site/src/data/books/French-A1.js` (syllabus) and `units/French-A1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 496 exercise items in lessons, 14 to 16 questions per test). Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs French-A1` passes. Review notes under `## French A1` in `docs/BOOK_REVIEW_NOTES.md`. New speaker roles in `site/src/data/books/audio.js`: Réceptionniste, Serveuse (women), Serveur, Guichetier (men). Picture words in unit 4 match `practice/pictures.js` (un réveil, un portable).
+- French A1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is French A2.
+- Not done: translations of the explanations (`docs/TRANSLATING_BOOKS.md`), audio from `/app/audio`, native review. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: French A2
+- Written alone, one unit per commit: `site/src/data/books/French-A2.js` (syllabus) and `units/French-A2/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 449 exercise items in lessons, 15 or 16 questions per test). Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs French-A2` passes. Review notes under `## French A2` in `docs/BOOK_REVIEW_NOTES.md`. New speaker roles in `site/src/data/books/audio.js`: Pharmacienne (woman), Marchand (man).
+- French A2 struck from the Order list in `docs/WRITING_BOOKS.md`; next is French B1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js` (it timed out in this environment, so only the content checker was run). `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: French B1
+- Written alone, one unit per commit: `site/src/data/books/French-B1.js` (syllabus) and `units/French-B1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 482 exercise items in lessons, 13 to 15 questions per test). Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs French-B1` passes. Review notes under `## French B1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker roles.
+- French B1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is French B2.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js` (it timed out in this environment). `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: French B2
+- Written alone, one unit per commit: `site/src/data/books/French-B2.js` (syllabus) and `units/French-B2/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 512 exercise items in lessons, 15 questions per test). Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs French-B2` passes. Review notes under `## French B2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker roles.
+- French B2 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Italian A1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js` (it timed out in this environment). `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Italian A1
+- Written alone, one unit per commit: `site/src/data/books/Italian-A1.js` (syllabus) and `units/Italian-A1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 502 exercise items in lessons, 14 to 16 questions per test). Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs Italian-A1` passes. Review notes under `## Italian A1` in `docs/BOOK_REVIEW_NOTES.md`. New speaker roles and names in `site/src/data/books/audio.js`: Segretaria, Giulia (women), Paolo, Barista, Bigliettaio (men).
+- Italian A1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Italian A2.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js` (it timed out in this environment). `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Italian A2
+- Written alone, one unit per commit: `site/src/data/books/Italian-A2.js` (syllabus) and `units/Italian-A2/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 454 exercise items in lessons, 15 or 16 questions per test). Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs Italian-A2` passes. Review notes under `## Italian A2` in `docs/BOOK_REVIEW_NOTES.md`. New speaker roles in `site/src/data/books/audio.js`: Farmacista (woman), Fruttivendolo (man).
+- Italian A2 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Italian B1.
+- Note: two commits of this book (unit 1) briefly carried a stray comma that broke the file on main; fixed in the following commit.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js` (it timed out in this environment). `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Italian B1
+- Written alone, one unit per commit: `site/src/data/books/Italian-B1.js` (syllabus) and `units/Italian-B1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 642 exercise items in lessons, 14 questions per test). Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs Italian-B1` passes. Review notes under `## Italian B1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (all dialogue speakers were already in `audio.js`).
+- Italian B1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Italian B2.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Italian B2
+- Written alone, one unit per commit: `site/src/data/books/Italian-B2.js` (syllabus) and `units/Italian-B2/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs Italian-B2` passes. Review notes under `## Italian B2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (all dialogue speakers were already in `audio.js`).
+- Italian B2 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Portuguese A1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Portuguese A1
+- Written alone, one unit per commit: `site/src/data/books/Portuguese-A1.js` (syllabus) and `units/Portuguese-A1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). European Portuguese, with Brazilian differences noted in tips. Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs Portuguese-A1` passes. Review notes under `## Portuguese A1` in `docs/BOOK_REVIEW_NOTES.md`. New speaker role in `site/src/data/books/audio.js`: Empregado (man).
+- Portuguese A1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Portuguese A2.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
 ## 27 Oct 2026 — Mockup D: showcase of the dashboard, video slots set, store badges
 - Owner: "more animations please, and showcase everything new we got, the practice, mock tests, exercises ... the 2 videos will be one of how alimun dashboard etc will be from pc and mobile, the other showcasing the ai tutor. also, put somewhere the download from playstore and apple store logos, i will send you later the links".
 - After the plans: a moving band of words (Live classes, Practice, Mock tests, Flashcards, AI tutor, Homework, Library) with buddies between them, faster while scrolling. Then "Everything you need between classes": seven rows (live classes, course book, practice rounds, mock tests, flashcards, library, homework and progress, facts from the js/app module headers) beside a sticky screen that plays a small animated preview of the row in view and changes tint.
