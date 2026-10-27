@@ -864,3 +864,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: *que, quem, onde, o que, o qual, cujo*; *quem* only after a preposition and for people; please confirm the tip about speech.
 - u5 p3: formal register of Portugal (*Exmo. Senhor, Venho por este meio, Agradeço desde já a atenção dispensada, Com os melhores cumprimentos*) and titles (*Dr., Eng.*); fictional phone number 210 555 0123.
 - u5 p4: the job advert and cover e-mail (Clara Moreira) are invented; e-mail addresses at example.com.
+- u6 p1: passive with *ser* + participle and *por* (*pela, pelo*); *ser* for the action and *estar* for the result.
+- u6 p2: *dizem que / diz-se que*, *toda a gente*, *a gente*; participles with two forms (*aceitado / aceite, entregado / entregue*, *pago*); please check the rule and the tip on speech.
+- u6 p3: reported speech after the perfeito, with *para* + infinitive for commands and *se* for questions; time words *no dia seguinte, ali*.
+- u6 p4: the library news item and comment are invented; the comment is signed with a first name only.
