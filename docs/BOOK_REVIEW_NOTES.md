@@ -1004,3 +1004,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: suffixes and gender, linking sounds in compounds; -nis gender note.
 - u6 p3: Denglisch and false anglicisms (Handy, Beamer, Smoking, Oldtimer); Natel in Switzerland; word field of sagen.
 - u6 p4: the essay is invented; the quoted verb downloadet is in quotation marks on purpose.
+- u7 p1: three levels and Sie against du. Native check.
+- u7 p2: idioms and proverbs; the tip on Hals- und Beinbruch.
+- u7 p3: Austrian and Swiss words, ss in Switzerland, greetings, modal particles. Check Moin and Gehsteig.
+- u7 p4: the conversation is invented.
