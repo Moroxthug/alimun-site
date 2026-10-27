@@ -593,3 +593,6 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: passive voice with être + participle and *par*; the article says French prefers *on* in speech.
 - u5 p3: subjunctive after *il faut que* reused (éteindre, trier, économiser); *il est important de* + infinitive.
 - u5 p4: leaflet and letter invented; no statistics.
+- u6 p2: subjunctive after vouloir que, il vaut mieux que, avant que, pour que; extra forms for prendre, venir, savoir, vouloir, dormir.
+- u6 p3: imperative with pronouns (repose-toi, mange-le, donne-moi) and negative order; check the hyphen and *moi / toi* rule.
+- u6 p4: the sleep advice and the doctor’s advice are general and contain no statistics.
