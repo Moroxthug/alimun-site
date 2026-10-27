@@ -1222,3 +1222,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: collocations and Zwillingsformeln; check the "not natural" column.
 - u1 p3: euphemism and understatement (nicht übel, nicht ohne, freistellen); native check.
 - u1 p4: the essay is invented; the demonstration is fictional.
+- u2 p1: parallelism and periodic sentences; the example sentences are original.
+- u2 p2: pronominal adverbs, Letzterer, resumption; check the notes on Ersterer and Letzterer.
+- u2 p3: punctuation and German comma rules (relative clauses always set off); native check.
+- u2 p4: the essay is invented.
