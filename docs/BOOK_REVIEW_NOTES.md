@@ -906,3 +906,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: qualquer que seja, quem quer que, onde quer que, seja como for, por muito que.
 - u7 p3: review markers (no fundo, no geral, em suma, ainda assim).
 - u7 p4: exhibition review is invented; no real museum is named.
+- u8 p1: deve ter / pode ter / devia ter + participle; pode ser que. Native check of the guess against regret distinction.
+- u8 p2: visto que, devido a, graças a, por culpa de, por isso, consequentemente.
+- u8 p3: abstract nouns, há quem + conjuntivo, caber a.
+- u8 p4: essay is invented; check the dermos form (futuro do conjuntivo of dar).

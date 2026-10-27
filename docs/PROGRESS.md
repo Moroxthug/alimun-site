@@ -1137,3 +1137,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Portuguese B1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Portuguese B2.
 - Note: another session pushed to `main` meanwhile; I merged `origin/main` into my branch (no conflicts) before pushing.
 - Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Portuguese B2
+- Written alone, one unit per commit: `site/src/data/books/Portuguese-B2.js` (syllabus) and `units/Portuguese-B2/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). European Portuguese, with Brazilian differences in the tips.
+- `node scripts/check-book.mjs Portuguese-B2` passes. Review notes under `## Portuguese B2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles.
+- Portuguese B2 struck from the Order list in `docs/WRITING_BOOKS.md`; next is English A1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
