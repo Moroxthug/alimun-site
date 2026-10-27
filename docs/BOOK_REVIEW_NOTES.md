@@ -1260,3 +1260,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: pronouns, este último, lo cual, nominal resumption; check the note on accents in demonstratives.
 - u2 p3: punctuation and Spanish rules (colon, raya, inverted marks); native check.
 - u2 p4: the essay is invented.
+- u3 p1: uses of se (accidental, passive, impersonal); native check on the agreement notes.
+- u3 p2: absolute participle and gerund; check Terminada la reunión and El tiempo permitiéndolo.
+- u3 p3: mood after quizá, a lo mejor, como si, aunque; check the capaz que remark.
+- u3 p4: the story is invented.
