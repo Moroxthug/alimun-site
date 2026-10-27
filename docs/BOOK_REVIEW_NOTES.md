@@ -690,3 +690,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: ne for di + noun and for quantities; *ce ne sono* and *non ce n’è*; ne attached to the infinitive.
 - u4 p3: tu imperative (taglia, aggiungi, cuoci) and voi imperative; negative tu with non + infinitive; irregular tu forms only recognised.
 - u4 p4: prices in the leaflet are invented. New speaker role added to audio.js: Fruttivendolo (man's voice).
+- u5 p1: *mi fa male / mi fanno male* with the subject agreeing, and *ho mal di* + body part.
+- u5 p2: *dovrebbe* taught as a fixed phrase; Lei imperative and tu imperative with attached pronouns (riposati).
+- u5 p3: emergency numbers (118 for an ambulance, 112 in Europe) are stated in a tip; please verify. The doctor’s name and address are invented.
+- u5 p4: tessera sanitaria mentioned for Italy; e-mail at example.com. New speaker role added to audio.js: Farmacista (woman's voice).
