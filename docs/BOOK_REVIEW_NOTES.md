@@ -950,3 +950,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: time periphrases; recién in Argentina.
 - u1 p3: time clauses with indicative or subjunctive; apenas había + cuando; nada más + infinitive.
 - u1 p4: the narrative is invented.
+- u2 p1: imperfecto de subjuntivo forms; -ra and -se. Native check of the -se remark.
+- u2 p2: kinds of si; advice with si yo fuera tú.
+- u2 p3: ojalá, como si, quisiera, past sequence of tenses.
+- u2 p4: the interview is invented.
