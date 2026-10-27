@@ -882,3 +882,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: futuro composto and the future for guesses (*será, terá perdido*).
 - u1 p3: mais-que-perfeito simples (*fizera, dissera, vira, saíra*) for recognition, with the *nós* forms listed; please check the accents.
 - u1 p4: the tale of Manuel and the bridge is invented; no real place named.
+- u2 p1: pretérito perfeito do conjuntivo after doubt, denial and feeling; *acho que* + indicative for a plain opinion.
+- u2 p2: mais-que-perfeito do conjuntivo and condicional composto, *devia / deveria ter* for a regret.
+- u2 p3: four kinds of if, with *se + futuro do conjuntivo* for the possible type; a tip on the informal *Se tinha sabido, vinha*; *quem me dera, se ao menos, pena que*.
+- u2 p4: the letter about the job in London is invented; London is named as a city only.
