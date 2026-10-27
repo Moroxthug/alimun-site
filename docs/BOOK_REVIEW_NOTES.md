@@ -1216,3 +1216,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: narrative voice (focalisation) and tone; check the terms.
 - u8 p3: the commentaire plan and the advice on tense and quotations.
 - u8 p4: the story and critical note are invented.
+
+## German C2
+- u1 p1: connotation of near-synonyms (betrachten, erblicken, starren, spähen, schlank, mager, dürr, sparsam, geizig); native check.
+- u1 p2: collocations and Zwillingsformeln; check the "not natural" column.
+- u1 p3: euphemism and understatement (nicht übel, nicht ohne, freistellen); native check.
+- u1 p4: the essay is invented; the demonstration is fictional.
