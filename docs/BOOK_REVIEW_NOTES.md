@@ -1328,3 +1328,7 @@ u2 p1: sentence variety and parallel structure; native teacher to check the exam
 u2 p2: cohesion (este último, o primeiro … o segundo, o que, tal, nominal resumption, ellipsis).
 u2 p3: punctuation for effect, with « » as the quotation marks of Portugal; the comma examples (Vamos comer, crianças) are classic and safe.
 u2 p4: invented magazine essay on slow living.
+u3 p1: future subjunctive (including the irregular forms) and the inflected infinitive; native teacher to check the choice between subjunctive and infinitive after impersonal expressions.
+u3 p2: absolute constructions (Feita a reunião, Dito isto, Sendo assim) and estar a + infinitive against the Brazilian gerund.
+u3 p3: clitic placement (enclisis, proclisis, mesoclisis), pronoun contractions (mo, ta, lho, lha, no-lo) and mood after talvez, oxalá and como se.
+u3 p4: invented short story that uses these structures.
