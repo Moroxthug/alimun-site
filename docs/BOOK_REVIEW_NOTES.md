@@ -564,3 +564,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: lui / leur taught against le / la / les by whether the verb takes *à* before a person.
 - u6 p3: phone phrases (*C’est de la part de qui ?*, *Ne quittez pas*) are standard in France; check Belgium, Switzerland and Quebec usage.
 - u6 p4: the job advert, e-mail and company are invented; e-mail at example.com.
+- u7 p1: gender rule for countries (ending in -e = feminine) with the exception *le Mexique*; countries such as Cambodge and Zimbabwe not listed.
+- u7 p2: near future with aller; the hotel dialogue and prices are invented.
+- u7 p3: weather phrases follow France; the claim that Quebec and Belgium use degrees Celsius is general.
+- u7 p4: hotel e-mail at example.com; Bretagne and Mont-Saint-Michel are real places named in a postcard.
