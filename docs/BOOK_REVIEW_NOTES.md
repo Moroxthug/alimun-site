@@ -1226,3 +1226,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: pronominal adverbs, Letzterer, resumption; check the notes on Ersterer and Letzterer.
 - u2 p3: punctuation and German comma rules (relative clauses always set off); native check.
 - u2 p4: the essay is invented.
+- u3 p1: als ob and als + Konjunktiv II; check the simple form against würde advice.
+- u3 p2: participial attributes; native check on the unpacking examples.
+- u3 p3: Funktionsverbgefüge; check each verb and preposition.
+- u3 p4: the story is invented.
