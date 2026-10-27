@@ -1132,3 +1132,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: Spain and Latin America vocabulary and past tenses; check the remark on coger.
 - u4 p3: idioms and proverbs; check each against a Spanish source.
 - u4 p4: the conversation is invented; Inés, Rafael and Martín are fictional.
+- u5 p1: formal prepositional phrases (en virtud de, con arreglo a, en el marco de, a tenor de); check the note on en relación a.
+- u5 p2: passive with se, estimar/desestimar, proceder a, queísmo note; native check.
+- u5 p3: request and reply formulas; check le ruego que and le agradecería que.
+- u5 p4: the letters are invented; Luis Navas is fictional.
