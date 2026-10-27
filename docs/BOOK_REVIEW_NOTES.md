@@ -679,3 +679,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: più … di versus più … che; migliore / meglio; pronoun after di (di me).
 - u1 p3: direct object pronouns lo, la, li, le; agreement in the passato prossimo is mentioned for the next unit.
 - u1 p4: the letter and names are invented.
+- u2 p1: irregular participles (messo, chiesto, aperto, chiuso, risposto, vinto) and già / ancora between the auxiliary and the participle.
+- u2 p2: reflexive verbs in the passato prossimo always take essere; the participle agrees with the subject.
+- u2 p3: *fa* (ago), *da* + present, *per* + past; check the explanation of da versus per.
+- u2 p4: the email is invented.
