@@ -1340,3 +1340,7 @@ u5 p1: discourse markers (pronto, então, pois, pá, portanto, tipo, ya); native
 u5 p2: shortened forms (tá, pra, né, num in Brazil, ó) and tu, você and o senhor in Portugal and Brazil; taboo language is explained, not taught.
 u5 p3: regional voices (Lisbon, Porto and the north, Alentejo, Azores, Brazil, Angola) and words fixe, bué, miúdo, catraio, kamba; native review of the regional claims needed.
 u5 p4: invented conversation between speakers from Lisbon, Porto and Luanda.
+u6 p1: legal words (o senhorio, o arrendatário, supramencionado, a contar de, sem prejuízo de, denunciar); native or legal reviewer to check the terms for Portugal.
+u6 p2: why legal Portuguese is dense and how to simplify it (passive to active, noun to verb); the plain rewrites must keep the legal meaning.
+u6 p3: obligation, right, prohibition and condition (fica obrigado a, tem a faculdade de, é proibido, desde que, salvo se, caso) with the subjunctive.
+u6 p4: invented lease clause with a plain-language version; not a real contract.
