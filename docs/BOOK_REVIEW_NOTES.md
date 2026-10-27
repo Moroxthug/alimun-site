@@ -886,3 +886,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: mais-que-perfeito do conjuntivo and condicional composto, *devia / deveria ter* for a regret.
 - u2 p3: four kinds of if, with *se + futuro do conjuntivo* for the possible type; a tip on the informal *Se tinha sabido, vinha*; *quem me dera, se ao menos, pena que*.
 - u2 p4: the letter about the job in London is invented; London is named as a city only.
+- u3 p1: embora, ainda que, por mais que, mesmo que + conjuntivo; apesar de + noun or infinitive. Check the se bem que row (indicative or subjunctive).
+- u3 p2: para que, desde que, a não ser que, caso. Native check of the two meanings of desde que.
+- u3 p3: antes que / antes de, sem que, como se; same-subject infinitive against different-subject conjuntivo.
+- u3 p4: opinion piece on public transport; check register.
