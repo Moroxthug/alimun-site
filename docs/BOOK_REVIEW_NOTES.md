@@ -686,3 +686,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p1: imperfetto endings for -are / -ere / -ire and the irregular stems (fare, dire, bere); essere has its own forms.
 - u3 p3: passato prossimo versus imperfetto as event versus background; *mentre* in a tip; the example *ci sono già stato* uses *ci* before it is taught.
 - u3 p4: the school memories are invented; the teacher’s name Rossi is fictional.
+- u4 p1: molto / troppo / tanto as adjectives agreeing with the noun; ci vuole / ci vogliono; un etto as a common measure.
+- u4 p2: ne for di + noun and for quantities; *ce ne sono* and *non ce n’è*; ne attached to the infinitive.
+- u4 p3: tu imperative (taglia, aggiungi, cuoci) and voi imperative; negative tu with non + infinitive; irregular tu forms only recognised.
+- u4 p4: prices in the leaflet are invented. New speaker role added to audio.js: Fruttivendolo (man's voice).
