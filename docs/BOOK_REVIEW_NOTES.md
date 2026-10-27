@@ -872,3 +872,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: *se* + imperfeito do conjuntivo + condicional and *Se eu fosse a ti*; tip on the informal imperfeito in both parts (*Se tinha tempo, viajava*).
 - u7 p3: futuro do conjuntivo after *se, quando, assim que, quem*, with the irregular forms *tiver, fizer, puder, for, vier*; please check the tip comparing it with the infinitivo pessoal.
 - u7 p4: the baker's interview is invented; no real place or person is named.
+- u8 p1: infinitivo pessoal (*para falarmos, ao chegarem, é importante estudares*) against the plain infinitive when the subject is the same; please check the rule.
+- u8 p2: relative and absolute superlative (*belíssimo, riquíssimo, antiquíssima*), *embora* and *mesmo que* + subjunctive, *apesar de, em vez de, portanto, no entanto*.
+- u8 p3: city and environment vocabulary and the four-step argument; please check that it reads naturally.
+- u8 p4: the letter to the editor is invented; the street name is made up and Luís Ferreira is a fictional name.
