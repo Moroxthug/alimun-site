@@ -936,3 +936,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: Can I and Can you; Could and May in the tip.
 - u6 p3: like + -ing, play, go, do, how often; check that I like to swim is mentioned fairly.
 - u6 p4: the club and the members are invented.
+- u7 p1: clothes and colours; British and American words in the tip. Native check.
+- u7 p2: weather, months, seasons (northern hemisphere); autumn only, with fall in a tip would be worth adding.
+- u7 p3: present continuous, -ing spelling, contrast with the present simple.
+- u7 p4: the two messages are invented; the seaside is not named.
