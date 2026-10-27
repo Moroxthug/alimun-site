@@ -920,3 +920,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: possessive adjectives, 's, family words; its against it's.
 - u2 p3: have got (British); adjectives before the noun. Check the 's got tip.
 - u2 p4: the family is invented.
+- u3 p1: present simple with I, you, we, they; don't. Native check.
+- u3 p2: he/she/it spelling, does and doesn't, short answers.
+- u3 p3: telling the time (past, to; USA after), days, at, in, on; have for meals.
+- u3 p4: the baker's day is invented; Bristol is a real city, no other real names.
