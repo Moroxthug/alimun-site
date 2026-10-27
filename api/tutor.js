@@ -736,7 +736,7 @@ async function handleLiveStart(req, res, supabase, user) {
       clean(m.result && m.result.pron ? pron.forTutor(m.result.pron) : m.result && m.result.lines ? m.result.lines.join(' ') : m.text, 400)).join('\n');
     const pronDrill = pron.configured();
     const instructions = live.instructionsFor(session, await brain.brief(supabase, profile, { lessonId: session.lesson_id }), tutor, history, pronDrill);
-    const pass = await live.token({ instructions, tutor, handle: live.cleanHandle(body.handle), seconds: remaining + 60, pronDrill });
+    const pass = await live.token({ instructions, tutor, handle: live.cleanHandle(body.handle), seconds: remaining + 60, pronDrill, level: session.level });
     await supabase.from('tutor_sessions').update({
       tutor, mode: 'live', live_until: pass.expires, last_turn_at: new Date().toISOString(), seconds_used: (session.seconds_used || 0) + charged,
     }).eq('id', session.id);
