@@ -740,3 +740,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: absolute superlative with the *h* spelling (*lunghissimo, antichissimo*); the congiuntivo after a relative superlative in a tip (*il più bello che abbia visto*); connectors *anche se, siccome, quindi, però, tuttavia*.
 - u8 p3: the four-step argument (opinion, reason, example, conclusion) is a writing model; please check that it reads naturally.
 - u8 p4: the letter to the editor is invented; the street name is made up and Luca Ferri is a fictional name.
+
+## Italian B2
+- u1 p1: futuro anteriore after *appena, quando, dopo che, una volta che*; tip says the simple future is common in speech.
+- u1 p2: future and futuro anteriore for guesses (*sarà, avrà perso*); please check the sort item *Saranno le sei* as a guess.
+- u1 p3: passato remoto of regular and ten irregular verbs (lui/lei and loro); tip on north and centre/south use in speech; *credé* and *credette* both listed.
+- u1 p4: the tale of Gino and the bridge is invented; no real place named.
