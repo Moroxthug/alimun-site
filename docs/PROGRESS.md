@@ -1114,3 +1114,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `node scripts/check-book.mjs Italian-B2` passes. Review notes under `## Italian B2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (all dialogue speakers were already in `audio.js`).
 - Italian B2 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Portuguese A1.
 - Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Portuguese A1
+- Written alone, one unit per commit: `site/src/data/books/Portuguese-A1.js` (syllabus) and `units/Portuguese-A1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). European Portuguese, with Brazilian differences noted in tips. Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs Portuguese-A1` passes. Review notes under `## Portuguese A1` in `docs/BOOK_REVIEW_NOTES.md`. New speaker role in `site/src/data/books/audio.js`: Empregado (man).
+- Portuguese A1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Portuguese A2.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
