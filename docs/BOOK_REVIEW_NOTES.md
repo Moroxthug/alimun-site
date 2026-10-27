@@ -653,3 +653,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p3: bar customs (pay at the cassa, prices al banco / al tavolo) are general; prices invented.
 - u3 p4: menu prices are invented.
 - New speaker role added to audio.js: Barista (man's voice).
+- u4 p1: *quello* forms (quel, quello, quell’, quella, quei) given in one sentence; *monolocale / bilocale / trilocale* explained as commonly used.
+- u4 p2: *bello* changing like the article (bel, bello, bell’, bei, begli) in a tip; *grande* / *gran*.
+- u4 p3: prepositions su / in / a joined with the article (sul, nel, al); the picture exercise names the clock *una sveglia* and the phone *un cellulare* as in the picture sets.
+- u4 p4: rent and address in the advert are invented; e-mail at example.com.
