@@ -665,3 +665,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: sapere + infinitive for skills versus potere for possibility; the four modal verbs in one table.
 - u6 p3: invitation phrases (Ti va di …?, Volentieri, Mi dispiace, non posso); weather phrases use fa / c’è / piove / nevica.
 - u6 p4: the club and café notices are invented.
+- u7 p1: a + article (al, alla, all’, ai) and in + place without the article (in centro, in banca).
+- u7 p2: imperative with Lei (giri, vada, prenda) given as forms to learn; the tu imperative and the negative are in a tip.
+- u7 p3: *convalidare* the ticket is general practice on Italian trains and buses; ticket prices and times are invented.
+- u7 p4: the city text and the ticket machine are invented. New speaker role added to audio.js: Bigliettaio (man's voice).
