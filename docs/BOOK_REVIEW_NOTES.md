@@ -1008,3 +1008,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: idioms and proverbs; the tip on Hals- und Beinbruch.
 - u7 p3: Austrian and Swiss words, ss in Switzerland, greetings, modal particles. Check Moin and Gehsteig.
 - u7 p4: the conversation is invented.
+- u8 p1: structure of a Kommentar and an Erörterung; phrases for each step. Native check.
+- u8 p2: zwar … aber, gleichwohl, immerhin, zumindest; rhetorical devices.
+- u8 p3: phrases for taking the floor, interrupting, agreeing and disagreeing.
+- u8 p4: the commentary is invented.
