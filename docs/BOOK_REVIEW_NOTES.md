@@ -1246,3 +1246,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: rhetorical devices; check the chiasmus example (arbeiten, um zu leben, nicht leben, um zu arbeiten).
 - u7 p3: framing and loaded language; native check on the connotation labels (Steuerentlastung, Regime, Pöbel).
 - u7 p4: the speech and commentary are invented; the park and the town are fictional.
+- u8 p1: figurative language; native check on the effect statements.
+- u8 p2: Erzählperspektive (Ich-Erzähler, personal, auktorial) and tone.
+- u8 p3: the Textanalyse structure (Behauptung, Beleg, Deutung); check the advice on tense and quotations.
+- u8 p4: the story and critical note are invented.
