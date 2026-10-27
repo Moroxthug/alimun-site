@@ -818,3 +818,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: irregular perfeito of fazer, ter, estar, ver, dizer, pôr, vir, ler, dar; tip on *vimos* (ver in the past, vir in the present); reflexive verbs with the pronoun after the verb.
 - u2 p3: *ontem, há + time* (Portugal; *atrás* is Brazilian), *primeiro, depois, finalmente*.
 - u2 p4: the e-mail about a busy week is invented.
+- u3 p1: imperfeito of regular verbs and ser, ter, vir, pôr; *ir* regular (*ia*); accent in the *nós* forms.
+- u3 p2: habits, descriptions, age, weather, *costumar* and *havia*.
+- u3 p3: perfeito against imperfeito, *já / nunca / ainda não* with the perfeito; the gap on weather accepts *estava* and *fazia*.
+- u3 p4: the two school memories (Rui and Clara) are invented; Viseu is named as a place only.
