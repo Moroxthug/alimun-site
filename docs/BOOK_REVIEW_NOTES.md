@@ -585,3 +585,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: relative pronouns qui, que, où, dont only; no ce qui / ce que yet.
 - u3 p3: order of double pronouns (me/te before le/la/les before lui/leur before y before en); imperative with pronouns left for a later book.
 - u3 p4: the article and the review are invented and contain no statistics or brands.
+- u4 p1: conditional taught with future stems; politeness uses (voudrais, pourriez-vous, il faudrait) checked against French business practice.
+- u4 p2: si + imparfait + conditional; the 'likely' type (si + present + future) repeated from A2 for contrast.
+- u4 p3: closing formula *Je vous prie d’agréer, Madame, Monsieur, l’expression de mes salutations distinguées* given in full; check it is still the standard.
+- u4 p4: the advert and letter are invented; e-mail at example.com.
