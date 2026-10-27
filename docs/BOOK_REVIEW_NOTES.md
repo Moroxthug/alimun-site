@@ -622,3 +622,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: c’est … qui / que, ce qui / ce que … c’est; agreement of the verb after c’est moi qui.
 - u4 p3: negotiation vocabulary (devis, remise, geste commercial) and polite refusals with the conditional.
 - u4 p4: the meeting report and the e-mail are invented.
+- u5 p1: grâce à / à cause de / en raison de / faute de; puisque against parce que.
+- u5 p2: *de sorte que* and *si bien que* taken with the indicative for a real result; the subjunctive for a goal is mentioned.
+- u5 p3: discourse markers for an essay (certes … mais, on pourrait objecter que, somme toute).
+- u5 p4: both texts are invented opinion pieces; no statistics.
