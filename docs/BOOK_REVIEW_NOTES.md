@@ -1272,3 +1272,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: spoken contractions (pa', to', na', cansao) and tú/usted; check the Caribbean s-aspiration remark.
 - u5 p3: regional words (guay, mola, chévere, chido, bacán, copado, cuate, mande); check each against its region and the seseo and yeísmo notes.
 - u5 p4: the conversation is invented; Carmen, Rodrigo and Lucía are fictional.
+- u6 p1: legal words (arrendatario, dicho, sin perjuicio de, en lo sucesivo); native check on the plain equivalents.
+- u6 p2: plain language rewrites; check that the obligation is kept.
+- u6 p3: obligation, right, prohibition, condition (deberá, podrá, queda prohibido, salvo que, siempre que); native check.
+- u6 p4: the contract clause is invented; no real contract is quoted.
