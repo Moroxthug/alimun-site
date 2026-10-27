@@ -546,3 +546,6 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: *plus … que* + stress pronoun (moi, toi, lui); *aussi sympa que* kept as the A2 comparison set; superlatives only touched.
 - u1 p3: direct object pronouns without the passé composé agreement (taught later in the book if needed).
 - u1 p4: letter uses *depuis* before it is taught in u2; *Grosses bises* is informal.
+- u2 p2: participle agreement of reflexive verbs taught as agreeing with the subject (true for most cases; the exception with a direct object after the verb is left out).
+- u2 p3: *depuis* with a present verb versus *pendant* with a past verb; check the explanation for A2.
+- u2 p4: the e-mail uses *j’avais*, *j’étais* and *parce que* before the imparfait is taught in u3.
