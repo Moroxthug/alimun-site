@@ -66,8 +66,8 @@ export const UNIT = {
           { t: 'ex', kind: 'picture', h: 'What is it?', items: [
             { pic: 'house', o: ['une maison', 'une clé', 'un lit'], why: '*une maison* is a house.' },
             { pic: 'key', o: ['une clé', 'une porte', 'un téléphone'], why: '*une clé* is a key.' },
-            { pic: 'clock', o: ['une horloge', 'une lampe', 'un bureau'], why: 'A clock on the wall: *une horloge*.' },
-            { pic: 'phone', o: ['un téléphone', 'un placard', 'un lit'], why: '*un téléphone* is a phone.' },
+            { pic: 'clock', o: ['un réveil', 'une lampe', 'un bureau'], why: 'The drawing is an alarm clock: *un réveil*.' },
+            { pic: 'phone', o: ['un portable', 'un placard', 'un lit'], why: '*un portable* is a mobile phone.' },
           ] },
           { t: 'ex', kind: 'label', h: 'Label the kitchen.', scene: 'kitchen', extra: ['le lit', 'la porte'], items: [
             { x: 160, y: 50, a: 'la fenêtre', why: 'The window.' },

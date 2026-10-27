@@ -524,7 +524,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p4: menu prices are invented examples.
 - New speaker roles added to audio.js: Serveuse (woman), Serveur (man).
 - u4 p1: *le living* for the living room in Belgium; *un trois-pièces* counting rule (living room and bedrooms) as commonly used in France.
-- u4 p1: picture exercise accepts *une horloge* for the clock drawing (could also be *une pendule*).
+- u4 p1: picture exercise names the clock drawing *un réveil* and the phone *un portable* (same words as the picture sets in practice/pictures.js).
 - u4 p2: *de belles chaises* (de before adjective + plural noun) taught as the careful rule; many speakers say *des belles chaises*.
 - u4 p4: rent and address in the advert are invented; email at example.com.
 - u5 p1: 24-hour clock written *14 h 30* and read in full; everyday speech uses the 12-hour forms.
@@ -534,3 +534,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p1: jouer à / jouer de / faire du taught as the rule; *faire du tennis* and *faire du piano* are also heard colloquially, so exercises avoid them.
 - u6 p3: *au printemps* versus *en été / en automne / en hiver*.
 - u6 p4: *il faut* and *pas besoin de* appear in the notices before they are taught.
+- u7 p1: *un dépanneur* for a corner shop in Quebec; mairie / place description is general.
+- u7 p2: imperative taught with vous first, tu form in a tip (tu vas becomes va); *Je vous en prie* glossed.
+- u7 p3: ticket prices and times are invented; *valider* its ticket is general practice in France.
+- New speaker role added to audio.js: Guichetier (man's voice).
