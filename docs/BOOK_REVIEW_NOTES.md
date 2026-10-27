@@ -531,3 +531,6 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: *nous mangeons* and *nous commençons* spelling changes taught briefly; no other -er changes (appeler, acheter) yet.
 - u5 p3: *se lever* accent pattern (je me lève, nous nous levons) stated as a rule; check wording.
 - u5 p4: *Dis-moi ce qui te va* is a colloquial phrase, glossed in the exercise.
+- u6 p1: jouer à / jouer de / faire du taught as the rule; *faire du tennis* and *faire du piano* are also heard colloquially, so exercises avoid them.
+- u6 p3: *au printemps* versus *en été / en automne / en hiver*.
+- u6 p4: *il faut* and *pas besoin de* appear in the notices before they are taught.
