@@ -1,0 +1,19 @@
+// Italian A2 course book (docs/BOOKS.md). Draft: reviewed by a native teacher before it is published.
+// Units are written in units/Italian-A2/<unit>.js; until then each entry here is planned, with its outline.
+// Explanations in English, translated in i18n/Italian-A2.<lang>.json (Italian included).
+export const BOOK = {
+  id: 'Italian-A2',
+  language: 'Italian',
+  level: 'A2',
+  review: 'draft',
+  units: [
+    { id: 'u1', title: 'People and relationships', planned: true, plan: { goal: 'Describe people and their character, compare them and talk about relationships.', lessons: ['Character and appearance; adjectives of personality; secondo me and penso che', 'Comparing: più … di, meno … di, (tanto) … quanto, così … come; migliore and meglio', 'The direct object pronouns lo, la, li, le (Lo conosco. La vedi?)', 'Reading: a letter to a friend about a new colleague'] } },
+    { id: 'u2', title: 'What did you do?', planned: true, plan: { goal: 'Tell a short story about last week and put events in order.', lessons: ['The passato prossimo: a review of avere and essere, with irregular participles (messo, detto, aperto, chiesto, capito)', 'Reflexive verbs in the passato prossimo (Mi sono alzato presto.); agreement with the subject', 'Time and sequence: prima, poi, dopo, infine; fa, da, per', 'Reading: an email about a busy week'] } },
+    { id: 'u3', title: 'Experiences and childhood', planned: true, plan: { goal: 'Talk about what you used to do and what you have already done.', lessons: ['The imperfetto: forms, with essere, avere, abitare, fare', 'Using the imperfetto for habits and descriptions (Da piccolo, …)', 'Passato prossimo or imperfetto: an event and its background; già, mai, non … ancora', 'Reading: two people remember their school days'] } },
+    { id: 'u4', title: 'Food, shopping and recipes', planned: true, plan: { goal: 'Shop for food, follow a simple recipe and say how much you need.', lessons: ['Quantities (un po’ di, molto, abbastanza, un etto di, un chilo di); bisogna and ci vuole', 'The pronoun ne (Ne voglio due. Ce ne sono tre.)', 'Following and giving a recipe with the imperative tu and voi; kitchen verbs', 'Reading: a recipe and a shop leaflet'] } },
+    { id: 'u5', title: 'Health', planned: true, plan: { goal: 'Say what hurts, make a doctor’s appointment and understand simple advice.', lessons: ['The body; mi fa male …, ho mal di …; the doctor and the pharmacy', 'dovere and bisogna + infinitive; advice with dovresti; the imperative with Lei and tu', 'Making an appointment by phone; expressing a wish and an excuse', 'Reading: a leaflet from a pharmacy and an appointment confirmation'] } },
+    { id: 'u6', title: 'Work and everyday life', planned: true, plan: { goal: 'Talk about jobs, phone calls and daily tasks at work.', lessons: ['Jobs and workplaces; sono + job (no article); the CV in short sentences', 'The indirect object pronouns gli, le and loro; telefonare, scrivere, rispondere, dare', 'On the phone: Pronto, Vorrei parlare con …, Può ripetere?; leaving a message', 'Reading: a job advert and a short work email'] } },
+    { id: 'u7', title: 'Travel and weather', planned: true, plan: { goal: 'Plan a trip, book a hotel and talk about the weather.', lessons: ['Places and prepositions: a, in, negli with cities and countries; venire da', 'Booking a hotel and a train; stare per and the plan with the present', 'The weather and the seasons; fa, c’è, è; comparing places', 'Reading: a hotel confirmation and a postcard'] } },
+    { id: 'u8', title: 'Celebrations and the future', planned: true, plan: { goal: 'Talk about celebrations, invite people and say what you will do.', lessons: ['Celebrations and traditions; inviting, accepting and declining', 'The simple future of regular verbs and the most common irregular ones (sarò, avrò, andrò, farò)', 'se + present + future (Se ho tempo, verrò.); making plans and promises', 'Reading: an invitation card and an email reply'] } },
+  ],
+};
