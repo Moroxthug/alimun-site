@@ -1188,3 +1188,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: collocations and fixed pairs; check the "not natural" column.
 - u1 p3: euphemism and litotes; check ce n'est pas rien and plan de sauvegarde de l'emploi.
 - u1 p4: the essay is invented; the protest is fictional.
+- u2 p1: parallelism and periodic sentences; the example sentences are original.
+- u2 p2: pronouns, ce dernier, nominal resumption; check the notes on celui-ci and ce dernier.
+- u2 p3: punctuation and French typography (space before ; : ? !); check the Quebec practice, which often differs.
+- u2 p4: the essay is invented.
