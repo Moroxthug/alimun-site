@@ -538,3 +538,6 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: imperative taught with vous first, tu form in a tip (tu vas becomes va); *Je vous en prie* glossed.
 - u7 p3: ticket prices and times are invented; *valider* its ticket is general practice in France.
 - New speaker role added to audio.js: Guichetier (man's voice).
+- u8 p2: only seven verbs taught with être (aller, venir, partir, arriver, rester, sortir, rentrer); agreement of the participle with the subject shown for je / nous / vous.
+- u8 p3: *c’était* given as a fixed phrase (imparfait not explained); *ne … rien* appears in examples only.
+- u8 p4: the reading uses *il faisait beau* and *il a plu* without explanation; glossed by context.
