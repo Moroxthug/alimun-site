@@ -568,3 +568,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: near future with aller; the hotel dialogue and prices are invented.
 - u7 p3: weather phrases follow France; the claim that Quebec and Belgium use degrees Celsius is general.
 - u7 p4: hotel e-mail at example.com; Bretagne and Mont-Saint-Michel are real places named in a postcard.
+- u8 p1: dates written with *le* + number (*le douze mars*) and *le premier mai*; months and days in lower case.
+- u8 p2: simple future stems for eight irregular verbs; the endings are said to look like avoir (ai, as, a, ont).
+- u8 p3: *si* + present + future only; *quand* + future in one example; no conditional yet.
+- u8 p4: invitation and reply are invented; e-mail at example.com.
