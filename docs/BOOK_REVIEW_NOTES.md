@@ -916,3 +916,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: be, short forms and short answers (Yes, I am).
 - u1 p3: alphabet respelling (zed or zee), numbers to 20, nationalities; the British and English tip.
 - u1 p4: profiles are invented.
+- u2 p1: a and an by sound, plurals, this/that/these/those. Native check.
+- u2 p2: possessive adjectives, 's, family words; its against it's.
+- u2 p3: have got (British); adjectives before the noun. Check the 's got tip.
+- u2 p4: the family is invented.
