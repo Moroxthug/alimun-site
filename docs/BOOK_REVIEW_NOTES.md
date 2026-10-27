@@ -1294,3 +1294,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: pronouns, quest'ultimo, ciò, nominal resumption; native check on the notes on ne and ci.
 - u2 p3: punctuation and Italian rules (colon, guillemets, comma before ma); check the Swiss remark.
 - u2 p4: the essay is invented.
+- u3 p1: si passivante, si impersonale, andare and venire + participle; native check on the agreement notes.
+- u3 p2: absolute participle and gerund; check Finita la riunione and Stando così le cose.
+- u3 p3: combined pronouns, ci and ne, mood after forse, magari, chissà and come se; check the register notes.
+- u3 p4: the story is invented.
