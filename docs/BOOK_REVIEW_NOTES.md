@@ -527,3 +527,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p1: picture exercise accepts *une horloge* for the clock drawing (could also be *une pendule*).
 - u4 p2: *de belles chaises* (de before adjective + plural noun) taught as the careful rule; many speakers say *des belles chaises*.
 - u4 p4: rent and address in the advert are invented; email at example.com.
+- u5 p1: 24-hour clock written *14 h 30* and read in full; everyday speech uses the 12-hour forms.
+- u5 p2: *nous mangeons* and *nous commençons* spelling changes taught briefly; no other -er changes (appeler, acheter) yet.
+- u5 p3: *se lever* accent pattern (je me lève, nous nous levons) stated as a rule; check wording.
+- u5 p4: *Dis-moi ce qui te va* is a colloquial phrase, glossed in the exercise.
