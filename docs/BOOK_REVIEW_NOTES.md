@@ -856,3 +856,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: irregular stems; *Podia / Poderia ajudar-me?*, *Importava-se de …?*; please check that the select item prefers *Importavas-te de* for a friend.
 - u3 p3: advice with *no teu lugar*, *devias / deverias*, *era melhor*, *seria bom*; the condicional for a plan reported from the past, with a tip on the imperfeito used in speech.
 - u3 p4: the e-mail and its reply are invented (Elena Duarte); address at example.com; dates and price made up.
+- u4 p1: *acho que* + indicative and *não acho que / duvido que* + subjunctive, the rule for Portuguese; please confirm the wording of the tip.
+- u4 p2: presente do conjuntivo built from the *eu* form, irregular verbs including *dê, deem, vá, vão, haja*; spelling changes of *-car, -çar, -gar*.
+- u4 p3: *espero / quero / lamento / receio / é importante que* + subjunctive, the infinitive for the same subject, *talvez* and *pode ser que* + subjunctive.
+- u4 p4: the forum posts are invented, with first names only.
