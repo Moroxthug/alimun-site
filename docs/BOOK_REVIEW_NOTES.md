@@ -842,3 +842,13 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: futuro simples of regular verbs and eleven irregular stems; a tip says speech often uses *ir* + infinitive.
 - u8 p3: *se* + present for plans (the future subjunctive *Se chover* is only previewed in a tip for B1); *prometo, pretendo, espero*.
 - u8 p4: the invitation card and the reply (Ana, Pedro) are invented; address at example.com.
+
+## Portuguese B1
+- u1 p1: perfeito for events and imperfeito for the scene; *tomar o duche* used for Portugal.
+- u1 p2: mais-que-perfeito composto with *ter*; irregular participles; the literary simple form (*fizera*) only mentioned.
+- u1 p3: *enquanto, de repente, assim que, antes de / depois de* + infinitive, *desde que* + present; the dialogue uses the personal infinitive *até chegar o porteiro*, which is taught in unit 8.
+- u1 p4: grandmother Rosa's story is invented; Lisbon is named as a city only.
+- u2 p1: pronoun after the verb in a normal sentence and before it after negatives, *já / ainda / sempre / também / só*, conjunctions and question words; tip on the Brazilian order.
+- u2 p2: pronoun with an infinitive (*vê-lo, ajudá-la*), *ter de o fazer / fazê-lo*, mesóclise in the formal future (*dir-lhe-ei*); please check that *Direi-lhe* is rightly marked as wrong.
+- u2 p3: combined pronouns *mo, to, lho, no-lo* and *se* for things in general and impersonal sentences.
+- u2 p4: the parcel chat is invented; no courier named.
