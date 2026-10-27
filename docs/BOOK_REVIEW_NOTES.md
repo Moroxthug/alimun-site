@@ -1302,3 +1302,7 @@ u4 p1: hedges and boosters (pare che, a quanto pare, tende a, presumibilmente, i
 u4 p2: nominal style and reporting verbs; pretendere as a false friend of to pretend (fingere).
 u4 p3: strengths and limits, signposting with sebbene + subjunctive, mentre, ne consegue che.
 u4 p4: invented literature review on remote work; no real studies cited.
+u5 p1: discourse markers (allora, insomma, cioè, ecco, praticamente, tipo, no?); check intonation notes with a native speaker.
+u5 p2: truncations and elisions (po', 'sto, 'na, mo', vabbè, boh); informal register only; taboo language is explained, not taught.
+u5 p3: regional voices (north, Tuscan gorgia, Roman, Neapolitan, Sicilian) and friendly words pischello, guagliò, picciotto; native review of the regional claims needed.
+u5 p4: invented conversation between speakers from Milan, Rome and Naples.
