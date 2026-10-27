@@ -5,7 +5,7 @@ Format and exercise kinds: `docs/BOOKS.md`. Check: `node scripts/check-book.mjs 
 
 ## Order (owner, 27 Oct 2026: exercises, listening and voices in every language taught)
 Course books first, one per level; goal books only later and on demand.
-- Italian B2; Portuguese A1, A2, B1, B2
+- Portuguese A1, A2, B1, B2
 - English A1; Spanish B2; German C1; French, Italian, Portuguese C1; Spanish C1
 - C2 for every language
 Strike a book from this list (in the same commit) when it is written.
