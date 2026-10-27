@@ -736,3 +736,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: *se* + congiuntivo imperfetto + condizionale for unreal present situations; the past unreal (*se avessi avuto … avrei …*) is left for B2.
 - u7 p3: *Se fossi in te*, *vorrei che tu venissi*, *magari* + congiuntivo imperfetto, *come se*; the *Vieni? – Magari!* use is noted in a tip.
 - u7 p4: the interview with a baker is invented; no real place or person is named.
+- u8 p1: gerundio, *stare* + gerundio for an action in progress, *dopo aver* + participle, *senza* and *invece di* + infinitive.
+- u8 p2: absolute superlative with the *h* spelling (*lunghissimo, antichissimo*); the congiuntivo after a relative superlative in a tip (*il più bello che abbia visto*); connectors *anche se, siccome, quindi, però, tuttavia*.
+- u8 p3: the four-step argument (opinion, reason, example, conclusion) is a writing model; please check that it reads naturally.
+- u8 p4: the letter to the editor is invented; the street name is made up and Luca Ferri is a fictional name.
