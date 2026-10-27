@@ -1130,3 +1130,10 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Owner: "more animations please, and showcase everything new we got, the practice, mock tests, exercises ... the 2 videos will be one of how alimun dashboard etc will be from pc and mobile, the other showcasing the ai tutor. also, put somewhere the download from playstore and apple store logos, i will send you later the links".
 - After the plans: a moving band of words (Live classes, Practice, Mock tests, Flashcards, AI tutor, Homework, Library) with buddies between them, faster while scrolling. Then "Everything you need between classes": seven rows (live classes, course book, practice rounds, mock tests, flashcards, library, homework and progress, facts from the js/app module headers) beside a sticky screen that plays a small animated preview of the row in view and changes tint.
 - Video 1 "Alimun on your computer and your phone" after the showcase, with the official App Store badge (developer.apple.com) and Google Play badge (play.google.com) in images/stores/; links are "#" until the owner sends them. Video 2 "See your AI tutor at work" right after the tutor section.
+
+## 2026-10-27 — Course book: Portuguese B1
+- Written alone, one unit per commit: `site/src/data/books/Portuguese-B1.js` (syllabus) and `units/Portuguese-B1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). European Portuguese, with Brazilian differences noted in tips. Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs Portuguese-B1` passes. Review notes under `## Portuguese B1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles.
+- Portuguese B1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Portuguese B2.
+- Note: another session pushed to `main` meanwhile; I merged `origin/main` into my branch (no conflicts) before pushing.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
