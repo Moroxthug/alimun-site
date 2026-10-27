@@ -572,3 +572,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: simple future stems for eight irregular verbs; the endings are said to look like avoir (ai, as, a, ont).
 - u8 p3: *si* + present + future only; *quand* + future in one example; no conditional yet.
 - u8 p4: invitation and reply are invented; e-mail at example.com.
+
+## French B1
+- u1 p1: pluperfect shown with avoir and être; agreement of the participle with the subject for être verbs.
+- u1 p2: agreement with a preceding direct object (que, le, la, les) only for avoir; no agreement rule yet for reflexive verbs.
+- u1 p3: après avoir / avant de need the same subject in both parts; subjunctive after avant que is only mentioned.
+- u1 p4: the readings mention real cities (Casablanca, Rabat, Lyon, Paris, Lille) in invented life stories.
