@@ -15,7 +15,7 @@ t=t.replace('<section class="ln">',part('TUTOR')+'\n<section class="ln">')
 i=[m.start() for m in re.finditer(r'class="sx_row[ "]',t)][1]; j=t.index('</p>',i)+4
 t=t[:j]+part('TRY')+t[j:]
 assert t.count('<section class="gs">')==1 and t.count('<section class="section qa is-home">')==1
-t=t.replace(part('TUTOR'),part('VIDEO1')+'\n'+part('TUTOR')).replace('<section class="section qa is-home">',part('VIDEO2')+'\n<section class="section qa is-home">')
+t=t.replace(part('TUTOR'),part('MARQUEE')+'\n'+part('SHOWCASE')+'\n'+part('VIDEO1')+'\n'+part('TUTOR')+'\n'+part('VIDEO2'))
 t=t.replace('</body>',part('ASSETS')+'\n</body>',1)
 os.makedirs(R+'/preview/home-live',exist_ok=True); open(R+'/preview/home-live/index.html','w').write(t)
 print(len(t), t.count('noindex'), 'canonical' in t)
