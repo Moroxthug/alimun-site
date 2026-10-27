@@ -1196,3 +1196,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: gérondif, participe présent, participe absolu; native check on the adjectif verbal example.
 - u3 p3: expletive ne, ne … que, ne … guère, stylistic inversion; check the register notes.
 - u3 p4: the story is invented.
+- u4 p1: hedges and boosters; check prétendument and soi-disant.
+- u4 p2: reporting verbs (soutenir, avancer, concéder, contester, prétendre); check the nuance of prétendre.
+- u4 p3: evaluation and signposting; check force est de constater and par contre.
+- u4 p4: the literature review is invented; no real studies or authors are cited.
