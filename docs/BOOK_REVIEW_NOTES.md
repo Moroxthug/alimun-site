@@ -1076,3 +1076,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: concession and refutation; mood after è pur vero che is flexible, check.
 - u7 p3: rhetorical figures; litote examples need a native check.
 - u7 p4: the commentary is invented; the library and the council are fictional.
+- u8 p1: reporting verbs with nuance; pretendere as a false friend. Native check.
+- u8 p2: indirect speech; time words and the condizionale composto.
+- u8 p3: sources and the condizionale of reported doubt; check the subjunctive after sembra che.
+- u8 p4: the article and summary are invented; the town, the bridge and the mayor are fictional.
