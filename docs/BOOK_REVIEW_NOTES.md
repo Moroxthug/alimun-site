@@ -1174,3 +1174,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: absolute constructions and reduced clauses; native check on the example register.
 - u6 p3: modals and aspect (will for habit, shall, dare, needn't); check the register notes.
 - u6 p4: the story is invented.
+- u7 p1: ethos, pathos, logos; examples are original.
+- u7 p2: rhetorical devices; check the chiasmus example (Work to live; don't live to work).
+- u7 p3: framing and loaded language; native check on the connotation labels.
+- u7 p4: the speech and commentary are invented; the park and the town are fictional.
