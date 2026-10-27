@@ -876,3 +876,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: relative and absolute superlative (*belíssimo, riquíssimo, antiquíssima*), *embora* and *mesmo que* + subjunctive, *apesar de, em vez de, portanto, no entanto*.
 - u8 p3: city and environment vocabulary and the four-step argument; please check that it reads naturally.
 - u8 p4: the letter to the editor is invented; the street name is made up and Luís Ferreira is a fictional name.
+
+## Portuguese B2
+- u1 p1: pretérito perfeito composto taught as repeated or continuous up to now (not the English present perfect), against the perfeito simples.
+- u1 p2: futuro composto and the future for guesses (*será, terá perdido*).
+- u1 p3: mais-que-perfeito simples (*fizera, dissera, vira, saíra*) for recognition, with the *nós* forms listed; please check the accents.
+- u1 p4: the tale of Manuel and the bridge is invented; no real place named.
