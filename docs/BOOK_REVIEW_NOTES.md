@@ -1230,3 +1230,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: participial attributes; native check on the unpacking examples.
 - u3 p3: Funktionsverbgefüge; check each verb and preposition.
 - u3 p4: the story is invented.
+- u4 p1: hedges and boosters (dürfte, angeblich, tendenziell); native check.
+- u4 p2: reporting verbs and Konjunktiv I; check the Konjunktiv II fallback.
+- u4 p3: evaluation and signposting; check zwar … aber and the formal phrases.
+- u4 p4: the literature review is invented; no real studies or authors are cited.
