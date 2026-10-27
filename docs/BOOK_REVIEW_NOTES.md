@@ -706,3 +706,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: simple future endings with the a to e change in -are verbs; spelling of cercherò, mangerò; eight irregular stems.
 - u8 p3: *se* + present + future, with a note that the present is common in the result in everyday Italian.
 - u8 p4: the invitation and reply are invented; e-mail at example.com.
+
+## Italian B1
+- u1 p1: habit in the past with *ogni domenica* / *ogni estate* taken as imperfetto only; please confirm no natural passato prossimo reading is left in those choice items.
+- u1 p2: trapassato prossimo of *cominciare* (*il film era già cominciato*) and the transform answers accepted with or without *già*.
+- u1 p3: *finché non* + passato prossimo (until), and *dopo che* + passato prossimo, as everyday forms.
+- u1 p4: nonna Rosa's story is invented; Milano is named as a city only.
