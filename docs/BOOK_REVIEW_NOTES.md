@@ -1018,3 +1018,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: imparfait, passé simple and passé antérieur in narration.
 - u1 p3: imparfait and plus-que-parfait du subjonctif, with modern equivalents.
 - u1 p4: the literary extract is invented.
+- u2 p1: lequel, auquel, duquel, dont, ce dont; qui against lequel for people. Native check.
+- u2 p2: celui qui, quiconque, n'importe lequel, chacun, l'un et l'autre.
+- u2 p3: agreement of the past participle (avoir, être, pronominal, en).
+- u2 p4: the article on spelling reform is invented.
