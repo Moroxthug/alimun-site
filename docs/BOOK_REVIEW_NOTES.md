@@ -1336,3 +1336,7 @@ u4 p1: hedges and boosters (parece que, ao que parece, tende a, presumivelmente,
 u4 p2: nominal style and reporting verbs; pretender (to intend) as a false friend of to pretend (fingir). In the p4 reading, check the subjunctive after avança que.
 u4 p3: strengths and limits, signposting with embora + subjunctive, ao passo que, daqui resulta que.
 u4 p4: invented literature review on remote work; no real studies cited.
+u5 p1: discourse markers (pronto, então, pois, pá, portanto, tipo, ya); native teacher to check the intonation notes.
+u5 p2: shortened forms (tá, pra, né, num in Brazil, ó) and tu, você and o senhor in Portugal and Brazil; taboo language is explained, not taught.
+u5 p3: regional voices (Lisbon, Porto and the north, Alentejo, Azores, Brazil, Angola) and words fixe, bué, miúdo, catraio, kamba; native review of the regional claims needed.
+u5 p4: invented conversation between speakers from Lisbon, Porto and Luanda.
