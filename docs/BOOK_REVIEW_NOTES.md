@@ -992,3 +992,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: Nominalstil against Verbalstil; anhand, mittels, im Rahmen, im Zuge, im Falle.
 - u3 p3: Funktionsverbgefüge; check the list.
 - u3 p4: the letter from the Bürgeramt is invented; the town is not real.
+- u4 p1: wenngleich, obgleich, wohingegen, zumal, geschweige denn. Native check.
+- u4 p2: sofern, es sei denn, indem, ohne dass, statt zu; same subject rule.
+- u4 p3: je nachdem, insofern … als, umso … als, als ob with Konjunktiv II.
+- u4 p4: the reader's letter is invented.
