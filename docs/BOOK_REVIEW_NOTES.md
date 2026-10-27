@@ -694,3 +694,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: *dovrebbe* taught as a fixed phrase; Lei imperative and tu imperative with attached pronouns (riposati).
 - u5 p3: emergency numbers (118 for an ambulance, 112 in Europe) are stated in a tip; please verify. The doctor’s name and address are invented.
 - u5 p4: tessera sanitaria mentioned for Italy; e-mail at example.com. New speaker role added to audio.js: Farmacista (woman's voice).
+- u6 p1: no article after essere + job, article with an adjective; feminine forms (ingegnera, studentessa) given as in current usage.
+- u6 p2: gli (him and, in everyday speech, them), le, Le; loro mentioned as the formal plural.
+- u6 p3: phone phrases (Pronto, Chi parla?, Resti in linea, Gliela passo) are standard in Italy; *gliela* appears before it is explained.
+- u6 p4: the job advert, e-mail and company are invented; e-mail at example.com.
