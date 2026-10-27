@@ -770,3 +770,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: qualunque, chiunque, dovunque, comunque, per quanto + congiuntivo; the tip separates *comunque* alone (anyway) from *comunque* + congiuntivo.
 - u7 p3: discourse markers for reviews (*tutto sommato, a dire il vero, in fondo, per certi versi, di fatto*); please check the tip contrasting *in realtà* and *in effetti*.
 - u7 p4: the exhibition review is invented; no real museum, artist or city named.
+- u8 p1: *dovere / potere* for probability, impossibility and regret, with the past infinitive (*deve essere stato*); the auxiliary of the infinitive with a modal (*ho dovuto lavorare*, *sono dovuto partire*).
+- u8 p2: cause and result connectors (*dato che, visto che, a causa di, grazie a, perciò, di conseguenza, così … che*); transform item accepts *perciò, quindi, dunque*.
+- u8 p3: abstract vocabulary and the phrases *da un lato … dall’altro, a ben vedere, in conclusione*.
+- u8 p4: the essay on technology is invented and general; it does not name any product or company.
