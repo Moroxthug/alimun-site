@@ -958,3 +958,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: hubiera and habría, deber and poder + haber; the tip says hubiera often replaces habría.
 - u3 p3: si-clauses about the past, mixed, ojalá hubiera, de haberlo sabido.
 - u3 p4: the letter is invented; Edimburgo is a real city.
+- u4 p1: aunque with indicative or subjunctive, por mucho que, a pesar de que. Native check.
+- u4 p2: para que, con tal de que, siempre que, a menos que, en caso de que.
+- u4 p3: antes de que, sin que, de modo que (purpose or result); same subject takes the infinitive.
+- u4 p4: the opinion piece is invented.
