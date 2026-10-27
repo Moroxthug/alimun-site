@@ -966,3 +966,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: indicative for known, subjunctive for unknown; personal a with alguien and nadie.
 - u5 p3: restrictive against explanatory commas; participle for a relative clause.
 - u5 p4: the article is invented; no real city is named.
+- u6 p1: news collocations; bulo in Spain, rumor in Latin America; dar and hacer una entrevista. Native check.
+- u6 p2: mandar, dejar, hacer + infinitive; ser against estar + participle; the tip prefers se in speech.
+- u6 p3: debate markers; a lo mejor, quizá, vale, pues, bueno, dale in the tip.
+- u6 p4: the article and the reply are invented.
