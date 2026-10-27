@@ -724,3 +724,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: congiuntivo presente forms, including *-isc-* verbs and the spelling of *cerchi, paghi, mangi, studi*.
 - u4 p3: *spero di* + infinitive when the subject is the same and *che* + congiuntivo when it changes; *bisogna che* taught as a congiuntivo trigger.
 - u4 p4: the forum posts are invented, with first names only.
+- u5 p1: *da* + present against *per* + passato prossimo for the length of a job; *mi occupo di* and *so* + infinitive for skills.
+- u5 p2: *che*, *cui*, *dove* and *quello che*; *dove* accepted as well as *in cui* for places.
+- u5 p3: formal register (*Gentile …, Le scrivo per …, Cordiali saluti*); capital *Le / La* in formal writing; fictional phone number 055 555 0123.
+- u5 p4: the job advert and cover e-mail are invented; e-mail addresses at example.com; no real hotel or person named.
