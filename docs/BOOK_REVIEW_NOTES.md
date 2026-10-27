@@ -1026,3 +1026,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: verlan, shortened words, anglicisms and recommended French terms (courriel, mot-dièse, infox).
 - u3 p3: openings and closings by situation; tu and vous.
 - u3 p4: the three messages are invented.
+- u4 p1: prepositional phrases of formal French; Belgium, Switzerland and Quebec remark. Native check.
+- u4 p2: administrative verbs and formulas; ci-joint agreement.
+- u4 p3: formal request and reply formulas; reconnaissant(e).
+- u4 p4: the letter and the reply are invented (name, dates, company).
