@@ -52,7 +52,7 @@ export const UNIT = {
             ['la pancia', 'stomach'],
           ] },
           { t: 'ex', kind: 'gap', h: 'Write the missing words.', items: [
-            { q: 'Dove ti fa ___ ?', a: ['male'], why: '*Dove ti fa male?*' },
+            { q: 'Dove ti fa ___?', a: ['male'], why: '*Dove ti fa male?*' },
             { q: 'Ho mal ___ gola.', a: ['di'], why: '*avere mal di* + body part.' },
             { q: 'Ha la ___. (fever)', a: ['febbre'], why: '*la febbre*' },
             { q: 'Mi fanno male ___ occhi.', a: ['gli'], why: '*gli occhi* is plural masculine.' },
@@ -84,7 +84,7 @@ export const UNIT = {
             ['voi', 'dovete'],
             ['loro', 'devono'],
           ] },
-          { t: 'tip', art: 'owl', md: '**Bisogna** is the same for every person: *Bisogna mangiare. Bisogna che tu mangi* is a more advanced form for later. Compare: **Deve** is stronger (you must), and **Dovrebbe** is softer (you should). Another soft way is **È meglio** + infinitive: *È meglio riposarsi.*' },
+          { t: 'tip', art: 'owl', md: '**Bisogna** is the same for every person: *Bisogna mangiare.* Compare: **Deve** is stronger (you must), and **Dovrebbe** is softer (you should). Another soft way is **È meglio** + infinitive: *È meglio riposarsi.*' },
         ],
         [
           { t: 'text', md: 'The doctor often gives advice with the **imperative**. With **Lei**, the forms are **riposi**, **beva**, **prenda**, **resti** (for -are: -i; for -ere and -ire: -a). With **tu**, the pronoun joins the end of a positive command: **Riposati. Alzati. Mangiala.** In a negative command with **tu**, use **non** + infinitive and the pronoun can go before or after: **Non preoccuparti** or **Non ti preoccupare.**' },
