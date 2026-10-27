@@ -894,3 +894,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: indicative for known, conjuntivo for unknown or none; superlative tip says both are heard. Native check.
 - u4 p3: restrictive against appositive commas; participle in place of a relative clause.
 - u4 p4: article on a riverside quarter is invented; no real city is named.
+- u5 p1: news collocations; dar / fazer uma entrevista tip. Native check.
+- u5 p2: mandar, deixar, fazer + infinitive with the pronoun on the first verb; ser against estar with the participle.
+- u5 p3: debate markers and softening; check the pois and se calhar tips.
+- u5 p4: opinion article and reader reply are invented.
