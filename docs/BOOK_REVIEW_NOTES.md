@@ -560,3 +560,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p3: emergency numbers (15, 112) stated in a tip; check they are right for the countries you teach.
 - u5 p4: *carte vitale* mentioned for France; the doctor’s name and address are invented; e-mail at example.com.
 - New speaker role added to audio.js: Pharmacienne (woman's voice).
+- u6 p1: no article after *être* + job, article after *c’est*; feminine forms *professeure* and *ingénieure* (more common in Quebec) are listed as normal forms.
+- u6 p2: lui / leur taught against le / la / les by whether the verb takes *à* before a person.
+- u6 p3: phone phrases (*C’est de la part de qui ?*, *Ne quittez pas*) are standard in France; check Belgium, Switzerland and Quebec usage.
+- u6 p4: the job advert, e-mail and company are invented; e-mail at example.com.
