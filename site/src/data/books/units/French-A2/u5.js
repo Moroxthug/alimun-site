@@ -84,7 +84,7 @@ export const UNIT = {
             ['vous', 'devez'],
             ['ils / elles', 'doivent'],
           ] },
-          { t: 'tip', art: 'owl', md: '**Il faut** is the same for every person: *Il faut manger. Il faut que tu manges* is a more advanced form for later. Compare: **vous devez** is stronger (you must), and **vous devriez** is softer (you should).' },
+          { t: 'tip', art: 'owl', md: '**Il faut** is the same for every person: *Il faut manger.* Compare: **vous devez** is stronger (you must), and **vous devriez** is softer (you should).' },
         ],
         [
           { t: 'text', md: 'The doctor often gives advice with the **imperative**. For reflexive verbs, the pronoun goes **after** the verb in a positive command, and **toi / vous** replace *te / vous*: *Repose-toi. Reposez-vous. Couche-toi tôt.* In a negative command, the pronoun stays before: *Ne vous inquiétez pas. Ne te lève pas.*' },
@@ -236,7 +236,7 @@ export const UNIT = {
       { q: 'Il a mal ___ dos.', o: ['au', 'à la', 'aux'], why: '*dos* is masculine: *au*.' },
       { q: 'Elle a mal ___ tête.', o: ['à la', 'au', 'à l’'], why: '*tête* is feminine: *à la*.' },
       { q: 'Tu ___ te reposer.', o: ['dois', 'doit', 'devons'], why: '*tu dois*' },
-      { q: 'Quand on est malade : « ___ -vous. »', o: ['Reposez', 'Reposer', 'Repose'], why: '*Reposez-vous.*' },
+      { q: 'Quand on est malade : « ___-vous. »', o: ['Reposez', 'Reposer', 'Repose'], why: '*Reposez-vous.*' },
     ] },
     { t: 'ex', kind: 'gap', h: 'Write the missing word.', items: [
       { q: 'Les enfants ont mal ___ dents.', a: ['aux'], why: 'Plural: *aux*.' },
