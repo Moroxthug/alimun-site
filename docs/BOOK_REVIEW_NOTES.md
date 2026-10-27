@@ -792,3 +792,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: *estar* for place against *ser*; *há* for a new thing and *está* for a known thing.
 - u4 p3: prepositions of place with the contractions *no, na, do, da, ao, à*; *em frente de* used (Portugal also says *em frente a*).
 - u4 p4: the flat advert (Coimbra, rent in euros) and the e-mail are invented; address at example.com.
+- u5 p1: time with *é / são* and *à / às*; *quatro menos um quarto* for 3:45; days with *na segunda-feira* and *às segundas*.
+- u5 p2: reflexive pronoun after the verb in statements and before it in negatives and questions with a question word; the choice items mark the Brazilian order (*Me levanto*) as wrong for Portugal, so please confirm that is the right call at A1.
+- u5 p3: fazer, ir, sair, ver, pôr; *veem* without circumflex (new spelling), *vês / vê* with accent.
+- u5 p4: the baker's day is invented; Manuel is a made-up name.
