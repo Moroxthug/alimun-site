@@ -1,0 +1,345 @@
+// Portuguese A1, unit 1 (docs/BOOKS.md). Draft for native-teacher review.
+export const UNIT = {
+  id: 'u1',
+  title: 'Hello!',
+  goal: 'Greet people, say your name, where you are from and which languages you speak.',
+  art: 'nata',
+  tags: { skills: ['vocabulary', 'grammar', 'speaking', 'reading'], topics: ['greetings', 'tu-o senhor', 'ser', 'chamar-se', 'nationalities', 'alphabet', 'numbers', 'languages'], goals: ['foundations'] },
+  pages: [
+    {
+      id: 'p1',
+      title: 'Olá, adeus',
+      about: 'Say hello and goodbye, and choose between tu and o senhor.',
+      art: 'parrot',
+      spreads: [
+        [
+          { t: 'text', md: 'To say hello, say **olá**. You can say it all day, to everybody. To be a little more polite, say **bom dia** in the morning, **boa tarde** in the afternoon and **boa noite** in the evening and at night.' },
+          { t: 'table', caption: 'Hello and goodbye', explain: ['head', 'col1'], head: ['Portuguese', 'English'], rows: [
+            ['olá', 'hello, at any time'],
+            ['bom dia', 'good morning, until lunch'],
+            ['boa tarde', 'good afternoon, from lunch until dark'],
+            ['boa noite', 'good evening, good night'],
+            ['Tudo bem?', 'How are you? Is everything fine?'],
+            ['adeus', 'goodbye'],
+            ['até logo', 'see you later, bye'],
+            ['até amanhã', 'see you tomorrow'],
+            ['obrigado / obrigada', 'thank you (a man says obrigado, a woman says obrigada)'],
+            ['de nada', 'you are welcome'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'A man says **obrigado** and a woman says **obrigada**, because the word agrees with the person who speaks. In Portugal, *adeus* is a normal goodbye, and *até logo* is friendly and common. In Brazil, people often say *tchau* and *tudo bem?*' },
+        ],
+        [
+          { t: 'text', md: 'Portuguese has several words for *you*. Say **tu** to friends, family, children and young people. To be polite with a person you do not know, or an older person, say **o senhor** (to a man) or **a senhora** (to a woman), or use the name: *Como está, Dona Rosa?* With *o senhor* and *a senhora*, the verb changes: *Como estás?* (tu), *Como está o senhor?* (polite).' },
+          { t: 'examples', items: [
+            { s: 'Olá! Tudo bem? Como **estás**?', n: 'To a friend: *tu*.' },
+            { s: 'Bom dia. Como **está o senhor**?', n: 'Polite, to a man.' },
+            { s: 'Bem, obrigada. E **tu**?', n: 'Ask back with *E tu?*' },
+            { s: 'Muito bem, obrigado. E **a senhora**?', n: 'Ask back politely to a woman.' },
+            { s: 'Boa tarde, **Dona** Rosa.', n: '*Dona* goes before the first name of an older woman.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Portugal, **você** exists but can sound distant or even rude, so learners are safer with *tu*, *o senhor*, *a senhora* or the name. In Brazil, *você* is the normal word for *you*. To speak to two or more people, say **vocês**.' },
+        ],
+        [
+          { t: 'text', md: 'Listen to two short conversations. In the first one, two friends meet in the street. In the second one, a receptionist speaks to a guest at a hotel.' },
+          { t: 'dialogue', title: 'Two friends', lines: [
+            { who: 'Ana', s: 'Olá, Pedro! Tudo bem?' },
+            { who: 'Pedro', s: 'Tudo bem, obrigado. E tu?' },
+            { who: 'Ana', s: 'Bem, bem. Até logo!' },
+            { who: 'Pedro', s: 'Adeus, até logo!' },
+          ] },
+          { t: 'dialogue', title: 'At a hotel', lines: [
+            { who: 'Rececionista', s: 'Boa tarde, minha senhora. Como está?' },
+            { who: 'Marta', s: 'Muito bem, obrigada. E o senhor?' },
+            { who: 'Rececionista', s: 'Bem, obrigado. Aqui tem a chave.' },
+            { who: 'Marta', s: 'Obrigada. Até amanhã!' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'match', h: 'Find the answer.', pairs: [
+            ['Olá! Tudo bem?', 'Tudo bem. E tu?'],
+            ['Como está, minha senhora?', 'Bem, obrigada. E o senhor?'],
+            ['Obrigado.', 'De nada.'],
+            ['Adeus.', 'Até amanhã.'],
+          ] },
+          { t: 'ex', kind: 'select', h: 'tu or o senhor? Choose.', items: [
+            { q: 'Bom dia, Dona Rosa. Como está ___?', o: ['a senhora', 'tu', 'nós'], why: 'You speak politely to one woman, and the verb is *está*: *a senhora*.' },
+            { q: 'Olá, Tomás! E ___?', o: ['tu', 'o senhor', 'a senhora'], why: 'Tomás is a friend: *tu*.' },
+            { q: 'Muito bem, obrigado, senhor Gil. E ___?', o: ['o senhor', 'tu', 'a senhora'], why: '*Senhor Gil*: you speak politely to a man, so *o senhor*.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'What do you say? Look at the time.', items: [
+            { q: '9h00, no escritório: ___, senhor Ruiz.', o: ['Bom dia', 'Boa noite', 'Boa tarde'], why: 'In the morning: *bom dia*.' },
+            { q: '17h00, numa loja: ___. Tudo bem?', o: ['Boa tarde', 'Bom dia', 'Boa noite'], why: 'The afternoon goes from lunch until dark: *boa tarde*.' },
+            { q: '23h00, em casa: ___. Até amanhã.', o: ['Boa noite', 'Boa tarde', 'Bom dia'], why: 'Late in the evening and at night: *boa noite*.' },
+            { q: 'A tua amiga diz «Obrigada». Tu dizes: ___.', o: ['De nada', 'Até logo', 'Bom dia'], why: 'The answer to *obrigada* is *de nada*.' },
+          ] },
+          { t: 'ex', kind: 'odd', h: 'Find the odd one out.', items: [
+            { o: ['adeus', 'olá', 'bom dia', 'boa tarde'], why: '*Adeus* says goodbye. The others say hello.' },
+            { o: ['obrigado', 'adeus', 'até logo', 'até amanhã'], why: '*Obrigado* means thank you. The others are goodbyes.' },
+            { o: ['E o senhor?', 'E tu?', 'Tudo bem?', 'Como estás?'], why: '*E o senhor?* is polite. The others are for friends (*tu*).' },
+          ] },
+        ],
+      ],
+    },
+    {
+      id: 'p2',
+      title: 'Sou de Lisboa',
+      about: 'ser, your name and where you are from.',
+      art: 'cat',
+      spreads: [
+        [
+          { t: 'text', md: '**ser** means *to be*. Use it to say who you are and where you are from: *Sou a Ana. Sou de Lisboa.* It is irregular, so learn every form.' },
+          { t: 'table', caption: 'ser (to be)', quiz: true, head: ['', 'ser'], rows: [
+            ['eu', 'sou'],
+            ['tu', 'és'],
+            ['ele / ela / você / o senhor / a senhora', 'é'],
+            ['nós', 'somos'],
+            ['eles / elas / vocês', 'são'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'Portuguese often leaves out *eu*, *tu* and the other pronouns, because the verb shows the person: *Sou de Faro* means *I am from Faro*. Notice that *é* has an accent: *ele é*, but *e* without an accent means *and*.' },
+        ],
+        [
+          { t: 'text', md: 'To say your name, use **chamar-se**: *Chamo-me Carlos* (My name is Carlos). In Portugal, the little word **me / te / se** goes **after** the verb in a normal sentence and joins it with a hyphen. In a question that starts with a question word, it goes **before**: *Como te chamas?* To ask where someone is from, say **De onde és?** The answer is **Sou de** + a city, or **Sou do / da** + a place with an article: *Sou do Porto.*' },
+          { t: 'table', caption: 'chamar-se (to be called)', quiz: true, head: ['', 'chamar-se'], rows: [
+            ['eu', 'chamo-me'],
+            ['tu', 'chamas-te'],
+            ['ele / ela / você', 'chama-se'],
+            ['nós', 'chamamo-nos'],
+            ['eles / elas / vocês', 'chamam-se'],
+          ] },
+          { t: 'examples', items: [
+            { s: 'Como **te chamas**? – **Chamo-me** Mateus.', n: 'With *tu*: the pronoun goes before the verb in a question.' },
+            { s: 'Como **se chama** a senhora? – **Chamo-me** Elena Ruiz.', n: 'Polite.' },
+            { s: 'De onde **és**? – **Sou de** Coimbra.', n: '*De* + a city.' },
+            { s: 'De onde **é** a senhora? – **Sou do** Porto.', n: '*De* + *o* = *do*: the city *o Porto* has an article.' },
+            { s: 'Muito prazer. / Prazer em conhecer-te.', n: 'Nice to meet you.' },
+          ] },
+        ],
+        [
+          { t: 'text', md: 'Nationalities have one form for a man and one for a woman. Many end in **-o** for a man and **-a** for a woman: *O Pedro é italiano. A Carla é italiana.* When the form for a man ends in a consonant, add **-a** for a woman: *português, portuguesa*. Nationalities in Portuguese are written with a small letter.' },
+          { t: 'table', caption: 'Countries and nationalities', explain: ['head'], quiz: true, head: ['Country', 'Man', 'Woman'], rows: [
+            ['Portugal', 'português', 'portuguesa'],
+            ['Espanha', 'espanhol', 'espanhola'],
+            ['França', 'francês', 'francesa'],
+            ['Itália', 'italiano', 'italiana'],
+            ['Alemanha', 'alemão', 'alemã'],
+            ['Inglaterra', 'inglês', 'inglesa'],
+            ['Brasil', 'brasileiro', 'brasileira'],
+            ['China', 'chinês', 'chinesa'],
+            ['Marrocos', 'marroquino', 'marroquina'],
+            ['Estados Unidos', 'americano', 'americana'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'Look at the accents: *português* but *portuguesa* (the accent goes away), *alemão* but *alemã*. A man says **encantado** and a woman says **encantada** when they meet someone, or they say *muito prazer*.' },
+        ],
+        [
+          { t: 'ex', kind: 'conjugate', h: 'Write the forms of ser.', verb: 'ser', tense: 'present', rows: [
+            ['eu', 'sou'],
+            ['tu', 'és'],
+            ['ele / ela / você', 'é'],
+            ['nós', 'somos'],
+            ['eles / elas / vocês', 'são'],
+          ] },
+          { t: 'ex', kind: 'gap', h: 'Write the right form of ser.', items: [
+            { q: 'Eu ___ de Lisboa.', a: ['sou'], why: '*eu sou*' },
+            { q: 'Tu ___ o Paulo?', a: ['és'], why: '*tu és*' },
+            { q: 'A Ana ___ portuguesa.', a: ['é'], why: 'One person, *ela*: *é*.' },
+            { q: 'Nós ___ do Porto.', a: ['somos'], why: '*nós somos*' },
+            { q: 'Dona Rosa, a senhora ___ daqui?', a: ['é'], why: '*A senhora* takes the same form as *ela*: *é*.' },
+            { q: 'Eles ___ de Faro.', a: ['são'], why: '*eles são*' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'gap', h: 'Write the right form of chamar-se.', items: [
+            { q: 'Eu ___-me Paulo.', a: ['chamo'], why: '*eu chamo-me*' },
+            { q: 'Como te ___? (tu)', a: ['chamas'], why: '*tu chamas*; in a question, *te* goes before the verb.' },
+            { q: 'Ela ___-se Marta.', a: ['chama'], why: '*ela chama-se*' },
+            { q: 'Nós chamamo-___ Rafael e Ana.', a: ['nos'], why: '*nós chamamo-nos*' },
+          ] },
+          { t: 'ex', kind: 'sort', h: 'Is it for a man or for a woman?', groups: ['man', 'woman'], explain: ['groups'], items: [
+            { s: 'portuguesa', g: 1, why: 'The *-a* is for a woman.' },
+            { s: 'alemão', g: 0, why: 'For a woman: *alemã*.' },
+            { s: 'francesa', g: 1, why: 'The *-a* is for a woman. For a man: *francês*.' },
+            { s: 'brasileiro', g: 0, why: 'The *-o* is for a man.' },
+            { s: 'espanhola', g: 1, why: 'The *-a* is for a woman.' },
+            { s: 'inglês', g: 0, why: 'For a woman: *inglesa*.' },
+            { s: 'americana', g: 1, why: 'The *-a* is for a woman.' },
+            { s: 'chinês', g: 0, why: 'For a woman: *chinesa*.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'Choose the right word.', items: [
+            { q: 'A Carla é de Roma. É ___.', o: ['italiana', 'italiano', 'Itália'], why: 'Carla is a woman: *italiana*.' },
+            { q: 'O Rafael é de Madrid. É ___.', o: ['espanhol', 'espanhola', 'Espanha'], why: 'Rafael is a man: *espanhol*.' },
+            { q: 'A Amira é de Rabat. É ___.', o: ['marroquina', 'marroquino', 'Marrocos'], why: 'Amira is a woman: *marroquina*.' },
+            { q: 'O Lukas é de Berlim. É ___.', o: ['alemão', 'alemã', 'Alemanha'], why: 'Lukas is a man: *alemão*, with *-ão*.' },
+            { q: 'E tu, Inês, de onde ___?', o: ['és', 'é', 'sou'], why: 'You speak to Inês with *tu*: *és*.' },
+          ] },
+        ],
+      ],
+    },
+    {
+      id: 'p3',
+      title: 'Letters, numbers and languages',
+      about: 'Spell your name, count to 20 and say which languages you speak.',
+      art: 'snail',
+      spreads: [
+        [
+          { t: 'text', md: 'To ask how to spell a word, say **Como se escreve?** Then say the letters. Portuguese has the same letters as English. The letters **k, w** and **y** are only used in foreign words. When a letter has an accent, say **com acento**: *á* is *a com acento agudo*.' },
+          { t: 'table', caption: 'The alphabet', explain: ['head'], head: ['Letter', 'Name', 'Letter', 'Name'], rows: [
+            ['a', 'á', 'n', 'éne'],
+            ['b', 'bê', 'o', 'ó'],
+            ['c', 'cê', 'p', 'pê'],
+            ['d', 'dê', 'q', 'quê'],
+            ['e', 'é', 'r', 'érre'],
+            ['f', 'éfe', 's', 'ésse'],
+            ['g', 'gê', 't', 'tê'],
+            ['h', 'agá', 'u', 'u'],
+            ['i', 'i', 'v', 'vê'],
+            ['j', 'jota', 'w', 'dâblio'],
+            ['k', 'capa', 'x', 'xis'],
+            ['l', 'éle', 'y', 'ípsilon'],
+            ['m', 'éme', 'z', 'zê'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'The letter **h** is silent: *hotel* sounds like *otel*. The letter **ç** (a c with a cedilla) sounds like *s*: *lição*. In Portuguese, **ão** and **ões** are special endings: *alemão, aviões*.' },
+        ],
+        [
+          { t: 'table', caption: 'Numbers 0 to 20', explain: ['head'], head: ['Number', 'Word', 'Number', 'Word'], rows: [
+            ['0', 'zero', '11', 'onze'],
+            ['1', 'um / uma', '12', 'doze'],
+            ['2', 'dois / duas', '13', 'treze'],
+            ['3', 'três', '14', 'catorze'],
+            ['4', 'quatro', '15', 'quinze'],
+            ['5', 'cinco', '16', 'dezasseis'],
+            ['6', 'seis', '17', 'dezassete'],
+            ['7', 'sete', '18', 'dezoito'],
+            ['8', 'oito', '19', 'dezanove'],
+            ['9', 'nove', '20', 'vinte'],
+            ['10', 'dez', '', ''],
+          ] },
+          { t: 'tip', art: 'owl', md: '**Um** and **dois** have a feminine form: *um euro, uma casa; dois livros, duas casas*. In Portugal, 16, 17 and 19 are written **dezasseis, dezassete, dezanove**. In Brazil: *dezesseis, dezessete, dezenove*.' },
+        ],
+        [
+          { t: 'text', md: 'To say which languages you speak, use **falar**: *Falo português e inglês.* Do not use an article before the language, and write it with a small letter. To say *a little*, say **um pouco de**: *Falo um pouco de francês.* To ask, say **Falas inglês?** (tu) or **Fala inglês?** (polite).' },
+          { t: 'table', caption: 'falar (to speak)', quiz: true, head: ['', 'falar'], rows: [
+            ['eu', 'falo'],
+            ['tu', 'falas'],
+            ['ele / ela / você', 'fala'],
+            ['nós', 'falamos'],
+            ['eles / elas / vocês', 'falam'],
+          ] },
+          { t: 'examples', items: [
+            { s: '**Falo** português e inglês.', n: 'No article before the language.' },
+            { s: '**Falas** espanhol?', n: 'A question with *tu*.' },
+            { s: 'Não **falo** alemão.', n: '*Não* goes before the verb.' },
+            { s: '**Falo um pouco de** francês.', n: 'A little French.' },
+            { s: 'Como se escreve «Inês»? – I, ene, ê com acento, ésse.', n: 'Spelling a name.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'conjugate', h: 'Write the forms of falar.', verb: 'falar', tense: 'present', rows: [
+            ['eu', 'falo'],
+            ['tu', 'falas'],
+            ['ele / ela / você', 'fala'],
+            ['nós', 'falamos'],
+            ['eles / elas / vocês', 'falam'],
+          ] },
+          { t: 'ex', kind: 'gap', h: 'Write the number in words.', items: [
+            { q: '2 + 2 = ___', a: ['quatro'], why: '*Dois e dois são quatro.*' },
+            { q: '3 + 4 = ___', a: ['sete'], why: '*Três e quatro são sete.*' },
+            { q: '10 + 5 = ___', a: ['quinze'], why: '*Dez e cinco são quinze.*' },
+            { q: '20 − 2 = ___', a: ['dezoito'], why: '*Vinte menos dois são dezoito.*' },
+            { q: '8 + 8 = ___', a: ['dezasseis'], why: '*Oito e oito são dezasseis.*' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'gap', h: 'Write the right form of falar.', items: [
+            { q: 'Eu ___ português e inglês.', a: ['falo'], why: '*eu falo*' },
+            { q: 'Tu ___ francês?', a: ['falas'], why: '*tu falas*' },
+            { q: 'A Marta ___ espanhol.', a: ['fala'], why: '*ela fala*' },
+            { q: 'Nós ___ um pouco de alemão.', a: ['falamos'], why: '*nós falamos*' },
+          ] },
+          { t: 'ex', kind: 'crossword', h: 'Which language? Write the word.', words: [
+            { a: 'inglês', clue: 'A língua de Londres.' },
+            { a: 'alemão', clue: 'A língua de Berlim.' },
+            { a: 'francês', clue: 'A língua de Paris.' },
+            { a: 'espanhol', clue: 'A língua de Madrid.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'match', h: 'Match the number with its word.', pairs: [
+            ['3', 'três'],
+            ['9', 'nove'],
+            ['12', 'doze'],
+            ['17', 'dezassete'],
+            ['20', 'vinte'],
+          ] },
+          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
+            { a: 'Falo português e um pouco de inglês.', why: '*Falo* + language, *um pouco de* before a little.' },
+            { a: 'Não falo alemão.', why: '*Não* goes before the verb.' },
+            { a: 'Tu falas espanhol?', why: 'The question has the same order as the sentence.' },
+          ] },
+        ],
+      ],
+    },
+    {
+      id: 'p4',
+      title: 'Perfis',
+      about: 'Read three short profiles on a language exchange website.',
+      art: 'nata',
+      spreads: [
+        [
+          { t: 'reading', title: 'Três perfis', md: '**Inês:** Olá! Chamo-me Inês. Sou portuguesa e sou de Faro. Falo português e inglês. Falo um pouco de francês.\n\n**Paulo:** Bom dia! Sou o Paulo. Sou do Porto. Sou português. Falo português, espanhol e um pouco de alemão.\n\n**Clara:** Olá, chamo-me Clara. Sou brasileira e sou de São Paulo. Falo português e espanhol. Não falo inglês.' },
+          { t: 'tip', art: 'owl', md: 'Clara is from Brazil. In Brazil, people often say *me chamo* and put the pronoun before the verb. In Portugal, we say *chamo-me*. The meaning is the same.' },
+        ],
+        [
+          { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
+            { q: 'A Inês é portuguesa.', a: 't', why: '*Sou portuguesa.*' },
+            { q: 'O Paulo é de Faro.', a: 'f', why: 'Paulo is from Porto: *Sou do Porto.*' },
+            { q: 'A Clara fala inglês.', a: 'f', why: '*Não falo inglês.*' },
+            { q: 'A Inês fala um pouco de francês.', a: 't', why: '*Falo um pouco de francês.*' },
+            { q: 'O Paulo vive no Porto.', a: 'ng', why: 'He says he is from Porto, but not where he lives now.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'Read again and choose.', items: [
+            { q: 'De onde é a Clara?', o: ['De São Paulo.', 'De Faro.', 'Do Porto.'], why: '*Sou brasileira e sou de São Paulo.*' },
+            { q: 'Que línguas fala o Paulo?', o: ['Português, espanhol e um pouco de alemão.', 'Português e inglês.', 'Português e francês.'], why: '*Falo português, espanhol e um pouco de alemão.*' },
+            { q: 'Qual é a nacionalidade da Inês?', o: ['Portuguesa.', 'Brasileira.', 'Espanhola.'], why: '*Sou portuguesa.*' },
+          ] },
+          { t: 'ex', kind: 'gap', h: 'Write the missing word.', items: [
+            { q: 'A Inês ___ de Faro. (ser)', a: ['é'], why: '*Ela é de Faro.*' },
+            { q: 'Eu ___-me Clara. (chamar-se)', a: ['chamo'], why: '*Chamo-me Clara.*' },
+            { q: 'O Paulo ___ português, espanhol e um pouco de alemão. (falar)', a: ['fala'], why: '*Ele fala …*' },
+          ] },
+        ],
+      ],
+    },
+  ],
+  test: [
+    { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
+      { q: '9h00, no escritório: ___, senhor Ruiz.', o: ['Bom dia', 'Boa noite', 'Boa tarde'], why: 'In the morning: *bom dia*.' },
+      { q: 'Tu ___ de Lisboa?', o: ['és', 'é', 'sou'], why: '*Tu és*.' },
+      { q: 'A Carla é de Roma. É ___.', o: ['italiana', 'italiano', 'Itália'], why: 'A woman: *italiana*.' },
+      { q: 'Olá, Tomás! E ___?', o: ['tu', 'o senhor', 'a senhora'], why: 'Tomás is a friend: *tu*.' },
+    ] },
+    { t: 'ex', kind: 'gap', h: 'Write the missing word.', items: [
+      { q: 'Eu ___ português e inglês. (falar)', a: ['falo'], why: '*Eu falo*.' },
+      { q: '3 + 4 = ___', a: ['sete'], why: '*Três e quatro são sete.*' },
+      { q: 'Eu ___-me Paulo. (chamar-se)', a: ['chamo'], why: '*Chamo-me*.' },
+    ] },
+    { t: 'ex', kind: 'match', h: 'Find the answer.', pairs: [
+      ['Olá! Tudo bem?', 'Tudo bem. E tu?'],
+      ['Obrigado.', 'De nada.'],
+      ['Adeus.', 'Até amanhã.'],
+    ] },
+    { t: 'ex', kind: 'fix', h: 'Find the mistake and write the right word.', items: [
+      { s: 'A Ana [são] portuguesa.', a: ['é'], why: 'One person: *é*.' },
+      { s: 'O Lukas é [alemã].', a: ['alemão'], why: 'Lukas is a man: *alemão*.' },
+    ] },
+    { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
+      { a: 'Falo português e um pouco de inglês.', why: '*Um pouco de* before a little.' },
+      { a: 'Não falo alemão.', why: '*Não* before the verb.' },
+    ] },
+  ],
+};

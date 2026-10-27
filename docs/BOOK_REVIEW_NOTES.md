@@ -774,3 +774,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: cause and result connectors (*dato che, visto che, a causa di, grazie a, perciò, di conseguenza, così … che*); transform item accepts *perciò, quindi, dunque*.
 - u8 p3: abstract vocabulary and the phrases *da un lato … dall’altro, a ben vedere, in conclusione*.
 - u8 p4: the essay on technology is invented and general; it does not name any product or company.
+
+## Portuguese A1
+- u1 p1: greetings of Portugal; *você* described as distant in Portugal and normal in Brazil; polite forms *o senhor / a senhora / Dona Rosa*.
+- u1 p2: *chamar-se* with the pronoun after the verb in statements (*chamo-me*) and before it in questions (*Como te chamas?*); *Sou do Porto* with the article; list of nationalities.
+- u1 p3: European letter names (*dâblio*, *ípsilon*, *capa*), numbers 0 to 20 with *dezasseis, dezassete, dezanove*, *falar* and *um pouco de*.
+- u1 p4: the three profiles are invented; Faro, Porto and São Paulo are named as cities only.
