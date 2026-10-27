@@ -988,3 +988,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: müssen, dürfte, können, mögen; the tip on muss nicht against kann nicht.
 - u2 p3: scheinen, drohen, versprechen + zu; anscheinend against scheinbar; wohl.
 - u2 p4: the news report is invented; no real place or people.
+- u3 p1: formal prepositions and their case; zufolge after the noun; laut, betreffend. Native check.
+- u3 p2: Nominalstil against Verbalstil; anhand, mittels, im Rahmen, im Zuge, im Falle.
+- u3 p3: Funktionsverbgefüge; check the list.
+- u3 p4: the letter from the Bürgeramt is invented; the town is not real.
