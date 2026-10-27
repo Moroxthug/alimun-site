@@ -852,3 +852,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: pronoun with an infinitive (*vê-lo, ajudá-la*), *ter de o fazer / fazê-lo*, mesóclise in the formal future (*dir-lhe-ei*); please check that *Direi-lhe* is rightly marked as wrong.
 - u2 p3: combined pronouns *mo, to, lho, no-lo* and *se* for things in general and impersonal sentences.
 - u2 p4: the parcel chat is invented; no courier named.
+- u3 p1: condicional of regular verbs; tip says the imperfeito (*Queria, Gostava*) is the usual polite form in speech and the condicional is more formal.
+- u3 p2: irregular stems; *Podia / Poderia ajudar-me?*, *Importava-se de …?*; please check that the select item prefers *Importavas-te de* for a friend.
+- u3 p3: advice with *no teu lugar*, *devias / deverias*, *era melhor*, *seria bom*; the condicional for a plan reported from the past, with a tip on the imperfeito used in speech.
+- u3 p4: the e-mail and its reply are invented (Elena Duarte); address at example.com; dates and price made up.
