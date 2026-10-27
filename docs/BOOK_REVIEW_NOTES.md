@@ -1200,3 +1200,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: reporting verbs (soutenir, avancer, concéder, contester, prétendre); check the nuance of prétendre.
 - u4 p3: evaluation and signposting; check force est de constater and par contre.
 - u4 p4: the literature review is invented; no real studies or authors are cited.
+- u5 p1: vocabulary of France, Quebec, Belgium, Switzerland and Africa; native check on huitante, enjailler, bienvenue and the meal names.
+- u5 p2: verlan and abbreviations; check that each is still current.
+- u5 p3: politeness strategies; check the remark on Belgian and Swiss s'il vous plaît.
+- u5 p4: the conversation is invented; Camille, Jean-Luc, Émilie and Moussa are fictional.
