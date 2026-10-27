@@ -762,3 +762,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: *fare / lasciare / farsi* + infinitive and *andare* + participle for necessity; the participle with a pronoun (*l’ho fatta riparare*) is left out on purpose.
 - u5 p3: discourse markers (*del resto, in effetti, d’altronde, anzi, tuttavia, insomma, in fondo*); please check the tip on *anzi*.
 - u5 p4: the opinion article and the reader’s reply are invented and general; the reply is signed with a first name only.
+- u6 p1: participle clauses (*Finito il lavoro*, *Arrivati a casa*) and gerundio composto (*Avendo finito*, *Essendo arrivato*), with agreement and the same-subject rule.
+- u6 p2: nominalisation with common verb-noun pairs and support verbs (*effettuare, presentare, procedere a*).
+- u6 p3: structure and set phrases of a complaint and a reply (*Con la presente, In merito a, pertanto, abbiamo provveduto a, riscontro*); the transform item accepts two forms of *Si prega di rispondere*.
+- u6 p4: the complaint and the reply are invented; order number and dates are made up and no company is named.
