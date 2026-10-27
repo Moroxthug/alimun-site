@@ -838,3 +838,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: hotel and train phrases; *o cais* mentioned for the platform in Portugal and *a plataforma* in Brazil; please confirm.
 - u7 p3: weather with *estar* and *fazer*, *Estão vinte graus*, comparisons; *Está chovendo* mentioned as Brazilian.
 - u7 p4: the hotel confirmation (price, hours) and the postcard are invented; the Algarve is named as a region only.
+- u8 p1: months and dates (*no dia doze de março*), *Parabéns / Feliz aniversário*, invitations; *Feliz Ano Novo* named as Brazilian.
+- u8 p2: futuro simples of regular verbs and eleven irregular stems; a tip says speech often uses *ir* + infinitive.
+- u8 p3: *se* + present for plans (the future subjunctive *Se chover* is only previewed in a tip for B1); *prometo, pretendo, espero*.
+- u8 p4: the invitation card and the reply (Ana, Pedro) are invented; address at example.com.
