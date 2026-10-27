@@ -784,3 +784,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: possessives with the article (Portugal) and *dele / dela* for clarity; a tip says Brazilian speakers often drop the article.
 - u2 p3: adjective agreement including *-e* and consonant adjectives (*jovem, jovens*); *cabelo curto, olhos castanhos* with *ter*.
 - u2 p4: the message is invented; family names are made up.
+- u3 p1: genders and plurals (*pão / pães*, *mulher / mulheres*); *sumo* in Portugal, *suco* in Brazil.
+- u3 p2: regular present of -ar, -er, -ir (falar, comer, abrir); *viver* as an -er verb in the sort item.
+- u3 p3: *Queria …, se faz favor*, *bica* and *galão* explained as common names; prices with *euros e cêntimos*; please check the tip on *uma bica* against *um café*.
+- u3 p4: the menu of Café da Praça and its prices are invented; the shopping list is invented.
