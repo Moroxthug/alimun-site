@@ -720,3 +720,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: *Potrebbe / Le dispiacerebbe* for polite requests with *Lei*; *Mi daresti* accepted as the only answer in the transform item.
 - u3 p3: first look at the condizionale passato (*avrei dovuto*, *sarebbe arrivato*) used for advice and reported plans; kept very short for B1.
 - u3 p4: the course e-mail and its reply are invented; address at example.com, price and dates are made up.
+- u4 p1: tip says the indicative after *penso che* is common in speech but the congiuntivo is the standard form; please confirm the wording.
+- u4 p2: congiuntivo presente forms, including *-isc-* verbs and the spelling of *cerchi, paghi, mangi, studi*.
+- u4 p3: *spero di* + infinitive when the subject is the same and *che* + congiuntivo when it changes; *bisogna che* taught as a congiuntivo trigger.
+- u4 p4: the forum posts are invented, with first names only.
