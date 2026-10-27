@@ -581,3 +581,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p3: subjunctive introduced with five irregular verbs (être, avoir, faire, aller, pouvoir) and the ils-stem rule; scope kept small for B1 (no savoir, vouloir, bien que yet).
 - u2 p2: *parce que* / *car* / *puisque* / *comme* distinctions simplified; *car* never starts a sentence is stated as a rule.
 - u2 p4: the article and comments are invented (a four-day week test in a town hall).
+- u3 p1: Quebec *courriel* and *magasiner*, Belgian GSM and Swiss natel mentioned in a tip; check the regional claims.
+- u3 p2: relative pronouns qui, que, où, dont only; no ce qui / ce que yet.
+- u3 p3: order of double pronouns (me/te before le/la/les before lui/leur before y before en); imperative with pronouns left for a later book.
+- u3 p4: the article and the review are invented and contain no statistics or brands.
