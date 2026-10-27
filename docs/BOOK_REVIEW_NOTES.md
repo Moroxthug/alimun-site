@@ -1276,3 +1276,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: plain language rewrites; check that the obligation is kept.
 - u6 p3: obligation, right, prohibition, condition (deberá, podrá, queda prohibido, salvo que, siempre que); native check.
 - u6 p4: the contract clause is invented; no real contract is quoted.
+- u7 p1: ethos, pathos, logos; examples are original.
+- u7 p2: rhetorical devices; check the chiasmus example (Se trabaja para vivir, no se vive para trabajar).
+- u7 p3: framing and loaded words; native check on the connotation labels (reajuste de plantilla, régimen, turba).
+- u7 p4: the speech and commentary are invented; the park and the town are fictional.
