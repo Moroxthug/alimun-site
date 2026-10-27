@@ -1589,6 +1589,40 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
   .tl-captions { position: static; min-height: 0; max-height: none; }
   .tl-lines { max-height: 45vh; }
 }
+.tl-bar { display: none; }
+/* On a phone, the call fills the screen while it is on: the face large while talking, the board sliding up when it is used */
+@media (max-width: 899px) {
+  html.tl-incall, html.tl-incall body { overflow: hidden; }
+  .tl-wrap.is-live { position: fixed; inset: 0; z-index: 110; background: var(--bone); display: flex; flex-direction: column; gap: 10px; padding: calc(12px + env(safe-area-inset-top)) 12px calc(12px + env(safe-area-inset-bottom)); overflow: hidden; animation: rise .3s var(--ease) both; }
+  .tl-wrap.is-live .view__head { flex: 0 0 auto; margin: 0; padding: 0 4px; gap: 4px; flex-wrap: nowrap; align-items: baseline; }
+  .tl-wrap.is-live .view__head .t-h1 { font-size: 24px; }
+  .tl-wrap.is-live .view__head .t-lead { margin: 0; font-size: 14px; }
+  .tl-wrap.is-live .view__head .btn-row { display: none; }
+  .tl-wrap.is-live .tl-grid, .tl-wrap.is-live .tl-side { display: contents; }
+  .tl-wrap.is-live .tl-stage { order: 1; flex: 1 1 auto; min-height: 0; }
+  .tl-wrap.is-live .tl-face { width: min(220px, 52vw); }
+  .tl-wrap.is-live .tl-board { order: 2; display: none; }
+  .tl-wrap.is-live .tl-captions { order: 3; flex: 0 0 auto; min-height: 0; max-height: 30vh; padding-top: 10px; }
+  .tl-wrap.is-live .tl-captions > h2 { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .tl-wrap.is-live .tl-lines { max-height: none; min-height: 56px; }
+  .tl-wrap.is-live .tl-bar { order: 4; flex: 0 0 auto; display: flex; gap: 8px; }
+  .tl-wrap.is-live .tl-bar .btn { flex: 1 1 0; min-width: 0; padding-inline: 8px; font-size: 15px; white-space: normal; line-height: 1.15; }
+  .tl-wrap.is-live .tl-bar [hidden] { display: none; }
+  .tl-wrap.is-live .tl-bar [aria-expanded="true"], .tl-wrap.is-live .tl-bar [aria-pressed="true"] { background: var(--forest); color: var(--bone); }
+  .tl-wrap.is-live .tl-sample { display: none; }
+  /* The board up: the face shrinks to a row at the top, the board takes the room, the captions keep the last lines */
+  .tl-wrap.is-live[data-board="open"] .tl-stage { flex: 0 0 auto; flex-direction: row; flex-wrap: wrap; justify-content: flex-start; gap: 4px 12px; padding: 8px 14px; text-align: start; }
+  .tl-wrap.is-live[data-board="open"] .tl-face { width: 48px; }
+  .tl-wrap.is-live[data-board="open"] .tl-name { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .tl-wrap.is-live[data-board="open"] .tl-state { margin: 0; min-height: 0; justify-content: flex-start; }
+  .tl-wrap.is-live[data-board="open"] .tl-idle { flex-basis: 100%; margin-top: 4px; }
+  .tl-wrap.is-live[data-board="open"] .tl-board { display: block; flex: 1 1 auto; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 20px 18px; animation: tl-sheet .45s var(--ease) both; }
+  .tl-wrap.is-live[data-board="open"] .tl-captions { max-height: 17vh; }
+  @media (max-height: 700px) { .tl-wrap.is-live[data-board="open"] .tl-captions { max-height: 13vh; } .tl-wrap.is-live .view__head .t-h1 { font-size: 20px; } }
+  .tl-wrap.is-live[data-board="open"] .tu-ex, .tl-wrap.is-live[data-board="open"] .tu-pron { margin-top: 16px; padding: 18px 16px; }
+}
+@keyframes tl-sheet { from { opacity: 0; transform: translateY(48px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .tl-wrap.is-live, .tl-wrap.is-live[data-board="open"] .tl-board { animation: none; } }
 @media (prefers-reduced-motion: reduce) { .tu-op.is-new, .tu-op--spell.is-new .tu-sp { animation: none; } .tl-stage[data-state="speaking"] .tl-face { animation: none; } }
 
 /* AI tutor, part 5: connected to the dashboard */
