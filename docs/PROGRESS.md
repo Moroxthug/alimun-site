@@ -1149,3 +1149,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `node scripts/check-book.mjs English-A1` passes. Review notes under `## English A1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles.
 - English A1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Spanish B2.
 - Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Spanish B2
+- Written alone, one unit per commit: `site/src/data/books/Spanish-B2.js` (syllabus) and `units/Spanish-B2/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). Spanish of Spain, with Latin American differences in the tips. Because Spanish B1 stops at the present subjunctive, the book also teaches the imperfect, perfect and pluperfect subjunctive (units 2 and 3).
+- `node scripts/check-book.mjs Spanish-B2` passes. Review notes under `## Spanish B2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles.
+- Spanish B2 struck from the Order list in `docs/WRITING_BOOKS.md`; next is German C1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.

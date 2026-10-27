@@ -974,3 +974,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: nouns for verbs; efectuar, presentar, solicitar.
 - u7 p3: formal letter phrases (Muy señores míos, Le agradecería que + imperfecto de subjuntivo); Latin America openings in the tip.
 - u7 p4: complaint and reply are invented (name, date, company).
+- u8 p1: vocabulary of books, film and exhibitions; personaje is masculine; trama and argumento in the tip. Native check.
+- u8 p2: cualquiera que sea, quienquiera que, dondequiera que, pase lo que pase and the other repeated-verb expressions.
+- u8 p3: cause and effect, de ahí que + subjunctive; hay quien takes the indicative; abstract vocabulary.
+- u8 p4: the essay is invented; check debió de ser as a guess.
