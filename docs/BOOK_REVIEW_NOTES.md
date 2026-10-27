@@ -1158,3 +1158,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: substitution and reference (one, do so, the former and the latter); check the note on I hope not.
 - u2 p3: punctuation; the comma-splice rule and the semicolon remarks need a check.
 - u2 p4: the essay is invented.
+- u3 p1: irony, sarcasm, understatement and overstatement; native check on the examples.
+- u3 p2: puns; check sole/soul and two tired/two tyred.
+- u3 p3: less common idioms and phrasal verbs; check British or American labels.
+- u3 p4: the column is invented.
