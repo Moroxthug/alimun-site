@@ -630,3 +630,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: present participle versus verbal adjective with the spelling pairs (fatiguant / fatigant, convainquant / convaincant, différant / différent).
 - u6 p3: nominalisation and cause-effect verbs (provoquer, entraîner, être dû à, résulter de).
 - u6 p4: the museum chart is marked as a fictional example; no real statistics.
+- u7 p1: regional words (septante / nonante, souper, magasiner, courriel, dépanneur, natel) are general facts; please verify and add Africa-specific examples if you wish.
+- u7 p2: subjunctive after verbs of feeling; the ne explétif after avoir peur que explained.
+- u7 p3: reviewing vocabulary (intrigue, scénario, réalisateur) and ce qui / ce que for impressions.
+- u7 p4: the extract and the film review are invented; the film title is fictional.
