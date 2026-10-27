@@ -514,3 +514,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p3: letter names *ku* (q) and *zède* (z) as in standard teaching; Quebec differences not mentioned.
 - u1 p4: reading uses *professeure*; confirm you accept it (also *professeur* for both).
 - New speaker role added to audio.js: Réceptionniste (woman's voice).
+- u2 p1: numbers 70 to 99 given as soixante-dix / quatre-vingts / quatre-vingt-dix with a tip on septante and nonante (Belgium, Switzerland); check the note on huitante.
+- u2 p2: son/sa/ses explained as agreeing with the noun that follows, with mon/ton/son before a feminine noun starting with a vowel.
+- u2 p3: *il est* + adjective and *c’est* + name or noun kept as a simple A1 rule; *il est médecin* type uses are not taught yet.
+- u2 p4: reading uses *travaillent* and *beaucoup* before they are taught (meaning clear from context).
