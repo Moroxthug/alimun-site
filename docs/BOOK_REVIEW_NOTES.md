@@ -754,3 +754,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: affinché, purché, a condizione che, a patto che, a meno che non, nel caso in cui; tip on *perché* as cause (indicative) and purpose (congiuntivo).
 - u3 p3: prima che, senza che, come se, in modo che against the infinitive forms when the subject is the same; *dopo che* + indicative.
 - u3 p4: the opinion piece on public transport is invented and general; no real city or company named.
+- u4 p1: il quale, il cui, chi, ciò che / quello che / quanto; *di cui* against *il cui* in a tip.
+- u4 p2: congiuntivo in relative clauses (wanted but not known, superlative, unico, nessuno); *C’è un negozio che venda questo?* kept as a question about an unknown shop.
+- u4 p3: restrictive and appositive clauses with commas, *il che*, *cosa che*, and reduced relative clauses with the participle; the present participle (*aventi diritto*) is only mentioned.
+- u4 p4: the article about a harbour district is invented and general; no real city named.
