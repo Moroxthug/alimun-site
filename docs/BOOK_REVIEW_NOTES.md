@@ -1080,3 +1080,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: indirect speech; time words and the condizionale composto.
 - u8 p3: sources and the condizionale of reported doubt; check the subjunctive after sembra che.
 - u8 p4: the article and summary are invented; the town, the bridge and the mayor are fictional.
+
+## Portuguese C1
+- u1 p1: mesoclisis (dar-te-ei, dir-lhe-ia); check that the table's everyday alternatives are natural.
+- u1 p2: adjective position and meaning (grande homem, velho amigo, pobre homem); check each pair.
+- u1 p3: free indirect speech, historic present, dialogue dash; native check.
+- u1 p4: the extract is invented; the 1998 flood is fictional.
