@@ -826,3 +826,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: *me, te, lhe, nos, lhes* and the contractions *mo, to, lho, lha*; pronoun before the verb after *não, já, também, nunca* and question words; please check the dialogue *Já lho dei ontem*.
 - u4 p3: imperative of tu (the *ele* form) and você (present subjunctive form), negative tu *não mexas*, pronouns after the verb (*corta-a*).
 - u4 p4: the soup recipe and the market leaflet (prices, hours) are invented; no real market named.
+- u5 p1: body words, *dói-me / doem-me* agreeing with the part of the body, *dor de / dor nas costas*, the pronoun before the verb after *não* and question words.
+- u5 p2: *ter de* for a need, *dever* and *devias* for advice, *é melhor* + infinitive; please check *devias* as the softer form.
+- u5 p3: phone phrases for an appointment (*Queria marcar uma consulta*, *Para quando?*, *Quinta não posso*); *Estou? / Está lá?* mentioned as the phone greeting.
+- u5 p4: the pharmacy leaflet and the confirmation (Dra. Silva, times, *cartão de utente*) are invented.
