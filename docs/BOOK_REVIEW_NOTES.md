@@ -1162,3 +1162,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: puns; check sole/soul and two tired/two tyred.
 - u3 p3: less common idioms and phrasal verbs; check British or American labels.
 - u3 p4: the column is invented.
+- u4 p1: hedges and boosters; check ostensibly and purportedly.
+- u4 p2: reporting verbs (contend, posit, concede, allege); check the strength ranking.
+- u4 p3: evaluation and signposting; native check on the sample-size examples.
+- u4 p4: the literature review is invented; no real studies or authors are cited.
