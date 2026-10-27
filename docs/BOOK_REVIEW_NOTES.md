@@ -1114,3 +1114,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: indirect speech; time words and the condicional.
 - u8 p3: sources and the condicional of reported doubt; check parece que and não parece que.
 - u8 p4: the article and summary are invented; the town, the bridge and the mayor are fictional.
+
+## Spanish C1
+- u1 p1: pretérito anterior (hubo terminado); recognition only, check the Latin America remark.
+- u1 p2: adjective position and meaning (gran hombre, viejo amigo, pobre hombre, cierta noticia); check each pair.
+- u1 p3: free indirect speech, historic present, raya dialogue; native check.
+- u1 p4: the extract is invented; the 1998 flood is fictional.
