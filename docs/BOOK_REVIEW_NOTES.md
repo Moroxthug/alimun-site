@@ -766,3 +766,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: nominalisation with common verb-noun pairs and support verbs (*effettuare, presentare, procedere a*).
 - u6 p3: structure and set phrases of a complaint and a reply (*Con la presente, In merito a, pertanto, abbiamo provveduto a, riscontro*); the transform item accepts two forms of *Si prega di rispondere*.
 - u6 p4: the complaint and the reply are invented; order number and dates are made up and no company is named.
+- u7 p1: vocabulary of plot and criticism; verbs of feeling with the person as object (*La trama mi ha coinvolto*); colloc items check *girare, scrivere, allestire*.
+- u7 p2: qualunque, chiunque, dovunque, comunque, per quanto + congiuntivo; the tip separates *comunque* alone (anyway) from *comunque* + congiuntivo.
+- u7 p3: discourse markers for reviews (*tutto sommato, a dire il vero, in fondo, per certi versi, di fatto*); please check the tip contrasting *in realtà* and *in effetti*.
+- u7 p4: the exhibition review is invented; no real museum, artist or city named.
