@@ -868,3 +868,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: *dizem que / diz-se que*, *toda a gente*, *a gente*; participles with two forms (*aceitado / aceite, entregado / entregue*, *pago*); please check the rule and the tip on speech.
 - u6 p3: reported speech after the perfeito, with *para* + infinitive for commands and *se* for questions; time words *no dia seguinte, ali*.
 - u6 p4: the library news item and comment are invented; the comment is signed with a first name only.
+- u7 p1: imperfeito do conjuntivo from the *eles* form of the perfeito, with *fosse, tivesse, fizesse, pudesse, quisesse, viesse*; accents in the *nós* forms (*falássemos, fôssemos*).
+- u7 p2: *se* + imperfeito do conjuntivo + condicional and *Se eu fosse a ti*; tip on the informal imperfeito in both parts (*Se tinha tempo, viajava*).
+- u7 p3: futuro do conjuntivo after *se, quando, assim que, quem*, with the irregular forms *tiver, fizer, puder, for, vier*; please check the tip comparing it with the infinitivo pessoal.
+- u7 p4: the baker's interview is invented; no real place or person is named.
