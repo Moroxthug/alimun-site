@@ -1154,3 +1154,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: collocations and binomials; check the "not natural" column.
 - u1 p3: euphemism and understatement; "not bad" as British understatement needs a check.
 - u1 p4: the essay is invented; the protest is fictional.
+- u2 p1: parallelism and periodic sentences; the example sentences are original.
+- u2 p2: substitution and reference (one, do so, the former and the latter); check the note on I hope not.
+- u2 p3: punctuation; the comma-splice rule and the semicolon remarks need a check.
+- u2 p4: the essay is invented.
