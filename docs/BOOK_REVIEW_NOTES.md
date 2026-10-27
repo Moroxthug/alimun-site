@@ -448,9 +448,6 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: "Le llamo mañana" (leísmo) for usted.
 - u5 p3: general claims about working hours, lunch at two to three, sweets on your birthday.
 
-## All Spanish books (decision for the owner)
-- Writers accepted unaccented answer variants (Podria, razon, habeis; trabaje for trabajé) following the German umlaut variants. Some are other real verb forms (trabaje is a subjunctive). Keep or remove for Spanish?
-
 ## Spanish B1, moving abroad
 - u1 p1: fianza "often one month"; extra guarantee.
 - u1 p3: padrón text (free, owner's authorisation) general enough?

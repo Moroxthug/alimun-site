@@ -35,7 +35,20 @@
   function norm(s) {
     return String(s || '').replace(/[‘’ʼ`´]/g, "'").replace(/\s+/g, ' ').trim().replace(/[.!?]+$/, '').toLocaleLowerCase();
   }
-  function accepts(list, v) { v = norm(v); return list.some(function (a) { return norm(a) === v; }); }
+  /* Spanish written accents (á é í ó ú ü; ñ stays a letter of its own). Owner (27 Oct 2026): up to B1 an answer
+     without them counts as right, with a note; from B2 it is "almost" and counts as wrong. */
+  function bare(s) { return norm(s).normalize('NFD').replace(/[\u0301\u0308]/g, '').normalize('NFC'); }
+  function accepts(list, v, b) {
+    var n = norm(v);
+    if (list.some(function (a) { return norm(a) === n; })) return true;
+    return !!(b && b._af) && list.some(function (a) { return bare(a) === bare(n); });
+  }
+  /* Right but for the accents (typed answers only) */
+  function accentOnly(b, it, x) {
+    if (!b._es || !x || !x.value || !Array.isArray(it.a)) return false;
+    var n = norm(x.value);
+    return !it.a.some(function (a) { return norm(a) === n; }) && it.a.some(function (a) { return bare(a) === bare(n); });
+  }
   /* A small seeded random, so a generated grid is the same on every visit */
   function seeded(str) {
     var h = 2166136261;
@@ -78,7 +91,11 @@
       onAnswer: o.onAnswer || function () {}, onChange: o.onChange || function () {}, onItem: o.onItem || function () {}
     };
     S.transcribe = o.transcribe || null;   /* (blob) => Promise of text, or rejected with { note: <text key> } */
-    S.blocks = o.blocks.map(normalize);
+    /* The language being learned (from ta) and the level decide how accents are marked (accepts) */
+    var lang = (/lang="([a-z]+)/.exec(S.ta) || [])[1] || '';
+    var prof = (o.A && o.A.data && o.A.data().profile) || {};
+    var es = lang === 'es', af = es && ['A1', 'A2', 'B1'].indexOf(String(o.level || prof.level || 'A1').toUpperCase()) > -1;
+    S.blocks = o.blocks.map(normalize).map(function (b) { return es && b.t === 'ex' ? Object.assign({}, b, { _es: true, _af: af }) : b; });
     S.state = S.blocks.map(function (b) { return b.t === 'ex' ? prepare(S, b) : null; });
     S.html = function (bi) { return exHtml(S, bi); };
     S.done = function (bi) { var b = S.blocks[bi]; return b.t !== 'ex' || blockDone(b, S.state[bi]); };
@@ -229,7 +246,7 @@
 
   var typed = {
     prep: function () { return {}; },
-    right: function (b, it, x) { return accepts(it.a, x.value); },
+    right: function (b, it, x) { return accepts(it.a, x.value, b); },
     answer: function (b, it) { return it.a[0]; },
     ready: function (b, it, x) { return norm(x.value) !== ''; },
     check: true
@@ -390,7 +407,7 @@
     /* Rewrite the sentence; `cue` is the word to use or the start of the new sentence */
     transform: Object.assign({}, typed, {
       /* The answer may be written with or without the words given at the start */
-      right: function (b, it, x) { return accepts(it.a, x.value) || (!!it.cue && !it.gap && accepts(it.a, it.cue + ' ' + x.value)); },
+      right: function (b, it, x) { return accepts(it.a, x.value, b) || (!!it.cue && !it.gap && accepts(it.a, it.cue + ' ' + x.value, b)); },
       html: function (S, bi, i, b, it, x, test, review, locked) {
         var a = ' data-b="' + bi + '" data-i="' + i + '"';
         /* Key word transformation (tests): the original, the key word, then the second sentence with a gap for the answer */
@@ -486,7 +503,7 @@
     /* Find and fix the mistake: tap the wrong word (in brackets in the file), then write it correctly */
     fix: {
       prep: function (it) { return { tokens: spotTokens(it.s), hit: null, bad: null, stage: 'find' }; },
-      right: function (b, it, x) { return x.hit != null && x.tokens[x.hit].target > -1 && accepts(it.a, x.value); },
+      right: function (b, it, x) { return x.hit != null && x.tokens[x.hit].target > -1 && accepts(it.a, x.value, b); },
       answer: function (b, it, x) { var w = x.tokens.filter(function (k) { return k.target > -1; })[0]; return (w ? w.text + ' → ' : '') + it.a[0]; },
       ready: function (b, it, x) { return x.hit != null && norm(x.value) !== ''; },
       hint: 'app_ex_fix_hint',
@@ -634,7 +651,7 @@
   function bankRight(s, it, x) { return x.picked != null && norm(s.bank[x.picked]) === norm(it.a); }
   var LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   function pickLong(b) { return b.opts.some(function (o) { return String(o).length > 24; }); }
-  function clozeRight(b, it, x) { return b.opts || it.o ? x.picked === (b.opts ? it.a : 0) : accepts(it.a, x.value); }
+  function clozeRight(b, it, x) { return b.opts || it.o ? x.picked === (b.opts ? it.a : 0) : accepts(it.a, x.value, b); }
   function clozeAnswered(b, it, x) { return b.opts || it.o ? x.picked != null : norm(x.value) !== ''; }
   function clozeAnswer(b, it) { return b.opts ? LETTERS[it.a] : it.o ? it.o[0] : it.a[0]; }
   function wordCount(s) { return String(s || '').trim().split(/\s+/).filter(function (w) { return /[\p{L}\p{N}]/u.test(w); }).length; }
@@ -784,7 +801,10 @@
     if (review) {
       fb = isRight(b, it, x) ? feedback(S, true, praise(S, bi, i), it.why) : feedback(S, false, t(S, 'app_book_answer_is_label'), it.why, K[b.kind].answer(b, it, x, S));
     } else if (!test) {
-      if (x.done) fb = x.shown ? feedback(S, false, t(S, 'app_book_answer_is_label'), it.why, K[b.kind].answer(b, it, x, S)) : feedback(S, true, praise(S, bi, i), it.why);
+      if (x.done) fb = x.shown ? feedback(S, false, t(S, 'app_book_answer_is_label'), it.why, K[b.kind].answer(b, it, x, S))
+        : accentOnly(b, it, x) ? feedback(S, true, praise(S, bi, i) + ' ' + t(S, 'app_ex_accent_mind'), it.why, K[b.kind].answer(b, it, x, S))
+        : feedback(S, true, praise(S, bi, i), it.why);
+      else if (x.flash && accentOnly(b, it, x)) fb = feedback(S, false, t(S, 'app_ex_accent_almost'), '');
       else if (x.flash) fb = K[b.kind].wrong ? '<div class="fb fb--no">' + S.A.Cast.book('think') + '<div>' + K[b.kind].wrong(S, b, it, x) + '</div></div>' : feedback(S, false, t(S, 'app_book_wrong'), '');
     }
     var locked = review || x.done;
