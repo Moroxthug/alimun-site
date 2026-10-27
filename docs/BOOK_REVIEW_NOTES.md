@@ -644,3 +644,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: nationalities in -co / -go (tedesco, svizzero) and their feminine; plurals only in the tip.
 - u1 p3: the alphabet table omits foreign letters (j, k, w, x, y); phone number in the dialogue is fictional.
 - New speaker roles and names added to audio.js: Segretaria, Giulia (women), Paolo (man).
+- u2 p1: *ventun anni* / *trentun anni* (the final vowel of the ten falls before *uno* and *otto*); *tré* accent in ventitré.
+- u2 p2: no article with singular unmodified family nouns (mia sorella) but *i miei fratelli*, and *la loro* always with the article.
+- u2 p3: plurals in -co / -ca (simpatici, simpatiche) and -e adjectives; c’è / ci sono.
+- u2 p4: the message and names are invented.
