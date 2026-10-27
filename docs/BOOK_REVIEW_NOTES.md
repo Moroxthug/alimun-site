@@ -924,3 +924,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: he/she/it spelling, does and doesn't, short answers.
 - u3 p3: telling the time (past, to; USA after), days, at, in, on; have for meals.
 - u3 p4: the baker's day is invented; Bristol is a real city, no other real names.
+- u4 p1: food words, a/an/some, like; the some/any example is a preview. Native check.
+- u4 p2: ordering politely; the tip says I want sounds rude. Check the strength of that claim.
+- u4 p3: numbers to 100, prices in pounds and euros.
+- u4 p4: menu and prices are invented; the totals add up (6.50 and 5.50 make 12).
