@@ -669,3 +669,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: imperative with Lei (giri, vada, prenda) given as forms to learn; the tu imperative and the negative are in a tip.
 - u7 p3: *convalidare* the ticket is general practice on Italian trains and buses; ticket prices and times are invented.
 - u7 p4: the city text and the ticket machine are invented. New speaker role added to audio.js: Bigliettaio (man's voice).
+- u8 p1: participles in -ato / -uto / -ito and the irregular ones (fatto, preso, visto, letto, scritto, detto, stato); *già* between auxiliary and participle.
+- u8 p2: essere with verbs of movement and change of state; agreement with the subject; reflexive verbs mentioned.
+- u8 p3: *era*, *c’era* and *faceva* are used as fixed forms of the imperfect before it is taught; check this is acceptable.
+- u8 p4: the weekend text is invented.
