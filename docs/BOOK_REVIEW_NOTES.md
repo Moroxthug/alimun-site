@@ -1034,3 +1034,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: si, aussi, pour, tout … que; que … ou que; soit … soit.
 - u5 p3: à supposer que, en admettant que, pour peu que, sans que, quitte à.
 - u5 p4: the debate report is invented; no real town.
+- u6 p1: connectors of argument; the tip on or and par contre. Native check.
+- u6 p2: il n'en reste pas moins que, force est de constater, on a beau, encore faut-il que.
+- u6 p3: structure of a commentary; rhetorical question, litote, antithesis, hyperbole.
+- u6 p4: the commentary is invented.
