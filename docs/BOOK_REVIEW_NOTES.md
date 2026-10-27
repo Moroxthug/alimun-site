@@ -1314,3 +1314,7 @@ u7 p1: ethos, pathos, logos with Italian examples; native review of the example 
 u7 p2: anafora, antitesi, chiasmo, gradazione, domanda retorica, metafora continuata.
 u7 p3: framing and loaded words (taglio, razionalizzazione, massa, popolo); check connotations with a native speaker.
 u7 p4: invented speech by a mayor of an imaginary city, with a commentary; no real speaker or quotation.
+u8 p1: metafora, similitudine, personificazione, simbolo, immagine; each tied to its effect.
+u8 p2: narrative voice (first and third person, omniscient, unreliable), tone and irony.
+u8 p3: analisi del testo (introduzione, sviluppo, conclusione), brief quotation in guillemets.
+u8 p4: invented story extract and critical note; no real author or quotation.
