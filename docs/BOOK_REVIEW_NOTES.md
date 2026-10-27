@@ -698,3 +698,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: gli (him and, in everyday speech, them), le, Le; loro mentioned as the formal plural.
 - u6 p3: phone phrases (Pronto, Chi parla?, Resti in linea, Gliela passo) are standard in Italy; *gliela* appears before it is explained.
 - u6 p4: the job advert, e-mail and company are invented; e-mail at example.com.
+- u7 p1: a + city, in + country or region, negli / nelle for plural countries; di + city and da + country for origin.
+- u7 p2: plans expressed with the present and *stare per*; the simple future is left for u8. Hotel dialogue and prices are invented.
+- u7 p3: weather phrases (fa, c’è, è, piove, nevica); the forecast uses the present with domani.
+- u7 p4: hotel e-mail at example.com; Liguria and the Cinque Terre are real places named in a postcard.
