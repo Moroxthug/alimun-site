@@ -928,3 +928,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: ordering politely; the tip says I want sounds rude. Check the strength of that claim.
 - u4 p3: numbers to 100, prices in pounds and euros.
 - u4 p4: menu and prices are invented; the totals add up (6.50 and 5.50 make 12).
+- u5 p1: rooms, there is and there are, some and any; flat against apartment. Native check.
+- u5 p2: in, on, under, next to, in front of; at home, on the wall.
+- u5 p3: places in a town; newsagent's, chemist's and high street tip.
+- u5 p4: the email is invented; Manchester is a real city, no other real names.
