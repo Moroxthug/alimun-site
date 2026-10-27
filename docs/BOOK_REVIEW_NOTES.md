@@ -1204,3 +1204,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: verlan and abbreviations; check that each is still current.
 - u5 p3: politeness strategies; check the remark on Belgian and Swiss s'il vous plaît.
 - u5 p4: the conversation is invented; Camille, Jean-Luc, Émilie and Moussa are fictional.
+- u6 p1: legal and formal words (ci-après, nonobstant, aux termes de, ledit); native check on the plain equivalents.
+- u6 p2: plain language rewrites; check the 20-word guideline and that the obligation is kept.
+- u6 p3: obligation, right, prohibition and condition; check à défaut de and faute de.
+- u6 p4: the contract clause is invented; no real contract is quoted.
