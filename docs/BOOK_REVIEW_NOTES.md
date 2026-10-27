@@ -614,3 +614,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: bien que / quoique + subjunctive, même si + indicative; *malgré que* flagged as a mistake (some speakers accept it).
 - u2 p3: *il semble que* with subjunctive (some authors accept the indicative); conditional of the press explained.
 - u2 p4: the survey and the letter are invented; no statistics.
+- u3 p1: *à moins que* with the optional ne explétif; *au cas où* + conditional; *si jamais* added.
+- u3 p2: *après que* + indicative (not subjunctive) stated as the rule, with a note that many speakers use the subjunctive.
+- u3 p3: past subjunctive for an earlier action; contrast with the present subjunctive.
+- u3 p4: the rental contract extract is original and not legal advice; the e-mail is invented.
