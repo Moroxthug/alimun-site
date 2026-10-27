@@ -673,3 +673,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: essere with verbs of movement and change of state; agreement with the subject; reflexive verbs mentioned.
 - u8 p3: *era*, *c’era* and *faceva* are used as fixed forms of the imperfect before it is taught; check this is acceptable.
 - u8 p4: the weekend text is invented.
+
+## Italian A2
+- u1 p1: *penso che sia* taught as a fixed phrase; the subjunctive is not explained yet.
+- u1 p2: più … di versus più … che; migliore / meglio; pronoun after di (di me).
+- u1 p3: direct object pronouns lo, la, li, le; agreement in the passato prossimo is mentioned for the next unit.
+- u1 p4: the letter and names are invented.
