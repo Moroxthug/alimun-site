@@ -626,3 +626,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: *de sorte que* and *si bien que* taken with the indicative for a real result; the subjunctive for a goal is mentioned.
 - u5 p3: discourse markers for an essay (certes … mais, on pourrait objecter que, somme toute).
 - u5 p4: both texts are invented opinion pieces; no statistics.
+- u6 p1: percentages written with a space (10 %); *une hausse de / à / de … à …* prepositions.
+- u6 p2: present participle versus verbal adjective with the spelling pairs (fatiguant / fatigant, convainquant / convaincant, différant / différent).
+- u6 p3: nominalisation and cause-effect verbs (provoquer, entraîner, être dû à, résulter de).
+- u6 p4: the museum chart is marked as a fictional example; no real statistics.
