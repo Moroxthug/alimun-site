@@ -589,3 +589,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: si + imparfait + conditional; the 'likely' type (si + present + future) repeated from A2 for contrast.
 - u4 p3: closing formula *Je vous prie d’agréer, Madame, Monsieur, l’expression de mes salutations distinguées* given in full; check it is still the standard.
 - u4 p4: the advert and letter are invented; e-mail at example.com.
+- u5 p1: superlatives with le plus / le moins, de plus en plus de; quantity words la plupart de, plusieurs, quelques, aucun.
+- u5 p2: passive voice with être + participle and *par*; the article says French prefers *on* in speech.
+- u5 p3: subjunctive after *il faut que* reused (éteindre, trier, économiser); *il est important de* + infinitive.
+- u5 p4: leaflet and letter invented; no statistics.
