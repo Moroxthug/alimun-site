@@ -1318,3 +1318,9 @@ u8 p1: metafora, similitudine, personificazione, simbolo, immagine; each tied to
 u8 p2: narrative voice (first and third person, omniscient, unreliable), tone and irony.
 u8 p3: analisi del testo (introduzione, sviluppo, conclusione), brief quotation in guillemets.
 u8 p4: invented story extract and critical note; no real author or quotation.
+
+## Portuguese C2
+u1 p1: near-synonyms for looking and thinness (olhar, fitar, observar, contemplar, espreitar; magro, esbelto, franzino, esquelético); native teacher to check the connotations.
+u1 p2: collocations and fixed pairs (gravemente ferido, erro crasso, generalização precipitada, mais cedo ou mais tarde, são e salvo, pouco a pouco).
+u1 p3: euphemism and litotes (faleceu, partiu, não é mau, não é pouco); check the European Portuguese register.
+u1 p4: invented essay on the words we choose; no real author or quotation.
