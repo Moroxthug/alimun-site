@@ -932,3 +932,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: in, on, under, next to, in front of; at home, on the wall.
 - u5 p3: places in a town; newsagent's, chemist's and high street tip.
 - u5 p4: the email is invented; Manchester is a real city, no other real names.
+- u6 p1: can and can't; the tip on the vowel of can against can't. Native check.
+- u6 p2: Can I and Can you; Could and May in the tip.
+- u6 p3: like + -ing, play, go, do, how often; check that I like to swim is mentioned fairly.
+- u6 p4: the club and the members are invented.
