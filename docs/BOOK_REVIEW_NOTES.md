@@ -1250,3 +1250,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: Erzählperspektive (Ich-Erzähler, personal, auktorial) and tone.
 - u8 p3: the Textanalyse structure (Behauptung, Beleg, Deutung); check the advice on tense and quotations.
 - u8 p4: the story and critical note are invented.
+
+## Spanish C2
+- u1 p1: connotation of near-synonyms (contemplar, clavar la vista, divisar, escuálido, tacaño, rácano); native check, and the Latin America note on rácano.
+- u1 p2: collocations and fixed pairs; check the "not natural" column and the remark on hacer una decisión.
+- u1 p3: euphemism and litotes (no es moco de pavo, nos dejó, reajuste de plantilla); native check.
+- u1 p4: the essay is invented; the demonstration is fictional.
