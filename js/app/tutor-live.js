@@ -15,6 +15,10 @@
    On a phone the call fills the screen while it is on (.tl-wrap.is-live): the tutor's face large while you talk, the board
    sliding up over it when the tutor writes, sets an exercise or a sentence to say (and down again when it is wiped), the
    last captions under it and Mute, the board and End in a bar at the bottom. Wider screens keep the board beside the face.
+   The microphone: filtered (no rumble below 120 Hz, nothing above 7 kHz that would fold into the voice range at 16 kHz)
+   and gated (speechGate): only sound that lasts like speech and has a voice in it reaches Google, with a short look-back
+   so first syllables are kept; otherwise silence is sent. Taps, the phone moving in the hand and rustling were heard as
+   words before. While the tutor speaks, the gate asks for a louder voice, so its own sound in the room does not cut it off.
    Sample (signed out or ?sample=1): a scripted call, nothing is sent and the microphone is not used.
    Interface text: app_tl_* keys. */
 (function () {
@@ -52,16 +56,47 @@
     L.micAsk.catch(function () { /* handled when the call starts */ });
     return Promise.resolve();
   }
+  /* The speech gate: 20 ms frames of 16 kHz audio in, the same frames out about 240 ms later, each kept or silenced.
+     It opens on 120 ms of sound clearly above the room's noise of which most frames are voiced (few zero crossings, as a
+     voice is; a tap is too short, rubbing and rustling are hiss), keeps the 240 ms before it, and closes after 700 ms
+     without speech. busy(): the tutor is speaking, so a louder and longer sound is needed. */
+  var FRAME = 320, LOOKBACK = 12, OPEN_FRAMES = 6, BUSY_OPEN_FRAMES = 10, HANG_FRAMES = 35;
+  function speechGate(busy) {
+    var floor = 0.003, run = 0, voiced = 0, open = false, hang = 0, line = [];
+    return function (frame) {
+      var sum = 0, cross = 0;
+      for (var i = 0; i < frame.length; i++) { sum += frame[i] * frame[i]; if (i && (frame[i] >= 0) !== (frame[i - 1] >= 0)) cross++; }
+      var rms = Math.sqrt(sum / frame.length), zcr = cross / frame.length, b = busy && busy();
+      var thr = Math.max(0.008, floor * 3) * (b ? 2.5 : 1), loud = rms > thr;
+      if (!loud && !open) floor = floor * 0.97 + rms * 0.03;   /* the room's noise, learned while nobody speaks */
+      var item = { f: frame, keep: false };
+      line.push(item);
+      if (loud) { run++; if (zcr < 0.22) voiced++; } else { run = 0; voiced = 0; }
+      if (!open && run >= (b ? BUSY_OPEN_FRAMES : OPEN_FRAMES) && voiced * 2 >= run) { open = true; line.forEach(function (x) { x.keep = true; }); }
+      if (open) {
+        item.keep = true;
+        if (rms > thr * 0.6) hang = 0; else if (++hang >= HANG_FRAMES) { open = false; hang = 0; run = 0; voiced = 0; }
+      }
+      return line.length > LOOKBACK ? [line.shift()] : [];
+    };
+  }
   /* The microphone as 16 kHz 16-bit PCM in 100 ms pieces, sent while the call is open and not muted */
   function startMic(stream) {
     var AC = window.AudioContext || window.webkitAudioContext, ctx = new AC();
     L.inCtx = ctx; L.stream = stream; ctx.resume();
-    var src = ctx.createMediaStreamSource(stream), ratio = ctx.sampleRate / IN_RATE, pend = [], acc = 0;
+    var src = ctx.createMediaStreamSource(stream), ratio = ctx.sampleRate / IN_RATE, raw = [], pend = [], acc = 0;
+    var gate = speechGate(function () { return !!(L && L.playing && L.playing.length); });
     var feed = function (f) {
-      if (!L || L.muted || !L.ready) return;
+      if (!L || L.muted || !L.ready) { raw = []; return; }
       for (var i = 0; i < f.length; i++) {
         acc += 1;
-        if (acc >= ratio) { acc -= ratio; pend.push(Math.max(-1, Math.min(1, f[i]))); }
+        if (acc >= ratio) { acc -= ratio; raw.push(Math.max(-1, Math.min(1, f[i]))); }
+      }
+      while (raw.length >= FRAME) {
+        gate(raw.splice(0, FRAME)).forEach(function (x) {
+          if (x.keep) for (var k = 0; k < x.f.length; k++) pend.push(x.f[k]);
+          else for (var z = 0; z < x.f.length; z++) pend.push(0);
+        });
       }
       while (pend.length >= CHUNK) {
         var part = pend.splice(0, CHUNK), pcm = new Int16Array(CHUNK);
@@ -70,6 +105,9 @@
       }
     };
     var silent = ctx.createGain(); silent.gain.value = 0; silent.connect(ctx.destination);
+    var hp = ctx.createBiquadFilter(), lp = ctx.createBiquadFilter();
+    hp.type = 'highpass'; hp.frequency.value = 120; lp.type = 'lowpass'; lp.frequency.value = 7000;
+    src.connect(hp); hp.connect(lp); src = lp;
     if (ctx.audioWorklet && window.AudioWorkletNode) {
       return ctx.audioWorklet.addModule(URL.createObjectURL(new Blob([WORKLET], { type: 'text/javascript' }))).then(function () {
         var node = new AudioWorkletNode(ctx, 'alimun-mic');
@@ -612,5 +650,5 @@
   function active() { return !!(L && !L.ended && (L.started || L.state === 'connecting')); }
   function reset() { if (L && !L.ended) end(); L = null; }
 
-  window.AlimunTutorLive = { prime: prime, want: want, begin: begin, mount: mount, active: active, reset: reset, myTutor: myTutor, setTutor: setTutor, supported: supported, TUTOR_KEY: TUTOR_KEY };
+  window.AlimunTutorLive = { speechGate: speechGate, prime: prime, want: want, begin: begin, mount: mount, active: active, reset: reset, myTutor: myTutor, setTutor: setTutor, supported: supported, TUTOR_KEY: TUTOR_KEY };
 })();
