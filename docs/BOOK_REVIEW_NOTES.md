@@ -1212,3 +1212,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: rhetorical devices; check the chiasmus example (Travailler pour vivre, non vivre pour travailler).
 - u7 p3: framing and loaded language; native check on the connotation labels (plan social, plan de sauvegarde de l'emploi, régime).
 - u7 p4: the speech and commentary are invented; the garden and the town are fictional.
+- u8 p1: figurative language; native check on the effect statements.
+- u8 p2: narrative voice (focalisation) and tone; check the terms.
+- u8 p3: the commentaire plan and the advice on tense and quotations.
+- u8 p4: the story and critical note are invented.
