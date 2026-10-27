@@ -1110,3 +1110,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: concession and refutation; check the mood after é verdade que and the sense of nem por isso.
 - u7 p3: rhetorical figures; litotes examples need a native check.
 - u7 p4: the commentary is invented; the library and the council are fictional.
+- u8 p1: reporting verbs; pretender as a false friend; check the infinitive constructions.
+- u8 p2: indirect speech; time words and the condicional.
+- u8 p3: sources and the condicional of reported doubt; check parece que and não parece que.
+- u8 p4: the article and summary are invented; the town, the bridge and the mayor are fictional.

@@ -1173,3 +1173,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `node scripts/check-book.mjs Italian-C1` passes. Review notes under `## Italian C1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (the units use readings, with no named speakers).
 - Italian C1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Portuguese C1.
 - Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Portuguese C1
+- Written alone, one unit per commit: `site/src/data/books/Portuguese-C1.js` (syllabus) and `units/Portuguese-C1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). European Portuguese, with Brazilian and African remarks in the tips. Unit 1 covers mesoclisis and literary word order; unit 4 covers tu, você and o senhor and the Portugal, Brazil and Africa differences.
+- `node scripts/check-book.mjs Portuguese-C1` passes. Review notes under `## Portuguese C1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (the units use readings, with no named speakers beyond fictional first names).
+- Portuguese C1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Spanish C1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
