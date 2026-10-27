@@ -1086,3 +1086,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: adjective position and meaning (grande homem, velho amigo, pobre homem); check each pair.
 - u1 p3: free indirect speech, historic present, dialogue dash; native check.
 - u1 p4: the extract is invented; the 1998 flood is fictional.
+- u2 p1: triggers of proclisis; check the optional cases after adverbs of time.
+- u2 p2: personal infinitive; check Vi-os sair / Vi-os saírem and the Brazil remark.
+- u2 p3: futuro do conjuntivo and combined pronouns (mo, to, lho, no-lo); native check.
+- u2 p4: the conversation is invented; roles only.
