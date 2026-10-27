@@ -7,6 +7,12 @@
   var SUPA = 'https://dgaiasmefcbrtzqwdyri.supabase.co';
   var PRICE_MIN = 0.03;  /* USD per minute of audio: gemini-3.1-flash-tts-preview on Google Cloud, $20 per million audio tokens, 25 a second */
   var token = null, books = [], state = {}, running = false, tally = { req: 0, made: 0, split: 0 }, timer = null;
+  /* Spending limit (owner, 27 Oct 2026): audio made since this page opened, stopped before it passes the limit.
+     One call makes at most a few minutes of audio, so the check keeps half a dollar in hand. */
+  var startSecs = null;
+  function totalSecs() { return books.reduce(function (n, b) { return n + ((state[b.id] || {}).seconds || 0); }, 0); }
+  function spent() { return startSecs == null ? 0 : (totalSecs() - startSecs) / 60 * PRICE_MIN; }
+  function cap() { var v = +document.getElementById('cap').value; return v > 0 ? v : 12; }
   /* Google's daily limit: when it resets (remembered in this browser, so a reopened tab waits instead of asking) */
   var RESET_KEY = 'alimun-audio-reset';
   function resetAt() { try { var v = +localStorage.getItem(RESET_KEY); return v > Date.now() ? v : 0; } catch (e) { return 0; } }
@@ -61,6 +67,11 @@
 
   function step() {
     if (!running) return;
+    if (spent() + 0.5 >= cap()) {
+      running = false; btn.textContent = 'Start';
+      say('Stopped at the spending limit: about $' + spent().toFixed(2) + ' of audio made since this page opened (limit $' + cap() + '). Raise the limit and press Start to carry on.');
+      return;
+    }
     var first = document.getElementById('tests-first').checked;
     var b = books.filter(function (x) { var s = state[x.id]; return s && s.done < s.total && (s.fails || 0) < 3; })
       .sort(function (p, q) { return first ? (q.test ? 1 : 0) - (p.test ? 1 : 0) : 0; })[0];
@@ -87,7 +98,7 @@
         }
         if (j.requests) {
           tally.req += j.requests; tally.made += j.made; tally.split += j.splitFailed || 0;
-          say(new Date().toLocaleTimeString() + ': ' + b.id + ', ' + tally.made + ' recordings from ' + tally.req + ' requests to Google in this session' +
+          say(new Date().toLocaleTimeString() + ': ' + b.id + ', ' + tally.made + ' recordings from ' + tally.req + ' requests to Google in this session, about $' + spent().toFixed(2) + ' of $' + cap() + ' spent' +
             (tally.split ? ' (' + tally.split + ' groups could not be cut at the pauses and were redone in halves)' : '') + '.');
         }
         if (!j.made && j.failed.length) { s.fails = (s.fails || 0) + 1; s.err = j.failed[0].error + (j.failed[0].detail ? ' ' + JSON.stringify(j.failed[0].detail).slice(0, 200) : ''); }
@@ -118,6 +129,7 @@
     running = !running;
     btn.textContent = running ? 'Pause' : 'Start';
     clearTimeout(timer);
+    if (running && startSecs == null) startSecs = totalSecs();
     if (running) waitForReset(); else say('Paused. Start again whenever you like; nothing is lost.');
   });
 
