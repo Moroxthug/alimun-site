@@ -1030,3 +1030,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: administrative verbs and formulas; ci-joint agreement.
 - u4 p3: formal request and reply formulas; reconnaissant(e).
 - u4 p4: the letter and the reply are invented (name, dates, company).
+- u5 p1: quel que soit, qui que, quoi que, où que, quelque … que. Native check.
+- u5 p2: si, aussi, pour, tout … que; que … ou que; soit … soit.
+- u5 p3: à supposer que, en admettant que, pour peu que, sans que, quitte à.
+- u5 p4: the debate report is invented; no real town.
