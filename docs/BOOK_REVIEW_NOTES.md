@@ -954,3 +954,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: kinds of si; advice with si yo fuera tú.
 - u2 p3: ojalá, como si, quisiera, past sequence of tenses.
 - u2 p4: the interview is invented.
+- u3 p1: perfecto de subjuntivo; cuando hayas terminado. Native check.
+- u3 p2: hubiera and habría, deber and poder + haber; the tip says hubiera often replaces habría.
+- u3 p3: si-clauses about the past, mixed, ojalá hubiera, de haberlo sabido.
+- u3 p4: the letter is invented; Edimburgo is a real city.
