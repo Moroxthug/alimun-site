@@ -683,3 +683,6 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: reflexive verbs in the passato prossimo always take essere; the participle agrees with the subject.
 - u2 p3: *fa* (ago), *da* + present, *per* + past; check the explanation of da versus per.
 - u2 p4: the email is invented.
+- u3 p1: imperfetto endings for -are / -ere / -ire and the irregular stems (fare, dire, bere); essere has its own forms.
+- u3 p3: passato prossimo versus imperfetto as event versus background; *mentre* in a tip; the example *ci sono già stato* uses *ci* before it is taught.
+- u3 p4: the school memories are invented; the teacher’s name Rossi is fictional.
