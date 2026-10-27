@@ -1192,3 +1192,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: pronouns, ce dernier, nominal resumption; check the notes on celui-ci and ce dernier.
 - u2 p3: punctuation and French typography (space before ; : ? !); check the Quebec practice, which often differs.
 - u2 p4: the essay is invented.
+- u3 p1: mood after croire, douter, se douter, superlatives and seul; check the subjunctive after seul and premier.
+- u3 p2: gérondif, participe présent, participe absolu; native check on the adjectif verbal example.
+- u3 p3: expletive ne, ne … que, ne … guère, stylistic inversion; check the register notes.
+- u3 p4: the story is invented.
