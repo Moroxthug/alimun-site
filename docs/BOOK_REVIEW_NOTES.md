@@ -1102,3 +1102,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: passive with se, deferir/indeferir, proceder a; check the note on deferir and diferir.
 - u5 p3: request and reply formulas (Venho por este meio, Agradeço que me seja enviado); check the closing formulas for Portugal.
 - u5 p4: the letters are invented; Luís Neves is fictional.
+- u6 p1: conquanto, nem que, se bem que, uma vez que, porquanto; check the moods, especially se bem que.
+- u6 p2: se + futuro do conjuntivo, fosse como fosse, quer … quer, mal + perfeito; native check.
+- u6 p3: spoken imperfeito hypotheses marked as spoken only; quem me dera and oxalá.
+- u6 p4: the debate is invented; roles only.
