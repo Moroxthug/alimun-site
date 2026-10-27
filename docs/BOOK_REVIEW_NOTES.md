@@ -1238,3 +1238,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: spoken contractions and du/Sie; check haste, biste, ham wir, nich.
 - u5 p3: Austrian and Swiss vocabulary; check Brötli, Härdöpfel, Gehsteig, Znüni.
 - u5 p4: the conversation is invented; Lena, Markus, Nadine and Jonas are fictional.
+- u6 p1: legal words (hiermit, hinsichtlich, gemäß, aufgrund, seitens, vorbehaltlich, unbeschadet) and their cases; native check.
+- u6 p2: plain language rewrites; check that the obligation is kept.
+- u6 p3: obligation, right, prohibition, condition; check es sei denn and sofern.
+- u6 p4: the contract clause is invented; no real contract is quoted.
