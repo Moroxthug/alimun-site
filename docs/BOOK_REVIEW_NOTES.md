@@ -1256,3 +1256,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: collocations and fixed pairs; check the "not natural" column and the remark on hacer una decisión.
 - u1 p3: euphemism and litotes (no es moco de pavo, nos dejó, reajuste de plantilla); native check.
 - u1 p4: the essay is invented; the demonstration is fictional.
+- u2 p1: parallelism and periodic sentences; the example sentences are original.
+- u2 p2: pronouns, este último, lo cual, nominal resumption; check the note on accents in demonstratives.
+- u2 p3: punctuation and Spanish rules (colon, raya, inverted marks); native check.
+- u2 p4: the essay is invented.
