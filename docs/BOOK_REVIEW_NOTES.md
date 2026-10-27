@@ -1072,3 +1072,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: seppure, ancorché, quand'anche, se non fosse per, casomai; check register.
 - u6 p3: spoken imperfetto hypotheses (Se lo sapevo, venivo) marked as spoken only.
 - u6 p4: the debate is invented; names are fictional.
+- u7 p1: connectors tuttavia, peraltro, d'altronde, anzi, infatti. Native check.
+- u7 p2: concession and refutation; mood after è pur vero che is flexible, check.
+- u7 p3: rhetorical figures; litote examples need a native check.
+- u7 p4: the commentary is invented; the library and the council are fictional.
