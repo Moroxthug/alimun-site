@@ -1056,3 +1056,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: cleft sentences; sono io che ho against ha.
 - u2 p3: neostandard features and what to avoid in writing; the remark about Tuscany.
 - u2 p4: the speech is invented.
+- u3 p1: altered nouns (-ino, -etto, -one, -accio) and lexicalised ones. Native check.
+- u3 p2: prefixes and suffixes and the gender they give.
+- u3 p3: parasynthetic verbs, compounds and their plurals, loanwords; check capolavoro and cassaforte plurals.
+- u3 p4: the essay is invented.
