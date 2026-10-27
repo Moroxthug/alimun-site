@@ -505,3 +505,12 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 ## Translations of the new books (27 Oct 2026)
 - Several existing German-book translation files (`*.de.json`) keep English values in meaning columns (body parts, "I like drinking tea."); the new A1 files give German meanings instead.
 - Explanations of the 25 new books were translated by helper agents into seven languages; checked for missing strings, markers and gaps, not yet read by native speakers.
+
+## French A1
+- u1 p1: *Ça va ?* spacing before ? and ! follows French typesetting; learners may not type it, the checker ignores final punctuation.
+- u1 p1: bonsoir from dusk, bonjour all day; check this matches how you teach it.
+- u1 p2: *Je viens du Maroc / de France / d’Italie* pattern taught as a rule of thumb; no full rule for countries yet.
+- u1 p3: French phone numbers said in pairs; example numbers are fictional (06 01 02 03 04).
+- u1 p3: letter names *ku* (q) and *zède* (z) as in standard teaching; Quebec differences not mentioned.
+- u1 p4: reading uses *professeure*; confirm you accept it (also *professeur* for both).
+- New speaker role added to audio.js: Réceptionniste (woman's voice).
