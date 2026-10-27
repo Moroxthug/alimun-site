@@ -814,3 +814,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: *mais … do que / que*, *tão … como*, irregular *melhor, pior, maior, menor*; the fix item accepts *do que* and *que*.
 - u1 p3: direct object pronouns after the verb (Portugal), *-lo / -la* after infinitives, *-no / -na* after nasal endings, and before the verb after *não, também, quem*.
 - u1 p4: the letter about the colleague Miguel is invented.
+- u2 p1: pretérito perfeito of regular verbs and *ir / ser*; *falámos* with accent in Portugal against *falamos* in the present (Brazil has no difference).
+- u2 p2: irregular perfeito of fazer, ter, estar, ver, dizer, pôr, vir, ler, dar; tip on *vimos* (ver in the past, vir in the present); reflexive verbs with the pronoun after the verb.
+- u2 p3: *ontem, há + time* (Portugal; *atrás* is Brazilian), *primeiro, depois, finalmente*.
+- u2 p4: the e-mail about a busy week is invented.
