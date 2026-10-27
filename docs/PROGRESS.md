@@ -1131,6 +1131,84 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - After the plans: a moving band of words (Live classes, Practice, Mock tests, Flashcards, AI tutor, Homework, Library) with buddies between them, faster while scrolling. Then "Everything you need between classes": seven rows (live classes, course book, practice rounds, mock tests, flashcards, library, homework and progress, facts from the js/app module headers) beside a sticky screen that plays a small animated preview of the row in view and changes tint.
 - Video 1 "Alimun on your computer and your phone" after the showcase, with the official App Store badge (developer.apple.com) and Google Play badge (play.google.com) in images/stores/; links are "#" until the owner sends them. Video 2 "See your AI tutor at work" right after the tutor section.
 
+## 2026-10-27 — Course book: Portuguese B1
+- Written alone, one unit per commit: `site/src/data/books/Portuguese-B1.js` (syllabus) and `units/Portuguese-B1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). European Portuguese, with Brazilian differences noted in tips. Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs Portuguese-B1` passes. Review notes under `## Portuguese B1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles.
+- Portuguese B1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Portuguese B2.
+- Note: another session pushed to `main` meanwhile; I merged `origin/main` into my branch (no conflicts) before pushing.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Portuguese B2
+- Written alone, one unit per commit: `site/src/data/books/Portuguese-B2.js` (syllabus) and `units/Portuguese-B2/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). European Portuguese, with Brazilian differences in the tips.
+- `node scripts/check-book.mjs Portuguese-B2` passes. Review notes under `## Portuguese B2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles.
+- Portuguese B2 struck from the Order list in `docs/WRITING_BOOKS.md`; next is English A1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: English A1
+- Written alone, one unit per commit: `site/src/data/books/English-A1.js` (syllabus) and `units/English-A1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 15 to 16 questions per test). Explanations in simple English; A1 depth as in Spanish A1, with British English and the American differences in the tips.
+- `node scripts/check-book.mjs English-A1` passes. Review notes under `## English A1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles.
+- English A1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Spanish B2.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Spanish B2
+- Written alone, one unit per commit: `site/src/data/books/Spanish-B2.js` (syllabus) and `units/Spanish-B2/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). Spanish of Spain, with Latin American differences in the tips. Because Spanish B1 stops at the present subjunctive, the book also teaches the imperfect, perfect and pluperfect subjunctive (units 2 and 3).
+- `node scripts/check-book.mjs Spanish-B2` passes. Review notes under `## Spanish B2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles.
+- Spanish B2 struck from the Order list in `docs/WRITING_BOOKS.md`; next is German C1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: German C1
+- Written alone, one unit per commit: `site/src/data/books/German-C1.js` (syllabus) and `units/German-C1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). German of Germany, with Austrian and Swiss usage in the tips and in unit 7. Unit 5's first lesson was changed from the draft plan (sein + zu and sich lassen are already in German B2); the plan in the book file now matches.
+- `node scripts/check-book.mjs German-C1` passes. Review notes under `## German C1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (the dialogues are in readings, without named speakers).
+- German C1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is French C1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: French C1
+- Written alone, one unit per commit: `site/src/data/books/French-C1.js` (syllabus) and `units/French-C1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). French of France, with Quebec, Belgian and Swiss remarks in the tips. Unit 1 adds the literary tenses (passé simple, passé antérieur, imparfait du subjonctif) to recognise in reading.
+- `node scripts/check-book.mjs French-C1` passes. Review notes under `## French C1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (the units use readings, with no named speakers).
+- French C1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Italian C1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Italian C1
+- Written alone, one unit per commit: `site/src/data/books/Italian-C1.js` (syllabus) and `units/Italian-C1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). Italian of Italy, with Swiss and regional remarks in the tips. Spoken forms (Se lo sapevo, venivo) are marked as spoken only.
+- `node scripts/check-book.mjs Italian-C1` passes. Review notes under `## Italian C1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (the units use readings, with no named speakers).
+- Italian C1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Portuguese C1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Portuguese C1
+- Written alone, one unit per commit: `site/src/data/books/Portuguese-C1.js` (syllabus) and `units/Portuguese-C1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). European Portuguese, with Brazilian and African remarks in the tips. Unit 1 covers mesoclisis and literary word order; unit 4 covers tu, você and o senhor and the Portugal, Brazil and Africa differences.
+- `node scripts/check-book.mjs Portuguese-C1` passes. Review notes under `## Portuguese C1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (the units use readings, with no named speakers beyond fictional first names).
+- Portuguese C1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Spanish C1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Spanish C1
+- Written alone, one unit per commit: `site/src/data/books/Spanish-C1.js` (syllabus) and `units/Spanish-C1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). Spanish of Spain, with Latin American remarks in the tips. Unit 1 covers the pretérito anterior and literary word order; unit 4 covers tú, usted, vos, vosotros and ustedes and the Spain and Latin America differences.
+- `node scripts/check-book.mjs Spanish-C1` passes. Review notes under `## Spanish C1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (the units use readings, with no named speakers beyond fictional first names).
+- Spanish C1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is C2 for every language.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: English C2
+- Written alone, one unit per commit: `site/src/data/books/English-C2.js` (syllabus) and `units/English-C2/u1.js` to `u8.js` (eight units, four lessons and a unit test each). English with British and American notes. Units: precision and nuance, style and rhythm, irony and wordplay, academic and critical writing, varieties of English, advanced grammar, rhetoric, literature and criticism.
+- `node scripts/check-book.mjs English-C2` passes. Review notes under `## English C2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names.
+- The "C2 for every language" line in `docs/WRITING_BOOKS.md` now says English is done; the other five languages follow.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: French C2
+- Written alone, one unit per commit: `site/src/data/books/French-C2.js` (syllabus) and `units/French-C2/u1.js` to `u8.js` (eight units, four lessons and a unit test each). French of France, with Quebec, Belgian, Swiss and African remarks. Units: precision and nuance, style and rhythm, subtle grammar, academic writing, varieties of French, legal French and plain language, rhetoric, literature and criticism.
+- `node scripts/check-book.mjs French-C2` passes. Review notes under `## French C2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names.
+- The "C2 for every language" line in `docs/WRITING_BOOKS.md` now says English and French are done; German, Spanish, Italian and Portuguese follow.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: German C2
+- Written alone, one unit per commit: `site/src/data/books/German-C2.js` (syllabus) and `units/German-C2/u1.js` to `u8.js` (eight units, four lessons and a unit test each). German of Germany, with Austrian and Swiss remarks. Units: precision and nuance, style and rhythm, subtle grammar, academic writing, spoken German and regional voices, legal German and plain language, rhetoric, literature and criticism. Unit 5 replaced the planned varieties unit to avoid repeating German C1 unit 7.
+- `node scripts/check-book.mjs German-C2` passes. Review notes under `## German C2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names.
+- The "C2 for every language" line in `docs/WRITING_BOOKS.md` now says English, French and German are done; Spanish, Italian and Portuguese follow.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Spanish C2
+- Written alone, one unit per commit: `site/src/data/books/Spanish-C2.js` (syllabus) and `units/Spanish-C2/u1.js` to `u8.js` (eight units, four lessons and a unit test each). Spanish of Spain, with Latin American remarks. Units: precision and nuance, style and rhythm, subtle grammar, academic writing, spoken Spanish and regional voices, legal Spanish and plain language, rhetoric, literature and criticism.
+- `node scripts/check-book.mjs Spanish-C2` passes. Review notes under `## Spanish C2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names.
+- The "C2 for every language" line in `docs/WRITING_BOOKS.md` now says English, French, German and Spanish are done; Italian and Portuguese follow.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
 ## 27 Oct 2026 — Product films on mockup D
 - Owner sent 16 silent screen films of the app (8 subjects, each 16:9 1920x1080 and 4:5 1080x1350). Sources in media/video-source/ (kept out of the Vercel upload by /media/ in .vercelignore). Web versions in videos/ with the existing naming (<name>-transcode.mp4 / .webm / -poster-00001.jpg) by scripts/encode-product-films.sh: audio stripped, H.264 High 4.1 crf 25 +faststart, VP9 crf 34, 16:9 at 1600 px, 4:5 at 1080 px, poster at 1 s. The overview was re-encoded at crf 27 (H.264) and 38 (VP9) to stay under 6 MB (SSIM 0.98 against the source).
 - Mockup D (/preview/home-live/): the overview in the "Alimun on your computer and your phone" slot, the AI tutor film in "See your AI tutor at work", and the live classes, course book, practice, mock tests, library and progress films in the matching showcase rows (flashcards has no film and keeps its animated sketch). The 16:9 or 4:5 film is chosen once on load (4:5 at 767 px and below); each video is created only when its box comes on screen (IntersectionObserver), autoplay muted loop playsinline, preload metadata, poster, WebM then MP4; the slots pause when scrolled away; reduced motion shows the poster only.
