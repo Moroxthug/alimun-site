@@ -549,3 +549,6 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: participle agreement of reflexive verbs taught as agreeing with the subject (true for most cases; the exception with a direct object after the verb is left out).
 - u2 p3: *depuis* with a present verb versus *pendant* with a past verb; check the explanation for A2.
 - u2 p4: the e-mail uses *j’avais*, *j’étais* and *parce que* before the imparfait is taught in u3.
+- u3 p1: imparfait stem rule (nous form minus -ons) with être as the only exception; check wording.
+- u3 p3: passé composé versus imparfait explained as event versus background; *pendant que* only in a tip.
+- u3 p4: *institutrice* used for the school teacher (France now says *maîtresse* or *professeure des écoles*).
