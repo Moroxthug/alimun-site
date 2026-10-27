@@ -1068,3 +1068,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: administrative verbs (inoltrare, rilasciare, evadere, essere tenuto a). Native check.
 - u5 p3: request and reply formulas; Le sarei grato se volesse.
 - u5 p4: the letters are invented; names are fictional.
+- u6 p1: qualora, a patto che, purché, ammesso che with the subjunctive. Native check.
+- u6 p2: seppure, ancorché, quand'anche, se non fosse per, casomai; check register.
+- u6 p3: spoken imperfetto hypotheses (Se lo sapevo, venivo) marked as spoken only.
+- u6 p4: the debate is invented; names are fictional.
