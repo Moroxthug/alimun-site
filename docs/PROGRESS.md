@@ -1064,3 +1064,4 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - Not done: audio for the 25 books (from `/app/audio`), the 32 missing translations, native review.
 - Cost: the writing and translating ran as many parallel agents and used a large share of the owner's weekly limit; the owner was not told the size first. Next time: give the size and an estimate before starting work of this scale.
 - Checked: `npm run build`, `npm run build:site` (earlier in the session), unit tests 99 of 99, `node --check`.
+- Course audio for the 25 new books made by the owner from `/app/audio` (new spending limit, default $12, `js/app/audio-admin.js`): every file present, 373 minutes, about $11.19 at $0.03 a minute (estimate was $10.40).
