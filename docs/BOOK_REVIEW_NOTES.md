@@ -898,3 +898,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: mandar, deixar, fazer + infinitive with the pronoun on the first verb; ser against estar with the participle.
 - u5 p3: debate markers and softening; check the pois and se calhar tips.
 - u5 p4: opinion article and reader reply are invented.
+- u6 p1: participle clause (feito o trabalho) and tendo + participle; agreement with the following noun. Native check.
+- u6 p2: nouns in place of verbs; efetuar, apresentar, solicitar collocations.
+- u6 p3: formal letter phrases; Portugal against Brazil closings in the tip.
+- u6 p4: complaint and reply are invented (name, date, company).
