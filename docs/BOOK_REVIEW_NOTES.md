@@ -556,3 +556,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p3: the dialogue uses imperatives with pronouns (*casse-les*, *fais-la cuire*) before they are taught; glossed by context.
 - u4 p4: prices in the leaflet are invented.
 - New speaker role added to audio.js: Marchand (man's voice).
+- u5 p2: *vous devriez* (conditional) taught as a fixed phrase only; imperative of reflexive verbs (reposez-vous, ne vous inquiétez pas) introduced here.
+- u5 p3: emergency numbers (15, 112) stated in a tip; check they are right for the countries you teach.
+- u5 p4: *carte vitale* mentioned for France; the doctor’s name and address are invented; e-mail at example.com.
+- New speaker role added to audio.js: Pharmacienne (woman's voice).

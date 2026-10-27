@@ -21,7 +21,7 @@ const STYLE = {
 
 /* Speakers' genders: names and roles used in the dialogues. Unknown ones ("Receptionist", "Sam") take the
    gender that contrasts with the other speaker. */
-const WOMEN = 'Serveuse Réceptionniste Abena Aiko Aisha Amara Amira Ana Aylin Ayumi Bethan Birgit Carla Clara Elena Elif Farah Farida Fatima Fatma Fatou Grace Hana Hannah Helen Ines Inés Jana Ji-woo Joanna Katrin Lea Leila Lena Leyla Lina Lucía Mara Margaret Mariam Marta Maya Mei Mira Nadia Olga Priya Rania Rosa Sabine Sara Selin Sofia Sofie Sophie Waitress Woman Yuki Camarera Cajera Dependienta Doctora Empleada Funcionaria Médica Panadera Señora Secretaria Taquillera';
+const WOMEN = 'Pharmacienne Serveuse Réceptionniste Abena Aiko Aisha Amara Amira Ana Aylin Ayumi Bethan Birgit Carla Clara Elena Elif Farah Farida Fatima Fatma Fatou Grace Hana Hannah Helen Ines Inés Jana Ji-woo Joanna Katrin Lea Leila Lena Leyla Lina Lucía Mara Margaret Mariam Marta Maya Mei Mira Nadia Olga Priya Rania Rosa Sabine Sara Selin Sofia Sofie Sophie Waitress Woman Yuki Camarera Cajera Dependienta Doctora Empleada Funcionaria Médica Panadera Señora Secretaria Taquillera';
 const MEN = 'Marchand Guichetier Serveur Amir Andrés Arjun Ben Bilal Callum Carlos Daniel David Diego Emre Felix Gareth Ibrahim James Javier Jin Jonas Joon Joseph Jun Karim Kemal Kenji Kofi Kunde Kwame Leo Liam Lucas Lukas Man Mann Marco Mateo Mehmet Mitarbeiter Noah Oliver Omar Owen Paul Paulo Pedro Peter Prüfer Rafael Raj Ravi Tarek Tomasz Tomás Verkäufer Waiter Yusuf Camarero Dependiente Empleado Farmacéutico Frutero Médico Rezeptionist Señor Taquillero';
 const W = new Set(WOMEN.split(' ')), M = new Set(MEN.split(' '));
 export function gender(who) {
