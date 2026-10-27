@@ -1083,3 +1083,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `node scripts/check-book.mjs French-B1` passes. Review notes under `## French B1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker roles.
 - French B1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is French B2.
 - Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js` (it timed out in this environment). `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: French B2
+- Written alone, one unit per commit: `site/src/data/books/French-B2.js` (syllabus) and `units/French-B2/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 512 exercise items in lessons, 15 questions per test). Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs French-B2` passes. Review notes under `## French B2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker roles.
+- French B2 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Italian A1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js` (it timed out in this environment). `npm run build` not run, as instructed.

@@ -634,3 +634,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: subjunctive after verbs of feeling; the ne explétif after avoir peur que explained.
 - u7 p3: reviewing vocabulary (intrigue, scénario, réalisateur) and ce qui / ce que for impressions.
 - u7 p4: the extract and the film review are invented; the film title is fictional.
+- u8 p1: *il est probable que* + indicative against *il est possible que* + subjunctive; *je ne pense pas que* + subjunctive stated as a rule.
+- u8 p2: future, future perfect, conditional and near future for predictions; *d’ici là*.
+- u8 p3: typical learner mistakes (malgré que, plus bon, participle agreement, si il, a / à) collected in one table.
+- u8 p4: the essay and the letter are original; no statistics.
