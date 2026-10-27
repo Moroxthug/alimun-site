@@ -657,3 +657,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: *bello* changing like the article (bel, bello, bell’, bei, begli) in a tip; *grande* / *gran*.
 - u4 p3: prepositions su / in / a joined with the article (sul, nel, al); the picture exercise names the clock *una sveglia* and the phone *un cellulare* as in the picture sets.
 - u4 p4: rent and address in the advert are invented; e-mail at example.com.
+- u5 p1: *Sono le … / È l’una* rule; 24-hour clock mentioned for timetables.
+- u5 p2: present tense for -are / -ere / -ire with the -isc- group (finire); spelling of cercare and mangiare.
+- u5 p3: reflexive verbs with mi, ti, si, ci, vi, si.
+- u5 p4: the week planner and message are invented; time written 12,30 as in Italy.
