@@ -26,7 +26,7 @@ export const UNIT = {
             ['gentile', 'gentile', 'gentili', 'kind'],
             ['nervoso', 'nervosa', 'nervosi', 'nervous'],
           ] },
-          { t: 'tip', art: 'owl', md: 'In speech, the last vowel shows the gender: **pigro** and **pigra**. Adjectives in **-co** like *simpatico* have the plural **-ci** (*simpatici*) for men and **-che** (*simpatiche*) for women. Adjectives in **-e** have the same form for a man and a woman: *gentile*.' },,
+          { t: 'tip', art: 'owl', md: 'In speech, the last vowel shows the gender: **pigro** and **pigra**. Adjectives in **-co** like *simpatico* have the plural **-ci** (*simpatici*) for men and **-che** (*simpatiche*) for women. Adjectives in **-e** have the same form for a man and a woman: *gentile*.' },
         ],
         [
           { t: 'text', md: 'To give an opinion about a person, use **secondo me** (in my opinion), **per me** or **mi sembra** (it seems to me): *Secondo me, Luca è molto simpatico. Mi sembra timida.* After **penso che** and **credo che** (I think that), Italian normally uses the subjunctive, which you will study later; for now, learn two fixed phrases: **penso che sia** (I think he or she is) and **penso che abbia** (I think he or she has). Ask for an opinion with **Che ne pensi?** (What do you think of it?).' },
