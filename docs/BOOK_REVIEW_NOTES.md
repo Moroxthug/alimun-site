@@ -1094,3 +1094,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: prefixes and hyphen rules of the Acordo Ortográfico (antissocial, anti-higiénico, pré-história, ultrarrápido); native check.
 - u3 p3: parasynthetic verbs and compounds; check the plural of arranha-céus and guarda-chuva.
 - u3 p4: the essay is invented.
+- u4 p1: tu, você, o senhor in Portugal; check the remark on você and the use of Doutor.
+- u4 p2: Portugal, Brazil, Africa; check machimbombo (Mozambique), bué (Angola) and the note on rapariga.
+- u4 p3: idioms and proverbs; check each against a Portuguese source.
+- u4 p4: the conversation is invented; Inês, Rafael and Domingos are fictional.
