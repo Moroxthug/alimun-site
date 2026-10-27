@@ -1095,3 +1095,10 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `node scripts/check-book.mjs Italian-A1` passes. Review notes under `## Italian A1` in `docs/BOOK_REVIEW_NOTES.md`. New speaker roles and names in `site/src/data/books/audio.js`: Segretaria, Giulia (women), Paolo, Barista, Bigliettaio (men).
 - Italian A1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Italian A2.
 - Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js` (it timed out in this environment). `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: Italian A2
+- Written alone, one unit per commit: `site/src/data/books/Italian-A2.js` (syllabus) and `units/Italian-A2/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 454 exercise items in lessons, 15 or 16 questions per test). Draft for native-teacher review; the book file keeps every unit `planned` with its plan.
+- `node scripts/check-book.mjs Italian-A2` passes. Review notes under `## Italian A2` in `docs/BOOK_REVIEW_NOTES.md`. New speaker roles in `site/src/data/books/audio.js`: Farmacista (woman), Fruttivendolo (man).
+- Italian A2 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Italian B1.
+- Note: two commits of this book (unit 1) briefly carried a stray comma that broke the file on main; fixed in the following commit.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js` (it timed out in this environment). `npm run build` not run, as instructed.

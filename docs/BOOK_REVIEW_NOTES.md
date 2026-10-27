@@ -702,3 +702,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: plans expressed with the present and *stare per*; the simple future is left for u8. Hotel dialogue and prices are invented.
 - u7 p3: weather phrases (fa, c’è, è, piove, nevica); the forecast uses the present with domani.
 - u7 p4: hotel e-mail at example.com; Liguria and the Cinque Terre are real places named in a postcard.
+- u8 p1: dates written with *il* + number (*il dodici marzo*) and *il primo maggio*; months and days in lower case.
+- u8 p2: simple future endings with the a to e change in -are verbs; spelling of cercherò, mangerò; eight irregular stems.
+- u8 p3: *se* + present + future, with a note that the present is common in the result in everyday Italian.
+- u8 p4: the invitation and reply are invented; e-mail at example.com.
