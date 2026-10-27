@@ -1310,3 +1310,7 @@ u6 p1: legal words (il locatore, il conduttore, suddetto, summenzionato, a decor
 u6 p2: why legal Italian is dense and how to simplify it (passive to active, noun to verb); the plain rewrites must keep the legal meaning.
 u6 p3: obligation, right, prohibition and condition (è tenuto a, ha facoltà di, è vietato, purché, salvo che, qualora) with the subjunctive.
 u6 p4: invented lease clause with a plain-language version; not a real contract.
+u7 p1: ethos, pathos, logos with Italian examples; native review of the example sentences.
+u7 p2: anafora, antitesi, chiasmo, gradazione, domanda retorica, metafora continuata.
+u7 p3: framing and loaded words (taglio, razionalizzazione, massa, popolo); check connotations with a native speaker.
+u7 p4: invented speech by a mayor of an imaginary city, with a commentary; no real speaker or quotation.
