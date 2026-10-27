@@ -822,3 +822,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: habits, descriptions, age, weather, *costumar* and *havia*.
 - u3 p3: perfeito against imperfeito, *já / nunca / ainda não* with the perfeito; the gap on weather accepts *estava* and *fazia*.
 - u3 p4: the two school memories (Rui and Clara) are invented; Viseu is named as a place only.
+- u4 p1: quantities with *de*, *meio / meia*, *quanto / quantos*; *muito* and *pouco* agree with the noun.
+- u4 p2: *me, te, lhe, nos, lhes* and the contractions *mo, to, lho, lha*; pronoun before the verb after *não, já, também, nunca* and question words; please check the dialogue *Já lho dei ontem*.
+- u4 p3: imperative of tu (the *ele* form) and você (present subjunctive form), negative tu *não mexas*, pronouns after the verb (*corta-a*).
+- u4 p4: the soup recipe and the market leaflet (prices, hours) are invented; no real market named.
