@@ -1148,3 +1148,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: indirect speech; time words, the condicional and the subjunctive for orders.
 - u8 p3: sources and the condicional of reported doubt; check parece que and no parece que.
 - u8 p4: the article and summary are invented; the town, the bridge and the mayor are fictional.
+
+## English C2
+- u1 p1: connotation labels for near-synonyms (thrifty, stingy, slender, skinny, gaunt); native check.
+- u1 p2: collocations and binomials; check the "not natural" column.
+- u1 p3: euphemism and understatement; "not bad" as British understatement needs a check.
+- u1 p4: the essay is invented; the protest is fictional.
