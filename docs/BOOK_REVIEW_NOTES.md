@@ -578,3 +578,6 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: agreement with a preceding direct object (que, le, la, les) only for avoir; no agreement rule yet for reflexive verbs.
 - u1 p3: après avoir / avant de need the same subject in both parts; subjunctive after avant que is only mentioned.
 - u1 p4: the readings mention real cities (Casablanca, Rabat, Lyon, Paris, Lille) in invented life stories.
+- u2 p3: subjunctive introduced with five irregular verbs (être, avoir, faire, aller, pouvoir) and the ils-stem rule; scope kept small for B1 (no savoir, vouloir, bien que yet).
+- u2 p2: *parce que* / *car* / *puisque* / *comme* distinctions simplified; *car* never starts a sentence is stated as a rule.
+- u2 p4: the article and comments are invented (a four-day week test in a town hall).
