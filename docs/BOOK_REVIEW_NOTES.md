@@ -984,3 +984,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: Vorfeld and Nachfeld; the remark on spoken afterthoughts.
 - u1 p3: es ist … der, was … ist, wer … der; sein agrees with the noun after was.
 - u1 p4: the speech is invented.
+- u2 p1: sollen and wollen as reports; Infinitiv Perfekt. Native check.
+- u2 p2: müssen, dürfte, können, mögen; the tip on muss nicht against kann nicht.
+- u2 p3: scheinen, drohen, versprechen + zu; anscheinend against scheinbar; wohl.
+- u2 p4: the news report is invented; no real place or people.
