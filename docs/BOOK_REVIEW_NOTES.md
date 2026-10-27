@@ -618,3 +618,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: *après que* + indicative (not subjunctive) stated as the rule, with a note that many speakers use the subjunctive.
 - u3 p3: past subjunctive for an earlier action; contrast with the present subjunctive.
 - u3 p4: the rental contract extract is original and not legal advice; the e-mail is invented.
+- u4 p1: meeting phrases (je propose que + subjunctive, que diriez-vous de, si je comprends bien).
+- u4 p2: c’est … qui / que, ce qui / ce que … c’est; agreement of the verb after c’est moi qui.
+- u4 p3: negotiation vocabulary (devis, remise, geste commercial) and polite refusals with the conditional.
+- u4 p4: the meeting report and the e-mail are invented.
