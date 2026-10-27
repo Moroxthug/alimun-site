@@ -518,3 +518,8 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: son/sa/ses explained as agreeing with the noun that follows, with mon/ton/son before a feminine noun starting with a vowel.
 - u2 p3: *il est* + adjective and *c’est* + name or noun kept as a simple A1 rule; *il est médecin* type uses are not taught yet.
 - u2 p4: reading uses *travaillent* and *beaucoup* before they are taught (meaning clear from context).
+- u3 p1: gender of every noun taught with its article; *œuf* / *œufs* pronunciation note.
+- u3 p2: partitive (du, de la, des, pas de) with *aimer* + le/la/les kept to A1 essentials; check the explanation of *du* = *de* + *le*.
+- u3 p3: café etiquette (service included, small coins) is general; prices fictional; *Je vais prendre* mentioned in text only.
+- u3 p4: menu prices are invented examples.
+- New speaker roles added to audio.js: Serveuse (woman), Serveur (man).
