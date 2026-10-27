@@ -1161,3 +1161,9 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `node scripts/check-book.mjs German-C1` passes. Review notes under `## German C1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (the dialogues are in readings, without named speakers).
 - German C1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is French C1.
 - Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+
+## 2026-10-27 — Course book: French C1
+- Written alone, one unit per commit: `site/src/data/books/French-C1.js` (syllabus) and `units/French-C1/u1.js` to `u8.js` (eight units, four lessons and a unit test each, 14 questions per test). French of France, with Quebec, Belgian and Swiss remarks in the tips. Unit 1 adds the literary tenses (passé simple, passé antérieur, imparfait du subjonctif) to recognise in reading.
+- `node scripts/check-book.mjs French-C1` passes. Review notes under `## French C1` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names or roles (the units use readings, with no named speakers).
+- French C1 struck from the Order list in `docs/WRITING_BOOKS.md`; next is Italian C1.
+- Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.

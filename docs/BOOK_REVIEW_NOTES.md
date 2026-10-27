@@ -1042,3 +1042,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u7 p2: proverbs, similes, metaphors; the similes are neutral on purpose.
 - u7 p3: homophones, puns (au courant, filet), irony; phonetic symbols in the table.
 - u7 p4: the humorous column is invented.
+- u8 p1: reporting verbs, tense changes in indirect speech. Native check.
+- u8 p2: selon, d'après, aux dires de, à en croire; free indirect speech.
+- u8 p3: how to write a résumé; nominalisation.
+- u8 p4: the article and its summary are invented; no real library or town.
