@@ -1140,3 +1140,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: como + subjunctive, siempre y cuando, salvo que, puesto que; check the moods.
 - u6 p3: spoken imperfecto hypotheses marked as spoken only; check por si acaso + indicative.
 - u6 p4: the debate is invented; roles only.
+- u7 p1: connectors sin embargo, no obstante, aun así, de hecho, en definitiva. Native check.
+- u7 p2: concession and refutation; check ni mucho menos and the mood after es cierto que.
+- u7 p3: rhetorical figures; litotes examples need a native check.
+- u7 p4: the commentary is invented; the library and the council are fictional.
