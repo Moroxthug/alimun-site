@@ -750,3 +750,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: congiuntivo trapassato and condizionale passato in one table; *Avrei voluto venire* and a future seen from the past (*sarebbe venuto*).
 - u2 p3: four kinds of if, including the mixed type; a tip says the imperfetto in both parts (*Se lo sapevo, venivo*) is informal.
 - u2 p4: the letter is invented; Lisbon is named as a city only.
+- u3 p1: benché, sebbene, per quanto + congiuntivo; anche se + indicative; nonostante + noun (and nonostante che + congiuntivo in a tip); *pur* + gerundio.
+- u3 p2: affinché, purché, a condizione che, a patto che, a meno che non, nel caso in cui; tip on *perché* as cause (indicative) and purpose (congiuntivo).
+- u3 p3: prima che, senza che, come se, in modo che against the infinitive forms when the subject is the same; *dopo che* + indicative.
+- u3 p4: the opinion piece on public transport is invented and general; no real city or company named.
