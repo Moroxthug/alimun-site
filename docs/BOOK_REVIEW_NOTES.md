@@ -970,3 +970,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: mandar, dejar, hacer + infinitive; ser against estar + participle; the tip prefers se in speech.
 - u6 p3: debate markers; a lo mejor, quizá, vale, pues, bueno, dale in the tip.
 - u6 p4: the article and the reply are invented.
+- u7 p1: participle clauses and habiendo + participio; agreement. Native check.
+- u7 p2: nouns for verbs; efectuar, presentar, solicitar.
+- u7 p3: formal letter phrases (Muy señores míos, Le agradecería que + imperfecto de subjuntivo); Latin America openings in the tip.
+- u7 p4: complaint and reply are invented (name, date, company).
