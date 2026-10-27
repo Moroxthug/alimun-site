@@ -1046,3 +1046,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: selon, d'après, aux dires de, à en croire; free indirect speech.
 - u8 p3: how to write a résumé; nominalisation.
 - u8 p4: the article and its summary are invented; no real library or town.
+
+## Italian C1
+- u1 p1: passato remoto irregular forms; regional remark on speech. Native check.
+- u1 p2: trapassato remoto and imperfetto narrativo.
+- u1 p3: participio assoluto, free indirect speech, inverted dialogue tags.
+- u1 p4: the extract is invented.
