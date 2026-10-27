@@ -1,0 +1,19 @@
+// English A1 course book (docs/BOOKS.md). Draft: reviewed by a native teacher before it is published.
+// Units are written in units/English-A1/<unit>.js; until then each entry here is planned, with the outline
+// ("plan") its writer works from. Explanations in English, translated in i18n/English-A1.<lang>.json.
+export const BOOK = {
+  id: 'English-A1',
+  language: 'English',
+  level: 'A1',
+  review: 'draft',
+  units: [
+    { id: 'u1', title: 'Hello!', planned: true, plan: { goal: 'Greet people, say your name, where you are from and which languages you speak.', lessons: ['Hello and goodbye; Hello, Hi, Good morning, See you later; How are you?', 'The verb be: I am, you are, he is; short forms (I’m, you’re); My name is …, I’m from …', 'The alphabet and spelling your name; numbers 0 to 20; countries, nationalities and languages', 'Reading: profiles on a language exchange website'] } },
+    { id: 'u2', title: 'My family and my things', planned: true, plan: { goal: 'Talk about your family, your things and what you can see.', lessons: ['A, an and plural nouns (-s, -es, man, woman, child, person); this, that, these, those', 'My, your, his, her, our, their and the possessive ’s; family words', 'Have got and has got; describing people and things (old, young, tall, short, big, small)', 'Reading: a girl describes a family photo'] } },
+    { id: 'u3', title: 'My day', planned: true, plan: { goal: 'Say what you do every day and what time you do it.', lessons: ['Present simple with I, you, we and they; the negative with don’t', 'He, she and it: the -s ending, has, doesn’t; questions with do and does', 'Telling the time, days of the week and daily routine verbs (get up, have breakfast, go to work)', 'Reading: a day in the life of a baker'] } },
+    { id: 'u4', title: 'Food and drink', planned: true, plan: { goal: 'Say what you like to eat and drink, order in a café and understand prices.', lessons: ['Food and drink words; like, love, don’t like, want; a, an and some', 'Ordering: Can I have …? I’d like …, please and thank you; in a café', 'Numbers 20 to 100, money and How much is it?; prices in pounds and euros', 'Reading: a café menu and an order'] } },
+    { id: 'u5', title: 'Home and town', planned: true, plan: { goal: 'Describe your home and say where things are.', lessons: ['Rooms and furniture; there is, there are, is there? are there?', 'Prepositions of place: in, on, under, next to, in front of', 'Places in town and Where is …? It’s …', 'Reading: a short email about a new flat'] } },
+    { id: 'u6', title: 'Can and can’t', planned: true, plan: { goal: 'Say what you can and cannot do, ask politely and talk about your free time.', lessons: ['Can and can’t for ability: I can swim, I can’t cook; questions and short answers', 'Can for requests and permission: Can I open the window? Can you help me?', 'Hobbies and free time: like + -ing, play, go, do; once a week, every day', 'Reading: a hobbies page on a club website'] } },
+    { id: 'u7', title: 'Clothes and weather', planned: true, plan: { goal: 'Describe what people wear and the weather, and say what is happening now.', lessons: ['Clothes and colours; wear; adjectives before the noun', 'The weather and the seasons: It’s sunny, It’s raining; months of the year', 'Present continuous for now: I’m wearing, she’s reading; negatives and questions', 'Reading: two messages from a weekend away'] } },
+    { id: 'u8', title: 'Out and about', planned: true, plan: { goal: 'Find your way, buy a ticket and ask for help.', lessons: ['Places in town and transport words; Where is …? What time does it leave?', 'Buying a ticket; asking for help and saying you do not understand (Can you say that again, please?)', 'Giving directions: turn left, turn right, go straight on; the imperative and please', 'Reading: a text message and a short description of a route'] } },
+  ],
+};
