@@ -1136,3 +1136,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u5 p2: passive with se, estimar/desestimar, proceder a, queísmo note; native check.
 - u5 p3: request and reply formulas; check le ruego que and le agradecería que.
 - u5 p4: the letters are invented; Luis Navas is fictional.
+- u6 p1: conditions without si (de haberlo sabido, de no ser por, gerund); native check.
+- u6 p2: como + subjunctive, siempre y cuando, salvo que, puesto que; check the moods.
+- u6 p3: spoken imperfecto hypotheses marked as spoken only; check por si acaso + indicative.
+- u6 p4: the debate is invented; roles only.
