@@ -1242,3 +1242,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: plain language rewrites; check that the obligation is kept.
 - u6 p3: obligation, right, prohibition, condition; check es sei denn and sofern.
 - u6 p4: the contract clause is invented; no real contract is quoted.
+- u7 p1: Ethos, Pathos, Logos; examples are original.
+- u7 p2: rhetorical devices; check the chiasmus example (arbeiten, um zu leben, nicht leben, um zu arbeiten).
+- u7 p3: framing and loaded language; native check on the connotation labels (Steuerentlastung, Regime, Pöbel).
+- u7 p4: the speech and commentary are invented; the park and the town are fictional.
