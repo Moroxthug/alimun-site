@@ -962,3 +962,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: para que, con tal de que, siempre que, a menos que, en caso de que.
 - u4 p3: antes de que, sin que, de modo que (purpose or result); same subject takes the infinitive.
 - u4 p4: the opinion piece is invented.
+- u5 p1: el cual, cuyo, quien, lo que, lo cual; the tip on el que and on cuyo in Latin America. Native check.
+- u5 p2: indicative for known, subjunctive for unknown; personal a with alguien and nadie.
+- u5 p3: restrictive against explanatory commas; participle for a relative clause.
+- u5 p4: the article is invented; no real city is named.
