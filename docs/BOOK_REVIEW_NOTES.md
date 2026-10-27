@@ -712,3 +712,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: trapassato prossimo of *cominciare* (*il film era già cominciato*) and the transform answers accepted with or without *già*.
 - u1 p3: *finché non* + passato prossimo (until), and *dopo che* + passato prossimo, as everyday forms.
 - u1 p4: nonna Rosa's story is invented; Milano is named as a city only.
+- u2 p1: *ci* for places and *a* + thing; *ci* = us/each other mentioned in one tip; *andarci* with the joined infinitive.
+- u2 p2: agreement of the participle with *ne* for a quantity (*Ne ho mangiate due*) is taught as the rule; please confirm for the level that *Ne ho mangiato due* should not be accepted in the choice item.
+- u2 p3: *glie-* forms, *gliel’ho* and *gliele ho date* (no elision before *le*), imperative *mandamelo*, *me ne vado*.
+- u2 p4: the parcel chat is invented; no real shops or couriers named.
