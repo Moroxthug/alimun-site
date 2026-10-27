@@ -610,3 +610,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: lequel / auquel / duquel against dont; *avec qui* allowed for people.
 - u1 p3: *à peine … que* with inversion; participle clauses with ayant / étant / voyant.
 - u1 p4: the short story and the travel anecdote are original.
+- u2 p1: headlines in nominal style and the verbs behind them; pronominal passive (ça se dit).
+- u2 p2: bien que / quoique + subjunctive, même si + indicative; *malgré que* flagged as a mistake (some speakers accept it).
+- u2 p3: *il semble que* with subjunctive (some authors accept the indicative); conditional of the press explained.
+- u2 p4: the survey and the letter are invented; no statistics.
