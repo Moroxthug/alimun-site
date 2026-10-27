@@ -996,3 +996,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: sofern, es sei denn, indem, ohne dass, statt zu; same subject rule.
 - u4 p3: je nachdem, insofern … als, umso … als, als ob with Konjunktiv II.
 - u4 p4: the reader's letter is invented.
+- u5 p1: Vorgangspassiv, Zustandspassiv, passive without a subject, von and durch. Native check.
+- u5 p2: participle attributes and their relative clauses; zu + Partizip I.
+- u5 p3: strength of verbs for results, hedges, Konjunktiv I in quotations.
+- u5 p4: the study is invented and has no figures.
