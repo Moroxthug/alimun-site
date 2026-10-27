@@ -732,3 +732,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u6 p2: passive with *essere* and *venire*, *da* for the agent, *andare* for necessity (*va compilato*); *essere* chosen in the passato prossimo.
 - u6 p3: reported speech with the tense shifts after a past reporting verb; time words (*il giorno dopo*, *lì*); please check the accepted answers in the transform item with *il giorno seguente*.
 - u6 p4: the news item about a library is invented and general; the comment is signed with a first name only.
+- u7 p1: congiuntivo imperfetto after past verbs of opinion and hope (*pensavo che fosse*); irregular stems of fare, dire, dare, stare, bere.
+- u7 p2: *se* + congiuntivo imperfetto + condizionale for unreal present situations; the past unreal (*se avessi avuto … avrei …*) is left for B2.
+- u7 p3: *Se fossi in te*, *vorrei che tu venissi*, *magari* + congiuntivo imperfetto, *come se*; the *Vieni? – Magari!* use is noted in a tip.
+- u7 p4: the interview with a baker is invented; no real place or person is named.
