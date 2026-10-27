@@ -523,3 +523,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p3: café etiquette (service included, small coins) is general; prices fictional; *Je vais prendre* mentioned in text only.
 - u3 p4: menu prices are invented examples.
 - New speaker roles added to audio.js: Serveuse (woman), Serveur (man).
+- u4 p1: *le living* for the living room in Belgium; *un trois-pièces* counting rule (living room and bedrooms) as commonly used in France.
+- u4 p1: picture exercise accepts *une horloge* for the clock drawing (could also be *une pendule*).
+- u4 p2: *de belles chaises* (de before adjective + plural noun) taught as the careful rule; many speakers say *des belles chaises*.
+- u4 p4: rent and address in the advert are invented; email at example.com.
