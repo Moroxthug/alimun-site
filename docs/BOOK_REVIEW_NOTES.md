@@ -890,3 +890,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: para que, desde que, a não ser que, caso. Native check of the two meanings of desde que.
 - u3 p3: antes que / antes de, sem que, como se; same-subject infinitive against different-subject conjuntivo.
 - u3 p4: opinion piece on public transport; check register.
+- u4 p1: o qual, cujo, quem, tudo o que / tudo quanto. Check the Brazil note on cujo.
+- u4 p2: indicative for known, conjuntivo for unknown or none; superlative tip says both are heard. Native check.
+- u4 p3: restrictive against appositive commas; participle in place of a relative clause.
+- u4 p4: article on a riverside quarter is invented; no real city is named.
