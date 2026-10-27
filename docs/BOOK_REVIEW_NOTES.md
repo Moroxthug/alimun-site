@@ -780,3 +780,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u1 p2: *chamar-se* with the pronoun after the verb in statements (*chamo-me*) and before it in questions (*Como te chamas?*); *Sou do Porto* with the article; list of nationalities.
 - u1 p3: European letter names (*dâblio*, *ípsilon*, *capa*), numbers 0 to 20 with *dezasseis, dezassete, dezanove*, *falar* and *um pouco de*.
 - u1 p4: the three profiles are invented; Faro, Porto and São Paulo are named as cities only.
+- u2 p1: *ter* with *tem / têm* accent; family words; numbers 20 to 100 with *e* before the units; *filho único / filha única*.
+- u2 p2: possessives with the article (Portugal) and *dele / dela* for clarity; a tip says Brazilian speakers often drop the article.
+- u2 p3: adjective agreement including *-e* and consonant adjectives (*jovem, jovens*); *cabelo curto, olhos castanhos* with *ter*.
+- u2 p4: the message is invented; family names are made up.
