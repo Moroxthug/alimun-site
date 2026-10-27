@@ -1128,3 +1128,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: prefixes and spelling (antiinflamatorio, reescribir, imposible); check the note on posguerra.
 - u3 p3: parasynthetic verbs and compounds; check the plural of rascacielos and paraguas.
 - u3 p4: the essay is invented.
+- u4 p1: tú, usted, vos, vosotros, ustedes; check the notes on Colombia, Costa Rica and the voseo forms.
+- u4 p2: Spain and Latin America vocabulary and past tenses; check the remark on coger.
+- u4 p3: idioms and proverbs; check each against a Spanish source.
+- u4 p4: the conversation is invented; Inés, Rafael and Martín are fictional.
