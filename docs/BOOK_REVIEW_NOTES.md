@@ -1332,3 +1332,7 @@ u3 p1: future subjunctive (including the irregular forms) and the inflected infi
 u3 p2: absolute constructions (Feita a reunião, Dito isto, Sendo assim) and estar a + infinitive against the Brazilian gerund.
 u3 p3: clitic placement (enclisis, proclisis, mesoclisis), pronoun contractions (mo, ta, lho, lha, no-lo) and mood after talvez, oxalá and como se.
 u3 p4: invented short story that uses these structures.
+u4 p1: hedges and boosters (parece que, ao que parece, tende a, presumivelmente, indubitavelmente); native teacher to check the register.
+u4 p2: nominal style and reporting verbs; pretender (to intend) as a false friend of to pretend (fingir). In the p4 reading, check the subjunctive after avança que.
+u4 p3: strengths and limits, signposting with embora + subjunctive, ao passo que, daqui resulta que.
+u4 p4: invented literature review on remote work; no real studies cited.
