@@ -1124,3 +1124,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u2 p2: mood after no es que, el hecho de que, no porque; native check on el hecho de que.
 - u2 p3: futuro de subjuntivo in fixed phrases; recognition only.
 - u2 p4: the conversation is invented; roles only.
+- u3 p1: diminutives, augmentatives, pejoratives; check tiempazo, ricachón, libraco and the meaning shifts (bolsillo, cajón, ventanilla, cordón).
+- u3 p2: prefixes and spelling (antiinflamatorio, reescribir, imposible); check the note on posguerra.
+- u3 p3: parasynthetic verbs and compounds; check the plural of rascacielos and paraguas.
+- u3 p4: the essay is invented.
