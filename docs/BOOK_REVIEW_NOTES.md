@@ -1298,3 +1298,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u3 p2: absolute participle and gerund; check Finita la riunione and Stando così le cose.
 - u3 p3: combined pronouns, ci and ne, mood after forse, magari, chissà and come se; check the register notes.
 - u3 p4: the story is invented.
+u4 p1: hedges and boosters (pare che, a quanto pare, tende a, presumibilmente, indubbiamente); native teacher to check the register of the examples.
+u4 p2: nominal style and reporting verbs; pretendere as a false friend of to pretend (fingere).
+u4 p3: strengths and limits, signposting with sebbene + subjunctive, mentre, ne consegue che.
+u4 p4: invented literature review on remote work; no real studies cited.
