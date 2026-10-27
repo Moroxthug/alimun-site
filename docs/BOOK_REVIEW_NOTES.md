@@ -541,3 +541,8 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: only seven verbs taught with être (aller, venir, partir, arriver, rester, sortir, rentrer); agreement of the participle with the subject shown for je / nous / vous.
 - u8 p3: *c’était* given as a fixed phrase (imparfait not explained); *ne … rien* appears in examples only.
 - u8 p4: the reading uses *il faisait beau* and *il a plu* without explanation; glossed by context.
+
+## French A2
+- u1 p2: *plus … que* + stress pronoun (moi, toi, lui); *aussi sympa que* kept as the A2 comparison set; superlatives only touched.
+- u1 p3: direct object pronouns without the passé composé agreement (taught later in the book if needed).
+- u1 p4: letter uses *depuis* before it is taught in u2; *Grosses bises* is informal.
