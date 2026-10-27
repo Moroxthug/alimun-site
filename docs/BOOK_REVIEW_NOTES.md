@@ -944,3 +944,9 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u8 p2: single and return (British) against one-way and round-trip; phrases for not understanding.
 - u8 p3: imperatives and directions; ordinals first to third.
 - u8 p4: the message and the directions are invented; Leeds is a real city, the street names are not.
+
+## Spanish B2
+- u1 p1: futuro and futuro perfecto for guesses, condicional for the past. Native check of the Latin America remark.
+- u1 p2: time periphrases; recién in Argentina.
+- u1 p3: time clauses with indicative or subjunctive; apenas había + cuando; nada más + infinitive.
+- u1 p4: the narrative is invented.
