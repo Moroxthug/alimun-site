@@ -1064,3 +1064,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: anguria, cocomero, melone d'acqua; natel in Ticino; mica, già, magari, boh, dai.
 - u4 p3: idioms and proverbs; check piove a catinelle and essere al verde.
 - u4 p4: the conversation is invented; Bologna, Rome, Milan and Palermo are real cities.
+- u5 p1: formal prepositional phrases (in merito a, a seguito di, ai fini di, previa). Native check.
+- u5 p2: administrative verbs (inoltrare, rilasciare, evadere, essere tenuto a). Native check.
+- u5 p3: request and reply formulas; Le sarei grato se volesse.
+- u5 p4: the letters are invented; names are fictional.
