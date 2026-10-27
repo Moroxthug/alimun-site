@@ -1234,3 +1234,7 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4 p2: reporting verbs and Konjunktiv I; check the Konjunktiv II fallback.
 - u4 p3: evaluation and signposting; check zwar … aber and the formal phrases.
 - u4 p4: the literature review is invented; no real studies or authors are cited.
+- u5 p1: modal particles and discourse markers; native check on the glosses.
+- u5 p2: spoken contractions and du/Sie; check haste, biste, ham wir, nich.
+- u5 p3: Austrian and Swiss vocabulary; check Brötli, Härdöpfel, Gehsteig, Znüni.
+- u5 p4: the conversation is invented; Lena, Markus, Nadine and Jonas are fictional.
