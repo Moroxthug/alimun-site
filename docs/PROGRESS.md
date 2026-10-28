@@ -1254,3 +1254,7 @@ Owner: "from mobile, alimun in the middle, hamburger menu on left and get starte
 ## 2026-10-28 — Homepage phone pass
 
 Owner: "should we improve the other sections look as well?" / "ok go". Phones only: plan cards now rest centred and move on quickly (no more two half cards mid-swipe; groups.html script, under 768px); language rows compact now that the video scrolls away (list 1980px to about 1120px tall); closing banner box 20rem tall and its button kept above it. Checked and left as is: the film captions are scene titles inside the owner's films (not repeats), the FAQ title is the same size as the other titles, the tutor card's lower space holds the slowed-down words. v2/assets.html lock updated. Tested at iPhone 13, 360px Arabic and desktop unchanged; no console errors.
+
+## 2026-10-28 — Inner pages alive: previews
+
+Owner: "integrating the same style to the other sections like tiers, services, about and contact and leave the careers and corporate professional and as they are already". Built site/src/blocks/alive.html (homepage motion, cast drawings and soft tints for Tiers, Services, About, Contact; no new copy) and previews at /preview/tiers-alive/, /preview/services-alive/, /preview/about-us-alive/, /preview/contact-alive/ (noindex, built by site/scripts/preview-alive.py from site/dist). Services hero: the black shade becomes a bone wash with ink text (no black backgrounds rule). Live pages unchanged until the owner approves; then the block is added to the four pages and the previews removed.
