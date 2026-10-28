@@ -449,6 +449,22 @@
     .gs_head { padding-top: 1rem; }
   }
   @media (prefers-reduced-motion: reduce) { .ah_t .l, .ah_hello, .ah_p, .ah_btns, .ah_stage, .ah_card, .ah_owl, .ah_peek, .ah_mini, .dk-w > span, .dk-rise { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; clip-path: none !important; } .ah_mk::after { transform: scaleX(1); } .ah_stage { clip-path: none; } .dk-prog { display: none; } }
+
+  /* Owner, 28 Oct 2026: "animate more" */
+  .dk-cur { position: fixed; left: 0; top: 0; width: 2.2rem; height: 2.2rem; margin: -1.1rem 0 0 -1.1rem; border-radius: 50%; border: 2px solid #1a443c; background: rgba(206, 255, 101, .25); pointer-events: none; z-index: 10000; transition: width .3s, height .3s, margin .3s, background .3s, opacity .3s; opacity: 0; mix-blend-mode: multiply; }
+  .dk-cur.is-on { opacity: 1; } .dk-cur.is-big { width: 4.2rem; height: 4.2rem; margin: -2.1rem 0 0 -2.1rem; background: rgba(206, 255, 101, .55); }
+  .ah_hello::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(22rem circle at var(--mx, 50%) var(--my, 50%), rgba(206, 255, 101, .28), transparent 60%); opacity: 0; transition: opacity .4s; }
+  .ah_hello:hover::before { opacity: 1; }
+  .ah_hello > * { position: relative; }
+  .gs_panel { transition: transform .5s cubic-bezier(.2, .8, .2, 1); transform-style: preserve-3d; }
+  .gs_panel .gs_img img { transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .dk-cross { position: absolute; z-index: 4; width: 4.5rem; height: 4.5rem; pointer-events: none; left: 0; will-change: transform; }
+  .dk-cross svg { width: 100%; height: 100%; }
+  .dk-cross.is-flip svg { transform: scaleX(-1); }
+  .ln, .qa, .gs_head { position: relative; }
+  .ln_video video { transform: scale(1.12); transition: transform 6s ease-out; } .ln_video.is-on video { transform: scale(1); }
+  .mq_d svg { transform: rotate(var(--mq-r, 0deg)); transition: transform .2s linear; }
+  @media (prefers-reduced-motion: reduce) { .dk-cur, .dk-cross { display: none !important; } }
   @media (prefers-reduced-motion: reduce) { .dk-char, .dk-bub, .dk-food, .dk-line > div, .tu_rise, .tu_stage { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; clip-path: none !important; } }
   @media (max-width: 767px) {
     .tu { padding: 4.5rem 0; } .tu_grid { grid-template-columns: 1fr; gap: 2.5rem; } .tu_stage { height: auto; min-height: 30rem; padding: 2rem 1.25rem; border-radius: 2.25rem; }
@@ -587,6 +603,47 @@
         show(0);
         seen(fxs, function () { fxs.classList.add("is-in"); film(scs[cur]); }, { threshold: 0.1 });
         if ("IntersectionObserver" in window) { var fio = new IntersectionObserver(function (l) { l.forEach(function (x) { if (x.isIntersecting) show(rowsFx.indexOf(x.target)); }); }, { rootMargin: "-48% 0px -48% 0px" }); rowsFx.forEach(function (r) { fio.observe(r); }); }
+      }
+
+      /* More motion (owner, 28 Oct 2026: "animate more") */
+      if (!calm) {
+        var fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+        /* Desktop: a lime ring follows the cursor and grows over things you can press */
+        if (fine) {
+          var ring = document.createElement("div"); ring.className = "dk-cur"; document.body.appendChild(ring);
+          var cx = 0, cy = 0, tx = 0, ty = 0;
+          document.addEventListener("mousemove", function (e) { tx = e.clientX; ty = e.clientY; ring.classList.add("is-on"); ring.classList.toggle("is-big", !!e.target.closest("a, button, [data-flip], .tr_fc")); });
+          document.addEventListener("mouseleave", function () { ring.classList.remove("is-on"); });
+          (function loop() { cx += (tx - cx) * 0.2; cy += (ty - cy) * 0.2; ring.style.transform = "translate(" + cx.toFixed(1) + "px," + cy.toFixed(1) + "px)"; requestAnimationFrame(loop); })();
+          /* Buttons lean towards the mouse */
+          $$(".button, .ah_btn, .pv_store").forEach(function (b) {
+            b.addEventListener("mousemove", function (e) { var r = b.getBoundingClientRect(); b.style.translate = ((e.clientX - r.left - r.width / 2) * 0.18).toFixed(1) + "px " + ((e.clientY - r.top - r.height / 2) * 0.25).toFixed(1) + "px"; });
+            b.addEventListener("mouseleave", function () { b.style.translate = ""; });
+          });
+          /* Hero card: a soft light follows the mouse */
+          var hello = $(".ah_hello");
+          if (hello) hello.addEventListener("mousemove", function (e) { var r = hello.getBoundingClientRect(); hello.style.setProperty("--mx", (e.clientX - r.left) + "px"); hello.style.setProperty("--my", (e.clientY - r.top) + "px"); });
+          /* Plan cards tilt; the photo moves at another depth */
+          $$(".gs_panel").forEach(function (pn) {
+            var im = $(".gs_img img", pn);
+            pn.addEventListener("mousemove", function (e) { var r = pn.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5; pn.style.transform = "perspective(1200px) rotateX(" + (-y * 5).toFixed(2) + "deg) rotateY(" + (x * 5).toFixed(2) + "deg)"; if (im) im.style.translate = (x * -14).toFixed(1) + "px " + (y * -10).toFixed(1) + "px"; });
+            pn.addEventListener("mouseleave", function () { pn.style.transform = ""; if (im) im.style.translate = ""; });
+          });
+        }
+        /* A burst of colour on every main button click */
+        $$(".button, .ah_btn").forEach(function (b) { b.addEventListener("click", function () { burst(b); }); });
+        /* Buddies that cross a section's edge as you scroll past it */
+        var crossers = [[".gs_head", "cat", "top"], [".ln", "snail", "top"], [".qa", "dog", "top"]];
+        var cr = crossers.map(function (c) { var host = $(c[0]); if (!host) return null; var d = document.createElement("div"); d.className = "dk-cross"; d.setAttribute("aria-hidden", "true"); d.innerHTML = C.drawing(c[1]) || ""; d.style.top = c[0] === ".gs_head" ? "-3.5rem" : "-2.2rem"; host.appendChild(d); return { host: host, el: d, last: 0 }; }).filter(Boolean);
+        var mqDraws = $$(".mq_d"), cq = 0;
+        var crossTick = function () {
+          cq = 0;
+          cr.forEach(function (c) { var r = c.host.getBoundingClientRect(), k = Math.min(1, Math.max(0, (innerHeight - r.top) / (innerHeight + r.height * 0.6))), x = k * Math.max(0, c.host.clientWidth - 72); c.el.classList.toggle("is-flip", x < c.last); c.last = x; c.el.style.transform = "translateX(" + x.toFixed(0) + "px)"; });
+          var rot = (scrollY * 0.08) % 360; mqDraws.forEach(function (d, i) { d.style.setProperty("--mq-r", ((i % 2 ? -1 : 1) * Math.sin(rot / 30) * 14).toFixed(1) + "deg"); });
+        };
+        window.addEventListener("scroll", function () { if (!cq) cq = requestAnimationFrame(crossTick); }, { passive: true }); crossTick();
+        /* Remaining intro text rises in */
+        $$(".gs_intro p, .ln_head p, .qa_head p, .sx_side p, .gs_cta").forEach(function (e) { e.classList.add("dk-rise"); seen(e, function () { e.classList.add("is-in"); }, { threshold: 0.2 }); });
       }
 
       /* Try it */
