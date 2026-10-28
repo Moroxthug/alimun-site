@@ -350,8 +350,6 @@
   @media (prefers-reduced-motion: reduce) { .ah_t .l, .ah_hello, .ah_p, .ah_btns, .ah_stage, .ah_card, .ah_owl, .ah_peek, .ah_mini, .dk-w > span, .dk-rise { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; clip-path: none !important; } .ah_mk::after { transform: scaleX(1); } .ah_stage { clip-path: none; } .dk-prog { display: none; } }
 
   /* Owner, 28 Oct 2026: "animate more" */
-  .dk-cur { position: fixed; left: 0; top: 0; width: 2.2rem; height: 2.2rem; margin: -1.1rem 0 0 -1.1rem; border-radius: 50%; border: 2px solid #1a443c; background: rgba(206, 255, 101, .25); pointer-events: none; z-index: 10000; transition: width .3s, height .3s, margin .3s, background .3s, opacity .3s; opacity: 0; mix-blend-mode: multiply; }
-  .dk-cur.is-on { opacity: 1; } .dk-cur.is-big { width: 4.2rem; height: 4.2rem; margin: -2.1rem 0 0 -2.1rem; background: rgba(206, 255, 101, .55); }
   .ah_hello::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(22rem circle at var(--mx, 50%) var(--my, 50%), rgba(206, 255, 101, .28), transparent 60%); opacity: 0; transition: opacity .4s; }
   .ah_hello:hover::before { opacity: 1; }
   .ah_hello > * { position: relative; }
@@ -534,13 +532,8 @@
       /* More motion (owner, 28 Oct 2026: "animate more") */
       if (!calm) {
         var fine = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-        /* Desktop: a lime ring follows the cursor and grows over things you can press */
+        /* Desktop only (the cursor ring was removed on the owner's request, 28 Oct 2026) */
         if (fine) {
-          var ring = document.createElement("div"); ring.className = "dk-cur"; document.body.appendChild(ring);
-          var cx = 0, cy = 0, tx = 0, ty = 0;
-          document.addEventListener("mousemove", function (e) { tx = e.clientX; ty = e.clientY; ring.classList.add("is-on"); ring.classList.toggle("is-big", !!e.target.closest("a, button, [data-flip], .tr_fc")); });
-          document.addEventListener("mouseleave", function () { ring.classList.remove("is-on"); });
-          (function loop() { cx += (tx - cx) * 0.2; cy += (ty - cy) * 0.2; ring.style.transform = "translate(" + cx.toFixed(1) + "px," + cy.toFixed(1) + "px)"; requestAnimationFrame(loop); })();
           /* Buttons lean towards the mouse */
           $$(".button, .ah_btn, .pv_store").forEach(function (b) {
             b.addEventListener("mousemove", function (e) { var r = b.getBoundingClientRect(); b.style.translate = ((e.clientX - r.left - r.width / 2) * 0.18).toFixed(1) + "px " + ((e.clientY - r.top - r.height / 2) * 0.25).toFixed(1) + "px"; });

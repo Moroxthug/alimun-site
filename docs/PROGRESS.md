@@ -1263,3 +1263,23 @@ Owner: "should we improve the other sections look as well?" / "ok go". Phones on
 ## 2026-10-28 — Inner pages alive: previews
 
 Owner: "integrating the same style to the other sections like tiers, services, about and contact and leave the careers and corporate professional and as they are already". Built site/src/blocks/alive.html (homepage motion, cast drawings and soft tints for Tiers, Services, About, Contact; no new copy) and previews at /preview/tiers-alive/, /preview/services-alive/, /preview/about-us-alive/, /preview/contact-alive/ (noindex, built by site/scripts/preview-alive.py from site/dist). Services hero: the black shade becomes a bone wash with ink text (no black backgrounds rule). Live pages unchanged until the owner approves; then the block is added to the four pages and the previews removed.
+
+## 2026-10-28 — Cursor ring removed; inner-page previews with more colour
+
+Owner: "remove the green circle on cursor, and maybe add some more colour to it, more animations, variegate a bit". Cursor ring removed from the live homepage (v2/assets.html, lock updated) and from the previews. Previews now add tinted back cards behind photos that drift with the scroll, a different entrance per section (plan cards fan in, contact cards pop, path cards slide from the sides, blog cards flip up), palette dots around heroes, the contact form and the quote, buddies that hop on hover, tinted FAQ answer and blog cards, a light sweep on buttons, and the homepage band (already translated) on Services and About.
+
+## 2026-10-28 — Homepage phone fixes
+
+Owner: "some videos do not play, some videos cover half text, download app badges do not look nicely put". On phones the showcase films were paused by the desktop sticky-scene logic (now each row plays its own film while on screen; a tap also starts a film, for iPhone Low Power Mode). The languages section video was sticky and covered the language names on phones; it now scrolls with the page. The app badges sit centred side by side under their label. Locks updated for v2/assets.html and v2/video-dashboard.html. Tested at iPhone 13 size (all on-screen films playing, no console errors) and desktop unchanged.
+
+## 2026-10-28 — Phone header
+
+Owner: "from mobile, alimun in the middle, hamburger menu on left and get started button on right". Added a phone/tablet rule (up to 991px) to the shared stylesheet: three-column grid with equal sides, so the logo sits exactly on the centre line on every page and language; Arabic mirrors. Smaller logo and button below 480px and 360px so nothing touches at 320px. Measured logo offset 0px at 320, 360, 390 and 820px on home, tiers, blog and es/ar/de/fr/zh; menu opens as before; desktop untouched.
+
+## 2026-10-28 — Homepage phone pass
+
+Owner: "should we improve the other sections look as well?" / "ok go". Phones only: plan cards now rest centred and move on quickly (no more two half cards mid-swipe; groups.html script, under 768px); language rows compact now that the video scrolls away (list 1980px to about 1120px tall); closing banner box 20rem tall and its button kept above it. Checked and left as is: the film captions are scene titles inside the owner's films (not repeats), the FAQ title is the same size as the other titles, the tutor card's lower space holds the slowed-down words. v2/assets.html lock updated. Tested at iPhone 13, 360px Arabic and desktop unchanged; no console errors.
+
+## 2026-10-28 — Inner pages alive: previews
+
+Owner: "integrating the same style to the other sections like tiers, services, about and contact and leave the careers and corporate professional and as they are already". Built site/src/blocks/alive.html (homepage motion, cast drawings and soft tints for Tiers, Services, About, Contact; no new copy) and previews at /preview/tiers-alive/, /preview/services-alive/, /preview/about-us-alive/, /preview/contact-alive/ (noindex, built by site/scripts/preview-alive.py from site/dist). Services hero: the black shade becomes a bone wash with ink text (no black backgrounds rule). Live pages unchanged until the owner approves; then the block is added to the four pages and the previews removed.
