@@ -1236,3 +1236,25 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 
 ## 28 Oct 2026 — Mockup D: more motion
 - Owner: "animate more". Added on desktop: a lime ring that follows the cursor and grows over buttons and links; buttons that lean towards the mouse; a soft lime light following the mouse over the hero card; plan cards tilting in 3D with the photo at another depth. Everywhere: a burst of colour when a main button is pressed; the cat, the snail and the dog crossing the top of the plans, the languages and the FAQ as you scroll past; the moving band's buddies rocking with the scroll; city videos easing in with a slow zoom; the remaining intro text rising in. All off with reduced motion; checked desktop, iPhone size and reduced motion with no console errors.
+
+## 28 Oct 2026 — New homepage live (mockup D applied)
+- Owner: "apply it". The homepage (site/src/pages/index.astro) now has, around the existing approved blocks: the hero from mockup A (white card with the title, the video frame with the owl, typing bubble and "after every class" card, three tinted cards), the moving band, "Everything you need between classes" with the seven product films, the dashboard film slot with the App Store and Google Play badges, the AI tutor section with Lena's pronunciation demo and its film slot, the try-it card under "Practice between classes", the colour, buddies and motion of mockup D. New blocks in site/src/blocks/home/v2/ (locked in site/locked.json with this request). The old hero block stays because its section wraps the page; its title and video wall are hidden.
+- AI wording: the homepage names the AI tutor as AI, on the owner's permission (24 Oct rule otherwise unchanged for other public pages).
+- Every language: 81 new keys (home2_*) in js/translations.js for en, es, fr, de, pt, zh, ar, it and ma (each in the site's existing tone); lines the scripts type come from a hidden keyed block. English practice material (the try-it sentence, the sentence Lena asks for, German and English flashcard words) stays as it is. Arabic: practice material left to right, hero words drop whole so the script stays joined; Chinese: hero title sized for the script.
+- Checks: build passes with 74 locked blocks unchanged; all nine homepages checked in a browser (translated, try-it in place, films load, no console errors), iPhone size and reduced motion checked. Previews /preview/home-alive/ and /preview/home-live/ and their builder removed.
+
+## 2026-10-28 — Homepage phone fixes
+
+Owner: "some videos do not play, some videos cover half text, download app badges do not look nicely put". On phones the showcase films were paused by the desktop sticky-scene logic (now each row plays its own film while on screen; a tap also starts a film, for iPhone Low Power Mode). The languages section video was sticky and covered the language names on phones; it now scrolls with the page. The app badges sit centred side by side under their label. Locks updated for v2/assets.html and v2/video-dashboard.html. Tested at iPhone 13 size (all on-screen films playing, no console errors) and desktop unchanged.
+
+## 2026-10-28 — Phone header
+
+Owner: "from mobile, alimun in the middle, hamburger menu on left and get started button on right". Added a phone/tablet rule (up to 991px) to the shared stylesheet: three-column grid with equal sides, so the logo sits exactly on the centre line on every page and language; Arabic mirrors. Smaller logo and button below 480px and 360px so nothing touches at 320px. Measured logo offset 0px at 320, 360, 390 and 820px on home, tiers, blog and es/ar/de/fr/zh; menu opens as before; desktop untouched.
+
+## 2026-10-28 — Homepage phone pass
+
+Owner: "should we improve the other sections look as well?" / "ok go". Phones only: plan cards now rest centred and move on quickly (no more two half cards mid-swipe; groups.html script, under 768px); language rows compact now that the video scrolls away (list 1980px to about 1120px tall); closing banner box 20rem tall and its button kept above it. Checked and left as is: the film captions are scene titles inside the owner's films (not repeats), the FAQ title is the same size as the other titles, the tutor card's lower space holds the slowed-down words. v2/assets.html lock updated. Tested at iPhone 13, 360px Arabic and desktop unchanged; no console errors.
+
+## 2026-10-28 — Inner pages alive: previews
+
+Owner: "integrating the same style to the other sections like tiers, services, about and contact and leave the careers and corporate professional and as they are already". Built site/src/blocks/alive.html (homepage motion, cast drawings and soft tints for Tiers, Services, About, Contact; no new copy) and previews at /preview/tiers-alive/, /preview/services-alive/, /preview/about-us-alive/, /preview/contact-alive/ (noindex, built by site/scripts/preview-alive.py from site/dist). Services hero: the black shade becomes a bone wash with ink text (no black backgrounds rule). Live pages unchanged until the owner approves; then the block is added to the four pages and the previews removed.

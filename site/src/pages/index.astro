@@ -1,5 +1,8 @@
 ---
 // Homepage, rebuilt one element at a time. Only approved elements are added.
+// 28 Oct 2026 (owner: "apply it", from mockup D): the hero from mockup A, the moving band, the dashboard showcase with
+// the product films, the two film slots, the AI tutor and the try-it card (src/blocks/home/v2/, text in home2_* keys).
+// The old hero block stays for its section, which wraps the page; its title and video wall are hidden by v2/assets.
 import Base from '../layouts/Base.astro';
 import head from '../blocks/head.html?raw';
 import after from '../blocks/after-body.html?raw';
@@ -11,16 +14,34 @@ import learn from '../blocks/home/learn.html?raw';
 import faq from '../blocks/home/faq.html?raw';
 import bottomCta from '../blocks/home/banner.html?raw';
 import footer from '../blocks/footer.html?raw';
+import v2Hero from '../blocks/home/v2/hero.html?raw';
+import v2Band from '../blocks/home/v2/band.html?raw';
+import v2Showcase from '../blocks/home/v2/showcase.html?raw';
+import v2VideoDashboard from '../blocks/home/v2/video-dashboard.html?raw';
+import v2Tutor from '../blocks/home/v2/tutor.html?raw';
+import v2VideoTutor from '../blocks/home/v2/video-tutor.html?raw';
+import v2Try from '../blocks/home/v2/try.html?raw';
+import v2Strings from '../blocks/home/v2/strings.html?raw';
+import v2Assets from '../blocks/home/v2/assets.html?raw';
 ---
 <Base wfPage="68d948d13b6c9f2bbbac3ea7" head={head} after={after}>
   <Fragment set:html={nav} />
   <main class="main-wrapper">
+    <Fragment set:html={v2Hero} />
     <Fragment set:html={hero} />
     <Fragment set:html={groups} />
+    <Fragment set:html={v2Band} />
+    <Fragment set:html={v2Showcase} />
+    <Fragment set:html={v2VideoDashboard} />
+    <Fragment set:html={v2Tutor} />
+    <Fragment set:html={v2VideoTutor} />
     <Fragment set:html={languages} />
     <Fragment set:html={learn} />
+    <Fragment set:html={v2Try} />
     <Fragment set:html={faq} />
     <Fragment set:html={bottomCta} />
+    <Fragment set:html={v2Strings} />
   </main>
   <Fragment set:html={footer} />
+  <Fragment set:html={v2Assets} />
 </Base>
