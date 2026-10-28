@@ -124,7 +124,7 @@ export const UNIT = {
           ] },
           { t: 'ex', kind: 'fix', h: 'Fix the punctuation error.', items: [
             { s: 'Il film era lungo[,] era anche magnifico.', a: [';', ' –', ':'], why: 'A comma splice: use a semicolon or a dash.' },
-            { s: 'Andiamo a mangiare[ ]nonna.', a: [','], why: 'A comma changes the meaning: *Andiamo a mangiare, nonna.*' },
+            { s: 'Ci servono tre cose[;] pane, formaggio e vino.', a: [':'], why: 'A colon, not a semicolon, introduces a list.' },
           ] },
         ],
       ],
