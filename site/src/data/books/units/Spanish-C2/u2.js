@@ -123,7 +123,7 @@ export const UNIT = {
           ] },
           { t: 'ex', kind: 'fix', h: 'Fix the punctuation error.', items: [
             { s: 'La película era larga[,] también era magnífica.', a: [';', ' —', ':'], why: 'A comma splice: use a semicolon or a dash.' },
-            { s: 'Vamos a comer[ ]abuela.', a: [','], why: 'A comma changes the meaning: *Vamos a comer, abuela.*' },
+            { s: 'Necesitamos tres cosas[;] pan, queso y vino.', a: [':'], why: 'A colon, not a semicolon, introduces a list.' },
           ] },
         ],
       ],

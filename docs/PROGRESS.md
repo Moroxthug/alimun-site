@@ -1219,6 +1219,11 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 - `node scripts/check-book.mjs Portuguese-C2` passes (368 exercise items in lessons). Review notes under `## Portuguese C2` in `docs/BOOK_REVIEW_NOTES.md`. No new speaker names. A small gender fix in Italian C2 unit 7 went in with unit 7 of this book.
 - The "C2 for every language" line is struck from the Order list in `docs/WRITING_BOOKS.md`: the list is now empty.
 - Not done: translations of the explanations, audio from `/app/audio`, native review, and a play-through with `scripts/play-books.js`. `npm run build` not run, as instructed.
+## 2026-10-28 — Play-through of the eleven new C1 and C2 books
+- `node scripts/play-books.js` on English C2, French, German, Italian, Portuguese and Spanish C1 and C2: 347 lessons and 88 unit tests, every unit test 100%. Five lessons (unit 2, page 3 of the English, French, German, Italian and Spanish C2 books) had a `fix` item whose error was a bracketed space, which a student cannot tap; each was replaced by a colon-for-semicolon fix and re-played clean.
+- `scripts/play-books.js` no longer clicks the per-item Check button for `fix` items inside unit tests (tests have none).
+- The player reads book data from alimun.com, so a fix has to be pushed and deployed before it can be re-played.
+- Next: translations of the explanations (77 files), then audio from `/app/audio` (about 1,071 clips, about 117 minutes), then native review.
 ## 27 Oct 2026 — Product films on mockup D
 - Owner sent 16 silent screen films of the app (8 subjects, each 16:9 1920x1080 and 4:5 1080x1350). Sources in media/video-source/ (kept out of the Vercel upload by /media/ in .vercelignore). Web versions in videos/ with the existing naming (<name>-transcode.mp4 / .webm / -poster-00001.jpg) by scripts/encode-product-films.sh: audio stripped, H.264 High 4.1 crf 25 +faststart, VP9 crf 34, 16:9 at 1600 px, 4:5 at 1080 px, poster at 1 s. The overview was re-encoded at crf 27 (H.264) and 38 (VP9) to stay under 6 MB (SSIM 0.98 against the source).
 - Mockup D (/preview/home-live/): the overview in the "Alimun on your computer and your phone" slot, the AI tutor film in "See your AI tutor at work", and the live classes, course book, practice, mock tests, library and progress films in the matching showcase rows (flashcards has no film and keeps its animated sketch). The 16:9 or 4:5 film is chosen once on load (4:5 at 767 px and below); each video is created only when its box comes on screen (IntersectionObserver), autoplay muted loop playsinline, preload metadata, poster, WebM then MP4; the slots pause when scrolled away; reduced motion shows the poster only.
@@ -1262,3 +1267,19 @@ Owner: "integrating the same style to the other sections like tiers, services, a
 ## 2026-10-28 — Cursor ring removed; inner-page previews with more colour
 
 Owner: "remove the green circle on cursor, and maybe add some more colour to it, more animations, variegate a bit". Cursor ring removed from the live homepage (v2/assets.html, lock updated) and from the previews. Previews now add tinted back cards behind photos that drift with the scroll, a different entrance per section (plan cards fan in, contact cards pop, path cards slide from the sides, blog cards flip up), palette dots around heroes, the contact form and the quote, buddies that hop on hover, tinted FAQ answer and blog cards, a light sweep on buttons, and the homepage band (already translated) on Services and About.
+
+## 2026-10-28 — Homepage phone fixes
+
+Owner: "some videos do not play, some videos cover half text, download app badges do not look nicely put". On phones the showcase films were paused by the desktop sticky-scene logic (now each row plays its own film while on screen; a tap also starts a film, for iPhone Low Power Mode). The languages section video was sticky and covered the language names on phones; it now scrolls with the page. The app badges sit centred side by side under their label. Locks updated for v2/assets.html and v2/video-dashboard.html. Tested at iPhone 13 size (all on-screen films playing, no console errors) and desktop unchanged.
+
+## 2026-10-28 — Phone header
+
+Owner: "from mobile, alimun in the middle, hamburger menu on left and get started button on right". Added a phone/tablet rule (up to 991px) to the shared stylesheet: three-column grid with equal sides, so the logo sits exactly on the centre line on every page and language; Arabic mirrors. Smaller logo and button below 480px and 360px so nothing touches at 320px. Measured logo offset 0px at 320, 360, 390 and 820px on home, tiers, blog and es/ar/de/fr/zh; menu opens as before; desktop untouched.
+
+## 2026-10-28 — Homepage phone pass
+
+Owner: "should we improve the other sections look as well?" / "ok go". Phones only: plan cards now rest centred and move on quickly (no more two half cards mid-swipe; groups.html script, under 768px); language rows compact now that the video scrolls away (list 1980px to about 1120px tall); closing banner box 20rem tall and its button kept above it. Checked and left as is: the film captions are scene titles inside the owner's films (not repeats), the FAQ title is the same size as the other titles, the tutor card's lower space holds the slowed-down words. v2/assets.html lock updated. Tested at iPhone 13, 360px Arabic and desktop unchanged; no console errors.
+
+## 2026-10-28 — Inner pages alive: previews
+
+Owner: "integrating the same style to the other sections like tiers, services, about and contact and leave the careers and corporate professional and as they are already". Built site/src/blocks/alive.html (homepage motion, cast drawings and soft tints for Tiers, Services, About, Contact; no new copy) and previews at /preview/tiers-alive/, /preview/services-alive/, /preview/about-us-alive/, /preview/contact-alive/ (noindex, built by site/scripts/preview-alive.py from site/dist). Services hero: the black shade becomes a bone wash with ink text (no black backgrounds rule). Live pages unchanged until the owner approves; then the block is added to the four pages and the previews removed.
