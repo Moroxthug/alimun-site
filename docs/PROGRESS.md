@@ -1258,3 +1258,7 @@ Owner: "should we improve the other sections look as well?" / "ok go". Phones on
 ## 2026-10-28 — Inner pages alive: previews
 
 Owner: "integrating the same style to the other sections like tiers, services, about and contact and leave the careers and corporate professional and as they are already". Built site/src/blocks/alive.html (homepage motion, cast drawings and soft tints for Tiers, Services, About, Contact; no new copy) and previews at /preview/tiers-alive/, /preview/services-alive/, /preview/about-us-alive/, /preview/contact-alive/ (noindex, built by site/scripts/preview-alive.py from site/dist). Services hero: the black shade becomes a bone wash with ink text (no black backgrounds rule). Live pages unchanged until the owner approves; then the block is added to the four pages and the previews removed.
+
+## 2026-10-28 — Cursor ring removed; inner-page previews with more colour
+
+Owner: "remove the green circle on cursor, and maybe add some more colour to it, more animations, variegate a bit". Cursor ring removed from the live homepage (v2/assets.html, lock updated) and from the previews. Previews now add tinted back cards behind photos that drift with the scroll, a different entrance per section (plan cards fan in, contact cards pop, path cards slide from the sides, blog cards flip up), palette dots around heroes, the contact form and the quote, buddies that hop on hover, tinted FAQ answer and blog cards, a light sweep on buttons, and the homepage band (already translated) on Services and About.

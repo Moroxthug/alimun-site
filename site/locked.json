@@ -257,8 +257,8 @@
     "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\"); 2026-10-27 games and fun: any question set for games, flip cards from pairs, pages for all games and all fun quizzes (owner: \"more resources now, games and fun stuff\")"
   },
   "src/blocks/home/v2/assets.html": {
-    "sha256": "47a69a095e8a0f71c8dc71bf50758266efdd6bef2dcc8905893c0da3e5b47e82",
-    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-10-28 mobile fixes (owner: \"some videos do not play, some videos cover half text, download app badges do not look nicely put\"); 2026-10-28 phone pass (owner: \"should we improve the other sections look as well?\" ... \"ok go\")"
+    "sha256": "67b41dd2993a514e8d471eb2d0fc7608150f4f5ed4a6395318c4d1b9e4c7240d",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-10-28 mobile fixes (owner: \"some videos do not play, some videos cover half text, download app badges do not look nicely put\"); 2026-10-28 phone pass (owner: \"should we improve the other sections look as well?\" ... \"ok go\"); 2026-10-28 cursor ring removed (owner: \"remove the green circle on cursor\")"
   },
   "src/blocks/home/v2/band.html": {
     "sha256": "ee96fed3ff5ea74206747a7beaf2c17e898200f1548db41a9089c8caa0f888cd",

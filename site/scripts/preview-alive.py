@@ -12,6 +12,9 @@ for page,name in [('tiers','Tiers'),('services','Services'),('about-us','About')
   t=re.sub(r'<script type="application/json" id="alimun-lang-alternates">.*?</script>','',t,flags=re.S)
   t=re.sub(r'<script type="application/ld\+json">.*?</script>','',t,flags=re.S)
   assert t.count('</body>')==1
+  band=open(R+'/site/src/blocks/home/v2/band.html').read()
+  for anchor in {'services':'<section id="explore" class="tl"','about-us':'<section class="ah"'}.get(page,'').split('|'):
+    if anchor: assert t.count(anchor)==1; t=t.replace(anchor,band+'\n'+anchor,1)
   t=t.replace('</body>',blk+'\n</body>',1)
   os.makedirs(R+'/preview/'+page+'-alive',exist_ok=True); open(R+'/preview/'+page+'-alive/index.html','w').write(t)
   print(page,len(t),t.count('noindex'),'canonical' in t)
