@@ -10,6 +10,8 @@ t=re.sub(r'<title>.*?</title>','<title>Preview – Homepage D – Alimun</title>
 t=re.sub(r'<link[^>]*rel="(canonical|alternate)"[^>]*>\s*','',t)
 t=re.sub(r'<script type="application/json" id="alimun-lang-alternates">.*?</script>','',t,flags=re.S)
 t=re.sub(r'<script type="application/ld\+json">.*?</script>','',t,flags=re.S)
+assert t.count('<section class="section is-video">')==1
+t=t.replace('<section class="section is-video">',part('MHERO')+'<section class="section is-video">')
 assert t.count('<section class="ln">')==1
 t=t.replace('<section class="ln">',part('TUTOR')+'\n<section class="ln">')
 i=[m.start() for m in re.finditer(r'class="sx_row[ "]',t)][1]; j=t.index('</p>',i)+4
