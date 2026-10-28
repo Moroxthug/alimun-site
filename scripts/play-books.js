@@ -136,7 +136,7 @@ async function answer(page, b, gi) {
         const ti = spotTargets(b.items[i].s)[0];
         await click('[data-act="fixtap"][data-i="' + i + '"][data-t="' + ti + '"]');
         await q('input[data-i="' + i + '"]').fill(b.items[i].a[0]);
-        await click('[data-act="fixok"][data-i="' + i + '"]');
+        if (await q('[data-act="fixok"][data-i="' + i + '"]').count()) await click('[data-act="fixok"][data-i="' + i + '"]');
       }
       return;
     case 'colloc':
