@@ -240,6 +240,7 @@
   /* Store badges under the dashboard video (official artwork from Apple and Google; links come later) */
   .pv_apps { display: flex; align-items: center; justify-content: center; gap: 1rem; flex-wrap: wrap; margin-top: 2rem; }
   .pv_apps p { margin: 0 .5rem 0 0; font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; font-size: 1.6rem; }
+  .pv_badges { display: flex; align-items: center; gap: 1rem; }
   .pv_store { display: inline-block; transition: transform .5s cubic-bezier(.3, 1.5, .5, 1); } .pv_store:hover { transform: translateY(-4px) scale(1.04); }
   .pv_store img { display: block; height: 52px; width: auto; }
   @media (max-width: 767px) {
@@ -368,6 +369,16 @@
   html[lang="zh"] .ah .ah_t { font-size: clamp(3rem, 5.4vw, 5rem) !important; line-height: 1.05 !important; }
   html[dir="rtl"] .ah .ah_t { line-height: 1.15 !important; }
   html[dir="rtl"] .ah_peek { right: auto; left: 1.5rem; }
+  /* Phones (owner, 28 Oct 2026): the language video scrolls with the page instead of covering the list; store badges centred */
+  @media (max-width: 767px) {
+    .ln_side { position: relative !important; top: auto !important; padding-top: 0 !important; z-index: 1 !important; background: transparent !important; }
+    .ln_media { height: 52vw !important; min-height: 13rem; margin-bottom: 1.5rem; }
+    .pv_apps { flex-direction: column; gap: .9rem; text-align: center; }
+    .pv_apps p { margin: 0; font-size: 1.4rem; }
+    .pv_apps .pv_badges { display: flex; justify-content: center; align-items: center; gap: .75rem; flex-wrap: nowrap; }
+    .pv_store img { height: 44px !important; }
+    .pv_frame, .fx_rowfilm { cursor: pointer; }
+  }
   @media (prefers-reduced-motion: reduce) { .dk-char, .dk-bub, .dk-food, .dk-line > div, .tu_rise, .tu_stage { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; clip-path: none !important; } }
   @media (max-width: 767px) {
     .tu { padding: 4.5rem 0; } .tu_grid { grid-template-columns: 1fr; gap: 2.5rem; } .tu_stage { height: auto; min-height: 30rem; padding: 2rem 1.25rem; border-radius: 2.25rem; }
@@ -476,6 +487,8 @@
         }
         var pr = v.play(); if (pr && pr.catch) pr.catch(function () {});
       };
+      /* A tap starts a film that the device did not autoplay (for example iPhone Low Power Mode) */
+      $$("[data-film]").forEach(function (b) { b.addEventListener("click", function () { if (calm) return; playFilm(b); var v = $("video", b); if (v && v.paused) { var pr = v.play(); if (pr && pr.catch) pr.catch(function () {}); } }); });
       /* The two large slots play while on screen and pause when scrolled away */
       if ("IntersectionObserver" in window && !calm) {
         var slotIo = new IntersectionObserver(function (l) { l.forEach(function (x) { if (x.isIntersecting) playFilm(x.target); else { var v = $("video", x.target); if (v) v.pause(); } }); }, { rootMargin: "150px 0px" });
@@ -493,7 +506,8 @@
         var screen = $("[data-fx-screen]", fxs), rowsFx = $$(".fx_row", fxs), scs = $$(".fx_sc", fxs), cur = -1, loops = [];
         $$("[data-draw='book']", fxs).forEach(function (el) { el.innerHTML = C.book ? C.book("idle") : ""; });
         var film = function (s) {
-          $$("[data-film] video", fxs).forEach(function (v) { if (!s.contains(v)) v.pause(); });
+          if (FILM_SIZE === "4x5") return; /* phones: each row plays its own film while on screen */
+          $$(".fx_sc [data-film] video", fxs).forEach(function (v) { if (!s.contains(v)) v.pause(); });
           var box = $("[data-film]", s); if (box) playFilm(box);
         };
         var stop = function () { loops.forEach(function (x) { clearInterval(x); clearTimeout(x); }); loops = []; };

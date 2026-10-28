@@ -257,8 +257,8 @@
     "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\"); 2026-10-27 games and fun: any question set for games, flip cards from pairs, pages for all games and all fun quizzes (owner: \"more resources now, games and fun stuff\")"
   },
   "src/blocks/home/v2/assets.html": {
-    "sha256": "7db7b9e4865104f2e4670fc6ceaef58d0d22c9f70b52a5a513aa5aa7ca7bafb7",
-    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+    "sha256": "58d1bfb55d8959671a3925c41538e2359f97e67591181be8c98e0a060a72fa33",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-10-28 mobile fixes (owner: \"some videos do not play, some videos cover half text, download app badges do not look nicely put\")"
   },
   "src/blocks/home/v2/band.html": {
     "sha256": "ee96fed3ff5ea74206747a7beaf2c17e898200f1548db41a9089c8caa0f888cd",
@@ -285,8 +285,8 @@
     "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
   },
   "src/blocks/home/v2/video-dashboard.html": {
-    "sha256": "aa9533a8063755de81709b3b9d05244f92661d64b3f3c692024ef78705e760ca",
-    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+    "sha256": "3b2831e1bcacec519fe78542f539ae2128a19cf3079b24b89d55133030275f21",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-10-28 mobile fixes (owner: \"some videos do not play, some videos cover half text, download app badges do not look nicely put\")"
   },
   "src/blocks/home/v2/video-tutor.html": {
     "sha256": "14438d3a314cda39084d7339672815c2c2433f08e7cd66382bf1684200d3e1a9",
