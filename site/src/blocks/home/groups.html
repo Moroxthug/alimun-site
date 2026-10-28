@@ -100,6 +100,9 @@
               var p = Math.min(1, Math.max(0, -root.getBoundingClientRect().top / range));
               // Hold the first card briefly, glide through the rest, hold the last.
               var t = Math.min(1, Math.max(0, (p - .08) / .84));
+              // Phones (owner, 28 Oct 2026): each card rests in the centre for most of its share of the scroll and then
+              // moves on quickly, so a whole card is in view instead of two halves.
+              if (window.innerWidth < 768) { var n = panels.length - 1, s = t * n, k = Math.min(n - 1, Math.floor(s)), f = s - k; f = Math.min(1, Math.max(0, (f - .3) / .4)); t = (k + f * f * (3 - 2 * f)) / n; }
               // Centre the card in view; measured positions make this work left to right and right to left.
               var first = panels[0].offsetLeft, last = panels[panels.length - 1].offsetLeft;
               var x = (window.innerWidth - panels[0].offsetWidth) / 2 - (first + t * (last - first));

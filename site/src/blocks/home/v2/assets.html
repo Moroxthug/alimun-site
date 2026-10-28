@@ -378,6 +378,12 @@
     .pv_apps .pv_badges { display: flex; justify-content: center; align-items: center; gap: .75rem; flex-wrap: nowrap; }
     .pv_store img { height: 44px !important; }
     .pv_frame, .fx_rowfilm { cursor: pointer; }
+    /* Phone pass (owner, 28 Oct 2026): compact language rows now the video scrolls away; the closing banner box is shorter and stays clear of its button. */
+    .ln_row { min-height: 0 !important; }
+    .ln_link { padding: 1.4rem 0; }
+    .ln_media { margin-bottom: .5rem; }
+    .bottom-cta_box { height: 20rem !important; margin-top: -3.5rem !important; }
+    .bottom-cta_wrap .max-width-full { position: relative; z-index: 2; margin-top: .5rem; }
   }
   @media (prefers-reduced-motion: reduce) { .dk-char, .dk-bub, .dk-food, .dk-line > div, .tu_rise, .tu_stage { animation: none !important; transition: none !important; opacity: 1 !important; transform: none !important; clip-path: none !important; } }
   @media (max-width: 767px) {

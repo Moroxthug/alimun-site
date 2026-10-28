@@ -1250,3 +1250,7 @@ Owner: "some videos do not play, some videos cover half text, download app badge
 ## 2026-10-28 — Phone header
 
 Owner: "from mobile, alimun in the middle, hamburger menu on left and get started button on right". Added a phone/tablet rule (up to 991px) to the shared stylesheet: three-column grid with equal sides, so the logo sits exactly on the centre line on every page and language; Arabic mirrors. Smaller logo and button below 480px and 360px so nothing touches at 320px. Measured logo offset 0px at 320, 360, 390 and 820px on home, tiers, blog and es/ar/de/fr/zh; menu opens as before; desktop untouched.
+
+## 2026-10-28 — Homepage phone pass
+
+Owner: "should we improve the other sections look as well?" / "ok go". Phones only: plan cards now rest centred and move on quickly (no more two half cards mid-swipe; groups.html script, under 768px); language rows compact now that the video scrolls away (list 1980px to about 1120px tall); closing banner box 20rem tall and its button kept above it. Checked and left as is: the film captions are scene titles inside the owner's films (not repeats), the FAQ title is the same size as the other titles, the tutor card's lower space holds the slowed-down words. v2/assets.html lock updated. Tested at iPhone 13, 360px Arabic and desktop unchanged; no console errors.
