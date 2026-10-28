@@ -255,5 +255,45 @@
   "src/pages/resources/[p].astro": {
     "sha256": "ab45462f47854a3fcf50c040d5fb39f95bf539d4e577191e664adc37abe977ee",
     "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\"); 2026-10-27 games and fun: any question set for games, flip cards from pairs, pages for all games and all fun quizzes (owner: \"more resources now, games and fun stuff\")"
+  },
+  "src/blocks/home/v2/assets.html": {
+    "sha256": "7db7b9e4865104f2e4670fc6ceaef58d0d22c9f70b52a5a513aa5aa7ca7bafb7",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/band.html": {
+    "sha256": "ee96fed3ff5ea74206747a7beaf2c17e898200f1548db41a9089c8caa0f888cd",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/hero.html": {
+    "sha256": "19183108cfaf19c7f0df070e9f8281417c8f98a1d9b87647db68f518978f3fd2",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/showcase.html": {
+    "sha256": "8ea8b7d05f9e9717fd6689a941a69a113065309efcef6a093eff3f91b41b0c9a",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/strings.html": {
+    "sha256": "bd79b81c11f209715c0b526e4315c0ad9c2dd5faf17425c11c460b5c21eb842b",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/try.html": {
+    "sha256": "f438c8c5cfb69b38ca1dd4c4831be616255bd88dadffeb925b0189557de0d752",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/tutor.html": {
+    "sha256": "2ac06fe50d8f33570dbed52eea1886deb9fe4c980e4626f6c7f0b9908ab9326d",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/video-dashboard.html": {
+    "sha256": "aa9533a8063755de81709b3b9d05244f92661d64b3f3c692024ef78705e760ca",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/video-tutor.html": {
+    "sha256": "14438d3a314cda39084d7339672815c2c2433f08e7cd66382bf1684200d3e1a9",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/pages/index.astro": {
+    "sha256": "a7c99e1eaf0ba08ddbf689913d8e41512dd70bd467762940176047474ba588f7",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
   }
 }
