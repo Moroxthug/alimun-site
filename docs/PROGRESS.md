@@ -1246,3 +1246,7 @@ Append one entry per session: date, phase, branch/commit, what shipped, what is 
 ## 2026-10-28 — Homepage phone fixes
 
 Owner: "some videos do not play, some videos cover half text, download app badges do not look nicely put". On phones the showcase films were paused by the desktop sticky-scene logic (now each row plays its own film while on screen; a tap also starts a film, for iPhone Low Power Mode). The languages section video was sticky and covered the language names on phones; it now scrolls with the page. The app badges sit centred side by side under their label. Locks updated for v2/assets.html and v2/video-dashboard.html. Tested at iPhone 13 size (all on-screen films playing, no console errors) and desktop unchanged.
+
+## 2026-10-28 — Phone header
+
+Owner: "from mobile, alimun in the middle, hamburger menu on left and get started button on right". Added a phone/tablet rule (up to 991px) to the shared stylesheet: three-column grid with equal sides, so the logo sits exactly on the centre line on every page and language; Arabic mirrors. Smaller logo and button below 480px and 360px so nothing touches at 320px. Measured logo offset 0px at 320, 360, 390 and 820px on home, tiers, blog and es/ar/de/fr/zh; menu opens as before; desktop untouched.
