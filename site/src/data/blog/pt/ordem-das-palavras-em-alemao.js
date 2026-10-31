@@ -1,0 +1,225 @@
+// Ordem das palavras em alemão. Verificado no Duden (Satzklammer, weil), na página da Grimm Grammar sobre ordem das palavras
+// (University of Texas at Austin) e em gramáticas de referência: verbo na segunda posição, verbo no início nas perguntas de sim ou não
+// e no imperativo, verbo no final nas subordinadas, o parêntese verbal e a posição de nicht.
+export default {
+  key: 'german-word-order',
+  site: 'pt',
+  slug: 'ordem-das-palavras-em-alemao',
+  section: 'grammar',
+  course: 'German',
+  published: '2026-10-31',
+  updated: '2026-10-31',
+  title: 'Ordem das palavras em alemão: onde vai o verbo e por quê',
+  metaTitle: 'Ordem das palavras em alemão: regras e onde vai o verbo – Alimun',
+  desc: 'A ordem das palavras em alemão explicada: o verbo na segunda posição, no final depois de weil e dass, verbos separáveis, modais, perguntas e onde vai o nicht.',
+  lead: 'Em português, a ordem sujeito, verbo, complemento é bem estável. O alemão deixa você começar a frase com quase qualquer coisa, mas uma coisa praticamente não se mexe: **o verbo conjugado**. Aprenda onde ele vai nos três tipos principais de frase e o alemão vai deixar de parecer escrito de trás para frente.',
+  photo: 'PHOTO',
+  sticker: { draw: 'snail', say: 'Paciência: em alemão, o verbo muitas vezes chega no final.' },
+  facts: [
+    { label: 'Verbo em segundo', text: 'numa frase afirmativa em alemão, o verbo conjugado é sempre o segundo elemento' },
+    { n: 1, unit: 'elemento', text: 'vem antes do verbo numa frase afirmativa, por mais longo que seja' },
+    { n: 5, unit: 'conjunções', text: 'und, aber, oder, denn e sondern, que não mudam a ordem das palavras' },
+    { label: 'Verbo no final', text: 'depois de weil, dass, wenn, ob e das outras conjunções subordinativas' },
+  ],
+  blocks: [
+    { take: { title: 'Resposta curta', text: 'Numa frase afirmativa em alemão, **o verbo conjugado é sempre o segundo elemento**, não importa o que venha antes. As outras partes do verbo, como o infinitivo, o particípio ou o prefixo separável, vão para o final, e as duas partes emolduram a frase. Nas orações com weil, dass, wenn ou ob, o verbo conjugado vai para o final. Perguntas de sim ou não e o imperativo começam pelo verbo.', draw: 'owl' } },
+
+    { h: 'Por que a ordem das palavras importa tanto em alemão' },
+    { p: 'O português mostra quem faz o quê principalmente pela ordem: “o cachorro morde o homem” e “o homem morde o cachorro” são histórias diferentes. O alemão mostra isso com as terminações de caso nos artigos e pronomes, por isso consegue mover as outras partes da frase com mais liberdade. **Den Mann beißt der Hund** continua significando que o cachorro morde o homem, porque den Mann está no acusativo.' },
+    { p: 'Essa liberdade tem um preço. O verbo tem lugares fixos, e não são os do português. Você pode conhecer todas as palavras de uma frase e ainda soar estrangeiro porque o verbo está no lugar errado. A boa notícia é que existem **só três posições do verbo**: depois que você entende essas três, o resto é ajuste fino.' },
+
+    { h: 'O verbo na segunda posição' },
+    { p: 'Numa frase afirmativa normal, o verbo conjugado, aquele que muda conforme o sujeito, é o **segundo elemento** da frase. Atenção: segundo elemento, não segunda palavra. O primeiro elemento pode ser uma palavra, um grupo de palavras ou até uma oração subordinada inteira; ele sempre conta como um bloco só.' },
+    { examples: [
+      ['Ich **fahre** morgen nach Berlin.', 'Eu vou para Berlim amanhã. (primeiro o sujeito)'],
+      ['Morgen **fahre** ich nach Berlin.', 'Amanhã eu vou para Berlim. (primeiro o tempo)'],
+      ['Nach Berlin **fahre** ich morgen.', 'É para Berlim que eu vou amanhã. (primeiro o lugar, para dar ênfase)'],
+      ['Meine Schwester aus Hamburg **fährt** morgen nach Berlin.', 'Minha irmã de Hamburgo vai para Berlim amanhã. (um sujeito longo continua sendo um elemento só)'],
+    ] },
+    { p: 'As quatro frases estão corretas. O que muda é a ênfase: o primeiro elemento é o ponto de partida, muitas vezes algo já conhecido ou algo que você quer destacar. O que nunca muda é que **fahre ou fährt fica em segundo lugar**.' },
+
+    { h3: 'O que pode ir na primeira posição' },
+    { p: 'Quase qualquer parte da frase pode abri-la: o sujeito, uma expressão de tempo, um lugar, o objeto direto, um advérbio como leider (infelizmente) ou zum Glück (por sorte), ou uma oração subordinada inteira. Mas antes do verbo vai **um elemento só**. Uma frase afirmativa em alemão não começa com dois elementos antes do verbo, coisa que o português faz o tempo todo: em “amanhã eu vou” há dois.' },
+    { examples: [
+      ['Leider **habe** ich keine Zeit.', 'Infelizmente eu não tenho tempo.'],
+      ['Den Film **habe** ich schon gesehen.', 'Esse filme eu já vi. (primeiro o objeto)'],
+      ['Im Sommer **lernen** wir jeden Tag Deutsch.', 'No verão a gente estuda alemão todo dia.'],
+      ['Weil es regnet, **bleiben** wir zu Hause.', 'Como está chovendo, vamos ficar em casa. (toda a oração com weil é o primeiro elemento)'],
+    ] },
+    { note: { title: 'Conte elementos, não palavras', text: 'Em “Am nächsten Montag um neun Uhr beginnt der Kurs”, o primeiro elemento tem seis palavras: **am nächsten Montag um neun Uhr**. O verbo beginnt continua na segunda posição, porque toda a expressão de tempo é um bloco só.', draw: 'parrot' } },
+
+    { figure: { photo: 'FIG1', alt: 'FIG1ALT', caption: 'FIG1CAP' } },
+
+    { h: 'A inversão: o sujeito passa para depois do verbo' },
+    { p: 'Quando algo que não é o sujeito ocupa o primeiro lugar, o sujeito precisa se mover e vai logo depois do verbo. É a chamada **inversão**. Em “Morgen fahre ich nach Berlin”, ich vem depois de fahre porque morgen ocupou o primeiro lugar. O verbo fica onde está e o sujeito sai da frente.' },
+    { p: 'Esse é o erro de ordem mais comum entre brasileiros, porque no português do Brasil o sujeito costuma vir antes do verbo: amanhã eu trabalho, aqui a gente mora, às vezes ela lê. Em alemão, fica **Morgen arbeite ich**, Hier wohnen wir e Manchmal liest sie. Se você começa com qualquer coisa que não seja o sujeito, a próxima palavra é o verbo.' },
+    { p: 'Com os advérbios de frequência, por outro lado, o português ajuda: a gente diz “vou sempre ao cinema”, e o alemão faz igual, **Ich gehe oft ins Kino**. O advérbio vem depois do verbo, ou vai para o início e o sujeito se desloca: Oft gehe ich ins Kino.' },
+
+    { h3: 'Und, aber, oder, denn, sondern: a posição zero' },
+    { p: 'Cinco conjunções muito comuns ligam duas orações principais sem contar como elemento: und (e), aber (mas), oder (ou), denn (pois, porque) e sondern (mas sim). Elas ficam fora da frase, no que muitos livros chamam de posição zero, então **a ordem das palavras depois delas não muda**.' },
+    { examples: [
+      ['Ich lerne Deutsch, **denn** ich will in Wien arbeiten.', 'Estudo alemão, pois quero trabalhar em Viena. (denn: o verbo continua em segundo)'],
+      ['Ich lerne Deutsch, **weil** ich in Wien arbeiten will.', 'O mesmo significado com weil: o verbo vai para o final.'],
+      ['Er wohnt in Köln, **aber** seine Familie lebt in Bonn.', 'Ele mora em Colônia, mas a família dele vive em Bonn.'],
+    ] },
+    { p: 'O nosso “porque” corresponde tanto a denn quanto a weil, mas em alemão cada um muda a frase de um jeito. Cuidado também com palavras como deshalb (por isso), trotzdem (mesmo assim), dann (depois, então) e außerdem (além disso): são advérbios, então ocupam sozinhos a primeira posição e o verbo vem logo em seguida, **Es regnet, deshalb bleiben wir zu Hause.** Confundir denn e dann é um erro clássico: com denn o sujeito continua na frente, com dann ele passa para depois do verbo.' },
+
+    { h: 'O parêntese verbal: duas peças, uma moldura' },
+    { p: 'Muitas frases em alemão têm um verbo em duas partes. A parte conjugada fica na segunda posição e o resto vai para o final da oração. As gramáticas alemãs chamam isso de **Satzklammer**, o parêntese da frase, porque as duas partes do verbo emolduram todo o resto. O exemplo do Duden mostra bem: “Sie hat gestern ein Buch gekauft.”' },
+    { p: 'Todo o resto, ou seja, o sujeito quando não está em primeiro, os complementos, o tempo e o lugar, fica no campo central, entre as duas partes. Esse campo pode ser longo, e é por isso que ouvir alemão às vezes significa **esperar o fim da frase** para descobrir o que aconteceu de verdade.' },
+    { h3: 'Os verbos modais' },
+    { p: 'Com können, müssen, wollen, sollen, dürfen e mögen (e a forma möchte), o modal é conjugado e fica na segunda posição. O verbo principal vai para o final no **infinitivo**, sem zu. Em português a gente diz “hoje eu não posso vir”, com os dois verbos juntos; o alemão separa os dois.' },
+    { examples: [
+      ['Ich **kann** heute leider nicht **kommen**.', 'Infelizmente hoje eu não posso vir.'],
+      ['Wir **müssen** morgen sehr früh **aufstehen**.', 'Amanhã a gente precisa levantar muito cedo.'],
+      ['**Möchtest** du am Samstag mit uns ins Kino **gehen**?', 'Você quer ir ao cinema com a gente no sábado?'],
+    ] },
+    { h3: 'O Perfekt' },
+    { p: 'O Perfekt, o passado mais usado no alemão falado, é formado com haben ou sein mais o particípio. Em português você diria “comprei um livro ontem”, com um verbo só; o alemão usa dois verbos, coloca o auxiliar na segunda posição e manda **o particípio para o final**.' },
+    { examples: [
+      ['Ich **habe** gestern einen Kuchen **gebacken**.', 'Ontem eu fiz um bolo.'],
+      ['Sie **ist** letztes Jahr nach Hamburg **gezogen**.', 'Ela se mudou para Hamburgo no ano passado.'],
+      ['Wir **haben** den ganzen Abend Karten **gespielt**.', 'A gente jogou cartas a noite toda.'],
+    ] },
+    { h3: 'Werden: futuro e voz passiva' },
+    { p: 'Werden funciona do mesmo jeito. No futuro, vem seguido de um infinitivo no final: **Ich werde nächstes Jahr in München studieren.** Na voz passiva, vem seguido de um particípio: Das Haus wird gerade renoviert, a casa está sendo reformada. Nos dois casos, werden fica na segunda posição e o outro verbo fecha o parêntese.' },
+    { h3: 'Os verbos separáveis' },
+    { p: 'Verbos como anrufen (ligar para alguém), aufstehen (levantar), einkaufen (fazer compras) e abfahren (partir) têm um prefixo que **se separa e vai para o final** na oração principal, no presente e no Präteritum. O verbo continua na segunda posição. Aqui o parêntese é formado por um verbo só, partido em dois.' },
+    { examples: [
+      ['Ich **rufe** dich morgen **an**.', 'Eu te ligo amanhã. (anrufen)'],
+      ['Der Zug **fährt** um acht Uhr **ab**.', 'O trem sai às oito. (abfahren)'],
+      ['Ich **habe** dich gestern **angerufen**.', 'Eu te liguei ontem. (o particípio mantém o prefixo: an-ge-rufen)'],
+      ['Ich **muss** dich morgen **anrufen**.', 'Preciso te ligar amanhã. (depois de um modal, o infinitivo fica inteiro)'],
+    ] },
+    { table: {
+      head: ['Primeiro elemento', 'Verbo na 2ª posição', 'Campo central', 'Final da oração'],
+      rows: [
+        ['Ich', 'rufe', 'dich morgen', 'an.'],
+        ['Morgen', 'kann', 'ich leider nicht', 'kommen.'],
+        ['Sie', 'hat', 'gestern ein Buch', 'gekauft.'],
+        ['Nächstes Jahr', 'werde', 'ich in München', 'studieren.'],
+        ['Das Haus', 'wird', 'gerade', 'renoviert.'],
+      ],
+      note: 'O primeiro elemento e o campo central mudam de uma frase para outra; as duas posições do verbo, não.',
+    } },
+    { note: { title: 'Dois verbos, dois lugares', text: 'Se uma frase afirmativa tem mais de uma parte verbal, faça uma única pergunta: qual delas está conjugada? **Essa vai na segunda posição, e todo o resto vai para o final.** Essa checagem sozinha corrige a maioria dos erros com o parêntese.', draw: 'cat' } },
+
+    { figure: { photo: 'FIG2', alt: 'FIG2ALT', caption: 'FIG2CAP' } },
+
+    { quote: 'Em alemão, o verbo conjugado é o ponto fixo; todo o resto se move ao redor dele.' },
+
+    { cta: true },
+
+    { h: 'As subordinadas: o verbo vai para o final' },
+    { p: 'Uma oração subordinada não se sustenta sozinha: ela depende de uma principal. Em alemão, ela costuma começar com uma conjunção subordinativa como weil (porque), dass (que), wenn (se, quando), ob (se, em perguntas indiretas), als (quando, no passado), obwohl (embora), damit (para que), bevor (antes que) ou nachdem (depois que). Nessas orações, **o verbo conjugado vai bem para o final**.' },
+    { examples: [
+      ['Ich bleibe zu Hause, **weil** ich krank **bin**.', 'Vou ficar em casa porque estou doente.'],
+      ['Ich glaube, **dass** sie morgen **kommt**.', 'Acho que ela vem amanhã.'],
+      ['Ich weiß nicht, **ob** er Zeit **hat**.', 'Não sei se ele tem tempo.'],
+      ['Sie lernt Deutsch, **obwohl** sie wenig Zeit **hat**.', 'Ela estuda alemão, embora tenha pouco tempo.'],
+    ] },
+    { h3: 'Dois verbos no final' },
+    { p: 'Quando a subordinada tem um modal, um Perfekt ou werden, as duas partes do verbo vão para o final e **o verbo conjugado fica por último**. O infinitivo ou o particípio vem logo antes.' },
+    { examples: [
+      ['…, weil ich morgen früh **aufstehen muss**.', '…porque amanhã preciso levantar cedo.'],
+      ['…, dass er gestern **angerufen hat**.', '…que ele ligou ontem.'],
+      ['…, dass sie bald nach Wien **ziehen wird**.', '…que ela vai se mudar para Viena em breve.'],
+    ] },
+    { p: 'Na subordinada, os verbos separáveis se juntam de novo, porque o verbo foi para o final, justamente onde o prefixo já estava: Der Zug fährt um acht ab, mas Ich weiß, dass der Zug um acht **abfährt**.' },
+    { h3: 'Quando a subordinada vem primeiro' },
+    { p: 'Uma subordinada também pode abrir a frase. Nesse caso, a subordinada inteira conta como primeiro elemento, e a principal começa direto com o verbo. O resultado são dois verbos lado a lado, separados por uma vírgula: o esquema que muita gente chama de **verbo, vírgula, verbo**.' },
+    { examples: [
+      ['Wenn du Zeit **hast**, **ruf** mich an.', 'Se você tiver tempo, me liga.'],
+      ['Weil es so kalt **war**, **sind** wir zu Hause geblieben.', 'Como estava muito frio, ficamos em casa.'],
+      ['Als ich in Berlin **wohnte**, **habe** ich viel Deutsch gesprochen.', 'Quando eu morava em Berlim, falava muito alemão.'],
+    ] },
+    { h3: 'Perguntas indiretas e orações relativas' },
+    { p: 'A mesma regra vale para as perguntas indiretas, que começam com uma palavra interrogativa ou com ob, e para as orações relativas, que começam com der, die, das ou parecidas. Na pergunta direta, o verbo fica na segunda posição; **na indireta, vai para o final**: Wann fährt der Zug ab? mas Weißt du, wann der Zug abfährt? As relativas funcionam igual: Der Mann, der dort steht, ist mein Lehrer.' },
+    { note: { title: 'Você vai ouvir “weil ich habe keine Zeit”', text: 'No alemão falado informal, muita gente coloca o verbo na segunda posição depois de weil. O Duden registra esse uso, com o exemplo “ich komme nicht mit, weil ich habe keine Zeit”, e o marca como não padrão. **Na escrita e nas provas, coloque o verbo no final** depois de weil.', draw: 'dog' } },
+
+    { h: 'Perguntas e imperativo' },
+    { p: 'O alemão tem dois tipos de pergunta direta, cada um com sua posição do verbo. **As perguntas com palavra interrogativa**, como wer, was, wann, wo, wie, warum, woher ou wohin, mantêm o verbo na segunda posição: a palavra interrogativa é o primeiro elemento, depois vem o verbo e depois o sujeito. Wo wohnst du? Warum lernst du Deutsch?' },
+    { p: '**As perguntas de sim ou não começam pelo verbo**, e o sujeito vem logo depois. Em português basta a entonação, “você tem tempo hoje?”, mas em alemão a ordem muda: Hast du heute Zeit? A segunda parte do parêntese continua indo para o final. O imperativo também começa pelo verbo: Komm her! Ruf mich an! Na forma de cortesia, Sie vem depois do verbo: Kommen Sie bitte herein.' },
+    { table: {
+      head: ['Tipo de frase', 'Onde vai o verbo conjugado', 'Exemplo'],
+      rows: [
+        ['Afirmativa', 'na segunda posição', 'Ich habe heute keine Zeit.'],
+        ['Pergunta com palavra interrogativa', 'na segunda posição', 'Wann fährt der Zug ab?'],
+        ['Pergunta de sim ou não', 'na primeira posição', 'Hast du heute Zeit?'],
+        ['Imperativo', 'na primeira posição', 'Ruf mich morgen an!'],
+        ['Subordinada com weil, dass, wenn, ob', 'no final', '…, weil ich heute keine Zeit habe.'],
+        ['Pergunta indireta ou oração relativa', 'no final', 'Weißt du, wann der Zug abfährt?'],
+      ],
+      note: 'O verbo na primeira posição também pode substituir wenn numa condição, como em “Hast du Zeit, dann ruf mich an”, mas para quem está aprendendo, wenn é muito mais comum.',
+    } },
+
+    { figure: { photo: 'FIG3', alt: 'FIG3ALT', caption: 'FIG3CAP' } },
+
+    { h: 'Tempo, modo, lugar: uma tendência, não uma lei' },
+    { p: 'No campo central, o alemão tende a colocar **o tempo antes do lugar**: Ich fahre morgen nach Berlin, e não Ich fahre nach Berlin morgen. Muitos livros ensinam uma versão mais longa com a sigla TeKaMoLo: temporal (quando), causal (por quê), modal (como), local (onde).' },
+    { examples: [
+      ['Ich fahre **morgen** wegen der Arbeit **mit dem Zug** **nach Berlin**.', 'Amanhã vou para Berlim de trem a trabalho. (tempo, causa, modo, lugar)'],
+      ['Wir treffen uns **um acht** **vor dem Kino**.', 'A gente se encontra às oito na frente do cinema. (tempo, lugar)'],
+      ['Sie ist **gestern** **mit dem Fahrrad** **zur Arbeit** gefahren.', 'Ontem ela foi de bicicleta para o trabalho. (tempo, modo, lugar)'],
+    ] },
+    { p: 'TeKaMoLo é útil como ordem padrão, mas não é uma regra rígida, e as gramáticas descrevem o campo central de formas diferentes. A Grimm Grammar da Universidade do Texas, por exemplo, observa que a ordem é flexível e depende da ênfase. Os nativos mudam os elementos de lugar para destacá-los: **a informação colocada mais para o fim tende a pesar mais**, e qualquer elemento também pode ir para a primeira posição. Mit dem Zug fahre ich morgen nach Berlin, nicht mit dem Auto está perfeitamente correto.' },
+    { p: 'No campo central, mais duas tendências ajudam. **Os pronomes vêm antes dos substantivos**: Ich gebe es dem Lehrer, mas Ich gebe dem Lehrer das Buch. E a informação curta e já conhecida tende a vir antes da longa e nova. Na dúvida, tempo antes do lugar é a escolha mais segura.' },
+
+    { h: 'Onde vai o nicht' },
+    { p: 'Aqui o português engana. A gente coloca o “não” sempre antes do verbo: não venho, não li. Em alemão, o nicht nunca vai antes do verbo conjugado. Quando você nega a frase inteira, o nicht vai **mais para o final**: depois do verbo conjugado, depois dos complementos já conhecidos e depois da maioria das expressões de tempo, mas antes da segunda parte do parêntese.' },
+    { examples: [
+      ['Ich komme heute **nicht**.', 'Hoje eu não venho.'],
+      ['Ich kenne den Mann **nicht**.', 'Não conheço esse homem.'],
+      ['Ich habe das Buch **nicht** gelesen.', 'Não li o livro. (antes do particípio)'],
+      ['Wir können morgen **nicht** kommen.', 'Amanhã a gente não pode vir. (antes do infinitivo)'],
+    ] },
+    { p: 'O nicht também vai **antes de um lugar, uma direção ou um adjetivo** muito ligados ao verbo: Ich wohne nicht in Berlin. Das ist nicht teuer. Ich fahre nicht nach Hause. E vem antes da maioria dos advérbios de modo: Er fährt nicht schnell.' },
+    { p: 'Para negar só uma parte da frase, coloque o nicht logo antes dessa parte, normalmente seguido de sondern: Ich fahre **nicht heute, sondern morgen**. Por fim, lembre que substantivos com artigo indefinido ou sem artigo são negados com kein, não com nicht: Ich habe keine Zeit, nunca ich habe nicht Zeit.' },
+
+    { h: 'Os erros mais comuns' },
+    { p: 'Quase todos os erros de ordem vêm de transferir a ordem da própria língua. Em português, o sujeito costuma vir antes do verbo, o “não” fica antes do verbo e os verbos ficam juntos. Veja o que costuma acontecer.' },
+    { mistakes: [
+      ['Morgen ich fahre nach Berlin.', 'Morgen **fahre ich** nach Berlin.', 'Antes do verbo vai um elemento só; o sujeito passa para depois do verbo.'],
+      ['Ich nicht komme heute.', 'Ich **komme heute nicht**.', 'O nicht nunca vai antes do verbo conjugado, como faz o “não”.'],
+      ['Ich habe gekauft ein neues Handy.', 'Ich habe ein neues Handy **gekauft**.', 'O particípio fecha o parêntese no final da oração.'],
+      ['Ich anrufe dich morgen.', 'Ich **rufe** dich morgen **an**.', 'Na oração principal, o prefixo do verbo separável vai para o final.'],
+      ['…, weil ich habe keine Zeit.', '…, weil ich keine Zeit **habe**.', 'Depois de weil, no alemão padrão, o verbo conjugado vai para o final.'],
+      ['Wenn ich Zeit habe, ich komme.', 'Wenn ich Zeit habe, **komme ich**.', 'A subordinada é o primeiro elemento, então o verbo vem logo depois.'],
+      ['Weißt du, wann fährt der Zug ab?', 'Weißt du, wann der Zug **abfährt**?', 'Nas perguntas indiretas, o verbo vai para o final e o prefixo se junta de novo.'],
+      ['Ich kann nicht kommen heute.', 'Ich kann heute **nicht kommen**.', 'O tempo fica no campo central e o nicht vem antes do infinitivo.'],
+    ] },
+
+    { figure: { photo: 'FIG4', alt: 'FIG4ALT', caption: 'FIG4CAP' } },
+
+    { h: 'Como deixar a ordem das palavras automática' },
+    { p: 'Conhecer as regras é o primeiro passo, mas numa conversa não dá tempo de checar cada uma. O objetivo é que a ordem certa **soe natural para você**, e isso vem de ouvir e dizer muitas frases corretas. Aprender frases inteiras em vez de palavras soltas é o caminho mais rápido.' },
+    { p: 'Um exercício simples: pegue uma frase e **coloque um elemento diferente na primeira posição** a cada vez. Ich lerne am Abend Deutsch, Am Abend lerne ich Deutsch, Deutsch lerne ich am Abend. Depois acrescente um modal, passe para o Perfekt e transforme numa oração com weil. Cinco minutos assim treinam as três posições do verbo melhor do que uma hora lendo regras.' },
+    { p: 'Quando ler em alemão, procure o parêntese verbal e sublinhe as duas partes. Quando ouvir, preste atenção no fim da frase, onde muitas vezes o sentido se completa. E quando escrever, confira cada oração procurando uma coisa só: **onde está o verbo conjugado?**' },
+    { p: 'Na Alimun, você aprende alemão em aulas ao vivo com um professor e sempre o mesmo grupo pequeno, então ouve e usa essas estruturas toda semana, e **o seu professor corrige a sua lição de casa**, inclusive a ordem das palavras. Os exercícios com correção imediata mostram na hora quando um verbo está no lugar errado, enquanto você ainda lembra por que o colocou ali.' },
+  ],
+  quiz: [
+    { q: 'Qual frase está correta?', options: ['Morgen ich fahre nach Berlin.', 'Morgen fahre ich nach Berlin.', 'Morgen nach Berlin ich fahre.', 'Ich morgen fahre nach Berlin.'], a: 1, why: 'Morgen ocupa a primeira posição, então o verbo vem em segundo e o sujeito passa para depois dele.' },
+    { q: 'Ich bleibe zu Hause, weil ich krank ___.', options: ['bin', 'bin ich', 'ich bin', 'sein'], a: 0, why: 'Depois de weil, o verbo conjugado vai para o final: weil ich krank bin.' },
+    { q: 'Onde vai o particípio em “Ich habe gestern ein Buch ___”?', options: ['Depois de habe', 'Antes de ich', 'No final da oração', 'Antes de ein Buch'], a: 2, why: 'No Perfekt, haben ou sein fica na segunda posição e o particípio fecha o parêntese no final.' },
+    { q: 'Qual conjunção mantém o verbo na segunda posição?', options: ['weil', 'dass', 'obwohl', 'denn'], a: 3, why: 'Denn é uma conjunção de posição zero, como und, aber, oder e sondern.' },
+    { q: 'Como se diz “Eu te ligo amanhã” com anrufen?', options: ['Ich anrufe dich morgen.', 'Ich rufe morgen an dich.', 'Ich rufe dich morgen an.', 'Ich dich morgen anrufe.'], a: 2, why: 'Na oração principal, o prefixo separável an vai para o final: Ich rufe dich morgen an.' },
+    { q: 'Qual destas é uma pergunta de sim ou não?', options: ['Hast du heute Zeit?', 'Wann hast du Zeit?', 'Du hast heute Zeit.', 'Weil du heute Zeit hast.'], a: 0, why: 'As perguntas de sim ou não começam pelo verbo conjugado.' },
+    { q: 'Complete: Wenn du Zeit hast, ___ mich an.', options: ['du rufst', 'ruf', 'rufst du nicht', 'du ruf'], a: 1, why: 'A oração com wenn é o primeiro elemento, então o imperativo ruf vem logo depois da vírgula.' },
+    { q: 'Onde vai o nicht para negar a frase inteira “Ich habe das Buch gelesen”?', options: ['Antes de ich', 'Logo depois de habe', 'Antes de gelesen', 'Depois de gelesen'], a: 2, why: 'O nicht vai antes da segunda parte do parêntese: Ich habe das Buch nicht gelesen.' },
+  ],
+  faq: [
+    ['A ordem das palavras em alemão é livre?', 'Em parte. A primeira posição e o campo central são flexíveis e permitem mudar a ênfase. Já as posições do verbo são fixas: segunda nas afirmativas e nas perguntas com palavra interrogativa, primeira nas perguntas de sim ou não e no imperativo, última nas subordinadas.'],
+    ['Por que depois de weil o verbo vai para o final e depois de denn não?', 'Weil é uma conjunção subordinativa, então abre uma subordinada com o verbo no final. Denn é uma conjunção coordenativa: liga duas orações principais e não conta como elemento, por isso o verbo continua na segunda posição.'],
+    ['TeKaMoLo é uma regra?', 'É uma ordem padrão útil para o campo central: tempo, causa, modo, lugar. Os nativos mudam essa ordem para destacar algo, e qualquer elemento também pode ir para a primeira posição. A parte mais confiável é o tempo antes do lugar.'],
+    ['Os alemães dizem mesmo “weil ich habe keine Zeit”?', 'Sim, na fala informal muita gente diz, e o Duden registra esse uso como não padrão. Na escrita, nas provas e em situações formais, coloque o verbo no final depois de weil.'],
+    ['Quando vale a pena estudar as subordinadas?', 'Na maioria dos cursos e livros, weil, dass e wenn aparecem no nível A2, depois das afirmativas, das perguntas, dos modais e do Perfekt. Dominar as três posições básicas do verbo é a base de tudo o que vem a partir do B1.'],
+  ],
+  related: ['german-articles', 'german-cases', 'german-modal-verbs'],
+  sources: [
+    ['Duden: Satzklammer', 'https://www.duden.de/rechtschreibung/Satzklammer'],
+    ['Duden: weil', 'https://www.duden.de/rechtschreibung/weil'],
+    ['Grimm Grammar (University of Texas at Austin): ordem das palavras', 'https://coerll.utexas.edu/gg/pr/con_06.html'],
+    ['German sentence structure (Wikipédia, em inglês)', 'https://en.wikipedia.org/wiki/German_sentence_structure'],
+    ['Satzklammer (Wikipédia, em alemão)', 'https://de.wikipedia.org/wiki/Satzklammer'],
+  ],
+};

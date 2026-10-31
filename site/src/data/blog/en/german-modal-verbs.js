@@ -1,0 +1,203 @@
+// German modal verbs. Checked against Duden (müssen, dürfen, sollen, mögen, brauchen), the Dartmouth German
+// modal verbs page and UT Austin Grimm Grammar: forms, meanings, Präteritum, double infinitive, Konjunktiv II.
+export default {
+  key: 'german-modal-verbs',
+  site: 'en',
+  slug: 'german-modal-verbs',
+  section: 'grammar',
+  course: 'German',
+  published: '2026-10-31',
+  updated: '2026-10-31',
+  title: 'German modal verbs: können, müssen, dürfen, sollen, wollen, mögen',
+  metaTitle: 'German modal verbs: meanings, conjugation and past tense – Alimun',
+  desc: 'The six German modal verbs plus möchte: what each one means, the pairs learners mix up, conjugation, word order, the past, the double infinitive and polite forms.',
+  lead: "Six small verbs do a huge amount of work in German: können, müssen, dürfen, sollen, wollen and mögen, plus möchte. They tell you what someone can, must, may, should or wants to do, and **they follow their own rules** for conjugation, word order and the past. Learn those rules once and you will use them in almost every conversation.",
+  photo: 'german-modal-verbs-cafe-table',
+  sticker: { draw: 'teacup', say: 'Ich möchte einen Tee, bitte.' },
+  facts: [
+    { n: 6, unit: 'modal verbs', text: 'können, müssen, dürfen, sollen, wollen and mögen, with möchte as a seventh in everyday use' },
+    { label: 'ich = er', text: 'in the present, the ich and er/sie/es forms are identical: ich kann, er kann' },
+    { n: 2, unit: 'infinitives', text: 'at the end of a perfect with a modal: ich habe arbeiten müssen' },
+    { label: 'wollte', text: 'the form Germans use for a past wish, because möchte has no past tense of its own' },
+  ],
+  blocks: [
+    { take: { title: 'The short answer', text: "German has six modal verbs: können (can), müssen (must, have to), dürfen (may, be allowed to), sollen (should, be supposed to), wollen (want to) and mögen (like), plus möchte (would like). **The modal is conjugated and the main verb goes to the end of the clause** in the infinitive, without zu. In the past, Germans normally use the simple past (konnte, musste), and in polite requests they use könnte and möchte.", draw: 'owl' } },
+
+    { h: 'Six modal verbs, plus möchte' },
+    { p: "A modal verb changes the meaning of another verb. Ich arbeite means “I work”; ich **muss** arbeiten means “I have to work”, ich **kann** arbeiten “I can work” and ich **will** arbeiten “I want to work”. The action is the same, but the modal tells you whether it is possible, necessary, allowed, expected or wanted." },
+    { p: "German grammars list six modal verbs. A seventh form, **möchte**, is so common that most courses teach it as a verb of its own from the first lessons. Strictly speaking it is the Konjunktiv II of mögen, a polite “would like”, but in everyday German it works like a separate modal with its own present tense." },
+    { table: {
+      head: ['Modal', 'Main meaning', 'Example', 'In English'],
+      rows: [
+        ['können', 'ability, possibility', 'Ich kann schwimmen.', 'I can swim.'],
+        ['müssen', 'necessity, obligation', 'Ich muss morgen früh aufstehen.', 'I have to get up early tomorrow.'],
+        ['dürfen', 'permission', 'Hier darf man parken.', 'You may park here.'],
+        ['sollen', 'what someone else wants, advice', 'Der Arzt sagt, ich soll mehr schlafen.', 'The doctor says I should sleep more.'],
+        ['wollen', 'wish, intention', 'Wir wollen im Sommer nach Wien fahren.', 'We want to go to Vienna in the summer.'],
+        ['mögen', 'liking', 'Ich mag keinen Fisch.', 'I don’t like fish.'],
+        ['möchte', 'polite wish', 'Ich möchte einen Kaffee, bitte.', 'I would like a coffee, please.'],
+      ],
+      note: 'Mögen is mostly used on its own, as a full verb meaning “to like”. With another verb, Germans usually prefer gern: ich schwimme gern, I like swimming.',
+    } },
+
+    { h: 'Present tense: the irregular singular' },
+    { p: "Modal verbs are irregular in the singular, and they all follow the same pattern. First, **the ich and er/sie/es forms are identical** and have no ending: ich kann, er kann; ich muss, sie muss. Second, most modals change their vowel in the singular: können becomes kann, müssen becomes muss, dürfen becomes darf, wollen becomes will and mögen becomes mag. Only sollen keeps its vowel: ich soll." },
+    { p: "The plural is regular. Wir and sie/Sie use the infinitive (wir können, sie müssen) and ihr adds -t to the stem with the vowel of the infinitive (ihr könnt, ihr dürft). So once you know the singular, you know the whole verb." },
+    { table: {
+      head: ['', 'können', 'müssen', 'dürfen', 'sollen', 'wollen', 'mögen', 'möchte'],
+      rows: [
+        ['ich', 'kann', 'muss', 'darf', 'soll', 'will', 'mag', 'möchte'],
+        ['du', 'kannst', 'musst', 'darfst', 'sollst', 'willst', 'magst', 'möchtest'],
+        ['er/sie/es', 'kann', 'muss', 'darf', 'soll', 'will', 'mag', 'möchte'],
+        ['wir', 'können', 'müssen', 'dürfen', 'sollen', 'wollen', 'mögen', 'möchten'],
+        ['ihr', 'könnt', 'müsst', 'dürft', 'sollt', 'wollt', 'mögt', 'möchtet'],
+        ['sie/Sie', 'können', 'müssen', 'dürfen', 'sollen', 'wollen', 'mögen', 'möchten'],
+      ],
+      note: 'The ich and er/sie/es forms never take -t: er kann, not er kannt. The singular vowel change does not reach the ihr form: ihr könnt, not ihr kannt.',
+    } },
+    { note: { title: 'Ich will is not “I will”', text: "The German **will** looks like the English future, but it means “want”. Ich will nach Hause means “I want to go home”, not “I will go home”. The German future uses werden: **ich werde** nach Hause gehen.", draw: 'parrot' } },
+
+    { h: 'The infinitive goes to the end' },
+    { p: "In a main clause, the conjugated modal sits in second position, as every conjugated verb does in German. The second verb goes to **the very end of the clause**, in the infinitive. Everything else, objects, times and places, fits in between, which is why the two verbs often end up far apart." },
+    { examples: [
+      ['Ich **kann** heute leider nicht **kommen**.', 'Unfortunately I can’t come today.'],
+      ['**Musst** du am Samstag **arbeiten**?', 'Do you have to work on Saturday? (question: the modal comes first)'],
+      ['Wir **wollen** nächstes Jahr in Berlin **studieren**.', 'We want to study in Berlin next year.'],
+      ['Ich bleibe zu Hause, weil ich morgen früh **aufstehen muss**.', 'I am staying at home because I have to get up early tomorrow. (subordinate clause: the modal goes last)'],
+    ] },
+    { p: "Two details catch English speakers out. There is **no zu before the infinitive** after a modal: ich muss arbeiten, never ich muss zu arbeiten, even though English says “have to work”. And in a subordinate clause, introduced by words like weil, dass or wenn, the modal itself moves to the very end, after the infinitive: weil ich arbeiten muss." },
+    { p: "When the meaning is clear, the infinitive can disappear. Ich muss jetzt nach Hause means “I have to go home now”, with gehen understood. Ich kann Deutsch means “I speak German”, and Ich mag Kaffee simply means “I like coffee”. These short forms are very common in speech." },
+
+    { figure: { photo: 'german-modal-verbs-guitar-sunset', alt: 'Two people playing guitars on a beach at sunset, seen in silhouette', caption: 'Sie können beide Gitarre spielen: können is conjugated in second position, and spielen goes to the end.' } },
+
+    { h: 'The pairs learners mix up' },
+    { p: "Each modal has a clear core meaning, but some pairs overlap with one English word, or split one English word in two. These are the differences that cause most mistakes, even at B1 and B2." },
+    { h3: 'Müssen or sollen?' },
+    { p: "Both can translate as “have to” or “should”, but they come from different places. **Müssen** is a necessity: the situation, a rule or the speaker's own judgment makes it unavoidable. **Sollen** is what someone else wants you to do: an instruction, a request or advice from another person. If you can add “they told me to”, sollen is usually the right choice." },
+    { examples: [
+      ['Ich **muss** um acht im Büro sein.', 'I have to be at the office at eight. (it is necessary)'],
+      ['Ich **soll** um acht im Büro sein.', 'I am supposed to be at the office at eight. (my boss wants it)'],
+      ['Der Arzt sagt, ich **soll** weniger Kaffee trinken.', 'The doctor says I should drink less coffee.'],
+      ['**Soll** ich das Fenster aufmachen?', 'Shall I open the window? (do you want me to?)'],
+    ] },
+    { h3: 'Nicht müssen or nicht dürfen?' },
+    { p: "This is the classic trap. English “must not” is a prohibition, but German **nicht müssen** only means that something is not necessary: “don't have to”. To forbid something, German uses **nicht dürfen**. A sign that says Hier darf man nicht rauchen means you are not allowed to smoke; du musst nicht rauchen would mean that nobody is forcing you to." },
+    { examples: [
+      ['Du **musst** heute nicht kochen, wir essen im Restaurant.', 'You don’t have to cook today, we are eating out.'],
+      ['Du **darfst** hier nicht parken.', 'You must not park here. (it is not allowed)'],
+      ['Du **brauchst** heute nicht **zu** kochen.', 'You don’t need to cook today. (same meaning as nicht müssen)'],
+    ] },
+    { note: { title: 'Brauchen nicht zu', text: "In the negative, Germans often replace müssen with **brauchen + zu**: du brauchst nicht zu kommen, you don't need to come. Unlike the modals, brauchen takes zu in standard German, although many people drop it when they speak.", draw: 'cat' } },
+    { h3: 'Wollen or möchte?' },
+    { p: "Both express a wish, and the difference is mostly tone. **Wollen** is direct and firm: ich will is a clear “I want”. **Möchte** is softer and polite, like “I would like”. In a café or a shop, ich möchte einen Kaffee is the normal way to order; ich will einen Kaffee sounds like a demand. Between friends, or when you talk about plans, wollen is perfectly natural: wir wollen im Sommer heiraten." },
+    { h3: 'Mögen or möchte?' },
+    { p: "They come from the same verb, but they say different things. **Ich mag Tee** is a general fact about your taste: I like tea. **Ich möchte einen Tee** is a wish for right now: I would like a tea. A waiter asks Was möchten Sie trinken?, never Was mögen Sie trinken?, because the question is about this moment, not about your preferences in general." },
+    { h3: 'Können or dürfen?' },
+    { p: "Können is about ability or possibility, dürfen about permission. In everyday speech, **kann ich…?** is often used to ask for permission too, just as English uses “can I…?”. **Darf ich…?** is the more polite choice, and the safe one with people you address as Sie: Darf ich Sie etwas fragen?" },
+
+    { figure: { photo: 'german-modal-verbs-mountain-hike', alt: 'A hiker walking along a mountain ridge', caption: 'Wir wollen den Gipfel erreichen, aber wir müssen vor dem Abend zurück sein: wollen for the plan, müssen for what is unavoidable.' } },
+
+    { quote: 'Nicht müssen means you don’t have to. Nicht dürfen means you must not.' },
+
+    { cta: true },
+
+    { h: 'The past: konnte, musste, durfte' },
+    { p: "With most verbs, spoken German uses the perfect for the past: ich habe gearbeitet. Modal verbs are different. **Germans normally use the simple past (Präteritum)** with modals, in speech as well as in writing: ich musste arbeiten, I had to work. The perfect forms exist, but they are rarer and more awkward, so the simple past is the form to learn first." },
+    { p: "The simple past is easy to build. Take the stem, **drop the umlaut**, and add -te with the usual past endings: können becomes konnte, müssen becomes musste, dürfen becomes durfte. Mögen changes its consonant too and becomes mochte. Again, ich and er/sie/es are identical: ich konnte, sie konnte." },
+    { table: {
+      head: ['Infinitive', 'ich / er, sie, es', 'du', 'wir / sie, Sie', 'ihr'],
+      rows: [
+        ['können', 'konnte', 'konntest', 'konnten', 'konntet'],
+        ['müssen', 'musste', 'musstest', 'mussten', 'musstet'],
+        ['dürfen', 'durfte', 'durftest', 'durften', 'durftet'],
+        ['sollen', 'sollte', 'solltest', 'sollten', 'solltet'],
+        ['wollen', 'wollte', 'wolltest', 'wollten', 'wolltet'],
+        ['mögen', 'mochte', 'mochtest', 'mochten', 'mochtet'],
+      ],
+      note: 'Möchte has no past tense of its own. For a past wish, Germans use wollte: Ich wollte dich anrufen, I wanted to call you.',
+    } },
+    { examples: [
+      ['Gestern **musste** ich lange **arbeiten**.', 'Yesterday I had to work late.'],
+      ['Als Kind **durfte** ich nicht allein in die Stadt **fahren**.', 'As a child I wasn’t allowed to go into town on my own.'],
+      ['Wir **wollten** ins Kino **gehen**, aber es war ausverkauft.', 'We wanted to go to the cinema, but it was sold out.'],
+    ] },
+
+    { h: 'The perfect: the double infinitive' },
+    { p: "At B2 you will meet the perfect of modal verbs, and it has a famous quirk. When a modal is used with another verb, its participle is not gemusst or gekonnt but **the infinitive**. The result is two infinitives at the end of the clause, the main verb first and the modal last: ich habe arbeiten müssen. Grammars call this the double infinitive, or Ersatzinfinitiv." },
+    { examples: [
+      ['Ich **habe** gestern lange **arbeiten müssen**.', 'I had to work late yesterday.'],
+      ['Sie **hat** nicht **kommen können**.', 'She wasn’t able to come.'],
+      ['Ich weiß, dass er **hat warten müssen**.', 'I know that he had to wait. (subordinate clause: hat comes before both infinitives)'],
+    ] },
+    { p: "Two rules go with it. The auxiliary is **always haben**, even when the main verb normally takes sein: ich bin gegangen, but ich habe gehen müssen. And in a subordinate clause the auxiliary does not go to the very end; it stands before the two infinitives: dass er hat warten müssen. This is one of the few exceptions to verb-final word order." },
+    { p: "Without a second verb, the modal takes a normal participle: Ich habe das nicht gekonnt, I couldn't do it; Er hat es so gewollt, he wanted it that way. In daily life, most Germans avoid the double infinitive and simply say ich musste arbeiten, but you need to recognize it in texts and use it in exams." },
+    { note: { title: 'Should have, could have', text: "The same structure gives you two very useful B2 phrases. **Du hättest früher kommen sollen**: you should have come earlier. **Wir hätten das Spiel gewinnen können**: we could have won the match. Hätte plus two infinitives talks about what did not happen.", draw: 'snail' } },
+
+    { figure: { photo: 'german-modal-verbs-doctor-advice', alt: 'A doctor talking with a patient', caption: 'Die Ärztin sagt, ich soll mehr schlafen: sollen reports advice from someone else, and Sie sollten mehr schlafen gives it politely.' } },
+
+    { h: 'Konjunktiv II: the polite modals' },
+    { p: "German uses the Konjunktiv II, its subjunctive, to make requests and suggestions softer. With modals it is very simple: take the simple past and **add the umlaut back** where the infinitive has one. Konnte becomes könnte, musste becomes müsste, durfte becomes dürfte and mochte becomes möchte. Sollte and wollte do not change, because sollen and wollen have no umlaut." },
+    { table: {
+      head: ['Infinitive', 'Konjunktiv II', 'Typical use', 'Example'],
+      rows: [
+        ['können', 'könnte', 'polite request, suggestion', 'Könnten Sie mir bitte helfen?'],
+        ['dürfen', 'dürfte', 'very polite request; likelihood', 'Dürfte ich kurz stören?'],
+        ['mögen', 'möchte', 'polite wish', 'Ich möchte einen Termin vereinbaren.'],
+        ['sollen', 'sollte', 'advice', 'Du solltest mehr Wasser trinken.'],
+        ['müssen', 'müsste', 'what should be the case', 'Der Bus müsste gleich kommen.'],
+        ['wollen', 'wollte', 'polite wish, in some phrases', 'Ich wollte fragen, ob Sie Zeit haben.'],
+      ],
+      note: 'Sollte and wollte look exactly like the simple past, so only the context tells you whether they mean “should” or “wanted”.',
+    } },
+    { p: "In daily life, **könnten Sie…?** is the standard polite request, and **du solltest…** is the normal way to give advice: it is softer than du musst and less bossy than an order. Dürfte also expresses a careful guess: Das dürfte reichen, that should be enough." },
+
+    { h: 'Modals that express a guess' },
+    { p: "Modals also tell you how sure the speaker is. **Er muss krank sein** can mean “he must be ill”: the speaker is fairly certain. Er könnte krank sein means “he might be ill”, and er dürfte krank sein “he is probably ill”. Sollen and wollen have a special use here too: Das Restaurant soll sehr gut sein means “the restaurant is said to be very good”, passing on what others say, and Er will das Geld nicht gesehen haben means “he claims not to have seen the money”." },
+
+    { figure: { photo: 'german-modal-verbs-tea-cups', alt: 'Cups of tea on a table', caption: 'Möchtest du noch einen Tee? Möchte is the friendly way to offer something, and Ja, gern is the friendly way to accept.' } },
+
+    { h: 'Common mistakes' },
+    { p: "These mistakes are typical for English speakers, and each one breaks a rule from this article." },
+    { mistakes: [
+      ['Ich muss zu arbeiten.', 'Ich muss **arbeiten**.', 'Modal verbs take the infinitive without zu, even where English says “have to”.'],
+      ['Er kannt gut kochen.', 'Er **kann** gut kochen.', 'The er/sie/es form of a modal has no -t ending: er kann, er muss, er will.'],
+      ['Ich kann sprechen Deutsch.', 'Ich kann Deutsch **sprechen**.', 'The infinitive goes to the end of the clause.'],
+      ['Du musst nicht hier rauchen.', 'Du **darfst** hier nicht rauchen.', '“Must not” is a prohibition, and German expresses that with nicht dürfen.'],
+      ['Ich will einen Kaffee, bitte.', 'Ich **möchte** einen Kaffee, bitte.', 'Wollen sounds like a demand when you order; möchte is the polite form.'],
+      ['Ich habe arbeiten gemusst.', 'Ich habe arbeiten **müssen**.', 'With a second verb, the perfect of a modal uses the infinitive, not the participle.'],
+      ['Ich will morgen anrufen dich.', 'Ich **werde** dich morgen anrufen.', 'Will means “want”; the future uses werden, and the infinitive goes last.'],
+    ] },
+
+    { h: 'How to make modals automatic' },
+    { p: "Modals are worth practicing early, because you need them in almost every real situation: ordering, asking for help, making plans, explaining what you have to do. Start with the present tense and the word order, then add the simple past, and keep the double infinitive for when your German is solid." },
+    { p: "Learn each modal in **full sentences rather than as a single word**. Ich muss morgen arbeiten teaches you the meaning, the form and the word order at once. Say the sentences aloud, then change the person and the tense: ich muss, er muss, wir mussten. A few minutes like this every day does more than an hour once a week." },
+    { p: "Pay special attention to the pairs that do not match English: nicht müssen and nicht dürfen, wollen and möchte, will and werde. Write your own example for each, about your own life, and they will stick much better than examples from a book." },
+    { p: "At Alimun, **exercises with instant feedback** show you right away when a modal is in the wrong form or the infinitive is in the wrong place, and your teacher corrects your homework. In live classes with a teacher and the same small group, you use the modals every week to make plans, give advice and ask politely, which is exactly how they become automatic." },
+  ],
+  quiz: [
+    { q: 'Er ___ sehr gut Klavier spielen.', options: ['kannt', 'könnt', 'kann', 'können'], a: 2, why: 'The er/sie/es form of können is kann, with no -t ending.' },
+    { q: 'Which sentence means “You must not park here”?', options: ['Du darfst hier nicht parken.', 'Du musst hier nicht parken.', 'Du sollst hier parken.', 'Du kannst hier parken.'], a: 0, why: 'A prohibition is nicht dürfen. Nicht müssen only means “don’t have to”.' },
+    { q: 'Der Arzt sagt, ich ___ mehr schlafen.', options: ['will', 'soll', 'darf', 'mag'], a: 1, why: 'Sollen expresses what someone else wants you to do, here the doctor’s advice.' },
+    { q: 'What is the simple past of ich muss?', options: ['ich müsste', 'ich mochte', 'ich habe gemusst', 'ich musste'], a: 3, why: 'The simple past drops the umlaut: müssen becomes musste.' },
+    { q: 'Which is the polite way to order in a café?', options: ['Ich möchte einen Kaffee, bitte.', 'Ich will einen Kaffee, bitte.', 'Ich muss einen Kaffee, bitte.', 'Ich soll einen Kaffee, bitte.'], a: 0, why: 'Möchte is the polite “would like”; ich will sounds like a demand.' },
+    { q: 'Gestern habe ich lange arbeiten ___.', options: ['gemusst', 'müssen', 'musste', 'zu müssen'], a: 1, why: 'With a second verb, the perfect of a modal uses the double infinitive: arbeiten müssen.' },
+    { q: 'What does Ich will nach Hause mean?', options: ['I will go home.', 'I have to go home.', 'I want to go home.', 'I may go home.'], a: 2, why: 'Will is a form of wollen and means “want”. The future uses werden.' },
+    { q: 'Which word completes the polite request? ___ Sie mir bitte helfen?', options: ['Können', 'Mögen', 'Müssten', 'Könnten'], a: 3, why: 'Könnte, the Konjunktiv II of können, is the standard polite request. Können is correct but less polite.' },
+  ],
+  faq: [
+    ['How many modal verbs does German have?', 'Six: können, müssen, dürfen, sollen, wollen and mögen. Möchte is formally the Konjunktiv II of mögen, but it is used so often as “would like” that courses teach it as a seventh modal from the start.'],
+    ['Do I use the perfect or the simple past with modals?', 'Mostly the simple past, even in conversation: ich musste, ich konnte, ich wollte. The perfect with a double infinitive (ich habe arbeiten müssen) exists and appears at B2, but it is less common.'],
+    ['What is the difference between müssen and sollen?', 'Müssen is a necessity created by the situation or a rule. Sollen is what another person wants you to do, such as an instruction or advice: Der Arzt sagt, ich soll mehr schlafen.'],
+    ['Why is there no zu after modal verbs?', 'Modal verbs take a bare infinitive in German: ich kann schwimmen, ich muss gehen. Zu appears with other verbs, such as brauchen in the negative: du brauchst nicht zu kommen.'],
+    ['What is the past of möchte?', 'Möchte has no past form of its own. For a past wish, Germans use wollte: Ich wollte dich gestern anrufen.'],
+  ],
+  related: ['german-word-order', 'german-cases', 'german-articles'],
+  sources: [
+    ['Duden: müssen', 'https://www.duden.de/rechtschreibung/muessen'],
+    ['Duden: dürfen', 'https://www.duden.de/rechtschreibung/duerfen'],
+    ['Duden: sollen', 'https://www.duden.de/rechtschreibung/sollen'],
+    ['Duden: mögen', 'https://www.duden.de/rechtschreibung/moegen'],
+    ['Dartmouth College: German modal verbs', 'https://www.germanstudiesdepartmenaluser.host.dartmouth.edu/Verbs/modals.html'],
+    ['University of Texas, Grimm Grammar: modal verbs in the past', 'https://coerll.utexas.edu/gg/gr/vm_02.html'],
+  ],
+};

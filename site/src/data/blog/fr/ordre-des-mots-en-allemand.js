@@ -1,0 +1,225 @@
+// Ordre des mots en allemand. Vérifié avec le Duden (Satzklammer, weil), la page Grimm Grammar sur l'ordre des mots
+// (University of Texas at Austin) et des grammaires de référence : verbe en deuxième position, verbe en tête dans les questions
+// fermées et à l'impératif, verbe à la fin dans les subordonnées, la parenthèse verbale et la place de nicht.
+export default {
+  key: 'german-word-order',
+  site: 'fr',
+  slug: 'ordre-des-mots-en-allemand',
+  section: 'grammar',
+  course: 'German',
+  published: '2026-10-31',
+  updated: '2026-10-31',
+  title: "L'ordre des mots en allemand : où placer le verbe et pourquoi",
+  metaTitle: 'Ordre des mots en allemand : règles et place du verbe – Alimun',
+  desc: "L'ordre des mots en allemand expliqué : le verbe en deuxième position, à la fin après weil et dass, verbes à particule, modaux, questions et place de nicht.",
+  lead: "En français, l'ordre sujet, verbe, complément est assez stable. L'allemand, lui, te laisse commencer la phrase par presque n'importe quoi, mais un élément ne bouge pratiquement pas : **le verbe conjugué**. Apprends où il se place dans les trois grands types de phrases, et l'allemand cessera de te sembler écrit à l'envers.",
+  photo: 'PHOTO',
+  sticker: { draw: 'snail', say: 'Patience : en allemand, le verbe arrive souvent à la fin.' },
+  facts: [
+    { label: 'Verbe en 2e', text: 'dans une phrase déclarative allemande, le verbe conjugué est toujours le deuxième élément' },
+    { n: 1, unit: 'élément', text: 'se place avant le verbe dans une phrase déclarative, quelle que soit sa longueur' },
+    { n: 5, unit: 'conjonctions', text: "und, aber, oder, denn et sondern, qui ne changent pas l'ordre des mots" },
+    { label: 'Verbe à la fin', text: 'après weil, dass, wenn, ob et les autres conjonctions de subordination' },
+  ],
+  blocks: [
+    { take: { title: "L'essentiel", text: "Dans une phrase déclarative allemande, **le verbe conjugué est toujours le deuxième élément**, quoi qu'il y ait avant. Les autres parties du verbe, comme l'infinitif, le participe ou la particule séparable, vont à la fin, et les deux parties encadrent la phrase. Dans une proposition introduite par weil, dass, wenn ou ob, le verbe conjugué va tout à la fin. Les questions fermées et l'impératif commencent par le verbe.", draw: 'owl' } },
+
+    { h: "Pourquoi l'ordre des mots compte autant en allemand" },
+    { p: "Le français indique qui fait quoi surtout par l'ordre des mots : « le chien mord l'homme » et « l'homme mord le chien » racontent deux histoires différentes. L'allemand le montre par les terminations de cas sur les articles et les pronoms, ce qui lui permet de déplacer plus librement les autres parties de la phrase. **Den Mann beißt der Hund** veut toujours dire que le chien mord l'homme, parce que den Mann est à l'accusatif." },
+    { p: "Cette liberté a un prix. Le verbe a des places fixes, et ce ne sont pas celles du français. Tu peux connaître tous les mots d'une phrase et sonner étranger parce que le verbe est au mauvais endroit. La bonne nouvelle, c'est qu'il n'y a **que trois positions du verbe** : une fois que tu les maîtrises, le reste n'est que du réglage." },
+
+    { h: 'Le verbe en deuxième position' },
+    { p: "Dans une phrase déclarative normale, le verbe conjugué, celui qui change selon le sujet, est le **deuxième élément** de la phrase. Attention : deuxième élément, pas deuxième mot. Le premier élément peut être un mot, un groupe de mots ou même toute une subordonnée ; il compte toujours comme un seul bloc." },
+    { examples: [
+      ['Ich **fahre** morgen nach Berlin.', 'Je vais à Berlin demain. (le sujet en tête)'],
+      ['Morgen **fahre** ich nach Berlin.', 'Demain, je vais à Berlin. (le temps en tête)'],
+      ['Nach Berlin **fahre** ich morgen.', "C'est à Berlin que je vais demain. (le lieu en tête, pour insister)"],
+      ['Meine Schwester aus Hamburg **fährt** morgen nach Berlin.', 'Ma sœur de Hambourg va à Berlin demain. (un long sujet reste un seul élément)'],
+    ] },
+    { p: "Les quatre phrases sont correctes. Ce qui change, c'est l'accent : le premier élément est le point de départ, souvent quelque chose de déjà connu ou que tu veux mettre en valeur. Ce qui ne change jamais, c'est que **fahre ou fährt est en deuxième place**." },
+
+    { h3: 'Ce qui peut occuper la première position' },
+    { p: "Presque n'importe quelle partie de la phrase peut l'ouvrir : le sujet, une indication de temps, un lieu, le complément d'objet, un adverbe comme leider (malheureusement) ou zum Glück (heureusement), ou toute une subordonnée. Mais **un seul élément** se place avant le verbe. Une phrase déclarative allemande ne commence jamais par deux éléments avant le verbe, alors que le français le fait sans cesse : dans « Demain, je vais », il y en a deux." },
+    { examples: [
+      ['Leider **habe** ich keine Zeit.', "Malheureusement, je n'ai pas le temps."],
+      ['Den Film **habe** ich schon gesehen.', "Ce film, je l'ai déjà vu. (le complément en tête)"],
+      ['Im Sommer **lernen** wir jeden Tag Deutsch.', "En été, nous étudions l'allemand tous les jours."],
+      ['Weil es regnet, **bleiben** wir zu Hause.', 'Comme il pleut, nous restons à la maison. (toute la proposition avec weil est le premier élément)'],
+    ] },
+    { note: { title: 'Compte les éléments, pas les mots', text: "Dans « Am nächsten Montag um neun Uhr beginnt der Kurs », le premier élément fait six mots : **am nächsten Montag um neun Uhr**. Le verbe beginnt reste en deuxième position, parce que toute l'indication de temps forme un seul bloc.", draw: 'parrot' } },
+
+    { figure: { photo: 'FIG1', alt: 'FIG1ALT', caption: 'FIG1CAP' } },
+
+    { h: "L'inversion : le sujet passe après le verbe" },
+    { p: "Quand autre chose que le sujet occupe la première place, le sujet doit bouger et se place juste après le verbe. C'est ce qu'on appelle **l'inversion**. Dans « Morgen fahre ich nach Berlin », ich vient après fahre parce que morgen a pris la première place. Le verbe garde sa position et le sujet s'efface." },
+    { p: "C'est l'erreur d'ordre la plus fréquente chez les francophones, parce que le français garde le sujet devant le verbe : demain je travaille, ici nous habitons, parfois elle lit. En allemand, on dit **Morgen arbeite ich**, Hier wohnen wir et Manchmal liest sie. Si tu commences par autre chose que le sujet, le mot suivant est le verbe." },
+    { p: "Pour les adverbes de fréquence, en revanche, le français aide : on dit « je vais souvent au cinéma », et l'allemand fait pareil, **Ich gehe oft ins Kino**. L'adverbe vient après le verbe, ou bien il passe en tête et le sujet se déplace : Oft gehe ich ins Kino." },
+
+    { h3: 'Und, aber, oder, denn, sondern : la position zéro' },
+    { p: "Cinq conjonctions courantes relient deux propositions principales sans compter comme un élément : und (et), aber (mais), oder (ou), denn (car) et sondern (mais, au contraire). Elles restent en dehors de la phrase, dans ce que beaucoup de manuels appellent la position zéro, donc **l'ordre des mots ne change pas** après elles." },
+    { examples: [
+      ['Ich lerne Deutsch, **denn** ich will in Wien arbeiten.', "J'apprends l'allemand, car je veux travailler à Vienne. (denn : le verbe reste en 2e position)"],
+      ['Ich lerne Deutsch, **weil** ich in Wien arbeiten will.', "J'apprends l'allemand parce que je veux travailler à Vienne. (weil : le verbe va à la fin)"],
+      ['Er wohnt in Köln, **aber** seine Familie lebt in Bonn.', 'Il habite à Cologne, mais sa famille vit à Bonn.'],
+    ] },
+    { p: "Le français offre ici un repère pratique : **denn correspond à « car »**, qui relie deux phrases complètes, et weil à « parce que », qui introduit une subordonnée. Attention aussi aux mots comme deshalb (c'est pourquoi), trotzdem (quand même), dann (ensuite) et außerdem (en plus) : ce sont des adverbes, ils occupent eux-mêmes la première place et le verbe suit aussitôt, Es regnet, deshalb bleiben wir zu Hause. Confondre denn et dann est une erreur classique : avec denn le sujet reste devant, avec dann il passe derrière le verbe." },
+
+    { h: 'La parenthèse verbale : deux morceaux, un cadre' },
+    { p: "Beaucoup de phrases allemandes ont un verbe en deux parties. La partie conjuguée se place en deuxième position et le reste va à la fin de la proposition. Les grammaires allemandes parlent de **Satzklammer**, la parenthèse de la phrase, parce que les deux parties du verbe encadrent tout le reste. L'exemple du Duden le montre bien : « Sie hat gestern ein Buch gekauft. »" },
+    { p: "Tout le reste, c'est-à-dire le sujet s'il n'est pas en tête, les compléments, le temps et le lieu, se place dans le champ central entre les deux parties. Ce champ peut être long, et c'est pour cela qu'écouter de l'allemand oblige parfois à **attendre la fin de la phrase** pour savoir ce qui s'est vraiment passé." },
+    { h3: 'Les verbes de modalité' },
+    { p: "Avec können, müssen, wollen, sollen, dürfen et mögen (et sa forme möchte), le verbe de modalité est conjugué et se place en deuxième position. Le verbe principal va à la fin, à **l'infinitif**, sans zu. En français, on dit « je ne peux pas venir aujourd'hui » avec les deux verbes côte à côte ; l'allemand les sépare." },
+    { examples: [
+      ['Ich **kann** heute leider nicht **kommen**.', "Malheureusement, je ne peux pas venir aujourd'hui."],
+      ['Wir **müssen** morgen sehr früh **aufstehen**.', 'Demain, nous devons nous lever très tôt.'],
+      ['**Möchtest** du am Samstag mit uns ins Kino **gehen**?', 'Tu voudrais aller au cinéma avec nous samedi ?'],
+    ] },
+    { h3: 'Le Perfekt' },
+    { p: "Le Perfekt, le passé le plus utilisé à l'oral en allemand, se construit comme notre passé composé : haben ou sein plus le participe passé. La grande différence, c'est la place. En français, on dit « j'ai acheté un livre hier », auxiliaire et participe côte à côte ; en allemand, l'auxiliaire est en deuxième position et **le participe va à la fin**." },
+    { examples: [
+      ['Ich **habe** gestern einen Kuchen **gebacken**.', "J'ai fait un gâteau hier."],
+      ['Sie **ist** letztes Jahr nach Hamburg **gezogen**.', "Elle a déménagé à Hambourg l'année dernière."],
+      ['Wir **haben** den ganzen Abend Karten **gespielt**.', 'Nous avons joué aux cartes toute la soirée.'],
+    ] },
+    { h3: 'Werden : futur et passif' },
+    { p: "Werden fonctionne de la même façon. Au futur, il est suivi d'un infinitif en fin de phrase : **Ich werde nächstes Jahr in München studieren.** Au passif, il est suivi d'un participe : Das Haus wird gerade renoviert, la maison est en cours de rénovation. Dans les deux cas, werden est en deuxième position et l'autre verbe ferme la parenthèse." },
+    { h3: 'Les verbes à particule séparable' },
+    { p: "Des verbes comme anrufen (téléphoner), aufstehen (se lever), einkaufen (faire les courses) et abfahren (partir) ont une particule qui **se détache et va à la fin** dans une proposition principale au présent et au prétérit. Le verbe reste en deuxième position. Ici, la parenthèse est formée par un seul verbe coupé en deux." },
+    { examples: [
+      ['Ich **rufe** dich morgen **an**.', "Je t'appelle demain. (anrufen)"],
+      ['Der Zug **fährt** um acht Uhr **ab**.', 'Le train part à huit heures. (abfahren)'],
+      ['Ich **habe** dich gestern **angerufen**.', "Je t'ai appelé hier. (le participe garde la particule : an-ge-rufen)"],
+      ['Ich **muss** dich morgen **anrufen**.', "Je dois t'appeler demain. (après un modal, l'infinitif reste entier)"],
+    ] },
+    { table: {
+      head: ['Premier élément', 'Verbe en 2e position', 'Champ central', 'Fin de la proposition'],
+      rows: [
+        ['Ich', 'rufe', 'dich morgen', 'an.'],
+        ['Morgen', 'kann', 'ich leider nicht', 'kommen.'],
+        ['Sie', 'hat', 'gestern ein Buch', 'gekauft.'],
+        ['Nächstes Jahr', 'werde', 'ich in München', 'studieren.'],
+        ['Das Haus', 'wird', 'gerade', 'renoviert.'],
+      ],
+      note: "Le premier élément et le champ central changent d'une phrase à l'autre ; les deux positions du verbe, jamais.",
+    } },
+    { note: { title: 'Deux verbes, deux places', text: "Si une phrase déclarative a plus d'une partie verbale, pose-toi une seule question : laquelle est conjuguée ? **Celle-là va en deuxième position, tout le reste à la fin.** Ce simple réflexe corrige la plupart des erreurs de parenthèse.", draw: 'cat' } },
+
+    { figure: { photo: 'FIG2', alt: 'FIG2ALT', caption: 'FIG2CAP' } },
+
+    { quote: 'En allemand, le verbe conjugué est le point fixe ; tout le reste bouge autour de lui.' },
+
+    { cta: true },
+
+    { h: 'Les subordonnées : le verbe va à la fin' },
+    { p: "Une subordonnée ne tient pas debout toute seule : elle dépend d'une principale. En allemand, elle commence souvent par une conjonction de subordination comme weil (parce que), dass (que), wenn (si, quand), ob (si, dans une question indirecte), als (quand, au passé), obwohl (bien que), damit (pour que), bevor (avant que) ou nachdem (après que). Dans ces propositions, **le verbe conjugué va tout à la fin**." },
+    { examples: [
+      ['Ich bleibe zu Hause, **weil** ich krank **bin**.', 'Je reste à la maison parce que je suis malade.'],
+      ['Ich glaube, **dass** sie morgen **kommt**.', "Je crois qu'elle vient demain."],
+      ['Ich weiß nicht, **ob** er Zeit **hat**.', "Je ne sais pas s'il a le temps."],
+      ['Sie lernt Deutsch, **obwohl** sie wenig Zeit **hat**.', "Elle apprend l'allemand bien qu'elle ait peu de temps."],
+    ] },
+    { h3: 'Deux verbes à la fin' },
+    { p: "Quand la subordonnée contient un modal, un Perfekt ou werden, les deux parties du verbe se retrouvent à la fin et **le verbe conjugué vient en dernier**. L'infinitif ou le participe se place juste avant." },
+    { examples: [
+      ['…, weil ich morgen früh **aufstehen muss**.', '…parce que je dois me lever tôt demain.'],
+      ['…, dass er gestern **angerufen hat**.', "…qu'il a appelé hier."],
+      ['…, dass sie bald nach Wien **ziehen wird**.', "…qu'elle va bientôt déménager à Vienne."],
+    ] },
+    { p: "Dans une subordonnée, les verbes à particule se ressoudent, parce que le verbe est parti à la fin, là où se trouvait déjà la particule : Der Zug fährt um acht ab, mais Ich weiß, dass der Zug um acht **abfährt**." },
+    { h3: 'Quand la subordonnée vient en premier' },
+    { p: "Une subordonnée peut aussi ouvrir la phrase. Elle compte alors tout entière comme premier élément, et la principale commence directement par son verbe. On obtient deux verbes côte à côte, séparés par une virgule : le schéma que beaucoup appellent **verbe, virgule, verbe**." },
+    { examples: [
+      ['Wenn du Zeit **hast**, **ruf** mich an.', 'Si tu as le temps, appelle-moi.'],
+      ['Weil es so kalt **war**, **sind** wir zu Hause geblieben.', 'Comme il faisait si froid, nous sommes restés à la maison.'],
+      ['Als ich in Berlin **wohnte**, **habe** ich viel Deutsch gesprochen.', "Quand j'habitais à Berlin, je parlais beaucoup allemand."],
+    ] },
+    { h3: 'Questions indirectes et relatives' },
+    { p: "La même règle vaut pour les questions indirectes, qui commencent par un mot interrogatif ou par ob, et pour les relatives, qui commencent par der, die, das ou un mot semblable. Dans la question directe, le verbe est en deuxième position ; **dans la question indirecte, il va à la fin** : Wann fährt der Zug ab ? mais Weißt du, wann der Zug abfährt ? Les relatives fonctionnent de la même manière : Der Mann, der dort steht, ist mein Lehrer." },
+    { note: { title: 'Tu entendras « weil ich habe keine Zeit »', text: "À l'oral familier, beaucoup de germanophones mettent le verbe en deuxième position après weil. Le Duden mentionne cet usage, avec l'exemple « ich komme nicht mit, weil ich habe keine Zeit », et le signale comme non standard. **À l'écrit et aux examens, mets le verbe à la fin** après weil.", draw: 'dog' } },
+
+    { h: 'Questions et impératif' },
+    { p: "L'allemand a deux types de questions directes, chacun avec sa position du verbe. **Les questions avec un mot interrogatif** comme wer, was, wann, wo, wie, warum, woher ou wohin gardent le verbe en deuxième position : le mot interrogatif est le premier élément, puis vient le verbe, puis le sujet. Wo wohnst du ? Warum lernst du Deutsch ?" },
+    { p: "**Les questions fermées commencent par le verbe**, et le sujet suit immédiatement. Le français connaît ce mécanisme avec l'inversion soutenue, « As-tu le temps ? », et l'allemand l'utilise tout le temps : Hast du heute Zeit ? La deuxième partie de la parenthèse va toujours à la fin. L'impératif commence aussi par le verbe : Komm her! Ruf mich an! À la forme de politesse, Sie suit le verbe : Kommen Sie bitte herein." },
+    { table: {
+      head: ['Type de phrase', 'Place du verbe conjugué', 'Exemple'],
+      rows: [
+        ['Déclarative', 'deuxième position', 'Ich habe heute keine Zeit.'],
+        ['Question avec mot interrogatif', 'deuxième position', 'Wann fährt der Zug ab?'],
+        ['Question fermée', 'première position', 'Hast du heute Zeit?'],
+        ['Impératif', 'première position', 'Ruf mich morgen an!'],
+        ['Subordonnée avec weil, dass, wenn, ob', 'à la fin', '…, weil ich heute keine Zeit habe.'],
+        ['Question indirecte ou relative', 'à la fin', 'Weißt du, wann der Zug abfährt?'],
+      ],
+      note: 'Le verbe en tête peut aussi remplacer wenn dans une condition, comme dans « Hast du Zeit, dann ruf mich an », mais pour un apprenant, wenn est bien plus courant.',
+    } },
+
+    { figure: { photo: 'FIG3', alt: 'FIG3ALT', caption: 'FIG3CAP' } },
+
+    { h: 'Temps, manière, lieu : une tendance, pas une loi' },
+    { p: "Dans le champ central, l'allemand a tendance à placer **le temps avant le lieu** : Ich fahre morgen nach Berlin, et non Ich fahre nach Berlin morgen. Beaucoup de manuels enseignent une version plus longue avec le moyen mnémotechnique TeKaMoLo : temporel (quand), causal (pourquoi), modal (comment), local (où)." },
+    { examples: [
+      ['Ich fahre **morgen** wegen der Arbeit **mit dem Zug** **nach Berlin**.', 'Demain, je vais à Berlin en train pour le travail. (temps, cause, manière, lieu)'],
+      ['Wir treffen uns **um acht** **vor dem Kino**.', 'On se retrouve à huit heures devant le cinéma. (temps, lieu)'],
+      ['Sie ist **gestern** **mit dem Fahrrad** **zur Arbeit** gefahren.', 'Hier, elle est allée au travail à vélo. (temps, manière, lieu)'],
+    ] },
+    { p: "TeKaMoLo est utile comme ordre par défaut, mais ce n'est pas une règle stricte, et les grammaires décrivent le champ central de différentes façons. La Grimm Grammar de l'Université du Texas, par exemple, note que l'ordre est souple et dépend de l'accent. Les germanophones déplacent les éléments pour les mettre en valeur : **une information placée plus loin a tendance à peser davantage**, et n'importe quel élément peut aussi passer en tête. Mit dem Zug fahre ich morgen nach Berlin, nicht mit dem Auto est parfaitement correct." },
+    { p: "Deux autres tendances aident dans le champ central. **Les pronoms viennent avant les noms** : Ich gebe es dem Lehrer, mais Ich gebe dem Lehrer das Buch. Et les informations courtes et déjà connues ont tendance à précéder les informations longues et nouvelles. Dans le doute, le temps avant le lieu reste le choix le plus sûr." },
+
+    { h: 'Où placer nicht' },
+    { p: "Le français a deux mots pour la négation, ne et pas, qui entourent le verbe : je ne viens pas. L'allemand n'en a qu'un, nicht, et sa place dépend de ce que tu nies. Quand tu nies toute la phrase, nicht va **vers la fin** : après le verbe conjugué, après les compléments déjà connus et après la plupart des indications de temps, mais avant la deuxième partie de la parenthèse." },
+    { examples: [
+      ['Ich komme heute **nicht**.', "Je ne viens pas aujourd'hui."],
+      ['Ich kenne den Mann **nicht**.', 'Je ne connais pas cet homme.'],
+      ['Ich habe das Buch **nicht** gelesen.', "Je n'ai pas lu le livre. (avant le participe)"],
+      ['Wir können morgen **nicht** kommen.', "Nous ne pouvons pas venir demain. (avant l'infinitif)"],
+    ] },
+    { p: "Calquer « je ne viens pas aujourd'hui » donne souvent Ich komme nicht heute, qui oppose « aujourd'hui » à un autre jour et appelle une suite avec sondern. Nicht se place aussi **avant un lieu, une direction ou un adjectif** étroitement liés au verbe : Ich wohne nicht in Berlin. Das ist nicht teuer. Ich fahre nicht nach Hause. Et il se place avant la plupart des adverbes de manière : Er fährt nicht schnell." },
+    { p: "Pour ne nier qu'une partie de la phrase, place nicht juste avant cette partie, généralement suivi de sondern : Ich fahre **nicht heute, sondern morgen**. Enfin, les noms avec un article indéfini ou sans article se nient avec kein, pas avec nicht : Ich habe keine Zeit, jamais ich habe nicht Zeit." },
+
+    { h: 'Les erreurs les plus fréquentes' },
+    { p: "Presque toutes les erreurs d'ordre viennent du transfert de sa propre langue. En français, le sujet précède presque toujours le verbe, auxiliaire et participe restent ensemble et la négation suit le verbe. Voici ce que cela donne en général." },
+    { mistakes: [
+      ['Morgen ich fahre nach Berlin.', 'Morgen **fahre ich** nach Berlin.', "Un seul élément avant le verbe ; le sujet passe derrière."],
+      ['Ich komme nicht heute.', 'Ich komme **heute nicht**.', "Pour nier toute la phrase, nicht vient après l'indication de temps."],
+      ['Ich habe gekauft ein neues Handy.', 'Ich habe ein neues Handy **gekauft**.', 'Le participe ferme la parenthèse en fin de proposition.'],
+      ['Ich anrufe dich morgen.', 'Ich **rufe** dich morgen **an**.', 'Dans une principale, la particule du verbe séparable va à la fin.'],
+      ['…, weil ich habe keine Zeit.', '…, weil ich keine Zeit **habe**.', 'Après weil, en allemand standard, le verbe conjugué va à la fin.'],
+      ['Wenn ich Zeit habe, ich komme.', 'Wenn ich Zeit habe, **komme ich**.', 'La subordonnée est le premier élément, donc le verbe suit directement.'],
+      ['Weißt du, wann fährt der Zug ab?', 'Weißt du, wann der Zug **abfährt**?', 'Dans une question indirecte, le verbe va à la fin et la particule se ressoude.'],
+      ['Ich kann nicht kommen heute.', 'Ich kann heute **nicht kommen**.', "Le temps va dans le champ central et nicht avant l'infinitif."],
+    ] },
+
+    { figure: { photo: 'FIG4', alt: 'FIG4ALT', caption: 'FIG4CAP' } },
+
+    { h: "Comment rendre l'ordre des mots automatique" },
+    { p: "Connaître les règles est la première étape, mais en conversation, tu n'as pas le temps de les vérifier. Le but est que le bon ordre **te paraisse naturel**, et cela vient en entendant et en disant beaucoup de phrases correctes. Apprendre des phrases entières plutôt que des mots isolés est le chemin le plus rapide." },
+    { p: "Un exercice simple : prends une phrase et **place un élément différent en tête** à chaque fois. Ich lerne am Abend Deutsch, Am Abend lerne ich Deutsch, Deutsch lerne ich am Abend. Ajoute ensuite un modal, mets-la au Perfekt et transforme-la en proposition avec weil. Cinq minutes de cet exercice entraînent les trois positions du verbe mieux qu'une heure de lecture de règles." },
+    { p: "Quand tu lis de l'allemand, repère la parenthèse verbale et souligne ses deux parties. Quand tu écoutes, fais attention à la fin de la phrase, où le sens se complète souvent. Et quand tu écris, vérifie chaque proposition pour une seule chose : **où est le verbe conjugué ?**" },
+    { p: "Chez Alimun, tu apprends l'allemand en cours en direct avec un professeur et toujours le même petit groupe, donc tu entends et utilises ces structures chaque semaine, et **ton professeur corrige tes devoirs**, ordre des mots compris. Les exercices avec correction immédiate te montrent tout de suite quand un verbe est mal placé, pendant que tu te souviens encore pourquoi tu l'as mis là." },
+  ],
+  quiz: [
+    { q: 'Quelle phrase est correcte ?', options: ['Morgen ich fahre nach Berlin.', 'Morgen fahre ich nach Berlin.', 'Morgen nach Berlin ich fahre.', 'Ich morgen fahre nach Berlin.'], a: 1, why: 'Morgen occupe la première place, donc le verbe vient en deuxième et le sujet passe derrière.' },
+    { q: 'Ich bleibe zu Hause, weil ich krank ___.', options: ['bin', 'bin ich', 'ich bin', 'sein'], a: 0, why: 'Après weil, le verbe conjugué va à la fin : weil ich krank bin.' },
+    { q: 'Où va le participe dans « Ich habe gestern ein Buch ___ » ?', options: ['Après habe', 'Avant ich', 'À la fin de la proposition', 'Avant ein Buch'], a: 2, why: 'Au Perfekt, haben ou sein est en deuxième position et le participe ferme la parenthèse à la fin.' },
+    { q: 'Quelle conjonction laisse le verbe en deuxième position ?', options: ['weil', 'dass', 'obwohl', 'denn'], a: 3, why: 'Denn est une conjonction de position zéro, comme und, aber, oder et sondern.' },
+    { q: "Comment dire « Je t'appelle demain » avec anrufen ?", options: ['Ich anrufe dich morgen.', 'Ich rufe morgen an dich.', 'Ich rufe dich morgen an.', 'Ich dich morgen anrufe.'], a: 2, why: 'Dans une principale, la particule an va à la fin : Ich rufe dich morgen an.' },
+    { q: 'Laquelle est une question fermée ?', options: ['Hast du heute Zeit?', 'Wann hast du Zeit?', 'Du hast heute Zeit.', 'Weil du heute Zeit hast.'], a: 0, why: 'Les questions fermées commencent par le verbe conjugué.' },
+    { q: 'Complète : Wenn du Zeit hast, ___ mich an.', options: ['du rufst', 'ruf', 'rufst du nicht', 'du ruf'], a: 1, why: "La proposition avec wenn est le premier élément, donc l'impératif ruf suit directement la virgule." },
+    { q: 'Où placer nicht pour nier toute la phrase « Ich habe das Buch gelesen » ?', options: ['Avant ich', 'Juste après habe', 'Avant gelesen', 'Après gelesen'], a: 2, why: 'Nicht se place avant la deuxième partie de la parenthèse : Ich habe das Buch nicht gelesen.' },
+  ],
+  faq: [
+    ["L'ordre des mots est-il libre en allemand ?", "En partie. La première position et le champ central sont souples et permettent de changer l'accent. Les positions du verbe, elles, sont fixes : deuxième dans les déclaratives et les questions avec mot interrogatif, première dans les questions fermées et à l'impératif, dernière dans les subordonnées."],
+    ['Pourquoi le verbe va-t-il à la fin après weil, mais pas après denn ?', "Weil est une conjonction de subordination, comme « parce que » : elle ouvre une subordonnée avec le verbe à la fin. Denn est une conjonction de coordination, comme « car » : elle relie deux principales et ne compte pas comme un élément, donc le verbe reste en deuxième position."],
+    ['TeKaMoLo, est-ce une règle ?', "C'est un ordre par défaut utile pour le champ central : temps, cause, manière, lieu. Les germanophones le modifient pour mettre quelque chose en valeur, et n'importe quel élément peut aussi passer en tête. La partie la plus fiable, c'est le temps avant le lieu."],
+    ['Les Allemands disent-ils vraiment « weil ich habe keine Zeit » ?', "Oui, beaucoup le disent à l'oral familier, et le Duden le signale comme non standard. À l'écrit, aux examens et dans les situations formelles, mets le verbe à la fin après weil."],
+    ['Quand faut-il apprendre les subordonnées ?', "Dans la plupart des cours et des manuels, weil, dass et wenn arrivent au niveau A2, après les déclaratives, les questions, les modaux et le Perfekt. Maîtriser les trois positions de base du verbe est le socle de tout ce qui vient à partir du B1."],
+  ],
+  related: ['german-articles', 'german-cases', 'german-modal-verbs'],
+  sources: [
+    ['Duden : Satzklammer', 'https://www.duden.de/rechtschreibung/Satzklammer'],
+    ['Duden : weil', 'https://www.duden.de/rechtschreibung/weil'],
+    ["Grimm Grammar (University of Texas at Austin) : l'ordre des mots", 'https://coerll.utexas.edu/gg/pr/con_06.html'],
+    ['German sentence structure (Wikipédia, en anglais)', 'https://en.wikipedia.org/wiki/German_sentence_structure'],
+    ['Satzklammer (Wikipédia, en allemand)', 'https://de.wikipedia.org/wiki/Satzklammer'],
+  ],
+};
