@@ -21,6 +21,6 @@ exact English text. Languages: es fr de pt it zh ar (Moroccan pages use fr).
 - No emojis. Do not add or drop information.
 
 ## Missing (31 Oct 2026)
-Done: every book up to B2 and its goal books, plus English C2, Spanish C2, Italian C2, Portuguese C2 and French C2 in all seven languages.
-Still to translate (all seven languages each): English C1 is done; French C1, German C1 and C2, Italian C1, Portuguese C1, Spanish C1. When a book is finished, strike it from this list in the same commit.
+Done: every book up to B2 and its goal books, plus English C2, Spanish C2, Italian C2, Portuguese C2, French C2 and German C2 in all seven languages.
+Still to translate (all seven languages each): English C1 is done; French C1, German C1, Italian C1, Portuguese C1, Spanish C1. When a book is finished, strike it from this list in the same commit.
 Tip: `scripts/book-strings.mjs` does not reuse translations from other books of the same language, so strings that appear in several books (instructions such as "Choose the best answer.") can be copied from the existing files for that language before translating the rest.
