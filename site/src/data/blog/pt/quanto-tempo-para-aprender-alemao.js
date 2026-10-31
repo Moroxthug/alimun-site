@@ -14,7 +14,7 @@ export default {
   metaTitle: 'Quanto tempo leva para aprender alemão? Horas por nível – Alimun',
   desc: 'As horas que o Goethe-Institut indica para cada nível, o que o FSI diz sobre o alemão, o peso da sua língua materna e os prazos para visto, cidadania e trabalho.',
   lead: 'O alemão tem fama de difícil, e de fato leva mais tempo do que outros idiomas. Mas quanto tempo não é mistério: o Goethe-Institut publica as horas de cada nível, a lei alemã diz qual nível você precisa para quê, e **o resto depende da sua semana**.',
-  photo: 'P0',
+  photo: 'how-long-german-stopwatch',
   sticker: { draw: 'snail', say: 'Devagar, mas chego ao B1.' },
   facts: [
     { n: 650, unit: 'unidades', text: 'o limite superior da faixa do Goethe-Institut para o B1, em aulas de 45 minutos, partindo do zero' },
@@ -80,9 +80,9 @@ export default {
       ['Ich habe 30 Jahre.', 'Ich bin 30 Jahre alt.', 'A idade em alemão se diz com sein e alt, não com haben.'],
     ] },
     { figure: {
-      photo: 'P1',
-      alt: 'P1 alt',
-      caption: 'P1 caption',
+      photo: 'how-long-german-notebook-and-pens',
+      alt: 'Um caderno fechado com uma caneta-tinteiro, óculos e um porta-canetas sobre uma mesa',
+      caption: 'Reserve uma página para os seus próprios erros, como o verbo no lugar errado, e leia antes de cada aula: os erros que você anota são os que você para de cometer.',
     } },
 
     { h: 'O que muda o ritmo' },
@@ -122,14 +122,14 @@ export default {
     { h3: 'O B1 para a residência permanente e a cidadania' },
     { p: 'O B1 é o nível que mais aparece na lei alemã. A autorização de residência permanente, a Niederlassungserlaubnis, exige em geral **ausreichende Kenntnisse**, conhecimentos suficientes de alemão, e a lei os define como B1. A cidadania, pelo § 10 da lei de nacionalidade, pede o mesmo, comprovado com uma prova de B1, depois de cinco anos de residência legal. O curso de integração do governo é montado para essa meta: a parte de idioma tem 600 aulas e termina com uma prova que certifica o A2 ou o B1.' },
     { p: 'Do zero, a faixa do Goethe para o B1 vai de cerca de 260 a 490 horas. Com seis horas por semana, são cerca de 43 a 82 semanas, ou seja, de um a dois anos para quem trabalha em tempo integral. Se a sua meta é a cidadania, começar o alemão no primeiro ano na Alemanha, e não no quarto, deixa o prazo de cinco anos muito menos estressante.' },
-    { figure: {
-      photo: 'P2',
-      alt: 'P2 alt',
-      caption: 'P2 caption',
-    } },
     { h3: 'O B2 e o C1 para a universidade e o trabalho' },
     { p: 'As universidades definem sozinhas o nível para os cursos dados em alemão, e o uni-assist, que cuida das inscrições de muitas delas, lembra que o nível aceito muda de universidade para universidade e de curso para curso. As provas mais comuns são o DSH e o TestDaF, ambas de **alemão para estudos universitários**. Para o trabalho, a lei alemã define o bom alemão como B2, e muitos empregadores com equipes que falam alemão esperam pelo menos isso.' },
     { p: 'Na saúde, quem define a régua são as autoridades que concedem a licença para exercer. De enfermeiros formados no exterior, em geral se pede o B2. Médicos precisam do B2 de alemão geral e de um **alemão médico especializado orientado ao C1**, verificado na Fachsprachprüfung, uma prova que inclui uma conversa entre médico e paciente. A partir do B1, o meio das faixas do Goethe coloca o C1 cerca de 400 unidades adiante, umas 300 horas: cerca de nove meses com oito horas por semana.' },
+    { figure: {
+      photo: 'how-long-german-doctor-at-desk',
+      alt: 'Um médico de jaleco branco fazendo anotações na mesa',
+      caption: 'Médicos formados no exterior precisam do B2 de alemão geral e de alemão médico orientado ao C1: o planejamento é em anos, não em meses.',
+    } },
     { quote: 'O alemão leva tempo. Não leva **a vida inteira**.' },
 
     { h: 'Uma semana modelo' },
@@ -149,9 +149,9 @@ export default {
     } },
     { p: 'As aulas trazem o conteúdo novo e a conversação. As sessões curtas entre elas são as que levam palavras e gramática para a **memória de longo prazo**: lembrar uma palavra a partir de um flashcard, em vez de reler, é o que a fixa. O espaço do fim de semana é para o alemão que você escolheria de qualquer jeito, para que a língua entre na sua vida em vez de ficar só como tarefa.' },
     { figure: {
-      photo: 'P3',
-      alt: 'P3 alt',
-      caption: 'P3 caption',
+      photo: 'how-long-german-small-group',
+      alt: 'Um professor conversando com uma turma pequena em volta de uma mesa com notebooks',
+      caption: 'Numa turma pequena você fala em todas as aulas, e é aí que se cria o hábito de pôr o verbo no fim.',
     } },
     { note: {
       title: 'Escreva e peça correção',
@@ -163,9 +163,9 @@ export default {
     { p: 'Muita gente avança rápido no A1 e no A2 e depois desacelera em algum ponto do B1. Você se vira, entende muito, e mesmo assim parece que nada muda por meses. Em parte é real: o conteúdo fica mais sutil, com as terminações dos adjetivos, o genitivo, a voz passiva e **um vocabulário mais preciso**, e cada passo parece menor. Em parte é hábito: quando você já consegue se comunicar, dá vontade de usar sempre as mesmas frases seguras.' },
     { p: 'A saída é puxar pela produção. Use a estrutura que você costuma evitar, como uma oração relativa ou uma frase com weil, e peça correção. Leia e ouça material um pouco acima do seu nível e anote as expressões que encontrar. Defina metas que dê para conferir, como acompanhar o noticiário no rádio ou escrever um e-mail formal sem dicionário.' },
     { figure: {
-      photo: 'P4',
-      alt: 'P4 alt',
-      caption: 'P4 caption',
+      photo: 'how-long-german-phone-call-park',
+      alt: 'Uma mulher num banco de praça falando ao telefone',
+      caption: 'Uma ligação em alemão, para o consultório médico ou para o locador, é um bom teste para saber se você já passou do platô.',
     } },
 
     { h: 'Como calcular o seu prazo' },

@@ -12,9 +12,9 @@ export default {
   updated: '2026-10-31',
   title: 'How long does it take to learn German?',
   metaTitle: 'How long does it take to learn German? Hours per level – Alimun',
-  desc: 'The hours the Goethe-Institut gives for each level, what the FSI says about German, how your first language changes the pace, and timelines for visas, citizenship and work.',
+  desc: 'Goethe-Institut hours per level, the FSI view of German, how your first language changes the pace, and timelines for visas, citizenship and work.',
   lead: 'German has a reputation for being hard, and it does take longer than some languages. But the time it takes is not a mystery: the Goethe-Institut publishes hours for every level, German law tells you which level you need for what, and **your own week decides the rest**.',
-  photo: 'P0',
+  photo: 'how-long-german-stopwatch',
   sticker: { draw: 'snail', say: 'Slow and steady still gets to B1.' },
   facts: [
     { n: 650, unit: 'units', text: 'the top of the Goethe-Institut range for B1, in lessons of 45 minutes, counted from zero' },
@@ -81,9 +81,9 @@ export default {
       ['Ich bekomme ein Arzt.', 'Ich werde Arzt.', 'Bekommen means to get, not to become. To become is werden.'],
     ] },
     { figure: {
-      photo: 'P1',
-      alt: 'P1 alt',
-      caption: 'P1 caption',
+      photo: 'how-long-german-notebook-and-pens',
+      alt: 'A notebook with a fountain pen, glasses and a cup of colored pens on a desk',
+      caption: 'Keep a page for your own mistakes, such as the verb in the wrong place, and read it before each class: the errors you write down are the ones you stop making.',
     } },
 
     { h: 'What changes the pace' },
@@ -123,14 +123,14 @@ export default {
     { h3: 'B1 for settlement and citizenship' },
     { p: 'B1 is the level that keeps coming up in German law. A permanent settlement permit, the Niederlassungserlaubnis, generally requires **ausreichende Kenntnisse**, sufficient German, and the Residence Act defines that as B1. Citizenship under § 10 of the Nationality Act asks for the same, proved with a B1 exam, after five years of lawful residence. The state integration course is built for this goal: its language part has 600 lessons and ends with a test that certifies A2 or B1.' },
     { p: 'From zero, the Goethe range for B1 is about 260 to 490 hours. At six hours a week that is roughly 43 to 82 weeks, so one to two years for most people who work full time. If citizenship is your goal, starting German in your first year in Germany rather than your fourth makes the five-year mark much less stressful.' },
-    { figure: {
-      photo: 'P2',
-      alt: 'P2 alt',
-      caption: 'P2 caption',
-    } },
     { h3: 'B2 and C1 for university and work' },
     { p: 'Universities set their own level for degree courses taught in German, and uni-assist, which handles applications for many of them, notes that the accepted level varies from university to university and from course to course. The usual proof is the DSH or the TestDaF, both exams in **German for academic study**. For work, German law defines good German as B2, and many employers in German-speaking teams expect at least that.' },
     { p: 'In health care the bar is set by the licensing authorities. Nurses trained abroad are generally asked for B2. Doctors need B2 general German and **specialist medical German oriented to C1**, checked in the Fachsprachprüfung, an exam that includes a conversation between doctor and patient. From B1, the middle of the Goethe ranges puts C1 about 400 units further on, roughly 300 hours: about nine months at eight hours a week.' },
+    { figure: {
+      photo: 'how-long-german-doctor-at-desk',
+      alt: 'A doctor in a white coat writing notes at his desk',
+      caption: 'Doctors trained abroad need B2 general German and specialist medical German oriented to C1, so they plan in years, not months.',
+    } },
     { quote: 'German takes longer than Spanish. It does not take **forever**.' },
 
     { h: 'A sample week' },
@@ -150,9 +150,9 @@ export default {
     } },
     { p: 'The classes carry the new material and the speaking. The short sessions in between are where words and grammar move into **long-term memory**: recalling a word from a flashcard, rather than rereading it, is what makes it stick. The weekend slot is for German you would choose anyway, so that the language becomes part of your life rather than a task.' },
     { figure: {
-      photo: 'P3',
-      alt: 'P3 alt',
-      caption: 'P3 caption',
+      photo: 'how-long-german-small-group',
+      alt: 'A teacher talking with a small group around a table with laptops',
+      caption: 'In a small group you speak in every lesson, and that is where the verb-at-the-end habit is built.',
     } },
     { note: {
       title: 'Write, then have it corrected',
@@ -164,9 +164,9 @@ export default {
     { p: 'Many learners move quickly through A1 and A2, then slow down somewhere in B1. You can get by, you understand a lot, and yet nothing seems to change for months. Part of this is real: the material becomes subtler, with adjective endings, the genitive, the passive and **more precise vocabulary**, and each step feels smaller. Part of it is habit: once you can communicate, it is tempting to keep using the same safe sentences.' },
     { p: 'The way out is to push your output. Use the structure you would normally avoid, such as a relative clause or a sentence with weil, and have it corrected. Read and listen to material slightly above your level and keep the phrases you meet. Set goals you can check, such as following the news on the radio or writing a formal email without a dictionary.' },
     { figure: {
-      photo: 'P4',
-      alt: 'P4 alt',
-      caption: 'P4 caption',
+      photo: 'how-long-german-phone-call-park',
+      alt: 'A woman on a park bench making a phone call',
+      caption: 'A phone call in German, to a doctor’s office or a landlord, is a good test of whether you have moved past the plateau.',
     } },
 
     { h: 'How to estimate your own timeline' },

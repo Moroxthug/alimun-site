@@ -14,7 +14,7 @@ export default {
   metaTitle: '¿Cuánto se tarda en aprender alemán? Horas por nivel – Alimun',
   desc: 'Las horas que da el Goethe-Institut para cada nivel, qué dice el FSI del alemán, cuánto pesa tu lengua materna y los plazos para visado, nacionalidad y trabajo.',
   lead: 'El alemán tiene fama de difícil, y es verdad que lleva más tiempo que otros idiomas. Pero cuánto tiempo no es un misterio: el Goethe-Institut publica las horas de cada nivel, la ley alemana dice qué nivel necesitas para qué, y **el resto lo decide tu semana**.',
-  photo: 'P0',
+  photo: 'how-long-german-stopwatch',
   sticker: { draw: 'snail', say: 'Despacio, pero llego al B1.' },
   facts: [
     { n: 650, unit: 'unidades', text: 'el límite alto de la franja del Goethe-Institut para el B1, en clases de 45 minutos, desde cero' },
@@ -80,9 +80,9 @@ export default {
       ['Ich habe 30 Jahre.', 'Ich bin 30 Jahre alt.', 'La edad en alemán se dice con sein y alt, no con haben.'],
     ] },
     { figure: {
-      photo: 'P1',
-      alt: 'P1 alt',
-      caption: 'P1 caption',
+      photo: 'how-long-german-notebook-and-pens',
+      alt: 'Un cuaderno cerrado con una pluma, unas gafas y un lapicero sobre un escritorio',
+      caption: 'Ten una página para tus propios errores, como el verbo en el sitio equivocado, y léela antes de cada clase: los errores que apuntas son los que dejas de cometer.',
     } },
 
     { h: 'Qué cambia el ritmo' },
@@ -122,14 +122,14 @@ export default {
     { h3: 'El B1 para la residencia permanente y la nacionalidad' },
     { p: 'El B1 es el nivel que más aparece en la ley alemana. El permiso de residencia permanente, la Niederlassungserlaubnis, exige en general **ausreichende Kenntnisse**, conocimientos suficientes de alemán, y la ley los define como B1. La nacionalidad, según el § 10 de la ley de nacionalidad, pide lo mismo, acreditado con un examen B1, tras cinco años de residencia legal. El curso de integración estatal está construido para este objetivo: su parte de idioma tiene 600 clases y termina con una prueba que certifica el A2 o el B1.' },
     { p: 'Desde cero, la franja del Goethe para el B1 va de unas 260 a 490 horas. Con seis horas por semana son unas 43 a 82 semanas, es decir, de uno a dos años para quien trabaja a jornada completa. Si tu meta es la nacionalidad, empezar con el alemán en tu primer año en Alemania y no en el cuarto hace que el plazo de cinco años sea mucho menos estresante.' },
-    { figure: {
-      photo: 'P2',
-      alt: 'P2 alt',
-      caption: 'P2 caption',
-    } },
     { h3: 'El B2 y el C1 para la universidad y el trabajo' },
     { p: 'Las universidades fijan ellas mismas el nivel para las carreras que se imparten en alemán, y uni-assist, que gestiona las solicitudes de muchas de ellas, recuerda que el nivel aceptado cambia de una universidad a otra y de una titulación a otra. Las pruebas más habituales son el DSH y el TestDaF, ambos exámenes de **alemán para estudios universitarios**. Para el trabajo, la ley alemana define el buen alemán como B2, y muchas empresas con equipos de habla alemana esperan al menos eso.' },
     { p: 'En sanidad, el listón lo ponen las autoridades que conceden la habilitación. A los enfermeros formados en el extranjero se les suele pedir el B2. A los médicos se les exige el B2 de alemán general y un **alemán médico especializado orientado al C1**, que se comprueba en la Fachsprachprüfung, un examen que incluye una conversación entre médico y paciente. Desde el B1, el centro de las franjas del Goethe sitúa el C1 unas 400 unidades más allá, unas 300 horas: unos nueve meses a ocho horas por semana.' },
+    { figure: {
+      photo: 'how-long-german-doctor-at-desk',
+      alt: 'Un médico con bata blanca tomando notas en su escritorio',
+      caption: 'Los médicos formados en el extranjero necesitan el B2 de alemán general y alemán médico orientado al C1: se planifica en años, no en meses.',
+    } },
     { quote: 'El alemán lleva tiempo. No lleva **toda la vida**.' },
 
     { h: 'Una semana tipo' },
@@ -149,9 +149,9 @@ export default {
     } },
     { p: 'Las clases aportan el material nuevo y la conversación. Las sesiones cortas de en medio son las que llevan palabras y gramática a la **memoria a largo plazo**: recordar una palabra desde una tarjeta, en lugar de releerla, es lo que la fija. El hueco del fin de semana es para el alemán que elegirías de todos modos, para que el idioma entre en tu vida en lugar de quedarse en tarea.' },
     { figure: {
-      photo: 'P3',
-      alt: 'P3 alt',
-      caption: 'P3 caption',
+      photo: 'how-long-german-small-group',
+      alt: 'Un profesor hablando con un grupo pequeño alrededor de una mesa con portátiles',
+      caption: 'En un grupo pequeño hablas en cada clase, y ahí se crea la costumbre de poner el verbo al final.',
     } },
     { note: {
       title: 'Escribe y que te corrijan',
@@ -163,9 +163,9 @@ export default {
     { p: 'Mucha gente avanza rápido por el A1 y el A2 y luego se frena en algún punto del B1. Te defiendes, entiendes mucho, y aun así durante meses parece que nada cambia. En parte es real: el material se vuelve más fino, con las terminaciones de los adjetivos, el genitivo, la pasiva y **un vocabulario más preciso**, y cada paso parece más pequeño. En parte es costumbre: cuando ya te comunicas, es tentador usar siempre las mismas frases seguras.' },
     { p: 'La salida es forzar la producción. Usa la estructura que normalmente evitas, como una oración de relativo o una frase con weil, y que te la corrijan. Lee y escucha material un poco por encima de tu nivel y apunta las expresiones que encuentres. Ponte metas que puedas comprobar, como seguir las noticias en la radio o escribir un correo formal sin diccionario.' },
     { figure: {
-      photo: 'P4',
-      alt: 'P4 alt',
-      caption: 'P4 caption',
+      photo: 'how-long-german-phone-call-park',
+      alt: 'Una mujer en un banco del parque hablando por teléfono',
+      caption: 'Una llamada en alemán, a la consulta del médico o al casero, es una buena prueba de si has dejado atrás el estancamiento.',
     } },
 
     { h: 'Cómo calcular tus propios plazos' },

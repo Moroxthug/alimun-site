@@ -12,9 +12,9 @@ export default {
   updated: '2026-10-31',
   title: "Combien de temps faut-il pour apprendre l'allemand ?",
   metaTitle: "Apprendre l'allemand : combien d'heures par niveau ? – Alimun",
-  desc: "Les heures que donne le Goethe-Institut pour chaque niveau, ce que dit le FSI sur l'allemand, le poids de ta langue maternelle et les délais pour visa, naturalisation et travail.",
+  desc: "Les heures du Goethe-Institut par niveau, l'avis du FSI sur l'allemand, le poids de ta langue maternelle et les délais pour visa, naturalisation et travail.",
   lead: "L'allemand a la réputation d'être difficile, et il demande effectivement plus de temps que d'autres langues. Mais combien de temps n'est pas un mystère : le Goethe-Institut publie les heures de chaque niveau, la loi allemande dit quel niveau il faut pour quoi, et **le reste dépend de ta semaine**.",
-  photo: 'P0',
+  photo: 'how-long-german-stopwatch',
   sticker: { draw: 'snail', say: 'Doucement, mais j’arrive au B1.' },
   facts: [
     { n: 650, unit: 'unités', text: 'le haut de la fourchette du Goethe-Institut pour le B1, en cours de 45 minutes, en partant de zéro' },
@@ -80,9 +80,9 @@ export default {
       ['Ich habe 30 Jahre.', 'Ich bin 30 Jahre alt.', "L'âge se dit avec sein et alt, pas avec haben."],
     ] },
     { figure: {
-      photo: 'P1',
-      alt: 'P1 alt',
-      caption: 'P1 caption',
+      photo: 'how-long-german-notebook-and-pens',
+      alt: 'Un carnet fermé avec un stylo plume, des lunettes et un pot à crayons sur un bureau',
+      caption: 'Garde une page pour tes propres erreurs, comme le verbe au mauvais endroit, et relis-la avant chaque cours : les erreurs que tu notes sont celles que tu arrêtes de faire.',
     } },
 
     { h: 'Ce qui change le rythme' },
@@ -122,14 +122,14 @@ export default {
     { h3: 'Le B1 pour le séjour permanent et la naturalisation' },
     { p: "Le B1 est le niveau qui revient le plus souvent dans la loi allemande. Le permis d'établissement, la Niederlassungserlaubnis, exige en général des **ausreichende Kenntnisse**, des connaissances suffisantes d'allemand, que la loi définit comme le B1. La naturalisation, selon le § 10 de la loi sur la nationalité, demande la même chose, prouvée par un examen B1, après cinq ans de résidence légale. Le cours d'intégration de l'État est construit pour cet objectif : sa partie linguistique compte 600 cours et se termine par un test qui certifie l'A2 ou le B1." },
     { p: "En partant de zéro, la fourchette du Goethe pour le B1 va d'environ 260 à 490 heures. À six heures par semaine, cela fait environ 43 à 82 semaines, soit un à deux ans pour quelqu'un qui travaille à plein temps. Si tu vises la naturalisation, commencer l'allemand dès ta première année en Allemagne plutôt que la quatrième rend l'échéance des cinq ans bien moins stressante." },
-    { figure: {
-      photo: 'P2',
-      alt: 'P2 alt',
-      caption: 'P2 caption',
-    } },
     { h3: "Le B2 et le C1 pour l'université et le travail" },
     { p: "Les universités fixent elles-mêmes le niveau pour les cursus enseignés en allemand, et uni-assist, qui traite les candidatures pour beaucoup d'entre elles, rappelle que le niveau accepté varie d'une université à l'autre et d'un cursus à l'autre. Les preuves les plus courantes sont le DSH et le TestDaF, deux examens d'**allemand pour les études supérieures**. Pour le travail, la loi allemande définit le bon allemand comme le B2, et beaucoup d'employeurs aux équipes germanophones attendent au moins ce niveau." },
     { p: "Dans la santé, la barre est fixée par les autorités qui délivrent l'autorisation d'exercer. Aux infirmiers formés à l'étranger, on demande en général le B2. Les médecins doivent avoir le B2 en allemand général et un **allemand médical spécialisé orienté vers le C1**, vérifié par la Fachsprachprüfung, un examen qui comprend un entretien entre médecin et patient. Depuis le B1, le milieu des fourchettes du Goethe place le C1 environ 400 unités plus loin, soit environ 300 heures : environ neuf mois à huit heures par semaine." },
+    { figure: {
+      photo: 'how-long-german-doctor-at-desk',
+      alt: 'Un médecin en blouse blanche qui prend des notes à son bureau',
+      caption: "Les médecins formés à l'étranger ont besoin du B2 en allemand général et d'un allemand médical orienté vers le C1 : on compte en années, pas en mois.",
+    } },
     { quote: "L'allemand prend du temps. Il ne prend pas **toute une vie**." },
 
     { h: 'Une semaine type' },
@@ -149,9 +149,9 @@ export default {
     } },
     { p: "Les cours apportent la nouvelle matière et la conversation. Les courtes séances entre les deux font passer mots et grammaire dans la **mémoire à long terme** : retrouver un mot à partir d'une flashcard, au lieu de le relire, est ce qui l'ancre. Le créneau du week-end est pour l'allemand que tu choisirais de toute façon, pour que la langue entre dans ta vie au lieu de rester une corvée." },
     { figure: {
-      photo: 'P3',
-      alt: 'P3 alt',
-      caption: 'P3 caption',
+      photo: 'how-long-german-small-group',
+      alt: "Un professeur qui parle avec un petit groupe autour d'une table avec des ordinateurs portables",
+      caption: "En petit groupe, tu parles à chaque cours, et c'est là que se prend l'habitude du verbe à la fin.",
     } },
     { note: {
       title: 'Écris, puis fais-toi corriger',
@@ -163,9 +163,9 @@ export default {
     { p: "Beaucoup avancent vite en A1 et A2, puis ralentissent quelque part dans le B1. Tu te débrouilles, tu comprends beaucoup, et pourtant rien ne semble bouger pendant des mois. C'est en partie réel : la matière devient plus fine, avec les terminaisons des adjectifs, le génitif, le passif et **un vocabulaire plus précis**, et chaque pas paraît plus petit. C'est aussi une question d'habitude : quand on arrive à communiquer, on est tenté de garder les mêmes phrases sûres." },
     { p: "Pour en sortir, il faut pousser la production. Utilise la structure que tu évites d'habitude, comme une relative ou une phrase avec weil, et fais-la corriger. Lis et écoute des contenus un peu au-dessus de ton niveau et note les expressions que tu y trouves. Fixe-toi des objectifs vérifiables, comme suivre le journal à la radio ou écrire un e-mail formel sans dictionnaire." },
     { figure: {
-      photo: 'P4',
-      alt: 'P4 alt',
-      caption: 'P4 caption',
+      photo: 'how-long-german-phone-call-park',
+      alt: 'Une femme sur un banc dans un parc qui téléphone',
+      caption: 'Un appel en allemand, au cabinet médical ou au propriétaire, est un bon test pour savoir si tu as dépassé le palier.',
     } },
 
     { h: 'Comment estimer ton propre délai' },

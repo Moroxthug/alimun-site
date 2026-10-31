@@ -14,7 +14,7 @@ export default {
   metaTitle: 'Quanto tempo per imparare il tedesco? Ore per livello – Alimun',
   desc: "Le ore che il Goethe-Institut indica per ogni livello, cosa dice l'FSI sul tedesco, quanto conta la tua lingua madre e i tempi per visto, cittadinanza e lavoro.",
   lead: "Il tedesco ha fama di lingua difficile, e in effetti richiede più tempo di altre. Ma quanto tempo non è un mistero: il Goethe-Institut pubblica le ore per ogni livello, la legge tedesca dice quale livello serve per cosa, e **il resto lo decide la tua settimana**.",
-  photo: 'P0',
+  photo: 'how-long-german-stopwatch',
   sticker: { draw: 'snail', say: 'Piano piano, ma al B1 ci arrivo.' },
   facts: [
     { n: 650, unit: 'unità', text: 'il limite alto della fascia del Goethe-Institut per il B1, in lezioni da 45 minuti, partendo da zero' },
@@ -80,9 +80,9 @@ export default {
       ['Ich habe 30 Jahre.', 'Ich bin 30 Jahre alt.', "L'età in tedesco si dice con sein e alt, non con haben."],
     ] },
     { figure: {
-      photo: 'P1',
-      alt: 'P1 alt',
-      caption: 'P1 caption',
+      photo: 'how-long-german-notebook-and-pens',
+      alt: 'Un quaderno chiuso con una penna stilografica, degli occhiali e un portapenne su una scrivania',
+      caption: 'Tieni una pagina per i tuoi errori, come il verbo nel posto sbagliato, e rileggila prima di ogni lezione: gli errori che scrivi sono quelli che smetti di fare.',
     } },
 
     { h: 'Cosa cambia il ritmo' },
@@ -122,14 +122,14 @@ export default {
     { h3: 'Il B1 per il soggiorno permanente e la cittadinanza' },
     { p: "Il B1 è il livello che torna più spesso nella legge tedesca. Il permesso di soggiorno permanente, la Niederlassungserlaubnis, richiede in genere **ausreichende Kenntnisse**, conoscenze sufficienti di tedesco, e la legge le definisce come B1. Anche la cittadinanza, secondo il § 10 della legge sulla cittadinanza, chiede lo stesso livello, dimostrato con un esame B1, dopo cinque anni di residenza regolare. Il corso di integrazione statale è costruito su questo obiettivo: la parte linguistica ha 600 lezioni e si chiude con un test che certifica l'A2 o il B1." },
     { p: "Da zero, la fascia del Goethe per il B1 va da circa 260 a 490 ore. Con sei ore a settimana sono circa 43-82 settimane, quindi da uno a due anni per chi lavora a tempo pieno. Se punti alla cittadinanza, cominciare il tedesco nel primo anno in Germania invece che nel quarto rende il traguardo dei cinque anni molto meno stressante." },
-    { figure: {
-      photo: 'P2',
-      alt: 'P2 alt',
-      caption: 'P2 caption',
-    } },
     { h3: "Il B2 e il C1 per l'università e il lavoro" },
     { p: "Le università fissano da sole il livello per i corsi di laurea in tedesco, e uni-assist, che gestisce le candidature per molte di esse, ricorda che il livello accettato cambia da università a università e da corso a corso. Le prove più comuni sono il DSH e il TestDaF, entrambi esami di **tedesco per lo studio universitario**. Per il lavoro, la legge tedesca definisce il buon tedesco come B2, e molti datori di lavoro con team di lingua tedesca si aspettano almeno quello." },
     { p: "In sanità l'asticella la fissano le autorità che rilasciano l'abilitazione. Agli infermieri formati all'estero in genere si chiede il B2. Ai medici servono il B2 di tedesco generale e un **tedesco medico specialistico orientato al C1**, verificato nella Fachsprachprüfung, un esame che comprende un colloquio tra medico e paziente. Dal B1, il centro delle fasce del Goethe colloca il C1 circa 400 unità più avanti, cioè circa 300 ore: circa nove mesi a otto ore a settimana." },
+    { figure: {
+      photo: 'how-long-german-doctor-at-desk',
+      alt: 'Un medico in camice bianco che prende appunti alla scrivania',
+      caption: "Ai medici formati all'estero servono il B2 di tedesco generale e il tedesco medico orientato al C1: si ragiona in anni, non in mesi.",
+    } },
     { quote: 'Il tedesco richiede tempo. Non richiede **una vita**.' },
 
     { h: 'Una settimana tipo' },
@@ -149,9 +149,9 @@ export default {
     } },
     { p: "Le lezioni portano il materiale nuovo e la conversazione. Le sessioni brevi nel mezzo sono quelle in cui parole e grammatica passano nella **memoria a lungo termine**: richiamare una parola da una flashcard, invece di rileggerla, è ciò che la fissa. Lo spazio del fine settimana è per il tedesco che sceglieresti comunque, così la lingua entra nella tua vita invece di restare un compito." },
     { figure: {
-      photo: 'P3',
-      alt: 'P3 alt',
-      caption: 'P3 caption',
+      photo: 'how-long-german-small-group',
+      alt: 'Un insegnante che parla con un piccolo gruppo attorno a un tavolo con dei portatili',
+      caption: "In un piccolo gruppo parli in ogni lezione, ed è lì che nasce l'abitudine di mettere il verbo in fondo.",
     } },
     { note: {
       title: 'Scrivi, poi fatti correggere',
@@ -163,9 +163,9 @@ export default {
     { p: "Molti avanzano in fretta tra A1 e A2, poi rallentano da qualche parte nel B1. Te la cavi, capisci molto, eppure per mesi sembra che nulla cambi. In parte è reale: il materiale diventa più sottile, con le desinenze degli aggettivi, il genitivo, il passivo e **un lessico più preciso**, e ogni passo sembra più piccolo. In parte è abitudine: quando riesci a comunicare, viene la tentazione di usare sempre le stesse frasi sicure." },
     { p: "La via d'uscita è spingere sulla produzione. Usa la struttura che di solito eviti, come una relativa o una frase con weil, e fattela correggere. Leggi e ascolta materiale appena sopra il tuo livello e annota le espressioni che incontri. Datti obiettivi verificabili, come seguire il notiziario alla radio o scrivere un'email formale senza dizionario." },
     { figure: {
-      photo: 'P4',
-      alt: 'P4 alt',
-      caption: 'P4 caption',
+      photo: 'how-long-german-phone-call-park',
+      alt: 'Una donna su una panchina del parco che parla al telefono',
+      caption: 'Una telefonata in tedesco, allo studio medico o al padrone di casa, è un buon test per capire se hai superato lo stallo.',
     } },
 
     { h: 'Come stimare i tuoi tempi' },
