@@ -252,12 +252,12 @@
   // HTML templates for banner and modal
   const bannerHTML = `
     <div id="alimun-cookie-banner">
-      <div class="cookie-banner-title">Cookie Consent</div>
-      <p>We use cookies to optimize your experience, deliver interactive features, and analyze site traffic. You can choose to accept all cookies or manage your preferences. Read our <a href="cookies.html">Cookie Policy</a> for details.</p>
+      <div class="cookie-banner-title" data-i18n="cbx_title">Cookie consent</div>
+      <p data-i18n-html="cbx_text">We use cookies to optimize your experience, deliver interactive features, and analyze site traffic. You can choose to accept all cookies or manage your preferences. Read our <a href="cookies.html">Cookie Policy</a> for details.</p>
       <div class="cookie-banner-btns">
-        <button class="cookie-btn cookie-btn-primary" id="cookies-accept-all">Accept All</button>
-        <button class="cookie-btn cookie-btn-secondary" id="cookies-reject-all">Reject All</button>
-        <button class="cookie-btn cookie-btn-link" id="cookies-manage">Cookie Settings</button>
+        <button class="cookie-btn cookie-btn-primary" id="cookies-accept-all" data-i18n="cbx_accept">Accept all</button>
+        <button class="cookie-btn cookie-btn-secondary" id="cookies-reject-all" data-i18n="cbx_reject">Reject all</button>
+        <button class="cookie-btn cookie-btn-link" id="cookies-manage" data-i18n="cbx_manage">Cookie settings</button>
       </div>
     </div>
   `;
@@ -266,15 +266,15 @@
     <div id="cookie-modal-overlay">
       <div class="cookie-modal">
         <div class="cookie-modal-header">
-          <div class="cookie-modal-title">Cookie Preferences</div>
-          <div class="cookie-modal-desc">Manage how cookies are used on Alimun. Essential cookies are required to operate the site, while other categories help us personalize and improve your experience.</div>
+          <div class="cookie-modal-title" data-i18n="cbx_m_title">Cookie preferences</div>
+          <div class="cookie-modal-desc" data-i18n="cbx_m_desc">Manage how cookies are used on Alimun. Essential cookies are required to operate the site, while other categories help us personalize and improve your experience.</div>
         </div>
         <div class="cookie-option-list">
           <!-- Essential -->
           <div class="cookie-option-item">
             <div class="cookie-option-info">
-              <div class="cookie-option-name">Essential <span class="cookie-badge cookie-badge-required">Always On</span></div>
-              <div class="cookie-option-desc">Required for basic site functionality, such as user authentication sessions, waitlist processing, and security.</div>
+              <div class="cookie-option-name"><span data-i18n="cbx_ess">Essential</span> <span class="cookie-badge cookie-badge-required" data-i18n="cbx_always">Always on</span></div>
+              <div class="cookie-option-desc" data-i18n="cbx_ess_desc">Required for basic site functionality, such as user authentication sessions, waitlist processing, and security.</div>
             </div>
             <label class="cookie-switch">
               <input type="checkbox" id="cookie-opt-essential" checked disabled>
@@ -284,8 +284,8 @@
           <!-- Analytics -->
           <div class="cookie-option-item">
             <div class="cookie-option-info">
-              <div class="cookie-option-name">Analytics & Performance <span class="cookie-badge">Optional</span></div>
-              <div class="cookie-option-desc">Allows us to analyze visitor behavior, count visits, and measure traffic sources so we can improve site navigation and curriculum content.</div>
+              <div class="cookie-option-name"><span data-i18n="cbx_ana">Analytics & Performance</span> <span class="cookie-badge" data-i18n="cbx_optional">Optional</span></div>
+              <div class="cookie-option-desc" data-i18n="cbx_ana_desc">Allows us to analyze visitor behavior, count visits, and measure traffic sources so we can improve site navigation and curriculum content.</div>
             </div>
             <label class="cookie-switch">
               <input type="checkbox" id="cookie-opt-analytics">
@@ -295,8 +295,8 @@
           <!-- Marketing -->
           <div class="cookie-option-item">
             <div class="cookie-option-info">
-              <div class="cookie-option-name">Marketing & Personalization <span class="cookie-badge">Optional</span></div>
-              <div class="cookie-option-desc">Used to display relevant ads, track marketing campaign performance, and offer personalized learning recommendations.</div>
+              <div class="cookie-option-name"><span data-i18n="cbx_mkt">Marketing & Personalization</span> <span class="cookie-badge" data-i18n="cbx_optional">Optional</span></div>
+              <div class="cookie-option-desc" data-i18n="cbx_mkt_desc">Used to display relevant ads, track marketing campaign performance, and offer personalized learning recommendations.</div>
             </div>
             <label class="cookie-switch">
               <input type="checkbox" id="cookie-opt-marketing">
@@ -305,8 +305,8 @@
           </div>
         </div>
         <div class="cookie-banner-btns" style="justify-content: flex-end;">
-          <button class="cookie-btn cookie-btn-secondary" id="cookie-modal-close">Cancel</button>
-          <button class="cookie-btn cookie-btn-primary" id="cookie-modal-save">Save Preferences</button>
+          <button class="cookie-btn cookie-btn-secondary" id="cookie-modal-close" data-i18n="cbx_cancel">Cancel</button>
+          <button class="cookie-btn cookie-btn-primary" id="cookie-modal-save" data-i18n="cbx_save">Save preferences</button>
         </div>
       </div>
     </div>
@@ -328,11 +328,32 @@
     modalContainer.innerHTML = modalHTML;
     document.body.appendChild(modalContainer.firstElementChild);
 
-    // 3. Attach Handlers
+    // 3. Text in the page's language (keys cbx_* in js/translations.js), once the translation script has loaded
+    translateBanner();
+    if (window.ALIMUN_I18N_READY && window.ALIMUN_I18N_READY.then) window.ALIMUN_I18N_READY.then(translateBanner);
+
+    // 4. Attach Handlers
     attachEventHandlers();
 
-    // 4. Check Saved Consent
+    // 5. Check Saved Consent
     checkConsent();
+  }
+
+  // The banner and the settings window in the page's language.
+  function translateBanner() {
+    const boxes = [document.getElementById('alimun-cookie-banner'), document.getElementById('cookie-modal-overlay')];
+    boxes.forEach((box) => {
+      if (!box) return;
+      if (typeof window.i18nTranslateElement === 'function') {
+        box.querySelectorAll('[data-i18n], [data-i18n-html]').forEach((el) => window.i18nTranslateElement(el));
+      }
+    });
+  }
+
+  // The policy page for this page's language, also from pages in sub-folders such as /blog/ (the link text is relative).
+  function policyUrl() {
+    const seg = (location.pathname.split('/')[1] || '');
+    return (['ar', 'de', 'es', 'fr', 'it', 'ma', 'pt', 'zh'].indexOf(seg) >= 0 ? '/' + seg : '') + '/cookies.html';
   }
 
   function attachEventHandlers() {
@@ -370,6 +391,12 @@
     overlay.addEventListener('click', (e) => {
       if (e.target === overlay) closeModal();
     });
+
+    // The Cookie Policy link inside the banner and the settings window
+    [banner, overlay].forEach((box) => box.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href="cookies.html"]');
+      if (a) { e.preventDefault(); location.href = policyUrl(); }
+    }));
 
     // Globally hook "Manage Cookies" links in footer
     document.addEventListener('click', (e) => {
