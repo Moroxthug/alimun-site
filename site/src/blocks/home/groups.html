@@ -95,9 +95,13 @@
           (function () {
             var root = document.currentScript.closest(".gs");
             var track = root.querySelector(".gs_track"), panels = [].slice.call(root.querySelectorAll(".gs_panel"));
+            var lastP = -1;
             function update() {
               var range = root.offsetHeight - window.innerHeight;
               var p = Math.min(1, Math.max(0, -root.getBoundingClientRect().top / range));
+              // Nothing to move while the section is above or below the screen and already in place.
+              if (p === lastP && (p === 0 || p === 1)) return;
+              lastP = p;
               // Hold the first card briefly, glide through the rest, hold the last.
               var t = Math.min(1, Math.max(0, (p - .08) / .84));
               // Phones (owner, 28 Oct 2026): each card rests in the centre for most of its share of the scroll and then
@@ -112,8 +116,9 @@
                 panel.style.setProperty("--gs-shift", (off * 6).toFixed(2) + "%");
               });
             }
-            window.addEventListener("scroll", update, { passive: true });
-            window.addEventListener("resize", update);
+            var queued = 0;
+            window.addEventListener("scroll", function () { if (!queued) queued = requestAnimationFrame(function () { queued = 0; update(); }); }, { passive: true });
+            window.addEventListener("resize", function () { lastP = -1; update(); });
             update();
           })();
         </script>
