@@ -45,12 +45,12 @@
     "approved": "2026-10-22 services nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/services/s01.html": {
-    "sha256": "96a37c9fd3332f01f3959dde731519c61d7d061d5e3adcfe447d21a180d2e701",
-    "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 quote restored (owner); 2026-10-24 AI mentions removed (owner)"
+    "sha256": "b0f077724ef42bacd42e86879e6f658c24738385e7fb28a855d0a387ad94d185",
+    "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 quote restored (owner); 2026-10-24 AI mentions removed (owner); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\")"
   },
   "src/blocks/services/s04.html": {
-    "sha256": "ca67580b92a3c3d2516e8fc93470e78ced3cb2f718de01900ca9de864d18de88",
-    "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed); 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
+    "sha256": "496eb7bbc8e2b9871aeafdf777b8044d5fffb948c5c055bfebeeabeaab10b813",
+    "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed); 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\")"
   },
   "src/blocks/about/head.html": {
     "sha256": "d410609269347eb505774dea4e2ec80a33eb654a9f7d22b507e8a0ce2d1960ad",
@@ -257,8 +257,8 @@
     "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\"); 2026-10-27 games and fun: any question set for games, flip cards from pairs, pages for all games and all fun quizzes (owner: \"more resources now, games and fun stuff\")"
   },
   "src/blocks/home/v2/assets.html": {
-    "sha256": "67b41dd2993a514e8d471eb2d0fc7608150f4f5ed4a6395318c4d1b9e4c7240d",
-    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-10-28 mobile fixes (owner: \"some videos do not play, some videos cover half text, download app badges do not look nicely put\"); 2026-10-28 phone pass (owner: \"should we improve the other sections look as well?\" ... \"ok go\"); 2026-10-28 cursor ring removed (owner: \"remove the green circle on cursor\")"
+    "sha256": "8cee7d0ce26c11106b0ee413331df4d4d4e38b5e87de749cfe9edce27906f51b",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-10-28 mobile fixes (owner: \"some videos do not play, some videos cover half text, download app badges do not look nicely put\"); 2026-10-28 phone pass (owner: \"should we improve the other sections look as well?\" ... \"ok go\"); 2026-10-28 cursor ring removed (owner: \"remove the green circle on cursor\"); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\")"
   },
   "src/blocks/home/v2/band.html": {
     "sha256": "ee96fed3ff5ea74206747a7beaf2c17e898200f1548db41a9089c8caa0f888cd",
@@ -297,7 +297,7 @@
     "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
   },
   "src/blocks/alive.html": {
-    "sha256": "2cabcdd7a0a20390668a731f5f9581dd02f048e18cc6ab474afe516f58953c7f",
-    "approved": "2026-10-31 inner pages in the homepage style for Tiers, Services, About and Contact (owner: \"sure go on then\", after the /preview/*-alive pages and the owner's fixes: no cursor ring, more colour, calmer motion)"
+    "sha256": "2a89bc828f2ceb338d3976f4398bece898d7f073187c422e080c524e2b59526b",
+    "approved": "2026-10-31 inner pages in the homepage style for Tiers, Services, About and Contact (owner: \"sure go on then\", after the /preview/*-alive pages and the owner's fixes: no cursor ring, more colour, calmer motion); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\")"
   }
 }
