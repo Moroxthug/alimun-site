@@ -151,4 +151,33 @@
             </div>
           </div>
         </div>
+        <style>
+          /* The banner's motion, done here instead of by Webflow's scroll engine (owner, 31 Oct 2026: "take the banner animation off Webflow").
+             Same as before: the title rises in once; the box shrinks from 2.5x to its size and its corners round as the section comes up the screen. */
+          .is-bottom-cta.lv-bc .bottom-cta_wrap .is-word { display: inline-block; opacity: 0; transform: translateY(.5em); transition: opacity 2s cubic-bezier(.19, 1, .22, 1), transform 2s cubic-bezier(.19, 1, .22, 1); }
+          .is-bottom-cta.lv-bc.is-title .bottom-cta_wrap .is-word { opacity: 1; transform: none; }
+          .is-bottom-cta.lv-bc .bottom-cta_box { will-change: transform; }
+          @media (prefers-reduced-motion: reduce) { .is-bottom-cta.lv-bc .bottom-cta_wrap .is-word { opacity: 1; transform: none; transition: none; } }
+        </style>
+        <script>
+          (function () {
+            var root = document.currentScript.closest(".is-bottom-cta"), wrap = root.querySelector(".bottom-cta_wrap"), box = root.querySelector(".bottom-cta_box");
+            // Webflow's scroll engine leaves this section alone (this runs before webflow.js loads).
+            root.removeAttribute("data-w-id"); if (wrap) wrap.removeAttribute("data-w-id");
+            root.classList.add("lv-bc");
+            var calm = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+            var set = function (k) { box.style.transform = "scale(" + (2.5 - 1.5 * k).toFixed(4) + ")"; box.style.setProperty("--bottom-cta-radius", (3.125 * k).toFixed(3) + "rem"); };
+            if (calm || !("IntersectionObserver" in window)) { root.classList.add("is-title"); set(1); return; }
+            new IntersectionObserver(function (l, o) { if (l[0].isIntersecting) { root.classList.add("is-title"); o.disconnect(); } }, { rootMargin: "0px 0px -15% 0px" }).observe(wrap || root);
+            // Progress runs from the section's top at the bottom of the screen (0) to halfway through its passage (1), eased towards like Webflow's smoothing.
+            var target = 0, cur = 0, running = false, onScreen = false;
+            var measure = function () { var r = root.getBoundingClientRect(), p = (innerHeight - r.top) / (innerHeight + r.height); target = Math.max(0, Math.min(1, p / 0.5)); };
+            var tick = function () { cur += (target - cur) * 0.2; if (Math.abs(target - cur) < 0.0005) cur = target; set(cur); if (cur !== target) requestAnimationFrame(tick); else running = false; };
+            var kick = function () { if (!onScreen) return; measure(); if (!running && cur !== target) { running = true; requestAnimationFrame(tick); } };
+            new IntersectionObserver(function (l) { onScreen = l[0].isIntersecting; kick(); }, { rootMargin: "100px 0px" }).observe(root);
+            window.addEventListener("scroll", kick, { passive: true });
+            window.addEventListener("resize", kick);
+            measure(); cur = target; set(cur);
+          })();
+        </script>
       </section>
