@@ -13,7 +13,7 @@ export default {
   metaTitle: 'Ordine delle parole in tedesco: le regole del verbo – Alimun',
   desc: "L'ordine delle parole in tedesco spiegato: verbo in seconda posizione e in fondo dopo weil e dass, verbi separabili, modali, domande e posizione di nicht.",
   lead: "In italiano puoi spostare le parole quasi a piacere e spesso il soggetto nemmeno si dice. Anche il tedesco ti lascia iniziare la frase con quasi tutto, ma c'è un elemento che non si muove: **il verbo coniugato**. Impara dove va nei tre tipi principali di frase e il tedesco smetterà di sembrarti scritto al contrario.",
-  photo: 'PHOTO',
+  photo: 'german-word-order-old-town-street',
   sticker: { draw: 'snail', say: 'Pazienza: in tedesco il verbo arriva spesso alla fine.' },
   facts: [
     { label: 'Verbo in seconda', text: 'in una frase affermativa tedesca il verbo coniugato è sempre il secondo elemento' },
@@ -48,7 +48,7 @@ export default {
     ] },
     { note: { title: 'Conta gli elementi, non le parole', text: "In “Am nächsten Montag um neun Uhr beginnt der Kurs” il primo elemento è lungo sei parole: **am nächsten Montag um neun Uhr**. Il verbo beginnt è comunque in seconda posizione, perché tutta l'espressione di tempo è un unico blocco.", draw: 'parrot' } },
 
-    { figure: { photo: 'FIG1', alt: 'FIG1ALT', caption: 'FIG1CAP' } },
+    { figure: { photo: 'german-word-order-cafe-window', alt: "Un uomo anziano seduto al tavolo di un caffè davanti a una grande vetrata", caption: "Am Morgen sitzt er im Café: am Morgen viene per primo, quindi il verbo sitzt è secondo e il soggetto er lo segue." } },
 
     { h: "L'inversione: il soggetto passa dietro il verbo" },
     { p: "Quando al primo posto c'è qualcosa che non è il soggetto, il soggetto deve spostarsi e va subito dopo il verbo. È la cosiddetta **inversione**. In “Morgen fahre ich nach Berlin” ich viene dopo fahre perché morgen ha preso il primo posto. Il verbo resta dov'è e il soggetto si fa da parte." },
@@ -104,7 +104,7 @@ export default {
     } },
     { note: { title: 'Due verbi, due posti', text: "Se una frase affermativa ha più di una parte verbale, chiediti una cosa sola: quale parte è coniugata? **Quella va in seconda posizione, tutto il resto in fondo.** Questo controllo da solo corregge la maggior parte degli errori sulla parentesi.", draw: 'cat' } },
 
-    { figure: { photo: 'FIG2', alt: 'FIG2ALT', caption: 'FIG2CAP' } },
+    { figure: { photo: 'german-word-order-train-station', alt: "Treni fermi ai binari di una grande stazione ferroviaria", caption: "Der Zug fährt um acht Uhr ab: abfahren si divide, fährt resta in seconda posizione e il prefisso ab chiude la frase." } },
 
     { quote: 'In tedesco il verbo coniugato è il punto fisso; tutto il resto si muove intorno a lui.' },
 
@@ -153,7 +153,7 @@ export default {
       note: 'Il verbo in prima posizione può anche sostituire wenn in una condizionale, come in “Hast du Zeit, dann ruf mich an”, ma per chi impara wenn è molto più comune.',
     } },
 
-    { figure: { photo: 'FIG3', alt: 'FIG3ALT', caption: 'FIG3CAP' } },
+    { figure: { photo: 'german-word-order-coffee-and-flowers', alt: "Una tazza di caffè e un piccolo vaso di fiori su un bancone di legno", caption: "Möchtest du einen Kaffee? comincia con il verbo, mentre Was möchtest du trinken? lo tiene in seconda posizione." } },
 
     { h: 'Tempo, modo, luogo: una tendenza, non una legge' },
     { p: "Nel campo centrale il tedesco tende a mettere **il tempo prima del luogo**: Ich fahre morgen nach Berlin, e non Ich fahre nach Berlin morgen. Molti manuali insegnano una versione più lunga con la sigla TeKaMoLo: temporale (quando), causale (perché), modale (come), locale (dove)." },
@@ -189,7 +189,7 @@ export default {
       ['Ich kann nicht kommen heute.', 'Ich kann heute **nicht kommen**.', "Il tempo sta nel campo centrale e nicht va prima dell'infinito."],
     ] },
 
-    { figure: { photo: 'FIG4', alt: 'FIG4ALT', caption: 'FIG4CAP' } },
+    { figure: { photo: 'german-word-order-notebook-pencil', alt: "Un quaderno a righe aperto con una matita e un temperino", caption: "Scrivi una frase in tre modi: Ich lerne am Abend Deutsch, Am Abend lerne ich Deutsch, Deutsch lerne ich am Abend." } },
 
     { h: "Come rendere automatico l'ordine delle parole" },
     { p: "Conoscere le regole è il primo passo, ma in una conversazione non hai il tempo di controllarle. L'obiettivo è che l'ordine giusto **ti suoni naturale**, e questo arriva sentendo e dicendo tante frasi corrette. Imparare frasi intere invece di parole isolate è la strada più rapida." },

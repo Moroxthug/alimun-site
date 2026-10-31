@@ -13,7 +13,7 @@ export default {
   metaTitle: 'Ordre des mots en allemand : règles et place du verbe – Alimun',
   desc: "L'ordre des mots en allemand expliqué : le verbe en deuxième position, à la fin après weil et dass, verbes à particule, modaux, questions et place de nicht.",
   lead: "En français, l'ordre sujet, verbe, complément est assez stable. L'allemand, lui, te laisse commencer la phrase par presque n'importe quoi, mais un élément ne bouge pratiquement pas : **le verbe conjugué**. Apprends où il se place dans les trois grands types de phrases, et l'allemand cessera de te sembler écrit à l'envers.",
-  photo: 'PHOTO',
+  photo: 'german-word-order-old-town-street',
   sticker: { draw: 'snail', say: 'Patience : en allemand, le verbe arrive souvent à la fin.' },
   facts: [
     { label: 'Verbe en 2e', text: 'dans une phrase déclarative allemande, le verbe conjugué est toujours le deuxième élément' },
@@ -48,7 +48,7 @@ export default {
     ] },
     { note: { title: 'Compte les éléments, pas les mots', text: "Dans « Am nächsten Montag um neun Uhr beginnt der Kurs », le premier élément fait six mots : **am nächsten Montag um neun Uhr**. Le verbe beginnt reste en deuxième position, parce que toute l'indication de temps forme un seul bloc.", draw: 'parrot' } },
 
-    { figure: { photo: 'FIG1', alt: 'FIG1ALT', caption: 'FIG1CAP' } },
+    { figure: { photo: 'german-word-order-cafe-window', alt: "Un homme âgé assis à une table de café devant une grande baie vitrée", caption: "Am Morgen sitzt er im Café : am Morgen vient en premier, donc le verbe sitzt est deuxième et le sujet er le suit." } },
 
     { h: "L'inversion : le sujet passe après le verbe" },
     { p: "Quand autre chose que le sujet occupe la première place, le sujet doit bouger et se place juste après le verbe. C'est ce qu'on appelle **l'inversion**. Dans « Morgen fahre ich nach Berlin », ich vient après fahre parce que morgen a pris la première place. Le verbe garde sa position et le sujet s'efface." },
@@ -104,7 +104,7 @@ export default {
     } },
     { note: { title: 'Deux verbes, deux places', text: "Si une phrase déclarative a plus d'une partie verbale, pose-toi une seule question : laquelle est conjuguée ? **Celle-là va en deuxième position, tout le reste à la fin.** Ce simple réflexe corrige la plupart des erreurs de parenthèse.", draw: 'cat' } },
 
-    { figure: { photo: 'FIG2', alt: 'FIG2ALT', caption: 'FIG2CAP' } },
+    { figure: { photo: 'german-word-order-train-station', alt: "Des trains à quai dans une grande gare", caption: "Der Zug fährt um acht Uhr ab : abfahren se sépare, fährt reste en deuxième position et la particule ab ferme la phrase." } },
 
     { quote: 'En allemand, le verbe conjugué est le point fixe ; tout le reste bouge autour de lui.' },
 
@@ -153,7 +153,7 @@ export default {
       note: 'Le verbe en tête peut aussi remplacer wenn dans une condition, comme dans « Hast du Zeit, dann ruf mich an », mais pour un apprenant, wenn est bien plus courant.',
     } },
 
-    { figure: { photo: 'FIG3', alt: 'FIG3ALT', caption: 'FIG3CAP' } },
+    { figure: { photo: 'german-word-order-coffee-and-flowers', alt: "Une tasse de café et un petit vase de fleurs sur un comptoir en bois", caption: "Möchtest du einen Kaffee? commence par le verbe, alors que Was möchtest du trinken? le garde en deuxième position." } },
 
     { h: 'Temps, manière, lieu : une tendance, pas une loi' },
     { p: "Dans le champ central, l'allemand a tendance à placer **le temps avant le lieu** : Ich fahre morgen nach Berlin, et non Ich fahre nach Berlin morgen. Beaucoup de manuels enseignent une version plus longue avec le moyen mnémotechnique TeKaMoLo : temporel (quand), causal (pourquoi), modal (comment), local (où)." },
@@ -189,7 +189,7 @@ export default {
       ['Ich kann nicht kommen heute.', 'Ich kann heute **nicht kommen**.', "Le temps va dans le champ central et nicht avant l'infinitif."],
     ] },
 
-    { figure: { photo: 'FIG4', alt: 'FIG4ALT', caption: 'FIG4CAP' } },
+    { figure: { photo: 'german-word-order-notebook-pencil', alt: "Un cahier ligné ouvert avec un crayon et un taille-crayon", caption: "Écris une phrase de trois façons : Ich lerne am Abend Deutsch, Am Abend lerne ich Deutsch, Deutsch lerne ich am Abend." } },
 
     { h: "Comment rendre l'ordre des mots automatique" },
     { p: "Connaître les règles est la première étape, mais en conversation, tu n'as pas le temps de les vérifier. Le but est que le bon ordre **te paraisse naturel**, et cela vient en entendant et en disant beaucoup de phrases correctes. Apprendre des phrases entières plutôt que des mots isolés est le chemin le plus rapide." },

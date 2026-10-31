@@ -12,7 +12,7 @@ export default {
   metaTitle: 'German word order: rules and where the verb goes – Alimun',
   desc: 'German word order explained: the verb in second position, the verb at the end after weil and dass, separable verbs, modal verbs, questions and where nicht goes.',
   lead: "German word order looks free at first: you can start a sentence with almost anything. But one thing hardly moves, and that is **the conjugated verb**. Learn where it goes in the three main types of sentence, and most German sentences stop looking upside down.",
-  photo: 'PHOTO',
+  photo: 'german-word-order-old-town-street',
   sticker: { draw: 'snail', say: 'Patience: in German, the verb often comes last.' },
   facts: [
     { label: 'Verb second', text: 'in a German statement, the conjugated verb is always the second element' },
@@ -47,7 +47,7 @@ export default {
     ] },
     { note: { title: 'Count elements, not words', text: "In “Am nächsten Montag um neun Uhr beginnt der Kurs”, the first element is six words long: **am nächsten Montag um neun Uhr**. The verb beginnt is still in second position, because the whole time expression is one block.", draw: 'parrot' } },
 
-    { figure: { photo: 'FIG1', alt: 'FIG1ALT', caption: 'FIG1CAP' } },
+    { figure: { photo: 'german-word-order-cafe-window', alt: "An older man sitting at a café table by a large window", caption: "Am Morgen sitzt er im Café: am Morgen comes first, so the verb sitzt is second and the subject er follows it." } },
 
     { h: 'Inversion: the subject moves behind the verb' },
     { p: "When something other than the subject comes first, the subject has to move. It goes right after the verb, which is called **inversion**. In “Morgen fahre ich nach Berlin”, ich comes after fahre because morgen has taken first place. The verb holds its position and the subject steps aside." },
@@ -103,7 +103,7 @@ export default {
     } },
     { note: { title: 'Two verbs, two places', text: "If a statement has more than one verb part, ask yourself one question: which part is conjugated? **That part goes second, and everything else goes to the end.** This single check fixes most bracket mistakes.", draw: 'cat' } },
 
-    { figure: { photo: 'FIG2', alt: 'FIG2ALT', caption: 'FIG2CAP' } },
+    { figure: { photo: 'german-word-order-train-station', alt: "Trains waiting at the platforms of a large railway station", caption: "Der Zug fährt um acht Uhr ab: abfahren splits, fährt stays second and the prefix ab closes the sentence." } },
 
     { quote: 'In German, the conjugated verb is the fixed point; everything else moves around it.' },
 
@@ -152,7 +152,7 @@ export default {
       note: 'Verb first can also replace wenn in a conditional clause, as in “Hast du Zeit, dann ruf mich an”, but wenn is far more common for learners.',
     } },
 
-    { figure: { photo: 'FIG3', alt: 'FIG3ALT', caption: 'FIG3CAP' } },
+    { figure: { photo: 'german-word-order-coffee-and-flowers', alt: "A cup of coffee and a small vase of flowers on a wooden counter", caption: "Möchtest du einen Kaffee? starts with the verb, while Was möchtest du trinken? keeps it in second place." } },
 
     { h: 'Time, manner, place: a tendency, not a law' },
     { p: "In the middle field, German tends to put **time before place**: Ich fahre morgen nach Berlin, not Ich fahre nach Berlin morgen, which is the English order. Many textbooks teach a longer version with the mnemonic TeKaMoLo: temporal (when), kausal (why), modal (how), lokal (where)." },
@@ -188,7 +188,7 @@ export default {
       ['Ich kann nicht kommen heute.', 'Ich kann heute **nicht kommen**.', 'Time goes into the middle field, and nicht stands before the infinitive.'],
     ] },
 
-    { figure: { photo: 'FIG4', alt: 'FIG4ALT', caption: 'FIG4CAP' } },
+    { figure: { photo: 'german-word-order-notebook-pencil', alt: "An open lined notebook with a pencil and a pencil sharpener", caption: "Write one sentence three ways: Ich lerne am Abend Deutsch, Am Abend lerne ich Deutsch, Deutsch lerne ich am Abend." } },
 
     { h: 'How to make German word order automatic' },
     { p: "Knowing the rules is the first step, but in conversation you do not have time to check them. The goal is for the right order to **feel normal**, and that comes from hearing and saying many correct sentences. Learning whole sentences rather than single words is the quickest way to get there." },
