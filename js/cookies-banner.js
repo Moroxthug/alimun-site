@@ -16,11 +16,12 @@
       transform: translateX(-50%) translateY(120%);
       width: calc(100% - 3rem);
       max-width: 600px;
-      background: #080808;
-      color: #ffffff;
+      background: #ffffff;
+      color: #080808;
+      border: 1px solid rgba(8, 8, 8, 0.08);
       border-radius: 1.25rem;
       padding: 1.5rem;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+      box-shadow: 0 20px 60px rgba(8, 8, 8, 0.16);
       z-index: 999999;
       display: flex;
       flex-direction: column;
@@ -34,22 +35,24 @@
     #alimun-cookie-banner p {
       font-size: 0.875rem;
       line-height: 1.5;
-      color: rgba(255, 255, 255, 0.8);
+      color: rgba(8, 8, 8, 0.72);
       margin: 0;
     }
     #alimun-cookie-banner a {
-      color: #ceff65;
+      color: #080808;
       text-decoration: underline;
+      text-decoration-color: #ceff65;
+      text-decoration-thickness: 2px;
     }
     #alimun-cookie-banner a:hover {
-      color: #b3e940;
+      background: #ceff65;
     }
     .cookie-banner-title {
-      font-family: 'Anton', sans-serif;
-      font-size: 1.25rem;
+      font-family: 'Coolvetica Condensed', sans-serif;
+      font-size: 1.5rem;
+      line-height: 1;
       text-transform: uppercase;
-      letter-spacing: 0.03em;
-      color: #ceff65;
+      color: #080808;
     }
     .cookie-banner-btns {
       display: flex;
@@ -79,29 +82,31 @@
     }
     .cookie-btn-secondary {
       background: transparent;
-      color: #ffffff;
-      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      color: #080808;
+      border: 1.5px solid rgba(8, 8, 8, 0.2);
     }
     .cookie-btn-secondary:hover {
-      background: rgba(255, 255, 255, 0.08);
-      border-color: rgba(255, 255, 255, 0.4);
+      background: #f0efe9;
+      border-color: rgba(8, 8, 8, 0.4);
     }
     .cookie-btn-link {
       background: transparent;
-      color: #ceff65;
+      color: #080808;
       border: none;
       text-decoration: underline;
+      text-decoration-color: #ceff65;
+      text-decoration-thickness: 2px;
       padding: 0.5rem;
     }
     .cookie-btn-link:hover {
-      color: #b3e940;
+      background: #ceff65;
     }
 
     /* Modal Overlay */
     #cookie-modal-overlay {
       position: fixed;
       inset: 0;
-      background: rgba(8, 8, 8, 0.7);
+      background: rgba(240, 239, 233, 0.75);
       backdrop-filter: blur(10px);
       z-index: 9999999;
       opacity: 0;
@@ -118,13 +123,14 @@
       pointer-events: all;
     }
     .cookie-modal {
-      background: #080808;
-      color: #ffffff;
+      background: #ffffff;
+      color: #080808;
+      border: 1px solid rgba(8, 8, 8, 0.08);
       border-radius: 1.75rem;
       width: 100%;
       max-width: 520px;
       padding: 2rem;
-      box-shadow: 0 40px 100px rgba(0, 0, 0, 0.5);
+      box-shadow: 0 40px 100px rgba(8, 8, 8, 0.18);
       transform: translateY(20px) scale(0.95);
       transition: transform 0.3s cubic-bezier(0.215, 0.61, 0.355, 1);
     }
@@ -135,16 +141,16 @@
       margin-bottom: 1.5rem;
     }
     .cookie-modal-title {
-      font-family: 'Anton', sans-serif;
-      font-size: 1.75rem;
+      font-family: 'Coolvetica Condensed', sans-serif;
+      font-size: 2rem;
+      line-height: 1;
       text-transform: uppercase;
-      letter-spacing: 0.02em;
-      color: #ceff65;
+      color: #080808;
       margin-bottom: 0.5rem;
     }
     .cookie-modal-desc {
       font-size: 0.85rem;
-      color: rgba(255, 255, 255, 0.6);
+      color: rgba(8, 8, 8, 0.65);
       line-height: 1.5;
     }
     .cookie-option-list {
@@ -159,7 +165,7 @@
       align-items: flex-start;
       gap: 1.5rem;
       padding-bottom: 1.125rem;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      border-bottom: 1px solid rgba(8, 8, 8, 0.1);
     }
     .cookie-option-item:last-child {
       border-bottom: none;
@@ -171,7 +177,7 @@
     .cookie-option-name {
       font-weight: 700;
       font-size: 0.9rem;
-      color: #ffffff;
+      color: #080808;
       margin-bottom: 0.25rem;
       display: flex;
       align-items: center;
@@ -182,18 +188,18 @@
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      background: rgba(255, 255, 255, 0.1);
-      color: rgba(255, 255, 255, 0.6);
+      background: #f0efe9;
+      color: rgba(8, 8, 8, 0.6);
       padding: 0.18rem 0.5rem;
       border-radius: 0.35rem;
     }
     .cookie-badge-required {
-      background: rgba(206, 255, 101, 0.15);
-      color: #ceff65;
+      background: #ceff65;
+      color: #080808;
     }
     .cookie-option-desc {
       font-size: 0.78rem;
-      color: rgba(255, 255, 255, 0.5);
+      color: rgba(8, 8, 8, 0.6);
       line-height: 1.45;
     }
     
@@ -214,7 +220,7 @@
       position: absolute;
       cursor: pointer;
       inset: 0;
-      background-color: rgba(255, 255, 255, 0.15);
+      background-color: rgba(8, 8, 8, 0.15);
       transition: .25s ease;
       border-radius: 34px;
     }
@@ -226,6 +232,7 @@
       left: 3px;
       bottom: 3px;
       background-color: white;
+      box-shadow: 0 1px 3px rgba(8, 8, 8, 0.25);
       transition: .25s ease;
       border-radius: 50%;
     }

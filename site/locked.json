@@ -5,8 +5,8 @@
     "approved": "2026-10-19 nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-23 FAQ answers made accurate (owner: faq ok); 2026-10-23 English-only FAQPage removed from the head graph (owner FAQ redo; each language now gets its own FAQPage from the FAQ section); 2026-10-24 homepage title (and og/twitter title) changed for search on owner request; 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 AI mentions removed from meta (owner)"
   },
   "src/blocks/after-body.html": {
-    "sha256": "736dc38e48d62d0ee713cd9dfeac4ef58ca3af22541c60e19565a5ea636cdb84",
-    "approved": "2026-10-19 nav ok"
+    "sha256": "f57d11adb3aaa267103291dc267b8ae8dad89e372d54d803ebfe967dc1b29d95",
+    "approved": "2026-10-19 nav ok; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/01-nav.html": {
     "sha256": "ceb9d496127cd9f2b6fc0dace36adcf5c32b0451dfe4e6abc48a5bacdbb928fc",
@@ -21,8 +21,8 @@
     "approved": "2026-10-20 tiers nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request)"
   },
   "src/blocks/tiers/after.html": {
-    "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
-    "approved": "2026-10-20 tiers nav ok"
+    "sha256": "82cd633a9696c7dfacd44bee29dfb2576e94b25a48757041ff25deee4665a1da",
+    "approved": "2026-10-20 tiers nav ok; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/tiers/nav.html": {
     "sha256": "9fe8c8d2644fc6694bc9df01ca3c0f6d7e6edf4e7222669db28208ec624e1428",
@@ -37,8 +37,8 @@
     "approved": "2026-10-22 services nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 AI mentions removed from meta (owner)"
   },
   "src/blocks/services/after.html": {
-    "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
-    "approved": "2026-10-22 services nav ok"
+    "sha256": "82cd633a9696c7dfacd44bee29dfb2576e94b25a48757041ff25deee4665a1da",
+    "approved": "2026-10-22 services nav ok; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/services/nav.html": {
     "sha256": "fe247b8b20dc3c4c556f158d540fea4b1ca96574bb57fec6ed35ffcc1de9b73e",
@@ -57,8 +57,8 @@
     "approved": "2026-10-22 about nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 AI mentions removed from meta (owner)"
   },
   "src/blocks/about/after.html": {
-    "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
-    "approved": "2026-10-22 about nav ok"
+    "sha256": "82cd633a9696c7dfacd44bee29dfb2576e94b25a48757041ff25deee4665a1da",
+    "approved": "2026-10-22 about nav ok; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/about/nav.html": {
     "sha256": "fa50d31cf9f894d224e4d2de2dd6517dbb0705b4f0ae859e7b3cf28d04562700",
@@ -81,8 +81,8 @@
     "approved": "2026-10-22 corporate nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 company dashboard removed from the descriptions (feature does not exist; owner: go on with corporate)"
   },
   "src/blocks/corporate/after.html": {
-    "sha256": "838c06364965a5530c13b451b6586fc9aef690f18c801a329f6c33e3bdfda3fb",
-    "approved": "2026-10-22 corporate nav ok; 2026-10-23 demo form now sends by email (bug fix: it faked success), no visual change"
+    "sha256": "dc90db599eeab4501b88c2282800da6441eb6b984be6bb155104ea6d7d88cc38",
+    "approved": "2026-10-22 corporate nav ok; 2026-10-23 demo form now sends by email (bug fix: it faked success), no visual change; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/corporate/nav.html": {
     "sha256": "3adad65ce7666e419379c34b04f5e3b5306ffa9122deb2b4c9470d39c859218c",
@@ -109,8 +109,8 @@
     "approved": "2026-10-22 careers nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 AI mentions removed from meta (owner)"
   },
   "src/blocks/careers/after.html": {
-    "sha256": "523f28966a5d2ada38b2b637016e6f7f5b74d3e0520a5e78a33bf2e17c145b74",
-    "approved": "2026-10-22 careers nav ok"
+    "sha256": "e0d0d301fed9a352d689a65265b68a67cc0b37a6b8f78b3a627bb337d897844f",
+    "approved": "2026-10-22 careers nav ok; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/careers/nav.html": {
     "sha256": "b9951e44fab57d8626faf18de97bfe8b967bd20db134a1cf432bb38e10b47196",
@@ -145,8 +145,8 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
   },
   "src/blocks/legal/after.html": {
-    "sha256": "c85f5c10606408283be29c5ba8b942fe62e3e1c0306c86b20d1d59ff6d74df68",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+    "sha256": "f43c91f2f13b5287460e806014f17796fc3b6f9b0c9461fe5d308c423e522e3e",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/legal/cookies.html": {
     "sha256": "e19cad550822ab8f1a9496992f5ff56e86b403422eb32359db54be729e892c93",
