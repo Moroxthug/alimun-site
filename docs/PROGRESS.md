@@ -1283,3 +1283,11 @@ Owner: "should we improve the other sections look as well?" / "ok go". Phones on
 ## 2026-10-28 — Inner pages alive: previews
 
 Owner: "integrating the same style to the other sections like tiers, services, about and contact and leave the careers and corporate professional and as they are already". Built site/src/blocks/alive.html (homepage motion, cast drawings and soft tints for Tiers, Services, About, Contact; no new copy) and previews at /preview/tiers-alive/, /preview/services-alive/, /preview/about-us-alive/, /preview/contact-alive/ (noindex, built by site/scripts/preview-alive.py from site/dist). Services hero: the black shade becomes a bone wash with ink text (no black backgrounds rule). Live pages unchanged until the owner approves; then the block is added to the four pages and the previews removed.
+
+## 2026-10-28 — Inner-page previews: fixes
+
+Owner: "animations feel clunky, services page has many bugs, languages button hidden". Services: the quote was hidden by a word effect (removed); the crossing buddies walked over headings (removed on these pages); tinted back cards now desktop only and not behind the How it works photo; the buddy over the first step removed. Motion: once a card has arrived its hover moves are quick with no leftover delay; plan-card tilt softer; tilt only on plan cards. Language button: solid white with a soft shadow so it stands out over the hero photos. Palette dots on larger screens only.
+
+## 2026-10-31 — Inner pages alive: applied
+
+Owner: "sure go on then". Tiers, Services, About and Contact now load site/src/blocks/alive.html (locked) in every language; the homepage band (translated home2_band_* keys) sits on Services before the tools and on About before the story section. Right-to-left Services hero gets an even bone wash so the Arabic title and text read clearly. Previews and site/scripts/preview-alive.py removed. Checked 72 page versions (4 pages x 9 languages x desktop and phone): no console errors, no sideways scroll. Careers and Corporate unchanged.

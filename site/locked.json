@@ -295,5 +295,9 @@
   "src/pages/index.astro": {
     "sha256": "a7c99e1eaf0ba08ddbf689913d8e41512dd70bd467762940176047474ba588f7",
     "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/alive.html": {
+    "sha256": "2cabcdd7a0a20390668a731f5f9581dd02f048e18cc6ab474afe516f58953c7f",
+    "approved": "2026-10-31 inner pages in the homepage style for Tiers, Services, About and Contact (owner: \"sure go on then\", after the /preview/*-alive pages and the owner's fixes: no cursor ring, more colour, calmer motion)"
   }
 }
