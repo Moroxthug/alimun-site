@@ -57,7 +57,7 @@ export default {
       ['If you **need** help with the move, **call** me.', "Si tu as besoin d'aide pour le déménagement, appelle-moi : impératif dans la principale."],
     ] },
     { note: { title: 'If ou when ?', text: "When signifie que tu es sûr que ça arrivera ; if, que ça pourrait arriver. **When I get home, I'll call you** : tu rentreras, c'est certain. If I get the job, I'll celebrate : tu n'auras peut-être pas le poste. C'est la même différence qu'entre quand et si.", draw: 'parrot' } },
-    { figure: { photo: 'english-conditionals-packing-suitcase', alt: 'Des mains qui rangent des vêtements pliés dans une valise ouverte sur un lit', caption: "First conditional pour un vrai projet : if the weather is good, we'll go to the coast on Saturday." } },
+    { figure: { photo: 'english-conditionals-packing-suitcase', alt: 'Une valise ouverte avec une chemise rayée pliée à l\'intérieur', caption: "First conditional pour un vrai projet : if the weather is good, we'll go to the coast on Saturday." } },
 
     { h: 'Second conditional : les situations imaginées' },
     { p: "Le second conditional imagine une situation présente ou future **peu probable ou impossible** : if I won the lottery, I'd stop working, si je gagnais au loto, j'arrêterais de travailler. Après if vient le prétérit, et dans la principale would, could ou might avec la base verbale. Le prétérit joue ici le rôle de ton imparfait, et would celui du conditionnel." },
@@ -70,7 +70,7 @@ export default {
       ["If I **were** you, I**'d call** the landlord today.", "À ta place, j'appellerais le propriétaire aujourd'hui : la façon typique de conseiller."],
       ['What **would** you **do** if you **lost** your passport abroad?', "Que ferais-tu si tu perdais ton passeport à l'étranger ?"],
     ] },
-    { figure: { photo: 'english-conditionals-beach-chairs', alt: 'Deux transats vides face à une mer calme sur une plage ensoleillée', caption: "Second conditional pour rêver : if I didn't have to work, I'd spend the whole summer by the sea." } },
+    { figure: { photo: 'english-conditionals-pier-sea', alt: 'Deux personnes assises côte à côte sur une jetée, face à la mer', caption: "Second conditional pour rêver : if I didn't have to work, I'd spend the whole summer by the sea." } },
     { quote: 'Le verbe dit à quel point la situation est réelle.' },
 
     { h: "Third conditional : un passé qui ne s'est pas passé ainsi" },
@@ -81,7 +81,7 @@ export default {
       ['It **would have been** easier if George **had brought** his car.', 'Ça aurait été plus simple si George avait pris sa voiture.'],
       ["If we**'d left** ten minutes earlier, we **could have caught** the train.", 'Si nous étions partis dix minutes plus tôt, nous aurions pu attraper le train.'],
     ] },
-    { figure: { photo: 'english-conditionals-train-station', alt: "Un train à quai dans une gare avec quelques voyageurs qui marchent à côté", caption: "Third conditional pour un train raté : if we had left on time, we wouldn't have had to wait an hour for the next one." } },
+    { figure: { photo: 'english-conditionals-train-station', alt: 'Un train qui quitte le quai d\'une station de métro', caption: "Third conditional pour un train raté : if we had left on time, we wouldn't have had to wait an hour for the next one." } },
 
     { h: 'Mixed conditionals : passé et présent ensemble' },
     { p: "La vie ne sépare pas le passé du présent, et l'anglais mélange les schémas. Le mixed conditional le plus courant relie **une condition passée et un effet présent** : if avec le past perfect, puis would avec la base verbale. If I hadn't met Charles, I wouldn't be here now, si je n'avais pas rencontré Charles, je ne serais pas ici. C'est le même schéma qu'en français : plus-que-parfait puis conditionnel présent." },
@@ -127,7 +127,7 @@ export default {
     ] },
     { p: "Deux formes négatives figées s'apprennent en bloc. **Were it not for** veut dire si ce n'était pas pour, sans : were it not for the bridge, the town would be cut off. **Had it not been for** est sa version passée, sans… : had it not been for your warning, I would have crashed the car, sans ton avertissement, j'aurais eu un accident. Plus court encore : but for your warning, I would have crashed." },
     { note: { title: 'Ni contraction ni if', text: "Dans une inversion, if disparaît et la négation ne se contracte jamais. **Had I not seen it**, pas hadn't I seen it, et jamais if had I seen it. Si la phrase te paraît trop lourde, reviens à une phrase normale avec if : elle est toujours correcte.", draw: 'snail' } },
-    { figure: { photo: 'english-conditionals-signing-documents', alt: "Une personne qui signe un document imprimé sur un bureau avec un stylo", caption: "Les lettres formelles et les contrats adorent l'inversion : should you have any questions, please do not hesitate to contact us." } },
+    { figure: { photo: 'english-conditionals-signed-letter', alt: 'Une lettre signée sur un porte-bloc, à côté d\'un stylo-plume sur un bureau en bois', caption: "Les lettres formelles et les contrats adorent l'inversion : should you have any questions, please do not hesitate to contact us." } },
 
     { h: 'Les conditionnels aux niveaux B1, B2 et C1, et aux examens' },
     { p: "Le British Council place les zero, first et second conditionals, ainsi que le third et les mixed, dans sa **grammaire B1 et B2**, et l'inversion avec should, were et had au C1. Le Cambridge Dictionary classe if I were you au niveau B1. En pratique, au B2 tu passes avec aisance d'un type à l'autre, et au C1 tu maîtrises en plus les formes soutenues avec inversion." },

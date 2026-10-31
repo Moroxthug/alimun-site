@@ -95,7 +95,7 @@ export default {
     { h3: 'Können ou dürfen ?' },
     { p: "Notre « pouvoir » se partage en deux. Können parle de capacité ou de possibilité, dürfen de permission. À l'oral, **kann ich…?** sert souvent aussi à demander la permission, comme notre « je peux… ? ». **Darf ich…?** est le choix le plus poli, et le plus sûr avec les personnes que tu vouvoies : Darf ich Sie etwas fragen?" },
 
-    { figure: { photo: 'german-modal-verbs-mountain-hike', alt: 'Un randonneur marche sur une crête de montagne', caption: 'Wir wollen den Gipfel erreichen, aber wir müssen vor dem Abend zurück sein : wollen pour le projet, müssen pour ce qui est inévitable.' } },
+    { figure: { photo: 'german-modal-verbs-mountain-hike', alt: 'Un randonneur sur un sentier de montagne vers les sommets des Dolomites', caption: 'Wir wollen den Gipfel erreichen, aber wir müssen vor dem Abend zurück sein : wollen pour le projet, müssen pour ce qui est inévitable.' } },
 
     { quote: 'Nicht müssen : pas la peine. Nicht dürfen : interdit.' },
 
@@ -133,7 +133,7 @@ export default {
     { p: "Sans second verbe, le verbe de modalité prend un participe normal : Ich habe das nicht gekonnt, je n'en ai pas été capable ; Er hat es so gewollt, c'est lui qui l'a voulu. Au quotidien, beaucoup d'Allemands évitent le double infinitif et disent simplement ich musste arbeiten, mais tu dois le reconnaître dans les textes et savoir l'utiliser aux examens." },
     { note: { title: 'J’aurais dû, j’aurais pu', text: "La même structure te donne deux expressions très utiles au B2. **Du hättest früher kommen sollen** : tu aurais dû venir plus tôt. **Wir hätten das Spiel gewinnen können** : nous aurions pu gagner le match. Hätte plus deux infinitifs parle de ce qui ne s'est pas passé.", draw: 'snail' } },
 
-    { figure: { photo: 'german-modal-verbs-doctor-advice', alt: 'Un médecin parle avec un patient', caption: "Die Ärztin sagt, ich soll mehr schlafen : sollen rapporte le conseil de quelqu'un d'autre, et Sie sollten mehr schlafen le donne poliment." } },
+    { figure: { photo: 'german-modal-verbs-doctor-advice', alt: 'Un médecin parle avec un patient', caption: "Der Arzt sagt, ich soll mehr schlafen : sollen rapporte le conseil de quelqu'un d'autre, et Sie sollten mehr schlafen le donne poliment." } },
 
     { h: 'Le Konjunktiv II : les verbes de modalité polis' },
     { p: "L'allemand utilise le Konjunktiv II, qui correspond en grande partie à notre conditionnel, pour adoucir les demandes et les propositions. Avec les verbes de modalité, c'est très simple : prends le Präteritum et **remets l'Umlaut** si l'infinitif en a un. Konnte devient könnte (pourrais), musste devient müsste, durfte devient dürfte et mochte devient möchte (voudrais). Sollte et wollte ne changent pas, car sollen et wollen n'ont pas d'Umlaut." },
@@ -155,7 +155,7 @@ export default {
     { p: "Les verbes de modalité disent aussi à quel point celui qui parle est sûr de lui. **Er muss krank sein** peut vouloir dire « il doit être malade » : on en est presque certain. Er könnte krank sein signifie « il pourrait être malade », et er dürfte krank sein « il est probablement malade ». Sollen et wollen ont ici un emploi spécial : Das Restaurant soll sehr gut sein veut dire « le restaurant serait très bon », d'après ce que disent les autres, et Er will das Geld nicht gesehen haben « il prétend ne pas avoir vu l'argent »." },
     { p: "Le français t'aide ici, car il fonctionne de façon proche avec « devoir » et le conditionnel. Remarque d'ailleurs que **soll sein correspond très bien à notre conditionnel journalistique** : « le restaurant serait excellent », « le ministre aurait démissionné ». Là où la presse française met un conditionnel, l'allemand met souvent sollen." },
 
-    { figure: { photo: 'german-modal-verbs-tea-cups', alt: 'Des tasses de thé sur une table', caption: 'Möchtest du noch einen Tee? Möchte est la façon aimable de proposer quelque chose, et Ja, gern celle d’accepter.' } },
+    { figure: { photo: 'german-modal-verbs-teacup', alt: 'Une tasse à thé en porcelaine blanche sur une table près de la fenêtre', caption: 'Möchtest du noch einen Tee? Möchte est la façon aimable de proposer quelque chose, et Ja, gern celle d’accepter.' } },
 
     { h: 'Les erreurs fréquentes' },
     { p: "Ces erreurs sont typiques des francophones, et chacune enfreint une règle de cet article." },

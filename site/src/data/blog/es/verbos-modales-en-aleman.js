@@ -95,7 +95,7 @@ export default {
     { h3: '¿Können o dürfen?' },
     { p: 'Nuestro “poder” se divide en dos. Können habla de capacidad o posibilidad; dürfen, de permiso. Al hablar, **kann ich…?** se usa a menudo también para pedir permiso, como nuestro “¿puedo…?”. **Darf ich…?** es la opción más cortés, y la segura con las personas a las que tratas de Sie: Darf ich Sie etwas fragen?' },
 
-    { figure: { photo: 'german-modal-verbs-mountain-hike', alt: 'Un excursionista camina por una cresta de montaña', caption: 'Wir wollen den Gipfel erreichen, aber wir müssen vor dem Abend zurück sein: wollen para el plan, müssen para lo inevitable.' } },
+    { figure: { photo: 'german-modal-verbs-mountain-hike', alt: 'Un excursionista en un sendero de montaña hacia las cumbres de los Dolomitas', caption: 'Wir wollen den Gipfel erreichen, aber wir müssen vor dem Abend zurück sein: wollen para el plan, müssen para lo inevitable.' } },
 
     { quote: 'Nicht müssen: no hace falta. Nicht dürfen: está prohibido.' },
 
@@ -133,7 +133,7 @@ export default {
     { p: 'Sin un segundo verbo, el modal lleva un participio normal: Ich habe das nicht gekonnt, no he sido capaz; Er hat es so gewollt, él lo ha querido así. En el día a día muchos alemanes evitan el doble infinitivo y dicen simplemente ich musste arbeiten, pero tienes que reconocerlo en los textos y saber usarlo en los exámenes.' },
     { note: { title: 'Debería haber, podría haber', text: 'La misma estructura te da dos expresiones muy útiles en B2. **Du hättest früher kommen sollen**: deberías haber venido antes. **Wir hätten das Spiel gewinnen können**: podríamos haber ganado el partido. Hätte más dos infinitivos habla de lo que no ocurrió.', draw: 'snail' } },
 
-    { figure: { photo: 'german-modal-verbs-doctor-advice', alt: 'Un médico habla con un paciente', caption: 'Die Ärztin sagt, ich soll mehr schlafen: sollen transmite el consejo de otra persona, y Sie sollten mehr schlafen lo da con cortesía.' } },
+    { figure: { photo: 'german-modal-verbs-doctor-advice', alt: 'Un médico habla con un paciente', caption: 'Der Arzt sagt, ich soll mehr schlafen: sollen transmite el consejo de otra persona, y Sie sollten mehr schlafen lo da con cortesía.' } },
 
     { h: 'Konjunktiv II: los modales de cortesía' },
     { p: 'El alemán usa el Konjunktiv II, que en gran parte corresponde a nuestro condicional, para suavizar peticiones y propuestas. Con los modales es muy sencillo: toma el Präteritum y **vuelve a ponerle la diéresis** si el infinitivo la tiene. Konnte pasa a könnte (podría), musste a müsste, durfte a dürfte y mochte a möchte (quisiera). Sollte y wollte no cambian, porque sollen y wollen no tienen diéresis.' },
@@ -155,7 +155,7 @@ export default {
     { p: 'Los modales también dicen lo seguro que está quien habla. **Er muss krank sein** puede significar “debe de estar enfermo”: quien habla está casi seguro. Er könnte krank sein quiere decir “podría estar enfermo”, y er dürfte krank sein, “seguramente está enfermo”. Sollen y wollen tienen aquí un uso especial: Das Restaurant soll sehr gut sein significa “dicen que el restaurante es muy bueno”, transmitiendo lo que dicen otros, y Er will das Geld nicht gesehen haben, “asegura no haber visto el dinero”.' },
     { p: 'El español funciona de forma parecida con “deber de” y “poder”, así que la idea te resultará familiar. Lo nuevo son sollen y wollen, que no tienen equivalente directo: **en español usarías “dicen que” o “asegura que”**, y en alemán basta con el modal.' },
 
-    { figure: { photo: 'german-modal-verbs-tea-cups', alt: 'Tazas de té sobre una mesa', caption: 'Möchtest du noch einen Tee? Möchte es la forma amable de ofrecer algo, y Ja, gern la de aceptarlo.' } },
+    { figure: { photo: 'german-modal-verbs-teacup', alt: 'Una taza de té de porcelana blanca sobre una mesa junto a la ventana', caption: 'Möchtest du noch einen Tee? Möchte es la forma amable de ofrecer algo, y Ja, gern la de aceptarlo.' } },
 
     { h: 'Errores frecuentes' },
     { p: 'Estos errores son típicos de quienes hablan español, y cada uno rompe una regla de este artículo.' },

@@ -14,7 +14,7 @@ export default {
   metaTitle: 'B2 First de Cambridge (FCE): provas, notas e preparação – Alimun',
   desc: 'Todas as provas e partes do B2 First, o antigo FCE, com os tempos, como funcionam a Cambridge English Scale e os conceitos, e um plano de estudo.',
   lead: "O B2 First, durante décadas chamado First Certificate in English ou FCE, é um dos certificados de inglês mais conhecidos do mundo. Ele avalia as quatro habilidades, além de gramática e vocabulário, e **comprova que você chegou ao nível intermediário superior**. Veja como ele funciona, parte por parte, e como se preparar.",
-  photo: '__H__',
+  photo: 'b2-first-desk-notebook',
   sticker: { draw: 'owl', say: 'Cinco notas, uma média, um certificado.' },
   facts: [
     { n: 4, unit: 'provas', text: 'Reading and Use of English, Writing, Listening e Speaking' },
@@ -44,7 +44,7 @@ export default {
     } },
     { p: "As cinco notas que você recebe, de Reading, Use of English, Writing, Listening e Speaking, **têm o mesmo peso**. Então, embora Reading and Use of English seja uma prova só, ela vale duas das suas cinco notas: um bom motivo para levá-la a sério." },
 
-    { figure: { photo: '__F1__', alt: '__F1_ALT__', caption: 'Os textos de Reading and Use of English somam de 2.200 a 2.500 palavras: a velocidade de leitura conta tanto quanto a gramática.' } },
+    { figure: { photo: 'b2-first-reading-book', alt: 'Uma pessoa lendo um livro de bolso, vista por cima do ombro', caption: 'Os textos de Reading and Use of English somam de 2.200 a 2.500 palavras: a velocidade de leitura conta tanto quanto a gramática.' } },
 
     { h: 'Reading and Use of English' },
     { p: "Esta prova dura 1 hora e 15 minutos e tem sete partes com 52 questões. As quatro primeiras partes são o **Use of English**: exercícios curtos que avaliam diretamente gramática e vocabulário. As três últimas são de leitura: textos mais longos tirados de artigos, relatórios, ficção, anúncios, cartas e outras fontes, com cerca de 2.200 a 2.500 palavras no total." },
@@ -64,19 +64,19 @@ export default {
     { p: "A prova de Writing dura 1 hora e 20 minutos, e você escreve dois textos de **140 a 190 palavras** cada. A Part 1 é obrigatória: **uma redação** (essay) em que você dá sua opinião sobre um tema de interesse geral. Você recebe duas ideias para desenvolver e acrescenta uma terceira sua. A redação é escrita para o seu professor, então cabe um estilo neutro ou um pouco formal." },
     { p: "Na Part 2, você escolhe **uma tarefa de uma lista curta**. No B2 First, os formatos são artigo, e-mail ou carta, resenha (review) e relatório (report). Cada tarefa indica um leitor e um objetivo, como recomendar um lugar a um amigo ou relatar um evento da escola ao responsável por um grupo, e você é avaliado pelo quanto o texto funciona para esse leitor." },
     { p: "Os examinadores avaliam cada texto em **quatro escalas**: Content, se você fez tudo o que a tarefa pedia; Communicative Achievement, se o estilo e o formato combinam com o leitor; Organisation, se o texto se sustenta bem; e Language, a variedade e a correção da sua gramática e do seu vocabulário. A Cambridge também pede coerência com uma variedade do inglês: a ortografia britânica e a americana valem, desde que você não misture as duas." },
-    { figure: { photo: '__F2__', alt: '__F2_ALT__', caption: 'As duas tarefas de Writing pedem de 140 a 190 palavras: alguns minutos de planejamento ajudam você a cobrir todos os pontos.' } },
+    { figure: { photo: 'b2-first-writing-notes', alt: 'Pessoas à mesa, uma anotando num caderno espiral ao lado de uma xícara de café', caption: 'As duas tarefas de Writing pedem de 140 a 190 palavras: alguns minutos de planejamento ajudam você a cobrir todos os pontos.' } },
     { note: { title: 'O número de palavras é uma referência', text: "Um texto curto demais pode não mostrar variedade suficiente ou deixar um ponto de fora; um longo demais pode fugir do tema. **Mire no meio da faixa** e use as palavras naquilo de que o leitor precisa.", draw: 'teacup' } },
 
     { h: 'Listening' },
     { p: "O Listening dura cerca de 40 minutos e tem quatro partes com 30 questões. Na Part 1, você ouve oito gravações curtas e sem relação entre si, de cerca de 30 segundos, e responde a uma questão de três opções sobre cada uma. Na Part 2, você ouve uma fala de três a quatro minutos e completa dez frases com palavras que escuta. Na Part 3, cinco pessoas falam sobre um tema em comum por cerca de 30 segundos cada, e você precisa **associar cada pessoa** a uma de oito afirmações. Na Part 4, você responde a sete questões de três opções sobre uma entrevista ou conversa de três a quatro minutos." },
     { p: "Cada gravação toca **duas vezes**. Use a primeira para entender a ideia geral e marcar uma resposta provisória, e a segunda para conferir. A Part 3 é a mais traiçoeira: três das oito afirmações sobram, e quem fala pode mencionar uma ideia de uma opção errada antes de dizer o que realmente pensa." },
-    { figure: { photo: '__F3__', alt: '__F3_ALT__', caption: 'Cada gravação do Listening toca duas vezes: a primeira para a ideia geral, a segunda para conferir a resposta.' } },
+    { figure: { photo: 'b2-first-headphones', alt: 'Um jovem de fones de ouvido olhando o celular', caption: 'Cada gravação do Listening toca duas vezes: a primeira para a ideia geral, a segunda para conferir a resposta.' } },
 
     { h: 'Speaking' },
     { p: "Normalmente você faz o Speaking **com outro candidato**, ou em um grupo de três, diante de dois examinadores. Um deles, o interlocutor, faz as perguntas e passa as tarefas; o outro, o assessor, ouve e dá as notas. A prova dura 14 minutos por dupla e tem quatro partes. Você é avaliado pelo seu próprio desempenho, não em comparação com o seu parceiro." },
     { p: "A Part 1 é uma entrevista curta, de cerca de dois minutos, com perguntas sobre você, seu trabalho ou estudos, seu tempo livre e seus planos. Na Part 2, cada candidato recebe duas fotos e fala sobre elas sozinho por um minuto, comparando-as e respondendo à pergunta escrita acima; depois você comenta as fotos do parceiro por cerca de 30 segundos. Na Part 3, você e o parceiro discutem uma pergunta com algumas ideias escritas por dois minutos e depois têm **mais um minuto para tomar uma decisão** juntos. Na Part 4, o examinador faz mais perguntas sobre o mesmo tema, e a conversa dura cerca de quatro minutos." },
     { p: "O assessor avalia Grammar and Vocabulary, Discourse Management, Pronunciation e **Interactive Communication**, e o interlocutor dá uma nota global (global achievement). A interação conta: nas partes 3 e 4, reagir ao que o parceiro diz, perguntar a opinião dele e construir em cima dela vale mais do que recitar um discurso pronto." },
-    { figure: { photo: '__F4__', alt: '__F4_ALT__', caption: 'Na Part 3 você conversa com o parceiro por dois minutos e depois vocês têm um minuto para chegar a uma decisão.' } },
+    { figure: { photo: 'b2-first-street-chat', alt: 'Três amigos conversando numa rua ensolarada da cidade', caption: 'Na Part 3 você conversa com o parceiro por dois minutos e depois vocês têm um minuto para chegar a uma decisão.' } },
 
     { cta: true },
 

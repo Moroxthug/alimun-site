@@ -95,7 +95,7 @@ export default {
     { h3: 'Können o dürfen?' },
     { p: "Il nostro “potere” si divide in due. Können riguarda la capacità o la possibilità, dürfen il permesso. Nel parlato **kann ich…?** si usa spesso anche per chiedere un permesso, come il nostro “posso…?”. **Darf ich…?** è la scelta più cortese, e quella sicura con le persone a cui dai del Sie: Darf ich Sie etwas fragen?" },
 
-    { figure: { photo: 'german-modal-verbs-mountain-hike', alt: 'Un escursionista cammina lungo una cresta di montagna', caption: 'Wir wollen den Gipfel erreichen, aber wir müssen vor dem Abend zurück sein: wollen per il progetto, müssen per ciò che è inevitabile.' } },
+    { figure: { photo: 'german-modal-verbs-mountain-hike', alt: 'Un escursionista su un sentiero di montagna verso le cime delle Dolomiti', caption: 'Wir wollen den Gipfel erreichen, aber wir müssen vor dem Abend zurück sein: wollen per il progetto, müssen per ciò che è inevitabile.' } },
 
     { quote: 'Nicht müssen: non serve. Nicht dürfen: è vietato.' },
 
@@ -133,7 +133,7 @@ export default {
     { p: "Senza un secondo verbo, il modale prende un participio normale: Ich habe das nicht gekonnt, non ci sono riuscito; Er hat es so gewollt, l'ha voluto lui. Nella vita di tutti i giorni molti tedeschi evitano il doppio infinito e dicono semplicemente ich musste arbeiten, ma devi riconoscerlo nei testi e saperlo usare agli esami." },
     { note: { title: 'Avrei dovuto, avrei potuto', text: "La stessa struttura ti dà due espressioni utilissime al B2. **Du hättest früher kommen sollen**: saresti dovuto venire prima. **Wir hätten das Spiel gewinnen können**: avremmo potuto vincere la partita. Hätte più due infiniti parla di ciò che non è successo.", draw: 'snail' } },
 
-    { figure: { photo: 'german-modal-verbs-doctor-advice', alt: 'Un medico parla con un paziente', caption: 'Die Ärztin sagt, ich soll mehr schlafen: sollen riferisce il consiglio di un altro, e Sie sollten mehr schlafen lo dà con cortesia.' } },
+    { figure: { photo: 'german-modal-verbs-doctor-advice', alt: 'Un medico parla con un paziente', caption: 'Der Arzt sagt, ich soll mehr schlafen: sollen riferisce il consiglio di un altro, e Sie sollten mehr schlafen lo dà con cortesia.' } },
 
     { h: 'Konjunktiv II: i modali di cortesia' },
     { p: "Il tedesco usa il Konjunktiv II, che corrisponde in buona parte al nostro condizionale, per rendere più morbide richieste e proposte. Con i modali è semplicissimo: prendi il Präteritum e **rimetti l'Umlaut** dove l'infinito ce l'ha. Konnte diventa könnte (potrei), musste diventa müsste, durfte diventa dürfte e mochte diventa möchte (vorrei). Sollte e wollte non cambiano, perché sollen e wollen non hanno Umlaut." },
@@ -155,7 +155,7 @@ export default {
     { p: "I modali dicono anche quanto è sicuro chi parla. **Er muss krank sein** può significare “deve essere malato”: chi parla ne è quasi certo. Er könnte krank sein vuol dire “potrebbe essere malato”, ed er dürfte krank sein “probabilmente è malato”. Sollen e wollen hanno qui un uso speciale: Das Restaurant soll sehr gut sein significa “dicono che il ristorante sia ottimo”, riferendo ciò che dicono altri, ed Er will das Geld nicht gesehen haben “sostiene di non aver visto i soldi”." },
     { p: "Qui l'italiano ti aiuta, perché funziona in modo simile: anche noi diciamo “deve essere stanco” per una supposizione quasi certa e “potrebbe essere stanco” per una possibilità. La differenza sta in sollen e wollen, che non hanno un equivalente diretto: **in italiano useresti “si dice che” o “sostiene di”**, e il congiuntivo che ne segue sparisce del tutto in tedesco." },
 
-    { figure: { photo: 'german-modal-verbs-tea-cups', alt: 'Tazze di tè su un tavolo', caption: 'Möchtest du noch einen Tee? Möchte è il modo gentile di offrire qualcosa, e Ja, gern quello di accettare.' } },
+    { figure: { photo: 'german-modal-verbs-teacup', alt: 'Una tazza da tè di porcellana bianca su un tavolo vicino alla finestra', caption: 'Möchtest du noch einen Tee? Möchte è il modo gentile di offrire qualcosa, e Ja, gern quello di accettare.' } },
 
     { h: 'Errori frequenti' },
     { p: "Questi errori sono tipici di chi parla italiano, e ognuno infrange una regola di questo articolo." },

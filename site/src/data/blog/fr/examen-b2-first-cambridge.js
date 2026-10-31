@@ -14,7 +14,7 @@ export default {
   metaTitle: 'B2 First Cambridge (FCE) : épreuves, scores, préparation – Alimun',
   desc: "Toutes les épreuves du B2 First, l'ancien FCE, avec leur durée, le fonctionnement de la Cambridge English Scale et des mentions, et un plan de révision.",
   lead: "Le B2 First, longtemps appelé First Certificate in English ou FCE, est l'une des certifications d'anglais les plus connues en Europe. Il évalue les quatre compétences ainsi que la grammaire et le vocabulaire, et **il prouve que tu as atteint le niveau intermédiaire avancé**. Voici comment il fonctionne, partie par partie, et comment le préparer.",
-  photo: '__H__',
+  photo: 'b2-first-desk-notebook',
   sticker: { draw: 'owl', say: 'Cinq scores, une moyenne, un certificat.' },
   facts: [
     { n: 4, unit: 'épreuves', text: 'Reading and Use of English, Writing, Listening et Speaking' },
@@ -44,7 +44,7 @@ export default {
     } },
     { p: "Les cinq scores que tu reçois, en Reading, Use of English, Writing, Listening et Speaking, **ont le même poids**. Même si Reading and Use of English est une seule épreuve, elle compte donc pour deux de tes cinq scores : une bonne raison de la prendre au sérieux." },
 
-    { figure: { photo: '__F1__', alt: '__F1_ALT__', caption: "Les textes de Reading and Use of English totalisent 2 200 à 2 500 mots : la vitesse de lecture compte autant que la grammaire." } },
+    { figure: { photo: 'b2-first-reading-book', alt: 'Une personne qui lit un livre de poche, vue par-dessus l\'épaule', caption: "Les textes de Reading and Use of English totalisent 2 200 à 2 500 mots : la vitesse de lecture compte autant que la grammaire." } },
 
     { h: 'Reading and Use of English' },
     { p: "Cette épreuve dure 1 h 15 et compte sept parties pour 52 questions. Les quatre premières parties forment le **Use of English** : des exercices courts qui testent directement la grammaire et le vocabulaire. Les trois dernières sont de la lecture : des textes plus longs tirés d'articles, de rapports, de fiction, de publicités, de lettres et d'autres sources, environ 2 200 à 2 500 mots en tout." },
@@ -64,19 +64,19 @@ export default {
     { p: "L'épreuve de Writing dure 1 h 20 et tu rédiges deux textes de **140 à 190 mots** chacun. La Part 1 est obligatoire : **un essai** (essay) où tu donnes ton avis sur un sujet d'intérêt général. On te donne deux idées à développer et tu en ajoutes une troisième de ton choix. L'essai s'adresse à ton professeur, donc un style neutre ou assez soutenu convient." },
     { p: "Dans la Part 2, tu choisis **une tâche dans une courte liste**. Dans le B2 First, les formats sont l'article, l'e-mail ou la lettre, la critique (review) et le rapport (report). Chaque tâche précise un destinataire et un objectif, comme recommander un lieu à un ami ou rendre compte d'un événement scolaire au responsable d'un groupe, et tu es évalué sur l'efficacité de ton texte pour ce lecteur." },
     { p: "Les examinateurs notent chaque texte sur **quatre échelles** : Content, as-tu fait tout ce que demandait la tâche ; Communicative Achievement, le style et le format conviennent-ils au lecteur ; Organisation, le texte est-il bien construit ; et Language, la variété et la justesse de ta grammaire et de ton vocabulaire. Cambridge demande aussi de rester cohérent dans une variété d'anglais : l'orthographe britannique et l'américaine sont acceptées, à condition de ne pas les mélanger." },
-    { figure: { photo: '__F2__', alt: '__F2_ALT__', caption: 'Les deux tâches de Writing demandent 140 à 190 mots : quelques minutes de plan t’aident à traiter tous les points demandés.' } },
+    { figure: { photo: 'b2-first-writing-notes', alt: 'Des personnes autour d\'une table, l\'une prend des notes dans un carnet à spirale à côté d\'une tasse de café', caption: 'Les deux tâches de Writing demandent 140 à 190 mots : quelques minutes de plan t’aident à traiter tous les points demandés.' } },
     { note: { title: 'Le nombre de mots est un repère', text: "Un texte trop court risque de manquer de variété ou d'oublier un point ; un texte trop long risque de sortir du sujet. **Vise le milieu de la fourchette** et consacre tes mots à ce dont le lecteur a besoin.", draw: 'teacup' } },
 
     { h: 'Listening' },
     { p: "Le Listening dure environ 40 minutes et compte quatre parties pour 30 questions. Dans la Part 1, tu entends huit courts enregistrements sans lien entre eux, d'environ 30 secondes, et tu réponds à une question à trois options pour chacun. Dans la Part 2, tu écoutes une intervention de trois à quatre minutes et tu complètes dix phrases avec des mots entendus. Dans la Part 3, cinq personnes parlent d'un même thème pendant environ 30 secondes chacune, et tu dois **associer chaque personne** à l'une de huit affirmations. Dans la Part 4, tu réponds à sept questions à trois options sur une interview ou une conversation de trois à quatre minutes." },
     { p: "Chaque enregistrement est diffusé **deux fois**. Utilise la première écoute pour l'idée générale et une réponse provisoire, et la seconde pour la vérifier. La Part 3 est la plus piégeuse : trois des huit affirmations ne servent pas, et une personne peut évoquer l'idée d'une mauvaise option avant de dire ce qu'elle pense vraiment." },
-    { figure: { photo: '__F3__', alt: '__F3_ALT__', caption: "Chaque enregistrement du Listening passe deux fois : la première pour l'idée générale, la seconde pour vérifier ta réponse." } },
+    { figure: { photo: 'b2-first-headphones', alt: 'Un jeune homme avec un casque, qui regarde son téléphone', caption: "Chaque enregistrement du Listening passe deux fois : la première pour l'idée générale, la seconde pour vérifier ta réponse." } },
 
     { h: 'Speaking' },
     { p: "Tu passes généralement le Speaking **avec un autre candidat**, ou en groupe de trois, devant deux examinateurs. L'un, l'interlocutor, pose les questions et te donne les tâches ; l'autre, l'assessor, écoute et attribue les notes. L'épreuve dure 14 minutes pour un binôme et compte quatre parties. Tu es évalué sur ta propre prestation, pas par comparaison avec ton partenaire." },
     { p: "La Part 1 est un court entretien d'environ deux minutes, avec des questions sur toi, ton travail ou tes études, tes loisirs et tes projets. Dans la Part 2, chaque candidat reçoit deux photos et en parle seul pendant une minute, en les comparant et en répondant à la question écrite au-dessus ; puis tu commentes les photos de ton partenaire pendant environ 30 secondes. Dans la Part 3, ton partenaire et toi discutez d'une question accompagnée de plusieurs pistes écrites pendant deux minutes, puis vous avez **une minute de plus pour prendre une décision** ensemble. Dans la Part 4, l'examinateur pose d'autres questions sur le même thème, et la discussion dure environ quatre minutes." },
     { p: "L'assessor note Grammar and Vocabulary, Discourse Management, Pronunciation et **Interactive Communication**, et l'interlocutor donne une note globale (global achievement). L'interaction compte : dans les parties 3 et 4, réagir à ce que dit ton partenaire, lui demander son avis et rebondir dessus rapporte plus qu'un discours préparé." },
-    { figure: { photo: '__F4__', alt: '__F4_ALT__', caption: 'Dans la Part 3, tu discutes avec ton partenaire pendant deux minutes, puis vous avez une minute pour vous mettre d’accord.' } },
+    { figure: { photo: 'b2-first-street-chat', alt: 'Trois amis qui discutent dans une rue ensoleillée', caption: 'Dans la Part 3, tu discutes avec ton partenaire pendant deux minutes, puis vous avez une minute pour vous mettre d’accord.' } },
 
     { cta: true },
 

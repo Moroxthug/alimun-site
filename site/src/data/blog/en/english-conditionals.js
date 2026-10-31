@@ -57,7 +57,7 @@ export default {
       ['If you **need** help with the move, **call** me.', 'An imperative in the main clause.'],
     ] },
     { note: { title: 'If or when?', text: "When means you are sure it will happen; if means it might. **When I get home, I'll call you** says you will get home. If I get the job, I'll celebrate says you might not get it. Choose the word that matches what you believe.", draw: 'parrot' } },
-    { figure: { photo: 'english-conditionals-packing-suitcase', alt: 'Hands packing folded clothes into an open suitcase on a bed', caption: "First conditional for a real plan: if the weather is good, we'll go to the coast on Saturday." } },
+    { figure: { photo: 'english-conditionals-packing-suitcase', alt: 'An open suitcase with a folded striped shirt packed inside', caption: "First conditional for a real plan: if the weather is good, we'll go to the coast on Saturday." } },
 
     { h: 'Second conditional: imagined situations' },
     { p: "The second conditional imagines a present or future situation that is **unlikely or impossible**: if I won the lottery, I'd stop working. The if clause takes the past simple and the main clause takes would, could or might with the base verb. Nothing in the sentence is about the past. People don't complain now, so if people complained, things would change imagines a different present." },
@@ -70,7 +70,7 @@ export default {
       ["If I **were** you, I**'d call** the landlord today.", 'The usual way to give advice.'],
       ['What **would** you **do** if you **lost** your passport abroad?', 'A question about an unlikely situation.'],
     ] },
-    { figure: { photo: 'english-conditionals-beach-chairs', alt: 'Two empty deck chairs facing a calm sea on a sunny beach', caption: "Second conditional for a daydream: if I didn't have to work, I'd spend the whole summer by the sea." } },
+    { figure: { photo: 'english-conditionals-pier-sea', alt: 'Two people sitting side by side on a pier, looking out at the sea', caption: "Second conditional for a daydream: if I didn't have to work, I'd spend the whole summer by the sea." } },
     { quote: 'The verb tells you how real the situation is.' },
 
     { h: 'Third conditional: a past that did not happen' },
@@ -81,7 +81,7 @@ export default {
       ['It **would have been** easier if George **had brought** his car.', 'George did not bring his car.'],
       ["If we**'d left** ten minutes earlier, we **could have caught** the train.", 'Could have: the result was possible, not certain.'],
     ] },
-    { figure: { photo: 'english-conditionals-train-station', alt: 'A train waiting at a station platform with a few travelers walking beside it', caption: "Third conditional for a missed train: if we had left on time, we wouldn't have had to wait an hour for the next one." } },
+    { figure: { photo: 'english-conditionals-train-station', alt: 'A train pulling out of an underground station platform', caption: "Third conditional for a missed train: if we had left on time, we wouldn't have had to wait an hour for the next one." } },
 
     { h: 'Mixed conditionals: past and present together' },
     { p: "Real life does not keep past and present apart, so English mixes the patterns. The most common mixed conditional joins **a past condition with a present result**: if plus past perfect, then would plus base verb. If I hadn't met Charles, I wouldn't be here now. The meeting is in the past, being here is now." },
@@ -127,7 +127,7 @@ export default {
     ] },
     { p: "Two fixed negative forms are worth learning as wholes. **Were it not for** means if it were not for, without: were it not for the bridge, the town would be cut off. **Had it not been for** is its past version: had it not been for your warning, I would have crashed the car. A shorter alternative to both is but for: but for your warning, I would have crashed." },
     { note: { title: 'No contractions, no if', text: "In an inverted conditional you never keep if, and the negative is never contracted. **Had I not seen it**, not hadn't I seen it, and never if had I seen it. If the sentence feels too heavy, go back to a normal if clause: it is always correct.", draw: 'snail' } },
-    { figure: { photo: 'english-conditionals-signing-documents', alt: 'A person signing a printed document on an office desk with a pen', caption: 'Formal letters and contracts love inversion: should you have any questions, please do not hesitate to contact us.' } },
+    { figure: { photo: 'english-conditionals-signed-letter', alt: 'A signed letter on a clipboard next to a fountain pen on a wooden desk', caption: 'Formal letters and contracts love inversion: should you have any questions, please do not hesitate to contact us.' } },
 
     { h: 'Conditionals at B1, B2 and C1, and in exams' },
     { p: "British Council LearnEnglish places the zero, first and second conditionals, and the third and mixed conditionals, in its **B1 and B2 grammar**, and inversion with should, were and had at C1. The Cambridge Dictionary marks if I were you as a B1 phrase. In practice, B2 means moving easily between all the types, and C1 adds control of the formal inverted forms." },

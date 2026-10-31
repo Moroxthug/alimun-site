@@ -95,7 +95,7 @@ export default {
     { h3: 'Können ou dürfen?' },
     { p: 'O nosso “poder” se divide em dois. Können fala de capacidade ou possibilidade; dürfen, de permissão. Na fala, **kann ich…?** também é muito usado para pedir permissão, como o nosso “posso…?”. **Darf ich…?** é a opção mais educada, e a mais segura com quem você trata por Sie: Darf ich Sie etwas fragen?' },
 
-    { figure: { photo: 'german-modal-verbs-mountain-hike', alt: 'Uma pessoa caminha por uma crista de montanha', caption: 'Wir wollen den Gipfel erreichen, aber wir müssen vor dem Abend zurück sein: wollen para o plano, müssen para o que é inevitável.' } },
+    { figure: { photo: 'german-modal-verbs-mountain-hike', alt: 'Uma pessoa numa trilha de montanha rumo aos picos das Dolomitas', caption: 'Wir wollen den Gipfel erreichen, aber wir müssen vor dem Abend zurück sein: wollen para o plano, müssen para o que é inevitável.' } },
 
     { quote: 'Nicht müssen: não precisa. Nicht dürfen: é proibido.' },
 
@@ -133,7 +133,7 @@ export default {
     { p: 'Sem um segundo verbo, o modal tem um particípio normal: Ich habe das nicht gekonnt, eu não consegui; Er hat es so gewollt, foi ele que quis assim. No dia a dia, muitos alemães evitam o duplo infinitivo e dizem simplesmente ich musste arbeiten, mas você precisa reconhecê-lo nos textos e saber usá-lo nas provas.' },
     { note: { title: 'Deveria ter, poderia ter', text: 'A mesma estrutura dá duas expressões muito úteis no B2. **Du hättest früher kommen sollen**: você deveria ter vindo mais cedo. **Wir hätten das Spiel gewinnen können**: a gente poderia ter ganhado o jogo. Hätte mais dois infinitivos fala do que não aconteceu.', draw: 'snail' } },
 
-    { figure: { photo: 'german-modal-verbs-doctor-advice', alt: 'Um médico conversa com um paciente', caption: 'Die Ärztin sagt, ich soll mehr schlafen: sollen transmite o conselho de outra pessoa, e Sie sollten mehr schlafen dá o conselho com educação.' } },
+    { figure: { photo: 'german-modal-verbs-doctor-advice', alt: 'Um médico conversa com um paciente', caption: 'Der Arzt sagt, ich soll mehr schlafen: sollen transmite o conselho de outra pessoa, e Sie sollten mehr schlafen dá o conselho com educação.' } },
 
     { h: 'Konjunktiv II: os modais da educação' },
     { p: 'O alemão usa o Konjunktiv II, que corresponde em boa parte ao nosso futuro do pretérito, para suavizar pedidos e sugestões. Com os modais é bem simples: pegue o Präteritum e **devolva o trema** se o infinitivo tiver um. Konnte vira könnte (poderia), musste vira müsste, durfte vira dürfte e mochte vira möchte (gostaria). Sollte e wollte não mudam, porque sollen e wollen não têm trema.' },
@@ -155,7 +155,7 @@ export default {
     { h: 'Os modais para fazer suposições' },
     { p: 'Os modais também dizem o quanto quem fala tem certeza. **Er muss krank sein** pode significar “ele deve estar doente”: quem fala tem quase certeza. Er könnte krank sein quer dizer “ele pode estar doente”, e er dürfte krank sein, “provavelmente ele está doente”. Sollen e wollen têm aqui um uso especial: Das Restaurant soll sehr gut sein significa “dizem que o restaurante é muito bom”, passando adiante o que outros dizem, e Er will das Geld nicht gesehen haben, “ele afirma não ter visto o dinheiro”.' },
 
-    { figure: { photo: 'german-modal-verbs-tea-cups', alt: 'Xícaras de chá sobre uma mesa', caption: 'Möchtest du noch einen Tee? Möchte é o jeito simpático de oferecer algo, e Ja, gern o de aceitar.' } },
+    { figure: { photo: 'german-modal-verbs-teacup', alt: 'Uma xícara de chá de porcelana branca sobre uma mesa perto da janela', caption: 'Möchtest du noch einen Tee? Möchte é o jeito simpático de oferecer algo, e Ja, gern o de aceitar.' } },
 
     { h: 'Erros comuns' },
     { p: 'Esses erros são típicos de quem fala português, e cada um quebra uma regra deste artigo.' },

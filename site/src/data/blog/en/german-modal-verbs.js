@@ -95,7 +95,7 @@ export default {
     { h3: 'Können or dürfen?' },
     { p: "Können is about ability or possibility, dürfen about permission. In everyday speech, **kann ich…?** is often used to ask for permission too, just as English uses “can I…?”. **Darf ich…?** is the more polite choice, and the safe one with people you address as Sie: Darf ich Sie etwas fragen?" },
 
-    { figure: { photo: 'german-modal-verbs-mountain-hike', alt: 'A hiker walking along a mountain ridge', caption: 'Wir wollen den Gipfel erreichen, aber wir müssen vor dem Abend zurück sein: wollen for the plan, müssen for what is unavoidable.' } },
+    { figure: { photo: 'german-modal-verbs-mountain-hike', alt: 'A hiker on a mountain trail leading toward the peaks of the Dolomites', caption: 'Wir wollen den Gipfel erreichen, aber wir müssen vor dem Abend zurück sein: wollen for the plan, müssen for what is unavoidable.' } },
 
     { quote: 'Nicht müssen means you don’t have to. Nicht dürfen means you must not.' },
 
@@ -133,7 +133,7 @@ export default {
     { p: "Without a second verb, the modal takes a normal participle: Ich habe das nicht gekonnt, I couldn't do it; Er hat es so gewollt, he wanted it that way. In daily life, most Germans avoid the double infinitive and simply say ich musste arbeiten, but you need to recognize it in texts and use it in exams." },
     { note: { title: 'Should have, could have', text: "The same structure gives you two very useful B2 phrases. **Du hättest früher kommen sollen**: you should have come earlier. **Wir hätten das Spiel gewinnen können**: we could have won the match. Hätte plus two infinitives talks about what did not happen.", draw: 'snail' } },
 
-    { figure: { photo: 'german-modal-verbs-doctor-advice', alt: 'A doctor talking with a patient', caption: 'Die Ärztin sagt, ich soll mehr schlafen: sollen reports advice from someone else, and Sie sollten mehr schlafen gives it politely.' } },
+    { figure: { photo: 'german-modal-verbs-doctor-advice', alt: 'A doctor talking with a patient', caption: 'Der Arzt sagt, ich soll mehr schlafen: sollen reports advice from someone else, and Sie sollten mehr schlafen gives it politely.' } },
 
     { h: 'Konjunktiv II: the polite modals' },
     { p: "German uses the Konjunktiv II, its subjunctive, to make requests and suggestions softer. With modals it is very simple: take the simple past and **add the umlaut back** where the infinitive has one. Konnte becomes könnte, musste becomes müsste, durfte becomes dürfte and mochte becomes möchte. Sollte and wollte do not change, because sollen and wollen have no umlaut." },
@@ -154,7 +154,7 @@ export default {
     { h: 'Modals that express a guess' },
     { p: "Modals also tell you how sure the speaker is. **Er muss krank sein** can mean “he must be ill”: the speaker is fairly certain. Er könnte krank sein means “he might be ill”, and er dürfte krank sein “he is probably ill”. Sollen and wollen have a special use here too: Das Restaurant soll sehr gut sein means “the restaurant is said to be very good”, passing on what others say, and Er will das Geld nicht gesehen haben means “he claims not to have seen the money”." },
 
-    { figure: { photo: 'german-modal-verbs-tea-cups', alt: 'Cups of tea on a table', caption: 'Möchtest du noch einen Tee? Möchte is the friendly way to offer something, and Ja, gern is the friendly way to accept.' } },
+    { figure: { photo: 'german-modal-verbs-teacup', alt: 'A white china teacup on a table by a window', caption: 'Möchtest du noch einen Tee? Möchte is the friendly way to offer something, and Ja, gern is the friendly way to accept.' } },
 
     { h: 'Common mistakes' },
     { p: "These mistakes are typical for English speakers, and each one breaks a rule from this article." },

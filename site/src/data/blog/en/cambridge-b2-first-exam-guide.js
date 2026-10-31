@@ -14,7 +14,7 @@ export default {
   metaTitle: 'Cambridge B2 First (FCE): format, scores and preparation – Alimun',
   desc: 'Every paper and part of Cambridge B2 First, formerly FCE, with timings, how the Cambridge English Scale and grades work, and a preparation plan.',
   lead: "B2 First, long known as the First Certificate in English or FCE, is one of the best-known English certificates in Europe. It tests all four skills plus grammar and vocabulary, and **it shows you have reached upper-intermediate level**. Here is how it works, part by part, and how to prepare for it.",
-  photo: '__H__',
+  photo: 'b2-first-desk-notebook',
   sticker: { draw: 'owl', say: 'Five scores, one average, one certificate.' },
   facts: [
     { n: 4, unit: 'papers', text: 'Reading and Use of English, Writing, Listening and Speaking' },
@@ -44,7 +44,7 @@ export default {
     } },
     { p: "The five scores you receive, for Reading, Use of English, Writing, Listening and Speaking, **carry equal weight**. So although Reading and Use of English is one paper, it gives you two of your five scores, which is a good reason to take it seriously." },
 
-    { figure: { photo: '__F1__', alt: '__F1_ALT__', caption: 'The texts in Reading and Use of English add up to 2,200 to 2,500 words, so reading speed counts as much as grammar.' } },
+    { figure: { photo: 'b2-first-reading-book', alt: 'A person reading a paperback book, seen over the shoulder', caption: 'The texts in Reading and Use of English add up to 2,200 to 2,500 words, so reading speed counts as much as grammar.' } },
 
     { h: 'Reading and Use of English' },
     { p: "This paper lasts 1 hour 15 minutes and has seven parts with 52 questions. The first four parts are **Use of English**: short tasks that test grammar and vocabulary directly. The last three are Reading: longer texts from articles, reports, fiction, advertisements, letters and other sources, about 2,200 to 2,500 words in all." },
@@ -64,19 +64,19 @@ export default {
     { p: "The Writing paper lasts 1 hour 20 minutes and you write two texts of **140 to 190 words** each. Part 1 is compulsory: **an essay** giving your opinion on a topic of general interest. You get two ideas to discuss and you add a third idea of your own. The essay is written for your teacher, so a neutral or fairly formal style fits." },
     { p: "In Part 2 you choose **one task from a short list**. In B2 First the formats are an article, an email or letter, a review and a report. Each task names a reader and a purpose, such as recommending a place to a friend or reporting on a school event to a group leader, and you are marked on how well your text works for that reader." },
     { p: "Examiners mark each text on **four scales**: Content, whether you did everything the task asked; Communicative Achievement, whether the style and format suit the reader; Organisation, how well the text holds together; and Language, the range and accuracy of your grammar and vocabulary. Cambridge also asks you to keep to one variety of English: British or American spelling are both fine, as long as you do not switch between them." },
-    { figure: { photo: '__F2__', alt: '__F2_ALT__', caption: 'Both Writing tasks ask for 140 to 190 words: a few minutes of planning helps you cover every point the task asks for.' } },
+    { figure: { photo: 'b2-first-writing-notes', alt: 'People at a table, one writing notes in a spiral notebook next to a cup of coffee', caption: 'Both Writing tasks ask for 140 to 190 words: a few minutes of planning helps you cover every point the task asks for.' } },
     { note: { title: 'Word counts are a guide, not a target', text: "Texts that are too short may not show enough range or cover every point; texts that are too long may drift off the task. **Aim for the middle of the range** and use the words on what the reader needs.", draw: 'teacup' } },
 
     { h: 'Listening' },
     { p: "Listening takes about 40 minutes and has four parts with 30 questions. In Part 1 you hear eight short, unrelated recordings of about 30 seconds and answer one three-option question on each. In Part 2 you listen to a talk of three to four minutes and complete ten sentences with words you hear. In Part 3 five speakers talk about a common topic for about 30 seconds each, and you **match each speaker** to one of eight statements. In Part 4 you answer seven three-option questions on an interview or conversation of three to four minutes." },
     { p: "Every recording is **played twice**. Use the first listening to get the general idea and mark a likely answer, and the second to check it. Part 3 is the trickiest: three of the eight statements are not used, and a speaker may mention an idea from a wrong option before saying what they really think." },
-    { figure: { photo: '__F3__', alt: '__F3_ALT__', caption: 'Each Listening recording is played twice: the first time for the general idea, the second to check your answer.' } },
+    { figure: { photo: 'b2-first-headphones', alt: 'A young man wearing headphones, looking at his phone', caption: 'Each Listening recording is played twice: the first time for the general idea, the second to check your answer.' } },
 
     { h: 'Speaking' },
     { p: "You usually take the Speaking test **with another candidate**, or in a group of three, and there are two examiners. One, the interlocutor, asks the questions and gives you the tasks; the other, the assessor, listens and marks. The test lasts 14 minutes for a pair and has four parts. You are assessed on your own performance, not compared with your partner." },
     { p: "Part 1 is a short interview, about two minutes, with questions about you, your work or studies, your free time and your plans. In Part 2 each candidate gets two photographs and talks about them alone for one minute, comparing them and answering a question printed above them; then you comment on your partner's photos for about 30 seconds. In Part 3 you and your partner discuss a question with several written prompts for two minutes, then have **one more minute to reach a decision** together. In Part 4 the examiner asks further questions on the same topic, and the discussion lasts about four minutes." },
     { p: "The assessor marks Grammar and Vocabulary, Discourse Management, Pronunciation and **Interactive Communication**, and the interlocutor gives a mark for global achievement. Interaction counts: in Parts 3 and 4, reacting to what your partner says, asking their opinion and building on it scores better than delivering a prepared speech." },
-    { figure: { photo: '__F4__', alt: '__F4_ALT__', caption: 'In Part 3 you talk with your partner for two minutes, then have one minute to agree on a decision.' } },
+    { figure: { photo: 'b2-first-street-chat', alt: 'Three friends talking on a sunny city street', caption: 'In Part 3 you talk with your partner for two minutes, then have one minute to agree on a decision.' } },
 
     { cta: true },
 
