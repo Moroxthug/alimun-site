@@ -1,0 +1,195 @@
+// Articoli in inglese a, an, the e articolo zero. Verificato su Cambridge Dictionary (A/an and the; Geographical places;
+// Place names; Nationalities, languages, countries and regions), British Council LearnEnglish (Articles: a, an, the;
+// Articles: the or no article) e Oxford Learner's Dictionaries (a, the, hospital, school, breakfast, tennis, herb, advice).
+export default {
+  key: 'english-articles',
+  site: 'it',
+  slug: 'articoli-in-inglese-a-an-the',
+  section: 'grammar',
+  course: 'English',
+  published: '2026-11-01',
+  updated: '2026-11-01',
+  title: 'Articoli in inglese: quando usare a, an, the o nessun articolo',
+  metaTitle: 'Articoli in inglese a, an, the: regole ed errori tipici – Alimun',
+  desc: "Quando usare a, an, the o nessun articolo in inglese: an hour, a university, the Alps, Lake Como, go to school, she is a doctor e gli errori tipici degli italiani.",
+  lead: "A, an e the sono tra le parole più frequenti dell'inglese, eppure fanno inciampare studenti di ogni livello, soprattutto chi parla italiano. Il motivo è semplice: **noi usiamo l'articolo determinativo dove l'inglese non lo vuole**, per esempio quando parliamo in generale. Qui trovi gli schemi che coprono quasi tutte le frasi e gli errori che gli insegnanti sentono più spesso dagli italiani.",
+  photo: 'english-articles-HEADER',
+  sticker: { draw: 'dog', say: 'Dogs are loyal. I cani sono fedeli, senza the.' },
+  facts: [
+    { label: 'an hour', text: 'la scelta tra a e an dipende dal primo suono, non dalla lettera: an hour, a university, an MBA' },
+    { label: 'the Nile', text: 'fiumi, mari, oceani e catene montuose vogliono the; quasi tutti i paesi, le città e i laghi no' },
+    { n: 2, unit: 'pronunce', text: 'the si legge “thə” davanti a un suono consonantico e “thi” davanti a un suono vocalico' },
+    { label: 'in the hospital', text: "inglese americano per un paziente, dove l'inglese britannico dice in hospital" },
+  ],
+  blocks: [
+    { take: { title: 'In breve', text: "Usa **a o an** per una cosa che chi ascolta non conosce ancora o per dire che cos'è qualcosa (she is a doctor); scegli a o an in base al primo suono, non alla lettera. Usa **the** quando chi ascolta sa esattamente di quale cosa parli: l'hai già nominata, è unica o la frase lo rende chiaro. **Non usare articoli** quando parli in generale con un sostantivo plurale o non numerabile (dogs are loyal, I love music) e con quasi tutti i nomi di paesi, città e laghi.", draw: 'owl' } },
+
+    { h: 'A o an? Ascolta il suono' },
+    { p: "A e an sono la stessa parola, l'articolo indeterminativo, come il nostro un e uno. E proprio come in italiano scegliamo tra un amico, uno studente e un'ora guardando come comincia la parola dopo, anche l'inglese sceglie in base all'inizio della parola. Con una differenza importante: **conta il suono, non la scrittura**. Si usa a davanti a un suono consonantico e an davanti a un suono vocalico: a car, a house, an apple, an umbrella." },
+    { p: "I casi difficili sono le parole in cui lettera e suono non coincidono. Hour e honest cominciano con una h muta, quindi con un suono vocalico: **an hour, an honest answer**. University, European e one cominciano con una vocale scritta ma con un suono consonantico (“iu”, “iu”, “uan”), quindi vogliono a: a university, a European country, a one-year-old child. Le sigle seguono la stessa logica: la lettera M si legge “em”, quindi **an MBA**; la U si legge “iu”, quindi a UN report." },
+    { examples: [
+      ['It took me **an hour** to get home.', 'Ci ho messo un’ora per tornare a casa. H muta: la parola comincia con un suono vocalico.'],
+      ['She studies at **a university** in Boston.', 'Studia in un’università di Boston. University comincia con il suono “iu”, consonantico.'],
+      ['He has **an MBA** from a business school in Madrid.', 'Ha un MBA di una business school di Madrid. M si legge “em”.'],
+      ['We have **a one-year-old** daughter.', 'Abbiamo una figlia di un anno. One comincia con il suono “u” di uomo.'],
+      ['I need **an X-ray** of my wrist.', 'Mi serve una radiografia al polso. X si legge “eks”.'],
+    ] },
+    { p: "Anche the cambia suono, ma non scrittura. Davanti a un suono consonantico è una “thə” breve e debole: the car, the university. Davanti a un suono vocalico diventa “thi”: **the apple, the hour**. I madrelingua lo fanno in automatico, ed è uno dei piccoli dettagli che rendono la pronuncia naturale." },
+    { note: { title: 'An herb o a herb?', text: "Poiché la regola segue il suono, può cambiare con l'accento. Quasi tutti gli americani non pronunciano la h di herb, l'erba aromatica, e dicono **an herb**; quasi tutti i britannici la pronunciano e dicono a herb. Sono corrette entrambe, ognuna nella sua varietà.", draw: 'teacup' } },
+
+    { h: 'A per una cosa nuova, the per una cosa nota' },
+    { p: "La differenza di fondo tra a e the riguarda quello che chi ascolta sa già. A o an introduce **qualcosa di nuovo, o uno fra tanti**: chi ascolta non può ancora sapere quale. The gli dice che invece lo sa: ne hai già parlato, ce n'è uno solo, o la situazione lo rende chiaro. Fin qui l'inglese funziona come l'italiano: anche noi raccontiamo “c'era un incidente... l'autista”. Per questo una storia di solito comincia con a e continua con the." },
+    { examples: [
+      ['There was **an** accident here yesterday. **A** car hit a tree and **the** driver was hurt.', 'Ieri qui c’è stato un incidente. Un’auto ha colpito un albero e il conducente si è ferito.'],
+      ['Do you have **a** car?', 'Hai una macchina? Una qualsiasi.'],
+      ['Where did we park **the** car?', 'Dove abbiamo parcheggiato la macchina? Quella che conosciamo tutti e due.'],
+      ['Can you close **the** window, please?', 'Puoi chiudere la finestra? Nella stanza ce n’è una sola.'],
+    ] },
+    { p: "Le cose uniche nel nostro mondo vogliono the, perché non c'è dubbio su quale sia: **the sun, the moon, the earth, the sky, the internet**. Lo stesso vale per le cose che sono le sole in un luogo che condividi con chi ascolta, come la cucina, il capo o la stazione di una piccola città: the kitchen, the boss, the station." },
+    { h3: 'Superlativi e altre parole che ne indicano uno' },
+    { p: "I superlativi indicano una cosa all'interno di un gruppo, quindi vogliono the, proprio come in italiano: **the best day of my life**, il giorno più bello della mia vita, the tallest building in the city, the most expensive option. Lo stesso vale per i numeri ordinali e per parole come same, only, next e last quando indicano un elemento preciso: the first time, the same question, the only problem, the last train." },
+    { examples: [
+      ['It was **the best** concert I have ever been to.', 'È stato il concerto più bello a cui sia mai stato. Superlativo davanti a un nome: the.'],
+      ['You are **the third** person to ask me that.', 'Sei la terza persona che me lo chiede. Numero ordinale: the.'],
+      ['We have **the same** teacher as last year.', 'Abbiamo la stessa insegnante dell’anno scorso. The same vuole sempre the.'],
+    ] },
+
+    { figure: { photo: 'english-articles-FIG1', alt: 'ALT1', caption: 'CAP1' } },
+
+    { h: 'Nessun articolo: quando parli in generale' },
+    { p: "Questa è la regola che causa più errori a chi parla italiano. Quando parli di **cose in generale, l'inglese usa un sostantivo plurale o non numerabile senza articolo**. Noi diciamo i cani sono fedeli, amo la musica, la vita è breve; l'inglese dice dogs are loyal, I love music, life is short. Pensa al film di Benigni: La vita è bella, in inglese, è uscito come Life Is Beautiful, senza the." },
+    { examples: [
+      ['**Dogs** are loyal.', 'I cani sono fedeli. Tutti i cani, in generale.'],
+      ['I love **music**.', 'Amo la musica. La musica in generale, non numerabile.'],
+      ['**Children** learn languages quickly.', 'I bambini imparano le lingue in fretta.'],
+      ['**The** dogs next door bark all night.', 'I cani dei vicini abbaiano tutta la notte. Cani precisi: quelli della porta accanto.'],
+      ['**The** music at the party was too loud.', 'La musica alla festa era troppo alta. Quella musica, a quella festa.'],
+    ] },
+    { p: "Guarda gli ultimi due esempi. Appena aggiungi un'informazione che dice a chi ascolta di quali si tratta, come next door, at the party o that I bought, il sostantivo diventa specifico e **the torna al suo posto**. Life is wonderful è generale; the life of a soldier è una vita precisa. History repeats itself è generale; the history of Italy è una storia precisa." },
+    { h3: 'I non numerabili non vogliono mai a o an' },
+    { p: "A o an vuol dire “uno”, quindi va solo con i sostantivi numerabili singolari. I non numerabili come **advice, information, news, furniture, weather e bread** non vogliono mai a o an, anche se in italiano diciamo un consiglio, un'informazione, una notizia, un mobile. Per indicarne uno solo usa una formula come a piece of: a piece of advice, a piece of furniture, a bit of news. Anche con un aggettivo l'articolo resta fuori: we had nice weather, she gave me good advice." },
+    { note: { title: 'Un singolare non sta mai da solo', text: "Un sostantivo numerabile singolare non può stare da solo in inglese. Ha bisogno di **a, an, the o un'altra parola** come my, this o every: I have a car, the car is red, my car is old. “I have car” non è mai corretto.", draw: 'parrot' } },
+    { p: "Esiste un altro modo per parlare di una categoria intera, usato soprattutto nell'inglese più formale o scientifico: the con un sostantivo singolare, come in **the dolphin is an intelligent animal** o the computer changed the way we work. Si può dire anche a dolphin is an intelligent animal, cioè un delfino qualsiasi. Nel parlato di tutti i giorni, però, la scelta più naturale resta il plurale senza articolo: dolphins are intelligent." },
+
+    { quote: 'Dogs are loyal. The dog next door is not.' },
+
+    { cta: true },
+
+    { h: 'Luoghi: the Thames, Lake Como, Italy' },
+    { p: "I nomi di luogo seguono schemi propri, e qui tirare a indovinare è rischioso perché i gruppi non sono logici. **Fiumi, mari, oceani, deserti e catene montuose vogliono the**: the Thames, the Mediterranean, the Pacific, the Sahara, the Alps. Quasi tutti i paesi, le città, i continenti, le strade e i laghi non vogliono articolo: Italy, Madrid, Europe, Oxford Street, Lake Como. Anche le singole montagne con Mount non lo vogliono: Mount Everest, Mount Etna." },
+    { table: {
+      head: ['Luogo', 'Articolo', 'Esempi'],
+      rows: [
+        ['Fiumi', 'the', 'the Thames, the Tiber, the Po, the Danube'],
+        ['Mari e oceani', 'the', 'the Mediterranean, the Adriatic, the Atlantic, the Pacific Ocean'],
+        ['Catene montuose e arcipelaghi', 'the', 'the Alps, the Dolomites, the Apennines, the Canary Islands'],
+        ['Deserti', 'the', 'the Sahara, the Gobi Desert'],
+        ['Quasi tutti i paesi, continenti, città', 'nessun articolo', 'Italy, Spain, France, Europe, Rome, Milan'],
+        ['Paesi con un plurale o parole come Republic, Kingdom, States', 'the', 'the United States, the United Kingdom, the Netherlands, the Philippines'],
+        ['Laghi', 'nessun articolo', 'Lake Como, Lake Garda, Lake Maggiore'],
+        ['Singole montagne', 'nessun articolo', 'Mount Everest, Mount Etna, Kilimanjaro'],
+        ['Vie e piazze di una città', 'nessun articolo', 'Oxford Street, Times Square, Broadway'],
+      ],
+      note: 'Qualche montagna singola tiene the, come the Matterhorn, il Cervino, e i gruppi di laghi lo vogliono: the Great Lakes, ma Lake Michigan.',
+    } },
+    { p: "Per un italiano i due gruppi più insidiosi sono i paesi e i laghi, perché noi diciamo l'Italia, la Francia, il lago di Como. In inglese invece si dice **Italy, France e Lake Como**, senza articolo. Le eccezioni tra i paesi hanno una ragione chiara: il nome contiene un sostantivo comune come states, kingdom o republic, oppure è un plurale. Quindi the United States, the UK, the Czech Republic e the Netherlands, ma Italy, Germany e Brazil. Musei, hotel e teatri di solito vogliono the (the Louvre, the National Gallery); aeroporti e università con il nome della città no: Heathrow Airport, Harvard University, ma the University of Tokyo." },
+
+    { figure: { photo: 'english-articles-FIG2', alt: 'ALT2', caption: 'CAP2' } },
+
+    { h: 'Pasti, sport e lingue' },
+    { p: "Tre gruppi della vita quotidiana non vogliono articolo quando ne parli in generale. **I pasti**: have breakfast, what's for dinner?, we met for lunch. **Sport e giochi**: play tennis, watch football, she is good at chess. **Le lingue**: I speak French, Japanese is hard to learn. Con i pasti e gli sport l'italiano ci aiuta, perché diciamo fare colazione e giocare a tennis senza articolo. Con le lingue invece no: diciamo l'inglese è difficile, e l'inglese vuole English is difficult." },
+    { examples: [
+      ['We usually have **breakfast** at seven.', 'Di solito facciamo colazione alle sette. Non: have the breakfast.'],
+      ['I play **tennis** on Saturdays.', 'Gioco a tennis il sabato. Non: play the tennis.'],
+      ['**English** is easier than **German**, in my opinion.', 'Secondo me l’inglese è più facile del tedesco. Non: The English.'],
+      ['**The** breakfast at this hotel is excellent.', 'La colazione di questo hotel è ottima. Una colazione precisa.'],
+      ['We had **a** quick lunch.', 'Abbiamo fatto un pranzo veloce. Con un aggettivo il pasto può prendere a.'],
+    ] },
+    { p: "Due dettagli da sapere. Primo, un pasto diventa numerabile quando lo descrivi: a big breakfast, a quick lunch, a lovely dinner. Secondo, **the English language** vuole the, perché language è un sostantivo e l'espressione indica una lingua precisa, mentre English da solo no. E gli strumenti musicali si comportano diversamente dagli sport: play tennis, ma di solito play the piano, play the guitar." },
+
+    { h: "Scuola, letto, ospedale: l'edificio o quello che ci fai?" },
+    { p: "Un piccolo gruppo di luoghi perde l'articolo quando intendi **l'attività che si svolge lì**, non l'edificio. Si va to school per studiare, to bed per dormire, to work per lavorare, e chi è in prison è un detenuto. Qui l'italiano funziona allo stesso modo: andare a scuola, andare a letto, essere in ospedale. Quando intendi l'edificio, l'articolo torna: my mother went to the school to talk to my teacher, mia madre è andata a scuola a parlare con la maestra." },
+    { examples: [
+      ['My son goes **to school** by bus.', 'Mio figlio va a scuola in autobus. Ci va come studente.'],
+      ['I went **to the school** to pick up my son.', 'Sono andato a scuola a prendere mio figlio. Hai visitato l’edificio.'],
+      ['I usually go **to bed** at eleven.', 'Di solito vado a letto alle undici. Non: go to the bed.'],
+      ['He is **in prison** for fraud.', 'È in carcere per frode. Ci sta come detenuto.'],
+    ] },
+    { note: { title: 'Hospital negli Stati Uniti e nel Regno Unito', text: "In inglese britannico un paziente è **in hospital** e va to hospital, come il nostro in ospedale. In inglese americano serve the: she spent two weeks **in the hospital**. Gli americani dicono anche in school dove i britannici dicono at school: all my kids are still in school.", draw: 'cat' } },
+    { p: "Home e work si comportano allo stesso modo: go home, be at home, start work, leave work, tutti senza articolo. Nota che dopo go, home perde anche la preposizione: go home, non go to home. In inglese britannico funziona così anche town: I'm going to town this afternoon, she works in town." },
+
+    { figure: { photo: 'english-articles-FIG3', alt: 'ALT3', caption: 'CAP3' } },
+
+    { h: 'Mestieri: she is a doctor' },
+    { p: "Quando dici che lavoro fa qualcuno, l'inglese vuole a o an: **she is a doctor, he is an engineer**, I want to be a teacher. In italiano diciamo è medico, oppure fa il medico, e così nascono due errori classici: “she is doctor” e “she does the doctor”. Lo stesso vale quando dici che cos'è qualcosa: it's a good idea, that's a nice car." },
+    { p: "L'articolo sparisce quando il ruolo è unico e lo ricopre una persona alla volta, soprattutto dopo verbi come become, be elected o be appointed: **she was elected president**, he became head of the department. E i titoli davanti a un nome non vogliono mai articolo: dove noi diciamo il dottor Rossi o il professor Bianchi, l'inglese dice Doctor Rossi, Professor Bianchi." },
+
+    { h: 'Espressioni fisse da imparare così come sono' },
+    { p: "Alcune scelte sull'articolo fanno semplicemente parte di un'espressione fissa, e la strategia migliore è imparare la frase intera. Molte riguardano il tempo e i mezzi di trasporto. Si viaggia **by car, by train, by plane**, senza articolo, il nostro in macchina, in treno; ma si sta in the car, on the train. Si sente qualcosa **on the radio**, alla radio, ma la si vede on TV. Si lavora at night, di notte, ma in the morning." },
+    { table: {
+      head: ['Nessun articolo', 'Con the', 'Con a o an'],
+      rows: [
+        ['by car, by bus, by train, on foot', 'on the radio, on the internet, in the newspaper', 'three times a week, once a month'],
+        ['at night, at noon, at home, at work', 'in the morning, in the afternoon, in the evening', 'fifty miles an hour, two euros a kilo'],
+        ['go to bed, go home, watch TV', 'the same, the other day, the rest', 'half an hour, a few, a lot of'],
+      ],
+      note: 'A o an con le frequenze e i prezzi significa “ogni”, “al”: three times a week, tre volte alla settimana; two euros a kilo, due euro al chilo. In inglese americano si dice anche a half hour accanto a half an hour.',
+    } },
+
+    { h: 'Perché noi italiani mettiamo the troppo spesso' },
+    { p: "Se la tua lingua madre è l'italiano, quasi tutti i tuoi errori con gli articoli vengono da una sola differenza. **L'italiano usa l'articolo determinativo per le generalizzazioni, l'inglese no.** I cani sono fedeli, tradotto parola per parola, dà “the dogs are loyal”, che in inglese significa alcuni cani precisi, non i cani in generale. Lo stesso succede con la vita è bella, l'inglese è difficile, amo la musica, il tempo è denaro: in inglese life, English, music e time vanno senza articolo." },
+    { p: "L'italiano aggiunge altre trappole. Mettiamo l'articolo davanti al possessivo, la mia macchina, ma l'inglese non combina mai le due parole: **my car, non the my car**. Mettiamo l'articolo con le parti del corpo, mi lavo le mani, dove l'inglese usa il possessivo: I wash my hands. E con i numeri diciamo cento persone, mentre l'inglese vuole **a hundred people**, a thousand people." },
+    { p: "Gli altri parlanti di lingue romanze fanno gli stessi errori, per la stessa ragione. Lo spagnolo dice los perros son leales, il francese les chiens sont fidèles, il portoghese os cachorros são leais, e tutti e tre danno “the dogs are loyal”. Se lavori in un gruppo internazionale sentirai the life e the English dappertutto, e ora sai da dove vengono." },
+    { note: { title: 'Un test veloce per le generalizzazioni', text: "Prima di scrivere the, chiediti: **quali?** Se sai rispondere, per esempio the dogs next door o the music at the party, tieni the. Se la risposta è “tutti, in generale”, toglilo: dogs are loyal, music makes me happy.", draw: 'snail' } },
+
+    { figure: { photo: 'english-articles-FIG4', alt: 'ALT4', caption: 'CAP4' } },
+
+    { h: 'Errori frequenti' },
+    { p: "Questi sono gli errori con gli articoli che gli insegnanti sentono più spesso da chi parla italiano, e ognuno infrange uno schema di questo articolo." },
+    { mistakes: [
+      ['The life is beautiful.', '**Life** is beautiful.', 'La vita in generale non vuole articolo.'],
+      ['I love the music.', 'I love **music**.', 'La musica in generale: non numerabile, nessun articolo.'],
+      ['The English is difficult.', '**English** is difficult.', 'Le lingue non vogliono articolo.'],
+      ['She is doctor. / She does the doctor.', 'She is **a** doctor.', 'I mestieri vogliono a o an.'],
+      ['It took me a hour.', 'It took me **an** hour.', 'La h è muta, quindi hour comincia con un suono vocalico.'],
+      ['He studies at an university.', 'He studies at **a** university.', 'University comincia con il suono “iu”.'],
+      ['Can you give me an advice?', 'Can you give me **some advice** / **a piece of advice**?', 'Advice è non numerabile, anche se un consiglio è numerabile.'],
+      ['This is the my car.', 'This is **my** car.', 'Mai l’articolo davanti a my, your, his e simili.'],
+      ['I wash the hands.', 'I wash **my** hands.', 'Con le parti del corpo l’inglese usa il possessivo.'],
+      ['We swam in the Lake Garda.', 'We swam in **Lake Garda**.', 'I laghi con Lake non vogliono articolo.'],
+      ['I have been to the Italy.', 'I have been to **Italy**.', 'Quasi tutti i paesi non vogliono articolo.'],
+      ['There were hundred people.', 'There were **a hundred** people.', 'Cento si dice a hundred o one hundred.'],
+    ] },
+
+    { h: 'Come rendere automatici gli articoli' },
+    { p: "Gli articoli sono brevi, non accentati e velocissimi, quindi in una conversazione nessuno ha il tempo di controllare una regola. Quello che aiuta è **imparare i sostantivi in blocchi con il loro articolo**: have breakfast, go to bed, by train, on the radio, the United States. Quando l'espressione intera è nella tua memoria, l'articolo esce insieme a lei." },
+    { p: "Quando scrivi, fai un controllo degli articoli alla fine. Guarda ogni the davanti a un plurale o a un non numerabile e chiediti “quali?”: se la risposta è “in generale”, cancellalo. Poi guarda ogni sostantivo numerabile singolare e verifica che abbia davanti a, an, the o my. **Due passaggi richiedono un minuto** ed eliminano la maggior parte degli errori della tabella qui sopra." },
+    { p: "Soprattutto, devi sentire e usare gli articoli in frasi vere, tante volte. Nelle lezioni dal vivo con un insegnante e lo stesso piccolo gruppo parli della tua vita, dei tuoi programmi e delle notizie, e **il tuo insegnante corregge i tuoi compiti**, così gli stessi errori vengono segnalati finché non spariscono. Dopo ogni lezione, le flashcard con le parole delle tue lezioni ti aiutano a ripassare i sostantivi insieme alle espressioni di cui fanno parte." },
+  ],
+  quiz: [
+    { q: 'It took us ___ hour to find a parking space.', options: ['a', 'an', 'the', 'nessun articolo'], a: 1, why: 'La h di hour è muta, quindi la parola comincia con un suono vocalico: an hour.' },
+    { q: 'She works for ___ university in Chicago.', options: ['an', 'the', 'a', 'nessun articolo'], a: 2, why: 'University comincia con il suono “iu”, consonantico, quindi vuole a.' },
+    { q: 'Quale frase parla dei cani in generale?', options: ['The dogs are loyal.', 'Dogs are loyal.', 'A dogs are loyal.', 'The dog are loyal.'], a: 1, why: 'Per le cose in generale l’inglese usa il plurale senza articolo.' },
+    { q: 'We spent a week hiking in ___ Alps.', options: ['the', 'a', 'nessun articolo', 'an'], a: 0, why: 'Le catene montuose vogliono the: the Alps, the Dolomites, the Andes.' },
+    { q: 'Our hotel was on the shore of ___ Lake Como.', options: ['the', 'a', 'an', 'nessun articolo'], a: 3, why: 'I laghi con Lake non vogliono articolo: Lake Como, anche se in italiano diciamo il lago di Como.' },
+    { q: 'My brother is ___ engineer.', options: ['nessun articolo', 'an', 'a', 'the'], a: 1, why: 'I mestieri vogliono a o an, e engineer comincia con un suono vocalico.' },
+    { q: 'Quale frase è corretta?', options: ['I go to the bed at eleven.', 'I go to a bed at eleven.', 'I go to bed at eleven.', 'I go at bed at eleven.'], a: 2, why: 'Go to bed, andare a dormire, non vuole articolo.' },
+    { q: 'It was ___ best meal I have ever had.', options: ['a', 'the', 'nessun articolo', 'an'], a: 1, why: 'I superlativi davanti a un nome vogliono the: the best meal.' },
+  ],
+  faq: [
+    ['Davanti alla h si usa a o an?', 'Dipende da come si pronuncia la h. Quasi tutte le parole con h la pronunciano e vogliono a: a house, a hotel, a holiday. Poche hanno la h muta e vogliono an: an hour, an honest mistake, an heir. Herb è an herb in inglese americano e a herb in inglese britannico.'],
+    ['Con i paesi si usa the?', 'Con quasi nessuno: Italy, Spain, France, Brazil, anche se in italiano diciamo l’Italia. Si usa the quando il nome è plurale o contiene parole come States, Kingdom o Republic: the United States, the UK, the Netherlands, the Czech Republic.'],
+    ['Perché the sun ma Mars?', 'Il sole, la luna e la terra sono cose uniche nel nostro mondo quotidiano, quindi vogliono the come le altre cose uniche. Gli altri pianeti sono nomi propri, come i nomi delle persone, e non vogliono articolo.'],
+    ['Si dice in hospital o in the hospital?', 'Sono corrette entrambe. Per un paziente l’inglese britannico dice in hospital e quello americano in the hospital. Quando parli dell’edificio, per esempio per andare a trovare qualcuno, entrambe le varietà usano the.'],
+    ['Serve l’articolo davanti a una lingua?', 'No, quando usi il nome da solo: I speak Spanish, French is beautiful. Il the serve solo con la parola language (the English language) o quando intendi un uso preciso della lingua, come the English in this report, l’inglese di questo report.'],
+  ],
+  related: ['in-on-at', 'present-perfect', 'cefr-english'],
+  sources: [
+    ['Cambridge Dictionary: A/an and the', 'https://dictionary.cambridge.org/grammar/british-grammar/a-an-and-the'],
+    ['Cambridge Dictionary: Geographical places', 'https://dictionary.cambridge.org/grammar/british-grammar/geographical-places'],
+    ['Cambridge Dictionary: Nationalities, languages, countries and regions', 'https://dictionary.cambridge.org/grammar/british-grammar/nationalities-languages-countries-and-regions'],
+    ['British Council LearnEnglish: Articles a, an, the', 'https://learnenglish.britishcouncil.org/free-resources/grammar/a1-a2-grammar/articles-a-an-the'],
+    ['British Council LearnEnglish: Articles, the or no article', 'https://learnenglish.britishcouncil.org/free-resources/grammar/a1-a2-grammar/articles-the-or-no-article'],
+    ['Oxford Learner’s Dictionaries: hospital', 'https://www.oxfordlearnersdictionaries.com/definition/english/hospital'],
+  ],
+};

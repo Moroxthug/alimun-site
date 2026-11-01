@@ -1,0 +1,195 @@
+// English articles a, an, the and no article. Checked against Cambridge Dictionary (A/an and the; Geographical places;
+// Place names; Nationalities, languages, countries and regions), British Council LearnEnglish (Articles: a, an, the;
+// Articles: the or no article) and Oxford Learner's Dictionaries (a, the, hospital, school, breakfast, tennis, herb, advice).
+export default {
+  key: 'english-articles',
+  site: 'en',
+  slug: 'english-articles-a-an-the',
+  section: 'grammar',
+  course: 'English',
+  published: '2026-11-01',
+  updated: '2026-11-01',
+  title: 'English articles: when to use a, an, the or no article',
+  metaTitle: 'English articles a, an, the and no article: the rules – Alimun',
+  desc: 'When to use a, an, the or no article in English: an hour, a university, the Alps, Lake Como, go to school, she is a doctor, and the classic mistakes.',
+  lead: "A, an and the are among the most common words in English, and still they trip up learners at every level. The good news is that **a handful of patterns covers most sentences**: whether the listener knows what you mean, whether you are talking in general, and a few groups of names and fixed phrases. Here they are, with the mistakes that speakers of Italian, Spanish, French and Portuguese make most often.",
+  photo: 'english-articles-HEADER',
+  sticker: { draw: 'dog', say: 'Dogs are loyal. The dog next door is very loyal.' },
+  facts: [
+    { label: 'an hour', text: 'a or an depends on the first sound, not the first letter: an hour, a university, an MBA' },
+    { label: 'the Nile', text: 'rivers, seas, oceans and mountain ranges take the; most countries, cities and lakes do not' },
+    { n: 2, unit: 'sounds', text: 'the is said “thuh” before a consonant sound and “thee” before a vowel sound' },
+    { label: 'in the hospital', text: 'American English for a patient, where British English says in hospital' },
+  ],
+  blocks: [
+    { take: { title: 'The short answer', text: "Use **a or an** for one thing the listener does not know yet, or to say what something is (she is a doctor); choose a or an by the first sound, not the letter. Use **the** when the listener knows exactly which one you mean: it was mentioned before, it is the only one, or the sentence makes it clear. Use **no article** when you talk about things in general with a plural or uncountable noun (dogs are loyal, I love music), and with most names of countries, cities and lakes.", draw: 'owl' } },
+
+    { h: 'A or an? Listen to the sound' },
+    { p: "A and an are the same word, the indefinite article. The only question is which form to use, and the answer depends on **how the next word sounds, not how it is spelled**. Use a before a consonant sound and an before a vowel sound. Most of the time spelling and sound agree, so you say a car, a house, an apple and an umbrella without thinking about it." },
+    { p: "The tricky cases are the words where letter and sound do not match. Hour and honest start with a silent h, so they begin with a vowel sound: **an hour, an honest answer**. University, European and one start with a vowel letter but a consonant sound (“you”, “you”, “won”), so they take a: a university, a European country, a one-year-old child. Abbreviations follow the same logic. You say the letter M as “em”, so it is **an MBA**; you say U as “you”, so it is a UN report." },
+    { examples: [
+      ['It took me **an hour** to get home.', 'Silent h: the word starts with a vowel sound.'],
+      ['She studies at **a university** in Boston.', 'University starts with a “you” sound, a consonant sound.'],
+      ['He has **an MBA** from a business school in Madrid.', 'M is said “em”, so the abbreviation starts with a vowel sound.'],
+      ['We have **a one-year-old** daughter.', 'One starts with a “w” sound.'],
+      ['I need **an X-ray** of my wrist.', 'X is said “eks”, a vowel sound.'],
+    ] },
+    { p: "The also changes its sound, though not its spelling. Before a consonant sound it is a short “thuh”: the car, the university. Before a vowel sound it becomes “thee”: **the apple, the hour**. Native speakers do this automatically, and it is one of the small details that make your English sound natural." },
+    { note: { title: 'An herb or a herb?', text: "Because the rule follows sound, it can change with the accent. Most Americans do not pronounce the h in herb, so they say **an herb**; most British speakers do pronounce it, so they say a herb. Both are correct in their own variety.", draw: 'teacup' } },
+
+    { h: 'A for something new, the for something known' },
+    { p: "The basic difference between a and the is about what the listener already knows. A or an introduces **something new, or one of many**: the listener cannot yet tell which one you mean. The tells them that they can: you have mentioned it before, there is only one, or the situation makes it clear. That is why a story usually begins with a and continues with the." },
+    { examples: [
+      ['There was **an** accident here yesterday. **A** car hit a tree and **the** driver was hurt.', 'An accident and a car are new; the driver is the driver of that car.'],
+      ['Do you have **a** car?', 'Any car at all.'],
+      ['Where did we park **the** car?', 'The car we both know.'],
+      ['Can you close **the** window, please?', 'There is one window in the room, so it is clear which one.'],
+    ] },
+    { p: "Things that are unique in our world take the, because there is no doubt about which one you mean: **the sun, the moon, the earth, the sky, the internet**. The same goes for things that are the only one in a place you share with the listener, like the kitchen, the boss or the station in a small town." },
+    { h3: 'Superlatives and other words that pick out one' },
+    { p: "Superlatives point to one thing out of a group, so they take the: **the best day of my life**, the tallest building in the city, the most expensive option. So do ordinal numbers and words like same, only, next and last when they pick out one item: the first time, the same question, the only problem, the last train. You can drop the after a verb when there is no noun (this one is best), but before a noun keep it." },
+    { examples: [
+      ['It was **the best** concert I have ever been to.', 'Superlative before a noun: the.'],
+      ['You are **the third** person to ask me that.', 'Ordinal number: the.'],
+      ['We have **the same** teacher as last year.', 'The same: always with the.'],
+    ] },
+
+    { figure: { photo: 'english-articles-FIG1', alt: 'ALT1', caption: 'CAP1' } },
+
+    { h: 'No article: talking about things in general' },
+    { p: "This is the rule that causes the most mistakes for speakers of Romance languages. When you talk about **things in general, English uses a plural or uncountable noun with no article**. Dogs are loyal means dogs as a species. I love music means music of any kind. Life is short, money is not everything, and coffee keeps me awake are all about the thing in general, so none of them takes the." },
+    { examples: [
+      ['**Dogs** are loyal.', 'All dogs, dogs in general.'],
+      ['I love **music**.', 'Music in general, uncountable.'],
+      ['**Children** learn languages quickly.', 'Children in general.'],
+      ['**The** dogs next door bark all night.', 'Specific dogs: the ones next door.'],
+      ['**The** music at the party was too loud.', 'Specific music: the music at that party.'],
+    ] },
+    { p: "Look at the last two examples. As soon as you add information that tells the listener which ones you mean, such as next door, at the party or that I bought, the noun becomes specific and **the comes back**. Life is wonderful is general; the life of a soldier is a specific life. History repeats itself is general; the history of Italy is one specific history." },
+    { h3: 'Uncountable nouns never take a or an' },
+    { p: "A or an means “one”, so it only goes with singular countable nouns. Uncountable nouns such as **advice, information, news, furniture, weather and bread** never take a or an, even when the word in your language is countable. To talk about one item, use a phrase like a piece of: a piece of advice, a piece of furniture, a bit of news. Add an adjective and you still need no article: we had nice weather, she gave me good advice." },
+    { note: { title: 'A singular noun needs a partner', text: "A singular countable noun cannot stand alone in English. It needs **a, an, the or another determiner** such as my, this or every: I have a car, the car is red, my car is old. “I have car” is never correct.", draw: 'parrot' } },
+    { p: "There is one more way to talk about a whole class of things, used mostly in more formal or scientific English: the with a singular noun, as in **the dolphin is an intelligent animal** or the computer changed the way we work. You can also say a dolphin is an intelligent animal, meaning any dolphin. In everyday speech, though, the plural without an article is the most natural choice: dolphins are intelligent." },
+
+    { quote: 'Dogs are loyal. The dog next door is not.' },
+
+    { cta: true },
+
+    { h: 'Places: the Thames, Lake Como, Italy' },
+    { p: "Names of places follow their own set of patterns, and here guessing is risky because the groups are not logical. **Rivers, seas, oceans, deserts and mountain ranges take the**: the Thames, the Mediterranean, the Pacific, the Sahara, the Alps. Most countries, cities, continents, streets and lakes take no article: Italy, Madrid, Europe, Oxford Street, Lake Como. Single mountains named with Mount take no article either: Mount Everest, Mount Etna." },
+    { table: {
+      head: ['Place', 'Article', 'Examples'],
+      rows: [
+        ['Rivers', 'the', 'the Thames, the Nile, the Amazon, the Danube'],
+        ['Seas and oceans', 'the', 'the Mediterranean, the Atlantic, the Pacific Ocean'],
+        ['Mountain ranges and groups of islands', 'the', 'the Alps, the Andes, the Himalayas, the Canary Islands'],
+        ['Deserts', 'the', 'the Sahara, the Gobi Desert'],
+        ['Most countries, continents, cities', 'no article', 'Italy, Spain, France, Brazil, Europe, Lisbon'],
+        ['Countries with a plural or a word like Republic, Kingdom, States', 'the', 'the United States, the United Kingdom, the Netherlands, the Philippines'],
+        ['Lakes', 'no article', 'Lake Como, Lake Geneva, Lake Michigan'],
+        ['Single mountains', 'no article', 'Mount Everest, Mount Etna, Kilimanjaro'],
+        ['Streets and squares in a town', 'no article', 'Oxford Street, Times Square, Broadway'],
+      ],
+      note: 'A few single mountains keep the, such as the Matterhorn, and groups of lakes take it too: the Great Lakes, but Lake Michigan.',
+    } },
+    { p: "The exceptions among countries have a clear reason: the name contains a common noun such as **states, kingdom or republic**, or it is a plural. So you say the United States, the UK, the Czech Republic and the Netherlands, but Italy, Germany and Brazil. Museums, hotels and theaters usually take the as well: the Louvre, the National Gallery. Airports and universities named after a city do not: Heathrow Airport, Harvard University, but the University of Tokyo." },
+
+    { figure: { photo: 'english-articles-FIG2', alt: 'ALT2', caption: 'CAP2' } },
+
+    { h: 'Meals, sports and languages' },
+    { p: "Three everyday groups take no article when you talk about them in general. **Meals**: have breakfast, what's for dinner?, we met for lunch. **Sports and games**: play tennis, watch football, she is good at chess. **Languages**: I speak French, Japanese is hard to learn, she is studying Portuguese. In all three, adding the sounds wrong to a native speaker, and it is one of the most frequent slips for learners whose language uses an article here." },
+    { examples: [
+      ['We usually have **breakfast** at seven.', 'Not: have the breakfast.'],
+      ['I play **tennis** on Saturdays.', 'Not: play the tennis.'],
+      ['**English** is easier than **German**, in my opinion.', 'Not: The English is easier.'],
+      ['**The** breakfast at this hotel is excellent.', 'A specific breakfast: the one at this hotel.'],
+      ['We had **a** quick lunch.', 'With an adjective, a meal can take a.'],
+    ] },
+    { p: "Two details are worth knowing. First, a meal becomes countable when you describe it: a big breakfast, a quick lunch, a lovely dinner. Second, **the English language** takes the, because language is a noun and the phrase points to one specific language, while English on its own does not. And musical instruments are different from sports: you play tennis, but you usually play the piano or the guitar." },
+
+    { h: 'School, bed, hospital: the building or what you do there?' },
+    { p: "A small group of places drops the article when you mean **the activity that happens there**, not the building. You go to school to study, go to bed to sleep, go to work to do your job, and someone in prison is a prisoner. When you mean the building itself, the article comes back: my mother went to the school to talk to my teacher, and there is a cat on the bed." },
+    { examples: [
+      ['My son goes **to school** by bus.', 'He is a student there.'],
+      ['I went **to the school** to pick up my son.', 'You visited the building.'],
+      ['I usually go **to bed** at eleven.', 'To sleep. Not: go to the bed.'],
+      ['He is **in prison** for fraud.', 'He is a prisoner.'],
+    ] },
+    { note: { title: 'Hospital in the US and the UK', text: "In British English, a patient is **in hospital** and goes to hospital. In American English you need the: she spent two weeks **in the hospital**. American English also says in school where British English says at school: all my kids are still in school.", draw: 'cat' } },
+    { p: "Home and work behave in a similar way: go home, be at home, start work, leave work, all without an article. Note that home also drops the preposition after go: you go home, not go to home. Town works like this in British English too: I'm going to town this afternoon, she works in town." },
+
+    { figure: { photo: 'english-articles-FIG3', alt: 'ALT3', caption: 'CAP3' } },
+
+    { h: 'Jobs: she is a doctor' },
+    { p: "When you say what someone does for a living, English needs a or an: **she is a doctor, he is an engineer**, I want to be a teacher. Many European languages leave the article out here, so “she is doctor” is a very common mistake. The same applies to saying what something is: it's a good idea, that's a nice car, he is a Buddhist." },
+    { p: "The article disappears when the job is a unique role held by one person at a time, especially after verbs like become, be elected or be appointed: **she was elected president**, he became head of the department. And titles before a name take no article at all: Doctor Smith, President Lincoln, Professor Rossi." },
+
+    { h: 'Fixed phrases worth learning as they are' },
+    { p: "Some article choices are simply part of a fixed expression, and the best strategy is to learn the whole phrase. Several of them describe time and transport. You travel **by car, by train or by plane**, with no article; but you sit in the car, on the train. You hear something **on the radio** but see it on TV. You work at night but in the morning." },
+    { table: {
+      head: ['No article', 'With the', 'With a or an'],
+      rows: [
+        ['by car, by bus, by train, on foot', 'on the radio, on the internet, in the newspaper', 'three times a week, once a month'],
+        ['at night, at noon, at home, at work', 'in the morning, in the afternoon, in the evening', 'fifty miles an hour, two euros a kilo'],
+        ['go to bed, go home, watch TV', 'the same, the other day, the rest', 'half an hour, a few, a lot of'],
+      ],
+      note: 'A or an with rates means “per”: twice a day, 50 miles an hour. American English also says a half hour beside half an hour.',
+    } },
+
+    { h: 'Why speakers of Romance languages use the too often' },
+    { p: "If your first language is Italian, Spanish, French or Portuguese, most of your article mistakes come from one difference. **Your language uses the definite article for generalizations; English does not.** In Italian you say i cani sono fedeli, in Spanish los perros son leales, in French les chiens sont fidèles and in Portuguese os cachorros são leais. Translated word for word, all four give “the dogs are loyal”, which in English means some specific dogs, not dogs in general." },
+    { p: "The same habit produces **the life is beautiful** (la vita è bella, la vida es bella), the English is difficult (l'inglese è difficile, l'anglais est difficile, o inglês é difícil) and I love the music (amo la musica, me encanta la música, j'aime la musique). Romance languages also put an article before many country names, as in l'Italia, la France and o Brasil, while English says Italy, France and Brazil." },
+    { p: "Italian and European Portuguese add one more trap: the article before a possessive, as in la mia macchina or a minha casa. English never combines the two, so it is **my car, not the my car**. And all four languages leave out the article with jobs (è medico, es médica, elle est médecin, ela é médica), which becomes “she is doctor” instead of she is a doctor." },
+    { note: { title: 'A quick test for generalizations', text: "Before you write the, ask yourself: **which ones?** If you can answer, for example the dogs next door or the music at the party, keep the. If the answer is “all of them, in general”, drop it: dogs are loyal, music makes me happy.", draw: 'snail' } },
+
+    { figure: { photo: 'english-articles-FIG4', alt: 'ALT4', caption: 'CAP4' } },
+
+    { h: 'Common mistakes' },
+    { p: "These are the article mistakes teachers hear most often from Italian, Spanish, French and Portuguese speakers, and each one breaks a pattern from this article." },
+    { mistakes: [
+      ['The life is beautiful.', '**Life** is beautiful.', 'Life in general takes no article.'],
+      ['I love the music.', 'I love **music**.', 'Music in general: uncountable, no article.'],
+      ['The English is difficult.', '**English** is difficult.', 'Languages take no article.'],
+      ['She is doctor.', 'She is **a** doctor.', 'Jobs need a or an.'],
+      ['It took me a hour.', 'It took me **an** hour.', 'The h is silent, so hour starts with a vowel sound.'],
+      ['He studies at an university.', 'He studies at **a** university.', 'University starts with a “you” sound.'],
+      ['Can you give me an advice?', 'Can you give me **some advice** / **a piece of advice**?', 'Advice is uncountable.'],
+      ['I play the football every Sunday.', 'I play **football** every Sunday.', 'Sports take no article.'],
+      ['I go to the bed at eleven.', 'I go to **bed** at eleven.', 'Go to bed means go to sleep.'],
+      ['This is the my car.', 'This is **my** car.', 'Never use an article with my, your, his and so on.'],
+      ['We swam in the Lake Garda.', 'We swam in **Lake Garda**.', 'Lakes named with Lake take no article.'],
+      ['I have been to the Italy.', 'I have been to **Italy**.', 'Most countries take no article.'],
+    ] },
+
+    { h: 'How to make articles automatic' },
+    { p: "Articles are short, unstressed and fast, so in conversation nobody has time to check a rule. What helps is to **learn nouns in chunks with their article**: have breakfast, go to bed, by train, on the radio, the United States. When the whole phrase is stored in your memory, the article comes out with it." },
+    { p: "When you write, do a quick article check at the end. Look at every the before a plural or uncountable noun and ask “which ones?”; if the answer is “in general”, delete it. Then look at every singular countable noun and make sure it has a, an, the or my in front of it. **Two passes take a minute** and remove most of the mistakes in the table above." },
+    { p: "Most of all, you need to hear and use articles in real sentences, many times. In live classes with a teacher and the same small group, you talk about your life, your plans and the news, and **your teacher corrects your homework**, so the same slips get pointed out until they disappear. After each lesson, flashcards with the words from your classes help you review nouns together with the phrases they belong to." },
+  ],
+  quiz: [
+    { q: 'It took us ___ hour to find a parking space.', options: ['a', 'an', 'the', 'no article'], a: 1, why: 'The h in hour is silent, so the word starts with a vowel sound: an hour.' },
+    { q: 'She works for ___ university in Chicago.', options: ['an', 'the', 'a', 'no article'], a: 2, why: 'University starts with a “you” sound, a consonant sound, so it takes a.' },
+    { q: 'Which sentence is about dogs in general?', options: ['The dogs are loyal.', 'Dogs are loyal.', 'A dogs are loyal.', 'The dog are loyal.'], a: 1, why: 'For things in general, English uses a plural noun with no article.' },
+    { q: 'We spent a week hiking in ___ Alps.', options: ['the', 'a', 'no article', 'an'], a: 0, why: 'Mountain ranges take the: the Alps, the Andes, the Himalayas.' },
+    { q: 'Our hotel was on the shore of ___ Lake Como.', options: ['the', 'a', 'an', 'no article'], a: 3, why: 'Lakes named with Lake take no article: Lake Como.' },
+    { q: 'My brother is ___ engineer.', options: ['no article', 'an', 'a', 'the'], a: 1, why: 'Jobs take a or an, and engineer starts with a vowel sound.' },
+    { q: 'Which sentence is correct?', options: ['I go to the bed at eleven.', 'I go to a bed at eleven.', 'I go to bed at eleven.', 'I go at bed at eleven.'], a: 2, why: 'Go to bed means going to sleep, with no article.' },
+    { q: 'It was ___ best meal I have ever had.', options: ['a', 'the', 'no article', 'an'], a: 1, why: 'Superlatives before a noun take the: the best meal.' },
+  ],
+  faq: [
+    ['Is it a or an before h?', 'It depends on whether you pronounce the h. Most words starting with h have a pronounced h and take a: a house, a hotel, a holiday. A few have a silent h and take an: an hour, an honest mistake, an heir. Herb is an herb in American English and a herb in British English.'],
+    ['Do I use the with countries?', 'Not with most of them: Italy, Spain, France, Brazil. Use the when the name is plural or contains a word like States, Kingdom or Republic: the United States, the UK, the Netherlands, the Czech Republic.'],
+    ['Why do we say the sun but Mars?', 'The sun, the moon and the earth are unique things in our everyday world, so they take the like other unique things. Planets other than the earth are proper names, like the names of people, and take no article.'],
+    ['Is it in hospital or in the hospital?', 'Both are correct. For a patient, British English says in hospital and American English says in the hospital. When you are talking about the building, for example to visit someone, both varieties use the.'],
+    ['Do I need an article before a language?', 'No, not when you use the name on its own: I speak Spanish, French is beautiful. You use the only with the word language (the English language) or when you mean a specific use of it, such as the English in this report.'],
+  ],
+  related: ['in-on-at', 'present-perfect', 'cefr-english'],
+  sources: [
+    ['Cambridge Dictionary: A/an and the', 'https://dictionary.cambridge.org/grammar/british-grammar/a-an-and-the'],
+    ['Cambridge Dictionary: Geographical places', 'https://dictionary.cambridge.org/grammar/british-grammar/geographical-places'],
+    ['Cambridge Dictionary: Nationalities, languages, countries and regions', 'https://dictionary.cambridge.org/grammar/british-grammar/nationalities-languages-countries-and-regions'],
+    ['British Council LearnEnglish: Articles a, an, the', 'https://learnenglish.britishcouncil.org/free-resources/grammar/a1-a2-grammar/articles-a-an-the'],
+    ['British Council LearnEnglish: Articles, the or no article', 'https://learnenglish.britishcouncil.org/free-resources/grammar/a1-a2-grammar/articles-the-or-no-article'],
+    ['Oxford Learner’s Dictionaries: hospital', 'https://www.oxfordlearnersdictionaries.com/definition/english/hospital'],
+  ],
+};

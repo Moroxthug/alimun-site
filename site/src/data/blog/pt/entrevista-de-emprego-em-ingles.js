@@ -1,0 +1,201 @@
+// Entrevista de emprego em inglês. Verificado no National Careers Service (método STAR, perguntas mais frequentes,
+// entrevistas por vídeo), University of Washington Career & Internship Center (proporções STAR), UMass Amherst (e-mail de
+// agradecimento em 24 horas) e Cambridge Dictionary (actually, eventually, assist, sensible, pretend, CV e résumé, salary).
+export default {
+  key: 'english-job-interview',
+  site: 'pt',
+  slug: 'entrevista-de-emprego-em-ingles',
+  section: 'abroad',
+  course: 'English',
+  published: '2026-11-01',
+  updated: '2026-11-01',
+  title: 'Entrevista de emprego em inglês: perguntas, respostas e frases',
+  metaTitle: 'Entrevista de emprego em inglês: perguntas e respostas – Alimun',
+  desc: 'Como funciona uma entrevista em inglês, as perguntas clássicas e como respondê-las, o método STAR, frases para ganhar tempo e os erros típicos de quem fala português.',
+  lead: 'Uma entrevista de emprego em inglês testa duas coisas ao mesmo tempo: se você sabe fazer o trabalho e se consegue **falar sobre ele com clareza** em uma língua que não é a sua. As perguntas são surpreendentemente previsíveis, e o inglês de que você precisa também. Veja como uma entrevista costuma acontecer, o que responder às perguntas clássicas e as pequenas armadilhas da língua em que quem fala português cai com frequência.',
+  photo: 'english-job-interview-meeting-table',
+  sticker: { draw: 'suitcase', say: 'Tell me about yourself. Mas seja breve!' },
+  facts: [
+    { n: 4, unit: 'partes', text: 'em uma resposta STAR: situation, task, action e result' },
+    { n: 60, unit: 'por cento', text: 'de uma resposta STAR deveria tratar da ação, segundo o career center da University of Washington' },
+    { n: 24, unit: 'horas', text: 'o prazo para enviar o e-mail de agradecimento depois da entrevista, segundo os serviços de carreira das universidades' },
+    { label: 'Câmera na altura dos olhos', text: 'e olhar para a câmera, não para a tela: as dicas do National Careers Service para entrevistas por vídeo' },
+  ],
+  blocks: [
+    { take: { title: 'Resumindo', text: 'Quase todas as entrevistas em inglês seguem o mesmo caminho: um pouco de small talk, perguntas sobre a sua trajetória, perguntas sobre situações reais do seu passado e, no fim, as suas próprias perguntas. Prepare **uma resposta curta para “Tell me about yourself”**, dois ou três pontos fortes com exemplos, um ponto fraco sincero e três ou quatro histórias para contar com o **método STAR**. Depois aprenda algumas frases para ganhar tempo e pedir esclarecimentos, e revise os falsos cognatos que fazem bons candidatos dizerem algo que não queriam dizer.', draw: 'owl' } },
+
+    { h: 'Como funciona uma entrevista de emprego em inglês' },
+    { p: 'As entrevistas variam de empresa para empresa e de país para país, mas a estrutura é muito estável. Elas começam com alguns minutos de **small talk**, a conversa de cortesia enquanto todos se sentam. Depois o entrevistador se apresenta, muitas vezes descreve a vaga e pede que você fale da sua trajetória. A parte mais longa são as perguntas sobre suas competências e experiências, seguidas de eventuais perguntas técnicas. No fim, você é convidado a fazer suas perguntas e o entrevistador explica as próximas etapas.' },
+    { p: 'O small talk faz parte da entrevista, não é perda de tempo. Ninguém espera uma resposta longa, mas uma resposta de uma palavra só soa fria em inglês. Responda, acrescente um pequeno detalhe e, se for natural, **devolva a pergunta**. É também o momento de aquecer o seu inglês antes das perguntas importantes.' },
+    { examples: [
+      ['Did you find us OK? Yes, thanks, the directions were very clear.', 'Achou a gente com facilidade? Sim, obrigado, as indicações estavam bem claras. Uma resposta curta mais um detalhe basta.'],
+      ['How was your journey? Pretty smooth, actually. The train was on time.', 'Como foi a viagem? Bem tranquila, na verdade. Aqui actually quer dizer “na verdade”, não “atualmente”.'],
+      ['Thanks for having me. It is nice to meet you in person.', 'Obrigado por me receber. Uma abertura simpática que funciona no inglês britânico e no americano.'],
+      ['How are you today? Very well, thank you. And you?', 'Devolver a pergunta é educado, e é o que se espera.'],
+    ] },
+    { figure: { photo: 'english-job-interview-conference-room', alt: 'Uma sala de reuniões vazia com uma mesa comprida, cadeiras de escritório e grandes janelas', caption: 'Muitas entrevistas ainda acontecem em volta de uma mesa como esta. Se houver vários entrevistadores, olhe para quem fez a pergunta e depois inclua os outros enquanto responde.' } },
+
+    { h: '“Tell me about yourself”' },
+    { p: 'Costuma ser a primeira pergunta de verdade, e não é um convite para contar a sua vida. O entrevistador quer um resumo curto e profissional que ligue o seu passado a esta vaga. Uma estrutura simples funciona em qualquer língua e é fácil em inglês: **presente, passado, futuro**. Diga o que você faz hoje, como chegou até aqui e por que esta vaga é o próximo passo natural. Mire em cerca de um minuto e deixe de fora data de nascimento, família e hobbies, a não ser que tenham relação com a vaga.' },
+    { examples: [
+      ["I'm a logistics coordinator at a food distribution company in São Paulo.", 'Presente: o seu cargo atual, no present simple.'],
+      ["I've worked in logistics for six years, mostly on international shipments.", 'Experiência até hoje: o present perfect. Em português você diria “trabalho com logística há seis anos”, no presente, mas em inglês o presente aqui é um erro.'],
+      ['Before that, I studied economics in Campinas and did an internship at a shipping agency.', 'Passado concluído: o past simple.'],
+      ["Now I'm looking for a role where I can work with English-speaking clients every day, which is why this position caught my eye.", 'Futuro: por que você está ali hoje.'],
+    ] },
+    { note: { title: 'Prepare, mas não decore', text: 'Escreva a sua resposta e depois fale em voz alta até conseguir contá-la **com as suas próprias palavras**. Um texto decorado palavra por palavra soa recitado, e se você esquece uma frase perde o resto. O National Careers Service dá o mesmo conselho para todos os seus exemplos: passe suas ideias em tom de conversa, para não parecer ensaiado demais.', draw: 'parrot' } },
+
+    { h: 'Pontos fortes e pontos fracos' },
+    { p: 'Para os pontos fortes, o National Careers Service recomenda preparar **dois ou três exemplos** ligados à vaga, como comunicação, resolução de problemas, entusiasmo ou flexibilidade, e apoiá-los com diplomas ou cursos, se você tiver. Um adjetivo sozinho não prova nada. “I am organized” é uma afirmação; “I plan the delivery schedule for twelve drivers every week” é uma prova.' },
+    { p: 'Para os pontos fracos, o conselho é ser sincero e explicar **o que você está fazendo para melhorar**. Escolha um ponto fraco real que não seja central para a vaga, descreva-o rapidamente e dedique a maior parte da resposta à solução. Muitos candidatos tentam disfarçar uma qualidade de defeito (“I work too hard”), mas isso costuma soar evasivo em vez de modesto.' },
+    { examples: [
+      ['One of my main strengths is staying calm under pressure. In my current job, I handle urgent customer issues almost every day.', 'Um ponto forte seguido logo de uma prova.'],
+      ['I sometimes find it hard to delegate. I have started breaking projects into tasks and sharing them with the team at the start.', 'Um ponto fraco sincero e o que você faz para melhorar.'],
+      ['Public speaking used to make me nervous, so last year I volunteered to present our monthly results.', 'Used to mais uma ação no passado mostra progresso: “antes eu ficava nervoso”.'],
+    ] },
+
+    { h: '“Why do you want to work here?”' },
+    { p: 'Essa pergunta verifica se você conhece a empresa e se a escolheu de propósito. O National Careers Service recomenda ler o site da empresa, incluindo as páginas “about us”, os produtos, os serviços e os valores, e **mostrar o que você aprendeu** ao longo de toda a entrevista. Cite algo específico, ligue isso à sua experiência e evite respostas que serviriam para qualquer empresa, como “It is a big, international company”.' },
+    { p: 'Uma boa fórmula é “o que eu sei sobre a empresa mais o que eu trago”. Por exemplo: “I’ve read about your expansion into Latin America, and with my Spanish and my experience in export documentation, I think I could **contribute from day one**.” Repare no condicional could: soa confiante sem soar arrogante.' },
+
+    { h: '“Where do you see yourself in five years?”' },
+    { p: 'O entrevistador não quer uma previsão. Ele quer saber se os seus planos combinam com a vaga e se é provável que você fique e cresça. Fale das competências que quer desenvolver e das responsabilidades que espera assumir, de preferência dentro da empresa. Aqui quem trabalha são as **formas de futuro**: I would like to, I hope to, I see myself.' },
+    { examples: [
+      ["I'd like to have more responsibility for client accounts, and I hope to be leading a small team.", 'I would like to e I hope to soam naturais e modestos.'],
+      ['I see myself developing my skills in data analysis, which is a big part of this role.', 'Ligue os seus planos de volta à vaga.'],
+    ] },
+
+    { h: 'A pretensão salarial' },
+    { p: 'As perguntas sobre salário podem aparecer cedo, numa ligação de triagem, ou no fim do processo. Antes de qualquer entrevista, pesquise a remuneração típica para aquela vaga naquela cidade e naquele país, para que qualquer número que você diga seja realista. Lembre também que salary costuma indicar um valor anual: o Cambridge Dictionary o define como “a fixed amount of money agreed every year”, enquanto no Brasil é comum falar em salário mensal. Em inglês é normal e perfeitamente educado **dar uma faixa** em vez de um número exato, ou pedir que a empresa fale primeiro.' },
+    { examples: [
+      ["Based on my research and experience, I'm looking for something in the range of 40,000 to 45,000 euros.", 'Uma faixa soa flexível e bem preparada.'],
+      ['Could you tell me the salary range for this position?', 'Um jeito educado de pedir que a empresa fale primeiro.'],
+      ["I'm open to discussing it, depending on the overall package.", 'O package inclui os benefícios, não só o salário.'],
+    ] },
+    { table: {
+      head: ['Pergunta', 'O que querem saber', 'Um jeito natural de começar'],
+      rows: [
+        ['Tell me about yourself.', 'A sua trajetória profissional, em cerca de um minuto', "I'm currently a … at …, and I've worked in … for … years."],
+        ['What are your main strengths?', 'Competências que combinam com a vaga, com provas', 'One of my main strengths is … For example, …'],
+        ['Do you have any weaknesses?', 'Sinceridade e capacidade de melhorar', 'I sometimes find it hard to … so I have started …'],
+        ['Why do you want to work here?', 'Se você pesquisou sobre a empresa', "I've read about your … and with my experience in …"],
+        ['Where do you see yourself in five years?', 'Se os seus planos combinam com a vaga', "I'd like to … and I hope to …"],
+        ['What are your salary expectations?', 'Se você é realista', "I'm looking for something in the range of …"],
+        ['Do you have any questions for us?', 'O seu interesse pela vaga', 'Yes, I was wondering what a typical day involves.'],
+      ],
+      note: 'O National Careers Service lista perguntas como estas entre as mais comuns, junto com perguntas sobre o seu tempo livre e sobre por que você saiu do último emprego.',
+    } },
+
+    { cta: true },
+
+    { h: 'O método STAR para perguntas comportamentais' },
+    { p: 'Muitas perguntas começam com “Tell me about a time when…”, “Give me an example of…” ou “Describe a situation where…”. São perguntas comportamentais: a ideia é que **o que você fez no passado** mostra como vai trabalhar no futuro. Os serviços de carreira recomendam o método STAR para estruturar a resposta, e o National Careers Service descreve as quatro partes como a situação que você teve de enfrentar, a tarefa que recebeu, a ação que tomou e o resultado, incluindo o que você aprendeu.' },
+    { p: 'Você começa descrevendo o contexto em uma ou duas frases, para que o entrevistador entenda a situação. Depois diz qual era o seu objetivo ou a sua responsabilidade. O coração da resposta é a ação: o que **você, pessoalmente**, fez, passo a passo, e quais competências usou. Você termina com o resultado, de preferência concreto, como um número, um prazo cumprido ou um cliente satisfeito, e com o que aprendeu. O career center da University of Washington sugere dedicar cerca de 60 por cento da resposta à ação, cerca de 20 por cento à situação e cerca de 10 por cento à tarefa e ao resultado cada um.' },
+    { quote: 'Diga I, não we: quem está sendo contratado é você, não o seu antigo time.' },
+    { p: 'Aqui a gramática ajuda. A situação e a tarefa costumam ser contadas no **past simple** e no past continuous (“I was working on a project when…”), a ação numa sequência de verbos no past simple, e o resultado também no past simple, muitas vezes seguido do present perfect para o que você fez desde então. A boa notícia é que o pretérito perfeito do português (“analisei os dados”) corresponde bem ao past simple. A armadilha está no outro lado: “trabalho aqui há três anos” pede o present perfect. Prepare três ou quatro histórias que possa adaptar a perguntas diferentes: um problema que você resolveu, um conflito na equipe, um erro que cometeu e uma vez em que liderou algo.' },
+    { examples: [
+      ['Situation: Last year, our biggest client complained that deliveries were arriving late.', 'O contexto, em uma ou duas frases.'],
+      ['Task: My manager asked me to find the cause and fix it within a month.', 'O seu objetivo ou a sua responsabilidade.'],
+      ['Action: I analyzed three months of delivery data, found that most delays came from one warehouse, and reorganized the loading schedule with the team there.', 'A parte mais longa, com I como sujeito.'],
+      ['Result: Late deliveries fell sharply within four weeks, and the client renewed the contract. Since then, I have used the same analysis for two other clients.', 'Um resultado concreto e depois o que você aprendeu ou fez em seguida.'],
+    ] },
+    { figure: { photo: 'english-job-interview-notebook-pen', alt: 'Uma mão fazendo anotações com uma caneta-tinteiro em um caderno espiral', caption: 'Escreva as suas histórias STAR em quatro linhas curtas, uma para cada parte, e depois pratique contá-las em voz alta no past simple.' } },
+
+    { h: 'Frases para ganhar tempo e pedir esclarecimentos' },
+    { p: 'Até os nativos fazem uma pausa antes de uma pergunta difícil. Um silêncio curto não tem problema, mas uma frase que o preenche **faz você soar calmo e no controle**, e dá ao seu cérebro alguns segundos para encontrar as palavras. Pedir esclarecimentos também é totalmente normal, e muito melhor do que responder a uma pergunta que você não entendeu.' },
+    { examples: [
+      ["That's a good question. Let me think about that for a moment.", 'O jeito clássico de ganhar alguns segundos.'],
+      ["Off the top of my head, I'd say the biggest challenge was the deadline.", 'Off the top of your head quer dizer “assim de cabeça”, sem tempo para conferir.'],
+      ['Bear with me a second while I find the right example.', 'Bear with me pede um instante de paciência a quem escuta.'],
+      ['Sorry, could you repeat the question?', 'Simples e sempre aceitável.'],
+      ['Just to make sure I understand, do you mean with clients or within the team?', 'Conferir o sentido mostra que você está ouvindo.'],
+      ["I'm not sure I've understood. Could you put it another way?", 'Útil quando a pergunta tem uma palavra que você não conhece.'],
+    ] },
+    { note: { title: 'Não peça desculpas pelo seu inglês', text: 'Começar com “Sorry, my English is not very good” coloca o foco nas suas limitações antes de você dizer qualquer coisa. Se precisar de um momento ou de uma repetição, peça com uma das frases acima. O que os entrevistadores precisam é de um inglês **claro e simples**, e isso dá para preparar.', draw: 'cat' } },
+
+    { h: 'As suas perguntas no final' },
+    { p: 'Perto do fim você quase sempre vai ouvir “Do you have any questions for us?”. O National Careers Service lembra que normalmente você terá um tempo para fazer suas próprias perguntas, recomenda anotá-las antes e observa que fazê-las mostra **interesse pela empresa**. “No, I think you covered everything” é uma oportunidade perdida. Entre os exemplos estão perguntar como é trabalhar ali, como é um dia típico, como a empresa deve se desenvolver nos próximos anos e se haverá oportunidades de treinamento.' },
+    { examples: [
+      ['What does a typical day look like in this role?', 'Mostra que você já se imagina na vaga.'],
+      ['How would you describe the team I would be working with?', 'O condicional would deixa a pergunta hipotética e educada.'],
+      ['Will there be any training opportunities after I start?', 'Um dos exemplos do National Careers Service.'],
+      ['What are the next steps in the process?', 'Uma última pergunta natural, para saber quando você terá notícias.'],
+    ] },
+
+    { h: 'Entrevistas por vídeo' },
+    { p: 'Hoje as primeiras etapas costumam ser por videochamada, e algumas empresas usam entrevistas gravadas, em que você responde a perguntas na tela sem ninguém do outro lado. O National Careers Service dá conselhos práticos para seguir à risca: **câmera na altura dos olhos**, nada que distraia atrás de você, boa luz natural ou uma luminária, e testar o microfone e o programa antes de começar. Quando falar, olhe para a câmera e não para a tela.' },
+    { p: 'Para as entrevistas gravadas, as mesmas orientações sugerem imaginar que você está falando com uma pessoa real e ler bem as perguntas antes de responder. Você também pode deixar anotações curtas **num lugar onde consiga vê-las**, uma vantagem real das entrevistas por vídeo. Só não leia respostas inteiras: os olhos se mexem e dá para perceber.' },
+    { figure: { photo: 'english-job-interview-desk-earphones', alt: 'Um caderno, um teclado, fones de ouvido e uma xícara de café sobre uma mesa de madeira', caption: 'Numa entrevista por vídeo, fones com microfone ajudam você a ouvir cada palavra. Deixe algumas palavras-chave num caderno ao seu lado, não frases inteiras para ler.' } },
+
+    { h: 'Educação e registro' },
+    { p: 'O inglês das entrevistas é educado, mas não engessado. Contrações como **I’m, I’ve e I’d** são normais no inglês falado, mesmo num contexto formal, enquanto frases muito longas e formais traduzidas do português podem soar distantes. “I would like to express my gratitude for the opportunity” está correto, mas “Thanks for the opportunity, I really enjoyed our conversation” soa mais natural no fim de uma entrevista.' },
+    { p: 'Também existem diferenças de estilo entre países. Como tendência geral, não como regra, os britânicos costumam suavizar o que dizem e usar o understatement, enquanto os americanos tendem a ser mais diretos e mais à vontade **para falar das próprias conquistas**. Na prática, numa entrevista britânica “I disagree” muitas vezes vira “I’m not sure I quite agree”, e numa entrevista americana não tem problema dizer com clareza que você liderou um projeto e que ele deu certo.' },
+    { panels: [
+      ['Uma tendência britânica', 'Atenuadores como quite, a bit e I’m not sure, pedidos indiretos (“I was wondering if…”) e modéstia sobre os sucessos. “It went quite well” pode querer dizer que foi muito bem.'],
+      ['Uma tendência americana', 'Afirmações mais diretas, entusiasmo dito em voz alta (“I’m really excited about this role”) e um relato claro dos seus resultados, sem falsa modéstia.'],
+    ] },
+
+    { h: 'A gramática que mais importa' },
+    { p: 'Você não precisa de uma gramática perfeita para ir bem numa entrevista, mas três pontos aparecem o tempo todo. O primeiro é a diferença entre **present perfect e past simple**. O present perfect serve para a experiência até hoje, muitas vezes com for e since: “I’ve worked in sales for five years”. O past simple serve para empregos que já terminaram e para datas: “I worked at a hotel in Lisbon from 2019 to 2021”. Para quem fala português, o erro clássico é traduzir “trabalho aqui desde 2020” com o presente. O nosso artigo sobre present perfect e past simple explica a diferença em detalhe.' },
+    { p: 'O segundo é o condicional. Perguntas hipotéticas como “What would you do if a client was unhappy?” pedem uma resposta com **would**: “I would call them first to understand the problem.” Use o second conditional também para falar da vaga: “If I joined the team, I would focus on…”. Não coloque would depois de if, mesmo que o futuro do subjuntivo do português (“se um cliente reclamar”) puxe para outra forma: o nosso guia de condicionais em inglês cobre todas as estruturas. O terceiro é usar I como sujeito de verbos ativos: “I organized”, “I negotiated”, “I trained” deixam clara a sua contribuição, enquanto as frases na voz passiva a escondem.' },
+    { mistakes: [
+      ['I work here since 2020.', "I**'ve worked** here since 2020.", 'Com since e for, uma situação que continua até hoje pede o present perfect.'],
+      ['I have worked at a bank in 2019.', 'I **worked** at a bank in 2019.', 'Um tempo encerrado como in 2019 pede o past simple.'],
+      ['If a client would complain, I call my manager.', 'If a client **complained**, I **would call** my manager.', 'Second conditional: past simple depois de if, would na outra metade.'],
+      ['The project was completed in time.', '**I completed** the project on time.', 'Diga quem fez; on time quer dizer “dentro do prazo”.'],
+    ] },
+
+    { h: 'O e-mail de agradecimento' },
+    { p: 'É comum, principalmente nos Estados Unidos, enviar um e-mail curto de agradecimento depois de uma entrevista. Os serviços de carreira das universidades, como o da UMass Amherst, recomendam enviá-lo **em até 24 horas**, ser breve, mencionar algo específico da conversa e revisar bem a ortografia, sobretudo nomes e cargos. É um detalhe pequeno, e uma chance fácil de mostrar o seu inglês escrito.' },
+    { examples: [
+      ['Subject: Thank you, Marketing Coordinator interview', 'Um assunto claro.'],
+      ['Dear Ms. Taylor, thank you for taking the time to meet with me today.', 'Ms. com ponto é o estilo americano; no inglês britânico costuma-se escrever Ms sem ponto.'],
+      ['I especially enjoyed hearing about your plans for the Brazilian market, and I am even more excited about the role.', 'Um detalhe específico da entrevista.'],
+      ['I look forward to hearing from you. Best regards, Ana Souza', 'Look forward to é seguido da forma com -ing.'],
+    ] },
+    { figure: { photo: 'english-job-interview-suit-tie', alt: 'Um homem de terno escuro ajeitando a gravata', caption: 'O dress code varia: para a câmera, o National Careers Service sugere algo simples que não distraia, e a mesma ideia vale ao vivo. Business casual é a expressão usual quando não é preciso usar terno.' } },
+
+    { h: 'Os erros típicos de quem fala português' },
+    { p: 'Alguns dos erros mais prejudiciais não são de gramática, e sim **falsos cognatos**, palavras parecidas com o português que querem dizer outra coisa. Segundo o Cambridge Dictionary, actually significa “in fact or really”, ou seja, “na verdade”, enquanto atualmente se diz currently. Eventually significa “no fim, sobretudo depois de muito tempo”, enquanto eventualmente se diz possibly ou if necessary. Dizer “Eventually I could relocate” comunica que um dia, depois de muita dificuldade, você vai se mudar, e não que está disposto a isso.' },
+    { mistakes: [
+      ['Actually I work as a project manager.', '**Currently**, I work as a project manager.', 'Actually quer dizer “na verdade”; atualmente se diz currently.'],
+      ['Eventually, I could start in January.', '**If necessary**, I could start in January.', 'Eventually quer dizer “no fim”; eventualmente se diz possibly ou if necessary.'],
+      ['I pretend to stay in the company for many years.', 'I **intend** to stay with the company for many years.', 'Pretend quer dizer fingir; pretender é intend ou plan.'],
+      ['I am very sensible to criticism.', 'I am very **sensitive** to criticism.', 'Sensible quer dizer “sensato”; sensível é sensitive.'],
+      ['I have a big experience in sales.', 'I have **a lot of experience** in sales.', 'Experience no sentido de prática é incontável: a lot of, much, extensive.'],
+      ['I assisted a training course in Excel.', 'I **attended** a training course in Excel.', 'Assist quer dizer ajudar; frequentar um curso é attend.'],
+    ] },
+    { p: 'A tradução ao pé da letra cria um segundo grupo de problemas. “I have 32 years” para a idade, “make a question” em vez de **ask a question**, “I did a stage” para o estágio, que em inglês é an internship, e “formation” para a formação, que é education ou training. Cuidado também com o registro: uma frase elegante em português pode soar formal demais em inglês. Frases curtas e ativas, com I como sujeito, são mais claras e mais naturais.' },
+    { note: { title: 'CV ou résumé?', text: 'No inglês britânico se envia um **CV**. No inglês americano, como observa o Cambridge Dictionary, a palavra usual é **résumé**, e o CV é o documento usado para trabalhar em um college ou uma universidade. Use a palavra do país onde você está se candidatando.', draw: 'snail' } },
+
+    { h: 'Como se preparar na última semana' },
+    { p: 'Escreva a sua resposta para “Tell me about yourself”, seus pontos fortes e seu ponto fraco, e três ou quatro histórias STAR, e depois **fale tudo em voz alta** todos os dias, de preferência gravando, para ouvir os tempos verbais e as pausas. Pratique as frases para ganhar tempo até que saiam no automático e prepare as perguntas para o final. Um amigo fazendo o papel de entrevistador, ou um colega que fale inglês, deixa o ensaio muito mais parecido com a realidade.' },
+    { p: 'Se você tem mais tempo para se preparar, a prática oral regular vale mais do que qualquer lista de frases. Na Alimun, as aulas ao vivo com um professor e **o mesmo grupo pequeno** dão a você toda semana a chance de falar sobre o seu trabalho, e o professor corrige as suas tarefas, então os erros de tempo verbal e os falsos cognatos acima são corrigidos antes da entrevista, e não durante.' },
+  ],
+  quiz: [
+    { q: 'Qual estrutura funciona bem para “Tell me about yourself”?', options: ['Infância, estudos, hobbies', 'Presente, passado, futuro', 'Pontos fortes, pontos fracos, salário', 'Família, cidade, planos'], a: 1, why: 'Diga o que você faz hoje, como chegou até aqui e por que esta vaga é o próximo passo.' },
+    { q: 'O que significa STAR?', options: ['Skills, Training, Attitude, Results', 'Situation, Target, Answer, Review', 'Situation, Task, Action, Result', 'Story, Task, Achievement, Reflection'], a: 2, why: 'O National Careers Service descreve as quatro partes como situation, task, action e result.' },
+    { q: 'Qual parte de uma resposta STAR deveria ser a mais longa?', options: ['Situation', 'Task', 'Result', 'Action'], a: 3, why: 'O career center da University of Washington sugere cerca de 60 por cento para a ação.' },
+    { q: 'Escolha a frase correta.', options: ["I've worked in logistics for six years.", 'I work in logistics since six years.', 'I have worked in logistics in 2019.', 'I am working in logistics since 2019.'], a: 0, why: 'Uma experiência que continua até hoje, com for, pede o present perfect.' },
+    { q: 'Você quer dizer que atualmente trabalha como enfermeiro. Qual palavra serve? “___, I work as a nurse.”', options: ['Actually', 'Currently', 'Eventually', 'Possibly'], a: 1, why: 'Currently quer dizer atualmente. Actually quer dizer na verdade.' },
+    { q: 'Qual frase pede ao entrevistador um instante de paciência?', options: ['Bear with me a second.', 'Off the top of my head.', 'Let me get back to you.', 'Thanks for having me.'], a: 0, why: 'Bear with me pede a quem escuta que espere um momento.' },
+    { q: 'Numa entrevista por vídeo, para onde você deve olhar enquanto fala?', options: ['Para as suas anotações', 'Para o entrevistador na tela', 'Para a câmera', 'Para longe da tela'], a: 2, why: 'O National Careers Service recomenda olhar para a câmera e não para a tela.' },
+    { q: 'Quando os serviços de carreira das universidades recomendam enviar o e-mail de agradecimento?', options: ['Em até 24 horas', 'Depois de uma semana', 'Só se você conseguir a vaga', 'Antes da entrevista'], a: 0, why: 'A UMass Amherst, entre outras, recomenda enviá-lo em até 24 horas.' },
+  ],
+  faq: [
+    ['Posso levar anotações para uma entrevista em inglês?', 'Ao vivo, um caderno com as suas perguntas para o final é normal. Numa entrevista por vídeo, o National Careers Service sugere deixar as anotações onde você consiga vê-las. Use palavras-chave, não respostas inteiras para ler.'],
+    ['E se eu não entender uma pergunta?', 'Pergunte. “Sorry, could you repeat the question?” ou “Just to make sure I understand, do you mean…?” são frases educadas e normais. Responder à pergunta errada é um problema muito maior do que pedir um esclarecimento.'],
+    ['É melhor usar inglês britânico ou americano?', 'Os dois servem, desde que você seja coerente e claro. Ajuda conhecer as palavras locais, como CV no Reino Unido e résumé nos Estados Unidos, e a diferença geral de estilo entre o understatement britânico e a franqueza americana.'],
+    ['Quanto tempo devem durar as minhas respostas?', 'O suficiente para dar um exemplo, sem travar a conversa. Cerca de um minuto para “Tell me about yourself” e um pouco mais para uma história STAR é uma boa referência. Se o entrevistador quiser saber mais, vai fazer outra pergunta.'],
+    ['Posso dizer que ainda estou aprendendo inglês?', 'Se a vaga exige inglês, o entrevistador já está ouvindo o seu nível. Não precisa pedir desculpas. Se o assunto surgir, diga o que você está fazendo para melhorar, como faria com qualquer outro ponto fraco.'],
+  ],
+  related: ['present-perfect', 'english-conditionals', 'practise-speaking'],
+  sources: [
+    ['National Careers Service: the STAR method', 'https://nationalcareers.service.gov.uk/careers-advice/interview-advice/the-star-method'],
+    ['National Careers Service: top interview questions', 'https://nationalcareers.service.gov.uk/careers-advice/top-10-interview-questions'],
+    ['National Careers Service: video interviews', 'https://nationalcareers.service.gov.uk/careers-advice/how-to-do-well-in-video-interviews/'],
+    ['University of Washington: STAR method of interviewing', 'https://careers.uw.edu/resources/star-method-of-interviewing/'],
+    ['UMass Amherst: after the interview', 'https://www.umass.edu/humanities-arts/book/job-interview-prep-guide/after-interview'],
+    ['Cambridge Dictionary: actually', 'https://dictionary.cambridge.org/dictionary/english/actually'],
+  ],
+};

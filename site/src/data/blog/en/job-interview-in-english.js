@@ -1,0 +1,201 @@
+// Job interview in English. Checked against the National Careers Service (STAR method, top interview questions,
+// video interviews), University of Washington Career & Internship Center (STAR proportions), UMass Amherst (thank-you
+// email within 24 hours) and Cambridge Dictionary (actually, eventually, assist, sensible, CV and résumé, bear with someone).
+export default {
+  key: 'english-job-interview',
+  site: 'en',
+  slug: 'job-interview-in-english',
+  section: 'abroad',
+  course: 'English',
+  published: '2026-11-01',
+  updated: '2026-11-01',
+  title: 'Job interview in English: questions, answers and phrases',
+  metaTitle: 'Job interview in English: questions, answers, phrases – Alimun',
+  desc: 'How a job interview in English works, the classic questions and natural answers, the STAR method, phrases to buy time and the mistakes non-native speakers make.',
+  lead: 'A job interview in English tests two things at once: whether you can do the job, and whether you can **talk about it clearly** in a language that is not your own. The questions are surprisingly predictable, and so is the English you need. Here is how an interview usually runs, what to say to the classic questions, and the small language traps that catch Italian, Spanish, French and Portuguese speakers.',
+  photo: 'english-job-interview-meeting-table',
+  sticker: { draw: 'suitcase', say: 'Tell me about yourself. Briefly!' },
+  facts: [
+    { n: 4, unit: 'parts', text: 'in a STAR answer: situation, task, action and result' },
+    { n: 60, unit: 'percent', text: 'of a STAR answer should be about your action, according to the University of Washington careers center' },
+    { n: 24, unit: 'hours', text: 'the window for sending a thank-you email after the interview, in university careers advice' },
+    { label: 'Camera at eye level', text: 'and look at the camera, not the screen: the National Careers Service tips for video interviews' },
+  ],
+  blocks: [
+    { take: { title: 'The short answer', text: 'Most interviews in English follow the same path: a little small talk, questions about your background, questions about real situations from your past, and your own questions at the end. Prepare **a short answer to “Tell me about yourself”**, two or three strengths with examples, an honest weakness, and three or four stories you can tell with the **STAR method**. Then learn a handful of phrases for buying time and asking for clarification, and check the false friends that make good candidates say something they did not mean.', draw: 'owl' } },
+
+    { h: 'How a job interview in English usually runs' },
+    { p: 'Interviews differ by company and country, but the shape is remarkably stable. They open with a few minutes of **small talk**, while everyone sits down. The interviewer then introduces themselves and often the role, and asks you to talk about your background. The longest part is the questions about your skills and your past experience, followed by any technical questions for the job. At the end, you are invited to ask your own questions, and the interviewer tells you what happens next.' },
+    { p: 'Small talk is part of the interview, not a waste of time. Nobody expects a long answer, but a one-word reply sounds cold in English. Answer, add one small detail, and if it feels natural, **return the question**. This is also where you warm up your English before the questions that matter.' },
+    { examples: [
+      ['Did you find us OK? Yes, thanks, the directions were very clear.', 'A short answer plus one detail is enough.'],
+      ['How was your journey? Pretty smooth, actually. The train was on time.', 'Pretty smooth is natural, neutral English. Actually here means “to be honest”, not “currently”.'],
+      ['Thanks for having me. It is nice to meet you in person.', 'A friendly opening line that works in both British and American English.'],
+      ['How are you today? Very well, thank you. And you?', 'Returning the question is polite and expected.'],
+    ] },
+    { figure: { photo: 'english-job-interview-conference-room', alt: 'An empty meeting room with a long table, office chairs and large windows', caption: 'Many interviews still take place around a table like this one. If there are several interviewers, look at the person who asked the question, then include the others as you answer.' } },
+
+    { h: '“Tell me about yourself”' },
+    { p: 'This is often the first real question, and it is not an invitation to tell your life story. The interviewer wants a short, professional summary that connects your past to this job. A simple structure works in any language and is easy in English: **present, past, future**. Say what you do now, how you got there, and why this role is the natural next step. Aim for about a minute, and leave out your date of birth, your family and your hobbies unless they are relevant.' },
+    { examples: [
+      ["I'm a logistics coordinator at a food distribution company in Valencia.", 'Present: your current role, in the present simple.'],
+      ["I've worked in logistics for six years, mostly on international shipments.", 'Experience up to now: the present perfect.'],
+      ['Before that, I studied economics in Madrid and did an internship at a shipping agency.', 'Finished past: the past simple.'],
+      ["Now I'm looking for a role where I can work with English-speaking clients every day, which is why this position caught my eye.", 'Future: why you are here today.'],
+    ] },
+    { note: { title: 'Prepare it, do not memorize it', text: 'Write your answer down, then say it out loud until you can tell it **in your own words**. A text learned word for word sounds recited, and if you lose one sentence you lose the rest. The National Careers Service gives the same advice for all your examples: get your points across in a conversational way, so you do not sound too rehearsed.', draw: 'parrot' } },
+
+    { h: 'Strengths and weaknesses' },
+    { p: 'For strengths, the National Careers Service suggests planning **two or three examples** that match the job, such as communication, problem solving, enthusiasm or flexibility, and backing them up with qualifications or training where you have them. An adjective on its own proves nothing. “I am organized” is a claim; “I plan the delivery schedule for twelve drivers every week” is evidence.' },
+    { p: 'For weaknesses, the same advice is to be honest and to explain **what you are doing to improve**. Choose a real weakness that is not central to the job, describe it briefly, and spend most of your answer on the fix. Many candidates try to disguise a strength as a weakness (“I work too hard”), but this usually sounds evasive rather than modest.' },
+    { examples: [
+      ['One of my main strengths is staying calm under pressure. In my current job, I handle urgent customer issues almost every day.', 'A strength followed at once by evidence.'],
+      ['I sometimes find it hard to delegate. I have started breaking projects into tasks and sharing them with the team at the start.', 'An honest weakness, then what you are doing about it.'],
+      ['Public speaking used to make me nervous, so last year I volunteered to present our monthly results.', 'Used to plus a past action shows progress.'],
+    ] },
+
+    { h: '“Why do you want to work here?”' },
+    { p: 'This question checks whether you know the company and whether you chose it on purpose. The National Careers Service advice is to read the company website, including its “about us” pages, its products, services and values, and to **show what you have learned** throughout the interview. Mention something specific, link it to your own experience, and avoid answers that would fit any company, such as “It is a big, international company”.' },
+    { p: 'A good formula is “what I know about you, plus what I bring”. For example: “I’ve read about your expansion into Latin America, and with my Spanish and my experience in export documentation, I think I could **contribute from day one**.” Notice the conditional could: it sounds confident without sounding arrogant.' },
+
+    { h: '“Where do you see yourself in five years?”' },
+    { p: 'The interviewer is not asking for a prediction. They want to know whether your plans fit the role and whether you are likely to stay and grow. Talk about the skills you want to develop and the responsibility you hope to take on, ideally inside the company. **Future forms** do the work here: I would like to, I hope to, I see myself.' },
+    { examples: [
+      ["I'd like to have more responsibility for client accounts, and I hope to be leading a small team.", 'I would like to and I hope to are natural and modest.'],
+      ['I see myself developing my skills in data analysis, which is a big part of this role.', 'Link your plans back to the job.'],
+    ] },
+
+    { h: 'Salary expectations' },
+    { p: 'Questions about pay can come early, in a screening call, or at the end of the process. Before any interview, find out the typical pay for the role in that city and country, so that any figure you give is realistic. Remember, too, that a salary is usually discussed as a yearly figure: Cambridge Dictionary defines it as “a fixed amount of money agreed every year”. In English, it is common and perfectly polite to **give a range** rather than a single number, or to turn the question back to the employer first.' },
+    { examples: [
+      ["Based on my research and experience, I'm looking for something in the range of 40,000 to 45,000 euros.", 'A range sounds flexible and well prepared.'],
+      ['Could you tell me the salary range for this position?', 'A polite way to ask the employer to go first.'],
+      ["I'm open to discussing it, depending on the overall package.", 'The package includes benefits, not just the salary.'],
+    ] },
+    { table: {
+      head: ['Question', 'What they want to know', 'A natural way to start'],
+      rows: [
+        ['Tell me about yourself.', 'Your professional story, in about a minute', "I'm currently a … at …, and I've worked in … for … years."],
+        ['What are your main strengths?', 'Skills that match the job, with proof', 'One of my main strengths is … For example, …'],
+        ['Do you have any weaknesses?', 'Honesty and the ability to improve', 'I sometimes find it hard to … so I have started …'],
+        ['Why do you want to work here?', 'Whether you researched the company', "I've read about your … and with my experience in …"],
+        ['Where do you see yourself in five years?', 'Whether your plans fit the role', "I'd like to … and I hope to …"],
+        ['What are your salary expectations?', 'Whether you are realistic', "I'm looking for something in the range of …"],
+        ['Do you have any questions for us?', 'Your interest in the job', 'Yes, I was wondering what a typical day involves.'],
+      ],
+      note: 'The National Careers Service lists questions like these among the most common, together with questions about your spare time and why you left your last job.',
+    } },
+
+    { cta: true },
+
+    { h: 'The STAR method for behavioral questions' },
+    { p: 'Many questions begin with “Tell me about a time when…”, “Give me an example of…” or “Describe a situation where…”. These are behavioral questions: the idea is that **what you did in the past** shows how you will work in the future. Careers services recommend the STAR method to structure your answer, and the National Careers Service describes its four parts as the situation you had to deal with, the task you were given, the action you took, and the result, including what you learned.' },
+    { p: 'You start by setting the scene in a sentence or two, so that the interviewer understands the context. Then you say what your goal or responsibility was. The heart of the answer is the action: what **you personally** did, step by step, and which skills you used. You finish with the result, ideally with something concrete such as a number, a deadline met or a happy client, and with what you learned. The University of Washington careers center suggests giving the action about 60 percent of the answer, the situation about 20 percent, and the task and the result about 10 percent each.' },
+    { quote: 'Say I, not we: the interviewer is hiring you, not your old team.' },
+    { p: 'Language helps you here. The situation and the task are usually told in the **past simple** and the past continuous (“I was working on a project when…”), the action in a chain of past simple verbs, and the result in the past simple too, often followed by the present perfect for what you have done since. Prepare three or four stories that you can adapt to different questions: a problem you solved, a conflict in a team, a mistake you made and a time you led something.' },
+    { examples: [
+      ['Situation: Last year, our biggest client complained that deliveries were arriving late.', 'Set the scene in one or two sentences.'],
+      ['Task: My manager asked me to find the cause and fix it within a month.', 'Your goal or responsibility.'],
+      ['Action: I analyzed three months of delivery data, found that most delays came from one warehouse, and reorganized the loading schedule with the team there.', 'The longest part, with I as the subject.'],
+      ['Result: Late deliveries fell sharply within four weeks, and the client renewed the contract. Since then, I have used the same analysis for two other clients.', 'A concrete outcome, then what you learned or did next.'],
+    ] },
+    { figure: { photo: 'english-job-interview-notebook-pen', alt: 'A hand writing notes with a fountain pen in a spiral notebook', caption: 'Write your STAR stories down as four short lines, one per part, then practice telling them out loud in the past simple.' } },
+
+    { h: 'Phrases to buy time and ask for clarification' },
+    { p: 'Even native speakers pause before a difficult question. A short silence is fine, but a phrase that fills it **sounds calm and in control**, and it gives your brain a few seconds to find the words. Asking for clarification is also perfectly normal, and much better than answering a question you have not understood.' },
+    { examples: [
+      ["That's a good question. Let me think about that for a moment.", 'The classic way to buy a few seconds.'],
+      ["Off the top of my head, I'd say the biggest challenge was the deadline.", 'Off the top of your head means without time to check or think carefully.'],
+      ['Bear with me a second while I find the right example.', 'Bear with me asks the listener to be patient for a moment.'],
+      ['Sorry, could you repeat the question?', 'Simple and always acceptable.'],
+      ['Just to make sure I understand, do you mean with clients or within the team?', 'Checking the meaning shows you are listening.'],
+      ["I'm not sure I've understood. Could you put it another way?", 'Useful when the question contains a word you do not know.'],
+    ] },
+    { note: { title: 'Do not apologize for your English', text: 'Starting with “Sorry, my English is not very good” puts the focus on your weaknesses before you have said anything. If you need a moment or a repetition, ask for it with one of the phrases above. **Clear and simple** English is what interviewers need, and that is something you can prepare.', draw: 'cat' } },
+
+    { h: 'Your questions at the end' },
+    { p: 'Near the end, you will almost always hear “Do you have any questions for us?” The National Careers Service points out that you will usually have some time to ask your own questions, recommends writing them down beforehand, and notes that asking them shows your **interest in the company**. “No, I think you covered everything” is a missed chance. Its own examples include asking what it is like to work there, what a typical day involves, how the company is likely to develop over the next few years and whether there will be training opportunities.' },
+    { examples: [
+      ['What does a typical day look like in this role?', 'Shows you are picturing yourself in the job.'],
+      ['How would you describe the team I would be working with?', 'The conditional would keeps it hypothetical and polite.'],
+      ['Will there be any training opportunities after I start?', 'One of the National Careers Service examples.'],
+      ['What are the next steps in the process?', 'A natural last question, so you know when you will hear back.'],
+    ] },
+
+    { h: 'Video interviews' },
+    { p: 'First rounds now often happen on a video call, and some companies use pre-recorded interviews, where you answer questions on screen with nobody on the other side. The National Careers Service gives practical advice that is worth following to the letter: put the **camera at eye level**, sit somewhere with nothing distracting behind you, use good natural light or a lamp, and test your microphone and the software before you start. When you speak, look at the camera rather than the screen.' },
+    { p: 'For pre-recorded interviews, the same guidance suggests imagining that you are talking to a real person, and reading the questions carefully before you answer. You can also keep short notes **somewhere you can see them**, which is a real advantage of video interviews. Just do not read whole answers from them: your eyes will move and it will show.' },
+    { figure: { photo: 'english-job-interview-desk-earphones', alt: 'A notebook, a keyboard, earphones and a cup of coffee on a wooden desk', caption: 'For a video interview, earphones with a microphone help you hear every word. Keep a few key words in a notebook beside you, not full sentences to read.' } },
+
+    { h: 'Politeness and register' },
+    { p: 'Interview English is polite but not stiff. Contractions such as **I\'m, I\'ve and I\'d** are normal in spoken English, even in a formal setting, and very long, formal sentences translated from your own language can sound distant. “I would like to express my gratitude for the opportunity” is correct, but “Thanks for the opportunity, I really enjoyed our conversation” sounds more natural at the end of an interview.' },
+    { p: 'There are also differences in style between countries. As a general tendency, not a rule, British speakers often soften what they say and use understatement, while American speakers tend to be more direct and more comfortable **talking about their achievements**. In practice, this means that in a British interview “I disagree” often becomes “I\'m not sure I quite agree”, and in an American interview it is fine to say clearly that you led a project and it worked.' },
+    { panels: [
+      ['A British tendency', 'Softeners such as quite, a bit and I\'m not sure, indirect requests (“I was wondering if…”) and modesty about successes. “It went quite well” can mean it went very well.'],
+      ['An American tendency', 'More direct statements, enthusiasm said out loud (“I\'m really excited about this role”) and a clear account of your own results, without false modesty.'],
+    ] },
+
+    { h: 'The grammar that matters most' },
+    { p: 'You do not need perfect grammar to do well in an interview, but three areas come up again and again. The first is the difference between the **present perfect and the past simple**. Use the present perfect for experience up to now, often with for and since: “I\'ve worked in sales for five years”. Use the past simple for finished jobs and dates: “I worked at a hotel in Lisbon from 2019 to 2021”. Our article on the present perfect and the past simple explains the difference in detail.' },
+    { p: 'The second is the conditional. Hypothetical questions such as “What would you do if a client was unhappy?” need an answer with **would**: “I would call them first to understand the problem.” Use the second conditional to talk about the job you are applying for, too: “If I joined the team, I would focus on…”. Our guide to English conditionals covers all the forms. The third is the use of I as the subject of active verbs. “I organized”, “I negotiated”, “I trained” make your contribution clear, where passive sentences hide it.' },
+    { mistakes: [
+      ['I work here since 2020.', "I**'ve worked** here since 2020.", 'With since and for, a situation that continues until now takes the present perfect.'],
+      ['I have worked at a bank in 2019.', 'I **worked** at a bank in 2019.', 'A finished time such as in 2019 takes the past simple.'],
+      ['If a client would complain, I call my manager.', 'If a client **complained**, I **would call** my manager.', 'Second conditional: past simple after if, would in the other half.'],
+      ['The project was completed in time.', '**I completed** the project on time.', 'Say who did it, and on time means by the deadline.'],
+    ] },
+
+    { h: 'The thank-you email' },
+    { p: 'It is common, especially in the United States, to send a short thank-you email after an interview. University careers services such as UMass Amherst advise sending it **within 24 hours**, keeping it brief, referring to something specific from your conversation, and checking spelling carefully, especially names and job titles. It is a small thing, and an easy chance to show your written English.' },
+    { examples: [
+      ['Subject: Thank you, Marketing Coordinator interview', 'A clear subject line.'],
+      ['Dear Ms. Taylor, thank you for taking the time to meet with me today.', 'Ms. with a period is the American style; British English usually writes Ms without one.'],
+      ['I especially enjoyed hearing about your plans for the Spanish market, and I am even more excited about the role.', 'One specific detail from the interview.'],
+      ['I look forward to hearing from you. Best regards, Lucía García', 'Look forward to is followed by the -ing form.'],
+    ] },
+    { figure: { photo: 'english-job-interview-suit-tie', alt: 'A man in a dark suit adjusting his tie', caption: 'Dress codes vary: the National Careers Service suggests something plain that does not look distracting on camera, and the same idea works in person. Business casual is the usual phrase when a suit is not needed.' } },
+
+    { h: 'Common mistakes for Italian, Spanish, French and Portuguese speakers' },
+    { p: 'Some of the most damaging mistakes are not grammar at all but **false friends**, words that look like a word in your language and mean something else. In Cambridge Dictionary, actually means “in fact or really”, while attualmente, actualmente, actuellement and atualmente mean currently. Eventually means “in the end, especially after a long time”, while eventualmente and éventuellement mean possibly. Saying “Eventually I could relocate” tells the interviewer that you will move one day after a long struggle, not that you are open to it.' },
+    { mistakes: [
+      ['Actually I work as a project manager.', '**Currently**, I work as a project manager.', 'Actually means in fact; currently means at the present time.'],
+      ['Eventually, I could start in January.', '**If necessary**, I could start in January.', 'Eventually means in the end; possibly or if necessary is what you mean.'],
+      ['I assisted a training course in Excel.', 'I **attended** a training course in Excel.', 'Assist means to help; attend means to go to an event or course.'],
+      ['I am very sensible to criticism.', 'I am very **sensitive** to criticism.', 'Sensible means practical and reasonable; sensitive is the word for feelings.'],
+      ['I have a big experience in sales.', 'I have **a lot of experience** in sales.', 'Experience meaning skill is uncountable: a lot of, much, extensive.'],
+      ['I am graduated in economics.', 'I **graduated** in economics. / I have a degree in economics.', 'Graduate is a verb in English, not an adjective after be.'],
+    ] },
+    { p: 'Direct translation causes a second group of problems. “I have 32 years” for your age, “make a question” instead of **ask a question**, “career” for a university degree, and “formation” for training all come from Romance languages. Watch the register, too: a sentence that is elegant in Italian or French can sound overly formal in English. Short, active sentences with I as the subject are both clearer and more natural.' },
+    { note: { title: 'CV or résumé?', text: 'In British English you send a **CV**. In American English, Cambridge Dictionary notes that the usual word is **résumé**, and a CV is the document used for jobs at a college or university. Use the word that matches the country of the job.', draw: 'snail' } },
+
+    { h: 'How to prepare in the last week' },
+    { p: 'Write your answer to “Tell me about yourself”, your strengths and weakness, and three or four STAR stories, then **say them out loud** every day, ideally recording yourself so you can hear your verb tenses and your pauses. Practice the buying-time phrases until they come out automatically, and prepare your questions for the end. A friend who plays the interviewer, or a colleague who speaks English, makes the rehearsal much closer to the real thing.' },
+    { p: 'If you are preparing over a longer time, regular speaking practice matters more than any list of phrases. At Alimun, live classes with a teacher and **the same small group** give you a weekly chance to talk about your work, and your teacher corrects your homework, so the tense mistakes and false friends above get fixed before the interview rather than during it.' },
+  ],
+  quiz: [
+    { q: 'Which structure works well for “Tell me about yourself”?', options: ['Your childhood, your studies, your hobbies', 'Present, past, future', 'Strengths, weaknesses, salary', 'Your family, your city, your plans'], a: 1, why: 'Say what you do now, how you got there and why this role is the next step.' },
+    { q: 'What does STAR stand for?', options: ['Skills, Training, Attitude, Results', 'Situation, Target, Answer, Review', 'Situation, Task, Action, Result', 'Story, Task, Achievement, Reflection'], a: 2, why: 'The National Careers Service describes the four parts as situation, task, action and result.' },
+    { q: 'Which part of a STAR answer should be the longest?', options: ['Situation', 'Task', 'Result', 'Action'], a: 3, why: 'The University of Washington careers center suggests about 60 percent for the action.' },
+    { q: 'Choose the correct sentence.', options: ["I've worked in logistics for six years.", 'I work in logistics since six years.', 'I have worked in logistics in 2019.', 'I am working in logistics since 2019.'], a: 0, why: 'Experience that continues until now, with for, takes the present perfect.' },
+    { q: 'You want to say you are working as a nurse at the moment. Which word fits? “___, I work as a nurse.”', options: ['Actually', 'Currently', 'Eventually', 'Possibly'], a: 1, why: 'Currently means at the present time. Actually means in fact.' },
+    { q: 'Which phrase asks the interviewer to be patient for a moment?', options: ['Bear with me a second.', 'Off the top of my head.', 'Let me get back to you.', 'Thanks for having me.'], a: 0, why: 'Bear with me asks the listener to wait a moment while you find something.' },
+    { q: 'In a video interview, where should you look while you speak?', options: ['At your notes', 'At the interviewer on the screen', 'At the camera', 'Away from the screen'], a: 2, why: 'The National Careers Service advises looking at the camera rather than at the screen.' },
+    { q: 'When do university careers services advise sending a thank-you email?', options: ['Within 24 hours', 'After one week', 'Only if you get the job', 'Before the interview'], a: 0, why: 'UMass Amherst, among others, advises sending it within 24 hours.' },
+  ],
+  faq: [
+    ['Can I bring notes to a job interview in English?', 'In person, a notebook with your questions for the end is normal. In a video interview, the National Careers Service suggests putting notes somewhere you can see them. Use key words, not full answers to read aloud.'],
+    ['What if I do not understand a question?', 'Ask. “Sorry, could you repeat the question?” or “Just to make sure I understand, do you mean…?” are polite and normal. Answering the wrong question is a much bigger problem than asking for clarification.'],
+    ['Should I use British or American English?', 'Either is fine, as long as you are consistent and clear. It helps to know the local words, such as CV in the United Kingdom and résumé in the United States, and the general difference in style between British understatement and American directness.'],
+    ['How long should my answers be?', 'Long enough to give an example, short enough to keep the conversation moving. About a minute for “Tell me about yourself” and a little longer for a STAR story is a good guide. If the interviewer wants more, they will ask a follow-up question.'],
+    ['Is it OK to say I am still learning English?', 'If the job needs English, the interviewer can already hear your level. There is no need to apologize for it. If a language question comes up, say what you are doing to improve, as you would for any other weakness.'],
+  ],
+  related: ['present-perfect', 'english-conditionals', 'practise-speaking'],
+  sources: [
+    ['National Careers Service: the STAR method', 'https://nationalcareers.service.gov.uk/careers-advice/interview-advice/the-star-method'],
+    ['National Careers Service: top interview questions', 'https://nationalcareers.service.gov.uk/careers-advice/top-10-interview-questions'],
+    ['National Careers Service: video interviews', 'https://nationalcareers.service.gov.uk/careers-advice/how-to-do-well-in-video-interviews/'],
+    ['University of Washington: STAR method of interviewing', 'https://careers.uw.edu/resources/star-method-of-interviewing/'],
+    ['UMass Amherst: after the interview', 'https://www.umass.edu/humanities-arts/book/job-interview-prep-guide/after-interview'],
+    ['Cambridge Dictionary: actually', 'https://dictionary.cambridge.org/dictionary/english/actually'],
+  ],
+};
