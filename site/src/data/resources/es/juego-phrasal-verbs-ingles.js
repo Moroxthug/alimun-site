@@ -1,0 +1,37 @@
+// Resource: game. Ten common English phrasal verbs (B1-B2): what each one means in context. Meanings checked against the Cambridge Dictionary and Oxford Learner's Dictionaries.
+export default {
+  key: 'phrasal-verbs-game', site: 'es', slug: 'juego-phrasal-verbs-ingles', kind: 'game', course: 'English', level: 'Todos los niveles',
+  draw: 'parrot', tint: 'sun', published: '2026-11-01',
+  title: 'Juego de phrasal verbs en inglés: ¿sabes qué significa give up?',
+  metaTitle: 'Juego de phrasal verbs en inglés: los 10 más comunes – Alimun',
+  desc: 'Un juego gratis con diez phrasal verbs muy comunes en inglés, de give up a take after. Léelos en una frase real, adivina qué significan y empareja las tarjetas.',
+  lead: 'Give up, run out of, figure out. Lee diez phrasal verbs del inglés de todos los días en frases reales y adivina qué significa cada uno.',
+  instructions: '¿Qué significa el phrasal verb en esta frase?',
+  about: [
+    'Un phrasal verb es un verbo seguido de una palabra corta como up, out, off u over, y juntos suelen significar algo muy distinto del verbo solo. Los nativos los usan constantemente, sobre todo al hablar.',
+    'Aprende cada phrasal verb dentro de una frase de ejemplo completa, no suelto. Muchos tienen más de un significado, así que fíjate en lo que te dice el resto de la frase.',
+  ],
+  items: [
+    { q: 'I gave up smoking last year.', options: ['Empecé a fumar.', 'Dejé de fumar.', 'Fumé menos.', 'Disfruté fumando.'], a: 1, why: 'To give something up es dejar de hacer algo que hacías con regularidad: She gave up chocolate for a month.' },
+    { q: "I'm really looking forward to the holidays.", options: ['Tengo muchas ganas de que lleguen.', 'Me preocupan las vacaciones.', 'Las estoy planeando con cuidado.', 'Me estoy acordando de ellas.'], a: 0, why: 'To look forward to something es estar contento e ilusionado por algo que va a pasar: tener muchas ganas.' },
+    { q: "We've run out of milk.", options: ['Tenemos demasiada leche.', 'Se nos ha derramado la leche.', 'Se nos ha acabado la leche.', 'Hemos comprado leche fresca.'], a: 2, why: 'To run out of something es gastarlo todo hasta que no queda nada.' },
+    { q: 'It took her two weeks to get over the flu.', options: ['para pillar la gripe', 'para evitar la gripe', 'para contarle a todos lo de la gripe', 'para recuperarse de la gripe'], a: 3, why: 'To get over una enfermedad o una mala experiencia es recuperarse, superarla.' },
+    { q: "Don't put off your homework until tomorrow.", options: ['No hagas los deberes con prisa.', 'No dejes los deberes para más tarde.', 'No pierdas los deberes.', 'No copies los deberes.'], a: 1, why: 'To put something off es aplazar algo, dejarlo para más tarde: We put off the meeting until Friday.' },
+    { q: 'She turned down the job offer.', options: ['La rechazó.', 'La aceptó.', 'Pidió más dinero.', 'Se olvidó de ella.'], a: 0, why: 'To turn down an offer es rechazar una oferta o una petición.' },
+    { q: "I can't figure out how this app works.", options: ['No consigo descargarla.', 'No me la puedo permitir.', 'No consigo entenderla.', 'No puedo dejar de usarla.'], a: 2, why: 'To figure something out es llegar a entender algo o encontrar la solución, normalmente después de pensarlo.' },
+    { q: 'I came across some old photos while I was tidying up.', options: ['Las tiré.', 'Las busqué durante horas.', 'Las hice yo.', 'Las encontré por casualidad.'], a: 3, why: 'To come across something es encontrar algo o a alguien por casualidad, sin buscarlo.' },
+    { q: 'Our car broke down on the motorway.', options: ['Se averió.', 'Chocó con otro coche.', 'Iba muy rápido.', 'Iba demasiado lleno.'], a: 0, why: 'Cuando un coche o una máquina breaks down, deja de funcionar: se avería.' },
+    { q: 'Tom really takes after his father.', options: ['Sigue a su padre a todas partes.', 'Se parece a su padre.', 'Cuida de su padre.', 'Trabaja para su padre.'], a: 1, why: 'To take after un familiar mayor es parecerse a él, en el físico o en el carácter. No lo confundas con look after, que es cuidar.' },
+  ],
+  pairs: [
+    ['Give up', 'Dejar de hacer algo'],
+    ['Look forward to', 'Tener muchas ganas de'],
+    ['Run out of', 'Quedarse sin'],
+    ['Get over', 'Recuperarse de'],
+    ['Put off', 'Aplazar'],
+    ['Turn down', 'Rechazar'],
+    ['Figure out', 'Llegar a entender'],
+    ['Come across', 'Encontrar por casualidad'],
+  ],
+  related: ['english-idioms', 'en-verbs-sheet', 'en-quiz-b1'],
+};

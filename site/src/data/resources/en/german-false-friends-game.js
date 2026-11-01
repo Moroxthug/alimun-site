@@ -1,0 +1,37 @@
+// Resource: game. German false friends for English speakers and their real meanings. German meanings checked against Duden; English meanings against Cambridge and Oxford Learner's.
+export default {
+  key: 'german-false-friends', site: 'en', slug: 'german-false-friends-game', kind: 'game', course: 'German', level: 'All levels',
+  draw: 'ghost', tint: 'lime', published: '2026-11-01',
+  title: 'German false friends game: is a Gift a present?',
+  metaTitle: 'German false friends game: Gift, Handy, Chef and more – Alimun',
+  desc: 'A free game with German false friends: das Gift is poison, not a present, and your Chef is your boss. Guess what ten tricky German words really mean.',
+  lead: 'Some German words look exactly like English ones and mean something else. Das Gift is poison and das Handy is your phone. Can you spot the rest?',
+  instructions: 'What does it really mean?',
+  about: [
+    'False friends are words that look like a word you already know but mean something different. German and English share many roots, so they are full of them.',
+    'Learning them early saves you from funny mistakes, like telling your host you brought them poison or that you want to become a coffee.',
+  ],
+  items: [
+    { q: 'das Gift', options: ['a present', 'poison', 'a talent', 'a tip'], a: 1, why: 'das Gift = poison. A present is das Geschenk.' },
+    { q: 'das Handy', options: ['a mobile phone', 'a handbag', 'a glove', 'a tool'], a: 0, why: 'das Handy = the mobile phone. If something is handy, it is praktisch.' },
+    { q: 'der Chef', options: ['a cook', 'a waiter', 'a boss', 'a customer'], a: 2, why: 'der Chef = the boss or head of a team. A cook is der Koch.' },
+    { q: 'bekommen', options: ['to become', 'to come back', 'to welcome', 'to get, to receive'], a: 3, why: 'bekommen = to get or receive. To become is werden, so "Ich bekomme einen Kaffee" means you are getting a coffee, not turning into one.' },
+    { q: 'der Rat', options: ['a rat', 'advice', 'a rate', 'a mouse'], a: 1, why: 'der Rat = advice, and also a council. The animal is die Ratte.' },
+    { q: 'die Kaution', options: ['caution, care', 'a warning sign', 'a deposit', 'a cushion'], a: 2, why: 'die Kaution = a deposit, for example on a flat, or bail. Caution is die Vorsicht.' },
+    { q: 'aktuell', options: ['current, up to date', 'actual, real', 'active', 'exact'], a: 0, why: 'aktuell = current or up to date. Actual is tatsächlich or eigentlich.' },
+    { q: 'eventuell', options: ['eventually, in the end', 'every time', 'immediately', 'possibly, maybe'], a: 3, why: 'eventuell = possibly, perhaps. Eventually is schließlich or irgendwann.' },
+    { q: 'sensibel', options: ['sensible, reasonable', 'sensitive', 'sensual', 'sentimental'], a: 1, why: 'sensibel = sensitive. Sensible is vernünftig.' },
+    { q: 'das Gymnasium', options: ['a gym', 'a sports hall', 'a secondary school', 'a swimming pool'], a: 2, why: 'das Gymnasium = a secondary school that leads to the Abitur. A gym is das Fitnessstudio, a school sports hall die Turnhalle.' },
+  ],
+  pairs: [
+    ['das Gift', 'poison'],
+    ['das Handy', 'the mobile phone'],
+    ['der Chef', 'the boss'],
+    ['bekommen', 'to get, to receive'],
+    ['der Rat', 'advice'],
+    ['eventuell', 'possibly'],
+    ['sensibel', 'sensitive'],
+    ['das Gymnasium', 'the secondary school'],
+  ],
+  related: ['false-friends', 'german-compounds', 'untranslatable-german'],
+};
