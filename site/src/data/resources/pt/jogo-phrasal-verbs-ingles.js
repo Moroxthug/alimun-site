@@ -1,0 +1,37 @@
+// Resource: game. Ten common English phrasal verbs (B1-B2): what each one means in context. Sentences stay English; options and explanations are in Portuguese. Meanings checked against the Cambridge Dictionary and Oxford Learner's Dictionaries.
+export default {
+  key: 'phrasal-verbs-game', site: 'pt', slug: 'jogo-phrasal-verbs-ingles', kind: 'game', course: 'English', level: 'Todos os níveis',
+  draw: 'parrot', tint: 'sun', published: '2026-11-01',
+  title: 'Jogo de phrasal verbs em inglês: você sabe o que give up quer dizer?',
+  metaTitle: 'Jogo de phrasal verbs em inglês: os 10 mais comuns – Alimun',
+  desc: 'Um jogo grátis com dez phrasal verbs muito comuns em inglês, de give up a take after. Leia cada um numa frase real, adivinhe o significado e combine as cartas.',
+  lead: 'Give up, run out of, figure out. Leia dez phrasal verbs do inglês do dia a dia em frases reais e adivinhe o que cada um significa.',
+  instructions: 'O que o phrasal verb significa nesta frase?',
+  about: [
+    'Um phrasal verb é um verbo seguido de uma palavrinha como up, out, off ou over, e juntos eles muitas vezes significam algo bem diferente do verbo sozinho. Os falantes nativos usam o tempo todo, principalmente na fala.',
+    'Aprenda cada phrasal verb dentro de uma frase de exemplo inteira, e não solto. Muitos têm mais de um significado, então preste atenção no que o resto da frase diz.',
+  ],
+  items: [
+    { q: 'I gave up smoking last year.', options: ['Comecei a fumar.', 'Parei de fumar.', 'Fumei menos.', 'Gostei de fumar.'], a: 1, why: 'Give something up é parar de fazer algo que você fazia com frequência: She gave up chocolate for a month.' },
+    { q: "I'm really looking forward to the holidays.", options: ['Estou ansioso para que cheguem.', 'Estou preocupado com as férias.', 'Estou planejando as férias com cuidado.', 'Estou me lembrando das férias.'], a: 0, why: 'Look forward to something é estar feliz e animado com algo que vai acontecer: não ver a hora.' },
+    { q: "We've run out of milk.", options: ['Temos leite demais.', 'Derramamos o leite.', 'Acabou o leite.', 'Compramos leite fresco.'], a: 2, why: 'Run out of something é usar tudo até não sobrar nada.' },
+    { q: 'It took her two weeks to get over the flu.', options: ['para pegar a gripe', 'para evitar a gripe', 'para contar a todo mundo sobre a gripe', 'para se recuperar da gripe'], a: 3, why: 'Get over uma doença ou uma experiência ruim é se recuperar, superar.' },
+    { q: "Don't put off your homework until tomorrow.", options: ['Não faça a lição com pressa.', 'Não adie a lição.', 'Não perca a lição.', 'Não copie a lição.'], a: 1, why: 'Put something off é adiar algo, deixar para depois: We put off the meeting until Friday.' },
+    { q: 'She turned down the job offer.', options: ['Ela recusou.', 'Ela aceitou.', 'Ela pediu mais dinheiro.', 'Ela esqueceu da proposta.'], a: 0, why: 'Turn down an offer é recusar uma oferta ou um pedido.' },
+    { q: "I can't figure out how this app works.", options: ['Não consigo baixar.', 'Não tenho dinheiro para ele.', 'Não consigo entender.', 'Não consigo parar de usar.'], a: 2, why: 'Figure something out é finalmente entender algo ou encontrar a solução, normalmente depois de pensar.' },
+    { q: 'I came across some old photos while I was tidying up.', options: ['Joguei fora.', 'Procurei durante horas.', 'Eu mesmo tirei.', 'Encontrei por acaso.'], a: 3, why: 'Come across something é encontrar algo ou alguém por acaso, sem estar procurando.' },
+    { q: 'Our car broke down on the motorway.', options: ['Ele quebrou.', 'Ele bateu em outro carro.', 'Ele estava muito rápido.', 'Ele estava cheio demais.'], a: 0, why: 'Quando um carro ou uma máquina breaks down, para de funcionar: quebra, dá defeito.' },
+    { q: 'Tom really takes after his father.', options: ['Ele segue o pai para todo lado.', 'Ele puxou ao pai.', 'Ele cuida do pai.', 'Ele trabalha para o pai.'], a: 1, why: 'Take after um familiar mais velho é ser parecido com ele, na aparência ou no jeito: puxar a alguém. Não confunda com look after, que é cuidar.' },
+  ],
+  pairs: [
+    ['Give up', 'Parar de fazer algo'],
+    ['Look forward to', 'Não ver a hora de'],
+    ['Run out of', 'Ficar sem'],
+    ['Get over', 'Se recuperar de'],
+    ['Put off', 'Adiar'],
+    ['Turn down', 'Recusar'],
+    ['Figure out', 'Conseguir entender'],
+    ['Come across', 'Encontrar por acaso'],
+  ],
+  related: ['english-idioms', 'en-verbs-sheet', 'en-quiz-b1'],
+};

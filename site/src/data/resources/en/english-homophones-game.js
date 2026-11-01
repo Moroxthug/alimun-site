@@ -1,0 +1,37 @@
+// Resource: game. English homophones: words that sound the same but are spelled differently. Meanings and UK/US pronunciations checked against Cambridge Dictionary.
+export default {
+  key: 'english-homophones', site: 'en', slug: 'english-homophones-game', kind: 'game', course: 'English', level: 'All levels',
+  draw: 'cat', tint: 'coral', published: '2026-11-01',
+  title: "English homophones game: their, there or they're?",
+  metaTitle: "English homophones game: their, there, they're and more – Alimun",
+  desc: "A free game with ten sets of English words that sound the same but are spelled differently, from their and there to piece and peace. Pick the right spelling.",
+  lead: "Their, there or they're? Your or you're? Fill the gap in ten sentences with the spelling that fits, then match the words to their meanings.",
+  instructions: 'Which spelling fills the gap?',
+  about: [
+    'Homophones are words that sound exactly the same but have different spellings and meanings, like their, there and they\'re. When you listen, the sentence tells you which one is meant; when you write, you have to choose.',
+    'Native speakers mix them up too, especially its and it\'s or your and you\'re. A quick test helps: if you can say "it is" or "you are" instead, use the spelling with the apostrophe.',
+  ],
+  items: [
+    { q: 'Look over ___, by the window.', options: ['their', 'there', "they're", 'thier'], a: 1, why: "There means in or at that place. Their (belonging to them) and they're (they are) sound the same: /ðeə/ in British English, /ðer/ in American English." },
+    { q: "___ going to love this film.", options: ["You're", 'Your', 'Youre', "Your'e"], a: 0, why: "You're is short for you are. Your means belonging to you. Both are said /jɔː/ in British English and usually /jʊr/ in American English." },
+    { q: 'The dog wagged ___ tail.', options: ["it's", "its'", 'its', 'it is'], a: 2, why: "Its means belonging to it and has no apostrophe. It's is short for it is or it has. Both are said /ɪts/." },
+    { q: 'This coffee is ___ hot to drink.', options: ['to', 'two', 'tow', 'too'], a: 3, why: 'Too means more than is needed or wanted, or also. Two is the number 2. To usually sounds shorter, /tə/, and only sounds like /tuː/ when it is stressed.' },
+    { q: "I can't decide ___ to go or stay.", options: ['weather', 'whether', 'wheather', 'whather'], a: 1, why: 'Whether introduces a choice between two possibilities. Weather is rain, sun and wind. Most speakers say both /ˈweðə/; some Americans start whether with a breathy /hw/.' },
+    { q: "Speak up, I can't ___ you!", options: ['hear', 'here', 'heer', 'hier'], a: 0, why: "Hear is what you do with your ears; here means in this place. Both are /hɪə/ in British English and /hɪr/ in American English." },
+    { q: "I don't ___ the answer.", options: ['no', 'now', 'know', 'kno'], a: 2, why: 'Know means to have information in your mind. No is the opposite of yes. Both are /nəʊ/ in British English and /noʊ/ in American English.' },
+    { q: 'I need to ___ some milk on the way home.', options: ['by', 'bye', 'bie', 'buy'], a: 3, why: 'Buy means to get something by paying for it. By means near or through, and bye is short for goodbye. All three are /baɪ/.' },
+    { q: "Don't forget to ___ your name at the top.", options: ['right', 'write', 'rite', 'wright'], a: 1, why: 'Write means to put words on paper or a screen. Right means correct or the opposite of left, a rite is a ceremony, and wright appears in words like playwright. All are /raɪt/.' },
+    { q: 'All we want is a bit of ___ and quiet.', options: ['peace', 'piece', 'peice', 'peese'], a: 0, why: 'Peace means calm and quiet, or no war. A piece is a part of something, like a piece of cake. Both are /piːs/.' },
+  ],
+  pairs: [
+    ['their', 'Belonging to them'],
+    ["they're", 'They are'],
+    ["you're", 'You are'],
+    ["it's", 'It is or it has'],
+    ['too', 'Also, or more than needed'],
+    ['whether', 'If, between two choices'],
+    ['buy', 'Pay for something'],
+    ['piece', 'A part of something'],
+  ],
+  related: ['english-idioms', 'british-american', 'false-friends'],
+};

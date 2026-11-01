@@ -1,0 +1,37 @@
+// Resource: game. German food and drink nouns, their articles and regional words (Semmel, Schrippe, Breze, Erdapfel). Checked against Duden.
+export default {
+  key: 'german-food', site: 'en', slug: 'german-food-words-game', kind: 'game', course: 'German', level: 'All levels',
+  draw: 'pretzel', tint: 'sun', published: '2026-11-01',
+  title: 'German food words game: Brezel, Brötchen and Spätzle',
+  metaTitle: 'German food words game: Brezel, Brötchen, Spätzle – Alimun',
+  desc: 'A free game with German food and drink words: guess what Brötchen, Schorle and Eintopf mean, pick the right article and learn the regional names.',
+  lead: 'Order breakfast in Munich and you ask for a Semmel. Do the same in Berlin and it is a Schrippe. Ten German food words, their articles and a few regional surprises.',
+  instructions: 'What does it mean, or which article is right?',
+  about: [
+    'Food words are some of the first German words you need, and each one comes with its article: der Kuchen, die Kartoffel, das Brötchen. Learning the article together with the word saves you a lot of guessing later.',
+    'German also changes from region to region. The same bread roll is a Brötchen, a Semmel or a Schrippe depending on where you buy it, and in Austria a potato can be an Erdapfel.',
+  ],
+  items: [
+    { q: 'die Brezel', options: ['a pretzel', 'a bread roll', 'a doughnut', 'a waffle'], a: 0, why: 'die Brezel = the pretzel. In Bavaria and Austria you will also hear die Breze.' },
+    { q: 'das Brötchen', options: ['a slice of toast', 'a bread roll', 'a breadcrumb', 'a whole loaf'], a: 1, why: 'das Brötchen = the bread roll. In Bavaria and Austria it is die Semmel, and in Berlin a long roll with a cut on top is die Schrippe.' },
+    { q: 'Spätzle: which article is right?', options: ['der', 'das', 'die, because the word is plural', 'die, because the word is feminine'], a: 2, why: 'die Spätzle are small egg noodles from Swabia. Duden lists the word only in the plural, which is why it takes die.' },
+    { q: 'der Kuchen', options: ['a kitchen', 'a biscuit', 'a cook', 'a cake'], a: 3, why: 'der Kuchen = the cake. Do not mix it up with die Küche, the kitchen, or der Koch, the cook.' },
+    { q: 'die Schorle', options: ['wine or apple juice mixed with sparkling water', 'a hot punch', 'beer mixed with lemonade', 'a milkshake'], a: 0, why: 'die Schorle is wine or apple juice topped up with sparkling water, as in Apfelschorle. Duden also accepts das Schorle, which you hear in some regions.' },
+    { q: 'der Aufschnitt', options: ['a cut on your finger', 'sliced cold meats', 'a slice of cake', 'a sandwich'], a: 1, why: 'der Aufschnitt = cold cuts: sausage, ham and roast meat in slices, often served on a platter.' },
+    { q: 'Kartoffel: which article is right?', options: ['der', 'das', 'die', 'it changes from region to region'], a: 2, why: 'die Kartoffel = the potato. In Austria and some other regions you also hear der Erdapfel, literally an earth apple.' },
+    { q: 'das Abendbrot', options: ['a simple evening meal, usually with bread', 'the last loaf in the bakery', 'a sweet bread for dessert', 'a late-night snack at a bar'], a: 0, why: 'das Abendbrot, literally evening bread, is a simple supper, usually bread with cold cuts and cheese.' },
+    { q: 'der Eintopf', options: ['a flower pot', 'a thick stew cooked in one pot', 'a single portion', 'a teapot'], a: 1, why: 'der Eintopf, literally one pot, is a hearty stew where everything cooks together.' },
+    { q: 'Senf: which article is right?', options: ['die', 'das', 'der', 'it changes from region to region'], a: 2, why: 'der Senf = the mustard. Seinen Senf dazugeben means giving your opinion when nobody asked for it.' },
+  ],
+  pairs: [
+    ['die Brezel', 'the pretzel'],
+    ['das Brötchen', 'the bread roll'],
+    ['die Spätzle', 'egg noodles'],
+    ['der Kuchen', 'the cake'],
+    ['die Schorle', 'juice or wine with sparkling water'],
+    ['der Aufschnitt', 'cold cuts'],
+    ['die Kartoffel', 'the potato'],
+    ['der Senf', 'the mustard'],
+  ],
+  related: ['german-compounds', 'de-articles-sheet', 'untranslatable-german'],
+};

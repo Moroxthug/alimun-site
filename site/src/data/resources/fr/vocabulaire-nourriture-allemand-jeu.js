@@ -1,0 +1,37 @@
+// Resource: game. German food and drink nouns, their articles and regional words (Semmel, Schrippe, Breze, Erdapfel). Checked against Duden.
+export default {
+  key: 'german-food', site: 'fr', slug: 'vocabulaire-nourriture-allemand-jeu', kind: 'game', course: 'German', level: 'Tous niveaux',
+  draw: 'pretzel', tint: 'sun', published: '2026-11-01',
+  title: 'Jeu du vocabulaire de la nourriture en allemand : Brezel, Brötchen et Spätzle',
+  metaTitle: 'La nourriture en allemand, le jeu : Brezel, Brötchen… – Alimun',
+  desc: "Un jeu gratuit avec des mots allemands de la cuisine : devine ce que sont Brötchen, Schorle et Eintopf, choisis le bon article et découvre les noms régionaux.",
+  lead: "Au petit-déjeuner à Munich, tu demandes une Semmel. À Berlin, la même chose s'appelle une Schrippe. Dix mots allemands de la nourriture, leurs articles et quelques surprises régionales.",
+  instructions: "Qu'est-ce que ça veut dire, ou quel est le bon article ?",
+  about: [
+    "Les mots de la nourriture font partie des premiers dont tu as besoin en allemand, et chacun a son article : der Kuchen, die Kartoffel, das Brötchen. Si tu apprends l'article avec le mot, tu auras beaucoup moins à deviner ensuite.",
+    "L'allemand change aussi d'une région à l'autre. Le même petit pain s'appelle Brötchen, Semmel ou Schrippe selon l'endroit où tu l'achètes, et en Autriche une pomme de terre peut être un Erdapfel.",
+  ],
+  items: [
+    { q: 'die Brezel', options: ['un bretzel', 'un petit pain', 'un beignet', 'une gaufre'], a: 0, why: 'die Brezel = le bretzel. En Bavière et en Autriche, on dit aussi die Breze.' },
+    { q: 'das Brötchen', options: ['une tranche de pain grillé', 'un petit pain', 'une miette de pain', 'une miche entière'], a: 1, why: "das Brötchen = le petit pain. En Bavière et en Autriche, on dit die Semmel, et à Berlin un petit pain allongé entaillé sur le dessus s'appelle die Schrippe." },
+    { q: 'Spätzle : quel est le bon article ?', options: ['der', 'das', 'die, parce que le mot est au pluriel', 'die, parce que le mot est féminin'], a: 2, why: "die Spätzle sont de petites pâtes aux œufs de Souabe. Le Duden ne donne le mot qu'au pluriel, c'est pour ça qu'il prend die." },
+    { q: 'der Kuchen', options: ['une cuisine', 'un biscuit', 'un cuisinier', 'un gâteau'], a: 3, why: 'der Kuchen = le gâteau. Ne le confonds pas avec die Küche, la cuisine, ni avec der Koch, le cuisinier.' },
+    { q: 'die Schorle', options: ["du vin ou du jus de pomme allongé d'eau gazeuse", 'un punch chaud', 'de la bière avec de la limonade', 'un milkshake'], a: 0, why: "die Schorle, c'est du vin ou du jus de pomme allongé d'eau gazeuse, comme l'Apfelschorle. Le Duden accepte aussi das Schorle, qu'on entend dans certaines régions." },
+    { q: 'der Aufschnitt', options: ['une coupure au doigt', 'de la charcuterie en tranches', 'une part de gâteau', 'un sandwich'], a: 1, why: 'der Aufschnitt = la charcuterie en tranches : saucisse, jambon et rôti coupés, souvent servis sur un plateau.' },
+    { q: 'Kartoffel : quel est le bon article ?', options: ['der', 'das', 'die', 'ça dépend de la région'], a: 2, why: 'die Kartoffel = la pomme de terre. En Autriche et dans d’autres régions, on dit aussi der Erdapfel, comme une pomme de terre en français.' },
+    { q: 'das Abendbrot', options: ['un dîner simple, le plus souvent à base de pain', 'la dernière miche de la boulangerie', 'un pain sucré pour le dessert', 'un en-cas de fin de soirée au bar'], a: 0, why: "das Abendbrot, littéralement le pain du soir, est un dîner simple, souvent du pain avec de la charcuterie et du fromage." },
+    { q: 'der Eintopf', options: ['un pot de fleurs', 'un ragoût épais cuit dans une seule marmite', 'une portion individuelle', 'une théière'], a: 1, why: 'der Eintopf, littéralement une marmite, est un plat copieux où tout cuit ensemble.' },
+    { q: 'Senf : quel est le bon article ?', options: ['die', 'das', 'der', 'ça dépend de la région'], a: 2, why: "der Senf = la moutarde. Seinen Senf dazugeben veut dire donner son avis quand personne ne l'a demandé." },
+  ],
+  pairs: [
+    ['die Brezel', 'le bretzel'],
+    ['das Brötchen', 'le petit pain'],
+    ['die Spätzle', 'les pâtes aux œufs'],
+    ['der Kuchen', 'le gâteau'],
+    ['die Schorle', "jus ou vin avec de l'eau gazeuse"],
+    ['der Aufschnitt', 'la charcuterie en tranches'],
+    ['die Kartoffel', 'la pomme de terre'],
+    ['der Senf', 'la moutarde'],
+  ],
+  related: ['german-compounds', 'de-articles-sheet', 'untranslatable-german'],
+};

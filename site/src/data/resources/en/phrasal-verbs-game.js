@@ -1,0 +1,37 @@
+// Resource: game. Ten common English phrasal verbs (B1-B2): what each one means in context. Meanings checked against the Cambridge Dictionary and Oxford Learner's Dictionaries.
+export default {
+  key: 'phrasal-verbs-game', site: 'en', slug: 'phrasal-verbs-game', kind: 'game', course: 'English', level: 'All levels',
+  draw: 'parrot', tint: 'sun', published: '2026-11-01',
+  title: 'Phrasal verbs game: do you know what give up really means?',
+  metaTitle: 'Phrasal verbs game: 10 common English phrasal verbs – Alimun',
+  desc: 'A free game with ten common English phrasal verbs, from give up to take after. Read each one in a real sentence, guess what it means, then match the cards.',
+  lead: 'Give up, run out of, figure out. Read ten everyday English phrasal verbs in real sentences and guess what each one means.',
+  instructions: 'What does the phrasal verb mean in this sentence?',
+  about: [
+    'A phrasal verb is a verb followed by a small word like up, out, off or over, and together they often mean something quite different from the verb alone. Native speakers use them constantly, especially when they speak.',
+    'Learn each phrasal verb with a whole example sentence rather than on its own. Many have more than one meaning, so notice what the rest of the sentence tells you.',
+  ],
+  items: [
+    { q: 'I gave up smoking last year.', options: ['I started smoking.', 'I stopped smoking.', 'I smoked less.', 'I enjoyed smoking.'], a: 1, why: 'To give something up is to stop doing it regularly: She gave up chocolate for a month.' },
+    { q: "I'm really looking forward to the holidays.", options: ["I'm excited about them.", "I'm worried about them.", "I'm planning them carefully.", "I'm remembering them."], a: 0, why: 'To look forward to something is to feel happy and excited about something that is going to happen.' },
+    { q: "We've run out of milk.", options: ['We have too much milk.', 'We have spilled the milk.', 'We have no milk left.', 'We have bought fresh milk.'], a: 2, why: 'To run out of something is to use all of it so that there is none left.' },
+    { q: 'It took her two weeks to get over the flu.', options: ['to catch the flu', 'to avoid the flu', 'to tell people about the flu', 'to recover from the flu'], a: 3, why: 'To get over an illness or a bad experience is to recover from it.' },
+    { q: "Don't put off your homework until tomorrow.", options: ["Don't rush your homework.", "Don't delay your homework.", "Don't lose your homework.", "Don't copy your homework."], a: 1, why: 'To put something off is to decide to do it later than planned: We put off the meeting until Friday.' },
+    { q: 'She turned down the job offer.', options: ['She refused it.', 'She accepted it.', 'She asked for more money.', 'She forgot about it.'], a: 0, why: 'To turn down an offer or a request is to refuse it.' },
+    { q: "I can't figure out how this app works.", options: ['I can\'t download it.', 'I can\'t afford it.', 'I can\'t understand it.', 'I can\'t stop using it.'], a: 2, why: 'To figure something out is to finally understand it or find the answer, usually after thinking about it.' },
+    { q: 'I came across some old photos while I was tidying up.', options: ['I threw them away.', 'I looked for them for hours.', 'I took them.', 'I found them by chance.'], a: 3, why: 'To come across something is to find it or meet it by chance, without looking for it.' },
+    { q: 'Our car broke down on the motorway.', options: ['It stopped working.', 'It crashed into another car.', 'It went very fast.', 'It ran out of space.'], a: 0, why: 'When a car or machine breaks down, it stops working.' },
+    { q: 'Tom really takes after his father.', options: ['He follows his father everywhere.', 'He is similar to his father.', 'He looks after his father.', 'He works for his father.'], a: 1, why: 'To take after an older family member is to look or behave like them. Do not confuse it with look after, which means take care of.' },
+  ],
+  pairs: [
+    ['Give up', 'Stop doing something'],
+    ['Look forward to', 'Feel excited about something coming'],
+    ['Run out of', 'Have none left'],
+    ['Get over', 'Recover from'],
+    ['Put off', 'Delay until later'],
+    ['Turn down', 'Refuse an offer'],
+    ['Figure out', 'Finally understand'],
+    ['Come across', 'Find by chance'],
+  ],
+  related: ['english-idioms', 'en-verbs-sheet', 'en-quiz-b1'],
+};
