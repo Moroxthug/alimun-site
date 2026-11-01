@@ -64,7 +64,7 @@ export default {
     { p: "Due di queste coppie meritano un'occhiata in più, perché tornano in quasi ogni conversazione. **Actually** serve ad aggiungere un fatto, a correggere qualcuno con garbo o a esprimere sorpresa: “Actually, I've never been to London”, in realtà non sono mai stato a Londra. Se vuoi dire che qualcosa è vero adesso, usa currently, at the moment o nowadays: “I'm currently working in Milan”." },
     { p: "**Eventually** vuol dire che qualcosa succede alla fine, di solito dopo molto tempo o molta fatica: “We eventually found the hotel at midnight”, alla fine abbiamo trovato l'albergo a mezzanotte. Non è mai incerto. Il nostro eventualmente, che secondo il Treccani si usa per qualcosa che dipende dalle circostanze, in inglese è if necessary, if needed o possibly: “Call me if necessary”." },
 
-    { figure: { photo: 'english-false-friends-factory', alt: "Operai e macchinari dentro il capannone di una grande fabbrica", caption: "Una fabbrica in inglese è a factory. Fabric invece è la stoffa, il tessuto che una fabbrica come questa potrebbe produrre." } },
+    { figure: { photo: 'english-false-friends-factory', alt: "Una donna al lavoro su una macchina in una piccola fabbrica tessile, tra scaffali di filati", caption: "Una fabbrica in inglese è a factory. Fabric invece è la stoffa, il tessuto che una fabbrica come questa potrebbe produrre." } },
 
     { h: 'I falsi amici a metà' },
     { p: "Non tutti i falsi amici sono falsi del tutto. Alcune parole condividono un significato con l'italiano e ne hanno un altro diverso, e questi **falsi amici parziali** sono più insidiosi, perché a volte hai ragione. L'inglese argument può essere un argomento a favore di un'idea, ma vuol dire anche litigio: “They had an argument about money”, hanno litigato per i soldi. L'argomento di una conversazione, invece, in inglese è the topic." },
@@ -107,11 +107,11 @@ export default {
       ['She had to **confront** her manager about the problem.', 'ha dovuto affrontare il suo responsabile per il problema'],
       ['They spent the **summer** on a large **estate** in Tuscany.', "hanno passato l'estate in una grande tenuta in Toscana"],
     ] },
-    { figure: { photo: 'english-false-friends-lecture', alt: 'Un pubblico che ascolta una conferenza', caption: 'Queste persone stanno assistendo a una conferenza: in inglese they are attending a talk. To assist vuol dire aiutare.' } },
+    { figure: { photo: 'english-false-friends-lecture', alt: "Persone sedute in una grande sala conferenze, in attesa che inizi un intervento", caption: 'Queste persone stanno assistendo a una conferenza: in inglese they are attending a talk. To assist vuol dire aiutare.' } },
 
     { h: 'Inglese britannico e americano' },
     { p: "Alcune parole cambiano significato anche tra le due sponde dell'Atlantico, e questo aggiunge un livello di falsi amici dentro l'inglese stesso. Le chips che abbiamo visto sono il caso più famoso. **Il college** è un altro: per un americano “going to college” vuol dire andare all'università, per un britannico non necessariamente. La library è la biblioteca dappertutto, ma il negozio dove compri i libri è di solito a bookstore negli Stati Uniti e a bookshop nel Regno Unito." },
-    { figure: { photo: 'english-false-friends-fries', alt: 'Una porzione di patatine fritte', caption: 'Nel Regno Unito queste sono chips, negli Stati Uniti fries. Le chips americane sono le patatine in busta, che i britannici chiamano crisps.' } },
+    { figure: { photo: 'english-false-friends-chips', alt: "Una ciotola di patatine accanto a un bicchiere di birra scura", caption: "Negli Stati Uniti queste sono chips, nel Regno Unito crisps. Le chips britanniche sono invece le patatine fritte a bastoncino, che gli americani chiamano fries." } },
     { p: "Se viaggi o lavori con colleghi di altri paesi, **non preoccuparti di scegliere una variante** per ogni parola: basta sapere che esistono entrambe. Nel dubbio, la parola più chiara vince: French fries si capisce ovunque, e bookstore anche." },
 
     { h: 'Gli errori più comuni' },

@@ -63,7 +63,7 @@ export default {
 
     { p: "One more pair belongs here because it comes up at school and at work. A **lecture** in English is a formal talk on a serious subject, given to a group of people, especially students, and it can also be a long, serious talk telling someone off. It is never reading, which is lettura in Italian, lectura in Spanish, lecture in French and leitura in Portuguese. “I have a lecture at nine” means you are going to listen to a talk, not to read a book." },
 
-    { figure: { photo: 'english-false-friends-factory', alt: 'Workers and machines inside a large factory hall', caption: 'A factory is a fábrica in Spanish and a fabbrica in Italian. The English fabric means cloth, the material a factory like this might weave.' } },
+    { figure: { photo: 'english-false-friends-factory', alt: "A woman working at a machine in a small textile factory, among racks of thread", caption: 'A factory is a fábrica in Spanish and a fabbrica in Italian. The English fabric means cloth, the material a factory like this might weave.' } },
 
     { h: 'Partial false friends' },
     { p: "Not every false friend is completely false. Some words share one meaning with your language and differ in another, and these **partial false friends** are trickier than the total ones, because you are right part of the time. The English argument can be a reason that supports an idea, as in the Italian argomento, but it also means a disagreement, a row: “They had an argument about money.” The everyday Italian argomento, meanwhile, is usually a topic." },
@@ -99,12 +99,12 @@ export default {
     { p: "The most famous Spanish false friend is **embarazada**, which means pregnant. If you feel awkward or ashamed, you are embarrassed, which is avergonzado or “me da vergüenza”. Constipado is another one: in Spain it usually means you have a cold, while constipated in English means only one thing, and the Spanish word for it is estreñido." },
     { p: "Carpeta is a folder, while a **carpet** is a floor covering, an alfombra or a moqueta. Actual in Spanish means current, present, so “the actual government” in English would be the real government, not el gobierno actual, which is the current government. Éxito is success, while exit is salida. Realizar is to carry out, while to realize means to understand something, often suddenly: darse cuenta." },
 
-    { figure: { photo: 'english-false-friends-lecture', alt: 'An audience listening to a talk', caption: 'These people are attending a talk. Assistere, asistir, assister and assistir all mean to attend; in English, to assist means to help.' } },
+    { figure: { photo: 'english-false-friends-lecture', alt: "People sitting in a large conference hall, waiting for a talk to begin", caption: 'These people are attending a talk. Assistere, asistir, assister and assistir all mean to attend; in English, to assist means to help.' } },
 
     { h: 'If your language is French' },
     { p: "French speakers share actuellement, éventuellement, sensible and librairie with the general group. Actuellement means currently, so “actually” is en fait. Éventuellement means possibly, so “eventually” is finalement. Sensible is sensitive, so **sensible** in English is raisonnable or sensé. Librairie is a bookshop, and library is bibliothèque." },
     { p: "A few more are worth knowing. Assister à means to attend, and to assist is to help. Location is a rental, while an English **location** is a place or position. Large means wide, while large in English means big. Raisin means grape, while an English raisin is a dried grape, a raisin sec. Coin is a corner, while a coin in English is money, une pièce." },
-    { figure: { photo: 'english-false-friends-fries', alt: 'A serving of French fries', caption: 'In the UK these are chips, in the US they are fries. The French chips are the crunchy slices that Americans call chips and the British call crisps.' } },
+    { figure: { photo: 'english-false-friends-chips', alt: "A bowl of potato chips next to a glass of dark beer", caption: "In American English these are chips, in British English they are crisps, and in French they are chips too. British chips are what Americans call fries." } },
 
     { h: 'If your language is Portuguese' },
     { p: "Brazilian learners know the trap on doors: **puxe** means pull, and push is empurre. Pretender means to intend, so “eu pretendo viajar” is “I intend to travel”, while to pretend is fingir. Esquisito means strange, odd, while **exquisite** is very beautiful and delicate, requintado or primoroso." },

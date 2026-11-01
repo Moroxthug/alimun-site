@@ -66,7 +66,7 @@ export default {
     { p: "Dois desses pares merecem mais atenção porque aparecem em quase toda conversa. **Actually** serve para acrescentar um fato, corrigir alguém com educação ou mostrar surpresa: “Actually, I've never been to London”, na verdade, nunca fui a Londres. Se você quer dizer que algo é verdade agora, use currently, at the moment ou nowadays: “I'm currently working in São Paulo”." },
     { p: "**Eventually** quer dizer que algo acontece no fim, em geral depois de muito tempo ou esforço: “We eventually found the hotel at midnight”, finalmente achamos o hotel à meia-noite. Nunca é incerto nem ocasional. O nosso eventualmente, que o Cambridge português-inglês traduz como occasionally ou sometimes, em inglês é occasionally: “I occasionally read novels”, eventualmente leio romances." },
 
-    { figure: { photo: 'english-false-friends-factory', alt: 'Operários e máquinas dentro do galpão de uma grande fábrica', caption: 'Uma fábrica em inglês é a factory. Fabric é o tecido, o pano que uma fábrica como esta poderia produzir.' } },
+    { figure: { photo: 'english-false-friends-factory', alt: "Uma mulher trabalhando numa máquina em uma pequena fábrica têxtil, entre prateleiras de fios", caption: 'Uma fábrica em inglês é a factory. Fabric é o tecido, o pano que uma fábrica como esta poderia produzir.' } },
 
     { h: 'Os falsos cognatos pela metade' },
     { p: "Nem todo falso cognato é falso por inteiro. Algumas palavras compartilham um sentido com o português e têm outro diferente, e esses **falsos cognatos parciais** são mais traiçoeiros, porque às vezes você acerta. Realize é o melhor exemplo: em inglês quer dizer principalmente perceber, se dar conta, “I didn't realize it was so late”, não percebi que era tão tarde. Mas também pode querer dizer realizar um sonho, to realize a dream. Para realizar uma tarefa, diga to carry out ou to do." },
@@ -101,14 +101,14 @@ export default {
     { h: 'Na faculdade e no trabalho' },
     { p: "Alguns falsos cognatos aparecem sobretudo na sala de aula e no escritório. **A lecture** em inglês é uma aula expositiva ou uma palestra, uma fala formal sobre um assunto sério para um grupo de pessoas, muitas vezes estudantes. Também pode ser um sermão, uma bronca longa em alguém que fez algo errado. Nunca é leitura, que em inglês é reading: “I have a lecture at nine” quer dizer que você tem aula às nove, não que precisa ler um livro." },
     { p: "A agenda engana pela metade: em inglês, **an agenda** é a pauta de uma reunião, ou um conjunto de objetivos, às vezes escondidos, como em a hidden agenda. A agenda onde você anota seus compromissos é a planner, ou a diary no inglês britânico." },
-    { figure: { photo: 'english-false-friends-lecture', alt: 'Uma plateia ouvindo uma palestra', caption: 'Essas pessoas estão assistindo a uma palestra: em inglês, they are attending a talk. To assist quer dizer ajudar.' } },
+    { figure: { photo: 'english-false-friends-lecture', alt: "Pessoas sentadas em um grande auditório, esperando o começo de uma palestra", caption: 'Essas pessoas estão assistindo a uma palestra: em inglês, they are attending a talk. To assist quer dizer ajudar.' } },
     { examples: [
       ['The **lecture** starts at nine in room 4.', 'a aula começa às nove na sala 4'],
       ["I couldn't **attend** the meeting yesterday.", 'ontem não consegui ir à reunião'],
       ["What's on the **agenda** for today's meeting?", 'qual é a pauta da reunião de hoje?'],
       ['We **watched** a movie last night.', 'ontem à noite assistimos a um filme'],
     ] },
-    { figure: { photo: 'english-false-friends-fries', alt: 'Uma porção de batatas fritas', caption: 'No Reino Unido, isto são chips; nos Estados Unidos, fries. As chips americanas são as batatinhas de saquinho, que os britânicos chamam de crisps.' } },
+    { figure: { photo: 'english-false-friends-chips', alt: "Uma tigela de batatinhas fritas ao lado de um copo de cerveja escura", caption: "Nos Estados Unidos, isto são chips; no Reino Unido, crisps. As chips britânicas são as batatas fritas em palito, que os americanos chamam de fries." } },
 
     { h: 'Inglês britânico e americano' },
     { p: "Algumas palavras mudam de sentido até entre os dois lados do Atlântico, e isso acrescenta uma camada de falsos cognatos dentro do próprio inglês. As chips são o caso mais famoso. **College** é outro: para um americano, “going to college” quer dizer fazer faculdade; para um britânico, não necessariamente. A library é a biblioteca em todo lugar, mas a loja onde você compra livros costuma ser a bookstore nos Estados Unidos e a bookshop no Reino Unido." },

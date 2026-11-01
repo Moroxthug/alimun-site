@@ -65,7 +65,7 @@ export default {
     { p: "Deux de ces paires méritent qu'on s'y arrête, parce qu'elles reviennent dans presque toutes les conversations. **Actually** sert à ajouter un fait, à corriger quelqu'un poliment ou à marquer la surprise : « Actually, I've never been to London », en fait, je ne suis jamais allé à Londres. Pour dire que quelque chose est vrai en ce moment, utilise currently, at the moment ou nowadays : « I'm currently working in Lyon »." },
     { p: "**Eventually** veut dire que quelque chose finit par arriver, en général après beaucoup de temps ou d'efforts : « We eventually found the hotel at midnight », nous avons fini par trouver l'hôtel à minuit. Ce n'est jamais incertain. Notre éventuellement, que le Larousse définit comme « d'une manière éventuelle », se dit possibly ou maybe, et « si besoin » se dit if necessary : « Call me if necessary »." },
 
-    { figure: { photo: 'english-false-friends-factory', alt: "Des ouvriers et des machines dans le hall d'une grande usine", caption: "Une usine, ou une fabrique, se dit factory. Fabric, en revanche, c'est le tissu, l'étoffe qu'une usine comme celle-ci pourrait produire." } },
+    { figure: { photo: 'english-false-friends-factory', alt: "Une femme au travail sur une machine dans une petite usine textile, entre des rayonnages de fils", caption: "Une usine, ou une fabrique, se dit factory. Fabric, en revanche, c'est le tissu, l'étoffe qu'une usine comme celle-ci pourrait produire." } },
 
     { h: 'Les faux amis partiels' },
     { p: "Tous les faux amis ne sont pas complètement faux. Certains mots partagent un sens avec le français et en ont un autre différent, et ces **faux amis partiels** sont plus sournois, parce que tu as raison une partie du temps. Parents en est un bon exemple : en français, le mot désigne le père et la mère, mais aussi toute la famille, et le Cambridge traduit parent aussi bien par relative que par parent. En anglais, parents, ce sont seulement le père et la mère. Les oncles, les tantes et les cousins sont des relatives." },
@@ -100,14 +100,14 @@ export default {
     { h: 'En cours et au travail' },
     { p: "Certains faux amis apparaissent surtout à l'université et au bureau. **A lecture**, en anglais, c'est un cours magistral ou une conférence, un exposé formel sur un sujet sérieux devant un groupe, souvent d'étudiants. Ce peut être aussi un sermon, une longue leçon de morale à quelqu'un qui s'est mal conduit. Ce n'est jamais la lecture, qui se dit reading : « I have a lecture at nine » veut dire que tu as cours à neuf heures, pas que tu dois lire un livre." },
     { p: "Au bureau, assister à une réunion se dit **to attend a meeting**, et to assist someone veut dire aider quelqu'un. Et quand quelqu'un te dit « I'll eventually send you the file », il ne dit pas qu'il te l'enverra peut-être : il te dit qu'il finira par te l'envoyer." },
-    { figure: { photo: 'english-false-friends-lecture', alt: 'Un public qui écoute une conférence', caption: 'Ces personnes assistent à une conférence : en anglais, they are attending a talk. To assist veut dire aider.' } },
+    { figure: { photo: 'english-false-friends-lecture', alt: "Des personnes assises dans une grande salle de conférence, en attendant le début d'un exposé", caption: 'Ces personnes assistent à une conférence : en anglais, they are attending a talk. To assist veut dire aider.' } },
     { examples: [
       ['The **lecture** starts at nine in room 4.', 'le cours commence à neuf heures en salle 4'],
       ["I couldn't **attend** the meeting yesterday.", "je n'ai pas pu assister à la réunion hier"],
       ['Can you **assist** me with these boxes?', "tu peux m'aider à porter ces cartons ?"],
       ["I'm **reading** a great novel at the moment.", 'je lis un excellent roman en ce moment : la lecture, c’est reading'],
     ] },
-    { figure: { photo: 'english-false-friends-fries', alt: 'Une portion de frites', caption: 'Au Royaume-Uni, ce sont des chips ; aux États-Unis, des fries. Nos chips françaises sont des crisps pour les Britanniques.' } },
+    { figure: { photo: 'english-false-friends-chips', alt: "Un bol de chips à côté d'un verre de bière brune", caption: "Pour un Américain, ce sont des chips, comme en français ; pour un Britannique, des crisps. Les chips britanniques, ce sont nos frites." } },
 
     { h: 'Les erreurs les plus fréquentes' },
     { p: "Ces phrases sont typiques de ce que les professeurs entendent aux niveaux A2 et B1, et **chacune contient un faux ami** de cet article." },

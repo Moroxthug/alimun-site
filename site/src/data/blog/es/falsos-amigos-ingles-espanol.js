@@ -65,7 +65,7 @@ export default {
     { p: "Dos de estos pares merecen más atención porque aparecen en casi cualquier conversación. **Actually** sirve para añadir un dato, corregir a alguien con educación o mostrar sorpresa: “Actually, I've never been to London”, en realidad nunca he estado en Londres. Si quieres decir que algo es cierto ahora, usa currently, at the moment o nowadays: “I'm currently working in Madrid”." },
     { p: "**Eventually** significa que algo pasa al final, normalmente después de mucho tiempo o esfuerzo: “We eventually found the hotel at midnight”, al final encontramos el hotel a medianoche. Nunca es incierto. Si quieres decir “posiblemente” o “si hace falta”, di possibly o if necessary: “Call me if necessary”, llámame si hace falta." },
 
-    { figure: { photo: 'english-false-friends-factory', alt: 'Operarios y máquinas dentro de la nave de una gran fábrica', caption: 'Una fábrica en inglés es a factory. Fabric, en cambio, es la tela, el tejido que una fábrica como esta podría producir.' } },
+    { figure: { photo: 'english-false-friends-factory', alt: "Una mujer trabajando en una máquina en una pequeña fábrica textil, entre estantes de hilos", caption: 'Una fábrica en inglés es a factory. Fabric, en cambio, es la tela, el tejido que una fábrica como esta podría producir.' } },
 
     { h: 'Los falsos amigos a medias' },
     { p: "No todos los falsos amigos son falsos del todo. Algunas palabras comparten un significado con el español y tienen otro distinto, y estos **falsos amigos parciales** son más traicioneros, porque a veces aciertas. Realize es el mejor ejemplo: en inglés significa sobre todo darse cuenta, “I didn't realize it was so late”, no me di cuenta de que era tan tarde. Pero también puede significar hacer realidad algo que deseabas, como en to realize a dream. Para “realizar un trabajo”, en inglés se dice to carry out o to do." },
@@ -100,14 +100,14 @@ export default {
     { h: 'Falsos amigos en clase y en el trabajo' },
     { p: "Algunos falsos amigos aparecen sobre todo en el aula y en la oficina. **A lecture** en inglés es una clase magistral o una conferencia, una charla formal sobre un tema serio delante de un grupo, a menudo de estudiantes. También puede ser un sermón, una regañina larga a alguien que se ha portado mal. Nunca es una lectura, que en inglés es reading: “I have a lecture at nine” significa que a las nueve tienes clase, no que tengas que leer un libro." },
     { p: "Asistir a una clase o a una reunión se dice **to attend**, mientras que to assist significa ayudar. Y la agenda engaña a medias: en inglés an agenda es el orden del día de una reunión, o un conjunto de objetivos, a veces ocultos, como en a hidden agenda. La agenda donde apuntas tus citas es a planner, o a diary en inglés británico." },
-    { figure: { photo: 'english-false-friends-lecture', alt: 'Un público escuchando una conferencia', caption: 'Estas personas asisten a una conferencia: en inglés, they are attending a talk. To assist significa ayudar.' } },
+    { figure: { photo: 'english-false-friends-lecture', alt: "Personas sentadas en una gran sala de conferencias, esperando a que empiece una charla", caption: 'Estas personas asisten a una conferencia: en inglés, they are attending a talk. To assist significa ayudar.' } },
     { examples: [
       ['The **lecture** starts at nine in room 4.', 'la clase empieza a las nueve en el aula 4'],
       ["I couldn't **attend** the meeting yesterday.", 'ayer no pude asistir a la reunión'],
       ["What's on the **agenda** for today's meeting?", '¿cuál es el orden del día de la reunión de hoy?'],
       ['The film was a huge **success**.', 'la película fue un gran éxito'],
     ] },
-    { figure: { photo: 'english-false-friends-fries', alt: 'Una ración de patatas fritas', caption: 'En el Reino Unido son chips; en Estados Unidos, fries. Las chips americanas son las patatas de bolsa, que los británicos llaman crisps.' } },
+    { figure: { photo: 'english-false-friends-chips', alt: "Un cuenco de patatas fritas de bolsa junto a un vaso de cerveza negra", caption: "En Estados Unidos son chips; en el Reino Unido, crisps. Las chips británicas son las patatas fritas en tiras, que los estadounidenses llaman fries." } },
 
     { h: 'Inglés británico y americano' },
     { p: "Algunas palabras cambian de significado incluso entre los dos lados del Atlántico, y eso añade una capa de falsos amigos dentro del propio inglés. Las chips son el caso más famoso. **College** es otro: para un estadounidense, “going to college” significa ir a la universidad; para un británico, no necesariamente. La library es la biblioteca en todas partes, pero la tienda donde compras libros suele ser a bookstore en Estados Unidos y a bookshop en el Reino Unido." },
