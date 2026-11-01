@@ -12,7 +12,7 @@ export default {
   metaTitle: 'Passado em alemão: Perfekt e Präteritum explicados – Alimun',
   desc: 'Como formar o Perfekt com haben ou sein, montar o Partizip II, usar o Präteritum (war, hatte, musste) e o Plusquamperfekt, com os erros mais comuns.',
   lead: "O alemão tem dois passados de uso diário, o Perfekt e o Präteritum, e na maioria dos verbos eles querem dizer a mesma coisa. A diferença está na **língua falada e na escrita**, num punhado de verbos muito frequentes e um pouco também na geografia. Depois que você entende o padrão, escolher fica fácil.",
-  photo: 'german-past-tenses-photographs',
+  photo: 'german-past-tenses-old-clock',
   sticker: { draw: 'suitcase', say: 'Ich bin nach Berlin gefahren!' },
   facts: [
     { n: 2, unit: 'auxiliares', text: 'haben e sein, os dois verbos que formam o Perfekt' },
@@ -58,7 +58,7 @@ export default {
       note: 'Os verbos reflexivos usam sempre haben, mesmo quando expressam movimento ou mudança: ich habe mich hingesetzt, eu me sentei.',
     } },
     { p: "Alguns verbos trocam de auxiliar conforme o significado. O Duden registra **fahren** com sein quando você viaja ou vai a algum lugar, e com haben quando você dirige ou leva alguma coisa: ich bin nach Köln gefahren, eu fui para Colônia, mas ich habe meine Mutter zum Bahnhof gefahren, eu levei minha mãe à estação. O objeto direto (meine Mutter) é o sinal de que você precisa de haben." },
-    { figure: { photo: 'german-past-tenses-train', alt: 'Um trem parado na plataforma de uma estação', caption: 'Ich bin mit dem Zug gefahren: o deslocamento de um lugar para outro usa sein no Perfekt.' } },
+    { figure: { photo: 'german-past-tenses-train', alt: 'Um trem chegando a uma estação sob uma cobertura em arco', caption: 'Ich bin mit dem Zug gefahren: o deslocamento de um lugar para outro usa sein no Perfekt.' } },
 
     { h3: 'Ich bin gestanden: o sein do sul' },
     { p: "No sul, a regra do sein vai um pouco mais longe. O Duden dá o Perfekt de stehen como hat gestanden e acrescenta que no uso do sul da Alemanha, da Áustria e da Suíça se diz **ist gestanden**. Com sitzen acontece o mesmo: padrão ich habe gesessen, no sul **ich bin gesessen**. Não são erros, mas formas regionais corretas, então não se assuste se ouvir isso em Munique, Viena ou Zurique." },
@@ -111,7 +111,7 @@ export default {
     { h: 'Norte e sul: uma questão de grau' },
     { p: "Onde você está também conta. A Grimm Grammar observa que **no norte da Alemanha se usa muito o Präteritum com certos verbos** mesmo na fala, como os modais, sein, haben e wissen, enquanto no sul o mais provável é o Perfekt. Quem fala bávaro, austríaco ou suíço prefere o Perfekt, e os mais jovens também tendem a usá-lo mais." },
     { p: "Em muitos dialetos do sul, o Präteritum quase desapareceu da fala do dia a dia, um processo que os linguistas chamam de Präteritumschwund. Nos dialetos do alemão suíço ele foi **substituído pelo Perfekt**, e um suíço falando do passado em dialeto usa o Perfekt para quase tudo. O alemão padrão escrito, porém, é igual em todo lugar: um jornal de Zurique e um de Hamburgo contam as notícias no Präteritum." },
-    { figure: { photo: 'german-past-tenses-alps', alt: 'Picos dos Alpes acima de um vale verde', caption: 'Na Baviera, na Áustria e na Suíça se diz ich bin gestanden e quase tudo é contado no Perfekt.' } },
+    { figure: { photo: 'german-past-tenses-mountain-valley', alt: 'Encostas verdes de montanha e um vale sob um céu nublado', caption: 'Na Baviera, na Áustria e na Suíça se diz ich bin gestanden e quase tudo é contado no Perfekt.' } },
 
     { h: 'O Plusquamperfekt: o passado antes do passado' },
     { p: "O Duden descreve o Plusquamperfekt como o tempo que expressa **um fato anterior a outro fato passado**, igual ao nosso mais-que-perfeito composto (eu tinha comido). Ele se forma como o Perfekt, mas com o auxiliar no Präteritum: hatte ou war mais o Partizip II. Os verbos que usam sein no Perfekt usam war aqui: ich war gegangen, eu tinha ido; ich war geblieben, eu tinha ficado." },

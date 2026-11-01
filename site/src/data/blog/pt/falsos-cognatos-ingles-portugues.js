@@ -36,6 +36,7 @@ export default {
     { p: "O inglês é uma língua germânica, mas uma parte muito grande do seu vocabulário veio do francês depois da conquista normanda de 1066, e do latim pela língua da igreja, da ciência e do direito. O português vem do latim. Por isso inglês e português compartilham milhares de raízes, mas **uma raiz comum não garante um significado comum**." },
     { p: "As palavras continuam mudando depois de emprestadas. Atual vem do latim actualis, ligado a agir, a fazer. Em português ficou com o sentido de “do momento presente”, e atualmente quer dizer hoje em dia. Em inglês, actual ganhou o sentido de “real, efetivo”, e é por isso que **actually** quer dizer “na verdade” e não “atualmente”." },
     { p: "Pretend é outro bom exemplo. Em português, pretender quer dizer desejar, ter a intenção: o Michaelis dá como exemplo alguém que pretendia conhecer o Egito. Em inglês, **to pretend** quer dizer fingir, agir como se algo fosse verdade quando você sabe que não é: “He pretended not to see me”, ele fingiu que não me viu. Para pretender, use to intend ou to plan." },
+    { p: "Livraria e library também vêm da mesma família de palavras, ligada ao latim liber, livro. O inglês ficou com a ideia da coleção de livros: **a library** é o lugar onde você consulta livros ou pega emprestado. Em português, livraria é a loja, e o lugar do empréstimo é a biblioteca, que é exatamente a library dos ingleses." },
     { note: { title: 'Às vezes o sentido antigo sobrevive', text: "Em inglês, pretend também pode significar alegar ser ou ter algo, e o Oxford Learner's Dictionaries ainda registra esse uso. O Cambridge dá o exemplo “I don't pretend to be an expert on the subject”, não digo que sou especialista no assunto. É o sentido mais próximo do nosso pretender, mas no dia a dia **pretend quer dizer fingir**.", draw: 'cat' } },
 
     { h: 'Os falsos cognatos mais comuns para brasileiros' },
@@ -95,7 +96,7 @@ export default {
     { p: "Além da tabela, há palavras que aparecem cedo e que vale a pena organizar logo. **Parentes** em inglês são relatives, enquanto parents são só seus pais: “My parents live in Recife” quer dizer que sua mãe e seu pai moram em Recife, não os primos. Livraria é a bookstore, ou a bookshop no Reino Unido, e o lugar onde você pega livros emprestados é the library, a biblioteca." },
     { p: "Esquisito se diz strange, odd ou weird, enquanto **exquisite** é muito bonito e delicado, requintado: an exquisite piece of jewelry. Pasta, no sentido de pasta de documentos, é a folder, e a pasta de couro é a briefcase; já pasta em inglês é massa, macarrão. Costume é a habit, “I'm in the habit of reading the news”, enquanto a costume é a roupa de um ator ou a fantasia de uma festa." },
     { p: "Data é a date, “What's the date today?”, enquanto data em inglês quer dizer dados. E um aviso útil no supermercado: preservativo em inglês é condom, enquanto preservative é o conservante no rótulo dos alimentos. Por fim, **assistir** engana em dois sentidos: assistir TV é to watch TV, assistir a uma aula é to attend a class, e to assist quer dizer ajudar." },
-    { figure: { photo: 'english-false-friends-family', alt: 'Uma família reunida', caption: 'Tios, primos e avós são seus relatives, seus parentes. Parents são só sua mãe e seu pai.' } },
+    { figure: { photo: 'english-false-friends-family', alt: "Uma mãe, um pai e os dois filhos deitados na grama com o cachorro", caption: "A mãe e o pai são os parents dos filhos, os pais. Tios, primos e avós são relatives, os parentes." } },
 
     { h: 'Na faculdade e no trabalho' },
     { p: "Alguns falsos cognatos aparecem sobretudo na sala de aula e no escritório. **A lecture** em inglês é uma aula expositiva ou uma palestra, uma fala formal sobre um assunto sério para um grupo de pessoas, muitas vezes estudantes. Também pode ser um sermão, uma bronca longa em alguém que fez algo errado. Nunca é leitura, que em inglês é reading: “I have a lecture at nine” quer dizer que você tem aula às nove, não que precisa ler um livro." },
@@ -108,6 +109,10 @@ export default {
       ['We **watched** a movie last night.', 'ontem à noite assistimos a um filme'],
     ] },
     { figure: { photo: 'english-false-friends-fries', alt: 'Uma porção de batatas fritas', caption: 'No Reino Unido, isto são chips; nos Estados Unidos, fries. As chips americanas são as batatinhas de saquinho, que os britânicos chamam de crisps.' } },
+
+    { h: 'Inglês britânico e americano' },
+    { p: "Algumas palavras mudam de sentido até entre os dois lados do Atlântico, e isso acrescenta uma camada de falsos cognatos dentro do próprio inglês. As chips são o caso mais famoso. **College** é outro: para um americano, “going to college” quer dizer fazer faculdade; para um britânico, não necessariamente. A library é a biblioteca em todo lugar, mas a loja onde você compra livros costuma ser a bookstore nos Estados Unidos e a bookshop no Reino Unido." },
+    { p: "Se você viaja ou trabalha com colegas de outros países, **não precisa escolher uma variante** para cada palavra: basta saber que as duas existem. Na dúvida, a palavra mais clara ganha: French fries se entende em qualquer lugar, e bookstore também." },
 
     { h: 'Os erros mais comuns' },
     { p: "Estas frases são típicas do que os professores ouvem nos níveis A2 e B1, e **cada uma tem um falso cognato** deste artigo." },

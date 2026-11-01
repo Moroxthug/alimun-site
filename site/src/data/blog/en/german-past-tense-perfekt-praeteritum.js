@@ -12,7 +12,7 @@ export default {
   metaTitle: 'German past tense: Perfekt vs Präteritum explained – Alimun',
   desc: 'How to form the German Perfekt with haben or sein, build the Partizip II, use the Präteritum for war, hatte and musste, and add the Plusquamperfekt.',
   lead: "German has two everyday past tenses, the Perfekt and the Präteritum, and for most verbs they mean the same thing. The difference is about **speech and writing**, a handful of very common verbs, and a little geography. Once you see the pattern, choosing between them becomes easy.",
-  photo: 'german-past-tenses-photographs',
+  photo: 'german-past-tenses-old-clock',
   sticker: { draw: 'suitcase', say: 'Ich bin nach Berlin gefahren!' },
   facts: [
     { n: 2, unit: 'auxiliaries', text: 'haben and sein, the two helping verbs that build the Perfekt' },
@@ -58,7 +58,7 @@ export default {
       note: 'Reflexive verbs always take haben in German, even when they describe movement or change: ich habe mich hingesetzt.',
     } },
     { p: "Some verbs switch helping verb when their meaning changes. Duden lists **fahren** with sein when you travel or go somewhere, and with haben when you drive or carry something: ich bin nach Köln gefahren, but ich habe meine Mutter zum Bahnhof gefahren. The direct object (meine Mutter) is the signal that you need haben." },
-    { figure: { photo: 'german-past-tenses-train', alt: 'A train waiting at a station platform', caption: 'Ich bin mit dem Zug gefahren: travel from one place to another takes sein in the Perfekt.' } },
+    { figure: { photo: 'german-past-tenses-train', alt: 'A train arriving at a station under an arched roof', caption: 'Ich bin mit dem Zug gefahren: travel from one place to another takes sein in the Perfekt.' } },
 
     { h3: 'Ich bin gestanden: the southern sein' },
     { p: "In the south, the rule for sein reaches a little further. Duden gives the Perfekt of stehen as hat gestanden, and adds that southern German, Austrian and Swiss usage says **ist gestanden**. Sitzen works the same way: standard ich habe gesessen, southern **ich bin gesessen**. These are not mistakes but regional standard forms, so do not be surprised when you hear them in Munich, Vienna or Zurich." },
@@ -111,7 +111,7 @@ export default {
     { h: 'North and south: a matter of degree' },
     { p: "Where you are also plays a role. The Grimm Grammar notes that **north Germans often use the Präteritum for certain verbs** even in speech, such as the modals, sein, haben and wissen, while southern Germans would most likely use the Perfekt. Bavarian, Austrian and Swiss speakers prefer the Perfekt, and younger speakers tend to use it more as well." },
     { p: "In many southern dialects, the Präteritum has largely disappeared from everyday speech, a process linguists call Präteritumschwund. In the Swiss German dialects it has been **replaced by the Perfekt**, so a Swiss speaker talking about the past in dialect uses the Perfekt for nearly everything. Written Standard German is the same everywhere, though: a newspaper in Zurich and one in Hamburg both report in the Präteritum." },
-    { figure: { photo: 'german-past-tenses-alps', alt: 'Mountain peaks in the Alps above a green valley', caption: 'In Bavaria, Austria and Switzerland, people say ich bin gestanden and tell almost every story in the Perfekt.' } },
+    { figure: { photo: 'german-past-tenses-mountain-valley', alt: 'Green mountain slopes and a valley under a cloudy sky', caption: 'In Bavaria, Austria and Switzerland, people say ich bin gestanden and tell almost every story in the Perfekt.' } },
 
     { h: 'The Plusquamperfekt: the past before the past' },
     { p: "Duden describes the Plusquamperfekt as the tense that expresses **an event that happened before another past event**. It is formed like the Perfekt, but the helping verb is in the Präteritum: hatte or war plus the Partizip II. Whatever takes sein in the Perfekt takes war here: ich war gegangen, ich war geblieben." },

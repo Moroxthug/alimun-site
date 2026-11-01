@@ -93,7 +93,7 @@ export default {
     { h: 'If your language is Italian' },
     { p: "Italian speakers meet the general group above, plus some of their own. **Camera** is a room, while an English camera is a macchina fotografica. Parenti are relatives, and your parents are i genitori. Libreria is a bookshop, or a bookcase at home, and the place where you borrow books is a biblioteca, which is the English library." },
     { p: "Fattoria is a farm, so it has nothing to do with the English factory, which is a fabbrica. Morbido means soft, while **morbid** describes an unhealthy interest in death and disease. Annoiare is to bore, while to annoy means to irritate, which is infastidire. Sensibile is sensitive, and a sensible decision is una decisione sensata." },
-    { figure: { photo: 'english-false-friends-family', alt: 'A family gathered together', caption: 'Aunts, uncles, cousins and grandparents are your relatives: parenti in Italian, parientes in Spanish, parentes in Portuguese. Your parents are only your mother and father.' } },
+    { figure: { photo: 'english-false-friends-family', alt: "A mother, a father and their two children lying on the grass with their dog", caption: "A mother and a father are their children's parents: genitori in Italian, padres in Spanish, pais in Portuguese. Aunts, uncles and cousins are relatives, the parenti, parientes and parentes." } },
 
     { h: 'If your language is Spanish' },
     { p: "The most famous Spanish false friend is **embarazada**, which means pregnant. If you feel awkward or ashamed, you are embarrassed, which is avergonzado or “me da vergüenza”. Constipado is another one: in Spain it usually means you have a cold, while constipated in English means only one thing, and the Spanish word for it is estreñido." },

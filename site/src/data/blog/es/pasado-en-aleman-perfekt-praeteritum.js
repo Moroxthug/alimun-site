@@ -12,7 +12,7 @@ export default {
   metaTitle: 'Pasado en alemán: Perfekt y Präteritum explicados – Alimun',
   desc: 'Cómo se forma el Perfekt con haben o sein, cómo se construye el Partizip II, cuándo usar el Präteritum (war, hatte, musste) y el Plusquamperfekt.',
   lead: "El alemán tiene dos pasados de uso diario, el Perfekt y el Präteritum, y con la mayoría de los verbos significan lo mismo. La diferencia está en **la lengua hablada y la escrita**, en un puñado de verbos muy frecuentes y un poco también en la geografía. Cuando ves el patrón, elegir entre los dos es fácil.",
-  photo: 'german-past-tenses-photographs',
+  photo: 'german-past-tenses-old-clock',
   sticker: { draw: 'suitcase', say: 'Ich bin nach Berlin gefahren!' },
   facts: [
     { n: 2, unit: 'auxiliares', text: 'haben y sein, los dos verbos que forman el Perfekt' },
@@ -58,7 +58,7 @@ export default {
       note: 'Los verbos reflexivos llevan siempre haben, también cuando expresan movimiento o cambio: ich habe mich hingesetzt, me he sentado.',
     } },
     { p: "Algunos verbos cambian de auxiliar según el significado. El Duden registra **fahren** con sein cuando viajas o vas a algún sitio, y con haben cuando conduces o llevas algo: ich bin nach Köln gefahren, fui a Colonia, pero ich habe meine Mutter zum Bahnhof gefahren, llevé a mi madre a la estación. El complemento directo (meine Mutter) es la señal de que necesitas haben." },
-    { figure: { photo: 'german-past-tenses-train', alt: 'Un tren parado en el andén de una estación', caption: 'Ich bin mit dem Zug gefahren: el desplazamiento de un lugar a otro lleva sein en el Perfekt.' } },
+    { figure: { photo: 'german-past-tenses-train', alt: 'Un tren que llega a una estación bajo una cubierta en arco', caption: 'Ich bin mit dem Zug gefahren: el desplazamiento de un lugar a otro lleva sein en el Perfekt.' } },
 
     { h3: 'Ich bin gestanden: el sein del sur' },
     { p: "En el sur, la regla de sein llega un poco más lejos. El Duden da el Perfekt de stehen como hat gestanden, y añade que en el uso del sur de Alemania, Austria y Suiza se dice **ist gestanden**. Con sitzen pasa lo mismo: estándar ich habe gesessen, en el sur **ich bin gesessen**. No son errores sino formas regionales correctas, así que no te sorprendas si las oyes en Múnich, Viena o Zúrich." },
@@ -111,7 +111,7 @@ export default {
     { h: 'Norte y sur: una cuestión de grado' },
     { p: "También importa dónde estés. La Grimm Grammar señala que **en el norte de Alemania se usa a menudo el Präteritum con ciertos verbos** incluso al hablar, como los modales, sein, haben y wissen, mientras que en el sur lo más probable es que se use el Perfekt. Los hablantes de Baviera, Austria y Suiza prefieren el Perfekt, y los más jóvenes también tienden a usarlo más." },
     { p: "En muchos dialectos del sur, el Präteritum casi ha desaparecido del habla cotidiana, un proceso que los lingüistas llaman Präteritumschwund. En los dialectos del alemán de Suiza ha sido **sustituido por el Perfekt**, de modo que un suizo que habla del pasado en dialecto usa el Perfekt para casi todo. El alemán estándar escrito, en cambio, es igual en todas partes: un periódico de Zúrich y uno de Hamburgo cuentan las noticias en Präteritum." },
-    { figure: { photo: 'german-past-tenses-alps', alt: 'Cumbres de los Alpes sobre un valle verde', caption: 'En Baviera, Austria y Suiza se dice ich bin gestanden y casi todo se cuenta en Perfekt.' } },
+    { figure: { photo: 'german-past-tenses-mountain-valley', alt: 'Laderas verdes de montaña y un valle bajo un cielo nublado', caption: 'En Baviera, Austria y Suiza se dice ich bin gestanden y casi todo se cuenta en Perfekt.' } },
 
     { h: 'El Plusquamperfekt: el pasado antes del pasado' },
     { p: "El Duden describe el Plusquamperfekt como el tiempo que expresa **un hecho anterior a otro hecho pasado**, igual que el pluscuamperfecto español (había comido). Se forma como el Perfekt, pero con el auxiliar en Präteritum: hatte o war más el Partizip II. Los verbos que llevan sein en el Perfekt llevan war aquí: ich war gegangen, había ido; ich war geblieben, me había quedado." },

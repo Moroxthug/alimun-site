@@ -12,7 +12,7 @@ export default {
   metaTitle: 'Passato in tedesco: Perfekt e Präteritum spiegati bene – Alimun',
   desc: 'Come si forma il Perfekt con haben o sein, come si costruisce il Partizip II, quando usare il Präteritum (war, hatte, musste) e il Plusquamperfekt.',
   lead: "Il tedesco ha due passati di uso quotidiano, il Perfekt e il Präteritum, e per la maggior parte dei verbi significano la stessa cosa. La differenza sta tra **lingua parlata e lingua scritta**, in una manciata di verbi molto frequenti e un po' anche nella geografia. Una volta capito lo schema, scegliere diventa facile.",
-  photo: 'german-past-tenses-photographs',
+  photo: 'german-past-tenses-old-clock',
   sticker: { draw: 'suitcase', say: 'Ich bin nach Berlin gefahren!' },
   facts: [
     { n: 2, unit: 'ausiliari', text: 'haben e sein, i due verbi che formano il Perfekt' },
@@ -58,7 +58,7 @@ export default {
       note: 'I verbi riflessivi in tedesco prendono sempre haben, anche quando indicano movimento o cambiamento: ich habe mich hingesetzt, mi sono seduto.',
     } },
     { p: "Alcuni verbi cambiano ausiliare con il significato. Il Duden indica **fahren** con sein quando si viaggia o si va da qualche parte, e con haben quando si guida o si trasporta qualcosa: ich bin nach Köln gefahren, sono andato a Colonia, ma ich habe meine Mutter zum Bahnhof gefahren, ho accompagnato mia madre alla stazione. Il complemento oggetto (meine Mutter) è il segnale che serve haben." },
-    { figure: { photo: 'german-past-tenses-train', alt: 'Un treno fermo al binario di una stazione', caption: 'Ich bin mit dem Zug gefahren: lo spostamento da un luogo a un altro vuole sein nel Perfekt.' } },
+    { figure: { photo: 'german-past-tenses-train', alt: 'Un treno che arriva in una stazione sotto una tettoia ad arco', caption: 'Ich bin mit dem Zug gefahren: lo spostamento da un luogo a un altro vuole sein nel Perfekt.' } },
 
     { h3: 'Ich bin gestanden: il sein del sud' },
     { p: "Al sud la regola di sein si allarga un po'. Il Duden dà il Perfekt di stehen come hat gestanden, e aggiunge che nell'uso della Germania meridionale, dell'Austria e della Svizzera si dice **ist gestanden**. Con sitzen succede lo stesso: standard ich habe gesessen, al sud **ich bin gesessen**. Non sono errori ma forme regionali corrette, quindi non stupirti se le senti a Monaco, a Vienna o a Zurigo." },
@@ -111,7 +111,7 @@ export default {
     { h: 'Nord e sud: una questione di misura' },
     { p: "Conta anche dove ti trovi. La Grimm Grammar osserva che **nel nord della Germania si usa spesso il Präteritum per alcuni verbi** anche parlando, come i modali, sein, haben e wissen, mentre al sud si userebbe più probabilmente il Perfekt. Chi parla bavarese, austriaco o svizzero preferisce il Perfekt, e anche i più giovani tendono a usarlo di più." },
     { p: "In molti dialetti del sud il Präteritum è quasi scomparso dal parlato quotidiano, un fenomeno che i linguisti chiamano Präteritumschwund. Nei dialetti svizzeri tedeschi è stato **sostituito dal Perfekt**, un po' come il passato remoto, che nel parlato di gran parte del Nord Italia ha lasciato il posto al passato prossimo. Il tedesco standard scritto però è uguale ovunque: un giornale di Zurigo e uno di Amburgo raccontano i fatti al Präteritum." },
-    { figure: { photo: 'german-past-tenses-alps', alt: 'Cime delle Alpi sopra una valle verde', caption: 'In Baviera, in Austria e in Svizzera si dice ich bin gestanden e si racconta quasi tutto al Perfekt.' } },
+    { figure: { photo: 'german-past-tenses-mountain-valley', alt: 'Pendii di montagna verdi e una valle sotto un cielo nuvoloso', caption: 'In Baviera, in Austria e in Svizzera si dice ich bin gestanden e si racconta quasi tutto al Perfekt.' } },
 
     { h: 'Il Plusquamperfekt: il passato prima del passato' },
     { p: "Il Duden descrive il Plusquamperfekt come il tempo che esprime **un fatto avvenuto prima di un altro fatto passato**, esattamente come il trapassato prossimo. Si forma come il Perfekt, ma con l'ausiliare al Präteritum: hatte o war più il Partizip II. I verbi che vogliono sein nel Perfekt vogliono war anche qui: ich war gegangen, ero andato; ich war geblieben, ero rimasto." },

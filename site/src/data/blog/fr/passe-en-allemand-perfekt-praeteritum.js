@@ -12,7 +12,7 @@ export default {
   metaTitle: 'Passé en allemand : Perfekt et Präteritum expliqués – Alimun',
   desc: 'Comment former le Perfekt avec haben ou sein, construire le Partizip II, employer le Präteritum (war, hatte, musste) et le Plusquamperfekt.',
   lead: "L'allemand a deux passés d'usage courant, le Perfekt et le Präteritum, et pour la plupart des verbes ils veulent dire la même chose. La différence tient à **l'oral et à l'écrit**, à une poignée de verbes très fréquents et un peu à la géographie. Une fois le principe compris, choisir devient simple.",
-  photo: 'german-past-tenses-photographs',
+  photo: 'german-past-tenses-old-clock',
   sticker: { draw: 'suitcase', say: 'Ich bin nach Berlin gefahren !' },
   facts: [
     { n: 2, unit: 'auxiliaires', text: 'haben et sein, les deux verbes qui forment le Perfekt' },
@@ -58,7 +58,7 @@ export default {
       note: 'Les verbes pronominaux prennent toujours haben en allemand, même quand ils expriment un mouvement ou un changement : ich habe mich hingesetzt, je me suis assis.',
     } },
     { p: "Certains verbes changent d'auxiliaire selon le sens. Le Duden indique **fahren** avec sein quand on voyage ou qu'on se rend quelque part, et avec haben quand on conduit ou qu'on transporte quelque chose : ich bin nach Köln gefahren, je suis allé à Cologne, mais ich habe meine Mutter zum Bahnhof gefahren, j'ai conduit ma mère à la gare. Le complément d'objet direct (meine Mutter) est le signal qu'il faut haben." },
-    { figure: { photo: 'german-past-tenses-train', alt: 'Un train à quai dans une gare', caption: 'Ich bin mit dem Zug gefahren : le déplacement d’un lieu à un autre prend sein au Perfekt.' } },
+    { figure: { photo: 'german-past-tenses-train', alt: 'Un train qui entre en gare sous une verrière en arc', caption: 'Ich bin mit dem Zug gefahren : le déplacement d’un lieu à un autre prend sein au Perfekt.' } },
 
     { h3: 'Ich bin gestanden : le sein du sud' },
     { p: "Dans le sud, la règle de sein va un peu plus loin. Le Duden donne le Perfekt de stehen sous la forme hat gestanden, et précise que l'usage du sud de l'Allemagne, de l'Autriche et de la Suisse dit **ist gestanden**. Même chose pour sitzen : standard ich habe gesessen, dans le sud **ich bin gesessen**. Ce ne sont pas des fautes mais des formes régionales correctes, alors ne sois pas surpris de les entendre à Munich, à Vienne ou à Zurich." },
@@ -111,7 +111,7 @@ export default {
     { h: 'Nord et sud : une question de degré' },
     { p: "L'endroit où tu te trouves compte aussi. La Grimm Grammar note que **dans le nord de l'Allemagne, on emploie souvent le Präteritum pour certains verbes** même à l'oral, comme les verbes de modalité, sein, haben et wissen, alors que dans le sud on utiliserait plus probablement le Perfekt. Les locuteurs de Bavière, d'Autriche et de Suisse préfèrent le Perfekt, et les plus jeunes ont eux aussi tendance à l'utiliser davantage." },
     { p: "Dans de nombreux dialectes du sud, le Präteritum a presque disparu de la langue de tous les jours, un phénomène que les linguistes appellent Präteritumschwund. Dans les dialectes suisses alémaniques, il a été **remplacé par le Perfekt**, un peu comme le passé simple a cédé la place au passé composé dans le français parlé. L'allemand standard écrit, lui, est le même partout : un journal de Zurich et un journal de Hambourg racontent l'actualité au Präteritum." },
-    { figure: { photo: 'german-past-tenses-alps', alt: 'Des sommets des Alpes au-dessus d’une vallée verte', caption: 'En Bavière, en Autriche et en Suisse, on dit ich bin gestanden et on raconte presque tout au Perfekt.' } },
+    { figure: { photo: 'german-past-tenses-mountain-valley', alt: 'Des pentes de montagne vertes et une vallée sous un ciel nuageux', caption: 'En Bavière, en Autriche et en Suisse, on dit ich bin gestanden et on raconte presque tout au Perfekt.' } },
 
     { h: 'Le Plusquamperfekt : le passé avant le passé' },
     { p: "Le Duden décrit le Plusquamperfekt comme le temps qui exprime **un fait antérieur à un autre fait passé**, exactement comme le plus-que-parfait. Il se forme comme le Perfekt, mais avec l'auxiliaire au Präteritum : hatte ou war plus le Partizip II. Les verbes qui prennent sein au Perfekt prennent war ici : ich war gegangen, j'étais parti ; ich war geblieben, j'étais resté." },
