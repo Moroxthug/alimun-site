@@ -10,10 +10,10 @@ export default {
   published: '2026-11-01',
   updated: '2026-11-01',
   title: 'Pontuação do IELTS: o que significa cada banda e como a nota geral é calculada',
-  metaTitle: 'Pontuação do IELTS explicada: a escala de 0 a 9, passo a passo – Alimun',
-  desc: 'O que significa cada banda do IELTS de 0 a 9, como a nota geral é arredondada, quantos acertos você precisa, como Writing e Speaking são avaliados e como subir meia banda.',
+  metaTitle: 'Pontuação do IELTS explicada: a escala de 0 a 9 passo a passo – Alimun',
+  desc: 'O que significa cada banda do IELTS de 0 a 9, como a nota geral é arredondada, quantos acertos você precisa e como subir meia banda.',
   lead: 'Um resultado do IELTS são cinco números: uma banda para cada habilidade e uma banda geral. Quando você entende **como esses números são formados**, consegue ler qualquer exigência, saber de onde vem a sua nota e ver exatamente onde está a próxima meia banda.',
-  photo: 'PH0',
+  photo: 'ielts-band-scores-reading-at-table',
   sticker: { draw: 'snail', say: 'Meia banda de cada vez, mas você chega lá.' },
   facts: [
     { n: 9, text: 'a banda mais alta, Expert, numa escala que começa em 0 e avança em bandas inteiras e meias bandas' },
@@ -45,7 +45,7 @@ export default {
     } },
     { p: "A mesma escala vale para cada uma das quatro habilidades e para o resultado geral. Por isso as exigências podem ser tão precisas: uma instituição pode pedir 6,5 na nota geral e também um mínimo em uma habilidade, por exemplo **não menos que 6 no Writing**." },
 
-    { figure: { photo: 'PH2', alt: 'Uma calculadora, um lápis e um post-it amarelo sobre uma mesa', caption: 'A banda geral é pura aritmética: some as quatro bandas, divida por quatro e arredonde para a meia banda mais próxima.' } },
+    { figure: { photo: 'ielts-band-scores-calculator', alt: 'Uma calculadora, um lápis e um post-it amarelo sobre uma mesa', caption: 'A banda geral é pura aritmética: some as quatro bandas, divida por quatro e arredonde para a meia banda mais próxima.' } },
 
     { h: 'Como a banda geral é calculada' },
     { p: "A banda geral é **a média das suas quatro bandas**, arredondada para a banda inteira ou meia banda mais próxima. Você soma os quatro resultados, divide por quatro e olha o que sobra depois da vírgula. Na maioria das vezes o arredondamento é óbvio: uma média de 6,1 vira 6, e uma média de 6,4 vira 6,5." },
@@ -80,7 +80,7 @@ export default {
     { p: "Repare na última coluna. A mesma banda exige **mais acertos no Reading do General Training** do que no Academic: cerca de 30 pontos para a banda 6, contra cerca de 23 no Academic. As bandas indicam o mesmo nível de leitura nas duas versões; a conversão só reflete o fato de que as duas provas usam textos diferentes. Isso também significa que uma nota de simulado de uma versão não se converte pela tabela da outra." },
     { p: "No Listening, a tabela dá um objetivo concreto. Passar da banda 6 para a banda 7 exige **cerca de sete acertos a mais**, de uns 23 para uns 30. Visto assim, meia banda são poucas questões, muitas vezes perdidas por um erro de ortografia, um plural esquecido ou uma resposta escrita no lugar errado." },
 
-    { figure: { photo: 'PH1', alt: 'Fones de ouvido brancos sobre uma pilha de cadernos pretos', caption: 'No Listening cada acerto vale um ponto de 40, e uma palavra escrita errado não conta: confira a ortografia.' } },
+    { figure: { photo: 'ielts-band-scores-open-book', alt: "Um livro aberto com as páginas em leque", caption: "No Reading cada acerto vale um ponto de 40, e uma resposta escrita errado não conta: confira a ortografia." } },
 
     { h: 'Writing: quatro critérios, duas tarefas' },
     { p: "O Writing é corrigido por examinadores treinados, não por uma contagem de acertos. Cada uma das duas tarefas é avaliada separadamente em **quatro critérios com o mesmo peso**, e a nota da tarefa é a média dos quatro. Depois, a banda do Writing combina as duas tarefas, e a Task 2 pesa mais que a Task 1: a redação conta mais do que a primeira tarefa, mais curta." },
@@ -126,7 +126,7 @@ export default {
     } },
     { p: "O IELTS Life Skills funciona de outro jeito. Ele avalia só Speaking e Listening, nos níveis A1, A2 ou B1, e o resultado é **aprovado ou reprovado**, não uma banda. É usado em rotas como vistos de família e residência permanente, em que só a compreensão e a expressão oral são exigidas." },
 
-    { figure: { photo: 'PH4', alt: PH4_ALT_PT, caption: 'As universidades definem as suas próprias exigências de IELTS, muitas vezes curso por curso: confira a banda geral e o mínimo por habilidade.' } },
+    { figure: { photo: 'ielts-band-scores-historic-library', alt: "O teto decorado e as estantes altas de uma biblioteca histórica", caption: "As universidades definem as suas próprias exigências de IELTS, muitas vezes curso por curso: confira a banda geral e o mínimo por habilidade." } },
 
     { h: 'O IELTS e o QECR' },
     { p: "Muitas instituições, principalmente na Europa, descrevem os níveis pelo QECR, de A1 a C2. O IELTS foi relacionado ao QECR, mas **as bandas nunca foram pensadas para coincidir exatamente** com esses níveis, e o IELTS recomenda que as instituições usem as descrições das bandas ao definir exigências." },
@@ -141,7 +141,7 @@ export default {
     { p: "Se uma única habilidade deixa você abaixo da meta, talvez não precise refazer a prova inteira. O **IELTS One Skill Retake** permite refazer uma das quatro habilidades, Listening, Reading, Writing ou Speaking, em até 60 dias depois de uma prova IELTS completa feita no computador em um centro de provas. Vale para o Academic e para o General Training, mas não depois de uma prova em papel ou do IELTS Online, e você só pode usá-lo uma vez para cada prova completa." },
     { p: "Você recebe um novo Test Report Form com a nota refeita, marcada como retake, junto com os seus resultados originais nas outras três habilidades, e a banda geral é recalculada. O Test Report Form original continua válido, então **você pode usar o melhor dos dois**. O ponto fraco é a aceitação: as instituições precisam aderir, e nem todas aceitam o retake. Pergunte à instituição antes de agendar." },
 
-    { figure: { photo: 'PH3', alt: PH3_ALT_PT, caption: 'O Speaking é uma conversa com um examinador, avaliada em fluência e coerência, vocabulário, gramática e pronúncia.' } },
+    { figure: { photo: 'ielts-band-scores-teacher-small-group', alt: "Um professor conversando com um pequeno grupo de adultos em volta de um notebook", caption: "Uma correção baseada nos quatro critérios mostra qual deles está segurando o seu Writing ou o seu Speaking." } },
 
     { h: 'Como subir meia banda' },
     { p: "Comece pelas contas. Descubra qual habilidade está mais longe da exigência e calcule do que a banda geral precisa. Como cada habilidade vale um quarto da média, **uma habilidade fraca puxa a banda geral para baixo** mais do que parece, e uma habilidade que melhora pode puxá-la para cima." },

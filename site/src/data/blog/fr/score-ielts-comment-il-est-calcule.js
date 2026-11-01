@@ -13,7 +13,7 @@ export default {
   metaTitle: 'Score IELTS expliqué : l’échelle de 0 à 9, étape par étape – Alimun',
   desc: 'Ce que veut dire chaque bande IELTS de 0 à 9, comment la note globale est arrondie, combien de bonnes réponses il faut et comment gagner une demi-bande.',
   lead: "Un résultat IELTS, ce sont cinq chiffres : une bande par compétence et une bande globale. Quand tu sais **comment ces chiffres sont construits**, tu peux lire n'importe quelle exigence, comprendre d'où vient ton score et voir exactement où se cache la prochaine demi-bande.",
-  photo: 'PH0',
+  photo: 'ielts-band-scores-reading-at-table',
   sticker: { draw: 'snail', say: 'Une demi-bande à la fois, et tu y arrives.' },
   facts: [
     { n: 9, text: 'la bande la plus haute, Expert, sur une échelle qui part de 0 et avance par bandes entières et demi-bandes' },
@@ -45,7 +45,7 @@ export default {
     } },
     { p: "La même échelle sert pour chacune des quatre compétences et pour le résultat global. C'est pour cela que les exigences peuvent être si précises : un organisme peut demander 6,5 au global et fixer aussi un minimum pour une compétence, par exemple **pas moins de 6 en Writing**." },
 
-    { figure: { photo: 'PH2', alt: 'Une calculatrice, un crayon et un post-it jaune sur une table', caption: 'La bande globale, c’est de l’arithmétique : tu additionnes les quatre bandes, tu divises par quatre et tu arrondis à la demi-bande la plus proche.' } },
+    { figure: { photo: 'ielts-band-scores-calculator', alt: 'Une calculatrice, un crayon et un post-it jaune sur une table', caption: 'La bande globale, c’est de l’arithmétique : tu additionnes les quatre bandes, tu divises par quatre et tu arrondis à la demi-bande la plus proche.' } },
 
     { h: 'Comment se calcule la bande globale' },
     { p: "La bande globale est **la moyenne de tes quatre bandes**, arrondie à la bande entière ou à la demi-bande la plus proche. Tu additionnes les quatre résultats, tu divises par quatre et tu regardes ce qui reste après la virgule. La plupart du temps l'arrondi est évident : une moyenne de 6,1 donne 6, une moyenne de 6,4 donne 6,5." },
@@ -80,7 +80,7 @@ export default {
     { p: "Regarde la dernière colonne. La même bande demande **plus de bonnes réponses en Reading General Training** qu'en Academic : environ 30 points pour la bande 6, contre environ 23 en Academic. Les bandes correspondent au même niveau de lecture dans les deux versions ; la conversion reflète simplement le fait que les deux tests utilisent des textes différents. Cela veut dire aussi qu'un score d'entraînement d'une version ne se convertit pas avec le tableau de l'autre." },
     { p: "En Listening, le tableau te donne un objectif concret. Passer de la bande 6 à la bande 7 demande **environ sept bonnes réponses de plus**, d'environ 23 à environ 30. Vu comme ça, une demi-bande, ce sont quelques questions, souvent perdues à cause d'une faute d'orthographe, d'un pluriel oublié ou d'une réponse écrite au mauvais endroit." },
 
-    { figure: { photo: 'PH1', alt: 'Un casque audio blanc posé sur une pile de carnets noirs', caption: 'En Listening, chaque bonne réponse vaut un point sur 40, et un mot mal orthographié ne compte pas : vérifie ton orthographe.' } },
+    { figure: { photo: 'ielts-band-scores-open-book', alt: "Un livre ouvert aux pages déployées en éventail", caption: "En Reading, chaque bonne réponse vaut un point sur 40, et une réponse mal orthographiée ne compte pas : vérifie ton orthographe." } },
 
     { h: 'Writing : quatre critères, deux tâches' },
     { p: "Le Writing est corrigé par des examinateurs formés, pas par un comptage de bonnes réponses. Chacune des deux tâches est évaluée séparément selon **quatre critères de même poids**, et la note de la tâche est la moyenne des quatre. La bande de Writing combine ensuite les deux tâches, et la Task 2 pèse plus que la Task 1 : l'essai compte davantage que la première tâche, plus courte." },
@@ -126,7 +126,7 @@ export default {
     } },
     { p: "IELTS Life Skills fonctionne autrement. Il n'évalue que le Speaking et le Listening, aux niveaux A1, A2 ou B1, et le résultat est **réussi ou non réussi**, pas une bande. On l'utilise pour des parcours comme les visas familiaux et l'installation durable, où seuls l'oral et l'écoute sont exigés." },
 
-    { figure: { photo: 'PH4', alt: PH4_ALT_FR, caption: 'Les universités fixent leurs propres exigences IELTS, souvent programme par programme : vérifie la bande globale et le minimum par compétence.' } },
+    { figure: { photo: 'ielts-band-scores-historic-library', alt: "Le plafond sculpté et les hautes étagères d’une bibliothèque ancienne", caption: "Les universités fixent leurs propres exigences IELTS, souvent programme par programme : vérifie la bande globale et le minimum par compétence." } },
 
     { h: 'IELTS et le CECRL' },
     { p: "Beaucoup d'organismes, surtout en Europe, décrivent les niveaux avec le CECRL, de A1 à C2. IELTS a été mis en relation avec le CECRL, mais **les bandes n'ont jamais été conçues pour coïncider exactement** avec ses niveaux, et IELTS recommande aux organismes d'utiliser les descriptions des bandes pour fixer leurs exigences." },
@@ -141,7 +141,7 @@ export default {
     { p: "Si une seule compétence te maintient sous l'objectif, tu n'as peut-être pas besoin de repasser tout le test. **IELTS One Skill Retake** te permet de repasser une des quatre compétences, Listening, Reading, Writing ou Speaking, dans les 60 jours qui suivent un test IELTS complet passé sur ordinateur dans un centre d'examen. Il existe pour l'Academic comme pour le General Training, mais pas après un test papier ni après IELTS Online, et tu ne peux l'utiliser qu'une fois par test complet." },
     { p: "Tu reçois un nouveau Test Report Form avec le score repassé, signalé comme retake, et tes résultats d'origine dans les trois autres compétences, et la bande globale est recalculée. Ton Test Report Form d'origine reste valable : **tu peux utiliser le meilleur des deux**. Le point faible, c'est l'acceptation : les organismes doivent s'inscrire pour l'accepter, et tous ne le font pas. Renseigne-toi auprès de l'organisme visé avant de réserver." },
 
-    { figure: { photo: 'PH3', alt: PH3_ALT_FR, caption: 'Le Speaking est une conversation avec un examinateur, notée sur l’aisance et la cohérence, le vocabulaire, la grammaire et la prononciation.' } },
+    { figure: { photo: 'ielts-band-scores-teacher-small-group', alt: "Un professeur qui parle avec un petit groupe d’adultes autour d’un ordinateur portable", caption: "Un retour sur les quatre critères te montre lequel freine ton Writing ou ton Speaking." } },
 
     { h: 'Comment gagner une demi-bande' },
     { p: "Commence par les calculs. Repère la compétence la plus éloignée de l'exigence et calcule ce dont la bande globale a besoin. Comme chaque compétence compte pour un quart de la moyenne, **une compétence faible tire la bande globale vers le bas** plus qu'on ne le croit, et une compétence améliorée peut la faire monter." },

@@ -11,9 +11,9 @@ export default {
   updated: '2026-11-01',
   title: 'Puntuación IELTS: qué significa cada banda y cómo se calcula la nota global',
   metaTitle: 'Puntuación IELTS explicada: la escala de 0 a 9, paso a paso – Alimun',
-  desc: 'Qué significa cada banda IELTS de 0 a 9, cómo se redondea la nota global, cuántos aciertos necesitas, cómo se corrigen Writing y Speaking y cómo subir media banda.',
+  desc: 'Qué significa cada banda IELTS de 0 a 9, cómo se redondea la nota global, cuántos aciertos necesitas y cómo subir media banda.',
   lead: 'Un resultado de IELTS son cinco números: una banda por cada destreza y una banda global. Cuando sabes **cómo se construyen esos números**, puedes leer cualquier requisito, entender de dónde sale tu nota y ver exactamente dónde está la siguiente media banda.',
-  photo: 'PH0',
+  photo: 'ielts-band-scores-reading-at-table',
   sticker: { draw: 'snail', say: 'Media banda cada vez, pero llegas.' },
   facts: [
     { n: 9, text: 'la banda más alta, Expert, en una escala que empieza en 0 y avanza en bandas enteras y medias' },
@@ -45,7 +45,7 @@ export default {
     } },
     { p: "La misma escala sirve para cada una de las cuatro destrezas y para el resultado global. Por eso los requisitos pueden ser tan precisos: una institución puede pedir un 6,5 global y fijar además un mínimo para una destreza, por ejemplo **no menos de 6 en Writing**." },
 
-    { figure: { photo: 'PH2', alt: 'Una calculadora, un lápiz y una nota adhesiva amarilla sobre una mesa', caption: 'La banda global es pura aritmética: sumas las cuatro bandas, divides entre cuatro y redondeas a la media banda más cercana.' } },
+    { figure: { photo: 'ielts-band-scores-calculator', alt: 'Una calculadora, un lápiz y una nota adhesiva amarilla sobre una mesa', caption: 'La banda global es pura aritmética: sumas las cuatro bandas, divides entre cuatro y redondeas a la media banda más cercana.' } },
 
     { h: 'Cómo se calcula la banda global' },
     { p: "La banda global es **la media de tus cuatro bandas**, redondeada a la banda entera o media banda más cercana. Sumas los cuatro resultados, divides entre cuatro y miras lo que queda después de la coma. Casi siempre el redondeo es evidente: una media de 6,1 se queda en 6, y una de 6,4 sube a 6,5." },
@@ -80,7 +80,7 @@ export default {
     { p: "Fíjate en la última columna. La misma banda exige **más aciertos en el Reading de General Training** que en el de Academic: unos 30 para la banda 6, frente a los unos 23 de Academic. Las bandas indican el mismo nivel de comprensión lectora en las dos versiones; la conversión solo refleja que los dos exámenes usan textos distintos. También significa que una nota de práctica de una versión no se convierte con la tabla de la otra." },
     { p: "En Listening, la tabla te da un objetivo concreto. Pasar de la banda 6 a la 7 exige **unos siete aciertos más**, de unos 23 a unos 30. Visto así, media banda son unas pocas preguntas, que muchas veces se pierden por una falta de ortografía, un plural olvidado o una respuesta escrita en la casilla equivocada." },
 
-    { figure: { photo: 'PH1', alt: 'Unos auriculares blancos sobre una pila de cuadernos negros', caption: 'En Listening cada acierto vale un punto sobre 40, y una palabra mal escrita no cuenta: revisa la ortografía.' } },
+    { figure: { photo: 'ielts-band-scores-open-book', alt: "Un libro abierto con las páginas en abanico", caption: "En Reading cada acierto vale un punto sobre 40, y una respuesta mal escrita no cuenta: revisa la ortografía." } },
 
     { h: 'Writing: cuatro criterios, dos tareas' },
     { p: "El Writing lo corrigen examinadores formados, no un recuento de aciertos. Cada una de las dos tareas se evalúa por separado con **cuatro criterios del mismo peso**, y la nota de la tarea es la media de los cuatro. Después, la banda de Writing combina las dos tareas, y la Task 2 pesa más que la Task 1: el ensayo cuenta más que la primera tarea, más corta." },
@@ -126,7 +126,7 @@ export default {
     } },
     { p: "IELTS Life Skills funciona de otra manera. Solo evalúa Speaking y Listening, en los niveles A1, A2 o B1, y el resultado es **apto o no apto**, no una banda. Se usa en vías como los visados familiares y la residencia permanente, donde solo se exige comprensión y expresión oral." },
 
-    { figure: { photo: 'PH4', alt: PH4_ALT_ES, caption: 'Las universidades fijan sus propios requisitos de IELTS, a menudo programa por programa: mira la banda global y el mínimo por destreza.' } },
+    { figure: { photo: 'ielts-band-scores-historic-library', alt: "El techo decorado y las altas estanterías de una biblioteca histórica", caption: "Las universidades fijan sus propios requisitos de IELTS, a menudo programa por programa: mira la banda global y el mínimo por destreza." } },
 
     { h: 'IELTS y el MCER' },
     { p: "Muchas instituciones, sobre todo en Europa, describen los niveles con el MCER, de A1 a C2. IELTS se ha relacionado con el MCER, pero **las bandas nunca se diseñaron para coincidir exactamente** con sus niveles, e IELTS recomienda a las instituciones usar las descripciones de las bandas al fijar requisitos." },
@@ -141,7 +141,7 @@ export default {
     { p: "Si una sola destreza te deja por debajo del objetivo, puede que no tengas que repetir todo el examen. **IELTS One Skill Retake** te permite repetir una de las cuatro destrezas, Listening, Reading, Writing o Speaking, en los 60 días siguientes a un IELTS completo hecho en ordenador en un centro examinador. Sirve para Academic y para General Training, pero no después de un examen en papel ni de IELTS Online, y solo puedes usarlo una vez por cada examen completo." },
     { p: "Recibes un nuevo Test Report Form con la nota repetida, marcada como retake, junto con tus resultados originales en las otras tres destrezas, y la banda global se recalcula. Tu Test Report Form original sigue siendo válido, así que **puedes usar el mejor de los dos**. El inconveniente es la aceptación: las instituciones tienen que adherirse, y no todas aceptan el retake. Pregunta a la que te presentas antes de reservar." },
 
-    { figure: { photo: 'PH3', alt: PH3_ALT_ES, caption: 'El Speaking es una conversación con un examinador, evaluada por fluidez y coherencia, vocabulario, gramática y pronunciación.' } },
+    { figure: { photo: 'ielts-band-scores-teacher-small-group', alt: "Un profesor hablando con un grupo reducido de adultos alrededor de un portátil", caption: "Una corrección basada en los cuatro criterios te muestra cuál está frenando tu Writing o tu Speaking." } },
 
     { h: 'Cómo subir media banda' },
     { p: "Empieza por las cuentas. Localiza la destreza más alejada del requisito y calcula qué necesita la banda global. Como cada destreza es un cuarto de la media, **una destreza floja tira de la banda global** hacia abajo más de lo que parece, y una destreza mejorada la puede subir." },

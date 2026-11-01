@@ -13,7 +13,7 @@ export default {
   metaTitle: 'Punteggi IELTS spiegati: la scala da 0 a 9, passo per passo – Alimun',
   desc: 'Cosa significa ogni band IELTS da 0 a 9, come si arrotonda il punteggio complessivo, quante risposte giuste servono, come si valutano Writing e Speaking.',
   lead: "Un risultato IELTS è fatto di cinque numeri: una band per ogni abilità e una band complessiva. Quando sai **come vengono costruiti quei numeri**, puoi leggere qualsiasi requisito, capire da dove arriva il tuo punteggio e vedere esattamente dove si nasconde il prossimo mezzo punto.",
-  photo: 'PH0',
+  photo: 'ielts-band-scores-reading-at-table',
   sticker: { draw: 'snail', say: 'Mezza band alla volta, ma ci arrivi.' },
   facts: [
     { n: 9, text: 'la band più alta, Expert, su una scala che parte da 0 e procede per band intere e mezze band' },
@@ -45,7 +45,7 @@ export default {
     } },
     { p: "La stessa scala vale per ciascuna delle quattro abilità e per il risultato complessivo. Per questo i requisiti possono essere così precisi: un ente può chiedere 6,5 complessivo e fissare anche un minimo per una singola abilità, per esempio **almeno 6 nel Writing**." },
 
-    { figure: { photo: 'PH2', alt: 'Una calcolatrice, una matita e un foglietto adesivo giallo su un tavolo', caption: 'La band complessiva è aritmetica pura: sommi le quattro band, dividi per quattro e arrotondi alla mezza band più vicina.' } },
+    { figure: { photo: 'ielts-band-scores-calculator', alt: 'Una calcolatrice, una matita e un foglietto adesivo giallo su un tavolo', caption: 'La band complessiva è aritmetica pura: sommi le quattro band, dividi per quattro e arrotondi alla mezza band più vicina.' } },
 
     { h: 'Come si calcola la band complessiva' },
     { p: "La band complessiva è **la media delle tue quattro band**, arrotondata alla band intera o alla mezza band più vicina. Sommi i quattro risultati, dividi per quattro e guardi cosa resta dopo la virgola. Quasi sempre l'arrotondamento è ovvio: una media di 6,1 diventa 6, una media di 6,4 diventa 6,5." },
@@ -80,7 +80,7 @@ export default {
     { p: "Guarda l'ultima colonna. La stessa band richiede **più risposte giuste nel Reading General Training** che nell'Academic: circa 30 punti per la band 6, contro i circa 23 dell'Academic. Le band indicano lo stesso livello di comprensione in entrambe le versioni; la conversione riflette semplicemente il fatto che i due test usano testi diversi. Significa anche che un punteggio di esercitazione di una versione non si converte con la tabella dell'altra." },
     { p: "Per il Listening la tabella ti dà un obiettivo concreto. Passare dalla band 6 alla band 7 richiede **circa sette risposte giuste in più**, da circa 23 a circa 30. Vista così, mezza band sono poche domande, spesso perse per un errore di spelling, un plurale dimenticato o una risposta scritta nel posto sbagliato." },
 
-    { figure: { photo: 'PH1', alt: 'Cuffie bianche appoggiate su una pila di quaderni neri', caption: 'Nel Listening ogni risposta giusta vale un punto su 40, e una parola scritta male non vale nulla: controlla lo spelling.' } },
+    { figure: { photo: 'ielts-band-scores-open-book', alt: "Un libro aperto con le pagine a ventaglio", caption: "Nel Reading ogni risposta giusta vale un punto su 40, e una parola scritta male non vale nulla: controlla lo spelling." } },
 
     { h: 'Writing: quattro criteri, due task' },
     { p: "Il Writing lo correggono esaminatori formati, non un conteggio di risposte giuste. Ognuno dei due task viene valutato da solo su **quattro criteri con lo stesso peso**, e il voto del task è la media dei quattro. La band del Writing combina poi i due task, e il Task 2 pesa più del Task 1: il saggio conta più del primo compito, più breve." },
@@ -126,7 +126,7 @@ export default {
     } },
     { p: "IELTS Life Skills funziona in modo diverso. Valuta solo Speaking e Listening, ai livelli A1, A2 o B1, e il risultato è **superato o non superato**, non una band. Si usa per percorsi come i visti familiari e la residenza permanente, dove servono solo ascolto e parlato." },
 
-    { figure: { photo: 'PH4', alt: PH4_ALT_IT, caption: 'Le università fissano i propri requisiti IELTS, spesso corso per corso: controlla la band complessiva e il minimo per ogni abilità.' } },
+    { figure: { photo: 'ielts-band-scores-historic-library', alt: "Il soffitto decorato e le alte librerie di una biblioteca storica", caption: "Le università fissano i propri requisiti IELTS, spesso corso per corso: controlla la band complessiva e il minimo per ogni abilità." } },
 
     { h: 'IELTS e il QCER' },
     { p: "Molti enti, soprattutto in Europa e anche in Italia, descrivono i livelli con il QCER, da A1 a C2. IELTS è stato messo in relazione con il QCER, ma **le band non sono mai state pensate per coincidere esattamente** con i livelli, e IELTS raccomanda agli enti di usare le descrizioni delle band quando fissano i requisiti." },
@@ -141,7 +141,7 @@ export default {
     { p: "Se è una sola abilità a tenerti sotto l'obiettivo, forse non devi rifare tutto il test. **IELTS One Skill Retake** ti permette di ripetere una delle quattro abilità, Listening, Reading, Writing o Speaking, entro 60 giorni da un test IELTS completo sostenuto al computer in un centro d'esame. Vale sia per l'Academic sia per il General Training, ma non dopo un test su carta o IELTS Online, e puoi usarlo una sola volta per ogni test completo." },
     { p: "Ricevi un nuovo Test Report Form con il nuovo punteggio, indicato come retake, insieme ai risultati originali delle altre tre abilità, e la band complessiva viene ricalcolata. Il Test Report Form originale resta valido, quindi **puoi usare il risultato migliore**. Il punto debole è l'accettazione: gli enti devono aderire, e non tutti accettano il retake. Chiedi all'ente a cui ti candidi prima di prenotare." },
 
-    { figure: { photo: 'PH3', alt: PH3_ALT_IT, caption: 'Lo Speaking è una conversazione con un esaminatore, valutata su fluidità e coerenza, lessico, grammatica e pronuncia.' } },
+    { figure: { photo: 'ielts-band-scores-teacher-small-group', alt: "Un insegnante che parla con un piccolo gruppo di adulti intorno a un portatile", caption: "Un riscontro sui quattro criteri ti mostra quale sta frenando il tuo Writing o il tuo Speaking." } },
 
     { h: 'Come guadagnare mezza band' },
     { p: "Parti dai conti. Trova l'abilità più lontana dal requisito e calcola cosa serve alla band complessiva. Poiché ogni abilità vale un quarto della media, **un'abilità debole tira giù la band complessiva** più di quanto si pensi, e un'abilità migliorata la può far salire." },

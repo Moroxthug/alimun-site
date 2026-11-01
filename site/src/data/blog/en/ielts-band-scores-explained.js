@@ -11,9 +11,9 @@ export default {
   updated: '2026-11-01',
   title: 'IELTS band scores explained: what each band means and how it is calculated',
   metaTitle: 'IELTS band scores explained: the 0 to 9 scale, step by step – Alimun',
-  desc: 'What each IELTS band from 0 to 9 means, how the overall band is rounded, how many correct answers you need, how Writing and Speaking are marked and how to gain half a band.',
+  desc: 'What each IELTS band from 0 to 9 means, how the overall band is rounded, how many correct answers you need and how to gain half a band.',
   lead: 'An IELTS result is five numbers: one band for each skill and an overall band. Once you know **how those numbers are built**, you can read any score requirement, see where your result comes from and work out exactly where the next half band is hiding.',
-  photo: 'PH0',
+  photo: 'ielts-band-scores-reading-at-table',
   sticker: { draw: 'snail', say: 'Half a band at a time still gets you there.' },
   facts: [
     { n: 9, text: 'the top IELTS band, called Expert, on a scale from 0 that moves in whole and half bands' },
@@ -45,7 +45,7 @@ export default {
     } },
     { p: "The same scale is used for each of the four skills and for the overall result. That is why requirements can be so precise: an organization can ask for an overall 6.5 and also set a minimum for one skill, for example **no less than 6 in Writing**." },
 
-    { figure: { photo: 'PH2', alt: 'A calculator and a pen on a desk next to a sheet of figures', caption: 'Your overall band is simple arithmetic: add the four skill bands, divide by four and round to the nearest half band.' } },
+    { figure: { photo: 'ielts-band-scores-calculator', alt: 'A calculator and a pen on a desk next to a sheet of figures', caption: 'Your overall band is simple arithmetic: add the four skill bands, divide by four and round to the nearest half band.' } },
 
     { h: 'How the overall band is calculated' },
     { p: "The overall band is **the average of your four skill bands**, rounded to the nearest whole or half band. Add the four results, divide by four, and look at what is left after the decimal point. In most cases the rounding is obvious: an average of 6.1 becomes 6, and an average of 6.4 becomes 6.5." },
@@ -80,7 +80,7 @@ export default {
     { p: "Look at the last column. The same band needs **more correct answers in General Training Reading** than in Academic Reading: about 30 marks for band 6, where Academic needs about 23. The bands mean the same level of reading ability in both versions; the conversion simply reflects that the two tests use different texts. It also means that a practice score from one version cannot be converted with the table of the other." },
     { p: "For Listening, the table gives you a practical target. Moving from band 6 to band 7 takes **roughly seven more correct answers**, from about 23 to about 30. Seen like that, half a band is a handful of questions, often lost to spelling, to a missed plural or to an answer written in the wrong place." },
 
-    { figure: { photo: 'PH1', alt: 'Headphones lying on an open notepad', caption: 'In Listening every correct answer is one mark out of 40, and a misspelled word earns nothing, so check your spelling.' } },
+    { figure: { photo: 'ielts-band-scores-open-book', alt: "An open book with its pages fanned out", caption: "In Reading every correct answer is one mark out of 40, and a misspelled answer earns nothing, so check your spelling." } },
 
     { h: 'Writing: four criteria, two tasks' },
     { p: "Writing is marked by trained examiners, not by a count of correct answers. Each of the two tasks is assessed on its own against **four criteria that carry equal weight**, and the task score is the average of the four. The Writing band then combines the two tasks, and Task 2 carries more weight than Task 1, so the essay counts for more than the shorter first task." },
@@ -126,7 +126,7 @@ export default {
     } },
     { p: "IELTS Life Skills works differently. It tests only Speaking and Listening, at A1, A2 or B1, and the result is a **pass or fail** rather than a band. It is used for routes such as family visas and settlement, where only speaking and listening are required." },
 
-    { figure: { photo: 'PH4', alt: 'Graduates in caps and gowns at a university ceremony', caption: 'Universities set their own IELTS requirements, often course by course: check the overall band and the minimum for each skill.' } },
+    { figure: { photo: 'ielts-band-scores-historic-library', alt: "The carved ceiling and tall bookshelves of a historic library", caption: "Universities set their own IELTS requirements, often course by course: check the overall band and the minimum for each skill." } },
 
     { h: 'IELTS and the CEFR' },
     { p: "Many organizations, especially in Europe, describe language levels with the CEFR, from A1 to C2. IELTS has been mapped to the CEFR, but **the bands were never designed to line up exactly** with the CEFR levels, and IELTS recommends that organizations use the band descriptions themselves when setting requirements." },
@@ -141,7 +141,7 @@ export default {
     { p: "If one skill keeps your overall band below the target, you may not need to take the whole test again. **IELTS One Skill Retake** lets you retake one of the four skills, Listening, Reading, Writing or Speaking, within 60 days of a full IELTS test taken on computer at a test center. It is available for both Academic and General Training, but not after a paper-based test or IELTS Online, and you can use it only once for each full test." },
     { p: "You receive a new Test Report Form that shows the retaken score, marked as a retake, together with your original results in the other three skills, and the overall band is recalculated. Your original Test Report Form stays valid, so **you can use whichever result is better**. The catch is acceptance: organizations have to opt in, and not all of them accept a retake. Ask the place you are applying to before you book." },
 
-    { figure: { photo: 'PH3', alt: 'Two people talking face to face across a table', caption: 'Speaking is a conversation with an examiner, marked on fluency and coherence, vocabulary, grammar and pronunciation.' } },
+    { figure: { photo: 'ielts-band-scores-teacher-small-group', alt: "A teacher talking with a small group of adults around a laptop", caption: "Feedback on the four criteria shows you which one is holding your Writing or Speaking back." } },
 
     { h: 'How to move up half a band' },
     { p: "Start with the arithmetic. Find out which skill sits furthest below the requirement, then work out what the overall band needs. Because each skill is a quarter of the average, **one weak skill pulls the overall band down** more than most people expect, and one improved skill can lift it." },
