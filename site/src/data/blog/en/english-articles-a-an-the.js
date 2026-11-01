@@ -13,7 +13,7 @@ export default {
   metaTitle: 'English articles a, an, the and no article: the rules – Alimun',
   desc: 'When to use a, an, the or no article in English: an hour, a university, the Alps, Lake Como, go to school, she is a doctor, and the classic mistakes.',
   lead: "A, an and the are among the most common words in English, and still they trip up learners at every level. The good news is that **a handful of patterns covers most sentences**: whether the listener knows what you mean, whether you are talking in general, and a few groups of names and fixed phrases. Here they are, with the mistakes that speakers of Italian, Spanish, French and Portuguese make most often.",
-  photo: 'english-articles-HEADER',
+  photo: 'english-articles-misty-mountains',
   sticker: { draw: 'dog', say: 'Dogs are loyal. The dog next door is very loyal.' },
   facts: [
     { label: 'an hour', text: 'a or an depends on the first sound, not the first letter: an hour, a university, an MBA' },
@@ -54,7 +54,7 @@ export default {
       ['We have **the same** teacher as last year.', 'The same: always with the.'],
     ] },
 
-    { figure: { photo: 'english-articles-FIG1', alt: 'ALT1', caption: 'CAP1' } },
+    { figure: { photo: 'english-articles-playing-guitar', alt: "A hand playing an acoustic guitar", caption: "I love music: no article for music in general. But you play the guitar, because instruments usually take the." } },
 
     { h: 'No article: talking about things in general' },
     { p: "This is the rule that causes the most mistakes for speakers of Romance languages. When you talk about **things in general, English uses a plural or uncountable noun with no article**. Dogs are loyal means dogs as a species. I love music means music of any kind. Life is short, money is not everything, and coffee keeps me awake are all about the thing in general, so none of them takes the." },
@@ -94,7 +94,7 @@ export default {
     } },
     { p: "The exceptions among countries have a clear reason: the name contains a common noun such as **states, kingdom or republic**, or it is a plural. So you say the United States, the UK, the Czech Republic and the Netherlands, but Italy, Germany and Brazil. Museums, hotels and theaters usually take the as well: the Louvre, the National Gallery. Airports and universities named after a city do not: Heathrow Airport, Harvard University, but the University of Tokyo." },
 
-    { figure: { photo: 'english-articles-FIG2', alt: 'ALT2', caption: 'CAP2' } },
+    { figure: { photo: 'english-articles-lake-and-peaks', alt: "A clear lake with a wooden fence below rocky mountain peaks", caption: "A lake below a mountain range: Lake Garda and Lake Como take no article, while ranges take the, as in the Alps or the Dolomites." } },
 
     { h: 'Meals, sports and languages' },
     { p: "Three everyday groups take no article when you talk about them in general. **Meals**: have breakfast, what's for dinner?, we met for lunch. **Sports and games**: play tennis, watch football, she is good at chess. **Languages**: I speak French, Japanese is hard to learn, she is studying Portuguese. In all three, adding the sounds wrong to a native speaker, and it is one of the most frequent slips for learners whose language uses an article here." },
@@ -118,7 +118,7 @@ export default {
     { note: { title: 'Hospital in the US and the UK', text: "In British English, a patient is **in hospital** and goes to hospital. In American English you need the: she spent two weeks **in the hospital**. American English also says in school where British English says at school: all my kids are still in school.", draw: 'cat' } },
     { p: "Home and work behave in a similar way: go home, be at home, start work, leave work, all without an article. Note that home also drops the preposition after go: you go home, not go to home. Town works like this in British English too: I'm going to town this afternoon, she works in town." },
 
-    { figure: { photo: 'english-articles-FIG3', alt: 'ALT3', caption: 'CAP3' } },
+    { figure: { photo: 'english-articles-doctors-x-ray', alt: "Three medical workers in scrubs looking at an X-ray", caption: "They are doctors, so they need a in the singular: she is a doctor. And it is an X-ray, because X starts with the sound “eks”." } },
 
     { h: 'Jobs: she is a doctor' },
     { p: "When you say what someone does for a living, English needs a or an: **she is a doctor, he is an engineer**, I want to be a teacher. Many European languages leave the article out here, so “she is doctor” is a very common mistake. The same applies to saying what something is: it's a good idea, that's a nice car, he is a Buddhist." },
@@ -142,7 +142,7 @@ export default {
     { p: "Italian and European Portuguese add one more trap: the article before a possessive, as in la mia macchina or a minha casa. English never combines the two, so it is **my car, not the my car**. And all four languages leave out the article with jobs (è medico, es médica, elle est médecin, ela é médica), which becomes “she is doctor” instead of she is a doctor." },
     { note: { title: 'A quick test for generalizations', text: "Before you write the, ask yourself: **which ones?** If you can answer, for example the dogs next door or the music at the party, keep the. If the answer is “all of them, in general”, drop it: dogs are loyal, music makes me happy.", draw: 'snail' } },
 
-    { figure: { photo: 'english-articles-FIG4', alt: 'ALT4', caption: 'CAP4' } },
+    { figure: { photo: 'english-articles-family-breakfast', alt: "A family with a small child having breakfast in a bright kitchen", caption: "We have breakfast together: no article with meals in general, but the breakfast at this hotel is one specific meal." } },
 
     { h: 'Common mistakes' },
     { p: "These are the article mistakes teachers hear most often from Italian, Spanish, French and Portuguese speakers, and each one breaks a pattern from this article." },

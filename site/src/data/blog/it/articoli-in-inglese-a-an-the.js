@@ -13,7 +13,7 @@ export default {
   metaTitle: 'Articoli in inglese a, an, the: regole ed errori tipici – Alimun',
   desc: "Quando usare a, an, the o nessun articolo in inglese: an hour, a university, the Alps, Lake Como, go to school, she is a doctor e gli errori tipici degli italiani.",
   lead: "A, an e the sono tra le parole più frequenti dell'inglese, eppure fanno inciampare studenti di ogni livello, soprattutto chi parla italiano. Il motivo è semplice: **noi usiamo l'articolo determinativo dove l'inglese non lo vuole**, per esempio quando parliamo in generale. Qui trovi gli schemi che coprono quasi tutte le frasi e gli errori che gli insegnanti sentono più spesso dagli italiani.",
-  photo: 'english-articles-HEADER',
+  photo: 'english-articles-misty-mountains',
   sticker: { draw: 'dog', say: 'Dogs are loyal. I cani sono fedeli, senza the.' },
   facts: [
     { label: 'an hour', text: 'la scelta tra a e an dipende dal primo suono, non dalla lettera: an hour, a university, an MBA' },
@@ -54,7 +54,7 @@ export default {
       ['We have **the same** teacher as last year.', 'Abbiamo la stessa insegnante dell’anno scorso. The same vuole sempre the.'],
     ] },
 
-    { figure: { photo: 'english-articles-FIG1', alt: 'ALT1', caption: 'CAP1' } },
+    { figure: { photo: 'english-articles-playing-guitar', alt: "Una mano che suona una chitarra acustica", caption: "I love music, amo la musica: niente articolo per la musica in generale. Ma play the guitar, perché gli strumenti di solito vogliono the." } },
 
     { h: 'Nessun articolo: quando parli in generale' },
     { p: "Questa è la regola che causa più errori a chi parla italiano. Quando parli di **cose in generale, l'inglese usa un sostantivo plurale o non numerabile senza articolo**. Noi diciamo i cani sono fedeli, amo la musica, la vita è breve; l'inglese dice dogs are loyal, I love music, life is short. Pensa al film di Benigni: La vita è bella, in inglese, è uscito come Life Is Beautiful, senza the." },
@@ -94,7 +94,7 @@ export default {
     } },
     { p: "Per un italiano i due gruppi più insidiosi sono i paesi e i laghi, perché noi diciamo l'Italia, la Francia, il lago di Como. In inglese invece si dice **Italy, France e Lake Como**, senza articolo. Le eccezioni tra i paesi hanno una ragione chiara: il nome contiene un sostantivo comune come states, kingdom o republic, oppure è un plurale. Quindi the United States, the UK, the Czech Republic e the Netherlands, ma Italy, Germany e Brazil. Musei, hotel e teatri di solito vogliono the (the Louvre, the National Gallery); aeroporti e università con il nome della città no: Heathrow Airport, Harvard University, ma the University of Tokyo." },
 
-    { figure: { photo: 'english-articles-FIG2', alt: 'ALT2', caption: 'CAP2' } },
+    { figure: { photo: 'english-articles-lake-and-peaks', alt: "Un lago limpido con una staccionata di legno sotto alte cime rocciose", caption: "Un lago sotto una catena montuosa: Lake Garda e Lake Como non vogliono articolo, le catene invece sì, come the Alps o the Dolomites." } },
 
     { h: 'Pasti, sport e lingue' },
     { p: "Tre gruppi della vita quotidiana non vogliono articolo quando ne parli in generale. **I pasti**: have breakfast, what's for dinner?, we met for lunch. **Sport e giochi**: play tennis, watch football, she is good at chess. **Le lingue**: I speak French, Japanese is hard to learn. Con i pasti e gli sport l'italiano ci aiuta, perché diciamo fare colazione e giocare a tennis senza articolo. Con le lingue invece no: diciamo l'inglese è difficile, e l'inglese vuole English is difficult." },
@@ -118,7 +118,7 @@ export default {
     { note: { title: 'Hospital negli Stati Uniti e nel Regno Unito', text: "In inglese britannico un paziente è **in hospital** e va to hospital, come il nostro in ospedale. In inglese americano serve the: she spent two weeks **in the hospital**. Gli americani dicono anche in school dove i britannici dicono at school: all my kids are still in school.", draw: 'cat' } },
     { p: "Home e work si comportano allo stesso modo: go home, be at home, start work, leave work, tutti senza articolo. Nota che dopo go, home perde anche la preposizione: go home, non go to home. In inglese britannico funziona così anche town: I'm going to town this afternoon, she works in town." },
 
-    { figure: { photo: 'english-articles-FIG3', alt: 'ALT3', caption: 'CAP3' } },
+    { figure: { photo: 'english-articles-doctors-x-ray', alt: "Tre operatori sanitari in divisa che guardano una radiografia", caption: "They are doctors: al singolare serve a, she is a doctor, anche se in italiano diciamo è medico. E si dice an X-ray, perché la X si legge “eks”." } },
 
     { h: 'Mestieri: she is a doctor' },
     { p: "Quando dici che lavoro fa qualcuno, l'inglese vuole a o an: **she is a doctor, he is an engineer**, I want to be a teacher. In italiano diciamo è medico, oppure fa il medico, e così nascono due errori classici: “she is doctor” e “she does the doctor”. Lo stesso vale quando dici che cos'è qualcosa: it's a good idea, that's a nice car." },
@@ -142,7 +142,7 @@ export default {
     { p: "Gli altri parlanti di lingue romanze fanno gli stessi errori, per la stessa ragione. Lo spagnolo dice los perros son leales, il francese les chiens sont fidèles, il portoghese os cachorros são leais, e tutti e tre danno “the dogs are loyal”. Se lavori in un gruppo internazionale sentirai the life e the English dappertutto, e ora sai da dove vengono." },
     { note: { title: 'Un test veloce per le generalizzazioni', text: "Prima di scrivere the, chiediti: **quali?** Se sai rispondere, per esempio the dogs next door o the music at the party, tieni the. Se la risposta è “tutti, in generale”, toglilo: dogs are loyal, music makes me happy.", draw: 'snail' } },
 
-    { figure: { photo: 'english-articles-FIG4', alt: 'ALT4', caption: 'CAP4' } },
+    { figure: { photo: 'english-articles-family-breakfast', alt: "Una famiglia con un bambino piccolo che fa colazione in una cucina luminosa", caption: "We have breakfast together, facciamo colazione insieme: niente articolo con i pasti in generale, ma the breakfast at this hotel è una colazione precisa." } },
 
     { h: 'Errori frequenti' },
     { p: "Questi sono gli errori con gli articoli che gli insegnanti sentono più spesso da chi parla italiano, e ognuno infrange uno schema di questo articolo." },

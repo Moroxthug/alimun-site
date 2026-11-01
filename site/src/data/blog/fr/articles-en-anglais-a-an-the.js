@@ -13,7 +13,7 @@ export default {
   metaTitle: 'Articles en anglais a, an, the : règles et erreurs typiques – Alimun',
   desc: "Quand utiliser a, an, the ou aucun article en anglais : an hour, a university, the Alps, Lake Geneva, go to school, she is a doctor et les erreurs typiques.",
   lead: "A, an et the comptent parmi les mots les plus fréquents de l'anglais, et pourtant ils font trébucher les apprenants à tous les niveaux, surtout les francophones. La raison est simple : **le français met l'article défini là où l'anglais n'en veut pas**, par exemple quand on parle en général. Voici les règles qui couvrent presque toutes les phrases, et les erreurs que les professeurs entendent le plus souvent.",
-  photo: 'english-articles-HEADER',
+  photo: 'english-articles-misty-mountains',
   sticker: { draw: 'dog', say: 'Dogs are loyal. Les chiens sont fidèles, sans the.' },
   facts: [
     { label: 'an hour', text: "a ou an dépend du premier son, pas de la lettre : an hour, a university, an MBA" },
@@ -54,7 +54,7 @@ export default {
       ['We have **the same** teacher as last year.', "Nous avons la même professeure que l'année dernière. The same prend toujours the."],
     ] },
 
-    { figure: { photo: 'english-articles-FIG1', alt: 'ALT1', caption: 'CAP1' } },
+    { figure: { photo: 'english-articles-playing-guitar', alt: "Une main qui joue de la guitare acoustique", caption: "I love music, j'aime la musique : pas d'article pour la musique en général. Mais play the guitar, parce que les instruments prennent en général the." } },
 
     { h: 'Pas d’article : quand on parle en général' },
     { p: "C'est la règle qui provoque le plus d'erreurs chez les francophones. Quand tu parles de **choses en général, l'anglais utilise un nom pluriel ou indénombrable sans article**. Nous disons les chiens sont fidèles, j'aime la musique, la vie est courte ; l'anglais dit dogs are loyal, I love music, life is short. Pense au film de Benigni : La vie est belle est sorti en anglais sous le titre Life Is Beautiful, sans the." },
@@ -94,7 +94,7 @@ export default {
     } },
     { p: "Pour un francophone, les deux groupes les plus piégeux sont les pays et les lacs, parce que nous disons la France, le Canada, le lac Léman. En anglais, on dit **France, Canada et Lake Geneva**, sans article. Les exceptions parmi les pays ont une raison claire : le nom contient un nom commun comme states, kingdom ou republic, ou il est au pluriel. On dit donc the United States, the UK, the Czech Republic et the Netherlands, mais France, Belgium et Switzerland. Les musées, hôtels et théâtres prennent souvent the (the Louvre, the National Gallery) ; les aéroports et universités qui portent le nom de leur ville, non : Heathrow Airport, Harvard University, mais the University of Tokyo." },
 
-    { figure: { photo: 'english-articles-FIG2', alt: 'ALT2', caption: 'CAP2' } },
+    { figure: { photo: 'english-articles-lake-and-peaks', alt: "Un lac limpide avec une barrière en bois au pied de sommets rocheux", caption: "Un lac au pied d'une chaîne de montagnes : Lake Geneva et Lake Annecy ne prennent pas d'article, alors que les chaînes en prennent un, comme the Alps ou the Pyrenees." } },
 
     { h: 'Repas, sports et langues' },
     { p: "Trois groupes du quotidien ne prennent pas d'article quand on en parle en général. **Les repas** : have breakfast, what's for dinner?, we met for lunch. **Les sports et les jeux** : play tennis, watch football, she is good at chess. **Les langues** : I speak French, Japanese is hard to learn. Dans les trois cas, le français met un article : après le déjeuner, je joue au tennis, l'anglais est difficile. D'où after the lunch, play the tennis et the English is difficult, trois erreurs très fréquentes." },
@@ -118,7 +118,7 @@ export default {
     { note: { title: "Hospital aux États-Unis et au Royaume-Uni", text: "En anglais britannique, un patient est **in hospital** et va to hospital, sans article. En anglais américain, il faut the, comme en français à l'hôpital : she spent two weeks **in the hospital**. Les Américains disent aussi in school là où les Britanniques disent at school : all my kids are still in school.", draw: 'cat' } },
     { p: "Home et work fonctionnent de la même façon : go home, be at home, start work, leave work, tous sans article. Remarque qu'après go, home perd aussi la préposition : go home, pas go to home. En anglais britannique, town marche ainsi également : I'm going to town this afternoon, she works in town." },
 
-    { figure: { photo: 'english-articles-FIG3', alt: 'ALT3', caption: 'CAP3' } },
+    { figure: { photo: 'english-articles-doctors-x-ray', alt: "Trois soignants en tenue qui regardent une radio", caption: "They are doctors : au singulier, il faut a, she is a doctor, même si nous disons elle est médecin. Et on dit an X-ray, parce que X se prononce « eks »." } },
 
     { h: 'Les métiers : she is a doctor' },
     { p: "Quand tu dis ce que quelqu'un fait dans la vie, l'anglais exige a ou an : **she is a doctor, he is an engineer**, I want to be a teacher. En français, on dit elle est médecin, sans article, et c'est ainsi que naît une des erreurs les plus courantes : « she is doctor ». Même chose quand tu dis ce qu'est une chose : it's a good idea, that's a nice car." },
@@ -142,7 +142,7 @@ export default {
     { p: "Les locuteurs des autres langues romanes font les mêmes erreurs, pour la même raison. L'italien dit i cani sono fedeli, l'espagnol los perros son leales et le portugais os cachorros são leais, et les trois donnent « the dogs are loyal ». Les Italiens et les Portugais y ajoutent the my car, parce que leur langue met un article devant le possessif." },
     { note: { title: 'Un test rapide pour les généralités', text: "Avant d'écrire the, demande-toi : **lesquels ?** Si tu peux répondre, par exemple the dogs next door ou the music at the party, garde the. Si la réponse est « tous, en général », supprime-le : dogs are loyal, music makes me happy.", draw: 'snail' } },
 
-    { figure: { photo: 'english-articles-FIG4', alt: 'ALT4', caption: 'CAP4' } },
+    { figure: { photo: 'english-articles-family-breakfast', alt: "Une famille avec un jeune enfant qui prend le petit-déjeuner dans une cuisine lumineuse", caption: "We have breakfast together, nous prenons le petit-déjeuner ensemble : pas d'article avec les repas en général, mais the breakfast at this hotel est un repas précis." } },
 
     { h: 'Les erreurs fréquentes' },
     { p: "Voici les erreurs d'article que les professeurs entendent le plus souvent chez les francophones, et chacune enfreint une règle de cet article." },
