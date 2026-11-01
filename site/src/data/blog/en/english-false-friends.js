@@ -61,6 +61,8 @@ export default {
     { p: "Two of these deserve a closer look because they come up in almost every conversation. **Actually** is used to add a fact, to correct someone politely or to show surprise: “Actually, I've never been to London.” If you want to say that something is true now, use currently, at the moment or nowadays: “I'm currently working in Milan.”" },
     { p: "**Eventually** means that something happens in the end, usually after a long time or a lot of effort: “We eventually found the hotel at midnight.” It is never uncertain. If you mean “possibly” or “if necessary”, as the Italian eventualmente and the French éventuellement do, say if necessary, if needed or possibly: “Call me if necessary.”" },
 
+    { p: "One more pair belongs here because it comes up at school and at work. A **lecture** in English is a formal talk on a serious subject, given to a group of people, especially students, and it can also be a long, serious talk telling someone off. It is never reading, which is lettura in Italian, lectura in Spanish, lecture in French and leitura in Portuguese. “I have a lecture at nine” means you are going to listen to a talk, not to read a book." },
+
     { figure: { photo: 'english-false-friends-factory', alt: 'Workers and machines inside a large factory hall', caption: 'A factory is a fábrica in Spanish and a fabbrica in Italian. The English fabric means cloth, the material a factory like this might weave.' } },
 
     { h: 'Partial false friends' },
@@ -72,6 +74,7 @@ export default {
       ['My brother is in **college**; he studies engineering.', 'in American English, at university'],
       ['She is very **educated**, but not always very polite.', 'educated means she has studied a lot'],
     ] },
+    { p: "Agenda is a quieter partial friend. In English, an **agenda** is a list of matters to be discussed at a meeting, or a set of aims, sometimes hidden ones. In Italian and Spanish, agenda is also the little book where you write your appointments, which in English is a planner, or a diary in British English." },
     { note: { title: 'Chips have three meanings', text: "In British English, **chips** are long fried potatoes, what Americans call fries or French fries. In American English, chips are thin, crunchy slices sold in bags, which the British call crisps. The French chips are those crunchy slices too. Same word, three different plates, depending on where you are.", draw: 'snail' } },
 
     { h: 'How to spot a false friend in a text' },

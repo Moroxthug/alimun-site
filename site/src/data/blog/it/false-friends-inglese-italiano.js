@@ -35,6 +35,7 @@ export default {
     { p: "L'inglese è una lingua germanica, ma una parte molto grande del suo vocabolario è arrivata dal francese dopo la conquista normanna del 1066, e dal latino attraverso la lingua della chiesa, della scienza e del diritto. L'italiano viene dal latino. Così inglese e italiano condividono migliaia di radici, ma **una radice comune non garantisce un significato comune**." },
     { p: "Le parole continuano a cambiare dopo essere state prese in prestito. Attuale viene dal latino actualis, legato all'agire. In italiano si è fissato sul senso di “del momento presente”: il Treccani lo dà come significato comune, e attualmente vuol dire “ora, al momento”. In inglese actual ha preso il senso di “reale, effettivo”, ed è per questo che **actually** vuol dire “in realtà” e non “attualmente”." },
     { p: "Morbido è un altro buon esempio. Il latino morbidus viene da morbus, malattia, come ricorda il Treccani. L'inglese ha tenuto il legame con la malattia: per l'Oxford Learner's Dictionaries, **morbid** descrive un forte interesse per cose tristi o spiacevoli, soprattutto la malattia e la morte. In italiano la parola ha preso un'altra strada, e un cuscino morbido in inglese è a soft pillow." },
+    { p: "Libreria e library vengono entrambe dal latino liber, libro. Il Treccani registra per libreria, come primo senso, una raccolta di libri, poi la stanza o il mobile che li contiene e infine il negozio dove si vendono. L'inglese ha tenuto il senso della raccolta: **a library** è il posto dove consulti i libri o li prendi in prestito. L'italiano di oggi usa libreria soprattutto per il negozio e per il mobile, e chiama biblioteca il luogo del prestito." },
     { note: { title: 'A volte il vecchio significato sopravvive', text: "Anche in inglese sensible voleva dire “percepibile con i sensi” o “consapevole”. L'Oxford Learner's Dictionaries elenca ancora “aware of something” come senso formale, come in **sensible of the danger**. Nell'inglese di oggi, però, sensible vuol dire assennato, ragionevole, e la parola per il nostro sensibile è sensitive.", draw: 'cat' } },
 
     { h: 'I falsi amici più comuni per chi parla italiano' },
@@ -95,6 +96,17 @@ export default {
     { p: "Assistere a una lezione o a uno spettacolo si dice **to attend**, mentre to assist vuol dire aiutare. Romanzo è a novel, e una romance è una storia d'amore. Magazzino è a warehouse, mentre magazine è una rivista. E un'avvertenza utile al supermercato: preservativo in inglese è condom, mentre preservative è il conservante sull'etichetta del cibo." },
     { figure: { photo: 'english-false-friends-family', alt: 'Una famiglia riunita', caption: 'Zii, cugini e nonni in inglese sono relatives, i parenti. I parents sono soltanto la mamma e il papà.' } },
 
+    { h: 'Falsi amici a scuola e al lavoro' },
+    { p: "Alcuni falsi amici compaiono soprattutto in aula e in ufficio, e conviene conoscerli prima di una riunione o di un esame. **A lecture** in inglese è una lezione o una conferenza, un discorso formale su un argomento serio davanti a un gruppo di persone, spesso studenti. Può essere anche una ramanzina, una lunga predica a qualcuno che ha sbagliato. Non è mai la lettura, che in inglese è reading: “I have a lecture at nine” vuol dire che alle nove hai lezione, non che devi leggere un libro." },
+    { p: "L'agenda è un falso amico a metà. In inglese **an agenda** è l'ordine del giorno di una riunione, oppure un insieme di obiettivi, a volte nascosti, come in a hidden agenda. L'agenda dove scrivi gli appuntamenti è a planner, o a diary in inglese britannico. Allo stesso modo, confrontare due prezzi si dice to compare, mentre to confront vuol dire affrontare una situazione o una persona difficile." },
+    { p: "Infine estate, che sembra la nostra stagione preferita ma non c'entra niente. In inglese **an estate** è una grande proprietà terriera in campagna, oppure l'insieme dei beni che una persona lascia quando muore, e in inglese britannico anche un complesso di case costruite insieme. L'estate, la stagione, è summer." },
+    { examples: [
+      ['The **lecture** starts at nine in room 4.', 'la lezione comincia alle nove in aula 4'],
+      ["What's on the **agenda** for today's meeting?", "qual è l'ordine del giorno della riunione di oggi?"],
+      ['Let’s **compare** the two offers before we decide.', 'confrontiamo le due offerte prima di decidere'],
+      ['She had to **confront** her manager about the problem.', 'ha dovuto affrontare il suo responsabile per il problema'],
+      ['They spent the **summer** on a large **estate** in Tuscany.', "hanno passato l'estate in una grande tenuta in Toscana"],
+    ] },
     { figure: { photo: 'english-false-friends-lecture', alt: 'Un pubblico che ascolta una conferenza', caption: 'Queste persone stanno assistendo a una conferenza: in inglese they are attending a talk. To assist vuol dire aiutare.' } },
 
     { h: 'Inglese britannico e americano' },
