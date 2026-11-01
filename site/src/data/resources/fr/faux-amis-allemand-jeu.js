@@ -4,7 +4,7 @@ export default {
   key: 'german-false-friends', site: 'fr', slug: 'faux-amis-allemand-jeu', kind: 'game', course: 'German', level: 'Tous niveaux',
   draw: 'ghost', tint: 'lime', published: '2026-11-01',
   title: 'Jeu des faux amis allemands : un Gift, est-ce un cadeau ?',
-  metaTitle: 'Jeu des faux amis allemands : Gift, Handy, Rat et les autres – Alimun',
+  metaTitle: 'Faux amis allemands : le jeu avec Gift, Handy, Rat – Alimun',
   desc: "Un jeu gratuit avec des faux amis allemands : das Gift, c'est du poison, pas un cadeau, et der Rat n'est pas un rat. Devine le vrai sens de dix mots.",
   lead: "Certains mots allemands ressemblent à de l'anglais, ou à du français, et veulent dire tout autre chose. Das Gift, c'est du poison et das Handy, ton portable. Tu reconnais les autres ?",
   instructions: 'Que veut-il vraiment dire ?',

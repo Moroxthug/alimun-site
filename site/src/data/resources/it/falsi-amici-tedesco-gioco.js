@@ -4,7 +4,7 @@ export default {
   key: 'german-false-friends', site: 'it', slug: 'falsi-amici-tedesco-gioco', kind: 'game', course: 'German', level: 'Tutti i livelli',
   draw: 'ghost', tint: 'lime', published: '2026-11-01',
   title: 'Gioco dei falsi amici in tedesco: un Gift è un regalo?',
-  metaTitle: 'Falsi amici in tedesco, il gioco: Gift, Handy, Chef e altri – Alimun',
+  metaTitle: 'Falsi amici in tedesco: gioco con Gift, Handy, Chef – Alimun',
   desc: "Un gioco gratis con i falsi amici del tedesco: das Gift è il veleno, non un regalo, e der Chef è il capo. Indovina cosa significano davvero dieci parole.",
   lead: "Alcune parole tedesche sembrano inglesi, o italiane, e vogliono dire tutt'altro. Das Gift è il veleno e das Handy è il cellulare. Riconosci le altre?",
   instructions: 'Cosa significa davvero?',

@@ -4,7 +4,7 @@ export default {
   key: 'english-homophones', site: 'es', slug: 'homofonos-ingles-juego', kind: 'game', course: 'English', level: 'Todos los niveles',
   draw: 'cat', tint: 'coral', published: '2026-11-01',
   title: "Juego de homófonos en inglés: ¿their, there o they're?",
-  metaTitle: "Homófonos en inglés: juego con their, there, they're y más – Alimun",
+  metaTitle: "Juego de homófonos en inglés: their, there, they're – Alimun",
   desc: "Un juego gratis con diez grupos de palabras inglesas que suenan igual pero se escriben distinto, de their y there a piece y peace. Elige la forma correcta.",
   lead: "¿Their, there o they're? ¿Your o you're? Completa diez frases con la palabra bien escrita y luego une cada palabra con su significado.",
   instructions: '¿Qué forma completa la frase?',

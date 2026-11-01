@@ -4,7 +4,7 @@ export default {
   draw: 'pretzel', tint: 'sun', published: '2026-11-01',
   title: 'Juego de la comida en alemán: Brezel, Brötchen y Spätzle',
   metaTitle: 'Comida en alemán, el juego: Brezel, Brötchen, Spätzle – Alimun',
-  desc: 'Un juego gratis con palabras alemanas de comida y bebida: adivina qué son Brötchen, Schorle y Eintopf, elige el artículo correcto y aprende los nombres regionales.',
+  desc: 'Un juego gratis con palabras alemanas de comida: adivina qué son Brötchen, Schorle y Eintopf, elige el artículo correcto y aprende los nombres regionales.',
   lead: 'Si desayunas en Múnich, pides una Semmel. En Berlín, lo mismo se llama Schrippe. Diez palabras alemanas de comida, sus artículos y alguna sorpresa regional.',
   instructions: '¿Qué significa, o cuál es el artículo correcto?',
   about: [

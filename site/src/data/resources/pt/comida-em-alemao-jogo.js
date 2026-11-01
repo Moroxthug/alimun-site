@@ -1,0 +1,37 @@
+// Resource: game. German food and drink nouns, their articles and regional words (Semmel, Schrippe, Breze, Erdapfel). German words stay German; questions, options and explanations are in Portuguese. Checked against Duden.
+export default {
+  key: 'german-food', site: 'pt', slug: 'comida-em-alemao-jogo', kind: 'game', course: 'German', level: 'Todos os níveis',
+  draw: 'pretzel', tint: 'sun', published: '2026-11-01',
+  title: 'Jogo da comida em alemão: Brezel, Brötchen e Spätzle',
+  metaTitle: 'Comida em alemão, o jogo: Brezel, Brötchen e Spätzle – Alimun',
+  desc: 'Um jogo grátis com palavras alemãs de comida e bebida: adivinhe o que são Brötchen, Schorle e Eintopf, escolha o artigo certo e conheça os nomes regionais.',
+  lead: 'No café da manhã em Munique, você pede uma Semmel. Em Berlim, a mesma coisa se chama Schrippe. Dez palavras alemãs de comida, seus artigos e algumas surpresas regionais.',
+  instructions: 'O que significa, ou qual é o artigo certo?',
+  about: [
+    'As palavras de comida estão entre as primeiras de que você precisa em alemão, e cada uma vem com o seu artigo: der Kuchen, die Kartoffel, das Brötchen. Se você aprende o artigo junto com a palavra, depois precisa adivinhar muito menos.',
+    'O alemão também muda de região para região. O mesmo pãozinho é Brötchen, Semmel ou Schrippe dependendo de onde você compra, e na Áustria uma batata pode ser um Erdapfel.',
+  ],
+  items: [
+    { q: 'die Brezel', options: ['um pretzel', 'um pãozinho', 'um sonho', 'um waffle'], a: 0, why: 'die Brezel = o pretzel. Na Baviera e na Áustria também se diz die Breze.' },
+    { q: 'das Brötchen', options: ['uma torrada', 'um pãozinho', 'uma migalha de pão', 'um pão inteiro'], a: 1, why: 'das Brötchen = o pãozinho. Na Baviera e na Áustria se diz die Semmel, e em Berlim um pãozinho comprido com um corte em cima é die Schrippe.' },
+    { q: 'Spätzle: qual é o artigo certo?', options: ['der', 'das', 'die, porque a palavra é plural', 'die, porque a palavra é feminina'], a: 2, why: 'die Spätzle são pequenos macarrões de ovo da Suábia. O Duden registra a palavra só no plural, por isso ela leva die.' },
+    { q: 'der Kuchen', options: ['uma cozinha', 'um biscoito', 'um cozinheiro', 'um bolo'], a: 3, why: 'der Kuchen = o bolo. Não confunda com die Küche, a cozinha, nem com der Koch, o cozinheiro.' },
+    { q: 'die Schorle', options: ['vinho ou suco de maçã com água com gás', 'um ponche quente', 'cerveja com limonada', 'um milk-shake'], a: 0, why: 'die Schorle é vinho ou suco de maçã misturado com água com gás, como a Apfelschorle. O Duden também aceita das Schorle, que se ouve em algumas regiões.' },
+    { q: 'der Aufschnitt', options: ['um corte no dedo', 'frios fatiados', 'uma fatia de bolo', 'um sanduíche'], a: 1, why: 'der Aufschnitt = os frios fatiados: linguiça, presunto e carne assada em fatias, muitas vezes servidos numa travessa.' },
+    { q: 'Kartoffel: qual é o artigo certo?', options: ['der', 'das', 'die', 'muda de região para região'], a: 2, why: 'die Kartoffel = a batata. Na Áustria e em algumas outras regiões também se diz der Erdapfel, literalmente maçã da terra.' },
+    { q: 'das Abendbrot', options: ['um jantar simples, geralmente com pão', 'o último pão da padaria', 'um pão doce de sobremesa', 'um lanche de madrugada no bar'], a: 0, why: 'das Abendbrot, literalmente pão da noite, é um jantar simples, geralmente pão com frios e queijo.' },
+    { q: 'der Eintopf', options: ['um vaso de flores', 'um ensopado grosso feito numa panela só', 'uma porção individual', 'um bule de chá'], a: 1, why: 'der Eintopf, literalmente uma panela, é um ensopado farto em que tudo cozinha junto.' },
+    { q: 'Senf: qual é o artigo certo?', options: ['die', 'das', 'der', 'muda de região para região'], a: 2, why: 'der Senf = a mostarda. Seinen Senf dazugeben quer dizer dar a sua opinião quando ninguém pediu.' },
+  ],
+  pairs: [
+    ['die Brezel', 'o pretzel'],
+    ['das Brötchen', 'o pãozinho'],
+    ['die Spätzle', 'o macarrão de ovo'],
+    ['der Kuchen', 'o bolo'],
+    ['die Schorle', 'suco ou vinho com água com gás'],
+    ['der Aufschnitt', 'os frios fatiados'],
+    ['die Kartoffel', 'a batata'],
+    ['der Senf', 'a mostarda'],
+  ],
+  related: ['german-compounds', 'de-articles-sheet', 'untranslatable-german'],
+};

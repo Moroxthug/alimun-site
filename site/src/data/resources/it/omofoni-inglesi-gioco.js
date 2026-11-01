@@ -5,7 +5,7 @@ export default {
   draw: 'cat', tint: 'coral', published: '2026-11-01',
   title: "Gioco degli omofoni inglesi: their, there o they're?",
   metaTitle: "Omofoni inglesi: gioco con their, there, they're e altri – Alimun",
-  desc: "Un gioco gratis con dieci gruppi di parole inglesi che si pronunciano uguali ma si scrivono in modo diverso, da their e there a piece e peace. Scegli la grafia giusta.",
+  desc: "Un gioco gratis con dieci gruppi di parole inglesi che suonano uguali ma si scrivono diversamente, da their e there a piece e peace. Scegli quella giusta.",
   lead: "Their, there o they're? Your o you're? Completa dieci frasi con la parola scritta nel modo giusto, poi abbina ogni parola al suo significato.",
   instructions: 'Quale grafia completa la frase?',
   about: [
