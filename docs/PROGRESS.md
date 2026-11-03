@@ -1319,3 +1319,11 @@ Owner: "more resources now, games and fun stuff". Seven new Resources in en/it/e
 ## 2026-11-01 — Six more blog articles
 
 Owner: "more blog articles now". Six articles in en/it/es/fr/pt, written in parallel: a/an/the (english-articles), German past tenses Perfekt vs Praeteritum (german-past-tenses), IELTS band scores (ielts-band-scores), German certificates compared Goethe/telc/TestDaF/DSH/OESD (german-exams-compared), English false friends with a different list per reader language (english-false-friends), job interviews in English (english-job-interview). 30 new CC0 StockSnap photos (600px Openverse thumbnails; the CDN still answers with a bot check). Facts checked on official sources (ielts.org, gov.uk, HRK/KMK framework, telc regulations, BAMF, Federal Foreign Office, Cambridge, Duden). Checked: 22 articles import, every photo exists and is used once, quiz answers in range, related keys exist; 30 pages render on a phone with no errors or broken images.
+
+## 2026-11-03 — C1/C2 book translations and audio check
+
+Owner: "go on" through the remaining books. Explanations of the 11 new C1/C2 books (plus English C1) are now translated into es, fr, de, pt, it, zh and ar: 77 files in `site/src/data/books/i18n/`, each passing `scripts/check-i18n.mjs` with 0 problems (bold and italic spans match the English). `docs/TRANSLATING_BOOKS.md` now says nothing is left to translate.
+- Audio: `/app/audio` reports 13,274 of 13,274 files done (about 1,400 minutes, about $42.01 spent). For the 12 C1/C2 books the audio plan (1,244 clips) matches the stored files per book in Supabase `course-audio` (each folder holds only the clips and a manifest.json). Counts were compared per book, not hash by hash; no clip was played.
+- Translations do not affect audio: recordings are the examples, dialogues and readings in the book's own language.
+- Not done: native review of the translations; listening to a sample of the new recordings; the $42.01 spend should be checked against Google Cloud billing and the budget alert.
+- Known: the Spanish C1 unit 7 commit has a typo in its trailer; `main` history was not rewritten.
