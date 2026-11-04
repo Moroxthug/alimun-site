@@ -1327,3 +1327,16 @@ Owner: "go on" through the remaining books. Explanations of the 11 new C1/C2 boo
 - Translations do not affect audio: recordings are the examples, dialogues and readings in the book's own language.
 - Not done: native review of the translations; listening to a sample of the new recordings; the $42.01 spend should be checked against Google Cloud billing and the budget alert.
 - Known: the Spanish C1 unit 7 commit has a typo in its trailer; `main` history was not rewritten.
+
+## 2026-11-04 — Ten articles for the target markets; Moroccan blog opened
+
+Owner: "focus on these countries, we need to create more articles" (Canada, USA, Italy, Germany, Morocco; Search Console showed almost only brand queries, except Italy: "test inglese b2", "test inglese c1", "tedesco per lavorare in germania"). Owner chose a Moroccan blog for readers learning English and German, no German-language blog (Germany is served in English, for expats), and ten articles, two per country. Ten writers in parallel, facts from official sources only, listed per article.
+- USA (en): TOEFL vs IELTS for US universities (new 2026 TOEFL format and 1–6 scale, ETS concordance), German pronunciation for English speakers.
+- Canada (en): CLB levels explained (IRCC tables for CELPIP, IELTS General, PTE Core; program minimums; CRS points; CLB–CEFR only as the CCLB research guide), CELPIP vs IELTS for Express Entry and citizenship.
+- Italy (it): Livello B2 inglese (incl. GPS points from OM 27/2026), Cambridge C1 Advanced.
+- Germany (en): German for citizenship (B1; three-year route abolished from 30 Oct 2025), the integration course (Feb 2026 admission halt and the reopening from 1 Aug 2026).
+- Morocco (new site `ma`, French, formal): Travailler en Allemagne depuis le Maroc (embassy in Rabat, TLScontact, Goethe-Institut Maroc checked on goethe.de/ins/ma/fr), TOEIC/IELTS/TOEFL/Cambridge au Maroc (British Council and Amideast pages).
+- `ma` entry in `site/src/data/blog/ui.js`; `scripts/localize.mjs` writes `fr-MA` as `inLanguage` in structured data (html lang and hreflang were already fr-MA). No locked file changed (the lock check fails on Windows only because of CRLF; LF-normalized hashes all match).
+- 38 new CC0 photos (Openverse thumbnails of StockSnap, 600px). Checked: 120 articles import, photos exist and are not shared between articles, quiz answers in range, related keys exist, no AI mention; site build passes; all ten pages, /ma/blog and the /ma/ footer link load with no broken images or console errors.
+- Not verified: celpip.ca, goethe.de (German pages), coe.int and Cambridge's guided-hours page block automated reading; facts from them were taken from official search results or left out, as noted in each file's header. Fees left out where no official page confirmed them.
+- Also today: sitemap resubmitted in Search Console; URL Inspection of 95 of 190 blog/resources URLs (16 indexed); daily quota reached before the Italian (rest), Portuguese and Resources pages.

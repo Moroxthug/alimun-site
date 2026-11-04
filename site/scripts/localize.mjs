@@ -244,6 +244,8 @@ function movePages(dirName, baseOf, lastmodOf) {
     if (lang !== 'en') html = localizePage(html, { lang, templateFile: dirName + '-' + name + '.html', langDict: translations[lang] || {}, META_I18N, META_LANG });
     html = absolutize(withFooterCourses(html, lang), lang);
     const $ = cheerio.load(html);
+    // Structured data carries the site code as the language; Morocco's is fr-MA, like its hreflang.
+    if (HREFLANG[lang]) $('script[type="application/ld+json"]').each((i, el) => { $(el).text($(el).text().split(`"inLanguage":"${lang}"`).join(`"inLanguage":"${HREFLANG[lang]}"`)); });
     const self = `${BASE}/${lang === 'en' ? '' : lang + '/'}${base}${name === 'index' ? '' : '/' + name}`;
     $('link[rel="canonical"]').attr('href', self);
     $('meta[property="og:url"]').attr('content', self);
