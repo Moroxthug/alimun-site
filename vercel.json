@@ -1,7 +1,7 @@
 {
   "version": 2,
   "regions": ["dub1"],
-  "git": { "deploymentEnabled": { "rebuild-astro": false } },
+  "git": { "deploymentEnabled": { "rebuild-astro": false, "claude/*": false, "ccr-*": false } },
   "outputDirectory": ".",
   "buildCommand": "npm run build:site",
   "cleanUrls": true,
