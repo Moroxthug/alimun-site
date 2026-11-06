@@ -278,7 +278,7 @@
     var btn = form.querySelector('[type="submit"]'); btn.disabled = true; say('[data-msg="inv"]', 'Creating the account…');
     window.AlimunData.adminInvite(body).then(function (r) {
       btn.disabled = false; form.reset(); ST = null; TE = null;
-      say('[data-msg="inv"]', r.emailed ? 'Done. ' + body.full_name + ' has been emailed a link to sign in.' : 'The account was created, but the email could not be sent. Send them this sign-in link yourself; it works once and expires after a day:');
+      say('[data-msg="inv"]', r.emailed ? 'Done. ' + body.full_name + ' has been emailed a link to sign in.' : 'The account was created, but the email could not be sent. Send them this sign-in link yourself; it works once and only for a limited time:');
       if (!r.emailed && r.link) {
         var box = root.querySelector('[data-invlink]');
         box.innerHTML = '<input class="st-in" readonly value="' + esc(r.link) + '" aria-label="Sign-in link"><div class="btn-row"><button class="btn btn--ghost btn--sm" type="button" data-copy>Copy the link</button></div>';

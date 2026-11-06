@@ -739,17 +739,17 @@ const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
 
 function inviteEmailHtml(fullName, role, link) {
   const what = role === 'teacher'
-    ? 'Alimun has opened a teacher account for you. Use the button below to sign in for the first time; then set a password in Settings.'
-    : 'Alimun has opened a student account for you. Use the button below to sign in for the first time, take the short level test and start learning.';
+    ? 'Alimun has opened a teacher account for you. Use the button below to choose your password; you then go straight to your teacher dashboard.'
+    : 'Alimun has opened a student account for you. Use the button below to choose your password, then take the short level test and start learning.';
   return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Your Alimun account</title></head>
 <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f6f6f6;margin:0;padding:0">
 <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden">
-<div style="background:#080808;padding:30px;text-align:center"><h1 style="color:#ceff65;margin:0;font-size:24px;font-weight:800;letter-spacing:.05em;text-transform:uppercase">Alimun</h1></div>
+<div style="padding:30px 30px 0;text-align:center"><h1 style="color:#080808;margin:0;font-size:24px;font-weight:800;letter-spacing:.05em;text-transform:uppercase">Alimun</h1></div>
 <div style="padding:40px 30px;color:#333333;line-height:1.6">
 <h2 style="color:#080808;margin-top:0">Hello ${escapeHtml(fullName)},</h2>
 <p>${what}</p>
-<p style="text-align:center"><a href="${escapeHtml(link)}" style="display:inline-block;background:#ceff65;color:#080808;text-decoration:none;padding:14px 30px;border-radius:30px;font-weight:700;font-size:14px">Sign in to Alimun</a></p>
-<p style="font-size:13px;color:#777777">The link works once and expires after a day. If it has expired, use "Forgot password" on the sign-in page with this email address.</p>
+<p style="text-align:center"><a href="${escapeHtml(link)}" style="display:inline-block;background:#ceff65;color:#080808;text-decoration:none;padding:14px 30px;border-radius:30px;font-weight:700;font-size:14px">Choose your password</a></p>
+<p style="font-size:13px;color:#777777">The link works once and only for a limited time. If it has expired, use "Forgot password" on the sign-in page with this email address.</p>
 </div></div></body></html>`;
 }
 
@@ -805,7 +805,10 @@ async function handleInvite(req, res) {
       return res.status(500).json({ error: 'The account was created but the teacher profile was not' });
     }
   }
-  const link = linkData.properties?.action_link || '';
+  // The link opens alimun.com directly with the hashed token (verified there when the password is saved). Supabase's
+  // action_link goes through /auth/v1/verify and lands on the project's Site URL, which was http://localhost:3000.
+  const hashed = linkData.properties?.hashed_token;
+  const link = hashed ? `${origin}/reset-password.html?token_hash=${encodeURIComponent(hashed)}&type=invite` : '';
   const emailed = link ? await sendEmail(email, 'Your Alimun account', inviteEmailHtml(fullName, role, link)) : false;
   console.log(`[Alimun Admin] admin ${user.id} invited ${role} ${invited.id} (emailed: ${emailed})`);
   // Without email the admin gets the link to pass on by hand
