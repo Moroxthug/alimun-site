@@ -12,6 +12,7 @@ const React = require('react');
 // loaded with import() on first use instead; see loadPdfKit() below.
 let Document, Page, Text, View, StyleSheet, Font, pdf, styles, HEADER_FONT;
 const { createClient } = require('@supabase/supabase-js');
+const mail = require('./_lib/email.js');
 const path = require('path');
 const fs = require('fs');
 
@@ -128,9 +129,6 @@ const NOTES_BUCKET = 'session-notes-pdfs';           // must match the dashboard
 const SIGNED_URL_TTL = 60 * 60 * 24 * 365;           // 1 year: works for private buckets too
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
 /** Verify the caller's Supabase JWT and return { user, isAdmin }. */
 async function requireUser(req, supabase) {
@@ -308,7 +306,6 @@ module.exports = async function handler(req, res) {
     if (isFirstPublish && !enrollmentsError && enrollments && enrollments.length > 0) {
       const resendKey = process.env.RESEND_API_KEY;
       if (resendKey && !resendKey.includes('YOUR_RESEND_API_KEY')) {
-        const emailFrom = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
         const dashboardUrl = `${process.env.APP_URL || 'https://alimun.com'}/app#/classes`;
 
         const emailPromises = enrollments.map(async (e) => {
@@ -320,61 +317,19 @@ module.exports = async function handler(req, res) {
           if (!email) return;
 
           const emailSubject = `Session notes ready — ${cohort.language} ${cohort.level} ${sessionDate}`.replace(/[<>\r\n]/g, '');
-          const emailHtml = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-              <meta charset="utf-8">
-              <style>
-                body { font-family: sans-serif; line-height: 1.6; color: #080808; background-color: #f0efe9; padding: 20px; }
-                .container { max-width: 600px; margin: 20px auto; padding: 30px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-                .header { background-color: #080808; color: #ffffff; padding: 20px; border-radius: 8px; text-align: center; }
-                .header h1 { color: #ceff65; font-family: 'Anton', sans-serif; font-size: 28px; margin: 0; text-transform: uppercase; }
-                .btn { display: inline-block; background-color: #ceff65; color: #080808; text-decoration: none; padding: 12px 24px; border-radius: 30px; font-weight: bold; margin-top: 20px; text-transform: uppercase; font-size: 12px; }
-                .footer { font-size: 11px; color: #888; margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px; text-align: center; }
-              </style>
-            </head>
-            <body>
-              <div class="container">
-                <div class="header">
-                  <h1>alimun</h1>
-                  <p>Session Notes Ready</p>
-                </div>
-                <div style="margin-top:20px;">
-                  <p>Hello ${escapeHtml(studentProfile.full_name)},</p>
-                  <p>Your session notes for <b>${escapeHtml(cohort.language)} ${escapeHtml(cohort.level)}</b> from <b>${escapeHtml(sessionDate)}</b> are now ready!</p>
-                  
-                  <div style="background-color: #fafaf8; border-left: 4px solid #ceff65; padding: 15px; margin: 20px 0; border-radius: 4px;">
-                    <p style="margin:0 0 8px 0;"><strong>Grammar Focus:</strong> ${escapeHtml(grammarTitle)}</p>
-                    <p style="margin:0 0 8px 0;"><strong>Vocabulary learned:</strong> ${pdfData.vocabulary?.length || 0} words</p>
-                    <p style="margin:0;"><strong>Homework due date:</strong> ${escapeHtml(pdfData.dueDate || 'N/A')}</p>
-                  </div>
-
-                  <center>
-                    <a href="${dashboardUrl}" class="btn" target="_blank">Open in your dashboard</a>
-                  </center>
-                </div>
-                <div class="footer">
-                  This is an automated notification from Alimun.
-                </div>
-              </div>
-            </body>
-            </html>
-          `;
-
-          await fetch('https://api.resend.com/emails', {
-            method: 'POST',
-            headers: {
-              'Authorization': `Bearer ${resendKey}`,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              from: emailFrom,
-              to: email,
-              subject: emailSubject,
-              html: emailHtml
-            })
+          const content = mail.renderEmail({
+            preheader: `Your notes from ${sessionDate} are in your dashboard.`,
+            heading: 'Your session notes are ready',
+            blocks: [
+              { p: `Hello ${mail.esc(studentProfile.full_name)},` },
+              { p: `Your notes from the <strong>${mail.esc(cohort.language)} ${mail.esc(cohort.level)}</strong> session on <strong>${mail.esc(sessionDate)}</strong> are ready.` },
+              { facts: [['Grammar', grammarTitle], ['New words', String(pdfData.vocabulary?.length || 0)], ['Homework due', pdfData.dueDate || '']] },
+              { button: { label: 'Open your notes', href: dashboardUrl } },
+            ],
+            footer: 'You received this email because you are in this class on Alimun.',
           });
+
+          await mail.sendEmail({ to: email, subject: emailSubject, ...content });
         });
 
         await Promise.allSettled(emailPromises);

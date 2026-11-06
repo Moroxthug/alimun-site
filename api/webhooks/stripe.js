@@ -26,6 +26,7 @@ if (!STRIPE_KEY) {
 const stripe = require('stripe')(STRIPE_KEY || 'dummy_key_for_load_validation');
 const { createClient } = require('@supabase/supabase-js');
 const tutorPacks = require('../_lib/tutor-packs.js');
+const mail = require('../_lib/email.js');
 
 const env = (k) => process.env[k] || '';
 
@@ -587,32 +588,14 @@ async function resolveStudentEmail(student, fallback) {
   return fallback || null;
 }
 
-async function sendResend({ to, subject, html }) {
+async function sendResend({ to, subject, content }) {
   if (!process.env.RESEND_API_KEY) {
     console.warn('[Alimun Webhook] RESEND_API_KEY not configured. Skipping email.');
     return;
   }
-  const from = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
-  try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ from, to, subject, html }),
-    });
-    if (!response.ok) {
-      console.error('[Alimun Webhook] Resend API error:', await response.text());
-    }
-  } catch (err) {
-    console.error('[Alimun Webhook] Resend dispatch failed:', err);
-  }
+  await mail.sendEmail({ to, subject, ...content });
 }
 
-function escapeHtml(s) {
-  return String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
 async function sendCancellationEmail(student, subscription) {
   let fallback = null;
@@ -633,14 +616,17 @@ async function sendCancellationEmail(student, subscription) {
   await sendResend({
     to: email,
     subject: 'Your Alimun subscription has ended',
-    html: `<div style="font-family:sans-serif;color:#333;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;border:1px solid #f0f0f0;border-radius:8px;">
-      <h2 style="color:#080808;">Your subscription has ended</h2>
-      <p>Hi ${escapeHtml(student.full_name) || 'there'},</p>
-      <p>Your subscription has ended and your seat in your class has been released. Your access continues until <strong>${endDate}</strong>.</p>
-      <p>You can resubscribe at any time from your dashboard to rejoin a class.</p>
-      <p>Thank you for studying with us!</p>
-      <p>The Alimun Team</p>
-    </div>`,
+    content: mail.renderEmail({
+      preheader: `Your access continues until ${endDate}.`,
+      heading: 'Your subscription has ended',
+      blocks: [
+        { p: `Hello ${mail.esc(student.full_name) || 'there'},` },
+        { p: `Your subscription has ended and your seat in your class has been released. Your access continues until <strong>${mail.esc(endDate)}</strong>.` },
+        { p: 'You can subscribe again at any time from your dashboard to rejoin a class. Thank you for studying with us.' },
+        { button: { label: 'Open your dashboard', href: `${mail.SITE}/signin.html` } },
+      ],
+      footer: 'You received this email because you had an Alimun subscription.',
+    }),
   });
 }
 
@@ -648,27 +634,35 @@ async function sendPaymentFailedEmail(student, invoice, isFinalFailure) {
   const email = await resolveStudentEmail(student, invoice.customer_email);
   if (!email) return;
 
-  const name = escapeHtml(student.full_name) || 'there';
-  const html = isFinalFailure
-    ? `<div style="font-family:sans-serif;color:#333;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;border:1px solid #f0f0f0;border-radius:8px;">
-        <h2 style="color:#ea4335;">Your Alimun subscription has been suspended</h2>
-        <p>Hi ${name},</p>
-        <p>We were unable to process your payment after 3 attempts. Your subscription has been cancelled and your class seat released.</p>
-        <p>To come back, log in to your dashboard, update your payment method and resubscribe.</p>
-        <p>The Alimun Team</p>
-      </div>`
-    : `<div style="font-family:sans-serif;color:#333;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;border:1px solid #f0f0f0;border-radius:8px;">
-        <h2 style="color:#080808;">Payment failed for your Alimun subscription</h2>
-        <p>Hi ${name},</p>
-        <p>We could not process your latest subscription payment. Please update your payment method in your dashboard's billing settings to keep your seat.</p>
-        <p>We will retry automatically in a few days.</p>
-        <p>The Alimun Team</p>
-      </div>`;
+  const name = mail.esc(student.full_name) || 'there';
+  const content = isFinalFailure
+    ? mail.renderEmail({
+      preheader: 'We could not take your payment, so your subscription was cancelled.',
+      heading: 'Your subscription has been cancelled',
+      blocks: [
+        { p: `Hello ${name},` },
+        { p: 'We could not take your payment after three attempts, so your subscription has been cancelled and your class seat released.' },
+        { p: 'To come back, sign in, update your payment method and subscribe again.' },
+        { button: { label: 'Open your dashboard', href: `${mail.SITE}/signin.html` } },
+      ],
+      footer: 'You received this email because you have an Alimun subscription.',
+    })
+    : mail.renderEmail({
+      preheader: 'Update your payment method to keep your seat.',
+      heading: 'Your payment did not go through',
+      blocks: [
+        { p: `Hello ${name},` },
+        { p: 'We could not take your latest subscription payment. Update your payment method in your dashboard billing settings to keep your seat.' },
+        { p: 'We will try again automatically in a few days.' },
+        { button: { label: 'Update payment method', href: `${mail.SITE}/signin.html` } },
+      ],
+      footer: 'You received this email because you have an Alimun subscription.',
+    });
 
   await sendResend({
     to: email,
-    subject: isFinalFailure ? 'Your subscription has been suspended' : 'Payment failed — action required',
-    html,
+    subject: isFinalFailure ? 'Your Alimun subscription has been cancelled' : 'Your Alimun payment did not go through',
+    content,
   });
 }
 

@@ -27,6 +27,7 @@
  */
 
 const crypto = require('crypto');
+const mail = require('../_lib/email.js');
 const { createClient } = require('@supabase/supabase-js');
 const adminOps = require('../_lib/admin-ops.js');
 
@@ -123,32 +124,9 @@ function cleanSubject(s) {
   return String(s ?? '').replace(/[\r\n<>]+/g, ' ').trim().slice(0, 200);
 }
 
-/** Send through Resend. Returns true only when Resend accepted the message. */
-async function sendEmail(to, subject, html) {
-  const resendKey = process.env.RESEND_API_KEY;
-  if (!resendKey) {
-    console.warn('[Alimun Admin] RESEND_API_KEY not configured. Skipping email.');
-    return false;
-  }
-  const emailFrom = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
-  try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${resendKey}`,
-        'Content-Type':  'application/json'
-      },
-      body: JSON.stringify({ from: emailFrom, to, subject: cleanSubject(subject), html })
-    });
-    if (!response.ok) {
-      console.error('[Alimun Admin] Resend rejected email:', response.status);
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.error('[Alimun Admin] Failed to send email:', err.message);
-    return false;
-  }
+/** Send through Resend (api/_lib/email.js). content is { html, text } from mail.renderEmail. True only when Resend accepted it. */
+async function sendEmail(to, subject, content) {
+  return mail.sendEmail({ to, subject: cleanSubject(subject), ...(typeof content === 'string' ? { html: content } : content) });
 }
 
 // ── action=approve / action=reject (emailed links) ──────────
@@ -327,109 +305,48 @@ async function handleEmailDecision(req, res, action) {
 // ── Email bodies (shared by the email-link handlers and action=set-status) ──
 
 function approvedEmailHtml(fullName) {
-  return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>Welcome to Alimun</title>
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f6f6f6; margin: 0; padding: 0; }
-          .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-          .header { background: #080808; padding: 30px; text-align: center; }
-          .header h1 { color: #ceff65; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-          .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
-          .btn { display: inline-block; background-color: #ceff65; color: #080808; text-decoration: none; padding: 14px 30px; border-radius: 30px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 20px; }
-          .footer { background: #fafafa; padding: 20px 30px; text-align: center; border-top: 1px solid #eeeeee; font-size: 12px; color: #aaaaaa; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1>Alimun</h1>
-          </div>
-          <div class="content">
-            <h2 style="color: #080808; margin-top: 0;">Congratulations, ${escapeHtml(fullName)}!</h2>
-            <p>Your application to join the Alimun teacher network has been approved.</p>
-            <p>Your account is ready. You can now log in to the dashboard to set up your cohorts and welcome your first students.</p>
-            <p>We've started you on the <strong>Focused</strong> tier level by default.</p>
-            <center>
-              <a href="https://alimun.com/signin.html" class="btn">Access Dashboard</a>
-            </center>
-          </div>
-          <div class="footer">
-            If you have any questions, reply to this email or contact teacher support.
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
+  return mail.renderEmail({
+    preheader: 'Your Alimun teacher account is ready.',
+    heading: 'Welcome to Alimun',
+    blocks: [
+      { p: `Hello ${mail.esc(fullName)},` },
+      { p: 'Your application to teach with Alimun has been approved, and your account is ready. Sign in to set up your classes and welcome your first students.' },
+      { p: 'You start on the <strong>Focused</strong> tier.' },
+      { button: { label: 'Open your dashboard', href: `${mail.SITE}/signin.html` } },
+    ],
+    note: 'Questions? Reply to this email.',
+    footer: 'You received this email because you applied to teach with Alimun.',
+  });
 }
 
 function rejectedEmailHtml(fullName, email, reason) {
-  const reasonBlock = reason
-    ? `<p style="background:#fafafa;border-left:3px solid #080808;padding:12px;white-space:pre-wrap;">${escapeHtml(reason)}</p>`
-    : '';
-  return `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <title>Alimun Application Update</title>
-        <style>
-          body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f6f6f6; margin: 0; padding: 0; }
-          .container { max-width: 600px; margin: 40px auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-          .header { background: #080808; padding: 30px; text-align: center; }
-          .header h1 { color: #ceff65; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-          .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
-          .footer { background: #fafafa; padding: 20px 30px; text-align: center; border-top: 1px solid #eeeeee; font-size: 12px; color: #aaaaaa; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1>Alimun</h1>
-          </div>
-          <div class="content">
-            <p>Dear ${escapeHtml(fullName)},</p>
-            <p>Thank you for applying to Alimun. After review, we're unable to approve your application at this time.</p>
-            ${reasonBlock}
-            <p>We appreciate your interest in our platform and wish you all the best in your teaching endeavors.</p>
-            <p>Warm regards,<br/>The Alimun Team</p>
-          </div>
-          <div class="footer">
-            This email was sent to ${escapeHtml(email)}.
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
+  return mail.renderEmail({
+    preheader: 'An update on your application to teach with Alimun.',
+    heading: 'About your application',
+    blocks: [
+      { p: `Hello ${mail.esc(fullName)},` },
+      { p: 'Thank you for applying to teach with Alimun. After reviewing your application, we are not able to approve it at this time.' },
+      ...(reason ? [{ quote: reason }] : []),
+      { p: 'We appreciate the time you put into it and wish you all the best with your teaching.' },
+      { p: 'The Alimun team' },
+    ],
+    footer: `This email was sent to ${mail.esc(email)} because you applied to teach with Alimun.`,
+  });
 }
 
 function suspendedEmailHtml(fullName, reason) {
-  const reasonBlock = reason
-    ? `<p style="background:#fafafa;border-left:3px solid #080808;padding:12px;white-space:pre-wrap;">${escapeHtml(reason)}</p>`
-    : '';
-  return `
-      <!DOCTYPE html>
-      <html>
-      <head><meta charset="utf-8"><title>Alimun Account Update</title></head>
-      <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background:#f6f6f6; margin:0; padding:0;">
-        <div style="max-width:600px; margin:40px auto; background:#fff; border-radius:16px; overflow:hidden;">
-          <div style="background:#080808; padding:30px; text-align:center;">
-            <h1 style="color:#ceff65; margin:0; font-size:24px; font-weight:800; letter-spacing:0.05em; text-transform:uppercase;">Alimun</h1>
-          </div>
-          <div style="padding:40px 30px; color:#333; line-height:1.6;">
-            <p>Dear ${escapeHtml(fullName)},</p>
-            <p>Your Alimun teacher account has been suspended, so you can no longer access the teacher dashboard.</p>
-            ${reasonBlock}
-            <p>If you believe this is a mistake, reply to this email and we'll look into it.</p>
-            <p>The Alimun Team</p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `;
+  return mail.renderEmail({
+    preheader: 'Your Alimun teacher account has been suspended.',
+    heading: 'Your teacher account is suspended',
+    blocks: [
+      { p: `Hello ${mail.esc(fullName)},` },
+      { p: 'Your Alimun teacher account has been suspended, so the teacher dashboard is no longer available to you.' },
+      ...(reason ? [{ quote: reason }] : []),
+      { p: 'If you think this is a mistake, reply to this email and we will look into it.' },
+      { p: 'The Alimun team' },
+    ],
+    footer: 'You received this email because you have a teacher account on Alimun.',
+  });
 }
 
 async function getTeacherEmail(supabase, userId) {
@@ -530,10 +447,6 @@ async function handleNotify(req, res) {
   };
 
   const rawName = String(profile.full_name || '');
-  const full_name = escapeHtml(rawName);
-  const experience_years = escapeHtml(profile.experience_years);
-  const specialty = escapeHtml(profile.specialty || '—');
-  const bio = escapeHtml(profile.bio || '');
 
   const exp = Math.floor(Date.now() / 1000) + TOKEN_TTL_SECONDS;
   const approveToken = signActionToken(adminSecret, teacher_id, 'approve', exp);
@@ -542,90 +455,31 @@ async function handleNotify(req, res) {
   const appUrl = process.env.APP_URL || 'https://alimun.com';
   const adminEmail = process.env.ADMIN_EMAIL || 'admin@alimun.com';
 
-  const approveUrl = escapeHtml(`${appUrl}/api/admin/approve-teacher?token=${approveToken}&teacher_id=${encodeURIComponent(teacher_id)}&exp=${exp}`);
-  const rejectUrl  = escapeHtml(`${appUrl}/api/admin/reject-teacher?token=${rejectToken}&teacher_id=${encodeURIComponent(teacher_id)}&exp=${exp}`);
+  const approveHref = `${appUrl}/api/admin/approve-teacher?token=${approveToken}&teacher_id=${encodeURIComponent(teacher_id)}&exp=${exp}`;
+  const rejectHref  = `${appUrl}/api/admin/reject-teacher?token=${rejectToken}&teacher_id=${encodeURIComponent(teacher_id)}&exp=${exp}`;
 
-  const langList = escapeHtml(Array.isArray(profile.languages) ? profile.languages.join(', ') : (profile.languages || 'None'));
 
-  const htmlContent = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8">
-      <title>New Teacher Application</title>
-      <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f6f6f6; margin: 0; padding: 0; -webkit-font-smoothing: antialiased; }
-        .wrapper { background-color: #f6f6f6; width: 100%; padding: 40px 0; }
-        .container { max-width: 600px; margin: 0 auto; background: #ffffff; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-        .header { background: #080808; padding: 30px; text-align: center; }
-        .header h1 { color: #ceff65; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 0.05em; text-transform: uppercase; }
-        .content { padding: 40px 30px; color: #333333; line-height: 1.6; }
-        .candidate-card { background: #f9f9fb; border: 1px solid #eef0f3; border-radius: 12px; padding: 24px; margin-bottom: 30px; }
-        .candidate-title { font-size: 20px; font-weight: 700; margin: 0 0 16px 0; color: #080808; border-bottom: 2px solid #ceff65; padding-bottom: 8px; display: inline-block; }
-        .field { margin-bottom: 12px; }
-        .field strong { color: #555555; text-transform: uppercase; font-size: 11px; letter-spacing: 0.08em; display: block; margin-bottom: 4px; }
-        .field span { font-size: 15px; color: #080808; font-weight: 500; }
-        .bio { white-space: pre-wrap; font-style: italic; color: #666; background: #fff; padding: 12px; border-left: 3px solid #080808; border-radius: 4px; margin-top: 6px; }
-        .actions { display: flex; gap: 16px; margin-top: 30px; }
-        .btn { flex: 1; text-align: center; text-decoration: none; padding: 14px 20px; border-radius: 30px; font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 0.05em; display: inline-block; }
-        .btn-approve { background-color: #ceff65; color: #080808; border: 1px solid #ceff65; }
-        .btn-approve:hover { background-color: #b8eb4c; }
-        .btn-reject { background-color: #ffffff; color: #ea4335; border: 1px solid #ea4335; }
-        .btn-reject:hover { background-color: #fff5f5; }
-        .footer { background: #fafafa; padding: 20px 30px; text-align: center; border-top: 1px solid #eeeeee; font-size: 12px; color: #aaaaaa; }
-      </style>
-    </head>
-    <body>
-      <div class="wrapper">
-        <div class="container">
-          <div class="header">
-            <h1>Alimun</h1>
-          </div>
-          <div class="content">
-            <div class="candidate-card">
-              <div class="candidate-title">${full_name}</div>
-              <div class="field"><strong>Languages</strong><span>${langList}</span></div>
-              <div class="field"><strong>Experience</strong><span>${experience_years} years</span></div>
-              <div class="field"><strong>Specialty</strong><span>${specialty}</span></div>
-              <div class="field" style="margin-bottom: 0;"><strong>Biography</strong><div class="bio">${bio}</div></div>
-            </div>
-            <p style="font-size: 14px; color: #666; margin-bottom: 24px;">Please review the application and make a decision using the buttons below.</p>
-            <table width="100%" cellspacing="0" cellpadding="0" style="margin-top: 20px;">
-              <tr>
-                <td align="center" width="48%"><a href="${approveUrl}" class="btn btn-approve" style="display: block;">Approve Application</a></td>
-                <td width="4%"></td>
-                <td align="center" width="48%"><a href="${rejectUrl}" class="btn btn-reject" style="display: block;">Reject Application</a></td>
-              </tr>
-            </table>
-          </div>
-          <div class="footer">
-            This is an automated notification from Alimun Platform.
-          </div>
-        </div>
-      </div>
-    </body>
-    </html>
-  `;
+  const content = mail.renderEmail({
+    preheader: `${rawName} applied to teach with Alimun.`,
+    heading: 'New teacher application',
+    blocks: [
+      { p: 'A teacher has applied. Review the details and decide with the buttons below; each button asks you to confirm.' },
+      { facts: [
+        ['Name', rawName],
+        ['Languages', Array.isArray(profile.languages) ? profile.languages.join(', ') : (profile.languages || 'None')],
+        ['Experience', `${profile.experience_years ?? 0} years`],
+        ['Specialty', profile.specialty || '-'],
+      ] },
+      ...(profile.bio ? [{ quote: String(profile.bio) }] : []),
+      { buttons: [{ label: 'Approve', href: approveHref }, { label: 'Reject', href: rejectHref, secondary: true }] },
+    ],
+    note: 'The buttons work for seven days. You can also decide in the admin dashboard.',
+    footer: 'Sent to the Alimun admin address when a teacher applies.',
+  });
 
   try {
-    const emailFrom = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${resendKey}`,
-        'Content-Type':  'application/json'
-      },
-      body: JSON.stringify({
-        from:    emailFrom,
-        to:      adminEmail,
-        subject: cleanSubject(`New teacher application — ${rawName}`),
-        html:    htmlContent
-      })
-    });
-
-    if (!response.ok) {
-      const errText = await response.text();
-      console.error('[Alimun Admin Notification] Resend API error:', response.status, errText.slice(0, 500));
+    const sent = await mail.sendEmail({ to: adminEmail, subject: cleanSubject(`New teacher application: ${rawName}`), ...content });
+    if (!sent) {
       await releaseClaim();
       return res.status(502).json({ error: 'Failed to send notification email' });
     }
@@ -739,18 +593,19 @@ const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
 
 function inviteEmailHtml(fullName, role, link) {
   const what = role === 'teacher'
-    ? 'Alimun has opened a teacher account for you. Use the button below to choose your password; you then go straight to your teacher dashboard.'
-    : 'Alimun has opened a student account for you. Use the button below to choose your password, then take the short level test and start learning.';
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Your Alimun account</title></head>
-<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f6f6f6;margin:0;padding:0">
-<div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden">
-<div style="padding:30px 30px 0;text-align:center"><h1 style="color:#080808;margin:0;font-size:24px;font-weight:800;letter-spacing:.05em;text-transform:uppercase">Alimun</h1></div>
-<div style="padding:40px 30px;color:#333333;line-height:1.6">
-<h2 style="color:#080808;margin-top:0">Hello ${escapeHtml(fullName)},</h2>
-<p>${what}</p>
-<p style="text-align:center"><a href="${escapeHtml(link)}" style="display:inline-block;background:#ceff65;color:#080808;text-decoration:none;padding:14px 30px;border-radius:30px;font-weight:700;font-size:14px">Choose your password</a></p>
-<p style="font-size:13px;color:#777777">The link works once and only for a limited time. If it has expired, use "Forgot password" on the sign-in page with this email address.</p>
-</div></div></body></html>`;
+    ? 'Alimun has opened a teacher account for you. Choose your password with the button below and you go straight to your teacher dashboard.'
+    : 'Alimun has opened a student account for you. Choose your password with the button below, then take the short level test and start learning.';
+  return mail.renderEmail({
+    preheader: 'Your Alimun account is ready. Choose a password to sign in.',
+    heading: 'Your Alimun account is ready',
+    blocks: [
+      { p: `Hello ${mail.esc(fullName)},` },
+      { p: what },
+      { button: { label: 'Choose your password', href: link } },
+    ],
+    note: 'The link works once and only for a limited time. If it has expired, use "Forgot password" on the sign-in page with this email address.',
+    footer: 'You received this email because an Alimun administrator opened an account for this address.',
+  });
 }
 
 async function handleInvite(req, res) {

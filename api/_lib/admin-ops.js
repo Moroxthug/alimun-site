@@ -18,6 +18,7 @@
 
 const { createClient } = require('@supabase/supabase-js');
 const TZ = require('../../js/tz.js');
+const mail = require('./email.js');
 const { cancelActiveEnrollments, takeSeat } = require('./seat.js');
 const { sendOfferEmail } = require('./waitlist-offer-email.js');
 
@@ -41,41 +42,25 @@ function emailConfigured() {
   return !!process.env.RESEND_API_KEY;
 }
 
-/** Send through Resend. Returns true only when Resend accepted the message. */
-async function sendEmail(to, subject, html) {
+/** Send through Resend (./email.js). Returns true only when Resend accepted the message. */
+async function sendEmail(to, subject, content) {
   if (!emailConfigured()) return false;
-  try {
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${process.env.RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>',
-        to,
-        subject: String(subject).replace(/[\r\n<>]+/g, ' ').slice(0, 200),
-        html,
-      }),
-    });
-    if (!r.ok) console.error('[Admin ops] Resend rejected email:', r.status);
-    return r.ok;
-  } catch (err) {
-    console.error('[Admin ops] Email failed:', err.message);
-    return false;
-  }
+  return mail.sendEmail({ to, subject, ...content });
 }
 
-function emailHtml(heading, paragraphs) {
-  const appUrl = process.env.APP_URL || 'https://alimun.com';
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
-  <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f0efe9;margin:0;padding:0;">
-    <div style="max-width:600px;margin:40px auto;background:#fff;border-radius:16px;overflow:hidden;">
-      <div style="background:#080808;padding:30px;text-align:center;"><h1 style="color:#ceff65;margin:0;font-size:24px;letter-spacing:.05em;text-transform:uppercase;">Alimun</h1></div>
-      <div style="padding:40px 30px;color:#333;line-height:1.6;">
-        <h2 style="color:#080808;margin-top:0;">${escapeHtml(heading)}</h2>
-        ${paragraphs.map((p) => `<p>${p}</p>`).join('')}
-        <p style="text-align:center;"><a href="${appUrl}/signin.html" style="display:inline-block;background:#ceff65;color:#080808;text-decoration:none;padding:14px 30px;border-radius:30px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:12px;">Open your dashboard</a></p>
-      </div>
-      <div style="background:#fafafa;padding:20px 30px;text-align:center;border-top:1px solid #eee;font-size:12px;color:#aaa;">Questions? Just reply to this email.</div>
-    </div></body></html>`;
+/** heading: the email's title; name: greeting; paragraphs: HTML strings (escape what came from people). */
+function emailHtml(heading, name, paragraphs) {
+  return mail.renderEmail({
+    preheader: heading,
+    heading,
+    blocks: [
+      { p: `Hello${name ? ' ' + mail.esc(name) : ''},` },
+      ...paragraphs.map((p) => ({ p })),
+      { button: { label: 'Open your dashboard', href: `${mail.SITE}/signin.html` } },
+    ],
+    note: 'Questions? Reply to this email.',
+    footer: 'You received this email because you have an Alimun account.',
+  });
 }
 
 /** "Monday 20 October, 18:00 (Europe/Madrid)" */
@@ -204,7 +189,7 @@ async function sessionUpdate(req, res) {
     if (reason) lines.push(`Reason: ${escapeHtml(reason)}`);
     if (op === 'reschedule') lines.push('The classroom opens in your dashboard 15 minutes before the new start time.');
     const subject = op === 'cancel' ? `Session cancelled: ${className}` : `Session moved: ${className}`;
-    const ok = await sendEmail(to, subject, emailHtml(`Hello ${p.full_name || ''}`.trim(), lines));
+    const ok = await sendEmail(to, subject, emailHtml(op === 'cancel' ? 'Session cancelled' : 'Session moved', p.full_name, lines));
     if (ok) result.emailed++; else result.notEmailed++;
   }
   return res.status(200).json(result);
@@ -260,7 +245,7 @@ async function enrollmentMove(req, res) {
     const to = await emailOf(supabase, student.user_id);
     if (to) {
       const teacher = cohort.teacher_profiles?.full_name || 'your teacher';
-      result.emailed = await sendEmail(to, `Your class: ${cohort.language} ${cohort.level}`, emailHtml(`Hello ${student.full_name || ''}`.trim(), [
+      result.emailed = await sendEmail(to, `Your class: ${cohort.language} ${cohort.level}`, emailHtml('Your new class', student.full_name, [
         `You are now in the <strong>${escapeHtml(cohort.language)} ${escapeHtml(cohort.level)}</strong> class with <strong>${escapeHtml(teacher)}</strong>.`,
         'Your dashboard shows the schedule and your next session.',
       ]));
@@ -291,7 +276,7 @@ async function enrollmentRemove(req, res) {
     const to = await emailOf(supabase, student.user_id);
     const c = active[0].cohorts;
     if (to) {
-      result.emailed = await sendEmail(to, 'Your Alimun class', emailHtml(`Hello ${student.full_name || ''}`.trim(), [
+      result.emailed = await sendEmail(to, 'Your Alimun class', emailHtml('Your class has changed', student.full_name, [
         `You are no longer in the <strong>${escapeHtml(c ? `${c.language} ${c.level}` : '')}</strong> class.`,
         'You can choose a new class from your dashboard, or reply to this email if you have questions.',
       ]));

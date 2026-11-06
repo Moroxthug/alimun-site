@@ -9,6 +9,8 @@
  * on each warm instance.
  */
 
+const mail = require('./email.js');
+
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const LOCALES = new Set(['en', 'es', 'fr', 'de', 'it', 'pt', 'zh', 'ar', 'ma']);
 const PER_IP_HOUR = 5;
@@ -19,9 +21,6 @@ function clientIp(req) {
   return fwd || String(req.headers['x-real-ip'] || '') || 'unknown';
 }
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
 function field(body, name, max) {
   return String(body[name] || '').replace(/[\r\n]+/g, name === 'message' ? '\n' : ' ').trim().slice(0, max);
@@ -62,11 +61,16 @@ module.exports = async function contact(req, res) {
   }
 
   const name = `${firstName} ${lastName}`.trim();
-  const rows = [['Name', name], ['Email', email], ['Phone', phone || '-'], ['Language', locale], ['Page', page || '-']]
-    .map(([k, v]) => `<tr><td style="padding:4px 12px 4px 0;color:#666">${k}</td><td style="padding:4px 0">${escapeHtml(v)}</td></tr>`).join('');
-  const html = `<table style="font-family:sans-serif;font-size:14px">${rows}</table>`
-    + `<p style="font-family:sans-serif;font-size:14px;white-space:pre-wrap">${escapeHtml(message)}</p>`;
-  const text = `Name: ${name}\nEmail: ${email}\nPhone: ${phone || '-'}\nLanguage: ${locale}\nPage: ${page || '-'}\n\n${message}`;
+  const content = mail.renderEmail({
+    preheader: message.replace(/\s+/g, ' ').slice(0, 120),
+    heading: `Message from ${name}`,
+    blocks: [
+      { facts: [['Name', name], ['Email', email], ['Phone', phone || '-'], ['Language', locale], ['Page', page || '-']] },
+      { quote: message },
+    ],
+    note: 'Reply to this email to answer them directly.',
+    footer: 'Sent from the contact form on alimun.com.',
+  });
 
   try {
     const r = await fetch('https://api.resend.com/emails', {
@@ -77,8 +81,7 @@ module.exports = async function contact(req, res) {
         to: [process.env.CONTACT_EMAIL || 'bchysfpol@gmail.com'],
         reply_to: email,
         subject: `Contact form: ${name}`.slice(0, 200),
-        html,
-        text,
+        ...content,
       }),
     });
     if (!r.ok) {

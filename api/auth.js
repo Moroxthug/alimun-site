@@ -21,6 +21,7 @@
  */
 
 const { createClient } = require('@supabase/supabase-js');
+const mail = require('./_lib/email.js');
 
 const SITE = 'https://alimun.com';
 const LOCALES = new Set(['ar', 'de', 'es', 'fr', 'it', 'ma', 'pt', 'zh']);
@@ -42,9 +43,6 @@ function clientIp(req) {
   return fwd || String(req.headers['x-real-ip'] || '') || 'unknown';
 }
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
 /** true when the key may go ahead; records the attempt. */
 function allow(map, key, max) {
@@ -57,35 +55,17 @@ function allow(map, key, max) {
   return true;
 }
 
-function resetEmailHtml(link) {
-  return `<!DOCTYPE html><html><head><meta charset="utf-8"><title>Choose a new password</title></head>
-<body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f6f6f6;margin:0;padding:0">
-<div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:16px;overflow:hidden">
-<div style="padding:30px 30px 0;text-align:center"><h1 style="color:#080808;margin:0;font-size:24px;font-weight:800;letter-spacing:.05em;text-transform:uppercase">Alimun</h1></div>
-<div style="padding:30px;color:#333333;line-height:1.6">
-<h2 style="color:#080808;margin-top:0">Choose a new password</h2>
-<p>Someone asked to reset the password of the Alimun account for this email address. Use the button below to choose a new one.</p>
-<p style="text-align:center"><a href="${escapeHtml(link)}" style="display:inline-block;background:#ceff65;color:#080808;text-decoration:none;padding:14px 30px;border-radius:30px;font-weight:700;font-size:14px">Choose a new password</a></p>
-<p style="font-size:13px;color:#777777">The link works once and only for a limited time. If you did not ask for this, ignore this email: your password stays as it is.</p>
-</div></div></body></html>`;
-}
-
-async function sendEmail(to, subject, html) {
-  const key = process.env.RESEND_API_KEY;
-  if (!key || key.includes('YOUR_RESEND_API_KEY')) { console.error('[auth] RESEND_API_KEY missing'); return false; }
-  const from = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
-  try {
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from, to, subject, html }),
-    });
-    if (!r.ok) { console.error('[auth] Resend rejected email:', r.status); return false; }
-    return true;
-  } catch (err) {
-    console.error('[auth] Resend error:', err.message);
-    return false;
-  }
+function resetEmail(link) {
+  return mail.renderEmail({
+    preheader: 'Use the button in this email to choose a new password for your Alimun account.',
+    heading: 'Choose a new password',
+    blocks: [
+      { p: 'Someone asked to reset the password of the Alimun account for this email address. Use the button below to choose a new one.' },
+      { button: { label: 'Choose a new password', href: link } },
+    ],
+    note: 'The link works once and only for a limited time. If you did not ask for this, you can ignore this email: your password stays as it is.',
+    footer: 'You received this email because a password reset was requested for this address on alimun.com.',
+  });
 }
 
 async function handleReset(req, res) {
@@ -113,7 +93,7 @@ async function handleReset(req, res) {
     return res.status(200).json({ ok: true });
   }
   const link = `${page}?token_hash=${encodeURIComponent(hashed)}&type=recovery`;
-  const sent = await sendEmail(email, 'Choose a new Alimun password', resetEmailHtml(link));
+  const sent = await mail.sendEmail({ to: email, subject: 'Choose a new Alimun password', ...resetEmail(link) });
   if (!sent) return res.status(503).json({ error: 'email_unavailable' });
   return res.status(200).json({ ok: true });
 }

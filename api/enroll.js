@@ -26,6 +26,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const { cancelActiveEnrollments, takeSeat } = require('./_lib/seat.js');
 const oneOnOne = require('./_lib/one-on-one.js');
+const mail = require('./_lib/email.js');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const TIER_WEIGHTS = { community: 1, focused: 2, intensive: 3, private: 4 };
@@ -42,27 +43,13 @@ function getSupabaseAdmin() {
   });
 }
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
-async function sendResend({ to, subject, html }) {
-  const resendKey = process.env.RESEND_API_KEY;
-  if (!resendKey) {
+async function sendResend({ to, subject, content }) {
+  if (!process.env.RESEND_API_KEY) {
     console.warn('[Enroll API] RESEND_API_KEY not configured. Skipping email.');
     return;
   }
-  const from = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
-  try {
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${resendKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from, to, subject, html }),
-    });
-    if (!r.ok) console.error('[Enroll API] Resend error:', await r.text());
-  } catch (err) {
-    console.error('[Enroll API] Resend dispatch failed:', err);
-  }
+  await mail.sendEmail({ to, subject, ...content });
 }
 
 module.exports = async function handler(req, res) {
@@ -239,18 +226,19 @@ module.exports = async function handler(req, res) {
       await sendResend({
         to: user.email,
         subject: `You're in: ${cohort.language} ${cohort.level} with ${teacherName}`,
-        html: `<!DOCTYPE html><html><head><meta charset="utf-8"></head>
-        <body style="font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;background:#f6f6f6;margin:0;padding:0;">
-          <div style="max-width:600px;margin:40px auto;background:#fff;border-radius:16px;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.05);">
-            <div style="background:#080808;padding:30px;text-align:center;"><h1 style="color:#ceff65;margin:0;font-size:24px;letter-spacing:.05em;text-transform:uppercase;">Alimun</h1></div>
-            <div style="padding:40px 30px;color:#333;line-height:1.6;">
-              <h2 style="color:#080808;margin-top:0;">Welcome aboard, ${escapeHtml(student.full_name)}!</h2>
-              <p>You have joined the <strong>${escapeHtml(cohort.language)} ${escapeHtml(cohort.level)} (${escapeHtml(cohort.goal_track)})</strong> class with <strong>${escapeHtml(teacherName)}</strong>.</p>
-              <p>Your next session is <strong>${escapeHtml(whenStr)}</strong>. The classroom opens in your dashboard 15 minutes before start.</p>
-              <p style="text-align:center;"><a href="${appUrl}/app#/classes" style="display:inline-block;background:#ceff65;color:#080808;text-decoration:none;padding:14px 30px;border-radius:30px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-top:20px;">Go to dashboard</a></p>
-            </div>
-            <div style="background:#fafafa;padding:20px 30px;text-align:center;border-top:1px solid #eee;font-size:12px;color:#aaa;">Questions? Just reply to this email.</div>
-          </div></body></html>`,
+        content: mail.renderEmail({
+          preheader: `Your next session: ${whenStr}.`,
+          heading: "You're in",
+          blocks: [
+            { p: `Welcome, ${mail.esc(student.full_name)}.` },
+            { p: `You have joined the <strong>${mail.esc(cohort.language)} ${mail.esc(cohort.level)}</strong> class with <strong>${mail.esc(teacherName)}</strong>.` },
+            { facts: [['Class', `${cohort.language} ${cohort.level}${cohort.goal_track ? ` (${cohort.goal_track})` : ''}`], ['Teacher', teacherName], ['Next session', whenStr]] },
+            { p: 'The classroom opens in your dashboard 15 minutes before the start.' },
+            { button: { label: 'Go to your classes', href: `${appUrl}/app#/classes` } },
+          ],
+          note: 'Questions? Reply to this email.',
+          footer: 'You received this email because you joined a class on Alimun.',
+        }),
       });
     }
 
@@ -261,12 +249,17 @@ module.exports = async function handler(req, res) {
         await sendResend({
           to: teacherEmail,
           subject: 'New student joined your class',
-          html: `<div style="font-family:sans-serif;line-height:1.6;color:#333;max-width:600px;margin:20px auto;padding:20px;border:1px solid #eee;border-radius:8px;">
-            <h2>Hello ${escapeHtml(teacherName)},</h2>
-            <p>A new student joined your <strong>${escapeHtml(cohort.language)} ${escapeHtml(cohort.level)}</strong> class:</p>
-            <ul><li><strong>Name:</strong> ${escapeHtml(student.full_name)}</li><li><strong>Level:</strong> ${escapeHtml(student.level)}</li><li><strong>Goal:</strong> ${escapeHtml(student.goal_track)}</li></ul>
-            <p>Seats: ${newCount}/${cohort.max_students}. Open your teacher dashboard to see the roster.</p>
-          </div>`,
+          content: mail.renderEmail({
+            preheader: `${student.full_name} joined your ${cohort.language} ${cohort.level} class.`,
+            heading: 'A new student joined your class',
+            blocks: [
+              { p: `Hello ${mail.esc(teacherName)},` },
+              { p: `A new student joined your <strong>${mail.esc(cohort.language)} ${mail.esc(cohort.level)}</strong> class.` },
+              { facts: [['Name', student.full_name], ['Level', student.level], ['Goal', student.goal_track], ['Seats taken', `${newCount} of ${cohort.max_students}`]] },
+              { button: { label: 'Open your teacher dashboard', href: `${appUrl}/app/teach` } },
+            ],
+            footer: 'You received this email because you teach this class on Alimun.',
+          }),
         });
       }
     }
