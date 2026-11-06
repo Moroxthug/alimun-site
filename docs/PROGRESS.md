@@ -1374,4 +1374,4 @@ Owner: "with dark mode the logo doesnt seem ok, also the elements ... not someth
 - [OWNER]: review the plan; answer D1–D8; create the `alimun-classroom` repo, a LiveKit Cloud project and a Cloudflare account when C0 starts.
 
 ## 2026-11-06 — Research branches merged
-Owner: "merge the two research branches into main". Merged `claude/serene-turing-iccosh` (market, pricing and teacher-contracting research notes and reports, 26 Oct–4 Nov) and `classroom-plan` (`docs/classroom/PLAN.md`, entry above). Documents only, nothing served (`/docs` returns 404).
+Owner: "merge the two research branches into main". Moved to `docs/research/` (reports and notes) so the whole folder is blocked from the site. Merged `claude/serene-turing-iccosh` (market, pricing and teacher-contracting research notes and reports, 26 Oct–4 Nov) and `classroom-plan` (`docs/classroom/PLAN.md`, entry above). Documents only, nothing served (`/docs` returns 404).
