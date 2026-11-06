@@ -62,11 +62,13 @@ module.exports = async function contact(req, res) {
 
   const name = `${firstName} ${lastName}`.trim();
   const content = mail.renderEmail({
+    hero: 'message',
+    signoff: false,
     preheader: message.replace(/\s+/g, ' ').slice(0, 120),
     heading: `Message from ${name}`,
     blocks: [
       { facts: [['Name', name], ['Email', email], ['Phone', phone || '-'], ['Language', locale], ['Page', page || '-']] },
-      { quote: message },
+      { quote: message, label: 'Message' },
     ],
     note: 'Reply to this email to answer them directly.',
     footer: 'Sent from the contact form on alimun.com.',

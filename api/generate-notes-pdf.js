@@ -318,6 +318,7 @@ module.exports = async function handler(req, res) {
 
           const emailSubject = `Session notes ready — ${cohort.language} ${cohort.level} ${sessionDate}`.replace(/[<>\r\n]/g, '');
           const content = mail.renderEmail({
+            hero: 'notes',
             preheader: `Your notes from ${sessionDate} are in your dashboard.`,
             heading: 'Your session notes are ready',
             blocks: [

@@ -49,8 +49,9 @@ async function sendEmail(to, subject, content) {
 }
 
 /** heading: the email's title; name: greeting; paragraphs: HTML strings (escape what came from people). */
-function emailHtml(heading, name, paragraphs) {
+function emailHtml(heading, name, paragraphs, hero) {
   return mail.renderEmail({
+    hero: hero || 'class',
     preheader: heading,
     heading,
     blocks: [
@@ -189,7 +190,7 @@ async function sessionUpdate(req, res) {
     if (reason) lines.push(`Reason: ${escapeHtml(reason)}`);
     if (op === 'reschedule') lines.push('The classroom opens in your dashboard 15 minutes before the new start time.');
     const subject = op === 'cancel' ? `Session cancelled: ${className}` : `Session moved: ${className}`;
-    const ok = await sendEmail(to, subject, emailHtml(op === 'cancel' ? 'Session cancelled' : 'Session moved', p.full_name, lines));
+    const ok = await sendEmail(to, subject, emailHtml(op === 'cancel' ? 'Session cancelled' : 'Session moved', p.full_name, lines, 'session'));
     if (ok) result.emailed++; else result.notEmailed++;
   }
   return res.status(200).json(result);
@@ -248,7 +249,7 @@ async function enrollmentMove(req, res) {
       result.emailed = await sendEmail(to, `Your class: ${cohort.language} ${cohort.level}`, emailHtml('Your new class', student.full_name, [
         `You are now in the <strong>${escapeHtml(cohort.language)} ${escapeHtml(cohort.level)}</strong> class with <strong>${escapeHtml(teacher)}</strong>.`,
         'Your dashboard shows the schedule and your next session.',
-      ]));
+      ], mail.heroForLanguage(cohort.language)));
     }
   }
   return res.status(200).json(result);

@@ -57,6 +57,7 @@ function allow(map, key, max) {
 
 function resetEmail(link) {
   return mail.renderEmail({
+    hero: 'reset',
     preheader: 'Use the button in this email to choose a new password for your Alimun account.',
     heading: 'Choose a new password',
     blocks: [

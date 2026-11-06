@@ -306,6 +306,7 @@ async function handleEmailDecision(req, res, action) {
 
 function approvedEmailHtml(fullName) {
   return mail.renderEmail({
+    hero: 'welcome',
     preheader: 'Your Alimun teacher account is ready.',
     heading: 'Welcome to Alimun',
     blocks: [
@@ -321,14 +322,14 @@ function approvedEmailHtml(fullName) {
 
 function rejectedEmailHtml(fullName, email, reason) {
   return mail.renderEmail({
+    hero: 'update',
     preheader: 'An update on your application to teach with Alimun.',
     heading: 'About your application',
     blocks: [
       { p: `Hello ${mail.esc(fullName)},` },
       { p: 'Thank you for applying to teach with Alimun. After reviewing your application, we are not able to approve it at this time.' },
-      ...(reason ? [{ quote: reason }] : []),
+      ...(reason ? [{ quote: reason, label: 'Note from the team' }] : []),
       { p: 'We appreciate the time you put into it and wish you all the best with your teaching.' },
-      { p: 'The Alimun team' },
     ],
     footer: `This email was sent to ${mail.esc(email)} because you applied to teach with Alimun.`,
   });
@@ -336,14 +337,14 @@ function rejectedEmailHtml(fullName, email, reason) {
 
 function suspendedEmailHtml(fullName, reason) {
   return mail.renderEmail({
+    hero: 'update',
     preheader: 'Your Alimun teacher account has been suspended.',
     heading: 'Your teacher account is suspended',
     blocks: [
       { p: `Hello ${mail.esc(fullName)},` },
       { p: 'Your Alimun teacher account has been suspended, so the teacher dashboard is no longer available to you.' },
-      ...(reason ? [{ quote: reason }] : []),
+      ...(reason ? [{ quote: reason, label: 'Note from the team' }] : []),
       { p: 'If you think this is a mistake, reply to this email and we will look into it.' },
-      { p: 'The Alimun team' },
     ],
     footer: 'You received this email because you have a teacher account on Alimun.',
   });
@@ -460,6 +461,8 @@ async function handleNotify(req, res) {
 
 
   const content = mail.renderEmail({
+    hero: 'application',
+    signoff: false,
     preheader: `${rawName} applied to teach with Alimun.`,
     heading: 'New teacher application',
     blocks: [
@@ -470,7 +473,7 @@ async function handleNotify(req, res) {
         ['Experience', `${profile.experience_years ?? 0} years`],
         ['Specialty', profile.specialty || '-'],
       ] },
-      ...(profile.bio ? [{ quote: String(profile.bio) }] : []),
+      ...(profile.bio ? [{ quote: String(profile.bio), label: 'About them' }] : []),
       { buttons: [{ label: 'Approve', href: approveHref }, { label: 'Reject', href: rejectHref, secondary: true }] },
     ],
     note: 'The buttons work for seven days. You can also decide in the admin dashboard.',
@@ -596,6 +599,7 @@ function inviteEmailHtml(fullName, role, link) {
     ? 'Alimun has opened a teacher account for you. Choose your password with the button below and you go straight to your teacher dashboard.'
     : 'Alimun has opened a student account for you. Choose your password with the button below, then take the short level test and start learning.';
   return mail.renderEmail({
+    hero: 'welcome',
     preheader: 'Your Alimun account is ready. Choose a password to sign in.',
     heading: 'Your Alimun account is ready',
     blocks: [

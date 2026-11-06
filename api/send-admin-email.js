@@ -136,6 +136,7 @@ module.exports = async function handler(req, res) {
     if (emailType === 'tier-upgrade') {
       subject = cleanSubject(`Your Alimun plan is now ${tierName}`);
       content = mail.renderEmail({
+        hero: 'plan',
         preheader: `Your account is now on the ${tierName} plan.`,
         heading: 'Your plan has changed',
         blocks: [
@@ -152,6 +153,7 @@ module.exports = async function handler(req, res) {
       const paras = String(customBody).split(/\n{2,}/).map((t) => t.trim()).filter(Boolean)
         .map((t) => ({ p: mail.esc(t).replace(/\n/g, '<br>') }));
       content = mail.renderEmail({
+        hero: 'message',
         preheader: String(customBody).replace(/\s+/g, ' ').slice(0, 120),
         heading: subject,
         blocks: [{ p: `Hello ${mail.esc(fullName)},` }, ...paras],
