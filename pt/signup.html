@@ -14,6 +14,7 @@
 </script>
 <script src="../js/i18n/en.js" defer=""></script><script src="../js/i18n/pt.js" defer=""></script>
 <script src="../js/i18n.js" defer=""></script>
+<script src="/js/captcha.js"></script>
 </head>
 <body>
 <!--
@@ -203,6 +204,8 @@ function paintNote(r) {
   note.classList.remove('au_hide');
 }
 
+// Captcha token for Supabase Auth (js/captcha.js; undefined while captcha is off).
+const captchaToken = async () => { try { return (await window.AlimunCaptcha?.token()) || undefined; } catch (e) { return undefined; } };
 let lastEmail = '';
 async function signUp({ name, email, pw, data, btn, msgId }) {
   let timezone = null;
@@ -210,7 +213,7 @@ async function signUp({ name, email, pw, data, btn, msgId }) {
   busy(btn, true);
   const { data: out, error } = await supabase.auth.signUp({
     email, password: pw,
-    options: { emailRedirectTo: `${location.origin}/signup.html`, data: { full_name: name, timezone, ...data } },
+    options: { emailRedirectTo: `${location.origin}/signup.html`, data: { full_name: name, timezone, ...data }, captchaToken: await captchaToken() },
   });
   busy(btn, false);
   if (error) { msg(msgId, errorText(error)); return; }
@@ -276,7 +279,7 @@ $('b-resend').addEventListener('click', async () => {
   if (wait > 0 || !lastEmail) return;
   const btn = $('b-resend');
   busy(btn, true);
-  const { error } = await supabase.auth.resend({ type: 'signup', email: lastEmail, options: { emailRedirectTo: `${location.origin}/signup.html` } });
+  const { error } = await supabase.auth.resend({ type: 'signup', email: lastEmail, options: { emailRedirectTo: `${location.origin}/signup.html`, captchaToken: await captchaToken() } });
   busy(btn, false);
   if (error) return msg('m-check', errorText(error));
   msg('m-check', t('au_resent'), true);

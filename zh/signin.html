@@ -14,6 +14,7 @@
 </script>
 <script src="../js/i18n/en.js" defer=""></script><script src="../js/i18n/zh.js" defer=""></script>
 <script src="../js/i18n.js" defer=""></script>
+<script src="/js/captcha.js"></script>
 </head>
 <body>
 <!-- Sign in. Where you go next depends on the account's role (app_metadata, set by the database): admin, learner
@@ -120,13 +121,15 @@ async function route(user) {
   return false;
 }
 
+// Captcha token for Supabase Auth (js/captcha.js; undefined while captcha is off).
+const captchaToken = async () => { try { return (await window.AlimunCaptcha?.token()) || undefined; } catch (e) { return undefined; } };
 $('f-signin').addEventListener('submit', async (e) => {
   e.preventDefault(); msg('');
   const email = $('i-email').value.trim(), password = $('i-pw').value;
   if (!email || !password) return msg(t('au_err_fill'));
   const btn = $('b-signin'), label = btn.innerHTML;
   btn.disabled = true; btn.textContent = t('au_waiting');
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password, options: { captchaToken: await captchaToken() } });
   if (error) {
     btn.disabled = false; btn.innerHTML = label;
     const m = error.message || '';

@@ -22,6 +22,7 @@
 
 const { createClient } = require('@supabase/supabase-js');
 const mail = require('./_lib/email.js');
+const captcha = require('./_lib/captcha.js');
 
 const SITE = 'https://alimun.com';
 const LOCALES = new Set(['ar', 'de', 'es', 'fr', 'it', 'ma', 'pt', 'zh']);
@@ -78,6 +79,7 @@ async function handleReset(req, res) {
   const lang = LOCALES.has(String(body.lang || '')) ? String(body.lang) : '';
   if (!EMAIL_RE.test(email) || email.length > 200) return res.status(400).json({ error: 'invalid_email' });
   if (!allow(recentIp, clientIp(req), PER_IP_HOUR)) return res.status(429).json({ error: 'rate_limited' });
+  if (!(await captcha.verify(req))) return res.status(403).json({ error: 'captcha_failed' });
   // Same answer as a sent email, so the limit does not reveal anything about the account.
   if (!allow(recentEmail, email, PER_EMAIL_HOUR)) return res.status(200).json({ ok: true });
 
@@ -102,7 +104,7 @@ async function handleReset(req, res) {
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || SITE);
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Captcha-Token');
   res.setHeader('Cache-Control', 'no-store');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }

@@ -35,10 +35,12 @@ function ipHash(ip) {
   return crypto.createHmac('sha256', process.env.SUPABASE_SERVICE_ROLE_KEY || 'alimun').update(ip).digest('hex').slice(0, 32);
 }
 
+const captcha = require('./captcha.js');
+
 module.exports = async function subscribe(req, res) {
   res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || 'https://alimun.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Captcha-Token');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -51,6 +53,8 @@ module.exports = async function subscribe(req, res) {
   const source = SOURCES.has(body.source) ? body.source : 'home';
   const locale = LOCALES.has(body.locale) ? body.locale : null;
   const page = typeof body.page === 'string' ? body.page.slice(0, 200) : null;
+
+  if (!(await captcha.verify(req))) return res.status(403).json({ error: 'captcha_failed', message: 'Please try again.' });
 
   const supabase = getSupabaseAdmin();
   if (!supabase) return res.status(500).json({ error: 'server_error', message: 'Please try again later.' });

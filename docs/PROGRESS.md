@@ -1375,3 +1375,10 @@ Owner: "with dark mode the logo doesnt seem ok, also the elements ... not someth
 
 ## 2026-11-06 — Research branches merged
 Owner: "merge the two research branches into main". Moved to `docs/research/` (reports and notes) so the whole folder is blocked from the site. Merged `claude/serene-turing-iccosh` (market, pricing and teacher-contracting research notes and reports, 26 Oct–4 Nov) and `classroom-plan` (`docs/classroom/PLAN.md`, entry above). Documents only, nothing served (`/docs` returns 404).
+
+## 2026-11-06 — Growth plan; step 1 captcha built (dormant)
+
+Owner: country at onboarding, captcha, knowing what each user does, promo and marketing emails and notifications. Decisions: order captcha → country and consent → activity → notifications and campaigns; one consent tick box; no marketing under 16. Plan: `docs/GROWTH_PLAN.md` (linked from CLAUDE.md).
+- Step 1: Cloudflare Turnstile. `js/captcha.js` (loaded by `js/nav-account.js` and by sign-in, sign-up, forgot-password; no locked block changed) adds the token to the contact, corporate, email-signup and reset requests; Supabase Auth calls pass `captchaToken`. `api/_lib/captcha.js` checks it in contact, subscribe and `/api/auth`. Report-only CSP allows challenges.cloudflare.com.
+- Dormant until keys exist (empty `SITE_KEY`, no `TURNSTILE_SECRET_KEY`): the site behaves as before. Checked with Cloudflare's test keys: token only on the protected requests; server accepts a valid token, refuses a missing or failed one; no console errors; `npm run build` passes.
+- For the owner: create the Turnstile widget for alimun.com; switch-on order in the plan.
