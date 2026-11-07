@@ -10,7 +10,7 @@
    Routes: #/classes, #/classes/live/<session>, #/classes/live/b/<booking>. Interface text: app_cl_* keys. */
 (function () {
   'use strict';
-  var A = null, root = null, C = null, call = null;
+  var A = null, root = null, C = null, call = null, board = null;
   var DAY = 86400000, MIN = 60000;
   var OPEN_BEFORE = 15, CLOSE_AFTER = 90, LESSON = 60;
   var DAILY_JS = 'https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js';
@@ -354,7 +354,7 @@
     var ta = ' lang="' + (window.AlimunData.langCode((C.cohorts[0] || {}).language) || 'en') + '" dir="ltr"';
     return '<div class="cl-live"><div class="cl-live__top"><a class="rd-back" href="#/classes">' + A.icon('back') + '<span>' + esc(t('app_cl_leave')) + '</span></a>' +
       '<h1 class="t-h2">' + esc(title) + '</h1></div>' +
-      '<div class="cl-live__body"><div class="cl-live__frame" data-frame><div class="cl-live__wait"><div class="loader" style="--w:64px" aria-hidden="true">' + A.loaderInner() + '</div><p class="t-body" data-livemsg>' + esc(t('app_cl_joining')) + '</p></div></div>' +
+      '<div class="cl-live__body">' + (kind === 'b' ? '' : '<div class="cl-live__board" data-board hidden></div>') + '<div class="cl-live__frame" data-frame><div class="cl-live__wait"><div class="loader" style="--w:64px" aria-hidden="true">' + A.loaderInner() + '</div><p class="t-body" data-livemsg>' + esc(t('app_cl_joining')) + '</p></div></div>' +
       (latest ? '<aside class="cl-live__side card"><h2 class="t-h3">' + esc(t('app_cl_live_words')) + '</h2><dl class="lb-wl">' + latest.vocabulary.slice(0, 12).map(function (v) { return '<div><dt' + ta + '>' + esc(v.word) + '</dt><dd>' + esc(v.definition || '') + '</dd></div>'; }).join('') + '</dl></aside>' : '') +
       '</div></div>';
   }
@@ -401,11 +401,21 @@
           leave(true);
           call = { frame: D.createFrame(box, roomOptions()), session: kind === 'b' ? null : id };
           call.frame.on('left-meeting', function () { leave(); if (location.hash.indexOf('#/classes/live') === 0) location.hash = '#/classes'; });
+          /* The teacher's board (js/app/board.js): shown beside the video while the teacher has it open */
+          var el = root.querySelector('[data-board]');
+          if (el && window.AlimunBoard && kind !== 'b') {
+            board = window.AlimunBoard.create({ A: A, role: 'student', frame: call.frame, sessionId: id, onShow: function (on) {
+              var live = root.querySelector('.cl-live'); if (!live) return;
+              live.classList.toggle('has-board', on); el.hidden = !on; if (board) board.fit();
+            } });
+            board.mount(el);
+          }
           return call.frame.join(j.token ? { url: url, token: j.token } : { url: url });
         });
       }).catch(function (e) { say('app_cl_join_error', e && e.message ? e.message : null); });
   }
   function leave(quiet) {
+    if (board) { board.destroy(); board = null; }
     if (!call) return;
     var c = call; call = null;
     try { var p = c.frame.leave(); if (p && p.catch) p.catch(function () {}); } catch (e) { /* already gone */ }
