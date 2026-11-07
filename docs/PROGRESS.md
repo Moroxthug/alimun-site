@@ -1570,3 +1570,9 @@ Owner: "for the automated marketing emails i would like an automation, not to do
 - Checked locally with a stand-in database and mail service: a wrong key gets 403; three language tests reach only the admin; each person gets their own language; a sign-up who also has an account is emailed once, as an account holder; a changed count gets 409; the fourth send in a day gets 429; a role filter leaves sign-ups out.
 - Missing, for the owner: the `CAMPAIGN_AGENT_KEY` value (Vercel → Settings → Environment Variables, then the same value in the session's credential form). The Privacy page (locked block) names sign-up and Settings as the places to agree to news and offers; it does not yet mention the footer newsletter form. Flagged, not changed.
 - Switched on (7 Nov 2026): the owner set `CAMPAIGN_AGENT_KEY` in Vercel and in the session credential form; redeployed; the key reads the audience (0 today: no account holder has opted in yet, no new sign-ups) and a test in English and French reached bchysfpol@gmail.com only.
+
+## 2026-11-07 — Privacy page: the newsletter form
+
+Owner: "update the privacy page too".
+- `site/src/blocks/legal/gdpr.html` and its seven translations: the newsletter form on the website is now listed as a way to agree to news and offers (it asks you to confirm you are 16 or older; if you also have an account, the account's choice is followed), as a place a choice is recorded, and under retention: after a newsletter unsubscribe the address and date are kept so we do not write again, deletable on request. Lock updated in `site/locked.json`.
+- Built locally: all nine language pages carry the new sentences (ma uses the French text).
