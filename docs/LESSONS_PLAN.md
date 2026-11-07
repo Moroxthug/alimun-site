@@ -41,7 +41,7 @@ Lessons are drafted from the book's lesson outline, then reviewed (status draft 
 
 ## How it works (technical)
 
-- Tables (one migration each step, RLS on): `class_lessons` (course key, position, title, status, focus, tips, board pages, activities by size, homework), `sessions.lesson_id`, `cohorts.lesson_cursor`, `session_boards` (one shared board per class date: pages and strokes), `session_board_solo` (one per student per solo exercise).
+- Built (7 Nov 2026): lessons are data files, like the books (`site/src/data/classes/<course>.js` and `<course>/<id>.js`, served as `/data/classes/<course>.json`, checked by `scripts/check-classes.mjs`). The database only numbers class dates (`supabase/migrations/202611071800_session_lessons.sql`): `class_courses(id, lessons)`, `cohorts.lesson_start`, `sessions.lesson_no` and `lesson_pinned`, `assign_cohort_lessons()` (run by triggers on any change to a class's dates) and `set_session_lesson()` for the teacher. Still to come: `session_boards` (one shared board per class date: pages and strokes) and `session_board_solo` (one per student per solo exercise).
 - Live sync through Daily's app messages (`sendAppMessage`), teacher-authoritative: the teacher's browser holds the state, sends changes, and saves to the database every few seconds and at the end. A student who joins late asks for the current state and the teacher's browser sends it.
 - Strokes are stored as points, not pictures, so a board can be replayed and redrawn at any size.
 - Content is generated with the existing AI drafting, from the book outline, in batches; reviewed in an admin screen before it is approved.

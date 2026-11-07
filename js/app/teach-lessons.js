@@ -125,5 +125,13 @@
     });
   }
 
-  window.AlimunTeachLessons = { mount: mount, reset: reset };
+  /* For the class pages (js/app/teach-classes.js): the course of a class (language and level), or null when it has no
+     prepared lessons; the lesson for a lesson number; its link */
+  function courseFor(language, level) {
+    var id = language + '-' + level;
+    return COURSES.indexOf(id) > -1 ? loadCourse(id).catch(function () { return null; }) : Promise.resolve(null);
+  }
+  function lessonOf(c, no) { return c && no ? c.lessons[no - 1] || null : null; }
+  function hrefOf(c, l) { return '#/lessons/' + encodeURIComponent(c.id) + '/' + encodeURIComponent(l.id); }
+  window.AlimunTeachLessons = { mount: mount, reset: reset, courseFor: courseFor, lessonOf: lessonOf, hrefOf: hrefOf, kindLabel: function (k) { return KINDS[k] || 'app_tl_kind_book'; } };
 })();
