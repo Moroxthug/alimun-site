@@ -92,6 +92,7 @@
   /* Line icons: the student dashboard's set, plus students and payouts */
   var P = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
   var ICONS = {
+    book: '<path d="M12 6.5C10.4 5 8.2 4.5 4 4.8v13.4c4.2-.3 6.4.2 8 1.8 1.6-1.6 3.8-2.1 8-1.8V4.8c-4.2-.3-6.4.2-8 1.7z"/><path d="M12 6.5V20"/>',
     home: '<path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/>',
     classes: '<rect x="3" y="6" width="13" height="12" rx="3"/><path d="m16 10.5 5-3v9l-5-3"/>',
     students: '<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.8" cy="9.5" r="2.5"/><path d="M15.5 14.6c2.6-.3 4.4 1.3 5 4.4"/>',
@@ -120,6 +121,7 @@
     { id: 'classes', label: 'app_t_nav_classes', icon: 'classes', group: 'teach', part: 2, art: 'mug', tint: 'leaf', kind: 'think', text: 'app_t_soon_classes_text', bub: 'app_t_soon_classes_bub' },
     { id: 'students', label: 'app_t_nav_students', icon: 'students', group: 'teach', part: 3, art: 'parrot', tint: 'mint', kind: 'say', text: 'app_t_soon_students_text', bub: 'app_t_soon_students_bub' },
     { id: 'homework', label: 'app_t_nav_homework', icon: 'homework', group: 'teach', part: 4, art: 'monster', tint: 'coral', kind: 'say', text: 'app_t_soon_homework_text', bub: 'app_t_soon_homework_bub' },
+    { id: 'lessons', label: 'app_t_nav_lessons', icon: 'book', group: 'make' },
     { id: 'material', label: 'app_t_nav_material', icon: 'material', group: 'make', part: 5, art: 'owl', tint: 'sun', kind: 'think', text: 'app_t_soon_material_text', bub: 'app_t_soon_material_bub' },
     { id: 'messages', label: 'app_t_nav_messages', icon: 'messages', group: 'account', part: 6, art: 'alien', tint: 'mint', kind: 'say', text: 'app_t_soon_messages_text', bub: 'app_t_soon_messages_bub' },
     { id: 'payouts', label: 'app_t_nav_payouts', icon: 'payouts', group: 'account', part: 6, art: 'suitcase', tint: 'sun', kind: 'think', text: 'app_t_soon_payouts_text', bub: 'app_t_soon_payouts_bub' },
@@ -370,7 +372,7 @@
     loaderInner: loaderInner, dayName: dayName, relative: relative, className: className, weekday: weekday, browserZone: browserZone,
     mode: function () { return mode; }, rerender: function () { render(current, false); }
   };
-  var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; }, homework: function () { return window.AlimunTeachHomework; }, material: function () { return window.AlimunTeachMaterial; },
+  var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; }, homework: function () { return window.AlimunTeachHomework; }, material: function () { return window.AlimunTeachMaterial; }, lessons: function () { return window.AlimunTeachLessons; },
     messages: function () { return window.AlimunTeachMessages; }, payouts: function () { return window.AlimunTeachPayouts; }, settings: function () { return window.AlimunTeachSettings; } };
   function partsOf(id) { return location.hash.replace(new RegExp('^#\\/' + id + '\\/?'), '').split('/').filter(Boolean); }
 

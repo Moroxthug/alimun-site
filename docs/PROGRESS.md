@@ -1495,6 +1495,14 @@ Owner: "yes translate the other emails too".
 - Checked: key and placeholder check for all languages; sample sentences in 8 languages; the waiting-list email end to end in Italian; `node --check` and unit tests.
 - Not translated: Supabase's own templates (used only as a fallback for password reset now) and the unsubscribe confirmation page.
 
+## 2026-11-07 — English A1 class lessons (step L1, content and the teacher's Lessons page)
+
+Owner: "start the 48 class lessons for A1".
+- Content as data files, like the books: `site/src/data/classes/English-A1.js` (the order: welcome, one class per book lesson, a review after every unit, two conversation classes, three exam-practice classes ending with a practice exam in the A2 Key format, a mid-level check and the end-of-level check) and `site/src/data/classes/English-A1/c01.js` to `c48.js`. Each lesson: focus note for the teacher, tips, a timed 60-minute plan, board pages (book blocks and exercises, always an "Exam corner"), activities for 1 on 1, 2 to 6 and 7 to 15 students, homework. Served as `/data/classes/<course>.json`.
+- `scripts/check-classes.mjs` checks a course (fields, plan adds up to about 60 minutes, board blocks and exercise kinds allowed on the board, book references exist). English-A1: 48 of 48, ok.
+- Teacher dashboard: new "Lessons" section (`js/app/teach-lessons.js`, nav label in nine languages): the course grouped by unit, and each lesson with its focus, tips, plan, board (exercises can be tried) and activities. Content in English, for teachers.
+- Not yet (next steps in docs/LESSONS_PLAN.md): attaching lessons to class dates automatically, the live board in the classroom, students writing, solo exercises, saving.
+
 ## 2026-11-07 — Admin emails and the unsubscribe page translated
 
 Owner: "translate the admin emails and unsubscribe page too".
