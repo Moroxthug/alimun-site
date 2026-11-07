@@ -1,6 +1,8 @@
-# Privacy page: draft changes (7 Nov 2026), for the owner to approve
+# Privacy page: draft changes (7 Nov 2026), approved and published
 
-Not live. `gdpr.html` changes only after the owner approves this wording; then it is translated into the eight
+Approved by the owner on 7 Nov 2026 and published in `site/src/blocks/legal/gdpr.html` and its seven translations (the live page is the locked Astro block, not the root `gdpr.html`). The live page already had the card-number, AI-training and sub-processor points right; the additions were fitted into its sections 2, 3, 5, 7, 10 and 12. The notes below are kept as the record of the draft.
+
+Was not live when written. `gdpr.html` changes only after the owner approves this wording; then it is translated into the eight
 other languages (the legal pages are owner-flagged "legal translations later").
 
 Why: growth steps 1–3 (docs/GROWTH_PLAN.md) added Cloudflare Turnstile, the country question, the news-and-offers
