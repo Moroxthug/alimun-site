@@ -1449,3 +1449,12 @@ Owner: "draft the privacy wording, then start step 4".
 - Checked: the endpoint with Supabase and Resend stubbed (student refused, filters cleaned, outside links refused, test goes only to the admin, count guard, batch with greeting, unsubscribe and click link, bell rows, real and forged clicks); `campaign_audience` callable by the server, refused to anonymous visitors; the page in sample mode on desktop and phone, no errors.
 - The real audience is 0 today: the tick box exists since 6 Nov. Existing users can opt in under Settings → News and offers.
 - Next (step 4c): automatic reminders, each approved by the owner first.
+
+## 2026-11-07 — Books, second edition: English A1 unit 1 sample
+
+Owner: "yes, proceed" (improve the books first: much more explanation, fewer exercises, new kinds), and "we will market this as preparation for tests, without having you spend more to study".
+- Sample for review: `site/src/data/books/English-A1-preview.js` with `units/English-A1-preview/u1.js`. Not listed anywhere: `preview: true` keeps it out of `/data/books/index.json`; `/data/books/preview.json` lists it and the reader opens it only by link (`/app#/book/English-A1-preview`). Students keep the current unit 1.
+- The unit: four lessons, each with a full explanation (rule, why, many examples, the usual mistakes, a dialogue or reading), fewer exercises from controlled to free, a speaking task, and one task in the format of the A2 Key exam with an exam tip.
+- Speaking exercises now work in the book reader (same transcription as Practice); `scripts/check-book.mjs` knows `speak` (lessons only; checks the text and the tutor).
+- Checked: `node scripts/check-book.mjs English-A1-preview English-A1 English-B1` ok; site build; the preview in the reader with sample data, no errors except the missing audio list for the preview (no recordings yet).
+- Not yet: translations of the new explanations and course audio for the new sentences (after the owner approves the style).

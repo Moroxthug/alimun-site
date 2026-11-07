@@ -358,6 +358,8 @@
     var base = ctx.book.id + ':' + ctx.unit.id + ':' + (ctx.page ? ctx.page.id : 'test') + ':';
     return window.AlimunEx.create({ A: A, blocks: blocks, test: test, level: ctx.book.level, xa: xA(ctx.book), ta: tA(ctx.book), root: function () { return root; },
       onAnswer: afterPractice, onChange: refreshEnd,
+      /* Speaking exercises (second edition of the books): the same transcription as Practice */
+      transcribe: window.AlimunPractice ? window.AlimunPractice.transcriber(ctx.book.language) : null,
       onItem: function (r) { if (window.AlimunPractice) window.AlimunPractice.record(base + r.bi + ':' + r.i, r.ok); } });
   }
 
@@ -769,6 +771,11 @@
     return loadIndex().then(function (list) {
       var id = parts[0] || A.myBookId();
       var entry = list.filter(function (b) { return b.id === id; })[0];
+      /* A preview edition (owner's review) is not in the index: look it up only when its link is opened */
+      if (!entry && /-preview$/.test(id)) return getJSON('/data/books/preview.json').then(function (x) { return [list, (x.books || []).filter(function (b) { return b.id === id; })[0]]; }, function () { return [list, null]; });
+      return [list, entry];
+    }).then(function (le) {
+      var list = le[0], entry = le[1], id = entry ? entry.id : null;
       if (!entry) return { html: noneView(list.filter(function (b) { return b.written > 0 && b.track === 'core'; })), title: t('app_nav_book') };
       return Promise.all([loadBook(id, explainCode(entry)), loadProgress(id), loadAudio(id)]).then(function (r) {
         var book = r[0];
