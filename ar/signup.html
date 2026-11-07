@@ -42,7 +42,8 @@
             <div class="au_field"><label for="a-name" data-i18n="au_name">الاسم الكامل</label><input class="au_input" id="a-name" type="text" autocomplete="name" maxlength="100" required=""></div>
             <div class="au_field"><label for="a-email" data-i18n="au_email">البريد الإلكتروني</label><input class="au_input" id="a-email" type="email" autocomplete="email" required=""></div>
             <div class="au_field"><label for="a-pw" data-i18n="au_password">كلمة المرور</label>
-              <div class="au_pw"><input class="au_input" id="a-pw" type="password" autocomplete="new-password" minlength="8" required="" placeholder="8 أحرف على الأقل" data-i18n-placeholder="au_pw_hint"><button type="button" class="au_eye" data-eye="a-pw" data-i18n="au_show">إظهار</button></div>
+              <div class="au_pw"><input class="au_input" id="a-pw" type="password" autocomplete="new-password" minlength="8" required="" aria-describedby="a-pw-hint"><button type="button" class="au_eye" data-eye="a-pw" data-i18n="au_show">إظهار</button></div>
+              <p class="au_fine" id="a-pw-hint" data-i18n="au_pw_hint">8 أحرف على الأقل، منها حرف صغير وحرف كبير ورقم</p>
             </div>
             <div class="au_field"><label for="a-country" data-i18n="au_country">البلد الذي تعيش فيه</label><select class="au_input" id="a-country" autocomplete="country" required=""></select></div>
             <label class="au_tick"><input type="checkbox" id="a-adult"><span data-i18n="au_age16">عمري 16 عامًا أو أكثر</span></label>
@@ -83,7 +84,8 @@
             <div class="au_field"><label for="ta-name" data-i18n="au_name">الاسم الكامل</label><input class="au_input" id="ta-name" type="text" autocomplete="name" maxlength="100" required=""></div>
             <div class="au_field"><label for="ta-email" data-i18n="au_email">البريد الإلكتروني</label><input class="au_input" id="ta-email" type="email" autocomplete="email" required=""></div>
             <div class="au_field"><label for="ta-pw" data-i18n="au_password">كلمة المرور</label>
-              <div class="au_pw"><input class="au_input" id="ta-pw" type="password" autocomplete="new-password" minlength="8" required="" placeholder="8 أحرف على الأقل" data-i18n-placeholder="au_pw_hint"><button type="button" class="au_eye" data-eye="ta-pw" data-i18n="au_show">إظهار</button></div>
+              <div class="au_pw"><input class="au_input" id="ta-pw" type="password" autocomplete="new-password" minlength="8" required="" aria-describedby="ta-pw-hint"><button type="button" class="au_eye" data-eye="ta-pw" data-i18n="au_show">إظهار</button></div>
+              <p class="au_fine" id="ta-pw-hint" data-i18n="au_pw_hint">8 أحرف على الأقل، منها حرف صغير وحرف كبير ورقم</p>
             </div>
             <div class="au_field"><label for="ta-country" data-i18n="au_country">البلد الذي تعيش فيه</label><select class="au_input" id="ta-country" autocomplete="country" required=""></select></div>
             <label class="au_tick"><input type="checkbox" id="ta-adult"><span data-i18n="au_age16">عمري 16 عامًا أو أكثر</span></label>
@@ -142,7 +144,7 @@
   <span data-i18n="au_hide">إخفاء</span>
   <span data-i18n="au_err_name">يرجى إدخال اسمك.</span>
   <span data-i18n="au_err_email">يرجى إدخال بريد إلكتروني صالح.</span>
-  <span data-i18n="au_err_pw">يجب أن تتكوّن كلمة المرور من 8 أحرف على الأقل.</span>
+  <span data-i18n="au_err_pw">يجب أن تتكوّن كلمة المرور من 8 أحرف على الأقل، منها حرف صغير وحرف كبير ورقم.</span>
   <span data-i18n="au_err_exists">يوجد حساب مسجّل بهذا البريد الإلكتروني بالفعل.</span>
   <span data-i18n="au_err_generic">حدث خطأ ما. يرجى المحاولة مرة أخرى.</span>
   <span data-i18n="au_err_spec">يرجى إضافة تخصصك في التدريس.</span>
@@ -189,8 +191,12 @@ function show(id) {
 }
 function msg(id, text, ok) { const el = $(id); el.textContent = text; el.classList.toggle('is-on', !!text); el.classList.toggle('is-ok', !!ok); }
 function busy(btn, on) { btn.disabled = on; if (on) { btn.dataset.label = btn.innerHTML; btn.textContent = t('au_waiting'); } else if (btn.dataset.label) btn.innerHTML = btn.dataset.label; }
+// Supabase's rule (Authentication → Policies): 8+ characters with a lowercase letter, a capital letter and a number.
+const strongPw = (pw) => pw.length >= 8 && /[a-z]/.test(pw) && /[A-Z]/.test(pw) && /[0-9]/.test(pw);
 function errorText(err) {
   const m = (err && err.message) || '';
+  if ((err && err.code === 'weak_password') || /should contain|weak/i.test(m)) return t('au_err_pw');
+  if (/captcha/i.test(m)) return t('au_err_generic');
   if (/already/i.test(m)) return t('au_err_exists');
   if (/rate|too many|seconds/i.test(m)) return t('au_err_rate');
   return t('au_err_generic');
@@ -261,7 +267,7 @@ function startLearner(r) {
     const name = $('a-name').value.trim(), email = $('a-email').value.trim(), pw = $('a-pw').value;
     if (!name) return msg('m-account', t('au_err_name'));
     if (!EMAIL.test(email)) return msg('m-account', t('au_err_email'));
-    if (pw.length < 8) return msg('m-account', t('au_err_pw'));
+    if (!strongPw(pw)) return msg('m-account', t('au_err_pw'));
     if (!$('a-country').value) return msg('m-account', t('au_err_country'));
     const placement = r.level ? { language: r.language, level: r.level, skills: r.skills || null, topics: (r.topics || []).slice(0, 5), at: r.at || null } : { language: r.language, level: null, waitlist: true };
     signUp({ name, email, pw, data: { role: 'student', onboarding: { placement, intent }, ...extras('a') }, btn: $('b-account'), msgId: 'm-account' });
@@ -291,7 +297,7 @@ function startTeacher() {
     const name = $('ta-name').value.trim(), email = $('ta-email').value.trim(), pw = $('ta-pw').value;
     if (!name) return msg('m-teach-account', t('au_err_name'));
     if (!EMAIL.test(email)) return msg('m-teach-account', t('au_err_email'));
-    if (pw.length < 8) return msg('m-teach-account', t('au_err_pw'));
+    if (!strongPw(pw)) return msg('m-teach-account', t('au_err_pw'));
     if (!$('ta-country').value) return msg('m-teach-account', t('au_err_country'));
     signUp({ name, email, pw, data: { role: 'teacher', teacher_application: application, ...extras('ta') }, btn: $('b-teach-account'), msgId: 'm-teach-account' });
   });

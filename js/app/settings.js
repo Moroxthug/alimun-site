@@ -117,7 +117,7 @@
   }
   function savePw(form) {
     var pw = String(new FormData(form).get('pw') || '');
-    if (pw.length < 8) { say('pw', 'app_st_pw_short', true); return; }
+    if (!(pw.length >= 8 && /[a-z]/.test(pw) && /[A-Z]/.test(pw) && /[0-9]/.test(pw))) { say('pw', 'app_st_pw_short', true); return; }
     if (S.sample) { say('pw', 'app_st_sample_saved'); return; }
     window.AlimunData.changePassword(pw).then(function () { form.reset(); say('pw', 'app_st_pw_done'); }, function (e) { say('pw', 'app_st_pw_error', true); console.warn('[Alimun] Password not changed', e && e.message); });
   }
