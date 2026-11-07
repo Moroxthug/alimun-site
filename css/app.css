@@ -1718,3 +1718,6 @@ a.nt-item:hover { background: var(--bone, #f0efe9); }
 .bd-dialogue p, .bd-reading p { margin: 4px 0; }
 .bd-wait { display: grid; place-items: center; min-height: 200px; background: var(--bone); border-radius: var(--r-lg); padding: 24px; text-align: center; }
 .bd-content .rd-table tbody tr { animation: none; }
+.bd-who { display: inline-flex; align-items: center; gap: 8px; margin-inline-start: 6px; }
+.bd-who .st-in { width: auto; min-width: 170px; padding-top: 6px; padding-bottom: 6px; }
+.bd-you { margin: 0; color: var(--forest); font-weight: 700; }

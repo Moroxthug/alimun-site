@@ -4,7 +4,9 @@
    the page shown, what is drawn and typed on each page, and whether each page's answers are revealed. Every change goes
    to the students through Daily app messages (4 KB each; a whole board is sent in pieces). A student who joins asks for
    the board ("hi") and the teacher's browser answers. Students accept board messages only from the room owner (the teacher).
-   Students only watch in this step; writing comes in step L3.
+   Students write when the teacher allows it (step L3): nobody, everyone, or one student. A student's marks go to the
+   teacher's browser as requests (radd, rseg, rdel); it checks the student may write and passes them on to everyone.
+   Students erase and undo only their own marks; pages, clearing and answers stay with the teacher.
    Drawing is in page pixels on a page 960 wide, so strokes land in the same place on every screen.
    Exercise answers stay hidden until the teacher reveals them (owner, 7 Nov 2026). */
 (function () {
@@ -29,8 +31,8 @@
     var md = function (s) { return window.AlimunEx ? window.AlimunEx.md(s) : esc(s); };
     var paras = function (s) { return String(s || '').split(/\n\s*\n/).map(function (p) { return '<p>' + md(p.trim()) + '</p>'; }).join(''); };
     var key = 'alimun-board-' + (o.sessionId || 'x');
-    var S = { v: 1, show: false, course: o.course || null, lesson: o.lesson || null, page: 0, pages: {} };
-    var course = null, root = null, tool = 'pen', color = 'ink', drawing = null, segTimer = null, pending = {}, alive = true;
+    var S = { v: 1, show: false, course: o.course || null, lesson: o.lesson || null, page: 0, pages: {}, write: { m: 'none', who: null } };
+    var course = null, root = null, tool = 'pen', color = 'ink', drawing = null, segTimer = null, pending = {}, alive = true, mine = {}, me = null;
     if (teacher) { try { var saved = JSON.parse(localStorage.getItem(key) || 'null'); if (saved && saved.v === 1) S = Object.assign(S, saved, { course: o.course || saved.course, lesson: o.lesson || saved.lesson }); } catch (e) { /* storage blocked */ } }
 
     function lessonPages() {
@@ -39,6 +41,11 @@
     }
     function pg(i) { return S.pages[i] || (S.pages[i] = { it: [], rv: false }); }
     function save() { if (!teacher) return; try { localStorage.setItem(key, JSON.stringify(S)); } catch (e) { /* storage blocked */ } }
+    function people() { var ps = frame && frame.participants ? frame.participants() : {}; return Object.keys(ps).map(function (k) { return ps[k]; }); }
+    function myId() { if (!me) { var l = people().filter(function (x) { return x.local; })[0]; me = l ? l.session_id : null; } return me; }
+    function teacherId() { var x = people().filter(function (y) { return y.owner && !y.local; })[0]; return x ? x.session_id : null; }
+    function mayWrite(id) { var w = S.write || {}; return w.m === 'all' || (w.m === 'one' && !!id && w.who === id); }
+    function canWrite() { return teacher || mayWrite(myId()); }
 
     function sorted(list) { return list.slice().sort(function (a, b) { return String(a).localeCompare(String(b)); }); }
     function gapOf(q, ans, rv) { return md(String(q || '').replace('___', rv ? '**' + String(ans || '').replace(/\*/g, '') + '**' : '______')); }
@@ -123,16 +130,25 @@
       return it.t === 't' ? '<div class="bd-note" data-id="' + esc(it.id) + '" style="left:' + (+it.x) + 'px;top:' + (+it.y) + 'px;color:' + COLORS[it.c === 'lime' ? 'forest' : it.c] + '">' + esc(it.s) + '</div>' : '';
     }
     function toolbar(pages) {
-      if (!teacher) return '';
+      if (!teacher && !canWrite()) return '';
       var btn = function (k, label) { return '<button class="btn btn--' + (tool === k ? 'primary' : 'quiet') + ' btn--sm" type="button" data-bd="tool" data-k="' + k + '" aria-pressed="' + (tool === k) + '">' + esc(t(label)) + '</button>'; };
       var sw = function (k) { return '<button class="bd-sw' + (color === k ? ' is-on' : '') + '" type="button" data-bd="color" data-k="' + k + '" style="background:' + COLORS[k] + '" aria-label="' + esc(t('app_bd_colour')) + ' ' + k + '" aria-pressed="' + (color === k) + '"></button>'; };
       var p = pg(S.page);
-      return '<div class="bd-tabs btn-row" role="tablist">' + pages.map(function (x, i) { return '<button class="btn btn--' + (i === S.page ? 'primary' : 'ghost') + ' btn--sm" type="button" role="tab" aria-selected="' + (i === S.page) + '" data-bd="page" data-k="' + i + '">' + esc(x.title) + '</button>'; }).join('') + '</div>' +
-        '<div class="bd-tools btn-row">' + btn('pen', 'app_bd_pen') + btn('marker', 'app_bd_marker') + btn('text', 'app_bd_text') + btn('eraser', 'app_bd_eraser') +
+      var tools = btn('pen', 'app_bd_pen') + btn('marker', 'app_bd_marker') + btn('text', 'app_bd_text') + btn('eraser', 'app_bd_eraser') +
         '<span class="bd-sws">' + ['ink', 'forest', 'coral'].map(sw).join('') + '</span>' +
-        '<button class="btn btn--quiet btn--sm" type="button" data-bd="undo">' + esc(t('app_bd_undo')) + '</button>' +
+        '<button class="btn btn--quiet btn--sm" type="button" data-bd="undo">' + esc(t('app_bd_undo')) + '</button>';
+      if (!teacher) return '<p class="t-small bd-you">' + esc(t('app_bd_you_can')) + '</p><div class="bd-tools btn-row">' + tools + '</div>';
+      var w = S.write || {}, cur = w.m === 'one' ? 'one:' + w.who : w.m;
+      var who = '<label class="bd-who"><span class="t-small">' + esc(t('app_bd_who')) + '</span><select class="st-in" data-bd-who>' +
+        '<option value="none"' + (cur === 'none' ? ' selected' : '') + '>' + esc(t('app_bd_who_none')) + '</option>' +
+        '<option value="all"' + (cur === 'all' ? ' selected' : '') + '>' + esc(t('app_bd_who_all')) + '</option>' +
+        people().filter(function (x) { return !x.local && !x.owner; }).map(function (x) {
+          return '<option value="one:' + esc(x.session_id) + '"' + (cur === 'one:' + x.session_id ? ' selected' : '') + '>' + esc(x.user_name || t('app_bd_student')) + '</option>';
+        }).join('') + '</select></label>';
+      return '<div class="bd-tabs btn-row" role="tablist">' + pages.map(function (x, i) { return '<button class="btn btn--' + (i === S.page ? 'primary' : 'ghost') + ' btn--sm" type="button" role="tab" aria-selected="' + (i === S.page) + '" data-bd="page" data-k="' + i + '">' + esc(x.title) + '</button>'; }).join('') + '</div>' +
+        '<div class="bd-tools btn-row">' + tools +
         '<button class="btn btn--quiet btn--sm" type="button" data-bd="clear">' + esc(t('app_bd_clear')) + '</button>' +
-        (pages[S.page].blocks.some(function (b) { return b.t === 'ex'; }) ? '<button class="btn btn--' + (p.rv ? 'primary' : 'ghost') + ' btn--sm" type="button" data-bd="reveal">' + esc(t(p.rv ? 'app_bd_hide_answers' : 'app_bd_reveal')) + '</button>' : '') + '</div>';
+        (pages[S.page].blocks.some(function (b) { return b.t === 'ex'; }) ? '<button class="btn btn--' + (p.rv ? 'primary' : 'ghost') + ' btn--sm" type="button" data-bd="reveal">' + esc(t(p.rv ? 'app_bd_hide_answers' : 'app_bd_reveal')) + '</button>' : '') + who + '</div>';
     }
     function draw() {
       if (!root) return;
@@ -140,7 +156,7 @@
       if (S.page >= pages.length) S.page = pages.length - 1;
       var page = pages[S.page], p = pg(S.page);
       if (!teacher && !S.show) { root.innerHTML = '<div class="bd-wait"><p class="t-body">' + esc(t('app_bd_wait')) + '</p></div>'; return; }
-      root.innerHTML = toolbar(pages) + '<div class="bd-stage"><div class="bd-paper' + (teacher ? ' is-' + tool : '') + '" style="width:' + W + 'px"><h2 class="t-h2">' + esc(page.title) + '</h2>' +
+      root.innerHTML = toolbar(pages) + '<div class="bd-stage"><div class="bd-paper' + (canWrite() ? ' is-' + tool : '') + '" style="width:' + W + 'px"><h2 class="t-h2">' + esc(page.title) + '</h2>' +
         '<div class="bd-content" lang="en">' + page.blocks.map(function (b) { return blockHtml(b, p.rv); }).join('') + '</div>' +
         '<svg class="bd-ink" xmlns="http://www.w3.org/2000/svg">' + p.it.map(itemSvg).join('') + '</svg><div class="bd-notes">' + p.it.map(itemText).join('') + '</div></div></div>';
       fit();
@@ -185,12 +201,14 @@
           }
           return;
         case 'show': S.show = !!m.on; if (o.onShow) o.onShow(S.show); break;
+        case 'write': S.write = { m: m.m, who: m.who || null }; if (drawing && !canWrite()) { clearInterval(segTimer); drawing = null; } break;
         case 'page': S.page = +m.pg || 0; break;
         case 'rv': pg(m.pg).rv = !!m.on; if (m.pg !== S.page) return; break;
         case 'clear': pg(m.pg).it = []; if (m.pg !== S.page) return; return redrawInk();
         case 'del': p = pg(m.pg); p.it = p.it.filter(function (x) { return x.id !== m.id; }); if (m.pg !== S.page) return; return redrawInk();
-        case 'add': p = pg(m.pg); if (!p.it.some(function (x) { return x.id === m.it.id; })) p.it.push(m.it); if (m.pg !== S.page) return; return redrawInk();
+        case 'add': if (mine[m.it.id]) return; p = pg(m.pg); if (!p.it.some(function (x) { return x.id === m.it.id; })) p.it.push(m.it); if (m.pg !== S.page) return; return redrawInk();
         case 'seg':
+          if (mine[m.id]) return;
           p = pg(m.pg);
           var it = p.it.filter(function (x) { return x.id === m.id; })[0];
           if (!it) { it = { id: m.id, t: 's', c: m.c, p: [] }; p.it.push(it); }
@@ -203,7 +221,7 @@
     function onMessage(e) {
       var m = e && e.data;
       if (!m || m.a !== V || !alive) return;
-      if (teacher) { if (m.k === 'hi') sendState(e.fromId); return; }
+      if (teacher) { if (m.k === 'hi') sendState(e.fromId); else if (/^r(add|seg|del)$/.test(m.k)) request(m, e.fromId); return; }
       /* Students accept the board only from the room owner (the teacher's token) */
       var ps = frame.participants ? frame.participants() : {};
       var from = Object.keys(ps).map(function (k) { return ps[k]; }).filter(function (x) { return x.session_id === e.fromId; })[0];
@@ -211,7 +229,36 @@
       if (m.k !== 'st' && !course && S.course === null) { send({ k: 'hi' }); }
       apply(m);
     }
-    function onJoined() { if (!teacher) send({ k: 'hi' }); else sendState(); }
+    /* A student's mark, accepted only while that student may write; then passed on to everyone */
+    function cleanPts(a) { return Array.isArray(a) ? a.slice(0, 4000).map(function (n) { return Math.max(-50, Math.min(4000, Math.round(+n) || 0)); }) : []; }
+    function request(m, from) {
+      if (!mayWrite(from) || !(m.pg >= 0 && m.pg < lessonPages().length)) return;
+      var p = pg(m.pg), id = String(m.id || (m.it && m.it.id) || '').slice(0, 24), it;
+      if (!/^u[a-z0-9]+$/.test(id)) return;
+      if (m.k === 'rdel') {
+        it = p.it.filter(function (x) { return x.id === id; })[0];
+        if (!it || it.by !== from) return;
+        p.it = p.it.filter(function (x) { return x !== it; });
+        save(); send({ k: 'del', pg: m.pg, id: id });
+      } else if (m.k === 'rseg') {
+        if (!COLORS[m.c]) return;
+        it = p.it.filter(function (x) { return x.id === id; })[0];
+        if (it && it.by !== from) return;
+        if (!it) { it = { id: id, t: 's', c: m.c, p: [], by: from }; p.it.push(it); }
+        var pts = cleanPts(m.p); if (it.p.length + pts.length > 8000) return;
+        it.p = it.p.concat(pts);
+        save(); send({ k: 'seg', pg: m.pg, id: id, c: it.c, p: pts });
+      } else {
+        var x = m.it || {};
+        if (x.t !== 't' || !COLORS[x.c] || p.it.some(function (y) { return y.id === id; })) return;
+        it = { id: id, t: 't', c: x.c, x: Math.round(+x.x) || 0, y: Math.round(+x.y) || 0, s: String(x.s || '').slice(0, 120), by: from };
+        p.it.push(it); save(); send({ k: 'add', pg: m.pg, it: it });
+      }
+      if (m.pg === S.page) redrawInk();
+    }
+    /* Sends one change: the teacher to everyone, a student as a request to the teacher */
+    function out(m) { if (teacher) send(m); else { var to = teacherId(); if (to) send(Object.assign({}, m, { k: 'r' + m.k }), to); } }
+    function onJoined() { me = null; myId(); if (!teacher) send({ k: 'hi' }); else sendState(); }
 
     /* ---------- The teacher's tools ---------- */
     function point(e) {
@@ -220,12 +267,13 @@
     }
     function flushSeg() {
       if (!drawing || !drawing.fresh.length) return;
-      send({ k: 'seg', pg: drawing.pg, id: drawing.it.id, c: drawing.it.c, p: drawing.fresh });
+      out({ k: 'seg', pg: drawing.pg, id: drawing.it.id, c: drawing.it.c, p: drawing.fresh });
       drawing.fresh = [];
     }
     function nearest(xy) {
       var p = pg(S.page), best = null, bd = 18;
       p.it.forEach(function (it) {
+        if (!teacher && !mine[it.id]) return;
         if (it.t === 't') { if (xy[0] >= it.x - 6 && xy[0] <= it.x + 12 * String(it.s).length && xy[1] >= it.y - 6 && xy[1] <= it.y + 36) { best = it; bd = 0; } return; }
         for (var i = 0; i < it.p.length; i += 2) { var d = Math.hypot(it.p[i] - xy[0], it.p[i + 1] - xy[1]); if (d < bd) { bd = d; best = it; } }
       });
@@ -234,20 +282,22 @@
     function erase(xy) {
       var it = nearest(xy); if (!it) return;
       var p = pg(S.page); p.it = p.it.filter(function (x) { return x !== it; });
-      save(); send({ k: 'del', pg: S.page, id: it.id }); redrawInk();
+      save(); out({ k: 'del', pg: S.page, id: it.id }); redrawInk();
     }
+    function newId() { var id = teacher ? rid() : 'u' + rid(); if (!teacher) mine[id] = 1; return id; }
     function down(e) {
-      if (!teacher || !e.target.closest('.bd-paper') || e.target.closest('.bd-input')) return;
+      if (!canWrite() || !e.target.closest('.bd-paper') || e.target.closest('.bd-input')) return;
       var xy = point(e);
       if (tool === 'text') { textAt(xy); e.preventDefault(); return; }
       if (tool === 'eraser') { erase(xy); drawing = { erase: true }; e.preventDefault(); return; }
-      drawing = { pg: S.page, it: { id: rid(), t: 's', c: tool === 'marker' ? 'lime' : color, p: xy.slice() }, fresh: xy.slice() };
+      drawing = { pg: S.page, it: { id: newId(), t: 's', c: tool === 'marker' ? 'lime' : color, p: xy.slice() }, fresh: xy.slice() };
       segTimer = setInterval(flushSeg, 120);
       try { e.target.setPointerCapture(e.pointerId); } catch (x) { /* fine */ }
       e.preventDefault();
     }
     function move(e) {
       if (!drawing) return;
+      if (!canWrite()) { clearInterval(segTimer); drawing = null; redrawInk(); return; }
       var xy = point(e);
       if (drawing.erase) { erase(xy); return; }
       var pts = drawing.it.p, n = pts.length;
@@ -273,19 +323,25 @@
         finished = true;
         var s = inp.value.trim(); if (inp.parentNode) inp.parentNode.removeChild(inp);
         if (!keep || !s) return;
-        var it = { id: rid(), t: 't', c: color, x: xy[0], y: xy[1], s: s };
-        pg(S.page).it.push(it); save(); send({ k: 'add', pg: S.page, it: it }); redrawInk();
+        if (!canWrite()) return;
+        var it = { id: newId(), t: 't', c: color, x: xy[0], y: xy[1], s: s };
+        pg(S.page).it.push(it); save(); out({ k: 'add', pg: S.page, it: it }); redrawInk();
       };
       inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') done(true); else if (e.key === 'Escape') done(false); });
       inp.addEventListener('blur', function () { done(true); });
     }
     function click(e) {
-      var b = e.target.closest('[data-bd]'); if (!b || !teacher) return;
+      var b = e.target.closest('[data-bd]'); if (!b || !canWrite()) return;
       var k = b.getAttribute('data-bd'), v = b.getAttribute('data-k'), p = pg(S.page);
+      if (!teacher && ['tool', 'color', 'undo'].indexOf(k) < 0) return;
       if (k === 'tool') { tool = v; draw(); return; }
       if (k === 'color') { color = v; if (tool === 'marker' || tool === 'eraser') tool = 'pen'; draw(); return; }
       if (k === 'page') { S.page = +v; save(); send({ k: 'page', pg: S.page }); draw(); return; }
-      if (k === 'undo') { var last = p.it.pop(); if (last) { save(); send({ k: 'del', pg: S.page, id: last.id }); redrawInk(); } return; }
+      if (k === 'undo') {
+        var own = p.it.filter(function (x) { return teacher ? !x.by : mine[x.id]; }), last = own[own.length - 1];
+        if (last) { p.it = p.it.filter(function (x) { return x !== last; }); save(); out({ k: 'del', pg: S.page, id: last.id }); redrawInk(); }
+        return;
+      }
       if (k === 'clear') { if (b.getAttribute('data-sure') !== '1') { b.setAttribute('data-sure', '1'); b.textContent = t('app_bd_clear_sure'); return; } p.it = []; save(); send({ k: 'clear', pg: S.page }); draw(); return; }
       if (k === 'reveal') { p.rv = !p.rv; save(); send({ k: 'rv', pg: S.page, on: p.rv }); draw(); }
     }
@@ -298,17 +354,23 @@
       root.addEventListener('pointerup', up);
       root.addEventListener('pointercancel', up);
       root.addEventListener('click', click);
+      root.addEventListener('change', function (e) {
+        var sel = e.target.closest('[data-bd-who]'); if (!sel || !teacher) return;
+        var v = sel.value, w = v.indexOf('one:') === 0 ? { m: 'one', who: v.slice(4) } : { m: v === 'all' ? 'all' : 'none', who: null };
+        S.write = w; save(); send({ k: 'write', m: w.m, who: w.who }); draw();
+      });
       window.addEventListener('resize', fit);
       return loadCourse(S.course).then(function (c) { course = c; draw(); });
     }
     function setShow(on) { S.show = !!on; save(); send({ k: 'show', on: S.show }); if (on) sendState(); draw(); }
     function destroy() {
       alive = false; clearInterval(segTimer);
-      if (frame) { try { frame.off('app-message', onMessage); frame.off('joined-meeting', onJoined); } catch (e) { /* gone */ } }
+      if (frame) { try { frame.off('app-message', onMessage); frame.off('joined-meeting', onJoined); frame.off('participant-joined', onPeople); frame.off('participant-left', onPeople); } catch (e) { /* gone */ } }
       window.removeEventListener('resize', fit);
       root = null;
     }
-    if (frame) { frame.on('app-message', onMessage); frame.on('joined-meeting', onJoined); }
+    function onPeople() { if (teacher && root && !drawing) draw(); }
+    if (frame) { frame.on('app-message', onMessage); frame.on('joined-meeting', onJoined); if (teacher) { frame.on('participant-joined', onPeople); frame.on('participant-left', onPeople); } }
     return { mount: mountIn, show: setShow, shown: function () { return S.show; }, destroy: destroy, hello: onJoined, fit: fit };
   }
 
