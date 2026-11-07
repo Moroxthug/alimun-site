@@ -1403,9 +1403,23 @@ Owner: "yes to both, apply it and add them. also, allow admin to give plan to st
 - Given plans (`supabase/migrations/202611071000_admin_given_plan.sql`, applied and verified): `student_profiles.plan_given_until`. Admin → Students → a student → "Give it without payment, until" (date) next to Plan. While the date is ahead, the plan counts as active wherever a Stripe subscription is required: enrol (`api/enroll.js`), live classes and 1 on 1 (`api/join-session.js`, `api/_lib/one-on-one.js`), assistant eligibility (`api/ai.js`), waiting lists and tutor minutes (SQL). Shared check `api/_lib/plan.js`. Students cannot set the column (guard trigger also clears it on insert). Student Settings and Plans say "Alimun gave you this plan until {date}" (9 languages) and hide the Stripe billing button; Students list shows "given until" and has a filter for it.
 - Teacher availability (`js/app/teach-classes.js`): tick several days (with "Monday to Friday" and "Every day"), add several time ranges, one Add saves every combination in one request (`AlimunData.addSlots`, existing identical blocks skipped). Overlapping ranges are refused with a message.
 - Checked: `npm run build`; `node --check` on `api/`; both screens in `?preview=1` with Playwright (5 days x 2 ranges = 10 blocks, overlap message, given-plan save and filter), no console errors; database paths tested as the real teacher/admin with rollback.
-- Not live yet: the code is on branch `claude/elegant-cori-d1u272`; this session was not allowed to push to `main`. The database changes are already live and work with the current site.
+- Live on `main` (418f9c6) after the owner said to push; production smoke test passes. Owner: push to `main` only, never to a session branch.
 
 ## 2026-11-07 — Captcha on in Supabase (growth step 1 done)
+
+- Owner, 7 Nov: Attack Protection → Turnstile with the secret. Checked through the API: sign-in and sign-up without a token or with a fake token answer `captcha_failed`. Server-side admin calls (reset links, invites) are not affected. Growth step 1 done.
+
+## 7 Nov 2026 — Classroom: "Could not create the video room"
+
+Daily room creation has never succeeded in production: `cron_runs` shows `vercel:cron-create-rooms` failing on every run since 27 Oct. Vercel holds two Daily keys (`DAILY_API_KEY`, `DAILY_CO_API_KEY`), both stored as sensitive, so they can't be read or tested from a session. `api/_lib/daily.js` now handles all Daily calls for join-session and the room cron. It tries the second key if Daily rejects the first as unauthorised, and records Daily's status and error code (never the key) in `cron_runs` under `daily:join-session`, plus `lastDailyError` on cron runs. Next step: read that row after a join attempt. If both keys are rejected, the owner pastes a fresh key from the Daily dashboard into `DAILY_API_KEY` and redeploys. `create-cohort.js` still reads `DAILY_API_KEY` directly.
+
+## 2026-11-07 — Classroom (Daily) in Alimun's colours
+
+Owner: "do 1 and 2, keep chat, no emoji reactions".
+- Student and teacher classrooms (`js/app/classes.js`, `js/app/teach-classes.js`, `roomOptions()`): Daily Prebuilt theme in site and dashboard colours (lime buttons on white and bone, forest video area), room language from the dashboard (Daily has no Arabic or Chinese: English; Darija: French), name taken from the meeting token with no rename option.
+- Rooms (`api/join-session.js` for classes and 1 on 1, `api/cron-create-rooms.js`): chat on, emoji reactions off (`enable_emoji_reactions: false`), applied to existing rooms on the next join because join-session refreshes the room's properties.
+- Checked: Daily accepted the frame options in a browser (no join), `node --check`, dashboards boot in `?preview=1` with no console errors. The look in a live call is for the owner to confirm.
+- Whiteboard: proposed, not built (owner to confirm the plan).
 
 - Owner, 7 Nov: Attack Protection → Turnstile with the secret. Checked through the API: sign-in and sign-up without a token or with a fake token answer `captcha_failed`. Server-side admin calls (reset links, invites) are not affected. Growth step 1 done.
 
