@@ -53,10 +53,19 @@ Lessons are drafted from the book's lesson outline, then reviewed (status draft 
 
 ## Decisions
 
-- D1. Class lessons follow the book (one class lesson per book lesson, plus review and speaking lessons in between), or a separate class course? Recommendation: follow the book, so home study and class match.
-- D2. How many class lessons per level (classes meet several times a week)?
-- D3. Class sizes for the activities: suggested 1 on 1, 2 to 6, 7 to 17, 18 and more.
-- D4. Exercise answers on the board: right or wrong shown at once, or only when the teacher reveals them?
-- D5. After class: students only look at the saved boards, or can keep working on them?
-- D6. Who reviews the drafted lessons before teachers see them?
-- D7. Which course comes first after English A1?
+Owner, 7 Nov 2026:
+- D1 yes: class lessons follow the book. The books are to be improved first: much more explanation, fewer but better exercises, new kinds of exercises (see "Books, second edition" below).
+- D2 depends on how long a level takes: proposal in "Course length" below, owner to confirm.
+- D3 open: the owner is revisiting class sizes and pricing (likely a cap of 15 per class).
+- D4 answers are shown only when the teacher reveals them.
+- D5 after class: a class digest (what was covered, the teacher's notes, the board where useful), not further work on the boards.
+- D6 open: who checks drafted content before teachers and students use it.
+- D7 English first, in order A1, A2, B1, B2, C1, C2. Owner's idea for tests: a test from A2 to B1, from B2 to C1 and from C1 to C2.
+
+## Books, second edition (proposal)
+
+Measured on English A1 units 1 and 2 and B1 unit 2: about 800 to 1,000 words of explanation per unit (so roughly 200 to 250 per lesson) against 70 to 95 exercise items in about 20 exercise blocks; one short reading per unit; no listening, speaking or writing tasks. Proposal per lesson: a full explanation (the rule in plain words, why it works this way, many examples, the usual mistakes, a short dialogue or text that uses it), then fewer exercises, ordered from controlled to free, and one skills task (listening with the existing voices, speaking with the pronunciation check, short writing corrected by the teacher). New exercise kinds to add to the engine: listen and write, listen and choose, say it (pronunciation), role-play dialogue, describe the picture, find it in the text, correct the mistakes in a paragraph, short writing. Pilot: English A1 unit 1 rewritten for the owner's review, then the rest of A1.
+
+## Course length (proposal)
+
+Cambridge's guided-learning estimates (cumulative, to reach each level): A2 about 180 to 200 hours, B1 350 to 400, B2 500 to 600, C1 700 to 800, C2 1,000 to 1,200. Per level that is roughly A1 100, A2 100, B1 175, B2 175, C1 200, C2 300 hours of class plus guided study. With Focused (2 classes a week) and about 2 to 3 hours of book, homework and practice a week, A1 and A2 take about 5 to 6 months each, B1 and B2 about 9 months each. These are estimates; the class lesson count per level follows from the owner's choice of pace.
