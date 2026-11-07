@@ -316,9 +316,36 @@
     if (board || !window.AlimunBoard) return board;
     var s = sessionOf(id), x = s ? lessonFor(s) : null, el = root.querySelector('[data-board]');
     if (!s || !el) return null;
-    board = window.AlimunBoard.create({ A: A, role: 'teacher', frame: frame || null, sessionId: s.id, course: x ? x.course.id : null, lesson: x && x.lesson ? x.lesson.id : null });
-    board.mount(el).then(function () { if (board && board.shown()) setBoardOpen(true); });
+    board = window.AlimunBoard.create({ A: A, role: 'teacher', frame: frame || null, sessionId: s.id, course: x ? x.course.id : null, lesson: x && x.lesson ? x.lesson.id : null, persist: !C.sample });
+    var b = board;
+    board.mount(el).then(function () {
+      if (board && board.shown()) setBoardOpen(true);
+      if (!C.sample && window.AlimunData.boardOf) window.AlimunData.boardOf(s.id).then(function (saved) { if (board === b) b.load(saved); }, function () { /* the browser's copy stays */ });
+    });
     return board;
+  }
+  /* The class date page: the board saved from class (step L5), read-only, with every student's solo work, and whether
+     students see it with the class notes */
+  function boardCard(id) {
+    var box = root.querySelector('[data-boardcard]');
+    if (!box || C.sample || !window.AlimunData.boardOf || !window.AlimunBoard) return;
+    window.AlimunData.boardOf(id).then(function (saved) {
+      if (!saved.board || !root.contains(box)) return;
+      var b = saved.board;
+      box.hidden = false;
+      box.innerHTML = '<section class="card" aria-labelledby="h-board"><h2 class="t-h2" id="h-board">' + esc(t('app_bd_saved_h')) + '</h2>' +
+        '<label class="st-day" style="margin-top:10px"><input type="checkbox" data-board-share' + (b.shared ? ' checked' : '') + '><span>' + esc(t('app_bd_share')) + '</span></label>' +
+        '<p class="t-small st-msg" data-sharemsg aria-live="polite"></p>' +
+        '<details style="margin-top:10px"><summary class="linkish">' + esc(t('app_bd_see')) + '</summary><div class="tc-board-view" data-board-view></div></details></section>';
+      var v = window.AlimunBoard.create({ A: A, role: 'viewer', data: b, work: saved.work });
+      box.querySelector('details').addEventListener('toggle', function () { if (this.open && !this.__on) { this.__on = true; v.mount(box.querySelector('[data-board-view]')); } });
+      box.querySelector('[data-board-share]').addEventListener('change', function (e) {
+        var el = e.target, msg = box.querySelector('[data-sharemsg]');
+        el.disabled = true;
+        window.AlimunData.setBoardShared(id, el.checked).then(function () { el.disabled = false; msg.textContent = t(el.checked ? 'app_bd_shared_on' : 'app_bd_shared_off'); msg.classList.remove('is-bad'); },
+          function () { el.disabled = false; el.checked = !el.checked; msg.textContent = t('app_tc_save_error'); msg.classList.add('is-bad'); });
+      });
+    }, function () { /* no board card */ });
   }
   function setBoardOpen(on) {
     var live = root.querySelector('.cl-live'), el = root.querySelector('[data-board]'), btn = root.querySelector('[data-tc="board"]');
@@ -397,7 +424,7 @@
     var st = notesState(s), co = cohortOf(s.cohortId), lang = window.AlimunData.langCode(co.language) || 'en';
     var html = '<a class="rd-back" href="#/classes">' + A.icon('back') + '<span>' + esc(t('app_t_nav_classes')) + '</span></a>' +
       '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_tc_notes_h', { class: A.className(co) })) + '</h1><p class="t-lead">' + esc(longDay(s.at) + ', ' + time(s.at)) + '</p></div></div>' +
-      '<div class="grid rise">' + lessonCard(s, 0) + '<form class="card span-8 st-form tc-notes" style="--i:0;max-width:none" data-notes="' + esc(s.id) + '" novalidate>' +
+      '<div class="grid rise">' + lessonCard(s, 0) + '<div class="span-12" data-boardcard="' + esc(s.id) + '" hidden></div><form class="card span-8 st-form tc-notes" style="--i:0;max-width:none" data-notes="' + esc(s.id) + '" novalidate>' +
       '<fieldset class="st-field"><legend class="st-lbl">' + esc(t('app_tc_words')) + '</legend><p class="t-small st-hint">' + esc(t('app_tc_words_p')) + '</p><div class="tc-words" data-words>' +
         words.map(function (w, i) { return wordRow(w, i, lang); }).join('') + '</div>' +
         '<div class="btn-row"><button class="btn btn--quiet btn--sm" type="button" data-tc="addword"' + (words.length >= MAX_WORDS ? ' disabled' : '') + '>' + A.icon('plus') + esc(t('app_tc_add_word')) + '</button></div></fieldset>' +
@@ -736,13 +763,14 @@
       if (my !== mountNo) return { stale: true };
       var p0 = parts[0], html, title = t('app_t_nav_classes');
       if (p0 === 'live') html = liveView(parts[1] === 'b' ? 'b' : 's', parts[1] === 'b' ? parts[2] : parts[1]);
-      else if (p0 === 'notes') html = notesView(parts[1]);
+      else if (p0 === 'notes') { html = notesView(parts[1]); }
       else if (p0 === 'oto') html = otoView(parts[1]);
       else if (p0 === 'new') { html = newView(); title = t('app_tc_new_h'); }
       else if (p0 === 'availability') { html = availView(); title = t('app_tc_avail'); }
       else html = timetableView();
       root.innerHTML = html;
       if (!p0 && C.flash) { root.querySelector('.view__head').insertAdjacentHTML('afterend', '<p class="t-body st-msg tc-flash" role="status">' + esc(C.flash) + '</p>'); C.flash = null; }
+      if (p0 === 'notes') boardCard(parts[1]);
       if (p0 === 'live') {
         var kind = parts[1] === 'b' ? 'b' : 's', id = kind === 'b' ? parts[2] : parts[1];
         join(kind, id);
