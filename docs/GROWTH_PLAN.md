@@ -5,7 +5,7 @@ each user does with his account, and we need to start pushing users with promo m
 communications through notifications." Decisions the same day: this order; one consent tick box for news and offers;
 no marketing at all to anyone under 16. Each step is shown to the owner before the next starts.
 
-## Step 1. Captcha (Cloudflare Turnstile)
+## Step 1. Captcha (Cloudflare Turnstile) (live 7 Nov 2026: site, Vercel and Supabase)
 
 - Browser: `js/captcha.js` (`window.AlimunCaptcha.token()`), loaded by `js/nav-account.js` on every page with the
   header and directly by sign-in, sign-up and forgot-password. It adds an `X-Captcha-Token` header to same-origin POSTs

@@ -1404,3 +1404,7 @@ Owner: "yes to both, apply it and add them. also, allow admin to give plan to st
 - Teacher availability (`js/app/teach-classes.js`): tick several days (with "Monday to Friday" and "Every day"), add several time ranges, one Add saves every combination in one request (`AlimunData.addSlots`, existing identical blocks skipped). Overlapping ranges are refused with a message.
 - Checked: `npm run build`; `node --check` on `api/`; both screens in `?preview=1` with Playwright (5 days x 2 ranges = 10 blocks, overlap message, given-plan save and filter), no console errors; database paths tested as the real teacher/admin with rollback.
 - Not live yet: the code is on branch `claude/elegant-cori-d1u272`; this session was not allowed to push to `main`. The database changes are already live and work with the current site.
+
+## 2026-11-07 — Captcha on in Supabase (growth step 1 done)
+
+- Owner, 7 Nov: Attack Protection → Turnstile with the secret. Checked through the API: sign-in and sign-up without a token or with a fake token answer `captcha_failed`. Server-side admin calls (reset links, invites) are not affected. Growth step 1 done.
