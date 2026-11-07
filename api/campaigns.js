@@ -15,7 +15,7 @@
  *
  *  Automation (owner, 7 Nov 2026): audience, test and send also accept the campaign key the owner set in Vercel
  *  (CAMPAIGN_AGENT_KEY, sent as Authorization: Bearer <key>). With the key, a test goes to every admin account and
- *  nowhere else, and at most AGENT_SENDS_PER_DAY campaigns go out per day; each is saved with sent_via 'agent'.
+ *  nowhere else (or to the owner's test inbox, app_settings 'campaign_test_to'), and at most AGENT_SENDS_PER_DAY campaigns go out per day; each is saved with sent_via 'agent'.
  *  The owner approves each campaign by replying "go" to the test (docs/GROWTH_PLAN.md, "Campaigns on request").
  *  Remove the variable in Vercel to switch the key off.
  *
@@ -311,7 +311,10 @@ module.exports = async function handler(req, res) {
   if (agentKeyOk(req)) {
     if (action === 'audience') return handleAudience(req, res, supabase);
     if (action === 'test') {
-      const admins = await adminAccounts(supabase);
+      // Owner-set test inbox (app_settings 'campaign_test_to', admins only), else every admin account.
+      const { data: st } = await supabase.from('app_settings').select('value').eq('key', 'campaign_test_to').maybeSingle();
+      const inbox = String((st && st.value) || '').split(',').map((x) => x.trim()).filter((x) => /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x)).slice(0, 3);
+      const admins = inbox.length ? inbox.map((email) => ({ email, user_metadata: {} })) : await adminAccounts(supabase);
       if (!admins.length) return res.status(404).json({ error: 'No admin account found' });
       return handleTest(req, res, admins, true);
     }

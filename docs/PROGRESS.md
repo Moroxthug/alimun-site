@@ -1576,3 +1576,4 @@ Owner: "for the automated marketing emails i would like an automation, not to do
 Owner: "update the privacy page too".
 - `site/src/blocks/legal/gdpr.html` and its seven translations: the newsletter form on the website is now listed as a way to agree to news and offers (it asks you to confirm you are 16 or older; if you also have an account, the account's choice is followed), as a place a choice is recorded, and under retention: after a newsletter unsubscribe the address and date are kept so we do not write again, deletable on request. Lock updated in `site/locked.json`.
 - Built locally: all nine language pages carry the new sentences (ma uses the French text).
+- Test inbox (owner: "send them to bchysfita@gmail.com not pol"): tests sent with the campaign key go to app_settings `campaign_test_to` (bchysfita@gmail.com) when set, else to every admin account. Migration 202611080200_campaign_test_to applied.
