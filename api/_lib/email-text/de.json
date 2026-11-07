@@ -5,7 +5,8 @@
     "hello": "Hallo,",
     "open_dashboard": "Zu Ihrem Dashboard",
     "questions": "Fragen? Antworten Sie einfach auf diese E-Mail.",
-    "footer_account": "Sie erhalten diese E-Mail, weil Sie ein Alimun-Konto haben."
+    "footer_account": "Sie erhalten diese E-Mail, weil Sie ein Alimun-Konto haben.",
+    "footer_newsletter": "Sie erhalten diese E-Mail, weil Sie sich auf alimun.com für Neuigkeiten und Angebote angemeldet haben."
   },
   "reset": {
     "subject": "Neues Alimun-Passwort festlegen",
@@ -193,6 +194,7 @@
     "button": "Neuigkeiten und Angebote abbestellen",
     "title_done": "Erledigt",
     "text_done": "Sie erhalten keine Neuigkeiten und Angebote von Alimun mehr. Sie können sie jederzeit in Ihrem Dashboard unter Einstellungen wieder einschalten.",
+    "text_done_newsletter": "Sie erhalten keine Neuigkeiten und Angebote von Alimun mehr. Um sich wieder anzumelden, nutzen Sie das Formular unten auf jeder Seite von alimun.com.",
     "title_error": "Bitte versuchen Sie es erneut",
     "text_error": "Bei uns ist etwas schiefgelaufen. Bitte versuchen Sie es in einer Minute erneut.",
     "back": "Zurück zu Alimun"

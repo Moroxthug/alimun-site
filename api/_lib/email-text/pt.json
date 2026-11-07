@@ -5,7 +5,8 @@
     "hello": "Olá,",
     "open_dashboard": "Abrir o seu painel",
     "questions": "Tem dúvidas? Responda a este email.",
-    "footer_account": "Recebeu este email porque tem uma conta Alimun."
+    "footer_account": "Recebeu este email porque tem uma conta Alimun.",
+    "footer_newsletter": "Você recebeu este e-mail porque se inscreveu para receber novidades e ofertas em alimun.com."
   },
   "reset": {
     "subject": "Escolha uma nova palavra-passe Alimun",
@@ -193,6 +194,7 @@
     "button": "Deixar de receber novidades e ofertas",
     "title_done": "Feito",
     "text_done": "Deixará de receber novidades e ofertas da Alimun. Pode voltar a ativá-las a qualquer momento no seu painel, em Definições.",
+    "text_done_newsletter": "Você não receberá mais novidades e ofertas da Alimun. Para se inscrever novamente, use o formulário no final de qualquer página de alimun.com.",
     "title_error": "Tente novamente",
     "text_error": "Algo correu mal do nosso lado. Tente novamente dentro de um minuto.",
     "back": "Voltar à Alimun"

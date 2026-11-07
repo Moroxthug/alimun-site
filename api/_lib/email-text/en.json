@@ -5,7 +5,8 @@
     "hello": "Hello,",
     "open_dashboard": "Open your dashboard",
     "questions": "Questions? Reply to this email.",
-    "footer_account": "You received this email because you have an Alimun account."
+    "footer_account": "You received this email because you have an Alimun account.",
+    "footer_newsletter": "You received this email because you signed up for news and offers on alimun.com."
   },
   "reset": {
     "subject": "Choose a new Alimun password",
@@ -193,6 +194,7 @@
     "button": "Stop news and offers",
     "title_done": "Done",
     "text_done": "You will no longer receive news and offers from Alimun. You can turn them back on at any time in your dashboard, under Settings.",
+    "text_done_newsletter": "You will no longer receive news and offers from Alimun. To sign up again, use the form at the bottom of any page on alimun.com.",
     "title_error": "Please try again",
     "text_error": "Something went wrong on our side. Please try again in a minute.",
     "back": "Back to Alimun"

@@ -138,8 +138,31 @@ async function personLang(supabase, userId, req) {
   return L.fromAcceptLanguage(req.headers['accept-language']);
 }
 
+/** Newsletter sign-ups (no account): the same page, and the sign-up is marked unsubscribed. */
+async function handleNewsletterUnsubscribe(req, res, n, s) {
+  const supabase = getSupabaseAdmin();
+  const valid = UUID_RE.test(n) && mail.checkUnsubscribe(`n:${n}`, s);
+  let lang = L.fromAcceptLanguage(req.headers['accept-language']);
+  if (valid && supabase) {
+    const { data } = await supabase.from('email_signups').select('locale').eq('id', n).maybeSingle();
+    if (data && L.LANGS.includes(data.locale)) lang = data.locale;
+  }
+  const t = (k) => mail.esc(L.say(lang, `unsub.${k}`));
+  if (!valid) return page(res, 400, L.say(lang, 'unsub.title_bad'), t('text_bad'), '', lang);
+  if (req.method === 'GET') {
+    const action = `/api/auth?action=unsubscribe&n=${encodeURIComponent(n)}&s=${encodeURIComponent(s)}`;
+    return page(res, 200, L.say(lang, 'unsub.title_ask'), t('text_ask'),
+      `<form method="POST" action="${mail.esc(action)}"><button type="submit">${t('button')}</button></form>`, lang);
+  }
+  if (!supabase) return page(res, 503, L.say(lang, 'unsub.title_error'), t('text_error'), '', lang);
+  const { error } = await supabase.from('email_signups').update({ offers_consent: false, unsubscribed_at: new Date().toISOString() }).eq('id', n);
+  if (error) { console.error('[auth] newsletter unsubscribe:', error.message); return page(res, 500, L.say(lang, 'unsub.title_error'), t('text_error'), '', lang); }
+  return page(res, 200, L.say(lang, 'unsub.title_done'), t('text_done_newsletter'), '', lang);
+}
+
 async function handleUnsubscribe(req, res) {
   const u = String((req.query && req.query.u) || ''), s = String((req.query && req.query.s) || '');
+  if (req.query && req.query.n) return handleNewsletterUnsubscribe(req, res, String(req.query.n), s);
   const supabase = getSupabaseAdmin();
   const valid = UUID_RE.test(u) && mail.checkUnsubscribe(u, s);
   const lang = await personLang(supabase, valid ? u : '', req);

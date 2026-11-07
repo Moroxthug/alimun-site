@@ -5,7 +5,8 @@
     "hello": "Bonjour,",
     "open_dashboard": "Ouvrir votre tableau de bord",
     "questions": "Des questions ? Répondez à cet e-mail.",
-    "footer_account": "Vous recevez cet e-mail car vous avez un compte Alimun."
+    "footer_account": "Vous recevez cet e-mail car vous avez un compte Alimun.",
+    "footer_newsletter": "Vous recevez cet e-mail parce que vous vous êtes inscrit aux nouvelles et offres sur alimun.com."
   },
   "reset": {
     "subject": "Choisissez un nouveau mot de passe Alimun",
@@ -193,6 +194,7 @@
     "button": "Ne plus recevoir les nouveautés et les offres",
     "title_done": "C'est fait",
     "text_done": "Vous ne recevrez plus les nouveautés ni les offres d'Alimun. Vous pouvez les réactiver à tout moment dans votre tableau de bord, dans Paramètres.",
+    "text_done_newsletter": "Vous ne recevrez plus les nouvelles et les offres d'Alimun. Pour vous réinscrire, utilisez le formulaire en bas de n'importe quelle page d'alimun.com.",
     "title_error": "Veuillez réessayer",
     "text_error": "Un problème est survenu de notre côté. Veuillez réessayer dans une minute.",
     "back": "Retour à Alimun"

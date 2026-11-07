@@ -5,7 +5,8 @@
     "hello": "你好：",
     "open_dashboard": "打开控制面板",
     "questions": "有问题吗？直接回复这封邮件即可。",
-    "footer_account": "你收到这封邮件，是因为你拥有 Alimun 账户。"
+    "footer_account": "你收到这封邮件，是因为你拥有 Alimun 账户。",
+    "footer_newsletter": "您收到这封邮件，是因为您在 alimun.com 订阅了新闻和优惠。"
   },
   "reset": {
     "subject": "设置新的 Alimun 密码",
@@ -193,6 +194,7 @@
     "button": "退订最新消息和优惠",
     "title_done": "已完成",
     "text_done": "你将不再收到 Alimun 的最新消息和优惠。你可以随时在学习面板的“设置”中重新开启。",
+    "text_done_newsletter": "您将不再收到 Alimun 的新闻和优惠。如需重新订阅，请使用 alimun.com 任意页面底部的表单。",
     "title_error": "请重试",
     "text_error": "我们这边出了点问题。请一分钟后再试。",
     "back": "返回 Alimun"

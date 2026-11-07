@@ -5,9 +5,6 @@
  *
  *    ?action=audience (POST, admin)  { filter }            → { count, people: first 30 }
  *    ?action=test     (POST, admin)  { message }           → sends the email to the admin's own address only
- *         The test action also accepts an operations key (Authorization: Bearer <key>) whose SHA-256 is stored in
- *         app_settings 'agent_test_key_sha256'. With it the test goes to every admin account and nowhere else; it
- *         cannot send a campaign, read an audience or email anyone else. Delete the setting to switch it off.
  *    ?action=send     (POST, admin)  { message, filter, channels, confirm: <count> }
  *         → creates the campaign, writes in-app notifications and/or emails everyone in the audience
  *    ?action=click    (GET, public)  ?c=&u=&s=             → records the click, then redirects to the campaign's button link
@@ -15,6 +12,18 @@
  *  The audience is public.campaign_audience(filter): only people whose latest choice is news-and-offers "yes", which
  *  the database allows only with the 16+ check (owner, 6 Nov 2026: no marketing under 16). Every email carries the
  *  person's own unsubscribe link and List-Unsubscribe headers. Admin = app_metadata.role, checked on the server.
+ *
+ *  Automation (owner, 7 Nov 2026): audience, test and send also accept the campaign key the owner set in Vercel
+ *  (CAMPAIGN_AGENT_KEY, sent as Authorization: Bearer <key>). With the key, a test goes to every admin account and
+ *  nowhere else, and at most AGENT_SENDS_PER_DAY campaigns go out per day; each is saved with sent_via 'agent'.
+ *  The owner approves each campaign by replying "go" to the test (docs/GROWTH_PLAN.md, "Campaigns on request").
+ *  Remove the variable in Vercel to switch the key off.
+ *
+ *  Translations: { messages: { en: {...}, fr: {...}, ... } } instead of { message }. Each person gets the version in
+ *  their dashboard language (ma falls back to fr), else English, which is required.
+ *  Newsletter: { include_newsletter: true } adds footer sign-ups who agreed to news and offers (email_signups
+ *  .offers_consent, not unsubscribed, and not an account holder, whose own choice counts). Only with no filter
+ *  other than ui_lang, since sign-ups have no role, level, country or plan.
  * ============================================================
  */
 
@@ -25,6 +34,7 @@ const L = require('./_lib/email-i18n.js');
 
 const SITE = 'https://alimun.com';
 const MAX_RECIPIENTS = 5000;
+const AGENT_SENDS_PER_DAY = 3;
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const LANGS = ['English', 'German', 'Spanish', 'French', 'Portuguese', 'Italian', 'Mandarin', 'Japanese', 'Arabic'];
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
@@ -41,15 +51,13 @@ async function adminUser(req, supabase) {
   if (error || !data?.user || data.user.app_metadata?.role !== 'admin') return null;
   return data.user;
 }
-/** Operations key for test sends only: compared with the stored SHA-256, never stored itself. */
-async function opsKeyOk(req, supabase) {
+/** The owner's campaign key (Vercel env CAMPAIGN_AGENT_KEY): compared in constant time, never logged. */
+function agentKeyOk(req) {
+  const want = process.env.CAMPAIGN_AGENT_KEY || '';
   const h = req.headers.authorization || '';
-  if (!h.startsWith('Bearer ') || h.length < 50 || h.length > 200 || h.split('.').length === 3) return false;
-  const { data } = await supabase.from('app_settings').select('value').eq('key', 'agent_test_key_sha256').maybeSingle();
-  const want = (data && data.value) || '';
-  if (!/^[0-9a-f]{64}$/.test(want)) return false;
-  const got = crypto.createHash('sha256').update(h.slice(7)).digest('hex');
-  return crypto.timingSafeEqual(Buffer.from(got), Buffer.from(want));
+  if (want.length < 32 || !h.startsWith('Bearer ')) return false;
+  const a = crypto.createHash('sha256').update(h.slice(7)).digest(), b = crypto.createHash('sha256').update(want).digest();
+  return crypto.timingSafeEqual(a, b);
 }
 async function adminAccounts(supabase) {
   const out = [];
@@ -94,6 +102,49 @@ function cleanMessage(m) {
   if (!!msg.button_label !== !!msg.button_link) return { error: 'A button needs both a label and a link (or neither).' };
   return { msg };
 }
+/** One message, or translated versions keyed by dashboard language (English required). */
+function cleanMessages(b) {
+  if (b.messages && typeof b.messages === 'object') {
+    const msgs = {};
+    for (const lang of Object.keys(b.messages)) {
+      if (!L.LANGS.includes(lang)) return { error: `Unknown language: ${String(lang).slice(0, 8)}` };
+      const { msg, error } = cleanMessage(b.messages[lang]);
+      if (error) return { error: `${lang}: ${error}` };
+      msgs[lang] = msg;
+    }
+    if (!msgs.en) return { error: 'The English version is required.' };
+    const links = new Set(Object.values(msgs).map((m) => m.button_link || ''));
+    if (links.size > 1) return { error: 'Every language version needs the same button link.' };
+    return { msgs, base: msgs.en };
+  }
+  const { msg, error } = cleanMessage(b.message);
+  return error ? { error } : { msgs: { en: msg }, base: msg };
+}
+function pick(msgs, lang) { return msgs[lang] || (lang === 'ma' && msgs.fr) || msgs.en; }
+const USER_ONLY_FILTERS = ['role', 'language', 'level', 'countries', 'plan', 'active_within_days', 'inactive_for_days'];
+
+async function allUserEmails(supabase) {
+  const out = new Set();
+  for (let page = 1; page <= 50; page++) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage: 1000 });
+    if (error) throw error;
+    for (const u of data.users || []) if (u.email) out.add(u.email.toLowerCase());
+    if (!data.users || data.users.length < 1000) break;
+  }
+  return out;
+}
+/** Footer sign-ups who agreed to news and offers, have not unsubscribed and have no account. */
+async function newsletterAudience(supabase, filter) {
+  if (USER_ONLY_FILTERS.some((k) => k in filter)) return [];
+  const { data, error } = await supabase.from('email_signups').select('id, email, locale')
+    .eq('offers_consent', true).is('unsubscribed_at', null).limit(MAX_RECIPIENTS + 1);
+  if (error) throw error;
+  const users = await allUserEmails(supabase);
+  return (data || []).filter((r) => !users.has(r.email.toLowerCase()))
+    .map((r) => ({ id: r.id, email: r.email, lang: L.LANGS.includes(r.locale) ? r.locale : 'en' }))
+    .filter((r) => !filter.ui_lang || r.lang === filter.ui_lang);
+}
+
 function clickUrl(campaignId, userId) {
   const s = mail.linkSig(`${campaignId}:${userId}`);
   return `${SITE}/api/campaigns?action=click&c=${campaignId}&u=${userId}&s=${s}`;
@@ -123,47 +174,79 @@ async function resendBatch(items) {
 }
 
 async function handleAudience(req, res, supabase) {
-  const filter = cleanFilter(body(req).filter);
+  const b = body(req);
+  const filter = cleanFilter(b.filter);
   const { data, error } = await supabase.rpc('campaign_audience', { p_filter: filter });
   if (error) { console.error('[campaigns] audience', error.message); return res.status(500).json({ error: 'The audience could not be counted' }); }
-  return res.status(200).json({ count: data.length, people: data.slice(0, 30).map((p) => ({ name: p.name, email: p.email, role: p.role, country: p.country, language: p.language, level: p.level, ui_lang: p.ui_lang })) });
+  let newsletter = [];
+  if (b.include_newsletter) {
+    try { newsletter = await newsletterAudience(supabase, filter); } catch (e) { console.error('[campaigns] newsletter', e.message); return res.status(500).json({ error: 'The newsletter list could not be read' }); }
+  }
+  const byLang = {};
+  for (const p of data) { const l = p.ui_lang || 'en'; byLang[l] = (byLang[l] || 0) + 1; }
+  for (const n of newsletter) byLang[n.lang] = (byLang[n.lang] || 0) + 1;
+  return res.status(200).json({ count: data.length + newsletter.length, users: data.length, newsletter: newsletter.length, by_language: byLang, people: data.slice(0, 30).map((p) => ({ name: p.name, email: p.email, role: p.role, country: p.country, language: p.language, level: p.level, ui_lang: p.ui_lang })) });
 }
 
-async function handleTest(req, res, user) {
+async function handleTest(req, res, users, viaAgent) {
   const b = body(req);
-  const { msg, error } = cleanMessage(b.message);
+  const { msgs, error } = cleanMessages(b);
   if (error) return res.status(400).json({ error });
-  const lang = cleanFilter(b.filter).ui_lang || 'en';
-  const { html, text } = render(msg, { name: user.user_metadata?.full_name || '', footer: 'This is a test sent only to you from the Campaigns page.', lang });
-  const ok = await mail.sendEmail({ to: user.email, subject: `[Test] ${msg.subject}`, html, text, from: fromAddress() });
-  return ok ? res.status(200).json({ sent: user.email }) : res.status(502).json({ error: 'The test email could not be sent' });
+  const wanted = cleanFilter(b.filter).ui_lang;
+  // From the dashboard: the version for the chosen language. With the key: every version, so the owner sees them all.
+  const langs = viaAgent ? Object.keys(msgs) : [wanted && msgs[wanted] ? wanted : (wanted === 'ma' && msgs.fr ? 'fr' : 'en')];
+  const footer = viaAgent ? 'This is a test sent only to Alimun admins. Nothing goes to customers until you approve it.'
+    : 'This is a test sent only to you from the Campaigns page.';
+  const sent = [];
+  for (const user of users) {
+    for (const lang of langs) {
+      const msg = pick(msgs, lang);
+      const { html, text } = render(msg, { name: user.user_metadata?.full_name || '', footer, lang });
+      const tag = langs.length > 1 ? `[Test ${lang.toUpperCase()}]` : '[Test]';
+      const ok = await mail.sendEmail({ to: user.email, subject: `${tag} ${msg.subject}`, html, text, from: fromAddress() });
+      if (!ok) return res.status(502).json({ error: 'The test email could not be sent', sent });
+      sent.push(`${user.email} (${lang})`);
+    }
+  }
+  return res.status(200).json({ sent: users.length === 1 && langs.length === 1 ? users[0].email : sent });
 }
 
-async function handleSend(req, res, supabase, user) {
+async function handleSend(req, res, supabase, user, viaAgent) {
   const b = body(req);
-  const { msg, error } = cleanMessage(b.message);
+  const { msgs, base: msg, error } = cleanMessages(b);
   if (error) return res.status(400).json({ error });
+  if (viaAgent) {
+    const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+    const { count } = await supabase.from('campaigns').select('id', { count: 'exact', head: true }).eq('sent_via', 'agent').gte('created_at', since);
+    if ((count || 0) >= AGENT_SENDS_PER_DAY) return res.status(429).json({ error: `At most ${AGENT_SENDS_PER_DAY} campaigns a day with the campaign key.` });
+  }
   const channels = (Array.isArray(b.channels) ? b.channels : []).filter((c) => c === 'email' || c === 'inapp');
   if (!channels.length) return res.status(400).json({ error: 'Choose email, the bell in the dashboard, or both.' });
   const filter = cleanFilter(b.filter);
   const { data: people, error: aErr } = await supabase.rpc('campaign_audience', { p_filter: filter });
   if (aErr) return res.status(500).json({ error: 'The audience could not be read' });
-  if (!people.length) return res.status(400).json({ error: 'Nobody in this audience has asked for news and offers.' });
-  if (people.length > MAX_RECIPIENTS) return res.status(400).json({ error: `At most ${MAX_RECIPIENTS} people per campaign; narrow the audience.` });
+  let newsletter = [];
+  if (b.include_newsletter && channels.includes('email')) {
+    try { newsletter = await newsletterAudience(supabase, filter); } catch (e) { return res.status(500).json({ error: 'The newsletter list could not be read' }); }
+  }
+  const total = people.length + newsletter.length;
+  if (!total) return res.status(400).json({ error: 'Nobody in this audience has asked for news and offers.' });
+  if (total > MAX_RECIPIENTS) return res.status(400).json({ error: `At most ${MAX_RECIPIENTS} people per campaign; narrow the audience.` });
   // The admin confirmed this exact number: if the audience changed in between, ask again.
-  if (Number(b.confirm) !== people.length) return res.status(409).json({ error: 'The audience changed. Check the count and confirm again.', count: people.length });
+  if (Number(b.confirm) !== total) return res.status(409).json({ error: 'The audience changed. Check the count and confirm again.', count: total });
 
   const { data: camp, error: cErr } = await supabase.from('campaigns').insert({
-    created_by: user.id, subject: msg.subject, heading: msg.heading, body: msg.body, button_label: msg.button_label, button_link: msg.button_link,
-    hero: msg.hero, channels, audience: filter, recipients: people.length,
+    created_by: user ? user.id : null, subject: msg.subject, heading: msg.heading, body: msg.body, button_label: msg.button_label, button_link: msg.button_link,
+    hero: msg.hero, channels, audience: { ...filter, ...(newsletter.length ? { include_newsletter: true } : {}) }, recipients: total,
+    sent_via: viaAgent ? 'agent' : 'dashboard', messages: Object.keys(msgs).length > 1 ? msgs : null,
   }).select('id').single();
   if (cErr) { console.error('[campaigns] create', cErr.message); return res.status(500).json({ error: 'The campaign could not be saved' }); }
 
-  await supabase.from('campaign_recipients').insert(people.map((p) => ({ campaign_id: camp.id, user_id: p.user_id })));
+  if (people.length) await supabase.from('campaign_recipients').insert(people.map((p) => ({ campaign_id: camp.id, user_id: p.user_id })));
 
   if (channels.includes('inapp')) {
-    const rows = people.map((p) => ({ user_id: p.user_id, kind: 'offer', title: msg.heading, body: msg.body.replace(/\s+/g, ' ').slice(0, 300),
-      link: msg.button_link ? clickUrl(camp.id, p.user_id) : null, campaign_id: camp.id }));
+    const rows = people.map((p) => { const m = pick(msgs, p.ui_lang || 'en'); return { user_id: p.user_id, kind: 'offer', title: m.heading, body: m.body.replace(/\s+/g, ' ').slice(0, 300),
+      link: m.button_link ? clickUrl(camp.id, p.user_id) : null, campaign_id: camp.id }; });
     for (let i = 0; i < rows.length; i += 500) {
       const { error: nErr } = await supabase.from('notifications').insert(rows.slice(i, i + 500));
       if (nErr) console.error('[campaigns] notifications', nErr.message);
@@ -176,8 +259,9 @@ async function handleSend(req, res, supabase, user) {
       const chunk = people.slice(i, i + 100);
       const items = chunk.map((p) => {
         const unsub = mail.unsubscribeUrl(p.user_id);
-        const { html, text } = render(msg, { name: p.name || '', unsubscribeUrl: unsub, buttonHref: msg.button_link ? clickUrl(camp.id, p.user_id) : null, lang: p.ui_lang || 'en' });
-        return { from: fromAddress(), to: p.email, subject: msg.subject, html, text,
+        const m = pick(msgs, p.ui_lang || 'en');
+        const { html, text } = render(m, { name: p.name || '', unsubscribeUrl: unsub, buttonHref: m.button_link ? clickUrl(camp.id, p.user_id) : null, lang: p.ui_lang || 'en' });
+        return { from: fromAddress(), to: p.email, subject: m.subject, html, text,
           headers: unsub ? { 'List-Unsubscribe': `<${unsub}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } : undefined };
       });
       const ok = await resendBatch(items);
@@ -186,9 +270,24 @@ async function handleSend(req, res, supabase, user) {
       if (sentIds.length) await supabase.from('campaign_recipients').update({ emailed: true }).eq('campaign_id', camp.id).in('user_id', sentIds);
     }
   }
-  await supabase.from('campaigns').update({ emailed, sent_at: new Date().toISOString() }).eq('id', camp.id);
-  console.log(`[campaigns] admin ${user.id} sent campaign ${camp.id} to ${people.length} (${channels.join('+')}, emailed ${emailed})`);
-  return res.status(200).json({ id: camp.id, recipients: people.length, emailed, inapp: channels.includes('inapp') });
+  let newsletterEmailed = 0;
+  for (let i = 0; i < newsletter.length; i += 100) {
+    const chunk = newsletter.slice(i, i + 100);
+    const items = chunk.map((n) => {
+      const unsub = mail.newsletterUnsubscribeUrl(n.id);
+      const m = pick(msgs, n.lang);
+      const { html, text } = render(m, { name: '', unsubscribeUrl: unsub, lang: n.lang,
+        footer: L.say(n.lang, 'common.footer_newsletter') });
+      return { from: fromAddress(), to: n.email, subject: m.subject, html, text,
+        headers: unsub ? { 'List-Unsubscribe': `<${unsub}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } : undefined };
+    });
+    const ok = await resendBatch(items);
+    newsletterEmailed += ok.filter(Boolean).length;
+  }
+  emailed += newsletterEmailed;
+  await supabase.from('campaigns').update({ emailed, newsletter_emailed: newsletterEmailed, sent_at: new Date().toISOString() }).eq('id', camp.id);
+  console.log(`[campaigns] ${viaAgent ? 'campaign key' : 'admin ' + user.id} sent campaign ${camp.id} to ${total} (${channels.join('+')}, emailed ${emailed}, newsletter ${newsletterEmailed})`);
+  return res.status(200).json({ id: camp.id, recipients: total, users: people.length, newsletter: newsletter.length, emailed, inapp: channels.includes('inapp') });
 }
 
 async function handleClick(req, res, supabase) {
@@ -209,22 +308,20 @@ module.exports = async function handler(req, res) {
   if (!supabase) return res.status(500).json({ error: 'Server configuration error' });
   if (action === 'click') return handleClick(req, res, supabase);
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
-  if (action === 'test' && await opsKeyOk(req, supabase)) {
-    const admins = await adminAccounts(supabase);
-    if (!admins.length) return res.status(404).json({ error: 'No admin account found' });
-    const sent = [];
-    for (const a of admins) {
-      const r = { statusCode: 0, body: null, status(c) { this.statusCode = c; return this; }, json(b) { this.body = b; return this; } };
-      await handleTest(req, r, a);
-      if (r.statusCode !== 200) return res.status(r.statusCode).json(r.body);
-      sent.push(a.email);
+  if (agentKeyOk(req)) {
+    if (action === 'audience') return handleAudience(req, res, supabase);
+    if (action === 'test') {
+      const admins = await adminAccounts(supabase);
+      if (!admins.length) return res.status(404).json({ error: 'No admin account found' });
+      return handleTest(req, res, admins, true);
     }
-    return res.status(200).json({ sent });
+    if (action === 'send') return handleSend(req, res, supabase, null, true);
+    return res.status(400).json({ error: 'Unknown action' });
   }
   const user = await adminUser(req, supabase);
   if (!user) return res.status(403).json({ error: 'Admins only' });
   if (action === 'audience') return handleAudience(req, res, supabase);
-  if (action === 'test') return handleTest(req, res, user);
-  if (action === 'send') return handleSend(req, res, supabase, user);
+  if (action === 'test') return handleTest(req, res, [user], false);
+  if (action === 'send') return handleSend(req, res, supabase, user, false);
   return res.status(400).json({ error: 'Unknown action' });
 };

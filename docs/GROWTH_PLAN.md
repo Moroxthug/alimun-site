@@ -56,6 +56,16 @@ no marketing at all to anyone under 16. Each step is shown to the owner before t
   test done but no plan, a class place opened.
 - Sending identity: marketing from a separate address (e.g. `news@alimun.com`) so service emails keep their reputation.
 
+## Campaigns on request (built 7 Nov 2026)
+
+Owner, 7 Nov 2026: "i want to tell you or something else send campaign about half price for example, and you send it among existing users and newsletter subs". Chosen: test first, the owner says go; newsletter sign-ups from the footer form are included from now on.
+
+How it runs. The owner tells a Claude session what the campaign is about (offer, dates, link). Claude writes the email in English and in each dashboard language that has people in the audience (`/api/campaigns?action=audience` with `include_newsletter: true` returns `by_language`), then calls `?action=test` with `{ messages: { en, fr, ... } }`: every version goes to the admin accounts only, subject "[Test FR] ...". Nothing goes to customers until the owner replies "go". Claude then calls `?action=send` with the same messages, `channels: ['email', 'inapp']`, `include_newsletter: true` and `confirm` set to the count from the audience call. Prices and dates come from the owner, never invented.
+
+Access. The calls carry the owner's campaign key: Vercel env `CAMPAIGN_AGENT_KEY` (at least 32 characters), given to the session through the secure credential form for alimun.com, never in chat or code. The key can read the audience count, send tests to admins and send at most 3 campaigns a day; it cannot do anything else. Campaigns sent with it are saved with `sent_via = 'agent'` and show in Admin, Campaigns. Removing the variable in Vercel switches it off.
+
+Who receives it. Account holders whose latest news-and-offers choice is yes (16+ only, as before), and footer sign-ups with `email_signups.offers_consent` who have not unsubscribed and have no account (the account's own choice counts). The footer form says from 7 Nov 2026 that it brings news and offers, that you must be 16 or older and that every email can be unsubscribed; only sign-ups after that change have `offers_consent`, so the 6 earlier sign-ups get no campaigns. Each person gets the version in their dashboard language (sign-ups: the language of the page they signed up on; ma falls back to fr), else English. Newsletter emails carry their own signed unsubscribe link (`/api/auth?action=unsubscribe&n=`). Filters on role, level, country, plan or activity leave sign-ups out, since they have none of these.
+
 ## Open for the owner
 
 - Turnstile keys (step 1).

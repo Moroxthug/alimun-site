@@ -281,6 +281,12 @@ function checkUnsubscribe(userId, sig) {
   return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(want));
 }
 
+/** Unsubscribe link for a newsletter sign-up (no account): the same key, a different prefix. */
+function newsletterUnsubscribeUrl(signupId) {
+  const s = unsubscribeSig(`n:${signupId}`);
+  return s ? `${SITE}/api/auth?action=unsubscribe&n=${encodeURIComponent(signupId)}&s=${s}` : '';
+}
+
 /** A short signature for links the server checks later (campaign click links), with the same key as unsubscribe links. */
 function linkSig(data) {
   const key = unsubscribeKey();
@@ -292,4 +298,4 @@ function checkLinkSig(data, sig) {
   return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(want));
 }
 
-module.exports = { renderEmail, sendEmail, esc, heroForLanguage, HEROES, SITE, unsubscribeUrl, checkUnsubscribe, linkSig, checkLinkSig };
+module.exports = { renderEmail, sendEmail, esc, heroForLanguage, HEROES, SITE, unsubscribeUrl, newsletterUnsubscribeUrl, checkUnsubscribe, linkSig, checkLinkSig };

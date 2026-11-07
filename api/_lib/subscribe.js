@@ -71,8 +71,12 @@ module.exports = async function subscribe(req, res) {
       return res.status(429).json({ error: 'rate_limited', message: 'Too many signups right now. Please try again later.' });
     }
 
-    const { error } = await supabase.from('email_signups').insert({ email, source, locale, page, ip_hash: hash });
+    // The footer form says it brings news and offers and that you must be 16 or older (owner, 7 Nov 2026), so a
+    // footer sign-up is consent to campaigns; signing up again turns them back on after an unsubscribe.
+    const consent = source === 'footer' ? { offers_consent: true, consented_at: new Date().toISOString(), unsubscribed_at: null } : {};
+    const { error } = await supabase.from('email_signups').insert({ email, source, locale, page, ip_hash: hash, ...consent });
     if (error && error.code !== '23505') throw error; // 23505: already signed up, same answer
+    if (error && source === 'footer') await supabase.from('email_signups').update(consent).ilike('email', email.replace(/[\\%_]/g, '\\$&'));
 
     // Keep the rate-limit key no longer than a day.
     await supabase.from('email_signups').update({ ip_hash: null })
