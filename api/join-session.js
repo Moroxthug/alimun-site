@@ -34,20 +34,8 @@ function getSupabaseAdmin() {
   });
 }
 
-const DAILY_API = 'https://api.daily.co/v1';
-
-async function dailyFetch(path, options = {}) {
-  const res = await fetch(`${DAILY_API}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.DAILY_API_KEY}`,
-      ...(options.headers || {}),
-    },
-  });
-  const body = await res.json().catch(() => ({}));
-  return { ok: res.ok, status: res.status, body };
-}
+const { dailyFetch, dailyErrorSummary, hasDailyKey } = require('./_lib/daily.js');
+const { recordRun } = require('./_lib/cron-log.js');
 
 /** Private Daily room named `roomName`, valid until `expEpoch`, plus a meeting token. */
 async function roomAndToken(roomName, expEpoch, displayName, userId, isOwner) {
@@ -110,7 +98,7 @@ module.exports = async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
-  if (!process.env.DAILY_API_KEY) {
+  if (!hasDailyKey()) {
     return res.status(503).json({ error: 'Video service is not configured' });
   }
 
@@ -233,6 +221,7 @@ module.exports = async function handler(req, res) {
       }
       if (!roomUrl) {
         console.error('[Join Session API] Daily room refresh/creation failed:', refreshed.status, created.body);
+        await recordRun(supabase, 'daily:join-session', false, { session: session.id, refresh: dailyErrorSummary(refreshed), create: dailyErrorSummary(created) });
         return res.status(502).json({ error: 'Could not create the video room. Please try again.' });
       }
     }
@@ -260,6 +249,7 @@ module.exports = async function handler(req, res) {
 
     if (!tokenRes.ok || !tokenRes.body?.token) {
       console.error('[Join Session API] Meeting token creation failed:', tokenRes.body);
+      await recordRun(supabase, 'daily:join-session', false, { session: session.id, token: dailyErrorSummary(tokenRes) });
       return res.status(502).json({ error: 'Could not authorize video access. Please try again.' });
     }
 

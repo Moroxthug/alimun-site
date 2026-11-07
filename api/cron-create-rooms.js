@@ -22,6 +22,7 @@
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const { recordRun } = require('./_lib/cron-log.js');
+const { dailyFetch, dailyErrorSummary, hasDailyKey } = require('./_lib/daily.js');
 
 const COMPLETE_AFTER_MIN = 90;   // must match the join window in join-session.js
 const PREFETCH_HOURS = 24;       // cron runs daily, so look a full day ahead
@@ -51,17 +52,13 @@ function isAuthorized(req) {
   return safeEqual(req.headers.authorization || '', `Bearer ${cronSecret}`);
 }
 
-async function createDailyRoom(session, apiKey) {
+async function createDailyRoom(session, summary) {
   const sessionStart = new Date(session.scheduled_at);
   const expEpoch = Math.floor((sessionStart.getTime() + COMPLETE_AFTER_MIN * 60 * 1000) / 1000);
   const roomName = `alimun-${session.id}`;
 
-  const dailyRes = await fetch('https://api.daily.co/v1/rooms', {
+  const created = await dailyFetch('/rooms', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${apiKey}`,
-    },
     body: JSON.stringify({
       name: roomName,
       privacy: 'private',
@@ -78,25 +75,16 @@ async function createDailyRoom(session, apiKey) {
       },
     }),
   });
-
-  if (dailyRes.ok) {
-    const data = await dailyRes.json();
-    return data?.url || null;
-  }
+  if (created.ok && created.body?.url) return created.body.url;
 
   // Room may already exist (created by join-session or create-cohort) — reuse it.
-  if (dailyRes.status === 400) {
-    const lookup = await fetch(`https://api.daily.co/v1/rooms/${roomName}`, {
-      headers: { Authorization: `Bearer ${apiKey}` },
-    });
-    if (lookup.ok) {
-      const data = await lookup.json();
-      return data?.url || null;
-    }
+  if (created.status === 400) {
+    const lookup = await dailyFetch(`/rooms/${roomName}`);
+    if (lookup.ok && lookup.body?.url) return lookup.body.url;
   }
 
-  const errText = await dailyRes.text();
-  console.error(`[Cron Sessions] Daily.co error for session ${session.id}:`, errText);
+  console.error(`[Cron Sessions] Daily.co error for session ${session.id}:`, created.status, created.body);
+  summary.lastDailyError = dailyErrorSummary(created);
   return null;
 }
 
@@ -129,8 +117,7 @@ module.exports = async function handler(req, res) {
     }
 
     // 2. Prefetch rooms for the next 24h.
-    const dailyApiKey = process.env.DAILY_API_KEY;
-    if (!dailyApiKey) {
+    if (!hasDailyKey()) {
       console.warn('[Cron Sessions] DAILY_API_KEY not set — skipping room prefetch');
       await recordRun(supabase, 'vercel:cron-create-rooms', true, { ...summary, note: 'DAILY_API_KEY not set' });
       return res.status(200).json({ success: true, ...summary, note: 'DAILY_API_KEY not set' });
@@ -149,7 +136,7 @@ module.exports = async function handler(req, res) {
       const hasRealRoom = session.daily_room_url && !session.daily_room_url.includes('/mock-room/');
       if (hasRealRoom) continue;
 
-      const roomUrl = await createDailyRoom(session, dailyApiKey);
+      const roomUrl = await createDailyRoom(session, summary);
       if (!roomUrl) {
         summary.roomsFailed += 1;
         continue; // never persist a fake URL — join-session will retry on demand
