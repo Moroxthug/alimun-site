@@ -520,21 +520,40 @@
     });
     html += '</div><p class="t-small st-msg" data-slotmsg aria-live="polite"></p></section>' +
       '<form class="card span-5 st-form" style="--i:1;max-width:none;margin-top:0" data-slot><h2 class="t-h2">' + esc(t('app_tc_add_h')) + '</h2>' +
-      field('app_tc_day', sel('day', WEEK.map(function (d) { return [d, A.weekday(d)]; }), 1)) +
-      '<div class="st-row">' + field('app_st_from', '<input class="st-in" type="time" name="start" step="1800" value="09:00" required>') + field('app_st_to', '<input class="st-in" type="time" name="end" step="1800" value="13:00" required>') + '</div>' +
-      '<p class="t-small st-note" style="margin-top:0">' + esc(t('app_tc_in_zone', { zone: bz.replace(/_/g, ' ') })) + '</p>' +
+      '<fieldset class="st-field"><legend class="st-lbl">' + esc(t('app_tc_days')) + '</legend><div class="st-days">' + WEEK.map(function (d) {
+        return '<label class="st-day"><input type="checkbox" name="day" value="' + d + '"' + (d === 1 ? ' checked' : '') + '><span>' + esc(A.weekday(d)) + '</span></label>';
+      }).join('') + '</div><div class="btn-row" style="margin-top:8px"><button class="btn btn--quiet btn--sm" type="button" data-tc="days" data-k="week">' + esc(t('app_tc_weekdays')) + '</button>' +
+        '<button class="btn btn--quiet btn--sm" type="button" data-tc="days" data-k="all">' + esc(t('app_tc_everyday')) + '</button></div></fieldset>' +
+      '<div data-times>' + timeRow('09:00', '13:00', false) + '</div>' +
+      '<div class="btn-row" style="margin-top:0"><button class="btn btn--ghost btn--sm" type="button" data-tc="moretime">' + A.icon('plus') + esc(t('app_tc_more_time')) + '</button></div>' +
+      '<p class="t-small st-note">' + esc(t('app_tc_in_zone', { zone: bz.replace(/_/g, ' ') })) + '</p>' +
       '<div class="btn-row"><button class="btn btn--primary" type="submit">' + esc(t('app_tc_add')) + '</button></div><p class="t-body st-msg" data-msg aria-live="polite"></p></form>' +
       sampleLine() + '</div>';
     return html;
   }
+  /* One from/to pair in the "Add free time" form; every pair is added to every ticked day */
+  function timeRow(a, b, removable) {
+    return '<div class="st-row" data-time>' + field('app_st_from', '<input class="st-in" type="time" name="start" step="1800" value="' + esc(a) + '" required>') +
+      field('app_st_to', '<input class="st-in" type="time" name="end" step="1800" value="' + esc(b) + '" required>') +
+      (removable ? '<button class="linkish" type="button" data-tc="lesstime" style="align-self:center">' + esc(t('app_tc_remove')) + '</button>' : '') + '</div>';
+  }
   function addSlot(form) {
-    var f = new FormData(form), day = +f.get('day'), a = String(f.get('start') || ''), b = String(f.get('end') || ''), msg = form.querySelector('[data-msg]');
+    var f = new FormData(form), days = f.getAll('day').map(Number), starts = f.getAll('start').map(String), ends = f.getAll('end').map(String), msg = form.querySelector('[data-msg]');
     var say = function (k, bad) { msg.textContent = t(k); msg.classList.toggle('is-bad', !!bad); };
-    if (!/^\d\d:\d\d$/.test(a) || !/^\d\d:\d\d$/.test(b) || a >= b) { say('app_tc_slot_order', true); return; }
-    var tz = A.browserZone();
-    if (C.sample) { C.slots.push({ id: 'a' + Date.now(), day_of_week: day, start_time: a + ':00', end_time: b + ':00', timezone: tz }); C.fit = null; A.rerender(); return; }
+    if (!days.length) { say('app_tc_pick_day', true); return; }
+    var times = starts.map(function (a, i) { return [a, ends[i] || '']; });
+    if (times.some(function (x) { return !/^\d\d:\d\d$/.test(x[0]) || !/^\d\d:\d\d$/.test(x[1]) || x[0] >= x[1]; })) { say('app_tc_slot_order', true); return; }
+    var sorted = times.slice().sort(function (x, y) { return x[0] < y[0] ? -1 : 1; });
+    for (var i = 1; i < sorted.length; i++) if (sorted[i][0] < sorted[i - 1][1]) { say('app_tc_overlap', true); return; }
+    var tz = A.browserZone(), rows = [];
+    days.forEach(function (d) { times.forEach(function (x) {
+      var dup = C.slots.some(function (s) { return s.day_of_week === d && hm(s.start_time) === x[0] && hm(s.end_time) === x[1]; });
+      if (!dup) rows.push({ day_of_week: d, start_time: x[0] + ':00', end_time: x[1] + ':00', timezone: tz });
+    }); });
+    if (!rows.length) { say('app_tc_slot_dup', true); return; }
+    if (C.sample) { rows.forEach(function (r, j) { C.slots.push(Object.assign({ id: 'a' + Date.now() + j }, r)); }); C.fit = null; A.rerender(); return; }
     var btn = form.querySelector('[type="submit"]'); btn.disabled = true;
-    window.AlimunData.addSlot(C.teacher.id, day, a, b, tz).then(function (row) { C.slots.push(row); C.fit = null; A.rerender(); },
+    window.AlimunData.addSlots(C.teacher.id, rows).then(function (added) { C.slots = C.slots.concat(added); C.fit = null; A.rerender(); },
       function (e) { btn.disabled = false; say(e && e.code === '23505' ? 'app_tc_slot_dup' : 'app_tc_save_error', true); });
   }
   function delSlot(btn) {
@@ -577,6 +596,12 @@
       }
       else if (a === 'publish') publish(el);
       else if (a === 'delslot') delSlot(el);
+      else if (a === 'days') { var want = el.getAttribute('data-k') === 'all' ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5];
+        el.closest('form').querySelectorAll('input[name="day"]').forEach(function (c) { c.checked = want.indexOf(+c.value) > -1; }); }
+      else if (a === 'moretime') { var box = el.closest('form').querySelector('[data-times]'), last = box.querySelectorAll('input[name="end"]'), from = last.length ? last[last.length - 1].value : '14:00';
+        var to = from && from < '22:00' ? ('0' + Math.min(23, +from.slice(0, 2) + 4)).slice(-2) + from.slice(2) : '23:30';
+        box.insertAdjacentHTML('beforeend', timeRow(from || '14:00', to > from ? to : '23:30', true)); }
+      else if (a === 'lesstime') { var r = el.closest('[data-time]'); if (r) r.remove(); }
     });
     root.addEventListener('input', function (e) { var f = e.target.closest('[data-notes]'); if (f && C) saveDraft(f); });
     root.addEventListener('change', function (e) { var f = e.target.closest('[data-new]'); if (f && e.target.name === 'day') refreshTimes(f); });

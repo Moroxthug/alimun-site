@@ -40,13 +40,14 @@
 
   /* ---------- The plans ---------- */
   function view(classId, need) {
-    var p = P(), paying = real() ? p.paying : false, mine = p.tier;
+    var p = P(), given = real() && p.givenUntil, paying = real() ? p.paying && !given : false, mine = p.tier;
     var html = '<a class="rd-back" href="#/settings">' + A.icon('back') + '<span>' + esc(t('app_nav_settings')) + '</span></a>' +
       '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_pl_title')) + '</h1><p class="t-lead">' + esc(t('app_pl_lead')) + '</p></div></div><div class="grid rise">';
+    if (given) html += '<section class="card card--forest span-12" style="--i:0"><p class="t-body">' + esc(t('app_st_s_given', { date: new Intl.DateTimeFormat(A.locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(p.givenUntil)) })) + '</p></section>';
     if (paying) html += '<section class="card card--forest span-12" style="--i:0"><p class="t-body">' + esc(t('app_pl_change_p')) + '</p><div class="btn-row" style="margin-top:14px"><button class="btn btn--lime" type="button" data-pl="portal">' + esc(t('app_pl_change')) + '</button></div><p class="t-small st-msg pl-msg" data-plmsg="top" aria-live="polite"></p></section>';
     var tab = function (k) { return '<button class="btn btn--' + (k === period ? 'primary' : 'quiet') + ' btn--sm" type="button" data-pl="period" data-k="' + k + '" aria-pressed="' + (k === period) + '">' + esc(t(k === 'yearly' ? 'app_pl_yearly' : 'app_pl_monthly')) + '</button>'; };
     html += '<section class="card span-12" style="--i:1" aria-label="' + esc(t('app_pl_title')) + '"><div class="btn-row" role="group">' + tab('monthly') + tab('yearly') + '</div><div class="pl-grid">' + PLANS.map(function (k) {
-      var needed = need && WEIGHT[k] >= WEIGHT[need], isMine = paying && mine === k;
+      var needed = need && WEIGHT[k] >= WEIGHT[need], isMine = (paying || given) && mine === k;
       return '<div class="pl-card' + (needed ? ' is-needed' : '') + (isMine ? ' is-mine' : '') + '"><h2 class="t-h2"><bdi>' + esc(t('app_tier_' + k)) + '</bdi></h2>' +
         '<p class="t-h3 pl-price">' + esc(priceLine(k)) + '</p>' +
         '<p class="t-small">' + esc(k === 'private' ? t('app_pl_private') : t('app_pl_seats', { n: SEATS[k] })) + '</p>' +

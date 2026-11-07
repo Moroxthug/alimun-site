@@ -79,12 +79,14 @@
     return '<select class="st-in" name="' + name + '"' + (extra ? ' ' + extra : '') + '>' + opts.map(function (o) { return '<option value="' + esc(o[0]) + '"' + (String(o[0]) === String(cur || '') ? ' selected' : '') + '>' + esc(o[1]) + '</option>'; }).join('') + '</select>';
   }
   function planHtml(p) {
-    var tier = p.tier || 'free', name = PLANS[tier], paid = tier !== 'free' && tier !== 'waitlist';
     var status = p.stripe_subscription_status, st = STATUS[status];
+    var givenMs = p.plan_given_until ? Date.parse(p.plan_given_until) : NaN, given = !status && isFinite(givenMs) && givenMs > Date.now();
+    /* A given plan that has ended, with no subscription behind it, reads as the free plan */
+    var tier = p.tier || 'free', name = PLANS[tier], paid = tier !== 'free' && tier !== 'waitlist' && (!!status || given || !p.plan_given_until);
     var body;
     if (tier === 'waitlist') body = '<h2 class="t-h1">' + esc(t('app_st_plan_wait_h')) + '</h2><p class="t-lead" style="margin-top:12px">' + esc(t('app_st_plan_wait_p')) + '</p>';
     else if (!paid) body = '<h2 class="t-h1">' + esc(t('app_st_plan_free_h')) + '</h2><p class="t-lead" style="margin-top:12px">' + esc(t('app_st_plan_free_p')) + '</p>';
-    else body = '<h2 class="t-h1">' + esc(t('app_st_plan_h', { plan: name || tier })) + '</h2><p class="t-lead" style="margin-top:12px">' + esc(st ? t(st) : t('app_st_s_unknown')) + '</p>';
+    else body = '<h2 class="t-h1">' + esc(t('app_st_plan_h', { plan: name || tier })) + '</h2><p class="t-lead" style="margin-top:12px">' + esc(st ? t(st) : given ? t('app_st_s_given', { date: new Intl.DateTimeFormat(A.locale, { day: 'numeric', month: 'long', year: 'numeric' }).format(new Date(givenMs)) }) : t('app_st_s_unknown')) + '</p>';
     var btn = paid && status ? '<button class="btn btn--lime" type="button" data-st="portal">' + esc(t('app_st_manage')) + A.icon('arrow') + '</button><p class="t-small st-plan__p">' + esc(t('app_st_manage_p')) + '</p>'
       : paid ? '' : '<a class="btn btn--lime" href="#/settings/plans">' + esc(t(tier === 'waitlist' ? 'app_st_see_plans' : 'app_st_choose_plan')) + A.icon('arrow') + '</a>';
     return '<section class="card card--forest span-8 cover-card st-plan" style="--i:0" aria-live="polite">' + body + '<div class="btn-row" style="margin-top:22px;flex-direction:column;align-items:flex-start">' + btn + '</div><p class="t-body st-msg st-msg--light" data-msg="plan"></p></section>' +

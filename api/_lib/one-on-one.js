@@ -14,6 +14,7 @@
  */
 
 const TZ = require('../../js/tz.js');
+const { planActive } = require('./plan.js');
 
 const FOLLOWUP_MIN = 20;
 const CREDIT_MIN = 60;
@@ -98,7 +99,7 @@ function dbError(res, err) {
 async function loadStudent(supabase, userId) {
   const { data } = await supabase
     .from('student_profiles')
-    .select('id, full_name, tier, stripe_subscription_status, enrolled_cohort_id, user_id')
+    .select('id, full_name, tier, stripe_subscription_status, plan_given_until, enrolled_cohort_id, user_id')
     .eq('user_id', userId)
     .maybeSingle();
   return data || null;
@@ -164,7 +165,7 @@ async function entitlement(supabase, student, now) {
   const cohort = await loadCohort(supabase, student.enrolled_cohort_id);
   const teacher = cohort?.teacher_profiles;
   const teacherOk = !!teacher && teacher.status === 'approved';
-  const active = student.stripe_subscription_status === 'active';
+  const active = planActive(student, now);
   const out = { followup: null, credit: null, teacher: teacherOk ? { id: teacher.id, name: teacher.full_name || 'Your teacher' } : null };
 
   if (student.tier === 'intensive' && cohort?.tier === 'intensive') {

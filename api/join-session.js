@@ -19,6 +19,7 @@
  */
 
 const { createClient } = require('@supabase/supabase-js');
+const { planActive } = require('./_lib/plan.js');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const OPEN_BEFORE_MIN = 15;
@@ -73,7 +74,7 @@ const OTO_CLOSE_AFTER_MIN = 15;
 async function joinBooking(res, supabase, user, isAdmin, bookingId) {
   const { data: b } = await supabase
     .from('one_on_one_bookings')
-    .select('id, kind, status, scheduled_at, duration_minutes, daily_room_url, teacher_profiles ( user_id, full_name, status ), student_profiles ( user_id, full_name, stripe_subscription_status )')
+    .select('id, kind, status, scheduled_at, duration_minutes, daily_room_url, teacher_profiles ( user_id, full_name, status ), student_profiles ( user_id, full_name, stripe_subscription_status, plan_given_until )')
     .eq('id', bookingId)
     .maybeSingle();
   if (!b) return res.status(404).json({ error: 'Booking not found' });
@@ -82,7 +83,7 @@ async function joinBooking(res, supabase, user, isAdmin, bookingId) {
   const isTeacher = !!t && t.user_id === user.id && t.status === 'approved';
   const isStudent = !!st && st.user_id === user.id;
   if (!isTeacher && !isStudent && !isAdmin) return res.status(403).json({ error: 'This 1:1 is not yours' });
-  if (isStudent && b.kind === 'followup' && st.stripe_subscription_status !== 'active') {
+  if (isStudent && b.kind === 'followup' && !planActive(st)) {
     return res.status(402).json({ error: 'payment_required', message: 'Your subscription is not active. Update your billing to join.' });
   }
   const startMs = Date.parse(b.scheduled_at);
@@ -161,7 +162,7 @@ module.exports = async function handler(req, res) {
     if (!isTeacher && !isAdmin) {
       const { data: sp } = await supabase
         .from('student_profiles')
-        .select('id, full_name, stripe_subscription_status')
+        .select('id, full_name, stripe_subscription_status, plan_given_until')
         .eq('user_id', user.id)
         .maybeSingle();
 
@@ -178,7 +179,7 @@ module.exports = async function handler(req, res) {
       if (!studentProfile) {
         return res.status(403).json({ error: 'You are not enrolled in this class' });
       }
-      if (studentProfile.stripe_subscription_status !== 'active') {
+      if (!planActive(studentProfile)) {
         return res.status(402).json({ error: 'payment_required', message: 'Your subscription is not active. Update your billing to rejoin your class.' });
       }
     }

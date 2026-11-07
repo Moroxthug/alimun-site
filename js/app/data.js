@@ -6,6 +6,8 @@
   'use strict';
   var URL = 'https://dgaiasmefcbrtzqwdyri.supabase.co';
   var KEY = 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh';
+  /* A plan an admin gave without payment, still running (student_profiles.plan_given_until) */
+  function givenActive(p) { var u = p && p.plan_given_until ? Date.parse(p.plan_given_until) : NaN; return isFinite(u) && u > Date.now(); }
   var LANG_CODES = { English: 'en', German: 'de', French: 'fr', Spanish: 'es', Italian: 'it', Portuguese: 'pt' };
   var DAY = 86400000;
 
@@ -139,7 +141,7 @@
     return mySession().then(function (r) {
       var session = r.data && r.data.session;
       if (!session) return null;
-      return c.from('student_profiles').select('id, full_name, language, level, tier, goal_track, placement, enrolled_cohort_id, timezone, stripe_subscription_status, waitlist_opt_in, preferred_days')
+      return c.from('student_profiles').select('id, full_name, language, level, tier, goal_track, placement, enrolled_cohort_id, timezone, stripe_subscription_status, plan_given_until, waitlist_opt_in, preferred_days')
         .eq('user_id', session.user.id).maybeSingle().then(function (pr) {
           if (pr.error) throw pr.error;
           var p = pr.data;
@@ -227,7 +229,8 @@
           goal: p.goal_track || null,
           timezone: p.timezone || null,
           cohorts: res.cohorts || [],
-          paying: p.stripe_subscription_status === 'active',
+          paying: p.stripe_subscription_status === 'active' || givenActive(p),
+          givenUntil: p.stripe_subscription_status !== 'active' && givenActive(p) ? p.plan_given_until : null,
           waitlistOptIn: !!p.waitlist_opt_in,
           days: p.preferred_days || []
         },
@@ -519,7 +522,7 @@
       var session = x.data && x.data.session;
       if (!session) return null;
       return Promise.all([
-        c.from('student_profiles').select('full_name, language, level, goal_track, goal_timeframe, timezone, preferred_days, preferred_time_start, preferred_time_end, tier, stripe_subscription_status, enrolled_cohort_id, country')
+        c.from('student_profiles').select('full_name, language, level, goal_track, goal_timeframe, timezone, preferred_days, preferred_time_start, preferred_time_end, tier, stripe_subscription_status, plan_given_until, enrolled_cohort_id, country')
           .eq('user_id', session.user.id).maybeSingle(),
         myConsent(c, session.user.id)
       ]).then(function (res) {
@@ -730,6 +733,13 @@
     if (!c) return Promise.reject(new Error('Supabase did not load'));
     return c.from('teacher_availability').insert({ teacher_id: teacherId, day_of_week: day, start_time: start + ':00', end_time: end + ':00', timezone: tz })
       .select('id, day_of_week, start_time, end_time, timezone').single().then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  /* Several weekly blocks at once (every ticked day times every from/to pair); blocks that already exist are left as they are */
+  function addSlots(teacherId, rows) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('teacher_availability').upsert(rows.map(function (r) { return Object.assign({ teacher_id: teacherId }, r); }), { onConflict: 'teacher_id,day_of_week,start_time,end_time', ignoreDuplicates: true })
+      .select('id, day_of_week, start_time, end_time, timezone').then(function (r) { if (r.error) throw r.error; return r.data || []; });
   }
   function removeSlot(id) {
     var c = client();
@@ -1051,7 +1061,7 @@
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
     return Promise.all([
-      c.from('student_profiles').select('id, user_id, full_name, language, level, tier, goal_track, stripe_subscription_status, enrolled_cohort_id, created_at').order('created_at', { ascending: false }).limit(2000),
+      c.from('student_profiles').select('id, user_id, full_name, language, level, tier, goal_track, stripe_subscription_status, plan_given_until, enrolled_cohort_id, created_at').order('created_at', { ascending: false }).limit(2000),
       c.from('cohorts').select('id, language, level, tier, status, teacher_profiles(full_name)').limit(500)
     ]).then(function (r) { return { students: rows(r[0]), cohorts: rows(r[1]) }; });
   }
@@ -1463,5 +1473,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { tutorPurchase: tutorPurchase, tutorSets: tutorSets, tutorSetAudio: tutorSetAudio, tutorWritingCheck: tutorWritingCheck, saveTutorWriting: saveTutorWriting, lessonOpen: lessonOpen, tutorStatus: tutorStatus, tutorStart: tutorStart, tutorTurn: tutorTurn, tutorVoice: tutorVoice, tutorPronounce: tutorPronounce, tutorLiveStart: tutorLiveStart, tutorLiveTick: tutorLiveTick, tutorLiveBoard: tutorLiveBoard, tutorLiveAnswer: tutorLiveAnswer, tutorEnd: tutorEnd, tutorForget: tutorForget, tutorSessions: tutorSessions, tutorSession: tutorSession, tutorMemory: tutorMemory, adminTutorGrant: adminTutorGrant, adminTutorMinutes: adminTutorMinutes, adminTutorMinutesSet: adminTutorMinutesSet, checkout: checkout, billingPortal: billingPortal, findClasses: findClasses, findClass: findClass, myWaitlist: myWaitlist, joinWaitlist: joinWaitlist, leaveWaitlist: leaveWaitlist, setWaitlistOptIn: setWaitlistOptIn, enroll: enroll, myTeachers: myTeachers, reviewState: reviewState, saveReview: saveReview, viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, adminClasses: adminClasses, adminClassFile: adminClassFile, adminTeacherSlots: adminTeacherSlots, adminCreateClass: adminCreateClass, adminClassUpdate: adminClassUpdate, adminMoveStudent: adminMoveStudent, adminRemoveStudent: adminRemoveStudent, adminSchedule: adminSchedule, adminSessionUpdate: adminSessionUpdate, adminWaitlist: adminWaitlist, adminWaitlistRemove: adminWaitlistRemove, adminWaitlistOffer: adminWaitlistOffer, adminThreads: adminThreads, adminThreadMessages: adminThreadMessages, adminHideMessage: adminHideMessage, adminPayouts: adminPayouts, adminRecordPayout: adminRecordPayout, adminPayoutUpdate: adminPayoutUpdate, adminPayoutDelete: adminPayoutDelete, adminAiUsage: adminAiUsage, adminAiFailures: adminAiFailures, adminSettings: adminSettings, adminSettingSet: adminSettingSet, adminReviews: adminReviews, adminReviewDelete: adminReviewDelete, adminJobs: adminJobs, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftHomework: draftHomework, draftSet: draftSet, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveConsent: saveConsent, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { tutorPurchase: tutorPurchase, tutorSets: tutorSets, tutorSetAudio: tutorSetAudio, tutorWritingCheck: tutorWritingCheck, saveTutorWriting: saveTutorWriting, lessonOpen: lessonOpen, tutorStatus: tutorStatus, tutorStart: tutorStart, tutorTurn: tutorTurn, tutorVoice: tutorVoice, tutorPronounce: tutorPronounce, tutorLiveStart: tutorLiveStart, tutorLiveTick: tutorLiveTick, tutorLiveBoard: tutorLiveBoard, tutorLiveAnswer: tutorLiveAnswer, tutorEnd: tutorEnd, tutorForget: tutorForget, tutorSessions: tutorSessions, tutorSession: tutorSession, tutorMemory: tutorMemory, adminTutorGrant: adminTutorGrant, adminTutorMinutes: adminTutorMinutes, adminTutorMinutesSet: adminTutorMinutesSet, checkout: checkout, billingPortal: billingPortal, findClasses: findClasses, findClass: findClass, myWaitlist: myWaitlist, joinWaitlist: joinWaitlist, leaveWaitlist: leaveWaitlist, setWaitlistOptIn: setWaitlistOptIn, enroll: enroll, myTeachers: myTeachers, reviewState: reviewState, saveReview: saveReview, viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, adminClasses: adminClasses, adminClassFile: adminClassFile, adminTeacherSlots: adminTeacherSlots, adminCreateClass: adminCreateClass, adminClassUpdate: adminClassUpdate, adminMoveStudent: adminMoveStudent, adminRemoveStudent: adminRemoveStudent, adminSchedule: adminSchedule, adminSessionUpdate: adminSessionUpdate, adminWaitlist: adminWaitlist, adminWaitlistRemove: adminWaitlistRemove, adminWaitlistOffer: adminWaitlistOffer, adminThreads: adminThreads, adminThreadMessages: adminThreadMessages, adminHideMessage: adminHideMessage, adminPayouts: adminPayouts, adminRecordPayout: adminRecordPayout, adminPayoutUpdate: adminPayoutUpdate, adminPayoutDelete: adminPayoutDelete, adminAiUsage: adminAiUsage, adminAiFailures: adminAiFailures, adminSettings: adminSettings, adminSettingSet: adminSettingSet, adminReviews: adminReviews, adminReviewDelete: adminReviewDelete, adminJobs: adminJobs, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftHomework: draftHomework, draftSet: draftSet, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, addSlots: addSlots, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveConsent: saveConsent, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

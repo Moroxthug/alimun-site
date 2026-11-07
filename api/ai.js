@@ -45,6 +45,7 @@
  */
 
 const { createClient } = require('@supabase/supabase-js');
+const { planActive } = require('./_lib/plan.js');
 
 const GEMINI_MODEL = process.env.GEMINI_MODEL || 'gemini-2.0-flash';
 const GROQ_MODEL = process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
@@ -267,9 +268,9 @@ async function aiEligible(supabase, user) {
   }
   if (role === 'student') {
     const { data: profile, error } = await supabase
-      .from('student_profiles').select('id, stripe_subscription_status').eq('user_id', user.id).maybeSingle();
+      .from('student_profiles').select('id, stripe_subscription_status, plan_given_until').eq('user_id', user.id).maybeSingle();
     if (error || !profile) return false;
-    if (profile.stripe_subscription_status === 'active') return true;
+    if (planActive(profile)) return true;
     const { count, error: enrErr } = await supabase
       .from('enrollments').select('id', { count: 'exact', head: true })
       .eq('student_id', profile.id).eq('status', 'active');

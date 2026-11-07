@@ -26,6 +26,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const { cancelActiveEnrollments, takeSeat } = require('./_lib/seat.js');
 const oneOnOne = require('./_lib/one-on-one.js');
+const { planActive } = require('./_lib/plan.js');
 const mail = require('./_lib/email.js');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -128,7 +129,7 @@ module.exports = async function handler(req, res) {
     }
 
     // ── Pre-enrollment checks ──────────────────────────────
-    if (student.stripe_subscription_status !== 'active') {
+    if (!planActive(student)) {
       return res.status(402).json({
         error: 'payment_required',
         message: 'An active subscription is required to join a class.',

@@ -23,6 +23,10 @@
   var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   function esc(s) { return A.esc(s); }
+  /* A plan given without payment (student_profiles.plan_given_until) */
+  function givenOn(s) { var u = s && s.plan_given_until ? Date.parse(s.plan_given_until) : NaN; return isFinite(u) && u > Date.now(); }
+  function payLine(s) { return PAY[s.stripe_subscription_status] || (givenOn(s) ? 'given until ' + day(s.plan_given_until) : s.plan_given_until ? 'given plan ended ' + day(s.plan_given_until) : ''); }
+  function dateInput(iso) { if (!iso) return ''; var d = new Date(iso); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
   function real() { return A.mode() === 'real'; }
   function day(d) { return A.fmt(d, { day: 'numeric', month: 'short', year: 'numeric' }); }
   function opt(v, label, cur) { return '<option value="' + esc(v) + '"' + (String(v) === String(cur == null ? '' : cur) ? ' selected' : '') + '>' + esc(label) + '</option>'; }
@@ -107,7 +111,8 @@
     return ST.students.filter(function (s) {
       if (q && [s.full_name, EMAILS[s.user_id], s.language].join(' ').toLowerCase().indexOf(q) < 0) return false;
       if (SF.plan === 'paying' && s.stripe_subscription_status !== 'active') return false;
-      if (SF.plan && SF.plan !== 'paying' && s.tier !== SF.plan) return false;
+      if (SF.plan === 'given' && !givenOn(s)) return false;
+      if (SF.plan && SF.plan !== 'paying' && SF.plan !== 'given' && s.tier !== SF.plan) return false;
       if (SF.lang && s.language !== SF.lang) return false;
       if (SF.klass === 'in' && !s.enrolled_cohort_id) return false;
       if (SF.klass === 'none' && s.enrolled_cohort_id) return false;
@@ -120,7 +125,7 @@
       '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/students/invite">Invite a student</a><a class="btn btn--ghost btn--sm" href="#/students/signups">Email signups</a></div></div>' +
       '<div class="grid rise"><section class="card span-12" style="--i:0"><div class="ad-filters">' +
         '<input class="st-in" type="search" data-sf="q" placeholder="Search by name, email or language" value="' + esc(SF.q) + '" aria-label="Search">' +
-        '<select class="st-in" data-sf="plan" aria-label="Plan">' + opt('', 'Every plan', SF.plan) + opt('paying', 'Active subscription', SF.plan) + Object.keys(PLANS).map(function (k) { return opt(k, PLANS[k], SF.plan); }).join('') + '</select>' +
+        '<select class="st-in" data-sf="plan" aria-label="Plan">' + opt('', 'Every plan', SF.plan) + opt('paying', 'Active subscription', SF.plan) + opt('given', 'Plan given without payment', SF.plan) + Object.keys(PLANS).map(function (k) { return opt(k, PLANS[k], SF.plan); }).join('') + '</select>' +
         '<select class="st-in" data-sf="lang" aria-label="Language">' + opt('', 'Every language', SF.lang) + langs.map(function (l) { return opt(l, l, SF.lang); }).join('') + '</select>' +
         '<select class="st-in" data-sf="klass" aria-label="Class">' + opt('', 'In a class or not', SF.klass) + opt('in', 'In a class', SF.klass) + opt('none', 'Not in a class', SF.klass) + '</select></div>' +
         (ST.noEmails ? '<p class="t-small st-msg is-bad">Emails could not be loaded, so the search covers names and languages only.</p>' : '') +
@@ -131,7 +136,7 @@
     if (!list.length) return '<p class="t-body" style="margin-top:12px">No student matches.</p>';
     return list.slice(0, 300).map(function (s) {
       var co = cohortOf(ST.cohorts, s.enrolled_cohort_id);
-      var bits = [s.language + ' ' + (s.level || ''), PLANS[s.tier] || s.tier, PAY[s.stripe_subscription_status] || '', co ? 'in ' + A.className(co) : 'no class', 'joined ' + day(s.created_at)].filter(Boolean);
+      var bits = [s.language + ' ' + (s.level || ''), PLANS[s.tier] || s.tier, payLine(s), co ? 'in ' + A.className(co) : 'no class', 'joined ' + day(s.created_at)].filter(Boolean);
       return '<a class="tt-row tt-row--wide" href="#/students/' + esc(s.id) + '"><span class="tt-row__time">' + esc(s.level || '') + '</span><span><b>' + esc(s.full_name || '') + '</b><small>' + esc((EMAILS[s.user_id] ? EMAILS[s.user_id] + '. ' : '') + bits.join(', ')) + '</small></span></a>';
     }).join('') + (list.length > 300 ? '<p class="t-small">Showing the first 300. Narrow the search to see the rest.</p>' : '');
   }
@@ -143,11 +148,13 @@
       '<div class="btn-row"><a class="btn btn--primary btn--sm" href="/app?as=' + esc(p.id) + '" target="_blank" rel="noopener">Open their dashboard, read-only</a></div></div><div class="grid rise">';
     var paid = p.stripe_subscription_status === 'active';
     html += '<form class="card span-7 st-form" style="--i:0;max-width:none;margin-top:0" data-sfile="' + esc(p.id) + '"><h2 class="t-h2">Plan and level</h2>' +
-      '<p class="t-body">' + esc((PLANS[p.tier] || p.tier) + '. ' + (PAY[p.stripe_subscription_status] || 'No subscription') + '.') + '</p>' +
+      '<p class="t-body">' + esc((PLANS[p.tier] || p.tier) + '. ' + A.cap(payLine(p) || 'no subscription') + '.') + '</p>' +
       '<div class="st-row">' + field('Level', '<select class="st-in" name="level">' + LEVELS.map(function (l) { return opt(l, l, p.level); }).join('') + '</select>') +
         field('Goal', '<select class="st-in" name="goal_track">' + Object.keys(GOALS).map(function (g) { return opt(g, GOALS[g], p.goal_track); }).join('') + '</select>') + '</div>' +
       field('Plan', '<select class="st-in" name="tier">' + Object.keys(PLANS).map(function (k) { return opt(k, PLANS[k], p.tier); }).join('') + '</select>',
         paid ? 'This student pays through Stripe: changing the plan here does not change what they pay, and the next payment update sets it back.' : 'Changing the plan here does not charge or refund anything.') +
+      field('Give it without payment, until', '<input class="st-in" type="date" name="given_until" min="' + esc(dateInput(new Date().toISOString())) + '" value="' + esc(givenOn(p) ? dateInput(p.plan_given_until) : '') + '">',
+        'With a date, the plan above works for classes, live lessons, 1 on 1 and tutor minutes until the end of that day, with no Stripe payment. Leave it empty to stop a given plan.') +
       '<label class="st-day"><input type="checkbox" name="tell" checked><span>Email them when their plan changes to a paid plan</span></label>' +
       '<div class="btn-row"><button class="btn btn--primary btn--sm" type="submit">Save</button></div><p class="t-small st-msg" data-msg="sfile" aria-live="polite"></p></form>';
     html += '<section class="card span-5" style="--i:1"><h2 class="t-h2">Activity</h2><div class="tt-week">' +
@@ -219,8 +226,13 @@
   }
   function saveStudent(form) {
     var id = form.getAttribute('data-sfile'), s = ST.students.filter(function (x) { return x.id === id; })[0], fd = new FormData(form);
-    var patch = { level: fd.get('level'), goal_track: fd.get('goal_track'), tier: fd.get('tier') }, tell = !!fd.get('tell');
-    var changed = patch.tier !== (FILE.profile || s).tier;
+    var gu = String(fd.get('given_until') || ''), guMs = gu ? new Date(gu + 'T23:59:59').getTime() : NaN;
+    if (gu && !(guMs > Date.now())) { say('[data-msg="sfile"]', 'Choose a date from today on, or leave it empty.', true); return; }
+    var patch = { level: fd.get('level'), goal_track: fd.get('goal_track'), tier: fd.get('tier'), plan_given_until: gu ? new Date(guMs).toISOString() : null }, tell = !!fd.get('tell');
+    if (gu && (patch.tier === 'free' || patch.tier === 'waitlist')) { say('[data-msg="sfile"]', 'Choose the plan to give, not Free or Waiting list.', true); return; }
+    var prev = FILE.profile || s;
+    if (!gu && !prev.plan_given_until) delete patch.plan_given_until;
+    var changed = patch.tier !== prev.tier || (gu && !givenOn(prev));
     var done = function (note) { Object.assign(s, patch); Object.assign(FILE.profile, patch); say('[data-msg="sfile"]', 'Saved.' + (note || '')); };
     if (!real()) { done(' (sample: nothing was saved)'); return; }
     var btn = form.querySelector('[type="submit"]'); btn.disabled = true;
