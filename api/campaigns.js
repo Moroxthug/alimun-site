@@ -5,6 +5,9 @@
  *
  *    ?action=audience (POST, admin)  { filter }            → { count, people: first 30 }
  *    ?action=test     (POST, admin)  { message }           → sends the email to the admin's own address only
+ *         The test action also accepts an operations key (Authorization: Bearer <key>) whose SHA-256 is stored in
+ *         app_settings 'agent_test_key_sha256'. With it the test goes to every admin account and nowhere else; it
+ *         cannot send a campaign, read an audience or email anyone else. Delete the setting to switch it off.
  *    ?action=send     (POST, admin)  { message, filter, channels, confirm: <count> }
  *         → creates the campaign, writes in-app notifications and/or emails everyone in the audience
  *    ?action=click    (GET, public)  ?c=&u=&s=             → records the click, then redirects to the campaign's button link
@@ -16,6 +19,7 @@
  */
 
 const { createClient } = require('@supabase/supabase-js');
+const crypto = require('crypto');
 const mail = require('./_lib/email.js');
 const L = require('./_lib/email-i18n.js');
 
@@ -36,6 +40,26 @@ async function adminUser(req, supabase) {
   const { data, error } = await supabase.auth.getUser(h.slice(7));
   if (error || !data?.user || data.user.app_metadata?.role !== 'admin') return null;
   return data.user;
+}
+/** Operations key for test sends only: compared with the stored SHA-256, never stored itself. */
+async function opsKeyOk(req, supabase) {
+  const h = req.headers.authorization || '';
+  if (!h.startsWith('Bearer ') || h.length < 50 || h.length > 200 || h.split('.').length === 3) return false;
+  const { data } = await supabase.from('app_settings').select('value').eq('key', 'agent_test_key_sha256').maybeSingle();
+  const want = (data && data.value) || '';
+  if (!/^[0-9a-f]{64}$/.test(want)) return false;
+  const got = crypto.createHash('sha256').update(h.slice(7)).digest('hex');
+  return crypto.timingSafeEqual(Buffer.from(got), Buffer.from(want));
+}
+async function adminAccounts(supabase) {
+  const out = [];
+  for (let page = 1; page <= 20; page++) {
+    const { data, error } = await supabase.auth.admin.listUsers({ page, perPage: 200 });
+    if (error || !data?.users?.length) break;
+    for (const u of data.users) if (u.app_metadata?.role === 'admin' && u.email) out.push(u);
+    if (data.users.length < 200) break;
+  }
+  return out;
 }
 function body(req) {
   let b = req.body || {};
@@ -185,6 +209,18 @@ module.exports = async function handler(req, res) {
   if (!supabase) return res.status(500).json({ error: 'Server configuration error' });
   if (action === 'click') return handleClick(req, res, supabase);
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
+  if (action === 'test' && await opsKeyOk(req, supabase)) {
+    const admins = await adminAccounts(supabase);
+    if (!admins.length) return res.status(404).json({ error: 'No admin account found' });
+    const sent = [];
+    for (const a of admins) {
+      const r = { statusCode: 0, body: null, status(c) { this.statusCode = c; return this; }, json(b) { this.body = b; return this; } };
+      await handleTest(req, r, a);
+      if (r.statusCode !== 200) return res.status(r.statusCode).json(r.body);
+      sent.push(a.email);
+    }
+    return res.status(200).json({ sent });
+  }
   const user = await adminUser(req, supabase);
   if (!user) return res.status(403).json({ error: 'Admins only' });
   if (action === 'audience') return handleAudience(req, res, supabase);
