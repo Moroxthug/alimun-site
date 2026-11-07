@@ -273,11 +273,12 @@
   function inviteView(role) {
     return back(role === 'teacher' ? '#/teachers' : '#/students', role === 'teacher' ? 'Teachers' : 'Students') +
       '<div class="view__head"><div><h1 class="t-h1">Invite ' + (role === 'teacher' ? 'a teacher' : 'a student') + '</h1><p class="t-lead">' + esc(role === 'teacher'
-        ? 'The account is created as an approved teacher and they get an email with a link to sign in. They set a password in their Settings.'
-        : 'The account is created as a student and they get an email with a link to sign in, then take the level test.') + '</p></div></div>' +
+        ? 'The account is created as an approved teacher and they get an email with a link to choose their password.'
+        : 'The account is created as a student and they get an email with a link to choose their password, then take the level test.') + '</p></div></div>' +
       '<div class="grid rise"><form class="card span-8 st-form" style="--i:0;max-width:none;margin-top:0" data-invite="' + role + '">' +
       field('Email', '<input class="st-in" type="email" name="email" maxlength="200" required autocomplete="off">') +
       field('Full name', '<input class="st-in" name="full_name" maxlength="100" required>') +
+      field('Their language', '<select class="st-in" name="ui_lang">' + [['en', 'English'], ['es', 'Spanish'], ['fr', 'French'], ['de', 'German'], ['pt', 'Portuguese'], ['it', 'Italian'], ['zh', 'Chinese'], ['ar', 'Arabic'], ['ma', 'French (Morocco)']].map(function (l) { return opt(l[0], l[1], 'en'); }).join('') + '</select>', 'The invitation and their later emails are written in it. They can change it by opening their dashboard in another language.') +
       (role === 'teacher' ? '<div class="st-row">' + field('Language they teach', '<select class="st-in" name="language">' + LANGS.map(function (l) { return opt(l, l, 'English'); }).join('') + '</select>') +
         field('Specialty', '<input class="st-in" name="specialty" maxlength="200">', 'Optional') + '</div>' : '') +
       '<div class="btn-row"><button class="btn btn--primary" type="submit">Create the account and send the invitation</button></div><p class="t-body st-msg" data-msg="inv" aria-live="polite"></p><div data-invlink></div></form>' +
@@ -285,7 +286,7 @@
   }
   function invite(form) {
     var fd = new FormData(form), role = form.getAttribute('data-invite');
-    var body = { role: role, email: String(fd.get('email') || '').trim(), full_name: String(fd.get('full_name') || '').trim(), language: fd.get('language') || '', specialty: String(fd.get('specialty') || '').trim() };
+    var body = { role: role, email: String(fd.get('email') || '').trim(), full_name: String(fd.get('full_name') || '').trim(), language: fd.get('language') || '', specialty: String(fd.get('specialty') || '').trim(), ui_lang: fd.get('ui_lang') || 'en' };
     if (!body.email || !body.full_name) { say('[data-msg="inv"]', 'Write the email address and the name.', true); return; }
     if (!real()) { say('[data-msg="inv"]', 'Sample: no account was created and nothing was sent.'); return; }
     var btn = form.querySelector('[type="submit"]'); btn.disabled = true; say('[data-msg="inv"]', 'Creating the account…');

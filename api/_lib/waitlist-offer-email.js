@@ -9,13 +9,14 @@
  */
 
 const mail = require('./email.js');
+const L = require('./email-i18n.js');
 
 
 async function sendOfferEmail(supabase, { waitlist_id, cohort_id, student_id }) {
   // 1. Fetch Student Profile and User Email
   const { data: student, error: studentErr } = await supabase
     .from('student_profiles')
-    .select('full_name, user_id')
+    .select('full_name, user_id, ui_lang')
     .eq('id', student_id)
     .single();
 
@@ -50,35 +51,33 @@ async function sendOfferEmail(supabase, { waitlist_id, cohort_id, student_id }) 
     throw new Error(`Failed to fetch cohort details: ${cohortErr?.message}`);
   }
 
-  // Every value below is escaped: teacher and student names are user-editable.
-  const teacherName = cohort.teacher_profiles?.full_name || 'your teacher';
-  const scheduleDays = (Array.isArray(cohort.schedule_days) ? cohort.schedule_days : []).join(', ');
+  // In the student's dashboard language. Every value is escaped when drawn (names are user-editable).
+  const lang = student.ui_lang || 'en';
+  const teacherName = cohort.teacher_profiles?.full_name || '';
+  const days = Array.isArray(cohort.schedule_days) ? cohort.schedule_days : [];
   const scheduleTime = String(cohort.schedule_time || '').slice(0, 5);
   const timezone = cohort.timezone || 'UTC';
-  const cohortLabel = `${cohort.language || ''} ${cohort.level || ''}`.trim();
+  const cls = L.className(cohort.language, cohort.level, lang);
 
   const appUrl = process.env.APP_URL || 'https://alimun.com';
   const claimUrl = `${appUrl}/app#/classes/offer/${encodeURIComponent(waitlist_id)}`;
 
   const content = mail.renderEmail({
-    hero: 'place',
-    preheader: 'A place has opened in the class you were waiting for. It is held for you for 48 hours.',
-    heading: 'A place is open for you',
+    hero: 'place', lang,
+    preheader: L.say(lang, 'place.preheader'),
+    heading: L.say(lang, 'place.heading'),
     blocks: [
-      { p: `Hello ${mail.esc(student.full_name)},` },
-      { p: 'A place has opened in the class you were waiting for. You were first on the waiting list, so it is held for you for the next <strong>48 hours</strong>.' },
-      { facts: [['Class', cohortLabel], ['Teacher', teacherName], ['Schedule', scheduleDays ? `${scheduleDays} at ${scheduleTime} (${timezone})` : '']] },
-      { button: { label: 'Claim your place', href: claimUrl } },
+      { p: L.hello(lang, student.full_name) },
+      { p: L.html(lang, 'place.body') },
+      { facts: [[L.say(lang, 'place.f_class'), cls], [L.say(lang, 'place.f_teacher'), teacherName],
+        [L.say(lang, 'place.f_schedule'), days.length ? L.say(lang, 'place.schedule', { days: L.weekdays(days, lang), time: scheduleTime, zone: timezone }) : '']] },
+      { button: { label: L.say(lang, 'place.button'), href: claimUrl } },
     ],
-    note: 'If you do not claim it within 48 hours, the place goes to the next person on the waiting list.',
-    footer: 'You received this email because you joined the waiting list for this class on Alimun.',
+    note: L.html(lang, 'place.note'),
+    footer: L.html(lang, 'place.footer'),
   });
 
-  const ok = await mail.sendEmail({
-    to: studentEmail,
-    subject: `A place is open in your ${cohort.language || ''} class`.replace(/\s+/g, ' '),
-    ...content,
-  });
+  const ok = await mail.sendEmail({ to: studentEmail, subject: L.say(lang, 'place.subject', { class: cls }), ...content });
   const response = { ok };
   if (!response.ok) {
     console.error('[Alimun Waitlist] Resend did not accept the offer email');

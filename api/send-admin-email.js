@@ -13,6 +13,7 @@ const { createClient } = require('@supabase/supabase-js');
 const subscribe = require('./_lib/subscribe.js');
 const contact = require('./_lib/contact.js');
 const mail = require('./_lib/email.js');
+const L = require('./_lib/email-i18n.js');
 
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
@@ -90,25 +91,27 @@ module.exports = async function handler(req, res) {
 
   try {
     // 3. Resolve user profile and user_id
-    let userId, fullName;
+    let userId, fullName, uiLang;
     const { data: student } = await supabase
       .from('student_profiles')
-      .select('user_id, full_name')
+      .select('user_id, full_name, ui_lang')
       .eq('id', targetId)
       .maybeSingle();
 
     if (student) {
       userId = student.user_id;
       fullName = student.full_name;
+      uiLang = student.ui_lang;
     } else {
       const { data: teacher } = await supabase
         .from('teacher_profiles')
-        .select('user_id, full_name')
+        .select('user_id, full_name, ui_lang')
         .eq('id', targetId)
         .maybeSingle();
       if (teacher) {
         userId = teacher.user_id;
         fullName = teacher.full_name;
+        uiLang = teacher.ui_lang;
       }
     }
 
@@ -133,20 +136,21 @@ module.exports = async function handler(req, res) {
     let subject = cleanSubject(customSubject || 'Update from Alimun') || 'Update from Alimun';
     let content;
 
+    const lang = uiLang || 'en';
     if (emailType === 'tier-upgrade') {
-      subject = cleanSubject(`Your Alimun plan is now ${tierName}`);
+      subject = cleanSubject(L.say(lang, 'plan.subject', { plan: tierName }));
       content = mail.renderEmail({
-        hero: 'plan',
-        preheader: `Your account is now on the ${tierName} plan.`,
-        heading: 'Your plan has changed',
+        hero: 'plan', lang,
+        preheader: L.say(lang, 'plan.preheader', { plan: tierName }),
+        heading: L.say(lang, 'plan.heading'),
         blocks: [
-          { p: `Hello ${mail.esc(fullName)},` },
-          { p: `The Alimun team has moved your account to the <strong>${mail.esc(tierName)}</strong> plan. It is active now, with no card or payment needed.` },
-          { p: 'Sign in to see your classes and exercises.' },
-          { button: { label: 'Open your dashboard', href: `${mail.SITE}/signin.html` } },
+          { p: L.hello(lang, fullName) },
+          { p: L.html(lang, 'plan.body', { plan: tierName }) },
+          { p: L.html(lang, 'plan.body2') },
+          { button: { label: L.say(lang, 'common.open_dashboard'), href: `${mail.SITE}/signin.html` } },
         ],
-        note: 'If you think this is a mistake, reply to this email.',
-        footer: 'You received this email because you have an Alimun account.',
+        note: L.html(lang, 'plan.note'),
+        footer: L.html(lang, 'common.footer_account'),
       });
     } else {
       // Message written by an admin: plain text, escaped, line breaks kept.
@@ -156,9 +160,10 @@ module.exports = async function handler(req, res) {
         hero: 'message',
         preheader: String(customBody).replace(/\s+/g, ' ').slice(0, 120),
         heading: subject,
-        blocks: [{ p: `Hello ${mail.esc(fullName)},` }, ...paras],
-        note: 'Questions? Reply to this email.',
-        footer: 'You received this email because you have an Alimun account.',
+        lang,
+        blocks: [{ p: L.hello(lang, fullName) }, ...paras],
+        note: L.html(lang, 'common.questions'),
+        footer: L.html(lang, 'common.footer_account'),
       });
     }
 

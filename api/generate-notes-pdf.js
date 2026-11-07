@@ -13,6 +13,7 @@ const React = require('react');
 let Document, Page, Text, View, StyleSheet, Font, pdf, styles, HEADER_FONT;
 const { createClient } = require('@supabase/supabase-js');
 const mail = require('./_lib/email.js');
+const L = require('./_lib/email-i18n.js');
 const path = require('path');
 const fs = require('fs');
 
@@ -299,7 +300,7 @@ module.exports = async function handler(req, res) {
     // 5. Notify enrolled students via Resend
     const { data: enrollments, error: enrollmentsError } = await supabase
       .from('enrollments')
-      .select('student_profiles (user_id, full_name)')
+      .select('student_profiles (user_id, full_name, ui_lang, timezone)')
       .eq('cohort_id', cohort.id)
       .eq('status', 'active');
 
@@ -316,18 +317,22 @@ module.exports = async function handler(req, res) {
           const email = authUser?.user?.email;
           if (!email) return;
 
-          const emailSubject = `Session notes ready — ${cohort.language} ${cohort.level} ${sessionDate}`.replace(/[<>\r\n]/g, '');
+          // In the student's dashboard language, the date in their own time zone when they set one.
+          const lang = studentProfile.ui_lang || 'en';
+          const zone = studentProfile.timezone && studentProfile.timezone !== 'UTC' ? studentProfile.timezone : (cohort.timezone || 'UTC');
+          const cls = L.className(cohort.language, cohort.level, lang), date = L.day(session.scheduled_at, lang, zone);
+          const emailSubject = L.say(lang, 'notes.subject', { class: cls, date }).replace(/[<>\r\n]/g, '');
           const content = mail.renderEmail({
-            hero: 'notes',
-            preheader: `Your notes from ${sessionDate} are in your dashboard.`,
-            heading: 'Your session notes are ready',
+            hero: 'notes', lang,
+            preheader: L.say(lang, 'notes.preheader', { date }),
+            heading: L.say(lang, 'notes.heading'),
             blocks: [
-              { p: `Hello ${mail.esc(studentProfile.full_name)},` },
-              { p: `Your notes from the <strong>${mail.esc(cohort.language)} ${mail.esc(cohort.level)}</strong> session on <strong>${mail.esc(sessionDate)}</strong> are ready.` },
-              { facts: [['Grammar', grammarTitle], ['New words', String(pdfData.vocabulary?.length || 0)], ['Homework due', pdfData.dueDate || '']] },
-              { button: { label: 'Open your notes', href: dashboardUrl } },
+              { p: L.hello(lang, studentProfile.full_name) },
+              { p: L.html(lang, 'notes.body', { class: cls, date }) },
+              { facts: [[L.say(lang, 'notes.f_grammar'), grammarTitle], [L.say(lang, 'notes.f_words'), String(pdfData.vocabulary?.length || 0)], [L.say(lang, 'notes.f_due'), pdfData.dueDate ? L.day(pdfData.dueDate + 'T12:00:00Z', lang) : '']] },
+              { button: { label: L.say(lang, 'notes.button'), href: dashboardUrl } },
             ],
-            footer: 'You received this email because you are in this class on Alimun.',
+            footer: L.html(lang, 'notes.footer'),
           });
 
           await mail.sendEmail({ to: email, subject: emailSubject, ...content });

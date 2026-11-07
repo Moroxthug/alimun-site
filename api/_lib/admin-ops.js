@@ -19,6 +19,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const TZ = require('../../js/tz.js');
 const mail = require('./email.js');
+const L = require('./email-i18n.js');
 const { cancelActiveEnrollments, takeSeat } = require('./seat.js');
 const { sendOfferEmail } = require('./waitlist-offer-email.js');
 
@@ -34,9 +35,6 @@ function getSupabaseAdmin() {
   return createClient(url, key, { auth: { autoRefreshToken: false, persistSession: false } });
 }
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
 function emailConfigured() {
   return !!process.env.RESEND_API_KEY;
@@ -49,28 +47,21 @@ async function sendEmail(to, subject, content) {
 }
 
 /** heading: the email's title; name: greeting; paragraphs: HTML strings (escape what came from people). */
-function emailHtml(heading, name, paragraphs, hero) {
+function emailHtml(heading, name, paragraphs, hero, lang) {
   return mail.renderEmail({
-    hero: hero || 'class',
+    hero: hero || 'class', lang,
     preheader: heading,
     heading,
     blocks: [
-      { p: `Hello${name ? ' ' + mail.esc(name) : ''},` },
+      { p: L.hello(lang, name) },
       ...paragraphs.map((p) => ({ p })),
-      { button: { label: 'Open your dashboard', href: `${mail.SITE}/signin.html` } },
+      { button: { label: L.say(lang, 'common.open_dashboard'), href: `${mail.SITE}/signin.html` } },
     ],
-    note: 'Questions? Reply to this email.',
-    footer: 'You received this email because you have an Alimun account.',
+    note: L.html(lang, 'common.questions'),
+    footer: L.html(lang, 'common.footer_account'),
   });
 }
 
-/** "Monday 20 October, 18:00 (Europe/Madrid)" */
-function formatWhen(date, tz) {
-  const zone = TZ.isValidTimezone(tz) ? tz : 'UTC';
-  const d = new Date(date);
-  return `${d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: zone })}, `
-    + `${d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: zone })} (${zone})`;
-}
 
 /** A person's display zone: their own setting unless it is the 'UTC' default, else the class zone. */
 function personZone(profileTz, classTz) {
@@ -124,7 +115,7 @@ async function sessionUpdate(req, res) {
 
   const { data: session, error: sErr } = await supabase
     .from('sessions')
-    .select('id, status, scheduled_at, cohort_id, cohorts ( id, language, level, timezone, teacher_profiles ( full_name, user_id ) )')
+    .select('id, status, scheduled_at, cohort_id, cohorts ( id, language, level, timezone, teacher_profiles ( full_name, user_id, ui_lang ) )')
     .eq('id', body.session_id)
     .maybeSingle();
   if (sErr) throw sErr;
@@ -172,7 +163,7 @@ async function sessionUpdate(req, res) {
   // Recipients: the class's active students and its teacher.
   const { data: enrolled } = await supabase
     .from('enrollments')
-    .select('student_profiles ( full_name, user_id, timezone )')
+    .select('student_profiles ( full_name, user_id, timezone, ui_lang )')
     .eq('cohort_id', cohort.id)
     .eq('status', 'active');
   const people = (enrolled || []).map((e) => e.student_profiles).filter(Boolean);
@@ -183,14 +174,16 @@ async function sessionUpdate(req, res) {
     const to = await emailOf(supabase, p.user_id);
     if (!to) { result.notEmailed++; continue; }
     const zone = personZone(p.timezone, classTz);
-    const oldWhen = formatWhen(session.scheduled_at, zone);
+    const lang = p.ui_lang || 'en';
+    const cls = L.className(cohort.language, cohort.level, lang);
+    const oldWhen = L.when(session.scheduled_at, zone, lang);
     const lines = op === 'cancel'
-      ? [`Your <strong>${escapeHtml(className)}</strong> session on <strong>${escapeHtml(oldWhen)}</strong> has been cancelled.`]
-      : [`Your <strong>${escapeHtml(className)}</strong> session on ${escapeHtml(oldWhen)} has moved to <strong>${escapeHtml(formatWhen(newStart, zone))}</strong>.`];
-    if (reason) lines.push(`Reason: ${escapeHtml(reason)}`);
-    if (op === 'reschedule') lines.push('The classroom opens in your dashboard 15 minutes before the new start time.');
-    const subject = op === 'cancel' ? `Session cancelled: ${className}` : `Session moved: ${className}`;
-    const ok = await sendEmail(to, subject, emailHtml(op === 'cancel' ? 'Session cancelled' : 'Session moved', p.full_name, lines, 'session'));
+      ? [L.html(lang, 'session.cancelled', { class: cls, when: oldWhen })]
+      : [L.html(lang, 'session.moved', { class: cls, was: oldWhen, when: L.when(newStart, zone, lang) })];
+    if (reason) lines.push(L.html(lang, 'session.reason', { reason }));
+    if (op === 'reschedule') lines.push(L.html(lang, 'session.opens'));
+    const subject = L.say(lang, op === 'cancel' ? 'session.subject_cancelled' : 'session.subject_moved', { class: cls });
+    const ok = await sendEmail(to, subject, emailHtml(L.say(lang, op === 'cancel' ? 'session.heading_cancelled' : 'session.heading_moved'), p.full_name, lines, 'session', lang));
     if (ok) result.emailed++; else result.notEmailed++;
   }
   return res.status(200).json(result);
@@ -201,7 +194,7 @@ async function sessionUpdate(req, res) {
 async function loadStudent(supabase, id) {
   const { data, error } = await supabase
     .from('student_profiles')
-    .select('id, user_id, full_name, language, tier, enrolled_cohort_id')
+    .select('id, user_id, full_name, language, tier, enrolled_cohort_id, ui_lang')
     .eq('id', id)
     .maybeSingle();
   if (error) throw error;
@@ -245,11 +238,12 @@ async function enrollmentMove(req, res) {
   if (body.notify !== false) {
     const to = await emailOf(supabase, student.user_id);
     if (to) {
-      const teacher = cohort.teacher_profiles?.full_name || 'your teacher';
-      result.emailed = await sendEmail(to, `Your class: ${cohort.language} ${cohort.level}`, emailHtml('Your new class', student.full_name, [
-        `You are now in the <strong>${escapeHtml(cohort.language)} ${escapeHtml(cohort.level)}</strong> class with <strong>${escapeHtml(teacher)}</strong>.`,
-        'Your dashboard shows the schedule and your next session.',
-      ], mail.heroForLanguage(cohort.language)));
+      const lang = student.ui_lang || 'en', cls = L.className(cohort.language, cohort.level, lang);
+      const teacher = cohort.teacher_profiles?.full_name || '';
+      result.emailed = await sendEmail(to, L.say(lang, 'class_new.subject', { class: cls }), emailHtml(L.say(lang, 'class_new.heading'), student.full_name, [
+        L.html(lang, 'class_new.body', { class: cls, teacher }),
+        L.html(lang, 'class_new.body2'),
+      ], mail.heroForLanguage(cohort.language), lang));
     }
   }
   return res.status(200).json(result);
@@ -277,10 +271,11 @@ async function enrollmentRemove(req, res) {
     const to = await emailOf(supabase, student.user_id);
     const c = active[0].cohorts;
     if (to) {
-      result.emailed = await sendEmail(to, 'Your Alimun class', emailHtml('Your class has changed', student.full_name, [
-        `You are no longer in the <strong>${escapeHtml(c ? `${c.language} ${c.level}` : '')}</strong> class.`,
-        'You can choose a new class from your dashboard, or reply to this email if you have questions.',
-      ]));
+      const lang = student.ui_lang || 'en';
+      result.emailed = await sendEmail(to, L.say(lang, 'class_left.subject'), emailHtml(L.say(lang, 'class_left.heading'), student.full_name, [
+        L.html(lang, 'class_left.body', { class: c ? L.className(c.language, c.level, lang) : '' }),
+        L.html(lang, 'class_left.body2'),
+      ], 'class', lang));
     }
   }
   return res.status(200).json(result);

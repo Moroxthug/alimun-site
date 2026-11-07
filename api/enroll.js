@@ -28,6 +28,7 @@ const { cancelActiveEnrollments, takeSeat } = require('./_lib/seat.js');
 const oneOnOne = require('./_lib/one-on-one.js');
 const { planActive } = require('./_lib/plan.js');
 const mail = require('./_lib/email.js');
+const L = require('./_lib/email-i18n.js');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const TIER_WEIGHTS = { community: 1, focused: 2, intensive: 3, private: 4 };
@@ -121,7 +122,7 @@ module.exports = async function handler(req, res) {
     // 3. Cohort
     const { data: cohort, error: cohortError } = await supabase
       .from('cohorts')
-      .select('*, teacher_profiles ( id, full_name, user_id )')
+      .select('*, teacher_profiles ( id, full_name, user_id, ui_lang )')
       .eq('id', cohort_id)
       .maybeSingle();
     if (cohortError || !cohort) {
@@ -205,7 +206,7 @@ module.exports = async function handler(req, res) {
 
     // ── Notifications ──────────────────────────────────────
     const appUrl = process.env.APP_URL || 'https://alimun.com';
-    const teacherName = cohort.teacher_profiles?.full_name || 'your teacher';
+    const teacherName = cohort.teacher_profiles?.full_name || '';
 
     const { data: nextSession } = await supabase
       .from('sessions')
@@ -217,29 +218,29 @@ module.exports = async function handler(req, res) {
       .limit(1)
       .maybeSingle();
 
-    let whenStr = 'soon — check your dashboard for the schedule';
-    if (nextSession) {
-      const d = new Date(nextSession.scheduled_at);
-      whenStr = `${d.toLocaleDateString('en-GB', { weekday: 'long', day: 'numeric', month: 'long', timeZone: cohort.timezone || 'UTC' })} at ${d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: cohort.timezone || 'UTC' })} (${cohort.timezone || 'UTC'})`;
-    }
+    // Each email in its reader's dashboard language; the student's time in their own zone when they set one.
+    const sLang = student.ui_lang || 'en';
+    const sZone = student.timezone && student.timezone !== 'UTC' ? student.timezone : (cohort.timezone || 'UTC');
+    const whenStr = nextSession ? L.when(nextSession.scheduled_at, sZone, sLang) : L.say(sLang, 'enrolled.soon');
+    const sClass = L.className(cohort.language, cohort.level, sLang);
 
     if (user.email) {
       await sendResend({
         to: user.email,
-        subject: `You're in: ${cohort.language} ${cohort.level} with ${teacherName}`,
+        subject: L.say(sLang, 'enrolled.subject', { class: sClass, teacher: teacherName }),
         content: mail.renderEmail({
-          hero: mail.heroForLanguage(cohort.language),
-          preheader: `Your next session: ${whenStr}.`,
-          heading: "You're in",
+          hero: mail.heroForLanguage(cohort.language), lang: sLang,
+          preheader: L.say(sLang, 'enrolled.preheader', { when: whenStr }),
+          heading: L.say(sLang, 'enrolled.heading'),
           blocks: [
-            { p: `Welcome, ${mail.esc(student.full_name)}.` },
-            { p: `You have joined the <strong>${mail.esc(cohort.language)} ${mail.esc(cohort.level)}</strong> class with <strong>${mail.esc(teacherName)}</strong>.` },
-            { facts: [['Class', `${cohort.language} ${cohort.level}${cohort.goal_track ? ` (${cohort.goal_track})` : ''}`], ['Teacher', teacherName], ['Next session', whenStr]] },
-            { p: 'The classroom opens in your dashboard 15 minutes before the start.' },
-            { button: { label: 'Go to your classes', href: `${appUrl}/app#/classes` } },
+            { p: L.html(sLang, 'enrolled.welcome', { name: String(student.full_name || '').split(/\s+/)[0] }) },
+            { p: L.html(sLang, 'enrolled.body', { class: sClass, teacher: teacherName }) },
+            { facts: [[L.say(sLang, 'enrolled.f_class'), sClass], [L.say(sLang, 'enrolled.f_teacher'), teacherName], [L.say(sLang, 'enrolled.f_next'), whenStr]] },
+            { p: L.html(sLang, 'enrolled.opens') },
+            { button: { label: L.say(sLang, 'enrolled.button'), href: `${appUrl}/app#/classes` } },
           ],
-          note: 'Questions? Reply to this email.',
-          footer: 'You received this email because you joined a class on Alimun.',
+          note: L.html(sLang, 'common.questions'),
+          footer: L.html(sLang, 'enrolled.footer'),
         }),
       });
     }
@@ -248,20 +249,23 @@ module.exports = async function handler(req, res) {
       const { data: authTeacher } = await supabase.auth.admin.getUserById(cohort.teacher_profiles.user_id);
       const teacherEmail = authTeacher?.user?.email;
       if (teacherEmail) {
+        const tLang = cohort.teacher_profiles.ui_lang || 'en';
+        const tClass = L.className(cohort.language, cohort.level, tLang);
         await sendResend({
           to: teacherEmail,
-          subject: 'New student joined your class',
+          subject: L.say(tLang, 'student_joined.subject'),
           content: mail.renderEmail({
-            hero: mail.heroForLanguage(cohort.language),
-            preheader: `${student.full_name} joined your ${cohort.language} ${cohort.level} class.`,
-            heading: 'A new student joined your class',
+            hero: mail.heroForLanguage(cohort.language), lang: tLang,
+            preheader: L.say(tLang, 'student_joined.preheader', { name: student.full_name, class: tClass }),
+            heading: L.say(tLang, 'student_joined.heading'),
             blocks: [
-              { p: `Hello ${mail.esc(teacherName)},` },
-              { p: `A new student joined your <strong>${mail.esc(cohort.language)} ${mail.esc(cohort.level)}</strong> class.` },
-              { facts: [['Name', student.full_name], ['Level', student.level], ['Goal', student.goal_track], ['Seats taken', `${newCount} of ${cohort.max_students}`]] },
-              { button: { label: 'Open your teacher dashboard', href: `${appUrl}/app/teach` } },
+              { p: L.hello(tLang, teacherName) },
+              { p: L.html(tLang, 'student_joined.body', { class: tClass }) },
+              { facts: [[L.say(tLang, 'student_joined.f_name'), student.full_name], [L.say(tLang, 'student_joined.f_level'), student.level], [L.say(tLang, 'student_joined.f_goal'), student.goal_track],
+                [L.say(tLang, 'student_joined.f_seats'), L.say(tLang, 'student_joined.seats', { n: newCount, max: cohort.max_students })]] },
+              { button: { label: L.say(tLang, 'student_joined.button'), href: `${appUrl}/app/teach` } },
             ],
-            footer: 'You received this email because you teach this class on Alimun.',
+            footer: L.html(tLang, 'student_joined.footer'),
           }),
         });
       }

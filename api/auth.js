@@ -25,6 +25,7 @@
 const { createClient } = require('@supabase/supabase-js');
 const mail = require('./_lib/email.js');
 const captcha = require('./_lib/captcha.js');
+const L = require('./_lib/email-i18n.js');
 
 const SITE = 'https://alimun.com';
 const LOCALES = new Set(['ar', 'de', 'es', 'fr', 'it', 'ma', 'pt', 'zh']);
@@ -58,17 +59,17 @@ function allow(map, key, max) {
   return true;
 }
 
-function resetEmail(link) {
+function resetEmail(link, lang) {
   return mail.renderEmail({
-    hero: 'reset',
-    preheader: 'Use the button in this email to choose a new password for your Alimun account.',
-    heading: 'Choose a new password',
+    hero: 'reset', lang,
+    preheader: L.say(lang, 'reset.preheader'),
+    heading: L.say(lang, 'reset.heading'),
     blocks: [
-      { p: 'Someone asked to reset the password of the Alimun account for this email address. Use the button below to choose a new one.' },
-      { button: { label: 'Choose a new password', href: link } },
+      { p: L.html(lang, 'reset.body') },
+      { button: { label: L.say(lang, 'reset.button'), href: link } },
     ],
-    note: 'The link works once and only for a limited time. If you did not ask for this, you can ignore this email: your password stays as it is.',
-    footer: 'You received this email because a password reset was requested for this address on alimun.com.',
+    note: L.html(lang, 'reset.note'),
+    footer: L.html(lang, 'reset.footer'),
   });
 }
 
@@ -79,6 +80,8 @@ async function handleReset(req, res) {
   }
   const email = String(body.email || '').trim().toLowerCase();
   const lang = LOCALES.has(String(body.lang || '')) ? String(body.lang) : '';
+  // The email's language: the page's folder, else the language the visitor chose on the site, else English.
+  const emailLang = lang || (L.LANGS.includes(String(body.ui || '')) ? String(body.ui) : 'en');
   if (!EMAIL_RE.test(email) || email.length > 200) return res.status(400).json({ error: 'invalid_email' });
   if (!allow(recentIp, clientIp(req), PER_IP_HOUR)) return res.status(429).json({ error: 'rate_limited' });
   if (!(await captcha.verify(req))) return res.status(403).json({ error: 'captcha_failed' });
@@ -98,7 +101,7 @@ async function handleReset(req, res) {
     return res.status(200).json({ ok: true });
   }
   const link = `${page}?token_hash=${encodeURIComponent(hashed)}&type=recovery`;
-  const sent = await mail.sendEmail({ to: email, subject: 'Choose a new Alimun password', ...resetEmail(link) });
+  const sent = await mail.sendEmail({ to: email, subject: L.say(emailLang, 'reset.subject'), ...resetEmail(link, emailLang) });
   if (!sent) return res.status(503).json({ error: 'email_unavailable' });
   return res.status(200).json({ ok: true });
 }

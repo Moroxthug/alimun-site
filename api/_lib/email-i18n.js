@@ -101,4 +101,52 @@ const T = {
 function t(lang) { return T[norm(lang)]; }
 function fill(s, vars) { return String(s).replace(/\{(\w+)\}/g, (m, k) => (vars && vars[k] != null ? vars[k] : m)); }
 
-module.exports = { LANGS, norm, htmlLang, isRtl, languageName, t, fill };
+/* ---------- Every other email to students and teachers: api/_lib/email-text/<lang>.json ----------
+   English is the source; a missing language or key falls back to English. */
+const TEXT = { en: require('./email-text/en.json') };
+for (const l of ['es', 'fr', 'de', 'pt', 'it', 'zh', 'ar']) {
+  try { TEXT[l] = require(`./email-text/${l}.json`); } catch (e) { /* not translated yet: English */ }
+}
+function raw(lang, key) {
+  const [group, name] = String(key).split('.');
+  const pick = (d) => d && d[group] && d[group][name];
+  return pick(TEXT[norm(lang)]) || pick(TEXT.en) || key;
+}
+function escHtml(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
+/** Plain text (subjects, preheaders, labels, button text): placeholders filled, ** markers removed. */
+function say(lang, key, vars) { return fill(raw(lang, key), vars).replace(/\*\*/g, ''); }
+/** HTML for a paragraph: the text and the values escaped, **…** made bold. */
+function html(lang, key, vars) {
+  const safe = {};
+  Object.keys(vars || {}).forEach((k) => { safe[k] = escHtml(vars[k]); });
+  return fill(escHtml(raw(lang, key)), safe).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+}
+function locale(lang) { const l = norm(lang); return l === 'en' ? 'en-GB' : l === 'pt' ? 'pt-PT' : l === 'zh' ? 'zh-CN' : l; }
+/** 'German', 'B1' → 'Deutsch B1' in the reader's language. */
+function className(language, level, lang) { return `${languageName(language, lang)} ${level || ''}`.trim(); }
+/** A date and time in the reader's language and time zone, with the zone named. */
+function when(date, tz, lang) {
+  const zone = tz || 'UTC';
+  try {
+    const d = new Date(date);
+    return new Intl.DateTimeFormat(locale(lang), { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: zone }).format(d) + ` (${zone})`;
+  } catch (e) { return String(date); }
+}
+/** A date without the time. */
+function day(date, lang, tz) {
+  try { return new Intl.DateTimeFormat(locale(lang), { day: 'numeric', month: 'long', year: 'numeric', timeZone: tz || 'UTC' }).format(new Date(date)); } catch (e) { return String(date); }
+}
+/** ['Monday', 'Thursday'] → 'lunes, jueves' in the reader's language. */
+function weekdays(days, lang) {
+  const idx = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6 };
+  const f = new Intl.DateTimeFormat(locale(lang), { weekday: 'long', timeZone: 'UTC' });
+  const names = (days || []).map((d) => (idx[d] == null ? d : f.format(new Date(Date.UTC(2024, 0, 7 + idx[d])))));
+  try { return new Intl.ListFormat(locale(lang), { style: 'long', type: 'conjunction' }).format(names); } catch (e) { return names.join(', '); }
+}
+/** Greeting with the first name, or without a name. */
+function hello(lang, fullName) {
+  const first = String(fullName || '').trim().split(/\s+/)[0];
+  return first ? html(lang, 'common.hello_name', { name: first }) : html(lang, 'common.hello');
+}
+
+module.exports = { LANGS, norm, htmlLang, isRtl, languageName, t, fill, say, html, className, when, day, weekdays, hello, locale };

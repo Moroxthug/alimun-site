@@ -28,6 +28,7 @@
 
 const crypto = require('crypto');
 const mail = require('../_lib/email.js');
+const L = require('../_lib/email-i18n.js');
 const { createClient } = require('@supabase/supabase-js');
 const adminOps = require('../_lib/admin-ops.js');
 
@@ -230,7 +231,7 @@ async function handleEmailDecision(req, res, action) {
 
   const { data: profile, error: fetchErr } = await supabase
     .from('teacher_profiles')
-    .select('full_name, user_id, status')
+    .select('full_name, user_id, status, ui_lang')
     .eq('id', teacher_id)
     .single();
 
@@ -287,8 +288,8 @@ async function handleEmailDecision(req, res, action) {
   let emailed = false;
   if (teacherEmail) {
     emailed = action === 'approve'
-      ? await sendEmail(teacherEmail, `Welcome to Alimun, ${profile.full_name}! You're approved.`, approvedEmailHtml(profile.full_name))
-      : await sendEmail(teacherEmail, 'Teacher Application Update — Alimun', rejectedEmailHtml(profile.full_name, teacherEmail));
+      ? await sendEmail(teacherEmail, L.say(profile.ui_lang, 'approved.subject', { name: profile.full_name }), approvedEmailHtml(profile.full_name, profile.ui_lang))
+      : await sendEmail(teacherEmail, L.say(profile.ui_lang, 'rejected.subject'), rejectedEmailHtml(profile.full_name, teacherEmail, null, profile.ui_lang));
   }
   const emailLine = emailed
     ? ` A notification email has been sent to <strong>${escapeHtml(teacherEmail)}</strong>.`
@@ -304,49 +305,49 @@ async function handleEmailDecision(req, res, action) {
 
 // ── Email bodies (shared by the email-link handlers and action=set-status) ──
 
-function approvedEmailHtml(fullName) {
+function approvedEmailHtml(fullName, lang) {
   return mail.renderEmail({
-    hero: 'welcome',
-    preheader: 'Your Alimun teacher account is ready.',
-    heading: 'Welcome to Alimun',
+    hero: 'welcome', lang,
+    preheader: L.say(lang, 'approved.preheader'),
+    heading: L.say(lang, 'approved.heading'),
     blocks: [
-      { p: `Hello ${mail.esc(fullName)},` },
-      { p: 'Your application to teach with Alimun has been approved, and your account is ready. Sign in to set up your classes and welcome your first students.' },
-      { p: 'You start on the <strong>Focused</strong> tier.' },
-      { button: { label: 'Open your dashboard', href: `${mail.SITE}/signin.html` } },
+      { p: L.hello(lang, fullName) },
+      { p: L.html(lang, 'approved.body') },
+      { p: L.html(lang, 'approved.tier') },
+      { button: { label: L.say(lang, 'common.open_dashboard'), href: `${mail.SITE}/signin.html` } },
     ],
-    note: 'Questions? Reply to this email.',
-    footer: 'You received this email because you applied to teach with Alimun.',
+    note: L.html(lang, 'common.questions'),
+    footer: L.html(lang, 'approved.footer'),
   });
 }
 
-function rejectedEmailHtml(fullName, email, reason) {
+function rejectedEmailHtml(fullName, email, reason, lang) {
   return mail.renderEmail({
-    hero: 'update',
-    preheader: 'An update on your application to teach with Alimun.',
-    heading: 'About your application',
+    hero: 'update', lang,
+    preheader: L.say(lang, 'rejected.preheader'),
+    heading: L.say(lang, 'rejected.heading'),
     blocks: [
-      { p: `Hello ${mail.esc(fullName)},` },
-      { p: 'Thank you for applying to teach with Alimun. After reviewing your application, we are not able to approve it at this time.' },
-      ...(reason ? [{ quote: reason, label: 'Note from the team' }] : []),
-      { p: 'We appreciate the time you put into it and wish you all the best with your teaching.' },
+      { p: L.hello(lang, fullName) },
+      { p: L.html(lang, 'rejected.body') },
+      ...(reason ? [{ quote: reason, label: L.say(lang, 'rejected.note_label') }] : []),
+      { p: L.html(lang, 'rejected.body2') },
     ],
-    footer: `This email was sent to ${mail.esc(email)} because you applied to teach with Alimun.`,
+    footer: L.html(lang, 'rejected.footer', { email }),
   });
 }
 
-function suspendedEmailHtml(fullName, reason) {
+function suspendedEmailHtml(fullName, reason, lang) {
   return mail.renderEmail({
-    hero: 'update',
-    preheader: 'Your Alimun teacher account has been suspended.',
-    heading: 'Your teacher account is suspended',
+    hero: 'update', lang,
+    preheader: L.say(lang, 'suspended.preheader'),
+    heading: L.say(lang, 'suspended.heading'),
     blocks: [
-      { p: `Hello ${mail.esc(fullName)},` },
-      { p: 'Your Alimun teacher account has been suspended, so the teacher dashboard is no longer available to you.' },
-      ...(reason ? [{ quote: reason, label: 'Note from the team' }] : []),
-      { p: 'If you think this is a mistake, reply to this email and we will look into it.' },
+      { p: L.hello(lang, fullName) },
+      { p: L.html(lang, 'suspended.body') },
+      ...(reason ? [{ quote: reason, label: L.say(lang, 'rejected.note_label') }] : []),
+      { p: L.html(lang, 'suspended.body2') },
     ],
-    footer: 'You received this email because you have a teacher account on Alimun.',
+    footer: L.html(lang, 'suspended.footer'),
   });
 }
 
@@ -536,7 +537,7 @@ async function handleSetStatus(req, res) {
 
   const { data: profiles, error: fetchErr } = await supabase
     .from('teacher_profiles')
-    .select('id, full_name, user_id, status, tier_level')
+    .select('id, full_name, user_id, status, tier_level, ui_lang')
     .in('id', ids);
   if (fetchErr) return res.status(500).json({ error: 'Could not load teacher profiles' });
 
@@ -572,11 +573,11 @@ async function handleSetStatus(req, res) {
     const email = await getTeacherEmail(supabase, profile.user_id);
     if (!email) return;
     if (status === 'approved') {
-      entry.emailed = await sendEmail(email, `Welcome to Alimun, ${profile.full_name}! You're approved.`, approvedEmailHtml(profile.full_name));
+      entry.emailed = await sendEmail(email, L.say(profile.ui_lang, 'approved.subject', { name: profile.full_name }), approvedEmailHtml(profile.full_name, profile.ui_lang));
     } else if (previous === 'pending') {
-      entry.emailed = await sendEmail(email, 'Teacher Application Update — Alimun', rejectedEmailHtml(profile.full_name, email, reason));
+      entry.emailed = await sendEmail(email, L.say(profile.ui_lang, 'rejected.subject'), rejectedEmailHtml(profile.full_name, email, reason, profile.ui_lang));
     } else {
-      entry.emailed = await sendEmail(email, 'Your Alimun teacher account — Alimun', suspendedEmailHtml(profile.full_name, reason));
+      entry.emailed = await sendEmail(email, L.say(profile.ui_lang, 'suspended.subject'), suspendedEmailHtml(profile.full_name, reason, profile.ui_lang));
     }
   }));
 
@@ -594,21 +595,18 @@ const INVITE_ROLES = ['student', 'teacher'];
 const INVITE_LANGUAGES = ['English', 'German', 'Spanish', 'French', 'Portuguese', 'Italian', 'Mandarin', 'Japanese', 'Arabic'];
 const EMAIL_RE = /^[^\s@<>()[\]\\,;:"]+@[^\s@<>()[\]\\,;:"]+\.[a-z]{2,}$/i;
 
-function inviteEmailHtml(fullName, role, link) {
-  const what = role === 'teacher'
-    ? 'Alimun has opened a teacher account for you. Choose your password with the button below and you go straight to your teacher dashboard.'
-    : 'Alimun has opened a student account for you. Choose your password with the button below, then take the short level test and start learning.';
+function inviteEmailHtml(fullName, role, link, lang) {
   return mail.renderEmail({
-    hero: 'welcome',
-    preheader: 'Your Alimun account is ready. Choose a password to sign in.',
-    heading: 'Your Alimun account is ready',
+    hero: 'welcome', lang,
+    preheader: L.say(lang, 'invite.preheader'),
+    heading: L.say(lang, 'invite.heading'),
     blocks: [
-      { p: `Hello ${mail.esc(fullName)},` },
-      { p: what },
-      { button: { label: 'Choose your password', href: link } },
+      { p: L.hello(lang, fullName) },
+      { p: L.html(lang, role === 'teacher' ? 'invite.body_teacher' : 'invite.body_student') },
+      { button: { label: L.say(lang, 'invite.button'), href: link } },
     ],
-    note: 'The link works once and only for a limited time. If it has expired, use "Forgot password" on the sign-in page with this email address.',
-    footer: 'You received this email because an Alimun administrator opened an account for this address.',
+    note: L.html(lang, 'invite.note'),
+    footer: L.html(lang, 'invite.footer'),
   });
 }
 
@@ -632,6 +630,8 @@ async function handleInvite(req, res) {
   const fullName = String(body.full_name || '').trim();
   const language = String(body.language || '');
   const specialty = String(body.specialty || '').trim();
+  // The invited person's language (Admin → Invite): the email and later their dashboard emails use it.
+  const uiLang = L.LANGS.includes(String(body.ui_lang || '')) ? String(body.ui_lang) : 'en';
   if (!EMAIL_RE.test(email) || email.length > 200) return res.status(400).json({ error: 'Invalid email address' });
   if (!INVITE_ROLES.includes(role)) return res.status(400).json({ error: 'Role must be student or teacher' });
   if (!fullName || fullName.length > 100 || /[<>\u0000-\u001f]/.test(fullName)) return res.status(400).json({ error: 'Write a name of up to 100 characters, without < or >' });
@@ -642,7 +642,7 @@ async function handleInvite(req, res) {
   const origin = 'https://alimun.com';
   const { data: linkData, error: linkErr } = await supabase.auth.admin.generateLink({
     type: 'invite', email,
-    options: { data: { full_name: fullName, role }, redirectTo: `${origin}/welcome.html` },
+    options: { data: { full_name: fullName, role, ui_lang: uiLang }, redirectTo: `${origin}/welcome.html` },
   });
   if (linkErr || !linkData?.user) {
     const taken = /already|registered|exists/i.test(linkErr?.message || '');
@@ -668,7 +668,7 @@ async function handleInvite(req, res) {
   // action_link goes through /auth/v1/verify and lands on the project's Site URL, which was http://localhost:3000.
   const hashed = linkData.properties?.hashed_token;
   const link = hashed ? `${origin}/reset-password.html?token_hash=${encodeURIComponent(hashed)}&type=invite` : '';
-  const emailed = link ? await sendEmail(email, 'Your Alimun account', inviteEmailHtml(fullName, role, link)) : false;
+  const emailed = link ? await sendEmail(email, L.say(uiLang, 'invite.subject'), inviteEmailHtml(fullName, role, link, uiLang)) : false;
   console.log(`[Alimun Admin] admin ${user.id} invited ${role} ${invited.id} (emailed: ${emailed})`);
   // Without email the admin gets the link to pass on by hand
   return res.status(200).json({ success: true, user_id: invited.id, role, emailed, link: emailed ? undefined : link });

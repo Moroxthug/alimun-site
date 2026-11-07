@@ -27,6 +27,7 @@ const stripe = require('stripe')(STRIPE_KEY || 'dummy_key_for_load_validation');
 const { createClient } = require('@supabase/supabase-js');
 const tutorPacks = require('../_lib/tutor-packs.js');
 const mail = require('../_lib/email.js');
+const L = require('../_lib/email-i18n.js');
 
 const env = (k) => process.env[k] || '';
 
@@ -233,7 +234,7 @@ const handler = async function (req, res) {
 
 // ── Lookup helpers ────────────────────────────────────────────
 
-const STUDENT_BILLING_COLUMNS = 'id, user_id, full_name, tier, stripe_subscription_id, stripe_subscription_status, enrolled_cohort_id';
+const STUDENT_BILLING_COLUMNS = 'id, user_id, full_name, tier, stripe_subscription_id, stripe_subscription_status, enrolled_cohort_id, ui_lang';
 
 /**
  * Find the student a subscription/invoice event belongs to.
@@ -619,25 +620,24 @@ async function sendCancellationEmail(student, subscription) {
   const email = await resolveStudentEmail(student, fallback);
   if (!email) return;
 
+  const lang = student.ui_lang || 'en';
   const periodEnd = subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end;
-  const endDate = periodEnd
-    ? new Date(periodEnd * 1000).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
-    : 'today';
+  const endDate = L.day(periodEnd ? periodEnd * 1000 : Date.now(), lang);
 
   await sendResend({
     to: email,
-    subject: 'Your Alimun subscription has ended',
+    subject: L.say(lang, 'sub_ended.subject'),
     content: mail.renderEmail({
-      hero: 'ended',
-      preheader: `Your access continues until ${endDate}.`,
-      heading: 'Your subscription has ended',
+      hero: 'ended', lang,
+      preheader: L.say(lang, 'sub_ended.preheader', { date: endDate }),
+      heading: L.say(lang, 'sub_ended.heading'),
       blocks: [
-        { p: `Hello ${mail.esc(student.full_name) || 'there'},` },
-        { p: `Your subscription has ended and your seat in your class has been released. Your access continues until <strong>${mail.esc(endDate)}</strong>.` },
-        { p: 'You can subscribe again at any time from your dashboard to rejoin a class. Thank you for studying with us.' },
-        { button: { label: 'Open your dashboard', href: `${mail.SITE}/signin.html` } },
+        { p: L.hello(lang, student.full_name) },
+        { p: L.html(lang, 'sub_ended.body', { date: endDate }) },
+        { p: L.html(lang, 'sub_ended.body2') },
+        { button: { label: L.say(lang, 'common.open_dashboard'), href: `${mail.SITE}/signin.html` } },
       ],
-      footer: 'You received this email because you had an Alimun subscription.',
+      footer: L.html(lang, 'sub_ended.footer'),
     }),
   });
 }
@@ -646,38 +646,21 @@ async function sendPaymentFailedEmail(student, invoice, isFinalFailure) {
   const email = await resolveStudentEmail(student, invoice.customer_email);
   if (!email) return;
 
-  const name = mail.esc(student.full_name) || 'there';
-  const content = isFinalFailure
-    ? mail.renderEmail({
-      hero: 'payment',
-      preheader: 'We could not take your payment, so your subscription was cancelled.',
-      heading: 'Your subscription has been cancelled',
-      blocks: [
-        { p: `Hello ${name},` },
-        { p: 'We could not take your payment after three attempts, so your subscription has been cancelled and your class seat released.' },
-        { p: 'To come back, sign in, update your payment method and subscribe again.' },
-        { button: { label: 'Open your dashboard', href: `${mail.SITE}/signin.html` } },
-      ],
-      footer: 'You received this email because you have an Alimun subscription.',
-    })
-    : mail.renderEmail({
-      hero: 'payment',
-      preheader: 'Update your payment method to keep your seat.',
-      heading: 'Your payment did not go through',
-      blocks: [
-        { p: `Hello ${name},` },
-        { p: 'We could not take your latest subscription payment. Update your payment method in your dashboard billing settings to keep your seat.' },
-        { p: 'We will try again automatically in a few days.' },
-        { button: { label: 'Update payment method', href: `${mail.SITE}/signin.html` } },
-      ],
-      footer: 'You received this email because you have an Alimun subscription.',
-    });
-
-  await sendResend({
-    to: email,
-    subject: isFinalFailure ? 'Your Alimun subscription has been cancelled' : 'Your Alimun payment did not go through',
-    content,
+  const lang = student.ui_lang || 'en', k = isFinalFailure ? 'pay_cancelled' : 'pay_failed';
+  const content = mail.renderEmail({
+    hero: 'payment', lang,
+    preheader: L.say(lang, `${k}.preheader`),
+    heading: L.say(lang, `${k}.heading`),
+    blocks: [
+      { p: L.hello(lang, student.full_name) },
+      { p: L.html(lang, `${k}.body`) },
+      { p: L.html(lang, `${k}.body2`) },
+      { button: { label: L.say(lang, isFinalFailure ? 'common.open_dashboard' : 'pay_failed.button'), href: `${mail.SITE}/signin.html` } },
+    ],
+    footer: L.html(lang, `${k}.footer`),
   });
+
+  await sendResend({ to: email, subject: L.say(lang, `${k}.subject`), content });
 }
 
 module.exports = handler;
