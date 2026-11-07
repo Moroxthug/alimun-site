@@ -9,5 +9,12 @@ export const BOOK = {
   preview: true,
   units: [
     { id: 'u1', title: 'Hello!' },
+    { id: 'u2', title: 'My family and my things', planned: true },
+    { id: 'u3', title: 'My day', planned: true },
+    { id: 'u4', title: 'Food and drink', planned: true },
+    { id: 'u5', title: 'Home and town', planned: true },
+    { id: 'u6', title: 'Can and can’t', planned: true },
+    { id: 'u7', title: 'Clothes and weather', planned: true },
+    { id: 'u8', title: 'Out and about', planned: true },
   ],
 };
