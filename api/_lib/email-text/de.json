@@ -1,0 +1,160 @@
+{
+  "_note": "Deutsche Übersetzung (Sie) der E-Mails an Lernende und Lehrkräfte. Die {placeholders} füllt der Server aus; **Text** wird fett dargestellt. Tarifnamen (Community, Focused, Intensive, Private) bleiben unübersetzt.",
+  "common": {
+    "hello_name": "Hallo {name},",
+    "hello": "Hallo,",
+    "open_dashboard": "Zu Ihrem Dashboard",
+    "questions": "Fragen? Antworten Sie einfach auf diese E-Mail.",
+    "footer_account": "Sie erhalten diese E-Mail, weil Sie ein Alimun-Konto haben."
+  },
+  "reset": {
+    "subject": "Neues Alimun-Passwort festlegen",
+    "preheader": "Über die Schaltfläche in dieser E-Mail können Sie ein neues Passwort für Ihr Alimun-Konto festlegen.",
+    "heading": "Neues Passwort festlegen",
+    "body": "Für das Alimun-Konto mit dieser E-Mail-Adresse wurde das Zurücksetzen des Passworts angefordert. Über die Schaltfläche unten können Sie ein neues festlegen.",
+    "button": "Neues Passwort festlegen",
+    "note": "Der Link funktioniert nur einmal und nur für begrenzte Zeit. Wenn Sie das nicht angefordert haben, können Sie diese E-Mail ignorieren: Ihr Passwort bleibt unverändert.",
+    "footer": "Sie erhalten diese E-Mail, weil für diese Adresse auf alimun.com das Zurücksetzen des Passworts angefordert wurde."
+  },
+  "invite": {
+    "subject": "Ihr Alimun-Konto",
+    "preheader": "Ihr Alimun-Konto ist bereit. Legen Sie ein Passwort fest, um sich anzumelden.",
+    "heading": "Ihr Alimun-Konto ist bereit",
+    "body_teacher": "Alimun hat ein Konto für Lehrkräfte für Sie eingerichtet. Legen Sie über die Schaltfläche unten Ihr Passwort fest, und Sie gelangen direkt zu Ihrem Lehrkraft-Dashboard.",
+    "body_student": "Alimun hat ein Lernkonto für Sie eingerichtet. Legen Sie über die Schaltfläche unten Ihr Passwort fest, machen Sie dann den kurzen Einstufungstest und beginnen Sie zu lernen.",
+    "button": "Passwort festlegen",
+    "note": "Der Link funktioniert nur einmal und nur für begrenzte Zeit. Falls er abgelaufen ist, verwenden Sie auf der Anmeldeseite „Passwort vergessen“ mit dieser E-Mail-Adresse.",
+    "footer": "Sie erhalten diese E-Mail, weil das Alimun-Team ein Konto für diese Adresse eingerichtet hat."
+  },
+  "approved": {
+    "subject": "Willkommen bei Alimun, {name}",
+    "preheader": "Ihr Alimun-Konto für Lehrkräfte ist bereit.",
+    "heading": "Willkommen bei Alimun",
+    "body": "Ihre Bewerbung als Lehrkraft bei Alimun wurde angenommen, und Ihr Konto ist bereit. Melden Sie sich an, um Ihre Kurse einzurichten und Ihre ersten Lernenden zu begrüßen.",
+    "tier": "Sie starten in der Stufe **Focused**.",
+    "footer": "Sie erhalten diese E-Mail, weil Sie sich als Lehrkraft bei Alimun beworben haben."
+  },
+  "rejected": {
+    "subject": "Zu Ihrer Bewerbung als Lehrkraft bei Alimun",
+    "preheader": "Neuigkeiten zu Ihrer Bewerbung als Lehrkraft bei Alimun.",
+    "heading": "Zu Ihrer Bewerbung",
+    "body": "Vielen Dank für Ihre Bewerbung als Lehrkraft bei Alimun. Nach Prüfung Ihrer Bewerbung können wir sie derzeit leider nicht annehmen.",
+    "body2": "Wir wissen die Zeit, die Sie investiert haben, sehr zu schätzen und wünschen Ihnen für Ihre Lehrtätigkeit alles Gute.",
+    "note_label": "Hinweis vom Team",
+    "footer": "Diese E-Mail wurde an {email} gesendet, weil Sie sich als Lehrkraft bei Alimun beworben haben."
+  },
+  "suspended": {
+    "subject": "Ihr Alimun-Konto für Lehrkräfte",
+    "preheader": "Ihr Alimun-Konto für Lehrkräfte wurde gesperrt.",
+    "heading": "Ihr Lehrkraft-Konto ist gesperrt",
+    "body": "Ihr Alimun-Konto für Lehrkräfte wurde gesperrt, daher steht Ihnen das Lehrkraft-Dashboard nicht mehr zur Verfügung.",
+    "body2": "Wenn Sie glauben, dass es sich um einen Fehler handelt, antworten Sie auf diese E-Mail, und wir sehen uns das an.",
+    "footer": "Sie erhalten diese E-Mail, weil Sie ein Lehrkraft-Konto bei Alimun haben."
+  },
+  "session": {
+    "subject_cancelled": "Stunde abgesagt: {class}",
+    "subject_moved": "Stunde verschoben: {class}",
+    "heading_cancelled": "Stunde abgesagt",
+    "heading_moved": "Stunde verschoben",
+    "cancelled": "Ihre Stunde im Kurs **{class}** am **{when}** wurde abgesagt.",
+    "moved": "Ihre Stunde im Kurs **{class}** am {was} wurde auf **{when}** verschoben.",
+    "reason": "Grund: {reason}",
+    "opens": "Das Klassenzimmer öffnet sich in Ihrem Dashboard 15 Minuten vor der neuen Startzeit."
+  },
+  "class_new": {
+    "subject": "Ihr Kurs: {class}",
+    "heading": "Ihr neuer Kurs",
+    "body": "Sie sind jetzt im Kurs **{class}** bei **{teacher}**.",
+    "body2": "Ihr Dashboard zeigt den Stundenplan und Ihre nächste Stunde."
+  },
+  "class_left": {
+    "subject": "Ihr Alimun-Kurs",
+    "heading": "Ihr Kurs hat sich geändert",
+    "body": "Sie sind nicht mehr im Kurs **{class}**.",
+    "body2": "Sie können in Ihrem Dashboard einen neuen Kurs wählen oder auf diese E-Mail antworten, wenn Sie Fragen haben."
+  },
+  "enrolled": {
+    "subject": "Sie sind dabei: {class} bei {teacher}",
+    "preheader": "Ihre nächste Stunde: {when}.",
+    "heading": "Sie sind dabei",
+    "welcome": "Willkommen, {name}.",
+    "body": "Sie sind dem Kurs **{class}** bei **{teacher}** beigetreten.",
+    "f_class": "Kurs",
+    "f_teacher": "Lehrkraft",
+    "f_next": "Nächste Stunde",
+    "soon": "in Kürze: Ihr Dashboard zeigt den Stundenplan",
+    "opens": "Das Klassenzimmer öffnet sich in Ihrem Dashboard 15 Minuten vor Beginn.",
+    "button": "Zu Ihren Kursen",
+    "footer": "Sie erhalten diese E-Mail, weil Sie einem Kurs bei Alimun beigetreten sind."
+  },
+  "student_joined": {
+    "subject": "Neue Anmeldung in Ihrem Kurs",
+    "preheader": "{name} ist Ihrem Kurs {class} beigetreten.",
+    "heading": "Neue Anmeldung in Ihrem Kurs",
+    "body": "Eine neue Person ist Ihrem Kurs **{class}** beigetreten.",
+    "f_name": "Name",
+    "f_level": "Niveau",
+    "f_goal": "Ziel",
+    "f_seats": "Belegte Plätze",
+    "seats": "{n} von {max}",
+    "button": "Lehrkraft-Dashboard öffnen",
+    "footer": "Sie erhalten diese E-Mail, weil Sie diesen Kurs bei Alimun unterrichten."
+  },
+  "place": {
+    "subject": "Ein Platz im Kurs {class} ist frei",
+    "preheader": "In dem Kurs, auf den Sie gewartet haben, ist ein Platz frei geworden. Er wird 48 Stunden lang für Sie reserviert.",
+    "heading": "Ein Platz ist für Sie frei",
+    "body": "In dem Kurs, auf den Sie gewartet haben, ist ein Platz frei geworden. Sie standen an erster Stelle der Warteliste, deshalb ist er für die nächsten **48 Stunden** für Sie reserviert.",
+    "f_class": "Kurs",
+    "f_teacher": "Lehrkraft",
+    "f_schedule": "Zeitplan",
+    "schedule": "{days} um {time} ({zone})",
+    "button": "Platz sichern",
+    "note": "Wenn Sie den Platz nicht innerhalb von 48 Stunden sichern, geht er an die nächste Person auf der Warteliste.",
+    "footer": "Sie erhalten diese E-Mail, weil Sie sich bei Alimun auf die Warteliste für diesen Kurs gesetzt haben."
+  },
+  "notes": {
+    "subject": "Stundennotizen bereit: {class}, {date}",
+    "preheader": "Ihre Notizen vom {date} finden Sie in Ihrem Dashboard.",
+    "heading": "Ihre Stundennotizen sind bereit",
+    "body": "Ihre Notizen zur Stunde im Kurs **{class}** vom **{date}** sind bereit.",
+    "f_grammar": "Grammatik",
+    "f_words": "Neue Wörter",
+    "f_due": "Hausaufgaben fällig",
+    "button": "Notizen öffnen",
+    "footer": "Sie erhalten diese E-Mail, weil Sie an diesem Kurs bei Alimun teilnehmen."
+  },
+  "sub_ended": {
+    "subject": "Ihr Alimun-Abo ist beendet",
+    "preheader": "Ihr Zugang bleibt bis zum {date} bestehen.",
+    "heading": "Ihr Abo ist beendet",
+    "body": "Ihr Abo ist beendet, und Ihr Platz im Kurs wurde freigegeben. Ihr Zugang bleibt bis zum **{date}** bestehen.",
+    "body2": "Sie können jederzeit über Ihr Dashboard ein neues Abo abschließen und wieder einem Kurs beitreten. Danke, dass Sie mit uns gelernt haben.",
+    "footer": "Sie erhalten diese E-Mail, weil Sie ein Alimun-Abo hatten."
+  },
+  "pay_cancelled": {
+    "subject": "Ihr Alimun-Abo wurde gekündigt",
+    "preheader": "Wir konnten Ihre Zahlung nicht einziehen, daher wurde Ihr Abo gekündigt.",
+    "heading": "Ihr Abo wurde gekündigt",
+    "body": "Wir konnten Ihre Zahlung nach drei Versuchen nicht einziehen. Daher wurde Ihr Abo gekündigt und Ihr Platz im Kurs freigegeben.",
+    "body2": "Wenn Sie zurückkommen möchten, melden Sie sich an, aktualisieren Sie Ihre Zahlungsmethode und schließen Sie das Abo erneut ab.",
+    "footer": "Sie erhalten diese E-Mail, weil Sie ein Alimun-Abo haben."
+  },
+  "pay_failed": {
+    "subject": "Ihre Alimun-Zahlung ist fehlgeschlagen",
+    "preheader": "Aktualisieren Sie Ihre Zahlungsmethode, um Ihren Platz zu behalten.",
+    "heading": "Ihre Zahlung ist fehlgeschlagen",
+    "body": "Wir konnten die letzte Zahlung für Ihr Abo nicht einziehen. Aktualisieren Sie Ihre Zahlungsmethode in den Abrechnungseinstellungen Ihres Dashboards, um Ihren Platz zu behalten.",
+    "body2": "Wir versuchen es in einigen Tagen automatisch erneut.",
+    "button": "Zahlungsmethode aktualisieren",
+    "footer": "Sie erhalten diese E-Mail, weil Sie ein Alimun-Abo haben."
+  },
+  "plan": {
+    "subject": "Ihr Alimun-Tarif ist jetzt {plan}",
+    "preheader": "Ihr Konto nutzt jetzt den Tarif {plan}.",
+    "heading": "Ihr Tarif hat sich geändert",
+    "body": "Das Alimun-Team hat Ihr Konto auf den Tarif **{plan}** umgestellt. Er ist ab sofort aktiv, ganz ohne Karte oder Zahlung.",
+    "body2": "Melden Sie sich an, um Ihre Kurse und Übungen zu sehen.",
+    "note": "Wenn Sie glauben, dass es sich um einen Fehler handelt, antworten Sie auf diese E-Mail."
+  }
+}

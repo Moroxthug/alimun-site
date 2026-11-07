@@ -114,12 +114,17 @@ function raw(lang, key) {
 }
 function escHtml(s) { return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 /** Plain text (subjects, preheaders, labels, button text): placeholders filled, ** markers removed. */
-function say(lang, key, vars) { return fill(raw(lang, key), vars).replace(/\*\*/g, ''); }
+/** French: "de" before a course name that starts with a vowel becomes "d'" (séance d'allemand, cours d'anglais). */
+function elide(lang, tpl, vars) {
+  if (norm(lang) !== 'fr' || !vars || !/^[aeiouyhàâéèêîïôû]/i.test(String(vars.class || ''))) return tpl;
+  return tpl.replace(/\bde (\*\*)?\{class\}/g, "d'$1{class}");
+}
+function say(lang, key, vars) { return fill(elide(lang, raw(lang, key), vars), vars).replace(/\*\*/g, ''); }
 /** HTML for a paragraph: the text and the values escaped, **…** made bold. */
 function html(lang, key, vars) {
   const safe = {};
   Object.keys(vars || {}).forEach((k) => { safe[k] = escHtml(vars[k]); });
-  return fill(escHtml(raw(lang, key)), safe).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  return fill(escHtml(elide(lang, raw(lang, key), vars)), safe).replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
 }
 function locale(lang) { const l = norm(lang); return l === 'en' ? 'en-GB' : l === 'pt' ? 'pt-PT' : l === 'zh' ? 'zh-CN' : l; }
 /** 'German', 'B1' → 'Deutsch B1' in the reader's language. */
