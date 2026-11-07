@@ -6,7 +6,7 @@ Status: plan, waiting for the owner's answers in "Decisions". Nothing is built y
 
 ## Positioning (owner, 7 Nov 2026)
 
-Alimun is marketed as preparation for the exams: we prepare you for the test without you spending more to study elsewhere. Every lesson, book unit and class lesson therefore includes work in the format of the exam for its level (A2 Key, B1 Preliminary, B2 First, C1 Advanced, C2 Proficiency), named as "in the format of", never as an official qualification. Course length and the number of lessons per level must be planned so the promise holds (see "Course length"; the owner wants to settle this before lessons are produced).
+Alimun is marketed as preparation for the exams: we prepare you for the test without you spending more to study elsewhere. Every lesson, book unit and class lesson therefore includes work in the format of the exam for its level (A2 Key, B1 Preliminary, B2 First, C1 Advanced, C2 Proficiency), named as "in the format of", never as an official qualification. Course length and the number of lessons per level must be planned so the promise holds (see "Course length").
 
 ## What exists today (facts this plan builds on)
 
@@ -59,7 +59,7 @@ Lessons are drafted from the book's lesson outline, then reviewed (status draft 
 
 Owner, 7 Nov 2026:
 - D1 yes: class lessons follow the book. The books are to be improved first: much more explanation, fewer but better exercises, new kinds of exercises (see "Books, second edition" below).
-- D2 depends on how long a level takes: proposal in "Course length" below, owner to confirm.
+- D2 decided (owner, 7 Nov 2026): Option B pace and 48 class lessons per level for A1 and A2 (see "Course length").
 - D3 open: the owner is revisiting class sizes and pricing (likely a cap of 15 per class).
 - D4 answers are shown only when the teacher reveals them.
 - D5 after class: a class digest (what was covered, the teacher's notes, the board where useful), not further work on the boards.
@@ -70,6 +70,12 @@ Owner, 7 Nov 2026:
 
 Measured on English A1 units 1 and 2 and B1 unit 2: about 800 to 1,000 words of explanation per unit (so roughly 200 to 250 per lesson) against 70 to 95 exercise items in about 20 exercise blocks; one short reading per unit; no listening, speaking or writing tasks. Proposal per lesson: a full explanation (the rule in plain words, why it works this way, many examples, the usual mistakes, a short dialogue or text that uses it), then fewer exercises, ordered from controlled to free, and one skills task (listening with the existing voices, speaking with the pronunciation check, short writing corrected by the teacher). New exercise kinds to add to the engine: listen and write, listen and choose, say it (pronunciation), role-play dialogue, describe the picture, find it in the text, correct the mistakes in a paragraph, short writing. Pilot: English A1 unit 1 rewritten for the owner's review, then the rest of A1.
 
-## Course length (proposal)
+## Course length (decided 7 Nov 2026, Option B)
 
-Cambridge's guided-learning estimates (cumulative, to reach each level): A2 about 180 to 200 hours, B1 350 to 400, B2 500 to 600, C1 700 to 800, C2 1,000 to 1,200. Per level that is roughly A1 100, A2 100, B1 175, B2 175, C1 200, C2 300 hours of class plus guided study. With Focused (2 classes a week) and about 2 to 3 hours of book, homework and practice a week, A1 and A2 take about 5 to 6 months each, B1 and B2 about 9 months each. These are estimates; the class lesson count per level follows from the owner's choice of pace.
+Pace: two one-hour classes a week (Focused) plus about 30 minutes a day of book and practice, about 5.5 hours a week. Intensive (three classes a week and more home study) goes through the same lessons faster. One set of class lessons per level serves every plan.
+
+A1 and A2: 48 class lessons each (owner). The book has 32 lessons per level (8 units of 4), so a level is the 32 book lessons, one class each, plus 16 classes for review, speaking and exam practice, including the end-of-level check. About 6 months on Focused, about 4 months on Intensive.
+
+B1 to C2 (proposal, same pace, to confirm before those levels are written): B1 and B2 about 84 class lessons each (about 10 months on Focused), C1 about 96, C2 about 144. The B and C books then need more lessons, or two classes per book lesson.
+
+Basis: Cambridge's guided-learning estimates (cumulative to reach each level): A2 about 180 to 200 hours, B1 350 to 400, B2 500 to 600, C1 700 to 800, C2 1,000 to 1,200. Market check (7 Nov 2026): Lingoda about 50 one-hour classes per level; Goethe-Institut online about 60 live hours for A1; separate exam-preparation courses run 10 to 16 weeks at about GBP 600. Students are told "ready to take the exam" after the end-of-level check, never "you will pass"; times assume the home study and allow about 10% for holidays.
