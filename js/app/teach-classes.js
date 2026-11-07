@@ -11,7 +11,7 @@
    Signed out or not a teacher: a sample, nothing is saved. Text: app_tc_* keys. */
 (function () {
   'use strict';
-  var A = null, root = null, C = null, call = null, poll = null, saveTimer = null, tick = null;
+  var A = null, root = null, C = null, call = null, poll = null, saveTimer = null, tick = null, board = null, liveId = null;
   var DAILY_JS = 'https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js';
   var MIN = 60000, HOUR = 3600000, DAY = 86400000;
   var LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
@@ -243,6 +243,7 @@
 
   /* ---------- Classroom ---------- */
   function liveView(kind, id) {
+    liveId = kind === 'b' ? null : id;
     document.body.classList.add('is-reading');
     var s = kind === 'b' ? null : sessionOf(id), b = kind === 'b' ? bookingOf(id) : null;
     var title = s ? A.className(cohortOf(s.cohortId)) : b ? otoTitle(b) : t('app_tc_classroom');
@@ -258,8 +259,8 @@
         '</aside>';
     }
     return '<div class="cl-live"><div class="cl-live__top"><a class="rd-back" href="#/classes">' + A.icon('back') + '<span>' + esc(t('app_cl_leave')) + '</span></a>' +
-      '<h1 class="t-h2">' + esc(title) + '</h1>' + (s ? '<a class="btn btn--ghost btn--sm" href="#/classes/notes/' + esc(s.id) + '">' + esc(t('app_tc_write_notes')) + '</a>' : b ? '<a class="btn btn--ghost btn--sm" href="#/classes/oto/' + esc(b.id) + '">' + esc(t('app_tc_write_note')) + '</a>' : '') + '</div>' +
-      '<div class="cl-live__body"><div class="cl-live__frame" data-frame><div class="cl-live__wait"><div class="loader" style="--w:64px" aria-hidden="true">' + A.loaderInner() + '</div><p class="t-body" data-livemsg>' + esc(t('app_tc_opening')) + '</p></div></div>' +
+      '<h1 class="t-h2">' + esc(title) + '</h1>' + (s ? '<span class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-tc="board" aria-pressed="false">' + esc(t('app_bd_open')) + '</button><a class="btn btn--ghost btn--sm" href="#/classes/notes/' + esc(s.id) + '">' + esc(t('app_tc_write_notes')) + '</a></span>' : b ? '<a class="btn btn--ghost btn--sm" href="#/classes/oto/' + esc(b.id) + '">' + esc(t('app_tc_write_note')) + '</a>' : '') + '</div>' +
+      '<div class="cl-live__body">' + (s ? '<div class="cl-live__board" data-board hidden></div>' : '') + '<div class="cl-live__frame" data-frame><div class="cl-live__wait"><div class="loader" style="--w:64px" aria-hidden="true">' + A.loaderInner() + '</div><p class="t-body" data-livemsg>' + esc(t('app_tc_opening')) + '</p></div></div>' +
       side + '</div></div>';
   }
   /* Daily Prebuilt in Alimun's colours and the dashboard's language (Daily has no Arabic or Chinese: English; Darija: French).
@@ -305,11 +306,34 @@
           leave();
           call = D.createFrame(box, roomOptions());
           call.on('left-meeting', function () { leave(); if (location.hash.indexOf('#/classes/live') === 0) location.hash = '#/classes'; });
+          if (kind !== 'b') startBoard(id, call);
           return call.join(j.token ? { url: url, token: j.token } : { url: url });
         });
       }).catch(function (e) { liveSay('app_tc_join_error', e && e.message ? e.message : null); });
   }
+  /* The live board (js/app/board.js): the lesson's board pages beside the video, sent to the students */
+  function startBoard(id, frame) {
+    if (board || !window.AlimunBoard) return board;
+    var s = sessionOf(id), x = s ? lessonFor(s) : null, el = root.querySelector('[data-board]');
+    if (!s || !el) return null;
+    board = window.AlimunBoard.create({ A: A, role: 'teacher', frame: frame || null, sessionId: s.id, course: x ? x.course.id : null, lesson: x && x.lesson ? x.lesson.id : null });
+    board.mount(el).then(function () { if (board && board.shown()) setBoardOpen(true); });
+    return board;
+  }
+  function setBoardOpen(on) {
+    var live = root.querySelector('.cl-live'), el = root.querySelector('[data-board]'), btn = root.querySelector('[data-tc="board"]');
+    if (!live || !el) return;
+    live.classList.toggle('has-board', on); el.hidden = !on;
+    if (btn) { btn.setAttribute('aria-pressed', String(on)); btn.textContent = t(on ? 'app_bd_close' : 'app_bd_open'); }
+    if (board) { if (board.shown() !== on) board.show(on); board.fit(); }
+  }
+  function toggleBoard() {
+    if (!liveId) return;
+    if (!board) startBoard(liveId, call);
+    if (board) setBoardOpen(!root.querySelector('.cl-live').classList.contains('has-board'));
+  }
   function leave() {
+    if (board) { board.destroy(); board = null; }
     if (!call) return;
     var c = call; call = null;
     try { var p = c.leave(); if (p && p.catch) p.catch(function () {}); } catch (e) { /* already gone */ }
@@ -661,6 +685,7 @@
       }
       else if (a === 'publish') publish(el);
       else if (a === 'delslot') delSlot(el);
+      else if (a === 'board') toggleBoard();
       else if (a === 'days') { var want = el.getAttribute('data-k') === 'all' ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5];
         el.closest('form').querySelectorAll('input[name="day"]').forEach(function (c) { c.checked = want.indexOf(+c.value) > -1; }); }
       else if (a === 'moretime') { var box = el.closest('form').querySelector('[data-times]'), last = box.querySelectorAll('input[name="end"]'), from = last.length ? last[last.length - 1].value : '14:00';
