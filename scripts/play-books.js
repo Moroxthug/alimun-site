@@ -91,6 +91,13 @@ async function answer(page, b, gi) {
       for (let i = 0; i < b.items.length; i++) await q('input[data-i="' + i + '"]').fill(b.items[i].a[0]);
       if (await q('[data-act="check"]').count()) await click('[data-act="check"]');
       return;
+    case 'speak':
+      /* No microphone or sign-in here: record once, then take the skip a student without a microphone gets */
+      for (let i = 0; i < b.items.length; i++) {
+        await click('[data-act="rec"][data-i="' + i + '"]');
+        await click('[data-act="show"][data-i="' + i + '"]');
+      }
+      return;
     case 'select':
       for (let i = 0; i < b.items.length; i++) await q('select[data-i="' + i + '"]').selectOption({ value: '0' });
       return;
@@ -178,7 +185,9 @@ async function playLesson(page, base, book, unit, lesson, errors) {
     await next.click();
   }
   await page.waitForSelector('.spread[data-spread="end"]:not([aria-hidden])');
-  const wrong = await page.locator('.spread:not([aria-hidden]) .fb--no').count();
+  /* Speaking items are skipped here (no microphone), and a skip shows as a wrong answer: those are expected */
+  const skipped = lesson.spreads.flat().filter(b => b.kind === 'speak').reduce((n, b) => n + b.items.length, 0);
+  const wrong = Math.max(0, await page.locator('.spread:not([aria-hidden]) .fb--no').count() - skipped);
   if (wrong) errors.push(book.id + ' ' + unit.id + ' ' + lesson.id + ': ' + wrong + ' wrong feedback shown');
 }
 
