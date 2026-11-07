@@ -49,6 +49,11 @@
       "dest": "/404.html"
     },
     {
+      "src": "/api/(.*)\\.(js|mjs|cjs|json|ts)",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
       "src": "/api/grade",
       "dest": "/api/ai?action=grade"
     },
