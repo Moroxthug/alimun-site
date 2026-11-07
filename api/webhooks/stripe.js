@@ -617,6 +617,7 @@ async function sendCancellationEmail(student, subscription) {
     to: email,
     subject: 'Your Alimun subscription has ended',
     content: mail.renderEmail({
+      hero: 'ended',
       preheader: `Your access continues until ${endDate}.`,
       heading: 'Your subscription has ended',
       blocks: [
@@ -637,6 +638,7 @@ async function sendPaymentFailedEmail(student, invoice, isFinalFailure) {
   const name = mail.esc(student.full_name) || 'there';
   const content = isFinalFailure
     ? mail.renderEmail({
+      hero: 'payment',
       preheader: 'We could not take your payment, so your subscription was cancelled.',
       heading: 'Your subscription has been cancelled',
       blocks: [
@@ -648,6 +650,7 @@ async function sendPaymentFailedEmail(student, invoice, isFinalFailure) {
       footer: 'You received this email because you have an Alimun subscription.',
     })
     : mail.renderEmail({
+      hero: 'payment',
       preheader: 'Update your payment method to keep your seat.',
       heading: 'Your payment did not go through',
       blocks: [

@@ -1,0 +1,401 @@
+{
+ "reset": {
+  "bg": "#e3f3ee",
+  "ground": "left:330px;bottom:16px;width:190px;height:22px;background:#cbe8df",
+  "art": [
+   {
+    "t": "book",
+    "n": "think",
+    "w": 160
+   }
+  ],
+  "pos": "right:44px;bottom:22px",
+  "bubble": {
+   "type": "thought",
+   "icon": {
+    "t": "object",
+    "n": "key"
+   },
+   "iw": 76,
+   "x": 196,
+   "y": 46,
+   "w": 128,
+   "h": 96
+  }
+ },
+ "welcome": {
+  "bg": "#f1fbd9",
+  "ground": "left:320px;bottom:14px;width:200px;height:22px;background:#dff1b8",
+  "art": [
+   {
+    "t": "book",
+    "n": "happy",
+    "w": 160
+   }
+  ],
+  "pos": "right:48px;bottom:20px",
+  "bubble": {
+   "type": "speech",
+   "text": "Welcome!",
+   "x": 168,
+   "y": 52,
+   "w": 176,
+   "h": 74
+  }
+ },
+ "application": {
+  "bg": "#f1fbd9",
+  "ground": "left:350px;bottom:14px;width:170px;height:20px;background:#dff1b8",
+  "art": [
+   {
+    "t": "cast",
+    "n": "owl",
+    "w": 168
+   }
+  ],
+  "pos": "right:44px;bottom:12px",
+  "bubble": {
+   "type": "thought",
+   "icon": {
+    "t": "tutor",
+    "n": "sofia"
+   },
+   "iw": 80,
+   "x": 214,
+   "y": 40,
+   "w": 128,
+   "h": 100
+  }
+ },
+ "update": {
+  "bg": "#f3f1ea",
+  "ground": "left:290px;bottom:14px;width:240px;height:20px;background:#e4e1d6",
+  "art": [
+   {
+    "t": "book",
+    "n": "idle",
+    "w": 140
+   },
+   {
+    "t": "spot",
+    "n": "plant",
+    "w": 120
+   }
+  ],
+  "pos": "right:40px;bottom:18px"
+ },
+ "class-english": {
+  "bg": "#fff3d1",
+  "ground": "left:270px;bottom:14px;width:270px;height:22px;background:#f7e2a6",
+  "art": [
+   {
+    "t": "book",
+    "n": "happy",
+    "w": 132
+   },
+   {
+    "t": "cast",
+    "n": "teacup",
+    "w": 124
+   }
+  ],
+  "pos": "right:26px;bottom:20px",
+  "bubble": {
+   "type": "speech",
+   "text": "Hello!",
+   "x": 150,
+   "y": 58,
+   "w": 150,
+   "h": 72
+  }
+ },
+ "class-german": {
+  "bg": "#fff3d1",
+  "ground": "left:270px;bottom:14px;width:270px;height:22px;background:#f7e2a6",
+  "art": [
+   {
+    "t": "book",
+    "n": "happy",
+    "w": 132
+   },
+   {
+    "t": "cast",
+    "n": "pretzel",
+    "w": 124
+   }
+  ],
+  "pos": "right:26px;bottom:20px",
+  "bubble": {
+   "type": "speech",
+   "text": "Hallo!",
+   "x": 150,
+   "y": 58,
+   "w": 150,
+   "h": 72
+  }
+ },
+ "class-french": {
+  "bg": "#fff3d1",
+  "ground": "left:270px;bottom:14px;width:270px;height:22px;background:#f7e2a6",
+  "art": [
+   {
+    "t": "book",
+    "n": "happy",
+    "w": 132
+   },
+   {
+    "t": "cast",
+    "n": "croissant",
+    "w": 124
+   }
+  ],
+  "pos": "right:26px;bottom:20px",
+  "bubble": {
+   "type": "speech",
+   "text": "Bonjour !",
+   "x": 124,
+   "y": 58,
+   "w": 176,
+   "h": 72
+  }
+ },
+ "class-spanish": {
+  "bg": "#fff3d1",
+  "ground": "left:270px;bottom:14px;width:270px;height:22px;background:#f7e2a6",
+  "art": [
+   {
+    "t": "book",
+    "n": "happy",
+    "w": 132
+   },
+   {
+    "t": "cast",
+    "n": "churro",
+    "w": 124
+   }
+  ],
+  "pos": "right:26px;bottom:20px",
+  "bubble": {
+   "type": "speech",
+   "text": "¡Hola!",
+   "x": 150,
+   "y": 58,
+   "w": 150,
+   "h": 72
+  }
+ },
+ "class-italian": {
+  "bg": "#fff3d1",
+  "ground": "left:270px;bottom:14px;width:270px;height:22px;background:#f7e2a6",
+  "art": [
+   {
+    "t": "book",
+    "n": "happy",
+    "w": 132
+   },
+   {
+    "t": "cast",
+    "n": "pizza",
+    "w": 124
+   }
+  ],
+  "pos": "right:26px;bottom:20px",
+  "bubble": {
+   "type": "speech",
+   "text": "Ciao!",
+   "x": 150,
+   "y": 58,
+   "w": 150,
+   "h": 72
+  }
+ },
+ "class-portuguese": {
+  "bg": "#fff3d1",
+  "ground": "left:270px;bottom:14px;width:270px;height:22px;background:#f7e2a6",
+  "art": [
+   {
+    "t": "book",
+    "n": "happy",
+    "w": 132
+   },
+   {
+    "t": "cast",
+    "n": "nata",
+    "w": 124
+   }
+  ],
+  "pos": "right:26px;bottom:20px",
+  "bubble": {
+   "type": "speech",
+   "text": "Olá!",
+   "x": 150,
+   "y": 58,
+   "w": 150,
+   "h": 72
+  }
+ },
+ "class": {
+  "bg": "#fff3d1",
+  "ground": "left:270px;bottom:14px;width:270px;height:22px;background:#f7e2a6",
+  "art": [
+   {
+    "t": "book",
+    "n": "happy",
+    "w": 132
+   },
+   {
+    "t": "spot",
+    "n": "calendar",
+    "w": 124
+   }
+  ],
+  "pos": "right:30px;bottom:20px",
+  "bubble": {
+   "type": "speech",
+   "text": "Hello!",
+   "x": 150,
+   "y": 58,
+   "w": 150,
+   "h": 72
+  }
+ },
+ "session": {
+  "bg": "#ffe7e0",
+  "ground": "left:280px;bottom:14px;width:250px;height:22px;background:#fbcdbf",
+  "art": [
+   {
+    "t": "book",
+    "n": "wow",
+    "w": 140
+   },
+   {
+    "t": "object",
+    "n": "clock",
+    "w": 130
+   }
+  ],
+  "pos": "right:30px;bottom:18px"
+ },
+ "place": {
+  "bg": "#ffe7e0",
+  "ground": "left:270px;bottom:14px;width:262px;height:22px;background:#fbcdbf",
+  "art": [
+   {
+    "t": "book",
+    "n": "wow",
+    "w": 140
+   },
+   {
+    "t": "object",
+    "n": "ticket",
+    "w": 150
+   }
+  ],
+  "pos": "right:26px;bottom:24px"
+ },
+ "notes": {
+  "bg": "#f1fbd9",
+  "ground": "left:230px;bottom:14px;width:300px;height:22px;background:#dff1b8",
+  "art": [
+   {
+    "t": "book",
+    "n": "happy",
+    "w": 132
+   },
+   {
+    "t": "spot",
+    "n": "books",
+    "w": 110
+   },
+   {
+    "t": "spot",
+    "n": "pencil",
+    "w": 90
+   }
+  ],
+  "pos": "right:24px;bottom:18px"
+ },
+ "payment": {
+  "bg": "#ffe7e0",
+  "ground": "left:330px;bottom:16px;width:190px;height:22px;background:#fbcdbf",
+  "art": [
+   {
+    "t": "book",
+    "n": "think",
+    "w": 160
+   }
+  ],
+  "pos": "right:44px;bottom:22px",
+  "bubble": {
+   "type": "thought",
+   "text": "?",
+   "x": 216,
+   "y": 46,
+   "w": 100,
+   "h": 84
+  }
+ },
+ "ended": {
+  "bg": "#e3f3ee",
+  "ground": "left:290px;bottom:14px;width:240px;height:22px;background:#cbe8df",
+  "art": [
+   {
+    "t": "book",
+    "n": "sleep",
+    "w": 150
+   },
+   {
+    "t": "cast",
+    "n": "mug",
+    "w": 96
+   }
+  ],
+  "pos": "right:34px;bottom:20px"
+ },
+ "plan": {
+  "bg": "#f1fbd9",
+  "ground": "left:280px;bottom:14px;width:250px;height:22px;background:#dff1b8",
+  "art": [
+   {
+    "t": "book",
+    "n": "happy",
+    "w": 140
+   },
+   {
+    "t": "spot",
+    "n": "chart",
+    "w": 130
+   }
+  ],
+  "pos": "right:30px;bottom:18px"
+ },
+ "message": {
+  "bg": "#e3f3ee",
+  "ground": "left:280px;bottom:14px;width:250px;height:22px;background:#cbe8df",
+  "art": [
+   {
+    "t": "cast",
+    "n": "parrot",
+    "w": 140
+   },
+   {
+    "t": "spot",
+    "n": "envelope",
+    "w": 124
+   }
+  ],
+  "pos": "right:30px;bottom:16px"
+ },
+ "default": {
+  "bg": "#e3f3ee",
+  "ground": "left:330px;bottom:14px;width:190px;height:22px;background:#cbe8df",
+  "art": [
+   {
+    "t": "book",
+    "n": "idle",
+    "w": 150
+   }
+  ],
+  "pos": "right:56px;bottom:20px"
+ }
+}

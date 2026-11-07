@@ -1,0 +1,38 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+html,body{margin:0;background:transparent}
+.h{position:relative;width:560px;height:220px;border-radius:18px;overflow:hidden}
+.logo{position:absolute;left:28px;top:26px;width:112px}
+.logo svg{width:112px;height:auto;display:block}
+.art{position:absolute;display:flex;align-items:flex-end;gap:6px}
+.art svg{display:block}
+@font-face{font-family:CC;src:url(/fonts/coolvetica-condensed-rg.otf)}
+.bub{position:absolute;background:#fff;border:3.5px solid #1a443c;border-radius:26px;display:flex;align-items:center;justify-content:center;font-family:CC;color:#1a443c;font-size:40px;letter-spacing:.01em;box-sizing:border-box}
+.bub svg{display:block}
+.tail{position:absolute}
+.ground{position:absolute;border-radius:50%}
+.mo{display:none}.mo-rest{display:inline}
+</style></head><body><div id=o></div>
+<script src="/js/app/cast.js"></script><script src="/js/app/cast3.js"></script>
+<script>
+const C=window.AlimunCast;
+async function hero(spec){
+  const logo=await (await fetch('/images/alimun-logo.svg')).text();
+  const art=spec.art.map(a=>{const svg=(a.t==='book'?C.book(a.n):a.t==='spot'?C.spot(a.n):a.t==='object'?C.object(a.n):a.t==='scene'?C.scene(a.n):a.t==='tutor'?C.tutor(a.n):C.drawing(a.n));return svg.replace('<svg',`<svg style="width:${a.w}px;height:${a.h||a.w}px;${a.css||''}"`)}).join('');
+  let bub='';
+  const b=spec.bubble;
+  if(b){
+    const inner=b.icon?(b.icon.t==='object'?C.object(b.icon.n):b.icon.t==='spot'?C.spot(b.icon.n):b.icon.t==='tutor'?C.tutor(b.icon.n):C.drawing(b.icon.n)).replace('<svg',`<svg style="width:${b.iw||70}px;height:${b.iw||70}px"`):(b.text||'');
+    if(b.type==='thought'){
+      bub=`<div class=bub style="left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px;border-radius:999px">${inner}</div>`+
+        `<div class=bub style="left:${b.x+b.w-30}px;top:${b.y+b.h+4}px;width:20px;height:20px;border-radius:50%"></div>`+
+        `<div class=bub style="left:${b.x+b.w-6}px;top:${b.y+b.h+26}px;width:12px;height:12px;border-radius:50%;border-width:3px"></div>`;
+    } else {
+      bub=`<div class=bub style="left:${b.x}px;top:${b.y}px;width:${b.w}px;height:${b.h}px">${inner}</div>`+
+        `<svg class=tail style="left:${b.x+b.w-74}px;top:${b.y+b.h-3.5}px" width="48" height="36" viewBox="0 0 48 36"><path d="M2 0 L28 0 L44 33 Z" fill="#fff" stroke="#1a443c" stroke-width="3.5" stroke-linejoin="round"/><rect x="4.5" y="-2" width="21" height="5.5" fill="#fff"/></svg>`;
+    }
+  }
+  const ground=spec.ground?`<div class=ground style="${spec.ground}"></div>`:'';
+  document.getElementById('o').innerHTML=`<div class=h id=h style="background:${spec.bg}"><div class=logo>${logo}</div>${ground}<div class=art style="${spec.pos||'right:30px;bottom:14px'}">${art}</div>${bub}</div>`;
+}
+window.hero=hero;
+</script></body></html>

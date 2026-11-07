@@ -227,6 +227,7 @@ module.exports = async function handler(req, res) {
         to: user.email,
         subject: `You're in: ${cohort.language} ${cohort.level} with ${teacherName}`,
         content: mail.renderEmail({
+          hero: mail.heroForLanguage(cohort.language),
           preheader: `Your next session: ${whenStr}.`,
           heading: "You're in",
           blocks: [
@@ -250,6 +251,7 @@ module.exports = async function handler(req, res) {
           to: teacherEmail,
           subject: 'New student joined your class',
           content: mail.renderEmail({
+            hero: mail.heroForLanguage(cohort.language),
             preheader: `${student.full_name} joined your ${cohort.language} ${cohort.level} class.`,
             heading: 'A new student joined your class',
             blocks: [

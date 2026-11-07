@@ -63,9 +63,11 @@
       field('app_st_email', '<input class="st-in" type="email" value="' + esc(SET.email || '') + '" disabled>', 'app_st_email_p') +
       '<div class="st-row">' + field('app_tst_location', '<input class="st-in" name="location" maxlength="100" value="' + esc(p.location || '') + '">') +
         field('app_tst_specialty', '<input class="st-in" name="specialty" maxlength="200" value="' + esc(p.specialty || '') + '">') + '</div>' +
+      (window.AlimunPrefs ? window.AlimunPrefs.countryField(A, p.country) : '') +
       field('app_tst_bio', '<textarea class="st-in tc-ta" name="bio" rows="5" maxlength="3000" dir="auto">' + esc(p.bio || '') + '</textarea>', 'app_tst_bio_p') +
       '<p class="t-body">' + esc(t('app_tst_langs', { list: A.listOf((p.languages || []).map(function (l) { return A.languageName(l); })) || '…' })) + '</p>' +
       '<div class="btn-row"><button class="btn btn--primary" type="submit">' + esc(t('app_st_save')) + '</button></div><p class="t-body st-msg" data-msg="me" aria-live="polite"></p></form></section>';
+    if (window.AlimunPrefs) html += window.AlimunPrefs.newsCard(A, SET.consent, 1);
     html += '<section class="card span-6 st-card" style="--i:1"><h2 class="t-h2">' + esc(t('app_st_ui_h')) + '</h2><p class="t-body">' + esc(t('app_st_ui_p')) + '</p>' +
       '<div class="st-field" style="margin-top:14px"><select class="st-in" data-ui>' + Object.keys(UI).map(function (l) { return '<option value="' + l + '"' + (l === A.lang ? ' selected' : '') + '>' + esc(UI[l]) + '</option>'; }).join('') + '</select></div></section>';
     html += '<section class="card span-6 st-card" style="--i:2"><h2 class="t-h2">' + esc(t('app_st_acc_h')) + '</h2>' +
@@ -79,6 +81,7 @@
   function saveMe(form) {
     var f = new FormData(form), clean = function (v, n) { return String(v || '').trim().slice(0, n); };
     var patch = { full_name: clean(f.get('full_name'), 100), location: clean(f.get('location'), 100) || null, specialty: clean(f.get('specialty'), 200) || null, bio: String(f.get('bio') || '').trim().slice(0, 3000) || null };
+    if (form.querySelector('[name="country"]')) patch.country = f.get('country') || null;
     if (!patch.full_name || /[<>]/.test(patch.full_name + (patch.location || '') + (patch.specialty || ''))) { say('me', 'app_tst_bad', true); return; }
     if (SET.sample) { say('me', 'app_st_sample_saved'); return; }
     var btn = form.querySelector('[type="submit"]'); btn.disabled = true;
@@ -89,13 +92,14 @@
   }
   function savePw(form) {
     var pw = String(new FormData(form).get('pw') || '');
-    if (pw.length < 8) { say('pw', 'app_st_pw_short', true); return; }
+    if (!(pw.length >= 8 && /[a-z]/.test(pw) && /[A-Z]/.test(pw) && /[0-9]/.test(pw))) { say('pw', 'app_st_pw_short', true); return; }
     if (SET.sample) { say('pw', 'app_st_sample_saved'); return; }
     window.AlimunData.changePassword(pw).then(function () { form.reset(); say('pw', 'app_st_pw_done'); }, function () { say('pw', 'app_st_pw_error', true); });
   }
   function bind() {
     if (root.__taccount) return;
     root.__taccount = true;
+    if (window.AlimunPrefs) window.AlimunPrefs.bindNews(root, A, function () { return !SET || SET.sample; });
     root.addEventListener('submit', function (e) {
       var f = e.target.closest('[data-tst]'); if (!f || !SET) return;
       e.preventDefault();

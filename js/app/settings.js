@@ -52,6 +52,7 @@
       '<div class="st-row">' +
         field('app_st_goal', select('goal_track', Object.keys(GOALS).map(function (g) { return [g, t(GOALS[g])]; }), p.goal_track)) +
         field('app_st_timeframe', select('goal_timeframe', [['', '…']].concat(Object.keys(TIMEFRAMES).map(function (g) { return [g, t(TIMEFRAMES[g])]; })), p.goal_timeframe || '')) + '</div>' +
+      (window.AlimunPrefs ? window.AlimunPrefs.countryField(A, p.country) : '') +
       field('app_st_zone', select('timezone', zoneList(zoneNow).map(function (z) { return [z, z.replace(/_/g, ' ')]; }), zoneNow), 'app_st_zone_p') +
       '<fieldset class="st-field"><legend class="st-lbl">' + esc(t('app_st_days')) + '</legend><div class="st-days">' + [1, 2, 3, 4, 5, 6, 0].map(function (d) {
         var on = (p.preferred_days || []).indexOf(d) > -1, name = new Intl.DateTimeFormat(A.locale, { weekday: 'long', timeZone: 'UTC' }).format(new Date(Date.UTC(2024, 0, d === 0 ? 7 : d)));
@@ -60,6 +61,7 @@
       '<div class="st-row">' + field('app_st_from', '<input class="st-in" type="time" name="preferred_time_start" value="' + esc(String(p.preferred_time_start || '').slice(0, 5)) + '">') +
         field('app_st_to', '<input class="st-in" type="time" name="preferred_time_end" value="' + esc(String(p.preferred_time_end || '').slice(0, 5)) + '">') + '</div>' +
       '<div class="btn-row"><button class="btn btn--primary" type="submit">' + esc(t('app_st_save')) + '</button></div><p class="t-body st-msg" data-msg="me" aria-live="polite"></p></form></section>';
+    if (window.AlimunPrefs) html += window.AlimunPrefs.newsCard(A, S.consent, 2);
     html += '<section class="card span-6 st-card" style="--i:2" aria-labelledby="h-ui"><h2 class="t-h2" id="h-ui">' + esc(t('app_st_ui_h')) + '</h2><p class="t-body">' + esc(t('app_st_ui_p')) + '</p>' +
       '<div class="st-field" style="margin-top:14px">' + select('ui', Object.keys(UI).map(function (l) { return [l, UI[l]]; }), A.lang, 'data-ui') + '</div></section>';
     html += '<section class="card span-6 st-card" style="--i:3" aria-labelledby="h-acc"><h2 class="t-h2" id="h-acc">' + esc(t('app_st_acc_h')) + '</h2>' +
@@ -98,6 +100,7 @@
       goal_timeframe: f.get('goal_timeframe') || null, timezone: f.get('timezone'), preferred_days: days,
       preferred_time_start: f.get('preferred_time_start') || null, preferred_time_end: f.get('preferred_time_end') || null
     };
+    if (form.querySelector('[name="country"]')) patch.country = f.get('country') || null;
     if (!patch.full_name || /[<>]/.test(patch.full_name)) { say('me', 'app_st_name_needed', true); return; }
     if (S.sample) { say('me', 'app_st_sample_saved'); return; }
     var btn = form.querySelector('[type="submit"]'); btn.disabled = true;
@@ -114,7 +117,7 @@
   }
   function savePw(form) {
     var pw = String(new FormData(form).get('pw') || '');
-    if (pw.length < 8) { say('pw', 'app_st_pw_short', true); return; }
+    if (!(pw.length >= 8 && /[a-z]/.test(pw) && /[A-Z]/.test(pw) && /[0-9]/.test(pw))) { say('pw', 'app_st_pw_short', true); return; }
     if (S.sample) { say('pw', 'app_st_sample_saved'); return; }
     window.AlimunData.changePassword(pw).then(function () { form.reset(); say('pw', 'app_st_pw_done'); }, function (e) { say('pw', 'app_st_pw_error', true); console.warn('[Alimun] Password not changed', e && e.message); });
   }
@@ -132,6 +135,7 @@
   function bind() {
     if (root.__settings) return;
     root.__settings = true;
+    if (window.AlimunPrefs) window.AlimunPrefs.bindNews(root, A, function () { return !S || S.sample; });
     root.addEventListener('submit', function (e) {
       var f = e.target.closest('[data-form]'); if (!f || !S) return;
       e.preventDefault();

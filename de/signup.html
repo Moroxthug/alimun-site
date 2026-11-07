@@ -14,6 +14,8 @@
 </script>
 <script src="../js/i18n/en.js" defer=""></script><script src="../js/i18n/de.js" defer=""></script>
 <script src="../js/i18n.js" defer=""></script>
+<script src="/js/captcha.js"></script>
+<script src="/js/country.js"></script>
 </head>
 <body>
 <!--
@@ -40,8 +42,12 @@
             <div class="au_field"><label for="a-name" data-i18n="au_name">Vollständiger Name</label><input class="au_input" id="a-name" type="text" autocomplete="name" maxlength="100" required=""></div>
             <div class="au_field"><label for="a-email" data-i18n="au_email">E-Mail-Adresse</label><input class="au_input" id="a-email" type="email" autocomplete="email" required=""></div>
             <div class="au_field"><label for="a-pw" data-i18n="au_password">Passwort</label>
-              <div class="au_pw"><input class="au_input" id="a-pw" type="password" autocomplete="new-password" minlength="8" required="" placeholder="Mindestens 8 Zeichen" data-i18n-placeholder="au_pw_hint"><button type="button" class="au_eye" data-eye="a-pw" data-i18n="au_show">Anzeigen</button></div>
+              <div class="au_pw"><input class="au_input" id="a-pw" type="password" autocomplete="new-password" minlength="8" required="" aria-describedby="a-pw-hint"><button type="button" class="au_eye" data-eye="a-pw" data-i18n="au_show">Anzeigen</button></div>
+              <p class="au_fine" id="a-pw-hint" data-i18n="au_pw_hint">Mindestens 8 Zeichen, mit einem Klein- und einem Großbuchstaben und einer Zahl</p>
             </div>
+            <div class="au_field"><label for="a-country" data-i18n="au_country">Land, in dem Sie leben</label><select class="au_input" id="a-country" autocomplete="country" required=""></select></div>
+            <label class="au_tick"><input type="checkbox" id="a-adult"><span data-i18n="au_age16">Ich bin 16 Jahre oder älter</span></label>
+            <label class="au_tick"><input type="checkbox" id="a-news" disabled=""><span data-i18n="au_marketing">Senden Sie mir Neuigkeiten und Angebote von Alimun</span></label>
             <p class="au_msg" id="m-account" role="alert"></p>
             <button type="submit" class="au_btn" id="b-account"><span data-i18n="au_create_free">Kostenloses Konto erstellen</span></button>
             <p class="au_fine" data-i18n-html="au_terms_note">Mit der Erstellung eines Kontos stimmen Sie den <a href="terms.html">Nutzungsbedingungen</a> und der <a href="gdpr.html">Datenschutzerklärung</a> zu.</p>
@@ -78,8 +84,12 @@
             <div class="au_field"><label for="ta-name" data-i18n="au_name">Vollständiger Name</label><input class="au_input" id="ta-name" type="text" autocomplete="name" maxlength="100" required=""></div>
             <div class="au_field"><label for="ta-email" data-i18n="au_email">E-Mail-Adresse</label><input class="au_input" id="ta-email" type="email" autocomplete="email" required=""></div>
             <div class="au_field"><label for="ta-pw" data-i18n="au_password">Passwort</label>
-              <div class="au_pw"><input class="au_input" id="ta-pw" type="password" autocomplete="new-password" minlength="8" required="" placeholder="Mindestens 8 Zeichen" data-i18n-placeholder="au_pw_hint"><button type="button" class="au_eye" data-eye="ta-pw" data-i18n="au_show">Anzeigen</button></div>
+              <div class="au_pw"><input class="au_input" id="ta-pw" type="password" autocomplete="new-password" minlength="8" required="" aria-describedby="ta-pw-hint"><button type="button" class="au_eye" data-eye="ta-pw" data-i18n="au_show">Anzeigen</button></div>
+              <p class="au_fine" id="ta-pw-hint" data-i18n="au_pw_hint">Mindestens 8 Zeichen, mit einem Klein- und einem Großbuchstaben und einer Zahl</p>
             </div>
+            <div class="au_field"><label for="ta-country" data-i18n="au_country">Land, in dem Sie leben</label><select class="au_input" id="ta-country" autocomplete="country" required=""></select></div>
+            <label class="au_tick"><input type="checkbox" id="ta-adult"><span data-i18n="au_age16">Ich bin 16 Jahre oder älter</span></label>
+            <label class="au_tick"><input type="checkbox" id="ta-news" disabled=""><span data-i18n="au_marketing">Senden Sie mir Neuigkeiten und Angebote von Alimun</span></label>
             <p class="au_msg" id="m-teach-account" role="alert"></p>
             <div class="au_actions">
               <button type="button" class="au_btn is-ghost is-auto" id="b-teach-back"><span data-i18n="au_back">Zurück</span></button>
@@ -134,10 +144,12 @@
   <span data-i18n="au_hide">Verbergen</span>
   <span data-i18n="au_err_name">Bitte geben Sie Ihren Namen ein.</span>
   <span data-i18n="au_err_email">Bitte geben Sie eine gültige E-Mail-Adresse ein.</span>
-  <span data-i18n="au_err_pw">Ihr Passwort muss mindestens 8 Zeichen lang sein.</span>
+  <span data-i18n="au_err_pw">Ihr Passwort braucht mindestens 8 Zeichen, mit einem Klein- und einem Großbuchstaben und einer Zahl.</span>
   <span data-i18n="au_err_exists">Für diese E-Mail-Adresse besteht bereits ein Konto.</span>
   <span data-i18n="au_err_generic">Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.</span>
   <span data-i18n="au_err_spec">Bitte geben Sie Ihren Unterrichtsschwerpunkt an.</span>
+  <span data-i18n="au_err_country">Bitte wählen Sie das Land, in dem Sie leben.</span>
+  <span data-i18n="au_country_pick">Wählen Sie Ihr Land</span>
   <span data-i18n="au_err_rate">Zu viele Versuche. Bitte warten Sie einige Minuten und versuchen Sie es dann erneut.</span>
   <span data-i18n="au_resent">Gesendet. Es kann ein bis zwei Minuten dauern, bis sie ankommt.</span>
   <span data-i18n="au_resend_wait">Sie können sie in {s} Sekunden erneut senden.</span>
@@ -153,6 +165,19 @@ const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&':
 // Text set by this script: drop the element's translation key so js/i18n.js does not put the generic text back.
 const setText = (el, text) => { el.removeAttribute('data-i18n'); el.removeAttribute('data-i18n-html'); el.textContent = text; };
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Country (pre-selected from the time zone) and the news-and-offers choice, only for people 16 or older (docs/GROWTH_PLAN.md step 2).
+const MARKETING_WORDING = 'v1';
+function setupExtras(pfx) {
+  const sel = $(pfx + '-country'), adult = $(pfx + '-adult'), news = $(pfx + '-news');
+  const guess = window.AlimunCountry ? window.AlimunCountry.guess() : '';
+  sel.innerHTML = '<option value="" data-i18n="au_country_pick">' + t('au_country_pick') + '</option>' + (window.AlimunCountry ? window.AlimunCountry.options(document.documentElement.lang || 'en', guess) : '');
+  adult.addEventListener('change', () => { news.disabled = !adult.checked; if (!adult.checked) news.checked = false; });
+}
+function extras(pfx) {
+  const country = $(pfx + '-country').value, adult = $(pfx + '-adult').checked;
+  return { country, marketing: { opt_in: adult && $(pfx + '-news').checked, age_16_plus: adult, wording: MARKETING_WORDING } };
+}
+setupExtras('a'); setupExtras('ta');
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 const WAITLIST_ONLY = ['Mandarin', 'Japanese', 'Arabic'];
 const TIERS = ['community', 'focused', 'intensive', 'private'];
@@ -166,8 +191,12 @@ function show(id) {
 }
 function msg(id, text, ok) { const el = $(id); el.textContent = text; el.classList.toggle('is-on', !!text); el.classList.toggle('is-ok', !!ok); }
 function busy(btn, on) { btn.disabled = on; if (on) { btn.dataset.label = btn.innerHTML; btn.textContent = t('au_waiting'); } else if (btn.dataset.label) btn.innerHTML = btn.dataset.label; }
+// Supabase's rule (Authentication → Policies): 8+ characters with a lowercase letter, a capital letter and a number.
+const strongPw = (pw) => pw.length >= 8 && /[a-z]/.test(pw) && /[A-Z]/.test(pw) && /[0-9]/.test(pw);
 function errorText(err) {
   const m = (err && err.message) || '';
+  if ((err && err.code === 'weak_password') || /should contain|weak/i.test(m)) return t('au_err_pw');
+  if (/captcha/i.test(m)) return t('au_err_generic');
   if (/already/i.test(m)) return t('au_err_exists');
   if (/rate|too many|seconds/i.test(m)) return t('au_err_rate');
   return t('au_err_generic');
@@ -203,6 +232,8 @@ function paintNote(r) {
   note.classList.remove('au_hide');
 }
 
+// Captcha token for Supabase Auth (js/captcha.js; undefined while captcha is off).
+const captchaToken = async () => { try { return (await window.AlimunCaptcha?.token()) || undefined; } catch (e) { return undefined; } };
 let lastEmail = '';
 async function signUp({ name, email, pw, data, btn, msgId }) {
   let timezone = null;
@@ -210,7 +241,7 @@ async function signUp({ name, email, pw, data, btn, msgId }) {
   busy(btn, true);
   const { data: out, error } = await supabase.auth.signUp({
     email, password: pw,
-    options: { emailRedirectTo: `${location.origin}/signup.html`, data: { full_name: name, timezone, ...data } },
+    options: { emailRedirectTo: `${location.origin}/signup.html`, data: { full_name: name, timezone, ...data }, captchaToken: await captchaToken() },
   });
   busy(btn, false);
   if (error) { msg(msgId, errorText(error)); return; }
@@ -236,9 +267,10 @@ function startLearner(r) {
     const name = $('a-name').value.trim(), email = $('a-email').value.trim(), pw = $('a-pw').value;
     if (!name) return msg('m-account', t('au_err_name'));
     if (!EMAIL.test(email)) return msg('m-account', t('au_err_email'));
-    if (pw.length < 8) return msg('m-account', t('au_err_pw'));
+    if (!strongPw(pw)) return msg('m-account', t('au_err_pw'));
+    if (!$('a-country').value) return msg('m-account', t('au_err_country'));
     const placement = r.level ? { language: r.language, level: r.level, skills: r.skills || null, topics: (r.topics || []).slice(0, 5), at: r.at || null } : { language: r.language, level: null, waitlist: true };
-    signUp({ name, email, pw, data: { role: 'student', onboarding: { placement, intent } }, btn: $('b-account'), msgId: 'm-account' });
+    signUp({ name, email, pw, data: { role: 'student', onboarding: { placement, intent }, ...extras('a') }, btn: $('b-account'), msgId: 'm-account' });
   });
 }
 function languageName(lang) {
@@ -265,8 +297,9 @@ function startTeacher() {
     const name = $('ta-name').value.trim(), email = $('ta-email').value.trim(), pw = $('ta-pw').value;
     if (!name) return msg('m-teach-account', t('au_err_name'));
     if (!EMAIL.test(email)) return msg('m-teach-account', t('au_err_email'));
-    if (pw.length < 8) return msg('m-teach-account', t('au_err_pw'));
-    signUp({ name, email, pw, data: { role: 'teacher', teacher_application: application }, btn: $('b-teach-account'), msgId: 'm-teach-account' });
+    if (!strongPw(pw)) return msg('m-teach-account', t('au_err_pw'));
+    if (!$('ta-country').value) return msg('m-teach-account', t('au_err_country'));
+    signUp({ name, email, pw, data: { role: 'teacher', teacher_application: application, ...extras('ta') }, btn: $('b-teach-account'), msgId: 'm-teach-account' });
   });
 }
 
@@ -276,7 +309,7 @@ $('b-resend').addEventListener('click', async () => {
   if (wait > 0 || !lastEmail) return;
   const btn = $('b-resend');
   busy(btn, true);
-  const { error } = await supabase.auth.resend({ type: 'signup', email: lastEmail, options: { emailRedirectTo: `${location.origin}/signup.html` } });
+  const { error } = await supabase.auth.resend({ type: 'signup', email: lastEmail, options: { emailRedirectTo: `${location.origin}/signup.html`, captchaToken: await captchaToken() } });
   busy(btn, false);
   if (error) return msg('m-check', errorText(error));
   msg('m-check', t('au_resent'), true);

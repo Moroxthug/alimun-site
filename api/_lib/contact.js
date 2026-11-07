@@ -4,12 +4,13 @@
  * Emails each message through Resend to CONTACT_EMAIL (default: the owner),
  * with the sender as reply-to. Nothing is stored.
  *
- * Abuse limits (until Cloudflare Turnstile is configured): a hidden honeypot
+ * Abuse limits: Cloudflare Turnstile (./captcha.js, once keys are set), a hidden honeypot
  * field, length caps, and at most PER_IP_HOUR messages per address per hour
  * on each warm instance.
  */
 
 const mail = require('./email.js');
+const captcha = require('./captcha.js');
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const LOCALES = new Set(['en', 'es', 'fr', 'de', 'it', 'pt', 'zh', 'ar', 'ma']);
@@ -29,7 +30,7 @@ function field(body, name, max) {
 module.exports = async function contact(req, res) {
   res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || 'https://alimun.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Captcha-Token');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -50,6 +51,8 @@ module.exports = async function contact(req, res) {
   if (!EMAIL_RE.test(email)) return res.status(400).json({ error: 'invalid_email', message: 'Please enter a valid email address.' });
   if (!firstName || !message) return res.status(400).json({ error: 'missing_fields', message: 'Please fill in your name and message.' });
 
+  if (!(await captcha.verify(req))) return res.status(403).json({ error: 'captcha_failed', message: 'Please try again.' });
+
   const ip = clientIp(req), now = Date.now();
   const times = (recent.get(ip) || []).filter((t) => now - t < 3600 * 1000);
   if (times.length >= PER_IP_HOUR) return res.status(429).json({ error: 'rate_limited', message: 'Too many messages right now. Please try again later.' });
@@ -62,11 +65,13 @@ module.exports = async function contact(req, res) {
 
   const name = `${firstName} ${lastName}`.trim();
   const content = mail.renderEmail({
+    hero: 'message',
+    signoff: false,
     preheader: message.replace(/\s+/g, ' ').slice(0, 120),
     heading: `Message from ${name}`,
     blocks: [
       { facts: [['Name', name], ['Email', email], ['Phone', phone || '-'], ['Language', locale], ['Page', page || '-']] },
-      { quote: message },
+      { quote: message, label: 'Message' },
     ],
     note: 'Reply to this email to answer them directly.',
     footer: 'Sent from the contact form on alimun.com.',

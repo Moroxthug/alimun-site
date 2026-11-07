@@ -61,6 +61,7 @@ async function sendOfferEmail(supabase, { waitlist_id, cohort_id, student_id }) 
   const claimUrl = `${appUrl}/app#/classes/offer/${encodeURIComponent(waitlist_id)}`;
 
   const content = mail.renderEmail({
+    hero: 'place',
     preheader: 'A place has opened in the class you were waiting for. It is held for you for 48 hours.',
     heading: 'A place is open for you',
     blocks: [

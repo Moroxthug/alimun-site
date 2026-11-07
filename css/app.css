@@ -1305,6 +1305,8 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 .st-days { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 8px 16px; margin-top: 4px; }
 .st-day { display: flex; align-items: center; gap: 10px; cursor: pointer; }
 .st-day input { width: 20px; height: 20px; accent-color: var(--forest); margin: 0; }
+.st-ticks { display: grid; gap: 10px; margin-top: 14px; }
+.st-day input:disabled + span { color: var(--muted); }
 .st-msg { margin: 0; min-height: 1.4em; color: var(--forest); font-weight: 600; }
 .st-msg.is-bad { color: #b0472f; }
 .st-msg--light { color: var(--lime); margin-top: 12px; }

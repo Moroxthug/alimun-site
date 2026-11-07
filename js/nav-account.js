@@ -1,3 +1,6 @@
+/* Captcha helper (js/captcha.js) for the public forms; it loads Cloudflare's script only when a protected form is sent. */
+(function () { if (window.AlimunCaptcha || document.querySelector('script[src="/js/captcha.js"]')) return; var s = document.createElement('script'); s.src = '/js/captcha.js'; document.head.appendChild(s); })();
+
 /* Header account links (owner, 31 Oct 2026: "get started is always there, even when logged in ... have dashboard or
    similar when logged in? And also the sign in option?").
    Signed out: a "Sign in" link at the other edge of the header from Get started (inside the menu on phones and tablets).
