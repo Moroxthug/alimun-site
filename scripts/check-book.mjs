@@ -4,9 +4,9 @@
 import { loadBook, loadSet, setIds } from './book-lib.mjs';
 
 const CAST = ['owl', 'parrot', 'cat', 'snail', 'dog', 'teacup', 'pretzel', 'croissant', 'pizza', 'churro', 'nata', 'dragon', 'alien', 'ghost', 'suitcase', 'cactus', 'mug', 'sun', 'monster'];
-const KINDS = ['choice', 'gap', 'order', 'match', 'tf', 'spot', 'odd', 'select', 'wordform', 'transform', 'conjugate', 'crossword', 'build', 'colloc', 'fix', 'bank', 'sort', 'memory', 'search', 'picture', 'label'];
+const KINDS = ['choice', 'gap', 'order', 'match', 'tf', 'spot', 'odd', 'select', 'wordform', 'transform', 'conjugate', 'crossword', 'build', 'colloc', 'fix', 'bank', 'sort', 'memory', 'search', 'picture', 'label', 'speak'];
 /* Games that only make sense with feedback straight away: not in unit tests */
-const LESSON_ONLY = ['memory', 'search'];
+const LESSON_ONLY = ['memory', 'search', 'speak'];
 /* Drawings of the third cast for picture exercises (docs/design/sources/cast3.py) */
 const OBJECTS = ['apple', 'bread', 'cheese', 'train', 'bus', 'bicycle', 'house', 'key', 'phone', 'umbrella', 'clock', 'ticket'];
 const SCENES = ['cafe', 'station', 'kitchen', 'park'];
@@ -156,6 +156,7 @@ function exCheck(bad, w, b) {
   if (!b.items || !b.items.length) { bad(w, 'no items'); return 0; }
   b.items.forEach((it, i) => {
     const iw = `${w} item ${i + 1}`;
+    if (b.kind === 'speak') { str(iw, it.a); if (!['lena', 'kofi', 'mei', 'omar', 'sofia', 'arthur'].includes(b.tutor)) bad(w, `tutor "${b.tutor}" is not one of the six`); return; }
     str(iw + ' why', it.why);
     switch (b.kind) {
       case 'choice': str(iw, it.q, false); options(iw, it.o); if (it.q && (it.q.match(/___/g) || []).length > 1) bad(iw, 'more than one gap'); break;
