@@ -1642,3 +1642,12 @@ a.tt-row:hover b { text-decoration: underline; text-underline-offset: 3px; }
 .pg-tutor .qunits__list li > div span + span { color: var(--muted); font-weight: 500; }
 .tw .write-in { width: 100%; margin-top: 14px; }
 .tw .wr-count.is-off { color: #b0472f; }
+
+/* Admin activity (js/app/admin-activity.js) */
+.ac-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px 20px; margin-top: 14px; }
+.ac-stat b { display: block; font-family: 'Coolvetica Condensed', Satoshi, sans-serif; font-weight: 400; font-size: 44px; line-height: 1; color: var(--forest); }
+.ac-stat span { display: block; margin-top: 4px; color: var(--muted); font-size: 14px; }
+.ac-bars { display: flex; align-items: flex-end; gap: 3px; height: 120px; margin-top: 22px; }
+.ac-bar { flex: 1; min-width: 3px; height: max(var(--h), 2px); background: var(--forest); border-radius: 4px 4px 0 0; }
+.ac-bar:last-child { background: var(--lime); }
+.ac-axis { display: flex; justify-content: space-between; margin-top: 6px; color: var(--muted); font-size: 13px; }

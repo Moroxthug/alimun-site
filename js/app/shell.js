@@ -543,6 +543,7 @@
   }
   function render(id, animate) {
     var r = byId[id];
+    if (window.AlimunData && window.AlimunData.track && id !== 'kit') window.AlimunData.track('view', { dashboard: 'student', section: id });
     var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' || id === 'messages' || id === 'settings' || id === 'tutor' ? '' : soonView(r);
     var swap = function () {
       if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
@@ -705,6 +706,7 @@
   }
 
   function boot() {
+    if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('open_dashboard', { dashboard: 'student' });
     app = document.getElementById('app');
     loadingScreen = document.getElementById('loading');
     document.documentElement.lang = lang === 'ma' ? 'fr-MA' : lang;

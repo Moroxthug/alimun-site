@@ -34,7 +34,7 @@ no marketing at all to anyone under 16. Each step is shown to the owner before t
 - Every marketing email carries a one-click unsubscribe link (`List-Unsubscribe` header and a footer link) that works
   without signing in, signed with a server secret.
 
-## Step 3. Activity
+## Step 3. Activity (built 7 Nov 2026, see PROGRESS)
 
 - `activity_events` table: user id, event name, a small JSON detail, page, time; written by the dashboards (signed
   in, opened a lesson, finished an exercise, used the tutor, opened homework) and by the server (joined a class, paid,

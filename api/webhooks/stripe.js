@@ -303,6 +303,13 @@ async function cancelEnrollmentsAboveTier(supabase, student, newTier) {
 
 // ── Event processing ──────────────────────────────────────────
 
+/** Activity timeline (docs/GROWTH_PLAN.md step 3): payment events for the admin's view of a person. Best effort. */
+async function logActivity(supabase, userId, event, detail) {
+  if (!userId) return;
+  const { error } = await supabase.from('activity_events').insert({ user_id: userId, event, detail: detail || {} });
+  if (error) console.warn('[Alimun Webhook] activity not recorded:', error.message);
+}
+
 async function processWebhookEvent(event, supabase) {
   const object = event.data.object;
 
@@ -399,6 +406,7 @@ async function processWebhookEvent(event, supabase) {
       if (error) throw new Error(`Failed to mark subscription cancelled: ${error.message}`);
 
       await cancelActiveEnrollments(supabase, student.id);
+      await logActivity(supabase, student.user_id, 'subscription_ended', { tier: student.tier });
       await sendCancellationEmail(student, subscription);
       break;
     }
@@ -438,6 +446,7 @@ async function processWebhookEvent(event, supabase) {
         .eq('id', student.id);
       if (error) throw new Error(`Failed to update on payment failure: ${error.message}`);
 
+      await logActivity(supabase, student.user_id, 'payment_failed', { tier: student.tier });
       await sendPaymentFailedEmail(student, invoice, false);
       break;
     }
@@ -486,6 +495,7 @@ async function handleSubscriptionCheckout(session, metadata, supabaseUserId, sup
   if (error) throw new Error(`Failed to activate subscription: ${error.message}`);
   if (!data || data.length === 0) throw new Error(`No student_profiles row for user ${supabaseUserId}`);
 
+  await logActivity(supabase, supabaseUserId, 'subscribed', { tier });
   console.log(`[Alimun Webhook] Subscription tier '${tier}' activated for user ${supabaseUserId}`);
 }
 
@@ -507,6 +517,7 @@ async function handleOneTimeCheckout(session, metadata, supabaseUserId, supabase
   if (stripeCustomerId) {
     await supabase.from('student_profiles').update({ stripe_customer_id: stripeCustomerId }).eq('id', student.id);
   }
+  await logActivity(supabase, supabaseUserId, 'purchased', { type });
 
   switch (type) {
     case 'session': {

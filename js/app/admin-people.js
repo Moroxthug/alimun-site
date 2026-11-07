@@ -176,7 +176,8 @@
       return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(day(n.created_at)) + '</span><span><span class="ts-note__text" dir="auto">' + esc(n.feedback_text) + '</span><small>' + esc(n.is_private ? 'Private: the student does not see it' : 'The student sees it') + '</small></span></div>';
     }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No notes yet.</p>') + '</section>';
     html += tutorCard(p.id, f);
-    html += mailForm(p.id, 'span-12', 6);
+    if (window.AlimunAdminActivity && p.user_id) html += window.AlimunAdminActivity.timelineCard(A, p.user_id, 6);
+    html += mailForm(p.id, 'span-12', 7);
     return html + sampleLine() + '</div>';
   }
   /* Tutor time (docs/AI_TUTOR_PLAN.md, part 1): the stored balance, its latest changes, and adding or removing minutes
@@ -384,6 +385,7 @@
     html += '<section class="card span-6" style="--i:3"><h2 class="t-h2">Reviews</h2>' + (f.reviews.length ? '<div class="tt-week">' + f.reviews.map(function (r) { return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(r.rating + ' of 5') + '</span><span><span class="ts-note__text" dir="auto">' + esc(r.review_text || '') + '</span><small>' + esc(day(r.created_at)) + '</small></span></div>'; }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No reviews yet.</p>') +
       '<h3 class="t-h3" style="margin-top:16px">Payouts</h3>' + (f.payouts.length ? '<div class="tt-week">' + f.payouts.map(function (x) { return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR' }).format(x.amount_eur)) + '</span><span><b>' + esc(day(x.period_start + 'T12:00:00') + ' – ' + day(x.period_end + 'T12:00:00')) + '</b><small>' + esc(x.status) + '</small></span></div>'; }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No payouts yet.</p>') + '</section>';
     html += mailForm(p.id, 'span-6', 4);
+    if (window.AlimunAdminActivity && p.user_id) html += window.AlimunAdminActivity.timelineCard(A, p.user_id, 5);
     return html + sampleLine() + '</div>';
   }
   function saveTeacher(form) {

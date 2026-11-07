@@ -382,6 +382,7 @@
   }
   function render(id, animate) {
     var r = byId[id];
+    if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('view', { dashboard: 'teacher', section: id });
     var mod = mode !== 'pending' && MODULES[id] ? MODULES[id]() : null;
     var html = mode === 'pending' ? pendingView() : id === 'today' ? todayView() : mod ? '' : soonView(r);
     var swap = function () {
@@ -449,6 +450,7 @@
     render(routeFromHash(), false);
   }
   function boot() {
+    if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('open_dashboard', { dashboard: 'teacher' });
     app = document.getElementById('app');
     loadingScreen = document.getElementById('loading');
     document.documentElement.lang = lang === 'ma' ? 'fr-MA' : lang;
