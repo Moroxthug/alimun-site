@@ -1408,3 +1408,7 @@ Owner: "yes to both, apply it and add them. also, allow admin to give plan to st
 ## 2026-11-07 — Captcha on in Supabase (growth step 1 done)
 
 - Owner, 7 Nov: Attack Protection → Turnstile with the secret. Checked through the API: sign-in and sign-up without a token or with a fake token answer `captcha_failed`. Server-side admin calls (reset links, invites) are not affected. Growth step 1 done.
+
+## 7 Nov 2026 — Classroom: "Could not create the video room"
+
+Daily room creation has never succeeded in production: `cron_runs` shows `vercel:cron-create-rooms` failing on every run since 27 Oct. Vercel holds two Daily keys (`DAILY_API_KEY`, `DAILY_CO_API_KEY`), both stored as sensitive, so they can't be read or tested from a session. `api/_lib/daily.js` now handles all Daily calls for join-session and the room cron. It tries the second key if Daily rejects the first as unauthorised, and records Daily's status and error code (never the key) in `cron_runs` under `daily:join-session`, plus `lastDailyError` on cron runs. Next step: read that row after a join attempt. If both keys are rejected, the owner pastes a fresh key from the Daily dashboard into `DAILY_API_KEY` and redeploys. `create-cohort.js` still reads `DAILY_API_KEY` directly.
