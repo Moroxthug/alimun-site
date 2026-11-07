@@ -11,7 +11,7 @@
 (function () {
   if (window.AlimunCaptcha) return;
   // Public site key from Cloudflare → Turnstile (safe in the browser). Empty = captcha off everywhere.
-  var SITE_KEY = '';
+  var SITE_KEY = '0x4AAAAAAF21wM8ag7AmQ4hx';
   var PROTECTED = [/^\/api\/send-admin-email\?action=(contact|subscribe)\b/, /^\/api\/auth\?action=reset\b/];
 
   var loading = null;
