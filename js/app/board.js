@@ -10,6 +10,10 @@
    "Everyone solves this" (step L4): the teacher starts a timed exercise on a page; each student works on a private copy
    and sends it ("Show the teacher", or by itself when the time is up); the teacher sees who has sent, opens any
    student's work, can show one to the class, and ends it, which brings everyone back to the shared board.
+   Saving (step L5): with o.persist, the teacher's browser saves the board to session_boards a few seconds after each
+   change and when the class page closes, and each student's solo work to session_board_work (by their Alimun user id
+   from the meeting token). load() fills an empty board from the database (another device). role 'viewer' draws a saved
+   board read-only for the class notes: the pages that were written on, then the solo work given in o.work.
    Drawing is in page pixels on a page 960 wide, so strokes land in the same place on every screen.
    Exercise answers stay hidden until the teacher reveals them (owner, 7 Nov 2026). */
 (function () {
@@ -28,7 +32,7 @@
 
   /* ---------- Static drawing of a board page ---------- */
   function create(o) {
-    var A = o.A, teacher = o.role === 'teacher', frame = o.frame;
+    var A = o.A, teacher = o.role === 'teacher', viewer = o.role === 'viewer', frame = viewer ? null : o.frame;
     var t = function (k, v) { return A.t(k, v); };
     var esc = A.esc;
     var md = function (s) { return window.AlimunEx ? window.AlimunEx.md(s) : esc(s); };
@@ -36,7 +40,8 @@
     var key = 'alimun-board-' + (o.sessionId || 'x');
     var S = { v: 1, show: false, course: o.course || null, lesson: o.lesson || null, page: 0, pages: {}, write: { m: 'none', who: null } };
     var course = null, root = null, tool = 'pen', color = 'ink', drawing = null, segTimer = null, pending = {}, alive = true, mine = {}, me = null;
-    var soloIt = [], soloId = null, soloSent = false, soloLocked = false, viewing = null, ticker = null;
+    var soloIt = [], soloId = null, soloSent = false, soloLocked = false, viewing = null, ticker = null, saveTimer = null, dirtyWork = {};
+    if (viewer && o.data) S = Object.assign(S, { course: o.data.course || null, lesson: o.data.lesson || null, pages: o.data.pages || {}, show: true });
     if (teacher) { try { var saved = JSON.parse(localStorage.getItem(key) || 'null'); if (saved && saved.v === 1) S = Object.assign(S, saved, { course: o.course || saved.course, lesson: o.lesson || saved.lesson }); } catch (e) { /* storage blocked */ } }
 
     function lessonPages() {
@@ -44,7 +49,27 @@
       return (l && l.board ? l.board : []).concat([{ title: t('app_bd_blank'), blocks: [] }]);
     }
     function pg(i) { return S.pages[i] || (S.pages[i] = { it: [], rv: false }); }
-    function save() { if (!teacher) return; try { localStorage.setItem(key, JSON.stringify(S)); } catch (e) { /* storage blocked */ } }
+    function save() { if (!teacher) return; try { localStorage.setItem(key, JSON.stringify(S)); } catch (e) { /* storage blocked */ } persist(false); }
+    /* The database copy (step L5): a few seconds after the last change, or at once when the class page closes */
+    function persist(now) {
+      if (!teacher || !o.persist || !window.AlimunData || !window.AlimunData.saveBoard) return;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(saveNow, now ? 0 : 6000);
+    }
+    function saveNow() {
+      clearTimeout(saveTimer); saveTimer = null;
+      if (!o.persist || !window.AlimunData) return;
+      var solos = (S.solos || []).map(function (x) { return { id: x.id, pg: x.pg, at: x.at }; });
+      var pgOf = {}; solos.forEach(function (x) { pgOf[x.id] = x.pg; });
+      var rows = [], sent = Object.keys(dirtyWork);
+      sent.forEach(function (k) {
+        var i = k.indexOf(':'), sid = k.slice(0, i), who = k.slice(i + 1), w = S.work && S.work[sid] && S.work[sid][who];
+        if (w && w.uid) rows.push({ session_id: o.sessionId, solo_id: sid, user_id: w.uid, name: String(w.name || '').slice(0, 100), page: pgOf[sid] || 0, items: w.it || [], sent_at: new Date(w.at || Date.now()).toISOString() });
+      });
+      window.AlimunData.saveBoard(o.sessionId, { course: S.course, lesson: S.lesson, pages: S.pages, solos: solos })
+        .then(function () { return window.AlimunData.saveBoardWork(rows); })
+        .then(function () { sent.forEach(function (k) { delete dirtyWork[k]; }); }, function () { /* kept in this browser; tried again on the next change */ });
+    }
     function people() { var ps = frame && frame.participants ? frame.participants() : {}; return Object.keys(ps).map(function (k) { return ps[k]; }); }
     function myId() { if (!me) { var l = people().filter(function (x) { return x.local; })[0]; me = l ? l.session_id : null; } return me; }
     function teacherId() { var x = people().filter(function (y) { return y.owner && !y.local; })[0]; return x ? x.session_id : null; }
@@ -193,8 +218,26 @@
         '<button class="btn btn--quiet btn--sm" type="button" data-bd="clear">' + esc(t('app_bd_clear')) + '</button>' +
         (pages[S.page].blocks.some(function (b) { return b.t === 'ex'; }) ? '<button class="btn btn--' + (p.rv ? 'primary' : 'ghost') + ' btn--sm" type="button" data-bd="reveal">' + esc(t(p.rv ? 'app_bd_hide_answers' : 'app_bd_reveal')) + '</button>' : '') + who + solo + '</div>';
     }
+    function paperHtml(title, page, items, rv) {
+      return '<div class="bd-stage"><div class="bd-paper" style="width:' + W + 'px"><h2 class="t-h2">' + esc(title) + '</h2>' +
+        '<div class="bd-content" lang="en">' + page.blocks.map(function (b) { return blockHtml(b, rv); }).join('') + '</div>' +
+        '<svg class="bd-ink" xmlns="http://www.w3.org/2000/svg">' + items.map(itemSvg).join('') + '</svg><div class="bd-notes">' + items.map(itemText).join('') + '</div></div></div>';
+    }
+    function digest() {
+      var pages = lessonPages(), html = '';
+      Object.keys(S.pages || {}).map(Number).sort(function (a, b) { return a - b; }).forEach(function (i) {
+        var p = S.pages[i]; if (!p || !pages[i] || !(p.it || []).length) return;
+        html += paperHtml(pages[i].title, pages[i], p.it, !!p.rv);
+      });
+      (o.work || []).forEach(function (w) {
+        var page = pages[Math.min(+w.page || 0, pages.length - 1)];
+        if (page && (w.items || []).length) html += paperHtml((w.own ? t('app_bd_your_work') : t('app_bd_work_of', { name: w.name || t('app_bd_student') })) + ': ' + page.title, page, w.items, false);
+      });
+      return html || '<p class="t-body">' + esc(t('app_bd_digest_empty')) + '</p>';
+    }
     function draw() {
       if (!root) return;
+      if (viewer) { root.innerHTML = '<div class="bd-digest">' + digest() + '</div>'; fit(); return; }
       var pages = lessonPages();
       if (S.page >= pages.length) S.page = pages.length - 1;
       if (!teacher && !S.show) { root.innerHTML = '<div class="bd-wait"><p class="t-body">' + esc(t('app_bd_wait')) + '</p></div>'; return; }
@@ -207,7 +250,9 @@
     function paper() { return root && root.querySelector('.bd-paper'); }
     /* The page is laid out 960 wide and scaled to the space it has */
     function fit() {
-      var pp = paper(); if (!pp) return;
+      if (root) Array.prototype.forEach.call(root.querySelectorAll('.bd-paper'), fitOne);
+    }
+    function fitOne(pp) {
       var stage = pp.parentNode, k = Math.min(1, stage.clientWidth / W);
       var h = Math.max(MINH, pp.querySelector('.bd-content').offsetHeight + 120);
       pp.style.height = h + 'px';
@@ -351,7 +396,8 @@
       if (!who || who.owner) return;
       var it = m.it.slice(0, 400).map(function (x) { return cleanItem(x, from); }).filter(Boolean);
       S.work = S.work || {}; S.work[S.solo.id] = S.work[S.solo.id] || {};
-      S.work[S.solo.id][from] = { name: who.user_name || '', it: it, at: Date.now() };
+      S.work[S.solo.id][from] = { name: who.user_name || '', uid: /^[0-9a-f-]{36}$/.test(String(who.user_id || '')) ? who.user_id : null, it: it, at: Date.now() };
+      dirtyWork[S.solo.id + ':' + from] = true;
       save();
       if (!drawing) draw();
     }
@@ -461,7 +507,7 @@
       if (k === 'back') { viewing = null; draw(); return; }
       if (k === 'spot') { var w = workOf(viewing); if (!w) return; S.spot = { name: w.name, pg: S.solo.pg, it: w.it }; save(); sendBig({ k: 'spot', on: true, name: w.name, pg: S.solo.pg, it: w.it }); draw(); return; }
       if (k === 'spotoff') { S.spot = null; save(); send({ k: 'spot', on: false }); draw(); return; }
-      if (k === 'end') { S.solo = null; S.spot = null; viewing = null; save(); send({ k: 'spot', on: false }); send({ k: 'solo', on: false }); tick(); draw(); }
+      if (k === 'end') { S.solo = null; S.spot = null; viewing = null; save(); persist(true); send({ k: 'spot', on: false }); send({ k: 'solo', on: false }); tick(); draw(); }
     }
 
     /* ---------- Setup ---------- */
@@ -481,8 +527,20 @@
       tick();
       return loadCourse(S.course).then(function (c) { course = c; draw(); });
     }
+    /* A board saved earlier (another device, or after the browser's copy was cleared): used only when this one is empty */
+    function load(saved) {
+      if (!teacher || !saved || !saved.board) return;
+      var empty = !Object.keys(S.pages || {}).some(function (k) { return (S.pages[k].it || []).length; });
+      if (!empty) return;
+      S.pages = saved.board.pages || {}; S.solos = saved.board.solos || [];
+      S.work = S.work || {};
+      (saved.work || []).forEach(function (w) { (S.work[w.solo_id] = S.work[w.solo_id] || {})[w.user_id] = { name: w.name || '', uid: w.user_id, it: w.items || [], at: Date.parse(w.sent_at) || Date.now() }; });
+      try { localStorage.setItem(key, JSON.stringify(S)); } catch (e) { /* storage blocked */ }
+      draw(); if (S.show) sendState();
+    }
     function setShow(on) { S.show = !!on; save(); send({ k: 'show', on: S.show }); if (on) sendState(); draw(); }
     function destroy() {
+      if (teacher && saveTimer) saveNow();
       alive = false; clearInterval(segTimer); clearInterval(ticker);
       if (frame) { try { frame.off('app-message', onMessage); frame.off('joined-meeting', onJoined); frame.off('participant-joined', onPeople); frame.off('participant-left', onPeople); } catch (e) { /* gone */ } }
       window.removeEventListener('resize', fit);
@@ -490,7 +548,7 @@
     }
     function onPeople() { if (teacher && root && !drawing) draw(); }
     if (frame) { frame.on('app-message', onMessage); frame.on('joined-meeting', onJoined); if (teacher) { frame.on('participant-joined', onPeople); frame.on('participant-left', onPeople); } }
-    return { mount: mountIn, show: setShow, shown: function () { return S.show; }, destroy: destroy, hello: onJoined, fit: fit, state: function () { return S; } };
+    return { mount: mountIn, show: setShow, shown: function () { return S.show; }, destroy: destroy, hello: onJoined, fit: fit, load: load, saveNow: saveNow, state: function () { return S; } };
   }
 
   window.AlimunBoard = { create: create };

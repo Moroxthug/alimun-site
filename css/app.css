@@ -1724,3 +1724,6 @@ a.nt-item:hover { background: var(--bone, #f0efe9); }
 .bd-solo { display: grid; gap: 10px; background: var(--t-lime); border-radius: var(--r-lg); padding: 16px 18px; }
 .bd-solo .t-h3 { margin: 0; }
 .bd-clock { font-family: Satoshi, sans-serif; font-weight: 700; font-size: 20px; font-variant-numeric: tabular-nums; text-transform: none; margin-inline-start: 8px; }
+.bd-digest { display: grid; gap: 16px; margin-top: 12px; }
+.cl-note__board { display: grid; gap: 12px; margin-top: 8px; }
+.tc-board-view { margin-top: 10px; }

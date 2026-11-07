@@ -316,6 +316,7 @@
         (n.exercises ? '<div><h4>' + esc(t('app_cl_note_ex')) + '</h4><p' + ta + '>' + esc(n.exercises) + '</p></div>' : '') +
         (n.homework ? '<div><h4>' + esc(t('app_cl_note_hw')) + '</h4><p' + ta + '>' + esc(n.homework) + (n.due_date ? ' <span class="t-small">' + esc(t('app_cl_due', { date: new Intl.DateTimeFormat(A.locale, { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(n.due_date + 'T12:00:00Z')) })) + '</span>' : '') + '</p></div>' : '') +
         (words.length ? '<div><h4>' + esc(t('app_cl_note_words')) + '</h4><dl class="lb-wl">' + words.map(function (v) { return '<div><dt' + ta + '>' + esc(v.word) + '</dt><dd>' + esc(v.definition || '') + (v.example ? '<br><i' + ta + '>' + esc(v.example) + '</i>' : '') + '</dd></div>'; }).join('') + '</dl></div>' : '') +
+        (n.board && n.session_id ? '<div class="cl-note__board"><button class="btn btn--ghost btn--sm" type="button" data-cl-board="' + esc(n.session_id) + '">' + esc(t('app_bd_see_class')) + '</button><div data-cl-boardview></div></div>' : '') +
         (pdf ? '<a class="btn btn--ghost btn--sm" href="' + esc(pdf) + '" target="_blank" rel="noopener">' + esc(t('app_cl_pdf')) + '</a>' : '') +
         '</div></details>';
     }).join('') + '</section>';
@@ -440,6 +441,18 @@
     root.__classes = true;
     root.addEventListener('click', function (e) {
       if (!C) return;
+      /* The board from a class (step L5): the written pages and the student's own exercise work, loaded when asked */
+      var bb = e.target.closest('[data-cl-board]');
+      if (bb && !bb.disabled && window.AlimunBoard && window.AlimunData.boardOf) {
+        var view = bb.parentNode.querySelector('[data-cl-boardview]');
+        bb.disabled = true;
+        window.AlimunData.boardOf(bb.getAttribute('data-cl-board')).then(function (saved) {
+          bb.hidden = true;
+          if (!saved.board) { view.innerHTML = '<p class="t-body">' + esc(t('app_bd_digest_empty')) + '</p>'; return; }
+          window.AlimunBoard.create({ A: A, role: 'viewer', data: saved.board, work: saved.work.map(function (w) { return Object.assign({}, w, { own: true }); }) }).mount(view);
+        }, function () { bb.disabled = false; view.innerHTML = '<p class="t-small st-msg is-bad">' + esc(t('app_bd_load_error')) + '</p>'; });
+        return;
+      }
       var el = e.target.closest('[data-cl]');
       if (!el || el.disabled) return;
       var a = el.getAttribute('data-cl');
