@@ -16,6 +16,7 @@
  *     note: 'Small print under the content (HTML allowed).',
  *     signoff: true,                 // "The Alimun team" with the book mark (default true)
  *     footer: 'Why this person gets this email (HTML allowed).',
+ *     unsubscribeUrl: mail.unsubscribeUrl(userId),   // marketing only: footer link (pass it to sendEmail too)
  *   });
  *   await sendEmail({ to, subject, html, text, replyTo });   // true only when Resend accepted it
  *
@@ -26,6 +27,8 @@
  * when a mail app darkens the email; apps that support it get a matching dark theme. Tables and inline styles so
  * Gmail, Outlook and phone apps show the same thing. No black backgrounds, no emojis, no AI wording.
  */
+
+const crypto = require('crypto');
 
 const SITE = 'https://alimun.com';
 const IMG = `${SITE}/images/email`;
@@ -134,7 +137,8 @@ function renderText({ heading, blocks = [], note, footer, signoff }) {
   return out.join('\n');
 }
 
-function renderEmail({ hero = 'default', preheader = '', heading, blocks = [], note = '', footer = '', signoff = true }) {
+function renderEmail({ hero = 'default', preheader = '', heading, blocks = [], note = '', footer = '', signoff = true, unsubscribeUrl = '' }) {
+  if (unsubscribeUrl) footer = `${footer ? footer + '<br>' : ''}You get these because you asked for news and offers from Alimun. <a href="${esc(safeHref(unsubscribeUrl))}" target="_blank" class="al-foot" style="color:${MUTED};text-decoration:underline;">Stop news and offers</a>`;
   const heroKey = HEROES[hero] ? hero : 'default';
   const firstButton = blocks.find((b) => b.button || b.buttons);
   const fallbackHref = firstButton ? safeHref((firstButton.buttons || [firstButton.button])[0].href) : '';
@@ -220,7 +224,7 @@ a { color: ${INK}; }
 }
 
 /** Send through Resend. Returns true only when Resend accepted the message. */
-async function sendEmail({ to, subject, html, text, replyTo, from }) {
+async function sendEmail({ to, subject, html, text, replyTo, from, unsubscribeUrl }) {
   const key = process.env.RESEND_API_KEY;
   if (!key || key.includes('YOUR_RESEND_API_KEY')) { console.error('[email] RESEND_API_KEY missing'); return false; }
   const payload = {
@@ -231,6 +235,8 @@ async function sendEmail({ to, subject, html, text, replyTo, from }) {
   };
   if (text) payload.text = text;
   if (replyTo) payload.reply_to = replyTo;
+  // One-click unsubscribe (RFC 8058): mail apps show their own Unsubscribe button and POST to the link.
+  if (unsubscribeUrl) payload.headers = { 'List-Unsubscribe': `<${unsubscribeUrl}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' };
   try {
     const r = await fetch('https://api.resend.com/emails', {
       method: 'POST',
@@ -249,4 +255,26 @@ async function sendEmail({ to, subject, html, text, replyTo, from }) {
   }
 }
 
-module.exports = { renderEmail, sendEmail, esc, heroForLanguage, HEROES, SITE };
+/* Unsubscribe links (docs/GROWTH_PLAN.md step 2): /api/auth?action=unsubscribe&u=<user id>&s=<signature>. The
+   signature is an HMAC of the user id with UNSUBSCRIBE_SECRET (Vercel), or, if that is not set, a key derived from the
+   service-role key, so links cannot be made for other people. */
+function unsubscribeKey() {
+  if (process.env.UNSUBSCRIBE_SECRET) return process.env.UNSUBSCRIBE_SECRET;
+  const base = process.env.SUPABASE_SERVICE_ROLE_KEY || '';
+  return base ? crypto.createHmac('sha256', base).update('alimun-unsubscribe-v1').digest('hex') : '';
+}
+function unsubscribeSig(userId) {
+  const key = unsubscribeKey();
+  return key ? crypto.createHmac('sha256', key).update(`unsubscribe:${userId}`).digest('base64url').slice(0, 32) : '';
+}
+function unsubscribeUrl(userId) {
+  const s = unsubscribeSig(userId);
+  return s ? `${SITE}/api/auth?action=unsubscribe&u=${encodeURIComponent(userId)}&s=${s}` : '';
+}
+function checkUnsubscribe(userId, sig) {
+  const want = unsubscribeSig(userId);
+  if (!want || typeof sig !== 'string' || sig.length !== want.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(want));
+}
+
+module.exports = { renderEmail, sendEmail, esc, heroForLanguage, HEROES, SITE, unsubscribeUrl, checkUnsubscribe };

@@ -20,7 +20,9 @@ no marketing at all to anyone under 16. Each step is shown to the owner before t
 - Tested with Cloudflare's test keys: tokens reach the protected endpoints and no others; the server accepts a valid
   token and refuses a missing or failed one.
 
-## Step 2. Country and consent at onboarding
+## Step 2. Country and consent at onboarding (built 7 Nov 2026, see PROGRESS)
+
+- As built: the country menu and both tick boxes sit on the sign-up account forms (learners and teachers), not in the welcome steps, so everyone is asked at the same moment.
 
 - Country: a picker in the welcome steps (`welcome.html`), pre-selected from the browser time zone, stored as an
   ISO 3166 code on `student_profiles.country` and `teacher_profiles.country` (and `email_signups.country` when known).

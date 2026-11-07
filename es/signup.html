@@ -15,6 +15,7 @@
 <script src="../js/i18n/en.js" defer=""></script><script src="../js/i18n/es.js" defer=""></script>
 <script src="../js/i18n.js" defer=""></script>
 <script src="/js/captcha.js"></script>
+<script src="/js/country.js"></script>
 </head>
 <body>
 <!--
@@ -43,6 +44,9 @@
             <div class="au_field"><label for="a-pw" data-i18n="au_password">Contraseña</label>
               <div class="au_pw"><input class="au_input" id="a-pw" type="password" autocomplete="new-password" minlength="8" required="" placeholder="Al menos 8 caracteres" data-i18n-placeholder="au_pw_hint"><button type="button" class="au_eye" data-eye="a-pw" data-i18n="au_show">Mostrar</button></div>
             </div>
+            <div class="au_field"><label for="a-country" data-i18n="au_country">País en el que vives</label><select class="au_input" id="a-country" autocomplete="country" required=""></select></div>
+            <label class="au_tick"><input type="checkbox" id="a-adult"><span data-i18n="au_age16">Tengo 16 años o más</span></label>
+            <label class="au_tick"><input type="checkbox" id="a-news" disabled=""><span data-i18n="au_marketing">Envíame novedades y ofertas de Alimun</span></label>
             <p class="au_msg" id="m-account" role="alert"></p>
             <button type="submit" class="au_btn" id="b-account"><span data-i18n="au_create_free">Crear mi cuenta gratuita</span></button>
             <p class="au_fine" data-i18n-html="au_terms_note">Al crear una cuenta aceptas los <a href="terms.html">Términos</a> y la <a href="gdpr.html">Política de privacidad</a>.</p>
@@ -81,6 +85,9 @@
             <div class="au_field"><label for="ta-pw" data-i18n="au_password">Contraseña</label>
               <div class="au_pw"><input class="au_input" id="ta-pw" type="password" autocomplete="new-password" minlength="8" required="" placeholder="Al menos 8 caracteres" data-i18n-placeholder="au_pw_hint"><button type="button" class="au_eye" data-eye="ta-pw" data-i18n="au_show">Mostrar</button></div>
             </div>
+            <div class="au_field"><label for="ta-country" data-i18n="au_country">País en el que vives</label><select class="au_input" id="ta-country" autocomplete="country" required=""></select></div>
+            <label class="au_tick"><input type="checkbox" id="ta-adult"><span data-i18n="au_age16">Tengo 16 años o más</span></label>
+            <label class="au_tick"><input type="checkbox" id="ta-news" disabled=""><span data-i18n="au_marketing">Envíame novedades y ofertas de Alimun</span></label>
             <p class="au_msg" id="m-teach-account" role="alert"></p>
             <div class="au_actions">
               <button type="button" class="au_btn is-ghost is-auto" id="b-teach-back"><span data-i18n="au_back">Atrás</span></button>
@@ -139,6 +146,8 @@
   <span data-i18n="au_err_exists">Este correo ya tiene una cuenta.</span>
   <span data-i18n="au_err_generic">Algo ha salido mal. Inténtalo de nuevo.</span>
   <span data-i18n="au_err_spec">Añade tu especialidad docente.</span>
+  <span data-i18n="au_err_country">Elige el país en el que vives.</span>
+  <span data-i18n="au_country_pick">Elige tu país</span>
   <span data-i18n="au_err_rate">Demasiados intentos en este momento. Espera unos minutos e inténtalo de nuevo.</span>
   <span data-i18n="au_resent">Enviado. Puede tardar uno o dos minutos en llegar.</span>
   <span data-i18n="au_resend_wait">Podrás enviarlo de nuevo en {s} segundos.</span>
@@ -154,6 +163,19 @@ const esc = (v) => String(v == null ? '' : v).replace(/[&<>"']/g, (c) => ({ '&':
 // Text set by this script: drop the element's translation key so js/i18n.js does not put the generic text back.
 const setText = (el, text) => { el.removeAttribute('data-i18n'); el.removeAttribute('data-i18n-html'); el.textContent = text; };
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Country (pre-selected from the time zone) and the news-and-offers choice, only for people 16 or older (docs/GROWTH_PLAN.md step 2).
+const MARKETING_WORDING = 'v1';
+function setupExtras(pfx) {
+  const sel = $(pfx + '-country'), adult = $(pfx + '-adult'), news = $(pfx + '-news');
+  const guess = window.AlimunCountry ? window.AlimunCountry.guess() : '';
+  sel.innerHTML = '<option value="" data-i18n="au_country_pick">' + t('au_country_pick') + '</option>' + (window.AlimunCountry ? window.AlimunCountry.options(document.documentElement.lang || 'en', guess) : '');
+  adult.addEventListener('change', () => { news.disabled = !adult.checked; if (!adult.checked) news.checked = false; });
+}
+function extras(pfx) {
+  const country = $(pfx + '-country').value, adult = $(pfx + '-adult').checked;
+  return { country, marketing: { opt_in: adult && $(pfx + '-news').checked, age_16_plus: adult, wording: MARKETING_WORDING } };
+}
+setupExtras('a'); setupExtras('ta');
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 const WAITLIST_ONLY = ['Mandarin', 'Japanese', 'Arabic'];
 const TIERS = ['community', 'focused', 'intensive', 'private'];
@@ -240,8 +262,9 @@ function startLearner(r) {
     if (!name) return msg('m-account', t('au_err_name'));
     if (!EMAIL.test(email)) return msg('m-account', t('au_err_email'));
     if (pw.length < 8) return msg('m-account', t('au_err_pw'));
+    if (!$('a-country').value) return msg('m-account', t('au_err_country'));
     const placement = r.level ? { language: r.language, level: r.level, skills: r.skills || null, topics: (r.topics || []).slice(0, 5), at: r.at || null } : { language: r.language, level: null, waitlist: true };
-    signUp({ name, email, pw, data: { role: 'student', onboarding: { placement, intent } }, btn: $('b-account'), msgId: 'm-account' });
+    signUp({ name, email, pw, data: { role: 'student', onboarding: { placement, intent }, ...extras('a') }, btn: $('b-account'), msgId: 'm-account' });
   });
 }
 function languageName(lang) {
@@ -269,7 +292,8 @@ function startTeacher() {
     if (!name) return msg('m-teach-account', t('au_err_name'));
     if (!EMAIL.test(email)) return msg('m-teach-account', t('au_err_email'));
     if (pw.length < 8) return msg('m-teach-account', t('au_err_pw'));
-    signUp({ name, email, pw, data: { role: 'teacher', teacher_application: application }, btn: $('b-teach-account'), msgId: 'm-teach-account' });
+    if (!$('ta-country').value) return msg('m-teach-account', t('au_err_country'));
+    signUp({ name, email, pw, data: { role: 'teacher', teacher_application: application, ...extras('ta') }, btn: $('b-teach-account'), msgId: 'm-teach-account' });
   });
 }
 
