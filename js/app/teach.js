@@ -190,7 +190,7 @@
         '<header class="top">' +
           '<a class="top__brand" href="#/today" aria-label="' + esc(t('app_home_link')) + '">' + Cast.book('idle') + Cast.wordmark() + '</a>' +
           '<p class="top__title" aria-hidden="true"></p>' +
-          '<div class="top__actions"><a class="avatar" href="#/settings" aria-label="' + esc(t('app_account')) + '">' + esc(initials(tp.full_name)) + '</a></div>' +
+          '<div class="top__actions">' + (mode === 'pending' ? '' : '<button class="icon-btn" type="button" data-bell aria-label="' + esc(t('app_notifications')) + '">' + icon('bell') + '</button>') + '<a class="avatar" href="#/settings" aria-label="' + esc(t('app_account')) + '">' + esc(initials(tp.full_name)) + '</a></div>' +
         '</header>' +
         '<main class="view" id="view" tabindex="-1"></main>' +
       '</div>' +
@@ -447,6 +447,7 @@
   /* ---------- Boot ---------- */
   function start() {
     renderShell();
+    if (window.AlimunBell) window.AlimunBell.attach(document.querySelector('[data-bell]'), helpers, mode === 'real' && !(window.AlimunData && window.AlimunData.viewingAs && window.AlimunData.viewingAs()));
     render(routeFromHash(), false);
   }
   function boot() {

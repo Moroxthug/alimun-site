@@ -211,7 +211,7 @@
           '<p class="top__title" aria-hidden="true"></p>' +
           '<div class="top__actions">' +
             '<button class="course-btn" type="button" aria-label="' + esc(t('app_course_label', { language: lng })) + '">' + buddySvg + '<span>' + esc(lng) + '</span></button>' +
-            '<button class="icon-btn" type="button" aria-label="' + esc(t('app_notifications')) + '">' + icon('bell') + '</button>' +
+            '<button class="icon-btn" type="button" data-bell aria-label="' + esc(t('app_notifications')) + '">' + icon('bell') + '</button>' +
             '<button class="avatar" type="button" aria-label="' + esc(t('app_account')) + '">' + esc(initials(D.profile.name)) + '</button>' +
           '</div>' +
         '</header>' +
@@ -652,6 +652,7 @@
   function start() {
     var back = fromStripe();
     renderShell();
+    if (window.AlimunBell) window.AlimunBell.attach(document.querySelector('[data-bell]'), readerHelpers, mode === 'real' && !(window.AlimunData && window.AlimunData.viewingAs && window.AlimunData.viewingAs()));
     render(routeFromHash(), false);
     if (back) stripeNote(back);
   }
