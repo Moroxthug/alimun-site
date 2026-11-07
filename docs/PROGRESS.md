@@ -1449,3 +1449,11 @@ Owner: "draft the privacy wording, then start step 4".
 - Checked: the endpoint with Supabase and Resend stubbed (student refused, filters cleaned, outside links refused, test goes only to the admin, count guard, batch with greeting, unsubscribe and click link, bell rows, real and forged clicks); `campaign_audience` callable by the server, refused to anonymous visitors; the page in sample mode on desktop and phone, no errors.
 - The real audience is 0 today: the tick box exists since 6 Nov. Existing users can opt in under Settings → News and offers.
 - Next (step 4c): automatic reminders, each approved by the owner first.
+
+## 2026-11-07 — Growth step 4c: automatic reminders
+
+Owner: "build all three, bell and email".
+- `supabase/migrations/202611071800_reminders.sql` (applied): `reminder_log` (admin read only), switches in `app_settings` (`reminder_practice_7d`, `reminder_level_test_2d`, `reminder_tutor_free_out`; set to `off` in Admin → System → App settings to pause one), `reminders_due()` (admins and the server only). Rules: no practice for 7 days (last activity under 60 days old, again at most every 14 days); level test 2 to 30 days ago with no plan, given plan or class (once); free tutor minutes used up on the free plan with no plan or bought minutes (at most every 30 days).
+- `api/cron-reminders.js` (Vercel cron daily 16:41 UTC, `CRON_SECRET`, `?dry=1` lists without sending, run recorded in `cron_runs`): bell notification for everyone due (`app_nt_reminder_*`, 9 languages); email only to people with news-and-offers yes (16+), from the marketing address, with unsubscribe link and headers, the language buddy picture, and the level from their test. Emails are in English (the dashboard language is kept in the browser only).
+- Due on the first run (checked today): 9 level-test reminders, 1 practice reminder, 0 emails (nobody opted in yet). Some of the 9 may be owner test accounts.
+- Checked: the job with Supabase and Resend stubbed (secret required, dry run writes nothing, bell for both, email only for the opted-in person, log rows); `reminders_due` refused to students.

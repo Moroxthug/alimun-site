@@ -23,11 +23,12 @@
   }
   /* Written out in full so the translation split (scripts/split-translations.js) files them with the dashboard text */
   var KEYS = { homework_graded: 'app_nt_homework_graded', homework_graded_noscore: 'app_nt_homework_graded_noscore', place_offered: 'app_nt_place_offered',
-    session_moved: 'app_nt_session_moved', session_cancelled: 'app_nt_session_cancelled', notes_ready: 'app_nt_notes_ready', student_joined: 'app_nt_student_joined' };
+    session_moved: 'app_nt_session_moved', session_cancelled: 'app_nt_session_cancelled', notes_ready: 'app_nt_notes_ready', student_joined: 'app_nt_student_joined',
+    reminder_practice: 'app_nt_reminder_practice', reminder_level_test: 'app_nt_reminder_level_test', reminder_tutor_free: 'app_nt_reminder_tutor_free' };
   function cls(p) { return (A.languageName ? A.languageName(p.language) : p.language) + (p.level ? ' ' + p.level : ''); }
   function text(n) {
     if (!n.key) return { title: n.title || '', body: n.body || '' };
-    var p = n.params || {}, v = { title: p.title || '', score: p.score, class: cls(p), at: p.at ? when(p.at) : '', was: p.was ? when(p.was) : '', until: p.until ? when(p.until) : '', name: p.name || '' };
+    var p = n.params || {}, v = { level: p.level || '', title: p.title || '', score: p.score, class: cls(p), at: p.at ? when(p.at) : '', was: p.was ? when(p.was) : '', until: p.until ? when(p.until) : '', name: p.name || '' };
     var key = n.key === 'homework_graded' && p.score == null ? KEYS.homework_graded_noscore : KEYS[n.key];
     return { title: key ? A.t(key, v) : '', body: '' };
   }

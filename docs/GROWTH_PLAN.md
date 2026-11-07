@@ -45,7 +45,7 @@ no marketing at all to anyone under 16. Each step is shown to the owner before t
   consent: the cookie banner's analytics and marketing switches decide that. The Privacy page is updated to say so.
 - Retention: events older than 24 months are deleted by the daily cron.
 
-## Step 4. Notifications and campaigns (4a bell and 4b campaigns built 7 Nov 2026; 4c reminders next)
+## Step 4. Notifications and campaigns (4a bell, 4b campaigns and 4c reminders built 7 Nov 2026)
 
 - In-app: a `notifications` table and a bell in the student and teacher dashboards; service messages (class moved,
   homework graded, place open) for everyone, offers only for people with consent.
