@@ -277,4 +277,15 @@ function checkUnsubscribe(userId, sig) {
   return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(want));
 }
 
-module.exports = { renderEmail, sendEmail, esc, heroForLanguage, HEROES, SITE, unsubscribeUrl, checkUnsubscribe };
+/** A short signature for links the server checks later (campaign click links), with the same key as unsubscribe links. */
+function linkSig(data) {
+  const key = unsubscribeKey();
+  return key ? crypto.createHmac('sha256', key).update(`link:${data}`).digest('base64url').slice(0, 24) : '';
+}
+function checkLinkSig(data, sig) {
+  const want = linkSig(data);
+  if (!want || typeof sig !== 'string' || sig.length !== want.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(want));
+}
+
+module.exports = { renderEmail, sendEmail, esc, heroForLanguage, HEROES, SITE, unsubscribeUrl, checkUnsubscribe, linkSig, checkLinkSig };
