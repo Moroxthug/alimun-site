@@ -1477,3 +1477,12 @@ Owner: "yes save their dashboard language and translate the emails".
 - Reminders are written in each person's language; campaigns greet each recipient and show the email's own lines in their language, with the admin's text as written, and Campaigns has a "Dashboard language" filter so each language can get its own version. The test send uses the chosen filter language.
 - Checked: reminders rendered in all 9 languages and Arabic on a phone, German on desktop; duplicate footer line removed; earlier reminder and campaign tests still pass; dashboards, sign-up and Campaigns load with no errors; a teacher can set their own `ui_lang` and invalid values are refused.
 - Today nobody has a saved language yet: it fills in as people sign up or open their dashboard. Other emails (password reset, invites, class and payment emails) are still English; same mechanism when wanted.
+
+## 2026-11-07 — English A1 second edition replaces the old A1 book
+
+Owner: "do the translations, audio and switch".
+- The eight new units replace `site/src/data/books/units/English-A1/u1.js` to `u8.js`; the preview book file and folder are removed (the preview mechanism, `preview: true` and `/data/books/preview.json`, stays for the next book).
+- Explanations translated into es, fr, de, pt, zh, ar, it (`site/src/data/books/i18n/English-A1.<lang>.json`, 1,318 strings each, none missing); A1 had no translations before. Four table columns that hold English examples (alphabet sounds, skills, transport, present-continuous pronouns) are no longer marked as explanations.
+- New dialogue speakers added to the voice lists in `site/src/data/books/audio.js`.
+- Checked: `node scripts/check-book.mjs English-A1` ok; site build; `node scripts/play-books.js English-A1 --data=local` (32 lessons, 8 tests, no problems) and in Arabic for two units.
+- For the owner: the course audio for the new sentences is made on /app/audio (Start, with the spending cap). Students who had finished an old A1 lesson see the new one with the same id as done.
