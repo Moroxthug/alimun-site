@@ -39,7 +39,7 @@ const { recordRun } = require('./_lib/cron-log.js');
 
 /** Private Daily room named `roomName`, valid until `expEpoch`, plus a meeting token. */
 async function roomAndToken(roomName, expEpoch, displayName, userId, isOwner) {
-  const properties = { exp: expEpoch, eject_at_room_exp: true, enable_recording: false, max_participants: 4 };
+  const properties = { exp: expEpoch, eject_at_room_exp: true, enable_recording: false, max_participants: 4, enable_chat: true, enable_emoji_reactions: false };
   let url = null;
   const refreshed = await dailyFetch(`/rooms/${roomName}`, { method: 'POST', body: JSON.stringify({ properties }) });
   if (refreshed.ok && refreshed.body?.url) url = refreshed.body.url;
@@ -198,6 +198,7 @@ module.exports = async function handler(req, res) {
       enable_knocking: false,
       start_video_off: false,
       eject_at_room_exp: true,
+      enable_emoji_reactions: false,
     };
     let roomUrl = null;
 

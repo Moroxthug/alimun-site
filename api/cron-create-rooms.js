@@ -72,6 +72,7 @@ async function createDailyRoom(session, summary) {
         start_video_off: false,
         eject_at_room_exp: true,
         enable_recording: false,
+        enable_emoji_reactions: false,
       },
     }),
   });

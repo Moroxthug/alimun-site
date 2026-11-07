@@ -209,6 +209,18 @@
       '<div class="cl-live__body"><div class="cl-live__frame" data-frame><div class="cl-live__wait"><div class="loader" style="--w:64px" aria-hidden="true">' + A.loaderInner() + '</div><p class="t-body" data-livemsg>' + esc(t('app_tc_opening')) + '</p></div></div>' +
       side + '</div></div>';
   }
+  /* Daily Prebuilt in Alimun's colours and the dashboard's language (Daily has no Arabic or Chinese: English; Darija: French).
+     The name comes from the meeting token, so it is not asked for or changed in the room. */
+  var DAILY_LANGS = { en: 'en', es: 'es', fr: 'fr', de: 'de', it: 'it', pt: 'pt', ma: 'fr' };
+  function roomOptions() {
+    return {
+      iframeStyle: { width: '100%', height: '100%', border: '0', borderRadius: '20px', background: '#1a443c' },
+      showLeaveButton: true, showFullscreenButton: true, showUserNameChangeUI: false,
+      lang: DAILY_LANGS[A && A.lang] || 'en',
+      theme: { colors: { accent: '#ceff65', accentText: '#080808', background: '#ffffff', backgroundAccent: '#f0efe9', baseText: '#080808', border: '#eeeeec',
+        mainAreaBg: '#1a443c', mainAreaBgAccent: '#285449', mainAreaText: '#ffffff', supportiveText: '#5c5c5a' } }
+    };
+  }
   function loadDaily() {
     if (window.DailyIframe) return Promise.resolve(window.DailyIframe);
     return new Promise(function (ok, no) {
@@ -238,7 +250,7 @@
           if (!box) return;
           box.innerHTML = '';
           leave();
-          call = D.createFrame(box, { iframeStyle: { width: '100%', height: '100%', border: '0', borderRadius: '20px', background: '#080808' }, showLeaveButton: true, showFullscreenButton: true });
+          call = D.createFrame(box, roomOptions());
           call.on('left-meeting', function () { leave(); if (location.hash.indexOf('#/classes/live') === 0) location.hash = '#/classes'; });
           return call.join(j.token ? { url: url, token: j.token } : { url: url });
         });

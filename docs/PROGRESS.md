@@ -1412,3 +1412,11 @@ Owner: "yes to both, apply it and add them. also, allow admin to give plan to st
 ## 7 Nov 2026 — Classroom: "Could not create the video room"
 
 Daily room creation has never succeeded in production: `cron_runs` shows `vercel:cron-create-rooms` failing on every run since 27 Oct. Vercel holds two Daily keys (`DAILY_API_KEY`, `DAILY_CO_API_KEY`), both stored as sensitive, so they can't be read or tested from a session. `api/_lib/daily.js` now handles all Daily calls for join-session and the room cron. It tries the second key if Daily rejects the first as unauthorised, and records Daily's status and error code (never the key) in `cron_runs` under `daily:join-session`, plus `lastDailyError` on cron runs. Next step: read that row after a join attempt. If both keys are rejected, the owner pastes a fresh key from the Daily dashboard into `DAILY_API_KEY` and redeploys. `create-cohort.js` still reads `DAILY_API_KEY` directly.
+
+## 2026-11-07 — Classroom (Daily) in Alimun's colours
+
+Owner: "do 1 and 2, keep chat, no emoji reactions".
+- Student and teacher classrooms (`js/app/classes.js`, `js/app/teach-classes.js`, `roomOptions()`): Daily Prebuilt theme in site and dashboard colours (lime buttons on white and bone, forest video area), room language from the dashboard (Daily has no Arabic or Chinese: English; Darija: French), name taken from the meeting token with no rename option.
+- Rooms (`api/join-session.js` for classes and 1 on 1, `api/cron-create-rooms.js`): chat on, emoji reactions off (`enable_emoji_reactions: false`), applied to existing rooms on the next join because join-session refreshes the room's properties.
+- Checked: Daily accepted the frame options in a browser (no join), `node --check`, dashboards boot in `?preview=1` with no console errors. The look in a live call is for the owner to confirm.
+- Whiteboard: proposed, not built (owner to confirm the plan).
