@@ -1516,6 +1516,12 @@ Owner: "translate the admin emails and unsubscribe page too".
 
 Owner: "translate the approve and reject pages too". The pages that open from the application email (confirm, done, already decided, and the error pages) use `admin_email_lang`, like the email, with right to left for Arabic. New text group `decide` in all 8 languages (180 keys per file, placeholders checked). Checked through the handler with stand-ins: broken link (German), confirm decline (French), confirmed approval with the teacher emailed (French), already approved (Arabic), confirm approve (English). Every email and page Alimun sends now follows a language: the reader's for students and teachers, `admin_email_lang` for the admin.
 - Owner, 7 Nov: `admin_email_lang` set to `fr` (checked live: the approve page answers in French).
+## 2026-11-07 — Class lessons on class dates
+
+Owner: "yes, start attaching lessons to class dates".
+- Database (`supabase/migrations/202611071800_session_lessons.sql`, applied and verified): `class_courses` (English-A1, 48), `cohorts.lesson_start`, `sessions.lesson_no` and `lesson_pinned`. `assign_cohort_lessons()` numbers a class's dates in order (cancelled dates none, past dates keep theirs, dates the teacher chose keep theirs, the rest follow on; past the end of the course none), run by triggers whenever dates are added, moved or cancelled. `set_session_lesson()` for the teacher (or admin) of the class: a lesson, none, or back to automatic; later dates continue after it. `set_cohort_lesson_start()` for where a class starts. Existing English A1 class (jos boch): 60 dates, the first 48 numbered 1 to 48.
+- Checked in the database with rollback: the teacher's change renumbers later dates (11 Nov to lesson 5, then 6, 7...); a teacher cannot write dates directly (0 rows); a student is refused ("not your class").
+- Teacher dashboard: the class date page ("Prepare") opens with "Lesson for this class" (title, kind, focus, open the lesson, change it: next in the course, any lesson, or none); the next-class card names the lesson; the classroom side panel links to it. Labels in nine languages. Sample mode: the second sample class is English A1 with its lessons. Checked with Playwright: choosing lesson 10 makes the next date lesson 11; no console errors.
 
 ## 2026-11-07 — Privacy page updated (owner approved)
 
