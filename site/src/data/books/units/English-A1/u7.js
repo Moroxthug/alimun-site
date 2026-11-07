@@ -1,4 +1,6 @@
-// English A1, unit 7 (docs/BOOKS.md). Draft for native-teacher review.
+// English A1, unit 7, second edition (docs/LESSONS_PLAN.md, "Books, second edition"). Style approved by the owner 7 Nov 2026; draft for native-teacher review.
+// Each lesson: a full explanation first (the rule in plain words, why, many examples, the usual mistakes, a text that
+// uses it), then fewer exercises from controlled to free, one speaking task, and one task in the format of the A2 Key exam.
 export const UNIT = {
   id: 'u7',
   title: 'Clothes and weather',
@@ -6,96 +8,110 @@ export const UNIT = {
   art: 'sun',
   tags: { skills: ['vocabulary', 'grammar', 'speaking', 'reading'], topics: ['clothes', 'colours', 'weather', 'seasons', 'months', 'present continuous'], goals: ['foundations'] },
   pages: [
+    /* ------------------------------------------------------------------ Lesson 1 */
     {
       id: 'p1',
       title: 'What do you wear?',
-      about: 'Name clothes and colours and put the adjective before the noun.',
+      about: 'Name clothes and colours, use a pair of, and put the adjective before the noun.',
       art: 'sun',
       spreads: [
         [
-          { t: 'text', md: 'Use **wear** to talk about clothes: *I wear a coat in winter. She wears a red dress.* Here are common clothes. Some are always **plural**: *trousers, jeans, shoes, boots, socks*. Say **a pair of** to talk about one of them: *a pair of jeans*. Say **these** and **are** with them: *These jeans are new.*' },
-          { t: 'table', caption: 'Clothes', explain: ['head', 'col1'], quiz: true, head: ['Word', 'Example'], rows: [
-            ['shirt', 'He wears a white shirt.'],
-            ['jumper', 'I like your grey jumper.'],
-            ['jacket', 'She has got a black jacket.'],
-            ['coat', 'I wear a coat in winter.'],
-            ['dress', 'She wears a yellow dress.'],
-            ['skirt', 'I’d like a blue skirt.'],
-            ['trousers', 'These trousers are new.'],
-            ['jeans', 'I wear jeans every day.'],
-            ['shoes', 'My shoes are brown.'],
-            ['hat', 'He wears a hat in the sun.'],
+          { t: 'text', md: 'Use the verb **wear** to talk about clothes: *I wear a coat in winter. She wears a red dress to work.* (Not *I carry a coat* or *I use a dress*: in English, clothes go with **wear**.)\n\nSome clothes are **one thing**: *a shirt, a dress, a coat, a jumper, a hat*. Use **a** or **an** with them.\n\nOther clothes have **two legs** or come in **two parts**, and they are always **plural**: *trousers, jeans, shorts, shoes, boots, socks*. You cannot say *a trouser*. To count them, say **a pair of**: *a pair of jeans, two pairs of socks*.' },
+          { t: 'table', caption: 'Clothes', explain: ['head', 'col1'], quiz: true, head: ['Word', 'One thing or plural?'], rows: [
+            ['a shirt', 'one thing'],
+            ['a T-shirt', 'one thing'],
+            ['a jumper', 'one thing'],
+            ['a dress', 'one thing'],
+            ['a skirt', 'one thing'],
+            ['a coat', 'one thing'],
+            ['a hat', 'one thing'],
+            ['trousers', 'always plural: a pair of trousers'],
+            ['jeans', 'always plural: a pair of jeans'],
+            ['shoes', 'plural: a pair of shoes'],
+            ['socks', 'plural: a pair of socks'],
           ] },
-          { t: 'tip', art: 'owl', md: 'Some words are different in the USA. A **jumper** in Britain is a **sweater** in the USA. **Trousers** are **pants**, and **trainers** are **sneakers**. In Britain, **pants** are underwear.' },
+          { t: 'tip', art: 'owl', md: 'Because **trousers** and **jeans** are plural, the verb is plural too: *My jeans **are** new. These trousers **are** too long.* Not *my jeans is new*.' },
         ],
         [
-          { t: 'text', md: 'An **adjective** goes **before** the noun and it never changes: *a red coat, red coats*. Do not put it after the noun: not *a coat red*. Here are the main colours.' },
+          { t: 'text', md: 'An **adjective** (a word that describes, like a colour) goes **before** the noun: *a **red** coat, **black** shoes*. Many languages put it after the noun, but English does not: never *a coat red*.\n\nAdjectives in English **never change**. They are the same for one thing and for many things, for a man and for a woman: *a blue shirt, two blue shirts*. Never *blues shirts*.' },
           { t: 'table', caption: 'Colours', explain: ['head'], quiz: true, head: ['Colour', 'Example'], rows: [
-            ['red', 'a red coat'],
-            ['blue', 'blue jeans'],
-            ['green', 'a green scarf'],
-            ['yellow', 'a yellow dress'],
             ['black', 'black shoes'],
             ['white', 'a white shirt'],
-            ['grey', 'a grey jumper'],
+            ['red', 'a red dress'],
+            ['blue', 'blue jeans'],
+            ['green', 'a green jumper'],
+            ['yellow', 'a yellow T-shirt'],
             ['brown', 'brown boots'],
+            ['grey', 'a grey coat'],
+            ['pink', 'pink socks'],
+          ] },
+          { t: 'examples', items: [
+            { s: 'I usually **wear** jeans and a T-shirt.', n: '*wear* + clothes.' },
+            { s: 'She has a **new red** coat.', n: 'Two adjectives, both before the noun.' },
+            { s: 'I need **a pair of** black shoes.', n: '*a pair of* + a plural word.' },
+            { s: 'My **trousers are** too short.', n: 'Plural word, plural verb.' },
+          ] },
+        ],
+        [
+          { t: 'table', caption: 'Three common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['a coat red', 'a red coat', 'The adjective goes before the noun.'],
+            ['I bought a jean.', 'I bought a pair of jeans.', '*jeans* is always plural.'],
+            ['two blacks shoes', 'two black shoes', 'Adjectives never take *-s*.'],
           ] },
           { t: 'dialogue', title: 'A new coat', lines: [
-            { who: 'Ben', s: 'I like your coat, Grace.' },
-            { who: 'Grace', s: 'Thanks. It’s new.' },
-            { who: 'Ben', s: 'Is it warm?' },
-            { who: 'Grace', s: 'Yes, it’s very warm. And the colour is nice, too. It’s dark green.' },
+            { who: 'Assistant', s: 'Hello. Can I help you?' },
+            { who: 'Tom', s: 'Yes, please. I need a warm coat for winter.' },
+            { who: 'Assistant', s: 'What colour do you like?' },
+            { who: 'Tom', s: 'I usually wear black or grey.' },
+            { who: 'Assistant', s: 'What about this grey coat? It’s very warm.' },
+            { who: 'Tom', s: 'It’s nice! And do you have a pair of black gloves?' },
+            { who: 'Assistant', s: 'Yes, they’re over there, next to the hats.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Write the verb wear.', items: [
-            { q: 'I ___ a coat in winter.', a: ['wear'], why: 'With *I*: *wear*.' },
-            { q: 'She ___ a red dress.', a: ['wears'], why: 'With *she*: *wears*.' },
-            { q: 'They ___ jeans every day.', a: ['wear'], why: 'With *they*: *wear*.' },
-            { q: 'He ___ a hat in the sun.', a: ['wears'], why: 'With *he*: *wears*.' },
+          { t: 'ex', kind: 'sort', h: 'One thing or a pair? Sort the clothes.', groups: ['one thing (a …)', 'always plural (a pair of …)'], explain: ['groups'], items: [
+            { s: 'shirt', g: 0, why: '*a shirt*: one thing.' },
+            { s: 'jeans', g: 1, why: '*a pair of jeans*: always plural.' },
+            { s: 'dress', g: 0, why: '*a dress*: one thing.' },
+            { s: 'trousers', g: 1, why: '*a pair of trousers*: always plural.' },
+            { s: 'jumper', g: 0, why: '*a jumper*: one thing.' },
+            { s: 'shorts', g: 1, why: '*a pair of shorts*: always plural.' },
           ] },
-          { t: 'ex', kind: 'sort', h: 'One thing or a pair? Sort the clothes.', groups: ['one thing', 'a pair (plural)'], explain: ['groups'], items: [
-            { s: 'shirt', g: 0, why: 'One thing: *a shirt*.' },
-            { s: 'jeans', g: 1, why: 'Always plural: *a pair of jeans*.' },
-            { s: 'coat', g: 0, why: 'One thing: *a coat*.' },
-            { s: 'shoes', g: 1, why: 'Always plural: *a pair of shoes*.' },
-            { s: 'trousers', g: 1, why: 'Always plural: *a pair of trousers*.' },
-            { s: 'dress', g: 0, why: 'One thing: *a dress*.' },
-            { s: 'socks', g: 1, why: 'Always plural: *a pair of socks*.' },
-            { s: 'hat', g: 0, why: 'One thing: *a hat*.' },
+          { t: 'ex', kind: 'select', h: 'Choose the right words.', items: [
+            { q: 'She is wearing ___.', o: ['a blue dress', 'a dress blue', 'a blues dress'], why: 'Adjective before the noun, with no *-s*.' },
+            { q: 'My new jeans ___ very comfortable.', o: ['are', 'is', 'am'], why: '*jeans* is plural: *are*.' },
+            { q: 'I need a new ___ of shoes.', o: ['pair', 'two', 'piece'], why: '*a pair of shoes*.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'match', h: 'Find the colour.', pairs: [
-            ['the sky', 'blue'],
-            ['grass', 'green'],
-            ['a banana', 'yellow'],
-            ['snow', 'white'],
+          { t: 'ex', kind: 'fix', h: 'Each sentence has one mistake. Find it and fix it.', items: [
+            { s: 'He has a [car blue].', a: ['blue car'], why: 'Adjective before the noun.' },
+            { s: 'These trousers [is] too long.', a: ['are'], why: '*trousers* is plural.' },
+            { s: 'I like your [reds] shoes.', a: ['red'], why: 'Adjectives never take *-s*.' },
           ] },
-          { t: 'ex', kind: 'choice', h: 'Choose the right word.', items: [
-            { q: 'I have got a ___ coat.', o: ['red', 'reds', 'redly'], why: 'An adjective never changes.' },
-            { q: 'Where does the adjective go?', o: ['a red coat', 'a coat red', 'a coat of red'], why: 'The adjective goes before the noun.' },
-            { q: 'These ___ are new.', o: ['trousers', 'trouser', 'a trousers'], why: '*Trousers* is always plural.' },
-          ] },
-          { t: 'ex', kind: 'odd', h: 'Find the odd one out.', items: [
-            { o: ['blue', 'shirt', 'jacket', 'dress'], why: '*Blue* is a colour. The others are clothes.' },
-            { o: ['coat', 'red', 'green', 'yellow'], why: '*Coat* is a piece of clothing. The others are colours.' },
+          { t: 'ex', kind: 'build', h: 'Write the sentence. Two words do not belong.', items: [
+            { a: 'I usually wear a white shirt to work.', extra: ['whites', 'carry'], why: 'Clothes go with *wear*; adjectives have no *-s*.' },
+            { a: 'She wants a pair of brown boots.', extra: ['an', 'is'], why: '*a pair of* + a plural word.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'She wears a red dress.', why: 'Subject, verb, *a*, adjective, noun.' },
-            { a: 'I like your blue coat.', why: '*Like* + possessive + adjective + noun.' },
-            { a: 'He has got brown boots.', why: '*Has got* + adjective + noun.' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the A2 Key exam: read the sentences and choose the right word.', items: [
+            { q: 'You wear these on your feet. They are warm and you can wear them in the snow.', o: ['boots', 'gloves', 'shorts'], why: 'On your feet, in the snow: *boots*.' },
+            { q: 'You wear this on your head when it is sunny or cold.', o: ['a hat', 'a skirt', 'a jumper'], why: 'On your head: *a hat*.' },
+            { q: 'You wear these on your legs. They are short, for hot weather.', o: ['shorts', 'socks', 'a coat'], why: 'Short, on your legs, for hot weather: *shorts*.' },
           ] },
-          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
-            { s: 'I have got a [coat red].', a: ['red coat'], why: 'The adjective goes before the noun.' },
-            { s: 'These [trouser] are new.', a: ['trousers'], why: '*Trousers* is always plural.' },
-            { s: 'She [wear] a red dress.', a: ['wears'], why: 'With *she*, add *-s*.' },
+          { t: 'tip', art: 'owl', md: 'In one part of the A2 Key reading test, you read a **description** and find the word. Look for the key information: **where** you wear it (head, feet, legs) and **when** (hot, cold, rain).' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'sofia', items: [
+            { a: 'I usually wear jeans and a T-shirt.' },
+            { a: 'She has a new red coat.' },
+            { a: 'I need a pair of black shoes.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 2 */
     {
       id: 'p2',
       title: 'What’s the weather like?',
@@ -103,80 +119,85 @@ export const UNIT = {
       art: 'sun',
       spreads: [
         [
-          { t: 'text', md: 'To ask about the weather, say **What’s the weather like?** To answer, say **It’s** + an adjective: *It’s sunny. It’s cold.* Say **it’s raining** and **it’s snowing** when the rain or the snow is falling now. Say **in** with a season or a month: *in summer, in July*.' },
-          { t: 'table', caption: 'The weather', explain: ['head', 'col1'], quiz: true, head: ['Weather', 'Example'], rows: [
-            ['sunny', 'It’s sunny today.'],
-            ['cloudy', 'It’s cloudy in the morning.'],
-            ['rainy', 'It’s rainy in Leeds.'],
-            ['windy', 'It’s very windy.'],
-            ['snowy', 'It’s snowy in the mountains.'],
-            ['hot', 'It’s hot in August.'],
-            ['warm', 'It’s warm in May.'],
-            ['cold', 'It’s cold in winter.'],
+          { t: 'text', md: 'To ask about the weather, say **What’s the weather like?** (Not *How is the weather like?*)\n\nTo answer, English always starts with **It’s**: *It’s sunny. It’s cold. It’s windy.* Here, **it** does not mean a thing. It is an empty subject, because every English sentence needs a subject. Never start with *Is sunny* or *Makes cold*.\n\nMany weather words come from a noun + **-y**: *sun → sunny, cloud → cloudy, wind → windy, rain → rainy*.' },
+          { t: 'table', caption: 'The weather', explain: ['head', 'col1'], quiz: true, head: ['Weather', 'What it means'], rows: [
+            ['It’s sunny.', 'There is sun.'],
+            ['It’s cloudy.', 'There are a lot of clouds.'],
+            ['It’s windy.', 'There is a lot of wind.'],
+            ['It’s hot.', 'Very warm, like a summer day.'],
+            ['It’s warm.', 'Nice, not hot and not cold.'],
+            ['It’s cold.', 'You need a coat.'],
+            ['It’s raining.', 'Rain is falling now.'],
+            ['It’s snowing.', 'Snow is falling now.'],
           ] },
-          { t: 'tip', art: 'owl', md: '**Sunny, cloudy, rainy, windy** and **snowy** are adjectives. Use them with **it’s**. The verbs **rain** and **snow** are for now: *It’s raining.* The word **weather** is not countable: say *the weather is nice*, not *the weathers are nice*.' },
+          { t: 'tip', art: 'owl', md: 'When rain or snow is falling **now**, say **It’s raining** or **It’s snowing**. To talk about the weather in general, say **It rains a lot in November** or **It often snows in January**.' },
         ],
         [
-          { t: 'text', md: 'There are twelve **months** and four **seasons**. Months start with a **capital letter**, and seasons do not. In the north of the world, **spring** starts in March, **summer** in June, **autumn** in September and **winter** in December.' },
-          { t: 'table', caption: 'The months', explain: ['head'], quiz: true, head: ['Month', 'Month'], rows: [
-            ['January', 'July'],
-            ['February', 'August'],
-            ['March', 'September'],
-            ['April', 'October'],
-            ['May', 'November'],
-            ['June', 'December'],
+          { t: 'text', md: 'There are twelve **months** and four **seasons**. **Months** always start with a **capital letter**: *January, May, October*. **Seasons** do not: *spring, summer, autumn, winter*.\n\nUse **in** with months and seasons: *in March, in the summer, in winter*. In American English, **autumn** is often **fall**.' },
+          { t: 'table', caption: 'The months', explain: ['head'], quiz: true, head: ['Month', 'Month', 'Month'], rows: [
+            ['January', 'May', 'September'],
+            ['February', 'June', 'October'],
+            ['March', 'July', 'November'],
+            ['April', 'August', 'December'],
+          ] },
+          { t: 'examples', items: [
+            { s: '**What’s the weather like** today? – **It’s** cloudy.', n: 'The question and an answer with *It’s*.' },
+            { s: 'It’s very hot **in August**.', n: '*in* + a month.' },
+            { s: 'It often snows **in winter**.', n: '*in* + a season, with no capital letter.' },
+            { s: 'Take an umbrella. **It’s raining!**', n: 'Rain is falling now.' },
+          ] },
+        ],
+        [
+          { t: 'table', caption: 'Three common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['Is cold today.', 'It’s cold today.', 'Weather sentences start with *It*.'],
+            ['How is the weather like?', 'What’s the weather like?', 'Use *What* with *like*.'],
+            ['in july', 'in July', 'Months take a capital letter.'],
           ] },
           { t: 'dialogue', title: 'A phone call', lines: [
-            { who: 'Ben', s: 'What’s the weather like in Madrid?' },
-            { who: 'Grace', s: 'It’s sunny and warm. And in Leeds?' },
-            { who: 'Ben', s: 'It’s cold and rainy. I don’t like winter.' },
-            { who: 'Grace', s: 'My favourite season is spring. It’s not too hot and not too cold.' },
+            { who: 'Ana', s: 'Hi, Mum! How are you?' },
+            { who: 'Mum', s: 'Fine, thanks. What’s the weather like in London?' },
+            { who: 'Ana', s: 'It’s cold and cloudy. And it’s raining again!' },
+            { who: 'Mum', s: 'Oh no! It’s sunny and warm here in Lisbon.' },
+            { who: 'Ana', s: 'Lucky you! It always rains in London in November.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'crossword', h: 'Write the words.', words: [
-            { a: 'sunny', clue: 'You can see the sun. It is …' },
-            { a: 'cloudy', clue: 'There are many clouds. It is …' },
-            { a: 'windy', clue: 'There is a lot of wind. It is …' },
-            { a: 'snowy', clue: 'There is snow. It is …' },
-            { a: 'winter', clue: 'The coldest season.' },
-            { a: 'summer', clue: 'The hottest season.' },
+          { t: 'ex', kind: 'wordform', h: 'Write the weather word.', items: [
+            { q: 'There are a lot of clouds. It’s ___.', base: 'cloud', a: ['cloudy'], why: '*cloud* + *-y*: *cloudy*.' },
+            { q: 'Take your sunglasses. It’s very ___.', base: 'sun', a: ['sunny'], why: '*sun* + *-y*, with a double *n*: *sunny*.' },
+            { q: 'Hold your hat! It’s ___ today.', base: 'wind', a: ['windy'], why: '*wind* + *-y*: *windy*.' },
           ] },
-          { t: 'ex', kind: 'memory', h: 'Find the pairs.', pairs: [
-            ['spring', 'March'],
-            ['summer', 'July'],
-            ['autumn', 'October'],
-            ['winter', 'January'],
+          { t: 'ex', kind: 'crossword', h: 'Complete the crossword with months and seasons.', words: [
+            { a: 'summer', clue: 'The hot season.' },
+            { a: 'winter', clue: 'The cold season, with snow.' },
+            { a: 'spring', clue: 'The season after winter.' },
+            { a: 'December', clue: 'The last month of the year.' },
+            { a: 'March', clue: 'The month after February.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Write the missing word.', items: [
-            { q: 'It’s very ___ in winter.', a: ['cold'], why: 'In winter it is *cold*.' },
-            { q: 'It’s very ___ today. I can see the sun.', a: ['sunny'], why: 'You can see the sun: *sunny*.' },
-            { q: 'My birthday is ___ June.', a: ['in'], why: '*In* + a month.' },
-            { q: 'It’s hot ___ summer.', a: ['in'], why: '*In* + a season.' },
-            { q: 'What’s the weather ___?', a: ['like'], why: '*What’s the weather like?*' },
+          { t: 'ex', kind: 'gap', h: 'Write one word in each gap.', items: [
+            { q: 'What’s the weather ___ in your city?', a: ['like'], why: '*What’s the weather like?*' },
+            { q: '___ snowing! Let’s make a snowman.', a: ['It’s', 'It is'], why: 'Weather sentences start with *It*.' },
+            { q: 'My birthday is ___ June.', a: ['in'], why: '*in* + a month.' },
+            { q: 'It often rains ___ autumn.', a: ['in'], why: '*in* + a season.' },
           ] },
-          { t: 'ex', kind: 'choice', h: 'Choose the right word.', items: [
-            { q: '“What’s the weather like?” – “It’s ___.”', o: ['sunny', 'sun', 'summer'], why: 'After *it’s* use an adjective: *sunny*.' },
-            { q: 'We have snow in ___.', o: ['winter', 'summer', 'July'], why: 'Snow comes in *winter*.' },
-            { q: '___ is the first month of the year.', o: ['January', 'Monday', 'Winter'], why: '*January* is the first month.' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the A2 Key exam: choose the best reply.', items: [
+            { q: '“What’s the weather like today?”', o: ['It’s windy and cold.', 'It’s Monday.', 'I like it.'], why: 'The question asks about the weather.' },
+            { q: '“Is it raining?”', o: ['No, but it’s very cloudy.', 'No, it doesn’t.', 'Yes, I am.'], why: '*Is it …?* : answer with *it*, and give information.' },
           ] },
+          { t: 'tip', art: 'owl', md: 'In the A2 Key exam, a wrong answer often uses **the same words** as the question but does not answer it. *“What’s the weather like?” – “I like it.”* has the word *like*, but it is not about the weather.' },
         ],
         [
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'What is the weather like?', why: 'Question word, *is*, *the weather*, *like*.' },
-            { a: 'It is very cold in winter.', why: '*It is* + adjective + *in* + season.' },
-            { a: 'My birthday is in June.', why: '*In* + a month.' },
-          ] },
-          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
-            { s: 'It’s cold [at] winter.', a: ['in'], why: '*In* + a season.' },
-            { s: 'My birthday is [on] June.', a: ['in'], why: '*In* + a month.' },
-            { s: 'It’s [sun] today.', a: ['sunny'], why: 'After *it’s* use an adjective: *sunny*.' },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'kofi', items: [
+            { a: 'What’s the weather like today?' },
+            { a: 'It’s cold and cloudy.' },
+            { a: 'It often snows in January.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 3 */
     {
       id: 'p3',
       title: 'I’m wearing a hat',
@@ -184,145 +205,191 @@ export const UNIT = {
       art: 'snail',
       spreads: [
         [
-          { t: 'text', md: 'Use the **present continuous** to say what is happening **now**: *I am reading. She is wearing a hat.* Make it with **be** (**am, is, are**) and the verb + **-ing**. Words that go with it are **now**, **today** and **at the moment**. For the negative, add **not**: *She isn’t wearing a hat.* For a question, put **be** before the subject: *Are you wearing a coat?*' },
-          { t: 'table', caption: 'Present continuous', explain: ['head', 'col1'], head: ['', 'Example'], rows: [
-            ['statement', 'I am wearing a coat. / I’m wearing a coat.'],
-            ['negative', 'She isn’t wearing a hat.'],
-            ['question', 'Are you wearing a coat?'],
-            ['short answer', 'Yes, I am. / No, I’m not.'],
-            ['question word', 'What are you doing?'],
+          { t: 'text', md: 'Use the **present continuous** to talk about things that are happening **now**, at this moment: *I’m reading. It’s raining. She’s wearing a hat.*\n\nYou make it with two parts: the verb **be** (**am, is, are**) and the main verb + **-ing**. You already know both parts! *I **am** + **reading**. They **are** + **playing**.*\n\nWords that often go with it: **now**, **right now**, **at the moment**, and **Look!** or **Listen!**' },
+          { t: 'table', caption: 'Present continuous', explain: ['head'], head: ['', 'Positive', 'Negative', 'Question'], rows: [
+            ['I', 'I’m working.', 'I’m not working.', 'Am I working?'],
+            ['he / she / it', 'She’s working.', 'She isn’t working.', 'Is she working?'],
+            ['you / we / they', 'They’re working.', 'They aren’t working.', 'Are they working?'],
           ] },
-          { t: 'tip', art: 'owl', md: 'Do not use the present continuous for a habit. Say **I read every day** (present simple) but **I’m reading now** (present continuous). Words such as **every day** and **on Sundays** go with the present simple.' },
+          { t: 'tip', art: 'owl', md: 'Do not forget **be**. *I working* or *She wearing a coat* are wrong. The present continuous always has two verbs: **be + -ing**.' },
         ],
         [
-          { t: 'text', md: 'Add **-ing** to the verb. Drop a final **e**: *make, making*. Double the last letter when a short verb ends in one vowel and one consonant: *sit, sitting; swim, swimming*. Do not double after two vowels or two consonants: *read, reading; wear, wearing*.' },
-          { t: 'table', caption: 'Spelling with -ing', explain: ['head', 'col1'], quiz: true, head: ['Rule', 'Verb', 'Verb + -ing'], rows: [
-            ['add -ing', 'wear', 'wearing'],
-            ['add -ing', 'read', 'reading'],
-            ['drop the e', 'make', 'making'],
-            ['drop the e', 'dance', 'dancing'],
-            ['double the last letter', 'sit', 'sitting'],
-            ['double the last letter', 'swim', 'swimming'],
+          { t: 'text', md: 'The spelling of **-ing** follows the same rules you learned in unit 6. Most verbs just add **-ing**. A final **e** drops: *make → making*. A short verb with one vowel and one consonant at the end doubles the consonant: *sit → sitting, swim → swimming, run → running*.\n\nAnd now the big question: **present simple** or **present continuous**? Use the **present simple** for things you do **usually** or **every day**: *I wear a suit to work.* Use the **present continuous** for what is happening **now**: *Today I’m wearing jeans.*' },
+          { t: 'table', caption: 'Every day or now?', explain: ['head', 'col2'], head: ['Present simple', 'Present continuous', 'The difference'], rows: [
+            ['I wear a suit to work.', 'Today I’m wearing jeans.', 'usually / now'],
+            ['It rains a lot in April.', 'It’s raining now.', 'in general / at this moment'],
+            ['She plays tennis on Fridays.', 'She’s playing tennis right now.', 'a habit / at this moment'],
+          ] },
+          { t: 'examples', items: [
+            { s: '**Look!** The children **are playing** in the snow.', n: '*Look!* shows it is happening now.' },
+            { s: 'I **can’t** talk now. **I’m driving.**', n: 'At this moment.' },
+            { s: 'Sam **isn’t wearing** a coat **today**.', n: 'The negative: *isn’t* + *-ing*.' },
+            { s: '**What are you doing?** – I’m cooking.', n: 'The most common question in the present continuous.' },
+          ] },
+        ],
+        [
+          { t: 'table', caption: 'Three common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['She wearing a hat.', 'She’s wearing a hat.', 'Do not forget *be*.'],
+            ['I am siting here.', 'I am sitting here.', '*sit*: double the *t*.'],
+            ['I’m wearing a suit every day.', 'I wear a suit every day.', '*every day*: present simple.'],
           ] },
           { t: 'dialogue', title: 'On the phone', lines: [
-            { who: 'Ben', s: 'What are you doing?' },
-            { who: 'Grace', s: 'I’m sitting in the park. It’s sunny, and I’m wearing a hat.' },
-            { who: 'Ben', s: 'Are you reading?' },
-            { who: 'Grace', s: 'No, I’m not. I’m drinking a coffee and I’m watching the children.' },
+            { who: 'Ben', s: 'Hi, Grace! What are you doing?' },
+            { who: 'Grace', s: 'I’m sitting in a café. I’m waiting for Lucy.' },
+            { who: 'Ben', s: 'Is it raining there?' },
+            { who: 'Grace', s: 'No, it isn’t. It’s sunny! What about you?' },
+            { who: 'Ben', s: 'I’m working at home. I’m wearing my pyjamas!' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Write am, is or are.', items: [
-            { q: 'I ___ wearing a hat.', a: ['am'], why: '*I am*' },
-            { q: 'She ___ reading a book.', a: ['is'], why: '*she is*' },
-            { q: 'They ___ playing football.', a: ['are'], why: '*they are*' },
-            { q: 'We ___ having lunch now.', a: ['are'], why: '*we are*' },
-            { q: 'It ___ raining.', a: ['is'], why: '*it is*' },
+          { t: 'ex', kind: 'conjugate', h: 'Write the present continuous of wear.', verb: 'wear', tense: 'present continuous', rows: [
+            ['I', 'am wearing|’m wearing'],
+            ['you', 'are wearing|’re wearing'],
+            ['she', 'is wearing|’s wearing'],
+            ['we', 'are wearing|’re wearing'],
+            ['they', 'are wearing|’re wearing'],
           ] },
           { t: 'ex', kind: 'wordform', h: 'Write the verb with -ing.', items: [
-            { q: 'She is ___ a book.', base: 'read', a: ['reading'], why: 'Add *-ing*.' },
-            { q: 'He is ___ a coffee.', base: 'drink', a: ['drinking'], why: 'Add *-ing*.' },
-            { q: 'They are ___ in the sea.', base: 'swim', a: ['swimming'], why: 'Double the last letter.' },
-            { q: 'I am ___ a cake.', base: 'make', a: ['making'], why: 'Drop the *e*, add *-ing*.' },
-            { q: 'We are ___ on the sofa.', base: 'sit', a: ['sitting'], why: 'Double the last letter.' },
+            { q: 'Shh! The baby is ___.', base: 'sleep', a: ['sleeping'], why: 'Just add *-ing*.' },
+            { q: 'We are ___ a cake for Mum.', base: 'make', a: ['making'], why: 'Drop the *e*: *making*.' },
+            { q: 'Why are you ___ on the floor?', base: 'sit', a: ['sitting'], why: 'Double the *t*: *sitting*.' },
+            { q: 'Look! Leo is ___ in the lake.', base: 'swim', a: ['swimming'], why: 'Double the *m*: *swimming*.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'sort', h: 'Now or every day? Sort the sentences.', groups: ['now', 'every day'], explain: ['groups'], items: [
-            { s: 'I’m reading.', g: 0, why: 'It is happening now.' },
-            { s: 'I read every day.', g: 1, why: '*Every day* goes with the present simple.' },
-            { s: 'It’s raining.', g: 0, why: 'It is happening now.' },
-            { s: 'It rains a lot in winter.', g: 1, why: 'A general fact: present simple.' },
-            { s: 'She’s wearing a hat.', g: 0, why: 'It is happening now.' },
-            { s: 'She wears a hat on Sundays.', g: 1, why: '*On Sundays* goes with the present simple.' },
+          { t: 'ex', kind: 'sort', h: 'Now or usually? Sort the sentences.', groups: ['now (present continuous)', 'usually (present simple)'], explain: ['groups'], items: [
+            { s: 'Look! It’s snowing.', g: 0, why: '*Look!*: it is happening now.' },
+            { s: 'I walk to work every day.', g: 1, why: '*every day*: a habit.' },
+            { s: 'She’s talking on the phone at the moment.', g: 0, why: '*at the moment*: now.' },
+            { s: 'We often go to the beach in July.', g: 1, why: '*often*: a habit.' },
+            { s: 'They aren’t wearing coats today.', g: 0, why: '*today*, at this moment.' },
           ] },
-          { t: 'ex', kind: 'choice', h: 'Choose the right word.', items: [
-            { q: '“What are you doing?” – “I’m ___.”', o: ['reading', 'read', 'reads'], why: 'Present continuous: *am* + verb + *-ing*.' },
-            { q: 'She ___ wearing a hat.', o: ['isn’t', 'doesn’t', 'don’t'], why: 'Present continuous negative: *isn’t* + verb + *-ing*.' },
-            { q: '___ you wearing a coat?', o: ['Are', 'Do', 'Is'], why: 'A question: *Are you …ing?*' },
+          { t: 'ex', kind: 'select', h: 'Choose the right words.', items: [
+            { q: 'Be quiet! I ___ a film.', o: ['’m watching', 'watch', 'watching'], why: 'Now: *be* + *-ing*.' },
+            { q: 'My father ___ a tie every day.', o: ['wears', 'is wearing', 'wearing'], why: '*every day*: present simple.' },
+            { q: '“What ___ you doing?” – “I’m reading.”', o: ['are', 'do', 'is'], why: '*What are you doing?*' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'transform', h: 'Say it for now.', items: [
-            { q: 'She reads a book.', cue: 'is', a: ['She is reading a book.', 'She’s reading a book.'], why: '*Is* + verb + *-ing*.' },
-            { q: 'I wear a hat.', cue: 'am', a: ['I am wearing a hat.', 'I’m wearing a hat.'], why: '*Am* + verb + *-ing*.' },
-            { q: 'They play football.', cue: 'are', a: ['They are playing football.', 'They’re playing football.'], why: '*Are* + verb + *-ing*.' },
-            { q: 'You are wearing a coat.', cue: 'Are', a: ['Are you wearing a coat?'], why: 'A question: *Are you …ing?*' },
+          { t: 'ex', kind: 'transform', h: 'Say it for now. Use the present continuous.', items: [
+            { q: 'I read a book.', cue: 'I’m', a: ['I’m reading a book.', 'I am reading a book.'], why: '*I* + *am* + *reading*.' },
+            { q: 'She wears a hat.', cue: 'She’s', a: ['She’s wearing a hat.', 'She is wearing a hat.'], why: '*she* + *is* + *wearing*.' },
+            { q: 'They play football.', cue: 'They’re', a: ['They’re playing football.', 'They are playing football.'], why: '*they* + *are* + *playing*.' },
           ] },
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'She is wearing a red dress.', why: 'Subject, *is*, verb + *-ing*, object.' },
-            { a: 'What are you doing now?', why: 'Question word, *are*, *you*, *doing*.' },
-            { a: 'They are not playing football.', why: 'Subject, *are not*, verb + *-ing*.' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the A2 Key exam: choose the best reply.', items: [
+            { q: '“What are you doing?”', o: ['I’m making dinner.', 'I make dinner.', 'Yes, I am.'], why: 'The question is about now: answer in the present continuous.' },
+            { q: '“Are you wearing your new shoes?”', o: ['Yes, I am. Do you like them?', 'Yes, I do.', 'Yes, they wear.'], why: 'A question with *Are you* has the short answer *Yes, I am*.' },
           ] },
-          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
-            { s: 'She is [read] a book.', a: ['reading'], why: 'After *is* use verb + *-ing*.' },
-            { s: 'I [wearing] a hat.', a: ['am wearing', 'm wearing'], why: 'You need *am* before verb + *-ing*.' },
-            { s: 'They [is] playing football.', a: ['are'], why: 'With *they*: *are*.' },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'lena', items: [
+            { a: 'What are you doing?' },
+            { a: 'I’m sitting in a café.' },
+            { a: 'It isn’t raining today.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 4 */
     {
       id: 'p4',
       title: 'A weekend away',
-      about: 'Read two messages from a weekend away.',
+      about: 'Read two messages from a weekend away, and describe a picture: who is there, what they are wearing and doing.',
       art: 'sun',
       spreads: [
         [
-          { t: 'reading', title: 'Two messages', md: '**Grace to Ben**\nHi Ben! We’re at the seaside for the weekend. It’s Saturday morning and the weather is great: it’s sunny and warm. I’m sitting on the beach and I’m wearing my new yellow dress and a hat. Hannah is swimming in the sea, but the water is very cold! Leo isn’t swimming. He’s reading a book. What are you doing?\n\n**Ben to Grace**\nHi Grace! Lucky you! It’s cold and rainy here in Leeds. It’s raining now, so I’m staying at home. I’m wearing a big jumper and warm socks, and I’m drinking hot tea. I’m not working today, but I’m cooking dinner for my parents. Have a great weekend!' },
+          { t: 'text', md: 'When you **describe a picture** or a place, you use everything from this unit together: **There is / There are** for what you can see, the **weather** with *It’s*, **clothes** with *wear*, and the **present continuous** for what people are doing.\n\nA good description goes from big to small: first the place and the weather, then the people, then the details.' },
+          { t: 'examples', items: [
+            { s: '**It’s** a sunny day at the beach.', n: 'The place and the weather first.' },
+            { s: '**There are** four people.', n: 'What you can see.' },
+            { s: 'A man **is reading** a newspaper.', n: 'What a person is doing now.' },
+            { s: 'He**’s wearing** shorts and a blue T-shirt.', n: 'Clothes, with colours before the nouns.' },
+            { s: 'Two children **are playing** in the sea.', n: 'More than one person: *are*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In the speaking test of an exam, describing a picture is a common task. Do not stop after one sentence. Use this order: **place and weather → people → clothes → actions**. It gives you at least five sentences.' },
         ],
         [
-          { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
-            { q: 'It is sunny at the seaside.', a: 't', why: '*It’s sunny and warm.*' },
-            { q: 'Grace is wearing a green dress.', a: 'f', why: '*My new yellow dress.*' },
-            { q: 'Hannah is swimming.', a: 't', why: '*Hannah is swimming in the sea.*' },
-            { q: 'Leo is swimming.', a: 'f', why: '*Leo isn’t swimming. He’s reading a book.*' },
-            { q: 'It’s raining in Leeds.', a: 't', why: '*It’s raining now.*' },
-            { q: 'Grace is at the seaside with her parents.', a: 'ng', why: 'The text does not say who she is with, except Hannah and Leo.' },
+          { t: 'reading', title: 'Two messages', md: '**Grace to Ben**\nHi Ben! We’re at the seaside for the weekend. It’s Saturday morning and the weather is great: it’s sunny and warm. I’m sitting on the beach and I’m wearing my new yellow dress. Lucy is swimming in the sea. The water is very cold, but she loves it! How are you?\n\n**Ben to Grace**\nHi Grace! Lucky you! Here in the city it’s cloudy and windy. I’m not doing anything special. I’m sitting on the sofa in my old jumper and I’m watching a film. I usually go running on Saturdays, but today it’s raining. Have a great weekend!' },
+          { t: 'ex', kind: 'tf', ng: true, h: 'Read the messages. True, false or not given?', items: [
+            { q: 'The weather at the seaside is sunny.', a: 't', why: '*It’s sunny and warm.*' },
+            { q: 'Grace is swimming in the sea.', a: 'f', why: 'Lucy is swimming. Grace is sitting on the beach.' },
+            { q: 'The water is warm.', a: 'f', why: '*The water is very cold.*' },
+            { q: 'Ben is watching a film.', a: 't', why: '*I’m watching a film.*' },
+            { q: 'Ben usually goes running on Sundays.', a: 'f', why: 'He usually goes running on *Saturdays*.' },
+            { q: 'Lucy is Grace’s sister.', a: 'ng', why: 'The messages do not say.' },
           ] },
         ],
         [
           { t: 'ex', kind: 'match', h: 'What is the person doing?', pairs: [
-            ['Grace', 'sitting on the beach'],
-            ['Hannah', 'swimming in the sea'],
-            ['Leo', 'reading a book'],
-            ['Ben', 'cooking dinner'],
+            ['Grace', 'is sitting on the beach'],
+            ['Lucy', 'is swimming in the sea'],
+            ['Ben', 'is watching a film'],
+            ['The weather in the city', 'is cloudy and windy'],
           ] },
-          { t: 'ex', kind: 'choice', h: 'Read the messages again and choose.', items: [
-            { q: 'What is Grace wearing?', o: ['A yellow dress and a hat', 'A jumper and socks', 'A coat and boots'], why: '*I’m wearing my new yellow dress and a hat.*' },
-            { q: 'What is Leo doing?', o: ['Reading a book', 'Swimming', 'Cooking'], why: '*He’s reading a book.*' },
-            { q: 'Why is Ben at home?', o: ['It is raining.', 'He is working.', 'He is ill.'], why: '*It’s raining now, so I’m staying at home.*' },
+          { t: 'ex', kind: 'order', h: 'Put the words in order to describe a picture.', items: [
+            { a: 'It’s a cold day in the park.', why: 'Start with the place and the weather.' },
+            { a: 'A woman is wearing a long red coat.', why: 'Person, *is wearing*, then the clothes with the colour before the noun.' },
+            { a: 'Two boys are playing football.', why: 'Two people: *are* + *-ing*.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake in this description.', items: [
+            { s: 'It’s a beautiful day and the sun [shining].', a: ['is shining'], why: 'Present continuous: *be* + *-ing*.' },
+            { s: 'A girl is wearing a [hat green].', a: ['green hat'], why: 'The colour goes before the noun.' },
+            { s: 'Two old men [is] sitting on a bench.', a: ['are'], why: 'Two people: *are*.' },
+          ] },
+          { t: 'ex', kind: 'choice', h: 'In the format of the A2 Key exam: read the message and choose the right answer.', items: [
+            { q: 'Hi Max, take your coat and an umbrella – it’s raining and it’s very cold here! See you at 6. Eva', o: ['Eva thinks the weather is bad.', 'Eva is wearing a coat.', 'Eva can’t meet Max.'], why: 'Rain and cold: she tells Max the weather is bad.' },
+            { q: 'Kim: I’m at the shop. Do you want the blue jumper or the green one? They’re both in your size.', o: ['Kim wants to know which colour to buy.', 'Kim is wearing a blue jumper.', 'Kim doesn’t like green.'], why: 'She asks which one: she wants to know which colour.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In A2 Key reading, think about **why** the person writes the message: to give information, to ask a question, or to change a plan. The right answer usually says the reason in different words.' },
+        ],
+        [
+          { t: 'text', md: 'Now describe the place where you are. What is the weather like? What are you wearing? What are the people near you doing? Then say these sentences after the tutor.' },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'arthur', items: [
+            { a: 'It’s a sunny day at the beach.' },
+            { a: 'A man is reading a newspaper.' },
+            { a: 'He’s wearing shorts and a blue T-shirt.' },
           ] },
         ],
       ],
     },
   ],
   test: [
-    { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
-      { q: 'She is wearing a ___ dress.', o: ['red', 'reds', 'redly'], why: 'An adjective never changes.' },
-      { q: 'It’s ___ today. Take an umbrella.', o: ['raining', 'rain', 'rains'], why: 'Present continuous: *it’s raining*.' },
-      { q: 'I ___ a jumper now.', o: ['am wearing', 'wear', 'wearing'], why: 'For now: *am* + verb + *-ing*.' },
-      { q: '“What’s the weather like?” – “It’s ___.”', o: ['sunny', 'sun', 'summer'], why: 'After *it’s* use an adjective: *sunny*.' },
+    { t: 'ex', kind: 'select', h: 'Choose the right words.', items: [
+      { q: 'I’d like ___, please.', o: ['a pair of jeans', 'a jean', 'a jeans'], why: '*jeans* is always plural: *a pair of jeans*.' },
+      { q: 'She has ___.', o: ['a green coat', 'a coat green', 'a greens coat'], why: 'Colour before the noun, with no *-s*.' },
+      { q: '___ cold and windy today.', o: ['It’s', 'Is', 'Makes'], why: 'Weather sentences start with *It*.' },
+      { q: 'Be quiet, please. The baby ___.', o: ['is sleeping', 'sleeps', 'sleeping'], why: 'Now: *be* + *-ing*.' },
     ] },
-    { t: 'ex', kind: 'gap', h: 'Write the missing word.', items: [
-      { q: 'He ___ not wearing a hat.', a: ['is'], why: '*he is*' },
-      { q: 'We ___ having lunch now.', a: ['are'], why: '*we are*' },
-      { q: 'It’s very cold in ___.', a: ['winter'], why: 'The cold season: *winter*.' },
-      { q: 'She is ___ a book. (read)', a: ['reading'], why: 'Add *-ing*.' },
+    { t: 'ex', kind: 'gap', h: 'Write one word in each gap.', items: [
+      { q: 'What’s the weather ___ in Rome?', a: ['like'], why: '*What’s the weather like?*' },
+      { q: 'My birthday is ___ October.', a: ['in'], why: '*in* + a month.' },
+      { q: 'My new shoes ___ very comfortable.', a: ['are'], why: '*shoes* is plural.' },
     ] },
-    { t: 'ex', kind: 'match', h: 'Find the months.', pairs: [
-      ['spring', 'March, April, May'],
-      ['summer', 'June, July, August'],
-      ['autumn', 'September, October, November'],
-      ['winter', 'December, January, February'],
-    ] },
-    { t: 'ex', kind: 'build', h: 'Build the sentences. Two words do not belong.', items: [
-      { a: 'She is wearing a blue coat.', extra: ['wears', 'are'], why: 'For now: *is* + verb + *-ing*.' },
-      { a: 'What are you doing now?', extra: ['does', 'do'], why: 'Question word, *are*, *you*, *doing*.' },
+    { t: 'ex', kind: 'wordform', h: 'Write the right form of the word.', items: [
+      { q: 'Take an umbrella. It’s ___ outside.', base: 'rain', a: ['raining'], why: 'Rain falling now: *it’s raining*.' },
+      { q: 'There are a lot of clouds. It’s ___.', base: 'cloud', a: ['cloudy'], why: '*cloud* + *-y*.' },
+      { q: 'Why are you ___ there? Come here!', base: 'sit', a: ['sitting'], why: 'Double the *t*.' },
     ] },
     { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
-      { s: 'I [wear] a coat now.', a: ['am wearing', 'm wearing'], why: 'For now: *am wearing*.' },
-      { s: 'It [rain] now.', a: ['is raining', 's raining'], why: 'For now: *is raining*.' },
+      { s: 'He [wearing] a black jumper.', a: ['is wearing', '’s wearing'], why: 'Do not forget *be*.' },
+      { s: 'I go to work by bus and I [am wearing] a suit every day.', a: ['wear'], why: '*every day*: present simple.' },
+      { s: 'It’s very cold in [january].', a: ['January'], why: 'Months take a capital letter.' },
+    ] },
+    { t: 'ex', kind: 'transform', h: 'Say it for now.', items: [
+      { q: 'We eat lunch.', cue: 'We’re', a: ['We’re eating lunch.', 'We are eating lunch.'], why: '*we* + *are* + *eating*.' },
+      { q: 'It snows.', cue: 'It’s', a: ['It’s snowing.', 'It is snowing.'], why: '*it* + *is* + *snowing*.' },
+    ] },
+    { t: 'ex', kind: 'match', h: 'Find the best answer.', pairs: [
+      ['What’s the weather like?', 'It’s sunny and hot.'],
+      ['What are you doing?', 'I’m cooking dinner.'],
+      ['Is it raining?', 'No, it isn’t.'],
+      ['Can I help you?', 'Yes, I need a coat.'],
+    ] },
+    { t: 'ex', kind: 'sort', h: 'Now or usually?', groups: ['now', 'usually'], explain: ['groups'], items: [
+      { s: 'Listen! Someone is singing.', g: 0, why: '*Listen!*: now.' },
+      { s: 'I wear a uniform at work.', g: 1, why: 'A habit: present simple.' },
+      { s: 'They’re waiting for the bus.', g: 0, why: 'Present continuous: now.' },
+      { s: 'It snows a lot in Canada.', g: 1, why: 'In general: present simple.' },
     ] },
   ],
 };
