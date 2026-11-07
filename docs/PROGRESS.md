@@ -1515,3 +1515,4 @@ Owner: "translate the admin emails and unsubscribe page too".
 ## 2026-11-07 — Approve and reject pages translated
 
 Owner: "translate the approve and reject pages too". The pages that open from the application email (confirm, done, already decided, and the error pages) use `admin_email_lang`, like the email, with right to left for Arabic. New text group `decide` in all 8 languages (180 keys per file, placeholders checked). Checked through the handler with stand-ins: broken link (German), confirm decline (French), confirmed approval with the teacher emailed (French), already approved (Arabic), confirm approve (English). Every email and page Alimun sends now follows a language: the reader's for students and teachers, `admin_email_lang` for the admin.
+- Owner, 7 Nov: `admin_email_lang` set to `fr` (checked live: the approve page answers in French).
