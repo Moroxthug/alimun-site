@@ -461,28 +461,31 @@ async function handleNotify(req, res) {
   const rejectHref  = `${appUrl}/api/admin/reject-teacher?token=${rejectToken}&teacher_id=${encodeURIComponent(teacher_id)}&exp=${exp}`;
 
 
+  // In the admin's email language (app_settings.admin_email_lang).
+  const lang = await L.adminLang(supabase);
+  const langs = (Array.isArray(profile.languages) ? profile.languages : [profile.languages].filter(Boolean)).map((x) => L.languageName(x, lang)).join(', ');
   const content = mail.renderEmail({
-    hero: 'application',
+    hero: 'application', lang,
     signoff: false,
-    preheader: `${rawName} applied to teach with Alimun.`,
-    heading: 'New teacher application',
+    preheader: L.say(lang, 'admin_app.preheader', { name: rawName }),
+    heading: L.say(lang, 'admin_app.heading'),
     blocks: [
-      { p: 'A teacher has applied. Review the details and decide with the buttons below; each button asks you to confirm.' },
+      { p: L.html(lang, 'admin_app.body') },
       { facts: [
-        ['Name', rawName],
-        ['Languages', Array.isArray(profile.languages) ? profile.languages.join(', ') : (profile.languages || 'None')],
-        ['Experience', `${profile.experience_years ?? 0} years`],
-        ['Specialty', profile.specialty || '-'],
+        [L.say(lang, 'admin_app.f_name'), rawName],
+        [L.say(lang, 'admin_app.f_languages'), langs || '-'],
+        [L.say(lang, 'admin_app.f_experience'), L.say(lang, 'admin_app.experience', { n: profile.experience_years ?? 0 })],
+        [L.say(lang, 'admin_app.f_specialty'), profile.specialty || '-'],
       ] },
-      ...(profile.bio ? [{ quote: String(profile.bio), label: 'About them' }] : []),
-      { buttons: [{ label: 'Approve', href: approveHref }, { label: 'Reject', href: rejectHref, secondary: true }] },
+      ...(profile.bio ? [{ quote: String(profile.bio), label: L.say(lang, 'admin_app.about') }] : []),
+      { buttons: [{ label: L.say(lang, 'admin_app.approve'), href: approveHref }, { label: L.say(lang, 'admin_app.reject'), href: rejectHref, secondary: true }] },
     ],
-    note: 'The buttons work for seven days. You can also decide in the admin dashboard.',
-    footer: 'Sent to the Alimun admin address when a teacher applies.',
+    note: L.html(lang, 'admin_app.note'),
+    footer: L.html(lang, 'admin_app.footer'),
   });
 
   try {
-    const sent = await mail.sendEmail({ to: adminEmail, subject: cleanSubject(`New teacher application: ${rawName}`), ...content });
+    const sent = await mail.sendEmail({ to: adminEmail, subject: cleanSubject(L.say(lang, 'admin_app.subject', { name: rawName })), ...content });
     if (!sent) {
       await releaseClaim();
       return res.status(502).json({ error: 'Failed to send notification email' });

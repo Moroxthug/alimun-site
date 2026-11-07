@@ -156,5 +156,45 @@
     "body": "The Alimun team has moved your account to the **{plan}** plan. It is active now, with no card or payment needed.",
     "body2": "Sign in to see your classes and exercises.",
     "note": "If you think this is a mistake, reply to this email."
+  },
+  "admin_app": {
+    "subject": "New teacher application: {name}",
+    "preheader": "{name} applied to teach with Alimun.",
+    "heading": "New teacher application",
+    "body": "A teacher has applied. Review the details and decide with the buttons below; each button asks you to confirm.",
+    "f_name": "Name",
+    "f_languages": "Languages",
+    "f_experience": "Experience",
+    "experience": "{n} years",
+    "f_specialty": "Specialty",
+    "about": "About them",
+    "approve": "Approve",
+    "reject": "Reject",
+    "note": "The buttons work for seven days. You can also decide in the admin dashboard.",
+    "footer": "Sent to the Alimun admin address when a teacher applies."
+  },
+  "contact": {
+    "subject": "Contact form: {name}",
+    "heading": "Message from {name}",
+    "f_name": "Name",
+    "f_email": "Email",
+    "f_phone": "Phone",
+    "f_language": "Language",
+    "f_page": "Page",
+    "message": "Message",
+    "note": "Reply to this email to answer them directly.",
+    "footer": "Sent from the contact form on alimun.com."
+  },
+  "unsub": {
+    "title_bad": "This link does not work",
+    "text_bad": "The link may be incomplete. You can also stop news and offers in your dashboard, under Settings.",
+    "title_ask": "Stop news and offers?",
+    "text_ask": "You will no longer receive news and offers from Alimun. Emails about your account and your classes still arrive.",
+    "button": "Stop news and offers",
+    "title_done": "Done",
+    "text_done": "You will no longer receive news and offers from Alimun. You can turn them back on at any time in your dashboard, under Settings.",
+    "title_error": "Please try again",
+    "text_error": "Something went wrong on our side. Please try again in a minute.",
+    "back": "Back to Alimun"
   }
 }

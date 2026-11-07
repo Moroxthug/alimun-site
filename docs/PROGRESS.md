@@ -1494,3 +1494,12 @@ Owner: "yes translate the other emails too".
 - Each sender reads the recipient's `ui_lang` (student or teacher profile): `api/auth.js` (the page folder, else the language chosen on the site, else English), `api/admin/teacher.js` (invite: the admin chooses the person's language, stored in their metadata so the profile and later emails use it), `api/_lib/admin-ops.js`, `api/enroll.js` (student and teacher each in their own), `api/_lib/waitlist-offer-email.js`, `api/generate-notes-pdf.js`, `api/webhooks/stripe.js`, `api/send-admin-email.js`. Emails to the admin (new application, contact form) stay English.
 - Checked: key and placeholder check for all languages; sample sentences in 8 languages; the waiting-list email end to end in Italian; `node --check` and unit tests.
 - Not translated: Supabase's own templates (used only as a fallback for password reset now) and the unsubscribe confirmation page.
+
+## 2026-11-07 — Admin emails and the unsubscribe page translated
+
+Owner: "translate the admin emails and unsubscribe page too".
+- New text groups `admin_app`, `contact`, `unsub` in `api/_lib/email-text/<lang>.json` (all 8 languages, 157 keys each, placeholders checked).
+- Emails to the admin (new teacher application, contact form) use `app_settings.admin_email_lang` (migration `202611072200_admin_email_lang.sql`, applied, default `en`; change it in Admin → System → App settings to es, fr, de, pt, it, zh, ar or ma). Languages taught and the visitor's language are named in that language.
+- Unsubscribe page (`/api/auth?action=unsubscribe`): the person's dashboard language, else the browser's (Accept-Language, fr-MA → ma), else English; right to left for Arabic.
+- Checked: the unsubscribe handler (German user: ask and done pages and the consent row; broken link from Arabic and Moroccan-French browsers), Arabic page on a phone; the contact email with the admin language set to French.
+- Still English: the approve/reject confirmation pages opened from the application email.

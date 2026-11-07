@@ -156,5 +156,45 @@
     "body": "L'équipe Alimun a fait passer votre compte à la formule **{plan}**. Elle est active dès maintenant, sans carte ni paiement nécessaire.",
     "body2": "Connectez-vous pour voir vos cours et vos exercices.",
     "note": "Si vous pensez qu'il s'agit d'une erreur, répondez à cet e-mail."
+  },
+  "admin_app": {
+    "subject": "Nouvelle candidature d'enseignant : {name}",
+    "preheader": "{name} souhaite enseigner avec Alimun.",
+    "heading": "Nouvelle candidature d'enseignant",
+    "body": "Une personne a posé sa candidature pour enseigner. Vérifiez les informations et décidez avec les boutons ci-dessous ; chaque bouton demande une confirmation.",
+    "f_name": "Nom",
+    "f_languages": "Langues",
+    "f_experience": "Expérience",
+    "experience": "{n} ans",
+    "f_specialty": "Spécialité",
+    "about": "À propos",
+    "approve": "Accepter",
+    "reject": "Refuser",
+    "note": "Les boutons fonctionnent pendant sept jours. Vous pouvez aussi décider dans le tableau de bord d'administration.",
+    "footer": "Envoyé à l'adresse d'administration d'Alimun lors d'une candidature."
+  },
+  "contact": {
+    "subject": "Formulaire de contact : {name}",
+    "heading": "Message de {name}",
+    "f_name": "Nom",
+    "f_email": "E-mail",
+    "f_phone": "Téléphone",
+    "f_language": "Langue",
+    "f_page": "Page",
+    "message": "Message",
+    "note": "Répondez à cet e-mail pour lui répondre directement.",
+    "footer": "Envoyé depuis le formulaire de contact d'alimun.com."
+  },
+  "unsub": {
+    "title_bad": "Ce lien ne fonctionne pas",
+    "text_bad": "Le lien est peut-être incomplet. Vous pouvez aussi arrêter les nouveautés et les offres dans votre tableau de bord, dans Paramètres.",
+    "title_ask": "Ne plus recevoir les nouveautés et les offres ?",
+    "text_ask": "Vous ne recevrez plus les nouveautés ni les offres d'Alimun. Les e-mails concernant votre compte et vos cours continueront d'arriver.",
+    "button": "Ne plus recevoir les nouveautés et les offres",
+    "title_done": "C'est fait",
+    "text_done": "Vous ne recevrez plus les nouveautés ni les offres d'Alimun. Vous pouvez les réactiver à tout moment dans votre tableau de bord, dans Paramètres.",
+    "title_error": "Veuillez réessayer",
+    "text_error": "Un problème est survenu de notre côté. Veuillez réessayer dans une minute.",
+    "back": "Retour à Alimun"
   }
 }

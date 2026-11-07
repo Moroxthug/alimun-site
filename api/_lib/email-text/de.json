@@ -156,5 +156,45 @@
     "body": "Das Alimun-Team hat Ihr Konto auf den Tarif **{plan}** umgestellt. Er ist ab sofort aktiv, ganz ohne Karte oder Zahlung.",
     "body2": "Melden Sie sich an, um Ihre Kurse und Übungen zu sehen.",
     "note": "Wenn Sie glauben, dass es sich um einen Fehler handelt, antworten Sie auf diese E-Mail."
+  },
+  "admin_app": {
+    "subject": "Neue Bewerbung als Lehrkraft: {name}",
+    "preheader": "{name} möchte bei Alimun unterrichten.",
+    "heading": "Neue Bewerbung als Lehrkraft",
+    "body": "Jemand hat sich als Lehrkraft beworben. Prüfen Sie die Angaben und entscheiden Sie mit den Schaltflächen unten; jede fragt noch einmal nach.",
+    "f_name": "Name",
+    "f_languages": "Sprachen",
+    "f_experience": "Erfahrung",
+    "experience": "{n} Jahre",
+    "f_specialty": "Schwerpunkt",
+    "about": "Über die Person",
+    "approve": "Annehmen",
+    "reject": "Ablehnen",
+    "note": "Die Schaltflächen funktionieren sieben Tage lang. Sie können auch im Admin-Dashboard entscheiden.",
+    "footer": "Gesendet an die Admin-Adresse von Alimun, wenn sich eine Lehrkraft bewirbt."
+  },
+  "contact": {
+    "subject": "Kontaktformular: {name}",
+    "heading": "Nachricht von {name}",
+    "f_name": "Name",
+    "f_email": "E-Mail",
+    "f_phone": "Telefon",
+    "f_language": "Sprache",
+    "f_page": "Seite",
+    "message": "Nachricht",
+    "note": "Antworten Sie auf diese E-Mail, um direkt zu antworten.",
+    "footer": "Gesendet über das Kontaktformular auf alimun.com."
+  },
+  "unsub": {
+    "title_bad": "Dieser Link funktioniert nicht",
+    "text_bad": "Der Link ist möglicherweise unvollständig. Sie können Neuigkeiten und Angebote auch in Ihrem Dashboard unter Einstellungen abbestellen.",
+    "title_ask": "Neuigkeiten und Angebote abbestellen?",
+    "text_ask": "Sie erhalten dann keine Neuigkeiten und Angebote von Alimun mehr. E-Mails zu Ihrem Konto und Ihren Kursen erhalten Sie weiterhin.",
+    "button": "Neuigkeiten und Angebote abbestellen",
+    "title_done": "Erledigt",
+    "text_done": "Sie erhalten keine Neuigkeiten und Angebote von Alimun mehr. Sie können sie jederzeit in Ihrem Dashboard unter Einstellungen wieder einschalten.",
+    "title_error": "Bitte versuchen Sie es erneut",
+    "text_error": "Bei uns ist etwas schiefgelaufen. Bitte versuchen Sie es in einer Minute erneut.",
+    "back": "Zurück zu Alimun"
   }
 }

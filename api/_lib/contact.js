@@ -9,7 +9,9 @@
  * on each warm instance.
  */
 
+const { createClient } = require('@supabase/supabase-js');
 const mail = require('./email.js');
+const L = require('./email-i18n.js');
 const captcha = require('./captcha.js');
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
@@ -64,17 +66,22 @@ module.exports = async function contact(req, res) {
   }
 
   const name = `${firstName} ${lastName}`.trim();
+  // In the admin's email language (app_settings.admin_email_lang).
+  const url = process.env.SUPABASE_URL, sk = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const lang = await L.adminLang(url && sk ? createClient(url, sk, { auth: { autoRefreshToken: false, persistSession: false } }) : null);
+  const visitorLang = { en: 'English', es: 'Spanish', fr: 'French', de: 'German', it: 'Italian', pt: 'Portuguese', zh: 'Mandarin', ar: 'Arabic' }[locale];
   const content = mail.renderEmail({
-    hero: 'message',
+    hero: 'message', lang,
     signoff: false,
     preheader: message.replace(/\s+/g, ' ').slice(0, 120),
-    heading: `Message from ${name}`,
+    heading: L.say(lang, 'contact.heading', { name }),
     blocks: [
-      { facts: [['Name', name], ['Email', email], ['Phone', phone || '-'], ['Language', locale], ['Page', page || '-']] },
-      { quote: message, label: 'Message' },
+      { facts: [[L.say(lang, 'contact.f_name'), name], [L.say(lang, 'contact.f_email'), email], [L.say(lang, 'contact.f_phone'), phone || '-'],
+        [L.say(lang, 'contact.f_language'), locale === 'ma' ? L.languageName('French', lang) + ' (Maroc)' : (visitorLang ? L.languageName(visitorLang, lang) : locale)], [L.say(lang, 'contact.f_page'), page || '-']] },
+      { quote: message, label: L.say(lang, 'contact.message') },
     ],
-    note: 'Reply to this email to answer them directly.',
-    footer: 'Sent from the contact form on alimun.com.',
+    note: L.html(lang, 'contact.note'),
+    footer: L.html(lang, 'contact.footer'),
   });
 
   try {
@@ -85,7 +92,7 @@ module.exports = async function contact(req, res) {
         from: process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>',
         to: [process.env.CONTACT_EMAIL || 'bchysfpol@gmail.com'],
         reply_to: email,
-        subject: `Contact form: ${name}`.slice(0, 200),
+        subject: L.say(lang, 'contact.subject', { name }).replace(/[\r\n<>]+/g, ' ').slice(0, 200),
         ...content,
       }),
     });

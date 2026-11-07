@@ -156,5 +156,45 @@
     "body": "A equipa Alimun mudou a sua conta para o plano **{plan}**. Já está ativo, sem necessidade de cartão nem pagamento.",
     "body2": "Inicie sessão para ver as suas turmas e exercícios.",
     "note": "Se considera que se trata de um erro, responda a este email."
+  },
+  "admin_app": {
+    "subject": "Nova candidatura de professor: {name}",
+    "preheader": "{name} candidatou-se para ensinar na Alimun.",
+    "heading": "Nova candidatura de professor",
+    "body": "Alguém se candidatou para ensinar. Reveja os dados e decida com os botões abaixo; cada botão pede confirmação.",
+    "f_name": "Nome",
+    "f_languages": "Línguas",
+    "f_experience": "Experiência",
+    "experience": "{n} anos",
+    "f_specialty": "Especialidade",
+    "about": "Sobre a pessoa",
+    "approve": "Aprovar",
+    "reject": "Recusar",
+    "note": "Os botões funcionam durante sete dias. Também pode decidir no painel de administração.",
+    "footer": "Enviado para o endereço de administração da Alimun quando alguém se candidata."
+  },
+  "contact": {
+    "subject": "Formulário de contacto: {name}",
+    "heading": "Mensagem de {name}",
+    "f_name": "Nome",
+    "f_email": "E-mail",
+    "f_phone": "Telefone",
+    "f_language": "Língua",
+    "f_page": "Página",
+    "message": "Mensagem",
+    "note": "Responda a este e-mail para responder diretamente.",
+    "footer": "Enviado a partir do formulário de contacto de alimun.com."
+  },
+  "unsub": {
+    "title_bad": "Esta ligação não funciona",
+    "text_bad": "A ligação pode estar incompleta. Também pode deixar de receber novidades e ofertas no seu painel, em Definições.",
+    "title_ask": "Deixar de receber novidades e ofertas?",
+    "text_ask": "Deixará de receber novidades e ofertas da Alimun. Os e-mails sobre a sua conta e as suas aulas continuam a chegar.",
+    "button": "Deixar de receber novidades e ofertas",
+    "title_done": "Feito",
+    "text_done": "Deixará de receber novidades e ofertas da Alimun. Pode voltar a ativá-las a qualquer momento no seu painel, em Definições.",
+    "title_error": "Tente novamente",
+    "text_error": "Algo correu mal do nosso lado. Tente novamente dentro de um minuto.",
+    "back": "Voltar à Alimun"
   }
 }

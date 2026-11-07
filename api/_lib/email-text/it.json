@@ -156,5 +156,45 @@
     "body": "Il team di Alimun ha spostato il tuo account sul piano **{plan}**. È già attivo, senza bisogno di carta o pagamento.",
     "body2": "Accedi per vedere le tue classi e i tuoi esercizi.",
     "note": "Se pensi che si tratti di un errore, rispondi a questa email."
+  },
+  "admin_app": {
+    "subject": "Nuova candidatura come insegnante: {name}",
+    "preheader": "{name} vuole insegnare con Alimun.",
+    "heading": "Nuova candidatura come insegnante",
+    "body": "Qualcuno si è candidato come insegnante. Controlla i dati e decidi con i pulsanti qui sotto; ogni pulsante chiede una conferma.",
+    "f_name": "Nome",
+    "f_languages": "Lingue",
+    "f_experience": "Esperienza",
+    "experience": "{n} anni",
+    "f_specialty": "Specializzazione",
+    "about": "Presentazione",
+    "approve": "Approva",
+    "reject": "Rifiuta",
+    "note": "I pulsanti funzionano per sette giorni. Puoi decidere anche nella dashboard di amministrazione.",
+    "footer": "Inviato all'indirizzo di amministrazione di Alimun quando arriva una candidatura."
+  },
+  "contact": {
+    "subject": "Modulo di contatto: {name}",
+    "heading": "Messaggio da {name}",
+    "f_name": "Nome",
+    "f_email": "Email",
+    "f_phone": "Telefono",
+    "f_language": "Lingua",
+    "f_page": "Pagina",
+    "message": "Messaggio",
+    "note": "Rispondi a questa email per rispondere direttamente.",
+    "footer": "Inviato dal modulo di contatto di alimun.com."
+  },
+  "unsub": {
+    "title_bad": "Questo link non funziona",
+    "text_bad": "Il link potrebbe essere incompleto. Puoi anche smettere di ricevere novità e offerte dalla tua dashboard, in Impostazioni.",
+    "title_ask": "Non ricevere più novità e offerte?",
+    "text_ask": "Non riceverai più novità e offerte da Alimun. Le email sul tuo account e sulle tue lezioni continueranno ad arrivare.",
+    "button": "Non ricevere più novità e offerte",
+    "title_done": "Fatto",
+    "text_done": "Non riceverai più novità e offerte da Alimun. Puoi riattivarle quando vuoi dalla tua dashboard, in Impostazioni.",
+    "title_error": "Riprova",
+    "text_error": "Qualcosa non ha funzionato da parte nostra. Riprova tra un minuto.",
+    "back": "Torna ad Alimun"
   }
 }

@@ -109,10 +109,11 @@ async function handleReset(req, res) {
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** A small page in the site's style (bone page, white card, Coolvetica heading, lime button). */
-function page(res, status, heading, text, form) {
+function page(res, status, heading, text, form, lang) {
+  const dir = L.isRtl(lang) ? 'rtl' : 'ltr';
   res.setHeader('Content-Type', 'text/html; charset=utf-8');
   res.setHeader('X-Robots-Tag', 'noindex, nofollow');
-  return res.status(status).send(`<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${mail.esc(heading)} – Alimun</title>
+  return res.status(status).send(`<!DOCTYPE html><html lang="${L.htmlLang(lang)}" dir="${dir}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>${mail.esc(heading)} – Alimun</title>
 <link rel="icon" href="/images/favicon.svg" type="image/svg+xml"><style>
 @font-face { font-family: 'Coolvetica Condensed'; src: url('/fonts/coolvetica-condensed-rg.otf') format('opentype'); }
 @font-face { font-family: 'Satoshi'; src: url('/fonts/Satoshi-Variable.ttf') format('truetype'); font-weight: 300 900; }
@@ -123,30 +124,42 @@ body { margin: 0; min-height: 100vh; display: grid; place-items: center; backgro
 h1 { font-family: 'Coolvetica Condensed', 'Arial Narrow', sans-serif; font-weight: 400; font-size: 42px; line-height: 1; margin: 0 0 14px; }
 p { font-size: 16px; line-height: 1.6; color: #2b2b2b; margin: 0 0 22px; }
 button, a.btn { display: inline-block; background: #ceff65; color: #080808; border: 0; border-radius: 999px; padding: 15px 28px; font: 700 16px Satoshi, Arial, sans-serif; cursor: pointer; text-decoration: none; }
-</style></head><body><main class="card"><img src="/images/email/hero-message.png" alt="Alimun"><div class="in"><h1>${mail.esc(heading)}</h1><p>${text}</p>${form || '<a class="btn" href="/">Back to Alimun</a>'}</div></main></body></html>`);
+</style></head><body><main class="card"><img src="/images/email/hero-message.png" alt="Alimun"><div class="in"><h1>${mail.esc(heading)}</h1><p>${text}</p>${form || `<a class="btn" href="/">${mail.esc(L.say(lang, 'unsub.back'))}</a>`}</div></main></body></html>`);
+}
+
+/** The person's dashboard language, else their browser's (Accept-Language), else English. */
+async function personLang(supabase, userId, req) {
+  if (supabase && UUID_RE.test(userId)) {
+    for (const table of ['student_profiles', 'teacher_profiles']) {
+      const { data } = await supabase.from(table).select('ui_lang').eq('user_id', userId).maybeSingle();
+      if (data && data.ui_lang) return data.ui_lang;
+    }
+  }
+  return L.fromAcceptLanguage(req.headers['accept-language']);
 }
 
 async function handleUnsubscribe(req, res) {
   const u = String((req.query && req.query.u) || ''), s = String((req.query && req.query.s) || '');
-  if (!UUID_RE.test(u) || !mail.checkUnsubscribe(u, s)) {
-    return page(res, 400, 'This link does not work', 'The link may be incomplete. You can also stop news and offers in your dashboard, under Settings.');
-  }
+  const supabase = getSupabaseAdmin();
+  const valid = UUID_RE.test(u) && mail.checkUnsubscribe(u, s);
+  const lang = await personLang(supabase, valid ? u : '', req);
+  const t = (k) => mail.esc(L.say(lang, `unsub.${k}`));
+  if (!valid) return page(res, 400, L.say(lang, 'unsub.title_bad'), t('text_bad'), '', lang);
   if (req.method === 'GET') {
     // A page with a button: link checkers that open the link do not unsubscribe anyone.
     const action = `/api/auth?action=unsubscribe&u=${encodeURIComponent(u)}&s=${encodeURIComponent(s)}`;
-    return page(res, 200, 'Stop news and offers?', 'You will no longer receive news and offers from Alimun. Emails about your account and your classes still arrive.',
-      `<form method="POST" action="${mail.esc(action)}"><button type="submit">Stop news and offers</button></form>`);
+    return page(res, 200, L.say(lang, 'unsub.title_ask'), t('text_ask'),
+      `<form method="POST" action="${mail.esc(action)}"><button type="submit">${t('button')}</button></form>`, lang);
   }
-  const supabase = getSupabaseAdmin();
-  if (!supabase) return page(res, 503, 'Please try again', 'Something went wrong on our side. Please try again in a minute.');
+  if (!supabase) return page(res, 503, L.say(lang, 'unsub.title_error'), t('text_error'), '', lang);
   const { data: last } = await supabase.from('marketing_consents').select('age_16_plus').eq('user_id', u)
     .order('created_at', { ascending: false }).limit(1).maybeSingle();
   const { error } = await supabase.from('marketing_consents').insert({ user_id: u, granted: false, age_16_plus: !!(last && last.age_16_plus), source: 'unsubscribe' });
   if (error && error.code !== '23503') {
     console.error('[auth] unsubscribe:', error.message);
-    return page(res, 500, 'Please try again', 'Something went wrong on our side. Please try again in a minute.');
+    return page(res, 500, L.say(lang, 'unsub.title_error'), t('text_error'), '', lang);
   }
-  return page(res, 200, 'Done', 'You will no longer receive news and offers from Alimun. You can turn them back on at any time in your dashboard, under Settings.');
+  return page(res, 200, L.say(lang, 'unsub.title_done'), t('text_done'), '', lang);
 }
 
 module.exports = async function handler(req, res) {

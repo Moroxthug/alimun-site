@@ -156,5 +156,45 @@
     "body": "El equipo de Alimun ha cambiado tu cuenta al plan **{plan}**. Ya está activo, sin necesidad de tarjeta ni pago.",
     "body2": "Inicia sesión para ver tus clases y ejercicios.",
     "note": "Si crees que se trata de un error, responde a este correo."
+  },
+  "admin_app": {
+    "subject": "Nueva solicitud de profesor: {name}",
+    "preheader": "{name} ha solicitado dar clases en Alimun.",
+    "heading": "Nueva solicitud de profesor",
+    "body": "Una persona ha solicitado dar clases. Revisa los datos y decide con los botones de abajo; cada botón te pide confirmación.",
+    "f_name": "Nombre",
+    "f_languages": "Idiomas",
+    "f_experience": "Experiencia",
+    "experience": "{n} años",
+    "f_specialty": "Especialidad",
+    "about": "Sobre esta persona",
+    "approve": "Aprobar",
+    "reject": "Rechazar",
+    "note": "Los botones funcionan durante siete días. También puedes decidir en el panel de administración.",
+    "footer": "Enviado a la dirección de administración de Alimun cuando alguien solicita dar clases."
+  },
+  "contact": {
+    "subject": "Formulario de contacto: {name}",
+    "heading": "Mensaje de {name}",
+    "f_name": "Nombre",
+    "f_email": "Correo electrónico",
+    "f_phone": "Teléfono",
+    "f_language": "Idioma",
+    "f_page": "Página",
+    "message": "Mensaje",
+    "note": "Responde a este correo para contestarle directamente.",
+    "footer": "Enviado desde el formulario de contacto de alimun.com."
+  },
+  "unsub": {
+    "title_bad": "Este enlace no funciona",
+    "text_bad": "Puede que el enlace esté incompleto. También puedes dejar de recibir novedades y ofertas en tu panel, en Ajustes.",
+    "title_ask": "¿Dejar de recibir novedades y ofertas?",
+    "text_ask": "Ya no recibirás novedades ni ofertas de Alimun. Los correos sobre tu cuenta y tus clases te seguirán llegando.",
+    "button": "Dejar de recibir novedades y ofertas",
+    "title_done": "Hecho",
+    "text_done": "Ya no recibirás novedades ni ofertas de Alimun. Puedes volver a activarlas cuando quieras en tu panel, en Ajustes.",
+    "title_error": "Inténtalo de nuevo",
+    "text_error": "Algo ha fallado por nuestra parte. Inténtalo de nuevo en un minuto.",
+    "back": "Volver a Alimun"
   }
 }

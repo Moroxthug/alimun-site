@@ -154,4 +154,20 @@ function hello(lang, fullName) {
   return first ? html(lang, 'common.hello_name', { name: first }) : html(lang, 'common.hello');
 }
 
-module.exports = { LANGS, norm, htmlLang, isRtl, languageName, t, fill, say, html, className, when, day, weekdays, hello, locale };
+/** The admin's email language (app_settings.admin_email_lang, Admin → System → App settings); English if unset. */
+async function adminLang(supabase) {
+  try {
+    if (!supabase) return 'en';
+    const { data } = await supabase.from('app_settings').select('value').eq('key', 'admin_email_lang').maybeSingle();
+    const v = String((data && data.value) || '').trim().toLowerCase();
+    return LANGS.includes(v) ? v : 'en';
+  } catch (e) { return 'en'; }
+}
+/** A visitor's language from their browser (Accept-Language), for pages without a known person; English if none fits. */
+function fromAcceptLanguage(header) {
+  const parts = String(header || '').toLowerCase().split(',').map((x) => x.trim().split(';')[0]);
+  for (const p of parts) { if (p === 'fr-ma') return 'ma'; const b = p.slice(0, 2); if (LANGS.includes(b)) return b; }
+  return 'en';
+}
+
+module.exports = { LANGS, norm, htmlLang, isRtl, languageName, t, fill, say, html, className, when, day, weekdays, hello, locale, adminLang, fromAcceptLanguage };
