@@ -40,6 +40,7 @@
       field('People', '<select class="st-in" name="role">' + opt('', 'Students and teachers') + opt('student', 'Students') + opt('teacher', 'Teachers') + '</select>') +
       '<div class="st-row">' + field('Course', '<select class="st-in" name="language">' + opt('', 'Any') + LANGS.map(function (l) { return opt(l, l); }).join('') + '</select>') +
         field('Level', '<select class="st-in" name="level">' + opt('', 'Any') + LEVELS.map(function (l) { return opt(l, l); }).join('') + '</select>') + '</div>' +
+      field('Dashboard language', '<select class="st-in" name="ui_lang">' + opt('', 'Any') + [['en', 'English'], ['es', 'Spanish'], ['fr', 'French'], ['de', 'German'], ['pt', 'Portuguese'], ['it', 'Italian'], ['zh', 'Chinese'], ['ar', 'Arabic'], ['ma', 'French (Morocco)']].map(function (l) { return opt(l[0], l[1]); }).join('') + '</select>', 'Write the message in this language. The greeting and the email\u2019s own lines follow each person\u2019s dashboard language; people who have not opened their dashboard since 7 Nov count as English.') +
       field('Countries', '<input class="st-in" name="countries" placeholder="e.g. IT, MA, DE">', 'Two-letter codes, separated by commas. Empty: every country.') +
       field('Plan', '<select class="st-in" name="plan">' + opt('', 'Any') + opt('free', 'Free plan') + opt('paying', 'Paying') + '</select>') +
       '<div class="st-row">' + field('Active in the last … days', '<input class="st-in" type="number" name="active_within_days" min="1" max="400">') +
@@ -70,7 +71,7 @@
   }
   function filter() {
     var f = new FormData(root.querySelector('[data-aud]')), out = {};
-    ['role', 'language', 'level', 'plan', 'active_within_days', 'inactive_for_days'].forEach(function (k) { var v = String(f.get(k) || '').trim(); if (v) out[k] = v; });
+    ['role', 'language', 'level', 'ui_lang', 'plan', 'active_within_days', 'inactive_for_days'].forEach(function (k) { var v = String(f.get(k) || '').trim(); if (v) out[k] = v; });
     var c = String(f.get('countries') || '').toUpperCase().split(/[\s,;]+/).filter(function (x) { return /^[A-Z]{2}$/.test(x); });
     if (c.length) out.countries = c;
     return out;
@@ -89,7 +90,7 @@
   function test(btn) {
     btn.disabled = true; say('[data-msg="test"]', 'Sending…');
     if (!real()) { btn.disabled = false; say('[data-msg="test"]', 'Sample: nothing was sent.'); return; }
-    window.AlimunData.campaignTest(message()).then(function (r) { btn.disabled = false; say('[data-msg="test"]', 'Sent to ' + r.sent + '. Check your inbox.'); },
+    window.AlimunData.campaignTest(message(), filter()).then(function (r) { btn.disabled = false; say('[data-msg="test"]', 'Sent to ' + r.sent + '. Check your inbox.'); },
       function (e) { btn.disabled = false; say('[data-msg="test"]', e.message, true); });
   }
   function ask() {

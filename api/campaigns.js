@@ -17,6 +17,7 @@
 
 const { createClient } = require('@supabase/supabase-js');
 const mail = require('./_lib/email.js');
+const L = require('./_lib/email-i18n.js');
 
 const SITE = 'https://alimun.com';
 const MAX_RECIPIENTS = 5000;
@@ -49,6 +50,7 @@ function cleanFilter(f) {
   if (['student', 'teacher'].includes(f.role)) out.role = f.role;
   if (LANGS.includes(f.language)) out.language = f.language;
   if (LEVELS.includes(f.level)) out.level = f.level;
+  if (L.LANGS.includes(f.ui_lang)) out.ui_lang = f.ui_lang;
   if (Array.isArray(f.countries)) { const c = f.countries.filter((x) => /^[A-Z]{2}$/.test(x)).slice(0, 50); if (c.length) out.countries = c; }
   if (['free', 'paying'].includes(f.plan)) out.plan = f.plan;
   const n = (v) => { const x = parseInt(v, 10); return x >= 1 && x <= 400 ? x : null; };
@@ -75,12 +77,13 @@ function clickUrl(campaignId, userId) {
 function render(msg, opts) {
   const paras = msg.body.split(/\n{2,}/).map((x) => x.trim()).filter(Boolean).map((x) => ({ p: mail.esc(x).replace(/\n/g, '<br>') }));
   const blocks = [];
-  if (opts.name) blocks.push({ p: `Hello ${mail.esc(opts.name.split(/\s+/)[0])},` });
+  const tx = L.t(opts.lang);
+  if (opts.name) blocks.push({ p: mail.esc(L.fill(tx.hello_name, { name: opts.name.split(/\s+/)[0] })) });
   blocks.push(...paras);
   if (msg.button_link) blocks.push({ button: { label: msg.button_label, href: opts.buttonHref || msg.button_link } });
   return mail.renderEmail({
     hero: msg.hero, preheader: msg.body.replace(/\s+/g, ' ').slice(0, 120), heading: msg.heading, blocks,
-    unsubscribeUrl: opts.unsubscribeUrl || '', footer: opts.footer || '',
+    unsubscribeUrl: opts.unsubscribeUrl || '', footer: opts.footer || '', lang: opts.lang || 'en',
   });
 }
 function fromAddress() { return process.env.EMAIL_MARKETING_FROM || 'Alimun <news@alimun.com>'; }
@@ -99,13 +102,15 @@ async function handleAudience(req, res, supabase) {
   const filter = cleanFilter(body(req).filter);
   const { data, error } = await supabase.rpc('campaign_audience', { p_filter: filter });
   if (error) { console.error('[campaigns] audience', error.message); return res.status(500).json({ error: 'The audience could not be counted' }); }
-  return res.status(200).json({ count: data.length, people: data.slice(0, 30).map((p) => ({ name: p.name, email: p.email, role: p.role, country: p.country, language: p.language, level: p.level })) });
+  return res.status(200).json({ count: data.length, people: data.slice(0, 30).map((p) => ({ name: p.name, email: p.email, role: p.role, country: p.country, language: p.language, level: p.level, ui_lang: p.ui_lang })) });
 }
 
 async function handleTest(req, res, user) {
-  const { msg, error } = cleanMessage(body(req).message);
+  const b = body(req);
+  const { msg, error } = cleanMessage(b.message);
   if (error) return res.status(400).json({ error });
-  const { html, text } = render(msg, { name: user.user_metadata?.full_name || '', footer: 'This is a test sent only to you from the Campaigns page.' });
+  const lang = cleanFilter(b.filter).ui_lang || 'en';
+  const { html, text } = render(msg, { name: user.user_metadata?.full_name || '', footer: 'This is a test sent only to you from the Campaigns page.', lang });
   const ok = await mail.sendEmail({ to: user.email, subject: `[Test] ${msg.subject}`, html, text, from: fromAddress() });
   return ok ? res.status(200).json({ sent: user.email }) : res.status(502).json({ error: 'The test email could not be sent' });
 }
@@ -147,7 +152,7 @@ async function handleSend(req, res, supabase, user) {
       const chunk = people.slice(i, i + 100);
       const items = chunk.map((p) => {
         const unsub = mail.unsubscribeUrl(p.user_id);
-        const { html, text } = render(msg, { name: p.name || '', unsubscribeUrl: unsub, buttonHref: msg.button_link ? clickUrl(camp.id, p.user_id) : null });
+        const { html, text } = render(msg, { name: p.name || '', unsubscribeUrl: unsub, buttonHref: msg.button_link ? clickUrl(camp.id, p.user_id) : null, lang: p.ui_lang || 'en' });
         return { from: fromAddress(), to: p.email, subject: msg.subject, html, text,
           headers: unsub ? { 'List-Unsubscribe': `<${unsub}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' } : undefined };
       });

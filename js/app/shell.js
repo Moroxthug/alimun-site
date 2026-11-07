@@ -652,6 +652,7 @@
   function start() {
     var back = fromStripe();
     renderShell();
+    if (mode === 'real' && window.AlimunData && window.AlimunData.rememberUiLang) window.AlimunData.rememberUiLang(lang, 'student');
     if (window.AlimunBell) window.AlimunBell.attach(document.querySelector('[data-bell]'), readerHelpers, mode === 'real' && !(window.AlimunData && window.AlimunData.viewingAs && window.AlimunData.viewingAs()));
     render(routeFromHash(), false);
     if (back) stripeNote(back);

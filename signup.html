@@ -177,7 +177,8 @@ function setupExtras(pfx) {
 }
 function extras(pfx) {
   const country = $(pfx + '-country').value, adult = $(pfx + '-adult').checked;
-  return { country, marketing: { opt_in: adult && $(pfx + '-news').checked, age_16_plus: adult, wording: MARKETING_WORDING } };
+  const uiLang = (location.pathname.match(/^\/(ar|de|es|fr|it|ma|pt|zh)\//) || [])[1] || (document.documentElement.lang || 'en').slice(0, 2);
+  return { country, ui_lang: uiLang, marketing: { opt_in: adult && $(pfx + '-news').checked, age_16_plus: adult, wording: MARKETING_WORDING } };
 }
 setupExtras('a'); setupExtras('ta');
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];

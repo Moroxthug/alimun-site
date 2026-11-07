@@ -16,6 +16,7 @@
  *     note: 'Small print under the content (HTML allowed).',
  *     signoff: true,                 // "The Alimun team" with the book mark (default true)
  *     footer: 'Why this person gets this email (HTML allowed).',
+ *     lang: 'de',                    // the reader's dashboard language: the email's own parts in it, right to left for ar
  *     unsubscribeUrl: mail.unsubscribeUrl(userId),   // marketing only: footer link (pass it to sendEmail too)
  *   });
  *   await sendEmail({ to, subject, html, text, replyTo });   // true only when Resend accepted it
@@ -29,6 +30,7 @@
  */
 
 const crypto = require('crypto');
+const L = require('./email-i18n.js');
 
 const SITE = 'https://alimun.com';
 const IMG = `${SITE}/images/email`;
@@ -122,7 +124,7 @@ function htmlToText(html) {
     .replace(/[ \t]+\n/g, '\n').trim();
 }
 
-function renderText({ heading, blocks = [], note, footer, signoff }) {
+function renderText({ heading, blocks = [], note, footer, signoff, lang }) {
   const out = [heading, ''];
   for (const b of blocks) {
     if (b.p != null) out.push(htmlToText(b.p), '');
@@ -131,29 +133,30 @@ function renderText({ heading, blocks = [], note, footer, signoff }) {
     else if (b.button || b.buttons) out.push((b.buttons || [b.button]).map((x) => `${x.label}: ${safeHref(x.href)}`).join('\n'), '');
   }
   if (note) out.push(htmlToText(note), '');
-  if (signoff !== false) out.push('The Alimun team', '');
+  if (signoff !== false) out.push(L.t(lang).signoff, '');
   out.push('--', `Alimun · ${SITE}`);
   if (footer) out.push(htmlToText(footer));
   return out.join('\n');
 }
 
-function renderEmail({ hero = 'default', preheader = '', heading, blocks = [], note = '', footer = '', signoff = true, unsubscribeUrl = '' }) {
-  if (unsubscribeUrl) footer = `${footer ? footer + '<br>' : ''}You get these because you asked for news and offers from Alimun. <a href="${esc(safeHref(unsubscribeUrl))}" target="_blank" class="al-foot" style="color:${MUTED};text-decoration:underline;">Stop news and offers</a>`;
+function renderEmail({ hero = 'default', preheader = '', heading, blocks = [], note = '', footer = '', signoff = true, unsubscribeUrl = '', lang = 'en' }) {
+  const tx = L.t(lang), dir = L.isRtl(lang) ? 'rtl' : 'ltr', align = dir === 'rtl' ? 'right' : 'left';
+  if (unsubscribeUrl) footer = `${footer ? footer + '<br>' : ''}${esc(tx.unsub_line)} <a href="${esc(safeHref(unsubscribeUrl))}" target="_blank" class="al-foot" style="color:${MUTED};text-decoration:underline;">${esc(tx.unsub_link)}</a>`;
   const heroKey = HEROES[hero] ? hero : 'default';
   const firstButton = blocks.find((b) => b.button || b.buttons);
   const fallbackHref = firstButton ? safeHref((firstButton.buttons || [firstButton.button])[0].href) : '';
   const fallback = fallbackHref && fallbackHref.startsWith('https://') && fallbackHref.length > 60
-    ? `<p class="al-muted" style="margin:0 0 18px;font-family:${SANS};font-size:13px;line-height:1.55;color:${MUTED};">If the button does not work, copy this link into your browser:<br><a href="${esc(fallbackHref)}" class="al-link" style="color:${INK};text-decoration:underline;word-break:break-all;">${esc(fallbackHref)}</a></p>`
+    ? `<p class="al-muted" style="margin:0 0 18px;font-family:${SANS};font-size:13px;line-height:1.55;color:${MUTED};">${esc(tx.fallback)}<br><a href="${esc(fallbackHref)}" class="al-link" style="color:${INK};text-decoration:underline;word-break:break-all;">${esc(fallbackHref)}</a></p>`
     : '';
   const noteHtml = note ? `<p class="al-muted" style="margin:0 0 18px;font-family:${SANS};font-size:13px;line-height:1.55;color:${MUTED};">${note}</p>` : '';
   const signoffHtml = signoff === false ? '' : `
       <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:10px 0 4px;"><tr>
         <td valign="middle" style="padding:0 12px 0 0;"><img src="${IMG}/mark.png" width="36" height="36" alt="" style="display:block;width:36px;height:36px;border:0;border-radius:50%;"></td>
-        <td valign="middle" class="al-h" style="font-family:${DISPLAY};font-size:22px;line-height:1;color:${INK};">The Alimun team</td>
+        <td valign="middle" class="al-h" style="font-family:${DISPLAY};font-size:22px;line-height:1;color:${INK};">${esc(tx.signoff)}</td>
       </tr></table>`;
 
   const html = `<!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<html lang="${L.htmlLang(lang)}" dir="${dir}" xmlns="http://www.w3.org/1999/xhtml" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -197,14 +200,14 @@ a { color: ${INK}; }
 </style>
 <!--[if mso]><style>.al-h1, .al-h { font-family: Arial, sans-serif !important; } td, p, a, div { font-family: Arial, sans-serif !important; }</style><![endif]-->
 </head>
-<body class="al-page" style="margin:0;padding:0;background:${BONE};">
+<body class="al-page" dir="${dir}" style="margin:0;padding:0;background:${BONE};text-align:${align};">
 <div style="display:none;max-height:0;overflow:hidden;opacity:0;mso-hide:all;font-size:1px;line-height:1px;color:${BONE};">${esc(preheader)}${'&#847;&zwnj;&nbsp;'.repeat(40)}</div>
-<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${BONE}" class="al-page" style="background:${BONE};">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="${BONE}" class="al-page" dir="${dir}" style="background:${BONE};direction:${dir};text-align:${align};">
 <tr><td align="center" class="al-outer" style="padding:36px 16px 44px;">
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:580px;">
     <tr><td class="al-card" bgcolor="#ffffff" style="background:#ffffff;border-radius:28px;padding:10px;">
       <a href="${SITE}" target="_blank" style="text-decoration:none;display:block;"><img class="al-hero" src="${IMG}/hero-${heroKey}.png" width="560" alt="${esc(HEROES[heroKey])}" style="display:block;width:100%;max-width:560px;height:auto;border:0;border-radius:20px;outline:none;font-family:${SANS};font-size:16px;color:${FOREST};background:${BONE};"></a>
-      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td class="al-body" style="padding:34px 36px 26px;">
+      <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td class="al-body" dir="${dir}" style="padding:34px 36px 26px;text-align:${align};">
         <h1 class="al-h1" style="margin:0 0 20px;font-family:${DISPLAY};font-size:46px;line-height:1;font-weight:400;letter-spacing:-0.005em;color:${INK};">${esc(heading)}</h1>
         ${blocks.map(block).join('\n        ')}
         ${fallback}
@@ -213,14 +216,15 @@ a { color: ${INK}; }
       </td></tr></table>
     </td></tr>
     <tr><td class="al-foot" style="padding:26px 22px 0;font-family:${SANS};font-size:12px;line-height:1.7;color:${MUTED};">
-      <a href="${SITE}/signin.html" target="_blank" class="al-foot-strong" style="color:${INK};text-decoration:none;font-weight:700;">Your dashboard</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="${SITE}/contact" target="_blank" class="al-foot-strong" style="color:${INK};text-decoration:none;font-weight:700;">Contact</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="${SITE}" target="_blank" class="al-foot" style="color:${MUTED};text-decoration:none;">alimun.com</a>${footer ? `<br>${footer}` : ''}
+      <a href="${SITE}/signin.html" target="_blank" class="al-foot-strong" style="color:${INK};text-decoration:none;font-weight:700;">${esc(tx.dashboard)}</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="${SITE}/contact" target="_blank" class="al-foot-strong" style="color:${INK};text-decoration:none;font-weight:700;">${esc(tx.contact)}</a>&nbsp;&nbsp;·&nbsp;&nbsp;<a href="${SITE}" target="_blank" class="al-foot" style="color:${MUTED};text-decoration:none;">alimun.com</a>${footer ? `<br>${footer}` : ''}
     </td></tr>
   </table>
 </td></tr>
 </table>
 </body>
 </html>`;
-  return { html, text: renderText({ heading, blocks, note, footer, signoff }) };
+  // Right-to-left (Arabic): the button arrow points the way the text reads.
+  return { html: dir === 'rtl' ? html.replace(/&rarr;/g, '&larr;') : html, text: renderText({ heading, blocks, note, footer, signoff, lang }) };
 }
 
 /** Send through Resend. Returns true only when Resend accepted the message. */

@@ -447,6 +447,7 @@
   /* ---------- Boot ---------- */
   function start() {
     renderShell();
+    if (mode === 'real' && window.AlimunData && window.AlimunData.rememberUiLang) window.AlimunData.rememberUiLang(lang, 'teacher');
     if (window.AlimunBell) window.AlimunBell.attach(document.querySelector('[data-bell]'), helpers, mode === 'real' && !(window.AlimunData && window.AlimunData.viewingAs && window.AlimunData.viewingAs()));
     render(routeFromHash(), false);
   }
