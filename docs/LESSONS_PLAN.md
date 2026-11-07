@@ -4,6 +4,10 @@ Owner, 7 Nov 2026: "the classes should be prepared by us. A class starts from A1
 
 Status: plan, waiting for the owner's answers in "Decisions". Nothing is built yet.
 
+## Positioning (owner, 7 Nov 2026)
+
+Alimun is marketed as preparation for the exams: we prepare you for the test without you spending more to study elsewhere. Every lesson, book unit and class lesson therefore includes work in the format of the exam for its level (A2 Key, B1 Preliminary, B2 First, C1 Advanced, C2 Proficiency), named as "in the format of", never as an official qualification. Course length and the number of lessons per level must be planned so the promise holds (see "Course length"; the owner wants to settle this before lessons are produced).
+
 ## What exists today (facts this plan builds on)
 
 - Course books per language, level and track (`site/src/data/books/`, `docs/BOOKS.md`): book > unit > lesson > pages > blocks. English A1 has 8 units of 4 lessons, each with a written outline. Explanation blocks (text, examples, table, dialogue, tip) render with `js/app/reader.js`; every exercise kind renders with `js/app/exercises.js` (`AlimunEx`).
