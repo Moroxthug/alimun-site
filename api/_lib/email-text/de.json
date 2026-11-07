@@ -196,5 +196,30 @@
     "title_error": "Bitte versuchen Sie es erneut",
     "text_error": "Bei uns ist etwas schiefgelaufen. Bitte versuchen Sie es in einer Minute erneut.",
     "back": "Zurück zu Alimun"
+  },
+  "decide": {
+    "back": "Zurück zu Alimun",
+    "err_title": "Aktion fehlgeschlagen",
+    "err_params": "Fehlende oder ungültige Angaben.",
+    "err_secret": "Dieser Link kann gerade nicht verwendet werden. Bitte entscheiden Sie im Admin-Dashboard.",
+    "err_expired": "Dieser Link ist ungültig oder abgelaufen. Bitte entscheiden Sie im Admin-Dashboard.",
+    "err_db": "Die Datenbank ist nicht erreichbar.",
+    "err_notfound": "Profil der Lehrkraft nicht gefunden.",
+    "err_update": "Das Profil der Lehrkraft konnte nicht aktualisiert werden.",
+    "already_approved_title": "Bereits angenommen",
+    "already_approved": "**{name}** ist bereits angenommen.",
+    "already_declined_title": "Bereits abgelehnt",
+    "already_declined": "**{name}** wurde bereits abgelehnt oder gesperrt.",
+    "confirm_approve_title": "Diese Bewerbung annehmen?",
+    "confirm_reject_title": "Diese Bewerbung ablehnen?",
+    "confirm_body": "Lehrkraft: **{name}**",
+    "button_approve": "Bewerbung annehmen",
+    "button_reject": "Bewerbung ablehnen",
+    "done_approved_title": "Lehrkraft angenommen",
+    "done_approved": "**{name}** ist jetzt angenommen.",
+    "done_declined_title": "Bewerbung abgelehnt",
+    "done_declined": "Die Bewerbung von **{name}** wurde abgelehnt und das Konto als gesperrt markiert.",
+    "emailed": "Eine Benachrichtigung wurde an **{email}** gesendet.",
+    "not_emailed": "Die Benachrichtigung konnte nicht gesendet werden."
   }
 }

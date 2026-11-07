@@ -196,5 +196,30 @@
     "title_error": "Inténtalo de nuevo",
     "text_error": "Algo ha fallado por nuestra parte. Inténtalo de nuevo en un minuto.",
     "back": "Volver a Alimun"
+  },
+  "decide": {
+    "back": "Volver a Alimun",
+    "err_title": "No se pudo completar",
+    "err_params": "Faltan parámetros o no son válidos.",
+    "err_secret": "Este enlace no se puede usar ahora. Decide desde el panel de administración.",
+    "err_expired": "Este enlace no es válido o ha caducado. Decide desde el panel de administración.",
+    "err_db": "No se pudo acceder a la base de datos.",
+    "err_notfound": "No se encontró el perfil del profesor.",
+    "err_update": "No se pudo actualizar el perfil del profesor.",
+    "already_approved_title": "Ya aprobado",
+    "already_approved": "**{name}** ya está aprobado.",
+    "already_declined_title": "Ya rechazado",
+    "already_declined": "**{name}** ya fue rechazado o suspendido.",
+    "confirm_approve_title": "¿Aprobar esta solicitud?",
+    "confirm_reject_title": "¿Rechazar esta solicitud?",
+    "confirm_body": "Profesor: **{name}**",
+    "button_approve": "Aprobar la solicitud",
+    "button_reject": "Rechazar la solicitud",
+    "done_approved_title": "Profesor aprobado",
+    "done_approved": "**{name}** ya está aprobado.",
+    "done_declined_title": "Solicitud rechazada",
+    "done_declined": "La solicitud de **{name}** se ha rechazado y la cuenta se ha marcado como suspendida.",
+    "emailed": "Se ha enviado un correo de aviso a **{email}**.",
+    "not_emailed": "No se pudo enviar el correo de aviso."
   }
 }

@@ -196,5 +196,30 @@
     "title_error": "يرجى المحاولة مرة أخرى",
     "text_error": "حدث خطأ من جهتنا. يرجى المحاولة مرة أخرى بعد دقيقة.",
     "back": "العودة إلى Alimun"
+  },
+  "decide": {
+    "back": "العودة إلى Alimun",
+    "err_title": "تعذّر تنفيذ الإجراء",
+    "err_params": "بيانات ناقصة أو غير صالحة.",
+    "err_secret": "لا يمكن استخدام هذا الرابط الآن. يرجى اتخاذ القرار من لوحة الإدارة.",
+    "err_expired": "هذا الرابط غير صالح أو انتهت صلاحيته. يرجى اتخاذ القرار من لوحة الإدارة.",
+    "err_db": "تعذّر الوصول إلى قاعدة البيانات.",
+    "err_notfound": "لم يُعثر على ملف المعلم.",
+    "err_update": "تعذّر تحديث ملف المعلم.",
+    "already_approved_title": "تم القبول مسبقًا",
+    "already_approved": "**{name}** مقبول بالفعل.",
+    "already_declined_title": "تم الرفض مسبقًا",
+    "already_declined": "تم رفض **{name}** أو تعليقه بالفعل.",
+    "confirm_approve_title": "قبول هذا الطلب؟",
+    "confirm_reject_title": "رفض هذا الطلب؟",
+    "confirm_body": "المعلم: **{name}**",
+    "button_approve": "قبول الطلب",
+    "button_reject": "رفض الطلب",
+    "done_approved_title": "تم قبول المعلم",
+    "done_approved": "تم قبول **{name}** الآن.",
+    "done_declined_title": "تم رفض الطلب",
+    "done_declined": "تم رفض طلب **{name}** ووضع علامة التعليق على الحساب.",
+    "emailed": "أُرسلت رسالة إشعار إلى **{email}**.",
+    "not_emailed": "تعذّر إرسال رسالة الإشعار."
   }
 }

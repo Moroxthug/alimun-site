@@ -84,15 +84,16 @@ async function getAuthUser(req, supabase) {
   return data.user;
 }
 
-function renderErrorPage(res, message) {
+function renderErrorPage(res, message, lang = 'en') {
+  const dir = L.isRtl(lang) ? 'rtl' : 'ltr';
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('Referrer-Policy', 'no-referrer');
   return res.status(400).send(`
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="${L.htmlLang(lang)}" dir="${dir}">
     <head>
       <meta charset="utf-8">
-      <title>Error — Alimun Admin</title>
+      <title>${escapeHtml(L.say(lang, 'decide.err_title'))} — Alimun</title>
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
       <style>
@@ -111,9 +112,9 @@ function renderErrorPage(res, message) {
         <div class="ico">
           <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </div>
-        <h1>Action Failed</h1>
+        <h1>${escapeHtml(L.say(lang, 'decide.err_title'))}</h1>
         <p>${escapeHtml(message)}</p>
-        <a href="https://alimun.com" class="btn">Back to Alimun</a>
+        <a href="https://alimun.com" class="btn">${escapeHtml(L.say(lang, 'decide.back'))}</a>
       </div>
     </body>
     </html>
@@ -155,15 +156,16 @@ const ICON_CHECK = '<svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/>
 const ICON_X = '<svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>';
 
 /** Admin result page. `bodyHtml` must already be escaped. */
-function renderPage(res, status, { title, heading, icoClass = '', icon = ICON_CHECK, bodyHtml, extraHtml = '' }) {
+function renderPage(res, status, { title, heading, icoClass = '', icon = ICON_CHECK, bodyHtml, extraHtml = '', lang = 'en' }) {
+  const dir = L.isRtl(lang) ? 'rtl' : 'ltr';
   res.setHeader('Cache-Control', 'no-store');
   res.setHeader('Referrer-Policy', 'no-referrer');
   return res.status(status).send(`
     <!DOCTYPE html>
-    <html lang="en">
+    <html lang="${L.htmlLang(lang)}" dir="${dir}">
     <head>
       <meta charset="utf-8">
-      <title>${escapeHtml(title)} — Alimun Admin</title>
+      <title>${escapeHtml(title)} — Alimun</title>
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <meta name="robots" content="noindex">
       <link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700,900&display=swap" rel="stylesheet">
@@ -176,21 +178,20 @@ function renderPage(res, status, { title, heading, icoClass = '', icon = ICON_CH
         <h1>${escapeHtml(heading)}</h1>
         <p>${bodyHtml}</p>
         ${extraHtml}
-        <a href="https://alimun.com" class="btn">Back to Alimun</a>
+        <a href="https://alimun.com" class="btn">${escapeHtml(L.say(lang, 'decide.back'))}</a>
       </div>
     </body>
     </html>
   `);
 }
 
-function renderAlreadyReviewed(res, profile) {
-  const name = escapeHtml(profile.full_name);
+function renderAlreadyReviewed(res, profile, lang) {
   if (profile.status === 'approved') {
-    return renderPage(res, 200, { title: 'Approved', heading: 'Already Approved',
-      bodyHtml: `Teacher <strong>${name}</strong> is already approved.` });
+    return renderPage(res, 200, { lang, title: L.say(lang, 'decide.already_approved_title'), heading: L.say(lang, 'decide.already_approved_title'),
+      bodyHtml: L.html(lang, 'decide.already_approved', { name: profile.full_name }) });
   }
-  return renderPage(res, 200, { title: 'Suspended', heading: 'Already Suspended', icoClass: 'neutral', icon: ICON_X,
-    bodyHtml: `Teacher <strong>${name}</strong> has already been marked as suspended/rejected.` });
+  return renderPage(res, 200, { lang, title: L.say(lang, 'decide.already_declined_title'), heading: L.say(lang, 'decide.already_declined_title'), icoClass: 'neutral', icon: ICON_X,
+    bodyHtml: L.html(lang, 'decide.already_declined', { name: profile.full_name }) });
 }
 
 async function handleEmailDecision(req, res, action) {
@@ -208,25 +209,28 @@ async function handleEmailDecision(req, res, action) {
   const teacher_id = String(params.teacher_id || '');
   const exp = String(params.exp || '');
   const label = action === 'approve' ? 'Approve' : 'Reject';
+  // Every page here in the admin's email language (app_settings.admin_email_lang), like the email that links to it.
+  const supabase = getSupabaseAdmin();
+  const lang = await L.adminLang(supabase);
+  const fail = (key) => renderErrorPage(res, L.say(lang, `decide.${key}`), lang);
 
   if (!token || !teacher_id || !exp || !UUID_RE.test(teacher_id) || !/^[0-9]{1,12}$/.test(exp) || !/^[0-9a-f]{64}$/i.test(token)) {
-    return renderErrorPage(res, 'Missing or invalid parameters.');
+    return fail('err_params');
   }
 
   const secret = linkSecret();
   if (!secret) {
     console.error(`[Alimun ${label}] link secret is not configured.`);
-    return renderErrorPage(res, 'This link cannot be used right now. Please act from the admin dashboard.');
+    return fail('err_secret');
   }
 
   if (!verifyActionToken(secret, teacher_id, action, exp, token)) {
     console.warn(`[Alimun ${label}] Invalid or expired token for teacher_id: ${teacher_id}`);
-    return renderErrorPage(res, 'This link is invalid or has expired. Please act from the admin dashboard.');
+    return fail('err_expired');
   }
 
-  const supabase = getSupabaseAdmin();
   if (!supabase) {
-    return renderErrorPage(res, 'Server database connection error.');
+    return fail('err_db');
   }
 
   const { data: profile, error: fetchErr } = await supabase
@@ -237,15 +241,14 @@ async function handleEmailDecision(req, res, action) {
 
   if (fetchErr || !profile) {
     console.error(`[Alimun ${label}] Error fetching teacher profile:`, fetchErr?.message);
-    return renderErrorPage(res, 'Teacher profile not found.');
+    return fail('err_notfound');
   }
 
   // Single use: only a pending application can be decided from an email link.
   if (profile.status !== 'pending') {
-    return renderAlreadyReviewed(res, profile);
+    return renderAlreadyReviewed(res, profile, lang);
   }
 
-  const name = escapeHtml(profile.full_name);
 
   if (!isPost) {
     // Confirmation step. Nothing changes until the admin presses the button.
@@ -254,12 +257,13 @@ async function handleEmailDecision(req, res, action) {
           <input type="hidden" name="token" value="${escapeHtml(token)}">
           <input type="hidden" name="teacher_id" value="${escapeHtml(teacher_id)}">
           <input type="hidden" name="exp" value="${escapeHtml(exp)}">
-          <button type="submit" class="btn ${action === 'approve' ? 'primary' : ''}">${label} Application</button>
+          <button type="submit" class="btn ${action === 'approve' ? 'primary' : ''}">${escapeHtml(L.say(lang, action === 'approve' ? 'decide.button_approve' : 'decide.button_reject'))}</button>
         </form>`;
+    const title = L.say(lang, action === 'approve' ? 'decide.confirm_approve_title' : 'decide.confirm_reject_title');
     return renderPage(res, 200, {
-      title: `${label} teacher`, heading: `${label} Application`,
+      lang, title, heading: title,
       icoClass: action === 'approve' ? '' : 'bad', icon: action === 'approve' ? ICON_CHECK : ICON_X,
-      bodyHtml: `Teacher <strong>${name}</strong>`,
+      bodyHtml: L.html(lang, 'decide.confirm_body', { name: profile.full_name }),
       extraHtml: form,
     });
   }
@@ -277,11 +281,11 @@ async function handleEmailDecision(req, res, action) {
 
   if (updateErr) {
     console.error(`[Alimun ${label}] Database update failed:`, updateErr.message);
-    return renderErrorPage(res, 'Failed to update teacher profile status.');
+    return fail('err_update');
   }
   if (!changed || changed.length === 0) {
     const { data: now } = await supabase.from('teacher_profiles').select('full_name, status').eq('id', teacher_id).maybeSingle();
-    return renderAlreadyReviewed(res, now || profile);
+    return renderAlreadyReviewed(res, now || profile, lang);
   }
 
   const teacherEmail = await getTeacherEmail(supabase, profile.user_id);
@@ -291,16 +295,14 @@ async function handleEmailDecision(req, res, action) {
       ? await sendEmail(teacherEmail, L.say(profile.ui_lang, 'approved.subject', { name: profile.full_name }), approvedEmailHtml(profile.full_name, profile.ui_lang))
       : await sendEmail(teacherEmail, L.say(profile.ui_lang, 'rejected.subject'), rejectedEmailHtml(profile.full_name, teacherEmail, null, profile.ui_lang));
   }
-  const emailLine = emailed
-    ? ` A notification email has been sent to <strong>${escapeHtml(teacherEmail)}</strong>.`
-    : ' The notification email could not be sent.';
+  const emailLine = ' ' + (emailed ? L.html(lang, 'decide.emailed', { email: teacherEmail }) : L.html(lang, 'decide.not_emailed'));
 
   if (action === 'approve') {
-    return renderPage(res, 200, { title: 'Approved', heading: 'Teacher Approved',
-      bodyHtml: `Teacher <strong>${name}</strong> is now approved.${emailLine}` });
+    return renderPage(res, 200, { lang, title: L.say(lang, 'decide.done_approved_title'), heading: L.say(lang, 'decide.done_approved_title'),
+      bodyHtml: L.html(lang, 'decide.done_approved', { name: profile.full_name }) + emailLine });
   }
-  return renderPage(res, 200, { title: 'Rejected', heading: 'Teacher Rejected', icoClass: 'bad', icon: ICON_X,
-    bodyHtml: `Teacher <strong>${name}</strong> has been rejected and marked as suspended.${emailLine}` });
+  return renderPage(res, 200, { lang, title: L.say(lang, 'decide.done_declined_title'), heading: L.say(lang, 'decide.done_declined_title'), icoClass: 'bad', icon: ICON_X,
+    bodyHtml: L.html(lang, 'decide.done_declined', { name: profile.full_name }) + emailLine });
 }
 
 // ── Email bodies (shared by the email-link handlers and action=set-status) ──

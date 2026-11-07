@@ -196,5 +196,30 @@
     "title_error": "请重试",
     "text_error": "我们这边出了点问题。请一分钟后再试。",
     "back": "返回 Alimun"
+  },
+  "decide": {
+    "back": "返回 Alimun",
+    "err_title": "操作失败",
+    "err_params": "参数缺失或无效。",
+    "err_secret": "此链接暂时无法使用。请在管理后台做决定。",
+    "err_expired": "此链接无效或已过期。请在管理后台做决定。",
+    "err_db": "无法连接数据库。",
+    "err_notfound": "未找到教师资料。",
+    "err_update": "无法更新教师资料。",
+    "already_approved_title": "已批准",
+    "already_approved": "**{name}** 已经获得批准。",
+    "already_declined_title": "已拒绝",
+    "already_declined": "**{name}** 已被拒绝或停用。",
+    "confirm_approve_title": "批准这份申请？",
+    "confirm_reject_title": "拒绝这份申请？",
+    "confirm_body": "教师：**{name}**",
+    "button_approve": "批准申请",
+    "button_reject": "拒绝申请",
+    "done_approved_title": "教师已批准",
+    "done_approved": "**{name}** 现已获得批准。",
+    "done_declined_title": "申请已拒绝",
+    "done_declined": "**{name}** 的申请已被拒绝，账户已标记为停用。",
+    "emailed": "已向 **{email}** 发送通知邮件。",
+    "not_emailed": "通知邮件未能发送。"
   }
 }

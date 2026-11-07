@@ -196,5 +196,30 @@
     "title_error": "Please try again",
     "text_error": "Something went wrong on our side. Please try again in a minute.",
     "back": "Back to Alimun"
+  },
+  "decide": {
+    "back": "Back to Alimun",
+    "err_title": "Action failed",
+    "err_params": "Missing or invalid parameters.",
+    "err_secret": "This link cannot be used right now. Please decide in the admin dashboard.",
+    "err_expired": "This link is invalid or has expired. Please decide in the admin dashboard.",
+    "err_db": "The database could not be reached.",
+    "err_notfound": "Teacher profile not found.",
+    "err_update": "The teacher profile could not be updated.",
+    "already_approved_title": "Already approved",
+    "already_approved": "**{name}** is already approved.",
+    "already_declined_title": "Already declined",
+    "already_declined": "**{name}** has already been declined or suspended.",
+    "confirm_approve_title": "Approve this application?",
+    "confirm_reject_title": "Decline this application?",
+    "confirm_body": "Teacher: **{name}**",
+    "button_approve": "Approve the application",
+    "button_reject": "Decline the application",
+    "done_approved_title": "Teacher approved",
+    "done_approved": "**{name}** is now approved.",
+    "done_declined_title": "Application declined",
+    "done_declined": "The application from **{name}** has been declined and the account marked as suspended.",
+    "emailed": "A notification email has been sent to **{email}**.",
+    "not_emailed": "The notification email could not be sent."
   }
 }

@@ -196,5 +196,30 @@
     "title_error": "Tente novamente",
     "text_error": "Algo correu mal do nosso lado. Tente novamente dentro de um minuto.",
     "back": "Voltar à Alimun"
+  },
+  "decide": {
+    "back": "Voltar à Alimun",
+    "err_title": "Ação falhou",
+    "err_params": "Parâmetros em falta ou inválidos.",
+    "err_secret": "Esta ligação não pode ser usada agora. Decida no painel de administração.",
+    "err_expired": "Esta ligação é inválida ou expirou. Decida no painel de administração.",
+    "err_db": "Não foi possível aceder à base de dados.",
+    "err_notfound": "Perfil do professor não encontrado.",
+    "err_update": "Não foi possível atualizar o perfil do professor.",
+    "already_approved_title": "Já aprovada",
+    "already_approved": "**{name}** já está aprovado.",
+    "already_declined_title": "Já recusada",
+    "already_declined": "**{name}** já foi recusado ou suspenso.",
+    "confirm_approve_title": "Aprovar esta candidatura?",
+    "confirm_reject_title": "Recusar esta candidatura?",
+    "confirm_body": "Professor: **{name}**",
+    "button_approve": "Aprovar a candidatura",
+    "button_reject": "Recusar a candidatura",
+    "done_approved_title": "Professor aprovado",
+    "done_approved": "**{name}** está agora aprovado.",
+    "done_declined_title": "Candidatura recusada",
+    "done_declined": "A candidatura de **{name}** foi recusada e a conta marcada como suspensa.",
+    "emailed": "Foi enviado um e-mail de aviso para **{email}**.",
+    "not_emailed": "Não foi possível enviar o e-mail de aviso."
   }
 }

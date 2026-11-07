@@ -196,5 +196,30 @@
     "title_error": "Riprova",
     "text_error": "Qualcosa non ha funzionato da parte nostra. Riprova tra un minuto.",
     "back": "Torna ad Alimun"
+  },
+  "decide": {
+    "back": "Torna ad Alimun",
+    "err_title": "Azione non riuscita",
+    "err_params": "Parametri mancanti o non validi.",
+    "err_secret": "Questo link non si può usare ora. Decidi dalla dashboard di amministrazione.",
+    "err_expired": "Questo link non è valido o è scaduto. Decidi dalla dashboard di amministrazione.",
+    "err_db": "Impossibile raggiungere il database.",
+    "err_notfound": "Profilo insegnante non trovato.",
+    "err_update": "Impossibile aggiornare il profilo dell'insegnante.",
+    "already_approved_title": "Già approvata",
+    "already_approved": "**{name}** è già approvato.",
+    "already_declined_title": "Già rifiutata",
+    "already_declined": "**{name}** è già stato rifiutato o sospeso.",
+    "confirm_approve_title": "Approvare questa candidatura?",
+    "confirm_reject_title": "Rifiutare questa candidatura?",
+    "confirm_body": "Insegnante: **{name}**",
+    "button_approve": "Approva la candidatura",
+    "button_reject": "Rifiuta la candidatura",
+    "done_approved_title": "Insegnante approvato",
+    "done_approved": "**{name}** ora è approvato.",
+    "done_declined_title": "Candidatura rifiutata",
+    "done_declined": "La candidatura di **{name}** è stata rifiutata e l'account segnato come sospeso.",
+    "emailed": "È stata inviata un'email di avviso a **{email}**.",
+    "not_emailed": "Non è stato possibile inviare l'email di avviso."
   }
 }

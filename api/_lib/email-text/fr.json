@@ -196,5 +196,30 @@
     "title_error": "Veuillez réessayer",
     "text_error": "Un problème est survenu de notre côté. Veuillez réessayer dans une minute.",
     "back": "Retour à Alimun"
+  },
+  "decide": {
+    "back": "Retour à Alimun",
+    "err_title": "Action impossible",
+    "err_params": "Paramètres manquants ou invalides.",
+    "err_secret": "Ce lien ne peut pas être utilisé pour le moment. Veuillez décider depuis le tableau de bord d'administration.",
+    "err_expired": "Ce lien n'est pas valide ou a expiré. Veuillez décider depuis le tableau de bord d'administration.",
+    "err_db": "La base de données est injoignable.",
+    "err_notfound": "Profil d'enseignant introuvable.",
+    "err_update": "Le profil de l'enseignant n'a pas pu être mis à jour.",
+    "already_approved_title": "Déjà acceptée",
+    "already_approved": "**{name}** est déjà accepté.",
+    "already_declined_title": "Déjà refusée",
+    "already_declined": "**{name}** a déjà été refusé ou suspendu.",
+    "confirm_approve_title": "Accepter cette candidature ?",
+    "confirm_reject_title": "Refuser cette candidature ?",
+    "confirm_body": "Enseignant : **{name}**",
+    "button_approve": "Accepter la candidature",
+    "button_reject": "Refuser la candidature",
+    "done_approved_title": "Enseignant accepté",
+    "done_approved": "**{name}** est maintenant accepté.",
+    "done_declined_title": "Candidature refusée",
+    "done_declined": "La candidature de **{name}** a été refusée et le compte marqué comme suspendu.",
+    "emailed": "Un e-mail de notification a été envoyé à **{email}**.",
+    "not_emailed": "L'e-mail de notification n'a pas pu être envoyé."
   }
 }
