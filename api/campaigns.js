@@ -5,6 +5,7 @@
  *
  *    ?action=audience (POST, admin)  { filter }            → { count, people: first 30 }
  *    ?action=test     (POST, admin)  { message }           → sends the email to the admin's own address only
+ *    ?action=preview  (POST, admin)  { message, lang }     → { html }: the email as it will look, for the admin page
  *    ?action=send     (POST, admin)  { message, filter, channels, confirm: <count> }
  *         → creates the campaign, writes in-app notifications and/or emails everyone in the audience
  *    ?action=click    (GET, public)  ?c=&u=&s=             → records the click, then redirects to the campaign's button link
@@ -247,6 +248,17 @@ async function handleTest(req, res, users, viaAgent) {
   return res.status(200).json({ sent: users.length === 1 && langs.length === 1 ? users[0].email : sent });
 }
 
+/** The email as it will look (admin page preview): { message } or { messages } and an optional lang. */
+function handlePreview(req, res, user) {
+  const b = body(req);
+  const { msgs, error } = cleanMessages(b);
+  if (error) return res.status(400).json({ error });
+  const lang = L.LANGS.includes(b.lang) ? b.lang : 'en';
+  const { html } = render(pick(msgs, lang), { name: (user && user.user_metadata?.full_name) || 'Sara', lang,
+    unsubscribeUrl: `${SITE}/api/auth?action=unsubscribe&preview=1` });
+  return res.status(200).json({ html });
+}
+
 async function handleSend(req, res, supabase, user, viaAgent) {
   const b = body(req);
   const { msgs, base: msg, error } = cleanMessages(b);
@@ -453,6 +465,7 @@ module.exports = async function handler(req, res) {
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
   if (agentKeyOk(req)) {
     if (action === 'audience') return handleAudience(req, res, supabase);
+    if (action === 'preview') return handlePreview(req, res, null);
     if (action === 'test') {
       // Owner-set test inbox (app_settings 'campaign_test_to', admins only), else every admin account.
       const { data: st } = await supabase.from('app_settings').select('value').eq('key', 'campaign_test_to').maybeSingle();
@@ -469,6 +482,7 @@ module.exports = async function handler(req, res) {
   if (!user) return res.status(403).json({ error: 'Admins only' });
   if (action === 'audience') return handleAudience(req, res, supabase);
   if (action === 'test') return handleTest(req, res, [user], false);
+  if (action === 'preview') return handlePreview(req, res, user);
   if (action === 'send') return handleSend(req, res, supabase, user, false);
   if (action.startsWith('banner_')) return handleBannerAdmin(action, req, res, supabase, user, false);
   return res.status(400).json({ error: 'Unknown action' });

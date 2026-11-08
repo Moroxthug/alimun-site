@@ -82,7 +82,7 @@ Banners (table `public.banners`, drawn by `js/banner.js`, loaded by `js/cookies-
 - `panel`: a wide bone panel with a drawing, above the footer on the site and above the content in the dashboard.
 Each has a `placement` (site, dashboard or both), a start and an optional end, texts per language (English required) and one link to alimun.com counted through `?action=banner_click`. They wait until the cookie choice is made, and a visitor who closes one does not see it again. A banner is saved switched off; the owner looks at it through the preview links (`/?alimun_banner=<id>.<signature>` and the same on `/app/`), and only after "go" is it switched on (`banner_activate`); `banner_stop` takes it down. The campaign key can do all of this, the same as the admin.
 
-Not built yet: choosing a layout or making a banner from the Admin Campaigns page (today they are made on request through Claude).
+Admin Campaigns page (8 Nov 2026, owner: "add the templates to the admin campaigns page"): a Layout choice with the fields of each layout, Preview (the email as it will look, in the dashboard language chosen under Who gets it, updated while typing), "Newsletter sign-ups too" under Who gets it, a New banner form (layout, where, texts with optional other languages, link, picture, start and end; saved switched off with preview links) and a Banners list with Switch on and Stop.
 
 ## Open for the owner
 

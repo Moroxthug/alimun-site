@@ -1617,3 +1617,10 @@ Owner: "more units, go on with B1".
 - Class lessons: `site/src/data/classes/English-B1.js` and `English-B1/c01.js` to `c84.js` (welcome, 64 book lessons, a review after every two units, four conversation classes, one exam practice per B1 Preliminary paper, a mid-level check, a full practice exam, the end-of-level check with a private report and no pass or fail). Lessons page lists English B1; database (`supabase/migrations/202611081800_class_course_english_b1.sql`, applied): `class_courses` English-B1 84, the existing B1 class's 12 dates numbered.
 - Checked: `check-book English-B1` ok; `check-classes English-B1` 84 of 84 ok; the preview played in full (64 lessons, 16 tests, no problems); the switched book is replayed in English and Arabic.
 - For the owner: the course audio for B1 on /app/audio.
+
+## 2026-11-08 — Layouts and banners on the Admin Campaigns page
+
+Owner: "add the templates to the admin campaigns page".
+- `js/app/admin-campaigns.js`: Layout (announcement, offer, newsletter, event) with each layout's fields; Preview of the email as it will look (kept up to date while typing); "Newsletter sign-ups too" in Who gets it, with the count saying how many come from the form; New banner form (strip, card or panel; website, dashboard or both; English plus optional other languages; link, picture, start and end) saved switched off with preview links; Banners list with state, clicks, preview links, Switch on and Stop.
+- `api/campaigns.js`: `?action=preview` (admin or key) returns the email's HTML. `js/app/data.js`: campaignPreview, banners, bannerSave, bannerSwitch; audience and send pass include_newsletter.
+- Checked on the sample admin page (`/app/admin?preview=1#/campaigns`): each layout shows only its own fields, the banner form and list draw, no console errors.
