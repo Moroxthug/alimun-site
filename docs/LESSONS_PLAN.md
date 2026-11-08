@@ -4,6 +4,14 @@ Owner, 7 Nov 2026: "the classes should be prepared by us. A class starts from A1
 
 Status: plan, waiting for the owner's answers in "Decisions". Nothing is built yet.
 
+## Status and next step (handoff, 8 Nov 2026)
+
+Done and live: books in the second edition with explanations in eight languages, and class lessons on class dates, for English A1 (8 units, 48 lessons), A2 (8 units, 48), B1 (16 units, 84) and B2 (16 units, 84). Classroom steps L1 to L5 are built (lessons on dates, live board, students write, "Everyone solves this", saved board in the class notes). Audio for the new A1, A2, B1 and B2 sentences is the owner's step on /app/audio.
+
+How each level was made (repeat it for the next): a preview book `site/src/data/books/English-<L>-preview.js` (`preview: true`) with one entry and `plan` per unit; helpers write `units/English-<L>-preview/uN.js` in the style of the newest units, checked with `node scripts/check-book.mjs`; `node scripts/play-books.js English-<L>-preview --data=local` after `npm --prefix site run build`; translations by `node scripts/book-strings.mjs` into `i18n/English-<L>.<lang>.json` as a superset; the course order `site/src/data/classes/English-<L>.js` (book pointing at the preview) and lessons `English-<L>/cNN.js`, checked with `node scripts/check-classes.mjs`; then the switch: the book file takes the preview's unit list, units move to `units/English-<L>/`, the preview file goes, the course's book becomes `English-<L>`, translations are trimmed to `book-strings`, new dialogue names go into `site/src/data/books/audio.js`, the course is added to `COURSES` in `js/app/teach-lessons.js`, and a migration adds the `class_courses` row and numbers existing classes.
+
+Next: English C1, then C2. Open questions for the owner before C1 starts: book size (16 units, or 20 units for about 96 class lessons, recommended), and whether C2 runs as full group classes or as small groups and 1 on 1 only. The last C1 class is the level test for moving up to C2 (owner's gate). Exams: C1 Advanced, C2 Proficiency.
+
 ## Positioning (owner, 7 Nov 2026)
 
 Alimun is marketed as preparation for the exams: we prepare you for the test without you spending more to study elsewhere. Every lesson, book unit and class lesson therefore includes work in the format of the exam for its level (A2 Key, B1 Preliminary, B2 First, C1 Advanced, C2 Proficiency), named as "in the format of", never as an official qualification. Course length and the number of lessons per level must be planned so the promise holds (see "Course length").
