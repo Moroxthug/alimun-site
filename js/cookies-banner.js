@@ -495,6 +495,7 @@
       var s = document.createElement('script'); s.src = src; s.defer = true; document.head.appendChild(s);
     }
     add('/js/source.js');
+    add('/js/banner.js'); // in-page banners (owner, 8 Nov 2026), drawn only when one is switched on
     if (/(^|\.)alimun\.com$/.test(location.hostname)) {
       window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
       add('/_vercel/insights/script.js');

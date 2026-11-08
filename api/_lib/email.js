@@ -12,6 +12,9 @@
  *       { quote: 'Text from a person (escaped here, line breaks kept)', label: 'Their note' },
  *       { button: { label: 'Choose a new password', href: 'https://alimun.com/…' } },
  *       { buttons: [{ label: 'Approve', href }, { label: 'Reject', href, secondary: true }] },
+ *       { offer: { headline: 'Half price', now: '€24.50 a month', was: '€49', code: 'HALF', codeLabel, codeHint, ends } },
+ *            // the lime offer card (campaigns): every value is escaped here; was is shown struck through
+ *       { stories: [{ title, text, href, linkLabel, hero }] },   // newsletter pieces, each with a small picture
  *     ],
  *     note: 'Small print under the content (HTML allowed).',
  *     signoff: true,                 // "The Alimun team" with the book mark (default true)
@@ -92,7 +95,30 @@ function buttonCell(b, last) {
     + (last ? '' : '<td width="10" style="width:10px;font-size:0;line-height:0;">&nbsp;</td>');
 }
 
+function offerCard(o) {
+  const was = o.was ? `<span class="al-lime-t" style="font-family:${SANS};font-size:20px;line-height:1.2;color:${INK};text-decoration:line-through;opacity:.55;">${esc(o.was)}</span>&nbsp;&nbsp;` : '';
+  const now = o.now ? `<div style="margin:10px 0 0;">${was}<span class="al-lime-t" style="font-family:${SANS};font-size:20px;line-height:1.2;font-weight:700;color:${INK};">${esc(o.now)}</span></div>` : '';
+  const code = o.code ? `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:20px 0 0;"><tr><td class="al-code" bgcolor="#ffffff" style="background:#ffffff;border-radius:16px;padding:16px 20px;">`
+    + `<div style="font-family:${SANS};font-size:13px;line-height:1.4;color:${MUTED};margin:0 0 4px;">${esc(o.codeLabel || '')}</div>`
+    + `<div class="al-code-v" style="font-family:${DISPLAY};font-size:34px;line-height:1;letter-spacing:.04em;color:${INK};">${esc(o.code)}</div>`
+    + (o.codeHint ? `<div style="font-family:${SANS};font-size:13px;line-height:1.4;color:${MUTED};margin:6px 0 0;">${esc(o.codeHint)}</div>` : '')
+    + `</td></tr></table>` : '';
+  const ends = o.ends ? `<p class="al-lime-t" style="margin:16px 0 0;font-family:${SANS};font-size:14px;line-height:1.5;color:${INK};">${esc(o.ends)}</p>` : '';
+  return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:4px 0 26px;border-collapse:separate;"><tr><td class="al-lime" bgcolor="${LIME}" style="background:${LIME};border-radius:22px;padding:26px 26px 24px;">`
+    + `<div class="al-lime-t" style="font-family:${DISPLAY};font-size:44px;line-height:1;color:${INK};">${esc(o.headline || '')}</div>${now}${code}${ends}</td></tr></table>`;
+}
+function storiesBlock(list) {
+  return list.map((x, i) => {
+    const pic = HEROES[x.hero] ? `<td width="150" valign="top" class="al-story-pic" style="width:150px;padding:0 18px 0 0;"><img src="${IMG}/hero-${x.hero}.png" width="150" alt="" style="display:block;width:150px;height:auto;border:0;border-radius:14px;background:${BONE};"></td>` : '';
+    const link = x.href ? `<a href="${esc(safeHref(x.href))}" target="_blank" class="al-link" style="font-family:${SANS};font-size:15px;font-weight:700;color:${INK};text-decoration:underline;">${esc(x.linkLabel || '')}&nbsp;&rarr;</a>` : '';
+    return `<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 ${i < list.length - 1 ? 22 : 28}px;padding:0 0 ${i < list.length - 1 ? 22 : 0}px;${i < list.length - 1 ? `border-bottom:1px solid ${LINE};` : ''}"><tr>${pic}`
+      + `<td valign="top" class="al-story"><div class="al-h" style="font-family:${DISPLAY};font-size:26px;line-height:1.05;color:${INK};margin:0 0 8px;">${esc(x.title)}</div>`
+      + `<div class="al-text" style="font-family:${SANS};font-size:15px;line-height:1.6;color:${TEXT};margin:0 0 10px;white-space:pre-wrap;">${esc(x.text)}</div>${link}</td></tr></table>`;
+  }).join('');
+}
 function block(b) {
+  if (b.offer) return offerCard(b.offer);
+  if (b.stories) return storiesBlock(b.stories);
   if (b.p != null) {
     return `<p class="al-text" style="margin:0 0 18px;font-family:${SANS};font-size:16px;line-height:1.65;color:${TEXT};">${b.p}</p>`;
   }
@@ -130,6 +156,9 @@ function renderText({ heading, blocks = [], note, footer, signoff, lang }) {
     if (b.p != null) out.push(htmlToText(b.p), '');
     else if (b.facts) out.push(b.facts.filter((f) => f && f[1] != null && String(f[1]).trim() !== '').map((f) => `${f[0]}: ${f[1]}`).join('\n'), '');
     else if (b.quote != null) out.push((b.label ? `${b.label}:\n` : '') + String(b.quote), '');
+    else if (b.offer) out.push([b.offer.headline, [b.offer.was && `(${b.offer.was})`, b.offer.now].filter(Boolean).join(' '),
+      b.offer.code && `${b.offer.codeLabel || ''}: ${b.offer.code}`, b.offer.codeHint, b.offer.ends].filter(Boolean).join('\n'), '');
+    else if (b.stories) out.push(b.stories.map((x) => [x.title, x.text, x.href && `${x.linkLabel || ''}: ${safeHref(x.href)}`].filter(Boolean).join('\n')).join('\n\n'), '');
     else if (b.button || b.buttons) out.push((b.buttons || [b.button]).map((x) => `${x.label}: ${safeHref(x.href)}`).join('\n'), '');
   }
   if (note) out.push(htmlToText(note), '');
@@ -180,6 +209,8 @@ a { color: ${INK}; }
   .al-fact-l, .al-fact-v { display: block !important; width: auto !important; text-align: left !important; white-space: normal !important; }
   .al-fact-l { padding: 14px 18px 2px !important; border-bottom: 0 !important; }
   .al-fact-v { padding: 0 18px 14px !important; }
+  .al-story { display: block !important; }
+  .al-story-pic { display: block !important; width: auto !important; padding: 0 0 14px !important; }
 }
 @media (prefers-color-scheme: dark) {
   body, .al-page { background: #151514 !important; }
@@ -191,6 +222,9 @@ a { color: ${INK}; }
   .al-fact-l, .al-fact-v { border-color: #3a3a36 !important; }
   .al-btn2 { background: #1f1f1d !important; border-color: #f3f2ec !important; }
   .al-btn2-a { color: #f3f2ec !important; }
+  .al-lime { background: #ceff65 !important; }
+  .al-lime-t, .al-code-v { color: #080808 !important; }
+  .al-code { background: #ffffff !important; }
 }
 [data-ogsc] .al-h1, [data-ogsc] .al-h, [data-ogsc] .al-fact-v, [data-ogsc] .al-link { color: #f3f2ec !important; }
 [data-ogsc] .al-text { color: #dcdad3 !important; }

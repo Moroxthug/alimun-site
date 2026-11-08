@@ -1597,3 +1597,13 @@ Owner: "go on with L6, start A2".
 - Class lessons: `site/src/data/classes/English-A2.js` (same pattern as A1; the last class is the level test for moving up to B1, the owner's A2-to-B1 gate) and `English-A2/c01.js` to `c48.js`. Lessons page now has a course switch (English A1, English A2). Database (`supabase/migrations/202611081200_class_course_english_a2.sql`, applied): `class_courses` English-A2 48; the existing English A2 class has its 48 dates numbered.
 - Checked: `node scripts/check-book.mjs English-A2` ok; `node scripts/check-classes.mjs English-A2` 48 of 48 ok; `node scripts/play-books.js English-A2 --data=local` 32 lessons and 8 tests, no problems; the Lessons page lists both courses and opens the B1 level test, no console errors.
 - For the owner: the course audio for the new A2 sentences on /app/audio (Start).
+
+## 2026-11-08 — Email layouts and in-page banners
+
+Owner: "can you create various templates for the emails and also for in page banners?"
+- `api/_lib/email.js`: two new blocks, the lime offer card (headline, old and new price, code panel, end date) and newsletter pieces (small drawing, title, text, link), both in dark mode and plain text; `api/_lib/email-i18n.js`: "Your code", "Enter it at checkout", "Read more" in the eight languages.
+- `api/campaigns.js`: `template` announcement, offer, newsletter or event, checked on the server; every campaign now stores its versions in `messages`. Banner actions: `banner` (public, cached a minute), `banner_click`, `banner_save` (draft and preview links), `banner_activate`, `banner_stop`, `banner_list`, for the admin and the campaign key.
+- `js/banner.js` (new): strip, card and panel, site and student dashboard; loaded from `js/cookies-banner.js` and `js/app/shell.js`, so the locked page blocks are unchanged.
+- Migration `202611080300_banners` applied and verified (table with row security, no browser access; click counter function for the server only).
+- Checked locally: the four email layouts drawn on desktop, phone and dark mode; the three banners on the English and French homepage and the sample dashboard at 1280 and 390 pixels, with no page errors.
+- Not built: picking a layout or making a banner on the Admin Campaigns page.

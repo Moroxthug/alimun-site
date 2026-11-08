@@ -66,6 +66,24 @@ Access. The calls carry the owner's campaign key: Vercel env `CAMPAIGN_AGENT_KEY
 
 Who receives it. Account holders whose latest news-and-offers choice is yes (16+ only, as before), and footer sign-ups with `email_signups.offers_consent` who have not unsubscribed and have no account (the account's own choice counts). The footer form says from 7 Nov 2026 that it brings news and offers, that you must be 16 or older and that every email can be unsubscribed; only sign-ups after that change have `offers_consent`, so the 6 earlier sign-ups get no campaigns. Each person gets the version in their dashboard language (sign-ups: the language of the page they signed up on; ma falls back to fr), else English. Newsletter emails carry their own signed unsubscribe link (`/api/auth?action=unsubscribe&n=`). Filters on role, level, country, plan or activity leave sign-ups out, since they have none of these.
 
+## Email layouts and in-page banners (built 8 Nov 2026)
+
+Owner, 8 Nov 2026: "can you create various templates for the emails and also for in page banners?"
+
+Email layouts, chosen per campaign with `message.template` (all share the Alimun card, picture, footer and dark mode):
+- `announcement`: the text and one lime button (the default, and what the Campaigns page sends).
+- `offer`: adds the lime offer card: a big headline ("Half price"), the old price struck through next to the new one, the code on a white panel with "Your code" and "Enter it at checkout" in the reader's language, and the end date in a sentence. Fields `offer: { headline, was, now, code, ends }`; prices, codes and dates come from the owner.
+- `newsletter`: one to four short pieces, each with a small drawing from the email set, a title, two lines and a link (`stories: [{ title, text, link, link_label, hero }]`).
+- `event`: a panel of details such as when, where and how long (`facts: [[label, value], ...]`) above the button.
+
+Banners (table `public.banners`, drawn by `js/banner.js`, loaded by `js/cookies-banner.js` on every public page and by the student dashboard):
+- `strip`: one sentence and a link in a slim bone bar (floating at the bottom of the site, since the menu is fixed to the top; above the content in the dashboard).
+- `card`: a small white card in the bottom corner with a drawing, a heading, a sentence and a lime button.
+- `panel`: a wide bone panel with a drawing, above the footer on the site and above the content in the dashboard.
+Each has a `placement` (site, dashboard or both), a start and an optional end, texts per language (English required) and one link to alimun.com counted through `?action=banner_click`. They wait until the cookie choice is made, and a visitor who closes one does not see it again. A banner is saved switched off; the owner looks at it through the preview links (`/?alimun_banner=<id>.<signature>` and the same on `/app/`), and only after "go" is it switched on (`banner_activate`); `banner_stop` takes it down. The campaign key can do all of this, the same as the admin.
+
+Not built yet: choosing a layout or making a banner from the Admin Campaigns page (today they are made on request through Claude).
+
 ## Open for the owner
 
 - Turnstile keys (step 1).

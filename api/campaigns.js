@@ -9,6 +9,14 @@
  *         → creates the campaign, writes in-app notifications and/or emails everyone in the audience
  *    ?action=click    (GET, public)  ?c=&u=&s=             → records the click, then redirects to the campaign's button link
  *
+ *  Banners (owner, 8 Nov 2026), table public.banners, drawn by js/banner.js:
+ *    ?action=banner          (GET, public)  ?place=site|dashboard&lang=&preview=<id>.<sig> → { banner } or { banner: null }
+ *    ?action=banner_click    (GET, public)  ?b=<id>                → counts the click, redirects to the banner's link
+ *    ?action=banner_save     (POST, admin or key) { id?, template, placement, messages, link, hero, starts_at, ends_at }
+ *         → saves a draft (switched off) and returns preview links; an active banner cannot be edited, stop it first
+ *    ?action=banner_activate (POST, admin or key) { id }  → switches it on      ?action=banner_stop { id } → off
+ *    ?action=banner_list     (POST, admin or key)         → the latest 30 banners with clicks
+ *
  *  The audience is public.campaign_audience(filter): only people whose latest choice is news-and-offers "yes", which
  *  the database allows only with the 16+ check (owner, 6 Nov 2026: no marketing under 16). Every email carries the
  *  person's own unsubscribe link and List-Unsubscribe headers. Admin = app_metadata.role, checked on the server.
@@ -35,6 +43,7 @@ const L = require('./_lib/email-i18n.js');
 const SITE = 'https://alimun.com';
 const MAX_RECIPIENTS = 5000;
 const AGENT_SENDS_PER_DAY = 3;
+const TEMPLATES = ['announcement', 'offer', 'newsletter', 'event'];
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const LANGS = ['English', 'German', 'Spanish', 'French', 'Portuguese', 'Italian', 'Mandarin', 'Japanese', 'Arabic'];
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
@@ -100,6 +109,30 @@ function cleanMessage(m) {
   if (!msg.subject || !msg.heading || !msg.body) return { error: 'Write a subject, a heading and the text.' };
   if (msg.button_link && !/^https:\/\/alimun\.com\//.test(msg.button_link)) return { error: 'The button can only link to a page on https://alimun.com/.' };
   if (!!msg.button_label !== !!msg.button_link) return { error: 'A button needs both a label and a link (or neither).' };
+  // Layouts (owner, 8 Nov 2026: "create various templates"): announcement (text and a button), offer (the lime
+  // offer card with price and code), newsletter (two to four short pieces with pictures), event (when and where).
+  msg.template = TEMPLATES.includes(m.template) ? m.template : 'announcement';
+  const link = (v) => { const x = t(v, 500); return /^https:\/\/alimun\.com\//.test(x) ? x : null; };
+  if (msg.template === 'offer') {
+    const o = m.offer || {};
+    msg.offer = { headline: t(o.headline, 60).replace(/\n/g, ' '), now: t(o.now, 60) || null, was: t(o.was, 60) || null,
+      code: t(o.code, 30).toUpperCase() || null, ends: t(o.ends, 160) || null };
+    if (!msg.offer.headline) return { error: 'An offer needs a headline, for example "Half price".' };
+    if (msg.offer.code && !/^[A-Z0-9_-]{3,30}$/.test(msg.offer.code)) return { error: 'The code can only have letters, numbers, - and _.' };
+  }
+  if (msg.template === 'newsletter') {
+    const list = (Array.isArray(m.stories) ? m.stories : []).slice(0, 4).map((x) => ({ title: t(x && x.title, 100).replace(/\n/g, ' '),
+      text: t(x && x.text, 600), link: link(x && x.link), link_label: t(x && x.link_label, 40).replace(/\n/g, ' ') || null,
+      hero: mail.HEROES[x && x.hero] ? x.hero : null }));
+    if (!list.length || list.some((x) => !x.title || !x.text)) return { error: 'A newsletter needs one to four pieces, each with a title and text.' };
+    if (list.some((x) => !!x.link !== !!x.link_label)) return { error: 'A piece with a link needs a link label too (links only to https://alimun.com/).' };
+    msg.stories = list;
+  }
+  if (msg.template === 'event') {
+    const facts = (Array.isArray(m.facts) ? m.facts : []).slice(0, 5).map((f) => [t(f && f[0], 40).replace(/\n/g, ' '), t(f && f[1], 120).replace(/\n/g, ' ')]).filter((f) => f[0] && f[1]);
+    if (!facts.length) return { error: 'An event needs at least one detail, for example ["When", "Thursday 12 November, 18:00"].' };
+    msg.facts = facts;
+  }
   return { msg };
 }
 /** One message, or translated versions keyed by dashboard language (English required). */
@@ -155,6 +188,9 @@ function render(msg, opts) {
   const tx = L.t(opts.lang);
   if (opts.name) blocks.push({ p: mail.esc(L.fill(tx.hello_name, { name: opts.name.split(/\s+/)[0] })) });
   blocks.push(...paras);
+  if (msg.template === 'offer' && msg.offer) blocks.push({ offer: { ...msg.offer, codeLabel: tx.code_label, codeHint: tx.code_hint } });
+  if (msg.template === 'event' && msg.facts) blocks.push({ facts: msg.facts });
+  if (msg.template === 'newsletter' && msg.stories) blocks.push({ stories: msg.stories.map((x) => ({ title: x.title, text: x.text, href: x.link, linkLabel: x.link_label, hero: x.hero })) });
   if (msg.button_link) blocks.push({ button: { label: msg.button_label, href: opts.buttonHref || msg.button_link } });
   return mail.renderEmail({
     hero: msg.hero, preheader: msg.body.replace(/\s+/g, ' ').slice(0, 120), heading: msg.heading, blocks,
@@ -238,7 +274,7 @@ async function handleSend(req, res, supabase, user, viaAgent) {
   const { data: camp, error: cErr } = await supabase.from('campaigns').insert({
     created_by: user ? user.id : null, subject: msg.subject, heading: msg.heading, body: msg.body, button_label: msg.button_label, button_link: msg.button_link,
     hero: msg.hero, channels, audience: { ...filter, ...(newsletter.length ? { include_newsletter: true } : {}) }, recipients: total,
-    sent_via: viaAgent ? 'agent' : 'dashboard', messages: Object.keys(msgs).length > 1 ? msgs : null,
+    sent_via: viaAgent ? 'agent' : 'dashboard', messages: msgs,
   }).select('id').single();
   if (cErr) { console.error('[campaigns] create', cErr.message); return res.status(500).json({ error: 'The campaign could not be saved' }); }
 
@@ -301,12 +337,119 @@ async function handleClick(req, res, supabase) {
   return res.status(302).end();
 }
 
+
+/* ---------- Banners ---------- */
+const BANNER_TEMPLATES = ['strip', 'card', 'panel'];
+const PLACES = ['site', 'dashboard', 'both'];
+function bannerSig(id) { return mail.linkSig(`banner:${id}`); }
+function cleanBanner(b) {
+  const t = (v, n) => String(v || '').replace(/\r/g, '').replace(/\n/g, ' ').trim().slice(0, n);
+  const template = BANNER_TEMPLATES.includes(b.template) ? b.template : null;
+  const placement = PLACES.includes(b.placement) ? b.placement : null;
+  if (!template) return { error: 'Choose a layout: strip, card or panel.' };
+  if (!placement) return { error: 'Choose where it shows: site, dashboard or both.' };
+  const link = t(b.link, 500) || null;
+  if (link && !/^https:\/\/alimun\.com\//.test(link)) return { error: 'The link can only go to a page on https://alimun.com/.' };
+  const raw = b.messages && typeof b.messages === 'object' ? b.messages : {};
+  const messages = {};
+  for (const lang of Object.keys(raw)) {
+    if (!L.LANGS.includes(lang)) return { error: `Unknown language: ${String(lang).slice(0, 8)}` };
+    const m = raw[lang] || {};
+    const x = { heading: t(m.heading, 80), text: t(m.text, template === 'strip' ? 160 : 280), button_label: t(m.button_label, 30) };
+    if (!x.text) return { error: `${lang}: the text is required.` };
+    if (template !== 'strip' && !x.heading) return { error: `${lang}: a card or panel needs a heading.` };
+    if (link && !x.button_label) return { error: `${lang}: a banner with a link needs a button label.` };
+    messages[lang] = x;
+  }
+  if (!messages.en) return { error: 'The English version is required.' };
+  const when = (v) => { if (!v) return null; const d = new Date(v); return isNaN(d) ? undefined : d.toISOString(); };
+  const starts_at = when(b.starts_at) || new Date().toISOString(), ends_at = when(b.ends_at);
+  if (starts_at === undefined || ends_at === undefined) return { error: 'Dates must be ISO dates, for example 2026-11-08T23:59:00+01:00.' };
+  if (ends_at && ends_at <= starts_at) return { error: 'The end must come after the start.' };
+  return { row: { template, placement, messages, link, hero: mail.HEROES[b.hero] ? b.hero : null, starts_at, ends_at } };
+}
+function previewLinks(id) {
+  const q = `alimun_banner=${id}.${bannerSig(id)}`;
+  return { site: `${SITE}/?${q}`, dashboard: `${SITE}/app/?${q}` };
+}
+async function handleBanner(req, res, supabase) {
+  const q = req.query || {};
+  const place = q.place === 'dashboard' ? 'dashboard' : 'site';
+  const lang = L.LANGS.includes(q.lang) ? q.lang : 'en';
+  let row = null;
+  const pv = String(q.preview || '').split('.');
+  if (pv.length === 2 && UUID_RE.test(pv[0]) && mail.checkLinkSig(`banner:${pv[0]}`, pv[1])) {
+    res.setHeader('Cache-Control', 'no-store');
+    ({ data: row } = await supabase.from('banners').select('*').eq('id', pv[0]).maybeSingle());
+  } else {
+    res.setHeader('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300');
+    const now = new Date().toISOString();
+    const { data } = await supabase.from('banners').select('*').eq('active', true).in('placement', [place, 'both'])
+      .lte('starts_at', now).or(`ends_at.is.null,ends_at.gt.${now}`).order('created_at', { ascending: false }).limit(1);
+    row = data && data[0];
+  }
+  if (!row) return res.status(200).json({ banner: null });
+  const m = row.messages[lang] || (lang === 'ma' && row.messages.fr) || row.messages.en;
+  return res.status(200).json({ banner: {
+    id: row.id, template: row.template, heading: m.heading || '', text: m.text, button_label: row.link ? m.button_label : '',
+    href: row.link ? `${SITE}/api/campaigns?action=banner_click&b=${row.id}` : '', picture: row.hero ? `${SITE}/images/email/hero-${row.hero}.png` : '',
+    preview: !row.active,
+  } });
+}
+async function handleBannerClick(req, res, supabase) {
+  const id = String((req.query && req.query.b) || '');
+  let to = SITE + '/';
+  if (UUID_RE.test(id)) {
+    const { data } = await supabase.from('banners').select('link').eq('id', id).maybeSingle();
+    if (data && /^https:\/\/alimun\.com\//.test(data.link || '')) to = data.link;
+    await supabase.rpc('banner_click', { p_id: id });
+  }
+  res.setHeader('Location', to);
+  return res.status(302).end();
+}
+async function handleBannerAdmin(action, req, res, supabase, user, viaAgent) {
+  const b = body(req);
+  if (action === 'banner_list') {
+    const { data, error } = await supabase.from('banners').select('id, template, placement, messages, link, starts_at, ends_at, active, clicks, sent_via, created_at')
+      .order('created_at', { ascending: false }).limit(30);
+    if (error) return res.status(500).json({ error: 'The banners could not be read' });
+    return res.status(200).json({ banners: data.map((x) => ({ ...x, preview: previewLinks(x.id) })) });
+  }
+  if (action === 'banner_save') {
+    const { row, error } = cleanBanner(b);
+    if (error) return res.status(400).json({ error });
+    if (b.id) {
+      if (!UUID_RE.test(b.id)) return res.status(400).json({ error: 'Unknown banner' });
+      const { data: cur } = await supabase.from('banners').select('active').eq('id', b.id).maybeSingle();
+      if (!cur) return res.status(404).json({ error: 'Unknown banner' });
+      if (cur.active) return res.status(409).json({ error: 'This banner is showing. Stop it before editing.' });
+      const { error: uErr } = await supabase.from('banners').update({ ...row, updated_at: new Date().toISOString() }).eq('id', b.id);
+      if (uErr) return res.status(500).json({ error: 'The banner could not be saved' });
+      return res.status(200).json({ id: b.id, active: false, preview: previewLinks(b.id) });
+    }
+    const { data, error: iErr } = await supabase.from('banners').insert({ ...row, active: false, sent_via: viaAgent ? 'agent' : 'dashboard', created_by: user ? user.id : null }).select('id').single();
+    if (iErr) { console.error('[campaigns] banner save', iErr.message); return res.status(500).json({ error: 'The banner could not be saved' }); }
+    return res.status(200).json({ id: data.id, active: false, preview: previewLinks(data.id) });
+  }
+  if (action === 'banner_activate' || action === 'banner_stop') {
+    if (!UUID_RE.test(b.id || '')) return res.status(400).json({ error: 'Unknown banner' });
+    const on = action === 'banner_activate';
+    const { data, error } = await supabase.from('banners').update({ active: on, updated_at: new Date().toISOString() }).eq('id', b.id).select('id, placement, starts_at, ends_at');
+    if (error || !data || !data.length) return res.status(404).json({ error: 'Unknown banner' });
+    console.log(`[campaigns] ${viaAgent ? 'campaign key' : 'admin ' + user.id} ${on ? 'switched on' : 'stopped'} banner ${b.id}`);
+    return res.status(200).json({ id: b.id, active: on, ...data[0] });
+  }
+  return res.status(400).json({ error: 'Unknown action' });
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Cache-Control', 'no-store');
   const action = (req.query && req.query.action) || '';
   const supabase = admin();
   if (!supabase) return res.status(500).json({ error: 'Server configuration error' });
   if (action === 'click') return handleClick(req, res, supabase);
+  if (action === 'banner') return handleBanner(req, res, supabase);
+  if (action === 'banner_click') return handleBannerClick(req, res, supabase);
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
   if (agentKeyOk(req)) {
     if (action === 'audience') return handleAudience(req, res, supabase);
@@ -319,6 +462,7 @@ module.exports = async function handler(req, res) {
       return handleTest(req, res, admins, true);
     }
     if (action === 'send') return handleSend(req, res, supabase, null, true);
+    if (action.startsWith('banner_')) return handleBannerAdmin(action, req, res, supabase, null, true);
     return res.status(400).json({ error: 'Unknown action' });
   }
   const user = await adminUser(req, supabase);
@@ -326,5 +470,8 @@ module.exports = async function handler(req, res) {
   if (action === 'audience') return handleAudience(req, res, supabase);
   if (action === 'test') return handleTest(req, res, [user], false);
   if (action === 'send') return handleSend(req, res, supabase, user, false);
+  if (action.startsWith('banner_')) return handleBannerAdmin(action, req, res, supabase, user, false);
   return res.status(400).json({ error: 'Unknown action' });
 };
+
+module.exports._test = { cleanMessage, render };

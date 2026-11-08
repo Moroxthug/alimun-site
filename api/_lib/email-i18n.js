@@ -27,6 +27,7 @@ const T = {
   en: {
     fallback: 'If the button does not work, copy this link into your browser:', signoff: 'The Alimun team', dashboard: 'Your dashboard', contact: 'Contact',
     unsub_line: 'You get these because you asked for news and offers from Alimun.', unsub_link: 'Stop news and offers',
+    code_label: 'Your code', code_hint: 'Enter it at checkout.', read_more: 'Read more',
     hello_name: 'Hello {name},', hello: 'Hello,',
     reminder_footer: 'You get these reminders because you asked for news and offers from Alimun.',
     practice: { subject: 'Ten minutes today?', heading: 'Ten minutes today?', body_lang: 'It has been a week since you last practised your {language}. A few minutes of exercises or flashcards today keeps the words you learned fresh.', body: 'It has been a week since you last practised. A few minutes of exercises or flashcards today keeps the words you learned fresh.', button: 'Practise now' },
@@ -36,6 +37,7 @@ const T = {
   es: {
     fallback: 'Si el botón no funciona, copia este enlace en tu navegador:', signoff: 'El equipo de Alimun', dashboard: 'Tu panel', contact: 'Contacto',
     unsub_line: 'Recibes estos correos porque pediste novedades y ofertas de Alimun.', unsub_link: 'Dejar de recibir novedades y ofertas',
+    code_label: 'Tu código', code_hint: 'Introdúcelo al pagar.', read_more: 'Leer más',
     hello_name: 'Hola, {name}:', hello: 'Hola:',
     reminder_footer: 'Recibes estos recordatorios porque pediste novedades y ofertas de Alimun.',
     practice: { subject: '¿Diez minutos hoy?', heading: '¿Diez minutos hoy?', body_lang: 'Hace una semana que no practicas tu {language}. Unos minutos de ejercicios o tarjetas hoy mantienen frescas las palabras que aprendiste.', body: 'Hace una semana que no practicas. Unos minutos de ejercicios o tarjetas hoy mantienen frescas las palabras que aprendiste.', button: 'Practicar ahora' },
@@ -45,6 +47,7 @@ const T = {
   fr: {
     fallback: 'Si le bouton ne fonctionne pas, copiez ce lien dans votre navigateur :', signoff: "L'équipe Alimun", dashboard: 'Votre tableau de bord', contact: 'Contact',
     unsub_line: 'Vous recevez ces e-mails parce que vous avez demandé les nouveautés et les offres d\'Alimun.', unsub_link: 'Ne plus recevoir les nouveautés et les offres',
+    code_label: 'Votre code', code_hint: 'Saisissez-le au moment du paiement.', read_more: 'Lire la suite',
     hello_name: 'Bonjour {name},', hello: 'Bonjour,',
     reminder_footer: 'Vous recevez ces rappels parce que vous avez demandé les nouveautés et les offres d\'Alimun.',
     practice: { subject: 'Dix minutes aujourd\'hui ?', heading: 'Dix minutes aujourd\'hui ?', body_lang: 'Cela fait une semaine que vous n\'avez pas pratiqué votre {language}. Quelques minutes d\'exercices ou de cartes mémoire aujourd\'hui gardent en tête les mots appris.', body: 'Cela fait une semaine que vous ne vous êtes pas entraîné. Quelques minutes d\'exercices ou de cartes mémoire aujourd\'hui gardent en tête les mots appris.', button: 'M\'entraîner maintenant' },
@@ -54,6 +57,7 @@ const T = {
   de: {
     fallback: 'Wenn die Schaltfläche nicht funktioniert, kopieren Sie diesen Link in Ihren Browser:', signoff: 'Ihr Alimun-Team', dashboard: 'Ihr Dashboard', contact: 'Kontakt',
     unsub_line: 'Sie erhalten diese E-Mails, weil Sie Neuigkeiten und Angebote von Alimun angefordert haben.', unsub_link: 'Neuigkeiten und Angebote abbestellen',
+    code_label: 'Ihr Code', code_hint: 'Geben Sie ihn beim Bezahlen ein.', read_more: 'Weiterlesen',
     hello_name: 'Hallo {name},', hello: 'Hallo,',
     reminder_footer: 'Sie erhalten diese Erinnerungen, weil Sie Neuigkeiten und Angebote von Alimun angefordert haben.',
     practice: { subject: 'Heute zehn Minuten?', heading: 'Heute zehn Minuten?', body_lang: 'Sie haben seit einer Woche kein {language} mehr geübt. Ein paar Minuten Übungen oder Karteikarten heute halten die gelernten Wörter frisch.', body: 'Sie haben seit einer Woche nicht mehr geübt. Ein paar Minuten Übungen oder Karteikarten heute halten die gelernten Wörter frisch.', button: 'Jetzt üben' },
@@ -63,6 +67,7 @@ const T = {
   pt: {
     fallback: 'Se o botão não funcionar, copie esta ligação para o seu navegador:', signoff: 'A equipa Alimun', dashboard: 'O seu painel', contact: 'Contacto',
     unsub_line: 'Recebe estes e-mails porque pediu novidades e ofertas da Alimun.', unsub_link: 'Deixar de receber novidades e ofertas',
+    code_label: 'O seu código', code_hint: 'Introduza-o no pagamento.', read_more: 'Ler mais',
     hello_name: 'Olá, {name},', hello: 'Olá,',
     reminder_footer: 'Recebe estes lembretes porque pediu novidades e ofertas da Alimun.',
     practice: { subject: 'Dez minutos hoje?', heading: 'Dez minutos hoje?', body_lang: 'Já passou uma semana desde a última vez que praticou o seu {language}. Alguns minutos de exercícios ou cartões hoje mantêm frescas as palavras que aprendeu.', body: 'Já passou uma semana desde a última vez que praticou. Alguns minutos de exercícios ou cartões hoje mantêm frescas as palavras que aprendeu.', button: 'Praticar agora' },
@@ -72,6 +77,7 @@ const T = {
   it: {
     fallback: 'Se il pulsante non funziona, copia questo link nel browser:', signoff: 'Il team di Alimun', dashboard: 'La tua dashboard', contact: 'Contatti',
     unsub_line: 'Ricevi queste email perché hai chiesto novità e offerte di Alimun.', unsub_link: 'Non ricevere più novità e offerte',
+    code_label: 'Il tuo codice', code_hint: 'Inseriscilo al momento del pagamento.', read_more: 'Leggi di più',
     hello_name: 'Ciao {name},', hello: 'Ciao,',
     reminder_footer: 'Ricevi questi promemoria perché hai chiesto novità e offerte di Alimun.',
     practice: { subject: 'Dieci minuti oggi?', heading: 'Dieci minuti oggi?', body_lang: 'È passata una settimana dall\'ultima volta che hai esercitato il tuo {language}. Qualche minuto di esercizi o flashcard oggi tiene fresche le parole che hai imparato.', body: 'È passata una settimana dall\'ultima volta che ti sei esercitato. Qualche minuto di esercizi o flashcard oggi tiene fresche le parole che hai imparato.', button: 'Esercitati ora' },
@@ -81,6 +87,7 @@ const T = {
   zh: {
     fallback: '如果按钮无法使用，请将此链接复制到浏览器中：', signoff: 'Alimun 团队', dashboard: '你的学习面板', contact: '联系我们',
     unsub_line: '你收到这些邮件，是因为你订阅了 Alimun 的最新消息和优惠。', unsub_link: '退订最新消息和优惠',
+    code_label: '您的优惠码', code_hint: '请在结账时输入。', read_more: '阅读全文',
     hello_name: '{name}，你好：', hello: '你好：',
     reminder_footer: '你收到这些提醒，是因为你订阅了 Alimun 的最新消息和优惠。',
     practice: { subject: '今天练习十分钟？', heading: '今天练习十分钟？', body_lang: '你已经一周没有练习{language}了。今天做几分钟练习或复习抽认卡，让学过的词保持新鲜。', body: '你已经一周没有练习了。今天做几分钟练习或复习抽认卡，让学过的词保持新鲜。', button: '现在练习' },
@@ -90,6 +97,7 @@ const T = {
   ar: {
     fallback: 'إذا لم يعمل الزر، انسخ هذا الرابط في متصفحك:', signoff: 'فريق Alimun', dashboard: 'لوحتك', contact: 'اتصل بنا',
     unsub_line: 'تصلك هذه الرسائل لأنك طلبت أخبار Alimun وعروضها.', unsub_link: 'إيقاف الأخبار والعروض',
+    code_label: 'رمزك', code_hint: 'أدخله عند الدفع.', read_more: 'اقرأ المزيد',
     hello_name: 'مرحبًا {name}،', hello: 'مرحبًا،',
     reminder_footer: 'تصلك هذه التذكيرات لأنك طلبت أخبار Alimun وعروضها.',
     practice: { subject: 'عشر دقائق اليوم؟', heading: 'عشر دقائق اليوم؟', body_lang: 'مر أسبوع منذ آخر مرة تدربت فيها على {language}. بضع دقائق من التمارين أو البطاقات اليوم تحافظ على الكلمات التي تعلمتها.', body: 'مر أسبوع منذ آخر مرة تدربت فيها. بضع دقائق من التمارين أو البطاقات اليوم تحافظ على الكلمات التي تعلمتها.', button: 'تدرّب الآن' },

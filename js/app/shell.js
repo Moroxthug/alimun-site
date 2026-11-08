@@ -722,6 +722,8 @@
     }).then(function (res) {
       D = res[0];
       start();
+      // In-page banner for students, when one is switched on in Admin (js/banner.js).
+      if (!document.querySelector('script[src="/js/banner.js"]')) { var bs = document.createElement('script'); bs.src = '/js/banner.js'; bs.defer = true; document.head.appendChild(bs); }
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
 
