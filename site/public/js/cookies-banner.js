@@ -487,6 +487,20 @@
     window.dispatchEvent(event);
   }
 
+  // Where visitors first came from (js/source.js, kept only with analytics consent) and Vercel Web Analytics
+  // (cookieless page counts, no personal data, so it does not wait for consent).
+  (function () {
+    function add(src) {
+      if (document.querySelector('script[src="' + src + '"]')) return;
+      var s = document.createElement('script'); s.src = src; s.defer = true; document.head.appendChild(s);
+    }
+    add('/js/source.js');
+    if (/(^|\.)alimun\.com$/.test(location.hostname)) {
+      window.va = window.va || function () { (window.vaq = window.vaq || []).push(arguments); };
+      add('/_vercel/insights/script.js');
+    }
+  })();
+
   // Initialize once DOM is ready
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

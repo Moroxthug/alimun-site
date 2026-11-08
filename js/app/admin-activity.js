@@ -8,7 +8,7 @@
    from their own tables; opening a dashboard, sections opened and payments from activity_events. */
 (function () {
   'use strict';
-  var A = null, root = null, OV = null, DAYMS = 86400000;
+  var A = null, root = null, OV = null, SRC = null, DAYMS = 86400000;
   var KIND = {
     signed_up: 'Created their account', last_sign_in: 'Last signed in', open_dashboard: 'Opened the dashboard', view: 'Opened',
     exercise: 'Did an exercise', practice: 'Practised', flashcards: 'Reviewed flashcards', tutor: 'Talked with the tutor',
@@ -100,6 +100,36 @@
       return '<span class="ac-bar" style="--h:' + h + '%" title="' + esc(A.fmt(d.day + 'T12:00:00', { day: 'numeric', month: 'short' }) + ': ' + d.active) + '"></span>';
     }).join('') + '</div><div class="ac-axis"><span>' + esc(A.fmt(days[0].day + 'T12:00:00', { day: 'numeric', month: 'short' })) + '</span><span>Today</span></div>';
   }
+  var HEARD = { search: 'Google or another search engine', instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube', facebook: 'Facebook',
+    friend: 'A friend or family member', school: 'Their school or teacher', other: 'Somewhere else' };
+  function heardText(p) { return p.heard_from ? (HEARD[p.heard_from] || p.heard_from) + (p.heard_from === 'other' && p.heard_from_other ? ': ' + p.heard_from_other : '') : ''; }
+  function trackText(p) {
+    var site = p.utm_source ? p.utm_source + (p.utm_medium ? ' / ' + p.utm_medium : '') + (p.utm_campaign ? ' / ' + p.utm_campaign : '') : (p.referrer_host || (p.landing_path ? 'typed the address or a saved link' : ''));
+    return site ? 'arrived from ' + site + (p.landing_path ? ' on ' + p.landing_path : '') : '';
+  }
+  function sampleSources() {
+    var n = Date.now();
+    return { sample: true, signups: 23, answered: 15, tracked: 9,
+      heard: [{ heard_from: 'search', people: 6 }, { heard_from: 'instagram', people: 4 }, { heard_from: 'friend', people: 3 }, { heard_from: 'school', people: 2 }],
+      sites: [{ site: 'google.com', people: 4 }, { site: 'instagram', people: 3 }, { site: 'direct', people: 2 }],
+      recent: [{ name: 'Marco Rossi', email: 'marco@example.com', role: 'student', student_id: 's1', created_at: new Date(n - 3600000).toISOString(), heard_from: 'instagram', utm_source: 'instagram', utm_medium: 'bio', landing_path: '/' },
+        { name: 'Aya Benali', email: 'aya@example.com', role: 'student', student_id: 's2', created_at: new Date(n - 26 * 3600000).toISOString(), heard_from: 'search', referrer_host: 'google.com', landing_path: '/blog/german-a1' },
+        { name: 'Lea Martin', email: 'lea@example.com', role: 'teacher', created_at: new Date(n - 50 * 3600000).toISOString() }] };
+  }
+  function sourcesCard(o, i) {
+    if (!o) return '';
+    var html = '<section class="card span-12" style="--i:' + i + '"><h2 class="t-h2">Where new people came from</h2><p class="t-small" style="margin-top:6px">' +
+      esc('Last 90 days: ' + o.signups + ' new accounts. ' + o.answered + ' said how they heard about Alimun at sign-up. ' + o.tracked + ' had their first visit recorded, which needs the cookie banner\u2019s analytics switch on.') + '</p>';
+    var rows = function (list, label) { return '<div class="tt-week">' + list.map(function (r) { return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(String(r.people)) + '</span><span><b>' + esc(label(r)) + '</b></span></div>'; }).join('') + '</div>'; };
+    html += '<div class="grid" style="margin-top:12px"><div class="span-6"><h3 class="t-h3">What they said</h3>' + ((o.heard || []).length ? rows(o.heard, function (r) { return HEARD[r.heard_from] || r.heard_from; }) : '<p class="t-body" style="margin-top:8px">No answers yet.</p>') + '</div>' +
+      '<div class="span-6"><h3 class="t-h3">Where their first visit came from</h3>' + ((o.sites || []).length ? rows(o.sites, function (r) { return r.site === 'direct' ? 'Typed the address or a saved link' : r.site; }) : '<p class="t-body" style="margin-top:8px">Nothing recorded yet.</p>') + '</div></div>';
+    html += '<h3 class="t-h3" style="margin-top:16px">Latest sign-ups</h3>' + ((o.recent || []).length ? '<div class="tt-week">' + o.recent.map(function (p) {
+      var href = p.role === 'student' && p.student_id ? '#/students/' + esc(p.student_id) : '#/teachers';
+      var what = [heardText(p), trackText(p)].filter(Boolean).join('; ') || 'not known';
+      return '<a class="tt-row tt-row--wide" href="' + href + '"><span class="tt-row__time">' + esc(ago(p.created_at)) + '</span><span><b>' + esc(p.name || p.email || 'Someone') + '</b><small>' + esc((p.role === 'teacher' ? 'Teacher. ' : '') + A.cap(what) + '.') + '</small></span></a>';
+    }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No sign-ups in the last 90 days.</p>');
+    return html + '</section>';
+  }
   function stat(n, label) { return '<div class="ac-stat"><b>' + esc(String(n)) + '</b><span>' + esc(label) + '</span></div>'; }
   function overviewView() {
     var o = OV, f = o.funnel || {};
@@ -118,6 +148,7 @@
     html += '<section class="card span-12" style="--i:3"><h2 class="t-h2">Countries</h2>' + ((o.countries || []).length ? '<div class="tt-week">' + o.countries.map(function (c) {
       return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(String(c.people)) + '</span><span><b>' + esc(countryName(c.country)) + '</b></span></div>';
     }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No countries yet: people choose theirs when they sign up, or in Settings.</p>') + '</section>';
+    html += sourcesCard(SRC, 4);
     if (o.sample) html += '<p class="t-tiny span-12">This is sample data.</p>';
     return html + '</div>';
   }
@@ -126,7 +157,9 @@
     var my = ++no;
     A = helpers; root = view;
     root.innerHTML = loading();
-    var get = real() ? window.AlimunData.adminActivityOverview() : Promise.resolve(sampleOverview());
+    // The sources card is extra: if it fails, the rest of the page still shows.
+    var src = real() ? window.AlimunData.adminSignupSources(90).catch(function (e) { console.warn('[Alimun] signup sources', e && e.message); return null; }) : Promise.resolve(sampleSources());
+    var get = Promise.all([real() ? window.AlimunData.adminActivityOverview() : Promise.resolve(sampleOverview()), src]).then(function (r) { SRC = r[1]; return r[0]; });
     return get.then(function (o) {
       if (my !== no) return { stale: true };
       OV = o || sampleOverview(); root.innerHTML = overviewView(); return { title: 'Activity' };

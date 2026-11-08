@@ -16,6 +16,7 @@
 <script src="../js/i18n.js" defer=""></script>
 <script src="/js/captcha.js"></script>
 <script src="/js/country.js"></script>
+<script src="/js/source.js" defer=""></script>
 </head>
 <body>
 <!--
@@ -46,6 +47,7 @@
               <p class="au_fine" id="a-pw-hint" data-i18n="au_pw_hint">Almeno 8 caratteri, con una minuscola, una maiuscola e un numero</p>
             </div>
             <div class="au_field"><label for="a-country" data-i18n="au_country">Paese in cui vivi</label><select class="au_input" id="a-country" autocomplete="country" required=""></select></div>
+            <div class="au_field"><label for="a-heard" data-i18n="au_heard">Come hai conosciuto Alimun? (facoltativo)</label><select class="au_input" id="a-heard"><option value="" data-i18n="au_heard_pick">Scegli un'opzione</option><option value="search" data-i18n="au_heard_search">Google o un altro motore di ricerca</option><option value="instagram">Instagram</option><option value="tiktok">TikTok</option><option value="youtube">YouTube</option><option value="facebook">Facebook</option><option value="friend" data-i18n="au_heard_friend">Un amico o un familiare</option><option value="school" data-i18n="au_heard_school">La mia scuola o il mio insegnante</option><option value="other" data-i18n="au_heard_other">Altrove</option></select><input class="au_input" id="a-heard-other" type="text" maxlength="100" hidden="" data-i18n-placeholder="au_heard_where" placeholder="Dove?" aria-label="Where?"></div>
             <label class="au_tick"><input type="checkbox" id="a-adult"><span data-i18n="au_age16">Ho 16 anni o più</span></label>
             <label class="au_tick"><input type="checkbox" id="a-news" disabled=""><span data-i18n="au_marketing">Inviami novità e offerte di Alimun</span></label>
             <p class="au_msg" id="m-account" role="alert"></p>
@@ -88,6 +90,7 @@
               <p class="au_fine" id="ta-pw-hint" data-i18n="au_pw_hint">Almeno 8 caratteri, con una minuscola, una maiuscola e un numero</p>
             </div>
             <div class="au_field"><label for="ta-country" data-i18n="au_country">Paese in cui vivi</label><select class="au_input" id="ta-country" autocomplete="country" required=""></select></div>
+            <div class="au_field"><label for="ta-heard" data-i18n="au_heard">Come hai conosciuto Alimun? (facoltativo)</label><select class="au_input" id="ta-heard"><option value="" data-i18n="au_heard_pick">Scegli un'opzione</option><option value="search" data-i18n="au_heard_search">Google o un altro motore di ricerca</option><option value="instagram">Instagram</option><option value="tiktok">TikTok</option><option value="youtube">YouTube</option><option value="facebook">Facebook</option><option value="friend" data-i18n="au_heard_friend">Un amico o un familiare</option><option value="school" data-i18n="au_heard_school">La mia scuola o il mio insegnante</option><option value="other" data-i18n="au_heard_other">Altrove</option></select><input class="au_input" id="ta-heard-other" type="text" maxlength="100" hidden="" data-i18n-placeholder="au_heard_where" placeholder="Dove?" aria-label="Where?"></div>
             <label class="au_tick"><input type="checkbox" id="ta-adult"><span data-i18n="au_age16">Ho 16 anni o più</span></label>
             <label class="au_tick"><input type="checkbox" id="ta-news" disabled=""><span data-i18n="au_marketing">Inviami novità e offerte di Alimun</span></label>
             <p class="au_msg" id="m-teach-account" role="alert"></p>
@@ -172,11 +175,16 @@ function setupExtras(pfx) {
   const guess = window.AlimunCountry ? window.AlimunCountry.guess() : '';
   sel.innerHTML = '<option value="" data-i18n="au_country_pick">' + t('au_country_pick') + '</option>' + (window.AlimunCountry ? window.AlimunCountry.options(document.documentElement.lang || 'en', guess) : '');
   adult.addEventListener('change', () => { news.disabled = !adult.checked; if (!adult.checked) news.checked = false; });
+  const heard = $(pfx + '-heard'), other = $(pfx + '-heard-other');
+  heard.addEventListener('change', () => { other.hidden = heard.value !== 'other'; if (!other.hidden) other.focus(); });
 }
 function extras(pfx) {
   const country = $(pfx + '-country').value, adult = $(pfx + '-adult').checked;
   const uiLang = (location.pathname.match(/^\/(ar|de|es|fr|it|ma|pt|zh)\//) || [])[1] || (document.documentElement.lang || 'en').slice(0, 2);
-  return { country, ui_lang: uiLang, marketing: { opt_in: adult && $(pfx + '-news').checked, age_16_plus: adult, wording: MARKETING_WORDING } };
+  // How they heard about Alimun (optional answer) and, with analytics consent, the first visit's source (js/source.js).
+  const heard = $(pfx + '-heard').value, firstTouch = window.AlimunSource ? window.AlimunSource.get() : null;
+  const source = heard || firstTouch ? { heard: heard || null, heard_other: heard === 'other' ? $(pfx + '-heard-other').value.trim().slice(0, 100) : null, first_touch: firstTouch } : undefined;
+  return { country, ui_lang: uiLang, marketing: { opt_in: adult && $(pfx + '-news').checked, age_16_plus: adult, wording: MARKETING_WORDING }, ...(source ? { source } : {}) };
 }
 setupExtras('a'); setupExtras('ta');
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
