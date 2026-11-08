@@ -1607,3 +1607,4 @@ Owner: "can you create various templates for the emails and also for in page ban
 - Migration `202611080300_banners` applied and verified (table with row security, no browser access; click counter function for the server only).
 - Checked locally: the four email layouts drawn on desktop, phone and dark mode; the three banners on the English and French homepage and the sample dashboard at 1280 and 390 pixels, with no page errors.
 - Not built: picking a layout or making a banner on the Admin Campaigns page.
+- Live check (8 Nov 2026): a draft card banner "Half price on Focused" (en, fr; site and dashboard; ends 8 Nov 23:59 Paris) saved switched off, id 73209507-0cec-4c99-826d-0ff7c7689ca1; its preview shows on the live French homepage and nothing shows without the preview link. The four email layouts were sent as tests to bchysfita@gmail.com.
