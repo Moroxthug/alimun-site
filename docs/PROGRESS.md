@@ -1588,3 +1588,12 @@ Owner: "do all three", then "approve the wording and push to main, just do not m
 - Privacy (section 2, "How you found Alimun") and Cookie Policy (analytics paragraph, `alimun-first-touch` row) updated in all languages; lock hashes updated.
 - Database: whole migration applied through the Supabase connector one statement at a time (owner: "apply the database now"). Verified: RLS on, only `authenticated` SELECT (admin policy), trigger on `auth.users`, `admin_signup_sources` not callable by anon, copy function not callable by users; copy tested on a sample answer in a rolled-back transaction. No account had a `source` yet, so the backfill found nothing.
 - Left untracked in that session: build output from a local `npm run build:site` (data/, course and level-test pages); not committed, Vercel builds them.
+
+## 2026-11-08 — L6: English A2 second edition and its 48 class lessons
+
+Owner: "go on with L6, start A2".
+- Book: the eight A2 units rewritten in the second-edition style (four helpers, as for A1), first as `English-A2-preview`, then switched in: `site/src/data/books/units/English-A2/u1.js` to `u8.js` replace the old units (same unit and lesson ids, so progress carries over; a finished old lesson shows the new one as done). Every lesson has the full explanation, common mistakes, a dialogue or reading, a speaking task and one task faithful to a named A2 Key exam part; u8 closes A2 with a look ahead to B1.
+- Translations: es, fr, de, pt, zh, ar, it, 1,242 strings each, none missing (111 reused from the old A2 files); old entries kept until the switch, then trimmed.
+- Class lessons: `site/src/data/classes/English-A2.js` (same pattern as A1; the last class is the level test for moving up to B1, the owner's A2-to-B1 gate) and `English-A2/c01.js` to `c48.js`. Lessons page now has a course switch (English A1, English A2). Database (`supabase/migrations/202611081200_class_course_english_a2.sql`, applied): `class_courses` English-A2 48; the existing English A2 class has its 48 dates numbered.
+- Checked: `node scripts/check-book.mjs English-A2` ok; `node scripts/check-classes.mjs English-A2` 48 of 48 ok; `node scripts/play-books.js English-A2 --data=local` 32 lessons and 8 tests, no problems; the Lessons page lists both courses and opens the B1 level test, no console errors.
+- For the owner: the course audio for the new A2 sentences on /app/audio (Start).

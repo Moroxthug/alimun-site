@@ -6,7 +6,7 @@
 (function () {
   'use strict';
   var A = null, root = null, courses = {}, P = null, at = null;
-  var COURSES = ['English-A1'];
+  var COURSES = ['English-A1', 'English-A2'];
   var SIZES = [['one', 'app_tl_size_one'], ['small', 'app_tl_size_small'], ['group', 'app_tl_size_group']];
   var KINDS = { welcome: 'app_tl_kind_welcome', book: 'app_tl_kind_book', review: 'app_tl_kind_review', conversation: 'app_tl_kind_conversation', exam: 'app_tl_kind_exam', check: 'app_tl_kind_check' };
 
@@ -25,7 +25,11 @@
   /* ---------- The course ---------- */
   function unitOf(l) { return String(l.book || '').split(/[\s:]/)[0]; }
   function courseView(c) {
-    var html = '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_tl_title')) + '</h1><p class="t-lead">' + esc(t('app_tl_lead')) + '</p></div></div><div class="grid rise">';
+    var tabs = COURSES.length > 1 ? '<div class="btn-row" role="tablist" style="margin-bottom:16px">' + COURSES.map(function (id) {
+      var on = id === c.id, name = A.languageName ? A.languageName(id.split('-')[0]) + ' ' + id.split('-')[1] : id.replace('-', ' ');
+      return '<a class="btn btn--' + (on ? 'primary' : 'quiet') + ' btn--sm" role="tab" aria-selected="' + on + '" href="#/lessons/' + esc(id) + '">' + esc(name) + '</a>';
+    }).join('') + '</div>' : '';
+    var html = '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_tl_title')) + '</h1><p class="t-lead">' + esc(t('app_tl_lead')) + '</p></div></div>' + tabs + '<div class="grid rise">';
     var groups = [], cur = null;
     c.lessons.forEach(function (l) {
       var u = l.kind === 'book' || l.kind === 'review' ? unitOf(l) : (cur ? cur.u : unitOf(l));
@@ -76,7 +80,7 @@
       '<article class="paper tm-try tl-board"><h3 class="t-h2">' + esc(page.title) + '</h3>' + blocks.map(function (b, i) { return '<div class="rd-block">' + blockHtml(b, i) + '</div>'; }).join('') + '</article></section>';
   }
   function lessonView(c, l, pi) {
-    var html = back('#/lessons', t('app_tl_title')) +
+    var html = back('#/lessons/' + encodeURIComponent(c.id), t('app_tl_title')) +
       '<div class="view__head"><div><h1 class="t-h1">' + esc(l.title) + '</h1><p class="t-lead">' + esc(t(KINDS[l.kind] || 'app_tl_kind_book') + (l.book && l.kind === 'book' ? '. ' + t('app_tl_builds', { unit: l.book.split(':')[0].slice(1), lesson: l.book.split(':')[1].slice(1) }) : '') + '.') + '</p></div></div><div class="grid rise">';
     html += '<section class="card card--lime span-7" style="--i:0"><h2 class="t-h2">' + esc(t('app_tl_focus')) + '</h2><div class="rd-text">' + paras(l.focus) + '</div></section>';
     html += '<section class="card span-5" style="--i:1"><h2 class="t-h2">' + esc(t('app_tl_tips')) + '</h2><div class="rd-text">' + (l.tips || []).map(function (x) { return '<p>' + md(x) + '</p>'; }).join('') + '</div></section>';
