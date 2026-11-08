@@ -78,6 +78,8 @@ A1 and A2: 48 class lessons each (owner). The book has 32 lessons per level (8 u
 
 B1 (owner, 8 Nov 2026: "more units"): the book grows to 16 units of four lessons (64 book lessons) and the course has 84 class lessons: a welcome class, the 64 book lessons, a review after every two units (8), four conversation classes, four exam-practice classes (one per B1 Preliminary paper: reading, writing, listening, speaking), a mid-level check, a full practice exam in the format of B1 Preliminary and the end-of-level check (no gate test between B1 and B2, owner's choice). About 10 months on Focused.
 
-B2 to C2 (proposal, same pace, to confirm before those levels are written): B1 and B2 about 84 class lessons each (about 10 months on Focused), C1 about 96, C2 about 144. The B and C books then need more lessons, or two classes per book lesson.
+B2 (owner, 8 Nov 2026: "go on with B2"): the same shape as B1, 16 units and 84 class lessons, in the format of B2 First; the last class is the level test for moving up to C1 (owner's gate between B2 and C1).
+
+C1 and C2 (proposal, same pace, to confirm before those levels are written): B1 and B2 about 84 class lessons each (about 10 months on Focused), C1 about 96, C2 about 144. The B and C books then need more lessons, or two classes per book lesson.
 
 Basis: Cambridge's guided-learning estimates (cumulative to reach each level): A2 about 180 to 200 hours, B1 350 to 400, B2 500 to 600, C1 700 to 800, C2 1,000 to 1,200. Market check (7 Nov 2026): Lingoda about 50 one-hour classes per level; Goethe-Institut online about 60 live hours for A1; separate exam-preparation courses run 10 to 16 weeks at about GBP 600. Students are told "ready to take the exam" after the end-of-level check, never "you will pass"; times assume the home study and allow about 10% for holidays.
