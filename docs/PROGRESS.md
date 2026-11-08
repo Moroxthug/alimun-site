@@ -1577,3 +1577,13 @@ Owner: "update the privacy page too".
 - `site/src/blocks/legal/gdpr.html` and its seven translations: the newsletter form on the website is now listed as a way to agree to news and offers (it asks you to confirm you are 16 or older; if you also have an account, the account's choice is followed), as a place a choice is recorded, and under retention: after a newsletter unsubscribe the address and date are kept so we do not write again, deletable on request. Lock updated in `site/locked.json`.
 - Built locally: all nine language pages carry the new sentences (ma uses the French text).
 - Test inbox (owner: "send them to bchysfita@gmail.com not pol"): tests sent with the campaign key go to app_settings `campaign_test_to` (bchysfita@gmail.com) when set, else to every admin account. Migration 202611080200_campaign_test_to applied.
+
+## 2026-11-08 — Where new people come from
+
+Owner: "do all three", then "approve the wording and push to main, just do not mention vercel web analytics".
+- Sign-up (learner and teacher) asks "How did you hear about Alimun? (optional)": search, Instagram, TikTok, YouTube, Facebook, friend or family, school or teacher, somewhere else (with a short text box). 9 languages.
+- `js/source.js` (loaded by `js/cookies-banner.js` and the sign-up page) keeps the first visit's referring host, landing path and utm_source/medium/campaign in local storage (`alimun-first-touch`) only with the banner's analytics consent; turning analytics off deletes it. Sent with the sign-up in the user metadata `source`.
+- Database `supabase/migrations/202611081800_signup_sources.sql`: `signup_sources` (admin read only), trigger on `auth.users`, backfill from metadata, `admin_signup_sources(days)`. Admin Activity page: "Where new people came from" card.
+- `cookies-banner.js` also loads Vercel Web Analytics (already enabled on the project, cookieless); not mentioned on the legal pages at the owner's request.
+- Privacy (section 2, "How you found Alimun") and Cookie Policy (analytics paragraph, `alimun-first-touch` row) updated in all languages; lock hashes updated.
+- Database status: only the table was created; the Supabase connector's confirmation prompt went unanswered twice, so access rules, trigger, backfill and admin function are still to apply (rest of the migration file). Until then the answers wait in the user metadata.
