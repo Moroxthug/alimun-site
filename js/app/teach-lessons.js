@@ -6,7 +6,7 @@
 (function () {
   'use strict';
   var A = null, root = null, courses = {}, P = null, at = null;
-  var COURSES = ['English-A1', 'English-A2', 'English-B1'];
+  var COURSES = ['English-A1', 'English-A2', 'English-B1', 'English-B2'];
   var SIZES = [['one', 'app_tl_size_one'], ['small', 'app_tl_size_small'], ['group', 'app_tl_size_group']];
   var KINDS = { welcome: 'app_tl_kind_welcome', book: 'app_tl_kind_book', review: 'app_tl_kind_review', conversation: 'app_tl_kind_conversation', exam: 'app_tl_kind_exam', check: 'app_tl_kind_check' };
 

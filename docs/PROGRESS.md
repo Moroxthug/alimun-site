@@ -1624,3 +1624,12 @@ Owner: "add the templates to the admin campaigns page".
 - `js/app/admin-campaigns.js`: Layout (announcement, offer, newsletter, event) with each layout's fields; Preview of the email as it will look (kept up to date while typing); "Newsletter sign-ups too" in Who gets it, with the count saying how many come from the form; New banner form (strip, card or panel; website, dashboard or both; English plus optional other languages; link, picture, start and end) saved switched off with preview links; Banners list with state, clicks, preview links, Switch on and Stop.
 - `api/campaigns.js`: `?action=preview` (admin or key) returns the email's HTML. `js/app/data.js`: campaignPreview, banners, bannerSave, bannerSwitch; audience and send pass include_newsletter.
 - Checked on the sample admin page (`/app/admin?preview=1#/campaigns`): each layout shows only its own fields, the banner form and list draw, no console errors.
+
+## 2026-11-08 — L6: English B2 second edition (16 units) and its 84 class lessons
+
+Owner: "go on with B2".
+- Book: `site/src/data/books/English-B2.js` now lists 16 units of four lessons (the eight old topics reworked, deeper than B1 where they overlap; eight new: health and lifestyle, learning for life, travel and the planet, money and choices, arts and creativity, society and rights, risk and challenge, ready for B2 First and beyond); units in `units/English-B2/u1.js` to `u16.js`. Every lesson has a task in the format of a named B2 First part (Reading and Use of English Parts 1 to 7 with the matching exercise kinds, Writing, Listening, Speaking); u13 teaches the review, u14 the essay. New names Kate and Nina in the voice lists.
+- Translations: es, fr, de, pt, zh, ar, it, 2,166 strings each, none missing (the helpers paused at the owner's usage limit and resumed).
+- Class lessons: `site/src/data/classes/English-B2.js` and `English-B2/c01.js` to `c84.js`, same shape as B1; the last class is the level test for moving up to C1 (owner's gate). Lessons page lists English B2; database (`supabase/migrations/202611082300_class_course_english_b2.sql`, applied): `class_courses` English-B2 84 (no B2 class exists yet; new ones get their lessons automatically).
+- Checked: `check-book English-B2` ok; `check-classes English-B2` 84 of 84 ok; the preview played in full (64 lessons, 16 tests, no problems); the switched book is replayed.
+- For the owner: the course audio for B2 on /app/audio.

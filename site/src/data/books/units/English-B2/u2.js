@@ -1,204 +1,252 @@
-// English B2, unit 2 (docs/BOOKS.md). Draft for native-teacher review.
+// English B2, unit 2, second edition (docs/LESSONS_PLAN.md, "Books, second edition"). Draft for native-teacher review.
+// Builds on B1 unit 9 (past simple, past continuous, past perfect, time words in stories): at B2 the three narrative
+// tenses working together, the past perfect continuous, and the linking that makes a story flow; then an anecdote.
+// Exam tasks in the format of B2 First.
 export const UNIT = {
   id: 'u2',
   title: 'Telling stories',
-  goal: 'Tell a story well: in the right order, with the right tenses and linking words.',
+  goal: 'Tell a story well: the right tense for every event, the past perfect continuous for background, and linking that keeps the listener with you.',
   art: 'ghost',
-  tags: { skills: ['grammar', 'vocabulary', 'reading'], topics: ['narrative-tenses', 'past-perfect', 'past-perfect-continuous', 'linking-words', 'stories'], goals: ['foundations'] },
+  tags: { skills: ['grammar', 'vocabulary', 'reading', 'writing', 'speaking'], topics: ['narrative-tenses', 'past-perfect', 'past-perfect-continuous', 'linking-words', 'stories'], goals: ['foundations'] },
   pages: [
+    /* ------------------------------------------------------------------ Lesson 1 */
     {
       id: 'p1',
-      title: 'What happened, what was happening',
-      about: 'Use the past simple, the past continuous and the past perfect to tell a story.',
+      title: 'Three tenses, one story',
+      about: 'Use the past simple, past continuous and past perfect together to tell a clear story.',
       art: 'parrot',
       spreads: [
         [
-          { t: 'text', md: 'A good story uses three past tenses together. Each one has its own job.' },
-          { t: 'table', caption: 'Narrative tenses', explain: ['head', 'col0', 'col1'], head: ['Tense', 'Use', 'Example'], rows: [
-            ['Past simple', 'the main events, in the order they happened', 'She opened the door and walked in.'],
-            ['Past continuous', 'the background, or an action in progress when something else happened', 'It was raining, and people were hurrying home.'],
-            ['Past perfect', 'an action that happened before another past action', 'When I arrived, the film had started.'],
+          { t: 'text', md: 'At B1 you learned the three narrative tenses one by one. At B2 the skill is to **combine** them so that a listener always knows what happened first, what was in the background, and what the main events were.\n\nThink of a story as a film. The **past simple** is the action that moves the story forward: *I opened the door. A man walked in.* The **past continuous** is the scenery behind the action, what was already happening: *It was raining and the lights were flickering.* The **past perfect** is a flashback to something that happened **before** the moment you are describing: *I realised I had left my keys at work.*' },
+          { t: 'table', caption: 'The job of each tense', explain: ['head', 'col1'], head: ['Tense', 'Job in the story', 'Example'], rows: [
+            ['past simple', 'the main events, in order', 'She picked up the phone and called the police.'],
+            ['past continuous', 'the background, or an action interrupted', 'While she was waiting, the lights went out.'],
+            ['past perfect', 'an earlier event: a flashback', 'Someone had cut the wire.'],
           ] },
+          { t: 'tip', art: 'owl', md: 'You do **not** need the past perfect when the order is already clear from the sequence or from *after* and *before*: *After she had eaten / After she ate, she left* are both fine. Use it when the order would otherwise be confusing: *When I arrived, the film started* (I arrived, then it started) is not the same as *When I arrived, the film had started* (it started first).' },
         ],
         [
+          { t: 'text', md: 'Two verbs in the past simple usually mean one thing happened **after** the other. *When the guests arrived, we served dinner*: first they arrived, then we served. Change one verb and the story changes.\n\n*When the guests arrived, we were serving dinner*: dinner was already in progress.\n*When the guests arrived, we had served dinner*: dinner was over before they came.\n\nThis small change is exactly the kind of meaning that B2 First tests in Listening and Reading, and it is what makes your own stories easy to follow.' },
           { t: 'examples', items: [
-            { s: 'I **was cycling** to work when a fox **ran** across the road.', n: 'A longer action in progress (past continuous) is interrupted by a short one (past simple).' },
-            { s: 'When we got to the station, the train **had left**.', n: 'First the train left, then we arrived. We missed it.' },
-            { s: 'When we got to the station, the train **left**.', n: 'First we arrived, then the train left. We probably caught it.' },
-            { s: 'While she **was cooking**, her husband **was setting** the table.', n: 'Two actions in progress at the same time.' },
-          ] },
-          { t: 'tip', art: 'owl', md: 'Do not put every past action in the past perfect. Use it only when you need to show that something happened **before** another past moment. When *after* or *before* already makes the order clear, the past simple is often enough: *After she finished work, she went home*.' },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct form.', items: [
-            { q: 'I ___ my keys when I was running for the bus.', o: ['dropped', 'was dropping', 'had dropped'], why: 'Dropping keys is a short action that happened during the longer one: past simple.' },
-            { q: 'When I opened the fridge, I saw that someone ___ my lunch.', o: ['had eaten', 'was eating', 'has eaten'], why: 'Someone ate it before I opened the fridge: past perfect.' },
-            { q: 'We ___ dinner when the lights suddenly went out.', o: ['were having', 'have had', 'are having'], why: 'Dinner was in progress when something interrupted it: past continuous.' },
-            { q: 'By the time the police arrived, the thieves ___.', o: ['had escaped', 'have escaped', 'escape'], why: 'The thieves escaped before the police arrived: past perfect.' },
-            { q: 'She ___ the letter, put it in an envelope and posted it.', o: ['wrote', 'had written', 'was writing'], why: 'A list of main events in order: past simple for each one.' },
+            { s: 'When I **got** to the station, the train **left**.', n: 'I got there, then the train left. I probably caught it.' },
+            { s: 'When I **got** to the station, the train **was leaving**.', n: 'It was moving out as I arrived.' },
+            { s: 'When I **got** to the station, the train **had left**.', n: 'It left before I arrived. I missed it.' },
+            { s: 'I **was cooking** when the smoke alarm **went off**.', n: 'A background action interrupted by an event.' },
+            { s: 'She **didn’t recognise** him because he **had grown** a beard.', n: 'The beard came first: a reason from earlier.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Complete with the past simple, past continuous or past perfect of the verb in brackets.', items: [
-            { q: 'I ___ (walk) home when I heard someone call my name.', a: ['was walking'], why: 'The walking was in progress when something happened: past continuous.' },
-            { q: 'Tom was nervous because he ___ (never / fly) before.', a: ['had never flown', '’d never flown'], why: 'His experience before that moment: past perfect. Fly, flew, flown.' },
-            { q: 'While they ___ (wait) for the bus, it started to snow.', a: ['were waiting'], why: '*While* + an action in progress: past continuous.' },
-            { q: 'When I got home, I ___ (realise) that I had left my phone at work.', a: ['realised', 'realized'], why: 'A main event in the story: past simple.' },
-            { q: 'She didn’t recognise him at first because he ___ (grow) a beard.', a: ['had grown', '’d grown'], why: 'He grew the beard before she saw him: past perfect. Grow, grew, grown.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['When I arrived, the party already finished.', 'When I arrived, the party had already finished.', 'An earlier event: past perfect.'],
+            ['I walked home when it started to rain.', 'I was walking home when it started to rain.', 'The walk is the background.'],
+            ['I had gone to Paris last year.', 'I went to Paris last year.', 'No earlier past moment: past simple.'],
+            ['While I watched TV, the phone was ringing.', 'While I was watching TV, the phone rang.', 'The background is continuous; the event is simple.'],
           ] },
-          { t: 'ex', kind: 'spot', h: 'Tap the verbs in the past perfect.', items: [
-            { s: 'When Elif arrived at the party, most of the guests [had gone] home and someone [had eaten] all the cake.', why: 'Both things happened before Elif arrived.' },
+          { t: 'ex', kind: 'select', h: 'Choose the form that fits the meaning.', items: [
+            { q: 'I missed the bus. When I reached the stop, it ___ .', o: ['had gone', 'went', 'was going'], why: 'It left before I arrived: past perfect.' },
+            { q: 'We ___ along the beach when we saw the dolphins.', o: ['were walking', 'walked', 'had walked'], why: 'The background activity: past continuous.' },
+            { q: 'He was nervous because he ___ in front of an audience before.', o: ['had never spoken', 'never spoke', 'was never speaking'], why: 'Never before that moment: past perfect.' },
+            { q: 'The lights went out and everyone ___ .', o: ['screamed', 'had screamed', 'was screaming'], why: 'The next event in order: past simple.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'gap', h: 'In the format of the B2 First exam (Reading and Use of English Part 2): write one word in each gap.', items: [
+            { q: 'By the time the firefighters arrived, the fire ___ already spread to the roof.', a: ['had'], why: 'Past perfect: *had* + participle.' },
+            { q: 'I was halfway home ___ I realised I’d left my phone in the café.', a: ['when'], why: '*When* introduces the sudden event.' },
+            { q: '___ we were waiting for the results, nobody said a word.', a: ['While', 'As', 'Whilst'], why: '*While* or *as* introduces a background action.' },
+            { q: 'She had never ___ such a beautiful place before.', a: ['seen', 'visited'], why: 'A past participle after *had never*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'Part 2 gaps are usually **grammar words**: auxiliaries (*had, was*), prepositions, linking words, pronouns. Read the whole text once before you fill anything in, and check the tense around each gap: a missing *had* or *was* is a classic Part 2 answer.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'arthur', items: [
+            { a: 'When I got to the station, the train had already left.' },
+            { a: 'I was cooking dinner when the lights went out.' },
+            { a: 'She didn’t recognise him because he’d grown a beard.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 2 */
     {
       id: 'p2',
-      title: 'She had been waiting for hours',
-      about: 'Use the past perfect continuous for activities that went on up to a moment in the past.',
+      title: 'I’d been waiting for hours',
+      about: 'Use the past perfect continuous to explain the background and the cause of a past situation.',
       art: 'snail',
       spreads: [
         [
-          { t: 'text', md: 'Use the **past perfect continuous** for an activity that continued up to a moment in the past, or stopped just before it. Form it with *had* + *been* + the *-ing* form. It is the past version of the present perfect continuous.' },
+          { t: 'text', md: 'The **past perfect continuous** (*had been doing*) is the past version of the present perfect continuous. Just as *I’ve been waiting for an hour* looks back from now, *I’d been waiting for an hour when she arrived* looks back from a moment in the past.\n\nIt has three main jobs in a story. It shows **how long** an activity had been going on before a past moment: *We’d been driving for six hours when the car broke down.* It explains a **visible result** in the past: *His eyes were red because he’d been crying.* And it describes a **repeated** activity up to a past moment: *She’d been calling him all evening.*' },
+          { t: 'table', caption: 'Past perfect simple or continuous?', explain: ['head', 'col2'], head: ['Simple', 'Continuous', 'The difference'], rows: [
+            ['She’d written the report.', 'She’d been writing the report.', 'finished / the activity, maybe not finished'],
+            ['I’d read three chapters.', 'I’d been reading for an hour.', 'how many / how long'],
+            ['He’d lived there since 2010.', 'He’d been living there since 2010.', 'often both possible'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'As with all continuous forms, **state verbs** stay simple: *I’d known him for years* (not *I’d been knowing*). And remember that you only need this tense when there is a **past moment** to look back from. Without it, use the past simple: *I waited for an hour*.' },
+        ],
+        [
           { t: 'examples', items: [
-            { s: 'When I met her, she **had been living** in Berlin for two years.', n: 'She started living there two years before we met, and she still lived there.' },
-            { s: 'The streets were wet. It **had been raining**.', n: 'The rain stopped just before, and we could see the result.' },
-            { s: 'How long **had** you **been waiting** when the doctor finally called you?', n: '*How long* asks about the length of the activity up to that past moment.' },
+            { s: 'We**’d been driving** for six hours when the car **broke down**.', n: 'How long, up to a past event.' },
+            { s: 'The ground was wet. It **had been raining** all night.', n: 'A visible past result of an activity.' },
+            { s: 'By the time I got there, they**’d been waiting** for forty minutes.', n: '*By the time* + past simple, then past perfect continuous.' },
+            { s: 'She was exhausted because she**’d been working** double shifts.', n: 'The cause of a past state.' },
+            { s: 'He **had known** about the problem for weeks.', n: '*Know* is a state verb: simple form.' },
+          ] },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['I was waiting for two hours when the bus came.', 'I’d been waiting for two hours when the bus came.', 'Duration up to a past moment.'],
+            ['She’d been knowing him for years.', 'She’d known him for years.', '*Know* is a state verb.'],
+            ['I’d been visiting four museums.', 'I’d visited four museums.', 'A number of things: simple form.'],
           ] },
         ],
         [
-          { t: 'text', md: 'The **past perfect simple** focuses on a finished action or a result, often with a number. The **past perfect continuous** focuses on the activity and how long it lasted.' },
-          { t: 'table', caption: 'Activity or result?', explain: ['head'], head: ['Past perfect continuous: the activity', 'Past perfect simple: the result'], rows: [
-            ['She had been writing all afternoon.', 'She had written four pages.'],
-            ['They had been driving for hours.', 'They had driven three hundred kilometres.'],
+          { t: 'dialogue', title: 'The interview', lines: [
+            { who: 'Ellie', s: 'How did the job interview go?' },
+            { who: 'Joe', s: 'Badly at first. I’d been travelling since five in the morning, and the train had been delayed twice.' },
+            { who: 'Ellie', s: 'Oh no. Were you late?' },
+            { who: 'Joe', s: 'Ten minutes. They’d already interviewed two other people, and I could tell they’d been waiting for me.' },
+            { who: 'Ellie', s: 'And then?' },
+            { who: 'Joe', s: 'Then they asked about a project I’d been working on for a year, and everything changed. I think I got it.' },
           ] },
-          { t: 'tip', art: 'owl', md: 'State verbs do not take the continuous here either. Say *I had known him for years*, never *I had been knowing him for years*.' },
-        ],
-        [
-          { t: 'ex', kind: 'gap', h: 'Complete with the past perfect continuous of the verb in brackets.', items: [
-            { q: 'Her eyes were red because she ___ (cry).', a: ['had been crying', '’d been crying'], why: 'The crying stopped just before, and we could see the result.' },
-            { q: 'We ___ (drive) for six hours when the car broke down.', a: ['had been driving', '’d been driving'], why: 'An activity that lasted six hours up to a past moment.' },
-            { q: 'He was out of breath because he ___ (run).', a: ['had been running', '’d been running'], why: 'The running explains how he was at that moment.' },
-            { q: 'How long ___ (they / go) out together before they got married?', a: ['had they been going'], why: 'In a question, *had* goes before the subject: *had they been going out*.' },
-            { q: 'I ___ (not / sleep) well for weeks, so I went to see a doctor.', a: ['hadn’t been sleeping', 'had not been sleeping'], why: 'Negative: *hadn’t* + *been* + *-ing*.' },
+          { t: 'ex', kind: 'select', h: 'Choose the better form.', items: [
+            { q: 'Joe was tired because he ___ since five in the morning.', o: ['had been travelling', 'had travelled', 'travelled'], why: 'Duration of an activity up to a past moment.' },
+            { q: 'They ___ two other people before Joe arrived.', o: ['had interviewed', 'had been interviewing', 'interviewed'], why: 'A number of finished actions: simple form.' },
+            { q: 'He talked about a project he ___ on for a year.', o: ['had been working', 'has worked', 'was working'], why: 'Duration up to a past moment: past perfect continuous.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct form.', items: [
-            { q: 'When I finally found my glasses, I ___ for them for twenty minutes.', o: ['had been looking', 'have been looking', 'am looking'], why: 'An activity up to a moment in the past: past perfect continuous.' },
-            { q: 'By midnight, the band ___ ten songs.', o: ['had recorded', 'had been recording', 'were recording'], why: 'We count finished results (*ten songs*), so the past perfect simple.' },
-            { q: 'I ___ him for years before we started working together.', o: ['had known', 'had been knowing', 'was knowing'], why: '*Know* is a state verb: no continuous form.' },
-            { q: 'The kitchen smelled wonderful. Dad ___ bread all morning.', o: ['had been baking', 'has been baking', 'bakes'], why: 'The story is in the past, so *had been*, not *has been*.' },
+          { t: 'ex', kind: 'transform', h: 'In the format of the B2 First exam (Reading and Use of English Part 4): complete the second sentence so that it means the same as the first, using the word given.', items: [
+            { q: 'I started reading at nine, and at midnight I was still reading.', cue: 'BEEN', a: ['At midnight I had been reading for three hours.', 'At midnight I’d been reading for three hours.'], why: 'Duration up to a past moment: past perfect continuous.' },
+            { q: 'The bus left just before I reached the stop.', cue: 'ALREADY', a: ['When I reached the stop, the bus had already left.', 'The bus had already left when I reached the stop.'], why: 'An earlier event: past perfect with *already*.' },
+            { q: 'It was my first visit to New York.', cue: 'NEVER', a: ['I had never been to New York before.', 'I’d never been to New York before.', 'I had never visited New York before.'], why: '*First visit* in the past becomes *had never… before*.' },
           ] },
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'How long had you been studying English?', why: 'Question: *How long* + *had* + subject + *been* + *-ing*.' },
-            { a: 'Why had he been crying?', why: 'Question word + *had* + subject + *been* + *-ing*.' },
+          { t: 'tip', art: 'owl', md: 'Part 4 loves **tense changes**: a sentence about a first time, a start point or a sequence often becomes a perfect form. Underline the time words in the first sentence (*at nine, just before, first*); they tell you which structure the examiner wants.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'mei', items: [
+            { a: 'We’d been driving for six hours when the car broke down.' },
+            { a: 'The ground was wet because it had been raining.' },
+            { a: 'By the time I arrived, they’d been waiting for an hour.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 3 */
     {
       id: 'p3',
-      title: 'As soon as, while, in the end',
-      about: 'Link the events of a story so the listener can follow them.',
+      title: 'Eventually, it turned out',
+      about: 'Link a story so that it flows: time words, sequence and surprise.',
       art: 'owl',
       spreads: [
         [
-          { t: 'text', md: 'Linking words show how the events in a story connect in time. They make a story much easier to follow.' },
-          { t: 'table', caption: 'Linking words for stories', explain: ['head', 'col1'], quiz: true, head: ['Linking word', 'Meaning', 'Example'], rows: [
-            ['as soon as', 'immediately after', 'As soon as I saw the email, I called her.'],
-            ['while', 'during the time that', 'While I was waiting, I read the news.'],
-            ['by the time', 'before or at the moment when', 'By the time we arrived, the shop had closed.'],
-            ['until', 'up to the time when', 'We waited until the rain stopped.'],
-            ['at first', 'at the beginning, before things changed', 'At first I hated the job, but now I love it.'],
-            ['eventually', 'after a long time or after many problems', 'The bus eventually arrived at midnight.'],
-            ['in the end', 'finally, after a lot of changes or discussion', 'In the end, we decided to stay at home.'],
+          { t: 'text', md: 'Good storytellers guide the listener with **linking words**. At B1 you used *when, then, after* and *in the end*. At B2 you need a wider range, and you need to use them precisely.\n\n**As soon as** and **the moment** mean *immediately after*: *As soon as I opened the email, I knew.* **By the time** means *not later than*, and usually takes a past perfect in the other clause: *By the time we arrived, the shop had closed.* **Eventually** means *after a long time or a lot of effort*: *We eventually found the hotel.* **In the end** means *finally, after everything*: *In the end, it was a great holiday.* And **at the end** (of something) is about place or time: *at the end of the film*.' },
+          { t: 'table', caption: 'Linking a story', explain: ['head', 'col1'], head: ['Linker', 'Meaning', 'Example'], rows: [
+            ['as soon as / the moment', 'immediately after', 'The moment she saw me, she smiled.'],
+            ['by the time', 'not later than; often with past perfect', 'By the time the police came, he had gone.'],
+            ['meanwhile', 'at the same time, elsewhere', 'Meanwhile, back at home, the dog was eating the cake.'],
+            ['eventually', 'after a long time', 'Eventually, the train arrived.'],
+            ['in the end', 'finally, as a result of everything', 'In the end, we stayed at home.'],
+            ['it turned out (that)', 'we discovered later', 'It turned out that he was her brother.'],
           ] },
         ],
         [
-          { t: 'text', md: '*In the end* means finally, after a lot of changes, problems or discussion. *At the end* is about the last part of something, and it is usually followed by *of*: *at the end of the film*, *at the end of the street*.' },
-          { t: 'text', md: '*By the time* is often followed by the past simple, with the past perfect in the other part of the sentence: *By the time I got there, everyone had left*.' },
-          { t: 'tip', art: 'owl', md: 'In many languages a similar word means *possibly*. In English, *eventually* never means *possibly*. It means *finally, after some time*: *She eventually found a job*.' },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the best linking word.', items: [
-            { q: '___ I got home, I took off my shoes and lay down on the sofa.', o: ['As soon as', 'While', 'Eventually'], why: '*As soon as*: immediately after I got home.' },
-            { q: '___ we were driving through the mountains, the weather changed.', o: ['While', 'By the time', 'In the end'], why: '*While* + an action in progress.' },
-            { q: '___ the ambulance arrived, the man had already stood up.', o: ['By the time', 'While', 'Until'], why: '*By the time* + past simple, with the past perfect in the other part.' },
-            { q: 'We looked at twenty flats, and ___ we found one we both liked.', o: ['eventually', 'at first', 'while'], why: '*Eventually*: after a long time and many attempts.' },
-            { q: 'I didn’t like my flatmate ___, but now we’re good friends.', o: ['at first', 'in the end', 'as soon as'], why: '*At first*: at the beginning, before things changed.' },
-            { q: 'Please stay here ___ I come back.', o: ['until', 'by the time', 'eventually'], why: '*Until*: up to the time when I come back.' },
+          { t: 'text', md: '**It turned out** is very useful for surprises, because it presents information that the characters discovered later: *The “stranger” turned out to be my old teacher. It turned out that the shop had been closed for years.* Other good phrases for a twist are **to my surprise**, **just as** (*Just as I was leaving, the phone rang*) and **all of a sudden**.\n\nDo not overuse *then*. A story with *then… then… then…* sounds childish. Vary it: *after that, a few minutes later, shortly afterwards, the next morning*.' },
+          { t: 'examples', items: [
+            { s: '**Just as** we sat down, the fire alarm went off.', n: 'At exactly that moment.' },
+            { s: 'The noise **turned out to be** a cat in the attic.', n: '*Turn out to be* + noun.' },
+            { s: '**By the time** I found a taxi, I had missed the flight.', n: 'Past perfect in the other clause.' },
+            { s: 'We waited for hours, and **eventually** a bus came.', n: 'After a long time.' },
+            { s: '**To my surprise**, she agreed immediately.', n: 'Introducing something unexpected.' },
+          ] },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['At the end, we stayed at home.', 'In the end, we stayed at home.', '*In the end* = finally.'],
+            ['Eventually he’ll call. I’m not sure.', 'He might call. I’m not sure.', '*Eventually* means in the end, not *possibly*.'],
+            ['By the time we arrived, the shop closed.', 'By the time we arrived, the shop had closed.', '*By the time* usually needs the past perfect.'],
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Complete with *in* or *at*.', items: [
-            { q: 'Turn left ___ the end of the street.', a: ['at'], why: '*At the end of* a place: the last part of it.' },
-            { q: 'Everyone stood up and clapped ___ the end of the concert.', a: ['at'], why: '*At the end of* an event: its last part.' },
-            { q: 'I couldn’t decide which job to take. ___ the end, I chose the one closer to home.', a: ['in'], why: '*In the end*: finally, after a long time deciding.' },
+          { t: 'ex', kind: 'select', h: 'In the format of the B2 First exam (Reading and Use of English Part 1): choose the word that best fits each gap.', items: [
+            { q: 'We searched for the hotel for an hour and ___ found it down a tiny side street.', o: ['eventually', 'actually', 'lately'], why: '*Eventually*: after a long time.' },
+            { q: 'The strange noise ___ out to be the wind in the chimney.', o: ['turned', 'came', 'went'], why: 'The fixed phrase is *turn out to be*.' },
+            { q: '___ the time the ambulance came, the man had stood up.', o: ['By', 'At', 'In'], why: '*By the time*: not later than.' },
+            { q: '___ I was locking the door, I heard a voice behind me.', o: ['Just as', 'As soon', 'By then'], why: '*Just as*: at exactly that moment.' },
           ] },
-          { t: 'ex', kind: 'match', h: 'Match the beginnings and the endings.', pairs: [
-            ['As soon as the plane landed,', 'everyone switched on their phones.'],
-            ['While I was cleaning the flat,', 'I found an old photo of my grandparents.'],
-            ['By the time I finished the report,', 'my colleagues had all gone home.'],
-            ['We stayed at the station', 'until the last train had gone.'],
-            ['The traffic was terrible, but', 'we eventually got there.'],
+          { t: 'ex', kind: 'build', h: 'Build the sentence. Two words do not belong.', items: [
+            { a: 'It turned out that the parcel had been sent to the wrong address.', extra: ['was', 'at'], why: '*It turned out that* + past perfect passive.' },
+            { a: 'In the end we decided to stay at home.', extra: ['At', 'stayed'], why: '*In the end* = finally.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'sofia', items: [
+            { a: 'Just as we sat down, the fire alarm went off.' },
+            { a: 'The stranger turned out to be my old teacher.' },
+            { a: 'In the end, it was the best holiday we’ve ever had.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 4 */
     {
       id: 'p4',
-      title: 'The wrong suitcase',
-      about: 'Read a short story with a surprise at the end.',
-      art: 'suitcase',
+      title: 'A story with a twist',
+      about: 'Read an anecdote with a twist, then plan and tell a story in the format of B2 First.',
+      art: 'ghost',
       spreads: [
         [
-          { t: 'reading', title: 'The wrong suitcase', md: 'Last spring, Daniel flew to Lisbon for a job interview. He had been preparing for weeks, and he had packed his best suit, a white shirt and a pair of new shoes.\n\nThe flight was two hours late, and by the time he reached the baggage hall, most of the other passengers had already left. A single black suitcase was going round and round. Daniel grabbed it, jumped into a taxi and went straight to his hotel. He was so tired that he fell asleep as soon as he lay down.\n\nThe next morning, while he was having breakfast, he noticed the time and panicked. He rushed back to his room, opened the suitcase and froze. There was no suit inside. Instead, he found a pair of walking boots, a guidebook and a large box of chocolates. Someone else had taken his bag, and he had taken theirs.\n\nDaniel phoned the airport, but nobody could help him. In the end, he went to the interview in jeans and a creased T-shirt, feeling completely embarrassed.\n\nThe woman who interviewed him was polite but serious. At first she asked the usual questions about his experience. Then she looked at his T-shirt and asked why he was not wearing a suit. Daniel told her the whole story: the late flight, the black suitcase, the walking boots.\n\nShe was silent for a moment, and then she started to laugh. “I was on that flight too,” she said. “I’ve been trying to find the owner of a black suitcase since last night. It’s in my office. There’s a very nice suit inside.”\n\nDaniel got the job. He still does not know if it was because of his answers or because he gave her the chocolates back.' },
+          { t: 'text', md: 'This anecdote uses everything in the unit. As you read, notice which tense the writer uses for each event, and how the linking words guide you to the twist at the end.' },
+          { t: 'reading', title: 'The wrong train', md: 'It was a cold Friday evening, and I had been working late all week. All I wanted was to get home. The station was crowded, and people were pushing towards the platforms, so when a train marked “Northfield” pulled in, I jumped on without thinking.\n\nI found a seat, closed my eyes, and fell asleep almost immediately. By the time I woke up, the train had been travelling for over an hour, and the view outside was completely unfamiliar: fields, sheep, no lights at all. My heart sank. I had taken the express to Northfield Bay, a seaside town eighty miles away, not the local train to Northfield, where I live.\n\nI got off at the next stop, a tiny village station, and discovered that the last train back had left twenty minutes earlier. Just as I was wondering where I would spend the night, an elderly man who had been watching me from a bench came over. It turned out that he ran the only guesthouse in the village, and he had seen the same thing happen to at least a dozen tired commuters over the years.\n\nIn the end, I had the best weekend I’d had in months. I still go back every summer.' },
         ],
         [
-          { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
-            { q: 'Daniel went to Lisbon on holiday.', a: 'f', why: 'He went there for a job interview.' },
-            { q: 'Daniel’s flight arrived on time.', a: 'f', why: 'The flight was two hours late.' },
-            { q: 'Daniel opened the suitcase as soon as he got to the hotel.', a: 'f', why: 'He fell asleep and opened it the next morning.' },
-            { q: 'The interviewer had taken Daniel’s suitcase.', a: 't', why: 'She had a black suitcase with a suit inside in her office.' },
-            { q: 'The interviewer had visited Lisbon many times before.', a: 'ng', why: 'The text does not say.' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the B2 First exam (Reading and Use of English Part 5): choose the best answer.', items: [
+            { q: 'Why did the writer get on the wrong train?', o: ['He was tired and did not check carefully.', 'The station staff gave him wrong information.', 'The local train had been cancelled.'], why: 'He had been working late all week and jumped on *without thinking*.' },
+            { q: 'When did he realise his mistake?', o: ['When he woke up and saw the countryside.', 'As soon as the train left.', 'When the ticket inspector checked his ticket.'], why: 'The view outside was completely unfamiliar when he woke up.' },
+            { q: 'What does “it turned out” tell the reader about the elderly man?', o: ['The writer discovered his job only later.', 'The writer already knew him.', 'The man was also lost.'], why: '*It turned out* introduces something discovered later.' },
+            { q: 'How does the writer feel about the experience now?', o: ['He remembers it fondly.', 'He is still embarrassed.', 'He is angry about the train service.'], why: 'He had the best weekend in months and goes back every summer.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Look at the language in the story.', items: [
-            { q: '“By the time he reached the baggage hall, most of the other passengers had already left.” What happened first?', o: ['The passengers left.', 'Daniel reached the baggage hall.', 'Both happened at the same moment.'], why: 'The past perfect, *had left*, shows the earlier action.' },
-            { q: '“He had been preparing for weeks.” What does this tell us?', o: ['He spent a long time preparing before the trip.', 'He started preparing after the interview.', 'He prepared for a few minutes.'], why: 'The past perfect continuous: an activity that lasted up to a past moment.' },
-            { q: 'What is the surprise at the end of the story?', o: ['The interviewer had the suitcase with Daniel’s suit.', 'Daniel missed the interview.', 'The suitcase was empty.'], why: 'She had taken his suitcase at the airport by mistake.' },
+          { t: 'text', md: 'In B2 First Writing Part 2 you may be asked to write a **story** of 140 to 190 words, often starting or ending with a sentence given by the examiner. Examiners reward stories that use a **range of past tenses accurately**, **varied linking**, and a clear **beginning, middle and end**.\n\nA simple plan works well. Set the scene with the past continuous and past perfect (*It was raining, and I had been…*). Move the action with the past simple and linkers (*Just as…, the moment…*). End with a twist or a reflection (*It turned out that…, In the end…*).' },
+          { t: 'ex', kind: 'order', h: 'Put the words in order to make strong story sentences.', items: [
+            { a: 'It was getting dark and I had been walking for hours.', why: 'Past continuous and past perfect continuous set the scene.' },
+            { a: 'Just as I was about to give up, I saw a light.', why: '*Just as* + past continuous, then past simple.' },
+            { a: 'It turned out that the house had been empty for years.', why: 'A twist with *it turned out* and the past perfect.' },
           ] },
-          { t: 'ex', kind: 'spot', h: 'Tap the verb in the past continuous.', items: [
-            { s: 'The next morning, while he [was having] breakfast, he noticed the time and panicked.', why: '*Was having*: an action in progress when something else happened.' },
+          { t: 'tip', art: 'owl', md: 'If the task gives you a **first sentence**, copy it exactly and continue in the same tense. If it gives you a **last sentence**, plan your story backwards so that it really leads there. Stories that ignore the given sentence lose marks for content.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Tell the start of a story. Say each sentence after the tutor.', tutor: 'omar', items: [
+            { a: 'I’d been working late all week, and I was exhausted.' },
+            { a: 'By the time I woke up, the train had been travelling for an hour.' },
+            { a: 'It turned out that I’d taken the wrong train.' },
           ] },
         ],
       ],
     },
   ],
   test: [
-    { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-      { q: 'I ___ along the beach when I found the ring.', o: ['was walking', 'walked', 'had walked'], why: 'The longer action in progress: past continuous.' },
-      { q: 'When we reached the cinema, the film ___.', o: ['had already started', 'has already started', 'already starts'], why: 'The film started before we arrived: past perfect.' },
-      { q: 'She was exhausted because she ___ all night.', o: ['had been studying', 'has been studying', 'studies'], why: 'An activity up to a moment in the past: past perfect continuous.' },
-      { q: '___ I heard the news, I phoned my mother.', o: ['As soon as', 'While', 'Until'], why: '*As soon as*: immediately after.' },
-      { q: 'We tried three different hotels, and ___ we found a room.', o: ['eventually', 'at first', 'while'], why: '*Eventually*: after a long time and several attempts.' },
+    { t: 'ex', kind: 'select', h: 'Choose the form that fits the meaning.', items: [
+      { q: 'When I got to the cinema, the film ___ , so I missed the beginning.', o: ['had started', 'started', 'was starting'], why: 'It started before I arrived.' },
+      { q: 'I ___ a shower when someone rang the bell.', o: ['was having', 'had', 'had had'], why: 'A background action interrupted.' },
+      { q: 'Her hands were dirty because she ___ in the garden.', o: ['had been working', 'worked', 'has worked'], why: 'A visible past result of an activity.' },
+      { q: 'We ___ each other for years before we became friends.', o: ['had known', 'had been knowing', 'knew'], why: '*Know* is a state verb.' },
     ] },
-    { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
-      { q: 'By the time I got up, my flatmate ___ (leave).', a: ['had left', '’d left'], why: '*By the time* + past simple, with the past perfect in the other part.' },
-      { q: 'They ___ (play) tennis when it started to rain.', a: ['were playing'], why: 'An action in progress, interrupted: past continuous.' },
-      { q: 'How long ___ (you / wait) when the bus finally came?', a: ['had you been waiting'], why: '*How long* + an activity up to a past moment: past perfect continuous.' },
-      { q: 'Wait here ___ I get back.', a: ['until', 'till'], why: '*Until*: up to the time when.' },
+    { t: 'ex', kind: 'gap', h: 'Write one word in each gap.', items: [
+      { q: '___ the time we arrived, everyone had left.', a: ['By'], why: '*By the time*.' },
+      { q: 'The noise turned ___ to be a cat.', a: ['out'], why: '*Turn out to be*.' },
+      { q: 'I had ___ waiting for an hour when she called.', a: ['been'], why: 'Past perfect continuous: *had been* + -ing.' },
+      { q: 'Just ___ I was leaving, it started to snow.', a: ['as'], why: '*Just as*: at that exact moment.' },
     ] },
-    { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-      { a: 'I was having a shower when the phone rang.', why: 'Past continuous for the background, past simple for the interruption.' },
-      { a: 'Had she ever been abroad before?', why: 'Past perfect question: *Had* + subject + *ever* + past participle.' },
+    { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+      { s: '[At the end], we decided to cancel the trip.', a: ['In the end'], why: '*In the end* means finally.' },
+      { s: 'I [walked] home when it started to rain.', a: ['was walking'], why: 'The walk is the background: past continuous.' },
+      { s: 'By the time we arrived, the shop [closed].', a: ['had closed'], why: '*By the time* usually needs the past perfect.' },
     ] },
-    { t: 'ex', kind: 'choice', h: 'Which sentence is correct?', items: [
-      { q: '', o: ['I had known him for years.', 'I had been knowing him for years.', 'I was knowing him for years.'], why: '*Know* is a state verb: no continuous form.' },
-      { q: '', o: ['At the end of the film, everyone cried.', 'In the end of the film, everyone cried.', 'Eventually of the film, everyone cried.'], why: '*At the end of* + an event.' },
-      { q: '', o: ['When I arrived, she had already gone.', 'When I arrived, she has already gone.', 'When I had arrived, she already went.'], why: 'She went first, so the past perfect for her action and the past simple for mine.' },
+    { t: 'ex', kind: 'transform', h: 'Complete the second sentence so that it means the same as the first, using the word given.', items: [
+      { q: 'I started waiting at six and the bus came at eight.', cue: 'BEEN', a: ['I had been waiting for two hours when the bus came.', 'I’d been waiting for two hours when the bus came.'], why: 'Duration up to a past moment.' },
+      { q: 'We discovered later that the man was a famous actor.', cue: 'TURNED', a: ['It turned out that the man was a famous actor.', 'The man turned out to be a famous actor.'], why: '*It turned out (that)* / *turn out to be*.' },
+    ] },
+    { t: 'ex', kind: 'tf', h: 'True, false or not given, according to the story in lesson 4.', ng: true, items: [
+      { q: 'The writer lives in Northfield Bay.', a: 'f', why: 'He lives in Northfield, not Northfield Bay.' },
+      { q: 'He missed the last train back.', a: 't', why: 'It had left twenty minutes earlier.' },
+      { q: 'The elderly man had worked on the railway.', a: 'ng', why: 'The text only says he ran the guesthouse.' },
     ] },
   ],
 };
