@@ -23,6 +23,7 @@
 
 const { createClient } = require('@supabase/supabase-js');
 const TZ = require('../js/tz.js');
+const { dailyFetch, hasDailyKey } = require('./_lib/daily.js');
 
 const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
 const GOAL_TRACKS = ['relocation', 'academic', 'professional', 'pleasure', 'foundations'];
@@ -273,8 +274,7 @@ module.exports = async function handler(req, res) {
       return res.status(500).json({ error: 'Could not schedule sessions for this classroom. Please try again.' });
     }
 
-    const dailyApiKey = process.env.DAILY_API_KEY;
-    if (sessionCount > 0 && dailyApiKey) {
+    if (sessionCount > 0 && hasDailyKey()) {
       try {
         const { data: sessions } = await supabase
           .from('sessions')
@@ -289,12 +289,8 @@ module.exports = async function handler(req, res) {
               const roomName = `alimun-${session.id}`;
 
               try {
-                const dailyRes = await fetch('https://api.daily.co/v1/rooms', {
+                const dailyRes = await dailyFetch('/rooms', {
                   method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${dailyApiKey}`
-                  },
                   body: JSON.stringify({
                     name: roomName,
                     privacy: 'private',
@@ -310,17 +306,13 @@ module.exports = async function handler(req, res) {
                   })
                 });
 
-                if (dailyRes.ok) {
-                  const dailyData = await dailyRes.json();
-                  if (dailyData?.url) {
-                    await supabase
-                      .from('sessions')
-                      .update({ daily_room_url: dailyData.url })
-                      .eq('id', session.id);
-                  }
+                if (dailyRes.ok && dailyRes.body?.url) {
+                  await supabase
+                    .from('sessions')
+                    .update({ daily_room_url: dailyRes.body.url })
+                    .eq('id', session.id);
                 } else {
-                  const errText = await dailyRes.text();
-                  console.error(`Daily.co room creation failed for session ${session.id}:`, errText);
+                  console.error(`Daily.co room creation failed for session ${session.id}:`, dailyRes.status, dailyRes.body);
                 }
               } catch (dailyErr) {
                 console.error(`Failed to fetch Daily.co API for session ${session.id}:`, dailyErr);
