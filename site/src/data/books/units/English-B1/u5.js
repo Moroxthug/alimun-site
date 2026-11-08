@@ -1,11 +1,14 @@
-// English B1, unit 5 (docs/BOOKS.md). Draft for native-teacher review.
+// English B1, unit 5, second edition (docs/LESSONS_PLAN.md, "Books, second edition"). Draft for native-teacher review.
+// Each lesson: a full explanation first (the rule in plain words, why, many examples, the usual mistakes, a text that
+// uses it), then fewer exercises from controlled to free, one speaking task, and one task in the format of B1 Preliminary.
 export const UNIT = {
   id: 'u5',
   title: 'The world around us',
-  goal: 'Describe the environment and processes, and compare.',
+  goal: 'Describe how things are made and what happened to them, talk about the environment with natural word partners, and compare things precisely.',
   art: 'cactus',
-  tags: { skills: ['grammar', 'vocabulary', 'reading'], topics: ['passive', 'environment', 'comparisons'], goals: ['foundations'] },
+  tags: { skills: ['grammar', 'vocabulary', 'speaking', 'reading'], topics: ['passive', 'environment', 'collocations', 'comparisons'], goals: ['foundations'] },
   pages: [
+    /* ------------------------------------------------------------------ Lesson 1 */
     {
       id: 'p1',
       title: 'It is made, it was built',
@@ -13,200 +16,330 @@ export const UNIT = {
       art: 'parrot',
       spreads: [
         [
-          { t: 'text', md: 'In the **passive**, the focus is on the action, or on the person or thing it happens to, not on who does it. Form it with *be* + past participle.' },
-          { t: 'table', caption: 'The passive', explain: ['head', 'col0'], quiz: true, head: ['', 'Active', 'Passive'], rows: [
+          { t: 'text', md: 'Most English sentences start with the person or thing that **does** the action: *Volunteers clean the beach every spring.* This is an **active** sentence.\n\nSometimes the person who does the action is not the interesting part. We want to talk about the beach, not the volunteers. Then we use the **passive**: *The beach **is cleaned** every spring.* The thing that the action happens to becomes the subject.\n\nThe passive has two parts: a form of **be** and the **past participle** of the main verb (*cleaned, made, built, sold, taken*). The tense is shown by *be*: **is/are** for the present simple, **was/were** for the past simple. The past participle never changes.' },
+          { t: 'table', caption: 'The passive: present simple and past simple', quiz: true, explain: ['head', 'col0'], head: ['', 'Active', 'Passive'], rows: [
             ['present simple', 'They recycle glass here.', 'Glass is recycled here.'],
+            ['present, plural', 'They sell tickets online.', 'Tickets are sold online.'],
             ['past simple', 'Someone built the bridge in 1890.', 'The bridge was built in 1890.'],
+            ['past, plural', 'They planted the trees last year.', 'The trees were planted last year.'],
             ['negative', 'They don’t collect bins on Sundays.', 'Bins aren’t collected on Sundays.'],
-            ['question', 'Do they sell tickets online?', 'Are tickets sold online?'],
+            ['question', 'Did they close the factory?', 'Was the factory closed?'],
           ] },
+          { t: 'tip', art: 'owl', md: 'Many past participles are irregular, and you need them for the passive: *make – made*, *build – built*, *take – taken*, *write – written*, *grow – grown*, *throw – thrown*, *find – found*, *give – given*. Learn them with the verb, not alone.' },
+        ],
+        [
+          { t: 'text', md: 'Use the passive in three common situations.\n\n**We do not know who did it**: *My bike **was stolen** last night.* (Nobody knows the thief.)\n\n**It is not important, or it is obvious who did it**: *The rubbish **is collected** on Tuesdays.* (Of course the rubbish collectors do it.)\n\n**We describe a process** step by step, as in a factory or a recipe: *First the bottles **are washed**. Then they **are crushed** and **melted**.*\n\nIf you want to say who did the action, add **by** + the person or thing: *The park was designed **by** a famous architect.* Add *by* only when this information is new and useful. *The rubbish is collected by rubbish collectors* sounds strange, because it tells us nothing new.' },
           { t: 'examples', items: [
             { s: 'Paper **is made** from wood.', n: 'A process: present simple passive.' },
             { s: 'The old factory **was closed** in 2010.', n: 'A past event: past simple passive.' },
-            { s: 'These bottles **were collected by** local volunteers.', n: 'Use *by* when you want to say who did it.' },
+            { s: 'These bottles **were collected by** local schoolchildren.', n: '*By* adds who did it, because this is interesting.' },
+            { s: 'About ten million plastic bags **are used** every day in this country.', n: 'We do not need to say who uses them: everybody.' },
+            { s: '**Was** the bridge **damaged** in the storm? – No, it **wasn’t**.', n: 'A question and a short answer in the passive.' },
+            { s: 'Our street **isn’t cleaned** very often.', n: 'Negative: *be* + *not* + past participle.' },
           ] },
         ],
         [
-          { t: 'text', md: 'Use the passive when we do not know who did something, when it is not important, or when it is obvious. Add **by** + the person only when this information is useful.' },
-          { t: 'tip', art: 'owl', md: 'The verb *be* changes with the tense and the subject: *is* or *are* for the present, *was* or *were* for the past. The past participle does not change.' },
-          { t: 'ex', kind: 'spot', h: 'Tap every past participle in a passive verb.', items: [
-            { s: 'Most of our waste is [collected] once a week. Plastic and glass are [taken] to a recycling centre, where they are [sorted] by machines.', why: '*Is collected*, *are taken* and *are sorted* are present simple passive. *Recycling* is not a participle.' },
-            { s: 'The new park was [opened] in May. Hundreds of trees were [planted], and the old car park was [turned] into a garden.', why: '*Was opened*, *were planted* and *was turned* are past simple passive.' },
+          { t: 'text', md: 'These are the mistakes teachers see most often. Most of them come from forgetting one of the two parts of the passive.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['The house built in 1950.', 'The house was built in 1950.', 'The passive needs *be*; without it, the house built itself.'],
+            ['The cars are make in Spain.', 'The cars are made in Spain.', 'After *be*, use the past participle, not the base form.'],
+            ['The museum was opened from the mayor.', 'The museum was opened by the mayor.', 'The person who does the action comes after *by*.'],
+            ['Glass are recycled here.', 'Glass is recycled here.', '*Be* agrees with the subject: *glass* is one thing (uncountable).'],
+            ['It was happened last year.', 'It happened last year.', 'Some verbs (*happen, arrive, die, go*) have no object, so no passive.'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'Before you write a passive, ask: *Can this verb have an object?* You can *build a house*, so *the house was built* is fine. But you cannot *happen something*, so *it was happened* is impossible.' },
+        ],
+        [
+          { t: 'reading', title: 'From bottle to bottle', md: 'Every year, millions of glass bottles are thrown away in our town. But many of them are not wasted. They are taken to a recycling centre on the edge of town.\n\nFirst, the bottles are sorted by colour, because clear, green and brown glass are recycled separately. Then they are washed, and the labels are removed. After that, the glass is crushed into small pieces and melted at a very high temperature.\n\nThe centre was opened in 2015 and was paid for by the town council. Last year, more than 4,000 tonnes of glass were recycled there. Most of it was made into new bottles, which were sold to local drinks companies.' },
+          { t: 'ex', kind: 'order', h: 'Put the steps in the right order: make one sentence for each step.', items: [
+            { a: 'The bottles are sorted by colour.', why: 'This is the first step in the text.' },
+            { a: 'The glass is crushed into small pieces.', why: 'This happens after the bottles are washed.' },
+          ] },
+          { t: 'ex', kind: 'tf', h: 'Read the text again. Are the sentences true or false?', items: [
+            { q: 'All the glass is recycled together.', a: 'f', why: 'Clear, green and brown glass are recycled separately.' },
+            { q: 'The labels are taken off before the glass is crushed.', a: 't', why: 'They are washed, and the labels are removed. *After that*, the glass is crushed.' },
+            { q: 'The centre was paid for by drinks companies.', a: 'f', why: 'It was paid for by the town council.' },
+            { q: 'Most recycled glass becomes new bottles.', a: 't', why: '*Most of it was made into new bottles.*' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct form.', items: [
-            { q: 'English ___ in many countries.', o: ['is spoken', 'speaks', 'is speaking'], why: 'People speak English: the passive is *is spoken*.' },
-            { q: 'Our house ___ in 1925.', o: ['was built', 'is built', 'built'], why: 'A past event, and the house did not build itself: *was built*.' },
-            { q: 'Bins ___ every Tuesday in our street.', o: ['are emptied', 'are emptying', 'empty'], why: 'A regular event, present simple passive: *are emptied*.' },
-            { q: 'The windows ___ last week, so the house is warmer now.', o: ['were replaced', 'are replaced', 'replaced'], why: '*Last week* is past, and *windows* is plural: *were replaced*.' },
-            { q: 'Where ___ these vegetables grown?', o: ['are', 'do', 'is'], why: 'Passive question: *are* + subject + past participle.' },
+          { t: 'ex', kind: 'gap', h: 'Complete with the passive of the verb in brackets. Use the present simple or the past simple.', items: [
+            { q: 'Coffee ___ (grow) in many hot countries.', a: ['is grown'], why: 'A general fact: present simple passive, *is* + *grown*.' },
+            { q: 'The first email ___ (send) in 1971.', a: ['was sent'], why: 'A past event: *was* + *sent*.' },
+            { q: 'These shoes ___ (make) from old car tyres.', a: ['are made'], why: '*Shoes* is plural: *are* + *made*.' },
+            { q: 'The windows ___ (break) during the storm last night.', a: ['were broken'], why: 'Past, plural: *were* + *broken*.' },
+            { q: 'Plastic bags ___ (not give) free in shops any more.', a: ['are not given', 'aren’t given'], why: 'Negative present passive: *are not* + *given*.' },
+          ] },
+          { t: 'ex', kind: 'transform', h: 'Rewrite the sentences in the passive. Do not use *by* unless it is needed.', items: [
+            { q: 'They built this school in 1975.', cue: 'This school', a: ['This school was built in 1975.'], why: 'Past simple active → *was built*. We do not need *by them*.' },
+            { q: 'People speak English in many countries.', cue: 'English', a: ['English is spoken in many countries.'], why: '*Speak – spoken*. *By people* tells us nothing new.' },
+            { q: 'A famous chef opened the restaurant.', cue: 'The restaurant', a: ['The restaurant was opened by a famous chef.'], why: 'Here *by a famous chef* is interesting, so we keep it.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Complete with the passive of the verb in brackets, present simple or past simple.', items: [
-            { q: 'Coffee ___ (grow) in hot countries.', a: ['is grown'], why: 'A general fact: present simple passive.' },
-            { q: 'The bridge ___ (close) last winter because of the floods.', a: ['was closed'], why: '*Last winter* is past: *was closed*.' },
-            { q: 'Today, many bottles ___ (make) from recycled plastic.', a: ['are made'], why: '*Today* and a plural subject: *are made*.' },
-            { q: 'The meeting ___ (not / cancel). It was moved to Thursday.', a: ['wasn’t cancelled', 'was not cancelled'], why: 'Past simple passive, negative: *wasn’t cancelled*.' },
-            { q: 'The old library ___ (turn) into a hotel in 2019.', a: ['was turned'], why: '*In 2019* is past: *was turned*.' },
+          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake in each sentence.', items: [
+            { s: 'The bridge [was build] in the nineteenth century.', a: ['was built'], why: 'After *was*, the past participle: *built*.' },
+            { s: 'Our bins [is] emptied every Monday.', a: ['are'], why: '*Bins* is plural, so *are emptied*.' },
+            { s: 'This song was written [from] a teenager.', a: ['by'], why: 'Who did the action comes after *by*.' },
+            { s: 'The accident [was happened] at six o’clock.', a: ['happened'], why: '*Happen* has no object, so no passive.' },
           ] },
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'This song was written by my cousin.', why: 'Passive + *by* + the person who did it.' },
-            { a: 'Are the bins collected on Mondays?', why: 'Passive question: *Are* + subject + past participle.' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the B1 Preliminary exam (Reading Part 5): choose the word that best fits each gap.', items: [
+            { q: 'The new library was ___ by a local writer last month.', o: ['opened', 'open', 'opening', 'opens'], why: 'Passive: *was* + past participle *opened*.' },
+            { q: 'More than half of the town’s waste is now ___ instead of thrown away.', o: ['recycled', 'recycling', 'recycle', 'to recycle'], why: '*Is* + past participle; *instead of thrown away* is also passive.' },
+            { q: 'The paintings ___ found in an old house in 1998.', o: ['were', 'was', 'are', 'did'], why: 'Past, plural subject: *were found*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Reading Part 5 of B1 Preliminary, you choose from four words for each gap. Read the **whole sentence** before you choose: words like *was*, *by* or *last month* tell you that you need a passive or a past form.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'sofia', items: [
+            { a: 'Paper is made from wood.' },
+            { a: 'The bridge was built in 1890.' },
+            { a: 'Glass is recycled separately.' },
+            { a: 'The park was designed by a famous architect.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 2 */
     {
       id: 'p2',
       title: 'Our planet',
-      about: 'Words and phrases for talking about the environment.',
-      art: 'sun',
-      spreads: [
-        [
-          { t: 'text', md: 'These words often appear in the news. Many of them go together in fixed pairs, so learn them as phrases.' },
-          { t: 'table', caption: 'The environment', explain: ['head', 'col1'], quiz: true, head: ['Phrase', 'Meaning'], rows: [
-            ['climate change', 'changes in the Earth’s weather over a long time'],
-            ['global warming', 'the Earth slowly getting hotter'],
-            ['renewable energy', 'energy from the sun, wind or water, which does not run out'],
-            ['carbon emissions', 'the gas that cars, planes and factories put into the air'],
-            ['air pollution', 'dirty air, for example from traffic and factories'],
-            ['reduce waste', 'make less rubbish'],
-            ['recycle', 'use old materials again to make new things'],
-            ['save energy', 'use less electricity, gas or fuel'],
-            ['protect the environment', 'keep nature safe from harm'],
-          ] },
-        ],
-        [
-          { t: 'tip', art: 'owl', md: 'Use the right verb. We *reduce* waste, we *save* energy and we *protect* the environment. We do not say *keep energy* or *defend the environment*.' },
-          { t: 'ex', kind: 'match', h: 'Match the beginnings and the endings.', pairs: [
-            ['We can save energy by', 'turning off lights we don’t need.'],
-            ['Solar and wind power are', 'types of renewable energy.'],
-            ['Many cities want to reduce', 'the number of cars in the centre.'],
-            ['Air pollution is often worst', 'near busy roads.'],
-            ['If we recycle more,', 'less rubbish goes into the ground.'],
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the best word.', items: [
-            { q: 'Turn off the heating when you go out. It’s an easy way to ___ energy.', o: ['save', 'keep', 'spend'], why: 'We *save* energy: we use less of it.' },
-            { q: 'Wind and solar power are examples of ___ energy.', o: ['renewable', 'recycled', 'reduced'], why: 'Energy that does not run out is *renewable*.' },
-            { q: 'Our office is trying to ___ the amount of paper it uses.', o: ['reduce', 'protect', 'save'], why: 'Make the amount smaller: *reduce*.' },
-            { q: 'National parks help to ___ wild animals and plants.', o: ['protect', 'reduce', 'recycle'], why: 'Keep them safe: *protect*.' },
-            { q: 'Most scientists agree that ___ is causing more extreme weather.', o: ['climate change', 'renewable energy', 'recycling'], why: '*Climate change*: long-term changes in the Earth’s weather.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'gap', h: 'Complete with a word from the lesson. The first letter is given.', items: [
-            { q: 'Please put empty bottles in the ___ (r) bin.', a: ['recycling'], why: 'The bin for things that will be used again is the *recycling* bin.' },
-            { q: 'The air ___ (p) in our city is worse in winter.', a: ['pollution'], why: '*Air pollution*: dirty air.' },
-            { q: 'Plastic bags create a lot of ___ (w).', a: ['waste'], why: '*Waste* means rubbish, things we throw away.' },
-            { q: 'We’ve put solar panels on our roof because we want to use ___ (r) energy.', a: ['renewable'], why: 'Energy from the sun is *renewable*.' },
-          ] },
-        ],
-      ],
-    },
-    {
-      id: 'p3',
-      title: 'Not as big as…',
-      about: 'Compare things with as … as, not as … as, and much or a bit + comparative.',
-      art: 'snail',
-      spreads: [
-        [
-          { t: 'text', md: '**as** + adjective + **as** means two things are the same. **not as** + adjective + **as** means the first thing has less of the quality.' },
-          { t: 'examples', items: [
-            { s: 'The train is **as fast as** the plane on this route.', n: 'They are the same speed.' },
-            { s: 'Cycling **isn’t as dangerous as** many people think.', n: 'Cycling is less dangerous than people think.' },
-            { s: 'My new flat **isn’t as big as** my old one.', n: 'The old flat was bigger.' },
-          ] },
-          { t: 'table', caption: 'Making comparisons', explain: ['head', 'col0'], head: ['Meaning', 'Example'], rows: [
-            ['the same', 'Bus tickets are as expensive as train tickets here.'],
-            ['less', 'Buses aren’t as fast as trains.'],
-            ['a big difference', 'Trains are much faster than buses.'],
-            ['a small difference', 'The train is a bit more expensive than the bus.'],
-          ] },
-        ],
-        [
-          { t: 'text', md: 'To say how big a difference is, put **much**, **far** or **a lot** (a big difference) or **a bit** or **slightly** (a small difference) before the comparative.' },
-          { t: 'text', md: 'Remember how to make comparatives. Short adjectives add *-er*: cheap → cheaper. Longer adjectives use *more*: expensive → more expensive. Some are irregular: good → **better**, bad → **worse**, far → **further**.' },
-          { t: 'tip', art: 'owl', md: 'Do not use *very* with comparatives. *Very cheaper* is wrong. Say *much cheaper*.' },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct words.', items: [
-            { q: 'Electric cars are ___ quieter than petrol cars.', o: ['much', 'very', 'more'], why: '*Much* + comparative. *Very* does not go with comparatives.' },
-            { q: 'My town isn’t as ___ as London.', o: ['big', 'bigger', 'biggest'], why: 'After *as*, use the normal adjective.' },
-            { q: 'This summer was ___ hotter than last summer, but only by one degree.', o: ['a bit', 'much', 'very'], why: 'One degree is a small difference: *a bit*.' },
-            { q: 'A train ticket is as cheap ___ a bus ticket here.', o: ['as', 'than', 'like'], why: 'The pattern is *as … as*.' },
-            { q: 'The air in the countryside is ___ than in the city.', o: ['much cleaner', 'much more clean', 'very cleaner'], why: '*Clean* is short, so *cleaner*. *Much* shows a big difference.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'gap', h: 'Complete the sentences. Use the words in brackets.', items: [
-            { q: 'The new bus is ___ (much / comfortable) than the old one.', a: ['much more comfortable'], why: '*Comfortable* is long, so *more comfortable*. *Much* goes before it.' },
-            { q: 'Walking ___ (not / fast) as cycling.', a: ['isn’t as fast', 'is not as fast'], why: '*not as* + adjective + *as*.' },
-            { q: 'Our new flat is ___ (a bit / small) than our old one.', a: ['a bit smaller'], why: 'A small difference: *a bit* + comparative.' },
-            { q: 'Today’s weather is ___ (bad) than yesterday’s.', a: ['worse'], why: '*Bad* is irregular: bad, worse, worst.' },
-          ] },
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'My bike is much older than yours.', why: '*Much* + comparative + *than*.' },
-            { a: 'Our village isn’t as noisy as the city.', why: '*not as* + adjective + *as*.' },
-            { a: 'Buses are a lot cheaper than taxis.', why: '*A lot* + comparative shows a big difference.' },
-          ] },
-        ],
-      ],
-    },
-    {
-      id: 'p4',
-      title: 'How Westbridge cut its plastic',
-      about: 'Read how a town reduced its plastic waste and check the details.',
+      about: 'Talk about the environment with the words that naturally go together.',
       art: 'cactus',
       spreads: [
         [
-          { t: 'reading', title: 'How Westbridge cut its plastic', md: 'In 2016, the streets of Westbridge were full of plastic. Bags were caught in trees, and bottles were left on the beach after every sunny weekend. Today the town is much cleaner. How did it happen?\n\nThe first step was small. In 2017, free water fountains were put in the main squares and parks. People were asked to carry their own bottles, and a map of the fountains was printed on the back of every bus ticket.\n\nNext, the town worked with local shops. Customers who brought their own bags or boxes were given a small discount. At first, many shop owners were worried, but most of them soon saw that customers liked the idea.\n\nThe biggest change came in schools. Every class was given a project: find one way to use less plastic at home. The children’s ideas were shown in an exhibition at the town hall, and some of them were later used by the town.\n\nToday, the amount of plastic collected from the beach is about half of what it was in 2016. Westbridge still isn’t as clean as its people would like, but it is a lot better than before. “It wasn’t one big idea,” says Hana Okoro, who works for the town council. “It was a hundred small ones.”' },
+          { t: 'text', md: 'In English, some words like to go together. We say **reduce waste**, not *make smaller waste*; **climate change**, not *weather change*. These pairs are called **collocations**. Using them makes you sound natural, and it makes you faster, because you learn two or three words as one piece.\n\nWhen you learn a new word about the environment, learn the verb that goes with it. Do not just learn *energy*: learn **save energy**, **waste energy**, **renewable energy**.' },
+          { t: 'table', caption: 'Verbs and nouns that go together', explain: ['head'], head: ['Verb', 'Noun', 'Example'], rows: [
+            ['reduce', 'waste, pollution, your carbon footprint', 'We must reduce waste.'],
+            ['save', 'energy, water, money', 'Turn off the lights to save energy.'],
+            ['protect', 'the environment, wildlife, forests', 'Laws protect wildlife in the park.'],
+            ['cause', 'pollution, damage, floods', 'Traffic causes air pollution.'],
+            ['recycle', 'paper, glass, plastic', 'We recycle all our paper.'],
+            ['throw away', 'rubbish, food, plastic', 'Don’t throw away good food.'],
+          ] },
+          { t: 'tip', art: 'owl', md: '**Throw away** is a phrasal verb. When the object is a pronoun, it goes in the middle: *throw **it** away*, not *throw away it*.' },
         ],
         [
-          { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
-            { q: 'In 2016 there was a lot of plastic on the streets of Westbridge.', a: 't', why: 'The streets were full of plastic.' },
-            { q: 'The water fountains were put in shops.', a: 'f', why: 'They were put in the main squares and parks.' },
-            { q: 'Customers with their own bags paid a little less.', a: 't', why: 'They were given a small discount.' },
-            { q: 'All shop owners liked the idea from the start.', a: 'f', why: 'At first, many of them were worried.' },
-            { q: 'Thousands of people visited the exhibition.', a: 'ng', why: 'The text does not say how many people visited it.' },
-            { q: 'There is no plastic on the beach now.', a: 'f', why: 'There is about half as much as in 2016.' },
+          { t: 'text', md: 'Some environment words are often used as **two nouns together**, where the first noun works like an adjective: **climate change**, **air pollution**, **plastic waste**, **energy bills**, **recycling bin**. The important noun is the second one: *air pollution* is a kind of pollution.\n\nOther common pairs are **adjective + noun**: **renewable energy** (from the sun or wind, it does not run out), **fossil fuels** (coal, oil and gas), **public transport** (buses, trains), **endangered species** (animals that may disappear), **global warming** (the Earth getting hotter).' },
+          { t: 'examples', items: [
+            { s: '**Air pollution** is a big problem in many cities.', n: 'Noun + noun: a kind of pollution.' },
+            { s: 'More and more homes use **renewable energy**.', n: 'Energy from the sun, wind or water.' },
+            { s: 'If more people used **public transport**, there would be less traffic.', n: 'Buses, trains and trams.' },
+            { s: 'The tiger is an **endangered species**.', n: 'There are very few tigers left.' },
+            { s: '**Burning fossil fuels** is one of the main causes of **global warming**.', n: 'Two important collocations in one sentence.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Choose the best answer.', items: [
-            { q: 'Where could people find a map of the fountains?', o: ['On their bus tickets.', 'In the town hall.', 'In the shops.'], why: 'It was printed on the back of every bus ticket.' },
-            { q: 'What did each school class have to do?', o: ['Find a way to use less plastic at home.', 'Clean the beach.', 'Build a water fountain.'], why: 'That was the class project.' },
-            { q: '“It was a hundred small ones.” What does Hana mean?', o: ['Many small changes together made the difference.', 'The town tried a hundred ideas that failed.', 'Only one idea was really important.'], why: 'There was no single big idea, but many small ones.' },
+          { t: 'text', md: 'Learners often choose a verb that means the same in their language but does not sound natural in English.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['We must make less pollution.', 'We must reduce pollution.', 'The natural partner of *pollution* is *reduce*.'],
+            ['The weather change is serious.', 'Climate change is serious.', 'The fixed phrase is *climate change*.'],
+            ['Close the light, please.', 'Turn off the light, please.', 'Lights and machines are *turned off*, not *closed*.'],
+            ['I throw away it.', 'I throw it away.', 'With a pronoun, the pronoun goes in the middle.'],
+            ['The environment pollution', 'Environmental pollution', 'Use the adjective *environmental* before a noun.'],
+          ] },
+        ],
+        [
+          { t: 'dialogue', title: 'A greener office', lines: [
+            { who: 'Priya', s: 'Our office uses so much paper. Can we reduce it?' },
+            { who: 'Tom', s: 'Easy. We could print only when it’s really necessary, and recycle the rest.' },
+            { who: 'Priya', s: 'And the lights are on all night. What a waste of energy.' },
+            { who: 'Tom', s: 'Let’s ask the last person to leave to turn them off.' },
+            { who: 'Priya', s: 'Good idea. Also, most of us drive to work.' },
+            { who: 'Tom', s: 'The office could pay part of our public transport tickets. Fewer cars, less air pollution.' },
+          ] },
+          { t: 'ex', kind: 'match', h: 'Match the beginnings and the endings to make collocations.', pairs: [
+            ['save', 'energy'],
+            ['reduce', 'waste'],
+            ['public', 'transport'],
+            ['climate', 'change'],
+            ['endangered', 'species'],
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'colloc', h: 'Which words go with the verb? Choose all the right ones.', items: [
+            { key: 'save', o: ['energy', 'water', 'pollution', 'money'], a: [0, 1, 3], why: 'We *save* energy, water and money. Pollution is something we *reduce*.' },
+            { key: 'cause', o: ['damage', 'floods', 'energy', 'pollution'], a: [0, 1, 3], why: 'We *cause* problems: damage, floods, pollution. We *save* or *use* energy.' },
+            { key: 'protect', o: ['wildlife', 'forests', 'the environment', 'rubbish'], a: [0, 1, 2], why: 'We *protect* things we want to keep. We *throw away* rubbish.' },
+          ] },
+          { t: 'ex', kind: 'bank', h: 'Complete the text with words from the box.', extra: ['close'], items: [
+            { q: 'Burning fossil fuels causes global ___.', a: 'warming', why: '*Global warming*: the Earth getting hotter.' },
+            { q: 'Solar and wind power are kinds of ___ energy.', a: 'renewable', why: 'Energy that does not run out.' },
+            { q: 'Please ___ off the computer when you leave.', a: 'turn', why: 'Machines are *turned off*.' },
+            { q: 'Put the bottles in the recycling ___.', a: 'bin', why: '*Recycling bin*: noun + noun.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'gap', h: 'In the format of the B1 Preliminary exam (Reading Part 6): write ONE word in each gap.', items: [
+            { q: 'Many people now cycle to work instead ___ driving.', a: ['of'], why: 'The fixed phrase is *instead of*.' },
+            { q: 'Every year, tonnes of food ___ thrown away by supermarkets.', a: ['are'], why: 'Passive, plural: *are thrown away*.' },
+            { q: 'If we want to protect the planet, we ___ to change our habits.', a: ['need', 'have'], why: '*Need to* or *have to*: necessity.' },
+            { q: 'Turning off the lights is ___ easy way to save energy.', a: ['an', 'one'], why: '*An easy way*: *an* before a vowel sound.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Reading Part 6 there are **no options**: you write one word in each gap. The missing words are usually small ones: prepositions (*of, in*), articles (*a, the*), auxiliaries (*are, was, have*) and pronouns. Look at the words on both sides of the gap.' },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'kofi', items: [
+            { a: 'We should reduce plastic waste.' },
+            { a: 'Turn off the lights to save energy.' },
+            { a: 'Public transport causes less pollution.' },
+          ] },
+        ],
+      ],
+    },
+    /* ------------------------------------------------------------------ Lesson 3 */
+    {
+      id: 'p3',
+      title: 'Not as big as…',
+      about: 'Compare precisely: as … as, not as … as, and much, far, a bit and slightly with comparatives.',
+      art: 'snail',
+      spreads: [
+        [
+          { t: 'text', md: 'You already know comparatives: *bigger, cheaper, more expensive, better*. At B1, you learn to make comparisons more **precise** and more **polite**.\n\nTo say two things are the **same**, use **as + adjective + as**: *My flat is **as big as** yours.* To say they are different, use **not as + adjective + as**: *The train is **not as fast as** the plane.*\n\n*Not as … as* is often more polite than a comparative. *Your town is not as lively as mine* sounds softer than *Your town is more boring than mine*.' },
+          { t: 'examples', items: [
+            { s: 'This city is **as expensive as** London.', n: 'The same price level.' },
+            { s: 'Buses are**n’t as fast as** trains.', n: 'Trains are faster.' },
+            { s: 'The new park is**n’t as big as** the old one, but it’s greener.', n: 'A polite comparison.' },
+            { s: 'Cycling is **as quick as** driving in the city centre.', n: 'Equal: the same time.' },
+            { s: 'I’m **not as good at** maths **as** my sister.', n: '*As* comes back after *good at maths*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'Use the adjective in its normal form between *as … as*: *as big as*, *as expensive as*, never *as bigger as* or *as more expensive as*.' },
+        ],
+        [
+          { t: 'text', md: 'To say how **big** the difference is, put a word before the comparative.\n\nA **big** difference: **much**, **far**, **a lot**: *The train is **much faster** than the bus.* *Solar energy is **far cleaner** than coal.*\n\nA **small** difference: **a bit**, **a little**, **slightly**: *This flat is **a bit cheaper**.* *Today is **slightly warmer** than yesterday.*\n\nYou cannot use *very* before a comparative: *very bigger* is wrong. Use *much bigger*.' },
+          { t: 'table', caption: 'How big is the difference?', explain: ['head', 'col0'], head: ['', 'Words', 'Example'], rows: [
+            ['big difference', 'much, far, a lot', 'Cars are much more polluting than bikes.'],
+            ['small difference', 'a bit, a little, slightly', 'The second hotel is slightly cheaper.'],
+            ['no difference', 'as … as', 'It’s as cold as last winter.'],
+            ['negative', 'not as … as, not nearly as … as', 'It’s not nearly as hot as last year.'],
+          ] },
+        ],
+        [
+          { t: 'text', md: 'These mistakes are very common, even at B1 and B2.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['It’s very cheaper.', 'It’s much cheaper.', '*Very* does not go before a comparative.'],
+            ['He’s as tall than me.', 'He’s as tall as me.', 'After *as … *, use *as*, not *than*.'],
+            ['It’s more cheaper.', 'It’s cheaper.', 'Short adjectives take *-er*, not *more*.'],
+            ['She’s more better now.', 'She’s much better now.', '*Better* is already a comparative.'],
+            ['It’s not so expensive like I thought.', 'It’s not as expensive as I thought.', 'The pattern is *not as … as*.'],
+          ] },
+        ],
+        [
+          { t: 'dialogue', title: 'Choosing how to travel', lines: [
+            { who: 'Lucas', s: 'Should we take the train or fly to Edinburgh?' },
+            { who: 'Ana', s: 'The plane is much faster, but it’s far worse for the environment.' },
+            { who: 'Lucas', s: 'True. And the train isn’t as expensive as I thought.' },
+            { who: 'Ana', s: 'It’s only slightly more expensive than the bus, and much more comfortable.' },
+            { who: 'Lucas', s: 'And we can work on the train. It’s not nearly as stressful as an airport.' },
+            { who: 'Ana', s: 'Train it is, then.' },
+          ] },
+          { t: 'ex', kind: 'choice', h: 'Read the dialogue. Choose the right answer.', items: [
+            { q: 'What do they say about the plane?', o: ['It is faster but worse for the environment.', 'It is cheaper than the train.', 'It is as comfortable as the train.'], why: '*The plane is much faster, but it’s far worse for the environment.*' },
+            { q: 'How do the train and the bus compare?', o: ['The train costs a little more.', 'The bus is much more comfortable.', 'They cost the same.'], why: '*Only slightly more expensive than the bus.*' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'select', h: 'Choose the right word.', items: [
+            { q: 'Wind energy is ___ cleaner than coal.', o: ['far', 'very', 'more'], why: 'A big difference: *far* + comparative.' },
+            { q: 'My new phone isn’t as fast ___ my old one.', o: ['as', 'than', 'like'], why: '*Not as … as*.' },
+            { q: 'This year was ___ warmer than last year: only one degree.', o: ['slightly', 'much', 'far'], why: 'One degree is a small difference: *slightly*.' },
+            { q: 'Organic food is ___ more expensive than normal food.', o: ['a lot', 'very', 'too'], why: 'A big difference: *a lot*.' },
+          ] },
+          { t: 'ex', kind: 'transform', h: 'Rewrite with *not as … as* so the meaning stays the same.', items: [
+            { q: 'The train is faster than the bus.', cue: 'The bus', a: ['The bus is not as fast as the train.', 'The bus isn’t as fast as the train.'], why: 'If the train is faster, the bus is *not as fast as* the train.' },
+            { q: 'My town is quieter than the capital.', cue: 'The capital', a: ['The capital is not as quiet as my town.', 'The capital isn’t as quiet as my town.'], why: 'Turn it round: the capital is *not as quiet as* my town.' },
+          ] },
+          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+            { s: 'Bikes are [very] cheaper than cars.', a: ['much', 'far', 'a lot'], why: '*Very* cannot go before a comparative.' },
+            { s: 'She is as clever [than] her brother.', a: ['as'], why: '*As … as*.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'In the format of the B1 Preliminary exam (Reading Part 1): read the notice. What does it say?', items: [
+            { q: 'CITY BIKES: Hire a bike for the day. Now as cheap as a single bus ticket!', o: ['A day of bike hire costs the same as one bus ticket.', 'Bikes are now cheaper than buses for a week.', 'You can take your bike on the bus.'], why: '*As cheap as* = the same price.' },
+            { q: 'Our new shop is open! Slightly smaller than the old one, but with far more organic food.', o: ['The new shop is a bit smaller but has much more organic food.', 'The new shop is much bigger.', 'The old shop sold more organic food.'], why: '*Slightly smaller* (a bit), *far more* (much more).' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Reading Part 1, you read a short notice or message and choose what it means. The right answer often uses **different words** with the same meaning: *as cheap as* becomes *costs the same*. Do not choose an option just because it repeats words from the text.' },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'arthur', items: [
+            { a: 'The bus isn’t as fast as the train.' },
+            { a: 'Solar energy is far cleaner than coal.' },
+            { a: 'This flat is slightly cheaper.' },
+          ] },
+        ],
+      ],
+    },
+    /* ------------------------------------------------------------------ Lesson 4 */
+    {
+      id: 'p4',
+      title: 'How Westbridge cut its plastic',
+      about: 'Read a longer article about a real change, and use the passive and comparisons to talk about it.',
+      art: 'sun',
+      spreads: [
+        [
+          { t: 'text', md: 'This lesson puts the unit together. You will read an article about a town that changed its habits. Notice how the writer uses the **passive** to describe what was done, **collocations** like *reduce waste* and *single-use plastic*, and **comparisons** to show how much things changed.\n\nBefore you read, learn two words: **single-use plastic** is plastic that is used once and then thrown away (straws, bags, cups). A **refill station** is a place where you fill your own bottle or container.' },
+          { t: 'reading', title: 'How Westbridge cut its plastic', md: 'Five years ago, the small town of Westbridge had a problem. Its beaches were covered in plastic, and the town produced far more waste than other towns of the same size.\n\nThen a group of local people decided to act. First, single-use plastic bags were banned in all the shops. Refill stations were opened in the market, where people could fill their own bottles with water, milk and even soap. Restaurants were asked to stop using plastic straws.\n\nNot everyone was happy at first. Some shop owners said that paper bags were much more expensive than plastic ones. But the changes worked. Today, the town produces about 40% less plastic waste than five years ago, and the beaches are much cleaner.\n\n“It wasn’t as hard as we thought,” says Maya Collins, who started the group. “People just needed an easy way to change.” Last year, Westbridge was given a national prize, and its ideas are now being copied by other towns.' },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'In the format of the B1 Preliminary exam (Reading Part 3): read the article and choose the best answer.', items: [
+            { q: 'What was Westbridge’s problem five years ago?', o: ['It produced more waste than similar towns.', 'It had no shops or restaurants.', 'Its beaches were too crowded.', 'It had no recycling centre.'], why: '*The town produced far more waste than other towns of the same size.*' },
+            { q: 'What could people do at the refill stations?', o: ['Fill their own containers.', 'Buy plastic bags.', 'Recycle old bottles.', 'Buy cheap paper bags.'], why: '*People could fill their own bottles with water, milk and even soap.*' },
+            { q: 'Why were some shop owners unhappy?', o: ['Paper bags cost them more.', 'They had to close their shops.', 'Nobody came to the market.', 'They lost the prize.'], why: '*Paper bags were much more expensive than plastic ones.*' },
+            { q: 'What does Maya Collins say about the changes?', o: ['They were easier than people expected.', 'They were too expensive.', 'Nobody wanted them.', 'They need more time.'], why: '*It wasn’t as hard as we thought.*' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Reading Part 3, the questions follow the order of the text. Read each question, find the part of the text it is about, and read that part carefully. Three options are wrong for a reason: they say something the text does not say.' },
+        ],
+        [
+          { t: 'ex', kind: 'spot', h: 'Tap the verbs in the passive in these sentences from the article.', items: [
+            { s: 'First, single-use plastic bags were [banned] in all the shops.', why: '*Were banned*: past simple passive.' },
+            { s: 'Refill stations were [opened] in the market.', why: '*Were opened*: past simple passive.' },
+            { s: 'Last year, Westbridge was [given] a national prize.', why: '*Was given*: past simple passive.' },
+          ] },
+          { t: 'ex', kind: 'wordform', h: 'Complete each sentence with the right form of the word in capitals.', items: [
+            { q: 'Plastic is very bad for the ___.', base: 'environmental', a: ['environment'], why: 'The noun: *the environment*.' },
+            { q: 'Air ___ is a serious problem in big cities.', base: 'pollute', a: ['pollution'], why: 'The noun from *pollute* is *pollution*.' },
+            { q: 'Solar power is a kind of ___ energy.', base: 'renew', a: ['renewable'], why: 'The adjective: *renewable* (it can be renewed).' },
+          ] },
+        ],
+        [
+          { t: 'text', md: 'Now talk about your own town. Use what you learned in this unit: the passive to say what was done (*a new park was opened*), collocations (*reduce waste, public transport*), and comparisons (*much cleaner, not as busy as*).\n\nFor example: *In my town, a new bike lane was built last year. Now cycling is much safer than before, and the centre isn’t as noisy as it was.*' },
+          { t: 'ex', kind: 'build', h: 'Build the sentence. Two words do not belong.', items: [
+            { a: 'The beaches are much cleaner than before.', extra: ['very', 'more'], why: '*Much* + comparative; *cleaner* already has *-er*.' },
+            { a: 'Plastic bags were banned in all the shops.', extra: ['was', 'from'], why: 'Plural subject: *were banned*.' },
+          ] },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'mei', items: [
+            { a: 'Plastic bags were banned in all the shops.' },
+            { a: 'It wasn’t as hard as we thought.' },
+            { a: 'The town produces far less waste now.' },
           ] },
         ],
       ],
     },
   ],
   test: [
-    { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-      { q: 'Paper ___ from wood.', o: ['is made', 'makes', 'is making'], why: 'A process: present simple passive.' },
-      { q: 'The road ___ last year, so it’s much safer now.', o: ['was repaired', 'is repaired', 'repaired'], why: '*Last year* is past: past simple passive.' },
-      { q: 'You can ___ energy by turning off lights.', o: ['save', 'protect', 'recycle'], why: 'We *save* energy.' },
-      { q: 'Solar power is a type of ___ energy.', o: ['renewable', 'recycled', 'reduced'], why: 'Energy that does not run out is *renewable*.' },
-      { q: 'This flat is ___ cheaper than the one we saw yesterday.', o: ['much', 'very', 'more'], why: '*Much* + comparative. Not *very* or *more*.' },
+    { t: 'ex', kind: 'gap', h: 'Complete with the passive of the verb in brackets.', items: [
+      { q: 'This cheese ___ (make) in a small village.', a: ['is made'], why: 'Present simple passive: *is made*.' },
+      { q: 'The castle ___ (build) in the twelfth century.', a: ['was built'], why: 'Past simple passive: *was built*.' },
+      { q: 'Thousands of trees ___ (plant) last year.', a: ['were planted'], why: 'Past, plural: *were planted*.' },
+      { q: 'Glass ___ (not recycle) with paper.', a: ['is not recycled', 'isn’t recycled'], why: 'Negative present passive.' },
     ] },
-    { t: 'ex', kind: 'gap', h: 'Complete the sentences. Use the words in brackets.', items: [
-      { q: 'Glass ___ (recycle) at the centre on Green Street.', a: ['is recycled'], why: 'Present simple passive: *is* + past participle.' },
-      { q: 'The trees ___ (plant) by students last spring.', a: ['were planted'], why: '*Last spring* and a plural subject: *were planted*.' },
-      { q: 'My car isn’t ___ (fast) as yours.', a: ['as fast'], why: '*not as* + adjective + *as*.' },
-      { q: 'The bus is ___ (a bit / slow) than the train.', a: ['a bit slower'], why: 'A small difference: *a bit* + comparative.' },
+    { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+      { s: 'The museum [was open] by the mayor in 2019.', a: ['was opened'], why: 'Past participle: *opened*.' },
+      { s: 'It [was happened] on a Sunday.', a: ['happened'], why: '*Happen* has no passive.' },
+      { s: 'Cars are [very] more polluting than bikes.', a: ['much', 'far', 'a lot'], why: 'Not *very* before a comparative.' },
     ] },
-    { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-      { a: 'Is plastic recycled in your town?', why: 'Passive question: *Is* + subject + past participle.' },
-      { a: 'Our town isn’t as clean as it was.', why: '*not as* + adjective + *as*.' },
+    { t: 'ex', kind: 'colloc', h: 'Which words go with the verb?', items: [
+      { key: 'reduce', o: ['waste', 'pollution', 'wildlife', 'your carbon footprint'], a: [0, 1, 3], why: 'We *reduce* bad things; we *protect* wildlife.' },
     ] },
-    { t: 'ex', kind: 'choice', h: 'Which sentence is correct?', items: [
-      { q: '', o: ['The windows were cleaned yesterday.', 'The windows was cleaned yesterday.', 'The windows cleaned yesterday.'], why: '*Windows* is plural: *were* + past participle.' },
-      { q: '', o: ['The new phone is much better than the old one.', 'The new phone is very better than the old one.', 'The new phone is more better than the old one.'], why: '*Better* is already a comparative. Use *much* before it.' },
-      { q: '', o: ['English is spoken here.', 'English is speaking here.', 'English speaks here.'], why: 'Passive: *is* + past participle.' },
+    { t: 'ex', kind: 'select', h: 'Choose the right word.', items: [
+      { q: 'The bus isn’t as quick ___ the tram.', o: ['as', 'than', 'that'], why: '*Not as … as*.' },
+      { q: 'This model is ___ cheaper: just one euro less.', o: ['slightly', 'far', 'much'], why: 'A small difference: *slightly*.' },
+      { q: 'Please turn ___ the heating when you go out.', o: ['off', 'away', 'down'], why: 'Machines are *turned off*.' },
+    ] },
+    { t: 'ex', kind: 'transform', h: 'Rewrite the sentences.', items: [
+      { q: 'They sell fresh fish at the market.', cue: 'Fresh fish', a: ['Fresh fish is sold at the market.'], why: 'Passive: *is sold*.' },
+      { q: 'The plane is faster than the train.', cue: 'The train', a: ['The train is not as fast as the plane.', 'The train isn’t as fast as the plane.'], why: '*Not as … as*.' },
+    ] },
+    { t: 'ex', kind: 'choice', h: 'Choose the best word.', items: [
+      { q: 'Burning fossil fuels causes global ___.', o: ['warming', 'heating', 'weather', 'change'], why: 'The collocation is *global warming*.' },
+      { q: 'More towns are now using ___ energy from the sun and wind.', o: ['renewable', 'recycled', 'fossil', 'endangered'], why: '*Renewable energy* does not run out.' },
     ] },
   ],
 };

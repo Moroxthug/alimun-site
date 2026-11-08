@@ -1608,3 +1608,12 @@ Owner: "can you create various templates for the emails and also for in page ban
 - Checked locally: the four email layouts drawn on desktop, phone and dark mode; the three banners on the English and French homepage and the sample dashboard at 1280 and 390 pixels, with no page errors.
 - Not built: picking a layout or making a banner on the Admin Campaigns page.
 - Live check (8 Nov 2026): a draft card banner "Half price on Focused" (en, fr; site and dashboard; ends 8 Nov 23:59 Paris) saved switched off, id 73209507-0cec-4c99-826d-0ff7c7689ca1; its preview shows on the live French homepage and nothing shows without the preview link. The four email layouts were sent as tests to bchysfita@gmail.com.
+
+## 2026-11-08 — L6: English B1 second edition (16 units) and its 84 class lessons
+
+Owner: "more units, go on with B1".
+- Book: `site/src/data/books/English-B1.js` now lists 16 units of four lessons (the eight old topics reworked, eight new: stories and memories, technology, people and relationships, money and shopping, what might have happened, entertainment and culture, sport and challenges, ready for B1 and beyond); units in `units/English-B1/u1.js` to `u16.js`, written as `English-B1-preview` by eight helpers and switched in. Every lesson has a task in the format of a named B1 Preliminary part. New dialogue names added to the voice lists.
+- Translations: es, fr, de, pt, zh, ar, it, 2,318 strings each, none missing (86 reused).
+- Class lessons: `site/src/data/classes/English-B1.js` and `English-B1/c01.js` to `c84.js` (welcome, 64 book lessons, a review after every two units, four conversation classes, one exam practice per B1 Preliminary paper, a mid-level check, a full practice exam, the end-of-level check with a private report and no pass or fail). Lessons page lists English B1; database (`supabase/migrations/202611081800_class_course_english_b1.sql`, applied): `class_courses` English-B1 84, the existing B1 class's 12 dates numbered.
+- Checked: `check-book English-B1` ok; `check-classes English-B1` 84 of 84 ok; the preview played in full (64 lessons, 16 tests, no problems); the switched book is replayed in English and Arabic.
+- For the owner: the course audio for B1 on /app/audio.

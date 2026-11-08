@@ -8,7 +8,7 @@ export const COURSE = {
   id: 'English-B1',
   language: 'English',
   level: 'B1',
-  book: 'English-B1-preview',
+  book: 'English-B1',
   review: 'draft',
   minutes: 60,
   lessons: [
