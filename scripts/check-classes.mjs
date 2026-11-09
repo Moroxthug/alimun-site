@@ -47,6 +47,9 @@ function checkBlock(w, b) {
 
 async function checkCourse(id) {
   const { COURSE } = await load(path.join(ROOT, 'site/src/data/classes', id + '.js'));
+  /* sizes: the class sizes the course runs in (C2: small groups and 1 on 1 only, owner 9 Nov 2026); default all three */
+  const SIZES = ['one', 'small', 'group'];
+  if (COURSE.sizes && (!Array.isArray(COURSE.sizes) || !COURSE.sizes.length || COURSE.sizes.some((k) => !SIZES.includes(k)))) bad(id, 'sizes must list one, small or group');
   const { BOOK } = await load(path.join(ROOT, 'site/src/data/books', COURSE.book + '.js'));
   const unitDir = path.join(ROOT, 'site/src/data/books/units', COURSE.book);
   const lessonsOf = {};
@@ -86,7 +89,8 @@ async function checkCourse(id) {
       if (!Array.isArray(pg.blocks) || !pg.blocks.length) bad(pw, 'no blocks');
       (pg.blocks || []).forEach((b, bi) => checkBlock(`${pw} block ${bi + 1}`, b));
     });
-    ['one', 'small', 'group'].forEach((k) => { const a = (L.activities || {})[k]; if (!a) bad(w, `activity "${k}" missing`); else { str(`${w} activity ${k} title`, a.title); str(`${w} activity ${k}`, a.md); } });
+    (COURSE.sizes || SIZES).forEach((k) => { const a = (L.activities || {})[k]; if (!a) bad(w, `activity "${k}" missing`); else { str(`${w} activity ${k} title`, a.title); str(`${w} activity ${k}`, a.md); } });
+    Object.keys(L.activities || {}).forEach((k) => { if (!(COURSE.sizes || SIZES).includes(k)) bad(w, `activity "${k}" is not a size this course runs in`); });
     if (!L.homework) bad(w, 'homework missing'); else { str(w + ' homework', L.homework.md); if (L.homework.book) bookRef(w + ' homework', L.homework.book); }
   }
   console.log(`${id}: ${written} of ${COURSE.lessons.length} lessons written`);

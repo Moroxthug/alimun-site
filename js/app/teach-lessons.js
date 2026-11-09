@@ -88,9 +88,10 @@
       return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(t('app_tl_min', { n: s.min })) + '</span><span><b>' + esc(s.title) + '</b><small>' + md(s.md) + '</small></span></div>';
     }).join('') + '</div></section>';
     html += boardHtml(c, l, Math.min(Math.max(pi, 0), l.board.length - 1));
+    var nSizes = SIZES.filter(function (s) { return (l.activities || {})[s[0]]; }).length;
     html += SIZES.map(function (s, i) {
       var a = (l.activities || {})[s[0]];
-      return a ? '<section class="card span-4" style="--i:' + (4 + i) + '"><p class="t-small">' + esc(t(s[1])) + '</p><h2 class="t-h3">' + esc(a.title) + '</h2><div class="rd-text">' + paras(a.md) + '</div></section>' : '';
+      return a ? '<section class="card span-' + (nSizes === 2 ? 6 : 4) + '" style="--i:' + (4 + i) + '"><p class="t-small">' + esc(t(s[1])) + '</p><h2 class="t-h3">' + esc(a.title) + '</h2><div class="rd-text">' + paras(a.md) + '</div></section>' : '';
     }).join('');
     if (l.homework) html += '<section class="card card--bone span-12" style="--i:7"><h2 class="t-h2">' + esc(t('app_tl_homework')) + '</h2><div class="rd-text">' + paras(l.homework.md) + '</div></section>';
     return html + '</div>';
