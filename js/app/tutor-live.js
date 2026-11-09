@@ -69,7 +69,7 @@
       var rms = Math.sqrt(sum / frame.length), zcr = cross / frame.length, b = busy && busy();
       var thr = Math.max(0.008, floor * 3) * (b ? 2.5 : 1), loud = rms > thr;
       if (!loud && !open) floor = floor * 0.97 + rms * 0.03;   /* the room's noise, learned while nobody speaks */
-      var item = { f: frame, keep: false };
+      var item = { f: frame, keep: false, v: loud && zcr < 0.22 };
       line.push(item);
       if (loud) { run++; if (zcr < 0.22) voiced++; } else { run = 0; voiced = 0; }
       if (!open && run >= (b ? BUSY_OPEN_FRAMES : OPEN_FRAMES) && voiced * 2 >= run) { open = true; line.forEach(function (x) { x.keep = true; }); }
@@ -80,29 +80,90 @@
       return line.length > LOOKBACK ? [line.shift()] : [];
     };
   }
+  /* Taking turns (manual mode: the pass switched Google's own voice detection off, so only what this decides is heard).
+     The gate's frames in; out: { start }, { audio: frame } (silence while the student pauses inside a turn) and { end }.
+     A turn starts only once the gate has let through enough voiced sound (240 ms, 320 ms while the tutor speaks):
+     a cough, a "hm", a tap or a short noise is dropped and Google never receives it, so it cannot turn it into words.
+     It ends after silenceMs without a voice (longer for beginners, who pause for a word). Nothing is sent between turns:
+     the silence and noise in between were where Google's transcriber made up words before. */
+  var MIN_TURN = 12, BUSY_MIN_TURN = 16;
+  function turnTaker(silenceMs, busy) {
+    var buf = [], voiced = 0, inTurn = false, quiet = 0, endAfter = Math.max(25, Math.round((silenceMs || 1200) / 20));
+    function step(item) {
+      var out = [];
+      if (!inTurn) {
+        if (!item.keep) { buf = []; voiced = 0; return out; }   /* the gate closed before it was a turn: dropped */
+        buf.push(item); if (item.v) voiced++;
+        if (voiced >= (busy && busy() ? BUSY_MIN_TURN : MIN_TURN)) {
+          inTurn = true; quiet = 0; out.push({ start: true });
+          buf.forEach(function (x) { out.push({ audio: x.f }); });
+          buf = []; voiced = 0;
+        }
+        return out;
+      }
+      out.push({ audio: item.keep ? item.f : new Array(item.f.length).fill(0) });
+      quiet = item.v ? 0 : quiet + 1;
+      if (quiet >= endAfter) { inTurn = false; quiet = 0; out.push({ end: true }); }
+      return out;
+    }
+    step.active = function () { return inTurn; };
+    step.stop = function () { var was = inTurn; inTurn = false; buf = []; voiced = 0; quiet = 0; return was; };
+    return step;
+  }
+  /* 16 kHz mono samples (-1..1) as a WAV file, for the pronunciation check of a turn */
+  function wav16(samples) {
+    var n = samples.length, buf = new ArrayBuffer(44 + n * 2), v = new DataView(buf);
+    function str(o, x) { for (var i = 0; i < x.length; i++) v.setUint8(o + i, x.charCodeAt(i)); }
+    str(0, 'RIFF'); v.setUint32(4, 36 + n * 2, true); str(8, 'WAVE'); str(12, 'fmt '); v.setUint32(16, 16, true);
+    v.setUint16(20, 1, true); v.setUint16(22, 1, true); v.setUint32(24, IN_RATE, true); v.setUint32(28, IN_RATE * 2, true);
+    v.setUint16(32, 2, true); v.setUint16(34, 16, true); str(36, 'data'); v.setUint32(40, n * 2, true);
+    for (var i = 0; i < n; i++) { var x = Math.max(-1, Math.min(1, samples[i])); v.setInt16(44 + i * 2, x < 0 ? x * 0x8000 : x * 0x7fff, true); }
+    return new Uint8Array(buf);
+  }
   /* The microphone as 16 kHz 16-bit PCM in 100 ms pieces, sent while the call is open and not muted */
   function startMic(stream) {
     var AC = window.AudioContext || window.webkitAudioContext, ctx = new AC();
     L.inCtx = ctx; L.stream = stream; ctx.resume();
     var src = ctx.createMediaStreamSource(stream), ratio = ctx.sampleRate / IN_RATE, raw = [], pend = [], acc = 0;
-    var gate = speechGate(function () { return !!(L && L.playing && L.playing.length); });
+    /* The tutor counts as speaking until half a second after its voice stops (the room still rings with it) */
+    var busy = function () { return !!(L && ((L.playing && L.playing.length) || Date.now() - (L.playEnd || 0) < 500)); };
+    var gate = speechGate(busy);
+    L.taker = null;
+    var sendPend = function () {
+      while (pend.length >= CHUNK) sendPcm(pend.splice(0, CHUNK));
+    };
+    var sendPcm = function (part) {
+      var pcm = new Int16Array(part.length);
+      for (var j = 0; j < part.length; j++) pcm[j] = part[j] < 0 ? part[j] * 0x8000 : part[j] * 0x7fff;
+      send({ realtimeInput: { audio: { mimeType: 'audio/pcm;rate=' + IN_RATE, data: b64(new Uint8Array(pcm.buffer)) } } });
+    };
     var feed = function (f) {
-      if (!L || L.muted || !L.ready) { raw = []; return; }
+      if (!L || L.muted || !L.ready) { raw = []; if (L && L.taker && L.taker.stop()) { if (pend.length) sendPcm(pend.splice(0)); turnEnd(); } return; }
       for (var i = 0; i < f.length; i++) {
         acc += 1;
         if (acc >= ratio) { acc -= ratio; raw.push(Math.max(-1, Math.min(1, f[i]))); }
       }
+      var manual = !!(L.pass && L.pass.turn && L.pass.turn.manual);
+      if (manual && !L.taker) L.taker = turnTaker(L.pass.turn.silence_ms, busy);
+      if (!manual) L.taker = null;
       while (raw.length >= FRAME) {
         gate(raw.splice(0, FRAME)).forEach(function (x) {
-          if (x.keep) for (var k = 0; k < x.f.length; k++) pend.push(x.f[k]);
-          else for (var z = 0; z < x.f.length; z++) pend.push(0);
+          if (!manual) {
+            if (x.keep) for (var k = 0; k < x.f.length; k++) pend.push(x.f[k]);
+            else for (var z = 0; z < x.f.length; z++) pend.push(0);
+            return;
+          }
+          L.taker(x).forEach(function (o) {
+            if (o.start) { send({ realtimeInput: { activityStart: {} } }); L.turnAudio = []; L.studentTurn = true; awake(); }
+            if (o.audio) {
+              for (var k2 = 0; k2 < o.audio.length; k2++) pend.push(o.audio[k2]);
+              if (L.turnAudio && L.turnAudio.length < IN_RATE * 30) for (var k3 = 0; k3 < o.audio.length; k3++) L.turnAudio.push(o.audio[k3]);
+            }
+            if (o.end) { if (pend.length) sendPcm(pend.splice(0)); turnEnd(); }
+          });
         });
       }
-      while (pend.length >= CHUNK) {
-        var part = pend.splice(0, CHUNK), pcm = new Int16Array(CHUNK);
-        for (var j = 0; j < CHUNK; j++) pcm[j] = part[j] < 0 ? part[j] * 0x8000 : part[j] * 0x7fff;
-        send({ realtimeInput: { audio: { mimeType: 'audio/pcm;rate=' + IN_RATE, data: b64(new Uint8Array(pcm.buffer)) } } });
-      }
+      sendPend();
     };
     var silent = ctx.createGain(); silent.gain.value = 0; silent.connect(ctx.destination);
     var hp = ctx.createBiquadFilter(), lp = ctx.createBiquadFilter();
@@ -120,6 +181,35 @@
     src.connect(sp); sp.connect(silent);
     return Promise.resolve();
   }
+  /* The student's turn is over: Google answers now; the turn's audio waits for its transcript to be checked */
+  function turnEnd() {
+    if (!L) return;
+    send({ realtimeInput: { activityEnd: {} } });
+    L.studentTurn = false;
+    if (L.turnAudio && L.turnAudio.length >= IN_RATE * 0.5) L.turnWait = L.turnAudio;
+    L.turnAudio = null;
+    sendNotes();
+  }
+  /* Pronunciation of what the student just said, checked by Alimun's speech scorer (Azure, through the server) against
+     Google's transcript of it. The tutor is told only when a word was said differently, and only between turns
+     (a note added to the conversation without asking for an answer), so it never cuts the tutor off. */
+  function checkTurn(text) {
+    var audio = L && L.turnWait;
+    if (!L || !audio) return;
+    L.turnWait = null;
+    if (!L.pass || !L.pass.pron_check || L.pronBusy || L.sample || !/\p{L}/u.test(text)) return;
+    L.pronBusy = true;
+    D().tutorLivePron({ session: L.session, text: text.slice(0, 400), audio: b64(wav16(audio)), mime: 'audio/wav' }).then(function (r) {
+      if (!L) return;
+      L.pronBusy = false;
+      if (r && r.note) { L.note2 = r.note; sendNotes(); }
+    }, function () { if (L) L.pronBusy = false; });
+  }
+  function sendNotes() {
+    if (!L || !L.note2 || L.studentTurn || L.tutorTurn || (L.playing && L.playing.length)) return;
+    var note = L.note2; L.note2 = null;
+    send({ clientContent: { turns: [{ role: 'user', parts: [{ text: '<school>' + note + '</school>' }] }], turnComplete: false } });
+  }
   /* The tutor's voice, played piece after piece without gaps */
   function playPcm(b64data) {
     var bytes = unb64(b64data), n = bytes.length >> 1, view = new DataView(bytes.buffer), buf = L.out.createBuffer(1, n, OUT_RATE), ch = buf.getChannelData(0);
@@ -128,18 +218,18 @@
     var at = Math.max(L.out.currentTime + 0.03, L.head || 0);
     src.start(at); L.head = at + buf.duration;
     L.playing.push(src);
-    src.onended = function () { L.playing = L.playing.filter(function (x) { return x !== src; }); if (!L.playing.length) setState('listening'); };
+    src.onended = function () { L.playing = L.playing.filter(function (x) { return x !== src; }); if (!L.playing.length) { L.playEnd = Date.now(); setState('listening'); sendNotes(); } };
     setState('speaking');
   }
   function stopPlayback() {
     (L.playing || []).forEach(function (s) { try { s.stop(); } catch (e) { /* already done */ } });
-    L.playing = []; L.head = 0;
+    L.playing = []; L.head = 0; L.playEnd = Date.now();
   }
 
   /* ---------- The connection to Google ---------- */
   function send(msg) { if (L && L.ws && L.ws.readyState === 1) L.ws.send(JSON.stringify(msg)); }
   function connect(pass) {
-    L.pass = pass; L.ready = false;
+    L.pass = pass; L.ready = false; L.taker = null; L.studentTurn = false; L.tutorTurn = false; L.turnAudio = null;
     var ws = L.ws = new WebSocket(pass.url + '?access_token=' + encodeURIComponent(pass.token));
     var mine = ws;
     ws.onopen = function () { if (L && L.ws === mine) send({ setup: { model: 'models/' + pass.model } }); };
@@ -176,19 +266,21 @@
     if (m.toolCall) { awake(); boardCalls((m.toolCall.functionCalls || []).slice(0, 4)); return; }
     var c = m.serverContent;
     if (!c) return;
-    if (c.interrupted) { stopPlayback(); flush('tutor'); setState('listening'); }
+    if (c.interrupted) { stopPlayback(); flush('tutor'); setState('listening'); L.tutorTurn = false; }
+    if (c.modelTurn || c.outputTranscription) L.tutorTurn = true;
     if (c.inputTranscription || c.outputTranscription || c.modelTurn) awake();
     if (c.inputTranscription && c.inputTranscription.text) { if (L.cur.tutor) flush('tutor'); L.cur.student += c.inputTranscription.text; captions(); }
     if (c.outputTranscription && c.outputTranscription.text) { if (L.cur.student) flush('student'); L.cur.tutor += c.outputTranscription.text; captions(); }
     (c.modelTurn && c.modelTurn.parts || []).forEach(function (p) {
       if (p.inlineData && p.inlineData.data && /audio\/pcm/.test(p.inlineData.mimeType || '')) playPcm(p.inlineData.data);
     });
-    if (c.turnComplete) { flush('student'); flush('tutor'); }
+    if (c.turnComplete) { flush('student'); flush('tutor'); L.tutorTurn = false; sendNotes(); }
   }
   /* A finished line goes to the captions and waits for the next tick */
   function flush(role) {
     var text = String(L.cur[role] || '').replace(/\s+/g, ' ').trim();
     L.cur[role] = '';
+    if (role === 'student' && text) checkTurn(text);
     if (!text) return;
     L.lines.push({ role: role, text: text });
     L.queue.push({ role: role, text: text });
@@ -316,7 +408,7 @@
     var mime = K().recMime(), chunks = [], mr;
     try { mr = mime ? new MediaRecorder(L.stream, { mimeType: mime }) : new MediaRecorder(L.stream); } catch (e) { L.pnote = 'app_tu_err_mic'; boardUi(); return; }
     L.prec = { mr: mr }; L.wasMuted = L.muted; L.muted = true;
-    send({ realtimeInput: { audioStreamEnd: true } });
+    if (!(L.pass && L.pass.turn && L.pass.turn.manual)) send({ realtimeInput: { audioStreamEnd: true } });
     mr.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
     mr.onstop = function () { pronStop(new Blob(chunks, { type: (mr.mimeType || mime || 'audio/webm').split(';')[0] })); };
     mr.start();
@@ -462,7 +554,7 @@
   function toggleMute() {
     if (!L || !L.started || L.ended) return;
     L.muted = !L.muted;
-    if (L.muted) send({ realtimeInput: { audioStreamEnd: true } });
+    if (L.muted && !(L.pass && L.pass.turn && L.pass.turn.manual)) send({ realtimeInput: { audioStreamEnd: true } });
     draw();
   }
 
@@ -650,5 +742,5 @@
   function active() { return !!(L && !L.ended && (L.started || L.state === 'connecting')); }
   function reset() { if (L && !L.ended) end(); L = null; }
 
-  window.AlimunTutorLive = { speechGate: speechGate, prime: prime, want: want, begin: begin, mount: mount, active: active, reset: reset, myTutor: myTutor, setTutor: setTutor, supported: supported, TUTOR_KEY: TUTOR_KEY };
+  window.AlimunTutorLive = { speechGate: speechGate, turnTaker: turnTaker, wav16: wav16, prime: prime, want: want, begin: begin, mount: mount, active: active, reset: reset, myTutor: myTutor, setTutor: setTutor, supported: supported, TUTOR_KEY: TUTOR_KEY };
 })();

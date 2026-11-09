@@ -741,7 +741,7 @@ async function handleLiveStart(req, res, supabase, user) {
       tutor, mode: 'live', live_until: pass.expires, last_turn_at: new Date().toISOString(), seconds_used: (session.seconds_used || 0) + charged,
     }).eq('id', session.id);
     return res.status(200).json({ session: { id: session.id, started_at: session.started_at }, fresh: created, token: pass.token, url: pass.url, model: pass.model,
-      tutor, voice: pass.voice, expires: pass.expires, pass_seconds: pass.seconds, seconds: remaining });
+      tutor, voice: pass.voice, expires: pass.expires, pass_seconds: pass.seconds, seconds: remaining, turn: pass.turn, pron_check: pronDrill && !!(pass.turn && pass.turn.manual) });
   } catch (e) {
     await undo();
     if (e && e.code === 'budget') return brainError(res, e);
@@ -804,6 +804,34 @@ async function liveSession(req, res, supabase, user) {
   if (!session) { res.status(404).json({ error: 'Session not found' }); return null; }
   if (session.ended_at || !session.live_until || Date.now() > Date.parse(session.live_until) + 60000) { res.status(409).json({ error: 'The live call has ended.', reason: 'ended' }); return null; }
   return { body, profile, session };
+}
+
+/* The pronunciation of each turn of a live call (its own limit: a student talking fast says more than the 20 a minute
+   other actions get). The recording goes to Azure and is dropped; nothing is stored but the cost. */
+const recentPron = new Map();
+async function handleLivePron(req, res, supabase, user) {
+  if (!pron.configured()) return res.status(501).json({ error: 'Pronunciation is not configured', reason: 'pron_off' });
+  const now = Date.now(), hits = (recentPron.get(user.id) || []).filter((t) => t > now - 60000);
+  if (hits.length >= 30) return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
+  hits.push(now); recentPron.set(user.id, hits);
+  const body = parseBody(req) || {};
+  let profile;
+  try { profile = await studentOf(supabase, user); } catch (e) { return res.status(500).json({ error: 'Could not load your profile' }); }
+  if (!profile) return res.status(404).json({ error: 'No student profile' });
+  const session = await sessionOf(supabase, profile.id, body.session);
+  if (!session) return res.status(404).json({ error: 'Session not found' });
+  if (session.ended_at || session.mode !== 'live' || !session.live_until || now > Date.parse(session.live_until) + 60000) return res.status(409).json({ error: 'The live call has ended.', reason: 'ended' });
+  const text = pron.cleanTurn(body.text);
+  if (!text) return res.status(200).json({ note: null });
+  const a = pron.readWav(body);
+  if (a.reason) return res.status(a.reason === 'audio_long' ? 413 : 400).json({ error: 'This recording cannot be used', reason: a.reason });
+  let scored;
+  try { scored = await pron.score(supabase, user.id, { audio: a.audio, seconds: a.seconds, sentence: text, language: session.language }); } catch (e) {
+    if (e && (e.code === 'unheard' || e.code === 'budget')) return res.status(200).json({ note: null });
+    console.error('[Tutor] live pron:', e && (e.code + ' ' + (e.message || '')));
+    return res.status(502).json({ error: 'Not checked', reason: 'pron' });
+  }
+  return res.status(200).json({ note: pron.forLive(scored) });
 }
 
 async function handleLiveBoard(req, res, supabase, user) {
@@ -938,7 +966,7 @@ module.exports = async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return handleAdminGrant(req, res, supabase, user);
   }
-  const POST = { start: handleStart, turn: handleTurn, 'set-audio': handleSetAudio, voice: handleVoice, pronounce: handlePronounce, 'live-start': handleLiveStart, 'live-tick': handleLiveTick, 'live-board': handleLiveBoard, 'live-answer': handleLiveAnswer, end: handleEnd, forget: handleForget };
+  const POST = { start: handleStart, turn: handleTurn, 'set-audio': handleSetAudio, voice: handleVoice, pronounce: handlePronounce, 'live-start': handleLiveStart, 'live-tick': handleLiveTick, 'live-board': handleLiveBoard, 'live-answer': handleLiveAnswer, 'live-pron': handleLivePron, end: handleEnd, forget: handleForget };
   if (POST[action]) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return POST[action](req, res, supabase, user);

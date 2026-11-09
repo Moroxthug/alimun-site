@@ -36,6 +36,28 @@ function cleanSentence(v) {
   return s;
 }
 
+/** A turn of the live call as Google transcribed it, to check its pronunciation against: plain words, at most 40 */
+function cleanTurn(v) {
+  if (typeof v !== 'string') return '';
+  const s = v.replace(/[<>{}[\]#*_`|~^]/g, '').replace(/[\u0000-\u001f]+/g, ' ').replace(/\s+/g, ' ').trim();
+  if (!s || s.length > 300 || s.split(' ').length > 40 || !/\p{L}/u.test(s)) return '';
+  return s;
+}
+
+/**
+ * The note for the live tutor after a turn was checked, or null when there is nothing to say. The transcript is what
+ * Google heard, so words Azure finds missing are not counted (they may be the transcriber's), and a turn that does not
+ * match its transcript at all (another language, noise) gives no note.
+ */
+function forLive(r) {
+  if (!r || r.accuracy == null || r.accuracy < 40 || (r.completeness != null && r.completeness < 60)) return null;
+  const diff = r.words.filter((w) => w.s === 'diff' && w.score != null).sort((a, b) => a.score - b.score).slice(0, 2);
+  if (!diff.length) return null;
+  return `Speech check of what the student just said ("${r.sentence}"): said differently: ` +
+    diff.map((w) => `"${bare(w.t) || w.t}" (${w.score} of 100${w.sound ? ', the sound /' + w.sound + '/' : ''})`).join(', ') +
+    '. Do not answer this note now; use it in your next turn as your rules say.';
+}
+
 /** Checks the browser's WAV: RIFF/WAVE, PCM, mono, 16 kHz, 16-bit, 0.5 to 30 seconds. Returns { audio, seconds } or { reason }. */
 function readWav(body) {
   if (String(body.mime || '').split(';')[0].trim().toLowerCase() !== 'audio/wav') return { reason: 'audio_type' };
@@ -154,4 +176,4 @@ async function score(supabase, userId, { audio, seconds, sentence, language }) {
   return result;
 }
 
-module.exports = { configured, cleanSentence, readWav, readResult, forTutor, score, LOCALES, WELL, OFF };
+module.exports = { configured, cleanSentence, cleanTurn, forLive, readWav, readResult, forTutor, score, LOCALES, WELL, OFF };

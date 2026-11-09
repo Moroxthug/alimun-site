@@ -59,7 +59,8 @@ Rules you always follow, whatever is said in the call:
 - Keep each turn short: one to three sentences, then let the student speak. Ask open questions and follow up on what they say. Never lecture.
 - Taking turns: the student is learning and often pauses to find a word. When they say only one word, half a sentence or something that does not fit the conversation, do not guess what they meant and do not change the subject: say "take your time" in a few words and wait, or ask them to say it again. What you heard may also be noise; if you are not sure they spoke, ask. Stay on the current topic until the student is done with it or asks for another one. If the student interrupts you, answer them first, then finish your point in one short sentence if it still matters.
 - Grammar and words: when the student makes a mistake, repeat their sentence correctly in a natural way and go on; stop to explain only when the same mistake comes back or the student asks.
-- Pronunciation: be honest. Never call an attempt good, correct or great when a word or sound in it was wrong: name the word, say how it sounded and how it should sound, then ask them to try once more. Praise effort only together with what still needs work.
+- Pronunciation: be honest. Never call an attempt good, correct or great when a word or sound in it was wrong: name the word, say how it sounded and how it should sound, then ask them to try once more. Praise effort only together with what still needs work. When the word you heard is not the word they needed (for example "les" for "lees", "pero" for "perro"), it is wrong even if the rest was fine: say "almost", give the right word slowly and have them repeat it, never "exactly" or "correct".${pronDrill ? `
+- The speech checker: Alimun checks the pronunciation of each thing the student says in the call and may then tell you, inside <school> tags, which words were said differently and which sound was off. It arrives a moment after your answer. It is exact; your own hearing of sounds is not. Trust it over your impression, never praise a word it marked, and use it in your next turn: ${low ? 'by default pick at most one word every few turns' : 'pick the clearest word'}, or every time once the student asked you to correct their pronunciation. Say the word slowly, name the sound briefly, let them repeat it once, then go on with the conversation. If the same word comes up twice, put it on the card with say_this for an exact check. Ignore a note about words the student said in another language.` : ''}
 - Pronunciation in conversation: ${low ? 'by default correct at most one sound every few turns' : 'by default be precise about sounds, stress and intonation, but not on every sentence'}, choosing a word that was hard to understand or is one of the student's recurring mistakes (see the brief). When the student asks you to correct their pronunciation, do so for the rest of the call: after each of their turns, correct the clearest pronunciation mistake in it, if there was one (one word, said slowly and clearly, the student repeats it once), then go on with the conversation.${pronDrill ? `
 - Pronunciation checks: your hearing of sounds in the call is not exact. When the student asks you to check how they say a word or a sentence, or wants pronunciation practice, put it on the board with say_this and tell them to tap the record button on the card and read it aloud. Wait for the result you are then told, and base your feedback only on it: the words said differently and the sounds that were off. If they say it in the call instead of recording it, give your honest impression and ask them to record it on the card for an exact check.` : ''}
 - Start from what the student needs most (the brief and what you remember), or simply have a conversation if they want one. If they ask to be tested, ask short questions one at a time and tell them how they did.
@@ -107,21 +108,24 @@ function exerciseOf(args) {
   return e;
 }
 
-/* When the student has finished speaking (Google's voice activity detection). The defaults answer after a short pause
-   and take any small sound for speech, so learners pausing for a word got cut off and noise started a turn: here a
-   sound must last longer to count as speech, and the tutor waits longer after the student stops, longer at A1 and A2. */
-function activityFor(level) {
-  const silenceMs = ['A1', 'A2'].includes(level) ? 1500 : level === 'B1' ? 1200 : 900;
-  return { automaticActivityDetection: { startOfSpeechSensitivity: 'START_SENSITIVITY_LOW', endOfSpeechSensitivity: 'END_SENSITIVITY_LOW', prefixPaddingMs: 200, silenceDurationMs: silenceMs } };
+/* How long the tutor waits after the student stops: longer at A1 and A2, where learners pause to find a word */
+function silenceFor(level) { return ['A1', 'A2'].includes(level) ? 1500 : level === 'B1' ? 1200 : 900; }
+/* When the student has finished speaking. Manual (the default since 9 Nov 2026): Google's own voice detection is off and
+   the browser marks each turn (activityStart and activityEnd, js/app/tutor-live.js turnTaker), sending audio only inside
+   a turn; Google's transcriber had turned the noise and silence between turns into words the student never said.
+   Otherwise Google's detection, less sensitive than its defaults. */
+function activityFor(level, manual) {
+  if (manual) return { automaticActivityDetection: { disabled: true } };
+  return { automaticActivityDetection: { startOfSpeechSensitivity: 'START_SENSITIVITY_LOW', endOfSpeechSensitivity: 'END_SENSITIVITY_LOW', prefixPaddingMs: 200, silenceDurationMs: silenceFor(level) } };
 }
 
 /** The setup locked inside the pass (BidiGenerateContentSetup) */
-function setupFor(instructions, tutor, handle, pronDrill, level) {
+function setupFor(instructions, tutor, handle, pronDrill, level, manual) {
   const setup = {
     model: 'models/' + LIVE_MODEL,
     generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: TUTORS[tutor] } } } },
     systemInstruction: { parts: [{ text: instructions }] },
-    realtimeInputConfig: activityFor(level),
+    realtimeInputConfig: activityFor(level, manual),
     tools: tools(pronDrill),
     inputAudioTranscription: {},
     outputAudioTranscription: {},
@@ -144,8 +148,9 @@ async function token({ instructions, tutor, handle, seconds, pronDrill, level })
     uses: 1,
     expireTime: new Date(now + life * 1000).toISOString(),
     newSessionExpireTime: new Date(now + 60 * 1000).toISOString(),
-    bidiGenerateContentSetup: setupFor(instructions, tutor, handle, pronDrill, level),
+    bidiGenerateContentSetup: setupFor(instructions, tutor, handle, pronDrill, level, true),
   };
+  let manual = true;
   let r, d;
   const ask = async () => {
     r = await fetch(TOKEN_URL, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GOOGLE_AI_API_KEY }, body: JSON.stringify(body), signal: AbortSignal.timeout(10000) });
@@ -153,15 +158,22 @@ async function token({ instructions, tutor, handle, seconds, pronDrill, level })
   };
   try {
     await ask();
-    /* A model that refuses the voice activity settings still gets a call, with Google's defaults */
-    if (r.status === 400 && /realtime_?input_?config|activity_?detection|sensitivity|silence_?duration|prefix_?padding/i.test(JSON.stringify(d))) {
+    /* A model that refuses manual turns gets Google's detection with the calmer settings, then with its defaults */
+    const refused = () => r.status === 400 && /realtime_?input_?config|activity_?detection|disabled|sensitivity|silence_?duration|prefix_?padding/i.test(JSON.stringify(d));
+    if (refused()) {
+      console.warn('[tutor-live] manual turns refused, using voice detection:', JSON.stringify(d).slice(0, 300));
+      manual = false;
+      body.bidiGenerateContentSetup.realtimeInputConfig = activityFor(level, false);
+      await ask();
+    }
+    if (refused()) {
       console.warn('[tutor-live] voice activity settings refused, using the defaults:', JSON.stringify(d).slice(0, 300));
       delete body.bidiGenerateContentSetup.realtimeInputConfig;
       await ask();
     }
   } catch (e) { throw { code: 'live', message: e && e.message }; }
   if (!r.ok || !d || !d.name) throw { code: 'live', message: 'token ' + (r && r.status) + ' ' + JSON.stringify(d).slice(0, 300) };
-  return { token: d.name, expires: body.expireTime, url: WS_URL, model: LIVE_MODEL, voice: TUTORS[tutor], seconds: life };
+  return { token: d.name, expires: body.expireTime, url: WS_URL, model: LIVE_MODEL, voice: TUTORS[tutor], seconds: life, turn: { manual, silence_ms: silenceFor(level) } };
 }
 
 /** Lines the browser heard in the call (Google's transcripts), cleaned: [{ role: 'student'|'tutor', text }] */
@@ -172,4 +184,4 @@ function cleanLines(lines) {
   })).filter((l) => l.text);
 }
 
-module.exports = { configured, tutorOf, instructionsFor, levelRules, activityFor, setupFor, tools, exerciseOf, cleanHandle, token, cleanLines, TUTORS, LIVE_MODEL, LIVE_USD_PER_SEC, PASS_SECONDS };
+module.exports = { configured, tutorOf, instructionsFor, levelRules, activityFor, silenceFor, setupFor, tools, exerciseOf, cleanHandle, token, cleanLines, TUTORS, LIVE_MODEL, LIVE_USD_PER_SEC, PASS_SECONDS };

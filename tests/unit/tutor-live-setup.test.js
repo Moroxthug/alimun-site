@@ -54,6 +54,26 @@ test('if Google refuses the voice activity settings, the pass is asked for again
   try {
     const pass = await live.token({ instructions: 'x', tutor: 'lena', handle: '', seconds: 300, pronDrill: true, level: 'A2' });
     assert.strictEqual(pass.token, 'auth_tokens/abc');
-    assert.strictEqual(sent.length, 2);
+    assert.strictEqual(sent.length, 3);   /* manual turns, then Google's detection, then its defaults */
+    assert.strictEqual(pass.turn.manual, false);
   } finally { global.fetch = real; }
+});
+
+test('manual turns are asked for first; refused, Google detection with the calmer settings', async () => {
+  const real = global.fetch, sent = [];
+  process.env.GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY || 'test-key';
+  global.fetch = async (url, opts) => {
+    const b = JSON.parse(opts.body); sent.push(b);
+    if (b.bidiGenerateContentSetup.realtimeInputConfig.automaticActivityDetection.disabled) return { ok: false, status: 400, json: async () => ({ error: { message: 'Unknown name "disabled" at automatic_activity_detection' } }) };
+    return { ok: true, status: 200, json: async () => ({ name: 'auth_tokens/abc' }) };
+  };
+  try {
+    const pass = await live.token({ instructions: 'x', tutor: 'lena', handle: '', seconds: 300, pronDrill: true, level: 'A2' });
+    assert.strictEqual(sent.length, 2);
+    assert.strictEqual(sent[1].bidiGenerateContentSetup.realtimeInputConfig.automaticActivityDetection.silenceDurationMs, 1500);
+    assert.deepStrictEqual(pass.turn, { manual: false, silence_ms: 1500 });
+  } finally { global.fetch = real; }
+  global.fetch = async () => ({ ok: true, status: 200, json: async () => ({ name: 'auth_tokens/abc' }) });
+  try { assert.deepStrictEqual((await live.token({ instructions: 'x', tutor: 'lena', handle: '', seconds: 300, pronDrill: true, level: 'B1' })).turn, { manual: true, silence_ms: 1200 }); }
+  finally { global.fetch = real; }
 });
