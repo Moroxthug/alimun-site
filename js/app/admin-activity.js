@@ -100,7 +100,7 @@
       return '<span class="ac-bar" style="--h:' + h + '%" title="' + esc(A.fmt(d.day + 'T12:00:00', { day: 'numeric', month: 'short' }) + ': ' + d.active) + '"></span>';
     }).join('') + '</div><div class="ac-axis"><span>' + esc(A.fmt(days[0].day + 'T12:00:00', { day: 'numeric', month: 'short' })) + '</span><span>Today</span></div>';
   }
-  var HEARD = { search: 'Google or another search engine', instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube', facebook: 'Facebook',
+  var HEARD = { search: 'Google or another search engine', chatgpt: 'ChatGPT', instagram: 'Instagram', tiktok: 'TikTok', youtube: 'YouTube', facebook: 'Facebook',
     friend: 'A friend or family member', school: 'Their school or teacher', other: 'Somewhere else' };
   function heardText(p) { return p.heard_from ? (HEARD[p.heard_from] || p.heard_from) + (p.heard_from === 'other' && p.heard_from_other ? ': ' + p.heard_from_other : '') : ''; }
   function trackText(p) {

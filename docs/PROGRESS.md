@@ -1644,3 +1644,7 @@ Owner: "Start English C1 ... C1 has 20 units of four lessons, about 96 class les
 - For the owner: the course audio for C1 on /app/audio. Next: the C2 plan, shown to the owner before it is written.
 - Owner on the C2 plan (9 Nov 2026): "Go with 16 units and 80 classes, groups of six", to be done in a new conversation; recorded in the handoff at the top of `docs/LESSONS_PLAN.md`.
 - Owner on the C2 topics (9 Nov 2026): the eight new units lean towards academic and professional English; listed in the handoff.
+
+## 2026-11-09 — ChatGPT in the sign-up question
+
+Owner: "add ChatGPT as an option in the sign-up question" (the first tracked sign-up, from France, arrived with utm_source=chatgpt.com but answered "search"). Option "ChatGPT" after the search option on both sign-up forms (brand name, same in every language); admin label; `supabase/migrations/202611091200_signup_sources_chatgpt.sql` widens the check and the copy function, applied one statement at a time and verified (existing row kept).
