@@ -1643,3 +1643,4 @@ Owner: "Start English C1 ... C1 has 20 units of four lessons, about 96 class les
 - Checked: `check-book English-C1` ok; `check-classes English-C1` 98 of 98 ok; the preview played in full (80 lessons, 20 tests, no problems); the switched book is replayed.
 - For the owner: the course audio for C1 on /app/audio. Next: the C2 plan, shown to the owner before it is written.
 - Owner on the C2 plan (9 Nov 2026): "Go with 16 units and 80 classes, groups of six", to be done in a new conversation; recorded in the handoff at the top of `docs/LESSONS_PLAN.md`.
+- Owner on the C2 topics (9 Nov 2026): the eight new units lean towards academic and professional English; listed in the handoff.
