@@ -6,7 +6,8 @@
    Buying a private class (one payment, a 1:1 credit added by the payment webhook) starts from Classes: buyExtra().
    Buying tutor time (docs/AI_TUTOR_PLAN.md, part 6: one payment, the minutes added by the webhook, back to the Tutor
    with ?checkout=tutor) starts from the Tutor when the time is used up: tutorPacks(), buyTutor().
-   Coming back from Stripe (?checkout=success|cancelled|credit) is shown by returnNote() in js/app/shell.js.
+   Paying happens on Alimun's own checkout page (js/app/pay.js), which falls back to Stripe's page if it cannot open.
+   Coming back after paying (?checkout=success|cancelled|credit) is shown by returnNote() in js/app/shell.js.
    Sample (signed out or ?sample=1): nothing is charged. Interface text: app_pl_* keys. */
 (function () {
   'use strict';
@@ -18,6 +19,17 @@
   function esc(s) { return A.esc(s); }
   function real() { return A.mode() === 'real' && A.data().profile && A.data().profile.id; }
   function P() { return A.data().profile; }
+  /* Photos for the checkout page (the homepage's own) */
+  var PHOTO = { group: '/images/pexels-katerina-holmes-5905749-p-1080.jpg', one: '/images/pexels-julia-m-cameron-4145153-p-1080.jpg', tutor: '/images/pexels-6599010-tool.jpg' };
+  /* Opens Alimun's checkout page; without it (an old cached page), Stripe's own page */
+  function payPage(body, info) {
+    if (window.AlimunPay) return window.AlimunPay.open(A, body, info);
+    return window.AlimunData.checkout(body).then(function (r) {
+      var u = new URL(r.url);
+      if (u.protocol !== 'https:' || !/(^|\.)stripe\.com$/.test(u.hostname)) throw new Error('unexpected checkout address');
+      location.href = u.href;
+    });
+  }
 
   function prices() {
     if (PRICES) return Promise.resolve(PRICES);
@@ -62,18 +74,14 @@
     root.setAttribute('data-plclass', classId || '');
     return html + '</div>';
   }
-  function say(which, key, bad) { var m = root.querySelector('[data-plmsg="' + which + '"]'); if (m) { m.textContent = t(key); m.classList.toggle('is-bad', !!bad); } }
+  function say(which, key, bad) { var m = root.querySelector('[data-plmsg="' + which + '"]'); if (m) { m.textContent = key ? t(key) : ''; m.classList.toggle('is-bad', !!bad); } }
 
-  /* Opens Stripe checkout; the address it sends back must be Stripe's own */
-  function checkout(body, msgKey, btn) {
+  /* Opens the checkout page for a plan */
+  function checkout(body, msgKey, btn, info) {
     if (!real()) { say(msgKey, 'app_pl_sample'); return; }
     if (btn) btn.disabled = true;
-    say(msgKey, 'app_pl_going');
-    window.AlimunData.checkout(body).then(function (r) {
-      var u = new URL(r.url);
-      if (u.protocol !== 'https:' || !/(^|\.)stripe\.com$/.test(u.hostname)) throw new Error('unexpected checkout address');
-      location.href = u.href;
-    }, function (e) {
+    say(msgKey, null);
+    payPage(body, info).then(function () { if (btn) btn.disabled = false; }, function (e) {
       if (e && e.body && e.body.error === 'active_subscription') return portal(btn, msgKey);
       if (btn) btn.disabled = false;
       say(msgKey, 'app_pl_err', true);
@@ -93,23 +101,21 @@
     var p = priceOf(k), cls = root.getAttribute('data-plclass');
     if (!p) return;
     var back = location.origin + '/app';
-    checkout({ priceId: p.id, mode: 'subscription', successUrl: back + '?checkout=success', cancelUrl: back + '?checkout=cancelled#/settings/plans', cohortId: cls || undefined, customerName: P().name || '' }, 'choose', btn);
+    checkout({ priceId: p.id, mode: 'subscription', successUrl: back + '?checkout=success', cancelUrl: back + '?checkout=cancelled#/settings/plans', cohortId: cls || undefined, customerName: P().name || '' }, 'choose', btn,
+      { title: t('app_tier_' + k), sub: k === 'private' ? t('app_pl_private') : t('app_pl_seats', { n: SEATS[k] }), photo: k === 'private' ? PHOTO.one : PHOTO.group });
   }
   /* One private class, paid once (Classes calls this; the webhook adds the credit) */
   function buyExtra(helpers, btn, msgEl) {
     A = helpers;
     var show = function (k, bad) { if (msgEl) { msgEl.textContent = t(k); msgEl.classList.toggle('is-bad', !!bad); } };
     if (!real()) { show('app_pl_sample'); return; }
-    btn.disabled = true; show('app_pl_going');
+    btn.disabled = true;
     prices().then(function (pr) {
       if (!pr.oneOnOneSession) throw new Error('no price');
       var back = location.origin + '/app';
-      return window.AlimunData.checkout({ priceId: pr.oneOnOneSession.id, mode: 'payment', successUrl: back + '?checkout=credit#/classes', cancelUrl: back + '?checkout=cancelled#/classes' });
-    }).then(function (r) {
-      var u = new URL(r.url);
-      if (u.protocol !== 'https:' || !/(^|\.)stripe\.com$/.test(u.hostname)) throw new Error('unexpected checkout address');
-      location.href = u.href;
-    }).catch(function (e) { btn.disabled = false; show('app_pl_err', true); console.warn('[Alimun] Extra class checkout', e && e.message); });
+      return payPage({ priceId: pr.oneOnOneSession.id, mode: 'payment', successUrl: back + '?checkout=credit#/classes', cancelUrl: back + '?checkout=cancelled#/classes' },
+        { title: t('app_pay_extra_h'), sub: t('app_pay_extra_p'), photo: PHOTO.one });
+    }).then(function () { btn.disabled = false; }).catch(function (e) { btn.disabled = false; show('app_pl_err', true); console.warn('[Alimun] Extra class checkout', e && e.message); });
   }
   /* Tutor time packs as Stripe has them: [{ key, id, minutes, price }], the smallest first (none until the owner sets them) */
   function tutorPacks(helpers) {
@@ -125,12 +131,12 @@
     A = helpers;
     var show = function (k, bad) { if (msgEl) { msgEl.textContent = t(k); msgEl.classList.toggle('is-bad', !!bad); } };
     if (!real()) { show('app_pl_sample'); return; }
-    btn.disabled = true; show('app_pl_going');
-    window.AlimunData.checkout({ priceId: priceId, mode: 'payment', customerName: P().name || '' }).then(function (r) {
-      var u = new URL(r.url);
-      if (u.protocol !== 'https:' || !/(^|\.)stripe\.com$/.test(u.hostname)) throw new Error('unexpected checkout address');
-      location.href = u.href;
-    }).catch(function (e) { btn.disabled = false; show('app_pl_err', true); console.warn('[Alimun] Tutor time checkout', e && e.message); });
+    btn.disabled = true;
+    prices().then(function (pr) {
+      var pack = Object.keys(pr).map(function (k) { return pr[k]; }).filter(function (x) { return x && x.id === priceId; })[0];
+      return payPage({ priceId: priceId, mode: 'payment', customerName: P().name || '' },
+        { title: t('app_pay_tutor_h'), sub: pack && pack.minutes ? t('app_pay_tutor_p', { n: pack.minutes }) : '', photo: PHOTO.tutor });
+    }).then(function () { btn.disabled = false; }).catch(function (e) { btn.disabled = false; show('app_pl_err', true); console.warn('[Alimun] Tutor time checkout', e && e.message); });
   }
   /* The label of the "buy a private class" button, with Stripe's price once known */
   function extraLabel(helpers) {

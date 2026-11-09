@@ -85,7 +85,7 @@ const supa = {
 const fakeStripe = () => ({
   customers: { search: async () => ({ data: [{ id: 'cus_1' }] }), create: async () => ({ id: 'cus_1' }) },
   checkout: { sessions: {
-    create: async (p) => { stripeCalls.push(['create', p]); return { id: 'cs_test_abc', url: 'https://checkout.stripe.com/c/pay/cs_test_abc' }; },
+    create: async (p, o) => { stripeCalls.push(['create', p, o]); return p.ui_mode === 'custom' ? { id: 'cs_test_abc', url: null, client_secret: 'cs_test_abc_secret_x' } : { id: 'cs_test_abc', url: 'https://checkout.stripe.com/c/pay/cs_test_abc' }; },
     listLineItems: async (id) => { stripeCalls.push(['lines', id]); return { data: lineItems }; },
   } },
   prices: { retrieve: async (id) => prices[id] },
@@ -133,6 +133,30 @@ test('checkout of a pack: one payment, back to the Tutor with the checkout id, w
   assert.strictEqual(p.payment_intent_data.metadata.type, 'tutor_time');
   assert.strictEqual(p.success_url, 'https://alimun.com/app?checkout=tutor&session_id={CHECKOUT_SESSION_ID}#/tutor');
   assert.strictEqual(p.cancel_url, 'https://alimun.com/app?checkout=cancelled#/tutor');
+});
+
+test('Alimun checkout page: a client secret, back to the Tutor with the checkout id, no cancel address', async () => {
+  reset();
+  const r = await call(stripeApi, { action: 'create-checkout', body: { priceId: 'price_t30', ui: 'custom' } });
+  assert.strictEqual(r.status, 200);
+  assert.strictEqual(r.body.clientSecret, 'cs_test_abc_secret_x');
+  const [, p, o] = stripeCalls[0];
+  assert.strictEqual(p.ui_mode, 'custom');
+  assert.strictEqual(p.return_url, 'https://alimun.com/app?checkout=tutor&session_id={CHECKOUT_SESSION_ID}#/tutor');
+  assert.strictEqual(p.success_url, undefined);
+  assert.strictEqual(p.cancel_url, undefined);
+  assert.strictEqual(p.branding_settings, undefined);
+  assert.strictEqual(o.apiVersion, '2025-09-30.clover');
+});
+
+test('Stripe page (fallback): branded, with success and cancel addresses', async () => {
+  reset();
+  const r = await call(stripeApi, { action: 'create-checkout', body: { priceId: 'price_t30' } });
+  assert.strictEqual(r.body.clientSecret, undefined);
+  const [, p, o] = stripeCalls[0];
+  assert.strictEqual(p.ui_mode, undefined);
+  assert.strictEqual(p.branding_settings.button_color, '#ceff65');
+  assert.strictEqual(o.apiVersion, '2025-09-30.clover');
 });
 
 test('a student on a plan may still buy a pack; an unknown price is refused', async () => {

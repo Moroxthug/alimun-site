@@ -95,12 +95,15 @@ function appOrigin() {
   try { return new URL(appUrl).origin; } catch { return 'https://alimun.com'; }
 }
 
-// ── Checkout branding ──
-// Alimun look on Stripe's hosted checkout: bone background, lime button, the
-// wordmark and app icon. Satoshi is not on Stripe's font list; Inter is the
-// closest. branding_settings needs API version 2025-09-30.clover, so only this
-// request is sent with that version (the rest of the integration is unchanged).
-// If Stripe ever refuses it, checkout goes ahead with the Dashboard defaults.
+// ── Checkout look ──
+// Two ways to pay, both Stripe Checkout Sessions on API version 2025-09-30.clover
+// (sent on these requests only; the rest of the integration is unchanged):
+//  - ui 'custom' (the default from the dashboard, js/app/pay.js): Alimun's own
+//    checkout page on alimun.com; Stripe draws only the payment fields inside
+//    it. The session returns a client secret instead of a URL.
+//  - hosted (fallback): Stripe's own page, branded with bone, lime, the
+//    wordmark and icon. Satoshi is not on Stripe's font list; Inter is the
+//    closest. If Stripe ever refuses the branding, it goes ahead unbranded.
 const CHECKOUT_API_VERSION = '2025-09-30.clover';
 const CHECKOUT_BRANDING = {
   display_name: 'Alimun',
@@ -112,12 +115,11 @@ const CHECKOUT_BRANDING = {
   icon: { type: 'url', url: 'https://alimun.com/images/icon-512.png' },
 };
 
-async function createBrandedCheckout(params) {
+async function createCheckout(params) {
+  const opts = { apiVersion: CHECKOUT_API_VERSION };
+  if (params.ui_mode === 'custom') return stripe.checkout.sessions.create(params, opts);
   try {
-    return await stripe.checkout.sessions.create(
-      { ...params, branding_settings: CHECKOUT_BRANDING },
-      { apiVersion: CHECKOUT_API_VERSION },
-    );
+    return await stripe.checkout.sessions.create({ ...params, branding_settings: CHECKOUT_BRANDING }, opts);
   } catch (e) {
     console.warn('[Alimun] checkout branding not applied:', e && e.message);
     return stripe.checkout.sessions.create(params);
@@ -204,7 +206,7 @@ async function handleCreateCheckout(req, res) {
     return res.status(401).json({ error: 'Unauthorized. Sign in before starting checkout.' });
   }
 
-  const { priceId, customerName, successUrl, cancelUrl, cohortId, currency } = body;
+  const { priceId, customerName, successUrl, cancelUrl, cohortId, currency, ui } = body;
   if (!priceId || typeof priceId !== 'string') {
     return res.status(400).json({ error: 'priceId is required' });
   }
@@ -278,6 +280,23 @@ async function handleCreateCheckout(req, res) {
       allow_promotion_codes: true,
     };
 
+    // Alimun's own checkout page: Stripe sends the student to return_url after
+    // paying (with the session id, so the dashboard can check it); closing the
+    // page is the cancel, so there is no cancel_url.
+    if (ui === 'custom') {
+      sessionParams.ui_mode = 'custom';
+      let back = resolvedSuccessUrl;
+      if (!back.includes('{CHECKOUT_SESSION_ID}')) {
+        const hashAt = back.indexOf('#');
+        const head = hashAt < 0 ? back : back.slice(0, hashAt);
+        const hash = hashAt < 0 ? '' : back.slice(hashAt);
+        back = head + (head.includes('?') ? '&' : '?') + 'session_id={CHECKOUT_SESSION_ID}' + hash;
+      }
+      sessionParams.return_url = back;
+      delete sessionParams.success_url;
+      delete sessionParams.cancel_url;
+    }
+
     // Prices carry EUR (base) + USD/CAD/AUD/MAD currency options
     // (supabase/setup-stripe-prices.js). EUR is the default.
     if (typeof currency === 'string' && ['usd', 'cad', 'aud', 'mad'].includes(currency.toLowerCase())) {
@@ -299,13 +318,13 @@ async function handleCreateCheckout(req, res) {
       if (withGift.subscription_data) withGift.subscription_data = { metadata: withGift.metadata };
       if (withGift.payment_intent_data) withGift.payment_intent_data = { metadata: withGift.metadata };
       try {
-        session = await createBrandedCheckout(withGift);
+        session = await createCheckout(withGift);
       } catch (e) {
         console.warn('[Alimun] welcome gift not applied:', e && e.message);
       }
     }
-    if (!session) session = await createBrandedCheckout(sessionParams);
-    return res.status(200).json({ sessionId: session.id, url: session.url, welcomeGift: session.metadata?.welcome_gift === '1' });
+    if (!session) session = await createCheckout(sessionParams);
+    return res.status(200).json({ sessionId: session.id, url: session.url || null, clientSecret: ui === 'custom' ? session.client_secret : undefined, welcomeGift: session.metadata?.welcome_gift === '1' });
   } catch (err) {
     console.error('[Alimun] create-checkout error:', err);
     return res.status(500).json({ error: 'Failed to create checkout session' });
