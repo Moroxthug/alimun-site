@@ -707,6 +707,23 @@
     })();
   }
 
+  /* Welcome poll (js/app/poll.js): once to every real student, never to an admin viewing someone */
+  function welcomePoll() {
+    /* ?sample=1&poll=1 opens it on the sample dashboard for a look; nothing is sent */
+    var preview = mode !== 'real' && /[?&]poll=1/.test(location.search);
+    if ((mode !== 'real' && !preview) || (window.AlimunData.viewingAs && window.AlimunData.viewingAs())) return;
+    var go = function () {
+      if (!window.AlimunPoll) return;
+      window.AlimunPoll.maybe({ t: t, esc: esc, icon: icon, lang: lang, locale: locale, profile: D.profile, drawing: Cast.drawing(buddyOf(D)), preview: preview,
+        onDone: function (added) {
+          if (!added) return;
+          D.tutor.seconds += added; D.tutor.fresh = false;
+          if (current === 'home' || current === 'tutor') render(current, false);
+        } });
+    };
+    if (window.AlimunPoll) go(); else loadScript('/js/app/poll.js').then(go);
+  }
+
   function boot() {
     if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('open_dashboard', { dashboard: 'student' });
     app = document.getElementById('app');
@@ -725,6 +742,7 @@
       // In-page banner for students, when one is switched on in Admin (js/banner.js).
       if (!document.querySelector('script[src="/js/banner.js"]')) { var bs = document.createElement('script'); bs.src = '/js/banner.js'; bs.defer = true; document.head.appendChild(bs); }
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
+      welcomePoll();
     });
 
     window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'messages' || id === 'settings' || id === 'tutor') render(id, true); });

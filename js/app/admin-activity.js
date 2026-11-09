@@ -5,10 +5,11 @@
    AlimunAdminActivity.timelineCard(A, userId, i)  a card for a student's or teacher's file; it fills itself from
                               admin_activity_timeline(), newest first, with "Show older".
    Exercises, practice, flashcards, tutor, homework, classes, 1:1s, waiting lists, messages and the news choice come
-   from their own tables; opening a dashboard, sections opened and payments from activity_events. */
+   from their own tables; opening a dashboard, sections opened and payments from activity_events.
+   The Welcome poll card counts the answers to the students' welcome poll (table welcome_poll). */
 (function () {
   'use strict';
-  var A = null, root = null, OV = null, SRC = null, DAYMS = 86400000;
+  var A = null, root = null, OV = null, SRC = null, POLLROWS = null, DAYMS = 86400000;
   var KIND = {
     signed_up: 'Created their account', last_sign_in: 'Last signed in', open_dashboard: 'Opened the dashboard', view: 'Opened',
     exercise: 'Did an exercise', practice: 'Practised', flashcards: 'Reviewed flashcards', tutor: 'Talked with the tutor',
@@ -130,6 +131,53 @@
     }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No sign-ups in the last 90 days.</p>');
     return html + '</section>';
   }
+  /* ---------- Welcome poll (js/app/poll.js): answers counted per question, and what people wrote ---------- */
+  var POLL = [
+    ['explain', 'How they want things explained', { target: 'Only in the language they learn', mostly: 'Mostly in that language, their own when stuck', own: 'In their own language' }],
+    ['teacher', 'Who they want to learn with', { native: 'A native speaker', home: 'A teacher from their country', either: 'Either, if the teacher is good' }],
+    ['confidence', 'How confident they feel', { c1: 'Just starting out', c2: 'Simple things, slowly', c3: 'Gets by in everyday situations', c4: 'Comfortable, still makes mistakes', c5: 'Very confident' }],
+    ['hardest', 'What feels hardest (several allowed)', { speaking: 'Speaking', listening: 'Listening to fast speech', reading: 'Reading longer texts', writing: 'Writing', grammar: 'Grammar', vocab: 'Finding the right words' }],
+    ['prefer', 'What would help most (up to two)', { exam: 'Exam preparation packs', classes: 'Relaxed small-group classes', conversation: 'Conversation practice', one: '1 on 1 lessons', self: 'Learning on their own' }],
+    ['time', 'Time each week', { lt1: 'Less than an hour', h1_3: 'One to three hours', h3_5: 'Three to five hours', gt5: 'More than five hours' }],
+    ['tutor', 'What they think of the Tutor', { not_tried: 'Not tried yet', love: 'Love it', useful: 'Useful, could be better', unsure: 'Not sure yet', no: 'Not for them' }]
+  ];
+  function pollCard(rows, total, i) {
+    if (!rows) return '';
+    var n = rows.length;
+    var html = '<section class="card span-12" style="--i:' + i + '"><h2 class="t-h2">Welcome poll</h2><p class="t-small" style="margin-top:6px">' +
+      esc(n + ' of ' + (total || 0) + ' students answered. Each answer added 10 minutes of tutor time.') + '</p>';
+    if (!n) return html + '<p class="t-body" style="margin-top:8px">No answers yet.</p></section>';
+    var count = function (key, labels) {
+      var c = {};
+      rows.forEach(function (r) { var v = (r.answers || {})[key]; (Array.isArray(v) ? v : v ? [v] : []).forEach(function (x) { c[x] = (c[x] || 0) + 1; }); });
+      return Object.keys(c).sort(function (a, b) { return c[b] - c[a]; }).map(function (k) { return [labels[k] || k, c[k]]; });
+    };
+    var list = function (pairs) { return pairs.length ? '<div class="tt-week">' + pairs.map(function (p) { return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(String(p[1])) + '</span><span><b>' + esc(p[0]) + '</b><small>' + esc(pct(p[1], n)) + '</small></span></div>'; }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No answers.</p>'; };
+    var from = {};
+    rows.forEach(function (r) { var c = (r.answers || {}).from; if (c) from[c] = (from[c] || 0) + 1; });
+    html += '<div class="grid" style="margin-top:12px"><div class="span-6"><h3 class="t-h3">Where they are from</h3>' +
+      list(Object.keys(from).sort(function (a, b) { return from[b] - from[a]; }).map(function (c) { return [countryName(c), from[c]]; })) + '</div>';
+    POLL.forEach(function (q) { html += '<div class="span-6"><h3 class="t-h3">' + esc(q[1]) + '</h3>' + list(count(q[0], q[2])) + '</div>'; });
+    html += '</div>';
+    var said = [];
+    rows.forEach(function (r) {
+      var a = r.answers || {}, who = (r.student_profiles && r.student_profiles.full_name) || 'A student';
+      var course = r.student_profiles ? [r.student_profiles.language, r.student_profiles.level].filter(Boolean).join(' ') : '';
+      if (a.tutor_note) said.push([who, course, 'About the Tutor: ' + a.tutor_note, r.created_at]);
+      if (a.note) said.push([who, course, a.note, r.created_at]);
+    });
+    html += '<h3 class="t-h3" style="margin-top:16px">What they wrote</h3>' + (said.length ? '<div class="tt-week">' + said.map(function (x) {
+      return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(ago(x[3])) + '</span><span><b>' + esc(x[0] + (x[1] ? ', ' + x[1] : '')) + '</b><small>' + esc(x[2]) + '</small></span></div>';
+    }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">Nothing written yet.</p>');
+    return html + '</section>';
+  }
+  function samplePoll() {
+    var n = Date.now();
+    return [
+      { created_at: new Date(n - 3600000).toISOString(), student_profiles: { full_name: 'Marco Rossi', language: 'English', level: 'B1' }, answers: { from: 'IT', explain: 'mostly', teacher: 'native', confidence: 'c3', hardest: ['speaking', 'listening'], prefer: ['exam', 'conversation'], time: 'h1_3', tutor: 'useful', tutor_note: 'Slower voice, please.' } },
+      { created_at: new Date(n - 30 * 3600000).toISOString(), student_profiles: { full_name: 'Aya Benali', language: 'English', level: 'A2' }, answers: { from: 'MA', explain: 'own', teacher: 'home', confidence: 'c2', hardest: ['grammar'], prefer: ['classes'], time: 'h3_5', tutor: 'love', note: 'Evening classes would suit me.' } }
+    ];
+  }
   function stat(n, label) { return '<div class="ac-stat"><b>' + esc(String(n)) + '</b><span>' + esc(label) + '</span></div>'; }
   function overviewView() {
     var o = OV, f = o.funnel || {};
@@ -149,6 +197,7 @@
       return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(String(c.people)) + '</span><span><b>' + esc(countryName(c.country)) + '</b></span></div>';
     }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No countries yet: people choose theirs when they sign up, or in Settings.</p>') + '</section>';
     html += sourcesCard(SRC, 4);
+    html += pollCard(POLLROWS, f.students, 5);
     if (o.sample) html += '<p class="t-tiny span-12">This is sample data.</p>';
     return html + '</div>';
   }
@@ -159,7 +208,8 @@
     root.innerHTML = loading();
     // The sources card is extra: if it fails, the rest of the page still shows.
     var src = real() ? window.AlimunData.adminSignupSources(90).catch(function (e) { console.warn('[Alimun] signup sources', e && e.message); return null; }) : Promise.resolve(sampleSources());
-    var get = Promise.all([real() ? window.AlimunData.adminActivityOverview() : Promise.resolve(sampleOverview()), src]).then(function (r) { SRC = r[1]; return r[0]; });
+    var poll = real() ? window.AlimunData.adminWelcomePoll().catch(function (e) { console.warn('[Alimun] welcome poll', e && e.message); return null; }) : Promise.resolve(samplePoll());
+    var get = Promise.all([real() ? window.AlimunData.adminActivityOverview() : Promise.resolve(sampleOverview()), src, poll]).then(function (r) { SRC = r[1]; POLLROWS = r[2]; return r[0]; });
     return get.then(function (o) {
       if (my !== no) return { stale: true };
       OV = o || sampleOverview(); root.innerHTML = overviewView(); return { title: 'Activity' };
