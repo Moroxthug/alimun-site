@@ -1,280 +1,308 @@
-// English C1, unit 5 (docs/BOOKS.md). Draft for native-teacher review.
+// English C1 (preview book), unit 5, second edition (docs/LESSONS_PLAN.md, "Books, second edition"). Draft for native-teacher review.
+// Science and ethics: passive reporting with the full range of infinitives, nominalisation for a formal style, the
+// language of certainty and doubt, and four views on gene editing read in the format of C1 Advanced Reading Part 6.
 export const UNIT = {
   id: 'u5',
   title: 'Science and ethics',
-  goal: 'Discuss research and its ethics in an impersonal, academic style.',
+  goal: 'Report what is claimed without taking responsibility for it, write in a dense, formal style with nouns, say exactly how sure the evidence allows you to be, and compare four writers’ views on gene editing.',
   art: 'alien',
-  tags: { skills: ['grammar', 'vocabulary', 'reading', 'writing'], topics: ['passive-reporting', 'perfect-infinitive', 'nominalisation', 'certainty-and-doubt', 'academic-style', 'science', 'ethics'], goals: ['foundations'] },
+  tags: { skills: ['grammar', 'vocabulary', 'reading', 'writing', 'speaking'], topics: ['passive-reporting', 'perfect-infinitive', 'nominalisation', 'certainty-and-doubt', 'hedging', 'academic-style', 'science', 'ethics', 'gene-editing'], goals: ['foundations'] },
   pages: [
+    /* ------------------------------------------------------------------ Lesson 1 */
     {
       id: 'p1',
-      title: 'She is said to have…',
-      about: 'Use the full range of infinitives after passive reporting verbs to show exactly when something happened.',
-      art: 'parrot',
+      title: 'The data is alleged to have been altered',
+      about: 'Use passive reporting structures with every kind of infinitive to report claims precisely and keep your distance from them.',
+      art: 'owl',
       spreads: [
         [
-          { t: 'text', md: 'At B2 you met the two patterns for reporting what people believe: *It is said that the castle is haunted* and *The castle is said to be haunted*. At C1 you need the **full range of infinitives** after the second pattern. The infinitive shows two things: when the action happens compared with the reporting, and whether it is active or passive.' },
-          { t: 'table', caption: 'Six infinitives after a reporting verb', explain: ['head', 'col0', 'col1'], head: ['Time and voice', 'Form', 'Example'], rows: [
-            ['Same time or future, active', '*to* + verb', 'The drug **is thought to reduce** the risk of infection.'],
-            ['In progress now, active', '*to be* + *-ing*', 'Several teams **are believed to be testing** similar treatments.'],
-            ['Earlier, active', '*to have* + past participle', 'The researcher **is said to have ignored** the warnings.'],
-            ['Earlier and lasting for some time', '*to have been* + *-ing*', 'She **is understood to have been working** on the project for a decade.'],
-            ['Same time or future, passive', '*to be* + past participle', 'The results **are expected to be published** next month.'],
-            ['Earlier, passive', '*to have been* + past participle', 'Some of the data **is alleged to have been altered**.'],
+          { t: 'text', md: 'At B2 you met two ways of reporting what people say or believe: ***It is said that** the lab is closing* and *The lab **is said to be** closing*. Both tell the reader that the claim comes from someone else, not from the writer. That is why news reports and academic texts rely on them: the writer passes on information **without vouching for it**.\n\nAt C1 the challenge is precision. The infinitive after the reporting verb carries two pieces of information at once: **when** the action happens compared with the moment of reporting, and whether it is **active or passive**. Choose the wrong infinitive and you change the facts.\n\n*The researcher **is said to falsify** results.* (a habit, now)\n*The researcher **is said to have falsified** results.* (something done before)\n*The results **are said to have been falsified**.* (done to the results, before)' },
+          { t: 'table', caption: 'The infinitive decides the time and the voice', explain: ['head', 'col0'], head: ['Meaning', 'Form', 'Example'], rows: [
+            ['Same time, or a general fact', 'to + verb', 'The compound **is known to cause** headaches.'],
+            ['In progress at the time', 'to be + -ing', 'Two teams **are thought to be racing** to publish first.'],
+            ['Earlier than the reporting', 'to have + past participle', 'The company **is alleged to have hidden** the side effects.'],
+            ['An activity over a period up to then', 'to have been + -ing', 'She **is believed to have been working** alone for months.'],
+            ['Passive, same time or future', 'to be + past participle', 'The findings **are expected to be published** in May.'],
+            ['Passive, earlier', 'to have been + past participle', 'The samples **are reported to have been contaminated**.'],
           ] },
         ],
         [
-          { t: 'text', md: 'Common verbs in this pattern are *believe, think, consider, know, say, report, expect, understand, estimate, allege* and *presume*. *Allege* is used when someone is accused of something that has not been proved. In the news, *is understood to* often means that a journalist has been told something privately.\n\nWhen the reporting verb is in the past, compare the time of the belief with the time of the event. If they are the same, use the simple infinitive. If the event came first, use the perfect infinitive.' },
+          { t: 'text', md: 'Why choose *The samples are reported to have been contaminated* rather than *It is reported that the samples were contaminated*? Both are correct. The personal pattern puts **the topic first** (the samples), which keeps a paragraph flowing when the samples were already the subject of the previous sentence. The *it*-pattern puts **the claim first** and is easier when the clause after *that* is long.\n\nThe verbs differ in tone. *Allege* means an accusation that has not been proved; *is understood to* in journalism means a source has told the writer privately; *is held to* and *is deemed to* are formal and legal; *is presumed to* means that people assume it until shown otherwise. With *there*, keep *there* as the subject: ***There are thought to be** few safe alternatives.*\n\nA past reporting verb moves everything back: *The disease **was once thought to be** contagious* (the belief and the state at the same past time), *The drug **was later found to have caused** the damage* (the damage came first).' },
           { t: 'examples', items: [
-            { s: 'The heart **was** once **believed to control** our emotions.', n: 'A past belief about something at the same time: past reporting verb + simple infinitive.' },
-            { s: 'The infection **is now known to have spread** through the water supply.', n: 'Present knowledge about an earlier event: the perfect infinitive.' },
-            { s: '**There are thought to be** thousands of species that have never been described.', n: 'With *there*, keep *there* as the subject: *there is said to be*, *there are believed to have been*.' },
-            { s: 'The treatment **is not thought to pose** any serious risk.', n: 'The negative usually goes with the reporting verb. *Is thought not to pose* is possible but less common.' },
-          ] },
-          { t: 'tip', art: 'owl', md: 'Not every reporting verb takes the subject pattern. *Suggest*, *propose* and *recommend* only work with *it*: *It has been suggested that the trial should stop*, never *The trial has been suggested to stop*. *Rumour* is the opposite: it is almost always passive, as in *She is rumoured to be leaving the institute*.' },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct form.', items: [
-            { q: 'The virus is believed ___ in bats many years ago.', o: ['to have originated', 'to originate', 'to be originating'], why: 'The origin came long before the belief, and *many years ago* shows the past: *to have* + past participle.' },
-            { q: 'The new vaccine is expected ___ by the end of the year.', o: ['to be approved', 'to approve', 'to have approved'], why: 'The vaccine does not approve anything; somebody approves it. A future passive: *to be* + past participle.' },
-            { q: 'The professor is said ___ on the same problem for over twenty years before she finally solved it.', o: ['to have been working', 'to be working', 'to work'], why: 'A long activity that continued up to a point in the past: *to have been* + *-ing*.' },
-            { q: '___ said to be several reasons for the delay.', o: ['There are', 'It is', 'They are'], why: 'With *there*, the verb agrees with *several reasons*. *It is said* would need a *that* clause.' },
-            { q: 'In the nineteenth century, many illnesses ___ to be caused by bad air.', o: ['were widely thought', 'are widely thought', 'were widely thought that'], why: 'A past belief about something at the same time: past reporting verb + simple infinitive.' },
-            { q: 'It ___ that the committee should review the study again.', o: ['has been suggested', 'has suggested', 'is suggested to be'], why: '*Suggest* only works with *it* + passive + *that*. It cannot take *to* + infinitive.' },
+            { s: '**There is said to have been** a serious error in the first trial.', n: '*There* stays the subject; the perfect infinitive puts the error before the reporting.' },
+            { s: 'The scientist **is understood to be considering** an offer from abroad.', n: 'Journalistic: a source has said so privately. Continuous infinitive for something in progress.' },
+            { s: 'The early results **were later shown to have been exaggerated**.', n: 'Past reporting verb, earlier passive action: *to have been* + past participle.' },
+            { s: '**It has been suggested that** the study should be repeated.', n: '*Suggest* cannot take the personal pattern: only *It has been suggested that…*' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'transform', h: 'Rewrite each sentence. Start with the words given.', items: [
-            { q: 'People believe that an earthquake destroyed the ancient city.', cue: 'The ancient city', a: ['The ancient city is believed to have been destroyed by an earthquake.'], why: 'The destruction came earlier and the city is the object: *to have been* + past participle.' },
-            { q: 'It is reported that the company is developing a new treatment.', cue: 'The company', a: ['The company is reported to be developing a new treatment.'], why: 'Something in progress now: *to be* + *-ing*.' },
-            { q: 'Experts estimate that the project cost twice the original budget.', cue: 'The project', a: ['The project is estimated to have cost twice the original budget.'], why: 'Present estimate, past cost: *to have* + past participle.' },
-            { q: 'It is alleged that the scientist invented some of his results.', cue: 'The scientist', a: ['The scientist is alleged to have invented some of his results.'], why: '*Allege* for an accusation not yet proved. The inventing came earlier: perfect infinitive.' },
-            { q: 'People say that there are risks that nobody has studied yet.', cue: 'There', a: ['There are said to be risks that nobody has studied yet.', 'There are said to be risks nobody has studied yet.'], why: 'Keep *there* as the subject: *There are said to be…*.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['The vaccine is said to be developed in 2019.', 'The vaccine is said to have been developed in 2019.', 'A past date needs the perfect infinitive, and the vaccine is developed by someone: passive.'],
+            ['The trial was suggested to stop.', 'It was suggested that the trial (should) stop.', '*Suggest, propose, recommend* only work with the *it*-pattern.'],
+            ['It is believed the drug to be safe.', 'The drug is believed to be safe.', 'Do not mix the two patterns: either *It is believed that the drug is safe* or *The drug is believed to be safe*.'],
+            ['She is said being the best in her field.', 'She is said to be the best in her field.', 'In the personal pattern the reporting verb is followed by a *to*-infinitive.'],
+            ['He is alleged that he stole the data.', 'He is alleged to have stolen the data.', 'The person subject takes an infinitive, not a *that*-clause.'],
+          ] },
+          { t: 'reading', title: 'Inquiry into missing results', md: 'An inquiry has been opened at a university laboratory after a junior researcher raised concerns about a drug trial. The trial’s leader is alleged to have removed results that did not support the treatment, and several files are reported to have been deleted shortly before an inspection.\n\nThe researcher who raised the alarm is understood to have been collecting evidence for almost a year. She is not thought to have spoken to the press. There are believed to be at least two other studies that relied on the same data, and these are now expected to be reviewed.\n\nThe university said it was “cooperating fully”. It has been suggested that the trial should be repeated by an independent team.' },
+        ],
+        [
+          { t: 'ex', kind: 'select', h: 'Choose the infinitive that gives the right time and voice.', items: [
+            { q: 'The fossil is thought ___ about 30 million years ago.', o: ['to have formed', 'to form', 'to be forming'], why: 'The formation was long before the belief: perfect infinitive.' },
+            { q: 'The new guidelines are expected ___ next spring.', o: ['to be introduced', 'to introduce', 'to have been introduced'], why: 'Future and passive: someone will introduce them.' },
+            { q: 'The two universities are said ___ on a joint project at the moment.', o: ['to be collaborating', 'to have collaborated', 'to collaborate'], why: '*At the moment*: an action in progress, so the continuous infinitive.' },
+            { q: 'The patients were later found ___ the wrong dose for weeks.', o: ['to have been receiving', 'to receive', 'to be received'], why: 'An activity over a period before the discovery: *to have been* + *-ing*.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
-            { s: 'The treatment is thought [to have been] safe for most patients, so doctors use it widely.', a: ['to be'], why: 'Its safety is a present fact, at the same time as the belief: the simple infinitive *to be*.' },
-            { s: 'The two laboratories are known [to work] together since 2019.', a: ['to have worked', 'to have been working'], why: '*Since* shows a period up to now, so the infinitive must be perfect.' },
-            { s: 'There [is] believed to be several errors in the paper.', a: ['are'], why: 'After *there*, the verb agrees with the noun that follows: *several errors*, so *are*.' },
-            { s: 'The missing samples are believed [to have stolen] from the laboratory.', a: ['to have been stolen'], why: 'The samples did not steal anything; they were stolen. Perfect passive: *to have been* + past participle.' },
+          { t: 'ex', kind: 'transform', h: 'In the format of the C1 Advanced exam (Reading and Use of English Part 4): complete the second sentence so that it has a similar meaning to the first, using the word given. Write the whole sentence; the new part has three to six words, including the word given.', items: [
+            { q: 'People believe that the original samples were destroyed in the fire.', cue: 'BELIEVED', a: ['The original samples are believed to have been destroyed in the fire.'], why: 'An earlier passive event: *are believed to have been destroyed* (six words).' },
+            { q: 'Experts think that the two companies are working on similar treatments.', cue: 'THOUGHT', a: ['The two companies are thought to be working on similar treatments.'], why: 'In progress now: *are thought to be working* (five words).' },
+            { q: 'According to the newspaper, the company paid scientists to stay silent.', cue: 'ALLEGED', a: ['The company is alleged to have paid scientists to stay silent.'], why: 'An unproved accusation about the past: *is alleged to have paid*.' },
+            { q: 'People say that there were three earlier versions of the report.', cue: 'SAID', a: ['There are said to have been three earlier versions of the report.'], why: '*There* stays the subject: *are said to have been* (five words).' },
+            { q: 'It is expected that the committee will publish its decision on Friday.', cue: 'EXPECTED', a: ['The committee is expected to publish its decision on Friday.'], why: 'A future event: *is expected to publish*.' },
+            { q: 'Someone proposed that the experiment should be stopped.', cue: 'WAS', a: ['It was proposed that the experiment should be stopped.', 'It was proposed that the experiment be stopped.'], why: '*Propose* only works with the *it*-pattern: *It was proposed that*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Part 4** of C1 Advanced you write **three to six words**, including the word given, which you must not change. Each answer usually tests **two things** (here, for example, the reporting pattern and the right infinitive), and each part earns a mark. Contractions count as two words.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor, as a newsreader would.', tutor: 'lena', items: [
+            { a: 'The samples are reported to have been contaminated.' },
+            { a: 'The scientist is understood to be considering an offer from abroad.' },
+            { a: 'There are thought to be very few safe alternatives.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 2 */
     {
       id: 'p2',
-      title: 'The discovery of…',
-      about: 'Turn verbs and adjectives into nouns to write in a formal, academic style.',
-      art: 'snail',
+      title: 'The discovery of the gene',
+      about: 'Turn verbs and adjectives into nouns to write in the compact, impersonal style of formal and academic English.',
+      art: 'teacup',
       spreads: [
         [
-          { t: 'text', md: 'Academic and scientific writing often expresses actions and qualities as **nouns** instead of verbs and adjectives. This is called **nominalisation**. It makes a text more compact and impersonal, and it lets the writer put a whole process at the start of a sentence, as its subject.\n\nWhen you nominalise, other parts of the sentence change too. The subject or object of the verb often moves into an *of* phrase or a possessive, adverbs become adjectives, and a new verb such as *led to, caused, showed* or *resulted in* links the ideas.' },
+          { t: 'text', md: 'Compare two ways of saying the same thing:\n\n*Scientists **discovered** the gene in 2003, and because of this doctors **changed** how they **treat** the disease.*\n\n***The discovery of** the gene in 2003 **led to** a change in **the treatment of** the disease.*\n\nThe second sentence uses **nominalisation**: the actions (*discover, change, treat*) have become nouns. Formal English does this constantly, for good reasons. A noun can be the **subject** of a sentence, so a process becomes the thing you are talking about. It removes the people (*scientists, doctors*), which makes the text **impersonal**. It lets you add **adjectives** where you would otherwise need adverbs and clauses (*a sharp reduction in costs*). And it lets the next sentence **refer back** neatly: ***This discovery** was later questioned.*\n\nThe verbs that hold the sentence together then become general ones: *lead to, result in, give rise to, bring about, cause, follow, prompt*.' },
+          { t: 'table', caption: 'Verb or adjective, noun and the word that follows', explain: ['head'], head: ['Verb or adjective', 'Noun', 'Typical phrase'], rows: [
+            ['reduce, increase, rise, decline', 'reduction, increase, rise, decline', 'a reduction **in** emissions'],
+            ['approve, refuse, remove', 'approval, refusal, removal', 'approval **for** a new drug'],
+            ['rely, depend, insist', 'reliance, dependence, insistence', 'reliance **on** animal models'],
+            ['oppose, object', 'opposition, objection', 'opposition **to** the plan'],
+            ['analyse, emphasise, hypothesise', 'analysis, emphasis, hypothesis', 'an analysis **of** the data'],
+            ['affect, impact', 'effect, impact', 'the impact **of** X **on** Y'],
+            ['able, likely, accurate, complex', 'ability, likelihood, accuracy, complexity', 'the likelihood **of** success'],
+          ] },
+        ],
+        [
+          { t: 'text', md: 'Nouns also bring their own **collocations**, and at C1 these matter as much as the noun itself. You do not *make* research; you **carry out** or **conduct** it. A finding **raises** concerns, a technique **poses** a risk, a government **places** restrictions **on** something, and a team **reaches** a conclusion.\n\nThere is a limit. Strings of nouns joined by *of* quickly become hard to read: *the implementation of the reduction of the use of pesticides* is grammatical but tiring. Keep one or two nominalisations per clause and let a real verb do some of the work: *reducing the use of pesticides*.' },
           { t: 'examples', items: [
-            { s: 'Scientists **discovered** penicillin by accident. → The **discovery of** penicillin was an accident.', n: 'The object of *discover* becomes *of* + noun.' },
-            { s: 'Emissions **fell sharply**, which surprised researchers. → The **sharp fall in** emissions surprised researchers.', n: 'The adverb *sharply* becomes the adjective *sharp*. *Fall* is followed by *in*.' },
-            { s: 'The public **did not trust** the study. → **Public distrust of** the study grew.', n: 'The subject *the public* becomes the adjective *public*.' },
-            { s: 'If you **fail to** obtain consent, the research cannot continue. → **Failure to** obtain consent means the research cannot continue.', n: 'Some nouns keep the *to* infinitive: *failure to, refusal to, decision to, ability to*.' },
+            { s: '**The introduction of** stricter rules **resulted in** a decline **in** complaints.', n: 'Two nominalisations linked by a general verb.' },
+            { s: 'The team **carried out an analysis of** over two thousand patient records.', n: 'Collocation: *carry out an analysis*.' },
+            { s: '**The complexity of** the immune system **poses a challenge** for researchers.', n: 'An adjective (*complex*) turned into the subject.' },
+            { s: '**This development** has **given rise to** serious ethical questions.', n: '*This* + noun refers back to the previous sentence.' },
           ] },
         ],
         [
-          { t: 'table', caption: 'Nouns and their prepositions', explain: ['head'], quiz: true, head: ['Verb or adjective', 'Noun + preposition'], rows: [
-            ['reduce', 'a reduction in'],
-            ['increase', 'an increase in'],
-            ['discover', 'the discovery of'],
-            ['depend', 'dependence on'],
-            ['emerge', 'the emergence of'],
-            ['refuse', 'a refusal to'],
-            ['reluctant', 'reluctance to'],
-            ['available', 'the availability of'],
-            ['responsible', 'responsibility for'],
-            ['aware', 'awareness of'],
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['a reduction of pollution', 'a reduction in pollution', 'A change in an amount takes *in*. *Of* gives the size: *a reduction of 10%*.'],
+            ['the impact to the environment', 'the impact on the environment', '*Impact* and *effect* take *on*.'],
+            ['They made a research on bees.', 'They carried out research on bees.', '*Research* is uncountable and goes with *carry out* or *conduct*.'],
+            ['The analyse of the results took weeks.', 'The analysis of the results took weeks.', 'The noun is *analysis* (plural *analyses*).'],
+            ['the reliance of technology', 'reliance on technology', '*Rely on* gives *reliance on*.'],
           ] },
-          { t: 'tip', art: 'owl', md: 'Do not turn every verb into a noun. Two or three nominalisations in one sentence make it heavy and hard to read. Notice also that nouns can hide who did something: *There was a failure to inform the patients* does not say who failed. When you read about ethics, ask who was responsible.' },
-        ],
-        [
-          { t: 'ex', kind: 'wordform', h: 'Complete each sentence with a noun formed from the word in capitals.', items: [
-            { q: 'There has been a sharp ___ in the number of animals used in testing.', base: 'reduce', a: ['reduction'], why: '*Reduce* → *reduction*, followed by *in*.' },
-            { q: 'The ___ of the new species surprised the whole team.', base: 'discover', a: ['discovery'], why: '*Discover* → *discovery*, followed by *of*.' },
-            { q: 'Patients must give their ___ before they take part in a trial.', base: 'permit', a: ['permission'], why: '*Permit* → *permission*. *Give permission* is a fixed collocation.' },
-            { q: 'The study points to our growing ___ on digital devices.', base: 'depend', a: ['dependence', 'dependency'], why: '*Depend* → *dependence* (or *dependency*), followed by *on*.' },
-            { q: 'There is little public ___ of the risks involved.', base: 'aware', a: ['awareness'], why: '*Aware* → *awareness*, followed by *of*.' },
-            { q: 'The ___ of cheap genetic tests has raised new ethical questions.', base: 'available', a: ['availability'], why: 'Adjectives in *-able* often form nouns in *-ability*.' },
-            { q: 'The company’s ___ to share its data was widely criticised.', base: 'refuse', a: ['refusal'], why: '*Refuse* → *refusal*, followed by *to* + infinitive.' },
+          { t: 'dialogue', title: 'Editing a report', lines: [
+            { who: 'Helen', s: 'Your draft says “we tested the drug and fewer people got ill”. It sounds like a diary.' },
+            { who: 'Daniel', s: 'So what would you write instead?' },
+            { who: 'Helen', s: 'Something like “testing of the drug resulted in a reduction in infection rates”.' },
+            { who: 'Daniel', s: 'That’s more formal, but I don’t want ten nouns in every sentence.' },
+            { who: 'Helen', s: 'Fair point. One or two per clause is plenty. The aim is clarity, not decoration.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'select', h: 'Choose the preposition that follows the noun.', items: [
-            { q: 'The report calls for a reduction ___ the use of antibiotics in farming.', o: ['in', 'of', 'on'], why: '*A reduction in* something: the thing that becomes smaller.' },
-            { q: 'Scientists still have a limited understanding ___ how the disease spreads.', o: ['of', 'on', 'to'], why: '*An understanding of* something.' },
-            { q: 'Who should take responsibility ___ the mistakes in the trial?', o: ['for', 'of', 'on'], why: '*Responsibility for* something, as in *responsible for*.' },
-            { q: 'Her refusal ___ sign the agreement delayed the project.', o: ['to', 'of', 'for'], why: '*Refusal* keeps the pattern of *refuse*: *to* + infinitive.' },
-            { q: 'The emergence ___ new technologies often raises difficult questions.', o: ['of', 'in', 'from'], why: '*The emergence of* something: the moment it appears.' },
+          { t: 'ex', kind: 'transform', h: 'Rewrite each sentence in a more formal style. Start with the words given.', items: [
+            { q: 'Because the government delayed the decision, the project lost its funding.', cue: 'The government’s delay', a: ['The government’s delay in making the decision led to the loss of funding for the project.', 'The government’s delay in making the decision resulted in the loss of funding for the project.', 'The government’s delay in making the decision caused the project to lose its funding.', 'The government’s delay led to the project losing its funding.', 'The government’s delay resulted in the project losing its funding.', 'The government’s delay caused the project to lose its funding.'], why: '*Delay* becomes a noun, followed by *in* + *-ing*; a general verb such as *led to* links cause and result.' },
+            { q: 'Many people objected strongly to the new law.', cue: 'There was', a: ['There was strong objection to the new law.', 'There was strong opposition to the new law.', 'There was a strong objection to the new law.'], why: 'The adverb *strongly* becomes the adjective *strong* before the noun.' },
+            { q: 'The researchers analysed the data carefully.', cue: 'The researchers carried out', a: ['The researchers carried out a careful analysis of the data.'], why: '*Analyse carefully* becomes *a careful analysis of*.' },
           ] },
-          { t: 'ex', kind: 'gap', h: 'Rewrite in a formal style. Complete each sentence with one noun.', items: [
-            { q: 'The government decided to fund the project, which pleased scientists. → The government’s ___ to fund the project pleased scientists.', a: ['decision'], why: '*Decide to* → *decision to*. The subject becomes a possessive.' },
-            { q: 'Researchers analysed the samples carefully, and this revealed several errors. → Careful ___ of the samples revealed several errors.', a: ['analysis'], why: '*Analyse* → *analysis*. The adverb *carefully* becomes the adjective *careful*.' },
-            { q: 'Temperatures rose steadily, and this worried farmers. → The steady ___ in temperatures worried farmers.', a: ['rise', 'increase'], why: '*Rise* is both a verb and a noun. The noun takes *in*.' },
-            { q: 'Many patients were unwilling to take part, which slowed the trial. → The ___ of many patients to take part slowed the trial.', a: ['unwillingness', 'reluctance'], why: '*Unwilling* → *unwillingness*; *reluctance* means the same.' },
+          { t: 'ex', kind: 'gap', h: 'Write the preposition that follows the noun.', items: [
+            { q: 'There has been a sharp rise ___ the cost of medicines.', a: ['in'], why: 'A change in an amount: *a rise in*.' },
+            { q: 'The study looked at the effect of screen time ___ sleep.', a: ['on'], why: '*the effect of X on Y*.' },
+            { q: 'Critics point to our growing dependence ___ a few large companies.', a: ['on'], why: '*depend on*, *dependence on*.' },
+            { q: 'Scientists are still looking for a solution ___ the problem.', a: ['to'], why: '*a solution to*, *an answer to*, *a key to*.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'sort', h: 'Which ending does the noun take? Sort the words.', groups: ['-tion / -sion', '-ment', '-ance / -ence', '-ity'], items: [
-            { s: 'investigate', g: 0, why: '*Investigate* → *investigation*.' },
-            { s: 'conclude', g: 0, why: '*Conclude* → *conclusion*.' },
-            { s: 'develop', g: 1, why: '*Develop* → *development*.' },
-            { s: 'assess', g: 1, why: '*Assess* → *assessment*.' },
-            { s: 'interfere', g: 2, why: '*Interfere* → *interference*.' },
-            { s: 'exist', g: 2, why: '*Exist* → *existence*.' },
-            { s: 'complex', g: 3, why: '*Complex* → *complexity*.' },
-            { s: 'secure', g: 3, why: '*Secure* → *security*.' },
+          { t: 'ex', kind: 'wordform', h: 'In the format of the C1 Advanced exam (Reading and Use of English Part 3): read the text about animal testing and use the word in capitals to form a word that fits each gap.', items: [
+            { q: 'The ___ of a new vaccine usually takes many years.', base: 'develop', a: ['development'], why: 'A noun after *The*: *development*.' },
+            { q: 'Critics question the ___ of results that come from animal studies.', base: 'rely', a: ['reliability'], why: 'The quality of being reliable: *reliability*, two steps from the verb.' },
+            { q: 'There is growing public ___ to experiments on primates.', base: 'oppose', a: ['opposition'], why: 'A noun followed by *to*: *opposition*.' },
+            { q: 'Every study must first receive ___ from an ethics committee.', base: 'approve', a: ['approval'], why: 'A noun after *receive*: *approval*.' },
+            { q: 'Some argue that such experiments are ___ unnecessary today.', base: 'large', a: ['largely'], why: 'An adverb before an adjective: *largely* (= mostly).' },
+            { q: 'Others stress the ___ of finding alternatives that work as well.', base: 'difficult', a: ['difficulty'], why: 'A noun after *the*: *difficulty*.' },
+            { q: 'Computer models have already led to a ___ fall in the number of animals used.', base: 'signify', a: ['significant'], why: 'An adjective before *fall*: *significant*.' },
+            { q: 'For many people, the suffering involved remains simply ___.', base: 'justify', a: ['unjustifiable'], why: 'The meaning is negative, and *remains* needs an adjective: prefix *un-* and suffix *-able*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Part 3** of C1 Advanced the words often need **two or three changes**: a prefix, a suffix and sometimes a change inside the word (*rely, reliable, reliability*; *justify, unjustifiable*). Decide the word class first, then read the whole sentence for meaning: is it positive or negative, singular or plural?' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these formal sentences after the tutor.', tutor: 'kofi', items: [
+            { a: 'The discovery of the gene led to a change in treatment.' },
+            { a: 'There is growing opposition to testing on animals.' },
+            { a: 'The team carried out a careful analysis of the data.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 3 */
     {
       id: 'p3',
-      title: 'There is little doubt that…',
-      about: 'Show exactly how sure you are, from certain to unclear, in formal English.',
+      title: 'It remains unclear whether',
+      about: 'Say exactly how certain the evidence allows you to be, from there is no doubt that to it remains to be seen whether.',
       art: 'cat',
       spreads: [
         [
-          { t: 'text', md: 'In research, a careful writer shows how strong the evidence is. Formal English has many fixed phrases for this. Many of them begin with *it* or *there*, which keeps the style impersonal: the claim is about the evidence, not about the writer.' },
-          { t: 'table', caption: 'From certain to unknown', explain: ['head', 'col0'], head: ['How sure?', 'Phrases'], rows: [
-            ['Certain', 'There is little doubt that… / It is beyond doubt that… / The evidence clearly shows that…'],
-            ['Probable', 'It seems highly likely that… / In all likelihood, … / There is strong evidence that…'],
-            ['Possible', 'It may well be that… / There is some evidence that… / It cannot be ruled out that…'],
-            ['Doubtful', 'It is doubtful whether… / There is little evidence that… / It seems unlikely that…'],
-            ['Unknown', 'It remains unclear whether… / It is open to question whether… / It is not yet known whether…'],
+          { t: 'text', md: 'Good scientific writing never claims more than the evidence shows, and never less. At B2 you used *must, might, probably* and *definitely*. At C1 you need a wider scale and, above all, phrases that **organise a whole sentence** around how certain you are.\n\nSome phrases are followed by a ***that*-clause** because they introduce a fact: *There is **no doubt that**…, It is **beyond doubt that**…, The evidence **suggests that**…* Others introduce an open question and are followed by ***whether*** (or *how, why, what*): *It **remains unclear whether**…, It is **debatable whether**…, It **remains to be seen whether**…* You cannot be unclear *that* something is true; you can only be unclear *whether* it is.\n\nWatch two traps. ***There is little doubt that** X* means you are **almost certain** (little = almost no doubt). And *likely* takes a *to*-infinitive (*The trial is likely to fail*), but *probable* does not: *It is probable that the trial will fail.*' },
+          { t: 'table', caption: 'A scale of certainty', explain: ['head', 'col0'], head: ['How sure', 'Expressions', 'Example'], rows: [
+            ['Certain', 'there is no doubt that, it is beyond doubt that, undoubtedly, be bound to', 'The results **are bound to** attract criticism.'],
+            ['Almost certain', 'there is little doubt that, in all likelihood, be almost certain to', '**In all likelihood**, the trial will be extended.'],
+            ['Probable', 'be likely to, may well, there is a strong possibility that, the evidence points to', 'The drug **may well** prove effective.'],
+            ['Possible', 'could conceivably, it is not inconceivable that, there is a chance that', 'It **is not inconceivable that** the virus will return.'],
+            ['Uncertain', 'it remains unclear whether, it is debatable whether, it remains to be seen whether', '**It remains to be seen whether** the ban will work.'],
+            ['Improbable', 'be unlikely to, it is doubtful whether, there is little evidence that', 'The method **is unlikely to** replace surgery.'],
           ] },
         ],
         [
+          { t: 'text', md: 'Academic writers also **hedge**: they soften a claim so that it matches their data. Verbs such as *appear to, seem to, tend to* and *suggest*, and phrases such as *to some extent* or *in most cases*, are not a sign of weakness. They show the reader that the writer knows the limits of the study.\n\n*The treatment **cures** the disease.* (too strong for one small trial)\n*The treatment **appears to reduce** symptoms **in most cases**.* (matches the evidence)\n\nThe opposite move, **boosting**, uses *clearly, undoubtedly, there is overwhelming evidence that* when the evidence really is strong. Using boosters for weak evidence is a quick way to lose a reader’s trust.' },
           { t: 'examples', items: [
-            { s: 'There is **little doubt** that the climate is warming.', n: '*Little doubt* means almost no doubt. The writer is nearly certain.' },
-            { s: 'There is **little evidence** that the supplement improves memory.', n: '*Little evidence* means almost no evidence. The writer thinks the claim is probably false.' },
-            { s: 'There is **a little evidence** that it may help older patients.', n: 'With *a*, the meaning is positive: some evidence, but not much.' },
-            { s: 'It **remains unclear whether** the effect lasts.', n: '*Whether* introduces a question that has no answer yet. *Remains* shows that people have been asking it for some time.' },
-            { s: 'The new findings **cast doubt on** earlier research.', n: '*Cast doubt on* means make people less sure about something.' },
-            { s: '**In all likelihood**, the trial will be extended.', n: 'Very probably. A comma follows it at the start of a sentence.' },
-          ] },
-          { t: 'tip', art: 'owl', md: '*There is no doubt that* means you are certain. *I doubt that…* and *It is doubtful whether…* mean you think it is probably not true. After *unclear, doubtful, open to question* and *not known*, use *whether* (or *if* in less formal English), not *that*.' },
-        ],
-        [
-          { t: 'dialogue', title: 'Promising or proven?', lines: [
-            { who: 'Priya', s: 'Have you read the new study on sleep and memory? Everyone’s calling it a breakthrough.' },
-            { who: 'Kenji', s: 'I have. There’s little doubt that sleep matters, but I’m not convinced by their conclusions.' },
-            { who: 'Priya', s: 'Why not? The results seemed fairly clear to me.' },
-            { who: 'Kenji', s: 'Only up to a point. The sample was tiny, so it remains unclear whether the effect would hold in a larger group.' },
-            { who: 'Priya', s: 'Fair enough. Still, there’s some evidence that it works for older adults.' },
-            { who: 'Kenji', s: 'True, and in all likelihood someone will try to repeat it. Until then, I’d call it promising rather than proven.' },
-          ] },
-          { t: 'ex', kind: 'sort', h: 'How sure is the writer? Sort the phrases.', explain: ['groups'], groups: ['certain', 'probable', 'doubtful or unknown'], items: [
-            { s: 'There is little doubt that…', g: 0, why: 'Almost no doubt: the writer is nearly certain.' },
-            { s: 'It is beyond doubt that…', g: 0, why: '*Beyond doubt* means certain.' },
-            { s: 'The evidence clearly shows that…', g: 0, why: '*Clearly shows* presents the claim as proved.' },
-            { s: 'In all likelihood, …', g: 1, why: 'Very probable, but not certain.' },
-            { s: 'It seems highly likely that…', g: 1, why: '*Highly likely* is strong, but *seems* keeps a little caution.' },
-            { s: 'There is strong evidence that…', g: 1, why: 'Strong evidence, but not proof.' },
-            { s: 'It remains unclear whether…', g: 2, why: 'The question has not been answered.' },
-            { s: 'There is little evidence that…', g: 2, why: 'Almost no evidence: the claim is probably false.' },
-            { s: 'It is doubtful whether…', g: 2, why: 'The writer thinks it is probably not true.' },
+            { s: '**There is little doubt that** the climate is warming.', n: '*Little doubt* = almost no doubt: a strong claim.' },
+            { s: '**It remains unclear whether** the effect lasts beyond six months.', n: 'An open question: *whether*, not *that*.' },
+            { s: 'Prices **are bound to** rise once the patent expires.', n: '*Bound to* = a confident prediction.' },
+            { s: 'The results **appear to** confirm the original hypothesis.', n: 'A hedge: confident, but not claiming proof.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-            { q: 'There is ___ doubt that smoking damages health; the evidence is overwhelming.', o: ['little', 'a little', 'some'], why: '*Little doubt* means almost none, which matches *overwhelming* evidence.' },
-            { q: 'It remains unclear ___ the new treatment is better than the old one.', o: ['whether', 'that', 'what'], why: 'After *unclear*, an open question: *whether*.' },
-            { q: 'There is ___ evidence that the diet works, so doctors do not recommend it.', o: ['little', 'a little', 'strong'], why: 'Doctors do not recommend it, so there is almost no evidence: *little*.' },
-            { q: 'The latest data ___ doubt on the original theory.', o: ['casts', 'gives', 'makes'], why: '*Cast doubt on* is a fixed collocation.' },
-            { q: '___, the results will be confirmed by other teams.', o: ['In all likelihood', 'Beyond doubt', 'With likelihood'], why: '*In all likelihood* means very probably and fits a prediction about the future.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['It remains unclear that the drug works.', 'It remains unclear whether the drug works.', 'An open question needs *whether*.'],
+            ['The results are probable to be accurate.', 'The results are likely to be accurate.', '*Probable* does not take a *to*-infinitive: *It is probable that…*'],
+            ['It is bound that prices will rise.', 'Prices are bound to rise.', '*Bound* works only in the pattern *be bound to* + verb.'],
+            ['There is no doubt whether it is true.', 'There is no doubt that it is true.', 'No doubt means a fact: *that*.'],
+            ['The treatment will may well help.', 'The treatment may well help.', '*May well* replaces *will*; two modals cannot sit together.'],
           ] },
-          { t: 'ex', kind: 'odd', h: 'Find the odd one out.', items: [
-            { o: ['It is doubtful whether…', 'There is little doubt that…', 'It is beyond doubt that…', 'The evidence clearly shows that…'], why: 'The others express certainty. *It is doubtful whether* expresses doubt.' },
-            { o: ['There is little doubt that…', 'It remains unclear whether…', 'It is not yet known whether…', 'It is open to question whether…'], why: 'The others say the question is still open. *There is little doubt* says it is almost certain.' },
+          { t: 'dialogue', title: 'Before the press conference', lines: [
+            { who: 'Hannah', s: 'The press release says the vaccine “prevents all infections”. We can’t say that.' },
+            { who: 'Ravi', s: 'It worked in every volunteer, though.' },
+            { who: 'Hannah', s: 'Every one of forty. It appears to be highly effective, and that’s as far as we can go.' },
+            { who: 'Ravi', s: 'And the long-term effects?' },
+            { who: 'Hannah', s: 'It remains to be seen whether the protection lasts. Journalists are bound to ask, so let’s say so first.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Complete each phrase with one word.', items: [
-            { q: 'The evidence ___ shows that the vaccine is safe.', a: ['clearly', 'strongly', 'conclusively'], why: 'An adverb makes the claim strong: *clearly shows*.' },
-            { q: 'It ___ unclear whether the results apply to children.', a: ['remains', 'is', 'seems'], why: '*Remains unclear*: the question is still open.' },
-            { q: 'There is strong ___ that the two problems are connected.', a: ['evidence', 'reason'], why: '*Strong evidence that…* is a common collocation.' },
-            { q: 'It seems highly ___ that the project will be delayed.', a: ['likely', 'probable'], why: '*Highly* goes with *likely* and *probable*, not with *possible*.' },
-            { q: 'A link between the two diseases cannot be ruled ___.', a: ['out'], why: '*Rule out* means say that something is not possible. *Cannot be ruled out* means it is still possible.' },
+          { t: 'ex', kind: 'sort', h: 'How sure is the writer? Sort the sentences.', groups: ['Certain or almost certain', 'Probable or possible', 'Uncertain or improbable'], explain: ['groups'], items: [
+            { s: 'There is little doubt that the method works.', g: 0, why: '*Little doubt* = almost no doubt.' },
+            { s: 'The drug may well prove effective.', g: 1, why: '*May well* = probable.' },
+            { s: 'It is doubtful whether the plan will succeed.', g: 2, why: '*Doubtful whether* = probably not.' },
+            { s: 'The results are bound to be challenged.', g: 0, why: '*Bound to* = a confident prediction.' },
+            { s: 'It is not inconceivable that the virus will mutate.', g: 1, why: 'A double negative that means *it is possible*.' },
+            { s: 'It remains to be seen whether the ban will work.', g: 2, why: 'Nobody knows yet.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'In the format of the C1 Advanced exam (Reading and Use of English Part 1): read the text about a new treatment and choose the word that best fits each gap.', items: [
+            { q: 'There is ___ doubt that the new treatment has helped many patients.', o: ['little', 'few', 'short', 'minor'], why: 'The fixed phrase is *there is little doubt that*.' },
+            { q: 'However, it ___ unclear whether its benefits last.', o: ['remains', 'stays', 'keeps', 'rests'], why: '*It remains unclear whether* is the fixed pattern.' },
+            { q: 'Its high price is ___ to cause controversy.', o: ['bound', 'definite', 'obvious', 'positive'], why: 'Only *bound* works in *be … to* + verb with this meaning.' },
+            { q: 'In all ___, health services will negotiate a lower price.', o: ['likelihood', 'chance', 'possibility', 'prospect'], why: 'The fixed phrase is *in all likelihood*.' },
+            { q: 'It is open to ___ whether the trials were large enough.', o: ['question', 'query', 'enquiry', 'problem'], why: '*Open to question* = doubtful.' },
+            { q: 'A cheaper version ___ well appear within a few years.', o: ['may', 'can', 'will', 'must'], why: '*May well* means *will probably*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Part 1** the four options usually share a general meaning. What decides the answer is the **fixed phrase** or **grammar pattern** around the gap: *little doubt*, *remain unclear whether*, *in all likelihood*. Learn such phrases as whole chunks.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'arthur', items: [
+            { a: 'There is little doubt that the method works.' },
+            { a: 'It remains to be seen whether the protection lasts.' },
+            { a: 'The results appear to confirm the original hypothesis.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 4 */
     {
       id: 'p4',
-      title: 'Editing life',
-      about: 'Read a feature on gene editing, and notice its reporting structures, nouns and language of certainty.',
-      art: 'cactus',
+      title: 'Four views on gene editing',
+      about: 'Compare four writers’ views on gene editing in the format of C1 Advanced Reading Part 6, then plan an essay for Writing Part 1.',
+      art: 'dragon',
       spreads: [
         [
-          { t: 'reading', title: 'Editing life', md: 'Not long ago, the idea of changing the genes of a living thing with precision belonged to science fiction. Today, gene editing is carried out in laboratories around the world, and its arrival has raised questions that scientists alone cannot answer.\n\nThe technique is often compared to a pair of molecular scissors. A guide molecule leads a cutting enzyme to a chosen place in the DNA, where it makes a cut; the cell’s own repair system then does the rest. Work that once took years can now be done in weeks, and the low cost of the tools has led to their rapid adoption in medicine and agriculture.\n\nThe potential benefits are hard to ignore. Several inherited blood disorders are thought to be suitable for treatment in this way, and early results in some patients are said to have been encouraging. In farming, crops are being developed that are believed to tolerate drought better, which could matter greatly as summers become hotter.\n\nYet there is little doubt that the technology also carries risks. The scissors do not always cut where they should, and the long-term consequences of such errors remain unclear. The deepest concern, however, involves the editing of embryos. Changes made at this stage would be passed on to future generations, who cannot give their consent. It is open to question whether any medical benefit could justify that, and researchers who are alleged to have edited embryos without approval have faced strong criticism from their colleagues.\n\nWhere, then, should the line be drawn? Many ethicists draw a distinction between treatment and enhancement: the correction of a gene that causes serious disease is one thing; the selection of height or intelligence is quite another. Others point out that the boundary between the two is far from clear. What does seem certain is that decisions about this technology should not be left to laboratories alone. In all likelihood, it will require a public debate as careful and patient as the science itself.' },
+          { t: 'text', md: 'Gene editing lets scientists change the DNA of living cells with great precision. Changes to the cells of one patient affect only that person; changes to an **embryo** would be passed on to that person’s children, which is why they are called **heritable**. Read four short texts by different writers. Read each once for the writer’s **overall position**, then again to see **where they agree and disagree** with the others.' },
+          { t: 'reading', title: 'A: a geneticist', md: 'Treating adults with inherited blood disorders by editing their own cells is no longer science fiction, and there is little doubt that such therapies will become routine. Editing embryos is another matter. The tools are known to make occasional changes in the wrong place, and it remains unclear what the long-term consequences of those errors would be. That said, I would not rule heritable editing out for ever: once the technique is reliable, preventing a devastating disease could well be justified. As for the companies involved, their investment is precisely what turns laboratory discoveries into treatments patients can actually receive.' },
+          { t: 'reading', title: 'B: a philosopher', md: 'The debate is often presented as a question of safety, as if the only obstacle were technical. It is not. A child whose genes were altered before birth cannot consent, and nor can that child’s descendants. For that reason I believe heritable editing should be prohibited, however safe it becomes. I am also uneasy about where the money is coming from. Firms answerable to their shareholders are bound to look for markets beyond serious illness, and the step from treatment to enhancement is a short one once there is a profit to be made.' },
         ],
         [
-          { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
-            { q: 'Gene editing is now carried out in many countries.', a: 't', why: '“Gene editing is carried out in laboratories around the world.”' },
-            { q: 'The tools are so expensive that few laboratories use them.', a: 'f', why: 'Their low cost has led to their rapid adoption.' },
-            { q: 'Crops that tolerate drought better are already sold to farmers.', a: 'ng', why: 'The text says such crops are being developed, not whether any are sold.' },
-            { q: 'The writer says the technique always cuts in the right place.', a: 'f', why: '“The scissors do not always cut where they should.”' },
-            { q: 'Changes to embryos would affect people who are not yet born.', a: 't', why: 'They would be passed on to future generations.' },
-            { q: 'All ethicists agree on where treatment ends and enhancement begins.', a: 'f', why: 'Others point out that the boundary is far from clear.' },
-            { q: 'The writer thinks the public should take part in decisions about gene editing.', a: 't', why: 'Decisions should not be left to laboratories alone, and a public debate will be needed.' },
+          { t: 'reading', title: 'C: a parent', md: 'My son has a condition that will shorten his life. When I read experts arguing about risks that might appear in thirty years, I want to ask whether they have ever watched a child struggle to breathe. Every treatment carries risk; the question is whether the risk is worse than the disease. Above all, families like mine should have a voice. These decisions are usually made by committees of scientists and lawyers who will never live with the consequences, and that strikes me as the wrong way round.' },
+          { t: 'reading', title: 'D: a science journalist', md: 'Public discussion of gene editing tends to swing between excitement and panic. Neither helps. The honest position is that nobody yet knows how edited genes will behave over a lifetime, let alone over generations, and that uncertainty should make us patient rather than afraid. I see no reason to ban heritable editing in principle, but it is too early to allow it. Crucially, the choice should not be left to experts alone. Citizens’ assemblies, in which ordinary people hear the evidence and then decide, are a far better model than closed meetings of specialists.' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the C1 Advanced exam (Reading and Use of English Part 6): for each question, choose the writer (A, B, C or D).', items: [
+            { q: 'Which writer shares writer D’s view that the long-term effects of editing are not yet known?', o: ['Writer A', 'Writer B', 'Writer C'], why: 'A: *it remains unclear what the long-term consequences of those errors would be*; D: *nobody yet knows how edited genes will behave over a lifetime*.' },
+            { q: 'Which writer has a different opinion from the others about whether heritable editing could ever be acceptable?', o: ['Writer B', 'Writer A', 'Writer C', 'Writer D'], why: 'B wants it prohibited *however safe it becomes*; A would not rule it out, C accepts risk, D sees no reason to ban it in principle.' },
+            { q: 'Which writer expresses a similar view to writer C about who should make decisions?', o: ['Writer D', 'Writer A', 'Writer B'], why: 'C: families should have a voice, not only committees of experts; D: *the choice should not be left to experts alone*.' },
+            { q: 'Which writer takes a different view from writer B on the role of companies?', o: ['Writer A', 'Writer C', 'Writer D'], why: 'B fears profit will lead to enhancement; A sees company investment as what brings treatments to patients.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Look at the language in the text.', items: [
-            { q: '“Early results in some patients are said to have been encouraging.” Why *to have been*?', o: ['The results came before the reporting.', 'The results will come in the future.', 'The writer is certain about the results.'], why: 'The perfect infinitive shows that the results came earlier than the saying.' },
-            { q: '“The low cost of the tools has led to their rapid adoption.” Which sentence means the same?', o: ['Because the tools are cheap, people have started using them quickly.', 'The tools are cheap because people started using them quickly.', 'People have been slow to use the tools, although they are cheap.'], why: 'Two nominalisations: *the low cost* (the tools cost little) and *rapid adoption* (people adopted them rapidly).' },
-            { q: '“It is open to question whether any medical benefit could justify that.” What does the writer mean?', o: ['The question has not been answered, and people disagree.', 'The question has been answered clearly.', 'Nobody has asked this question before.'], why: '*Open to question* means still uncertain and still debated.' },
-            { q: '“There is little doubt that the technology also carries risks.” How sure is the writer?', o: ['Almost certain', 'Quite doubtful', 'Not sure at all'], why: '*Little doubt* means almost no doubt.' },
-          ] },
-          { t: 'ex', kind: 'match', h: 'Match the words from the text with their meanings.', pairs: [
-            ['precision', 'the quality of being exact'],
-            ['adoption', 'the decision to start using something'],
-            ['inherited', 'passed from parents to their children'],
-            ['consent', 'permission given by the person affected'],
-            ['enhancement', 'making normal abilities better than they are'],
+          { t: 'tip', art: 'owl', md: 'In **Part 6** the questions ask about **agreement and disagreement between writers**, not about details. Before you answer, write one line for each writer on each topic (safety, embryos, money, who decides). Then compare the lines. Writers rarely use the same words when they agree, so look for the same idea in different language.' },
+          { t: 'ex', kind: 'gap', h: 'Complete the phrases from the texts with one word.', items: [
+            { q: 'There is little ___ that such therapies will become routine.', a: ['doubt'], why: 'Writer A: an almost certain prediction.' },
+            { q: 'The tools are ___ to make occasional changes in the wrong place.', a: ['known'], why: 'Writer A: a passive reporting structure, *are known to*.' },
+            { q: 'Firms answerable to their shareholders are ___ to look for markets beyond serious illness.', a: ['bound'], why: 'Writer B: a confident prediction.' },
+            { q: 'Public discussion of gene editing ___ to swing between excitement and panic.', a: ['tends'], why: 'Writer D: a hedge, *tends to*.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'crossword', h: 'Complete the crossword with words from the text.', words: [
-            { a: 'scissors', clue: 'A cutting tool with two blades, used in the text as an image for gene editing.' },
-            { a: 'embryo', clue: 'A human or animal in the earliest stage of development.' },
-            { a: 'enzyme', clue: 'A substance in living cells that causes a chemical change, such as a cut in DNA.' },
-            { a: 'drought', clue: 'A long period without rain.' },
-            { a: 'ethicist', clue: 'An expert who studies what is morally right and wrong.' },
-            { a: 'boundary', clue: 'A line that marks where one thing ends and another begins.' },
+          { t: 'text', md: 'In **C1 Advanced Writing Part 1** you write an **essay** of **220 to 260 words**. You are given a topic and **three points**, and you discuss **two** of them, say which is more important and give reasons. The style is formal and balanced; this is where nominalisation, passive reporting and careful certainty earn you marks.\n\nA strong essay introduces the issue, gives one paragraph to each point you have chosen, compares them, and ends with a clear conclusion that answers the question. Present the opposite view fairly before you reject it.' },
+          { t: 'reading', title: 'Your essay task', md: 'Your class has watched a documentary about gene editing. You have made the notes below.\n\nWhich area should receive most public funding for gene-editing research? Medicine, farming, protecting endangered species.\n\nSome opinions expressed in the documentary: “It could end inherited diseases.” “Crops that resist drought could feed millions.” “We can’t edit our way out of destroying habitats.”\n\nWrite an essay discussing **two** of the areas in your notes. Explain which area should receive most funding, giving reasons in support of your answer. You may use the opinions, but use your own words as far as possible. Write 220 to 260 words. Your teacher will read and correct it.' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the C1 Advanced exam (Writing Part 1): choose the best answer about the task.', items: [
+            { q: 'How many of the three areas must you discuss?', o: ['Two, and say which should receive most funding.', 'All three, equally.', 'One, in detail.'], why: 'Part 1 asks for two of the three points and a decision between them.' },
+            { q: 'Which sentence suits the introduction best?', o: ['The development of precise gene-editing tools has raised the question of where limited public funds should be directed.', 'I think gene editing is amazing and we should do it everywhere.', 'In this essay I will tell you what the documentary said.'], why: 'Formal, impersonal, and it introduces the issue with a nominalisation.' },
+            { q: 'Which sentence handles the evidence most carefully?', o: ['Drought-resistant crops could well reduce hunger, although it remains unclear how quickly farmers would adopt them.', 'Drought-resistant crops will definitely end hunger.', 'Nobody knows anything about crops, so we cannot decide.'], why: 'A probable claim plus a fair limit: neither too strong nor too weak.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'sofia', items: [
+            { a: 'Heritable changes would be passed on to future generations.' },
+            { a: 'Nobody yet knows how edited genes will behave over a lifetime.' },
+            { a: 'The choice should not be left to experts alone.' },
           ] },
         ],
       ],
     },
   ],
   test: [
-    { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-      { q: 'The ship is believed ___ in a storm more than three hundred years ago.', o: ['to have sunk', 'to sink', 'to be sinking'], why: 'A past event reported now: *to have* + past participle.' },
-      { q: 'The new guidelines are expected ___ later this week.', o: ['to be announced', 'to announce', 'to have announced'], why: 'The guidelines are announced by someone, in the future: *to be* + past participle.' },
-      { q: '___ thought to be over a million people affected by the shortage.', o: ['There are', 'It is', 'They are'], why: 'Keep *there* as the subject; the verb agrees with *people*.' },
-      { q: 'Public ___ in the study fell after the errors were reported.', o: ['confidence', 'confident', 'confidently'], why: 'A noun is needed as the subject: *confidence in*.' },
-      { q: 'There is ___ evidence that the treatment works, so it is not offered to patients.', o: ['little', 'a little', 'plenty of'], why: 'It is not offered, so there is almost no evidence: *little*.' },
-      { q: 'It is not yet known ___ the drug has any side effects.', o: ['whether', 'that', 'which'], why: 'After *not known*, an open question: *whether*.' },
+    { t: 'ex', kind: 'select', h: 'Choose the correct form.', items: [
+      { q: 'The bridge is thought ___ by Roman engineers.', o: ['to have been built', 'to build', 'to have built'], why: 'Earlier and passive: *to have been built*.' },
+      { q: 'The two labs are believed ___ on the same problem right now.', o: ['to be working', 'to have worked', 'to work'], why: 'In progress now: continuous infinitive.' },
+      { q: 'It remains unclear ___ the treatment is safe for children.', o: ['whether', 'that', 'if not'], why: 'An open question: *whether*.' },
+      { q: 'The results are ___ to surprise many experts.', o: ['likely', 'probable', 'doubtful'], why: 'Only *likely* takes *to* + verb.' },
     ] },
-    { t: 'ex', kind: 'wordform', h: 'Complete each sentence with a noun formed from the word in capitals.', items: [
-      { q: 'The report calls for greater ___ for the safety of volunteers.', base: 'responsible', a: ['responsibility'], why: '*Responsible* → *responsibility*, followed by *for*.' },
-      { q: 'The ___ of the internet changed how scientists share their work.', base: 'emerge', a: ['emergence'], why: '*Emerge* → *emergence*, followed by *of*.' },
-      { q: 'Some doctors showed great ___ to accept the new method.', base: 'reluctant', a: ['reluctance'], why: '*Reluctant* → *reluctance*, followed by *to*.' },
+    { t: 'ex', kind: 'transform', h: 'Complete the second sentence so that it has a similar meaning, using the word given (three to six words).', items: [
+      { q: 'People say that the professor resigned after the scandal.', cue: 'SAID', a: ['The professor is said to have resigned after the scandal.'], why: 'An earlier action: *is said to have resigned*.' },
+      { q: 'People think there are several errors in the study.', cue: 'THOUGHT', a: ['There are thought to be several errors in the study.'], why: '*There* stays the subject: *are thought to be*.' },
+      { q: 'I am almost certain that the law will change.', cue: 'DOUBT', a: ['There is little doubt that the law will change.'], why: '*Little doubt* = almost certain.' },
     ] },
-    { t: 'ex', kind: 'transform', h: 'Rewrite each sentence. Start with the words given.', items: [
-      { q: 'People say that the professor has been writing the book for ten years.', cue: 'The professor', a: ['The professor is said to have been writing the book for ten years.'], why: 'An activity that has lasted up to now: *to have been* + *-ing*.' },
-      { q: 'It is thought that the documents were destroyed in a fire.', cue: 'The documents', a: ['The documents are thought to have been destroyed in a fire.'], why: 'Earlier and passive: *to have been* + past participle.' },
-      { q: 'In the past, people believed that the Earth was the centre of the universe.', cue: 'The Earth', a: ['The Earth was believed to be the centre of the universe.', 'The Earth was believed in the past to be the centre of the universe.', 'The Earth was once believed to be the centre of the universe.'], why: 'A past belief about the same time: past reporting verb + simple infinitive.' },
+    { t: 'ex', kind: 'wordform', h: 'Use the word in capitals to form a word that fits the gap.', items: [
+      { q: 'The ___ of the gene changed the way the disease is treated.', base: 'discover', a: ['discovery'], why: 'A noun after *The*.' },
+      { q: 'There is strong ___ to the new law.', base: 'oppose', a: ['opposition'], why: 'A noun followed by *to*.' },
+      { q: 'Critics doubt the ___ of the results.', base: 'rely', a: ['reliability'], why: 'The quality of being reliable.' },
+      { q: 'Such cruelty is completely ___.', base: 'justify', a: ['unjustifiable'], why: 'A negative adjective.' },
     ] },
-    { t: 'ex', kind: 'gap', h: 'Complete each sentence with one word.', items: [
-      { q: 'The new findings cast ___ on the earlier study.', a: ['doubt'], why: '*Cast doubt on* means make people less sure of something.' },
-      { q: 'In all ___, the project will need more funding.', a: ['likelihood'], why: '*In all likelihood* means very probably.' },
-      { q: 'The sudden ___ in temperature killed many of the plants.', a: ['drop', 'fall', 'rise', 'increase', 'change'], why: 'A noun after the adjective *sudden*, followed by *in*.' },
+    { t: 'ex', kind: 'gap', h: 'Write one word in each gap.', items: [
+      { q: 'The new policy led to a reduction ___ waste.', a: ['in'], why: 'A change in an amount: *in*.' },
+      { q: 'Screens have an effect ___ sleep.', a: ['on'], why: '*an effect on*.' },
+      { q: 'The team carried ___ an analysis of the samples.', a: ['out'], why: '*carry out an analysis*.' },
+      { q: 'Prices are ___ to rise once the patent expires.', a: ['bound'], why: '*be bound to*: a confident prediction.' },
+    ] },
+    { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+      { s: 'The vaccine is said [to be developed] in 2019.', a: ['to have been developed'], why: 'A past date: perfect passive infinitive.' },
+      { s: 'They [made] a research on memory.', a: ['carried out', 'conducted', 'did'], why: '*carry out* or *conduct research*.' },
+      { s: 'It is [bound that] prices will rise.', a: ['likely that', 'certain that', 'probable that'], why: '*Bound* only works as *be bound to* + verb.' },
     ] },
   ],
 };

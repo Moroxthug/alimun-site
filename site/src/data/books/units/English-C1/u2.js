@@ -1,244 +1,295 @@
-// English C1, unit 2 (docs/BOOKS.md). Draft for native-teacher review.
+// English C1, unit 2, second edition (docs/LESSONS_PLAN.md, "Books, second edition"). Draft for native-teacher review.
+// Memory and narrative: past habits and the future in the past, participle clauses and fronting in a story, the
+// language of memory, and a memoir extract as a gapped text. Exam: C1 Advanced.
 export const UNIT = {
   id: 'u2',
   title: 'Memory and narrative',
-  goal: 'Tell stories with style: emphasis, suspense and a clear time frame.',
-  art: 'ghost',
-  tags: { skills: ['grammar', 'writing', 'reading'], topics: ['inversion', 'negative-adverbials', 'would-used-to', 'future-in-the-past', 'participle-clauses', 'fronting', 'storytelling', 'memoir'], goals: ['foundations'] },
+  goal: 'Tell stories about the past with would, used to and the future in the past, tighten a narrative with participle clauses and fronting, talk about memory precisely and follow how a memoir is built.',
+  art: 'snail',
+  tags: { skills: ['grammar', 'vocabulary', 'reading', 'listening', 'speaking'], topics: ['past-habits', 'future-in-the-past', 'participle-clauses', 'fronting', 'memory', 'narrative', 'memoir'], goals: ['foundations'] },
   pages: [
+    /* ------------------------------------------------------------------ Lesson 1 */
     {
       id: 'p1',
-      title: 'Never have I…',
-      about: 'Put the auxiliary before the subject after negative and limiting adverbials, for emphasis.',
-      art: 'parrot',
-      spreads: [
-        [
-          { t: 'text', md: 'When a sentence begins with a **negative** or **limiting** adverbial (*never, rarely, hardly, not until, only then*), the subject and the auxiliary change places, as in a question. This is called **inversion**. It makes a statement more dramatic and is typical of storytelling, speeches and formal writing.' },
-          { t: 'examples', items: [
-            { s: '**Never have I** seen such a beautiful sunrise.', n: 'Neutral: *I have never seen such a beautiful sunrise.* The inversion adds drama.' },
-            { s: '**Rarely do we** get the chance to travel together.', n: 'With the present or past simple, add *do*, *does* or *did*, as in a question.' },
-            { s: '**Little did she know** that her life was about to change.', n: '*Little* means *not at all* here. A classic way to build suspense in a story.' },
-            { s: '**Under no circumstances should you** open this door.', n: 'Very strong and formal: a warning or rule.' },
-          ] },
-        ],
-        [
-          { t: 'text', md: 'Some adverbials describe **time and sequence**, and are useful for saying that one event followed another very quickly, or happened only after something else.' },
-          { t: 'table', caption: 'Inversion for time and sequence', explain: ['head', 'col0'], head: ['Meaning', 'Structure', 'Example'], rows: [
-            ['B happened immediately after A', '*Hardly / Scarcely* + had + subject + past participle… *when*', 'Hardly **had we** sat down when the phone rang.'],
-            ['B happened immediately after A', '*No sooner* + had + subject + past participle… *than*', 'No sooner **had I** arrived than it started to rain.'],
-            ['B happened only after A', '*Not until* + clause, then inversion', 'Not until I got home **did I** notice the missing wallet.'],
-            ['B happened only at that point', '*Only then / Only after / Only when*', 'Only when the lights came on **did we** see the damage.'],
-            ['two things, both surprising', '*Not only* + inversion… *but (also)*', 'Not only **did he** forget my name, but he also called me Bethan.'],
-          ] },
-        ],
-        [
-          { t: 'tip', art: 'owl', md: 'With *Not until* and *Only when* / *Only after*, the inversion is in the **second** clause, not the first: *Only after the meeting had ended **did I** realise my mistake.* And remember the partners: *hardly… when*, *no sooner… than*.' },
-          { t: 'text', md: 'Inversion sounds unnatural in relaxed conversation if it is overused. Save it for a moment of emphasis: the turning point of a story, the end of a speech, a strong warning. One well-placed inversion is worth more than five.' },
-          { t: 'ex', kind: 'choice', h: 'Choose the correct form.', items: [
-            { q: 'Seldom ___ such a talented young musician.', o: ['have I heard', 'I have heard', 'I heard'], why: 'After *seldom*, invert the auxiliary and subject: *have I heard*.' },
-            { q: 'No sooner had she left the house ___ she remembered her keys.', o: ['than', 'when', 'that'], why: '*No sooner* is always followed by *than*.' },
-            { q: 'Hardly had the film started ___ the power went off.', o: ['when', 'than', 'then'], why: '*Hardly* and *scarcely* are followed by *when* (or *before*).' },
-            { q: 'Not until he apologised ___ to speak to him again.', o: ['did she agree', 'she agreed', 'she did agree'], why: 'With *Not until*, the inversion comes in the second clause.' },
-            { q: 'Little ___ that we were being watched.', o: ['did we realise', 'we realised', 'had realised we'], why: '*Little* + inversion with *did* for the past simple.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'transform', h: 'Rewrite the sentence, starting with the words given.', items: [
-            { q: 'I have never been so embarrassed in my life.', cue: 'Never', a: ['Never have I been so embarrassed in my life.', 'Never in my life have I been so embarrassed.'], why: '*Never* + *have I* + past participle.' },
-            { q: 'As soon as we arrived, the guide began the tour.', cue: 'No sooner', a: ['No sooner had we arrived than the guide began the tour.'], why: '*No sooner had* + subject + participle + *than*.' },
-            { q: 'We only understood the danger when we saw the map.', cue: 'Only when', a: ['Only when we saw the map did we understand the danger.'], why: 'The inversion goes in the second clause: *did we understand*.' },
-            { q: 'He was rude, and he was also late.', cue: 'Not only', a: ['Not only was he rude, but he was also late.', 'Not only was he rude but he was also late.', 'Not only was he rude, he was also late.'], why: 'With *be*, invert *was* and the subject: *Not only was he…*' },
-            { q: 'You must not tell anyone about this under any circumstances.', cue: 'Under no circumstances', a: ['Under no circumstances must you tell anyone about this.', 'Under no circumstances should you tell anyone about this.'], why: 'Invert the modal and the subject: *must you* or *should you*.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
-            { s: 'Rarely [we see] snow in this part of the country.', a: ['do we see'], why: 'After *Rarely*, add *do* and invert: *do we see*.' },
-            { s: 'No sooner had the guests arrived [when] the music started.', a: ['than'], why: '*No sooner* pairs with *than*.' },
-            { s: 'Only after the exam [I realised] I had misread the question.', a: ['did I realise', 'did I realize'], why: 'After *Only after* + time phrase, invert the main clause.' },
-          ] },
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'Scarcely had I closed my eyes when the alarm went off.', why: '*Scarcely had* + subject + participle, then *when*.' },
-            { a: 'At no time did anyone mention the extra cost.', why: '*At no time* + *did* + subject + verb.' },
-          ] },
-        ],
-      ],
-    },
-    {
-      id: 'p2',
-      title: 'We would spend whole summers there',
-      about: 'Talk about past habits with would and used to, and about plans that changed with was going to and was about to.',
+      title: 'It was to have been our year',
+      about: 'Describe past habits with would, used to and keep -ing, and talk about plans seen from the past with was going to, was about to, was to and was to have.',
       art: 'snail',
       spreads: [
         [
-          { t: 'text', md: 'Both *used to* and *would* describe **repeated actions** in the past that no longer happen. But only *used to* describes past **states**: *I used to have long hair*, never *I would have long hair*. *Would* is very common in nostalgic storytelling, once the past time has been made clear.' },
+          { t: 'text', md: 'At B2 you learned that **used to** and **would** both describe past habits. At C1 you need to choose between them for **style**, and to add the forms that show a speaker’s **attitude** to a habit.\n\n**Used to** works for actions and states that are no longer true: *I used to live by the sea. I used to swim every day.* **Would** works only for **repeated actions**, never for states (*I would live by the sea* is wrong). It sounds **nostalgic** and literary, and it needs a time already set: writers often open with *used to* and continue with *would*.\n\n*Every summer we **used to** go to my aunt’s farm. We**’d** get up at dawn, and she**’d** send us out to collect the eggs.*\n\nWhen a habit **annoyed** someone, English uses the past continuous with **always**, **forever** or **constantly**: *He **was always borrowing** money.* A stressed **would** criticises behaviour that was typical: *She **would** leave the door open, every single time.*' },
+          { t: 'table', caption: 'Talking about past habits', explain: ['head', 'col1'], head: ['Form', 'Use', 'Example'], rows: [
+            ['used to + infinitive', 'past habits and states, now over', 'We used to have a dog.'],
+            ['would + infinitive', 'repeated actions only; nostalgic, written', 'On Sundays he’d cook for everyone.'],
+            ['was always / forever + -ing', 'a habit that annoyed someone', 'She was forever losing her keys.'],
+            ['stressed would', 'typical, irritating behaviour', 'He would say that, wouldn’t he?'],
+            ['past simple', 'any finished past fact, with or without repetition', 'I walked to school every day.'],
+          ] },
+        ],
+        [
+          { t: 'text', md: 'The **future in the past** describes what was in the future **at that time**. Each form moves one of the B2 future forms back in time.\n\n**Was going to** reports a plan or a prediction, and often suggests it did not happen: *I was going to call, but I forgot.* **Was about to** and **was on the point of** describe something that was going to happen immediately: *We were about to leave when the phone rang.* **Was due to** gives a timetable: *The ferry was due to sail at six.*\n\nTwo forms are typical of C1 narrative. **Was to** + infinitive tells the reader what **really did happen later**, like a look into the future: *It was a meeting that **was to change** her life.* **Was to have** + past participle describes a plan that was **not** carried out, in a formal tone: *The bridge **was to have opened** in May, but the work was delayed.* A simple **would** can do the same as *was to*: *She **would later describe** it as the best year of her life.*' },
           { t: 'examples', items: [
-            { s: 'Every August we **would** drive to the coast, and my father **would** sing the whole way.', n: 'Repeated actions. The time (*Every August*) is set first, then *would* carries the memory.' },
-            { s: 'We **used to** live in a tiny flat above a bakery.', n: 'A past state: only *used to*, not *would*.' },
-            { s: 'She **would** always leave her shoes by the door.', n: '*Would* + *always* can suggest a typical, slightly annoying habit.' },
-            { s: 'I **didn’t use to** like olives, but now I love them.', n: 'Negative: *didn’t use to*. In questions: *Did you use to…?*' },
-          ] },
-          { t: 'tip', art: 'owl', md: 'Do not use either form for a single event or for how long something lasted: *I lived in Rome for three years*, not *I used to live in Rome for three years*. And *be used to* + *-ing* is different: it means *be accustomed to*.' },
-        ],
-        [
-          { t: 'text', md: 'To talk about a **past plan or expectation**, use the future seen from the past. These forms often suggest that the plan **did not happen** or was interrupted.' },
-          { t: 'table', caption: 'The future in the past', explain: ['head', 'col0'], head: ['Meaning', 'Example'], rows: [
-            ['an intention that may have changed', 'I **was going to** call you, but I fell asleep.'],
-            ['something on the point of happening', 'We **were about to** leave when the taxi arrived.'],
-            ['very close, more formal', 'She **was on the point of** resigning when they offered her a raise.'],
-            ['an arrangement that did not happen (formal)', 'They **were to have** married in June, but the wedding was cancelled.'],
-            ['destiny: what really happened later', 'It was a decision he **would** regret for the rest of his life.'],
-          ] },
-          { t: 'text', md: '*Was to* + infinitive tells the reader what really happened later, and is typical of biographies: *She left the village at sixteen. She was never to return.* The perfect form, *was to have* + participle, means the plan failed.' },
-        ],
-        [
-          { t: 'ex', kind: 'select', h: 'Choose the best form.', items: [
-            { q: 'When I was a child, I ___ a dog called Pepper.', o: ['used to have', 'would have', 'was having'], why: '*Have* meaning own is a state: *used to*, not *would*.' },
-            { q: 'In the evenings my grandmother ___ tell us stories about the war.', o: ['would', 'was going to', 'was about to'], why: 'A repeated action in the past, in a nostalgic description: *would*.' },
-            { q: 'I ___ to the gym this morning, but it was closed.', o: ['was going to go', 'used to go', 'would go'], why: 'A plan that did not happen: *was going to*.' },
-            { q: 'We ___ to give up when someone finally answered the door.', o: ['were about', 'used', 'would'], why: '*Be about to*: something on the point of happening.' },
-            { q: 'He left for Australia at twenty. He ___ never to see his parents again.', o: ['was', 'used', 'would'], why: '*Was to* + infinitive tells us what really happened later.' },
-            { q: 'I ___ live in Lisbon, but I moved back home in 2019.', o: ['used to', 'would', 'was about to'], why: '*Live* is a state here: only *used to* is possible.' },
+            { s: 'I **used to** be terrified of the dark.', n: 'A past state: *used to*, not *would*.' },
+            { s: 'My father **would** sing as he shaved.', n: 'A repeated action, told with affection.' },
+            { s: 'He **was forever** promising to fix the gate.', n: 'An irritating habit.' },
+            { s: 'We **were on the point of** giving up when the bus appeared.', n: 'Something that almost happened.' },
+            { s: 'Neither of them knew that they **were to meet** again forty years later.', n: '*Was to*: the narrator knows what happened next.' },
+            { s: 'The concert **was to have taken place** in the cathedral.', n: 'A plan that did not happen, in formal style.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'sort', h: 'Can you use *would* in the gap, or only *used to*?', groups: ['would or used to', 'only used to'], explain: ['groups'], items: [
-            { s: 'On Sundays we ___ walk to the river.', g: 0, why: 'A repeated action: both forms are possible.' },
-            { s: 'There ___ be a cinema on this corner.', g: 1, why: 'A past state (*there is*): only *used to*.' },
-            { s: 'My uncle ___ bring us sweets every time he visited.', g: 0, why: 'A repeated action: both forms work.' },
-            { s: 'I ___ believe in ghosts as a child.', g: 1, why: '*Believe* is a state verb: only *used to*.' },
-            { s: 'She ___ wear a red scarf to every match.', g: 0, why: 'A repeated action: both forms work.' },
-            { s: 'We ___ know everyone in the village.', g: 1, why: '*Know* is a state verb: only *used to*.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['When I was a child, I would have long hair.', 'When I was a child, I used to have long hair.', 'Having long hair is a state: *would* is only for actions.'],
+            ['I was used to walk to school.', 'I used to walk to school.', '*Be used to* + *-ing* means *be accustomed to*; the habit form is *used to* + infinitive.'],
+            ['We were about leaving when it rained.', 'We were about to leave when it rained.', '*About to* + infinitive.'],
+            ['The bridge was to open in May, but it didn’t.', 'The bridge was to have opened in May, but it didn’t.', 'For a plan that failed, use *was to have* + past participle.'],
           ] },
-          { t: 'ex', kind: 'gap', h: 'Complete with a form of *be going to*, *be about to* or *be to have*.', items: [
-            { q: 'I ___ (be going to / tell) you, but you found out first.', a: ['was going to tell'], why: 'A past intention that did not happen: *was going to* + infinitive.' },
-            { q: 'The concert ___ (be to / take) place in May, but it was postponed.', a: ['was to have taken'], why: 'A formal arrangement that failed: *was to have* + participle.' },
-            { q: 'Shh, the film ___ (be about to / start).', a: ['is about to start', '’s about to start'], why: '*Be about to*: something will happen very soon.' },
+          { t: 'dialogue', title: 'Looking at old photos', lines: [
+            { who: 'Nadia', s: 'Look, that’s the flat we used to live in. We’d sit on that balcony every evening.' },
+            { who: 'Rafael', s: 'And your brother was always climbing on the railing, I bet.' },
+            { who: 'Nadia', s: 'He would do that. Mum was on the point of selling the flat because of it.' },
+            { who: 'Rafael', s: 'Weren’t you going to move to Madrid that year?' },
+            { who: 'Nadia', s: 'We were to have moved in the spring, but my grandmother fell ill. I didn’t know it then, but that was to be her last summer.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'select', h: 'Choose the form that fits best.', items: [
+            { q: 'As a child I ___ afraid of dogs.', o: ['used to be', 'would be', 'was being'], why: 'A past state: only *used to* works.' },
+            { q: 'Every evening my grandfather ___ his pipe and tell us stories.', o: ['would light', 'was lighting', 'had lit'], why: 'A repeated past action, nostalgic: *would*.' },
+            { q: 'The match ___ at three, but it was cancelled.', o: ['was to have started', 'was to start', 'would start'], why: 'A plan that did not happen: *was to have* + past participle.' },
+            { q: 'I had no idea then that this young man ___ my husband.', o: ['was to become', 'was to have become', 'used to become'], why: 'What really happened later: *was to* + infinitive.' },
+            { q: 'She ___ interrupting me, which drove me mad.', o: ['was forever', 'would be', 'used'], why: 'An irritating habit: *was forever* + *-ing*.' },
+          ] },
+          { t: 'ex', kind: 'transform', h: 'Rewrite the sentence with the word given. Keep the meaning.', items: [
+            { q: 'I almost left the party when Sam arrived.', cue: 'point', gap: 'I was ___ the party when Sam arrived.', a: ['on the point of leaving'], why: '*Be on the point of* + *-ing* = be about to.' },
+            { q: 'They planned to marry in June, but they never did.', cue: 'have', gap: 'They were ___ in June.', a: ['to have married', 'to have got married', 'to have been married'], why: 'A failed plan: *was to have* + past participle.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'gap', h: 'In the format of the C1 Advanced exam (Reading and Use of English Part 2): read the text about a childhood memory and write one word in each gap.', items: [
+            { q: 'When I was small, my family ___ to spend every August on a farm in the hills.', a: ['used'], why: '*Used to* + infinitive for a past habit.' },
+            { q: 'My uncle ___ wake us at five, and we’d follow him out to the barn in our pyjamas.', a: ['would'], why: 'A repeated action, continued with *we’d*.' },
+            { q: 'He was ___ telling us to keep quiet, but we never did.', a: ['always', 'forever', 'constantly'], why: 'An annoying habit: *was always* + *-ing*.' },
+            { q: 'One morning we were just ___ to open the barn door when we heard a strange noise.', a: ['about'], why: '*Be about to*: something on the point of happening.' },
+            { q: 'Inside, a cow was on the ___ of giving birth.', a: ['point', 'verge'], why: '*On the point of* + *-ing*.' },
+            { q: 'My uncle had been ___ to call the vet, but there was no time.', a: ['going', 'meaning', 'planning'], why: 'A plan in the past that did not happen.' },
+            { q: 'It was a morning that ___ to stay with me for the rest of my life.', a: ['was'], why: '*Was to* + infinitive: what happened later.' },
+            { q: 'That calf, I later learned, ___ to have been sold, but my uncle never had the heart.', a: ['was'], why: '*Was to have been sold*: a plan that was not carried out.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Part 2** every gap needs exactly **one word**, and most of them are grammar words: auxiliaries, prepositions, articles, parts of fixed phrases. Read the whole sentence before you write, and check whether the word you need is part of a pattern such as *on the point of* or *was to have*. Contractions count as two words, so they never fill a gap.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'omar', items: [
+            { a: 'We’d spend whole summers at my grandmother’s house.' },
+            { a: 'We were on the point of giving up when the bus appeared.' },
+            { a: 'It was a decision that was to change my life.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 2 */
     {
-      id: 'p3',
-      title: 'Having left early…',
-      about: 'Use participle clauses and fronting to make a narrative tighter and more dramatic.',
-      art: 'dog',
+      id: 'p2',
+      title: 'Down the hill came the cart',
+      about: 'Tighten a narrative with participle clauses, and change the order of a sentence for drama with fronting and inversion after place adverbials.',
+      art: 'dragon',
       spreads: [
         [
-          { t: 'text', md: 'Participle clauses replace a full clause and make writing more compact. At B2 you met the basic forms. At C1, use the **perfect** forms to show that one action was **complete** before another, and the **passive** forms when the subject receives the action.' },
-          { t: 'table', caption: 'Participle clauses for narrative', explain: ['head', 'col0'], head: ['Meaning', 'Form', 'Example'], rows: [
-            ['at the same time, or because', '-ing', '**Hearing** a noise, she turned round.'],
-            ['complete before the main action', 'having + participle', '**Having packed** the car, we set off.'],
-            ['passive, complete before', 'having been + participle', '**Having been warned** about the roads, we drove slowly.'],
-            ['passive, describes the subject', 'past participle', '**Exhausted** by the climb, he sat down.'],
-            ['negative', 'not + participle', '**Not knowing** what to say, I stayed silent.'],
-            ['background circumstance', 'with + object + -ing', '**With the rain pouring** down, we ran for shelter.'],
+          { t: 'text', md: 'A **participle clause** is a short clause with no subject and no tense, built on a participle. Writers use it to pack two events into one sentence and to make a story move faster. The subject of the participle must be the **subject of the main clause**.\n\nThe **present participle** (*-ing*) shows an action at the same time, or a reason: *Opening the drawer, she found the letter.* *Not knowing what to say, I said nothing.* The **perfect participle** (*having* + past participle) shows that one action was finished **before** the other: *Having read the letter twice, she burned it.* The **past participle** has a passive meaning: *Built in 1890, the house had never been modernised.* *Asked about the money, he went pale.*\n\nYou can keep a conjunction for clarity: *After leaving school, While waiting for the bus, Once opened, Though warned of the danger.*' },
+          { t: 'table', caption: 'Participle clauses', explain: ['head', 'col1'], head: ['Form', 'Meaning', 'Example'], rows: [
+            ['-ing', 'same time, or a reason', 'Hearing a noise, he turned round.'],
+            ['not + -ing', 'a negative reason', 'Not wanting to wake her, I left quietly.'],
+            ['having + past participle', 'an earlier action', 'Having lost the map, we asked a farmer.'],
+            ['past participle', 'passive meaning', 'Shocked by the news, she sat down.'],
+            ['noun + participle', 'a clause with its own subject (formal)', 'The rain having stopped, we set off.'],
           ] },
         ],
         [
-          { t: 'text', md: 'The subject of a participle clause must be the **same** as the subject of the main clause. If not, the sentence becomes confusing or comic: *Walking down the street, the trees looked beautiful* suggests that the trees were walking. This mistake is called a **dangling participle**.' },
+          { t: 'text', md: '**Fronting** means moving a part of the sentence to the beginning to create drama or to link it to what came before. After an **adverbial of place or direction**, a verb of position or movement (*be, stand, sit, lie, come, go, run*) often comes **before** its subject: ***Down the hill came** the cart. **In the corner stood** an old piano.* This only happens when the subject is a **noun**: with a pronoun, the normal order stays: *Down the hill it came.* The same rule explains *Here comes the bus* and *Here it comes*.\n\nYou can also front a participle phrase to delay the subject: ***Sitting** at the back of the room **was** a man I had never seen.* And in speech, people front an object to contrast it: *Spiders I can cope with. Snakes I can’t.*' },
           { t: 'examples', items: [
-            { s: '**Having finished** the exam, the students left the room.', n: 'Correct: the students finished and the students left.' },
-            { s: '**Having finished** the exam, the room was emptied.', n: 'Wrong: the room did not finish the exam. Say *When the exam had finished, the room was emptied.*' },
-            { s: '**Not having been told** about the change, I went to the old office.', n: 'Negative + perfect + passive: nobody had told me before I went.' },
+            { s: '**Having said** goodbye, she walked out without looking back.', n: 'The goodbye came first.' },
+            { s: '**Left** alone in the house, the boy began to explore.', n: 'Passive meaning: he had been left alone.' },
+            { s: '**Up** the stairs **ran** the children, shouting.', n: 'Direction adverbial + verb + noun subject.' },
+            { s: 'On the table **lay** a single white envelope.', n: 'Fronting makes the reader wait for the envelope.' },
+            { s: 'Off **they** went, without a word.', n: 'With a pronoun subject, no inversion.' },
+            { s: '**Standing** in the doorway **was** my father.', n: 'A fronted participle delays the surprise.' },
           ] },
         ],
         [
-          { t: 'text', md: '**Fronting** moves part of a sentence to the beginning to create emphasis, contrast or suspense. After adverbs of place and direction, a short verb can come before the subject: *Down came the rain. Out ran the children. In the corner stood an old piano.* With a pronoun, keep the normal order: *Out they ran.*' },
-          { t: 'examples', items: [
-            { s: '**Strange as it may seem**, I have no memory of that day.', n: 'Adjective + *as* + clause = *Although it may seem strange*.' },
-            { s: '**Tired though we were**, we kept walking.', n: 'Adjective + *though* + clause: a concession, fronted for emphasis.' },
-            { s: '**That** part of the story I’ve never told anyone.', n: 'The object is fronted to contrast it with other parts of the story.' },
-            { s: 'At the end of the corridor **stood a tall man** in a grey coat.', n: 'Place phrase, then verb, then subject: a classic way to introduce a character.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['Walking down the street, a car hit me.', 'Walking down the street, I was hit by a car.', 'A dangling participle: the car was not walking. The subjects must match.'],
+            ['Having finish the work, he left.', 'Having finished the work, he left.', '*Having* + past participle.'],
+            ['Down the hill came it.', 'Down the hill it came.', 'No inversion with a pronoun subject.'],
+            ['Being cold, I put on a coat.', 'Feeling cold, I put on a coat.', 'Natural but less common with *be*; *feeling* or *As I was cold* sounds better.'],
           ] },
-          { t: 'tip', art: 'owl', md: 'Fronting with place and inversion (*Into the room walked…*) works with verbs of position and movement: *be, stand, sit, lie, come, go, walk, run*. It is a literary device, so use it in stories rather than in emails.' },
+          { t: 'reading', title: 'The night of the storm', md: 'Woken by the wind, I lay still and listened. Somewhere below, a door was banging. Not wanting to wake my sister, I crept down the stairs in the dark.\n\nAt the bottom stood my grandmother, a candle in her hand. Having lived through forty winters on that coast, she was not easily frightened, but that night her face was white. Out of the dark came a sound I would never forget: the roar of the sea breaking over the harbour wall.' },
         ],
         [
-          { t: 'ex', kind: 'transform', h: 'Rewrite with a participle clause, starting with the words given.', items: [
-            { q: 'After she had read the letter, she burst into tears.', cue: 'Having', a: ['Having read the letter, she burst into tears.'], why: 'The reading was complete before the crying: *having* + participle.' },
-            { q: 'Because I didn’t know the way, I asked a stranger.', cue: 'Not', a: ['Not knowing the way, I asked a stranger.'], why: 'A negative reason: *not* + *-ing*.' },
-            { q: 'He had been told to wait, so he sat down by the door.', cue: 'Having been', a: ['Having been told to wait, he sat down by the door.'], why: 'Passive and complete before: *having been* + participle.' },
-            { q: 'The house was built in 1820 and has survived two floods.', cue: 'Built', a: ['Built in 1820, the house has survived two floods.'], why: 'A passive participle describes the subject: *Built in 1820, the house…*' },
-            { q: 'Although it may sound strange, I enjoyed being ill as a child.', cue: 'Strange as', a: ['Strange as it may sound, I enjoyed being ill as a child.'], why: 'Adjective + *as* + clause, fronted.' },
+          { t: 'ex', kind: 'select', h: 'Choose the participle that fits.', items: [
+            { q: '___ the bill, we left the restaurant.', o: ['Having paid', 'Paid', 'Being paid'], why: 'The paying came first: *having* + past participle.' },
+            { q: '___ in 1920, the hotel still has its original lift.', o: ['Opened', 'Opening', 'Having opened'], why: 'Passive meaning: the hotel was opened.' },
+            { q: '___ how to reply, she stayed silent.', o: ['Not knowing', 'Knowing not', 'Not known'], why: 'A negative reason: *Not* + *-ing*.' },
+            { q: 'Into the room ___ , carrying a huge cake.', o: ['walked my mother', 'walked she', 'my mother did walk'], why: 'Direction adverbial + verb + noun subject.' },
+          ] },
+          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+            { s: 'Into the garden [ran they], laughing.', a: ['they ran'], why: 'With a pronoun subject, keep the normal order.' },
+            { s: '[Having arrive] late, we missed the speeches.', a: ['Having arrived'], why: '*Having* + past participle.' },
+            { s: 'Not [know] the way, we stopped to ask a farmer.', a: ['knowing'], why: 'A negative reason: *Not* + *-ing*.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Which sentence is correct?', items: [
-            { q: '', o: ['Having lost my map, I had to ask for directions.', 'Having lost my map, directions were needed.', 'Having lost my map, a man helped me.'], why: 'Only in the first sentence is the subject of *having lost* (I) also the subject of the main clause.' },
-            { q: '', o: ['Down came the rain.', 'Down the rain came it.', 'Down came it.'], why: 'With a noun subject, the verb can come first: *Down came the rain*. With a pronoun: *Down it came*.' },
-            { q: '', o: ['Exhausted though she was, she finished the race.', 'Though exhausted she was, she finished the race.', 'Exhausted though was she, she finished the race.'], why: 'Adjective + *though* + subject + verb.' },
+          { t: 'ex', kind: 'transform', h: 'In the format of the C1 Advanced exam (Reading and Use of English Part 4): complete the second sentence so that it has a similar meaning to the first. Use between three and six words, including the word given, and do not change the word given.', items: [
+            { q: 'After she had finished the report, she sent it to her manager.', cue: 'having', gap: '___ , she sent it to her manager.', a: ['Having finished the report', 'Having completed the report'], why: 'An earlier action: *Having* + past participle (four words).' },
+            { q: 'Because I didn’t want to be late, I took a taxi.', cue: 'wanting', gap: '___ late, I took a taxi.', a: ['Not wanting to be'], why: 'A negative reason: *Not wanting to be* (four words).' },
+            { q: 'An old wooden chest stood in the corner of the attic.', cue: 'stood', gap: 'In the corner of the attic ___ chest.', a: ['stood an old wooden'], why: 'Place adverbial fronted, then verb and noun subject (four words).' },
+            { q: 'I only realised what had happened when I got home.', cue: 'until', gap: 'It ___ that I realised what had happened.', a: ['was not until I got home', 'wasn’t until I got home'], why: '*It was not until… that…* (six words, with *wasn’t* counted as two).' },
           ] },
-          { t: 'ex', kind: 'build', h: 'Build the sentence. Two words do not belong.', items: [
-            { a: 'In the doorway stood an old woman with a lamp.', extra: ['did', 'was'], why: 'Place phrase, then the verb *stood*, then the subject: no auxiliary needed.' },
-            { a: 'With the clock ticking, she opened the envelope.', extra: ['was', 'had'], why: '*With* + object + *-ing* describes the background.' },
+          { t: 'tip', art: 'owl', md: 'Part 4 often tests **two changes at once**, for example a participle clause and a negative. Write the answer, then read the whole second sentence aloud in your head: if it does not sound like natural English, one of the two changes is missing.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor. Slow down before the subject.', tutor: 'sofia', items: [
+            { a: 'Having said goodbye, she walked out without looking back.' },
+            { a: 'Down the hill came an enormous lorry.' },
+            { a: 'Standing in the doorway was my father.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 3 */
+    {
+      id: 'p3',
+      title: 'It rings a bell',
+      about: 'Talk about memory precisely: collocations with memory and recollection, idioms for remembering and forgetting, and remember, remind and recall.',
+      art: 'ghost',
+      spreads: [
+        [
+          { t: 'text', md: 'Memories are rarely simply good or bad. English describes them by how **clear** they are (*a vivid, clear, hazy, vague, dim* memory), by how they **feel** (*a fond, happy, painful, bitter* memory) and by how **long** they last (*a lasting, abiding, distant* memory). The formal word **recollection** is used with *a clear / distinct / vague recollection*, and with ***have no recollection of***: *I have no recollection of signing it.*\n\nThe verbs matter too. You **remember** something yourself; something or someone **reminds** you of it or to do it. **Recall** and **recollect** are more formal and suggest an effort: *I can’t recall her name.* **Look back on** and **reminisce about** mean thinking or talking about the past with pleasure. Memories can **come flooding back**, a song can **bring back** memories, and you can **jog someone’s memory** by giving them a clue.' },
+          { t: 'table', caption: 'Idioms for remembering and forgetting', explain: ['head', 'col1'], head: ['Idiom', 'Meaning', 'Example'], rows: [
+            ['ring a bell', 'seem familiar', 'Her name rings a bell.'],
+            ['on the tip of my tongue', 'almost remembered', 'The word is on the tip of my tongue.'],
+            ['slip your mind', 'be forgotten', 'Sorry, your birthday completely slipped my mind.'],
+            ['jog someone’s memory', 'help them remember', 'Maybe this photo will jog your memory.'],
+            ['a memory like a sieve', 'a very bad memory', 'I’ve got a memory like a sieve.'],
+            ['in living memory', 'in the time people now alive remember', 'The worst flood in living memory.'],
+            ['commit something to memory', 'learn it by heart', 'She committed the poem to memory.'],
+          ] },
+        ],
+        [
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['Remind me to buy bread? I forgot it.', 'Remember to buy bread? I forgot.', 'You *remember*; someone else *reminds* you.'],
+            ['This song remembers me of my school.', 'This song reminds me of my school.', '*Remind someone of something*.'],
+            ['I have a dark memory of the house.', 'I have a dim memory of the house.', 'An unclear memory is *dim* or *hazy*.'],
+            ['I don’t have any recollection to sign it.', 'I have no recollection of signing it.', '*Recollection of* + *-ing*.'],
+            ['Your name rings me a bell.', 'Your name rings a bell.', 'No person after *ring*.'],
+          ] },
+          { t: 'dialogue', title: 'Do you remember…?', lines: [
+            { who: 'Emma', s: 'Do you remember that teacher who used to keep a parrot in the classroom?' },
+            { who: 'Joe', s: 'It rings a bell, but only vaguely. Mr… no, it’s on the tip of my tongue.' },
+            { who: 'Emma', s: 'Mr Fenwick! I have such a vivid memory of that bird shouting during exams.' },
+            { who: 'Joe', s: 'Oh, that’s jogged my memory. It all comes flooding back now.' },
+            { who: 'Emma', s: 'Funny how you can forget something for twenty years and then remember every detail.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'colloc', h: 'Which words go naturally with the key word?', items: [
+            { key: 'a … memory', o: ['vivid', 'hazy', 'fond', 'tall', 'dim'], a: [0, 1, 2, 4], why: 'Memories are vivid, hazy, fond or dim; not *tall*.' },
+            { key: 'a … recollection', o: ['distinct', 'vague', 'clear', 'loud'], a: [0, 1, 2], why: '*Recollection* collocates with how clear it is.' },
+            { key: 'bring back', o: ['memories', 'the past', 'a reminder', 'a bell'], a: [0, 1], why: 'Something *brings back memories* or *the past*.' },
+          ] },
+          { t: 'ex', kind: 'bank', h: 'Complete each sentence with a word from the bank.', extra: ['remembered', 'tongue'], items: [
+            { q: 'Sorry, the meeting completely ___ my mind.', a: 'slipped', why: '*Slip your mind* = be forgotten.' },
+            { q: 'This old photo might ___ your memory.', a: 'jog', why: '*Jog someone’s memory*.' },
+            { q: 'The smell of the bakery ___ me of my grandmother.', a: 'reminds', why: '*Remind someone of*.' },
+            { q: 'I have no ___ of ever meeting him.', a: 'recollection', why: '*Have no recollection of*.' },
+            { q: 'It was the coldest winter in living ___ .', a: 'memory', why: '*In living memory*.' },
+          ] },
+        ],
+        [
+          { t: 'reading', title: 'Three extracts', md: '**Extract one.** You hear a man talking about a school reunion. “I was dreading it, to be honest. I’d been telling myself for weeks that I wouldn’t know anyone. Then I walked in and a woman called my name, and it took me a full minute. Her face rang a bell, but it was only when she laughed that it all came back: we used to sit together in chemistry. What struck me was that she remembered things about me I’d completely forgotten, which was a little humbling.”\n\n**Extract two.** You hear a woman talking about her grandfather. “He had a memory like a sieve for everyday things. He was forever losing his glasses. But ask him about the war and he could recall the name of every man in his unit. I used to think it was selective. Now I think the old memories were simply rehearsed so often that they’d become a kind of story, polished every time he told it.”\n\n**Extract three.** You hear part of a radio programme about memory. “We tend to assume that a vivid memory is an accurate one. In fact, the research suggests that the confidence we feel about a memory and its accuracy are only loosely connected. Each time we recall an event, we rebuild it, and small details shift. That doesn’t make our memories worthless, but it should make us a little more modest about them.”' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the C1 Advanced exam (Listening Part 1): read the three extracts, as if you were hearing them, and choose the answer which fits best.', items: [
+            { q: 'Extract one. How did the man feel before the reunion?', o: ['anxious that he would feel out of place', 'excited to see his old friends', 'annoyed that he had been invited'], why: '*I was dreading it… I wouldn’t know anyone.*' },
+            { q: 'Extract one. What surprised him at the reunion?', o: ['how much the woman remembered about him', 'how much the woman had changed', 'that nobody recognised him'], why: '*She remembered things about me I’d completely forgotten.*' },
+            { q: 'Extract two. What does the woman now believe about her grandfather’s memory?', o: ['His old memories had been shaped by retelling.', 'He chose to forget unpleasant events.', 'His memory was better than he admitted.'], why: '*Rehearsed so often… polished every time he told it.*' },
+            { q: 'Extract two. What does *a memory like a sieve* tell us about him?', o: ['He forgot ordinary, everyday things.', 'He could not remember the war.', 'He remembered faces but not names.'], why: 'A sieve lets things through: he kept *losing his glasses*.' },
+            { q: 'Extract three. What is the speaker’s main point?', o: ['Feeling sure of a memory does not make it accurate.', 'Vivid memories are usually correct.', 'Most of our memories are invented.'], why: '*Confidence… and its accuracy are only loosely connected.*' },
+            { q: 'Extract three. What is the speaker’s attitude to human memory?', o: ['It is valuable but should be treated with caution.', 'It is completely unreliable.', 'It improves each time we use it.'], why: '*That doesn’t make our memories worthless, but it should make us a little more modest.*' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Listening Part 1** you hear three short, unrelated extracts, each twice, with **two questions** on each. The questions often ask about **feelings, attitude or purpose**, not facts. Listen for the speaker’s overall view: a single word like *dreading* or *modest* is often the key.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'mei', items: [
+            { a: 'Her name rings a bell, but I can’t place her.' },
+            { a: 'I have no recollection of saying that.' },
+            { a: 'That song always brings back memories of my first job.' },
+          ] },
+        ],
+      ],
+    },
+    /* ------------------------------------------------------------------ Lesson 4 */
     {
       id: 'p4',
-      title: 'The house on Harbour Street',
-      about: 'Read a memoir extract and look at how the writer creates time, emphasis and suspense.',
+      title: 'The boat he never sailed',
+      about: 'Read a memoir extract with paragraphs removed, put them back as in C1 Advanced Reading Part 7, and see how the writer uses the grammar of the unit.',
       art: 'suitcase',
       spreads: [
         [
-          { t: 'reading', title: 'The house on Harbour Street', md: 'My grandmother’s house stood at the top of Harbour Street, so close to the sea that in winter the windows would be white with salt by morning. Every summer of my childhood, my brother and I were sent there for six weeks, and every summer my grandmother would greet us at the gate with the same words: “You’ve grown. Shoes off.”\n\nShe was not, by any ordinary measure, a warm woman. She used to keep the good biscuits in a tin on the highest shelf, and she would count them. She never hugged us, rarely laughed, and treated our questions as a kind of minor illness that would pass if ignored. And yet, strange as it may seem, I have never felt as safe anywhere as I did in that house.\n\nThe days had their own fixed shape. We would wake to the sound of her radio, eat porridge in silence, and then be released, like dogs, onto the beach. Having been told to stay away from the rocks, we went straight to the rocks. Having been told to be back by six, we were back by six, because nobody wanted to discover what would happen if we were not.\n\nIt was the summer I turned eleven that everything changed. I remember it as the summer of the storm, although it was only one night. Hardly had we gone to bed when the wind began to rise. By midnight it was shaking the whole house. Not knowing what else to do, I crept downstairs, and there, at the kitchen table, sat my grandmother, fully dressed, a candle in front of her and a box of photographs open beside it.\n\nI was about to go back upstairs when she saw me. I expected to be sent away. Instead, she pulled out a chair. For the next three hours, with the storm battering the windows, she told me about the man in the photographs: my grandfather, whom I had never met. He had been a fisherman. He had gone out one October morning in weather much like this, and he had not come back. Not until that night did I understand why she sat up every time the wind blew from the north.\n\nShe told the story flatly, the way she told us to take our shoes off, and only once did her voice change. “We were going to move inland,” she said. “He had found us a house with a garden. We were to have moved that spring.”\n\nBy the morning the storm had passed. She was back at the stove, the radio was on, and nothing was ever said about the night before. But from then on, there would always be an extra biscuit beside my plate. Little did I know that it was the last summer we would spend in that house. She sold it the following year and moved, finally, inland.' },
+          { t: 'text', md: 'In a **memoir**, the writer moves between the past as it was lived and the present in which it is understood. Watch for the unit’s grammar doing this work: *would* for habits, *was to* for what happened later, participle clauses and fronting for the moments that matter.\n\nSix paragraphs have been removed from the extract. Read the main text first, then the paragraphs on the next page.' },
+          { t: 'reading', title: 'The boat he never sailed', md: 'My grandfather kept a boat he never sailed. It sat on a trailer beside his house in Kilbrae, its paint flaking a little more each winter, and every June he would announce that this was the year he would take it out. It never was. I was eight when I first heard the promise and nineteen when I last heard it, and it did not occur to me until much later that he had never meant to keep it.\n\n**Gap 1**\n\nI asked him about it only once. Sitting on the harbour wall one evening, legs dangling over the water, I wanted to know why a man who loved the sea would not go out on it. He looked at me for a long time, as if deciding how much an eleven-year-old could be trusted with, and then he changed the subject.\n\n**Gap 2**\n\nI had no recollection of anyone mentioning this, and when I said so, she seemed surprised. It was not a secret, she said; it was simply not discussed. Everyone in the town had known. Everyone, it seemed, except me.\n\n**Gap 3**\n\nI went back to Kilbrae the following spring, meaning to look at the boat again. I was too late. The house had been sold, and the trailer stood empty at the side of the road, its tyres flat.\n\n**Gap 4**\n\nI like to think they did. I have a vivid picture, which owes nothing to memory and everything to wishful thinking, of that boat out on the water at last, its new paint bright against the grey.\n\n**Gap 5**\n\nHe did not hear me come in, and I did not stay. I have never told anyone about it until now. It seemed, even then, to belong to him.\n\n**Gap 6**\n\nI am older now than he was that summer. I have no boat and no shed. But I have, I find, a habit of making promises I know I will not keep, and I have stopped apologising for it.' },
         ],
         [
-          { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
-            { q: 'The children spent their summers at their grandmother’s house every year.', a: 't', why: '“Every summer of my childhood, my brother and I were sent there for six weeks.”' },
-            { q: 'The grandmother often showed her affection physically.', a: 'f', why: '“She never hugged us.”' },
-            { q: 'The children obeyed every rule their grandmother gave them.', a: 'f', why: 'Told to stay away from the rocks, “we went straight to the rocks”.' },
-            { q: 'The writer’s brother also came downstairs during the storm.', a: 'ng', why: 'The text only mentions the writer going downstairs; it does not say what the brother did.' },
-            { q: 'The grandparents had planned to leave the coast.', a: 't', why: '“We were going to move inland… We were to have moved that spring.”' },
-            { q: 'The writer returned to the house the following summer.', a: 'f', why: 'It was “the last summer we would spend in that house”; she sold it the next year.' },
+          { t: 'reading', title: 'The removed paragraphs', md: '**A** The answer, when it came, came from my mother, years later and almost by accident. Her father, she told me, had worked on a fishing boat until the winter of 1962, when it went down off the point in a storm. Three men had been on board. Only he had come home.\n\n**B** The new owner remembered the boat well. She had sold it, she told me, to a couple from the mainland who were going to restore it and sail it round the islands. Whether they ever did, she could not say.\n\n**C** Perhaps that is what he was doing all those summers: not failing to keep a promise, but keeping a different one. Having lost two friends to the sea, he was not going to give it the chance to take him as well.\n\n**D** What he did instead was tinker. He would spend whole mornings in the shed, emerging at lunchtime with oil on his hands and an air of having achieved something. My grandmother, who had long since stopped asking what, would put his plate down without a word.\n\n**E** The bridge to the mainland was to have opened that summer, but the work dragged on for two more years, and the ferry that had carried my grandfather to market every week of his working life was eventually sold to a company in Norway.\n\n**F** Knowing it changed everything I remembered. The boat that was never launched, the hours in the shed, the long silence on the harbour wall: it all came flooding back, and all of it now meant something else.\n\n**G** But the picture I return to most often is a different one, and it is a real memory, though a hazy one. Early one morning, the summer I was ten, I woke before anyone else and went down to the shed. My grandfather was already there, not working, simply sitting on an upturned box with his hand resting on the side of the boat, the way you might rest your hand on a friend’s shoulder.' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the C1 Advanced exam (Reading and Use of English Part 7): choose the paragraph (A to G) that fits each gap. There is one extra paragraph that you do not need.', items: [
+            { q: 'Which paragraph fits gap 1?', o: ['D', 'A', 'E', 'G'], why: '*What he did instead* follows *he had never meant to keep* the promise to sail.' },
+            { q: 'Which paragraph fits gap 2?', o: ['A', 'B', 'F', 'C'], why: '*The answer, when it came* follows *he changed the subject*; *this* in the next paragraph is the shipwreck.' },
+            { q: 'Which paragraph fits gap 3?', o: ['F', 'C', 'E', 'D'], why: '*Knowing it* refers to the story *everyone… except me* had known.' },
+            { q: 'Which paragraph fits gap 4?', o: ['B', 'E', 'G', 'A'], why: 'The empty trailer leads to the new owner; *they* in *I like to think they did* is the couple.' },
+            { q: 'Which paragraph fits gap 5?', o: ['G', 'C', 'D', 'F'], why: '*But the picture I return to* contrasts with the imagined picture; *He did not hear me come in* follows the shed.' },
+            { q: 'Which paragraph fits gap 6?', o: ['C', 'E', 'B', 'A'], why: '*That is what he was doing* explains the scene in the shed; it leads to the narrator’s own promises.' },
           ] },
+          { t: 'tip', art: 'owl', md: 'In **Part 7**, look at both sides of each gap. Pronouns (*they, this, it*), contrast words (*But, instead*) and repeated ideas link a paragraph to the text before **and** after it. The extra paragraph usually fits the topic but has **no link** on either side: here, the bridge in **E** is never mentioned again.' },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Look at how the story is told.', items: [
-            { q: '“My grandmother would greet us at the gate.” What does *would* show here?', o: ['A repeated action in the past.', 'A plan that did not happen.', 'A polite request.'], why: '*Would* for past habits, in a nostalgic description.' },
-            { q: 'Why does the writer say “We were to have moved that spring”?', o: ['To show that the move was arranged but never happened.', 'To show that the move happened that spring.', 'To show that the move was a regular event.'], why: '*Was to have* + participle: an arrangement that failed.' },
-            { q: '“There, at the kitchen table, sat my grandmother.” Why is the verb before the subject?', o: ['To create suspense before revealing who was there.', 'Because it is a question.', 'Because the sentence is negative.'], why: 'Fronting a place phrase delays the subject and creates suspense.' },
-            { q: '“Not until that night did I understand…” What does this sentence suggest?', o: ['The writer understood only at that moment, not before.', 'The writer never understood.', 'The writer understood long before that night.'], why: '*Not until* + inversion: the understanding happened only then.' },
+          { t: 'ex', kind: 'spot', h: 'Tap the forms from this unit in sentences from the memoir.', items: [
+            { s: 'Every June he [would announce] that this was the year.', why: '*Would* for a repeated past action.' },
+            { s: '[Sitting] on the harbour wall one evening, I wanted to know why.', why: 'A participle clause: the narrator was sitting.' },
+            { s: '[Having lost] two friends to the sea, he was not going to give it the chance.', why: 'A perfect participle: the loss came first.' },
+            { s: 'The bridge [was to have opened] that summer.', why: 'A plan that was not carried out.' },
           ] },
-        ],
-        [
-          { t: 'ex', kind: 'spot', h: 'Tap the participle clauses.', items: [
-            { s: '[Having been told to stay away from the rocks], we went straight to the rocks.', why: 'A passive perfect participle clause: the telling came first.' },
-            { s: '[Not knowing what else to do], I crept downstairs.', why: 'A negative participle clause giving the reason.' },
-          ] },
-          { t: 'ex', kind: 'match', h: 'Match the phrases from the text with their meanings.', pairs: [
-            ['be released', 'be allowed to go free'],
-            ['creep downstairs', 'go down quietly so nobody hears'],
-            ['batter the windows', 'hit them again and again with force'],
-            ['flatly', 'without showing emotion'],
-            ['by any ordinary measure', 'judged in the usual way'],
+          { t: 'text', md: 'Now tell a memory of your own: a person, a place, a habit. Use *would* or *used to*, one participle clause and one phrase about memory (*I have a vivid memory of…*, *It only came back to me years later*).' },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'arthur', items: [
+            { a: 'Every June he would announce that this was the year.' },
+            { a: 'I have a hazy memory of the house, but a vivid one of the garden.' },
+            { a: 'It was only years later that I understood what he meant.' },
           ] },
         ],
       ],
     },
   ],
   test: [
-    { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-      { q: 'Never ___ so many people in one square.', o: ['have I seen', 'I have seen', 'I saw'], why: '*Never* at the start: invert *have* and the subject.' },
-      { q: 'No sooner had we sat down ___ the waiter brought the bill.', o: ['than', 'when', 'then'], why: '*No sooner… than*.' },
-      { q: 'When we were small, we ___ a big garden with an apple tree.', o: ['used to have', 'would have', 'were having'], why: 'A past state: *used to*, not *would*.' },
-      { q: 'I ___ text you, but my phone died.', o: ['was going to', 'used to', 'would'], why: 'A plan that did not happen: *was going to*.' },
-      { q: '___ the door, she switched on the light.', o: ['Having locked', 'Locked', 'Having been locked'], why: 'Active, complete before the main action: *having* + participle.' },
+    { t: 'ex', kind: 'select', h: 'Choose the form that fits best.', items: [
+      { q: 'We ___ a cottage in Wales when I was little.', o: ['used to have', 'would have', 'were having'], why: 'A past state: *used to*.' },
+      { q: 'The wedding ___ in June, but they postponed it.', o: ['was to have taken place', 'was to take place', 'would take place'], why: 'A plan that did not happen.' },
+      { q: 'I ___ leave when the phone rang.', o: ['was about to', 'was on the point to', 'used to'], why: '*Be about to* + infinitive.' },
+      { q: '___ the door, she found a parcel on the step.', o: ['Opening', 'Opened', 'Having been opened'], why: 'Same time, active: *Opening*.' },
     ] },
-    { t: 'ex', kind: 'transform', h: 'Rewrite the sentence, starting with the words given.', items: [
-      { q: 'I didn’t realise how serious it was until the doctor called.', cue: 'Not until', a: ['Not until the doctor called did I realise how serious it was.', 'Not until the doctor called did I realize how serious it was.'], why: 'The inversion goes in the second clause: *did I realise*.' },
-      { q: 'We had only just started dinner when the guests arrived.', cue: 'Hardly', a: ['Hardly had we started dinner when the guests arrived.'], why: '*Hardly had* + subject + participle + *when*.' },
-      { q: 'Although he was tired, he kept working.', cue: 'Tired', a: ['Tired as he was, he kept working.', 'Tired though he was, he kept working.'], why: 'Adjective + *as* or *though* + subject + verb.' },
+    { t: 'ex', kind: 'gap', h: 'Write one word in each gap.', items: [
+      { q: 'Little did they know that they ___ to meet again in Paris.', a: ['were'], why: '*Were to* + infinitive: what happened later.' },
+      { q: 'In the doorway ___ a tall man in a grey coat.', a: ['stood', 'was'], why: 'Place adverbial + verb + noun subject.' },
+      { q: 'I have no ___ of agreeing to that.', a: ['recollection', 'memory'], why: '*Have no recollection of* + *-ing*.' },
+      { q: 'His name rings a ___, but I can’t picture him.', a: ['bell'], why: '*Ring a bell* = seem familiar.' },
+    ] },
+    { t: 'ex', kind: 'transform', h: 'Complete the second sentence so that it has a similar meaning to the first. Use between three and six words, including the word given.', items: [
+      { q: 'After he had locked the door, he went to bed.', cue: 'having', gap: '___ , he went to bed.', a: ['Having locked the door'], why: 'An earlier action: *Having* + past participle.' },
+      { q: 'I forgot to send the email.', cue: 'slipped', gap: 'Sending the email ___ .', a: ['completely slipped my mind', 'slipped my mind', 'had slipped my mind'], why: '*Slip someone’s mind* = be forgotten.' },
+    ] },
+    { t: 'ex', kind: 'choice', h: 'Choose the correct sentence.', items: [
+      { q: '', o: ['This photo reminds me of our first holiday.', 'This photo remembers me of our first holiday.', 'This photo reminds me our first holiday.'], why: '*Remind someone of something*.' },
+      { q: '', o: ['Down the road they ran.', 'Down the road ran they.', 'Down the road did they run.'], why: 'No inversion with a pronoun subject.' },
+      { q: '', o: ['Walking home, I saw a fox.', 'Walking home, a fox crossed my path and I saw it.', 'Walking home, the fox was seen.'], why: 'The person walking must be the subject.' },
     ] },
     { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
-      { s: 'Little [she knew] what was waiting for her.', a: ['did she know'], why: '*Little* + inversion with *did*: *Little did she know*.' },
-      { s: 'My grandfather [would own] a small shop in the village.', a: ['used to own', 'owned'], why: '*Own* is a state verb: *used to own* or *owned*, not *would*.' },
-    ] },
-    { t: 'ex', kind: 'choice', h: 'Which sentence is correct?', items: [
-      { q: '', o: ['Having missed the bus, I walked to school.', 'Having missed the bus, the school was far away.', 'Having missed the bus, it was a long walk.'], why: 'The subject of the participle (I) must be the subject of the main clause.' },
-      { q: '', o: ['In the garden stood a stone statue.', 'In the garden did stand a stone statue.', 'In the garden a stone statue did stood.'], why: 'Place phrase + verb + subject, with no auxiliary.' },
-      { q: '', o: ['They were to have opened the shop in May, but the plan fell through.', 'They were to open the shop in May, and it was to have happened.', 'They used to have opened the shop in May.'], why: '*Were to have* + participle: an arrangement that did not happen.' },
+      { s: 'As a child I [would be] very shy.', a: ['used to be', 'was'], why: '*Would* is not used for states.' },
+      { s: 'We were [on the point to] leave.', a: ['about to'], why: '*About to* + infinitive; *on the point of* takes *-ing*.' },
+      { s: 'I have a very [dark] memory of that year; I was only three.', a: ['dim', 'hazy', 'vague'], why: 'An unclear memory is *dim, hazy* or *vague*.' },
     ] },
   ],
 };

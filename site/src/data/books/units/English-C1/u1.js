@@ -1,259 +1,306 @@
-// English C1, unit 1 (docs/BOOKS.md). Draft for native-teacher review.
+// English C1, unit 1, second edition (docs/LESSONS_PLAN.md, "Books, second edition"). Draft for native-teacher review.
+// Identity and perception: what the perfect and the continuous each add, state verbs used dynamically, precise
+// adverb and adjective collocations for personality, and an essay on first impressions. Exam: C1 Advanced.
 export const UNIT = {
   id: 'u1',
   title: 'Identity and perception',
-  goal: 'Talk precisely about yourself and how others see you, with the full range of tenses.',
-  art: 'cat',
-  tags: { skills: ['grammar', 'vocabulary', 'reading'], topics: ['perfect-aspect', 'continuous-aspect', 'future-perfect-continuous', 'past-perfect-continuous', 'state-verbs', 'personality', 'collocations', 'first-impressions'], goals: ['foundations'] },
+  goal: 'Choose the perfect and the continuous for what they add, use state verbs in the continuous to shift meaning and tone, describe character with precise collocations, and follow a demanding essay on how we judge people.',
+  art: 'owl',
+  tags: { skills: ['grammar', 'vocabulary', 'reading', 'speaking'], topics: ['aspect', 'perfect', 'continuous', 'state-verbs', 'personality', 'collocations', 'first-impressions'], goals: ['foundations'] },
   pages: [
+    /* ------------------------------------------------------------------ Lesson 1 */
     {
       id: 'p1',
-      title: 'I’ve been thinking',
-      about: 'See what the perfect and the continuous each add to a verb, in the past, present and future.',
-      art: 'parrot',
+      title: 'I’d been meaning to call',
+      about: 'See what the perfect and the continuous each add to a verb, in the past, the present and the future, and combine them with control.',
+      art: 'owl',
       spreads: [
         [
-          { t: 'text', md: 'Every English tense is built from two ideas that can be added to a verb. The **perfect** (*have* + past participle) looks back from a point in time: something happened **before** that point and matters **at** it. The **continuous** (*be* + *-ing*) shows an activity **in progress**: unfinished, temporary or repeated.' },
-          { t: 'text', md: 'At C1 the question is not only which tense is correct, but what each choice tells the listener. Put both together and you get the perfect continuous: an activity in progress over a period that leads up to a point in time.' },
-          { t: 'table', caption: 'The perfect continuous in three times', explain: ['head', 'col0'], head: ['Point of view', 'Form', 'Example'], rows: [
-            ['up to now', 'have been + -ing', 'I**’ve been thinking** about what you said.'],
-            ['up to a point in the past', 'had been + -ing', 'She **had been working** there for years when they promoted her.'],
-            ['up to a point in the future', 'will have been + -ing', 'By June I**’ll have been living** here for a decade.'],
+          { t: 'text', md: 'At B2 you learned the tenses one by one. At C1 it helps to see that English builds them from two separate ideas, called **aspects**, which you can add to any time: past, present or future.\n\nThe **perfect** (*have* + past participle) looks **back** from a point in time. It connects an earlier event to that point: *I **have finished*** (looking back from now), *I **had finished*** (looking back from a moment in the past), *I **will have finished*** (looking back from a moment in the future).\n\nThe **continuous** (*be* + *-ing*) puts you **inside** an action. It shows the action as in progress, temporary, unfinished or repeated, and it often adds a feeling: interest, irritation, tentativeness. *I **was reading*** says nothing about whether I finished the book.' },
+          { t: 'table', caption: 'What each aspect adds', explain: ['head', 'col0', 'col1'], head: ['Aspect', 'What it adds', 'Example'], rows: [
+            ['Simple', 'The action as a complete fact, a whole', 'She wrote three novels.'],
+            ['Perfect', 'A link back from a later point; the result counts', 'She has written three novels.'],
+            ['Continuous', 'The action in progress, temporary or incomplete', 'She was writing her third novel.'],
+            ['Perfect continuous', 'An activity filling the time up to a point; its effects', 'She had been writing for years before anyone noticed.'],
           ] },
+          { t: 'tip', art: 'owl', md: 'Think of the simple as a **photograph of the whole event**, the continuous as a **frame from a film** and the perfect as a **look over your shoulder**.' },
         ],
         [
-          { t: 'text', md: 'Compare the simple and the continuous forms of the perfect. The simple form presents a **completed** whole or a **result**. The continuous form presents an **activity** that may be unfinished, and often explains a present situation.' },
+          { t: 'text', md: 'The difference between the perfect simple and the perfect continuous is often a difference of **focus**. The simple focuses on the **result** or the **quantity** achieved; the continuous focuses on the **activity** and its duration, and it can suggest the activity is **not yet complete**.\n\n*I’ve read your report.* (finished: I can discuss it)\n*I’ve been reading your report.* (I’ve spent time on it; I may not have finished)\n\nThe **future perfect** looks back from a future deadline: *By the time you land, I’ll have left the office.* The **future perfect continuous** measures an activity up to that deadline: *In June I’ll have been working here for ten years.*\n\nA very useful C1 pattern is ***have been meaning to*** and ***had been meaning to***: an intention that has lasted for some time and has **not been carried out**. It sounds apologetic and natural: *I’ve been meaning to ring you for weeks.*' },
           { t: 'examples', items: [
-            { s: 'Someone**’s been reading** my diary.', n: 'The diary is not where I left it. We see the traces of the activity, not a finished result.' },
-            { s: 'Someone**’s read** my diary.', n: 'The reading is complete and the secret is out. The focus is the result.' },
-            { s: 'I**’ll have finished** the report by Friday.', n: 'Future perfect simple: the job will be complete before Friday.' },
-            { s: 'By Friday I**’ll have been working** on this report for a month.', n: 'Future perfect continuous: the length of the activity up to Friday. It is often said with some frustration.' },
-            { s: 'When I met him, he **had been travelling** for six months and looked exhausted.', n: 'The past perfect continuous explains a state in the past: why he looked exhausted.' },
+            { s: 'I’ve **been thinking** about what you said.', n: 'An ongoing process of thought, not a finished conclusion. It sounds open and tentative.' },
+            { s: 'I’ve **thought** about it, and the answer is no.', n: 'The thinking is complete: here is the result.' },
+            { s: 'By Friday we’ll **have interviewed** every candidate.', n: 'Future perfect: a task complete before a future deadline.' },
+            { s: 'Next month he’ll **have been living** abroad for half his life.', n: 'Future perfect continuous: duration measured up to a future point.' },
+            { s: 'I’d **been meaning to** tell you, but the moment never came.', n: 'An intention that lasted and was never acted on.' },
           ] },
         ],
         [
-          { t: 'text', md: 'The continuous also makes statements softer and less direct. *I’ve been meaning to call you* and *I’d been meaning to tell you* present an intention that has existed for a while but has not happened yet. It sounds apologetic. *I was wondering if…* and *I’ve been hoping…* work in the same way.' },
-          { t: 'examples', items: [
-            { s: 'I**’d been meaning to** tell you, but the moment never seemed right.', n: 'An intention that existed before a past moment and was never carried out.' },
-            { s: 'We**’ve been wondering** whether you might like to join us.', n: 'A gentle, tentative way of making an invitation.' },
-            { s: 'I **was hoping** you could look over my CV.', n: 'The past continuous here is about politeness, not past time.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['I’ve been writing four emails this morning.', 'I’ve written four emails this morning.', 'A number of finished things: the result, so the simple.'],
+            ['I’ve been knowing her since school.', 'I’ve known her since school.', '*Know* describes a state, not an activity.'],
+            ['When I arrived, they left already.', 'When I arrived, they had already left.', 'The leaving came first: the past perfect looks back from *arrived*.'],
+            ['By 2030 I will finish my doctorate.', 'By 2030 I will have finished my doctorate.', '*By* + future point needs the future perfect.'],
           ] },
-          { t: 'tip', art: 'owl', md: 'Count and the continuous rarely mix. If you say how many or how much (*three chapters*, *twenty kilometres*), use the simple form: *I’ve written three chapters*, not *I’ve been writing three chapters*.' },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the form that fits the meaning best.', items: [
-            { q: 'Your shoes are soaking. ___ in the rain?', o: ['Have you been walking', 'Have you walked', 'Did you walk'], why: 'We can see the effect of a recent activity: the present perfect continuous.' },
-            { q: 'By the time the ambulance arrived, the man ___ for over an hour.', o: ['had been lying there', 'has been lying there', 'is lying there'], why: 'An activity in progress up to a point in the past: the past perfect continuous.' },
-            { q: 'Next September we ___ married for twenty-five years.', o: ['will have been', 'will be', 'have been'], why: '*Be married* is a state, so the future perfect simple: twenty-five years up to a future point.' },
-            { q: 'I ___ to ask you: how did the interview go?', o: ['’ve been meaning', '’ve meant', 'mean'], why: '*I’ve been meaning to* presents a long-held intention that has not yet happened.' },
-            { q: 'She ___ four novels, and the fifth is out next spring.', o: ['has written', 'has been writing', 'had been writing'], why: 'A number of finished works: the present perfect simple.' },
-            { q: 'By the end of this year, Kenji ___ the orchestra for a decade.', o: ['will have been conducting', 'will conduct', 'has been conducting'], why: 'An activity in progress up to a future point: the future perfect continuous.' },
+          { t: 'dialogue', title: 'Catching up', lines: [
+            { who: 'Helen', s: 'Owen! I’ve been meaning to get in touch since your birthday. I’m so sorry.' },
+            { who: 'Owen', s: 'Don’t be. I’d been planning to write to you too, and look how that went.' },
+            { who: 'Helen', s: 'So what have you been doing? You look as if you’ve been sleeping properly at last.' },
+            { who: 'Owen', s: 'I have. I’ve handed in the thesis. By the end of the summer I’ll have been working on it for four years.' },
+            { who: 'Helen', s: 'And by the end of the summer you’ll have forgotten every word of it.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Complete with the best form of the verb in brackets. Use a perfect or continuous form.', items: [
-            { q: 'I could tell from her voice that she ___ (cry).', a: ['had been crying', '’d been crying'], why: 'An activity just before a past moment, with a visible effect: the past perfect continuous.' },
-            { q: 'By the time you get this letter, I ___ (leave) the country.', a: ['will have left', '’ll have left'], why: 'A completed action before a future point: the future perfect simple.' },
-            { q: 'In March, Owen ___ (teach) at the same school for thirty years.', a: ['will have been teaching', '’ll have been teaching', 'will have taught', '’ll have taught'], why: 'Duration up to a future point. The continuous stresses the activity; the simple is also possible with *teach*.' },
-            { q: 'We ___ (not / speak) for months when she suddenly called me.', a: ['hadn’t spoken', 'had not spoken', 'hadn’t been speaking', 'had not been speaking'], why: 'A period up to a past moment. With a negative, the simple form is more usual, but both are possible.' },
-            { q: 'Sorry I’m late. ___ (you / wait) long?', a: ['Have you been waiting'], why: 'A question about an activity that has just stopped: the present perfect continuous.' },
+          { t: 'ex', kind: 'select', h: 'Choose the form that says what the speaker means.', items: [
+            { q: 'You look exhausted. ___ all night?', o: ['Have you been revising', 'Have you revised', 'Did you revise'], why: 'A visible effect of an activity that has just been going on: the perfect continuous.' },
+            { q: 'I ___ three chapters, so I can tell you how it starts.', o: ['’ve read', '’ve been reading', '’m reading'], why: 'A quantity achieved: the perfect simple.' },
+            { q: 'When the police arrived, the thieves ___ the building for an hour.', o: ['had been searching', 'searched', 'have been searching'], why: 'An activity lasting up to a past point: the past perfect continuous.' },
+            { q: 'Don’t phone at nine; we ___ dinner by then.', o: ['won’t have finished', 'won’t finish', 'aren’t finishing'], why: '*By then* looks back from a future point: the future perfect.' },
+            { q: 'In May, she ___ the charity for twenty years.', o: ['will have been running', 'will run', 'is running'], why: 'Duration measured up to a future point: the future perfect continuous.' },
           ] },
-          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
-            { s: 'I [have been knowing] her since we were children.', a: ['have known', '’ve known'], why: '*Know* is a state verb and is not used in the continuous.' },
-            { s: 'By 2030, they [will be finishing] the new bridge, so we can drive across it then.', a: ['will have finished', '’ll have finished'], why: 'The bridge will be complete before 2030: the future perfect simple.' },
-            { s: 'He was tired because he [has been working] all night.', a: ['had been working', '’d been working'], why: 'The story is in the past, so the activity before it takes the past perfect continuous.' },
+        ],
+        [
+          { t: 'ex', kind: 'transform', h: 'In the format of the C1 Advanced exam (Reading and Use of English Part 4): complete the second sentence so that it has a similar meaning to the first. Use between three and six words, including the word given, and do not change the word given.', items: [
+            { q: 'I intended to reply to your letter weeks ago, but I still haven’t.', cue: 'meaning', gap: 'I ___ to your letter for weeks.', a: ['have been meaning to reply', '’ve been meaning to reply'], why: 'An intention lasting up to now: *have been meaning to* + infinitive.' },
+            { q: 'The last time I saw Clara was at her wedding.', cue: 'seen', gap: 'I ___ her wedding.', a: ['have not seen Clara since', 'haven’t seen Clara since', 'have not seen her since', 'haven’t seen her since'], why: '*The last time… was* becomes the present perfect negative + *since*.' },
+            { q: 'Ben started teaching here in 2010; in 2030 it will be twenty years.', cue: 'have', gap: 'By 2030, Ben ___ here for twenty years.', a: ['will have been teaching', '’ll have been teaching'], why: 'Duration up to a future point: the future perfect continuous.' },
+            { q: 'The train left before we got to the station.', cue: 'already', gap: 'By the time we got to the station, the train ___.', a: ['had already left', 'had already gone', 'had already departed'], why: 'Looking back from a past point: the past perfect, with *already* after *had*.' },
+            { q: 'It’s the first time she has ever given a speech in public.', cue: 'never', gap: 'She ___ a speech in public before.', a: ['has never given', '’s never given', 'has never made', '’s never made'], why: '*It’s the first time* = *has never… before*.' },
+            { q: 'Her eyes were red because she had spent the afternoon in tears.', cue: 'been', gap: 'Her eyes were red because she ___ all afternoon.', a: ['had been crying', '’d been crying', 'had been weeping'], why: 'An earlier activity explains a past result: *had been crying*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Part 4** you write **three to six words**, including the key word, which you must not change. Contractions count as two words: *haven’t* = *have not*. Each answer is worth **two marks**, one for each half of the change, so a partly right answer still earns a mark. Count your words before you move on.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor. Notice how the continuous softens what you say.', tutor: 'lena', items: [
+            { a: 'I’ve been meaning to call you for ages.' },
+            { a: 'I’ve been thinking about what you said yesterday.' },
+            { a: 'By June I’ll have been living here for ten years.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 2 */
     {
       id: 'p2',
       title: 'She’s being difficult',
-      about: 'Use state verbs in the continuous to change their meaning or tone.',
-      art: 'snail',
-      spreads: [
-        [
-          { t: 'text', md: 'State verbs (*be, have, see, think, look, feel, taste, appear*) are usually used in simple forms. But many of them have a second, **dynamic** meaning, an action or a temporary situation, and then the continuous is correct. The change of form signals a change of meaning.' },
-          { t: 'table', caption: 'One verb, two meanings', explain: ['head'], head: ['State: simple form', 'Action or temporary: continuous form'], rows: [
-            ['I **see** what you mean. (understand)', 'I**’m seeing** a client at three. (meet)'],
-            ['I **think** she’s right. (opinion)', 'I**’m thinking** about moving abroad. (consider)'],
-            ['He **has** two brothers. (possess)', 'He**’s having** a hard time at work. (experience)'],
-            ['This soup **tastes** of garlic. (quality)', 'The chef **is tasting** the sauce. (action)'],
-            ['She **appears** calm. (seem)', 'She**’s appearing** in a play this month. (perform)'],
-            ['The plan **looks** good. (seem)', 'We**’re looking** at three options. (examine)'],
-          ] },
-        ],
-        [
-          { t: 'text', md: '**Be** + adjective describes someone’s character: *He’s selfish.* **Being** + adjective describes how someone is behaving **at the moment**, often unusually: *He’s being selfish* means this behaviour is temporary, or not typical of him. It often carries criticism.' },
-          { t: 'examples', items: [
-            { s: 'You**’re being** ridiculous. Of course they’ll invite you.', n: 'Your behaviour right now is ridiculous; I am not saying you are a ridiculous person.' },
-            { s: 'She**’s being** very quiet tonight. Is something wrong?', n: 'This is not her usual behaviour.' },
-            { s: 'I know he**’s being** difficult, but he**’s** under a lot of pressure.', n: 'Temporary behaviour explained by a temporary situation.' },
-          ] },
-          { t: 'text', md: 'The continuous of *look*, *feel* and *sound* can also show that a situation is **developing**: *Things are looking good for the team this season. I’m feeling much more confident these days.* And *I’m loving it* or *I’m liking the new design* are informal and enthusiastic; avoid them in formal writing.' },
-        ],
-        [
-          { t: 'tip', art: 'owl', md: 'Some verbs almost never take the continuous, even in informal English: *know, believe, belong, consist, contain, own, mean* (when it means signify) and *seem*. Say *This box contains old letters*, not *is containing*.' },
-          { t: 'ex', kind: 'choice', h: 'Choose the correct form.', items: [
-            { q: 'I ___ your point, but I still disagree.', o: ['see', '’m seeing', '’ve been seeing'], why: '*See* meaning understand is a state: the simple form.' },
-            { q: 'We ___ of selling the house and moving to the coast.', o: ['’re thinking', 'think', 'thought of'], why: '*Think of* or *about* meaning consider is dynamic: the continuous.' },
-            { q: 'Why ___ so unfriendly to your cousin? It’s not like you.', o: ['are you being', 'are you', 'have you'], why: '*It’s not like you* shows the behaviour is unusual: *being* + adjective.' },
-            { q: 'This old house ___ to my grandparents.', o: ['belongs', 'is belonging', 'has been belonging'], why: '*Belong* is a state verb and is never continuous.' },
-            { q: 'The doctor ___ a patient at the moment; can you wait?', o: ['is seeing', 'sees', 'has seen'], why: '*See* meaning meet or examine is dynamic.' },
-            { q: 'These days the economy ___ a little stronger.', o: ['is looking', 'is looked', 'has looking'], why: '*Look* in the continuous can show a developing situation. *Looks* would also be possible, but the other options are wrong.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'gap', h: 'Complete with the simple or continuous form of the verb in brackets.', items: [
-            { q: 'Shh. I ___ (taste) the soup to see if it needs salt.', a: ['am tasting', '’m tasting'], why: 'An action happening now: the continuous.' },
-            { q: 'Lina ___ (have) a party on Saturday. Are you coming?', a: ['is having', '’s having'], why: '*Have a party* is an action, and the continuous is used for a future arrangement.' },
-            { q: 'I ___ (not / think) that’s a very good idea.', a: ['don’t think', 'do not think'], why: '*Think* meaning have an opinion is a state: the simple form.' },
-            { q: 'He ___ (be) unusually generous today. I wonder what he wants.', a: ['is being', '’s being'], why: 'Temporary, unusual behaviour: *being* + adjective.' },
-            { q: 'What ___ (this word / mean)?', a: ['does this word mean'], why: '*Mean* (signify) is a state verb: the simple form.' },
-          ] },
-          { t: 'ex', kind: 'sort', h: 'Sort the sentences: state meaning or dynamic meaning?', groups: ['state', 'dynamic'], explain: ['groups'], items: [
-            { s: 'The flat has two balconies.', g: 0, why: '*Have* meaning possess: a state.' },
-            { s: 'We’re having dinner with Sara.', g: 1, why: '*Have dinner*: an action.' },
-            { s: 'She appears to be lost.', g: 0, why: '*Appear* meaning seem: a state.' },
-            { s: 'He’s appearing at the festival.', g: 1, why: '*Appear* meaning perform: an action.' },
-            { s: 'I feel that we should wait.', g: 0, why: '*Feel* meaning think: a state.' },
-            { s: 'I’m feeling a lot better.', g: 1, why: '*Feel* about a developing physical condition: dynamic.' },
-          ] },
-        ],
-      ],
-    },
-    {
-      id: 'p3',
-      title: 'Fiercely independent',
-      about: 'Describe personality with precise adjectives and the adverbs that naturally go with them.',
+      about: 'Use state verbs in the continuous to change their meaning or to make what you say temporary, tentative or lively.',
       art: 'cat',
       spreads: [
         [
-          { t: 'text', md: 'At C1 you go beyond *kind* and *shy*. Choose adjectives that say exactly what you mean, and know whether they sound positive, neutral or negative. *Frugal* and *stingy* both describe someone who spends little money, but only *stingy* is a criticism.' },
-          { t: 'table', caption: 'Precise personality adjectives', explain: ['head', 'col1'], quiz: true, head: ['Adjective', 'Meaning'], rows: [
-            ['assertive', 'confident to say what you want or think, without being rude'],
-            ['self-effacing', 'modest; not wanting to attract attention to yourself'],
-            ['abrasive', 'rude and unkind in the way you speak to people'],
-            ['conscientious', 'careful to do your work well and thoroughly'],
-            ['aloof', 'unfriendly and distant, not interested in others'],
-            ['gregarious', 'enjoying the company of other people'],
-            ['headstrong', 'determined to do things your way, without listening to advice'],
-            ['perceptive', 'quick to notice and understand things that others miss'],
+          { t: 'text', md: 'At B2 you learned that **state verbs** (*know, believe, own, seem, love*) are not normally used in the continuous, because a state is not an activity: it has no stages. At C1 you need the other half of the rule: many of these verbs **can** take the continuous, and when they do, either their **meaning changes** or their **tone** does.\n\nThe meaning changes when the verb has two senses, one a state and one an action. *I **think** she’s right* is an opinion (a state). *I’**m thinking** about moving* is a mental process (an activity). *We **have** a flat* is possession; *We’**re having** lunch* is an activity.\n\nThe continuous also turns a permanent quality into a **temporary behaviour**. *He **is** rude* describes his character. *He’**s being** rude* describes how he is acting **right now**, possibly out of character. This is why *She’s being difficult* is a complaint about today, not a judgement of who she is.' },
+          { t: 'table', caption: 'One verb, two meanings', explain: ['head', 'col1', 'col3'], head: ['Verb', 'State', 'Example', 'Activity', 'Example'], rows: [
+            ['see', 'perceive; understand', 'I see what you mean.', 'meet, date; visit', 'She’s seeing a specialist.'],
+            ['think', 'have an opinion', 'I think it’s too late.', 'consider', 'I’m thinking of resigning.'],
+            ['have', 'possess', 'They have two cars.', 'experience, eat, take part', 'We’re having a great time.'],
+            ['look', 'seem', 'You look tired.', 'direct your eyes; search', 'I’m looking for my keys.'],
+            ['be', 'a permanent quality', 'He is generous.', 'behaviour at the moment', 'He’s being generous tonight.'],
           ] },
         ],
         [
-          { t: 'text', md: 'Certain adverbs and adjectives go together naturally. These **collocations** make your English sound precise and native-like. Many of them intensify: *fiercely* adds strength and pride, *painfully* adds discomfort, *refreshingly* adds a positive surprise.' },
+          { t: 'text', md: 'Even when the meaning stays the same, the continuous can change the **tone**. Three uses are typical of fluent speakers.\n\nFor **politeness and tentativeness**: *I **was wondering** if you could help.* *We’**re hoping** to finish by Friday.* The continuous makes a request or a hope sound less direct, as if it were still being formed.\n\nFor **change in progress**: *I’**m understanding** the system better every day.* *You’**re resembling** your father more and more.* The state is developing, so it behaves like an activity.\n\nFor **lively, informal emphasis**: *I’**m loving** this weather.* *It’**s looking** good for the team.* *How **are** you **liking** the new job?* Fine in a chat; keep them out of an essay.' },
           { t: 'examples', items: [
-            { s: 'My grandmother is **fiercely independent** and refuses any help.', n: '*Fiercely* collocates with *independent, loyal, competitive, proud*.' },
-            { s: 'As a teenager I was **painfully shy**.', n: '*Painfully* collocates with *shy, slow, obvious, aware*: so much that it hurts or is uncomfortable.' },
-            { s: 'She’s **refreshingly honest** about her mistakes.', n: '*Refreshingly* shows a pleasant surprise: *refreshingly direct, modest, different*.' },
-            { s: 'He’s **notoriously unreliable**, so have a plan B.', n: '*Notoriously*: well known for something bad.' },
-            { s: 'They’re **deeply religious** but **highly tolerant** of other views.', n: '*Deeply* goes with feelings and beliefs; *highly* with qualities like *intelligent, motivated, critical*.' },
+            { s: 'You’**re being** very quiet tonight. Is something wrong?', n: 'Temporary behaviour, unusual for the person.' },
+            { s: 'I’**m seeing** the dentist on Thursday.', n: '*See* = have an appointment with.' },
+            { s: 'I **was wondering** whether you’d be free for a call.', n: 'The past continuous softens a request.' },
+            { s: 'The soup **tastes** of garlic. / The chef **is tasting** the soup.', n: 'A quality versus a deliberate action.' },
           ] },
         ],
         [
-          { t: 'tip', art: 'owl', md: 'Compound adjectives describe character economically: *open-minded, level-headed, quick-tempered, thick-skinned* (not easily hurt), *self-centred, easy-going*. They are written with a hyphen before a noun and usually after a verb too.' },
-          { t: 'ex', kind: 'colloc', h: 'Which adverbs collocate naturally with the adjective?', items: [
-            { key: 'independent', o: ['fiercely', 'fully', 'totally', 'painfully'], a: [0, 1, 2], why: '*Fiercely independent*, *fully independent* and *totally independent* are all natural. *Painfully independent* is not.' },
-            { key: 'shy', o: ['painfully', 'extremely', 'deeply', 'highly'], a: [0, 1], why: 'We say *painfully shy* and *extremely shy*, but not *deeply shy* or *highly shy*.' },
-            { key: 'intelligent', o: ['highly', 'exceptionally', 'deeply', 'fiercely'], a: [0, 1], why: '*Highly intelligent* and *exceptionally intelligent* are common. *Deeply* goes with feelings and beliefs.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['I’m not believing what he says.', 'I don’t believe what he says.', '*Believe* = hold an opinion, a state.'],
+            ['He’s being tall for his age.', 'He’s tall for his age.', 'Height is not behaviour; *being* only works with qualities a person can show or choose.'],
+            ['This bag is belonging to me.', 'This bag belongs to me.', '*Belong* has no activity meaning.'],
+            ['I think to move to Lisbon.', 'I’m thinking of moving to Lisbon.', 'Considering a plan: *be thinking of / about* + *-ing*.'],
+          ] },
+          { t: 'dialogue', title: 'In the meeting room', lines: [
+            { who: 'Priya', s: 'I was wondering if you’d had a chance to look at the figures.' },
+            { who: 'Daniel', s: 'I’m looking at them now. They’re not looking too good, are they?' },
+            { who: 'Priya', s: 'No. And Mark is being very difficult about the budget.' },
+            { who: 'Daniel', s: 'He isn’t a difficult person. I think he’s just having a bad week.' },
+            { who: 'Priya', s: 'Maybe. I’m seeing him tomorrow, so I’ll find out.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'match', h: 'Match each description with an adjective.', pairs: [
-            ['never wants to be the centre of attention', 'self-effacing'],
-            ['always does a careful, thorough job', 'conscientious'],
-            ['ignores everyone’s advice and does it anyway', 'headstrong'],
-            ['notices what people are really feeling', 'perceptive'],
-            ['seems cold and keeps away from others', 'aloof'],
-            ['states their needs clearly but politely', 'assertive'],
+          { t: 'ex', kind: 'sort', h: 'Is the verb used for a state or for an activity?', groups: ['State', 'Activity'], explain: ['groups'], items: [
+            { s: 'I see your point.', g: 0, why: '*See* = understand.' },
+            { s: 'She’s seeing someone new.', g: 1, why: '*See* = date.' },
+            { s: 'The parcel weighs two kilos.', g: 0, why: 'A property of the parcel.' },
+            { s: 'They’re having an argument.', g: 1, why: '*Have* = take part in.' },
           ] },
-          { t: 'ex', kind: 'odd', h: 'Which word is the odd one out?', items: [
-            { o: ['gregarious', 'aloof', 'withdrawn', 'reserved'], why: '*Gregarious* people love company; the other three keep a distance from others.' },
-            { o: ['frugal', 'stingy', 'mean', 'tight-fisted'], why: '*Frugal* is neutral or positive; the other three are criticisms of someone who will not spend money.' },
-            { o: ['level-headed', 'quick-tempered', 'irritable', 'short-tempered'], why: '*Level-headed* means calm and sensible; the others describe people who get angry easily.' },
+          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+            { s: 'I [am not understanding] why he left.', a: ['don’t understand', 'do not understand'], why: 'Understanding a reason is a state: the simple.' },
+            { s: 'You [are] so unreasonable today. That isn’t like you.', a: ['are being', '’re being'], why: 'Behaviour today, out of character: *are being*.' },
+            { s: 'I [think] about changing careers, but I haven’t decided.', a: ['am thinking', '’m thinking', 'have been thinking', '’ve been thinking'], why: 'Considering, a process: the continuous.' },
+            { s: 'This house [is belonging] to my aunt.', a: ['belongs'], why: '*Belong* has only a state meaning.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'wordform', h: 'Complete with the correct form of the word in capitals.', items: [
-            { q: 'He’s highly ___ and never misses a deadline.', base: 'conscience', a: ['conscientious'], why: 'The adjective from *conscience* is *conscientious*.' },
-            { q: 'Her ___ in negotiations has won her a lot of respect.', base: 'assert', a: ['assertiveness'], why: 'Noun from *assertive*: *assertiveness*.' },
-            { q: 'I admire his ___; he always speaks about his success as luck.', base: 'modest', a: ['modesty'], why: 'Noun from *modest*: *modesty*.' },
-            { q: 'She’s remarkably ___ and always knows when something is wrong.', base: 'perceive', a: ['perceptive'], why: 'The adjective from *perceive* is *perceptive*: quick to notice and understand.' },
+          { t: 'text', md: 'In the format of the C1 Advanced exam (**Speaking Part 1**), the examiner asks each candidate a few questions about themselves: where they live, what they do, their plans, their likes. It lasts about two minutes. A strong answer is short but **developed**: answer, then add a reason, a detail or a contrast. Aspects and dynamic state verbs help you talk precisely about **now** and **lately**.\n\n*What are you enjoying about your studies at the moment?* *Well, I’ve been doing a lot of fieldwork recently, and I’m really enjoying being out of the library. I’d been thinking of changing course last year, so it’s been a relief.*' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the C1 Advanced exam (Speaking Part 1): the examiner asks you a question. Choose the answer that would score best.', items: [
+            { q: '“What have you been doing in your free time lately?”', o: ['I’ve been getting into climbing, actually. A friend took me in the spring and I’ve been going twice a week since then.', 'Climbing.', 'In my free time I am doing climbing because climbing is my hobby.'], why: 'A direct answer, then a detail and a time frame, with natural aspects.' },
+            { q: '“Is there anything you’re hoping to change in your life in the next few years?”', o: ['I’m hoping to move somewhere quieter. I’ve been living in the city centre for years and I’m beginning to find the noise wearing.', 'Yes, many things.', 'I hope I will change my city. The city is noisy. I don’t like noise.'], why: 'A clear answer with a reason, using *hoping* and the perfect continuous for duration.' },
+            { q: '“How do your friends see you?”', o: ['They’d probably say I’m fairly laid-back, though I can be fiercely competitive when I’m playing sport.', 'Friendly.', 'My friends see me with their eyes every day.'], why: 'An answer with a contrast and a precise collocation.' },
           ] },
-          { t: 'ex', kind: 'memory', h: 'Find the pairs: adverb and the adjective it often goes with.', pairs: [
-            ['fiercely', 'loyal'],
-            ['painfully', 'slow'],
-            ['refreshingly', 'direct'],
-            ['notoriously', 'difficult'],
-            ['deeply', 'committed'],
+          { t: 'tip', art: 'owl', md: 'In **Speaking Part 1**, do not prepare long speeches: the examiner wants natural, spontaneous answers. Aim for two or three sentences. If you need a moment, use a phrase like *That’s an interesting question* or *I’ve never really thought about that, but…*' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these answers after the tutor.', tutor: 'kofi', items: [
+            { a: 'I was wondering if you could help me with something.' },
+            { a: 'He isn’t usually rude; he’s just being difficult today.' },
+            { a: 'I’ve been thinking of changing jobs for a while now.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 3 */
+    {
+      id: 'p3',
+      title: 'Fiercely independent',
+      about: 'Describe personality precisely with adverb and adjective collocations, words with the right connotation and compound adjectives.',
+      art: 'parrot',
+      spreads: [
+        [
+          { t: 'text', md: 'At B2, describing someone often stops at *very kind* or *really shy*. At C1, English speakers reach for an **adverb that collocates** with the adjective: a fixed partnership that sounds natural and adds a precise shade of meaning. *Painfully shy* is not just *very shy*: it suggests the shyness hurts the person, and perhaps the people watching.\n\nThese pairs are not logical, so you learn them as units. You can be **fiercely** independent or loyal, but not *fiercely shy*. You can be **refreshingly** honest, but **brutally** honest is harsher. The adverb often carries the speaker’s **attitude**: *refreshingly* approves, *notoriously* warns, *blissfully* gently mocks.' },
+          { t: 'table', caption: 'Adverb and adjective collocations for character', explain: ['head', 'col2'], head: ['Adverb', 'Typical adjectives', 'What it adds'], rows: [
+            ['fiercely', 'independent, loyal, competitive, protective', 'strength and determination; approving'],
+            ['painfully', 'shy, slow, aware, honest', 'the quality causes discomfort'],
+            ['refreshingly', 'honest, direct, modest, down-to-earth', 'pleasantly unlike most people'],
+            ['notoriously', 'unreliable, difficult, late, stubborn', 'well known for something bad'],
+            ['blissfully', 'unaware, ignorant, happy', 'happily not knowing; a little ironic'],
+            ['quietly', 'confident, determined, ambitious', 'strength without show'],
+          ] },
+        ],
+        [
+          { t: 'text', md: 'Precision also means choosing the word with the right **connotation**. Many qualities have a positive word and a negative one for almost the same behaviour. If you call a friend *frank*, you admire their honesty; if you call them *blunt*, you are hinting that they hurt people. Your choice tells the listener what **you** think.\n\nC1 descriptions also use **compound adjectives**, often with a body part or a participle: *level-headed* (calm and sensible), *thick-skinned* (not easily hurt by criticism), *quick-witted* (fast and clever in reply), *self-effacing* (modest, keeps out of the spotlight), *highly strung* (nervous and easily upset), *easy-going*, *strong-willed*, *open-minded*.' },
+          { t: 'table', caption: 'Positive and negative words for similar behaviour', explain: ['head'], head: ['Approving', 'Disapproving'], rows: [
+            ['frank, direct', 'blunt, tactless'],
+            ['determined, resolute', 'stubborn, obstinate'],
+            ['assertive', 'pushy, aggressive'],
+            ['self-assured', 'arrogant, conceited'],
+            ['careful with money, thrifty', 'mean, tight-fisted'],
+            ['inquisitive, curious', 'nosy'],
+            ['ambitious', 'ruthless'],
+          ] },
+          { t: 'examples', items: [
+            { s: 'My grandmother was **fiercely independent** and refused any help until she was ninety.', n: 'Strong, determined, and admired.' },
+            { s: 'As a teenager he was **painfully shy**; he couldn’t order in a café.', n: 'The shyness caused real difficulty.' },
+            { s: 'She’s **refreshingly down-to-earth** for someone so famous.', n: 'Pleasantly unlike what you would expect.' },
+            { s: 'You need to be fairly **thick-skinned** to work in politics.', n: 'A compound adjective: not hurt by criticism.' },
+          ] },
+        ],
+        [
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['She is strongly independent.', 'She is fiercely independent.', 'The fixed partner of *independent* is *fiercely*.'],
+            ['My boss is very nosy about new ideas.', 'My boss is very curious about new ideas.', '*Nosy* is negative: too interested in other people’s private lives.'],
+            ['She is a level-head person.', 'She is a level-headed person.', 'The compound uses the *-ed* form.'],
+            ['He’s sensible, he cries at films.', 'He’s sensitive; he cries at films.', '*Sensible* = practical; *sensitive* = easily moved.'],
+          ] },
+          { t: 'dialogue', title: 'Describing a new colleague', lines: [
+            { who: 'Grace', s: 'So what’s the new director like? Everyone says she’s terrifying.' },
+            { who: 'Tomasz', s: 'Not at all. She’s refreshingly direct, which some people mistake for blunt.' },
+            { who: 'Grace', s: 'And the old one was notoriously indecisive, so that will make a change.' },
+            { who: 'Tomasz', s: 'Exactly. She’s quietly ambitious too. I wouldn’t be surprised if she ran the company in five years.' },
+            { who: 'Grace', s: 'As long as she isn’t ruthless about it.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'colloc', h: 'Which adjectives go naturally with the adverb?', items: [
+            { key: 'fiercely', o: ['independent', 'loyal', 'shy', 'competitive', 'unaware'], a: [0, 1, 3], why: '*Fiercely* adds strength: independent, loyal, competitive.' },
+            { key: 'painfully', o: ['shy', 'aware', 'slow', 'generous', 'ambitious'], a: [0, 1, 2], why: '*Painfully* suggests discomfort.' },
+            { key: 'blissfully', o: ['unaware', 'ignorant', 'happy', 'stubborn', 'reliable'], a: [0, 1, 2], why: '*Blissfully* goes with happy, untroubled states.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'In the format of the C1 Advanced exam (Reading and Use of English Part 1): read the text about a portrait painter and choose the word that best fits each gap.', items: [
+            { q: 'Those who knew Ilse Marr describe her as ___ private: she gave almost no interviews.', o: ['intensely', 'heavily', 'strongly', 'highly'], why: '*Intensely private* is the fixed collocation.' },
+            { q: 'She was also ___ protective of her sitters, never revealing who they were.', o: ['fiercely', 'wildly', 'sharply', 'firmly'], why: '*Fiercely protective* collocates.' },
+            { q: 'Critics, however, found her ___ honest portraits hard to accept.', o: ['brutally', 'violently', 'cruelly', 'roughly'], why: '*Brutally honest*: honesty that may hurt.' },
+            { q: 'Her sitters were rarely flattered; wrinkles and scars were ___ recorded.', o: ['faithfully', 'loyally', 'trustingly', 'devotedly'], why: 'You record something *faithfully*: accurately.' },
+            { q: 'Her own self-portraits show a woman ___ aware of her age.', o: ['acutely', 'severely', 'deeply', 'bitterly'], why: '*Acutely aware* = very conscious of.' },
+            { q: 'Yet friends say she was ___ modest about her success.', o: ['disarmingly', 'alarmingly', 'harmlessly', 'arrestingly'], why: '*Disarmingly modest*: so modest it wins people over.' },
+            { q: 'She was, as one put it, ‘thick-___ about criticism and thin-skinned about injustice.’', o: ['skinned', 'headed', 'minded', 'hearted'], why: 'The contrast with *thin-skinned* needs *thick-skinned*.' },
+            { q: 'It is that combination that ___ her apart from her contemporaries.', o: ['set', 'put', 'held', 'kept'], why: 'The phrasal verb *set someone apart* = make them different.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Part 1** all four options usually mean something similar. What decides the answer is **collocation**, a fixed phrase or the grammar after the gap. Read past the gap: *set her apart from* fixes the verb, whatever the meaning suggests.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these descriptions after the tutor.', tutor: 'mei', items: [
+            { a: 'My grandmother was fiercely independent until the very end.' },
+            { a: 'He’s refreshingly honest, though some people find him blunt.' },
+            { a: 'She was blissfully unaware of the trouble she had caused.' },
+          ] },
+        ],
+      ],
+    },
+    /* ------------------------------------------------------------------ Lesson 4 */
     {
       id: 'p4',
-      title: 'The first seven seconds',
-      about: 'Read an essay on first impressions and how far we should trust them.',
+      title: 'The face we show',
+      about: 'Read an essay on first impressions, answer questions in the format of C1 Advanced Reading Part 5 and talk about how others see you.',
       art: 'mug',
       spreads: [
         [
-          { t: 'reading', title: 'The first seven seconds', md: 'We are told, endlessly, that we have only a few seconds to make a first impression. The number changes with the source, seven seconds here, a tenth of a second there, but the message is always the same: the moment you walk into a room, you are being judged, and the verdict is almost impossible to appeal. It is a frightening idea, and like many frightening ideas, it is only partly true.\n\nIt is certainly the case that we form impressions quickly. Within moments of meeting a stranger, most of us have decided whether they seem warm or cold, competent or careless, trustworthy or not. We do this on remarkably little evidence: a handshake, a tone of voice, the way someone holds a cup. Evolution, so the argument goes, has made us efficient rather than fair. For our ancestors, deciding quickly whether a stranger was a friend or a threat mattered more than deciding correctly.\n\nWhat is less often said is how frequently those impressions turn out to be wrong. I had been working with a colleague for almost a year before I realised that the woman I had privately labelled aloof was, in fact, painfully shy. Her apparent coldness was not indifference but nerves. Had I trusted my first reading, I would have missed one of the most perceptive and fiercely loyal people I have ever known.\n\nPart of the problem is that we mistake a state for a trait. When someone is being short with us, we conclude that they are a short-tempered person, when they may simply be having a dreadful week. Psychologists have a name for this habit of explaining other people’s behaviour by their character while explaining our own by our circumstances. When I snap at a waiter, it is because I am exhausted; when a stranger does it, it is because he is rude.\n\nNone of this means that first impressions are worthless. They are a starting point, a rough sketch to be corrected. The danger lies in treating the sketch as a finished portrait, and then, without noticing, looking only for details that confirm it. A manager who has decided in the first interview that a new employee is unreliable will tend to notice every late email and forget every early one.\n\nSo perhaps the more useful question is not how to make a good first impression, but how to hold our own impressions more lightly. By the time we have known someone for a few months, we will have seen them tired, angry, generous and wrong. Only then do we have something worth calling an opinion. Until that point, the most honest thing we can say about a stranger is the thing we least like admitting: we do not yet know who they are.' },
+          { t: 'text', md: 'This essay brings the unit together: aspects that place events in time, state verbs used dynamically, and precise vocabulary for character. Read it once for the writer’s **argument**, then again for the **detail**. Notice words that carry the writer’s attitude, such as *comforting* or *merely*.' },
+          { t: 'reading', title: 'The face we show', md: 'Most of us have been told, at some point, that we never get a second chance to make a first impression. The advice is usually offered kindly, often just before an interview, and it is meant to concentrate the mind. What it rarely does is make us wonder whether the people judging us are any good at it.\n\nPsychologists have been studying snap judgements for decades, and the broad finding is not in dispute: we form impressions of strangers astonishingly fast, and we are remarkably confident in them. Show people a photograph of a face for a fraction of a second and they will happily tell you whether its owner is trustworthy, competent or kind. Show them the same face for longer and their verdicts barely change; they simply become more certain. Speed, it seems, is not the problem. Confidence is.\n\nThe comforting explanation is that these judgements must be accurate, or evolution would not have equipped us with them. But a tool can be useful without being precise. For our ancestors, deciding quickly whether a stranger was a threat mattered far more than deciding correctly; a person who hesitated to run from a friendly face lost nothing, while one who lingered beside a hostile one might lose everything. We have inherited a system designed to avoid one kind of error, and we pay for it with another.\n\nThat other error is the confusion of a state with a trait. When a colleague is being short with us on a Monday morning, we tend to conclude that he is a short-tempered person, rather than a man who has been up all night with a sick child. We read behaviour as character because character is simpler: it lets us predict, and prediction feels like safety. Having decided, we then notice what confirms the verdict and quietly file away what does not. The manager who has labelled a new recruit as disorganised will remember every missed deadline and forget every early one.\n\nNone of this means that first impressions are worthless. People who are fiercely independent or painfully shy often do signal it within minutes. But what such observations capture tends to be manner, not substance: warmth, energy, ease. Whether a person is honest, or loyal, or good at their job is a slower matter, and it is revealed in what they do repeatedly, over time, when they are not trying to impress.\n\nPerhaps, then, the advice should be turned around. Rather than telling the candidate that the first moments are everything, we might tell the interviewer that they are merely the beginning. A first impression is a hypothesis. The mistake is not to form one; it is to treat it as a conclusion.' },
         ],
         [
-          { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
-            { q: 'The writer believes the idea of instant judgement is completely false.', a: 'f', why: 'The writer says it is “only partly true”: we do form impressions quickly.' },
-            { q: 'According to the essay, quick judgements helped our ancestors survive.', a: 't', why: 'Deciding quickly whether a stranger was a friend or a threat “mattered more than deciding correctly”.' },
-            { q: 'The writer’s colleague later became the writer’s manager.', a: 'ng', why: 'The essay describes the colleague as loyal and perceptive, but says nothing about a promotion.' },
-            { q: 'The writer thinks first impressions have no value at all.', a: 'f', why: '“None of this means that first impressions are worthless. They are a starting point.”' },
-            { q: 'The writer suggests we need months of experience before forming a real opinion.', a: 't', why: '“By the time we have known someone for a few months… Only then do we have something worth calling an opinion.”' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the C1 Advanced exam (Reading and Use of English Part 5): read the essay and choose the answer which fits best according to the text.', items: [
+            { q: 'In the first paragraph, the writer suggests that the familiar advice about first impressions', o: ['overlooks the question of how reliable the judges are.', 'is usually given unkindly.', 'makes candidates too nervous to perform well.', 'is no longer believed by most people.'], why: 'The advice rarely makes us wonder *whether the people judging us are any good at it*.' },
+            { q: 'What does the writer find most significant about the research in the second paragraph?', o: ['People become more certain without becoming more accurate.', 'People need several seconds to judge a face.', 'People change their minds when they look for longer.', 'People are better at judging competence than kindness.'], why: '*Their verdicts barely change; they simply become more certain… Confidence is* the problem.' },
+            { q: 'Why does the writer describe our ancestors’ situation in the third paragraph?', o: ['To explain why a judgement can be useful but still inaccurate.', 'To prove that snap judgements are usually correct.', 'To show that early humans trusted strangers too easily.', 'To argue that evolution has made us more precise over time.'], why: '*A tool can be useful without being precise*: speed mattered more than accuracy.' },
+            { q: 'The example of the colleague on a Monday morning illustrates', o: ['how we mistake temporary behaviour for permanent character.', 'how tiredness makes people rude.', 'why parents of young children are often short-tempered.', 'why we should avoid colleagues early in the week.'], why: 'It is the *confusion of a state with a trait*: *being short* versus *a short-tempered person*.' },
+            { q: 'What does the writer say about the manager and the new recruit?', o: ['Once the manager has a view, he notices only what supports it.', 'The recruit is in fact disorganised.', 'The manager deliberately treats the recruit unfairly.', 'Most new recruits miss deadlines at first.'], why: '*Having decided, we then notice what confirms the verdict.*' },
+            { q: 'In the final paragraph, the writer’s main point is that a first impression', o: ['should be treated as a starting point to be tested.', 'should be ignored by interviewers.', 'matters more to interviewers than to candidates.', 'is the most important part of an interview.'], why: '*A first impression is a hypothesis… the mistake is to treat it as a conclusion.*' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Part 5** the questions follow the order of the text, and each one usually focuses on one paragraph. Wrong options often **repeat words from the text** (*Monday*, *child*, *deadlines*) while saying something the writer did not mean. Look for the option that matches the **idea**, in different words.' },
+        ],
+        [
+          { t: 'ex', kind: 'match', h: 'Match the words from the essay with their meaning in context.', pairs: [
+            ['concentrate the mind', 'make someone think seriously'],
+            ['not in dispute', 'accepted by everyone'],
+            ['a verdict', 'a final judgement'],
+            ['linger', 'stay longer than necessary'],
+            ['file away', 'put aside and forget'],
+            ['a hypothesis', 'an idea that still needs testing'],
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Answer the questions about the essay.', items: [
-            { q: 'What does the writer mean by “we mistake a state for a trait”?', o: ['We think temporary behaviour shows someone’s permanent character.', 'We forget how people behaved in the past.', 'We judge people by where they come from.'], why: 'A state is temporary (*being short*); a trait is permanent (*a short-tempered person*).' },
-            { q: 'Why does the writer mention the manager and the new employee?', o: ['To show how a first impression can make us notice only what confirms it.', 'To show that managers are usually good judges of character.', 'To give advice about job interviews.'], why: 'The manager “will tend to notice every late email and forget every early one”.' },
-            { q: 'What is the main purpose of the essay?', o: ['To encourage readers to treat their first impressions with caution.', 'To teach readers how to make a good first impression.', 'To explain the science of the brain.'], why: 'The writer’s conclusion: “how to hold our own impressions more lightly”.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Look at the language in the essay.', items: [
-            { q: '“I had been working with a colleague for almost a year before I realised…” Why the past perfect continuous?', o: ['It shows a long activity up to a moment in the past.', 'It shows the work finished a year ago.', 'It makes the sentence more polite.'], why: 'The working continued over a period leading up to the moment of realising.' },
-            { q: '“When someone is being short with us…” What does *being short* suggest?', o: ['Their impatient behaviour is temporary.', 'They are a small person.', 'They have always been impatient.'], why: '*Being* + adjective: behaviour at a particular moment, not a permanent quality.' },
-            { q: '“By the time we have known someone for a few months, we will have seen them tired, angry…” What does *will have seen* express?', o: ['Experiences that will be complete before a point in the future.', 'Something we see regularly now.', 'A prediction that may not come true.'], why: 'The future perfect: actions completed before a future point.' },
-          ] },
-          { t: 'ex', kind: 'spot', h: 'Tap the adverb + adjective collocations.', items: [
-            { s: 'The woman I had labelled aloof was, in fact, [painfully shy].', why: '*Painfully shy*: so shy that it is uncomfortable.' },
-            { s: 'One of the most perceptive and [fiercely loyal] people I have ever known.', why: '*Fiercely loyal*: loyal with great strength and conviction.' },
+          { t: 'text', md: 'Now talk about yourself, as in **Speaking Part 1** and the discussion that might follow it. Use a precise collocation for character, a dynamic state verb (*I’m being*, *I’m seeing*, *I’ve been thinking*) and one perfect form that looks back.\n\n*People who don’t know me well often think I’m rather reserved, but I’m not, really. I’ve been working in sales for three years, so I’ve had to become fairly thick-skinned. My friends would say I’m fiercely loyal, and occasionally blunt.*' },
+          { t: 'ex', kind: 'speak', h: 'Say these answers after the tutor.', tutor: 'arthur', items: [
+            { a: 'People often mistake my shyness for arrogance.' },
+            { a: 'I’ve had to become fairly thick-skinned in my job.' },
+            { a: 'A first impression is a hypothesis, not a conclusion.' },
           ] },
         ],
       ],
     },
   ],
   test: [
-    { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-      { q: 'By the time she retires, she ___ at the hospital for forty years.', o: ['will have been working', 'will work', 'has been working'], why: 'An activity in progress up to a future point: the future perfect continuous.' },
-      { q: 'He looked pale because he ___ all night.', o: ['had been studying', 'has been studying', 'studies'], why: 'An activity before a past moment that explains a past state: the past perfect continuous.' },
-      { q: 'I ___ to phone you for weeks. I’m so sorry.', o: ['’ve been meaning', '’ve meant', '’m meaning'], why: '*I’ve been meaning to*: a long-held intention that has not yet happened.' },
-      { q: 'You ___ very stubborn about this. Just listen for a minute.', o: ['’re being', 'are', '’ve been being'], why: 'Temporary behaviour that the speaker criticises: *being* + adjective.' },
-      { q: 'This drawer ___ all the documents you need.', o: ['contains', 'is containing', 'has been containing'], why: '*Contain* is a state verb and is not used in the continuous.' },
-      { q: 'As a child he was ___ shy and hardly spoke at school.', o: ['painfully', 'highly', 'fiercely'], why: '*Painfully shy* is the natural collocation.' },
+    { t: 'ex', kind: 'select', h: 'Choose the form that fits best.', items: [
+      { q: 'I ___ to ask you about the flat, but I keep forgetting.', o: ['’ve been meaning', '’ve meant', 'mean'], why: 'A lasting, unfulfilled intention: *have been meaning to*.' },
+      { q: 'By the time the ambulance arrived, he ___ consciousness.', o: ['had regained', 'has regained', 'regained already'], why: 'Looking back from a past point: the past perfect.' },
+      { q: 'Next year we ___ married for forty years.', o: ['will have been', 'will be being', 'are'], why: 'Duration up to a future point with a state verb: *will have been*.' },
+      { q: 'You’re covered in paint. ___ the kitchen?', o: ['Have you been decorating', 'Have you decorated', 'Did you decorate'], why: 'A visible effect of a recent activity.' },
     ] },
-    { t: 'ex', kind: 'gap', h: 'Complete with the correct form of the verb in brackets.', items: [
-      { q: 'I ___ (think) of changing jobs. What do you think?', a: ['am thinking', '’m thinking', 'have been thinking', '’ve been thinking'], why: '*Think of* meaning consider is dynamic, so a continuous form.' },
-      { q: 'By next week, we ___ (finish) all the exams.', a: ['will have finished', '’ll have finished'], why: 'Complete before a future point: the future perfect simple.' },
-      { q: 'This coffee ___ (taste) burnt. Can I have another one?', a: ['tastes'], why: '*Taste* describing a quality is a state: the simple form.' },
-      { q: 'She has always been fiercely ___ (independence).', a: ['independent'], why: 'An adverb is followed by an adjective: *independent*.' },
+    { t: 'ex', kind: 'transform', h: 'Complete the second sentence so that it has a similar meaning to the first. Use between three and six words, including the word given.', items: [
+      { q: 'It’s years since I last went to the theatre.', cue: 'been', gap: 'I ___ the theatre for years.', a: ['haven’t been to', 'have not been to'], why: '*It’s years since* = present perfect negative + *for*.' },
+      { q: 'I planned to call you, but I never did.', cue: 'meaning', gap: 'I ___ you, but I never did.', a: ['had been meaning to call', '’d been meaning to call', 'had been meaning to phone', '’d been meaning to phone'], why: 'A past intention that was never carried out.' },
     ] },
-    { t: 'ex', kind: 'match', h: 'Match the adjectives with their meanings.', pairs: [
-      ['gregarious', 'loves being with other people'],
-      ['headstrong', 'refuses to listen to advice'],
-      ['conscientious', 'works carefully and thoroughly'],
-      ['abrasive', 'rude and harsh with people'],
+    { t: 'ex', kind: 'gap', h: 'Complete each collocation with one word.', items: [
+      { q: 'He was ___ shy as a child and hated speaking in class.', a: ['painfully'], why: '*Painfully shy*: shyness that causes discomfort.' },
+      { q: 'She’s ___ independent and refuses all help.', a: ['fiercely'], why: '*Fiercely independent*.' },
+      { q: 'The airline is ___ unreliable, so book an early flight.', a: ['notoriously'], why: '*Notoriously* = well known for something bad.' },
+      { q: 'He was ___ unaware of the damage he had done.', a: ['blissfully'], why: '*Blissfully unaware*: happily ignorant.' },
+    ] },
+    { t: 'ex', kind: 'wordform', h: 'Use the word in capitals to form a word that fits the gap.', items: [
+      { q: 'Her ___ to admit mistakes made her hard to work with.', base: 'willing', a: ['unwillingness'], why: 'A negative noun after *Her*: *unwillingness*.' },
+      { q: 'He is admired for his ___ in difficult situations.', base: 'resolute', a: ['resolution', 'resoluteness'], why: 'A noun after *his*.' },
+      { q: 'She is ___ modest about her achievements.', base: 'arm', a: ['disarmingly'], why: 'An adverb before *modest*: *disarmingly*.' },
     ] },
     { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
-      { s: 'I [am knowing] exactly what you mean.', a: ['know'], why: '*Know* is a state verb: no continuous.' },
-      { s: 'She [has been writing] three emails this morning.', a: ['has written', '’s written'], why: 'With a number of finished things, use the present perfect simple.' },
+      { s: 'I [have been knowing] him since university.', a: ['have known', '’ve known'], why: '*Know* is a state verb.' },
+      { s: 'She’s a very [level-head] person in a crisis.', a: ['level-headed'], why: 'Compound adjectives with a body part take *-ed*.' },
+      { s: 'He’s so [sensible]: he cries at every film.', a: ['sensitive'], why: '*Sensitive* = easily moved.' },
     ] },
   ],
 };
