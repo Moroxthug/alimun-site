@@ -4,12 +4,12 @@
 // every two units (8), one exam-practice class per C2 Proficiency paper (Reading and Use of English; Writing; Listening;
 // Speaking), a mid-level check, a full practice exam and the final check (no level after C2, so no gate). The owner's
 // list adds up to 79; the mid-level check after unit 8 makes the 80th, as in B1, B2 and C1.
-// book: points at the preview while the book is written; English-C2 at the switch.
+// book: the second-edition book English-C2.
 export const COURSE = {
   id: 'English-C2',
   language: 'English',
   level: 'C2',
-  book: 'English-C2-preview',
+  book: 'English-C2',
   review: 'draft',
   minutes: 60,
   sizes: ['one', 'small'],
