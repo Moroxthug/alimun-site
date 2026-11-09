@@ -95,6 +95,35 @@ function appOrigin() {
   try { return new URL(appUrl).origin; } catch { return 'https://alimun.com'; }
 }
 
+// ── Checkout branding ──
+// Alimun look on Stripe's hosted checkout: bone background, lime button, the
+// wordmark and app icon. Satoshi is not on Stripe's font list; Inter is the
+// closest. branding_settings needs API version 2025-09-30.clover, so only this
+// request is sent with that version (the rest of the integration is unchanged).
+// If Stripe ever refuses it, checkout goes ahead with the Dashboard defaults.
+const CHECKOUT_API_VERSION = '2025-09-30.clover';
+const CHECKOUT_BRANDING = {
+  display_name: 'Alimun',
+  background_color: '#f0efe9',
+  button_color: '#ceff65',
+  border_style: 'rounded',
+  font_family: 'inter',
+  logo: { type: 'url', url: 'https://alimun.com/images/stripe-checkout-logo.png' },
+  icon: { type: 'url', url: 'https://alimun.com/images/icon-512.png' },
+};
+
+async function createBrandedCheckout(params) {
+  try {
+    return await stripe.checkout.sessions.create(
+      { ...params, branding_settings: CHECKOUT_BRANDING },
+      { apiVersion: CHECKOUT_API_VERSION },
+    );
+  } catch (e) {
+    console.warn('[Alimun] checkout branding not applied:', e && e.message);
+    return stripe.checkout.sessions.create(params);
+  }
+}
+
 /** Only allow redirect targets on our own origin (or relative paths). */
 function safeReturnUrl(candidate, fallbackPath) {
   const origin = appOrigin();
@@ -270,12 +299,12 @@ async function handleCreateCheckout(req, res) {
       if (withGift.subscription_data) withGift.subscription_data = { metadata: withGift.metadata };
       if (withGift.payment_intent_data) withGift.payment_intent_data = { metadata: withGift.metadata };
       try {
-        session = await stripe.checkout.sessions.create(withGift);
+        session = await createBrandedCheckout(withGift);
       } catch (e) {
         console.warn('[Alimun] welcome gift not applied:', e && e.message);
       }
     }
-    if (!session) session = await stripe.checkout.sessions.create(sessionParams);
+    if (!session) session = await createBrandedCheckout(sessionParams);
     return res.status(200).json({ sessionId: session.id, url: session.url, welcomeGift: session.metadata?.welcome_gift === '1' });
   } catch (err) {
     console.error('[Alimun] create-checkout error:', err);
