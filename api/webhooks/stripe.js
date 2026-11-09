@@ -311,6 +311,15 @@ async function logActivity(supabase, userId, event, detail) {
   if (error) console.warn('[Alimun Webhook] activity not recorded:', error.message);
 }
 
+/** The welcome gift (10 EUR off the first plan or 1 on 1 class) was paid with: it is not offered again. */
+async function markWelcomeGiftUsed(session, supabaseUserId, supabase) {
+  const { data: student } = await supabase.from('student_profiles').select('id').eq('user_id', supabaseUserId).maybeSingle();
+  if (!student) return;
+  const { error } = await supabase.from('welcome_poll').update({ discount_used_at: new Date().toISOString(), discount_checkout: session.id })
+    .eq('student_id', student.id).is('discount_used_at', null);
+  if (error) console.warn('[Alimun Webhook] welcome gift not marked used:', error.message);
+}
+
 async function processWebhookEvent(event, supabase) {
   const object = event.data.object;
 
@@ -337,6 +346,7 @@ async function processWebhookEvent(event, supabase) {
       } else {
         await handleOneTimeCheckout(session, metadata, supabaseUserId, supabase);
       }
+      if (metadata.welcome_gift === '1') await markWelcomeGiftUsed(session, supabaseUserId, supabase);
       break;
     }
 

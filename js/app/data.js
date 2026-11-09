@@ -189,7 +189,9 @@
         cohorts.length ? c.from('session_notes').select('id, grammar_focus, published_at, sessions!inner ( scheduled_at, cohort_id )').in('sessions.cohort_id', cohorts)
           .not('published_at', 'is', null).gte('published_at', new Date(Date.now() - 14 * DAY).toISOString()).order('published_at', { ascending: false }).limit(1) : null,
         cohorts.length ? c.from('sessions').select('cohort_id, scheduled_at, status').in('cohort_id', cohorts).gte('scheduled_at', new Date(Date.now() - 15 * DAY).toISOString())
-          .lte('scheduled_at', new Date().toISOString()).limit(100) : null
+          .lte('scheduled_at', new Date().toISOString()).limit(100) : null,
+        /* The welcome poll: answered, and whether the welcome gift (10 EUR off) is still to be used */
+        c.from('welcome_poll').select('discount_used_at').eq('student_id', p.id).maybeSingle()
       ]);
     }).then(function (res) {
       res.cohorts = cohortsOf;
@@ -250,6 +252,10 @@
         streak: streakFrom(stamps),
         placement: placement,
         topics: placement ? res[8] : [],
+        welcome: (function (w) {
+          if (!w || w.error) return null;
+          return { answered: !!w.data, giftOpen: !!w.data && !w.data.discount_used_at };
+        })(res[15]),
         tutor: (function () {
           var tt = res[10] && !res[10].error ? res[10].data : null, mem = res[11] && !res[11].error && res[11].data ? res[11].data.notes || {} : {};
           var last = res[12] && !res[12].error ? (res[12].data || [])[0] : null;

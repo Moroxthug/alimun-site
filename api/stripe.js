@@ -12,6 +12,10 @@
  *                                     and the tutor time packs with their minutes (api/_lib/tutor-packs.js)
  *    - GET  ?action=config            (public, publishable values only)
  *
+ *  Welcome gift (owner, 9 Nov 2026): a student who answered the welcome poll and has not used the gift gets the
+ *  coupon WELCOME_COUPON (10 EUR, or its set amount in USD/CAD/AUD/MAD) on a plan or a 1 on 1 class, once.
+ *  The coupon has no public code; the webhook marks it used when that checkout is paid.
+ *
  *  Security notes:
  *    - Checkout REQUIRES a Supabase JWT. The user id / email that end
  *      up in Stripe metadata always come from the verified session,
@@ -57,6 +61,15 @@ const PRICE_CATALOGUE = [
 ].filter((p) => p.id);
 
 const PRICE_BY_ID = Object.fromEntries(PRICE_CATALOGUE.map((p) => [p.id, p]));
+
+// The welcome gift's Stripe coupon (created live on 9 Nov 2026) and what it applies to
+const WELCOME_COUPON = 'alimun_welcome_10';
+function welcomeGiftApplies(price) { return price.mode === 'subscription' || price.type === 'session'; }
+async function welcomeGiftOpen(supabaseAdmin, studentId) {
+  const { data, error } = await supabaseAdmin.from('welcome_poll').select('discount_used_at').eq('student_id', studentId).maybeSingle();
+  if (error) { console.warn('[Alimun] welcome gift lookup:', error.message); return false; }
+  return !!data && !data.discount_used_at;
+}
 
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
@@ -248,8 +261,22 @@ async function handleCreateCheckout(req, res) {
       sessionParams.payment_intent_data = { metadata };
     }
 
-    const session = await stripe.checkout.sessions.create(sessionParams);
-    return res.status(200).json({ sessionId: session.id, url: session.url });
+    // The welcome gift replaces the promotion code box (Stripe takes one or the other). If Stripe refuses the
+    // coupon, checkout goes ahead at the full price rather than failing.
+    let session;
+    if (welcomeGiftApplies(price) && await welcomeGiftOpen(supabaseAdmin, profile.id)) {
+      const withGift = { ...sessionParams, discounts: [{ coupon: WELCOME_COUPON }], metadata: { ...metadata, welcome_gift: '1' } };
+      delete withGift.allow_promotion_codes;
+      if (withGift.subscription_data) withGift.subscription_data = { metadata: withGift.metadata };
+      if (withGift.payment_intent_data) withGift.payment_intent_data = { metadata: withGift.metadata };
+      try {
+        session = await stripe.checkout.sessions.create(withGift);
+      } catch (e) {
+        console.warn('[Alimun] welcome gift not applied:', e && e.message);
+      }
+    }
+    if (!session) session = await stripe.checkout.sessions.create(sessionParams);
+    return res.status(200).json({ sessionId: session.id, url: session.url, welcomeGift: session.metadata?.welcome_gift === '1' });
   } catch (err) {
     console.error('[Alimun] create-checkout error:', err);
     return res.status(500).json({ error: 'Failed to create checkout session' });

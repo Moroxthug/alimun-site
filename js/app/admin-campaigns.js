@@ -78,8 +78,9 @@
       field('Plan', '<select class="st-in" name="plan">' + opt('', 'Any') + opt('free', 'Free plan') + opt('paying', 'Paying') + '</select>') +
       '<div class="st-row">' + field('Active in the last … days', '<input class="st-in" type="number" name="active_within_days" min="1" max="400">') +
         field('Or quiet for … days', '<input class="st-in" type="number" name="inactive_for_days" min="1" max="400">') + '</div>' +
+      '<label class="st-day" style="margin-top:6px"><input type="checkbox" name="welcome_poll"><span>Only students who answered the welcome poll</span></label>' +
       '<label class="st-day" style="margin-top:6px"><input type="checkbox" name="include_newsletter" checked><span>Newsletter sign-ups too (email only)</span></label>' +
-      '<span class="t-small st-hint">People who signed up with the footer form since it says news and offers. Left out when you choose people, course, level, countries, plan or activity, since sign-ups have none of these.</span>' +
+      '<span class="t-small st-hint">People who signed up with the footer form since it says news and offers. Left out when you choose people, course, level, countries, plan, activity or the welcome poll, since sign-ups have none of these.</span>' +
       '<div class="ad-count" data-count aria-live="polite">' + loading() + '</div>' +
       '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-camp-send disabled>Send</button></div><p class="t-small st-msg" data-msg="send" aria-live="polite"></p>' +
       '<div data-confirm></div></form>';
@@ -129,6 +130,7 @@
     ['role', 'language', 'level', 'ui_lang', 'plan', 'active_within_days', 'inactive_for_days'].forEach(function (k) { var v = String(f.get(k) || '').trim(); if (v) out[k] = v; });
     var c = String(f.get('countries') || '').toUpperCase().split(/[\s,;]+/).filter(function (x) { return /^[A-Z]{2}$/.test(x); });
     if (c.length) out.countries = c;
+    if (f.get('welcome_poll')) out.welcome_poll = true;
     return out;
   }
   function count() {

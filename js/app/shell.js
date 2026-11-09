@@ -382,9 +382,27 @@
       '<div class="btn-row" style="margin-top:16px"><a class="btn btn--primary btn--sm" href="#/tutor/lesson/' + esc(l.id) + '">' + esc(t('app_lesson_go')) + '</a></div></section>';
   }
 
+  /* The welcome gift (js/app/poll.js): 10 EUR off the first plan or 1 on 1 class, applied at checkout by the server */
+  function giftAmount() { return new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(10); }
+  function welcomeCard(d) {
+    var w = d.welcome;
+    if (!w) return '';
+    if (!w.answered) {
+      return '<section class="card card--mint span-12" style="--i:8" aria-labelledby="h-wpoll">' +
+        '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2" id="h-wpoll">' + esc(t('app_home_poll_h')) + '</h2>' +
+        '<p class="t-body" style="margin-top:10px">' + esc(t('app_home_poll_p', { amount: giftAmount() })) + '</p></div>' +
+        '<button class="btn btn--primary" type="button" data-poll-open>' + esc(t('app_home_poll_go')) + '</button></div></section>';
+    }
+    if (!w.giftOpen) return '';
+    return '<section class="card card--lime span-12" style="--i:9" aria-labelledby="h-gift">' +
+      '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2" id="h-gift">' + esc(t('app_home_gift_h', { amount: giftAmount() })) + '</h2>' +
+      '<p class="t-body" style="margin-top:10px">' + esc(t('app_home_gift_p')) + '</p></div>' +
+      '<a class="btn btn--primary" href="#/settings/plans">' + esc(t('app_home_see_plans')) + '</a></div></section>';
+  }
+
   function planCard(d) {
     var tier = d.profile.tier;
-    if (!UNPAID[tier]) return '';
+    if (!UNPAID[tier] || (d.welcome && d.welcome.giftOpen)) return '';
     var k = tier === 'waitlist' ? ['app_home_plan_wait_h', 'app_home_plan_wait_p'] : ['app_home_plan_free_h', 'app_home_plan_free_p'];
     return '<section class="card card--lime span-12" style="--i:9" aria-labelledby="h-plan">' +
       '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2" id="h-plan">' + esc(t(k[0])) + '</h2>' +
@@ -421,6 +439,7 @@
         focusCard(d) +
         tutorCard(d) +
         lessonCard(d) +
+        welcomeCard(d) +
         planCard(d) +
       '</div>';
   }
@@ -712,16 +731,19 @@
     /* ?sample=1&poll=1 opens it on the sample dashboard for a look; nothing is sent */
     var preview = mode !== 'real' && /[?&]poll=1/.test(location.search);
     if ((mode !== 'real' && !preview) || (window.AlimunData.viewingAs && window.AlimunData.viewingAs())) return;
-    var go = function () {
-      if (!window.AlimunPoll) return;
-      window.AlimunPoll.maybe({ t: t, esc: esc, icon: icon, lang: lang, locale: locale, profile: D.profile, drawing: Cast.drawing(buddyOf(D)), preview: preview,
-        onDone: function (added) {
-          if (!added) return;
-          D.tutor.seconds += added; D.tutor.fresh = false;
-          if (current === 'home' || current === 'tutor') render(current, false);
-        } });
-    };
-    if (window.AlimunPoll) go(); else loadScript('/js/app/poll.js').then(go);
+    if (preview) { D.welcome = { answered: false, giftOpen: false }; if (current === 'home') render('home', false); }
+    withPoll(function (P) { P.maybe(pollHelpers(preview)); });
+  }
+  function pollHelpers(preview) {
+    return { t: t, esc: esc, icon: icon, lang: lang, locale: locale, profile: D.profile, drawing: Cast.drawing(buddyOf(D)), preview: preview, amount: giftAmount(),
+      onDone: function (added) {
+        D.welcome = { answered: true, giftOpen: !(D.welcome && D.welcome.answered && !D.welcome.giftOpen) };
+        if (added) { D.tutor.seconds += added; D.tutor.fresh = false; }
+        if (current === 'home' || current === 'tutor') render(current, false);
+      } };
+  }
+  function withPoll(fn) {
+    if (window.AlimunPoll) fn(window.AlimunPoll); else loadScript('/js/app/poll.js').then(function () { if (window.AlimunPoll) fn(window.AlimunPoll); });
   }
 
   function boot() {
@@ -750,8 +772,13 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 
     app.addEventListener('click', function (e) {
-      var el = e.target.closest('[data-more],[data-close],[data-join],[data-join-real],[data-demo-loader],[data-replay],[data-retry]');
+      var el = e.target.closest('[data-more],[data-close],[data-join],[data-join-real],[data-demo-loader],[data-replay],[data-retry],[data-poll-open]');
       if (!el) return;
+      if (el.hasAttribute('data-poll-open')) {
+        if (window.AlimunData.viewingAs && window.AlimunData.viewingAs()) return;
+        var pv = mode !== 'real';
+        return withPoll(function (P) { P.open(pollHelpers(pv)); });
+      }
       if (el.hasAttribute('data-more')) setSheet(!document.body.classList.contains('is-sheet-open'));
       else if (el.hasAttribute('data-close')) setSheet(false);
       else if (el.hasAttribute('data-join')) showLoader(t('app_loading_join'), 2200);

@@ -1669,3 +1669,12 @@ Owner: "for the existing users that just signed up, plus any new one ... an in w
 - Text: 66 `app_wp_*` strings in all languages (ma as French), filed with the dashboard text.
 - Checked locally: the whole poll walked through in English at 1280, French at 390 and Arabic at 1280, the admin card on the sample admin page, no page errors.
 - For the owner: the reward for answering beyond the 10 minutes (free first class, 10 euros off the first pack, or a free month) is not promised anywhere yet; it waits for the owner's choice.
+
+## 2026-11-09 — Welcome gift: 10 euros off the first plan or 1 on 1 class
+
+Owner: "go with the 10 euros off the first pack and future classes message".
+- Stripe (live): coupon `alimun_welcome_10`, 10 EUR off once, with 12 USD, 16 CAD, 18 AUD and 110 MAD for checkouts in those currencies; no promotion code, so only the server applies it. Checked with a live checkout page nobody paid (Community monthly in USD, 26 to 14); that page expires on its own within 24 hours (the Stripe connector cannot expire it), has no customer or account and grants nothing.
+- `api/stripe.js`: a student who answered the welcome poll and has not used the gift gets the coupon on a plan or a 1 on 1 class (not tutor time or certificates); Stripe takes a coupon or the promotion code box, so the box is hidden for that checkout; if Stripe refuses the coupon, checkout goes ahead at full price. `api/webhooks/stripe.js` marks the gift used when that checkout is paid.
+- `supabase/migrations/202611091800_welcome_discount.sql`, applied and verified: `welcome_poll.discount_used_at` and `discount_checkout`; `campaign_audience` takes `welcome_poll: true`. Admin Campaigns has "Only students who answered the welcome poll" (still only people who chose news and offers: 1 person in total today).
+- Dashboard: the poll's intro and thank-you name both gifts; Home shows a card to answer the poll (for anyone who pressed Later) and, once answered, "Your welcome gift: 10 EUR off ... ready for when classes start" until it is used, in place of the free-plan card; the Plans page says it comes off at checkout. Text in all languages.
+- Checked locally: Later, reopening from Home, the thank-you, the gift card and the Plans note in English at 1280 and German at 390, no page errors. Not tested: a real paid checkout with the gift (first real one will show it in Stripe and in welcome_poll.discount_used_at).

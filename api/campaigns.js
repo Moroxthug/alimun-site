@@ -98,6 +98,7 @@ function cleanFilter(f) {
   const n = (v) => { const x = parseInt(v, 10); return x >= 1 && x <= 400 ? x : null; };
   if (n(f.active_within_days)) out.active_within_days = n(f.active_within_days);
   if (n(f.inactive_for_days)) out.inactive_for_days = n(f.inactive_for_days);
+  if (f.welcome_poll === true) out.welcome_poll = true;
   return out;
 }
 /** The message, checked: plain text from the admin (escaped when drawn), the button only to alimun.com. */
@@ -155,7 +156,7 @@ function cleanMessages(b) {
   return error ? { error } : { msgs: { en: msg }, base: msg };
 }
 function pick(msgs, lang) { return msgs[lang] || (lang === 'ma' && msgs.fr) || msgs.en; }
-const USER_ONLY_FILTERS = ['role', 'language', 'level', 'countries', 'plan', 'active_within_days', 'inactive_for_days'];
+const USER_ONLY_FILTERS = ['role', 'language', 'level', 'countries', 'plan', 'active_within_days', 'inactive_for_days', 'welcome_poll'];
 
 async function allUserEmails(supabase) {
   const out = new Set();
