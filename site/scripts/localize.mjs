@@ -117,6 +117,14 @@ function absolutize(html, lang) {
   $('[style]').each((_, el) => { $(el).attr('style', $(el).attr('style').replace(/url\(['"]?([^'")]+)['"]?\)/gi, (m0, u) => `url('${fix(u)}')`)); });
   return $.html();
 }
+// Homepage: the old hero's video wall is hidden (src/blocks/home/v2/assets.html), yet its video still downloaded
+// the hero clip a second time, competing with the visible hero on phones. Its sources and autoplay are dropped
+// here so the locked block (src/blocks/02-hero.html) stays as approved.
+function withoutHiddenHeroVideo(html) {
+  return html.replace(/(<video id="34352df9[^>]*>)[\s\S]*?(<\/video>)/, (m, open, close) =>
+    open.replace(' autoplay=""', '').replace('<video ', '<video preload="none" ') + close);
+}
+
 function withCourseList(html, lang) {
   if (!html.includes('data-course-list')) return html;
   const $ = cheerio.load(html);
@@ -129,8 +137,10 @@ function withCourseList(html, lang) {
     row.find('a').attr('href', coursePath(S, c)).attr('title', S.heroTitle(c));
     row.find('.ln_title').text(c.name.charAt(0).toLocaleUpperCase(S.locale.replace('_', '-')) + c.name.slice(1));
     list.append(row);
+    // The poster is set from data-poster only when the section nears the screen (src/blocks/home/languages.html),
+    // so a phone opening the homepage does not fetch six city images and a clip before it scrolls there.
     const v = `/videos/${c.video}`;
-    media.append(`<div class="ln_video"><video muted loop playsinline preload="none" poster="${v}-poster-00001.jpg"><source src="${v}-transcode.mp4" type="video/mp4"><source src="${v}-transcode.webm" type="video/webm"></video></div>`);
+    media.append(`<div class="ln_video"><video muted loop playsinline preload="none" data-poster="${v}-poster-00001.jpg"><source src="${v}-transcode.mp4" type="video/mp4"><source src="${v}-transcode.webm" type="video/webm"></video></div>`);
   }
   const ld = { '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: S.courses.map((c, i) => ({
     '@type': 'ListItem', position: i + 1, url: BASE + coursePath(S, c),
@@ -198,11 +208,11 @@ function withLegalText(html, lang, file) {
 let count = 0;
 for (const file of pages) {
   const english = withEnglishFile(fs.readFileSync(path.join(dist, file), 'utf8'));
-  fs.writeFileSync(path.join(dist, file), withAlternates(withBlogStrip(withFooterCourses(withFaqLd(withCourseList(english, 'en')), 'en'), 'en'), file));
+  fs.writeFileSync(path.join(dist, file), withAlternates(withBlogStrip(withFooterCourses(withFaqLd(withCourseList(withoutHiddenHeroVideo(english), 'en')), 'en'), 'en'), file));
   for (const lang of languages) {
     fs.mkdirSync(path.join(dist, lang), { recursive: true });
     const html = localizePage(english, { lang, templateFile: file, langDict: translations[lang] || {}, META_I18N, META_LANG });
-    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withBlogStrip(withFooterCourses(withFaqLd(withCourseList(withLegalText(html, lang, file), lang)), lang), lang), file));
+    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withBlogStrip(withFooterCourses(withFaqLd(withCourseList(withoutHiddenHeroVideo(withLegalText(html, lang, file)), lang)), lang), lang), file));
     count++;
   }
 }

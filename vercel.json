@@ -19,6 +19,11 @@
       "continue": true
     },
     {
+      "src": "/(videos|images|fonts)/(.*)",
+      "headers": { "Cache-Control": "public, max-age=604800, stale-while-revalidate=2592000" },
+      "continue": true
+    },
+    {
       "src": "/fonts/(.*)",
       "headers": { "Access-Control-Allow-Origin": "*" },
       "continue": true

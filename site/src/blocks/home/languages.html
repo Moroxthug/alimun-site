@@ -81,9 +81,20 @@
               });
               show(best);
             }
-            window.addEventListener("scroll", update, { passive: true });
-            window.addEventListener("resize", update);
-            update();
+            // Nothing loads until the section is about a screen away: then the posters are set and the clip in the
+            // middle plays. Before, the first city clip started downloading with the page and slowed the hero on phones.
+            var started = false;
+            function start() {
+              if (started) return; started = true;
+              media.forEach(function (m) { var v = m.querySelector("video"), p = v.getAttribute("data-poster"); if (p) v.setAttribute("poster", p); });
+              window.addEventListener("scroll", update, { passive: true });
+              window.addEventListener("resize", update);
+              update();
+            }
+            if ("IntersectionObserver" in window) {
+              var near = new IntersectionObserver(function (entries) { if (entries[0].isIntersecting) { near.disconnect(); start(); } }, { rootMargin: "100% 0px" });
+              near.observe(root);
+            } else start();
           })();
         </script>
       </section>
