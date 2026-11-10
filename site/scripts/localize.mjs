@@ -84,16 +84,23 @@ const RES_UI_FOOT = { en: (await import(new URL('../src/data/resources/ui.js', i
 for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'resources')).filter((f) => /^ui-[a-z]{2}\.js$/.test(f))) RES_UI_FOOT[f.slice(3, 5)] = (await import(new URL(`../src/data/resources/${f}`, import.meta.url))).default;
 const resList = (lang) => fs.existsSync(path.join(site, 'src', 'data', 'resources', lang)) ? fs.readdirSync(path.join(site, 'src', 'data', 'resources', lang)).filter((f) => f.endsWith('.js')) : [];
 const blogList = (lang) => blogArticles.filter((a) => a.site === lang).sort((x, y) => (y.published + y.slug).localeCompare(x.published + x.slug));
-// The three articles of the strip: the language's chosen ones (ui.stripPicks), then the newest.
-function stripArticles(lang) {
+const READING = (await import(new URL('../src/data/blog/reading-picks.js', import.meta.url))).default;
+// The three articles of the strip: the language's chosen ones (ui.stripPicks), then the newest. Course and
+// Resources pages pass their own picks and course (src/data/blog/reading-picks.js): those first, then the
+// newest articles of the same course, then the language's usual strip.
+function stripArticles(lang, ctx) {
   const list = blogList(lang), picks = (BLOG_UI[lang] && BLOG_UI[lang].stripPicks) || [];
-  return [...picks.map((k) => list.find((a) => a.key === k)).filter(Boolean), ...list.filter((a) => !picks.includes(a.key))].slice(0, 3);
+  const base = [...picks.map((k) => list.find((a) => a.key === k)).filter(Boolean), ...list.filter((a) => !picks.includes(a.key))];
+  if (!ctx) return base.slice(0, 3);
+  const own = [...(ctx.keys || []).map((k) => list.find((a) => a.key === k)).filter(Boolean), ...list.filter((a) => ctx.course && a.course === ctx.course)];
+  return [...new Set([...own, ...base])].slice(0, 3);
 }
-function withBlogStrip(html, lang) {
-  const ui = BLOG_UI[lang], list = ui ? stripArticles(lang) : [];
+function withBlogStrip(html, lang, ctx) {
+  const ui = BLOG_UI[lang], list = ui ? stripArticles(lang, ctx) : [];
   if (!list.length || html.includes('class="section bl-strip"')) return html;
   const $ = cheerio.load(html);
-  const markup = blogRender.strip(list, ui, lang).replace('<div class="container-large">', '<div class="container-large">' + blogCards);
+  // Pages that already carry the card styles (Resources) do not get them twice.
+  const markup = blogRender.strip(list, ui, lang).replace('<div class="container-large">', '<div class="container-large">' + (html.includes('Blog cards, third design') ? '' : blogCards));
   const banner = $('section.is-bottom-cta').first();
   if (banner.length) banner.before(markup + '\n');
   else if ($('footer').length) $('footer').first().before(markup + '\n');
@@ -225,7 +232,8 @@ for (const p of coursePages) {
   const english = withEnglishFile(fs.readFileSync(path.join(dist, p.built), 'utf8'));
   const html = p.site === 'en' ? english
     : localizePage(english, { lang: p.site, templateFile: p.file, langDict: translations[p.site] || {}, META_I18N, META_LANG });
-  const $ = cheerio.load(withBlogStrip(withFooterCourses(html, p.site), p.site));
+  const course = (courseSites[p.site]?.courses || []).find((c) => c.slug + '.html' === p.file);
+  const $ = cheerio.load(withBlogStrip(withFooterCourses(html, p.site), p.site, course && { course: course.lang, keys: READING.courses[course.lang] }));
   $('link[rel="alternate"][hreflang]').remove();
   $('head').append(`\n  <link rel="alternate" hreflang="${HREFLANG[p.site] || p.site}" href="${url(p.site, p.file)}">\n`);
   fs.writeFileSync(path.join(dist, p.site === 'en' ? '' : p.site, p.file), $.html());
@@ -248,7 +256,7 @@ for (const d of fs.readdirSync(path.join(site, 'src', 'data', 'resources'), { wi
   }
 }
 const blogEntries = [];
-function movePages(dirName, baseOf, lastmodOf) {
+function movePages(dirName, baseOf, lastmodOf, extra) {
   const dir = path.join(dist, dirName);
   if (!fs.existsSync(dir)) return;
   for (const f of fs.readdirSync(dir).filter((f) => /^[a-z]{2}--[a-z0-9-]+\.html$/.test(f))) {
@@ -256,7 +264,7 @@ function movePages(dirName, baseOf, lastmodOf) {
     const base = baseOf(lang);
     let html = fs.readFileSync(path.join(dir, f), 'utf8');
     if (lang !== 'en') html = localizePage(html, { lang, templateFile: dirName + '-' + name + '.html', langDict: translations[lang] || {}, META_I18N, META_LANG });
-    html = absolutize(withFooterCourses(html, lang), lang);
+    html = absolutize(withFooterCourses(extra ? extra(html, lang, name) : html, lang), lang);
     const $ = cheerio.load(html);
     // Structured data carries the site code as the language; Morocco's is fr-MA, like its hreflang.
     if (HREFLANG[lang]) $('script[type="application/ld+json"]').each((i, el) => { $(el).text($(el).text().split(`"inLanguage":"${lang}"`).join(`"inLanguage":"${HREFLANG[lang]}"`)); });
@@ -287,6 +295,10 @@ movePages('blog', () => 'blog', (lang, name) => {
 movePages('resources', (lang) => RES_UI[lang].slugBase, (lang, name) => {
   const r = resItems.find((x) => x.site === lang && x.slug === name);
   return r ? r.published : resItems.filter((x) => x.site === lang).map((x) => x.published).sort().pop();
+}, (html, lang, name) => {
+  // Each resource links to the articles on its topic (src/data/blog/reading-picks.js).
+  const r = resItems.find((x) => x.site === lang && x.slug === name);
+  return r ? withBlogStrip(html, lang, { course: r.course, keys: READING.resources[r.key] }) : html;
 });
 
 // The 404 page has no language copies but shares the footer.
