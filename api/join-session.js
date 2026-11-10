@@ -193,7 +193,7 @@ module.exports = async function handler(req, res) {
     const roomProperties = {
       exp: expEpoch,
       max_participants: 40,
-      enable_chat: true,
+      enable_chat: false, // one class chat: the Alimun class conversation beside the video
       enable_screenshare: true,
       enable_knocking: false,
       start_video_off: false,

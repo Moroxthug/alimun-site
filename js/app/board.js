@@ -20,6 +20,27 @@
   'use strict';
   var W = 960, MINH = 540, V = 'b1', PIECE = 3000;
   var COLORS = { ink: '#080808', forest: '#1a443c', coral: '#ff9f8a', lime: '#ceff65' };
+  /* Line icons in the dashboards' style (2 px strokes, round ends) */
+  var IP = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
+  var ICONS = {
+    pen: '<path d="M4 20l1-4.5L15.5 5a2.1 2.1 0 0 1 3 3L8 18.5z"/><path d="M13.5 7l3 3"/>',
+    marker: '<path d="M9 15l-4 4h6l1.5-1.5"/><path d="M8.5 14.5 16.5 4.5l3 3-8 10z"/><path d="M4 21h16" opacity=".5"/>',
+    text: '<path d="M5 6.5V5h14v1.5M12 5v14M9 19h6"/>',
+    eraser: '<path d="M8.5 19.5 4 15a1.5 1.5 0 0 1 0-2.1L13 4a1.5 1.5 0 0 1 2.1 0L20 8.9a1.5 1.5 0 0 1 0 2.1l-8.5 8.5z"/><path d="M8.5 19.5H20M9 9.5l5.5 5.5"/>',
+    undo: '<path d="M9 14 4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/>',
+    clear: '<path d="M4 7h16M10 11v6M14 11v6M6 7l1 12.5a1.5 1.5 0 0 0 1.5 1.5h7a1.5 1.5 0 0 0 1.5-1.5L18 7M9 7V4.5h6V7"/>',
+    eye: '<path d="M2.5 12s3.5-6.5 9.5-6.5 9.5 6.5 9.5 6.5-3.5 6.5-9.5 6.5S2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
+    left: '<path d="M15 5l-7 7 7 7"/>', right: '<path d="M9 5l7 7-7 7"/>', down: '<path d="M6 9l6 6 6-6"/>',
+    plus: '<path d="M12 5v14M5 12h14"/>', people: '<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.8" cy="9.5" r="2.5"/><path d="M15.5 14.6c2.6-.3 4.4 1.3 5 4.4"/>',
+    clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>', check: '<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+    hand: '<path d="M8 13V6.5a1.5 1.5 0 0 1 3 0V12M11 11V4.5a1.5 1.5 0 0 1 3 0V11M14 11V5.5a1.5 1.5 0 0 1 3 0V12M17 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1.5a6 6 0 0 1-4.6-2.2L4.5 15.6a1.6 1.6 0 0 1 2.3-2.2L8 14.5"/>',
+    zoom: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8M10.5 7.5v6M7.5 10.5h6"/>',
+    zoomout: '<circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.8-4.8M7.5 10.5h6"/>'
+  };
+  function ic(n) { return '<svg class="bd-i" viewBox="0 0 24 24" ' + IP + ' aria-hidden="true" focusable="false">' + ICONS[n] + '</svg>'; }
+  /* Empty pages the teacher can add to any class (owner, 10 Nov 2026: more material for the board) */
+  var TPLS = ['lined', 'grid', 'cols', 'mind', 'time', 'table'];
+  var TPL_KEYS = { lined: 'app_bd_tpl_lined', grid: 'app_bd_tpl_grid', cols: 'app_bd_tpl_cols', mind: 'app_bd_tpl_mind', time: 'app_bd_tpl_time', table: 'app_bd_tpl_table' };
   var courses = {};
 
   function loadCourse(id) {
@@ -38,15 +59,25 @@
     var md = function (s) { return window.AlimunEx ? window.AlimunEx.md(s) : esc(s); };
     var paras = function (s) { return String(s || '').split(/\n\s*\n/).map(function (p) { return '<p>' + md(p.trim()) + '</p>'; }).join(''); };
     var key = 'alimun-board-' + (o.sessionId || 'x');
-    var S = { v: 1, show: false, course: o.course || null, lesson: o.lesson || null, page: 0, pages: {}, write: { m: 'none', who: null } };
+    var S = { v: 1, show: false, course: o.course || null, lesson: o.lesson || null, page: 0, pages: {}, extra: [], write: { m: 'none', who: null } };
     var course = null, root = null, tool = 'pen', color = 'ink', drawing = null, segTimer = null, pending = {}, alive = true, mine = {}, me = null;
-    var soloIt = [], soloId = null, soloSent = false, soloLocked = false, viewing = null, ticker = null, saveTimer = null, dirtyWork = {};
-    if (viewer && o.data) S = Object.assign(S, { course: o.data.course || null, lesson: o.data.lesson || null, pages: o.data.pages || {}, show: true });
+    var soloIt = [], soloId = null, soloSent = false, soloLocked = false, viewing = null, ticker = null, saveTimer = null, dirtyWork = {}, menu = false, clearSure = false, zoom = 1;
+    if (viewer && o.data) S = Object.assign(S, { course: o.data.course || null, lesson: o.data.lesson || null, pages: o.data.pages || {}, extra: Array.isArray(o.data.extra) ? o.data.extra : [], show: true });
     if (teacher) { try { var saved = JSON.parse(localStorage.getItem(key) || 'null'); if (saved && saved.v === 1) S = Object.assign(S, saved, { course: o.course || saved.course, lesson: o.lesson || saved.lesson }); } catch (e) { /* storage blocked */ } }
 
+    function lessonOf(id) { return course && id ? course.lessons.filter(function (x) { return x.id === id; })[0] || null : null; }
+    /* The lesson's board pages, a blank page, then the pages the teacher added in class (S.extra): an empty page
+       (lined, squared, two columns, word map, timeline, table), a page from another lesson of the course, or the
+       words from the last class. Added pages keep their place, so what is drawn on them stays on the right page. */
     function lessonPages() {
-      var l = course && S.lesson ? course.lessons.filter(function (x) { return x.id === S.lesson; })[0] : null;
-      return (l && l.board ? l.board : []).concat([{ title: t('app_bd_blank'), blocks: [] }]);
+      var l = lessonOf(S.lesson);
+      return (l && l.board ? l.board : []).concat([{ title: t('app_bd_blank'), blocks: [] }]).concat((S.extra || []).map(extraPage));
+    }
+    function extraPage(x) {
+      if (x && x.s === 'tpl' && TPLS.indexOf(x.k) > -1) return { title: t(TPL_KEYS[x.k]), blocks: [{ t: 'tpl', k: x.k }], added: true };
+      if (x && x.s === 'lesson') { var l = lessonOf(x.l), p = l && l.board ? l.board[+x.i] : null; if (p) return { title: p.title, blocks: p.blocks || [], added: true, from: l.title }; }
+      if (x && x.s === 'words' && Array.isArray(x.w)) return { title: t('app_bd_words_page'), added: true, blocks: [{ t: 'table', head: [t('app_bd_word'), t('app_bd_meaning')], rows: x.w.slice(0, 20).map(function (w) { return [String(w[0] || '').slice(0, 200), String(w[1] || '').slice(0, 300)]; }) }] };
+      return { title: t('app_bd_blank'), blocks: [], added: true };
     }
     function pg(i) { return S.pages[i] || (S.pages[i] = { it: [], rv: false }); }
     function save() { if (!teacher) return; try { localStorage.setItem(key, JSON.stringify(S)); } catch (e) { /* storage blocked */ } persist(false); }
@@ -66,7 +97,7 @@
         var i = k.indexOf(':'), sid = k.slice(0, i), who = k.slice(i + 1), w = S.work && S.work[sid] && S.work[sid][who];
         if (w && w.uid) rows.push({ session_id: o.sessionId, solo_id: sid, user_id: w.uid, name: String(w.name || '').slice(0, 100), page: pgOf[sid] || 0, items: w.it || [], sent_at: new Date(w.at || Date.now()).toISOString() });
       });
-      window.AlimunData.saveBoard(o.sessionId, { course: S.course, lesson: S.lesson, pages: S.pages, solos: solos })
+      window.AlimunData.saveBoard(o.sessionId, { course: S.course, lesson: S.lesson, pages: S.pages, solos: solos, extra: S.extra || [] })
         .then(function () { return window.AlimunData.saveBoardWork(rows); })
         .then(function () { sent.forEach(function (k) { delete dirtyWork[k]; }); }, function () { /* kept in this browser; tried again on the next change */ });
     }
@@ -143,7 +174,28 @@
         case 'dialogue': return '<div class="bd-dialogue">' + (b.title ? '<p class="bd-ex__h">' + md(b.title) + '</p>' : '') + b.lines.map(function (l) { return '<p><b>' + esc(l.who) + ':</b> ' + md(l.s) + '</p>'; }).join('') + '</div>';
         case 'reading': return '<div class="bd-reading">' + (b.title ? '<p class="bd-ex__h">' + esc(b.title) + '</p>' : '') + paras(b.md) + '</div>';
         case 'ex': return exHtml(b, rv);
+        case 'tpl': return tplHtml(b.k);
         default: return '';
+      }
+    }
+
+    /* The empty pages: lines, squares, two columns, a word map, a timeline or a table to write into */
+    function tplHtml(k) {
+      var svg = function (inner) { return '<svg class="bd-tpl__svg" viewBox="0 0 872 620" ' + IP + ' aria-hidden="true">' + inner + '</svg>'; };
+      switch (k) {
+        case 'cols': return '<div class="bd-tpl bd-tpl--cols"><div></div><div></div></div>';
+        case 'mind':
+          var spokes = '';
+          for (var i = 0; i < 8; i++) { var a = i * Math.PI / 4 + Math.PI / 8, x = 436 + Math.cos(a) * 250, y = 310 + Math.sin(a) * 215; spokes += '<path d="M' + (436 + Math.cos(a) * 92).toFixed(0) + ' ' + (310 + Math.sin(a) * 70).toFixed(0) + 'L' + x.toFixed(0) + ' ' + y.toFixed(0) + '" stroke-dasharray="2 9"/><ellipse cx="' + x.toFixed(0) + '" cy="' + y.toFixed(0) + '" rx="62" ry="30"/>'; }
+          return '<div class="bd-tpl bd-tpl--mind">' + svg('<ellipse cx="436" cy="310" rx="96" ry="64" stroke-width="3"/>' + spokes) + '</div>';
+        case 'time':
+          var ticks = '';
+          for (var j = 0; j < 6; j++) { var tx = 60 + j * 150; ticks += '<circle cx="' + tx + '" cy="310" r="9"/><path d="M' + tx + ' ' + (j % 2 ? 330 : 290) + 'V' + (j % 2 ? 440 : 180) + '" stroke-dasharray="2 9"/>'; }
+          return '<div class="bd-tpl bd-tpl--time">' + svg('<path d="M30 310H842M826 296l16 14-16 14" stroke-width="3"/>' + ticks) + '</div>';
+        case 'table':
+          var row = '<tr>' + new Array(5).join('<td></td>') + '</tr>';
+          return '<div class="bd-tpl bd-tpl--table"><table><tbody>' + new Array(8).join(row) + '</tbody></table></div>';
+        default: return '<div class="bd-tpl bd-tpl--' + (k === 'grid' ? 'grid' : 'lined') + '"></div>';
       }
     }
 
@@ -173,50 +225,89 @@
       return [S.page, pg(S.page).it];
     }
     function mmss(ms) { var s = Math.ceil(ms / 1000); return Math.floor(s / 60) + ':' + ('0' + (s % 60)).slice(-2); }
-    function toolsHtml() {
-      var btn = function (k, label) { return '<button class="btn btn--' + (tool === k ? 'primary' : 'quiet') + ' btn--sm" type="button" data-bd="tool" data-k="' + k + '" aria-pressed="' + (tool === k) + '">' + esc(t(label)) + '</button>'; };
-      var sw = function (k) { return '<button class="bd-sw' + (color === k ? ' is-on' : '') + '" type="button" data-bd="color" data-k="' + k + '" style="background:' + COLORS[k] + '" aria-label="' + esc(t('app_bd_colour')) + ' ' + k + '" aria-pressed="' + (color === k) + '"></button>'; };
-      return btn('pen', 'app_bd_pen') + btn('marker', 'app_bd_marker') + btn('text', 'app_bd_text') + btn('eraser', 'app_bd_eraser') +
-        '<span class="bd-sws">' + ['ink', 'forest', 'coral'].map(sw).join('') + '</span>' +
-        '<button class="btn btn--quiet btn--sm" type="button" data-bd="undo">' + esc(t('app_bd_undo')) + '</button>';
+    /* The floating tool dock under the page: pen, highlighter, text, eraser, three colours, undo (and, for the
+       teacher, clear the page). Icons with their names for screen readers and on hover. */
+    function dockHtml(extra) {
+      var btn = function (k, label) { return '<button class="bd-tool' + (tool === k ? ' is-on' : '') + '" type="button" data-bd="tool" data-k="' + k + '" aria-pressed="' + (tool === k) + '" aria-label="' + esc(t(label)) + '" title="' + esc(t(label)) + '">' + ic(k) + '</button>'; };
+      var sw = function (k) { return '<button class="bd-sw' + (color === k ? ' is-on' : '') + '" type="button" data-bd="color" data-k="' + k + '" style="--sw:' + COLORS[k] + '" aria-label="' + esc(t('app_bd_colour')) + ' ' + k + '" aria-pressed="' + (color === k) + '"></button>'; };
+      return '<div class="bd-dock" role="toolbar" aria-label="' + esc(t('app_bd_tools')) + '">' + zoomBtn() + (zoom > 1 ? btn('hand', 'app_bd_hand') : '') + btn('pen', 'app_bd_pen') + btn('marker', 'app_bd_marker') + btn('text', 'app_bd_text') + btn('eraser', 'app_bd_eraser') +
+        '<span class="bd-sep"></span><span class="bd-sws">' + ['ink', 'forest', 'coral'].map(sw).join('') + '</span><span class="bd-sep"></span>' +
+        '<button class="bd-tool" type="button" data-bd="undo" aria-label="' + esc(t('app_bd_undo')) + '" title="' + esc(t('app_bd_undo')) + '">' + ic('undo') + '</button>' + (extra || '') + '</div>';
     }
-    function clock() { return '<span class="bd-clock" data-bd-clock>' + esc(mmss(soloLeft())) + '</span>'; }
+    /* Phones: the page fits the width and is small, so it can be shown twice as large and moved with the hand tool */
+    function zoomBtn() { return '<button class="bd-tool bd-narrow' + (zoom > 1 ? ' is-on' : '') + '" type="button" data-bd="zoom" aria-pressed="' + (zoom > 1) + '" aria-label="' + esc(t(zoom > 1 ? 'app_bd_zoom_out' : 'app_bd_zoom_in')) + '" title="' + esc(t(zoom > 1 ? 'app_bd_zoom_out' : 'app_bd_zoom_in')) + '">' + ic(zoom > 1 ? 'zoomout' : 'zoom') + '</button>'; }
+    function clock() { return '<span class="bd-clock" data-bd-clock>' + ic('clock') + '<span>' + esc(mmss(soloLeft())) + '</span></span>'; }
+    /* The page menu: every page of this class, then pages to add (empty pages, pages from other lessons of the course,
+       the words from the last class) */
+    function menuHtml(pages) {
+      var h = '<div class="bd-menu" data-bd-menu role="menu"><p class="bd-menu__h">' + esc(t('app_bd_in_class')) + '</p><div class="bd-menu__list">' +
+        pages.map(function (x, i) { return '<button class="bd-mi' + (i === S.page ? ' is-on' : '') + '" type="button" role="menuitem" data-bd="page" data-k="' + i + '"><span class="bd-mi__n">' + (i + 1) + '</span><span>' + esc(x.title) + (x.from ? '<small>' + esc(x.from) + '</small>' : '') + '</span>' + (i === S.page ? ic('check') : '') + '</button>'; }).join('') + '</div>';
+      if ((S.extra || []).length >= 30) return h + '</div>';
+      h += '<p class="bd-menu__h">' + esc(t('app_bd_templates')) + '</p><div class="bd-menu__grid">' +
+        TPLS.map(function (k) { return '<button class="bd-tile" type="button" data-bd="add" data-k="tpl:' + k + '"><span class="bd-tile__pic bd-tile__pic--' + k + '" aria-hidden="true"></span><span>' + esc(t(TPL_KEYS[k])) + '</span></button>'; }).join('') + '</div>';
+      var words = (o.words || []).filter(function (w) { return w && w.word; });
+      if (words.length) h += '<button class="bd-mi" type="button" data-bd="add" data-k="words">' + ic('plus') + '<span>' + esc(t('app_bd_words_page')) + '<small>' + esc(t('app_bd_n_words', { n: words.length })) + '</small></span></button>';
+      var others = course ? course.lessons.filter(function (l) { return l.board && l.board.length; }) : [];
+      if (others.length) {
+        h += '<p class="bd-menu__h">' + esc(t('app_bd_from_course')) + '</p><div class="bd-menu__list">' + others.map(function (l) {
+          return '<details class="bd-lesson"' + (l.id === S.lesson ? ' open' : '') + '><summary>' + esc(l.title) + ic('down') + '</summary>' + l.board.map(function (p, i) {
+            return '<button class="bd-mi" type="button" data-bd="add" data-k="lesson:' + esc(l.id) + ':' + i + '">' + ic('plus') + '<span>' + esc(p.title) + '</span></button>';
+          }).join('') + '</details>';
+        }).join('') + '</div>';
+      }
+      return h + '</div>';
+    }
+    function headHtml(pages) {
+      var cur = pages[S.page] || pages[0];
+      var nav = '<div class="bd-nav"><button class="bd-arrow" type="button" data-bd="step" data-k="-1" aria-label="' + esc(t('app_bd_prev')) + '"' + (S.page ? '' : ' disabled') + '>' + ic('left') + '</button>' +
+        '<button class="bd-pagebtn" type="button" data-bd="menu" aria-haspopup="menu" aria-expanded="' + menu + '"><span class="bd-pagebtn__t">' + esc(cur.title) + '</span><span class="bd-pagebtn__n">' + esc(t('app_bd_page_n', { n: S.page + 1, of: pages.length })) + '</span>' + ic('down') + '</button>' +
+        '<button class="bd-arrow" type="button" data-bd="step" data-k="1" aria-label="' + esc(t('app_bd_next')) + '"' + (S.page < pages.length - 1 ? '' : ' disabled') + '>' + ic('right') + '</button></div>';
+      var p = pg(S.page), w = S.write || {}, sel = w.m === 'one' ? 'one:' + w.who : w.m;
+      var who = '<label class="bd-ctl bd-ctl--select" title="' + esc(t('app_bd_who')) + '">' + ic('people') + '<span class="sr">' + esc(t('app_bd_who')) + '</span><select data-bd-who>' +
+        '<option value="none"' + (sel === 'none' ? ' selected' : '') + '>' + esc(t('app_bd_who_none')) + '</option>' +
+        '<option value="all"' + (sel === 'all' ? ' selected' : '') + '>' + esc(t('app_bd_who_all')) + '</option>' +
+        people().filter(function (x) { return !x.local && !x.owner; }).map(function (x) {
+          return '<option value="one:' + esc(x.session_id) + '"' + (sel === 'one:' + x.session_id ? ' selected' : '') + '>' + esc(x.user_name || t('app_bd_student')) + '</option>';
+        }).join('') + '</select>' + ic('down') + '</label>';
+      var solo = '<span class="bd-ctl bd-ctl--split"><button type="button" data-bd="solo">' + ic('clock') + '<span>' + esc(t('app_bd_solo')) + '</span></button><select data-bd-mins aria-label="' + esc(t('app_bd_solo')) + '">' +
+        [3, 5, 10].map(function (n) { return '<option value="' + n + '"' + (n === 5 ? ' selected' : '') + '>' + esc(t('app_bd_mins', { n: n })) + '</option>'; }).join('') + '</select></span>';
+      var ans = (cur.blocks || []).some(function (b) { return b.t === 'ex'; }) ? '<button class="bd-ctl' + (p.rv ? ' is-on' : '') + '" type="button" data-bd="reveal" aria-pressed="' + p.rv + '">' + ic('eye') + '<span>' + esc(t(p.rv ? 'app_bd_hide_answers' : 'app_bd_reveal')) + '</span></button>' : '';
+      return '<div class="bd-head">' + nav + '<div class="bd-ctls">' + ans + who + solo + '</div>' + (menu ? menuHtml(pages) : '') + '</div>';
+    }
+    /* What sits above the page: the teacher's page switcher and class controls, a student's note, or the panel of
+       "Everyone solves this" */
     function toolbar(pages) {
-      if (!teacher && S.spot) return '<p class="t-small bd-you">' + esc(t('app_bd_work_of', { name: S.spot.name })) + '</p>';
+      if (!teacher && S.spot) return '<div class="bd-banner">' + ic('eye') + '<p>' + esc(t('app_bd_work_of', { name: S.spot.name })) + '</p></div>';
       if (privateMode()) {
-        return '<div class="bd-solo"><p class="t-h3">' + esc(t('app_bd_solo_h')) + ' ' + clock() + '</p>' +
+        return '<div class="bd-solo"><div class="bd-solo__top"><p class="bd-solo__h">' + esc(t('app_bd_solo_h')) + '</p>' + clock() + '</div>' +
           (soloLocked ? '<p class="t-body">' + esc(t('app_bd_timeup')) + '</p>'
-            : '<div class="bd-tools btn-row">' + toolsHtml() + '</div><div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-bd="sendwork">' + esc(t('app_bd_send')) + '</button></div>' +
-              (soloSent ? '<p class="t-small bd-you">' + esc(t('app_bd_sent')) + '</p>' : '')) + '</div>';
+            : '<div class="bd-solo__row"><button class="btn btn--primary btn--sm" type="button" data-bd="sendwork">' + esc(t('app_bd_send')) + '</button>' +
+              (soloSent ? '<p class="t-small bd-you">' + esc(t('app_bd_sent')) + '</p>' : '') + '</div>') + '</div>';
       }
       if (teacher && isSolo()) {
         var list = people().filter(function (x) { return !x.local && !x.owner; });
         var gone = Object.keys(S.work[S.solo.id] || {}).filter(function (k) { return !list.some(function (x) { return x.session_id === k; }); });
-        var row = function (id, name) { var w = workOf(id); return '<button class="btn btn--' + (viewing === id ? 'primary' : 'ghost') + ' btn--sm" type="button" data-bd="see" data-k="' + esc(id) + '">' + esc(name + ', ' + t(w ? 'app_bd_done' : 'app_bd_working')) + '</button>'; };
-        return '<div class="bd-solo"><p class="t-h3">' + esc(t('app_bd_solving')) + ' ' + clock() + '</p>' +
-          '<div class="btn-row">' + list.map(function (x) { return row(x.session_id, x.user_name || t('app_bd_student')); }).join('') +
+        var row = function (id, name) { var w = workOf(id); return '<button class="bd-who' + (viewing === id ? ' is-on' : '') + (w ? ' is-done' : '') + '" type="button" data-bd="see" data-k="' + esc(id) + '"><span class="bd-who__dot"></span><span>' + esc(name) + '</span><small>' + esc(t(w ? 'app_bd_done' : 'app_bd_working')) + '</small></button>'; };
+        return '<div class="bd-solo"><div class="bd-solo__top"><p class="bd-solo__h">' + esc(t('app_bd_solving')) + '</p>' + clock() + '</div>' +
+          '<div class="bd-solo__people">' + list.map(function (x) { return row(x.session_id, x.user_name || t('app_bd_student')); }).join('') +
             gone.map(function (k) { return row(k, S.work[S.solo.id][k].name || t('app_bd_student')); }).join('') + '</div>' +
-          '<div class="btn-row">' + (viewing ? '<button class="btn btn--quiet btn--sm" type="button" data-bd="back">' + esc(t('app_bd_back')) + '</button>' +
+          '<div class="bd-solo__row">' + (viewing ? '<button class="btn btn--quiet btn--sm" type="button" data-bd="back">' + esc(t('app_bd_back')) + '</button>' +
               (workOf(viewing) && !S.spot ? '<button class="btn btn--ghost btn--sm" type="button" data-bd="spot">' + esc(t('app_bd_spot')) + '</button>' : '') : '') +
             (S.spot ? '<button class="btn btn--ghost btn--sm" type="button" data-bd="spotoff">' + esc(t('app_bd_spot_off')) + '</button>' : '') +
             '<button class="btn btn--primary btn--sm" type="button" data-bd="end">' + esc(t('app_bd_end')) + '</button></div>' +
           (viewing ? '<p class="t-small bd-you">' + esc(t('app_bd_work_of', { name: (workOf(viewing) || {}).name || (people().filter(function (x) { return x.session_id === viewing; })[0] || {}).user_name || t('app_bd_student') })) + '</p>' : '') + '</div>';
       }
-      if (!teacher && !canWrite()) return '';
-      if (!teacher) return '<p class="t-small bd-you">' + esc(t('app_bd_you_can')) + '</p><div class="bd-tools btn-row">' + toolsHtml() + '</div>';
-      var p = pg(S.page), w = S.write || {}, cur = w.m === 'one' ? 'one:' + w.who : w.m;
-      var who = '<label class="bd-who"><span class="t-small">' + esc(t('app_bd_who')) + '</span><select class="st-in" data-bd-who>' +
-        '<option value="none"' + (cur === 'none' ? ' selected' : '') + '>' + esc(t('app_bd_who_none')) + '</option>' +
-        '<option value="all"' + (cur === 'all' ? ' selected' : '') + '>' + esc(t('app_bd_who_all')) + '</option>' +
-        people().filter(function (x) { return !x.local && !x.owner; }).map(function (x) {
-          return '<option value="one:' + esc(x.session_id) + '"' + (cur === 'one:' + x.session_id ? ' selected' : '') + '>' + esc(x.user_name || t('app_bd_student')) + '</option>';
-        }).join('') + '</select></label>';
-      var solo = '<span class="bd-who"><button class="btn btn--ghost btn--sm" type="button" data-bd="solo">' + esc(t('app_bd_solo')) + '</button><select class="st-in" data-bd-mins aria-label="' + esc(t('app_bd_solo')) + '">' +
-        [3, 5, 10].map(function (n) { return '<option value="' + n + '"' + (n === 5 ? ' selected' : '') + '>' + esc(t('app_bd_mins', { n: n })) + '</option>'; }).join('') + '</select></span>';
-      return '<div class="bd-tabs btn-row" role="tablist">' + pages.map(function (x, i) { return '<button class="btn btn--' + (i === S.page ? 'primary' : 'ghost') + ' btn--sm" type="button" role="tab" aria-selected="' + (i === S.page) + '" data-bd="page" data-k="' + i + '">' + esc(x.title) + '</button>'; }).join('') + '</div>' +
-        '<div class="bd-tools btn-row">' + toolsHtml() +
-        '<button class="btn btn--quiet btn--sm" type="button" data-bd="clear">' + esc(t('app_bd_clear')) + '</button>' +
-        (pages[S.page].blocks.some(function (b) { return b.t === 'ex'; }) ? '<button class="btn btn--' + (p.rv ? 'primary' : 'ghost') + ' btn--sm" type="button" data-bd="reveal">' + esc(t(p.rv ? 'app_bd_hide_answers' : 'app_bd_reveal')) + '</button>' : '') + who + solo + '</div>';
+      if (!teacher) {
+        var cur = pages[Math.min(view()[0], pages.length - 1)];
+        return '<div class="bd-head bd-head--student"><p class="bd-title">' + esc(cur.title) + '</p>' + (canWrite() ? '<p class="bd-you">' + ic('pen') + '<span>' + esc(t('app_bd_you_can')) + '</span></p>' : zoomBtn()) + '</div>';
+      }
+      return headHtml(pages);
+    }
+    function dockFor() {
+      if (S.spot || (teacher && viewing)) return '';
+      if (privateMode()) return soloLocked ? '' : dockHtml('');
+      if (!canWrite()) return '';
+      return dockHtml(teacher && !isSolo() ? '<button class="bd-tool' + (clearSure ? ' is-warn' : '') + '" type="button" data-bd="clear" aria-label="' + esc(t(clearSure ? 'app_bd_clear_sure' : 'app_bd_clear')) + '" title="' + esc(t(clearSure ? 'app_bd_clear_sure' : 'app_bd_clear')) + '">' + ic('clear') + (clearSure ? '<span>' + esc(t('app_bd_clear_sure')) + '</span>' : '') + '</button>' : '');
     }
     function paperHtml(title, page, items, rv) {
       return '<div class="bd-stage"><div class="bd-paper" style="width:' + W + 'px"><h2 class="t-h2">' + esc(title) + '</h2>' +
@@ -242,9 +333,9 @@
       if (S.page >= pages.length) S.page = pages.length - 1;
       if (!teacher && !S.show) { root.innerHTML = '<div class="bd-wait"><p class="t-body">' + esc(t('app_bd_wait')) + '</p></div>'; return; }
       var v = view(), page = pages[Math.min(v[0], pages.length - 1)], rv = pg(v[0]).rv;
-      root.innerHTML = toolbar(pages) + '<div class="bd-stage"><div class="bd-paper' + (canDraw() ? ' is-' + tool : '') + '" style="width:' + W + 'px"><h2 class="t-h2">' + esc(page.title) + '</h2>' +
+      root.innerHTML = '<div class="bd-shell">' + toolbar(pages) + '<div class="bd-stage"><div class="bd-paper' + (canDraw() ? ' is-' + tool : '') + '" style="width:' + W + 'px"><h2 class="t-h2">' + esc(page.title) + '</h2>' +
         '<div class="bd-content" lang="en">' + page.blocks.map(function (b) { return blockHtml(b, rv); }).join('') + '</div>' +
-        '<svg class="bd-ink" xmlns="http://www.w3.org/2000/svg">' + v[1].map(itemSvg).join('') + '</svg><div class="bd-notes">' + v[1].map(itemText).join('') + '</div></div></div>';
+        '<svg class="bd-ink" xmlns="http://www.w3.org/2000/svg">' + v[1].map(itemSvg).join('') + '</svg><div class="bd-notes">' + v[1].map(itemText).join('') + '</div></div></div>' + dockFor() + '</div>';
       fit();
     }
     function paper() { return root && root.querySelector('.bd-paper'); }
@@ -253,12 +344,16 @@
       if (root) Array.prototype.forEach.call(root.querySelectorAll('.bd-paper'), fitOne);
     }
     function fitOne(pp) {
-      var stage = pp.parentNode, k = Math.min(1, stage.clientWidth / W);
-      var h = Math.max(MINH, pp.querySelector('.bd-content').offsetHeight + 120);
+      var stage = pp.parentNode, fitK = Math.min(1, stage.clientWidth / W), k = Math.min(1, fitK * (viewer ? 1 : zoom));
+      var h = Math.max(MINH, pp.querySelector('.bd-content').offsetHeight + 150);
       pp.style.height = h + 'px';
       var svg = pp.querySelector('.bd-ink'); svg.setAttribute('viewBox', '0 0 ' + W + ' ' + h); svg.setAttribute('width', W); svg.setAttribute('height', h);
       pp.style.transform = 'scale(' + k + ')';
+      pp.style.left = k < 1 ? '0' : Math.max(0, Math.floor((stage.clientWidth - W) / 2)) + 'px';
       stage.style.height = Math.ceil(h * k) + 'px';
+      stage.classList.toggle('is-zoom', k > fitK + 0.001);
+      var sz = stage.querySelector('.bd-sizer'); if (!sz) { sz = document.createElement('div'); sz.className = 'bd-sizer'; stage.appendChild(sz); }
+      sz.style.width = Math.ceil(W * k) + 'px'; sz.style.height = Math.ceil(h * k) + 'px';
     }
     function redrawInk() {
       var pp = paper(); if (!pp) return;
@@ -272,7 +367,7 @@
       if (!isSolo()) return;
       ticker = setInterval(function () {
         if (!isSolo()) { clearInterval(ticker); return; }
-        var el = root && root.querySelector('[data-bd-clock]'), left = soloLeft();
+        var el = root && root.querySelector('[data-bd-clock] span'), left = soloLeft();
         if (el) el.textContent = left > 0 ? mmss(left) : t('app_bd_time_over');
         if (privateMode() && left <= 0 && !soloLocked) { sendWork(); soloLocked = true; drawing = null; draw(); }
       }, 500);
@@ -432,7 +527,7 @@
     function erase(xy) { var it = nearest(xy); if (it) { remove(it); redrawInk(); } }
     function newId() { var id = teacher ? rid() : 'u' + rid(); if (!teacher && !privateMode()) mine[id] = 1; return id; }
     function down(e) {
-      if (!canDraw() || !e.target.closest('.bd-paper') || e.target.closest('.bd-input')) return;
+      if (tool === 'hand' || !canDraw() || !e.target.closest('.bd-paper') || e.target.closest('.bd-input')) return;
       var xy = point(e);
       if (tool === 'text') { textAt(xy); e.preventDefault(); return; }
       if (tool === 'eraser') { erase(xy); drawing = { erase: true }; e.preventDefault(); return; }
@@ -482,9 +577,23 @@
       inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') done(true); else if (e.key === 'Escape') done(false); });
       inp.addEventListener('blur', function () { done(true); });
     }
+    /* Adds a page to this class's board (an empty page, a page from another lesson, the last class's words), shows it
+       and sends the new list of pages to everyone */
+    function addPage(v) {
+      var x = null, parts = String(v || '').split(':');
+      if (parts[0] === 'tpl' && TPLS.indexOf(parts[1]) > -1) x = { s: 'tpl', k: parts[1] };
+      else if (parts[0] === 'lesson' && lessonOf(parts[1])) x = { s: 'lesson', l: parts[1], i: Math.max(0, +parts[2] || 0) };
+      else if (parts[0] === 'words') x = { s: 'words', w: (o.words || []).filter(function (w) { return w && w.word; }).slice(0, 20).map(function (w) { return [String(w.word).slice(0, 200), String(w.definition || '').slice(0, 300)]; }) };
+      if (!x || (S.extra || []).length >= 30) return;
+      S.extra = (S.extra || []).concat([x]);
+      S.page = lessonPages().length - 1; menu = false;
+      save(); sendState(); draw();
+    }
     function click(e) {
       var b = e.target.closest('[data-bd]'); if (!b) return;
       var k = b.getAttribute('data-bd'), v = b.getAttribute('data-k'), p = pg(S.page);
+      if (k !== 'clear' && clearSure) clearSure = false;
+      if (k === 'zoom') { zoom = zoom > 1 ? 1 : 2; if (zoom === 1 && tool === 'hand') tool = 'pen'; draw(); return; }
       if (!teacher) {
         if (k === 'sendwork' && privateMode() && !soloLocked) { sendWork(); draw(); return; }
         if (!canDraw() || ['tool', 'color', 'undo'].indexOf(k) < 0) return;
@@ -493,8 +602,10 @@
       if (k === 'color') { color = v; if (tool === 'marker' || tool === 'eraser') tool = 'pen'; draw(); return; }
       if (k === 'undo') { var own = editable().filter(function (x) { return privateMode() || !x.by; }), last = own[own.length - 1]; if (last) { remove(last); redrawInk(); } return; }
       if (!teacher) return;
-      if (k === 'page') { S.page = +v; save(); send({ k: 'page', pg: S.page }); draw(); return; }
-      if (k === 'clear') { if (b.getAttribute('data-sure') !== '1') { b.setAttribute('data-sure', '1'); b.textContent = t('app_bd_clear_sure'); return; } p.it = []; save(); send({ k: 'clear', pg: S.page }); draw(); return; }
+      if (k === 'menu') { menu = !menu; draw(); var m = root.querySelector('[data-bd-menu] .is-on'); if (m) m.focus(); return; }
+      if (k === 'page' || k === 'step') { var n = k === 'page' ? +v : S.page + (+v || 0); if (n < 0 || n >= lessonPages().length) return; S.page = n; menu = false; save(); send({ k: 'page', pg: S.page }); draw(); return; }
+      if (k === 'add') { addPage(v); return; }
+      if (k === 'clear') { if (!clearSure) { clearSure = true; draw(); setTimeout(function () { if (clearSure) { clearSure = false; draw(); } }, 4000); return; } clearSure = false; p.it = []; save(); send({ k: 'clear', pg: S.page }); draw(); return; }
       if (k === 'reveal') { p.rv = !p.rv; save(); send({ k: 'rv', pg: S.page, on: p.rv }); draw(); return; }
       if (k === 'solo') {
         var sel = root.querySelector('[data-bd-mins]'), mins = sel ? +sel.value || 5 : 5, id = rid();
@@ -518,6 +629,8 @@
       root.addEventListener('pointerup', up);
       root.addEventListener('pointercancel', up);
       root.addEventListener('click', click);
+      root.addEventListener('keydown', function (e) { if (e.key === 'Escape' && menu) { menu = false; draw(); var b = root.querySelector('[data-bd="menu"]'); if (b) b.focus(); } });
+      document.addEventListener('pointerdown', outside, true);
       root.addEventListener('change', function (e) {
         var sel = e.target.closest('[data-bd-who]'); if (!sel || !teacher) return;
         var v = sel.value, w = v.indexOf('one:') === 0 ? { m: 'one', who: v.slice(4) } : { m: v === 'all' ? 'all' : 'none', who: null };
@@ -532,14 +645,16 @@
       if (!teacher || !saved || !saved.board) return;
       var empty = !Object.keys(S.pages || {}).some(function (k) { return (S.pages[k].it || []).length; });
       if (!empty) return;
-      S.pages = saved.board.pages || {}; S.solos = saved.board.solos || [];
+      S.pages = saved.board.pages || {}; S.solos = saved.board.solos || []; if (Array.isArray(saved.board.extra) && !(S.extra || []).length) S.extra = saved.board.extra;
       S.work = S.work || {};
       (saved.work || []).forEach(function (w) { (S.work[w.solo_id] = S.work[w.solo_id] || {})[w.user_id] = { name: w.name || '', uid: w.user_id, it: w.items || [], at: Date.parse(w.sent_at) || Date.now() }; });
       try { localStorage.setItem(key, JSON.stringify(S)); } catch (e) { /* storage blocked */ }
       draw(); if (S.show) sendState();
     }
     function setShow(on) { S.show = !!on; save(); send({ k: 'show', on: S.show }); if (on) sendState(); draw(); }
+    function outside(e) { if (menu && root && !e.target.closest('[data-bd-menu], [data-bd="menu"]')) { menu = false; draw(); } }
     function destroy() {
+      document.removeEventListener('pointerdown', outside, true);
       if (teacher && saveTimer) saveNow();
       alive = false; clearInterval(segTimer); clearInterval(ticker);
       if (frame) { try { frame.off('app-message', onMessage); frame.off('joined-meeting', onJoined); frame.off('participant-joined', onPeople); frame.off('participant-left', onPeople); } catch (e) { /* gone */ } }

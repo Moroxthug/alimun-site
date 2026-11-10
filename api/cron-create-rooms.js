@@ -66,7 +66,7 @@ async function createDailyRoom(session, summary) {
       properties: {
         exp: expEpoch,
         max_participants: 40,
-        enable_chat: true,
+        enable_chat: false,
         enable_screenshare: true,
         enable_knocking: false,
         start_video_off: false,

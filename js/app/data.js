@@ -879,7 +879,7 @@
   function saveBoard(sessionId, b) {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    var row = { session_id: sessionId, course: b.course || null, lesson: b.lesson || null, pages: b.pages || {}, solos: b.solos || [], updated_at: new Date().toISOString() };
+    var row = { session_id: sessionId, course: b.course || null, lesson: b.lesson || null, pages: b.pages || {}, solos: b.solos || [], extra: b.extra || [], updated_at: new Date().toISOString() };
     return c.from('session_boards').upsert(row, { onConflict: 'session_id' }).then(function (r) { if (r.error) throw r.error; });
   }
   function saveBoardWork(rows) {
@@ -892,7 +892,7 @@
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
     return Promise.all([
-      c.from('session_boards').select('session_id, course, lesson, pages, solos, shared, updated_at').eq('session_id', sessionId).maybeSingle(),
+      c.from('session_boards').select('session_id, course, lesson, pages, solos, extra, shared, updated_at').eq('session_id', sessionId).maybeSingle(),
       c.from('session_board_work').select('solo_id, user_id, name, page, items, sent_at').eq('session_id', sessionId).order('sent_at', { ascending: true }).limit(500)
     ]).then(function (r) { if (r[0].error) throw r[0].error; return { board: r[0].data || null, work: (r[1] && r[1].data) || [] }; });
   }
