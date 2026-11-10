@@ -89,3 +89,36 @@ test('Gemini answers the call; a model without the thinking setting is asked aga
     assert.strictEqual(sent.length, 2);
   } finally { global.fetch = real; }
 });
+
+test('the spoken text is read from the reply while it streams, with escapes decoded', () => {
+  assert.deepStrictEqual(cascade.sayOf('{"say": "Hello, Youssef. Let\\u2019s look at \\"been\\". No'), { text: 'Hello, Youssef. Let’s look at "been". No', closed: false });
+  assert.deepStrictEqual(cascade.sayOf('{"say":"Done.","board":[]}'), { text: 'Done.', closed: true });
+  assert.deepStrictEqual(cascade.sayOf('{"board":[]'), { text: '', closed: false });
+  assert.deepStrictEqual(cascade.sayOf('{"say":"Half \\'), { text: 'Half ', closed: false });
+});
+
+test('the first sentence is spoken on its own, then whole sentences, then the rest once complete', () => {
+  const t = 'Hello, Youssef. Let us look at been. Now';
+  assert.strictEqual(cascade.cutAt(t, 0, false), 15);
+  assert.strictEqual(cascade.cutAt(t, 15, false), 36);
+  assert.strictEqual(cascade.cutAt(t, 36, false), -1);
+  assert.strictEqual(cascade.cutAt(t, 36, true), 40);
+  assert.strictEqual(cascade.cutAt('Hi. Ok', 0, false), -1, 'too short to start on');
+});
+
+test('Gemini streams: what is said arrives piece by piece, the reply is parsed at the end', async () => {
+  const real = global.fetch;
+  process.env.GOOGLE_AI_API_KEY = 'test-key';
+  const enc = new TextEncoder();
+  const sse = ['{"say":"Good. You used ', 'the past participle. ', 'Now try another.","board":[{"op":"title","text":"Have you ever"}]}']
+    .map((x, i) => 'data: ' + JSON.stringify(Object.assign({ candidates: [{ content: { parts: [{ text: x }] } }] }, i === 2 ? { usageMetadata: { promptTokenCount: 3000, cachedContentTokenCount: 2500, candidatesTokenCount: 40 } } : {})) + '\r\n\r\n');
+  global.fetch = async () => ({ ok: true, status: 200, body: (async function* () { for (const x of sse) yield enc.encode(x); })() });
+  const said = [];
+  try {
+    const out = await cascade.streamThink(fakeSupabase(), 'u1', 'system', [{ role: 'user', content: 'hi' }], (text, closed) => said.push([text, closed]));
+    assert.strictEqual(out.raw.say, 'Good. You used the past participle. Now try another.');
+    assert.strictEqual(out.raw.board[0].text, 'Have you ever');
+    assert.deepStrictEqual(said[0], ['Good. You used ', false]);
+    assert.deepStrictEqual(said[said.length - 1], ['Good. You used the past participle. Now try another.', true]);
+  } finally { global.fetch = real; }
+});

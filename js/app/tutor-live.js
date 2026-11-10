@@ -276,28 +276,48 @@
   function cascadeLink() {
     var link = { readyState: 0, onopen: null, onmessage: null, onclose: null }, buf = [], notes = [], seq = 0, pending = false, unheard = false, lastSay = '';
     function emit(o) { if (link.readyState === 1 && link.onmessage) link.onmessage({ data: JSON.stringify(o) }); }
+    /* One turn, streamed: what was heard, then the voice sentence by sentence as the server writes it, then the board */
+    var askedAt = 0, speaking = false;
     function ask(body) {
       var my = ++seq;
       body.session = L.session;
       if (notes.length) body.notes = notes.splice(0);
       if (unheard) { body.unheard = true; unheard = false; }
       if (body.audio && lastSay) body.hint = lastSay;   /* what the student is likely to answer or repeat */
-      pending = true;
-      D().tutorCascadeTurn(body).then(function (r) {
-        if (my === seq) pending = false;
-        if (my !== seq || link.readyState !== 1 || !r) return;
-        if (r.say) lastSay = r.say;
-        if (r.heard) emit({ serverContent: { inputTranscription: { text: r.heard } } });
-        if (r.messages && r.messages.length) emit({ alimun: { messages: r.messages, board: r.board } });
-        if (r.say) emit({ serverContent: { outputTranscription: { text: r.say } } });
-        if (r.audio) emit({ serverContent: { modelTurn: { parts: [{ inlineData: { mimeType: 'audio/pcm;rate=24000', data: r.audio } }] } } });
-        if (r.ms) emit({ alimunCost: { usd: r.usd, ms: r.ms } });
-        emit({ serverContent: { turnComplete: true } });
-      }, function (e) {
-        if (my !== seq) return;
+      pending = true; speaking = false; askedAt = Date.now();
+      setState('thinking');
+      var mine = function () { return my === seq && link.readyState === 1; };
+      D().tutorCascadeStream(body, function (ev) {
+        if (!mine() || !ev) return;
+        if (ev.t === 'heard' && ev.heard) emit({ serverContent: { inputTranscription: { text: ev.heard } } });
+        if (ev.t === 'audio' && ev.audio) {
+          /* Arriving while the student is talking: not played over them; their new sentence will be answered */
+          if (!speaking && L.studentTurn) { unheard = true; pending = false; seq++; return; }
+          if (!speaking) { speaking = true; pending = false; }
+          emit({ serverContent: { modelTurn: { parts: [{ inlineData: { mimeType: 'audio/pcm;rate=24000', data: ev.audio } }] } } });
+        }
+        if (ev.t === 'board') {
+          if (ev.messages && ev.messages.length) emit({ alimun: { messages: ev.messages, board: ev.board } });
+          if (ev.say) { lastSay = ev.say; emit({ serverContent: { outputTranscription: { text: ev.say } } }); }
+        }
+        if (ev.t === 'done') {
+          pending = false;
+          if (ev.ms) emit({ alimunCost: { usd: ev.usd, ms: ev.ms } });
+          emit({ serverContent: { turnComplete: true } });
+          if (!speaking) setState('listening');
+        }
+        if (ev.t === 'error') {
+          pending = false;
+          console.warn('[Alimun] cascade turn:', ev.reason);
+          emit({ serverContent: { turnComplete: true } });
+          setState('listening');
+        }
+      }).then(null, function (e) {
+        if (!mine()) return;
         pending = false;
         console.warn('[Alimun] cascade turn:', e && (e.status + ' ' + (e.body && e.body.reason || '')));
         emit({ serverContent: { turnComplete: true } });
+        setState('listening');
       });
     }
     link.close = function () { link.readyState = 3; seq++; };
@@ -308,10 +328,11 @@
       if (ri) {
         if (ri.activityStart) {
           buf = [];
-          /* an answer still on its way is dropped (the student went on talking) and taken out of the conversation */
-          if (pending) { unheard = true; pending = false; }
-          seq++;
-          if (L.playing && L.playing.length) emit({ serverContent: { interrupted: true } });
+          /* The student goes on within 1.5 seconds, before the answer has started: they were still finishing their
+             sentence, so that answer is dropped and taken out of the conversation, and the whole sentence gets one.
+             Later, an answer still on its way is kept; a voice already playing stops (talked over). */
+          if (pending && !speaking && Date.now() - askedAt < 1500) { unheard = true; pending = false; seq++; }
+          else if (L.playing && L.playing.length) { seq++; emit({ serverContent: { interrupted: true } }); }
         }
         if (ri.audio && ri.audio.data && buf.length < IN_RATE * 30) {
           var bytes = unb64(ri.audio.data), view = new DataView(bytes.buffer);
@@ -772,7 +793,7 @@
     if (L.note) return t(L.note);
     if (L.prec) return t('app_tl_recording');
     if (L.muted) return t('app_tl_muted');
-    return L.state === 'speaking' ? t('app_tl_speaking', { name: name }) : L.state === 'listening' ? t('app_tl_listening', { name: name }) : L.state === 'ending' ? t('app_tl_ending') : t('app_tl_connecting');
+    return L.state === 'speaking' ? t('app_tl_speaking', { name: name }) : L.state === 'thinking' ? t('app_tl_thinking', { name: name }) : L.state === 'listening' ? t('app_tl_listening', { name: name }) : L.state === 'ending' ? t('app_tl_ending') : t('app_tl_connecting');
   }
   function clock() { var el = root && root.querySelector('[data-tl-left]'); if (el) el.textContent = t('app_tu_left_n', { time: mins(L.seconds) }); }
   function lineHtml(l, partial) {

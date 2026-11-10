@@ -860,7 +860,9 @@ async function handleLivePron(req, res, supabase, user) {
 const recentCascade = new Map();
 /* The pause before a cascade call answers: shorter than the live call's, because an answer the student talks over
    before hearing it is dropped and taken out of the conversation (js/app/tutor-live.js cascadeLink) */
-function cascadeSilence(level) { return ['A1', 'A2'].includes(level) ? 1100 : level === 'B1' ? 900 : 750; }
+/* The page's speech filter already holds the sound back about 240 ms, so this is the wait after that: about 1.1 s at
+   A1 and A2, 0.9 s at B1 and 0.75 s above in all from the student's last sound */
+function cascadeSilence(level) { return (['A1', 'A2'].includes(level) ? 1100 : level === 'B1' ? 900 : 750) - 240; }
 /* The student's brief for a cascade call, built once per call (it does not change during it) and kept 15 minutes:
    the same instructions every turn also let Google reuse what it has read */
 const briefCache = new Map();
@@ -919,11 +921,41 @@ async function handleCascadeTurn(req, res, supabase, user) {
   if (!heard && !line) return res.status(400).json({ error: 'Nothing to answer' });
   const saveHeard = heard ? supabase.from('tutor_messages').insert({ session_id: session.id, student_id: profile.id, role: 'student', text: heard, spoken: true }) : null;
 
+  // From here the answer streams as lines of JSON: what was heard, the voice piece by piece as soon as each sentence
+  // is written, then the board and the full text. The voice starts on the first sentence instead of the whole answer.
+  res.writeHead(200, { 'Content-Type': 'application/x-ndjson; charset=utf-8', 'Cache-Control': 'no-store', 'X-Accel-Buffering': 'no' });
+  const write = (o) => { try { res.write(JSON.stringify(o) + '\n'); } catch (e) { /* the page went away */ } };
+  if (heard) write({ t: 'heard', heard });
+
   const t1 = Date.now();
-  let reply;
+  let reply = null, voiceRow = null, chars = 0, idx = 0, sent = 0, chain = Promise.resolve(), firstAudio = 0, voiceErr = null;
+  const tutorName = session.tutor || 'lena';
+  const voiceP = cascade.voiceFor(tutorName, session.language, session.level);
+  voiceP.catch(() => {});
+  // A piece of what is said, spoken as soon as it is complete and sent in order
+  const speakSeg = (seg) => {
+    const text = cascade.speakable(seg);
+    if (!text) return;
+    chars += text.length;
+    const i = idx++;
+    const p = (async () => {
+      if (!voiceRow) voiceRow = cascade.voiceReserve(supabase, user.id);
+      await voiceRow;
+      return cascade.speakPiece(text, await voiceP);
+    })();
+    p.catch(() => {});
+    chain = chain.then(() => p.then((buf) => {
+      if (!firstAudio) firstAudio = Date.now() - t0;
+      write({ t: 'audio', i, audio: buf.toString('base64') });
+    }, (e) => { voiceErr = voiceErr || (e && (e.message || e.code)) || 'voice'; }));
+  };
+  const onSay = (said, closed) => {
+    const cut = cascade.cutAt(said, sent, closed);
+    if (cut > sent) { speakSeg(said.slice(sent, cut)); sent = cut; }
+  };
   try {
     const [studentBrief, past, remaining] = await ctxP;
-    const sys = cascade.systemFor(session, studentBrief, session.tutor || 'lena', pron.configured());
+    const sys = cascade.systemFor(session, studentBrief, tutorName, pron.configured());
     const history = body.unheard === true && past.length && past[past.length - 1].role === 'tutor' ? past.slice(0, -1) : past;
     const msgs = history.map(forModel);
     if (heard) msgs.push({ role: 'user', content: '[spoken] ' + heard });
@@ -936,30 +968,39 @@ async function handleCascadeTurn(req, res, supabase, user) {
     }
     msgs.push(schoolNote(cascade.timeNote(remaining)));
     while (msgs.length && msgs[0].role !== 'user') msgs.shift();
-    const out = await cascade.think(supabase, user.id, sys, msgs);
+    const out = await cascade.streamThink(supabase, user.id, sys, msgs, onSay);
     reply = brain.cleanReply(out.raw, { pron: pron.configured() ? pron.cleanSentence : null });
     if (!reply) throw { code: 'unreadable' };
     ms.model = out.model;
-  } catch (e) { return brainError(res, e); }
+  } catch (e) {
+    console.error('[Tutor] cascade turn:', e && (e.code + ' ' + (e.message || '')));
+    await chain;
+    write({ t: 'error', reason: e && e.code === 'budget' ? 'budget' : 'provider' });
+    return res.end();
+  }
   ms.think = Date.now() - t1;
+  // The text of "say" was cleaned after it was spoken: anything still unspoken (no sentence end) is spoken now
+  if (sent === 0 && reply.say) speakSeg(reply.say);
   if (saveHeard) await saveHeard;
 
   // Stored like a written reply, without touching last_turn_at: the ticks count the call's time from it
-  const { data: msgRow, error: mErr } = await supabase.from('tutor_messages').insert({
+  const { data: msgRow } = await supabase.from('tutor_messages').insert({
     session_id: session.id, student_id: profile.id, role: 'tutor', text: reply.say, board: reply.board, exercise: reply.exercise, pron: reply.pron || null,
   }).select(MSG_COLS).single();
-  if (mErr) return res.status(500).json({ error: 'Could not save the reply' });
   const board = brain.applyBoard(session.board, reply.board);
   if (reply.board.length) await supabase.from('tutor_sessions').update({ board }).eq('id', session.id);
+  const shown = msgRow && (reply.board.length || reply.exercise || reply.pron);
+  write({ t: 'board', messages: shown ? [outMessage(msgRow)] : [], board, say: reply.say });
 
-  const t2 = Date.now();
-  let audio = '', voiceName = null;
-  try { const v = await cascade.speak(supabase, user.id, { text: reply.say, tutor: session.tutor || 'lena', language: session.language, level: session.level }); audio = v.audio; voiceName = v.voice; } catch (e) {
-    console.error('[Tutor] cascade voice:', e && (e.code + ' ' + (e.message || '')));
+  await chain;
+  ms.first_audio = firstAudio; ms.total = Date.now() - t0;
+  if (voiceRow) {
+    const row = await voiceRow.catch(() => null);
+    if (row) await cascade.voiceSettle(supabase, row, { chars, voice: (await voiceP.catch(() => ({}))).name, ms: ms.total - ms.think, error: voiceErr });
   }
-  ms.speak = Date.now() - t2; ms.total = Date.now() - t0;
-  const shown = reply.board.length || reply.exercise || reply.pron;
-  return res.status(200).json({ heard, say: reply.say, audio, voice: voiceName, messages: shown ? [outMessage(msgRow)] : [], board, ms, usd: await callSpent(supabase, user.id, session.started_at) });
+  if (voiceErr) console.error('[Tutor] cascade voice:', voiceErr);
+  write({ t: 'done', say: reply.say, ms, usd: await callSpent(supabase, user.id, session.started_at) });
+  return res.end();
 }
 /** What this call has cost so far: every tutor step of this user since the call started (the test call's cost line) */
 async function callSpent(supabase, userId, since) {

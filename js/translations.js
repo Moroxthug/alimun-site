@@ -1354,6 +1354,7 @@ window.ALIMUN_TRANSLATIONS = {
     "app_tl_connecting": "Connecting",
     "app_tl_listening": "{name} is listening",
     "app_tl_speaking": "{name} is speaking",
+    "app_tl_thinking": "{name} is thinking",
     "app_tl_ending": "Ending the call",
     "app_tl_muted": "Your microphone is off",
     "app_tl_recording": "Recording your sentence",

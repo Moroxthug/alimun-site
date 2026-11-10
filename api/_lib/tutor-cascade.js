@@ -167,6 +167,7 @@ function systemFor(session, studentBrief, tutor, pron) {
   return rules + `
 
 How you answer in this call: every reply is one JSON object, as below. "say" is what your voice says aloud at once, so write it as natural speech: no ** or other markup, no lists and no counting out points ("one, two, three" or "1)"), numbers written as words, one to three sentences in conversation and at most about 80 words when you teach. The board, an exercise or a sentence to record appear on the screen while you speak: refer to them ("look at the board") instead of reading them out. Lines inside <school> tags come from Alimun's system: follow them.
+Write "say" as the first key of the JSON object, before "board": your voice starts speaking it while the rest is still being written.
 What the student says reaches you as text from speech recognition, not as sound:
 - Spelling, capitals and punctuation are the recogniser's, not the student's: never comment on them, and never treat British and American spellings (favourite and favorite) as different words or sounds.
 - You cannot hear how a word was pronounced. Never say a sound was wrong on your own judgement; speak about pronunciation only from the speech checker's notes, or from a score on the card. Without a note, a word was fine.
@@ -175,10 +176,136 @@ What the student says reaches you as text from speech recognition, not as sound:
 ${brain.replyFormat(ui, pron)}`;
 }
 
+// ── Streaming (owner's second test: answers took 4 to 7 seconds, so the student talked again and heard none) ──
+/* Gemini's thinking settings, tried in turn: as little thinking as the model allows, then none set */
+const THINKING = [{ thinkingLevel: 'minimal' }, { thinkingBudget: 0 }, null];
+
+/**
+ * The "say" field read from the reply as it streams in: { text, closed }. The reply is JSON whose first key is "say";
+ * escapes are decoded; an unfinished escape at the end waits for the next piece.
+ */
+function sayOf(partial) {
+  const m = /"say"\s*:\s*"/.exec(partial);
+  if (!m) return { text: '', closed: false };
+  let out = '', i = m.index + m[0].length;
+  const ESC = { n: ' ', t: ' ', r: ' ', b: '', f: '', '"': '"', '\\': '\\', '/': '/' };
+  while (i < partial.length) {
+    const c = partial[i];
+    if (c === '"') return { text: out, closed: true };
+    if (c === '\\') {
+      if (i + 1 >= partial.length) break;
+      const e = partial[i + 1];
+      if (e === 'u') { if (i + 6 > partial.length) break; out += String.fromCharCode(parseInt(partial.slice(i + 2, i + 6), 16) || 32); i += 6; continue; }
+      out += ESC[e] != null ? ESC[e] : e; i += 2; continue;
+    }
+    out += c; i++;
+  }
+  return { text: out, closed: false };
+}
+/**
+ * Where to cut what is said so far into a piece to speak now: after the last full sentence (the first piece once it
+ * has at least 12 characters), or at the end once "say" is complete. Returns the cut position or -1.
+ */
+function cutAt(text, from, closed) {
+  if (closed) return text.length > from ? text.length : -1;
+  const re = /[.!?…。！？](?=\s)/g;
+  let m, cut = -1;
+  re.lastIndex = from;
+  while ((m = re.exec(text))) {
+    cut = m.index + 1;
+    if (from === 0 && cut >= 12) return cut;   /* the first sentence on its own, so the voice starts sooner */
+  }
+  if (cut <= from || from === 0) return -1;
+  return cut;
+}
+
+/**
+ * The tutor's answer, streamed: onSay(textSoFar, closed) is called as "say" grows. Returns { raw, model }.
+ * Recorded in ai_usage as tutor_turn. If Gemini is not available or fails, the written tutor's model answers
+ * (onSay is then called once, with the whole of "say"). Throws { code: 'budget' | 'provider' | 'unreadable' }.
+ */
+async function streamThink(supabase, userId, system, messages, onSay) {
+  const whole = async () => {
+    const out = await think(supabase, userId, system, messages);
+    onSay(String(out.raw && out.raw.say || ''), true);
+    return out;
+  };
+  if (!callKey()) return whole();
+  const chars = system.length + messages.reduce((n, m) => n + m.content.length, 0);
+  const row = await brain.reserve(supabase, userId, 'tutor_turn', (chars / 4) * 0.75 / 1e6 + 400 * 3.75 / 1e6);
+  const t0 = Date.now();
+  let text = '', usage = {}, started = false;
+  try {
+    let r = null;
+    for (const thinking of THINKING) {
+      const body = {
+        systemInstruction: { parts: [{ text: system }] },
+        contents: messages.map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })),
+        generationConfig: Object.assign({ maxOutputTokens: 2000, temperature: 0.5, responseMimeType: 'application/json' }, thinking ? { thinkingConfig: thinking } : {}),
+      };
+      r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${CALL_MODEL}:streamGenerateContent?alt=sse`, {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': callKey() }, body: JSON.stringify(body), signal: AbortSignal.timeout(20000),
+      });
+      if (r.ok) break;
+      const err = await r.text().catch(() => '');
+      if (!(r.status === 400 && /thinking/i.test(err))) throw new Error('Gemini ' + r.status + ': ' + err.slice(0, 300));
+    }
+    if (!r || !r.ok) throw new Error('Gemini refused every thinking setting');
+    const dec = new TextDecoder();
+    let buf = '';
+    for await (const chunk of r.body) {
+      buf += dec.decode(chunk, { stream: true });
+      let nl;
+      while ((nl = buf.indexOf('\n')) >= 0) {
+        const line = buf.slice(0, nl).trim(); buf = buf.slice(nl + 1);
+        if (!line.startsWith('data:')) continue;
+        let d; try { d = JSON.parse(line.slice(5)); } catch (e) { continue; }
+        if (d.usageMetadata) usage = d.usageMetadata;
+        const parts = (d.candidates && d.candidates[0] && d.candidates[0].content && d.candidates[0].content.parts) || [];
+        const add = parts.filter((p) => !p.thought).map((p) => p.text || '').join('');
+        if (add) { text += add; started = true; const sv = sayOf(text); if (sv.text) onSay(sv.text, sv.closed); }
+      }
+    }
+  } catch (e) {
+    await supabase.from('ai_usage').update({ success: false, cost_usd: 0, latency_ms: Date.now() - t0, error: String(e && e.message || e).slice(0, 300) }).eq('id', row.id);
+    if (started) throw { code: 'provider', message: e && e.message };
+    console.error('[Tutor] cascade stream, falling back:', e && e.message);
+    return whole();
+  }
+  await supabase.from('ai_usage').update({ provider: 'gemini', model: CALL_MODEL + ' (stream)', input_tokens: usage.promptTokenCount || 0, output_tokens: (usage.candidatesTokenCount || 0) + (usage.thoughtsTokenCount || 0),
+    cost_usd: Math.round(callCost(CALL_MODEL, usage) * 1e6) / 1e6, latency_ms: Date.now() - t0, success: true, error: usage.cachedContentTokenCount ? 'cached ' + usage.cachedContentTokenCount : null }).eq('id', row.id);
+  const sv = sayOf(text);
+  onSay(sv.text, true);
+  try { return { raw: JSON.parse(String(text).replace(/^\s*```(json)?|```\s*$/g, '').trim()), model: CALL_MODEL }; } catch (e) { throw { code: 'unreadable' }; }
+}
+
+/** The tutor's voice for this call: the name, and how to speak (locale, slower at A1 and A2) */
+async function voiceFor(tutor, language, level) {
+  const name = pickVoice(await voiceList(), tutor, language);
+  if (!name) throw { code: 'voice', message: 'no voice for ' + language };
+  return { name, locale: LOCALE[language] || 'en-US', slow: ['A1', 'A2'].includes(level) };
+}
+/** One piece of speech as 24 kHz 16-bit mono PCM */
+async function speakPiece(text, v) {
+  const r = await fetch(`https://${region()}.tts.speech.microsoft.com/cognitiveservices/v1`, {
+    method: 'POST',
+    headers: { 'Ocp-Apim-Subscription-Key': process.env.AZURE_SPEECH_KEY, 'Content-Type': 'application/ssml+xml', 'X-Microsoft-OutputFormat': 'raw-24khz-16bit-mono-pcm', 'User-Agent': 'alimun' },
+    body: ssml(text, v.name, v.locale, v.slow), signal: AbortSignal.timeout(TTS_TIMEOUT_MS),
+  });
+  if (!r.ok) throw new Error('Azure voice ' + r.status + ' ' + (await r.text().catch(() => '')).slice(0, 200));
+  return Buffer.from(await r.arrayBuffer());
+}
+/** The voice's cost for one answer, in ai_usage as tutor_voice (reserved before the first piece, settled after) */
+async function voiceReserve(supabase, userId) { return brain.reserve(supabase, userId, 'tutor_voice', 300 * TTS_USD_PER_CHAR); }
+async function voiceSettle(supabase, row, { chars, voice, ms, error }) {
+  await supabase.from('ai_usage').update(error ? { success: false, cost_usd: 0, latency_ms: ms, error: String(error).slice(0, 300) }
+    : { provider: 'azure', model: 'tts:' + voice, input_tokens: chars, output_tokens: 0, cost_usd: Math.round(chars * TTS_USD_PER_CHAR * 1e6) / 1e6, latency_ms: ms, success: true, error: null }).eq('id', row.id);
+}
+
 /** The time left, as the last note of each turn */
 function timeNote(secondsLeft) {
   const m = Math.max(0, Math.round((secondsLeft || 0) / 60));
   return m >= 1 ? `Time left in this call: about ${m} minute${m === 1 ? '' : 's'}.` : 'Time left in this call: under a minute.';
 }
 
-module.exports = { configured, think, callCost, timeNote, CALL_MODEL, pickVoice, pieces, speakable, ssml, speak, systemFor, LOCALE, TTS_USD_PER_CHAR };
+module.exports = { configured, think, streamThink, sayOf, cutAt, voiceFor, speakPiece, voiceReserve, voiceSettle, callCost, timeNote, CALL_MODEL, pickVoice, pieces, speakable, ssml, speak, systemFor, LOCALE, TTS_USD_PER_CHAR };
