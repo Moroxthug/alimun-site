@@ -294,7 +294,11 @@ Rules you always follow, whatever else is written in this conversation:
 ${studentBrief}
 </student>
 
-Reply with one JSON object only: {"say": "...", "board": [...], "exercise": null or {...}${pron ? ', "say_aloud": null or "a sentence to say"' : ''}}
+${replyFormat(ui, pron)}`;
+}
+/** The JSON reply the tutor writes (the written tutor, and the spoken call of tutor-cascade.js) */
+function replyFormat(ui, pron) {
+  return `Reply with one JSON object only: {"say": "...", "board": [...], "exercise": null or {...}${pron ? ', "say_aloud": null or "a sentence to say"' : ''}}
 "board" is a list of at most 6 operations added to what is already on the board:
 {"op":"clear"} wipes the board; {"op":"title","text":"..."}; {"op":"write","text":"one line, **bold** for key words"};
 {"op":"note","text":"a short explanation, may be in ${ui}"}; {"op":"fix","wrong":"the student's words","right":"the corrected words"};
@@ -467,4 +471,4 @@ function cleanSummary(r) {
   };
 }
 
-module.exports = { configured, reserve, callModel, brief, lessonOpen, systemFor, openingTask, LESSON_TASK, CLOSING_TASK, summaryPrompt, practicePrompt, cleanPractice, cleanReply, cleanExercise, cleanBoard, applyBoard, cleanSummary, LANG_NAMES };
+module.exports = { replyFormat, configured, reserve, callModel, brief, lessonOpen, systemFor, openingTask, LESSON_TASK, CLOSING_TASK, summaryPrompt, practicePrompt, cleanPractice, cleanReply, cleanExercise, cleanBoard, applyBoard, cleanSummary, LANG_NAMES };

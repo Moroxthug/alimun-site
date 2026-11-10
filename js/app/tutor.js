@@ -455,7 +455,8 @@
     var L = window.AlimunTutorLive, mine = L.myTutor();
     return '<section class="card span-12 speak-card" style="--i:0" aria-labelledby="tl-pick-h"><div class="speak-card__top"><div>' +
       '<h2 class="t-h2" id="tl-pick-h">' + esc(t('app_tl_pick_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_tl_pick_p')) + '</p></div>' +
-      '<button class="btn btn--primary" type="button" data-tu="live"' + (none ? ' disabled' : '') + '>' + esc(t('app_tl_call', { name: cap(mine) })) + '</button></div>' +
+      '<div class="btn-row"><button class="btn btn--primary" type="button" data-tu="live"' + (none ? ' disabled' : '') + '>' + esc(t('app_tl_call', { name: cap(mine) })) + '</button>' +
+      (S.status && S.status.cascade_test ? '<button class="btn btn--ghost" type="button" data-tu="live-test"' + (none ? ' disabled' : '') + '>' + esc(t('app_tl_call_test')) + '</button>' : '') + '</div></div>' +
       '<div class="tutors" role="radiogroup" aria-label="' + esc(t('app_tl_pick_h')) + '">' + A.Cast.tutors.map(function (k) {
         var on = k === mine;
         return '<button class="tutor-pick tutor-art' + (on ? ' is-on' : '') + '" type="button" role="radio" aria-checked="' + on + '" data-tu="pick" data-tutor="' + esc(k) + '" data-mouth="rest" aria-label="' + esc(cap(k)) + '">' + A.Cast.tutor(k) + '<span>' + esc(cap(k)) + '</span></button>';
@@ -467,9 +468,9 @@
     root.querySelectorAll('[data-tu="pick"]').forEach(function (x) { var on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-checked', on ? 'true' : 'false'); });
     var go = root.querySelector('[data-tu="live"]'); if (go) go.textContent = t('app_tl_call', { name: cap(k) });
   }
-  function startLive() {
+  function startLive(engine) {
     unlock(); forgetAudio();
-    window.AlimunTutorLive.want({ tutor: window.AlimunTutorLive.myTutor(), sample: !!S.sample, seconds: S.status.seconds ? S.status.seconds.total : 0, lesson: S.lesson || null });
+    window.AlimunTutorLive.want({ tutor: window.AlimunTutorLive.myTutor(), sample: !!S.sample, seconds: S.status.seconds ? S.status.seconds.total : 0, lesson: S.lesson || null, engine: engine || null });
     location.hash = '#/tutor/live';
   }
   /* ---------- Part 6: out of time ---------- */
@@ -756,6 +757,7 @@
       else if (act === 'voice') toggleVoice();
       else if (act === 'pick') pick(b);
       else if (act === 'live') startLive();
+      else if (act === 'live-test') startLive('cascade');
       else if (act === 'buy') buy(b);
     });
     /* Leaving the session stops the voice and drops a recording in progress */

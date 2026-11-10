@@ -257,6 +257,69 @@
     L.playing = []; L.head = 0; L.playEnd = Date.now();
   }
 
+  /* ---------- The cascade engine (owner's test version, admins only) ----------
+     Speaks to the rest of this file like Google's connection, so the face, board, exercises, captions, time and
+     pronunciation checks work unchanged; behind it each turn goes to /api/tutor?action=cascade-turn (Whisper, the
+     written tutor's model, Azure's voice; api/_lib/tutor-cascade.js). Each new turn of the student drops an answer
+     still on its way, and stops the tutor's voice. */
+  function cascadeLink() {
+    var link = { readyState: 0, onopen: null, onmessage: null, onclose: null }, buf = [], notes = [], seq = 0;
+    function emit(o) { if (link.readyState === 1 && link.onmessage) link.onmessage({ data: JSON.stringify(o) }); }
+    function ask(body) {
+      var my = ++seq;
+      body.session = L.session;
+      if (notes.length) body.notes = notes.splice(0);
+      D().tutorCascadeTurn(body).then(function (r) {
+        if (my !== seq || link.readyState !== 1 || !r) return;
+        if (r.heard) emit({ serverContent: { inputTranscription: { text: r.heard } } });
+        if (r.messages && r.messages.length) emit({ alimun: { messages: r.messages, board: r.board } });
+        if (r.say) emit({ serverContent: { outputTranscription: { text: r.say } } });
+        if (r.audio) emit({ serverContent: { modelTurn: { parts: [{ inlineData: { mimeType: 'audio/pcm;rate=24000', data: r.audio } }] } } });
+        if (r.ms) emit({ alimunCost: { usd: r.usd, ms: r.ms } });
+        emit({ serverContent: { turnComplete: true } });
+      }, function (e) {
+        if (my !== seq) return;
+        console.warn('[Alimun] cascade turn:', e && (e.status + ' ' + (e.body && e.body.reason || '')));
+        emit({ serverContent: { turnComplete: true } });
+      });
+    }
+    link.close = function () { link.readyState = 3; seq++; };
+    link.send = function (str) {
+      var m = JSON.parse(str);
+      if (m.setup) { setTimeout(function () { emit({ setupComplete: {} }); }, 0); return; }
+      var ri = m.realtimeInput;
+      if (ri) {
+        if (ri.activityStart) {
+          buf = [];
+          seq++;   /* an answer still on its way is dropped: the student is talking again */
+          if (L.playing && L.playing.length) emit({ serverContent: { interrupted: true } });
+        }
+        if (ri.audio && ri.audio.data && buf.length < IN_RATE * 30) {
+          var bytes = unb64(ri.audio.data), view = new DataView(bytes.buffer);
+          for (var i = 0; i + 1 < bytes.length; i += 2) buf.push(view.getInt16(i, true) / 0x8000);
+        }
+        if (ri.activityEnd) {
+          if (buf.length >= IN_RATE * 0.3) ask({ audio: b64(wav16(buf)), mime: 'audio/wav' });
+          else emit({ serverContent: { turnComplete: true } });
+          buf = [];
+        }
+        return;
+      }
+      if (m.clientContent) {
+        var text = (m.clientContent.turns || []).map(function (x) { return (x.parts || []).map(function (p) { return p.text || ''; }).join(' '); }).join(' ');
+        if (m.clientContent.turnComplete) ask({ text: text });
+        else notes.push(text.replace(/^<school>/, '').replace(/<\/school>$/, ''));
+      }
+    };
+    setTimeout(function () { link.readyState = 1; if (link.onopen) link.onopen(); }, 0);
+    return link;
+  }
+  function costUi() {
+    var el = root && root.querySelector('[data-tl-cost]');
+    if (!el || !L || !L.cost) return;
+    el.textContent = t('app_tl_test_cost', { usd: '$' + Number(L.cost.usd || 0).toFixed(3), sec: ((L.cost.ms && L.cost.ms.total || 0) / 1000).toFixed(1) });
+  }
+
   /* ---------- The connection to Google ---------- */
   function send(msg) {
     if (!L) return;
@@ -267,7 +330,7 @@
   function connect(pass) {
     L.pass = pass; L.ready = false; L.conn = (L.conn || 0) + 1; L.ctx = 0; L.ctx0 = 0;
     if (!L.rotating) { L.taker = null; L.studentTurn = false; L.tutorTurn = false; L.turnAudio = null; L.waitReply = false; }
-    var ws = L.ws = new WebSocket(pass.url + '?access_token=' + encodeURIComponent(pass.token));
+    var ws = L.ws = pass.engine === 'cascade' ? cascadeLink() : new WebSocket(pass.url + '?access_token=' + encodeURIComponent(pass.token));
     var mine = ws;
     ws.onopen = function () { if (L && L.ws === mine) send({ setup: { model: 'models/' + pass.model } }); };
     ws.onmessage = function (e) {
@@ -300,6 +363,8 @@
       pa: modal(u.promptTokensDetails, 'AUDIO'), pt: modal(u.promptTokensDetails, 'TEXT'), ra: modal(u.responseTokensDetails, 'AUDIO'), rt: modal(u.responseTokensDetails, 'TEXT') };
   }
   function onMessage(m) {
+    if (m.alimun) { awake(); applyBoard(m.alimun.messages || [], m.alimun.board); return; }
+    if (m.alimunCost) { L.cost = m.alimunCost; costUi(); return; }
     if (m.usageMetadata) {
       if (L.usage && L.usage.length < 100) L.usage.push(usageOf(m.usageMetadata));
       L.ctx = Number(m.usageMetadata.promptTokenCount) || L.ctx || 0;
@@ -343,7 +408,7 @@
     if (role === 'student' && text) checkTurn(text);
     if (!text) return;
     L.lines.push({ role: role, text: text });
-    L.queue.push({ role: role, text: text });
+    if (L.engine !== 'cascade') L.queue.push({ role: role, text: text });   /* a cascade call's lines are stored by the server */
     captions();
   }
   function renew(why) {
@@ -353,7 +418,7 @@
     if (old) { try { old.close(); } catch (e) { /* gone */ } }
     tick().then(function () {
       if (!L || L.ending) return null;
-      return D().tutorLiveStart({ tutor: L.tutor, ui: A.lang, session: L.session, handle: L.handle });
+      return D().tutorLiveStart({ tutor: L.tutor, ui: A.lang, session: L.session, handle: L.handle, engine: L.engine || undefined });
     }).then(function (pass) {
       if (!L || L.ending || !pass) return;
       L.renewing = false; connect(pass);
@@ -546,7 +611,7 @@
   /* ---------- The call ---------- */
   function start(tutor, opts) {
     var sample = !!opts.sample;
-    L = Object.assign(L || {}, { tutor: tutor, sample: sample, state: 'connecting', lines: [], queue: [], cur: { student: '', tutor: '' }, playing: [], seconds: opts.seconds || 0,
+    L = Object.assign(L || {}, { tutor: tutor, sample: sample, engine: opts.engine === 'cascade' ? 'cascade' : null, cost: null, state: 'connecting', lines: [], queue: [], cur: { student: '', tutor: '' }, playing: [], seconds: opts.seconds || 0,
       started: false, ending: false, ended: false, muted: false, note: null, summary: null, handle: null, session: null, fresh: true, failed: null, renewing: false, head: 0,
       usage: [], conn: 0, startedAt: Date.now(), ctx: 0, rotating: false, hold: [], notes: [], told2: false, toldEnd: false, board: [], newOps: 0, ex: null, exMsg: null, got: [], pronMsg: null, pronResult: null, prec: null, boardOpen: false });
     draw();
@@ -554,7 +619,9 @@
     if (!supported()) { fail('app_tl_unsupported'); return; }
     prime();
     var mic = L.micAsk;
-    D().tutorLiveStart(opts.lesson ? { tutor: tutor, ui: A.lang, lesson: opts.lesson } : { tutor: tutor, ui: A.lang }).then(function (pass) {
+    var ask = opts.lesson ? { tutor: tutor, ui: A.lang, lesson: opts.lesson } : { tutor: tutor, ui: A.lang };
+    if (opts.engine === 'cascade') ask.engine = 'cascade';
+    D().tutorLiveStart(ask).then(function (pass) {
       /* Ended while connecting: the session just opened is closed again */
       if (!L || L.ending) { D().tutorEnd(pass.session.id).catch(function () {}); return; }
       L.session = pass.session.id; L.fresh = pass.fresh; L.seconds = pass.seconds; clock();
@@ -727,7 +794,7 @@
   function draw() {
     if (!root || !L) return;
     var name = cap(L.tutor), on = L.started && !L.ended;
-    var html = '<div class="tl-wrap' + (live() ? ' is-live' : '') + '" data-board="closed"><div class="view__head tu-head"><div><h1 class="t-h1">' + esc(t('app_tl_h', { name: name })) + '</h1><p class="t-lead" data-tl-left>' + esc(t('app_tu_left_n', { time: mins(L.seconds) })) + '</p></div>' +
+    var html = '<div class="tl-wrap' + (live() ? ' is-live' : '') + '" data-board="closed"><div class="view__head tu-head"><div><h1 class="t-h1">' + esc(t('app_tl_h', { name: name })) + '</h1><p class="t-lead" data-tl-left>' + esc(t('app_tu_left_n', { time: mins(L.seconds) })) + '</p>' + (L.engine === 'cascade' ? '<p class="t-small" data-tl-cost>' + esc(t('app_tl_test_h')) + '</p>' : '') + '</div>' +
       (L.ended ? '' : '<div class="btn-row">' + (on ? '<button class="btn btn--quiet btn--sm" type="button" data-tl="mute" aria-pressed="' + (L.muted ? 'true' : 'false') + '">' + esc(t(L.muted ? 'app_tl_unmute' : 'app_tl_mute')) + '</button>' : '') +
         '<button class="btn btn--primary btn--sm" type="button" data-tl="end"' + (L.ending ? ' disabled' : '') + '>' + esc(t('app_tl_end')) + '</button></div>') + '</div>';
     var stage = '<section class="tl-stage" data-state="' + esc(L.state) + '" aria-labelledby="tl-name"><div class="tl-face tutor-art" data-tl-face data-mouth="rest" aria-hidden="true">' + (A.Cast.tutor ? A.Cast.tutor(L.tutor) : '') + '</div>' +
@@ -743,7 +810,7 @@
     if (L.sample) html += '<p class="t-tiny tl-sample" style="margin-top:12px">' + esc(t('app_tu_sample')) + '</p>';
     html += '</div>';
     root.innerHTML = html;
-    layoutUi();
+    layoutUi(); costUi();
     L.newOps = 0;
     if (L.ex) L.ex.after(root.querySelector('[data-tl-ex]'));
     if (!L.ended) captions();

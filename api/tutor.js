@@ -83,6 +83,7 @@ const brain = require('./_lib/tutor-brain.js');
 const voice = require('./_lib/tutor-voice.js');
 const pron = require('./_lib/tutor-pron.js');
 const live = require('./_lib/tutor-live.js');
+const cascade = require('./_lib/tutor-cascade.js');
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const MAX_GRANT_MINUTES = 600;
@@ -161,6 +162,8 @@ async function handleStatus(req, res, supabase, user) {
     voice: voice.voiceConfigured(),
     pron: pron.configured(),
     live: live.configured() && brain.configured() && await liveAllowed(supabase, user),
+    // The cascade call, the owner's test version (admins only for now)
+    cascade_test: user.app_metadata?.role === 'admin' && cascade.configured() && brain.configured(),
   });
 }
 
@@ -685,6 +688,8 @@ async function handleLiveStart(req, res, supabase, user) {
   const body = parseBody(req) || {};
   const ui = UI_LANGS.includes(body.ui) ? body.ui : 'en';
   const tutor = live.tutorOf(body.tutor);
+  // The engine: Google's live model, or the cascade test version (admins only, api/_lib/tutor-cascade.js)
+  const engine = body.engine === 'cascade' && user.app_metadata?.role === 'admin' && cascade.configured() ? 'cascade' : 'live';
   let profile;
   try { profile = await studentOf(supabase, user); } catch (e) { return res.status(500).json({ error: 'Could not load your profile' }); }
   if (!profile) return res.status(404).json({ error: 'No student profile', reason: 'no_profile' });
@@ -700,7 +705,7 @@ async function handleLiveStart(req, res, supabase, user) {
   let session = null, created = false, charged = 0;
   const { data: open } = await supabase.from('tutor_sessions').select('*').eq('student_id', profile.id).is('ended_at', null).maybeSingle();
   const lastAt = (x) => Math.max(Date.parse(x.last_turn_at), x.live_until ? Math.min(now, Date.parse(x.live_until)) : 0);
-  if (open && now - lastAt(open) < IDLE_MS && (!lesson || open.lesson_id === lesson.id)) {
+  if (open && now - lastAt(open) < IDLE_MS && (!lesson || open.lesson_id === lesson.id) && (open.engine || 'live') === engine) {
     session = open;
     // Time the previous pass covered that no tick counted (a closed tab, a lost connection, skipped ticks)
     await chargeUnticked(supabase, profile.id, open);
@@ -711,7 +716,7 @@ async function handleLiveStart(req, res, supabase, user) {
     if (totalOf(t) <= 0) return res.status(402).json({ error: 'No tutor time left', reason: 'no_time' });
     const level = String(profile.level || '').slice(0, 2) || null;
     const { data: s, error: sErr } = await supabase.from('tutor_sessions')
-      .insert({ student_id: profile.id, language: profile.language || 'English', level, ui, tutor, mode: 'live', lesson_id: lesson ? lesson.id : null }).select('*').single();
+      .insert({ student_id: profile.id, language: profile.language || 'English', level, ui, tutor, mode: 'live', engine, lesson_id: lesson ? lesson.id : null }).select('*').single();
     if (sErr) return res.status(409).json({ error: 'A session is already open. Please reload.', reason: 'open' });
     session = s; created = true;
     const { data: ch } = await supabase.rpc('tutor_charge', { p_student: profile.id, p_seconds: MIN_CHARGE, p_session: session.id });
@@ -730,6 +735,13 @@ async function handleLiveStart(req, res, supabase, user) {
     return res.status(402).json({ error: 'No tutor time left', reason: 'no_time' });
   }
 
+  if (engine === 'cascade') {
+    // No pass to Google: the browser sends each turn to ?action=cascade-turn. The call's time is counted by ticks as usual.
+    const expires = new Date(now + Math.max(30, Math.min(live.PASS_SECONDS, remaining + 60)) * 1000).toISOString();
+    await supabase.from('tutor_sessions').update({ tutor, mode: 'live', live_until: expires, last_turn_at: new Date().toISOString(), seconds_used: (session.seconds_used || 0) + charged }).eq('id', session.id);
+    return res.status(200).json({ session: { id: session.id, started_at: session.started_at }, fresh: created, engine, token: null, url: null, model: 'cascade', tutor, voice: null,
+      expires, pass_seconds: Math.round((Date.parse(expires) - now) / 1000), seconds: remaining, turn: { manual: true, silence_ms: live.silenceFor(session.level) }, pron_check: pron.configured() });
+  }
   try {
     await liveCost(supabase, user.id, created ? MIN_CHARGE : Math.max(charged, 1));
     // A new pass for an open call (a dropped line, or the browser moving to a fresh connection to keep the conversation
@@ -789,7 +801,8 @@ async function handleLiveTick(req, res, supabase, user) {
 
   let stop = null;
   if (charged > 0) {
-    try { await liveCost(supabase, user.id, charged); } catch (e) { if (e && e.code === 'budget') stop = 'budget'; }
+    // A cascade call's steps record their own costs (tutor_listen, tutor_turn, tutor_voice)
+    if (session.engine !== 'cascade') try { await liveCost(supabase, user.id, charged); } catch (e) { if (e && e.code === 'budget') stop = 'budget'; }
   }
   if (remaining <= 0) stop = 'no_time';
   if (stop) {
@@ -839,6 +852,86 @@ async function handleLivePron(req, res, supabase, user) {
     return res.status(502).json({ error: 'Not checked', reason: 'pron' });
   }
   return res.status(200).json({ note: pron.forLive(scored) });
+}
+
+/* One turn of a cascade call (api/_lib/tutor-cascade.js): the student's recording (16 kHz WAV) or a line from the page
+   (the call's opening, an exercise or pronunciation result), then the tutor's reply stored and spoken.
+   Answers { heard, say, audio (24 kHz PCM, base64), messages, board, ms, usd }. */
+const recentCascade = new Map();
+async function handleCascadeTurn(req, res, supabase, user) {
+  if (!cascade.configured() || !brain.configured()) return res.status(501).json({ error: 'Not configured', reason: 'cascade_off' });
+  if (user.app_metadata?.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
+  const now = Date.now(), hits = (recentCascade.get(user.id) || []).filter((x) => x > now - 60000);
+  if (hits.length >= 30) return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
+  hits.push(now); recentCascade.set(user.id, hits);
+  const body = parseBody(req) || {};
+  let profile;
+  try { profile = await studentOf(supabase, user); } catch (e) { return res.status(500).json({ error: 'Could not load your profile' }); }
+  if (!profile) return res.status(404).json({ error: 'No student profile' });
+  const session = await sessionOf(supabase, profile.id, body.session);
+  if (!session) return res.status(404).json({ error: 'Session not found' });
+  if (session.ended_at || session.engine !== 'cascade' || !session.live_until || now > Date.parse(session.live_until) + 60000) return res.status(409).json({ error: 'The call has ended.', reason: 'ended' });
+  const ms = {}, t0 = Date.now();
+
+  // The student's words, forced to the course language
+  let heard = '';
+  if (body.audio) {
+    const a = pron.readWav(body);
+    if (a.reason) return res.status(a.reason === 'audio_long' ? 413 : 400).json({ error: 'This recording cannot be used', reason: a.reason });
+    try { heard = clean(await voice.listen(supabase, user.id, { audio: a.audio, mime: 'audio/wav', language: session.language }), MAX_TEXT); } catch (e) {
+      if (e && e.code === 'budget') return brainError(res, e);
+      return res.status(502).json({ error: 'Not heard', reason: 'listen' });
+    }
+    ms.listen = Date.now() - t0;
+    if (!/\p{L}/u.test(heard)) return res.status(200).json({ heard: '', ms });
+    await supabase.from('tutor_messages').insert({ session_id: session.id, student_id: profile.id, role: 'student', text: heard, spoken: true });
+  }
+  // Lines from the page: Alimun's own (in <school> tags) or the student's result, already stored by its own action
+  const line = clean(body.text, 2000);
+  const notes = (Array.isArray(body.notes) ? body.notes : []).slice(0, 4).map((n) => clean(n, 600)).filter(Boolean);
+  if (!heard && !line) return res.status(400).json({ error: 'Nothing to answer' });
+
+  const t1 = Date.now();
+  let reply;
+  try {
+    const remaining = await balance(supabase, profile.id);
+    const sys = cascade.systemFor(session, await brain.brief(supabase, profile, { lessonId: session.lesson_id }), session.tutor || 'lena', pron.configured(), remaining);
+    const history = await messagesOf(supabase, session.id, 30);
+    const msgs = history.map(forModel).concat(notes.map(schoolNote));
+    if (line) {
+      const school = /^<school>([\s\S]*)<\/school>$/.exec(String(body.text || '').trim());
+      const last = history[history.length - 1];
+      if (school) msgs.push(schoolNote(clean(school[1], 2000)));
+      else if (!(last && last.role === 'student' && last.result)) msgs.push({ role: 'user', content: line });
+    }
+    while (msgs.length && msgs[0].role !== 'user') msgs.shift();
+    if (!msgs.length) msgs.push(schoolNote('The call has just started. Greet the student by their first name in one short sentence and ask what they would like to do today.'));
+    const raw = await brain.callModel(supabase, user.id, 'tutor_turn', sys, msgs, { maxTokens: 2000, temperature: 0.6 });
+    reply = brain.cleanReply(raw, { pron: pron.configured() ? pron.cleanSentence : null });
+    if (!reply) throw { code: 'unreadable' };
+  } catch (e) { return brainError(res, e); }
+  ms.think = Date.now() - t1;
+  // Stored like a written reply, without touching last_turn_at: the ticks count the call's time from it
+  const { data: msgRow, error: mErr } = await supabase.from('tutor_messages').insert({
+    session_id: session.id, student_id: profile.id, role: 'tutor', text: reply.say, board: reply.board, exercise: reply.exercise, pron: reply.pron || null,
+  }).select(MSG_COLS).single();
+  if (mErr) return res.status(500).json({ error: 'Could not save the reply' });
+  const board = brain.applyBoard(session.board, reply.board);
+  if (reply.board.length) await supabase.from('tutor_sessions').update({ board }).eq('id', session.id);
+
+  const t2 = Date.now();
+  let audio = '', voiceName = null;
+  try { const v = await cascade.speak(supabase, user.id, { text: reply.say, tutor: session.tutor || 'lena', language: session.language, level: session.level }); audio = v.audio; voiceName = v.voice; } catch (e) {
+    console.error('[Tutor] cascade voice:', e && (e.code + ' ' + (e.message || '')));
+  }
+  ms.speak = Date.now() - t2; ms.total = Date.now() - t0;
+  const shown = reply.board.length || reply.exercise || reply.pron;
+  return res.status(200).json({ heard, say: reply.say, audio, voice: voiceName, messages: shown ? [outMessage(msgRow)] : [], board, ms, usd: await callSpent(supabase, user.id, session.started_at) });
+}
+/** What this call has cost so far: every tutor step of this user since the call started (the test call's cost line) */
+async function callSpent(supabase, userId, since) {
+  const { data } = await supabase.from('ai_usage').select('cost_usd').eq('user_id', userId).like('action', 'tutor%').neq('action', 'tutor_live').gte('created_at', since);
+  return Math.round((data || []).reduce((n, x) => n + Number(x.cost_usd || 0), 0) * 1e6) / 1e6;
 }
 
 async function handleLiveBoard(req, res, supabase, user) {
@@ -973,7 +1066,7 @@ module.exports = async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return handleAdminGrant(req, res, supabase, user);
   }
-  const POST = { start: handleStart, turn: handleTurn, 'set-audio': handleSetAudio, voice: handleVoice, pronounce: handlePronounce, 'live-start': handleLiveStart, 'live-tick': handleLiveTick, 'live-board': handleLiveBoard, 'live-answer': handleLiveAnswer, 'live-pron': handleLivePron, end: handleEnd, forget: handleForget };
+  const POST = { start: handleStart, turn: handleTurn, 'set-audio': handleSetAudio, voice: handleVoice, pronounce: handlePronounce, 'live-start': handleLiveStart, 'live-tick': handleLiveTick, 'live-board': handleLiveBoard, 'live-answer': handleLiveAnswer, 'live-pron': handleLivePron, 'cascade-turn': handleCascadeTurn, end: handleEnd, forget: handleForget };
   if (POST[action]) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return POST[action](req, res, supabase, user);
