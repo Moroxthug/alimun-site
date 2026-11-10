@@ -52,6 +52,10 @@ function withAlternates(html, file) {
 
 // The English translation file must load before i18n.js (the language copies are added after it).
 function withEnglishFile(html) {
+  // The homepage head (locked src/blocks/head.html) still loads js/translations.js, every language at once
+  // (1.8 MB, about 490 KB compressed), which held back the hero video on phones. The page needs only the
+  // English file added here; js/i18n.js fetches another language on demand.
+  html = html.replace(/[ \t]*<script src="js\/translations\.js" defer(="")?><\/script>\r?\n?/, '');
   if (html.includes('js/i18n/en.js') || !html.includes('<script src="js/i18n.js"')) return html;
   return html.replace('<script src="js/i18n.js"', '<script src="js/i18n/en.js" defer></script>\n  <script src="js/i18n.js"');
 }

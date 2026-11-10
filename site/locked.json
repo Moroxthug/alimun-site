@@ -257,16 +257,16 @@
     "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\"); 2026-10-27 games and fun: any question set for games, flip cards from pairs, pages for all games and all fun quizzes (owner: \"more resources now, games and fun stuff\")"
   },
   "src/blocks/home/v2/assets.html": {
-    "sha256": "8cee7d0ce26c11106b0ee413331df4d4d4e38b5e87de749cfe9edce27906f51b",
-    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-10-28 mobile fixes (owner: \"some videos do not play, some videos cover half text, download app badges do not look nicely put\"); 2026-10-28 phone pass (owner: \"should we improve the other sections look as well?\" ... \"ok go\"); 2026-10-28 cursor ring removed (owner: \"remove the green circle on cursor\"); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\")"
+    "sha256": "768217e76edd1da04900002c6bc52437cd70675153edad993e10395d3d425614",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-10-28 mobile fixes (owner: \"some videos do not play, some videos cover half text, download app badges do not look nicely put\"); 2026-10-28 phone pass (owner: \"should we improve the other sections look as well?\" ... \"ok go\"); 2026-10-28 cursor ring removed (owner: \"remove the green circle on cursor\"); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\"); 2026-11-10 phones play the product films as MP4 first (owner: \"it still lags ... just fix it\")"
   },
   "src/blocks/home/v2/band.html": {
     "sha256": "ee96fed3ff5ea74206747a7beaf2c17e898200f1548db41a9089c8caa0f888cd",
     "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
   },
   "src/blocks/home/v2/hero.html": {
-    "sha256": "19183108cfaf19c7f0df070e9f8281417c8f98a1d9b87647db68f518978f3fd2",
-    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+    "sha256": "7e3bd2c333f2cc45ae1ade272081d82764c8007128defdf418677fd048a713d2",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-11-10 phones get a lighter hero clip cropped to the frame they show (owner: \"it still lags ... just fix it\")"
   },
   "src/blocks/home/v2/showcase.html": {
     "sha256": "8ea8b7d05f9e9717fd6689a941a69a113065309efcef6a093eff3f91b41b0c9a",

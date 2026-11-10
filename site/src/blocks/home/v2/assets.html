@@ -492,7 +492,7 @@
           v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true;
           ["muted", "loop", "autoplay", "playsinline"].forEach(function (a) { v.setAttribute(a, ""); });
           v.setAttribute("preload", "metadata"); v.poster = "/videos/" + n + "-poster-00001.jpg"; v.setAttribute("aria-hidden", "true");
-          [["webm", "video/webm"], ["mp4", "video/mp4"]].forEach(function (x) { var so = document.createElement("source"); so.src = "/videos/" + n + "-transcode." + x[0]; so.type = x[1]; v.appendChild(so); });
+          /* phones: MP4 first, decoded by the phone's video chip and smaller than the WebM for every 4:5 film */ (FILM_SIZE === "4x5" ? [["mp4", "video/mp4"], ["webm", "video/webm"]] : [["webm", "video/webm"], ["mp4", "video/mp4"]]).forEach(function (x) { var so = document.createElement("source"); so.src = "/videos/" + n + "-transcode." + x[0]; so.type = x[1]; v.appendChild(so); });
           v.addEventListener("playing", function () { box.classList.add("is-playing"); });
           box.appendChild(v);
         }
