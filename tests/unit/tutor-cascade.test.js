@@ -36,11 +36,56 @@ test('a reply is spoken in at most three pieces of whole sentences, without boar
 });
 
 test('the call keeps the live rules and answers in the written tutor JSON, without Google tool names', () => {
-  const s = cascade.systemFor({ language: 'French', level: 'A2', ui: 'ar' }, 'Name: Sam', 'omar', true, 600);
+  const s = cascade.systemFor({ language: 'French', level: 'A2', ui: 'ar' }, 'Name: Sam', 'omar', true);
   assert.match(s, /Teach, then involve the student/);
-  assert.match(s, /about 10 minutes of tutor time left/);
+  assert.match(s, /the time left is told to you in a note with each turn/);
+  assert.match(s, /never treat British and American spellings/);
+  assert.match(s, /You cannot hear how a word was pronounced/);
+  assert.strictEqual(s, cascade.systemFor({ language: 'French', level: 'A2', ui: 'ar' }, 'Name: Sam', 'omar', true), 'the same every turn');
   assert.match(s, /Reply with one JSON object only/);
   assert.match(s, /"say_aloud"/);
   assert.match(s, /no \*\* or other markup/);
   assert.doesNotMatch(s, /board_write|set_exercise|say_this/);
+});
+
+const voice = require(path.join(__dirname, '../../api/_lib/tutor-voice.js'));
+
+test('Whisper words made up from silence are dropped in the call, kept elsewhere', () => {
+  const d = { text: 'Thank you. I have been to Switzerland.', segments: [
+    { text: ' Thank you.', no_speech_prob: 0.8, avg_logprob: -0.9, compression_ratio: 1 },
+    { text: ' I have been to Switzerland.', no_speech_prob: 0.05, avg_logprob: -0.2, compression_ratio: 1.1 }] };
+  assert.strictEqual(voice.heardText(d, true), 'I have been to Switzerland.');
+  assert.strictEqual(voice.heardText(d, false), 'Thank you. I have been to Switzerland.');
+  assert.strictEqual(voice.heardText({ text: ' Thank you.', segments: [d.segments[0]] }, true), '');
+});
+
+test('the time left is a note, and a turn costs less when Google has read most of it before', () => {
+  assert.strictEqual(cascade.timeNote(130), 'Time left in this call: about 2 minutes.');
+  assert.strictEqual(cascade.timeNote(20), 'Time left in this call: under a minute.');
+  const fresh = cascade.callCost('gemini-3.8-flash', { promptTokenCount: 4000, candidatesTokenCount: 150 });
+  const cached = cascade.callCost('gemini-3.8-flash', { promptTokenCount: 4000, cachedContentTokenCount: 3500, candidatesTokenCount: 150 });
+  assert.ok(Math.abs(fresh - 0.0035625) < 1e-9, String(fresh));
+  assert.ok(cached < fresh / 2, cached + ' vs ' + fresh);
+});
+
+function fakeSupabase() {
+  const rows = [];
+  const chain = { eq() { return chain; }, like() { return chain; }, gte() { return chain; }, order() { return chain; }, select() { return chain; },
+    range() { return Promise.resolve({ data: [] }); }, single() { return Promise.resolve({ data: { id: 1 } }); }, then(f) { return Promise.resolve({}).then(f); } };
+  return { rows, from() { return { insert(r) { rows.push(r); return chain; }, update(r) { rows.push(r); return chain; }, select() { return chain; }, delete() { return chain; } }; } };
+}
+test('Gemini answers the call; a model without the thinking setting is asked again without it', async () => {
+  const real = global.fetch, sent = [];
+  process.env.GOOGLE_AI_API_KEY = 'test-key';
+  global.fetch = async (url, opts) => {
+    const b = JSON.parse(opts.body); sent.push(b);
+    if (b.generationConfig.thinkingConfig) return { ok: false, status: 400, json: async () => ({ error: { message: 'thinking_level is not supported' } }) };
+    return { ok: true, status: 200, json: async () => ({ candidates: [{ content: { parts: [{ text: '{"say":"Hello","board":[]}' }] } }], usageMetadata: { promptTokenCount: 100, candidatesTokenCount: 10 } }) };
+  };
+  try {
+    const out = await cascade.think(fakeSupabase(), 'u1', 'system', [{ role: 'user', content: 'hi' }]);
+    assert.deepStrictEqual(out.raw, { say: 'Hello', board: [] });
+    assert.strictEqual(out.model, cascade.CALL_MODEL);
+    assert.strictEqual(sent.length, 2);
+  } finally { global.fetch = real; }
 });

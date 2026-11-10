@@ -19,8 +19,60 @@ const GENDER = { lena: 'Female', mei: 'Female', sofia: 'Female', arthur: 'Male',
 /* Azure neural voices, about $15 a million characters (HD voices, with ":" in the name, cost more and are not used) */
 const TTS_USD_PER_CHAR = 15 / 1e6;
 const TTS_TIMEOUT_MS = 12000;
+/* The call's thinking: Google's Flash on the key the live call already uses (owner's test, 10 Nov 2026: the written
+   tutor's cheaper model taught wrong sounds and grammar). Google discounts the part of each request it has read
+   before in this call (the instructions and earlier turns), so the instructions stay the same from turn to turn and
+   the time left goes in a note at the end. If Google fails, the written tutor's model answers. */
+const CALL_MODEL = process.env.TUTOR_CALL_MODEL || 'gemini-3.8-flash';
+const CALL_PRICE = { 'gemini-3.8-flash': [0.75, 0.075, 3.75], 'gemini-3.6-flash': [0.75, 0.075, 3.75], 'gemini-3.5-flash-lite': [0.30, 0.03, 2.50] };
+function callKey() { return process.env.GOOGLE_AI_API_KEY || process.env.GEMINI_API_KEY || ''; }
 
 function configured() { return !!(process.env.AZURE_SPEECH_KEY && process.env.AZURE_SPEECH_REGION && process.env.GROQ_API_KEY); }
+
+/** USD of one Gemini answer: new input, input read before (cached) and output with thinking */
+function callCost(model, u) {
+  const [inp, cached, out] = CALL_PRICE[model] || CALL_PRICE['gemini-3.8-flash'];
+  const c = u.cachedContentTokenCount || 0, p = Math.max(0, (u.promptTokenCount || 0) - c);
+  return (p * inp + c * cached + ((u.candidatesTokenCount || 0) + (u.thoughtsTokenCount || 0)) * out) / 1e6;
+}
+async function askGemini(system, messages, thinking) {
+  const body = {
+    systemInstruction: { parts: [{ text: system }] },
+    contents: messages.map((m) => ({ role: m.role === 'assistant' ? 'model' : 'user', parts: [{ text: m.content }] })),
+    generationConfig: Object.assign({ maxOutputTokens: 2000, temperature: 0.5, responseMimeType: 'application/json' }, thinking ? { thinkingConfig: { thinkingLevel: 'low' } } : {}),
+  };
+  const r = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${CALL_MODEL}:generateContent`, {
+    method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': callKey() }, body: JSON.stringify(body), signal: AbortSignal.timeout(15000),
+  });
+  const d = await r.json().catch(() => ({}));
+  return { r, d };
+}
+/**
+ * The tutor's answer for one turn: { reply object (JSON), model }. Recorded in ai_usage as tutor_turn under the daily
+ * budget. Throws { code: 'budget' | 'provider' | 'unreadable' }.
+ */
+async function think(supabase, userId, system, messages) {
+  if (!callKey()) return { raw: await brain.callModel(supabase, userId, 'tutor_turn', system, messages, { maxTokens: 2000, temperature: 0.6 }), model: 'fallback' };
+  const chars = system.length + messages.reduce((n, m) => n + m.content.length, 0);
+  const row = await brain.reserve(supabase, userId, 'tutor_turn', (chars / 4) * 0.75 / 1e6 + 400 * 3.75 / 1e6);
+  const t0 = Date.now();
+  let r, d;
+  try {
+    ({ r, d } = await askGemini(system, messages, true));
+    /* A model that does not take the thinking level answers without it */
+    if (r.status === 400 && /thinking/i.test(JSON.stringify(d))) ({ r, d } = await askGemini(system, messages, false));
+    if (!r.ok) throw new Error('Gemini ' + r.status + ': ' + JSON.stringify(d).slice(0, 300));
+  } catch (e) {
+    await supabase.from('ai_usage').update({ success: false, cost_usd: 0, latency_ms: Date.now() - t0, error: String(e && e.message || e).slice(0, 300) }).eq('id', row.id);
+    console.error('[Tutor] cascade think, falling back:', e && e.message);
+    return { raw: await brain.callModel(supabase, userId, 'tutor_turn', system, messages, { maxTokens: 2000, temperature: 0.6 }), model: 'fallback' };
+  }
+  const u = d.usageMetadata || {};
+  await supabase.from('ai_usage').update({ provider: 'gemini', model: CALL_MODEL, input_tokens: u.promptTokenCount || 0, output_tokens: (u.candidatesTokenCount || 0) + (u.thoughtsTokenCount || 0),
+    cost_usd: Math.round(callCost(CALL_MODEL, u) * 1e6) / 1e6, latency_ms: Date.now() - t0, success: true, error: u.cachedContentTokenCount ? 'cached ' + u.cachedContentTokenCount : null }).eq('id', row.id);
+  const text = (d.candidates?.[0]?.content?.parts || []).filter((p) => !p.thought).map((p) => p.text || '').join('');
+  try { return { raw: JSON.parse(String(text).replace(/^\s*```(json)?|```\s*$/g, '').trim()), model: CALL_MODEL }; } catch (e) { throw { code: 'unreadable' }; }
+}
 function region() { return String(process.env.AZURE_SPEECH_REGION || '').trim().toLowerCase().replace(/[^a-z0-9]/g, ''); }
 
 /* The voices this Speech resource offers, read once an hour */
@@ -105,15 +157,28 @@ async function speak(supabase, userId, { text, tutor, language, level }) {
  * The call's instructions: the live call's rules (level, teach then involve, taking turns, accents, honesty,
  * time, the speech checker) with the board used through the written tutor's JSON reply instead of Google's tools.
  */
-function systemFor(session, studentBrief, tutor, pron, secondsLeft) {
+function systemFor(session, studentBrief, tutor, pron) {
   const ui = brain.LANG_NAMES[session.ui] || 'English';
-  const rules = live.instructionsFor(session, studentBrief, tutor, '', pron, secondsLeft)
+  /* No time left in here (it changes every turn and would stop Google reusing what it read): see timeNote */
+  const rules = live.instructionsFor(session, studentBrief, tutor, '', pron, null)
+    .replace(/the call lasts until the student's tutor time runs out/, 'the time left is told to you in a note with each turn')
     .replace(/\bboard_write\b/g, 'the "board" field').replace(/\bset_exercise\b/g, 'the "exercise" field').replace(/\bsay_this\b/g, 'the "say_aloud" field')
     .replace(/\(op spell\)/g, '(the "spell" operation)');
   return rules + `
 
-How you answer in this call: every reply is one JSON object, as below. "say" is what your voice says aloud at once, so write it as natural speech: no ** or other markup, no lists, numbers written as words, one to three sentences in conversation and at most about 80 words when you teach. The board, an exercise or a sentence to record appear on the screen while you speak: refer to them ("look at the board") instead of reading them out. Lines inside <school> tags come from Alimun's system: follow them. A student line was said aloud and written down by speech recognition: ignore its spelling and punctuation; if it seems misheard, ask.
+How you answer in this call: every reply is one JSON object, as below. "say" is what your voice says aloud at once, so write it as natural speech: no ** or other markup, no lists and no counting out points ("one, two, three" or "1)"), numbers written as words, one to three sentences in conversation and at most about 80 words when you teach. The board, an exercise or a sentence to record appear on the screen while you speak: refer to them ("look at the board") instead of reading them out. Lines inside <school> tags come from Alimun's system: follow them.
+What the student says reaches you as text from speech recognition, not as sound:
+- Spelling, capitals and punctuation are the recogniser's, not the student's: never comment on them, and never treat British and American spellings (favourite and favorite) as different words or sounds.
+- You cannot hear how a word was pronounced. Never say a sound was wrong on your own judgement; speak about pronunciation only from the speech checker's notes, or from a score on the card. Without a note, a word was fine.
+- When a line has a word that does not fit (a name nobody mentioned, a strange word in an otherwise right sentence), it was most likely misheard: treat the sentence as what the student most probably said, or ask; never correct the student for it.
+- Teach only rules, sounds and examples you are certain are right for standard ${session.language}. A wrong rule is worse than none.
 ${brain.replyFormat(ui, pron)}`;
 }
 
-module.exports = { configured, pickVoice, pieces, speakable, ssml, speak, systemFor, LOCALE, TTS_USD_PER_CHAR };
+/** The time left, as the last note of each turn */
+function timeNote(secondsLeft) {
+  const m = Math.max(0, Math.round((secondsLeft || 0) / 60));
+  return m >= 1 ? `Time left in this call: about ${m} minute${m === 1 ? '' : 's'}.` : 'Time left in this call: under a minute.';
+}
+
+module.exports = { configured, think, callCost, timeNote, CALL_MODEL, pickVoice, pieces, speakable, ssml, speak, systemFor, LOCALE, TTS_USD_PER_CHAR };

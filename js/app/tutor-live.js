@@ -274,14 +274,19 @@
      written tutor's model, Azure's voice; api/_lib/tutor-cascade.js). Each new turn of the student drops an answer
      still on its way, and stops the tutor's voice. */
   function cascadeLink() {
-    var link = { readyState: 0, onopen: null, onmessage: null, onclose: null }, buf = [], notes = [], seq = 0;
+    var link = { readyState: 0, onopen: null, onmessage: null, onclose: null }, buf = [], notes = [], seq = 0, pending = false, unheard = false, lastSay = '';
     function emit(o) { if (link.readyState === 1 && link.onmessage) link.onmessage({ data: JSON.stringify(o) }); }
     function ask(body) {
       var my = ++seq;
       body.session = L.session;
       if (notes.length) body.notes = notes.splice(0);
+      if (unheard) { body.unheard = true; unheard = false; }
+      if (body.audio && lastSay) body.hint = lastSay;   /* what the student is likely to answer or repeat */
+      pending = true;
       D().tutorCascadeTurn(body).then(function (r) {
+        if (my === seq) pending = false;
         if (my !== seq || link.readyState !== 1 || !r) return;
+        if (r.say) lastSay = r.say;
         if (r.heard) emit({ serverContent: { inputTranscription: { text: r.heard } } });
         if (r.messages && r.messages.length) emit({ alimun: { messages: r.messages, board: r.board } });
         if (r.say) emit({ serverContent: { outputTranscription: { text: r.say } } });
@@ -290,6 +295,7 @@
         emit({ serverContent: { turnComplete: true } });
       }, function (e) {
         if (my !== seq) return;
+        pending = false;
         console.warn('[Alimun] cascade turn:', e && (e.status + ' ' + (e.body && e.body.reason || '')));
         emit({ serverContent: { turnComplete: true } });
       });
@@ -302,7 +308,9 @@
       if (ri) {
         if (ri.activityStart) {
           buf = [];
-          seq++;   /* an answer still on its way is dropped: the student is talking again */
+          /* an answer still on its way is dropped (the student went on talking) and taken out of the conversation */
+          if (pending) { unheard = true; pending = false; }
+          seq++;
           if (L.playing && L.playing.length) emit({ serverContent: { interrupted: true } });
         }
         if (ri.audio && ri.audio.data && buf.length < IN_RATE * 30) {

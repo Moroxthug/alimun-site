@@ -740,7 +740,7 @@ async function handleLiveStart(req, res, supabase, user) {
     const expires = new Date(now + Math.max(30, Math.min(live.PASS_SECONDS, remaining + 60)) * 1000).toISOString();
     await supabase.from('tutor_sessions').update({ tutor, mode: 'live', live_until: expires, last_turn_at: new Date().toISOString(), seconds_used: (session.seconds_used || 0) + charged }).eq('id', session.id);
     return res.status(200).json({ session: { id: session.id, started_at: session.started_at }, fresh: created, engine, token: null, url: null, model: 'cascade', tutor, voice: null,
-      expires, pass_seconds: Math.round((Date.parse(expires) - now) / 1000), seconds: remaining, turn: { manual: true, silence_ms: live.silenceFor(session.level) }, pron_check: pron.configured() });
+      expires, pass_seconds: Math.round((Date.parse(expires) - now) / 1000), seconds: remaining, turn: { manual: true, silence_ms: cascadeSilence(session.level) }, pron_check: pron.configured() });
   }
   try {
     await liveCost(supabase, user.id, created ? MIN_CHARGE : Math.max(charged, 1));
@@ -858,6 +858,20 @@ async function handleLivePron(req, res, supabase, user) {
    (the call's opening, an exercise or pronunciation result), then the tutor's reply stored and spoken.
    Answers { heard, say, audio (24 kHz PCM, base64), messages, board, ms, usd }. */
 const recentCascade = new Map();
+/* The pause before a cascade call answers: shorter than the live call's, because an answer the student talks over
+   before hearing it is dropped and taken out of the conversation (js/app/tutor-live.js cascadeLink) */
+function cascadeSilence(level) { return ['A1', 'A2'].includes(level) ? 1100 : level === 'B1' ? 900 : 750; }
+/* The student's brief for a cascade call, built once per call (it does not change during it) and kept 15 minutes:
+   the same instructions every turn also let Google reuse what it has read */
+const briefCache = new Map();
+async function callBrief(supabase, profile, session) {
+  const hit = briefCache.get(session.id);
+  if (hit && hit.at > Date.now() - 900000) return hit.brief;
+  const b = await brain.brief(supabase, profile, { lessonId: session.lesson_id });
+  briefCache.set(session.id, { at: Date.now(), brief: b });
+  if (briefCache.size > 200) briefCache.delete(briefCache.keys().next().value);
+  return b;
+}
 async function handleCascadeTurn(req, res, supabase, user) {
   if (!cascade.configured() || !brain.configured()) return res.status(501).json({ error: 'Not configured', reason: 'cascade_off' });
   if (user.app_metadata?.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
@@ -872,45 +886,64 @@ async function handleCascadeTurn(req, res, supabase, user) {
   if (!session) return res.status(404).json({ error: 'Session not found' });
   if (session.ended_at || session.engine !== 'cascade' || !session.live_until || now > Date.parse(session.live_until) + 60000) return res.status(409).json({ error: 'The call has ended.', reason: 'ended' });
   const ms = {}, t0 = Date.now();
+  // What the tutor needs, loaded while the student's words are being written down (the brief once per call)
+  const ctxP = Promise.all([
+    callBrief(supabase, profile, session),
+    messagesOf(supabase, session.id, 30),
+    balance(supabase, profile.id),
+  ]);
+  ctxP.catch(() => {});
 
-  // The student's words, forced to the course language
+  // The answer the student talked over before hearing it is taken out of the conversation
+  if (body.unheard === true) {
+    const { data: lastMsg } = await supabase.from('tutor_messages').select('id, role').eq('session_id', session.id).order('created_at', { ascending: false }).limit(1);
+    if (lastMsg && lastMsg[0] && lastMsg[0].role === 'tutor') await supabase.from('tutor_messages').delete().eq('id', lastMsg[0].id);
+  }
+
+  // The student's words, forced to the course language, with the tutor's last line as a hint of what may come
   let heard = '';
   if (body.audio) {
     const a = pron.readWav(body);
     if (a.reason) return res.status(a.reason === 'audio_long' ? 413 : 400).json({ error: 'This recording cannot be used', reason: a.reason });
-    try { heard = clean(await voice.listen(supabase, user.id, { audio: a.audio, mime: 'audio/wav', language: session.language }), MAX_TEXT); } catch (e) {
+    const hint = clean(body.hint, 400);
+    try { heard = clean(await voice.listen(supabase, user.id, { audio: a.audio, mime: 'audio/wav', language: session.language, prompt: hint, strict: true }), MAX_TEXT); } catch (e) {
       if (e && e.code === 'budget') return brainError(res, e);
       return res.status(502).json({ error: 'Not heard', reason: 'listen' });
     }
     ms.listen = Date.now() - t0;
     if (!/\p{L}/u.test(heard)) return res.status(200).json({ heard: '', ms });
-    await supabase.from('tutor_messages').insert({ session_id: session.id, student_id: profile.id, role: 'student', text: heard, spoken: true });
   }
   // Lines from the page: Alimun's own (in <school> tags) or the student's result, already stored by its own action
   const line = clean(body.text, 2000);
   const notes = (Array.isArray(body.notes) ? body.notes : []).slice(0, 4).map((n) => clean(n, 600)).filter(Boolean);
   if (!heard && !line) return res.status(400).json({ error: 'Nothing to answer' });
+  const saveHeard = heard ? supabase.from('tutor_messages').insert({ session_id: session.id, student_id: profile.id, role: 'student', text: heard, spoken: true }) : null;
 
   const t1 = Date.now();
   let reply;
   try {
-    const remaining = await balance(supabase, profile.id);
-    const sys = cascade.systemFor(session, await brain.brief(supabase, profile, { lessonId: session.lesson_id }), session.tutor || 'lena', pron.configured(), remaining);
-    const history = await messagesOf(supabase, session.id, 30);
-    const msgs = history.map(forModel).concat(notes.map(schoolNote));
+    const [studentBrief, past, remaining] = await ctxP;
+    const sys = cascade.systemFor(session, studentBrief, session.tutor || 'lena', pron.configured());
+    const history = body.unheard === true && past.length && past[past.length - 1].role === 'tutor' ? past.slice(0, -1) : past;
+    const msgs = history.map(forModel);
+    if (heard) msgs.push({ role: 'user', content: '[spoken] ' + heard });
+    msgs.push(...notes.map(schoolNote));
     if (line) {
       const school = /^<school>([\s\S]*)<\/school>$/.exec(String(body.text || '').trim());
       const last = history[history.length - 1];
       if (school) msgs.push(schoolNote(clean(school[1], 2000)));
       else if (!(last && last.role === 'student' && last.result)) msgs.push({ role: 'user', content: line });
     }
+    msgs.push(schoolNote(cascade.timeNote(remaining)));
     while (msgs.length && msgs[0].role !== 'user') msgs.shift();
-    if (!msgs.length) msgs.push(schoolNote('The call has just started. Greet the student by their first name in one short sentence and ask what they would like to do today.'));
-    const raw = await brain.callModel(supabase, user.id, 'tutor_turn', sys, msgs, { maxTokens: 2000, temperature: 0.6 });
-    reply = brain.cleanReply(raw, { pron: pron.configured() ? pron.cleanSentence : null });
+    const out = await cascade.think(supabase, user.id, sys, msgs);
+    reply = brain.cleanReply(out.raw, { pron: pron.configured() ? pron.cleanSentence : null });
     if (!reply) throw { code: 'unreadable' };
+    ms.model = out.model;
   } catch (e) { return brainError(res, e); }
   ms.think = Date.now() - t1;
+  if (saveHeard) await saveHeard;
+
   // Stored like a written reply, without touching last_turn_at: the ticks count the call's time from it
   const { data: msgRow, error: mErr } = await supabase.from('tutor_messages').insert({
     session_id: session.id, student_id: profile.id, role: 'tutor', text: reply.say, board: reply.board, exercise: reply.exercise, pron: reply.pron || null,

@@ -33,8 +33,19 @@ function readAudio(body) {
   return { audio, mime };
 }
 
-/** The recording to text. Throws { code: 'budget' | 'unavailable' | 'listen' }. */
-async function listen(supabase, userId, { audio, mime, language }) {
+/* Whisper writes words when there were none (silence or noise heard as "Thank you."): a piece it is itself unsure
+   held speech, or whose words it barely trusts, is dropped. Used for the spoken call (strict). */
+function heardText(d, strict) {
+  if (!strict || !Array.isArray(d.segments) || !d.segments.length) return String(d.text || '').trim();
+  return d.segments.filter((g) => !((Number(g.no_speech_prob) > 0.6 && Number(g.avg_logprob) < -0.6) || Number(g.avg_logprob) < -1.2 || Number(g.compression_ratio) > 2.6))
+    .map((g) => String(g.text || '').trim()).filter(Boolean).join(' ').trim();
+}
+
+/**
+ * The recording to text. prompt: words the student is likely to say (the tutor's last line), which helps Whisper
+ * hear them; strict: drop what Whisper itself doubts was speech. Throws { code: 'budget' | 'unavailable' | 'listen' }.
+ */
+async function listen(supabase, userId, { audio, mime, language, prompt, strict }) {
   const row = await brain.reserve(supabase, userId, 'tutor_listen', 30 * WHISPER_USD_PER_SEC);
   const t0 = Date.now();
   try {
@@ -44,6 +55,7 @@ async function listen(supabase, userId, { audio, mime, language }) {
     form.append('language', LISTEN_LANGS[language] || 'en');
     form.append('response_format', 'verbose_json');
     form.append('temperature', '0');
+    if (prompt) form.append('prompt', String(prompt).replace(/[\u0000-\u001f*_#<>]+/g, ' ').slice(-400));
     const r = await fetch('https://api.groq.com/openai/v1/audio/transcriptions', {
       method: 'POST', headers: { Authorization: `Bearer ${process.env.GROQ_API_KEY}` }, body: form, signal: AbortSignal.timeout(20000),
     });
@@ -54,7 +66,7 @@ async function listen(supabase, userId, { audio, mime, language }) {
       provider: 'groq', model: WHISPER_MODEL, input_tokens: 0, output_tokens: 0,
       cost_usd: Math.round(seconds * WHISPER_USD_PER_SEC * 1e6) / 1e6, latency_ms: Date.now() - t0, success: true, error: null,
     }).eq('id', row.id);
-    return String(d.text || '').trim();
+    return heardText(d, strict);
   } catch (e) {
     await supabase.from('ai_usage').update({ success: false, cost_usd: 0, latency_ms: Date.now() - t0, error: String(e.message).slice(0, 300) }).eq('id', row.id);
     throw { code: 'listen', message: e.message };
@@ -121,4 +133,4 @@ async function speak(supabase, userId, text, opts) {
   }
 }
 
-module.exports = { listenConfigured, readAudio, listen, voiceConfigured, voiceName, speak, VOICES, VOICE_MODEL, LISTEN_LANGS };
+module.exports = { heardText, listenConfigured, readAudio, listen, voiceConfigured, voiceName, speak, VOICES, VOICE_MODEL, LISTEN_LANGS };
