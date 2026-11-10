@@ -82,3 +82,12 @@ test('another language or noise (the turn does not match its transcript) gives n
   assert.strictEqual(pron.cleanTurn('<>'), '');
   assert.strictEqual(pron.cleanTurn('¿Comes pan?'), '¿Comes pan?');
 });
+
+test('no correction notes for numbers, letters or short weak words ("B1", "a", "to")', () => {
+  const r = { sentence: 'I am B1 a to reading', accuracy: 70, completeness: 100, words: [
+    { t: 'B1', s: 'diff', score: 20 }, { t: 'a', s: 'diff', score: 15 }, { t: 'to', s: 'diff', score: 25 }] };
+  assert.strictEqual(pron.forLive(r), null);
+  r.words.push({ t: 'reading', s: 'diff', score: 45, sound: 'iː' });
+  assert.match(pron.forLive(r), /"reading" \(45 of 100/);
+  assert.doesNotMatch(pron.forLive(r), /"b1"|"a"|"to"/);
+});

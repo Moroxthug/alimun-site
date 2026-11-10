@@ -213,8 +213,10 @@
     if (!L || L.rotating || L.studentTurn || L.tutorTurn || (L.playing && L.playing.length)) return;
     if (rotate()) return;
     if (!L.notes || !L.notes.length) return;
-    var notes = L.notes.splice(0);
-    send({ clientContent: { turns: [{ role: 'user', parts: [{ text: '<school>' + notes.join(' ') + '</school>' }] }], turnComplete: false } });
+    var notes = L.notes.splice(0), now = !!L.byeNow;
+    L.byeNow = false;
+    /* The goodbye is asked for at once; other notes wait for the tutor's next turn */
+    send({ clientContent: { turns: [{ role: 'user', parts: [{ text: '<school>' + notes.join(' ') + '</school>' }] }], turnComplete: now } });
   }
   /* Google bills the whole conversation again on every turn, the audio of every earlier turn included: a 10-minute call
      on 10 Nov cost about $1.25, 80% of it this re-reading. Once the conversation passes ROTATE_TOKENS, the call moves to a
@@ -230,14 +232,23 @@
     return true;
   }
   /* The time left, told to the tutor so it neither wraps up early nor runs out mid-explanation */
+  /* Owner, 10 Nov 2026: told "one minute left", the tutor said goodbye half a minute early without saying why. Now the
+     student hears that time is nearly up, the practice goes on, and goodbye comes only in the last 20 seconds, asked
+     for at once (not left for the tutor's next turn). The time left is counted down here between the 30-second ticks. */
+  function secondsLeft() { return L.seconds - Math.max(0, (Date.now() - (L.tickAt || Date.now())) / 1000); }
   function timeNotes() {
-    if (!L || L.sample || !L.started || L.seconds == null) return;
-    if (L.seconds <= 60 && !L.toldEnd) {
+    if (!L || L.sample || !L.started || L.ending || L.seconds == null) return;
+    var left = secondsLeft();
+    if (left <= 20 && !L.toldBye) {
+      L.toldBye = L.toldEnd = L.told2 = true;
+      L.byeNow = true;
+      L.notes = (L.notes || []).concat(['About 20 seconds of the call are left. Say goodbye now in one or two short sentences, with one thing to practise before next time.']);
+    } else if (left <= 60 && !L.toldEnd) {
       L.toldEnd = L.told2 = true;
-      L.notes = (L.notes || []).concat(['About one minute of the call is left. Finish the point you are on, recap in one or two sentences what the student learned today, say what to practise next time, then say goodbye.']);
-    } else if (L.seconds <= 150 && !L.told2) {
+      L.notes = (L.notes || []).concat(['About one minute of the call is left. At your next turn tell the student so in a few words and sum up in one sentence what they learned today, then keep practising it with them. Do not say goodbye yet: you will be told when.']);
+    } else if (left <= 150 && !L.told2) {
       L.told2 = true;
-      L.notes = (L.notes || []).concat(['About two minutes of the call are left. Do not start a new topic: practise what you just taught, then you will be told when to wrap up.']);
+      L.notes = (L.notes || []).concat(['About two minutes of the call are left. Do not start a new topic: practise what you just taught.']);
     } else return;
     sendNotes();
   }
@@ -581,6 +592,7 @@
   function awake() { if (!L) return; L.activeAt = Date.now(); if (L.idleWarn) { L.idleWarn = false; idleUi(); } }
   function checkIdle() {
     if (!L || L.ended || L.ending || !L.started || L.sample) return;
+    timeNotes();
     var limit = L.ex || L.pronMsg && !L.pronResult || L.prec || L.pbusy ? IDLE_BOARD_MS : IDLE_MS, quiet = Date.now() - (L.activeAt || Date.now());
     if (L.playing && L.playing.length) { awake(); return; }
     if (quiet >= limit) { end('app_tl_idle_end'); return; }
@@ -599,7 +611,7 @@
     var lines = L.queue.splice(0, L.queue.length), usage = (L.usage || []).splice(0);
     return D().tutorLiveTick(usage.length ? { session: L.session, lines: lines, usage: usage } : { session: L.session, lines: lines }).then(function (r) {
       if (!L) return;
-      L.seconds = r.seconds; clock(); timeNotes();
+      L.seconds = r.seconds; L.tickAt = Date.now(); clock(); timeNotes();
       if (r.stop) { if (r.summary) L.summary = r.summary; end(r.stop === 'budget' ? 'app_tu_err_budget' : 'app_tu_none_left', true); }
     }, function (e) {
       if (!L) return;
@@ -613,7 +625,7 @@
     var sample = !!opts.sample;
     L = Object.assign(L || {}, { tutor: tutor, sample: sample, engine: opts.engine === 'cascade' ? 'cascade' : null, cost: null, state: 'connecting', lines: [], queue: [], cur: { student: '', tutor: '' }, playing: [], seconds: opts.seconds || 0,
       started: false, ending: false, ended: false, muted: false, note: null, summary: null, handle: null, session: null, fresh: true, failed: null, renewing: false, head: 0,
-      usage: [], conn: 0, startedAt: Date.now(), ctx: 0, rotating: false, hold: [], notes: [], told2: false, toldEnd: false, board: [], newOps: 0, ex: null, exMsg: null, got: [], pronMsg: null, pronResult: null, prec: null, boardOpen: false });
+      usage: [], conn: 0, startedAt: Date.now(), tickAt: Date.now(), ctx: 0, rotating: false, hold: [], notes: [], told2: false, toldEnd: false, toldBye: false, byeNow: false, board: [], newOps: 0, ex: null, exMsg: null, got: [], pronMsg: null, pronResult: null, prec: null, boardOpen: false });
     draw();
     if (sample) { runSample(); return; }
     if (!supported()) { fail('app_tl_unsupported'); return; }

@@ -51,7 +51,10 @@ function cleanTurn(v) {
  */
 function forLive(r) {
   if (!r || r.accuracy == null || r.accuracy < 40 || (r.completeness != null && r.completeness < 60)) return null;
-  const diff = r.words.filter((w) => w.s === 'diff' && w.score != null).sort((a, b) => a.score - b.score).slice(0, 2);
+  // Not worth a correction: numbers and letters ("B1"), and words of one or two letters ("a", "to"), whose weak,
+  // unstressed sound in natural speech scores low although it is right
+  const worth = (w) => !/\d/.test(w.t) && bare(w.t).replace(/'/g, '').length > 2;
+  const diff = r.words.filter((w) => w.s === 'diff' && w.score != null && worth(w)).sort((a, b) => a.score - b.score).slice(0, 2);
   if (!diff.length) return null;
   return `Speech check of what the student just said ("${r.sentence}"): said differently: ` +
     diff.map((w) => `"${bare(w.t) || w.t}" (${w.score} of 100${w.sound ? ', the sound /' + w.sound + '/' : ''})`).join(', ') +

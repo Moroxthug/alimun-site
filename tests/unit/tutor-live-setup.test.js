@@ -120,6 +120,7 @@ test('owner, 10 Nov 2026: teach first, no early goodbye, accents, the time left'
   assert.match(s, /Teach, then involve the student/);
   assert.match(s, /about 7 minutes of tutor time left/);
   assert.match(s, /Never say goodbye, wish them a good day or wrap up on your own/);
+  assert.match(s, /say goodbye only when you are told twenty seconds are left/);
   assert.match(s, /German "gut" for "good"/);
   assert.match(s, /question in Italian/);
   assert.match(s, /"pen" when you asked for "sleeping"/);

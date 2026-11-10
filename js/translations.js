@@ -1346,7 +1346,7 @@ window.ALIMUN_TRANSLATIONS = {
     "app_tl_pick_h": "Talk with your tutor",
     "app_tl_pick_p": "Choose who you would like to talk to; each tutor has their own voice. Speak naturally: your tutor answers straight away, helps with your words and grammar, and works on your pronunciation when it matters.",
     "app_tl_call": "Talk with {name}",
-    "app_tl_call_test": "Try the test call",
+    "app_tl_call_test": "Try the cheaper test call",
     "app_tl_test_h": "Test call: speech to text, the written tutor and Azure voice",
     "app_tl_test_cost": "Test call: {usd} so far, last answer in {sec} s",
     "app_tl_write": "Write to your tutor",
