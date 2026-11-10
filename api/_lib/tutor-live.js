@@ -119,6 +119,12 @@ function activityFor(level, manual) {
   return { automaticActivityDetection: { startOfSpeechSensitivity: 'START_SENSITIVITY_LOW', endOfSpeechSensitivity: 'END_SENSITIVITY_LOW', prefixPaddingMs: 200, silenceDurationMs: silenceFor(level) } };
 }
 
+/* The conversation Google re-reads on every turn, and bills each time, is kept between these sizes: past 24,000 tokens
+   (about 10 minutes of talk, the instructions and the brief included) the oldest turns are dropped down to 12,000, about
+   the last 4 minutes. Google's default waits for 80% of the model's window, so a long call cost more each minute.
+   The instructions and the brief always stay; the dropped turns are also still in the transcript the tick stores. */
+const CONTEXT_TRIGGER = 24000, CONTEXT_TARGET = 12000;
+
 /** The setup locked inside the pass (BidiGenerateContentSetup) */
 function setupFor(instructions, tutor, handle, pronDrill, level, manual) {
   const setup = {
@@ -130,7 +136,7 @@ function setupFor(instructions, tutor, handle, pronDrill, level, manual) {
     inputAudioTranscription: {},
     outputAudioTranscription: {},
     sessionResumption: handle ? { handle } : {},
-    contextWindowCompression: { slidingWindow: {} },
+    contextWindowCompression: { triggerTokens: CONTEXT_TRIGGER, slidingWindow: { targetTokens: CONTEXT_TARGET } },
   };
   return setup;
 }
@@ -171,9 +177,25 @@ async function token({ instructions, tutor, handle, seconds, pronDrill, level })
       delete body.bidiGenerateContentSetup.realtimeInputConfig;
       await ask();
     }
+    /* Sizes for the conversation refused: Google's own sliding window, as before */
+    if (r.status === 400 && /trigger_?tokens|target_?tokens|context_?window_?compression/i.test(JSON.stringify(d))) {
+      console.warn('[tutor-live] context sizes refused, using the defaults:', JSON.stringify(d).slice(0, 300));
+      body.bidiGenerateContentSetup.contextWindowCompression = { slidingWindow: {} };
+      await ask();
+    }
   } catch (e) { throw { code: 'live', message: e && e.message }; }
   if (!r.ok || !d || !d.name) throw { code: 'live', message: 'token ' + (r && r.status) + ' ' + JSON.stringify(d).slice(0, 300) };
   return { token: d.name, expires: body.expireTime, url: WS_URL, model: LIVE_MODEL, voice: TUTORS[tutor], seconds: life, turn: { manual, silence_ms: silenceFor(level) } };
+}
+
+/** Google's token counts as the browser received them (js/app/tutor-live.js usageOf): whole numbers only, at most 100 */
+const USAGE_KEYS = ['n', 't', 'p', 'c', 'r', 'th', 'tu', 'pa', 'pt', 'ra', 'rt'];
+function cleanUsage(list) {
+  return (Array.isArray(list) ? list : []).slice(0, 100).map((u) => {
+    const out = {};
+    USAGE_KEYS.forEach((k) => { const v = Number(u && u[k]); out[k] = Number.isFinite(v) ? Math.max(0, Math.min(10000000, Math.round(v))) : 0; });
+    return out;
+  }).filter((u) => u.p || u.r);
 }
 
 /** Lines the browser heard in the call (Google's transcripts), cleaned: [{ role: 'student'|'tutor', text }] */
@@ -184,4 +206,4 @@ function cleanLines(lines) {
   })).filter((l) => l.text);
 }
 
-module.exports = { configured, tutorOf, instructionsFor, levelRules, activityFor, silenceFor, setupFor, tools, exerciseOf, cleanHandle, token, cleanLines, TUTORS, LIVE_MODEL, LIVE_USD_PER_SEC, PASS_SECONDS };
+module.exports = { configured, tutorOf, instructionsFor, levelRules, activityFor, silenceFor, setupFor, tools, exerciseOf, cleanHandle, token, cleanLines, cleanUsage, CONTEXT_TRIGGER, CONTEXT_TARGET, TUTORS, LIVE_MODEL, LIVE_USD_PER_SEC, PASS_SECONDS };

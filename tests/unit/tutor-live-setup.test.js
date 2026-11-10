@@ -77,3 +77,31 @@ test('manual turns are asked for first; refused, Google detection with the calme
   try { assert.deepStrictEqual((await live.token({ instructions: 'x', tutor: 'lena', handle: '', seconds: 300, pronDrill: true, level: 'B1' })).turn, { manual: true, silence_ms: 1200 }); }
   finally { global.fetch = real; }
 });
+
+test('the conversation Google re-reads each turn is kept between 12,000 and 24,000 tokens', () => {
+  const s = live.setupFor('x', 'lena', '', true, 'A2', true);
+  assert.deepStrictEqual(s.contextWindowCompression, { triggerTokens: 24000, slidingWindow: { targetTokens: 12000 } });
+});
+
+test('if Google refuses the context sizes, its own sliding window is used', async () => {
+  const real = global.fetch, sent = [];
+  process.env.GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY || 'test-key';
+  global.fetch = async (url, opts) => {
+    const b = JSON.parse(opts.body); sent.push(b);
+    if (b.bidiGenerateContentSetup.contextWindowCompression.triggerTokens) return { ok: false, status: 400, json: async () => ({ error: { message: 'Unknown name "trigger_tokens"' } }) };
+    return { ok: true, status: 200, json: async () => ({ name: 'auth_tokens/abc' }) };
+  };
+  try {
+    const pass = await live.token({ instructions: 'x', tutor: 'lena', handle: '', seconds: 300, pronDrill: true, level: 'B2' });
+    assert.strictEqual(pass.token, 'auth_tokens/abc');
+    assert.deepStrictEqual(sent[sent.length - 1].bidiGenerateContentSetup.contextWindowCompression, { slidingWindow: {} });
+    assert.strictEqual(pass.turn.manual, true);
+  } finally { global.fetch = real; }
+});
+
+test('Google token counts from the browser are kept as whole numbers, at most 100', () => {
+  const u = live.cleanUsage([{ n: 1, t: 12.4, p: '3100', c: -5, r: 420, pa: 2000, ra: 400, x: 'drop' }, { p: 0, r: 0 }, 'junk']);
+  assert.deepStrictEqual(u, [{ n: 1, t: 12, p: 3100, c: 0, r: 420, th: 0, tu: 0, pa: 2000, pt: 0, ra: 400, rt: 0 }]);
+  assert.strictEqual(live.cleanUsage(new Array(150).fill({ p: 1 })).length, 100);
+  assert.deepStrictEqual(live.cleanUsage(null), []);
+});

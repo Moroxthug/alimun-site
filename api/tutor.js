@@ -778,7 +778,11 @@ async function handleLiveTick(req, res, supabase, user) {
     })));
   }
   const turns = session.turns + lines.filter((l) => l.role === 'student').length;
-  await supabase.from('tutor_sessions').update({ seconds_used: session.seconds_used + charged, turns, last_turn_at: new Date(now).toISOString() }).eq('id', session.id);
+  const patch = { seconds_used: session.seconds_used + charged, turns, last_turn_at: new Date(now).toISOString() };
+  // Google's token counts for this stretch of the call (measurement only, at most 400 a session)
+  const usage = live.cleanUsage(body.usage);
+  if (usage.length) patch.live_usage = (Array.isArray(session.live_usage) ? session.live_usage : []).concat(usage).slice(0, 400);
+  await supabase.from('tutor_sessions').update(patch).eq('id', session.id);
 
   let stop = null;
   if (charged > 0) {

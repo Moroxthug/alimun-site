@@ -229,7 +229,7 @@
   /* ---------- The connection to Google ---------- */
   function send(msg) { if (L && L.ws && L.ws.readyState === 1) L.ws.send(JSON.stringify(msg)); }
   function connect(pass) {
-    L.pass = pass; L.ready = false; L.taker = null; L.studentTurn = false; L.tutorTurn = false; L.turnAudio = null;
+    L.pass = pass; L.ready = false; L.conn = (L.conn || 0) + 1; L.taker = null; L.studentTurn = false; L.tutorTurn = false; L.turnAudio = null;
     var ws = L.ws = new WebSocket(pass.url + '?access_token=' + encodeURIComponent(pass.token));
     var mine = ws;
     ws.onopen = function () { if (L && L.ws === mine) send({ setup: { model: 'models/' + pass.model } }); };
@@ -250,7 +250,20 @@
     clearTimeout(L.renewTimer);
     L.renewTimer = setTimeout(function () { renew('expiring'); }, Math.max(20, (pass.pass_seconds || 600) - 25) * 1000);
   }
+  /* Google's token counts, kept as they come and sent with the next tick: they measure what a minute of call really
+     costs (tutor_sessions.live_usage); the student's time is counted by the ticks, not by these */
+  function modal(list, kind) {
+    var n = 0;
+    (Array.isArray(list) ? list : []).forEach(function (x) { if (x && x.modality === kind) n += Number(x.tokenCount) || 0; });
+    return n;
+  }
+  function usageOf(u) {
+    return { n: L.conn || 0, t: Math.round((Date.now() - (L.startedAt || Date.now())) / 1000), p: u.promptTokenCount || 0, c: u.cachedContentTokenCount || 0,
+      r: u.responseTokenCount || 0, th: u.thoughtsTokenCount || 0, tu: u.toolUsePromptTokenCount || 0,
+      pa: modal(u.promptTokensDetails, 'AUDIO'), pt: modal(u.promptTokensDetails, 'TEXT'), ra: modal(u.responseTokensDetails, 'AUDIO'), rt: modal(u.responseTokensDetails, 'TEXT') };
+  }
   function onMessage(m) {
+    if (m.usageMetadata && L.usage && L.usage.length < 100) L.usage.push(usageOf(m.usageMetadata));
     if (m.setupComplete) {
       L.ready = true;
       var first = !L.started;
@@ -467,14 +480,14 @@
   /* ---------- Time ---------- */
   function tick() {
     if (!L || L.sample || !L.session) return Promise.resolve();
-    var lines = L.queue.splice(0, L.queue.length);
-    return D().tutorLiveTick({ session: L.session, lines: lines }).then(function (r) {
+    var lines = L.queue.splice(0, L.queue.length), usage = (L.usage || []).splice(0);
+    return D().tutorLiveTick(usage.length ? { session: L.session, lines: lines, usage: usage } : { session: L.session, lines: lines }).then(function (r) {
       if (!L) return;
       L.seconds = r.seconds; clock();
       if (r.stop) { if (r.summary) L.summary = r.summary; end(r.stop === 'budget' ? 'app_tu_err_budget' : 'app_tu_none_left', true); }
     }, function (e) {
       if (!L) return;
-      if (e && e.status !== 409) L.queue = lines.concat(L.queue);   /* tried again at the next tick */
+      if (e && e.status !== 409) { L.queue = lines.concat(L.queue); L.usage = usage.concat(L.usage || []).slice(0, 100); }   /* tried again at the next tick */
       if (e && e.body && e.body.reason === 'ended' && !L.renewing) end('app_tl_lost', true);
     });
   }
@@ -484,7 +497,7 @@
     var sample = !!opts.sample;
     L = Object.assign(L || {}, { tutor: tutor, sample: sample, state: 'connecting', lines: [], queue: [], cur: { student: '', tutor: '' }, playing: [], seconds: opts.seconds || 0,
       started: false, ending: false, ended: false, muted: false, note: null, summary: null, handle: null, session: null, fresh: true, failed: null, renewing: false, head: 0,
-      board: [], newOps: 0, ex: null, exMsg: null, got: [], pronMsg: null, pronResult: null, prec: null, boardOpen: false });
+      usage: [], conn: 0, startedAt: Date.now(), board: [], newOps: 0, ex: null, exMsg: null, got: [], pronMsg: null, pronResult: null, prec: null, boardOpen: false });
     draw();
     if (sample) { runSample(); return; }
     if (!supported()) { fail('app_tl_unsupported'); return; }
