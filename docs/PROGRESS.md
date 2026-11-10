@@ -1747,3 +1747,9 @@ Owner: "go with the 10 euros off the first pack and future classes message".
 - The per-turn speech check made the tutor correct "B1" and "a": `pron.forLive` now skips words with digits and words of one or two letters (weak forms of "a", "to" score low in natural speech although they are right).
 - The test button now reads "Try the cheaper test call".
 - Checked: one new test in `tests/unit/tutor-live-turns.test.js`, one more assertion in `tutor-live-setup.test.js`; 122 of 122 unit tests, `npm run build`, `node --check`.
+
+## 2026-11-10 — Cloudflare check shown in an Alimun card
+
+Owner: "we fixed the cloudflare and it works, but it looks horrible visually".
+- `js/captcha.js`: when Cloudflare asks for a tick (interaction-only mode), the box now appears centred in a white Alimun card over a blurred bone tint, with "One quick check" and one sentence in the page's language (8 languages, ma uses French), Cloudflare's light theme at the card's width; the card closes by itself after the tick, a failure or a timeout. People Cloudflare trusts still see nothing. Before, the grey box floated loose at the bottom of the screen.
+- Checked on the sign-in page at 1280 and 390 pixels with Cloudflare's always-ask test key: the card opens with the box inside, no page errors.
