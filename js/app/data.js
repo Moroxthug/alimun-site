@@ -627,7 +627,7 @@
   function adminWelcomePoll() {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.from('welcome_poll').select('answers, created_at, student_profiles ( full_name, language, level, country, tier )')
+    return c.from('welcome_poll').select('student_id, answers, created_at, discount_used_at, student_profiles ( full_name, language, level, country, tier )')
       .order('created_at', { ascending: false }).limit(1000).then(function (r) { if (r.error) throw r.error; return r.data || []; });
   }
   function adminActivityOverview() {

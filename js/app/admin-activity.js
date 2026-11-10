@@ -6,7 +6,8 @@
                               admin_activity_timeline(), newest first, with "Show older".
    Exercises, practice, flashcards, tutor, homework, classes, 1:1s, waiting lists, messages and the news choice come
    from their own tables; opening a dashboard, sections opened and payments from activity_events.
-   The Welcome poll card counts the answers to the students' welcome poll (table welcome_poll). */
+   The Welcome poll card counts the answers to the students' welcome poll (table welcome_poll), lists who answered
+   (each with their answers, whether they used the welcome gift and a link to their file) and what they wrote. */
 (function () {
   'use strict';
   var A = null, root = null, OV = null, SRC = null, POLLROWS = null, DAYMS = 86400000;
@@ -159,6 +160,17 @@
       list(Object.keys(from).sort(function (a, b) { return from[b] - from[a]; }).map(function (c) { return [countryName(c), from[c]]; })) + '</div>';
     POLL.forEach(function (q) { html += '<div class="span-6"><h3 class="t-h3">' + esc(q[1]) + '</h3>' + list(count(q[0], q[2])) + '</div>'; });
     html += '</div>';
+    /* Who answered: one line per student with their answers, the welcome gift and a link to their file */
+    var label = function (key, v) { var q = POLL.filter(function (x) { return x[0] === key; })[0]; return v && q ? (Array.isArray(v) ? v : [v]).map(function (x) { return q[2][x] || x; }).join(', ') : ''; };
+    html += '<h3 class="t-h3" style="margin-top:16px">Who answered</h3><div class="tt-week">' + rows.map(function (r) {
+      var a = r.answers || {}, sp = r.student_profiles || {};
+      var head = (sp.full_name || 'A student') + ([sp.language, sp.level].filter(Boolean).length ? ', ' + [sp.language, sp.level].filter(Boolean).join(' ') : '');
+      var parts = [a.from ? 'From ' + countryName(a.from) : '', label('explain', a.explain), label('teacher', a.teacher), label('confidence', a.confidence),
+        a.hardest ? 'Hardest: ' + label('hardest', a.hardest) : '', a.prefer ? 'Wants: ' + label('prefer', a.prefer) : '', label('time', a.time),
+        a.tutor ? 'Tutor: ' + label('tutor', a.tutor) : '', r.discount_used_at ? 'Used the 10 \u20ac gift' : 'Gift not used yet'].filter(Boolean);
+      var inner = '<span class="tt-row__time">' + esc(ago(r.created_at)) + '</span><span><b>' + esc(head) + '</b><small>' + esc(parts.join('. ') + '.') + '</small></span>';
+      return r.student_id ? '<a class="tt-row tt-row--wide" href="#/students/' + esc(r.student_id) + '">' + inner + '</a>' : '<div class="tt-row tt-row--wide">' + inner + '</div>';
+    }).join('') + '</div>';
     var said = [];
     rows.forEach(function (r) {
       var a = r.answers || {}, who = (r.student_profiles && r.student_profiles.full_name) || 'A student';
@@ -174,8 +186,8 @@
   function samplePoll() {
     var n = Date.now();
     return [
-      { created_at: new Date(n - 3600000).toISOString(), student_profiles: { full_name: 'Marco Rossi', language: 'English', level: 'B1' }, answers: { from: 'IT', explain: 'mostly', teacher: 'native', confidence: 'c3', hardest: ['speaking', 'listening'], prefer: ['exam', 'conversation'], time: 'h1_3', tutor: 'useful', tutor_note: 'Slower voice, please.' } },
-      { created_at: new Date(n - 30 * 3600000).toISOString(), student_profiles: { full_name: 'Aya Benali', language: 'English', level: 'A2' }, answers: { from: 'MA', explain: 'own', teacher: 'home', confidence: 'c2', hardest: ['grammar'], prefer: ['classes'], time: 'h3_5', tutor: 'love', note: 'Evening classes would suit me.' } }
+      { student_id: 's1', created_at: new Date(n - 3600000).toISOString(), student_profiles: { full_name: 'Marco Rossi', language: 'English', level: 'B1' }, answers: { from: 'IT', explain: 'mostly', teacher: 'native', confidence: 'c3', hardest: ['speaking', 'listening'], prefer: ['exam', 'conversation'], time: 'h1_3', tutor: 'useful', tutor_note: 'Slower voice, please.' } },
+      { student_id: 's2', discount_used_at: new Date(n - 3600000).toISOString(), created_at: new Date(n - 30 * 3600000).toISOString(), student_profiles: { full_name: 'Aya Benali', language: 'English', level: 'A2' }, answers: { from: 'MA', explain: 'own', teacher: 'home', confidence: 'c2', hardest: ['grammar'], prefer: ['classes'], time: 'h3_5', tutor: 'love', note: 'Evening classes would suit me.' } }
     ];
   }
   function stat(n, label) { return '<div class="ac-stat"><b>' + esc(String(n)) + '</b><span>' + esc(label) + '</span></div>'; }

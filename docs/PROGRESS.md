@@ -1779,3 +1779,7 @@ Owner: "we fixed the cloudflare and it works, but it looks horrible visually".
 - Not verified by a native speaker: the Italian and Moroccan French articles.
 
 - Internal links (owner: "Yes, add the links"): the reading strip before the bottom banner now picks articles that match the page. Course pages show their course's articles first and Resources items show the articles on their topic, from src/data/blog/reading-picks.js. scripts/localize.mjs adds the strip to Resources item pages too, without repeating the card styles they already have. Other pages keep the language's stripPicks. Checked in the build: German course pages in en, it and ma, the German B1 prepositions exercise in en and it, and the C1 quizzes in en, it and fr.
+
+## 2026-11-10 — Welcome poll: who answered, on Admin Activity
+
+Owner: "where can i see who filled out the poll?" then "sure" (to a list). The Welcome poll card on Admin, Activity now lists every student who answered, newest first: name and course, when, their answers in one line, whether they used the 10 EUR gift, and a link to their student file. Two students had answered by 10 Nov (Selin, English B2; Ilyas Awale Abrar, English A1). Checked on the sample admin page, no page errors.
