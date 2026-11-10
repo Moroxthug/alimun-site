@@ -24,31 +24,35 @@
   var reduced = function () { return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches; };
   var phone = function () { return window.matchMedia && window.matchMedia('(max-width: 899px)').matches; };
 
-  /* The page. o: { A, role, title, sub (html, already escaped), back, board (bool), actions (html), tabs: [{ id, label, icon, html }] } */
+  /* The page, in the dashboard's own parts: the back link and the big heading of every dashboard page, the standard
+     buttons, cards for the board and the side panel, and the cast with a speech bubble while the video opens.
+     o: { A, role, title, sub (html, already escaped), back, board (bool), actions (html), tabs: [{ id, label, icon, html }], art, wait } */
   function shell(o) {
     var A = o.A, t = A.t, esc = A.esc, tabs = o.tabs || [];
+    var art = A.Cast && A.Cast.drawing ? A.Cast.drawing(o.art || 'mug') : '';
     return '<div class="cr" data-cr data-role="' + esc(o.role) + '">' +
-      '<header class="cr-top"><a class="cr-back" href="' + esc(o.back || '#/classes') + '">' + icon('back') + '<span>' + esc(t('app_cl_leave')) + '</span></a>' +
-        '<div class="cr-title"><h1>' + esc(o.title) + '</h1>' + (o.sub ? '<p>' + o.sub + '</p>' : '') + '</div>' +
-        '<div class="cr-actions">' + (o.actions || '') + '</div></header>' +
-      '<div class="cr-body">' +
-        (o.board ? '<section class="cr-board" data-board hidden></section>' : '') +
-        '<div class="cr-video" data-cr-video><div class="cr-frame" data-frame><div class="cl-live__wait"><div class="loader" style="--w:64px" aria-hidden="true">' + A.loaderInner() + '</div><p class="t-body" data-livemsg>' + esc(o.wait || '') + '</p></div></div>' +
-          '<button class="cr-grow" type="button" data-cr="grow" aria-pressed="false" aria-label="' + esc(t('app_cr_bigger')) + '" title="' + esc(t('app_cr_bigger')) + '">' + icon('grow') + '</button></div>' +
-        (tabs.length ? '<aside class="cr-side" data-cr-side aria-label="' + esc(t('app_cr_panel')) + '"><div class="cr-tabs" role="tablist">' +
-          tabs.map(function (x, i) { return '<button class="cr-tab" type="button" role="tab" id="cr-tab-' + esc(x.id) + '" aria-controls="cr-p-' + esc(x.id) + '" aria-selected="' + (i === 0) + '" data-cr="tab" data-k="' + esc(x.id) + '">' + icon(x.icon) + '<span>' + esc(x.label) + '</span><b class="cr-dot" data-cr-dot="' + esc(x.id) + '" hidden></b></button>'; }).join('') +
-          '<button class="cr-x" type="button" data-cr="sheet" aria-label="' + esc(t('app_cr_close')) + '">' + icon('close') + '</button></div>' +
+      '<a class="rd-back" href="' + esc(o.back || '#/classes') + '">' + A.icon('back') + '<span>' + esc(t('app_cl_leave')) + '</span></a>' +
+      '<div class="view__head cr-head"><div><h1 class="t-h1">' + esc(o.title) + '</h1>' + (o.sub ? '<p class="t-lead">' + o.sub + '</p>' : '') + '</div>' +
+        (o.actions ? '<div class="btn-row cr-actions">' + o.actions + '</div>' : '') + '</div>' +
+      '<div class="cr-body rise">' +
+        (o.board ? '<section class="card cr-board" data-board hidden style="--i:0" aria-label="' + esc(t('app_bd_open')) + '"></section>' : '') +
+        '<div class="cr-video" data-cr-video style="--i:1"><div class="cr-frame" data-frame><div class="cl-live__wait cr-wait"><div class="bub say" data-livemsg>' + esc(o.wait || '') + '</div>' + art +
+          '<div class="loader" style="--w:46px" aria-hidden="true">' + A.loaderInner() + '</div></div></div>' +
+          '<button class="icon-btn cr-grow" type="button" data-cr="grow" aria-pressed="false" aria-label="' + esc(t('app_cr_bigger')) + '" title="' + esc(t('app_cr_bigger')) + '">' + icon('grow') + '</button></div>' +
+        (tabs.length ? '<aside class="card cr-side" data-cr-side style="--i:2" aria-label="' + esc(t('app_cr_panel')) + '"><div class="cr-tabs" role="tablist">' +
+          tabs.map(function (x, i) { return '<button class="btn btn--sm ' + (i === 0 ? 'btn--primary' : 'btn--quiet') + ' cr-tab" type="button" role="tab" id="cr-tab-' + esc(x.id) + '" aria-controls="cr-p-' + esc(x.id) + '" aria-selected="' + (i === 0) + '" data-cr="tab" data-k="' + esc(x.id) + '">' + icon(x.icon) + '<span>' + esc(x.label) + '</span><b class="cr-dot" data-cr-dot="' + esc(x.id) + '" hidden></b></button>'; }).join('') +
+          '<button class="icon-btn cr-x" type="button" data-cr="sheet" aria-label="' + esc(t('app_cr_close')) + '">' + icon('close') + '</button></div>' +
           tabs.map(function (x, i) { return '<div class="cr-panel" role="tabpanel" id="cr-p-' + esc(x.id) + '" aria-labelledby="cr-tab-' + esc(x.id) + '" data-cr-panel="' + esc(x.id) + '"' + (i ? ' hidden' : '') + '>' + x.html + '</div>'; }).join('') +
         '</aside>' : '') +
       '</div>' +
-      (tabs.length ? '<button class="cr-fab" type="button" data-cr="sheet" aria-expanded="false">' + icon('chat') + '<span>' + esc(t('app_cr_chat')) + '</span><b class="cr-count" data-cr-count hidden></b></button>' : '') +
+      (tabs.length ? '<button class="btn btn--primary cr-fab" type="button" data-cr="sheet" aria-expanded="false">' + icon('chat') + '<span>' + esc(t('app_cr_chat')) + '</span><b class="cr-count" data-cr-count hidden></b></button>' : '') +
       '<div class="cr-toasts" data-cr-toasts aria-live="polite"></div></div>';
   }
   function chatHtml(A) {
     var t = A.t, esc = A.esc;
     return '<div class="ms-msgs cr-msgs" data-msgs><p class="t-small">' + esc(t('app_tc_chat_loading')) + '</p></div>' +
-      '<form class="cr-send" data-cr-chat><label class="sr" for="cr-in">' + esc(t('app_ms_write')) + '</label><textarea id="cr-in" class="ms-in" rows="1" maxlength="4000" placeholder="' + esc(t('app_ms_write')) + '" dir="auto"></textarea>' +
-      '<button class="cr-sendbtn" type="submit" aria-label="' + esc(t('app_ms_send')) + '" title="' + esc(t('app_ms_send')) + '">' + icon('send') + '</button></form>';
+      '<form class="ms-form cr-send" data-cr-chat><label class="sr" for="cr-in">' + esc(t('app_ms_write')) + '</label><textarea id="cr-in" class="ms-in" rows="1" maxlength="4000" placeholder="' + esc(t('app_ms_write')) + '" dir="auto"></textarea>' +
+      '<button class="btn btn--primary btn--sm" type="submit">' + esc(t('app_ms_send')) + '</button></form>';
   }
   function wordsHtml(A, words, lang) {
     var esc = A.esc;
@@ -94,17 +98,21 @@
     if (!cr) return null;
     var first = cr.querySelector('[data-cr="tab"]'); tab = first ? first.getAttribute('data-k') : null;
 
-    function toast(text, kind) {
+    /* A notice in the dashboard's speech bubble, next to the person's initials in the dashboard's avatar circle */
+    function initials(n) { return String(n || '').trim().split(/\s+/).slice(0, 2).map(function (w) { return w.charAt(0); }).join('').toUpperCase() || '·'; }
+    function toast(text, kind, who) {
       var box = cr.querySelector('[data-cr-toasts]'); if (!box) return;
       var el = document.createElement('div');
       el.className = 'cr-toast' + (kind ? ' cr-toast--' + kind : '');
       el.setAttribute('role', 'status');
-      el.innerHTML = '<span class="cr-toast__i">' + icon(kind === 'msg' ? 'chat' : 'person') + '</span><p></p>';
-      el.querySelector('p').textContent = text;
+      el.innerHTML = '<span class="avatar cr-toast__av" aria-hidden="true"></span><div class="bub say cr-toast__bub"><b></b><span></span></div>';
+      el.querySelector('.cr-toast__av').textContent = initials(who);
+      el.querySelector('b').textContent = kind === 'msg' ? (who || '') : '';
+      el.querySelector('.cr-toast__bub span').textContent = text;
       box.appendChild(el);
       while (box.children.length > 3) box.removeChild(box.firstChild);
       requestAnimationFrame(function () { el.classList.add('is-in'); });
-      setTimeout(function () { el.classList.remove('is-in'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 400); }, 4600);
+      setTimeout(function () { el.classList.remove('is-in'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 400); }, 4800);
       if (kind === 'msg') el.addEventListener('click', function () { openTab('chat'); });
     }
     function sheetOpen() { return cr.classList.contains('is-sheet'); }
@@ -118,7 +126,7 @@
     function openTab(k) {
       var b = cr.querySelector('[data-cr="tab"][data-k="' + k + '"]'); if (!b) return;
       tab = k;
-      cr.querySelectorAll('[data-cr="tab"]').forEach(function (x) { x.setAttribute('aria-selected', String(x === b)); });
+      cr.querySelectorAll('[data-cr="tab"]').forEach(function (x) { x.setAttribute('aria-selected', String(x === b)); x.classList.toggle('btn--primary', x === b); x.classList.toggle('btn--quiet', x !== b); });
       cr.querySelectorAll('[data-cr-panel]').forEach(function (p) { p.hidden = p.getAttribute('data-cr-panel') !== k; });
       if (phone() && !sheetOpen()) setSheet(true);
       if (k === 'chat') { setUnread(0); var m = cr.querySelector('[data-msgs]'); if (m) m.scrollTop = m.scrollHeight; }
@@ -163,7 +171,7 @@
       var fresh = list.filter(function (m) { return m.sender_user !== chat.me; });
       if (!fresh.length) return;
       var last = fresh[fresh.length - 1];
-      toast(t('app_cr_msg_from', { name: last.sender_name || t('app_cr_someone') }) + ' ' + String(last.body || '').replace(/\s+/g, ' ').slice(0, 90), 'msg');
+      toast(String(last.body || '').replace(/\s+/g, ' ').slice(0, 110), 'msg', last.sender_name || t('app_cr_someone'));
       chime(false);
       if (!chatSeen()) setUnread(unread + fresh.length);
     }
@@ -204,8 +212,8 @@
 
     /* ---------- The call ---------- */
     function nameOf(e) { var p = e && e.participant; return p && (p.user_name || '').trim() ? p.user_name.trim().slice(0, 60) : t('app_cr_someone'); }
-    function onJoined(e) { if (e && e.participant && !e.participant.local) { toast(t('app_cr_joined', { name: nameOf(e) }), 'join'); chime(true); } }
-    function onLeft(e) { if (e && e.participant && !e.participant.local) toast(t('app_cr_left', { name: nameOf(e) }), 'join'); }
+    function onJoined(e) { if (e && e.participant && !e.participant.local) { toast(t('app_cr_joined', { name: nameOf(e) }), 'join', nameOf(e)); chime(true); } }
+    function onLeft(e) { if (e && e.participant && !e.participant.local) toast(t('app_cr_left', { name: nameOf(e) }), 'join', nameOf(e)); }
     function onApp(e) { var m = e && e.data; if (m && m.a === 'cr1' && m.k === 'chat') fetchNew(); }
     function attach(f) {
       detach(); frame = f;

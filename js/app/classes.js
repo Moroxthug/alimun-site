@@ -356,7 +356,8 @@
     var CR = window.AlimunClassroom, tabs = [];
     if (kind !== 'b' && item && item.cohort_id) tabs.push({ id: 'chat', label: t('app_cr_chat'), icon: 'chat', html: CR.chatHtml(A) });
     if (latest) tabs.push({ id: 'words', label: t('app_cr_words'), icon: 'words', html: '<p class="t-small">' + esc(t('app_cl_live_words')) + '</p>' + CR.wordsHtml(A, latest.vocabulary, lang) });
-    return CR.shell({ A: A, role: 'student', title: title, board: kind !== 'b', tabs: tabs, wait: t('app_cl_joining') });
+    var when = item && (item.scheduled_at || item.at) ? fmt(item.scheduled_at || item.at, { weekday: 'long', hour: '2-digit', minute: '2-digit' }) : '';
+    return CR.shell({ A: A, role: 'student', title: title, sub: when ? esc(A.cap ? A.cap(when) : when) : '', board: kind !== 'b', tabs: tabs, wait: t('app_cl_joining'), art: 'mug' });
   }
   /* Daily Prebuilt in Alimun's colours and the dashboard's language (Daily has no Arabic or Chinese: English; Darija: French).
      The name comes from the meeting token, so it is not asked for or changed in the room. */

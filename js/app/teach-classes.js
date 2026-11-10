@@ -256,12 +256,12 @@
       tabs.push({ id: 'notes', label: t('app_cr_notes'), icon: 'notes', html: '<form class="st-form tc-notes cr-notes" data-notes="' + esc(s.id) + '" novalidate><p class="t-small">' + esc(t('app_cr_notes_p')) + '</p>' + notesFields(s) + '</form>' +
         '<p class="cr-more"><a class="linkish" href="#/classes/notes/' + esc(s.id) + '" target="_blank" rel="noopener">' + esc(t('app_cr_notes_full')) + '</a></p>' });
       if (last) tabs.push({ id: 'words', label: t('app_cr_words'), icon: 'words', html: '<p class="t-small">' + esc(t('app_tc_last_words')) + '</p>' + CR.wordsHtml(A, last.notes.vocabulary, lang) });
-      actions = '<button class="cr-act cr-act--main" type="button" data-tc="board" aria-pressed="false">' + CR.icon('board') + '<span>' + esc(t('app_bd_open')) + '</span></button>' +
-        '<button class="cr-act" type="button" data-cr="open" data-k="notes">' + CR.icon('notes') + '<span>' + esc(t('app_cr_notes')) + '</span></button>';
+      actions = '<button class="btn btn--lime btn--sm" type="button" data-tc="board" aria-pressed="false">' + CR.icon('board') + '<span>' + esc(t('app_bd_open')) + '</span></button>' +
+        '<button class="btn btn--ghost btn--sm" type="button" data-cr="open" data-k="notes">' + CR.icon('notes') + '<span>' + esc(t('app_cr_notes')) + '</span></button>';
     } else if (b) {
-      actions = '<a class="cr-act" href="#/classes/oto/' + esc(b.id) + '" target="_blank" rel="noopener">' + CR.icon('notes') + '<span>' + esc(t('app_tc_write_note')) + '</span></a>';
+      actions = '<a class="btn btn--ghost btn--sm" href="#/classes/oto/' + esc(b.id) + '" target="_blank" rel="noopener">' + CR.icon('notes') + '<span>' + esc(t('app_tc_write_note')) + '</span></a>';
     }
-    return CR.shell({ A: A, role: 'teacher', title: title, sub: sub, board: !!s, actions: actions, tabs: tabs, wait: t('app_tc_opening') });
+    return CR.shell({ A: A, role: 'teacher', title: title, sub: sub, board: !!s, actions: actions, tabs: tabs, wait: t('app_tc_opening'), art: 'owl' });
   }
   /* Daily Prebuilt in Alimun's colours and the dashboard's language (Daily has no Arabic or Chinese: English; Darija: French).
      The name comes from the meeting token, so it is not asked for or changed in the room. */
@@ -352,7 +352,7 @@
   function setBoardOpen(on) {
     var btn = root.querySelector('[data-tc="board"]');
     if (cls) cls.board(on);
-    if (btn) { btn.setAttribute('aria-pressed', String(on)); btn.classList.toggle('is-on', on); btn.querySelector('span').textContent = t(on ? 'app_bd_close' : 'app_bd_open'); }
+    if (btn) { btn.setAttribute('aria-pressed', String(on)); btn.classList.toggle('btn--primary', on); btn.classList.toggle('btn--lime', !on); btn.querySelector('span').textContent = t(on ? 'app_bd_close' : 'app_bd_open'); }
     if (board) { if (board.shown() !== on) board.show(on); board.fit(); }
   }
   function toggleBoard() {

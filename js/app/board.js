@@ -240,16 +240,16 @@
     /* The page menu: every page of this class, then pages to add (empty pages, pages from other lessons of the course,
        the words from the last class) */
     function menuHtml(pages) {
-      var h = '<div class="bd-menu" data-bd-menu role="menu"><p class="bd-menu__h">' + esc(t('app_bd_in_class')) + '</p><div class="bd-menu__list">' +
+      var h = '<div class="card bd-menu" data-bd-menu role="menu"><p class="t-small bd-menu__h">' + esc(t('app_bd_in_class')) + '</p><div class="bd-menu__list">' +
         pages.map(function (x, i) { return '<button class="bd-mi' + (i === S.page ? ' is-on' : '') + '" type="button" role="menuitem" data-bd="page" data-k="' + i + '"><span class="bd-mi__n">' + (i + 1) + '</span><span>' + esc(x.title) + (x.from ? '<small>' + esc(x.from) + '</small>' : '') + '</span>' + (i === S.page ? ic('check') : '') + '</button>'; }).join('') + '</div>';
       if ((S.extra || []).length >= 30) return h + '</div>';
-      h += '<p class="bd-menu__h">' + esc(t('app_bd_templates')) + '</p><div class="bd-menu__grid">' +
-        TPLS.map(function (k) { return '<button class="bd-tile" type="button" data-bd="add" data-k="tpl:' + k + '"><span class="bd-tile__pic bd-tile__pic--' + k + '" aria-hidden="true"></span><span>' + esc(t(TPL_KEYS[k])) + '</span></button>'; }).join('') + '</div>';
+      h += '<p class="t-small bd-menu__h">' + esc(t('app_bd_templates')) + '</p><div class="bd-menu__grid">' +
+        TPLS.map(function (k) { return '<button class="bd-tile bd-tile--' + k + '" type="button" data-bd="add" data-k="tpl:' + k + '"><span class="bd-tile__pic bd-tile__pic--' + k + '" aria-hidden="true"></span><span>' + esc(t(TPL_KEYS[k])) + '</span></button>'; }).join('') + '</div>';
       var words = (o.words || []).filter(function (w) { return w && w.word; });
       if (words.length) h += '<button class="bd-mi" type="button" data-bd="add" data-k="words">' + ic('plus') + '<span>' + esc(t('app_bd_words_page')) + '<small>' + esc(t('app_bd_n_words', { n: words.length })) + '</small></span></button>';
       var others = course ? course.lessons.filter(function (l) { return l.board && l.board.length; }) : [];
       if (others.length) {
-        h += '<p class="bd-menu__h">' + esc(t('app_bd_from_course')) + '</p><div class="bd-menu__list">' + others.map(function (l) {
+        h += '<p class="t-small bd-menu__h">' + esc(t('app_bd_from_course')) + '</p><div class="bd-menu__list">' + others.map(function (l) {
           return '<details class="bd-lesson"' + (l.id === S.lesson ? ' open' : '') + '><summary>' + esc(l.title) + ic('down') + '</summary>' + l.board.map(function (p, i) {
             return '<button class="bd-mi" type="button" data-bd="add" data-k="lesson:' + esc(l.id) + ':' + i + '">' + ic('plus') + '<span>' + esc(p.title) + '</span></button>';
           }).join('') + '</details>';
@@ -259,27 +259,27 @@
     }
     function headHtml(pages) {
       var cur = pages[S.page] || pages[0];
-      var nav = '<div class="bd-nav"><button class="bd-arrow" type="button" data-bd="step" data-k="-1" aria-label="' + esc(t('app_bd_prev')) + '"' + (S.page ? '' : ' disabled') + '>' + ic('left') + '</button>' +
-        '<button class="bd-pagebtn" type="button" data-bd="menu" aria-haspopup="menu" aria-expanded="' + menu + '"><span class="bd-pagebtn__t">' + esc(cur.title) + '</span><span class="bd-pagebtn__n">' + esc(t('app_bd_page_n', { n: S.page + 1, of: pages.length })) + '</span>' + ic('down') + '</button>' +
-        '<button class="bd-arrow" type="button" data-bd="step" data-k="1" aria-label="' + esc(t('app_bd_next')) + '"' + (S.page < pages.length - 1 ? '' : ' disabled') + '>' + ic('right') + '</button></div>';
+      var nav = '<div class="bd-nav"><button class="btn btn--quiet btn--sm bd-arrow" type="button" data-bd="step" data-k="-1" aria-label="' + esc(t('app_bd_prev')) + '"' + (S.page ? '' : ' disabled') + '>' + ic('left') + '</button>' +
+        '<button class="bd-pagebtn" type="button" data-bd="menu" aria-haspopup="menu" aria-expanded="' + menu + '"><span class="t-h3 bd-pagebtn__t">' + esc(cur.title) + '</span><span class="t-small bd-pagebtn__n">' + esc(t('app_bd_page_n', { n: S.page + 1, of: pages.length })) + '</span>' + ic('down') + '</button>' +
+        '<button class="btn btn--quiet btn--sm bd-arrow" type="button" data-bd="step" data-k="1" aria-label="' + esc(t('app_bd_next')) + '"' + (S.page < pages.length - 1 ? '' : ' disabled') + '>' + ic('right') + '</button></div>';
       var p = pg(S.page), w = S.write || {}, sel = w.m === 'one' ? 'one:' + w.who : w.m;
-      var who = '<label class="bd-ctl bd-ctl--select" title="' + esc(t('app_bd_who')) + '">' + ic('people') + '<span class="sr">' + esc(t('app_bd_who')) + '</span><select data-bd-who>' +
+      var who = '<label class="bd-field"><span class="t-small">' + esc(t('app_bd_who')) + '</span><select class="st-in" data-bd-who>' +
         '<option value="none"' + (sel === 'none' ? ' selected' : '') + '>' + esc(t('app_bd_who_none')) + '</option>' +
         '<option value="all"' + (sel === 'all' ? ' selected' : '') + '>' + esc(t('app_bd_who_all')) + '</option>' +
         people().filter(function (x) { return !x.local && !x.owner; }).map(function (x) {
           return '<option value="one:' + esc(x.session_id) + '"' + (sel === 'one:' + x.session_id ? ' selected' : '') + '>' + esc(x.user_name || t('app_bd_student')) + '</option>';
-        }).join('') + '</select>' + ic('down') + '</label>';
-      var solo = '<span class="bd-ctl bd-ctl--split"><button type="button" data-bd="solo">' + ic('clock') + '<span>' + esc(t('app_bd_solo')) + '</span></button><select data-bd-mins aria-label="' + esc(t('app_bd_solo')) + '">' +
+        }).join('') + '</select></label>';
+      var solo = '<span class="bd-field bd-field--solo"><button class="btn btn--ghost btn--sm" type="button" data-bd="solo">' + ic('clock') + '<span>' + esc(t('app_bd_solo')) + '</span></button><select class="st-in" data-bd-mins aria-label="' + esc(t('app_bd_solo')) + '">' +
         [3, 5, 10].map(function (n) { return '<option value="' + n + '"' + (n === 5 ? ' selected' : '') + '>' + esc(t('app_bd_mins', { n: n })) + '</option>'; }).join('') + '</select></span>';
-      var ans = (cur.blocks || []).some(function (b) { return b.t === 'ex'; }) ? '<button class="bd-ctl' + (p.rv ? ' is-on' : '') + '" type="button" data-bd="reveal" aria-pressed="' + p.rv + '">' + ic('eye') + '<span>' + esc(t(p.rv ? 'app_bd_hide_answers' : 'app_bd_reveal')) + '</span></button>' : '';
+      var ans = (cur.blocks || []).some(function (b) { return b.t === 'ex'; }) ? '<button class="btn btn--sm ' + (p.rv ? 'btn--lime' : 'btn--quiet') + '" type="button" data-bd="reveal" aria-pressed="' + p.rv + '">' + ic('eye') + '<span>' + esc(t(p.rv ? 'app_bd_hide_answers' : 'app_bd_reveal')) + '</span></button>' : '';
       return '<div class="bd-head">' + nav + '<div class="bd-ctls">' + ans + who + solo + '</div>' + (menu ? menuHtml(pages) : '') + '</div>';
     }
     /* What sits above the page: the teacher's page switcher and class controls, a student's note, or the panel of
        "Everyone solves this" */
     function toolbar(pages) {
-      if (!teacher && S.spot) return '<div class="bd-banner">' + ic('eye') + '<p>' + esc(t('app_bd_work_of', { name: S.spot.name })) + '</p></div>';
+      if (!teacher && S.spot) return '<div class="card card--leaf bd-banner">' + ic('eye') + '<p class="t-h3">' + esc(t('app_bd_work_of', { name: S.spot.name })) + '</p></div>';
       if (privateMode()) {
-        return '<div class="bd-solo"><div class="bd-solo__top"><p class="bd-solo__h">' + esc(t('app_bd_solo_h')) + '</p>' + clock() + '</div>' +
+        return '<div class="card card--leaf bd-solo"><div class="bd-solo__top"><h3 class="t-h3">' + esc(t('app_bd_solo_h')) + '</h3>' + clock() + '</div>' +
           (soloLocked ? '<p class="t-body">' + esc(t('app_bd_timeup')) + '</p>'
             : '<div class="bd-solo__row"><button class="btn btn--primary btn--sm" type="button" data-bd="sendwork">' + esc(t('app_bd_send')) + '</button>' +
               (soloSent ? '<p class="t-small bd-you">' + esc(t('app_bd_sent')) + '</p>' : '') + '</div>') + '</div>';
@@ -287,8 +287,8 @@
       if (teacher && isSolo()) {
         var list = people().filter(function (x) { return !x.local && !x.owner; });
         var gone = Object.keys(S.work[S.solo.id] || {}).filter(function (k) { return !list.some(function (x) { return x.session_id === k; }); });
-        var row = function (id, name) { var w = workOf(id); return '<button class="bd-who' + (viewing === id ? ' is-on' : '') + (w ? ' is-done' : '') + '" type="button" data-bd="see" data-k="' + esc(id) + '"><span class="bd-who__dot"></span><span>' + esc(name) + '</span><small>' + esc(t(w ? 'app_bd_done' : 'app_bd_working')) + '</small></button>'; };
-        return '<div class="bd-solo"><div class="bd-solo__top"><p class="bd-solo__h">' + esc(t('app_bd_solving')) + '</p>' + clock() + '</div>' +
+        var row = function (id, name) { var w = workOf(id); return '<button class="btn btn--sm ' + (viewing === id ? 'btn--primary' : 'btn--quiet') + ' bd-person' + (w ? ' is-done' : '') + '" type="button" data-bd="see" data-k="' + esc(id) + '"><span class="bd-person__dot"></span><span>' + esc(name) + '</span><small>' + esc(t(w ? 'app_bd_done' : 'app_bd_working')) + '</small></button>'; };
+        return '<div class="card card--leaf bd-solo"><div class="bd-solo__top"><h3 class="t-h3">' + esc(t('app_bd_solving')) + '</h3>' + clock() + '</div>' +
           '<div class="bd-solo__people">' + list.map(function (x) { return row(x.session_id, x.user_name || t('app_bd_student')); }).join('') +
             gone.map(function (k) { return row(k, S.work[S.solo.id][k].name || t('app_bd_student')); }).join('') + '</div>' +
           '<div class="bd-solo__row">' + (viewing ? '<button class="btn btn--quiet btn--sm" type="button" data-bd="back">' + esc(t('app_bd_back')) + '</button>' +
@@ -299,7 +299,7 @@
       }
       if (!teacher) {
         var cur = pages[Math.min(view()[0], pages.length - 1)];
-        return '<div class="bd-head bd-head--student"><p class="bd-title">' + esc(cur.title) + '</p>' + (canWrite() ? '<p class="bd-you">' + ic('pen') + '<span>' + esc(t('app_bd_you_can')) + '</span></p>' : zoomBtn()) + '</div>';
+        return '<div class="bd-head bd-head--student"><h2 class="t-h3 bd-title">' + esc(cur.title) + '</h2>' + (canWrite() ? '<p class="bd-you">' + ic('pen') + '<span>' + esc(t('app_bd_you_can')) + '</span></p>' : zoomBtn()) + '</div>';
       }
       return headHtml(pages);
     }
