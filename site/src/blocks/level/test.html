@@ -135,6 +135,7 @@
               </div>
               <button type="button" class="button lt_go" disabled><span data-i18n="lt_start">Start the test</span></button>
               <p class="lt_facts" data-i18n="lt_facts">Free, no account needed. Your result appears as soon as you finish.</p>
+              <p class="lt_facts lt_wl lt_direct"><span data-i18n="lt_know_level">Already know your level?</span> <a href="signup.html?direct=1" data-i18n="lt_skip_test">Skip the test and choose it when you sign up.</a></p>
               <p class="lt_facts lt_wl"><span data-i18n="lt_waitlist">Learning Mandarin, Japanese or Arabic? Classes are not open yet:</span> <a href="signup.html?waitlist=Mandarin" data-wl="Mandarin">Mandarin</a>, <a href="signup.html?waitlist=Japanese" data-wl="Japanese">Japanese</a>, <a href="signup.html?waitlist=Arabic" data-wl="Arabic">Arabic</a>.</p>
             </div>
           </div>
@@ -238,6 +239,17 @@
               var code = { Mandarin: "zh", Japanese: "ja", Arabic: "ar" }[a.getAttribute("data-wl")];
               if (names && code) { var n = names.of(code); if (n) a.textContent = n.charAt(0).toLocaleUpperCase(uiLang) + n.slice(1); }
             });
+            // Sign up without the test (owner, 10 Nov 2026: trial of a direct sign-up with a self-chosen level).
+            // The link carries the chosen language and any plan from the Tiers page.
+            var direct = $(".lt_direct a");
+            function directHref() {
+              var q = new URLSearchParams({ direct: "1" }), here = new URLSearchParams(location.search);
+              if (chosen) q.set("language", chosen.getAttribute("data-lang"));
+              ["tier", "billing"].forEach(function (k) { if (here.get(k)) q.set(k, here.get(k)); });
+              direct.setAttribute("href", "signup.html?" + q.toString());
+            }
+            langBtns.forEach(function (b) { b.addEventListener("click", directHref); });
+            directHref();
             // ?language=German preselects the language (course pages and sign-up buttons pass it).
             var pre = new URLSearchParams(location.search).get("language");
             langBtns.forEach(function (b) { if (b.getAttribute("data-lang") === pre) b.click(); });

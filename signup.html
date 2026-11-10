@@ -42,6 +42,10 @@
           <h1 class="au_h1" data-i18n="au_save_title">Save your result</h1>
           <p class="au_lead" id="account-lead" data-i18n="au_save_lead">Create your free account to keep your level and the topics to work on, and start practising.</p>
           <form class="au_form" id="f-account" novalidate>
+            <div id="a-direct" class="au_direct" hidden>
+              <div class="au_field"><label for="a-lang" data-i18n="au_learn_lang">Language you are learning</label><select class="au_input" id="a-lang"></select></div>
+              <div class="au_field"><label for="a-level" data-i18n="au_level">Your level</label><select class="au_input" id="a-level"></select></div>
+            </div>
             <div class="au_field"><label for="a-name" data-i18n="au_name">Full name</label><input class="au_input" id="a-name" type="text" autocomplete="name" maxlength="100" required></div>
             <div class="au_field"><label for="a-email" data-i18n="au_email">Email address</label><input class="au_input" id="a-email" type="email" autocomplete="email" required></div>
             <div class="au_field"><label for="a-pw" data-i18n="au_password">Password</label>
@@ -159,6 +163,12 @@
   <span data-i18n="au_resent">Sent. It can take a minute or two to arrive.</span>
   <span data-i18n="au_resend_wait">You can send it again in {s} seconds.</span>
   <span data-i18n="au_waiting">Please wait…</span>
+  <span data-i18n="au_direct_title">Create your free account</span>
+  <span data-i18n="au_direct_lead">Tell us which language you are learning and your level. You can take the level test later from your dashboard.</span>
+  <span data-i18n="au_take_test">Not sure? Take the free level test</span>
+  <span data-i18n="au_lang_pick">Choose a language</span>
+  <span data-i18n="au_level_pick">Choose your level</span>
+  <span data-i18n="au_err_level">Please choose your language and level.</span>
 </div>
 
 <script type="module">
@@ -265,22 +275,47 @@ async function signUp({ name, email, pw, data, btn, msgId }) {
 }
 
 // ── Learner ─────────────────────────────────────────────────────────────────
-function startLearner(r) {
+function startLearner(r, direct) {
+  if (direct) return startDirect(r);
   if (r.level) setText($('account-lead'), t('au_save_lead_lang').replace('{language}', languageName(r.language)));
   paintNote(r);
   const q = new URLSearchParams({ language: r.language });
   if (intent) { q.set('tier', intent.tier); q.set('billing', intent.billing); }
   $('retake').href = base + 'level-test.html?' + q.toString();
   if (r.waitlist) $('retake').parentElement.classList.add('au_hide');
+  wireAccount(r);
+}
+// Direct sign-up without the test (owner, 10 Nov 2026, a trial): the learner picks the language and level.
+// The account is marked onboarding.placement.self_reported, so sign-ups from each path can be compared.
+const TEST_LANGS = ['English', 'German', 'French', 'Spanish', 'Italian', 'Portuguese'];
+function startDirect(prev) {
+  const want = params.get('language'), lang = $('a-lang'), level = $('a-level');
+  lang.innerHTML = '<option value="">' + esc(t('au_lang_pick')) + '</option>' + TEST_LANGS.map((l) => '<option value="' + l + '">' + esc(languageName(l)) + '</option>').join('');
+  level.innerHTML = '<option value="">' + esc(t('au_level_pick')) + '</option>' + LEVELS.map((l) => '<option value="' + l + '">' + l + ' ' + esc(t('lt_name_' + l)) + '</option>').join('');
+  if (TEST_LANGS.includes(want)) lang.value = want;
+  else if (prev && TEST_LANGS.includes(prev.language)) lang.value = prev.language;
+  if (prev && prev.level && prev.language === lang.value) level.value = prev.level;
+  $('a-direct').hidden = false;
+  setText(document.querySelector('#s-account .au_h1'), t('au_direct_title'));
+  setText($('account-lead'), t('au_direct_lead'));
+  const q = new URLSearchParams();
+  ['language', 'tier', 'billing'].forEach((k) => { if (params.get(k)) q.set(k, params.get(k)); });
+  $('retake').href = base + 'level-test.html' + (q.toString() ? '?' + q.toString() : '');
+  setText($('retake'), t('au_take_test'));
+  paintNote(null);
+  wireAccount(null, () => (TEST_LANGS.includes(lang.value) && LEVELS.includes(level.value) ? { language: lang.value, level: level.value, self_reported: true } : null));
+}
+function wireAccount(r, direct) {
   show('s-account');
   $('f-account').addEventListener('submit', (e) => {
     e.preventDefault(); msg('m-account', '');
+    if (direct && !(r = direct())) return msg('m-account', t('au_err_level'));
     const name = $('a-name').value.trim(), email = $('a-email').value.trim(), pw = $('a-pw').value;
     if (!name) return msg('m-account', t('au_err_name'));
     if (!EMAIL.test(email)) return msg('m-account', t('au_err_email'));
     if (!strongPw(pw)) return msg('m-account', t('au_err_pw'));
     if (!$('a-country').value) return msg('m-account', t('au_err_country'));
-    const placement = r.level ? { language: r.language, level: r.level, skills: r.skills || null, topics: (r.topics || []).slice(0, 5), at: r.at || null } : { language: r.language, level: null, waitlist: true };
+    const placement = r.self_reported ? { language: r.language, level: r.level, self_reported: true, at: new Date().toISOString() } : r.level ? { language: r.language, level: r.level, skills: r.skills || null, topics: (r.topics || []).slice(0, 5), at: r.at || null } : { language: r.language, level: null, waitlist: true };
     signUp({ name, email, pw, data: { role: 'student', onboarding: { placement, intent }, ...extras('a') }, btn: $('b-account'), msgId: 'm-account' });
   });
 }
@@ -343,6 +378,7 @@ $('b-change-email').addEventListener('click', () => show(params.get('role') === 
 
   if (params.get('role') === 'teacher') return startTeacher();
   const r = readResult();
+  if (params.get('direct') === '1' && !params.get('waitlist')) return startLearner(r, true);
   if (!r) {
     // Learners start with the level test; the plan and language they picked come along.
     const q = new URLSearchParams();

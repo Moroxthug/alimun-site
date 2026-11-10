@@ -199,7 +199,9 @@ async function learner() {
       level: LEVELS.includes(p.level) ? p.level : 'A1',
       goal_track: picked.goal,
       goal_timeframe: picked.time,
-      placement: p.level ? p : null,
+      // A level chosen at sign-up without the test (onboarding.placement.self_reported) sets the level only, so the
+      // dashboard does not describe it as a test result and still offers the test.
+      placement: p.level && !p.self_reported ? p : null,
       tier: LIVE.includes(p.language) ? 'free' : 'waitlist',
     };
     if (meta.timezone) row.timezone = meta.timezone;
