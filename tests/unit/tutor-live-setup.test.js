@@ -105,3 +105,38 @@ test('Google token counts from the browser are kept as whole numbers, at most 10
   assert.strictEqual(live.cleanUsage(new Array(150).fill({ p: 1 })).length, 100);
   assert.deepStrictEqual(live.cleanUsage(null), []);
 });
+
+test('the transcriber is told the course language first, then the interface language', () => {
+  assert.deepStrictEqual(live.languagesFor('English', 'it'), ['en-US', 'it-IT']);
+  assert.deepStrictEqual(live.languagesFor('English', 'en'), ['en-US']);
+  assert.deepStrictEqual(live.languagesFor('Spanish', 'ma'), ['es-ES', 'fr-FR']);
+  const s = live.setupFor('x', 'lena', '', true, 'A1', true, ['en-US', 'it-IT']);
+  assert.deepStrictEqual(s.inputAudioTranscription, { languageCodes: ['en-US', 'it-IT'] });
+  assert.deepStrictEqual(live.setupFor('x', 'lena', '', true, 'A1', true).inputAudioTranscription, {});
+});
+
+test('owner, 10 Nov 2026: teach first, no early goodbye, accents, the time left', () => {
+  const s = live.instructionsFor({ language: 'English', level: 'A1', ui: 'it' }, '', 'sofia', '', true, 420);
+  assert.match(s, /Teach, then involve the student/);
+  assert.match(s, /about 7 minutes of tutor time left/);
+  assert.match(s, /Never say goodbye, wish them a good day or wrap up on your own/);
+  assert.match(s, /German "gut" for "good"/);
+  assert.match(s, /question in Italian/);
+  assert.match(s, /"pen" when you asked for "sleeping"/);
+  assert.match(live.instructionsFor({ language: 'English', level: 'A1', ui: 'en' }, '', 'sofia', '', true), /until the student's tutor time runs out/);
+});
+
+test('if Google refuses the language hints, the transcriber guesses as before', async () => {
+  const real = global.fetch, sent = [];
+  process.env.GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY || 'test-key';
+  global.fetch = async (url, opts) => {
+    const b = JSON.parse(opts.body); sent.push(b);
+    if (b.bidiGenerateContentSetup.inputAudioTranscription.languageCodes) return { ok: false, status: 400, json: async () => ({ error: { message: 'Unknown name "language_codes"' } }) };
+    return { ok: true, status: 200, json: async () => ({ name: 'auth_tokens/abc' }) };
+  };
+  try {
+    const pass = await live.token({ instructions: 'x', tutor: 'lena', handle: '', seconds: 300, pronDrill: true, level: 'A1', languages: ['en-US'] });
+    assert.strictEqual(pass.token, 'auth_tokens/abc');
+    assert.deepStrictEqual(sent[sent.length - 1].bidiGenerateContentSetup.inputAudioTranscription, {});
+  } finally { global.fetch = real; }
+});

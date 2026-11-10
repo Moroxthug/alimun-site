@@ -732,11 +732,14 @@ async function handleLiveStart(req, res, supabase, user) {
 
   try {
     await liveCost(supabase, user.id, created ? MIN_CHARGE : Math.max(charged, 1));
-    const history = created ? '' : (await messagesOf(supabase, session.id, 12)).map((m) => (m.role === 'tutor' ? 'Tutor: ' : 'Student: ') +
-      clean(m.result && m.result.pron ? pron.forTutor(m.result.pron) : m.result && m.result.lines ? m.result.lines.join(' ') : m.text, 400)).join('\n');
+    // A new pass for an open call (a dropped line, or the browser moving to a fresh connection to keep the conversation
+    // Google re-reads short): the call so far as text, the last 30 lines
+    const history = created ? '' : (await messagesOf(supabase, session.id, 30))
+      .map((m) => ({ who: m.role === 'tutor' ? 'Tutor: ' : 'Student: ', text: clean(m.result && m.result.pron ? pron.forTutor(m.result.pron) : m.result && m.result.lines ? m.result.lines.join(' ') : m.text, 400) }))
+      .filter((x) => x.text).map((x) => x.who + x.text).join('\n');
     const pronDrill = pron.configured();
-    const instructions = live.instructionsFor(session, await brain.brief(supabase, profile, { lessonId: session.lesson_id }), tutor, history, pronDrill);
-    const pass = await live.token({ instructions, tutor, handle: live.cleanHandle(body.handle), seconds: remaining + 60, pronDrill, level: session.level });
+    const instructions = live.instructionsFor(session, await brain.brief(supabase, profile, { lessonId: session.lesson_id }), tutor, history, pronDrill, remaining);
+    const pass = await live.token({ instructions, tutor, handle: live.cleanHandle(body.handle), seconds: remaining + 60, pronDrill, level: session.level, languages: live.languagesFor(session.language, session.ui || ui) });
     await supabase.from('tutor_sessions').update({
       tutor, mode: 'live', live_until: pass.expires, last_turn_at: new Date().toISOString(), seconds_used: (session.seconds_used || 0) + charged,
     }).eq('id', session.id);

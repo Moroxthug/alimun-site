@@ -19,6 +19,9 @@
    and gated (speechGate): only sound that lasts like speech and has a voice in it reaches Google, with a short look-back
    so first syllables are kept; otherwise silence is sent. Taps, the phone moving in the hand and rustling were heard as
    words before. While the tutor speaks, the gate asks for a louder voice, so its own sound in the room does not cut it off.
+   Cost (10 Nov 2026): Google re-reads the whole conversation, audio included, on every turn; once it has grown by
+   ROTATE_GROWTH tokens the call moves to a fresh connection between turns (rotate), with the call so far as text.
+   The tutor is told the time left at about 2 minutes and 1 minute (timeNotes).
    Sample (signed out or ?sample=1): a scripted call, nothing is sent and the microphone is not used.
    Interface text: app_tl_* keys. */
 (function () {
@@ -128,6 +131,7 @@
     /* The tutor counts as speaking until half a second after its voice stops (the room still rings with it) */
     var busy = function () { return !!(L && ((L.playing && L.playing.length) || Date.now() - (L.playEnd || 0) < 500)); };
     var gate = speechGate(busy);
+    /* (during a planned fresh connection the microphone keeps going: send() holds it) */
     L.taker = null;
     var sendPend = function () {
       while (pend.length >= CHUNK) sendPcm(pend.splice(0, CHUNK));
@@ -138,7 +142,7 @@
       send({ realtimeInput: { audio: { mimeType: 'audio/pcm;rate=' + IN_RATE, data: b64(new Uint8Array(pcm.buffer)) } } });
     };
     var feed = function (f) {
-      if (!L || L.muted || !L.ready) { raw = []; if (L && L.taker && L.taker.stop()) { if (pend.length) sendPcm(pend.splice(0)); turnEnd(); } return; }
+      if (!L || L.muted || (!L.ready && !L.rotating)) { raw = []; if (L && L.taker && L.taker.stop()) { if (pend.length) sendPcm(pend.splice(0)); turnEnd(); } return; }
       for (var i = 0; i < f.length; i++) {
         acc += 1;
         if (acc >= ratio) { acc -= ratio; raw.push(Math.max(-1, Math.min(1, f[i]))); }
@@ -185,7 +189,7 @@
   function turnEnd() {
     if (!L) return;
     send({ realtimeInput: { activityEnd: {} } });
-    L.studentTurn = false;
+    L.studentTurn = false; L.waitReply = true;   /* the tutor's answer is coming: no fresh connection until it is done */
     if (L.turnAudio && L.turnAudio.length >= IN_RATE * 0.5) L.turnWait = L.turnAudio;
     L.turnAudio = null;
     sendNotes();
@@ -202,13 +206,40 @@
     D().tutorLivePron({ session: L.session, text: text.slice(0, 400), audio: b64(wav16(audio)), mime: 'audio/wav' }).then(function (r) {
       if (!L) return;
       L.pronBusy = false;
-      if (r && r.note) { L.note2 = r.note; sendNotes(); }
+      if (r && r.note) { L.notes = (L.notes || []).filter(function (n) { return !/^Speech check/.test(n); }).concat([r.note]); sendNotes(); }
     }, function () { if (L) L.pronBusy = false; });
   }
   function sendNotes() {
-    if (!L || !L.note2 || L.studentTurn || L.tutorTurn || (L.playing && L.playing.length)) return;
-    var note = L.note2; L.note2 = null;
-    send({ clientContent: { turns: [{ role: 'user', parts: [{ text: '<school>' + note + '</school>' }] }], turnComplete: false } });
+    if (!L || L.rotating || L.studentTurn || L.tutorTurn || (L.playing && L.playing.length)) return;
+    if (rotate()) return;
+    if (!L.notes || !L.notes.length) return;
+    var notes = L.notes.splice(0);
+    send({ clientContent: { turns: [{ role: 'user', parts: [{ text: '<school>' + notes.join(' ') + '</school>' }] }], turnComplete: false } });
+  }
+  /* Google bills the whole conversation again on every turn, the audio of every earlier turn included: a 10-minute call
+     on 10 Nov cost about $1.25, 80% of it this re-reading. Once the conversation passes ROTATE_TOKENS, the call moves to a
+     fresh connection between turns: the new pass has the same instructions plus the call so far as text (cheaper, and
+     much shorter than its audio), so the tutor keeps the thread. Not while an exercise or the sentence card is open.
+     Counted from where the connection started, so a long brief never makes it move after every turn. */
+  var ROTATE_GROWTH = 5500;
+  function rotate() {
+    if (!L || !L.started || L.renewing || L.ending || L.sample || !L.ctx0 || (L.ctx || 0) - L.ctx0 < ROTATE_GROWTH) return false;
+    if (!(L.pass && L.pass.turn && L.pass.turn.manual) || L.waitReply || L.toolBusy || L.ex || (L.pronMsg && !L.pronResult) || L.prec || L.pbusy) return false;
+    L.rotating = true; L.hold = []; L.handle = null; L.ctx = 0;
+    renew('rotate');
+    return true;
+  }
+  /* The time left, told to the tutor so it neither wraps up early nor runs out mid-explanation */
+  function timeNotes() {
+    if (!L || L.sample || !L.started || L.seconds == null) return;
+    if (L.seconds <= 60 && !L.toldEnd) {
+      L.toldEnd = L.told2 = true;
+      L.notes = (L.notes || []).concat(['About one minute of the call is left. Finish the point you are on, recap in one or two sentences what the student learned today, say what to practise next time, then say goodbye.']);
+    } else if (L.seconds <= 150 && !L.told2) {
+      L.told2 = true;
+      L.notes = (L.notes || []).concat(['About two minutes of the call are left. Do not start a new topic: practise what you just taught, then you will be told when to wrap up.']);
+    } else return;
+    sendNotes();
   }
   /* The tutor's voice, played piece after piece without gaps */
   function playPcm(b64data) {
@@ -227,9 +258,15 @@
   }
 
   /* ---------- The connection to Google ---------- */
-  function send(msg) { if (L && L.ws && L.ws.readyState === 1) L.ws.send(JSON.stringify(msg)); }
+  function send(msg) {
+    if (!L) return;
+    /* While a fresh connection is made (rotate), what the student says is kept and sent once it is ready */
+    if (L.rotating && msg.realtimeInput) { if (L.hold.length < 400) L.hold.push(msg); return; }
+    if (L.ws && L.ws.readyState === 1) L.ws.send(JSON.stringify(msg));
+  }
   function connect(pass) {
-    L.pass = pass; L.ready = false; L.conn = (L.conn || 0) + 1; L.taker = null; L.studentTurn = false; L.tutorTurn = false; L.turnAudio = null;
+    L.pass = pass; L.ready = false; L.conn = (L.conn || 0) + 1; L.ctx = 0; L.ctx0 = 0;
+    if (!L.rotating) { L.taker = null; L.studentTurn = false; L.tutorTurn = false; L.turnAudio = null; L.waitReply = false; }
     var ws = L.ws = new WebSocket(pass.url + '?access_token=' + encodeURIComponent(pass.token));
     var mine = ws;
     ws.onopen = function () { if (L && L.ws === mine) send({ setup: { model: 'models/' + pass.model } }); };
@@ -263,12 +300,22 @@
       pa: modal(u.promptTokensDetails, 'AUDIO'), pt: modal(u.promptTokensDetails, 'TEXT'), ra: modal(u.responseTokensDetails, 'AUDIO'), rt: modal(u.responseTokensDetails, 'TEXT') };
   }
   function onMessage(m) {
-    if (m.usageMetadata && L.usage && L.usage.length < 100) L.usage.push(usageOf(m.usageMetadata));
+    if (m.usageMetadata) {
+      if (L.usage && L.usage.length < 100) L.usage.push(usageOf(m.usageMetadata));
+      L.ctx = Number(m.usageMetadata.promptTokenCount) || L.ctx || 0;
+      if (!L.ctx0) L.ctx0 = L.ctx;   /* where this connection started: instructions, brief and the call so far as text */
+    }
     if (m.setupComplete) {
       L.ready = true;
       var first = !L.started;
       L.started = true; L.note = null;
       setState('listening');
+      if (L.rotating) {
+        /* A planned fresh connection: nothing to say, the student's held words go out now */
+        L.rotating = false;
+        L.hold.splice(0).forEach(send);
+        sendNotes(); draw(); return;
+      }
       if (first && L.fresh) send({ clientContent: { turns: [{ role: 'user', parts: [{ text: '<school>The call has just started. Greet the student by their first name in one short sentence and ask what they would like to do today, suggesting one thing from the brief.</school>' }] }], turnComplete: true } });
       else if (!L.handle) send({ clientContent: { turns: [{ role: 'user', parts: [{ text: '<school>The call was reconnected. Carry on where you left off, in one short sentence.</school>' }] }], turnComplete: true } });
       draw();
@@ -287,7 +334,7 @@
     (c.modelTurn && c.modelTurn.parts || []).forEach(function (p) {
       if (p.inlineData && p.inlineData.data && /audio\/pcm/.test(p.inlineData.mimeType || '')) playPcm(p.inlineData.data);
     });
-    if (c.turnComplete) { flush('student'); flush('tutor'); L.tutorTurn = false; sendNotes(); }
+    if (c.turnComplete) { flush('student'); flush('tutor'); L.tutorTurn = false; L.waitReply = false; sendNotes(); }
   }
   /* A finished line goes to the captions and waits for the next tick */
   function flush(role) {
@@ -312,7 +359,7 @@
       L.renewing = false; connect(pass);
     }, function (e) {
       if (!L) return;
-      L.renewing = false;
+      L.renewing = false; L.rotating = false; L.hold = [];
       var r = e && e.body && e.body.reason;
       end(r === 'no_time' ? 'app_tu_none_left' : r === 'budget' ? 'app_tu_err_budget' : 'app_tl_lost');
     });
@@ -329,11 +376,15 @@
   function boardCalls(calls) {
     if (!calls.length) return;
     var plain = calls.map(function (c) { return { id: c.id, name: c.name, args: c.args || {} }; });
+    L.toolBusy = (L.toolBusy || 0) + 1;
+    var done = function () { if (L) L.toolBusy = Math.max(0, (L.toolBusy || 1) - 1); };
     D().tutorLiveBoard({ session: L.session, calls: plain }).then(function (r) {
+      done();
       if (!L || L.ended) return;
       applyBoard(r.messages || [], r.board);
       toolAnswer(r.results || []);
     }, function () {
+      done();
       if (L && !L.ended) toolAnswer(plain.map(function (c) { return { id: c.id, name: c.name, ok: false, error: 'The board is not available right now; go on talking.' }; }));
     });
   }
@@ -483,7 +534,7 @@
     var lines = L.queue.splice(0, L.queue.length), usage = (L.usage || []).splice(0);
     return D().tutorLiveTick(usage.length ? { session: L.session, lines: lines, usage: usage } : { session: L.session, lines: lines }).then(function (r) {
       if (!L) return;
-      L.seconds = r.seconds; clock();
+      L.seconds = r.seconds; clock(); timeNotes();
       if (r.stop) { if (r.summary) L.summary = r.summary; end(r.stop === 'budget' ? 'app_tu_err_budget' : 'app_tu_none_left', true); }
     }, function (e) {
       if (!L) return;
@@ -497,7 +548,7 @@
     var sample = !!opts.sample;
     L = Object.assign(L || {}, { tutor: tutor, sample: sample, state: 'connecting', lines: [], queue: [], cur: { student: '', tutor: '' }, playing: [], seconds: opts.seconds || 0,
       started: false, ending: false, ended: false, muted: false, note: null, summary: null, handle: null, session: null, fresh: true, failed: null, renewing: false, head: 0,
-      usage: [], conn: 0, startedAt: Date.now(), board: [], newOps: 0, ex: null, exMsg: null, got: [], pronMsg: null, pronResult: null, prec: null, boardOpen: false });
+      usage: [], conn: 0, startedAt: Date.now(), ctx: 0, rotating: false, hold: [], notes: [], told2: false, toldEnd: false, board: [], newOps: 0, ex: null, exMsg: null, got: [], pronMsg: null, pronResult: null, prec: null, boardOpen: false });
     draw();
     if (sample) { runSample(); return; }
     if (!supported()) { fail('app_tl_unsupported'); return; }
