@@ -6,6 +6,8 @@
   'use strict';
   var URL = 'https://dgaiasmefcbrtzqwdyri.supabase.co';
   var KEY = 'sb_publishable_6epxmytr0e38p6OI77U_NQ_8pFzrzlh';
+  /* A plan an admin gave without payment, still running (student_profiles.plan_given_until) */
+  function givenActive(p) { var u = p && p.plan_given_until ? Date.parse(p.plan_given_until) : NaN; return isFinite(u) && u > Date.now(); }
   var LANG_CODES = { English: 'en', German: 'de', French: 'fr', Spanish: 'es', Italian: 'it', Portuguese: 'pt' };
   var DAY = 86400000;
 
@@ -19,7 +21,7 @@
   }
 
   /* ---------- An admin viewing someone's dashboard (admin pages, part 2) ----------
-     /app/teach?as=<teacher profile id> or /app/preview?as=<student profile id>, opened by a signed-in admin: the
+     /app/teach?as=<teacher profile id> or /app?as=<student profile id>, opened by a signed-in admin: the
      dashboard is drawn for that person (reads run as the admin, whom every row rule lets read), and nothing can be
      changed: inserts, updates, upserts, deletes, functions that write, password changes and every non-GET call to
      /api answer "read-only". For anyone who is not an admin the parameter is ignored. */
@@ -139,11 +141,11 @@
     return mySession().then(function (r) {
       var session = r.data && r.data.session;
       if (!session) return null;
-      return c.from('student_profiles').select('id, full_name, language, level, tier, goal_track, placement, enrolled_cohort_id, timezone')
+      return c.from('student_profiles').select('id, full_name, language, level, tier, goal_track, placement, enrolled_cohort_id, timezone, stripe_subscription_status, plan_given_until, waitlist_opt_in, preferred_days, country')
         .eq('user_id', session.user.id).maybeSingle().then(function (pr) {
           if (pr.error) throw pr.error;
           var p = pr.data;
-          if (!p) return { signedIn: true, profile: null };
+          if (!p) return { signedIn: true, profile: null, role: (session.user.app_metadata || {}).role || null };
           return loadFor(c, p, lang);
         });
     });
@@ -176,7 +178,20 @@
         c.from('practice_progress').select('updated_at').eq('student_id', p.id).gte('updated_at', since),
         c.from('exercise_results').select('created_at').eq('student_id', p.id).gte('created_at', since),
         c.from('session_attendance').select('joined_at').eq('student_id', p.id).gte('joined_at', since),
-        topicLabels(p.placement && p.placement.language || p.language, p.placement && p.placement.topics, lang)
+        topicLabels(p.placement && p.placement.language || p.language, p.placement && p.placement.topics, lang),
+        c.from('cohort_waitlist').select('id, cohort_id, offer_expires_at, cohorts ( language, level, tier, teacher_profiles:teacher_public ( full_name ) )')
+          .eq('student_id', p.id).gt('offer_expires_at', new Date().toISOString()).order('offer_expires_at', { ascending: true }).limit(1),
+        /* The Tutor card (AI tutor, part 5): the stored balance, what the tutor suggested last time */
+        c.from('tutor_time').select('free_seconds, plan_seconds, credit_seconds').eq('student_id', p.id).maybeSingle(),
+        c.from('tutor_memory').select('notes').eq('student_id', p.id).maybeSingle(),
+        c.from('tutor_sessions').select('id, started_at, title, summary').eq('student_id', p.id).not('summary', 'is', null).order('started_at', { ascending: false }).limit(1),
+        /* Part 5b: the latest class notes, and the classes' recent lessons, for "Go over the lesson with your tutor" */
+        cohorts.length ? c.from('session_notes').select('id, grammar_focus, published_at, sessions!inner ( scheduled_at, cohort_id )').in('sessions.cohort_id', cohorts)
+          .not('published_at', 'is', null).gte('published_at', new Date(Date.now() - 14 * DAY).toISOString()).order('published_at', { ascending: false }).limit(1) : null,
+        cohorts.length ? c.from('sessions').select('cohort_id, scheduled_at, status').in('cohort_id', cohorts).gte('scheduled_at', new Date(Date.now() - 15 * DAY).toISOString())
+          .lte('scheduled_at', new Date().toISOString()).limit(100) : null,
+        /* The welcome poll: answered, and whether the welcome gift (10 EUR off) is still to be used */
+        c.from('welcome_poll').select('discount_used_at').eq('student_id', p.id).maybeSingle()
       ]);
     }).then(function (res) {
       res.cohorts = cohortsOf;
@@ -215,8 +230,19 @@
           tier: p.tier || 'free',
           goal: p.goal_track || null,
           timezone: p.timezone || null,
-          cohorts: res.cohorts || []
+          cohorts: res.cohorts || [],
+          paying: p.stripe_subscription_status === 'active' || givenActive(p),
+          givenUntil: p.stripe_subscription_status !== 'active' && givenActive(p) ? p.plan_given_until : null,
+          waitlistOptIn: !!p.waitlist_opt_in,
+          country: p.country || '',
+          days: p.preferred_days || []
         },
+        offer: (function (o) {
+          o = o && !o.error && o.data && o.data[0];
+          if (!o || !o.cohorts) return null;
+          return { id: o.id, cohort: o.cohort_id, until: o.offer_expires_at, language: o.cohorts.language, level: o.cohorts.level, tier: o.cohorts.tier,
+            teacher: o.cohorts.teacher_profiles && o.cohorts.teacher_profiles.full_name || '' };
+        })(res[9]),
         nextClass: s ? {
           id: s.id, at: s.scheduled_at, live: s.status === 'live', language: co.language || p.language, level: co.level || p.level,
           teacher: res.teacher || ''
@@ -225,9 +251,113 @@
         homework: openHw,
         streak: streakFrom(stamps),
         placement: placement,
-        topics: placement ? res[8] : []
+        topics: placement ? res[8] : [],
+        welcome: (function (w) {
+          if (!w || w.error) return null;
+          return { answered: !!w.data, giftOpen: !!w.data && !w.data.discount_used_at };
+        })(res[15]),
+        tutor: (function () {
+          var tt = res[10] && !res[10].error ? res[10].data : null, mem = res[11] && !res[11].error && res[11].data ? res[11].data.notes || {} : {};
+          var last = res[12] && !res[12].error ? (res[12].data || [])[0] : null;
+          /* No row yet: the free 10 minutes are given the first time the Tutor is opened */
+          return { seconds: tt ? (tt.free_seconds || 0) + (tt.plan_seconds || 0) + (tt.credit_seconds || 0) : 600, fresh: !tt, next: mem.next || '', last: last || null };
+        })(),
+        lesson: (function () {
+          var n = res[13] && !res[13].error ? (res[13].data || [])[0] : null;
+          return n && lessonOpen(n, res[14] && !res[14].error ? res[14].data : []) ? { id: n.id, at: n.sessions.scheduled_at, grammar: n.grammar_focus || '' } : null;
+        })()
       };
     });
+  }
+
+  /* Step 16, part 1: finding a class, the waiting list and reviews (docs/DASHBOARD_PLAN.md, "Step 16 decisions").
+     Classes a student can see are open or full ones (cohorts_select); their dates are not visible before joining, so the
+     next dates are worked out from the timetable. Joining, switching, leaving and taking an offered place go through
+     /api/enroll, which checks the plan, the language and the seats on the server. */
+  var FIND_COLS = 'id, language, level, tier, goal_track, description, schedule_days, schedule_time, timezone, status, enrolled_count, max_students, teacher_id, ' +
+    'teacher_profiles:teacher_public ( id, full_name, specialty, bio, rating, experience_years, sessions_delivered, location )';
+  function findClasses(language) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('cohorts').select(FIND_COLS).eq('language', language).in('status', ['open', 'full']).order('level').limit(200).then(rows);
+  }
+  function findClass(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('cohorts').select(FIND_COLS).eq('id', id).maybeSingle().then(function (r) {
+      if (r.error) throw r.error;
+      if (!r.data) return null;
+      return teacherReviews(r.data.teacher_id).then(function (rv) { r.data.reviews = rv; return r.data; });
+    });
+  }
+  function teacherReviews(teacherId) {
+    var c = client();
+    if (!teacherId || !c) return Promise.resolve([]);
+    return c.from('teacher_reviews').select('rating, review_text, created_at').eq('teacher_id', teacherId).order('created_at', { ascending: false }).limit(20).then(rows);
+  }
+  function myWaitlist(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('cohort_waitlist').select('id, cohort_id, added_at, offered_at, offer_expires_at, cohorts ( ' + FIND_COLS + ' )').eq('student_id', studentId).order('added_at').then(rows);
+  }
+  function joinWaitlist(studentId, cohortId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('cohort_waitlist').insert({ student_id: studentId, cohort_id: cohortId }).select('id').single().then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  function leaveWaitlist(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('cohort_waitlist').delete().eq('id', id).then(function (r) { if (r.error) throw r.error; });
+  }
+  function setWaitlistOptIn(studentId, on) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('student_profiles').update({ waitlist_opt_in: !!on }).eq('id', studentId).then(function (r) { if (r.error) throw r.error; });
+  }
+  /* body: { cohort_id } to join, { cohort_id, switch: true } to switch, { cohort_id, waitlist_id } to take an offered
+     place, { action: 'leave' } to leave. Errors carry the server's code (payment_required, tier_mismatch, ...) */
+  /* Step 16, part 2: Stripe checkout (a plan, or one private class) and the billing page. The server checks the price
+     against its catalogue and keeps return addresses on alimun.com. */
+  function checkout(body) { return api('/api/stripe?action=create-checkout', body); }
+  function billingPortal(returnUrl) { return api('/api/stripe?action=billing-portal', { returnUrl: returnUrl }); }
+  function enroll(body) {
+    return api('/api/enroll', body).catch(function (e) { e.code = e.body && e.body.error || e.status; throw e; });
+  }
+  /* The teachers who taught the student: their classes (now and before) and their 1:1s */
+  function myTeachers(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('enrollments').select('cohort_id').eq('student_id', studentId),
+      c.from('one_on_one_bookings').select('teacher_id').eq('student_id', studentId).eq('status', 'completed')
+    ]).then(function (r) {
+      var ids = {}; rows(r[1]).forEach(function (b) { if (b.teacher_id) ids[b.teacher_id] = true; });
+      var cos = rows(r[0]).map(function (e) { return e.cohort_id; });
+      return (cos.length ? c.from('cohorts').select('teacher_id').in('id', cos).then(rows) : Promise.resolve([])).then(function (list) {
+        list.forEach(function (x) { if (x.teacher_id) ids[x.teacher_id] = true; });
+        var all = Object.keys(ids);
+        return all.length ? c.from('teachers_public').select('id, full_name').in('id', all).then(rows) : [];
+      });
+    });
+  }
+  /* A review can be written once the teacher has taught the student (was_taught_by, checked again by the row rules) */
+  function reviewState(studentId, teacherId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.rpc('was_taught_by', { p_teacher_id: teacherId }),
+      c.from('teacher_reviews').select('id, rating, review_text').eq('student_id', studentId).eq('teacher_id', teacherId).maybeSingle(),
+      c.from('teachers_public').select('id, full_name').eq('id', teacherId).maybeSingle()
+    ]).then(function (r) {
+      return { allowed: !r[0].error && r[0].data === true, review: r[1].data || null, teacher: r[2].data || null };
+    });
+  }
+  function saveReview(studentId, teacherId, rating, text) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('teacher_reviews').upsert({ student_id: studentId, teacher_id: teacherId, rating: rating, review_text: text || null }, { onConflict: 'teacher_id,student_id' })
+      .select('id').single().then(function (r) { if (r.error) throw r.error; });
   }
 
   /* Course book progress: one row per finished page or unit test */
@@ -290,9 +420,13 @@
       cohorts.forEach(function (co) { if (co.teacher_id) tids[co.teacher_id] = true; });
       (r[4].data || []).forEach(function (b) { if (b.teacher_id) tids[b.teacher_id] = true; });
       var list = Object.keys(tids);
-      return (list.length ? c.from('teachers_public').select('id, full_name').in('id', list) : none).then(function (tr) {
-        var names = {};
+      var noteSessions = (r[2].data || []).map(function (n) { return n.session_id; }).filter(Boolean);
+      return Promise.all([list.length ? c.from('teachers_public').select('id, full_name').in('id', list) : none,
+        noteSessions.length ? c.from('session_boards').select('session_id').in('session_id', noteSessions).eq('shared', true) : none]).then(function (rr) {
+        var tr = rr[0], names = {}, boards = {};
         (tr.data || []).forEach(function (x) { names[x.id] = x.full_name || ''; });
+        ((rr[1] && rr[1].data) || []).forEach(function (x) { boards[x.session_id] = true; });
+        (r[2].data || []).forEach(function (n) { n.board = !!boards[n.session_id]; });
         return { cohorts: cohorts, sessions: r[1].data || [], notes: r[2].data || [], homework: r[3].data || [], bookings: r[4].data || [], attended: (r[5].data || []).map(function (x) { return x.session_id; }), teachers: names };
       });
     });
@@ -398,11 +532,123 @@
     return mySession().then(function (x) {
       var session = x.data && x.data.session;
       if (!session) return null;
-      return c.from('student_profiles').select('full_name, language, level, goal_track, goal_timeframe, timezone, preferred_days, preferred_time_start, preferred_time_end, tier, stripe_subscription_status, enrolled_cohort_id')
-        .eq('user_id', session.user.id).maybeSingle().then(function (r) {
+      return Promise.all([
+        c.from('student_profiles').select('full_name, language, level, goal_track, goal_timeframe, timezone, preferred_days, preferred_time_start, preferred_time_end, tier, stripe_subscription_status, plan_given_until, enrolled_cohort_id, country')
+          .eq('user_id', session.user.id).maybeSingle(),
+        myConsent(c, session.user.id)
+      ]).then(function (res) {
+          var r = res[0];
           if (r.error) throw r.error;
-          return { email: session.user.email || '', profile: r.data };
+          return { email: session.user.email || '', profile: r.data, consent: res[1] };
         });
+    });
+  }
+  /* Activity (docs/GROWTH_PLAN.md step 3): 'open_dashboard' once per browser tab and dashboard, 'view' per section,
+     the same section counted again only after 10 minutes. Sent in small batches; only for a signed-in person in their
+     own dashboard (an admin viewing as someone is read-only, so nothing is written; signed out and samples send
+     nothing). Best effort: a failure is ignored. Readable only by admins (supabase/migrations/202611071200_activity.sql). */
+  var actQueue = [], actTimer = null, actSeen = {};
+  function track(event, detail) {
+    if (event !== 'open_dashboard' && event !== 'view') return;
+    var d = detail || {}, key = event + ':' + (d.dashboard || '') + ':' + (d.section || '');
+    if (event === 'open_dashboard') {
+      try { if (sessionStorage.getItem('alimun-act-' + key)) return; sessionStorage.setItem('alimun-act-' + key, '1'); } catch (e) { if (actSeen[key]) return; }
+    } else if (actSeen[key] && Date.now() - actSeen[key] < 10 * 60000) return;
+    actSeen[key] = Date.now();
+    actQueue.push({ event: event, detail: d, page: location.pathname.slice(0, 200) });
+    clearTimeout(actTimer);
+    actTimer = setTimeout(flushActivity, 2500);
+  }
+  function flushActivity() {
+    var batch = actQueue.splice(0, 20);
+    if (!batch.length) return;
+    var c = client();
+    if (!c) return;
+    mySession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session || VA) return null;
+      return c.from('activity_events').insert(batch.map(function (b) { return { user_id: session.user.id, event: b.event, detail: b.detail, page: b.page }; }));
+    }).then(function (r) { if (r && r.error) console.warn('[Alimun] activity', r.error.message); }, function () {});
+    if (actQueue.length) actTimer = setTimeout(flushActivity, 2500);
+  }
+  try { window.addEventListener('pagehide', flushActivity); } catch (e) { /* no window events */ }
+  /* The dashboard language, kept on the profile so emails can be written in it (once per tab; an admin viewing as
+     someone writes nothing). kind: 'student' or 'teacher'. */
+  function rememberUiLang(lang, kind) {
+    if (['en', 'es', 'fr', 'de', 'pt', 'it', 'zh', 'ar', 'ma'].indexOf(lang) < 0) return;
+    try { if (sessionStorage.getItem('alimun-ui-lang') === kind + ':' + lang) return; sessionStorage.setItem('alimun-ui-lang', kind + ':' + lang); } catch (e) { /* storage blocked */ }
+    var c = client();
+    if (!c) return;
+    mySession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session || VA) return null;
+      return c.from(kind === 'teacher' ? 'teacher_profiles' : 'student_profiles').update({ ui_lang: lang }).eq('user_id', session.user.id)
+        .or('ui_lang.is.null,ui_lang.neq.' + lang);
+    }).then(function (r) { if (r && r.error) console.warn('[Alimun] dashboard language', r.error.message); }, function () {});
+  }
+  /* Notifications for the bell (js/app/bell.js): the latest 20, and marking them read (only read_at can change) */
+  function notifications() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return mySession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session) return [];
+      return c.from('notifications').select('id, kind, key, params, title, body, link, created_at, read_at').eq('user_id', session.user.id)
+        .order('created_at', { ascending: false }).limit(20).then(function (r) { if (r.error) throw r.error; return r.data || []; });
+    });
+  }
+  function markNotificationsRead(ids) {
+    var c = client();
+    if (!c || !ids || !ids.length) return Promise.resolve();
+    return c.from('notifications').update({ read_at: new Date().toISOString() }).in('id', ids).is('read_at', null).then(function (r) { if (r.error) throw r.error; });
+  }
+  function adminActivity(userId, before) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.rpc('admin_activity_timeline', { p_user: userId, p_before: before || null, p_limit: 60 }).then(function (r) { if (r.error) throw r.error; return r.data || []; });
+  }
+  function adminSignupSources(days) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.rpc('admin_signup_sources', { p_days: days || 90 }).then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  /* Welcome poll (owner, 9 Nov 2026): whether this student answered it, saving the answers (the database adds the
+     10 tutor minutes once and returns the seconds added), and every answer for the admin. */
+  function welcomePollDone(profileId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('welcome_poll').select('created_at').eq('student_id', profileId).maybeSingle().then(function (r) { if (r.error) throw r.error; return !!r.data; });
+  }
+  function submitWelcomePoll(answers) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.rpc('submit_welcome_poll', { p_answers: answers }).then(function (r) { if (r.error) throw r.error; return r.data || 0; });
+  }
+  function adminWelcomePoll() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('welcome_poll').select('student_id, answers, created_at, discount_used_at, student_profiles ( full_name, language, level, country, tier )')
+      .order('created_at', { ascending: false }).limit(1000).then(function (r) { if (r.error) throw r.error; return r.data || []; });
+  }
+  function adminActivityOverview() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.rpc('admin_activity_overview').then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+
+  /* News-and-offers choice (docs/GROWTH_PLAN.md step 2): the latest row of marketing_consents; null when never asked */
+  function myConsent(c, uid) {
+    return c.from('marketing_consent_current').select('granted, age_16_plus, created_at').eq('user_id', uid).maybeSingle()
+      .then(function (r) { if (r.error) { console.warn('[Alimun] consent', r.error.message); return null; } return r.data; });
+  }
+  function saveConsent(granted, adult) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return mySession().then(function (x) {
+      var session = x.data && x.data.session;
+      if (!session) throw new Error('Not signed in');
+      return c.from('marketing_consents').insert({ user_id: session.user.id, granted: !!(granted && adult), age_16_plus: !!adult, wording_version: 'v1', source: 'settings' })
+        .then(function (r) { if (r.error) throw r.error; });
     });
   }
   function saveProfile(patch) {
@@ -540,7 +786,7 @@
             var cos = rows(cr), ids = cos.map(function (co) { return co.id; });
             var none = Promise.resolve({ data: [] });
             return Promise.all([
-              ids.length ? c.from('sessions').select('id, cohort_id, scheduled_at, status, session_notes(id, vocabulary, grammar_focus, exercises, homework, due_date, teacher_note, pdf_url, published_at)')
+              ids.length ? c.from('sessions').select('id, cohort_id, scheduled_at, status, lesson_no, lesson_pinned, session_notes(id, vocabulary, grammar_focus, exercises, homework, due_date, teacher_note, pdf_url, published_at)')
                 .in('cohort_id', ids).gte('scheduled_at', from).lte('scheduled_at', to).order('scheduled_at', { ascending: true }) : none,
               c.from('one_on_one_bookings').select('id, kind, scheduled_at, duration_minutes, status, teacher_note, student_profiles(full_name)')
                 .eq('teacher_id', tp.id).in('status', ['booked', 'completed']).gte('scheduled_at', from).lte('scheduled_at', to).order('scheduled_at', { ascending: true }).limit(200),
@@ -548,7 +794,7 @@
             ]).then(function (res) {
               var sessions = rows(res[0]).map(function (s) {
                 var n = Array.isArray(s.session_notes) ? s.session_notes[0] : s.session_notes;
-                return { id: s.id, cohortId: s.cohort_id, at: s.scheduled_at, status: s.status, notes: n || null, joined: 0 };
+                return { id: s.id, cohortId: s.cohort_id, at: s.scheduled_at, status: s.status, notes: n || null, joined: 0, lessonNo: s.lesson_no || null, lessonPinned: !!s.lesson_pinned };
               });
               var past = sessions.filter(function (s) { return new Date(s.at).getTime() < now; }).map(function (s) { return s.id; });
               return (past.length ? c.from('session_attendance').select('session_id').in('session_id', past).not('joined_at', 'is', null).limit(5000) : none).then(function (ar) {
@@ -583,6 +829,27 @@
       return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) { var e = new Error(j.error || j.message || String(r.status)); e.status = r.status; e.body = j; throw e; } return j; });
     });
   }
+  /* Campaigns (docs/GROWTH_PLAN.md step 4b): /api/campaigns checks the admin again; past campaigns are read here (admins only) */
+  function campaignAudience(filter, newsletter) { return api('/api/campaigns?action=audience', { filter: filter, include_newsletter: !!newsletter }); }
+  function campaignTest(message, filter) { return api('/api/campaigns?action=test', { message: message, filter: filter || {} }); }
+  function campaignPreview(message, lang) { return api('/api/campaigns?action=preview', { message: message, lang: lang || 'en' }); }
+  function campaignSend(message, filter, channels, confirm, newsletter) { return api('/api/campaigns?action=send', { message: message, filter: filter, channels: channels, confirm: confirm, include_newsletter: !!newsletter }); }
+  /* Banners (docs/GROWTH_PLAN.md, "Email layouts and in-page banners"): saved switched off, shown after "Switch on" */
+  function banners() { return api('/api/campaigns?action=banner_list', {}).then(function (r) { return r.banners || []; }); }
+  function bannerSave(banner) { return api('/api/campaigns?action=banner_save', banner); }
+  function bannerSwitch(id, on) { return api('/api/campaigns?action=' + (on ? 'banner_activate' : 'banner_stop'), { id: id }); }
+  function campaigns() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('campaigns').select('id, subject, heading, channels, recipients, emailed, sent_at, created_at').order('created_at', { ascending: false }).limit(30),
+      c.from('campaign_recipients').select('campaign_id, clicked_at').not('clicked_at', 'is', null).limit(5000)
+    ]).then(function (r) {
+      if (r[0].error) throw r[0].error;
+      var clicks = {}; (r[1].data || []).forEach(function (x) { clicks[x.campaign_id] = (clicks[x.campaign_id] || 0) + 1; });
+      return (r[0].data || []).map(function (x) { x.clicks = clicks[x.id] || 0; return x; });
+    });
+  }
   function publishNotes(notesId) { return api('/api/generate-notes-pdf', { session_notes_id: notesId }); }
   function otoNote(id, note) { return api('/api/enroll', { action: 'oto-note', id: id, note: note }); }
   function createClass(body) { return api('/api/create-cohort', body); }
@@ -591,6 +858,48 @@
     if (!c) return Promise.reject(new Error('Supabase did not load'));
     return c.from('teacher_availability').insert({ teacher_id: teacherId, day_of_week: day, start_time: start + ':00', end_time: end + ':00', timezone: tz })
       .select('id, day_of_week, start_time, end_time, timezone').single().then(function (r) { if (r.error) throw r.error; return r.data; });
+  }
+  /* Several weekly blocks at once (every ticked day times every from/to pair); blocks that already exist are left as they are */
+  function addSlots(teacherId, rows) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('teacher_availability').upsert(rows.map(function (r) { return Object.assign({ teacher_id: teacherId }, r); }), { onConflict: 'teacher_id,day_of_week,start_time,end_time', ignoreDuplicates: true })
+      .select('id, day_of_week, start_time, end_time, timezone').then(function (r) { if (r.error) throw r.error; return r.data || []; });
+  }
+  /* The class lesson for one date (docs/LESSONS_PLAN.md): a lesson number, none (no) with auto false, or back to automatic.
+     public.set_session_lesson checks the teacher teaches the class and renumbers the later dates. */
+  function setSessionLesson(sessionId, no, auto) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.rpc('set_session_lesson', { p_session: sessionId, p_lesson: no == null ? null : +no, p_auto: !!auto }).then(function (r) { if (r.error) throw r.error; });
+  }
+  /* The class board saved (docs/LESSONS_PLAN.md, step L5): session_boards (one per class date) and session_board_work
+     (each student's work in each "Everyone solves this"). The teacher's browser writes both; row-level security lets a
+     student read the board when shared and only their own work. */
+  function saveBoard(sessionId, b) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    var row = { session_id: sessionId, course: b.course || null, lesson: b.lesson || null, pages: b.pages || {}, solos: b.solos || [], extra: b.extra || [], updated_at: new Date().toISOString() };
+    return c.from('session_boards').upsert(row, { onConflict: 'session_id' }).then(function (r) { if (r.error) throw r.error; });
+  }
+  function saveBoardWork(rows) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    if (!rows.length) return Promise.resolve();
+    return c.from('session_board_work').upsert(rows, { onConflict: 'session_id,solo_id,user_id' }).then(function (r) { if (r.error) throw r.error; });
+  }
+  function boardOf(sessionId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('session_boards').select('session_id, course, lesson, pages, solos, extra, shared, updated_at').eq('session_id', sessionId).maybeSingle(),
+      c.from('session_board_work').select('solo_id, user_id, name, page, items, sent_at').eq('session_id', sessionId).order('sent_at', { ascending: true }).limit(500)
+    ]).then(function (r) { if (r[0].error) throw r[0].error; return { board: r[0].data || null, work: (r[1] && r[1].data) || [] }; });
+  }
+  function setBoardShared(sessionId, on) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('session_boards').update({ shared: !!on }).eq('session_id', sessionId).then(function (r) { if (r.error) throw r.error; });
   }
   function removeSlot(id) {
     var c = client();
@@ -753,7 +1062,9 @@
       .select('id, status, score, feedback, graded_at').single().then(function (r) { if (r.error) throw r.error; return r.data; });
   }
   function draftFeedback(submissionId) { return api('/api/ai?action=grade-submission', { submission_id: submissionId }); }
-  function draftTask(prompt, system) { return api('/api/ai?action=grade', { prompt: prompt, system: system, json: true }); }
+  /* Drafts for teachers; the instructions are built on the server, only the topic, text or points go */
+  function draftHomework(body) { return api('/api/ai?action=draft-homework', body); }
+  function draftSet(body) { return api('/api/ai?action=draft-set', body); }
 
   /* Teacher dashboard, Material (step 15, part 5; supabase/migrations/202610261200_teacher_sets.sql): the teacher's own
      exercise sets, who each was sent to, and the results of those students (practice_progress "set:<id>") */
@@ -851,9 +1162,10 @@
     return mySession().then(function (x) {
       var session = x.data && x.data.session;
       if (!session) return { signedIn: false };
-      return c.from('teacher_profiles').select('id, full_name, location, bio, specialty, languages, status').eq('user_id', session.user.id).maybeSingle().then(function (r) {
+      return Promise.all([c.from('teacher_profiles').select('id, full_name, location, bio, specialty, languages, status, country').eq('user_id', session.user.id).maybeSingle(), myConsent(c, session.user.id)]).then(function (res) {
+        var r = res[0];
         if (r.error) throw r.error;
-        return { signedIn: true, email: session.user.email || '', teacher: r.data };
+        return { signedIn: true, email: session.user.email || '', teacher: r.data, consent: res[1] };
       });
     });
   }
@@ -909,7 +1221,7 @@
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
     return Promise.all([
-      c.from('student_profiles').select('id, user_id, full_name, language, level, tier, goal_track, stripe_subscription_status, enrolled_cohort_id, created_at').order('created_at', { ascending: false }).limit(2000),
+      c.from('student_profiles').select('id, user_id, full_name, language, level, tier, goal_track, stripe_subscription_status, plan_given_until, enrolled_cohort_id, created_at').order('created_at', { ascending: false }).limit(2000),
       c.from('cohorts').select('id, language, level, tier, status, teacher_profiles(full_name)').limit(500)
     ]).then(function (r) { return { students: rows(r[0]), cohorts: rows(r[1]) }; });
   }
@@ -934,11 +1246,169 @@
       c.from('student_feedback').select('feedback_text, is_private, created_at, teacher_id').eq('student_id', id).order('created_at', { ascending: false }).limit(20),
       c.from('practice_progress').select('ex_key, updated_at').eq('student_id', id).gte('updated_at', since).order('updated_at', { ascending: false }).limit(2000),
       c.from('vocab_reviews').select('box').eq('student_id', id).limit(5000),
-      c.from('one_on_one_bookings').select('kind, scheduled_at, status, teacher_profiles(full_name)').eq('student_id', id).order('scheduled_at', { ascending: false }).limit(10)
+      c.from('one_on_one_bookings').select('kind, scheduled_at, status, teacher_profiles(full_name)').eq('student_id', id).order('scheduled_at', { ascending: false }).limit(10),
+      c.from('tutor_time').select('free_seconds, plan_seconds, plan_granted, plan_period, credit_seconds').eq('student_id', id).maybeSingle(),
+      c.from('tutor_time_ledger').select('seconds, bucket, reason, note, created_at').eq('student_id', id).order('created_at', { ascending: false }).limit(20)
     ]).then(function (r) {
       if (r[0].error) throw r[0].error;
-      return { profile: r[0].data, enrollments: rows(r[1]), submissions: rows(r[2]), notes: rows(r[3]), activity: rows(r[4]), cards: rows(r[5]), oto: rows(r[6]) };
+      return { profile: r[0].data, enrollments: rows(r[1]), submissions: rows(r[2]), notes: rows(r[3]), activity: rows(r[4]), cards: rows(r[5]), oto: rows(r[6]),
+        tutor: r[7] && !r[7].error ? r[7].data : null, tutorLog: rows(r[8]) };
     });
+  }
+  /* Tutor time (docs/AI_TUTOR_PLAN.md, part 1): the student's own balance from /api/tutor (which also brings it up to
+     date and gives the free 10 minutes the first time); an admin viewing as a student reads the stored balance only */
+  function tutorStatus() {
+    if (VA) {
+      var c = client();
+      if (!c || VA.kind !== 'student') return Promise.resolve(null);
+      return c.from('tutor_time').select('free_seconds, plan_seconds, plan_granted, plan_period, credit_seconds').eq('student_id', VA.id).maybeSingle().then(function (r) {
+        var t = r.data || {}, f = t.free_seconds || 0, p = t.plan_seconds || 0, k = t.credit_seconds || 0;
+        return { seconds: { free: f, plan: p, credit: k, total: f + p + k }, plan: { granted_seconds: t.plan_granted || 0, period: t.plan_period || null }, viewing: true };
+      });
+    }
+    return token().then(function (tok) {
+      return fetch('/api/tutor?action=status', { headers: { Authorization: 'Bearer ' + (tok || '') } });
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) { var e = new Error(j.error || String(r.status)); e.status = r.status; e.body = j; throw e; } return j; });
+    });
+  }
+  /* Part 6: the ledger row the payment webhook writes for a checkout of tutor time (the student's own row), or null */
+  function tutorPurchase(checkoutId) {
+    var c = client();
+    if (!c) return Promise.resolve(null);
+    return c.from('tutor_time_ledger').select('seconds, created_at').eq('stripe_session_id', checkoutId).eq('reason', 'purchase').maybeSingle()
+      .then(function (r) { if (r.error) throw r.error; return r.data || null; });
+  }
+  /* Part 2: a session goes through the server; past sessions, transcripts and memory are the student's own rows (an admin
+     viewing as the student reads that student's rows) */
+  /* lesson (part 5b): the class notes to go over, checked on the server against the student's classes */
+  function tutorStart(ui, lesson) { return api('/api/tutor?action=start', lesson ? { ui: ui, lesson: lesson } : { ui: ui }); }
+  function tutorTurn(body) { return api('/api/tutor?action=turn', body); }
+  function tutorEnd(sessionId) { return api('/api/tutor?action=end', { session: sessionId }); }
+  /* The tutor's voice for one of its messages (part 3), or with slow the sentence it set to say, spoken slowly (part 4):
+     an MP3 Blob; rejects like api() with the server's reason */
+  function tutorVoice(sessionId, messageId, slow) {
+    return token().then(function (tok) {
+      return fetch('/api/tutor?action=voice', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (tok || '') }, body: JSON.stringify(slow ? { session: sessionId, message: messageId, slow: true } : { session: sessionId, message: messageId }) });
+    }).then(function (r) {
+      if (r.ok) return r.blob();
+      return r.json().catch(function () { return {}; }).then(function (j) { var e = new Error(j.error || String(r.status)); e.status = r.status; e.body = j; throw e; });
+    });
+  }
+  /* Part 4: the student saying the sentence a tutor message set ({ session, message, audio, mime: 'audio/wav' }) */
+  function tutorPronounce(body) { return api('/api/tutor?action=pronounce', body); }
+  /* Part 7: the live call — the pass to Google ({ tutor, ui, session?, handle? }) and the time ticks ({ session, lines }) */
+  function tutorLiveStart(body) { return api('/api/tutor?action=live-start', body); }
+  function tutorLiveTick(body) { return api('/api/tutor?action=live-tick', body); }
+  /* Part 7 B: the tutor's board calls in the call ({ session, calls }) and the student's exercise results ({ session, answer }) */
+  function tutorLiveBoard(body) { return api('/api/tutor?action=live-board', body); }
+  function tutorLiveAnswer(body) { return api('/api/tutor?action=live-answer', body); }
+  /* The pronunciation of one turn of the call, checked against its transcript ({ session, text, audio, mime: 'audio/wav' }) */
+  function tutorLivePron(body) { return api('/api/tutor?action=live-pron', body); }
+  /* The cascade call, the owner's test version: one turn ({ session, audio?, mime?, text?, notes? }) */
+  function tutorCascadeTurn(body) { return api('/api/tutor?action=cascade-turn', body); }
+  /* The same turn, streamed: onEvent gets each line as it arrives ({ t: 'heard' | 'audio' | 'board' | 'done' | 'error' }).
+     A plain JSON answer (nothing was heard) comes as one 'done'. Resolves when the answer is complete. */
+  function tutorCascadeStream(body, onEvent) {
+    return token().then(function (tok) {
+      return fetch('/api/tutor?action=cascade-turn', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + (tok || '') }, body: JSON.stringify(body) });
+    }).then(function (r) {
+      if (!r.ok) return r.json().catch(function () { return {}; }).then(function (j) { var e = new Error(j.error || String(r.status)); e.status = r.status; e.body = j; throw e; });
+      if (!/ndjson/.test(r.headers.get('Content-Type') || '') || !r.body || !r.body.getReader) {
+        return r.text().then(function (txt) {
+          if (/ndjson/.test(r.headers.get('Content-Type') || '')) { txt.split('\n').forEach(function (l) { if (l.trim()) { try { onEvent(JSON.parse(l)); } catch (x) { /* broken line */ } } }); return; }
+          var j = {}; try { j = JSON.parse(txt); } catch (x) { /* empty */ }
+          onEvent(Object.assign({ t: 'done' }, j));
+        });
+      }
+      var reader = r.body.getReader(), dec = new TextDecoder(), buf = '';
+      function pump() {
+        return reader.read().then(function (x) {
+          if (x.value) buf += dec.decode(x.value, { stream: !x.done });
+          var nl;
+          while ((nl = buf.indexOf('\n')) >= 0) {
+            var line = buf.slice(0, nl); buf = buf.slice(nl + 1);
+            if (line.trim()) { try { onEvent(JSON.parse(line)); } catch (e) { /* broken line */ } }
+          }
+          if (x.done) { if (buf.trim()) { try { onEvent(JSON.parse(buf)); } catch (e) { /* broken line */ } } return; }
+          return pump();
+        });
+      }
+      return pump();
+    });
+  }
+  function tutorForget() { return api('/api/tutor?action=forget', {}); }
+  function tutorSessions(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.resolve().then(function () {
+      return c.from('tutor_sessions').select('id, started_at, ended_at, seconds_used, turns, title, summary').eq('student_id', id).gt('turns', 0).order('started_at', { ascending: false }).limit(30)
+        .then(function (r) { if (r.error) throw r.error; return r.data || []; });
+    });
+  }
+  function tutorSession(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('tutor_sessions').select('id, started_at, ended_at, title, summary, words, topics, board, tutor, mode').eq('id', id).maybeSingle(),
+      c.from('tutor_messages').select('id, role, text, exercise, result, pron, created_at').eq('session_id', id).order('created_at').limit(300)
+    ]).then(function (r) { if (r[0].error) throw r[0].error; return { session: r[0].data, messages: r[1].data || [] }; });
+  }
+  function tutorMemory(id) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.resolve().then(function () {
+      return c.from('tutor_memory').select('notes, updated_at').eq('student_id', id).maybeSingle().then(function (r) { if (r.error) throw r.error; return r.data || { notes: {} }; });
+    });
+  }
+  /* Part 5: what the tutor left in Practice ("From your tutor"), newest first, with the student's best scores
+     (practice_progress tutor:<id>, tutor:<id>:listen, tutor:<id>:speak) and the writing check (tutor:<id>:write) */
+  function tutorSets(studentId) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return Promise.all([
+      c.from('tutor_sets').select('id, session_id, title, language, level, items, created_at').eq('student_id', studentId).order('created_at', { ascending: false }).limit(12),
+      c.from('practice_progress').select('ex_key, done, graded_score, user_answer, feedback').eq('student_id', studentId).like('ex_key', 'tutor:%').limit(200)
+    ]).then(function (r) {
+      if (r[0].error) throw r[0].error;
+      var res = {};
+      rows(r[1]).forEach(function (x) { res[x.ex_key] = x; });
+      return (r[0].data || []).map(function (s) {
+        var k = 'tutor:' + s.id;
+        s.result = res[k] || null; s.listenResult = res[k + ':listen'] || null; s.speakResult = res[k + ':speak'] || null; s.writeResult = res[k + ':write'] || null;
+        return s;
+      });
+    });
+  }
+  /* The listening of a set in the tutor's voice: a signed https link to the MP3, valid for an hour */
+  function tutorSetAudio(setId) { return api('/api/tutor?action=set-audio', { set: setId }); }
+  /* The writing task of a set: pointers from /api/ai?action=homework-check (the task is read on the server) */
+  function tutorWritingCheck(setId, text, ui) { return api('/api/ai?action=homework-check', { tutor_set: setId, text: String(text).slice(0, 6000), ui: ui }).then(function (j) { return j.result; }); }
+  function saveTutorWriting(studentId, setId, text, result) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('practice_progress').upsert({
+      student_id: studentId, ex_key: 'tutor:' + setId + ':write', done: true, graded_score: null,
+      user_answer: { text: String(text).slice(0, 6000) }, feedback: JSON.stringify(result || {}).slice(0, 8000), updated_at: new Date().toISOString()
+    }, { onConflict: 'student_id,ex_key' }).then(function (r) { if (r.error) throw r.error; });
+  }
+  /* Part 5b: whether published class notes can still be gone over with the tutor: at most 14 days old and until the
+     class's next lesson has started (owner, question 13). sessions: the class's sessions; the server checks it again. */
+  function lessonOpen(note, sessions) {
+    var s = note && note.sessions, at = Date.parse(s && s.scheduled_at || note && note.published_at), now = Date.now();
+    if (!note || !note.published_at || !(now - at < 14 * DAY)) return false;
+    return !(sessions || []).some(function (x) { return x.cohort_id === s.cohort_id && x.status !== 'cancelled' && Date.parse(x.scheduled_at) > at && Date.parse(x.scheduled_at) <= now; });
+  }
+  function adminTutorGrant(studentId, minutes, note) { return api('/api/tutor?action=admin-grant', { student: studentId, minutes: minutes, note: note }); }
+  function adminTutorMinutes() {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('tutor_plan_minutes').select('tier, minutes_per_month, updated_at').then(function (r) { if (r.error) throw r.error; return r.data || []; });
+  }
+  function adminTutorMinutesSet(tier, minutes) {
+    var c = client();
+    if (!c) return Promise.reject(new Error('Supabase did not load'));
+    return c.from('tutor_plan_minutes').update({ minutes_per_month: minutes, updated_at: new Date().toISOString() }).eq('tier', tier).select('tier').single().then(function (r) { if (r.error) throw r.error; return r.data; });
   }
   function adminTeacherFile(id) {
     var c = client();
@@ -1172,7 +1642,7 @@
   function cards(studentId) {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
-    return c.from('vocab_reviews').select('id, word, word_key, definition, example, box, due_on, correct_count, wrong_count, last_reviewed_at')
+    return c.from('vocab_reviews').select('id, word, word_key, definition, example, source, box, due_on, correct_count, wrong_count, last_reviewed_at')
       .eq('student_id', studentId).order('due_on', { ascending: true }).limit(3000).then(rows);
   }
   function addCards(studentId, list) {
@@ -1197,5 +1667,5 @@
 
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
-  window.AlimunData = { viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, adminClasses: adminClasses, adminClassFile: adminClassFile, adminTeacherSlots: adminTeacherSlots, adminCreateClass: adminCreateClass, adminClassUpdate: adminClassUpdate, adminMoveStudent: adminMoveStudent, adminRemoveStudent: adminRemoveStudent, adminSchedule: adminSchedule, adminSessionUpdate: adminSessionUpdate, adminWaitlist: adminWaitlist, adminWaitlistRemove: adminWaitlistRemove, adminWaitlistOffer: adminWaitlistOffer, adminThreads: adminThreads, adminThreadMessages: adminThreadMessages, adminHideMessage: adminHideMessage, adminPayouts: adminPayouts, adminRecordPayout: adminRecordPayout, adminPayoutUpdate: adminPayoutUpdate, adminPayoutDelete: adminPayoutDelete, adminAiUsage: adminAiUsage, adminAiFailures: adminAiFailures, adminSettings: adminSettings, adminSettingSet: adminSettingSet, adminReviews: adminReviews, adminReviewDelete: adminReviewDelete, adminJobs: adminJobs, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftTask: draftTask, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+  window.AlimunData = { tutorPurchase: tutorPurchase, tutorSets: tutorSets, tutorSetAudio: tutorSetAudio, tutorWritingCheck: tutorWritingCheck, saveTutorWriting: saveTutorWriting, lessonOpen: lessonOpen, tutorStatus: tutorStatus, tutorStart: tutorStart, tutorTurn: tutorTurn, tutorVoice: tutorVoice, tutorPronounce: tutorPronounce, tutorLiveStart: tutorLiveStart, tutorLiveTick: tutorLiveTick, tutorLiveBoard: tutorLiveBoard, tutorLiveAnswer: tutorLiveAnswer, tutorLivePron: tutorLivePron, tutorCascadeTurn: tutorCascadeTurn, tutorCascadeStream: tutorCascadeStream, tutorEnd: tutorEnd, tutorForget: tutorForget, tutorSessions: tutorSessions, tutorSession: tutorSession, tutorMemory: tutorMemory, adminTutorGrant: adminTutorGrant, adminTutorMinutes: adminTutorMinutes, adminTutorMinutesSet: adminTutorMinutesSet, checkout: checkout, billingPortal: billingPortal, findClasses: findClasses, findClass: findClass, myWaitlist: myWaitlist, joinWaitlist: joinWaitlist, leaveWaitlist: leaveWaitlist, setWaitlistOptIn: setWaitlistOptIn, enroll: enroll, myTeachers: myTeachers, reviewState: reviewState, saveReview: saveReview, viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, adminClasses: adminClasses, adminClassFile: adminClassFile, adminTeacherSlots: adminTeacherSlots, adminCreateClass: adminCreateClass, adminClassUpdate: adminClassUpdate, adminMoveStudent: adminMoveStudent, adminRemoveStudent: adminRemoveStudent, adminSchedule: adminSchedule, adminSessionUpdate: adminSessionUpdate, adminWaitlist: adminWaitlist, adminWaitlistRemove: adminWaitlistRemove, adminWaitlistOffer: adminWaitlistOffer, adminThreads: adminThreads, adminThreadMessages: adminThreadMessages, adminHideMessage: adminHideMessage, adminPayouts: adminPayouts, adminRecordPayout: adminRecordPayout, adminPayoutUpdate: adminPayoutUpdate, adminPayoutDelete: adminPayoutDelete, adminAiUsage: adminAiUsage, adminAiFailures: adminAiFailures, adminSettings: adminSettings, adminSettingSet: adminSettingSet, adminReviews: adminReviews, adminReviewDelete: adminReviewDelete, adminJobs: adminJobs, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftHomework: draftHomework, draftSet: draftSet, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, addSlots: addSlots, setSessionLesson: setSessionLesson, saveBoard: saveBoard, saveBoardWork: saveBoardWork, boardOf: boardOf, setBoardShared: setBoardShared, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, rememberUiLang: rememberUiLang, campaignAudience: campaignAudience, campaignTest: campaignTest, campaignPreview: campaignPreview, campaignSend: campaignSend, banners: banners, bannerSave: bannerSave, bannerSwitch: bannerSwitch, campaigns: campaigns, notifications: notifications, markNotificationsRead: markNotificationsRead, track: track, adminActivity: adminActivity, adminActivityOverview: adminActivityOverview, adminSignupSources: adminSignupSources, welcomePollDone: welcomePollDone, submitWelcomePoll: submitWelcomePoll, adminWelcomePoll: adminWelcomePoll, saveConsent: saveConsent, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

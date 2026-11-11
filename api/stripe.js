@@ -8,7 +8,13 @@
  *    - POST ?action=create-checkout   (auth required)
  *    - GET  ?action=retrieve-session  (public, non-sensitive fields only)
  *    - POST ?action=billing-portal    (auth required)
+ *    - GET  ?action=prices            the amounts of the main prices, read from Stripe (public, cached an hour),
+ *                                     and the tutor time packs with their minutes (api/_lib/tutor-packs.js)
  *    - GET  ?action=config            (public, publishable values only)
+ *
+ *  Welcome gift (owner, 9 Nov 2026): a student who answered the welcome poll and has not used the gift gets the
+ *  coupon WELCOME_COUPON (10 EUR, or its set amount in USD/CAD/AUD/MAD) on a plan or a 1 on 1 class, once.
+ *  The coupon has no public code; the webhook marks it used when that checkout is paid.
  *
  *  Security notes:
  *    - Checkout REQUIRES a Supabase JWT. The user id / email that end
@@ -24,6 +30,7 @@
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
 const stripe = require('stripe')(STRIPE_KEY || 'dummy_key_for_load_validation');
 const { createClient } = require('@supabase/supabase-js');
+const tutorPacks = require('./_lib/tutor-packs.js');
 
 const env = (k) => process.env[k] || '';
 
@@ -49,9 +56,20 @@ const PRICE_CATALOGUE = [
   // The EUR 29 founding member fee was removed on 15 Oct 2026 (owner decision); it is no longer sold.
   { id: env('STRIPE_PRICE_ONEONONE_SESSION'),       mode: 'payment',      type: 'session' },
   { id: env('STRIPE_PRICE_CERTIFICATE'),            mode: 'payment',      type: 'certificate' },
+  // Tutor time (docs/AI_TUTOR_PLAN.md, part 6): minutes added by the webhook, read from the price, never the browser
+  ...tutorPacks.packs().map((p) => ({ id: p.id, mode: 'payment', type: 'tutor_time' })),
 ].filter((p) => p.id);
 
 const PRICE_BY_ID = Object.fromEntries(PRICE_CATALOGUE.map((p) => [p.id, p]));
+
+// The welcome gift's Stripe coupon (created live on 9 Nov 2026) and what it applies to
+const WELCOME_COUPON = 'alimun_welcome_10';
+function welcomeGiftApplies(price) { return price.mode === 'subscription' || price.type === 'session'; }
+async function welcomeGiftOpen(supabaseAdmin, studentId) {
+  const { data, error } = await supabaseAdmin.from('welcome_poll').select('discount_used_at').eq('student_id', studentId).maybeSingle();
+  if (error) { console.warn('[Alimun] welcome gift lookup:', error.message); return false; }
+  return !!data && !data.discount_used_at;
+}
 
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
@@ -75,6 +93,37 @@ async function getSupabaseUser(req) {
 function appOrigin() {
   const appUrl = process.env.APP_URL || 'https://alimun.com';
   try { return new URL(appUrl).origin; } catch { return 'https://alimun.com'; }
+}
+
+// ── Checkout look ──
+// Two ways to pay, both Stripe Checkout Sessions on API version 2025-09-30.clover
+// (sent on these requests only; the rest of the integration is unchanged):
+//  - ui 'custom' (the default from the dashboard, js/app/pay.js): Alimun's own
+//    checkout page on alimun.com; Stripe draws only the payment fields inside
+//    it. The session returns a client secret instead of a URL.
+//  - hosted (fallback): Stripe's own page, branded with bone, lime, the
+//    wordmark and icon. Satoshi is not on Stripe's font list; Inter is the
+//    closest. If Stripe ever refuses the branding, it goes ahead unbranded.
+const CHECKOUT_API_VERSION = '2025-09-30.clover';
+const CHECKOUT_BRANDING = {
+  display_name: 'Alimun',
+  background_color: '#f0efe9',
+  button_color: '#ceff65',
+  border_style: 'rounded',
+  font_family: 'inter',
+  logo: { type: 'url', url: 'https://alimun.com/images/stripe-checkout-logo.png' },
+  icon: { type: 'url', url: 'https://alimun.com/images/icon-512.png' },
+};
+
+async function createCheckout(params) {
+  const opts = { apiVersion: CHECKOUT_API_VERSION };
+  if (params.ui_mode === 'custom') return stripe.checkout.sessions.create(params, opts);
+  try {
+    return await stripe.checkout.sessions.create({ ...params, branding_settings: CHECKOUT_BRANDING }, opts);
+  } catch (e) {
+    console.warn('[Alimun] checkout branding not applied:', e && e.message);
+    return stripe.checkout.sessions.create(params);
+  }
 }
 
 /** Only allow redirect targets on our own origin (or relative paths). */
@@ -157,7 +206,7 @@ async function handleCreateCheckout(req, res) {
     return res.status(401).json({ error: 'Unauthorized. Sign in before starting checkout.' });
   }
 
-  const { priceId, customerName, successUrl, cancelUrl, cohortId, currency } = body;
+  const { priceId, customerName, successUrl, cancelUrl, cohortId, currency, ui } = body;
   if (!priceId || typeof priceId !== 'string') {
     return res.status(400).json({ error: 'priceId is required' });
   }
@@ -167,8 +216,14 @@ async function handleCreateCheckout(req, res) {
   }
 
   const safeCohortId = typeof cohortId === 'string' && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(cohortId) ? cohortId : '';
-  let resolvedSuccessUrl = safeReturnUrl(successUrl, '/student-dashboard.html?checkout=success');
-  const resolvedCancelUrl  = safeReturnUrl(cancelUrl,  '/student-dashboard.html?checkout=cancelled');
+  let resolvedSuccessUrl = safeReturnUrl(successUrl, '/app?checkout=success');
+  let resolvedCancelUrl  = safeReturnUrl(cancelUrl,  '/app?checkout=cancelled');
+  // Tutor time comes back to the Tutor, with the checkout id so the dashboard can see when the minutes are added
+  // (Stripe fills in {CHECKOUT_SESSION_ID}).
+  if (price.type === 'tutor_time') {
+    resolvedSuccessUrl = appOrigin() + '/app?checkout=tutor&session_id={CHECKOUT_SESSION_ID}#/tutor';
+    resolvedCancelUrl = appOrigin() + '/app?checkout=cancelled#/tutor';
+  }
   // The webhook does not enrol; carry the cohort back so the dashboard can
   // resume the join after payment (APIP-14).
   if (safeCohortId) {
@@ -225,6 +280,23 @@ async function handleCreateCheckout(req, res) {
       allow_promotion_codes: true,
     };
 
+    // Alimun's own checkout page: Stripe sends the student to return_url after
+    // paying (with the session id, so the dashboard can check it); closing the
+    // page is the cancel, so there is no cancel_url.
+    if (ui === 'custom') {
+      sessionParams.ui_mode = 'custom';
+      let back = resolvedSuccessUrl;
+      if (!back.includes('{CHECKOUT_SESSION_ID}')) {
+        const hashAt = back.indexOf('#');
+        const head = hashAt < 0 ? back : back.slice(0, hashAt);
+        const hash = hashAt < 0 ? '' : back.slice(hashAt);
+        back = head + (head.includes('?') ? '&' : '?') + 'session_id={CHECKOUT_SESSION_ID}' + hash;
+      }
+      sessionParams.return_url = back;
+      delete sessionParams.success_url;
+      delete sessionParams.cancel_url;
+    }
+
     // Prices carry EUR (base) + USD/CAD/AUD/MAD currency options
     // (supabase/setup-stripe-prices.js). EUR is the default.
     if (typeof currency === 'string' && ['usd', 'cad', 'aud', 'mad'].includes(currency.toLowerCase())) {
@@ -237,8 +309,22 @@ async function handleCreateCheckout(req, res) {
       sessionParams.payment_intent_data = { metadata };
     }
 
-    const session = await stripe.checkout.sessions.create(sessionParams);
-    return res.status(200).json({ sessionId: session.id, url: session.url });
+    // The welcome gift replaces the promotion code box (Stripe takes one or the other). If Stripe refuses the
+    // coupon, checkout goes ahead at the full price rather than failing.
+    let session;
+    if (welcomeGiftApplies(price) && await welcomeGiftOpen(supabaseAdmin, profile.id)) {
+      const withGift = { ...sessionParams, discounts: [{ coupon: WELCOME_COUPON }], metadata: { ...metadata, welcome_gift: '1' } };
+      delete withGift.allow_promotion_codes;
+      if (withGift.subscription_data) withGift.subscription_data = { metadata: withGift.metadata };
+      if (withGift.payment_intent_data) withGift.payment_intent_data = { metadata: withGift.metadata };
+      try {
+        session = await createCheckout(withGift);
+      } catch (e) {
+        console.warn('[Alimun] welcome gift not applied:', e && e.message);
+      }
+    }
+    if (!session) session = await createCheckout(sessionParams);
+    return res.status(200).json({ sessionId: session.id, url: session.url || null, clientSecret: ui === 'custom' ? session.client_secret : undefined, welcomeGift: session.metadata?.welcome_gift === '1' });
   } catch (err) {
     console.error('[Alimun] create-checkout error:', err);
     return res.status(500).json({ error: 'Failed to create checkout session' });
@@ -284,7 +370,7 @@ async function handleBillingPortal(req, res) {
     return res.status(500).json({ error: 'Database service is unavailable' });
   }
 
-  const resolvedReturnUrl = safeReturnUrl(body.returnUrl, '/student-dashboard.html');
+  const resolvedReturnUrl = safeReturnUrl(body.returnUrl, '/app#/settings');
 
   try {
     const profile = await loadStudentProfile(supabaseAdmin, user);
@@ -340,6 +426,41 @@ function handleGetConfig(req, res) {
   });
 }
 
+// The amount, currency and period of each main price, read from Stripe so the dashboard shows what Stripe will
+// charge (no amounts are written in the site). Public: prices are not secret. Cached per instance for an hour.
+const PRICE_KEYS = {
+  communityMonthly: 'STRIPE_PRICE_COMMUNITY_MONTHLY', focusedMonthly: 'STRIPE_PRICE_FOCUSED_MONTHLY',
+  intensiveMonthly: 'STRIPE_PRICE_INTENSIVE_MONTHLY', privateMonthly: 'STRIPE_PRICE_PRIVATE_MONTHLY',
+  communityYearly: 'STRIPE_PRICE_COMMUNITY_YEARLY', focusedYearly: 'STRIPE_PRICE_FOCUSED_YEARLY',
+  intensiveYearly: 'STRIPE_PRICE_INTENSIVE_YEARLY', privateYearly: 'STRIPE_PRICE_PRIVATE_YEARLY',
+  oneOnOneSession: 'STRIPE_PRICE_ONEONONE_SESSION',
+};
+const TUTOR_PACKS = Object.fromEntries(tutorPacks.packs().map((p) => [p.key, p]));
+let pricesCache = null;
+async function handleGetPrices(req, res) {
+  if (!pricesCache || Date.now() - pricesCache.at > 3600000) {
+    const out = {};
+    const keys = Object.keys(PRICE_KEYS).concat(Object.keys(TUTOR_PACKS));
+    await Promise.all(keys.map(async (k) => {
+      const pack = TUTOR_PACKS[k];
+      const id = pack ? pack.id : env(PRICE_KEYS[k]);
+      if (!id) return;
+      try {
+        const p = await stripe.prices.retrieve(id);
+        if (p && p.active && p.unit_amount != null) {
+          out[k] = { id, amount: p.unit_amount, currency: p.currency, interval: p.recurring ? p.recurring.interval : null };
+          if (pack) out[k].minutes = tutorPacks.minutesOf(pack, p);
+        }
+      } catch (err) {
+        console.error('[Alimun] price lookup failed for', k, err.message);
+      }
+    }));
+    pricesCache = { at: Date.now(), prices: out };
+  }
+  res.setHeader('Cache-Control', 'public, max-age=600, s-maxage=3600');
+  return res.status(200).json({ prices: pricesCache.prices });
+}
+
 // ── Main handler ──
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || 'https://alimun.com');
@@ -367,6 +488,9 @@ module.exports = async function handler(req, res) {
     case 'config':
       if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
       return handleGetConfig(req, res);
+    case 'prices':
+      if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+      return handleGetPrices(req, res);
     default:
       return res.status(400).json({ error: 'Unknown action' });
   }

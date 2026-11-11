@@ -9,7 +9,7 @@
           .tl_head p { margin: 1.25rem auto 0; color: rgba(8, 8, 8, .7); }
           .tl_list { position: relative; }
           .tl_line { position: absolute; top: 0; bottom: 0; left: 50%; width: 2px; margin-left: -1px; background-color: rgba(8, 8, 8, .1); }
-          .tl_fill { width: 100%; height: calc(var(--tl-p, 0) * 100%); background-color: var(--green); }
+          .tl_fill { width: 100%; height: 100%; transform: scaleY(var(--tl-p, 0)); transform-origin: 50% 0; background-color: var(--green); }
           .tl_item { display: grid; grid-template-columns: 1fr 1fr; gap: 7rem; align-items: center; margin-bottom: 6rem; }
           .tl_item:last-child { margin-bottom: 0; }
           .tl_item:nth-child(even) .tl_img { order: 2; }
@@ -105,13 +105,14 @@
         </div>
         <script>
           (function () {
-            var root = document.currentScript.closest(".tl"), list = root.querySelector(".tl_list");
+            var root = document.currentScript.closest(".tl"), list = root.querySelector(".tl_list"), line = root.querySelector(".tl_fill"), lastP = "", queued = 0;
             var items = [].slice.call(root.querySelectorAll(".tl_item"));
             function fill() {
               var r = list.getBoundingClientRect(), p = (window.innerHeight * .6 - r.top) / r.height;
-              list.style.setProperty("--tl-p", Math.max(0, Math.min(1, p)).toFixed(3));
+              // The value goes on the line only, and only when it changes, so the rest of the list is not restyled on every scroll.
+              var v = Math.max(0, Math.min(1, p)).toFixed(3); if (v !== lastP) { lastP = v; line.style.setProperty("--tl-p", v); }
             }
-            window.addEventListener("scroll", fill, { passive: true });
+            window.addEventListener("scroll", function () { if (!queued) queued = requestAnimationFrame(function () { queued = 0; fill(); }); }, { passive: true });
             window.addEventListener("resize", fill);
             fill();
             if (!("IntersectionObserver" in window)) { root.classList.add("is-in"); items.forEach(function (i) { i.classList.add("is-in"); }); return; }

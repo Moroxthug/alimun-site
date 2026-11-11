@@ -92,6 +92,7 @@
   /* Line icons: the student dashboard's set, plus students and payouts */
   var P = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
   var ICONS = {
+    book: '<path d="M12 6.5C10.4 5 8.2 4.5 4 4.8v13.4c4.2-.3 6.4.2 8 1.8 1.6-1.6 3.8-2.1 8-1.8V4.8c-4.2-.3-6.4.2-8 1.7z"/><path d="M12 6.5V20"/>',
     home: '<path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/>',
     classes: '<rect x="3" y="6" width="13" height="12" rx="3"/><path d="m16 10.5 5-3v9l-5-3"/>',
     students: '<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="16.8" cy="9.5" r="2.5"/><path d="M15.5 14.6c2.6-.3 4.4 1.3 5 4.4"/>',
@@ -120,6 +121,7 @@
     { id: 'classes', label: 'app_t_nav_classes', icon: 'classes', group: 'teach', part: 2, art: 'mug', tint: 'leaf', kind: 'think', text: 'app_t_soon_classes_text', bub: 'app_t_soon_classes_bub' },
     { id: 'students', label: 'app_t_nav_students', icon: 'students', group: 'teach', part: 3, art: 'parrot', tint: 'mint', kind: 'say', text: 'app_t_soon_students_text', bub: 'app_t_soon_students_bub' },
     { id: 'homework', label: 'app_t_nav_homework', icon: 'homework', group: 'teach', part: 4, art: 'monster', tint: 'coral', kind: 'say', text: 'app_t_soon_homework_text', bub: 'app_t_soon_homework_bub' },
+    { id: 'lessons', label: 'app_t_nav_lessons', icon: 'book', group: 'make' },
     { id: 'material', label: 'app_t_nav_material', icon: 'material', group: 'make', part: 5, art: 'owl', tint: 'sun', kind: 'think', text: 'app_t_soon_material_text', bub: 'app_t_soon_material_bub' },
     { id: 'messages', label: 'app_t_nav_messages', icon: 'messages', group: 'account', part: 6, art: 'alien', tint: 'mint', kind: 'say', text: 'app_t_soon_messages_text', bub: 'app_t_soon_messages_bub' },
     { id: 'payouts', label: 'app_t_nav_payouts', icon: 'payouts', group: 'account', part: 6, art: 'suitcase', tint: 'sun', kind: 'think', text: 'app_t_soon_payouts_text', bub: 'app_t_soon_payouts_bub' },
@@ -190,7 +192,7 @@
         '<header class="top">' +
           '<a class="top__brand" href="#/today" aria-label="' + esc(t('app_home_link')) + '">' + Cast.book('idle') + Cast.wordmark() + '</a>' +
           '<p class="top__title" aria-hidden="true"></p>' +
-          '<div class="top__actions"><a class="avatar" href="#/settings" aria-label="' + esc(t('app_account')) + '">' + esc(initials(tp.full_name)) + '</a></div>' +
+          '<div class="top__actions">' + (mode === 'pending' ? '' : '<button class="icon-btn" type="button" data-bell aria-label="' + esc(t('app_notifications')) + '">' + icon('bell') + '</button>') + '<a class="avatar" href="#/settings" aria-label="' + esc(t('app_account')) + '">' + esc(initials(tp.full_name)) + '</a></div>' +
         '</header>' +
         '<main class="view" id="view" tabindex="-1"></main>' +
       '</div>' +
@@ -314,7 +316,7 @@
     if (mode === 'real') return '';
     var p, btn = '';
     if (mode === 'forced') { p = t('app_t_sample_forced'); btn = '<a class="btn btn--primary btn--sm" href="' + location.pathname + location.hash + '">' + esc(t('app_t_sample_mine')) + '</a>'; }
-    else if (mode === 'noprofile') { p = t('app_t_sample_noprofile'); btn = '<a class="btn btn--primary btn--sm" href="/app/preview">' + esc(t('app_t_sample_student')) + '</a>'; }
+    else if (mode === 'noprofile') { p = t('app_t_sample_noprofile'); btn = '<a class="btn btn--primary btn--sm" href="/app">' + esc(t('app_t_sample_student')) + '</a>'; }
     else if (mode === 'admin') p = t('app_t_sample_admin');
     else if (mode === 'error') { p = t('app_sample_error'); btn = '<button class="btn btn--primary btn--sm" type="button" data-retry>' + esc(t('app_retry')) + '</button>'; }
     else { p = t('app_t_sample_p'); btn = '<a class="btn btn--primary btn--sm" href="/signin.html">' + esc(t('app_sample_signin')) + '</a>'; }
@@ -342,8 +344,7 @@
         '<div class="stage" style="--i:0;background:' + TINTS[r.tint] + '"><div class="bub ' + r.kind + '">' + esc(t(r.bub)) + '</div>' + Cast.drawing(r.art) + '</div>' +
         '<div class="card" style="--i:1">' + spot + '<h2 class="t-h2">' + esc(t('app_t_soon_h', { part: r.part })) + '</h2>' +
           '<p class="t-body">' + esc(t('app_t_soon_p')) + '</p>' +
-          '<div class="btn-row"><a class="btn btn--primary" href="#/today">' + esc(t('app_t_soon_back')) + '</a>' +
-          (mode === 'real' ? '<a class="btn btn--quiet" href="/teacher-dashboard">' + esc(t('app_t_soon_old')) + '</a>' : '') + '</div></div>' +
+          '<div class="btn-row"><a class="btn btn--primary" href="#/today">' + esc(t('app_t_soon_back')) + '</a></div></div>' +
       '</div>';
   }
 
@@ -371,7 +372,7 @@
     loaderInner: loaderInner, dayName: dayName, relative: relative, className: className, weekday: weekday, browserZone: browserZone,
     mode: function () { return mode; }, rerender: function () { render(current, false); }
   };
-  var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; }, homework: function () { return window.AlimunTeachHomework; }, material: function () { return window.AlimunTeachMaterial; },
+  var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; }, homework: function () { return window.AlimunTeachHomework; }, material: function () { return window.AlimunTeachMaterial; }, lessons: function () { return window.AlimunTeachLessons; },
     messages: function () { return window.AlimunTeachMessages; }, payouts: function () { return window.AlimunTeachPayouts; }, settings: function () { return window.AlimunTeachSettings; } };
   function partsOf(id) { return location.hash.replace(new RegExp('^#\\/' + id + '\\/?'), '').split('/').filter(Boolean); }
 
@@ -383,6 +384,7 @@
   }
   function render(id, animate) {
     var r = byId[id];
+    if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('view', { dashboard: 'teacher', section: id });
     var mod = mode !== 'pending' && MODULES[id] ? MODULES[id]() : null;
     var html = mode === 'pending' ? pendingView() : id === 'today' ? todayView() : mod ? '' : soonView(r);
     var swap = function () {
@@ -447,9 +449,12 @@
   /* ---------- Boot ---------- */
   function start() {
     renderShell();
+    if (mode === 'real' && window.AlimunData && window.AlimunData.rememberUiLang) window.AlimunData.rememberUiLang(lang, 'teacher');
+    if (window.AlimunBell) window.AlimunBell.attach(document.querySelector('[data-bell]'), helpers, mode === 'real' && !(window.AlimunData && window.AlimunData.viewingAs && window.AlimunData.viewingAs()));
     render(routeFromHash(), false);
   }
   function boot() {
+    if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('open_dashboard', { dashboard: 'teacher' });
     app = document.getElementById('app');
     loadingScreen = document.getElementById('loading');
     document.documentElement.lang = lang === 'ma' ? 'fr-MA' : lang;

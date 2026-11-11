@@ -1,0 +1,37 @@
+// Resource: game. German food and drink nouns, their articles and regional words (Semmel, Schrippe, Breze, Erdapfel). Checked against Duden.
+export default {
+  key: 'german-food', site: 'es', slug: 'comida-en-aleman-juego', kind: 'game', course: 'German', level: 'Todos los niveles',
+  draw: 'pretzel', tint: 'sun', published: '2026-11-01',
+  title: 'Juego de la comida en alemán: Brezel, Brötchen y Spätzle',
+  metaTitle: 'Comida en alemán, el juego: Brezel, Brötchen, Spätzle – Alimun',
+  desc: 'Un juego gratis con palabras alemanas de comida: adivina qué son Brötchen, Schorle y Eintopf, elige el artículo correcto y aprende los nombres regionales.',
+  lead: 'Si desayunas en Múnich, pides una Semmel. En Berlín, lo mismo se llama Schrippe. Diez palabras alemanas de comida, sus artículos y alguna sorpresa regional.',
+  instructions: '¿Qué significa, o cuál es el artículo correcto?',
+  about: [
+    'Las palabras de comida están entre las primeras que necesitas en alemán, y cada una tiene su artículo: der Kuchen, die Kartoffel, das Brötchen. Si aprendes el artículo junto con la palabra, luego tendrás que adivinar mucho menos.',
+    'El alemán también cambia de una región a otra. El mismo panecillo es un Brötchen, una Semmel o una Schrippe según dónde lo compres, y en Austria una patata puede ser un Erdapfel.',
+  ],
+  items: [
+    { q: 'die Brezel', options: ['un pretzel', 'un panecillo', 'un dónut', 'un gofre'], a: 0, why: 'die Brezel = el pretzel o lazo de pan. En Baviera y Austria también se dice die Breze.' },
+    { q: 'das Brötchen', options: ['una tostada', 'un panecillo', 'una miga de pan', 'una barra entera'], a: 1, why: 'das Brötchen = el panecillo. En Baviera y Austria se dice die Semmel, y en Berlín un panecillo alargado con un corte encima es die Schrippe.' },
+    { q: 'Spätzle: ¿cuál es el artículo correcto?', options: ['der', 'das', 'die, porque la palabra es plural', 'die, porque la palabra es femenina'], a: 2, why: 'die Spätzle son pequeños fideos de huevo típicos de Suabia. El Duden recoge la palabra solo en plural, y por eso lleva die.' },
+    { q: 'der Kuchen', options: ['una cocina', 'una galleta', 'un cocinero', 'un pastel'], a: 3, why: 'der Kuchen = el pastel o bizcocho. No lo confundas con die Küche, la cocina, ni con der Koch, el cocinero.' },
+    { q: 'die Schorle', options: ['vino o zumo de manzana con agua con gas', 'un ponche caliente', 'cerveza con limonada', 'un batido'], a: 0, why: 'die Schorle es vino o zumo de manzana rebajado con agua con gas, como la Apfelschorle. El Duden también acepta das Schorle, que se oye en algunas regiones.' },
+    { q: 'der Aufschnitt', options: ['un corte en el dedo', 'embutido en lonchas', 'una porción de pastel', 'un sándwich'], a: 1, why: 'der Aufschnitt = el embutido en lonchas: salchicha, jamón y carne asada cortados, a menudo servidos en una bandeja.' },
+    { q: 'Kartoffel: ¿cuál es el artículo correcto?', options: ['der', 'das', 'die', 'cambia según la región'], a: 2, why: 'die Kartoffel = la patata. En Austria y en otras regiones también se dice der Erdapfel, literalmente manzana de tierra.' },
+    { q: 'das Abendbrot', options: ['una cena sencilla, normalmente con pan', 'la última barra de la panadería', 'un pan dulce de postre', 'un tentempié nocturno en un bar'], a: 0, why: 'das Abendbrot, literalmente pan de la noche, es una cena sencilla, normalmente pan con embutido y queso.' },
+    { q: 'der Eintopf', options: ['una maceta', 'un guiso espeso hecho en una sola olla', 'una ración individual', 'una tetera'], a: 1, why: 'der Eintopf, literalmente una olla, es un guiso contundente en el que todo se cocina junto.' },
+    { q: 'Senf: ¿cuál es el artículo correcto?', options: ['die', 'das', 'der', 'cambia según la región'], a: 2, why: 'der Senf = la mostaza. Seinen Senf dazugeben significa dar tu opinión cuando nadie te la ha pedido.' },
+  ],
+  pairs: [
+    ['die Brezel', 'el pretzel'],
+    ['das Brötchen', 'el panecillo'],
+    ['die Spätzle', 'los fideos de huevo'],
+    ['der Kuchen', 'el pastel'],
+    ['die Schorle', 'zumo o vino con agua con gas'],
+    ['der Aufschnitt', 'el embutido en lonchas'],
+    ['die Kartoffel', 'la patata'],
+    ['der Senf', 'la mostaza'],
+  ],
+  related: ['german-compounds', 'de-articles-sheet', 'untranslatable-german'],
+};

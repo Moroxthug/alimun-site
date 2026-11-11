@@ -64,3 +64,7 @@ Smoke test (`scripts/ci/smoke-prod.sh`): all pass.
 - Both cron endpoints still return 401 without the secret. With `CRON_SECRET` they return 200, so this check ran each cron once, as the daily schedule does.
 
 The Phase 2 code fixes reach production when PR #2 is merged.
+
+## 2026-11-07 — Teacher applications backfilled
+
+Inserted `teacher_profiles` rows (status `pending`, community tier, rate 22) for flavianogueira2203@gmail.com and manouzi622@gmail.com from `raw_user_meta_data.teacher_application`, after the owner's yes. Undo: `delete from public.teacher_profiles where status = 'pending' and user_id in (select id from auth.users where email in ('flavianogueira2203@gmail.com','manouzi622@gmail.com'));`

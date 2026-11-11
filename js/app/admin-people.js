@@ -8,7 +8,7 @@
                               suspend or reinstate one or several (with the emails of /api/admin/teacher set-status)
    #/teachers/<id>            a teacher's file: profile, languages, rate and level, classes, availability, reviews,
                               payouts; status; email them; open their dashboard read-only
-   View-as opens /app/preview?as=<id> or /app/teach?as=<id>, where js/app/data.js blocks every write. */
+   View-as opens /app?as=<id> or /app/teach?as=<id>, where js/app/data.js blocks every write. */
 (function () {
   'use strict';
   var A = null, root = null, ST = null, TE = null, EMAILS = {}, FILE = null;
@@ -23,6 +23,10 @@
   var DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   function esc(s) { return A.esc(s); }
+  /* A plan given without payment (student_profiles.plan_given_until) */
+  function givenOn(s) { var u = s && s.plan_given_until ? Date.parse(s.plan_given_until) : NaN; return isFinite(u) && u > Date.now(); }
+  function payLine(s) { return PAY[s.stripe_subscription_status] || (givenOn(s) ? 'given until ' + day(s.plan_given_until) : s.plan_given_until ? 'given plan ended ' + day(s.plan_given_until) : ''); }
+  function dateInput(iso) { if (!iso) return ''; var d = new Date(iso); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
   function real() { return A.mode() === 'real'; }
   function day(d) { return A.fmt(d, { day: 'numeric', month: 'short', year: 'numeric' }); }
   function opt(v, label, cur) { return '<option value="' + esc(v) + '"' + (String(v) === String(cur == null ? '' : cur) ? ' selected' : '') + '>' + esc(label) + '</option>'; }
@@ -54,7 +58,9 @@
       enrollments: s.enrolled_cohort_id ? [{ id: 'e1', status: 'active', enrolled_at: ago(30), cohorts: cohortOf(ST.cohorts, s.enrolled_cohort_id) }] : [],
       submissions: [{ status: 'graded', score: 82, submitted_at: ago(4), assignments: { title: 'Ein Brief an den Vermieter' } }, { status: 'pending', score: null, submitted_at: ago(1), assignments: { title: 'Mein Wochenende' } }],
       notes: [{ feedback_text: 'Very good role play with the landlord.', is_private: false, created_at: ago(6) }, { feedback_text: 'Moving flat this month, a little tired.', is_private: true, created_at: ago(2) }],
-      activity: act, cards: cards, oto: [] };
+      activity: act, cards: cards, oto: [],
+      tutor: { free_seconds: 330, plan_seconds: 2700, plan_granted: 3600, plan_period: new Date().toISOString().slice(0, 7), credit_seconds: 0 },
+      tutorLog: [{ seconds: -270, bucket: 'free', reason: 'use', created_at: ago(2) }, { seconds: -900, bucket: 'plan', reason: 'use', created_at: ago(3) }, { seconds: 3600, bucket: 'plan', reason: 'plan_month', note: new Date().toISOString().slice(0, 7), created_at: ago(20) }, { seconds: 600, bucket: 'free', reason: 'free_grant', created_at: ago(21) }] };
   }
   function sampleTeachers() {
     var now = Date.now(), ago = function (d) { return new Date(now - d * DAY).toISOString(); };
@@ -105,7 +111,8 @@
     return ST.students.filter(function (s) {
       if (q && [s.full_name, EMAILS[s.user_id], s.language].join(' ').toLowerCase().indexOf(q) < 0) return false;
       if (SF.plan === 'paying' && s.stripe_subscription_status !== 'active') return false;
-      if (SF.plan && SF.plan !== 'paying' && s.tier !== SF.plan) return false;
+      if (SF.plan === 'given' && !givenOn(s)) return false;
+      if (SF.plan && SF.plan !== 'paying' && SF.plan !== 'given' && s.tier !== SF.plan) return false;
       if (SF.lang && s.language !== SF.lang) return false;
       if (SF.klass === 'in' && !s.enrolled_cohort_id) return false;
       if (SF.klass === 'none' && s.enrolled_cohort_id) return false;
@@ -118,7 +125,7 @@
       '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/students/invite">Invite a student</a><a class="btn btn--ghost btn--sm" href="#/students/signups">Email signups</a></div></div>' +
       '<div class="grid rise"><section class="card span-12" style="--i:0"><div class="ad-filters">' +
         '<input class="st-in" type="search" data-sf="q" placeholder="Search by name, email or language" value="' + esc(SF.q) + '" aria-label="Search">' +
-        '<select class="st-in" data-sf="plan" aria-label="Plan">' + opt('', 'Every plan', SF.plan) + opt('paying', 'Active subscription', SF.plan) + Object.keys(PLANS).map(function (k) { return opt(k, PLANS[k], SF.plan); }).join('') + '</select>' +
+        '<select class="st-in" data-sf="plan" aria-label="Plan">' + opt('', 'Every plan', SF.plan) + opt('paying', 'Active subscription', SF.plan) + opt('given', 'Plan given without payment', SF.plan) + Object.keys(PLANS).map(function (k) { return opt(k, PLANS[k], SF.plan); }).join('') + '</select>' +
         '<select class="st-in" data-sf="lang" aria-label="Language">' + opt('', 'Every language', SF.lang) + langs.map(function (l) { return opt(l, l, SF.lang); }).join('') + '</select>' +
         '<select class="st-in" data-sf="klass" aria-label="Class">' + opt('', 'In a class or not', SF.klass) + opt('in', 'In a class', SF.klass) + opt('none', 'Not in a class', SF.klass) + '</select></div>' +
         (ST.noEmails ? '<p class="t-small st-msg is-bad">Emails could not be loaded, so the search covers names and languages only.</p>' : '') +
@@ -129,7 +136,7 @@
     if (!list.length) return '<p class="t-body" style="margin-top:12px">No student matches.</p>';
     return list.slice(0, 300).map(function (s) {
       var co = cohortOf(ST.cohorts, s.enrolled_cohort_id);
-      var bits = [s.language + ' ' + (s.level || ''), PLANS[s.tier] || s.tier, PAY[s.stripe_subscription_status] || '', co ? 'in ' + A.className(co) : 'no class', 'joined ' + day(s.created_at)].filter(Boolean);
+      var bits = [s.language + ' ' + (s.level || ''), PLANS[s.tier] || s.tier, payLine(s), co ? 'in ' + A.className(co) : 'no class', 'joined ' + day(s.created_at)].filter(Boolean);
       return '<a class="tt-row tt-row--wide" href="#/students/' + esc(s.id) + '"><span class="tt-row__time">' + esc(s.level || '') + '</span><span><b>' + esc(s.full_name || '') + '</b><small>' + esc((EMAILS[s.user_id] ? EMAILS[s.user_id] + '. ' : '') + bits.join(', ')) + '</small></span></a>';
     }).join('') + (list.length > 300 ? '<p class="t-small">Showing the first 300. Narrow the search to see the rest.</p>' : '');
   }
@@ -138,14 +145,16 @@
     var days = {}; f.activity.forEach(function (a) { days[String(a.updated_at).slice(0, 10)] = true; });
     var last = f.activity[0] && f.activity[0].updated_at, learned = f.cards.filter(function (c) { return c.box >= 3; }).length;
     var html = back('#/students', 'Students') + '<div class="view__head"><div><h1 class="t-h1">' + esc(p.full_name || '') + '</h1><p class="t-lead">' + esc([email, p.language + ' ' + (p.level || ''), 'Joined ' + day(p.created_at)].filter(Boolean).join('. ') + '.') + '</p></div>' +
-      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="/app/preview?as=' + esc(p.id) + '" target="_blank" rel="noopener">Open their dashboard, read-only</a></div></div><div class="grid rise">';
+      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="/app?as=' + esc(p.id) + '" target="_blank" rel="noopener">Open their dashboard, read-only</a></div></div><div class="grid rise">';
     var paid = p.stripe_subscription_status === 'active';
     html += '<form class="card span-7 st-form" style="--i:0;max-width:none;margin-top:0" data-sfile="' + esc(p.id) + '"><h2 class="t-h2">Plan and level</h2>' +
-      '<p class="t-body">' + esc((PLANS[p.tier] || p.tier) + '. ' + (PAY[p.stripe_subscription_status] || 'No subscription') + '.') + '</p>' +
+      '<p class="t-body">' + esc((PLANS[p.tier] || p.tier) + '. ' + A.cap(payLine(p) || 'no subscription') + '.') + '</p>' +
       '<div class="st-row">' + field('Level', '<select class="st-in" name="level">' + LEVELS.map(function (l) { return opt(l, l, p.level); }).join('') + '</select>') +
         field('Goal', '<select class="st-in" name="goal_track">' + Object.keys(GOALS).map(function (g) { return opt(g, GOALS[g], p.goal_track); }).join('') + '</select>') + '</div>' +
       field('Plan', '<select class="st-in" name="tier">' + Object.keys(PLANS).map(function (k) { return opt(k, PLANS[k], p.tier); }).join('') + '</select>',
         paid ? 'This student pays through Stripe: changing the plan here does not change what they pay, and the next payment update sets it back.' : 'Changing the plan here does not charge or refund anything.') +
+      field('Give it without payment, until', '<input class="st-in" type="date" name="given_until" min="' + esc(dateInput(new Date().toISOString())) + '" value="' + esc(givenOn(p) ? dateInput(p.plan_given_until) : '') + '">',
+        'With a date, the plan above works for classes, live lessons, 1 on 1 and tutor minutes until the end of that day, with no Stripe payment. Leave it empty to stop a given plan.') +
       '<label class="st-day"><input type="checkbox" name="tell" checked><span>Email them when their plan changes to a paid plan</span></label>' +
       '<div class="btn-row"><button class="btn btn--primary btn--sm" type="submit">Save</button></div><p class="t-small st-msg" data-msg="sfile" aria-live="polite"></p></form>';
     html += '<section class="card span-5" style="--i:1"><h2 class="t-h2">Activity</h2><div class="tt-week">' +
@@ -166,8 +175,49 @@
     html += '<section class="card span-6" style="--i:4"><h2 class="t-h2">Teachers’ notes</h2>' + (f.notes.length ? '<div class="tt-week">' + f.notes.map(function (n) {
       return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(day(n.created_at)) + '</span><span><span class="ts-note__text" dir="auto">' + esc(n.feedback_text) + '</span><small>' + esc(n.is_private ? 'Private: the student does not see it' : 'The student sees it') + '</small></span></div>';
     }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No notes yet.</p>') + '</section>';
-    html += mailForm(p.id, 'span-6', 5);
+    html += tutorCard(p.id, f);
+    if (window.AlimunAdminActivity && p.user_id) html += window.AlimunAdminActivity.timelineCard(A, p.user_id, 6);
+    html += mailForm(p.id, 'span-12', 7);
     return html + sampleLine() + '</div>';
+  }
+  /* Tutor time (docs/AI_TUTOR_PLAN.md, part 1): the stored balance, its latest changes, and adding or removing minutes
+     (added time, which never expires; bought time expires 12 months after the purchase, part 6) through /api/tutor?action=admin-grant */
+  var LEDGER = { free_grant: 'Free minutes given', plan_month: 'Plan minutes for the month', plan_change: 'Plan changed', expire: 'Minutes ended',
+    use: 'Used with the tutor', purchase: 'Bought', refund: 'Refunded', admin: 'Changed by an admin' };
+  var BUCKET = { free: 'free minutes', plan: 'plan minutes', credit: 'added or bought' };
+  function mins(sec) { var m = Math.round(Math.abs(sec || 0) / 6) / 10; return (sec < 0 ? '−' : '') + m + ' min'; }
+  function ledgerName(l) { return l.reason === 'expire' ? (l.bucket === 'credit' ? 'Bought minutes expired after 12 months' : 'Last month’s plan minutes ended') : LEDGER[l.reason] || l.reason; }
+  function tutorCard(id, f) {
+    var tt = f.tutor, log = f.tutorLog || [];
+    var html = '<section class="card span-6" style="--i:5" aria-labelledby="h-tutor"><h2 class="t-h2" id="h-tutor">Tutor time</h2>';
+    if (!tt) html += '<p class="t-body" style="margin-top:8px">They have not opened the tutor yet; their free 10 minutes are given the first time they do.</p>';
+    else html += '<div class="tt-week">' + row(mins(tt.free_seconds + tt.plan_seconds + tt.credit_seconds), 'Left in all') + row(mins(tt.free_seconds), 'Free minutes') +
+      row(mins(tt.plan_seconds), 'Plan minutes for ' + (tt.plan_period || 'this month') + ', of ' + mins(tt.plan_granted)) + row(mins(tt.credit_seconds), 'Added or bought (bought minutes expire after 12 months)') + '</div>';
+    if (log.length) html += '<h3 class="t-h3" style="margin-top:16px">Latest changes</h3><div class="tt-week">' + log.map(function (l) {
+      return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc((l.seconds > 0 ? '+' : '') + mins(l.seconds)) + '</span><span><b>' + esc(ledgerName(l)) + '</b><small>' + esc((BUCKET[l.bucket] || l.bucket) + ', ' + day(l.created_at) + (l.note ? ', ' + l.note : '')) + '</small></span></div>';
+    }).join('') + '</div>';
+    html += '<form class="st-form" style="max-width:none;margin-top:16px" data-tgrant="' + esc(id) + '">' +
+      '<div class="st-row">' + field('Minutes', '<input class="st-in" type="number" name="minutes" min="-600" max="600" step="1" required>', 'Up to 600. A negative number removes added or bought minutes, never below zero.') +
+      field('Why', '<input class="st-in" name="note" maxlength="300" dir="auto">') + '</div>' +
+      '<div class="btn-row"><button class="btn btn--ghost btn--sm" type="submit">Change their tutor time</button></div><p class="t-small st-msg" data-msg="tgrant" aria-live="polite"></p></form>';
+    return html + '</section>';
+  }
+  function grantTutor(form) {
+    var id = form.getAttribute('data-tgrant'), fd = new FormData(form), minutes = parseInt(fd.get('minutes'), 10), note = String(fd.get('note') || '').trim();
+    if (!minutes || Math.abs(minutes) > 600) { say('[data-msg="tgrant"]', 'Write a whole number of minutes between −600 and 600, not 0.', true); return; }
+    if (!real()) { say('[data-msg="tgrant"]', 'Saved. (Sample: nothing was saved.)'); return; }
+    var btn = form.querySelector('[type="submit"]'); btn.disabled = true;
+    window.AlimunData.adminTutorGrant(id, minutes, note).then(function (r) {
+      btn.disabled = false;
+      var done = r.added_seconds ? (r.added_seconds > 0 ? 'Added ' : 'Removed ') + mins(Math.abs(r.added_seconds)) + '.' : 'Nothing changed: they have no added or bought minutes to remove.';
+      /* Only the tutor card is drawn again, with the balance and changes read back from the database */
+      return window.AlimunData.adminStudentFile(id).then(function (f) {
+        FILE = f;
+        var card = root.querySelector('[aria-labelledby="h-tutor"]');
+        if (card) card.outerHTML = tutorCard(id, f);
+        say('[data-msg="tgrant"]', done);
+      });
+    }, function (e) { btn.disabled = false; say('[data-msg="tgrant"]', 'That did not work: ' + ((e && e.message) || 'please try again') + '.', true); });
   }
   function row(big, small) { return '<div class="tt-row ad-kv"><span class="tt-row__time">' + esc(big) + '</span><span><small>' + esc(small) + '</small></span></div>'; }
   function mailForm(id, span, i) {
@@ -177,8 +227,13 @@
   }
   function saveStudent(form) {
     var id = form.getAttribute('data-sfile'), s = ST.students.filter(function (x) { return x.id === id; })[0], fd = new FormData(form);
-    var patch = { level: fd.get('level'), goal_track: fd.get('goal_track'), tier: fd.get('tier') }, tell = !!fd.get('tell');
-    var changed = patch.tier !== (FILE.profile || s).tier;
+    var gu = String(fd.get('given_until') || ''), guMs = gu ? new Date(gu + 'T23:59:59').getTime() : NaN;
+    if (gu && !(guMs > Date.now())) { say('[data-msg="sfile"]', 'Choose a date from today on, or leave it empty.', true); return; }
+    var patch = { level: fd.get('level'), goal_track: fd.get('goal_track'), tier: fd.get('tier'), plan_given_until: gu ? new Date(guMs).toISOString() : null }, tell = !!fd.get('tell');
+    if (gu && (patch.tier === 'free' || patch.tier === 'waitlist')) { say('[data-msg="sfile"]', 'Choose the plan to give, not Free or Waiting list.', true); return; }
+    var prev = FILE.profile || s;
+    if (!gu && !prev.plan_given_until) delete patch.plan_given_until;
+    var changed = patch.tier !== prev.tier || (gu && !givenOn(prev));
     var done = function (note) { Object.assign(s, patch); Object.assign(FILE.profile, patch); say('[data-msg="sfile"]', 'Saved.' + (note || '')); };
     if (!real()) { done(' (sample: nothing was saved)'); return; }
     var btn = form.querySelector('[type="submit"]'); btn.disabled = true;
@@ -218,11 +273,12 @@
   function inviteView(role) {
     return back(role === 'teacher' ? '#/teachers' : '#/students', role === 'teacher' ? 'Teachers' : 'Students') +
       '<div class="view__head"><div><h1 class="t-h1">Invite ' + (role === 'teacher' ? 'a teacher' : 'a student') + '</h1><p class="t-lead">' + esc(role === 'teacher'
-        ? 'The account is created as an approved teacher and they get an email with a link to sign in. They set a password in their Settings.'
-        : 'The account is created as a student and they get an email with a link to sign in, then take the level test.') + '</p></div></div>' +
+        ? 'The account is created as an approved teacher and they get an email with a link to choose their password.'
+        : 'The account is created as a student and they get an email with a link to choose their password, then take the level test.') + '</p></div></div>' +
       '<div class="grid rise"><form class="card span-8 st-form" style="--i:0;max-width:none;margin-top:0" data-invite="' + role + '">' +
       field('Email', '<input class="st-in" type="email" name="email" maxlength="200" required autocomplete="off">') +
       field('Full name', '<input class="st-in" name="full_name" maxlength="100" required>') +
+      field('Their language', '<select class="st-in" name="ui_lang">' + [['en', 'English'], ['es', 'Spanish'], ['fr', 'French'], ['de', 'German'], ['pt', 'Portuguese'], ['it', 'Italian'], ['zh', 'Chinese'], ['ar', 'Arabic'], ['ma', 'French (Morocco)']].map(function (l) { return opt(l[0], l[1], 'en'); }).join('') + '</select>', 'The invitation and their later emails are written in it. They can change it by opening their dashboard in another language.') +
       (role === 'teacher' ? '<div class="st-row">' + field('Language they teach', '<select class="st-in" name="language">' + LANGS.map(function (l) { return opt(l, l, 'English'); }).join('') + '</select>') +
         field('Specialty', '<input class="st-in" name="specialty" maxlength="200">', 'Optional') + '</div>' : '') +
       '<div class="btn-row"><button class="btn btn--primary" type="submit">Create the account and send the invitation</button></div><p class="t-body st-msg" data-msg="inv" aria-live="polite"></p><div data-invlink></div></form>' +
@@ -230,13 +286,13 @@
   }
   function invite(form) {
     var fd = new FormData(form), role = form.getAttribute('data-invite');
-    var body = { role: role, email: String(fd.get('email') || '').trim(), full_name: String(fd.get('full_name') || '').trim(), language: fd.get('language') || '', specialty: String(fd.get('specialty') || '').trim() };
+    var body = { role: role, email: String(fd.get('email') || '').trim(), full_name: String(fd.get('full_name') || '').trim(), language: fd.get('language') || '', specialty: String(fd.get('specialty') || '').trim(), ui_lang: fd.get('ui_lang') || 'en' };
     if (!body.email || !body.full_name) { say('[data-msg="inv"]', 'Write the email address and the name.', true); return; }
     if (!real()) { say('[data-msg="inv"]', 'Sample: no account was created and nothing was sent.'); return; }
     var btn = form.querySelector('[type="submit"]'); btn.disabled = true; say('[data-msg="inv"]', 'Creating the account…');
     window.AlimunData.adminInvite(body).then(function (r) {
       btn.disabled = false; form.reset(); ST = null; TE = null;
-      say('[data-msg="inv"]', r.emailed ? 'Done. ' + body.full_name + ' has been emailed a link to sign in.' : 'The account was created, but the email could not be sent. Send them this sign-in link yourself; it works once and expires after a day:');
+      say('[data-msg="inv"]', r.emailed ? 'Done. ' + body.full_name + ' has been emailed a link to sign in.' : 'The account was created, but the email could not be sent. Send them this sign-in link yourself; it works once and only for a limited time:');
       if (!r.emailed && r.link) {
         var box = root.querySelector('[data-invlink]');
         box.innerHTML = '<input class="st-in" readonly value="' + esc(r.link) + '" aria-label="Sign-in link"><div class="btn-row"><button class="btn btn--ghost btn--sm" type="button" data-copy>Copy the link</button></div>';
@@ -330,6 +386,7 @@
     html += '<section class="card span-6" style="--i:3"><h2 class="t-h2">Reviews</h2>' + (f.reviews.length ? '<div class="tt-week">' + f.reviews.map(function (r) { return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(r.rating + ' of 5') + '</span><span><span class="ts-note__text" dir="auto">' + esc(r.review_text || '') + '</span><small>' + esc(day(r.created_at)) + '</small></span></div>'; }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No reviews yet.</p>') +
       '<h3 class="t-h3" style="margin-top:16px">Payouts</h3>' + (f.payouts.length ? '<div class="tt-week">' + f.payouts.map(function (x) { return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'EUR' }).format(x.amount_eur)) + '</span><span><b>' + esc(day(x.period_start + 'T12:00:00') + ' – ' + day(x.period_end + 'T12:00:00')) + '</b><small>' + esc(x.status) + '</small></span></div>'; }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No payouts yet.</p>') + '</section>';
     html += mailForm(p.id, 'span-6', 4);
+    if (window.AlimunAdminActivity && p.user_id) html += window.AlimunAdminActivity.timelineCard(A, p.user_id, 5);
     return html + sampleLine() + '</div>';
   }
   function saveTeacher(form) {
@@ -370,6 +427,7 @@
       else if (f.hasAttribute('data-tfile')) { e.preventDefault(); saveTeacher(f); }
       else if (f.hasAttribute('data-mail')) { e.preventDefault(); sendMail(f); }
       else if (f.hasAttribute('data-invite')) { e.preventDefault(); invite(f); }
+      else if (f.hasAttribute('data-tgrant')) { e.preventDefault(); grantTutor(f); }
     });
     root.addEventListener('click', function (e) {
       var b = e.target.closest('[data-ask],[data-ask1],[data-do],[data-cancel],[data-csv],[data-copy]');

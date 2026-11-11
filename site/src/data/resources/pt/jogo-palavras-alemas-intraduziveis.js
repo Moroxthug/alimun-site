@@ -1,0 +1,37 @@
+// Resource: game. German words with no one-word Portuguese translation. German words stay German; options and explanations are in Portuguese. Meanings checked against Duden and DWDS.
+export default {
+  key: 'untranslatable-german', site: 'pt', slug: 'jogo-palavras-alemas-intraduziveis', kind: 'game', course: 'German', level: 'Todos os níveis',
+  draw: 'ghost', tint: 'mint', published: '2026-10-27',
+  title: 'Palavras alemãs intraduzíveis: o jogo',
+  metaTitle: 'Jogo de palavras alemãs intraduzíveis: Fernweh e mais – Alimun',
+  desc: 'Um jogo grátis com palavras alemãs que não têm tradução em uma só palavra: Fernweh, Kummerspeck, Fremdschämen, Feierabend. Adivinhe o que cada uma significa.',
+  lead: 'O alemão tem uma palavra para o peso que você ganha comendo quando está triste. Adivinhe o significado de dez palavras que em português pedem uma frase inteira.',
+  instructions: 'O que a palavra significa?',
+  about: [
+    'Todo idioma guarda em uma única palavra ideias que outros precisam explicar com uma frase, como a nossa saudade. O alemão faz isso com frequência, porque pode juntar palavras livremente.',
+    'Essas palavras são reais e usadas todos os dias, o que faz delas um ótimo jeito de soar natural e de puxar conversa com quem fala alemão.',
+  ],
+  items: [
+    { q: 'Fernweh', options: ['vontade de estar em lugares distantes', 'medo de voar', 'saudade de casa', 'uma viagem longa'], a: 0, why: 'Fernweh é o contrário de Heimweh (saudade de casa): você tem vontade de estar longe.' },
+    { q: 'Kummerspeck', options: ['uma música triste', 'o peso que se ganha comendo quando se está triste', 'bacon velho', 'mau humor de manhã'], a: 1, why: 'Literalmente bacon da tristeza: os quilos a mais de quem come para se consolar.' },
+    { q: 'Fremdschämen', options: ['ter vergonha de estranhos', 'ter vergonha do próprio sotaque', 'sentir vergonha pelos outros', 'medo de estrangeiros'], a: 2, why: 'Fremdschämen é sentir vergonha alheia por alguém que está passando vergonha.' },
+    { q: 'Feierabend', options: ['uma festa de aniversário', 'um feriado', 'a véspera de Ano-Novo', 'o fim do expediente'], a: 3, why: 'Feierabend é o fim do dia de trabalho e o tempo livre que vem depois: Schönen Feierabend!' },
+    { q: 'Verschlimmbessern', options: ['piorar algo tentando melhorar', 'consertar algo', 'reclamar muito', 'esquecer um compromisso'], a: 0, why: 'Uma mistura de verschlimmern (piorar) e verbessern (melhorar).' },
+    { q: 'Torschlusspanik', options: ['medo de portas fechadas', 'o medo de que o tempo para fazer algo esteja acabando', 'pânico antes de um jogo de futebol', 'medo de palco'], a: 1, why: 'Literalmente pânico do portão fechando: a preocupação de que já está ficando tarde demais, por exemplo para casar ou mudar de carreira.' },
+    { q: 'Treppenwitz', options: ['uma piada sobre escadas', 'um tombo desajeitado', 'a resposta perfeita que só vem tarde demais', 'uma piada que ninguém entende'], a: 2, why: 'Literalmente piada da escada: a resposta esperta que só aparece quando você já está indo embora.' },
+    { q: 'Schnapsidee', options: ['um ótimo plano de negócios', 'uma receita de licor', 'uma ressaca', 'uma ideia maluca que parece boa na hora'], a: 3, why: 'Uma ideia de schnaps é um plano sem pé nem cabeça, daqueles que surgem depois de uma bebida.' },
+    { q: 'Ohrwurm', options: ['uma música que não sai da cabeça', 'uma infecção no ouvido', 'um vizinho barulhento', 'um sussurro'], a: 0, why: 'Literalmente minhoca de ouvido: uma música chiclete que fica tocando na sua cabeça.' },
+    { q: 'Backpfeifengesicht', options: ['um rosto alegre', 'uma cara que parece pedir um tapa', 'um rosto coberto de farinha', 'uma cara de bebê'], a: 1, why: 'Uma palavra grosseira e engraçada para uma cara que dá vontade de estapear. Melhor guardar para brincadeiras entre amigos.' },
+  ],
+  pairs: [
+    ['Fernweh', 'Vontade de estar em lugares distantes'],
+    ['Kummerspeck', 'O peso de comer quando se está triste'],
+    ['Fremdschämen', 'Sentir vergonha alheia'],
+    ['Feierabend', 'O fim do expediente'],
+    ['Verschlimmbessern', 'Piorar tentando melhorar'],
+    ['Torschlusspanik', 'O medo de que o tempo esteja acabando'],
+    ['Treppenwitz', 'A resposta perfeita, pensada tarde demais'],
+    ['Ohrwurm', 'Uma música que não sai da cabeça'],
+  ],
+  related: ['german-idioms', 'german-compounds', 'false-friends'],
+};

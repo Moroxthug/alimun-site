@@ -1,217 +1,281 @@
-// English B2, unit 7 (docs/BOOKS.md). Draft for native-teacher review.
+// English B2, unit 7, second edition (docs/LESSONS_PLAN.md, "Books, second edition"). Draft for native-teacher review.
+// Each lesson: a full explanation first (the rule in plain words, why, many examples, the usual mistakes, a text that
+// uses it), then fewer exercises from controlled to free, one speaking task, and one task in the format of B2 First.
+// Builds on B1 unit 13 (must, might, can't and must have): here the full range of certainty, past deduction in depth
+// and speculating in the exam.
 export const UNIT = {
   id: 'u7',
   title: 'Mysteries and deductions',
-  goal: 'Speculate about the present and the past.',
+  goal: 'Say exactly how certain you are, reason about what happened in the past, and speculate fluently in conversation and in the exam.',
   art: 'alien',
-  tags: { skills: ['grammar', 'speaking', 'reading'], topics: ['modals-of-deduction', 'speculating', 'mysteries'], goals: ['foundations'] },
+  tags: { skills: ['grammar', 'vocabulary', 'speaking', 'reading'], topics: ['modals-of-deduction', 'certainty', 'past-deduction', 'speculating', 'mysteries'], goals: ['foundations'] },
   pages: [
+    /* ------------------------------------------------------------------ Lesson 1 */
     {
       id: 'p1',
-      title: 'It must be true',
-      about: 'Say how sure you are about the present with must, might, may, could and can’t.',
-      art: 'cat',
+      title: 'Bound to, likely to, no way',
+      about: 'Show exactly how certain you are, from completely sure to almost impossible, with more than modal verbs.',
+      art: 'alien',
       spreads: [
         [
-          { t: 'text', md: 'When you are not sure about something, use a modal verb to show how certain you are. **Must** means you are almost sure it is true. **Can’t** means you are almost sure it is not true. **Might**, **may** and **could** mean it is possible.' },
+          { t: 'text', md: 'At B1 you learned to guess with **must**, **might** and **can’t**. Real speakers have many more ways to say how sure they are, and they choose them carefully, because certainty is part of the message. *It will rain* and *It may well rain* do not say the same thing.\n\nThink of certainty as a scale. At the top are expressions for things you are sure of: **be bound to**, **be certain to**, **definitely**. In the middle are expressions for things that are probable or possible: **be likely to**, **may well**, **could easily**, **probably**, **possibly**. At the bottom are expressions for things you think will not happen: **be unlikely to**, **probably won’t**, **there’s no way**.' },
+          { t: 'table', caption: 'The scale of certainty', explain: ['head', 'col0'], head: ['How sure', 'Expression', 'Example'], rows: [
+            ['certain', 'be bound to / be certain to', 'She’s bound to win; she’s much faster than the others.'],
+            ['very probable', 'be likely to / may well', 'Prices are likely to rise. It may well snow tonight.'],
+            ['possible', 'could easily / might / possibly', 'The meeting could easily run late.'],
+            ['not probable', 'be unlikely to / probably won’t', 'He’s unlikely to reply before Monday.'],
+            ['almost impossible', 'there’s no way / can’t possibly', 'There’s no way they’ll finish today.'],
+          ] },
+          { t: 'tip', art: 'owl', md: '**Be bound to** and **be likely to** are followed by the **base form** of the verb: *bound to **win***, *likely to **rise***. And the subject is the person or thing that will do the action: *She’s likely to be late*, not *It’s likely she to be late*.' },
+        ],
+        [
+          { t: 'text', md: 'Adverbs of certainty need a careful position. With a normal verb they go **before** it: *She **probably** knows.* With **be** and with auxiliaries they go **after** the first auxiliary: *She’s **definitely** coming. They’ll **probably** be late.* In negative sentences, **probably** and **definitely** go **before** the negative: *He **probably won’t** come*, not *He won’t probably come*.\n\nYou can also use **It** + **be** + adjective + **that**: *It’s **likely that** the shop will close. It’s **unlikely that** we’ll see her again.* This is more formal and is common in essays and reports.' },
           { t: 'examples', items: [
-            { s: 'You’ve been travelling all day. You **must be** exhausted.', n: 'I am almost sure, because of what I know.' },
-            { s: 'Someone’s at the door. It **might be** the delivery.', n: 'Possible, but I do not know.' },
-            { s: 'He **can’t be** hungry. He’s just had lunch.', n: 'I am almost sure it is not true.' },
-            { s: 'Where’s Priya? She **could be** stuck in traffic.', n: '*Could* here is a possibility, like *might*.' },
+            { s: 'You’re **bound to** feel nervous before the interview.', n: 'Certain, and normal: everybody does.' },
+            { s: 'The train **may well** be delayed because of the storm.', n: '*May well* = it is quite probable.' },
+            { s: 'He **probably won’t** remember my name.', n: '*Probably* before *won’t*.' },
+            { s: '**There’s no way** she said that. It doesn’t sound like her.', n: 'Informal: you think it is impossible.' },
+            { s: '**It’s unlikely that** the price will fall this year.', n: 'More formal, good for writing.' },
+            { s: 'We **could easily** get lost without a map.', n: 'A real, quite strong possibility.' },
+          ] },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['She is bound to winning.', 'She is bound to win.', '*Bound to* is followed by the base form.'],
+            ['He won’t probably come.', 'He probably won’t come.', 'In negatives, *probably* goes before *won’t*.'],
+            ['It’s likely to rain is good for farmers.', 'Rain is likely, which is good for farmers.', 'Do not use *it’s likely to* as the subject of a sentence.'],
+            ['There’s no way that it can be possibly true.', 'There’s no way that can be true.', '*No way* is already very strong; do not add *possibly*.'],
           ] },
         ],
         [
-          { t: 'table', caption: 'How sure are you?', explain: ['head', 'col0'], head: ['How sure?', 'Modal', 'Example'], rows: [
-            ['almost certain that it is true', 'must', 'She must be at home. Her lights are on.'],
-            ['possible', 'might / may / could', 'He might be in a meeting.'],
-            ['possible that it is not true', 'might not / may not', 'They may not know about the change.'],
-            ['almost certain that it is not true', 'can’t / couldn’t', 'That can’t be Joe. He’s in Spain.'],
+          { t: 'dialogue', title: 'Waiting for the results', lines: [
+            { who: 'Nina', s: 'The results are out tomorrow. I’m bound to have failed the maths paper.' },
+            { who: 'Paul', s: 'There’s no way you failed. You studied for weeks.' },
+            { who: 'Nina', s: 'Maybe, but the last question was really hard. I probably won’t get a top mark.' },
+            { who: 'Paul', s: 'You may well be surprised. Teachers are likely to be generous with that question if everyone found it difficult.' },
+            { who: 'Nina', s: 'I hope you’re right. It’s unlikely that I’ll sleep tonight, though.' },
           ] },
-          { t: 'text', md: 'For an action in progress now, use the modal + *be* + *-ing*: *She must be working late. They might be waiting outside.*' },
-          { t: 'tip', art: 'owl', md: 'The opposite of *must* in a deduction is *can’t*, not *mustn’t*. *Mustn’t* means that something is not allowed. Also compare *It couldn’t be him* (I am sure it is not him) with *It might not be him* (perhaps it is not him).' },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the best modal.', items: [
-            { q: 'Lena has three jobs. She ___ very busy.', o: ['must be', 'can’t be', 'mustn’t be'], why: 'Three jobs: you are almost sure she is busy.' },
-            { q: 'That ___ Martin’s car. His car is red, and this one is blue.', o: ['can’t be', 'must be', 'might be'], why: 'The colour is wrong, so you are sure it is not his.' },
-            { q: 'I’m not sure where Ali is. He ___ in the library.', o: ['might be', 'must be', 'can’t be'], why: 'You are not sure: a possibility.' },
-            { q: 'Listen! Someone ___ the piano upstairs.', o: ['must be playing', 'must play', 'can’t be playing'], why: 'You can hear it now: *must be* + *-ing* for an action in progress.' },
-            { q: 'The restaurant is empty on a Saturday night. The food ___ very good.', o: ['can’t be', 'must be', 'mustn’t be'], why: 'An empty restaurant suggests the food is not good. *Mustn’t* is not used for deduction.' },
+          { t: 'ex', kind: 'select', h: 'Choose the expression that fits the meaning in brackets.', items: [
+            { q: 'He trains every day, so he’s ___ do well in the race. (certain)', o: ['bound to', 'unlikely to', 'could easily'], why: '*Bound to* means you are certain.' },
+            { q: 'The weather ___ change this afternoon. (quite probable)', o: ['may well', 'can’t possibly', 'is bound'], why: '*May well* = quite probable.' },
+            { q: 'She’s ___ to call before ten; she never gets up early. (not probable)', o: ['unlikely', 'bound', 'certain'], why: '*Unlikely to* = probably not.' },
+            { q: '___ they’ll sell all the tickets in one day. (almost impossible)', o: ['There’s no way', 'It’s bound', 'They may well'], why: '*There’s no way* + clause = almost impossible.' },
           ] },
-        ],
-        [
-          { t: 'ex', kind: 'gap', h: 'Complete with must, might or can’t and the verb in brackets.', items: [
-            { q: 'You ___ (be) Sara’s brother. You look just like her!', a: ['must be'], why: 'The resemblance makes you almost sure.' },
-            { q: 'Take an umbrella. It ___ (rain) later.', a: ['might rain', 'may rain', 'could rain'], why: 'Possible, not certain: *might*, *may* or *could*.' },
-            { q: 'This bill ___ (be) right. We only had two coffees, and it says six.', a: ['can’t be', 'cannot be', 'couldn’t be'], why: 'You are sure the bill is wrong.' },
-            { q: 'It’s three in the morning in Tokyo, so Kenji ___ (sleep).', a: ['must be sleeping', 'might be sleeping', 'may be sleeping', 'could be sleeping'], why: 'An action in progress now: modal + *be* + *-ing*. *Must* if you are sure, *might* if you are less sure.' },
+          { t: 'ex', kind: 'fix', h: 'Each sentence has one mistake. Find it and fix it.', items: [
+            { s: 'Our team is bound to [winning] the cup this year.', a: ['win'], why: '*Bound to* + base form.' },
+            { s: 'They [won’t probably] arrive before midnight.', a: ['probably won’t', 'probably will not'], why: 'In negatives, *probably* comes before *won’t*.' },
+            { s: 'The new law is [likely being] popular with drivers.', a: ['likely to be'], why: '*Be likely to* + base form.' },
           ] },
         ],
         [
-          { t: 'dialogue', title: 'Lost keys', lines: [
-            { who: 'Inés', s: 'I can’t find my keys. They must be somewhere in the flat.' },
-            { who: 'Kwame', s: 'Have you checked your coat? They might be in the pocket.' },
-            { who: 'Inés', s: 'They can’t be in my coat. I wasn’t wearing it today.' },
-            { who: 'Kwame', s: 'Then they could be in the car. You drove to the shop, didn’t you?' },
-            { who: 'Inés', s: 'You’re right. They must be in the car!' },
+          { t: 'ex', kind: 'transform', h: 'In the format of the B2 First exam (Reading and Use of English Part 4): rewrite the sentence with the key word, so it means the same.', items: [
+            { q: 'I’m sure Anna will get the job.', cue: 'BOUND', a: ['Anna is bound to get the job.', 'Anna’s bound to get the job.'], why: '*Be bound to* = be certain to.' },
+            { q: 'It is not probable that the shop will open on Sunday.', cue: 'UNLIKELY', a: ['The shop is unlikely to open on Sunday.', 'It is unlikely that the shop will open on Sunday.'], why: '*Be unlikely to* + base form, or *it is unlikely that*.' },
+            { q: 'Perhaps the flight will be cancelled; it is quite probable.', cue: 'WELL', a: ['The flight may well be cancelled.', 'The flight might well be cancelled.'], why: '*May well* = quite probable.' },
           ] },
-          { t: 'ex', kind: 'spot', h: 'Tap the modal that shows the speaker is almost sure something is not true.', items: [
-            { s: 'They [can’t] be in my coat. I wasn’t wearing it today, so they must be somewhere else.', why: '*Can’t be*: almost sure it is not true. *Must be* is the opposite.' },
-            { s: 'He might be at the gym, but he [can’t] be at work. The office is closed today.', why: '*Might be* is a possibility. *Can’t be* means it is impossible.' },
+          { t: 'tip', art: 'owl', md: 'In **Part 4** you must use the key word **without changing it**, and write **between two and five words**. Contractions like *’s* count as words. Read the second sentence to the end: the words after the gap often decide the structure.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor, with natural stress on the certainty word.', tutor: 'omar', items: [
+            { a: 'She’s bound to win.' },
+            { a: 'It may well rain later.' },
+            { a: 'There’s no way they’ll finish today.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 2 */
     {
       id: 'p2',
-      title: 'It must have happened',
-      about: 'Make deductions about the past with must have, might have and can’t have.',
-      art: 'dog',
-      spreads: [
-        [
-          { t: 'text', md: 'To make a deduction about the **past**, use the modal + *have* + past participle. The meanings are the same as for the present: *must have* (almost sure), *might have*, *may have* or *could have* (possible), *can’t have* or *couldn’t have* (almost sure it did not happen).' },
-          { t: 'examples', items: [
-            { s: 'The streets are wet. It **must have rained** in the night.', n: 'I did not see it, but I am almost sure.' },
-            { s: 'She isn’t answering. She **might have gone** to bed early.', n: 'A possible explanation.' },
-            { s: 'They **can’t have seen** us. They didn’t even wave.', n: 'I am almost sure they did not see us.' },
-            { s: 'His eyes were red. He **must have been crying**.', n: 'An action in progress in the past: *must have been* + *-ing*.' },
-          ] },
-        ],
-        [
-          { t: 'table', caption: 'Deductions about the past', explain: ['head', 'col0', 'col1'], head: ['How sure?', 'Form', 'Example'], rows: [
-            ['almost certain that it happened', '*must have* + past participle', 'He must have missed the train.'],
-            ['possible', '*might / may / could have* + past participle', 'She might have forgotten.'],
-            ['almost certain that it did not happen', '*can’t / couldn’t have* + past participle', 'They can’t have seen us.'],
-          ] },
-          { t: 'tip', art: 'owl', md: '*Could have* has two uses. It can be a deduction: *She could have taken the bus* (perhaps she did). It can also be a possibility that did not happen: *You could have hurt yourself!* The context tells you which. In speech, *must have* sounds like “must’ve”, but never write *must of*.' },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the best form.', items: [
-            { q: 'The grass is wet. It ___ in the night.', o: ['must have rained', 'can’t have rained', 'must rain'], why: 'A past deduction you are almost sure of: *must have* + past participle.' },
-            { q: 'Ben ___ my email. He hasn’t replied, and he always replies quickly.', o: ['can’t have read', 'must have read', 'mustn’t have read'], why: 'He always replies, so you are almost sure he did not read it.' },
-            { q: 'I’m not sure how they got here. They ___ a taxi.', o: ['might have taken', 'must have taken', 'can’t have taken'], why: 'You are not sure: a possibility in the past.' },
-            { q: 'Her eyes were red. She ___.', o: ['must have been crying', 'must cry', 'can’t have cried'], why: 'Red eyes suggest an action in progress before: *must have been* + *-ing*.' },
-            { q: 'You ___ Eva at the party last night. She was in Rome all week.', o: ['can’t have seen', 'must have seen', 'might have seen'], why: 'She was in another city, so it is impossible.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'gap', h: 'Say the same thing with a past modal and the verb in brackets.', items: [
-            { q: 'I’m sure he forgot. → He ___ (forget).', a: ['must have forgotten', 'must’ve forgotten'], why: '*I’m sure* = *must have* + past participle.' },
-            { q: 'Perhaps they got lost. → They ___ (get) lost.', a: ['might have got', 'may have got', 'could have got'], why: '*Perhaps* = *might*, *may* or *could have*.' },
-            { q: 'I’m sure she didn’t write this. → She ___ (write) this.', a: ['can’t have written', 'couldn’t have written', 'cannot have written'], why: '*I’m sure … not* = *can’t have* + past participle.' },
-            { q: 'Perhaps he didn’t hear the alarm. → He ___ (hear) the alarm.', a: ['might not have heard', 'may not have heard'], why: '*Perhaps … not* = *might not have* or *may not have*.' },
-            { q: 'I’m sure they were waiting for hours. → They ___ (wait) for hours.', a: ['must have been waiting', 'must’ve been waiting'], why: 'An action in progress: *must have been* + *-ing*.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'She must have left her phone at home.', why: '*Must have* + past participle, then the object and the place.' },
-            { a: 'You can’t have seen my brother.', why: '*Can’t have* + past participle.' },
-            { a: 'He might have been working late.', why: '*Might have been* + *-ing* for an action in progress.' },
-          ] },
-        ],
-      ],
-    },
-    {
-      id: 'p3',
-      title: 'I bet…',
-      about: 'Use everyday expressions for guessing and speculating.',
-      art: 'parrot',
-      spreads: [
-        [
-          { t: 'text', md: 'Besides modal verbs, English has many expressions for guessing. Some show you are almost sure, and some show you doubt something. Many of them are informal and very common in conversation.' },
-          { t: 'table', caption: 'Expressions for speculating', explain: ['head', 'col1'], quiz: true, head: ['Expression', 'Meaning', 'Example'], rows: [
-            ['I bet…', 'I am fairly sure (informal)', 'I bet she’s forgotten our meeting.'],
-            ['There’s no way…', 'It is impossible (informal)', 'There’s no way he ran ten kilometres in twenty minutes.'],
-            ['It looks as if / as though…', 'This is how it seems from what I can see', 'It looks as if it’s going to snow.'],
-            ['be bound to…', 'It is certain to happen', 'They’re bound to be late. They always are.'],
-            ['I doubt (that)…', 'I do not think so', 'I doubt she’ll call back today.'],
-            ['I reckon…', 'I think (informal)', 'I reckon they’ve sold the house.'],
-            ['Chances are…', 'It is probable', 'Chances are he’s still at work.'],
-          ] },
-        ],
-        [
-          { t: 'tip', art: 'owl', md: '*I bet*, *I reckon* and *there’s no way* are informal: use them with friends, not in an essay. In formal writing, use *it is likely that* or *it is almost certain that*. After *it looks as if*, people often use a present tense: *It looks as if nobody is home.*' },
-          { t: 'ex', kind: 'match', h: 'Match each expression with its meaning.', pairs: [
-            ['I bet', 'I’m fairly sure'],
-            ['There’s no way', 'It’s impossible'],
-            ['be bound to', 'be certain to'],
-            ['I doubt', 'I don’t think'],
-            ['Chances are', 'It’s probable that'],
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the best expression.', items: [
-            { q: 'Look at those clouds. It looks ___ it’s going to rain.', o: ['as if', 'like as', 'so if'], why: '*It looks as if* + clause: what we can see suggests this.' },
-            { q: 'She’s been training for months. She’s ___ to win.', o: ['bound', 'doubt', 'reckon'], why: '*Be bound to* + infinitive: certain to happen.' },
-            { q: '___ he’s still asleep. He never gets up before ten.', o: ['I bet', 'I doubt', 'There’s no way'], why: 'The reason supports the guess, so *I bet*: I am fairly sure.' },
-            { q: '___ she wrote that report herself. It’s full of words she never uses.', o: ['There’s no way', 'I bet', 'Chances are'], why: 'The reason shows it is impossible: *there’s no way*.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'gap', h: 'Complete with one word.', items: [
-            { q: 'It looks as ___ nobody is at home.', a: ['if', 'though'], why: '*It looks as if* or *as though*.' },
-            { q: 'They’re ___ to notice the mistake. It’s on the first page.', a: ['bound', 'sure', 'certain'], why: '*Be bound to*: it is certain to happen.' },
-            { q: 'I ___ she’ll come. She said she was very busy.', a: ['doubt'], why: '*I doubt* + clause: I do not think it will happen.' },
-            { q: 'There’s no ___ he finished the marathon in two hours.', a: ['way'], why: '*There’s no way*: it is impossible.' },
-          ] },
-          { t: 'ex', kind: 'spot', h: 'Tap the expression that means the speaker is sure something will happen.', items: [
-            { s: 'Don’t worry about the tickets. They’re [bound to] have some left, although I doubt they’ll be cheap.', why: '*Bound to* means certain. *I doubt* shows the opposite: probably not.' },
-          ] },
-        ],
-      ],
-    },
-    {
-      id: 'p4',
-      title: 'The piano in the forest',
-      about: 'Read about an unsolved mystery and follow how people speculate about it.',
+      title: 'She must have been working',
+      about: 'Reason about the past with must have, could have, might not have and can’t have, in the continuous and the passive too.',
       art: 'ghost',
       spreads: [
         [
-          { t: 'reading', title: 'The piano in the forest', md: 'Early one October morning, two walkers in the hills above the small town of Carrow found something strange in the middle of the forest: an old piano, standing between the trees, more than a kilometre from the nearest road.\n\nThe piano was in surprisingly good condition. Its wood was dry, and there was no dust on the keys, so it can’t have been there for long. It had rained heavily two days earlier, which meant it must have arrived after the rain. But how? The path was too narrow for a car, and there were no tyre marks on the ground.\n\nLocal people soon had their theories. Some said a group of students must have carried it there as a joke, but a piano like that weighs more than two hundred kilograms. Others thought it might have been dropped from a helicopter, yet nobody in the town remembered hearing one. A musician from Carrow suggested that it could be part of an art project, and that the artist might be watching to see how people react.\n\nInside the piano, the police found only a folded note. It said, in neat handwriting, “Play something.” Three years later, nobody has explained how the piano got there. It is still in the forest, and on summer evenings people walk up the hill to play it.' },
+          { t: 'text', md: 'To guess about the past, put **have** + past participle after the modal: *She **must have** forgotten. He **can’t have** seen us.* You already know this from B1. At B2, three more things matter.\n\n**First, the full range.** **Must have** = almost sure. **May have**, **might have**, **could have** = possible. **Might not have** / **may not have** = possibly not. **Can’t have** / **couldn’t have** = almost sure it did not happen. Note that **could have** is a possibility, while **couldn’t have** is almost certainty: they are not opposites in strength.\n\n**Second, the continuous.** When you guess about an action **in progress** at a past moment, use **have been** + -ing: *He didn’t answer the phone. He **must have been driving**.*\n\n**Third, the passive.** When you guess about something done **to** someone or something, use **have been** + past participle: *The window is broken. It **must have been hit** by a ball.*' },
+          { t: 'table', caption: 'Past deduction', explain: ['head', 'col0'], head: ['Meaning', 'Form', 'Example'], rows: [
+            ['almost sure it happened', 'must have done', 'The ground is wet. It must have rained.'],
+            ['possible', 'may / might / could have done', 'She might have missed the bus.'],
+            ['possibly not', 'may not / might not have done', 'He might not have heard the message.'],
+            ['almost sure it did not happen', 'can’t / couldn’t have done', 'They can’t have left; their coats are here.'],
+            ['in progress (guess)', 'must / might have been doing', 'She must have been sleeping when I called.'],
+            ['done to it (guess)', 'must / might have been done', 'The car must have been stolen last night.'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'Do not mix **can’t have** with **needn’t have**. *You **can’t have** paid*, means *I am sure you did not pay*. *You **needn’t have** paid* means *you paid, but it was not necessary*. The first is a guess; the second is about necessity.' },
         ],
         [
-          { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
-            { q: 'The piano was found next to a road.', a: 'f', why: 'It was more than a kilometre from the nearest road.' },
-            { q: 'People think the piano arrived after the heavy rain.', a: 't', why: 'The wood was dry, so it must have arrived after the rain.' },
-            { q: 'Several people in the town heard a helicopter.', a: 'f', why: 'Nobody remembered hearing one.' },
-            { q: 'The police found out who wrote the note.', a: 'ng', why: 'The text describes the note, but it does not say if anyone knows who wrote it.' },
-            { q: 'People still play the piano today.', a: 't', why: 'On summer evenings people walk up the hill to play it.' },
+          { t: 'text', md: 'When we talk, we often give the **reason** for the guess straight after it, with *because*, *as*, *since*, or just a second sentence: *She must have been tired – she was yawning all evening.* This makes the deduction convincing, and it is exactly what examiners want to hear in the Speaking test.\n\nIn speech, **have** is weak: *must have* sounds like /mʌstəv/ and *can’t have* like /kɑːntəv/. Learners sometimes write *must of* because of this sound, but it is always **have**.' },
+          { t: 'examples', items: [
+            { s: 'The office was dark. Everyone **must have gone** home.', n: 'Almost sure, with the reason first.' },
+            { s: 'I **might not have locked** the door. Can you check?', n: 'Possibly not.' },
+            { s: 'He **couldn’t have written** this; he doesn’t speak German.', n: 'Almost sure it did not happen.' },
+            { s: 'They **must have been arguing**; their faces were red.', n: 'An action in progress.' },
+            { s: 'The letter **might have been sent** to the wrong address.', n: 'Passive: something done to the letter.' },
+            { s: 'You **needn’t have bought** milk – we had some.', n: 'Not a guess: it was unnecessary.' },
+          ] },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['She must of forgotten.', 'She must have forgotten.', 'Always *have*, even if it sounds like *of*.'],
+            ['He can’t have saw it.', 'He can’t have seen it.', 'Past participle after *have*.'],
+            ['It must have stolen yesterday.', 'It must have been stolen yesterday.', 'A thing that was stolen needs the passive.'],
+            ['She mustn’t have heard me.', 'She can’t have heard me.', 'The negative of *must have* for deduction is *can’t have*.'],
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Look at the deductions in the text.', items: [
-            { q: 'Why does the text say the piano “can’t have been there for long”?', o: ['The wood was dry and the keys were clean.', 'There was a note inside it.', 'The path was too narrow.'], why: 'No dust and dry wood show it had not been outside long.' },
-            { q: 'Why is the idea about the students weak?', o: ['A piano like that is very heavy.', 'The students were on holiday.', 'Nobody heard any music.'], why: 'It weighs more than two hundred kilograms, so carrying it a kilometre is very hard.' },
-            { q: '“The artist might be watching.” How sure is the musician?', o: ['Not sure: it is only a possibility.', 'Completely sure.', 'Sure that it is not true.'], why: '*Might* + *be* + *-ing*: a possibility about the present.' },
+          { t: 'reading', title: 'A message from a neighbour', md: 'Hi Sam, something odd happened while you were away. On Tuesday evening I noticed your front gate was open, though I’m sure you closed it before you left. The postman can’t have done it – he comes in the morning.\n\nThere were muddy paw prints on the path, so a dog must have pushed it open. Then on Wednesday a parcel was sitting on your doorstep in the rain. It must have been delivered after I went out, because it wasn’t there at lunchtime. I took it in for you; the box might have been damaged a little by the water, I’m afraid.\n\nOne more thing: your kitchen light was on all night. You might not have switched it off before leaving, or perhaps it’s on a timer. See you on Sunday! Maria' },
+          { t: 'ex', kind: 'tf', h: 'Read the message. Are the sentences true, false or not given?', ng: true, items: [
+            { q: 'Maria thinks the postman opened the gate.', a: 'f', why: '*The postman can’t have done it* – he comes in the morning.' },
+            { q: 'Maria believes a dog pushed the gate open.', a: 't', why: '*A dog must have pushed it open.*' },
+            { q: 'The parcel arrived in the morning.', a: 'f', why: 'It wasn’t there at lunchtime, so it was delivered later.' },
+            { q: 'The parcel contained something made of glass.', a: 'ng', why: 'The message does not say what was in the parcel.' },
+            { q: 'Maria is sure Sam forgot to switch off the light.', a: 'f', why: 'She says he *might not have* switched it off, or it is on a timer.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'gap', h: 'Complete each sentence with the right past form of the verb in brackets.', items: [
+            { q: 'Tom isn’t answering. He must ___ (sleep) when you called.', a: ['have been sleeping'], why: 'An action in progress at that moment: *must have been* + -ing.' },
+            { q: 'The documents are missing. They might ___ (throw) away by mistake.', a: ['have been thrown'], why: 'Something done to the documents: passive.' },
+            { q: 'She can’t ___ (see) the email; she has been offline all week.', a: ['have seen'], why: '*Can’t have* + past participle.' },
+            { q: 'I’m not sure, but the shop may ___ (close) early today.', a: ['have closed'], why: 'Possible past event: *may have* + past participle.' },
+          ] },
+          { t: 'ex', kind: 'select', h: 'In the format of the B2 First exam (Reading and Use of English Part 1): choose the word that best fits each gap.', items: [
+            { q: 'The plane landed two hours late; the pilots must have been ___ to fly around the storm.', o: ['forced', 'pushed', 'pressed'], why: '*Be forced to* do something is the fixed expression.' },
+            { q: 'Nobody knows for ___ what happened to the ship.', o: ['certain', 'clear', 'true'], why: '*Know for certain* is the fixed phrase; we do not say *for clear* or *for true*.' },
+            { q: 'The thief ___ have used a key, because nothing was broken.', o: ['must', 'can’t', 'should'], why: 'Nothing broken leads to an almost certain conclusion: *must have*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Part 1**, all four options often have a similar meaning. The right one is usually decided by **the words around the gap**: a preposition, a fixed phrase, or a collocation. Read the whole sentence before you choose.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these deductions after the tutor.', tutor: 'sofia', items: [
+            { a: 'She must have been working late.' },
+            { a: 'They can’t have heard the news.' },
+            { a: 'The parcel might have been delivered already.' },
+          ] },
+        ],
+      ],
+    },
+    /* ------------------------------------------------------------------ Lesson 3 */
+    {
+      id: 'p3',
+      title: 'It looks as if…',
+      about: 'Speculate fluently in conversation and in Part 2 of the Speaking test.',
+      art: 'cat',
+      spreads: [
+        [
+          { t: 'text', md: 'Modal verbs are not the only way to speculate. In conversation, English speakers use a set of soft, natural phrases that show they are guessing: **it looks as if**, **it looks as though**, **it seems as if**, **I suppose**, **I would imagine**, **I’d say**, **judging by**, **presumably**.\n\nThese phrases are very useful in **Part 2** of the B2 First Speaking test, where you compare two photos and say what the people might be doing or feeling. Examiners reward candidates who speculate with a **range** of language, not the same *maybe* again and again.' },
+          { t: 'table', caption: 'Phrases for speculating', explain: ['head', 'col1'], head: ['Phrase', 'Use it to…', 'Example'], rows: [
+            ['It looks as if / as though', 'guess from what you see', 'It looks as if they’re waiting for someone.'],
+            ['Judging by…', 'give the evidence first', 'Judging by their clothes, it’s quite cold.'],
+            ['I’d say / I would imagine', 'give a careful opinion', 'I’d say she’s about forty.'],
+            ['Presumably', 'guess the obvious', 'Presumably they’re on holiday.'],
+            ['I suppose', 'guess without being sure', 'I suppose they’ve just finished work.'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'After **as if** and **as though**, use a normal clause: *It looks **as if** it’s going to rain.* Do not use *like* + clause in the exam if you want to sound careful: *It looks like it’s going to rain* is common in speech but less formal.' },
+        ],
+        [
+          { t: 'dialogue', title: 'Two candidates practise Part 2', lines: [
+            { who: 'Examiner', s: 'Here are your photos. They show people celebrating. Compare the photos and say why the people might be celebrating.' },
+            { who: 'Lena', s: 'In the first photo, judging by the cake and the candles, it looks as if it’s a birthday party.' },
+            { who: 'Lena', s: 'The older woman must be the grandmother, I suppose, and she’s probably very proud.' },
+            { who: 'Lena', s: 'The second photo is different. It seems as though the team has just won something, because they’re holding a trophy.' },
+            { who: 'Lena', s: 'I would imagine they’ve been training for months, so they’re bound to feel relieved as well as happy.' },
+          ] },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['It looks as if they are wait.', 'It looks as if they are waiting.', 'A full clause after *as if*.'],
+            ['Judging by her face, she must to be tired.', 'Judging by her face, she must be tired.', 'No *to* after *must*.'],
+            ['Maybe they are friends, maybe they are family, maybe…', 'They might be friends, or perhaps they’re family.', 'Use a range of phrases, not only *maybe*.'],
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'match', h: 'Match the beginnings and the endings.', pairs: [
+            ['Judging by the snow on their boots,', 'they’ve just come in from outside.'],
+            ['It looks as though', 'the concert has already started.'],
+            ['I’d say', 'they’re about the same age.'],
+            ['Presumably', 'they know each other quite well.'],
+          ] },
+          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
+            { a: 'It looks as if they have lost their way.', why: '*It looks as if* + full clause.' },
+            { a: 'Judging by the boxes, they must be moving house.', why: 'Evidence first, then the deduction.' },
+            { a: 'I would imagine they feel quite nervous.', why: '*I would imagine* + clause: a careful opinion.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'In the format of the B2 First exam (Speaking Part 2): the examiner asks why the people might be in this situation. Choose the best answer for a high mark.', items: [
+            { q: 'Photo: people standing in the rain at a bus stop.', o: ['Judging by their faces, they might have been waiting for a long time, and the bus may well be late.', 'They are at a bus stop. It is raining. They are wet.', 'Maybe the bus is late. Maybe they are tired. Maybe it is cold.'], why: 'The first answer speculates with a range of language and gives evidence.' },
+            { q: 'Photo: a man smiling at a laptop in a kitchen.', o: ['It looks as though he’s just received some good news, presumably about work.', 'He has a laptop. He is in the kitchen.', 'He is smile because good news.'], why: 'The first answer speculates naturally and correctly.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Speaking Part 2** you talk alone for about **one minute**. Do not just describe what you see: **compare** the two photos and **speculate**. A good pattern is: evidence → guess → reason (*Judging by…, they might…, because…*).' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor, as if you were in the exam.', tutor: 'arthur', items: [
+            { a: 'It looks as if they’re waiting for someone.' },
+            { a: 'Judging by their clothes, it must be quite cold.' },
+            { a: 'I would imagine they feel very proud.' },
+          ] },
+        ],
+      ],
+    },
+    /* ------------------------------------------------------------------ Lesson 4 */
+    {
+      id: 'p4',
+      title: 'The lighthouse keepers',
+      about: 'Read about an unsolved mystery and judge the explanations people have given.',
+      art: 'alien',
+      spreads: [
+        [
+          { t: 'text', md: 'Unsolved mysteries are a perfect place to practise deduction, because nobody knows the answer. Writers and investigators present the **evidence**, then weigh up different **explanations** using the language of certainty: *must have*, *might have*, *is unlikely to have*, *there is no way*.\n\nAs you read, notice how the writer separates **facts** (what was found) from **speculation** (what might have happened). This skill is tested in Part 5 of the Reading paper, where questions often ask what the writer *suggests* or *believes*.' },
+          { t: 'reading', title: 'Three men and an empty lighthouse', md: 'In December 1900, a supply boat reached a small island off the coast of Scotland. Three keepers were supposed to be working in its lighthouse. Nobody came down to meet the boat, and when the crew climbed up to the building, they found it empty.\n\nThe evidence was strange. The beds had not been slept in, a clock had stopped, and two of the three waterproof coats were missing. The last entries in the logbook described a violent storm, yet villagers on the mainland insisted the weather had been calm that week.\n\nMany explanations have been offered. Some believe a huge wave must have swept the men off the rocks while they were checking the equipment. This seems likely, since the coats were gone, but it cannot explain why the third man went outside without his. Others think one keeper might have attacked the other two, though there was no sign of a fight.\n\nThe most imaginative theories, involving sea monsters or foreign spies, are almost certainly false. What is likely is that the sea, always dangerous on that coast, played some part. Over a century later, we are unlikely ever to know the full story.' },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'In the format of the B2 First exam (Reading and Use of English Part 5): choose the best answer.', items: [
+            { q: 'What made the crew think something was wrong?', o: ['No one came to meet the boat.', 'The lighthouse light was off.', 'They found signs of a fight.'], why: '*Nobody came down to meet the boat.*' },
+            { q: 'Why is the logbook described as strange?', o: ['It described a storm that people on land did not notice.', 'It had not been written for several days.', 'It was found outside the building.'], why: 'The villagers *insisted the weather had been calm*.' },
+            { q: 'What problem does the writer see with the wave theory?', o: ['It does not explain why one man left without a coat.', 'There were no waves that week.', 'The equipment was not damaged.'], why: '*It cannot explain why the third man went outside without his.*' },
+            { q: 'What is the writer’s opinion of the most imaginative theories?', o: ['They are very probably untrue.', 'They deserve more research.', 'They explain most of the evidence.'], why: '*Almost certainly false.*' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Part 5**, the questions follow the order of the text. The correct option usually **paraphrases** the text: *almost certainly false* becomes *very probably untrue*. Be careful with options that repeat words from the text but change the meaning.' },
+        ],
+        [
+          { t: 'ex', kind: 'transform', h: 'Rewrite the sentence about the mystery with the word given, so it means the same.', items: [
+            { q: 'I am sure a wave swept the men away.', cue: 'MUST', a: ['A wave must have swept the men away.', 'The men must have been swept away by a wave.'], why: 'Almost sure about the past: *must have*.' },
+            { q: 'It is impossible that the keepers slept in their beds that night.', cue: 'CAN’T', a: ['The keepers can’t have slept in their beds that night.'], why: 'Almost sure it did not happen: *can’t have*.' },
+            { q: 'It is not probable that we will ever know the truth.', cue: 'UNLIKELY', a: ['We are unlikely ever to know the truth.', 'We are unlikely to ever know the truth.', 'It is unlikely that we will ever know the truth.'], why: '*Be unlikely to* + base form.' },
+          ] },
+          { t: 'ex', kind: 'speak', h: 'Give your own explanation: say these sentences after the tutor.', tutor: 'kofi', items: [
+            { a: 'The men must have gone out to check the equipment.' },
+            { a: 'A huge wave might have swept them away.' },
+            { a: 'We are unlikely ever to know the full story.' },
           ] },
         ],
       ],
     },
   ],
   test: [
-    { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-      { q: 'Your sister ___ very proud of you. You did so well!', o: ['must be', 'can’t be', 'mustn’t be'], why: 'You are almost sure: *must be*.' },
-      { q: 'That ___ the right address. There’s no number 90 on this street.', o: ['can’t be', 'must be', 'might be'], why: 'The number does not exist, so it is impossible.' },
-      { q: 'They’re not answering. They ___ out for dinner.', o: ['might have gone', 'can’t have gone', 'must go'], why: 'A possible explanation in the past: *might have* + past participle.' },
-      { q: 'Nobody’s here. Everyone ___ home already.', o: ['must have gone', 'can’t have gone', 'must go'], why: 'The empty room makes you almost sure: *must have gone*.' },
-      { q: 'It ___ as if the shop is closed.', o: ['looks', 'bets', 'doubts'], why: '*It looks as if* + clause.' },
+    { t: 'ex', kind: 'select', h: 'Choose the right expression.', items: [
+      { q: 'She has studied for months, so she’s ___ pass.', o: ['bound to', 'unlikely to', 'no way'], why: 'Certain: *bound to*.' },
+      { q: 'The roads are icy; there ___ be some accidents.', o: ['may well', 'can’t possibly', 'is no way'], why: 'Quite probable: *may well*.' },
+      { q: 'He ___ have heard us; he was wearing headphones.', o: ['can’t', 'must', 'bound to'], why: 'Almost sure it did not happen.' },
     ] },
-    { t: 'ex', kind: 'gap', h: 'Complete with a modal and the verb in brackets.', items: [
-      { q: 'I’m sure Lucas didn’t break it. Lucas ___ (break) it.', a: ['can’t have broken', 'couldn’t have broken', 'cannot have broken'], why: 'Almost sure it did not happen: *can’t have* + past participle.' },
-      { q: 'Perhaps the letter got lost. The letter ___ (get) lost.', a: ['might have got', 'may have got', 'could have got'], why: 'A past possibility: *might have* + past participle.' },
-      { q: 'Listen to that noise! The neighbours ___ (have) a party.', a: ['must be having'], why: 'An action in progress now that you are sure about: *must be* + *-ing*.' },
-      { q: 'You’ve worked twelve hours today. You ___ (be) tired.', a: ['must be'], why: 'Almost sure about the present: *must be*.' },
+    { t: 'ex', kind: 'gap', h: 'Complete with the right past form of the verb in brackets.', items: [
+      { q: 'The car wasn’t there. It must ___ (tow) away by the police.', a: ['have been towed'], why: 'Passive deduction.' },
+      { q: 'She didn’t hear the phone. She might ___ (have) a shower.', a: ['have been having'], why: 'An action in progress: continuous.' },
+      { q: 'They can’t ___ (finish) already; they only started an hour ago.', a: ['have finished'], why: '*Can’t have* + past participle.' },
     ] },
-    { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-      { a: 'Someone must have taken my umbrella.', why: '*Must have* + past participle.' },
-      { a: 'It looks as if nobody is home.', why: '*It looks as if* + subject + verb.' },
+    { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+      { s: 'He must [of] left early.', a: ['have'], why: 'Always *have*.' },
+      { s: 'She [won’t definitely] come tonight.', a: ['definitely won’t', 'definitely will not'], why: '*Definitely* before *won’t*.' },
+      { s: 'It looks as if they [wait] for a long time.', a: ['have been waiting', 'are waiting'], why: 'A full, correct clause after *as if*.' },
+    ] },
+    { t: 'ex', kind: 'transform', h: 'Rewrite the sentence with the word given, so it means the same.', items: [
+      { q: 'Perhaps Leo forgot about the meeting.', cue: 'MIGHT', a: ['Leo might have forgotten about the meeting.'], why: 'Possible past: *might have*.' },
+      { q: 'I am sure the parcel was delivered to the wrong house.', cue: 'MUST', a: ['The parcel must have been delivered to the wrong house.'], why: 'Passive deduction with *must have been*.' },
+    ] },
+    { t: 'ex', kind: 'match', h: 'Match the beginnings and the endings.', pairs: [
+      ['Judging by the empty plates,', 'the meal must have been good.'],
+      ['It looks as though', 'nobody has been here for years.'],
+      ['There’s no way', 'he finished that book in one night.'],
+      ['You needn’t have', 'cooked so much food.'],
     ] },
     { t: 'ex', kind: 'choice', h: 'Which sentence is correct?', items: [
-      { q: '', o: ['She must have left early.', 'She must left early.', 'She must of left early.'], why: '*Must have* + past participle. *Must of* is a spelling mistake.' },
-      { q: '', o: ['He can’t be at work. It’s Sunday.', 'He mustn’t be at work. It’s Sunday.', 'He can’t to be at work. It’s Sunday.'], why: 'The opposite of *must* in a deduction is *can’t*, followed by the infinitive without *to*.' },
-      { q: '', o: ['They’re bound to be late.', 'They’re bound being late.', 'They’re bound that they are late.'], why: '*Be bound to* + infinitive.' },
+      { q: '', o: ['The window must have been broken by the wind.', 'The window must have broken by the wind.', 'The window must be broke by the wind.'], why: 'Passive deduction: *must have been* + past participle.' },
+      { q: '', o: ['He probably won’t remember us.', 'He won’t probably remember us.', 'He probably not remember us.'], why: '*Probably* before *won’t*.' },
     ] },
   ],
 };

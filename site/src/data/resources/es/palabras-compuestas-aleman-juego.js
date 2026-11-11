@@ -1,0 +1,37 @@
+// Resource: game. German compound nouns and their literal meanings. Checked against Duden.
+export default {
+  key: 'german-compounds', site: 'es', slug: 'palabras-compuestas-aleman-juego', kind: 'game', course: 'German', level: 'Todos los niveles',
+  draw: 'cat', tint: 'lime', published: '2026-10-27',
+  title: 'Juego de palabras compuestas en alemán: ¿qué es un zapato de mano?',
+  metaTitle: 'Palabras compuestas en alemán, el juego: Handschuh y más – Alimun',
+  desc: 'Un juego gratis con palabras compuestas alemanas muy curiosas: un zapato de mano es un guante. Adivina diez palabras a partir de su significado literal.',
+  lead: 'El alemán crea palabras nuevas pegando otras que ya tiene. Un zapato de mano es un guante y un animal vago es un perezoso. ¿Adivinas las demás?',
+  instructions: '¿Qué es?',
+  about: [
+    'El alemán une sustantivos para formar otros nuevos, y la última parte siempre decide el género de la palabra: der Handschuh porque se dice der Schuh.',
+    'En cuanto conoces las partes, muchas palabras largas se explican solas. Por eso las palabras compuestas son una de las formas más divertidas de ampliar tu vocabulario en alemán.',
+  ],
+  items: [
+    { q: 'Handschuh (mano + zapato)', options: ['un guante', 'una zapatilla', 'un anillo', 'un calcetín'], a: 0, why: 'der Handschuh = el guante: un zapato para la mano.' },
+    { q: 'Faultier (vago + animal)', options: ['un gato', 'un perezoso', 'una tortuga', 'un koala'], a: 1, why: 'das Faultier = el perezoso.' },
+    { q: 'Kühlschrank (fresco + armario)', options: ['una bolsa de congelación', 'un sótano', 'una nevera', 'un aire acondicionado'], a: 2, why: 'der Kühlschrank = la nevera o el frigorífico.' },
+    { q: 'Schildkröte (escudo + sapo)', options: ['una rana', 'un cangrejo', 'un escarabajo', 'una tortuga'], a: 3, why: 'die Schildkröte = la tortuga: un sapo con escudo.' },
+    { q: 'Glühbirne (brillo + pera)', options: ['una bombilla', 'una vela', 'una pera madura', 'un farol'], a: 0, why: 'die Glühbirne = la bombilla, con forma de pera que brilla.' },
+    { q: 'Stinktier (peste + animal)', options: ['un cerdo', 'una mofeta', 'una cabra', 'una rata'], a: 1, why: 'das Stinktier = la mofeta o el zorrillo.' },
+    { q: 'Staubsauger (polvo + succionador)', options: ['una escoba', 'un plumero', 'una aspiradora', 'un ventilador'], a: 2, why: 'der Staubsauger = la aspiradora.' },
+    { q: 'Flugzeug (vuelo + cosa)', options: ['un pájaro', 'una cometa', 'un avión', 'un dron'], a: 2, why: 'das Flugzeug = el avión: una cosa para volar.' },
+    { q: 'Nacktschnecke (desnudo + caracol)', options: ['una babosa', 'un gusano', 'un caracol bebé', 'una anguila'], a: 0, why: 'die Nacktschnecke = la babosa: un caracol sin concha.' },
+    { q: 'Drahtesel (alambre + burro)', options: ['un robot', 'una valla', 'una bicicleta', 'un tractor'], a: 2, why: 'der Drahtesel es una forma de broma de decir bicicleta: un burro de alambre.' },
+  ],
+  pairs: [
+    ['der Handschuh: mano + zapato', 'el guante'],
+    ['das Faultier: vago + animal', 'el perezoso'],
+    ['der Kühlschrank: fresco + armario', 'la nevera'],
+    ['die Schildkröte: escudo + sapo', 'la tortuga'],
+    ['die Glühbirne: brillo + pera', 'la bombilla'],
+    ['das Stinktier: peste + animal', 'la mofeta'],
+    ['der Staubsauger: polvo + succionador', 'la aspiradora'],
+    ['die Nacktschnecke: desnudo + caracol', 'la babosa'],
+  ],
+  related: ['german-idioms', 'de-articles-a1', 'de-articles-sheet'],
+};

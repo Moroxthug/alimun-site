@@ -1,11 +1,14 @@
-// English A2, unit 6 (docs/BOOKS.md). Draft for native-teacher review.
+// English A2, unit 6, second edition (docs/LESSONS_PLAN.md, "Books, second edition"). Draft for native-teacher review.
+// Each lesson: a full explanation first (the rule in plain words, why, many examples, the usual mistakes, a text that
+// uses it), then fewer exercises from controlled to free, one speaking task, and one task in the format of A2 Key.
 export const UNIT = {
   id: 'u6',
   title: 'Health and the body',
-  goal: 'Say what is wrong, understand simple advice and make an appointment.',
+  goal: 'Say what is wrong, understand and give simple advice, talk about what is necessary, and make an appointment.',
   art: 'cactus',
   tags: { skills: ['vocabulary', 'grammar', 'speaking', 'reading'], topics: ['body', 'illness', 'should', 'have-to', 'doctor'], goals: ['foundations'] },
   pages: [
+    /* ------------------------------------------------------------------ Lesson 1 */
     {
       id: 'p1',
       title: 'What’s the matter?',
@@ -13,57 +16,92 @@ export const UNIT = {
       art: 'dog',
       spreads: [
         [
-          { t: 'text', md: 'Here are some important words for the body. Some have an irregular plural: one *tooth*, two **teeth**; one *foot*, two **feet**.' },
-          { t: 'table', caption: 'The body', explain: ['head'], quiz: true, head: ['Word', 'Example'], rows: [
+          { t: 'text', md: 'To talk about your health, you first need the words for the **body**. Most are regular: one *hand*, two *hands*. A few have an **irregular plural**, and you will use them often: one **tooth**, two **teeth**; one **foot**, two **feet**.\n\nIn English we say **my** head, **my** back, **my** leg. Many languages say *the head* when you talk about your own body, but in English you use **my, your, his, her**: *My back hurts*, not *The back hurts*.' },
+          { t: 'table', caption: 'The body', explain: ['head'], head: ['Word', 'Example'], rows: [
             ['head', 'She’s wearing a hat on her head.'],
             ['eye / ear / nose / mouth', 'Close your eyes and listen.'],
             ['tooth (teeth)', 'Brush your teeth twice a day.'],
             ['throat', 'My throat is dry.'],
             ['neck / shoulder', 'He carries his bag on one shoulder.'],
-            ['arm / hand', 'Raise your hand if you know the answer.'],
-            ['back', 'Sit up straight. It’s good for your back.'],
-            ['stomach', 'I can’t eat any more. My stomach is full.'],
-            ['leg / knee', 'Bend your knees when you lift something.'],
-            ['foot (feet)', 'My feet are cold.'],
+            ['arm / hand / finger', 'Raise your hand if you know the answer.'],
+            ['back / stomach', 'Lie on your back.'],
+            ['leg / knee / foot (feet)', 'My feet are cold.'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'The **gh** in *cough* sounds like **f**: /kɒf/. The **b** in *thumb* and the **k** in *knee* are silent. The **ch** in *stomach* sounds like **k**.' },
+        ],
+        [
+          { t: 'text', md: 'To ask about a problem, say **What’s the matter?** or **What’s wrong?** You can also ask **Are you OK?**\n\nThere are two common ways to answer. Use **I’ve got** (or *I have*) + **a** + the problem: *I’ve got a headache.* *I’ve got a cold.* Or say that a part of your body **hurts**: *My back hurts.* *My feet hurt* (two feet: *hurt*, no *-s*).\n\nNotice the words with **-ache**: *a headache, a stomach ache, (a) toothache, (a) backache*. They mean a pain that continues.' },
+          { t: 'table', caption: 'Common problems', explain: ['head', 'col1'], head: ['Problem', 'What it means'], rows: [
+            ['a headache', 'your head hurts'],
+            ['a stomach ache', 'your stomach hurts'],
+            ['a sore throat', 'your throat hurts when you swallow'],
+            ['a cough', 'you can’t stop coughing'],
+            ['a cold', 'you are sneezing and your nose is running'],
+            ['a temperature', 'your body is very hot'],
+            ['the flu', 'a bad cold with a temperature; you feel very ill'],
           ] },
         ],
         [
-          { t: 'text', md: 'To ask about a problem, say **What’s the matter?** or **What’s wrong?** To answer, use *I’ve got* or *I have* + a problem, or say that a part of your body **hurts**.' },
-          { t: 'table', caption: 'Common problems', explain: ['head'], quiz: true, head: ['Problem', 'How you feel'], rows: [
-            ['a headache', 'My head hurts.'],
-            ['a stomach ache', 'My stomach hurts.'],
-            ['a sore throat', 'My throat hurts.'],
-            ['a cough', 'I can’t stop coughing.'],
-            ['a cold', 'I’m sneezing and my nose is running.'],
-            ['a temperature', 'My body is very hot.'],
+          { t: 'examples', items: [
+            { s: '**What’s the matter?** – **I’ve got** a headache.', n: 'The question and the usual answer.' },
+            { s: 'I don’t feel well. I**’ve got** a sore throat.', n: '*I don’t feel well* = I feel ill.' },
+            { s: 'My left knee **hurts** when I walk.', n: 'One knee: *hurts*.' },
+            { s: 'My eyes **hurt**. I need to stop.', n: 'Two eyes: *hurt*, no *-s*.' },
+            { s: 'He**’s got** the flu. He’s in bed.', n: 'With *he*: *has got*.' },
           ] },
-          { t: 'tip', art: 'owl', md: 'One part of the body takes *hurts*: *My back hurts.* Two or more take *hurt*: *My feet hurt.*' },
-        ],
-        [
-          { t: 'ex', kind: 'match', h: 'Match the problem and what the person says.', pairs: [
-            ['a sore throat', 'It hurts when I eat or drink.'],
-            ['a headache', 'My head hurts.'],
-            ['a stomach ache', 'I ate too much and now my stomach hurts.'],
-            ['a temperature', 'I feel very hot.'],
-            ['a cough', 'I can’t stop coughing.'],
-            ['a cold', 'I’m sneezing and my nose is running.'],
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['I have headache.', 'I’ve got a headache.', 'Most problems need *a*.'],
+            ['The back hurts me.', 'My back hurts.', 'Use *my* for your own body.'],
+            ['I have pain in the stomach.', 'I’ve got a stomach ache.', 'English uses the *-ache* word.'],
+            ['My teeths hurt.', 'My teeth hurt.', '*tooth* → *teeth*.'],
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct word.', items: [
-            { q: 'I walked for six hours and now my feet ___.', o: ['hurt', 'hurts', 'is hurting'], why: '*Feet* is plural, so *hurt*.' },
-            { q: 'She’s got a ___ throat.', o: ['sore', 'hurt', 'pain'], why: 'We say *a sore throat*.' },
-            { q: 'The dentist checked my ___.', o: ['teeth', 'tooths', 'teeths'], why: 'The plural of *tooth* is *teeth*.' },
-            { q: 'I’ve got ___ headache.', o: ['a', 'an', 'some'], why: '*Headache* is countable and starts with a consonant sound: *a headache*.' },
-            { q: 'You look ill. What’s the ___?', o: ['matter', 'pain', 'ache'], why: 'The question is *What’s the matter?*' },
+          { t: 'dialogue', title: 'At work', lines: [
+            { who: 'Sara', s: 'Are you OK, Kemal? You look tired.' },
+            { who: 'Kemal', s: 'Not really. I’ve got a terrible headache.' },
+            { who: 'Sara', s: 'Oh no. Have you got a temperature?' },
+            { who: 'Kemal', s: 'I don’t think so, but my throat hurts too.' },
+            { who: 'Sara', s: 'Maybe it’s a cold. Go home and rest!' },
           ] },
-          { t: 'ex', kind: 'spot', h: 'Tap the parts of the body.', items: [
-            { s: 'After the football match, my [legs] were tired and my [knee] was very sore.', why: '*Legs* and *knee* are parts of the body.' },
-            { s: 'I hurt my [back] when I carried the boxes, and now my [shoulders] hurt too.', why: '*Back* and *shoulders* are parts of the body.' },
+          { t: 'ex', kind: 'match', h: 'Match the problem and what it means.', pairs: [
+            ['a sore throat', 'it hurts when you swallow'],
+            ['a temperature', 'your body is very hot'],
+            ['a cough', 'you can’t stop coughing'],
+            ['a stomach ache', 'your stomach hurts'],
+            ['a cold', 'your nose is running'],
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'select', h: 'Choose the right words.', items: [
+            { q: 'I’ve got a ___. I need to see the dentist.', o: ['toothache', 'sore throat', 'cough'], why: 'A dentist looks at your teeth.' },
+            { q: 'My feet ___ after the long walk.', o: ['hurt', 'hurts', 'ache me'], why: 'Two feet: *hurt*.' },
+            { q: '“What’s the ___?” – “I’ve got a cold.”', o: ['matter', 'problem with', 'pain'], why: 'The usual question: *What’s the matter?*' },
+            { q: 'She’s got ___ temperature.', o: ['a', 'the', '–'], why: '*a temperature*.' },
+          ] },
+          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+            { s: 'I have [headache].', a: ['a headache'], why: '*a headache*, with *a*.' },
+            { s: '[The] back hurts.', a: ['My'], why: 'Use *my* for your own body.' },
+            { s: 'Brush your [tooths] every day.', a: ['teeth'], why: 'Irregular plural: *teeth*.' },
+          ] },
+        ],
+        [
+          { t: 'reading', title: 'An email', md: 'Dear Ms Grant, I’m sorry, but I can’t come to the English class this evening. I’ve got a bad ___ and my ___ is very sore, so I can’t talk much. I’m going to stay at ___ and rest. I hope to see you next Tuesday. Best wishes, Pablo' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the A2 Key exam (Reading Part 4): choose the right word for each gap in the email.', items: [
+            { q: 'I’ve got a bad ___', o: ['cold', 'ill', 'sick'], why: 'After *a bad*, a noun: *a bad cold*.' },
+            { q: 'my ___ is very sore', o: ['throat', 'head', 'back'], why: 'A sore throat means it hurts to talk: *I can’t talk much*.' },
+            { q: 'I’m going to stay at ___ and rest', o: ['home', 'house', 'bed'], why: 'We say *stay at home*. (*Stay in bed* uses *in*.)' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Reading Part 4, a short text has gaps, and you choose one of three words for each. Often all three words are about the same topic, so meaning is not enough: check the **grammar** and the **word that goes with it**. *Stay at home*, but *stay in bed*.' },
+          { t: 'ex', kind: 'speak', h: 'Your turn: say these sentences after the tutor.', tutor: 'kofi', items: [
+            { a: 'What’s the matter?' },
+            { a: 'I’ve got a headache and a sore throat.' },
+            { a: 'My back hurts when I sit.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 2 */
     {
       id: 'p2',
       title: 'You should rest',
@@ -71,48 +109,85 @@ export const UNIT = {
       art: 'snail',
       spreads: [
         [
-          { t: 'text', md: 'To give advice, use **should** + the base form of a verb. The negative is **shouldn’t** (*should not*). *Should* is the same for every person: no *-s*, and no *to* after it.' },
-          { t: 'examples', items: [
-            { s: 'You **should drink** a lot of water.', n: 'This is a good idea.' },
-            { s: 'He **shouldn’t go** to work today.', n: 'This is not a good idea. *He shouldn’t*, not *He doesn’t should*.' },
-            { s: '**Should** I **call** a doctor?', n: 'Question: *Should* + person + base form.' },
-            { s: 'I **think** you **should** rest.', n: '*I think* makes the advice softer and more polite.' },
-          ] },
-        ],
-        [
-          { t: 'table', caption: 'Should', explain: ['head', 'col0'], quiz: true, head: ['', 'Example'], rows: [
+          { t: 'text', md: 'To give **advice** (to say what you think is a good idea), use **should** + the base form of a verb: *You should drink more water.* The negative is **shouldn’t** (*should not*): *You shouldn’t go to work today.*\n\n**Should** is easy, because it never changes: it is the same for every person, with **no -s** (*she should*, not *she shoulds*) and **no to** after it (*you should rest*, not *you should to rest*).\n\nTo ask for advice, put **should** before the subject: **Should I** take a painkiller? **What should I** do?' },
+          { t: 'table', caption: 'should', quiz: true, explain: ['head', 'col0'], head: ['', 'Example'], rows: [
             ['Positive', 'You should stay in bed.'],
             ['Negative', 'You shouldn’t go out.'],
-            ['Question', 'Should I take a painkiller?'],
+            ['Question', 'Should I call a doctor?'],
             ['Short answers', 'Yes, you should. / No, you shouldn’t.'],
           ] },
-          { t: 'tip', art: 'owl', md: '*You should to rest* and *She shoulds rest* are mistakes. With *think*, we usually say *I don’t think you should go*. It sounds more natural than *I think you shouldn’t go*.' },
+          { t: 'tip', art: 'owl', md: 'Advice is softer with **I think** or **Maybe**: *I think you should see a doctor.* *Maybe you should go to bed early.* For a negative, English says *I don’t think you should go*, not *I think you shouldn’t go*.' },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct words.', items: [
-            { q: 'You look tired. You ___ go to bed early.', o: ['should', 'shouldn’t', 'should to'], why: 'Going to bed early is a good idea when you are tired: *should* + base form.' },
-            { q: 'He ___ eat so many sweets. They’re bad for his teeth.', o: ['shouldn’t', 'should', 'shoulds'], why: 'Sweets are bad for him, so the advice is negative: *shouldn’t*.' },
-            { q: '___ I stay at home tomorrow?', o: ['Should', 'Do', 'Am'], why: 'Asking for advice: *Should I…?*' },
-            { q: 'She should ___ a doctor.', o: ['see', 'sees', 'to see'], why: 'After *should*, use the base form with no *to*.' },
-            { q: 'I don’t think you ___ drive. You’ve got a temperature.', o: ['should', 'shouldn’t', 'to'], why: 'After *I don’t think*, use *should*: the negative is already in *don’t*.' },
+          { t: 'examples', items: [
+            { s: 'You**’ve got** a cold. You **should** drink hot tea with honey.', n: 'Advice for a problem.' },
+            { s: 'He **shouldn’t** carry heavy bags with his bad back.', n: 'A negative: not a good idea.' },
+            { s: '**Should I** take the medicine before or after eating?', n: 'Asking for advice.' },
+            { s: '**I think** you **should** stay at home today.', n: 'Softer advice.' },
+            { s: '**I don’t think** you **should** play football this week.', n: 'Soft negative advice.' },
+          ] },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['You should to rest.', 'You should rest.', 'No *to* after *should*.'],
+            ['She shoulds see a doctor.', 'She should see a doctor.', '*should* never takes *-s*.'],
+            ['You should resting.', 'You should rest.', 'After *should*, the base form.'],
+            ['Do I should go?', 'Should I go?', 'Questions start with *should*, no *do*.'],
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Complete with *should* or *shouldn’t* and the verb in brackets.', items: [
-            { q: 'You’ve got a bad cough. You ___ (not / smoke).', a: ['shouldn’t smoke', 'should not smoke'], why: 'Smoking is bad for a cough: *shouldn’t* + base form.' },
-            { q: 'Mina has got a temperature. She ___ (stay) in bed.', a: ['should stay'], why: 'Good advice: *should* + base form, with no *-s*.' },
-            { q: 'It’s very hot today. We ___ (drink) a lot of water.', a: ['should drink'], why: '*Should* + base form.' },
-            { q: 'Your eyes are tired. You ___ (not / look) at your screen all evening.', a: ['shouldn’t look', 'should not look'], why: 'Negative advice: *shouldn’t* + base form.' },
-            { q: '___ (I / take) these tablets before or after food?', a: ['Should I take'], why: 'Question: *Should* + *I* + base form.' },
+          { t: 'dialogue', title: 'Asking for advice', lines: [
+            { who: 'Ines', s: 'I can’t sleep at night. What should I do?' },
+            { who: 'Doctor', s: 'Do you drink coffee in the evening?' },
+            { who: 'Ines', s: 'Yes, two or three cups.' },
+            { who: 'Doctor', s: 'You shouldn’t drink coffee after four o’clock. And you should go for a walk every day.' },
+            { who: 'Ines', s: 'Should I take sleeping tablets?' },
+            { who: 'Doctor', s: 'No, I don’t think you should. Try these ideas first.' },
           ] },
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'You should go to the doctor.', why: 'Person + *should* + base form.' },
-            { a: 'What should I do?', why: 'Question word + *should* + person + verb.' },
-            { a: 'You shouldn’t carry heavy bags.', why: 'Person + *shouldn’t* + base form.' },
+          { t: 'ex', kind: 'choice', h: 'Read the dialogue. Choose the right answer.', items: [
+            { q: 'What is Ines’s problem?', o: ['She can’t sleep.', 'She has a headache.', 'She drinks too much water.'], why: '*I can’t sleep at night.*' },
+            { q: 'What does the doctor say about tablets?', o: ['She shouldn’t take them now.', 'She should take two a day.', 'She should buy them at the pharmacy.'], why: '*No, I don’t think you should. Try these ideas first.*' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'gap', h: 'Write should or shouldn’t.', items: [
+            { q: 'You’ve got a temperature. You ___ go to school today.', a: ['shouldn’t', 'should not'], why: 'Going out with a temperature is not a good idea.' },
+            { q: 'Your eyes hurt. You ___ have a break from the computer.', a: ['should'], why: 'A break is a good idea.' },
+            { q: 'He’s got a sore throat. He ___ shout at the football match.', a: ['shouldn’t', 'should not'], why: 'Shouting hurts a sore throat.' },
+            { q: 'It’s very cold. You ___ wear a warm coat.', a: ['should'], why: 'Good advice in cold weather.' },
+          ] },
+          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+            { s: 'You should [to drink] more water.', a: ['drink'], why: 'No *to* after *should*.' },
+            { s: 'She [shoulds] eat more fruit.', a: ['should'], why: '*should* never takes *-s*.' },
+            { s: '[Do I should] call the doctor?', a: ['Should I'], why: 'Questions start with *Should*.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'match', h: 'Match each problem with the best advice.', pairs: [
+            ['I’ve got a toothache.', 'You should see a dentist.'],
+            ['I’m always tired.', 'You should go to bed earlier.'],
+            ['I’ve got a cough.', 'You shouldn’t smoke.'],
+            ['My back hurts.', 'You shouldn’t carry heavy bags.'],
+          ] },
+          { t: 'ex', kind: 'build', h: 'Write the advice. Two words do not belong.', items: [
+            { a: 'I think you should drink more water.', extra: ['to', 'shoulds'], why: '*I think you should* + base form.' },
+            { a: 'You shouldn’t eat so much sugar.', extra: ['don’t', 'eating'], why: '*shouldn’t* + base form.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'In the format of the A2 Key exam (Reading Part 1): read the notice or message. What does it say?', items: [
+            { q: 'Sign at a swimming pool: “Please do not eat or drink in the changing rooms.”', o: ['You shouldn’t have food in the changing rooms.', 'You can buy food in the changing rooms.', 'The changing rooms close when you eat.'], why: '*Do not eat or drink* there.' },
+            { q: '“Grandma – the doctor says you should take one tablet in the morning and one at night. Love, Ben”', o: ['Grandma should take two tablets a day.', 'Grandma should take one tablet a day.', 'Grandma should see the doctor at night.'], why: 'One in the morning and one at night: two a day.' },
+            { q: 'Pharmacy: “Ask our staff for advice. No appointment needed.”', o: ['You can talk to someone without booking first.', 'You must book before you ask a question.', 'The staff are only there by appointment.'], why: '*No appointment needed* = you don’t have to book.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Reading Part 1, look for words that mean the same as the text but are not the same: *one in the morning and one at night* = *two a day*; *no appointment needed* = *without booking*. If an option uses the exact words of the text, check it twice: it is often the trap.' },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'lena', items: [
+            { a: 'You should drink more water.' },
+            { a: 'You shouldn’t go to work today.' },
+            { a: 'What should I do?' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 3 */
     {
       id: 'p3',
       title: 'At the doctor’s',
@@ -120,117 +195,169 @@ export const UNIT = {
       art: 'croissant',
       spreads: [
         [
-          { t: 'text', md: 'Use **have to** + verb when something is necessary, often because of a rule or because another person says so. With *he*, *she* and *it*, use **has to**.\n\nUse **don’t have to** when something is not necessary. You can do it, but you can also choose not to.' },
-          { t: 'table', caption: 'Have to', explain: ['head'], quiz: true, head: ['', 'Positive', 'Negative', 'Question'], rows: [
+          { t: 'text', md: 'Use **have to** + the base form of a verb when something is **necessary**: you have no choice, often because of a rule or because another person says so. *I have to wait.* *You have to show your card.* With **he, she, it**, use **has to**: *She has to take the tablets twice a day.*\n\nUse **don’t have to** (or **doesn’t have to**) when something is **not necessary**. You can do it if you want, but you have a choice: *You don’t have to pay for the prescription.* (It’s free.)\n\n**should** is advice (a good idea); **have to** is a necessity (no choice). Compare: *You should rest* (my advice) and *You have to stay in hospital tonight* (the doctor’s decision).' },
+          { t: 'table', caption: 'have to', quiz: true, explain: ['head'], head: ['', 'Positive', 'Negative', 'Question'], rows: [
             ['I / you / we / they', 'I have to wait', 'I don’t have to pay', 'Do I have to wait?'],
             ['he / she / it', 'she has to wait', 'she doesn’t have to pay', 'Does she have to wait?'],
           ] },
+          { t: 'tip', art: 'owl', md: '**have to** makes questions and negatives with **do** and **does**, like a normal verb: *Do you have to work on Saturday?* *He doesn’t have to come.* Say it /ˈhæftə/: *have to* sounds like **haf-ta**, and *has to* like **has-ta**.' },
+        ],
+        [
           { t: 'examples', items: [
-            { s: 'You **have to** fill in this form.', n: 'It is necessary. It is the rule.' },
-            { s: 'You **don’t have to** come early.', n: 'It is not necessary, but you can if you want.' },
+            { s: 'I **have to** take this medicine three times a day.', n: 'The doctor says so: necessary.' },
+            { s: 'He **has to** stay in bed for two days.', n: 'With *he*: *has to*.' },
+            { s: 'You **don’t have to** make an appointment. Just come in.', n: 'Not necessary.' },
+            { s: '**Do** I **have to** wait long?', n: 'A question with *do*.' },
+            { s: 'Children **don’t have to** pay for medicine here.', n: 'It’s free for them.' },
+          ] },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['She have to rest.', 'She has to rest.', 'With *she*: *has to*.'],
+            ['I haven’t to work today.', 'I don’t have to work today.', 'The negative uses *don’t*.'],
+            ['Have I to wait?', 'Do I have to wait?', 'The question uses *do*.'],
+            ['You have to see a doctor. (only a good idea)', 'You should see a doctor.', 'Advice: *should*.'],
           ] },
         ],
         [
+          { t: 'text', md: 'At the doctor’s, first you make an **appointment**: a fixed time to see the doctor. The person at the desk is the **receptionist**. The doctor may give you a **prescription**: a paper that you take to the **pharmacy** (in Britain also called the **chemist’s**) to get your **medicine**. Medicine can be **tablets** (small, hard pieces you swallow) or **cream** for your skin.' },
           { t: 'dialogue', title: 'Making an appointment', lines: [
-            { who: 'Receptionist', s: 'Good morning, Park Road Health Centre.' },
-            { who: 'Omar', s: 'Hello. I’d like to make an appointment, please. I’ve had a bad cough for a week.' },
+            { who: 'Receptionist', s: 'Good morning, Hill Street Surgery.' },
+            { who: 'Omar', s: 'Hello. I’d like to make an appointment, please. I’ve got a bad cough.' },
             { who: 'Receptionist', s: 'Can you come tomorrow at ten past nine?' },
             { who: 'Omar', s: 'Yes, that’s fine. Do I have to bring anything?' },
-            { who: 'Receptionist', s: 'Yes, you have to bring a list of any medicine you take.' },
-            { who: 'Omar', s: 'OK. Do I have to come early?' },
-            { who: 'Receptionist', s: 'No, you don’t have to come early. Just arrive at ten past nine.' },
-          ] },
-          { t: 'text', md: 'More useful words. The doctor sometimes gives you a **prescription**: a paper you take to the **pharmacy** to get medicine. In British English, people also call a pharmacy a *chemist’s*. **Tablets** are small, hard pieces of medicine.' },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct words.', items: [
-            { q: 'My brother ___ wear glasses for driving.', o: ['has to', 'have to', 'has'], why: '*He* takes *has to* + base form.' },
-            { q: 'It’s Sunday tomorrow, so I ___ get up early.', o: ['don’t have to', 'have to', 'doesn’t have to'], why: 'It is not necessary on Sunday. *I* takes *don’t*.' },
-            { q: '___ we have to pay for the appointment?', o: ['Do', 'Have', 'Does'], why: 'Questions with *have to* use *do*: *Do we have to…?*' },
-            { q: 'She doesn’t ___ work on Fridays.', o: ['have to', 'has to', 'having to'], why: 'After *doesn’t*, use *have*, not *has*.' },
-            { q: 'You ___ show your passport at the airport. It’s the rule.', o: ['have to', 'don’t have to', 'should to'], why: 'It is a rule, so it is necessary: *have to*.' },
+            { who: 'Receptionist', s: 'You have to bring your health card. You don’t have to bring anything else.' },
+            { who: 'Omar', s: 'Thank you. See you tomorrow.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Complete with the correct form of *have to*. Use the words in brackets.', items: [
-            { q: 'Nurses often ___ (work) at night.', a: ['have to work'], why: '*Nurses* is plural: *have to* + base form.' },
-            { q: 'Ali ___ (take) his medicine three times a day.', a: ['has to take'], why: '*Ali* is one person: *has to*.' },
-            { q: 'You ___ (not / book) a table. The café is never full.', a: ['don’t have to book', 'do not have to book'], why: 'It is not necessary: *don’t have to*.' },
-            { q: '___ (she / stay) in hospital tonight?', a: ['Does she have to stay'], why: 'Question with *she*: *Does she have to* + base form.' },
+          { t: 'ex', kind: 'select', h: 'Choose the right words.', items: [
+            { q: 'My sister ___ wear glasses for reading.', o: ['has to', 'have to', 'haves to'], why: 'With *she*: *has to*.' },
+            { q: 'You ___ pay. The museum is free on Sundays.', o: ['don’t have to', 'have to', 'doesn’t have to'], why: 'Free = not necessary to pay.' },
+            { q: '___ we have to bring our passports?', o: ['Do', 'Have', 'Are'], why: 'Questions with *have to* use *do*.' },
+            { q: 'It’s only a cold. You ___ see a doctor, but you should rest.', o: ['don’t have to', 'have to', 'should'], why: 'Not necessary.' },
           ] },
-          { t: 'ex', kind: 'tf', h: 'Think about Omar’s phone call. True or false?', items: [
-            { q: 'Omar has had a cough for a week.', a: 't', why: '“I’ve had a bad cough for a week.”' },
-            { q: 'His appointment is today.', a: 'f', why: 'It is tomorrow at ten past nine.' },
-            { q: 'Omar has to bring a list of his medicine.', a: 't', why: 'The receptionist says “you have to bring a list of any medicine you take.”' },
-            { q: 'Omar has to arrive early for his appointment.', a: 'f', why: 'The receptionist says “No, you don’t have to come early.”' },
+          { t: 'ex', kind: 'choice', h: 'should or have to? Choose the best sentence.', items: [
+            { q: 'The doctor says Ana must take tablets. There is no choice.', o: ['Ana has to take tablets.', 'Ana should to take tablets.', 'Ana doesn’t have to take tablets.'], why: 'No choice: *has to*.' },
+            { q: 'Your friend is tired. It is a good idea to sleep more.', o: ['You should sleep more.', 'You have to sleeping more.', 'You don’t should sleep more.'], why: 'A good idea: *should*.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'match', h: 'Match the words and their meanings.', pairs: [
-            ['an appointment', 'a time to see the doctor'],
-            ['a prescription', 'a paper from the doctor for medicine'],
-            ['a pharmacy', 'a shop that sells medicine'],
-            ['tablets', 'small, hard pieces of medicine'],
-            ['a receptionist', 'the person who answers the phone and makes appointments'],
+          { t: 'ex', kind: 'gap', h: 'Write the correct form of have to.', items: [
+            { q: 'He ___ (have to) work on Saturdays.', a: ['has to'], why: '*he has to*.' },
+            { q: 'We ___ (not / have to) wear a uniform at school.', a: ['don’t have to', 'do not have to'], why: '*We don’t have to*.' },
+            { q: '___ she have to stay in hospital?', a: ['Does'], why: 'Questions with *she*: *Does she have to…?*' },
+            { q: 'You ___ (not / have to) come with me. I can go alone.', a: ['don’t have to', 'do not have to'], why: 'Not necessary.' },
+          ] },
+          { t: 'ex', kind: 'sort', h: 'Where do you hear it: at the doctor’s or at the pharmacy?', groups: ['doctor', 'pharmacy'], explain: ['groups'], items: [
+            { s: 'Open your mouth and say “ah”.', g: 0, why: 'The doctor looks at your throat.' },
+            { s: 'Here is your prescription.', g: 0, why: 'The doctor writes it.' },
+            { s: 'That’s six pounds for the tablets.', g: 1, why: 'You pay for medicine at the pharmacy.' },
+            { s: 'Take two with water after meals.', g: 1, why: 'The pharmacist explains the medicine.' },
+          ] },
+        ],
+        [
+          { t: 'dialogue', title: 'At the pharmacy', lines: [
+            { who: 'Pharmacist', s: 'Hello. Have you got a prescription?' },
+            { who: 'Lucía', s: 'No, I haven’t. I’ve just got a sore throat. Have you got anything for it?' },
+            { who: 'Pharmacist', s: 'You can try these sweets. You have to take one every three hours.' },
+            { who: 'Lucía', s: 'Do I have to take them with food?' },
+            { who: 'Pharmacist', s: 'No, you don’t. But you shouldn’t take more than eight a day.' },
+          ] },
+          { t: 'ex', kind: 'choice', h: 'In the format of the A2 Key exam (Listening Part 3): listen to the conversation and choose the right answer.', items: [
+            { q: 'Why is Lucía at the pharmacy?', o: ['She has a sore throat.', 'She has a prescription.', 'She wants some food.'], why: '*I’ve just got a sore throat.*' },
+            { q: 'How often does she have to take the sweets?', o: ['every three hours', 'eight times a day', 'after every meal'], why: '*One every three hours*; eight is the most in a day.' },
+            { q: 'Does she have to take them with food?', o: ['No, she doesn’t.', 'Yes, she does.', 'Only in the morning.'], why: '*No, you don’t.*' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Listening Part 3 you hear a longer conversation and answer five questions. You will often hear **all three** options, but only one answers the question. Here *eight* is in the conversation, but it is the most in a day, not how often.' },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'omar', items: [
+            { a: 'I’d like to make an appointment, please.' },
+            { a: 'Do I have to bring anything?' },
+            { a: 'You don’t have to pay for this.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 4 */
     {
       id: 'p4',
       title: 'Stay well this winter',
-      about: 'Read a leaflet with simple health advice.',
+      about: 'Read a leaflet with simple health advice, and write a short message to say you are ill.',
       art: 'sun',
       spreads: [
         [
-          { t: 'reading', title: 'Stay well this winter', md: 'In winter, a lot of people get colds and coughs. Here are some simple ways to stay well.\n\nWash your hands often, with soap and warm water. This is the easiest way to stop germs. You should also cover your mouth and nose when you cough or sneeze.\n\nTry to sleep for seven or eight hours every night. Your body needs sleep to get better. You should also eat a lot of fruit and vegetables and drink enough water, even when it is cold.\n\nGo outside every day, if you can. A short walk in the daylight is good for your body and your mood.\n\nDo you have a cold? You don’t usually have to see a doctor. Rest at home and drink warm drinks. A pharmacist can help you choose medicine. But if you feel very ill, or you are not better after a week, you should call your doctor.' },
+          { t: 'text', md: 'Leaflets give short, clear advice. They often use the **imperative** (the base form of the verb, with no subject): *Wash your hands.* *Don’t share cups.* They also use **should**, **have to** and **don’t have to**, which you learned in this unit. Notice how each part starts with a heading: this helps you find information fast.' },
+          { t: 'reading', title: 'Stay well this winter', md: '**Keep warm.** Wear a hat, a scarf and gloves when you go out. Your home should be at least 18 degrees.\n\n**Wash your hands.** Colds and the flu travel easily. Wash your hands often with soap, and don’t share cups or towels.\n\n**Eat and sleep well.** You should eat fruit and vegetables every day and drink plenty of water. Adults should sleep seven to nine hours a night.\n\n**Do you feel ill?** For a cold, you don’t have to see a doctor. Rest, drink warm drinks and ask at the pharmacy. But you have to call a doctor if you have a very high temperature for more than three days.\n\n**The flu vaccine.** People over 65 don’t have to pay for it. Ask your doctor’s receptionist for an appointment.' },
         ],
         [
-          { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
-            { q: 'The leaflet says washing your hands is the easiest way to stop germs.', a: 't', why: '“This is the easiest way to stop germs.”' },
-            { q: 'You should sleep for ten hours every night.', a: 'f', why: 'The leaflet says seven or eight hours.' },
-            { q: 'You don’t have to drink water in winter.', a: 'f', why: 'You should drink enough water, even when it is cold.' },
-            { q: 'Walking in the daylight can help your mood.', a: 't', why: 'A short walk is good for your body and your mood.' },
-            { q: 'The leaflet comes from a hospital.', a: 'ng', why: 'The leaflet does not say who wrote it.' },
+          { t: 'ex', kind: 'tf', ng: true, h: 'Read the leaflet. True, false, or not given?', items: [
+            { q: 'Your home should be at least 18 degrees.', a: 't', why: '*Your home should be at least 18 degrees.*' },
+            { q: 'You should see a doctor for every cold.', a: 'f', why: '*For a cold, you don’t have to see a doctor.*' },
+            { q: 'Adults should sleep seven to nine hours.', a: 't', why: 'It says this in *Eat and sleep well*.' },
+            { q: 'The pharmacy is open on Sundays.', a: 'ng', why: 'The leaflet doesn’t say when the pharmacy is open.' },
+            { q: 'People over 65 have to pay for the flu vaccine.', a: 'f', why: 'They *don’t have to pay* for it.' },
+          ] },
+          { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
+            { q: 'When do you have to call a doctor?', o: ['With a very high temperature for more than three days.', 'When you have a cold.', 'When you need a vaccine.'], why: 'See *Do you feel ill?*' },
+            { q: 'Why should you wash your hands often?', o: ['Colds and the flu travel easily.', 'Your home is cold.', 'The pharmacy says so.'], why: '*Colds and the flu travel easily.*' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-            { q: 'You have a cold. What does the leaflet say?', o: ['You usually don’t have to see a doctor.', 'You have to see a doctor the same day.', 'You should go to work as usual.'], why: '“You don’t usually have to see a doctor.”' },
-            { q: 'Who can help you choose medicine?', o: ['A pharmacist.', 'A receptionist.', 'A teacher.'], why: '“A pharmacist can help you choose medicine.”' },
-            { q: 'When should you call your doctor?', o: ['When you feel very ill or you are not better after a week.', 'When you sneeze for the first time.', 'Every winter.'], why: 'This is the advice in the last paragraph.' },
+          { t: 'ex', kind: 'match', h: 'In the format of the A2 Key exam (Reading Part 2): which part of the leaflet should each person read?', pairs: [
+            ['Ravi is 70 and wants to know about the vaccine.', 'The flu vaccine'],
+            ['Grace has a cold and wants to know if she needs a doctor.', 'Do you feel ill?'],
+            ['Tom is often tired and goes to bed at 1 a.m.', 'Eat and sleep well'],
+            ['Mei’s flat is very cold in the evening.', 'Keep warm'],
           ] },
-          { t: 'ex', kind: 'spot', h: 'Tap *should* and the verb after it.', items: [
-            { s: 'You [should] also [cover] your mouth and nose when you cough or sneeze.', why: '*Should* + base form: *should cover*.' },
-            { s: 'If you feel very ill, you [should] [call] your doctor.', why: '*Should* + base form: *should call*.' },
+          { t: 'tip', art: 'owl', md: 'In Reading Part 2 you match people to short texts (three texts, seven questions). Underline what each person **needs**, then look for a text that gives exactly that. Be careful: two texts can talk about the same topic, but only one answers the person’s need.' },
+        ],
+        [
+          { t: 'text', md: 'When you are ill, you often write a short message to say you can’t come to work or to class. A good message says **what the problem is**, **what you are going to do**, and **what happens next** (when you are coming back, or what the other person should do). Use what you learned: *I’ve got…*, *I have to…*, *I’m going to…*, *Could you…?*' },
+          { t: 'examples', items: [
+            { s: 'Hi Ms Grant, I’m sorry, but I can’t come to work today. **I’ve got the flu.**', n: 'The problem.' },
+            { s: 'The doctor says **I have to stay in bed** for two days.', n: 'What is necessary.' },
+            { s: 'I**’m going to** come back on Thursday. **Could you** send me the notes from the meeting?', n: 'What happens next.' },
+          ] },
+          { t: 'ex', kind: 'order', h: 'Put the words in order to make sentences for a message.', items: [
+            { a: 'I can’t come to class today.', why: 'Subject, *can’t*, verb, place, time.' },
+            { a: 'I have to stay at home.', why: '*have to* + base form.' },
+            { a: 'I’m going to come back on Monday.', why: 'A plan with *going to*.' },
+          ] },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'arthur', items: [
+            { a: 'You should wash your hands often.' },
+            { a: 'For a cold, you don’t have to see a doctor.' },
+            { a: 'I’m sorry, but I can’t come to work today.' },
           ] },
         ],
       ],
     },
   ],
   test: [
-    { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-      { q: 'I’ve got a ___. I can’t eat or drink.', o: ['sore throat', 'sore back', 'cough throat'], why: 'If your throat hurts, it is hard to eat or drink: *a sore throat*.' },
-      { q: 'My knees ___ after the long walk.', o: ['hurt', 'hurts', 'hurting'], why: '*Knees* is plural, so *hurt*.' },
-      { q: 'You ___ go to work with a temperature. Stay at home.', o: ['shouldn’t', 'should', 'don’t should'], why: 'Going to work is not a good idea: *shouldn’t*.' },
-      { q: 'Tomorrow is a holiday, so we ___ work.', o: ['don’t have to', 'have to', 'doesn’t have to'], why: 'It is not necessary on a holiday. *We* takes *don’t*.' },
-      { q: 'Gabriel ___ take a tablet every morning.', o: ['has to', 'have to', 'has'], why: '*He* takes *has to* + base form.' },
+    { t: 'ex', kind: 'select', h: 'Choose the right words.', items: [
+      { q: 'I’ve got ___ sore throat.', o: ['a', 'the', '–'], why: '*a sore throat*.' },
+      { q: 'My feet ___.', o: ['hurt', 'hurts', 'is hurting me'], why: 'Two feet: *hurt*.' },
+      { q: 'You’ve got a cough. You ___ smoke.', o: ['shouldn’t', 'should', 'have to'], why: 'Smoking is bad for a cough.' },
+      { q: 'She ___ take the tablets with food.', o: ['has to', 'have to', 'should to'], why: 'With *she*: *has to*.' },
     ] },
-    { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
-      { q: 'One foot, two ___.', a: ['feet'], why: 'The plural of *foot* is *feet*.' },
-      { q: 'You look ill. What’s the ___?', a: ['matter'], why: 'We ask *What’s the matter?*' },
-      { q: 'You ___ (not / lift) heavy things with a bad back.', a: ['shouldn’t lift', 'should not lift'], why: 'Advice: *shouldn’t* + base form.' },
-      { q: '___ (I / have to) bring my passport?', a: ['Do I have to'], why: 'Question: *Do* + *I* + *have to*.' },
+    { t: 'ex', kind: 'gap', h: 'Write should, shouldn’t, have to, has to, don’t have to or doesn’t have to.', items: [
+      { q: 'It’s free. You ___ pay.', a: ['don’t have to', 'do not have to'], why: 'Not necessary.' },
+      { q: 'The doctor says he ___ stay in bed. He has no choice.', a: ['has to'], why: 'Necessary, with *he*.' },
+      { q: 'You look tired. I think you ___ go to bed early.', a: ['should'], why: 'Advice.' },
+      { q: 'You ___ eat so many sweets. They are bad for your teeth.', a: ['shouldn’t', 'should not'], why: 'Advice: not a good idea.' },
     ] },
     { t: 'ex', kind: 'match', h: 'Match the problem and the advice.', pairs: [
-      ['I’ve got a headache.', 'You should turn the loud music off.'],
-      ['My eyes are tired.', 'You shouldn’t look at your phone so much.'],
-      ['I’ve got a stomach ache.', 'You shouldn’t eat so fast.'],
-      ['I can’t sleep at night.', 'You shouldn’t drink coffee in the evening.'],
+      ['I’ve got a temperature.', 'You should stay in bed.'],
+      ['My eyes hurt.', 'You should have a break from the screen.'],
+      ['I’ve got a toothache.', 'You should see a dentist.'],
+      ['I feel sick.', 'You shouldn’t eat anything heavy.'],
     ] },
-    { t: 'ex', kind: 'choice', h: 'Which sentence is correct?', items: [
-      { q: '', o: ['You should see a doctor.', 'You should to see a doctor.', 'You should seeing a doctor.'], why: '*Should* + base form, with no *to*.' },
-      { q: '', o: ['She doesn’t have to pay.', 'She doesn’t has to pay.', 'She don’t have to pay.'], why: '*She doesn’t* + *have to*.' },
+    { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+      { s: 'You should [to rest].', a: ['rest'], why: 'No *to* after *should*.' },
+      { s: '[Have I] to wait?', a: ['Do I have'], why: 'Questions with *have to* use *do*.' },
+      { s: 'I have [headache].', a: ['a headache'], why: '*a headache*.' },
+      { s: 'My [tooths] hurt.', a: ['teeth'], why: '*tooth* → *teeth*.' },
+    ] },
+    { t: 'ex', kind: 'choice', h: 'Where are you?', items: [
+      { q: '“Here is your prescription. Take it to the pharmacy.”', o: ['At the doctor’s.', 'At the pharmacy.', 'At the dentist’s.'], why: 'The doctor gives you a prescription.' },
+      { q: '“Take one tablet twice a day. That’s four pounds.”', o: ['At the pharmacy.', 'At the doctor’s.', 'At the hospital desk.'], why: 'You pay for medicine at the pharmacy.' },
     ] },
   ],
 };

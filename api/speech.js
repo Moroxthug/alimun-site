@@ -4,14 +4,23 @@
  *  Vercel Serverless Function (Node.js runtime)
  *
  *  Voices for the course material (docs/DASHBOARD_PLAN.md, step 5).
- *    ?action=status  (GET)  — { configured } : is GOOGLE_AI_API_KEY set. No cost.
+ *    ?action=status  (GET)  — { configured, cloudAccount } : is GOOGLE_AI_API_KEY set, and does GOOGLE_CLOUD_TTS_KEY hold
+ *                     a service account's JSON key (yes or no only). No cost.
  *    ?action=generate (POST, admin JWT) — { book }: makes the next missing course audio
  *                     files of a book (plan /data/audio/<book>.json, site/src/data/books/audio.js)
  *                     as MP3 in Supabase Storage course-audio/<book>/<hash>.mp3, with
- *                     <book>/manifest.json listing the files made; sentences of one block with the same
+ *                     <book>/manifest.json listing the files made. With a Google Cloud model in the plan
+ *                     (gemini-3.1-flash-tts-preview, owner 26 Oct 2026) each sentence is one Vertex AI request as
+ *                     the service account, up to TTS_CLOUD_PER_MINUTE (default 120) a minute, 8 at a time. With a Gemini API
+ *                     model, sentences of one block with the same
  *                     voice are spoken in one request and cut at the pauses; about 75 s per call, one request
  *                     every 6.7 s (TTS_PER_MINUTE, default 9) for Google's per-minute limit; a 429 ends the
- *                     call with retryAfter (seconds) for the admin page to wait.
+ *                     call with retryAfter (seconds), and daily + resetAt when it is Google's daily limit, for the
+ *                     admin page to wait (minutes) or stop until the reset (hours).
+ *    ?action=cloud-test (POST, admin JWT) — { model, voice }: one sentence in a Gemini voice through Google Cloud
+ *                     (Vertex AI, then Cloud Text-to-Speech; no daily limit), with GOOGLE_CLOUD_TTS_KEY if set, else
+ *                     GOOGLE_AI_API_KEY; returns audio/mpeg (X-Alimun-Via says which route worked), or each route's
+ *                     refusal so the owner's set-up can be checked (docs/CLOUD_TTS_SETUP.md).
  *    ?action=sample  (POST, admin JWT) — one sentence, or a two-speaker dialogue,
  *                     spoken by Gemini text-to-speech; returns audio/wav.
  *        { text, voice, model?: 'flash' | 'lite', style? }
@@ -24,6 +33,7 @@
  */
 
 const { createClient } = require('@supabase/supabase-js');
+const { GCP_PROJECT, wav, findAudio, toWav, pcmOf, retrySeconds, limited, serviceAccount, cloudHeaders, speakVertex, mp3, mp3Pcm } = require('./_lib/google-voice.js');
 
 const MODELS = { flash: 'gemini-3.8-flash-tts', lite: 'gemini-3.8-flash-lite-tts' };
 const VOICES = ['Zephyr', 'Puck', 'Charon', 'Kore', 'Fenrir', 'Leda', 'Orus', 'Aoede', 'Callirrhoe', 'Autonoe', 'Enceladus', 'Iapetus',
@@ -58,66 +68,12 @@ function cleanText(s) {
   return String(s || '').replace(/[\u0000-\u001f]+/g, ' ').trim().slice(0, MAX_TEXT);
 }
 
-/* 16-bit mono PCM -> WAV */
-function wav(pcm, rate) {
-  const h = Buffer.alloc(44);
-  h.write('RIFF', 0); h.writeUInt32LE(36 + pcm.length, 4); h.write('WAVE', 8);
-  h.write('fmt ', 12); h.writeUInt32LE(16, 16); h.writeUInt16LE(1, 20); h.writeUInt16LE(1, 22);
-  h.writeUInt32LE(rate, 24); h.writeUInt32LE(rate * 2, 28); h.writeUInt16LE(2, 32); h.writeUInt16LE(16, 34);
-  h.write('data', 36); h.writeUInt32LE(pcm.length, 40);
-  return Buffer.concat([h, pcm]);
-}
-
-/* The audio part of a response, wherever the API puts it: { type: 'audio', data, mime_type } (Interactions)
-   or { inlineData: { mimeType, data } } (generateContent) */
-function findAudio(node) {
-  if (!node || typeof node !== 'object') return null;
-  if (node.inlineData && node.inlineData.data) return { data: node.inlineData.data, mime: node.inlineData.mimeType || '' };
-  if (node.type === 'audio' && node.data) return { data: node.data, mime: node.mime_type || node.mimeType || '', rate: node.sample_rate };
-  for (const k of Object.keys(node)) {
-    const found = findAudio(node[k]);
-    if (found) return found;
-  }
-  return null;
-}
-function toWav(a) {
-  const buf = Buffer.from(a.data, 'base64');
-  if (buf.slice(0, 4).toString() === 'RIFF') return buf;
-  const m = /rate=(\d+)/.exec(a.mime);
-  return wav(buf, +(m && m[1]) || a.rate || 24000);
-}
-
 async function callJSON(url, body) {
   const r = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GOOGLE_AI_API_KEY }, body: JSON.stringify(body) });
   const text = await r.text();
   let json = null;
   try { json = JSON.parse(text); } catch (e) { /* not JSON */ }
   return { ok: r.ok, status: r.status, json, text };
-}
-
-/* PCM samples of a WAV (the "data" chunk) */
-function pcmOf(w) {
-  let at = 12;
-  while (at + 8 <= w.length) {
-    const id = w.toString('ascii', at, at + 4), size = w.readUInt32LE(at + 4);
-    if (id === 'data') return { pcm: w.slice(at + 8, at + 8 + size), rate: w.readUInt32LE(24) };
-    at += 8 + size + (size % 2);
-  }
-  return { pcm: w.slice(44), rate: 24000 };
-}
-
-/* Google's rate limit (Tier 1: 10 requests a minute for the TTS models): stop at once and say when to try again,
-   instead of spending the next request on the fallback */
-function limited(r) {
-  if (r.status !== 429) return;
-  const m = /retry in ([\d.]+)\s*s/i.exec(r.text || '');
-  const err = new Error('rate_limited');
-  err.rateLimited = true;
-  let msg = '';
-  try { msg = JSON.parse(r.text).error.message; } catch (e) { msg = String(r.text || ''); }
-  err.limitMessage = String(msg).slice(0, 300);
-  err.retryAfter = Math.min(120, Math.ceil(m ? +m[1] : 60));
-  throw err;
 }
 
 /* One request: Interactions API first, generateContent as a fallback (single voice) */
@@ -179,25 +135,59 @@ async function speak({ model, turns, voices, style }) {
   throw err;
 }
 
+/* ---------- Google Cloud voices (step by step with the owner, 26 Oct 2026) ----------
+   The key in Vercel is bound to a service account, and such keys only reach the Gemini API and Vertex AI (Agent
+   Platform), so the Gemini voices are tried through Vertex AI generateContent (per-minute limits, no daily cap),
+   at the project's global endpoint and then the publisher endpoint; Cloud Text-to-Speech is tried last. */
+const CLOUD_MODELS = ['gemini-2.5-flash-tts', 'gemini-3.1-flash-tts-preview', 'gemini-2.5-pro-tts'];
+const TEST_TEXT = 'Hi, I\u2019m calling about the flat on Park Road. Is it still available? I\u2019d love to see it this week, maybe on Thursday after work.';
+const TEST_STYLE = 'Speak naturally, at a normal conversational pace, clearly and warmly.';
+
+async function cloudTest(res, body) {
+  const model = CLOUD_MODELS.includes(body.model) ? body.model : CLOUD_MODELS[0];
+  const voice = VOICES.includes(body.voice) ? body.voice : 'Orus';
+  const sa = serviceAccount(), project = sa && sa.project_id || GCP_PROJECT;
+  const headers = await cloudHeaders();
+  const vertexBody = { contents: [{ role: 'user', parts: [{ text: TEST_STYLE + '\n' + TEST_TEXT }] }],
+    generationConfig: { responseModalities: ['AUDIO'], speechConfig: { voiceConfig: { prebuiltVoiceConfig: { voiceName: voice } } } } };
+  const tries = [
+    ['vertex-global', 'https://aiplatform.googleapis.com/v1/projects/' + project + '/locations/global/publishers/google/models/' + model + ':generateContent', vertexBody],
+    ['vertex-publisher', 'https://aiplatform.googleapis.com/v1/publishers/google/models/' + model + ':generateContent', vertexBody],
+    ['cloud-tts', 'https://texttospeech.googleapis.com/v1/text:synthesize', { input: { prompt: TEST_STYLE, text: TEST_TEXT },
+      voice: { languageCode: 'en-US', name: voice, modelName: model }, audioConfig: { audioEncoding: 'LINEAR16' } }],
+  ];
+  const refused = [];
+  for (const [via, url, payload] of tries) {
+    const r = await fetch(url, { method: 'POST', headers, body: JSON.stringify(payload) });
+    const text = await r.text();
+    let json = null;
+    try { json = JSON.parse(text); } catch (e) { /* not JSON */ }
+    const audio = r.ok && json && (json.audioContent ? { data: json.audioContent, mime: 'audio/wav' } : findAudio(json));
+    if (audio) {
+      const m = await mp3(toWav(audio));
+      res.setHeader('Content-Type', 'audio/mpeg');
+      res.setHeader('Cache-Control', 'no-store');
+      res.setHeader('X-Alimun-Via', via);
+      return res.status(200).send(m.buf);
+    }
+    const g = json && json.error || {};
+    const reason = (g.details || []).map((d) => d.reason).filter(Boolean).join(', ');
+    refused.push({ via, status: r.status, message: String(g.message || text).slice(0, 300), reason });
+  }
+  return res.status(502).json({ error: 'cloud_refused', model, voice, signedIn: !!sa, refused });
+}
+
 /* ---------- Course audio: files for the sentences of a book ---------- */
 const BUCKET = 'course-audio';
 /* Milliseconds between two requests to Google: 6.5 s keeps under 10 a minute (raise TTS_PER_MINUTE after a tier upgrade) */
 const GAP = Math.ceil(60000 / Math.max(1, +(process.env.TTS_PER_MINUTE || 9)));
+/* Through Google Cloud (Vertex AI) there is no fixed limit for the preview model (Google's shared pool): up to
+   TTS_CLOUD_PER_MINUTE requests a minute (default 120), TTS_CLOUD_PARALLEL of them at the same time (default 8) */
+const CLOUD_GAP = Math.ceil(60000 / Math.max(1, +(process.env.TTS_CLOUD_PER_MINUTE || 120)));
+const CLOUD_PARALLEL = Math.min(20, Math.max(1, +(process.env.TTS_CLOUD_PARALLEL || 8)));
 function sleep(ms) { return new Promise((r) => setTimeout(r, ms)); }
 const BOOK_RE = /^[A-Z][a-z]+-[ABC][12](-[a-z]+)?$/;
 
-async function mp3(w) { const { pcm, rate } = pcmOf(w); return mp3Pcm(pcm, rate); }
-async function mp3Pcm(pcm, rate) {
-  const lame = await import('@breezystack/lamejs');
-  const samples = new Int16Array(pcm.length >> 1);
-  for (let i = 0; i < samples.length; i++) samples[i] = pcm.readInt16LE(i * 2);
-  const enc = new lame.Mp3Encoder(1, rate, 40);
-  const out = [];
-  for (let i = 0; i < samples.length; i += 1152 * 20) { const b = enc.encodeBuffer(samples.subarray(i, i + 1152 * 20)); if (b.length) out.push(Buffer.from(b)); }
-  const end = enc.flush();
-  if (end.length) out.push(Buffer.from(end));
-  return { buf: Buffer.concat(out), seconds: Math.round(samples.length / rate * 10) / 10 };
-}
 
 async function ensureBucket(supabase) {
   const { data } = await supabase.storage.getBucket(BUCKET);
@@ -299,9 +289,13 @@ async function generate(req, res, supabase, body) {
     const manifest = await readManifest(supabase, book);
     const entries = [], seen = new Set();
     Object.entries(plan.items).forEach(([k, it]) => { if (!manifest.done[it[0]] && !seen.has(it[0])) { seen.add(it[0]); entries.push([k, it]); } });
-    const queue = chunks(entries);
+    /* Through Google Cloud there is no daily limit: one sentence per request, spoken as it is, never cut */
+    const cloud = CLOUD_MODELS.includes(plan.model) && !!serviceAccount();
+    if (CLOUD_MODELS.includes(plan.model) && !cloud) return res.status(503).json({ error: 'cloud_not_configured', detail: 'GOOGLE_CLOUD_TTS_KEY is not set' });
+    const gap = cloud ? CLOUD_GAP : GAP;
+    const queue = cloud ? entries.map(([, it]) => [it]) : chunks(entries);
     const made = [], failed = [];
-    let retryAfter = 0, last = 0, limitMessage = '', requests = 0, splitFailed = 0;
+    let retryAfter = 0, last = 0, limitMessage = '', requests = 0, splitFailed = 0, daily = false, resetAt = null;
     const save = async (h, pcm, rate) => {
       const m = await mp3Pcm(pcm, rate);
       const up = await supabase.storage.from(BUCKET).upload(book + '/' + h + '.mp3', m.buf, { contentType: 'audio/mpeg', cacheControl: '31536000', upsert: true });
@@ -309,10 +303,32 @@ async function generate(req, res, supabase, body) {
       manifest.done[h] = m.seconds;
       made.push(h);
     };
-    /* One request at a time, at most one every GAP ms, to stay under Google's requests-per-minute limit */
-    while (queue.length && Date.now() - t0 < 75000) {
+    /* Google Cloud: several sentences at once, starts spaced CLOUD_GAP apart; a refusal stops every worker */
+    let next = 0;
+    const worker = async () => {
+      while (queue.length && !retryAfter && Date.now() - t0 < 75000) {
+        const group = queue.shift();
+        const slot = Math.max(next, Date.now());
+        next = slot + gap;
+        if (slot > Date.now()) await sleep(slot - Date.now());
+        if (retryAfter) return;
+        last = Math.max(last, Date.now());
+        requests++;
+        try {
+          const w = await speakVertex({ model: plan.model, voice: group[0][1], style: group[0][2], text: group[0][3] });
+          const { pcm, rate } = pcmOf(w);
+          await save(group[0][0], pcm, rate);
+        } catch (e) {
+          if (e.rateLimited) { if (!retryAfter) { retryAfter = e.retryAfter; limitMessage = e.limitMessage; daily = e.daily; resetAt = e.resetAt; } return; }
+          failed.push({ h: group[0][0], error: String(e.message || e).slice(0, 200), detail: e.detail || null });
+        }
+      }
+    };
+    if (cloud) await Promise.all(Array.from({ length: CLOUD_PARALLEL }, worker));
+    /* Gemini API: one request at a time, at most one every GAP ms, to stay under Google's requests-per-minute limit */
+    while (!cloud && queue.length && Date.now() - t0 < 75000) {
       const group = queue.shift();
-      const wait = last + GAP - Date.now();
+      const wait = last + gap - Date.now();
       if (wait > 0) await sleep(wait);
       last = Date.now();
       requests++;
@@ -323,15 +339,21 @@ async function generate(req, res, supabase, body) {
           style: group.length > 1 ? style + ', with a long pause of about two seconds after each sentence' : style });
         const { pcm, rate } = pcmOf(w);
         const pieces = splitPcm(pcm, rate, group.map((it) => it[3]));
-        if (!pieces) { splitFailed++; group.forEach((it) => queue.unshift([it])); continue; }
+        /* Not clearly cut: try again in two halves (two requests) rather than one request per sentence */
+        if (!pieces) {
+          splitFailed++;
+          if (group.length >= 4) { const h = Math.ceil(group.length / 2); queue.unshift(group.slice(0, h), group.slice(h)); }
+          else group.slice().reverse().forEach((it) => queue.unshift([it]));
+          continue;
+        }
         for (let i = 0; i < group.length; i++) await save(group[i][0], pieces[i], rate);
       } catch (e) {
-        if (e.rateLimited) { retryAfter = e.retryAfter; limitMessage = e.limitMessage; break; }
+        if (e.rateLimited) { retryAfter = e.retryAfter; limitMessage = e.limitMessage; daily = e.daily; resetAt = e.resetAt; break; }
         failed.push({ h: group[0][0], error: String(e.message || e).slice(0, 200), detail: e.detail || null });
       }
     }
     /* The next call may start right away: keep the gap after this call's last request too */
-    const rest = last + GAP - Date.now();
+    const rest = last + gap - Date.now();
     if (!retryAfter && rest > 0) await sleep(rest);
     if (made.length) {
       manifest.updated = new Date().toISOString();
@@ -340,7 +362,7 @@ async function generate(req, res, supabase, body) {
     }
     const total = new Set(Object.values(plan.items).map((it) => it[0])).size;
     const seconds = Object.values(manifest.done).reduce((a, b) => a + b, 0);
-    return res.status(200).json({ book, total, done: Object.keys(manifest.done).length, made: made.length, failed, seconds: Math.round(seconds), retryAfter, limitMessage, requests, splitFailed });
+    return res.status(200).json({ book, total, done: Object.keys(manifest.done).length, made: made.length, failed, seconds: Math.round(seconds), retryAfter, limitMessage, daily, resetAt, requests, splitFailed });
   } catch (e) {
     console.error('[speech generate] ' + book + ': ' + e.message);
     return res.status(500).json({ error: 'generate_failed', detail: String(e.message || e).slice(0, 300) });
@@ -349,8 +371,8 @@ async function generate(req, res, supabase, body) {
 
 module.exports = async function handler(req, res) {
   const action = String((req.query && req.query.action) || '');
-  if (action === 'status') return res.status(200).json({ configured: !!process.env.GOOGLE_AI_API_KEY, models: MODELS, voices: VOICES, bucket: BUCKET });
-  if (action !== 'sample' && action !== 'generate') return res.status(404).json({ error: 'Unknown action' });
+  if (action === 'status') return res.status(200).json({ configured: !!process.env.GOOGLE_AI_API_KEY, cloudAccount: !!serviceAccount(), models: MODELS, voices: VOICES, bucket: BUCKET });
+  if (action !== 'sample' && action !== 'generate' && action !== 'cloud-test') return res.status(404).json({ error: 'Unknown action' });
   if (req.method !== 'POST') { res.setHeader('Allow', 'POST'); return res.status(405).json({ error: 'Method not allowed' }); }
   if (!process.env.GOOGLE_AI_API_KEY) return res.status(503).json({ error: 'speech_not_configured' });
 
@@ -363,6 +385,10 @@ module.exports = async function handler(req, res) {
   const body = parseBody(req);
   if (!body) return res.status(400).json({ error: 'Invalid JSON' });
   if (action === 'generate') return generate(req, res, supabase, body);
+  if (action === 'cloud-test') {
+    if (tooMany()) return res.status(429).json({ error: 'Too many requests, wait a minute' });
+    try { return await cloudTest(res, body); } catch (e) { return res.status(502).json({ error: 'cloud_failed', message: String(e.message || e).slice(0, 300) }); }
+  }
   if (tooMany()) return res.status(429).json({ error: 'Too many requests, wait a minute' });
   const model = MODELS[body.model] || MODELS.flash;
   const style = cleanText(body.style).slice(0, 80);
@@ -390,4 +416,4 @@ module.exports = async function handler(req, res) {
   }
 };
 
-module.exports._test = { findAudio, toWav, speak, wav, pcmOf, mp3, splitPcm, chunks };
+module.exports._test = { findAudio, toWav, speak, wav, pcmOf, mp3, splitPcm, chunks, retrySeconds, limited, cloudTest, serviceAccount, speakVertex, generate };

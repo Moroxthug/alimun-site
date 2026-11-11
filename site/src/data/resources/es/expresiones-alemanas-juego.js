@@ -1,0 +1,37 @@
+// Resource: game. German idioms: what each one really means. Meanings checked against Duden and DWDS.
+export default {
+  key: 'german-idioms', site: 'es', slug: 'expresiones-alemanas-juego', kind: 'game', course: 'German', level: 'Todos los niveles',
+  draw: 'pretzel', tint: 'sun', published: '2026-10-27',
+  title: 'Juego de expresiones alemanas: ¿tomates en los ojos?',
+  metaTitle: 'Juego de expresiones alemanas: 10 frases curiosas – Alimun',
+  desc: 'Un juego gratis con diez expresiones alemanas del día a día, de Tomaten auf den Augen a Ich verstehe nur Bahnhof. Adivina qué significa cada una.',
+  lead: 'Los alemanes dicen que tienen tomates en los ojos y que solo entienden «estación de tren». Adivina qué significan de verdad diez expresiones cotidianas.',
+  instructions: '¿Qué significa de verdad la expresión?',
+  about: [
+    'Las expresiones idiomáticas son frases cuyo significado no es la suma de sus palabras. El alemán tiene muchísimas, y muchas hablan de comida, de animales y de cerveza.',
+    'Todas estas las vas a oír en conversaciones normales. Aprende el significado junto con la frase entera y úsalas con amigos, no en un correo formal.',
+  ],
+  items: [
+    { q: 'Tomaten auf den Augen haben (tener tomates en los ojos)', options: ['no ver algo evidente', 'estar muy cansado', 'haber llorado', 'estar enamorado'], a: 0, why: 'Hast du Tomaten auf den Augen? quiere decir «¿No lo ves? Lo tienes delante de las narices».' },
+    { q: 'Ich verstehe nur Bahnhof (solo entiendo «estación de tren»)', options: ['quiero irme a casa', 'no entiendo nada', 'tengo prisa', 'me he perdido en la ciudad'], a: 1, why: 'Significa que no entiendes absolutamente nada, como nuestro «me suena a chino».' },
+    { q: 'Schwein haben (tener un cerdo)', options: ['ser desordenado', 'comer demasiado', 'tener suerte', 'ser maleducado'], a: 2, why: 'En alemán el cerdo es un símbolo de buena suerte: Da hast du aber Schwein gehabt! quiere decir «¡Qué suerte has tenido!».' },
+    { q: 'Das ist nicht mein Bier (esa no es mi cerveza)', options: ['no bebo alcohol', 'no es asunto mío', 'eso no es lo que pedí', 'no me gusta'], a: 1, why: 'Significa «no es mi problema» o «no es asunto mío».' },
+    { q: 'Die Daumen drücken (apretar los pulgares)', options: ['cruzar los dedos', 'contar algo', 'hacer autostop', 'quejarse'], a: 0, why: 'Los alemanes aprietan los pulgares donde nosotros cruzamos los dedos: Ich drücke dir die Daumen!' },
+    { q: 'Ins Fettnäpfchen treten (pisar el cazo de la grasa)', options: ['cocinar mal', 'resbalar en el hielo', 'meter la pata', 'engordar'], a: 2, why: 'Significa decir o hacer algo inoportuno sin querer, igual que nuestro «meter la pata».' },
+    { q: 'Jemandem auf den Keks gehen (pisarle la galleta a alguien)', options: ['robarle a alguien', 'sacar de quicio a alguien', 'sorprender a alguien', 'visitar a alguien'], a: 1, why: 'Du gehst mir auf den Keks! quiere decir «¡Me estás sacando de quicio!».' },
+    { q: 'Da steppt der Bär (allí el oso baila claqué)', options: ['allí es peligroso', 'allí hace mucho frío', 'allí hay mucha fiesta', 'allí es aburrido'], a: 2, why: 'Describe un sitio donde hay mucho ambiente, como una fiesta estupenda.' },
+    { q: 'Hals- und Beinbruch! (¡rotura de cuello y pierna!)', options: ['¡Ten cuidado!', '¡Mucha suerte!', '¡Que te mejores!', '¡Vete de aquí!'], a: 1, why: 'Es una forma de desear buena suerte, como el «break a leg» del inglés o nuestro «mucha suerte» antes de un examen o un estreno.' },
+    { q: 'Jemandem einen Bären aufbinden (atarle un oso a alguien)', options: ['darle un abrazo a alguien', 'darle trabajo a alguien', 'tomarle el pelo a alguien', 'asustar a alguien'], a: 2, why: 'Significa hacer creer a alguien algo que no es verdad, como nuestro «tomar el pelo».' },
+  ],
+  pairs: [
+    ['Tomaten auf den Augen haben', 'No ver algo evidente'],
+    ['Ich verstehe nur Bahnhof', 'No entiendo nada'],
+    ['Schwein haben', 'Tener suerte'],
+    ['Das ist nicht mein Bier', 'No es asunto mío'],
+    ['Die Daumen drücken', 'Cruzar los dedos'],
+    ['Ins Fettnäpfchen treten', 'Meter la pata'],
+    ['Auf den Keks gehen', 'Sacar de quicio'],
+    ['Da steppt der Bär', 'Hay mucha fiesta'],
+  ],
+  related: ['german-compounds', 'false-friends', 'de-quiz-a2'],
+};

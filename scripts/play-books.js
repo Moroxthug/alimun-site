@@ -1,4 +1,4 @@
-/* Plays course books in /app/preview with the right answers, the way a student would (docs/BOOKS.md).
+/* Plays course books in /app with the right answers, the way a student would (docs/BOOKS.md).
    Every lesson is turned page by page to its end page and every unit test must score 100%.
    Serves this checkout on a local port; /data/* comes from alimun.com unless --data=local (site build output in site/dist).
    Usage: node scripts/play-books.js [book ids...] [--units=N] [--lang=de] [--phone] [--practice]
@@ -60,7 +60,7 @@ function serve() {
       return;
     }
     if (p.startsWith('/data/')) p = '/site/dist' + p;
-    if (p === '/app/preview') p = '/app/preview.html';
+    if (p === '/app' || p === '/app/') p = '/app/index.html';
     const f = path.join(ROOT, p);
     if (!f.startsWith(ROOT) || !fs.existsSync(f) || fs.statSync(f).isDirectory()) { res.writeHead(404); return res.end(); }
     res.writeHead(200, { 'content-type': TYPES[path.extname(f)] || 'application/octet-stream' });
@@ -90,6 +90,13 @@ async function answer(page, b, gi) {
     case 'gap': case 'wordform': case 'transform': case 'heargap': case 'dictation':
       for (let i = 0; i < b.items.length; i++) await q('input[data-i="' + i + '"]').fill(b.items[i].a[0]);
       if (await q('[data-act="check"]').count()) await click('[data-act="check"]');
+      return;
+    case 'speak':
+      /* No microphone or sign-in here: record once, then take the skip a student without a microphone gets */
+      for (let i = 0; i < b.items.length; i++) {
+        await click('[data-act="rec"][data-i="' + i + '"]');
+        await click('[data-act="show"][data-i="' + i + '"]');
+      }
       return;
     case 'select':
       for (let i = 0; i < b.items.length; i++) await q('select[data-i="' + i + '"]').selectOption({ value: '0' });
@@ -136,7 +143,7 @@ async function answer(page, b, gi) {
         const ti = spotTargets(b.items[i].s)[0];
         await click('[data-act="fixtap"][data-i="' + i + '"][data-t="' + ti + '"]');
         await q('input[data-i="' + i + '"]').fill(b.items[i].a[0]);
-        await click('[data-act="fixok"][data-i="' + i + '"]');
+        if (await q('[data-act="fixok"][data-i="' + i + '"]').count()) await click('[data-act="fixok"][data-i="' + i + '"]');
       }
       return;
     case 'colloc':
@@ -178,7 +185,9 @@ async function playLesson(page, base, book, unit, lesson, errors) {
     await next.click();
   }
   await page.waitForSelector('.spread[data-spread="end"]:not([aria-hidden])');
-  const wrong = await page.locator('.spread:not([aria-hidden]) .fb--no').count();
+  /* Speaking items are skipped here (no microphone), and a skip shows as a wrong answer: those are expected */
+  const skipped = lesson.spreads.flat().filter(b => b.kind === 'speak').reduce((n, b) => n + b.items.length, 0);
+  const wrong = Math.max(0, await page.locator('.spread:not([aria-hidden]) .fb--no').count() - skipped);
   if (wrong) errors.push(book.id + ' ' + unit.id + ' ' + lesson.id + ': ' + wrong + ' wrong feedback shown');
 }
 
@@ -213,7 +222,7 @@ async function playRound(page, url, errors, label) {
 
 async function main() {
   const server = await serve();
-  const base = 'http://localhost:' + server.address().port + '/app/preview?sample=1&lang=' + LANG;
+  const base = 'http://localhost:' + server.address().port + '/app?sample=1&lang=' + LANG;
   /* The project's own Playwright may want another browser build; fall back to the one installed on the machine */
   const browser = await chromium.launch().catch(() => chromium.launch({ executablePath: '/opt/pw-browsers/chromium' }));
   const context = await browser.newContext(flag('phone') ? { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true } : { viewport: { width: 1280, height: 900 } });

@@ -1,0 +1,37 @@
+// Resource: game. German idioms: what each one really means. Meanings checked against Duden and DWDS.
+export default {
+  key: 'german-idioms', site: 'fr', slug: 'jeu-expressions-allemandes', kind: 'game', course: 'German', level: 'Tous niveaux',
+  draw: 'pretzel', tint: 'sun', published: '2026-10-27',
+  title: 'Jeu des expressions allemandes : des tomates sur les yeux ?',
+  metaTitle: 'Jeu des expressions allemandes : 10 expressions drôles – Alimun',
+  desc: "Un jeu gratuit avec dix expressions allemandes du quotidien, de Tomaten auf den Augen à Ich verstehe nur Bahnhof. Devine leur sens, puis retourne les cartes.",
+  lead: "Les Allemands disent qu'ils ont des tomates sur les yeux et qu'ils ne comprennent que « gare ». Devine ce que veulent vraiment dire dix expressions du quotidien.",
+  instructions: "Que veut vraiment dire cette expression ?",
+  about: [
+    "Une expression idiomatique, c'est une expression dont le sens n'est pas la somme de ses mots. L'allemand en a beaucoup, et souvent avec de la nourriture, des animaux et de la bière.",
+    "Tu les entendras toutes dans les conversations de tous les jours. Apprends le sens avec la phrase entière, et utilise-les plutôt entre amis que dans un e-mail formel.",
+  ],
+  items: [
+    { q: "Tomaten auf den Augen haben (avoir des tomates sur les yeux)", options: ["ne pas voir quelque chose d'évident", 'être très fatigué', 'avoir pleuré', 'être amoureux'], a: 0, why: "Hast du Tomaten auf den Augen? veut dire « Tu ne le vois pas ? C'est juste devant toi. »" },
+    { q: "Ich verstehe nur Bahnhof (je ne comprends que « gare »)", options: ['je veux rentrer chez moi', 'je ne comprends rien du tout', 'je suis pressé', 'je suis perdu en ville'], a: 1, why: "Ça veut dire qu'on ne comprend absolument rien, comme « c'est du chinois pour moi »." },
+    { q: "Schwein haben (avoir un cochon)", options: ['être désordonné', 'manger trop', 'avoir de la chance', 'être impoli'], a: 2, why: "En allemand, le cochon porte bonheur : Da hast du aber Schwein gehabt! veut dire « T'as vraiment eu du bol ! »" },
+    { q: "Das ist nicht mein Bier (ce n'est pas ma bière)", options: ['je ne bois pas', 'ce ne sont pas mes affaires', "ce n'est pas ma commande", "je n'aime pas ça"], a: 1, why: "Ça veut dire « ce n'est pas mon problème », comme « ce ne sont pas mes oignons »." },
+    { q: "Die Daumen drücken (serrer les pouces)", options: ['croiser les doigts', 'compter quelque chose', 'faire du stop', 'se plaindre'], a: 0, why: "Les Allemands serrent les pouces là où les Français croisent les doigts : Ich drücke dir die Daumen!" },
+    { q: "Ins Fettnäpfchen treten (marcher dans le petit pot de graisse)", options: ['mal cuisiner', 'glisser sur la glace', 'faire une gaffe', 'prendre du poids'], a: 2, why: "Ça veut dire dire ou faire quelque chose de gênant sans le vouloir, comme « mettre les pieds dans le plat »." },
+    { q: "Jemandem auf den Keks gehen (marcher sur le biscuit de quelqu'un)", options: ['voler quelqu\'un', "taper sur les nerfs de quelqu'un", "surprendre quelqu'un", "rendre visite à quelqu'un"], a: 1, why: "Du gehst mir auf den Keks! veut dire « Tu me tapes sur les nerfs ! »" },
+    { q: "Da steppt der Bär (là, l'ours fait des claquettes)", options: ["c'est dangereux là-bas", 'il fait très froid là-bas', "c'est la fête là-bas", "on s'ennuie là-bas"], a: 2, why: "Ça décrit un endroit où il se passe plein de choses, comme une super fête." },
+    { q: "Hals- und Beinbruch! (fracture du cou et de la jambe !)", options: ['Fais attention !', 'Bonne chance !', 'Bon rétablissement !', "Va-t'en !"], a: 1, why: "C'est une façon de souhaiter bonne chance, un peu comme « break a leg » en anglais." },
+    { q: "Jemandem einen Bären aufbinden (attacher un ours sur quelqu'un)", options: ["faire un câlin à quelqu'un", "donner un travail à quelqu'un", "raconter des salades à quelqu'un", "faire peur à quelqu'un"], a: 2, why: "Ça veut dire faire croire à quelqu'un une chose fausse, comme « mener quelqu'un en bateau »." },
+  ],
+  pairs: [
+    ['Tomaten auf den Augen haben', "Ne pas voir quelque chose d'évident"],
+    ['Ich verstehe nur Bahnhof', "Je n'y comprends rien"],
+    ['Schwein haben', 'Avoir de la chance'],
+    ['Das ist nicht mein Bier', 'Ce ne sont pas mes affaires'],
+    ['Die Daumen drücken', 'Croiser les doigts'],
+    ['Ins Fettnäpfchen treten', 'Mettre les pieds dans le plat'],
+    ['Auf den Keks gehen', 'Taper sur les nerfs'],
+    ['Da steppt der Bär', "C'est la fête"],
+  ],
+  related: ['german-compounds', 'false-friends', 'de-quiz-a2'],
+};

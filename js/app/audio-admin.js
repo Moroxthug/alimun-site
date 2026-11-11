@@ -1,11 +1,32 @@
 /* Alimun: course audio, admin only and not linked (docs/DASHBOARD_PLAN.md, step 5). Shows how much of each book is
    voiced and, with Start, keeps calling /api/speech?action=generate book after book while this tab stays open.
+   Google's per-minute limit: wait the seconds it asks. Its daily limit: stop asking until the reset, then carry on.
    Files: Supabase Storage course-audio/<book>/<hash>.mp3, listed in <book>/manifest.json. Interface in English. */
 (function () {
   'use strict';
   var SUPA = 'https://dgaiasmefcbrtzqwdyri.supabase.co';
-  var PRICE_MIN = 0.0135;  /* USD per minute of audio, gemini-3.8-flash-tts until 31 Dec 2026 */
-  var token = null, books = [], state = {}, running = false, tally = { req: 0, made: 0, split: 0 };
+  var PRICE_MIN = 0.03;  /* USD per minute of audio: gemini-3.1-flash-tts-preview on Google Cloud, $20 per million audio tokens, 25 a second */
+  var token = null, books = [], state = {}, running = false, tally = { req: 0, made: 0, split: 0 }, timer = null;
+  /* Spending limit (owner, 27 Oct 2026): audio made since this page opened, stopped before it passes the limit.
+     One call makes at most a few minutes of audio, so the check keeps half a dollar in hand. */
+  var startSecs = null;
+  function totalSecs() { return books.reduce(function (n, b) { return n + ((state[b.id] || {}).seconds || 0); }, 0); }
+  function spent() { return startSecs == null ? 0 : (totalSecs() - startSecs) / 60 * PRICE_MIN; }
+  function cap() { var v = +document.getElementById('cap').value; return v > 0 ? v : 12; }
+  /* Google's daily limit: when it resets (remembered in this browser, so a reopened tab waits instead of asking) */
+  var RESET_KEY = 'alimun-audio-reset';
+  function resetAt() { try { var v = +localStorage.getItem(RESET_KEY); return v > Date.now() ? v : 0; } catch (e) { return 0; } }
+  function hm(ms) { var m = Math.max(1, Math.round(ms / 60000)); return m < 60 ? m + ' min' : Math.floor(m / 60) + ' h ' + (m % 60) + ' min'; }
+  function later(fn, ms) { clearTimeout(timer); timer = setTimeout(fn, ms); }
+  /* Waits for the daily reset (checked every minute, so a sleeping laptop catches up), then carries on */
+  function waitForReset() {
+    var at = resetAt();
+    if (!running) return;
+    if (!at) { step(); return; }
+    say('Google\u2019s daily limit is used up (it allows 100 voice requests a day on the current plan). Carrying on by itself at ' +
+      new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (in ' + hm(at - Date.now()) + ') if this tab stays open. Nothing is asked of Google until then.');
+    later(waitForReset, Math.min(60000, at - Date.now() + 1000));
+  }
   var list = document.getElementById('books'), status = document.getElementById('status'), btn = document.getElementById('go');
 
   function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -46,6 +67,11 @@
 
   function step() {
     if (!running) return;
+    if (spent() + 0.5 >= cap()) {
+      running = false; btn.textContent = 'Start';
+      say('Stopped at the spending limit: about $' + spent().toFixed(2) + ' of audio made since this page opened (limit $' + cap() + '). Raise the limit and press Start to carry on.');
+      return;
+    }
     var first = document.getElementById('tests-first').checked;
     var b = books.filter(function (x) { var s = state[x.id]; return s && s.done < s.total && (s.fails || 0) < 3; })
       .sort(function (p, q) { return first ? (q.test ? 1 : 0) - (p.test ? 1 : 0) : 0; })[0];
@@ -56,30 +82,55 @@
       .then(function (j) {
         var s = state[b.id];
         s.total = j.total; s.done = j.done; s.seconds = j.seconds;
+        if (j.retryAfter && j.daily) {
+          /* Google's daily limit: no point asking again before it resets */
+          draw();
+          try { localStorage.setItem(RESET_KEY, String(Date.parse(j.resetAt) + 60000)); } catch (e) { /* private mode */ }
+          waitForReset();
+          return;
+        }
         if (j.retryAfter) {
           /* Google's per-minute limit: wait and carry on, it is not a failure */
           draw();
           say(new Date().toLocaleTimeString() + ': Google asked to wait, so waiting ' + j.retryAfter + ' seconds, then carrying on. Google said: ' + (j.limitMessage || 'rate limit'));
-          setTimeout(step, j.retryAfter * 1000 + 1500);
+          later(step, j.retryAfter * 1000 + 1500);
           return;
         }
         if (j.requests) {
           tally.req += j.requests; tally.made += j.made; tally.split += j.splitFailed || 0;
-          say(new Date().toLocaleTimeString() + ': ' + b.id + ', ' + tally.made + ' recordings from ' + tally.req + ' requests to Google in this session' +
-            (tally.split ? ' (' + tally.split + ' groups had to be redone one by one)' : '') + '.');
+          say(new Date().toLocaleTimeString() + ': ' + b.id + ', ' + tally.made + ' recordings from ' + tally.req + ' requests to Google in this session, about $' + spent().toFixed(2) + ' of $' + cap() + ' spent' +
+            (tally.split ? ' (' + tally.split + ' groups could not be cut at the pauses and were redone in halves)' : '') + '.');
         }
         if (!j.made && j.failed.length) { s.fails = (s.fails || 0) + 1; s.err = j.failed[0].error + (j.failed[0].detail ? ' ' + JSON.stringify(j.failed[0].detail).slice(0, 200) : ''); }
         else { s.fails = 0; s.err = ''; }
         draw();
-        setTimeout(step, 300);
+        later(step, 300);
       })
-      .catch(function (e) { var s = state[b.id]; s.fails = (s.fails || 0) + 1; s.err = e.message; draw(); setTimeout(step, 3000); });
+      .catch(function (e) { var s = state[b.id]; s.fails = (s.fails || 0) + 1; s.err = e.message; draw(); later(step, 3000); });
   }
+
+  /* Google Cloud Text-to-Speech test: plays the sentence, or shows Google's refusal (no key ever reaches this page) */
+  var cloudBtn = document.getElementById('cloud-try'), cloudMsg = document.getElementById('cloud-msg'), cloudAudio = document.getElementById('cloud-audio');
+  cloudBtn.addEventListener('click', function () {
+    cloudBtn.disabled = true; cloudMsg.textContent = 'Asking Google Cloud…'; cloudAudio.hidden = true;
+    fetch('/api/speech?action=cloud-test', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ model: document.getElementById('cloud-model').value, voice: document.getElementById('cloud-voice').value }) })
+      .then(function (r) {
+        if (r.ok) return r.blob().then(function (b) { cloudAudio.src = URL.createObjectURL(b); cloudAudio.hidden = false; cloudAudio.play().catch(function () {}); cloudMsg.textContent = 'It works: Google Cloud spoke the sentence (route: ' + (r.headers.get('X-Alimun-Via') || '?') + ').'; });
+        return r.json().catch(function () { return {}; }).then(function (j) {
+          cloudMsg.textContent = 'Google Cloud refused. ' + ((j.refused || []).map(function (x) { return x.via + ' ' + x.status + ': ' + x.message + (x.reason ? ' [' + x.reason + ']' : ''); }).join(' | ') || j.message || j.error || 'No detail.');
+        });
+      })
+      .catch(function (e) { cloudMsg.textContent = 'The test did not run: ' + e.message; })
+      .then(function () { cloudBtn.disabled = false; });
+  });
 
   btn.addEventListener('click', function () {
     running = !running;
     btn.textContent = running ? 'Pause' : 'Start';
-    if (running) step(); else say('Paused. Start again whenever you like; nothing is lost.');
+    clearTimeout(timer);
+    if (running && startSecs == null) startSecs = totalSecs();
+    if (running) waitForReset(); else say('Paused. Start again whenever you like; nothing is lost.');
   });
 
   function boot() {
@@ -90,7 +141,12 @@
       token = s.access_token;
       /* The session token expires after an hour; keep it fresh while the tab works */
       sb.auth.onAuthStateChange(function (ev, ses) { if (ses) token = ses.access_token; });
-      return load().then(function () { btn.disabled = false; say('Press Start and keep this tab open. Several sentences go to Google in one request and are cut apart at the pauses, to fit Google’s daily limit.'); });
+      return load().then(function () {
+        btn.disabled = false; cloudBtn.disabled = false;
+        var at = resetAt();
+        say(at ? 'Google\u2019s daily limit is used up until ' + new Date(at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) + ' (in ' + hm(at - Date.now()) + '). Press Start and keep this tab open: it carries on by itself then.'
+          : 'Press Start and keep this tab open. Each sentence is spoken by Google Cloud (Gemini 3.1 Flash TTS) at a natural pace; Google\u2019s per-minute limit is waited out by itself.');
+      });
     }).catch(function (e) { say('Could not start: ' + e.message); });
   }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot); else boot();

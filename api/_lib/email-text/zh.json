@@ -1,0 +1,227 @@
+{
+  "_note": "发送给学生和教师的邮件的简体中文译文。{placeholders} 由服务器填写；**文字** 显示为粗体。套餐名称（Community、Focused、Intensive、Private）保持不译。",
+  "common": {
+    "hello_name": "{name}，你好：",
+    "hello": "你好：",
+    "open_dashboard": "打开控制面板",
+    "questions": "有问题吗？直接回复这封邮件即可。",
+    "footer_account": "你收到这封邮件，是因为你拥有 Alimun 账户。",
+    "footer_newsletter": "您收到这封邮件，是因为您在 alimun.com 订阅了新闻和优惠。"
+  },
+  "reset": {
+    "subject": "设置新的 Alimun 密码",
+    "preheader": "请使用邮件中的按钮，为你的 Alimun 账户设置新密码。",
+    "heading": "设置新密码",
+    "body": "有人申请重置与此邮箱地址关联的 Alimun 账户密码。请使用下方按钮设置新密码。",
+    "button": "设置新密码",
+    "note": "该链接仅可使用一次，且有效期有限。如果这不是你本人的操作，可以忽略这封邮件，你的密码不会改变。",
+    "footer": "你收到这封邮件，是因为有人在 alimun.com 上为此邮箱地址申请了密码重置。"
+  },
+  "invite": {
+    "subject": "你的 Alimun 账户",
+    "preheader": "你的 Alimun 账户已准备就绪。设置密码即可登录。",
+    "heading": "你的 Alimun 账户已准备就绪",
+    "body_teacher": "Alimun 已为你开通教师账户。通过下方按钮设置密码后，即可直接进入你的教师控制面板。",
+    "body_student": "Alimun 已为你开通学生账户。通过下方按钮设置密码，然后完成简短的水平测试，即可开始学习。",
+    "button": "设置你的密码",
+    "note": "该链接仅可使用一次，且有效期有限。如果链接已过期，请在登录页面点击“忘记密码”，并使用此邮箱地址。",
+    "footer": "你收到这封邮件，是因为 Alimun 管理员为此邮箱地址开通了账户。"
+  },
+  "approved": {
+    "subject": "欢迎加入 Alimun，{name}",
+    "preheader": "你的 Alimun 教师账户已准备就绪。",
+    "heading": "欢迎加入 Alimun",
+    "body": "你在 Alimun 任教的申请已获批准，账户也已准备就绪。登录后即可设置你的班级，迎接你的第一批学生。",
+    "tier": "你将从 **Focused** 级别开始。",
+    "footer": "你收到这封邮件，是因为你申请了在 Alimun 任教。"
+  },
+  "rejected": {
+    "subject": "关于你在 Alimun 任教的申请",
+    "preheader": "你在 Alimun 任教申请的最新进展。",
+    "heading": "关于你的申请",
+    "body": "感谢你申请在 Alimun 任教。经过审核，我们目前无法批准你的申请。",
+    "body2": "感谢你为此付出的时间，祝你在教学工作中一切顺利。",
+    "note_label": "团队留言",
+    "footer": "这封邮件发送至 {email}，因为你申请了在 Alimun 任教。"
+  },
+  "suspended": {
+    "subject": "你的 Alimun 教师账户",
+    "preheader": "你的 Alimun 教师账户已被暂停。",
+    "heading": "你的教师账户已被暂停",
+    "body": "你的 Alimun 教师账户已被暂停，因此你将无法再使用教师控制面板。",
+    "body2": "如果你认为这是误操作，请回复这封邮件，我们会进行核查。",
+    "footer": "你收到这封邮件，是因为你在 Alimun 拥有教师账户。"
+  },
+  "session": {
+    "subject_cancelled": "课堂已取消：{class}",
+    "subject_moved": "课堂时间已调整：{class}",
+    "heading_cancelled": "课堂已取消",
+    "heading_moved": "课堂时间已调整",
+    "cancelled": "你在 **{when}** 的 **{class}** 课堂已取消。",
+    "moved": "你原定于 {was} 的 **{class}** 课堂已改至 **{when}**。",
+    "reason": "原因：{reason}",
+    "opens": "教室会在新的开始时间前 15 分钟在你的控制面板中开放。"
+  },
+  "class_new": {
+    "subject": "你的班级：{class}",
+    "heading": "你的新班级",
+    "body": "你现在已加入 **{teacher}** 的 **{class}** 班级。",
+    "body2": "你的控制面板中会显示课表和下一次课堂。"
+  },
+  "class_left": {
+    "subject": "你的 Alimun 班级",
+    "heading": "你的班级有变动",
+    "body": "你已不在 **{class}** 班级中。",
+    "body2": "你可以在控制面板中选择新的班级；如有疑问，也可以直接回复这封邮件。"
+  },
+  "enrolled": {
+    "subject": "报名成功：{teacher} 的 {class}",
+    "preheader": "你的下一次课堂：{when}。",
+    "heading": "报名成功",
+    "welcome": "欢迎你，{name}。",
+    "body": "你已加入 **{teacher}** 的 **{class}** 班级。",
+    "f_class": "班级",
+    "f_teacher": "教师",
+    "f_next": "下一次课堂",
+    "soon": "即将公布：请在控制面板中查看课表",
+    "opens": "教室会在开始前 15 分钟在你的控制面板中开放。",
+    "button": "前往你的班级",
+    "footer": "你收到这封邮件，是因为你在 Alimun 加入了一个班级。"
+  },
+  "student_joined": {
+    "subject": "有新学生加入了你的班级",
+    "preheader": "{name} 加入了你的 {class} 班级。",
+    "heading": "有新学生加入了你的班级",
+    "body": "有一位新学生加入了你的 **{class}** 班级。",
+    "f_name": "姓名",
+    "f_level": "水平",
+    "f_goal": "学习目标",
+    "f_seats": "已占名额",
+    "seats": "{n} / {max}",
+    "button": "打开教师控制面板",
+    "footer": "你收到这封邮件，是因为你在 Alimun 教授这个班级。"
+  },
+  "place": {
+    "subject": "你的 {class} 班级有空位了",
+    "preheader": "你在等待的班级有空位了，我们会为你保留 48 小时。",
+    "heading": "有一个名额为你保留",
+    "body": "你在等待的班级有空位了。你在候补名单中排第一，因此这个名额将为你保留 **48 小时**。",
+    "f_class": "班级",
+    "f_teacher": "教师",
+    "f_schedule": "上课时间",
+    "schedule": "{days} {time}（{zone}）",
+    "button": "确认你的名额",
+    "note": "如果你在 48 小时内没有确认，这个名额将转给候补名单上的下一位。",
+    "footer": "你收到这封邮件，是因为你在 Alimun 加入了这个班级的候补名单。"
+  },
+  "notes": {
+    "subject": "课堂笔记已就绪：{class}，{date}",
+    "preheader": "你 {date} 的笔记已在控制面板中。",
+    "heading": "你的课堂笔记已就绪",
+    "body": "你 **{date}** 的 **{class}** 课堂笔记已就绪。",
+    "f_grammar": "语法",
+    "f_words": "新词汇",
+    "f_due": "作业截止",
+    "button": "打开你的笔记",
+    "footer": "你收到这封邮件，是因为你在 Alimun 参加了这个班级。"
+  },
+  "sub_ended": {
+    "subject": "你的 Alimun 订阅已结束",
+    "preheader": "你的访问权限将保留至 {date}。",
+    "heading": "你的订阅已结束",
+    "body": "你的订阅已结束，你在班级中的名额已释放。你的访问权限将保留至 **{date}**。",
+    "body2": "你可以随时在控制面板中重新订阅，再次加入班级。感谢你和我们一起学习。",
+    "footer": "你收到这封邮件，是因为你曾订阅 Alimun。"
+  },
+  "pay_cancelled": {
+    "subject": "你的 Alimun 订阅已取消",
+    "preheader": "我们未能完成扣款，因此你的订阅已取消。",
+    "heading": "你的订阅已取消",
+    "body": "经过三次尝试，我们仍未能完成扣款，因此你的订阅已取消，班级名额也已释放。",
+    "body2": "如需回来，请登录、更新付款方式并重新订阅。",
+    "footer": "你收到这封邮件，是因为你订阅了 Alimun。"
+  },
+  "pay_failed": {
+    "subject": "你的 Alimun 付款未成功",
+    "preheader": "请更新付款方式，以保留你的名额。",
+    "heading": "你的付款未成功",
+    "body": "我们未能收取你最近一期的订阅费用。请在控制面板的账单设置中更新付款方式，以保留你的名额。",
+    "body2": "我们会在几天后自动重试。",
+    "button": "更新付款方式",
+    "footer": "你收到这封邮件，是因为你订阅了 Alimun。"
+  },
+  "plan": {
+    "subject": "你的 Alimun 套餐现为 {plan}",
+    "preheader": "你的账户现在使用 {plan} 套餐。",
+    "heading": "你的套餐已变更",
+    "body": "Alimun 团队已将你的账户调整为 **{plan}** 套餐。套餐即刻生效，无需银行卡或付款。",
+    "body2": "登录即可查看你的班级和练习。",
+    "note": "如果你认为这是误操作，请回复这封邮件。"
+  },
+  "admin_app": {
+    "subject": "新的教师申请：{name}",
+    "preheader": "{name} 申请在 Alimun 授课。",
+    "heading": "新的教师申请",
+    "body": "有人申请成为教师。请查看详情，并用下面的按钮做出决定；每个按钮都会要求再次确认。",
+    "f_name": "姓名",
+    "f_languages": "教授语言",
+    "f_experience": "教学经验",
+    "experience": "{n} 年",
+    "f_specialty": "专长",
+    "about": "个人介绍",
+    "approve": "批准",
+    "reject": "拒绝",
+    "note": "按钮在七天内有效。你也可以在管理后台做决定。",
+    "footer": "有人申请授课时，发送到 Alimun 管理员地址。"
+  },
+  "contact": {
+    "subject": "联系表单：{name}",
+    "heading": "来自 {name} 的消息",
+    "f_name": "姓名",
+    "f_email": "邮箱",
+    "f_phone": "电话",
+    "f_language": "语言",
+    "f_page": "页面",
+    "message": "消息",
+    "note": "直接回复这封邮件即可答复对方。",
+    "footer": "来自 alimun.com 的联系表单。"
+  },
+  "unsub": {
+    "title_bad": "此链接无效",
+    "text_bad": "链接可能不完整。你也可以在学习面板的“设置”中退订最新消息和优惠。",
+    "title_ask": "退订最新消息和优惠？",
+    "text_ask": "你将不再收到 Alimun 的最新消息和优惠。有关你的账户和课程的邮件仍会照常发送。",
+    "button": "退订最新消息和优惠",
+    "title_done": "已完成",
+    "text_done": "你将不再收到 Alimun 的最新消息和优惠。你可以随时在学习面板的“设置”中重新开启。",
+    "text_done_newsletter": "您将不再收到 Alimun 的新闻和优惠。如需重新订阅，请使用 alimun.com 任意页面底部的表单。",
+    "title_error": "请重试",
+    "text_error": "我们这边出了点问题。请一分钟后再试。",
+    "back": "返回 Alimun"
+  },
+  "decide": {
+    "back": "返回 Alimun",
+    "err_title": "操作失败",
+    "err_params": "参数缺失或无效。",
+    "err_secret": "此链接暂时无法使用。请在管理后台做决定。",
+    "err_expired": "此链接无效或已过期。请在管理后台做决定。",
+    "err_db": "无法连接数据库。",
+    "err_notfound": "未找到教师资料。",
+    "err_update": "无法更新教师资料。",
+    "already_approved_title": "已批准",
+    "already_approved": "**{name}** 已经获得批准。",
+    "already_declined_title": "已拒绝",
+    "already_declined": "**{name}** 已被拒绝或停用。",
+    "confirm_approve_title": "批准这份申请？",
+    "confirm_reject_title": "拒绝这份申请？",
+    "confirm_body": "教师：**{name}**",
+    "button_approve": "批准申请",
+    "button_reject": "拒绝申请",
+    "done_approved_title": "教师已批准",
+    "done_approved": "**{name}** 现已获得批准。",
+    "done_declined_title": "申请已拒绝",
+    "done_declined": "**{name}** 的申请已被拒绝，账户已标记为停用。",
+    "emailed": "已向 **{email}** 发送通知邮件。",
+    "not_emailed": "通知邮件未能发送。"
+  }
+}

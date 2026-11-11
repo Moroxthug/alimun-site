@@ -1,0 +1,50 @@
+// Which articles the reading strip shows on course pages and Resources pages (owner, 10 Nov 2026: link
+// course and Resources pages to matching articles). Keys are article keys; each page takes the first
+// three that exist on its site, then the newest articles of the same course. Pages not listed here keep
+// the language's stripPicks (src/data/blog/ui.js). Used by scripts/localize.mjs.
+export default {
+  courses: {
+    English: ['moroccan-english-exams', 'english-public-competitions', 'english-c1-level', 'english-b2-level', 'cefr-english', 'how-long-english', 'ielts-or-cambridge', 'practise-speaking'],
+    German: ['germany-from-morocco', 'germany-study-from-morocco', 'german-for-work', 'german-citizenship', 'goethe-certificates', 'how-long-german', 'german-cases'],
+  },
+  // Resource key -> articles on the same topic.
+  resources: {
+    'en-ex-a1': ['cefr-english', 'practise-speaking', 'how-long-english'],
+    'en-ex-a2': ['present-perfect', 'english-articles', 'in-on-at'],
+    'en-ex-b1': ['present-perfect', 'english-conditionals', 'cefr-english'],
+    'en-ex-b2': ['english-conditionals', 'english-b2-level', 'b2-first', 'cefr-english', 'ielts-band-scores'],
+    'en-ex-c1': ['english-c1-level', 'c1-advanced', 'c1-advanced-or-ielts', 'ielts-band-scores', 'cefr-english'],
+    'en-verbs-sheet': ['present-perfect', 'english-conditionals', 'phrasal-verbs'],
+    'en-reading-a2': ['practise-speaking', 'how-long-english', 'cefr-english'],
+    'en-quiz-a1': ['cefr-english', 'how-long-english', 'practise-speaking'],
+    'en-quiz-a2': ['cefr-english', 'how-long-english', 'present-perfect'],
+    'en-quiz-b1': ['cefr-english', 'english-b2-level', 'ielts-band-scores'],
+    'en-quiz-b2': ['english-b2-level', 'b2-first', 'ielts-or-cambridge', 'cefr-english'],
+    'en-quiz-c1': ['english-c1-level', 'c1-advanced', 'c1-advanced-or-ielts', 'ielts-band-scores', 'ielts-or-cambridge', 'cefr-english'],
+    'british-american': ['english-false-friends', 'toefl-or-ielts', 'practise-speaking'],
+    'english-homophones': ['english-false-friends', 'practise-speaking', 'phrasal-verbs'],
+    'english-idioms': ['phrasal-verbs', 'english-false-friends', 'practise-speaking'],
+    'english-idiom-quiz': ['phrasal-verbs', 'english-false-friends', 'practise-speaking'],
+    'make-or-do': ['phrasal-verbs', 'english-false-friends', 'english-job-interview'],
+    'phrasal-verbs-game': ['phrasal-verbs', 'english-false-friends', 'english-job-interview'],
+    'false-friends': ['english-false-friends', 'phrasal-verbs', 'german-articles'],
+    'de-articles-sheet': ['german-articles', 'german-cases', 'german-prepositions'],
+    'de-articles-a1': ['german-articles', 'german-cases', 'german-pronunciation'],
+    'de-ex-a2': ['german-past-tenses', 'german-modal-verbs', 'german-word-order'],
+    'de-ex-b1': ['german-prepositions', 'german-cases', 'german-articles'],
+    'de-ex-b2': ['german-cases', 'german-articles', 'german-prepositions'],
+    'de-ex-c1': ['german-modal-verbs', 'german-word-order', 'german-past-tenses'],
+    'german-compounds': ['german-articles', 'german-pronunciation', 'how-long-german'],
+    'german-false-friends': ['german-pronunciation', 'german-articles', 'how-long-german'],
+    'german-food': ['german-pronunciation', 'german-articles', 'how-long-german'],
+    'german-idioms': ['german-pronunciation', 'german-word-order', 'how-long-german'],
+    'untranslatable-german': ['german-pronunciation', 'how-long-german', 'german-for-work'],
+    'german-word-quiz': ['german-pronunciation', 'how-long-german', 'german-for-work'],
+    'de-quiz-a1': ['goethe-certificates', 'goethe-validity', 'how-long-german'],
+    'de-quiz-a2': ['goethe-certificates', 'integration-course', 'how-long-german'],
+    'de-quiz-b1': ['german-citizenship', 'integration-course', 'goethe-certificates'],
+    'de-quiz-b2': ['german-for-work', 'german-exams-compared', 'goethe-certificates'],
+    'de-quiz-c1': ['german-exams-compared', 'germany-study-from-morocco', 'german-for-work'],
+    'cefr-poster': ['cefr-english', 'english-c1-level', 'goethe-certificates', 'how-long-english'],
+  },
+};

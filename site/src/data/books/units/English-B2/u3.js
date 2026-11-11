@@ -1,214 +1,295 @@
-// English B2, unit 3 (docs/BOOKS.md). Draft for native-teacher review.
+// English B2, unit 3, second edition (docs/LESSONS_PLAN.md, "Books, second edition"). Draft for native-teacher review.
+// Each lesson: a full explanation first (the rule in plain words, why, many examples, the usual mistakes, a text that
+// uses it), then fewer exercises from controlled to free, one speaking task, and one task in the format of B2 First.
 export const UNIT = {
   id: 'u3',
   title: 'Work and ambition',
-  goal: 'Talk about careers and the future with precision, and negotiate politely.',
+  goal: 'Talk about careers, plans and deadlines with precision, use the natural word partners of working life, and negotiate politely.',
   art: 'mug',
   tags: { skills: ['grammar', 'vocabulary', 'speaking', 'reading'], topics: ['future-continuous', 'future-perfect', 'work-collocations', 'negotiating', 'careers'], goals: ['foundations'] },
   pages: [
+    /* ------------------------------------------------------------------ Lesson 1 */
     {
       id: 'p1',
       title: 'I’ll be working, I’ll have finished',
-      about: 'Use the future continuous and the future perfect to talk about plans and deadlines.',
+      about: 'Use the future continuous and the future perfect to picture the future and talk about deadlines.',
       art: 'snail',
       spreads: [
         [
-          { t: 'text', md: 'Use the **future continuous** for an action that will be **in progress** at a particular time in the future. Form it with *will be* + the *-ing* form.' },
+          { t: 'text', md: 'At B1 you learned to choose between **will**, **going to** and the **present continuous** for the future. At B2 you need two more forms, which help you look at the future from a particular point in time.\n\nThe **future continuous** (*will be* + *-ing*) describes an action that will be **in progress** at a moment in the future. Imagine a photo taken at that moment: *This time next week, I**’ll be lying** on a beach.* The action started before that moment and continues after it.\n\nThe **future perfect** (*will have* + past participle) describes an action that will be **complete before** a moment in the future. You look back from that moment: *By Friday, I**’ll have finished** the report.* We usually show the moment with **by** (by Friday, by the end of the year, by the time you arrive).' },
+          { t: 'table', caption: 'Two ways of seeing the future', quiz: true, explain: ['head', 'col0', 'col3'], head: ['', 'Form', 'Example', 'Meaning'], rows: [
+            ['future continuous', 'will be + -ing', 'At 10 tomorrow I’ll be interviewing a candidate.', 'in progress at that moment'],
+            ['future perfect', 'will have + past participle', 'By 10 tomorrow I’ll have interviewed three candidates.', 'complete before that moment'],
+            ['negative', 'won’t be + -ing / won’t have + p.p.', 'I won’t have finished by then.', 'not complete yet at that moment'],
+            ['question', 'Will you be …ing? / Will you have …?', 'Will you have read it by Monday?', 'asking about a deadline'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'A quick test: if you can add **by + a time**, you usually need the **future perfect**. If you can add **at + a time** or **this time next…**, you often need the **future continuous**.' },
+        ],
+        [
+          { t: 'text', md: 'The future continuous has a second, very useful job: it makes questions about someone’s plans **more polite**. *Will you come to the meeting?* can sound like a request or even an order. *Will you be coming to the meeting?* only asks about their plans, so the other person does not feel pushed.\n\nIt is also used for things that will happen **as a normal part of events**, not because someone decided: *I’ll be seeing Anna at the conference anyway, so I can give her the documents.*\n\nThe future perfect continuous (*will have been working*) exists too. It looks back at **how long** an activity will have lasted at a future point: *In June I**’ll have been working** here for ten years.* Use it with *for* + a period.' },
           { t: 'examples', items: [
-            { s: 'This time next week, I**’ll be lying** on a beach.', n: 'At that moment next week, the lying on the beach will be in progress.' },
-            { s: 'Don’t call at eight. We**’ll be having** dinner.', n: 'Dinner will already have started and will not be finished at eight.' },
-            { s: '**Will** you **be using** the car tomorrow? I need to go to the airport.', n: 'A polite way to ask about someone’s plans, often before a request.' },
+            { s: '**Will you be using** the meeting room this afternoon?', n: 'A polite question about someone’s plans.' },
+            { s: 'Don’t call at 9: I**’ll be driving** to work.', n: 'In progress at that moment.' },
+            { s: 'By the end of the year, we**’ll have opened** two new offices.', n: '*By* + time: complete before then.' },
+            { s: 'She **won’t have arrived** by the time the meeting starts.', n: 'Negative: not complete at that point.' },
+            { s: 'Next month I**’ll have been working** in sales for five years.', n: 'Future perfect continuous: duration up to a future point.' },
+            { s: 'I**’ll be passing** your office tomorrow, so I can drop the contract off.', n: 'A normal part of events, not a new decision.' },
           ] },
         ],
         [
-          { t: 'text', md: 'Use the **future perfect** for an action that will be **finished before** a particular time in the future. Form it with *will have* + the past participle.' },
-          { t: 'examples', items: [
-            { s: 'I**’ll have finished** the report **by** Friday.', n: 'The report will be done on Friday or earlier.' },
-            { s: 'By the end of this year, we**’ll have been** married for ten years.', n: 'We look back from a future point in time.' },
-            { s: 'Don’t worry. The meeting **won’t have started** by the time you arrive.', n: 'Negative: *won’t have* + past participle.' },
+          { t: 'text', md: 'Most mistakes with these forms come from the time words. **By** means *at the latest*, so it goes with the future perfect. **Until** means *up to that point*, and goes with an action that continues. And after **when, as soon as, by the time** we use the **present**, not *will*.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['By Friday I’ll finish the report.', 'By Friday I’ll have finished the report.', 'With *by* + time, show the action as complete: future perfect.'],
+            ['This time tomorrow I’ll fly to Rome.', 'This time tomorrow I’ll be flying to Rome.', 'In progress at that moment: future continuous.'],
+            ['By the time you will arrive, we’ll have eaten.', 'By the time you arrive, we’ll have eaten.', 'After *by the time*, use the present simple.'],
+            ['I’ll have finished until six.', 'I’ll have finished by six.', '*Until* is for a continuing action; *by* is for a deadline.'],
+            ['Will you be come tomorrow?', 'Will you be coming tomorrow?', 'Future continuous: *be* + *-ing*.'],
           ] },
-          { t: 'tip', art: 'owl', md: '*By* + a time means *not later than*: *by Friday*, *by the end of the month*, *by the time you arrive*. It is very common with the future perfect.' },
+          { t: 'dialogue', title: 'Planning a launch', lines: [
+            { who: 'Hannah', s: 'Will you be working from home on Thursday?' },
+            { who: 'Daniel', s: 'Yes, but I’ll be checking my email all day, so just write.' },
+            { who: 'Hannah', s: 'Good. The client wants the designs by Friday.' },
+            { who: 'Daniel', s: 'That’s fine. By Thursday evening I’ll have finished the last two.' },
+            { who: 'Hannah', s: 'And next week? The launch is on Monday.' },
+            { who: 'Daniel', s: 'This time next week we’ll be celebrating, I hope.' },
+          ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct form.', items: [
-            { q: 'Don’t call me at eight. I ___ the children to bed.', o: ['’ll be putting', '’ll have put', 'put'], why: 'At eight the action will be in progress: future continuous.' },
-            { q: 'By seven o’clock I ___ dinner, so we can eat as soon as you arrive.', o: ['’ll have cooked', '’ll be cooking', 'am cooking'], why: 'The cooking will be finished before seven: future perfect.' },
-            { q: 'This time tomorrow, we ___ over the Atlantic.', o: ['’ll be flying', '’ll have flown', 'fly'], why: '*This time tomorrow*: an action in progress at that moment.' },
-            { q: '___ the printer this afternoon? I need to print forty pages.', o: ['Will you be using', 'Will you have used', 'Are you use'], why: 'A polite question about someone’s plans: future continuous.' },
-            { q: 'She ___ her degree by next June.', o: ['will have completed', 'will have complete', 'has completed'], why: '*By next June*: finished before that time, so the future perfect.' },
+          { t: 'ex', kind: 'select', h: 'Choose the best form.', items: [
+            { q: 'By the end of the month, we ___ all the interviews.', o: ['will have done', 'will be doing', 'will do'], why: '*By* + time: complete before then, future perfect.' },
+            { q: 'Don’t phone at eight: we ___ dinner.', o: ['will be having', 'will have had', 'have'], why: 'In progress at that moment: future continuous.' },
+            { q: '___ the car tomorrow? I need it to get to work.', o: ['Will you be using', 'Will you have used', 'Are you use'], why: 'A polite question about someone’s plans.' },
+            { q: 'In April she ___ here for twenty years.', o: ['will have been working', 'will be working', 'works'], why: 'Duration up to a future point: future perfect continuous.' },
+          ] },
+          { t: 'ex', kind: 'gap', h: 'Complete with the verb in brackets in the future continuous or the future perfect.', items: [
+            { q: 'By the time you read this, I ___ (leave) the company.', a: ['will have left', '’ll have left', 'll have left'], why: 'Complete before the moment you read it.' },
+            { q: 'At midday tomorrow I ___ (give) my presentation.', a: ['will be giving', '’ll be giving', 'll be giving'], why: 'In progress at midday.' },
+            { q: 'Don’t worry, the team ___ (fix) the problem by Monday.', a: ['will have fixed', '’ll have fixed', 'll have fixed'], why: 'Deadline with *by*.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Complete with the future continuous or the future perfect of the verb in brackets.', items: [
-            { q: 'By the end of the month, we ___ (sell) all the tickets.', a: ['will have sold', '’ll have sold'], why: 'Finished before a future time: *will have* + past participle.' },
-            { q: 'Don’t phone at midnight. I ___ (sleep).', a: ['will be sleeping', '’ll be sleeping'], why: 'In progress at midnight: *will be* + *-ing*.' },
-            { q: '___ (you / finish) the project by Monday?', a: ['Will you have finished'], why: 'Question: *Will* + subject + *have* + past participle.' },
-            { q: 'At this time on Friday, they ___ (sit) their final exam.', a: ['will be sitting', '’ll be sitting'], why: 'In progress at that moment on Friday: future continuous.' },
-            { q: 'I’m sure the guests ___ (not / leave) by the time we get there.', a: ['won’t have left', 'will not have left'], why: 'Negative future perfect: *won’t have* + past participle.' },
+          { t: 'ex', kind: 'transform', h: 'In the format of the B2 First exam (Reading and Use of English Part 4): complete the second sentence so that it means the same as the first, using the word given. Use between two and five words.', items: [
+            { q: 'I will finish the project before the deadline on Friday. Begin: By Friday, I …', cue: 'HAVE', a: ['By Friday, I will have finished the project', 'By Friday, I’ll have finished the project'], why: '*Will have finished*: complete before Friday.' },
+            { q: 'My shift starts at six and ends at two, so at ten I am at work. Begin: At ten, I …', cue: 'BE', a: ['At ten, I will be working', 'At ten, I’ll be working', 'At ten, I will be at work', 'At ten, I’ll be at work'], why: 'In progress at ten: *will be working*.' },
           ] },
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'Will you be coming to the meeting?', why: 'Question: *Will* + subject + *be* + *-ing*.' },
-            { a: 'She won’t have read the report.', why: '*Won’t have* + past participle.' },
+          { t: 'tip', art: 'owl', md: 'In **Part 4** you must use the key word **without changing it**, and write **two to five words**. Contractions like *I’ll* count as two words. First find what grammar the key word points to, then check the meaning has not changed.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'arthur', items: [
+            { a: 'This time next year I’ll be working abroad.' },
+            { a: 'By the end of the week we’ll have finished.' },
+            { a: 'Will you be coming to the meeting?' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 2 */
     {
       id: 'p2',
       title: 'Meet a deadline, run a business',
-      about: 'Learn the verbs and nouns that go together when we talk about work.',
-      art: 'dog',
+      about: 'Use the natural word partners of working life, so your English sounds professional.',
+      art: 'mug',
       spreads: [
         [
-          { t: 'text', md: 'In English, some verbs and nouns go together naturally. These pairs are called **collocations**. Another verb often sounds wrong to a native speaker: we **make** a decision, never *do* a decision.' },
-          { t: 'table', caption: 'Work collocations', explain: ['head'], quiz: true, head: ['Collocation', 'Example'], rows: [
-            ['meet a deadline', 'We worked all weekend to meet the deadline.'],
-            ['miss a deadline', 'If we miss the deadline, we lose the client.'],
-            ['run a business', 'My aunt runs a small travel business.'],
-            ['take on responsibility', 'I’d like to take on more responsibility next year.'],
-            ['make a decision', 'We need to make a decision by Friday.'],
-            ['gain experience', 'She gained a lot of experience abroad.'],
-            ['get a promotion', 'He got a promotion after only a year.'],
-            ['earn a living', 'It’s hard to earn a living as an artist.'],
-            ['do overtime', 'I did ten hours of overtime last week.'],
-            ['hand in your notice', 'She handed in her notice on Monday.'],
+          { t: 'text', md: 'A **collocation** is a pair of words that native speakers naturally put together. You can understand *do a deadline*, but nobody says it: we **meet** a deadline. Collocations are why an English sentence sounds natural or strange, and the B2 First exam tests them often.\n\nWork English is full of fixed verb + noun pairs. The verb often seems random, so learn the pair, not the single word. It helps to group them by verb: **make** a decision, a profit, a mistake; **take** responsibility, a risk, a day off; **run** a business, a meeting, a team.' },
+          { t: 'table', caption: 'Work collocations', head: ['Verb', 'Natural partners'], rows: [
+            ['meet', 'a deadline, a target, someone’s needs'],
+            ['run', 'a business, a company, a meeting, a team'],
+            ['take on', 'responsibility, new staff, extra work, a challenge'],
+            ['make', 'a decision, a profit, a loss, a complaint, progress'],
+            ['apply for', 'a job, a position, a promotion, a loan'],
+            ['earn', 'a living, a salary, a reputation'],
+            ['set up', 'a company, a meeting, a system'],
           ] },
         ],
         [
-          { t: 'tip', art: 'owl', md: '*Hand in your notice* means you tell your employer that you are going to leave your job. When your employer makes you leave, you *are fired* or, in informal British English, you *get the sack*.' },
-          { t: 'ex', kind: 'match', h: 'Match the verbs and the nouns.', pairs: [
-            ['meet', 'a deadline'],
-            ['run', 'a business'],
-            ['earn', 'a living'],
-            ['hand in', 'your notice'],
-            ['gain', 'experience'],
-            ['do', 'overtime'],
+          { t: 'text', md: 'Some collocations come in families. You **get** a promotion, a pay rise and a bonus. You **hand in** your notice when you leave, and you are **made redundant** when your job disappears (not because of your work). You **work overtime** when you stay late, and you **work flexible hours** when you choose your times.\n\nAdjectives have partners too: a **heavy** workload (not *big*), **high** demand, **fierce** competition, a **steady** income, **tight** deadlines.' },
+          { t: 'examples', items: [
+            { s: 'We **set up** the company with only two people.', n: '*Set up* = start a business or a system.' },
+            { s: 'She **took on** a lot of **responsibility** in her first year.', n: '*Take on* = accept extra work or duties.' },
+            { s: 'He was **made redundant** when the factory closed.', n: 'The job disappeared; it was not his fault.' },
+            { s: 'I’ve got a **heavy workload** this month and **tight deadlines**.', n: 'Adjective partners: heavy, tight.' },
+            { s: 'After three years she **got a promotion** and a **pay rise**.', n: '*Get* a promotion, a pay rise.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Complete with the missing verb in the correct form.', items: [
-            { q: 'We’ll have to stay late tonight if we want to ___ the deadline.', a: ['meet'], why: 'We *meet* a deadline when we finish in time.' },
-            { q: 'He ___ in his notice yesterday, so he leaves at the end of the month.', a: ['handed'], why: '*Hand in your notice*, in the past simple: *handed*.' },
-            { q: 'Volunteering is a good way to ___ experience.', a: ['gain', 'get'], why: 'We *gain* or *get* experience.' },
-            { q: 'I’ve been asked to ___ on more responsibility next year.', a: ['take'], why: '*Take on responsibility*: accept more duties.' },
-            { q: 'It’s hard to ___ a living as a musician.', a: ['earn', 'make'], why: 'We *earn* or *make* a living.' },
-            { q: 'After only eighteen months, she ___ a promotion.', a: ['got', 'received', 'won', 'earned'], why: 'We *get* a promotion. *Receive*, *win* and *earn* are also possible.' },
+          { t: 'text', md: 'Learners usually translate the verb from their own language. Here are the pairs that go wrong most often.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['do a decision', 'make a decision', 'Decisions are *made*.'],
+            ['make a business', 'run a business', '*Run* = manage; *set up* = start.'],
+            ['win a salary', 'earn a salary', 'Money for work is *earned*; you *win* a prize.'],
+            ['arrive a deadline', 'meet a deadline', 'You *meet* or *miss* a deadline.'],
+            ['big competition', 'fierce competition', 'Competition is *fierce* or *strong*.'],
+            ['a big workload', 'a heavy workload', 'A workload is *heavy* or *light*.'],
+          ] },
+          { t: 'reading', title: 'A message to the team', md: 'Hi everyone,\n\nI know we’ve all had a heavy workload this quarter, and I want to thank you. We met every deadline, even the very tight one in March, and we made a profit for the first time since we set up the company.\n\nNext month we will take on two new members of staff, so some of you will run a small team for the first time. If you’d like to apply for one of these positions, please let me know by Friday.\n\nThanks again,\nMarta' },
+        ],
+        [
+          { t: 'ex', kind: 'colloc', h: 'Which words go naturally with the verb?', items: [
+            { key: 'make', o: ['a decision', 'a profit', 'a deadline', 'a mistake', 'a business'], a: [0, 1, 3], why: 'We *make* decisions, profits and mistakes; we *meet* deadlines and *run* businesses.' },
+            { key: 'take on', o: ['responsibility', 'new staff', 'a salary', 'extra work'], a: [0, 1, 3], why: 'You *take on* duties, people and work; you *earn* a salary.' },
+            { key: 'run', o: ['a meeting', 'a team', 'a promotion', 'a business'], a: [0, 1, 3], why: 'You *run* things you manage; you *get* a promotion.' },
+          ] },
+          { t: 'ex', kind: 'tf', h: 'Read Marta’s message again. Are the sentences true or false?', items: [
+            { q: 'The team missed one deadline in March.', a: 'f', why: 'They *met every deadline, even the very tight one in March*.' },
+            { q: 'The company has made a profit before.', a: 'f', why: 'It is *the first time since we set up the company*.' },
+            { q: 'Some staff will manage a team for the first time.', a: 't', why: '*Some of you will run a small team for the first time.*' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'spot', h: 'Each sentence has one wrong verb. Tap it.', items: [
-            { s: 'I hope to [do] a decision about the job by Friday.', why: 'We *make* a decision, not *do* one.' },
-            { s: 'She [made] a lot of overtime last month to pay for her holiday.', why: 'We *do* overtime: *She did a lot of overtime*.' },
-            { s: 'We [arrived] the deadline, but only just.', why: 'We *meet* a deadline: *We met the deadline*.' },
+          { t: 'ex', kind: 'select', h: 'In the format of the B2 First exam (Reading and Use of English Part 1): choose the word that best fits each gap.', items: [
+            { q: 'After two years of hard work, the café finally began to ___ a profit.', o: ['make', 'do', 'win', 'gain'], why: 'The collocation is *make a profit*.' },
+            { q: 'If we don’t hire more people, we won’t ___ our targets.', o: ['meet', 'reach out', 'arrive', 'touch'], why: 'You *meet* a target.' },
+            { q: 'Competition in the industry is ___, so prices are low.', o: ['fierce', 'big', 'tall', 'wide'], why: 'Competition is *fierce*.' },
+            { q: 'She decided to ___ in her notice and start her own company.', o: ['hand', 'give up', 'take', 'pass'], why: 'You *hand in* your notice.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Part 1**, all four options often have a similar meaning. The right one is usually the word that **collocates** with the words around the gap, so read the whole phrase, not just the gap.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'sofia', items: [
+            { a: 'We met every deadline this year.' },
+            { a: 'She took on a lot of responsibility.' },
+            { a: 'He set up his own company last spring.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 3 */
     {
       id: 'p3',
       title: 'I see your point, but…',
-      about: 'Negotiate politely: disagree, ask and suggest without sounding rude.',
-      art: 'teacup',
+      about: 'Negotiate and disagree politely with diplomatic language.',
+      art: 'parrot',
       spreads: [
         [
-          { t: 'text', md: 'In a negotiation, very direct language can sound rude in English. Speakers make their requests and disagreements softer with a few simple tools: *would*, *could* and *might*, questions instead of orders, and phrases that show they have listened.' },
-          { t: 'table', caption: 'Direct and diplomatic', explain: ['head'], head: ['Direct', 'More diplomatic'], rows: [
+          { t: 'text', md: 'In a negotiation, *No, that’s wrong* can end the conversation. Fluent speakers soften what they say so that the other person can agree without losing face. This is **diplomatic language**, and it is one of the clearest signs of B2 speaking.\n\nThere are three main tools. **Acknowledge** the other person before you disagree: *I see your point, but…*, *I understand that, however…*. **Soften** with modal verbs and distance: *That might be difficult*, *I would suggest…*, *It could be a problem.* **Ask** instead of telling: *Would you be willing to…?*, *How would you feel about…?*' },
+          { t: 'table', caption: 'Direct and diplomatic', head: ['Direct', 'Diplomatic'], rows: [
+            ['That’s too expensive.', 'That’s a little more than we were hoping to pay.'],
+            ['No, we can’t do that.', 'I’m afraid that might be difficult for us.'],
             ['You’re wrong.', 'I see your point, but I’m not sure I agree.'],
-            ['Give us a discount.', 'Would you be willing to offer us a discount?'],
-            ['That’s impossible.', 'I’m afraid that might be difficult.'],
-            ['We want delivery in May.', 'We’d prefer delivery in May, if possible.'],
-            ['Your price is too high.', 'Your price is a little higher than we expected.'],
+            ['Give us a discount.', 'Would you be willing to offer a discount?'],
+            ['Deliver it next week.', 'How would you feel about delivering it next week?'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'Small words make a big difference: **a little**, **slightly**, **quite**, **not entirely**. *It’s not entirely what we expected* is much softer than *It’s bad*.' },
+        ],
+        [
+          { t: 'text', md: 'A negotiation usually has the same shape. You **open** by saying what you want, you **make offers** and **conditions**, and you **close** with an agreement.\n\nConditions often use *if* or *as long as*: *We could lower the price **if** you ordered more.* Notice the past tense *ordered* after *if*: like the second conditional, it makes the offer sound less fixed and more polite. To accept, say *That sounds reasonable* or *I think we can agree to that*. To close, say *So, to sum up, we’ve agreed that…*' },
+          { t: 'dialogue', title: 'Negotiating a price', lines: [
+            { who: 'Supplier', s: 'For two hundred units, the price is eight euros each.' },
+            { who: 'Buyer', s: 'I see. That’s a little more than we were hoping to pay.' },
+            { who: 'Supplier', s: 'What did you have in mind?' },
+            { who: 'Buyer', s: 'Would you be willing to go down to seven, if we ordered three hundred?' },
+            { who: 'Supplier', s: 'Seven might be difficult. How would you feel about seven fifty?' },
+            { who: 'Buyer', s: 'That sounds reasonable, as long as you can deliver by the end of the month.' },
+            { who: 'Supplier', s: 'I think we can agree to that.' },
           ] },
         ],
         [
-          { t: 'dialogue', title: 'Talking about price', lines: [
-            { who: 'Kwame', s: 'Thanks for coming in, Inés. Shall we start with the price?' },
-            { who: 'Inés', s: 'Yes, let’s. To be honest, your price is a little higher than we expected.' },
-            { who: 'Kwame', s: 'I see your point, but our machines are built to last. What did you have in mind?' },
-            { who: 'Inés', s: 'Would you be willing to offer ten per cent off if we ordered two hundred?' },
-            { who: 'Kwame', s: 'I’m afraid ten per cent might be difficult. Could we meet halfway, at five?' },
-            { who: 'Inés', s: 'That sounds reasonable, as long as you can deliver by the end of May.' },
-            { who: 'Kwame', s: 'I think we can manage that. Let’s put it in writing.' },
-          ] },
-          { t: 'text', md: 'Neither speaker says a direct *no*. *I’m afraid* introduces bad news politely. *Could we meet halfway?* suggests a compromise. *As long as* adds a condition to an agreement.' },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the most diplomatic answer.', items: [
-            { q: 'A colleague says the deadline is fine. You disagree.', o: ['I see what you mean, but I think it might be a bit tight.', 'That’s wrong. The deadline is too tight.', 'No. Change the deadline.'], why: '*I see what you mean, but…* shows you listened. *Might* and *a bit* make it softer.' },
-            { q: 'You want a client to pay sooner.', o: ['Would it be possible to pay within thirty days?', 'Pay within thirty days.', 'You must pay within thirty days, OK?'], why: 'A question with *would* sounds like a request, not an order.' },
-            { q: 'You can’t accept a lower price.', o: ['I’m afraid we can’t go any lower than that.', 'We won’t go lower. Forget it.', 'That price is ridiculous.'], why: '*I’m afraid* introduces bad news politely.' },
-            { q: 'You want to suggest a compromise.', o: ['Could we meet halfway?', 'Just accept half.', 'You have to give us half.'], why: '*Could we…?* makes a suggestion that the other side can accept or refuse.' },
-            { q: 'You agree, but with one condition.', o: ['That sounds fine, as long as we can review it in June.', 'Fine, but only if you stop complaining.', 'OK, whatever.'], why: '*As long as* adds a condition politely.' },
+          { t: 'text', md: 'Being too direct is the commonest problem, but being too polite can also confuse people. And some phrases are simply wrong in form.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['I see your point, and you’re wrong.', 'I see your point, but I see it differently.', 'After acknowledging, disagree gently with *but*.'],
+            ['Would you be willing to lowering the price?', 'Would you be willing to lower the price?', '*Willing to* + base form.'],
+            ['How would you feel about to deliver earlier?', 'How would you feel about delivering earlier?', 'After *about*, use *-ing*.'],
+            ['If you will order more, we lower the price.', 'If you ordered more, we could lower the price.', 'A polite offer: past tense after *if*, *could* in the result.'],
           ] },
         ],
         [
-          { t: 'ex', kind: 'match', h: 'Match the beginnings and the endings of these phrases.', pairs: [
-            ['I see your', 'point, but I’m not sure.'],
-            ['Would you be', 'willing to wait a week?'],
-            ['Could we meet', 'halfway?'],
-            ['I’m afraid that', 'might be difficult.'],
-            ['That sounds', 'like a good idea.'],
+          { t: 'ex', kind: 'match', h: 'Match each direct sentence with a diplomatic version.', pairs: [
+            ['That’s too late.', 'That might be a little late for us.'],
+            ['Reduce the price.', 'Would you be willing to reduce the price?'],
+            ['I disagree.', 'I see your point, but I’m not sure.'],
+            ['This plan is bad.', 'This plan isn’t entirely what we hoped for.'],
           ] },
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'Would you be willing to change the date?', why: '*Would you be willing to* + base form: a polite request.' },
-            { a: 'I’m afraid that might be difficult.', why: '*I’m afraid* + a softer statement with *might*.' },
-            { a: 'Could we discuss the price again?', why: '*Could we* + base form: a polite suggestion.' },
+          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+            { s: 'Would you be willing to [giving] us more time?', a: ['give'], why: '*Willing to* + base form.' },
+            { s: 'How would you feel about [meet] on Tuesday?', a: ['meeting'], why: 'After *about*: *-ing*.' },
+            { s: 'We could deliver sooner if you [will pay] in advance.', a: ['paid'], why: 'A polite condition: past simple after *if*.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'In the format of the B2 First exam (Speaking Part 3): you and your partner must agree. Choose the most suitable thing to say.', items: [
+            { q: 'Your partner suggests a plan you do not like. You say:', o: ['That’s an interesting idea, but I wonder if it would work.', 'No, that’s a terrible plan.', 'I don’t want to talk about it.'], why: 'Acknowledge, then disagree politely.' },
+            { q: 'You want to move the discussion towards a decision. You say:', o: ['So, shall we decide which one is the most important?', 'We have finished.', 'Choose one now.'], why: 'Invite your partner to decide together.' },
+            { q: 'Your partner has not said much. You say:', o: ['What do you think about this one?', 'Why are you so quiet?', 'I will choose for us.'], why: 'In Part 3 you are marked on interaction: ask for your partner’s opinion.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Speaking Part 3** you get marks for how you **interact**, not for winning. Ask your partner questions, react to their ideas, and try to reach a decision together in the last minute.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'omar', items: [
+            { a: 'I see your point, but I’m not sure I agree.' },
+            { a: 'Would you be willing to offer a discount?' },
+            { a: 'That sounds reasonable.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 4 */
     {
       id: 'p4',
       title: 'From the courtroom to the kitchen',
-      about: 'Read an interview with someone who changed career.',
-      art: 'croissant',
+      about: 'Read an interview about a change of career, and talk about your own ambitions.',
+      art: 'teacup',
       spreads: [
         [
-          { t: 'reading', title: 'From the courtroom to the kitchen', md: 'Marisol Ortega worked as a lawyer for twelve years before she opened a small bakery. We asked her about the change.\n\n**Why did you leave law?**\n\nI was good at my job and I had a good salary, but I was working seventy hours a week and I wasn’t happy. One evening I realised that the only part of my day I really enjoyed was baking bread when I got home. That frightened me a little.\n\n**Was it a difficult decision?**\n\nVery. It took me nearly two years to make it. I didn’t want to hand in my notice and then discover that I hated running a business. So first I did a weekend course, and then I worked in a friend’s bakery on Saturdays to gain some experience.\n\n**What surprised you most?**\n\nHow much of the job has nothing to do with baking. I spend hours on suppliers, staff and tax. Funnily enough, my legal training helps a lot. When I negotiate with suppliers, I still say things like “I see your point, but…”\n\n**Do you earn less now?**\n\nMuch less, at least for now. But I only take on the work I want, and the deadlines I have to meet are my own.\n\n**Where do you see yourself in five years?**\n\nI hope I’ll have opened a second shop by then. And on most mornings, I’ll be doing exactly what I do today: getting up at four and making bread.\n\n**Any advice for people who are thinking about a change?**\n\nTest the idea before you jump. And don’t wait for the perfect moment, because it won’t come.' },
+          { t: 'text', md: 'This interview brings together the language of the unit: future forms, work collocations and the way people describe big decisions. Read it once for the general idea, then again for detail.' },
+          { t: 'reading', title: 'From the courtroom to the kitchen', md: 'For twelve years, Rachel Okafor worked as a lawyer in a large firm. She earned a good salary, but she says she had a heavy workload and almost no free time. “I was taking on more and more responsibility, and I was very good at it, but I wasn’t happy,” she explains.\n\nThe turning point came when her firm made her a partner. “Everyone expected me to be delighted. Instead, I realised that in ten years I would still be doing exactly the same thing.” Six months later, she handed in her notice and enrolled on a cooking course.\n\nToday she runs a small restaurant near the river. The work is hard and the hours are long, and she earns less than half of her old salary. “People ask if I regret it. I don’t. When I was a lawyer, I was always waiting for the weekend. Now I’m always thinking about the next menu.”\n\nWhat comes next? “By this time next year, we’ll have opened a second place. And in five years, I hope I’ll be teaching young cooks. Maybe some of them will be lawyers who changed their minds.”' },
         ],
         [
-          { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
-            { q: 'Marisol left law because she was bad at her job.', a: 'f', why: 'She says she was good at her job but she was not happy.' },
-            { q: 'She made the decision to change career very quickly.', a: 'f', why: 'It took her nearly two years.' },
-            { q: 'She worked in a bakery before she opened her own.', a: 't', why: 'She worked in a friend’s bakery on Saturdays.' },
-            { q: 'Her bakery has five employees.', a: 'ng', why: 'She mentions staff, but the text does not say how many.' },
-            { q: 'Her experience as a lawyer is useful in her new job.', a: 't', why: '“My legal training helps a lot.”' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the B2 First exam (Reading and Use of English Part 5): choose the best answer.', items: [
+            { q: 'Why did Rachel leave the law?', o: ['She realised her future would be the same as her present.', 'Her firm refused to make her a partner.', 'She was not good at her job.', 'She wanted a higher salary.'], why: '*In ten years I would still be doing exactly the same thing.*' },
+            { q: 'How did Rachel feel when she became a partner?', o: ['Not as happy as people expected.', 'Delighted and proud.', 'Angry with her colleagues.', 'Worried about money.'], why: '*Everyone expected me to be delighted. Instead…*' },
+            { q: 'What does she say about her new job?', o: ['It is demanding but she has no regrets.', 'It is easier than the law.', 'It pays better than her old job.', 'She is thinking of going back to the law.'], why: 'Hard work and long hours, *I don’t* regret it.' },
+            { q: 'What are her plans for next year?', o: ['To have a second restaurant.', 'To start teaching cooks.', 'To return to her old firm.', 'To work fewer hours.'], why: '*By this time next year, we’ll have opened a second place.* Teaching is in five years.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In **Part 5** the questions follow the order of the text. The wrong options often use **words from the text** but change the meaning, so check the whole sentence, not just matching words.' },
+        ],
+        [
+          { t: 'ex', kind: 'gap', h: 'Complete the sentences about Rachel with one word in each gap.', items: [
+            { q: 'Rachel ___ in her notice six months after becoming a partner.', a: ['handed'], why: 'The phrase is *hand in your notice*.' },
+            { q: 'She now ___ a small restaurant near the river.', a: ['runs'], why: 'You *run* a business.' },
+            { q: 'By next year she will ___ opened a second restaurant.', a: ['have'], why: 'Future perfect: *will have opened*.' },
+          ] },
+          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
+            { a: 'In five years I hope I will be teaching young cooks.', why: 'Future continuous for a picture of the future.' },
+            { a: 'By then we will have opened a second restaurant.', why: '*By then* + future perfect.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Look at the language in the interview.', items: [
-            { q: '“I hope I’ll have opened a second shop by then.” What does Marisol mean?', o: ['She hopes the second shop will be open in five years or sooner.', 'She is opening a second shop at the moment.', 'She opened a second shop five years ago.'], why: 'The future perfect: finished before a future time.' },
-            { q: '“I’ll be doing exactly what I do today.” Why the future continuous?', o: ['It describes an activity in progress at a time in the future.', 'It describes an activity that will be finished.', 'It describes a decision she is making now.'], why: '*Will be* + *-ing*: in progress at that future time.' },
-            { q: 'What does “Test the idea before you jump” mean?', o: ['Try the new work in a small way before you leave your job.', 'Do a sports test before you start.', 'Leave your job first and think later.'], why: 'Marisol did a course and worked on Saturdays before she left law.' },
-          ] },
-          { t: 'ex', kind: 'spot', h: 'Tap the two work collocations.', items: [
-            { s: 'I didn’t want to [hand in my notice] and then discover that I hated [running a business].', why: '*Hand in your notice* and *run a business* are work collocations.' },
+          { t: 'text', md: 'Now talk about your own working life or studies. Think about where you will be at a moment in the future and what you will have achieved by then. Use the future continuous, the future perfect and at least two collocations from this unit.' },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'mei', items: [
+            { a: 'She handed in her notice and enrolled on a cooking course.' },
+            { a: 'By this time next year, we’ll have opened a second place.' },
+            { a: 'I don’t regret it at all.' },
           ] },
         ],
       ],
     },
   ],
   test: [
-    { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-      { q: 'By the time you read this email, I ___ the country.', o: ['’ll have left', '’m leaving', 'leave'], why: 'The leaving will be finished before you read it: future perfect.' },
-      { q: 'Don’t visit at two. I ___ an online lesson.', o: ['’ll be teaching', '’ll have taught', 'teach'], why: 'In progress at two: future continuous.' },
-      { q: 'We need to ___ a decision about the new office soon.', o: ['make', 'do', 'take on'], why: 'We *make* a decision.' },
-      { q: 'If we miss the ___, the client will be very unhappy.', o: ['deadline', 'notice', 'living'], why: 'We meet or miss a *deadline*.' },
-      { q: 'You disagree politely: “I see your point, ___ I’m not sure it will work.”', o: ['but', 'so', 'because'], why: '*I see your point, but…* accepts the idea and then disagrees.' },
+    { t: 'ex', kind: 'select', h: 'Choose the best form.', items: [
+      { q: 'By the time the guests arrive, we ___ the food.', o: ['will have prepared', 'will be preparing', 'prepare'], why: 'Complete before they arrive: future perfect.' },
+      { q: 'This time tomorrow I ___ on a plane.', o: ['will be sitting', 'will have sat', 'sit'], why: 'In progress at that moment: future continuous.' },
+      { q: '___ the car this evening? I’d like to borrow it.', o: ['Will you be using', 'Will you have used', 'Do you will use'], why: 'Polite question about plans.' },
     ] },
-    { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
-      { q: 'By 2030, they ___ (build) the new bridge.', a: ['will have built', '’ll have built'], why: 'Finished before a future time: future perfect.' },
-      { q: '___ (you / use) your laptop this evening? Mine is broken.', a: ['Will you be using'], why: 'A polite question about plans: future continuous.' },
-      { q: 'She wants to ___ on more responsibility at work.', a: ['take'], why: '*Take on responsibility*.' },
-      { q: 'Would you be ___ to lower the price a little?', a: ['willing', 'able', 'prepared'], why: '*Would you be willing to…?* is a polite request.' },
+    { t: 'ex', kind: 'gap', h: 'Write one word in each gap.', items: [
+      { q: 'We need to ___ a decision about the new office.', a: ['make'], why: '*Make a decision.*' },
+      { q: 'I’m afraid we didn’t ___ the deadline.', a: ['meet'], why: '*Meet a deadline.*' },
+      { q: 'She ___ a small team of designers.', a: ['runs', 'manages', 'leads'], why: 'You *run* or *manage* a team.' },
+      { q: 'He was made ___ when the factory closed.', a: ['redundant'], why: '*Be made redundant* = lose your job because it disappears.' },
     ] },
-    { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-      { a: 'Could we meet halfway on the price?', why: '*Could we* + base form: a polite suggestion.' },
-      { a: 'Will you have finished the report?', why: 'Question: *Will* + subject + *have* + past participle.' },
+    { t: 'ex', kind: 'transform', h: 'Complete the second sentence so that it means the same as the first, using the word given.', items: [
+      { q: 'The painters will finish the house before Friday. Begin: By Friday, the painters …', cue: 'HAVE', a: ['By Friday, the painters will have finished the house', 'By Friday, the painters’ll have finished the house'], why: 'Future perfect with *by*.' },
+      { q: 'Can you lower the price? Begin: Would you …', cue: 'WILLING', a: ['Would you be willing to lower the price?', 'Would you be willing to lower the price'], why: '*Would you be willing to* + base form.' },
     ] },
-    { t: 'ex', kind: 'choice', h: 'Which is the most diplomatic?', items: [
-      { q: '', o: ['I’m afraid Friday might be difficult for us.', 'Friday is impossible.', 'We can’t do Friday, sorry, no.'], why: '*I’m afraid* and *might* make the bad news softer.' },
-      { q: '', o: ['We’d prefer to pay in two parts, if possible.', 'We want to pay in two parts.', 'We will pay in two parts.'], why: '*We’d prefer…, if possible* is a soft way to say what you want.' },
+    { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+      { s: 'By six I’ll [finish] all my emails.', a: ['have finished'], why: 'With *by*: future perfect.' },
+      { s: 'How would you feel about [change] the date?', a: ['changing'], why: 'After *about*: *-ing*.' },
+      { s: 'We need to [do] a decision today.', a: ['make'], why: '*Make a decision.*' },
+    ] },
+    { t: 'ex', kind: 'match', h: 'Match the direct and the diplomatic sentences.', pairs: [
+      ['That’s too expensive.', 'That’s a little more than we hoped to pay.'],
+      ['We can’t do that.', 'That might be difficult for us.'],
+      ['You’re wrong.', 'I see your point, but I’m not sure.'],
     ] },
   ],
 };

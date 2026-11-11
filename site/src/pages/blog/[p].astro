@@ -1,0 +1,68 @@
+---
+// Blog (docs/BLOG_PLAN.md, third design): the blog home, a page per section and every article, for each site
+// language with articles. Built as blog/<site>--index.html, blog/<site>--<section slug>.html and
+// blog/<site>--<article slug>.html, then moved to /blog, /blog/<name>, /<site>/blog and /<site>/blog/<name> by
+// scripts/localize.mjs (which also translates nav and footer). Markup in src/blog/render.js; articles in
+// src/data/blog/<site>/; interface text in src/data/blog/ui.js.
+import Base from '../../layouts/Base.astro';
+import headTpl from '../../blocks/blog/head.html?raw';
+import style from '../../blocks/blog/style.html?raw';
+import cards from '../../blocks/blog/cards.html?raw';
+import after from '../../blocks/legal/after.html?raw';
+import nav from '../../blocks/legal/nav.html?raw';
+import footer from '../../blocks/footer.html?raw';
+import UI from '../../data/blog/ui.js';
+import PHOTOS from '../../data/blog/photos.js';
+import { esc, home, section, article, articleLd, listLd, articlePath, blogPath, sectionPath, SECTIONS } from '../../blog/render.js';
+
+export async function getStaticPaths() {
+  const articles = Object.values(import.meta.glob('../../data/blog/*/*.js', { eager: true })).map((m) => m.default);
+  const paths = [];
+  for (const site of Object.keys(UI)) {
+    const list = articles.filter((a) => a.site === site);
+    if (!list.length) continue;
+    paths.push({ params: { p: `${site}--index` }, props: { site, list, articles } });
+    for (const id of Object.keys(SECTIONS)) {
+      if (list.some((a) => a.section === id)) paths.push({ params: { p: `${site}--${UI[site].sectionSlugs[id]}` }, props: { site, list, articles, sectionId: id } });
+    }
+    for (const a of list) paths.push({ params: { p: `${site}--${a.slug}` }, props: { site, a, list, articles } });
+  }
+  return paths;
+}
+
+const { site, a, list, articles, sectionId } = Astro.props;
+const ui = UI[site];
+const lang = site;
+const fill = (tpl, values) => Object.entries(values).reduce((t, [k, v]) => t.split(`{{${k}}}`).join(v), tpl);
+const json = (o) => JSON.stringify(o).replace(/</g, '\\u003c');
+const ogImage = (id) => 'https://alimun.com' + ((PHOTOS[id] && PHOTOS[id].src) || '/images/alimun-og.jpg');
+
+let head, main;
+if (a) {
+  // The same article in the other languages, for the language switcher and the redirect (js/i18n.js).
+  const alts = Object.fromEntries(articles.filter((x) => x.key === a.key).map((x) => [x.site, articlePath(x)]));
+  const related = [...(a.related || []).map((k) => list.find((x) => x.key === k)).filter(Boolean), ...list.filter((x) => x !== a && !(a.related || []).includes(x.key))].filter((x) => x !== a);
+  head = fill(headTpl, { PAGE_TITLE: esc(a.metaTitle || `${a.title} – Alimun`), META_DESC: esc(a.desc), CANON: 'https://alimun.com' + articlePath(a), LOCALE: ui.locale, OG_TYPE: 'article', LD: articleLd(a, ui, lang) })
+    .replace('https://alimun.com/images/alimun-og.jpg', ogImage(a.photo))
+    + `\n  <script type="application/json" id="alimun-lang-alternates">${json(alts)}</script>`;
+  main = style + cards + article(a, ui, related);
+} else if (sectionId) {
+  const name = ui.sections[sectionId][0], url = sectionPath(site, ui, sectionId);
+  const alts = Object.fromEntries(Object.keys(UI).filter((s) => articles.some((x) => x.site === s && x.section === sectionId)).map((s) => [s, sectionPath(s, UI[s], sectionId)]));
+  head = fill(headTpl, { PAGE_TITLE: esc(`${ui.sectionTitle(name)} – Alimun`), META_DESC: esc(ui.sectionMetaDesc(name, ui.sections[sectionId][1])), CANON: 'https://alimun.com' + url, LOCALE: ui.locale, OG_TYPE: 'website', LD: listLd(name, ui.sections[sectionId][1], url, list.filter((x) => x.section === sectionId)) })
+    + `\n  <script type="application/json" id="alimun-lang-alternates">${json(alts)}</script>`;
+  main = style + cards + section(site, sectionId, list, ui);
+} else {
+  const alts = Object.fromEntries(Object.keys(UI).filter((s) => articles.some((x) => x.site === s)).map((s) => [s, blogPath(s)]));
+  head = fill(headTpl, { PAGE_TITLE: esc(ui.metaTitle), META_DESC: esc(ui.metaDesc), CANON: 'https://alimun.com' + blogPath(site), LOCALE: ui.locale, OG_TYPE: 'website', LD: listLd(ui.metaTitle, ui.metaDesc, blogPath(site), list) })
+    + `\n  <script type="application/json" id="alimun-lang-alternates">${json(alts)}</script>`;
+  main = style + cards + home(site, list, ui);
+}
+---
+<Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang={lang}>
+  <Fragment set:html={nav} />
+  <main class="main-wrapper">
+    <Fragment set:html={main} />
+  </main>
+  <Fragment set:html={footer} />
+</Base>

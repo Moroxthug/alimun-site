@@ -1,0 +1,227 @@
+{
+  "_note": "English source for every email sent to students and teachers. {placeholders} are filled by the server; **text** becomes bold. Plan names (Community, Focused, Intensive, Private) are product names and stay as they are.",
+  "common": {
+    "hello_name": "Hello {name},",
+    "hello": "Hello,",
+    "open_dashboard": "Open your dashboard",
+    "questions": "Questions? Reply to this email.",
+    "footer_account": "You received this email because you have an Alimun account.",
+    "footer_newsletter": "You received this email because you signed up for news and offers on alimun.com."
+  },
+  "reset": {
+    "subject": "Choose a new Alimun password",
+    "preheader": "Use the button in this email to choose a new password for your Alimun account.",
+    "heading": "Choose a new password",
+    "body": "Someone asked to reset the password of the Alimun account for this email address. Use the button below to choose a new one.",
+    "button": "Choose a new password",
+    "note": "The link works once and only for a limited time. If you did not ask for this, you can ignore this email: your password stays as it is.",
+    "footer": "You received this email because a password reset was requested for this address on alimun.com."
+  },
+  "invite": {
+    "subject": "Your Alimun account",
+    "preheader": "Your Alimun account is ready. Choose a password to sign in.",
+    "heading": "Your Alimun account is ready",
+    "body_teacher": "Alimun has opened a teacher account for you. Choose your password with the button below and you go straight to your teacher dashboard.",
+    "body_student": "Alimun has opened a student account for you. Choose your password with the button below, then take the short level test and start learning.",
+    "button": "Choose your password",
+    "note": "The link works once and only for a limited time. If it has expired, use \"Forgot password\" on the sign-in page with this email address.",
+    "footer": "You received this email because an Alimun administrator opened an account for this address."
+  },
+  "approved": {
+    "subject": "Welcome to Alimun, {name}",
+    "preheader": "Your Alimun teacher account is ready.",
+    "heading": "Welcome to Alimun",
+    "body": "Your application to teach with Alimun has been approved, and your account is ready. Sign in to set up your classes and welcome your first students.",
+    "tier": "You start on the **Focused** tier.",
+    "footer": "You received this email because you applied to teach with Alimun."
+  },
+  "rejected": {
+    "subject": "About your application to teach with Alimun",
+    "preheader": "An update on your application to teach with Alimun.",
+    "heading": "About your application",
+    "body": "Thank you for applying to teach with Alimun. After reviewing your application, we are not able to approve it at this time.",
+    "body2": "We appreciate the time you put into it and wish you all the best with your teaching.",
+    "note_label": "Note from the team",
+    "footer": "This email was sent to {email} because you applied to teach with Alimun."
+  },
+  "suspended": {
+    "subject": "Your Alimun teacher account",
+    "preheader": "Your Alimun teacher account has been suspended.",
+    "heading": "Your teacher account is suspended",
+    "body": "Your Alimun teacher account has been suspended, so the teacher dashboard is no longer available to you.",
+    "body2": "If you think this is a mistake, reply to this email and we will look into it.",
+    "footer": "You received this email because you have a teacher account on Alimun."
+  },
+  "session": {
+    "subject_cancelled": "Session cancelled: {class}",
+    "subject_moved": "Session moved: {class}",
+    "heading_cancelled": "Session cancelled",
+    "heading_moved": "Session moved",
+    "cancelled": "Your **{class}** session on **{when}** has been cancelled.",
+    "moved": "Your **{class}** session on {was} has moved to **{when}**.",
+    "reason": "Reason: {reason}",
+    "opens": "The classroom opens in your dashboard 15 minutes before the new start time."
+  },
+  "class_new": {
+    "subject": "Your class: {class}",
+    "heading": "Your new class",
+    "body": "You are now in the **{class}** class with **{teacher}**.",
+    "body2": "Your dashboard shows the schedule and your next session."
+  },
+  "class_left": {
+    "subject": "Your Alimun class",
+    "heading": "Your class has changed",
+    "body": "You are no longer in the **{class}** class.",
+    "body2": "You can choose a new class from your dashboard, or reply to this email if you have questions."
+  },
+  "enrolled": {
+    "subject": "You're in: {class} with {teacher}",
+    "preheader": "Your next session: {when}.",
+    "heading": "You're in",
+    "welcome": "Welcome, {name}.",
+    "body": "You have joined the **{class}** class with **{teacher}**.",
+    "f_class": "Class",
+    "f_teacher": "Teacher",
+    "f_next": "Next session",
+    "soon": "soon: your dashboard shows the schedule",
+    "opens": "The classroom opens in your dashboard 15 minutes before the start.",
+    "button": "Go to your classes",
+    "footer": "You received this email because you joined a class on Alimun."
+  },
+  "student_joined": {
+    "subject": "A new student joined your class",
+    "preheader": "{name} joined your {class} class.",
+    "heading": "A new student joined your class",
+    "body": "A new student joined your **{class}** class.",
+    "f_name": "Name",
+    "f_level": "Level",
+    "f_goal": "Goal",
+    "f_seats": "Seats taken",
+    "seats": "{n} of {max}",
+    "button": "Open your teacher dashboard",
+    "footer": "You received this email because you teach this class on Alimun."
+  },
+  "place": {
+    "subject": "A place is open in your {class} class",
+    "preheader": "A place has opened in the class you were waiting for. It is held for you for 48 hours.",
+    "heading": "A place is open for you",
+    "body": "A place has opened in the class you were waiting for. You were first on the waiting list, so it is held for you for the next **48 hours**.",
+    "f_class": "Class",
+    "f_teacher": "Teacher",
+    "f_schedule": "Schedule",
+    "schedule": "{days} at {time} ({zone})",
+    "button": "Claim your place",
+    "note": "If you do not claim it within 48 hours, the place goes to the next person on the waiting list.",
+    "footer": "You received this email because you joined the waiting list for this class on Alimun."
+  },
+  "notes": {
+    "subject": "Session notes ready: {class}, {date}",
+    "preheader": "Your notes from {date} are in your dashboard.",
+    "heading": "Your session notes are ready",
+    "body": "Your notes from the **{class}** session on **{date}** are ready.",
+    "f_grammar": "Grammar",
+    "f_words": "New words",
+    "f_due": "Homework due",
+    "button": "Open your notes",
+    "footer": "You received this email because you are in this class on Alimun."
+  },
+  "sub_ended": {
+    "subject": "Your Alimun subscription has ended",
+    "preheader": "Your access continues until {date}.",
+    "heading": "Your subscription has ended",
+    "body": "Your subscription has ended and your seat in your class has been released. Your access continues until **{date}**.",
+    "body2": "You can subscribe again at any time from your dashboard to rejoin a class. Thank you for studying with us.",
+    "footer": "You received this email because you had an Alimun subscription."
+  },
+  "pay_cancelled": {
+    "subject": "Your Alimun subscription has been cancelled",
+    "preheader": "We could not take your payment, so your subscription was cancelled.",
+    "heading": "Your subscription has been cancelled",
+    "body": "We could not take your payment after three attempts, so your subscription has been cancelled and your class seat released.",
+    "body2": "To come back, sign in, update your payment method and subscribe again.",
+    "footer": "You received this email because you have an Alimun subscription."
+  },
+  "pay_failed": {
+    "subject": "Your Alimun payment did not go through",
+    "preheader": "Update your payment method to keep your seat.",
+    "heading": "Your payment did not go through",
+    "body": "We could not take your latest subscription payment. Update your payment method in your dashboard billing settings to keep your seat.",
+    "body2": "We will try again automatically in a few days.",
+    "button": "Update payment method",
+    "footer": "You received this email because you have an Alimun subscription."
+  },
+  "plan": {
+    "subject": "Your Alimun plan is now {plan}",
+    "preheader": "Your account is now on the {plan} plan.",
+    "heading": "Your plan has changed",
+    "body": "The Alimun team has moved your account to the **{plan}** plan. It is active now, with no card or payment needed.",
+    "body2": "Sign in to see your classes and exercises.",
+    "note": "If you think this is a mistake, reply to this email."
+  },
+  "admin_app": {
+    "subject": "New teacher application: {name}",
+    "preheader": "{name} applied to teach with Alimun.",
+    "heading": "New teacher application",
+    "body": "A teacher has applied. Review the details and decide with the buttons below; each button asks you to confirm.",
+    "f_name": "Name",
+    "f_languages": "Languages",
+    "f_experience": "Experience",
+    "experience": "{n} years",
+    "f_specialty": "Specialty",
+    "about": "About them",
+    "approve": "Approve",
+    "reject": "Reject",
+    "note": "The buttons work for seven days. You can also decide in the admin dashboard.",
+    "footer": "Sent to the Alimun admin address when a teacher applies."
+  },
+  "contact": {
+    "subject": "Contact form: {name}",
+    "heading": "Message from {name}",
+    "f_name": "Name",
+    "f_email": "Email",
+    "f_phone": "Phone",
+    "f_language": "Language",
+    "f_page": "Page",
+    "message": "Message",
+    "note": "Reply to this email to answer them directly.",
+    "footer": "Sent from the contact form on alimun.com."
+  },
+  "unsub": {
+    "title_bad": "This link does not work",
+    "text_bad": "The link may be incomplete. You can also stop news and offers in your dashboard, under Settings.",
+    "title_ask": "Stop news and offers?",
+    "text_ask": "You will no longer receive news and offers from Alimun. Emails about your account and your classes still arrive.",
+    "button": "Stop news and offers",
+    "title_done": "Done",
+    "text_done": "You will no longer receive news and offers from Alimun. You can turn them back on at any time in your dashboard, under Settings.",
+    "text_done_newsletter": "You will no longer receive news and offers from Alimun. To sign up again, use the form at the bottom of any page on alimun.com.",
+    "title_error": "Please try again",
+    "text_error": "Something went wrong on our side. Please try again in a minute.",
+    "back": "Back to Alimun"
+  },
+  "decide": {
+    "back": "Back to Alimun",
+    "err_title": "Action failed",
+    "err_params": "Missing or invalid parameters.",
+    "err_secret": "This link cannot be used right now. Please decide in the admin dashboard.",
+    "err_expired": "This link is invalid or has expired. Please decide in the admin dashboard.",
+    "err_db": "The database could not be reached.",
+    "err_notfound": "Teacher profile not found.",
+    "err_update": "The teacher profile could not be updated.",
+    "already_approved_title": "Already approved",
+    "already_approved": "**{name}** is already approved.",
+    "already_declined_title": "Already declined",
+    "already_declined": "**{name}** has already been declined or suspended.",
+    "confirm_approve_title": "Approve this application?",
+    "confirm_reject_title": "Decline this application?",
+    "confirm_body": "Teacher: **{name}**",
+    "button_approve": "Approve the application",
+    "button_reject": "Decline the application",
+    "done_approved_title": "Teacher approved",
+    "done_approved": "**{name}** is now approved.",
+    "done_declined_title": "Application declined",
+    "done_declined": "The application from **{name}** has been declined and the account marked as suspended.",
+    "emailed": "A notification email has been sent to **{email}**.",
+    "not_emailed": "The notification email could not be sent."
+  }
+}

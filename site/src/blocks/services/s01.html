@@ -37,15 +37,19 @@
         <script>
           (function () {
             var root = document.currentScript.closest(".is-hero");
+            var card = root.querySelector(".hero_wrap"), lastP = -1;
             function update() {
               var p = Math.min(1, Math.max(0, window.scrollY / (window.innerHeight * 0.5)));
+              // Only when the value changes, and on the card rather than the whole section, so less is restyled per scroll.
+              if (p === lastP) return; lastP = p; var root = card;
               root.style.setProperty("--hero-s", (0.9 + p * 0.1).toFixed(3));
               root.style.setProperty("--hero-z", (1.15 - p * 0.15).toFixed(3));
               root.style.setProperty("--hero-y", (-p * 60).toFixed(1) + "px");
               root.style.setProperty("--hero-o", (1 - p * 0.5).toFixed(3));
             }
-            window.addEventListener("scroll", update, { passive: true });
-            window.addEventListener("resize", update);
+            var queued = 0; /* at most once per frame (owner, 31 Oct 2026: "some animations seem laggy") */
+            window.addEventListener("scroll", function () { if (!queued) queued = requestAnimationFrame(function () { queued = 0; update(); }); }, { passive: true });
+            window.addEventListener("resize", function () { lastP = -1; update(); });
             update();
           })();
         </script>

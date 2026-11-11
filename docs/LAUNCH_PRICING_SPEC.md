@@ -1,6 +1,6 @@
 # Alimun launch: price list and operating spec
 
-Status: agreed with the owner in the planning session of October–November 2026, not yet built. It replaces the earlier tier pricing (Community / Focused / Intensive / Private) and the planning drafts in `reports/`. Research and models behind it: `reports/Alimun market and pricing research.md`, `reports/Alimun learner segments and pricing tactics.md`, `reports/Alimun teacher contracting by country.md`, `reports/Alimun financial stress test.md` and `reports/alimun_finmodel.py`. Not legal or tax advice; the open items at the end need advisers.
+Status: agreed with the owner in the planning session of October–November 2026, not yet built. It replaces the earlier tier pricing (Community / Focused / Intensive / Private) and the planning drafts in `docs/research/reports/`. Research and models behind it: `docs/research/reports/Alimun market and pricing research.md`, `docs/research/reports/Alimun learner segments and pricing tactics.md`, `docs/research/reports/Alimun teacher contracting by country.md`, `docs/research/reports/Alimun financial stress test.md` and `docs/research/reports/alimun_finmodel.py`. Not legal or tax advice; the open items at the end need advisers.
 
 ## 1. Scope at launch
 
@@ -91,7 +91,7 @@ Share of revenue left after teacher pay, video, card fees, VAT (or a 5% provisio
 | Company room (8 / 12 learners) | 59–63% | 66–69% |
 | App subscription | about 80% at typical use, about 65% if every minute is used | |
 
-Band B gives the same margins within a point. The founding prices are thinner on purpose and limited to the launch window. Full model and break-even: `reports/Alimun financial stress test.md` (base case: break-even at roughly 1,000 to 1,200 paying customers, with about €30,000 to €50,000 of cash needed to get there).
+Band B gives the same margins within a point. The founding prices are thinner on purpose and limited to the launch window. Full model and break-even: `docs/research/reports/Alimun financial stress test.md` (base case: break-even at roughly 1,000 to 1,200 paying customers, with about €30,000 to €50,000 of cash needed to get there).
 
 ## 6. Rules
 
@@ -184,7 +184,7 @@ On `main` already: rooms (`cohorts`), enrolment, seats, waiting-list offers, Dai
 
 ## 12. The first 90 days
 
-Run three monthly start dates and measure, each month: the share of app users who subscribe, the share who take the open class or a pack, the average room size, the cost to win a paying customer in each channel, monthly churn by product, AI cost per user, and teacher retention. After three cycles, re-run `reports/alimun_finmodel.py` with the real figures and decide: keep, adjust (prices, minutes, room sizes, channels) or stop a product or channel that misses twice.
+Run three monthly start dates and measure, each month: the share of app users who subscribe, the share who take the open class or a pack, the average room size, the cost to win a paying customer in each channel, monthly churn by product, AI cost per user, and teacher retention. After three cycles, re-run `docs/research/reports/alimun_finmodel.py` with the real figures and decide: keep, adjust (prices, minutes, room sizes, channels) or stop a product or channel that misses twice.
 
 ## 13. Open items
 

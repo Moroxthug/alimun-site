@@ -262,6 +262,7 @@
     stopAudio();
     if (same) return;
     player = player || new Audio();
+    var rate = +btn.getAttribute('data-rate') || 1;
     queue = { list: list, btn: btn, at: 0 };
     btn.classList.add('is-playing');
     var q = queue;
@@ -273,6 +274,7 @@
       if (before) before(x);
       if (x.el) x.el.classList.add('is-speaking');
       player.src = x.src;
+      player.playbackRate = rate;
       player.onended = function () { setTimeout(next, 250); };
       player.play().catch(function () { stopAudio(); });
     };
@@ -288,6 +290,9 @@
     }
     playList(els.map(function (el) { return { src: el.getAttribute('data-src'), el: el }; }), btn, function (x) { x.el.classList.add('is-on'); });
   }
+
+  /* The same dialogue or reading at three quarters of the speed (recordings are made at a natural pace) */
+  function slowerBtn() { return '<button class="btn btn--ghost btn--sm listen" type="button" data-act="listen" data-rate="0.75">' + esc(t('app_ex_slower')) + '</button>'; }
 
   /* ---------- Teaching blocks ---------- */
   function blockHtml(b, gi) {
@@ -329,7 +334,7 @@
               '<p><b>' + esc(l.who) + '</b><span>' + md(l.s) + '</span></p></div>';
           }).join('') + '</div>' +
           (b.lines.every(function (l, k) { return audioSrc(gi, k); })
-            ? '<button class="btn btn--primary btn--sm listen" type="button" data-act="listen">' + A.icon('play') + '<span>' + esc(t('app_book_listen')) + '</span></button>'
+            ? '<span class="rd-listen"><button class="btn btn--primary btn--sm listen" type="button" data-act="listen">' + A.icon('play') + '<span>' + esc(t('app_book_listen')) + '</span></button>' + slowerBtn() + '</span>'
             : '<button class="linkish" type="button" data-act="replay">' + esc(t('app_book_replay')) + '</button>') + '</figure>';
       }
       case 'tip':
@@ -338,7 +343,7 @@
         var ps = String(b.md || '').split(/\n\s*\n/);
         var heard = ps.every(function (p, k) { return !p.trim() || audioSrc(gi, k); });
         return '<section class="rd-reading" data-reading' + tA(book) + '>' + (b.title ? '<h2 class="t-h2">' + esc(b.title) + '</h2>' : '') +
-          (heard ? '<button class="btn btn--primary btn--sm listen" type="button" data-act="listen">' + A.icon('play') + '<span>' + esc(t('app_book_listen')) + '</span></button>' : '') +
+          (heard ? '<span class="rd-listen"><button class="btn btn--primary btn--sm listen" type="button" data-act="listen">' + A.icon('play') + '<span>' + esc(t('app_book_listen')) + '</span></button>' + slowerBtn() + '</span>' : '') +
           ps.map(function (p, k) { var src = heard && audioSrc(gi, k); return '<p' + (src ? ' data-src="' + esc(src) + '"' : '') + '>' + md(p.trim()) + '</p>'; }).join('') + '</section>';
       case 'ex': return ctx.ex.html(gi);
       default: return '';
@@ -351,8 +356,10 @@
   /* Each answer also goes to the Practice memory (js/app/practice.js), so mistakes come back in practice rounds */
   function session(blocks, test) {
     var base = ctx.book.id + ':' + ctx.unit.id + ':' + (ctx.page ? ctx.page.id : 'test') + ':';
-    return window.AlimunEx.create({ A: A, blocks: blocks, test: test, xa: xA(ctx.book), ta: tA(ctx.book), root: function () { return root; },
+    return window.AlimunEx.create({ A: A, blocks: blocks, test: test, level: ctx.book.level, xa: xA(ctx.book), ta: tA(ctx.book), root: function () { return root; },
       onAnswer: afterPractice, onChange: refreshEnd,
+      /* Speaking exercises (second edition of the books): the same transcription as Practice */
+      transcribe: window.AlimunPractice ? window.AlimunPractice.transcriber(ctx.book.language) : null,
       onItem: function (r) { if (window.AlimunPractice) window.AlimunPractice.record(base + r.bi + ':' + r.i, r.ok); } });
   }
 
@@ -764,6 +771,11 @@
     return loadIndex().then(function (list) {
       var id = parts[0] || A.myBookId();
       var entry = list.filter(function (b) { return b.id === id; })[0];
+      /* A preview edition (owner's review) is not in the index: look it up only when its link is opened */
+      if (!entry && /-preview$/.test(id)) return getJSON('/data/books/preview.json').then(function (x) { return [list, (x.books || []).filter(function (b) { return b.id === id; })[0]]; }, function () { return [list, null]; });
+      return [list, entry];
+    }).then(function (le) {
+      var list = le[0], entry = le[1], id = entry ? entry.id : null;
       if (!entry) return { html: noneView(list.filter(function (b) { return b.written > 0 && b.track === 'core'; })), title: t('app_nav_book') };
       return Promise.all([loadBook(id, explainCode(entry)), loadProgress(id), loadAudio(id)]).then(function (r) {
         var book = r[0];

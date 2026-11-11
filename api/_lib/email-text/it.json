@@ -1,0 +1,227 @@
+{
+  "_note": "Traduzione italiana (tu) delle email inviate a studenti e insegnanti. I {placeholders} vengono compilati dal server; **testo** appare in grassetto. I nomi dei piani (Community, Focused, Intensive, Private) non si traducono.",
+  "common": {
+    "hello_name": "Ciao {name},",
+    "hello": "Ciao,",
+    "open_dashboard": "Apri la tua dashboard",
+    "questions": "Hai domande? Rispondi a questa email.",
+    "footer_account": "Ricevi questa email perché hai un account Alimun.",
+    "footer_newsletter": "Ricevi questa email perché ti sei iscritto a novità e offerte su alimun.com."
+  },
+  "reset": {
+    "subject": "Scegli una nuova password Alimun",
+    "preheader": "Usa il pulsante in questa email per scegliere una nuova password per il tuo account Alimun.",
+    "heading": "Scegli una nuova password",
+    "body": "Qualcuno ha chiesto di reimpostare la password dell'account Alimun associato a questo indirizzo email. Usa il pulsante qui sotto per sceglierne una nuova.",
+    "button": "Scegli una nuova password",
+    "note": "Il link funziona una sola volta e solo per un tempo limitato. Se non hai fatto tu questa richiesta, puoi ignorare questa email: la tua password resta invariata.",
+    "footer": "Ricevi questa email perché è stato richiesto il ripristino della password per questo indirizzo su alimun.com."
+  },
+  "invite": {
+    "subject": "Il tuo account Alimun",
+    "preheader": "Il tuo account Alimun è pronto. Scegli una password per accedere.",
+    "heading": "Il tuo account Alimun è pronto",
+    "body_teacher": "Alimun ha aperto per te un account insegnante. Scegli la tua password con il pulsante qui sotto e accederai direttamente alla tua dashboard insegnante.",
+    "body_student": "Alimun ha aperto per te un account studente. Scegli la tua password con il pulsante qui sotto, poi fai il breve test di livello e inizia a imparare.",
+    "button": "Scegli la tua password",
+    "note": "Il link funziona una sola volta e solo per un tempo limitato. Se è scaduto, usa \"Password dimenticata\" nella pagina di accesso con questo indirizzo email.",
+    "footer": "Ricevi questa email perché un amministratore di Alimun ha aperto un account per questo indirizzo."
+  },
+  "approved": {
+    "subject": "Ti diamo il benvenuto in Alimun, {name}",
+    "preheader": "Il tuo account insegnante Alimun è pronto.",
+    "heading": "Ti diamo il benvenuto in Alimun",
+    "body": "La tua candidatura per insegnare con Alimun è stata approvata e il tuo account è pronto. Accedi per impostare le tue classi e accogliere i tuoi primi studenti.",
+    "tier": "Inizi nella categoria **Focused**.",
+    "footer": "Ricevi questa email perché hai inviato la candidatura per insegnare con Alimun."
+  },
+  "rejected": {
+    "subject": "Sulla tua candidatura per insegnare con Alimun",
+    "preheader": "Un aggiornamento sulla tua candidatura per insegnare con Alimun.",
+    "heading": "Sulla tua candidatura",
+    "body": "Grazie per la tua candidatura per insegnare con Alimun. Dopo averla valutata, al momento non possiamo approvarla.",
+    "body2": "Apprezziamo il tempo che ci hai dedicato e ti auguriamo il meglio per la tua attività di insegnamento.",
+    "note_label": "Nota del team",
+    "footer": "Questa email è stata inviata a {email} perché hai inviato la candidatura per insegnare con Alimun."
+  },
+  "suspended": {
+    "subject": "Il tuo account insegnante Alimun",
+    "preheader": "Il tuo account insegnante Alimun è stato sospeso.",
+    "heading": "Il tuo account insegnante è sospeso",
+    "body": "Il tuo account insegnante Alimun è stato sospeso, quindi la dashboard insegnante non è più disponibile per te.",
+    "body2": "Se pensi che si tratti di un errore, rispondi a questa email e verificheremo.",
+    "footer": "Ricevi questa email perché hai un account insegnante su Alimun."
+  },
+  "session": {
+    "subject_cancelled": "Lezione annullata: {class}",
+    "subject_moved": "Lezione spostata: {class}",
+    "heading_cancelled": "Lezione annullata",
+    "heading_moved": "Lezione spostata",
+    "cancelled": "La tua lezione di **{class}** prevista per **{when}** è stata annullata.",
+    "moved": "La tua lezione di **{class}** prevista per {was} è stata spostata a **{when}**.",
+    "reason": "Motivo: {reason}",
+    "opens": "L'aula si apre nella tua dashboard 15 minuti prima del nuovo orario di inizio."
+  },
+  "class_new": {
+    "subject": "La tua classe: {class}",
+    "heading": "La tua nuova classe",
+    "body": "Ora fai parte della classe di **{class}** con **{teacher}**.",
+    "body2": "Nella tua dashboard trovi l'orario e la tua prossima lezione."
+  },
+  "class_left": {
+    "subject": "La tua classe Alimun",
+    "heading": "La tua classe è cambiata",
+    "body": "Non fai più parte della classe di **{class}**.",
+    "body2": "Puoi scegliere una nuova classe dalla tua dashboard, oppure rispondere a questa email se hai domande."
+  },
+  "enrolled": {
+    "subject": "Ci sei: {class} con {teacher}",
+    "preheader": "La tua prossima lezione: {when}.",
+    "heading": "Ci sei",
+    "welcome": "Ti diamo il benvenuto, {name}.",
+    "body": "Ora fai parte della classe di **{class}** con **{teacher}**.",
+    "f_class": "Classe",
+    "f_teacher": "Insegnante",
+    "f_next": "Prossima lezione",
+    "soon": "a breve: trovi l'orario nella tua dashboard",
+    "opens": "L'aula si apre nella tua dashboard 15 minuti prima dell'inizio.",
+    "button": "Vai alle tue classi",
+    "footer": "Ricevi questa email perché hai scelto una classe su Alimun."
+  },
+  "student_joined": {
+    "subject": "Un nuovo studente è entrato nella tua classe",
+    "preheader": "{name} fa ora parte della tua classe di {class}.",
+    "heading": "Un nuovo studente è entrato nella tua classe",
+    "body": "Un nuovo studente è entrato nella tua classe di **{class}**.",
+    "f_name": "Nome",
+    "f_level": "Livello",
+    "f_goal": "Obiettivo",
+    "f_seats": "Posti occupati",
+    "seats": "{n} su {max}",
+    "button": "Apri la tua dashboard insegnante",
+    "footer": "Ricevi questa email perché insegni in questa classe su Alimun."
+  },
+  "place": {
+    "subject": "Si è liberato un posto nella tua classe di {class}",
+    "preheader": "Si è liberato un posto nella classe che aspettavi. Lo teniamo per te per 48 ore.",
+    "heading": "C'è un posto per te",
+    "body": "Si è liberato un posto nella classe che aspettavi. Eri al primo posto nella lista d'attesa, quindi lo teniamo per te per le prossime **48 ore**.",
+    "f_class": "Classe",
+    "f_teacher": "Insegnante",
+    "f_schedule": "Orario",
+    "schedule": "{days} alle {time} ({zone})",
+    "button": "Prendi il tuo posto",
+    "note": "Se non lo prendi entro 48 ore, il posto passa alla persona successiva nella lista d'attesa.",
+    "footer": "Ricevi questa email perché sei in lista d'attesa per questa classe su Alimun."
+  },
+  "notes": {
+    "subject": "Appunti della lezione pronti: {class}, {date}",
+    "preheader": "I tuoi appunti della lezione del giorno {date} sono nella tua dashboard.",
+    "heading": "Gli appunti della lezione sono pronti",
+    "body": "I tuoi appunti della lezione di **{class}** del giorno **{date}** sono pronti.",
+    "f_grammar": "Grammatica",
+    "f_words": "Parole nuove",
+    "f_due": "Compiti da consegnare entro",
+    "button": "Apri i tuoi appunti",
+    "footer": "Ricevi questa email perché fai parte di questa classe su Alimun."
+  },
+  "sub_ended": {
+    "subject": "Il tuo abbonamento Alimun è terminato",
+    "preheader": "Il tuo accesso resta attivo fino al giorno {date}.",
+    "heading": "Il tuo abbonamento è terminato",
+    "body": "Il tuo abbonamento è terminato e il tuo posto nella classe è stato liberato. Il tuo accesso resta attivo fino al giorno **{date}**.",
+    "body2": "Puoi abbonarti di nuovo in qualsiasi momento dalla tua dashboard per rientrare in una classe. Grazie per aver studiato con noi.",
+    "footer": "Ricevi questa email perché avevi un abbonamento Alimun."
+  },
+  "pay_cancelled": {
+    "subject": "Il tuo abbonamento Alimun è stato annullato",
+    "preheader": "Non siamo riusciti ad addebitare il pagamento, quindi il tuo abbonamento è stato annullato.",
+    "heading": "Il tuo abbonamento è stato annullato",
+    "body": "Non siamo riusciti ad addebitare il pagamento dopo tre tentativi, quindi il tuo abbonamento è stato annullato e il tuo posto nella classe è stato liberato.",
+    "body2": "Per tornare, accedi, aggiorna il metodo di pagamento e abbonati di nuovo.",
+    "footer": "Ricevi questa email perché hai un abbonamento Alimun."
+  },
+  "pay_failed": {
+    "subject": "Il tuo pagamento Alimun non è andato a buon fine",
+    "preheader": "Aggiorna il metodo di pagamento per mantenere il tuo posto.",
+    "heading": "Il tuo pagamento non è andato a buon fine",
+    "body": "Non siamo riusciti ad addebitare l'ultimo pagamento del tuo abbonamento. Aggiorna il metodo di pagamento nelle impostazioni di fatturazione della tua dashboard per mantenere il tuo posto.",
+    "body2": "Riproveremo automaticamente tra qualche giorno.",
+    "button": "Aggiorna il metodo di pagamento",
+    "footer": "Ricevi questa email perché hai un abbonamento Alimun."
+  },
+  "plan": {
+    "subject": "Il tuo piano Alimun ora è {plan}",
+    "preheader": "Il tuo account ora è sul piano {plan}.",
+    "heading": "Il tuo piano è cambiato",
+    "body": "Il team di Alimun ha spostato il tuo account sul piano **{plan}**. È già attivo, senza bisogno di carta o pagamento.",
+    "body2": "Accedi per vedere le tue classi e i tuoi esercizi.",
+    "note": "Se pensi che si tratti di un errore, rispondi a questa email."
+  },
+  "admin_app": {
+    "subject": "Nuova candidatura come insegnante: {name}",
+    "preheader": "{name} vuole insegnare con Alimun.",
+    "heading": "Nuova candidatura come insegnante",
+    "body": "Qualcuno si è candidato come insegnante. Controlla i dati e decidi con i pulsanti qui sotto; ogni pulsante chiede una conferma.",
+    "f_name": "Nome",
+    "f_languages": "Lingue",
+    "f_experience": "Esperienza",
+    "experience": "{n} anni",
+    "f_specialty": "Specializzazione",
+    "about": "Presentazione",
+    "approve": "Approva",
+    "reject": "Rifiuta",
+    "note": "I pulsanti funzionano per sette giorni. Puoi decidere anche nella dashboard di amministrazione.",
+    "footer": "Inviato all'indirizzo di amministrazione di Alimun quando arriva una candidatura."
+  },
+  "contact": {
+    "subject": "Modulo di contatto: {name}",
+    "heading": "Messaggio da {name}",
+    "f_name": "Nome",
+    "f_email": "Email",
+    "f_phone": "Telefono",
+    "f_language": "Lingua",
+    "f_page": "Pagina",
+    "message": "Messaggio",
+    "note": "Rispondi a questa email per rispondere direttamente.",
+    "footer": "Inviato dal modulo di contatto di alimun.com."
+  },
+  "unsub": {
+    "title_bad": "Questo link non funziona",
+    "text_bad": "Il link potrebbe essere incompleto. Puoi anche smettere di ricevere novità e offerte dalla tua dashboard, in Impostazioni.",
+    "title_ask": "Non ricevere più novità e offerte?",
+    "text_ask": "Non riceverai più novità e offerte da Alimun. Le email sul tuo account e sulle tue lezioni continueranno ad arrivare.",
+    "button": "Non ricevere più novità e offerte",
+    "title_done": "Fatto",
+    "text_done": "Non riceverai più novità e offerte da Alimun. Puoi riattivarle quando vuoi dalla tua dashboard, in Impostazioni.",
+    "text_done_newsletter": "Non riceverai più novità e offerte da Alimun. Per iscriverti di nuovo, usa il modulo in fondo a qualsiasi pagina di alimun.com.",
+    "title_error": "Riprova",
+    "text_error": "Qualcosa non ha funzionato da parte nostra. Riprova tra un minuto.",
+    "back": "Torna ad Alimun"
+  },
+  "decide": {
+    "back": "Torna ad Alimun",
+    "err_title": "Azione non riuscita",
+    "err_params": "Parametri mancanti o non validi.",
+    "err_secret": "Questo link non si può usare ora. Decidi dalla dashboard di amministrazione.",
+    "err_expired": "Questo link non è valido o è scaduto. Decidi dalla dashboard di amministrazione.",
+    "err_db": "Impossibile raggiungere il database.",
+    "err_notfound": "Profilo insegnante non trovato.",
+    "err_update": "Impossibile aggiornare il profilo dell'insegnante.",
+    "already_approved_title": "Già approvata",
+    "already_approved": "**{name}** è già approvato.",
+    "already_declined_title": "Già rifiutata",
+    "already_declined": "**{name}** è già stato rifiutato o sospeso.",
+    "confirm_approve_title": "Approvare questa candidatura?",
+    "confirm_reject_title": "Rifiutare questa candidatura?",
+    "confirm_body": "Insegnante: **{name}**",
+    "button_approve": "Approva la candidatura",
+    "button_reject": "Rifiuta la candidatura",
+    "done_approved_title": "Insegnante approvato",
+    "done_approved": "**{name}** ora è approvato.",
+    "done_declined_title": "Candidatura rifiutata",
+    "done_declined": "La candidatura di **{name}** è stata rifiutata e l'account segnato come sospeso.",
+    "emailed": "È stata inviata un'email di avviso a **{email}**.",
+    "not_emailed": "Non è stato possibile inviare l'email di avviso."
+  }
+}

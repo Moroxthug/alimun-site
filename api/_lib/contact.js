@@ -4,10 +4,15 @@
  * Emails each message through Resend to CONTACT_EMAIL (default: the owner),
  * with the sender as reply-to. Nothing is stored.
  *
- * Abuse limits (until Cloudflare Turnstile is configured): a hidden honeypot
+ * Abuse limits: Cloudflare Turnstile (./captcha.js, once keys are set), a hidden honeypot
  * field, length caps, and at most PER_IP_HOUR messages per address per hour
  * on each warm instance.
  */
+
+const { createClient } = require('@supabase/supabase-js');
+const mail = require('./email.js');
+const L = require('./email-i18n.js');
+const captcha = require('./captcha.js');
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 const LOCALES = new Set(['en', 'es', 'fr', 'de', 'it', 'pt', 'zh', 'ar', 'ma']);
@@ -19,9 +24,6 @@ function clientIp(req) {
   return fwd || String(req.headers['x-real-ip'] || '') || 'unknown';
 }
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
 function field(body, name, max) {
   return String(body[name] || '').replace(/[\r\n]+/g, name === 'message' ? '\n' : ' ').trim().slice(0, max);
@@ -30,7 +32,7 @@ function field(body, name, max) {
 module.exports = async function contact(req, res) {
   res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || 'https://alimun.com');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, X-Captcha-Token');
   if (req.method === 'OPTIONS') return res.status(200).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
@@ -51,6 +53,8 @@ module.exports = async function contact(req, res) {
   if (!EMAIL_RE.test(email)) return res.status(400).json({ error: 'invalid_email', message: 'Please enter a valid email address.' });
   if (!firstName || !message) return res.status(400).json({ error: 'missing_fields', message: 'Please fill in your name and message.' });
 
+  if (!(await captcha.verify(req))) return res.status(403).json({ error: 'captcha_failed', message: 'Please try again.' });
+
   const ip = clientIp(req), now = Date.now();
   const times = (recent.get(ip) || []).filter((t) => now - t < 3600 * 1000);
   if (times.length >= PER_IP_HOUR) return res.status(429).json({ error: 'rate_limited', message: 'Too many messages right now. Please try again later.' });
@@ -62,11 +66,23 @@ module.exports = async function contact(req, res) {
   }
 
   const name = `${firstName} ${lastName}`.trim();
-  const rows = [['Name', name], ['Email', email], ['Phone', phone || '-'], ['Language', locale], ['Page', page || '-']]
-    .map(([k, v]) => `<tr><td style="padding:4px 12px 4px 0;color:#666">${k}</td><td style="padding:4px 0">${escapeHtml(v)}</td></tr>`).join('');
-  const html = `<table style="font-family:sans-serif;font-size:14px">${rows}</table>`
-    + `<p style="font-family:sans-serif;font-size:14px;white-space:pre-wrap">${escapeHtml(message)}</p>`;
-  const text = `Name: ${name}\nEmail: ${email}\nPhone: ${phone || '-'}\nLanguage: ${locale}\nPage: ${page || '-'}\n\n${message}`;
+  // In the admin's email language (app_settings.admin_email_lang).
+  const url = process.env.SUPABASE_URL, sk = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const lang = await L.adminLang(url && sk ? createClient(url, sk, { auth: { autoRefreshToken: false, persistSession: false } }) : null);
+  const visitorLang = { en: 'English', es: 'Spanish', fr: 'French', de: 'German', it: 'Italian', pt: 'Portuguese', zh: 'Mandarin', ar: 'Arabic' }[locale];
+  const content = mail.renderEmail({
+    hero: 'message', lang,
+    signoff: false,
+    preheader: message.replace(/\s+/g, ' ').slice(0, 120),
+    heading: L.say(lang, 'contact.heading', { name }),
+    blocks: [
+      { facts: [[L.say(lang, 'contact.f_name'), name], [L.say(lang, 'contact.f_email'), email], [L.say(lang, 'contact.f_phone'), phone || '-'],
+        [L.say(lang, 'contact.f_language'), locale === 'ma' ? L.languageName('French', lang) + ' (Maroc)' : (visitorLang ? L.languageName(visitorLang, lang) : locale)], [L.say(lang, 'contact.f_page'), page || '-']] },
+      { quote: message, label: L.say(lang, 'contact.message') },
+    ],
+    note: L.html(lang, 'contact.note'),
+    footer: L.html(lang, 'contact.footer'),
+  });
 
   try {
     const r = await fetch('https://api.resend.com/emails', {
@@ -76,9 +92,8 @@ module.exports = async function contact(req, res) {
         from: process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>',
         to: [process.env.CONTACT_EMAIL || 'bchysfpol@gmail.com'],
         reply_to: email,
-        subject: `Contact form: ${name}`.slice(0, 200),
-        html,
-        text,
+        subject: L.say(lang, 'contact.subject', { name }).replace(/[\r\n<>]+/g, ' ').slice(0, 200),
+        ...content,
       }),
     });
     if (!r.ok) {

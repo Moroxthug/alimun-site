@@ -1,260 +1,371 @@
-// English A2, unit 1 (docs/BOOKS.md). Draft for native-teacher review.
+// English A2, unit 1, second edition (docs/LESSONS_PLAN.md, "Books, second edition"). Draft for native-teacher review.
+// Builds on A1 (present simple, be, have got, present continuous). Each lesson: a full explanation, the usual mistakes,
+// a text that uses the language, exercises from controlled to free, a speaking task and one task in the format of A2 Key.
 export const UNIT = {
   id: 'u1',
   title: 'Me and my world',
-  goal: 'Talk about yourself, your routines and the people around you.',
+  goal: 'Talk about yourself, your routines, what is happening in your life now and the people around you, and write a short email about yourself.',
   art: 'sun',
-  tags: { skills: ['grammar', 'vocabulary', 'reading'], topics: ['present-simple', 'present-continuous', 'adverbs-of-frequency', 'describing-people', 'have-got'], goals: ['foundations'] },
+  tags: { skills: ['grammar', 'vocabulary', 'reading', 'writing', 'speaking'], topics: ['present-simple', 'present-continuous', 'adverbs-of-frequency', 'describing-people', 'state-verbs'], goals: ['foundations'] },
   pages: [
+    /* ------------------------------------------------------------------ Lesson 1 */
     {
       id: 'p1',
       title: 'Every day',
-      about: 'Talk about routines and facts with the present simple, and say how often with always, usually, sometimes and never.',
-      art: 'mug',
+      about: 'Talk about routines and facts with the present simple, and say how often you do things.',
+      art: 'sun',
       spreads: [
         [
-          { t: 'text', md: 'Use the **present simple** for things you do again and again (routines), and for facts that are always true.' },
-          { t: 'examples', items: [
-            { s: 'I **get up** at seven every day.', n: 'A routine: I do it every day.' },
-            { s: 'My brother **works** in a bank.', n: 'A fact about him. With *he*, *she* and *it*, the verb ends in *-s*.' },
-            { s: 'We **don’t eat** meat.', n: 'Negative: *don’t* + the verb.' },
-            { s: '**Does** your sister **live** near you?', n: 'Question with *he*, *she*, *it*: *does* + the verb, without *-s*.' },
+          { t: 'text', md: 'You already know the **present simple** from A1: *I work, she works, do you work?* At A2 you use it for more and more things, so it is worth checking that the basics are automatic.\n\nThe present simple is for things that are **true in general** or that **happen regularly**: habits, routines, jobs, likes and facts. *I get up at seven. My sister lives in Lyon. Water boils at 100 degrees.*\n\nRemember the three small rules that cause most mistakes. With **he, she** and **it**, the verb adds **-s**: *she works, he watches, it goes*. In questions and negatives, **do** or **does** does the work, and the main verb goes back to its simple form: *Does she work? She doesn’t work* (not *she doesn’t works*).' },
+          { t: 'table', caption: 'The present simple', quiz: true, explain: ['head'], head: ['', 'Positive', 'Negative', 'Question'], rows: [
+            ['I / you / we / they', 'I work.', 'I don’t work.', 'Do you work?'],
+            ['he / she / it', 'She works.', 'She doesn’t work.', 'Does she work?'],
           ] },
+          { t: 'tip', art: 'owl', md: 'Watch the spelling of the **-s** form: after **-ch, -sh, -s, -x, -o** add **-es** (*watches, washes, misses, fixes, goes*). After a consonant + **y**, change **y** to **ies** (*study → studies*), but not after a vowel (*play → plays*). **Have** becomes **has**.' },
         ],
         [
-          { t: 'table', caption: 'The present simple', explain: ['head'], quiz: true, head: ['', 'Positive', 'Negative', 'Question'], rows: [
-            ['I / you / we / they', 'I work', 'I don’t work', 'Do you work?'],
-            ['he / she / it', 'she works', 'she doesn’t work', 'Does she work?'],
-          ] },
-          { t: 'text', md: 'Spelling with *he*, *she*, *it*: most verbs add *-s* (*works*, *lives*). Verbs that end in *-ch*, *-sh*, *-s*, *-x* or *-o* add *-es* (*watches*, *finishes*, *goes*, *does*). A consonant + *-y* changes to *-ies* (*study* → *studies*). *Have* changes to *has*.' },
-          { t: 'tip', art: 'owl', md: 'After *does* and *doesn’t*, the verb has no *-s*. Say *Does he play?*, not *Does he plays?*' },
-        ],
-        [
-          { t: 'text', md: '**Adverbs of frequency** say how often you do something.' },
-          { t: 'table', caption: 'How often?', explain: ['col1'], head: ['Adverb', 'How often'], rows: [
-            ['always', 'every time'],
-            ['usually', 'almost every time'],
+          { t: 'text', md: 'To say **how often** you do something, use a frequency adverb. Think of them as a scale from 100% to 0%: **always, usually, often, sometimes, rarely, never**.\n\nThese words go **before the main verb** (*I usually walk to work*) but **after be** (*I’m usually tired on Mondays*). **Sometimes** can also go at the start: *Sometimes I cook.*\n\nFor more exact frequency, use an **expression** at the end of the sentence: **every day, every Monday, once a week, twice a month, three times a year**. The question is **How often…?** *How often do you go to the gym? – Twice a week.*' },
+          { t: 'table', caption: 'How often?', explain: ['head', 'col1'], head: ['Word', 'How often'], rows: [
+            ['always', 'every time (100%)'],
+            ['usually', 'nearly every time'],
             ['often', 'many times'],
-            ['sometimes', 'some of the time'],
-            ['never', 'not at any time'],
+            ['sometimes', 'now and then'],
+            ['rarely', 'not often'],
+            ['never', 'not at all (0%)'],
           ] },
-          { t: 'text', md: 'They go **before** the main verb: *I **often** walk to work.* But they go **after** *am*, *is* and *are*: *She is **always** happy.*' },
-          { t: 'tip', art: 'owl', md: '*Never* is already negative. Say *I never drink coffee*, not *I don’t never drink coffee*.' },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct form.', items: [
-            { q: 'My mother ___ in a hospital.', o: ['works', 'work', 'working'], why: '*My mother* is *she*, so the verb ends in *-s*.' },
-            { q: 'We ___ to the gym on Mondays.', o: ['go', 'goes', 'are go'], why: 'With *we*, the verb has no *-s*.' },
-            { q: 'Tomás ___ like spicy food.', o: ['doesn’t', 'don’t', 'isn’t'], why: '*Tomás* is *he*, so the negative is *doesn’t* + the verb.' },
-            { q: '___ your children go to school by bus?', o: ['Do', 'Does', 'Are'], why: '*Your children* is *they*, so the question starts with *Do*.' },
-            { q: 'Does your husband ___ English?', o: ['speak', 'speaks', 'speaking'], why: 'After *does*, the verb has no *-s*.' },
+          { t: 'examples', items: [
+            { s: 'I **usually** have breakfast at home.', n: 'Before the main verb *have*.' },
+            { s: 'She’s **always** late for class.', n: 'After *be*.' },
+            { s: 'We go swimming **once a week**.', n: 'An expression goes at the end.' },
+            { s: '**How often** does he call his parents? – **Every Sunday**.', n: 'The question, and a short answer.' },
+            { s: 'They **never** eat meat.', n: '*Never* already means “not”: no *don’t*.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Complete with the present simple of the verb in brackets.', items: [
-            { q: 'Li Wei ___ (study) medicine at university.', a: ['studies'], why: 'Consonant + *-y* changes to *-ies*: *studies*.' },
-            { q: 'My dad ___ (watch) the news every evening.', a: ['watches'], why: 'Verbs that end in *-ch* add *-es*.' },
-            { q: 'Olga ___ (have) two brothers.', a: ['has'], why: 'With *he*, *she*, *it*, *have* changes to *has*.' },
-            { q: 'I ___ (not / drive) to work. I take the train.', a: ['don’t drive', 'do not drive'], why: 'Negative with *I*: *don’t* + the verb.' },
-            { q: 'The shop ___ (close) at six o’clock.', a: ['closes'], why: '*The shop* is *it*, so add *-s*: *closes*.' },
+          { t: 'text', md: 'These are the mistakes teachers hear most often with the present simple at this level. Most come from translating directly, or from forgetting the **-s**.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['She work in a bank.', 'She works in a bank.', 'With *he, she, it*, add *-s*.'],
+            ['Does he lives here?', 'Does he live here?', 'After *does*, the simple form.'],
+            ['I go always to the gym.', 'I always go to the gym.', 'The adverb goes before the main verb.'],
+            ['I don’t never eat fish.', 'I never eat fish.', '*Never* is already negative.'],
+            ['How often you go?', 'How often do you go?', 'Questions need *do* or *does*.'],
+          ] },
+          { t: 'dialogue', title: 'A new colleague', lines: [
+            { who: 'Paul', s: 'So, how do you get to work, Leila?' },
+            { who: 'Leila', s: 'I usually take the bus, but on Fridays I cycle.' },
+            { who: 'Paul', s: 'Really? How often do you cycle in winter?' },
+            { who: 'Leila', s: 'Hardly ever! It’s too cold. What about you?' },
+            { who: 'Paul', s: 'I always drive. My son goes to school near here, so I take him every morning.' },
           ] },
         ],
         [
+          { t: 'ex', kind: 'gap', h: 'Write the verb in the present simple.', items: [
+            { q: 'My brother ___ (work) in a hotel.', a: ['works'], why: 'One person: *-s*.' },
+            { q: 'She ___ (study) law at university.', a: ['studies'], why: 'Consonant + *y*: *-ies*.' },
+            { q: 'We ___ (not watch) much TV.', a: ['don’t watch', 'do not watch', "don't watch"], why: '*We* + *don’t* + simple form.' },
+            { q: '___ your father speak English?', a: ['Does'], why: '*Your father* = *he*: *does*.' },
+            { q: 'The shop ___ (close) at eight.', a: ['closes'], why: '*It*: *-es* after *-s*.' },
+          ] },
           { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'She never drinks coffee.', why: '*Never* goes before the main verb, *drinks*.' },
-            { a: 'My boss is always busy.', why: 'With *is*, the adverb goes after it: *is always*.' },
-            { a: 'We always eat dinner together.', why: '*Always* goes before the main verb, *eat*.' },
-            { a: 'Does she always walk to work?', why: 'In a question the adverb goes after the subject, before the main verb.' },
+            { a: 'I am never late for work.', why: '*Never* goes after *be*.' },
+            { a: 'We usually eat at seven.', why: '*Usually* goes before the main verb.' },
+            { a: 'How often do you play tennis?', why: '*How often* + *do* + subject + verb.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+            { s: 'My mother [cook] dinner every evening.', a: ['cooks'], why: '*My mother* = *she*: add *-s*.' },
+            { s: 'Does Tom [plays] the guitar?', a: ['play'], why: 'After *does*, the simple form.' },
+            { s: 'I [go often] to the cinema.', a: ['often go'], why: 'The adverb goes before the main verb.' },
+          ] },
+          { t: 'ex', kind: 'transform', h: 'Rewrite the sentence with the word given.', items: [
+            { q: 'I go to the gym on Mondays and Thursdays.', cue: 'twice', a: ['I go to the gym twice a week.'], why: 'Two times a week is *twice a week*.' },
+            { q: 'She drinks coffee every morning, without exception.', cue: 'always', a: ['She always drinks coffee in the morning.', 'She always drinks coffee every morning.'], why: 'Every time is *always*, before the verb.' },
+          ] },
+        ],
+        [
+          { t: 'text', md: 'In **Part 5 of the A2 Key Reading paper**, you read a short text, often an email, with six gaps. You write **one word** in each gap. The missing words are usually small grammar words: *do, does, at, in, the, a, my, is, are, often, how*.' },
+          { t: 'ex', kind: 'gap', h: 'In the format of the A2 Key exam (Reading, Part 5): write one word in each gap.', items: [
+            { q: 'Hi Sam! How ___ you?', a: ['are'], why: '*How are you?*' },
+            { q: 'I’m writing ___ tell you about my new job.', a: ['to'], why: '*to* + verb for a reason.' },
+            { q: 'I start work ___ eight o’clock.', a: ['at'], why: '*at* with clock times.' },
+            { q: 'My boss is nice and she ___ always helpful.', a: ['is'], why: '*She is always helpful*: *be* before the adverb.' },
+            { q: '___ you free on Saturday?', a: ['Are'], why: 'A question with *be*: *Are you…?*' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Part 5, read the **whole sentence** before you write. Ask: is a verb missing, a preposition, or a small word like *the* or *my*? Check the **spelling**: a word spelled wrongly is marked wrong.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'kofi', items: [
+            { a: 'I usually get up at seven.' },
+            { a: 'How often do you go to the gym?' },
+            { a: 'She never drinks coffee.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 2 */
     {
       id: 'p2',
       title: 'Right now',
-      about: 'Talk about what is happening now with the present continuous, and choose between the two present tenses.',
-      art: 'parrot',
+      about: 'Talk about what is happening now and these days with the present continuous, choose between the two present tenses, and learn the verbs that do not use -ing.',
+      art: 'cat',
       spreads: [
         [
-          { t: 'text', md: 'Use the **present continuous** for things that are happening **now**, at the moment of speaking, or around now. Make it with *am*, *is* or *are* + the verb with *-ing*.' },
+          { t: 'text', md: 'The **present continuous** (*be + verb-ing*) is for things that are **in progress**. At A1 you used it for this exact moment: *I’m wearing a hat.* At A2 you also use it for things happening **around now**, for a limited time, even if you are not doing them at this second: *I’m reading a great book this month. My brother is living with us at the moment.*\n\nUseful time words: **now, right now, at the moment, today, this week, these days**.' },
+          { t: 'table', caption: 'The present continuous', quiz: true, explain: ['head'], head: ['', 'Positive', 'Negative', 'Question'], rows: [
+            ['I', 'I’m working.', 'I’m not working.', 'Am I working?'],
+            ['you / we / they', 'They’re working.', 'They aren’t working.', 'Are they working?'],
+            ['he / she / it', 'She’s working.', 'She isn’t working.', 'Is she working?'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'Spelling of **-ing**: a verb ending in **-e** loses it (*make → making*). A short verb ending in one vowel + one consonant doubles it (*sit → sitting, run → running*). A verb ending in **-ie** changes to **y** (*lie → lying*).' },
+        ],
+        [
+          { t: 'text', md: 'So which present do you choose? Ask: is it **usual** or **now**?\n\n**Present simple**: a habit or a fact, something that is normally true. *I work in an office.*\n\n**Present continuous**: something happening now or for a short time. *I’m working from home this week.*\n\nMany sentences use both: *I usually drive to work, but this week I’m taking the train because my car is at the garage.*' },
+          { t: 'table', caption: 'Usual or now?', explain: ['head', 'col2'], head: ['Present simple', 'Present continuous', 'The difference'], rows: [
+            ['She teaches French.', 'She’s teaching a class now.', 'her job / this moment'],
+            ['I live in Rome.', 'I’m living with friends.', 'my home / for a short time'],
+            ['It rains a lot here.', 'It’s raining.', 'in general / at this moment'],
+          ] },
           { t: 'examples', items: [
-            { s: 'I**’m cooking** dinner. Can I call you later?', n: 'I am doing it now.' },
-            { s: 'Sara **is studying** for her exams this week.', n: 'Around now: not at this exact moment, but this week.' },
-            { s: 'They **aren’t watching** TV.', n: 'Negative: *aren’t* + verb with *-ing*.' },
-            { s: '**Are** you **listening** to me?', n: 'Question: *are* goes before the subject.' },
+            { s: 'He **plays** football on Saturdays, but today he**’s watching** a match.', n: 'A habit, and something different today.' },
+            { s: 'What **are** you **doing** these days? – I**’m learning** to drive.', n: 'A temporary activity around now.' },
+            { s: 'Where **do** you usually **go** on holiday?', n: 'A habit: present simple.' },
           ] },
         ],
         [
-          { t: 'table', caption: 'The present continuous', explain: ['head'], quiz: true, head: ['', 'Positive', 'Negative', 'Question'], rows: [
-            ['I', 'I’m working', 'I’m not working', 'Am I working?'],
-            ['he / she / it', 'she’s working', 'she isn’t working', 'Is she working?'],
-            ['you / we / they', 'they’re working', 'they aren’t working', 'Are they working?'],
+          { t: 'text', md: 'Some verbs describe a **state**, not an action: what we think, feel, want or own. These **state verbs** are almost never used with **-ing**, even when we mean now.\n\nThe most common are **like, love, hate, want, need, know, understand, believe, remember, mean, belong, own, seem**. So say *I know the answer* (not *I’m knowing*), *She wants a coffee*, *This bag belongs to me.*' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['I’m wanting a new phone.', 'I want a new phone.', '*want* is a state verb.'],
+            ['Do you understand me now? – Yes, I’m understanding.', 'Yes, I understand.', '*understand* is a state verb.'],
+            ['Look! It rains.', 'Look! It’s raining.', 'Happening now: present continuous.'],
+            ['I’m working here since May.', 'I work here. / I’ve worked here since May.', 'For a permanent job, use the present simple.'],
           ] },
-          { t: 'text', md: 'Spelling of *-ing*: most verbs just add *-ing* (*read* → *reading*). A verb that ends in *-e* loses the *-e* (*make* → *making*). Short verbs with one vowel and one consonant at the end double the consonant (*run* → *running*, *sit* → *sitting*).' },
-        ],
-        [
-          { t: 'text', md: 'Present simple or present continuous? The present simple is for routines and facts: *every day*, *usually*, *on Fridays*. The present continuous is for now: *now*, *at the moment*, *today*, *this week*.' },
           { t: 'dialogue', title: 'A phone call', lines: [
-            { who: 'Nadia', s: 'Hi Ben! What are you doing?' },
-            { who: 'Ben', s: 'I’m sitting on the train. I’m going to a meeting in Leeds.' },
-            { who: 'Nadia', s: 'Really? You usually work from home on Thursdays.' },
-            { who: 'Ben', s: 'I know, but this week is different. My manager is visiting the Leeds office.' },
-          ] },
-          { t: 'tip', art: 'owl', md: 'Some verbs are not usually in the continuous form: *like*, *love*, *want*, *know*, *need*, *understand*. Say *I want a coffee now*, not *I’m wanting a coffee*.' },
-        ],
-        [
-          { t: 'ex', kind: 'gap', h: 'Complete with the present continuous of the verb in brackets.', items: [
-            { q: 'Be quiet, please. The baby ___ (sleep).', a: ['is sleeping', '’s sleeping'], why: '*The baby* is *it*: *is* + *sleeping*.' },
-            { q: 'I ___ (write) an email to my teacher.', a: ['am writing', '’m writing'], why: '*Write* ends in *-e*, so it loses the *-e*: *writing*.' },
-            { q: 'Look! Those children ___ (run) in the rain.', a: ['are running', '’re running'], why: '*Run* doubles the *n*: *running*.' },
-            { q: 'Karim ___ (not / work) today. He is ill.', a: ['isn’t working', 'is not working', '’s not working'], why: 'Negative: *isn’t* + verb with *-ing*.' },
-            { q: '___ (you / wait) for the bus?', a: ['Are you waiting'], why: 'Question: *Are* + *you* + verb with *-ing*.' },
+            { who: 'Mum', s: 'Hi, Ben! What are you doing?' },
+            { who: 'Ben', s: 'I’m cooking dinner. Anna’s coming round tonight.' },
+            { who: 'Mum', s: 'Lovely. Is she still working at the hospital?' },
+            { who: 'Ben', s: 'Yes, but she’s doing night shifts this month, so she’s always tired.' },
+            { who: 'Mum', s: 'Poor thing. Do you need anything for dinner?' },
+            { who: 'Ben', s: 'No, thanks. I know exactly what I want to make!' },
           ] },
         ],
         [
           { t: 'ex', kind: 'choice', h: 'Present simple or present continuous? Choose the correct form.', items: [
-            { q: 'I ___ my teeth twice a day.', o: ['brush', 'am brushing', 'brushing'], why: '*Twice a day* is a routine, so the present simple.' },
-            { q: 'Shh! I ___ to the radio.', o: ['’m listening', 'listen', 'listens'], why: 'It is happening now, so the present continuous.' },
-            { q: 'Water ___ at 100 degrees.', o: ['boils', 'is boiling', 'boil'], why: 'A fact that is always true: present simple.' },
-            { q: 'Where is Anna? She ___ a shower.', o: ['’s having', 'has', 'have'], why: 'She is doing it now: present continuous.' },
-            { q: 'My parents usually ___ in July.', o: ['go on holiday', 'are going on holiday', 'goes on holiday'], why: '*Usually* means a routine: present simple, and *parents* is *they*.' },
-            { q: 'I ___ what you mean.', o: ['understand', '’m understanding', 'understanding'], why: '*Understand* is not usually in the continuous form.' },
+            { q: 'Shh! The baby ___.', o: ['is sleeping', 'sleeps', 'sleep'], why: 'Happening now.' },
+            { q: 'My parents ___ in a small village.', o: ['live', 'are living', 'lives'], why: 'Their permanent home: present simple.' },
+            { q: 'I ___ what you mean.', o: ['understand', 'am understanding', 'understanding'], why: '*understand* is a state verb.' },
+            { q: 'This week she ___ from home.', o: ['is working', 'works', 'work'], why: 'A temporary situation: present continuous.' },
+            { q: 'Water ___ at 100 degrees.', o: ['boils', 'is boiling', 'boil'], why: 'A fact: present simple.' },
+          ] },
+          { t: 'ex', kind: 'sort', h: 'Can the verb usually take -ing?', groups: ['action verb: yes', 'state verb: no'], explain: ['groups'], items: [
+            { s: 'run', g: 0, why: 'An action.' },
+            { s: 'know', g: 1, why: 'A state of the mind.' },
+            { s: 'cook', g: 0, why: 'An action.' },
+            { s: 'want', g: 1, why: 'A state: a wish.' },
+            { s: 'belong', g: 1, why: 'A state: owning.' },
+            { s: 'write', g: 0, why: 'An action.' },
           ] },
         ],
         [
+          { t: 'ex', kind: 'gap', h: 'Write the verb in the present simple or the present continuous.', items: [
+            { q: 'Look! Those children ___ (play) in the rain.', a: ['are playing', 'they’re playing', "are playing"], why: '*Look!*: happening now.' },
+            { q: 'I ___ (not like) horror films.', a: ['don’t like', 'do not like', "don't like"], why: '*like* is a state verb.' },
+            { q: 'Sara usually ___ (walk) to school.', a: ['walks'], why: '*usually*: a habit.' },
+            { q: 'We ___ (paint) the kitchen this weekend.', a: ['are painting', 'we’re painting', "are painting"], why: '*this weekend*: around now.' },
+          ] },
           { t: 'ex', kind: 'spot', h: 'Tap every verb in the present continuous.', items: [
-            { s: 'I usually take the bus, but today I [am walking] to work.', why: '*Today* is about now, so *am walking*. *Take* is a routine.' },
-            { s: 'Raj works in a café, but this month he [is helping] in his uncle’s shop.', why: '*This month* is around now: *is helping*. *Works* is a fact.' },
+            { s: 'Tom [is studying] in Madrid this year, so he [is sharing] a flat with two students.', why: 'Both are temporary situations.' },
+            { s: 'I usually work late, but tonight I [am leaving] at five.', why: '*work* is a habit; *am leaving* is about tonight.' },
+          ] },
+        ],
+        [
+          { t: 'text', md: 'In **Part 4 of the A2 Key Reading paper**, you read a short text with six gaps and choose the right word from **three options** (A, B or C). Often the options are three forms of a verb, or three words with similar meanings.' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the A2 Key exam (Reading, Part 4): choose the right word for each gap.', items: [
+            { q: 'My cousin Jade ___ in Canada at the moment.', o: ['is staying', 'stays', 'stay'], why: '*at the moment*: present continuous.' },
+            { q: 'She ___ English at a language school there.', o: ['is studying', 'study', 'studied'], why: 'A temporary activity now.' },
+            { q: 'She says she ___ the city very much.', o: ['likes', 'is liking', 'like'], why: '*like* is a state verb: present simple.' },
+            { q: 'Every evening she ___ dinner with her host family.', o: ['has', 'is having', 'have'], why: '*Every evening*: a habit.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Part 4, look for **time words** near the gap (*at the moment, every day, now, usually*): they often tell you which tense is right. Then read the full sentence once more with your answer in it.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'mei', items: [
+            { a: 'I’m working from home this week.' },
+            { a: 'What are you doing these days?' },
+            { a: 'I know exactly what I want.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 3 */
     {
       id: 'p3',
       title: 'What are they like?',
-      about: 'Describe how people look and what they are like, with adjectives and have got.',
-      art: 'cat',
+      about: 'Describe how people look and what they are like, and use the questions What does she look like? and What is she like?',
+      art: 'parrot',
       spreads: [
         [
-          { t: 'text', md: 'To describe how a person looks, we often talk about their height, build, age and hair.' },
-          { t: 'table', caption: 'Appearance', explain: ['head'], quiz: true, head: ['Word', 'Example'], rows: [
-            ['tall / short', 'My brother is tall, but I’m short.'],
-            ['slim', 'She is slim and very fit.'],
-            ['young / old', 'Our neighbour is quite old. He is ninety.'],
-            ['long / short hair', 'Ana has got long hair.'],
-            ['curly / straight hair', 'He’s got curly hair.'],
-            ['dark / fair hair', 'The twins have got fair hair.'],
-            ['a beard', 'My uncle has got a grey beard.'],
+          { t: 'text', md: 'English has three questions with **like** that learners often mix up. They look similar, but they ask for different information.\n\n**What does she look like?** asks about **appearance**: her face, hair, body, clothes. *She’s tall and she’s got long dark hair.*\n\n**What is she like?** asks about **character**: what kind of person she is. *She’s friendly and very funny.*\n\n**What does she like?** asks about her **likes**: things she enjoys. *She likes jazz and old films.*' },
+          { t: 'table', caption: 'Three questions with like', explain: ['head', 'col1'], head: ['Question', 'It asks about', 'Answer'], rows: [
+            ['What does he look like?', 'appearance', 'He’s short and he’s got a beard.'],
+            ['What is he like?', 'character', 'He’s quiet but very kind.'],
+            ['What does he like?', 'things he enjoys', 'He likes cooking and football.'],
           ] },
-          { t: 'tip', art: 'owl', md: 'Questions about people: *What does she look like?* asks about appearance. *What is she like?* asks about character.' },
+          { t: 'tip', art: 'owl', md: 'In **What is she like?**, *like* is not the verb “to like”: it means *similar to*. So the answer is about the person, not about her hobbies.' },
         ],
         [
-          { t: 'text', md: 'These adjectives describe character: what a person is like.' },
+          { t: 'text', md: 'To describe **appearance**, use **be** with height and build, and **have got** (or **have**) with hair, eyes and other features.\n\n*He’s tall / short / of medium height. She’s slim. He’s got curly hair and brown eyes. She has a beard? No: she doesn’t have a beard!*\n\nWhen you use more than one adjective before a noun, the usual order is **opinion, size, age, shape, colour**: *a lovely long red dress, short curly black hair, a friendly old man.* At A2, two adjectives are plenty.' },
+          { t: 'table', caption: 'Appearance', explain: ['head'], head: ['With be', 'With have got'], rows: [
+            ['tall, short, of medium height', 'long, short, curly, straight hair'],
+            ['slim, thin, well-built', 'blond, dark, red, grey hair'],
+            ['young, middle-aged, old', 'blue, brown, green eyes; a beard; glasses'],
+          ] },
           { t: 'table', caption: 'Character', explain: ['head', 'col1'], quiz: true, head: ['Adjective', 'What it means'], rows: [
             ['friendly', 'nice to people, easy to talk to'],
-            ['shy', 'a bit afraid to talk to new people'],
+            ['shy', 'nervous with people they do not know'],
+            ['lazy', 'does not like working'],
+            ['hard-working', 'works a lot and well'],
+            ['generous', 'happy to give things to others'],
             ['funny', 'makes people laugh'],
-            ['kind', 'helps people and thinks about them'],
-            ['hard-working', 'works a lot and does it well'],
-            ['lazy', 'does not like to work'],
-            ['patient', 'can wait and does not get angry'],
-            ['talkative', 'talks a lot'],
+            ['patient', 'can wait calmly'],
           ] },
         ],
         [
-          { t: 'text', md: 'In British English we often use **have got** to talk about appearance, family and things we own. It means the same as *have*.' },
-          { t: 'table', caption: 'Have got', explain: ['head'], quiz: true, head: ['', 'Positive', 'Negative', 'Question'], rows: [
-            ['I / you / we / they', 'I’ve got', 'I haven’t got', 'Have you got…?'],
-            ['he / she / it', 'she’s got', 'she hasn’t got', 'Has she got…?'],
+          { t: 'text', md: 'Here are the mistakes learners make most often when they describe people.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['How is your brother like?', 'What is your brother like?', 'The question word is *What*.'],
+            ['She has 30 years and long hair.', 'She’s 30 and she’s got long hair.', 'Age with *be*.'],
+            ['He’s got a hair black.', 'He’s got black hair.', '*hair* has no *a*; adjective first.'],
+            ['My teacher is very sympathetic.', 'My teacher is very kind / nice.', 'In English, *sympathetic* means you share someone’s sadness.'],
           ] },
-          { t: 'examples', items: [
-            { s: 'She**’s got** blue eyes.', n: '*She’s got* = *she has got*.' },
-            { s: '**Have** you **got** a brother? Yes, I **have**.', n: 'Short answer: *Yes, I have* or *No, I haven’t*. We do not repeat *got*.' },
+          { t: 'dialogue', title: 'The new neighbour', lines: [
+            { who: 'Grace', s: 'Have you met the new neighbour?' },
+            { who: 'Tom', s: 'Yes, yesterday. He’s really nice.' },
+            { who: 'Grace', s: 'What does he look like? I think I saw him at the shop.' },
+            { who: 'Tom', s: 'He’s quite tall, he’s got short grey hair and he wears glasses.' },
+            { who: 'Grace', s: 'That’s him! And what’s he like?' },
+            { who: 'Tom', s: 'A bit shy at first, but very funny when you talk to him.' },
           ] },
-          { t: 'tip', art: 'owl', md: 'Use *be* for age: *She is thirty*, not *She has got thirty years*.' },
         ],
         [
-          { t: 'ex', kind: 'match', h: 'Match the opposites.', pairs: [
-            ['tall', 'short'],
-            ['young', 'old'],
-            ['curly hair', 'straight hair'],
-            ['fair hair', 'dark hair'],
-            ['lazy', 'hard-working'],
-            ['quiet', 'talkative'],
+          { t: 'ex', kind: 'match', h: 'Match the question and the answer.', pairs: [
+            ['What does she look like?', 'She’s tall with red hair.'],
+            ['What is she like?', 'She’s kind and patient.'],
+            ['What does she like?', 'She likes dancing.'],
+            ['How old is she?', 'She’s twenty-five.'],
           ] },
           { t: 'ex', kind: 'choice', h: 'Choose the best adjective.', items: [
-            { q: 'Ellie always helps her old neighbours. She is very ___.', o: ['kind', 'lazy', 'shy'], why: 'A person who helps others is *kind*.' },
-            { q: 'My teacher tells jokes in every class. He is really ___.', o: ['funny', 'patient', 'tall'], why: 'A person who makes people laugh is *funny*.' },
-            { q: 'Ji-ho never speaks at parties. He is a bit ___.', o: ['shy', 'talkative', 'friendly'], why: 'A person who does not like talking to new people is *shy*.' },
-            { q: 'Our doctor explains everything three times and never gets angry. She is very ___.', o: ['patient', 'lazy', 'funny'], why: 'A person who can wait and does not get angry is *patient*.' },
+            { q: 'He never helps at home and stays in bed until noon. He’s ___.', o: ['lazy', 'generous', 'shy'], why: 'Does not like working: *lazy*.' },
+            { q: 'She always pays for everyone’s coffee. She’s ___.', o: ['generous', 'lazy', 'patient'], why: 'Happy to give: *generous*.' },
+            { q: 'My son doesn’t speak much when he meets new people. He’s ___.', o: ['shy', 'funny', 'hard-working'], why: 'Nervous with new people: *shy*.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Complete with the correct form of have got.', items: [
-            { q: 'My sister ___ green eyes.', a: ['has got', '’s got'], why: '*My sister* is *she*: *has got*.' },
-            { q: 'We ___ a garden, but we’ve got a big balcony.', a: ['haven’t got', 'have not got'], why: 'Negative with *we*: *haven’t got*.' },
-            { q: '___ your father got a beard?', a: ['Has'], why: '*Your father* is *he*: *Has* … *got*?' },
-            { q: 'I ___ two cousins in Canada.', a: ['have got', '’ve got'], why: 'With *I*: *have got*.' },
-            { q: 'Have your neighbours got a dog? No, they ___.', a: ['haven’t', 'have not'], why: 'Short answer: *No, they haven’t*. We do not repeat *got*.' },
+          { t: 'ex', kind: 'build', h: 'Write the sentence. Two words do not belong.', items: [
+            { a: 'She has got long curly hair.', extra: ['a', 'have'], why: '*hair* has no *a*; with *she*: *has got*.' },
+            { a: 'What is your new boss like?', extra: ['How', 'does'], why: 'Character: *What is … like?*' },
+          ] },
+          { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+            { s: 'My sister [has] twenty-two years old.', a: ['is'], why: 'Age with *be*.' },
+            { s: 'He’s got [a short hair].', a: ['short hair'], why: '*hair* takes no *a*.' },
+            { s: '[How] is your teacher like?', a: ['What'], why: '*What is … like?*' },
+          ] },
+        ],
+        [
+          { t: 'text', md: 'In **Part 1 of the A2 Key Speaking test**, the examiner asks you simple questions about yourself, your family, your daily life and your likes. Short answers are not enough: give an answer and **one more detail**.' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the A2 Key exam (Speaking, Part 1): which is the best answer?', items: [
+            { q: 'Examiner: “Tell me about your best friend.”', o: ['Her name’s Inés. She’s really funny, and we often go running together.', 'Inés.', 'Yes, I have.'], why: 'An answer plus a detail.' },
+            { q: 'Examiner: “What do you usually do at the weekend?”', o: ['I usually visit my grandparents, and on Sunday I play football.', 'Weekend.', 'I am doing football.'], why: 'Present simple for a routine, with a detail.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In the Speaking test, if you do not understand a question, ask: **Sorry, can you repeat that, please?** You do not lose marks for asking.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'sofia', items: [
+            { a: 'What does your brother look like?' },
+            { a: 'She’s got short dark hair.' },
+            { a: 'He’s quite shy but very kind.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 4 */
     {
       id: 'p4',
       title: 'A week in my life',
-      about: 'Read a short profile of a person and their week.',
-      art: 'dog',
+      about: 'Read a short profile, then write an email about yourself and your week in the format of A2 Key.',
+      art: 'monster',
       spreads: [
         [
-          { t: 'reading', title: 'Meet Amara', md: 'Amara Okafor is thirty-four and she lives in Bristol with her husband and their son, Theo. She has got short curly hair and a big smile. Her friends say she is friendly and very patient.\n\nAmara is a nurse at a children’s hospital. She usually works from Monday to Thursday. She gets up at six, and she always cycles to work, even in the rain. On Fridays she never works. She takes Theo to the park and they often have lunch at her mother’s flat.\n\nThis week is different. Amara is doing a course in Manchester, so she is staying in a small hotel. Her husband is looking after Theo at home. “I’m learning a lot,” she says, “but I miss my family and my bike!”' },
-        ],
-        [
+          { t: 'text', md: 'This lesson puts the unit together. You will read about a real week in someone’s life and then write about your own. Notice how the writer uses the **present simple** for routines and the **present continuous** for things that are different this month.' },
+          { t: 'reading', title: 'Meet Amara', md: 'Amara Okafor is thirty-four and lives in Bristol with her husband and their son, Theo. She’s got short curly hair and a big smile, and her friends say she is the most patient person they know.\n\nAmara is a nurse. She usually works three long days a week at the city hospital, and on the other days she looks after Theo. She always takes him to the park on Wednesday afternoons.\n\nThis month is different, though. Amara is studying for an exam, so she is getting up at six every morning to read before work. “I’m drinking a lot of coffee at the moment,” she laughs, “but I love learning new things.”' },
           { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
-            { q: 'Amara has got long hair.', a: 'f', why: 'She has got short curly hair.' },
-            { q: 'Amara usually works four days a week.', a: 't', why: 'She usually works from Monday to Thursday.' },
-            { q: 'Amara sometimes drives to work.', a: 'f', why: 'She always cycles to work.' },
-            { q: 'Amara’s mother lives in Bristol.', a: 'ng', why: 'They have lunch at her mother’s flat, but the text does not say where it is.' },
-            { q: 'This week Amara is in Manchester.', a: 't', why: 'She is doing a course in Manchester.' },
+            { q: 'Amara lives with her family in Bristol.', a: 't', why: 'She lives there with her husband and son.' },
+            { q: 'She works five days a week.', a: 'f', why: 'She works three days a week.' },
+            { q: 'She goes to the park on Wednesdays.', a: 't', why: '*She always takes him to the park on Wednesday afternoons.*' },
+            { q: 'Her exam is in June.', a: 'ng', why: 'The text does not say when the exam is.' },
+            { q: 'She is getting up early this month.', a: 't', why: '*She is getting up at six every morning.*' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Look at the verbs in the text.', items: [
-            { q: '“She always cycles to work.” Why the present simple?', o: ['It is a routine.', 'It is happening now.', 'It happened in the past.'], why: '*Always* shows a routine, so the present simple.' },
-            { q: '“She is staying in a small hotel.” Why the present continuous?', o: ['It is happening around now, only this week.', 'She stays there every week.', 'It is a fact that is always true.'], why: '*This week is different*: it is only for now.' },
-            { q: 'Who is looking after Theo this week?', o: ['His father.', 'His grandmother.', 'Amara.'], why: '“Her husband is looking after Theo at home.”' },
+          { t: 'ex', kind: 'choice', h: 'Why does the writer use these tenses?', items: [
+            { q: '*She usually works three long days a week.*', o: ['It is a routine.', 'It is happening now.', 'It is finished.'], why: '*usually*: a routine, present simple.' },
+            { q: '*She is studying for an exam.*', o: ['It is a temporary situation.', 'It is a fact about her.', 'It is a habit.'], why: 'Only this month: present continuous.' },
           ] },
-          { t: 'ex', kind: 'spot', h: 'Tap the adverb of frequency in each sentence.', items: [
-            { s: 'She [usually] works from Monday to Thursday.', why: '*Usually* says how often. It goes before the main verb.' },
-            { s: 'They [often] have lunch at her mother’s flat.', why: '*Often* says how often. It goes before the main verb, *have*.' },
+          { t: 'text', md: 'In **Part 6 of the A2 Key Writing paper**, you write a short email or message of **25 words or more**. The task gives you **three points**, and you must write about all three. A good answer is short, friendly and complete: it does not need difficult words.' },
+          { t: 'examples', items: [
+            { s: 'Task: Write to your new English penfriend. Tell them **what you do**, **what you do at weekends** and **something you are doing this month**.', n: 'Three points to cover.' },
+            { s: 'Hi Max! I’m a student in Porto. At the weekend I usually play volleyball with friends. This month I’m learning to cook, so I’m making dinner every night! Write soon, Ana', n: '38 words: all three points, both present tenses.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'In the format of the A2 Key exam (Writing, Part 6): which email answers all three points?', items: [
+            { q: 'Task: Write to a friend. Say where you are working now, when you finish work, and invite them for a coffee.', o: ['Hi Jo! I’m working at a bookshop now. I finish at five every day. Do you want to meet for a coffee on Friday? Lucy', 'Hi Jo! I’m working at a bookshop now. It’s a really nice place and my boss is friendly. Lucy', 'Hi Jo! Do you want to meet for a coffee? I like coffee a lot. Lucy'], why: 'Only the first one covers all three points.' },
+          ] },
+          { t: 'ex', kind: 'order', h: 'Put the words in order to make sentences for your email.', items: [
+            { a: 'At the moment I am learning to swim.', why: 'A temporary activity: present continuous.' },
+            { a: 'I usually see my friends on Saturday.', why: 'A routine: present simple, adverb before the verb.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'Before you write, **underline the three points** in the task. After you write, **tick them off**. Missing one point costs more marks than a small grammar mistake. Count your words: 25 is the minimum, and 30 to 40 is a good length.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'lena', items: [
+            { a: 'I usually work three days a week.' },
+            { a: 'This month I’m studying for an exam.' },
+            { a: 'Do you want to meet for a coffee on Friday?' },
           ] },
         ],
       ],
     },
   ],
   test: [
-    { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-      { q: 'My brother ___ in a restaurant at weekends.', o: ['works', 'work', 'is work'], why: 'A routine with *he*: present simple with *-s*.' },
-      { q: 'Where’s Paolo? He ___ in the garden.', o: ['’s playing', 'plays', 'play'], why: 'It is happening now: present continuous.' },
-      { q: '___ she got any children?', o: ['Has', 'Does', 'Is'], why: '*Have got* question with *she*: *Has she got…?*' },
-      { q: 'I ___ late for work. I’m always on time.', o: ['am never', 'never am', 'don’t never'], why: 'The adverb goes after *am*, and *never* is already negative.' },
-      { q: 'What does your new boss look ___?', o: ['like', 'as', 'how'], why: '*What does he look like?* asks about appearance.' },
+    { t: 'ex', kind: 'choice', h: 'Choose the correct form.', items: [
+      { q: 'My dad ___ in a factory.', o: ['works', 'is working', 'work'], why: 'His job: present simple.' },
+      { q: 'Be quiet! I ___ to the news.', o: ['am listening', 'listen', 'listens'], why: 'Happening now.' },
+      { q: 'I ___ your name. Can you tell me again?', o: ['don’t remember', 'am not remembering', 'not remember'], why: '*remember* is a state verb.' },
+      { q: '___ she usually take the bus?', o: ['Does', 'Is', 'Do'], why: 'A present simple question: *Does*.' },
     ] },
-    { t: 'ex', kind: 'gap', h: 'Complete with the correct form of the verb in brackets.', items: [
-      { q: 'Marta ___ (finish) work at five every day.', a: ['finishes'], why: 'A routine with *she*. *Finish* ends in *-sh*, so add *-es*.' },
-      { q: 'We ___ (not / watch) TV at the moment. We’re reading.', a: ['aren’t watching', 'are not watching', '’re not watching'], why: '*At the moment*: present continuous, negative.' },
-      { q: '___ (your son / like) football?', a: ['Does your son like'], why: 'Present simple question with *he*: *Does* + subject + verb.' },
-      { q: 'They ___ (have got) a small flat near the station.', a: ['have got', '’ve got'], why: 'With *they*: *have got*.' },
+    { t: 'ex', kind: 'gap', h: 'Write the verb in the correct present form.', items: [
+      { q: 'We ___ (not eat) meat.', a: ['don’t eat', 'do not eat', "don't eat"], why: 'A habit: present simple negative.' },
+      { q: 'Kate ___ (stay) with us this week.', a: ['is staying', 'she’s staying', "is staying"], why: '*this week*: temporary.' },
+      { q: 'He ___ (watch) TV every evening.', a: ['watches'], why: '*-es* after *-ch*.' },
     ] },
     { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-      { a: 'He is always very friendly.', why: 'The adverb goes after *is*.' },
-      { a: 'What are you doing now?', why: 'Question word + *are* + *you* + verb with *-ing*.' },
-      { a: 'My sister has got blue eyes.', why: 'Subject + *has got* + description.' },
+      { a: 'She is always happy in the morning.', why: '*always* after *be*.' },
+      { a: 'What does your sister look like?', why: 'Appearance: *look like*.' },
     ] },
-    { t: 'ex', kind: 'choice', h: 'Which sentence is correct?', items: [
-      { q: '', o: ['She is twenty-five.', 'She has twenty-five years.', 'She has got twenty-five years.'], why: 'Use *be* for age.' },
-      { q: '', o: ['I need a new phone.', 'I’m needing a new phone.', 'I needing a new phone.'], why: '*Need* is not usually in the continuous form.' },
-      { q: '', o: ['Does he speak French?', 'Does he speaks French?', 'Do he speak French?'], why: 'After *does*, the verb has no *-s*.' },
+    { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+      { s: 'I [am wanting] a glass of water.', a: ['want'], why: '*want* is a state verb.' },
+      { s: 'He [go never] to the theatre.', a: ['never goes'], why: 'Adverb before the verb, and *-es* with *he*.' },
+    ] },
+    { t: 'ex', kind: 'match', h: 'Match the questions and answers.', pairs: [
+      ['What is he like?', 'He’s very funny.'],
+      ['What does he look like?', 'He’s tall with a beard.'],
+      ['How often do you see him?', 'Once a week.'],
+      ['What are you doing?', 'I’m writing an email.'],
+    ] },
+    { t: 'ex', kind: 'gap', h: 'Write one word in each gap.', items: [
+      { q: 'I go to the cinema ___ a month.', a: ['once', 'twice'], why: '*once a month*.' },
+      { q: '___ often do you call your parents?', a: ['How'], why: '*How often…?*' },
     ] },
   ],
 };

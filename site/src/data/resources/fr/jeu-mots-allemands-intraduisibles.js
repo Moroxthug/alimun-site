@@ -1,0 +1,37 @@
+// Resource: game. German words with no one-word French translation. Meanings checked against Duden and DWDS.
+export default {
+  key: 'untranslatable-german', site: 'fr', slug: 'jeu-mots-allemands-intraduisibles', kind: 'game', course: 'German', level: 'Tous niveaux',
+  draw: 'ghost', tint: 'mint', published: '2026-10-27',
+  title: 'Mots allemands intraduisibles : le jeu',
+  metaTitle: 'Jeu des mots allemands intraduisibles : Fernweh et cie – Alimun',
+  desc: "Un jeu gratuit avec des mots allemands sans équivalent en un mot en français : Fernweh, Kummerspeck, Fremdschämen, Feierabend. Devine ce que chacun veut dire.",
+  lead: "L'allemand a un mot pour les kilos qu'on prend en mangeant quand on est triste. Devine le sens de dix mots pour lesquels le français a souvent besoin d'une phrase entière.",
+  instructions: "Que veut dire ce mot ?",
+  about: [
+    "Chaque langue concentre certaines idées en un seul mot là où les autres ont besoin d'une phrase. L'allemand le fait souvent, parce qu'il peut assembler les mots librement.",
+    "Ces mots sont bien réels et utilisés tous les jours, ce qui en fait un excellent moyen de parler de façon naturelle et de lancer la conversation avec des germanophones.",
+  ],
+  items: [
+    { q: 'Fernweh', options: ["l'envie de partir loin", "la peur de l'avion", 'le mal du pays', 'un long voyage'], a: 0, why: "Fernweh est le contraire de Heimweh (le mal du pays) : tu rêves d'être loin." },
+    { q: 'Kummerspeck', options: ['une chanson triste', "les kilos pris en mangeant quand on est triste", 'du vieux lard', 'la mauvaise humeur du matin'], a: 1, why: "Littéralement du lard de chagrin : les kilos en trop quand on mange pour se consoler." },
+    { q: 'Fremdschämen', options: ['être timide avec les inconnus', 'avoir honte de son accent', "avoir honte pour quelqu'un d'autre", 'avoir peur des étrangers'], a: 2, why: "Fremdschämen, c'est ressentir la gêne à la place de quelqu'un qui se ridiculise." },
+    { q: 'Feierabend', options: ["une fête d'anniversaire", 'un jour férié', 'le réveillon du Nouvel An', 'la fin de la journée de travail'], a: 3, why: "Feierabend, c'est la fin de la journée de travail et le temps libre qui suit : Schönen Feierabend!" },
+    { q: 'Verschlimmbessern', options: ['empirer une chose en voulant l\'améliorer', 'réparer quelque chose', 'se plaindre beaucoup', 'oublier un rendez-vous'], a: 0, why: "Un mélange de verschlimmern (empirer) et verbessern (améliorer)." },
+    { q: 'Torschlusspanik', options: ['la peur des portes fermées', "la peur qu'il soit bientôt trop tard pour faire quelque chose", "la panique avant un match de foot", 'le trac'], a: 1, why: "Littéralement la panique de la porte qui se ferme : la crainte qu'il soit trop tard, par exemple pour se marier ou changer de métier." },
+    { q: 'Treppenwitz', options: ['une blague sur les escaliers', 'une chute maladroite', 'la réplique parfaite à laquelle on pense trop tard', 'une blague que personne ne comprend'], a: 2, why: "Littéralement la blague de l'escalier, ce que le français appelle « l'esprit de l'escalier » : la bonne réponse qui te vient en partant." },
+    { q: 'Schnapsidee', options: ['un excellent business plan', 'une recette de liqueur', 'une gueule de bois', "une idée folle qui semble bonne sur le moment"], a: 3, why: "Une idée de schnaps, c'est un plan farfelu, le genre qu'on a après un verre." },
+    { q: 'Ohrwurm', options: ["une chanson qu'on n'arrive pas à se sortir de la tête", "une otite", 'un voisin bruyant', 'un chuchotement'], a: 0, why: "Littéralement un ver d'oreille : une chanson entraînante qui tourne en boucle dans ta tête." },
+    { q: 'Backpfeifengesicht', options: ['un visage joyeux', 'une tête à claques', 'un visage couvert de farine', 'une tête de bébé'], a: 1, why: "Un mot grossier et drôle pour un visage qu'on aurait envie de gifler, exactement comme « une tête à claques ». À garder pour plaisanter entre amis." },
+  ],
+  pairs: [
+    ['Fernweh', "L'envie de partir loin"],
+    ['Kummerspeck', 'Les kilos du chagrin'],
+    ['Fremdschämen', "Avoir honte pour quelqu'un d'autre"],
+    ['Feierabend', 'La fin de la journée de travail'],
+    ['Verschlimmbessern', "Empirer en voulant améliorer"],
+    ['Torschlusspanik', "La peur qu'il soit trop tard"],
+    ['Treppenwitz', "L'esprit de l'escalier"],
+    ['Ohrwurm', 'Une chanson qui reste en tête'],
+  ],
+  related: ['german-idioms', 'german-compounds', 'false-friends'],
+};

@@ -1,5 +1,6 @@
-// Local smoke test: key pages and the three dashboards in ?preview=1 mode
-// (preview only works on localhost) must load with no console errors.
+// Local smoke test: key pages and the dashboards must load with no console errors. The old dashboard addresses
+// forward to the new dashboards (26 Oct 2026); the students' dashboard shows its sample with ?sample=1, and sends a
+// signed-out visitor to sign-in.
 const { test, expect } = require('@playwright/test');
 
 const PAGES = [
@@ -11,9 +12,14 @@ const PAGES = [
   '/teacher-dashboard?preview=1',
   // The old admin page forwards to the new admin pages (26 Oct 2026), which load with sample data when signed out.
   '/admin?preview=1',
+  '/app?sample=1',
+  '/app',
 ];
 const EXPECT_PATH = {
-  '/student-dashboard?preview=1': '/student-dashboard',
+  // Students are sent to the new dashboard at /app (step 16, 26 Oct 2026); ?preview=1 becomes its sample.
+  '/student-dashboard?preview=1': '/app',
+  '/app?sample=1': '/app',
+  '/app': '/signin',
   // Teachers are sent to the new teacher dashboard (step 15, 26 Oct 2026); it must load there with no errors.
   '/teacher-dashboard?preview=1': '/app/teach',
   '/admin?preview=1': '/app/admin',

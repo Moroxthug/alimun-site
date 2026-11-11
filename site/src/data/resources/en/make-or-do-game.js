@@ -1,0 +1,37 @@
+// Resource: game. Make or do: ten English collocations learners mix up. Collocations and usage checked against Cambridge Dictionary and Oxford Learner's Dictionaries.
+export default {
+  key: 'make-or-do', site: 'en', slug: 'make-or-do-game', kind: 'game', course: 'English', level: 'All levels',
+  draw: 'owl', tint: 'mint', published: '2026-11-01',
+  title: 'Make or do game: do you make a mistake or do one?',
+  metaTitle: 'Make or do game: 10 English collocations to practise – Alimun',
+  desc: 'A free game with ten everyday English collocations, from make a mistake to do your homework. Choose make, do or another verb, then match the pairs.',
+  lead: 'Make a mistake or do a mistake? Do your homework or make it? Choose the right verb in ten everyday English phrases.',
+  instructions: 'Which verb completes the sentence?',
+  about: [
+    'Many languages have one verb where English has two, make and do, so learners often mix them up. As a general rule, do is for tasks, work and activities, and make is for creating, producing or causing something.',
+    'The rule has exceptions, like make the bed and do someone a favour, so learn each phrase whole, verb and noun together. The more English you read and hear, the more natural the right verb will sound.',
+  ],
+  items: [
+    { q: "Don't worry, everyone ___ mistakes when they're learning.", options: ['makes', 'does', 'has', 'takes'], a: 0, why: 'We make a mistake, we never do one. Do is for tasks and work, while make is for creating or causing something, and a mistake is something you cause.' },
+    { q: 'I have to ___ my homework before dinner.', options: ['make', 'give', 'do', 'have'], a: 2, why: 'Homework is a task, so it takes do, like do the housework and do an exercise. Make homework is wrong.' },
+    { q: 'We need to ___ a decision by Friday.', options: ['do', 'make', 'give', 'have'], a: 1, why: 'Make a decision is the usual phrase. British English also says take a decision, mostly in formal contexts, but never do a decision.' },
+    { q: "It's your turn to ___ the dishes tonight.", options: ['make', 'have', 'give', 'do'], a: 3, why: 'Household chores take do: do the dishes, do the laundry, do the cleaning. A well-known exception is make the bed.' },
+    { q: 'She ___ a real effort to speak only English in class.', options: ['did', 'made', 'had', 'got'], a: 1, why: 'Make an effort, like make progress and make a difference: you produce something, so English uses make.' },
+    { q: "It's a pleasure to ___ business with you.", options: ['make', 'take', 'do', 'give'], a: 2, why: 'Do business is a fixed phrase, even though business creates things. Learn it whole: do business with someone.' },
+    { q: 'He ___ a lot of friends at university.', options: ['did', 'took', 'gave', 'made'], a: 3, why: 'Make friends means start new friendships, something you create. In the past it is made friends.' },
+    { q: 'Could you ___ me a favour and close the window?', options: ['do', 'make', 'give', 'take'], a: 0, why: 'Do someone a favour is an exception: a favour is not really a task, but it always takes do. American English spells it favor.' },
+    { q: 'I have to ___ a phone call to my bank before it closes.', options: ['do', 'take', 'make', 'get'], a: 2, why: 'Make a phone call, like make a complaint and make a suggestion. Take a phone call is also English, but it means answer one.' },
+    { q: "Don't worry about the result, just ___ your best.", options: ['do', 'make', 'have', 'take'], a: 0, why: 'Do your best is a fixed phrase meaning try as hard as you can. Make your best is wrong.' },
+  ],
+  pairs: [
+    ['make a mistake', 'get something wrong'],
+    ['do homework', 'finish schoolwork at home'],
+    ['make a decision', 'choose what to do'],
+    ['do the dishes', 'wash the plates and cups'],
+    ['make friends', 'start new friendships'],
+    ['do business', 'buy and sell, work with companies'],
+    ['make a phone call', 'call someone'],
+    ['do your best', 'try as hard as you can'],
+  ],
+  related: ['english-idioms', 'false-friends', 'en-verbs-sheet'],
+};

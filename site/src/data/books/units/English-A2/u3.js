@@ -1,256 +1,355 @@
-// English A2, unit 3 (docs/BOOKS.md). Draft for native-teacher review.
+// English A2, unit 3, second edition (docs/LESSONS_PLAN.md, L6). Draft for native-teacher review.
+// Each lesson: a full explanation first (the rule in plain words, why, many examples, the usual mistakes, a text that
+// uses it), then fewer exercises from controlled to free, one speaking task, and one task in the format of A2 Key.
 export const UNIT = {
   id: 'u3',
   title: 'Food and shopping',
-  goal: 'Buy food, order in a café and talk about what you eat.',
+  goal: 'Talk about food and amounts, order in a café, buy things in a shop, and follow a simple recipe.',
   art: 'teacup',
   tags: { skills: ['grammar', 'vocabulary', 'speaking', 'reading'], topics: ['countable-uncountable', 'quantifiers', 'containers', 'cafe', 'shopping'], goals: ['foundations'] },
   pages: [
+    /* ------------------------------------------------------------------ Lesson 1 */
     {
       id: 'p1',
       title: 'Some bread, an apple',
-      about: 'Learn countable and uncountable nouns, and use a, an, some and any.',
-      art: 'croissant',
-      spreads: [
-        [
-          { t: 'text', md: '**Countable** nouns are things you can count: *one apple*, *two apples*. They have a singular and a plural form. **Uncountable** nouns are things you cannot count one by one, like liquids and many foods: *milk*, *rice*, *bread*. They have no plural form.' },
-          { t: 'table', caption: 'Countable or uncountable?', explain: ['head'], quiz: true, head: ['Countable', 'Uncountable'], rows: [
-            ['an egg, two eggs', 'milk'],
-            ['a banana, three bananas', 'rice'],
-            ['a tomato, four tomatoes', 'bread'],
-            ['a sandwich, two sandwiches', 'cheese'],
-            ['a biscuit, some biscuits', 'water'],
-            ['a potato, five potatoes', 'pasta'],
-          ] },
-          { t: 'tip', art: 'owl', md: 'Do not say *a bread* or *breads*. Say *some bread* or *a loaf of bread*. The same is true for *money*: *some money*, not *a money*.' },
-        ],
-        [
-          { t: 'text', md: 'Use **a** or **an** with one countable thing. Use *an* before a vowel sound: *an egg*, *an orange*, *an hour*. Use **some** and **any** with plural nouns and with uncountable nouns.' },
-          { t: 'table', caption: 'A, an, some, any', explain: ['head'], head: ['', 'Singular', 'Plural', 'Uncountable'], rows: [
-            ['+', 'There’s an apple.', 'There are some apples.', 'There’s some milk.'],
-            ['−', 'There isn’t an apple.', 'There aren’t any apples.', 'There isn’t any milk.'],
-            ['?', 'Is there an apple?', 'Are there any apples?', 'Is there any milk?'],
-          ] },
-          { t: 'examples', items: [
-            { s: 'We need **some** onions for the soup.', n: 'A positive sentence: *some*.' },
-            { s: 'I haven’t got **any** cash.', n: 'A negative sentence: *any*.' },
-            { s: 'Would you like **some** cake?', n: 'When you offer something, use *some*, even in a question.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'spot', h: 'Tap every uncountable noun.', items: [
-            { s: 'For breakfast I have [bread], two eggs and some [juice].', why: '*Bread* and *juice* are uncountable. *Eggs* has a plural, so it is countable.' },
-            { s: 'Can you buy some [rice], three lemons and some [butter]?', why: '*Rice* and *butter* are uncountable. *Lemons* is a plural countable noun.' },
-            { s: 'There are some apples, but there isn’t any [cheese].', why: '*Cheese* is uncountable. *Apples* is plural, so it is countable.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'gap', h: 'Complete with a, an, some or any.', items: [
-            { q: 'I’d like ___ orange juice, please.', a: ['an', 'some'], why: 'Both are correct: *an orange juice* is one glass, *some orange juice* is an amount.' },
-            { q: 'There isn’t ___ sugar in my coffee.', a: ['any'], why: 'A negative sentence with an uncountable noun: *any*.' },
-            { q: 'She eats ___ apple every morning.', a: ['an'], why: 'One apple, and *apple* starts with a vowel sound: *an*.' },
-            { q: 'We’ve got ___ tomatoes, so we can make a salad.', a: ['some'], why: 'A positive sentence with a plural noun: *some*.' },
-            { q: 'Are there ___ eggs in the fridge?', a: ['any'], why: 'A question with a plural noun: *any*.' },
-            { q: 'I need ___ new pan for the kitchen.', a: ['a'], why: 'One pan, and *new* starts with a consonant sound: *a*.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Which sentence is correct?', items: [
-            { q: '', o: ['Can I have some water?', 'Can I have some waters?', 'Can I have any waters?'], why: '*Water* is uncountable: *some water*.' },
-            { q: '', o: ['There aren’t any bananas.', 'There aren’t some bananas.', 'There isn’t any bananas.'], why: 'Negative with a plural noun: *aren’t any*.' },
-            { q: '', o: ['I bought some bread.', 'I bought a bread.', 'I bought some breads.'], why: '*Bread* is uncountable, so no *a* and no plural.' },
-            { q: '', o: ['We had an egg for lunch.', 'We had a egg for lunch.', 'We had any egg for lunch.'], why: '*Egg* starts with a vowel sound: *an egg*.' },
-          ] },
-        ],
-      ],
-    },
-    {
-      id: 'p2',
-      title: 'How much? How many?',
-      about: 'Talk about quantities with how much, how many, a lot of, a few and a little, and name food containers.',
-      art: 'pretzel',
-      spreads: [
-        [
-          { t: 'text', md: 'Use **How many** with plural countable nouns. Use **How much** with uncountable nouns. *How much* is also the question for prices.' },
-          { t: 'examples', items: [
-            { s: '**How many** eggs do we need?', n: '*Eggs* is countable: *how many*.' },
-            { s: '**How much** milk is there?', n: '*Milk* is uncountable: *how much*.' },
-            { s: '**How much** is this cake?', n: 'A question about the price.' },
-          ] },
-          { t: 'table', caption: 'Big and small amounts', explain: ['head', 'col0'], head: ['', 'Countable', 'Uncountable'], rows: [
-            ['a big amount', 'a lot of eggs', 'a lot of milk'],
-            ['a small amount', 'a few eggs', 'a little milk'],
-            ['in negatives', 'not many eggs', 'not much milk'],
-          ] },
-          { t: 'tip', art: 'owl', md: '*A lot of* works with both kinds of nouns. In positive sentences, *a lot of* is more natural than *much*: say *I drink a lot of tea*, not *I drink much tea*.' },
-        ],
-        [
-          { t: 'text', md: 'We often buy uncountable things in **containers** or pieces. Then we can count them: *two bottles of water*, *three loaves of bread*.' },
-          { t: 'table', caption: 'Containers and amounts', explain: ['head'], quiz: true, head: ['Container', 'Example'], rows: [
-            ['a bottle of', 'a bottle of water'],
-            ['a carton of', 'a carton of milk'],
-            ['a packet of', 'a packet of biscuits'],
-            ['a tin of', 'a tin of tomatoes'],
-            ['a jar of', 'a jar of jam'],
-            ['a loaf of', 'a loaf of bread'],
-            ['a bar of', 'a bar of chocolate'],
-            ['a bunch of', 'a bunch of bananas'],
-            ['a kilo of', 'a kilo of potatoes'],
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct word.', items: [
-            { q: 'How ___ apples do you want?', o: ['many', 'much', 'little'], why: '*Apples* is countable and plural: *how many*.' },
-            { q: 'How ___ rice do we need for six people?', o: ['much', 'many', 'few'], why: '*Rice* is uncountable: *how much*.' },
-            { q: 'I only want a ___ sugar in my tea.', o: ['little', 'few', 'many'], why: '*Sugar* is uncountable: *a little*.' },
-            { q: 'There are only a ___ biscuits left.', o: ['few', 'little', 'much'], why: '*Biscuits* is countable and plural: *a few*.' },
-            { q: 'We haven’t got ___ money this month.', o: ['much', 'many', 'a few'], why: 'Negative with an uncountable noun: *not much*.' },
-            { q: 'My son eats ___ fruit. He loves it.', o: ['a lot of', 'many', 'a few'], why: '*Fruit* is uncountable here, and this is a positive sentence: *a lot of*.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'match', h: 'Match the containers and the food.', pairs: [
-            ['a loaf of', 'bread'],
-            ['a bar of', 'chocolate'],
-            ['a jar of', 'jam'],
-            ['a tin of', 'tuna'],
-            ['a bunch of', 'bananas'],
-            ['a bottle of', 'olive oil'],
-          ] },
-          { t: 'ex', kind: 'gap', h: 'Complete with How much or How many.', items: [
-            { q: '___ cups of coffee do you drink a day?', a: ['How many'], why: '*Cups* is countable: *how many*.' },
-            { q: '___ cheese is in the fridge?', a: ['How much'], why: '*Cheese* is uncountable: *how much*.' },
-            { q: '___ is a bottle of water here?', a: ['How much'], why: 'A question about the price: *how much*.' },
-            { q: '___ people are coming to dinner?', a: ['How many'], why: '*People* is the plural of *person*: *how many*.' },
-            { q: '___ bread do we need for the picnic?', a: ['How much'], why: '*Bread* is uncountable: *how much*.' },
-          ] },
-        ],
-      ],
-    },
-    {
-      id: 'p3',
-      title: 'Can I have…?',
-      about: 'Order in a café, buy things in a shop and ask about prices.',
+      about: 'Know which nouns you can count, and use a, an, some and any in sentences, negatives and questions.',
       art: 'teacup',
       spreads: [
         [
-          { t: 'dialogue', title: 'In a café', lines: [
-            { who: 'Waiter', s: 'Hello. What would you like?' },
-            { who: 'Fatima', s: 'Hi. Can I have a large cappuccino, please?' },
-            { who: 'Waiter', s: 'Of course. Anything else?' },
-            { who: 'Fatima', s: 'Yes, I’d like a piece of carrot cake, please.' },
-            { who: 'Waiter', s: 'Eat in or take away?' },
-            { who: 'Fatima', s: 'Eat in, please. How much is it?' },
-            { who: 'Waiter', s: 'That’s six pounds twenty, please.' },
-            { who: 'Fatima', s: 'Can I pay by card?' },
-            { who: 'Waiter', s: 'Yes, of course. Here you are.' },
+          { t: 'text', md: 'In English, nouns are in two groups. **Countable** nouns are things you can count one by one: *one apple, two apples, three eggs*. They have a singular and a plural form.\n\n**Uncountable** nouns are things you cannot count one by one, usually because they are a mass or a liquid: *bread, rice, water, milk, cheese, money, music, information*. They have no plural, and you never put *a* or *an* before them. You say *some bread*, not *a bread* and not *breads*.\n\nThis matters because the small words before a noun (*a, some, any, much, many*) change with the group. Learn new food words with their group, and the rest becomes easy.' },
+          { t: 'table', caption: 'Countable or uncountable?', explain: ['head'], head: ['Countable', 'Uncountable'], rows: [
+            ['an apple, two apples', 'bread'],
+            ['an egg, six eggs', 'rice'],
+            ['a tomato, tomatoes', 'cheese'],
+            ['a biscuit, biscuits', 'milk'],
+            ['a sandwich, sandwiches', 'water'],
+            ['a potato, potatoes', 'pasta'],
           ] },
-          { t: 'text', md: '*Can I have…?* and *I’d like…* are polite ways to ask for something. *I’d like* means *I would like*. *Here you are* is what we say when we give something to someone.' },
+          { t: 'tip', art: 'owl', md: 'Some words are uncountable in English but countable in other languages: **bread, pasta, fruit, money, news, advice, information, furniture**. *I need some information*, never *an information* or *informations*.' },
         ],
         [
-          { t: 'table', caption: 'Useful phrases', explain: ['head', 'col0'], head: ['What you want to do', 'What you say'], rows: [
-            ['ask for something', 'Can I have a tea, please?'],
-            ['say what you want', 'I’d like two croissants, please.'],
-            ['ask the price of one thing', 'How much is it?'],
-            ['ask the price of more things', 'How much are they?'],
-            ['ask how to pay', 'Can I pay by card?'],
-            ['finish your order', 'No, thanks. That’s all.'],
+          { t: 'text', md: 'Use **a** or **an** with one countable thing: *a banana, an orange*.\n\nUse **some** in positive sentences, with plural countable nouns and with uncountable nouns: *There are some eggs. I bought some cheese.*\n\nUse **any** in negative sentences and in most questions: *We haven’t got any milk. Have you got any eggs?*\n\nThere is one important exception: when you **offer** something or **ask for** something, use **some** in the question, because you expect the answer *yes*: *Would you like some tea? Can I have some water, please?*' },
+          { t: 'examples', items: [
+            { s: 'I’d like **an** apple and **a** banana.', n: 'One countable thing each: *a* or *an*.' },
+            { s: 'There’s **some** rice in the cupboard.', n: 'Positive, uncountable: *some*.' },
+            { s: 'We need **some** tomatoes for the salad.', n: 'Positive, plural: *some*.' },
+            { s: 'There isn’t **any** bread left.', n: 'Negative: *any*.' },
+            { s: 'Are there **any** eggs in the fridge?', n: 'A normal question: *any*.' },
+            { s: 'Would you like **some** cake?', n: 'An offer: *some*, because you expect *yes*.' },
           ] },
-          { t: 'tip', art: 'owl', md: '*I want a coffee* can sound rude in a café or a shop. *I’d like a coffee, please* or *Can I have a coffee, please?* are polite.' },
-        ],
-        [
-          { t: 'dialogue', title: 'At the market', lines: [
-            { who: 'Seller', s: 'Good morning. Can I help you?' },
-            { who: 'Daniel', s: 'Yes, please. How much are the strawberries?' },
-            { who: 'Seller', s: 'They’re three pounds a box.' },
-            { who: 'Daniel', s: 'I’d like two boxes, please. And a kilo of carrots.' },
-            { who: 'Seller', s: 'Here you are. Anything else?' },
-            { who: 'Daniel', s: 'No, thanks. That’s all.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['I’d like a bread.', 'I’d like some bread.', '*bread* is uncountable: no *a*.'],
+            ['We haven’t got some milk.', 'We haven’t got any milk.', 'In negatives, use *any*.'],
+            ['Can I have any water?', 'Can I have some water?', 'When you ask for something, use *some*.'],
+            ['I need some informations.', 'I need some information.', '*information* has no plural.'],
           ] },
         ],
         [
-          { t: 'ex', kind: 'match', h: 'Match the questions and the answers.', pairs: [
-            ['Large or small?', 'Small, please.'],
-            ['Eat in or take away?', 'Take away, please.'],
-            ['Anything else?', 'No, thanks. That’s all.'],
-            ['How much is it?', 'It’s four pounds fifty.'],
-            ['Can I pay by card?', 'Yes, of course.'],
+          { t: 'dialogue', title: 'What’s in the fridge?', lines: [
+            { who: 'Lucy', s: 'I’m hungry. Is there any food in the fridge?' },
+            { who: 'Sam', s: 'There’s some cheese and there are some eggs.' },
+            { who: 'Lucy', s: 'Is there any bread?' },
+            { who: 'Sam', s: 'No, there isn’t any bread. But we’ve got some pasta.' },
+            { who: 'Lucy', s: 'Great. And are there any tomatoes?' },
+            { who: 'Sam', s: 'Just one. Would you like some tea while I cook?' },
+            { who: 'Lucy', s: 'Yes, please!' },
           ] },
-          { t: 'ex', kind: 'choice', h: 'Choose the correct words.', items: [
-            { q: '___ a cheese sandwich, please.', o: ['I’d like', 'I like', 'I’d liking'], why: '*I’d like* = *I would like*, a polite way to order. *I like* means you enjoy it in general.' },
-            { q: 'How much ___ these lemons?', o: ['are', 'is', 'do'], why: '*These lemons* is plural: *How much are…?*' },
-            { q: 'Can I ___ a bottle of water, please?', o: ['have', 'having', 'to have'], why: '*Can I* + base form: *Can I have…?*' },
-            { q: 'Thank you. ___ you are.', o: ['Here', 'There', 'This'], why: 'When we give something to someone, we say *Here you are*.' },
+          { t: 'ex', kind: 'tf', h: 'Read the dialogue. True or false?', items: [
+            { q: 'There is some cheese in the fridge.', a: 't', why: '*There’s some cheese.*' },
+            { q: 'There is some bread.', a: 'f', why: '*There isn’t any bread.*' },
+            { q: 'They have got a lot of tomatoes.', a: 'f', why: 'There is *just one* tomato.' },
+            { q: 'Sam offers Lucy a drink.', a: 't', why: '*Would you like some tea?*' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'Can I have a glass of water?', why: '*Can I have* + the thing you want.' },
-            { a: 'How much are the strawberries?', why: '*How much* + *are* + plural noun.' },
-            { a: 'I’d like a piece of cake.', why: '*I’d like* + the thing you want.' },
-            { a: 'Can I pay by card?', why: '*Can I* + *pay* + *by card*.' },
+          { t: 'ex', kind: 'sort', h: 'Countable or uncountable?', groups: ['countable', 'uncountable'], explain: ['groups'], items: [
+            { s: 'banana', g: 0, why: '*one banana, two bananas*' },
+            { s: 'rice', g: 1, why: 'You cannot count rice one by one.' },
+            { s: 'egg', g: 0, why: '*an egg, six eggs*' },
+            { s: 'milk', g: 1, why: 'A liquid: uncountable.' },
+            { s: 'money', g: 1, why: 'You count coins, but *money* is uncountable.' },
+            { s: 'sandwich', g: 0, why: '*a sandwich, two sandwiches*' },
+          ] },
+          { t: 'ex', kind: 'select', h: 'Choose a, an, some or any.', items: [
+            { q: 'Can I have ___ orange juice, please?', o: ['some', 'any', 'an'], why: 'Asking for something: *some*.' },
+            { q: 'There aren’t ___ biscuits left.', o: ['any', 'some', 'a'], why: 'Negative: *any*.' },
+            { q: 'I eat ___ egg every morning.', o: ['an', 'a', 'some'], why: 'One countable thing, vowel sound: *an*.' },
+            { q: 'Have you got ___ cheese?', o: ['any', 'a', 'an'], why: 'A normal question: *any*.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'fix', h: 'Each sentence has one mistake. Find it and fix it.', items: [
+            { s: 'Would you like [any] coffee?', a: ['some'], why: 'An offer: *some*.' },
+            { s: 'I bought [a bread] at the bakery.', a: ['some bread', 'bread'], why: '*bread* is uncountable.' },
+            { s: 'We don’t have [some] eggs.', a: ['any'], why: 'Negative: *any*.' },
+            { s: 'He gave me some good [advices].', a: ['advice'], why: '*advice* has no plural.' },
+          ] },
+          { t: 'ex', kind: 'select', h: 'In the format of the A2 Key exam (Reading, Part 1): what does the notice say?', items: [
+            { q: 'Notice in a café: “Sandwiches: sorry, no bread today. Try our soups!” ___', o: ['You can’t get a sandwich today.', 'There is no soup today.', 'The café is closed today.'], why: 'No bread means no sandwiches; soup is offered instead.' },
+            { q: 'Message on the fridge: “Sam, we haven’t got any milk. Can you buy some? Lucy” ___', o: ['Lucy wants Sam to buy milk.', 'Lucy bought some milk.', 'There is some milk in the fridge.'], why: '*We haven’t got any milk. Can you buy some?*' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Part 1 of the A2 Key reading paper you read six short notices or messages and choose what each one means. Read the whole notice first, then each option. The right option usually says the same thing **in different words**.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'sofia', items: [
+            { a: 'Is there any milk in the fridge?' },
+            { a: 'Would you like some tea?' },
+            { a: 'There isn’t any bread left.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 2 */
+    {
+      id: 'p2',
+      title: 'How much? How many?',
+      about: 'Ask and talk about amounts with how much, how many, a lot of, a few and a little, and name food containers.',
+      art: 'mug',
+      spreads: [
+        [
+          { t: 'text', md: 'To ask about an amount, choose the question by the group of the noun.\n\n**How many** + plural countable noun: *How many eggs do we need?*\n\n**How much** + uncountable noun: *How much milk is there?* People also use **How much is it?** for prices, because *money* is uncountable.\n\nFor a big amount, **a lot of** works with both groups: *a lot of apples, a lot of water*. In negatives and questions people also say **much** and **many**: *We haven’t got much time. Are there many people?*' },
+          { t: 'table', caption: 'Small and big amounts', explain: ['head', 'col0'], head: ['', 'Countable (plural)', 'Uncountable'], rows: [
+            ['Question', 'How many tomatoes?', 'How much rice?'],
+            ['A big amount', 'a lot of tomatoes', 'a lot of rice'],
+            ['A small amount', 'a few tomatoes', 'a little rice'],
+            ['Negative', 'not many tomatoes', 'not much rice'],
+          ] },
+          { t: 'tip', art: 'owl', md: '**A few** and **a little** are positive: *I have a few friends here* means some, enough to be happy. Without *a*, **few** and **little** sound negative (almost none). At A2, use **a few** and **a little**.' },
+        ],
+        [
+          { t: 'text', md: 'Uncountable food is often counted with a **container** or a **piece**: *a bottle of water, two cartons of milk, a loaf of bread, a piece of cake*. The container is countable, so it can be plural: *three bottles of water*.\n\nThis is how you buy uncountable things in a shop, and how recipes give amounts.' },
+          { t: 'table', caption: 'Containers and pieces', explain: ['head', 'col1'], head: ['English', 'Usually for'], rows: [
+            ['a bottle of', 'water, juice, oil'],
+            ['a carton of', 'milk, juice'],
+            ['a packet of', 'biscuits, rice, pasta'],
+            ['a tin of', 'tomatoes, beans, tuna'],
+            ['a jar of', 'jam, honey, coffee'],
+            ['a loaf of', 'bread'],
+            ['a piece of', 'cake, cheese, paper'],
+            ['a kilo of', 'potatoes, apples'],
+          ] },
+          { t: 'examples', items: [
+            { s: '**How many** bottles of water do we need? – Two.', n: '*bottles* are countable: *how many*.' },
+            { s: '**How much** sugar is in it? – Just **a little**.', n: '*sugar* is uncountable.' },
+            { s: 'There were **a lot of** people at the market.', n: '*a lot of* with both groups.' },
+            { s: 'I only bought **a few** apples.', n: 'A small number.' },
+            { s: 'Could I have **a piece of** cake, please?', n: 'A piece makes *cake* countable.' },
+          ] },
+        ],
+        [
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['How much eggs?', 'How many eggs?', '*eggs* are countable.'],
+            ['How many water?', 'How much water?', '*water* is uncountable.'],
+            ['two milks', 'two cartons of milk', 'Count the container, not the milk.'],
+            ['a few cheese', 'a little cheese', '*cheese* is uncountable: *a little*.'],
+          ] },
+          { t: 'ex', kind: 'select', h: 'Choose the right word.', items: [
+            { q: 'How ___ apples do you want?', o: ['many', 'much', 'lot'], why: '*apples* are countable.' },
+            { q: 'There’s only ___ milk left.', o: ['a little', 'a few', 'many'], why: '*milk* is uncountable.' },
+            { q: 'I’ve got ___ friends in London.', o: ['a few', 'a little', 'much'], why: '*friends* are countable.' },
+            { q: 'We haven’t got ___ time.', o: ['much', 'many', 'a few'], why: '*time* is uncountable; negative: *much*.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'match', h: 'Match the container and the food.', pairs: [
+            ['a loaf of', 'bread'],
+            ['a carton of', 'milk'],
+            ['a jar of', 'honey'],
+            ['a tin of', 'tuna'],
+            ['a packet of', 'biscuits'],
+          ] },
+          { t: 'ex', kind: 'gap', h: 'Write how much or how many.', items: [
+            { q: '___ bananas are there?', a: ['How many'], why: '*bananas* are countable.' },
+            { q: '___ coffee do you drink every day?', a: ['How much'], why: '*coffee* is uncountable.' },
+            { q: '___ is a bottle of water?', a: ['How much'], why: 'A price: *how much*.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'select', h: 'In the format of the A2 Key exam (Reading, Part 4): read the email and choose the best word for each gap.', items: [
+            { q: 'Hi Ben, can you go to the supermarket? We need a ___ of bread.', o: ['loaf', 'bottle', 'tin'], why: 'Bread comes in a *loaf*.' },
+            { q: 'Please get two ___ of milk too.', o: ['cartons', 'pieces', 'jars'], why: 'Milk comes in *cartons*.' },
+            { q: 'We don’t need ___ eggs, there are six in the fridge.', o: ['any', 'some', 'much'], why: 'Negative, countable: *any*.' },
+            { q: 'And buy a ___ apples for the children. Thanks!', o: ['few', 'little', 'lot'], why: '*apples* are countable: *a few*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Part 4 of the A2 Key reading paper, a short text has six gaps and three choices for each. Read the words **before and after** the gap: here, *of bread* tells you the answer must be a container for bread.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'omar', items: [
+            { a: 'How many eggs do we need?' },
+            { a: 'Could I have a bottle of water, please?' },
+            { a: 'There’s only a little cheese left.' },
+          ] },
+        ],
+      ],
+    },
+    /* ------------------------------------------------------------------ Lesson 3 */
+    {
+      id: 'p3',
+      title: 'I’d like a coffee, please',
+      about: 'Order in a café and buy things in a shop politely, with I’d like, Could I have, Would you like and prices.',
+      art: 'mug',
+      spreads: [
+        [
+          { t: 'text', md: 'At A1 you learned **Can I have…, please?** At A2 you can be more polite and more natural.\n\n**I’d like** (= I would like) is a polite way to say what you want: *I’d like a cheese sandwich, please.* It is softer than *I want*, which can sound rude to a waiter.\n\n**Could I have…?** is a very polite question: *Could I have the menu, please?*\n\nThe waiter or shop assistant offers with **Would you like…?** *Would you like anything to drink?* Answer **Yes, please** or **No, thank you**. Do not answer *Yes, I would like*: it sounds strange.' },
+          { t: 'examples', items: [
+            { s: '**I’d like** a large cappuccino, please.', n: 'Polite and natural.' },
+            { s: '**Could I have** the bill, please?', n: 'Very polite: asking to pay.' },
+            { s: '**Would you like** some milk with that? – **No, thank you.**', n: 'An offer and a polite answer.' },
+            { s: '**Is that to take away**, or to eat here?', n: 'In a café: are you leaving with it?' },
+            { s: '**Anything else?** – **No, that’s all, thanks.**', n: 'At the end of the order.' },
+          ] },
+          { t: 'tip', art: 'owl', md: '**I want** is grammatically correct, but in a café or shop it can sound like an order. Children say *I want*; adults usually say **I’d like** or **Could I have**.' },
+        ],
+        [
+          { t: 'text', md: 'Prices: ask **How much is it?** for one thing and **How much are they?** for more than one. Say prices like this: **£3.50** is *three pounds fifty*; **€12.99** is *twelve euros ninety-nine*. In shops you will also hear **That’s £8.40, please** and **Do you want to pay by card?**\n\nSizes and choices: *small, medium, large*; *still or sparkling water*; *with or without sugar*.' },
+          { t: 'dialogue', title: 'At the Corner Café', lines: [
+            { who: 'Waiter', s: 'Hi! What would you like?' },
+            { who: 'Maya', s: 'I’d like a medium latte and a piece of chocolate cake, please.' },
+            { who: 'Waiter', s: 'Would you like anything else?' },
+            { who: 'Maya', s: 'Could I have a bottle of water too? Still, please.' },
+            { who: 'Waiter', s: 'Sure. Is that to eat here or to take away?' },
+            { who: 'Maya', s: 'To eat here. How much is it?' },
+            { who: 'Waiter', s: 'That’s nine pounds twenty, please.' },
+            { who: 'Maya', s: 'Can I pay by card?' },
+            { who: 'Waiter', s: 'Of course.' },
+          ] },
+          { t: 'ex', kind: 'choice', h: 'Read the dialogue and choose the right answer.', items: [
+            { q: 'What does Maya order to drink?', o: ['A latte and some water', 'A latte and some juice', 'Only water'], why: '*a medium latte* and *a bottle of water*.' },
+            { q: 'Where does Maya eat?', o: ['In the café', 'At home', 'At work'], why: '*To eat here.*' },
+            { q: 'How much does she pay?', o: ['£9.20', '£2.90', '£9.12'], why: '*nine pounds twenty* is £9.20.' },
+          ] },
+        ],
+        [
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['Yes, I would like.', 'Yes, please.', 'Answer an offer with *Yes, please*.'],
+            ['I would like a coffee? (to the waiter)', 'Could I have a coffee, please?', 'A question needs *could*, *can* or *would*.'],
+            ['How much is the apples?', 'How much are the apples?', 'Plural: *are*.'],
+            ['I want the bill.', 'Could I have the bill, please?', '*I want* sounds rude here.'],
+          ] },
+          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
+            { a: 'Could I have the menu, please?', why: '*Could I have* + thing + *please*.' },
+            { a: 'Would you like anything to drink?', why: 'The waiter’s offer.' },
+            { a: 'I’d like a small orange juice.', why: '*I’d like* + size + drink.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'match', h: 'Match the waiter’s question and the best answer.', pairs: [
+            ['What would you like?', 'A tea, please.'],
+            ['Anything else?', 'No, that’s all, thanks.'],
+            ['To eat here or to take away?', 'To take away, please.'],
+            ['Still or sparkling?', 'Sparkling, please.'],
+            ['Would you like sugar?', 'No, thank you.'],
+          ] },
+          { t: 'ex', kind: 'label', h: 'Label the café.', scene: 'cafe', extra: ['bill', 'menu'], items: [
+            { x: 125, y: 137, a: 'cup', why: 'Your coffee comes in a *cup*.' },
+            { x: 188, y: 132, a: 'croissant', why: 'A *croissant* is a kind of bread for breakfast.' },
+            { x: 66, y: 152, a: 'table', why: 'You sit at a *table*.' },
+            { x: 250, y: 42, a: 'lamp', why: 'A *lamp* gives light.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'In the format of the A2 Key exam (Listening, Part 1): read what you hear and choose the right answer.', items: [
+            { q: 'Woman: “A cheese sandwich and an apple juice, please.” Man: “Sorry, we haven’t got any apple juice.” Woman: “Then an orange juice.” What does the woman drink?', o: ['orange juice', 'apple juice', 'water'], why: 'There is no apple juice, so she has *an orange juice*.' },
+            { q: 'Man: “How much are the strawberries?” Woman: “Three pounds a box, or two boxes for five pounds.” He buys two boxes. How much does he pay?', o: ['£5', '£3', '£6'], why: '*two boxes for five pounds*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Part 1 of the A2 Key listening paper you hear five short conversations, and the speakers often **change their mind**, like the woman who wanted apple juice. Listen to the end before you choose.' },
+          { t: 'ex', kind: 'speak', h: 'Order in the café. Say these sentences after the tutor.', tutor: 'arthur', items: [
+            { a: 'I’d like a medium latte, please.' },
+            { a: 'Could I have the bill, please?' },
+            { a: 'How much is it?' },
+          ] },
+        ],
+      ],
+    },
+    /* ------------------------------------------------------------------ Lesson 4 */
     {
       id: 'p4',
       title: 'Soup for dinner',
-      about: 'Read a recipe and a shopping list.',
-      art: 'pizza',
+      about: 'Read a recipe and a shopping list, and give instructions with first, then and after that.',
+      art: 'teacup',
       spreads: [
         [
-          { t: 'reading', title: 'Easy tomato soup (for four people)', md: 'You need two tins of tomatoes, one onion, a little olive oil, a litre of water, a little salt and a little sugar. You also need some fresh bread.\n\nFirst, cut the onion into small pieces. Then put a little olive oil in a big pan and cook the onion for five minutes. After that, add the tomatoes, the water, the salt and the sugar. Cook the soup for twenty minutes. Finally, serve it hot with the bread.' },
-          { t: 'reading', title: 'A note on the fridge', md: 'Hi Tom,\n\nI’m making tomato soup tonight. We’ve got some onions and a lot of salt, but there isn’t any olive oil and there aren’t any tomatoes. Can you buy two tins of tomatoes, a small bottle of olive oil and a loaf of bread, please? We don’t need any sugar.\n\nThanks! Yasmin' },
-        ],
-        [
-          { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
-            { q: 'The soup is for four people.', a: 't', why: 'The recipe title says “for four people”.' },
-            { q: 'You cook the onion for twenty minutes.', a: 'f', why: 'You cook the onion for five minutes. You cook the soup for twenty minutes.' },
-            { q: 'Yasmin has got some onions at home.', a: 't', why: '“We’ve got some onions.”' },
-            { q: 'Tom needs to buy some sugar.', a: 'f', why: '“We don’t need any sugar.”' },
-            { q: 'Tom likes tomato soup.', a: 'ng', why: 'The note does not say what Tom likes.' },
+          { t: 'text', md: 'Recipes give instructions with the **imperative**: the verb on its own, with no subject. *Cut the onions. Add the water. Cook for twenty minutes.* The negative is **Don’t** + verb: *Don’t add salt yet.*\n\nTo show the order of the steps, use **First**, **Then**, **Next**, **After that** and **Finally**. These words make a text easy to follow, and they are useful in the A2 Key writing paper too.' },
+          { t: 'table', caption: 'Kitchen verbs', explain: ['head', 'col1'], head: ['Verb', 'What you do'], rows: [
+            ['cut', 'make something into pieces with a knife'],
+            ['boil', 'cook in very hot water'],
+            ['fry', 'cook in hot oil'],
+            ['add', 'put one thing into another'],
+            ['mix', 'put things together and turn them'],
+            ['heat', 'make something hot'],
           ] },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-            { q: 'What do you do first?', o: ['Cut the onion.', 'Add the water.', 'Cook the tomatoes.'], why: '“First, cut the onion into small pieces.”' },
-            { q: 'How many tins of tomatoes does Tom need to buy?', o: ['Two.', 'One.', 'Four.'], why: '“Can you buy two tins of tomatoes…?”' },
-            { q: 'What does Tom need to buy?', o: ['Tomatoes, olive oil and bread.', 'Onions, salt and bread.', 'Tomatoes, sugar and onions.'], why: 'The note asks for tomatoes, olive oil and a loaf of bread.' },
+          { t: 'reading', title: 'Easy tomato soup (for four people)', md: '**You need:** two onions, a little oil, a tin of tomatoes, a litre of water, a few fresh tomatoes, some salt and a loaf of bread.\n\nFirst, cut the onions into small pieces. Then heat a little oil in a big pot and fry the onions for five minutes.\n\nNext, add the tin of tomatoes, the fresh tomatoes and the water. Boil it all for twenty minutes. Don’t add the salt yet.\n\nAfter that, mix the soup until it is smooth, and add some salt. Finally, cut the bread and serve the soup hot. Enjoy!' },
+          { t: 'ex', kind: 'tf', h: 'Read the recipe. True, false or not given?', ng: true, items: [
+            { q: 'The soup is for four people.', a: 't', why: '*for four people*' },
+            { q: 'You fry the onions for twenty minutes.', a: 'f', why: 'You fry them for *five minutes*.' },
+            { q: 'You add the salt at the start.', a: 'f', why: '*Don’t add the salt yet*: you add it after mixing.' },
+            { q: 'The soup is good for children.', a: 'ng', why: 'The recipe does not say.' },
           ] },
-          { t: 'ex', kind: 'gap', h: 'Complete with words from the texts.', items: [
-            { q: 'You need a ___ of water.', a: ['litre'], why: 'The recipe says “a litre of water”.' },
-            { q: 'Can you buy a small ___ of olive oil?', a: ['bottle'], why: 'Liquids like oil often come in a *bottle*.' },
-            { q: 'There isn’t ___ olive oil.', a: ['any'], why: 'A negative sentence with an uncountable noun: *any*.' },
-            { q: 'Can you buy a ___ of bread, please?', a: ['loaf'], why: 'We say *a loaf of bread*.' },
+        ],
+        [
+          { t: 'reading', title: 'Shopping list', md: 'Hi Sam, I’m making the soup tonight. Can you buy these on your way home? Two onions, a tin of tomatoes, a loaf of bread. We’ve got oil and salt, so we don’t need any. Thanks! Lucy' },
+          { t: 'ex', kind: 'choice', h: 'Read Lucy’s message and choose the right answer.', items: [
+            { q: 'Why is Lucy writing?', o: ['to ask Sam to buy food', 'to invite Sam to dinner', 'to give Sam a recipe'], why: '*Can you buy these on your way home?*' },
+            { q: 'What doesn’t Sam need to buy?', o: ['oil', 'onions', 'bread'], why: '*We’ve got oil and salt.*' },
+          ] },
+          { t: 'ex', kind: 'order', h: 'Put the steps in the right order: make sentences.', items: [
+            { a: 'First, cut the onions.', why: '*First* + imperative.' },
+            { a: 'Then add the water.', why: '*Then* + imperative.' },
+            { a: 'Don’t add the salt yet.', why: 'Negative imperative: *Don’t* + verb.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'gap', h: 'In the format of the A2 Key exam (Reading, Part 5): write one word in each gap.', items: [
+            { q: 'Hi Maya! I’m cooking dinner tonight. Would you like ___ come?', a: ['to'], why: '*Would you like to* + verb.' },
+            { q: 'I’m making soup, so I need ___ few tomatoes.', a: ['a'], why: '*a few* + plural noun.' },
+            { q: 'Have you got ___ bread at home? Can you bring it?', a: ['any'], why: 'A question: *any*.' },
+            { q: 'Dinner is ___ seven o’clock. See you later!', a: ['at'], why: '*at* + a time.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Part 5 of the A2 Key reading paper you write **one word** in each gap, with no options. The missing words are usually small grammar words: *to, a, any, at, of, there*. Read the whole sentence, then ask: which word makes it correct?' },
+          { t: 'ex', kind: 'speak', h: 'Give the steps. Say these sentences after the tutor.', tutor: 'mei', items: [
+            { a: 'First, cut the onions into small pieces.' },
+            { a: 'After that, boil it for twenty minutes.' },
+            { a: 'Finally, serve the soup hot.' },
           ] },
         ],
       ],
     },
   ],
   test: [
-    { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-      { q: 'There aren’t ___ potatoes in the cupboard.', o: ['any', 'some', 'a'], why: 'Negative with a plural noun: *any*.' },
-      { q: 'How ___ water do you drink a day?', o: ['much', 'many', 'few'], why: '*Water* is uncountable: *how much*.' },
-      { q: 'I need ___ umbrella. It’s raining.', o: ['an', 'a', 'some'], why: 'One umbrella, and *umbrella* starts with a vowel sound: *an*.' },
-      { q: 'Can you buy a ___ of chocolate for Grandma?', o: ['bar', 'loaf', 'bunch'], why: 'We say *a bar of chocolate*.' },
-      { q: 'We’ve only got a ___ eggs, so we can’t make a big cake.', o: ['few', 'little', 'lot'], why: '*Eggs* is countable and plural: *a few*.' },
+    { t: 'ex', kind: 'select', h: 'Choose a, an, some or any.', items: [
+      { q: 'Would you like ___ cake?', o: ['some', 'any', 'a'], why: 'An offer: *some*.' },
+      { q: 'There aren’t ___ eggs in the fridge.', o: ['any', 'some', 'an'], why: 'Negative: *any*.' },
+      { q: 'I had ___ orange for breakfast.', o: ['an', 'a', 'any'], why: 'One countable thing, vowel sound: *an*.' },
     ] },
-    { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
-      { q: 'There’s ___ milk in the fridge, but there isn’t any juice.', a: ['some'], why: 'A positive sentence with an uncountable noun: *some*.' },
-      { q: 'How ___ bananas are there?', a: ['many'], why: '*Bananas* is countable and plural: *how many*.' },
-      { q: 'I’d like a ___ of milk, please. (container)', a: ['carton', 'bottle', 'glass', 'jug'], why: 'Milk comes in a *carton* or a *bottle*. In a café you can also ask for *a glass of milk*.' },
-      { q: 'How much ___ these grapes? (be)', a: ['are'], why: '*These grapes* is plural: *are*.' },
+    { t: 'ex', kind: 'gap', h: 'Write how much or how many.', items: [
+      { q: '___ people are coming?', a: ['How many'], why: '*people* is plural.' },
+      { q: '___ rice do we need?', a: ['How much'], why: '*rice* is uncountable.' },
     ] },
-    { t: 'ex', kind: 'match', h: 'Match the questions and the answers.', pairs: [
-      ['Eat in or take away?', 'Eat in, please.'],
-      ['How many sandwiches would you like?', 'Two, please.'],
-      ['How much is the coffee?', 'Two pounds forty.'],
-      ['Anything else?', 'No, that’s all, thanks.'],
+    { t: 'ex', kind: 'select', h: 'Choose the right word.', items: [
+      { q: 'Can you buy a ___ of milk?', o: ['carton', 'loaf', 'tin'], why: 'Milk comes in a *carton*.' },
+      { q: 'There’s only a ___ sugar left.', o: ['little', 'few', 'lot'], why: '*sugar* is uncountable.' },
+      { q: 'We’ve got a ___ apples.', o: ['few', 'little', 'much'], why: '*apples* are countable.' },
     ] },
-    { t: 'ex', kind: 'choice', h: 'Which sentence is correct?', items: [
-      { q: '', o: ['I’d like some rice, please.', 'I’d like a rice, please.', 'I’d like some rices, please.'], why: '*Rice* is uncountable: *some rice*.' },
-      { q: '', o: ['We eat a lot of vegetables.', 'We eat much vegetables.', 'We eat a little vegetables.'], why: '*A lot of* works in positive sentences. *A little* is for uncountable nouns.' },
+    { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+      { s: 'Can I have [any] water, please?', a: ['some'], why: 'Asking for something: *some*.' },
+      { s: 'How [many] money have you got?', a: ['much'], why: '*money* is uncountable.' },
+      { s: 'I need some [informations].', a: ['information'], why: '*information* has no plural.' },
+    ] },
+    { t: 'ex', kind: 'choice', h: 'What do you say?', items: [
+      { q: 'The waiter asks: “Would you like some milk?” You want milk. You say:', o: ['Yes, please.', 'Yes, I would like.', 'Yes, I want.'], why: 'Answer an offer with *Yes, please*.' },
+      { q: 'You want to pay. You say:', o: ['Could I have the bill, please?', 'I want the bill.', 'Give me the bill.'], why: 'Polite: *Could I have…?*' },
+    ] },
+    { t: 'ex', kind: 'tf', h: 'Read and decide: true or false?', items: [
+      { q: 'In a recipe, “Cut the onions” is an imperative.', a: 't', why: 'The verb on its own gives an instruction.' },
+      { q: '“Don’t add salt” means you add salt now.', a: 'f', why: '*Don’t* means not to do it.' },
+    ] },
+    { t: 'ex', kind: 'match', h: 'Match the container and the food.', pairs: [
+      ['a jar of', 'jam'],
+      ['a loaf of', 'bread'],
+      ['a bottle of', 'oil'],
+      ['a piece of', 'cake'],
     ] },
   ],
 };

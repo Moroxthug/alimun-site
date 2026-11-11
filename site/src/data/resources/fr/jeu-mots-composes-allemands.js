@@ -1,0 +1,37 @@
+// Resource: game. German compound nouns and their literal meanings. Checked against Duden.
+export default {
+  key: 'german-compounds', site: 'fr', slug: 'jeu-mots-composes-allemands', kind: 'game', course: 'German', level: 'Tous niveaux',
+  draw: 'cat', tint: 'lime', published: '2026-10-27',
+  title: "Jeu des mots composés allemands : c'est quoi, une chaussure de main ?",
+  metaTitle: 'Jeu des mots composés allemands : Handschuh, Faultier… – Alimun',
+  desc: "Un jeu gratuit avec des mots composés allemands rigolos : une chaussure de main est un gant, un animal paresseux est un paresseux. Devine dix mots.",
+  lead: "L'allemand crée de nouveaux mots en collant des mots ensemble. Une chaussure de main est un gant et un animal paresseux est un paresseux. Tu devines la suite ?",
+  instructions: "Qu'est-ce que c'est ?",
+  about: [
+    "L'allemand assemble des noms pour en créer de nouveaux, et c'est toujours le dernier élément qui donne son genre au mot : der Handschuh, à cause de der Schuh.",
+    "Une fois que tu connais les morceaux, beaucoup de mots longs s'expliquent tout seuls. C'est pour ça que les mots composés sont l'une des façons les plus amusantes d'enrichir ton vocabulaire allemand.",
+  ],
+  items: [
+    { q: 'Handschuh (main + chaussure)', options: ['un gant', 'un chausson', 'une bague', 'une chaussette'], a: 0, why: "der Handschuh = le gant : une chaussure pour la main." },
+    { q: 'Faultier (paresseux + animal)', options: ['un chat', 'un paresseux', 'une tortue', 'un koala'], a: 1, why: "das Faultier = le paresseux." },
+    { q: 'Kühlschrank (frais + armoire)', options: ['un sac congélation', 'une cave', 'un frigo', 'un climatiseur'], a: 2, why: "der Kühlschrank = le frigo." },
+    { q: 'Schildkröte (bouclier + crapaud)', options: ['une grenouille', 'un crabe', 'un scarabée', 'une tortue'], a: 3, why: "die Schildkröte = la tortue : un crapaud avec un bouclier." },
+    { q: 'Glühbirne (incandescent + poire)', options: ['une ampoule', 'une bougie', 'une poire mûre', 'une lanterne'], a: 0, why: "die Glühbirne = l'ampoule, en forme de poire qui brille." },
+    { q: 'Stinktier (puer + animal)', options: ['un cochon', 'une mouffette', 'une chèvre', 'un rat'], a: 1, why: "das Stinktier = la mouffette." },
+    { q: 'Staubsauger (poussière + suceur)', options: ['un balai', 'un plumeau', 'un aspirateur', 'un ventilateur'], a: 2, why: "der Staubsauger = l'aspirateur." },
+    { q: 'Flugzeug (vol + engin)', options: ['un oiseau', 'un cerf-volant', 'un avion', 'un drone'], a: 2, why: "das Flugzeug = l'avion : un engin pour voler." },
+    { q: 'Nacktschnecke (nu + escargot)', options: ['une limace', 'un ver de terre', 'un bébé escargot', 'une anguille'], a: 0, why: "die Nacktschnecke = la limace : un escargot sans coquille." },
+    { q: 'Drahtesel (fil de fer + âne)', options: ['un robot', 'une clôture', 'un vélo', 'un tracteur'], a: 2, why: "der Drahtesel est un mot rigolo pour dire vélo : un âne en fil de fer." },
+  ],
+  pairs: [
+    ['der Handschuh : main + chaussure', 'le gant'],
+    ['das Faultier : paresseux + animal', 'le paresseux'],
+    ['der Kühlschrank : frais + armoire', 'le frigo'],
+    ['die Schildkröte : bouclier + crapaud', 'la tortue'],
+    ['die Glühbirne : incandescent + poire', "l'ampoule"],
+    ['das Stinktier : puer + animal', 'la mouffette'],
+    ['der Staubsauger : poussière + suceur', "l'aspirateur"],
+    ['die Nacktschnecke : nu + escargot', 'la limace'],
+  ],
+  related: ['german-idioms', 'de-articles-a1', 'de-articles-sheet'],
+};

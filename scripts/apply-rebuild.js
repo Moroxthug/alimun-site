@@ -25,9 +25,22 @@ if (!fs.existsSync(path.join(dist, 'index.html'))) {
   process.exit(1);
 }
 copyPages(dist, root);
+// Blog and Resources pages (docs/BLOG_PLAN.md): every page folder the build made, such as /blog, /resources,
+// /it/blog and /it/risorse (assets, data and language folders are handled elsewhere).
+const NOT_PAGES = new Set(['css', 'js', 'images', 'fonts', 'videos', 'data', '_astro', 'downloads']);
+function copyBlog(from, to) {
+  for (const d of fs.readdirSync(from)) {
+    const dir = path.join(from, d);
+    if (NOT_PAGES.has(d) || /^[a-z]{2}$/.test(d) || !fs.statSync(dir).isDirectory()) continue;
+    if (!fs.readdirSync(dir).some((f) => f.endsWith('.html'))) continue;
+    fs.mkdirSync(path.join(to, d), { recursive: true });
+    copyPages(dir, path.join(to, d));
+  }
+}
+copyBlog(dist, root);
 for (const d of fs.readdirSync(dist)) {
   const dir = path.join(dist, d);
-  if (/^[a-z]{2}$/.test(d) && fs.statSync(dir).isDirectory()) copyPages(dir, path.join(root, d));
+  if (/^[a-z]{2}$/.test(d) && fs.statSync(dir).isDirectory()) { copyPages(dir, path.join(root, d)); copyBlog(dir, path.join(root, d)); }
 }
 fs.copyFileSync(path.join(dist, 'sitemap.xml'), path.join(root, 'sitemap.xml'));
 // Data the rebuilt pages load at run time (level test question banks).

@@ -246,3 +246,1109 @@ Points the writers flagged while drafting (docs/BOOKS.md). Each needs a decision
 - u4: social contributions "about half each" simplified; tax classes I, IV/IV, III/V; a job-related move as Werbungskosten.
 - u6: regional words (Swiss *Weggli*, *Ade*, Austrian *Paradeiser*, *Schlagobers*) and idioms (*Daumen drücken* / *Daumen halten*) need a native check.
 - Model documents below 200 words on purpose; main readings 205 to 249 words.
+
+## German A1
+- u5 p1: table gives everyday 8:00/20:00 as just "acht"; "acht Uhr"?
+- u5 p3: "Um halb vier im Café?" taken as 15:30 in the true/false item; natural?
+- u6 p1: vowel change for essen and treffen (isst, triffst) beside fahren, lesen, sprechen; too much for one A1 page?
+- u6 p3: "der Regenschirm" in the picture item, "Schirm" in the gap; use one word?
+- u7 p2: "bis zur Ampel", "neben der Bank" (dative) as fixed phrases before the dative is taught.
+- u7 p3: ticket times and prices are invented examples.
+- u8 p1: war and hatte before the Perfekt; order and wording for A1?
+- u8 p2: -et rule shown with "reden -> geredet"; too rare?
+- u8 p3: "Der Film hat mir gut gefallen" as an unexplained chunk; "ein ruhiges Wochenende" adjective ending above A1.
+- u8 p4: reading has "geschienen", "geregnet", not taught (read only).
+- u1 p3: English-style letter names in the "Say" column.
+- u1 p3: Morocco's languages "Arabisch, Tamazight, Französisch".
+- u2 p1: "Ich habe einen Bruder" as a fixed phrase before the Akkusativ.
+- u2 p3: "fleißig / faul", "lustig / ernst" as opposites.
+- u4 p1: "im Wohnzimmer", "in der Küche" as phrases without the Dativ; der Topf, der Wasserkocher in the label exercise.
+- u4 p3-p4: rents above 100 written as digits.
+- u4 test: "billig" and "günstig" both accepted.
+
+## Spanish A2
+- u5 p1: the tip on leísmo ("A Juan le veo" accepted in Spain); check wording.
+- u5 p2: freír -> fríe, calentar -> calienta in the imperative table; too much for A2?
+- u5 p3: "una lata de" collocation item (tomate, atún, sardinas right; lechuga, leche fresca wrong); clear enough?
+- u5 p4: the reading uses "dale la vuelta" (le) before le is taught in u8.
+- u6 p1: "dolor de muelas" in the plural; natural?
+- u6 p3: "Siéntese", "Debería quedarse" in the doctor dialogue, not taught.
+- u7 p2: should "bañandonos" without the accent be accepted?
+- u7 p3: "¡Que disfruten de su estancia!" subjunctive set phrase.
+- u8 p3: "¿Se te antoja…?" for Mexico; confirm.
+- u8 p4: festivals reading (Fallas, twelve grapes); check facts and level.
+- u1 p1: *es rico / está rico* (rich / tasty) shown; keep or only *está rico* for food?
+- u1 p3-p4: *nos conocimos* as a set phrase before the indefinido (u2).
+- u2 p2: "La fiesta ___ fantástico" has *fue* as the answer; *estuvo* is also natural (not an option).
+- u3 p3: *Esta mañana hablé*, *Nunca estuve* marked wrong "as people speak in Spain"; framing OK given Latin America?
+- u3 p4: reading mixes indefinido and perfecto in one sentence; natural?
+- u3 p4: one option uses *Le han llamado* (leísmo); *Lo han llamado*?
+- u4 p1: *iba a misa* as a family habit; culturally fine?
+- u4 p4: *se vendía de todo* (taught in u5) and *judías* (Spain only).
+
+## Spanish A1
+- u5 p1: note "In Spain, lunch is often quite late": a general claim about culture; keep or cut?
+- u5 p2: vestirse, despertarse as vocabulary before the vowel-change lesson.
+- u6 p3: "dale" / "está bien" in Latin America; check.
+- u7 p2: "coger el autobús" in Spain, "tomar" in Latin America; tactful wording?
+- u7 p4: reading uses usted commands baje / vaya, not taught.
+- u8 p2: "¿Puedo probármelo?" pronoun on the infinitive, only in a tip; too early for A1?
+- u8 p1: rosa and naranja "usually do not change"; ese for far things in everyday speech.
+- u1 p3: "i griega, ye" for y; both names?
+- u2 p1: age gap for 31 accepts only "treinta y un" (before años); too strict?
+- u2 p3: *mayor* as the polite word instead of *viejo*.
+- u2 p4: reading words not taught (gafas, divertida, cumpleaños).
+- u3 p1: *el agua* feminine with *el*; too much for A1?
+- u3 p3: "¿Qué les pongo?" to two customers while the table has "le".
+- u4 p1: kitchen words *la olla*, *el hervidor* (from pictures.js).
+
+## English C1
+- u1 p1: "will have been teaching" and "will have taught" both accepted; both right?
+- u1 p3: collocation answers (fully independent right; deeply shy, highly shy wrong).
+- u2 p2: "was to have" + participle may be too literary; the gap cue "(be to / take)" is awkward.
+- u3 p2: "quite good" given in its British sense (American: very good).
+- u4 p1: "didn't need to usually means I did not do it" is a simplification.
+- u4 p2: supposedly and allegedly suggest more doubt than reportedly; confirm.
+- u4 test: both adverb positions accepted in "may well (already) have (already) left".
+- u4 p4: the reading's figures belong to an invented company (Hartwell & Rowe).
+- u5 p1: "Some of the data is alleged..." singular data.
+- u5 p3: "It cannot be ruled out that…" under "Possible".
+- u6 p1: future condition with past result example; "If the company ___ (be) to close" accepts was and were.
+- u6 p2: "I wish he would be more patient" only for refusal; too strict?
+- u7 p1: informal forms in the register table (*or so*, *mind you*).
+- u7 test: order item with two sentences.
+- u8 p1: "is ___ to open" accepts due, set, expected, scheduled.
+- u8 p4: "Most of the world's people already live in cities" stated as a fact; soften?
+
+## Spanish A1, work
+- u1 p1: "Buenos días until about two o'clock in Spain"; fair rule?
+- u1 p2: tip on two kisses or a handshake at work.
+- u2 p1: *la dependienta* rather than *la dependiente*.
+- u2 p2: *el operario* natural for a factory worker at A1?
+- u3 p1: gap "Como ___ una y media": *Como* (I eat) may confuse.
+- u4 p1: phone numbers one digit at a time or in pairs, accurate for Spain?
+- u4 p2: "Adiós, buenos días" as a phone goodbye; *Te llamo* before object pronouns.
+- u5 p2, u6 p2: fixed phrases with pronouns (¿Me dejas…?, ¿Puedes ayudarme?, ¿Te va bien?).
+- u6 p1: "in August many companies in Spain work less"; check.
+- u6 p3: *¿Les va bien…?* in very polite emails in Spain; check.
+
+## Spanish B1
+- u5 p2: "Niños, lávense las manos" as ustedes (in Spain adults usually say "lavaos").
+- u5 p1: "sentaos", "levantaos" taught; colloquial "sentaros" not mentioned.
+- u7 p1: "Dijo que fue al cine" accepted beside "había ido"; how strict?
+- u7 p2: "se habla catalán y castellano" (many say "se hablan"); confirm.
+- u7 p3: "¡Qué fuerte!" labelled very informal, Spain only.
+- u8 p1: "la casa ___ nació mi abuelo" accepts donde, en la que, en que.
+- u8 p4: reading has subjunctive uses not taught (recognition only).
+- u1 p1: "Cuando salimos del cine, ___ (llover)" accepts llovía / estaba lloviendo, not llovió.
+- u3 p2: colloc "me da": igual, vergüenza right beside miedo, pena.
+- u4 p3: "Trabajo como / de camarera"; "¿Cuándo empezaría el contrato?"
+- u4 p4: advert wording "sueldo según convenio", "con don de gentes", mention of euskera.
+
+## German A1, work
+- u1 p1: "mein erster Tag" (ordinal) as a fixed phrase.
+- u1 p2: English sound hints for letters (E "ay", J "yot", W "vay", Z "tset").
+- u2 p2: im/in der + place as fixed phrases before the dative; "bei" + company in a tip.
+- u3 p1: everyday form for 17.00 given as "fünf"; natural?
+- u4 p1: "Herrn Braun" -n only mentioned in a why.
+- u4 p2, u5 p2: mich, mir in fixed phrases (für mich, Können Sie mir helfen?).
+- u6 p1: "Mein Büro ist Zimmer 4."; natural?
+
+## German A1, moving abroad
+- u1 p1, p3: Dativ in fixed phrases ("Wie geht es Ihnen?", "auf dem Router").
+- u2 p2: date of birth said "Der 3. Mai 1996" without ordinals taught.
+- u4 p3: ticket prices and the "Kurzstrecke" rule are invented, kept general.
+- u5 p3: 116 117 and 112 stated as real German numbers; confirm.
+- u5 p1: "Krankmeldung", "Rezept" given without the system behind them.
+
+## German A1, travel
+- u1 p2: letter names written as they sound (eh, jott, üpsilon, tsett); usual spelling instead?
+- u1 p1: Grüß Gott and Grüezi tip; accurate?
+- u3 p1: "Zwei Kaffee, bitte" without a plural ending.
+- u3 p2: tipping tip ("Stimmt so", some cafés cash only).
+- u4 p1: "Gehen Sie links" or "nach links" / "Biegen Sie links ab"?
+- u4 p3: stamping tickets only in some cities.
+- u5 p1: "auf" for open beside "offen", "geöffnet"; too colloquial?
+- u6 p1: "die Magnete" and "einen Magneten"; both fine?
+- u6 p3: postcard has Perfekt forms taught only in the last unit (reading only).
+
+## German A1, study and exams
+- u1 p1: "unterrichtet den Kurs" uses the definite accusative (A1 teaches only ein/kein).
+- u2 p1: Ihr/Ihre as a fixed polite phrase.
+- u2 p2: "der 12.03.1998" read aloud with an ordinal and a year; keep written only?
+- u2 p2: "zwo" for 2 on the phone; common enough?
+- u5 p2: short forms (S., Ü, HA, z. B., Min.) as met in German courses?
+- u6: description of the A1 exam parts kept general; check against the current format.
+
+## Spanish A1, travel
+- u1 p3: airport signs *Recogida de equipajes*, *Aseos*; natural for Spain?
+- u3 p2: Latin American bills sometimes include the tip; wording general?
+- u4 p1: *billete sencillo* in the reading against *de ida* in the lesson.
+- u5 p1: "Es la una menos diez" for 12:50.
+- u5 p2: *hacer fotos* (Spain) vs *tomar fotos* (Latin America); no note yet.
+- u6 p2: lo/la/los/las taught only through *llevarse*.
+
+## Spanish A1, study and exams
+- u1 p1: tú/vosotros commands (abrid, escuchad) taught only to understand.
+- u1 p2, u4 p2: tú with teachers at language schools, usted at first at universities; fair?
+- u2 p1: two surnames, the father's first, as a general statement.
+- u2 p2: *matrícula* (Spain) vs *inscripción* (Latin America).
+- u3 p3: *el salón* for a classroom in many Latin American countries.
+- u6 p1-p2: the four DELE A1 part names given as facts; 20 to 30 words for the message task.
+
+## Spanish A2, work
+- u1 p1: "la dependiente" accepted beside "la dependienta".
+- u1 p2: "las dieciséis treinta" for 16:30 in timetables.
+- u2 p1: phone numbers read in groups; is this how Spain reads them?
+- u2 p2: "llámelo" or "llámele" (leísmo) for Spain; u6 p3 "conocerlo" or "conocerle".
+- u3 p2: "Quedo a la espera de su respuesta" too formal for A2?
+- u4 p3: calendar labels "Acepta / Rechaza / Quizás".
+- u6 p2: CV gives "Bachillerato" for a Lisbon school qualification.
+- General: unaccented answer variants accepted (Podria, razon, habeis), following the German umlaut variants; wanted for Spanish?
+
+## Spanish A1, moving abroad
+- u1 p1: "Buenas tardes until about eight or nine" in Spain.
+- u2 p2-p3: "Necesito empadronarme"; the simplified padrón form and letter wording.
+- u3 p2: "están a un euro veinte el kilo" (estar a for prices) at A1.
+- u4 p1: "Cambie de tren" or "Haga transbordo".
+- u5 p2: me duele as a fixed phrase; "una gripa" (Mexico), "un resfrío" (Argentina, Chile).
+- u6 p3: reading uses "escribidme" (vosotros imperative with a pronoun).
+
+## Spanish A2, moving abroad
+- u1 p1: spelling Haddad "hache, a, de, de, a, de" or "dos des"?
+- u1 p3: padrón form and appointment letter simplified (paperwork varies by town).
+- u2 p1: invented fares; *abono mensual*, *billete sencillo* natural?
+- u3 p1: adverts usually count bedrooms; *luz* for electricity.
+- u4 p2: general statements on paid bags, midday and Sunday closing.
+- u5 p3: prescriptions stored on the health card (varies by region); *justificante para su empresa*.
+- u6 p1: two kisses in Spain, one in much of Latin America.
+- u6 p3: vosotros commands with pronouns (*traed*, *decidnos*) above A2.
+
+## Spanish A2, travel
+- u1 p1: *¿A qué estamos hoy?* beside *¿Qué día es hoy?*
+- u3 p1: check-in/check-out words (*registrarse*, *dejar la habitación*, *hacer el check-out*).
+- u4 p2: about ten per cent tip usual in many Latin American countries.
+- u5 p2: gaps accept perfecto and indefinido for *hoy* to allow Latin American use; right?
+- u5 p3: formal commands in the reading (*Pasee*, *descubra*).
+- u6 p2: *tengo resfriado* marked wrong; *estoy mareado* meaning.
+- u6 p1: *me he dejado la chaqueta* (mainly Spain).
+
+## Spanish A2, study and exams
+- u1 p1: "Abrid el libro por la página 12" or "en la página".
+- u1 p2: subject names capitalised (Estudio Informática)?
+- u2 p1: "seguido" for "a menudo" in some Latin American countries.
+- u4 p1: abbreviations (L-V, sáb., 1.ª pl., máx., aprox.).
+- u4 p2: "hacer apuntes" marked wrong (tomar apuntes).
+- u6 p1-p2: DELE A2 part names and instruction style; 30 to 40 words for the writing task.
+
+## Spanish B1, work
+- u1 p1: "Te escribo por lo de la reunión" as the neutral first line.
+- u2 test: "no ___ oye bien" accepts "se le" and "se".
+- u3 p2: 15-day notice period and "unos 30.000 euros brutos al año" as examples.
+- u5 p2: "Le llamo mañana" (leísmo) for usted.
+- u5 p3: general claims about working hours, lunch at two to three, sweets on your birthday.
+
+## Spanish B1, moving abroad
+- u1 p1: fianza "often one month"; extra guarantee.
+- u1 p3: padrón text (free, owner's authorisation) general enough?
+- u2, u6: "les agradecería que me confirmaran" (imperfect subjunctive) taught as fixed phrases.
+- u2 p2: "vaya a la cita" or "acuda"; u3 p1: "escucharle los pulmones" or "auscultarle".
+- u3 p2: sick note sent electronically in Spain; "baja / alta".
+- u5 p1: recycling container colours "usual in many Spanish towns".
+- u6 p1: school stages and admission "often in spring"; u6 p3: vosotros to families in a school letter.
+
+## Spanish B1, study and exams
+- u1 p1: *clase teórica* / *prácticas* for lecture / seminar.
+- u2 p2: short forms (*s.*, *n.º*) and student-note forms *q / xq / tb*.
+- u3 p1: *Solicitud de prórroga*, *justificante médico* for a student.
+- u4 p2: *aunque* only with the indicative; note on the subjunctive?
+- u6: last lesson is speaking (photo description, opinions), as in the English and German models; station announcement with Zaragoza and Lleida trains.
+
+## English C1, work
+- u3 p1: "That's an interesting idea." = "I am not sure I like it." too sweeping?
+- u4 p2: "That + should is more common in British English".
+- u5 p1: *be set to* = "likely, because everything is in place"; test accepts expected, likely.
+- u6 p3: "dressed up as" explained as "make it look better than it is".
+
+## English C1, moving abroad
+- u1 p2: *query about* marked wrong.
+- u2 p2: general statements on mediation, arbitration, ombudsman (often free, often binding).
+- u3 p1: after *It has been proposed that*, *moves* accepted beside *should move*, *move*.
+- u4 p2: *mustn't have* wrong for past deduction (can't, couldn't).
+- u5 p1: claims about British understatement and *quite*.
+
+## Spanish B1, travel
+- u1 p1: Madrid–Granada ticket office scene is made up; realistic?
+- u2 p1: tú with strangers of similar age in Spain, usted more common in Latin America.
+- u3 p2: tipping facts (not expected in Spain; 10–15% in Mexico and many Latin American countries).
+- u3 p2: Spain / Latin America word sort is a simplification (papa also in the Canaries and Andalucía).
+- u4 p2: perfecto and indefinido mixed for a film seen today.
+- u5 p2: wild camping not allowed in many Spanish natural parks.
+
+## English C1, travel
+- u1 p2: inversion after place phrases with stand, lie, come, rise, grow.
+- u2 p1: regional examples (arvo, grand, wee, prepone); American past simple with just and yet.
+- u2 p3: more people use English as a second language than as a first, stated generally.
+- u3 p1: wordform base PUNGENCY -> pungent (unusual direction).
+- u5 p1: "for the third day ___" accepts "in a row" although the instruction says one word.
+- u5 p2: the "hard to beat" egg pun may not survive translation.
+- u6 p1: "dependant" accepted for "dependent".
+
+## English C1, study and exams
+- u1 p3: "a well-known review of active learning" unnamed; must not read as a real study.
+- u2 p1: transform answers accept only listed hedges; add variants?
+- u4 p2: tense advice for citing (present for views, past for one study) varies by subject.
+- u6 p1: key word transformations ask for the whole sentence, not a 2-5 word gap.
+- u6 test: "Under no circumstances ___ students use" accepts should, may, can, must.
+- All cited authors and studies invented.
+
+## Translations of the new books (27 Oct 2026)
+- Several existing German-book translation files (`*.de.json`) keep English values in meaning columns (body parts, "I like drinking tea."); the new A1 files give German meanings instead.
+- Explanations of the 25 new books were translated by helper agents into seven languages; checked for missing strings, markers and gaps, not yet read by native speakers.
+
+## French A1
+- u1 p1: *Ça va ?* spacing before ? and ! follows French typesetting; learners may not type it, the checker ignores final punctuation.
+- u1 p1: bonsoir from dusk, bonjour all day; check this matches how you teach it.
+- u1 p2: *Je viens du Maroc / de France / d’Italie* pattern taught as a rule of thumb; no full rule for countries yet.
+- u1 p3: French phone numbers said in pairs; example numbers are fictional (06 01 02 03 04).
+- u1 p3: letter names *ku* (q) and *zède* (z) as in standard teaching; Quebec differences not mentioned.
+- u1 p4: reading uses *professeure*; confirm you accept it (also *professeur* for both).
+- New speaker role added to audio.js: Réceptionniste (woman's voice).
+- u2 p1: numbers 70 to 99 given as soixante-dix / quatre-vingts / quatre-vingt-dix with a tip on septante and nonante (Belgium, Switzerland); check the note on huitante.
+- u2 p2: son/sa/ses explained as agreeing with the noun that follows, with mon/ton/son before a feminine noun starting with a vowel.
+- u2 p3: *il est* + adjective and *c’est* + name or noun kept as a simple A1 rule; *il est médecin* type uses are not taught yet.
+- u2 p4: reading uses *travaillent* and *beaucoup* before they are taught (meaning clear from context).
+- u3 p1: gender of every noun taught with its article; *œuf* / *œufs* pronunciation note.
+- u3 p2: partitive (du, de la, des, pas de) with *aimer* + le/la/les kept to A1 essentials; check the explanation of *du* = *de* + *le*.
+- u3 p3: café etiquette (service included, small coins) is general; prices fictional; *Je vais prendre* mentioned in text only.
+- u3 p4: menu prices are invented examples.
+- New speaker roles added to audio.js: Serveuse (woman), Serveur (man).
+- u4 p1: *le living* for the living room in Belgium; *un trois-pièces* counting rule (living room and bedrooms) as commonly used in France.
+- u4 p1: picture exercise names the clock drawing *un réveil* and the phone *un portable* (same words as the picture sets in practice/pictures.js).
+- u4 p2: *de belles chaises* (de before adjective + plural noun) taught as the careful rule; many speakers say *des belles chaises*.
+- u4 p4: rent and address in the advert are invented; email at example.com.
+- u5 p1: 24-hour clock written *14 h 30* and read in full; everyday speech uses the 12-hour forms.
+- u5 p2: *nous mangeons* and *nous commençons* spelling changes taught briefly; no other -er changes (appeler, acheter) yet.
+- u5 p3: *se lever* accent pattern (je me lève, nous nous levons) stated as a rule; check wording.
+- u5 p4: *Dis-moi ce qui te va* is a colloquial phrase, glossed in the exercise.
+- u6 p1: jouer à / jouer de / faire du taught as the rule; *faire du tennis* and *faire du piano* are also heard colloquially, so exercises avoid them.
+- u6 p3: *au printemps* versus *en été / en automne / en hiver*.
+- u6 p4: *il faut* and *pas besoin de* appear in the notices before they are taught.
+- u7 p1: *un dépanneur* for a corner shop in Quebec; mairie / place description is general.
+- u7 p2: imperative taught with vous first, tu form in a tip (tu vas becomes va); *Je vous en prie* glossed.
+- u7 p3: ticket prices and times are invented; *valider* its ticket is general practice in France.
+- New speaker role added to audio.js: Guichetier (man's voice).
+- u8 p2: only seven verbs taught with être (aller, venir, partir, arriver, rester, sortir, rentrer); agreement of the participle with the subject shown for je / nous / vous.
+- u8 p3: *c’était* given as a fixed phrase (imparfait not explained); *ne … rien* appears in examples only.
+- u8 p4: the reading uses *il faisait beau* and *il a plu* without explanation; glossed by context.
+
+## French A2
+- u1 p2: *plus … que* + stress pronoun (moi, toi, lui); *aussi sympa que* kept as the A2 comparison set; superlatives only touched.
+- u1 p3: direct object pronouns without the passé composé agreement (taught later in the book if needed).
+- u1 p4: letter uses *depuis* before it is taught in u2; *Grosses bises* is informal.
+- u2 p2: participle agreement of reflexive verbs taught as agreeing with the subject (true for most cases; the exception with a direct object after the verb is left out).
+- u2 p3: *depuis* with a present verb versus *pendant* with a past verb; check the explanation for A2.
+- u2 p4: the e-mail uses *j’avais*, *j’étais* and *parce que* before the imparfait is taught in u3.
+- u3 p1: imparfait stem rule (nous form minus -ons) with être as the only exception; check wording.
+- u3 p3: passé composé versus imparfait explained as event versus background; *pendant que* only in a tip.
+- u3 p4: *institutrice* used for the school teacher (France now says *maîtresse* or *professeure des écoles*).
+- u4 p2: *en* taught for du / de la / des and quantities; the rule that *aimer* takes le / la / l’ (not en) is stated in a tip.
+- u4 p3: the dialogue uses imperatives with pronouns (*casse-les*, *fais-la cuire*) before they are taught; glossed by context.
+- u4 p4: prices in the leaflet are invented.
+- New speaker role added to audio.js: Marchand (man's voice).
+- u5 p2: *vous devriez* (conditional) taught as a fixed phrase only; imperative of reflexive verbs (reposez-vous, ne vous inquiétez pas) introduced here.
+- u5 p3: emergency numbers (15, 112) stated in a tip; check they are right for the countries you teach.
+- u5 p4: *carte vitale* mentioned for France; the doctor’s name and address are invented; e-mail at example.com.
+- New speaker role added to audio.js: Pharmacienne (woman's voice).
+- u6 p1: no article after *être* + job, article after *c’est*; feminine forms *professeure* and *ingénieure* (more common in Quebec) are listed as normal forms.
+- u6 p2: lui / leur taught against le / la / les by whether the verb takes *à* before a person.
+- u6 p3: phone phrases (*C’est de la part de qui ?*, *Ne quittez pas*) are standard in France; check Belgium, Switzerland and Quebec usage.
+- u6 p4: the job advert, e-mail and company are invented; e-mail at example.com.
+- u7 p1: gender rule for countries (ending in -e = feminine) with the exception *le Mexique*; countries such as Cambodge and Zimbabwe not listed.
+- u7 p2: near future with aller; the hotel dialogue and prices are invented.
+- u7 p3: weather phrases follow France; the claim that Quebec and Belgium use degrees Celsius is general.
+- u7 p4: hotel e-mail at example.com; Bretagne and Mont-Saint-Michel are real places named in a postcard.
+- u8 p1: dates written with *le* + number (*le douze mars*) and *le premier mai*; months and days in lower case.
+- u8 p2: simple future stems for eight irregular verbs; the endings are said to look like avoir (ai, as, a, ont).
+- u8 p3: *si* + present + future only; *quand* + future in one example; no conditional yet.
+- u8 p4: invitation and reply are invented; e-mail at example.com.
+
+## French B1
+- u1 p1: pluperfect shown with avoir and être; agreement of the participle with the subject for être verbs.
+- u1 p2: agreement with a preceding direct object (que, le, la, les) only for avoir; no agreement rule yet for reflexive verbs.
+- u1 p3: après avoir / avant de need the same subject in both parts; subjunctive after avant que is only mentioned.
+- u1 p4: the readings mention real cities (Casablanca, Rabat, Lyon, Paris, Lille) in invented life stories.
+- u2 p3: subjunctive introduced with five irregular verbs (être, avoir, faire, aller, pouvoir) and the ils-stem rule; scope kept small for B1 (no savoir, vouloir, bien que yet).
+- u2 p2: *parce que* / *car* / *puisque* / *comme* distinctions simplified; *car* never starts a sentence is stated as a rule.
+- u2 p4: the article and comments are invented (a four-day week test in a town hall).
+- u3 p1: Quebec *courriel* and *magasiner*, Belgian GSM and Swiss natel mentioned in a tip; check the regional claims.
+- u3 p2: relative pronouns qui, que, où, dont only; no ce qui / ce que yet.
+- u3 p3: order of double pronouns (me/te before le/la/les before lui/leur before y before en); imperative with pronouns left for a later book.
+- u3 p4: the article and the review are invented and contain no statistics or brands.
+- u4 p1: conditional taught with future stems; politeness uses (voudrais, pourriez-vous, il faudrait) checked against French business practice.
+- u4 p2: si + imparfait + conditional; the 'likely' type (si + present + future) repeated from A2 for contrast.
+- u4 p3: closing formula *Je vous prie d’agréer, Madame, Monsieur, l’expression de mes salutations distinguées* given in full; check it is still the standard.
+- u4 p4: the advert and letter are invented; e-mail at example.com.
+- u5 p1: superlatives with le plus / le moins, de plus en plus de; quantity words la plupart de, plusieurs, quelques, aucun.
+- u5 p2: passive voice with être + participle and *par*; the article says French prefers *on* in speech.
+- u5 p3: subjunctive after *il faut que* reused (éteindre, trier, économiser); *il est important de* + infinitive.
+- u5 p4: leaflet and letter invented; no statistics.
+- u6 p2: subjunctive after vouloir que, il vaut mieux que, avant que, pour que; extra forms for prendre, venir, savoir, vouloir, dormir.
+- u6 p3: imperative with pronouns (repose-toi, mange-le, donne-moi) and negative order; check the hyphen and *moi / toi* rule.
+- u6 p4: the sleep advice and the doctor’s advice are general and contain no statistics.
+- u7 p2: reported speech with tense shifts (present to imparfait, passé composé to plus-que-parfait, future to conditional) and time words (demain to le lendemain).
+- u7 p3: national days (France 14 July, Belgium 21 July, Switzerland 1 August, Quebec 24 June) and Fête de la musique (21 June) are general facts; please verify.
+- u7 p3: passé simple recognised only (fut, eut, alla, fit, prit, arrivèrent); no forms to write.
+- u7 p4: the complaint letter is invented; hotels and dates are fictional.
+- u8 p1: espérer que + indicative (future) against souhaiter / vouloir que + subjunctive stated as a rule.
+- u8 p2: gerund formation (nous-form minus -ons + -ant) with être / avoir / savoir irregular; used for simultaneous action and manner.
+- u8 p3: past conditional (j’aurais dû, j’aurais pu) and si + plus-que-parfait + past conditional.
+- u8 p4: the letter and the text about a decision are invented.
+
+## French B2
+- u1 p1: passé simple recognised (forms for 3rd person singular and plural of common verbs); never produced in exercises.
+- u1 p2: lequel / auquel / duquel against dont; *avec qui* allowed for people.
+- u1 p3: *à peine … que* with inversion; participle clauses with ayant / étant / voyant.
+- u1 p4: the short story and the travel anecdote are original.
+- u2 p1: headlines in nominal style and the verbs behind them; pronominal passive (ça se dit).
+- u2 p2: bien que / quoique + subjunctive, même si + indicative; *malgré que* flagged as a mistake (some speakers accept it).
+- u2 p3: *il semble que* with subjunctive (some authors accept the indicative); conditional of the press explained.
+- u2 p4: the survey and the letter are invented; no statistics.
+- u3 p1: *à moins que* with the optional ne explétif; *au cas où* + conditional; *si jamais* added.
+- u3 p2: *après que* + indicative (not subjunctive) stated as the rule, with a note that many speakers use the subjunctive.
+- u3 p3: past subjunctive for an earlier action; contrast with the present subjunctive.
+- u3 p4: the rental contract extract is original and not legal advice; the e-mail is invented.
+- u4 p1: meeting phrases (je propose que + subjunctive, que diriez-vous de, si je comprends bien).
+- u4 p2: c’est … qui / que, ce qui / ce que … c’est; agreement of the verb after c’est moi qui.
+- u4 p3: negotiation vocabulary (devis, remise, geste commercial) and polite refusals with the conditional.
+- u4 p4: the meeting report and the e-mail are invented.
+- u5 p1: grâce à / à cause de / en raison de / faute de; puisque against parce que.
+- u5 p2: *de sorte que* and *si bien que* taken with the indicative for a real result; the subjunctive for a goal is mentioned.
+- u5 p3: discourse markers for an essay (certes … mais, on pourrait objecter que, somme toute).
+- u5 p4: both texts are invented opinion pieces; no statistics.
+- u6 p1: percentages written with a space (10 %); *une hausse de / à / de … à …* prepositions.
+- u6 p2: present participle versus verbal adjective with the spelling pairs (fatiguant / fatigant, convainquant / convaincant, différant / différent).
+- u6 p3: nominalisation and cause-effect verbs (provoquer, entraîner, être dû à, résulter de).
+- u6 p4: the museum chart is marked as a fictional example; no real statistics.
+- u7 p1: regional words (septante / nonante, souper, magasiner, courriel, dépanneur, natel) are general facts; please verify and add Africa-specific examples if you wish.
+- u7 p2: subjunctive after verbs of feeling; the ne explétif after avoir peur que explained.
+- u7 p3: reviewing vocabulary (intrigue, scénario, réalisateur) and ce qui / ce que for impressions.
+- u7 p4: the extract and the film review are invented; the film title is fictional.
+- u8 p1: *il est probable que* + indicative against *il est possible que* + subjunctive; *je ne pense pas que* + subjunctive stated as a rule.
+- u8 p2: future, future perfect, conditional and near future for predictions; *d’ici là*.
+- u8 p3: typical learner mistakes (malgré que, plus bon, participle agreement, si il, a / à) collected in one table.
+- u8 p4: the essay and the letter are original; no statistics.
+
+## Italian A1
+- u1 p1: *buongiorno* used until the early afternoon and *buonasera* after; check how you teach the switch.
+- u1 p2: nationalities in -co / -go (tedesco, svizzero) and their feminine; plurals only in the tip.
+- u1 p3: the alphabet table omits foreign letters (j, k, w, x, y); phone number in the dialogue is fictional.
+- New speaker roles and names added to audio.js: Segretaria, Giulia (women), Paolo (man).
+- u2 p1: *ventun anni* / *trentun anni* (the final vowel of the ten falls before *uno* and *otto*); *tré* accent in ventitré.
+- u2 p2: no article with singular unmodified family nouns (mia sorella) but *i miei fratelli*, and *la loro* always with the article.
+- u2 p3: plurals in -co / -ca (simpatici, simpatiche) and -e adjectives; c’è / ci sono.
+- u2 p4: the message and names are invented.
+- u3 p1: the definite article table (il, lo, l’, la, i, gli, le) and plurals; l’uovo / le uova as the only irregular plural taught.
+- u3 p2: partitive (del, della, dei …) is optional in speech; *mi piace / mi piacciono* introduced before u6.
+- u3 p3: bar customs (pay at the cassa, prices al banco / al tavolo) are general; prices invented.
+- u3 p4: menu prices are invented.
+- New speaker role added to audio.js: Barista (man's voice).
+- u4 p1: *quello* forms (quel, quello, quell’, quella, quei) given in one sentence; *monolocale / bilocale / trilocale* explained as commonly used.
+- u4 p2: *bello* changing like the article (bel, bello, bell’, bei, begli) in a tip; *grande* / *gran*.
+- u4 p3: prepositions su / in / a joined with the article (sul, nel, al); the picture exercise names the clock *una sveglia* and the phone *un cellulare* as in the picture sets.
+- u4 p4: rent and address in the advert are invented; e-mail at example.com.
+- u5 p1: *Sono le … / È l’una* rule; 24-hour clock mentioned for timetables.
+- u5 p2: present tense for -are / -ere / -ire with the -isc- group (finire); spelling of cercare and mangiare.
+- u5 p3: reflexive verbs with mi, ti, si, ci, vi, si.
+- u5 p4: the week planner and message are invented; time written 12,30 as in Italy.
+- u6 p1: piacere shown as mi piace / mi piacciono with the subject agreement explained simply; anche a me / neanche a me.
+- u6 p2: sapere + infinitive for skills versus potere for possibility; the four modal verbs in one table.
+- u6 p3: invitation phrases (Ti va di …?, Volentieri, Mi dispiace, non posso); weather phrases use fa / c’è / piove / nevica.
+- u6 p4: the club and café notices are invented.
+- u7 p1: a + article (al, alla, all’, ai) and in + place without the article (in centro, in banca).
+- u7 p2: imperative with Lei (giri, vada, prenda) given as forms to learn; the tu imperative and the negative are in a tip.
+- u7 p3: *convalidare* the ticket is general practice on Italian trains and buses; ticket prices and times are invented.
+- u7 p4: the city text and the ticket machine are invented. New speaker role added to audio.js: Bigliettaio (man's voice).
+- u8 p1: participles in -ato / -uto / -ito and the irregular ones (fatto, preso, visto, letto, scritto, detto, stato); *già* between auxiliary and participle.
+- u8 p2: essere with verbs of movement and change of state; agreement with the subject; reflexive verbs mentioned.
+- u8 p3: *era*, *c’era* and *faceva* are used as fixed forms of the imperfect before it is taught; check this is acceptable.
+- u8 p4: the weekend text is invented.
+
+## Italian A2
+- u1 p1: *penso che sia* taught as a fixed phrase; the subjunctive is not explained yet.
+- u1 p2: più … di versus più … che; migliore / meglio; pronoun after di (di me).
+- u1 p3: direct object pronouns lo, la, li, le; agreement in the passato prossimo is mentioned for the next unit.
+- u1 p4: the letter and names are invented.
+- u2 p1: irregular participles (messo, chiesto, aperto, chiuso, risposto, vinto) and già / ancora between the auxiliary and the participle.
+- u2 p2: reflexive verbs in the passato prossimo always take essere; the participle agrees with the subject.
+- u2 p3: *fa* (ago), *da* + present, *per* + past; check the explanation of da versus per.
+- u2 p4: the email is invented.
+- u3 p1: imperfetto endings for -are / -ere / -ire and the irregular stems (fare, dire, bere); essere has its own forms.
+- u3 p3: passato prossimo versus imperfetto as event versus background; *mentre* in a tip; the example *ci sono già stato* uses *ci* before it is taught.
+- u3 p4: the school memories are invented; the teacher’s name Rossi is fictional.
+- u4 p1: molto / troppo / tanto as adjectives agreeing with the noun; ci vuole / ci vogliono; un etto as a common measure.
+- u4 p2: ne for di + noun and for quantities; *ce ne sono* and *non ce n’è*; ne attached to the infinitive.
+- u4 p3: tu imperative (taglia, aggiungi, cuoci) and voi imperative; negative tu with non + infinitive; irregular tu forms only recognised.
+- u4 p4: prices in the leaflet are invented. New speaker role added to audio.js: Fruttivendolo (man's voice).
+- u5 p1: *mi fa male / mi fanno male* with the subject agreeing, and *ho mal di* + body part.
+- u5 p2: *dovrebbe* taught as a fixed phrase; Lei imperative and tu imperative with attached pronouns (riposati).
+- u5 p3: emergency numbers (118 for an ambulance, 112 in Europe) are stated in a tip; please verify. The doctor’s name and address are invented.
+- u5 p4: tessera sanitaria mentioned for Italy; e-mail at example.com. New speaker role added to audio.js: Farmacista (woman's voice).
+- u6 p1: no article after essere + job, article with an adjective; feminine forms (ingegnera, studentessa) given as in current usage.
+- u6 p2: gli (him and, in everyday speech, them), le, Le; loro mentioned as the formal plural.
+- u6 p3: phone phrases (Pronto, Chi parla?, Resti in linea, Gliela passo) are standard in Italy; *gliela* appears before it is explained.
+- u6 p4: the job advert, e-mail and company are invented; e-mail at example.com.
+- u7 p1: a + city, in + country or region, negli / nelle for plural countries; di + city and da + country for origin.
+- u7 p2: plans expressed with the present and *stare per*; the simple future is left for u8. Hotel dialogue and prices are invented.
+- u7 p3: weather phrases (fa, c’è, è, piove, nevica); the forecast uses the present with domani.
+- u7 p4: hotel e-mail at example.com; Liguria and the Cinque Terre are real places named in a postcard.
+- u8 p1: dates written with *il* + number (*il dodici marzo*) and *il primo maggio*; months and days in lower case.
+- u8 p2: simple future endings with the a to e change in -are verbs; spelling of cercherò, mangerò; eight irregular stems.
+- u8 p3: *se* + present + future, with a note that the present is common in the result in everyday Italian.
+- u8 p4: the invitation and reply are invented; e-mail at example.com.
+
+## Italian B1
+- u1 p1: habit in the past with *ogni domenica* / *ogni estate* taken as imperfetto only; please confirm no natural passato prossimo reading is left in those choice items.
+- u1 p2: trapassato prossimo of *cominciare* (*il film era già cominciato*) and the transform answers accepted with or without *già*.
+- u1 p3: *finché non* + passato prossimo (until), and *dopo che* + passato prossimo, as everyday forms.
+- u1 p4: nonna Rosa's story is invented; Milano is named as a city only.
+- u2 p1: *ci* for places and *a* + thing; *ci* = us/each other mentioned in one tip; *andarci* with the joined infinitive.
+- u2 p2: agreement of the participle with *ne* for a quantity (*Ne ho mangiate due*) is taught as the rule; please confirm for the level that *Ne ho mangiato due* should not be accepted in the choice item.
+- u2 p3: *glie-* forms, *gliel’ho* and *gliele ho date* (no elision before *le*), imperative *mandamelo*, *me ne vado*.
+- u2 p4: the parcel chat is invented; no real shops or couriers named.
+- u3 p1: condizionale presente of regular verbs; *Mi piacerebbe* and *prenderei* as polite orders at a bar.
+- u3 p2: *Potrebbe / Le dispiacerebbe* for polite requests with *Lei*; *Mi daresti* accepted as the only answer in the transform item.
+- u3 p3: first look at the condizionale passato (*avrei dovuto*, *sarebbe arrivato*) used for advice and reported plans; kept very short for B1.
+- u3 p4: the course e-mail and its reply are invented; address at example.com, price and dates are made up.
+- u4 p1: tip says the indicative after *penso che* is common in speech but the congiuntivo is the standard form; please confirm the wording.
+- u4 p2: congiuntivo presente forms, including *-isc-* verbs and the spelling of *cerchi, paghi, mangi, studi*.
+- u4 p3: *spero di* + infinitive when the subject is the same and *che* + congiuntivo when it changes; *bisogna che* taught as a congiuntivo trigger.
+- u4 p4: the forum posts are invented, with first names only.
+- u5 p1: *da* + present against *per* + passato prossimo for the length of a job; *mi occupo di* and *so* + infinitive for skills.
+- u5 p2: *che*, *cui*, *dove* and *quello che*; *dove* accepted as well as *in cui* for places.
+- u5 p3: formal register (*Gentile …, Le scrivo per …, Cordiali saluti*); capital *Le / La* in formal writing; fictional phone number 055 555 0123.
+- u5 p4: the job advert and cover e-mail are invented; e-mail addresses at example.com; no real hotel or person named.
+- u6 p1: *si impersonale* and *si passivo* with the verb agreeing with a plural object; *ci si* with reflexive verbs; *si è lavorato*, *si sono venduti*.
+- u6 p2: passive with *essere* and *venire*, *da* for the agent, *andare* for necessity (*va compilato*); *essere* chosen in the passato prossimo.
+- u6 p3: reported speech with the tense shifts after a past reporting verb; time words (*il giorno dopo*, *lì*); please check the accepted answers in the transform item with *il giorno seguente*.
+- u6 p4: the news item about a library is invented and general; the comment is signed with a first name only.
+- u7 p1: congiuntivo imperfetto after past verbs of opinion and hope (*pensavo che fosse*); irregular stems of fare, dire, dare, stare, bere.
+- u7 p2: *se* + congiuntivo imperfetto + condizionale for unreal present situations; the past unreal (*se avessi avuto … avrei …*) is left for B2.
+- u7 p3: *Se fossi in te*, *vorrei che tu venissi*, *magari* + congiuntivo imperfetto, *come se*; the *Vieni? – Magari!* use is noted in a tip.
+- u7 p4: the interview with a baker is invented; no real place or person is named.
+- u8 p1: gerundio, *stare* + gerundio for an action in progress, *dopo aver* + participle, *senza* and *invece di* + infinitive.
+- u8 p2: absolute superlative with the *h* spelling (*lunghissimo, antichissimo*); the congiuntivo after a relative superlative in a tip (*il più bello che abbia visto*); connectors *anche se, siccome, quindi, però, tuttavia*.
+- u8 p3: the four-step argument (opinion, reason, example, conclusion) is a writing model; please check that it reads naturally.
+- u8 p4: the letter to the editor is invented; the street name is made up and Luca Ferri is a fictional name.
+
+## Italian B2
+- u1 p1: futuro anteriore after *appena, quando, dopo che, una volta che*; tip says the simple future is common in speech.
+- u1 p2: future and futuro anteriore for guesses (*sarà, avrà perso*); please check the sort item *Saranno le sei* as a guess.
+- u1 p3: passato remoto of regular and ten irregular verbs (lui/lei and loro); tip on north and centre/south use in speech; *credé* and *credette* both listed.
+- u1 p4: the tale of Gino and the bridge is invented; no real place named.
+- u2 p1: congiuntivo passato after opinion, feeling and possibility; *Credo che Anna sia già uscita* kept as the only defensible choice against the indicative.
+- u2 p2: congiuntivo trapassato and condizionale passato in one table; *Avrei voluto venire* and a future seen from the past (*sarebbe venuto*).
+- u2 p3: four kinds of if, including the mixed type; a tip says the imperfetto in both parts (*Se lo sapevo, venivo*) is informal.
+- u2 p4: the letter is invented; Lisbon is named as a city only.
+- u3 p1: benché, sebbene, per quanto + congiuntivo; anche se + indicative; nonostante + noun (and nonostante che + congiuntivo in a tip); *pur* + gerundio.
+- u3 p2: affinché, purché, a condizione che, a patto che, a meno che non, nel caso in cui; tip on *perché* as cause (indicative) and purpose (congiuntivo).
+- u3 p3: prima che, senza che, come se, in modo che against the infinitive forms when the subject is the same; *dopo che* + indicative.
+- u3 p4: the opinion piece on public transport is invented and general; no real city or company named.
+- u4 p1: il quale, il cui, chi, ciò che / quello che / quanto; *di cui* against *il cui* in a tip.
+- u4 p2: congiuntivo in relative clauses (wanted but not known, superlative, unico, nessuno); *C’è un negozio che venda questo?* kept as a question about an unknown shop.
+- u4 p3: restrictive and appositive clauses with commas, *il che*, *cosa che*, and reduced relative clauses with the participle; the present participle (*aventi diritto*) is only mentioned.
+- u4 p4: the article about a harbour district is invented and general; no real city named.
+- u5 p1: media vocabulary and collocations (diffondere/smentire/verificare); *fare informazione* explained as to do journalism.
+- u5 p2: *fare / lasciare / farsi* + infinitive and *andare* + participle for necessity; the participle with a pronoun (*l’ho fatta riparare*) is left out on purpose.
+- u5 p3: discourse markers (*del resto, in effetti, d’altronde, anzi, tuttavia, insomma, in fondo*); please check the tip on *anzi*.
+- u5 p4: the opinion article and the reader’s reply are invented and general; the reply is signed with a first name only.
+- u6 p1: participle clauses (*Finito il lavoro*, *Arrivati a casa*) and gerundio composto (*Avendo finito*, *Essendo arrivato*), with agreement and the same-subject rule.
+- u6 p2: nominalisation with common verb-noun pairs and support verbs (*effettuare, presentare, procedere a*).
+- u6 p3: structure and set phrases of a complaint and a reply (*Con la presente, In merito a, pertanto, abbiamo provveduto a, riscontro*); the transform item accepts two forms of *Si prega di rispondere*.
+- u6 p4: the complaint and the reply are invented; order number and dates are made up and no company is named.
+- u7 p1: vocabulary of plot and criticism; verbs of feeling with the person as object (*La trama mi ha coinvolto*); colloc items check *girare, scrivere, allestire*.
+- u7 p2: qualunque, chiunque, dovunque, comunque, per quanto + congiuntivo; the tip separates *comunque* alone (anyway) from *comunque* + congiuntivo.
+- u7 p3: discourse markers for reviews (*tutto sommato, a dire il vero, in fondo, per certi versi, di fatto*); please check the tip contrasting *in realtà* and *in effetti*.
+- u7 p4: the exhibition review is invented; no real museum, artist or city named.
+- u8 p1: *dovere / potere* for probability, impossibility and regret, with the past infinitive (*deve essere stato*); the auxiliary of the infinitive with a modal (*ho dovuto lavorare*, *sono dovuto partire*).
+- u8 p2: cause and result connectors (*dato che, visto che, a causa di, grazie a, perciò, di conseguenza, così … che*); transform item accepts *perciò, quindi, dunque*.
+- u8 p3: abstract vocabulary and the phrases *da un lato … dall’altro, a ben vedere, in conclusione*.
+- u8 p4: the essay on technology is invented and general; it does not name any product or company.
+
+## Portuguese A1
+- u1 p1: greetings of Portugal; *você* described as distant in Portugal and normal in Brazil; polite forms *o senhor / a senhora / Dona Rosa*.
+- u1 p2: *chamar-se* with the pronoun after the verb in statements (*chamo-me*) and before it in questions (*Como te chamas?*); *Sou do Porto* with the article; list of nationalities.
+- u1 p3: European letter names (*dâblio*, *ípsilon*, *capa*), numbers 0 to 20 with *dezasseis, dezassete, dezanove*, *falar* and *um pouco de*.
+- u1 p4: the three profiles are invented; Faro, Porto and São Paulo are named as cities only.
+- u2 p1: *ter* with *tem / têm* accent; family words; numbers 20 to 100 with *e* before the units; *filho único / filha única*.
+- u2 p2: possessives with the article (Portugal) and *dele / dela* for clarity; a tip says Brazilian speakers often drop the article.
+- u2 p3: adjective agreement including *-e* and consonant adjectives (*jovem, jovens*); *cabelo curto, olhos castanhos* with *ter*.
+- u2 p4: the message is invented; family names are made up.
+- u3 p1: genders and plurals (*pão / pães*, *mulher / mulheres*); *sumo* in Portugal, *suco* in Brazil.
+- u3 p2: regular present of -ar, -er, -ir (falar, comer, abrir); *viver* as an -er verb in the sort item.
+- u3 p3: *Queria …, se faz favor*, *bica* and *galão* explained as common names; prices with *euros e cêntimos*; please check the tip on *uma bica* against *um café*.
+- u3 p4: the menu of Café da Praça and its prices are invented; the shopping list is invented.
+- u4 p1: *há* and *ter* for rooms; T1, T2 and T3 explained; *casa de banho* in Portugal and *banheiro* in Brazil.
+- u4 p2: *estar* for place against *ser*; *há* for a new thing and *está* for a known thing.
+- u4 p3: prepositions of place with the contractions *no, na, do, da, ao, à*; *em frente de* used (Portugal also says *em frente a*).
+- u4 p4: the flat advert (Coimbra, rent in euros) and the e-mail are invented; address at example.com.
+- u5 p1: time with *é / são* and *à / às*; *quatro menos um quarto* for 3:45; days with *na segunda-feira* and *às segundas*.
+- u5 p2: reflexive pronoun after the verb in statements and before it in negatives and questions with a question word; the choice items mark the Brazilian order (*Me levanto*) as wrong for Portugal, so please confirm that is the right call at A1.
+- u5 p3: fazer, ir, sair, ver, pôr; *veem* without circumflex (new spelling), *vês / vê* with accent.
+- u5 p4: the baker's day is invented; Manuel is a made-up name.
+- u6 p1: *gostar de* with the contractions *do, da, dos*; *eu também / eu também não*.
+- u6 p2: frequency words and *nunca* without *não*; *estar a* + infinitive (Brazil: *estar* + gerund).
+- u6 p3: *querer* and *poder*, *ter de*; the weather with *estar*, and a tip that Brazil also says *Faz calor*; please check *Combinado!* in the second dialogue.
+- u6 p4: the notices are invented; address at example.com.
+- u7 p1: *ficar* for location, *aqui / ali / lá*; *paragem* in Portugal and *ponto* in Brazil.
+- u7 p2: *ir a* with contractions, *ir para casa / para o trabalho*, *de autocarro*, *a pé*; the ticket dialogue price (18,50 euros) and times are invented.
+- u7 p3: directions with the tu form (*segue, vira*) and the polite form (*siga, vire*); *vá* for *ir*.
+- u7 p4: the Coimbra guide only says the city has an old university; the metro notice is invented.
+- u8 p1: clothes, colour agreement (*azul / azuis*, *cor-de-rosa* invariable), este / esse / aquele; *camisola* as a jumper in Portugal.
+- u8 p2: shop phrases; *levo-o / -a / -os / -as* with the pronoun after the verb (Portugal), a tip on the Brazilian way; please check *Fica bem?* in the dialogue.
+- u8 p3: *ir* + infinitive without *a* (Portugal) and time words; *O que vais fazer …?*
+- u8 p4: the sale advert and Clara's message are invented; prices are made up.
+
+## Portuguese A2
+- u1 p1: *ser* for character and *estar* for today; *acho que* + indicative; *trabalhador / trabalhadora*.
+- u1 p2: *mais … do que / que*, *tão … como*, irregular *melhor, pior, maior, menor*; the fix item accepts *do que* and *que*.
+- u1 p3: direct object pronouns after the verb (Portugal), *-lo / -la* after infinitives, *-no / -na* after nasal endings, and before the verb after *não, também, quem*.
+- u1 p4: the letter about the colleague Miguel is invented.
+- u2 p1: pretérito perfeito of regular verbs and *ir / ser*; *falámos* with accent in Portugal against *falamos* in the present (Brazil has no difference).
+- u2 p2: irregular perfeito of fazer, ter, estar, ver, dizer, pôr, vir, ler, dar; tip on *vimos* (ver in the past, vir in the present); reflexive verbs with the pronoun after the verb.
+- u2 p3: *ontem, há + time* (Portugal; *atrás* is Brazilian), *primeiro, depois, finalmente*.
+- u2 p4: the e-mail about a busy week is invented.
+- u3 p1: imperfeito of regular verbs and ser, ter, vir, pôr; *ir* regular (*ia*); accent in the *nós* forms.
+- u3 p2: habits, descriptions, age, weather, *costumar* and *havia*.
+- u3 p3: perfeito against imperfeito, *já / nunca / ainda não* with the perfeito; the gap on weather accepts *estava* and *fazia*.
+- u3 p4: the two school memories (Rui and Clara) are invented; Viseu is named as a place only.
+- u4 p1: quantities with *de*, *meio / meia*, *quanto / quantos*; *muito* and *pouco* agree with the noun.
+- u4 p2: *me, te, lhe, nos, lhes* and the contractions *mo, to, lho, lha*; pronoun before the verb after *não, já, também, nunca* and question words; please check the dialogue *Já lho dei ontem*.
+- u4 p3: imperative of tu (the *ele* form) and você (present subjunctive form), negative tu *não mexas*, pronouns after the verb (*corta-a*).
+- u4 p4: the soup recipe and the market leaflet (prices, hours) are invented; no real market named.
+- u5 p1: body words, *dói-me / doem-me* agreeing with the part of the body, *dor de / dor nas costas*, the pronoun before the verb after *não* and question words.
+- u5 p2: *ter de* for a need, *dever* and *devias* for advice, *é melhor* + infinitive; please check *devias* as the softer form.
+- u5 p3: phone phrases for an appointment (*Queria marcar uma consulta*, *Para quando?*, *Quinta não posso*); *Estou? / Está lá?* mentioned as the phone greeting.
+- u5 p4: the pharmacy leaflet and the confirmation (Dra. Silva, times, *cartão de utente*) are invented.
+- u6 p1: jobs without an article after *ser*; *num / numa*; feminine forms of jobs; *Sei usar o computador*.
+- u6 p2: *há* + time and *desde* with the present, *durante* with the perfeito.
+- u6 p3: phone phrases of Portugal (*Estou?*, *Fala o …*, *Quer deixar recado?*); a tip mentions *Alô?* in Brazil.
+- u6 p4: the job advert and the e-mail (Rafael Costa, Lisbon) are invented; address at example.com.
+- u7 p1: *em / a / de* with cities and countries (*no Brasil, ao Brasil, do Brasil*); *vir* with *vêm*; a tip on *ir para*.
+- u7 p2: hotel and train phrases; *o cais* mentioned for the platform in Portugal and *a plataforma* in Brazil; please confirm.
+- u7 p3: weather with *estar* and *fazer*, *Estão vinte graus*, comparisons; *Está chovendo* mentioned as Brazilian.
+- u7 p4: the hotel confirmation (price, hours) and the postcard are invented; the Algarve is named as a region only.
+- u8 p1: months and dates (*no dia doze de março*), *Parabéns / Feliz aniversário*, invitations; *Feliz Ano Novo* named as Brazilian.
+- u8 p2: futuro simples of regular verbs and eleven irregular stems; a tip says speech often uses *ir* + infinitive.
+- u8 p3: *se* + present for plans (the future subjunctive *Se chover* is only previewed in a tip for B1); *prometo, pretendo, espero*.
+- u8 p4: the invitation card and the reply (Ana, Pedro) are invented; address at example.com.
+
+## Portuguese B1
+- u1 p1: perfeito for events and imperfeito for the scene; *tomar o duche* used for Portugal.
+- u1 p2: mais-que-perfeito composto with *ter*; irregular participles; the literary simple form (*fizera*) only mentioned.
+- u1 p3: *enquanto, de repente, assim que, antes de / depois de* + infinitive, *desde que* + present; the dialogue uses the personal infinitive *até chegar o porteiro*, which is taught in unit 8.
+- u1 p4: grandmother Rosa's story is invented; Lisbon is named as a city only.
+- u2 p1: pronoun after the verb in a normal sentence and before it after negatives, *já / ainda / sempre / também / só*, conjunctions and question words; tip on the Brazilian order.
+- u2 p2: pronoun with an infinitive (*vê-lo, ajudá-la*), *ter de o fazer / fazê-lo*, mesóclise in the formal future (*dir-lhe-ei*); please check that *Direi-lhe* is rightly marked as wrong.
+- u2 p3: combined pronouns *mo, to, lho, no-lo* and *se* for things in general and impersonal sentences.
+- u2 p4: the parcel chat is invented; no courier named.
+- u3 p1: condicional of regular verbs; tip says the imperfeito (*Queria, Gostava*) is the usual polite form in speech and the condicional is more formal.
+- u3 p2: irregular stems; *Podia / Poderia ajudar-me?*, *Importava-se de …?*; please check that the select item prefers *Importavas-te de* for a friend.
+- u3 p3: advice with *no teu lugar*, *devias / deverias*, *era melhor*, *seria bom*; the condicional for a plan reported from the past, with a tip on the imperfeito used in speech.
+- u3 p4: the e-mail and its reply are invented (Elena Duarte); address at example.com; dates and price made up.
+- u4 p1: *acho que* + indicative and *não acho que / duvido que* + subjunctive, the rule for Portuguese; please confirm the wording of the tip.
+- u4 p2: presente do conjuntivo built from the *eu* form, irregular verbs including *dê, deem, vá, vão, haja*; spelling changes of *-car, -çar, -gar*.
+- u4 p3: *espero / quero / lamento / receio / é importante que* + subjunctive, the infinitive for the same subject, *talvez* and *pode ser que* + subjunctive.
+- u4 p4: the forum posts are invented, with first names only.
+- u5 p1: interview vocabulary; *há / desde* with the present and *durante* with the perfeito; *a tempo inteiro* (Brazil: *em tempo integral*).
+- u5 p2: *que, quem, onde, o que, o qual, cujo*; *quem* only after a preposition and for people; please confirm the tip about speech.
+- u5 p3: formal register of Portugal (*Exmo. Senhor, Venho por este meio, Agradeço desde já a atenção dispensada, Com os melhores cumprimentos*) and titles (*Dr., Eng.*); fictional phone number 210 555 0123.
+- u5 p4: the job advert and cover e-mail (Clara Moreira) are invented; e-mail addresses at example.com.
+- u6 p1: passive with *ser* + participle and *por* (*pela, pelo*); *ser* for the action and *estar* for the result.
+- u6 p2: *dizem que / diz-se que*, *toda a gente*, *a gente*; participles with two forms (*aceitado / aceite, entregado / entregue*, *pago*); please check the rule and the tip on speech.
+- u6 p3: reported speech after the perfeito, with *para* + infinitive for commands and *se* for questions; time words *no dia seguinte, ali*.
+- u6 p4: the library news item and comment are invented; the comment is signed with a first name only.
+- u7 p1: imperfeito do conjuntivo from the *eles* form of the perfeito, with *fosse, tivesse, fizesse, pudesse, quisesse, viesse*; accents in the *nós* forms (*falássemos, fôssemos*).
+- u7 p2: *se* + imperfeito do conjuntivo + condicional and *Se eu fosse a ti*; tip on the informal imperfeito in both parts (*Se tinha tempo, viajava*).
+- u7 p3: futuro do conjuntivo after *se, quando, assim que, quem*, with the irregular forms *tiver, fizer, puder, for, vier*; please check the tip comparing it with the infinitivo pessoal.
+- u7 p4: the baker's interview is invented; no real place or person is named.
+- u8 p1: infinitivo pessoal (*para falarmos, ao chegarem, é importante estudares*) against the plain infinitive when the subject is the same; please check the rule.
+- u8 p2: relative and absolute superlative (*belíssimo, riquíssimo, antiquíssima*), *embora* and *mesmo que* + subjunctive, *apesar de, em vez de, portanto, no entanto*.
+- u8 p3: city and environment vocabulary and the four-step argument; please check that it reads naturally.
+- u8 p4: the letter to the editor is invented; the street name is made up and Luís Ferreira is a fictional name.
+
+## Portuguese B2
+- u1 p1: pretérito perfeito composto taught as repeated or continuous up to now (not the English present perfect), against the perfeito simples.
+- u1 p2: futuro composto and the future for guesses (*será, terá perdido*).
+- u1 p3: mais-que-perfeito simples (*fizera, dissera, vira, saíra*) for recognition, with the *nós* forms listed; please check the accents.
+- u1 p4: the tale of Manuel and the bridge is invented; no real place named.
+- u2 p1: pretérito perfeito do conjuntivo after doubt, denial and feeling; *acho que* + indicative for a plain opinion.
+- u2 p2: mais-que-perfeito do conjuntivo and condicional composto, *devia / deveria ter* for a regret.
+- u2 p3: four kinds of if, with *se + futuro do conjuntivo* for the possible type; a tip on the informal *Se tinha sabido, vinha*; *quem me dera, se ao menos, pena que*.
+- u2 p4: the letter about the job in London is invented; London is named as a city only.
+- u3 p1: embora, ainda que, por mais que, mesmo que + conjuntivo; apesar de + noun or infinitive. Check the se bem que row (indicative or subjunctive).
+- u3 p2: para que, desde que, a não ser que, caso. Native check of the two meanings of desde que.
+- u3 p3: antes que / antes de, sem que, como se; same-subject infinitive against different-subject conjuntivo.
+- u3 p4: opinion piece on public transport; check register.
+- u4 p1: o qual, cujo, quem, tudo o que / tudo quanto. Check the Brazil note on cujo.
+- u4 p2: indicative for known, conjuntivo for unknown or none; superlative tip says both are heard. Native check.
+- u4 p3: restrictive against appositive commas; participle in place of a relative clause.
+- u4 p4: article on a riverside quarter is invented; no real city is named.
+- u5 p1: news collocations; dar / fazer uma entrevista tip. Native check.
+- u5 p2: mandar, deixar, fazer + infinitive with the pronoun on the first verb; ser against estar with the participle.
+- u5 p3: debate markers and softening; check the pois and se calhar tips.
+- u5 p4: opinion article and reader reply are invented.
+- u6 p1: participle clause (feito o trabalho) and tendo + participle; agreement with the following noun. Native check.
+- u6 p2: nouns in place of verbs; efetuar, apresentar, solicitar collocations.
+- u6 p3: formal letter phrases; Portugal against Brazil closings in the tip.
+- u6 p4: complaint and reply are invented (name, date, company).
+- u7 p1: vocabulary of books, film and exhibitions; personagem is feminine; realizador against diretor. Native check.
+- u7 p2: qualquer que seja, quem quer que, onde quer que, seja como for, por muito que.
+- u7 p3: review markers (no fundo, no geral, em suma, ainda assim).
+- u7 p4: exhibition review is invented; no real museum is named.
+- u8 p1: deve ter / pode ter / devia ter + participle; pode ser que. Native check of the guess against regret distinction.
+- u8 p2: visto que, devido a, graças a, por culpa de, por isso, consequentemente.
+- u8 p3: abstract nouns, há quem + conjuntivo, caber a.
+- u8 p4: essay is invented; check the dermos form (futuro do conjuntivo of dar).
+
+## English A1
+- u1 p1: greetings; the tip on How do you do? and What's up? Native check.
+- u1 p2: be, short forms and short answers (Yes, I am).
+- u1 p3: alphabet respelling (zed or zee), numbers to 20, nationalities; the British and English tip.
+- u1 p4: profiles are invented.
+- u2 p1: a and an by sound, plurals, this/that/these/those. Native check.
+- u2 p2: possessive adjectives, 's, family words; its against it's.
+- u2 p3: have got (British); adjectives before the noun. Check the 's got tip.
+- u2 p4: the family is invented.
+- u3 p1: present simple with I, you, we, they; don't. Native check.
+- u3 p2: he/she/it spelling, does and doesn't, short answers.
+- u3 p3: telling the time (past, to; USA after), days, at, in, on; have for meals.
+- u3 p4: the baker's day is invented; Bristol is a real city, no other real names.
+- u4 p1: food words, a/an/some, like; the some/any example is a preview. Native check.
+- u4 p2: ordering politely; the tip says I want sounds rude. Check the strength of that claim.
+- u4 p3: numbers to 100, prices in pounds and euros.
+- u4 p4: menu and prices are invented; the totals add up (6.50 and 5.50 make 12).
+- u5 p1: rooms, there is and there are, some and any; flat against apartment. Native check.
+- u5 p2: in, on, under, next to, in front of; at home, on the wall.
+- u5 p3: places in a town; newsagent's, chemist's and high street tip.
+- u5 p4: the email is invented; Manchester is a real city, no other real names.
+- u6 p1: can and can't; the tip on the vowel of can against can't. Native check.
+- u6 p2: Can I and Can you; Could and May in the tip.
+- u6 p3: like + -ing, play, go, do, how often; check that I like to swim is mentioned fairly.
+- u6 p4: the club and the members are invented.
+- u7 p1: clothes and colours; British and American words in the tip. Native check.
+- u7 p2: weather, months, seasons (northern hemisphere); autumn only, with fall in a tip would be worth adding.
+- u7 p3: present continuous, -ing spelling, contrast with the present simple.
+- u7 p4: the two messages are invented; the seaside is not named.
+- u8 p1: transport, by + transport, timetable questions; tube against subway. Native check.
+- u8 p2: single and return (British) against one-way and round-trip; phrases for not understanding.
+- u8 p3: imperatives and directions; ordinals first to third.
+- u8 p4: the message and the directions are invented; Leeds is a real city, the street names are not.
+
+## Spanish B2
+- u1 p1: futuro and futuro perfecto for guesses, condicional for the past. Native check of the Latin America remark.
+- u1 p2: time periphrases; recién in Argentina.
+- u1 p3: time clauses with indicative or subjunctive; apenas había + cuando; nada más + infinitive.
+- u1 p4: the narrative is invented.
+- u2 p1: imperfecto de subjuntivo forms; -ra and -se. Native check of the -se remark.
+- u2 p2: kinds of si; advice with si yo fuera tú.
+- u2 p3: ojalá, como si, quisiera, past sequence of tenses.
+- u2 p4: the interview is invented.
+- u3 p1: perfecto de subjuntivo; cuando hayas terminado. Native check.
+- u3 p2: hubiera and habría, deber and poder + haber; the tip says hubiera often replaces habría.
+- u3 p3: si-clauses about the past, mixed, ojalá hubiera, de haberlo sabido.
+- u3 p4: the letter is invented; Edimburgo is a real city.
+- u4 p1: aunque with indicative or subjunctive, por mucho que, a pesar de que. Native check.
+- u4 p2: para que, con tal de que, siempre que, a menos que, en caso de que.
+- u4 p3: antes de que, sin que, de modo que (purpose or result); same subject takes the infinitive.
+- u4 p4: the opinion piece is invented.
+- u5 p1: el cual, cuyo, quien, lo que, lo cual; the tip on el que and on cuyo in Latin America. Native check.
+- u5 p2: indicative for known, subjunctive for unknown; personal a with alguien and nadie.
+- u5 p3: restrictive against explanatory commas; participle for a relative clause.
+- u5 p4: the article is invented; no real city is named.
+- u6 p1: news collocations; bulo in Spain, rumor in Latin America; dar and hacer una entrevista. Native check.
+- u6 p2: mandar, dejar, hacer + infinitive; ser against estar + participle; the tip prefers se in speech.
+- u6 p3: debate markers; a lo mejor, quizá, vale, pues, bueno, dale in the tip.
+- u6 p4: the article and the reply are invented.
+- u7 p1: participle clauses and habiendo + participio; agreement. Native check.
+- u7 p2: nouns for verbs; efectuar, presentar, solicitar.
+- u7 p3: formal letter phrases (Muy señores míos, Le agradecería que + imperfecto de subjuntivo); Latin America openings in the tip.
+- u7 p4: complaint and reply are invented (name, date, company).
+- u8 p1: vocabulary of books, film and exhibitions; personaje is masculine; trama and argumento in the tip. Native check.
+- u8 p2: cualquiera que sea, quienquiera que, dondequiera que, pase lo que pase and the other repeated-verb expressions.
+- u8 p3: cause and effect, de ahí que + subjunctive; hay quien takes the indicative; abstract vocabulary.
+- u8 p4: the essay is invented; check debió de ser as a guess.
+
+## German C1
+- u1 p1: Mittelfeld order (pronouns, dative before accusative, te-ka-mo-lo). Native check.
+- u1 p2: Vorfeld and Nachfeld; the remark on spoken afterthoughts.
+- u1 p3: es ist … der, was … ist, wer … der; sein agrees with the noun after was.
+- u1 p4: the speech is invented.
+- u2 p1: sollen and wollen as reports; Infinitiv Perfekt. Native check.
+- u2 p2: müssen, dürfte, können, mögen; the tip on muss nicht against kann nicht.
+- u2 p3: scheinen, drohen, versprechen + zu; anscheinend against scheinbar; wohl.
+- u2 p4: the news report is invented; no real place or people.
+- u3 p1: formal prepositions and their case; zufolge after the noun; laut, betreffend. Native check.
+- u3 p2: Nominalstil against Verbalstil; anhand, mittels, im Rahmen, im Zuge, im Falle.
+- u3 p3: Funktionsverbgefüge; check the list.
+- u3 p4: the letter from the Bürgeramt is invented; the town is not real.
+- u4 p1: wenngleich, obgleich, wohingegen, zumal, geschweige denn. Native check.
+- u4 p2: sofern, es sei denn, indem, ohne dass, statt zu; same subject rule.
+- u4 p3: je nachdem, insofern … als, umso … als, als ob with Konjunktiv II.
+- u4 p4: the reader's letter is invented.
+- u5 p1: Vorgangspassiv, Zustandspassiv, passive without a subject, von and durch. Native check.
+- u5 p2: participle attributes and their relative clauses; zu + Partizip I.
+- u5 p3: strength of verbs for results, hedges, Konjunktiv I in quotations.
+- u5 p4: the study is invented and has no figures.
+- u6 p1: inseparable prefixes ver-, ent-, er-, zer-, be-; über-, um-, durch- separable against inseparable. Native check.
+- u6 p2: suffixes and gender, linking sounds in compounds; -nis gender note.
+- u6 p3: Denglisch and false anglicisms (Handy, Beamer, Smoking, Oldtimer); Natel in Switzerland; word field of sagen.
+- u6 p4: the essay is invented; the quoted verb downloadet is in quotation marks on purpose.
+- u7 p1: three levels and Sie against du. Native check.
+- u7 p2: idioms and proverbs; the tip on Hals- und Beinbruch.
+- u7 p3: Austrian and Swiss words, ss in Switzerland, greetings, modal particles. Check Moin and Gehsteig.
+- u7 p4: the conversation is invented.
+- u8 p1: structure of a Kommentar and an Erörterung; phrases for each step. Native check.
+- u8 p2: zwar … aber, gleichwohl, immerhin, zumindest; rhetorical devices.
+- u8 p3: phrases for taking the floor, interrupting, agreeing and disagreeing.
+- u8 p4: the commentary is invented.
+
+## French C1
+- u1 p1: passé simple forms; spoken against written use. Native check.
+- u1 p2: imparfait, passé simple and passé antérieur in narration.
+- u1 p3: imparfait and plus-que-parfait du subjonctif, with modern equivalents.
+- u1 p4: the literary extract is invented.
+- u2 p1: lequel, auquel, duquel, dont, ce dont; qui against lequel for people. Native check.
+- u2 p2: celui qui, quiconque, n'importe lequel, chacun, l'un et l'autre.
+- u2 p3: agreement of the past participle (avoir, être, pronominal, en).
+- u2 p4: the article on spelling reform is invented.
+- u3 p1: three registers in words and syntax; Quebec, Belgian and Swiss remarks. Native check.
+- u3 p2: verlan, shortened words, anglicisms and recommended French terms (courriel, mot-dièse, infox).
+- u3 p3: openings and closings by situation; tu and vous.
+- u3 p4: the three messages are invented.
+- u4 p1: prepositional phrases of formal French; Belgium, Switzerland and Quebec remark. Native check.
+- u4 p2: administrative verbs and formulas; ci-joint agreement.
+- u4 p3: formal request and reply formulas; reconnaissant(e).
+- u4 p4: the letter and the reply are invented (name, dates, company).
+- u5 p1: quel que soit, qui que, quoi que, où que, quelque … que. Native check.
+- u5 p2: si, aussi, pour, tout … que; que … ou que; soit … soit.
+- u5 p3: à supposer que, en admettant que, pour peu que, sans que, quitte à.
+- u5 p4: the debate report is invented; no real town.
+- u6 p1: connectors of argument; the tip on or and par contre. Native check.
+- u6 p2: il n'en reste pas moins que, force est de constater, on a beau, encore faut-il que.
+- u6 p3: structure of a commentary; rhetorical question, litote, antithesis, hyperbole.
+- u6 p4: the commentary is invented.
+- u7 p1: everyday idioms; Belgian il drache in the tip. Native check.
+- u7 p2: proverbs, similes, metaphors; the similes are neutral on purpose.
+- u7 p3: homophones, puns (au courant, filet), irony; phonetic symbols in the table.
+- u7 p4: the humorous column is invented.
+- u8 p1: reporting verbs, tense changes in indirect speech. Native check.
+- u8 p2: selon, d'après, aux dires de, à en croire; free indirect speech.
+- u8 p3: how to write a résumé; nominalisation.
+- u8 p4: the article and its summary are invented; no real library or town.
+
+## Italian C1
+- u1 p1: passato remoto irregular forms; regional remark on speech. Native check.
+- u1 p2: trapassato remoto and imperfetto narrativo.
+- u1 p3: participio assoluto, free indirect speech, inverted dialogue tags.
+- u1 p4: the extract is invented.
+- u2 p1: dislocation left and right; agreement of the participle with lo, la, li, le. Native check.
+- u2 p2: cleft sentences; sono io che ho against ha.
+- u2 p3: neostandard features and what to avoid in writing; the remark about Tuscany.
+- u2 p4: the speech is invented.
+- u3 p1: altered nouns (-ino, -etto, -one, -accio) and lexicalised ones. Native check.
+- u3 p2: prefixes and suffixes and the gender they give.
+- u3 p3: parasynthetic verbs, compounds and their plurals, loanwords; check capolavoro and cassaforte plurals.
+- u3 p4: the essay is invented.
+- u4 p1: three registers; Lei, voi in the south, tu. Native check.
+- u4 p2: anguria, cocomero, melone d'acqua; natel in Ticino; mica, già, magari, boh, dai.
+- u4 p3: idioms and proverbs; check piove a catinelle and essere al verde.
+- u4 p4: the conversation is invented; Bologna, Rome, Milan and Palermo are real cities.
+- u5 p1: formal prepositional phrases (in merito a, a seguito di, ai fini di, previa). Native check.
+- u5 p2: administrative verbs (inoltrare, rilasciare, evadere, essere tenuto a). Native check.
+- u5 p3: request and reply formulas; Le sarei grato se volesse.
+- u5 p4: the letters are invented; names are fictional.
+- u6 p1: qualora, a patto che, purché, ammesso che with the subjunctive. Native check.
+- u6 p2: seppure, ancorché, quand'anche, se non fosse per, casomai; check register.
+- u6 p3: spoken imperfetto hypotheses (Se lo sapevo, venivo) marked as spoken only.
+- u6 p4: the debate is invented; names are fictional.
+- u7 p1: connectors tuttavia, peraltro, d'altronde, anzi, infatti. Native check.
+- u7 p2: concession and refutation; mood after è pur vero che is flexible, check.
+- u7 p3: rhetorical figures; litote examples need a native check.
+- u7 p4: the commentary is invented; the library and the council are fictional.
+- u8 p1: reporting verbs with nuance; pretendere as a false friend. Native check.
+- u8 p2: indirect speech; time words and the condizionale composto.
+- u8 p3: sources and the condizionale of reported doubt; check the subjunctive after sembra che.
+- u8 p4: the article and summary are invented; the town, the bridge and the mayor are fictional.
+
+## Portuguese C1
+- u1 p1: mesoclisis (dar-te-ei, dir-lhe-ia); check that the table's everyday alternatives are natural.
+- u1 p2: adjective position and meaning (grande homem, velho amigo, pobre homem); check each pair.
+- u1 p3: free indirect speech, historic present, dialogue dash; native check.
+- u1 p4: the extract is invented; the 1998 flood is fictional.
+- u2 p1: triggers of proclisis; check the optional cases after adverbs of time.
+- u2 p2: personal infinitive; check Vi-os sair / Vi-os saírem and the Brazil remark.
+- u2 p3: futuro do conjuntivo and combined pronouns (mo, to, lho, no-lo); native check.
+- u2 p4: the conversation is invented; roles only.
+- u3 p1: diminutives, augmentatives, pejoratives; check tempão, ricaço, livreco and the meaning shifts (portão, caixote, cartão).
+- u3 p2: prefixes and hyphen rules of the Acordo Ortográfico (antissocial, anti-higiénico, pré-história, ultrarrápido); native check.
+- u3 p3: parasynthetic verbs and compounds; check the plural of arranha-céus and guarda-chuva.
+- u3 p4: the essay is invented.
+- u4 p1: tu, você, o senhor in Portugal; check the remark on você and the use of Doutor.
+- u4 p2: Portugal, Brazil, Africa; check machimbombo (Mozambique), bué (Angola) and the note on rapariga.
+- u4 p3: idioms and proverbs; check each against a Portuguese source.
+- u4 p4: the conversation is invented; Inês, Rafael and Domingos are fictional.
+- u5 p1: formal prepositional phrases (no âmbito de, ao abrigo de, por força de, a fim de). Native check.
+- u5 p2: passive with se, deferir/indeferir, proceder a; check the note on deferir and diferir.
+- u5 p3: request and reply formulas (Venho por este meio, Agradeço que me seja enviado); check the closing formulas for Portugal.
+- u5 p4: the letters are invented; Luís Neves is fictional.
+- u6 p1: conquanto, nem que, se bem que, uma vez que, porquanto; check the moods, especially se bem que.
+- u6 p2: se + futuro do conjuntivo, fosse como fosse, quer … quer, mal + perfeito; native check.
+- u6 p3: spoken imperfeito hypotheses marked as spoken only; quem me dera and oxalá.
+- u6 p4: the debate is invented; roles only.
+- u7 p1: connectors contudo, todavia, no entanto, aliás, com efeito, em suma. Native check.
+- u7 p2: concession and refutation; check the mood after é verdade que and the sense of nem por isso.
+- u7 p3: rhetorical figures; litotes examples need a native check.
+- u7 p4: the commentary is invented; the library and the council are fictional.
+- u8 p1: reporting verbs; pretender as a false friend; check the infinitive constructions.
+- u8 p2: indirect speech; time words and the condicional.
+- u8 p3: sources and the condicional of reported doubt; check parece que and não parece que.
+- u8 p4: the article and summary are invented; the town, the bridge and the mayor are fictional.
+
+## Spanish C1
+- u1 p1: pretérito anterior (hubo terminado); recognition only, check the Latin America remark.
+- u1 p2: adjective position and meaning (gran hombre, viejo amigo, pobre hombre, cierta noticia); check each pair.
+- u1 p3: free indirect speech, historic present, raya dialogue; native check.
+- u1 p4: the extract is invented; the 1998 flood is fictional.
+- u2 p1: double pronouns and leísmo; check the RAE remarks and the Latin America note.
+- u2 p2: mood after no es que, el hecho de que, no porque; native check on el hecho de que.
+- u2 p3: futuro de subjuntivo in fixed phrases; recognition only.
+- u2 p4: the conversation is invented; roles only.
+- u3 p1: diminutives, augmentatives, pejoratives; check tiempazo, ricachón, libraco and the meaning shifts (bolsillo, cajón, ventanilla, cordón).
+- u3 p2: prefixes and spelling (antiinflamatorio, reescribir, imposible); check the note on posguerra.
+- u3 p3: parasynthetic verbs and compounds; check the plural of rascacielos and paraguas.
+- u3 p4: the essay is invented.
+- u4 p1: tú, usted, vos, vosotros, ustedes; check the notes on Colombia, Costa Rica and the voseo forms.
+- u4 p2: Spain and Latin America vocabulary and past tenses; check the remark on coger.
+- u4 p3: idioms and proverbs; check each against a Spanish source.
+- u4 p4: the conversation is invented; Inés, Rafael and Martín are fictional.
+- u5 p1: formal prepositional phrases (en virtud de, con arreglo a, en el marco de, a tenor de); check the note on en relación a.
+- u5 p2: passive with se, estimar/desestimar, proceder a, queísmo note; native check.
+- u5 p3: request and reply formulas; check le ruego que and le agradecería que.
+- u5 p4: the letters are invented; Luis Navas is fictional.
+- u6 p1: conditions without si (de haberlo sabido, de no ser por, gerund); native check.
+- u6 p2: como + subjunctive, siempre y cuando, salvo que, puesto que; check the moods.
+- u6 p3: spoken imperfecto hypotheses marked as spoken only; check por si acaso + indicative.
+- u6 p4: the debate is invented; roles only.
+- u7 p1: connectors sin embargo, no obstante, aun así, de hecho, en definitiva. Native check.
+- u7 p2: concession and refutation; check ni mucho menos and the mood after es cierto que.
+- u7 p3: rhetorical figures; litotes examples need a native check.
+- u7 p4: the commentary is invented; the library and the council are fictional.
+- u8 p1: reporting verbs; pretender as a false friend; check the infinitive constructions.
+- u8 p2: indirect speech; time words, the condicional and the subjunctive for orders.
+- u8 p3: sources and the condicional of reported doubt; check parece que and no parece que.
+- u8 p4: the article and summary are invented; the town, the bridge and the mayor are fictional.
+
+## English C2
+- u1 p1: connotation labels for near-synonyms (thrifty, stingy, slender, skinny, gaunt); native check.
+- u1 p2: collocations and binomials; check the "not natural" column.
+- u1 p3: euphemism and understatement; "not bad" as British understatement needs a check.
+- u1 p4: the essay is invented; the protest is fictional.
+- u2 p1: parallelism and periodic sentences; the example sentences are original.
+- u2 p2: substitution and reference (one, do so, the former and the latter); check the note on I hope not.
+- u2 p3: punctuation; the comma-splice rule and the semicolon remarks need a check.
+- u2 p4: the essay is invented.
+- u3 p1: irony, sarcasm, understatement and overstatement; native check on the examples.
+- u3 p2: puns; check sole/soul and two tired/two tyred.
+- u3 p3: less common idioms and phrasal verbs; check British or American labels.
+- u3 p4: the column is invented.
+- u4 p1: hedges and boosters; check ostensibly and purportedly.
+- u4 p2: reporting verbs (contend, posit, concede, allege); check the strength ranking.
+- u4 p3: evaluation and signposting; native check on the sample-size examples.
+- u4 p4: the literature review is invented; no real studies or authors are cited.
+- u5 p1: British, American, Australian, Indian and Scottish features; native check on prepone, do the needful, arvo, ken.
+- u5 p2: informal words and politeness styles; check the generalisations about British and American politeness.
+- u5 p3: legal English and plain English rewrites; check the plain versions keep the meaning.
+- u5 p4: the conversation is invented; Fiona, Dwight, Mia and Anil are fictional.
+- u6 p1: mandative subjunctive and formulaic phrases; check the British should alternative and far be it from me.
+- u6 p2: absolute constructions and reduced clauses; native check on the example register.
+- u6 p3: modals and aspect (will for habit, shall, dare, needn't); check the register notes.
+- u6 p4: the story is invented.
+- u7 p1: ethos, pathos, logos; examples are original.
+- u7 p2: rhetorical devices; check the chiasmus example (Work to live; don't live to work).
+- u7 p3: framing and loaded language; native check on the connotation labels.
+- u7 p4: the speech and commentary are invented; the park and the town are fictional.
+- u8 p1: figurative language; native check on the effect statements.
+- u8 p2: narrative voice and tone; check the tone words (wry, detached, sardonic).
+- u8 p3: point, evidence, explanation; check the advice on tense and quotations.
+- u8 p4: the story and the critical note are invented.
+
+## French C2
+- u1 p1: connotation of near-synonyms (contempler, fixer, épier, svelte, maigre, radin, économe); native check.
+- u1 p2: collocations and fixed pairs; check the "not natural" column.
+- u1 p3: euphemism and litotes; check ce n'est pas rien and plan de sauvegarde de l'emploi.
+- u1 p4: the essay is invented; the protest is fictional.
+- u2 p1: parallelism and periodic sentences; the example sentences are original.
+- u2 p2: pronouns, ce dernier, nominal resumption; check the notes on celui-ci and ce dernier.
+- u2 p3: punctuation and French typography (space before ; : ? !); check the Quebec practice, which often differs.
+- u2 p4: the essay is invented.
+- u3 p1: mood after croire, douter, se douter, superlatives and seul; check the subjunctive after seul and premier.
+- u3 p2: gérondif, participe présent, participe absolu; native check on the adjectif verbal example.
+- u3 p3: expletive ne, ne … que, ne … guère, stylistic inversion; check the register notes.
+- u3 p4: the story is invented.
+- u4 p1: hedges and boosters; check prétendument and soi-disant.
+- u4 p2: reporting verbs (soutenir, avancer, concéder, contester, prétendre); check the nuance of prétendre.
+- u4 p3: evaluation and signposting; check force est de constater and par contre.
+- u4 p4: the literature review is invented; no real studies or authors are cited.
+- u5 p1: vocabulary of France, Quebec, Belgium, Switzerland and Africa; native check on huitante, enjailler, bienvenue and the meal names.
+- u5 p2: verlan and abbreviations; check that each is still current.
+- u5 p3: politeness strategies; check the remark on Belgian and Swiss s'il vous plaît.
+- u5 p4: the conversation is invented; Camille, Jean-Luc, Émilie and Moussa are fictional.
+- u6 p1: legal and formal words (ci-après, nonobstant, aux termes de, ledit); native check on the plain equivalents.
+- u6 p2: plain language rewrites; check the 20-word guideline and that the obligation is kept.
+- u6 p3: obligation, right, prohibition and condition; check à défaut de and faute de.
+- u6 p4: the contract clause is invented; no real contract is quoted.
+- u7 p1: ethos, pathos, logos; examples are original.
+- u7 p2: rhetorical devices; check the chiasmus example (Travailler pour vivre, non vivre pour travailler).
+- u7 p3: framing and loaded language; native check on the connotation labels (plan social, plan de sauvegarde de l'emploi, régime).
+- u7 p4: the speech and commentary are invented; the garden and the town are fictional.
+- u8 p1: figurative language; native check on the effect statements.
+- u8 p2: narrative voice (focalisation) and tone; check the terms.
+- u8 p3: the commentaire plan and the advice on tense and quotations.
+- u8 p4: the story and critical note are invented.
+
+## German C2
+- u1 p1: connotation of near-synonyms (betrachten, erblicken, starren, spähen, schlank, mager, dürr, sparsam, geizig); native check.
+- u1 p2: collocations and Zwillingsformeln; check the "not natural" column.
+- u1 p3: euphemism and understatement (nicht übel, nicht ohne, freistellen); native check.
+- u1 p4: the essay is invented; the demonstration is fictional.
+- u2 p1: parallelism and periodic sentences; the example sentences are original.
+- u2 p2: pronominal adverbs, Letzterer, resumption; check the notes on Ersterer and Letzterer.
+- u2 p3: punctuation and German comma rules (relative clauses always set off); native check.
+- u2 p4: the essay is invented.
+- u3 p1: als ob and als + Konjunktiv II; check the simple form against würde advice.
+- u3 p2: participial attributes; native check on the unpacking examples.
+- u3 p3: Funktionsverbgefüge; check each verb and preposition.
+- u3 p4: the story is invented.
+- u4 p1: hedges and boosters (dürfte, angeblich, tendenziell); native check.
+- u4 p2: reporting verbs and Konjunktiv I; check the Konjunktiv II fallback.
+- u4 p3: evaluation and signposting; check zwar … aber and the formal phrases.
+- u4 p4: the literature review is invented; no real studies or authors are cited.
+- u5 p1: modal particles and discourse markers; native check on the glosses.
+- u5 p2: spoken contractions and du/Sie; check haste, biste, ham wir, nich.
+- u5 p3: Austrian and Swiss vocabulary; check Brötli, Härdöpfel, Gehsteig, Znüni.
+- u5 p4: the conversation is invented; Lena, Markus, Nadine and Jonas are fictional.
+- u6 p1: legal words (hiermit, hinsichtlich, gemäß, aufgrund, seitens, vorbehaltlich, unbeschadet) and their cases; native check.
+- u6 p2: plain language rewrites; check that the obligation is kept.
+- u6 p3: obligation, right, prohibition, condition; check es sei denn and sofern.
+- u6 p4: the contract clause is invented; no real contract is quoted.
+- u7 p1: Ethos, Pathos, Logos; examples are original.
+- u7 p2: rhetorical devices; check the chiasmus example (arbeiten, um zu leben, nicht leben, um zu arbeiten).
+- u7 p3: framing and loaded language; native check on the connotation labels (Steuerentlastung, Regime, Pöbel).
+- u7 p4: the speech and commentary are invented; the park and the town are fictional.
+- u8 p1: figurative language; native check on the effect statements.
+- u8 p2: Erzählperspektive (Ich-Erzähler, personal, auktorial) and tone.
+- u8 p3: the Textanalyse structure (Behauptung, Beleg, Deutung); check the advice on tense and quotations.
+- u8 p4: the story and critical note are invented.
+
+## Spanish C2
+- u1 p1: connotation of near-synonyms (contemplar, clavar la vista, divisar, escuálido, tacaño, rácano); native check, and the Latin America note on rácano.
+- u1 p2: collocations and fixed pairs; check the "not natural" column and the remark on hacer una decisión.
+- u1 p3: euphemism and litotes (no es moco de pavo, nos dejó, reajuste de plantilla); native check.
+- u1 p4: the essay is invented; the demonstration is fictional.
+- u2 p1: parallelism and periodic sentences; the example sentences are original.
+- u2 p2: pronouns, este último, lo cual, nominal resumption; check the note on accents in demonstratives.
+- u2 p3: punctuation and Spanish rules (colon, raya, inverted marks); native check.
+- u2 p4: the essay is invented.
+- u3 p1: uses of se (accidental, passive, impersonal); native check on the agreement notes.
+- u3 p2: absolute participle and gerund; check Terminada la reunión and El tiempo permitiéndolo.
+- u3 p3: mood after quizá, a lo mejor, como si, aunque; check the capaz que remark.
+- u3 p4: the story is invented.
+- u4 p1: hedges and boosters (supuestamente, presuntamente, cabe suponer); native check.
+- u4 p2: reporting verbs (sostener, plantear, conceder, alegar); check alegar and the false friend note on pretender.
+- u4 p3: evaluation and signposting; check si bien + indicative.
+- u4 p4: the literature review is invented; no real studies or authors are cited.
+- u5 p1: discourse markers (bueno, pues, o sea, vale, es que, a ver); native check on the glosses.
+- u5 p2: spoken contractions (pa', to', na', cansao) and tú/usted; check the Caribbean s-aspiration remark.
+- u5 p3: regional words (guay, mola, chévere, chido, bacán, copado, cuate, mande); check each against its region and the seseo and yeísmo notes.
+- u5 p4: the conversation is invented; Carmen, Rodrigo and Lucía are fictional.
+- u6 p1: legal words (arrendatario, dicho, sin perjuicio de, en lo sucesivo); native check on the plain equivalents.
+- u6 p2: plain language rewrites; check that the obligation is kept.
+- u6 p3: obligation, right, prohibition, condition (deberá, podrá, queda prohibido, salvo que, siempre que); native check.
+- u6 p4: the contract clause is invented; no real contract is quoted.
+- u7 p1: ethos, pathos, logos; examples are original.
+- u7 p2: rhetorical devices; check the chiasmus example (Se trabaja para vivir, no se vive para trabajar).
+- u7 p3: framing and loaded words; native check on the connotation labels (reajuste de plantilla, régimen, turba).
+- u7 p4: the speech and commentary are invented; the park and the town are fictional.
+- u8 p1: figurative language; native check on the effect statements.
+- u8 p2: narrative voice and tone; check the terms.
+- u8 p3: the comentario de texto structure and the advice on tense and quotations.
+- u8 p4: the story and critical note are invented.
+
+## Italian C2
+- u1 p1: connotation of near-synonyms (contemplare, fissare, scorgere, scheletrico, tirchio, testardo); native check, and the regional note on tirchio and spilorcio.
+- u1 p2: collocations and fixed pairs; check the "not natural" column and the remark on raggiungere un compromesso.
+- u1 p3: euphemism and litotes (non è una cosa da poco, ci ha lasciati, esuberi); native check.
+- u1 p4: the essay is invented; the demonstration is fictional.
+- u2 p1: parallelism and periodic sentences; the example sentences are original.
+- u2 p2: pronouns, quest'ultimo, ciò, nominal resumption; native check on the notes on ne and ci.
+- u2 p3: punctuation and Italian rules (colon, guillemets, comma before ma); check the Swiss remark.
+- u2 p4: the essay is invented.
+- u3 p1: si passivante, si impersonale, andare and venire + participle; native check on the agreement notes.
+- u3 p2: absolute participle and gerund; check Finita la riunione and Stando così le cose.
+- u3 p3: combined pronouns, ci and ne, mood after forse, magari, chissà and come se; check the register notes.
+- u3 p4: the story is invented.
+u4 p1: hedges and boosters (pare che, a quanto pare, tende a, presumibilmente, indubbiamente); native teacher to check the register of the examples.
+u4 p2: nominal style and reporting verbs; pretendere as a false friend of to pretend (fingere).
+u4 p3: strengths and limits, signposting with sebbene + subjunctive, mentre, ne consegue che.
+u4 p4: invented literature review on remote work; no real studies cited.
+u5 p1: discourse markers (allora, insomma, cioè, ecco, praticamente, tipo, no?); check intonation notes with a native speaker.
+u5 p2: truncations and elisions (po', 'sto, 'na, mo', vabbè, boh); informal register only; taboo language is explained, not taught.
+u5 p3: regional voices (north, Tuscan gorgia, Roman, Neapolitan, Sicilian) and friendly words pischello, guagliò, picciotto; native review of the regional claims needed.
+u5 p4: invented conversation between speakers from Milan, Rome and Naples.
+u6 p1: legal words (il locatore, il conduttore, suddetto, summenzionato, a decorrere da, fatto salvo); native or legal reviewer to check the terms.
+u6 p2: why legal Italian is dense and how to simplify it (passive to active, noun to verb); the plain rewrites must keep the legal meaning.
+u6 p3: obligation, right, prohibition and condition (è tenuto a, ha facoltà di, è vietato, purché, salvo che, qualora) with the subjunctive.
+u6 p4: invented lease clause with a plain-language version; not a real contract.
+u7 p1: ethos, pathos, logos with Italian examples; native review of the example sentences.
+u7 p2: anafora, antitesi, chiasmo, gradazione, domanda retorica, metafora continuata.
+u7 p3: framing and loaded words (taglio, razionalizzazione, massa, popolo); check connotations with a native speaker.
+u7 p4: invented speech by a mayor of an imaginary city, with a commentary; no real speaker or quotation.
+u8 p1: metafora, similitudine, personificazione, simbolo, immagine; each tied to its effect.
+u8 p2: narrative voice (first and third person, omniscient, unreliable), tone and irony.
+u8 p3: analisi del testo (introduzione, sviluppo, conclusione), brief quotation in guillemets.
+u8 p4: invented story extract and critical note; no real author or quotation.
+
+## Portuguese C2
+u1 p1: near-synonyms for looking and thinness (olhar, fitar, observar, contemplar, espreitar; magro, esbelto, franzino, esquelético); native teacher to check the connotations.
+u1 p2: collocations and fixed pairs (gravemente ferido, erro crasso, generalização precipitada, mais cedo ou mais tarde, são e salvo, pouco a pouco).
+u1 p3: euphemism and litotes (faleceu, partiu, não é mau, não é pouco); check the European Portuguese register.
+u1 p4: invented essay on the words we choose; no real author or quotation.
+u2 p1: sentence variety and parallel structure; native teacher to check the examples read naturally.
+u2 p2: cohesion (este último, o primeiro … o segundo, o que, tal, nominal resumption, ellipsis).
+u2 p3: punctuation for effect, with « » as the quotation marks of Portugal; the comma examples (Vamos comer, crianças) are classic and safe.
+u2 p4: invented magazine essay on slow living.
+u3 p1: future subjunctive (including the irregular forms) and the inflected infinitive; native teacher to check the choice between subjunctive and infinitive after impersonal expressions.
+u3 p2: absolute constructions (Feita a reunião, Dito isto, Sendo assim) and estar a + infinitive against the Brazilian gerund.
+u3 p3: clitic placement (enclisis, proclisis, mesoclisis), pronoun contractions (mo, ta, lho, lha, no-lo) and mood after talvez, oxalá and como se.
+u3 p4: invented short story that uses these structures.
+u4 p1: hedges and boosters (parece que, ao que parece, tende a, presumivelmente, indubitavelmente); native teacher to check the register.
+u4 p2: nominal style and reporting verbs; pretender (to intend) as a false friend of to pretend (fingir). In the p4 reading, check the subjunctive after avança que.
+u4 p3: strengths and limits, signposting with embora + subjunctive, ao passo que, daqui resulta que.
+u4 p4: invented literature review on remote work; no real studies cited.
+u5 p1: discourse markers (pronto, então, pois, pá, portanto, tipo, ya); native teacher to check the intonation notes.
+u5 p2: shortened forms (tá, pra, né, num in Brazil, ó) and tu, você and o senhor in Portugal and Brazil; taboo language is explained, not taught.
+u5 p3: regional voices (Lisbon, Porto and the north, Alentejo, Azores, Brazil, Angola) and words fixe, bué, miúdo, catraio, kamba; native review of the regional claims needed.
+u5 p4: invented conversation between speakers from Lisbon, Porto and Luanda.
+u6 p1: legal words (o senhorio, o arrendatário, supramencionado, a contar de, sem prejuízo de, denunciar); native or legal reviewer to check the terms for Portugal.
+u6 p2: why legal Portuguese is dense and how to simplify it (passive to active, noun to verb); the plain rewrites must keep the legal meaning.
+u6 p3: obligation, right, prohibition and condition (fica obrigado a, tem a faculdade de, é proibido, desde que, salvo se, caso) with the subjunctive.
+u6 p4: invented lease clause with a plain-language version; not a real contract.
+u7 p1: ethos, pathos, logos with Portuguese examples; native review of the example sentences.
+u7 p2: anáfora, antítese, quiasmo, gradação, pergunta retórica, metáfora continuada.
+u7 p3: framing and loaded words (corte, racionalização, turba, povo); check connotations with a native speaker.
+u7 p4: invented speech by a mayor of an imaginary city, with a commentary; no real speaker or quotation.
+u8 p1: metáfora, comparação, personificação, símbolo, imagem; each tied to its effect.
+u8 p2: narrative voice (first and third person, omniscient, unreliable), tone and irony.
+u8 p3: comentário de texto (introdução, desenvolvimento, conclusão), brief quotation in aspas angulares.
+u8 p4: invented story extract and critical note; no real author or quotation.

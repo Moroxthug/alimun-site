@@ -4,7 +4,8 @@
  *  Vercel Serverless Function (Node.js runtime)
  *
  *  Stripe webhook handler — the ONLY writer of billing state
- *  (student_profiles.tier / stripe_* columns, session_credits).
+ *  (student_profiles.tier / stripe_* columns, session_credits,
+ *  bought tutor time through public.tutor_add_credit).
  *
  *  - Verifies the event signature with STRIPE_WEBHOOK_SECRET
  *  - Idempotent via webhook_logs.event_id (unique)
@@ -24,6 +25,9 @@ if (!STRIPE_KEY) {
 
 const stripe = require('stripe')(STRIPE_KEY || 'dummy_key_for_load_validation');
 const { createClient } = require('@supabase/supabase-js');
+const tutorPacks = require('../_lib/tutor-packs.js');
+const mail = require('../_lib/email.js');
+const L = require('../_lib/email-i18n.js');
 
 const env = (k) => process.env[k] || '';
 
@@ -230,7 +234,7 @@ const handler = async function (req, res) {
 
 // ── Lookup helpers ────────────────────────────────────────────
 
-const STUDENT_BILLING_COLUMNS = 'id, user_id, full_name, tier, stripe_subscription_id, stripe_subscription_status, enrolled_cohort_id';
+const STUDENT_BILLING_COLUMNS = 'id, user_id, full_name, tier, stripe_subscription_id, stripe_subscription_status, enrolled_cohort_id, ui_lang';
 
 /**
  * Find the student a subscription/invoice event belongs to.
@@ -300,6 +304,22 @@ async function cancelEnrollmentsAboveTier(supabase, student, newTier) {
 
 // ── Event processing ──────────────────────────────────────────
 
+/** Activity timeline (docs/GROWTH_PLAN.md step 3): payment events for the admin's view of a person. Best effort. */
+async function logActivity(supabase, userId, event, detail) {
+  if (!userId) return;
+  const { error } = await supabase.from('activity_events').insert({ user_id: userId, event, detail: detail || {} });
+  if (error) console.warn('[Alimun Webhook] activity not recorded:', error.message);
+}
+
+/** The welcome gift (10 EUR off the first plan or 1 on 1 class) was paid with: it is not offered again. */
+async function markWelcomeGiftUsed(session, supabaseUserId, supabase) {
+  const { data: student } = await supabase.from('student_profiles').select('id').eq('user_id', supabaseUserId).maybeSingle();
+  if (!student) return;
+  const { error } = await supabase.from('welcome_poll').update({ discount_used_at: new Date().toISOString(), discount_checkout: session.id })
+    .eq('student_id', student.id).is('discount_used_at', null);
+  if (error) console.warn('[Alimun Webhook] welcome gift not marked used:', error.message);
+}
+
 async function processWebhookEvent(event, supabase) {
   const object = event.data.object;
 
@@ -326,6 +346,7 @@ async function processWebhookEvent(event, supabase) {
       } else {
         await handleOneTimeCheckout(session, metadata, supabaseUserId, supabase);
       }
+      if (metadata.welcome_gift === '1') await markWelcomeGiftUsed(session, supabaseUserId, supabase);
       break;
     }
 
@@ -396,6 +417,7 @@ async function processWebhookEvent(event, supabase) {
       if (error) throw new Error(`Failed to mark subscription cancelled: ${error.message}`);
 
       await cancelActiveEnrollments(supabase, student.id);
+      await logActivity(supabase, student.user_id, 'subscription_ended', { tier: student.tier });
       await sendCancellationEmail(student, subscription);
       break;
     }
@@ -435,6 +457,7 @@ async function processWebhookEvent(event, supabase) {
         .eq('id', student.id);
       if (error) throw new Error(`Failed to update on payment failure: ${error.message}`);
 
+      await logActivity(supabase, student.user_id, 'payment_failed', { tier: student.tier });
       await sendPaymentFailedEmail(student, invoice, false);
       break;
     }
@@ -483,12 +506,13 @@ async function handleSubscriptionCheckout(session, metadata, supabaseUserId, sup
   if (error) throw new Error(`Failed to activate subscription: ${error.message}`);
   if (!data || data.length === 0) throw new Error(`No student_profiles row for user ${supabaseUserId}`);
 
+  await logActivity(supabase, supabaseUserId, 'subscribed', { tier });
   console.log(`[Alimun Webhook] Subscription tier '${tier}' activated for user ${supabaseUserId}`);
 }
 
 /**
- * One-time purchases: founding member fee, 1:1 session credit, certificate.
- * Writes are keyed on stripe_session_id (unique), so completed +
+ * One-time purchases: founding member fee, 1:1 session credit, certificate,
+ * tutor time. Writes are keyed on stripe_session_id (unique), so completed +
  * async_payment_succeeded or a redelivery grant at most once (APIP-02).
  */
 async function handleOneTimeCheckout(session, metadata, supabaseUserId, supabase) {
@@ -504,6 +528,7 @@ async function handleOneTimeCheckout(session, metadata, supabaseUserId, supabase
   if (stripeCustomerId) {
     await supabase.from('student_profiles').update({ stripe_customer_id: stripeCustomerId }).eq('id', student.id);
   }
+  await logActivity(supabase, supabaseUserId, 'purchased', { type });
 
   switch (type) {
     case 'session': {
@@ -545,6 +570,26 @@ async function handleOneTimeCheckout(session, metadata, supabaseUserId, supabase
       console.warn(`[Alimun Webhook] Certificate purchased by ${student.id} — manual fulfilment required`);
       break;
     }
+    case 'tutor_time': {
+      // Tutor time (docs/AI_TUTOR_PLAN.md, part 6): the minutes come from the pack's price as Stripe has it, never
+      // from metadata the checkout carried. tutor_add_credit adds nothing for a checkout id it has seen, and the
+      // minutes bought expire after 12 months (supabase/migrations/202610271400_tutor_paid_time.sql).
+      const items = await stripe.checkout.sessions.listLineItems(session.id, { limit: 10 });
+      let minutes = 0;
+      for (const item of items.data || []) {
+        const pack = tutorPacks.packByPrice(item.price?.id);
+        if (pack) minutes += tutorPacks.minutesOf(pack, item.price) * Math.max(1, item.quantity || 1);
+      }
+      if (!minutes) throw new Error(`No tutor time pack in checkout ${session.id}`);
+      minutes = Math.min(minutes, tutorPacks.MAX_MINUTES);
+      const { data: added, error: tErr } = await supabase.rpc('tutor_add_credit', {
+        p_student: student.id, p_seconds: minutes * 60, p_reason: 'purchase',
+        p_stripe_session: session.id, p_note: `${minutes} minutes bought`, p_by: null,
+      });
+      if (tErr) throw new Error(`Failed to add tutor time: ${tErr.message}`);
+      console.log(`[Alimun Webhook] ${added ? minutes + ' tutor minute(s) added' : 'Tutor time already added'} for student ${student.id}`);
+      break;
+    }
     default:
       throw new Error(`Unknown one-time purchase type '${type}' on session ${session.id}`);
   }
@@ -565,32 +610,14 @@ async function resolveStudentEmail(student, fallback) {
   return fallback || null;
 }
 
-async function sendResend({ to, subject, html }) {
+async function sendResend({ to, subject, content }) {
   if (!process.env.RESEND_API_KEY) {
     console.warn('[Alimun Webhook] RESEND_API_KEY not configured. Skipping email.');
     return;
   }
-  const from = process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>';
-  try {
-    const response = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ from, to, subject, html }),
-    });
-    if (!response.ok) {
-      console.error('[Alimun Webhook] Resend API error:', await response.text());
-    }
-  } catch (err) {
-    console.error('[Alimun Webhook] Resend dispatch failed:', err);
-  }
+  await mail.sendEmail({ to, subject, ...content });
 }
 
-function escapeHtml(s) {
-  return String(s || '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
 async function sendCancellationEmail(student, subscription) {
   let fallback = null;
@@ -603,22 +630,25 @@ async function sendCancellationEmail(student, subscription) {
   const email = await resolveStudentEmail(student, fallback);
   if (!email) return;
 
+  const lang = student.ui_lang || 'en';
   const periodEnd = subscription.current_period_end || subscription.items?.data?.[0]?.current_period_end;
-  const endDate = periodEnd
-    ? new Date(periodEnd * 1000).toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' })
-    : 'today';
+  const endDate = L.day(periodEnd ? periodEnd * 1000 : Date.now(), lang);
 
   await sendResend({
     to: email,
-    subject: 'Your Alimun subscription has ended',
-    html: `<div style="font-family:sans-serif;color:#333;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;border:1px solid #f0f0f0;border-radius:8px;">
-      <h2 style="color:#080808;">Your subscription has ended</h2>
-      <p>Hi ${escapeHtml(student.full_name) || 'there'},</p>
-      <p>Your subscription has ended and your seat in your class has been released. Your access continues until <strong>${endDate}</strong>.</p>
-      <p>You can resubscribe at any time from your dashboard to rejoin a class.</p>
-      <p>Thank you for studying with us!</p>
-      <p>The Alimun Team</p>
-    </div>`,
+    subject: L.say(lang, 'sub_ended.subject'),
+    content: mail.renderEmail({
+      hero: 'ended', lang,
+      preheader: L.say(lang, 'sub_ended.preheader', { date: endDate }),
+      heading: L.say(lang, 'sub_ended.heading'),
+      blocks: [
+        { p: L.hello(lang, student.full_name) },
+        { p: L.html(lang, 'sub_ended.body', { date: endDate }) },
+        { p: L.html(lang, 'sub_ended.body2') },
+        { button: { label: L.say(lang, 'common.open_dashboard'), href: `${mail.SITE}/signin.html` } },
+      ],
+      footer: L.html(lang, 'sub_ended.footer'),
+    }),
   });
 }
 
@@ -626,28 +656,21 @@ async function sendPaymentFailedEmail(student, invoice, isFinalFailure) {
   const email = await resolveStudentEmail(student, invoice.customer_email);
   if (!email) return;
 
-  const name = escapeHtml(student.full_name) || 'there';
-  const html = isFinalFailure
-    ? `<div style="font-family:sans-serif;color:#333;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;border:1px solid #f0f0f0;border-radius:8px;">
-        <h2 style="color:#ea4335;">Your Alimun subscription has been suspended</h2>
-        <p>Hi ${name},</p>
-        <p>We were unable to process your payment after 3 attempts. Your subscription has been cancelled and your class seat released.</p>
-        <p>To come back, log in to your dashboard, update your payment method and resubscribe.</p>
-        <p>The Alimun Team</p>
-      </div>`
-    : `<div style="font-family:sans-serif;color:#333;line-height:1.6;max-width:600px;margin:0 auto;padding:20px;border:1px solid #f0f0f0;border-radius:8px;">
-        <h2 style="color:#080808;">Payment failed for your Alimun subscription</h2>
-        <p>Hi ${name},</p>
-        <p>We could not process your latest subscription payment. Please update your payment method in your dashboard's billing settings to keep your seat.</p>
-        <p>We will retry automatically in a few days.</p>
-        <p>The Alimun Team</p>
-      </div>`;
-
-  await sendResend({
-    to: email,
-    subject: isFinalFailure ? 'Your subscription has been suspended' : 'Payment failed — action required',
-    html,
+  const lang = student.ui_lang || 'en', k = isFinalFailure ? 'pay_cancelled' : 'pay_failed';
+  const content = mail.renderEmail({
+    hero: 'payment', lang,
+    preheader: L.say(lang, `${k}.preheader`),
+    heading: L.say(lang, `${k}.heading`),
+    blocks: [
+      { p: L.hello(lang, student.full_name) },
+      { p: L.html(lang, `${k}.body`) },
+      { p: L.html(lang, `${k}.body2`) },
+      { button: { label: L.say(lang, isFinalFailure ? 'common.open_dashboard' : 'pay_failed.button'), href: `${mail.SITE}/signin.html` } },
+    ],
+    footer: L.html(lang, `${k}.footer`),
   });
+
+  await sendResend({ to: email, subject: L.say(lang, `${k}.subject`), content });
 }
 
 module.exports = handler;

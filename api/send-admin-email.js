@@ -12,6 +12,8 @@
 const { createClient } = require('@supabase/supabase-js');
 const subscribe = require('./_lib/subscribe.js');
 const contact = require('./_lib/contact.js');
+const mail = require('./_lib/email.js');
+const L = require('./_lib/email-i18n.js');
 
 function getSupabaseAdmin() {
   const url = process.env.SUPABASE_URL;
@@ -22,9 +24,6 @@ function getSupabaseAdmin() {
   });
 }
 
-function escapeHtml(s) {
-  return String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-}
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const EMAIL_TYPES = new Set(['tier-upgrade', 'promo']);
@@ -92,25 +91,27 @@ module.exports = async function handler(req, res) {
 
   try {
     // 3. Resolve user profile and user_id
-    let userId, fullName;
+    let userId, fullName, uiLang;
     const { data: student } = await supabase
       .from('student_profiles')
-      .select('user_id, full_name')
+      .select('user_id, full_name, ui_lang')
       .eq('id', targetId)
       .maybeSingle();
 
     if (student) {
       userId = student.user_id;
       fullName = student.full_name;
+      uiLang = student.ui_lang;
     } else {
       const { data: teacher } = await supabase
         .from('teacher_profiles')
-        .select('user_id, full_name')
+        .select('user_id, full_name, ui_lang')
         .eq('id', targetId)
         .maybeSingle();
       if (teacher) {
         userId = teacher.user_id;
         fullName = teacher.full_name;
+        uiLang = teacher.ui_lang;
       }
     }
 
@@ -133,80 +134,37 @@ module.exports = async function handler(req, res) {
     // Subjects are plain text: strip CR/LF and angle brackets.
     const cleanSubject = (v) => String(v).replace(/[\r\n<>]/g, ' ').trim().slice(0, MAX_SUBJECT);
     let subject = cleanSubject(customSubject || 'Update from Alimun') || 'Update from Alimun';
-    let emailHtml = '';
+    let content;
 
+    const lang = uiLang || 'en';
     if (emailType === 'tier-upgrade') {
-      subject = cleanSubject(`Your Alimun classroom tier has been upgraded to ${tierName}!`);
-      emailHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <style>
-            body { font-family: sans-serif; line-height: 1.6; color: #080808; background-color: #fafaf8; padding: 20px; }
-            .container { max-width: 600px; margin: 20px auto; padding: 30px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #eae8e2; }
-            .header { background-color: #080808; color: #ffffff; padding: 20px; border-radius: 8px; text-align: center; }
-            .header h1 { color: #ceff65; font-size: 28px; margin: 0; text-transform: uppercase; font-weight: bold; letter-spacing: 0.05em; }
-            .badge { display: inline-block; background-color: #ceff65; color: #080808; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; text-transform: uppercase; margin-top: 15px; }
-            .footer { font-size: 11px; color: #888; margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px; text-align: center; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>ALIMUN</h1>
-              <p>Administrative Upgrade</p>
-            </div>
-            <div style="margin-top:24px;">
-              <p>Hello <b>${escapeHtml(fullName)}</b>,</p>
-              <p>Your subscription tier has been modified directly by the Alimun Administration team. Your account has been upgraded to:</p>
-              <center>
-                <div class="badge">${escapeHtml(tierName)}</div>
-              </center>
-              <p style="margin-top: 24px;">This tier is now active on your account without requiring credit card registration or subscription payments. Enjoy your live classes and interactive exercises!</p>
-              <p>Log in to your dashboard to view your new capabilities.</p>
-            </div>
-            <div class="footer">
-              This is a transactional update from Alimun. If you believe this is in error, please contact support@alimun.com.
-            </div>
-          </div>
-        </body>
-        </html>
-      `;
+      subject = cleanSubject(L.say(lang, 'plan.subject', { plan: tierName }));
+      content = mail.renderEmail({
+        hero: 'plan', lang,
+        preheader: L.say(lang, 'plan.preheader', { plan: tierName }),
+        heading: L.say(lang, 'plan.heading'),
+        blocks: [
+          { p: L.hello(lang, fullName) },
+          { p: L.html(lang, 'plan.body', { plan: tierName }) },
+          { p: L.html(lang, 'plan.body2') },
+          { button: { label: L.say(lang, 'common.open_dashboard'), href: `${mail.SITE}/signin.html` } },
+        ],
+        note: L.html(lang, 'plan.note'),
+        footer: L.html(lang, 'common.footer_account'),
+      });
     } else {
-      // General promo / custom memo email
-      emailHtml = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <meta charset="utf-8">
-          <style>
-            body { font-family: sans-serif; line-height: 1.6; color: #080808; background-color: #fafaf8; padding: 20px; }
-            .container { max-width: 600px; margin: 20px auto; padding: 30px; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #eae8e2; }
-            .header { background-color: #080808; color: #ffffff; padding: 20px; border-radius: 8px; text-align: center; }
-            .header h1 { color: #ceff65; font-size: 28px; margin: 0; text-transform: uppercase; font-weight: bold; letter-spacing: 0.05em; }
-            .content { margin-top: 24px; font-size: 15px; white-space: pre-wrap; }
-            .footer { font-size: 11px; color: #888; margin-top: 30px; border-top: 1px solid #eee; padding-top: 15px; text-align: center; }
-          </style>
-        </head>
-        <body>
-          <div class="container">
-            <div class="header">
-              <h1>ALIMUN</h1>
-              <p>Admin Notification</p>
-            </div>
-            <div class="content">
-<p>Hello <b>${escapeHtml(fullName)}</b>,</p>
-
-${escapeHtml(customBody)}
-            </div>
-            <div class="footer">
-              Sent by Alimun Administration. Contact support@alimun.com for inquiry.
-            </div>
-          </div>
-        </body>
-        </html>
-      `;
+      // Message written by an admin: plain text, escaped, line breaks kept.
+      const paras = String(customBody).split(/\n{2,}/).map((t) => t.trim()).filter(Boolean)
+        .map((t) => ({ p: mail.esc(t).replace(/\n/g, '<br>') }));
+      content = mail.renderEmail({
+        hero: 'message',
+        preheader: String(customBody).replace(/\s+/g, ' ').slice(0, 120),
+        heading: subject,
+        lang,
+        blocks: [{ p: L.hello(lang, fullName) }, ...paras],
+        note: L.html(lang, 'common.questions'),
+        footer: L.html(lang, 'common.footer_account'),
+      });
     }
 
     // 5. Send via Resend
@@ -216,28 +174,9 @@ ${escapeHtml(customBody)}
       return res.status(503).json({ error: 'Email delivery is not configured' });
     }
 
-    const resendRes = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${resendKey}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        from: process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>',
-        to: email,
-        subject: subject,
-        html: emailHtml
-      })
-    });
-
-    if (resendRes.ok) {
-      const resendData = await resendRes.json();
-      return res.status(200).json({ success: true, id: resendData.id });
-    } else {
-      const errText = await resendRes.text();
-      console.error('[Send Admin Email] Resend failure:', resendRes.status, errText.slice(0, 500));
-      return res.status(502).json({ error: 'Email delivery failed' });
-    }
+    const sent = await mail.sendEmail({ to: email, subject, ...content });
+    if (sent) return res.status(200).json({ success: true });
+    return res.status(502).json({ error: 'Email delivery failed' });
 
   } catch (err) {
     console.error('[Send Admin Email] Endpoint exception:', err);

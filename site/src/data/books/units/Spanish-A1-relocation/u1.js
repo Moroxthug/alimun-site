@@ -1,0 +1,258 @@
+// Spanish A1 for moving abroad, unit 1 (docs/BOOKS.md). Draft for native-teacher review.
+export const UNIT = {
+  id: 'u1',
+  title: 'Arriving',
+  goal: 'Greet people, say who you are and spell your name and your email.',
+  art: 'suitcase',
+  tags: { skills: ['vocabulary', 'speaking', 'reading'], topics: ['greetings', 'tu-usted', 'ser', 'nationalities', 'alphabet', 'numbers-0-20', 'personal-details'], goals: ['relocation'] },
+  pages: [
+    {
+      id: 'p1',
+      title: 'Hello, I am…',
+      about: 'Greet people, say your name and where you are from, with tú or usted.',
+      art: 'churro',
+      spreads: [
+        [
+          { t: 'text', md: 'The first Spanish you need is a greeting. **Hola** works everywhere. With a greeting for the time of day you sound polite: *buenos días* in the morning, *buenas tardes* in the afternoon and early evening, *buenas noches* late in the evening and at night.' },
+          { t: 'table', caption: 'Hello and goodbye', explain: ['head', 'col1'], quiz: true, head: ['Spanish', 'When you say it'], rows: [
+            ['Hola.', 'hello, at any time'],
+            ['Buenos días.', 'in the morning, until lunch'],
+            ['Buenas tardes.', 'after lunch, until about eight or nine'],
+            ['Buenas noches.', 'late in the evening and when you go to bed'],
+            ['Adiós.', 'goodbye'],
+            ['Hasta luego.', 'see you later, also to people you may not see again'],
+            ['Hasta mañana.', 'see you tomorrow'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Spain, lunch is late, often at two or three, so *buenos días* is used until then. Friends and family often greet with two kisses on the cheeks. At an office, people usually shake hands.' },
+        ],
+        [
+          { t: 'text', md: 'Spanish has two words for *you*. Use **tú** with friends, children and people of your age. Use **usted** with older people and at an office or a hotel when you are not sure. With *usted*, the verb has the same form as for *él* and *ella*: *¿Cómo **se llama** usted?*' },
+          { t: 'table', caption: 'ser (to be) and llamarse (to be called)', explain: ['head'], quiz: true, head: ['Person', 'ser', 'llamarse'], rows: [
+            ['yo', 'soy', 'me llamo'],
+            ['tú', 'eres', 'te llamas'],
+            ['él, ella, usted', 'es', 'se llama'],
+            ['nosotros, nosotras', 'somos', 'nos llamamos'],
+            ['vosotros, vosotras', 'sois', 'os llamáis'],
+            ['ellos, ellas, ustedes', 'son', 'se llaman'],
+          ] },
+          { t: 'tip', art: 'churro', md: 'In Latin America, people use *usted* more often, also with neighbours and colleagues. For more than one person, they always say *ustedes*, never *vosotros*: *¿Ustedes son de aquí?*' },
+        ],
+        [
+          { t: 'dialogue', title: 'En la recepción del hotel', lines: [
+            { who: 'Recepcionista', s: 'Buenas tardes. ¿En qué puedo ayudarle?' },
+            { who: 'Mei', s: 'Buenas tardes. Tengo una reserva.' },
+            { who: 'Recepcionista', s: '¿Cómo se llama usted?' },
+            { who: 'Mei', s: 'Me llamo Mei Chen.' },
+            { who: 'Recepcionista', s: 'Muy bien. ¿Es usted china?' },
+            { who: 'Mei', s: 'Sí, soy china, de Shanghái. Pero ahora vivo aquí, en Valencia.' },
+            { who: 'Recepcionista', s: '¡Bienvenida! ¿Su pasaporte, por favor?' },
+            { who: 'Mei', s: 'Sí, aquí está.' },
+          ] },
+          { t: 'text', md: 'To say where you are from, use **ser de** + city or country: *Soy de Shanghái.* Or use a nationality word. Most have a form for a man (-o) and a form for a woman (-a). Words that end in *-e* or *-í* are the same for both.' },
+          { t: 'table', caption: 'Countries and nationalities', explain: ['head'], head: ['Country', 'Man', 'Woman'], rows: [
+            ['China', 'chino', 'china'],
+            ['Brasil', 'brasileño', 'brasileña'],
+            ['Alemania', 'alemán', 'alemana'],
+            ['Inglaterra', 'inglés', 'inglesa'],
+            ['Marruecos', 'marroquí', 'marroquí'],
+            ['Estados Unidos', 'estadounidense', 'estadounidense'],
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'conjugate', h: 'Write the forms of ser.', verb: 'ser', tense: 'present', rows: [
+            ['yo', 'soy'],
+            ['tú', 'eres'],
+            ['él, ella, usted', 'es'],
+            ['nosotros', 'somos'],
+            ['vosotros', 'sois'],
+            ['ellos, ellas, ustedes', 'son'],
+          ] },
+          { t: 'ex', kind: 'choice', h: 'Choose the right greeting.', items: [
+            { q: 'Son las nueve de la mañana. ___', o: ['Buenos días.', 'Buenas noches.', 'Hasta mañana.'], why: 'In the morning you say *buenos días*.' },
+            { q: 'Son las cinco de la tarde. ___', o: ['Buenas tardes.', 'Buenos días.', 'Buenas noches.'], why: 'After lunch and until the evening: *buenas tardes*.' },
+            { q: 'Usted sale de la oficina y vuelve mañana. ___', o: ['Hasta mañana.', 'Buenos días.', 'Hola.'], why: 'You leave and come back tomorrow: *hasta mañana*.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'tú or usted? Choose the question.', items: [
+            { q: 'A woman of seventy at the bus stop: ___', o: ['¿Cómo se llama usted?', '¿Cómo te llamas?', '¿Cómo os llamáis?'], why: 'With an older person you do not know, use *usted*: *se llama*.' },
+            { q: 'A child of eight in the park: ___', o: ['¿Cómo te llamas?', '¿Cómo se llama usted?', '¿Cómo se llaman ustedes?'], why: 'With a child, use *tú*: *te llamas*.' },
+            { q: 'Two new friends in a bar in Madrid: ___', o: ['¿De dónde sois?', '¿De dónde eres?', '¿De dónde es?'], why: 'Two friends in Spain: *vosotros sois*. In Latin America you would say *¿De dónde son?*' },
+          ] },
+          { t: 'ex', kind: 'gap', h: 'Complete with the right word.', items: [
+            { q: 'Hola, me ___ Omar. (llamarse)', a: ['llamo'], why: 'For yourself: *me llamo*.' },
+            { q: 'Ana es de Brasil. Es ___.', a: ['brasileña'], why: 'Ana is a woman: *brasileña*, with *-a*.' },
+            { q: 'Kofi y Amara ___ de Ghana. (ser)', a: ['son'], why: 'Two people, *ellos*: *son*.' },
+            { q: 'Tomás es de Alemania. Es ___.', a: ['alemán'], why: 'Tomás is a man: *alemán*, with an accent on the *a*.' },
+          ] },
+          { t: 'ex', kind: 'order', h: 'Build the sentences.', items: [
+            { a: '¿De dónde es usted?', why: 'Question word, then the verb *es*, then *usted*.' },
+            { a: 'Soy marroquí, de Rabat.', why: '*Soy* + nationality, then *de* + city.' },
+            { a: '¿Cómo se llama usted?', why: '*se* comes before the verb *llama*.' },
+          ] },
+        ],
+      ],
+    },
+    {
+      id: 'p2',
+      title: 'Spelling and numbers',
+      about: 'Spell your name, and give your phone number and email address.',
+      art: 'parrot',
+      spreads: [
+        [
+          { t: 'text', md: 'At a counter, people often ask *¿Cómo se escribe?* (How do you write it?). Spanish letters have short names. Most sound as they are written, but learn these.' },
+          { t: 'table', caption: 'Letters with special names', explain: ['head'], quiz: true, head: ['Letter', 'Name in Spanish'], rows: [
+            ['B', 'be'],
+            ['G', 'ge'],
+            ['H', 'hache'],
+            ['J', 'jota'],
+            ['Ñ', 'eñe'],
+            ['Q', 'cu'],
+            ['R', 'erre'],
+            ['V', 'uve'],
+            ['W', 'uve doble'],
+            ['Y', 'i griega'],
+            ['Z', 'zeta'],
+          ] },
+          { t: 'tip', art: 'owl', md: 'The letter *h* is never pronounced: *hola* sounds like *ola*. In many Latin American countries, people say *ve corta* for V and *doble ve* for W.' },
+        ],
+        [
+          { t: 'table', caption: 'Numbers 0 to 20', explain: ['head'], quiz: true, head: ['Number', 'Spanish', 'Number', 'Spanish'], rows: [
+            ['0', 'cero', '11', 'once'],
+            ['1', 'uno', '12', 'doce'],
+            ['2', 'dos', '13', 'trece'],
+            ['3', 'tres', '14', 'catorce'],
+            ['4', 'cuatro', '15', 'quince'],
+            ['5', 'cinco', '16', 'dieciséis'],
+            ['6', 'seis', '17', 'diecisiete'],
+            ['7', 'siete', '18', 'dieciocho'],
+            ['8', 'ocho', '19', 'diecinueve'],
+            ['9', 'nueve', '20', 'veinte'],
+            ['10', 'diez', '', ''],
+          ] },
+          { t: 'text', md: 'For a phone number, you can say the numbers one by one: *seis, cero, cero…* For an email address, you need three words: **arroba** (@), **punto** (.) and **guion** (-).' },
+          { t: 'examples', items: [
+            { s: 'Mi número de teléfono es el **seis, cero, cero, uno, dos, tres…**', n: 'In Spain, mobile numbers have nine digits. Say them one by one or in small groups.' },
+            { s: 'Mi correo es **mei.chen@example.com**.', n: 'Say: *mei punto chen arroba example punto com*.' },
+            { s: '¿Cómo se escribe **Chen**? Ce, hache, e, ene.', n: 'Say the name of each letter.' },
+          ] },
+        ],
+        [
+          { t: 'dialogue', title: 'En la academia de idiomas', lines: [
+            { who: 'Carlos', s: 'Hola. ¿Cómo te llamas?' },
+            { who: 'Priya', s: 'Priya Sharma.' },
+            { who: 'Carlos', s: '¿Cómo se escribe Sharma?' },
+            { who: 'Priya', s: 'Ese, hache, a, erre, eme, a.' },
+            { who: 'Carlos', s: 'Gracias. ¿Y tu número de teléfono?' },
+            { who: 'Priya', s: 'Es el seis, cero, cero, nueve, ocho, siete, cero, cero, cero.' },
+            { who: 'Carlos', s: '¿Tienes correo electrónico?' },
+            { who: 'Priya', s: 'Sí: priya guion sharma arroba example punto com.' },
+            { who: 'Carlos', s: 'Perfecto. ¡Bienvenida!' },
+          ] },
+          { t: 'ex', kind: 'tf', h: 'Think about the dialogue. True or false?', items: [
+            { q: 'Carlos y Priya usan tú.', a: 't', why: 'Carlos says *¿Cómo te llamas?* and *tu número*: that is *tú*.' },
+            { q: 'El número de Priya tiene nueve números.', a: 't', why: 'Count them: 600 987 000. A Spanish mobile number has nine digits.' },
+            { q: 'El correo de Priya es priya.sharma@example.com.', a: 'f', why: 'She says *guion*, so it is *priya-sharma*, not *punto*.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'match', h: 'Match the letter and its Spanish name.', pairs: [
+            ['H', 'hache'],
+            ['J', 'jota'],
+            ['Ñ', 'eñe'],
+            ['V', 'uve'],
+            ['Y', 'i griega'],
+            ['Z', 'zeta'],
+          ] },
+          { t: 'ex', kind: 'crossword', h: 'Write the numbers in words.', words: [
+            { a: 'quince', clue: 'Diez más cinco.' },
+            { a: 'doce', clue: 'Seis más seis.' },
+            { a: 'veinte', clue: 'Diez más diez.' },
+            { a: 'catorce', clue: 'Siete más siete.' },
+            { a: 'nueve', clue: 'Tres más seis.' },
+            { a: 'dieciocho', clue: 'Nueve más nueve.' },
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
+            { q: 'mei.chen@example.com: mei ___ chen arroba example punto com.', a: ['punto'], why: 'The dot in an email address is *punto*.' },
+            { q: 'ana-ruiz@example.com: ana guion ruiz ___ example punto com.', a: ['arroba'], why: 'The sign @ is *arroba*.' },
+            { q: '¿Cómo se ___ su nombre? (escribir)', a: ['escribe'], why: '*¿Cómo se escribe?* asks how to spell it.' },
+            { q: 'Ocho más ocho son ___.', a: ['dieciséis'], why: '16 is *dieciséis*: one word, with an accent on the last *e*.' },
+          ] },
+          { t: 'ex', kind: 'memory', h: 'Find the pairs: number and word.', pairs: [
+            ['11', 'once'],
+            ['13', 'trece'],
+            ['15', 'quince'],
+            ['17', 'diecisiete'],
+            ['19', 'diecinueve'],
+            ['0', 'cero'],
+          ] },
+        ],
+      ],
+    },
+    {
+      id: 'p3',
+      title: 'A check-in card and a welcome message',
+      about: 'Read a hotel check-in card and a message from the owner of a flat.',
+      art: 'snail',
+      spreads: [
+        [
+          { t: 'text', md: 'At a hotel or a holiday flat, you often fill in a short card with your details. In Spain, most people have **two surnames** (*apellidos*): the first from the father and the second from the mother. On a form, the field is often *Apellidos*, in the plural.' },
+          { t: 'reading', title: 'Ficha de registro, Hotel Mar Azul', md: 'Nombre: Mei\nApellidos: Chen\nNacionalidad: china\nN.º de pasaporte: EX1234567\nFecha de llegada: 05/09/2026\nFecha de salida: 12/09/2026\nNúmero de personas: 1\nTeléfono: 600 112 233\nCorreo electrónico: mei.chen@example.com\nFirma: Mei Chen' },
+          { t: 'ex', kind: 'tf', h: 'Read the card. True or false?', items: [
+            { q: 'Mei es de China.', a: 't', why: '*Nacionalidad: china*.' },
+            { q: 'Mei llega al hotel con su familia.', a: 'f', why: '*Número de personas: 1*. She is alone.' },
+            { q: 'Mei está siete noches en el hotel.', a: 't', why: 'From the 5th to the 12th: seven nights.' },
+            { q: 'Mei tiene dos apellidos.', a: 'f', why: 'She writes only one surname: *Chen*.' },
+          ] },
+        ],
+        [
+          { t: 'reading', title: 'Un mensaje de Marta', md: '¡Hola, Mei! Soy Marta, la dueña del piso. ¡Bienvenida a Valencia!\n\nEl piso está en la calle de la Paz, número 14, tercero B. Las llaves están en la cafetería de abajo, la Cafetería Sol. El camarero se llama Javier. Él tiene las llaves.\n\nEn el piso hay internet. El nombre de la red es PAZ14 y la contraseña está en la cocina. Mi número de teléfono es el 699 000 456. Por la mañana trabajo, pero por la tarde estoy en casa.\n\n¡Hasta pronto!\nMarta' },
+          { t: 'ex', kind: 'tf', ng: true, h: 'Read the message. True, false or not given?', items: [
+            { q: 'Marta es la dueña del piso.', a: 't', why: 'She writes *Soy Marta, la dueña del piso*.' },
+            { q: 'Las llaves están en el piso.', a: 'f', why: 'They are in the café below, *en la cafetería de abajo*.' },
+            { q: 'Javier trabaja en la cafetería.', a: 't', why: 'He is *el camarero* of the café.' },
+            { q: 'La contraseña de internet está en la cocina.', a: 't', why: '*la contraseña está en la cocina*.' },
+            { q: 'Marta vive en el mismo edificio.', a: 'ng', why: 'She says she is at home in the afternoon, but not where her home is.' },
+          ] },
+        ],
+        [
+          { t: 'tip', art: 'owl', md: 'In Spain, an address often has the floor and the door: *calle de la Paz, 14, 3.º B* is number 14, third floor, door B. In Latin America, people often say *departamento* for a flat. In Spain it is *piso*.' },
+          { t: 'ex', kind: 'spot', h: 'Tap Mei’s name, nationality and city.', items: [
+            { s: 'Me llamo [Mei], soy [china] y ahora vivo en [Valencia].', why: 'Her name, her nationality and the city where she lives.' },
+          ] },
+          { t: 'ex', kind: 'match', h: 'Match each field on the card and what Mei writes.', pairs: [
+            ['Nombre', 'Mei'],
+            ['Apellidos', 'Chen'],
+            ['Fecha de llegada', '05/09/2026'],
+            ['Correo electrónico', 'mei.chen@example.com'],
+            ['Nacionalidad', 'china'],
+          ] },
+        ],
+      ],
+    },
+  ],
+  test: [
+    { t: 'ex', kind: 'choice', h: 'Choose the right answer.', items: [
+      { q: 'Son las diez de la mañana. ___', o: ['Buenos días.', 'Buenas tardes.', 'Buenas noches.'], why: 'In the morning: *buenos días*.' },
+      { q: 'At the hotel: ¿Cómo ___ usted?', o: ['se llama', 'te llamas', 'me llamo'], why: 'With *usted*: *se llama*.' },
+      { q: 'Lucía es de Inglaterra. Es ___.', o: ['inglesa', 'inglés', 'ingleses'], why: 'Lucía is a woman: *inglesa*.' },
+      { q: 'The sign @ in Spanish is ___.', o: ['arroba', 'punto', 'guion'], why: '@ is *arroba*.' },
+    ] },
+    { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
+      { q: 'Nosotros ___ de Marruecos. (ser)', a: ['somos'], why: '*nosotros*: *somos*.' },
+      { q: 'Y vosotros, ¿de dónde ___? (ser)', a: ['sois'], why: '*vosotros*: *sois*. In Latin America: *ustedes son*.' },
+      { q: 'Siete más siete son ___.', a: ['catorce'], why: '14 is *catorce*.' },
+      { q: '¿Cómo se ___ su apellido? (escribir)', a: ['escribe'], why: '*¿Cómo se escribe?* asks for the spelling.' },
+    ] },
+    { t: 'ex', kind: 'order', h: 'Build the sentences.', items: [
+      { a: '¿De dónde eres tú?', why: 'Question word, verb, then *tú*.' },
+      { a: 'Me llamo Omar y soy de Egipto.', why: '*Me llamo* + name, *soy de* + country.' },
+    ] },
+    { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+      { s: 'Ana es [brasileño].', a: ['brasileña'], why: 'Ana is a woman: *brasileña*.' },
+      { s: 'Yo [es] de China.', a: ['soy'], why: 'With *yo*: *soy*.' },
+    ] },
+  ],
+};

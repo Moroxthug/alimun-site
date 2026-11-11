@@ -1,0 +1,826 @@
+/* Alimun app: the tutor (docs/AI_TUTOR_PLAN.md).
+   Part 1: the student's tutor time as the server counts it (/api/tutor?action=status): the free 10 minutes given once,
+   this month's plan minutes and minutes added or bought. The browser only shows the time; the server gives and takes it.
+   Part 2: a written session beside a whiteboard. The tutor writes on the board (titles, lines with **bold** words,
+   notes, corrections, small tables) and sets exercises there, played by the shared engine (js/app/exercises.js); when the
+   student has answered every item, the results go back to the tutor as their turn. /api/tutor?action=start|turn|end;
+   past sessions, transcripts and what the tutor remembers are read straight from the database (the student's own rows),
+   and "Forget everything" goes through /api/tutor?action=forget.
+   Part 3: voice. "Speak" records the student (at most 30 seconds); the recording goes to /api/tutor?action=turn, where
+   Groq Whisper writes it down in the language being learned and drops it; the words appear as the student's message.
+   After each reply the tutor's words are spoken (/api/tutor?action=voice: the server's stored text, once per message,
+   Orus or Sulafat through Google Cloud) and kept in the page to hear again. The voice can be turned off (remembered in
+   this browser); if Google refuses or is slow, the reply simply stays written. The voice stops when the time runs out.
+   Part 4: pronunciation, shown only when the server says it is configured (Azure). A tutor reply can set a sentence to
+   say aloud; it appears on the board with "Say it" and "Hear it slowly" (the tutor's voice, slowly, once per sentence).
+   The recording is turned into 16 kHz mono WAV in the page and sent to /api/tutor?action=pronounce, which scores it and
+   drops it; the board marks each word (said well, said differently, missed), names the sound that was off where Azure
+   gives it, and shows accuracy, fluency and completeness; the tutor answers and sets the sentence again until it is right.
+   Part 7: the live call. When the server says it is configured, the Tutor page lets the student pick one of the six
+   tutors (each with its own voice) and "Talk with ..." opens #/tutor/live, run by js/app/tutor-live.js; writing to the
+   tutor stays as the other way in.
+   Part 5: at the end of a session (written or live) the summary says how many words went into the flashcards and links
+   to the practice the tutor left in Practice ("From your tutor", js/app/practice.js).
+   Part 5b: #/tutor/lesson/<notes id> (from Home and Classes, once the teacher published the class notes): the same page
+   with the lesson to go over; writing or calling then starts from that lesson (the server checks it is the student's).
+   Sample (signed out or ?sample=1): a short scripted session in German, nothing is sent.
+   Part 6: paid time. When the time is used up (and only then: no upgrade pop-up), the Tutor shows when the plan's minutes
+   come back, the plans with their monthly minutes and the packs of minutes to buy once (js/app/plans.js, Stripe Checkout;
+   the webhook adds the minutes, which last 12 months). The same offer closes a written session or a call that ran out.
+   Routes: #/tutor, #/tutor/session, #/tutor/live, #/tutor/past/<id>, #/tutor/lesson/<id>. Interface text: app_tu_* keys. */
+(function () {
+  'use strict';
+  var A = null, root = null, mountNo = 0;
+  var S = null;  /* { status, session, messages, board, ex, exMsg, busy, ended, summary, error, sessions, memory, sample } */
+  var EX = function () { return window.AlimunEx; };
+  function t(k, v) { return A.t(k, v); }
+  function esc(s) { return A.esc(s); }
+  function signedIn() { return A.mode() === 'real' && A.data().profile && A.data().profile.id; }
+  function D() { return window.AlimunData; }
+  function langCode() { return D().langCode(A.data().profile.language) || 'en'; }
+  function ta() { return ' lang="' + esc(langCode()) + '" dir="ltr"'; }
+
+  /* Whole minutes, with each language's own plural forms */
+  function mins(sec) { return new Intl.NumberFormat(A.locale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(Math.floor((sec || 0) / 60)); }
+  function day(iso, opts) { return new Intl.DateTimeFormat(A.locale, opts || { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(iso)); }
+  function row(big, small) { return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(big) + '</span><span><small>' + esc(small) + '</small></span></div>'; }
+  function loader(w) { return '<div class="loader" style="--w:' + (w || 72) + 'px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div>'; }
+
+  /* ---------- Voice (part 3) ---------- */
+  var VOICE_KEY = 'alimun.tutor.voice', REC_MAX = 30;
+  function voiceOn() { try { return localStorage.getItem(VOICE_KEY) !== 'off'; } catch (e) { return true; } }
+  function setVoiceOn(on) { try { if (on) localStorage.removeItem(VOICE_KEY); else localStorage.setItem(VOICE_KEY, 'off'); } catch (e) { /* kept for this visit only */ } }
+  function voiceReady() { return !!(S && S.status && S.status.voice); }
+  function pronReady() { return !!(S && S.status && S.status.pron); }
+  function listenReady() { return !!(S && S.status && (S.status.listen || S.sample)); }
+  /* One audio element for the whole session. Started once inside a tap (with a moment of silence) so that phones let
+     the replies play by themselves afterwards. */
+  var player = null, silent = null;
+  function audioEl() {
+    if (player) return player;
+    player = new Audio();
+    var done = function () { if (S && S.playing && (player.paused || player.ended)) { S.playing = null; hearUi(); } };
+    player.addEventListener('ended', done); player.addEventListener('pause', done);
+    return player;
+  }
+  function unlock() {
+    var p = audioEl();
+    if (p.__unlocked || (S && S.playing)) return;
+    p.__unlocked = true;
+    if (!silent) {
+      var n = 400, b = new DataView(new ArrayBuffer(44 + n * 2)), w = function (o, x) { for (var i = 0; i < x.length; i++) b.setUint8(o + i, x.charCodeAt(i)); };
+      w(0, 'RIFF'); b.setUint32(4, 36 + n * 2, true); w(8, 'WAVE'); w(12, 'fmt '); b.setUint32(16, 16, true); b.setUint16(20, 1, true); b.setUint16(22, 1, true);
+      b.setUint32(24, 8000, true); b.setUint32(28, 16000, true); b.setUint16(32, 2, true); b.setUint16(34, 16, true); w(36, 'data'); b.setUint32(40, n * 2, true);
+      silent = URL.createObjectURL(new Blob([b.buffer], { type: 'audio/wav' }));
+    }
+    p.src = silent;
+    var r = p.play(); if (r && r.catch) r.catch(function () { /* nothing to hear */ });
+  }
+  function play(id) {
+    var url = S.audio && S.audio[id];
+    if (!url) return;
+    var p = audioEl();
+    p.src = url; S.playing = id;
+    var r = p.play();
+    if (r && r.catch) r.catch(function () { if (S && S.playing === id) { S.playing = null; hearUi(); } });
+    hearUi();
+  }
+  function stopVoice() {
+    if (player && !player.paused) player.pause();
+    if (S) S.playing = null;
+  }
+  function forgetAudio() {
+    stopVoice();
+    if (S && S.audio) Object.keys(S.audio).forEach(function (k) { URL.revokeObjectURL(S.audio[k]); });
+    if (S) { S.audio = {}; S.vload = null; }
+  }
+  /* The latest tutor message, the only one whose voice can still be asked for */
+  function lastTutor() { for (var i = S.messages.length - 1; i >= 0; i--) if (S.messages[i].role === 'tutor') return S.messages[i]; return null; }
+  function hearHtml(m) {
+    var has = S.audio && S.audio[m.id];
+    var can = has || (voiceReady() && !S.sample && !S.ended && !m.voiced && (S.seconds || 0) > 0 && m.text && lastTutor() === m);
+    if (!can) return '';
+    var label = S.vload === m.id ? 'app_tu_listen' : S.playing === m.id ? 'app_tu_listen_stop' : 'app_tu_listen';
+    return '<button class="tu-hear" type="button" data-tu="hear" data-id="' + esc(m.id) + '"' + (S.vload === m.id ? ' disabled aria-busy="true"' : '') + '>' + esc(t(label)) + '</button>';
+  }
+  /* Only the listen buttons change: what the student is typing stays */
+  function hearUi() {
+    if (!root || !S || !S.session) return;
+    S.messages.forEach(function (m) {
+      if (m.role !== 'tutor') return;
+      var box = root.querySelector('[data-hear-for="' + (window.CSS && CSS.escape ? CSS.escape(m.id) : m.id) + '"]');
+      if (box) box.innerHTML = hearHtml(m);
+    });
+    var sb = root.querySelector('[data-slow-box]'); if (sb) sb.innerHTML = slowHtml();
+    var v = root.querySelector('[data-tu="voice"]');
+    if (v) { v.textContent = t(voiceOn() ? 'app_tu_voice_off' : 'app_tu_voice_on'); v.setAttribute('aria-pressed', voiceOn() ? 'true' : 'false'); }
+    var n = root.querySelector('[data-tu-note]'); if (n) n.textContent = S.note ? t(S.note) : '';
+  }
+  /* Asks the server for a message's voice once, keeps it in the page, and plays it if asked to */
+  function fetchVoice(m, autoplay) {
+    if (S.sample || !voiceReady() || !m || !m.text || m.voiced || (S.audio && S.audio[m.id]) || S.vload) return;
+    var session = S.session;
+    S.vload = m.id; hearUi();
+    D().tutorVoice(session.id, m.id).then(function (blob) {
+      if (!S || S.session !== session) return;
+      S.vload = null; m.voiced = true;
+      S.audio = S.audio || {};
+      S.audio[m.id] = URL.createObjectURL(blob);
+      if (autoplay && voiceOn() && lastTutor() === m && !S.rec && !S.busy) play(m.id); else hearUi();
+    }, function (e) {
+      if (!S || S.session !== session) return;
+      S.vload = null;
+      var r = e && e.body && e.body.reason;
+      if (r === 'voiced') m.voiced = true;
+      else if (r === 'no_time' || r === 'ended') { m.voiced = true; }
+      else S.note = 'app_tu_voice_failed';
+      hearUi();
+    });
+  }
+  function hear(id) {
+    if (S.playing === id) { stopVoice(); hearUi(); return; }
+    unlock();
+    if (S.audio && S.audio[id]) { play(id); return; }
+    var m = S.messages.filter(function (x) { return x.id === id; })[0];
+    if (m) fetchVoice(m, true);
+  }
+  function toggleVoice() {
+    var on = !voiceOn();
+    setVoiceOn(on);
+    if (!on) stopVoice();
+    hearUi();
+  }
+
+  /* ---------- Speaking to the tutor ---------- */
+  function recMime() {
+    var list = ['audio/webm;codecs=opus', 'audio/webm', 'audio/mp4', 'audio/ogg;codecs=opus'];
+    for (var k = 0; k < list.length; k++) if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(list[k])) return list[k];
+    return '';
+  }
+  function blobBase64(blob) {
+    return new Promise(function (ok, no) { var r = new FileReader(); r.onload = function () { ok(String(r.result).split(',')[1] || ''); }; r.onerror = no; r.readAsDataURL(blob); });
+  }
+  function showErr(key) { S.error = key; var el = root && root.querySelector('[data-tu-err]'); if (el) el.textContent = key ? t(key) : ''; }
+  /* The form while recording: the button stops and sends, writing waits, the seconds left are read out */
+  function recUi() {
+    if (!root || !S) return;
+    var b = root.querySelector('[data-tu="rec"]'), p = root.querySelector('[data-tu="pron-rec"]'), send = root.querySelector('[data-tu-send]'), inp = root.querySelector('#tu-in');
+    var on = !!S.rec, mode = on ? S.rec.mode : null, left = on && S.rec.t0 ? t('app_tu_rec_left', { n: Math.max(0, REC_MAX - Math.round((Date.now() - S.rec.t0) / 1000)) }) : '';
+    if (b) { b.textContent = t(mode === 'turn' ? 'app_tu_rec_stop' : 'app_tu_speak'); b.setAttribute('aria-pressed', mode === 'turn' ? 'true' : 'false'); b.disabled = !!S.busy || mode === 'pron' || (on && S.rec.starting); }
+    if (p) { p.textContent = t(mode === 'pron' ? 'app_tu_rec_stop' : p.getAttribute('data-label')); p.setAttribute('aria-pressed', mode === 'pron' ? 'true' : 'false'); p.disabled = !!S.busy || mode === 'turn' || (on && S.rec.starting); }
+    if (send) send.disabled = on || !!S.busy;
+    if (inp) inp.disabled = on;
+    var line = root.querySelector('[data-tu-rec]'); if (line) line.textContent = mode === 'turn' ? left : '';
+    var pl = root.querySelector('[data-tu-prec]'); if (pl) pl.textContent = mode === 'pron' ? left : '';
+  }
+  /* mode: 'turn' (talking to the tutor) or 'pron' (saying the sentence on the board, msg is its message) */
+  function startRec(mode, msg) {
+    if (!S || S.busy || S.ended || S.rec) return;
+    mode = mode || 'turn';
+    stopVoice(); unlock(); showErr(null); S.note = null; hearUi();
+    if (S.sample) {
+      var sr = S.rec = { sample: true, t0: Date.now(), mode: mode, msg: msg };
+      sr.timer = setTimeout(function () { stopRec(); }, 2500); sr.tick = setInterval(recUi, 500);
+      recUi(); return;
+    }
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) { showErr('app_tu_err_mic'); return; }
+    var r = S.rec = { starting: true, chunks: [], mode: mode, msg: msg };
+    recUi();
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (stream) {
+      if (!S || S.rec !== r || r.cancel) { stream.getTracks().forEach(function (x) { x.stop(); }); if (S && S.rec === r) S.rec = null; recUi(); return; }
+      var mime = recMime(), mr;
+      try { mr = mime ? new MediaRecorder(stream, { mimeType: mime, audioBitsPerSecond: 32000 }) : new MediaRecorder(stream); } catch (e) {
+        stream.getTracks().forEach(function (x) { x.stop(); }); S.rec = null; showErr('app_tu_err_mic'); recUi(); return;
+      }
+      r.starting = false; r.mr = mr; r.stream = stream; r.t0 = Date.now();
+      mr.ondataavailable = function (e) { if (e.data && e.data.size) r.chunks.push(e.data); };
+      mr.onstop = function () {
+        clearTimeout(r.timer); clearInterval(r.tick);
+        stream.getTracks().forEach(function (x) { x.stop(); });
+        if (S && S.rec === r) S.rec = null;
+        recUi();
+        if (r.cancel || !S || !S.session) return;
+        var blob = new Blob(r.chunks, { type: (mr.mimeType || mime || 'audio/webm').split(';')[0] });
+        if (r.mode === 'pron') sendPron(blob, r.msg); else sendSpoken(blob);
+      };
+      mr.start();
+      r.timer = setTimeout(function () { stopRec(); }, REC_MAX * 1000);
+      r.tick = setInterval(recUi, 500);
+      recUi();
+    }, function () { if (S && S.rec === r) S.rec = null; showErr('app_tu_err_mic'); recUi(); });
+  }
+  function stopRec(cancel) {
+    var r = S && S.rec;
+    if (!r) return;
+    if (cancel) r.cancel = true;
+    if (r.sample) {
+      clearTimeout(r.timer); clearInterval(r.tick); S.rec = null; recUi();
+      if (!cancel) { if (r.mode === 'pron') sendPron(null, r.msg); else sendSpoken(null); }
+      return;
+    }
+    if (r.mr && r.mr.state !== 'inactive') r.mr.stop();
+    else if (r.starting && cancel) { S.rec = null; recUi(); }
+  }
+  function sendSpoken(blob) {
+    if (!S || S.busy || S.ended) return;
+    if (blob && blob.size < 800) { showErr('app_tu_err_unheard'); return; }
+    S.error = null;
+    S.messages.push({ id: 'pending', role: 'student', spoken: true, waiting: true });
+    busy(true);
+    if (S.sample) {
+      setTimeout(function () { afterTurn({ mine: sampleMsg('student', { text: 'Am Wochenende bin ich ins Kino gegangen.' }), message: sampleMsg('tutor', SAMPLE_SPOKEN), board: S.board.concat(SAMPLE_SPOKEN.board), seconds: S.seconds - 30 }, true); }, 1100);
+      return;
+    }
+    var session = S.session;
+    blobBase64(blob).then(function (b64) {
+      return D().tutorTurn({ session: session.id, audio: b64, mime: blob.type || 'audio/webm' });
+    }).then(function (r) { if (S && S.session === session) afterTurn(r, true); }, function (e) { if (S && S.session === session) turnFailed(e, true); });
+  }
+
+  /* ---------- Saying the sentence (part 4) ---------- */
+  /* The recording as 16 kHz mono 16-bit WAV, the one form Azure takes from every browser's recorder */
+  function toWav(blob) {
+    var AC = window.AudioContext || window.webkitAudioContext, OAC = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    if (!AC || !OAC) return Promise.reject(new Error('no audio'));
+    return blob.arrayBuffer().then(function (buf) {
+      var ac = new AC();
+      return new Promise(function (ok, no) { ac.decodeAudioData(buf, ok, no); }).then(function (ab) {
+        if (ac.close) ac.close();
+        var n = Math.min(Math.ceil(ab.duration * 16000), REC_MAX * 16000), off = new OAC(1, Math.max(n, 1), 16000), src = off.createBufferSource();
+        src.buffer = ab; src.connect(off.destination); src.start(0);
+        return off.startRendering();
+      });
+    }).then(function (out) {
+      var pcm = out.getChannelData(0), b = new DataView(new ArrayBuffer(44 + pcm.length * 2));
+      var w = function (o, x) { for (var i = 0; i < x.length; i++) b.setUint8(o + i, x.charCodeAt(i)); };
+      w(0, 'RIFF'); b.setUint32(4, 36 + pcm.length * 2, true); w(8, 'WAVE'); w(12, 'fmt '); b.setUint32(16, 16, true); b.setUint16(20, 1, true); b.setUint16(22, 1, true);
+      b.setUint32(24, 16000, true); b.setUint32(28, 32000, true); b.setUint16(32, 2, true); b.setUint16(34, 16, true); w(36, 'data'); b.setUint32(40, pcm.length * 2, true);
+      for (var i = 0; i < pcm.length; i++) { var v = Math.max(-1, Math.min(1, pcm[i])); b.setInt16(44 + i * 2, v < 0 ? v * 0x8000 : v * 0x7fff, true); }
+      return new Blob([b.buffer], { type: 'audio/wav' });
+    });
+  }
+  function sendPron(blob, msgId) {
+    if (!S || S.busy || S.ended) return;
+    if (blob && blob.size < 800) { showErr('app_tu_err_unheard'); return; }
+    S.error = null;
+    S.messages.push({ id: 'pending', role: 'student', spoken: true, waiting: true });
+    busy(true);
+    if (S.sample) {
+      var good = (S.tries = (S.tries || 0) + 1) > 1, said = sampleMsg('student', { text: SAMPLE_PRON_TEXT, result: { message: msgId, pron: good ? SAMPLE_PRON_GOOD : SAMPLE_PRON_FIRST } });
+      var next = good ? SAMPLE_PRON_DONE : SAMPLE_PRON_AGAIN;
+      setTimeout(function () { afterTurn({ mine: said, message: sampleMsg('tutor', next), board: S.board.concat(next.board), seconds: S.seconds - 25 }, true); }, 1200);
+      return;
+    }
+    var session = S.session;
+    toWav(blob).then(function (wav) {
+      if (wav.size > 44 + REC_MAX * 32000 + 64) throw { body: { reason: 'audio_long' } };
+      return blobBase64(wav);
+    }, function () { throw { body: { reason: 'audio_type' } }; }).then(function (b64) {
+      return D().tutorPronounce({ session: session.id, message: msgId, audio: b64, mime: 'audio/wav' });
+    }).then(function (r) { if (S && S.session === session) afterTurn(r, true); }, function (e) { if (S && S.session === session) turnFailed(e, true); });
+  }
+  /* The sentence open to say: the latest tutor message, when it set one */
+  function openPron() { var m = lastTutor(); return m && m.pron ? m : null; }
+  function pronOf(id) { var m = S.messages.filter(function (x) { return x.id === id; })[0]; return m && m.pron || ''; }
+  /* The latest attempt: shown on the board for the open sentence, or until the next turn when the tutor has moved on */
+  function lastAttempt() {
+    for (var i = S.messages.length - 1; i >= 0; i--) {
+      var m = S.messages[i];
+      if (m.role !== 'student' || m.waiting) continue;
+      if (!(m.result && m.result.pron)) return null;
+      var open = openPron();
+      return !open || pronOf(m.result.message) === open.pron ? m : null;
+    }
+    return null;
+  }
+  function slowHtml() {
+    var m = openPron();
+    if (!m || S.sample) return '';
+    var key = 'slow:' + m.id, has = S.audio && S.audio[key];
+    if (!has && (!voiceReady() || S.ended || m.slow_voiced || (S.seconds || 0) <= 0)) return '';
+    return '<button class="btn btn--ghost btn--sm" type="button" data-tu="slow" data-id="' + esc(m.id) + '"' + (S.vload === key ? ' disabled aria-busy="true"' : '') + '>' +
+      esc(t(S.playing === key ? 'app_tu_listen_stop' : 'app_tu_pron_slow')) + '</button>';
+  }
+  function hearSlow(id) {
+    var key = 'slow:' + id;
+    if (S.playing === key) { stopVoice(); hearUi(); return; }
+    unlock();
+    if (S.audio && S.audio[key]) { play(key); return; }
+    if (S.vload) return;
+    var session = S.session, m = S.messages.filter(function (x) { return x.id === id; })[0];
+    if (!m) return;
+    S.vload = key; hearUi();
+    D().tutorVoice(session.id, id, true).then(function (blob) {
+      if (!S || S.session !== session) return;
+      S.vload = null; m.slow_voiced = true;
+      S.audio = S.audio || {}; S.audio[key] = URL.createObjectURL(blob);
+      if (!S.rec && !S.busy) play(key); else hearUi();
+    }, function (e) {
+      if (!S || S.session !== session) return;
+      S.vload = null;
+      var r = e && e.body && e.body.reason;
+      if (r === 'voiced' || r === 'no_time' || r === 'ended') m.slow_voiced = true; else S.note = 'app_tu_voice_failed';
+      hearUi();
+    });
+  }
+  /* The sentence with each word marked as the score found it */
+  function markedHtml(sentence, attempt) {
+    var words = attempt && attempt.words;
+    if (!words || !words.length) return esc(sentence);
+    return words.map(function (w) {
+      var cls = w.s === 'ok' ? 'is-ok' : w.s === 'diff' ? 'is-diff' : w.s === 'missed' ? 'is-missed' : '';
+      return cls ? '<span class="tu-pw ' + cls + '">' + esc(w.t) + '</span>' : esc(w.t);
+    }).join(' ');
+  }
+  /* The sentence (its words marked when the attempt was on it), and with an attempt the scores and the sounds that were off */
+  function pronBody(sentence, r, mine) {
+    var html = '<p class="tu-pron__s"' + ta() + '>' + markedHtml(sentence, mine ? r : null) + '</p>';
+    if (r) {
+      var diff = (r.words || []).filter(function (w) { return w.s === 'diff'; }), missed = (r.words || []).filter(function (w) { return w.s === 'missed'; });
+      html += '<div class="tu-pron__scores">' + [['accuracy', 'app_tu_pron_acc'], ['fluency', 'app_tu_pron_flu'], ['completeness', 'app_tu_pron_comp']].map(function (x) {
+        return r[x[0]] == null ? '' : '<p><span class="tu-pron__n">' + esc(String(r[x[0]])) + '</span><small>' + esc(t(x[1])) + '</small></p>';
+      }).join('') + '</div>';
+      html += '<p class="t-body">' + esc(t(!diff.length && !missed.length ? 'app_tu_pron_all_ok' : missed.length ? 'app_tu_pron_key_missed' : 'app_tu_pron_key')) + '</p>';
+      diff.filter(function (w) { return w.sound; }).slice(0, 3).forEach(function (w) {
+        html += '<p class="t-body">' + esc(t('app_tu_pron_sound', { word: '\u2068' + w.t.replace(/[^\p{L}\p{N}'’-]+/gu, '') + '\u2069', sound: '\u2068/' + w.sound + '/\u2069' })) + '</p>';
+      });
+    }
+    return html;
+  }
+  function pronHtml() {
+    var open = openPron(), at = lastAttempt(), r = at && at.result.pron;
+    if (!open && !r) return '';
+    var said = r ? pronOf(at.result.message) || r.sentence || '' : '', sentence = open ? open.pron : said || (r.words || []).map(function (w) { return w.t; }).join(' ');
+    var mine = r && (!said || said === sentence);
+    var html = '<div class="paper tu-pron" data-tu-pron><h3 class="t-h3">' + esc(t(open ? 'app_tu_pron_h' : 'app_tu_pron_last')) + '</h3>' + pronBody(sentence, r, mine);
+    if (open && !S.ended && pronReady()) {
+      var label = mine ? 'app_tu_pron_again' : 'app_tu_pron_say';
+      html += '<div class="btn-row" style="margin-top:14px"><button class="btn btn--primary btn--sm" type="button" data-tu="pron-rec" data-id="' + esc(open.id) + '" data-label="' + label + '" aria-pressed="false"' + (S.busy ? ' disabled' : '') + '>' + esc(t(label)) + '</button>' +
+        '<span data-slow-box>' + slowHtml() + '</span></div><p class="t-small tu-rec" data-tu-prec aria-live="polite"></p>';
+    }
+    return html + '</div>';
+  }
+
+  /* ---------- Sample ---------- */
+  function sampleStatus() {
+    var renews = new Date(); renews = new Date(Date.UTC(renews.getUTCFullYear(), renews.getUTCMonth() + 1, 1)).toISOString();
+    return { seconds: { free: 600, plan: 2520, credit: 0, total: 3120 }, plan: { tier: 'focused', minutes_per_month: 60, granted_seconds: 3600, renews_at: renews }, plans: { community: 30, focused: 60, intensive: 120, private: 120 }, open: true, listen: true, voice: true, pron: true, live: true, sample: true };
+  }
+  var SAMPLE_OPEN = {
+    text: 'Hallo! Heute üben wir das Perfekt mit haben oder sein, denn das war in deinen Übungen oft schwierig.',
+    board: [{ op: 'title', text: 'Perfekt: haben oder sein?' }, { op: 'write', text: 'Ich **habe** gestern lange **geschlafen**.' }, { op: 'write', text: 'Wir **sind** nach Berlin **gefahren**.' },
+      { op: 'note', text: 'Verbs of movement from A to B, and changes of state, take sein.' }, { op: 'table', rows: [['haben', 'sein'], ['schlafen, essen, kaufen', 'fahren, gehen, aufstehen']] }],
+    exercise: { t: 'ex', kind: 'choice', h: 'Haben oder sein?', items: [
+      { q: 'Ich ___ um sieben Uhr aufgestanden.', o: ['bin', 'habe', 'ist'], why: 'aufstehen ist eine Veränderung: sein.' },
+      { q: 'Sie ___ einen Kaffee getrunken.', o: ['hat', 'ist', 'sind'], why: 'trinken: haben.' },
+      { q: 'Wir ___ in die Stadt gegangen.', o: ['sind', 'haben', 'hat'], why: 'gehen: Bewegung, also sein.' }] }
+  };
+  var SAMPLE_REPLY = {
+    text: 'Sehr gut! Schreib mir jetzt einen Satz über dein Wochenende, im Perfekt.',
+    board: [{ op: 'fix', wrong: 'Ich habe nach Hause gegangen.', right: 'Ich bin nach Hause gegangen.' }, { op: 'write', text: 'Am Wochenende **bin** ich ... / **habe** ich ...' }]
+  };
+  var SAMPLE_SPOKEN = {
+    text: 'Super, das hast du richtig gesagt! Ins Kino gehen nimmt sein. Sag jetzt diesen Satz laut, ich höre zu.',
+    board: [{ op: 'write', text: 'Ich **bin** ins Kino **gegangen**.' }],
+    pron: 'Am Wochenende bin ich ins Kino gegangen.'
+  };
+  var SAMPLE_PRON_TEXT = 'Am Wochenende bin ich ins Kino gegangen.';
+  var SAMPLE_PRON_FIRST = { sentence: SAMPLE_PRON_TEXT, score: 74, accuracy: 71, fluency: 82, completeness: 100, extra: 0, words: [{ t: 'Am', s: 'ok' }, { t: 'Wochenende', s: 'diff', sound: 'x' }, { t: 'bin', s: 'ok' }, { t: 'ich', s: 'ok' }, { t: 'ins', s: 'ok' }, { t: 'Kino', s: 'ok' }, { t: 'gegangen.', s: 'diff', sound: 'ŋ' }] };
+  var SAMPLE_PRON_GOOD = { sentence: SAMPLE_PRON_TEXT, score: 93, accuracy: 92, fluency: 95, completeness: 100, extra: 0, words: SAMPLE_PRON_FIRST.words.map(function (w) { return { t: w.t, s: 'ok' }; }) };
+  var SAMPLE_PRON_AGAIN = {
+    text: 'Schon gut! Das ch in Wochenende kommt hinten aus dem Hals, wie in Bach, und am Ende von gegangen bleibt die Zunge hinten: ng, ohne g. Noch einmal, bitte.',
+    board: [{ op: 'write', text: 'Wo**ch**enende, wie Ba**ch**' }, { op: 'write', text: 'gegan**gen**: ng, ohne g am Ende' }],
+    pron: 'Am Wochenende bin ich ins Kino gegangen.'
+  };
+  var SAMPLE_PRON_DONE = {
+    text: 'Perfekt, jetzt klingt es ganz natürlich! Welchen Film hast du gesehen?',
+    board: [{ op: 'note', text: 'Your ch and ng were clear this time.' }]
+  };
+  function sampleMsg(role, x) { return { id: 's' + Math.random().toString(36).slice(2), role: role, text: x.text || '', board: x.board || [], exercise: x.exercise || null, result: x.result || null, pron: x.pron || null, at: new Date().toISOString() }; }
+
+  /* ---------- The whiteboard ---------- */
+  function md(s) { return EX().md(s); }
+  function opHtml(o, isNew) {
+    var c = isNew ? ' is-new' : '';
+    if (o.op === 'title') return '<h3 class="tu-op tu-op--title' + c + '"' + ta() + '>' + md(o.text) + '</h3>';
+    if (o.op === 'write') return '<p class="tu-op tu-op--write' + c + '"' + ta() + '>' + md(o.text) + '</p>';
+    if (o.op === 'note') return '<p class="tu-op tu-op--note' + c + '" dir="auto">' + md(o.text) + '</p>';
+    if (o.op === 'spell') return '<p class="tu-op tu-op--spell' + c + '"' + ta() + ' aria-label="' + esc(o.text) + '">' + Array.from(String(o.text)).map(function (ch, i) {
+      return ch === ' ' ? '<span class="tu-sp tu-sp--gap" aria-hidden="true"> </span>' : '<span class="tu-sp" style="--i:' + i + '" aria-hidden="true">' + esc(ch) + '</span>';
+    }).join('') + '</p>';
+    if (o.op === 'fix') return '<p class="tu-op tu-op--fix' + c + '"' + ta() + '><s>' + esc(o.wrong) + '</s> <span aria-hidden="true">→</span> <b>' + esc(o.right) + '</b></p>';
+    if (o.op === 'table') return '<div class="tu-op tu-op--table' + c + '"><table' + ta() + '>' + o.rows.map(function (r, i) {
+      return '<tr>' + r.map(function (cell) { return i ? '<td>' + md(cell) + '</td>' : '<th>' + md(cell) + '</th>'; }).join('') + '</tr>';
+    }).join('') + '</table></div>';
+    return '';
+  }
+  function boardHtml(newCount) {
+    var b = S.board || [], from = b.length - (newCount || 0);
+    return b.length ? b.map(function (o, i) { return opHtml(o, i >= from); }).join('') : '<p class="tu-op tu-op--empty">' + esc(t('app_tu_board_empty')) + '</p>';
+  }
+
+  /* ---------- The exercise on the board ---------- */
+  /* The latest tutor message with an exercise the student has not answered yet */
+  function openExercise() {
+    var answered = {};
+    S.messages.forEach(function (m) { if (m.result && m.result.message) answered[m.result.message] = true; });
+    for (var i = S.messages.length - 1; i >= 0; i--) {
+      var m = S.messages[i];
+      if (m.role === 'tutor') return m.exercise && !answered[m.id] ? m : null;
+    }
+    return null;
+  }
+  function prepareExercise() {
+    var m = openExercise();
+    if (!m) { S.ex = null; S.exMsg = null; return; }
+    if (S.exMsg === m.id && S.ex) return;
+    S.exMsg = m.id; S.got = [];
+    S.ex = EX().create({ A: A, blocks: [m.exercise], xa: '', ta: ta(), root: function () { return root; },
+      onItem: function (r) {
+        var x = S.ex.state[0] && S.ex.state[0].items && S.ex.state[0].items[r.i];
+        S.got.push({ i: r.i, ok: !!r.ok, given: !r.ok && x && x.value ? String(x.value).slice(0, 80) : undefined });
+      },
+      onAnswer: function () { if (S.ex && S.ex.done(0)) setTimeout(sendResults, 900); } });
+  }
+  function exHtml() {
+    if (!S.ex) return '';
+    return '<div class="paper tu-ex" data-tu-ex>' + S.ex.html(0) + '</div>';
+  }
+
+  /* ---------- Views ---------- */
+  function liveReady() { return !!(S && S.status && S.status.live && window.AlimunTutorLive && A.Cast.tutor && !S.status.viewing); }
+  function cap(k) { return k.charAt(0).toUpperCase() + k.slice(1); }
+  /* The live call: the six tutors to pick from and the call button */
+  function liveCard(none) {
+    var L = window.AlimunTutorLive, mine = L.myTutor();
+    return '<section class="card span-12 speak-card" style="--i:0" aria-labelledby="tl-pick-h"><div class="speak-card__top"><div>' +
+      '<h2 class="t-h2" id="tl-pick-h">' + esc(t('app_tl_pick_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_tl_pick_p')) + '</p></div>' +
+      '<div class="btn-row"><button class="btn btn--primary" type="button" data-tu="live"' + (none ? ' disabled' : '') + '>' + esc(t('app_tl_call', { name: cap(mine) })) + '</button>' +
+      (S.status && S.status.cascade_test ? '<button class="btn btn--ghost" type="button" data-tu="live-test"' + (none ? ' disabled' : '') + '>' + esc(t('app_tl_call_test')) + '</button>' : '') + '</div></div>' +
+      '<div class="tutors" role="radiogroup" aria-label="' + esc(t('app_tl_pick_h')) + '">' + A.Cast.tutors.map(function (k) {
+        var on = k === mine;
+        return '<button class="tutor-pick tutor-art' + (on ? ' is-on' : '') + '" type="button" role="radio" aria-checked="' + on + '" data-tu="pick" data-tutor="' + esc(k) + '" data-mouth="rest" aria-label="' + esc(cap(k)) + '">' + A.Cast.tutor(k) + '<span>' + esc(cap(k)) + '</span></button>';
+      }).join('') + '</div>' + (none ? '<p class="t-small" style="margin-top:10px">' + esc(t('app_tu_none_left')) + '</p>' : '') + '</section>';
+  }
+  function pick(b) {
+    var k = b.getAttribute('data-tutor');
+    window.AlimunTutorLive.setTutor(k);
+    root.querySelectorAll('[data-tu="pick"]').forEach(function (x) { var on = x === b; x.classList.toggle('is-on', on); x.setAttribute('aria-checked', on ? 'true' : 'false'); });
+    var go = root.querySelector('[data-tu="live"]'); if (go) go.textContent = t('app_tl_call', { name: cap(k) });
+  }
+  function startLive(engine) {
+    unlock(); forgetAudio();
+    window.AlimunTutorLive.want({ tutor: window.AlimunTutorLive.myTutor(), sample: !!S.sample, seconds: S.status.seconds ? S.status.seconds.total : 0, lesson: S.lesson || null, engine: engine || null });
+    location.hash = '#/tutor/live';
+  }
+  /* ---------- Part 6: out of time ---------- */
+  var PAID = ['community', 'focused', 'intensive', 'private'];
+  function loadPacks() {
+    if (!S || S.packs || S.packsAsk || !window.AlimunPlans) return;
+    S.packsAsk = true;
+    window.AlimunPlans.tutorPacks(A).then(function (p) { S.packs = p; }, function () { S.packs = []; }).then(function () {
+      if (root) root.querySelectorAll('[data-tu-out]').forEach(function (el) { el.innerHTML = outInner(); });
+    });
+  }
+  function outInner() {
+    var s = S.status || {}, plan = s.plan || {}, packs = S.packs || [], html = '<h2 class="t-h2">' + esc(t('app_tu_out_h')) + '</h2>';
+    if (plan.granted_seconds && plan.renews_at) html += '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_out_renews', { date: day(plan.renews_at) })) + '</p>';
+    else {
+      var items = PAID.filter(function (k) { return s.plans && s.plans[k]; }).map(function (k) { return t('app_tu_out_plan_item', { time: mins(s.plans[k] * 60), plan: '\u2068' + t('app_tier_' + k) + '\u2069' }); });
+      if (items.length) html += '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_out_plans', { list: A.listOf(items) })) + '</p>';
+    }
+    if (packs.length) html += '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_out_packs')) + '</p>';
+    html += '<div class="btn-row" style="margin-top:14px">' + packs.map(function (x, i) {
+      return '<button class="btn btn--' + (i ? 'ghost' : 'primary') + '" type="button" data-tu="buy" data-price="' + esc(x.id) + '">' + esc(t('app_tu_out_buy', { time: mins(x.minutes * 60), price: x.price })) + '</button>';
+    }).join('') + '<a class="btn btn--' + (packs.length ? 'quiet' : 'primary') + '" href="#/settings/plans">' + esc(t('app_tu_see_plans')) + '</a></div>' +
+      '<p class="t-small st-msg" data-tu-buymsg aria-live="polite"></p>';
+    return html;
+  }
+  /* The offer, in a card on the Tutor page or inside the end of a session or a call */
+  function outHtml(inside) {
+    if (S && S.status && S.status.viewing) return '';
+    loadPacks();
+    return inside ? '<div class="tu-out" data-tu-out>' + outInner() + '</div>'
+      : '<section class="card card--sun span-12" style="--i:0" data-tu-out aria-live="polite">' + outInner() + '</section>';
+  }
+  function buy(b) {
+    var msg = b.closest('[data-tu-out]').querySelector('[data-tu-buymsg]');
+    window.AlimunPlans.buyTutor(A, b, msg, b.getAttribute('data-price'));
+  }
+  function homeView() {
+    var s = S.status, sec = s.seconds || {}, plan = s.plan || {}, none = (sec.total || 0) <= 0;
+    var buddy = A.Cast.drawing(A.buddyFor(A.data().profile.language)), liveOn = liveReady();
+    var html = '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_nav_tutor')) + '</h1><p class="t-lead">' + esc(t('app_tu_lead2')) + '</p></div></div><div class="grid rise">';
+    /* Part 5b: going over a class lesson */
+    if (S.lesson) html += '<section class="card card--sun span-12" style="--i:0" aria-labelledby="tu-lesson"><h2 class="t-h2" id="tu-lesson">' + esc(t('app_tu_lesson_h')) + '</h2>' +
+      '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_lesson_p')) + '</p><div class="btn-row" style="margin-top:12px"><a class="btn btn--quiet btn--sm" href="#/tutor">' + esc(t('app_tu_lesson_not')) + '</a></div></section>';
+    if (none) html += outHtml(false);
+    if (liveOn) html += liveCard(none);
+    html += '<section class="card span-7" style="--i:0" aria-labelledby="tu-left"><h2 class="t-h2" id="tu-left">' + esc(t('app_tu_left_h')) + '</h2>' +
+      '<p class="t-num" style="margin-top:8px">' + esc(mins(sec.total)) + '</p><div class="tt-week" style="margin-top:12px">' +
+      row(mins(sec.free), t('app_tu_free')) +
+      (plan.granted_seconds ? row(mins(sec.plan), plan.renews_at ? t('app_tu_plan', { date: day(plan.renews_at) }) : t('app_tu_plan_nodate')) : '') +
+      (sec.credit ? row(mins(sec.credit), t('app_tu_credit')) : '') + '</div>' +
+      (s.expiring && s.expiring.seconds ? '<p class="t-small" style="margin-top:12px">' + esc(t('app_tu_credit_until', { time: mins(s.expiring.seconds), date: day(s.expiring.at) })) + '</p>' : '') +
+      (plan.granted_seconds ? '' : '<p class="t-small" style="margin-top:12px">' + esc(t('app_tu_plan_none')) + '</p>') +
+      (s.viewing ? '<p class="t-tiny" style="margin-top:12px">' + esc(t('app_tu_viewing')) + '</p>'
+        : '<div class="btn-row" style="margin-top:16px"><button class="btn ' + (liveOn ? 'btn--ghost' : 'btn--primary') + '" type="button" data-tu="start"' + (none || !s.open ? ' disabled' : '') + '>' + esc(t(liveOn ? 'app_tl_write' : 'app_tu_start')) + '</button>' +
+          '</div>' +
+          '<p class="t-small st-msg" data-tu-msg aria-live="polite">' + esc(none ? t('app_tu_none_left') : !s.open ? t('app_tu_closed') : S.error ? t(S.error) : '') + '</p>') + '</section>';
+    html += '<section class="stage span-5" style="--i:1;background:var(--t-mint)" aria-hidden="true"><div class="bub say">' + esc(t('app_tu_bub2')) + '</div>' + buddy + '</section>';
+    html += '<section class="card span-7" style="--i:2" aria-labelledby="tu-past"><h2 class="t-h2" id="tu-past">' + esc(t('app_tu_past_h')) + '</h2>' +
+      ((S.sessions || []).length ? '<div class="tt-week">' + S.sessions.map(function (x) {
+        return '<a class="tt-row tt-row--wide" href="#/tutor/past/' + esc(x.id) + '"><span class="tt-row__time">' + esc(day(x.started_at, { day: 'numeric', month: 'short' })) + '</span><span><b dir="auto">' + esc(x.title || t('app_tu_untitled')) + '</b>' +
+          (x.summary ? '<small dir="auto">' + esc(x.summary) + '</small>' : '') + '</span></a>';
+      }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_past_none')) + '</p>') + '</section>';
+    html += memoryCard();
+    if (S.sample) html += '<p class="t-tiny span-12">' + esc(t('app_tu_sample')) + '</p>';
+    return html + '</div>';
+  }
+  function memoryCard() {
+    var n = S.memory || {}, parts = [];
+    if (n.goals) parts.push(n.goals);
+    if (n.interests) parts.push(n.interests);
+    if (n.mistakes && n.mistakes.length) parts.push(t('app_tu_mem_mistakes', { list: A.listOf(n.mistakes) }));
+    if (n.learned && n.learned.length) parts.push(t('app_tu_mem_learned', { list: A.listOf(n.learned) }));
+    if (n.next) parts.push(t('app_tu_mem_next', { next: n.next }));
+    return '<section class="card span-5" style="--i:3" aria-labelledby="tu-mem"><h2 class="t-h2" id="tu-mem">' + esc(t('app_tu_mem_h')) + '</h2>' +
+      (parts.length ? parts.map(function (p) { return '<p class="t-body" style="margin-top:8px" dir="auto">' + esc(p) + '</p>'; }).join('') : '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_mem_none')) + '</p>') +
+      ((parts.length || (S.sessions || []).length) && !(S.status && S.status.viewing) ? '<div class="btn-row" style="margin-top:14px" data-forget><button class="btn btn--quiet btn--sm" type="button" data-tu="ask-forget">' + esc(t('app_tu_forget')) + '</button></div>' : '') +
+      '<p class="t-small st-msg" data-forget-msg aria-live="polite"></p></section>';
+  }
+
+  function sessionView() {
+    var html = '<div class="view__head tu-head"><div><h1 class="t-h1">' + esc(t('app_nav_tutor')) + '</h1><p class="t-lead" data-tu-left>' + esc(t('app_tu_left_n', { time: mins(S.seconds) })) + '</p></div>' +
+      '<div class="btn-row">' + (S.ended ? '<button class="btn btn--primary btn--sm" type="button" data-tu="home">' + esc(t('app_tu_back')) + '</button>'
+        : (voiceReady() ? '<button class="btn btn--quiet btn--sm" type="button" data-tu="voice" aria-pressed="' + (voiceOn() ? 'true' : 'false') + '">' + esc(t(voiceOn() ? 'app_tu_voice_off' : 'app_tu_voice_on')) + '</button>' : '') +
+          '<button class="btn btn--ghost btn--sm" type="button" data-tu="end"' + (S.busy ? ' disabled' : '') + '>' + esc(t('app_tu_end')) + '</button>') + '</div></div>';
+    html += '<div class="tu-grid">';
+    html += '<section class="tu-board" aria-labelledby="tu-board-h"><h2 class="sr" id="tu-board-h">' + esc(t('app_tu_board_h')) + '</h2><div class="tu-board__ops" data-tu-board aria-live="polite">' + boardHtml(S.fresh) + '</div>' + exHtml() + pronHtml() + '</section>';
+    html += '<section class="tu-chat card" aria-labelledby="tu-chat-h"><h2 class="sr" id="tu-chat-h">' + esc(t('app_tu_chat_h')) + '</h2>' +
+      '<div class="tu-chat__face" aria-hidden="true">' + A.Cast.drawing(A.buddyFor(A.data().profile.language)) + '</div>' +
+      '<div class="ms-msgs tu-msgs" data-tu-msgs>' + msgsHtml() + '</div>' +
+      (S.ended ? summaryHtml() : '<form class="ms-form tu-form" data-tu-form><label class="sr" for="tu-in">' + esc(t('app_tu_write')) + '</label><textarea id="tu-in" class="ms-in" rows="2" maxlength="1200" placeholder="' + esc(t('app_tu_write')) + '"' + ta() + '></textarea>' +
+        (listenReady() ? '<button class="btn btn--ghost" type="button" data-tu="rec" aria-pressed="false"' + (S.busy ? ' disabled' : '') + '>' + esc(t('app_tu_speak')) + '</button>' : '') +
+        '<button class="btn btn--primary" type="submit" data-tu-send' + (S.busy ? ' disabled' : '') + '>' + esc(t('app_tu_send')) + '</button></form>' +
+        '<p class="t-small tu-rec" data-tu-rec aria-live="polite"></p>') +
+      '<p class="t-small ms-err" data-tu-err aria-live="assertive">' + esc(S.error ? t(S.error) : '') + '</p><p class="t-tiny tu-note" data-tu-note aria-live="polite">' + esc(S.note ? t(S.note) : '') + '</p></section></div>';
+    if (S.sample) html += '<p class="t-tiny" style="margin-top:12px">' + esc(t('app_tu_sample')) + '</p>';
+    return html;
+  }
+  function msgsHtml() {
+    var out = S.messages.map(function (m) {
+      if (m.role === 'tutor') return m.text ? '<div class="ms-msg is-teacher"><div class="ms-bub"' + ta() + '>' + esc(m.text) + '<span class="tu-hear-box" data-hear-for="' + esc(m.id) + '">' + hearHtml(m) + '</span></div></div>' : '';
+      if (m.waiting) return '<div class="ms-msg is-me"><div class="ms-bub tu-wait">' + loader(28) + '<span class="sr">' + esc(t('app_tu_rec_sending')) + '</span></div></div>';
+      if (m.result) return '<div class="ms-msg is-me"><div class="ms-bub">' + esc(resultText(m.result)) + '</div></div>';
+      return '<div class="ms-msg is-me"><div class="ms-bub" dir="auto">' + esc(m.text) + '</div></div>';
+    }).join('');
+    if (S.busy) out += '<div class="ms-msg is-teacher"><div class="ms-bub tu-wait">' + loader(28) + '<span class="sr">' + esc(t('app_tu_thinking')) + '</span></div></div>';
+    return out;
+  }
+  function resultText(x) { return x.pron ? t('app_tu_pron_said', { score: x.pron.score }) : t('app_tu_results', { right: x.right, total: x.total }); }
+  /* Part 5: what the session left: new flashcards and the practice in Practice */
+  function afterHtml(x) {
+    if (!x || (!x.cards && !(x.set && x.set.id))) return '';
+    return '<div class="tu-after">' + (x.cards ? '<p class="t-body">' + esc(t('app_tu_after_cards', { n: new Intl.NumberFormat(A.locale).format(x.cards) })) + ' <a class="linkish" href="#/cards">' + esc(t('app_tu_after_cards_go')) + '</a></p>' : '') +
+      (x.set && x.set.id ? '<p class="t-body">' + esc(t('app_tu_after_set')) + '</p><div class="btn-row" style="margin-top:8px"><a class="btn btn--primary btn--sm" href="#/practice/tutor/' + esc(x.set.id) + '">' + esc(t('app_tu_after_set_go')) + '</a></div>' : '') + '</div>';
+  }
+  function summaryHtml() {
+    var x = S.summary || {};
+    return '<div class="tu-sum"><h3 class="t-h3">' + esc(t('app_tu_sum_h')) + '</h3>' + (x.title ? '<p class="t-body" dir="auto"><b>' + esc(x.title) + '</b></p>' : '') +
+      (x.summary ? '<p class="t-body" dir="auto">' + esc(x.summary) + '</p>' : '<p class="t-body">' + esc(t('app_tu_sum_none')) + '</p>') +
+      ((x.words || []).length ? '<h4 class="t-h3" style="margin-top:12px">' + esc(t('app_tu_words_h')) + '</h4><div class="tt-week">' + x.words.map(function (w) {
+        return '<div class="tt-row tt-row--wide"><span class="tt-row__time"' + ta() + '>' + esc(w.w) + '</span><span><small dir="auto">' + esc(w.m || '') + '</small></span></div>';
+      }).join('') + '</div>' : '') + afterHtml(x) + ((S.seconds || 0) <= 0 && !S.sample ? outHtml(true) : '') + '</div>';
+  }
+  function pastView(x, msgs) {
+    var html = '<a class="rd-back" href="#/tutor">' + A.icon('back') + '<span>' + esc(t('app_nav_tutor')) + '</span></a>' +
+      '<div class="view__head"><div><h1 class="t-h1" dir="auto">' + esc(x.title || t('app_tu_untitled')) + '</h1><p class="t-lead">' + esc(day(x.started_at, { day: 'numeric', month: 'long', year: 'numeric' })) + '</p></div></div><div class="grid rise">';
+    html += '<section class="card span-7" style="--i:0"><h2 class="t-h2">' + esc(t('app_tu_sum_h')) + '</h2>' + (x.summary ? '<p class="t-body" style="margin-top:8px" dir="auto">' + esc(x.summary) + '</p>' : '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_sum_none')) + '</p>') +
+      ((x.words || []).length ? '<h3 class="t-h3" style="margin-top:16px">' + esc(t('app_tu_words_h')) + '</h3><div class="tt-week">' + x.words.map(function (w) {
+        return '<div class="tt-row tt-row--wide"><span class="tt-row__time"' + ta() + '>' + esc(w.w) + '</span><span><small dir="auto">' + esc(w.m || '') + '</small></span></div>';
+      }).join('') + '</div>' : '') + '</section>';
+    html += '<section class="tu-board span-5" style="--i:1"><div class="tu-board__ops">' + ((x.board || []).length ? x.board.map(function (o) { return opHtml(o, false); }).join('') : '<p class="tu-op tu-op--empty">' + esc(t('app_tu_board_empty')) + '</p>') + '</div></section>';
+    html += '<section class="card span-12" style="--i:2"><h2 class="t-h2">' + esc(t('app_tu_transcript_h')) + '</h2>' + (msgs.length ? '<div class="ms-msgs tu-msgs tu-msgs--past">' + msgs.map(function (m) {
+      if (m.role === 'tutor' && !m.text && !m.exercise && !m.pron) return '';
+      if (m.role === 'tutor') return '<div class="ms-msg is-teacher"><div class="ms-bub"' + ta() + '>' + esc(m.text || '') + (m.exercise ? '<br><small>' + esc(t('app_tu_set_ex')) + '</small>' : '') + (m.pron ? '<br><small>' + esc(t('app_tu_pron_set', { sentence: m.pron })) + '</small>' : '') + '</div></div>';
+      return '<div class="ms-msg is-me"><div class="ms-bub" dir="auto">' + esc(m.result ? resultText(m.result) : m.text || '') + '</div></div>';
+    }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_transcript_gone')) + '</p>') + '</section>';
+    return html + '</div>';
+  }
+  function note(key) {
+    return '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_nav_tutor')) + '</h1></div></div><div class="card"><p class="t-body">' + esc(t(key)) + '</p></div>';
+  }
+
+  /* ---------- Drawing ---------- */
+  function draw() {
+    if (!root) return;
+    var inSession = !!S.session, was = root.querySelector('#tu-in'), draft = was ? was.value : '';
+    root.innerHTML = inSession ? sessionView() : homeView();
+    /* What the student was writing stays when the view is redrawn (a spoken turn, a reply arriving) */
+    var inp = draft && root.querySelector('#tu-in'); if (inp) inp.value = draft;
+    if (inSession) {
+      var box = root.querySelector('[data-tu-msgs]'); if (box) box.scrollTop = box.scrollHeight;
+      if (S.ex) S.ex.after(root.querySelector('[data-tu-ex]'));
+    }
+    S.fresh = 0;
+    recUi();
+  }
+  function errKey(e) {
+    var r = e && e.body && e.body.reason;
+    if (r === 'listen' || r === 'listen_off' || r === 'audio_type' || r === 'audio_long') return 'app_tu_err_listen';
+    if (r === 'unheard' || r === 'audio_short') return 'app_tu_err_unheard';
+    if (r === 'pron' || r === 'pron_off') return 'app_tu_err_pron';
+    if (r === 'pron_closed') return 'app_tu_err_pron_closed';
+    if (r === 'lesson_closed') return 'app_tu_lesson_closed';
+    return r === 'no_time' ? 'app_tu_none_left' : r === 'budget' ? 'app_tu_err_budget' : r === 'ended' ? 'app_tu_err_ended' : r === 'email' ? 'app_tu_email' : r === 'not_configured' ? 'app_tu_closed' : e && e.status === 429 ? 'app_tu_err_fast' : 'app_tu_err';
+  }
+
+  /* ---------- Actions ---------- */
+  function start(btn) {
+    btn.disabled = true; S.error = null; S.note = null;
+    unlock(); forgetAudio();
+    var msg = root.querySelector('[data-tu-msg]'); if (msg) msg.innerHTML = loader(28);
+    if (S.sample) {
+      setTimeout(function () { S.session = { id: 'sample' }; S.messages = [sampleMsg('tutor', SAMPLE_OPEN)]; S.board = SAMPLE_OPEN.board.slice(); S.fresh = S.board.length; S.seconds = S.status.seconds.total; prepareExercise(); history.replaceState(null, '', '#/tutor/session'); draw(); }, 700);
+      return;
+    }
+    D().tutorStart(A.lang, S.lesson).then(function (r) {
+      S.session = r.session; S.messages = r.messages || []; S.board = r.board || []; S.seconds = r.seconds; S.ended = false; S.summary = null; S.fresh = r.resumed ? 0 : S.board.length;
+      prepareExercise();
+      if (location.hash !== '#/tutor/session') history.replaceState(null, '', '#/tutor/session');
+      draw();
+      if (!r.resumed && voiceOn()) fetchVoice(lastTutor(), true);
+    }, function (e) { S.error = errKey(e); btn.disabled = false; if (msg) msg.textContent = t(S.error); });
+  }
+  function busy(on) { S.busy = on; draw(); }
+  function afterTurn(r, mine) {
+    if (mine) S.messages[S.messages.length - 1] = r.mine || S.messages[S.messages.length - 1];
+    /* A scored attempt can come back without the tutor's answer (the score stays and the sentence stays open) */
+    if (r.message) S.messages.push(r.message);
+    else S.error = r.reply_error === 'budget' ? 'app_tu_err_budget' : 'app_tu_err';
+    /* The lines this reply added (after its last "clear") are written in with the board's animation */
+    var ops = r.message && r.message.board || [], last = -1;
+    ops.forEach(function (o, i) { if (o.op === 'clear') last = i; });
+    S.board = r.board || S.board; S.fresh = ops.length - last - 1;
+    S.seconds = r.seconds;
+    if (r.ended) { S.ended = true; S.summary = r.summary || {}; }
+    prepareExercise();
+    busy(false);
+    /* Back to writing, unless the tutor has just set an exercise */
+    var inp = !S.ex && !openPron() && root.querySelector('#tu-in'); if (inp) inp.focus({ preventScroll: true });
+    /* The tutor speaks the reply, unless the time has run out (the closing reply stays written) */
+    if (r.ended || (r.seconds || 0) <= 0) stopVoice();
+    else if (voiceOn() && r.message) fetchVoice(r.message, true);
+  }
+  function turnFailed(e, rollback) {
+    if (rollback) S.messages.pop();
+    S.error = errKey(e);
+    if (e && e.body && (e.body.reason === 'ended' || e.body.reason === 'no_time')) { S.ended = true; S.summary = S.summary || {}; }
+    busy(false);
+  }
+  function send(form) {
+    var inp = form.querySelector('textarea'), text = String(inp.value || '').trim().slice(0, 1200);
+    if (!text || S.busy || S.ended || S.rec) return;
+    S.error = null; unlock(); stopVoice();
+    S.messages.push({ id: 'pending', role: 'student', text: text });
+    inp.value = '';
+    busy(true);
+    if (S.sample) { setTimeout(function () { afterTurn({ message: sampleMsg('tutor', SAMPLE_REPLY), board: S.board.concat(SAMPLE_REPLY.board), seconds: S.seconds - 30 }, false); }, 900); return; }
+    D().tutorTurn({ session: S.session.id, text: text }).then(function (r) { afterTurn(r, true); }, function (e) {
+      turnFailed(e, true);
+      var i = root.querySelector('#tu-in'); if (i && !i.value) i.value = text;
+    });
+  }
+  function sendResults() {
+    if (!S.ex || !S.exMsg || S.busy || S.ended) return;
+    var got = S.got || [], items = S.ex.state[0] && S.ex.state[0].items ? S.ex.state[0].items.length : (S.ex.blocks[0].pairs || []).length;
+    var right = got.filter(function (g) { return g.ok; }).length;
+    var mine = { id: 'pending', role: 'student', result: { message: S.exMsg, right: right, total: items || got.length } };
+    var msgId = S.exMsg;
+    S.messages.push(mine); S.ex = null; S.exMsg = null;
+    busy(true);
+    if (S.sample) { setTimeout(function () { afterTurn({ message: sampleMsg('tutor', SAMPLE_REPLY), board: S.board.concat(SAMPLE_REPLY.board), seconds: S.seconds - 45 }, false); }, 900); return; }
+    D().tutorTurn({ session: S.session.id, answer: { message: msgId, results: got } }).then(function (r) { afterTurn(r, true); }, function (e) { turnFailed(e, true); prepareExercise(); draw(); });
+  }
+  function end() {
+    if (S.busy) return;
+    stopRec(true); stopVoice();
+    if (S.sample) { S.ended = true; S.summary = { title: 'Perfekt mit haben und sein', summary: 'You practised the Perfekt with haben and sein and got most of the exercise right. Next time: separable verbs in the Perfekt.', words: [{ w: 'aufstehen', m: 'to get up' }, { w: 'gefahren', m: 'driven, gone (by vehicle)' }], cards: 2, set: { id: 'sample' } }; draw(); return; }
+    busy(true);
+    D().tutorEnd(S.session.id).then(function (r) {
+      S.ended = true; S.summary = r; S.seconds = r.seconds; S.ex = null; busy(false);
+    }, function (e) { S.error = errKey(e); busy(false); });
+  }
+  function home() {
+    stopRec(true); forgetAudio();
+    S.session = null; S.messages = []; S.board = []; S.ex = null; S.exMsg = null; S.ended = false; S.summary = null; S.error = null; S.tries = 0; S.lesson = null;
+    location.hash = '#/tutor';
+  }
+  function askForget() {
+    var box = root.querySelector('[data-forget]');
+    box.innerHTML = '<p class="t-small">' + esc(t('app_tu_forget_sure')) + '</p><button class="btn btn--primary btn--sm" type="button" data-tu="forget">' + esc(t('app_tu_forget_yes')) + '</button><button class="btn btn--quiet btn--sm" type="button" data-tu="no-forget">' + esc(t('app_tu_forget_no')) + '</button>';
+  }
+  function forget(btn) {
+    if (S.sample) { S.memory = {}; S.sessions = []; draw(); return; }
+    btn.disabled = true;
+    D().tutorForget().then(function () { S.memory = {}; S.sessions = []; draw(); var m = root.querySelector('[data-forget-msg]'); if (m) m.textContent = t('app_tu_forgot'); },
+      function () { btn.disabled = false; var m = root.querySelector('[data-forget-msg]'); if (m) m.textContent = t('app_tu_err'); });
+  }
+
+  /* ---------- Events ---------- */
+  function bind() {
+    if (root.__tutor) return;
+    root.__tutor = true;
+    root.addEventListener('click', function (e) {
+      if (!S) return;
+      var exEl = e.target.closest('[data-tu-ex]');
+      if (exEl && S.ex) {
+        if (EX().swallowClick && EX().swallowClick()) { e.preventDefault(); return; }
+        var a = e.target.closest('[data-act]');
+        if (a && !a.disabled) S.ex.act(a.getAttribute('data-act'), a);
+        return;
+      }
+      var b = e.target.closest('[data-tu]');
+      if (!b || b.disabled) return;
+      var act = b.getAttribute('data-tu');
+      if (act === 'start') start(b);
+      else if (act === 'end') end();
+      else if (act === 'home') home();
+      else if (act === 'ask-forget') askForget();
+      else if (act === 'no-forget') draw();
+      else if (act === 'forget') forget(b);
+      else if (act === 'rec') { if (S.rec) stopRec(); else startRec('turn'); }
+      else if (act === 'pron-rec') { if (S.rec) stopRec(); else startRec('pron', b.getAttribute('data-id')); }
+      else if (act === 'slow') hearSlow(b.getAttribute('data-id'));
+      else if (act === 'hear') hear(b.getAttribute('data-id'));
+      else if (act === 'voice') toggleVoice();
+      else if (act === 'pick') pick(b);
+      else if (act === 'live') startLive();
+      else if (act === 'live-test') startLive('cascade');
+      else if (act === 'buy') buy(b);
+    });
+    /* Leaving the session stops the voice and drops a recording in progress */
+    window.addEventListener('hashchange', function () {
+      if (S && location.hash.indexOf('#/tutor/session') !== 0) { stopRec(true); stopVoice(); }
+    });
+    root.addEventListener('submit', function (e) { if (e.target.hasAttribute('data-tu-form')) { e.preventDefault(); send(e.target); } });
+    root.addEventListener('keydown', function (e) {
+      if (e.target.id === 'tu-in' && e.key === 'Enter' && !e.shiftKey && !e.isComposing) { e.preventDefault(); send(e.target.form); return; }
+      if (S && S.ex && e.target.closest('[data-tu-ex]')) S.ex.keydown(e);
+    });
+    root.addEventListener('input', function (e) { if (S && S.ex && e.target.closest('[data-tu-ex]')) S.ex.input(e.target); });
+    root.addEventListener('change', function (e) { if (S && S.ex && e.target.closest('[data-tu-ex]')) S.ex.change(e.target); });
+    root.addEventListener('pointerdown', function (e) { if (S && S.ex && e.target.closest('[data-tu-ex]')) EX().pointerDown(S.ex, e); });
+  }
+
+  /* ---------- Loading ---------- */
+  function loadHome() {
+    if (!signedIn()) {
+      return Promise.resolve({ status: sampleStatus(), sample: true, memory: { goals: 'Wants to move to Berlin for work next year.', mistakes: ['haben or sein in the Perfekt', 'word order after weil'], next: 'Separable verbs in the Perfekt.' },
+        sessions: [{ id: 'x1', started_at: new Date(Date.now() - 2 * 86400000).toISOString(), title: 'Weil and dass', summary: 'You practised word order after weil and dass and wrote three sentences about your job.' }] });
+    }
+    var none = function () { return null; };
+    return Promise.all([D().tutorStatus(), D().tutorSessions(A.data().profile.id).catch(none), D().tutorMemory(A.data().profile.id).catch(none)]).then(function (r) {
+      return { status: r[0], sessions: r[1] || [], memory: (r[2] && r[2].notes) || {} };
+    });
+  }
+
+  function mount(view_, parts, helpers) {
+    var my = ++mountNo;
+    A = helpers; root = view_;
+    bind();
+    /* The live call (part 7) */
+    if (parts[0] === 'live' && window.AlimunTutorLive) {
+      window.AlimunTutorLive.mount(view_, helpers, { sample: !signedIn(), seconds: S && S.status && S.status.seconds ? S.status.seconds.total : 0 });
+      return Promise.resolve({});
+    }
+    /* A session keeps going while the student moves around the dashboard and comes back */
+    if (parts[0] === 'session' && S && S.session) { draw(); return Promise.resolve({}); }
+    if (parts[0] === 'past' && parts[1]) {
+      root.innerHTML = '<div class="rd-loading">' + loader() + '</div>';
+      var get = signedIn() ? D().tutorSession(parts[1]) : Promise.resolve({ session: { title: 'Weil and dass', started_at: new Date(Date.now() - 2 * 86400000).toISOString(), summary: 'You practised word order after weil and dass and wrote three sentences about your job.', words: [{ w: 'weil', m: 'because' }], board: [{ op: 'title', text: 'weil + Verb am Ende' }, { op: 'write', text: 'Ich lerne Deutsch, **weil** ich in Berlin arbeiten **möchte**.' }] }, messages: [] });
+      return get.then(function (r) { if (my === mountNo) root.innerHTML = r && r.session ? pastView(r.session, r.messages || []) : note('app_tu_err'); return {}; },
+        function () { if (my === mountNo) root.innerHTML = note('app_tu_err'); return {}; });
+    }
+    root.innerHTML = '<div class="rd-loading">' + loader() + '</div>';
+    return loadHome().then(function (h) {
+      if (my !== mountNo) return {};
+      var keep = S && S.session && !S.ended ? S : null;
+      S = keep || { messages: [], board: [], audio: {} };
+      S.status = h.status; S.sessions = h.sessions; S.memory = h.memory; S.sample = !!h.sample;
+      S.lesson = parts[0] === 'lesson' && /^[\w-]{1,40}$/.test(parts[1] || '') ? parts[1] : null;
+      if (S.session && !S.ended) { location.replace('#/tutor/session'); return {}; }
+      draw();
+      return {};
+    }, function (e) {
+      console.warn('[Alimun] Tutor did not load', e && e.message);
+      if (my === mountNo) root.innerHTML = note(e && e.body && e.body.reason === 'email' ? 'app_tu_email' : 'app_tu_error');
+      return {};
+    });
+  }
+
+  /* Shared with the live call (js/app/tutor-live.js): the board's lines, the pronunciation card's body, the recording helpers */
+  window.AlimunTutor = { mount: mount, kit: { opHtml: function (o, isNew) { return opHtml(o, isNew); }, pronBody: function (s, r, mine) { return pronBody(s, r, mine); },
+    toWav: toWav, blobBase64: blobBase64, recMime: recMime, ta: function () { return ta(); }, afterHtml: function (x) { return afterHtml(x); }, outHtml: function () { return S ? outHtml(true) : ''; } } };
+})();

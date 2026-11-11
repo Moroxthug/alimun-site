@@ -22,3 +22,6 @@ alimun-site.zip
 .DS_Store
 Thumbs.db
 nul
+
+# Owner's original product films (kept in the repo; the web versions live in videos/)
+/media/

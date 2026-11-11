@@ -66,10 +66,11 @@
               blocks.forEach(function (b) {
                 var top = b.getBoundingClientRect().top;
                 var p = Math.min(1, Math.max(0, (vh * 0.9 - top) / (vh * 0.35)));
-                b.style.setProperty("--how-o", (0.15 + 0.85 * p).toFixed(3));
+                var v = (0.15 + 0.85 * p).toFixed(3); if (b._o !== v) { b._o = v; b.style.setProperty("--how-o", v); }
               });
             }
-            window.addEventListener("scroll", update, { passive: true });
+            var queued = 0; // at most once per frame, and only blocks whose value changed (owner, 31 Oct 2026: "some animations seem laggy")
+            window.addEventListener("scroll", function () { if (!queued) queued = requestAnimationFrame(function () { queued = 0; update(); }); }, { passive: true });
             window.addEventListener("resize", update);
             update();
           })();

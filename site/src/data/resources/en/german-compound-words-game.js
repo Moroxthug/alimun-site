@@ -1,0 +1,37 @@
+// Resource: game. German compound nouns and their literal meanings. Checked against Duden.
+export default {
+  key: 'german-compounds', site: 'en', slug: 'german-compound-words-game', kind: 'game', course: 'German', level: 'All levels',
+  draw: 'cat', tint: 'lime', published: '2026-10-27',
+  title: 'German compound words game: what is a hand shoe?',
+  metaTitle: 'German compound words game: Handschuh, Faultier and more – Alimun',
+  desc: 'A free game with funny German compound nouns: a hand shoe is a glove and a lazy animal is a sloth. Guess ten words from their literal meaning.',
+  lead: 'German builds new words by sticking old ones together. A hand shoe is a glove and a lazy animal is a sloth. Can you guess the rest?',
+  instructions: 'What is it?',
+  about: [
+    'German joins nouns together to make new ones, and the last part always gives the word its gender: der Handschuh because of der Schuh.',
+    'Once you know the parts, many long words explain themselves. That makes compounds one of the most fun ways to grow your German vocabulary.',
+  ],
+  items: [
+    { q: 'Handschuh (hand + shoe)', options: ['a glove', 'a slipper', 'a ring', 'a sock'], a: 0, why: 'der Handschuh = the glove: a shoe for your hand.' },
+    { q: 'Faultier (lazy + animal)', options: ['a cat', 'a sloth', 'a tortoise', 'a koala'], a: 1, why: 'das Faultier = the sloth.' },
+    { q: 'Kühlschrank (cool + cupboard)', options: ['a freezer bag', 'a cellar', 'a fridge', 'an air conditioner'], a: 2, why: 'der Kühlschrank = the fridge.' },
+    { q: 'Schildkröte (shield + toad)', options: ['a frog', 'a crab', 'a beetle', 'a tortoise'], a: 3, why: 'die Schildkröte = the tortoise or turtle: a toad with a shield.' },
+    { q: 'Glühbirne (glow + pear)', options: ['a light bulb', 'a candle', 'a ripe pear', 'a lantern'], a: 0, why: 'die Glühbirne = the light bulb, shaped like a glowing pear.' },
+    { q: 'Stinktier (stink + animal)', options: ['a pig', 'a skunk', 'a goat', 'a rat'], a: 1, why: 'das Stinktier = the skunk.' },
+    { q: 'Staubsauger (dust + sucker)', options: ['a broom', 'a duster', 'a vacuum cleaner', 'a fan'], a: 2, why: 'der Staubsauger = the vacuum cleaner.' },
+    { q: 'Flugzeug (flight + thing)', options: ['a bird', 'a kite', 'an airplane', 'a drone'], a: 2, why: 'das Flugzeug = the airplane: a thing for flying.' },
+    { q: 'Nacktschnecke (naked + snail)', options: ['a slug', 'a worm', 'a baby snail', 'an eel'], a: 0, why: 'die Nacktschnecke = the slug: a snail without its shell.' },
+    { q: 'Drahtesel (wire + donkey)', options: ['a robot', 'a fence', 'a bicycle', 'a tractor'], a: 2, why: 'der Drahtesel is a joking word for a bicycle: a donkey made of wire.' },
+  ],
+  pairs: [
+    ['der Handschuh: hand + shoe', 'the glove'],
+    ['das Faultier: lazy + animal', 'the sloth'],
+    ['der Kühlschrank: cool + cupboard', 'the fridge'],
+    ['die Schildkröte: shield + toad', 'the tortoise'],
+    ['die Glühbirne: glow + pear', 'the light bulb'],
+    ['das Stinktier: stink + animal', 'the skunk'],
+    ['der Staubsauger: dust + sucker', 'the vacuum cleaner'],
+    ['die Nacktschnecke: naked + snail', 'the slug'],
+  ],
+  related: ['german-idioms', 'de-articles-a1', 'de-articles-sheet'],
+};

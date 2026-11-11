@@ -5,8 +5,8 @@
     "approved": "2026-10-19 nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-23 FAQ answers made accurate (owner: faq ok); 2026-10-23 English-only FAQPage removed from the head graph (owner FAQ redo; each language now gets its own FAQPage from the FAQ section); 2026-10-24 homepage title (and og/twitter title) changed for search on owner request; 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 AI mentions removed from meta (owner)"
   },
   "src/blocks/after-body.html": {
-    "sha256": "736dc38e48d62d0ee713cd9dfeac4ef58ca3af22541c60e19565a5ea636cdb84",
-    "approved": "2026-10-19 nav ok"
+    "sha256": "f57d11adb3aaa267103291dc267b8ae8dad89e372d54d803ebfe967dc1b29d95",
+    "approved": "2026-10-19 nav ok; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/01-nav.html": {
     "sha256": "ceb9d496127cd9f2b6fc0dace36adcf5c32b0451dfe4e6abc48a5bacdbb928fc",
@@ -21,8 +21,8 @@
     "approved": "2026-10-20 tiers nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request)"
   },
   "src/blocks/tiers/after.html": {
-    "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
-    "approved": "2026-10-20 tiers nav ok"
+    "sha256": "82cd633a9696c7dfacd44bee29dfb2576e94b25a48757041ff25deee4665a1da",
+    "approved": "2026-10-20 tiers nav ok; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/tiers/nav.html": {
     "sha256": "9fe8c8d2644fc6694bc9df01ca3c0f6d7e6edf4e7222669db28208ec624e1428",
@@ -37,28 +37,28 @@
     "approved": "2026-10-22 services nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 AI mentions removed from meta (owner)"
   },
   "src/blocks/services/after.html": {
-    "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
-    "approved": "2026-10-22 services nav ok"
+    "sha256": "82cd633a9696c7dfacd44bee29dfb2576e94b25a48757041ff25deee4665a1da",
+    "approved": "2026-10-22 services nav ok; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/services/nav.html": {
     "sha256": "fe247b8b20dc3c4c556f158d540fea4b1ca96574bb57fec6ed35ffcc1de9b73e",
     "approved": "2026-10-22 services nav ok; 2026-10-24 nav spacing fix (class nav_cta on the Get started wrapper) on owner request; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
   },
   "src/blocks/services/s01.html": {
-    "sha256": "96a37c9fd3332f01f3959dde731519c61d7d061d5e3adcfe447d21a180d2e701",
-    "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 quote restored (owner); 2026-10-24 AI mentions removed (owner)"
+    "sha256": "b0f077724ef42bacd42e86879e6f658c24738385e7fb28a855d0a387ad94d185",
+    "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 quote restored (owner); 2026-10-24 AI mentions removed (owner); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\")"
   },
   "src/blocks/services/s04.html": {
-    "sha256": "ca67580b92a3c3d2516e8fc93470e78ced3cb2f718de01900ca9de864d18de88",
-    "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed); 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow)"
+    "sha256": "496eb7bbc8e2b9871aeafdf777b8044d5fffb948c5c055bfebeeabeaab10b813",
+    "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed); 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\")"
   },
   "src/blocks/about/head.html": {
     "sha256": "d410609269347eb505774dea4e2ec80a33eb654a9f7d22b507e8a0ce2d1960ad",
     "approved": "2026-10-22 about nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 AI mentions removed from meta (owner)"
   },
   "src/blocks/about/after.html": {
-    "sha256": "6724f99d713a607c5b319a1949b3a96f687dc5454cb97f47b94147ec144ac085",
-    "approved": "2026-10-22 about nav ok"
+    "sha256": "82cd633a9696c7dfacd44bee29dfb2576e94b25a48757041ff25deee4665a1da",
+    "approved": "2026-10-22 about nav ok; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/about/nav.html": {
     "sha256": "fa50d31cf9f894d224e4d2de2dd6517dbb0705b4f0ae859e7b3cf28d04562700",
@@ -81,8 +81,8 @@
     "approved": "2026-10-22 corporate nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 company dashboard removed from the descriptions (feature does not exist; owner: go on with corporate)"
   },
   "src/blocks/corporate/after.html": {
-    "sha256": "838c06364965a5530c13b451b6586fc9aef690f18c801a329f6c33e3bdfda3fb",
-    "approved": "2026-10-22 corporate nav ok; 2026-10-23 demo form now sends by email (bug fix: it faked success), no visual change"
+    "sha256": "dc90db599eeab4501b88c2282800da6441eb6b984be6bb155104ea6d7d88cc38",
+    "approved": "2026-10-22 corporate nav ok; 2026-10-23 demo form now sends by email (bug fix: it faked success), no visual change; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/corporate/nav.html": {
     "sha256": "3adad65ce7666e419379c34b04f5e3b5306ffa9122deb2b4c9470d39c859218c",
@@ -109,8 +109,8 @@
     "approved": "2026-10-22 careers nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-10-24 AI mentions removed from meta (owner)"
   },
   "src/blocks/careers/after.html": {
-    "sha256": "523f28966a5d2ada38b2b637016e6f7f5b74d3e0520a5e78a33bf2e17c145b74",
-    "approved": "2026-10-22 careers nav ok"
+    "sha256": "e0d0d301fed9a352d689a65265b68a67cc0b37a6b8f78b3a627bb337d897844f",
+    "approved": "2026-10-22 careers nav ok; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/careers/nav.html": {
     "sha256": "b9951e44fab57d8626faf18de97bfe8b967bd20db134a1cf432bb38e10b47196",
@@ -145,16 +145,16 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
   },
   "src/blocks/legal/after.html": {
-    "sha256": "c85f5c10606408283be29c5ba8b942fe62e3e1c0306c86b20d1d59ff6d74df68",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+    "sha256": "f43c91f2f13b5287460e806014f17796fc3b6f9b0c9461fe5d308c423e522e3e",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/legal/cookies.html": {
-    "sha256": "e19cad550822ab8f1a9496992f5ff56e86b403422eb32359db54be729e892c93",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 made accurate: no analytics cookies are set (Google Analytics removed), currency preference listed, teacher application fields match the real form (owner: go on with the legal pages)"
+    "sha256": "3b358552ffdd50ff3b8ce8b634882195f3a31a7c731b8ee50d040d61e75ec1a1",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 made accurate: no analytics cookies are set (Google Analytics removed), currency preference listed, teacher application fields match the real form (owner: go on with the legal pages); 2026-11-08 how you found Alimun (sign-up answer and, with analytics consent, first-visit source) and the alimun-first-touch local storage item (owner: \"approve the wording and push to main, just do not mention vercel web analytics\")"
   },
   "src/blocks/legal/gdpr.html": {
-    "sha256": "8d65f08ee37fe049801fef75ec6becb4bef1215c879ff4fdd63f5ad467cdc870",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 made accurate: no analytics cookies are set (Google Analytics removed), currency preference listed, teacher application fields match the real form (owner: go on with the legal pages)"
+    "sha256": "898fea0164825d93744c1d6ad58f7cafe136809918e2f8e87eb1f16d2eabef18",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 made accurate: no analytics cookies are set (Google Analytics removed), currency preference listed, teacher application fields match the real form (owner: go on with the legal pages); 2026-10-27 tutor paragraph added (owner: \"apply it and update lock\"): Groq for text and listening, Google Cloud for the voice, recordings not stored, transcripts 90 days, under-16s only with a parent’s authorisation; legal review marked [COPY NEEDED]; 2026-10-27 Microsoft Azure added for the tutor’s pronunciation scoring (owner: \"yes\"): recordings scored and discarded, scores kept; 2026-10-26 the live tutor call (owner: \"yes\"): Google’s Gemini API for the call, audio not stored, transcript kept; 2026-11-07 growth steps 1-4 (owner: \"approve the privacy wording and update the page\"): country, dashboard language and 16+ check, news-and-offers consent and how to withdraw it, dashboard activity record (24 months), notifications (12 months), Cloudflare Turnstile; 2026-11-07 [COPY NEEDED] markers removed, missing details left out (owner: \"do not use copy needed, just leave empty for now\"); 2026-11-07 newsletter form as a way to agree to news and offers (16+ confirmed on the form, the account choice wins), and what is kept after a newsletter unsubscribe (owner: \"update the privacy page too\"); 2026-11-08 how you found Alimun (sign-up answer and, with analytics consent, first-visit source) and the alimun-first-touch local storage item (owner: \"approve the wording and push to main, just do not mention vercel web analytics\")"
   },
   "src/blocks/legal/head-404.html": {
     "sha256": "3d84ff380453d3d1497131d832eaeddd223f887b1dcead097660dfa3a95b45a1",
@@ -181,8 +181,8 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
   },
   "src/blocks/legal/terms.html": {
-    "sha256": "1a213dc0e89337b6788146d45f885bfa0cc4fb104dd82f8d611d7291742b2745",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request"
+    "sha256": "d53aa1dce4e7ad0f323afdd6b5873cc41f39c31ba7994afb35934dd683649df9",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-27 tutor paragraph added (owner: \"apply it and update lock\"): Groq for text and listening, Google Cloud for the voice, recordings not stored, transcripts 90 days, under-16s only with a parent’s authorisation; legal review marked [COPY NEEDED]; 2026-10-27 Microsoft Azure added for the tutor’s pronunciation scoring (owner: \"yes\"): recordings scored and discarded, scores kept; 2026-10-26 the live tutor call (owner: \"yes\"): Google’s Gemini API for the call, audio not stored, transcript kept; 2026-11-07 [COPY NEEDED] markers removed, missing details left out (owner: \"do not use copy needed, just leave empty for now\")"
   },
   "src/blocks/course/hero.html": {
     "sha256": "339033737b0ec1abfda1d7a9ab74ac5e3043e1054cf5384180cc7fd1af685bca",
@@ -223,5 +223,81 @@
   "src/data/course-quiz.js": {
     "sha256": "c84b045ce8095d1e6a80a3895c96f5aebf11f817b9f15a610e13695f03d9ddb7",
     "approved": "2026-10-23 Italian course pages: adaptive level quiz with roulette result (owner: quiz ok); 2026-10-23 Italian question bank added for the other site languages"
+  },
+  "src/blog/render.js": {
+    "sha256": "f6a55c6373884636ae502b0749c8825a8907b31d02b6606693026936d9351fcf",
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\"); 2026-10-26 more motion on the blog home (owner: \"animate the blog page as well\")"
+  },
+  "src/blocks/blog/style.html": {
+    "sha256": "8f0f0414b1f53bccfc97988777eb4e4a503c01305e3e1b7c5eb29967bb1f3fab",
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\"); 2026-10-26 more motion on the blog home (owner: \"animate the blog page as well\")"
+  },
+  "src/blocks/blog/cards.html": {
+    "sha256": "2c62b721205e077819bcc3812f505e9b777e10a6a8b9b2e1a4753521ae734e22",
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
+  },
+  "src/blocks/blog/head.html": {
+    "sha256": "3198431e1742984c37fd5b64c4aa3f73e55afa078d603ecbd7948a436b054575",
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
+  },
+  "src/pages/blog/[p].astro": {
+    "sha256": "c57a9df04217ca544432acfdd2ea7c09facf68c04eae18ba2f01d4907300a07a",
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
+  },
+  "src/resources/render.js": {
+    "sha256": "7ce5428c9a2aa1ba911542eb744cf5997b9346bc819c90e6463da37417eea26f",
+    "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\"); 2026-10-27 games and fun: any question set for games, flip cards from pairs, pages for all games and all fun quizzes (owner: \"more resources now, games and fun stuff\")"
+  },
+  "src/blocks/resources/style.html": {
+    "sha256": "2a3d7c96d5e18b2b251f6ff4b5815103c92af7dd151fdaf65162ba07cebcce26",
+    "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\")"
+  },
+  "src/pages/resources/[p].astro": {
+    "sha256": "ab45462f47854a3fcf50c040d5fb39f95bf539d4e577191e664adc37abe977ee",
+    "approved": "2026-10-26 Resources hub and resource pages from the owner-approved preview /preview/resources-step1 (owner: \"love it, lock it in and build step 2\"); 2026-10-26 exercises and quizzes by level: level ladders on the hub and a page per kind (owner: \"more resources first, exercises and quizzes by level\"); 2026-10-27 games and fun: any question set for games, flip cards from pairs, pages for all games and all fun quizzes (owner: \"more resources now, games and fun stuff\")"
+  },
+  "src/blocks/home/v2/assets.html": {
+    "sha256": "768217e76edd1da04900002c6bc52437cd70675153edad993e10395d3d425614",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-10-28 mobile fixes (owner: \"some videos do not play, some videos cover half text, download app badges do not look nicely put\"); 2026-10-28 phone pass (owner: \"should we improve the other sections look as well?\" ... \"ok go\"); 2026-10-28 cursor ring removed (owner: \"remove the green circle on cursor\"); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\"); 2026-11-10 phones play the product films as MP4 first (owner: \"it still lags ... just fix it\")"
+  },
+  "src/blocks/home/v2/band.html": {
+    "sha256": "ee96fed3ff5ea74206747a7beaf2c17e898200f1548db41a9089c8caa0f888cd",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/hero.html": {
+    "sha256": "7e3bd2c333f2cc45ae1ade272081d82764c8007128defdf418677fd048a713d2",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-11-10 phones get a lighter hero clip cropped to the frame they show (owner: \"it still lags ... just fix it\")"
+  },
+  "src/blocks/home/v2/showcase.html": {
+    "sha256": "8ea8b7d05f9e9717fd6689a941a69a113065309efcef6a093eff3f91b41b0c9a",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/strings.html": {
+    "sha256": "bd79b81c11f209715c0b526e4315c0ad9c2dd5faf17425c11c460b5c21eb842b",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/try.html": {
+    "sha256": "f438c8c5cfb69b38ca1dd4c4831be616255bd88dadffeb925b0189557de0d752",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/tutor.html": {
+    "sha256": "2ac06fe50d8f33570dbed52eea1886deb9fe4c980e4626f6c7f0b9908ab9326d",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/home/v2/video-dashboard.html": {
+    "sha256": "3b2831e1bcacec519fe78542f539ae2128a19cf3079b24b89d55133030275f21",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-10-28 mobile fixes (owner: \"some videos do not play, some videos cover half text, download app badges do not look nicely put\")"
+  },
+  "src/blocks/home/v2/video-tutor.html": {
+    "sha256": "14438d3a314cda39084d7339672815c2c2433f08e7cd66382bf1684200d3e1a9",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/pages/index.astro": {
+    "sha256": "a7c99e1eaf0ba08ddbf689913d8e41512dd70bd467762940176047474ba588f7",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+  },
+  "src/blocks/alive.html": {
+    "sha256": "2a89bc828f2ceb338d3976f4398bece898d7f073187c422e080c524e2b59526b",
+    "approved": "2026-10-31 inner pages in the homepage style for Tiers, Services, About and Contact (owner: \"sure go on then\", after the /preview/*-alive pages and the owner's fixes: no cursor ring, more colour, calmer motion); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\")"
   }
 }

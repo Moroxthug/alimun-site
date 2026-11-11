@@ -207,13 +207,9 @@
     };
     if (H.sample) { fill({ title: 'Mein Traumjob', task: 'Beschreiben Sie Ihren Traumjob.\n\nWas machen Sie jeden Tag? Warum gefällt Ihnen diese Arbeit? Was müssen Sie dafür lernen?', min_words: 100 }); return; }
     btn.disabled = true; say('app_th_drafting');
-    var prompt = 'Write one homework task for adult students of ' + c.language + ' at CEFR level ' + c.level + '. Kind of homework: ' + type + '. Topic: ' + topic + '.\n' +
-      'Write the title and the task in ' + c.language + ', with words and grammar the level can manage. The task says exactly what to do and what to include, in two to five short sentences. ' +
-      (type === 'Speaking' ? 'It is spoken: the student records about one minute.' : 'Suggest a minimum number of words that suits the level.') +
-      '\nRespond only with JSON: {"title": "...", "task": "...", "min_words": <number>}';
-    window.AlimunData.draftTask(prompt, 'You write homework for language classes. You never mention that you are an AI.').then(function (r) {
+    window.AlimunData.draftHomework({ language: c.language, level: c.level, type: type, topic: topic }).then(function (r) {
       btn.disabled = false;
-      var j = JSON.parse(String(r.text || '').replace(/```json|```/g, '').trim());
+      var j = r.result || {};
       if (!j.title || !j.task) throw new Error('empty');
       fill(j);
     }).catch(function (e) { btn.disabled = false; say('app_th_draft_error', true); console.warn('[Alimun] Draft failed', e && e.message); });

@@ -331,7 +331,7 @@ curl -s -o /dev/null -w "%{http_code}\n" https://alimun.com/supabase/schema.sql 
 curl -s -o /dev/null -w "%{http_code}\n" https://alimun.com/docs/IMPLEMENTATION_PLAN.md  # 404
 curl -s -o /dev/null -w "%{http_code}\n" https://alimun.com/api/cron-create-rooms    # 401
 curl -s -o /dev/null -w "%{http_code}\n" -X POST https://alimun.com/api/admin/teacher?action=set-status  # 401
-curl -s -o /dev/null -w "%{http_code}\n" -X POST https://alimun.com/api/ai?action=grade -H 'content-type: application/json' -d '{}'  # 401
+curl -s -o /dev/null -w "%{http_code}\n" -X POST https://alimun.com/api/ai?action=homework-check -H 'content-type: application/json' -d '{}'  # 401
 curl -s https://alimun.com/api/stripe?action=config | head -c 200                      # pk_live_… and price ids
 curl -sI https://alimun.com/ | grep -i strict-transport-security                       # present
 ```

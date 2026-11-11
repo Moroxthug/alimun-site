@@ -1,0 +1,19 @@
+// German A1 course book (docs/BOOKS.md). Draft: reviewed by a native teacher before it is published.
+// Units are written in units/German-A1/<unit>.js; until then each entry here is planned, with its outline.
+// Explanations in English, translated in i18n/German-A1.<lang>.json (German included).
+export const BOOK = {
+  id: 'German-A1',
+  language: 'German',
+  level: 'A1',
+  review: 'draft',
+  units: [
+    { id: 'u1', title: 'Hello!', planned: true, plan: { goal: 'Greet people, say your name, where you come from and which languages you speak.', lessons: ['Greetings and goodbyes (Hallo, Guten Tag, Tschüss, Auf Wiedersehen); du and Sie', 'sein and the personal pronouns; Wie heißen Sie? Woher kommen Sie? with heißen, kommen, wohnen, sprechen', 'The alphabet, spelling your name, numbers 0 to 20; countries and languages', 'Reading: short profiles on a language course website'] } },
+    { id: 'u2', title: 'Family and people', planned: true, plan: { goal: 'Talk about your family, say how old people are and describe them simply.', lessons: ['haben; family words; Wie alt bist du? numbers 20 to 100', 'mein and dein, sein and ihr in the nominative', 'Describing people with sein + adjective (groß, nett, jung); the verb in second position and yes/no questions', 'Reading: a message with a family photo'] } },
+    { id: 'u3', title: 'Food and drink', planned: true, plan: { goal: 'Order in a café, buy food and say what you like.', lessons: ['der, die, das and ein, eine; plural forms; food and drink words', 'The accusative of ein and kein: Ich möchte einen Kaffee. Ich habe keinen Hunger.', 'In the café: ordering, asking the price, paying; gern and nicht gern; prices and euros', 'Reading: a café menu and a shopping list'] } },
+    { id: 'u4', title: 'Home', planned: true, plan: { goal: 'Describe your flat, its rooms and furniture.', lessons: ['Rooms and furniture; es gibt + accusative; der/die/das to refer back (Der Tisch? Er ist neu.)', 'Adjectives after sein (hell, groß, teuer) and colours; nicht and kein', 'Where is it? hier, dort, links, rechts; Wo ist …? Wie viele Zimmer hat die Wohnung?', 'Reading: a flat advert and an email about a new flat'] } },
+    { id: 'u5', title: 'My day', planned: true, plan: { goal: 'Say what you do during the day and make appointments.', lessons: ['Telling the time (formal and everyday: halb, Viertel nach); days of the week; am, um, von … bis', 'Separable verbs (aufstehen, einkaufen, anrufen) and the sentence bracket', 'Daily routine; word order with a time first (Am Montag arbeite ich.)', 'Reading: a week planner and a message changing an appointment'] } },
+    { id: 'u6', title: 'Free time', planned: true, plan: { goal: 'Talk about hobbies, say what you can do and arrange to meet.', lessons: ['Hobbies; verbs with a vowel change (fahren, lesen, sprechen, essen, treffen)', 'können and möchten with the infinitive at the end', 'Arranging to meet: Hast du Zeit? Wann? Wo? Weather and seasons', 'Reading: notices from a sports club and a language café'] } },
+    { id: 'u7', title: 'In town', planned: true, plan: { goal: 'Find places in town, ask the way and use public transport.', lessons: ['Places in town; Wo ist …? Wie komme ich zum / zur …?', 'Directions and the imperative with Sie (Gehen Sie geradeaus. Nehmen Sie die U2.)', 'Transport: mit dem Bus, mit der U-Bahn; zu + dative of the article; buying a ticket', 'Reading: a city map text and a ticket machine screen'] } },
+    { id: 'u8', title: 'At the weekend', planned: true, plan: { goal: 'Say what you did at the weekend and what you liked.', lessons: ['war and hatte: the past of sein and haben', 'The Perfekt with haben: regular participles (gemacht, gekauft) and common irregular ones (gegessen, getrunken, gesehen)', 'The Perfekt with sein for movement (gefahren, gegangen, gekommen); Wie war dein Wochenende?', 'Reading: a short blog post about a weekend trip'] } },
+  ],
+};

@@ -1,0 +1,30 @@
+// Resource: game. Cards: [word, language of the word, what it looks like in English, what it really means,
+// how to say what it looks like]. The game asks what each word really means.
+export default {
+  key: 'false-friends', site: 'en', slug: 'false-friends-game', kind: 'game', course: null, level: 'All levels',
+  draw: 'dragon', tint: 'coral', published: '2026-10-26',
+  title: 'False friends game: words that trick you',
+  metaTitle: 'False friends game: English, German, Spanish, Italian, French – Alimun',
+  desc: 'A free game with false friends between English and German, Spanish, Italian, French and Portuguese: words that look the same and mean something else.',
+  lead: 'Words that look like English but mean something else. Guess what each one really means, then flip it to see.',
+  instructions: 'What does the word really mean?',
+  about: [
+    'False friends are words that look or sound like a word in another language but mean something different. They are some of the most common and funniest mistakes learners make.',
+    'Play the game, then flip the cards to see the word you actually need.',
+  ],
+  cards: [
+    ['embarazada', 'Spanish', 'embarrassed', 'pregnant', 'avergonzado'],
+    ['Gift', 'German', 'gift', 'poison', 'das Geschenk'],
+    ['parenti', 'Italian', 'parents', 'relatives', 'genitori'],
+    ['librairie', 'French', 'library', 'bookstore', 'bibliothèque'],
+    ['bekommen', 'German', 'become', 'to get, to receive', 'werden'],
+    ['puxe', 'Portuguese', 'push', 'pull', 'empurre'],
+    ['actual', 'Spanish', 'actual', 'current', 'real'],
+    ['Chef', 'German', 'chef', 'boss', 'der Koch'],
+    ['camera', 'Italian', 'camera', 'room', 'macchina fotografica'],
+    ['sensible', 'French', 'sensible', 'sensitive', 'raisonnable'],
+    ['pasta', 'Portuguese', 'pasta', 'folder, briefcase', 'massa'],
+    ['Handy', 'German', 'handy', 'cell phone', 'praktisch'],
+  ],
+  related: ['buddy-quiz', 'de-articles-a1', 'en-quiz-b1'],
+};

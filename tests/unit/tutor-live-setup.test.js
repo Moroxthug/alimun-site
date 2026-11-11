@@ -1,0 +1,143 @@
+// Run with: node --no-experimental-require-module --test 'tests/unit/*.test.js'
+// The live tutor's setup (api/_lib/tutor-live.js): speaking at the student's level, waiting for a learner who pauses
+// (Google's voice activity detection, less sensitive than its defaults) and honest pronunciation checks on the card.
+const test = require('node:test');
+const assert = require('node:assert');
+const path = require('path');
+const live = require(path.join(__dirname, '../../api/_lib/tutor-live.js'));
+
+const session = (level, extra) => Object.assign({ language: 'Spanish', level, ui: 'en' }, extra || {});
+
+test('a beginner gets short everyday sentences and English help, whatever the goals in the brief', () => {
+  const s = live.instructionsFor(session('A2'), 'Goal: Spanish for work', 'lena', '', true);
+  assert.match(s, /beginner \(A2\)/);
+  assert.match(s, /5 to 8 words/);
+  assert.match(s, /No professional, abstract or idiomatic language/);
+  assert.match(s, /meaning in English/);
+  assert.doesNotMatch(s, /natural pace/);
+});
+
+test('each level speaks differently', () => {
+  assert.match(live.levelRules('B1', 'Spanish', 'English'), /up to about 15 words/);
+  assert.match(live.levelRules('C1', 'Spanish', 'English'), /natural pace/);
+  assert.match(live.levelRules(null, 'Spanish', 'English'), /not known/);
+});
+
+test('turn-taking and honest pronunciation are in the instructions', () => {
+  const s = live.instructionsFor(session('B1'), '', 'mei', '', true);
+  assert.match(s, /do not change the subject/);
+  assert.match(s, /Never call an attempt good, correct or great when a word or sound in it was wrong/);
+  assert.match(s, /for the rest of the call/);
+  assert.match(s, /say_this and tell them to tap the record button/);
+  const noCard = live.instructionsFor(session('B1'), '', 'mei', '', false);
+  assert.doesNotMatch(noCard, /say_this/);
+});
+
+test('the pass waits longer after a learner stops speaking and ignores small sounds', () => {
+  const a2 = live.setupFor('x', 'lena', '', true, 'A2').realtimeInputConfig.automaticActivityDetection;
+  assert.strictEqual(a2.startOfSpeechSensitivity, 'START_SENSITIVITY_LOW');
+  assert.strictEqual(a2.endOfSpeechSensitivity, 'END_SENSITIVITY_LOW');
+  assert.strictEqual(a2.silenceDurationMs, 1500);
+  assert.strictEqual(live.activityFor('B1').automaticActivityDetection.silenceDurationMs, 1200);
+  assert.strictEqual(live.activityFor('C1').automaticActivityDetection.silenceDurationMs, 900);
+  assert.strictEqual(live.activityFor(null).automaticActivityDetection.silenceDurationMs, 900);
+});
+
+test('if Google refuses the voice activity settings, the pass is asked for again without them', async () => {
+  const real = global.fetch, sent = [];
+  process.env.GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY || 'test-key';
+  global.fetch = async (url, opts) => {
+    const b = JSON.parse(opts.body); sent.push(b);
+    if (b.bidiGenerateContentSetup.realtimeInputConfig) return { ok: false, status: 400, json: async () => ({ error: { message: 'Invalid JSON payload received. Unknown name "realtime_input_config"' } }) };
+    return { ok: true, status: 200, json: async () => ({ name: 'auth_tokens/abc' }) };
+  };
+  try {
+    const pass = await live.token({ instructions: 'x', tutor: 'lena', handle: '', seconds: 300, pronDrill: true, level: 'A2' });
+    assert.strictEqual(pass.token, 'auth_tokens/abc');
+    assert.strictEqual(sent.length, 3);   /* manual turns, then Google's detection, then its defaults */
+    assert.strictEqual(pass.turn.manual, false);
+  } finally { global.fetch = real; }
+});
+
+test('manual turns are asked for first; refused, Google detection with the calmer settings', async () => {
+  const real = global.fetch, sent = [];
+  process.env.GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY || 'test-key';
+  global.fetch = async (url, opts) => {
+    const b = JSON.parse(opts.body); sent.push(b);
+    if (b.bidiGenerateContentSetup.realtimeInputConfig.automaticActivityDetection.disabled) return { ok: false, status: 400, json: async () => ({ error: { message: 'Unknown name "disabled" at automatic_activity_detection' } }) };
+    return { ok: true, status: 200, json: async () => ({ name: 'auth_tokens/abc' }) };
+  };
+  try {
+    const pass = await live.token({ instructions: 'x', tutor: 'lena', handle: '', seconds: 300, pronDrill: true, level: 'A2' });
+    assert.strictEqual(sent.length, 2);
+    assert.strictEqual(sent[1].bidiGenerateContentSetup.realtimeInputConfig.automaticActivityDetection.silenceDurationMs, 1500);
+    assert.deepStrictEqual(pass.turn, { manual: false, silence_ms: 1500 });
+  } finally { global.fetch = real; }
+  global.fetch = async () => ({ ok: true, status: 200, json: async () => ({ name: 'auth_tokens/abc' }) });
+  try { assert.deepStrictEqual((await live.token({ instructions: 'x', tutor: 'lena', handle: '', seconds: 300, pronDrill: true, level: 'B1' })).turn, { manual: true, silence_ms: 1200 }); }
+  finally { global.fetch = real; }
+});
+
+test('the conversation Google re-reads each turn is kept between 12,000 and 24,000 tokens', () => {
+  const s = live.setupFor('x', 'lena', '', true, 'A2', true);
+  assert.deepStrictEqual(s.contextWindowCompression, { triggerTokens: 24000, slidingWindow: { targetTokens: 12000 } });
+});
+
+test('if Google refuses the context sizes, its own sliding window is used', async () => {
+  const real = global.fetch, sent = [];
+  process.env.GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY || 'test-key';
+  global.fetch = async (url, opts) => {
+    const b = JSON.parse(opts.body); sent.push(b);
+    if (b.bidiGenerateContentSetup.contextWindowCompression.triggerTokens) return { ok: false, status: 400, json: async () => ({ error: { message: 'Unknown name "trigger_tokens"' } }) };
+    return { ok: true, status: 200, json: async () => ({ name: 'auth_tokens/abc' }) };
+  };
+  try {
+    const pass = await live.token({ instructions: 'x', tutor: 'lena', handle: '', seconds: 300, pronDrill: true, level: 'B2' });
+    assert.strictEqual(pass.token, 'auth_tokens/abc');
+    assert.deepStrictEqual(sent[sent.length - 1].bidiGenerateContentSetup.contextWindowCompression, { slidingWindow: {} });
+    assert.strictEqual(pass.turn.manual, true);
+  } finally { global.fetch = real; }
+});
+
+test('Google token counts from the browser are kept as whole numbers, at most 100', () => {
+  const u = live.cleanUsage([{ n: 1, t: 12.4, p: '3100', c: -5, r: 420, pa: 2000, ra: 400, x: 'drop' }, { p: 0, r: 0 }, 'junk']);
+  assert.deepStrictEqual(u, [{ n: 1, t: 12, p: 3100, c: 0, r: 420, th: 0, tu: 0, pa: 2000, pt: 0, ra: 400, rt: 0 }]);
+  assert.strictEqual(live.cleanUsage(new Array(150).fill({ p: 1 })).length, 100);
+  assert.deepStrictEqual(live.cleanUsage(null), []);
+});
+
+test('the transcriber is told the course language first, then the interface language', () => {
+  assert.deepStrictEqual(live.languagesFor('English', 'it'), ['en-US', 'it-IT']);
+  assert.deepStrictEqual(live.languagesFor('English', 'en'), ['en-US']);
+  assert.deepStrictEqual(live.languagesFor('Spanish', 'ma'), ['es-ES', 'fr-FR']);
+  const s = live.setupFor('x', 'lena', '', true, 'A1', true, ['en-US', 'it-IT']);
+  assert.deepStrictEqual(s.inputAudioTranscription, { languageCodes: ['en-US', 'it-IT'] });
+  assert.deepStrictEqual(live.setupFor('x', 'lena', '', true, 'A1', true).inputAudioTranscription, {});
+});
+
+test('owner, 10 Nov 2026: teach first, no early goodbye, accents, the time left', () => {
+  const s = live.instructionsFor({ language: 'English', level: 'A1', ui: 'it' }, '', 'sofia', '', true, 420);
+  assert.match(s, /Teach, then involve the student/);
+  assert.match(s, /about 7 minutes of tutor time left/);
+  assert.match(s, /Never say goodbye, wish them a good day or wrap up on your own/);
+  assert.match(s, /say goodbye only when you are told twenty seconds are left/);
+  assert.match(s, /German "gut" for "good"/);
+  assert.match(s, /question in Italian/);
+  assert.match(s, /"pen" when you asked for "sleeping"/);
+  assert.match(live.instructionsFor({ language: 'English', level: 'A1', ui: 'en' }, '', 'sofia', '', true), /until the student's tutor time runs out/);
+});
+
+test('if Google refuses the language hints, the transcriber guesses as before', async () => {
+  const real = global.fetch, sent = [];
+  process.env.GOOGLE_AI_API_KEY = process.env.GOOGLE_AI_API_KEY || 'test-key';
+  global.fetch = async (url, opts) => {
+    const b = JSON.parse(opts.body); sent.push(b);
+    if (b.bidiGenerateContentSetup.inputAudioTranscription.languageCodes) return { ok: false, status: 400, json: async () => ({ error: { message: 'Unknown name "language_codes"' } }) };
+    return { ok: true, status: 200, json: async () => ({ name: 'auth_tokens/abc' }) };
+  };
+  try {
+    const pass = await live.token({ instructions: 'x', tutor: 'lena', handle: '', seconds: 300, pronDrill: true, level: 'A1', languages: ['en-US'] });
+    assert.strictEqual(pass.token, 'auth_tokens/abc');
+    assert.deepStrictEqual(sent[sent.length - 1].bidiGenerateContentSetup.inputAudioTranscription, {});
+  } finally { global.fetch = real; }
+});

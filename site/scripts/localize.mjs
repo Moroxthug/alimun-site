@@ -52,6 +52,10 @@ function withAlternates(html, file) {
 
 // The English translation file must load before i18n.js (the language copies are added after it).
 function withEnglishFile(html) {
+  // The homepage head (locked src/blocks/head.html) still loads js/translations.js, every language at once
+  // (1.8 MB, about 490 KB compressed), which held back the hero video on phones. The page needs only the
+  // English file added here; js/i18n.js fetches another language on demand.
+  html = html.replace(/[ \t]*<script src="js\/translations\.js" defer(="")?><\/script>\r?\n?/, '');
   if (html.includes('js/i18n/en.js') || !html.includes('<script src="js/i18n.js"')) return html;
   return html.replace('<script src="js/i18n.js"', '<script src="js/i18n/en.js" defer></script>\n  <script src="js/i18n.js"');
 }
@@ -64,6 +68,74 @@ for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'course-sites')).f
   courseSites[S.site] = S;
 }
 const coursePath = (S, c) => `/${S.site === 'en' ? '' : S.site + '/'}${c.slug}`;
+
+// Blog (docs/BLOG_PLAN.md): articles per site language, the interface text and the card markup, for the blog
+// pages built by src/pages/blog/[p].astro and for the reading strip added before the bottom banner of every page.
+const BLOG_UI = (await import(new URL('../src/data/blog/ui.js', import.meta.url))).default;
+const blogRender = await import(new URL('../src/blog/render.js', import.meta.url));
+const blogCards = fs.readFileSync(path.join(site, 'src', 'blocks', 'blog', 'cards.html'), 'utf8');
+const blogArticles = [];
+for (const d of fs.readdirSync(path.join(site, 'src', 'data', 'blog'), { withFileTypes: true }).filter((e) => e.isDirectory())) {
+  for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'blog', d.name)).filter((f) => f.endsWith('.js'))) {
+    blogArticles.push((await import(new URL(`../src/data/blog/${d.name}/${f}`, import.meta.url))).default);
+  }
+}
+const RES_UI_FOOT = { en: (await import(new URL('../src/data/resources/ui.js', import.meta.url))).default.en };
+for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'resources')).filter((f) => /^ui-[a-z]{2}\.js$/.test(f))) RES_UI_FOOT[f.slice(3, 5)] = (await import(new URL(`../src/data/resources/${f}`, import.meta.url))).default;
+const resList = (lang) => fs.existsSync(path.join(site, 'src', 'data', 'resources', lang)) ? fs.readdirSync(path.join(site, 'src', 'data', 'resources', lang)).filter((f) => f.endsWith('.js')) : [];
+const blogList = (lang) => blogArticles.filter((a) => a.site === lang).sort((x, y) => (y.published + y.slug).localeCompare(x.published + x.slug));
+const READING = (await import(new URL('../src/data/blog/reading-picks.js', import.meta.url))).default;
+// The three articles of the strip: the language's chosen ones (ui.stripPicks), then the newest. Course and
+// Resources pages pass their own picks and course (src/data/blog/reading-picks.js): those first, then the
+// newest articles of the same course, then the language's usual strip.
+function stripArticles(lang, ctx) {
+  const list = blogList(lang), picks = (BLOG_UI[lang] && BLOG_UI[lang].stripPicks) || [];
+  const base = [...picks.map((k) => list.find((a) => a.key === k)).filter(Boolean), ...list.filter((a) => !picks.includes(a.key))];
+  if (!ctx) return base.slice(0, 3);
+  const own = [...(ctx.keys || []).map((k) => list.find((a) => a.key === k)).filter(Boolean), ...list.filter((a) => ctx.course && a.course === ctx.course)];
+  return [...new Set([...own, ...base])].slice(0, 3);
+}
+function withBlogStrip(html, lang, ctx) {
+  const ui = BLOG_UI[lang], list = ui ? stripArticles(lang, ctx) : [];
+  if (!list.length || html.includes('class="section bl-strip"')) return html;
+  const $ = cheerio.load(html);
+  // Pages that already carry the card styles (Resources) do not get them twice.
+  const markup = blogRender.strip(list, ui, lang).replace('<div class="container-large">', '<div class="container-large">' + (html.includes('Blog cards, third design') ? '' : blogCards));
+  const banner = $('section.is-bottom-cta').first();
+  if (banner.length) banner.before(markup + '\n');
+  else if ($('footer').length) $('footer').first().before(markup + '\n');
+  else return html;
+  return $.html();
+}
+// Blog pages sit one folder deeper than the others: every relative address becomes a root address
+// (pages with the language folder, assets at the root).
+function absolutize(html, lang) {
+  const $ = cheerio.load(html);
+  const pre = lang === 'en' ? '/' : `/${lang}/`;
+  const fix = (v) => {
+    if (!v) return v;
+    const t = v.trim();
+    if (/^(https?:|\/\/|\/|#|mailto:|tel:|javascript:|data:)/i.test(t)) return t;
+    if (t.startsWith('../')) return '/' + t.replace(/^(\.\.\/)+/, '');
+    const m = t.match(/^([\w-]+)\.html([?#].*)?$/);
+    if (m) return (m[1] === 'index' ? pre : pre + m[1]) + (m[2] || '');
+    return '/' + t;
+  };
+  for (const [sel, attr] of [['[href]', 'href'], ['[src]', 'src'], ['[poster]', 'poster'], ['form[action]', 'action']]) {
+    $(sel).each((_, el) => { if (el.tagName !== 'link' || attr !== 'href' || !/^(canonical|alternate)$/.test($(el).attr('rel'))) $(el).attr(attr, fix($(el).attr(attr))); });
+  }
+  $('[srcset]').each((_, el) => { $(el).attr('srcset', $(el).attr('srcset').split(',').map((p) => { const [u, ...r] = p.trim().split(/\s+/); return [fix(u), ...r].join(' '); }).join(', ')); });
+  $('[style]').each((_, el) => { $(el).attr('style', $(el).attr('style').replace(/url\(['"]?([^'")]+)['"]?\)/gi, (m0, u) => `url('${fix(u)}')`)); });
+  return $.html();
+}
+// Homepage: the old hero's video wall is hidden (src/blocks/home/v2/assets.html), yet its video still downloaded
+// the hero clip a second time, competing with the visible hero on phones. Its sources and autoplay are dropped
+// here so the locked block (src/blocks/02-hero.html) stays as approved.
+function withoutHiddenHeroVideo(html) {
+  return html.replace(/(<video id="34352df9[^>]*>)[\s\S]*?(<\/video>)/, (m, open, close) =>
+    open.replace(' autoplay=""', '').replace('<video ', '<video preload="none" ') + close);
+}
+
 function withCourseList(html, lang) {
   if (!html.includes('data-course-list')) return html;
   const $ = cheerio.load(html);
@@ -76,8 +148,10 @@ function withCourseList(html, lang) {
     row.find('a').attr('href', coursePath(S, c)).attr('title', S.heroTitle(c));
     row.find('.ln_title').text(c.name.charAt(0).toLocaleUpperCase(S.locale.replace('_', '-')) + c.name.slice(1));
     list.append(row);
+    // The poster is set from data-poster only when the section nears the screen (src/blocks/home/languages.html),
+    // so a phone opening the homepage does not fetch six city images and a clip before it scrolls there.
     const v = `/videos/${c.video}`;
-    media.append(`<div class="ln_video"><video muted loop playsinline preload="none" poster="${v}-poster-00001.jpg"><source src="${v}-transcode.mp4" type="video/mp4"><source src="${v}-transcode.webm" type="video/webm"></video></div>`);
+    media.append(`<div class="ln_video"><video muted loop playsinline preload="none" data-poster="${v}-poster-00001.jpg"><source src="${v}-transcode.mp4" type="video/mp4"><source src="${v}-transcode.webm" type="video/webm"></video></div>`);
   }
   const ld = { '@context': 'https://schema.org', '@type': 'ItemList', itemListElement: S.courses.map((c, i) => ({
     '@type': 'ListItem', position: i + 1, url: BASE + coursePath(S, c),
@@ -101,7 +175,22 @@ function withFaqLd(html) {
 
 // Shared footer (src/blocks/footer.html): its course column links to this site's course pages; sites
 // without course pages drop the column.
+// Footer "Blog" link (src/blocks/footer.html): kept only in languages that have a blog.
+function withFooterBlog(html, lang) {
+  if (!html.includes('data-footer-blog') && !html.includes('data-footer-resources')) return html;
+  const $ = cheerio.load(html);
+  if (blogList(lang).length) $('[data-footer-blog] a').attr('href', `${lang === 'en' ? '/' : '/' + lang + '/'}blog`);
+  else $('[data-footer-blog]').remove();
+  $('[data-footer-blog]').removeAttr('data-footer-blog');
+  // Resources: the language's own address and name, only where that language has resources.
+  const ru = RES_UI_FOOT[lang];
+  if (ru && resList(lang).length) $('[data-footer-resources] a').attr('href', `${lang === 'en' ? '/' : '/' + lang + '/'}${ru.slugBase}`).text(ru.title);
+  else $('[data-footer-resources]').remove();
+  $('[data-footer-resources]').removeAttr('data-footer-resources');
+  return $.html();
+}
 function withFooterCourses(html, lang) {
+  html = withFooterBlog(html, lang);
   if (!html.includes('data-footer-course-list')) return html;
   const $ = cheerio.load(html);
   const S = courseSites[lang];
@@ -130,11 +219,11 @@ function withLegalText(html, lang, file) {
 let count = 0;
 for (const file of pages) {
   const english = withEnglishFile(fs.readFileSync(path.join(dist, file), 'utf8'));
-  fs.writeFileSync(path.join(dist, file), withAlternates(withFooterCourses(withFaqLd(withCourseList(english, 'en')), 'en'), file));
+  fs.writeFileSync(path.join(dist, file), withAlternates(withBlogStrip(withFooterCourses(withFaqLd(withCourseList(withoutHiddenHeroVideo(english), 'en')), 'en'), 'en'), file));
   for (const lang of languages) {
     fs.mkdirSync(path.join(dist, lang), { recursive: true });
     const html = localizePage(english, { lang, templateFile: file, langDict: translations[lang] || {}, META_I18N, META_LANG });
-    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withFooterCourses(withFaqLd(withCourseList(withLegalText(html, lang, file), lang)), lang), file));
+    fs.writeFileSync(path.join(dist, lang, file), withAlternates(withBlogStrip(withFooterCourses(withFaqLd(withCourseList(withoutHiddenHeroVideo(withLegalText(html, lang, file)), lang)), lang), lang), file));
     count++;
   }
 }
@@ -143,13 +232,74 @@ for (const p of coursePages) {
   const english = withEnglishFile(fs.readFileSync(path.join(dist, p.built), 'utf8'));
   const html = p.site === 'en' ? english
     : localizePage(english, { lang: p.site, templateFile: p.file, langDict: translations[p.site] || {}, META_I18N, META_LANG });
-  const $ = cheerio.load(withFooterCourses(html, p.site));
+  const course = (courseSites[p.site]?.courses || []).find((c) => c.slug + '.html' === p.file);
+  const $ = cheerio.load(withBlogStrip(withFooterCourses(html, p.site), p.site, course && { course: course.lang, keys: READING.courses[course.lang] }));
   $('link[rel="alternate"][hreflang]').remove();
   $('head').append(`\n  <link rel="alternate" hreflang="${HREFLANG[p.site] || p.site}" href="${url(p.site, p.file)}">\n`);
   fs.writeFileSync(path.join(dist, p.site === 'en' ? '' : p.site, p.file), $.html());
   fs.rmSync(path.join(dist, p.built));
   count++;
 }
+
+// Blog and Resources pages: built as <dir>/<site>--<name>.html, translated like the other pages, moved to
+// /<base>/<name> (English) or /<site>/<base>/<name>, where <base> is "blog" or the language's Resources address
+// (resources, risorse, recursos, ressources), with root addresses, hreflang between translations and the
+// language file. Resources: docs/BLOG_PLAN.md, "Resources".
+const RES_UI = { en: (await import(new URL('../src/data/resources/ui.js', import.meta.url))).default.en };
+for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'resources')).filter((f) => /^ui-[a-z]{2}\.js$/.test(f))) {
+  RES_UI[f.slice(3, 5)] = (await import(new URL(`../src/data/resources/${f}`, import.meta.url))).default;
+}
+const resItems = [];
+for (const d of fs.readdirSync(path.join(site, 'src', 'data', 'resources'), { withFileTypes: true }).filter((e) => e.isDirectory())) {
+  for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'resources', d.name)).filter((f) => f.endsWith('.js'))) {
+    resItems.push((await import(new URL(`../src/data/resources/${d.name}/${f}`, import.meta.url))).default);
+  }
+}
+const blogEntries = [];
+function movePages(dirName, baseOf, lastmodOf, extra) {
+  const dir = path.join(dist, dirName);
+  if (!fs.existsSync(dir)) return;
+  for (const f of fs.readdirSync(dir).filter((f) => /^[a-z]{2}--[a-z0-9-]+\.html$/.test(f))) {
+    const [, lang, name] = f.match(/^([a-z]{2})--([a-z0-9-]+)\.html$/);
+    const base = baseOf(lang);
+    let html = fs.readFileSync(path.join(dir, f), 'utf8');
+    if (lang !== 'en') html = localizePage(html, { lang, templateFile: dirName + '-' + name + '.html', langDict: translations[lang] || {}, META_I18N, META_LANG });
+    html = absolutize(withFooterCourses(extra ? extra(html, lang, name) : html, lang), lang);
+    const $ = cheerio.load(html);
+    // Structured data carries the site code as the language; Morocco's is fr-MA, like its hreflang.
+    if (HREFLANG[lang]) $('script[type="application/ld+json"]').each((i, el) => { $(el).text($(el).text().split(`"inLanguage":"${lang}"`).join(`"inLanguage":"${HREFLANG[lang]}"`)); });
+    const self = `${BASE}/${lang === 'en' ? '' : lang + '/'}${base}${name === 'index' ? '' : '/' + name}`;
+    $('link[rel="canonical"]').attr('href', self);
+    $('meta[property="og:url"]').attr('content', self);
+    if (lang !== 'en' && !$(`script[src="/js/i18n/${lang}.js"]`).length) $('script[src="/js/i18n/en.js"]').after(`<script src="/js/i18n/${lang}.js" defer></script>`);
+    let alts = {};
+    try { alts = JSON.parse($('#alimun-lang-alternates').text() || '{}'); } catch (e) { alts = {}; }
+    $('link[rel="alternate"][hreflang]').remove();
+    const links = Object.entries(alts).map(([l, p]) => `<link rel="alternate" hreflang="${HREFLANG[l] || l}" href="${BASE}${p}">`);
+    if (alts.en) links.unshift(`<link rel="alternate" hreflang="x-default" href="${BASE}${alts.en}">`);
+    $('head').append('\n  ' + links.join('\n  ') + '\n');
+    const outDir = path.join(dist, lang === 'en' ? '' : lang, base);
+    fs.mkdirSync(outDir, { recursive: true });
+    fs.writeFileSync(path.join(outDir, name + '.html'), $.html());
+    fs.rmSync(path.join(dir, f));
+    const xl = Object.entries(alts).map(([l, p]) => `    <xhtml:link rel="alternate" hreflang="${HREFLANG[l] || l}" href="${BASE}${p}"/>`).join('\n');
+    blogEntries.push(`  <url>\n    <loc>${self}</loc>\n${xl ? xl + '\n' : ''}    <lastmod>${lastmodOf(lang, name)}</lastmod>\n  </url>`);
+    count++;
+  }
+  if (fs.existsSync(dir) && !fs.readdirSync(dir).length) fs.rmSync(dir, { recursive: true });
+}
+movePages('blog', () => 'blog', (lang, name) => {
+  const a = blogArticles.find((x) => x.site === lang && x.slug === name);
+  return a ? a.updated : blogList(lang).map((x) => x.updated).sort().pop();
+});
+movePages('resources', (lang) => RES_UI[lang].slugBase, (lang, name) => {
+  const r = resItems.find((x) => x.site === lang && x.slug === name);
+  return r ? r.published : resItems.filter((x) => x.site === lang).map((x) => x.published).sort().pop();
+}, (html, lang, name) => {
+  // Each resource links to the articles on its topic (src/data/blog/reading-picks.js).
+  const r = resItems.find((x) => x.site === lang && x.slug === name);
+  return r ? withBlogStrip(html, lang, { course: r.course, keys: READING.resources[r.key] }) : html;
+});
 
 // The 404 page has no language copies but shares the footer.
 const notFound = path.join(dist, '404.html');
@@ -162,6 +312,7 @@ for (const file of pages) {
     .map(([h, u]) => `    <xhtml:link rel="alternate" hreflang="${h}" href="${u}"/>`).join('\n');
   for (const lang of ['en', ...languages]) entries.push(`  <url>\n    <loc>${url(lang, file)}</loc>\n${alts}\n    <lastmod>${today}</lastmod>\n  </url>`);
 }
+entries.push(...blogEntries);
 for (const p of coursePages) entries.push(`  <url>\n    <loc>${url(p.site, p.file)}</loc>\n    <lastmod>${today}</lastmod>\n  </url>`);
 // Keep addresses the current sitemap lists that are not rebuilt yet (the Italian course pages).
 const covered = new Set([...pages.flatMap((f) => ['en', ...languages].map((l) => url(l, f))), ...coursePages.map((p) => url(p.site, p.file))]);

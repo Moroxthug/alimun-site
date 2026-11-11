@@ -75,7 +75,9 @@
     app_fc_add_rest: ['app_fc_add_rest_zero', 'app_fc_add_rest_one', 'app_fc_add_rest_two', 'app_fc_add_rest_few', 'app_fc_add_rest_many', 'app_fc_add_rest_other'],
     app_fc_mine: ['app_fc_mine_zero', 'app_fc_mine_one', 'app_fc_mine_two', 'app_fc_mine_few', 'app_fc_mine_many', 'app_fc_mine_other'],
     app_qz_clock_end_p: ['app_qz_clock_end_p_zero', 'app_qz_clock_end_p_one', 'app_qz_clock_end_p_two', 'app_qz_clock_end_p_few', 'app_qz_clock_end_p_many', 'app_qz_clock_end_p_other'],
-    app_pr_mistakes_n: ['app_pr_mistakes_n_zero', 'app_pr_mistakes_n_one', 'app_pr_mistakes_n_two', 'app_pr_mistakes_n_few', 'app_pr_mistakes_n_many', 'app_pr_mistakes_n_other']
+    app_pr_mistakes_n: ['app_pr_mistakes_n_zero', 'app_pr_mistakes_n_one', 'app_pr_mistakes_n_two', 'app_pr_mistakes_n_few', 'app_pr_mistakes_n_many', 'app_pr_mistakes_n_other'],
+    app_fd_seats: ['app_fd_seats_zero', 'app_fd_seats_one', 'app_fd_seats_two', 'app_fd_seats_few', 'app_fd_seats_many', 'app_fd_seats_other'],
+    app_fd_years: ['app_fd_years_zero', 'app_fd_years_one', 'app_fd_years_two', 'app_fd_years_few', 'app_fd_years_many', 'app_fd_years_other']
   };
   var plural = window.Intl && Intl.PluralRules ? new Intl.PluralRules(locale) : null;
   function tn(key, n, vars) {
@@ -111,6 +113,7 @@
     homework: '<path d="M14.5 4.5 19.5 9.5 9 20H4v-5z"/><path d="m12.5 6.5 5 5"/>',
     progress: '<path d="M4 20V13M10 20V8M16 20v-5M20 20H3"/><path d="m14.5 6.5 3-3 3 3M17.5 3.5V11"/>',
     messages: '<path d="M20 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.2A8 8 0 1 1 20 12z"/>',
+    tutor: '<rect x="3" y="4" width="18" height="12" rx="2.5"/><path d="M8 20h8M12 16v4M7.5 9.5h5M7.5 12h3"/>',
     settings: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
     kit: '<circle cx="8" cy="8" r="3.5"/><rect x="13" y="4.5" width="7" height="7" rx="2"/><path d="M4.5 19.5 8 13.5l3.5 6z"/><circle cx="16.5" cy="16.5" r="3.5"/>',
     more: '<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',
@@ -135,6 +138,7 @@
     { id: 'book', label: 'app_nav_book', short: 'app_nav_book_short', icon: 'book', group: 'learn' },
     { id: 'practice', label: 'app_nav_practice', icon: 'practice', group: 'learn', step: 5, art: 'dog', tint: 'leaf', kind: 'say', text: 'app_soon_practice_text', bub: 'app_soon_practice_bub' },
     { id: 'cards', label: 'app_nav_cards', icon: 'cards', group: 'learn' },
+    { id: 'tutor', label: 'app_nav_tutor', icon: 'tutor', group: 'learn' },
     { id: 'tests', label: 'app_nav_tests', short: 'app_nav_tests_short', icon: 'tests', group: 'learn', step: 8, art: 'dragon', tint: 'leaf', kind: 'say', text: 'app_soon_tests_text', bub: 'app_soon_tests_bub' },
     { id: 'library', label: 'app_nav_library', icon: 'library', group: 'learn', step: 9, art: 'teacup', tint: 'mint', kind: 'say', text: 'app_soon_library_text', bub: 'app_soon_library_bub' },
     { id: 'classes', label: 'app_nav_classes', icon: 'classes', group: 'class', step: 10, art: 'mug', tint: 'leaf', kind: 'think', text: 'app_soon_classes_text', bub: 'app_soon_classes_bub' },
@@ -181,7 +185,8 @@
     var html = '';
     Object.keys(GROUPS).forEach(function (g) {
       html += '<div class="nav__group"><div class="nav__label">' + esc(t(GROUPS[g])) + '</div>';
-      ROUTES.filter(function (r) { return r.group === g; }).forEach(function (r) {
+      /* The design kit is an internal reference: not in a real student's menu */
+      ROUTES.filter(function (r) { return r.group === g && !(r.id === 'kit' && mode === 'real'); }).forEach(function (r) {
         html += '<a href="#/' + r.id + '" data-route="' + r.id + '">' + icon(r.icon) + '<span>' + esc(t(r.label)) + '</span></a>';
       });
       html += '</div>';
@@ -206,10 +211,11 @@
           '<p class="top__title" aria-hidden="true"></p>' +
           '<div class="top__actions">' +
             '<button class="course-btn" type="button" aria-label="' + esc(t('app_course_label', { language: lng })) + '">' + buddySvg + '<span>' + esc(lng) + '</span></button>' +
-            '<button class="icon-btn" type="button" aria-label="' + esc(t('app_notifications')) + '">' + icon('bell') + '</button>' +
+            '<button class="icon-btn" type="button" data-bell aria-label="' + esc(t('app_notifications')) + '">' + icon('bell') + '</button>' +
             '<button class="avatar" type="button" aria-label="' + esc(t('app_account')) + '">' + esc(initials(D.profile.name)) + '</button>' +
           '</div>' +
         '</header>' +
+        '<div class="app-note" data-appnote role="status" aria-live="polite"></div>' +
         '<main class="view" id="view" tabindex="-1"></main>' +
       '</div>' +
       '<nav class="bar" aria-label="' + esc(t('app_sections')) + '">' +
@@ -284,7 +290,8 @@
     return head + '<div class="card__row card__row--split"><div>' +
         '<p class="t-small" id="h-next">' + esc(t('app_home_next')) + '</p>' +
         '<h2 class="t-h1" style="margin-top:10px">' + esc(t(k[0])) + '</h2>' +
-        '<p class="t-lead" style="margin-top:12px">' + esc(t(k[1], { course: courseName(d) })) + '</p></div>' +
+        '<p class="t-lead" style="margin-top:12px">' + esc(t(k[1], { course: courseName(d) })) + '</p>' +
+        '<div class="btn-row" style="margin-top:20px"><a class="btn btn--lime" href="#/classes/find">' + esc(t('app_fd_title')) + '</a></div></div>' +
         '<div class="card__art card__art--lg">' + Cast.drawing('mug') + '</div></div>' +
       '</section>';
   }
@@ -349,14 +356,58 @@
     '</section>';
   }
 
+  /* AI tutor, part 5: the time left (the stored balance) and what the tutor suggested last time */
+  function tutorCard(d) {
+    var x = d.tutor;
+    if (!x) return '';
+    var left = new Intl.NumberFormat(locale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(Math.floor((x.seconds || 0) / 60));
+    var line = x.next ? t('app_home_tu_next', { next: x.next }) : x.last && x.last.title ? t('app_home_tu_last', { title: x.last.title }) : t('app_home_tu_none');
+    return '<section class="card card--mint span-' + (d.lesson ? 7 : 12) + '" style="--i:9" aria-labelledby="h-tutor">' +
+      '<div class="card__row card__row--split"><div><h2 class="t-h2" id="h-tutor">' + esc(t('app_home_tu_h')) + '</h2>' +
+      '<p class="t-small" style="margin-top:10px">' + esc(t('app_home_tu_left')) + '</p><div class="t-num" style="margin-top:6px">' + esc(left) + '</div>' +
+      '<p class="t-body" style="margin-top:12px" dir="auto">' + esc(line) + '</p>' +
+      '<div class="btn-row" style="margin-top:18px"><a class="btn btn--primary btn--sm" href="#/tutor">' + esc(t('app_home_tu_go')) + icon('arrow') + '</a>' +
+      (x.last && x.last.id ? '<a class="btn btn--ghost btn--sm" href="#/tutor/past/' + esc(x.last.id) + '">' + esc(t('app_home_tu_past')) + '</a>' : '') + '</div></div>' +
+      '<div class="card__art">' + Cast.drawing(buddyOf(d)) + '</div></div></section>';
+  }
+  /* Part 5b: once the teacher has published the class notes, until the class's next lesson */
+  function lessonCard(d) {
+    var l = d.lesson;
+    if (!l) return '';
+    var today = new Date(l.at).toDateString() === new Date().toDateString();
+    var code = (window.AlimunData && window.AlimunData.langCode(d.profile.language)) || 'en';
+    return '<section class="card card--sun span-5" style="--i:10" aria-labelledby="h-lesson"><h2 class="t-h2" id="h-lesson">' + esc(t(today ? 'app_home_lesson_today_h' : 'app_home_lesson_h')) + '</h2>' +
+      (l.grammar ? '<p class="t-body" style="margin-top:10px"><b lang="' + esc(code) + '">' + esc(l.grammar) + '</b></p>' : '') +
+      '<p class="t-small" style="margin-top:8px">' + esc(t('app_home_lesson_p', { date: fmt(l.at, { weekday: 'long', day: 'numeric', month: 'long' }) })) + '</p>' +
+      '<div class="btn-row" style="margin-top:16px"><a class="btn btn--primary btn--sm" href="#/tutor/lesson/' + esc(l.id) + '">' + esc(t('app_lesson_go')) + '</a></div></section>';
+  }
+
+  /* The welcome gift (js/app/poll.js): 10 EUR off the first plan or 1 on 1 class, applied at checkout by the server */
+  function giftAmount() { return new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(10); }
+  function welcomeCard(d) {
+    var w = d.welcome;
+    if (!w) return '';
+    if (!w.answered) {
+      return '<section class="card card--mint span-12" style="--i:8" aria-labelledby="h-wpoll">' +
+        '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2" id="h-wpoll">' + esc(t('app_home_poll_h')) + '</h2>' +
+        '<p class="t-body" style="margin-top:10px">' + esc(t('app_home_poll_p', { amount: giftAmount() })) + '</p></div>' +
+        '<button class="btn btn--primary" type="button" data-poll-open>' + esc(t('app_home_poll_go')) + '</button></div></section>';
+    }
+    if (!w.giftOpen) return '';
+    return '<section class="card card--lime span-12" style="--i:9" aria-labelledby="h-gift">' +
+      '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2" id="h-gift">' + esc(t('app_home_gift_h', { amount: giftAmount() })) + '</h2>' +
+      '<p class="t-body" style="margin-top:10px">' + esc(t('app_home_gift_p')) + '</p></div>' +
+      '<a class="btn btn--primary" href="#/settings/plans">' + esc(t('app_home_see_plans')) + '</a></div></section>';
+  }
+
   function planCard(d) {
     var tier = d.profile.tier;
-    if (!UNPAID[tier]) return '';
+    if (!UNPAID[tier] || (d.welcome && d.welcome.giftOpen)) return '';
     var k = tier === 'waitlist' ? ['app_home_plan_wait_h', 'app_home_plan_wait_p'] : ['app_home_plan_free_h', 'app_home_plan_free_p'];
     return '<section class="card card--lime span-12" style="--i:9" aria-labelledby="h-plan">' +
       '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2" id="h-plan">' + esc(t(k[0])) + '</h2>' +
       '<p class="t-body" style="margin-top:10px">' + esc(t(k[1])) + '</p></div>' +
-      '<a class="btn btn--primary" href="/tiers">' + esc(t('app_home_see_plans')) + '</a></div>' +
+      '<a class="btn btn--primary" href="#/settings/plans">' + esc(t('app_home_see_plans')) + '</a></div>' +
     '</section>';
   }
 
@@ -380,11 +431,15 @@
         '<p class="t-lead">' + esc(cap(fmt(Date.now(), { weekday: 'long', day: 'numeric', month: 'long' }))) + '</p></div></div>' +
       '<div class="grid rise">' +
         sampleNote() +
+        (d.offer && window.AlimunFind ? AlimunFind.offerCard(d.offer, readerHelpers) : '') +
         nextClassCard(d) +
         buddyStage(d) +
         todayPlan(d) +
         streakCard(d) +
         focusCard(d) +
+        tutorCard(d) +
+        lessonCard(d) +
+        welcomeCard(d) +
         planCard(d) +
       '</div>';
   }
@@ -488,6 +543,8 @@
   var progressHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('progress', false); } });
   var messagesHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('messages', false); } });
   var settingsHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('settings', false); } });
+  var tutorHelpers = Object.assign({}, readerHelpers, { listOf: listOf, rerender: function () { render('tutor', false); } });
+  function tutorParts() { return location.hash.replace(/^#\/tutor\/?/, '').split('/').filter(Boolean); }
   function messagesParts() { return location.hash.replace(/^#\/messages\/?/, '').split('/').filter(Boolean); }
   function homeworkParts() { return location.hash.replace(/^#\/homework\/?/, '').split('/').filter(Boolean); }
   function classesParts() { return location.hash.replace(/^#\/classes\/?/, '').split('/').filter(Boolean); }
@@ -505,7 +562,8 @@
   }
   function render(id, animate) {
     var r = byId[id];
-    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' || id === 'messages' || id === 'settings' ? '' : soonView(r);
+    if (window.AlimunData && window.AlimunData.track && id !== 'kit') window.AlimunData.track('view', { dashboard: 'student', section: id });
+    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' || id === 'messages' || id === 'settings' || id === 'tutor' ? '' : soonView(r);
     var swap = function () {
       if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
       if (id !== 'tests' && window.AlimunTests) window.AlimunTests.reset();
@@ -533,10 +591,13 @@
         });
       }
       if (id === 'settings') {
-        window.AlimunSettings.mount(view, [], settingsHelpers);
+        window.AlimunSettings.mount(view, location.hash.replace(/^#\/settings\/?/, '').split('/').filter(Boolean), settingsHelpers);
       }
       if (id === 'progress') {
         window.AlimunProgress.mount(view, [], progressHelpers);
+      }
+      if (id === 'tutor') {
+        window.AlimunTutor.mount(view, tutorParts(), tutorHelpers);
       }
       if (id === 'homework') {
         window.AlimunHomework.mount(view, homeworkParts(), homeworkHelpers).then(function (res) {
@@ -586,11 +647,18 @@
     var s = window.ALIMUN_SAMPLE();
     return window.AlimunData.topicLabels(s.placement.language, s.placement.topics, lang).then(function (labels) { s.topics = labels; return s; });
   }
+  /* /app is the students' dashboard (step 16): signed out goes to sign-in (and back here after), teachers and admins to
+     their own pages, a student without a profile to the welcome steps. The sample only with ?sample=1. */
+  function away(to) { location.replace(to); return new Promise(function () {}); }
   function loadData() {
     if (/[?&]sample=1/.test(location.search)) { mode = 'forced'; return sample(); }
     return window.AlimunData.load(lang).then(function (d) {
       if (d && d.profile) { mode = 'real'; return d; }
-      mode = d ? 'noprofile' : 'sample';
+      if (!d) return away('/signin?next=' + encodeURIComponent('/app' + (/^#\/[A-Za-z0-9\/_-]*$/.test(location.hash) ? location.hash : '')));
+      if (d.role === 'teacher') return away('/app/teach');
+      if (d.role === 'admin') return away('/app/admin');
+      if (d.role === 'student' || !d.role) return away('/welcome');
+      mode = 'noprofile';
       return sample();
     }, function (err) {
       console.warn('[Alimun] Home data did not load', err && err.message);
@@ -601,11 +669,85 @@
 
   /* ---------- Boot ---------- */
   function start() {
+    var back = fromStripe();
     renderShell();
+    if (mode === 'real' && window.AlimunData && window.AlimunData.rememberUiLang) window.AlimunData.rememberUiLang(lang, 'student');
+    if (window.AlimunBell) window.AlimunBell.attach(document.querySelector('[data-bell]'), readerHelpers, mode === 'real' && !(window.AlimunData && window.AlimunData.viewingAs && window.AlimunData.viewingAs()));
     render(routeFromHash(), false);
+    if (back) stripeNote(back);
+  }
+
+  /* Coming back from Stripe (step 16): ?checkout=success|cancelled|credit, with ?join=<class> when a class needed the
+     plan. The address is cleaned, the class opened, and a paid plan that the payment webhook has not recorded yet is
+     checked again for half a minute. ?checkout=tutor&session_id=<checkout> (tutor time, docs/AI_TUTOR_PLAN.md part 6):
+     the minutes are looked for in the student's own time ledger until the webhook has added them. */
+  var stripeCheckout = null;
+  function fromStripe() {
+    var q = new URLSearchParams(location.search), c = q.get('checkout'), join = q.get('join');
+    if (!/^(success|cancelled|credit|tutor)$/.test(c || '')) return null;
+    stripeCheckout = /^cs_(live|test)_[A-Za-z0-9]{10,200}$/.test(q.get('session_id') || '') ? q.get('session_id') : null;
+    ['checkout', 'join', 'session_id', 'tier'].forEach(function (k) { q.delete(k); });
+    var hash = c === 'success' && /^[0-9a-f-]{36}$/i.test(join || '') ? '#/classes/find/' + join : location.hash;
+    history.replaceState(null, '', location.pathname + (q.toString() ? '?' + q.toString() : '') + hash);
+    return c;
+  }
+  function stripeNote(c) {
+    var show = function (text) { var box = app.querySelector('[data-appnote]'); if (box) box.innerHTML = '<p class="t-body cl-flash">' + esc(text) + '</p>'; };
+    if (c === 'cancelled') return show(t('app_pl_back_cancelled'));
+    if (c === 'credit') return show(t('app_pl_back_credit'));
+    if (c === 'tutor') return tutorBack(show);
+    if (mode !== 'real' || D.profile.paying) return show(t('app_pl_back_success'));
+    show(t('app_pl_back_success') + ' ' + t('app_pl_confirming'));
+    var tries = 0;
+    (function again() {
+      setTimeout(function () {
+        window.AlimunData.load(lang).then(function (d) {
+          if (d && d.profile && d.profile.paying) { D = d; renderShell(); render(routeFromHash(), false); show(t('app_pl_confirmed')); }
+          else if (++tries < 8) again();
+        }, function () { if (++tries < 8) again(); });
+      }, 4000);
+    })();
+  }
+
+  function tutorBack(show) {
+    if (mode !== 'real' || !stripeCheckout) return show(t('app_tu_back_bought'));
+    show(t('app_tu_back_bought') + ' ' + t('app_tu_back_adding'));
+    var tries = 0;
+    (function again() {
+      setTimeout(function () {
+        window.AlimunData.tutorPurchase(stripeCheckout).then(function (row) {
+          if (row) {
+            if (location.hash.indexOf('#/tutor') === 0) render(routeFromHash(), false);
+            show(t('app_tu_back_added', { time: new Intl.NumberFormat(locale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(Math.round(row.seconds / 60)) }));
+          } else if (++tries < 10) again();
+          else show(t('app_tu_back_bought') + ' ' + t('app_tu_back_slow'));
+        }, function () { if (++tries < 10) again(); });
+      }, 3000);
+    })();
+  }
+
+  /* Welcome poll (js/app/poll.js): once to every real student, never to an admin viewing someone */
+  function welcomePoll() {
+    /* ?sample=1&poll=1 opens it on the sample dashboard for a look; nothing is sent */
+    var preview = mode !== 'real' && /[?&]poll=1/.test(location.search);
+    if ((mode !== 'real' && !preview) || (window.AlimunData.viewingAs && window.AlimunData.viewingAs())) return;
+    if (preview) { D.welcome = { answered: false, giftOpen: false }; if (current === 'home') render('home', false); }
+    withPoll(function (P) { P.maybe(pollHelpers(preview)); });
+  }
+  function pollHelpers(preview) {
+    return { t: t, esc: esc, icon: icon, lang: lang, locale: locale, profile: D.profile, drawing: Cast.drawing(buddyOf(D)), preview: preview, amount: giftAmount(),
+      onDone: function (added) {
+        D.welcome = { answered: true, giftOpen: !(D.welcome && D.welcome.answered && !D.welcome.giftOpen) };
+        if (added) { D.tutor.seconds += added; D.tutor.fresh = false; }
+        if (current === 'home' || current === 'tutor') render(current, false);
+      } };
+  }
+  function withPoll(fn) {
+    if (window.AlimunPoll) fn(window.AlimunPoll); else loadScript('/js/app/poll.js').then(function () { if (window.AlimunPoll) fn(window.AlimunPoll); });
   }
 
   function boot() {
+    if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('open_dashboard', { dashboard: 'student' });
     app = document.getElementById('app');
     loadingScreen = document.getElementById('loading');
     document.documentElement.lang = lang === 'ma' ? 'fr-MA' : lang;
@@ -619,16 +761,24 @@
     }).then(function (res) {
       D = res[0];
       start();
+      // In-page banner for students, when one is switched on in Admin (js/banner.js).
+      if (!document.querySelector('script[src="/js/banner.js"]')) { var bs = document.createElement('script'); bs.src = '/js/banner.js'; bs.defer = true; document.head.appendChild(bs); }
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
+      welcomePoll();
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'messages') render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'messages' || id === 'settings' || id === 'tutor') render(id, true); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 
     app.addEventListener('click', function (e) {
-      var el = e.target.closest('[data-more],[data-close],[data-join],[data-join-real],[data-demo-loader],[data-replay],[data-retry]');
+      var el = e.target.closest('[data-more],[data-close],[data-join],[data-join-real],[data-demo-loader],[data-replay],[data-retry],[data-poll-open]');
       if (!el) return;
+      if (el.hasAttribute('data-poll-open')) {
+        if (window.AlimunData.viewingAs && window.AlimunData.viewingAs()) return;
+        var pv = mode !== 'real';
+        return withPoll(function (P) { P.open(pollHelpers(pv)); });
+      }
       if (el.hasAttribute('data-more')) setSheet(!document.body.classList.contains('is-sheet-open'));
       else if (el.hasAttribute('data-close')) setSheet(false);
       else if (el.hasAttribute('data-join')) showLoader(t('app_loading_join'), 2200);

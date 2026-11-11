@@ -1,0 +1,188 @@
+// German pronunciation for English speakers. Checked (Nov 2026) against Duden (ß after long vowels and diphthongs on the
+// "außerdem" page; König [ˈkøːnɪç] for the -ig ending), the Wikipedia articles Standard German phonology (vowel pairs,
+// ich-Laut and ach-Laut, uvular r and vocalized r in Oper [ˈoːpɐ], glottal stop, inseparable prefixes), German orthography
+// (spelling-to-sound rules, Kamm/kam, w, v, z, s, sp/st, ß, capital ẞ in 2017), Final-obstruent devoicing (Rad/Rat [ʁaːt],
+// Zug/Züge, Bad/Bäder, no devoicing in Austrian and Swiss Standard German), ß (Swiss ss, Buße/Busse), and Wiktionary
+// entries umfahren ([ˈʊmˌfaːʁən] vs [ʊmˈfaːʁən]), vereisen ([fɛɐ̯ˈʔaɪ̯zn̩]) and Spiegelei ([ˈʃpiːɡl̩ˌʔaɪ̯]).
+// Only IPA confirmed on those pages is used.
+export default {
+  key: 'german-pronunciation',
+  site: 'en',
+  slug: 'german-pronunciation-guide',
+  section: 'grammar',
+  course: 'German',
+  published: '2026-11-04',
+  updated: '2026-11-04',
+  title: 'German pronunciation: a guide for English speakers',
+  metaTitle: 'German pronunciation guide for English speakers – Alimun',
+  desc: 'The German sounds English speakers find hardest: long and short vowels, ä ö ü, ß, the two ch sounds, the German r, ei vs ie, final devoicing and stress.',
+  lead: "German has a reputation for being harsh and hard to pronounce, but its spelling is far more regular than English. Once you know **which letters sound different from English**, you can read almost any German word aloud correctly the first time. This guide walks through those sounds one by one, with the mistakes English speakers make most often.",
+  photo: 'german-pronunciation-woman-podcast',
+  sticker: { draw: 'parrot', say: 'Wein or Wien? Say the second letter.' },
+  facts: [
+    { label: 'ä, ö, ü, ß', text: 'the four letters German adds to the 26 letters it shares with English' },
+    { n: 2, unit: 'ch sounds', text: 'the soft ich-Laut and the throaty ach-Laut, chosen by the vowel before them' },
+    { label: 'Rad = Rat', text: 'wheel and council sound the same, because a final d is pronounced like t' },
+    { label: '2017', text: 'the year the capital ẞ became an official letter of German spelling' },
+  ],
+  blocks: [
+    { take: { title: 'The short answer', text: "German spelling is close to phonetic: a letter or letter group almost always stands for the same sound. The sounds that trip up English speakers are **the umlauts ä, ö and ü**, the two kinds of ch, the r made in the back of the throat, and a handful of letters that sound different from English, such as w (said like v), v (usually like f), z (like ts) and the pair ei and ie. Add long and short vowels, hardened final consonants and stress on the first syllable of the stem, and you have the whole system.", draw: 'owl' } },
+
+    { h: 'Why German is easier to read than English' },
+    { p: "English spelling is famously unreliable: think of though, through, tough and cough. German is much kinder. Once you learn the rules, **a written word tells you how to say it**, and a spoken word usually tells you how to write it. That is why German children learn to read quickly, and why adult learners can start reading aloud within their first weeks." },
+    { p: "The alphabet itself has the same 26 letters as English, plus the three umlauts ä, ö and ü and the letter ß. The difficulty is not the number of letters but the fact that some familiar letters stand for different sounds. Your eyes see a w, and your English habits want to say it the English way. Most of the work in German pronunciation is **retraining those habits** for about a dozen letters and combinations." },
+    { table: {
+      head: ['Spelling', 'German sound', 'Close to English', 'Examples'],
+      rows: [
+        ['w', 'v', 'v in “van”', 'Wasser (water), Wein (wine)'],
+        ['v', 'usually f', 'f in “fan”', 'Vogel (bird), viel (much), Vater (father)'],
+        ['z, tz', 'ts', 'ts in “cats”', 'Zeit (time), zehn (ten), Katze (cat)'],
+        ['s before a vowel', 'z', 'z in “zoo”', 'Sonne (sun), sagen (to say)'],
+        ['sch', 'sh', 'sh in “shoe”', 'Schule (school), schnell (fast)'],
+        ['sp, st at the start', 'shp, sht', 'sh + p, sh + t', 'Sport, Straße (street), Stadt (city)'],
+        ['j', 'y', 'y in “yes”', 'ja (yes), Jahr (year)'],
+        ['ei', 'like “eye”', 'i in “wine”', 'mein (my), drei (three)'],
+        ['ie', 'long ee', 'ee in “see”', 'Liebe (love), vier (four)'],
+        ['eu, äu', 'oy', 'oy in “boy”', 'neu (new), Häuser (houses)'],
+        ['qu', 'kv', 'k + v', 'Quelle (source), Qualität (quality)'],
+        ['th, ph', 't, f', 't in “top”, f in “fun”', 'Theater, Physik (physics)'],
+      ],
+      note: 'The English comparisons are approximate. The sounds with no real English match, such as ü, ö and ch, are explained below.',
+    } },
+
+    { h: 'Long and short vowels' },
+    { p: "Every German vowel comes in a long and a short version, and the difference can change the meaning of a word. The long vowels are held longer and are more tense; the short ones are quick and a little more open. **Kamm** with a short a means “comb”, while **kam** with a long a means “came”. In the same way, Ofen (oven) has a long o and offen (open) a short one." },
+    { p: "The spelling usually tells you which one you are dealing with. A double consonant after a vowel marks it as short: Mitte (middle), Bett (bed), Sonne. A vowel followed by a silent h, a doubled vowel or, for i, the spelling ie marks it as long: gehen (to go), Boot (boat), Miete (rent). A vowel followed by a single consonant is often long, as in Tag (day) and Name, but this last pattern has exceptions, so it is a guide rather than a rule." },
+    { examples: [
+      ['Ich **kam** mit einem **Kamm**.', 'I came with a comb. (long a, then short a)'],
+      ['Der **Ofen** ist **offen**.', 'The oven is open. (long o, then short o)'],
+      ['Die **Miete** ist in der **Mitte** des Monats fällig.', 'The rent is due in the middle of the month. (long ie, then short i)'],
+    ] },
+    { p: "One more vowel deserves a mention: the unstressed e at the end of many words. In **Name, Liebe or bitte**, the final e is not silent as it often is in English. It is a short, relaxed sound like the a in “sofa”. Leaving it out turns bitte (please) into bitt, which sounds clipped and foreign." },
+
+    { h: 'The umlauts ä, ö and ü' },
+    { p: "The two dots over a, o and u are not decoration. They mark **separate vowels**, and swapping them changes the word: schon means “already”, schön means “beautiful”. Many plurals are formed with an umlaut too, so der Bruder (brother) becomes die Brüder and die Tochter (daughter) becomes die Töchter. If you cannot type umlauts, the standard replacement is ae, oe and ue, which is why you will see spellings like Koenig for König in web addresses." },
+    { p: "**Ä** is the easiest of the three. Short ä sounds like the e in “bed”, as in Männer (men). Long ä is a long open e sound, as in Käse (cheese), and in everyday speech many Germans pronounce it just like a long e." },
+    { p: "**Ö and ü** have no English equivalent, but there is a reliable trick. For ü, say a long “ee” as in “see”, then round your lips tightly as if to whistle, without moving your tongue. The sound that comes out is the German ü in über (over) and Tür (door). For ö, do the same with the vowel of “day” or “bed”: keep the tongue where it is and round the lips. That gives you the ö of schön and hören (to hear)." },
+    { examples: [
+      ['Er ist **schon** hier. Das Wetter ist **schön**.', 'He is already here. The weather is nice.'],
+      ['Ich habe zwei **Brüder** und eine **Tochter**.', 'I have two brothers and a daughter.'],
+      ['Der Schlüssel liegt **über** der **Tür**.', 'The key is above the door.'],
+      ['Ich **höre** gern Musik.', 'I like listening to music.'],
+    ] },
+    { note: { title: 'Lips round, tongue still', text: "English speakers often say ü as “oo” and ö as “er”. The fix is to start from the front vowel, ee for ü and the e of “bed” for ö, and only round the lips. **The tongue stays forward** the whole time, which is what keeps Tür from sounding like “tour”.", draw: 'cat' } },
+
+    { figure: { photo: 'german-pronunciation-headphones', alt: 'A young woman holding white headphones around her neck on a quiet road', caption: 'Die Kopfhörer, the headphones: hören has an ö, so round your lips on the e of “bed”.' } },
+
+    { h: 'ß, the sharp s' },
+    { p: "The letter ß, called Eszett or scharfes S (sharp s), is simply **a voiceless s sound**, like the s in “miss”. It is not a B, and it never sounds like one. What it tells you is something about the vowel before it. Since the spelling reform, Duden's rule is that after a long vowel or a diphthong the voiceless s is generally written ß, while after a short vowel it is written ss." },
+    { p: "So Straße (street), Fuß (foot), groß (big) and heißen (to be called) have ß because the vowel before it is long or a diphthong, while Fluss (river), Kuss (kiss) and dass (that) have ss after a short vowel. The pair Buße (penance) and Busse (buses) shows the difference in a single word shape. In Switzerland and Liechtenstein, ß is not used at all and ss is written everywhere. Since 2017 the Council for German Orthography has also allowed a capital ẞ, for text in all capitals such as STRAẞE, next to the older STRASSE." },
+
+    { h: 'The two ch sounds' },
+    { p: "German ch is the sound English speakers worry about most, and it helps to know that there are two of them. Which one you use depends on **the sound right before it**, so you never have to guess." },
+    { h3: 'The ach-Laut after a, o, u and au' },
+    { p: "After a, o, u and au, ch is pronounced in the back of the mouth, like the ch in Scottish “loch”. You make it by raising the back of your tongue toward the soft palate, where you would make a k, and letting the air rub through instead of stopping it. This is the sound in Bach, Buch (book), Nacht (night), Tochter and auch (also). It is not a k: Nacht and nackt (naked) are different words." },
+    { h3: 'The ich-Laut everywhere else' },
+    { p: "After the front vowels i, e, ä, ö and ü, after ei and eu, and after consonants such as l, n and r, ch is the softer ich-Laut. A good way to find it is to whisper the y of “yes” or the h of “huge”, pushing a bit more air. It is made with the middle of the tongue close to the hard palate, further forward than the ach-Laut. You hear it in ich (I), mich (me), Milch (milk), München and in every diminutive ending in -chen, such as Mädchen (girl)." },
+    { p: "Because the choice depends on the vowel, the same word can switch sound in its plural. **Buch has the ach-Laut, Bücher the ich-Laut**; Nacht has the back sound, Nächte the front one; Tochter and Töchter do the same. Many English speakers say “ish” for ich, which Germans understand but notice at once. Aim for the whispered y instead." },
+    { examples: [
+      ['Das **Buch** gehört mir, die **Bücher** gehören dir.', 'The book is mine, the books are yours. (ach-Laut, then ich-Laut)'],
+      ['In der **Nacht** trinke ich **Milch**.', 'At night I drink milk. (ach-Laut, then ich-Laut)'],
+      ['Der **König** ist **richtig** müde.', 'The king is really tired. (-ig said with the ich-Laut)'],
+    ] },
+    { p: "The ending **-ig** at the end of a word belongs here too. In standard pronunciation, Duden gives König (king) as [ˈkøːnɪç], with the ich-Laut, and the same goes for richtig (right), wenig (little) and zwanzig (twenty). In southern Germany you will often hear a k instead, and both are understood everywhere." },
+
+    { cta: true },
+
+    { h: 'The German r' },
+    { p: "The standard German r is not made with the tip of the tongue, as in English. In most of Germany it is a **uvular r**, made far back in the throat: the back of the tongue comes close to the uvula, the small flap at the back of the mouth, and the air rubs through, a little like a soft gargle. If you can make the ach-Laut, you are very close; add voice and move the sound slightly further back. In Bavaria and parts of Austria and Switzerland, many speakers roll the r with the tip of the tongue instead, and that is correct German as well." },
+    { p: "After a vowel, the r usually turns into a vowel itself. The ending **-er**, as in Oper (opera), Lehrer (teacher) and Wasser, is pronounced like a short, open “uh”, not like the English “er” with a curled tongue. In words like Uhr (clock), Tür and hier (here), the r after the long vowel also becomes a light “uh” sound. Getting -er right does more for your accent than almost anything else, because it appears in so many words." },
+    { examples: [
+      ['**Rot** und **grün** sind meine Lieblingsfarben.', 'Red and green are my favorite colors. (r at the start: throat r)'],
+      ['Mein **Bruder** ist **Lehrer**.', 'My brother is a teacher. (-er at the end: a short “uh”)'],
+      ['Wie viel **Uhr** ist es **hier**?', 'What time is it here? (r after a long vowel: a light “uh”)'],
+    ] },
+
+    { h: 'w, v, z, s and the sp and st rule' },
+    { p: "These letters look harmless, which is exactly why English speakers get them wrong. **W is always pronounced like an English v**: Wasser, Wein, Wohnung (apartment). There is no English w sound in native German words at all." },
+    { p: "V, in turn, is usually pronounced like f in native German words: Vater (father), viel, Vogel, vier. In words borrowed from other languages it is often a v, as in Klavier (piano) and Vase. Z is always pronounced ts, also at the start of a word, where English never has that sound: Zeit, zehn, Zug (train). Practice by saying “cats” and then starting a word with the last two sounds." },
+    { p: "A single s before a vowel is voiced, like the English z: Sonne, sagen, Rose. At the end of a word or syllable it is a voiceless s, as in Haus (house) and Maus (mouse). Sch is always the English sh. And at the start of a word or word stem, **sp and st are pronounced shp and sht**: Sport, spielen (to play), Straße, Stadt, and also verstehen (to understand) and Beispiel (example), where -steh- and -spiel are the stems. Inside or at the end of a stem, they keep the plain s sound: Fenster (window), ist (is), Kasten (box)." },
+    { figure: { photo: 'german-pronunciation-microphone', alt: 'A gold microphone on a stand against a dark background', caption: 'Say it into the mic: Wasser, Wein and Wohnung all start with the sound of an English v.' } },
+
+    { h: 'ei and ie, eu and au' },
+    { p: "The pair ei and ie causes endless confusion, because English uses both spellings inconsistently. German does not. **Ei is always the sound of English “eye”**, and ie is always a long “ee”. A simple trick: say the name of the second letter in English. In ei, the second letter is i, whose English name is “eye”; in ie, it is e, whose name is “ee”." },
+    { p: "The trick helps with some famous pairs. Wein (wine) and Wien (Vienna) differ only in this way, as do Bein (leg) and Biene (bee). Ai sounds the same as ei but is rare, appearing in words like Mai (May) and Saite (string). Eu and äu both sound like the oy of “boy”: Deutschland, neu, heute (today), Häuser, Bäume (trees). Au is the ow of “how”: Haus, laut (loud), Frau (woman)." },
+    { examples: [
+      ['Wir trinken **Wein** in **Wien**.', 'We drink wine in Vienna.'],
+      ['Eine **Biene** sitzt auf meinem **Bein**.', 'A bee is sitting on my leg.'],
+      ['**Heute** sind die **Häuser** **neu**.', 'Today the houses are new.'],
+    ] },
+
+    { h: 'Final devoicing: why Rad sounds like Rat' },
+    { p: "In standard German as spoken in Germany, the consonants b, d and g are hardened at the end of a word or syllable, becoming p, t and k. The same happens to a voiced s, which becomes a hissing s. German calls this **Auslautverhärtung**, final hardening. The result is that Rad (wheel) and Rat (council, advice) are pronounced exactly the same, [ʁaːt]." },
+    { p: "The original sound comes back as soon as a vowel follows. Bad (bath) ends in a t sound, but in Bäder (baths) the d is a real d again. Zug ends in a k sound, while Züge (trains) has a clear g. Hand (hand) ends in t, Hände does not. English speakers tend to pronounce the written letter, saying Hund (dog) with a soft d, which sounds slightly off to a German ear. The rule applies only to pronunciation; the spelling keeps the b, d or g. Note that speakers of Austrian and Swiss Standard German generally do not harden final consonants in this way." },
+    { examples: [
+      ['Das **Rad** ist kaputt. Der **Rat** ist gut.', 'The wheel is broken. The advice is good. (Rad and Rat sound the same)'],
+      ['Der **Zug** kommt. Die **Züge** kommen.', 'The train is coming. The trains are coming. (final k sound, then g)'],
+      ['Mein **Hund** ist alt. Ich habe zwei **Hunde**.', 'My dog is old. I have two dogs. (final t sound, then d)'],
+    ] },
+
+    { h: 'Word stress' },
+    { p: "Most simple native German words are stressed on **the first syllable of the stem**: Wasser, Sprache (language), Arbeit (work), Kinder (children). Prefixes change the picture in a predictable way. The inseparable prefixes be-, ge-, er-, ver-, zer-, ent- and emp- are never stressed, so the stress stays on the stem: bezahlen (to pay), verstehen, erzählen (to tell), Geschenk (gift)." },
+    { p: "Separable prefixes, the ones that split off in a sentence, take the stress themselves: anrufen (to call), aufstehen (to get up), einkaufen (to shop). Sometimes the same verb exists in both forms, and **stress is the only spoken difference**. Umfahren with the stress on um, [ˈʊmˌfaːʁən], means to knock something over with a vehicle; umfahren with the stress on fahren, [ʊmˈfaːʁən], means to drive around it." },
+    { p: "Words borrowed from other languages often keep their own stress, frequently on the last syllables: Elefant, Universität, Musik. Verbs ending in -ieren are stressed on the ie: studieren (to study), telefonieren (to phone), probieren (to try). If you are unsure, any good dictionary marks the stressed syllable." },
+    { figure: { photo: 'german-pronunciation-recording-studio', alt: 'A woman with headphones speaking into a studio microphone with a pop filter', caption: 'Recording yourself and listening back is one of the quickest ways to hear where the stress falls.' } },
+
+    { h: 'The glottal stop' },
+    { p: "One feature of German is so natural to native speakers that textbooks often forget it: **the glottal stop**. It is the tiny catch in the throat you make in the middle of the English “uh-oh”. In careful German speech, words and stems that begin with a vowel start with this catch, instead of being linked to the word before, as English or French would do." },
+    { p: "This is why German can sound clipped or staccato to English ears. In a sentence like ich esse ein Ei (I am eating an egg), the words are not run together into one stream: ein and Ei each start fresh with a small catch. The glottal stop also keeps word parts apart. Spiegelei (fried egg) is Spiegel plus Ei, pronounced [ˈʃpiːɡl̩ˌʔaɪ̯], not Spie-gelei. Vereisen (to ice up), [fɛɐ̯ˈʔaɪ̯zn̩], has a catch before eisen, which keeps it apart from verreisen (to go on a trip). In casual, fast speech the glottal stop is often dropped, so it is something to recognize first and imitate later." },
+
+    { h: 'Common mistakes' },
+    { p: "These are the errors teachers hear most often from English speakers. None of them makes you hard to understand on its own, but together they add up to a strong accent." },
+    { mistakes: [
+      ['Wasser with an English w', '**V**asser', 'German w is always pronounced like English v.'],
+      ['Vater with an English v', '**F**ater', 'In native German words, v is usually pronounced f.'],
+      ['Zeit said “zite”', '**Ts**eit', 'Z is always ts, even at the start of a word.'],
+      ['Wein and Wien said the same', 'W**ei**n like “vine”, W**ie**n like “veen”', 'Ei sounds like “eye”, ie like a long “ee”.'],
+      ['ich said “ish”', 'i**ch** with a whispered y', 'The ich-Laut is made at the palate, not with the lips rounded like sh.'],
+      ['über said “oober”', '**ü**ber with rounded lips on ee', 'Ü is an ee sound with rounded lips, not oo.'],
+      ['Hund with a soft final d', 'Hun**t**', 'Final b, d and g are hardened to p, t and k.'],
+      ['Lehrer with an English “er”', 'Lehr**uh**', 'Final -er is a short, open “uh”, without a curled tongue.'],
+      ['Sport with an English sp', '**Sch**port', 'Sp and st at the start of a stem are shp and sht.'],
+    ] },
+
+    { h: 'How to practice German pronunciation' },
+    { p: "Pronunciation improves fastest when you **listen and speak at the same time**. Pick short recordings with a transcript, such as news for learners or dialogues from your coursebook, and read along aloud while the speaker talks, then on your own. Recording yourself and comparing the two versions shows you mistakes you cannot hear while speaking." },
+    { p: "Work on one sound at a time. Spend a few days on ü and ö, then on the two ch sounds, then on -er. Minimal pairs, words that differ in a single sound like schon and schön, Wein and Wien or Kamm and kam, are especially useful because they train your ear to hear the difference before your mouth has to produce it." },
+    { p: "Most of all, you need someone who can hear what you cannot. At Alimun, German classes are **live with a teacher and a small group**, so you speak in every lesson and your teacher can correct a ch or an r the moment it slips. If you are not sure where to start, a short level test places you in the right course." },
+  ],
+  quiz: [
+    { q: 'How is the German w in Wasser pronounced?', options: ['Like English w', 'Like English v', 'Like English f', 'It is silent'], a: 1, why: 'German w is always pronounced like English v.' },
+    { q: 'Which word is pronounced with the ach-Laut, the throaty ch?', options: ['ich', 'Milch', 'Buch', 'Mädchen'], a: 2, why: 'After a, o, u and au, ch is the ach-Laut, so Buch has the back sound. The others have the ich-Laut.' },
+    { q: 'What does Wien mean, as opposed to Wein?', options: ['Wine', 'Vienna', 'Leg', 'Bee'], a: 1, why: 'Ie is a long “ee”, so Wien is Vienna; ei sounds like “eye”, so Wein is wine.' },
+    { q: 'Why do Rad and Rat sound the same?', options: ['Because of the umlaut', 'Because d at the end of a word is pronounced like t', 'Because both have a short a', 'Because the r is silent'], a: 1, why: 'Final devoicing hardens b, d and g at the end of a word to p, t and k.' },
+    { q: 'Which spelling is correct in Germany for “street”?', options: ['Strase', 'Strasse', 'Straße', 'Straaße'], a: 2, why: 'After a long vowel, the voiceless s is written ß: Straße. Strasse is the Swiss spelling.' },
+    { q: 'Where is the stress in the verb verstehen?', options: ['On ver', 'On steh', 'On en', 'It varies by region'], a: 1, why: 'Inseparable prefixes like ver- are never stressed, so the stress falls on the stem: verstehen.' },
+    { q: 'How is the -er at the end of Lehrer usually pronounced?', options: ['Like English “er” with a curled tongue', 'Like a rolled r', 'Like a short, open “uh”', 'It is silent'], a: 2, why: 'After a vowel, the r becomes vowel-like, and final -er sounds like a short “uh”.' },
+    { q: 'How do you pronounce st at the start of Stadt?', options: ['st, as in English', 'sht', 'ts', 'zt'], a: 1, why: 'At the start of a word or stem, st is pronounced sht and sp is pronounced shp.' },
+  ],
+  faq: [
+    ['Is German pronunciation hard for English speakers?', 'Less than its reputation suggests. German spelling is much more regular than English, so once you learn the dozen or so letters that sound different, you can read most words correctly. The umlauts ö and ü, the ich-Laut and the r take the most practice.'],
+    ['Do I have to use the throaty r?', 'The uvular r is the most common in Germany, but a rolled r with the tip of the tongue is also standard and is used in Bavaria and parts of Austria and Switzerland. Either is correct. What matters more is pronouncing the -er ending as a short “uh”.'],
+    ['What if my keyboard has no umlauts or ß?', 'Write ae, oe and ue for ä, ö and ü, and ss for ß. These are the standard replacements, and Swiss German uses ss instead of ß all the time.'],
+    ['Is the ich sound the same as English “sh”?', 'No. Sh is made with rounded lips and the tongue further forward. The ich-Laut is closer to a strongly whispered y, as in “yes”, made with the middle of the tongue near the hard palate.'],
+    ['Why do Austrians and Swiss sound different?', 'German has several standard varieties. Speakers in Austria and Switzerland often roll the r, generally do not harden final b, d and g, and in southern Germany -ig may end in a k. All of these are correct German.'],
+  ],
+  related: ['german-articles', 'how-long-german', 'german-word-order'],
+  sources: [
+    ['Duden: ß after long vowels and diphthongs (außerdem)', 'https://www.duden.de/haeufige_fehler/ausserdem'],
+    ['Duden: König, pronunciation', 'https://www.duden.de/rechtschreibung/Koenig'],
+    ['Standard German phonology', 'https://en.wikipedia.org/wiki/Standard_German_phonology'],
+    ['German orthography', 'https://en.wikipedia.org/wiki/German_orthography'],
+    ['Final-obstruent devoicing', 'https://en.wikipedia.org/wiki/Final-obstruent_devoicing'],
+    ['ß (Eszett)', 'https://en.wikipedia.org/wiki/%C3%9F'],
+    ['Wiktionary: umfahren', 'https://de.wiktionary.org/wiki/umfahren'],
+    ['Wiktionary: vereisen', 'https://de.wiktionary.org/wiki/vereisen'],
+    ['Wiktionary: Spiegelei', 'https://de.wiktionary.org/wiki/Spiegelei'],
+  ],
+};

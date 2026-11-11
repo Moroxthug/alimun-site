@@ -1,253 +1,304 @@
-// English B1, unit 7 (docs/BOOKS.md). Draft for native-teacher review.
+// English B1, unit 7, second edition (docs/LESSONS_PLAN.md, "Books, second edition"). Draft for native-teacher review.
+// Each lesson: a full explanation first (the rule in plain words, why, many examples, the usual mistakes, a text that
+// uses it), then fewer exercises from controlled to free, one speaking task, and one task in the format of B1 Preliminary.
 export const UNIT = {
   id: 'u7',
   title: 'A new home abroad',
-  goal: 'Describe places, people and customs in a new country.',
+  goal: 'Say exactly which person, thing or place you mean, describe homes and neighbourhoods, talk politely about customs, and read about life in a new country.',
   art: 'cactus',
-  tags: { skills: ['grammar', 'vocabulary', 'reading'], topics: ['relative-clauses', 'adjective-order', 'homes', 'customs'], goals: ['foundations'] },
+  tags: { skills: ['grammar', 'vocabulary', 'speaking', 'reading'], topics: ['relative-clauses', 'adjective-order', 'homes', 'customs'], goals: ['foundations', 'relocation'] },
   pages: [
+    /* ------------------------------------------------------------------ Lesson 1 */
     {
       id: 'p1',
       title: 'The people who live next door',
-      about: 'Say which person, thing or place you mean with who, which, that, where and whose.',
+      about: 'Use who, which, that, where and whose to say exactly which person, thing or place you mean.',
       art: 'cat',
       spreads: [
         [
-          { t: 'text', md: 'A **defining relative clause** tells us **which** person, thing or place we mean. Without it, the sentence is not clear. It comes straight after the noun.' },
-          { t: 'table', caption: 'Relative pronouns', explain: ['head', 'col1'], head: ['Word', 'Use', 'Example'], rows: [
-            ['who', 'for people', 'The woman **who** lives next door is a nurse.'],
-            ['which', 'for things', 'The flat **which** we rented was very small.'],
-            ['that', 'for people or things', 'The bus **that** goes to the centre is the 12.'],
-            ['where', 'for places', 'This is the café **where** we first met.'],
-            ['whose', 'for possession (his, her, their)', 'I have a neighbour **whose** son plays the drums.'],
+          { t: 'text', md: 'When you move to a new place, you talk about a lot of new people and things, and you often need to say **which one** you mean. *The woman* is not enough when there are ten women in the building. *The woman **who lives on the second floor*** is clear.\n\nThe part in bold is a **defining relative clause**. It comes straight after the noun and tells us which one. Without it, the sentence does not give enough information: *I met the man* (which man?) becomes *I met **the man who owns the café***.\n\nThe clause starts with a **relative pronoun**. Which one you choose depends on what the noun is.' },
+          { t: 'table', caption: 'Relative pronouns', explain: ['head', 'col1'], head: ['Pronoun', 'Use it for', 'Example'], rows: [
+            ['who', 'people', 'the neighbour who helped me'],
+            ['which', 'things and animals', 'the flat which has a balcony'],
+            ['that', 'people or things (more informal)', 'the bus that goes to the centre'],
+            ['where', 'places', 'the street where I live'],
+            ['whose', 'possession: his, her, their', 'the girl whose dog barks all night'],
           ] },
+          { t: 'tip', art: 'owl', md: 'Never use **which** for people. Say *the doctor **who** speaks English*, not *the doctor which speaks English*. **That** is fine for both, and it is very common when people speak.' },
         ],
         [
-          { t: 'text', md: 'When *who*, *which* or *that* is the **object** of the clause, you can leave it out. When it is the **subject**, you must keep it.' },
+          { t: 'text', md: 'Look at the job the pronoun does in its clause. In *the man **who** owns the café*, **who** is the **subject** of *owns*: the man owns the café. In *the café **that** I like*, **that** is the **object** of *like*: I like the café.\n\nWhen the pronoun is the **object**, you can leave it out, and English speakers usually do: *the café **(that)** I like*, *the people **(who)** we met*. When it is the **subject**, you must keep it: *the man **who** owns the café*, never *the man owns the café* as one noun phrase.\n\nOne more rule that learners often forget: the relative pronoun **replaces** *he, she, it* or *them*. Do not add them again.' },
           { t: 'examples', items: [
-            { s: 'The flat (**that**) we rented was very small.', n: '*We* is the subject of *rented*, so *that* is the object. You can leave it out.' },
-            { s: 'The man **who** called you is my landlord.', n: '*Who* is the subject of *called*. You cannot leave it out.' },
-            { s: 'That’s the shop **where** I buy my bread.', n: 'After a place, *where* + subject + verb.' },
+            { s: 'That’s **the woman who** runs the bakery.', n: '*who* is the subject (she runs the bakery): keep it.' },
+            { s: 'Is this **the key (that) you** lost?', n: '*that* is the object (you lost it): you can leave it out.' },
+            { s: 'We found **a flat which** is close to the station.', n: 'A thing: *which* or *that*.' },
+            { s: 'This is **the park where** my kids play every afternoon.', n: 'A place: *where*.' },
+            { s: 'I talked to **the man whose** car was parked outside.', n: '*whose* = his: his car was parked outside.' },
+            { s: 'The people **(who) I work with** are very friendly.', n: 'The preposition goes at the end in everyday English.' },
           ] },
-          { t: 'tip', art: 'owl', md: 'Do not add a second pronoun: say *the man who lives here*, not *the man who he lives here*. And use *who* or *that* for people, never *which*.' },
+          { t: 'tip', art: 'owl', md: 'Do not put **where** after a noun that is not a place in the sentence. *The flat **where** I live* is fine; *the flat **which** I rented* is also fine. Ask yourself: could I say *in it*? If yes, *where* works: I live *in it*. I rented *it*, not *in it*: so *which*.' },
         ],
         [
-          { t: 'ex', kind: 'choice', h: 'Choose the correct word.', items: [
-            { q: 'I met a woman ___ works at the embassy.', o: ['who', 'which', 'where'], why: 'A person, and the subject of *works*: *who*.' },
-            { q: 'The supermarket ___ is near our flat closes at ten.', o: ['that', 'who', 'where'], why: 'A thing: *that* or *which*. *Where* would need a subject after it.' },
-            { q: 'This is the street ___ I grew up.', o: ['where', 'which', 'who'], why: 'A place, followed by subject + verb: *where*.' },
-            { q: 'He’s the neighbour ___ dog barks all night.', o: ['whose', 'who', 'who’s'], why: 'The dog belongs to him: *whose*. *Who’s* means *who is*.' },
-            { q: 'Do you remember the restaurant ___ we had dinner on our first night?', o: ['where', 'which', 'who'], why: 'We had dinner there, in that place: *where*.' },
+          { t: 'text', md: 'These are the mistakes teachers correct most often with relative clauses.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['the man which lives here', 'the man who lives here', 'People: *who* or *that*, never *which*.'],
+            ['the book that I bought it', 'the book that I bought', '*that* replaces *it*: do not repeat it.'],
+            ['the town where I visited', 'the town (that) I visited', 'You visit a town, not *in* it: no *where*.'],
+            ['the girl who her brother is a pilot', 'the girl whose brother is a pilot', 'Possession: *whose*.'],
+          ] },
+          { t: 'dialogue', title: 'Who’s who in the building', lines: [
+            { who: 'Lucía', s: 'Who’s the man who just said hello in the lift?' },
+            { who: 'Tom', s: 'That’s Mr Okafor. He’s the one whose daughter plays the piano every evening.' },
+            { who: 'Lucía', s: 'Oh, so he’s the person I can hear at seven o’clock!' },
+            { who: 'Tom', s: 'Exactly. And the woman who lives opposite you is Mrs Hall. She knows everyone.' },
+            { who: 'Lucía', s: 'Is there a shop where I can buy bread on Sunday?' },
+            { who: 'Tom', s: 'Yes, the little shop that’s next to the bus stop is open every day.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'gap', h: 'Complete with a relative pronoun: *who*, *which*, *that*, *where* or *whose*.', items: [
-            { q: 'The teacher ___ helped me with my visa forms was very kind.', a: ['who', 'that'], why: 'A person, subject of *helped*: *who* or *that*.' },
-            { q: 'I’ve lost the key ___ opens the front door.', a: ['which', 'that'], why: 'A thing, subject of *opens*: *which* or *that*.' },
-            { q: 'We stayed in a small town ___ nobody spoke English.', a: ['where'], why: 'A place: *where* + subject + verb.' },
-            { q: 'Do you know anyone ___ flat has a garden?', a: ['whose'], why: 'Their flat: *whose*.' },
-            { q: 'The doctor ___ I saw yesterday was very helpful.', a: ['who', 'that', 'whom'], why: 'A person: *who* or *that*. Here it is the object, so you could also leave it out.' },
+          { t: 'ex', kind: 'select', h: 'Choose the right word.', items: [
+            { q: 'My neighbour is the woman ___ dog you saw this morning.', o: ['whose', 'who', 'which'], why: 'Possession (her dog): *whose*.' },
+            { q: 'This is the café ___ we first met.', o: ['where', 'which', 'who'], why: 'A place, *we met in it*: *where*.' },
+            { q: 'I need a bag ___ is big enough for my laptop.', o: ['which', 'who', 'where'], why: 'A thing, and the subject of *is*: *which* (or *that*).' },
+            { q: 'Do you know anyone ___ speaks Portuguese?', o: ['who', 'which', 'whose'], why: 'A person: *who* (or *that*).' },
+          ] },
+          { t: 'ex', kind: 'fix', h: 'Each sentence has one mistake. Find it and fix it.', items: [
+            { s: 'The doctor [which] I saw was very kind.', a: ['who', 'that'], why: 'A person: *who* or *that*.' },
+            { s: 'This is the flat that I told you [about it].', a: ['about'], why: '*that* already means *it*: say *told you about*, not *about it*.' },
+            { s: 'Is that the man [who his] car was stolen?', a: ['whose'], why: 'Possession: *whose car*.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'This is the café where we met.', why: '*Where* comes straight after the place, *the café*.' },
-            { a: 'I have a friend whose father is a pilot.', why: '*Whose* + noun: *whose father*.' },
-            { a: 'The man who lives upstairs is French.', why: 'The clause *who lives upstairs* comes straight after *the man*.' },
+          { t: 'ex', kind: 'transform', h: 'Join the two sentences with who, which, where or whose.', items: [
+            { q: 'I have a friend. She lives in Lisbon.', cue: 'I have a friend', a: ['I have a friend who lives in Lisbon.', 'I have a friend that lives in Lisbon.'], why: 'A person, subject of *lives*: *who* or *that*.' },
+            { q: 'That’s the restaurant. We had dinner there.', cue: 'That’s the restaurant', a: ['That’s the restaurant where we had dinner.', 'That’s the restaurant that we had dinner in.', 'That’s the restaurant which we had dinner in.'], why: 'A place, *there*: *where*.' },
+            { q: 'I met a woman. Her son goes to my school.', cue: 'I met a woman', a: ['I met a woman whose son goes to my school.'], why: '*Her son*: *whose son*.' },
           ] },
-          { t: 'ex', kind: 'match', h: 'Match the beginnings and the endings.', pairs: [
-            ['A landlord is a person', 'who owns the flat that you rent.'],
-            ['A lift is a machine', 'which carries people between floors.'],
-            ['A launderette is a place', 'where you can wash your clothes.'],
-            ['A flatmate is someone', 'who shares a flat with you.'],
-            ['A deposit is money', 'that you pay before you move in.'],
+          { t: 'ex', kind: 'gap', h: 'In the format of the B1 Preliminary exam (Reading Part 6): write one word in each gap.', items: [
+            { q: 'Our new flat is in a street ___ there are lots of trees.', a: ['where'], why: 'A place, *in it*: *where*.' },
+            { q: 'The neighbour ___ lives below us gave us a cake.', a: ['who', 'that'], why: 'A person, subject: *who* or *that*.' },
+            { q: 'We have a cat ___ name is Pepper.', a: ['whose'], why: 'Possession (its name): *whose*.' },
+            { q: 'It is the best flat ___ we have ever had.', a: ['that', 'which'], why: 'After a superlative, *that* is the most natural; *which* is also possible.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Reading Part 6 of B1 Preliminary there are no options: you write one word. Relative pronouns come up often. Read the whole sentence first, then ask: is the noun a person, a thing or a place, and is there *his, her* or *their* in the meaning?' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'sofia', items: [
+            { a: 'She’s the neighbour who helped us move in.' },
+            { a: 'This is the street where I grew up.' },
+            { a: 'He’s the man whose car is always in front of my door.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 2 */
     {
       id: 'p2',
       title: 'Homes and neighbourhoods',
-      about: 'Describe where you live, with adjectives in the right order.',
+      about: 'Describe a home and the area around it, and put two or three adjectives in the right order.',
       art: 'dog',
       spreads: [
         [
-          { t: 'text', md: 'Here are useful words for finding a home and describing it.' },
-          { t: 'table', caption: 'Homes', explain: ['head', 'col1'], quiz: true, head: ['Word', 'Meaning'], rows: [
-            ['a detached house', 'a house that is not joined to another house'],
-            ['a terraced house', 'a house in a row of houses that are joined together'],
-            ['a studio flat', 'a small flat with one main room'],
-            ['furnished', 'with furniture already in it'],
-            ['the rent', 'the money that you pay every month to live in a place'],
-            ['a deposit', 'money that you pay at the start and usually get back when you leave'],
-            ['the ground floor', 'the floor at street level'],
+          { t: 'text', md: 'When you look for a home abroad, you read adverts, ask questions and describe what you want. A few words do a lot of the work.\n\nA **flat** (in the USA an **apartment**) is one home in a bigger building; a **house** stands on its own or joined to others. A **detached** house is not joined to any other; a **semi-detached** house shares one wall; a **terraced** house is in a row. A **studio** is one main room with a small kitchen and bathroom.\n\nYou **rent** a flat from a **landlord** or **landlady**, you pay **rent** every month and usually a **deposit** at the start. Bills like water and electricity are sometimes **included** in the rent. A flat can be **furnished** (with furniture) or **unfurnished**.' },
+          { t: 'table', caption: 'Describing an area', explain: ['head', 'col1'], head: ['Word', 'What it means'], rows: [
+            ['lively', 'a lot of people, shops and things happening'],
+            ['quiet', 'not much noise or traffic'],
+            ['crowded', 'too many people'],
+            ['run-down', 'old and in bad condition'],
+            ['convenient', 'close to the things you need'],
+            ['residential', 'mostly homes, not shops or offices'],
           ] },
+          { t: 'tip', art: 'owl', md: '**Rent** is both a verb and a noun: *We **rent** a flat. The **rent** is €900 a month.* The person who rents is the **tenant**; the person who owns the flat is the **landlord**.' },
         ],
         [
-          { t: 'text', md: 'To describe a **neighbourhood**, you can say it is *quiet*, *lively*, *safe*, *noisy* or *residential* (with homes, not shops or offices). You can also say what is close: *There’s a park nearby.* *It’s close to the station.* *It’s a ten-minute walk from the centre.*' },
-          { t: 'dialogue', title: 'Looking at a flat', lines: [
-            { who: 'Agent', s: 'So, this is the living room. The flat is fully furnished.' },
-            { who: 'Amira', s: 'It’s lovely and bright. How much is the rent?' },
-            { who: 'Agent', s: 'It’s nine hundred a month, plus a deposit of one month’s rent.' },
-            { who: 'Amira', s: 'And what’s the neighbourhood like?' },
-            { who: 'Agent', s: 'It’s quiet and residential, but there’s a lively market a five-minute walk away.' },
-            { who: 'Amira', s: 'Perfect. Is there a lift?' },
-            { who: 'Agent', s: 'I’m afraid not, but the flat is only on the second floor.' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'match', h: 'Match the words and the meanings.', pairs: [
-            ['furnished', 'with furniture already in it'],
-            ['rent', 'money you pay every month for your home'],
-            ['detached', 'not joined to another house'],
-            ['residential', 'with homes, not shops or offices'],
-            ['lively', 'busy and full of energy'],
-            ['nearby', 'not far away'],
-          ] },
-          { t: 'ex', kind: 'tf', h: 'Think about the conversation. True or false?', items: [
-            { q: 'Amira will need to buy furniture.', a: 'f', why: 'The flat is fully furnished.' },
-            { q: 'The deposit is the same as one month’s rent.', a: 't', why: '“A deposit of one month’s rent.”' },
-            { q: 'There is a market near the flat.', a: 't', why: 'It is a five-minute walk away.' },
-            { q: 'The building has a lift.', a: 'f', why: 'The agent says “I’m afraid not.”' },
-          ] },
-        ],
-        [
-          { t: 'text', md: 'When you use two or more adjectives before a noun, they usually go in this order. Your **opinion** comes first, and the **material** comes just before the noun.' },
-          { t: 'table', caption: 'Adjective order', explain: ['head', 'col0'], head: ['Type', 'Examples'], rows: [
-            ['opinion', 'lovely, ugly, comfortable'],
-            ['size', 'big, small, tiny'],
-            ['age', 'old, new, modern'],
-            ['colour', 'white, red, grey'],
-            ['origin', 'Spanish, Turkish, Japanese'],
-            ['material', 'wooden, stone, glass'],
+          { t: 'text', md: 'Often you want to use two or three adjectives before a noun: *a lovely big old house*. English has a fixed order for them, and native speakers feel it without thinking. *A big lovely old house* sounds strange.\n\nThe general rule: **opinion** comes first (what you think), then **facts**. Among the facts, the usual order is **size**, **age**, **shape**, **colour**, **origin** (where it is from), **material** (what it is made of), and **purpose** (what it is for), then the noun.\n\nIn real life you rarely use more than two or three, so remember the start of the list: **opinion, size, age, colour**.' },
+          { t: 'table', caption: 'The order of adjectives', explain: ['head'], head: ['Opinion', 'Size', 'Age', 'Colour', 'Material', 'Noun'], rows: [
+            ['a lovely', 'small', 'old', '', '', 'cottage'],
+            ['a', 'huge', 'modern', 'white', '', 'kitchen'],
+            ['an ugly', '', '', 'grey', 'concrete', 'building'],
+            ['a comfortable', 'big', '', 'red', 'leather', 'sofa'],
           ] },
           { t: 'examples', items: [
-            { s: 'a **lovely old stone** house', n: 'Opinion, then age, then material.' },
-            { s: 'a **small white Italian** car', n: 'Size, then colour, then origin.' },
+            { s: 'They live in **a beautiful old** farmhouse.', n: 'Opinion before age.' },
+            { s: 'We bought **a small round wooden** table.', n: 'Size, shape, material.' },
+            { s: 'It’s **a noisy, crowded** street.', n: 'Two opinions: use a comma.' },
           ] },
-          { t: 'tip', art: 'owl', md: 'In everyday speech we usually put only one or two adjectives before a noun. Three is possible, but more than three sounds strange.' },
+        ],
+        [
+          { t: 'text', md: 'Three common mistakes with homes and adjectives.' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['a red big car', 'a big red car', 'Size comes before colour.'],
+            ['The flat is very convenience.', 'The flat is very convenient.', '*Convenient* is the adjective.'],
+            ['We pay the landlord 900 euros of rent.', 'We pay 900 euros in rent.', 'Say *in rent*, or *The rent is 900 euros*.'],
+          ] },
+          { t: 'dialogue', title: 'Looking at a flat', lines: [
+            { who: 'Agent', s: 'So this is the living room. It’s a bright, spacious room with two big windows.' },
+            { who: 'Daniel', s: 'It’s lovely. Is the flat furnished?' },
+            { who: 'Agent', s: 'Yes, everything you see is included: the sofa, the beds and the small wooden table.' },
+            { who: 'Daniel', s: 'And what’s the area like at night?' },
+            { who: 'Agent', s: 'It’s quite lively at the weekend, but this street is residential, so it’s quiet.' },
+            { who: 'Daniel', s: 'Are the bills included in the rent?' },
+            { who: 'Agent', s: 'Water is included, but you pay electricity and internet yourself.' },
+          ] },
         ],
         [
           { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-            { a: 'They live in a lovely old stone house.', why: 'Opinion (*lovely*), age (*old*), material (*stone*).' },
-            { a: 'She bought a small white Italian car.', why: 'Size (*small*), colour (*white*), origin (*Italian*).' },
-            { a: 'We found a comfortable new leather sofa.', why: 'Opinion (*comfortable*), age (*new*), material (*leather*).' },
+            { a: 'They have a lovely old stone house.', why: 'Opinion, age, material, noun.' },
+            { a: 'I bought a big blue sofa.', why: 'Size before colour.' },
+            { a: 'It is a quiet residential area.', why: 'Opinion, then the type of area.' },
           ] },
-          { t: 'ex', kind: 'choice', h: 'Which phrase has the correct order?', items: [
-            { q: '', o: ['a beautiful old Turkish carpet', 'an old beautiful Turkish carpet', 'a Turkish beautiful old carpet'], why: 'Opinion, age, origin.' },
-            { q: '', o: ['a big red brick house', 'a red big brick house', 'a brick big red house'], why: 'Size, colour, material.' },
-            { q: '', o: ['a tiny grey stone cottage', 'a stone tiny grey cottage', 'a grey tiny stone cottage'], why: 'Size, colour, material.' },
+          { t: 'ex', kind: 'match', h: 'Match the words and the meanings.', pairs: [
+            ['deposit', 'money you pay at the start and get back later'],
+            ['landlord', 'the person who owns the flat you rent'],
+            ['furnished', 'with furniture in it'],
+            ['run-down', 'old and in bad condition'],
+            ['convenient', 'close to what you need'],
+          ] },
+        ],
+        [
+          { t: 'ex', kind: 'choice', h: 'In the format of the B1 Preliminary exam (Reading Part 5): choose the right word for each gap.', items: [
+            { q: 'Our new flat is small but very ___: the station is only two minutes away.', o: ['convenient', 'crowded', 'run-down'], why: 'Close to what you need: *convenient*.' },
+            { q: 'The landlord asked us to pay a ___ of one month’s rent.', o: ['deposit', 'bill', 'price'], why: 'Money at the start that you get back: *deposit*.' },
+            { q: 'The flat comes ___, so we didn’t need to buy any furniture.', o: ['furnished', 'included', 'equipped'], why: 'With furniture: *furnished*.' },
+            { q: 'Electricity is not ___ in the rent.', o: ['included', 'contained', 'involved'], why: 'Fixed phrase: *included in the rent*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Reading Part 5 the four words often have similar meanings. The answer depends on **collocation**, the words that go together: *included in the rent*, *pay a deposit*. Read the words around the gap, not only the gap.' },
+        ],
+        [
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'omar', items: [
+            { a: 'It’s a lovely old flat in a quiet street.' },
+            { a: 'Are the bills included in the rent?' },
+            { a: 'The area is lively but very convenient.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 3 */
     {
       id: 'p3',
       title: 'In my country we usually…',
-      about: 'Talk politely about customs and cultural differences.',
-      art: 'teacup',
+      about: 'Talk politely about customs, compare them with your own, and ask what is normal.',
+      art: 'snail',
       spreads: [
         [
-          { t: 'text', md: 'When you talk about customs, it is polite to speak in general and not to judge. These phrases help you compare your country with your new home in a friendly way.' },
-          { t: 'table', caption: 'Talking about customs', explain: ['head'], head: ['Phrase', 'Example'], rows: [
-            ['In my country, we usually…', 'In my country, we usually eat dinner at around six.'],
-            ['People tend to…', 'People tend to arrive a little late for parties.'],
-            ['It’s common to…', 'It’s common to take your shoes off at the door.'],
-            ['It’s considered rude / polite to…', 'It’s considered rude to ask someone’s salary.'],
-            ['You’re expected to…', 'You’re expected to bring a small gift.'],
-            ['I’ve noticed that…', 'I’ve noticed that people here queue very patiently.'],
+          { t: 'text', md: 'Living in another country means meeting customs that are different from yours: what time people eat, how they greet, whether you take your shoes off. Talking about this is interesting, but it can also sound rude if you are not careful.\n\nThe secret is to describe, not to judge. Instead of *That’s strange*, say **In my country we usually…** or **Where I come from, people tend to…**. **Tend to** + verb means *usually do*: *People tend to eat late in Spain.*\n\nTo ask what is normal, use **Is it OK to…?**, **Is it normal to…?** or **Do people usually…?**. For rules, use what you learned in unit 3: **You’re supposed to…** means *the rule or custom says you should*: *You’re supposed to take your shoes off.*' },
+          { t: 'examples', items: [
+            { s: '**In my country we usually** kiss on both cheeks.', n: 'Describe your own custom.' },
+            { s: 'People here **tend to** arrive exactly on time.', n: '*tend to* = usually do.' },
+            { s: '**Is it OK to** call someone after nine in the evening?', n: 'Asking what is acceptable.' },
+            { s: '**Do people usually** leave a tip in restaurants?', n: 'Asking what most people do.' },
+            { s: 'You’**re supposed to** bring a small present.', n: 'The custom says so.' },
+            { s: 'That’s **quite different from** what we do at home.', n: 'Comparing politely: *different from*.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'Soft words help a lot: **quite**, **a bit**, **usually**, **tend to**. *People are a bit more formal here* sounds friendly. *People are cold here* does not.' },
+        ],
+        [
+          { t: 'text', md: 'To compare two customs, use the comparison words from unit 5: **more** / **less** + adjective, **not as … as**, **the same as**, **similar to**, **different from**. To show you are open to the difference, use phrases like **It took me a while to get used to it** (unit 2: *get used to* + noun or -ing).' },
+          { t: 'table', caption: 'Common mistakes', explain: ['head', 'col2'], head: ['Not this', 'But this', 'Why'], rows: [
+            ['different of my country', 'different from my country', 'Say *different from*.'],
+            ['People tend to arriving late.', 'People tend to arrive late.', '*tend to* + base verb.'],
+            ['I’m not used to eat so late.', 'I’m not used to eating so late.', '*be used to* + -ing.'],
+            ['Is normal to tip?', 'Is it normal to tip?', 'You need *it*.'],
+          ] },
+          { t: 'dialogue', title: 'Dinner at eight', lines: [
+            { who: 'Aiko', s: 'Can I ask you something? Is it OK to arrive a bit late for dinner?' },
+            { who: 'Ben', s: 'Ten minutes is fine. People here tend to come a little after the time on the invitation.' },
+            { who: 'Aiko', s: 'That’s quite different from Japan. We usually arrive exactly on time, or early.' },
+            { who: 'Ben', s: 'Really? I think I’d find that hard to get used to!' },
+            { who: 'Aiko', s: 'And are you supposed to bring something?' },
+            { who: 'Ben', s: 'It’s not a rule, but most people bring flowers or a bottle of something.' },
           ] },
         ],
         [
-          { t: 'tip', art: 'owl', md: 'To ask about a custom, use a soft question: *Is it OK to…?*, *Do people usually…?*, *Should I…?* This shows that you want to do the right thing.' },
-          { t: 'dialogue', title: 'A first dinner invitation', lines: [
-            { who: 'Jonas', s: 'My colleague has invited me to dinner at her home on Saturday. Should I bring anything?' },
-            { who: 'Yuki', s: 'Here it’s common to bring something small, like flowers or a dessert.' },
-            { who: 'Jonas', s: 'In my country, we usually bring a bottle of wine. Is that OK too?' },
-            { who: 'Yuki', s: 'Yes, that’s fine. And people tend to take their shoes off when they come in.' },
-            { who: 'Jonas', s: 'Really? I’ve noticed that in a few homes already. What time should I arrive?' },
-            { who: 'Yuki', s: 'Try to be on time. Here it’s considered a bit rude to arrive more than ten minutes late.' },
+          { t: 'ex', kind: 'select', h: 'Choose the right words.', items: [
+            { q: 'It took me months to get used to ___ dinner at nine.', o: ['having', 'have', 'had'], why: '*get used to* + -ing.' },
+            { q: 'In Britain people tend ___ in a queue.', o: ['to wait', 'waiting', 'wait'], why: '*tend to* + base verb.' },
+            { q: 'Our customs are quite different ___ yours.', o: ['from', 'of', 'than'], why: '*different from*.' },
+            { q: 'Is it OK ___ my shoes on in your house?', o: ['to keep', 'keeping', 'keep'], why: '*Is it OK* + *to* + verb.' },
+          ] },
+          { t: 'ex', kind: 'build', h: 'Write the sentence. Two words do not belong.', items: [
+            { a: 'You are supposed to shake hands.', extra: ['should', 'shaking'], why: '*be supposed to* + base verb.' },
+            { a: 'Do people usually leave a tip?', extra: ['does', 'leaving'], why: 'Question with *do* + base verb.' },
           ] },
         ],
         [
-          { t: 'ex', kind: 'tf', h: 'Think about the conversation. True or false?', items: [
-            { q: 'Jonas has been invited to a colleague’s home.', a: 't', why: 'His colleague has invited him to dinner at her home.' },
-            { q: 'Yuki says that flowers are a good gift.', a: 't', why: 'She says it is common to bring flowers or a dessert.' },
-            { q: 'Jonas has never seen people take their shoes off at home.', a: 'f', why: 'He has noticed it in a few homes already.' },
-            { q: 'Yuki says it is fine to arrive half an hour late.', a: 'f', why: 'More than ten minutes late is a bit rude.' },
+          { t: 'ex', kind: 'choice', h: 'In the format of the B1 Preliminary exam (Reading Part 1): what does the notice say?', items: [
+            { q: 'NOTICE TO RESIDENTS: Please put recycling out on Tuesday evenings only, not before 6 pm.', o: ['You should take recycling outside after 6 pm on Tuesdays.', 'Recycling is collected every evening after 6 pm.', 'You can put recycling out any time on Tuesday.'], why: 'Only on Tuesday, and not before 6 pm.' },
+            { q: 'Message from Sam: Shoes off at the door, please! Slippers are in the basket if your feet get cold.', o: ['Sam asks guests to take off their shoes and offers slippers.', 'Sam wants guests to bring their own slippers.', 'Guests must keep their shoes on.'], why: 'Shoes off, and slippers are there for you.' },
           ] },
-          { t: 'ex', kind: 'gap', h: 'Complete the phrases. Use the word in brackets in the correct form.', items: [
-            { q: 'It’s ___ (consider) polite to thank the bus driver.', a: ['considered'], why: '*It’s considered* + adjective + *to*: a passive form.' },
-            { q: 'Guests are ___ (expect) to take off their shoes.', a: ['expected'], why: '*Be expected to* + verb.' },
-            { q: 'In my country, we ___ (usual) shake hands when we meet.', a: ['usually'], why: 'An adverb before the verb: *usually*.' },
-            { q: 'I’ve ___ (notice) that people here rarely pay in cash.', a: ['noticed'], why: 'Present perfect: *I’ve noticed that…*' },
-          ] },
-        ],
-        [
-          { t: 'ex', kind: 'choice', h: 'Choose the most polite thing to say.', items: [
-            { q: 'You want to know if you should tip in a restaurant.', o: ['Do people usually leave a tip here?', 'Why don’t you tip here?', 'Tipping here is wrong.'], why: '*Do people usually…?* is a soft, open question.' },
-            { q: 'You want to describe a custom from your country.', o: ['In my country, we usually kiss on both cheeks.', 'Everyone in the world kisses on both cheeks.', 'Your way of saying hello is strange.'], why: '*In my country, we usually…* talks about your custom without judging others.' },
-            { q: 'You see people taking off their shoes, and you are not sure what to do.', o: ['Should I take my shoes off too?', 'I don’t want to take my shoes off.', 'Why do you all do that?'], why: '*Should I…?* shows that you want to do the right thing.' },
-            { q: 'You notice that people here eat dinner late.', o: ['I’ve noticed that people here tend to eat quite late.', 'People here eat at a crazy time.', 'You eat too late in this country.'], why: '*I’ve noticed that…* and *tend to* sound neutral and friendly.' },
+          { t: 'tip', art: 'owl', md: 'In Reading Part 1 the text is short, but each word counts. Look for words like **only**, **not before**, **unless**, **must** and **if**: the wrong options usually change one of them.' },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'arthur', items: [
+            { a: 'In my country we usually eat dinner quite early.' },
+            { a: 'Is it OK to arrive a few minutes late?' },
+            { a: 'It took me a while to get used to it.' },
           ] },
         ],
       ],
     },
+    /* ------------------------------------------------------------------ Lesson 4 */
     {
       id: 'p4',
       title: 'Thirty days in a new city',
-      about: 'Read a blog post about a first month abroad.',
-      art: 'suitcase',
+      about: 'Read an expat’s diary of her first month, and use the language of the unit together.',
+      art: 'croissant',
       spreads: [
         [
-          { t: 'reading', title: 'Thirty days in a new city', md: 'I moved here exactly one month ago for a job at a design studio. I didn’t know anyone, and the only words I could say in the local language were “hello” and “thank you”.\n\nMy first home was a tiny studio flat that I found online. The photos looked great, but the flat was above a bar where people sang until two in the morning. After a week I found a room in a flat in a quiet residential area. I share the flat with Tomasz, who is a nurse, and Leila, whose food is the best I have ever eaten.\n\nThe biggest surprise has been the customs. People here tend to eat dinner very late, often after nine. It’s also considered rude to start eating before everyone has their food. On my first evening I started too early, and Leila laughed and told me to wait.\n\nThe neighbours are friendly too. The old man who lives downstairs says good morning to me every day, and last week he asked me if I was enjoying the city. I told him I was, and it was true. I still get lost, but every day this place feels a little more like home.' },
+          { t: 'text', md: 'Marta is from Seville. Last month she moved to Edinburgh for a new job. She wrote a short post on her blog at the end of each week. Read the four posts, then answer the questions. Notice how she uses relative clauses, adjectives and the language of customs.' },
+          { t: 'reading', title: 'Week by week', md: '**Week 1.** I’m living in a small, furnished studio which a colleague found for me. It’s on a quiet residential street where everyone seems to have a dog. The landlady, who lives upstairs, brought me soup on my first evening. I didn’t expect that!\n\n**Week 2.** Work is great. The people I work with are friendly, but they tend to eat lunch at their desks in twenty minutes. In Spain we usually take an hour and talk. I’m trying to get used to sandwiches.\n\n**Week 3.** I’ve found a lively café where I can practise English with locals on Thursday evenings. The owner, whose mother is Italian, makes the best coffee in the city.\n\n**Week 4.** The weather is the thing I still can’t get used to. It can be sunny, rainy and windy in the same hour. But the light at ten o’clock in the evening is amazing, and the city is more beautiful than I imagined. I’m staying.' },
         ],
         [
-          { t: 'ex', kind: 'tf', ng: true, h: 'True, false or not given?', items: [
-            { q: 'The writer moved to the city for work.', a: 't', why: 'The writer came for a job at a design studio.' },
-            { q: 'The writer spoke the local language well on arrival.', a: 'f', why: 'The writer could only say “hello” and “thank you”.' },
-            { q: 'The studio flat was noisy at night.', a: 't', why: 'It was above a bar where people sang until two in the morning.' },
-            { q: 'Tomasz and Leila are married.', a: 'ng', why: 'The text does not say.' },
-            { q: 'Leila is a very good cook.', a: 't', why: 'Her food is the best the writer has ever eaten.' },
-            { q: 'The neighbour downstairs is a young man.', a: 'f', why: 'He is an old man.' },
+          { t: 'ex', kind: 'tf', h: 'Are the sentences true, false or not given?', ng: true, items: [
+            { q: 'Marta found her studio herself.', a: 'f', why: '*a colleague found for me*.' },
+            { q: 'The landlady lives in the same building.', a: 't', why: '*who lives upstairs*.' },
+            { q: 'Marta’s colleagues take long lunch breaks.', a: 'f', why: 'They eat at their desks in twenty minutes.' },
+            { q: 'The café owner speaks Italian.', a: 'ng', why: 'His mother is Italian, but the text does not say what he speaks.' },
+            { q: 'Marta plans to stay in Edinburgh.', a: 't', why: '*I’m staying.*' },
           ] },
+          { t: 'ex', kind: 'choice', h: 'In the format of the B1 Preliminary exam (Reading Part 3): choose the best answer.', items: [
+            { q: 'Why did Marta mention the soup?', o: ['It was a kind thing she did not expect.', 'She had nothing to eat in her studio.', 'Her landlady runs a restaurant.'], why: '*I didn’t expect that!*' },
+            { q: 'What does Marta say about lunch at work?', o: ['It is very different from what she was used to.', 'She refuses to eat at her desk.', 'Her colleagues invited her to a long lunch.'], why: 'She compares it with Spain and is *trying to get used to* it.' },
+            { q: 'Which sentence best describes Marta’s month?', o: ['Some things were hard, but she likes her new life.', 'She found everything easy from the first day.', 'She is thinking of going back to Seville.'], why: 'The weather is hard, but the city is beautiful and she is staying.' },
+          ] },
+          { t: 'tip', art: 'owl', md: 'In Reading Part 3 the last question is often about the **whole text**: the writer’s opinion or the main idea. Do not choose an answer because it repeats a word from one line; choose the one that is true of everything you read.' },
         ],
         [
-          { t: 'ex', kind: 'spot', h: 'Tap the relative pronouns (*who*, *which*, *that*, *where*, *whose*).', items: [
-            { s: 'My first home was a tiny studio flat [that] I found online. It was above a bar [where] people sang until two in the morning.', why: '*That* refers to the flat, a thing. *Where* refers to the bar, a place.' },
-            { s: 'The old man [who] lives downstairs says good morning. Leila, [whose] food is wonderful, told me to wait.', why: '*Who* is for a person. *Whose* shows possession: her food.' },
+          { t: 'ex', kind: 'transform', h: 'Write one sentence with who, which, where or whose.', items: [
+            { q: 'I rent a flat. It has a small balcony.', cue: 'I rent a flat', a: ['I rent a flat which has a small balcony.', 'I rent a flat that has a small balcony.'], why: 'A thing, subject: *which* or *that*.' },
+            { q: 'There’s a market. You can buy fresh fish there.', cue: 'There’s a market', a: ['There’s a market where you can buy fresh fish.'], why: 'A place: *where*.' },
           ] },
-          { t: 'ex', kind: 'choice', h: 'Answer the questions about the text.', items: [
-            { q: 'Why did the writer leave the first flat?', o: ['It was too noisy at night.', 'It was too expensive.', 'It was too far from work.'], why: 'People in the bar below sang until two in the morning.' },
-            { q: 'What mistake did the writer make on the first evening?', o: ['Starting to eat before the others had their food.', 'Arriving late for dinner.', 'Eating dinner before nine.'], why: 'It is considered rude to start before everyone has their food.' },
-            { q: '“The old man who lives downstairs…” Why *who*?', o: ['It tells us which man, and he is a person.', 'It is for a place.', 'It shows possession.'], why: '*Who* is for people, and the clause tells us which man.' },
+          { t: 'ex', kind: 'speak', h: 'Say these sentences after the tutor.', tutor: 'mei', items: [
+            { a: 'I live in a small furnished studio near the centre.' },
+            { a: 'The people I work with tend to eat at their desks.' },
+            { a: 'The weather is the thing I still can’t get used to.' },
           ] },
         ],
       ],
     },
   ],
   test: [
-    { t: 'ex', kind: 'choice', h: 'Choose the correct answer.', items: [
-      { q: 'The woman ___ cuts my hair is from Ghana.', o: ['who', 'which', 'where'], why: 'A person: *who*.' },
-      { q: 'That’s the hospital ___ my son was born.', o: ['where', 'which', 'who'], why: 'A place, followed by subject + verb: *where*.' },
-      { q: 'I have a friend ___ brother runs a restaurant.', o: ['whose', 'who', 'who’s'], why: 'Her brother: *whose*.' },
-      { q: 'They live in a ___ house.', o: ['lovely old stone', 'stone lovely old', 'old stone lovely'], why: 'Opinion, age, material.' },
-      { q: 'Here it’s ___ rude to ask people how much they earn.', o: ['considered', 'consider', 'considering'], why: '*It’s considered* + adjective.' },
+    { t: 'ex', kind: 'select', h: 'Choose the right word.', items: [
+      { q: 'Is that the shop ___ sells second-hand furniture?', o: ['that', 'where', 'who'], why: 'A thing, subject of *sells*: *that* or *which*.' },
+      { q: 'This is the town ___ my grandparents were born.', o: ['where', 'which', 'whose'], why: 'A place, *born in it*: *where*.' },
+      { q: 'I met a man ___ wife is from Brazil.', o: ['whose', 'who', 'which'], why: 'His wife: *whose*.' },
+      { q: 'The tenant ___ lived here before left a lot of books.', o: ['who', 'which', 'where'], why: 'A person: *who*.' },
     ] },
-    { t: 'ex', kind: 'gap', h: 'Complete the sentences.', items: [
-      { q: 'The phone ___ I bought last week has stopped working.', a: ['which', 'that'], why: 'A thing: *which* or *that*.' },
-      { q: 'Guests are ___ (expect) to arrive on time.', a: ['expected'], why: '*Be expected to* + verb.' },
-      { q: 'The flat has furniture in it: it is ___ (furniture).', a: ['furnished'], why: 'A flat with furniture is *furnished*.' },
-      { q: 'In my country, we ___ (usual) eat lunch at one.', a: ['usually'], why: 'An adverb before the verb: *usually*.' },
+    { t: 'ex', kind: 'fix', h: 'Find and fix the mistake.', items: [
+      { s: 'The driver [which] drives our bus is always friendly.', a: ['who', 'that'], why: 'A person: *who* or *that*.' },
+      { s: 'She bought a [red big] umbrella.', a: ['big red'], why: 'Size before colour.' },
+      { s: 'It took me a year to get used to [drive] on the left.', a: ['driving'], why: '*get used to* + -ing.' },
     ] },
     { t: 'ex', kind: 'order', h: 'Put the words in order.', items: [
-      { a: 'This is the town where I grew up.', why: '*Where* comes straight after the place.' },
-      { a: 'Do people usually bring a gift?', why: 'A soft question: *Do people usually…?*' },
+      { a: 'We found a beautiful old flat.', why: 'Opinion, age, noun.' },
+      { a: 'People tend to eat late here.', why: '*tend to* + base verb.' },
     ] },
-    { t: 'ex', kind: 'choice', h: 'Which sentence is correct?', items: [
-      { q: '', o: ['The man who lives next door is a pilot.', 'The man which lives next door is a pilot.', 'The man who he lives next door is a pilot.'], why: '*Who* for people, and no second pronoun.' },
-      { q: '', o: ['We rented a big white wooden house.', 'We rented a wooden big white house.', 'We rented a white wooden big house.'], why: 'Size, colour, material.' },
-      { q: '', o: ['Is it OK to take photos here?', 'Is OK to take photos here?', 'It is OK take photos here?'], why: '*Is it OK to* + verb.' },
+    { t: 'ex', kind: 'choice', h: 'Choose the best reply.', items: [
+      { q: '“Is it OK to call you after nine?”', o: ['Sure, I usually go to bed quite late.', 'Yes, it is call.', 'No, I don’t tend.'], why: 'A natural answer to a polite question.' },
+      { q: '“What’s your new area like?”', o: ['It’s quiet and very convenient.', 'It likes trees.', 'Yes, I like it very much area.'], why: '*What’s it like?* asks for a description.' },
+    ] },
+    { t: 'ex', kind: 'gap', h: 'Write one word in each gap.', items: [
+      { q: 'Our customs are quite different ___ yours.', a: ['from'], why: '*different from*.' },
+      { q: 'You’re supposed ___ take your shoes off.', a: ['to'], why: '*be supposed to* + verb.' },
+      { q: 'The woman ___ lives upstairs is very kind.', a: ['who', 'that'], why: 'A person, subject of *lives*: *who* or *that*.' },
     ] },
   ],
 };

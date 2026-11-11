@@ -1,0 +1,37 @@
+// Resource: game. British and American words for the same thing. Checked against Cambridge Dictionary (UK/US labels).
+export default {
+  key: 'british-american', site: 'en', slug: 'british-vs-american-english-game', kind: 'game', course: 'English', level: 'All levels',
+  draw: 'suitcase', tint: 'coral', published: '2026-10-27',
+  title: 'British or American English? The word game',
+  metaTitle: 'British vs American English words game: flat or apartment? – Alimun',
+  desc: 'A free game with British and American words for the same thing: flat or apartment, lift or elevator, chips or fries. Ten questions, every answer explained.',
+  lead: 'A flat in London is an apartment in New York, and British chips are American fries. Test yourself on ten everyday words.',
+  instructions: 'Pick the right word.',
+  about: [
+    'British and American English share almost all of their grammar and most of their words, but dozens of everyday things have different names on each side of the Atlantic.',
+    'Both are correct. What matters is to be consistent, and to know both so you understand everyone, from British TV series to American films.',
+  ],
+  items: [
+    { q: 'A British "flat" is an American...', options: ['apartment', 'condo', 'studio', 'house'], a: 0, why: 'British flat = American apartment.' },
+    { q: 'An American "elevator" is a British...', options: ['escalator', 'lift', 'hoist', 'stairs'], a: 1, why: 'American elevator = British lift.' },
+    { q: 'British "chips" are American...', options: ['chips', 'crisps', 'fries', 'wedges'], a: 2, why: 'British chips = American (French) fries. American chips are British crisps.' },
+    { q: 'American "cookies" are British...', options: ['biscuits', 'scones', 'cakes', 'crackers'], a: 0, why: 'American cookie = British biscuit.' },
+    { q: 'In the US, "pants" are what the British call...', options: ['underwear', 'trousers', 'shorts', 'jeans'], a: 1, why: 'American pants = British trousers. In British English, pants are underwear, so be careful.' },
+    { q: 'British "rubbish" is American...', options: ['litter', 'dust', 'scraps', 'trash'], a: 3, why: 'British rubbish = American trash (or garbage).' },
+    { q: 'An American "vacation" is a British...', options: ['break', 'holiday', 'leave', 'trip'], a: 1, why: 'American vacation = British holiday.' },
+    { q: 'British people "queue". Americans stand in...', options: ['a row', 'a line', 'a crowd', 'a group'], a: 1, why: 'British queue = American line.' },
+    { q: 'An American fills the car with "gas". A British driver uses...', options: ['fuel oil', 'diesel only', 'petrol', 'benzine'], a: 2, why: 'American gas (gasoline) = British petrol.' },
+    { q: 'A British "mobile" is an American...', options: ['cell phone', 'smartphone only', 'pager', 'landline'], a: 0, why: 'British mobile (phone) = American cell phone.' },
+  ],
+  pairs: [
+    ['UK flat', 'US apartment'],
+    ['UK lift', 'US elevator'],
+    ['UK chips', 'US fries'],
+    ['UK crisps', 'US chips'],
+    ['UK biscuit', 'US cookie'],
+    ['UK trousers', 'US pants'],
+    ['UK holiday', 'US vacation'],
+    ['UK queue', 'US line'],
+  ],
+  related: ['english-idioms', 'cefr-poster', 'en-quiz-a2'],
+};

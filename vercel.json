@@ -1,6 +1,7 @@
 {
   "version": 2,
-  "git": { "deploymentEnabled": { "rebuild-astro": false } },
+  "regions": ["dub1"],
+  "git": { "deploymentEnabled": { "rebuild-astro": false, "claude/*": false, "ccr-*": false } },
   "outputDirectory": ".",
   "buildCommand": "npm run build:site",
   "cleanUrls": true,
@@ -13,8 +14,18 @@
         "Referrer-Policy": "strict-origin-when-cross-origin",
         "Permissions-Policy": "camera=(self \"https://*.daily.co\"), microphone=(self \"https://*.daily.co\"), display-capture=(self \"https://*.daily.co\"), geolocation=(), payment=(self \"https://js.stripe.com\" \"https://checkout.stripe.com\")",
         "Strict-Transport-Security": "max-age=63072000; includeSubDomains; preload",
-        "Content-Security-Policy-Report-Only": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://ajax.googleapis.com https://d3e54v103j8qbb.cloudfront.net https://js.stripe.com https://*.daily.co; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' data: https://fonts.gstatic.com https://api.fontshare.com https://cdn.fontshare.com; img-src 'self' data: blob: https://dgaiasmefcbrtzqwdyri.supabase.co https://www.launchory.app; media-src 'self' blob: https://dgaiasmefcbrtzqwdyri.supabase.co; connect-src 'self' https://dgaiasmefcbrtzqwdyri.supabase.co wss://dgaiasmefcbrtzqwdyri.supabase.co https://api.stripe.com https://*.daily.co wss://*.daily.co https://*.pluot.blue wss://*.pluot.blue; frame-src 'self' https://js.stripe.com https://hooks.stripe.com https://*.daily.co; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'self'"
+        "Content-Security-Policy-Report-Only": "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://unpkg.com https://ajax.googleapis.com https://d3e54v103j8qbb.cloudfront.net https://js.stripe.com https://*.daily.co https://challenges.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://api.fontshare.com; font-src 'self' data: https://fonts.gstatic.com https://api.fontshare.com https://cdn.fontshare.com; img-src 'self' data: blob: https://dgaiasmefcbrtzqwdyri.supabase.co https://www.launchory.app; media-src 'self' blob: https://dgaiasmefcbrtzqwdyri.supabase.co; connect-src 'self' https://challenges.cloudflare.com https://dgaiasmefcbrtzqwdyri.supabase.co wss://dgaiasmefcbrtzqwdyri.supabase.co https://api.stripe.com https://*.daily.co wss://*.daily.co https://*.pluot.blue wss://*.pluot.blue; frame-src 'self' https://challenges.cloudflare.com https://js.stripe.com https://hooks.stripe.com https://*.daily.co; worker-src 'self' blob:; object-src 'none'; base-uri 'self'; form-action 'self' https://checkout.stripe.com; frame-ancestors 'self'"
       },
+      "continue": true
+    },
+    {
+      "src": "/(videos|images|fonts)/(.*)",
+      "headers": { "Cache-Control": "public, max-age=604800, stale-while-revalidate=2592000" },
+      "continue": true
+    },
+    {
+      "src": "/fonts/(.*)",
+      "headers": { "Access-Control-Allow-Origin": "*" },
       "continue": true
     },
     {
@@ -44,6 +55,11 @@
     },
     {
       "src": "/(package(-lock)?\\.json|vercel\\.json|verification-results\\.json|\\.env.*|\\.gitignore|\\.vercelignore|\\.gitleaks\\.toml)",
+      "status": 404,
+      "dest": "/404.html"
+    },
+    {
+      "src": "/api/(.*)\\.(js|mjs|cjs|json|ts)",
       "status": 404,
       "dest": "/404.html"
     },
@@ -120,6 +136,9 @@
     },
     "api/speech.js": {
       "maxDuration": 120
+    },
+    "api/tutor.js": {
+      "maxDuration": 60
     }
   },
   "crons": [
@@ -130,6 +149,10 @@
     {
       "path": "/api/waitlist/cron-expire-offers",
       "schedule": "30 0 * * *"
+    },
+    {
+      "path": "/api/cron-reminders",
+      "schedule": "41 16 * * *"
     }
   ]
 }

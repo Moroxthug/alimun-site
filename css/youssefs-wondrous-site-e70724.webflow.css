@@ -3551,3 +3551,22 @@ blockquote {
   html[lang="zh"] .nav_link { font-size: .9rem; }
   html[lang="zh"] .nav_menu-link-wrap { grid-column-gap: .75rem; }
 }
+
+/* Phone and tablet header (owner, 28 Oct 2026): menu button at the start, Alimun logo exactly centred,
+   Get started at the end. Three-column grid with equal side columns keeps the logo on the page's centre
+   line whatever the button text's length; right-to-left pages mirror it. */
+@media screen and (max-width: 991px) {
+  .nav_wrap { display: grid !important; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; column-gap: .5rem; padding-left: 4% !important; padding-right: 4% !important; }
+  .nav_wrap > .nav_button { grid-column: 1; grid-row: 1; justify-self: start; margin: 0 !important; margin-inline-start: -.85rem !important; }
+  .nav_wrap > .nav_brand { grid-column: 2; grid-row: 1; justify-self: center; position: relative !important; margin: 0 !important; }
+  .nav_wrap > .nav_brand .nav_logo { margin: 0 !important; }
+  .nav_wrap > div.nav_cta { grid-column: 3; grid-row: 1; justify-self: end; margin: 0 !important; }
+}
+@media screen and (max-width: 479px) {
+  .nav_wrap > .nav_brand { width: 6.75rem !important; }
+  .nav_wrap > div.nav_cta a { font-size: .7rem !important; padding: .42rem .8rem !important; }
+}
+@media screen and (max-width: 359px) {
+  .nav_wrap > .nav_brand { width: 5.75rem !important; }
+  .nav_wrap > div.nav_cta a { font-size: .64rem !important; padding: .4rem .6rem !important; }
+}

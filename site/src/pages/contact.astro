@@ -1,4 +1,5 @@
 ---
+// 31 Oct 2026 (owner: "sure go on then", from the /preview/*-alive pages): the homepage style via blocks/alive.html.
 // Contact page, rebuilt one element at a time from its own blocks.
 import Base from '../layouts/Base.astro';
 import head from '../blocks/contact/head.html?raw';
@@ -7,6 +8,7 @@ import nav from '../blocks/contact/nav.html?raw';
 import form from '../blocks/contact/s01.html?raw';
 import routes from '../blocks/contact/routes.html?raw';
 import footer from '../blocks/footer.html?raw';
+import alive from '../blocks/alive.html?raw';
 ---
 <Base wfPage="68d948d23b6c9f2bbbac3eac" head={head} after={after}>
   <Fragment set:html={nav} />
@@ -15,4 +17,5 @@ import footer from '../blocks/footer.html?raw';
     <Fragment set:html={routes} />
   </main>
   <Fragment set:html={footer} />
+  <Fragment set:html={alive} />
 </Base>

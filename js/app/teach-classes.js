@@ -11,7 +11,7 @@
    Signed out or not a teacher: a sample, nothing is saved. Text: app_tc_* keys. */
 (function () {
   'use strict';
-  var A = null, root = null, C = null, call = null, poll = null, saveTimer = null, tick = null;
+  var A = null, root = null, C = null, call = null, saveTimer = null, tick = null, board = null, liveId = null, cls = null;
   var DAILY_JS = 'https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js';
   var MIN = 60000, HOUR = 3600000, DAY = 86400000;
   var LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
@@ -45,7 +45,7 @@
     var bz = A.browserZone();
     var cos = [
       { id: 'c1', language: 'German', level: 'B1', goal_track: 'relocation', tier: 'focused', max_students: 17, enrolled_count: 9, schedule_days: ['Tuesday', 'Thursday'], schedule_time: '18:30', timezone: bz, status: 'open' },
-      { id: 'c2', language: 'German', level: 'A2', goal_track: 'foundations', tier: 'intensive', max_students: 6, enrolled_count: 5, schedule_days: ['Monday', 'Wednesday', 'Friday'], schedule_time: '09:00', timezone: bz, status: 'open' }
+      { id: 'c2', language: 'English', level: 'A1', goal_track: 'foundations', tier: 'intensive', max_students: 6, enrolled_count: 5, schedule_days: ['Monday', 'Wednesday', 'Friday'], schedule_time: '09:00', timezone: bz, status: 'open' }
     ];
     var words = [{ word: 'die Kaution', definition: 'the deposit', example: 'Die Kaution beträgt drei Monatsmieten.' }, { word: 'kündigen', definition: 'to give notice', example: 'Ich möchte meinen Vertrag kündigen.' }, { word: 'die Nebenkosten', definition: 'utility costs', example: 'Sind die Nebenkosten in der Miete enthalten?' }];
     var sessions = [], id = 0;
@@ -76,8 +76,59 @@
     };
   }
   function load() {
-    if (!real()) return Promise.resolve(sample());
-    return window.AlimunData.teacherClasses().then(function (d) { return d && d.teacher ? d : sample(); });
+    var d0 = !real() ? Promise.resolve(sample()) : window.AlimunData.teacherClasses().then(function (d) { return d && d.teacher ? d : sample(); });
+    return d0.then(withCourses);
+  }
+  /* The prepared lessons of each class's course (docs/LESSONS_PLAN.md), from js/app/teach-lessons.js */
+  function withCourses(d) {
+    var L = window.AlimunTeachLessons;
+    d.courses = {};
+    if (d.sample) {
+      /* Sample: the English A1 class has its lessons in order; no notes from the German class */
+      var n = 0;
+      d.sessions.filter(function (s) { return s.cohortId === 'c2'; }).sort(function (a, b) { return new Date(a.at) - new Date(b.at); })
+        .forEach(function (s) { s.notes = null; if (s.status !== 'cancelled') s.lessonNo = ++n; });
+    }
+    if (!L) return Promise.resolve(d);
+    return Promise.all(d.cohorts.map(function (co) { return L.courseFor(co.language, co.level).then(function (c) { if (c) d.courses[co.id] = c; }); })).then(function () { return d; });
+  }
+  function lessonFor(s) {
+    var L = window.AlimunTeachLessons, c = s && C.courses && C.courses[s.cohortId];
+    var l = c && L ? L.lessonOf(c, s.lessonNo) : null;
+    return c ? { course: c, lesson: l } : null;
+  }
+  /* The lesson for a class date: what it is, a link to it, and the choice to change it */
+  function lessonCard(s, i) {
+    var x = lessonFor(s);
+    if (!x) return '';
+    var L = window.AlimunTeachLessons, l = x.lesson;
+    var opts = '<option value="auto">' + esc(t('app_tc_lesson_auto')) + '</option>' + x.course.lessons.map(function (y, k) {
+      return '<option value="' + (k + 1) + '"' + (s.lessonPinned && s.lessonNo === k + 1 ? ' selected' : '') + '>' + esc(y.title) + '</option>';
+    }).join('') + '<option value="none"' + (s.lessonPinned && !s.lessonNo ? ' selected' : '') + '>' + esc(t('app_tc_lesson_none')) + '</option>';
+    return '<section class="card card--lime span-12" style="--i:' + i + '" aria-labelledby="h-lesson"><h2 class="t-h2" id="h-lesson">' + esc(t('app_tc_lesson_h')) + '</h2>' +
+      (l ? '<p class="t-h3" style="margin-top:8px">' + esc(l.title) + '</p><p class="t-small">' + esc(t(L.kindLabel(l.kind))) + (s.lessonPinned ? '. ' + esc(t('app_tc_lesson_pinned')) : '') + '</p>' +
+        (l.focus ? '<p class="t-body" style="margin-top:8px">' + (window.AlimunEx ? window.AlimunEx.md(l.focus) : esc(l.focus)) + '</p>' : '')
+        : '<p class="t-body" style="margin-top:8px">' + esc(t(s.lessonPinned ? 'app_tc_lesson_none_p' : 'app_tc_lesson_end')) + '</p>') +
+      '<div class="btn-row" style="margin-top:16px;align-items:flex-end">' + (l && !l.planned ? '<a class="btn btn--primary btn--sm" href="' + esc(L.hrefOf(x.course, l)) + '">' + esc(t('app_tc_lesson_open')) + '</a>' : '') +
+      '<label class="st-field" style="margin:0;min-width:240px"><span class="st-lbl">' + esc(t('app_tc_lesson_change')) + '</span><select class="st-in" data-tc-lesson="' + esc(s.id) + '">' + opts + '</select></label></div>' +
+      '<p class="t-small st-msg" data-lessonmsg aria-live="polite"></p></section>';
+  }
+  function changeLesson(el) {
+    var id = el.getAttribute('data-tc-lesson'), v = el.value, s = sessionOf(id), msg = root.querySelector('[data-lessonmsg]');
+    var no = v === 'auto' || v === 'none' ? null : +v;
+    if (C.sample) {
+      /* Sample: renumber here the way the database does */
+      if (v === 'auto') s.lessonPinned = false; else { s.lessonPinned = true; s.lessonNo = no; }
+      var n = 0;
+      C.sessions.filter(function (x) { return x.cohortId === s.cohortId && x.status !== 'cancelled'; }).sort(function (a, b) { return new Date(a.at) - new Date(b.at); })
+        .forEach(function (x) { if (x.lessonPinned) { if (x.lessonNo) n = x.lessonNo; return; } n++; x.lessonNo = n <= 48 ? n : null; });
+      A.rerender();
+      return;
+    }
+    el.disabled = true;
+    if (msg) { msg.textContent = t('app_tc_lesson_saving'); msg.classList.remove('is-bad'); }
+    window.AlimunData.setSessionLesson(id, no, v === 'auto').then(reload).then(function () { A.rerender(); },
+      function () { el.disabled = false; if (msg) { msg.textContent = t('app_tc_save_error'); msg.classList.add('is-bad'); } });
   }
 
   /* ---------- Timetable ---------- */
@@ -94,6 +145,7 @@
     var co = cohortOf(s.cohortId);
     return head + '<h2 class="t-h1" id="h-next">' + esc(t('app_t_next_when', { day: A.dayName(s.at), time: time(s.at) })) + '</h2>' +
       '<p class="t-lead" style="margin-top:12px">' + esc(A.className(co)) + ', ' + esc(A.tn('app_t_students_n', co.enrolled_count || 0)) + '. <span data-countdown="' + esc(s.at) + '">' + esc(countdown(s)) + '</span></p>' +
+      (function () { var x = lessonFor(s); return x && x.lesson ? '<p class="t-body" style="margin-top:8px">' + esc(t('app_tc_lesson_next', { title: x.lesson.title })) + '</p>' : ''; })() +
       '<div class="btn-row" style="margin-top:26px">' + (isOpen(s) ? '<a class="btn btn--lime" href="#/classes/live/' + esc(s.id) + '">' + A.icon('play') + esc(t('app_t_start')) + '</a>' : '') +
       '<a class="btn btn--ghost btn--on-forest" href="#/classes/notes/' + esc(s.id) + '">' + esc(t('app_t_prepare')) + '</a></div>' +
       (isOpen(s) ? '' : '<p class="t-small tc-open-note">' + esc(t('app_tc_opens')) + '</p>') + '</section>';
@@ -191,23 +243,37 @@
 
   /* ---------- Classroom ---------- */
   function liveView(kind, id) {
+    liveId = kind === 'b' ? null : id;
     document.body.classList.add('is-reading');
     var s = kind === 'b' ? null : sessionOf(id), b = kind === 'b' ? bookingOf(id) : null;
     var title = s ? A.className(cohortOf(s.cohortId)) : b ? otoTitle(b) : t('app_tc_classroom');
     var last = s ? C.sessions.filter(function (x) { return x.cohortId === s.cohortId && x.notes && (x.notes.vocabulary || []).length && new Date(x.at) < new Date(s.at); }).pop() : null;
     var lang = s ? (window.AlimunData.langCode(cohortOf(s.cohortId).language) || 'en') : 'en';
-    var side = '';
+    var CR = window.AlimunClassroom, lx = s ? lessonFor(s) : null, sub = '', tabs = [], actions = '';
+    if (lx && lx.lesson && !lx.lesson.planned) sub = '<a class="linkish" href="' + esc(window.AlimunTeachLessons.hrefOf(lx.course, lx.lesson)) + '" target="_blank" rel="noopener">' + esc(lx.lesson.title) + '</a>';
     if (s) {
-      side = '<aside class="cl-live__side card tc-side"><h2 class="t-h3">' + esc(t('app_tc_chat_h')) + '</h2><div class="ms-msgs tc-msgs" data-msgs><p class="t-small">' + esc(t('app_tc_chat_loading')) + '</p></div>' +
-        '<form class="ms-form" data-tc-chat><label class="sr" for="tc-in">' + esc(t('app_ms_write')) + '</label><textarea id="tc-in" class="ms-in" rows="1" maxlength="4000" placeholder="' + esc(t('app_ms_write')) + '" dir="auto"></textarea>' +
-        '<button class="btn btn--primary btn--sm" type="submit">' + esc(t('app_ms_send')) + '</button></form>' +
-        (last ? '<h2 class="t-h3" style="margin-top:18px">' + esc(t('app_tc_last_words')) + '</h2><dl class="lb-wl">' + last.notes.vocabulary.slice(0, 12).map(function (v) { return '<div><dt lang="' + esc(lang) + '" dir="ltr">' + esc(v.word) + '</dt><dd>' + esc(v.definition || '') + '</dd></div>'; }).join('') + '</dl>' : '') +
-        '</aside>';
+      tabs.push({ id: 'chat', label: t('app_cr_chat'), icon: 'chat', html: CR.chatHtml(A) });
+      tabs.push({ id: 'notes', label: t('app_cr_notes'), icon: 'notes', html: '<form class="st-form tc-notes cr-notes" data-notes="' + esc(s.id) + '" novalidate><p class="t-small">' + esc(t('app_cr_notes_p')) + '</p>' + notesFields(s) + '</form>' +
+        '<p class="cr-more"><a class="linkish" href="#/classes/notes/' + esc(s.id) + '" target="_blank" rel="noopener">' + esc(t('app_cr_notes_full')) + '</a></p>' });
+      if (last) tabs.push({ id: 'words', label: t('app_cr_words'), icon: 'words', html: '<p class="t-small">' + esc(t('app_tc_last_words')) + '</p>' + CR.wordsHtml(A, last.notes.vocabulary, lang) });
+      actions = '<button class="btn btn--lime btn--sm" type="button" data-tc="board" aria-pressed="false">' + CR.icon('board') + '<span>' + esc(t('app_bd_open')) + '</span></button>' +
+        '<button class="btn btn--ghost btn--sm" type="button" data-cr="open" data-k="notes">' + CR.icon('notes') + '<span>' + esc(t('app_cr_notes')) + '</span></button>';
+    } else if (b) {
+      actions = '<a class="btn btn--ghost btn--sm" href="#/classes/oto/' + esc(b.id) + '" target="_blank" rel="noopener">' + CR.icon('notes') + '<span>' + esc(t('app_tc_write_note')) + '</span></a>';
     }
-    return '<div class="cl-live"><div class="cl-live__top"><a class="rd-back" href="#/classes">' + A.icon('back') + '<span>' + esc(t('app_cl_leave')) + '</span></a>' +
-      '<h1 class="t-h2">' + esc(title) + '</h1>' + (s ? '<a class="btn btn--ghost btn--sm" href="#/classes/notes/' + esc(s.id) + '">' + esc(t('app_tc_write_notes')) + '</a>' : b ? '<a class="btn btn--ghost btn--sm" href="#/classes/oto/' + esc(b.id) + '">' + esc(t('app_tc_write_note')) + '</a>' : '') + '</div>' +
-      '<div class="cl-live__body"><div class="cl-live__frame" data-frame><div class="cl-live__wait"><div class="loader" style="--w:64px" aria-hidden="true">' + A.loaderInner() + '</div><p class="t-body" data-livemsg>' + esc(t('app_tc_opening')) + '</p></div></div>' +
-      side + '</div></div>';
+    return CR.shell({ A: A, role: 'teacher', title: title, sub: sub, board: !!s, actions: actions, tabs: tabs, wait: t('app_tc_opening'), art: 'owl' });
+  }
+  /* Daily Prebuilt in Alimun's colours and the dashboard's language (Daily has no Arabic or Chinese: English; Darija: French).
+     The name comes from the meeting token, so it is not asked for or changed in the room. */
+  var DAILY_LANGS = { en: 'en', es: 'es', fr: 'fr', de: 'de', it: 'it', pt: 'pt', ma: 'fr' };
+  function roomOptions() {
+    return {
+      iframeStyle: { width: '100%', height: '100%', border: '0', borderRadius: '20px', background: '#1a443c' },
+      showLeaveButton: true, showFullscreenButton: true, showUserNameChangeUI: false,
+      lang: DAILY_LANGS[A && A.lang] || 'en',
+      theme: { colors: { accent: '#ceff65', accentText: '#080808', background: '#ffffff', backgroundAccent: '#f0efe9', baseText: '#080808', border: '#eeeeec',
+        mainAreaBg: '#1a443c', mainAreaBgAccent: '#285449', mainAreaText: '#ffffff', supportiveText: '#5c5c5a' } }
+    };
   }
   function loadDaily() {
     if (window.DailyIframe) return Promise.resolve(window.DailyIframe);
@@ -238,61 +304,69 @@
           if (!box) return;
           box.innerHTML = '';
           leave();
-          call = D.createFrame(box, { iframeStyle: { width: '100%', height: '100%', border: '0', borderRadius: '20px', background: '#080808' }, showLeaveButton: true, showFullscreenButton: true });
+          call = D.createFrame(box, roomOptions());
+          if (cls) cls.attach(call);
           call.on('left-meeting', function () { leave(); if (location.hash.indexOf('#/classes/live') === 0) location.hash = '#/classes'; });
+          if (kind !== 'b') startBoard(id, call);
           return call.join(j.token ? { url: url, token: j.token } : { url: url });
         });
       }).catch(function (e) { liveSay('app_tc_join_error', e && e.message ? e.message : null); });
   }
+  /* The live board (js/app/board.js): the lesson's board pages beside the video, sent to the students */
+  function startBoard(id, frame) {
+    if (board || !window.AlimunBoard) return board;
+    var s = sessionOf(id), x = s ? lessonFor(s) : null, el = root.querySelector('[data-board]');
+    if (!s || !el) return null;
+    var lastWords = (C.sessions.filter(function (y) { return y.cohortId === s.cohortId && y.notes && (y.notes.vocabulary || []).length && new Date(y.at) < new Date(s.at); }).pop() || { notes: {} }).notes.vocabulary || [];
+    board = window.AlimunBoard.create({ A: A, role: 'teacher', frame: frame || null, sessionId: s.id, course: x ? x.course.id : null, lesson: x && x.lesson ? x.lesson.id : null, persist: !C.sample, words: lastWords });
+    var b = board;
+    board.mount(el).then(function () {
+      if (board && board.shown()) setBoardOpen(true);
+      if (!C.sample && window.AlimunData.boardOf) window.AlimunData.boardOf(s.id).then(function (saved) { if (board === b) b.load(saved); }, function () { /* the browser's copy stays */ });
+    });
+    return board;
+  }
+  /* The class date page: the board saved from class (step L5), read-only, with every student's solo work, and whether
+     students see it with the class notes */
+  function boardCard(id) {
+    var box = root.querySelector('[data-boardcard]');
+    if (!box || C.sample || !window.AlimunData.boardOf || !window.AlimunBoard) return;
+    window.AlimunData.boardOf(id).then(function (saved) {
+      if (!saved.board || !root.contains(box)) return;
+      var b = saved.board;
+      box.hidden = false;
+      box.innerHTML = '<section class="card" aria-labelledby="h-board"><h2 class="t-h2" id="h-board">' + esc(t('app_bd_saved_h')) + '</h2>' +
+        '<label class="st-day" style="margin-top:10px"><input type="checkbox" data-board-share' + (b.shared ? ' checked' : '') + '><span>' + esc(t('app_bd_share')) + '</span></label>' +
+        '<p class="t-small st-msg" data-sharemsg aria-live="polite"></p>' +
+        '<details style="margin-top:10px"><summary class="linkish">' + esc(t('app_bd_see')) + '</summary><div class="tc-board-view" data-board-view></div></details></section>';
+      var v = window.AlimunBoard.create({ A: A, role: 'viewer', data: b, work: saved.work });
+      box.querySelector('details').addEventListener('toggle', function () { if (this.open && !this.__on) { this.__on = true; v.mount(box.querySelector('[data-board-view]')); } });
+      box.querySelector('[data-board-share]').addEventListener('change', function (e) {
+        var el = e.target, msg = box.querySelector('[data-sharemsg]');
+        el.disabled = true;
+        window.AlimunData.setBoardShared(id, el.checked).then(function () { el.disabled = false; msg.textContent = t(el.checked ? 'app_bd_shared_on' : 'app_bd_shared_off'); msg.classList.remove('is-bad'); },
+          function () { el.disabled = false; el.checked = !el.checked; msg.textContent = t('app_tc_save_error'); msg.classList.add('is-bad'); });
+      });
+    }, function () { /* no board card */ });
+  }
+  function setBoardOpen(on) {
+    var btn = root.querySelector('[data-tc="board"]');
+    if (cls) cls.board(on);
+    if (btn) { btn.setAttribute('aria-pressed', String(on)); btn.classList.toggle('btn--primary', on); btn.classList.toggle('btn--lime', !on); btn.querySelector('span').textContent = t(on ? 'app_bd_close' : 'app_bd_open'); }
+    if (board) { if (board.shown() !== on) board.show(on); board.fit(); }
+  }
+  function toggleBoard() {
+    if (!liveId) return;
+    if (!board) startBoard(liveId, call);
+    if (board) setBoardOpen(!root.querySelector('[data-cr]').classList.contains('has-board'));
+  }
   function leave() {
+    if (board) { board.destroy(); board = null; }
     if (!call) return;
     var c = call; call = null;
     try { var p = c.leave(); if (p && p.catch) p.catch(function () {}); } catch (e) { /* already gone */ }
     try { c.destroy(); } catch (e) { /* already gone */ }
   }
-  /* The class conversation beside the video (step 13 tables): opened through open_thread, refreshed every 6 seconds */
-  function chatStart(cohortId) {
-    var box = function () { return root.querySelector('[data-msgs]'); };
-    if (C.sample) {
-      C.chat = { id: null, me: 'me', msgs: [{ id: 'm1', sender_user: 'x', sender_role: 'student', sender_name: 'Mei', body: 'Guten Abend! I will be two minutes late.', created_at: new Date(Date.now() - 4 * MIN).toISOString() }] };
-      drawChat(true);
-      return;
-    }
-    Promise.all([window.AlimunData.openThread('class', cohortId), window.AlimunData.userId()]).then(function (r) {
-      C.chat = { id: r[0], me: r[1], msgs: [] };
-      return window.AlimunData.threadMessages(r[0]).then(function (m) { C.chat.msgs = m; drawChat(true); window.AlimunData.markRead(r[0]).catch(function () {}); });
-    }).catch(function () { var b = box(); if (b) b.innerHTML = '<p class="t-small">' + esc(t('app_tc_chat_error')) + '</p>'; });
-    poll = setInterval(function () {
-      if (!C.chat || !C.chat.id || document.hidden) return;
-      var lastAt = C.chat.msgs.length ? C.chat.msgs[C.chat.msgs.length - 1].created_at : null;
-      window.AlimunData.threadMessages(C.chat.id, lastAt).then(function (m) {
-        if (!m.length || !C.chat) return;
-        var have = {}; C.chat.msgs.forEach(function (x) { have[x.id] = true; });
-        m.forEach(function (x) { if (!have[x.id]) C.chat.msgs.push(x); });
-        drawChat(false);
-        window.AlimunData.markRead(C.chat.id).catch(function () {});
-      }).catch(function () { /* try again on the next tick */ });
-    }, 6000);
-  }
-  function drawChat(stick) {
-    var b = root.querySelector('[data-msgs]');
-    if (!b || !C.chat) return;
-    var atEnd = b.scrollHeight - b.scrollTop - b.clientHeight < 60;
-    b.innerHTML = C.chat.msgs.length ? C.chat.msgs.map(function (m) {
-      var mine = m.sender_user === C.chat.me;
-      return '<div class="ms-msg' + (mine ? ' is-me' : '') + (m.sender_role === 'teacher' ? ' is-teacher' : '') + '">' + (mine ? '' : '<p class="ms-msg__who">' + esc(m.sender_name) + '</p>') +
-        '<div class="ms-bub" dir="auto">' + esc(m.body).replace(/\n/g, '<br>') + '</div><p class="ms-msg__time">' + esc(time(m.created_at)) + '</p></div>';
-    }).join('') : '<p class="t-small">' + esc(t('app_tc_chat_empty')) + '</p>';
-    if (stick || atEnd) b.scrollTop = b.scrollHeight;
-  }
-  function chatSend(form) {
-    var ta = form.querySelector('textarea'), body = ta.value.trim();
-    if (!body || !C.chat) return;
-    ta.value = '';
-    if (C.sample) { C.chat.msgs.push({ id: 'l' + Date.now(), sender_user: 'me', sender_role: 'teacher', sender_name: '', body: body, created_at: new Date().toISOString() }); drawChat(true); return; }
-    window.AlimunData.sendMessage(C.chat.id, body).then(function (m) { if (m && C.chat) { C.chat.msgs.push(m); drawChat(true); } }, function () { ta.value = body; });
-  }
-
   /* ---------- Class notes ---------- */
   function splitFocus(g) { g = String(g || ''); var i = g.indexOf('\n\n'); return i < 0 ? [g, ''] : [g.slice(0, i), g.slice(i + 2)]; }
   /* The class's next date after this one, as the default due date for homework */
@@ -300,16 +374,12 @@
     var n = C.sessions.filter(function (x) { return x.cohortId === s.cohortId && x.status !== 'cancelled' && new Date(x.at) > new Date(s.at); })[0];
     return dayKey(n ? n.at : new Date(s.at).getTime() + 7 * DAY);
   }
-  function notesView(id) {
-    var s = sessionOf(id);
-    if (!s) return missingView();
+  /* The notes fields, used on the notes page and in the classroom's Notes panel; saved as a draft while typing */
+  function notesFields(s) {
     var n = s.notes || {}, f = splitFocus(n.grammar_focus), words = (n.vocabulary || []).slice(0, MAX_WORDS);
     if (!words.length) words = [{}];
-    var st = notesState(s), co = cohortOf(s.cohortId), lang = window.AlimunData.langCode(co.language) || 'en';
-    var html = '<a class="rd-back" href="#/classes">' + A.icon('back') + '<span>' + esc(t('app_t_nav_classes')) + '</span></a>' +
-      '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_tc_notes_h', { class: A.className(co) })) + '</h1><p class="t-lead">' + esc(longDay(s.at) + ', ' + time(s.at)) + '</p></div></div>' +
-      '<div class="grid rise"><form class="card span-8 st-form tc-notes" style="--i:0;max-width:none" data-notes="' + esc(s.id) + '" novalidate>' +
-      '<fieldset class="st-field"><legend class="st-lbl">' + esc(t('app_tc_words')) + '</legend><p class="t-small st-hint">' + esc(t('app_tc_words_p')) + '</p><div class="tc-words" data-words>' +
+    var lang = window.AlimunData.langCode(cohortOf(s.cohortId).language) || 'en';
+    return '<fieldset class="st-field"><legend class="st-lbl">' + esc(t('app_tc_words')) + '</legend><p class="t-small st-hint">' + esc(t('app_tc_words_p')) + '</p><div class="tc-words" data-words>' +
         words.map(function (w, i) { return wordRow(w, i, lang); }).join('') + '</div>' +
         '<div class="btn-row"><button class="btn btn--quiet btn--sm" type="button" data-tc="addword"' + (words.length >= MAX_WORDS ? ' disabled' : '') + '>' + A.icon('plus') + esc(t('app_tc_add_word')) + '</button></div></fieldset>' +
       field('app_tc_g_title', '<input class="st-in" name="g_title" maxlength="200" value="' + esc(f[0]) + '" lang="' + esc(lang) + '" dir="auto" required>', 'app_tc_g_title_p') +
@@ -318,7 +388,16 @@
       '<div class="st-row">' + field('app_tc_hw', '<textarea class="st-in tc-ta" name="homework" rows="3" maxlength="4000" dir="auto">' + esc(n.homework || '') + '</textarea>') +
         field('app_tc_due', '<input class="st-in" type="date" name="due_date" value="' + esc(n.due_date || nextDue(s)) + '">') + '</div>' +
       field('app_tc_note', '<textarea class="st-in tc-ta" name="teacher_note" rows="3" maxlength="4000" dir="auto">' + esc(n.teacher_note || '') + '</textarea>') +
-      '<p class="t-small st-msg" data-saved aria-live="polite">' + esc(n.id ? t('app_tc_saved_draft') : '') + '</p></form>';
+      '<p class="t-small st-msg" data-saved aria-live="polite">' + esc(n.id ? t('app_tc_saved_draft') : '') + '</p>';
+  }
+  function notesView(id) {
+    var s = sessionOf(id);
+    if (!s) return missingView();
+    var n = s.notes || {}, st = notesState(s), co = cohortOf(s.cohortId);
+    var html = '<a class="rd-back" href="#/classes">' + A.icon('back') + '<span>' + esc(t('app_t_nav_classes')) + '</span></a>' +
+      '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_tc_notes_h', { class: A.className(co) })) + '</h1><p class="t-lead">' + esc(longDay(s.at) + ', ' + time(s.at)) + '</p></div></div>' +
+      '<div class="grid rise">' + lessonCard(s, 0) + '<div class="span-12" data-boardcard="' + esc(s.id) + '" hidden></div><form class="card span-8 st-form tc-notes" style="--i:0;max-width:none" data-notes="' + esc(s.id) + '" novalidate>' +
+      notesFields(s) + '</form>';
     var pdf = n.pdf_url ? safeUrl(n.pdf_url) : null;
     html += '<section class="card card--forest span-4 tc-pub" style="--i:1" aria-labelledby="h-pub"><h2 class="t-h2" id="h-pub">' + esc(t(st === 'published' ? 'app_tc_pub_done_h' : 'app_tc_pub_h')) + '</h2>' +
       '<p class="t-body" style="margin-top:10px">' + esc(t(st === 'published' ? 'app_tc_pub_again_p' : 'app_tc_pub_p')) + '</p>' +
@@ -520,21 +599,40 @@
     });
     html += '</div><p class="t-small st-msg" data-slotmsg aria-live="polite"></p></section>' +
       '<form class="card span-5 st-form" style="--i:1;max-width:none;margin-top:0" data-slot><h2 class="t-h2">' + esc(t('app_tc_add_h')) + '</h2>' +
-      field('app_tc_day', sel('day', WEEK.map(function (d) { return [d, A.weekday(d)]; }), 1)) +
-      '<div class="st-row">' + field('app_st_from', '<input class="st-in" type="time" name="start" step="1800" value="09:00" required>') + field('app_st_to', '<input class="st-in" type="time" name="end" step="1800" value="13:00" required>') + '</div>' +
-      '<p class="t-small st-note" style="margin-top:0">' + esc(t('app_tc_in_zone', { zone: bz.replace(/_/g, ' ') })) + '</p>' +
+      '<fieldset class="st-field"><legend class="st-lbl">' + esc(t('app_tc_days')) + '</legend><div class="st-days">' + WEEK.map(function (d) {
+        return '<label class="st-day"><input type="checkbox" name="day" value="' + d + '"' + (d === 1 ? ' checked' : '') + '><span>' + esc(A.weekday(d)) + '</span></label>';
+      }).join('') + '</div><div class="btn-row" style="margin-top:8px"><button class="btn btn--quiet btn--sm" type="button" data-tc="days" data-k="week">' + esc(t('app_tc_weekdays')) + '</button>' +
+        '<button class="btn btn--quiet btn--sm" type="button" data-tc="days" data-k="all">' + esc(t('app_tc_everyday')) + '</button></div></fieldset>' +
+      '<div data-times>' + timeRow('09:00', '13:00', false) + '</div>' +
+      '<div class="btn-row" style="margin-top:0"><button class="btn btn--ghost btn--sm" type="button" data-tc="moretime">' + A.icon('plus') + esc(t('app_tc_more_time')) + '</button></div>' +
+      '<p class="t-small st-note">' + esc(t('app_tc_in_zone', { zone: bz.replace(/_/g, ' ') })) + '</p>' +
       '<div class="btn-row"><button class="btn btn--primary" type="submit">' + esc(t('app_tc_add')) + '</button></div><p class="t-body st-msg" data-msg aria-live="polite"></p></form>' +
       sampleLine() + '</div>';
     return html;
   }
+  /* One from/to pair in the "Add free time" form; every pair is added to every ticked day */
+  function timeRow(a, b, removable) {
+    return '<div class="st-row" data-time>' + field('app_st_from', '<input class="st-in" type="time" name="start" step="1800" value="' + esc(a) + '" required>') +
+      field('app_st_to', '<input class="st-in" type="time" name="end" step="1800" value="' + esc(b) + '" required>') +
+      (removable ? '<button class="linkish" type="button" data-tc="lesstime" style="align-self:center">' + esc(t('app_tc_remove')) + '</button>' : '') + '</div>';
+  }
   function addSlot(form) {
-    var f = new FormData(form), day = +f.get('day'), a = String(f.get('start') || ''), b = String(f.get('end') || ''), msg = form.querySelector('[data-msg]');
+    var f = new FormData(form), days = f.getAll('day').map(Number), starts = f.getAll('start').map(String), ends = f.getAll('end').map(String), msg = form.querySelector('[data-msg]');
     var say = function (k, bad) { msg.textContent = t(k); msg.classList.toggle('is-bad', !!bad); };
-    if (!/^\d\d:\d\d$/.test(a) || !/^\d\d:\d\d$/.test(b) || a >= b) { say('app_tc_slot_order', true); return; }
-    var tz = A.browserZone();
-    if (C.sample) { C.slots.push({ id: 'a' + Date.now(), day_of_week: day, start_time: a + ':00', end_time: b + ':00', timezone: tz }); C.fit = null; A.rerender(); return; }
+    if (!days.length) { say('app_tc_pick_day', true); return; }
+    var times = starts.map(function (a, i) { return [a, ends[i] || '']; });
+    if (times.some(function (x) { return !/^\d\d:\d\d$/.test(x[0]) || !/^\d\d:\d\d$/.test(x[1]) || x[0] >= x[1]; })) { say('app_tc_slot_order', true); return; }
+    var sorted = times.slice().sort(function (x, y) { return x[0] < y[0] ? -1 : 1; });
+    for (var i = 1; i < sorted.length; i++) if (sorted[i][0] < sorted[i - 1][1]) { say('app_tc_overlap', true); return; }
+    var tz = A.browserZone(), rows = [];
+    days.forEach(function (d) { times.forEach(function (x) {
+      var dup = C.slots.some(function (s) { return s.day_of_week === d && hm(s.start_time) === x[0] && hm(s.end_time) === x[1]; });
+      if (!dup) rows.push({ day_of_week: d, start_time: x[0] + ':00', end_time: x[1] + ':00', timezone: tz });
+    }); });
+    if (!rows.length) { say('app_tc_slot_dup', true); return; }
+    if (C.sample) { rows.forEach(function (r, j) { C.slots.push(Object.assign({ id: 'a' + Date.now() + j }, r)); }); C.fit = null; A.rerender(); return; }
     var btn = form.querySelector('[type="submit"]'); btn.disabled = true;
-    window.AlimunData.addSlot(C.teacher.id, day, a, b, tz).then(function (row) { C.slots.push(row); C.fit = null; A.rerender(); },
+    window.AlimunData.addSlots(C.teacher.id, rows).then(function (added) { C.slots = C.slots.concat(added); C.fit = null; A.rerender(); },
       function (e) { btn.disabled = false; say(e && e.code === '23505' ? 'app_tc_slot_dup' : 'app_tc_save_error', true); });
   }
   function delSlot(btn) {
@@ -577,17 +675,20 @@
       }
       else if (a === 'publish') publish(el);
       else if (a === 'delslot') delSlot(el);
+      else if (a === 'board') toggleBoard();
+      else if (a === 'days') { var want = el.getAttribute('data-k') === 'all' ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5];
+        el.closest('form').querySelectorAll('input[name="day"]').forEach(function (c) { c.checked = want.indexOf(+c.value) > -1; }); }
+      else if (a === 'moretime') { var box = el.closest('form').querySelector('[data-times]'), last = box.querySelectorAll('input[name="end"]'), from = last.length ? last[last.length - 1].value : '14:00';
+        var to = from && from < '22:00' ? ('0' + Math.min(23, +from.slice(0, 2) + 4)).slice(-2) + from.slice(2) : '23:30';
+        box.insertAdjacentHTML('beforeend', timeRow(from || '14:00', to > from ? to : '23:30', true)); }
+      else if (a === 'lesstime') { var r = el.closest('[data-time]'); if (r) r.remove(); }
     });
     root.addEventListener('input', function (e) { var f = e.target.closest('[data-notes]'); if (f && C) saveDraft(f); });
-    root.addEventListener('change', function (e) { var f = e.target.closest('[data-new]'); if (f && e.target.name === 'day') refreshTimes(f); });
-    root.addEventListener('keydown', function (e) {
-      if (e.key === 'Enter' && !e.shiftKey && e.target.matches('[data-tc-chat] textarea')) { e.preventDefault(); chatSend(e.target.form); }
-    });
+    root.addEventListener('change', function (e) { if (!C) return; if (e.target.hasAttribute('data-tc-lesson')) { changeLesson(e.target); return; } var f = e.target.closest('[data-new]'); if (f && e.target.name === 'day') refreshTimes(f); });
     root.addEventListener('submit', function (e) {
       if (!C) return;
       var f = e.target;
-      if (f.hasAttribute('data-tc-chat')) { e.preventDefault(); chatSend(f); }
-      else if (f.hasAttribute('data-oto')) { e.preventDefault(); saveOto(f); }
+      if (f.hasAttribute('data-oto')) { e.preventDefault(); saveOto(f); }
       else if (f.hasAttribute('data-new')) { e.preventDefault(); createClass(f); }
       else if (f.hasAttribute('data-slot')) { e.preventDefault(); addSlot(f); }
       else if (f.hasAttribute('data-notes')) e.preventDefault();
@@ -602,10 +703,9 @@
   /* Leaving the section or the classroom: stop the call, the chat and the timers; save a notes draft not yet saved */
   function reset() {
     leave();
-    if (poll) { clearInterval(poll); poll = null; }
+    if (cls) { cls.destroy(); cls = null; }
     if (tick) { clearInterval(tick); tick = null; }
     if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; var f = root && root.querySelector('[data-notes]'); if (f) saveDraft(f, true).catch(function () {}); }
-    if (C) C.chat = null;
     document.body.classList.remove('is-reading');
   }
 
@@ -621,18 +721,21 @@
       if (my !== mountNo) return { stale: true };
       var p0 = parts[0], html, title = t('app_t_nav_classes');
       if (p0 === 'live') html = liveView(parts[1] === 'b' ? 'b' : 's', parts[1] === 'b' ? parts[2] : parts[1]);
-      else if (p0 === 'notes') html = notesView(parts[1]);
+      else if (p0 === 'notes') { html = notesView(parts[1]); }
       else if (p0 === 'oto') html = otoView(parts[1]);
       else if (p0 === 'new') { html = newView(); title = t('app_tc_new_h'); }
       else if (p0 === 'availability') { html = availView(); title = t('app_tc_avail'); }
       else html = timetableView();
       root.innerHTML = html;
       if (!p0 && C.flash) { root.querySelector('.view__head').insertAdjacentHTML('afterend', '<p class="t-body st-msg tc-flash" role="status">' + esc(C.flash) + '</p>'); C.flash = null; }
+      if (p0 === 'notes') boardCard(parts[1]);
       if (p0 === 'live') {
         var kind = parts[1] === 'b' ? 'b' : 's', id = kind === 'b' ? parts[2] : parts[1];
-        join(kind, id);
         var s = kind === 's' ? sessionOf(id) : null;
-        if (s) chatStart(s.cohortId);
+        cls = window.AlimunClassroom.start({ root: root, A: A, role: 'teacher', cohortId: s ? s.cohortId : null, sample: C.sample,
+          sampleMsgs: [{ id: 'm1', sender_user: 'x', sender_role: 'student', sender_name: 'Mei', body: 'Guten Abend! I will be two minutes late.', created_at: new Date(Date.now() - 4 * MIN).toISOString() }],
+          onLayout: function () { if (board) board.fit(); } });
+        join(kind, id);
       }
       if (!p0) tick = setInterval(function () {
         var el = root.querySelector('[data-countdown]');

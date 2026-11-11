@@ -38,6 +38,8 @@
     messages: '<path d="M20 12a8 8 0 0 1-11.6 7.1L4 20.5l1.4-4.2A8 8 0 1 1 20 12z"/>',
     payouts: '<rect x="3" y="6.5" width="18" height="12" rx="2.5"/><path d="M3 10.5h18M7 15h3"/>',
     ai: '<path d="M4 20V13M10 20V8M16 20v-5M20 20H3"/>',
+    activity: '<path d="M3 12h4l3-7 4 14 3-7h4"/>',
+    campaigns: '<path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/>',
     system: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
     more: '<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
@@ -55,6 +57,8 @@
   var ROUTES = [
     { id: 'overview', label: 'Overview', icon: 'home', group: 'Alimun' },
     { id: 'students', label: 'Students', icon: 'students', group: 'People', part: 2, text: 'Every student: search, their file, plan, class and progress, and view their dashboard as they see it.' },
+    { id: 'activity', label: 'Activity', icon: 'activity', group: 'People', text: 'Who is active, who is slipping away, where new students stop, and countries.' },
+    { id: 'campaigns', label: 'Campaigns', icon: 'campaigns', group: 'People', text: 'News and offers by email and in the dashboard bell, to people who asked for them.' },
     { id: 'teachers', label: 'Teachers', icon: 'teachers', group: 'People', part: 2, text: 'Applications to approve or reject, and each teacher’s file, classes and availability.' },
     { id: 'classes', label: 'Classes', icon: 'classes', group: 'Teaching', part: 3, text: 'Creating classes for teachers, rosters, moving students, closing and reopening.' },
     { id: 'schedule', label: 'Schedule', icon: 'schedule', group: 'Teaching', part: 3, text: 'Every class date: cancel or move one, with students and teacher told.' },
@@ -169,7 +173,7 @@
       '</p><div class="btn-row"><a class="btn btn--primary" href="#/overview">Back to the overview</a></div></div></div>';
   }
   function deniedView() {
-    var to = D.role === 'teacher' ? '/app/teach' : D.role === 'student' ? '/student-dashboard.html' : '/';
+    var to = D.role === 'teacher' ? '/app/teach' : D.role === 'student' ? '/app' : '/';
     return '<div class="soon rise"><div class="stage" style="--i:0;background:var(--t-coral)"><div class="bub think">Staff only, I’m afraid.</div>' + Cast.drawing('cat') + '</div>' +
       '<div class="card" style="--i:1"><h2 class="t-h2">This page is for Alimun’s administrators</h2><p class="t-body">Your account does not have access to it.</p><div class="btn-row"><a class="btn btn--primary" href="' + to + '">Go to your dashboard</a></div></div></div>';
   }
@@ -196,7 +200,7 @@
   function hideLoader() { loadingScreen.classList.add('is-done'); loadingScreen.setAttribute('aria-hidden', 'true'); }
   function setSheet(open) { document.body.classList.toggle('is-sheet-open', open); app.querySelector('[data-more]').setAttribute('aria-expanded', String(open)); if (open) { var a = sheet.querySelector('a'); if (a) a.focus(); } }
   function routeFromHash() { var id = (location.hash.match(/^#\/([a-z]+)/) || [])[1]; return byId[id] ? id : 'overview'; }
-  var MODULES = { students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; },
+  var MODULES = { activity: function () { return window.AlimunAdminActivity; }, campaigns: function () { return window.AlimunAdminCampaigns; }, students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; },
     classes: function () { return window.AlimunAdminClasses; }, schedule: function () { return window.AlimunAdminSchedule; },
     waiting: function () { return window.AlimunAdminWaiting; }, messages: function () { return window.AlimunAdminMessages; },
     payouts: function () { return window.AlimunAdminPayouts; }, ai: function () { return window.AlimunAdminAi; }, system: function () { return window.AlimunAdminSystem; } };

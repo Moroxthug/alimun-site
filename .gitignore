@@ -26,3 +26,20 @@ nul
 .inline-js/
 test-results/
 playwright-report/
+
+# Blog pages are generated at deploy time (site/ build, docs/BLOG_PLAN.md)
+/blog/
+/it/blog/
+/es/blog/
+/fr/blog/
+/pt/blog/
+/de/blog/
+/ar/blog/
+/zh/blog/
+/ma/blog/
+/mock-blog/
+/resources/
+/it/risorse/
+/es/recursos/
+/fr/ressources/
+/pt/recursos/

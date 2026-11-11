@@ -1,0 +1,37 @@
+// Resource: game. Ten common English phrasal verbs (B1-B2): what each one means in context. Meanings checked against the Cambridge Dictionary and Oxford Learner's Dictionaries.
+export default {
+  key: 'phrasal-verbs-game', site: 'fr', slug: 'jeu-phrasal-verbs-anglais', kind: 'game', course: 'English', level: 'Tous niveaux',
+  draw: 'parrot', tint: 'sun', published: '2026-11-01',
+  title: 'Jeu des phrasal verbs anglais : sais-tu ce que veut dire give up ?',
+  metaTitle: 'Jeu des phrasal verbs anglais : les 10 plus courants – Alimun',
+  desc: "Un jeu gratuit avec dix phrasal verbs anglais très courants, de give up à take after. Lis-les dans une vraie phrase, devine leur sens, puis associe les cartes.",
+  lead: "Give up, run out of, figure out. Lis dix phrasal verbs anglais du quotidien dans de vraies phrases et devine ce que veut dire chacun.",
+  instructions: 'Que veut dire le phrasal verb dans cette phrase ?',
+  about: [
+    "Un phrasal verb, c'est un verbe suivi d'un petit mot comme up, out, off ou over, et ensemble ils veulent souvent dire tout autre chose que le verbe seul. Les anglophones en utilisent sans arrêt, surtout à l'oral.",
+    "Apprends chaque phrasal verb dans une phrase d'exemple complète plutôt que tout seul. Beaucoup ont plusieurs sens : regarde bien ce que t'indique le reste de la phrase.",
+  ],
+  items: [
+    { q: 'I gave up smoking last year.', options: ["J'ai commencé à fumer.", "J'ai arrêté de fumer.", "J'ai moins fumé.", "J'ai aimé fumer."], a: 1, why: "To give something up, c'est arrêter de faire quelque chose qu'on faisait régulièrement : She gave up chocolate for a month." },
+    { q: "I'm really looking forward to the holidays.", options: ["J'ai hâte qu'elles arrivent.", 'Les vacances me font peur.', 'Je les prépare avec soin.', 'Je me les rappelle.'], a: 0, why: "To look forward to something, c'est être content et impatient à l'idée de quelque chose qui va arriver : avoir hâte." },
+    { q: "We've run out of milk.", options: ['On a trop de lait.', 'On a renversé le lait.', "On n'a plus de lait.", 'On a acheté du lait frais.'], a: 2, why: "To run out of something, c'est avoir tout utilisé, jusqu'à ne plus en avoir." },
+    { q: 'It took her two weeks to get over the flu.', options: ['pour attraper la grippe', 'pour éviter la grippe', 'pour parler à tout le monde de sa grippe', 'pour se remettre de la grippe'], a: 3, why: "To get over une maladie ou une mauvaise expérience, c'est s'en remettre." },
+    { q: "Don't put off your homework until tomorrow.", options: ['Ne bâcle pas tes devoirs.', 'Ne remets pas tes devoirs à plus tard.', 'Ne perds pas tes devoirs.', 'Ne copie pas tes devoirs.'], a: 1, why: "To put something off, c'est repousser quelque chose à plus tard : We put off the meeting until Friday." },
+    { q: 'She turned down the job offer.', options: ["Elle l'a refusée.", "Elle l'a acceptée.", "Elle a demandé plus d'argent.", "Elle l'a oubliée."], a: 0, why: "To turn down an offer, c'est refuser une offre ou une demande." },
+    { q: "I can't figure out how this app works.", options: ["Je n'arrive pas à la télécharger.", "Je n'ai pas les moyens de me l'offrir.", "Je n'arrive pas à la comprendre.", "Je n'arrive pas à arrêter de l'utiliser."], a: 2, why: "To figure something out, c'est finir par comprendre quelque chose ou trouver la solution, en général après y avoir réfléchi." },
+    { q: 'I came across some old photos while I was tidying up.', options: ['Je les ai jetées.', "Je les ai cherchées pendant des heures.", "C'est moi qui les ai prises.", 'Je les ai trouvées par hasard.'], a: 3, why: "To come across something, c'est tomber sur quelque chose ou quelqu'un par hasard, sans le chercher." },
+    { q: 'Our car broke down on the motorway.', options: ['Elle est tombée en panne.', 'Elle est rentrée dans une autre voiture.', 'Elle roulait très vite.', 'Elle était trop chargée.'], a: 0, why: "Quand une voiture ou une machine breaks down, elle arrête de fonctionner : elle tombe en panne." },
+    { q: 'Tom really takes after his father.', options: ['Il suit son père partout.', 'Il ressemble à son père.', "Il s'occupe de son père.", 'Il travaille pour son père.'], a: 1, why: "To take after un parent plus âgé, c'est lui ressembler, physiquement ou par le caractère. Ne le confonds pas avec look after, qui veut dire s'occuper de." },
+  ],
+  pairs: [
+    ['Give up', 'Arrêter de faire quelque chose'],
+    ['Look forward to', 'Avoir hâte de'],
+    ['Run out of', 'Ne plus avoir de'],
+    ['Get over', 'Se remettre de'],
+    ['Put off', 'Remettre à plus tard'],
+    ['Turn down', 'Refuser'],
+    ['Figure out', 'Finir par comprendre'],
+    ['Come across', 'Tomber sur'],
+  ],
+  related: ['english-idioms', 'en-verbs-sheet', 'en-quiz-b1'],
+};

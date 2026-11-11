@@ -1,0 +1,30 @@
+// Resource: game. Cards: [word, language of the word, what it looks like to an Italian reader, what it really means,
+// how to say what it looks like in that language]. The game asks what each word really means.
+export default {
+  key: 'false-friends', site: 'it', slug: 'gioco-falsi-amici', kind: 'game', course: null, level: 'Tutti i livelli',
+  draw: 'dragon', tint: 'coral', published: '2026-10-26',
+  title: 'Gioco dei falsi amici: le parole che ti ingannano',
+  metaTitle: 'Falsi amici: gioco gratis in inglese, tedesco, spagnolo – Alimun',
+  desc: "Un gioco gratis con i falsi amici di inglese, tedesco, spagnolo, francese e portoghese: parole che sembrano familiari ma vogliono dire tutt'altro.",
+  lead: "Parole che sembrano italiane, o che ricordano l'inglese, ma vogliono dire altro. Indovina cosa significa davvero ognuna, poi gira la carta.",
+  instructions: 'Cosa significa davvero la parola?',
+  about: [
+    "I falsi amici sono parole che sembrano o suonano come una parola di un'altra lingua ma hanno un significato diverso. Sono tra gli errori più comuni, e più divertenti, di chi studia una lingua.",
+    'Gioca, poi gira le carte per scoprire la parola che ti serve davvero.',
+  ],
+  cards: [
+    ['embarazada', 'spagnolo', 'imbarazzata', 'incinta', 'avergonzada'],
+    ['Gift', 'tedesco', 'gift (regalo in inglese)', 'veleno', 'das Geschenk'],
+    ['library', 'inglese', 'libreria', 'biblioteca', 'bookshop'],
+    ['salir', 'francese', 'salire', 'sporcare', 'monter'],
+    ['bekommen', 'tedesco', 'become (diventare in inglese)', 'ricevere, ottenere', 'werden'],
+    ['esquisito', 'portoghese', 'squisito', 'strano', 'delicioso'],
+    ['guardar', 'spagnolo', 'guardare', 'conservare, mettere via', 'mirar'],
+    ['Chef', 'tedesco', 'chef (cuoco)', 'capo', 'der Koch'],
+    ['camera', 'inglese', 'camera (stanza)', 'macchina fotografica', 'room'],
+    ['sensible', 'inglese', 'sensibile', 'ragionevole, sensato', 'sensitive'],
+    ['pasta', 'portoghese', 'pasta', 'cartella, valigetta', 'massa'],
+    ['Handy', 'tedesco', 'handy (pratico in inglese)', 'cellulare', 'praktisch'],
+  ],
+  related: ['buddy-quiz', 'de-articles-a1', 'en-quiz-b1'],
+};

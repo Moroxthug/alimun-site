@@ -10,7 +10,7 @@
    Routes: #/classes, #/classes/live/<session>, #/classes/live/b/<booking>. Interface text: app_cl_* keys. */
 (function () {
   'use strict';
-  var A = null, root = null, C = null, call = null;
+  var A = null, root = null, C = null, call = null, board = null, cls = null;
   var DAY = 86400000, MIN = 60000;
   var OPEN_BEFORE = 15, CLOSE_AFTER = 90, LESSON = 60;
   var DAILY_JS = 'https://unpkg.com/@daily-co/daily-js@0.79.0/dist/daily-iframe.js';
@@ -57,8 +57,8 @@
       : [[{ word: 'landlord', definition: 'the owner of a flat you rent' }, { word: 'deposit', definition: 'money you pay before you move in' }], [{ word: 'to apply for', definition: 'to ask formally for a job' }, { word: 'shortlist', definition: 'the final list of candidates' }]];
     var sessions = [], notes = [];
     [-13, -11, -6, -4, 1, 3, 8, 10, 15, 17].forEach(function (n, i) { sessions.push({ id: 's' + i, cohort_id: 'c1', scheduled_at: day(n), status: n < 0 ? 'completed' : 'scheduled' }); });
-    notes.push({ id: 'n1', session_id: 's3', vocabulary: words[1], grammar_focus: de ? 'Nebensätze mit weil und obwohl' : 'Linking ideas: although and because', homework: de ? 'Schreiben Sie eine kurze Bewerbung (80 Wörter).' : 'Write a short job application (80 words).', due_date: day(2).slice(0, 10), teacher_note: de ? 'Sehr gute Fragen heute. Achten Sie auf das Verb am Ende.' : 'Great questions today. Watch the word order after although.', pdf_url: null, published_at: day(-4), sessions: { scheduled_at: day(-4) } });
-    notes.push({ id: 'n2', session_id: 's2', vocabulary: words[0], grammar_focus: de ? 'Wohnungssuche: Fragen stellen' : 'Asking about a flat', homework: null, due_date: null, teacher_note: null, exercises: de ? 'Rollenspiel: ein Anruf beim Vermieter.' : 'Role play: calling a landlord.', pdf_url: null, published_at: day(-6), sessions: { scheduled_at: day(-6) } });
+    notes.push({ id: 'n1', session_id: 's3', vocabulary: words[1], grammar_focus: de ? 'Nebensätze mit weil und obwohl' : 'Linking ideas: although and because', homework: de ? 'Schreiben Sie eine kurze Bewerbung (80 Wörter).' : 'Write a short job application (80 words).', due_date: day(2).slice(0, 10), teacher_note: de ? 'Sehr gute Fragen heute. Achten Sie auf das Verb am Ende.' : 'Great questions today. Watch the word order after although.', pdf_url: null, published_at: day(-4), sessions: { scheduled_at: day(-4), cohort_id: 'c1' } });
+    notes.push({ id: 'n2', session_id: 's2', vocabulary: words[0], grammar_focus: de ? 'Wohnungssuche: Fragen stellen' : 'Asking about a flat', homework: null, due_date: null, teacher_note: null, exercises: de ? 'Rollenspiel: ein Anruf beim Vermieter.' : 'Role play: calling a landlord.', pdf_url: null, published_at: day(-6), sessions: { scheduled_at: day(-6), cohort_id: 'c1' } });
     return {
       cohorts: [{ id: 'c1', language: A.data().profile.language || 'German', level: A.data().profile.level || 'B1', tier: 'intensive', teacher_id: 't1' }],
       sessions: sessions, notes: notes,
@@ -105,12 +105,14 @@
 
   function pageView() {
     var up = upcoming(), next = up[0];
-    var html = '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_nav_classes')) + '</h1><p class="t-lead">' + esc(t('app_cl_lead')) + '</p></div>' +
+    var html = (window.AlimunFind ? AlimunFind.takeFlash() : '') + '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_nav_classes')) + '</h1><p class="t-lead">' + esc(t('app_cl_lead')) + '</p></div>' +
       '<p class="t-small cl-zone">' + esc(t('app_cl_zone', { zone: zone().replace(/_/g, ' ') })) + '</p></div><div class="grid rise">';
+    var offer = A.data().offer;
+    if (offer && window.AlimunFind) html += AlimunFind.offerHtml(offer, 0);
     if (!C.cohorts.length && !C.bookings.length) {
       html += '<section class="stage span-4" style="--i:0;background:var(--t-mint)" aria-hidden="true"><div class="bub think">' + esc(t('app_cl_none_bub')) + '</div>' + A.Cast.drawing('mug') + '</section>' +
         '<section class="card span-8" style="--i:1"><h2 class="t-h2">' + esc(t('app_cl_none_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_cl_none_p')) + '</p>' +
-        '<div class="btn-row" style="margin-top:20px"><a class="btn btn--primary" href="/student-dashboard">' + esc(t('app_cl_find')) + A.icon('arrow') + '</a></div></section>';
+        '<div class="btn-row" style="margin-top:20px"><a class="btn btn--primary" href="#/classes/find">' + esc(t('app_cl_find')) + A.icon('arrow') + '</a></div></section>';
     } else {
       html += nextHtml(next);
       html += '<section class="stage span-4" style="--i:1;background:var(--t-lime)" aria-hidden="true"><div class="bub say">' + esc(t(next && joinable(next.at, next.minutes) ? 'app_cl_bub_now' : 'app_cl_bub')) + '</div>' + A.Cast.drawing('mug') + '</section>';
@@ -119,6 +121,9 @@
       html += otoHtml();
       html += notesHtml();
       html += wordsHtml();
+      var mine = C.cohorts.filter(function (co) { return (A.data().profile.cohorts || []).indexOf(co.id) > -1; })[0] || (C.sample ? C.cohorts[0] : null);
+      if (mine && window.AlimunFind) html += AlimunFind.yourClassHtml(mine, C.teachers[mine.teacher_id] || '', 7);
+      else if (window.AlimunFind) html += '<section class="card card--bone span-12" style="--i:7"><div class="card__row" style="flex-wrap:wrap"><p class="t-body" style="flex:1;min-width:220px">' + esc(t('app_fd_no_group')) + '</p><a class="btn btn--ghost btn--sm" href="#/classes/find">' + esc(t('app_cl_find')) + '</a></div></section>';
     }
     if (C.sample) html += '<p class="t-tiny span-12" style="margin-top:4px">' + esc(t('app_cl_sample')) + '</p>';
     return html + '</div>';
@@ -214,6 +219,11 @@
         (reasonText(st.credit) ? '<p class="t-small cl-oto__why">' + esc(reasonText(st.credit)) + '</p>' : '') + '</div>' +
         (st.credit.canBook ? '<button class="btn btn--primary btn--sm" type="button" data-cl="pick" data-kind="credit">' + esc(t('app_cl_book')) + '</button>' : '') + '</div>';
     }
+    /* One more private class, paid once through Stripe (js/app/plans.js); the price is Stripe's */
+    if (st.teacher && window.AlimunPlans) {
+      html += '<div class="cl-oto__row"><div><h3 class="t-h3">' + esc(t('app_pl_buy_h')) + '</h3><p class="t-body">' + esc(t('app_pl_buy_extra_p')) + '</p><p class="t-small st-msg" data-buymsg aria-live="polite"></p></div>' +
+        '<button class="btn btn--ghost btn--sm" type="button" data-cl="buy" data-buylabel>' + esc(t('app_pl_buy_extra_np')) + '</button></div>';
+    }
     html += '<div data-picker></div>';
     if (past.length) {
       html += '<h3 class="t-h3 cl-oto__notes-h">' + esc(t('app_cl_oto_notes_h')) + '</h3>' + past.map(function (b) {
@@ -295,14 +305,18 @@
     var html = '<section class="card span-12 cl-notes" style="--i:5" aria-labelledby="h-notes"><h2 class="t-h2" id="h-notes">' + esc(t('app_cl_notes_h')) + '</h2>';
     if (!list.length) return html + '<p class="t-body" style="margin-top:8px">' + esc(t('app_cl_notes_none')) + '</p></section>';
     html += '<p class="t-body" style="margin-top:6px">' + esc(t('app_cl_notes_p')) + '</p>';
+    /* AI tutor, part 5b: the latest notes can be gone over with the tutor until the class's next lesson */
+    var review = list.filter(function (n) { return window.AlimunData.lessonOpen(n, C.sessions); })[0];
     return html + list.map(function (n, i) {
       var at = n.sessions && n.sessions.scheduled_at || n.published_at, pdf = n.pdf_url && safeUrl(n.pdf_url);
       var words = Array.isArray(n.vocabulary) ? n.vocabulary.filter(function (v) { return v && v.word; }) : [];
       return '<details class="cl-note"' + (i === 0 ? ' open' : '') + '><summary><b>' + esc(fmt(at, { weekday: 'long', day: 'numeric', month: 'long' })) + '</b>' + (n.grammar_focus ? '<span' + ta + '>' + esc(n.grammar_focus) + '</span>' : '') + '</summary><div class="cl-note__body">' +
+        (review === n ? '<div class="cl-note__tutor"><p class="t-body">' + esc(t('app_cl_lesson_p')) + '</p><a class="btn btn--primary btn--sm" href="#/tutor/lesson/' + esc(n.id) + '">' + esc(t('app_lesson_go')) + '</a></div>' : '') +
         (n.teacher_note ? '<div class="cl-note__teacher"><h4>' + esc(t('app_cl_note_teacher')) + '</h4><p' + ta + '>' + esc(n.teacher_note) + '</p></div>' : '') +
         (n.exercises ? '<div><h4>' + esc(t('app_cl_note_ex')) + '</h4><p' + ta + '>' + esc(n.exercises) + '</p></div>' : '') +
         (n.homework ? '<div><h4>' + esc(t('app_cl_note_hw')) + '</h4><p' + ta + '>' + esc(n.homework) + (n.due_date ? ' <span class="t-small">' + esc(t('app_cl_due', { date: new Intl.DateTimeFormat(A.locale, { day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(n.due_date + 'T12:00:00Z')) })) + '</span>' : '') + '</p></div>' : '') +
         (words.length ? '<div><h4>' + esc(t('app_cl_note_words')) + '</h4><dl class="lb-wl">' + words.map(function (v) { return '<div><dt' + ta + '>' + esc(v.word) + '</dt><dd>' + esc(v.definition || '') + (v.example ? '<br><i' + ta + '>' + esc(v.example) + '</i>' : '') + '</dd></div>'; }).join('') + '</dl></div>' : '') +
+        (n.board && n.session_id ? '<div class="cl-note__board"><button class="btn btn--ghost btn--sm" type="button" data-cl-board="' + esc(n.session_id) + '">' + esc(t('app_bd_see_class')) + '</button><div data-cl-boardview></div></div>' : '') +
         (pdf ? '<a class="btn btn--ghost btn--sm" href="' + esc(pdf) + '" target="_blank" rel="noopener">' + esc(t('app_cl_pdf')) + '</a>' : '') +
         '</div></details>';
     }).join('') + '</section>';
@@ -322,7 +336,7 @@
     upcoming().forEach(function (n) {
       var title = n.type === 'class' ? cohortName(n.cohort) : t(n.kind === 'followup' ? 'app_cl_oto_followup' : 'app_cl_oto_private');
       lines.push('BEGIN:VEVENT', 'UID:' + n.id + '@alimun.com', 'DTSTAMP:' + stamp(new Date().toISOString()), 'DTSTART:' + stamp(n.at), 'DTEND:' + stamp(new Date(Date.parse(n.at) + n.minutes * MIN).toISOString()),
-        'SUMMARY:Alimun: ' + String(title).replace(/[,;\\]/g, ' '), 'URL:https://alimun.com/app/preview#/classes', 'END:VEVENT');
+        'SUMMARY:Alimun: ' + String(title).replace(/[,;\\]/g, ' '), 'URL:https://alimun.com/app#/classes', 'END:VEVENT');
     });
     lines.push('END:VCALENDAR');
     var a = document.createElement('a');
@@ -338,12 +352,24 @@
     var item = kind === 'b' ? C.bookings.filter(function (b) { return b.id === id; })[0] : C.sessions.filter(function (s) { return s.id === id; })[0];
     var title = !item ? t('app_cl_class') : kind === 'b' ? t(item.kind === 'followup' ? 'app_cl_oto_followup' : 'app_cl_oto_private') : cohortName(item.cohort_id);
     var latest = C.notes.filter(function (n) { return Array.isArray(n.vocabulary) && n.vocabulary.length; })[0];
-    var ta = ' lang="' + (window.AlimunData.langCode((C.cohorts[0] || {}).language) || 'en') + '" dir="ltr"';
-    return '<div class="cl-live"><div class="cl-live__top"><a class="rd-back" href="#/classes">' + A.icon('back') + '<span>' + esc(t('app_cl_leave')) + '</span></a>' +
-      '<h1 class="t-h2">' + esc(title) + '</h1></div>' +
-      '<div class="cl-live__body"><div class="cl-live__frame" data-frame><div class="cl-live__wait"><div class="loader" style="--w:64px" aria-hidden="true">' + A.loaderInner() + '</div><p class="t-body" data-livemsg>' + esc(t('app_cl_joining')) + '</p></div></div>' +
-      (latest ? '<aside class="cl-live__side card"><h2 class="t-h3">' + esc(t('app_cl_live_words')) + '</h2><dl class="lb-wl">' + latest.vocabulary.slice(0, 12).map(function (v) { return '<div><dt' + ta + '>' + esc(v.word) + '</dt><dd>' + esc(v.definition || '') + '</dd></div>'; }).join('') + '</dl></aside>' : '') +
-      '</div></div>';
+    var lang = window.AlimunData.langCode((C.cohorts[0] || {}).language) || 'en';
+    var CR = window.AlimunClassroom, tabs = [];
+    if (kind !== 'b' && item && item.cohort_id) tabs.push({ id: 'chat', label: t('app_cr_chat'), icon: 'chat', html: CR.chatHtml(A) });
+    if (latest) tabs.push({ id: 'words', label: t('app_cr_words'), icon: 'words', html: '<p class="t-small">' + esc(t('app_cl_live_words')) + '</p>' + CR.wordsHtml(A, latest.vocabulary, lang) });
+    var when = item && (item.scheduled_at || item.at) ? fmt(item.scheduled_at || item.at, { weekday: 'long', hour: '2-digit', minute: '2-digit' }) : '';
+    return CR.shell({ A: A, role: 'student', title: title, sub: when ? esc(A.cap ? A.cap(when) : when) : '', board: kind !== 'b', tabs: tabs, wait: t('app_cl_joining'), art: 'mug' });
+  }
+  /* Daily Prebuilt in Alimun's colours and the dashboard's language (Daily has no Arabic or Chinese: English; Darija: French).
+     The name comes from the meeting token, so it is not asked for or changed in the room. */
+  var DAILY_LANGS = { en: 'en', es: 'es', fr: 'fr', de: 'de', it: 'it', pt: 'pt', ma: 'fr' };
+  function roomOptions() {
+    return {
+      iframeStyle: { width: '100%', height: '100%', border: '0', borderRadius: '20px', background: '#1a443c' },
+      showLeaveButton: true, showFullscreenButton: true, showUserNameChangeUI: false,
+      lang: DAILY_LANGS[A && A.lang] || 'en',
+      theme: { colors: { accent: '#ceff65', accentText: '#080808', background: '#ffffff', backgroundAccent: '#f0efe9', baseText: '#080808', border: '#eeeeec',
+        mainAreaBg: '#1a443c', mainAreaBgAccent: '#285449', mainAreaText: '#ffffff', supportiveText: '#5c5c5a' } }
+    };
   }
   function loadDaily() {
     if (window.DailyIframe) return Promise.resolve(window.DailyIframe);
@@ -374,13 +400,25 @@
           if (!box) return;
           box.innerHTML = '';
           leave(true);
-          call = { frame: D.createFrame(box, { iframeStyle: { width: '100%', height: '100%', border: '0', borderRadius: '20px', background: '#080808' }, showLeaveButton: true, showFullscreenButton: true }), session: kind === 'b' ? null : id };
+          call = { frame: D.createFrame(box, roomOptions()), session: kind === 'b' ? null : id };
+          if (cls) cls.attach(call.frame);
           call.frame.on('left-meeting', function () { leave(); if (location.hash.indexOf('#/classes/live') === 0) location.hash = '#/classes'; });
+          /* The teacher's board (js/app/board.js): shown beside the video while the teacher has it open */
+          var el = root.querySelector('[data-board]');
+          if (el && window.AlimunBoard && kind !== 'b') {
+            board = window.AlimunBoard.create({ A: A, role: 'student', frame: call.frame, sessionId: id, onShow: function (on) {
+              if (cls) cls.board(on); else el.hidden = !on;
+              if (board) board.fit();
+            } });
+            board.mount(el);
+          }
           return call.frame.join(j.token ? { url: url, token: j.token } : { url: url });
         });
       }).catch(function (e) { say('app_cl_join_error', e && e.message ? e.message : null); });
   }
   function leave(quiet) {
+    if (board) { board.destroy(); board = null; }
+    if (cls && !quiet) { cls.destroy(); cls = null; }
     if (!call) return;
     var c = call; call = null;
     try { var p = c.frame.leave(); if (p && p.catch) p.catch(function () {}); } catch (e) { /* already gone */ }
@@ -405,6 +443,18 @@
     root.__classes = true;
     root.addEventListener('click', function (e) {
       if (!C) return;
+      /* The board from a class (step L5): the written pages and the student's own exercise work, loaded when asked */
+      var bb = e.target.closest('[data-cl-board]');
+      if (bb && !bb.disabled && window.AlimunBoard && window.AlimunData.boardOf) {
+        var view = bb.parentNode.querySelector('[data-cl-boardview]');
+        bb.disabled = true;
+        window.AlimunData.boardOf(bb.getAttribute('data-cl-board')).then(function (saved) {
+          bb.hidden = true;
+          if (!saved.board) { view.innerHTML = '<p class="t-body">' + esc(t('app_bd_digest_empty')) + '</p>'; return; }
+          window.AlimunBoard.create({ A: A, role: 'viewer', data: saved.board, work: saved.work.map(function (w) { return Object.assign({}, w, { own: true }); }) }).mount(view);
+        }, function () { bb.disabled = false; view.innerHTML = '<p class="t-small st-msg is-bad">' + esc(t('app_bd_load_error')) + '</p>'; });
+        return;
+      }
       var el = e.target.closest('[data-cl]');
       if (!el || el.disabled) return;
       var a = el.getAttribute('data-cl');
@@ -418,6 +468,7 @@
       else if (a === 'cancelno') el.closest('[data-cancelbox]').innerHTML = '';
       else if (a === 'cancelyes') cancel(el.getAttribute('data-id'), el);
       else if (a === 'ics') ics();
+      else if (a === 'buy' && window.AlimunPlans) AlimunPlans.buyExtra(A, el, root.querySelector('[data-buymsg]'));
     });
     /* The countdown and the Join button follow the clock */
     setInterval(function () {
@@ -437,7 +488,21 @@
     A = helpers; root = view;
     leave();
     bind();
+    if (window.AlimunFind) AlimunFind.bind(view, helpers);
     document.body.classList.remove('is-reading');
+    /* Finding a class, an offered place and reviews live in js/app/find.js */
+    if (window.AlimunFind && AlimunFind.routes.indexOf(parts[0]) > -1) {
+      view.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div></div>';
+      return AlimunFind.mount(view, parts, helpers).then(function (res) {
+        if (my !== mountNo) return { stale: true };
+        view.innerHTML = res.html;
+        return res;
+      }, function (e) {
+        console.warn('[Alimun] Finding a class did not load', e && e.message);
+        if (my === mountNo) view.innerHTML = errorView();
+        return { title: t('app_nav_classes') };
+      });
+    }
     view.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div></div>';
     var keep = C && { month: C.month, day: C.day };
     return load().then(function (d) {
@@ -458,7 +523,15 @@
     }).then(function (res) {
       if (res.stale || my !== mountNo) return { stale: true };
       view.innerHTML = res.html;
-      if (res.live) join(res.live.kind, res.live.id);
+      var buy = view.querySelector('[data-buylabel]');
+      if (buy && window.AlimunPlans) AlimunPlans.extraLabel(A).then(function (l) { if (buy.isConnected) buy.textContent = l; });
+      if (res.live) {
+        var it = res.live.kind === 'b' ? null : C.sessions.filter(function (x) { return x.id === res.live.id; })[0];
+        cls = window.AlimunClassroom.start({ root: root, A: A, role: 'student', cohortId: it ? it.cohort_id : null, sample: C.sample,
+          sampleMsgs: [{ id: 'm1', sender_user: 't', sender_role: 'teacher', sender_name: 'Ana', body: 'Welcome! Open your book at page 12.', created_at: new Date(Date.now() - 3 * 60000).toISOString() }],
+          onLayout: function () { if (board) board.fit(); } });
+        join(res.live.kind, res.live.id);
+      }
       if (FLASH && root.querySelector('.cl-up, .cl-oto')) {
         var where = root.querySelector('.cl-oto') || root.querySelector('.cl-up');
         where.insertAdjacentHTML('afterbegin', '<p class="t-body cl-flash" role="status">' + esc(t(FLASH)) + '</p>');

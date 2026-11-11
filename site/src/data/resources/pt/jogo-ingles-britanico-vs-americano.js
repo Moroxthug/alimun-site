@@ -1,0 +1,37 @@
+// Resource: game. British and American words for the same thing. English words stay English; questions and explanations are in Portuguese. Checked against Cambridge Dictionary (UK/US labels).
+export default {
+  key: 'british-american', site: 'pt', slug: 'jogo-ingles-britanico-vs-americano', kind: 'game', course: 'English', level: 'Todos os níveis',
+  draw: 'suitcase', tint: 'coral', published: '2026-10-27',
+  title: 'Inglês britânico ou americano? O jogo das palavras',
+  metaTitle: 'Jogo inglês britânico vs americano: flat ou apartment? – Alimun',
+  desc: 'Um jogo grátis com palavras britânicas e americanas para a mesma coisa: flat ou apartment, lift ou elevator, chips ou fries. Dez perguntas, todas explicadas.',
+  lead: 'Um flat em Londres é um apartment em Nova York, e as chips britânicas são as fries americanas. Teste você mesmo com dez palavras do dia a dia.',
+  instructions: 'Escolha a palavra certa.',
+  about: [
+    'O inglês britânico e o americano têm quase toda a gramática e a maioria das palavras em comum, mas dezenas de coisas do dia a dia têm nomes diferentes de cada lado do Atlântico.',
+    'As duas formas estão certas. O importante é ser coerente e conhecer as duas para entender todo mundo, das séries britânicas aos filmes americanos.',
+  ],
+  items: [
+    { q: 'Um "flat" britânico, em inglês americano, é...', options: ['apartment', 'condo', 'studio', 'house'], a: 0, why: 'Flat no Reino Unido = apartment nos Estados Unidos.' },
+    { q: 'Um "elevator" americano, em inglês britânico, é...', options: ['escalator', 'lift', 'hoist', 'stairs'], a: 1, why: 'Elevator nos Estados Unidos = lift no Reino Unido.' },
+    { q: 'As "chips" britânicas, em inglês americano, são...', options: ['chips', 'crisps', 'fries', 'wedges'], a: 2, why: 'Chips no Reino Unido = (French) fries nos Estados Unidos. As chips americanas são as crisps britânicas, as batatas de pacote.' },
+    { q: 'Os "cookies" americanos, em inglês britânico, são...', options: ['biscuits', 'scones', 'cakes', 'crackers'], a: 0, why: 'Cookie nos Estados Unidos = biscuit no Reino Unido.' },
+    { q: 'Nos Estados Unidos, "pants" é o que os britânicos chamam de...', options: ['underwear', 'trousers', 'shorts', 'jeans'], a: 1, why: 'Pants nos Estados Unidos = trousers no Reino Unido. No inglês britânico, pants é roupa de baixo, então cuidado.' },
+    { q: 'O "rubbish" britânico, em inglês americano, é...', options: ['litter', 'dust', 'scraps', 'trash'], a: 3, why: 'Rubbish no Reino Unido = trash (ou garbage) nos Estados Unidos.' },
+    { q: 'Uma "vacation" americana, em inglês britânico, é...', options: ['break', 'holiday', 'leave', 'trip'], a: 1, why: 'Vacation nos Estados Unidos = holiday no Reino Unido.' },
+    { q: 'Os britânicos fazem "queue". Os americanos ficam em...', options: ['a row', 'a line', 'a crowd', 'a group'], a: 1, why: 'Queue no Reino Unido = line nos Estados Unidos.' },
+    { q: 'Um americano abastece o carro com "gas". Um motorista britânico usa...', options: ['fuel oil', 'diesel', 'petrol', 'benzine'], a: 2, why: 'Gas (gasoline) nos Estados Unidos = petrol no Reino Unido.' },
+    { q: 'Um "mobile" britânico, em inglês americano, é...', options: ['cell phone', 'smartphone', 'pager', 'landline'], a: 0, why: 'Mobile (phone) no Reino Unido = cell phone nos Estados Unidos.' },
+  ],
+  pairs: [
+    ['Reino Unido: flat', 'EUA: apartment'],
+    ['Reino Unido: lift', 'EUA: elevator'],
+    ['Reino Unido: chips', 'EUA: fries'],
+    ['Reino Unido: crisps', 'EUA: chips'],
+    ['Reino Unido: biscuit', 'EUA: cookie'],
+    ['Reino Unido: trousers', 'EUA: pants'],
+    ['Reino Unido: holiday', 'EUA: vacation'],
+    ['Reino Unido: queue', 'EUA: line'],
+  ],
+  related: ['english-idioms', 'cefr-poster', 'en-quiz-a2'],
+};

@@ -1,0 +1,157 @@
+// English false friends. Checked 1 Nov 2026 against Cambridge Dictionary (false friend, actually, eventually, sensible, embarrassed,
+// constipated, library, fabric, parent, pretend, college, exquisite, chip, argument, assist; Spanish-, Italian-, French- and Portuguese-English
+// entries for embarazada, actualmente, attualmente, actuellement, atualmente, eventualmente, éventuellement, libreria, librairie, parenti,
+// pretender, puxar, esquisito, colegio, collège, colégio), Oxford Learner's Dictionaries (actually, eventually, sensible, sensitive, chip, crisp,
+// college, morbid), Treccani (libreria, morbido, sensibile, eventuale, attuale) and Michaelis (pretender, puxar, esquisito, colégio, parente).
+// Kept consistent with the false friends game in site/src/data/resources/en/false-friends-game.js.
+export default {
+  key: 'english-false-friends',
+  site: 'en',
+  slug: 'english-false-friends',
+  section: 'vocabulary',
+  course: 'English',
+  published: '2026-11-01',
+  updated: '2026-11-01',
+  title: 'English false friends: words that look familiar and mean something else',
+  metaTitle: 'English false friends: the most common ones and how to avoid them – Alimun',
+  desc: 'Actually, eventually, sensible, library, embarrassed: the English false friends that trick Italian, Spanish, French and Portuguese speakers, and what to say instead.',
+  lead: "Some English words look exactly like a word you already know, and that is the trap. Actually does not mean “currently”, a library does not sell books, and someone who is embarrassed is not expecting a baby. **These words are called false friends**, and once you know the common ones, they stop catching you out.",
+  photo: 'english-false-friends-library-aisle',
+  sticker: { draw: 'parrot', say: 'Actually means “in fact”, not “right now”!' },
+  facts: [
+    { label: 'faux amis', text: 'the French name for false friends, made popular by a 1928 book by Maxime Koessler and Jules Derocquigny' },
+    { label: 'actually', text: 'means “in fact” or “really”; to say “at the moment” in English, use currently' },
+    { label: 'library', text: 'a place where you borrow books; the place where you buy them is a bookstore, or a bookshop in British English' },
+    { n: 4, unit: 'languages', text: 'Italian, Spanish, French and Portuguese all have a word like actually that means “currently”' },
+  ],
+  blocks: [
+    { take: { title: 'The short answer', text: "A false friend is a word that looks or sounds like a word in your language but means something different. **Most of them come from the same Latin root**, and the meaning drifted apart over the centuries. The classics are actually (in fact, not currently), eventually (in the end, not possibly), sensible (reasonable, not sensitive) and library (a place to borrow books, not a bookstore). Learn them in pairs, inside a full sentence, and the mistake goes away.", draw: 'owl' } },
+
+    { h: 'What a false friend is' },
+    { p: "The Cambridge Dictionary defines a false friend as a word that is often confused with a word in another language with a different meaning, **because the two words look or sound similar**. The name comes from French: faux amis, made popular by a 1928 book by Maxime Koessler and Jules Derocquigny about the traps of English vocabulary for French translators. Linguists also call them deceptive cognates." },
+    { p: "False friends are a problem precisely because they feel safe. When you meet a completely new word, you look it up. When you meet a word that looks like one you already know, you assume you understand it, and you move on. That is how a Spanish speaker ends up saying “I'm embarrassed” to mean pregnant, or an Italian student reads that something will happen “eventually” and thinks it **might** happen, when in fact it will happen, only later." },
+    { p: "The good news is that most similar-looking words are true friends. Information, possible, important, family and hundreds of others mean the same thing in English and in the Romance languages. **The false ones are a limited group**, and the most common of them come up again and again, in every class and every exam." },
+
+    { h: 'Why false friends exist' },
+    { p: "English is a Germanic language, but a very large part of its vocabulary came from French after the Norman Conquest of 1066, and from Latin through the language of the church, science and law. Italian, Spanish, French and Portuguese all grew out of Latin too. So English and these languages share thousands of roots, and **a shared root does not guarantee a shared meaning**." },
+    { p: "Words keep moving after they are borrowed. Actual comes from the Latin actualis, connected with acting and doing. In the Romance languages it settled on the sense of “present, current”: the Treccani dictionary gives that as the everyday meaning of the Italian attuale. In English it moved towards “real, existing in fact”, which is why **actually** means “in fact” and not “at the moment”." },
+    { p: "Morbid is another good example. The Latin morbidus comes from morbus, disease, and English kept that link: the Oxford Learner's Dictionaries define morbid as having a strong interest in sad or unpleasant things, especially disease or death. Italian went a different way, and **morbido** now means soft, as in un cuscino morbido, a soft pillow." },
+    { note: { title: 'The old meaning sometimes survives', text: "Sensible once meant “perceived by the senses” or “aware” in English too. The Oxford Learner's Dictionaries still list “aware of something” as a formal sense, as in **sensible of the danger**. In everyday English today, though, sensible means practical and reasonable, and the word for the Romance meaning is sensitive.", draw: 'cat' } },
+
+    { h: 'The false friends that catch almost everyone' },
+    { p: "Some false friends trip up speakers of all four Romance languages at once, because the same Latin word lives on in each of them with the same shift in meaning. If you learn **this group first**, you have covered the mistakes teachers hear most often, whatever your first language." },
+    { table: {
+      head: ['English word', 'Looks like', 'What it really means', 'What to say instead'],
+      rows: [
+        ['actually', 'attualmente, actualmente, actuellement, atualmente', 'in fact, really', 'currently, at the moment, nowadays'],
+        ['eventually', 'eventualmente, éventuellement', 'in the end, after a long time', 'possibly, if necessary; occasionally (Portuguese)'],
+        ['sensible', 'sensibile, sensible, sensível', 'practical, reasonable', 'sensitive'],
+        ['library', 'libreria, librería, librairie, livraria', 'a place where you borrow books', 'bookstore (US), bookshop (UK)'],
+        ['fabric', 'fabbrica, fábrica', 'cloth, material', 'factory'],
+        ['parents', 'parenti, parientes, parentes', 'your mother and father', 'relatives'],
+        ['pretend', 'pretendere, pretender, prétendre', 'to act as if something is true', 'to intend, to expect, to claim'],
+        ['college', 'collegio, colegio, collège, colégio', 'a place of higher education', 'school'],
+        ['assist', 'assistere, asistir, assister, assistir', 'to help', 'to attend (a class, a show)'],
+        ['embarrassed', 'embarazada (Spanish)', 'ashamed, uncomfortable', 'pregnant'],
+        ['exquisite', 'esquisito (Portuguese)', 'very beautiful and delicate', 'strange, weird'],
+        ['push', 'puxe, puxar (Portuguese)', 'to press something away from you', 'pull'],
+      ],
+      note: 'The French parents means both parents and relatives, and the French collège is a school for children of about 11 to 15, so the last two columns depend a little on your language.',
+    } },
+    { p: "Two of these deserve a closer look because they come up in almost every conversation. **Actually** is used to add a fact, to correct someone politely or to show surprise: “Actually, I've never been to London.” If you want to say that something is true now, use currently, at the moment or nowadays: “I'm currently working in Milan.”" },
+    { p: "**Eventually** means that something happens in the end, usually after a long time or a lot of effort: “We eventually found the hotel at midnight.” It is never uncertain. If you mean “possibly” or “if necessary”, as the Italian eventualmente and the French éventuellement do, say if necessary, if needed or possibly: “Call me if necessary.”" },
+
+    { p: "One more pair belongs here because it comes up at school and at work. A **lecture** in English is a formal talk on a serious subject, given to a group of people, especially students, and it can also be a long, serious talk telling someone off. It is never reading, which is lettura in Italian, lectura in Spanish, lecture in French and leitura in Portuguese. “I have a lecture at nine” means you are going to listen to a talk, not to read a book." },
+
+    { figure: { photo: 'english-false-friends-factory', alt: "A woman working at a machine in a small textile factory, among racks of thread", caption: 'A factory is a fábrica in Spanish and a fabbrica in Italian. The English fabric means cloth, the material a factory like this might weave.' } },
+
+    { h: 'Partial false friends' },
+    { p: "Not every false friend is completely false. Some words share one meaning with your language and differ in another, and these **partial false friends** are trickier than the total ones, because you are right part of the time. The English argument can be a reason that supports an idea, as in the Italian argomento, but it also means a disagreement, a row: “They had an argument about money.” The everyday Italian argomento, meanwhile, is usually a topic." },
+    { p: "College is another one. In the US, college usually means a university where you study for a degree. In the UK, it can also mean a place where people study or train after they leave school. Neither is the place where children go to school, which is what **colégio** means in Brazil and colegio in Spain. Educated is partial too: an educated person has studied a lot, while the Italian educato usually means polite." },
+    { examples: [
+      ['We had a long **argument** about where to go on vacation.', 'a disagreement, not just a topic'],
+      ['Her main **argument** is that the plan costs too much.', 'a reason that supports an idea: the meaning English shares with argomento'],
+      ['My brother is in **college**; he studies engineering.', 'in American English, at university'],
+      ['She is very **educated**, but not always very polite.', 'educated means she has studied a lot'],
+    ] },
+    { p: "Agenda is a quieter partial friend. In English, an **agenda** is a list of matters to be discussed at a meeting, or a set of aims, sometimes hidden ones. In Italian and Spanish, agenda is also the little book where you write your appointments, which in English is a planner, or a diary in British English." },
+    { note: { title: 'Chips have three meanings', text: "In British English, **chips** are long fried potatoes, what Americans call fries or French fries. In American English, chips are thin, crunchy slices sold in bags, which the British call crisps. The French chips are those crunchy slices too. Same word, three different plates, depending on where you are.", draw: 'snail' } },
+
+    { h: 'How to spot a false friend in a text' },
+    { p: "When you read, context usually warns you before a dictionary does. If you translate a word with the meaning you expected and the sentence suddenly sounds odd, **stop and check that word**. “The project was eventually approved after three years of meetings” makes no sense as “possibly approved after three years”, so the familiar-looking word must mean something else." },
+    { p: "Adverbs are the most frequent troublemakers, because they are short, they come up in almost every paragraph and they rarely change the grammar of the sentence around them. Actually, eventually and the Spanish and Portuguese actualmente and atualmente slip by without making a sentence look wrong. Adjectives that describe people, such as **sensible, sympathetic and educated**, come next: in English, a sympathetic friend is one who understands and cares about your problems, not simply a nice one, which in French would be sympathique." },
+    { examples: [
+      ['The project was **eventually** approved after three years of meetings.', 'it was approved in the end, after a long wait'],
+      ['He was very **sympathetic** when I told him about the accident.', 'he showed that he understood and cared'],
+      ['Wearing **sensible** shoes is a good idea for the hike.', 'practical, comfortable shoes, not fashionable ones'],
+      ['Our **current** teacher is from Dublin.', 'the one we have now: in English, current, not actual'],
+    ] },
+    { note: { title: 'Embarazada, the classic', text: "If you feel awkward after a mistake, the English is “I'm so embarrassed”. Translate that back into Spanish as **“estoy embarazada”** and you are telling everyone that you are pregnant. The Spanish for embarrassed is avergonzado, or simply “me da vergüenza”, and the English for embarazada is pregnant.", draw: 'dog' } },
+
+    { cta: true },
+
+    { h: 'If your language is Italian' },
+    { p: "Italian speakers meet the general group above, plus some of their own. **Camera** is a room, while an English camera is a macchina fotografica. Parenti are relatives, and your parents are i genitori. Libreria is a bookshop, or a bookcase at home, and the place where you borrow books is a biblioteca, which is the English library." },
+    { p: "Fattoria is a farm, so it has nothing to do with the English factory, which is a fabbrica. Morbido means soft, while **morbid** describes an unhealthy interest in death and disease. Annoiare is to bore, while to annoy means to irritate, which is infastidire. Sensibile is sensitive, and a sensible decision is una decisione sensata." },
+    { figure: { photo: 'english-false-friends-family', alt: "A mother, a father and their two children lying on the grass with their dog", caption: "A mother and a father are their children's parents: genitori in Italian, padres in Spanish, pais in Portuguese. Aunts, uncles and cousins are relatives, the parenti, parientes and parentes." } },
+
+    { h: 'If your language is Spanish' },
+    { p: "The most famous Spanish false friend is **embarazada**, which means pregnant. If you feel awkward or ashamed, you are embarrassed, which is avergonzado or “me da vergüenza”. Constipado is another one: in Spain it usually means you have a cold, while constipated in English means only one thing, and the Spanish word for it is estreñido." },
+    { p: "Carpeta is a folder, while a **carpet** is a floor covering, an alfombra or a moqueta. Actual in Spanish means current, present, so “the actual government” in English would be the real government, not el gobierno actual, which is the current government. Éxito is success, while exit is salida. Realizar is to carry out, while to realize means to understand something, often suddenly: darse cuenta." },
+
+    { figure: { photo: 'english-false-friends-lecture', alt: "People sitting in a large conference hall, waiting for a talk to begin", caption: 'These people are attending a talk. Assistere, asistir, assister and assistir all mean to attend; in English, to assist means to help.' } },
+
+    { h: 'If your language is French' },
+    { p: "French speakers share actuellement, éventuellement, sensible and librairie with the general group. Actuellement means currently, so “actually” is en fait. Éventuellement means possibly, so “eventually” is finalement. Sensible is sensitive, so **sensible** in English is raisonnable or sensé. Librairie is a bookshop, and library is bibliothèque." },
+    { p: "A few more are worth knowing. Assister à means to attend, and to assist is to help. Location is a rental, while an English **location** is a place or position. Large means wide, while large in English means big. Raisin means grape, while an English raisin is a dried grape, a raisin sec. Coin is a corner, while a coin in English is money, une pièce." },
+    { figure: { photo: 'english-false-friends-chips', alt: "A bowl of potato chips next to a glass of dark beer", caption: "In American English these are chips, in British English they are crisps, and in French they are chips too. British chips are what Americans call fries." } },
+
+    { h: 'If your language is Portuguese' },
+    { p: "Brazilian learners know the trap on doors: **puxe** means pull, and push is empurre. Pretender means to intend, so “eu pretendo viajar” is “I intend to travel”, while to pretend is fingir. Esquisito means strange, odd, while **exquisite** is very beautiful and delicate, requintado or primoroso." },
+    { p: "**Parentes** are relatives, and your parents are seus pais. Colégio is a school, while college is faculdade or universidade. Pasta is a folder or a briefcase, while pasta in English is massa. Atualmente means currently, and eventualmente means occasionally, so neither one matches actually or eventually. Costume is a habit, while a costume in English is what you wear in a play or at a party, a fantasia." },
+
+    { h: 'Common mistakes' },
+    { p: "These sentences are typical of what teachers hear at A2 and B1, and **each one uses a false friend** from this article." },
+    { mistakes: [
+      ['Actually I work in a bank, but I want to change jobs.', '**Currently** I work in a bank, but I want to change jobs.', 'Actually means “in fact”; for “at the moment”, use currently.'],
+      ['Eventually, call me tomorrow.', '**If necessary**, call me tomorrow.', 'Eventually means “in the end”, never “possibly” or “if needed”.'],
+      ['He cries at every film; he is very sensible.', 'He cries at every film; he is very **sensitive**.', 'Sensible means practical and reasonable; sensitive is about feelings.'],
+      ['I bought this novel at the library.', 'I bought this novel at the **bookstore**.', 'You borrow books from a library; you buy them in a bookstore or bookshop.'],
+      ['All my parents came to the wedding: aunts, uncles and cousins.', 'All my **relatives** came to the wedding.', 'Parents are only your mother and father.'],
+      ['I pretend to finish the course by June.', 'I **intend** to finish the course by June.', 'To pretend is to act as if something is true; to plan is to intend.'],
+    ] },
+    { quote: 'A word that looks familiar is not always a word you know.' },
+
+    { h: 'How to learn false friends' },
+    { p: "The first habit is to **learn them in pairs**, the English word next to the word in your language that looks like it, with the right meaning of each. Writing “actually = in fact; attualmente = currently” on one card works better than learning the two words on different days, because the confusion itself is what you need to correct." },
+    { p: "The second habit is to learn every false friend inside a full sentence. A single word is easy to mix up again; “We eventually found the hotel at midnight” is a little story, and stories stick. Say the sentence aloud a few times. **Your mouth needs practice as much as your memory**, because false friends tend to slip out when you speak quickly." },
+    { p: "Third, be suspicious of any word that looks exactly like your own, especially an adverb or an adjective. If a sentence does not quite make sense with the meaning you expected, check a learner's dictionary such as Cambridge or Oxford. A quick game helps too: **Alimun's false friends game** puts several of the words in this article on cards, and you guess what each one really means before you flip it." },
+    { p: "Finally, practice with people who will notice the mistake. False friends rarely stop a conversation, so nobody corrects them, and they become habits. At Alimun, **your teacher corrects your homework** and you meet the same small group in live classes every week, and the words from your classes come back as flashcards after each lesson, so a false friend you mixed up once is one you review until it sticks." },
+  ],
+  quiz: [
+    { q: "What does “actually” mean in “Actually, I've never been to London”?", options: ['at the moment', 'in fact', 'possibly', 'finally'], a: 1, why: 'Actually means “in fact” or “really”. For “at the moment”, English uses currently.' },
+    { q: 'Which sentence uses “eventually” correctly?', options: ['Call me eventually if you need help.', 'We eventually found the hotel at midnight.', 'Eventually it will rain, or maybe not.', 'I eventually work in a bank at the moment.'], a: 1, why: 'Eventually means “in the end, after a long time”, so it fits a result that finally happened.' },
+    { q: 'Your friend cries at every film. In English, she is very…', options: ['sensitive', 'sensible', 'sensational', 'sensual'], a: 0, why: 'Sensitive is about feelings. Sensible means practical and reasonable.' },
+    { q: 'Where do you go to buy a novel?', options: ['a library', 'a college', 'a factory', 'a bookstore'], a: 3, why: 'You buy books in a bookstore or bookshop; a library is where you borrow them.' },
+    { q: 'What does the Spanish word embarazada mean?', options: ['embarrassed', 'pregnant', 'ashamed', 'confused'], a: 1, why: 'Embarazada means pregnant. Embarrassed is avergonzado.' },
+    { q: 'In English, your aunts, uncles and cousins are your…', options: ['relatives', 'parents', 'neighbors', 'colleagues'], a: 0, why: 'Parents are only your mother and father; the wider family are your relatives.' },
+    { q: 'What is “fabric” in English?', options: ['a factory', 'a farm', 'cloth or material', 'a building'], a: 2, why: 'Fabric is cloth. A factory is fabbrica in Italian and fábrica in Spanish and Portuguese.' },
+    { q: 'On a door in Brazil, “puxe” tells you to…', options: ['push', 'knock', 'pull', 'lock'], a: 2, why: 'Puxe means pull. Push is empurre.' },
+  ],
+  faq: [
+    ['What is a false friend in English?', 'A word that looks or sounds like a word in another language but has a different meaning, such as actually, which means “in fact” and not “currently”. The French name is faux amis.'],
+    ['Why do English and the Romance languages have so many false friends?', 'Because they share thousands of Latin roots, many of them borrowed into English through French. Once a word was shared, its meaning kept developing separately in each language.'],
+    ['What is a partial false friend?', 'A word that shares one meaning with a word in your language and differs in another. Argument, for example, can be a reason supporting an idea, like the Italian argomento, but it also means a disagreement.'],
+    ['Which false friends should I learn first?', 'Start with the ones that affect speakers of all Romance languages: actually, eventually, sensible, library, parents, pretend and assist. Then add the ones specific to your own language.'],
+    ['Are most similar-looking words false friends?', 'No. Most words that look alike in English and the Romance languages, such as information, possible or important, mean the same thing. False friends are a limited group, which is why learning the common ones pays off.'],
+  ],
+  related: ['phrasal-verbs', 'practise-speaking', 'cefr-english'],
+  sources: [
+    ['Cambridge Dictionary: false friend', 'https://dictionary.cambridge.org/dictionary/english/false-friend'],
+    ["Oxford Learner's Dictionaries: actually", 'https://www.oxfordlearnersdictionaries.com/definition/english/actually'],
+    ["Oxford Learner's Dictionaries: eventually", 'https://www.oxfordlearnersdictionaries.com/definition/english/eventually'],
+    ["Oxford Learner's Dictionaries: sensible", 'https://www.oxfordlearnersdictionaries.com/definition/english/sensible'],
+    ['Cambridge Spanish-English Dictionary: embarazada', 'https://dictionary.cambridge.org/dictionary/spanish-english/embarazada'],
+    ['Treccani: attuale', 'https://www.treccani.it/vocabolario/attuale/'],
+  ],
+};
