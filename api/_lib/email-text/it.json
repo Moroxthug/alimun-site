@@ -223,5 +223,15 @@
     "done_declined": "La candidatura di **{name}** è stata rifiutata e l'account segnato come sospeso.",
     "emailed": "È stata inviata un'email di avviso a **{email}**.",
     "not_emailed": "Non è stato possibile inviare l'email di avviso."
+  },
+  "withdrawal": {
+    "subject": "Abbiamo ricevuto il tuo recesso",
+    "preheader": "Ricevuto il {when}.",
+    "heading": "Abbiamo ricevuto il tuo recesso",
+    "body": "Abbiamo ricevuto il tuo recesso il **{when}**. Questa e-mail è la tua conferma.",
+    "contract": "Acquisto: **{contract}**",
+    "reason": "Il tuo motivo: {reason}",
+    "refund": "Ti rimborsiamo entro 14 giorni, con lo stesso metodo di pagamento. Se hai chiesto che le lezioni iniziassero durante il periodo di recesso, le lezioni già svolte vengono detratte. Se l'acquisto è un abbonamento, lo chiudiamo noi; non devi disdirlo tu.",
+    "footer": "Ricevi questa e-mail perché hai esercitato il recesso da un acquisto su alimun.com."
   }
 }

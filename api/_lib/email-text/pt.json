@@ -223,5 +223,15 @@
     "done_declined": "A candidatura de **{name}** foi recusada e a conta marcada como suspensa.",
     "emailed": "Foi enviado um e-mail de aviso para **{email}**.",
     "not_emailed": "Não foi possível enviar o e-mail de aviso."
+  },
+  "withdrawal": {
+    "subject": "Recebemos a sua desistência",
+    "preheader": "Recebida em {when}.",
+    "heading": "Recebemos a sua desistência",
+    "body": "Recebemos a sua desistência em **{when}**. Este e-mail é a sua confirmação.",
+    "contract": "Compra: **{contract}**",
+    "reason": "O seu motivo: {reason}",
+    "refund": "Reembolsamos o que pagou no prazo de 14 dias, pelo mesmo meio de pagamento. Se pediu que as aulas começassem durante o prazo de desistência, as aulas já dadas são descontadas. Se a compra for uma assinatura, terminamo-la nós; não precisa de a cancelar.",
+    "footer": "Recebe este e-mail porque desistiu de uma compra em alimun.com."
   }
 }

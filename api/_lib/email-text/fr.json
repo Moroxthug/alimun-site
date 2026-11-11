@@ -223,5 +223,15 @@
     "done_declined": "La candidature de **{name}** a été refusée et le compte marqué comme suspendu.",
     "emailed": "Un e-mail de notification a été envoyé à **{email}**.",
     "not_emailed": "L'e-mail de notification n'a pas pu être envoyé."
+  },
+  "withdrawal": {
+    "subject": "Nous avons reçu votre rétractation",
+    "preheader": "Reçue le {when}.",
+    "heading": "Nous avons reçu votre rétractation",
+    "body": "Nous avons reçu votre rétractation le **{when}**. Cet e-mail en est la confirmation.",
+    "contract": "Achat : **{contract}**",
+    "reason": "Votre motif : {reason}",
+    "refund": "Nous vous rembourserons dans un délai de 14 jours, par le moyen de paiement utilisé. Si vous avez demandé que les cours commencent pendant le délai de rétractation, les cours déjà donnés sont déduits. Si l'achat est un abonnement, nous y mettons fin ; vous n'avez rien à résilier vous-même.",
+    "footer": "Vous recevez cet e-mail parce que vous vous êtes rétracté d'un achat sur alimun.com."
   }
 }

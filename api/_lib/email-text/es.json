@@ -223,5 +223,15 @@
     "done_declined": "La solicitud de **{name}** se ha rechazado y la cuenta se ha marcado como suspendida.",
     "emailed": "Se ha enviado un correo de aviso a **{email}**.",
     "not_emailed": "No se pudo enviar el correo de aviso."
+  },
+  "withdrawal": {
+    "subject": "Hemos recibido tu desistimiento",
+    "preheader": "Recibido el {when}.",
+    "heading": "Hemos recibido tu desistimiento",
+    "body": "Hemos recibido tu desistimiento el **{when}**. Este correo es tu confirmación.",
+    "contract": "Compra: **{contract}**",
+    "reason": "Tu motivo: {reason}",
+    "refund": "Te devolveremos lo que pagaste en un plazo de 14 días, con el mismo medio de pago. Si pediste que las clases empezaran durante el plazo de desistimiento, se descuentan las clases ya impartidas. Si la compra es una suscripción, la cancelamos nosotros; no tienes que hacerlo tú.",
+    "footer": "Recibes este correo porque desististe de una compra en alimun.com."
   }
 }

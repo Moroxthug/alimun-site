@@ -223,5 +223,15 @@
     "done_declined": "The application from **{name}** has been declined and the account marked as suspended.",
     "emailed": "A notification email has been sent to **{email}**.",
     "not_emailed": "The notification email could not be sent."
+  },
+  "withdrawal": {
+    "subject": "We received your withdrawal",
+    "preheader": "Received on {when}.",
+    "heading": "We received your withdrawal",
+    "body": "We received your withdrawal on **{when}**. This email is your confirmation.",
+    "contract": "Purchase: **{contract}**",
+    "reason": "Your reason: {reason}",
+    "refund": "We will refund what you paid within 14 days, to the payment method you used. If you asked for classes to start during the withdrawal period, the classes already given are deducted. If the purchase is a subscription, we end it; you do not need to cancel it yourself.",
+    "footer": "You received this email because you withdrew from a purchase on alimun.com."
   }
 }

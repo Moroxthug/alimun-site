@@ -223,5 +223,15 @@
     "done_declined": "Die Bewerbung von **{name}** wurde abgelehnt und das Konto als gesperrt markiert.",
     "emailed": "Eine Benachrichtigung wurde an **{email}** gesendet.",
     "not_emailed": "Die Benachrichtigung konnte nicht gesendet werden."
+  },
+  "withdrawal": {
+    "subject": "Wir haben Ihren Widerruf erhalten",
+    "preheader": "Eingegangen am {when}.",
+    "heading": "Wir haben Ihren Widerruf erhalten",
+    "body": "Ihr Widerruf ist am **{when}** bei uns eingegangen. Diese E-Mail ist Ihre Bestätigung.",
+    "contract": "Kauf: **{contract}**",
+    "reason": "Ihr Grund: {reason}",
+    "refund": "Wir erstatten Ihre Zahlung innerhalb von 14 Tagen über das Zahlungsmittel, mit dem Sie bezahlt haben. Wenn Sie verlangt haben, dass der Unterricht während der Widerrufsfrist beginnt, werden die bereits erteilten Stunden abgezogen. Ist der Kauf ein Abonnement, beenden wir es; Sie müssen nichts selbst kündigen.",
+    "footer": "Sie erhalten diese E-Mail, weil Sie einen Kauf auf alimun.com widerrufen haben."
   }
 }
