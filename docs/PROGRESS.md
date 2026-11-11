@@ -1844,3 +1844,10 @@ Owner asked to clear the advisor's warnings about SECURITY DEFINER functions; pl
 - Fixed `guard_teacher_profile_admin_fields`: a browser-side teacher insert set `badges` to null on a NOT NULL column. Now `'{}'`. `supabase/migrations/202611112100_teacher_guard_badges.sql`, applied and verified. Live applications use the service role through api/admin/teacher.js and were never affected.
 - Tests brought up to date: teachers can no longer write class dates directly (admin and API only), so "complete own session" and "change session created_at" expect denied. Supabase blocks DELETE on storage.objects from SQL, so the two file-delete checks now test the delete policy's condition as a read. A direct student signup now gets tier `free` (or `waitlist`), and founding_member can no longer be claimed.
 - Result after the fix: 162 of 162 pass.
+
+## 2026-11-11 — Performance advisor fixes
+
+- `supabase/migrations/202611112200_rls_initplan_fk_indexes.sql`, applied statement by statement and verified (0 unwrapped policies, 7 new indexes).
+- Eight RLS policies now call `(select auth.uid())` so it runs once per query instead of per row: entitlements_read, customer_pricing_read, withdrawal_requests_own_read, message_reads_select/insert/update, one_on_one_student_read, one_on_one_teacher_read. Same roles, commands and conditions.
+- Indexes added for the foreign keys the dashboards filter on: cohorts.teacher_id, assignments.teacher_id, session_attendance.student_id, message_threads.teacher_id, cohort_waitlist.student_id, teacher_reviews.student_id, session_board_work.user_id.
+- RLS tests still 162/162. Performance advisor: the per-row auth warning is gone (8 to 0), unindexed foreign keys 22 to 15 (admin "who did this" columns, left alone). The 7 new indexes show as "unused" until traffic reaches them. Left as they are: 10 "multiple permissive policies" warnings (admin plus normal read rules; merging them means reworking the rules for a small gain) and the older unused indexes on quiet tables. Security advisor unchanged.
