@@ -192,7 +192,7 @@ Run three monthly start dates and measure, each month: the share of app users wh
 - Stripe Canada's actual fees (the margins use Stripe Ireland's).
 - Canadian GST/HST registration and the EU's non-Union OSS registration before the first EU sale of the app.
 - Contractor agreement per country, Morocco's 30% single-client withholding above MAD 80,000, and the owner's work permit conditions (open or employer-specific) before taking an active role.
-- The owner's rule that public copy does not mention AI, against the EU AI Act's duty to tell people when they talk to an AI (from August 2026).
+- AI wording (owner, 11 Nov 2026): features that use AI may be named as AI, and must be where the EU AI Act requires it; Alimun as a whole is not branded as AI (CLAUDE.md).
 - Launch-day exchange rates for every local price.
 - Cash: about €30,000 to €50,000 to reach break-even (base case), plus the owner's living costs until a salary starts, plus six months in reserve before paid advertising (CFO).
 - Pricing engine: technical spec and build plan in `docs/PRICING_ENGINE_SPEC.md`.
