@@ -122,6 +122,26 @@
       "status": 301
     },
     {
+      "src": "/((?:ar|de|es|fr|it|ma|pt|zh)/)?privacy(\\.html)?",
+      "headers": { "Location": "/$1gdpr" },
+      "status": 308
+    },
+    {
+      "src": "/((?:ar|de|es|fr|it|ma|pt|zh)/)?about(\\.html)?",
+      "headers": { "Location": "/$1about-us" },
+      "status": 308
+    },
+    {
+      "src": "/((?:ar|de|es|fr|it|ma|pt|zh)/)?(login|admin-login|teacher-login)(\\.html)?",
+      "headers": { "Location": "/$1signin" },
+      "status": 308
+    },
+    {
+      "src": "/blog/learn-english-fast-2026",
+      "headers": { "Location": "/blog/how-long-does-it-take-to-learn-english" },
+      "status": 308
+    },
+    {
       "src": "/(.*)",
       "dest": "/$1"
     }
