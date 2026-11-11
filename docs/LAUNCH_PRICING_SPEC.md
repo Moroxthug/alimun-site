@@ -37,7 +37,7 @@ Each step costs less per class the more the learner commits. Money already paid 
 | Voice minutes, subscribers only, valid 12 months | 30 minutes €2.99; 120 minutes €8.99 | same |
 | Closed room for a company, up to 12, 12-week minimum | €79 (English) or €95 (German) per learner a month, excluding VAT, invoiced | — |
 
-Founding prices apply to everyone who joins before a closing date the owner sets, and stay for as long as the learner stays subscribed or keeps buying packs without a gap. The list price is what new learners pay after that date. The founding price is shown as its own price, never as a crossed-out list price.
+Founding prices apply to the first 500 paying learners who join before a closing date the owner sets. Each keeps the founding price for 12 months from their first payment, or until the end of the path they are on at that point (for example A1 to B1), whichever is later but never more than 18 months, as long as they have no gap of more than one month; then the list price applies, announced 30 days ahead. The founding price is shown as its own price, never as a crossed-out list price. (CFO, 11 Nov 2026: a known, capped cost instead of a permanent one.)
 
 Voice minutes included: free 10 once; app 60 a month (40 in Band B); open class 40; level and exam packs 120. Plan minutes reset monthly; bought minutes last 12 months and are used after plan minutes.
 
@@ -95,6 +95,9 @@ Band B gives the same margins within a point. The founding prices are thinner on
 - End of each pack: a level check decides the next pack. A learner who does not pass may repeat the pack once at 50%.
 - Exam pack guarantee: a learner who attends at least 90% of classes and does not pass gets the next 4 weeks free.
 - Rewards are paid in seats, never cash: a referral gives the referrer one free open-class month and the friend a free trial class, once the friend pays; full attendance over a pack gives one free help class. Rewards are given only to a card, phone and device different from the referrer's.
+- Company rooms: paid upfront or within 30 days of invoice, never classes taught on credit; no single company above about 25% of revenue.
+- Exam guarantee reserve: 5% of exam-pack revenue set aside until the fail rate among guaranteed learners is known.
+- Most Alimun pays to win one customer: €15 (app), €30 (open class), €60 (level or exam pack); a channel above that is stopped or fixed.
 - Learners under 18 are not accepted at launch.
 - Never: fake timers, invented counts, crossed-out prices nobody paid, pre-ticked extras, guilt wording on the cancel button. Seat counts come from the database.
 
@@ -186,3 +189,5 @@ Run three monthly start dates and measure, each month: the share of app users wh
 - Contractor agreement per country, Morocco's 30% single-client withholding above MAD 80,000, and the owner's work permit conditions (open or employer-specific) before taking an active role.
 - The owner's rule that public copy does not mention AI, against the EU AI Act's duty to tell people when they talk to an AI (from August 2026).
 - Launch-day exchange rates for every local price.
+- Cash: about €30,000 to €50,000 to reach break-even (base case), plus the owner's living costs until a salary starts, plus six months in reserve before paid advertising (CFO).
+- Pricing engine: technical spec and build plan in `docs/PRICING_ENGINE_SPEC.md`.
