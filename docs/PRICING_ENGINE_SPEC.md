@@ -63,7 +63,7 @@ Seed: `country_bands` for every ISO country (Band A list from the launch spec, a
    - **Band:** the card country's band. If the account already has a locked band, a higher band wins at once; a lower band only if `band_change_allowed_at` has passed and the card is issued in that band's country (then `set_band`, logged). Local methods, when added, set the band of their country.
    - **Currency:** the card country's currency if `price_book` has it for that band, else EUR (or USD for USD countries).
    - **Variant:** founding if the learner already has a founding lock that is still valid, or if `claim_founding_seat` succeeds (only on the first paid purchase); otherwise list.
-   - **Trial:** for `product_key = trial`, refuse if any marker (email, phone, card fingerprint, device) is already in `trial_markers`.
+   - **Trial:** for `product_key = trial`, refuse if any marker (email, card fingerprint, device) is already in `trial_markers`.
    - Writes a `quotes` row with a 15-minute expiry and returns the final price, currency, what is included and the room's start date. The page shows this before any charge: "Your card is from France, so your price is €72 a month."
 3. `POST ?action=purchase { quoteId }`: re-checks the quote (owner, expiry, unused, room still open or forming), then:
    - **App, open class, minutes, trial, help class:** charges or subscribes now (section 5).
@@ -106,7 +106,7 @@ The client never sends an amount, currency, band or Stripe price id. `api/stripe
 ## 7. Abuse checks
 
 - **Sign-up:** the existing captcha; at most 5 sign-ups per IP an hour and a daily cap per data-centre network (an ASN list), keyed by an HMAC of the IP as `api/_lib/subscribe.js` already does.
-- **Phone verification** before the 10 free tutor minutes, the trial or any reward: a text code through an SMS provider (to choose: Twilio Verify or MessageBird), refusing internet-only and throwaway numbers by line type. New `api/auth.js?action=phone-start` and `phone-check`; the phone is stored only as an HMAC.
+- **Phone verification: not at launch (owner, 11 Nov 2026).** The trial and rewards rely on the card fingerprint; the free 10 minutes on the captcha, the normalised email and, in the apps, the device check. If the weekly report shows abuse, add Supabase phone sign-in with an SMS provider (Twilio or MessageBird), refusing internet-only numbers.
 - **Email:** lower-cased; for Gmail, dots and `+tag` removed before hashing; a throwaway-domain list refused for free things.
 - **Device (apps only, later):** Apple App Attest or DeviceCheck and Google Play Integrity markers.
 - **Referral rewards** granted only after the referred learner's first payment, and only if card, phone and device markers differ from the referrer's; at most 5 rewards a month per referrer.
@@ -139,13 +139,13 @@ Each step ends with `npm run build`, `node --check` on changed `api/` files, the
 
 | Step | Contents | Depends on | Estimate |
 |---|---|---|---|
-| 0 | Owner and advisers: founding closing date; accountant confirms EU non-Union OSS, Canada GST/HST and Band B taxes; Stripe Canada fees; Stripe Tax on; SMS provider chosen; `PRICING_HMAC_SECRET` created in Vercel | — | owner, in parallel |
+| 0 | Owner and advisers: accountant registers EU non-Union OSS and Canada GST/HST and checks Band B taxes; Stripe Canada fees; Stripe Tax on; store developer accounts and per-country store prices; `PRICING_HMAC_SECRET` created in Vercel | — | owner, in parallel |
 | 1 | EU two-step online withdrawal function (account page and a public form), refunds computed per class taken | — | 2–3 days |
 | 2 | Migration: tables, RPCs, RLS, seed of countries, products and price book; RLS tests | 0 for tax flags | 2 days |
 | 3 | `setup-stripe-catalogue.js`, test mode; price ids written back; prices page reads `price_book` | 2 | 2 days |
 | 4 | `api/pricing.js`: display quote, setup, quote, purchase; founding claim; band lock; Alimun's checkout page switched to card-first | 2, 3 | 4–5 days |
 | 5 | Charging and webhooks (section 5 and 6); entitlements drive access, `planActive` reads them; `tier` kept in step | 4 | 4 days |
-| 6 | Abuse checks: phone verification, trial markers, referral checks, IP limits; Radar rules written up for the owner to paste | 4 | 3 days |
+| 6 | Abuse checks: trial markers, referral checks, IP limits; Radar rules written up for the owner to paste; store purchase notifications into entitlements | 4 | 3–4 days |
 | 7 | Room jobs: publish, open or merge, start-day charges; course contract offers to teachers (with the launch spec's ops steps) | 5 | 4–5 days |
 | 8 | Finance jobs and the admin figures page; tutor spend changes | 5 | 3 days |
 | 9 | Pricing page and in-app offers in the site's design (locked blocks only with the owner's OK); translations through `js/translations.js` | 4 | 3–4 days |
@@ -153,9 +153,12 @@ Each step ends with `npm run build`, `node --check` on changed `api/` files, the
 
 About five to six weeks of build sessions, plus the owner's step 0 in parallel. Steps 1 and 2 can start as soon as this spec is approved; step 3 waits for the tax answers only for the `stripe_tax` flags, which can be switched later.
 
-## 11. Decisions still needed from the owner
+## 11. Store purchases
 
-- The founding closing date (the cap of 500 and the 12–18 month lock are set).
-- The SMS provider and its monthly budget.
-- Whether the app is also sold in the iPhone and Android stores at launch (their purchases bypass this engine and need separate store prices).
-- Which currencies beyond EUR, MAD, CAD and USD at launch (GBP and AUD are easy to add).
+The app subscription and minute packs are also sold in the App Store and Google Play, priced per country in each store. Store purchases reach `entitlements` through the stores' server notifications (App Store Server Notifications v2, Google Real-time Developer Notifications), or through RevenueCat, which unifies both (free up to about $2,500 of monthly revenue, then about 1%). A learner who pays in a store and on the web gets one combined set of entitlements. Classes and packs are not sold in the stores: Apple requires its own payments for live group classes bought inside an iPhone app (to verify against the current App Review Guidelines), so the apps send learners to the website for them where store rules allow.
+
+## 12. Decided and still open
+
+Decided by the owner on 11 Nov 2026: founding closing date 1 January 2027 (cap 500, lock 12 to 18 months); prices include tax except in Canada and the US; Stripe Tax calculates and collects, the accountant registers and files; no SMS verification at launch; the app in both stores with per-country prices; GBP and other currencies added as price-book rows.
+
+Still open: whether to use RevenueCat or the stores' own notifications; the store price per country (proposal: the app's Band A price in rich countries and about 65% elsewhere, rounded to each store's price points).

@@ -37,11 +37,17 @@ Each step costs less per class the more the learner commits. Money already paid 
 | Voice minutes, subscribers only, valid 12 months | 30 minutes €2.99; 120 minutes €8.99 | same |
 | Closed room for a company, up to 12, 12-week minimum | €79 (English) or €95 (German) per learner a month, excluding VAT, invoiced | — |
 
-Founding prices apply to the first 500 paying learners who join before a closing date the owner sets. Each keeps the founding price for 12 months from their first payment, or until the end of the path they are on at that point (for example A1 to B1), whichever is later but never more than 18 months, as long as they have no gap of more than one month; then the list price applies, announced 30 days ahead. The founding price is shown as its own price, never as a crossed-out list price. (CFO, 11 Nov 2026: a known, capped cost instead of a permanent one.)
+Founding prices apply to the first 500 paying learners who join before 1 January 2027 (owner, 11 Nov 2026). Each keeps the founding price for 12 months from their first payment, or until the end of the path they are on at that point (for example A1 to B1), whichever is later but never more than 18 months, as long as they have no gap of more than one month; then the list price applies, announced 30 days ahead. The founding price is shown as its own price, never as a crossed-out list price. (CFO, 11 Nov 2026: a known, capped cost instead of a permanent one.)
 
 Voice minutes included: free 10 once; app 60 a month (40 in Band B); open class 40; level and exam packs 120. Plan minutes reset monthly; bought minutes last 12 months and are used after plan minutes.
 
 Exam packs prepare for the exam; Alimun does not issue the certificate. Wording everywhere: "Preparation for the Goethe-Zertifikat B1 / IELTS. You take the exam at an official test centre; the exam fee is not included." Alimun's own "certificate of completion, level assessed by Alimun" says exactly that.
+
+**Tax display (owner, 11 Nov 2026):** prices include tax everywhere except Canada and the US, where tax is added at checkout as customers there expect. Stripe Tax calculates and collects it; Alimun still registers (EU non-Union OSS, Canada GST/HST) and files, through the accountant or a filing service.
+
+**Stores (owner, 11 Nov 2026):** the app is sold in the App Store and Google Play too, priced per country in each store (Apple and Google are the seller of record and handle tax; 15% commission under their small-business programmes). Store purchases feed the same access table as web purchases. Classes and packs are sold on the website only.
+
+**Currencies:** EUR, MAD, CAD and USD at launch, plus GBP and others as needed; each is a row in the price book.
 
 ## 4. Country bands
 
@@ -185,7 +191,6 @@ Run three monthly start dates and measure, each month: the share of app users wh
 - Local tax on foreign digital services in Morocco, Egypt, Turkey and other Band B countries; the 5% provision is a placeholder.
 - Stripe Canada's actual fees (the margins use Stripe Ireland's).
 - Canadian GST/HST registration and the EU's non-Union OSS registration before the first EU sale of the app.
-- The founding price's closing date.
 - Contractor agreement per country, Morocco's 30% single-client withholding above MAD 80,000, and the owner's work permit conditions (open or employer-specific) before taking an active role.
 - The owner's rule that public copy does not mention AI, against the EU AI Act's duty to tell people when they talk to an AI (from August 2026).
 - Launch-day exchange rates for every local price.
