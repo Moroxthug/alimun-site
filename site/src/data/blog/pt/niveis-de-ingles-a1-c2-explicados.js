@@ -1,7 +1,7 @@
 // Artigo (terceiro design, docs/BLOG_PLAN.md). Fatos verificados em 26 out. 2026: Conselho da Europa, QECR
 // (escala global, 2001; Volume Complementar de 2020 com Pre-A1 e níveis "plus"), exames Cambridge English
 // e resultados na Cambridge English Scale (B2 First), horas de aprendizagem guiada da Cambridge (indicativas, cumulativas),
-// ielts.org sobre IELTS e o QECR (B2 = 5,5 a 6,5, C1 = 7 a 8, C2 aprox. 9), teste de nível da Alimun (de A1 a C1).
+// ielts.org sobre IELTS e o QECR (B2 = 5,5 a 6,5, C1 = 7 a 8, C2 aprox. 9), teste de nível da Alimun (de A1 a C2).
 // Nomes dos níveis mantidos em inglês (Breakthrough, Waystage...), por decisão editorial.
 export default {
   key: 'cefr-english',
@@ -22,7 +22,7 @@ export default {
     { n: 6, text: 'níveis na escala, de A1 a C2' },
     { n: 3, text: 'etapas: usuário básico, independente e proficiente' },
     { n: 2001, text: 'o ano em que o Conselho da Europa publicou o QECR' },
-    { label: 'De A1 a C1', text: 'os níveis em que o teste da Alimun posiciona você, em poucos minutos' },
+    { label: 'De A1 a C2', text: 'os níveis em que o teste da Alimun posiciona você, em poucos minutos' },
   ],
   blocks: [
     { take: {
@@ -131,7 +131,7 @@ export default {
     { p: 'Duas coisas chamam a atenção. Os degraus ficam **mais altos conforme você sobe**: do B2 ao C1 são mais ou menos tantas horas quanto do zero ao A2. E as horas guiadas são só uma parte da história. O que você faz entre uma aula e outra, de leitura e áudio a exercícios, faz muita diferença, e é por isso que a constância costuma vencer a maratona de estudos de vez em quando.' },
 
     { h: 'Como descobrir o seu nível e acompanhar o progresso' },
-    { p: 'O jeito mais rápido de começar é um **teste de nivelamento**. O teste de nível da Alimun posiciona você entre A1 e C1 em poucos minutos, e a sua turma e os seus exercícios seguem o resultado: você começa de onde realmente está, e não de onde acha que deveria estar. Começar alto demais é frustrante, e começar baixo demais faz você perder um tempo que poderia usar para subir.' },
+    { p: 'O jeito mais rápido de começar é um **teste de nivelamento**. O teste de nível da Alimun posiciona você entre A1 e C2 em poucos minutos, e a sua turma e os seus exercícios seguem o resultado: você começa de onde realmente está, e não de onde acha que deveria estar. Começar alto demais é frustrante, e começar baixo demais faz você perder um tempo que poderia usar para subir.' },
     { panels: [
       ['Teste de nivelamento', 'Rápido e gratuito, mostra **por onde começar**. É um guia para o seu aprendizado, não um resultado oficial.'],
       ['Certificado', 'Um exame como o B2 First ou o IELTS, em um centro aplicador ou on-line, onde houver essa opção. **Comprova o seu nível** para uma universidade, empresa ou consulado.'],
@@ -147,7 +147,7 @@ export default {
     { q: 'Segundo o IELTS, quais bandas correspondem ao C1?', options: ['De 4 a 5', 'De 5,5 a 6,5', 'De 7 a 8', 'Só a 9'], a: 2, why: 'O IELTS relaciona as bandas de 7 a 8 ao C1, as de 5,5 a 6,5 ao B2 e o C2 aproximadamente à banda 9.' },
     { q: 'É normal ler em um nível mais alto do que o nível em que você fala?', options: ['Não, significa que o teste errou', 'Sim, perfis desiguais são muito comuns', 'Só no A1', 'Só para nativos'], a: 1, why: 'Quase todo mundo tem níveis diferentes em cada habilidade, e o QECR permite descrevê-las separadamente.' },
     { q: 'Quantas horas de aprendizagem guiada a Cambridge indica, aproximadamente, para chegar ao C1 do zero?', options: ['De 180 a 200', 'De 350 a 400', 'De 700 a 800', 'De 2.000 a 2.500'], a: 2, why: 'A Cambridge indica cerca de 700 a 800 horas guiadas cumulativas para o C1, como referência.' },
-    { q: 'O que faz o teste de nível da Alimun?', options: ['Emite um certificado oficial', 'Posiciona você entre A1 e C1 em poucos minutos', 'Substitui o IELTS para vistos', 'Avalia só gramática'], a: 1, why: 'O teste posiciona você entre A1 e C1 em poucos minutos para você começar na turma certa; um resultado oficial ainda exige um exame reconhecido.' },
+    { q: 'O que faz o teste de nível da Alimun?', options: ['Emite um certificado oficial', 'Posiciona você entre A1 e C2 em poucos minutos', 'Substitui o IELTS para vistos', 'Avalia só gramática'], a: 1, why: 'O teste posiciona você entre A1 e C2 em poucos minutos para você começar na turma certa; um resultado oficial ainda exige um exame reconhecido.' },
   ],
   faq: [
     ['Qual nível conta como fluente?', 'O QECR não tem um nível “fluente” oficial. Muita gente usa a palavra para o B2, em que você mantém uma conversa natural sem esforço, enquanto C1 e C2 descrevem um domínio mais preciso e flexível.'],

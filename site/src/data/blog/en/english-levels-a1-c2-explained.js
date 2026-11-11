@@ -2,7 +2,7 @@
 // (global scale, 2001; Companion Volume 2020 with Pre-A1 and plus levels), Cambridge English Qualifications
 // and Cambridge English Scale results (B2 First), Cambridge guided learning hours (guideline, cumulative),
 // ielts.org "Everything you need to know about IELTS and the CEFR" (B2 = 5.5 to 6.5, C1 = 7 to 8, C2 about 9),
-// and the Alimun level test (A1 to C1).
+// and the Alimun level test (A1 to C2).
 export default {
   key: 'cefr-english',
   site: 'en',
@@ -22,7 +22,7 @@ export default {
     { n: 6, text: 'levels on the scale, from A1 to C2' },
     { n: 3, text: 'stages: basic, independent and proficient user' },
     { n: 2001, text: 'the year the Council of Europe published the CEFR' },
-    { label: 'A1 to C1', text: 'the range the Alimun level test places you on, in a few minutes' },
+    { label: 'A1 to C2', text: 'the range the Alimun level test places you on, in a few minutes' },
   ],
   blocks: [
     { take: {
@@ -131,7 +131,7 @@ export default {
     { p: "Two things stand out. The gaps get **bigger as you go up**: from B2 to C1 takes about as many hours as getting from scratch to A2. And guided hours are only part of the picture. What you do between lessons, from reading and listening to doing exercises, makes a large difference, which is why steady practice tends to beat occasional bursts." },
 
     { h: 'How to find your level and track your progress' },
-    { p: "The quickest way to start is a **placement test**. The Alimun level test places you from A1 to C1 in a few minutes, and your class and your exercises follow the result, so you begin where you are, not where you think you should be. Starting too high is frustrating, and starting too low wastes time you could spend moving up." },
+    { p: "The quickest way to start is a **placement test**. The Alimun level test places you from A1 to C2 in a few minutes, and your class and your exercises follow the result, so you begin where you are, not where you think you should be. Starting too high is frustrating, and starting too low wastes time you could spend moving up." },
     { panels: [
       ['Placement test', "Quick and free, and it tells you **where to start**. It is a guide for your learning, not an official result."],
       ['Certificate', "An exam such as B2 First or IELTS, taken at a test center or online where available. It **proves your level** to a university, employer or visa office."],
@@ -147,7 +147,7 @@ export default {
     { q: 'According to IELTS, which bands correspond to C1?', options: ['4 to 5', '5.5 to 6.5', '7 to 8', '9 only'], a: 2, why: 'IELTS maps bands 7 to 8 to C1, bands 5.5 to 6.5 to B2, and C2 approximately to band 9.' },
     { q: "Is it normal to read at a higher level than you speak?", options: ['No, it means the test was wrong', 'Yes, uneven profiles are very common', 'Only at A1', 'Only for native speakers'], a: 1, why: 'Most people have different levels in different skills, and the CEFR lets you describe each skill separately.' },
     { q: 'About how many guided learning hours does Cambridge suggest for reaching C1 from scratch?', options: ['180 to 200', '350 to 400', '700 to 800', '2,000 to 2,500'], a: 2, why: 'Cambridge gives about 700 to 800 cumulative guided learning hours for C1, as a guideline.' },
-    { q: 'What does the Alimun level test do?', options: ['It gives you an official certificate', 'It places you from A1 to C1 in a few minutes', 'It replaces IELTS for visas', 'It only tests grammar'], a: 1, why: 'The level test places you from A1 to C1 in a few minutes so you start in the right class; an official result still needs a recognized exam.' },
+    { q: 'What does the Alimun level test do?', options: ['It gives you an official certificate', 'It places you from A1 to C2 in a few minutes', 'It replaces IELTS for visas', 'It only tests grammar'], a: 1, why: 'The level test places you from A1 to C2 in a few minutes so you start in the right class; an official result still needs a recognized exam.' },
   ],
   faq: [
     ['Which level counts as fluent?', "There is no official “fluent” level in the CEFR. Many people use the word for B2, where you can hold a natural conversation without strain, while C1 and C2 describe a more precise and flexible command of the language."],

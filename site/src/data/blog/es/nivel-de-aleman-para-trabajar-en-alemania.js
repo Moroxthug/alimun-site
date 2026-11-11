@@ -128,7 +128,7 @@ export default {
     { h: 'Cómo planificar tu alemán' },
     { p: "Empieza por el trabajo, no por el visado. Busca dos o tres ofertas reales de tu sector en la ciudad que te interesa y fíjate en qué idioma están escritas y qué nivel piden. Como ciudadano de la UE, el límite no te lo pone la ley, sino el mercado: **apunta al nivel que piden las ofertas**. Para la mayoría significa B1 antes de irse y B2 durante el primer año." },
     { p: "Elige el certificado que acepta tu objetivo. Goethe, telc y ÖSD sirven para los visados; enfermeros y médicos siguen la lista de la oficina de su Land. Recuerda que para el visado el certificado debe ser reciente, así que **no hagas el examen demasiado pronto**." },
-    { p: "Sigue estudiando cuando llegues. El B2 abre trabajos que el A2 y el B1 no abren, y el paso al C1 es el que convierte a un profesional extranjero en el compañero que dirige la reunión. La prueba de nivel de Alimun, del A1 al C1, te dice dónde estás hoy, y **las clases en directo con un profesor y el mismo grupo reducido** entrenan justo la expresión oral que ponen a prueba entrevistas y reuniones." },
+    { p: "Sigue estudiando cuando llegues. El B2 abre trabajos que el A2 y el B1 no abren, y el paso al C1 es el que convierte a un profesional extranjero en el compañero que dirige la reunión. La prueba de nivel de Alimun, del A1 al C2, te dice dónde estás hoy, y **las clases en directo con un profesor y el mismo grupo reducido** entrenan justo la expresión oral que ponen a prueba entrevistas y reuniones." },
     { p: "Sea cual sea tu plan, consulta las páginas oficiales para tu caso antes de presentar la solicitud, porque las normas, los umbrales salariales e incluso el acceso a los cursos cambian de un año a otro." },
   ],
   quiz: [

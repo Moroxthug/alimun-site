@@ -158,7 +158,7 @@ export default {
       ['“Uma Task 1 longa compensa uma redação curta.”', 'Capriche mais na Task 2.', 'A Task 2 pesa mais que a Task 1 na banda do Writing.'],
       ['“O meu resultado de três anos atrás ainda serve.”', 'Confira a data antes de se candidatar.', 'Os resultados são reconhecidos por dois anos a partir da data da prova e não podem ser prorrogados.'],
     ] },
-    { p: "O progresso de verdade vem da prática regular com correção, não só de fazer mais provas. Na Alimun você aprende em **aulas ao vivo com um professor e o mesmo grupo pequeno**, e o seu professor corrige a sua lição de casa, então você sabe qual critério está segurando o seu Writing. Não sabe de onde está começando? O teste de nível coloca você entre A1 e C1 em poucos minutos." },
+    { p: "O progresso de verdade vem da prática regular com correção, não só de fazer mais provas. Na Alimun você aprende em **aulas ao vivo com um professor e o mesmo grupo pequeno**, e o seu professor corrige a sua lição de casa, então você sabe qual critério está segurando o seu Writing. Não sabe de onde está começando? O teste de nível coloca você entre A1 e C2 em poucos minutos." },
   ],
   quiz: [
     { q: 'As suas quatro bandas dão uma média de 6,25. Qual é a sua banda geral?', options: ['6', '6,25', '6,5', '7'], a: 2, why: 'Uma média que termina em ,25 sobe para a meia banda seguinte: 6,25 vira 6,5.' },

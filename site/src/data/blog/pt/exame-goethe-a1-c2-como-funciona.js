@@ -136,7 +136,7 @@ export default {
       ['Ich habe 25 Jahre alt.', 'Ich bin 25 Jahre alt.', 'Para idade o alemão usa sein, não haben: você «é» 25 anos, não «tem».'],
       ['Ich freue mich für Ihre Antwort.', 'Ich freue mich auf Ihre Antwort.', 'Sich freuen auf é ficar feliz com algo que você espera; sich freuen über, com algo que já aconteceu.'],
     ] },
-    { note: { title: 'Preparando-se com a Alimun', text: 'Na Alimun você tem aulas de alemão ao vivo com um professor e a mesma turma pequena, exercícios com correção na hora e lição de casa corrigida pelo seu professor. Não sabe em que nível está? O teste de nível coloca você entre o A1 e o C1 em poucos minutos. A Alimun não é afiliada ao Goethe-Institut.', draw: 'pretzel' } },
+    { note: { title: 'Preparando-se com a Alimun', text: 'Na Alimun você tem aulas de alemão ao vivo com um professor e a mesma turma pequena, exercícios com correção na hora e lição de casa corrigida pelo seu professor. Não sabe em que nível está? O teste de nível coloca você entre o A1 e o C2 em poucos minutos. A Alimun não é afiliada ao Goethe-Institut.', draw: 'pretzel' } },
 
     { h: 'Erros comuns' },
     { p: 'O erro mais caro é **agendar o nível errado**. Para o visto de reunião familiar é preciso A1, não B1, e uma universidade que pede C2 ou TestDaF não vai aceitar um certificado B2, por melhor que seja a nota. Leia a exigência na redação original e use as palavras da Lei de Residência para decifrá-la.' },

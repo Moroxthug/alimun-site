@@ -158,7 +158,7 @@ export default {
       ['« Une longue Task 1 compense un essai court. »', 'Soigne surtout la Task 2.', 'La Task 2 pèse plus que la Task 1 dans la bande de Writing.'],
       ['« Mon résultat d’il y a trois ans est encore bon. »', 'Vérifie la date avant de postuler.', 'Les résultats sont reconnus deux ans à compter de la date du test et ne peuvent pas être prolongés.'],
     ] },
-    { p: "Les vrais progrès viennent d'une pratique régulière avec un retour, pas seulement de tests en plus. Chez Alimun, tu apprends en **cours en direct avec un professeur et le même petit groupe**, et ton professeur corrige tes devoirs, donc tu sais quel critère freine ton Writing. Tu ne sais pas d'où tu pars ? Le test de niveau te situe entre A1 et C1 en quelques minutes." },
+    { p: "Les vrais progrès viennent d'une pratique régulière avec un retour, pas seulement de tests en plus. Chez Alimun, tu apprends en **cours en direct avec un professeur et le même petit groupe**, et ton professeur corrige tes devoirs, donc tu sais quel critère freine ton Writing. Tu ne sais pas d'où tu pars ? Le test de niveau te situe entre A1 et C2 en quelques minutes." },
   ],
   quiz: [
     { q: 'Tes quatre bandes donnent une moyenne de 6,25. Quelle est ta bande globale ?', options: ['6', '6,25', '6,5', '7'], a: 2, why: 'Une moyenne qui finit en ,25 monte à la demi-bande suivante : 6,25 donne 6,5.' },

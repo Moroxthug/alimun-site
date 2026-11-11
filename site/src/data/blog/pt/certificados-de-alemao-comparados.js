@@ -124,7 +124,7 @@ export default {
 
     { h: 'Como se preparar' },
     { p: 'Seja qual for o exame, o trabalho é o mesmo: o seu alemão precisa estar no nível que você quer comprovar, e depois você aprende o formato para que nada surpreenda no dia. Use os modelos de prova oficiais da instituição, faça pelo menos um simulado completo no tempo real e pratique falar em voz alta com outra pessoa, porque quase todos esses exames incluem uma conversa ou uma apresentação.' },
-    { p: 'Se você não tem certeza do seu nível, descubra antes de pagar uma inscrição. Na Alimun, **o teste de nivelamento situa você de A1 a C1** em poucos minutos, e as aulas ao vivo com um professor e sempre o mesmo grupo pequeno, com lição de casa corrigida pelo seu professor, ajudam a construir as quatro habilidades que esses exames avaliam. A Alimun não é afiliada a nenhuma das instituições citadas neste artigo.' },
+    { p: 'Se você não tem certeza do seu nível, descubra antes de pagar uma inscrição. Na Alimun, **o teste de nivelamento situa você de A1 a C2** em poucos minutos, e as aulas ao vivo com um professor e sempre o mesmo grupo pequeno, com lição de casa corrigida pelo seu professor, ajudam a construir as quatro habilidades que esses exames avaliam. A Alimun não é afiliada a nenhuma das instituições citadas neste artigo.' },
   ],
   quiz: [
     { q: 'Qual resultado do TestDaF vale como comprovação para o acesso a todos os cursos?', options: ['TDN 3 nas quatro partes', 'TDN 4 nas quatro partes', 'TDN 5 só na fala', 'Um total de 40 pontos'], a: 1, why: 'Pelo marco da HRK e da KMK, TDN 4 nas quatro partes vale para todos os cursos.' },

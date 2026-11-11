@@ -136,7 +136,7 @@ export default {
       ['Ich habe 25 Jahre alt.', 'Ich bin 25 Jahre alt.', 'Per l’età il tedesco usa sein, non haben: si «è» 25 anni, non si «hanno».'],
       ['Ich freue mich für Ihre Antwort.', 'Ich freue mich auf Ihre Antwort.', 'Sich freuen auf indica qualcosa che aspetti; sich freuen über qualcosa che è già successo.'],
     ] },
-    { note: { title: 'Prepararsi con Alimun', text: "Su Alimun trovi lezioni di tedesco dal vivo con un insegnante e lo stesso piccolo gruppo, esercizi con correzione immediata e compiti corretti dal tuo insegnante. Non sai a che punto sei? Il test di livello ti colloca dalla A1 alla C1 in pochi minuti. Alimun non è affiliata al Goethe-Institut.", draw: 'pretzel' } },
+    { note: { title: 'Prepararsi con Alimun', text: "Su Alimun trovi lezioni di tedesco dal vivo con un insegnante e lo stesso piccolo gruppo, esercizi con correzione immediata e compiti corretti dal tuo insegnante. Non sai a che punto sei? Il test di livello ti colloca dalla A1 alla C2 in pochi minuti. Alimun non è affiliata al Goethe-Institut.", draw: 'pretzel' } },
 
     { h: 'Gli errori più comuni' },
     { p: "L'errore più caro è **prenotare il livello sbagliato**. Per il visto di ricongiungimento serve la A1, non la B1, e un'università che chiede la C2 o il TestDaF non accetterà un certificato B2, per quanto alto sia il voto. Leggi il requisito nella formulazione originale e usa le parole della legge sul soggiorno per decifrarlo." },

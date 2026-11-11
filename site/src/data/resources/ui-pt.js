@@ -19,7 +19,7 @@ export default {
     printable: ['Para imprimir', 'Resumos e listas de palavras para baixar e imprimir.', 'Baixar'],
     game: ['Jogos', 'Jogos de palavras, falsos cognatos e trava-línguas.', 'Jogar'],
     fun: ['Só por diversão', 'Quizzes para compartilhar com os amigos.', 'Experimentar'],
-    level: ['Teste de nível', 'Descubra seu nível, de A1 a C1, em poucos minutos.', 'Teste seus conhecimentos'],
+    level: ['Teste de nível', 'Descubra seu nível, de A1 a C2, em poucos minutos.', 'Teste seus conhecimentos'],
   },
   clockTitle: 'Contra o relógio', clockHead: '60 segundos. Quantas você acerta?', clockText: 'Perguntas rápidas, uma atrás da outra.', clockPlay: 'Jogar agora',
   clockFlash: ['She ___ to work every day. (go / goes)', 'Ich habe ___ Hund. (ein / einen)', 'I have lived here ___ 2020. (for / since)', '___ Sonne scheint. (Der / Die / Das)'],

@@ -124,7 +124,7 @@ export default {
 
     { h: 'Comment te préparer' },
     { p: "Quel que soit l'examen choisi, le travail est le même : ton allemand doit être au niveau que tu veux prouver, puis tu apprends le format pour que rien ne te surprenne le jour J. Utilise les modèles d'examen officiels de l'organisme, fais au moins un examen blanc complet en conditions réelles et entraîne-toi à parler à voix haute avec quelqu'un, car presque tous ces examens comportent une conversation ou un exposé." },
-    { p: "Si tu n'es pas sûr de ton niveau, vérifie-le avant de payer une inscription. Chez Alimun, **le test de niveau te situe de A1 à C1** en quelques minutes, et les cours en direct avec un professeur et toujours le même petit groupe, avec des devoirs corrigés par ton professeur, t'aident à construire les quatre compétences que ces examens évaluent. Alimun n'est affiliée à aucun des organismes cités dans cet article." },
+    { p: "Si tu n'es pas sûr de ton niveau, vérifie-le avant de payer une inscription. Chez Alimun, **le test de niveau te situe de A1 à C2** en quelques minutes, et les cours en direct avec un professeur et toujours le même petit groupe, avec des devoirs corrigés par ton professeur, t'aident à construire les quatre compétences que ces examens évaluent. Alimun n'est affiliée à aucun des organismes cités dans cet article." },
   ],
   quiz: [
     { q: 'Quel résultat au TestDaF vaut preuve pour l’admission à toutes les formations ?', options: ['TDN 3 aux quatre épreuves', 'TDN 4 aux quatre épreuves', 'TDN 5 à l’oral seulement', 'Un total de 40 points'], a: 1, why: 'Selon le cadre de la HRK et de la KMK, TDN 4 aux quatre épreuves vaut pour toutes les formations.' },

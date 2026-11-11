@@ -96,7 +96,7 @@ export default {
         ]],
         ['Como saber por qual nível começar', [
           'O Quadro Europeu Comum de Referência divide o conhecimento de uma língua em seis níveis, do A1 ao C2, e **os certificados de alemão seguem a mesma escala**. Saber onde você está evita repetir o que já sabe.',
-          'O teste de nível da Alimun coloca você entre o A1 e o C1, e a sua turma e os seus exercícios se adaptam ao resultado.',
+          'O teste de nível da Alimun coloca você entre o A1 e o C2, e a sua turma e os seus exercícios se adaptam ao resultado.',
         ]],
         ['Alemão para trabalhar, estudar ou se mudar', [
           'Se o seu objetivo é um emprego ou uma mudança, informe-se com antecedência sobre **o nível e o certificado exigidos**: costumam estar indicados nas vagas ou nos órgãos onde você faz o pedido.',
@@ -154,7 +154,7 @@ export default {
         [`Quanto custa um curso de ${c.name} online na Alimun?`, 'Os planos começam em €24 por mês com o Community, em turmas de cerca de 35 pessoas. O Focused custa €59, o Intensive €109 e as aulas particulares 1 on 1 €269 por mês. Com a assinatura anual, você paga dez meses em vez de doze.'],
         ['As aulas são ao vivo ou gravadas?', 'São aulas ao vivo por vídeo com um professor e sempre a mesma turma. A Alimun não grava as aulas: depois de cada aula você recebe as anotações da sessão, o vocabulário novo e as tarefas.'],
         ['Em que dias e horários são as aulas?', 'Cada turma se reúne em dias fixos e no mesmo horário toda semana, com o mesmo professor e a mesma turma. Assim, estudar vira parte da sua semana.'],
-        ['Preciso de um nível mínimo para começar?', 'Não. Há turmas a partir do nível A1, e um teste inicial curto coloca você entre o A1 e o C1, para entrar na turma certa.'],
+        ['Preciso de um nível mínimo para começar?', 'Não. Há turmas a partir do nível A1, e um teste inicial curto coloca você entre o A1 e o C2, para entrar na turma certa.'],
         ['Posso me preparar para um certificado?', c.lang === 'German'
           ? 'Sim, você pode praticar com provas no formato do Goethe B1, Goethe B2 e telc B1. Não é material oficial e a Alimun não é afiliada às instituições certificadoras.'
           : 'Sim, você pode praticar com provas no formato do B2 First, C1 Advanced e IELTS. Não é material oficial e a Alimun não é afiliada às instituições certificadoras.'],
@@ -188,7 +188,7 @@ export default {
     UI_QUIZ_BTN: 'Descubra o seu nível',
     UI_QUIZ_BTN_LONG: 'Descubra o seu nível em dois minutos',
     UI_HOW_1_T: 'Teste de nível',
-    UI_HOW_1_D: 'Um teste curto define o seu nível, do A1 ao C1, e coloca você na turma certa.',
+    UI_HOW_1_D: 'Um teste curto define o seu nível, do A1 ao C2, e coloca você na turma certa.',
     UI_HOW_1_A: 'Uma estudante no computador fazendo anotações',
     UI_HOW_2_T: 'Aulas ao vivo',
     UI_HOW_2_A: 'Uma aula por vídeo com dois alunos na tela',
@@ -198,7 +198,7 @@ export default {
     UI_HOW_4_T: 'Pratique quando quiser',
     UI_HOW_4_D: 'Exercícios do seu nível com correção imediata, flashcards com o vocabulário das aulas e provas no formato dos exames.',
     UI_HOW_4_A: 'Um estudante de fones de ouvido praticando no caderno',
-    UI_LV_INTRO: 'O Quadro Europeu Comum de Referência (QECR) descreve seis níveis de conhecimento de uma língua. Na Alimun há turmas para cada nível e o teste inicial coloca você entre o A1 e o C1.',
+    UI_LV_INTRO: 'O Quadro Europeu Comum de Referência (QECR) descreve seis níveis de conhecimento de uma língua. Na Alimun há turmas para cada nível e o teste inicial coloca você entre o A1 e o C2.',
     UI_LV_1_H: 'A1, nível básico', UI_LV_1_P: LEVELS.A1,
     UI_LV_2_H: 'A2, nível elementar', UI_LV_2_P: LEVELS.A2,
     UI_LV_3_H: 'B1, nível intermediário', UI_LV_3_P: LEVELS.B1,

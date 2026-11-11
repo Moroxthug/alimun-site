@@ -96,7 +96,7 @@ export default {
         ]],
         ['Comment savoir par quel niveau commencer', [
           "Le Cadre européen commun de référence divise la maîtrise d'une langue en six niveaux, de A1 à C2, et **les certifications d'allemand suivent la même échelle**. Savoir où tu en es t'évite de répéter ce que tu sais déjà.",
-          "Le test de niveau d'Alimun te situe de A1 à C1, et ta classe et tes exercices s'adaptent au résultat.",
+          "Le test de niveau d'Alimun te situe de A1 à C2, et ta classe et tes exercices s'adaptent au résultat.",
         ]],
         ["L'allemand pour travailler, étudier ou s'installer", [
           "Si ton objectif est un emploi ou un déménagement, renseigne-toi à l'avance sur **le niveau et la certification demandés** : ils sont souvent indiqués dans les offres ou par les organismes auprès desquels tu déposes ta demande.",
@@ -156,7 +156,7 @@ export default {
         [`Combien coûte un cours ${c.de} en ligne sur Alimun ?`, "Les formules commencent à €24 par mois avec Community, en groupes d'environ 35 personnes. Focused coûte €59, Intensive €109 et les cours particuliers 1 on 1 €269 par mois. Avec l'abonnement annuel, tu paies dix mois au lieu de douze."],
         ['Les cours sont-ils en direct ou enregistrés ?', "Ce sont des cours en direct en visio avec un professeur et toujours le même groupe. Alimun n'enregistre pas les cours : après chaque cours, tu reçois les notes de la séance, le nouveau vocabulaire et les devoirs."],
         ['Quels jours et à quelle heure ont lieu les cours ?', "Chaque classe se réunit à jours fixes et à la même heure chaque semaine, avec le même professeur et le même groupe. L'apprentissage devient ainsi une partie de ta semaine."],
-        ['Faut-il un niveau minimum pour commencer ?', 'Non. Il y a des classes dès le niveau A1, et un court test initial te situe de A1 à C1 pour que tu entres dans la classe qui te convient.'],
+        ['Faut-il un niveau minimum pour commencer ?', 'Non. Il y a des classes dès le niveau A1, et un court test initial te situe de A1 à C2 pour que tu entres dans la classe qui te convient.'],
         ['Puis-je préparer une certification ?', c.lang === 'German'
           ? "Oui, tu peux t'entraîner avec des épreuves au format Goethe B1, Goethe B2 et telc B1. Ce n'est pas du matériel officiel et Alimun n'est pas affiliée aux organismes certificateurs."
           : "Oui, tu peux t'entraîner avec des épreuves au format B2 First, C1 Advanced et IELTS. Ce n'est pas du matériel officiel et Alimun n'est pas affiliée aux organismes certificateurs."],
@@ -190,7 +190,7 @@ export default {
     UI_QUIZ_BTN: 'Découvre ton niveau',
     UI_QUIZ_BTN_LONG: 'Découvre ton niveau en deux minutes',
     UI_HOW_1_T: 'Test de niveau',
-    UI_HOW_1_D: 'Un court test établit ton niveau, de A1 à C1, et te place dans la classe qui te convient.',
+    UI_HOW_1_D: 'Un court test établit ton niveau, de A1 à C2, et te place dans la classe qui te convient.',
     UI_HOW_1_A: "Une étudiante devant son ordinateur en train de prendre des notes",
     UI_HOW_2_T: 'Cours en direct',
     UI_HOW_2_A: "Un cours en visio avec deux élèves à l'écran",
@@ -200,7 +200,7 @@ export default {
     UI_HOW_4_T: "Entraîne-toi quand tu veux",
     UI_HOW_4_D: "Des exercices à ton niveau avec correction immédiate, des cartes mémoire avec le vocabulaire des cours et des épreuves au format des examens.",
     UI_HOW_4_A: "Un étudiant avec un casque qui s'entraîne sur son cahier",
-    UI_LV_INTRO: "Le Cadre européen commun de référence (CECR) décrit six niveaux de maîtrise d'une langue. Sur Alimun, il y a des classes pour chaque niveau et le test initial te situe de A1 à C1.",
+    UI_LV_INTRO: "Le Cadre européen commun de référence (CECR) décrit six niveaux de maîtrise d'une langue. Sur Alimun, il y a des classes pour chaque niveau et le test initial te situe de A1 à C2.",
     UI_LV_1_H: 'A1, niveau débutant', UI_LV_1_P: LEVELS.A1,
     UI_LV_2_H: 'A2, niveau élémentaire', UI_LV_2_P: LEVELS.A2,
     UI_LV_3_H: 'B1, niveau intermédiaire', UI_LV_3_P: LEVELS.B1,

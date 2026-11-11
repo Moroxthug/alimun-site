@@ -136,7 +136,7 @@ export default {
       ['Ich habe 25 Jahre alt.', 'Ich bin 25 Jahre alt.', 'German uses sein, not haben, for age.'],
       ['Ich freue mich für Ihre Antwort.', 'Ich freue mich auf Ihre Antwort.', 'Sich freuen auf looks forward to something; sich freuen über is about something that already happened.'],
     ] },
-    { note: { title: 'Preparing with Alimun', text: "Alimun has live German classes with a teacher and the same small group, exercises with instant feedback, and homework your teacher corrects. Not sure where you stand? The level test places you from A1 to C1 in a few minutes. Alimun is not affiliated with the Goethe-Institut.", draw: 'pretzel' } },
+    { note: { title: 'Preparing with Alimun', text: "Alimun has live German classes with a teacher and the same small group, exercises with instant feedback, and homework your teacher corrects. Not sure where you stand? The level test places you from A1 to C2 in a few minutes. Alimun is not affiliated with the Goethe-Institut.", draw: 'pretzel' } },
 
     { h: 'Common mistakes' },
     { p: "The most expensive mistake is **booking the wrong level**. A spouse visa needs A1, not B1, and a university that asks for C2 or TestDaF will not take a B2 certificate however good the grade. Read the requirement in the original wording and use the words from the Residence Act to decode it." },

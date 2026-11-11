@@ -136,7 +136,7 @@ export default {
       ['Ich habe 25 Jahre alt.', 'Ich bin 25 Jahre alt.', 'Para la edad el alemán usa sein, no haben: se «es» 25 años, no se «tienen».'],
       ['Ich freue mich für Ihre Antwort.', 'Ich freue mich auf Ihre Antwort.', 'Sich freuen auf es alegrarse por algo que esperas; sich freuen über, por algo que ya ha pasado.'],
     ] },
-    { note: { title: 'Prepararte con Alimun', text: 'En Alimun tienes clases de alemán en directo con un profesor y el mismo grupo reducido, ejercicios con corrección al instante y deberes que corrige tu profesor. ¿No sabes en qué nivel estás? La prueba de nivel te sitúa de A1 a C1 en pocos minutos. Alimun no está afiliada al Goethe-Institut.', draw: 'pretzel' } },
+    { note: { title: 'Prepararte con Alimun', text: 'En Alimun tienes clases de alemán en directo con un profesor y el mismo grupo reducido, ejercicios con corrección al instante y deberes que corrige tu profesor. ¿No sabes en qué nivel estás? La prueba de nivel te sitúa de A1 a C2 en pocos minutos. Alimun no está afiliada al Goethe-Institut.', draw: 'pretzel' } },
 
     { h: 'Errores frecuentes' },
     { p: 'El error más caro es **reservar el nivel equivocado**. Para el visado de reagrupación hace falta A1, no B1, y una universidad que pide C2 o TestDaF no aceptará un certificado de B2 por buena que sea la nota. Lee el requisito en su redacción original y usa las palabras de la Ley de Residencia para descifrarlo.' },

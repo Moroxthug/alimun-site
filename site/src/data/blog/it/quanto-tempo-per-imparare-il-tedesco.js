@@ -169,7 +169,7 @@ export default {
     } },
 
     { h: 'Come stimare i tuoi tempi' },
-    { p: "Comincia scoprendo dove sei. Un test di livello ti colloca sulla scala in pochi minuti; quello di Alimun va dall'A1 al C1. Poi decidi quale livello ti serve e per quando, partendo dagli obiettivi visti sopra. Cerca la distanza nella tabella del Goethe e sii onesto su quante ore a settimana puoi dedicare, contando lezioni e lavoro assegnato dall'insegnante." },
+    { p: "Comincia scoprendo dove sei. Un test di livello ti colloca sulla scala in pochi minuti; quello di Alimun va dall'A1 al C2. Poi decidi quale livello ti serve e per quando, partendo dagli obiettivi visti sopra. Cerca la distanza nella tabella del Goethe e sii onesto su quante ore a settimana puoi dedicare, contando lezioni e lavoro assegnato dall'insegnante." },
     { p: "Dividi la distanza per le ore settimanali e aggiungi un margine. Se il risultato supera la tua scadenza, puoi aggiungere ore, abbassare l'obiettivo per ora o spostare la data. Le lezioni dal vivo con **un insegnante e lo stesso piccolo gruppo**, con le flashcard delle parole di ogni lezione, danno al piano un ritmo fisso. Controlla i progressi ogni pochi mesi e, se vai più piano del previsto, cambia il tipo di pratica prima di aumentarne la quantità." },
   ],
   quiz: [
@@ -187,7 +187,7 @@ export default {
     ["Per un italiano il tedesco è più difficile dell'inglese?", "Di solito ci vuole più tempo. Il lessico colto di origine latina aiuta, ma i casi, i tre generi che non coincidono con quelli italiani e la posizione del verbo richiedono pratica. Anche l'FSI, per gli anglofoni, prevede più settimane per il tedesco che per le lingue romanze."],
     ['Il corso di integrazione porta al B1?', 'È pensato per questo. La parte linguistica ha 600 lezioni e si chiude con il Deutsch-Test für Zuwanderer, che certifica l’A2 o il B1. Dove arriva ciascuno dipende dal punto di partenza e dalla pratica fuori dal corso.'],
     ["Che livello serve per studiare in un'università tedesca?", "Ogni università fissa il proprio livello per i corsi in tedesco, e può cambiare anche tra corsi dello stesso ateneo. Le prove più comuni sono il DSH e il TestDaF. Controlla la pagina del corso prima di pianificare i tuoi tempi."],
-    ['Come faccio a sapere il mio livello attuale?', "Fai un test di livello. Quello di Alimun ti colloca dall'A1 al C1 in pochi minuti, e da lì la tabella del Goethe ti mostra più o meno quanta strada ti resta."],
+    ['Come faccio a sapere il mio livello attuale?', "Fai un test di livello. Quello di Alimun ti colloca dall'A1 al C2 in pochi minuti, e da lì la tabella del Goethe ti mostra più o meno quanta strada ti resta."],
   ],
   related: ['goethe-certificates', 'german-for-work', 'german-cases'],
   sources: [

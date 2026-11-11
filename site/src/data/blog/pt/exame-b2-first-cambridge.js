@@ -124,7 +124,7 @@ export default {
     { p: "Quando o idioma começar a fluir, trabalhe o exame parte por parte. Faça uma ou duas partes de Use of English várias vezes por semana, revise cada erro e anote por que estava errado. Escreva um texto por semana em um formato diferente da Part 2 e peça correção: **o retorno sobre os seus textos** vale mais do que escrever o dobro sem ele. Ouça podcasts e entrevistas e depois faça partes do Listening com cronômetro." },
     { p: "Pratique o Speaking em voz alta **com outra pessoa**. Cronometre seu minuto de fala no celular, compare as fotos em vez de descrever uma de cada vez e, na tarefa colaborativa, treine trazer o parceiro para a conversa e chegar a uma decisão antes de o minuto acabar." },
     { p: "Nas últimas quatro a seis semanas, faça **simulados completos** em condições de prova, de preferência um a cada uma ou duas semanas, e revise cada um com cuidado. Inscreva-se no exame quando suas notas nos simulados estiverem no nível da sua meta, não antes." },
-    { p: "Na Alimun, as aulas ao vivo com um professor e o mesmo grupo pequeno dão a você um parceiro para conversar toda semana, e **o seu professor corrige a sua lição de casa**, que é do que a preparação para o Writing mais precisa. Não sabe em que nível está? O teste de nível situa você de A1 a C1 em poucos minutos." },
+    { p: "Na Alimun, as aulas ao vivo com um professor e o mesmo grupo pequeno dão a você um parceiro para conversar toda semana, e **o seu professor corrige a sua lição de casa**, que é do que a preparação para o Writing mais precisa. Não sabe em que nível está? O teste de nível situa você de A1 a C2 em poucos minutos." },
 
     { h: 'Erros comuns no dia da prova' },
     { mistakes: [

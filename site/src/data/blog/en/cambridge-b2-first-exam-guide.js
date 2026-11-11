@@ -124,7 +124,7 @@ export default {
     { p: "Once the language is moving, work through the exam part by part. Do one or two Use of English parts several times a week, check every wrong answer and write down why it was wrong. Write one text a week in a different Part 2 format, and get it corrected; **feedback on your writing** is worth more than writing twice as much without it. Listen to podcasts and interviews, then do Listening parts against the clock." },
     { p: "Practice Speaking out loud **with another person**. Time your one-minute long turn with your phone, compare the photos instead of describing each one, and in the collaborative task practice inviting your partner in and reaching a decision before the minute is up." },
     { p: "In the final four to six weeks, do **full mock tests** under exam conditions, ideally one every week or two, and review each one carefully. Book the exam once your practice scores are at your target, not before." },
-    { p: "At Alimun, the live classes with a teacher and the same small group give you a partner to speak with every week, and **your teacher corrects your homework**, which is what Writing preparation needs most. Not sure where you stand? The level test places you from A1 to C1 in a few minutes." },
+    { p: "At Alimun, the live classes with a teacher and the same small group give you a partner to speak with every week, and **your teacher corrects your homework**, which is what Writing preparation needs most. Not sure where you stand? The level test places you from A1 to C2 in a few minutes." },
 
     { h: 'Common mistakes on exam day' },
     { mistakes: [
