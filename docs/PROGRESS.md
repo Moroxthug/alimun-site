@@ -1837,3 +1837,10 @@ Owner asked to clear the advisor's warnings about SECURITY DEFINER functions; pl
 - To check:
   - The Italian German level test article describes the Alimun level test as A1 to C2 (from site/src/data/level-test/German.js). Older Italian course text says A1 to C1, so the owner should confirm which is right.
   - The Italian, Moroccan French and Spanish articles have not been reviewed by a native speaker.
+
+## 2026-11-11 — RLS tests green again
+
+- Ran `supabase/tests/rls.sql` on production inside a transaction that always aborts (nothing kept, no queued HTTP calls sent): 155 of 162 passed. The same 7 failed with the old function grants restored, so they predate today's grants change.
+- Fixed `guard_teacher_profile_admin_fields`: a browser-side teacher insert set `badges` to null on a NOT NULL column. Now `'{}'`. `supabase/migrations/202611112100_teacher_guard_badges.sql`, applied and verified. Live applications use the service role through api/admin/teacher.js and were never affected.
+- Tests brought up to date: teachers can no longer write class dates directly (admin and API only), so "complete own session" and "change session created_at" expect denied. Supabase blocks DELETE on storage.objects from SQL, so the two file-delete checks now test the delete policy's condition as a read. A direct student signup now gets tier `free` (or `waitlist`), and founding_member can no longer be claimed.
+- Result after the fix: 162 of 162 pass.
