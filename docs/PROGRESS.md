@@ -1814,3 +1814,11 @@ Owner: "the whole experience needs to uphold alimun design standards, it looks d
 - Board: page title in the card heading style with the calendar's arrow buttons; class controls as standard buttons and form fields; the page menu is a card with the added pages as tinted tiles; the tools are round buttons in a white tray with the chosen one in the sidebar's lime; Everyone solves this in a leaf card with the clock in the heading font. Phones: the panel as a sheet, the Chat button a standard forest button, the tools a row above the page.
 
 - Old addresses that Search Console reported as 404 now redirect (308, vercel.json routes): /privacy to /gdpr, /about to /about-us, /login, /admin-login and /teacher-login to /signin (also with a language folder), and /blog/learn-english-fast-2026 to /blog/how-long-does-it-take-to-learn-english.
+
+## 2026-11-11 — Database function permissions (Supabase security advisor)
+
+Owner asked to clear the advisor's warnings about SECURITY DEFINER functions; plan shown and approved ("go").
+- `supabase/migrations/202611111900_definer_function_grants.sql`, applied statement by statement and verified. Four trigger functions (cohorts/sessions_assign_lessons, messages_before/after_insert) and cohort_course are no longer callable as RPCs; session_cohort is signed-in only (the class board policies need it); campaign_audience and reminders_due are service role only (only api/campaigns.js and api/cron-reminders.js call them). New functions created by postgres no longer get EXECUTE for PUBLIC by default, so anything the dashboards call needs an explicit grant.
+- Checked as a real teacher inside a rolled-back transaction: the board is visible, set_session_lesson works, open_thread works, and a message insert fires its triggers. cohort_course and reminders_due are refused; signed-out visitors are refused session_cohort and still read teachers_public.
+- Advisor afterwards: signed-out only public_teacher_rows (behind teachers_public, intended). Signed-in 26 functions, all intended: RLS helpers that policies call as the user, and RPCs that check is_admin() or the caller's own rows. The advisor flags these by design. `supabase/tests/rls.sql` allow-list updated to match.
+- Open for the owner: leaked password protection (Dashboard → Authentication → Password security) is still off.
