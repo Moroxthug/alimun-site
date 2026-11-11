@@ -1,7 +1,7 @@
 // Article (troisième design, docs/BLOG_PLAN.md). Faits vérifiés le 26 oct. 2026 : Conseil de l'Europe, CECRL
 // (échelle globale, 2001 ; Volume complémentaire 2020 avec le pré-A1 et les niveaux « plus »), examens Cambridge English
 // et résultats sur la Cambridge English Scale (B2 First), heures d'apprentissage guidé Cambridge (indicatives, cumulées),
-// ielts.org sur IELTS et le CECRL (B2 = 5,5 à 6,5, C1 = 7 à 8, C2 environ 9), test de niveau Alimun (de A1 à C1).
+// ielts.org sur IELTS et le CECRL (B2 = 5,5 à 6,5, C1 = 7 à 8, C2 environ 9), test de niveau Alimun (de A1 à C2).
 // Noms français des niveaux (introductif ou découverte, intermédiaire ou de survie, seuil, avancé ou indépendant, autonome, maîtrise)
 // et des étapes (utilisateur élémentaire, indépendant, expérimenté) comme dans l'usage français du CECRL (Eduscol).
 export default {
@@ -23,7 +23,7 @@ export default {
     { n: 6, text: "niveaux sur l'échelle, de A1 à C2" },
     { n: 3, text: 'étapes : utilisateur élémentaire, indépendant et expérimenté' },
     { n: 2001, text: "l'année où le Conseil de l'Europe a publié le CECRL" },
-    { label: 'De A1 à C1', text: "les niveaux sur lesquels le test d'Alimun te place, en quelques minutes" },
+    { label: 'De A1 à C2', text: "les niveaux sur lesquels le test d'Alimun te place, en quelques minutes" },
   ],
   blocks: [
     { take: {
@@ -132,7 +132,7 @@ export default {
     { p: "Deux choses sautent aux yeux. Les marches sont **de plus en plus hautes** : passer du B2 au C1 demande à peu près autant d'heures que d'arriver de zéro à l'A2. Et les heures guidées ne sont qu'une partie de l'histoire. Ce que tu fais entre deux cours, lire, écouter, faire des exercices, change beaucoup de choses : c'est pour ça que la régularité bat en général les séances intensives occasionnelles." },
 
     { h: 'Comment connaître ton niveau et suivre tes progrès' },
-    { p: "Le plus rapide pour commencer, c'est un **test de positionnement**. Le test de niveau d'Alimun te place entre A1 et C1 en quelques minutes, et ton cours et tes exercices suivent le résultat : tu commences là où tu en es vraiment, pas là où tu penses devoir être. Commencer trop haut est frustrant, commencer trop bas te fait perdre un temps que tu pourrais passer à progresser." },
+    { p: "Le plus rapide pour commencer, c'est un **test de positionnement**. Le test de niveau d'Alimun te place entre A1 et C2 en quelques minutes, et ton cours et tes exercices suivent le résultat : tu commences là où tu en es vraiment, pas là où tu penses devoir être. Commencer trop haut est frustrant, commencer trop bas te fait perdre un temps que tu pourrais passer à progresser." },
     { panels: [
       ['Test de positionnement', "Rapide et gratuit, il te dit **par où commencer**. C'est un repère pour ton apprentissage, pas un résultat officiel."],
       ['Certification', "Un examen comme le B2 First ou l'IELTS, dans un centre d'examen ou en ligne quand c'est possible. Il **prouve ton niveau** à une université, un employeur ou un service des visas."],
@@ -148,7 +148,7 @@ export default {
     { q: "Selon l'IELTS, quelles notes correspondent au C1 ?", options: ['De 4 à 5', 'De 5,5 à 6,5', 'De 7 à 8', 'Seulement 9'], a: 2, why: "L'IELTS fait correspondre les notes de 7 à 8 au C1, de 5,5 à 6,5 au B2, et le C2 à peu près à la note 9." },
     { q: "Est-ce normal de lire à un niveau plus élevé que celui auquel tu parles ?", options: ["Non, ça veut dire que le test s'est trompé", 'Oui, les profils inégaux sont très courants', "Seulement en A1", 'Seulement chez les natifs'], a: 1, why: "Presque tout le monde a des niveaux différents selon les compétences, et le CECRL permet de les décrire séparément." },
     { q: "Combien d'heures d'apprentissage guidé Cambridge indique-t-il, environ, pour atteindre le C1 depuis zéro ?", options: ['De 180 à 200', 'De 350 à 400', 'De 700 à 800', 'De 2 000 à 2 500'], a: 2, why: "Cambridge indique environ 700 à 800 heures guidées cumulées pour le C1, à titre indicatif." },
-    { q: "Que fait le test de niveau d'Alimun ?", options: ['Il délivre une certification officielle', 'Il te place entre A1 et C1 en quelques minutes', "Il remplace l'IELTS pour les visas", 'Il évalue seulement la grammaire'], a: 1, why: "Le test te place entre A1 et C1 en quelques minutes pour que tu commences dans le bon cours ; un résultat officiel demande toujours un examen reconnu." },
+    { q: "Que fait le test de niveau d'Alimun ?", options: ['Il délivre une certification officielle', 'Il te place entre A1 et C2 en quelques minutes', "Il remplace l'IELTS pour les visas", 'Il évalue seulement la grammaire'], a: 1, why: "Le test te place entre A1 et C2 en quelques minutes pour que tu commences dans le bon cours ; un résultat officiel demande toujours un examen reconnu." },
   ],
   faq: [
     ['Quel niveau veut dire « parler couramment » ?', "Le CECRL n'a pas de niveau « courant » officiel. Beaucoup de gens emploient le mot pour le B2, où tu tiens une conversation naturelle sans effort, tandis que le C1 et le C2 décrivent une maîtrise plus précise et plus souple."],

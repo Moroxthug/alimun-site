@@ -125,7 +125,7 @@ export default {
 
     { h: 'Cómo prepararte' },
     { p: 'Elijas el examen que elijas, el trabajo es el mismo: tu alemán tiene que estar al nivel que quieres demostrar, y después aprendes el formato para que nada te sorprenda el día del examen. Usa los modelos de examen oficiales del organismo, haz al menos un simulacro completo con el tiempo real y practica hablar en voz alta con otra persona, porque casi todos estos exámenes incluyen una conversación o una exposición.' },
-    { p: 'Si no tienes claro tu nivel, averígualo antes de pagar una tasa de examen. En Alimun, **la prueba de nivel te sitúa de A1 a C1** en unos minutos, y las clases en directo con un profesor y siempre el mismo grupo reducido, con deberes que corrige tu profesor, te ayudan a construir las cuatro destrezas que evalúan estos exámenes. Alimun no está afiliada a ninguno de los organismos de este artículo.' },
+    { p: 'Si no tienes claro tu nivel, averígualo antes de pagar una tasa de examen. En Alimun, **la prueba de nivel te sitúa de A1 a C2** en unos minutos, y las clases en directo con un profesor y siempre el mismo grupo reducido, con deberes que corrige tu profesor, te ayudan a construir las cuatro destrezas que evalúan estos exámenes. Alimun no está afiliada a ninguno de los organismos de este artículo.' },
   ],
   quiz: [
     { q: '¿Qué resultado del TestDaF sirve como prueba para el acceso a todas las titulaciones?', options: ['TDN 3 en las cuatro partes', 'TDN 4 en las cuatro partes', 'TDN 5 solo en expresión oral', 'Un total de 40 puntos'], a: 1, why: 'Según el marco de la HRK y la KMK, TDN 4 en las cuatro partes vale para todas las titulaciones.' },

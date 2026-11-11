@@ -124,7 +124,7 @@ export default {
 
     { h: 'How to prepare' },
     { p: "Whichever exam you choose, the work is the same: your German has to be at the level you want to prove, and then you learn the format so that nothing surprises you. Use the official sample papers from the provider, do at least one full mock exam under real timing and practice speaking out loud with another person, since most of these exams include a conversation or a talk." },
-    { p: "If you are not sure of your level, find out before you pay an exam fee. At Alimun, **the level test places you from A1 to C1** in a few minutes, and live classes with a teacher and the same small group, with homework your teacher corrects, help you build the four skills these exams test. Alimun is not affiliated with any of the exam providers in this article." },
+    { p: "If you are not sure of your level, find out before you pay an exam fee. At Alimun, **the level test places you from A1 to C2** in a few minutes, and live classes with a teacher and the same small group, with homework your teacher corrects, help you build the four skills these exams test. Alimun is not affiliated with any of the exam providers in this article." },
   ],
   quiz: [
     { q: 'Which TestDaF result counts as proof for admission to all degree programs?', options: ['TDN 3 in all four parts', 'TDN 4 in all four parts', 'TDN 5 in speaking only', 'A total of 40 points'], a: 1, why: 'Under the HRK and KMK framework, TDN 4 in all four parts is the proof for all degree programs.' },

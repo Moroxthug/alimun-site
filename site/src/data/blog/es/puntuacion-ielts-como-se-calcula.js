@@ -158,7 +158,7 @@ export default {
       ['“Una Task 1 larga compensa un ensayo corto.”', 'Pon más cuidado en la Task 2.', 'La Task 2 pesa más que la Task 1 en la banda de Writing.'],
       ['“Mi resultado de hace tres años todavía sirve.”', 'Comprueba la fecha antes de presentarte.', 'Los resultados se reconocen durante dos años desde la fecha del examen y no se pueden prorrogar.'],
     ] },
-    { p: "El progreso real llega con práctica regular y corrección, no solo con más exámenes. En Alimun aprendes en **clases en directo con un profesor y el mismo grupo reducido**, y tu profesor corrige tus deberes, así sabes qué criterio está frenando tu Writing. ¿No sabes de qué nivel partes? La prueba de nivel te sitúa entre A1 y C1 en pocos minutos." },
+    { p: "El progreso real llega con práctica regular y corrección, no solo con más exámenes. En Alimun aprendes en **clases en directo con un profesor y el mismo grupo reducido**, y tu profesor corrige tus deberes, así sabes qué criterio está frenando tu Writing. ¿No sabes de qué nivel partes? La prueba de nivel te sitúa entre A1 y C2 en pocos minutos." },
   ],
   quiz: [
     { q: 'Tus cuatro bandas dan una media de 6,25. ¿Cuál es tu banda global?', options: ['6', '6,25', '6,5', '7'], a: 2, why: 'Una media que termina en ,25 sube a la siguiente media banda: 6,25 pasa a 6,5.' },

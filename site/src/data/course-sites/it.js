@@ -67,7 +67,7 @@ export default {
   ui: {
     UI_QUIZ_BTN: "Scopri il tuo livello",
     UI_HOW_1_T: "Test di livello",
-    UI_HOW_1_D: "Un breve test stabilisce il tuo livello, dalla A1 alla C1, e ti inserisce nella classe giusta per te.",
+    UI_HOW_1_D: "Un breve test stabilisce il tuo livello, dalla A1 alla C2, e ti inserisce nella classe giusta per te.",
     UI_HOW_1_A: "Una studentessa al computer mentre prende appunti",
     UI_HOW_2_T: "Lezioni dal vivo",
     UI_HOW_2_A: "Una video lezione con due studenti sullo schermo",
@@ -77,7 +77,7 @@ export default {
     UI_HOW_4_T: "Pratica quando vuoi",
     UI_HOW_4_D: "Esercizi al tuo livello con correzione immediata, flashcard con le parole delle lezioni e prove nel formato degli esami.",
     UI_HOW_4_A: "Uno studente con le cuffie che si esercita sul quaderno",
-    UI_LV_INTRO: "Il Quadro comune europeo di riferimento (QCER) descrive sei livelli di conoscenza di una lingua. Su Alimun ci sono classi per ogni livello e il test iniziale ti colloca dalla A1 alla C1.",
+    UI_LV_INTRO: "Il Quadro comune europeo di riferimento (QCER) descrive sei livelli di conoscenza di una lingua. Su Alimun ci sono classi per ogni livello e il test iniziale ti colloca dalla A1 alla C2.",
     UI_LV_1_H: "A1, livello base",
     UI_LV_1_P: "Capisci e usi espressioni quotidiane e frasi molto semplici, sai presentarti e fare domande su informazioni personali, se l'altra persona parla lentamente e con chiarezza.",
     UI_LV_2_H: "A2, livello elementare",

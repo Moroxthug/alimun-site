@@ -1,7 +1,7 @@
 // Articolo (terzo design, docs/BLOG_PLAN.md). Fatti verificati il 26 ott 2026: Consiglio d'Europa, QCER
 // (scala globale, 2001; Volume complementare 2020 con Pre-A1 e livelli "plus"), certificazioni Cambridge English
 // e risultati sulla Cambridge English Scale (B2 First), ore di apprendimento guidato Cambridge (indicative, cumulative),
-// ielts.org sul rapporto IELTS-QCER (B2 = 5,5-6,5, C1 = 7-8, C2 circa 9), test di livello Alimun (da A1 a C1).
+// ielts.org sul rapporto IELTS-QCER (B2 = 5,5-6,5, C1 = 7-8, C2 circa 9), test di livello Alimun (da A1 a C2).
 // Nomi italiani dei livelli (Contatto, Sopravvivenza, Soglia, Progresso, Efficacia, Padronanza) come nell'uso italiano del QCER.
 export default {
   key: 'cefr-english',
@@ -22,7 +22,7 @@ export default {
     { n: 6, text: 'livelli sulla scala, da A1 a C2' },
     { n: 3, text: 'fasce: utente base, autonomo e competente' },
     { n: 2001, text: "l'anno in cui il Consiglio d'Europa ha pubblicato il QCER" },
-    { label: 'Da A1 a C1', text: 'i livelli su cui ti colloca il test di Alimun, in pochi minuti' },
+    { label: 'Da A1 a C2', text: 'i livelli su cui ti colloca il test di Alimun, in pochi minuti' },
   ],
   blocks: [
     { take: {
@@ -131,7 +131,7 @@ export default {
     { p: "Due cose saltano all'occhio. I passi diventano **più lunghi man mano che sali**: dal B2 al C1 servono più o meno tante ore quante ne servono per arrivare da zero all'A2. E le ore guidate sono solo una parte del quadro. Quello che fai tra una lezione e l'altra, dalla lettura all'ascolto agli esercizi, fa una grande differenza: per questo la costanza di solito batte lo studio a ondate." },
 
     { h: 'Come scoprire il tuo livello e seguire i progressi' },
-    { p: "Il modo più rapido per iniziare è un **test di posizionamento**. Il test di livello di Alimun ti colloca da A1 a C1 in pochi minuti, e la tua classe e i tuoi esercizi seguono il risultato: parti da dove sei davvero, non da dove pensi di dover essere. Partire troppo in alto è frustrante, partire troppo in basso ti fa perdere tempo che potresti usare per salire." },
+    { p: "Il modo più rapido per iniziare è un **test di posizionamento**. Il test di livello di Alimun ti colloca da A1 a C2 in pochi minuti, e la tua classe e i tuoi esercizi seguono il risultato: parti da dove sei davvero, non da dove pensi di dover essere. Partire troppo in alto è frustrante, partire troppo in basso ti fa perdere tempo che potresti usare per salire." },
     { panels: [
       ['Test di posizionamento', "Rapido e gratuito, ti dice **da dove partire**. È una guida per il tuo studio, non un risultato ufficiale."],
       ['Certificazione', "Un esame come il B2 First o l'IELTS, in un centro d'esame oppure online dove previsto. **Dimostra il tuo livello** a università, aziende o uffici visti."],
@@ -147,7 +147,7 @@ export default {
     { q: "Secondo l'IELTS, quali bande corrispondono al C1?", options: ['Da 4 a 5', 'Da 5,5 a 6,5', 'Da 7 a 8', 'Solo la 9'], a: 2, why: "L'IELTS fa corrispondere le bande da 7 a 8 al C1, da 5,5 a 6,5 al B2, e il C2 all'incirca alla banda 9." },
     { q: 'È normale leggere a un livello più alto di quello a cui parli?', options: ['No, vuol dire che il test era sbagliato', 'Sì, i profili non uniformi sono molto comuni', "Solo all'A1", 'Solo per i madrelingua'], a: 1, why: "Quasi tutti hanno livelli diversi nelle varie abilità, e il QCER permette di descriverle separatamente." },
     { q: 'Quante ore di apprendimento guidato indica Cambridge, circa, per arrivare al C1 da zero?', options: ['Da 180 a 200', 'Da 350 a 400', 'Da 700 a 800', 'Da 2.000 a 2.500'], a: 2, why: "Cambridge indica circa 700-800 ore guidate cumulative per il C1, come riferimento." },
-    { q: 'Cosa fa il test di livello di Alimun?', options: ['Rilascia una certificazione ufficiale', 'Ti colloca da A1 a C1 in pochi minuti', "Sostituisce l'IELTS per i visti", 'Valuta solo la grammatica'], a: 1, why: "Il test ti colloca da A1 a C1 in pochi minuti per farti partire nella classe giusta; per un risultato ufficiale serve un esame riconosciuto." },
+    { q: 'Cosa fa il test di livello di Alimun?', options: ['Rilascia una certificazione ufficiale', 'Ti colloca da A1 a C2 in pochi minuti', "Sostituisce l'IELTS per i visti", 'Valuta solo la grammatica'], a: 1, why: "Il test ti colloca da A1 a C2 in pochi minuti per farti partire nella classe giusta; per un risultato ufficiale serve un esame riconosciuto." },
   ],
   faq: [
     ['Quale livello significa parlare fluentemente?', "Nel QCER non esiste un livello “fluente” ufficiale. Molti usano la parola per il B2, dove sostieni una conversazione naturale senza fatica, mentre C1 e C2 descrivono una padronanza più precisa e flessibile."],

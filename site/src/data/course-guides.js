@@ -15,7 +15,7 @@ export const GUIDES = {
       ]],
       ["Come capire da che livello partire", [
         "Il Quadro comune europeo di riferimento divide la conoscenza di una lingua in sei livelli, dalla A1 alla C2. Partire da un livello troppo alto è frustrante, partire troppo in basso fa perdere motivazione: per questo **conviene misurarsi prima di iniziare**.",
-        "Il test di livello di Alimun ti colloca dalla A1 alla C1 e i tuoi esercizi e la tua classe si adattano al risultato. Man mano che migliori, le attività crescono con te.",
+        "Il test di livello di Alimun ti colloca dalla A1 alla C2 e i tuoi esercizi e la tua classe si adattano al risultato. Man mano che migliori, le attività crescono con te.",
       ]],
       ["Quanto si migliora e da cosa dipende", [
         "Non esiste un numero di settimane uguale per tutti: i progressi dipendono dal livello di partenza, dalla regolarità e da quanto pratichi tra una lezione e l'altra. **Poche ore costanti ogni settimana funzionano meglio di lunghe sessioni occasionali**.",
@@ -37,7 +37,7 @@ export const GUIDES = {
       ]],
       ['Come capire da che livello partire', [
         "Il Quadro comune europeo di riferimento divide la conoscenza di una lingua in sei livelli, dalla A1 alla C2, e **le certificazioni di tedesco seguono la stessa scala**. Sapere dove sei ti evita di ripetere ciò che conosci o di partire troppo in alto.",
-        "Il test di livello di Alimun ti colloca dalla A1 alla C1 e la tua classe e i tuoi esercizi si adattano al risultato.",
+        "Il test di livello di Alimun ti colloca dalla A1 alla C2 e la tua classe e i tuoi esercizi si adattano al risultato.",
       ]],
       ['Tedesco per lavoro, studio e trasferimento', [
         "Se il tuo obiettivo è un lavoro o un trasferimento, chiedi in anticipo **quale livello e quale certificato ti servono**: spesso è indicato negli annunci o dagli enti a cui presenti la domanda.",

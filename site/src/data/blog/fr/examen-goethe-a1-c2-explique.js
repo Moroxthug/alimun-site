@@ -136,7 +136,7 @@ export default {
       ['Ich habe 25 Jahre alt.', 'Ich bin 25 Jahre alt.', 'Pour l’âge, l’allemand utilise sein et non haben : on « est » 25 ans, on ne les « a » pas.'],
       ['Ich freue mich für Ihre Antwort.', 'Ich freue mich auf Ihre Antwort.', 'Sich freuen auf, c’est se réjouir d’une chose attendue ; sich freuen über, d’une chose déjà arrivée.'],
     ] },
-    { note: { title: 'Se préparer avec Alimun', text: "Chez Alimun, tu as des cours d'allemand en direct avec un professeur et le même petit groupe, des exercices avec correction immédiate et des devoirs corrigés par ton professeur. Tu ne sais pas où tu en es ? Le test de niveau te situe de A1 à C1 en quelques minutes. Alimun n'est pas affiliée au Goethe-Institut.", draw: 'pretzel' } },
+    { note: { title: 'Se préparer avec Alimun', text: "Chez Alimun, tu as des cours d'allemand en direct avec un professeur et le même petit groupe, des exercices avec correction immédiate et des devoirs corrigés par ton professeur. Tu ne sais pas où tu en es ? Le test de niveau te situe de A1 à C2 en quelques minutes. Alimun n'est pas affiliée au Goethe-Institut.", draw: 'pretzel' } },
 
     { h: 'Les erreurs courantes' },
     { p: "L'erreur la plus coûteuse, c'est de **réserver le mauvais niveau**. Pour le visa de regroupement familial il faut l'A1, pas le B1, et une université qui demande le C2 ou le TestDaF n'acceptera pas un certificat B2, aussi bonne soit la note. Lis l'exigence dans sa formulation d'origine et sers-toi des mots de la loi sur le séjour pour la décoder." },

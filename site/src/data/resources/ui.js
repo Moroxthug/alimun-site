@@ -21,7 +21,7 @@ export default {
       printable: ['Printables', 'Cheat sheets and word lists to download and print.', 'Download'],
       game: ['Games', 'Word games, false friends and tongue twisters.', 'Play'],
       fun: ['Just for fun', 'Quizzes to share with your friends.', 'Have a go'],
-      level: ['Level test', 'Find out your level from A1 to C1 in a few minutes.', 'Test my knowledge'],
+      level: ['Level test', 'Find out your level from A1 to C2 in a few minutes.', 'Test my knowledge'],
     },
     clockTitle: 'Beat the clock', clockHead: '60 seconds. How many can you get?', clockText: 'Quick questions, one after another.', clockPlay: 'Play now',
     clockFlash: ['She ___ to work every day. (go / goes)', 'Ich habe ___ Hund. (ein / einen)', 'I have lived here ___ 2020. (for / since)', '___ Sonne scheint. (Der / Die / Das)'],

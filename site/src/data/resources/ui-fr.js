@@ -19,7 +19,7 @@ export default {
     printable: ['Fiches à imprimer', 'Des fiches mémo et des listes de mots à télécharger et imprimer.', 'Télécharger'],
     game: ['Jeux', 'Jeux de mots, faux amis et virelangues.', 'Jouer'],
     fun: ['Pour le plaisir', 'Des quiz à partager avec tes amis.', 'Essayer'],
-    level: ['Test de niveau', 'Découvre ton niveau de A1 à C1 en quelques minutes.', 'Teste tes connaissances'],
+    level: ['Test de niveau', 'Découvre ton niveau de A1 à C2 en quelques minutes.', 'Teste tes connaissances'],
   },
   clockTitle: 'Course contre la montre', clockHead: '60 secondes. Combien de bonnes réponses ?', clockText: "Des questions rapides, l'une après l'autre.", clockPlay: 'Jouer',
   clockFlash: ['She ___ to work every day. (go / goes)', 'Ich habe ___ Hund. (ein / einen)', 'I have lived here ___ 2020. (for / since)', '___ Sonne scheint. (Der / Die / Das)'],

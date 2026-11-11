@@ -124,7 +124,7 @@ export default {
     { p: "Cuando el idioma empiece a fluir, trabaja el examen parte por parte. Haz una o dos partes de Use of English varias veces por semana, revisa cada fallo y apunta por qué estaba mal. Escribe un texto por semana en un formato distinto de la Part 2 y haz que te lo corrijan: **la corrección de tus textos** vale más que escribir el doble sin ella. Escucha pódcast y entrevistas, y luego haz partes del Listening con cronómetro." },
     { p: "Practica el Speaking en voz alta **con otra persona**. Cronometra tu minuto de monólogo con el móvil, compara las fotos en lugar de describirlas una a una, y en la tarea colaborativa entrénate para invitar a tu compañero a participar y llegar a una decisión antes de que acabe el minuto." },
     { p: "En las últimas cuatro a seis semanas, haz **simulacros completos** en condiciones de examen, idealmente uno cada una o dos semanas, y revísalos con calma. Inscríbete en el examen cuando tus puntuaciones de práctica estén a la altura de tu objetivo, no antes." },
-    { p: "En Alimun, las clases en directo con un profesor y el mismo grupo reducido te dan un compañero con quien hablar cada semana, y **tu profesor corrige tus deberes**, que es lo que más necesita la preparación del Writing. ¿No sabes en qué nivel estás? La prueba de nivel te sitúa de A1 a C1 en pocos minutos." },
+    { p: "En Alimun, las clases en directo con un profesor y el mismo grupo reducido te dan un compañero con quien hablar cada semana, y **tu profesor corrige tus deberes**, que es lo que más necesita la preparación del Writing. ¿No sabes en qué nivel estás? La prueba de nivel te sitúa de A1 a C2 en pocos minutos." },
 
     { h: 'Errores frecuentes el día del examen' },
     { mistakes: [

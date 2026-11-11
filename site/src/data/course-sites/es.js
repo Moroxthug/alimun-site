@@ -96,7 +96,7 @@ export default {
         ]],
         ['Cómo saber desde qué nivel empezar', [
           'El Marco común europeo de referencia divide el conocimiento de una lengua en seis niveles, de A1 a C2, y **los certificados de alemán siguen la misma escala**. Saber dónde estás te evita repetir lo que ya sabes.',
-          'La prueba de nivel de Alimun te sitúa de A1 a C1, y tu clase y tus ejercicios se adaptan al resultado.',
+          'La prueba de nivel de Alimun te sitúa de A1 a C2, y tu clase y tus ejercicios se adaptan al resultado.',
         ]],
         ['Alemán para trabajar, estudiar o mudarte', [
           'Si tu objetivo es un trabajo o una mudanza, pregunta con antelación **qué nivel y qué certificado necesitas**: suele indicarse en las ofertas o en los organismos ante los que presentas la solicitud.',
@@ -159,7 +159,7 @@ export default {
         [`¿Cuánto cuesta un curso de ${n} online en Alimun?`, 'Los planes empiezan en €24 al mes con Community, en grupos de unas 35 personas. Focused cuesta €59, Intensive €109 y las clases particulares 1 on 1 €269 al mes. Con la suscripción anual pagas diez meses en lugar de doce.'],
         ['¿Las clases son en directo o grabadas?', 'Son clases en directo por vídeo con un profesor y siempre el mismo grupo. Alimun no graba las clases: después de cada clase recibes los apuntes de la sesión, el vocabulario nuevo y los deberes.'],
         ['¿Qué días y a qué hora son las clases?', 'Cada clase se reúne en días fijos y a la misma hora cada semana, con el mismo profesor y el mismo grupo. Así estudiar se convierte en parte de tu semana.'],
-        ['¿Hace falta un nivel mínimo para empezar?', 'No. Hay clases desde el nivel A1 y una breve prueba inicial te sitúa de A1 a C1, para que entres en la clase adecuada.'],
+        ['¿Hace falta un nivel mínimo para empezar?', 'No. Hay clases desde el nivel A1 y una breve prueba inicial te sitúa de A1 a C2, para que entres en la clase adecuada.'],
         ['¿Puedo prepararme para un certificado?', c.lang === 'German'
           ? 'Sí, puedes practicar con pruebas en el formato de Goethe B1, Goethe B2 y telc B1. No es material oficial y Alimun no está afiliada a los organismos examinadores.'
           : 'Sí, puedes practicar con pruebas en el formato de B2 First, C1 Advanced e IELTS. No es material oficial y Alimun no está afiliada a los organismos examinadores.'],
@@ -193,7 +193,7 @@ export default {
     UI_QUIZ_BTN: 'Descubre tu nivel',
     UI_QUIZ_BTN_LONG: 'Descubre tu nivel en dos minutos',
     UI_HOW_1_T: 'Prueba de nivel',
-    UI_HOW_1_D: 'Una breve prueba establece tu nivel, de A1 a C1, y te coloca en la clase adecuada para ti.',
+    UI_HOW_1_D: 'Una breve prueba establece tu nivel, de A1 a C2, y te coloca en la clase adecuada para ti.',
     UI_HOW_1_A: 'Una estudiante frente al ordenador tomando apuntes',
     UI_HOW_2_T: 'Clases en directo',
     UI_HOW_2_A: 'Una clase por vídeo con dos estudiantes en la pantalla',
@@ -203,7 +203,7 @@ export default {
     UI_HOW_4_T: 'Practica cuando quieras',
     UI_HOW_4_D: 'Ejercicios de tu nivel con corrección inmediata, tarjetas con el vocabulario de las clases y pruebas en el formato de los exámenes.',
     UI_HOW_4_A: 'Un estudiante con auriculares practicando en su cuaderno',
-    UI_LV_INTRO: 'El Marco común europeo de referencia (MCER) describe seis niveles de conocimiento de una lengua. En Alimun hay clases para cada nivel y la prueba inicial te sitúa de A1 a C1.',
+    UI_LV_INTRO: 'El Marco común europeo de referencia (MCER) describe seis niveles de conocimiento de una lengua. En Alimun hay clases para cada nivel y la prueba inicial te sitúa de A1 a C2.',
     UI_LV_1_H: 'A1, nivel básico', UI_LV_1_P: LEVELS.A1,
     UI_LV_2_H: 'A2, nivel elemental', UI_LV_2_P: LEVELS.A2,
     UI_LV_3_H: 'B1, nivel intermedio', UI_LV_3_P: LEVELS.B1,

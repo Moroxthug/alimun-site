@@ -170,7 +170,7 @@ export default {
     } },
 
     { h: 'How to estimate your own timeline' },
-    { p: 'Start by finding out where you are. A level test places you on the scale in a few minutes; at Alimun it goes from A1 to C1. Then decide which level you need and by when, using the goals above. Look up the gap in the Goethe table, and be honest about how many hours a week you can give, counting classes and the work your teacher sets.' },
+    { p: 'Start by finding out where you are. A level test places you on the scale in a few minutes; at Alimun it goes from A1 to C2. Then decide which level you need and by when, using the goals above. Look up the gap in the Goethe table, and be honest about how many hours a week you can give, counting classes and the work your teacher sets.' },
     { p: 'Divide the gap by your weekly hours and add a margin. If the result is later than your deadline, you can add hours, lower the target for now or move the date. Live classes with **a teacher and the same small group**, with flashcards of the words from each lesson, give the plan a fixed rhythm. Check your progress every few months, and if you are slower than expected, change the kind of practice before you add more of it.' },
   ],
   quiz: [
@@ -188,7 +188,7 @@ export default {
     ['Is German harder than Spanish or French for English speakers?', 'The Foreign Service Institute thinks so: it plans about 36 weeks of full-time training for German and 24 to 30 weeks for Spanish, French, Italian and Portuguese. Vocabulary is not the problem; cases, three genders and word order take the extra time.'],
     ['Does the integration course get me to B1?', 'It is designed to. The language part has 600 lessons and ends with the Deutsch-Test für Zuwanderer, which certifies A2 or B1. How far each person gets depends on their starting point and practice outside class.'],
     ['Which level do I need to study at a German university?', 'Each university sets its own level for courses taught in German, and it can differ between courses at the same university. The usual proof is the DSH or the TestDaF. Check the course page before you plan your timeline.'],
-    ['How do I know my current level?', 'Take a level test. The one at Alimun places you from A1 to C1 in a few minutes, and from there the Goethe table shows roughly how far you have to go.'],
+    ['How do I know my current level?', 'Take a level test. The one at Alimun places you from A1 to C2 in a few minutes, and from there the Goethe table shows roughly how far you have to go.'],
   ],
   related: ['goethe-certificates', 'german-for-work', 'german-cases'],
   sources: [

@@ -99,7 +99,7 @@ export default {
         ]],
         ['Savoir par quel niveau commencer', [
           'Le Cadre européen commun de référence divise la maîtrise d’une langue en six niveaux, de A1 à C2, et **les certificats d’allemand suivent la même échelle**. Connaître votre niveau vous évite de refaire ce que vous savez déjà.',
-          'Le test de niveau d’Alimun vous place entre A1 et C1, et votre groupe et vos exercices s’adaptent au résultat.',
+          'Le test de niveau d’Alimun vous place entre A1 et C2, et votre groupe et vos exercices s’adaptent au résultat.',
         ]],
         ['Se préparer avant le départ', [
           'Un projet en Allemagne se prépare souvent pendant des mois. Avancer **régulièrement, chaque semaine**, permet d’arriver à l’examen avec le bon niveau, sans tout concentrer sur les dernières semaines.',
@@ -157,7 +157,7 @@ export default {
         ['Puis-je suivre les cours depuis le Maroc ?', 'Oui. Les cours ont lieu en ligne, par vidéo, et vous les suivez depuis n’importe quelle ville, avec une connexion stable.'],
         ['Les cours sont-ils en direct ou enregistrés ?', 'Ce sont des cours en direct par vidéo, avec un professeur et toujours le même groupe. Alimun n’enregistre pas les cours : après chaque cours, vous recevez les notes de la séance, le nouveau vocabulaire et les devoirs.'],
         ['Quels jours et à quelle heure ont lieu les cours ?', 'Chaque groupe se retrouve à jours fixes et à la même heure chaque semaine, avec le même professeur et le même groupe. L’apprentissage devient ainsi une partie de votre semaine.'],
-        ['Faut-il un niveau minimum pour commencer ?', 'Non. Il existe des groupes dès le niveau A1, et un court test au début vous place entre A1 et C1 pour rejoindre le bon groupe.'],
+        ['Faut-il un niveau minimum pour commencer ?', 'Non. Il existe des groupes dès le niveau A1, et un court test au début vous place entre A1 et C2 pour rejoindre le bon groupe.'],
         ['Puis-je préparer un certificat ?', c.lang === 'German'
           ? 'Oui, vous pouvez vous entraîner sur des épreuves au format du Goethe B1, du Goethe B2 et du telc B1. Ce ne sont pas des documents officiels, et Alimun n’est pas affilié aux organismes d’examen.'
           : 'Oui, vous pouvez vous entraîner sur des épreuves au format du B2 First, du C1 Advanced et de l’IELTS. Ce ne sont pas des documents officiels, et Alimun n’est pas affilié aux organismes d’examen.'],
@@ -190,7 +190,7 @@ export default {
     UI_QUIZ_BTN: 'Estimer mon niveau',
     UI_QUIZ_BTN_LONG: 'Estimer mon niveau en deux minutes',
     UI_HOW_1_T: 'Test de niveau',
-    UI_HOW_1_D: 'Un court test fixe votre niveau, de A1 à C1, et vous place dans le groupe qui vous correspond.',
+    UI_HOW_1_D: 'Un court test fixe votre niveau, de A1 à C2, et vous place dans le groupe qui vous correspond.',
     UI_HOW_1_A: 'Une étudiante devant son ordinateur prend des notes',
     UI_HOW_2_T: 'Cours en direct',
     UI_HOW_2_A: 'Un cours en vidéo avec deux élèves à l’écran',
@@ -200,7 +200,7 @@ export default {
     UI_HOW_4_T: 'Entraînez-vous quand vous voulez',
     UI_HOW_4_D: 'Des exercices à votre niveau avec une correction immédiate, des flashcards avec le vocabulaire des cours et des épreuves au format des examens.',
     UI_HOW_4_A: 'Un élève avec un casque s’entraîne dans son cahier',
-    UI_LV_INTRO: 'Le Cadre européen commun de référence pour les langues décrit six niveaux de maîtrise. Chez Alimun, il existe des groupes pour chaque niveau, et le test de départ vous place entre A1 et C1.',
+    UI_LV_INTRO: 'Le Cadre européen commun de référence pour les langues décrit six niveaux de maîtrise. Chez Alimun, il existe des groupes pour chaque niveau, et le test de départ vous place entre A1 et C2.',
     UI_LV_1_H: 'A1, niveau débutant', UI_LV_1_P: LEVELS.A1,
     UI_LV_2_H: 'A2, niveau élémentaire', UI_LV_2_P: LEVELS.A2,
     UI_LV_3_H: 'B1, niveau intermédiaire', UI_LV_3_P: LEVELS.B1,

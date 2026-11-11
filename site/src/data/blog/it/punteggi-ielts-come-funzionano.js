@@ -158,7 +158,7 @@ export default {
       ['“Un Task 1 lungo compensa un saggio corto.”', 'Dedica più cura al Task 2.', 'Il Task 2 pesa più del Task 1 nella band del Writing.'],
       ['“Il mio risultato di tre anni fa va ancora bene.”', 'Controlla la data prima di candidarti.', 'I risultati sono riconosciuti per due anni dalla data del test e non si possono prorogare.'],
     ] },
-    { p: "I progressi veri arrivano con la pratica regolare e un riscontro, non solo con più test. Con Alimun impari in **lezioni dal vivo con un insegnante e lo stesso piccolo gruppo**, e l'insegnante corregge i tuoi compiti, così sai quale criterio sta frenando il tuo Writing. Non sai da dove parti? Il test di livello ti colloca da A1 a C1 in pochi minuti." },
+    { p: "I progressi veri arrivano con la pratica regolare e un riscontro, non solo con più test. Con Alimun impari in **lezioni dal vivo con un insegnante e lo stesso piccolo gruppo**, e l'insegnante corregge i tuoi compiti, così sai quale criterio sta frenando il tuo Writing. Non sai da dove parti? Il test di livello ti colloca da A1 a C2 in pochi minuti." },
   ],
   quiz: [
     { q: 'Le tue quattro band hanno una media di 6,25. Qual è la band complessiva?', options: ['6', '6,25', '6,5', '7'], a: 2, why: 'Una media che finisce in ,25 si arrotonda alla mezza band successiva: 6,25 diventa 6,5.' },

@@ -124,7 +124,7 @@ export default {
 
     { h: 'Come prepararti' },
     { p: "Qualunque esame tu scelga, il lavoro è lo stesso: il tuo tedesco deve essere al livello che vuoi dimostrare, e poi impari il formato perché il giorno dell'esame niente ti colga di sorpresa. Usa i modelli d'esame ufficiali dell'ente, fai almeno una simulazione completa con i tempi reali e allenati a parlare ad alta voce con un'altra persona, perché quasi tutti questi esami prevedono una conversazione o un'esposizione." },
-    { p: "Se non sei sicuro del tuo livello, scoprilo prima di pagare l'iscrizione. Su Alimun **il test di livello ti colloca da A1 a C1** in pochi minuti, e le lezioni dal vivo con un insegnante e sempre lo stesso piccolo gruppo, con i compiti corretti dal tuo insegnante, ti aiutano a costruire le quattro abilità che questi esami verificano. Alimun non è affiliata a nessuno degli enti citati in questo articolo." },
+    { p: "Se non sei sicuro del tuo livello, scoprilo prima di pagare l'iscrizione. Su Alimun **il test di livello ti colloca da A1 a C2** in pochi minuti, e le lezioni dal vivo con un insegnante e sempre lo stesso piccolo gruppo, con i compiti corretti dal tuo insegnante, ti aiutano a costruire le quattro abilità che questi esami verificano. Alimun non è affiliata a nessuno degli enti citati in questo articolo." },
   ],
   quiz: [
     { q: 'Quale risultato TestDaF vale come prova per l’ammissione a tutti i corsi di studio?', options: ['TDN 3 in tutte e quattro le parti', 'TDN 4 in tutte e quattro le parti', 'TDN 5 solo nel parlato', 'Un totale di 40 punti'], a: 1, why: 'Secondo il quadro di HRK e KMK, TDN 4 in tutte e quattro le parti vale per tutti i corsi di studio.' },

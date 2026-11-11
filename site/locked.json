@@ -49,8 +49,8 @@
     "approved": "2026-10-22 services hero ok (live-class video, black and white) | 2026-10-22 owner: hero scroll transition everywhere; 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 quote restored (owner); 2026-10-24 AI mentions removed (owner); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\")"
   },
   "src/blocks/services/s04.html": {
-    "sha256": "496eb7bbc8e2b9871aeafdf777b8044d5fffb948c5c055bfebeeabeaab10b813",
-    "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed); 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\")"
+    "sha256": "e8f8db0c5b8312f771ca68beadc9cb3c93ce15b215e590d6b696de92329f69e0",
+    "approved": "2026-10-22 services how it works ok (sentences, no tags/numbers) | 2026-10-22 owner: animations always play (reduced-motion switch removed); 2026-10-24 owner: hero text without \"toolkit\", quote removed / id=\"how\" anchor; 2026-10-24 sign-up links and quiz buttons now open the level test (owner: new sign-up flow); 2026-10-31 smoother scrolling (owner: \"some animations seem laggy\"); 2026-11-11 level test range A1 to C2 (owner: \"Up to C2\")"
   },
   "src/blocks/about/head.html": {
     "sha256": "d410609269347eb505774dea4e2ec80a33eb654a9f7d22b507e8a0ce2d1960ad",
@@ -93,8 +93,8 @@
     "approved": "2026-10-22 corporate hero ok (owner text, Contact us, team-meeting video) | 2026-10-22 owner: hero scroll transition everywhere"
   },
   "src/blocks/corporate/s02.html": {
-    "sha256": "1053508af1a552b9ab1626028307c7f01eb9d1a90192a12a9648d6d0f63e3198",
-    "approved": "2026-10-22 corporate workforce fluency ok (bento, scroll motion); 2026-10-24 Company dashboard card replaced by placement level card, white instead of black (owner: go on with corporate)"
+    "sha256": "2f991e79831a87bb4c0aa96c223cf63bf3bbc3bf79f6b54c93a0c9b81a3409cc",
+    "approved": "2026-10-22 corporate workforce fluency ok (bento, scroll motion); 2026-10-24 Company dashboard card replaced by placement level card, white instead of black (owner: go on with corporate); 2026-11-11 level test range A1 to C2 (owner: \"Up to C2\")"
   },
   "src/blocks/corporate/s02c-contact.html": {
     "sha256": "1e9d02a3a6bcd193aee511866240ebec5359ec49bf53de00bbb642572b48b94a",
@@ -205,8 +205,8 @@
     "approved": "2026-10-23 Italian course pages: guide text with lime markers (owner: section ok)"
   },
   "src/data/course-guides.js": {
-    "sha256": "a6c56128e11f1e06a3b737e1b5dfbdcd36bc91bb19bf0a6fa5149b14f161d82b",
-    "approved": "2026-10-23 Italian course pages: guide text with lime markers (owner: section ok)"
+    "sha256": "da9c00c1bd4e05abea89659494cd5603015ffec0f1b9eab2233e6fb37188f74a",
+    "approved": "2026-10-23 Italian course pages: guide text with lime markers (owner: section ok); 2026-11-11 level test range A1 to C2 (owner: \"Up to C2\")"
   },
   "src/blocks/course/plans.html": {
     "sha256": "473e565c9eb34c4d263596fb7b7251d4d308a1b81812828d0ece35b06892a357",
@@ -217,8 +217,8 @@
     "approved": "2026-10-23 Italian course pages: FAQ (owner: section ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
   },
   "src/data/course-faq.js": {
-    "sha256": "1dc7debcb9b4936627cf3fb3276ba9ca8b3ab4a9e5bb3e189df9f6cae5907d2b",
-    "approved": "2026-10-23 Italian course pages: FAQ text (owner: section ok)"
+    "sha256": "2ff6fee9423beec372a04548978e0645dc89e3f08fbdaae043e6e9ff7e454885",
+    "approved": "2026-10-23 Italian course pages: FAQ text (owner: section ok); 2026-11-11 level test range A1 to C2 (owner: \"Up to C2\")"
   },
   "src/data/course-quiz.js": {
     "sha256": "c84b045ce8095d1e6a80a3895c96f5aebf11f817b9f15a610e13695f03d9ddb7",
