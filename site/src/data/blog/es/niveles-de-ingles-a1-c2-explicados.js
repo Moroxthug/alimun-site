@@ -1,7 +1,7 @@
 // Artículo (tercer diseño, docs/BLOG_PLAN.md). Datos comprobados el 26 oct 2026: Consejo de Europa, MCER
 // (escala global, 2001; Volumen complementario 2020 con Pre-A1 y niveles "plus"), exámenes Cambridge English
 // y resultados en la Cambridge English Scale (B2 First), horas de aprendizaje guiado de Cambridge (orientativas, acumuladas),
-// ielts.org sobre IELTS y el MCER (B2 = 5,5-6,5, C1 = 7-8, C2 aprox. 9), prueba de nivel de Alimun (de A1 a C1).
+// ielts.org sobre IELTS y el MCER (B2 = 5,5-6,5, C1 = 7-8, C2 aprox. 9), prueba de nivel de Alimun (de A1 a C2).
 // Nombres de los niveles en español (Acceso, Plataforma, Umbral, Avanzado, Dominio operativo eficaz, Maestría) como en la versión del Instituto Cervantes.
 export default {
   key: 'cefr-english',
@@ -22,7 +22,7 @@ export default {
     { n: 6, text: 'niveles en la escala, de A1 a C2' },
     { n: 3, text: 'etapas: usuario básico, independiente y competente' },
     { n: 2001, text: 'el año en que el Consejo de Europa publicó el MCER' },
-    { label: 'De A1 a C1', text: 'los niveles en los que te sitúa la prueba de Alimun, en pocos minutos' },
+    { label: 'De A1 a C2', text: 'los niveles en los que te sitúa la prueba de Alimun, en pocos minutos' },
   ],
   blocks: [
     { take: {
@@ -131,7 +131,7 @@ export default {
     { p: 'Hay dos cosas que llaman la atención. Los tramos se hacen **más largos a medida que subes**: de B2 a C1 hacen falta más o menos tantas horas como para llegar desde cero a A2. Y las horas guiadas son solo una parte. Lo que haces entre clase y clase, desde leer y escuchar hasta hacer ejercicios, marca una gran diferencia, y por eso la constancia suele ganar a los atracones de estudio.' },
 
     { h: 'Cómo saber tu nivel y seguir tu progreso' },
-    { p: 'La forma más rápida de empezar es una **prueba de nivel**. La prueba de Alimun te sitúa entre A1 y C1 en pocos minutos, y tu clase y tus ejercicios siguen ese resultado: empiezas donde estás de verdad, no donde crees que deberías estar. Empezar demasiado alto frustra, y empezar demasiado bajo te hace perder un tiempo que podrías dedicar a subir.' },
+    { p: 'La forma más rápida de empezar es una **prueba de nivel**. La prueba de Alimun te sitúa entre A1 y C2 en pocos minutos, y tu clase y tus ejercicios siguen ese resultado: empiezas donde estás de verdad, no donde crees que deberías estar. Empezar demasiado alto frustra, y empezar demasiado bajo te hace perder un tiempo que podrías dedicar a subir.' },
     { panels: [
       ['Prueba de nivel', 'Rápida y gratuita, te dice **por dónde empezar**. Es una guía para tu aprendizaje, no un resultado oficial.'],
       ['Certificado', 'Un examen como el B2 First o el IELTS, en un centro examinador o en línea donde se ofrezca. **Acredita tu nivel** ante una universidad, una empresa o una oficina de visados.'],
@@ -147,7 +147,7 @@ export default {
     { q: 'Según IELTS, ¿qué bandas corresponden al C1?', options: ['De 4 a 5', 'De 5,5 a 6,5', 'De 7 a 8', 'Solo la 9'], a: 2, why: 'IELTS hace corresponder las bandas de 7 a 8 con el C1, las de 5,5 a 6,5 con el B2 y el C2 aproximadamente con la banda 9.' },
     { q: '¿Es normal leer a un nivel más alto que el que hablas?', options: ['No, significa que la prueba falló', 'Sí, los perfiles desiguales son muy habituales', 'Solo en A1', 'Solo en los nativos'], a: 1, why: 'Casi todo el mundo tiene niveles distintos en cada destreza, y el MCER permite describirlas por separado.' },
     { q: '¿Cuántas horas de aprendizaje guiado indica Cambridge, aproximadamente, para llegar al C1 desde cero?', options: ['De 180 a 200', 'De 350 a 400', 'De 700 a 800', 'De 2.000 a 2.500'], a: 2, why: 'Cambridge da unas 700 a 800 horas guiadas acumuladas para el C1, como orientación.' },
-    { q: '¿Qué hace la prueba de nivel de Alimun?', options: ['Te da un certificado oficial', 'Te sitúa entre A1 y C1 en pocos minutos', 'Sustituye al IELTS para los visados', 'Solo evalúa gramática'], a: 1, why: 'La prueba te sitúa entre A1 y C1 en pocos minutos para que empieces en la clase adecuada; un resultado oficial sigue necesitando un examen reconocido.' },
+    { q: '¿Qué hace la prueba de nivel de Alimun?', options: ['Te da un certificado oficial', 'Te sitúa entre A1 y C2 en pocos minutos', 'Sustituye al IELTS para los visados', 'Solo evalúa gramática'], a: 1, why: 'La prueba te sitúa entre A1 y C2 en pocos minutos para que empieces en la clase adecuada; un resultado oficial sigue necesitando un examen reconocido.' },
   ],
   faq: [
     ['¿Qué nivel se considera fluido?', 'El MCER no tiene un nivel “fluido” oficial. Mucha gente usa la palabra para el B2, donde mantienes una conversación natural sin esfuerzo, mientras que C1 y C2 describen un dominio más preciso y flexible.'],

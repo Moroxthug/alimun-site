@@ -250,7 +250,8 @@ select pg_temp.chk('tchT', 'read own student',             'allowed', 'select * 
 select pg_temp.chk('tchT', 'read student outside cohorts', 'none',    'select * from public.student_profiles where id = {spB}');
 select pg_temp.chk('tchT', 'read own cohort enrollments',  'allowed', 'select * from public.enrollments where cohort_id = {c1}');
 select pg_temp.chk('tchT', 'read foreign enrollments',     'none',    'select * from public.enrollments where cohort_id = {c2}');
-select pg_temp.chk('tchT', 'complete own session',         'allowed', 'update public.sessions set status = ''completed'' where id = {s1}');
+-- Class dates are written by admins and the API only (policy sessions_admin_write).
+select pg_temp.chk('tchT', 'complete own session',         'denied',  'update public.sessions set status = ''completed'' where id = {s1}');
 select pg_temp.chk('tchT', 'rewrite room url',             'denied',  'update public.sessions set daily_room_url = ''https://evil.example'' where id = {s1}');
 select pg_temp.chk('tchT', 'update foreign session',       'denied',  'update public.sessions set status = ''cancelled'' where id = {s2}');
 select pg_temp.chk('tchT', 'insert session',               'denied',  'insert into public.sessions (cohort_id, scheduled_at) values ({c1}, now())');
@@ -295,7 +296,9 @@ select pg_temp.chk('stuA', 'insert session_credits',       'denied',  'insert in
 select pg_temp.chk('stuA', 'waitlist on closed cohort',    'error',   'insert into public.cohort_waitlist (cohort_id, student_id) values ({c2}, {spA})');
 select pg_temp.chk('stuA', 'waitlist other language',      'error',   'insert into public.cohort_waitlist (cohort_id, student_id) values ({cDe}, {spA})');
 select pg_temp.chk('stuA', 'waitlist row for student B',   'error',   'insert into public.cohort_waitlist (cohort_id, student_id) values ({cFull}, {spB})');
-select pg_temp.chk('stuA', 'delete own session file',      'allowed', 'delete from storage.objects where name = ''shared/'' || {s1} || ''/rls-a.pdf''');
+-- Supabase blocks DELETE on storage.objects from SQL (deletes go through the Storage API),
+-- so the delete policy (session_files_owner_delete) is checked as a read with its condition.
+select pg_temp.chk('stuA', 'delete rule: own session file', 'allowed', 'select * from storage.objects where name = ''shared/'' || {s1} || ''/rls-a.pdf'' and bucket_id = ''session-notes-pdfs'' and (storage.foldername(name))[1] = ''shared'' and owner = auth.uid() and public.can_use_session_files((storage.foldername(name))[2])');
 select pg_temp.chk('stuA', 'move own review to stranger',  'denied',  'update public.teacher_reviews set teacher_id = {tpU} where student_id = {spA}');
 
 select pg_temp.chk('stuA', 'self-grade own submission',    'error',   'update public.assignment_submissions set status = ''graded'', score = 100 where id = {sub1}');
@@ -314,8 +317,8 @@ select pg_temp.chk('tchT', 'read U''s student feedback',   'none',    'select * 
 select pg_temp.chk('stuC', 'waitlist without subscription', 'error',  'insert into public.cohort_waitlist (cohort_id, student_id) values ({cFull}, {spC})');
 
 -- new student N: first profile insert (signup)
-select pg_temp.chk('stuN', 'signup forces unpaid tier',    'allowed', 'with i as (insert into public.student_profiles (user_id, full_name, language, level, goal_track, tier, stripe_subscription_status, stripe_subscription_id, stripe_customer_id) values ({stuN}, ''New'', ''Spanish'', ''A1'', ''foundations'', ''private'', ''active'', ''sub_x'', ''cus_x'') returning tier, stripe_subscription_status, stripe_subscription_id, stripe_customer_id) select * from i where tier = ''waitlist'' and stripe_subscription_status is null and stripe_subscription_id is null and stripe_customer_id is null');
-select pg_temp.chk('stuN', 'signup keeps founding_member', 'allowed', 'with i as (insert into public.student_profiles (user_id, full_name, language, level, goal_track, tier) values ({stuN}, ''New'', ''Italian'', ''A1'', ''foundations'', ''founding_member'') returning tier) select * from i where tier = ''founding_member''');
+select pg_temp.chk('stuN', 'signup forces unpaid tier',    'allowed', 'with i as (insert into public.student_profiles (user_id, full_name, language, level, goal_track, tier, stripe_subscription_status, stripe_subscription_id, stripe_customer_id) values ({stuN}, ''New'', ''Spanish'', ''A1'', ''foundations'', ''private'', ''active'', ''sub_x'', ''cus_x'') returning tier, stripe_subscription_status, stripe_subscription_id, stripe_customer_id) select * from i where tier = ''free'' and stripe_subscription_status is null and stripe_subscription_id is null and stripe_customer_id is null');
+select pg_temp.chk('stuN', 'signup cannot claim founding_member', 'allowed', 'with i as (insert into public.student_profiles (user_id, full_name, language, level, goal_track, tier) values ({stuN}, ''New'', ''Italian'', ''A1'', ''foundations'', ''founding_member'') returning tier) select * from i where tier = ''free''');
 
 -- teacher T: trust fields are admin-only
 select pg_temp.chk('tchT', 'inflate sessions_delivered',   'error',   'update public.teacher_profiles set sessions_delivered = 5000 where id = {tpT}');
@@ -325,12 +328,12 @@ select pg_temp.chk('tchT', 'edit languages after review',  'error',   'update pu
 select pg_temp.chk('tchT', 'edit own bio',                 'allowed', 'update public.teacher_profiles set bio = ''Teaching since 2010'', specialty = ''Grammar'' where id = {tpT}');
 select pg_temp.chk('tchT', 'markup in own location',       'error',   'update public.teacher_profiles set location = ''<script>x</script>'' where id = {tpT}');
 select pg_temp.chk('tchT', 'markup in own name',           'error',   'update public.teacher_profiles set full_name = ''<b>T</b>'' where id = {tpT}');
-select pg_temp.chk('tchT', 'change session created_at',    'error',   'update public.sessions set created_at = now() - interval ''1 day'' where id = {s1}');
-select pg_temp.chk('tchT', 'delete a student''s file',     'none',    'delete from storage.objects where name = ''shared/'' || {s1} || ''/rls-a.pdf''');
+select pg_temp.chk('tchT', 'change session created_at',    'denied',  'update public.sessions set created_at = now() - interval ''1 day'' where id = {s1}');
+select pg_temp.chk('tchT', 'delete rule: student''s file', 'none',    'select * from storage.objects where name = ''shared/'' || {s1} || ''/rls-a.pdf'' and bucket_id = ''session-notes-pdfs'' and (storage.foldername(name))[1] = ''shared'' and owner = auth.uid() and public.can_use_session_files((storage.foldername(name))[2])');
 select pg_temp.chk('tchT', 'grade foreign submission',     'none',    'update public.assignment_submissions set score = 1 where student_id = {spB}');
 
 -- new teacher N: application insert resets admin and trust fields
-select pg_temp.chk('tchN', 'application resets trust fields', 'allowed', 'with i as (insert into public.teacher_profiles (user_id, full_name, languages, experience_years, status, sessions_delivered, badges, rating, hourly_rate, tier_level) values ({tchN}, ''New T'', ''{Spanish}'', 99, ''approved'', 999, ''{Verified}'', 5, 99, ''intensive'') returning status, sessions_delivered, badges, experience_years, rating, hourly_rate, tier_level) select * from i where status = ''pending'' and sessions_delivered = 0 and badges is null and experience_years = 60 and rating = 0 and hourly_rate = 22 and tier_level = ''community''');
+select pg_temp.chk('tchN', 'application resets trust fields', 'allowed', 'with i as (insert into public.teacher_profiles (user_id, full_name, languages, experience_years, status, sessions_delivered, badges, rating, hourly_rate, tier_level) values ({tchN}, ''New T'', ''{Spanish}'', 99, ''approved'', 999, ''{Verified}'', 5, 99, ''intensive'') returning status, sessions_delivered, badges, experience_years, rating, hourly_rate, tier_level) select * from i where status = ''pending'' and sessions_delivered = 0 and badges = ''{}'' and experience_years = 60 and rating = 0 and hourly_rate = 22 and tier_level = ''community''');
 
 -- suspended teacher S (teaches c3): no teacher powers left
 select pg_temp.chk('tchS', 'read own profile',             'allowed', 'select * from public.teacher_profiles where id = {tpS}');
@@ -400,7 +403,12 @@ from (
     and p.proname not in ('is_admin', 'my_student_profile_id', 'my_teacher_profile_id', 'my_own_teacher_profile_id',
                           'is_enrolled_in', 'teaches_cohort', 'teaches_student', 'teaches_session', 'attends_session',
                           'was_taught_by', 'can_use_session_files', 'cohort_classmates', 'can_join_waitlist',
-                          'is_client_write', 'public_teacher_rows', 'teacher_public')
+                          'is_client_write', 'public_teacher_rows', 'teacher_public',
+                          -- added after the phase 1 lockdown; each checks is_admin() or the caller's rows
+                          'can_read_set', 'can_see_thread', 'session_cohort', 'my_threads', 'open_thread',
+                          'complete_material_homework', 'set_cohort_lesson_start', 'set_session_lesson',
+                          'submit_welcome_poll', 'admin_activity_overview', 'admin_activity_timeline',
+                          'admin_signup_sources')
 ) x;
 insert into rls_results (actor, test, expect, got, ok, detail)
 select 'grants', 'anon EXECUTE allow-list', 'no extras', coalesce(string_agg(fn, ', '), 'no extras'), count(*) = 0, string_agg(fn, ', ')

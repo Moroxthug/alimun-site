@@ -169,7 +169,7 @@ export default {
     } },
 
     { h: 'Comment estimer ton propre délai' },
-    { p: "Commence par savoir où tu en es. Un test de niveau te place sur l'échelle en quelques minutes ; celui d'Alimun va de l'A1 au C1. Décide ensuite quel niveau il te faut et pour quand, à partir des objectifs ci-dessus. Cherche l'écart dans le tableau du Goethe et sois honnête sur le nombre d'heures que tu peux donner chaque semaine, en comptant les cours et le travail que te donne ton professeur." },
+    { p: "Commence par savoir où tu en es. Un test de niveau te place sur l'échelle en quelques minutes ; celui d'Alimun va de l'A1 au C2. Décide ensuite quel niveau il te faut et pour quand, à partir des objectifs ci-dessus. Cherche l'écart dans le tableau du Goethe et sois honnête sur le nombre d'heures que tu peux donner chaque semaine, en comptant les cours et le travail que te donne ton professeur." },
     { p: "Divise l'écart par tes heures hebdomadaires et ajoute une marge. Si le résultat dépasse ton échéance, tu peux ajouter des heures, baisser l'objectif pour l'instant ou déplacer la date. Des cours en direct avec **un professeur et le même petit groupe**, avec des flashcards des mots de chaque cours, donnent au plan un rythme fixe. Fais le point tous les quelques mois et, si tu avances moins vite que prévu, change le type de pratique avant d'en augmenter la quantité." },
   ],
   quiz: [
@@ -187,7 +187,7 @@ export default {
     ["Pour un francophone, l'allemand est-il plus difficile que l'anglais ?", "Il demande en général plus de temps. Le vocabulaire savant d'origine latine aide, mais les cas, les trois genres qui ne correspondent pas à ceux du français et la place du verbe demandent de la pratique. Le FSI, pour les anglophones, prévoit lui aussi plus de semaines pour l'allemand que pour les langues romanes."],
     ["Le cours d'intégration mène-t-il au B1 ?", "Il est conçu pour cela. La partie linguistique compte 600 cours et se termine par le Deutsch-Test für Zuwanderer, qui certifie l'A2 ou le B1. Le niveau atteint dépend du point de départ de chacun et de sa pratique hors du cours."],
     ['Quel niveau faut-il pour étudier dans une université allemande ?', "Chaque université fixe son niveau pour les cursus en allemand, et il peut varier entre cursus d'une même université. Les preuves habituelles sont le DSH et le TestDaF. Vérifie la page du cursus avant de planifier ton délai."],
-    ['Comment connaître mon niveau actuel ?', "Passe un test de niveau. Celui d'Alimun te place de l'A1 au C1 en quelques minutes, et à partir de là le tableau du Goethe te montre à peu près le chemin qu'il te reste."],
+    ['Comment connaître mon niveau actuel ?', "Passe un test de niveau. Celui d'Alimun te place de l'A1 au C2 en quelques minutes, et à partir de là le tableau du Goethe te montre à peu près le chemin qu'il te reste."],
   ],
   related: ['goethe-certificates', 'german-for-work', 'german-cases'],
   sources: [

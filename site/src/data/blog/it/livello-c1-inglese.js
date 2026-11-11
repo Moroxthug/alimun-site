@@ -1,0 +1,183 @@
+// Articolo (terzo design, docs/BLOG_PLAN.md). Fatti verificati l'11 nov 2026:
+// cambridgeenglish.org, pagina dei risultati (C1 Advanced: 200-210 grado A = C2, 193-199 grado B e 180-192 grado C = C1,
+// 160-179 certificato B2, 142-159 nessun certificato; i certificati non scadono, ma chi li riceve decide fino a quando
+// accettarli) e pagina del formato (Reading and Use of English 1h30, 8 parti, 56 domande; Writing 1h30, saggio
+// obbligatorio più un compito a scelta tra tre, 220-260 parole; Listening circa 40 min, 4 parti, 30 domande, audio
+// ascoltati due volte; Speaking 15 min in coppia con due esaminatori). ets.org, aggiornamento della scala TOEFL iBT:
+// scala 1-6 dal 21 gennaio 2026, C1 = 5 e 5,5 per sezione e totale, confronto con la scala 0-120 per due anni.
+// ielts.org: IELTS 7-8 = C1. Ripresi da articoli già verificati: QCER scala globale (coe.int blocca la lettura
+// automatica; descrittori come nell'articolo english-b2-level e nell'articolo ma/niveau-c1-anglais), B2 First 180-190 =
+// certificato C1 (it/livello-b2-inglese), oltre 11.000 enti che accettano il C1 Advanced (it/cambridge-c1-advanced-esame),
+// ore di apprendimento guidato Cambridge (circa 200 per livello, 500-600 cumulative al B2, 700-800 al C1; la pagina di
+// supporto Cambridge oggi mostra un controllo anti-bot e non è stata riletta), OM 27/2026 GPS (C1 4 punti, B2 3, C2 6,
+// un solo titolo per lingua, solo enti riconosciuti), DM 205 e 206/2023 (certificazioni solo dal C1: C1 3,75, C2 5),
+// DM 249/2010 art. 14 (corsi CLIL per docenti abilitati con almeno C1 certificato, 60 CFU, tirocinio 300 ore),
+// avviso MIM sul livello QCER riportato nel certificato (it/certificazione-inglese-concorsi-pubblici).
+// Risorse Alimun controllate nel repository: quiz-inglese-c1 (10 domande) ed esercizio-inglese-c1-inversione (12 domande).
+// Non verificato e quindi omesso: requisiti C1 di singole università italiane, prezzi degli esami, livello Trinity ISE
+// per il C1, tabelle IELTS sulla soglia 6,5-7. Alimun non è affiliata a Cambridge, IELTS o ETS.
+export default {
+  key: 'english-c1-level',
+  site: 'it',
+  slug: 'livello-c1-inglese',
+  section: 'levels',
+  course: 'English',
+  published: '2026-11-11',
+  updated: '2026-11-11',
+  title: "Livello C1 di inglese: cosa significa, come certificarlo ed esercizi per allenarti",
+  metaTitle: "Livello C1 inglese: cosa significa, certificati ed esercizi – Alimun",
+  desc: "Livello C1 di inglese spiegato: cosa sai fare secondo il QCER, C1 Advanced, IELTS e TOEFL, punti GPS e CLIL, ore di studio ed esercizi C1 gratuiti.",
+  lead: "Il C1 è il livello in cui l'inglese smette di essere una materia e diventa uno strumento di lavoro. Qui trovi cosa significa secondo il Consiglio d'Europa, **quali esami lo certificano**, dove conta in Italia, dalla scuola al CLIL, e come allenarti con esercizi di livello C1.",
+  photo: 'english-c1-level-it-open-books',
+  sticker: { draw: 'owl', say: 'Al C1 non cerchi le parole: scegli le migliori.' },
+  facts: [
+    { label: '180-199', text: 'il punteggio del C1 Advanced che dà un certificato di livello C1 sulla Cambridge English Scale' },
+    { label: 'IELTS 7-8', text: "le bande che l'IELTS fa corrispondere al C1" },
+    { n: 4, unit: 'punti', text: 'per una certificazione C1 nelle GPS 2026/28, contro i 3 del B2' },
+    { label: '700-800 ore', text: 'di apprendimento guidato indicate da Cambridge per arrivare al C1 partendo da zero' },
+  ],
+  blocks: [
+    { take: {
+      title: 'La risposta breve',
+      text: "Avere un **livello C1 di inglese** significa capire testi lunghi e impegnativi, coglierne i significati impliciti e parlare con scioltezza senza dover cercare le parole, nello studio come nel lavoro. Lo certifichi con il C1 Advanced di Cambridge, con un IELTS tra 7 e 8 o con un TOEFL iBT di 5 o 5,5. In Italia è **la soglia che conta** per il CLIL e per i punti nei concorsi docenti.",
+      draw: 'parrot',
+    } },
+
+    { h: 'Cosa significa C1 secondo il QCER' },
+    { p: "Il **Quadro comune europeo di riferimento per le lingue** (QCER, in inglese CEFR) del Consiglio d'Europa descrive la competenza in una lingua su sei livelli, da A1 a C2. Il C1 è il penultimo e, insieme al C2, forma la fascia dell'utente competente. In italiano viene chiamato livello “Efficacia”, e il nome dice già molto: al C1 non conta parlare un inglese perfetto, conta **usarlo in modo efficace** in situazioni complesse." },
+    { p: "Nella scala globale del Consiglio d'Europa chi è al C1 capisce un'ampia gamma di testi lunghi e impegnativi e ne riconosce il significato implicito. Si esprime in modo fluido e spontaneo, senza dover cercare le parole in modo evidente. Usa la lingua con flessibilità ed efficacia nella vita sociale, nello studio e nel lavoro. Infine produce testi chiari, ben strutturati e dettagliati su argomenti complessi, controllando **la struttura del testo, i connettivi e i meccanismi di coesione**." },
+    { p: "Per capire dove si colloca, conviene guardarlo accanto ai livelli vicini. Ecco come il Consiglio d'Europa descrive il B2, il C1 e il C2, riassunti in italiano." },
+    { levels: [
+      ['B2', 'Progresso', "Capisci le idee principali di testi complessi su temi concreti e astratti, comprese le discussioni tecniche nel tuo campo. Interagisci con una scioltezza tale che la conversazione con un madrelingua procede senza sforzo per nessuno dei due."],
+      ['C1', 'Efficacia', "Capisci testi lunghi e impegnativi e i loro sottintesi, ti esprimi con scioltezza senza cercare le parole e scrivi testi chiari, strutturati e dettagliati su argomenti complessi."],
+      ['C2', 'Padronanza', "Capisci senza sforzo praticamente tutto ciò che leggi o ascolti, riassumi informazioni da fonti diverse in modo coerente e ti esprimi con precisione, cogliendo le sfumature anche in situazioni complesse."],
+    ] },
+    { p: "Il salto dal B2 al C1 non riguarda tanto il numero di parole che conosci, quanto **la finezza** con cui le usi. Al B2 capisci di cosa parla un articolo; al C1 capisci anche il tono, l'ironia, quello che l'autore lascia intendere senza scriverlo. Al B2 sostieni una discussione; al C1 cambi registro a seconda che tu sia in una riunione, a un convegno o a cena con amici, e lo fai senza pensarci." },
+
+    { h: 'Cosa sai fare al C1, abilità per abilità' },
+    { p: "I descrittori del QCER sono volutamente generali. Tradotti nella vita di tutti i giorni, raccontano un inglese che non ti costringe più a semplificare quello che pensi. Quasi nessuno, però, è C1 in tutte le abilità nello stesso momento: è normale leggere a un livello più alto di quello a cui si scrive, e molti esami ti danno infatti **un risultato per ogni abilità**." },
+    { h3: 'Ascolto e lettura' },
+    { p: "All'ascolto segui lezioni universitarie, conferenze e riunioni anche quando il discorso non è ben organizzato e i collegamenti tra le idee sono solo impliciti. Riconosci molte espressioni idiomatiche e colloquiali, anche se un accento poco familiare può ancora costringerti a verificare un dettaglio. Film e serie in lingua originale non sono più un esercizio: li guardi e basta, magari con i sottotitoli in inglese per le scene più veloci." },
+    { p: "Alla lettura affronti testi lunghi e complessi, come un rapporto, un editoriale, un contratto o un capitolo di saggistica, e ne cogli i dettagli, compresi **gli atteggiamenti e le opinioni** espressi tra le righe. Puoi leggere la stampa anglofona senza tenere il dizionario accanto, anche se ogni tanto una parola rara ti sfugge. Nei testi specialistici fuori dal tuo campo può servirti ancora uno sguardo al dizionario, ma il senso generale non ti scappa." },
+    { h3: 'Parlato' },
+    { p: "Parli in modo fluido e spontaneo, quasi senza sforzo; solo un argomento concettualmente difficile può rallentarti. Sai **sfumare un'opinione** in base a quanto ne sei sicuro, esprimere un disaccordo netto in modo diplomatico e riprendere il filo quando vieni interrotto. È la differenza che si sente di più in una riunione di lavoro: al C1 intervieni al momento giusto, non tre minuti dopo, quando la discussione è già andata avanti." },
+    { figure: { photo: 'english-c1-level-it-presentation', alt: 'Un uomo con un maglione rosso indica una lavagna a fogli piena di post-it colorati davanti a un gruppo di colleghi', caption: 'Al C1 presenti un progetto in inglese, rispondi alle domande e adatti il tono al pubblico che hai davanti.' } },
+    { h3: 'Scrittura' },
+    { p: "Allo scritto usi con flessibilità una gamma ampia di strutture complesse. Organizzi i paragrafi in modo che il lettore segua il ragionamento, colleghi le idee con connettivi vari e scegli il **registro adatto** a chi legge: un'email delicata a un cliente, una relazione per il tuo responsabile, un saggio argomentativo, una recensione. Gli errori ci sono ancora, ma sono rari e non compromettono la comprensione." },
+    { p: "È spesso qui che chi è cresciuto con l'inglese di serie, canzoni e social scopre il proprio limite. Si può capire benissimo l'inglese parlato e scrivere comunque un testo troppo colloquiale o poco organizzato. Al C1 la scrittura formale deve essere **solida quanto la comprensione**, ed è uno dei motivi per cui il passaggio dal B2 richiede tempo." },
+
+    { h: 'Come suona un inglese di livello C1' },
+    { p: "Al C1 compaiono strutture che servono a dare enfasi, a essere formali o a dire una cosa con precisione. Non sono regole esotiche: le trovi negli articoli di giornale, nelle email di lavoro e, puntualmente, negli esami avanzati. Ecco alcune frasi tipiche di questo livello, con il motivo per cui le consideriamo C1." },
+    { examples: [
+      ["**Never have I seen** such a well-organised conference.", "Non ho mai visto un convegno organizzato così bene. L'inversione dopo un avverbio negativo a inizio frase: enfatica e tipica del registro formale."],
+      ["**Had I known** about the delay, I would have taken an earlier train.", "Se avessi saputo del ritardo, avrei preso un treno prima. Un periodo ipotetico senza if, con l'inversione al posto della congiunzione."],
+      ["**What worries me is** not the cost but the timing.", "Quello che mi preoccupa non è il costo ma la tempistica. Una frase scissa con what, per spostare l'accento dove vuoi tu."],
+      ["**Should you have** any questions, please do not hesitate to contact me.", "Se dovesse avere domande, non esiti a contattarmi. Una formula da email formale che al B2 di solito si capisce ma non si usa."],
+      ["The proposal **raised serious concerns** among the board members.", "La proposta ha sollevato serie preoccupazioni tra i membri del consiglio. Una collocazione precisa: raise concerns, non rise o lift."],
+      ["I'm **not entirely convinced** that this is the right approach.", "Non sono del tutto convinto che sia l'approccio giusto. Un disaccordo sfumato, educato ma chiaro."],
+    ] },
+    { p: "Se queste frasi ti sembrano naturali da leggere ma non ti verrebbero mentre parli o scrivi sotto pressione, sei probabilmente in quella zona tra il B2 alto e il C1 in cui **la comprensione è già avanti** e la produzione deve ancora raggiungerla. Proprio queste strutture sono al centro degli esercizi gratuiti di cui parliamo più avanti." },
+
+    { h: 'Come si certifica il C1' },
+    { p: "Nessun esame si chiama semplicemente “C1”. Ogni ente certificatore ha la propria scala e pubblica una corrispondenza con il QCER, basata su ricerche proprie. Le corrispondenze che seguono sono quelle pubblicate dagli enti stessi e valgono come riferimento: chi legge il tuo certificato, che sia un ateneo, un'azienda o un'amministrazione, decide sempre **il punteggio che chiede**." },
+    { h3: 'Cambridge C1 Advanced' },
+    { p: "Il **C1 Advanced**, che molti chiamano ancora CAE, è l'unico tra questi esami pensato proprio per il C1. Ha quattro prove. Reading and Use of English dura 1 ora e 30 minuti, con 8 parti e 56 domande. Writing dura anch'essa 1 ora e 30: un saggio obbligatorio e poi un compito a scelta tra tre, come una lettera o un'email, una proposta, un rapporto o una recensione, ciascuno di 220-260 parole. Listening dura circa 40 minuti, con 4 parti e 30 domande, e ogni registrazione si ascolta due volte. Speaking dura 15 minuti e si sostiene in coppia, davanti a due esaminatori." },
+    { p: "Il risultato è un punteggio sulla Cambridge English Scale. Da 180 a 192 ottieni il grado C e un certificato C1; da 193 a 199 il grado B, sempre di livello C1; da 200 a 210 il grado A e **un certificato di livello C2**. Con un punteggio da 160 a 179 ricevi un certificato B2, mentre da 142 a 159 non c'è certificato, ma il punteggio compare comunque nel documento dei risultati. Cambridge precisa che i suoi certificati non scadono, anche se ogni ente che li riceve può decidere fino a quando accettarli." },
+    { p: "C'è anche una strada laterale: con un punteggio da 180 a 190 al B2 First ottieni il grado A e un certificato di livello C1. È un'opzione da conoscere se oggi sei al confine tra i due livelli, ma se un bando o un'università chiede **un C1 pieno**, l'esame pensato per quel livello resta il C1 Advanced." },
+    { h3: 'IELTS' },
+    { p: "L'IELTS non ha un esame per livello: tutti sostengono lo stesso test e ricevono una banda da 0 a 9 per ascolto, lettura, scrittura e parlato, più una banda complessiva. Secondo quanto pubblicato dall'IELTS, le bande **da 7 a 8 corrispondono al C1**. Se un ateneo straniero chiede il C1 attraverso l'IELTS, di solito indica anche un minimo per ogni abilità: leggilo con attenzione, perché un 7 complessivo con un 6 in scrittura potrebbe non bastare." },
+    { h3: 'TOEFL iBT' },
+    { p: "Il TOEFL iBT ha cambiato scala per i test sostenuti dal 21 gennaio 2026: i punteggi vanno da 1 a 6, a passi di mezzo punto, e sono allineati al QCER. Secondo ETS, **5 e 5,5 corrispondono al C1**, sia nel totale sia in ciascuna sezione. Per due anni ETS fornisce anche un confronto con la vecchia scala da 0 a 120, così gli enti che chiedono ancora i vecchi punteggi possono leggere quelli nuovi." },
+    { table: {
+      head: ['Certificazione', 'Risultato che corrisponde al C1', 'Cosa valuta'],
+      rows: [
+        ['Cambridge C1 Advanced', 'Da 180 a 199 sulla Cambridge English Scale (gradi C e B)', 'Le quattro abilità, più grammatica e lessico'],
+        ['Cambridge B2 First', 'Da 180 a 190 (grado A, certificato C1)', 'Le quattro abilità, ma è tarato sul B2'],
+        ['IELTS', 'Bande da 7 a 8', 'Ascolto, lettura, scrittura e parlato'],
+        ['TOEFL iBT (dal 21 gennaio 2026)', 'Punteggio 5 o 5,5 sulla scala da 1 a 6', 'Le quattro abilità, con punteggio per sezione'],
+      ],
+      note: 'Fonti: cambridgeenglish.org, ielts.org, ets.org. Prezzi, date e formati cambiano: controlla la pagina ufficiale dell’esame o il tuo centro.',
+    } },
+    { p: "Se sei indeciso tra il formato Cambridge e l'IELTS, la domanda giusta non è quale sia più facile ma **chi deve riconoscere il certificato**. Per l'Italia conta che l'ente sia tra quelli accettati dal bando o dal Ministero; per un'università all'estero conta l'elenco dei test indicati nella pagina di ammissione." },
+
+    { h: 'Dove serve il C1 in Italia' },
+    { p: "Per molti italiani il C1 non è un traguardo astratto ma un requisito preciso. Il caso più chiaro è la scuola, dove le regole sono scritte in decreti e ordinanze; per università e lavoro, invece, **decide il singolo bando** o il singolo annuncio." },
+    { h3: 'Scuola: GPS, concorsi docenti e CLIL' },
+    { p: "Nelle graduatorie provinciali per le supplenze del biennio 2026/27 e 2027/28, regolate dall'ordinanza ministeriale n. 27 del 16 febbraio 2026, una certificazione linguistica vale 3 punti al B2, **4 punti al C1** e 6 al C2. Si valuta un solo titolo per ciascuna lingua, e solo se rilasciato da un ente riconosciuto dal Ministero dell'istruzione e del merito." },
+    { p: "Nei concorsi docenti dei decreti ministeriali 205 e 206 del 2023 la soglia è più alta: le certificazioni linguistiche danno punti come titolo **solo dal C1 in su**, con 3,75 punti per il C1 e 5 per il C2. Un B2 ti serve comunque, perché è il livello su cui vieni verificato nelle prove, ma come titolo nel concorso non vale nulla." },
+    { p: "Poi c'è il CLIL, cioè l'insegnamento di una disciplina non linguistica in lingua straniera, per esempio storia o scienze in inglese. Il decreto ministeriale 249 del 2010, all'articolo 14, prevede corsi di perfezionamento CLIL aperti ai docenti abilitati con **una competenza linguistica certificata di almeno livello C1**, da almeno 60 crediti formativi, compreso un tirocinio di almeno 300 ore. Per chi vuole insegnare la propria materia in inglese, quindi, il C1 è la porta d'ingresso." },
+    { p: "Un dettaglio che fa perdere punti a molti candidati: per essere riconosciuta, la certificazione deve **riportare il livello del QCER** raggiunto ed essere completa in sé, senza rinviare ad altri documenti. Un attestato di frequenza di un corso non basta. Tutte le regole, compresi gli enti riconosciuti, sono spiegate nel nostro articolo sulla certificazione di inglese nei concorsi pubblici e nelle GPS." },
+    { note: { title: 'Prima il requisito, poi l’esame', text: "Che sia una graduatoria, un ateneo o un'azienda, controlla **quali certificazioni accettano** e con quale punteggio prima di prenotare. Un C1 Advanced con grado C e un IELTS 7 dicono entrambi C1, ma non tutti gli enti li accettano allo stesso modo.", draw: 'suitcase' } },
+    { h3: 'Università e lavoro' },
+    { p: "Nelle università italiane il livello di inglese richiesto cambia da ateneo ad ateneo e da corso a corso: i corsi di laurea tenuti in inglese, i programmi di mobilità e i dottorati fissano ciascuno le proprie soglie e le certificazioni accettate. Lo stesso vale per le università all'estero. Il consiglio è uno solo: leggi **il bando o la pagina di ammissione** del tuo corso, non quello che dice un forum." },
+    { p: "Nel lavoro il C1 compare soprattutto negli annunci per ruoli in cui l'inglese è la lingua di tutti i giorni: aziende internazionali, consulenza, ricerca, turismo di alto livello, traduzione e comunicazione. Spesso l'annuncio non chiede un certificato ma un livello, e il livello lo verifichi tu al colloquio. Se ti prepari a un colloquio in inglese, ne parliamo in un articolo dedicato." },
+    { cta: true },
+
+    { h: 'Quanto ci vuole per arrivare al C1' },
+    { p: "Cambridge English indica delle ore di apprendimento guidato approssimative, cioè ore di studio con un insegnante. La regola generale è di **circa 200 ore per passare da un livello del QCER al successivo**: chi ha appena superato il B2 First potrebbe quindi aver bisogno di circa 200 ore per prepararsi al C1 Advanced." },
+    { table: {
+      head: ['Livello', 'Ore di apprendimento guidato da principiante (circa)'],
+      rows: [
+        ['B2', 'Da 500 a 600'],
+        ['C1', 'Da 700 a 800'],
+        ['C2', 'Da 1.000 a 1.200'],
+      ],
+      note: 'Indicazione di Cambridge English. Ore cumulative con un insegnante; il tempo reale dipende dal tuo percorso, dall’intensità dello studio e da quanto usi l’inglese fuori dalle lezioni.',
+    } },
+    { p: "In pratica 200 ore sono, per esempio, cinque ore a settimana per una quarantina di settimane, tra lezioni, compiti e letture. Il passaggio dal B2 al C1 è spesso vissuto come il più lungo, perché **i progressi si vedono meno**: capisci già quasi tutto, e il lavoro riguarda la precisione, le sfumature e la ricchezza del lessico." },
+    { quote: "Dal B2 al C1 servono circa **200 ore guidate**: poche settimane non bastano, la costanza sì." },
+
+    { h: 'Esercizi C1 di inglese: come allenarti' },
+    { p: "Chi cerca “esercizi C1 inglese” o “esercitazioni inglese C1” trova di tutto, spesso senza sapere da dove viene il materiale. Conviene combinare tre tipi di allenamento: esercizi mirati sulla grammatica e il lessico del C1, simulazioni ufficiali con i tempi veri e **produzione scritta e orale** corretta da qualcuno che conosce i criteri." },
+    { h3: 'Gli esercizi gratuiti di Alimun' },
+    { p: "Nelle risorse gratuite di Alimun trovi due esercitazioni di livello C1. Il quiz di inglese C1 ha **dieci domande** su inversione, frasi scisse, collocazioni avanzate, modi di dire e parole che si confondono, con la spiegazione di ogni risposta. L'esercizio sull'inversione ne ha dodici e si concentra su strutture come never have I, hardly had, not only, should you e were he to, cioè proprio le frasi che hai visto sopra. I link sono tra le fonti in fondo a questa pagina." },
+    { p: "Usali come un controllo, non come un verdetto: misurano grammatica e lessico, non il tuo ascolto, la tua scrittura o il tuo parlato. Il modo più utile è farli dopo aver letto le spiegazioni, annotare ogni risposta sbagliata e tornare alla regola **prima di rifare l'esercizio** qualche giorno dopo." },
+    { h3: 'Le simulazioni ufficiali' },
+    { p: "Sulla pagina di preparazione del C1 Advanced, Cambridge pubblica gratuitamente sample test digitali per Listening, Reading and Use of English e Writing, oltre a prove d'esempio in formato cartaceo con le soluzioni. Anche l'IELTS mette online domande d'esempio gratuite con le risposte. Per una simulazione utile rispetta i tempi veri, fai la prova in un'unica sessione, senza dizionario e senza fermare l'audio, e poi guarda **dove perdi punti**, non solo il totale." },
+    { figure: { photo: 'english-c1-level-it-home-study', alt: 'Tessere di legno di Scrabble che formano le parole home, education, school e learning su un tabellone', caption: 'Al C1 il lessico conta per la precisione: collocazioni e formazione delle parole sono il cuore del Use of English.' } },
+    { h3: 'Scrittura e parlato: serve un occhio esterno' },
+    { p: "Gli esercizi a correzione immediata e i test online non vedono le due abilità che di solito restano indietro. Per la scrittura, scrivi un saggio o una proposta di 220-260 parole con il tempo contato e fallo correggere da qualcuno che conosce i criteri del C1. Per il parlato, registrati mentre rispondi a una domanda e riascoltati: esiti spesso? Semplifichi le idee per paura di sbagliare? Se il problema è lì, **serve pratica con un insegnante**." },
+    { p: "Nelle lezioni dal vivo di Alimun studi con un insegnante in un piccolo gruppo, con esercizi a correzione immediata e compiti che l'insegnante corregge. Se non sai da dove partire, il test di livello ti colloca in pochi minuti e ti dice quanto ti manca al C1." },
+    { h3: 'Allenarsi ogni giorno' },
+    { p: "Il resto si costruisce fuori dagli esercizi. Leggi ogni settimana qualche articolo lungo di stampa anglofona su temi che non conosci, e annota le collocazioni, non le singole parole. Ascolta conferenze e podcast a velocità normale. E soprattutto parla a lungo: non risposte di una frase, ma minuti interi in cui **spieghi, confronti e difendi** un'idea. È lì che si vede la differenza tra un buon B2 e un C1." },
+
+    { h: 'Errori comuni sul livello C1' },
+    { p: "Il primo errore è iscriversi al C1 Advanced troppo presto. Con un punteggio tra 160 e 179 esci con un certificato B2, e sotto 160 senza certificato. Se le simulazioni ufficiali ti collocano ancora stabilmente nel B2, aspettare qualche mese o puntare a un B2 First con un buon grado può essere **la scelta più sicura**." },
+    { p: "Il secondo è pensare che basti capire bene. Un ottimo ascolto non compensa una scrittura da B2, e il risultato complessivo di un esame non nasconde a lungo un'abilità debole, soprattutto quando l'ente che legge il certificato chiede un minimo per sezione. Il terzo è non leggere il requisito preciso: per le GPS ti serve un ente riconosciuto dal Ministero, per un ateneo estero il test e il punteggio indicati nella sua pagina. Formati, date e prezzi cambiano, quindi **controlla sempre la pagina ufficiale** prima di iscriverti." },
+  ],
+  quiz: [
+    { q: 'In quale fascia del QCER si trova il livello C1?', options: ['Utente base', 'Utente autonomo', 'Utente competente', 'Utente principiante'], a: 2, why: "C1 e C2 formano la fascia dell'utente competente; B1 e B2 sono l'utente autonomo." },
+    { q: "Quale di queste azioni è tipica del C1 secondo il Consiglio d'Europa?", options: ['Presentarsi con frasi semplici', 'Capire testi lunghi e impegnativi e i loro significati impliciti', 'Capire senza sforzo praticamente tutto', 'Descrivere esperienze con frasi semplici collegate'], a: 1, why: "Capire testi lunghi e impegnativi e riconoscerne il significato implicito è un descrittore del C1; capire senza sforzo praticamente tutto è il C2." },
+    { q: 'Con quale punteggio il C1 Advanced rilascia un certificato di livello C1?', options: ['Da 142 a 159', 'Da 160 a 179', 'Da 180 a 199', 'Da 200 a 210'], a: 2, why: "Da 180 a 192 si ottiene il grado C e da 193 a 199 il grado B, entrambi di livello C1. Da 200 a 210 il certificato è di livello C2." },
+    { q: "Secondo l'IELTS, quali bande corrispondono al C1?", options: ['Da 5,5 a 6,5', 'Da 7 a 8', 'Solo 6', 'Solo 9'], a: 1, why: "L'IELTS fa corrispondere le bande da 7 a 8 al livello C1." },
+    { q: 'Sulla scala TOEFL iBT in vigore dal 21 gennaio 2026, quali punteggi corrispondono al C1?', options: ['4 e 4,5', '5 e 5,5', 'Solo 6', '100 su 120'], a: 1, why: "Secondo ETS, 5 e 5,5 corrispondono al C1, sia nel totale sia per ciascuna sezione." },
+    { q: 'Quanti punti vale una certificazione C1 nelle GPS 2026/28?', options: ['3 punti', '3,75 punti', '4 punti', '6 punti'], a: 2, why: "Nelle tabelle dell'OM 27/2026 il B2 vale 3 punti, il C1 4 e il C2 6, con un solo titolo per lingua." },
+    { q: 'Che livello serve, secondo il DM 249/2010, per accedere ai corsi di perfezionamento CLIL?', options: ['B1', 'B2', 'Almeno C1', 'Solo C2'], a: 2, why: "L'articolo 14 apre i corsi ai docenti abilitati con una competenza linguistica certificata di almeno livello C1." },
+    { q: 'Quante ore guidate indica Cambridge, circa, per passare da un livello del QCER al successivo?', options: ['Circa 50', 'Circa 100', 'Circa 200', 'Circa 700'], a: 2, why: "Cambridge indica circa 200 ore guidate per livello e 700-800 ore cumulative per arrivare al C1 da zero." },
+  ],
+  faq: [
+    ['Dove trovo esercizi di inglese C1 gratuiti?', "Nelle risorse gratuite di Alimun ci sono un quiz di inglese C1 di dieci domande e un esercizio sull'inversione di dodici domande, entrambi con correzione immediata e spiegazione di ogni risposta. Per le simulazioni d'esame, Cambridge pubblica sample test gratuiti del C1 Advanced e l'IELTS domande d'esempio con le risposte."],
+    ['Un IELTS 7 equivale a un C1?', "Secondo l'IELTS le bande da 7 a 8 corrispondono al C1. Ogni università o ente però fissa il proprio requisito, spesso con un minimo per ciascuna abilità, quindi controlla sempre la sua pagina."],
+    ['Il certificato C1 Advanced scade?', "No. Cambridge indica che i suoi certificati non scadono. Università, datori di lavoro e altri enti possono però decidere di accettare solo risultati recenti, quindi verifica la loro regola."],
+    ['Serve il C1 per insegnare in CLIL?', "Sì, per i corsi di perfezionamento CLIL previsti dall'articolo 14 del DM 249/2010 serve una competenza linguistica certificata di almeno livello C1, oltre all'abilitazione all'insegnamento."],
+    ['Quanto ci vuole per passare dal B2 al C1?', "Cambridge indica circa 200 ore di apprendimento guidato per passare da un livello al successivo. È solo un orientamento: contano anche lo studio personale e quanto usi l'inglese fuori dalle lezioni."],
+  ],
+  related: ['c1-advanced', 'english-b2-level', 'cefr-english', 'english-public-competitions', 'ielts-band-scores', 'ielts-or-cambridge', 'how-long-english', 'english-job-interview'],
+  sources: [
+    ["Consiglio d'Europa, livelli comuni di riferimento del QCER: scala globale", 'https://www.coe.int/en/web/common-european-framework-reference-languages/table-1-cefr-3.3-common-reference-levels-global-scale'],
+    ['Cambridge English, C1 Advanced', 'https://www.cambridgeenglish.org/exams-and-tests/qualifications/advanced/'],
+    ["Cambridge English, formato dell'esame C1 Advanced", 'https://www.cambridgeenglish.org/exams-and-tests/qualifications/advanced/format/'],
+    ['Cambridge English, risultati delle certificazioni', 'https://www.cambridgeenglish.org/exams-and-tests/qualifications/results'],
+    ['Cambridge English, preparazione e sample test gratuiti del C1 Advanced', 'https://www.cambridgeenglish.org/exams-and-tests/qualifications/advanced/preparation/'],
+    ['Cambridge English, ore di apprendimento guidato', 'https://support.cambridgeenglish.org/hc/it/articles/202838506-Ore-di-apprendimento-guidato'],
+    ['IELTS e il QCER', 'https://ielts.org/news-and-insights/everything-you-need-to-know-about-ielts-and-the-cefr'],
+    ["IELTS, domande d'esempio gratuite", 'https://ielts.org/take-a-test/preparation-resources/sample-test-questions'],
+    ['ETS, TOEFL iBT: aggiornamento della scala dei punteggi', 'https://www.ets.org/toefl/institutions/ibt/score-scale-update.html'],
+    ['MIM, Ordinanza ministeriale n. 27 del 16 febbraio 2026 (GPS) e tabelle di valutazione dei titoli', 'https://www.mim.gov.it/-/ordinanza-ministeriale-n-27-del-16-febbraio-2026'],
+    ['MIM, Decreto ministeriale n. 205 del 26 ottobre 2023 (concorso secondaria)', 'https://www.mim.gov.it/-/decreto-ministeriale-n-205-del-26-ottobre-2023'],
+    ['MIM, Decreto ministeriale n. 206 del 26 ottobre 2023 (concorso infanzia e primaria)', 'https://www.mim.gov.it/-/decreto-ministeriale-n-206-del-26-ottobre-2023'],
+    ['Normattiva, DM 10 settembre 2010, n. 249, art. 14 (CLIL)', 'https://www.normattiva.it/uri-res/N2Ls?urn:nir:ministero.istruzione.universita.ricerca:decreto:2010-09-10;249~art14'],
+    ['Alimun: quiz di inglese C1 gratuito', 'https://alimun.com/it/risorse/quiz-inglese-c1'],
+    ["Alimun: esercizio di inglese C1 sull'inversione", 'https://alimun.com/it/risorse/esercizio-inglese-c1-inversione'],
+  ],
+};

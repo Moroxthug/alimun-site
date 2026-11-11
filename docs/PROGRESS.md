@@ -1815,6 +1815,46 @@ Owner: "the whole experience needs to uphold alimun design standards, it looks d
 
 - Old addresses that Search Console reported as 404 now redirect (308, vercel.json routes): /privacy to /gdpr, /about to /about-us, /login, /admin-login and /teacher-login to /signin (also with a language folder), and /blog/learn-english-fast-2026 to /blog/how-long-does-it-take-to-learn-english.
 
+## 2026-11-11 — Database function permissions (Supabase security advisor)
+
+Owner asked to clear the advisor's warnings about SECURITY DEFINER functions; plan shown and approved ("go").
+- `supabase/migrations/202611111900_definer_function_grants.sql`, applied statement by statement and verified. Four trigger functions (cohorts/sessions_assign_lessons, messages_before/after_insert) and cohort_course are no longer callable as RPCs; session_cohort is signed-in only (the class board policies need it); campaign_audience and reminders_due are service role only (only api/campaigns.js and api/cron-reminders.js call them). New functions created by postgres no longer get EXECUTE for PUBLIC by default, so anything the dashboards call needs an explicit grant.
+- Checked as a real teacher inside a rolled-back transaction: the board is visible, set_session_lesson works, open_thread works, and a message insert fires its triggers. cohort_course and reminders_due are refused; signed-out visitors are refused session_cohort and still read teachers_public.
+- Advisor afterwards: signed-out only public_teacher_rows (behind teachers_public, intended). Signed-in 26 functions, all intended: RLS helpers that policies call as the user, and RPCs that check is_admin() or the caller's own rows. The advisor flags these by design. `supabase/tests/rls.sql` allow-list updated to match.
+- Leaked password protection: turning it on through the Management API was refused ("available on Pro Plans and up"); the Supabase project is on the Free plan. Owner decision (11 Nov 2026): leave it off for now; the advisor warning is accepted. Revisit if Supabase moves to Pro.
+
+## 2026-11-11 — Ten more articles
+
+- Published 2026-11-11, chosen from searches reaching us and the target countries:
+  - en: Goethe A1 exam (Start Deutsch 1), Express Entry language points, English test for nurses in the US, German for nurses, B2 level English
+  - it: Test di livello di tedesco, Livello C1 di inglese
+  - ma: Infirmier en Allemagne depuis le Maroc, Examen Goethe A1 pour le regroupement familial
+  - es: Nivel B2 de inglés (Spain sends searches such as "test b2 inglés")
+- Shared keys: goethe-a1-exam (en, ma), german-for-nurses (en, ma), english-b2-level (en, es, it), english-c1-level (it, ma).
+- The Express Entry article reflects the CRS change of 3 Nov 2026 (new Labour Market Integration factor, LMIA requirement removed for job offers). Checked on canada.ca; the language point values did not change.
+- The German A1 quiz's reading strip now leads with the Goethe A1 article.
+- Checker: 140 articles, 0 errors. Build: 546 sitemap addresses.
+- To check:
+  - The Italian German level test article describes the Alimun level test as A1 to C2 (from site/src/data/level-test/German.js). Older Italian course text says A1 to C1, so the owner should confirm which is right.
+  - The Italian, Moroccan French and Spanish articles have not been reviewed by a native speaker.
+
+## 2026-11-11 — RLS tests green again
+
+- Ran `supabase/tests/rls.sql` on production inside a transaction that always aborts (nothing kept, no queued HTTP calls sent): 155 of 162 passed. The same 7 failed with the old function grants restored, so they predate today's grants change.
+- Fixed `guard_teacher_profile_admin_fields`: a browser-side teacher insert set `badges` to null on a NOT NULL column. Now `'{}'`. `supabase/migrations/202611112100_teacher_guard_badges.sql`, applied and verified. Live applications use the service role through api/admin/teacher.js and were never affected.
+- Tests brought up to date: teachers can no longer write class dates directly (admin and API only), so "complete own session" and "change session created_at" expect denied. Supabase blocks DELETE on storage.objects from SQL, so the two file-delete checks now test the delete policy's condition as a read. A direct student signup now gets tier `free` (or `waitlist`), and founding_member can no longer be claimed.
+- Result after the fix: 162 of 162 pass.
+- Level test range (owner, 11 Nov: "Up to C2"): every mention of the placement or level test now says A1 to C2. That covers course pages (all languages), the About FAQ, homepage, services, corporate, Resources and blog interface text, and the blog articles. The locked course guides, course FAQ and the services and corporate blocks were updated and their hashes renewed. The services slide about the eight-question course quiz still says A1 to C1, because that quiz only goes up to C1 (src/data/course-quiz.js).
+
+## 2026-11-11 — Performance advisor fixes
+
+- `supabase/migrations/202611112200_rls_initplan_fk_indexes.sql`, applied statement by statement and verified (0 unwrapped policies, 7 new indexes).
+- Eight RLS policies now call `(select auth.uid())` so it runs once per query instead of per row: entitlements_read, customer_pricing_read, withdrawal_requests_own_read, message_reads_select/insert/update, one_on_one_student_read, one_on_one_teacher_read. Same roles, commands and conditions.
+- Indexes added for the foreign keys the dashboards filter on: cohorts.teacher_id, assignments.teacher_id, session_attendance.student_id, message_threads.teacher_id, cohort_waitlist.student_id, teacher_reviews.student_id, session_board_work.user_id.
+- RLS tests still 162/162. Performance advisor: the per-row auth warning is gone (8 to 0), unindexed foreign keys 22 to 15 (admin "who did this" columns, left alone). The 7 new indexes show as "unused" until traffic reaches them. Left as they are: 10 "multiple permissive policies" warnings (admin plus normal read rules; merging them means reworking the rules for a small gain) and the older unused indexes on quiet tables. Security advisor unchanged.
+
+- Old addresses that Search Console reported as 404 now redirect (308, vercel.json routes): /privacy to /gdpr, /about to /about-us, /login, /admin-login and /teacher-login to /signin (also with a language folder), and /blog/learn-english-fast-2026 to /blog/how-long-does-it-take-to-learn-english.
+
 ## 2026-11-11 — Pricing: launch spec, pricing engine spec, online withdrawal function, pricing tables
 - Planning with the owner (Oct–Nov 2026) ended in `docs/LAUNCH_PRICING_SPEC.md` (products, prices, bands, rules, operations) and `docs/PRICING_ENGINE_SPEC.md` (technical spec and build plan); research and models in `docs/research/reports/`. Owner's decisions of 11 Nov: founding prices for the first 500 learners until 1 January 2027 (12 to 18 months each); prices include tax except in Canada and the US (Stripe Tax collects, the accountant registers and files); no SMS checks at launch; the app in both stores via RevenueCat at €8.99 in Band A and 70% elsewhere; GBP and other currencies as price-book rows.
 - Build step 1, the online withdrawal function (EU Directive 2023/2673, required since 19 June 2026): `#/settings/withdraw` (`js/app/withdraw.js`, a "Withdraw from contract here" link on the plan card in Settings), two steps (details, then "Confirm withdrawal"), `api/withdraw.js` (the account's purchases from Stripe, the statement stored, a receipt with date and time emailed in the learner's language, the owner notified at CONTACT_EMAIL), `public.withdrawal_requests`. Texts in nine languages (`app_wd_*`, `withdrawal.*` email texts). Refunds stay manual.

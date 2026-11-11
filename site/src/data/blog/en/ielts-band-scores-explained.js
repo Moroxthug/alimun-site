@@ -158,7 +158,7 @@ export default {
       ['“A long Task 1 will make up for a short essay.”', 'Put the most care into Task 2.', 'Task 2 carries more weight in the Writing band than Task 1.'],
       ['“My result from three years ago is still fine.”', 'Check the date before you apply.', 'Results are recognized for two years from the test date and cannot be extended.'],
     ] },
-    { p: "Real progress takes regular practice with feedback, not only more tests. At Alimun you learn in **live classes with a teacher and the same small group**, and your teacher corrects your homework, so you know which criterion is holding your writing back. Not sure where you are starting from? The level test places you from A1 to C1 in a few minutes." },
+    { p: "Real progress takes regular practice with feedback, not only more tests. At Alimun you learn in **live classes with a teacher and the same small group**, and your teacher corrects your homework, so you know which criterion is holding your writing back. Not sure where you are starting from? The level test places you from A1 to C2 in a few minutes." },
   ],
   quiz: [
     { q: 'Your four skill bands average 6.25. What is your overall band?', options: ['6', '6.25', '6.5', '7'], a: 2, why: 'An average ending in .25 is rounded up to the next half band, so 6.25 becomes 6.5.' },

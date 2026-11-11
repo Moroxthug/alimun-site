@@ -149,7 +149,7 @@ export default {
     { p: "Quel que soit ton objectif, une bonne partie de la pratique en plus peut se faire **en déplacement**. Réviser tes flashcards dans le bus, faire un petit exercice en attendant, écouter un épisode en marchant : ce sont des minutes qui, à la fin du mois, deviennent des heures." },
 
     { h: 'Comment estimer ton propre calendrier' },
-    { p: "Commence par savoir où tu en es. Un test de niveau prend quelques minutes et te situe sur l'échelle ; celui d'Alimun va de A1 à C1. Ensuite, décide où tu dois arriver et pour quand, en t'aidant des objectifs ci-dessus. Regarde l'écart dans le tableau de Cambridge et sois honnête sur le nombre d'heures par semaine que tu peux y consacrer, en comptant les cours et le travail que te donne ton enseignant." },
+    { p: "Commence par savoir où tu en es. Un test de niveau prend quelques minutes et te situe sur l'échelle ; celui d'Alimun va de A1 à C2. Ensuite, décide où tu dois arriver et pour quand, en t'aidant des objectifs ci-dessus. Regarde l'écart dans le tableau de Cambridge et sois honnête sur le nombre d'heures par semaine que tu peux y consacrer, en comptant les cours et le travail que te donne ton enseignant." },
     { p: "Divise l'écart par tes heures hebdomadaires et ajoute une marge pour la vraie vie. Si le résultat tombe après ton échéance, tu as trois options : ajouter des heures, revoir l'objectif à la baisse pour l'instant ou décaler la date. S'il tombe avant, tant mieux : utilise le temps gagné pour écouter, lire et parler, et le niveau que tu atteindras sera plus solide." },
     { p: "Enfin, refais le point tous les quelques mois. Si tu avances plus vite que le tableau, profites-en ; si tu vas plus lentement, regarde les facteurs ci-dessus avant d'ajouter des heures, car changer le type de pratique aide parfois plus que d'en faire davantage." },
   ],
@@ -168,7 +168,7 @@ export default {
     ["Les heures passées sur une appli comptent-elles ?", "Toute pratique aide, et la révision espacée comme les petits exercices sont vraiment utiles. Mais les chiffres de Cambridge concernent l'apprentissage guidé avec un enseignant : les applis fonctionnent donc mieux en complément des cours, comme la pratique qui te fait avancer plus vite entre deux séances."],
     ["Est-ce plus difficile d'apprendre l'anglais à l'âge adulte ?", "Pas plus difficile, juste différent. Les adultes apprennent souvent la grammaire et le vocabulaire efficacement grâce à leur méthode de travail et à ce qu'ils savent déjà. La prononciation peut demander plus de pratique consciente : réserve à l'écoute et à l'oral une place fixe dans ta semaine."],
     ["Pourquoi j'ai l'impression de stagner au B1 ?", "Beaucoup d'apprenants atteignent le plateau intermédiaire. Les progrès se voient moins et il est facile de toujours réutiliser le même anglais sûr. Écrire davantage avec correction, parler de sujets moins familiers et employer exprès de nouvelles expressions relancent en général la machine."],
-    ["Comment connaître mon niveau actuel ?", "Passe un test de niveau. Celui d'Alimun te situe de A1 à C1 en quelques minutes, et à partir de là, le tableau de Cambridge te montre à peu près le chemin qu'il te reste."],
+    ["Comment connaître mon niveau actuel ?", "Passe un test de niveau. Celui d'Alimun te situe de A1 à C2 en quelques minutes, et à partir de là, le tableau de Cambridge te montre à peu près le chemin qu'il te reste."],
   ],
   related: ['cefr-english', 'ielts-or-cambridge', 'german-articles'],
   sources: [

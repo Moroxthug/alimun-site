@@ -99,7 +99,7 @@ export default {
         ]],
         ['How to know which level to start from', [
           'The Common European Framework of Reference divides language ability into six levels, from A1 to C2, and **German certificates follow the same scale**. Knowing your level saves you from repeating what you already know.',
-          'The Alimun placement test places you between A1 and C1, and your group and exercises follow the result.',
+          'The Alimun placement test places you between A1 and C2, and your group and exercises follow the result.',
         ]],
         ['German for work, study and moving', [
           'If your goal is a job or a move, find out early **which level and certificate are required**: they are usually stated in the job listing or by the institution you are applying to.',
@@ -170,7 +170,7 @@ export default {
         [`How much does the online ${c.name} course at Alimun cost?`, 'Plans start at €24 a month with Community, in groups of about 35 people. Focused costs €59, Intensive €109 and private 1 on 1 classes €269 a month. With the yearly plan you pay for ten months instead of twelve.'],
         ['Are the classes live or recorded?', 'They are live video classes with a teacher and always the same group. Alimun does not record classes: after each class you get the session notes, the new vocabulary and your homework.'],
         ['On which days and at what times are the classes?', 'Each group meets on fixed days at the same time every week, with the same teacher and the same group. That way learning becomes part of your week.'],
-        ['Do I need a certain level to start?', 'No. There are groups from A1, and a short test at the start places you between A1 and C1 so that you join the right group.'],
+        ['Do I need a certain level to start?', 'No. There are groups from A1, and a short test at the start places you between A1 and C2 so that you join the right group.'],
         ['Can I prepare for a certificate?', c.lang === 'German'
           ? 'Yes, you can practice tasks in the format of Goethe B1, Goethe B2 and telc B1. They are not official materials, and Alimun is not affiliated with the exam bodies.'
           : 'Yes, you can practice tasks in the format of B2 First, C1 Advanced and IELTS. They are not official materials, and Alimun is not affiliated with the exam bodies.'],
@@ -204,7 +204,7 @@ export default {
     UI_QUIZ_BTN: 'Find out your level',
     UI_QUIZ_BTN_LONG: 'Find out your level in two minutes',
     UI_HOW_1_T: 'Placement test',
-    UI_HOW_1_D: 'A short test sets your level, from A1 to C1, and places you in the right group for you.',
+    UI_HOW_1_D: 'A short test sets your level, from A1 to C2, and places you in the right group for you.',
     UI_HOW_1_A: 'A student at a laptop taking notes',
     UI_HOW_2_T: 'Live classes',
     UI_HOW_2_A: 'A video class with two students on screen',
@@ -214,7 +214,7 @@ export default {
     UI_HOW_4_T: 'Practice whenever you like',
     UI_HOW_4_D: 'Exercises at your level with instant feedback, flashcards with the vocabulary from class, and tasks in exam format.',
     UI_HOW_4_A: 'A student with headphones practicing in a notebook',
-    UI_LV_INTRO: 'The Common European Framework of Reference for Languages describes six levels of language ability. At Alimun there are groups for each level, and the placement test places you between A1 and C1.',
+    UI_LV_INTRO: 'The Common European Framework of Reference for Languages describes six levels of language ability. At Alimun there are groups for each level, and the placement test places you between A1 and C2.',
     UI_LV_1_H: 'A1, beginner', UI_LV_1_P: LEVELS.A1,
     UI_LV_2_H: 'A2, elementary', UI_LV_2_P: LEVELS.A2,
     UI_LV_3_H: 'B1, intermediate', UI_LV_3_P: LEVELS.B1,

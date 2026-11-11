@@ -18,7 +18,7 @@ export default {
     printable: ['Da stampare', 'Schede riassuntive e liste di parole da scaricare e stampare.', 'Scarica'],
     game: ['Giochi', 'Giochi di parole, falsi amici e scioglilingua.', 'Gioca'],
     fun: ['Per divertirsi', 'Quiz da condividere con gli amici.', 'Prova'],
-    level: ['Test di livello', 'Scopri il tuo livello dalla A1 alla C1 in pochi minuti.', 'Metti alla prova ciò che sai'],
+    level: ['Test di livello', 'Scopri il tuo livello dalla A1 alla C2 in pochi minuti.', 'Metti alla prova ciò che sai'],
   },
   clockTitle: 'Sfida il tempo', clockHead: '60 secondi. Quante ne indovini?', clockText: "Domande veloci, una dopo l'altra.", clockPlay: 'Gioca ora',
   clockFlash: ['She ___ to work every day. (go / goes)', 'Ich habe ___ Hund. (ein / einen)', 'I have lived here ___ 2020. (for / since)', '___ Sonne scheint. (Der / Die / Das)'],

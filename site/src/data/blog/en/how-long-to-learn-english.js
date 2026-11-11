@@ -149,7 +149,7 @@ export default {
     { p: 'Whatever your purpose, a lot of the extra practice can happen **on the go**. Reviewing flashcards on the bus, doing a short exercise while you wait, or listening to an episode on a walk all add minutes that become hours by the end of the month.' },
 
     { h: 'How to estimate your own timeline' },
-    { p: 'Start by finding out where you are. A level test takes a few minutes and places you on the scale; at Alimun it goes from A1 to C1. Then decide where you need to be and by when, using the purposes above as a guide. Look up the gap in the Cambridge table, and be honest about how many hours a week you can give, counting classes and the work your teacher sets.' },
+    { p: 'Start by finding out where you are. A level test takes a few minutes and places you on the scale; at Alimun it goes from A1 to C2. Then decide where you need to be and by when, using the purposes above as a guide. Look up the gap in the Cambridge table, and be honest about how many hours a week you can give, counting classes and the work your teacher sets.' },
     { p: 'Divide the gap by your weekly hours and add a margin for real life. If the result is later than your deadline, you have three options: add hours, lower the target for now, or move the date. If it is earlier, good: use the extra time for listening, reading and speaking, which will make the level you reach feel more solid.' },
     { p: 'Finally, check your plan every few months. If you are moving faster than the table, enjoy it; if you are slower, look at the factors above before you add hours, because sometimes changing the kind of practice helps more than adding more of it.' },
   ],
@@ -168,7 +168,7 @@ export default {
     ['Do hours on an app count?', 'Any practice helps, and spaced review and short exercises are genuinely useful. The Cambridge figures, though, refer to guided learning with a teacher, so apps work best alongside classes, as the practice that speeds you up between them.'],
     ['Is it harder to learn English as an adult?', 'Not harder, just different. Adults often learn grammar and vocabulary efficiently thanks to their study habits and what they already know. Pronunciation can take more conscious practice, so give listening and speaking a regular place in your week.'],
     ['Why do I feel stuck at B1?', 'Many learners hit an intermediate plateau. Progress becomes less visible, and it is easy to keep using the same safe language. Writing more with corrections, speaking about less familiar topics and using new phrases on purpose usually gets things moving again.'],
-    ['How do I know my current level?', 'Take a level test. The one at Alimun places you from A1 to C1 in a few minutes, and from there the Cambridge table shows roughly how far you have to go.'],
+    ['How do I know my current level?', 'Take a level test. The one at Alimun places you from A1 to C2 in a few minutes, and from there the Cambridge table shows roughly how far you have to go.'],
   ],
   related: ['cefr-english', 'ielts-or-cambridge', 'german-articles'],
   sources: [

@@ -18,7 +18,7 @@ export default {
     printable: ['Para imprimir', 'Chuletas y listas de palabras para descargar e imprimir.', 'Descargar'],
     game: ['Juegos', 'Juegos de palabras, falsos amigos y trabalenguas.', 'Jugar'],
     fun: ['Solo por diversión', 'Quizzes para compartir con tus amigos.', 'Pruébalo'],
-    level: ['Test de nivel', 'Descubre tu nivel del A1 al C1 en pocos minutos.', 'Pon a prueba lo que sabes'],
+    level: ['Test de nivel', 'Descubre tu nivel del A1 al C2 en pocos minutos.', 'Pon a prueba lo que sabes'],
   },
   clockTitle: 'Contrarreloj', clockHead: '60 segundos. ¿Cuántas aciertas?', clockText: 'Preguntas rápidas, una detrás de otra.', clockPlay: 'Juega ahora',
   clockFlash: ['She ___ to work every day. (go / goes)', 'Ich habe ___ Hund. (ein / einen)', 'I have lived here ___ 2020. (for / since)', '___ Sonne scheint. (Der / Die / Das)'],

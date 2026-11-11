@@ -127,7 +127,7 @@ export default {
     { h: 'How to plan your German' },
     { p: "Start from the job, not the visa. Find two or three real job ads in your field, in the city you want, and look at the language they are written in and the level they ask for. Then compare it with **the legal minimum for your permit** and aim for the higher of the two. For most people that means B1 before arriving and B2 within the first year." },
     { p: "Take the certificate that your target accepts. Goethe, telc and ÖSD are accepted for visas; nurses and doctors should follow their state office's list. Remember that a certificate for a visa should be recent, so **do not take the exam too early**." },
-    { p: "Keep studying after you arrive. B1 brings you permanent settlement sooner, B2 opens jobs that A2 and B1 cannot, and the step to C1 is what turns a foreign professional into a colleague who leads the meeting. An Alimun level test from A1 to C1 tells you where you stand today, and **live classes with a teacher and the same small group** build the speaking that interviews and meetings test." },
+    { p: "Keep studying after you arrive. B1 brings you permanent settlement sooner, B2 opens jobs that A2 and B1 cannot, and the step to C1 is what turns a foreign professional into a colleague who leads the meeting. An Alimun level test from A1 to C2 tells you where you stand today, and **live classes with a teacher and the same small group** build the speaking that interviews and meetings test." },
     { p: "Whatever your plan, check the official pages for your own case before you apply, because the rules, the salary thresholds and even course admissions change from year to year." },
   ],
   quiz: [

@@ -169,7 +169,7 @@ export default {
     } },
 
     { h: 'Cómo calcular tus propios plazos' },
-    { p: 'Empieza por saber dónde estás. Una prueba de nivel te sitúa en la escala en pocos minutos; la de Alimun va del A1 al C1. Después decide qué nivel necesitas y para cuándo, partiendo de los objetivos de arriba. Busca la distancia en la tabla del Goethe y sé sincero sobre cuántas horas por semana puedes dedicar, contando clases y el trabajo que te pone tu profesor.' },
+    { p: 'Empieza por saber dónde estás. Una prueba de nivel te sitúa en la escala en pocos minutos; la de Alimun va del A1 al C2. Después decide qué nivel necesitas y para cuándo, partiendo de los objetivos de arriba. Busca la distancia en la tabla del Goethe y sé sincero sobre cuántas horas por semana puedes dedicar, contando clases y el trabajo que te pone tu profesor.' },
     { p: 'Divide la distancia entre tus horas semanales y añade un margen. Si el resultado es posterior a tu fecha límite, puedes añadir horas, bajar el objetivo por ahora o mover la fecha. Las clases en vivo con **un profesor y el mismo grupo pequeño**, con tarjetas de las palabras de cada clase, dan al plan un ritmo fijo. Revisa tus avances cada pocos meses y, si vas más lento de lo previsto, cambia el tipo de práctica antes de aumentar la cantidad.' },
   ],
   quiz: [
@@ -187,7 +187,7 @@ export default {
     ['¿El alemán es más difícil que el inglés para un hispanohablante?', 'Normalmente lleva más tiempo. El vocabulario culto de origen latino ayuda, pero los casos, los tres géneros que no coinciden con los del español y la posición del verbo necesitan práctica. El FSI, para los angloparlantes, también prevé más semanas para el alemán que para las lenguas romances.'],
     ['¿El curso de integración lleva al B1?', 'Está pensado para eso. La parte de idioma tiene 600 clases y termina con el Deutsch-Test für Zuwanderer, que certifica el A2 o el B1. Hasta dónde llega cada uno depende de su punto de partida y de la práctica fuera de clase.'],
     ['¿Qué nivel necesito para estudiar en una universidad alemana?', 'Cada universidad fija su nivel para las carreras en alemán, y puede variar incluso entre titulaciones de la misma universidad. Las pruebas habituales son el DSH y el TestDaF. Consulta la página de la titulación antes de planificar tus plazos.'],
-    ['¿Cómo sé mi nivel actual?', 'Haz una prueba de nivel. La de Alimun te sitúa del A1 al C1 en pocos minutos, y a partir de ahí la tabla del Goethe te muestra más o menos cuánto te queda.'],
+    ['¿Cómo sé mi nivel actual?', 'Haz una prueba de nivel. La de Alimun te sitúa del A1 al C2 en pocos minutos, y a partir de ahí la tabla del Goethe te muestra más o menos cuánto te queda.'],
   ],
   related: ['goethe-certificates', 'german-for-work', 'german-cases'],
   sources: [
