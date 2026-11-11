@@ -63,6 +63,19 @@ EUR = [
 ]
 BAND_B = {"app": 0.65, "minutes_30": 1.0, "minutes_120": 1.0, "b2b_en": 1.0, "b2b_de": 1.0}  # everything else 0.85
 CURRENCIES = {"A": ["eur", "gbp", "chf", "usd", "cad", "aud"], "B": ["eur", "usd", "mad"]}
+# Morocco charges 20% VAT on foreign online services (since 11 June 2026): MAD prices set by the owner on 11 Nov 2026
+# (English about +14%, German about +7% over the converted price; app, trial, help class and minutes unchanged).
+MAD_OVERRIDES = {
+    ("open_en", "list", "month"): 249, ("open_de", "list", "month"): 289,
+    ("level_en", "list", "month"): 769, ("level_en", "list", "upfront"): 2119,
+    ("level_en", "founding", "month"): 679, ("level_en", "founding", "upfront"): 1899,
+    ("level_de", "list", "month"): 889, ("level_de", "list", "upfront"): 2499,
+    ("level_de", "founding", "month"): 819, ("level_de", "founding", "upfront"): 2289,
+    ("exam_en", "list", "month"): 949, ("exam_en", "list", "upfront"): 2659,
+    ("exam_en", "founding", "month"): 849, ("exam_en", "founding", "upfront"): 2339,
+    ("exam_de", "list", "month"): 1069, ("exam_de", "list", "upfront"): 2999,
+    ("exam_de", "founding", "month"): 969, ("exam_de", "founding", "upfront"): 2699,
+}
 
 
 def point(x):
@@ -127,7 +140,8 @@ def main():
                 if cur == "eur":
                     amount = base if band == "A" or product.startswith("b2b") or BAND_B.get(product) == 1.0 else point(base)
                 else:
-                    amount = local(base, cur)
+                    amount = MAD_OVERRIDES.get((product, variant, cadence)) if cur == "mad" else None
+                    amount = amount if amount is not None else local(base, cur)
                 lk = f"{product}_{band}_{variant}_{cadence}"
                 book.append(f"({q(product)}, {q(band)}, {q(variant)}, {q(cadence)}, {q(cur)}, {minor(amount)}, {q(lk)}, date '{RATES_DATE}')")
     out.append("insert into public.price_book (product_key, band, variant, cadence, currency, unit_amount, lookup_key, valid_from) values\n  " + ",\n  ".join(book) +

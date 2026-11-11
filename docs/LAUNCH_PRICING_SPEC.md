@@ -37,7 +37,7 @@ Each step costs less per class the more the learner commits. Money already paid 
 | Voice minutes, subscribers only, valid 12 months | 30 minutes €2.99; 120 minutes €8.99 | same |
 | Closed room for a company, up to 12, 12-week minimum | €79 (English) or €95 (German) per learner a month, excluding VAT, invoiced | — |
 
-Founding prices apply to the first 500 paying learners who join before 1 January 2027 (owner, 11 Nov 2026). Each keeps the founding price for 12 months from their first payment, or until the end of the path they are on at that point (for example A1 to B1), whichever is later but never more than 18 months, as long as they have no gap of more than one month; then the list price applies, announced 30 days ahead. The founding price is shown as its own price, never as a crossed-out list price. (CFO, 11 Nov 2026: a known, capped cost instead of a permanent one.)
+Founding prices apply to the first 500 paying learners who join before 1 January 2027 (joining means saving a card for a room or buying before that date, even if the room starts and is charged later; owner, 11 Nov 2026) (owner, 11 Nov 2026). Each keeps the founding price for 12 months from their first payment, or until the end of the path they are on at that point (for example A1 to B1), whichever is later but never more than 18 months, as long as they have no gap of more than one month; then the list price applies, announced 30 days ahead. The founding price is shown as its own price, never as a crossed-out list price. (CFO, 11 Nov 2026: a known, capped cost instead of a permanent one.)
 
 Voice minutes included: free 10 once; app 60 a month (40 in Band B); open class 40; level and exam packs 120. Plan minutes reset monthly; bought minutes last 12 months and are used after plan minutes.
 
@@ -64,16 +64,18 @@ Local prices at the 23 October 2026 rates (MAD 11.0, CAD 1.5665, USD 1.1193), to
 |---|---|---|---|
 | App, monthly / yearly | 12.99 / 124.99 | 59 / 569 | 5.99 / 58.99 |
 | Trial class | 5.99 | 29 | 3.99 |
-| Open class, English / German | 39.99 / 44.99 | 219 / 269 | 22.99 / 27.99 |
-| Level pack English, monthly / upfront | 114.99 / 309.99 | 669 / 1,859 | 68.99 / 189 |
-| Level pack German, monthly / upfront | 139.99 / 389.99 | 829 / 2,329 | 84.99 / 234 |
-| Exam pack English, monthly / upfront | 139.99 / 389.99 | 829 / 2,329 | 84.99 / 234 |
-| Exam pack German, monthly / upfront | 169.99 / 469.99 | 999 / 2,799 | 99 / 284 |
-| Founding level pack English, monthly / upfront | 99.99 / 279.99 | 599 / 1,669 | 60.99 / 169 |
-| Founding level pack German, monthly / upfront | 129.99 / 359.99 | 769 / 2,139 | 78.99 / 219 |
-| Founding exam pack English / German, upfront | 344.99 / 419.99 | 2,049 / 2,519 | 209 / 254 |
+| Open class, English / German | 39.99 / 44.99 | 249 / 289 | 22.99 / 27.99 |
+| Level pack English, monthly / upfront | 114.99 / 309.99 | 769 / 2,119 | 68.99 / 189 |
+| Level pack German, monthly / upfront | 139.99 / 389.99 | 889 / 2,499 | 84.99 / 234 |
+| Exam pack English, monthly / upfront | 139.99 / 389.99 | 949 / 2,659 | 84.99 / 234 |
+| Exam pack German, monthly / upfront | 169.99 / 469.99 | 1,069 / 2,999 | 99 / 284 |
+| Founding level pack English, monthly / upfront | 99.99 / 279.99 | 679 / 1,899 | 60.99 / 169 |
+| Founding level pack German, monthly / upfront | 129.99 / 359.99 | 819 / 2,289 | 78.99 / 219 |
+| Founding exam pack English / German, upfront | 344.99 / 419.99 | 2,339 / 2,699 | 209 / 254 |
 | Help class | 7.99 | 49 | 4.99 |
 | Voice minutes 30 / 120 | 4.99 / 14.99 | 29 / 99 | 3.99 / 10.99 |
+
+Morocco (owner, 11 Nov 2026): Morocco charges 20% VAT on online services sold by foreign companies (since 11 June 2026), so the MAD prices above include it and were raised for English (about 14%) and German (about 7%); the app, trial, help class and voice minutes are unchanged. Founding exam packs paid monthly: 849 MAD (English) and 969 MAD (German). Alimun registers on the DGI platform before its first Moroccan sale. Details: `docs/research/reports/Alimun Morocco launch deep dive.md`. The Moroccan approach is to be re-evaluated with the owner.
 
 Turkey and Egypt are charged in EUR and USD respectively (inflation); Morocco in MAD; Algeria in EUR or USD, with the warning that most Algerian cards cannot pay abroad.
 
