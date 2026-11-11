@@ -400,7 +400,12 @@ from (
     and p.proname not in ('is_admin', 'my_student_profile_id', 'my_teacher_profile_id', 'my_own_teacher_profile_id',
                           'is_enrolled_in', 'teaches_cohort', 'teaches_student', 'teaches_session', 'attends_session',
                           'was_taught_by', 'can_use_session_files', 'cohort_classmates', 'can_join_waitlist',
-                          'is_client_write', 'public_teacher_rows', 'teacher_public')
+                          'is_client_write', 'public_teacher_rows', 'teacher_public',
+                          -- added after the phase 1 lockdown; each checks is_admin() or the caller's rows
+                          'can_read_set', 'can_see_thread', 'session_cohort', 'my_threads', 'open_thread',
+                          'complete_material_homework', 'set_cohort_lesson_start', 'set_session_lesson',
+                          'submit_welcome_poll', 'admin_activity_overview', 'admin_activity_timeline',
+                          'admin_signup_sources')
 ) x;
 insert into rls_results (actor, test, expect, got, ok, detail)
 select 'grants', 'anon EXECUTE allow-list', 'no extras', coalesce(string_agg(fn, ', '), 'no extras'), count(*) = 0, string_agg(fn, ', ')
