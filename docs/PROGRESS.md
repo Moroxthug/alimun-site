@@ -1822,3 +1822,18 @@ Owner asked to clear the advisor's warnings about SECURITY DEFINER functions; pl
 - Checked as a real teacher inside a rolled-back transaction: the board is visible, set_session_lesson works, open_thread works, and a message insert fires its triggers. cohort_course and reminders_due are refused; signed-out visitors are refused session_cohort and still read teachers_public.
 - Advisor afterwards: signed-out only public_teacher_rows (behind teachers_public, intended). Signed-in 26 functions, all intended: RLS helpers that policies call as the user, and RPCs that check is_admin() or the caller's own rows. The advisor flags these by design. `supabase/tests/rls.sql` allow-list updated to match.
 - Leaked password protection: turning it on through the Management API was refused ("available on Pro Plans and up"); the Supabase project is on the Free plan. Owner decision (11 Nov 2026): leave it off for now; the advisor warning is accepted. Revisit if Supabase moves to Pro.
+
+## 2026-11-11 — Ten more articles
+
+- Published 2026-11-11, chosen from searches reaching us and the target countries:
+  - en: Goethe A1 exam (Start Deutsch 1), Express Entry language points, English test for nurses in the US, German for nurses, B2 level English
+  - it: Test di livello di tedesco, Livello C1 di inglese
+  - ma: Infirmier en Allemagne depuis le Maroc, Examen Goethe A1 pour le regroupement familial
+  - es: Nivel B2 de inglés (Spain sends searches such as "test b2 inglés")
+- Shared keys: goethe-a1-exam (en, ma), german-for-nurses (en, ma), english-b2-level (en, es, it), english-c1-level (it, ma).
+- The Express Entry article reflects the CRS change of 3 Nov 2026 (new Labour Market Integration factor, LMIA requirement removed for job offers). Checked on canada.ca; the language point values did not change.
+- The German A1 quiz's reading strip now leads with the Goethe A1 article.
+- Checker: 140 articles, 0 errors. Build: 546 sitemap addresses.
+- To check:
+  - The Italian German level test article describes the Alimun level test as A1 to C2 (from site/src/data/level-test/German.js). Older Italian course text says A1 to C1, so the owner should confirm which is right.
+  - The Italian, Moroccan French and Spanish articles have not been reviewed by a native speaker.

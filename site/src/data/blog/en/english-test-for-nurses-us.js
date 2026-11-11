@@ -1,0 +1,136 @@
+// English tests for nurses who want to work in the US. Checked (11 Nov 2026) against 8 CFR 212.15 (eCFR, current text:
+// covered occupations, certificate contents, English requirement, exempt countries, 212(r) certified statement, five-year use rule),
+// USCIS "Health Care Worker Certification" (May 12, 2026 HHS alert, authorized organizations, last updated 29 Jun 2026),
+// Federal Register 2026-05942 (The Evaluation Company approved 27 Mar 2026; CGFNS renamed TruMerit 18 Dec 2024),
+// TruMerit VisaScreen page and its "Updated list of Tests and Scores for Foreign Health Care Workers (as of May 12, 2026)" table,
+// TruMerit statement on the HRSA update (TOEIC dropped, exams before 12 May use old criteria), TruMerit 212(r) and RN pages,
+// ETS TOEFL score scale update (1-6 scale from 21 Jan 2026), NCLEX FAQs on nclex.com, and the Minnesota Board of Nursing
+// page for RN licensure by exam for foreign-educated applicants. HRSA's own page refused automated access; its list is cited
+// through USCIS and TruMerit. No fees given: none were confirmed for this article.
+export default {
+  key: 'english-nurses-us',
+  site: 'en',
+  slug: 'english-test-for-nurses-us',
+  section: 'exams',
+  course: 'English',
+  published: '2026-11-11',
+  updated: '2026-11-11',
+  title: 'Which English test do nurses need to work in the US?',
+  metaTitle: 'English test for nurses to work in the US: scores – Alimun',
+  desc: 'The English tests and minimum scores for the VisaScreen certificate since May 2026, who is exempt, and how state boards and the NCLEX fit in.',
+  lead: "A nurse educated abroad usually needs two things in English before a US visa: a passing score on an approved test and a federal health care worker certificate that confirms it. Since May 12, 2026 the list of tests and the minimum scores have changed, and **the speaking score is now the one that decides most cases**. This guide sets out the current numbers and the people who are exempt.",
+  photo: 'english-nurses-us-nurse-paperwork',
+  sticker: { draw: 'owl', say: 'Speaking 7 on IELTS. Write it down.' },
+  facts: [
+    { n: 7, unit: 'Speaking', text: 'the IELTS speaking band a registered nurse needs for VisaScreen, with 6.5 overall' },
+    { n: 6, unit: 'tests', text: 'on the TruMerit VisaScreen list since May 12, 2026, after TOEIC was dropped' },
+    { n: 5, unit: 'years', text: 'to use a health care worker certificate for a visa, admission or green card after it is issued' },
+    { label: 'TOEFL 4.5', text: 'overall and in speaking on the new 1 to 6 scale, the TOEFL iBT minimum for registered nurses' },
+  ],
+  blocks: [
+    { take: { title: 'The short answer', text: "If you were trained as a nurse outside the US and want an occupational visa or a green card to work as a nurse, US law requires a health care worker certificate, and the certificate includes an English requirement. With TruMerit's VisaScreen, the most common route, a registered nurse who took the test on or after May 12, 2026 needs, for example, **IELTS Academic 6.5 overall with 7 in speaking**, TOEFL iBT 4.5 overall and in speaking, or OET with 360 in speaking. Nurses whose entry-level education was in English in Australia, Canada outside Quebec, Ireland, New Zealand, the United Kingdom or the United States are exempt. Your state board of nursing may set its own test rules on top, so **check the board where you will be licensed**.", draw: 'owl' } },
+
+    { h: 'Why the US asks nurses for an English test at all' },
+    { p: "The requirement comes from federal immigration law, not from hospitals. Under section 212(a)(5)(C) of the Immigration and Nationality Act and the regulation that applies it, 8 CFR 212.15, a person coming to the United States as an immigrant or nonimmigrant **to work in certain health care occupations** is inadmissible unless they present a certificate from an approved credentialing organization. Registered nurses, licensed practical nurses and licensed vocational nurses are on that list, together with occupational and physical therapists, speech-language pathologists and audiologists, clinical laboratory scientists and technicians, and physician assistants. Physicians are not covered by this rule." },
+    { p: "USCIS describes what the certificate verifies. Your education, training, license and experience must be comparable with those of an American health care worker of the same type, authentic and, for a license, unencumbered. You must have **the necessary level of oral and written English**, shown by passing a standardized test. And you must have passed either the licensing exam for your occupation or a test that predicts success on it. You present the certificate when you seek admission, change or extend your status, or adjust to permanent residence, and the requirement stops once you are a lawful permanent resident." },
+    { p: "Who decides which tests count? The regulation says that the Secretary of Health and Human Services has **sole authority to set the English standards**. The test names and scores printed in 8 CFR 212.15 itself are old: they still mention the paper-based TOEFL, TOEIC and IELTS only. The current list is the one published by the Health Resources and Services Administration (HRSA), part of HHS. USCIS announced that on May 12, 2026 HHS approved new tests and scores, and the credentialing organizations now apply that list." },
+    { note: { title: 'A certificate is not a license', text: "The regulation says it plainly: the certificate **does not authorize you to practice**. It lets you through immigration. To work as a nurse you still need a license from a state board of nursing, which has its own steps, often including its own English rule.", draw: 'parrot' } },
+
+    { h: 'Who issues the certificate' },
+    { p: "Most nurses know the certificate as **VisaScreen**, the service run by the organization long called CGFNS (Commission on Graduates of Foreign Nursing Schools). According to a 2026 notice in the Federal Register, CGFNS International changed its name to TruMerit in December 2024, so you will see both names on official pages. Applicants who complete VisaScreen receive an International Commission on Healthcare Professions (ICHP) certificate. For registered nurses, VisaScreen also checks that you have passed either the NCLEX-RN or TruMerit's own Nurse Qualifying Exam." },
+    { p: "TruMerit is not the only option for nurses. The USCIS page on health care worker certification lists TruMerit (as CGFNS) for all the covered occupations, and **three other organizations authorized for nurses**: Josef Silny & Associates, International Education Evaluations, and The Evaluation Company, which USCIS approved on March 27, 2026. Each of them checks English against the HHS list, but each runs its own process, so if you use one of them, read its own instructions. The scores below are the ones TruMerit publishes for VisaScreen." },
+
+    { h: 'The accepted tests and the minimum scores' },
+    { p: "TruMerit's VisaScreen page lists six approved tests: Cambridge English (B2 First, C1 Advanced or C2 Proficiency), TOEFL iBT, Academic IELTS, the Michigan English Test (MET), the Occupational English Test (OET) and Pearson PTE Academic. **TOEIC is no longer accepted** for exams taken on or after May 12, 2026, because HRSA removed it from the approved list. TruMerit also says it does not accept the at-home versions of any of these tests, so book a test center." },
+    { p: "The scores depend on your occupation. The law groups registered nurses with other health care workers whose job requires a bachelor's degree, and puts licensed practical and vocational nurses in the group for **occupations below bachelor's level**, which has lower minimums for most parts but the same speaking scores. The table shows both columns from TruMerit's list, as of May 12, 2026." },
+    { table: {
+      head: ['Test', 'Registered nurses', 'LPN / LVN (below bachelor level)'],
+      rows: [
+        ['IELTS Academic', '6.5 overall, 7 speaking', '6 overall, 7 speaking'],
+        ['TOEFL iBT (1–6 scale)', '4.5 overall, 4.5 speaking, 3.5 reading, listening and writing', '4 overall, 4.5 speaking, 3 reading, listening and writing'],
+        ['OET', '360 speaking, 340 reading, 350 writing, 320 listening', '360 speaking, 310 reading, 290 writing, 290 listening'],
+        ['PTE Academic', '55 overall, 76 speaking, 62 reading, writing and listening', '47 overall, 76 speaking, 52 reading, writing and listening'],
+        ['Cambridge English (B2 First, C1 Advanced, C2 Proficiency)', '169 overall, 194 speaking', '161 overall, 194 speaking'],
+        ['Michigan English Test (MET)', '58 overall, 59 speaking', '53 overall, 59 speaking'],
+      ],
+      note: "Source: TruMerit, “Updated list of Tests and Scores for Foreign Health Care Workers (as of May 12, 2026)”, on the VisaScreen page. Exams taken before May 12, 2026 are assessed under the previous scores. Check the official page before you book.",
+    } },
+    { p: "Look at the speaking column. In every test, the speaking minimum is **the same for registered and practical nurses**, and in most tests it sits above the overall score: 7 against 6.5 on IELTS, 76 against 55 on PTE, 194 against 169 on Cambridge. TruMerit says it had recommended stronger speaking minimums to HRSA, and the new list reflects that. In practice it means that a nurse with excellent reading and a weaker speaking score can fail the requirement even with a high total." },
+    { h3: 'If you took your test before May 12, 2026' },
+    { p: "TruMerit states that exams taken before May 12, 2026 are **still certified under the previous criteria**, and exams taken on or after that date under the new ones. The previous rules also accepted TOEIC and required, since December 1, 2024, a PTE speaking score of 63 with 55 overall and 50 in the other sections. If you hold an older result, compare it with the previous table on TruMerit's site before you retake anything." },
+
+    { figure: { photo: 'english-nurses-us-patient-talk', alt: 'A nurse in light blue scrubs holding the hands of a smiling older woman in a wheelchair', caption: 'Talking with patients and families is why every test on the VisaScreen list now sets its highest bar for speaking.' } },
+
+    { h: 'The TOEFL change in 2026' },
+    { p: "If you studied TOEFL with older material, the numbers above may look strange. On January 21, 2026, ETS moved the TOEFL iBT to **a score scale from 1 to 6, in half-point steps**, for the total and for each section. ETS aligns the scale with the Common European Framework of Reference (CEFR): a 5 on any section corresponds to C1, a 4 or 4.5 to B2, and a 3 or 3.5 to B1." },
+    { p: "TruMerit's list now states the TOEFL requirement on this new scale. A registered nurse needs 4.5 overall and in speaking, which ETS places at B2, and 3.5 in reading, listening and writing. To help with the move, ETS prints a comparable score on the old 0 to 120 scale on score reports for two years, and in its guide for institutions it suggests that **an old requirement of 90 corresponds to 4.5** and 80 to 4. TOEFL scores stay valid for two years, so ETS expects some old-scale results to circulate until late 2027." },
+    { note: { title: 'Which test suits you?', text: "IELTS and TOEFL are general academic tests, while **OET is built for health professionals** and uses health care settings. A familiar setting can help, but the OET minimums above are just as demanding. Pick the test whose format you can practice most, and that your state board also accepts.", draw: 'cat' } },
+
+    { cta: true },
+
+    { h: 'Who is exempt from the English test' },
+    { p: "The regulation exempts people who graduated from a college, university or professional school in **Australia, Canada (except Quebec), Ireland, New Zealand, the United Kingdom or the United States**. TruMerit applies this to VisaScreen with two conditions that must both be met: your entry-level professional education took place in one of those countries, and English was the language of instruction, including the language of the textbooks. A nurse from India, Nigeria, the Philippines or Kenya, for example, takes a test even if the whole nursing program was taught in English." },
+    { p: "There is also an exemption for renewals. To renew VisaScreen without a new test, TruMerit asks you to show **at least 27 months of employment in the United States**, including nine months before the renewal order, in the profession you are certified for, with an employment summary signed by your US employer." },
+    { h3: 'The 212(r) certified statement' },
+    { p: "Registered nurses have an alternative to the standard certificate, the certified statement under section 212(r) of the Act. The regulation says nurses who obtain it **do not have to meet the English requirement**. TruMerit lists the conditions: an active license in Florida, Georgia, Illinois, Michigan or New York; a pass on the NCLEX-RN; and a nursing education in English, including textbooks, in Australia, Barbados, Canada (in Quebec only at McGill University, Dawson College, Vanier College, John Abbott College and Heritage College), Ireland, Jamaica, New Zealand, South Africa, Trinidad and Tobago, the United Kingdom or the United States." },
+    { p: "This route mostly helps nurses from **Barbados, Jamaica, South Africa and Trinidad and Tobago**, and from the English-language schools in Quebec, who would otherwise need a test for the standard certificate. Everyone else should plan for one of the six exams." },
+
+    { h: 'The NCLEX and your state board of nursing' },
+    { p: "The NCLEX is the licensing exam, and it is a different thing from the English test. It checks entry-level nursing knowledge, not language, but it is written in English: NCSBN, which runs it, offers a French version only for French-speaking candidates in Canada. You can sit it outside the US, at test centers that NCSBN lists in countries such as **India, the Philippines, Mexico, Brazil, Spain and the United Kingdom**, and at international centers the only accepted ID is a passport book or card." },
+    { p: "Before you register, a board of nursing has to make you eligible, and NCSBN says that **each nursing regulatory body sets its own eligibility rules**. Many boards ask foreign-educated nurses for a credentials evaluation and an English test of their own, with their own list and their own scores, which do not always match the federal ones." },
+    { h3: 'One board as an example: Minnesota' },
+    { p: "The Minnesota Board of Nursing shows how this works. For registered nurses educated abroad and applying for licensure by examination, it asks for a credentials evaluation report, naming TruMerit's Credentials Evaluation Service, and an approved English test **taken in person**. Its minimums are IELTS Academic 6.5 overall with 7.0 in speaking and 6.0 in the other modules, TOEFL iBT 4.5 overall with 5.0 in speaking and 4.0 in the other sections, or OET with 350 in speaking and 300 in the other modules, rising on January 1, 2027 to 360, 340, 350 and 320." },
+    { p: "Compare that with the federal list. Minnesota's TOEFL requirement asks for **5.0 in speaking, not 4.5**, and adds a minimum of 6.0 in each IELTS module, which VisaScreen does not. Its exempt countries are also wider, matching the 212(r) list. A nurse who prepares only for the VisaScreen minimum could pass for immigration and still fall short for this board, so plan your score around the stricter of the two." },
+    { table: {
+      head: ['Requirement', 'What it is for', 'Who sets the English rule'],
+      rows: [
+        ['VisaScreen or another health care worker certificate', 'A work visa, admission to the US, or a green card', 'HHS (HRSA list), applied by TruMerit and the other approved organizations'],
+        ['NCLEX-RN or NCLEX-PN', 'Your nursing license', 'No English score: the exam itself is in English'],
+        ['State board of nursing application', 'Eligibility for the NCLEX and the license', 'Each board, with its own tests and scores'],
+      ],
+      note: 'A summary of how the pieces fit together. Each board publishes its own requirements; read the one where you will practice.',
+    } },
+
+    { figure: { photo: 'english-nurses-us-doctor-visit', alt: 'A nurse in blue scrubs and gloves pushing a patient in a wheelchair toward a doctor sitting at a desk', caption: 'Handovers to doctors, calls to pharmacies and notes in the chart all happen in English from the first shift.' } },
+
+    { h: 'Timing: when to take the test' },
+    { p: "Two clocks matter. The first is the certificate: 8 CFR 212.15 says it must be used for admission, change of status or adjustment of status **within five years of the date it is issued**, and USCIS adds that after that a new certificate is needed. The second is the score itself. TOEFL scores, for example, remain valid for two years, and boards and credentialing organizations may set their own limits on how old a result can be, so check before you book." },
+    { p: "Many nurses take the English test early, at the same time as they gather transcripts and license validations, because it is the step they control most. That is sensible, but **keep the board's rules in view**. Minnesota, for instance, cancels an application if the credentials report and a passing English report are not received within one year, so a test taken too late can cost you a new application." },
+
+    { h: 'How to get to a 7 in speaking' },
+    { p: "The speaking minimums are the hard part for most nurses, even for those who read clinical English fluently. Examiners listen to how you speak at length, not to how much you know, and a high speaking score **comes from speaking regularly and getting corrected**, not from memorizing answers. Reading clinical texts every day does not train it on its own." },
+    { p: "Build your practice around the situations of the job. Explain a procedure to a patient in plain words, give a handover in a clear order, describe a change in a patient's condition on the phone, and **ask open questions** that let a worried relative talk. They are the situations of a real shift, and they train the fluency that every speaking test listens for." },
+    { p: "If you are not sure where you stand, start with a level test. At Alimun you can take one online, then practice in **live classes with a teacher and the same small group**, which is where speaking improves fastest. Whatever you choose, book the exam only when your practice answers are steadily at the level you need, not on your best day." },
+    { p: "Finally, check the official pages before every step. HRSA can change the list again, TruMerit and the other organizations update their pages, and each state board sets its own rules. The numbers in this guide are correct as of November 2026 for tests taken on or after May 12, 2026." },
+  ],
+  quiz: [
+    { q: 'Which IELTS result does a registered nurse need for VisaScreen, for a test taken after May 12, 2026?', options: ['6.0 overall, 6.5 speaking', '6.5 overall, 7 speaking', '7 overall, 7 speaking', '7.5 overall, 6.5 speaking'], a: 1, why: 'TruMerit lists IELTS Academic 6.5 overall with 7 in speaking for registered nurses.' },
+    { q: 'Which test is no longer accepted for VisaScreen for exams taken on or after May 12, 2026?', options: ['OET', 'PTE Academic', 'TOEIC', 'Michigan English Test'], a: 2, why: 'HRSA removed TOEIC from the approved list, so TruMerit stopped accepting it.' },
+    { q: 'On the new TOEFL iBT scale, what speaking score does a registered nurse need for VisaScreen?', options: ['3.5', '4', '4.5', '5.5'], a: 2, why: 'The current list asks for 4.5 overall and 4.5 in speaking on the 1 to 6 scale.' },
+    { q: 'Which nurse is exempt from the English test for a standard VisaScreen certificate?', options: ['A nurse trained in English in the Philippines', 'A nurse trained in English in Ireland', 'A nurse trained in French in Quebec', 'Any nurse who has passed the NCLEX'], a: 1, why: 'The exemption covers entry-level education in English in Australia, Canada except Quebec, Ireland, New Zealand, the UK or the US.' },
+    { q: 'Within how many years must a health care worker certificate be used?', options: ['One', 'Two', 'Five', 'Ten'], a: 2, why: '8 CFR 212.15 says it must be used within five years of the date it is issued.' },
+    { q: 'Who has sole authority to set the English test standards for the certificate?', options: ['Each state board of nursing', 'The Secretary of Health and Human Services', 'NCSBN', 'The nurse’s future employer'], a: 1, why: 'The regulation gives HHS sole authority; HRSA publishes the current list.' },
+    { q: 'What does VisaScreen need from a registered nurse besides English?', options: ['Nothing else', 'A pass on the NCLEX-RN or TruMerit’s Nurse Qualifying Exam', 'A US job offer', 'A state license in Minnesota'], a: 1, why: 'For registered nurses, VisaScreen verifies a pass on the NCLEX-RN or the Nurse Qualifying Exam.' },
+    { q: 'Which statement about state boards of nursing is true?', options: ['They must use the federal scores', 'They cannot ask for an English test', 'Each sets its own eligibility rules and may set its own English requirement', 'They only accept OET'], a: 2, why: 'NCSBN says each board sets its own eligibility rules; Minnesota, for example, has its own tests and scores.' },
+  ],
+  faq: [
+    ['Does a nurse need an English test to work in the US?', 'Usually yes. Nurses coming to work on an occupational visa or a green card need a health care worker certificate, and the certificate requires a passing score on an approved English test, unless the nurse trained in English in Australia, Canada outside Quebec, Ireland, New Zealand, the UK or the US, or qualifies for the 212(r) certified statement. Many state boards also ask for a test.'],
+    ['Is IELTS General accepted for VisaScreen?', 'TruMerit’s current list names Academic IELTS. Take the Academic version at a test center, since TruMerit does not accept at-home versions of the tests.'],
+    ['Is the Duolingo English Test accepted for VisaScreen?', 'No. The Duolingo English Test is not on the list TruMerit publishes, which names Cambridge English, TOEFL iBT, Academic IELTS, the Michigan English Test, OET and PTE Academic.'],
+    ['I took TOEFL before January 2026 and have a score out of 120. Does it still count?', 'For VisaScreen, a test taken before May 12, 2026 is assessed under the previous score requirements, which used the older scale. TOEFL scores stay valid for two years. Check TruMerit’s page on requirements before May 12, 2026, and your state board’s rules.'],
+    ['Do I need the NCLEX before VisaScreen?', 'Registered nurses need to have passed either the NCLEX-RN or TruMerit’s Nurse Qualifying Exam for VisaScreen. The NCLEX is also the exam for your state license, and the board decides when you are eligible to take it.'],
+  ],
+  related: ['toefl-or-ielts', 'ielts-band-scores', 'duolingo-english-test', 'english-job-interview', 'cefr-english', 'ielts-or-cambridge'],
+  sources: [
+    ['8 CFR 212.15: certificates for foreign health care workers (eCFR)', 'https://www.ecfr.gov/current/title-8/chapter-I/subchapter-B/part-212/section-212.15'],
+    ['USCIS: Health Care Worker Certification', 'https://www.uscis.gov/working-in-the-united-states/temporary-workers/health-care-worker-certification'],
+    ['TruMerit: VisaScreen, English requirement and score table (as of May 12, 2026)', 'https://www.trumerit.org/services/certification/visascreen-visa-credentials-assessment/'],
+    ['TruMerit: statement on the updated HRSA tests and scores', 'https://www.trumerit.org/updated-english-language-proficiency-elp-exams-and-score-requirements-by-the-health-resources-and-services-administration-hrsa/'],
+    ['TruMerit: requirements for exams taken before May 12, 2026', 'https://www.trumerit.org/visascreen-elp-exam-requirements-prior-to-may-12-2026/'],
+    ['TruMerit: 212(r) certified statement for registered nurses', 'https://www.trumerit.org/faq/visascreen/212r-certified-statement-an-alternative-to-visascreen-certification-for-rns-who-meet-certain-criteria/'],
+    ['Federal Register, 27 March 2026: approval of The Evaluation Company', 'https://www.federalregister.gov/documents/2026/03/27/2026-05942/notice-of-approval-of-new-credentialing-organization-for-health-care-workers-for-certain-immigration'],
+    ['ETS: TOEFL iBT score scale update (1–6)', 'https://www.ets.org/toefl/institutions/ibt/score-scale-update.html'],
+    ['NCLEX: frequently asked questions', 'https://www.nclex.com/faqs.htm'],
+    ['Minnesota Board of Nursing: RN licensure by exam, foreign nursing programs', 'https://mn.gov/boards/nursing/licensure/apply-for-a-license/rn-lic-exam-foreign-prog.jsp'],
+  ],
+};
