@@ -40,7 +40,7 @@ export default {
     'german-idioms': ['german-pronunciation', 'german-word-order', 'how-long-german'],
     'untranslatable-german': ['german-pronunciation', 'how-long-german', 'german-for-work'],
     'german-word-quiz': ['german-pronunciation', 'how-long-german', 'german-for-work'],
-    'de-quiz-a1': ['goethe-certificates', 'goethe-validity', 'how-long-german'],
+    'de-quiz-a1': ['goethe-a1-exam', 'goethe-certificates', 'goethe-validity', 'how-long-german'],
     'de-quiz-a2': ['goethe-certificates', 'integration-course', 'how-long-german'],
     'de-quiz-b1': ['german-citizenship', 'integration-course', 'goethe-certificates'],
     'de-quiz-b2': ['german-for-work', 'german-exams-compared', 'goethe-certificates'],
