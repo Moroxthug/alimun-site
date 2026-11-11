@@ -1,6 +1,6 @@
 # Pricing engine: technical spec and build plan
 
-Implements the prices and rules in `docs/LAUNCH_PRICING_SPEC.md` (with the CFO's conditions of 11 Nov 2026). Status: draft for the owner's approval; nothing built. Written against `main` as of 11 Nov 2026.
+Implements the prices and rules in `docs/LAUNCH_PRICING_SPEC.md` (with the CFO's conditions of 11 Nov 2026). Status: approved by the owner on 11 Nov 2026. Steps 1 and 2 built on 11 Nov 2026 (section 13); the rest not yet. Written against `main` as of 11 Nov 2026.
 
 ## 1. What exists and what changes
 
@@ -161,4 +161,19 @@ The app subscription and minute packs are also sold in the App Store and Google 
 
 Decided by the owner on 11 Nov 2026: founding closing date 1 January 2027 (cap 500, lock 12 to 18 months); prices include tax except in Canada and the US; Stripe Tax calculates and collects, the accountant registers and files; no SMS verification at launch; the app in both stores with per-country prices; GBP and other currencies added as price-book rows.
 
-Still open: whether to use RevenueCat or the stores' own notifications; the store price per country (proposal: the app's Band A price in rich countries and about 65% elsewhere, rounded to each store's price points).
+Decided on 11 Nov 2026: store purchases reach entitlements through RevenueCat; store prices are €8.99 in Band A countries and 70% elsewhere, rounded to each store's price points (higher than the web price, which pays no store commission).
+
+
+## 13. Morocco: card limits
+
+Moroccan residents can pay foreign websites only with a card enabled for international online payments, up to 20,000 MAD a year (2026). Many cards are not enabled by default, so a share of Moroccan payments will be declined. Handling, in order:
+- At checkout, a declined Moroccan card shows a short explanation: enable online international payments in the bank's app (most Moroccan banks offer a switch) and check the yearly allowance, then try again.
+- Prefer the upfront pack price for Moroccan learners where the allowance allows it: one payment instead of three monthly ones means fewer chances of a decline mid-pack.
+- Company rooms for Moroccan recruiters and employers are invoiced and paid by bank transfer.
+- Later, if declines stay high: a local payment route (a Moroccan card acquirer such as CMI through a partner, or a payment provider that supports local Moroccan cards and cash points), to research before building. Family members abroad paying with a foreign card are charged that card's band.
+
+## 14. Build status
+
+**Step 1, built and live in the database (11 Nov 2026):** `api/withdraw.js` (contracts from Stripe, two-step submission, receipt email in the learner's language with date and time, owner notified), `js/app/withdraw.js` at `#/settings/withdraw` with a "Withdraw from contract here" link on the plan card in Settings, texts in nine languages, `public.withdrawal_requests` (migration `202611111200_withdrawal_requests.sql`, applied and verified). Refunds are issued by an admin. Still to do: the Terms paragraph on withdrawal (a locked block) to name the online function, with the owner's OK; an admin list of requests (today they arrive by email).
+
+**Step 2, built and live in the database (11 Nov 2026):** migration `202611111300_pricing_engine.sql`, applied and verified: 10 tables with row level security, 8 policies, `claim_founding_seat`, `set_band`, `entitlement_minutes` (service role only), 13 products, 250 countries (68 in Band A, including the EU's outermost regions), 220 prices at the ECB rates of 11 Nov 2026 (MAD from an aggregator). Seed generator: `supabase/maintenance/build_pricing_seed.py`. Tested locally against PostgreSQL 16: founding cap and closing date, band rules, minutes, and access for learners, signed-out visitors and the server. Nothing on the site reads these tables yet.

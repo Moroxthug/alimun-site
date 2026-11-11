@@ -17,6 +17,8 @@ RATES = {"usd": 1.1127, "cad": 1.5839, "gbp": 0.83618, "aud": 1.6222, "chf": 0.9
 EU = "AT BE BG HR CY CZ DK EE FI FR DE GR HU IE IT LV LT LU MT NL PL PT RO SK SI ES SE".split()
 EEA = "IS LI NO".split()
 EURO_MICRO = "AD MC SM VA".split()
+# Parts of the EU that have their own country codes (Åland, French outermost regions): the one EU price
+EU_REGIONS = "AX GP MQ RE GF YT MF".split()
 # Band A outside the EU: own currency where we price it, otherwise EUR with tax included
 BAND_A_OWN = {"GB": "gbp", "CH": "chf", "US": "usd", "CA": "cad", "AU": "aud"}
 BAND_A_EUR = "AE SA QA KW BH OM JP KR SG HK MO TW IL NZ GI IM JE GG FO GL BM KY".split()
@@ -94,7 +96,7 @@ def main():
     rows = []
     for c in pycountry.countries:
         cc = c.alpha_2
-        if cc in EU or cc in EEA or cc in EURO_MICRO:
+        if cc in EU or cc in EEA or cc in EURO_MICRO or cc in EU_REGIONS:
             band, cur, note = "A", "eur", "EU/EEA: one price, VAT included"
         elif cc in BAND_A_OWN:
             band, cur, note = "A", BAND_A_OWN[cc], "Band A, own currency"
