@@ -482,21 +482,25 @@
       return '<div class="ad-item"><div class="tt-row ad-act"><span class="tt-row__time">' + esc(r.starts_on) + '</span><span><b>' + esc((PRODUCTS[r.product_key] || r.product_key) + ' ' + r.level) + '</b><small>' + esc(ROOM_STATE[r.room_state] || r.room_state) + '. ' + esc(bits.join('. ') + '.') + '</small></span>' +
         (can ? '<span class="btn-row ad-act__btns"><button class="btn btn--ghost btn--sm" type="button" data-askroom="' + esc(r.id) + '">Change</button></span>' : '') + '</div><div data-box="room-' + esc(r.id) + '"></div></div>';
     }).join('');
-    var form = '<form class="st-form" data-newroom>' +
-      field('Product', '<select class="st-in" name="product_key" required>' + Object.keys(PRODUCTS).map(function (k) { return opt(k, PRODUCTS[k], ''); }).join('') + '</select>', 'Packs open 10 days before the start with at least 8 learners; open and help classes are sold while they run.') +
-      field('Language (help classes)', '<select class="st-in" name="language">' + opt('English', 'English', 'English') + opt('German', 'German', '') + '</select>') +
-      field('Level', '<select class="st-in" name="level" required>' + LEVELS.map(function (l) { return opt(l, l, 'B1'); }).join('') + '</select>') +
+    /* A group from Admin → Matching ("Make this a room") fills the form once; the teacher is still chosen here */
+    var pf = window.AlimunRoomPrefill || null;
+    window.AlimunRoomPrefill = null;
+    var pfNote = pf ? '<p class="t-body" style="margin-top:8px" role="status">' + esc('Filled in from Matching: ' + pf.note + ' Choose a teacher and a substitute, check the rest, then create the room.') + '</p>' : '';
+    var form = pfNote + '<form class="st-form" data-newroom>' +
+      field('Product', '<select class="st-in" name="product_key" required>' + Object.keys(PRODUCTS).map(function (k) { return opt(k, PRODUCTS[k], pf ? pf.product_key : ''); }).join('') + '</select>', 'Packs open 10 days before the start with at least 8 learners; open and help classes are sold while they run.') +
+      field('Language (help classes)', '<select class="st-in" name="language">' + opt('English', 'English', pf ? pf.language : 'English') + opt('German', 'German', pf ? pf.language : '') + '</select>') +
+      field('Level', '<select class="st-in" name="level" required>' + LEVELS.map(function (l) { return opt(l, l, pf ? pf.level : 'B1'); }).join('') + '</select>') +
       field('Teacher', '<select class="st-in" name="teacher_id" required>' + teacherOpts('') + '</select>') +
       field('Substitute', '<select class="st-in" name="substitute_teacher_id">' + teacherOpts('') + '</select>', 'Needed before the room is published.') +
-      field('Start date', '<input class="st-in" type="date" name="starts_on" required>', 'Packs start on the first Monday of a month.') +
-      '<div class="st-field" role="group" aria-labelledby="rm-days"><span class="st-lbl" id="rm-days">Days</span><span class="btn-row">' + WEEK.map(function (d) { return '<label class="st-check"><input type="checkbox" name="days" value="' + d + '"> ' + d + '</label>'; }).join('') + '</span><span class="t-small st-hint">Leave empty for the usual days: packs Monday, Tuesday and Thursday; open class Wednesday; help class Sunday.</span></div>' +
-      field('Time', '<input class="st-in" type="time" name="schedule_time" required value="19:00">') +
-      field('Time zone', '<input class="st-in" name="timezone" required value="' + esc(Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Rome') + '">') +
+      field('Start date', '<input class="st-in" type="date" name="starts_on" required' + (pf && pf.starts_on ? ' value="' + esc(pf.starts_on) + '"' : '') + '>', 'Packs start on the first Monday of a month.') +
+      '<div class="st-field" role="group" aria-labelledby="rm-days"><span class="st-lbl" id="rm-days">Days</span><span class="btn-row">' + WEEK.map(function (d) { return '<label class="st-check"><input type="checkbox" name="days" value="' + d + '"' + (pf && pf.days.indexOf(d) > -1 ? ' checked' : '') + '> ' + d + '</label>'; }).join('') + '</span><span class="t-small st-hint">Leave empty for the usual days: packs Monday, Tuesday and Thursday; open class Wednesday; help class Sunday.</span></div>' +
+      field('Time', '<input class="st-in" type="time" name="schedule_time" required value="' + esc(pf ? pf.time : '19:00') + '">') +
+      field('Time zone', '<input class="st-in" name="timezone" required value="' + esc(pf ? pf.timezone : (Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Rome')) + '">') +
       '<div class="btn-row"><button class="btn btn--primary btn--sm" type="submit">Create the room</button></div><p class="t-small st-msg" data-msg aria-live="polite"></p></form>';
     var plan = planningCards();
     return flash() + back('#/classes', 'Classes') + '<div class="view__head"><div><h1 class="t-h1">Rooms</h1><p class="t-lead">Rooms of the new price list. Learners choose them in Plans and prices; the daily room job does the rest.</p></div></div>' +
       '<div class="grid rise">' + plan.top + '<section class="card span-12" style="--i:0"><h2 class="t-h2">Rooms</h2>' + (rows ? '<div class="tt-week" style="margin-top:12px">' + rows + '</div>' : '<p class="t-body" style="margin-top:8px">No rooms yet.</p>') + '</section>' +
-      plan.bottom + '<section class="card span-12" style="--i:1"><h2 class="t-h2">Create a room</h2>' + form + '</section>' + sampleLine() + '</div>';
+      plan.bottom + '<section class="card span-12" style="--i:1" id="new-room"><h2 class="t-h2">Create a room</h2>' + form + '</section>' + sampleLine() + '</div>';
   }
   /* Room planning (api/_lib/rooms.js suggestRooms): suggested rooms to approve or dismiss, what learners are asking for,
      and when teachers can teach. A suggestion appears when enough learners ask for a product at a level (room_suggest_min)

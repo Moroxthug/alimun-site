@@ -4,6 +4,7 @@
    database, today's classes with a way into each room, AI spend this month and the jobs' last week. Sections of later
    parts say which part builds them. Only an admin (app_metadata.role, checked again by the database's is_admin()) sees
    real data; signed out, or with ?sample=1, a sample; any other account is told the page is not for them.
+   Matching (js/app/admin-matching.js, engine js/match.js): groups of compatible learners.
    Part 2 (js/app/admin-people.js): students and teachers. Part 3 (js/app/admin-classes.js, js/app/admin-teaching.js):
    classes, schedule, waiting list and messages. Part 4 (js/app/admin-system.js): payouts, AI spend and the system. */
 (function () {
@@ -39,6 +40,7 @@
     payouts: '<rect x="3" y="6.5" width="18" height="12" rx="2.5"/><path d="M3 10.5h18M7 15h3"/>',
     ai: '<path d="M4 20V13M10 20V8M16 20v-5M20 20H3"/>',
     activity: '<path d="M3 12h4l3-7 4 14 3-7h4"/>',
+    matching: '<circle cx="8" cy="8" r="3"/><circle cx="16" cy="16" r="3"/><circle cx="16" cy="8" r="3"/><path d="M10.5 9.5l3 5M11 8h2"/>',
     campaigns: '<path d="M4 10v4a1 1 0 0 0 1 1h2l5 4V5L7 9H5a1 1 0 0 0-1 1z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a7.5 7.5 0 0 1 0 11"/>',
     system: '<circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v2.4M12 18.8v2.4M2.8 12h2.4M18.8 12h2.4M5.5 5.5l1.7 1.7M16.8 16.8l1.7 1.7M5.5 18.5l1.7-1.7M16.8 7.2l1.7-1.7"/>',
     more: '<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',
@@ -62,6 +64,7 @@
     { id: 'teachers', label: 'Teachers', icon: 'teachers', group: 'People', part: 2, text: 'Applications to approve or reject, and each teacher’s file, classes and availability.' },
     { id: 'classes', label: 'Classes', icon: 'classes', group: 'Teaching', part: 3, text: 'Creating classes for teachers, rosters, moving students, closing and reopening.' },
     { id: 'schedule', label: 'Schedule', icon: 'schedule', group: 'Teaching', part: 3, text: 'Every class date: cancel or move one, with students and teacher told.' },
+    { id: 'matching', label: 'Matching', icon: 'matching', group: 'Teaching', text: 'Every learner\u2019s level, focus and time zone, the groups they could form, and who is closest to buying.' },
     { id: 'waiting', label: 'Waiting list', icon: 'waiting', group: 'Teaching', part: 3, text: 'Who is waiting for which class, and the places offered.' },
     { id: 'messages', label: 'Messages', icon: 'messages', group: 'Teaching', part: 3, text: 'Read conversations and hide a message if needed.' },
     { id: 'figures', label: 'Figures', icon: 'payouts', group: 'Money and system', part: 4, text: 'Cash, revenue, deferred revenue, reserves, room margins, refunds, the cost to win a customer, AI against revenue.' },
@@ -206,7 +209,7 @@
   function routeFromHash() { var id = (location.hash.match(/^#\/([a-z]+)/) || [])[1]; return byId[id] ? id : 'overview'; }
   var MODULES = { activity: function () { return window.AlimunAdminActivity; }, campaigns: function () { return window.AlimunAdminCampaigns; }, students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; },
     classes: function () { return window.AlimunAdminClasses; }, schedule: function () { return window.AlimunAdminSchedule; },
-    waiting: function () { return window.AlimunAdminWaiting; }, messages: function () { return window.AlimunAdminMessages; },
+    matching: function () { return window.AlimunAdminMatching; }, waiting: function () { return window.AlimunAdminWaiting; }, messages: function () { return window.AlimunAdminMessages; },
     figures: function () { return window.AlimunAdminFigures; }, payouts: function () { return window.AlimunAdminPayouts; }, ai: function () { return window.AlimunAdminAi; }, system: function () { return window.AlimunAdminSystem; } };
   function helpers() {
     return { esc: esc, fmt: fmt, num: num, cap: cap, plural: plural, relative: relative, className: className, icon: icon, Cast: Cast, loaderInner: loaderInner, jobs: JOBS,
