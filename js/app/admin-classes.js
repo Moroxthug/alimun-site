@@ -433,9 +433,10 @@
     root.addEventListener('click', function (e) {
       var more = e.target.closest('[data-showrest]');
       if (more) { var rest = root.querySelector('[data-rest]'); if (rest) rest.hidden = false; more.parentNode.remove(); return; }
-      var b = e.target.closest('[data-askmove],[data-askremove],[data-domove],[data-doremove],[data-askstatus],[data-dostatus],[data-askdate],[data-dodate],[data-cancel],[data-askroom],[data-doroom],[data-doroomcancel]');
+      var b = e.target.closest('[data-askmove],[data-askremove],[data-domove],[data-doremove],[data-askstatus],[data-dostatus],[data-askdate],[data-dodate],[data-cancel],[data-askroom],[data-doroom],[data-doroomcancel],[data-doprop]');
       if (!b || b.disabled) return;
       if (b.hasAttribute('data-askroom')) { askRoom(b.getAttribute('data-askroom')); return; }
+      if (b.hasAttribute('data-doprop')) { doProposal(b); return; }
       if (b.hasAttribute('data-doroom')) { doRoom(b, false); return; }
       if (b.hasAttribute('data-doroomcancel')) { doRoom(b, true); return; }
       if (b.hasAttribute('data-askmove')) askMove(b.getAttribute('data-askmove'));
@@ -462,7 +463,11 @@
       var d = function (n) { return new Date(Date.now() + n * DAY).toISOString().slice(0, 10); };
       RM = { teachers: [{ id: 't1', full_name: 'Ana Weber', languages: ['German'] }, { id: 't2', full_name: 'James Hall', languages: ['English'] }],
         rooms: [{ id: 'r1', product_key: 'level_de', language: 'German', level: 'B1', starts_on: d(9), schedule_days: ['Monday', 'Tuesday', 'Thursday'], schedule_time: '19:00', timezone: 'Europe/Berlin', max_students: 12, min_learners: 8, seats: 9, room_state: 'open', contract_offered_at: d(-1), teacher_profiles: { full_name: 'Ana Weber' }, substitute: { full_name: 'James Hall' } },
-          { id: 'r2', product_key: 'level_en', language: 'English', level: 'A2', starts_on: d(30), schedule_days: ['Monday', 'Tuesday', 'Thursday'], schedule_time: '09:00', timezone: 'Europe/London', max_students: 12, min_learners: 8, seats: 0, room_state: 'draft', teacher_profiles: { full_name: 'James Hall' }, substitute: null }] };
+          { id: 'r2', product_key: 'level_en', language: 'English', level: 'A2', starts_on: d(30), schedule_days: ['Monday', 'Tuesday', 'Thursday'], schedule_time: '09:00', timezone: 'Europe/London', max_students: 12, min_learners: 8, seats: 0, room_state: 'draft', teacher_profiles: { full_name: 'James Hall' }, substitute: null }],
+        proposals: [{ id: 'p1', product_key: 'level_en', level: 'A1', starts_on: d(25), schedule_days: ['Monday', 'Tuesday', 'Thursday'], schedule_time: '19:00', timezone: 'Europe/Rome', demand: 6, status: 'pending', teacher: 'James Hall', substitute: null }],
+        demand: [{ product_key: 'level_en', level: 'A1', learners: 6 }, { product_key: 'open_en', level: 'A2', learners: 2 }], suggestMin: 5, starts: [d(25), d(53)],
+        availability: [{ id: 'v1', teacher: 'James Hall', approved: true, starts_on: d(0), kinds: ['level_pack', 'open_class'], language: 'English', levels: ['A1', 'A2'], days: ['Monday', 'Tuesday', 'Thursday'], schedule_time: '19:00', timezone: 'Europe/Rome', substitute: false },
+          { id: 'v2', teacher: 'Ana Weber', approved: true, starts_on: d(25), kinds: ['level_pack'], language: 'German', levels: ['A1', 'A2', 'B1'], days: ['Monday', 'Tuesday', 'Thursday'], schedule_time: '18:00', timezone: 'Europe/Berlin', substitute: true }] };
       return Promise.resolve(RM);
     }
     return window.AlimunData.adminRooms().then(function (r) { RM = r; return r; });
@@ -488,9 +493,48 @@
       field('Time', '<input class="st-in" type="time" name="schedule_time" required value="19:00">') +
       field('Time zone', '<input class="st-in" name="timezone" required value="' + esc(Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Rome') + '">') +
       '<div class="btn-row"><button class="btn btn--primary btn--sm" type="submit">Create the room</button></div><p class="t-small st-msg" data-msg aria-live="polite"></p></form>';
+    var plan = planningCards();
     return flash() + back('#/classes', 'Classes') + '<div class="view__head"><div><h1 class="t-h1">Rooms</h1><p class="t-lead">Rooms of the new price list. Learners choose them in Plans and prices; the daily room job does the rest.</p></div></div>' +
-      '<div class="grid rise"><section class="card span-12" style="--i:0"><h2 class="t-h2">Rooms</h2>' + (rows ? '<div class="tt-week" style="margin-top:12px">' + rows + '</div>' : '<p class="t-body" style="margin-top:8px">No rooms yet.</p>') + '</section>' +
-      '<section class="card span-12" style="--i:1"><h2 class="t-h2">Create a room</h2>' + form + '</section>' + sampleLine() + '</div>';
+      '<div class="grid rise">' + plan.top + '<section class="card span-12" style="--i:0"><h2 class="t-h2">Rooms</h2>' + (rows ? '<div class="tt-week" style="margin-top:12px">' + rows + '</div>' : '<p class="t-body" style="margin-top:8px">No rooms yet.</p>') + '</section>' +
+      plan.bottom + '<section class="card span-12" style="--i:1"><h2 class="t-h2">Create a room</h2>' + form + '</section>' + sampleLine() + '</div>';
+  }
+  /* Room planning (api/_lib/rooms.js suggestRooms): suggested rooms to approve or dismiss, what learners are asking for,
+     and when teachers can teach. A suggestion appears when enough learners ask for a product at a level (room_suggest_min)
+     and a teacher has said they can teach it; approving creates a draft room like the form below. */
+  var KIND_NAME = { level_pack: 'level packs', exam_pack: 'exam packs', open_class: 'open classes', help_class: 'help classes' };
+  function niceDay(d) { return new Intl.DateTimeFormat('en-GB', { weekday: 'short', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(d + 'T12:00:00Z')); }
+  function planningCards() {
+    var props = RM.proposals || [], demand = RM.demand || [], avail = RM.availability || [];
+    var subOpts = opt('', 'Substitute: keep as suggested', '') + RM.teachers.map(function (t) { return opt(t.id, 'Substitute: ' + t.full_name, ''); }).join('');
+    var rows = props.map(function (p) {
+      var line = (PRODUCTS[p.product_key] || p.product_key) + ' ' + p.level + '. ' + (p.schedule_days || []).join(', ') + ' ' + p.schedule_time + ' ' + p.timezone + '. ' +
+        A.plural(p.demand, 'learner', 'learners') + ' asking. Teacher ' + (p.teacher || 'unknown') + ', substitute ' + (p.substitute || 'none yet') + '.';
+      var pending = p.status === 'pending';
+      return '<div class="ad-item"><div class="tt-row ad-act"><span class="tt-row__time">' + esc(niceDay(p.starts_on)) + '</span><span><b>' + esc(pending ? 'Suggested' : p.status === 'approved' ? 'Approved, now a draft room' : 'Dismissed') + '</b><small>' + esc(line) + '</small></span>' +
+        (pending ? '<span class="btn-row ad-act__btns"><select class="st-in" style="min-width:200px" data-psub="' + esc(p.id) + '" aria-label="Substitute">' + subOpts + '</select><button class="btn btn--primary btn--sm" type="button" data-doprop="' + esc(p.id) + '" data-ok="1">Approve</button><button class="btn btn--quiet btn--sm" type="button" data-doprop="' + esc(p.id) + '" data-ok="0">Dismiss</button></span>' : '') + '</div></div>';
+    }).join('');
+    var top = props.length ? '<section class="card card--sun span-12" style="--i:0"><h2 class="t-h2">Suggested rooms</h2><p class="t-body" style="margin-top:6px">From the learners waiting and the times teachers gave. Approving makes a draft room; it is published 21 days before the start once it has a substitute, and the teacher is offered the course contract as usual. Dismissing a date keeps it from being suggested again; the next start date can still be.</p>' +
+      '<div class="tt-week" style="margin-top:12px">' + rows + '</div><p class="t-small st-msg" data-propmsg aria-live="polite"></p></section>' : '';
+    var asking = demand.length ? 'Learners waiting for a room, counting those who reserved without one: ' + demand.map(function (x) { return (PRODUCTS[x.product_key] || x.product_key) + ' ' + x.level + ', ' + x.learners; }).join('; ') + '.'
+      : 'No learners are waiting for a room yet. Learners can ask to be told when one opens from Plans and prices.';
+    var rule = ' A room is suggested from ' + A.plural(RM.suggestMin || 5, 'learner', 'learners') + ' at one level, when a teacher has said they can teach it (the room_suggest_min setting in System changes this). Next pack start dates: ' + (RM.starts || []).map(niceDay).join(', ') + '.';
+    var av = avail.length ? '<div class="tt-week" style="margin-top:12px">' + avail.map(function (a) {
+      var what = (a.kinds || []).map(function (k) { return KIND_NAME[k] || k; }).join(', ');
+      return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(niceDay(a.starts_on)) + '</span><span><b>' + esc(a.teacher + (a.approved ? '' : ' (not approved, not suggested)')) + '</b><small>' +
+        esc('From this date: ' + a.language + ' ' + what + ', levels ' + (a.levels || []).join(', ') + ', ' + (a.days || []).join(', ') + ' at ' + a.schedule_time + ' ' + a.timezone + '.' + (a.substitute ? ' Can also be a substitute.' : '')) + '</small></span></div>';
+    }).join('') + '</div>' : '<p class="t-body" style="margin-top:8px">No teacher has given times yet. Teachers add them on their Classes page, under Your availability.</p>';
+    var bottom = '<section class="card span-12" style="--i:1"><h2 class="t-h2">Planning</h2><p class="t-body" style="margin-top:6px">' + esc(asking + rule) + '</p>' +
+      '<h3 class="t-h3" style="margin-top:16px">When teachers can teach</h3>' + av + '</section>';
+    return { top: top, bottom: bottom };
+  }
+  function doProposal(b) {
+    var id = b.getAttribute('data-doprop'), ok = b.getAttribute('data-ok') === '1', msg = root.querySelector('[data-propmsg]');
+    var sel = root.querySelector('[data-psub="' + id + '"]'), sub = ok && sel ? sel.value : '';
+    if (!real()) { if (msg) msg.textContent = 'This is sample data; nothing is saved.'; return; }
+    b.disabled = true;
+    window.AlimunData.adminProposal(id, ok, sub || undefined).then(function (r) {
+      FLASH = ok ? 'The draft room was created with ' + A.plural(r.sessions, 'class date', 'class dates') + '.' : 'The suggestion was dismissed.'; RM = null; A.rerender();
+    }, function (e) { b.disabled = false; if (msg) msg.textContent = 'Not saved: ' + errText(e) + (e.body && e.body.detail ? ' (' + e.body.detail + ')' : '') + '.'; });
   }
   function createRoom(f) {
     var fd = new FormData(f), msg = f.querySelector('[data-msg]'), btn = f.querySelector('[type="submit"]');

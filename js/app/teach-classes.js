@@ -660,8 +660,81 @@
       '<div class="btn-row" style="margin-top:0"><button class="btn btn--ghost btn--sm" type="button" data-tc="moretime">' + A.icon('plus') + esc(t('app_tc_more_time')) + '</button></div>' +
       '<p class="t-small st-note">' + esc(t('app_tc_in_zone', { zone: bz.replace(/_/g, ' ') })) + '</p>' +
       '<div class="btn-row"><button class="btn btn--primary" type="submit">' + esc(t('app_tc_add')) + '</button></div><p class="t-body st-msg" data-msg aria-live="polite"></p></form>' +
-      sampleLine() + '</div>';
+      '<div class="span-12" data-roomavail hidden></div>' + sampleLine() + '</div>';
     return html;
+  }
+
+  /* ---------- When the teacher can teach rooms (room planning, docs/LAUNCH_PRICING_SPEC.md section 7) ----------
+     From when, what (packs, open or help classes), language, levels, days and time, and whether they can stand in as a
+     substitute (/api/pricing?action=availability). Rooms are suggested from this and the learners waiting; the owner
+     approves each one, and the teacher then gets it as a course contract they may accept or decline. */
+  var RAV = null;
+  var RKINDS = [['level_pack', 'app_tk_av_level'], ['exam_pack', 'app_tk_av_exam'], ['open_class', 'app_tk_av_open'], ['help_class', 'app_tk_av_help']];
+  var RDAYS = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  var RLEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+  function listOf(xs) { try { return new Intl.ListFormat(A.locale, { style: 'long', type: 'conjunction' }).format(xs); } catch (e) { return xs.join(', '); } }
+  function longDate(d) { return new Intl.DateTimeFormat(A.locale, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(d + 'T12:00:00Z')); }
+  function checks(name, values, labels, on) {
+    return '<div class="st-days">' + values.map(function (v, i) {
+      return '<label class="st-day"><input type="checkbox" name="' + name + '" value="' + esc(v) + '"' + (on.indexOf(v) > -1 ? ' checked' : '') + '><span>' + esc(labels[i]) + '</span></label>';
+    }).join('') + '</div>';
+  }
+  function roomAvailHtml() {
+    if (!RAV) return '';
+    var html = '<section class="card" aria-labelledby="h-rav"><h2 class="t-h2" id="h-rav">' + esc(t('app_tk_av_h')) + '</h2><p class="t-body" style="margin-top:6px">' + esc(t('app_tk_av_p')) + '</p>';
+    if (!RAV.languages.length) return html + '<p class="t-small" style="margin-top:10px">' + esc(t('app_tk_av_nolang')) + '</p></section>';
+    html += RAV.items.length ? '<div class="tt-week" style="margin-top:12px">' + RAV.items.map(function (a) {
+      var what = a.kinds.map(function (k) { var x = RKINDS.filter(function (r) { return r[0] === k; })[0]; return x ? t(x[1]) : k; });
+      var line = t('app_tk_av_line', { date: longDate(a.starts_on), what: listOf(what), levels: listOf(a.levels), days: kWeekdays(a.days), time: a.schedule_time, zone: a.timezone }) + (a.substitute ? ' ' + t('app_tk_av_line_sub') : '');
+      return '<div class="tt-row ad-act ad-act--2"><span><b>' + esc(a.language) + '</b><small>' + esc(line) + '</small></span><span class="btn-row ad-act__btns"><button class="btn btn--quiet btn--sm" type="button" data-tc="ravdel" data-id="' + esc(a.id) + '">' + esc(t('app_tk_av_remove')) + '</button></span></div>';
+    }).join('') + '</div>' : '<p class="t-small" style="margin-top:10px">' + esc(t('app_tk_av_none')) + '</p>';
+    if (!RAV.approved) return html + '<p class="t-small" style="margin-top:10px">' + esc(t('app_tk_av_wait')) + '</p><p class="t-small st-msg" data-ravmsg aria-live="polite"></p></section>';
+    var starts = [RAV.today].concat(RAV.starts || []);
+    html += '<form class="st-form" style="max-width:none;margin-top:16px" data-rav>' +
+      field('app_tk_av_from', '<select class="st-in" name="starts_on">' + starts.map(function (d, i) { return '<option value="' + esc(d) + '">' + esc(i ? longDate(d) : t('app_tk_av_now')) + '</option>'; }).join('') + '</select>') +
+      '<fieldset class="st-field"><legend class="st-lbl">' + esc(t('app_tk_av_what')) + '</legend>' + checks('kinds', RKINDS.map(function (r) { return r[0]; }), RKINDS.map(function (r) { return t(r[1]); }), ['level_pack']) + '</fieldset>' +
+      field('app_tk_av_lang', '<select class="st-in" name="language">' + RAV.languages.map(function (l) { return '<option value="' + esc(l) + '">' + esc(t(l === 'German' ? 'app_pp_lang_de' : 'app_pp_lang_en')) + '</option>'; }).join('') + '</select>') +
+      '<fieldset class="st-field"><legend class="st-lbl">' + esc(t('app_tk_av_levels')) + '</legend>' + checks('levels', RLEVELS, RLEVELS, []) + '</fieldset>' +
+      '<fieldset class="st-field"><legend class="st-lbl">' + esc(t('app_tk_av_days')) + '</legend>' + checks('days', RDAYS, RDAYS.map(function (d) { return kWeekdays([d]); }), ['Monday', 'Tuesday', 'Thursday']) + '</fieldset>' +
+      '<div class="st-row">' + field('app_tk_av_time', '<input class="st-in" type="time" name="schedule_time" step="1800" value="19:00" required>') +
+      field('app_tk_av_zone', '<input class="st-in" name="timezone" value="' + esc(A.browserZone()) + '" required>') + '</div>' +
+      '<label class="st-day" style="margin-top:4px"><input type="checkbox" name="substitute" value="1"><span>' + esc(t('app_tk_av_sub')) + '</span></label>' +
+      '<div class="btn-row"><button class="btn btn--primary" type="submit">' + esc(t('app_tk_av_add')) + '</button></div></form>';
+    return html + '<p class="t-small st-msg" data-ravmsg aria-live="polite"></p></section>';
+  }
+  function drawRoomAvail(msgKey, bad) {
+    var box = root && root.querySelector('[data-roomavail]');
+    if (!box) return;
+    box.innerHTML = roomAvailHtml();
+    box.hidden = !RAV;
+    var m = box.querySelector('[data-ravmsg]');
+    if (m && msgKey) { m.textContent = t(msgKey); m.classList.toggle('is-bad', !!bad); }
+  }
+  function sampleRoomAvail() {
+    var d = new Date(), y = d.getUTCFullYear(), m = d.getUTCMonth() + 1, first = new Date(Date.UTC(y, m, 1)), mon = new Date(Date.UTC(y, m, 1 + ((8 - first.getUTCDay()) % 7))).toISOString().slice(0, 10);
+    return { languages: ['English'], approved: true, today: d.toISOString().slice(0, 10), starts: [mon],
+      items: [{ id: 'v1', starts_on: mon, kinds: ['level_pack', 'open_class'], language: 'English', levels: ['A1', 'A2'], days: ['Monday', 'Tuesday', 'Thursday'], schedule_time: '19:00', timezone: 'Europe/Rome', substitute: true }] };
+  }
+  function loadRoomAvail() {
+    var go = C.sample ? Promise.resolve(sampleRoomAvail()) : window.AlimunData.myAvailability();
+    go.then(function (d) { RAV = d; drawRoomAvail(); }, function (e) { console.warn('[Alimun] Room availability', e && e.message); });
+  }
+  function addRoomAvail(form) {
+    var f = new FormData(form);
+    var b = { starts_on: f.get('starts_on'), kinds: f.getAll('kinds'), language: f.get('language'), levels: f.getAll('levels'), days: f.getAll('days'),
+      schedule_time: String(f.get('schedule_time') || ''), timezone: String(f.get('timezone') || '').trim(), substitute: f.get('substitute') === '1' };
+    if (!b.kinds.length || !b.levels.length || !b.days.length || !/^\d\d:\d\d$/.test(b.schedule_time)) { drawRoomAvail('app_tk_av_bad', true); return; }
+    if (C.sample) { RAV.items.push(Object.assign({ id: 'v' + Date.now() }, b)); drawRoomAvail('app_tc_sample'); return; }
+    var btn = form.querySelector('[type="submit"]'); btn.disabled = true;
+    window.AlimunData.saveAvailability(b).then(function (r) { RAV.items.push(Object.assign({ id: r.id }, b)); drawRoomAvail('app_tk_av_saved'); },
+      function (e) { btn.disabled = false; drawRoomAvail('app_tk_av_bad', true); console.warn('[Alimun] Room availability', e && e.message); });
+  }
+  function delRoomAvail(btn) {
+    var id = btn.getAttribute('data-id');
+    var drop = function () { RAV.items = RAV.items.filter(function (a) { return a.id !== id; }); drawRoomAvail(); };
+    if (C.sample) { drop(); return; }
+    btn.disabled = true;
+    window.AlimunData.saveAvailability({ id: id, remove: true }).then(drop, function () { btn.disabled = false; drawRoomAvail('app_tk_err', true); });
   }
   /* One from/to pair in the "Add free time" form; every pair is added to every ticked day */
   function timeRow(a, b, removable) {
@@ -713,6 +786,7 @@
       if (!el || el.disabled) return;
       var a = el.getAttribute('data-tc');
       if (a === 'contract') { answer(el); return; }
+      if (a === 'ravdel') { delRoomAvail(el); return; }
       if (a === 'month') { var d = +el.getAttribute('data-d'); C.month = { y: C.month.y + Math.floor((C.month.m + d) / 12), m: ((C.month.m + d) % 12 + 12) % 12 }; redrawCal(); }
       else if (a === 'day') { C.day = el.getAttribute('data-day'); redrawCal(); var b = root.querySelector('[data-day="' + C.day + '"]'); if (b) b.focus({ preventScroll: true }); }
       else if (a === 'addword') {
@@ -745,6 +819,7 @@
       if (f.hasAttribute('data-oto')) { e.preventDefault(); saveOto(f); }
       else if (f.hasAttribute('data-new')) { e.preventDefault(); createClass(f); }
       else if (f.hasAttribute('data-slot')) { e.preventDefault(); addSlot(f); }
+      else if (f.hasAttribute('data-rav')) { e.preventDefault(); addRoomAvail(f); }
       else if (f.hasAttribute('data-notes')) e.preventDefault();
     });
   }
@@ -782,6 +857,7 @@
       else html = timetableView();
       root.innerHTML = html;
       if (!p0) loadContracts();
+      if (p0 === 'availability') loadRoomAvail();
       if (!p0 && C.flash) { root.querySelector('.view__head').insertAdjacentHTML('afterend', '<p class="t-body st-msg tc-flash" role="status">' + esc(C.flash) + '</p>'); C.flash = null; }
       if (p0 === 'notes') boardCard(parts[1]);
       if (p0 === 'live') {

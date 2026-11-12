@@ -272,6 +272,14 @@
     "body": "**{room}**, que começava a {start} ({days} às {time}, {zone}), não vai abrir: não se inscreveram alunos suficientes, ou passaram para outra sala.",
     "body2": "Obrigado por oferecer este horário. As salas que puder dar chegarão até si como novas ofertas."
   },
+  "room_published": {
+    "subject": "Há uma sala aberta no seu nível: {room}",
+    "preheader": "Começa a {start}.",
+    "heading": "Há uma sala aberta no seu nível",
+    "body": "**{room}** começa a {start}, {days} às {time} ({zone}).",
+    "body2": "Pediu-nos para o avisar, ou reservou um lugar sem escolher sala. Escolha esta sala no seu painel enquanto houver lugares.",
+    "button": "Ver a sala"
+  },
   "founding_notice": {
     "subject": "O seu preço de fundador termina a {date}",
     "preheader": "Até lá nada muda.",

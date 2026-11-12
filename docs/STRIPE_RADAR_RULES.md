@@ -27,13 +27,12 @@ Do not add a rule that blocks any EU card by its member state: the EU forbids re
 
 ## Supabase sign-ups
 
-Sign-ups go straight from the browser to Supabase, so the limits are Supabase's own settings:
+Sign-ups go straight from the browser to Supabase, so the limits are Supabase's own settings. Checked on 12 Nov 2026:
 
-- Supabase → Authentication → Rate Limits: "Rate limit for sign ups and sign ins" at 5 per 5 minutes per IP address (the spec's "at most 5 sign-ups per IP an hour" is close to this; Supabase counts per 5 minutes).
-- Supabase → Authentication → Attack Protection → enable CAPTCHA protection with Cloudflare Turnstile, and paste the Turnstile secret key. The site already has the Turnstile widget code (`js/captcha.js`); put the site key in Vercel as `TURNSTILE_SITE_KEY` and the secret as `TURNSTILE_SECRET_KEY` so the newsletter forms use it too.
-- Supabase → Authentication → Attack Protection → "Prevent use of leaked passwords" on (the security advisor flagged it as off).
-
-A daily cap per data-centre network (an ASN list) needs a proxy in front of sign-up and is left for later, if the weekly report shows sign-up abuse.
+- Captcha: on. Cloudflare Turnstile is set in Supabase (Authentication → Attack Protection) with its secret saved, and the sign-up page sends the token (`js/captcha.js`, site key in the file; `TURNSTILE_SECRET_KEY` is in Vercel for the newsletter forms). Nothing to do.
+- There is no per-IP limit for email sign-ups in Supabase's settings (an earlier version of this note said 5 per 5 minutes; that setting does not exist for email sign-ups). The protections are the captcha, email confirmation (on) and one confirmation email per address a minute. A per-IP or per-network cap needs our own server in front of sign-up; left for later, if the weekly payment report shows abuse.
+- Auth emails: 30 an hour for the whole site, sign-up confirmations and password resets together. A 31st sign-up within an hour gets an error. To raise it: Supabase → Authentication → Rate Limits → "Rate limit for sending emails", for example 150. Auth emails go through Resend (custom SMTP), so first check that the Resend plan allows that many (its free plan has a daily cap).
+- "Prevent use of leaked passwords" needs Supabase Pro; off by the owner's decision of 11 Nov 2026.
 
 ## RevenueCat (store purchases)
 
@@ -44,5 +43,5 @@ A daily cap per data-centre network (an ASN list) needs a proxy in front of sign
 
 ## Vercel
 
-- `PRICING_HMAC_SECRET`: a long random value; trial and card markers are hashed with it. Until it is set, a key derived from the Supabase service key is used. Set it before the first trial is sold: changing it later makes earlier markers unrecognisable.
+- `PRICING_HMAC_SECRET`: set on 12 Nov 2026 (a random value generated and sent straight to Vercel, never shown), before any trial was sold. Do not change it: earlier trial markers would no longer be recognised.
 - `STRIPE_AUTOMATIC_TAX=on` once the tax registrations exist.

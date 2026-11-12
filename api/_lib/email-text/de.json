@@ -272,6 +272,14 @@
     "body": "**{room}** ab dem {start} ({days} um {time}, {zone}) startet nicht: Es haben sich nicht genug Lernende angemeldet, oder sie sind in einen anderen Raum gewechselt.",
     "body2": "Danke, dass Sie diese Zeit angeboten haben. Räume, die Sie unterrichten können, erreichen Sie als neue Angebote."
   },
+  "room_published": {
+    "subject": "Ein Raum auf Ihrem Niveau ist offen: {room}",
+    "preheader": "Beginn am {start}.",
+    "heading": "Ein Raum auf Ihrem Niveau ist offen",
+    "body": "**{room}** beginnt am {start}, {days} um {time} ({zone}).",
+    "body2": "Sie wollten Bescheid bekommen oder haben einen Platz ohne Raum reserviert. Wählen Sie diesen Raum in Ihrem Dashboard, solange es freie Plätze gibt.",
+    "button": "Raum ansehen"
+  },
   "founding_notice": {
     "subject": "Ihr Gründungspreis endet am {date}",
     "preheader": "Bis dahin ändert sich nichts.",

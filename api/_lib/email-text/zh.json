@@ -272,6 +272,14 @@
     "body": "**{room}**（{start} 开始，{days} {time}，{zone}）不会开课：报名人数不足，或学员已转到其他教室。",
     "body2": "感谢你提供这个时间。你可以授课的教室会以新邀约的形式发给你。"
   },
+  "room_published": {
+    "subject": "你的级别有一个教室开放了：{room}",
+    "preheader": "{start}开始。",
+    "heading": "你的级别有一个教室开放了",
+    "body": "**{room}** 于{start}开始，{days} {time}（{zone}）。",
+    "body2": "你曾请我们通知你，或者你预订了名额但还没有选择教室。请在名额用完之前到你的学习面板选择这个教室。",
+    "button": "查看教室"
+  },
   "founding_notice": {
     "subject": "你的创始价将于 {date} 结束",
     "preheader": "在此之前没有任何变化。",

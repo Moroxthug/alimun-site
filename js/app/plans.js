@@ -5,7 +5,10 @@
                      anything is charged. Level and exam packs are reserved (card saved, charged when the room opens).
    #/settings/plans/pick/<product>/<cadence>  packs, open classes, trial and help class: the learner picks a room
                      (start date, days, time, places taken) or a class date first (/api/pricing?action=rooms); a pack
-                     can also be reserved without a room, for the next start date.
+                     can also be reserved without a room, for the next start date. A learner holding such a
+                     reservation moves it into a published room here (/api/pricing?action=assign); with no room open,
+                     a learner asks to be emailed when one opens at their level (?action=interest). Both feed the
+                     room suggestions the owner approves (api/_lib/rooms.js suggestRooms).
    Voice practice minutes are also bought from the Tutor when the time is used up: tutorPacks(), buyTutor().
    Learners with a subscription from the old plans change it on Stripe's billing page.
    Coming back after paying (?checkout=success|reserved|minutes) is shown by stripeNote() in js/app/shell.js.
@@ -117,7 +120,8 @@
   }
 
   /* ---------- The picker: rooms with their start date, days, time and places, or class dates ---------- */
-  var PICK = null;
+  var PICK = null, ME = null;
+  function plannable(k) { return /^(level|exam|open)_/.test(k); }
   function day(iso) { return new Intl.DateTimeFormat(A.locale, { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(iso + (iso.length === 10 ? 'T12:00:00Z' : ''))); }
   function weekdays(days) {
     var idx = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6 };
@@ -139,16 +143,21 @@
     return bits.join(' ');
   }
   function pickView(k, cadence) {
-    var items = (PICK && PICK.items) || [], pack = /^(level|exam)_/.test(k);
+    var items = (PICK && PICK.items) || [], pack = /^(level|exam)_/.test(k), moving = !!(pack && ME && ME.reserved);
     var html = '<a class="rd-back" href="#/settings/plans">' + A.icon('back') + '<span>' + esc(t('app_pp_title')) + '</span></a>' +
       '<div class="view__head"><div><h1 class="t-h1"><bdi>' + esc(nameOf(k)) + '</bdi></h1><p class="t-lead">' + esc(t(pack ? 'app_pp_pick_lead_pack' : 'app_pp_pick_lead')) + '</p></div></div><div class="grid rise">';
     html += '<section class="card span-12" style="--i:0"><h2 class="t-h2">' + esc(t('app_pp_pick_h')) + '</h2>';
-    if (!items.length) html += '<p class="t-body" style="margin-top:8px">' + esc(t('app_pp_pick_none')) + '</p>';
-    else html += '<div class="tt-week" style="margin-top:12px">' + items.map(function (x, i) {
+    if (moving) html += '<p class="t-body" style="margin-top:8px">' + esc(t(items.length ? 'app_pp_reserved_p' : 'app_pp_reserved_wait')) + '</p>';
+    if (!items.length && !moving) html += '<p class="t-body" style="margin-top:8px">' + esc(t('app_pp_pick_none')) + '</p>';
+    else if (items.length) html += '<div class="tt-week" style="margin-top:12px">' + items.map(function (x, i) {
       var id = x.sessionId ? 's:' + x.sessionId : 'r:' + x.cohortId, full = x.seatsLeft <= 0;
-      return '<div class="tt-row"><span>' + esc(lineOf(k, x)) + '</span><span class="btn-row"><button class="btn btn--' + (i ? 'ghost' : 'primary') + ' btn--sm" type="button" data-pl="pick" data-k="' + esc(k) + '" data-c="' + esc(cadence) + '" data-w="' + esc(id) + '" data-i="' + i + '"' + (full ? ' disabled' : '') + '>' + esc(t('app_pp_pick_choose')) + '</button></span></div>';
+      return '<div class="tt-row"><span>' + esc(lineOf(k, x)) + '</span><span class="btn-row"><button class="btn btn--' + (i ? 'ghost' : 'primary') + ' btn--sm" type="button" data-pl="' + (moving ? 'assign' : 'pick') + '" data-k="' + esc(k) + '" data-c="' + esc(cadence) + '" data-w="' + esc(id) + '" data-i="' + i + '"' + (full ? ' disabled' : '') + '>' + esc(t(moving ? 'app_pp_move' : 'app_pp_pick_choose')) + '</button></span></div>';
     }).join('') + '</div>';
-    if (pack) html += '<p class="t-small" style="margin-top:14px">' + esc(t('app_pp_pick_later_p')) + '</p><div class="btn-row" style="margin-top:8px"><button class="btn btn--quiet btn--sm" type="button" data-pl="pick" data-k="' + esc(k) + '" data-c="' + esc(cadence) + '" data-w="">' + esc(t('app_pp_pick_later')) + '</button></div>';
+    if (plannable(k) && !items.length && !moving) {
+      var on = !!(ME && ME.interested);
+      html += '<p class="t-small" style="margin-top:14px">' + esc(t('app_pp_notify_p')) + '</p><div class="btn-row" style="margin-top:8px"><button class="btn btn--' + (on ? 'quiet' : 'primary') + ' btn--sm" type="button" data-pl="notify" data-k="' + esc(k) + '" data-on="' + (on ? '1' : '') + '">' + esc(t(on ? 'app_pp_notify_off' : 'app_pp_notify')) + '</button></div>';
+    }
+    if (pack && !moving) html += '<p class="t-small" style="margin-top:14px">' + esc(t('app_pp_pick_later_p')) + '</p><div class="btn-row" style="margin-top:8px"><button class="btn btn--quiet btn--sm" type="button" data-pl="pick" data-k="' + esc(k) + '" data-c="' + esc(cadence) + '" data-w="">' + esc(t('app_pp_pick_later')) + '</button></div>';
     html += '<p class="t-small st-msg pl-msg" data-plmsg="pick" aria-live="polite"></p></section>';
     if (!real()) html += '<p class="t-tiny span-12">' + esc(t('app_pl_sample')) + '</p>';
     return html + '</div>';
@@ -161,6 +170,37 @@
     if (w.indexOf('r:') === 0) where = { cohortId: w.slice(2), label: x ? lineOf(k, x) : '' };
     else if (w.indexOf('s:') === 0) where = { sessionId: w.slice(2), label: x ? lineOf(k, x) : '' };
     pay(k, c, b, function (key, bad) { say('pick', key, bad); }, where);
+  }
+  /* Moves the learner's room-less pack reservation into the room they chose */
+  function assign(b) {
+    var k = b.getAttribute('data-k'), w = b.getAttribute('data-w') || '';
+    if (!real()) { say('pick', 'app_pl_sample'); return; }
+    if (w.indexOf('r:') !== 0) return;
+    b.disabled = true; say('pick', null);
+    window.AlimunData.roomAssign(k, w.slice(2)).then(function () {
+      ME = Object.assign({}, ME, { reserved: false });
+      root.querySelectorAll('[data-pl="assign"]').forEach(function (x) { x.disabled = true; });
+      say('pick', 'app_pp_moved');
+    }, function (e) {
+      b.disabled = false;
+      var code = e && e.body && e.body.error;
+      say('pick', code === 'room_full' ? 'app_pay_room_full' : code === 'room_unavailable' ? 'app_pay_room_gone' : 'app_pl_err', true);
+      console.warn('[Alimun] Move reservation', e && e.message);
+    });
+  }
+  /* Asks to be emailed once when a room for this product opens at the learner's level, or stops it */
+  function notify(b) {
+    var k = b.getAttribute('data-k'), on = !b.getAttribute('data-on');
+    if (!real()) { say('pick', 'app_pl_sample'); return; }
+    b.disabled = true; say('pick', null);
+    window.AlimunData.roomInterest(k, on).then(function () {
+      ME = Object.assign({}, ME, { interested: on });
+      b.disabled = false;
+      b.setAttribute('data-on', on ? '1' : '');
+      b.textContent = t(on ? 'app_pp_notify_off' : 'app_pp_notify');
+      b.className = 'btn btn--' + (on ? 'quiet' : 'primary') + ' btn--sm';
+      say('pick', on ? 'app_pp_notify_on' : 'app_pp_notify_stopped');
+    }, function (e) { b.disabled = false; say('pick', 'app_pl_err', true); console.warn('[Alimun] Room interest', e && e.message); });
   }
   function portal(btn) {
     if (!real()) { say('top', 'app_pl_sample'); return; }
@@ -198,6 +238,8 @@
       var a = b.getAttribute('data-pl');
       if (a === 'choose') choose(b.getAttribute('data-k'), b.getAttribute('data-c'), b);
       else if (a === 'pick') picked(b);
+      else if (a === 'assign') assign(b);
+      else if (a === 'notify') notify(b);
       else if (a === 'portal') portal(b);
     });
   }
@@ -206,7 +248,9 @@
     bind();
     if (parts[1] === 'pick' && picks(parts[2] || '') && /^(month|upfront|once)$/.test(parts[3] || '')) {
       var k = parts[2], c = parts[3];
-      return window.AlimunData.roomsFor(k).then(function (r) { PICK = r; }, function () { PICK = { items: [] }; })
+      ME = null;
+      var me = real() && plannable(k) ? window.AlimunData.roomMe(k).then(function (m) { ME = m; }, function (e) { console.warn('[Alimun] Room standing', e && e.message); }) : null;
+      return Promise.all([window.AlimunData.roomsFor(k).then(function (r) { PICK = r; }, function () { PICK = { items: [] }; }), me])
         .then(function () { return { html: pickView(k, c), title: nameOf(k) }; });
     }
     return display().then(function () { return { html: view(), title: t('app_pp_title') }; });

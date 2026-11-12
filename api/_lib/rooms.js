@@ -69,6 +69,77 @@ function planDecisions(rooms) {
   return { merges, open, cancel };
 }
 
+// ── Planning: suggested rooms from the teachers' availability and the learners' demand ──
+const WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+/** Pack start dates: the first Monday of each month, the next n that still leave 14 days to fill the room. */
+function packStarts(today, n) {
+  const out = [];
+  let y = +today.slice(0, 4), m = +today.slice(5, 7) - 1;
+  while (out.length < n) {
+    const first = new Date(Date.UTC(y, m, 1));
+    const monday = ymd(Date.UTC(y, m, 1 + ((8 - first.getUTCDay()) % 7)));
+    if (monday >= addDays(today, 14)) out.push(monday);
+    m += 1; if (m > 11) { m = 0; y += 1; }
+  }
+  return out;
+}
+/** The first class date on one of `days` on or after `from`. */
+function firstOn(from, days) {
+  for (let i = 0; i < 7; i++) { const d = addDays(from, i); if (days.includes(WEEK[new Date(d + 'T12:00:00Z').getUTCDay()])) return d; }
+  return from;
+}
+const languageOf = (productKey) => LANGUAGE[String(productKey).slice(-2)] || null;
+/**
+ * Suggested rooms (pure, unit tested). availability: room_availability rows, whose starts_on is the day the
+ * teacher can start from; demand: { 'level_en|A1': 6, ... };
+ * taken: keys 'product|level' that already have an upcoming room or a pending or approved suggestion, and
+ * 'product|level|start' that the owner dismissed; minDemand: the setting room_suggest_min.
+ * For each product and level with enough demand: the earliest start date where a teacher can teach it (packs: the first
+ * Monday of a month at least 14 days ahead and on or after the teacher's date; open classes: the teacher's first day at
+ * least 7 days ahead), one room per 12 (packs)
+ * or 20 (open classes) learners asking, each with a different teacher, and a substitute: another teacher who said they
+ * can stand in for that language and is available by then (null when there is none; the owner adds one).
+ */
+function planProposals({ today, availability, demand, taken, minDemand }) {
+  const out = [], subUse = {};
+  const takenSet = new Set(taken || []);
+  for (const key of Object.keys(demand).sort()) {
+    const n = demand[key];
+    const [productKey, level] = key.split('|');
+    const kind = PRODUCT_KIND[productKey], language = languageOf(productKey);
+    if (!kind || kind === 'help_class' || !language || !level || n < minDemand || takenSet.has(productKey + '|' + level)) continue;
+    const pack = isPack(productKey), K = KINDS[kind];
+    const slots = [];
+    for (const a of availability) {
+      if (a.language !== language || !a.kinds.includes(kind) || !a.levels.includes(level)) continue;
+      let start;
+      if (pack) { start = packStarts(today, 6).find((d) => d >= a.starts_on && !takenSet.has([productKey, level, d].join('|'))); if (!start) continue; }
+      else start = firstOn(a.starts_on > addDays(today, 7) ? a.starts_on : addDays(today, 7), a.days);
+      if (takenSet.has([productKey, level, start].join('|'))) continue;
+      slots.push(Object.assign({ start }, a));
+    }
+    if (!slots.length) continue;
+    slots.sort((x, y) => (x.start < y.start ? -1 : x.start > y.start ? 1 : x.schedule_time < y.schedule_time ? -1 : 1));
+    const start = slots[0].start;
+    const rooms = Math.max(1, Math.ceil(n / K.max));
+    const teachers = new Set();
+    let made = 0;
+    for (const s of slots.filter((x) => x.start === start)) {
+      if (made >= rooms || teachers.has(s.teacher_id)) continue;
+      const subs = availability.filter((a) => a.substitute && a.language === language && a.teacher_id !== s.teacher_id && a.starts_on <= start)
+        .map((a) => a.teacher_id).filter((t, i, all) => all.indexOf(t) === i)
+        .sort((x, y) => (subUse[x] || 0) - (subUse[y] || 0));
+      const sub = subs[0] || null;
+      if (sub) subUse[sub] = (subUse[sub] || 0) + 1;
+      teachers.add(s.teacher_id);
+      out.push({ product_key: productKey, level, starts_on: start, schedule_days: pack ? s.days : [WEEK[new Date(start + 'T12:00:00Z').getUTCDay()]],
+        schedule_time: s.schedule_time, timezone: s.timezone, teacher_id: s.teacher_id, substitute_teacher_id: sub, demand: n });
+      made++;
+    }
+  }
+  return out;
+}
+
 // ── The daily job ──
 async function rows(q, what) {
   const { data, error } = await q;
@@ -90,6 +161,79 @@ async function cancelSessions(sb, cohortId) {
 async function reservations(sb, cohortId) {
   return rows(sb.from('entitlements').select('*').eq('cohort_id', cohortId).eq('status', 'pending_room').is('session_id', null), 'reservations');
 }
+/** Demand per 'product|level': learners asking to be told (not told yet) and room-less pack reservations (by the
+    learner's level), each learner counted once per product. */
+async function demandOf(sb) {
+  const d = {}, seen = new Set();
+  const add = (k) => { d[k] = (d[k] || 0) + 1; };
+  for (const r of await rows(sb.from('room_interest').select('user_id, product_key, level').is('notified_at', null), 'interest')) {
+    if (!r.level) continue;
+    add(r.product_key + '|' + r.level); seen.add(r.user_id + '|' + r.product_key);
+  }
+  const res = await rows(sb.from('entitlements').select('user_id, product_key').eq('status', 'pending_room').is('cohort_id', null).is('session_id', null), 'room-less reservations');
+  const levels = await levelsOf(sb, res.map((r) => r.user_id));
+  for (const r of res) if (levels[r.user_id] && !seen.has(r.user_id + '|' + r.product_key)) { add(r.product_key + '|' + levels[r.user_id]); seen.add(r.user_id + '|' + r.product_key); }
+  return d;
+}
+async function levelsOf(sb, userIds) {
+  const ids = [...new Set(userIds)];
+  if (!ids.length) return {};
+  return Object.fromEntries((await rows(sb.from('student_profiles').select('user_id, level').in('user_id', ids), 'levels')).map((p) => [p.user_id, p.level]));
+}
+/** The day's suggestions: new rows in room_proposals, returned with the lines the owner is sent. */
+async function suggestRooms(ctx, now) {
+  const { sb } = ctx;
+  const today = ymd(now || new Date());
+  const all = await rows(sb.from('room_availability').select('*'), 'availability');
+  if (!all.length) return { made: [], lines: [] };
+  const names = Object.fromEntries((await rows(sb.from('teacher_profiles').select('id, full_name, status').in('id', [...new Set(all.map((a) => a.teacher_id))]), 'teachers'))
+    .filter((t) => t.status === 'approved').map((t) => [t.id, t.full_name || 'a teacher']));
+  const availability = all.filter((a) => names[a.teacher_id]);
+  const { data: setting } = await sb.from('app_settings').select('value').eq('key', 'room_suggest_min').maybeSingle();
+  const minDemand = Math.max(1, parseInt(setting && setting.value, 10) || 5);
+  const taken = [];
+  for (const r of await rows(sb.from('cohorts').select('product_key, level, room_state').in('room_state', ['draft', 'published', 'open', 'running']), 'upcoming rooms')) {
+    if (r.product_key && (r.room_state !== 'running' || !isPack(r.product_key))) taken.push(r.product_key + '|' + r.level);
+  }
+  for (const p of await rows(sb.from('room_proposals').select('product_key, level, starts_on, status'), 'suggestions')) {
+    if (p.status === 'pending') taken.push(p.product_key + '|' + p.level);
+    else if (p.status === 'dismissed') taken.push([p.product_key, p.level, p.starts_on].join('|'));
+  }
+  const plan = planProposals({ today, availability, demand: await demandOf(sb), taken, minDemand });
+  const made = [], lines = [];
+  for (const p of plan) {
+    const { data, error } = await sb.from('room_proposals').upsert(p, { onConflict: 'product_key,level,starts_on,schedule_time', ignoreDuplicates: true }).select('id');
+    if (error) throw new Error('suggestion: ' + error.message);
+    if (!data || !data.length) continue;
+    made.push(Object.assign({ id: data[0].id }, p));
+    lines.push(`Room suggestion: ${p.product_key} ${p.level} from ${p.starts_on} (${p.schedule_days.join(', ')} ${p.schedule_time} ${p.timezone}), ${p.demand} learners asking, ` +
+      `teacher ${names[p.teacher_id]}, substitute ${p.substitute_teacher_id ? names[p.substitute_teacher_id] : 'none yet'}. Approve or dismiss it in Admin, Classes, Rooms.`);
+  }
+  return { made, lines };
+}
+/** A room is published (packs) or open (open classes): learners who asked, and room-less pack reservations at that
+    level, are emailed once with a link to choose it. Returns how many were told. */
+async function announceRoom(ctx, room) {
+  const { sb } = ctx;
+  const told = new Set();
+  for (const a of await rows(sb.from('room_interest').select('user_id, level').eq('product_key', room.product_key).is('notified_at', null), 'interest')) {
+    if (a.level && a.level !== room.level) continue;
+    await ctx.tell.learner(a.user_id, 'room_published', room, {});
+    await sb.from('room_interest').update({ notified_at: new Date().toISOString() }).eq('user_id', a.user_id).eq('product_key', room.product_key);
+    told.add(a.user_id);
+  }
+  if (isPack(room.product_key)) {
+    const res = await rows(sb.from('entitlements').select('user_id').eq('product_key', room.product_key).eq('status', 'pending_room').is('cohort_id', null).is('session_id', null), 'room-less reservations');
+    const levels = await levelsOf(sb, res.map((r) => r.user_id));
+    for (const r of res) {
+      if (told.has(r.user_id) || levels[r.user_id] !== room.level) continue;
+      await ctx.tell.learner(r.user_id, 'room_published', room, {});
+      told.add(r.user_id);
+    }
+  }
+  return told.size;
+}
+
 /**
  * Runs the day's room steps. ctx: entitlements ctx (sb, stripe, notify, markerSecret) plus
  * ctx.tell = { learner(userId, kind, room, extra), teacher(teacherId, kind, room, extra), owner(lines) }.
@@ -99,6 +243,11 @@ async function runRoomJob(ctx, now) {
   const today = ymd(now || new Date());
   const out = { published: 0, opened: 0, merged: 0, cancelled: 0, started: 0, charged: 0, chargeProblems: 0, released: 0, finished: 0 };
   const attention = [];
+  try {
+    const sug = await suggestRooms(ctx, now);
+    out.suggested = sug.made.length;
+    attention.push(...sug.lines);
+  } catch (e) { attention.push('Room suggestions could not be worked out today: ' + (e && e.message)); }
   const label = (r) => `${r.product_key} ${r.level} from ${r.starts_on} (${(r.schedule_days || []).join(', ')} ${String(r.schedule_time || '').slice(0, 5)} ${r.timezone})`;
 
   // 21 days before: publish
@@ -111,6 +260,7 @@ async function runRoomJob(ctx, now) {
       await setRoom(sb, r.id, { room_state: 'open', published_at: new Date().toISOString(), decided_at: new Date().toISOString(), contract_offered_at: new Date().toISOString() });
       await ctx.tell.teacher(r.teacher_id, 'contract_offer', r, { learners: 0 });
     }
+    out.announced = (out.announced || 0) + await announceRoom(ctx, r);
     out.published++;
   }
 
@@ -218,4 +368,4 @@ async function seatProblem(sb, productKey, cohortId, sessionId) {
   return (await seatsOf(sb, cohortId)) >= r.max_students ? 'room_full' : null;
 }
 
-module.exports = { KINDS, PRODUCT_KIND, LANGUAGE, planDecisions, runRoomJob, seatProblem, enrol, unenrol, isPack, addDays, ymd };
+module.exports = { KINDS, PRODUCT_KIND, LANGUAGE, planDecisions, planProposals, packStarts, demandOf, suggestRooms, announceRoom, runRoomJob, seatProblem, enrol, unenrol, isPack, addDays, ymd };

@@ -438,7 +438,42 @@ async function handleAdminRooms(req, res, sb) {
     const { data: n } = await sb.rpc('room_seats', { p_cohort: r.id });
     rooms.push(Object.assign({}, r, { seats: n || 0, substitute: r.substitute_teacher_id ? { full_name: nameOf[r.substitute_teacher_id] || 'a teacher no longer approved' } : null }));
   }
-  return res.status(200).json({ rooms, teachers: teachers || [] });
+  // Planning: suggestions waiting for the owner, the teachers' availability, and what learners are asking for
+  const today = R.ymd(new Date());
+  const { data: proposals } = await sb.from('room_proposals').select('*').or('status.eq.pending,decided_at.gte.' + R.addDays(today, -30)).order('starts_on').limit(100);
+  const { data: avail } = await sb.from('room_availability').select('*').order('starts_on').limit(300);
+  const { data: allTeachers } = await sb.from('teacher_profiles').select('id, full_name, status').in('id', [...new Set((avail || []).map((a) => a.teacher_id))]);
+  const tName = Object.fromEntries((allTeachers || []).map((t) => [t.id, t.full_name || 'a teacher']));
+  const name = (id) => (id ? nameOf[id] || tName[id] || 'a teacher no longer approved' : null);
+  const demand = await R.demandOf(sb);
+  const { data: setting } = await sb.from('app_settings').select('value').eq('key', 'room_suggest_min').maybeSingle();
+  return res.status(200).json({ rooms, teachers: teachers || [],
+    proposals: (proposals || []).map((p) => Object.assign({}, p, { teacher: name(p.teacher_id), substitute: name(p.substitute_teacher_id) })),
+    availability: (avail || []).map((a) => Object.assign({}, a, { teacher: tName[a.teacher_id] || 'a teacher', approved: (allTeachers || []).some((t) => t.id === a.teacher_id && t.status === 'approved') })),
+    demand: Object.keys(demand).sort().map((k) => ({ product_key: k.split('|')[0], level: k.split('|')[1], learners: demand[k] })),
+    suggestMin: parseInt(setting && setting.value, 10) || 5, starts: R.packStarts(today, 4) });
+}
+/** The owner's answer to a suggested room: { id, approve: true|false, substitute_teacher_id? }. Approving creates a
+    draft room (the same checks as the form); it is published by the daily job 21 days before its start. */
+async function handleAdminProposal(req, res, sb) {
+  const b = body(req);
+  if (!b || !P.isUuid(b.id) || typeof b.approve !== 'boolean') return fail(res, 400, 'bad_request');
+  const { data: p } = await sb.from('room_proposals').select('*').eq('id', b.id).maybeSingle();
+  if (!p) return fail(res, 404, 'not_found');
+  if (p.status !== 'pending') return fail(res, 409, 'already_answered');
+  const now = new Date().toISOString();
+  if (!b.approve) {
+    const { error } = await sb.from('room_proposals').update({ status: 'dismissed', decided_at: now }).eq('id', p.id);
+    if (error) throw new Error('suggestion: ' + error.message);
+    return res.status(200).json({ ok: true });
+  }
+  const made = await createRoom(sb, { product_key: p.product_key, level: p.level, starts_on: p.starts_on, schedule_days: p.schedule_days,
+    schedule_time: p.schedule_time, timezone: p.timezone, teacher_id: p.teacher_id,
+    substitute_teacher_id: P.isUuid(b.substitute_teacher_id) ? b.substitute_teacher_id : p.substitute_teacher_id || null });
+  if (made.error) return fail(res, 400, made.error, made.detail ? { detail: made.detail } : undefined);
+  const { error } = await sb.from('room_proposals').update({ status: 'approved', decided_at: now, cohort_id: made.id }).eq('id', p.id);
+  if (error) throw new Error('suggestion: ' + error.message);
+  return res.status(200).json({ ok: true, id: made.id, sessions: made.sessions });
 }
 const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
 const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -470,23 +505,29 @@ async function handleAdminRoom(req, res, sb) {
     if (f.contract_offered_at) await roomCtx(sb).tell.teacher(f.teacher_id, 'contract_offer', Object.assign({}, r, f), { learners: 0 });
     return res.status(200).json({ ok: true });
   }
+  const made = await createRoom(sb, b);
+  if (made.error) return fail(res, 400, made.error, made.detail ? { detail: made.detail } : undefined);
+  return res.status(200).json({ ok: true, id: made.id, sessions: made.sessions });
+}
+/** Creates a draft room with its class dates: from the admin's form, or from an approved suggestion. { id, sessions } or { error, detail } */
+async function createRoom(sb, b) {
   const kind = R.PRODUCT_KIND[b.product_key];
-  if (!kind) return fail(res, 400, 'bad_product');
+  if (!kind) return { error: 'bad_product' };
   const K = R.KINDS[kind];
   const language = b.product_key === 'help_class' ? (['English', 'German'].includes(b.language) ? b.language : null) : R.LANGUAGE[b.product_key.slice(-2)];
-  if (!language) return fail(res, 400, 'bad_language');
-  if (!['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].includes(b.level)) return fail(res, 400, 'bad_level');
-  if (!P.isUuid(b.teacher_id)) return fail(res, 400, 'teacher_required');
-  if (b.substitute_teacher_id && (!P.isUuid(b.substitute_teacher_id) || b.substitute_teacher_id === b.teacher_id)) return fail(res, 400, 'bad_substitute');
+  if (!language) return { error: 'bad_language' };
+  if (!['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].includes(b.level)) return { error: 'bad_level' };
+  if (!P.isUuid(b.teacher_id)) return { error: 'teacher_required' };
+  if (b.substitute_teacher_id && (!P.isUuid(b.substitute_teacher_id) || b.substitute_teacher_id === b.teacher_id)) return { error: 'bad_substitute' };
   const want = [b.teacher_id].concat(b.substitute_teacher_id ? [b.substitute_teacher_id] : []);
   const { data: known } = await sb.from('teacher_profiles').select('id').in('id', want).eq('status', 'approved');
-  if (!known || known.length !== want.length) return fail(res, 400, 'teacher_not_approved');
-  if (!/^\d{4}-\d{2}-\d{2}$/.test(b.starts_on || '') || b.starts_on < R.ymd(new Date())) return fail(res, 400, 'bad_start');
-  if (!TIME_RE.test(b.schedule_time || '')) return fail(res, 400, 'bad_time');
+  if (!known || known.length !== want.length) return { error: 'teacher_not_approved' };
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(b.starts_on || '') || b.starts_on < R.ymd(new Date())) return { error: 'bad_start' };
+  if (!TIME_RE.test(b.schedule_time || '')) return { error: 'bad_time' };
   const days = Array.isArray(b.schedule_days) && b.schedule_days.length ? b.schedule_days : K.days;
-  if (!days.every((d) => WEEKDAYS.includes(d)) || new Set(days).size !== days.length) return fail(res, 400, 'bad_days');
+  if (!days.every((d) => WEEKDAYS.includes(d)) || new Set(days).size !== days.length) return { error: 'bad_days' };
   const tz = typeof b.timezone === 'string' && b.timezone.length < 64 ? b.timezone : 'Europe/Rome';
-  try { new Intl.DateTimeFormat('en', { timeZone: tz }); } catch { return fail(res, 400, 'bad_timezone'); }
+  try { new Intl.DateTimeFormat('en', { timeZone: tz }); } catch { return { error: 'bad_timezone' }; }
   const max = Math.min(K.max, Math.max(1, parseInt(b.max_students, 10) || K.max));
   const min = Math.min(max, Math.max(1, parseInt(b.min_learners, 10) || K.min));
   const { data: room, error } = await sb.from('cohorts').insert({
@@ -499,9 +540,9 @@ async function handleAdminRoom(req, res, sb) {
   const { data: n, error: gErr } = await sb.rpc('generate_room_sessions', { p_cohort: room.id });
   if (gErr || !n) {
     await sb.from('cohorts').delete().eq('id', room.id);
-    return fail(res, 400, 'no_sessions', { detail: gErr ? gErr.message : 'no class dates fall on those days' });
+    return { error: 'no_sessions', detail: gErr ? gErr.message : 'no class dates fall on those days' };
   }
-  return res.status(200).json({ ok: true, id: room.id, sessions: n });
+  return { id: room.id, sessions: n };
 }
 
 // ── course contracts for teachers ──
@@ -537,6 +578,86 @@ async function handleContract(req, res, sb, user) {
   return res.status(200).json({ ok: true, accepted: b.accept });
 }
 
+// ── room planning for teachers and learners ──
+const ROOM_KINDS = ['level_pack', 'exam_pack', 'open_class', 'help_class'];
+const LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
+const uniqueIn = (v, allowed) => Array.isArray(v) && v.length > 0 && v.length <= allowed.length && new Set(v).size === v.length && v.every((x) => allowed.includes(x));
+/** A teacher's availability: GET lists theirs with the next start dates; POST adds one, or { id, remove: true }. */
+async function handleAvailability(req, res, sb, user) {
+  const { data: t } = await sb.from('teacher_profiles').select('id, languages, status').eq('user_id', user.id).maybeSingle();
+  if (!t) return fail(res, 403, 'teachers_only');
+  const today = R.ymd(new Date());
+  const languages = (t.languages || []).filter((l) => l === 'English' || l === 'German');
+  if (req.method === 'GET') {
+    const { data, error } = await sb.from('room_availability').select('id, starts_on, kinds, language, levels, days, schedule_time, timezone, substitute').eq('teacher_id', t.id).order('starts_on');
+    if (error) throw new Error('availability: ' + error.message);
+    return res.status(200).json({ languages, approved: t.status === 'approved', starts: R.packStarts(today, 4), today, items: data || [] });
+  }
+  if (req.method !== 'POST') return fail(res, 405, 'method_not_allowed');
+  const b = body(req);
+  if (!b) return fail(res, 400, 'bad_json');
+  if (b.remove === true) {
+    if (!P.isUuid(b.id)) return fail(res, 400, 'bad_request');
+    const { error } = await sb.from('room_availability').delete().eq('id', b.id).eq('teacher_id', t.id);
+    if (error) throw new Error('availability: ' + error.message);
+    return res.status(200).json({ ok: true });
+  }
+  if (t.status !== 'approved') return fail(res, 403, 'not_approved');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(b.starts_on || '') || b.starts_on < today || b.starts_on > R.addDays(today, 200)) return fail(res, 400, 'bad_start');
+  if (!uniqueIn(b.kinds, ROOM_KINDS)) return fail(res, 400, 'bad_kinds');
+  if (!languages.includes(b.language)) return fail(res, 400, 'bad_language');
+  if (!uniqueIn(b.levels, LEVELS)) return fail(res, 400, 'bad_levels');
+  if (!uniqueIn(b.days, WEEKDAYS)) return fail(res, 400, 'bad_days');
+  if (!TIME_RE.test(b.schedule_time || '')) return fail(res, 400, 'bad_time');
+  const tz = typeof b.timezone === 'string' && /^[A-Za-z0-9_+/-]{1,64}$/.test(b.timezone) ? b.timezone : '';
+  try { new Intl.DateTimeFormat('en', { timeZone: tz }); } catch { return fail(res, 400, 'bad_timezone'); }
+  if (!tz) return fail(res, 400, 'bad_timezone');
+  const { data: mine } = await sb.from('room_availability').select('id').eq('teacher_id', t.id);
+  if ((mine || []).length >= 30) return fail(res, 409, 'too_many');
+  const { data, error } = await sb.from('room_availability').insert({ teacher_id: t.id, starts_on: b.starts_on, kinds: b.kinds, language: b.language,
+    levels: b.levels, days: b.days, schedule_time: b.schedule_time, timezone: tz, substitute: b.substitute === true }).select('id').single();
+  if (error) throw new Error('availability: ' + error.message);
+  return res.status(200).json({ ok: true, id: data.id });
+}
+const plannable = (k) => !!R.PRODUCT_KIND[k] && R.PRODUCT_KIND[k] !== 'help_class';
+/** The learner's standing for one product: asked to be told, and a pack reservation still without a room. */
+async function handleRoomMe(req, res, sb, user) {
+  const product = String((req.query && req.query.product) || '');
+  if (!plannable(product)) return fail(res, 400, 'unknown_product');
+  const { data: i } = await sb.from('room_interest').select('notified_at').eq('user_id', user.id).eq('product_key', product).maybeSingle();
+  const { data: e } = await sb.from('entitlements').select('id').eq('user_id', user.id).eq('product_key', product).eq('status', 'pending_room').is('cohort_id', null).is('session_id', null).limit(1);
+  return res.status(200).json({ product, interested: !!(i && !i.notified_at), reserved: !!(e && e.length) });
+}
+/** { product, on }: be told (once) when a room for this product opens at the learner's level, or stop. */
+async function handleInterest(req, res, sb, user) {
+  const b = body(req);
+  if (!b || !plannable(b.product) || typeof b.on !== 'boolean') return fail(res, 400, 'bad_request');
+  if (!b.on) {
+    const { error } = await sb.from('room_interest').delete().eq('user_id', user.id).eq('product_key', b.product);
+    if (error) throw new Error('interest: ' + error.message);
+    return res.status(200).json({ ok: true, interested: false });
+  }
+  const { data: sp } = await sb.from('student_profiles').select('level').eq('user_id', user.id).maybeSingle();
+  if (!sp) return fail(res, 409, 'profile_required');
+  const { error } = await sb.from('room_interest').upsert({ user_id: user.id, product_key: b.product, level: LEVELS.includes(sp.level) ? sp.level : null,
+    created_at: new Date().toISOString(), notified_at: null }, { onConflict: 'user_id,product_key' });
+  if (error) throw new Error('interest: ' + error.message);
+  return res.status(200).json({ ok: true, interested: true });
+}
+/** { product, cohortId }: moves the learner's room-less pack reservation into a published room (seat checked). */
+async function handleAssign(req, res, sb, user) {
+  const b = body(req);
+  if (!b || !R.isPack(b.product) || !P.isUuid(b.cohortId)) return fail(res, 400, 'bad_request');
+  const { data: ents } = await sb.from('entitlements').select('id').eq('user_id', user.id).eq('product_key', b.product).eq('status', 'pending_room').is('cohort_id', null).is('session_id', null).limit(1);
+  if (!ents || !ents.length) return fail(res, 404, 'no_reservation');
+  const problem = await R.seatProblem(sb, b.product, b.cohortId, null);
+  if (problem) return fail(res, 409, problem);
+  const { error } = await sb.from('entitlements').update({ cohort_id: b.cohortId, updated_at: new Date().toISOString() }).eq('id', ents[0].id).is('cohort_id', null);
+  if (error) throw new Error('assign: ' + error.message);
+  await sb.from('room_interest').delete().eq('user_id', user.id).eq('product_key', b.product);
+  return res.status(200).json({ ok: true });
+}
+
 // ── emails the room steps send ──
 function roomCtx(sb) {
   const send = async (to, subject, content) => { if (to && process.env.RESEND_API_KEY) await mail.sendEmail(Object.assign({ to, subject }, content)); };
@@ -568,7 +689,8 @@ function roomCtx(sb) {
     tell: {
       learner: async (userId, kind, room) => {
         const p = await learnerOf(userId), k = kind, vars = roomText(room, p.lang);
-        await send(p.to, L.say(p.lang, `${k}.subject`, vars), email(p.lang, k, vars, { label: L.say(p.lang, `${k}.button`), href: `${mail.SITE}/app#/settings/plans` }, p.name));
+        const href = `${mail.SITE}/app#/settings/plans` + (k === 'room_published' ? `/pick/${room.product_key}/month` : '');
+        await send(p.to, L.say(p.lang, `${k}.subject`, vars), email(p.lang, k, vars, { label: L.say(p.lang, `${k}.button`), href }, p.name));
       },
       teacher: async (teacherId, kind, room, extra) => {
         if (!teacherId) return;
@@ -684,12 +806,13 @@ module.exports = async function handler(req, res) {
       if (req.method !== 'GET') return fail(res, 405, 'method_not_allowed');
       return await handleRooms(req, res, sb);
     }
-    if (action === 'admin-rooms' || action === 'admin-room') {
+    if (action === 'admin-rooms' || action === 'admin-room' || action === 'admin-proposal') {
       const admin = await userOf(req, sb);
       if (!admin) return fail(res, 401, 'sign_in_required');
       if (!admin.app_metadata || admin.app_metadata.role !== 'admin') return fail(res, 403, 'admins_only');
       if (action === 'admin-rooms' && req.method === 'GET') return await handleAdminRooms(req, res, sb);
       if (action === 'admin-room' && req.method === 'POST') return await handleAdminRoom(req, res, sb);
+      if (action === 'admin-proposal' && req.method === 'POST') return await handleAdminProposal(req, res, sb);
       return fail(res, 405, 'method_not_allowed');
     }
     if (action === 'contracts' || action === 'contract') {
@@ -697,6 +820,15 @@ module.exports = async function handler(req, res) {
       if (!teacher) return fail(res, 401, 'sign_in_required');
       if (action === 'contracts' && req.method === 'GET') return await handleContracts(req, res, sb, teacher);
       if (action === 'contract' && req.method === 'POST') return await handleContract(req, res, sb, teacher);
+      return fail(res, 405, 'method_not_allowed');
+    }
+    if (['availability', 'room-me', 'interest', 'assign'].includes(action)) {
+      const me = await userOf(req, sb);
+      if (!me) return fail(res, 401, 'sign_in_required');
+      if (action === 'availability') return await handleAvailability(req, res, sb, me);
+      if (action === 'room-me' && req.method === 'GET') return await handleRoomMe(req, res, sb, me);
+      if (action === 'interest' && req.method === 'POST') return await handleInterest(req, res, sb, me);
+      if (action === 'assign' && req.method === 'POST') return await handleAssign(req, res, sb, me);
       return fail(res, 405, 'method_not_allowed');
     }
     if (!['setup', 'quote', 'purchase', 'confirm'].includes(action)) return fail(res, 400, 'unknown_action');

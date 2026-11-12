@@ -272,6 +272,14 @@
     "body": "**{room}**, che doveva partire il {start} ({days} alle {time}, {zone}), non aprirà: non si sono iscritti abbastanza studenti, oppure sono passati a un'altra aula.",
     "body2": "Grazie per aver offerto questo orario. Le aule che puoi tenere ti arriveranno come nuove offerte."
   },
+  "room_published": {
+    "subject": "C'è un'aula aperta al tuo livello: {room}",
+    "preheader": "Inizia il {start}.",
+    "heading": "C'è un'aula aperta al tuo livello",
+    "body": "**{room}** inizia il {start}, {days} alle {time} ({zone}).",
+    "body2": "Ci hai chiesto di avvisarti, oppure hai prenotato un posto senza scegliere un'aula. Scegli quest'aula nella tua dashboard finché ci sono posti.",
+    "button": "Vedi l'aula"
+  },
   "founding_notice": {
     "subject": "Il tuo prezzo fondatore termina il {date}",
     "preheader": "Fino ad allora non cambia nulla.",

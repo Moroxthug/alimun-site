@@ -272,6 +272,14 @@
     "body": "**{room}** starting on {start} ({days} at {time}, {zone}) will not open: not enough learners joined, or the learners moved to another room.",
     "body2": "Thank you for offering this time. Rooms you can teach will come to you as new offers."
   },
+  "room_published": {
+    "subject": "A room at your level is open: {room}",
+    "preheader": "Starting on {start}.",
+    "heading": "A room is open at your level",
+    "body": "**{room}** starts on {start}, {days} at {time} ({zone}).",
+    "body2": "You asked us to tell you, or you reserved a place without choosing a room. Choose this room in your dashboard while places are left.",
+    "button": "See the room"
+  },
   "founding_notice": {
     "subject": "Your founding price ends on {date}",
     "preheader": "Nothing changes before then.",

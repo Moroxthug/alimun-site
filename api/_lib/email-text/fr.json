@@ -272,6 +272,14 @@
     "body": "**{room}**, qui devait commencer le {start} ({days} à {time}, {zone}), n'ouvrira pas : trop peu d'apprenants l'ont rejointe, ou ils ont rejoint une autre salle.",
     "body2": "Merci d'avoir proposé cet horaire. Les salles que vous pouvez animer vous parviendront sous forme de nouvelles offres."
   },
+  "room_published": {
+    "subject": "Une salle est ouverte à votre niveau : {room}",
+    "preheader": "Début le {start}.",
+    "heading": "Une salle est ouverte à votre niveau",
+    "body": "**{room}** commence le {start}, {days} à {time} ({zone}).",
+    "body2": "Vous nous avez demandé de vous prévenir, ou vous avez réservé une place sans choisir de salle. Choisissez cette salle dans votre tableau de bord tant qu'il reste des places.",
+    "button": "Voir la salle"
+  },
   "founding_notice": {
     "subject": "Votre prix fondateur prend fin le {date}",
     "preheader": "Rien ne change d'ici là.",

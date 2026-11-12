@@ -297,7 +297,8 @@
   var SETTING_NOTE = {
     api_url: 'The site’s address, used by the database to send waiting-list offers.',
     waitlist_webhook_secret: 'Shared with Vercel’s WAITLIST_WEBHOOK_SECRET; the waiting-list emails need both to match.',
-    admin_secret: 'An older shared secret, used only when the waiting-list secret is missing.'
+    admin_secret: 'An older shared secret, used only when the waiting-list secret is missing.',
+    room_suggest_min: 'How many learners at one level must be waiting before a room is suggested in Classes, Rooms (learners who asked to be told, and pack reservations without a room).'
   };
   function reviewRowsHtml() {
     var list = SY.reviews.filter(function (r) { return (!RF.teacher || (r.teacher_profiles && r.teacher_profiles.full_name) === RF.teacher) && (!RF.stars || String(r.rating) === String(RF.stars)); });
