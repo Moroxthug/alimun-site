@@ -33,6 +33,26 @@ async function profileId(sb, userId) {
   return data ? data.id : null;
 }
 
+// ── Room places (enrolments give the class pages, video and reminders) ──
+async function enrol(sb, userId, cohortId) {
+  const { data: sp } = await sb.from('student_profiles').select('id, enrolled_cohort_id').eq('user_id', userId).maybeSingle();
+  if (!sp) return;
+  const { data: had } = await sb.from('enrollments').select('id, status').eq('student_id', sp.id).eq('cohort_id', cohortId).limit(1);
+  if (had && had.length) {
+    if (had[0].status !== 'active') await sb.from('enrollments').update({ status: 'active', cancelled_at: null }).eq('id', had[0].id);
+  } else {
+    const { error } = await sb.from('enrollments').insert({ student_id: sp.id, cohort_id: cohortId, status: 'active' });
+    if (error) throw new Error('enrol: ' + error.message);
+  }
+  if (!sp.enrolled_cohort_id) await sb.from('student_profiles').update({ enrolled_cohort_id: cohortId }).eq('id', sp.id);
+}
+async function unenrol(sb, userId, cohortId) {
+  const { data: sp } = await sb.from('student_profiles').select('id, enrolled_cohort_id').eq('user_id', userId).maybeSingle();
+  if (!sp) return;
+  await sb.from('enrollments').update({ status: 'cancelled', cancelled_at: new Date().toISOString() }).eq('student_id', sp.id).eq('cohort_id', cohortId).eq('status', 'active');
+  if (sp.enrolled_cohort_id === cohortId) await sb.from('student_profiles').update({ enrolled_cohort_id: null }).eq('id', sp.id);
+}
+
 /** Grants what a paid quote bought (or reserves a pack). refs: { invoice, subscription, amountPaid, periodEnd, paymentIntent } */
 async function fulfil(ctx, user, q, refs) {
   const { sb, stripe } = ctx;
@@ -49,7 +69,7 @@ async function fulfil(ctx, user, q, refs) {
     const ent = {
       user_id: user.id, product_key: q.product_key, variant: q.variant, band: q.band, currency: q.currency, cadence: q.cadence,
       source: 'stripe', cohort_id: q.cohort_id, voice_minutes_month: (pr && pr.voice_minutes_month) || 0, quote_id: q.id,
-      stripe_payment_method_id: q.payment_method_id,
+      stripe_payment_method_id: q.payment_method_id, session_id: q.session_id || null,
     };
     if (prod.charge === 'reserve') Object.assign(ent, { status: 'pending_room', amount_paid: 0 });
     else Object.assign(ent, { status: 'active', starts_at: new Date().toISOString(), amount_paid: refs.amountPaid || 0,
@@ -58,6 +78,8 @@ async function fulfil(ctx, user, q, refs) {
     const { data, error } = await sb.from('entitlements').upsert(ent, { onConflict: 'quote_id' }).select('id').single();
     if (error) throw new Error('entitlement: ' + error.message);
     entitlementId = data.id;
+    // An open class is a room that already runs or is about to: the learner joins it at once
+    if (prod.kind === 'open_class' && q.cohort_id) await enrol(sb, user.id, q.cohort_id);
   }
   if (q.product_key === 'trial') {
     const pm = await stripe.paymentMethods.retrieve(q.payment_method_id);
@@ -337,4 +359,4 @@ async function releasePack(ctx, ent) {
   return true;
 }
 
-module.exports = { TYPE, fulfil, isPricingEvent, processEvent, startPack, releasePack, PACK_DAYS };
+module.exports = { TYPE, fulfil, enrol, unenrol, isPricingEvent, processEvent, startPack, releasePack, PACK_DAYS };

@@ -4,6 +4,10 @@
    #/classes/<id>             a class: its students (move to another class, remove, add one learning the language),
                               seats and description (/api/admin/teacher class-update), its waiting list and dates,
                               closing and reopening
+   #/classes/rooms            rooms of the new price list (packs, open classes, help classes): state, places taken,
+                              teacher, substitute and course contract; create one (12 weeks of dates from its start
+                              date), change its teacher or substitute, cancel one (reservations end, nothing charged).
+                              The daily room job publishes, opens or cancels, and starts them (api/_lib/rooms.js).
    #/schedule[/<which>]       every class date: this week, upcoming, past, cancelled; cancel or move one, with the
                               students and the teacher emailed (/api/admin/teacher session-update)
    Times are shown in the class's own timezone, with the admin's own time beside them when it differs. */
@@ -115,7 +119,7 @@
     var tab = function (k, label) { return '<a class="btn btn--' + (k === which ? 'primary' : 'quiet') + ' btn--sm" href="#/classes/list/' + k + '"' + (k === which ? ' aria-current="page"' : '') + '>' + esc(label + ' (' + counts[k] + ')') + '</a>'; };
     var seats = CL.classes.filter(function (c) { return c.status === 'open' || c.status === 'full'; }).reduce(function (n, c) { return n + (c.enrolled_count || 0); }, 0);
     return flash() + '<div class="view__head"><div><h1 class="t-h1">Classes</h1><p class="t-lead">' + esc(A.plural(counts.active, 'class', 'classes') + ' taking students, ' + A.plural(seats, 'student', 'students') + ' in them.') + '</p></div>' +
-      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/classes/new">Create a class</a></div></div>' +
+      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/classes/rooms">Rooms (new price list)</a><a class="btn btn--ghost btn--sm" href="#/classes/new">Create a class</a></div></div>' +
       '<div class="grid rise"><section class="card span-12" style="--i:0"><div class="btn-row ad-tabs" role="navigation" aria-label="Which classes">' + tab('active', 'Open and full') + tab('closed', 'Closed') + tab('all', 'All') + '</div>' +
       '<div class="ad-filters"><input class="st-in" type="search" data-cf="q" placeholder="Search by teacher, language or level" value="' + esc(CF.q) + '" aria-label="Search">' +
       '<select class="st-in" data-cf="lang" aria-label="Language">' + opt('', 'Every language', CF.lang) + langs.map(function (l) { return opt(l, l, CF.lang); }).join('') + '</select></div>' +
@@ -417,6 +421,7 @@
     });
     root.addEventListener('submit', function (e) {
       var f = e.target;
+      if (f.hasAttribute('data-newroom')) { e.preventDefault(); createRoom(f); return; }
       if (f.hasAttribute('data-classform')) { e.preventDefault(); saveClass(f); }
       else if (f.hasAttribute('data-newclass')) { e.preventDefault(); createClass(f); }
       else if (f.hasAttribute('data-add')) {
@@ -428,8 +433,11 @@
     root.addEventListener('click', function (e) {
       var more = e.target.closest('[data-showrest]');
       if (more) { var rest = root.querySelector('[data-rest]'); if (rest) rest.hidden = false; more.parentNode.remove(); return; }
-      var b = e.target.closest('[data-askmove],[data-askremove],[data-domove],[data-doremove],[data-askstatus],[data-dostatus],[data-askdate],[data-dodate],[data-cancel]');
+      var b = e.target.closest('[data-askmove],[data-askremove],[data-domove],[data-doremove],[data-askstatus],[data-dostatus],[data-askdate],[data-dodate],[data-cancel],[data-askroom],[data-doroom],[data-doroomcancel]');
       if (!b || b.disabled) return;
+      if (b.hasAttribute('data-askroom')) { askRoom(b.getAttribute('data-askroom')); return; }
+      if (b.hasAttribute('data-doroom')) { doRoom(b, false); return; }
+      if (b.hasAttribute('data-doroomcancel')) { doRoom(b, true); return; }
       if (b.hasAttribute('data-askmove')) askMove(b.getAttribute('data-askmove'));
       else if (b.hasAttribute('data-askremove')) askRemove(b.getAttribute('data-askremove'));
       else if (b.hasAttribute('data-domove')) { var box = b.closest('.ad-confirm'); doMove(b, b.getAttribute('data-domove'), box.querySelector('[data-to]').value, box.querySelector('[data-notify]').checked, box.querySelector('[data-msg]')); }
@@ -442,6 +450,77 @@
     });
   }
 
+
+  /* ---------- Rooms of the new price list ---------- */
+  var RM = null;
+  var PRODUCTS = { level_en: 'Level pack, English', level_de: 'Level pack, German', exam_en: 'Exam pack, English (IELTS)', exam_de: 'Exam pack, German (Goethe or telc B1)', open_en: 'Open class, English', open_de: 'Open class, German', help_class: 'Help class (30 minutes)' };
+  var ROOM_STATE = { draft: 'Draft: published 21 days before the start once it has a teacher and a substitute', published: 'Published: taking reservations', open: 'Open: course contract offered', running: 'Running', finished: 'Finished', cancelled: 'Cancelled' };
+  var WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  function loadRooms() {
+    if (RM && !real()) return Promise.resolve(RM);
+    if (!real()) {
+      var d = function (n) { return new Date(Date.now() + n * DAY).toISOString().slice(0, 10); };
+      RM = { teachers: [{ id: 't1', full_name: 'Ana Weber', languages: ['German'] }, { id: 't2', full_name: 'James Hall', languages: ['English'] }],
+        rooms: [{ id: 'r1', product_key: 'level_de', language: 'German', level: 'B1', starts_on: d(9), schedule_days: ['Monday', 'Tuesday', 'Thursday'], schedule_time: '19:00', timezone: 'Europe/Berlin', max_students: 12, min_learners: 8, seats: 9, room_state: 'open', contract_offered_at: d(-1), teacher_profiles: { full_name: 'Ana Weber' }, substitute: { full_name: 'James Hall' } },
+          { id: 'r2', product_key: 'level_en', language: 'English', level: 'A2', starts_on: d(30), schedule_days: ['Monday', 'Tuesday', 'Thursday'], schedule_time: '09:00', timezone: 'Europe/London', max_students: 12, min_learners: 8, seats: 0, room_state: 'draft', teacher_profiles: { full_name: 'James Hall' }, substitute: null }] };
+      return Promise.resolve(RM);
+    }
+    return window.AlimunData.adminRooms().then(function (r) { RM = r; return r; });
+  }
+  function roomsView() {
+    var teacherOpts = function (cur) { return opt('', 'Choose a teacher', cur) + RM.teachers.map(function (t) { return opt(t.id, t.full_name + (t.languages && t.languages.length ? ' (' + t.languages.join(', ') + ')' : ''), cur); }).join(''); };
+    var rows = RM.rooms.map(function (r) {
+      var contract = r.contract_accepted_at ? 'contract accepted' : r.contract_declined_at ? 'contract declined' : r.contract_offered_at ? 'contract offered, no answer yet' : '';
+      var bits = [(r.schedule_days || []).join(', ') + ' ' + String(r.schedule_time || '').slice(0, 5) + ' ' + r.timezone, (r.seats || 0) + ' of ' + r.max_students + ' places taken (opens at ' + (r.min_learners || '?') + ')',
+        'teacher ' + ((r.teacher_profiles && r.teacher_profiles.full_name) || 'none'), 'substitute ' + ((r.substitute && r.substitute.full_name) || 'none'), contract].filter(Boolean);
+      var can = ['draft', 'published', 'open'].indexOf(r.room_state) > -1;
+      return '<div class="ad-item"><div class="tt-row ad-act ad-act--2"><span class="tt-row__time">' + esc(r.starts_on) + '</span><span><b>' + esc((PRODUCTS[r.product_key] || r.product_key) + ' ' + r.level) + '</b><small>' + esc(ROOM_STATE[r.room_state] || r.room_state) + '. ' + esc(bits.join('. ') + '.') + '</small></span>' +
+        (can ? '<span class="btn-row ad-act__btns"><button class="btn btn--ghost btn--sm" type="button" data-askroom="' + esc(r.id) + '">Change</button></span>' : '') + '</div><div data-box="room-' + esc(r.id) + '"></div></div>';
+    }).join('');
+    var form = '<form class="st-form" data-newroom>' +
+      field('Product', '<select class="st-in" name="product_key" required>' + Object.keys(PRODUCTS).map(function (k) { return opt(k, PRODUCTS[k], ''); }).join('') + '</select>', 'Packs open 10 days before the start with at least 8 learners; open and help classes are sold while they run.') +
+      field('Language (help classes)', '<select class="st-in" name="language">' + opt('English', 'English', 'English') + opt('German', 'German', '') + '</select>') +
+      field('Level', '<select class="st-in" name="level" required>' + LEVELS.map(function (l) { return opt(l, l, 'B1'); }).join('') + '</select>') +
+      field('Teacher', '<select class="st-in" name="teacher_id" required>' + teacherOpts('') + '</select>') +
+      field('Substitute', '<select class="st-in" name="substitute_teacher_id">' + teacherOpts('') + '</select>', 'Needed before the room is published.') +
+      field('Start date', '<input class="st-in" type="date" name="starts_on" required>', 'Packs start on the first Monday of a month.') +
+      '<div class="st-field" role="group" aria-labelledby="rm-days"><span class="st-lbl" id="rm-days">Days</span><span class="btn-row">' + WEEK.map(function (d) { return '<label class="st-check"><input type="checkbox" name="days" value="' + d + '"> ' + d + '</label>'; }).join('') + '</span><span class="t-small st-hint">Leave empty for the usual days: packs Monday, Tuesday and Thursday; open class Wednesday; help class Sunday.</span></div>' +
+      field('Time', '<input class="st-in" type="time" name="schedule_time" required value="19:00">') +
+      field('Time zone', '<input class="st-in" name="timezone" required value="' + esc(Intl.DateTimeFormat().resolvedOptions().timeZone || 'Europe/Rome') + '">') +
+      '<div class="btn-row"><button class="btn btn--primary btn--sm" type="submit">Create the room</button></div><p class="t-small st-msg" data-msg aria-live="polite"></p></form>';
+    return flash() + back('#/classes', 'Classes') + '<div class="view__head"><div><h1 class="t-h1">Rooms</h1><p class="t-lead">Rooms of the new price list. Learners choose them in Plans and prices; the daily room job does the rest.</p></div></div>' +
+      '<div class="grid rise"><section class="card span-12" style="--i:0"><h2 class="t-h2">Rooms</h2>' + (rows ? '<div class="tt-week" style="margin-top:12px">' + rows + '</div>' : '<p class="t-body" style="margin-top:8px">No rooms yet.</p>') + '</section>' +
+      '<section class="card span-12" style="--i:1"><h2 class="t-h2">Create a room</h2>' + form + '</section>' + sampleLine() + '</div>';
+  }
+  function createRoom(f) {
+    var fd = new FormData(f), msg = f.querySelector('[data-msg]'), btn = f.querySelector('[type="submit"]');
+    var body = { product_key: fd.get('product_key'), language: fd.get('language'), level: fd.get('level'), teacher_id: fd.get('teacher_id'), substitute_teacher_id: fd.get('substitute_teacher_id') || undefined,
+      starts_on: fd.get('starts_on'), schedule_days: fd.getAll('days'), schedule_time: fd.get('schedule_time'), timezone: fd.get('timezone') };
+    if (!real()) { msg.textContent = 'This is sample data; nothing is saved.'; return; }
+    btn.disabled = true; msg.textContent = '';
+    window.AlimunData.adminRoom(body).then(function (r) { FLASH = 'The room was created with ' + A.plural(r.sessions, 'class date', 'class dates') + '.'; RM = null; A.rerender(); },
+      function (e) { btn.disabled = false; msg.textContent = 'Not created: ' + errText(e) + (e.body && e.body.detail ? ' (' + e.body.detail + ')' : '') + '.'; });
+  }
+  function askRoom(id) {
+    var r = RM.rooms.filter(function (x) { return x.id === id; })[0];
+    var box = root.querySelector('[data-box="room-' + id + '"]');
+    if (!r || !box) return;
+    var to = function (cur) { return opt('', 'Keep as it is', '') + RM.teachers.map(function (t) { return opt(t.id, t.full_name, ''); }).join(''); };
+    box.innerHTML = '<div class="ad-confirm"><div class="st-row">' + field('New teacher', '<select class="st-in" data-rt>' + to() + '</select>', 'A new teacher is offered the course contract again.') + field('New substitute', '<select class="st-in" data-rs>' + to() + '</select>') + '</div>' +
+      '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-doroom="' + esc(id) + '">Save</button><button class="btn btn--quiet btn--sm" type="button" data-doroomcancel="' + esc(id) + '">Cancel this room</button><button class="btn btn--quiet btn--sm" type="button" data-cancel>Close</button></div>' +
+      '<p class="t-small">Cancelling ends every reservation with nothing charged and emails the learners.</p><p class="t-small st-msg" data-msg aria-live="polite"></p></div>';
+  }
+  function doRoom(b, cancel) {
+    var id = b.getAttribute(cancel ? 'data-doroomcancel' : 'data-doroom'), box = b.closest('.ad-confirm'), msg = box.querySelector('[data-msg]');
+    var body = { id: id };
+    if (cancel) body.cancel = true;
+    else { var t = box.querySelector('[data-rt]').value, su = box.querySelector('[data-rs]').value; if (t) body.teacher_id = t; if (su) body.substitute_teacher_id = su; }
+    if (!real()) { msg.textContent = 'This is sample data; nothing is saved.'; return; }
+    b.disabled = true;
+    window.AlimunData.adminRoom(body).then(function () { FLASH = cancel ? 'The room was cancelled and its learners emailed.' : 'The room was saved.'; RM = null; A.rerender(); },
+      function (e) { b.disabled = false; msg.textContent = 'Not saved: ' + errText(e) + '.'; });
+  }
+
   function mounter(kind) {
     var no = 0;
     return function (view, parts, helpers) {
@@ -451,6 +530,7 @@
       if (!root.innerHTML) root.innerHTML = loading();
       var p0 = parts[0], go;
       if (kind === 'schedule') { if (real() && !parts.length) SCH = null; go = loadSchedule().then(function () { FILE = null; return { html: scheduleView(p0), title: 'Schedule' }; }); }
+      else if (p0 === 'rooms') { if (real()) RM = null; go = loadRooms().then(function () { return { html: roomsView(), title: 'Rooms' }; }); }
       else if (p0 === 'new') go = loadClasses().then(function () { return { html: newClassView(), title: 'Create a class', after: teacherPicked }; });
       else if (p0 && p0 !== 'list') go = loadClasses().then(function () {
         SCH = null;

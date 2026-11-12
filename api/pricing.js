@@ -13,6 +13,12 @@
  *   POST ?action=confirm            (signed in) { quoteId }: after the bank's confirmation, records the purchase.
  *   GET  ?action=admin-report       (admin) the last 7 days: purchases by band, card and visitor countries that
  *                                   differ, refused trials, withheld free minutes and disputes (section 7).
+ *   GET  ?action=rooms&product=     the rooms (packs, open classes) or class dates (trial, help class) on offer, with seats.
+ *   GET  ?action=admin-rooms        (admin) every room with its state, seats and contract; POST ?action=admin-room creates
+ *                                   a room ({ product_key, level, teacher_id, substitute_teacher_id, starts_on, ... }) or
+ *                                   changes one ({ id, teacher_id?, substitute_teacher_id?, cancel? }).
+ *   GET  ?action=contracts          (teacher) course contracts offered to them; POST ?action=contract { cohortId, accept }.
+ *   GET  ?action=cron-rooms         (Vercel cron) the rooms' daily steps (api/_lib/rooms.js).
  *   GET  ?action=cron-billing       (Vercel cron, Bearer CRON_SECRET) pauses entitlements unpaid for 3 days
  *                                   (public.pause_unpaid_entitlements), which frees their seats.
  *
@@ -25,6 +31,9 @@ const stripe = require('stripe')(STRIPE_KEY || 'dummy_key_for_load_validation');
 const { createClient } = require('@supabase/supabase-js');
 const P = require('./_lib/pricing.js');
 const E = require('./_lib/entitlements.js');
+const R = require('./_lib/rooms.js');
+const mail = require('./_lib/email.js');
+const L = require('./_lib/email-i18n.js');
 const { recordRun } = require('./_lib/cron-log.js');
 
 const TAX_ON = process.env.STRIPE_AUTOMATIC_TAX === 'on';
@@ -136,10 +145,14 @@ async function handleQuote(req, res, sb, user) {
   if (!b) return fail(res, 400, 'bad_json');
   const { setupIntentId, productKey, cadence } = b;
   const cohortId = P.isUuid(b.cohortId) ? b.cohortId : null;
+  const sessionId = P.isUuid(b.sessionId) ? b.sessionId : null;
   if (typeof setupIntentId !== 'string' || !/^seti_[A-Za-z0-9]{8,80}$/.test(setupIntentId)) return fail(res, 400, 'bad_setup_intent');
   const s = await settings(sb, ['founding_closes_at', 'founding_cap', 'founding_count', 'pricing_on_sale']);
   const bad = P.checkRequest(productKey, cadence, P.onSale(s.pricing_on_sale));
   if (bad) return fail(res, 400, bad);
+  // The room (packs, open classes) or the class date (trial, help class) the learner chose, with a free seat
+  const seat = await R.seatProblem(sb, productKey, cohortId, sessionId);
+  if (seat) return fail(res, 409, seat);
 
   const profile = await profileOf(sb, user.id);
   if (!profile) return fail(res, 409, 'profile_required');
@@ -187,7 +200,8 @@ async function handleQuote(req, res, sb, user) {
   const expires = new Date(Date.now() + P.QUOTE_MINUTES * 60000).toISOString();
   const { data: q, error: qErr } = await sb.from('quotes').insert({
     user_id: user.id, product_key: productKey, variant, cadence, band, currency, unit_amount: price.unit_amount,
-    stripe_price_id: price.stripe_price_id, setup_intent_id: si.id, cohort_id: cohortId, expires_at: expires,
+    stripe_price_id: price.stripe_price_id, setup_intent_id: si.id, cohort_id: R.PRODUCT_KIND[productKey] ? cohortId : null,
+    session_id: productKey === 'trial' || productKey === 'help_class' ? sessionId : null, expires_at: expires,
     payment_method_id: pm.id, card_country: cardCountry, founding_claim: claim, ip_country: ipCountryOf(req),
   }).select('id').single();
   if (qErr) throw new Error('quote: ' + qErr.message);
@@ -245,6 +259,8 @@ async function handlePurchase(req, res, sb, user) {
   const s = await settings(sb, ['pricing_on_sale']);
   const bad = P.checkRequest(q.product_key, q.cadence, P.onSale(s.pricing_on_sale));
   if (bad) return fail(res, 400, bad);
+  const seat = await R.seatProblem(sb, q.product_key, q.cohort_id, q.session_id);
+  if (seat) return fail(res, 409, seat);
 
   // One purchase per quote: whoever sets purchase_started_at first goes on (a double click does not charge twice).
   const { data: claimed } = await sb.from('quotes').update({ purchase_started_at: new Date().toISOString() })
@@ -366,6 +382,221 @@ async function handleAdminReport(req, res, sb) {
   return res.status(200).json(P.weeklyReport(quotes || [], log || []));
 }
 
+// ── rooms on offer (public) ──
+const firstName = (n) => String(n || '').trim().split(/\s+/)[0] || null;
+const ROOM_COLS = 'id, product_key, language, level, starts_on, schedule_days, schedule_time, timezone, max_students, room_state, class_minutes, teacher_profiles!cohorts_teacher_id_fkey ( full_name )';
+async function handleRooms(req, res, sb) {
+  const product = String((req.query && req.query.product) || '');
+  if (!Object.prototype.hasOwnProperty.call(P.PRODUCTS, product)) return fail(res, 400, 'unknown_product');
+  const today = R.ymd(new Date());
+  const out = [];
+  if (product === 'trial' || product === 'help_class') {
+    const states = product === 'help_class' ? ['open', 'running'] : ['running'];
+    let rq = sb.from('cohorts').select(ROOM_COLS).in('room_state', states).not('product_key', 'is', null);
+    rq = product === 'help_class' ? rq.eq('product_key', 'help_class') : rq.neq('product_key', 'help_class');
+    const rooms = (await rq.limit(100)).data || [];
+    const byId = Object.fromEntries(rooms.map((r) => [r.id, r]));
+    if (rooms.length) {
+      const until = new Date(Date.now() + (product === 'help_class' ? 21 : 14) * 86400000).toISOString();
+      const { data: sessions } = await sb.from('sessions').select('id, cohort_id, scheduled_at').in('cohort_id', rooms.map((r) => r.id))
+        .eq('status', 'scheduled').gte('scheduled_at', new Date(Date.now() + 3600000).toISOString()).lte('scheduled_at', until).order('scheduled_at').limit(60);
+      for (const x of sessions || []) {
+        const r = byId[x.cohort_id];
+        const { data: n } = await sb.rpc('session_seats', { p_session: x.id });
+        if ((n || 0) >= r.max_students) continue;
+        out.push({ sessionId: x.id, at: x.scheduled_at, minutes: r.class_minutes, language: r.language, level: r.level, timezone: r.timezone,
+          teacher: firstName(r.teacher_profiles && r.teacher_profiles.full_name), seatsLeft: r.max_students - (n || 0) });
+      }
+    }
+  } else if (R.PRODUCT_KIND[product]) {
+    const states = R.isPack(product) ? ['published', 'open'] : ['open', 'running'];
+    const { data: rooms } = await sb.from('cohorts').select(ROOM_COLS).eq('product_key', product).in('room_state', states).order('starts_on').limit(50);
+    for (const r of rooms || []) {
+      if (R.isPack(product) && r.starts_on < today) continue;
+      const { data: n } = await sb.rpc('room_seats', { p_cohort: r.id });
+      out.push({ cohortId: r.id, startsOn: r.starts_on, days: r.schedule_days, time: String(r.schedule_time || '').slice(0, 5), timezone: r.timezone,
+        language: r.language, level: r.level, minutes: r.class_minutes, teacher: firstName(r.teacher_profiles && r.teacher_profiles.full_name),
+        joined: n || 0, seatsLeft: Math.max(0, r.max_students - (n || 0)) });
+    }
+  }
+  res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=120');
+  return res.status(200).json({ product, items: out });
+}
+
+// ── rooms for the admin ──
+async function handleAdminRooms(req, res, sb) {
+  const { data, error } = await sb.from('cohorts').select('*, teacher_profiles!cohorts_teacher_id_fkey ( full_name )')
+    .not('product_key', 'is', null).order('starts_on', { ascending: false }).limit(200);
+  if (error) throw new Error('rooms: ' + error.message);
+  const { data: teachers } = await sb.from('teacher_profiles').select('id, full_name, languages, status, country').eq('status', 'approved').order('full_name');
+  const nameOf = Object.fromEntries((teachers || []).map((t) => [t.id, t.full_name]));
+  const rooms = [];
+  for (const r of data || []) {
+    const { data: n } = await sb.rpc('room_seats', { p_cohort: r.id });
+    rooms.push(Object.assign({}, r, { seats: n || 0, substitute: r.substitute_teacher_id ? { full_name: nameOf[r.substitute_teacher_id] || 'a teacher no longer approved' } : null }));
+  }
+  return res.status(200).json({ rooms, teachers: teachers || [] });
+}
+const TIME_RE = /^([01]\d|2[0-3]):[0-5]\d$/;
+const WEEKDAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+async function handleAdminRoom(req, res, sb) {
+  const b = body(req);
+  if (!b) return fail(res, 400, 'bad_json');
+  if (P.isUuid(b.id)) {
+    const { data: r } = await sb.from('cohorts').select('*').eq('id', b.id).not('product_key', 'is', null).maybeSingle();
+    if (!r) return fail(res, 404, 'room_not_found');
+    const f = { updated_at: new Date().toISOString() };
+    if (P.isUuid(b.teacher_id) && b.teacher_id !== r.teacher_id) Object.assign(f, { teacher_id: b.teacher_id, contract_accepted_at: null, contract_declined_at: null,
+      contract_offered_at: ['open', 'running'].includes(r.room_state) ? new Date().toISOString() : null });
+    if (P.isUuid(b.substitute_teacher_id)) f.substitute_teacher_id = b.substitute_teacher_id;
+    const want = [f.teacher_id, f.substitute_teacher_id].filter(Boolean);
+    if (want.length) {
+      const { data: known } = await sb.from('teacher_profiles').select('id').in('id', want).eq('status', 'approved');
+      if (!known || known.length !== want.length) return fail(res, 400, 'teacher_not_approved');
+    }
+    if (b.cancel === true) {
+      if (!['draft', 'published', 'open'].includes(r.room_state)) return fail(res, 409, 'room_running');
+      const ctx = roomCtx(sb);
+      const { data: ents } = await sb.from('entitlements').select('*').eq('cohort_id', r.id).eq('status', 'pending_room');
+      for (const ent of ents || []) { await E.releasePack(ctx, ent); await ctx.tell.learner(ent.user_id, 'room_cancelled', r, {}); }
+      Object.assign(f, { room_state: 'cancelled', decided_at: new Date().toISOString() });
+      await sb.from('sessions').update({ status: 'cancelled' }).eq('cohort_id', r.id).eq('status', 'scheduled');
+    }
+    const { error } = await sb.from('cohorts').update(f).eq('id', r.id);
+    if (error) throw new Error('room update: ' + error.message);
+    if (f.contract_offered_at) await roomCtx(sb).tell.teacher(f.teacher_id, 'contract_offer', Object.assign({}, r, f), { learners: 0 });
+    return res.status(200).json({ ok: true });
+  }
+  const kind = R.PRODUCT_KIND[b.product_key];
+  if (!kind) return fail(res, 400, 'bad_product');
+  const K = R.KINDS[kind];
+  const language = b.product_key === 'help_class' ? (['English', 'German'].includes(b.language) ? b.language : null) : R.LANGUAGE[b.product_key.slice(-2)];
+  if (!language) return fail(res, 400, 'bad_language');
+  if (!['A1', 'A2', 'B1', 'B2', 'C1', 'C2'].includes(b.level)) return fail(res, 400, 'bad_level');
+  if (!P.isUuid(b.teacher_id)) return fail(res, 400, 'teacher_required');
+  if (b.substitute_teacher_id && (!P.isUuid(b.substitute_teacher_id) || b.substitute_teacher_id === b.teacher_id)) return fail(res, 400, 'bad_substitute');
+  const want = [b.teacher_id].concat(b.substitute_teacher_id ? [b.substitute_teacher_id] : []);
+  const { data: known } = await sb.from('teacher_profiles').select('id').in('id', want).eq('status', 'approved');
+  if (!known || known.length !== want.length) return fail(res, 400, 'teacher_not_approved');
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(b.starts_on || '') || b.starts_on < R.ymd(new Date())) return fail(res, 400, 'bad_start');
+  if (!TIME_RE.test(b.schedule_time || '')) return fail(res, 400, 'bad_time');
+  const days = Array.isArray(b.schedule_days) && b.schedule_days.length ? b.schedule_days : K.days;
+  if (!days.every((d) => WEEKDAYS.includes(d)) || new Set(days).size !== days.length) return fail(res, 400, 'bad_days');
+  const tz = typeof b.timezone === 'string' && b.timezone.length < 64 ? b.timezone : 'Europe/Rome';
+  try { new Intl.DateTimeFormat('en', { timeZone: tz }); } catch { return fail(res, 400, 'bad_timezone'); }
+  const max = Math.min(K.max, Math.max(1, parseInt(b.max_students, 10) || K.max));
+  const min = Math.min(max, Math.max(1, parseInt(b.min_learners, 10) || K.min));
+  const { data: room, error } = await sb.from('cohorts').insert({
+    teacher_id: b.teacher_id, substitute_teacher_id: b.substitute_teacher_id || null, language, level: b.level, goal_track: K.goal, tier: K.tier,
+    max_students: max, min_learners: min, description: typeof b.description === 'string' ? b.description.slice(0, 2000) : null,
+    schedule_days: days, schedule_time: b.schedule_time, timezone: tz, status: 'closed', product_key: b.product_key, room_state: 'draft',
+    starts_on: b.starts_on, class_minutes: K.minutes,
+  }).select('id').single();
+  if (error) throw new Error('room insert: ' + error.message);
+  const { data: n, error: gErr } = await sb.rpc('generate_room_sessions', { p_cohort: room.id });
+  if (gErr || !n) {
+    await sb.from('cohorts').delete().eq('id', room.id);
+    return fail(res, 400, 'no_sessions', { detail: gErr ? gErr.message : 'no class dates fall on those days' });
+  }
+  return res.status(200).json({ ok: true, id: room.id, sessions: n });
+}
+
+// ── course contracts for teachers ──
+async function teacherOf(sb, user) {
+  const { data } = await sb.from('teacher_profiles').select('id, full_name').eq('user_id', user.id).maybeSingle();
+  return data || null;
+}
+async function handleContracts(req, res, sb, user) {
+  const t = await teacherOf(sb, user);
+  if (!t) return fail(res, 403, 'teachers_only');
+  const { data, error } = await sb.from('cohorts').select('id, product_key, language, level, starts_on, schedule_days, schedule_time, timezone, room_state, class_minutes, max_students, contract_offered_at, contract_accepted_at, contract_declined_at, teacher_id, substitute_teacher_id')
+    .not('product_key', 'is', null).in('room_state', ['published', 'open', 'running']).or(`teacher_id.eq.${t.id},substitute_teacher_id.eq.${t.id}`).order('starts_on');
+  if (error) throw new Error('contracts: ' + error.message);
+  const rooms = [];
+  for (const r of data || []) {
+    const { data: n } = await sb.rpc('room_seats', { p_cohort: r.id });
+    rooms.push(Object.assign({}, r, { learners: n || 0, role: r.teacher_id === t.id ? 'teacher' : 'substitute' }));
+  }
+  return res.status(200).json({ rooms });
+}
+async function handleContract(req, res, sb, user) {
+  const b = body(req);
+  if (!b || !P.isUuid(b.cohortId) || typeof b.accept !== 'boolean') return fail(res, 400, 'bad_request');
+  const t = await teacherOf(sb, user);
+  if (!t) return fail(res, 403, 'teachers_only');
+  const { data: r } = await sb.from('cohorts').select('*').eq('id', b.cohortId).eq('teacher_id', t.id).maybeSingle();
+  if (!r || !r.contract_offered_at || !['open', 'running'].includes(r.room_state)) return fail(res, 404, 'no_offer');
+  if (r.contract_accepted_at) return fail(res, 409, 'already_accepted');
+  const f = b.accept ? { contract_accepted_at: new Date().toISOString(), contract_declined_at: null } : { contract_declined_at: new Date().toISOString() };
+  const { error } = await sb.from('cohorts').update(f).eq('id', r.id);
+  if (error) throw new Error('contract: ' + error.message);
+  if (!b.accept) await roomCtx(sb).tell.owner([`${t.full_name || 'A teacher'} declined the course contract for ${r.product_key} ${r.level} from ${r.starts_on}. Choose another teacher in Admin, Classes.`]);
+  return res.status(200).json({ ok: true, accepted: b.accept });
+}
+
+// ── emails the room steps send ──
+function roomCtx(sb) {
+  const send = async (to, subject, content) => { if (to && process.env.RESEND_API_KEY) await mail.sendEmail(Object.assign({ to, subject }, content)); };
+  const roomText = (r, lang) => {
+    const kindKey = { level_pack: 'rooms.kind_level', exam_pack: 'rooms.kind_exam', open_class: 'rooms.kind_open', help_class: 'rooms.kind_help' }[R.PRODUCT_KIND[r.product_key]] || 'rooms.kind_level';
+    return { room: L.say(lang, kindKey, { class: L.className(r.language, r.level, lang) }), start: L.day(r.starts_on + 'T12:00:00Z', lang),
+      days: L.weekdays(r.schedule_days || [], lang), time: String(r.schedule_time || '').slice(0, 5), zone: r.timezone };
+  };
+  const email = (lang, k, vars, button, name) => mail.renderEmail({ hero: 'class', lang, preheader: L.say(lang, `${k}.preheader`, vars), heading: L.say(lang, `${k}.heading`, vars),
+    blocks: [{ p: L.hello(lang, name) }, { p: L.html(lang, `${k}.body`, vars) }, { p: L.html(lang, `${k}.body2`, vars) }].concat(button ? [{ button }] : []),
+    footer: L.html(lang, 'rooms.footer', vars) });
+  const learnerOf = async (userId) => {
+    const { data: u } = await sb.auth.admin.getUserById(userId);
+    const { data: sp } = await sb.from('student_profiles').select('full_name, ui_lang').eq('user_id', userId).maybeSingle();
+    return { to: u && u.user && u.user.email, lang: (sp && sp.ui_lang) || 'en', name: sp && sp.full_name };
+  };
+  return {
+    sb, stripe, markerSecret: P.markerSecret(process.env),
+    notify: {
+      // A room's first-day payment that failed or needs the bank's check: the learner is told how to pay
+      paymentFailed: async (userId) => {
+        const p = await learnerOf(userId), lang = p.lang;
+        await send(p.to, L.say(lang, 'pay_failed.subject'), mail.renderEmail({ hero: 'payment', lang, preheader: L.say(lang, 'pay_failed.preheader'), heading: L.say(lang, 'pay_failed.heading'),
+          blocks: [{ p: L.hello(lang, p.name) }, { p: L.html(lang, 'pay_failed.body') }, { p: L.html(lang, 'pay_failed.body2') },
+            { button: { label: L.say(lang, 'pay_failed.button'), href: `${mail.SITE}/app#/settings` } }], footer: L.html(lang, 'pay_failed.footer') }));
+      },
+      owner: async () => {},
+    },
+    tell: {
+      learner: async (userId, kind, room) => {
+        const p = await learnerOf(userId), k = kind, vars = roomText(room, p.lang);
+        await send(p.to, L.say(p.lang, `${k}.subject`, vars), email(p.lang, k, vars, { label: L.say(p.lang, `${k}.button`), href: `${mail.SITE}/app#/settings/plans` }, p.name));
+      },
+      teacher: async (teacherId, kind, room, extra) => {
+        if (!teacherId) return;
+        const { data: t } = await sb.from('teacher_profiles').select('user_id, full_name, ui_lang').eq('id', teacherId).maybeSingle();
+        if (!t) return;
+        const { data: u } = await sb.auth.admin.getUserById(t.user_id);
+        const lang = t.ui_lang || 'en', k = kind, vars = Object.assign(roomText(room, lang), { learners: String((extra && extra.learners) || 0) });
+        await send(u && u.user && u.user.email, L.say(lang, `${k}.subject`, vars), email(lang, k, vars, kind === 'contract_offer' ? { label: L.say(lang, `${k}.button`), href: `${mail.SITE}/app/teach#/classes` } : null, t.full_name));
+      },
+      owner: async (lines) => {
+        const to = process.env.CONTACT_EMAIL || 'bchysfpol@gmail.com';
+        await send(to, 'Alimun rooms: needs your attention', mail.renderEmail({ hero: 'class', lang: 'en', preheader: 'Rooms that need a decision', heading: 'Rooms that need a decision',
+          blocks: lines.map((l) => ({ p: mail.esc(l) })) }));
+      },
+    },
+  };
+}
+
+async function handleCronRooms(req, res, sb) {
+  const secret = process.env.CRON_SECRET;
+  if (!secret || req.headers.authorization !== 'Bearer ' + secret) return fail(res, 401, 'unauthorized');
+  try {
+    const out = await R.runRoomJob(roomCtx(sb), new Date());
+    await recordRun(sb, 'vercel:cron-rooms', true, out);
+    return res.status(200).json(out);
+  } catch (e) {
+    await recordRun(sb, 'vercel:cron-rooms', false, { error: String(e && e.message) });
+    throw e;
+  }
+}
+
 // ── daily billing job ──
 async function handleCronBilling(req, res, sb) {
   const secret = process.env.CRON_SECRET;
@@ -397,6 +628,26 @@ module.exports = async function handler(req, res) {
     if (action === 'display') {
       if (req.method !== 'GET') return fail(res, 405, 'method_not_allowed');
       return await handleDisplay(req, res, sb);
+    }
+    if (action === 'cron-rooms') return await handleCronRooms(req, res, sb);
+    if (action === 'rooms') {
+      if (req.method !== 'GET') return fail(res, 405, 'method_not_allowed');
+      return await handleRooms(req, res, sb);
+    }
+    if (action === 'admin-rooms' || action === 'admin-room') {
+      const admin = await userOf(req, sb);
+      if (!admin) return fail(res, 401, 'sign_in_required');
+      if (!admin.app_metadata || admin.app_metadata.role !== 'admin') return fail(res, 403, 'admins_only');
+      if (action === 'admin-rooms' && req.method === 'GET') return await handleAdminRooms(req, res, sb);
+      if (action === 'admin-room' && req.method === 'POST') return await handleAdminRoom(req, res, sb);
+      return fail(res, 405, 'method_not_allowed');
+    }
+    if (action === 'contracts' || action === 'contract') {
+      const teacher = await userOf(req, sb);
+      if (!teacher) return fail(res, 401, 'sign_in_required');
+      if (action === 'contracts' && req.method === 'GET') return await handleContracts(req, res, sb, teacher);
+      if (action === 'contract' && req.method === 'POST') return await handleContract(req, res, sb, teacher);
+      return fail(res, 405, 'method_not_allowed');
     }
     if (!['setup', 'quote', 'purchase', 'confirm'].includes(action)) return fail(res, 400, 'unknown_action');
     if (req.method !== 'POST') return fail(res, 405, 'method_not_allowed');

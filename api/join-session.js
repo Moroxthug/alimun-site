@@ -164,10 +164,17 @@ module.exports = async function handler(req, res) {
           .maybeSingle();
         if (enrollment) studentProfile = sp;
       }
+      // A trial or help-class pass for this one class date (api/pricing.js, docs/PRICING_ENGINE_SPEC.md step 7)
+      let pass = false;
+      if (!studentProfile) {
+        const { data: passes } = await supabase.from('entitlements').select('id').eq('user_id', user.id)
+          .eq('session_id', session.id).eq('status', 'active').limit(1);
+        if (passes && passes.length && sp) { studentProfile = sp; pass = true; }
+      }
       if (!studentProfile) {
         return res.status(403).json({ error: 'You are not enrolled in this class' });
       }
-      if (!planActive(studentProfile)) {
+      if (!pass && !planActive(studentProfile)) {
         return res.status(402).json({ error: 'payment_required', message: 'Your subscription is not active. Update your billing to rejoin your class.' });
       }
     }

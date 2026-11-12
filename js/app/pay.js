@@ -191,7 +191,7 @@
   var stripe = null, elements = null, setup = null, quote = null, want = null, info0 = null, resolveDone = null;
   var post = function (action, b) { return window.AlimunData.pricing(action, b); };
   var ERR = { trial_used: 'app_pay_trial_used', already_have: 'app_pay_have', quote_expired: 'app_pay_expired', quote_changed: 'app_pay_changed',
-    quote_used: 'app_pay_changed', card_country_unknown: 'app_pay_err', not_on_sale: 'app_pay_err', profile_required: 'app_pay_err' };
+    quote_used: 'app_pay_changed', room_full: 'app_pay_room_full', room_unavailable: 'app_pay_room_gone', session_unavailable: 'app_pay_room_gone', room_required: 'app_pay_room_gone', session_required: 'app_pay_room_gone', card_country_unknown: 'app_pay_err', not_on_sale: 'app_pay_err', profile_required: 'app_pay_err' };
   function errorText(e) {
     var code = e && e.body && e.body.error;
     if (code === 'declined') return t('app_pay_declined') + (e.body.moroccanCard ? ' ' + t('app_pay_ma') : '');
@@ -234,7 +234,7 @@
     setBusy(true); say(''); label(t('app_pay_checking'));
     stripe.confirmSetup({ elements: elements, redirect: 'if_required', confirmParams: { return_url: location.origin + '/app#/settings/plans' } }).then(function (r) {
       if (r && r.error) throw Object.assign(new Error(r.error.message || 'card'), { stripeMessage: r.error.message });
-      return post('quote', { setupIntentId: setup.setupIntentId, productKey: want.productKey, cadence: want.cadence, cohortId: want.cohortId || undefined });
+      return post('quote', { setupIntentId: setup.setupIntentId, productKey: want.productKey, cadence: want.cadence, cohortId: want.cohortId || undefined, sessionId: want.sessionId || undefined });
     }).then(function (qt) {
       setBusy(false);
       if (!el) return;

@@ -233,5 +233,43 @@
     "reason": "Your reason: {reason}",
     "refund": "We will refund what you paid within 14 days, to the payment method you used. If you asked for classes to start during the withdrawal period, the classes already given are deducted. If the purchase is a subscription, we end it; you do not need to cancel it yourself.",
     "footer": "You received this email because you withdrew from a purchase on alimun.com."
+  },
+  "rooms": {
+    "footer": "You get this email because you reserved or teach a room at Alimun.",
+    "kind_level": "Level pack, {class}",
+    "kind_exam": "Exam pack, {class}",
+    "kind_open": "Open class, {class}",
+    "kind_help": "Help class, {class}"
+  },
+  "room_cancelled": {
+    "subject": "Your room will not start on {start}",
+    "preheader": "Nothing has been charged.",
+    "heading": "Your room will not start",
+    "body": "Not enough learners joined **{room}** starting on {start} ({days} at {time}, {zone}), so it will not open.",
+    "body2": "Nothing has been charged and your reservation has ended. You can choose another time or the next start date, and your founding price stays yours.",
+    "button": "Choose another time"
+  },
+  "room_merged": {
+    "subject": "Your room has a new time",
+    "preheader": "Starting on {start}.",
+    "heading": "Your room has a new time",
+    "body": "Your room joined another room at the same level so that it can open: **{room}**, starting on {start}, {days} at {time} ({zone}).",
+    "body2": "Nothing has been charged yet; your card is charged on the first day. If the new time does not suit you, reply to this email before then and we cancel your reservation.",
+    "button": "See other times"
+  },
+  "contract_offer": {
+    "subject": "Course contract offered: {room}",
+    "preheader": "Starting on {start}.",
+    "heading": "A room is ready for you",
+    "body": "**{room}** opens with {learners} learners, starting on {start}, {days} at {time} ({zone}), for 12 weeks.",
+    "body2": "This is a separate course contract that you may accept or decline, without any consequence for future offers. Please answer from your dashboard.",
+    "button": "Answer the offer"
+  },
+  "room_not_opening": {
+    "subject": "{room} from {start} will not open",
+    "preheader": "Not enough learners joined.",
+    "heading": "This room will not open",
+    "body": "**{room}** starting on {start} ({days} at {time}, {zone}) will not open: not enough learners joined, or the learners moved to another room.",
+    "body2": "Thank you for offering this time. Rooms you can teach will come to you as new offers."
   }
 }

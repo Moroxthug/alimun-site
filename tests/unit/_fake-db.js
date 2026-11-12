@@ -10,7 +10,11 @@ function fakeDb(tables, rpcs, opts) {
     const match = (r) => st.filters.every((f) => f(r));
     const run = () => {
       let out;
-      if (st.op === 'select') out = rows().filter(match);
+      if (st.op === 'select') {
+        out = rows().filter(match);
+        if (st.order) { const [k, asc] = st.order; out = out.slice().sort((a, b) => (a[k] < b[k] ? -1 : a[k] > b[k] ? 1 : 0) * (asc ? 1 : -1)); }
+      }
+      else if (st.op === 'delete') { out = rows().filter(match); tables[name] = rows().filter((r) => !match(r)); }
       else if (st.op === 'insert' && (unique[name] || []).some((k) => [].concat(st.payload).some((p) => rows().some((r) => r[k] != null && r[k] === p[k])))) {
         return { data: null, error: { message: 'duplicate key value violates unique constraint' } };
       }
@@ -40,6 +44,12 @@ function fakeDb(tables, rpcs, opts) {
       is(k, v) { st.filters.push((r) => (r[k] == null ? null : r[k]) === v); return api; },
       // or('a.eq.x,b.eq.y'): only eq conditions, enough for the code under test
       or(expr) { const conds = expr.split(',').map((c) => c.split('.eq.')); st.filters.push((r) => conds.some(([k, v]) => String(r[k]) === v)); return api; },
+      lte(k, v) { st.filters.push((r) => r[k] != null && r[k] <= v); return api; },
+      gte(k, v) { st.filters.push((r) => r[k] != null && r[k] >= v); return api; },
+      neq(k, v) { st.filters.push((r) => r[k] !== v); return api; },
+      not(k, op, v) { st.filters.push((r) => (op === 'is' ? (r[k] == null ? null : r[k]) !== v : r[k] !== v)); return api; },
+      order(k, o) { st.order = [k, !(o && o.ascending === false)]; return api; },
+      delete() { st.op = 'delete'; return api; },
       limit() { return api; },
       single() { st.single = true; return Promise.resolve(run()); },
       maybeSingle() { st.maybe = true; return Promise.resolve(run()); },

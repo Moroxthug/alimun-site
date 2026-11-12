@@ -233,5 +233,43 @@
     "reason": "Tu motivo: {reason}",
     "refund": "Te devolveremos lo que pagaste en un plazo de 14 días, con el mismo medio de pago. Si pediste que las clases empezaran durante el plazo de desistimiento, se descuentan las clases ya impartidas. Si la compra es una suscripción, la cancelamos nosotros; no tienes que hacerlo tú.",
     "footer": "Recibes este correo porque desististe de una compra en alimun.com."
+  },
+  "rooms": {
+    "footer": "Recibes este correo porque reservaste o das clase en un aula de Alimun.",
+    "kind_level": "Pack de nivel, {class}",
+    "kind_exam": "Pack de examen, {class}",
+    "kind_open": "Clase abierta, {class}",
+    "kind_help": "Clase de ayuda, {class}"
+  },
+  "room_cancelled": {
+    "subject": "Tu aula no empezará el {start}",
+    "preheader": "No se ha cobrado nada.",
+    "heading": "Tu aula no empezará",
+    "body": "No se apuntaron suficientes estudiantes a **{room}**, que empezaba el {start} ({days} a las {time}, {zone}), así que no abrirá.",
+    "body2": "No se ha cobrado nada y tu reserva ha terminado. Puedes elegir otro horario o la próxima fecha de inicio, y tu precio fundador sigue siendo tuyo.",
+    "button": "Elegir otro horario"
+  },
+  "room_merged": {
+    "subject": "Tu aula tiene un nuevo horario",
+    "preheader": "Empieza el {start}.",
+    "heading": "Tu aula tiene un nuevo horario",
+    "body": "Tu aula se unió a otra del mismo nivel para poder abrir: **{room}**, desde el {start}, {days} a las {time} ({zone}).",
+    "body2": "Todavía no se ha cobrado nada; tu tarjeta se cobra el primer día. Si el nuevo horario no te viene bien, responde a este correo antes de esa fecha y cancelamos tu reserva.",
+    "button": "Ver otros horarios"
+  },
+  "contract_offer": {
+    "subject": "Contrato de curso ofrecido: {room}",
+    "preheader": "Empieza el {start}.",
+    "heading": "Hay un aula lista para ti",
+    "body": "**{room}** abre con {learners} estudiantes, desde el {start}, {days} a las {time} ({zone}), durante 12 semanas.",
+    "body2": "Es un contrato de curso independiente que puedes aceptar o rechazar, sin ninguna consecuencia para futuras ofertas. Responde desde tu panel.",
+    "button": "Responder a la oferta"
+  },
+  "room_not_opening": {
+    "subject": "{room} del {start} no abrirá",
+    "preheader": "No se apuntaron suficientes estudiantes.",
+    "heading": "Esta aula no abrirá",
+    "body": "**{room}**, que empezaba el {start} ({days} a las {time}, {zone}), no abrirá: no se apuntaron suficientes estudiantes o pasaron a otra aula.",
+    "body2": "Gracias por ofrecer este horario. Las aulas que puedas dar te llegarán como nuevas ofertas."
   }
 }

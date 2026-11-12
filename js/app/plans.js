@@ -3,6 +3,9 @@
                      prices for the learner's country, or their band once they have bought. The prices are a guide: at
                      checkout (js/app/pay.js) the country the card was issued in sets the final price, shown before
                      anything is charged. Level and exam packs are reserved (card saved, charged when the room opens).
+   #/settings/plans/pick/<product>/<cadence>  packs, open classes, trial and help class: the learner picks a room
+                     (start date, days, time, places taken) or a class date first (/api/pricing?action=rooms); a pack
+                     can also be reserved without a room, for the next start date.
    Voice practice minutes are also bought from the Tutor when the time is used up: tutorPacks(), buyTutor().
    Learners with a subscription from the old plans change it on Stripe's billing page.
    Coming back after paying (?checkout=success|reserved|minutes) is shown by stripeNote() in js/app/shell.js.
@@ -95,18 +98,69 @@
   }
   function say(which, key, bad) { var m = root.querySelector('[data-plmsg="' + which + '"]'); if (m) { m.textContent = key ? t(key) : ''; m.classList.toggle('is-bad', !!bad); } }
 
-  /* Opens the card-first checkout for one product */
-  function pay(k, cadence, btn, show) {
+  /* Opens the card-first checkout for one product; where: { cohortId } or { sessionId, label } from the picker */
+  function pay(k, cadence, btn, show, where) {
     if (!window.AlimunPay) { show('app_pl_err', true); return; }
     if (btn) btn.disabled = true;
-    var minutes = /^minutes_/.test(k);
-    window.AlimunPay.open(A, { productKey: k, cadence: cadence }, { title: nameOf(k), sub: textOf(k), photo: minutes ? PHOTO.tutor : PHOTO.group })
+    var minutes = /^minutes_/.test(k), w = where || {};
+    window.AlimunPay.open(A, { productKey: k, cadence: cadence, cohortId: w.cohortId, sessionId: w.sessionId },
+      { title: nameOf(k), sub: w.label || textOf(k), photo: minutes ? PHOTO.tutor : PHOTO.group })
       .then(function () { if (btn) btn.disabled = false; }, function (e) { if (btn) btn.disabled = false; show('app_pl_err', true); console.warn('[Alimun] Checkout', e && e.message); });
   }
+  /* Products bought for a room (packs, open classes) or a class date (trial, help class) go through the picker first */
+  function picks(k) { return /^(level|exam|open)_/.test(k) || k === 'trial' || k === 'help_class'; }
   function choose(k, cadence, btn) {
+    if (picks(k)) { location.hash = '#/settings/plans/pick/' + k + '/' + cadence; return; }
     if (!real()) { say('choose', 'app_pl_sample'); return; }
     say('choose', null);
     pay(k, cadence, btn, function (key, bad) { say('choose', key, bad); });
+  }
+
+  /* ---------- The picker: rooms with their start date, days, time and places, or class dates ---------- */
+  var PICK = null;
+  function day(iso) { return new Intl.DateTimeFormat(A.locale, { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(iso + (iso.length === 10 ? 'T12:00:00Z' : ''))); }
+  function weekdays(days) {
+    var idx = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6 };
+    var f = new Intl.DateTimeFormat(A.locale, { weekday: 'long', timeZone: 'UTC' });
+    var names = (days || []).map(function (d) { return idx[d] == null ? d : f.format(new Date(Date.UTC(2024, 0, 7 + idx[d]))); });
+    try { return new Intl.ListFormat(A.locale, { style: 'long', type: 'conjunction' }).format(names); } catch (e) { return names.join(', '); }
+  }
+  function when(iso, tz) {
+    try { return new Intl.DateTimeFormat(A.locale, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZone: tz }).format(new Date(iso)); } catch (e) { return iso; }
+  }
+  function lineOf(k, x) {
+    var bits = [];
+    if (x.sessionId) bits.push(t('app_pp_pick_session', { when: when(x.at, x.timezone), zone: x.timezone, cls: x.language + ' ' + x.level }));
+    else if (/^(level|exam)_/.test(k)) bits.push(t('app_pp_pick_pack', { date: day(x.startsOn), days: weekdays(x.days), time: x.time, zone: x.timezone, level: x.level }));
+    else bits.push(t('app_pp_pick_open', { days: weekdays(x.days), time: x.time, zone: x.timezone, level: x.level }));
+    if (x.teacher) bits.push(t('app_pp_pick_with', { teacher: x.teacher }));
+    if (x.joined != null) bits.push(t('app_pp_pick_joined', { n: x.joined }));
+    bits.push(t('app_pp_pick_left', { n: x.seatsLeft }));
+    return bits.join(' ');
+  }
+  function pickView(k, cadence) {
+    var items = (PICK && PICK.items) || [], pack = /^(level|exam)_/.test(k);
+    var html = '<a class="rd-back" href="#/settings/plans">' + A.icon('back') + '<span>' + esc(t('app_pp_title')) + '</span></a>' +
+      '<div class="view__head"><div><h1 class="t-h1"><bdi>' + esc(nameOf(k)) + '</bdi></h1><p class="t-lead">' + esc(t(pack ? 'app_pp_pick_lead_pack' : 'app_pp_pick_lead')) + '</p></div></div><div class="grid rise">';
+    html += '<section class="card span-12" style="--i:0"><h2 class="t-h2">' + esc(t('app_pp_pick_h')) + '</h2>';
+    if (!items.length) html += '<p class="t-body" style="margin-top:8px">' + esc(t('app_pp_pick_none')) + '</p>';
+    else html += '<div class="tt-week" style="margin-top:12px">' + items.map(function (x, i) {
+      var id = x.sessionId ? 's:' + x.sessionId : 'r:' + x.cohortId, full = x.seatsLeft <= 0;
+      return '<div class="tt-row"><span>' + esc(lineOf(k, x)) + '</span><span class="btn-row"><button class="btn btn--' + (i ? 'ghost' : 'primary') + ' btn--sm" type="button" data-pl="pick" data-k="' + esc(k) + '" data-c="' + esc(cadence) + '" data-w="' + esc(id) + '" data-i="' + i + '"' + (full ? ' disabled' : '') + '>' + esc(t('app_pp_pick_choose')) + '</button></span></div>';
+    }).join('') + '</div>';
+    if (pack) html += '<p class="t-small" style="margin-top:14px">' + esc(t('app_pp_pick_later_p')) + '</p><div class="btn-row" style="margin-top:8px"><button class="btn btn--quiet btn--sm" type="button" data-pl="pick" data-k="' + esc(k) + '" data-c="' + esc(cadence) + '" data-w="">' + esc(t('app_pp_pick_later')) + '</button></div>';
+    html += '<p class="t-small st-msg pl-msg" data-plmsg="pick" aria-live="polite"></p></section>';
+    if (!real()) html += '<p class="t-tiny span-12">' + esc(t('app_pl_sample')) + '</p>';
+    return html + '</div>';
+  }
+  function picked(b) {
+    var k = b.getAttribute('data-k'), c = b.getAttribute('data-c'), w = b.getAttribute('data-w') || '', x = PICK && PICK.items[+b.getAttribute('data-i')];
+    if (!real()) { say('pick', 'app_pl_sample'); return; }
+    say('pick', null);
+    var where = {};
+    if (w.indexOf('r:') === 0) where = { cohortId: w.slice(2), label: x ? lineOf(k, x) : '' };
+    else if (w.indexOf('s:') === 0) where = { sessionId: w.slice(2), label: x ? lineOf(k, x) : '' };
+    pay(k, c, b, function (key, bad) { say('pick', key, bad); }, where);
   }
   function portal(btn) {
     if (!real()) { say('top', 'app_pl_sample'); return; }
@@ -143,12 +197,18 @@
       if (!b || b.disabled) return;
       var a = b.getAttribute('data-pl');
       if (a === 'choose') choose(b.getAttribute('data-k'), b.getAttribute('data-c'), b);
+      else if (a === 'pick') picked(b);
       else if (a === 'portal') portal(b);
     });
   }
   function mount(view_, parts, helpers) {
     A = helpers; root = view_;
     bind();
+    if (parts[1] === 'pick' && picks(parts[2] || '') && /^(month|upfront|once)$/.test(parts[3] || '')) {
+      var k = parts[2], c = parts[3];
+      return window.AlimunData.roomsFor(k).then(function (r) { PICK = r; }, function () { PICK = { items: [] }; })
+        .then(function () { return { html: pickView(k, c), title: nameOf(k) }; });
+    }
     return display().then(function () { return { html: view(), title: t('app_pp_title') }; });
   }
   window.AlimunPlans = { mount: mount, tutorPacks: tutorPacks, buyTutor: buyTutor };

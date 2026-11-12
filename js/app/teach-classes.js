@@ -237,7 +237,60 @@
   function timetableView() {
     return '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_t_nav_classes')) + '</h1><p class="t-lead">' + esc(t('app_tc_lead')) + '</p></div>' +
       '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/classes/new">' + A.icon('plus') + esc(t('app_tc_new')) + '</a><a class="btn btn--ghost btn--sm" href="#/classes/availability">' + esc(t('app_tc_avail')) + '</a></div></div>' +
-      '<div class="grid rise">' + nextCard() + stageCard() + calendarHtml() + comingCard() + pastCard() + sampleLine() + '</div>';
+      '<div class="grid rise"><div class="span-12" data-contracts hidden></div>' + nextCard() + stageCard() + calendarHtml() + comingCard() + pastCard() + sampleLine() + '</div>';
+  }
+
+  /* ---------- Course contracts (rooms of the new price list, docs/LAUNCH_PRICING_SPEC.md section 7) ----------
+     Each room is a separate course contract the teacher may accept or decline, with no effect on later offers. */
+  var KONTRACTS = null;
+  function roomName(r) {
+    var lang = '\u2068' + t(/_de$/.test(r.product_key) || r.language === 'German' ? 'app_pp_lang_de' : 'app_pp_lang_en') + '\u2069';
+    var key = /^level_/.test(r.product_key) ? 'app_pp_level_h' : /^exam_/.test(r.product_key) ? 'app_pp_exam_h' : /^open_/.test(r.product_key) ? 'app_pp_open_h' : 'app_pp_help_h';
+    return t(key, { lang: lang }) + ' ' + r.level;
+  }
+  function kWeekdays(days) {
+    var idx = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6 };
+    var f = new Intl.DateTimeFormat(A.locale, { weekday: 'long', timeZone: 'UTC' });
+    var names = (days || []).map(function (d) { return idx[d] == null ? d : f.format(new Date(Date.UTC(2024, 0, 7 + idx[d]))); });
+    try { return new Intl.ListFormat(A.locale, { style: 'long', type: 'conjunction' }).format(names); } catch (e) { return names.join(', '); }
+  }
+  function contractsHtml() {
+    var rooms = (KONTRACTS && KONTRACTS.rooms) || [];
+    if (!rooms.length) return '';
+    return '<section class="card card--sun" aria-labelledby="tk-h"><h2 class="t-h2" id="tk-h">' + esc(t('app_tk_h')) + '</h2><p class="t-body" style="margin-top:6px">' + esc(t('app_tk_p')) + '</p>' +
+      '<div class="tt-week" style="margin-top:12px">' + rooms.map(function (r) {
+        var start = new Intl.DateTimeFormat(A.locale, { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(r.starts_on + 'T12:00:00Z'));
+        var line = t('app_tk_offer', { room: roomName(r), date: start, days: kWeekdays(r.schedule_days), time: String(r.schedule_time || '').slice(0, 5), zone: r.timezone, n: r.learners });
+        var state = r.role === 'substitute' ? t('app_tk_substitute') : r.contract_accepted_at ? t('app_tk_accepted') : r.contract_declined_at ? t('app_tk_declined') : !r.contract_offered_at ? t('app_tk_waiting') : '';
+        var ask = r.role === 'teacher' && r.contract_offered_at && !r.contract_accepted_at && !r.contract_declined_at;
+        return '<div class="tt-row"><span><b><bdi>' + esc(roomName(r)) + '</bdi></b><small>' + esc(line + (state ? ' ' + state : '')) + '</small></span>' +
+          (ask ? '<span class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-tc="contract" data-id="' + esc(r.id) + '" data-ok="1">' + esc(t('app_tk_accept')) + '</button>' +
+            '<button class="btn btn--quiet btn--sm" type="button" data-tc="contract" data-id="' + esc(r.id) + '" data-ok="0">' + esc(t('app_tk_decline')) + '</button></span>' : '') + '</div>';
+      }).join('') + '</div><p class="t-small st-msg" data-tk-msg aria-live="polite"></p></section>';
+  }
+  function sampleContracts() {
+    var d = new Date(Date.now() + 9 * 86400000).toISOString().slice(0, 10);
+    return { rooms: [{ id: 'k1', product_key: 'level_de', language: 'German', level: 'B1', starts_on: d, schedule_days: ['Monday', 'Tuesday', 'Thursday'], schedule_time: '19:00', timezone: 'Europe/Berlin', learners: 9, role: 'teacher', contract_offered_at: new Date().toISOString() }] };
+  }
+  function drawContracts() {
+    var box = root && root.querySelector('[data-contracts]');
+    if (!box) return;
+    var html = contractsHtml();
+    box.innerHTML = html;
+    box.hidden = !html;
+  }
+  function loadContracts() {
+    var go = C.sample ? Promise.resolve(sampleContracts()) : window.AlimunData.myContracts();
+    go.then(function (d) { KONTRACTS = d; drawContracts(); }, function (e) { console.warn('[Alimun] Course contracts', e && e.message); });
+  }
+  function answer(el) {
+    var id = el.getAttribute('data-id'), ok = el.getAttribute('data-ok') === '1', msg = root.querySelector('[data-tk-msg]');
+    if (C.sample) { if (msg) msg.textContent = t('app_tc_sample'); return; }
+    el.disabled = true;
+    window.AlimunData.answerContract(id, ok).then(function () {
+      KONTRACTS.rooms.forEach(function (r) { if (r.id === id) { if (ok) r.contract_accepted_at = new Date().toISOString(); else r.contract_declined_at = new Date().toISOString(); } });
+      drawContracts();
+    }, function (e) { el.disabled = false; if (msg) msg.textContent = t('app_tk_err'); console.warn('[Alimun] Contract', e && e.message); });
   }
   function sampleLine() { return C.sample ? '<p class="t-tiny span-12">' + esc(t('app_tc_sample')) + '</p>' : ''; }
 
@@ -659,6 +712,7 @@
       var el = e.target.closest('[data-tc]');
       if (!el || el.disabled) return;
       var a = el.getAttribute('data-tc');
+      if (a === 'contract') { answer(el); return; }
       if (a === 'month') { var d = +el.getAttribute('data-d'); C.month = { y: C.month.y + Math.floor((C.month.m + d) / 12), m: ((C.month.m + d) % 12 + 12) % 12 }; redrawCal(); }
       else if (a === 'day') { C.day = el.getAttribute('data-day'); redrawCal(); var b = root.querySelector('[data-day="' + C.day + '"]'); if (b) b.focus({ preventScroll: true }); }
       else if (a === 'addword') {
@@ -727,6 +781,7 @@
       else if (p0 === 'availability') { html = availView(); title = t('app_tc_avail'); }
       else html = timetableView();
       root.innerHTML = html;
+      if (!p0) loadContracts();
       if (!p0 && C.flash) { root.querySelector('.view__head').insertAdjacentHTML('afterend', '<p class="t-body st-msg tc-flash" role="status">' + esc(C.flash) + '</p>'); C.flash = null; }
       if (p0 === 'notes') boardCard(parts[1]);
       if (p0 === 'live') {

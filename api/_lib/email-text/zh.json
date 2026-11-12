@@ -233,5 +233,43 @@
     "reason": "你的原因：{reason}",
     "refund": "我们会在 14 天内原路退还你的付款。如果你曾要求在撤销期内开始上课，已上的课程将被扣除。如果购买的是订阅，我们会为你终止，你无需自行取消。",
     "footer": "你收到这封邮件，是因为你在 alimun.com 撤销了一笔购买。"
+  },
+  "rooms": {
+    "footer": "你收到这封邮件，是因为你在 Alimun 预订了教室或在那里授课。",
+    "kind_level": "级别课程包，{class}",
+    "kind_exam": "考试课程包，{class}",
+    "kind_open": "开放课，{class}",
+    "kind_help": "辅导课，{class}"
+  },
+  "room_cancelled": {
+    "subject": "你的教室不会在 {start} 开课",
+    "preheader": "未扣任何款项。",
+    "heading": "你的教室不会开课",
+    "body": "**{room}**（{start} 开始，{days} {time}，{zone}）报名人数不足，因此不会开课。",
+    "body2": "未扣任何款项，你的预订已结束。你可以选择其他时间或下一个开课日期，你的创始价保持不变。",
+    "button": "选择其他时间"
+  },
+  "room_merged": {
+    "subject": "你的教室时间已更改",
+    "preheader": "{start} 开课。",
+    "heading": "你的教室时间已更改",
+    "body": "为了能够开课，你的教室已与同级别的另一个教室合并：**{room}**，{start} 开始，{days} {time}（{zone}）。",
+    "body2": "目前尚未扣款；首日会从你的银行卡扣款。如果新时间不合适，请在此之前回复这封邮件，我们会取消你的预订。",
+    "button": "查看其他时间"
+  },
+  "contract_offer": {
+    "subject": "课程合同邀约：{room}",
+    "preheader": "{start} 开课。",
+    "heading": "有一个教室为你准备好了",
+    "body": "**{room}** 有 {learners} 名学员，{start} 开始，{days} {time}（{zone}），为期 12 周。",
+    "body2": "这是一份独立的课程合同，你可以接受或拒绝，不会影响今后的邀约。请在你的控制面板中回复。",
+    "button": "回复邀约"
+  },
+  "room_not_opening": {
+    "subject": "{start} 开始的 {room} 不会开课",
+    "preheader": "报名人数不足。",
+    "heading": "这个教室不会开课",
+    "body": "**{room}**（{start} 开始，{days} {time}，{zone}）不会开课：报名人数不足，或学员已转到其他教室。",
+    "body2": "感谢你提供这个时间。你可以授课的教室会以新邀约的形式发给你。"
   }
 }

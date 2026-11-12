@@ -129,6 +129,11 @@ module.exports = async function handler(req, res) {
       return res.status(404).json({ error: 'Cohort not found' });
     }
 
+    // Rooms of the new price list (packs, open classes, help classes) are joined by buying them, never here
+    if (cohort.product_key) {
+      return res.status(409).json({ error: 'room_by_purchase', message: 'Choose this room from Plans and prices.' });
+    }
+
     // ── Pre-enrollment checks ──────────────────────────────
     if (!planActive(student)) {
       return res.status(402).json({

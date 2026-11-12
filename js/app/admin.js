@@ -104,7 +104,8 @@
     'db:expire-waitlist-offers': { name: 'Expire unanswered waiting-list offers', every: 15 * MIN },
     'vercel:cron-create-rooms': { name: 'Prepare tomorrow’s video rooms', every: DAY },
     'vercel:cron-expire-offers': { name: 'Expire offers (daily backstop)', every: DAY },
-    'vercel:cron-billing': { name: 'Pause what stayed unpaid for 3 days', every: DAY }
+    'vercel:cron-billing': { name: 'Pause what stayed unpaid for 3 days', every: DAY },
+    'vercel:cron-rooms': { name: 'Rooms: publish, open or cancel, start and charge', every: DAY }
   };
   function jobsSummary() {
     var by = {};

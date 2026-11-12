@@ -233,5 +233,43 @@
     "reason": "Ihr Grund: {reason}",
     "refund": "Wir erstatten Ihre Zahlung innerhalb von 14 Tagen über das Zahlungsmittel, mit dem Sie bezahlt haben. Wenn Sie verlangt haben, dass der Unterricht während der Widerrufsfrist beginnt, werden die bereits erteilten Stunden abgezogen. Ist der Kauf ein Abonnement, beenden wir es; Sie müssen nichts selbst kündigen.",
     "footer": "Sie erhalten diese E-Mail, weil Sie einen Kauf auf alimun.com widerrufen haben."
+  },
+  "rooms": {
+    "footer": "Sie erhalten diese E-Mail, weil Sie bei Alimun einen Raum reserviert haben oder dort unterrichten.",
+    "kind_level": "Niveau-Paket, {class}",
+    "kind_exam": "Prüfungspaket, {class}",
+    "kind_open": "Offener Kurs, {class}",
+    "kind_help": "Hilfekurs, {class}"
+  },
+  "room_cancelled": {
+    "subject": "Ihr Raum startet nicht am {start}",
+    "preheader": "Es wurde nichts abgebucht.",
+    "heading": "Ihr Raum startet nicht",
+    "body": "Für **{room}** ab dem {start} ({days} um {time}, {zone}) haben sich nicht genug Lernende angemeldet, daher startet er nicht.",
+    "body2": "Es wurde nichts abgebucht und Ihre Reservierung ist beendet. Sie können eine andere Uhrzeit oder den nächsten Starttermin wählen; Ihr Gründungspreis bleibt Ihnen.",
+    "button": "Andere Uhrzeit wählen"
+  },
+  "room_merged": {
+    "subject": "Ihr Raum hat eine neue Uhrzeit",
+    "preheader": "Start am {start}.",
+    "heading": "Ihr Raum hat eine neue Uhrzeit",
+    "body": "Ihr Raum wurde mit einem anderen Raum auf demselben Niveau zusammengelegt, damit er starten kann: **{room}**, ab dem {start}, {days} um {time} ({zone}).",
+    "body2": "Bisher wurde nichts abgebucht; Ihre Karte wird am ersten Tag belastet. Passt Ihnen die neue Uhrzeit nicht, antworten Sie vorher auf diese E-Mail und wir stornieren Ihre Reservierung.",
+    "button": "Andere Uhrzeiten ansehen"
+  },
+  "contract_offer": {
+    "subject": "Kursvertrag angeboten: {room}",
+    "preheader": "Start am {start}.",
+    "heading": "Ein Raum ist für Sie bereit",
+    "body": "**{room}** startet mit {learners} Lernenden ab dem {start}, {days} um {time} ({zone}), für 12 Wochen.",
+    "body2": "Dies ist ein eigener Kursvertrag, den Sie annehmen oder ablehnen können, ohne Folgen für künftige Angebote. Bitte antworten Sie in Ihrem Dashboard.",
+    "button": "Auf das Angebot antworten"
+  },
+  "room_not_opening": {
+    "subject": "{room} ab dem {start} startet nicht",
+    "preheader": "Nicht genug Lernende angemeldet.",
+    "heading": "Dieser Raum startet nicht",
+    "body": "**{room}** ab dem {start} ({days} um {time}, {zone}) startet nicht: Es haben sich nicht genug Lernende angemeldet, oder sie sind in einen anderen Raum gewechselt.",
+    "body2": "Danke, dass Sie diese Zeit angeboten haben. Räume, die Sie unterrichten können, erreichen Sie als neue Angebote."
   }
 }

@@ -433,8 +433,12 @@ test('trial: a used card is refused and logged; the visitor\'s country is kept b
   tables.app_settings.find((r) => r.key === 'pricing_on_sale').value = 'trial,level_en';
   tables.price_book.push({ product_key: 'trial', band: 'B', variant: 'list', cadence: 'once', currency: 'mad', unit_amount: 2990, stripe_price_id: 'price_trial', active: true });
   tables.trial_markers.push({ kind: 'card', hash: P.markerHash('card', 'fp1', P.markerSecret({ SUPABASE_SERVICE_ROLE_KEY: 'service' })) });
+  const room = { id: '33333333-3333-4333-8333-333333333333', product_key: 'level_en', room_state: 'running', max_students: 12 };
+  const sess = { id: '44444444-4444-4444-8444-444444444444', cohort_id: room.id, scheduled_at: new Date(Date.now() + 2 * 86400000).toISOString(), status: 'scheduled' };
+  tables.cohorts = [room]; tables.sessions = [sess];
+  rpcs.session_seats = () => ({ data: 0, error: null });
   const { handler } = load(tables, rpcs);
-  const r = await call(handler, 'quote', { setupIntentId: 'seti_12345678', productKey: 'trial', cadence: 'once' });
+  const r = await call(handler, 'quote', { setupIntentId: 'seti_12345678', productKey: 'trial', cadence: 'once', sessionId: sess.id });
   assert.strictEqual(r.body.error, 'trial_used');
   assert.deepStrictEqual(tables.abuse_log[0].detail, { marker: 'card', card_country: 'MA' });
   const q = await call(handler, 'quote', { setupIntentId: 'seti_12345678', productKey: 'level_en', cadence: 'upfront' });
@@ -475,4 +479,27 @@ test('referrals: rewarded only after a payment, from a different card, phone and
   assert.deepStrictEqual(P.referralEligible({ referrer: me, referred: friend, referredHasPaid: true, rewardsThisMonth: 0 }), { ok: true });
   assert.deepStrictEqual(P.referralEligible({ referrer: me, referred: { markers: { card: 'c1' } }, referredHasPaid: true }), { ok: false, why: 'same_card' });
   assert.deepStrictEqual(P.referralEligible({ referrer: me, referred: friend, referredHasPaid: true, rewardsThisMonth: 5 }), { ok: false, why: 'monthly_cap' });
+});
+
+// ---------- Step 7: rooms at checkout ----------
+test('open class: bought for a chosen room, the learner is enrolled at once; a full room is refused', async () => {
+  const { tables, rpcs } = world();
+  tables.app_settings.find((r) => r.key === 'pricing_on_sale').value = 'open_en';
+  tables.products.push({ product_key: 'open_en', voice_minutes_month: 40 });
+  tables.price_book.push({ product_key: 'open_en', band: 'B', variant: 'list', cadence: 'month', currency: 'mad', unit_amount: 24900, stripe_price_id: 'price_open', active: true });
+  const room = { id: '55555555-5555-4555-8555-555555555555', product_key: 'open_en', room_state: 'running', max_students: 20 };
+  tables.cohorts = [room]; tables.enrollments = [];
+  rpcs.room_seats = () => ({ data: tables.entitlements.filter((e) => e.cohort_id === room.id).length, error: null });
+  const { handler } = load(tables, rpcs);
+  const quote = await call(handler, 'quote', { setupIntentId: 'seti_12345678', productKey: 'open_en', cadence: 'month', cohortId: room.id });
+  assert.strictEqual(quote.code, 200, JSON.stringify(quote.body));
+  const buy = await call(handler, 'purchase', { quoteId: quote.body.quoteId });
+  assert.strictEqual(buy.code, 200, JSON.stringify(buy.body));
+  assert.strictEqual(tables.entitlements[0].cohort_id, room.id);
+  assert.strictEqual(tables.enrollments.length, 1);
+  assert.strictEqual(tables.enrollments[0].cohort_id, room.id);
+  assert.strictEqual(tables.student_profiles[0].enrolled_cohort_id, room.id);
+  room.max_students = 1;
+  const again = await call(handler, 'quote', { setupIntentId: 'seti_12345678', productKey: 'open_en', cadence: 'month', cohortId: room.id });
+  assert.strictEqual(again.body.error, 'room_full');
 });

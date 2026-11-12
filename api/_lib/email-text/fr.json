@@ -233,5 +233,43 @@
     "reason": "Votre motif : {reason}",
     "refund": "Nous vous rembourserons dans un délai de 14 jours, par le moyen de paiement utilisé. Si vous avez demandé que les cours commencent pendant le délai de rétractation, les cours déjà donnés sont déduits. Si l'achat est un abonnement, nous y mettons fin ; vous n'avez rien à résilier vous-même.",
     "footer": "Vous recevez cet e-mail parce que vous vous êtes rétracté d'un achat sur alimun.com."
+  },
+  "rooms": {
+    "footer": "Vous recevez cet e-mail parce que vous avez réservé ou enseignez dans une salle Alimun.",
+    "kind_level": "Pack niveau, {class}",
+    "kind_exam": "Pack examen, {class}",
+    "kind_open": "Cours ouvert, {class}",
+    "kind_help": "Cours d'aide, {class}"
+  },
+  "room_cancelled": {
+    "subject": "Votre salle ne commencera pas le {start}",
+    "preheader": "Rien n'a été débité.",
+    "heading": "Votre salle ne commencera pas",
+    "body": "Trop peu d'apprenants ont rejoint **{room}**, qui devait commencer le {start} ({days} à {time}, {zone}) ; elle n'ouvrira donc pas.",
+    "body2": "Rien n'a été débité et votre réservation a pris fin. Vous pouvez choisir un autre horaire ou la prochaine date de début, et votre prix fondateur vous reste acquis.",
+    "button": "Choisir un autre horaire"
+  },
+  "room_merged": {
+    "subject": "Votre salle a un nouvel horaire",
+    "preheader": "Début le {start}.",
+    "heading": "Votre salle a un nouvel horaire",
+    "body": "Votre salle a rejoint une autre salle du même niveau pour pouvoir ouvrir : **{room}**, à partir du {start}, {days} à {time} ({zone}).",
+    "body2": "Rien n'a encore été débité ; votre carte est débitée le premier jour. Si le nouvel horaire ne vous convient pas, répondez à cet e-mail avant cette date et nous annulons votre réservation.",
+    "button": "Voir d'autres horaires"
+  },
+  "contract_offer": {
+    "subject": "Contrat de cours proposé : {room}",
+    "preheader": "Début le {start}.",
+    "heading": "Une salle est prête pour vous",
+    "body": "**{room}** ouvre avec {learners} apprenants, à partir du {start}, {days} à {time} ({zone}), pendant 12 semaines.",
+    "body2": "C'est un contrat de cours distinct que vous pouvez accepter ou refuser, sans aucune conséquence pour les offres futures. Merci de répondre depuis votre tableau de bord.",
+    "button": "Répondre à l'offre"
+  },
+  "room_not_opening": {
+    "subject": "{room} du {start} n'ouvrira pas",
+    "preheader": "Trop peu d'apprenants ont rejoint.",
+    "heading": "Cette salle n'ouvrira pas",
+    "body": "**{room}**, qui devait commencer le {start} ({days} à {time}, {zone}), n'ouvrira pas : trop peu d'apprenants l'ont rejointe, ou ils ont rejoint une autre salle.",
+    "body2": "Merci d'avoir proposé cet horaire. Les salles que vous pouvez animer vous parviendront sous forme de nouvelles offres."
   }
 }
