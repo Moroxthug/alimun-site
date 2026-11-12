@@ -31,7 +31,7 @@ Checked: a fake signed-in learner in headless Chromium (phone size): service wor
 - A performance budget checked in CI: the app interactive in under one second on a mid-range phone on a repeat visit.
 
 ## Step 3: store apps
-- Capacitor shell loading the same `/app`, with the owner's loader as the splash screen, the lime icon, deep links from emails, and native storage so iPhone does not clear downloads.
+- Capacitor shell loading the same `/app`, with the owner's loader as the splash screen, the icon on white, deep links from emails, and native storage so iPhone does not clear downloads.
 - Push notifications for class reminders, homework and flashcard reviews (the bell's notifications already exist).
 - Store purchases through RevenueCat for the app subscription and tutor minutes only, as decided on 11 Nov 2026 (`docs/PRICING_ENGINE_SPEC.md`). Classes and packs stay on the website, within what each store's rules allow; check the current App Review Guidelines before submitting.
 - Store listings, screenshots, privacy labels and the EU AI Act notices for the AI features.
