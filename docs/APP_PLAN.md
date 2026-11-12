@@ -41,7 +41,7 @@ Ideas, none built: a home-screen widget with the word of the day and the flashca
 
 ## Owner's decisions, 12 Nov 2026
 - "everyone can download, free download has limited access, like 2/3 units and a few exercises". Every account can download. Learners without a paid plan get the first two or three units of the book and a few exercises; paying learners get everything. Built in its own step, before or with step 2. The exact number of units and which exercises are free are still to be settled.
-- Today a free learner can read the whole book online (the reader, library and practice check no plan). If only the download were limited, the limit would mean little. The next conversation should confirm whether the same limit applies online too. A real limit also needs the paid units served only to signed-in paying learners (an API check), not as public files.
+- Owner, 12 Nov: "yes, offline and online both limited for free users". The same limit applies in the browser and in downloads. Today a free learner can read the whole book online (the reader, library and practice check no plan), so the paid units must be served only to signed-in paying learners (an API check), not as public files.
 - Step 2 starts in a new conversation.
 
 ## Decisions for the owner
