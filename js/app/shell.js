@@ -684,7 +684,7 @@
   var stripeCheckout = null;
   function fromStripe() {
     var q = new URLSearchParams(location.search), c = q.get('checkout'), join = q.get('join');
-    if (!/^(success|cancelled|credit|tutor)$/.test(c || '')) return null;
+    if (!/^(success|cancelled|credit|tutor|reserved|minutes)$/.test(c || '')) return null;
     stripeCheckout = /^cs_(live|test)_[A-Za-z0-9]{10,200}$/.test(q.get('session_id') || '') ? q.get('session_id') : null;
     ['checkout', 'join', 'session_id', 'tier'].forEach(function (k) { q.delete(k); });
     var hash = c === 'success' && /^[0-9a-f-]{36}$/i.test(join || '') ? '#/classes/find/' + join : location.hash;
@@ -695,6 +695,9 @@
     var show = function (text) { var box = app.querySelector('[data-appnote]'); if (box) box.innerHTML = '<p class="t-body cl-flash">' + esc(text) + '</p>'; };
     if (c === 'cancelled') return show(t('app_pl_back_cancelled'));
     if (c === 'credit') return show(t('app_pl_back_credit'));
+    /* The card-first checkout (js/app/pay.js): a reserved pack, and voice minutes added before coming back */
+    if (c === 'reserved') return show(t('app_pl_back_reserved'));
+    if (c === 'minutes') return show(t('app_pl_back_minutes'));
     if (c === 'tutor') return tutorBack(show);
     if (mode !== 'real' || D.profile.paying) return show(t('app_pl_back_success'));
     show(t('app_pl_back_success') + ' ' + t('app_pl_confirming'));

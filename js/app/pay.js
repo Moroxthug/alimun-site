@@ -1,19 +1,15 @@
-/* Alimun app: Alimun's own checkout page (replaces the trip to Stripe's page, 9 Nov 2026).
-   AlimunPay.open(A, body, info) covers the dashboard with a full-screen checkout in the dashboard's look: what is
-   being bought (info.title, info.sub, info.photo) with Stripe's own amounts on the left, and the payment on the
-   right. Stripe draws only the payment fields (Stripe.js, Checkout Sessions with ui_mode "custom", API version
-   2025-09-30.clover, so js.stripe.com/clover), styled with Satoshi, bone, forest and lime.
-   The server makes the session exactly as before (api/stripe.js ?action=create-checkout, body.ui = 'custom'): same
-   prices, customer, welcome gift, metadata and webhook; Stripe sends the student to the same "back" address after
-   paying. Closing the page is the cancel.
-   If anything on the way fails to load (Stripe.js, the session, the payment fields), it falls back to Stripe's own
-   page so nobody is stuck. Refusals the caller handles itself (active_subscription, profile_required) are passed
-   back as a rejected promise with the server's answer in e.body. Interface text: app_pay_* keys. */
+/* Alimun app: Alimun's own checkout page, card first (docs/PRICING_ENGINE_SPEC.md section 4; build step 4, 12 Nov 2026).
+   AlimunPay.open(A, { productKey, cadence, cohortId }, { title, sub, photo }) covers the dashboard with a full-screen
+   checkout in the dashboard's look. The learner adds a card first (a SetupIntent from /api/pricing?action=setup, Stripe's
+   Payment Element, nothing charged); the server reads the country the card was issued in and answers with the final
+   price (?action=quote), shown before anything is charged ("Your card is from Morocco, so your price is ..."). Pay or
+   Reserve then calls ?action=purchase; a payment the bank must confirm opens the bank's check (handleNextAction) and
+   ?action=confirm records it. Level and exam packs are reserved: the card is saved and charged when the room opens.
+   The browser never sends an amount, a currency or a price. Interface text: app_pay_* keys. */
 (function () {
   'use strict';
   var STRIPE_JS = 'https://js.stripe.com/clover/stripe.js';
-  var A = null, el = null, co = null, actions = null, busy = false, codes = false, lastFocus = null, keyHandler = null;
-  var CALLER_ERRORS = { active_subscription: true, profile_required: true };
+  var A = null, el = null, busy = false, lastFocus = null, keyHandler = null;
 
   function t(k, v) { return A.t(k, v); }
   function esc(s) { return A.esc(s); }
@@ -101,19 +97,13 @@
           '<h1 class="t-display pay__title" id="pay-h"><bdi>' + esc(info.title) + '</bdi></h1>' +
           (info.sub ? '<p class="t-lead pay__sub">' + esc(info.sub) + '</p>' : '') +
           photo +
-          '<div class="pay__bill" data-pay="bill" aria-live="polite"><div class="pay__bill-wait">' + loader(44) + '</div></div>' +
+          '<div class="pay__bill" data-pay="bill" aria-live="polite"><p class="t-body">' + esc(t('app_pay_card_p')) + '</p></div>' +
         '</section>' +
         '<section class="pay__form" aria-label="' + esc(t('app_pay_h')) + '">' +
-          '<h2 class="t-h2">' + esc(t('app_pay_h')) + '</h2>' +
+          '<h2 class="t-h2" data-pay="form-h">' + esc(t('app_pay_card_h')) + '</h2>' +
           '<div class="pay__fields" data-pay="fields"><div class="pay__wait">' + loader(72) + '<p class="t-small">' + esc(t('app_pay_loading')) + '</p></div></div>' +
-          '<div class="pay__code" data-pay="code" hidden>' +
-            '<button class="linkish pay__code-open" type="button" data-pay="code-open">' + esc(t('app_pay_code')) + '</button>' +
-            '<form class="pay__code-form" data-pay="code-form" hidden><label class="sr-only" for="pay-code">' + esc(t('app_pay_code_ph')) + '</label>' +
-              '<input id="pay-code" class="pay__code-in" name="code" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="' + esc(t('app_pay_code_ph')) + '">' +
-              '<button class="btn btn--quiet btn--sm" type="submit">' + esc(t('app_pay_apply')) + '</button></form>' +
-            '<p class="t-small pay__code-msg" data-pay="code-msg" aria-live="polite"></p>' +
-          '</div>' +
-          '<button class="btn btn--lime pay__go" type="button" data-pay="go" disabled><span data-pay="go-label">' + esc(t('app_pay_go_np')) + '</span></button>' +
+          '<button class="btn btn--lime pay__go" type="button" data-pay="go" disabled><span data-pay="go-label">' + esc(t('app_pay_next')) + '</span></button>' +
+          '<button class="linkish pay__again" type="button" data-pay="again" hidden>' + esc(t('app_pay_change_card')) + '</button>' +
           '<p class="t-small pay__msg" data-pay="msg" role="alert"></p>' +
           '<p class="t-tiny pay__safe">' + lockIcon() + '<span>' + esc(t('app_pay_safe')) + '</span></p>' +
         '</section>' +
@@ -123,37 +113,47 @@
     return '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4.5" y="10.5" width="15" height="10" rx="3"/><path d="M8 10.5V7.5a4 4 0 0 1 8 0v3"/></svg>';
   }
   function q(name) { return el && el.querySelector('[data-pay="' + name + '"]'); }
-
-  /* What is due, from Stripe's session: amounts arrive formatted in the student's currency */
-  function amt(x) { return x && typeof x === 'object' ? String(x.amount || '') : ''; }
-  function bill(s) {
-    var box = q('bill');
-    if (!box || !s) return;
-    var rows = '', tot = s.total || {};
-    (s.lineItems || []).forEach(function (li) {
-      rows += '<div class="pay__row"><span>' + esc(li.name || '') + '</span><span>' + esc(amt(li.subtotal)) + '</span></div>';
-    });
-    (s.discountAmounts || []).forEach(function (d) {
-      var name = d.promotionCode ? d.promotionCode : (d.displayName || t('app_pay_discount'));
-      rows += '<div class="pay__row pay__row--off"><span>' + esc(name) + '</span><span>−' + esc(amt(d)) + '</span></div>';
-    });
-    var then = '';
-    if (s.recurring && s.recurring.dueNext && s.recurring.dueNext.total) {
-      then = '<p class="t-small pay__then">' + esc(t(s.recurring.interval === 'year' ? 'app_pay_then_year' : 'app_pay_then_month', { price: amt(s.recurring.dueNext.total) })) + '</p>';
-    }
-    box.innerHTML = rows +
-      '<div class="pay__row pay__row--total"><span>' + esc(t('app_pay_today')) + '</span><span class="pay__total">' + esc(amt(tot.total)) + '</span></div>' + then;
-    var label = q('go-label');
-    if (label) label.textContent = amt(tot.total) ? t('app_pay_go', { price: amt(tot.total) }) : t('app_pay_go_np');
-    var code = q('code');
-    if (code) code.hidden = !codes;
-  }
   function say(msg) { var m = q('msg'); if (m) m.textContent = msg || ''; }
+  function label(text) { var l = q('go-label'); if (l) l.textContent = text; }
+  function setBusy(on) { busy = on; var go = q('go'); if (go) { go.disabled = on; go.classList.toggle('is-busy', on); } }
+
+  /* Money in the learner's language: whole amounts without cents */
+  function money(amount, currency) {
+    var whole = amount % 100 === 0;
+    return new Intl.NumberFormat(A.locale, { style: 'currency', currency: String(currency || 'eur').toUpperCase(), minimumFractionDigits: whole ? 0 : 2, maximumFractionDigits: 2 }).format(amount / 100);
+  }
+  function countryName(cc) {
+    try { return new Intl.DisplayNames([A.locale], { type: 'region' }).of(cc) || cc; } catch (e) { return cc; }
+  }
+  /* The price with its period, as the quote gives it */
+  function priced(qt) {
+    var p = money(qt.amount, qt.currency);
+    if (qt.cadence === 'month') return t('app_pl_per_month', { price: p });
+    if (qt.cadence === 'year') return t('app_pl_per_year', { price: p });
+    return p;
+  }
+
+  /* The quote, on the left, before anything is charged */
+  function showQuote(qt) {
+    var box = q('bill'), p = money(qt.amount, qt.currency), lines = '';
+    lines += '<p class="t-body"><b>' + esc(t('app_pay_quote', { country: countryName(qt.cardCountry), price: priced(qt) })) + '</b></p>';
+    if (qt.founding && qt.listAmount) lines += '<p class="t-small">' + esc(t('app_pay_founding', { price: money(qt.listAmount, qt.currency) })) + '</p>';
+    if (qt.charge === 'reserve') lines += '<p class="t-small">' + esc(t(qt.cadence === 'month' ? 'app_pay_reserve_mo' : 'app_pay_reserve_up', { price: p })) + '</p>';
+    else if (qt.cadence === 'month' || qt.cadence === 'year') lines += '<p class="t-small">' + esc(t(qt.cadence === 'year' ? 'app_pay_then_year' : 'app_pay_then_month', { price: p })) + '</p>';
+    if (qt.minutes) lines += '<p class="t-small">' + esc(t('app_pay_minutes_p', { n: qt.minutes })) + '</p>';
+    if (qt.taxInclusive === false) lines += '<p class="t-small">' + esc(t('app_pp_tax_plus')) + '</p>';
+    box.innerHTML = lines + '<div class="pay__row pay__row--total"><span>' + esc(t('app_pay_today')) + '</span><span class="pay__total">' + esc(qt.charge === 'reserve' ? money(0, qt.currency) : p) + '</span></div>';
+    var h = q('form-h');
+    if (h) h.textContent = t('app_pay_h');
+    label(qt.charge === 'reserve' ? t('app_pay_reserve') : t('app_pay_go', { price: p }));
+    q('again').hidden = false;
+  }
 
   /* ---------- Opening and closing ---------- */
   function close() {
     if (!el || busy) return;
-    var old = el; el = null; co = null; actions = null;
+    var old = el; el = null; elements = null; quote = null; setup = null;
+    if (resolveDone) { var done = resolveDone; resolveDone = null; done(); }
     document.documentElement.classList.remove('pay-open');
     if (keyHandler) document.removeEventListener('keydown', keyHandler);
     old.classList.add('is-leaving');
@@ -173,7 +173,6 @@
     document.body.appendChild(el);
     document.documentElement.classList.add('pay-open');
     el.addEventListener('click', onClick);
-    q('code-form').addEventListener('submit', onCode);
     keyHandler = function (e) { if (e.key === 'Escape') close(); };
     document.addEventListener('keydown', keyHandler);
     el.setAttribute('tabindex', '-1');
@@ -184,95 +183,132 @@
     if (!b) return;
     var a = b.getAttribute('data-pay');
     if (a === 'close') close();
-    else if (a === 'go') pay();
-    else if (a === 'code-open') { b.hidden = true; var f = q('code-form'); f.hidden = false; f.querySelector('input').focus(); }
-  }
-  function onCode(e) {
-    e.preventDefault();
-    var input = e.target.querySelector('input'), code = (input.value || '').trim(), m = q('code-msg');
-    if (!code || !actions) return;
-    m.textContent = '';
-    actions.applyPromotionCode(code).then(function (r) {
-      if (r && r.type === 'error') { m.textContent = t('app_pay_code_bad'); return; }
-      input.value = '';
-      if (r && r.session) bill(r.session);
-    }, function () { m.textContent = t('app_pay_code_bad'); });
+    else if (a === 'go') { if (quote) buy(); else addCard(); }
+    else if (a === 'again') restart();
   }
 
-  /* Stripe's own page, when Alimun's cannot open */
-  function hosted(body) {
-    say(t('app_pl_going'));
-    return window.AlimunData.checkout(body).then(function (r) {
-      var u = new URL(r.url);
-      if (u.protocol !== 'https:' || !/(^|\.)stripe\.com$/.test(u.hostname)) throw new Error('unexpected checkout address');
-      busy = true;
-      location.href = u.href;
-    });
+  /* ---------- The steps ---------- */
+  var stripe = null, elements = null, setup = null, quote = null, want = null, info0 = null, resolveDone = null;
+  var post = function (action, b) { return window.AlimunData.pricing(action, b); };
+  var ERR = { trial_used: 'app_pay_trial_used', already_have: 'app_pay_have', quote_expired: 'app_pay_expired', quote_changed: 'app_pay_changed',
+    quote_used: 'app_pay_changed', card_country_unknown: 'app_pay_err', not_on_sale: 'app_pay_err', profile_required: 'app_pay_err' };
+  function errorText(e) {
+    var code = e && e.body && e.body.error;
+    if (code === 'declined') return t('app_pay_declined') + (e.body.moroccanCard ? ' ' + t('app_pay_ma') : '');
+    return t(ERR[code] || 'app_pay_err');
   }
 
-  function pay() {
-    if (!actions || busy) return;
-    var go = q('go');
-    busy = true; go.disabled = true; go.classList.add('is-busy'); say('');
-    q('go-label').textContent = t('app_pay_busy');
-    actions.confirm().then(function (r) {
-      // On success Stripe moves the page to the "back" address; an answer here means it did not go through.
-      if (r && r.type === 'error') {
-        busy = false; go.disabled = false; go.classList.remove('is-busy');
-        say((r.error && r.error.message) || t('app_pay_err'));
-        bill(actions.getSession());
-      }
-    }, function (e) {
-      busy = false; go.disabled = false; go.classList.remove('is-busy');
-      say(t('app_pay_err'));
-      bill(actions && actions.getSession());
-      console.warn('[Alimun] Pay', e && e.message);
-    });
-  }
-
-  /* body: what /api/stripe?action=create-checkout takes; info: { title, sub, photo } */
-  function open(helpers, body, info) {
-    A = helpers; busy = false; codes = false;
-    show(info || {});
-    var session = window.AlimunData.checkout(Object.assign({}, body, { ui: 'custom' }));
-    return Promise.all([session, loadStripeJs(), loadConfig()]).then(function (res) {
-      var r = res[0];
+  /* Step one: the card, through a SetupIntent (nothing charged) */
+  function mountCard() {
+    quote = null;
+    var fields = q('fields');
+    fields.innerHTML = '<div class="pay__wait">' + loader(72) + '<p class="t-small">' + esc(t('app_pay_loading')) + '</p></div>';
+    fields.classList.remove('is-ready');
+    label(t('app_pay_next')); q('go').disabled = true; q('again').hidden = true;
+    return Promise.all([post('setup', {}), loadStripeJs(), loadConfig()]).then(function (res) {
       if (!el) return null;
-      if (!r || !r.clientSecret) throw new Error('no client secret');
-      codes = !r.welcomeGift;
-      var stripe = window.Stripe(config.stripePublishableKey, { locale: stripeLocale() });
-      co = stripe.initCheckout({ clientSecret: r.clientSecret, elementsOptions: { appearance: appearance(), fonts: fonts() } });
-      var fields = q('fields');
+      setup = res[0];
+      if (!setup || !setup.clientSecret) throw new Error('no setup');
+      if (!stripe) stripe = window.Stripe(config.stripePublishableKey, { locale: stripeLocale() });
+      elements = stripe.elements({ clientSecret: setup.clientSecret, appearance: appearance(), fonts: fonts() });
       var mountAt = document.createElement('div');
       mountAt.className = 'pay__pe';
       fields.appendChild(mountAt);
-      var pe = co.createPaymentElement({ layout: { type: 'accordion', defaultCollapsed: false, radios: true, spacedAccordionItems: true } });
-      var ready = new Promise(function (resolve, reject) {
+      var pe = elements.create('payment', { layout: { type: 'accordion', defaultCollapsed: false, radios: true, spacedAccordionItems: true } });
+      return new Promise(function (resolve, reject) {
         pe.on('ready', resolve);
-        pe.on('loaderror', function (ev) { reject(new Error((ev && ev.error && ev.error.message) || 'payment fields did not load')); });
-        setTimeout(function () { reject(new Error('payment fields timed out')); }, 20000);
-      });
-      pe.mount(mountAt);
-      co.on('change', function (s) { bill(s); });
-      return Promise.all([co.loadActions(), ready]).then(function (x) {
-        var la = x[0];
-        if (!el) return null;
-        if (!la || la.type !== 'success') throw new Error((la && la.error && la.error.message) || 'checkout did not load');
-        actions = la.actions;
-        var s = actions.getSession();
-        bill(s);
+        pe.on('loaderror', function (ev) { reject(new Error((ev && ev.error && ev.error.message) || 'card fields did not load')); });
+        setTimeout(function () { reject(new Error('card fields timed out')); }, 20000);
+        pe.mount(mountAt);
+      }).then(function () {
+        if (!el) return;
         var wait = fields.querySelector('.pay__wait');
         if (wait) wait.remove();
         fields.classList.add('is-ready');
-        // Ready to pay; Stripe marks anything missing in the fields when Pay is pressed.
         q('go').disabled = false;
-        return null;
       });
+    });
+  }
+  function addCard() {
+    if (!elements || busy) return;
+    setBusy(true); say(''); label(t('app_pay_checking'));
+    stripe.confirmSetup({ elements: elements, redirect: 'if_required', confirmParams: { return_url: location.origin + '/app#/settings/plans' } }).then(function (r) {
+      if (r && r.error) throw Object.assign(new Error(r.error.message || 'card'), { stripeMessage: r.error.message });
+      return post('quote', { setupIntentId: setup.setupIntentId, productKey: want.productKey, cadence: want.cadence, cohortId: want.cohortId || undefined });
+    }).then(function (qt) {
+      setBusy(false);
+      if (!el) return;
+      quote = qt;
+      q('fields').hidden = true;
+      showQuote(qt);
+    }, function (e) {
+      setBusy(false); label(t('app_pay_next'));
+      say(e && e.stripeMessage ? e.stripeMessage : errorText(e));
+      if (e && e.body && /^(trial_used|already_have)$/.test(e.body.error)) q('go').disabled = true;
+    });
+  }
+  /* Another card: a new SetupIntent and a new quote */
+  function restart() {
+    if (busy) return;
+    say(''); q('fields').hidden = false;
+    var box = q('bill'); if (box) box.innerHTML = '<p class="t-body">' + esc(t('app_pay_card_p')) + '</p>';
+    var h = q('form-h'); if (h) h.textContent = t('app_pay_card_h');
+    mountCard().catch(failed);
+  }
+
+  /* Step two: pay or reserve, as quoted */
+  function buy() {
+    if (!quote || busy) return;
+    setBusy(true); say(''); label(t('app_pay_busy'));
+    var qt = quote;
+    post('purchase', { quoteId: qt.quoteId }).then(function (r) {
+      if (r && r.next) {
+        return stripe.handleNextAction({ clientSecret: r.next }).then(function (x) {
+          if (x && x.error) throw Object.assign(new Error('bank'), { stripeMessage: x.error.message });
+          return confirmed(qt, 0);
+        });
+      }
+      return r;
+    }).then(function (r) {
+      if (r && r.done) return finished(qt);
+      throw new Error('not done');
     }).catch(function (e) {
-      if (e && e.body && CALLER_ERRORS[e.body.error]) { busy = false; close(); throw e; }
-      if (!el) return null;
-      console.warn('[Alimun] Alimun checkout unavailable, using Stripe\'s page:', e && e.message);
-      return hosted(body).catch(function (e2) { busy = false; close(); throw e2; });
+      setBusy(false);
+      say(e && e.stripeMessage ? e.stripeMessage : errorText(e));
+      // A refused card or a spent quote: start again with a card
+      quote = null; q('fields').hidden = false; label(t('app_pay_next'));
+      mountCard().catch(failed);
+    });
+  }
+  function confirmed(qt, tries) {
+    return post('confirm', { quoteId: qt.quoteId }).then(function (r) {
+      if (r && r.pending && tries < 6) return new Promise(function (ok) { setTimeout(ok, 2500); }).then(function () { return confirmed(qt, tries + 1); });
+      return r;
+    });
+  }
+  function finished(qt) {
+    say(t('app_pay_done'));
+    busy = false;
+    var where = qt.charge === 'reserve' ? '?checkout=reserved#/settings' : qt.minutes ? '?checkout=minutes#/tutor' : '?checkout=success#/settings';
+    resolveDone = null;
+    setTimeout(function () { location.href = location.origin + '/app' + where; }, 600);
+  }
+  function failed(e) {
+    if (!el) return;
+    console.warn('[Alimun] Checkout', e && e.message);
+    say(errorText(e));
+  }
+
+  /* want: { productKey, cadence, cohortId }; info: { title, sub, photo } */
+  function open(helpers, w, info) {
+    A = helpers; busy = false; want = w || {}; info0 = info || {};
+    show(info0);
+    return new Promise(function (resolve) {
+      resolveDone = resolve;
+      mountCard().catch(function (e) {
+        if (e && e.body && e.body.error === 'profile_required') { busy = false; close(); var x = new Error('profile_required'); x.body = e.body; return resolve(Promise.reject(x)); }
+        failed(e);
+      });
     });
   }
 

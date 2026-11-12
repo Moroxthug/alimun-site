@@ -219,11 +219,7 @@
         (reasonText(st.credit) ? '<p class="t-small cl-oto__why">' + esc(reasonText(st.credit)) + '</p>' : '') + '</div>' +
         (st.credit.canBook ? '<button class="btn btn--primary btn--sm" type="button" data-cl="pick" data-kind="credit">' + esc(t('app_cl_book')) + '</button>' : '') + '</div>';
     }
-    /* One more private class, paid once through Stripe (js/app/plans.js); the price is Stripe's */
-    if (st.teacher && window.AlimunPlans) {
-      html += '<div class="cl-oto__row"><div><h3 class="t-h3">' + esc(t('app_pl_buy_h')) + '</h3><p class="t-body">' + esc(t('app_pl_buy_extra_p')) + '</p><p class="t-small st-msg" data-buymsg aria-live="polite"></p></div>' +
-        '<button class="btn btn--ghost btn--sm" type="button" data-cl="buy" data-buylabel>' + esc(t('app_pl_buy_extra_np')) + '</button></div>';
-    }
+    /* Buying another private class (the 1:1 session credit) ended with the new price list (12 Nov 2026). */
     html += '<div data-picker></div>';
     if (past.length) {
       html += '<h3 class="t-h3 cl-oto__notes-h">' + esc(t('app_cl_oto_notes_h')) + '</h3>' + past.map(function (b) {
@@ -468,7 +464,6 @@
       else if (a === 'cancelno') el.closest('[data-cancelbox]').innerHTML = '';
       else if (a === 'cancelyes') cancel(el.getAttribute('data-id'), el);
       else if (a === 'ics') ics();
-      else if (a === 'buy' && window.AlimunPlans) AlimunPlans.buyExtra(A, el, root.querySelector('[data-buymsg]'));
     });
     /* The countdown and the Join button follow the clock */
     setInterval(function () {
@@ -523,8 +518,6 @@
     }).then(function (res) {
       if (res.stale || my !== mountNo) return { stale: true };
       view.innerHTML = res.html;
-      var buy = view.querySelector('[data-buylabel]');
-      if (buy && window.AlimunPlans) AlimunPlans.extraLabel(A).then(function (l) { if (buy.isConnected) buy.textContent = l; });
       if (res.live) {
         var it = res.live.kind === 'b' ? null : C.sessions.filter(function (x) { return x.id === res.live.id; })[0];
         cls = window.AlimunClassroom.start({ root: root, A: A, role: 'student', cohortId: it ? it.cohort_id : null, sample: C.sample,

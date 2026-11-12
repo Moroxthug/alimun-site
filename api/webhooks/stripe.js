@@ -426,6 +426,9 @@ async function processWebhookEvent(event, supabase) {
     case 'invoice.payment_succeeded': {
       const invoice = object;
       const subId = invoiceSubscriptionId(invoice);
+      // One-time invoices (the card-first checkout, api/pricing.js: voice minutes, trial, help class) are not a plan:
+      // api/pricing.js records them, and they must not mark a subscription active or past due.
+      if (!subId) break;
       const student = await findStudentBySubscription(supabase, subId, invoice.customer);
       if (!student) break;
       if (student.stripe_subscription_status !== 'active') {
@@ -442,6 +445,7 @@ async function processWebhookEvent(event, supabase) {
     case 'invoice.payment_failed': {
       const invoice = object;
       const subId = invoiceSubscriptionId(invoice);
+      if (!subId) break;  // a one-time invoice (see invoice.paid above)
       const student = await findStudentBySubscription(supabase, subId, invoice.customer);
       if (!student) {
         console.warn(`[Alimun Webhook] No student for customer ${invoice.customer}`);
