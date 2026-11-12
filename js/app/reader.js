@@ -170,7 +170,7 @@
     var isGoal = book.track === 'goal', core = isGoal && coreOf(book);
     var html = '' + (core ? backLink('#/book/' + core.id, bookName(core)) : '') +
       '<div class="view__head"><div><h1 class="t-h1"' + (isGoal ? xA(book) : '') + '>' + esc(isGoal ? book.title : bookName(book)) + '</h1><p class="t-lead">' + esc(isGoal ? t('app_book_goal_lead', { course: bookName(book) }) : t('app_book_lead')) + '</p></div>' +
-        '<div class="btn-row">' + explainSwitch(book) + (mine || isGoal ? '' : '<a class="btn btn--ghost btn--sm" href="#/book/' + esc(A.myBookId()) + '">' + esc(t('app_book_mine')) + '</a>') + '</div></div>' +
+        '<div class="btn-row">' + explainSwitch(book) + (window.AlimunOffline ? window.AlimunOffline.bookButton(A, book.id, book.language) : '') + (mine || isGoal ? '' : '<a class="btn btn--ghost btn--sm" href="#/book/' + esc(A.myBookId()) + '">' + esc(t('app_book_mine')) + '</a>') + '</div></div>' +
       '<div class="grid rise">' +
         '<section class="card card--forest span-8 cover-card" style="--i:0" aria-labelledby="h-cont">' +
           '<h2 class="t-h1" id="h-cont">' + esc(h) + '</h2>' +

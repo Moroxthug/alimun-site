@@ -2092,3 +2092,25 @@ body.is-class .view { max-width: 1640px; }
   .ln-win__photo { height: 180px; margin: -4px -4px 16px; }
   .ln-win__x { top: 26px; right: 22px; }
 }
+
+/* ---------- Offline and the installed app (docs/APP_PLAN.md, step 1; js/app/offline.js) ---------- */
+.net-note { position: fixed; left: 50%; bottom: 24px; z-index: 90; max-width: min(560px, calc(100vw - 32px)); padding: 14px 20px; border-radius: var(--r-md);
+  background: var(--white); color: var(--ink); box-shadow: var(--shadow-lift), inset 0 0 0 2px var(--forest); font-size: var(--fs-small); line-height: 1.45;
+  transform: translate(-50%, calc(100% + 40px)); opacity: 0; transition: transform var(--t-mid) var(--spring), opacity var(--t-fast) var(--ease); pointer-events: none; }
+.net-note.is-on { transform: translate(-50%, 0); opacity: 1; pointer-events: auto; cursor: pointer; }
+@media (max-width: 899px) { .net-note { bottom: calc(var(--bar-h) + 16px + env(safe-area-inset-bottom, 0px)); } }
+.off-list { display: grid; gap: 10px; margin-top: 18px; }
+.off-list:empty { display: none; }
+.off-row { display: flex; align-items: center; gap: 16px; padding: 14px 18px; border-radius: var(--r-md); background: var(--bone); }
+.off-row__text { flex: 1; min-width: 0; display: grid; gap: 4px; }
+.off-row__text .t-small { color: var(--muted); }
+.off-meter { display: block; height: 6px; border-radius: 3px; background: var(--faint); overflow: hidden; margin-top: 4px; }
+.off-meter i { display: block; height: 100%; border-radius: inherit; background: var(--forest); transition: width var(--t-mid) var(--ease); }
+.off-msg:empty { display: none; }
+.off-msg { margin-top: 10px; color: var(--coral); }
+.off-install { margin-top: 18px; }
+.off-install:empty { display: none; }
+.off-cover { gap: 8px; }
+.off-cover svg { width: 18px; height: 18px; }
+.off-cover.is-saved { box-shadow: none; background: var(--t-lime); cursor: default; }
+.off-cover.is-saved:hover { background: var(--t-lime); color: var(--forest); }

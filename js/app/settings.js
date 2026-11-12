@@ -42,6 +42,8 @@
     var p = S.profile || {}, zoneNow = p.timezone || browserZone();
     var html = '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_nav_settings')) + '</h1><p class="t-lead">' + esc(t('app_st_lead')) + '</p></div></div><div class="grid rise st">';
     html += planHtml(p);
+    /* Offline use and installing the app (js/app/offline.js) */
+    if (window.AlimunOffline) html += window.AlimunOffline.card(A, 1);
     html += '<section class="card span-12 st-card" style="--i:1" aria-labelledby="h-me"><h2 class="t-h2" id="h-me">' + esc(t('app_st_me_h')) + '</h2><form class="st-form" data-form="me">' +
       field('app_st_name', '<input class="st-in" name="full_name" autocomplete="name" maxlength="100" required value="' + esc(p.full_name || '') + '">') +
       field('app_st_email', '<input class="st-in" type="email" value="' + esc(S.email || '') + '" disabled>', 'app_st_email_p') +
@@ -180,10 +182,13 @@
       return { html: view() };
     }).catch(function (e) {
       console.warn('[Alimun] Settings did not load', e && e.message);
-      return { html: '<div class="card"><p class="t-body">' + esc(t('app_book_error')) + '</p></div>' };
+      /* Offline: the downloads still work */
+      var off = window.AlimunOffline ? '<div class="grid rise st">' + window.AlimunOffline.card(A, 1) + '</div>' : '';
+      return { html: '<div class="card"><p class="t-body">' + esc(t('app_book_error')) + '</p></div>' + off };
     }).then(function (res) {
       if (res.stale || my !== mountNo) return res;
       root.innerHTML = res.html;
+      if (window.AlimunOffline) window.AlimunOffline.fill(A, A.data());
       return res;
     });
   }

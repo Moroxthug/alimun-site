@@ -728,8 +728,27 @@
   /* /app is the students' dashboard (step 16): signed out goes to sign-in (and back here after), teachers and admins to
      their own pages, a student without a profile to the welcome steps. The sample only with ?sample=1. */
   function away(to) { location.replace(to); return new Promise(function () {}); }
+  /* The app (docs/APP_PLAN.md, step 1): with a copy of Home saved at the last visit, the app opens on it at once and
+     the fresh data replaces it a moment later (Home is drawn again only if it changed and is still on screen). Not when
+     coming back from a payment or for an admin viewing someone. */
+  var quick = false;
+  function quickData() {
+    if (/[?&](sample|as|checkout)=/.test(location.search) || !window.AlimunData.quickStart) return null;
+    var snap = window.AlimunData.quickStart();
+    if (!snap) return null;
+    quick = true;
+    window.AlimunData.load(lang).then(function (d) {
+      if (!d || !d.profile || d.profile.id !== snap.profile.id) { location.reload(); return; }
+      var changed = JSON.stringify(d) !== JSON.stringify(D);
+      D = d;
+      if (changed && current === 'home' && !document.body.classList.contains('is-sheet-open')) render('home', false);
+    }, function (err) { console.warn('[Alimun] Home data did not refresh', err && err.message); });
+    return snap;
+  }
   function loadData() {
     if (/[?&]sample=1/.test(location.search)) { mode = 'forced'; return sample(); }
+    var snap = quickData();
+    if (snap) { mode = 'real'; return Promise.resolve(snap); }
     return window.AlimunData.load(lang).then(function (d) {
       if (d && d.profile) { mode = 'real'; return d; }
       if (!d) return away('/signin?next=' + encodeURIComponent('/app' + (/^#\/[A-Za-z0-9\/_-]*$/.test(location.hash) ? location.hash : '')));
@@ -753,6 +772,7 @@
     if (window.AlimunBell) window.AlimunBell.attach(document.querySelector('[data-bell]'), readerHelpers, mode === 'real' && !(window.AlimunData && window.AlimunData.viewingAs && window.AlimunData.viewingAs()));
     render(routeFromHash(), false);
     if (back) stripeNote(back);
+    if (window.AlimunOffline) window.AlimunOffline.attach(readerHelpers);
   }
 
   /* Coming back from Stripe (step 16): ?checkout=success|cancelled|credit, with ?join=<class> when a class needed the
@@ -844,7 +864,7 @@
       start();
       // In-page banner for students, when one is switched on in Admin (js/banner.js).
       if (!document.querySelector('script[src="/js/banner.js"]')) { var bs = document.createElement('script'); bs.src = '/js/banner.js'; bs.defer = true; document.head.appendChild(bs); }
-      setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
+      setTimeout(hideLoader, quick ? 0 : Math.max(0, 900 - (Date.now() - started)));
       welcomePoll();
     });
 
