@@ -210,38 +210,13 @@ async function learner() {
     if (insErr && insErr.code === '22023') { delete row.timezone; ({ error: insErr } = await supabase.from('student_profiles').insert(row)); }
     if (insErr && insErr.code !== '23505') { $('b-time').disabled = false; return fail(); }
     try { localStorage.removeItem('alimun-level-result'); } catch (e) {}
-    if (willPay) return pay(intent);
+    // The product chosen on Plans and prices goes to the card-first checkout in the dashboard (pricing engine step 9):
+    // packs and open classes through their room picker; anything else (and the old plans' links) to Plans and prices.
+    if (willPay) return location.replace(intent.product && /^(open|level|exam)_(en|de)$/.test(intent.product)
+      ? '/app#/settings/plans/pick/' + intent.product + '/' + (intent.cadence === 'upfront' ? 'upfront' : 'month') : '/app#/settings/plans');
     location.replace('/app');
   });
   show('s-goal');
-}
-
-async function pay(intent) {
-  show('s-pay');
-  $('pay-actions').classList.add('au_hide');
-  try {
-    const cfg = await fetch('/api/stripe/config').then((r) => r.json());
-    const key = intent.tier + (intent.billing === 'yearly' ? 'Yearly' : 'Monthly');
-    const priceId = cfg && cfg.prices && cfg.prices[key];
-    if (!priceId) throw new Error('price');
-    const code = window.AlimunCurrency && window.AlimunCurrency.code;
-    const resp = await fetch('/api/create-checkout-session', {
-      method: 'POST', headers: await authHeaders(),
-      body: JSON.stringify({
-        priceId, customerName: meta.full_name || '', currency: code && code !== 'eur' ? code : undefined,
-        successUrl: `${location.origin}${base}signup-success.html?session_id={CHECKOUT_SESSION_ID}`,
-        cancelUrl: `${location.origin}/app?checkout=cancelled`,
-      }),
-    });
-    const out = await resp.json().catch(() => ({}));
-    if (!resp.ok || !out.url) throw new Error('checkout');
-    location.href = out.url;
-  } catch (e) {
-    $('m-pay').textContent = document.querySelector('#s-error [data-i18n="au_err_lead"]').textContent;
-    $('m-pay').classList.add('is-on');
-    $('pay-actions').classList.remove('au_hide');
-  }
-  $('b-pay-retry').onclick = () => pay(intent);
 }
 
 // ── Start ───────────────────────────────────────────────────────────────────

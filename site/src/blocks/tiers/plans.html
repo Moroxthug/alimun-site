@@ -1,8 +1,10 @@
-      <section class="tp" id="plans">
+      <section class="tp" id="plans" data-pp-lang="en" data-no-currency>
         <style>
-          /* Plans and prices: a monthly / yearly switch and the four plans side by side. Switching rolls each price
-             to its new value; each card's button opens the level test with that plan and billing carried through to sign-up and payment.
-             Prices go through js/currency.js when it is on the page, so they show in the visitor's currency. */
+          /* Plans and prices (docs/LAUNCH_PRICING_SPEC.md section 8; pricing engine step 9): an English / German switch
+             and the three ways to learn with a teacher, the level pack in the middle and a little wider. Prices are not
+             written here: js/prices.js fills each one from /api/pricing?action=display in the visitor's currency, and a
+             price that cannot load stays hidden. Each button opens the level test with the product carried through to
+             sign-up and payment. */
           .tp { padding: 6rem 0 7rem; background-color: var(--white); }
           .tp_head { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: end; margin-bottom: 3rem; }
           .tp_head h2 { margin: 0; }
@@ -12,11 +14,11 @@
           .tp_switch button { position: relative; z-index: 1; border: 0; background: none; padding: .7rem 1.5rem; font-family: Satoshi, sans-serif; font-size: 1rem; font-weight: 500; color: rgba(8, 8, 8, .6); cursor: pointer; transition: color .3s ease; }
           .tp_switch button[aria-pressed="true"] { color: var(--black); }
           .tp_knob { position: absolute; top: .3rem; bottom: .3rem; left: .3rem; width: calc(50% - .3rem); border-radius: 5rem; background-color: var(--white); box-shadow: 0 2px 10px rgba(8, 8, 8, .08); transition: transform .45s cubic-bezier(.645, .045, .355, 1); }
-          .tp[data-billing="yearly"] .tp_knob { transform: translateX(100%); }
-          [dir="rtl"] .tp[data-billing="yearly"] .tp_knob { transform: translateX(-100%); }
+          .tp[data-pp-lang="de"] .tp_knob { transform: translateX(100%); }
+          [dir="rtl"] .tp[data-pp-lang="de"] .tp_knob { transform: translateX(-100%); }
           [dir="rtl"] .tp_knob { left: auto; right: .3rem; }
           .tp_note { margin: .75rem 0 0; font-size: .95rem; color: rgba(8, 8, 8, .6); }
-          .tp_grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; align-items: stretch; }
+          .tp_grid { display: grid; grid-template-columns: 1fr 1.2fr 1fr; gap: 1.5rem; align-items: stretch; }
           .tp_card { display: flex; flex-direction: column; border-radius: 3.125rem; overflow: hidden; background-color: var(--white); opacity: 0; transform: translateY(3rem); transition: opacity .8s ease, transform .9s cubic-bezier(.215, .61, .355, 1); }
           .tp_card.is-in { opacity: 1; transform: none; }
           /* Head: title, text and switch slide in one after another. */
@@ -35,19 +37,17 @@
           .tp_body h3 { margin: 0 0 .35rem; }
           [dir="rtl"] .tp_body h3 { unicode-bidi: plaintext; text-align: right; }
           .tp_size { margin: 0 0 1.5rem; color: rgba(8, 8, 8, .6); }
-          .tp_price { display: flex; align-items: flex-end; gap: .5rem; height: 3.6rem; overflow: hidden; }
-          .tp_amount { position: relative; display: block; height: 3.6rem; font-family: Coolvetica Condensed, sans-serif; font-size: 3.6rem; line-height: 1; white-space: nowrap; }
-          .tp_amount span { display: block; transition: transform .55s cubic-bezier(.645, .045, .355, 1), opacity .4s ease; }
-          .tp_amount span.is-out { position: absolute; top: 0; left: 0; transform: translateY(-100%); opacity: 0; }
-          [dir="rtl"] .tp_amount span.is-out { left: auto; right: 0; }
-          .tp_amount span.is-in-start { transform: translateY(100%); opacity: 0; }
-          .tp_per { padding-bottom: .35rem; color: rgba(8, 8, 8, .7); }
+          .tp_price { margin: 0; min-height: 2rem; font-family: Coolvetica Condensed, sans-serif; font-size: 2rem; line-height: 1.05; }
+          .tp_price[hidden] { display: block; visibility: hidden; }
+          .tp_main .tp_price { font-size: 2.4rem; min-height: 2.4rem; }
           .tp_billed { margin: .5rem 0 1.25rem; min-height: 1.5em; font-size: .95rem; color: rgba(8, 8, 8, .6); }
           .tp_desc { margin: 0 0 1.75rem; flex: 1; }
           .tp_cta { align-self: flex-start; white-space: nowrap; }
-          .tp_tpl { display: none; }
+          .tp_lead { margin: 0 0 1rem; font-weight: 500; }
+          .tp_also { margin: 2.5rem 0 0; max-width: 52rem; color: rgba(8, 8, 8, .7); }
+          .tp_also span + span::before { content: " "; }
           @media (max-width: 1199px) {
-            .tp_grid { grid-template-columns: repeat(2, 1fr); }
+            .tp_grid { grid-template-columns: 1fr; max-width: 40rem; }
           }
           @media (max-width: 767px) {
             .tp { padding: 4rem 0 4.5rem; }
@@ -61,108 +61,72 @@
           <div class="tp_head">
             <div>
               <h2 class="heading-style-h2" data-i18n="tiers_plans_title">Plans and prices</h2>
-              <p class="text-size-medium" data-i18n="tiers_plans_desc">Every plan has live classes with a teacher on fixed days every week, practice with instant feedback and homework corrected by your teacher. The smaller the group, the more time you have to speak.</p>
+              <p class="text-size-medium" data-i18n="tiers2_desc">Every way to learn here has live classes with a teacher on fixed days, the app with its exercises and voice practice, and homework corrected by your teacher.</p>
             </div>
             <div class="tp_bill">
-              <div class="tp_switch" role="group">
+              <div class="tp_switch" role="group" aria-label="Language">
                 <span class="tp_knob" aria-hidden="true"></span>
-                <button type="button" data-billing="monthly" aria-pressed="false" data-i18n="tiers_bill_monthly">Monthly</button>
-                <button type="button" data-billing="yearly" aria-pressed="true" data-i18n="tiers_bill_yearly">Yearly</button>
+                <button type="button" data-lang="en" aria-pressed="true" data-i18n="tiers2_en">English</button>
+                <button type="button" data-lang="de" aria-pressed="false" data-i18n="tiers2_de">German</button>
               </div>
-              <p class="tp_note" data-i18n="tiers_bill_note">With the yearly plan you pay for ten months instead of twelve.</p>
+              <p class="tp_note" data-pp-tax="in" data-i18n="tiers2_tax_in">Prices include tax and are shown for the country you are in; the country of your card sets the final price, which you see before you pay.</p>
+              <p class="tp_note" data-pp-tax="plus" data-i18n="tiers2_tax_plus">Prices are shown for the country you are in, before sales tax; the country of your card sets the final price, which you see before you pay.</p>
             </div>
           </div>
-          <span class="tp_tpl" data-i18n="tiers_billed_yearly">{price} billed once a year</span>
-          <span class="tp_tpl" data-i18n="tiers_billed_monthly">Billed every month</span>
           <div class="tp_grid">
-            <div class="tp_card shadow-card" data-tier="community" data-m="24" data-y="240" data-ye="20">
+            <div class="tp_card shadow-card" data-product="open">
               <div class="tp_img"><img src="images/edu_square_2-800.jpg" alt="" width="800" height="800" loading="lazy"></div>
               <div class="tp_body">
-                <h3 class="heading-style-h3">Community</h3>
-                <p class="tp_size text-size-regular" data-i18n="tiers_size_1">About 35 people per group</p>
-                <div class="tp_price" data-no-currency><span class="tp_amount"><span>€20</span></span><span class="tp_per text-size-regular" data-i18n="tiers_per_month">a month</span></div>
-                <p class="tp_billed" data-no-currency></p>
-                <p class="tp_desc text-size-medium" data-i18n="tiers_plan_1_desc">One live class a week, session notes with the new vocabulary, and access to the community.</p>
-                <a class="button w-inline-block tp_cta" href="level-test.html?tier=community&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
+                <h3 class="heading-style-h3" data-i18n="tiers2_open_h">Open class</h3>
+                <p class="tp_size text-size-regular" data-i18n="tiers2_open_size">One live class a week, up to 20 people at your level</p>
+                <p class="tp_price" data-pp-text="price=open_{lang}:month" data-i18n="tiers2_month">{price} a month</p>
+                <p class="tp_billed" data-pp-text="class=open_{lang}:class" data-i18n="tiers2_per_class">{class} a class</p>
+                <p class="tp_desc text-size-medium" data-i18n="tiers2_open_desc">A weekly class to keep speaking, with breakout groups of two or three, and the app included. Stop whenever you like.</p>
+                <a class="button w-inline-block tp_cta" href="level-test.html?product=open_en&amp;cadence=month" data-base="level-test.html?product=open_{lang}&amp;cadence=month"><p data-i18n="tiers2_open_cta">Choose the open class</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
               </div>
             </div>
-            <div class="tp_card shadow-card" data-tier="focused" data-m="59" data-y="590" data-ye="49">
+            <div class="tp_card tp_main shadow-card" data-product="level">
               <div class="tp_img"><img src="images/edu_square_3-800.jpg" alt="" width="800" height="800" loading="lazy"></div>
               <div class="tp_body">
-                <h3 class="heading-style-h3">Focused</h3>
-                <p class="tp_size text-size-regular" data-i18n="tiers_size_2">About 17 people per group</p>
-                <div class="tp_price" data-no-currency><span class="tp_amount"><span>€49</span></span><span class="tp_per text-size-regular" data-i18n="tiers_per_month">a month</span></div>
-                <p class="tp_billed" data-no-currency></p>
-                <p class="tp_desc text-size-medium" data-i18n="tiers_plan_2_desc">Two live classes a week in a smaller group, feedback on your work every week, essay feedback and a monthly progress report.</p>
-                <a class="button w-inline-block tp_cta" href="level-test.html?tier=focused&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
+                <h3 class="heading-style-h3" data-i18n="tiers2_level_h">Level pack</h3>
+                <p class="tp_size text-size-regular" data-i18n="tiers2_level_size">Three live classes a week for 12 weeks, up to 12 people in a fixed room</p>
+                <p class="tp_lead text-size-regular" data-i18n="tiers2_level_lead">The main way to learn with Alimun: the same teacher and the same people from the first class to the last.</p>
+                <p class="tp_price" data-pp-text="price=level_{lang}:month" data-i18n="tiers2_month_3">{price} a month for three months</p>
+                <p class="tp_billed" data-pp-text="up=level_{lang}:upfront,save=level_{lang}:save" data-i18n="tiers2_upfront">or {up} paid once, saving {save}</p>
+                <p class="tp_billed" data-pp-text="class=level_{lang}:class" data-i18n="tiers2_per_class">{class} a class</p>
+                <p class="tp_desc text-size-medium" data-i18n="tiers2_level_desc">A new pack at each level starts at the beginning of every month. You reserve a place with your card and nothing is charged until your room opens.</p>
+                <a class="button w-inline-block tp_cta" href="level-test.html?product=level_en&amp;cadence=month" data-base="level-test.html?product=level_{lang}&amp;cadence=month"><p data-i18n="tiers2_level_cta">Choose a level pack</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
               </div>
             </div>
-            <div class="tp_card shadow-card" data-tier="intensive" data-m="109" data-y="1090" data-ye="90">
+            <div class="tp_card shadow-card" data-product="exam">
               <div class="tp_img"><img src="images/edu_square_4-800.jpg" alt="" width="800" height="800" loading="lazy"></div>
               <div class="tp_body">
-                <h3 class="heading-style-h3">Intensive</h3>
-                <p class="tp_size text-size-regular" data-i18n="tiers_size_3">About 6 people per group, plus a weekly one-to-one</p>
-                <div class="tp_price" data-no-currency><span class="tp_amount"><span>€90</span></span><span class="tp_per text-size-regular" data-i18n="tiers_per_month">a month</span></div>
-                <p class="tp_billed" data-no-currency></p>
-                <p class="tp_desc text-size-medium" data-i18n="tiers_plan_3_desc">Three live classes a week in a near-private group, a one-to-one session every week and a learning path made for you.</p>
-                <a class="button w-inline-block tp_cta" href="level-test.html?tier=intensive&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
-              </div>
-            </div>
-            <div class="tp_card shadow-card" data-tier="private" data-m="269" data-y="2690" data-ye="224">
-              <div class="tp_img"><img src="images/edu_square_1-800.jpg" alt="" width="800" height="800" loading="lazy"></div>
-              <div class="tp_body">
-                <h3 class="heading-style-h3">1 on 1</h3>
-                <p class="tp_size text-size-regular" data-i18n="tiers_size_4">Private, just you and your teacher</p>
-                <div class="tp_price" data-no-currency><span class="tp_amount"><span>€224</span></span><span class="tp_per text-size-regular" data-i18n="tiers_per_month">a month</span></div>
-                <p class="tp_billed" data-no-currency></p>
-                <p class="tp_desc text-size-medium" data-i18n="tiers_plan_4_desc">Private classes with your own teacher, based on three classes a week, a curriculum built around you and extra classes when you need them.</p>
-                <a class="button w-inline-block tp_cta" href="level-test.html?tier=private&amp;billing=yearly"><p data-i18n="tiers_choose">Choose this plan</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
+                <h3 class="heading-style-h3" data-i18n="tiers2_exam_h">Exam pack</h3>
+                <p class="tp_size text-size-regular" data-i18n="tiers2_exam_size">Three live classes a week for 12 weeks, with three marked mock exams</p>
+                <p class="tp_price" data-pp-text="price=exam_{lang}:month" data-i18n="tiers2_month_3">{price} a month for three months</p>
+                <p class="tp_billed" data-pp-text="up=exam_{lang}:upfront,save=exam_{lang}:save" data-i18n="tiers2_upfront">or {up} paid once, saving {save}</p>
+                <p class="tp_billed" data-pp-text="class=exam_{lang}:class" data-i18n="tiers2_per_class">{class} a class</p>
+                <p class="tp_desc text-size-medium" data-i18n="tiers2_exam_desc">Preparation for IELTS in English, and for Goethe or telc B1 in German. Alimun prepares you for the exam; the certificate is issued by the exam board.</p>
+                <a class="button w-inline-block tp_cta" href="level-test.html?product=exam_en&amp;cadence=month" data-base="level-test.html?product=exam_{lang}&amp;cadence=month"><p data-i18n="tiers2_exam_cta">Choose an exam pack</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
               </div>
             </div>
           </div>
+          <p class="tp_also text-size-regular" data-pp-founding data-i18n="tiers2_founding">The prices shown are founding prices, for the first 500 learners who join before 1 January 2027, kept for 12 months.</p>
+          <p class="tp_also text-size-regular"><span data-pp-sale="app" data-pp-text="price=app:month" data-i18n="tiers2_app">The app on its own, with 60 minutes of voice practice a month: {price} a month.</span><span data-pp-sale="help_class" data-pp-text="price=help_class:once" data-i18n="tiers2_help">A 30-minute help class in a small group: {price}.</span><span data-pp-sale="minutes_30" data-pp-text="price=minutes_30:once" data-i18n="tiers2_minutes">Extra voice practice: {price} for 30 minutes.</span></p>
         </div>
         <script>
           (function () {
             var root = document.currentScript.closest(".tp");
             var cards = [].slice.call(root.querySelectorAll(".tp_card"));
-            var tplYear = root.querySelector('[data-i18n="tiers_billed_yearly"]'), tplMonth = root.querySelector('[data-i18n="tiers_billed_monthly"]');
-            var AC = window.AlimunCurrency;
-            function money(eur) { return AC ? AC.fmt(eur) : "€" + eur; }
-            function perMonthYearly(y, ye) { return AC ? AC.fmtNative(AC.perMonthFromYearly(y, ye)) : "€" + ye; }
-            function render(billing, animate) {
-              root.setAttribute("data-billing", billing);
-              root.querySelectorAll(".tp_switch button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-billing") === billing ? "true" : "false"); });
-              cards.forEach(function (card) {
-                var m = +card.getAttribute("data-m"), y = +card.getAttribute("data-y"), ye = +card.getAttribute("data-ye");
-                var text = billing === "yearly" ? perMonthYearly(y, ye) : money(m);
-                var box = card.querySelector(".tp_amount"), old = box.querySelector("span:not(.is-out)");
-                if (!animate) { old.textContent = text; }
-                else if (old.textContent !== text) {
-                  var next = document.createElement("span"); next.textContent = text; next.className = "is-in-start";
-                  old.classList.add("is-out"); box.appendChild(next);
-                  requestAnimationFrame(function () { requestAnimationFrame(function () { next.className = ""; }); });
-                  setTimeout(function () { if (old.parentNode) old.parentNode.removeChild(old); }, 600);
-                }
-                card.querySelector(".tp_billed").textContent = billing === "yearly" ? tplYear.textContent.replace("{price}", money(y)) : tplMonth.textContent;
-                var a = card.querySelector(".tp_cta");
-                a.setAttribute("href", a.getAttribute("href").replace(/billing=(monthly|yearly)/, "billing=" + billing));
-              });
+            // English or German: the prices and the buttons follow the language chosen
+            function choose(lang) {
+              root.setAttribute("data-pp-lang", lang);
+              root.querySelectorAll(".tp_switch button").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-lang") === lang ? "true" : "false"); });
+              root.querySelectorAll(".tp_cta").forEach(function (a) { a.setAttribute("href", a.getAttribute("data-base").replace("{lang}", lang)); });
+              if (window.AlimunPrices) window.AlimunPrices.render(root);
             }
-            root.querySelectorAll(".tp_switch button").forEach(function (b) {
-              b.addEventListener("click", function () { render(b.getAttribute("data-billing"), true); });
-            });
-            render("yearly", false);
-            // First appearance: each price counts up from zero to its value.
-            function countUp(card) {
-              var el = card.querySelector(".tp_amount span"), target = el.textContent, m = target.match(/^(\D*)([\d.,\s]+?)(\D*)$/);
-              if (!m) return;
-              var digits = m[2].replace(/[^\d]/g, ""), end = +digits, t0 = performance.now(), dur = 1100;
-              (function step(now) {
-                var k = Math.min(1, (now - t0) / dur), v = Math.round(end * (1 - Math.pow(1 - k, 3)));
-                el.textContent = k < 1 ? m[1] + v + m[3] : target;
-                if (k < 1) requestAnimationFrame(step);
-              })(t0);
-            }
+            root.querySelectorAll(".tp_switch button").forEach(function (b) { b.addEventListener("click", function () { choose(b.getAttribute("data-lang")); }); });
+            choose(/german/i.test(new URLSearchParams(location.search).get("language") || "") ? "de" : "en");
             // Photos drift a little against their cards while the section scrolls past.
             function drift() {
               var vh = window.innerHeight;
@@ -180,13 +144,12 @@
             var io = new IntersectionObserver(function (entries) {
               entries.forEach(function (e) {
                 if (!e.isIntersecting) return;
-                var d = cards.indexOf(e.target) % 4 * 0.12;
-                e.target.style.transitionDelay = d + "s";
+                e.target.style.transitionDelay = (cards.indexOf(e.target) * 0.12) + "s";
                 e.target.classList.add("is-in"); io.unobserve(e.target);
-                setTimeout(function () { countUp(e.target); }, d * 1000 + 300);
               });
             }, { rootMargin: "0px 0px -10% 0px" });
             cards.forEach(function (c) { io.observe(c); });
           })();
         </script>
+        <script src="js/prices.js" defer></script>
       </section>

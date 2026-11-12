@@ -238,7 +238,10 @@ function readResult() {
 }
 
 // Plan chosen on the Tiers page, carried through the test: payment comes after the goal step.
-const intent = TIERS.includes(params.get('tier')) ? { tier: params.get('tier'), billing: params.get('billing') === 'yearly' ? 'yearly' : 'monthly' } : null;
+// The new price list (pricing engine step 9): ?product=level_en&cadence=month from the Plans and prices page.
+const PRODUCTS = ['open_en', 'open_de', 'level_en', 'level_de', 'exam_en', 'exam_de', 'app'];
+const intent = PRODUCTS.includes(params.get('product')) ? { product: params.get('product'), cadence: params.get('cadence') === 'upfront' ? 'upfront' : 'month' }
+  : TIERS.includes(params.get('tier')) ? { tier: params.get('tier'), billing: params.get('billing') === 'yearly' ? 'yearly' : 'monthly' } : null;
 
 function paintNote(r) {
   const note = $('side-note');
@@ -278,7 +281,8 @@ function startLearner(r, direct) {
   if (r.level) setText($('account-lead'), t('au_save_lead_lang').replace('{language}', languageName(r.language)));
   paintNote(r);
   const q = new URLSearchParams({ language: r.language });
-  if (intent) { q.set('tier', intent.tier); q.set('billing', intent.billing); }
+  if (intent && intent.product) { q.set('product', intent.product); q.set('cadence', intent.cadence); }
+  else if (intent) { q.set('tier', intent.tier); q.set('billing', intent.billing); }
   $('retake').href = base + 'level-test.html?' + q.toString();
   if (r.waitlist) $('retake').parentElement.classList.add('au_hide');
   wireAccount(r);

@@ -492,9 +492,15 @@
     if (packs.length) html += '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_out_packs')) + '</p>';
     html += '<div class="btn-row" style="margin-top:14px">' + packs.map(function (x, i) {
       return '<button class="btn btn--' + (i ? 'ghost' : 'primary') + '" type="button" data-tu="buy" data-price="' + esc(x.id) + '">' + esc(t('app_tu_out_buy', { time: mins(x.minutes * 60), price: x.price })) + '</button>';
-    }).join('') + '<a class="btn btn--' + (packs.length ? 'quiet' : 'primary') + '" href="#/settings/plans">' + esc(t('app_tu_see_plans')) + '</a></div>' +
+    }).join('') + openOffer() + '<a class="btn btn--' + (packs.length ? 'quiet' : 'primary') + '" href="#/settings/plans">' + esc(t('app_tu_see_plans')) + '</a></div>' +
       '<p class="t-small st-msg" data-tu-buymsg aria-live="polite"></p>';
     return html;
+  }
+  /* The weekly open class, for a learner of English or German (docs/LAUNCH_PRICING_SPEC.md section 8: "voice minutes
+     used up: a minute pack or the open class"); its rooms and places are chosen on the next page */
+  function openOffer() {
+    var l = String((A.data().profile || {}).language || '').toLowerCase(), k = l === 'german' ? 'open_de' : l === 'english' ? 'open_en' : null;
+    return k ? '<a class="btn btn--ghost" href="#/settings/plans/pick/' + k + '/month">' + esc(t('app_tu_open_offer')) + '</a>' : '';
   }
   /* The offer, in a card on the Tutor page or inside the end of a session or a call */
   function outHtml(inside) {

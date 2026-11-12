@@ -245,7 +245,7 @@
             function directHref() {
               var q = new URLSearchParams({ direct: "1" }), here = new URLSearchParams(location.search);
               if (chosen) q.set("language", chosen.getAttribute("data-lang"));
-              ["tier", "billing"].forEach(function (k) { if (here.get(k)) q.set(k, here.get(k)); });
+              ["tier", "billing", "product", "cadence"].forEach(function (k) { if (here.get(k)) q.set(k, here.get(k)); });
               direct.setAttribute("href", "signup.html?" + q.toString());
             }
             langBtns.forEach(function (b) { b.addEventListener("click", directHref); });
@@ -412,7 +412,7 @@
               }
               // A plan chosen on the Tiers page (?tier=&billing=) comes along to sign-up, where payment follows the goal step.
               var q = new URLSearchParams({ from: "test", language: r.language }), here = new URLSearchParams(location.search);
-              ["tier", "billing"].forEach(function (k) { if (here.get(k)) q.set(k, here.get(k)); });
+              ["tier", "billing", "product", "cadence"].forEach(function (k) { if (here.get(k)) q.set(k, here.get(k)); });
               $(".lt_cta").setAttribute("href", "signup.html?" + q.toString());
               requestAnimationFrame(function () { res.classList.add("is-in"); });
               // The level code rolls up through the scale and lands on the result while the segments fill.

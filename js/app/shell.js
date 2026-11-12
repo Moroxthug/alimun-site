@@ -406,9 +406,64 @@
     var k = tier === 'waitlist' ? ['app_home_plan_wait_h', 'app_home_plan_wait_p'] : ['app_home_plan_free_h', 'app_home_plan_free_p'];
     return '<section class="card card--lime span-12" style="--i:9" aria-labelledby="h-plan">' +
       '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2" id="h-plan">' + esc(t(k[0])) + '</h2>' +
-      '<p class="t-body" style="margin-top:10px">' + esc(t(k[1])) + '</p></div>' +
-      '<a class="btn btn--primary" href="#/settings/plans">' + esc(t('app_home_see_plans')) + '</a></div>' +
+      '<p class="t-body" style="margin-top:10px">' + esc(t(k[1])) + '</p><p class="t-body" style="margin-top:10px" data-offer hidden></p></div>' +
+      '<a class="btn btn--primary" href="#/settings/plans" data-offer-go>' + esc(t('app_home_see_plans')) + '</a></div>' +
     '</section>';
+  }
+
+  /* Offers that point to a real room with real places (docs/LAUNCH_PRICING_SPEC.md section 8; pricing engine step 9):
+     a learner without a plan sees the next level pack (the exam pack when their goal is study or an exam) at their
+     level; a learner in an open class for more than two months sees the level pack, with the unused part of the month
+     coming off its first payment. Rooms come from /api/pricing?action=rooms; nothing shows when there is no room. */
+  function weekdaysOf(days) {
+    var idx = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6 };
+    var f = new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'UTC' });
+    var names = (days || []).map(function (x) { return idx[x] == null ? x : f.format(new Date(Date.UTC(2024, 0, 7 + idx[x]))); });
+    try { return new Intl.ListFormat(locale, { style: 'long', type: 'conjunction' }).format(names); } catch (e) { return names.join(', '); }
+  }
+  function nextRoom(product, level) {
+    return window.AlimunData.roomsFor(product).then(function (r) {
+      return ((r && r.items) || []).filter(function (x) { return x.seatsLeft > 0 && (!level || x.level === level); })[0] || null;
+    }, function () { return null; });
+  }
+  function offerLine(product, room) {
+    var lang = '\u2068' + t(/_de$/.test(product) ? 'app_pp_lang_de' : 'app_pp_lang_en') + '\u2069';
+    var name = t(/^exam_/.test(product) ? 'app_pp_exam_h' : 'app_pp_level_h', { lang: lang });
+    var date = new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' }).format(new Date(room.startsOn + 'T12:00:00Z'));
+    return t('app_home_offer', { product: name, level: room.level, date: date, days: weekdaysOf(room.days), time: room.time, zone: room.timezone, n: room.seatsLeft });
+  }
+  function fillOffers() {
+    if (mode !== 'real' || !D || !D.profile) return;
+    var lang = String(D.profile.language || '').toLowerCase(), suffix = lang === 'german' ? 'de' : lang === 'english' ? 'en' : null;
+    if (!suffix) return;
+    var level = String(D.profile.level || '').slice(0, 2).toUpperCase() || null;
+    var box = view.querySelector('[data-offer]');
+    if (box) {
+      var product = (D.profile.goal === 'academic' ? 'exam_' : 'level_') + suffix;
+      nextRoom(product, level).then(function (room) {
+        if (!room || !box.isConnected) return;
+        box.textContent = offerLine(product, room);
+        box.hidden = false;
+        var go = view.querySelector('[data-offer-go]');
+        if (go) { go.href = '#/settings/plans/pick/' + product + '/month'; go.textContent = t('app_home_offer_go'); }
+      });
+    }
+    // In an open class for more than two months: the level pack, the month credited
+    if (!window.AlimunData.myEntitlements) return;
+    window.AlimunData.myEntitlements().then(function (rows) {
+      rows = rows || [];
+      if (rows.some(function (e) { return /^(level|exam)_/.test(e.product_key); })) return;
+      var open = rows.filter(function (e) { return /^open_/.test(e.product_key) && e.status === 'active' && e.starts_at && Date.now() - Date.parse(e.starts_at) > 60 * 86400000; })[0];
+      if (!open) return;
+      var product = 'level_' + open.product_key.slice(-2);
+      return nextRoom(product, level).then(function (room) {
+        var grid = view.querySelector('.grid');
+        if (!room || !grid || current !== 'home' || grid.querySelector('[data-moveup]')) return;
+        grid.insertAdjacentHTML('afterbegin', '<section class="card card--lime span-12" data-moveup aria-labelledby="h-moveup"><div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px">' +
+          '<h2 class="t-h2" id="h-moveup">' + esc(t('app_home_moveup_h')) + '</h2><p class="t-body" style="margin-top:10px">' + esc(offerLine(product, room) + ' ' + t('app_home_moveup_p')) + '</p></div>' +
+          '<a class="btn btn--primary" href="#/settings/plans/pick/' + product + '/month">' + esc(t('app_home_offer_go')) + '</a></div></section>');
+      });
+    }, function () { /* no offer */ });
   }
 
   /* Why sample data is showing, with the way to your own */
@@ -573,6 +628,7 @@
       if (window.AlimunMessages) window.AlimunMessages.reset();
       view.innerHTML = html;
       view.classList.remove('is-leaving');
+      if (id === 'home') fillOffers();
       document.body.classList.remove('is-reading');
       document.title = t(r.label) + ' – Alimun';
       if (id === 'book') {

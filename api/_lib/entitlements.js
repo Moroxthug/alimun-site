@@ -310,6 +310,43 @@ async function customerOfUser(sb, userId) {
   return data.stripe_customer_id;
 }
 
+/**
+ * Moving up from an open class to a pack (docs/PRICING_ENGINE_SPEC.md section 5): on the pack's first day the open-class
+ * subscription ends and the unused share of its current month is credited, in the same currency, on the pack's first
+ * payment (a customer balance credit for a monthly pack, a lower amount for an upfront one). Returns the credit in minor
+ * units (0 when there is nothing to credit). The pure share is creditShare(), unit tested.
+ */
+function creditShare(paidMinor, periodStartMs, periodEndMs, nowMs) {
+  if (!paidMinor || !(periodEndMs > periodStartMs) || nowMs >= periodEndMs) return 0;
+  const left = Math.max(0, Math.min(1, (periodEndMs - nowMs) / (periodEndMs - periodStartMs)));
+  return Math.floor(paidMinor * left);
+}
+async function moveUpCredit(ctx, ent, customer, nowMs) {
+  const { sb, stripe } = ctx;
+  const { data: opens } = await sb.from('entitlements').select('*').eq('user_id', ent.user_id).eq('status', 'active')
+    .in('product_key', ['open_en', 'open_de']).limit(5);
+  let credit = 0;
+  for (const o of opens || []) {
+    if (o.stripe_subscription_id) {
+      let sub = null;
+      try { sub = await stripe.subscriptions.retrieve(o.stripe_subscription_id); } catch (e) { sub = null; }
+      if (sub && sub.status === 'active' && o.currency === ent.currency) {
+        const { data: pr } = await sb.from('price_book').select('unit_amount').eq('product_key', o.product_key).eq('band', o.band)
+          .eq('variant', o.variant).eq('cadence', 'month').eq('currency', o.currency).limit(1);
+        credit += creditShare(pr && pr[0] ? pr[0].unit_amount : 0, (sub.current_period_start || 0) * 1000, (sub.current_period_end || 0) * 1000, nowMs);
+      }
+      if (sub && sub.status !== 'canceled') await stripe.subscriptions.cancel(o.stripe_subscription_id).catch(() => {});
+    }
+    await sb.from('entitlements').update({ status: 'ended', ends_at: new Date(nowMs).toISOString(), updated_at: new Date(nowMs).toISOString() }).eq('id', o.id);
+    if (o.cohort_id) await unenrol(sb, o.user_id, o.cohort_id);
+  }
+  if (credit > 0 && ent.cadence === 'month') {
+    await stripe.customers.createBalanceTransaction(customer, { amount: -credit, currency: ent.currency,
+      description: 'Unused open-class month, credited on the pack', metadata: { type: TYPE, entitlement_id: ent.id } }, { idempotencyKey: 'moveup-' + ent.id });
+  }
+  return credit;
+}
+
 /** Starts a reserved pack: returns { status: 'scheduled' | 'paid' | 'needs_action' | 'failed' }. startAt: Date or null (now). */
 async function startPack(ctx, ent, startAt) {
   const { sb, stripe } = ctx;
@@ -318,6 +355,8 @@ async function startPack(ctx, ent, startAt) {
   const customer = await customerOfUser(sb, ent.user_id);
   const meta = { type: TYPE, entitlement_id: ent.id, product_key: ent.product_key, band: ent.band, variant: ent.variant, cadence: ent.cadence, supabase_user_id: ent.user_id };
   const at = startAt instanceof Date ? startAt : new Date();
+  // Moving up from an open class: its unused share of the month comes off the pack's first payment
+  const credit = at.getTime() <= Date.now() + 60000 ? await moveUpCredit(ctx, ent, customer, Date.now()) : 0;
   if (ent.cadence === 'month') {
     const future = at.getTime() > Date.now() + 60000;
     const sched = await stripe.subscriptionSchedules.create({
@@ -333,7 +372,7 @@ async function startPack(ctx, ent, startAt) {
   // Upfront: one off-session payment now (the room job calls this on the first day)
   try {
     const pi = await stripe.paymentIntents.create({
-      amount: price.unit_amount, currency: ent.currency, customer, payment_method: ent.stripe_payment_method_id,
+      amount: Math.max(50, price.unit_amount - credit), currency: ent.currency, customer, payment_method: ent.stripe_payment_method_id,
       off_session: true, confirm: true, metadata: meta, description: `Alimun ${ent.product_key}`,
     }, { idempotencyKey: 'pack-pi-' + ent.id });
     await sb.from('entitlements').update({ stripe_payment_intent_id: pi.id, starts_at: at.toISOString(), updated_at: new Date().toISOString() }).eq('id', ent.id);
@@ -359,4 +398,4 @@ async function releasePack(ctx, ent) {
   return true;
 }
 
-module.exports = { TYPE, fulfil, enrol, unenrol, isPricingEvent, processEvent, startPack, releasePack, PACK_DAYS };
+module.exports = { TYPE, creditShare, fulfil, enrol, unenrol, isPricingEvent, processEvent, startPack, releasePack, PACK_DAYS };

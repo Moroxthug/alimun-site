@@ -1,7 +1,8 @@
-      <section class="gs">
+      <section class="gs" data-no-currency>
         <style>
-          /* Group size: the screen holds while four plan cards glide sideways with the scroll. Each card's photo drifts
-             slightly against the card for depth. */
+          /* Ways to learn (pricing engine step 9): the screen holds while four cards glide sideways with the scroll. Each
+             card's photo drifts slightly against the card for depth. Prices are filled by js/prices.js from the live
+             prices in the visitor's currency; a price that cannot load stays hidden. */
           .gs { position: relative; height: 420vh; background-color: var(--white); }
           .gs_stage { position: sticky; top: 0; height: 100vh; height: 100svh; overflow: hidden; display: flex; flex-direction: column; justify-content: center; }
           .gs_head { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; align-items: end; margin-bottom: 2.5rem; }
@@ -18,7 +19,8 @@
           .gs_num span { padding-bottom: .4rem; max-width: 10rem; font-size: 1rem; line-height: 1.2; color: rgba(8, 8, 8, .7); }
           .gs_body h3 { margin: 0 0 .5rem; }
           [dir="rtl"] .gs_body h3 { unicode-bidi: plaintext; text-align: right; }
-          .gs_price { margin: 0 0 1rem; }
+          .gs_price { margin: 0 0 1rem; min-height: 1.5em; }
+          .gs_price[hidden] { display: block; visibility: hidden; }
           .gs_price b { font-family: Coolvetica Condensed, sans-serif; font-weight: 400; font-size: 2rem; line-height: 1; }
           .gs_body p.gs_desc { margin: 0; max-width: 26rem; }
           .gs_cta { margin-top: 2.5rem; display: flex; justify-content: center; }
@@ -41,54 +43,54 @@
         <div class="gs_stage">
           <div class="container-large">
             <div class="gs_head">
-              <h2 class="heading-style-h2" data-i18n="home_groups_title">Choose the size of your group</h2>
+              <h2 class="heading-style-h2" data-i18n="home2_groups_title">Choose how you learn</h2>
               <div class="gs_intro">
-                <p class="text-size-medium" data-i18n="home_groups_desc">Every plan has live classes with a teacher on fixed days every week. The smaller the group, the more time you have to speak.</p>
+                <p class="text-size-medium" data-i18n="home2_groups_desc">Live classes with a teacher on fixed days every week, with the app and its voice practice included. Or the app on its own, at your pace.</p>
               </div>
             </div>
           </div>
           <div class="gs_rail">
             <div class="gs_track">
-              <div class="gs_panel shadow-card" data-size="35">
+              <div class="gs_panel shadow-card" data-size="20">
                 <div class="gs_img"><img src="images/pexels-august-de-richelieu-4260315-p-1080.jpg" srcset="images/pexels-august-de-richelieu-4260315-p-800.jpg 800w, images/pexels-august-de-richelieu-4260315-p-1080.jpg 1080w, images/pexels-august-de-richelieu-4260315-p-1600.jpg 1600w" sizes="(max-width: 767px) 90vw, 40vw" loading="lazy" alt=""></div>
                 <div class="gs_body">
-                  <div class="gs_num"><strong>35</strong><span class="text-size-small" data-i18n="home_groups_people">people in your group</span></div>
-                  <h3 class="heading-style-h3">Community</h3>
-                  <p class="gs_price"><b>€24</b> <span data-i18n="home_groups_month">a month</span></p>
-                  <p class="text-size-medium gs_desc" data-i18n="home_groups_1_desc">One live class a week in a group of about 35 people, with access to the community.</p>
+                  <div class="gs_num"><strong>20</strong><span class="text-size-small" data-i18n="home2_groups_max">people at most in the room</span></div>
+                  <h3 class="heading-style-h3" data-i18n="tiers2_open_h">Open class</h3>
+                  <p class="gs_price" data-pp-text="price=open_en:month" data-i18n="tiers2_month">{price} a month</p>
+                  <p class="text-size-medium gs_desc" data-i18n="home2_groups_open_desc">One live class a week at your level, with breakout groups of two or three. Stop whenever you like.</p>
                 </div>
               </div>
-              <div class="gs_panel shadow-card" data-size="17">
+              <div class="gs_panel shadow-card" data-size="12">
                 <div class="gs_img"><img src="images/pexels-katerina-holmes-5905749-p-1080.jpg" srcset="images/pexels-katerina-holmes-5905749-p-800.jpg 800w, images/pexels-katerina-holmes-5905749-p-1080.jpg 1080w, images/pexels-katerina-holmes-5905749-p-1600.jpg 1600w" sizes="(max-width: 767px) 90vw, 40vw" loading="lazy" alt=""></div>
                 <div class="gs_body">
-                  <div class="gs_num"><strong>17</strong><span class="text-size-small" data-i18n="home_groups_people">people in your group</span></div>
-                  <h3 class="heading-style-h3">Focused</h3>
-                  <p class="gs_price"><b>€59</b> <span data-i18n="home_groups_month">a month</span></p>
-                  <p class="text-size-medium gs_desc" data-i18n="home_groups_2_desc">Two live classes a week in a group of about 17 people, with feedback on your work every week.</p>
+                  <div class="gs_num"><strong>12</strong><span class="text-size-small" data-i18n="home2_groups_max">people at most in the room</span></div>
+                  <h3 class="heading-style-h3" data-i18n="tiers2_level_h">Level pack</h3>
+                  <p class="gs_price" data-pp-text="price=level_en:month" data-i18n="tiers2_month_3">{price} a month for three months</p>
+                  <p class="text-size-medium gs_desc" data-i18n="home2_groups_level_desc">Three live classes a week for 12 weeks with the same teacher and the same people, from one level to the next.</p>
                 </div>
               </div>
-              <div class="gs_panel shadow-card" data-size="6">
+              <div class="gs_panel shadow-card" data-size="12">
                 <div class="gs_img"><img src="images/pexels-diimejii-3466163-p-1080.jpg" srcset="images/pexels-diimejii-3466163-p-800.jpg 800w, images/pexels-diimejii-3466163-p-1080.jpg 1080w, images/pexels-diimejii-3466163-p-1600.jpg 1600w" sizes="(max-width: 767px) 90vw, 40vw" loading="lazy" alt=""></div>
                 <div class="gs_body">
-                  <div class="gs_num"><strong>6</strong><span class="text-size-small" data-i18n="home_groups_people">people in your group</span></div>
-                  <h3 class="heading-style-h3">Intensive</h3>
-                  <p class="gs_price"><b>€109</b> <span data-i18n="home_groups_month">a month</span></p>
-                  <p class="text-size-medium gs_desc" data-i18n="home_groups_3_desc">Three live classes a week in a group of about 6 people, plus a one-to-one session every week.</p>
+                  <div class="gs_num"><strong>12</strong><span class="text-size-small" data-i18n="home2_groups_max">people at most in the room</span></div>
+                  <h3 class="heading-style-h3" data-i18n="tiers2_exam_h">Exam pack</h3>
+                  <p class="gs_price" data-pp-text="price=exam_en:month" data-i18n="tiers2_month_3">{price} a month for three months</p>
+                  <p class="text-size-medium gs_desc" data-i18n="home2_groups_exam_desc">Twelve weeks of preparation for IELTS, Goethe or telc B1, with three marked mock exams.</p>
                 </div>
               </div>
-              <div class="gs_panel shadow-card" data-size="1">
+              <div class="gs_panel shadow-card" data-size="60">
                 <div class="gs_img"><img src="images/pexels-julia-m-cameron-4145153-p-1080.jpg" srcset="images/pexels-julia-m-cameron-4145153-p-800.jpg 800w, images/pexels-julia-m-cameron-4145153-p-1080.jpg 1080w, images/pexels-julia-m-cameron-4145153-p-1600.jpg 1600w" sizes="(max-width: 767px) 90vw, 40vw" loading="lazy" alt=""></div>
                 <div class="gs_body">
-                  <div class="gs_num"><strong>1</strong><span class="text-size-small" data-i18n="home_groups_private">just you and your teacher</span></div>
-                  <h3 class="heading-style-h3">1 on 1</h3>
-                  <p class="gs_price"><b>€269</b> <span data-i18n="home_groups_month">a month</span></p>
-                  <p class="text-size-medium gs_desc" data-i18n="home_groups_4_desc">Private classes with your teacher, based on three classes a week, with extra classes available.</p>
+                  <div class="gs_num"><strong>60</strong><span class="text-size-small" data-i18n="home2_groups_minutes">minutes of voice practice a month</span></div>
+                  <h3 class="heading-style-h3" data-i18n="tiers2_app_h">The app</h3>
+                  <p class="gs_price" data-pp-text="price=app:month" data-i18n="tiers2_month">{price} a month</p>
+                  <p class="text-size-medium gs_desc" data-i18n="home2_groups_app_desc">Every unit, the full course book and exercises with instant feedback, on your own schedule.</p>
                 </div>
               </div>
             </div>
           </div>
           <div class="gs_cta">
-            <a href="tiers.html" class="button w-inline-block"><p data-i18n="home_groups_cta">Compare the plans</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16"></a>
+            <a href="tiers.html" class="button w-inline-block"><p data-i18n="home2_groups_cta">See plans and prices</p><img src="images/icon-arrow-light.svg" loading="lazy" alt="" class="icon-16"></a>
           </div>
         </div>
         <script>
@@ -122,4 +124,5 @@
             update();
           })();
         </script>
+        <script src="js/prices.js" defer></script>
       </section>

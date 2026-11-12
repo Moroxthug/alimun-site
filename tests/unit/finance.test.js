@@ -116,3 +116,12 @@ test('tutor budget: $0.15 per paying learner, never below the $10 floor', () => 
 });
 
 test.after(() => { void crypto; });
+
+test('moving up: the unused share of the open-class month is credited', () => {
+  const E = require('../../api/_lib/entitlements.js');
+  const start = Date.parse('2026-11-01T00:00:00Z'), end = Date.parse('2026-12-01T00:00:00Z');
+  assert.strictEqual(E.creditShare(2400, start, end, Date.parse('2026-11-16T00:00:00Z')), 1200);
+  assert.strictEqual(E.creditShare(2400, start, end, end), 0);
+  assert.strictEqual(E.creditShare(2400, start, end, start), 2400);
+  assert.strictEqual(E.creditShare(0, start, end, start), 0);
+});
