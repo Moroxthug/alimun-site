@@ -474,7 +474,7 @@
       var bits = [(r.schedule_days || []).join(', ') + ' ' + String(r.schedule_time || '').slice(0, 5) + ' ' + r.timezone, (r.seats || 0) + ' of ' + r.max_students + ' places taken (opens at ' + (r.min_learners || '?') + ')',
         'teacher ' + ((r.teacher_profiles && r.teacher_profiles.full_name) || 'none'), 'substitute ' + ((r.substitute && r.substitute.full_name) || 'none'), contract].filter(Boolean);
       var can = ['draft', 'published', 'open'].indexOf(r.room_state) > -1;
-      return '<div class="ad-item"><div class="tt-row ad-act ad-act--2"><span class="tt-row__time">' + esc(r.starts_on) + '</span><span><b>' + esc((PRODUCTS[r.product_key] || r.product_key) + ' ' + r.level) + '</b><small>' + esc(ROOM_STATE[r.room_state] || r.room_state) + '. ' + esc(bits.join('. ') + '.') + '</small></span>' +
+      return '<div class="ad-item"><div class="tt-row ad-act"><span class="tt-row__time">' + esc(r.starts_on) + '</span><span><b>' + esc((PRODUCTS[r.product_key] || r.product_key) + ' ' + r.level) + '</b><small>' + esc(ROOM_STATE[r.room_state] || r.room_state) + '. ' + esc(bits.join('. ') + '.') + '</small></span>' +
         (can ? '<span class="btn-row ad-act__btns"><button class="btn btn--ghost btn--sm" type="button" data-askroom="' + esc(r.id) + '">Change</button></span>' : '') + '</div><div data-box="room-' + esc(r.id) + '"></div></div>';
     }).join('');
     var form = '<form class="st-form" data-newroom>' +
