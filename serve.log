@@ -114,3 +114,321 @@
  HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
  HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
  HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:09 PM 127.0.0.1 GET /
+ HTTP  11/12/2026 6:38:09 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /app/?sample=1&launch=1
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /fonts/Satoshi-Variable.ttf
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /css/app.css
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /fonts/coolvetica-condensed-rg.otf
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/cast.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/cast3.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/lipsync.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/sample-data.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/data.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/exercises.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/reader.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 5 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/practice.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/cards.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/tests.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 13 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/library.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 8 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 8 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/tz.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 10 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 6 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/find.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 4 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/board.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/classroom.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/classes.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 4 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 4 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/homework.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/progress.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/messages.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 4 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/pay.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/plans.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/country.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/prefs.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/withdraw.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/settings.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/tutor-live.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 4 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 4 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 4 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/tutor.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 4 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 4 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/bell.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/shell.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/i18n/en.app.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /data/level-test/German.json
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 404 in 1 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/app/launch-pop.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /js/banner.js
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /api/campaigns?action=banner&place=dashboard&lang=en
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 404 in 1 ms
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 GET /images/pexels-diimejii-3466163-p-800.jpg
+ HTTP  11/12/2026 6:38:12 PM 127.0.0.1 Returned 200 in 131 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /app/?sample=1&launch=1
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /fonts/Satoshi-Variable.ttf
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /css/app.css
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /fonts/coolvetica-condensed-rg.otf
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/cast.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/cast3.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/lipsync.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/sample-data.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/data.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/exercises.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/reader.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/practice.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/cards.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/tests.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/library.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/tz.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/find.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/board.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/classroom.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/classes.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/homework.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/progress.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/messages.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/pay.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/plans.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/country.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/prefs.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/withdraw.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/settings.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/tutor-live.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/tutor.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/bell.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/shell.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/i18n/en.app.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /data/level-test/German.json
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 404 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/app/launch-pop.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /js/banner.js
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /api/campaigns?action=banner&place=dashboard&lang=en
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 404 in 1 ms
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 GET /images/pexels-diimejii-3466163-p-800.jpg
+ HTTP  11/12/2026 6:38:17 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /app/?sample=1&launch=1
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /fonts/Satoshi-Variable.ttf
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /css/app.css
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /fonts/coolvetica-condensed-rg.otf
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/cast.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/cast3.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/lipsync.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/sample-data.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/data.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/exercises.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/reader.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/practice.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/cards.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/tests.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 4 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/library.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/tz.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/find.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/board.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/classroom.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/classes.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/homework.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/progress.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/messages.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/pay.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/plans.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/country.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/prefs.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/withdraw.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/settings.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/tutor-live.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/tutor.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/bell.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/shell.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 5 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/i18n/en.app.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/i18n/fr.app.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /data/level-test/German.json
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 404 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/app/launch-pop.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /js/banner.js
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /api/campaigns?action=banner&place=dashboard&lang=fr
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 404 in 1 ms
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 GET /images/pexels-diimejii-3466163-p-800.jpg
+ HTTP  11/12/2026 6:38:22 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /app/?sample=1&launch=1&poll=1
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /fonts/Satoshi-Variable.ttf
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /css/app.css
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /fonts/coolvetica-condensed-rg.otf
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/cast.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/cast3.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/lipsync.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/sample-data.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/data.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/exercises.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/reader.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/practice.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/cards.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/tests.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/library.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/tz.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/find.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 GET /js/app/board.js
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:26 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/classroom.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/classes.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/homework.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/progress.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/messages.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/pay.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/plans.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/country.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/prefs.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/withdraw.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/settings.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/tutor-live.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/tutor.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/bell.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/shell.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/i18n/en.app.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /data/level-test/German.json
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 404 in 1 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/launch-pop.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/banner.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /js/app/poll.js
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /api/campaigns?action=banner&place=dashboard&lang=en
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 404 in 3 ms
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 GET /images/pexels-diimejii-3466163-p-800.jpg
+ HTTP  11/12/2026 6:38:27 PM 127.0.0.1 Returned 200 in 1 ms

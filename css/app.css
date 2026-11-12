@@ -2065,3 +2065,30 @@ body.is-class .view { max-width: 1640px; }
 .mx-heat td { width: 32px; height: 30px; text-align: center; border-radius: 6px; font-weight: 700; color: var(--forest); box-shadow: inset 0 0 0 1px var(--line); }
 .mx-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .mx-group .tt-week { margin-bottom: 4px; }
+
+/* ---------- The English launch class on Home (js/app/launch-pop.js): banner and window ---------- */
+.ln-card { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 28px; align-items: stretch; background: var(--lime); color: var(--forest); padding: 30px; }
+.ln-card__text { display: flex; flex-direction: column; justify-content: center; min-width: 0; }
+.ln-card .t-h1 { color: var(--forest); }
+.ln-card__photo { border-radius: var(--r-lg); overflow: hidden; min-height: 260px; background: var(--bone); }
+.ln-card__photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+.ln__facts { display: grid; gap: 8px; margin-top: 16px; }
+.ln__facts p { margin: 0; background: var(--white); border-radius: var(--r-md); padding: 13px 16px; font-weight: 600; line-height: 1.45; color: var(--ink); }
+.ln-win .ln__facts p { background: var(--bone); }
+.ln__count { margin: 12px 0 0; font-weight: 600; }
+.ln-card .ln__count, .ln-card .ln__msg { color: var(--forest); }
+.ln__btns { margin-top: 18px; }
+.ln__msg { margin: 10px 0 0; }
+.ln__msg:empty { display: none; }
+.ln-win__card { position: relative; max-width: 560px; }
+.ln-win__photo { margin: -8px -10px 20px; border-radius: var(--r-lg); overflow: hidden; height: 230px; background: var(--bone); }
+.ln-win__photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 28%; }
+.ln-win__x { position: absolute; top: 28px; right: 30px; z-index: 2; background: var(--white); box-shadow: var(--shadow-lift); }
+@media (max-width: 760px) {
+  .ln-card { grid-template-columns: 1fr; padding: 22px; gap: 18px; }
+  .ln-card__photo { order: -1; min-height: 0; height: 190px; }
+}
+@media (max-width: 560px) {
+  .ln-win__photo { height: 180px; margin: -4px -4px 16px; }
+  .ln-win__x { top: 26px; right: 22px; }
+}

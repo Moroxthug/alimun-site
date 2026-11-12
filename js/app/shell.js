@@ -444,19 +444,9 @@
         if (go) { go.href = '#/settings/plans/pick/' + product + '/month'; go.textContent = t('app_home_offer_go'); }
       });
     }
-    // The English launch class (api/_lib/launch.js): free first class, then the class from Monday, while sign-ups are open
-    if (suffix === 'en' && window.AlimunData.launchInfo) {
-      window.AlimunData.launchInfo().then(function (L) {
-        var grid = view.querySelector('.grid');
-        if (!L || !L.offer || !L.offer.active || !grid || current !== 'home' || grid.querySelector('[data-launch]')) return;
-        if ((L.mine || []).length && (!L.intro || L.intro.registered)) return;
-        var at = L.intro && L.intro.open && !L.intro.registered ? new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(L.intro.at)) : null;
-        grid.insertAdjacentHTML('afterbegin', '<section class="card card--lime span-12" data-launch aria-labelledby="h-launch"><div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px">' +
-          '<h2 class="t-h2" id="h-launch">' + esc(t(at ? 'app_ln_home_h' : 'app_ln_title')) + '</h2><p class="t-body" style="margin-top:10px">' +
-          esc(at ? t('app_ln_home_p', { when: at }) : t('app_ln_off')) + '</p></div>' +
-          '<a class="btn btn--primary" href="#/settings/plans/launch">' + esc(t('app_ln_home_go')) + '</a></div></section>');
-      }, function () { /* no launch class */ });
-    }
+    // The English launch class (api/_lib/launch.js; js/app/launch-pop.js): a banner at the top of Home, and the same as a
+    // window in the welcome poll's place once the poll is answered. English learners at A1 to B2.
+    if (suffix === 'en' && /^(A1|A2|B1|B2)$/.test(level || '') && window.AlimunData.launchInfo) launchBanner(window.AlimunData.launchInfo());
     // In an open class for more than two months: the level pack, the month credited
     if (!window.AlimunData.myEntitlements) return;
     window.AlimunData.myEntitlements().then(function (rows) {
@@ -473,6 +463,29 @@
           '<a class="btn btn--primary" href="#/settings/plans/pick/' + product + '/month">' + esc(t('app_home_offer_go')) + '</a></div></section>');
       });
     }, function () { /* no offer */ });
+  }
+
+  /* The launch class banner and window (js/app/launch-pop.js); ?sample=1&launch=1 shows them with sample data */
+  function launchHelpers() {
+    return { t: t, esc: esc, locale: locale, level: D && D.profile ? D.profile.level : '', real: mode === 'real',
+      onChange: function () { /* the page and the banner read fresh data next time */ } };
+  }
+  function launchBanner(info) {
+    var pollAnswered = mode === 'real' ? !!(D && D.welcome && D.welcome.answered) : !/[?&]poll=1/.test(location.search);
+    Promise.all([info, window.AlimunLaunchPop ? null : loadScript('/js/app/launch-pop.js')]).then(function (r) {
+      var L = r[0], grid = view.querySelector('.grid');
+      if (!L || !window.AlimunLaunchPop || !grid || current !== 'home') return;
+      var H = launchHelpers();
+      if (!grid.querySelector('[data-launch]')) grid.insertAdjacentHTML('afterbegin', window.AlimunLaunchPop.card(L, H));
+      window.AlimunLaunchPop.maybe(L, H, pollAnswered);
+    }, function () { /* no launch class */ });
+  }
+  function sampleLaunch() {
+    var sat = new Date(Date.now() + 2 * 86400000); sat.setUTCHours(16, 0, 0, 0);
+    var mon = new Date(Date.now() + 4 * 86400000).toISOString().slice(0, 10);
+    return { offer: { code: 'launch-en-a1', endsAt: mon + 'T04:00:00Z', active: true, eurOff: 1000 }, seats: 3, min: 8, mine: [],
+      rooms: [{ product_key: 'level_en', starts_on: mon, state: 'published' }, { product_key: 'open_en', starts_on: mon, state: 'published' }],
+      intro: { session: 's1', at: sat.toISOString(), open: true, registered: false, registeredCount: 4 } };
   }
 
   /* Why sample data is showing, with the way to your own */
@@ -637,7 +650,7 @@
       if (window.AlimunMessages) window.AlimunMessages.reset();
       view.innerHTML = html;
       view.classList.remove('is-leaving');
-      if (id === 'home') fillOffers();
+      if (id === 'home') { fillOffers(); if (mode !== 'real' && /[?&]launch=1/.test(location.search)) launchBanner(Promise.resolve(sampleLaunch())); }
       document.body.classList.remove('is-reading');
       document.title = t(r.label) + ' – Alimun';
       if (id === 'book') {
@@ -840,6 +853,7 @@
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 
     app.addEventListener('click', function (e) {
+      if (window.AlimunLaunchPop && window.AlimunLaunchPop.homeClick(e)) return;
       var el = e.target.closest('[data-more],[data-close],[data-join],[data-join-real],[data-demo-loader],[data-replay],[data-retry],[data-poll-open]');
       if (!el) return;
       if (el.hasAttribute('data-poll-open')) {
