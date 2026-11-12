@@ -392,10 +392,11 @@
     Object.keys(JOBS).forEach(function (k) { by[k] = by[k] || []; });
     var keys = Object.keys(by).sort(function (a, b) { return ((JOBS[a] || {}).name || a).localeCompare((JOBS[b] || {}).name || b); });
     return '<section class="card span-12" style="--i:2" aria-labelledby="h-jobs"><h2 class="t-h2" id="h-jobs">Automatic jobs</h2><p class="t-small" style="margin-top:4px">The last seven days. They run by themselves; this page only shows them.</p><div class="tt-week">' + keys.map(function (k) {
-      var runs = by[k], j = JOBS[k] || {}, every = j.every || DAY, last = runs[0], failed = runs.filter(function (r) { return !r.ok; });
-      var late = !last || Date.now() - new Date(last.ran_at).getTime() > 2 * every + 10 * MIN;
-      var state = !last ? 'Has not run this week' : (late ? 'Late: last ran ' : 'Last ran ') + A.relative(new Date(last.ran_at).getTime() - Date.now()) + (last.ok ? '' : ', and failed');
-      var freq = every >= DAY ? 'once a day' : 'every ' + Math.round(every / MIN) + ' minutes';
+      var runs = by[k], j = JOBS[k] || {}, event = j.every === 0, every = j.every || DAY, last = runs[0], failed = runs.filter(function (r) { return !r.ok; });
+      /* A job added recently is only late once it has missed two runs since it was added; one that runs when something happens is never late */
+      var from = j.since ? Date.parse(j.since) : 0, late = !event && Date.now() - Math.max(last ? new Date(last.ran_at).getTime() : 0, from) > 2 * every + 10 * MIN;
+      var state = !last ? (event ? 'Not used this week' : late ? 'Has not run this week' : 'First run still to come') : (late ? 'Late: last ran ' : 'Last ran ') + A.relative(new Date(last.ran_at).getTime() - Date.now()) + (last.ok ? '' : ', and failed');
+      var freq = event ? 'when something happens' : every >= DAY ? 'once a day' : 'every ' + Math.round(every / MIN) + ' minutes';
       return '<div class="tt-row tt-row--wide ad-jobw' + (late || (last && !last.ok) ? ' is-bad' : '') + '"><span class="tt-row__time">' + esc(A.plural(runs.length, 'run', 'runs')) + '</span><span><b>' + esc(j.name || k) + '</b><small>' +
         esc(state + '. Runs ' + freq + '. ' + (failed.length ? A.plural(failed.length, 'failure', 'failures') + ' this week.' : 'No failures this week.') + (last && last.result ? ' Last result: ' + resultText(last.result) + '.' : '')) + '</small>' +
         (failed.length ? '<details class="ad-details"><summary>The failures</summary>' + failed.slice(0, 10).map(function (r) { return '<p class="t-small ad-pre">' + esc(A.fmt(r.ran_at, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) + ': ' + resultText(r.result).slice(0, 500)) + '</p>'; }).join('') + '</details>' : '') + '</span></div>';

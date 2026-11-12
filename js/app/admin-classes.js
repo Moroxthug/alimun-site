@@ -137,10 +137,13 @@
       return !q || [teacherOf(c), c.language, c.level, TIERS[c.tier]].join(' ').toLowerCase().indexOf(q) > -1;
     });
     if (!list.length) return '<p class="t-body" style="margin-top:12px">' + esc(CL.classes.length ? 'No class matches.' : 'No classes yet.') + '</p>';
-    return '<div class="tt-week">' + list.map(function (c) {
-      var bits = [teacherOf(c), timetable(c), STATUS[c.status] || c.status, next[c.id] ? 'next ' + day(next[c.id], c.timezone) : (c.status === 'open' || c.status === 'full' ? 'no dates ahead' : ''), wait[c.id] ? wait[c.id] + ' waiting' : ''].filter(Boolean);
-      return '<a class="tt-row tt-row--wide" href="#/classes/' + esc(c.id) + '"><span class="tt-row__time">' + esc((c.enrolled_count || 0) + ' of ' + (c.max_students || 0)) + '</span><span><b>' + esc(A.className(c)) + '</b><small>' + esc(bits.join(', ')) + '</small></span></a>';
-    }).join('') + '</div>';
+    return '<div class="dt-wrap"><table class="dt"><thead><tr><th>Class</th><th>Teacher</th><th>Timetable</th><th class="r">Seats</th><th>State</th><th>Next date</th><th class="r">Waiting</th></tr></thead><tbody>' + list.map(function (c) {
+      var active = c.status === 'open' || c.status === 'full';
+      return '<tr data-href="#/classes/' + esc(c.id) + '"><td><a href="#/classes/' + esc(c.id) + '">' + esc(A.className(c)) + '</a></td><td>' + esc(teacherOf(c)) + '</td><td class="m">' + esc(timetable(c)) + '</td>' +
+        '<td class="r">' + esc((c.enrolled_count || 0) + ' of ' + (c.max_students || 0)) + '</td>' +
+        '<td class="nw"><span class="dot' + (c.status === 'open' ? '' : c.status === 'full' ? ' dot--warn' : ' dot--off') + '"></span>' + esc(STATUS[c.status] || c.status) + '</td>' +
+        '<td class="nw' + (active && !next[c.id] ? ' is-bad' : ' m') + '">' + esc(next[c.id] ? day(next[c.id], c.timezone) : active ? 'No dates ahead' : '') + '</td><td class="r">' + esc(wait[c.id] ? String(wait[c.id]) : '') + '</td></tr>';
+    }).join('') + '</tbody></table></div>';
   }
 
   /* ---------- A class ---------- */

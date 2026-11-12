@@ -13,7 +13,7 @@
   'use strict';
   var A = null, root = null, ST = null, TE = null, EMAILS = {}, FILE = null;
   var DAY = 86400000;
-  var PLANS = { free: 'Free', community: 'Community', focused: 'Focused', intensive: 'Intensive', private: '1 on 1', onetoone: '1 on 1 (old)', daily: 'Daily', waitlist: 'Waiting list', founding_member: 'Founding member' };
+  var PLANS = { free: 'Free', community: 'Community', focused: 'Focused', intensive: 'Intensive', private: '1 on 1', onetoone: '1 on 1 (old)', daily: 'Daily', waitlist: 'Waiting list', founding_member: 'Founding member', app: 'App only', open: 'Open class', pack: 'Level pack', exam: 'Exam pack' };
   var PAID_EMAIL = { community: true, focused: true, intensive: true, private: true };
   var GOALS = { foundations: 'Strong foundations', relocation: 'Living or moving abroad', professional: 'Work', academic: 'Study or an exam', pleasure: 'For the pleasure of it' };
   var LEVELS = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];
@@ -25,7 +25,9 @@
   function esc(s) { return A.esc(s); }
   /* A plan given without payment (student_profiles.plan_given_until) */
   function givenOn(s) { var u = s && s.plan_given_until ? Date.parse(s.plan_given_until) : NaN; return isFinite(u) && u > Date.now(); }
-  function payLine(s) { return PAY[s.stripe_subscription_status] || (givenOn(s) ? 'given until ' + day(s.plan_given_until) : s.plan_given_until ? 'given plan ended ' + day(s.plan_given_until) : ''); }
+  /* Paying: a Stripe subscription, or an active purchase in entitlements (the pricing engine, 12 Nov 2026); admin grants and trials do not count */
+  function paying(s) { return s.stripe_subscription_status === 'active' || !!(ST && ST.paid && ST.paid[s.user_id]); }
+  function payLine(s) { var e = ST && ST.paid && ST.paid[s.user_id]; if (e && s.stripe_subscription_status !== 'active') return 'paid: ' + e; return PAY[s.stripe_subscription_status] || (givenOn(s) ? 'given until ' + day(s.plan_given_until) : s.plan_given_until ? 'given plan ended ' + day(s.plan_given_until) : ''); }
   function dateInput(iso) { if (!iso) return ''; var d = new Date(iso); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
   function real() { return A.mode() === 'real'; }
   function day(d) { return A.fmt(d, { day: 'numeric', month: 'short', year: 'numeric' }); }
@@ -110,7 +112,7 @@
     var q = SF.q.trim().toLowerCase();
     return ST.students.filter(function (s) {
       if (q && [s.full_name, EMAILS[s.user_id], s.language].join(' ').toLowerCase().indexOf(q) < 0) return false;
-      if (SF.plan === 'paying' && s.stripe_subscription_status !== 'active') return false;
+      if (SF.plan === 'paying' && !paying(s)) return false;
       if (SF.plan === 'given' && !givenOn(s)) return false;
       if (SF.plan && SF.plan !== 'paying' && SF.plan !== 'given' && s.tier !== SF.plan) return false;
       if (SF.lang && s.language !== SF.lang) return false;
@@ -121,11 +123,11 @@
   }
   function studentsView() {
     var langs = ST.students.map(function (s) { return s.language; }).filter(function (v, i, a) { return v && a.indexOf(v) === i; }).sort();
-    return '<div class="view__head"><div><h1 class="t-h1">Students</h1><p class="t-lead">' + esc(A.plural(ST.students.length, 'student', 'students') + ', ' + A.plural(ST.students.filter(function (s) { return s.stripe_subscription_status === 'active'; }).length, 'with an active subscription', 'with an active subscription') + '.') + '</p></div>' +
+    return '<div class="view__head"><div><h1 class="t-h1">Students</h1><p class="t-lead">' + esc(A.plural(ST.students.length, 'student', 'students') + ', ' + A.plural(ST.students.filter(paying).length, 'paying', 'paying') + '.') + '</p></div>' +
       '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/students/invite">Invite a student</a><a class="btn btn--ghost btn--sm" href="#/students/signups">Email signups</a></div></div>' +
       '<div class="grid rise"><section class="card span-12" style="--i:0"><div class="ad-filters">' +
         '<input class="st-in" type="search" data-sf="q" placeholder="Search by name, email or language" value="' + esc(SF.q) + '" aria-label="Search">' +
-        '<select class="st-in" data-sf="plan" aria-label="Plan">' + opt('', 'Every plan', SF.plan) + opt('paying', 'Active subscription', SF.plan) + opt('given', 'Plan given without payment', SF.plan) + Object.keys(PLANS).map(function (k) { return opt(k, PLANS[k], SF.plan); }).join('') + '</select>' +
+        '<select class="st-in" data-sf="plan" aria-label="Plan">' + opt('', 'Every plan', SF.plan) + opt('paying', 'Paying', SF.plan) + opt('given', 'Plan given without payment', SF.plan) + Object.keys(PLANS).map(function (k) { return opt(k, PLANS[k], SF.plan); }).join('') + '</select>' +
         '<select class="st-in" data-sf="lang" aria-label="Language">' + opt('', 'Every language', SF.lang) + langs.map(function (l) { return opt(l, l, SF.lang); }).join('') + '</select>' +
         '<select class="st-in" data-sf="klass" aria-label="Class">' + opt('', 'In a class or not', SF.klass) + opt('in', 'In a class', SF.klass) + opt('none', 'Not in a class', SF.klass) + '</select></div>' +
         (ST.noEmails ? '<p class="t-small st-msg is-bad">Emails could not be loaded, so the search covers names and languages only.</p>' : '') +
@@ -134,11 +136,14 @@
   function studentRowsHtml() {
     var list = studentRows();
     if (!list.length) return '<p class="t-body" style="margin-top:12px">No student matches.</p>';
-    return list.slice(0, 300).map(function (s) {
-      var co = cohortOf(ST.cohorts, s.enrolled_cohort_id);
-      var bits = [s.language + ' ' + (s.level || ''), PLANS[s.tier] || s.tier, payLine(s), co ? 'in ' + A.className(co) : 'no class', 'joined ' + day(s.created_at)].filter(Boolean);
-      return '<a class="tt-row tt-row--wide" href="#/students/' + esc(s.id) + '"><span class="tt-row__time">' + esc(s.level || '') + '</span><span><b>' + esc(s.full_name || '') + '</b><small>' + esc((EMAILS[s.user_id] ? EMAILS[s.user_id] + '. ' : '') + bits.join(', ')) + '</small></span></a>';
-    }).join('') + (list.length > 300 ? '<p class="t-small">Showing the first 300. Narrow the search to see the rest.</p>' : '');
+    /* A table: one student per row, the columns the admin scans (owner, 12 Nov 2026: corporate-grade console) */
+    return '<div class="dt-wrap"><table class="dt"><thead><tr><th>Student</th><th>Learning</th><th>Plan</th><th>Payment</th><th>Class</th><th class="r">Joined</th></tr></thead><tbody>' + list.slice(0, 300).map(function (s) {
+      var co = cohortOf(ST.cohorts, s.enrolled_cohort_id), pay = payLine(s);
+      return '<tr data-href="#/students/' + esc(s.id) + '"><td><a href="#/students/' + esc(s.id) + '">' + esc(s.full_name || 'Student') + '</a><div class="m">' + esc(EMAILS[s.user_id] || '') + '</div></td>' +
+        '<td>' + esc([s.language, s.level].filter(Boolean).join(' ')) + '</td><td>' + esc(PLANS[s.tier] || s.tier || '') + '</td>' +
+        '<td class="nw"><span class="dot' + (paying(s) ? '' : s.stripe_subscription_status === 'past_due' ? ' dot--bad' : givenOn(s) ? ' dot--warn' : ' dot--off') + '"></span>' + esc(pay ? A.cap(pay) : 'None') + '</td>' +
+        '<td>' + esc(co ? A.className(co) : '') + '</td><td class="r m">' + esc(day(s.created_at)) + '</td></tr>';
+    }).join('') + '</tbody></table></div>' + (list.length > 300 ? '<p class="t-small">Showing the first 300. Narrow the search to see the rest.</p>' : '');
   }
   function studentFileView(s, f) {
     var p = f.profile || s, email = EMAILS[p.user_id] || '';
@@ -326,13 +331,14 @@
       (picked.length ? (which === 'pending' ? '<button class="btn btn--primary btn--sm" type="button" data-ask="approved">Approve</button><button class="btn btn--quiet btn--sm" type="button" data-ask="suspended">Reject</button>'
         : which === 'suspended' ? '<button class="btn btn--primary btn--sm" type="button" data-ask="approved">Reinstate</button>' : '<button class="btn btn--quiet btn--sm" type="button" data-ask="suspended">Suspend</button>') : '') + '</div><div data-confirm></div>';
     if (!list.length) return html + '<p class="t-body" style="margin-top:12px">' + esc(which === 'pending' ? 'No applications waiting.' : 'No teacher matches.') + '</p>';
-    return html + '<div class="tt-week">' + list.map(function (t) {
+    return html + '<div class="dt-wrap"><table class="dt"><thead><tr>' + (bulk ? '<th></th>' : '') + '<th>Teacher</th><th>Languages</th><th>Specialty</th><th class="r">Years</th><th>State</th><th class="r">Joined</th><th></th></tr></thead><tbody>' + list.map(function (t) {
       var cos = TE.cohorts.filter(function (c) { return c.teacher_id === t.id && c.status !== 'closed'; }).length;
-      var bits = [(t.languages || []).join(', '), t.experience_years != null ? A.plural(t.experience_years, 'year', 'years') + ' teaching' : '', t.specialty, t.status === 'approved' ? A.plural(cos, 'open class', 'open classes') : STATUS[t.status], 'joined ' + day(t.created_at)].filter(Boolean);
-      return '<div class="tt-row ad-trow">' + (bulk ? '<input type="checkbox" data-sel="' + esc(t.id) + '"' + (SEL[t.id] ? ' checked' : '') + ' aria-label="Select ' + esc(t.full_name) + '">' : '') +
-        '<span><a class="linkish" href="#/teachers/' + esc(t.id) + '"><b>' + esc(t.full_name || '') + '</b></a><small>' + esc((EMAILS[t.user_id] ? EMAILS[t.user_id] + '. ' : '') + bits.join(', ')) + '</small></span>' +
-        '<a class="btn btn--ghost btn--sm" href="#/teachers/' + esc(t.id) + '">' + esc(t.status === 'pending' ? 'Review' : 'Open') + '</a></div>';
-    }).join('') + '</div>';
+      return '<tr>' + (bulk ? '<td style="width:36px"><input type="checkbox" data-sel="' + esc(t.id) + '"' + (SEL[t.id] ? ' checked' : '') + ' aria-label="Select ' + esc(t.full_name) + '" style="width:16px;height:16px;accent-color:#1a443c"></td>' : '') +
+        '<td><a href="#/teachers/' + esc(t.id) + '">' + esc(t.full_name || 'Teacher') + '</a><div class="m">' + esc(EMAILS[t.user_id] || '') + '</div></td>' +
+        '<td>' + esc((t.languages || []).join(', ')) + '</td><td class="m">' + esc(t.specialty || '') + '</td><td class="r">' + esc(t.experience_years != null ? t.experience_years : '') + '</td>' +
+        '<td class="nw"><span class="dot' + (t.status === 'approved' ? '' : t.status === 'pending' ? ' dot--warn' : ' dot--off') + '"></span>' + esc(t.status === 'approved' ? A.plural(cos, 'open class', 'open classes') : STATUS[t.status] || t.status) + '</td>' +
+        '<td class="r m">' + esc(day(t.created_at)) + '</td><td class="r"><a class="btn btn--ghost btn--sm" href="#/teachers/' + esc(t.id) + '">' + esc(t.status === 'pending' ? 'Review' : 'Open') + '</a></td></tr>';
+    }).join('') + '</tbody></table></div>';
   }
   function redrawTeachers() { var box = root.querySelector('[data-trows]'); if (box) box.innerHTML = teacherRowsHtml(box.getAttribute('data-which')); }
   /* Confirming a status change: who, whether to email them, and a reason when rejecting or suspending */
