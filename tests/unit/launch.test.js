@@ -49,9 +49,9 @@ test('the class opens with 8 sign-ups across the pack and the open class, otherw
 test('launch email: only the ticked learners, English A1 to B2, each once', async () => {
   const mail = require('../../api/_lib/email.js');
   const LM = require('../../api/_lib/launch-email.js');
-  const sent = [], notes = [];
+  const sent = [], notes = [], camps = [], recips = [], bodies = [];
   const realSend = mail.sendEmail;
-  mail.sendEmail = async (m) => { sent.push(m.to); return true; };
+  mail.sendEmail = async (m) => { sent.push(m.to); bodies.push(m.html); return true; };
   const ROOM = { starts_on: '2026-11-16', schedule_time: '19:00:00', timezone: 'Europe/Paris', min_learners: 8 };
   const profiles = [
     { user_id: 'a1', full_name: 'Ana', level: 'A1', timezone: 'Europe/Paris', ui_lang: 'fr', language: 'English' },
@@ -61,7 +61,7 @@ test('launch email: only the ticked learners, English A1 to B2, each once', asyn
     { user_id: '44444444-4444-4444-8444-444444444444', full_name: 'Test', level: 'A1', timezone: 'UTC', ui_lang: null, language: 'English' }
   ];
   const q = (rows) => {
-    const o = { rows, eq(k, v) { o.rows = o.rows.filter((r) => k.includes('->>') ? (r.params || {})[k.split('->>')[1]] === v : r[k] === v); return o; },
+    const o = { rows, eq(k, v) { o.rows = o.rows.filter((r) => k.includes('->>') ? (r[k.split('->>')[0]] || {})[k.split('->>')[1]] === v : r[k] === v); return o; },
       in(k, v) { o.rows = o.rows.filter((r) => v.includes(r[k])); return o; }, limit() { return o; }, maybeSingle() { return Promise.resolve({ data: o.rows[0] || null }); },
       select() { return o; }, then(res) { return Promise.resolve({ data: o.rows, error: null }).then(res); } };
     return o;
@@ -73,6 +73,10 @@ test('launch email: only the ticked learners, English A1 to B2, each once', asyn
       if (t === 'sessions') return q([{ id: OTHER, scheduled_at: '2026-11-14T16:00:00Z' }]);
       if (t === 'student_profiles') return q(profiles.slice());
       if (t === 'notifications') return Object.assign(q(notes.slice()), { insert: async (n) => { notes.push(n); return {}; } });
+      if (t === 'campaigns') return Object.assign(q(camps.slice()), {
+        insert: (c) => ({ select: () => ({ single: async () => { const row = Object.assign({ id: 'camp1', recipients: 0, emailed: 0 }, c); camps.push(row); return { data: row, error: null }; } }) }),
+        update: (f) => ({ eq: async () => { Object.assign(camps[0], f); return {}; } }) });
+      if (t === 'campaign_recipients') return Object.assign(q(recips.slice()), { upsert: async (r) => { recips.push(r); return {}; } });
       throw new Error('table ' + t);
     },
     auth: { admin: { getUserById: async (id) => ({ data: { user: { id, email: id + '@example.com', app_metadata: { role: 'student' } } } }) } }
@@ -85,6 +89,11 @@ test('launch email: only the ticked learners, English A1 to B2, each once', asyn
     const r = await LM.run(sb, 'send', { only: ['a1'], confirm: 1 });
     assert.strictEqual(r.sent, 1);
     assert.deepStrictEqual(sent, ['a1@example.com']);
+    assert.strictEqual(camps.length, 1, 'recorded as one campaign');
+    assert.deepStrictEqual(recips.map((r) => [r.user_id, r.emailed]), [['a1', true]]);
+    assert.strictEqual(notes[0].campaign_id, 'camp1');
+    assert.strictEqual(camps[0].emailed, 1);
+    assert.ok(/action=click&amp;c=camp1&amp;u=a1/.test(bodies[0]) || !mail.linkSig('x'), 'the button is a personal click link (when the signing key is set)');
     assert.deepStrictEqual((await LM.run(sb, 'preview', {})).people.map((x) => x.id), ['b2'], 'nobody gets it twice');
   } finally { mail.sendEmail = realSend; }
 });

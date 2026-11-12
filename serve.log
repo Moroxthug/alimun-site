@@ -76,3 +76,41 @@
  HTTP  11/12/2026 6:16:20 PM 127.0.0.1 Returned 200 in 0 ms
  HTTP  11/12/2026 6:16:20 PM 127.0.0.1 GET /js/app/admin.js
  HTTP  11/12/2026 6:16:20 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /app/admin.html
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 301 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /app/admin
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /fonts/Satoshi-Variable.ttf
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /css/app.css
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /fonts/coolvetica-condensed-rg.otf
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/app/cast.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/app/cast3.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/app/data.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/tz.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/app/admin-people.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/app/admin-activity.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/app/admin-campaigns.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/app/admin-classes.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/app/admin-teaching.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 4 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/app/admin-system.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/app/admin-figures.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/match.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/app/admin-matching.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 GET /js/app/admin.js
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/12/2026 6:28:01 PM 127.0.0.1 Returned 200 in 3 ms

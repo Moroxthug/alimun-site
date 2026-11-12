@@ -8,6 +8,7 @@
  *   POST /api/pricing?action=admin-launch-email (admin) { mode: 'preview' | 'test' | 'send', confirm }
  *     preview  the recipients (name, language, level, time zone) and the English subject; nothing sent
  *     test     one email per language in use, to the owner's address only
+ *     report   what each learner sent the email did next (clicked, bell read, free place, price looked at, reserved)
  *     send     { only: [user ids] } the learners the owner ticked (English A1–B2, not sent yet); confirm = how many
  */
 const mail = require('./email.js');
@@ -133,7 +134,7 @@ function build(r, ctx) {
     blocks.push({ offer: { headline: x.offerH, now: x.offerNow, ends: x.offerEnds(deadline) } });
     blocks.push({ p: mail.esc(x.rule(ctx.min, deadline)) });
   }
-  blocks.push({ button: { label: upper ? x.button : x.buttonClass, href: LINK } });
+  blocks.push({ button: { label: upper ? x.button : x.buttonClass, href: (ctx.clickUrl && ctx.clickUrl(r.user_id)) || LINK } });
   const unsub = ctx.unsub ? mail.unsubscribeUrl(r.user_id) : '';
   const out = mail.renderEmail({ hero: 'class-english', preheader: x.pre, heading: upper ? x.headingUpper : x.heading, blocks, note: mail.esc(x.note), unsubscribeUrl: unsub, lang });
   return { subject: upper ? x.subjectUpper : x.subject, html: out.html, text: out.text, lang, upper, unsub, bell: { title: x.bellTitle, body: x.bellBody } };
@@ -169,8 +170,56 @@ async function recipients(sb, exclude) {
   return out;
 }
 
+/* The launch email is recorded as a campaign (Admin → Campaigns shows it): campaign_recipients holds who was emailed and
+   when they clicked the button, through the campaigns' signed click link (/api/campaigns?action=click), which then
+   goes on to the class page. No open tracking: a hidden pixel needs consent in the EU and mail apps open emails on
+   their own. */
+async function campaignOf(sb, create) {
+  const { data } = await sb.from('campaigns').select('id, recipients, emailed').eq('audience->>launch', KIND).limit(1);
+  if (data && data.length) return data[0];
+  if (!create) return null;
+  const { data: c, error } = await sb.from('campaigns').insert({ subject: 'Launch class: English A1 to B2 (free class Saturday, class from Monday)',
+    heading: 'Your English class starts on Monday', body: 'The launch class email (api/_lib/launch-email.js), in the learner\u2019s language, with their own times.',
+    button_label: 'See the class', button_link: LINK, hero: 'class-english', channels: ['email', 'inapp'], audience: { launch: KIND } }).select('id, recipients, emailed').single();
+  if (error) throw new Error('campaign: ' + error.message);
+  return c;
+}
+function clickUrlFor(campaignId) {
+  return (userId) => {
+    const sig = mail.linkSig(`${campaignId}:${userId}`);
+    return sig ? `${mail.SITE}/api/campaigns?action=click&c=${campaignId}&u=${userId}&s=${sig}` : LINK;
+  };
+}
+/** What each learner who was sent the email did next: clicked, read the bell note, free place, price, reservation. */
+async function report(sb, ctx) {
+  const camp = await campaignOf(sb, false);
+  if (!camp) return { campaign: null, people: [] };
+  const { data: rec } = await sb.from('campaign_recipients').select('user_id, emailed, clicked_at, created_at').eq('campaign_id', camp.id);
+  const ids = (rec || []).map((r) => r.user_id);
+  if (!ids.length) return { campaign: camp.id, people: [] };
+  const [{ data: prof }, { data: notes }, { data: passes }, { data: quotes }, { data: ents }, { data: acts }] = await Promise.all([
+    sb.from('student_profiles').select('user_id, full_name, level').in('user_id', ids),
+    sb.from('notifications').select('user_id, read_at').eq('params->>launch', KIND).in('user_id', ids),
+    ctx.offer.intro_session ? sb.from('entitlements').select('user_id, created_at').eq('session_id', ctx.offer.intro_session).eq('status', 'active').in('user_id', ids) : Promise.resolve({ data: [] }),
+    sb.from('quotes').select('user_id, product_key, created_at').in('cohort_id', ctx.offer.rooms).in('user_id', ids),
+    sb.from('entitlements').select('user_id, product_key, cadence, status, created_at').in('cohort_id', ctx.offer.rooms).in('user_id', ids),
+    sb.from('activity_events').select('user_id, created_at').in('user_id', ids).order('created_at', { ascending: false }).limit(2000)
+  ]);
+  const by = (list) => { const m = {}; (list || []).forEach((x) => { (m[x.user_id] = m[x.user_id] || []).push(x); }); return m; };
+  const P = by(prof), N = by(notes), F = by(passes), Q = by(quotes), E = by(ents), A = by(acts);
+  return { campaign: camp.id, people: (rec || []).map((r) => {
+    const sentAt = r.created_at, after = (A[r.user_id] || []).filter((a) => a.created_at > sentAt);
+    const ent = (E[r.user_id] || []).filter((e) => ['pending_room', 'active', 'paused'].includes(e.status))[0] || null;
+    return { name: (P[r.user_id] || [{}])[0].full_name || '', level: (P[r.user_id] || [{}])[0].level || '', sentAt, emailed: r.emailed,
+      clickedAt: r.clicked_at, bellReadAt: ((N[r.user_id] || [])[0] || {}).read_at || null, freeClassAt: ((F[r.user_id] || [])[0] || {}).created_at || null,
+      pricedAt: (Q[r.user_id] || []).map((q) => q.created_at).sort().pop() || null, reserved: ent ? { product: ent.product_key, cadence: ent.cadence, at: ent.created_at } : null,
+      lastSeen: after.length ? after[0].created_at : null };
+  }).sort((a, b) => (b.reserved ? 4 : b.pricedAt ? 3 : b.freeClassAt ? 2 : b.clickedAt ? 1 : 0) - (a.reserved ? 4 : a.pricedAt ? 3 : a.freeClassAt ? 2 : a.clickedAt ? 1 : 0)) };
+}
+
 async function run(sb, mode, opts) {
   const ctx = await context(sb);
+  if (mode === 'report') return report(sb, ctx);
   const list = await recipients(sb, ctx.offer.exclude);
   if (mode === 'preview') {
     return { count: list.length, people: list.map((r) => { const e = build(r, ctx); return { id: r.user_id, name: r.name, level: r.level, timezone: r.timezone, lang: e.lang, beginner: !e.upper, subject: e.subject }; }) };
@@ -192,13 +241,17 @@ async function run(sb, mode, opts) {
     const chosen = list.filter((r) => want.has(r.user_id));
     if (!chosen.length) return { error: 'nobody_chosen' };
     if (Number(opts.confirm) !== chosen.length || chosen.length !== want.size) return { error: 'count_changed', count: chosen.length };
+    const camp = await campaignOf(sb, true);
+    const sendCtx = Object.assign({}, ctx, { clickUrl: clickUrlFor(camp.id) });
     let ok = 0; const failed = [];
     for (const r of chosen) {
-      const e = build(r, ctx);
+      const e = build(r, sendCtx);
       const sentOk = await mail.sendEmail({ to: r.email, subject: e.subject, html: e.html, text: e.text, unsubscribeUrl: e.unsub });
-      await sb.from('notifications').insert({ user_id: r.user_id, kind: 'offer', params: { launch: KIND }, title: e.bell.title, body: e.bell.body, link: '/app#/settings/plans/launch' });
+      await sb.from('campaign_recipients').upsert({ campaign_id: camp.id, user_id: r.user_id, emailed: !!sentOk }, { onConflict: 'campaign_id,user_id' });
+      await sb.from('notifications').insert({ user_id: r.user_id, kind: 'offer', params: { launch: KIND }, title: e.bell.title, body: e.bell.body, link: '/app#/settings/plans/launch', campaign_id: camp.id });
       if (sentOk) ok++; else failed.push(r.email);
     }
+    await sb.from('campaigns').update({ recipients: (camp.recipients || 0) + chosen.length, emailed: (camp.emailed || 0) + ok, sent_at: new Date().toISOString() }).eq('id', camp.id);
     return { sent: ok, failed };
   }
   return { error: 'bad_mode' };

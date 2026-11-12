@@ -238,6 +238,7 @@
     if (!L.offer) return html + '<p class="t-body" style="margin-top:8px">No launch class is set up.</p></section>';
     var rooms = (L.rooms || []).map(function (r) { return (/^level_/.test(r.product_key) ? 'level pack ' : 'open class ') + r.seats + ' (' + r.state + ')'; }).join(', ');
     html += '<p class="t-body" style="margin-top:8px">' + esc('Sign-ups: ' + L.seats + ' of ' + L.min + ' needed (' + rooms + '). Free first class: ' + (L.intro ? L.intro.registeredCount + ' registered' : 'none') + '. Sign-ups ' + (L.offer.active ? 'close ' + A.fmt(L.offer.endsAt, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : 'are closed') + '. The class page learners see: /app#/settings/plans/launch.') + '</p>';
+    html += reportHtml();
     var m = LMAIL;
     if (m && m.people) html += '<p class="t-body" style="margin-top:10px"><b>' + esc(A.plural(m.count, 'English learner (A1 to B2) has', 'English learners (A1 to B2) have') + ' not had the email yet. Tick who gets it.') + '</b></p>' +
       '<div class="btn-row" style="margin-top:6px"><button class="btn btn--quiet btn--sm" type="button" data-mx-pick="all">Tick all</button><button class="btn btn--quiet btn--sm" type="button" data-mx-pick="none">Untick all</button>' +
@@ -250,6 +251,31 @@
     html += '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-mx-mail="preview">Who gets the email</button><button class="btn btn--ghost btn--sm" type="button" data-mx-mail="test">Send me a test</button>' +
       (m && m.people && m.count ? '<button class="btn btn--ghost btn--sm" type="button" data-mx-mail="send" data-mx-sendbtn>' + esc(sendLabel()) + '</button>' : '') + '</div>' +
       '<p class="t-small st-msg" data-mx-mailmsg aria-live="polite"></p></section>';
+    return html;
+  }
+  /* What each learner sent the email did next (api/_lib/launch-email.js report) */
+  var LREP = null;
+  function when(at) { return A.fmt(at, { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }); }
+  function reportHtml() {
+    var r = LREP;
+    if (!r || !r.people || !r.people.length) return '';
+    var n = r.people.length, c = function (f) { return r.people.filter(f).length; };
+    var PROD = { level_en: 'the level pack', open_en: 'the open class' };
+    var html = '<h3 class="t-h3" style="margin-top:14px">What they did</h3><p class="t-body" style="margin-top:6px"><b>' + esc(
+      'Sent to ' + n + ': ' + c(function (x) { return x.clickedAt; }) + ' clicked the email\u2019s button, ' + c(function (x) { return x.bellReadAt; }) + ' read the dashboard note, ' +
+      c(function (x) { return x.freeClassAt; }) + ' saved a free place, ' + c(function (x) { return x.pricedAt; }) + ' looked at a price, ' + c(function (x) { return x.reserved; }) + ' reserved.') + '</b></p>' +
+      '<p class="t-small" style="margin-top:4px">Email opens are not counted: that needs a hidden pixel, which needs consent in the EU, and mail apps open emails by themselves.</p><div class="tt-week">';
+    html += r.people.map(function (x) {
+      var did = [x.emailed ? 'Emailed ' + when(x.sentAt) : 'Email failed ' + when(x.sentAt)];
+      if (x.clickedAt) did.push('clicked ' + when(x.clickedAt));
+      if (x.bellReadAt) did.push('read the dashboard note ' + when(x.bellReadAt));
+      if (x.freeClassAt) did.push('saved a free place ' + when(x.freeClassAt));
+      if (x.pricedAt) did.push('looked at a price ' + when(x.pricedAt));
+      if (x.reserved) did.push('reserved ' + (PROD[x.reserved.product] || x.reserved.product) + ' (' + (x.reserved.cadence === 'upfront' ? 'upfront' : 'monthly') + ') ' + when(x.reserved.at));
+      if (!x.clickedAt && !x.bellReadAt && !x.freeClassAt && !x.pricedAt && !x.reserved) did.push(x.lastSeen ? 'used Alimun since, last ' + when(x.lastSeen) : 'nothing since');
+      var step = x.reserved ? 'Reserved' : x.pricedAt ? 'Priced' : x.freeClassAt ? 'Free class' : x.clickedAt ? 'Clicked' : 'Sent';
+      return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(step) + '</span><span><b>' + esc((x.name || 'No name') + (x.level ? ', ' + x.level : '')) + '</b><small>' + esc(did.join(', ') + '.') + '</small></span></div>';
+    }).join('') + '</div>';
     return html;
   }
   var PICKED = {};
@@ -268,7 +294,7 @@
     window.AlimunData.adminLaunchEmail(mode, mode === 'send' ? only.length : undefined, mode === 'send' ? only : undefined).then(function (r) {
       if (mode === 'preview') { PICKED = {}; (r.people || []).forEach(function (x) { PICKED[x.id] = true; }); }
       LMAIL = mode === 'send' ? r : mode === 'test' ? Object.assign({}, LMAIL, r) : r;
-      if (mode === 'send') return window.AlimunData.adminLaunchEmail('preview').then(function (p) { LMAIL = Object.assign(p, { sent: r.sent, failed: r.failed }); });
+      if (mode === 'send') return Promise.all([window.AlimunData.adminLaunchEmail('preview'), window.AlimunData.adminLaunchEmail('report')]).then(function (x) { LMAIL = Object.assign(x[0], { sent: r.sent, failed: r.failed }); LREP = x[1]; });
     }).then(function () { draw(); }, function (e) { b.disabled = false; msg.textContent = 'That did not work: ' + ((e && e.body && e.body.error) || (e && e.message) || 'please try again') + '.'; });
   }
   function mainView(R) {
@@ -379,7 +405,8 @@
     bind();
     if (!window.AlimunMatch) { root.innerHTML = '<div class="card"><p class="t-body">The matching engine did not load. Please reload the page.</p></div>'; return Promise.resolve({ stale: true }); }
     var get = RAW && real() && parts0 ? Promise.resolve(RAW) : real() ? window.AlimunData.adminMatching() : Promise.resolve(sample());
-    if (real() && !parts0 && window.AlimunData.launchInfo) get = Promise.all([get, window.AlimunData.launchInfo().catch(function () { return null; })]).then(function (r) { LAUNCH = r[1]; return r[0]; });
+    if (real() && !parts0 && window.AlimunData.launchInfo) get = Promise.all([get, window.AlimunData.launchInfo().catch(function () { return null; }),
+      window.AlimunData.adminLaunchEmail('report').catch(function () { return null; })]).then(function (r) { LAUNCH = r[1]; LREP = r[2]; return r[0]; });
     if (!RAW || !parts0) root.innerHTML = loading();
     return get.then(function (d) {
       if (my !== no) return { stale: true };
