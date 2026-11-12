@@ -271,5 +271,13 @@
     "heading": "Cette salle n'ouvrira pas",
     "body": "**{room}**, qui devait commencer le {start} ({days} à {time}, {zone}), n'ouvrira pas : trop peu d'apprenants l'ont rejointe, ou ils ont rejoint une autre salle.",
     "body2": "Merci d'avoir proposé cet horaire. Les salles que vous pouvez animer vous parviendront sous forme de nouvelles offres."
+  },
+  "founding_notice": {
+    "subject": "Votre prix fondateur prend fin le {date}",
+    "preheader": "Rien ne change d'ici là.",
+    "heading": "Votre prix fondateur prend fin le {date}",
+    "body": "Vous avez rejoint Alimun au prix fondateur, qui vous est garanti jusqu'au **{date}**. Ensuite, les nouveaux achats se font au prix habituel affiché dans Formules et prix ; un pack que vous suivez déjà garde son prix jusqu'à la fin.",
+    "body2": "Rien ne change d'ici là, et cet e-mail n'entraîne aucun débit.",
+    "button": "Voir les formules et prix"
   }
 }

@@ -271,5 +271,13 @@
     "heading": "Dieser Raum startet nicht",
     "body": "**{room}** ab dem {start} ({days} um {time}, {zone}) startet nicht: Es haben sich nicht genug Lernende angemeldet, oder sie sind in einen anderen Raum gewechselt.",
     "body2": "Danke, dass Sie diese Zeit angeboten haben. Räume, die Sie unterrichten können, erreichen Sie als neue Angebote."
+  },
+  "founding_notice": {
+    "subject": "Ihr Gründungspreis endet am {date}",
+    "preheader": "Bis dahin ändert sich nichts.",
+    "heading": "Ihr Gründungspreis endet am {date}",
+    "body": "Sie sind Alimun zum Gründungspreis beigetreten, und er gilt für Sie bis zum **{date}**. Danach gelten für neue Käufe die üblichen Preise unter Tarife und Preise; ein Paket, in dem Sie schon sind, behält seinen Preis bis zum Ende.",
+    "body2": "Bis dahin ändert sich nichts, und diese E-Mail löst keine Abbuchung aus.",
+    "button": "Tarife und Preise ansehen"
   }
 }

@@ -14,7 +14,39 @@ const SITE_URL = (process.env.APP_URL || 'https://alimun.com').replace(/\/+$/, '
 const GROQ_MODEL = process.env.TUTOR_GROQ_MODEL || process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
 const GEMINI_MODEL = process.env.TUTOR_GEMINI_MODEL || 'gemini-2.5-flash';
 const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-haiku-4-5-20251001';
-const TUTOR_DAILY_BUDGET_USD = parseFloat(process.env.TUTOR_DAILY_BUDGET_USD || '10') || 10;
+// The tutor's daily budget (docs/LAUNCH_PRICING_SPEC.md section 10): tutor_budget_per_paid_usd (app_settings, $0.15)
+// times the learners who pay today, never below TUTOR_DAILY_BUDGET_USD ($10). The owner gets one email a day when
+// the day's spend passes 80% of it. Worked out at most every 10 minutes per instance.
+const BUDGET_FLOOR_USD = parseFloat(process.env.TUTOR_DAILY_BUDGET_USD || '10') || 10;
+let budgetCache = null;
+function budgetOf(perPaid, paying, floor) { return Math.max(floor, (Number(perPaid) || 0) * (Number(paying) || 0)); }
+async function dailyBudget(supabase) {
+  if (budgetCache && Date.now() - budgetCache.at < 600000) return budgetCache.value;
+  let per = 0.15, paying = 0;
+  try {
+    const { data } = await supabase.from('app_settings').select('value').eq('key', 'tutor_budget_per_paid_usd').maybeSingle();
+    per = parseFloat(data && data.value) || 0.15;
+    const { count } = await supabase.from('student_profiles').select('id', { count: 'exact', head: true })
+      .or(`stripe_subscription_status.eq.active,plan_given_until.gt.${new Date().toISOString()}`);
+    paying = count || 0;
+  } catch (e) { /* the floor applies */ }
+  budgetCache = { at: Date.now(), value: budgetOf(per, paying, BUDGET_FLOOR_USD) };
+  return budgetCache.value;
+}
+/** One email a day to the owner once the tutor has spent 80% of the day's budget. Best effort. */
+async function alertAt80(supabase, spent, budget) {
+  try {
+    const today = new Date().toISOString().slice(0, 10);
+    const { data: won } = await supabase.from('app_settings').update({ value: today }).eq('key', 'tutor_budget_alerted_on').neq('value', today).select('key');
+    if (!won || !won.length) return;
+    const mail = require('./email.js');
+    const to = process.env.CONTACT_EMAIL || 'bchysfpol@gmail.com';
+    const heading = 'The tutor has used 80% of the day’s budget';
+    const line = `The tutor has spent $${spent.toFixed(2)} today, ${Math.round((spent / budget) * 100)}% of the day’s budget of $${budget.toFixed(2)}. At 100% the tutor stops answering until midnight UTC. The budget grows with paying learners (tutor_budget_per_paid_usd in Admin, System).`;
+    await mail.sendEmail(Object.assign({ to, subject: 'Alimun: ' + heading },
+      mail.renderEmail({ lang: 'en', preheader: 'Tutor spend today', heading, blocks: [{ p: mail.esc(line) }] })));
+  } catch (e) { console.warn('[Tutor] budget alert', e && e.message); }
+}
 
 // USD per 1M tokens [input, output]. Update when providers reprice.
 const PRICING = {
@@ -102,10 +134,12 @@ async function reserve(supabase, userId, action, est) {
       if (!data || data.length < 1000) break;
       if (page === 49) throw new Error('too many rows');
     }
-    if (spent > TUTOR_DAILY_BUDGET_USD) {
+    const budget = await dailyBudget(supabase);
+    if (spent > budget) {
       await supabase.from('ai_usage').delete().eq('id', row.id);
       throw { code: 'budget' };
     }
+    if (spent > 0.8 * budget) await alertAt80(supabase, spent, budget);
   } catch (e) {
     if (e && e.code === 'budget') throw e;
     await supabase.from('ai_usage').delete().eq('id', row.id);
@@ -471,4 +505,5 @@ function cleanSummary(r) {
   };
 }
 
-module.exports = { replyFormat, configured, reserve, callModel, brief, lessonOpen, systemFor, openingTask, LESSON_TASK, CLOSING_TASK, summaryPrompt, practicePrompt, cleanPractice, cleanReply, cleanExercise, cleanBoard, applyBoard, cleanSummary, LANG_NAMES };
+module.exports = {
+  budgetOf, replyFormat, configured, reserve, callModel, brief, lessonOpen, systemFor, openingTask, LESSON_TASK, CLOSING_TASK, summaryPrompt, practicePrompt, cleanPractice, cleanReply, cleanExercise, cleanBoard, applyBoard, cleanSummary, LANG_NAMES };

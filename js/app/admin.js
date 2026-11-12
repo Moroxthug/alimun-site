@@ -64,6 +64,7 @@
     { id: 'schedule', label: 'Schedule', icon: 'schedule', group: 'Teaching', part: 3, text: 'Every class date: cancel or move one, with students and teacher told.' },
     { id: 'waiting', label: 'Waiting list', icon: 'waiting', group: 'Teaching', part: 3, text: 'Who is waiting for which class, and the places offered.' },
     { id: 'messages', label: 'Messages', icon: 'messages', group: 'Teaching', part: 3, text: 'Read conversations and hide a message if needed.' },
+    { id: 'figures', label: 'Figures', icon: 'payouts', group: 'Money and system', part: 4, text: 'Cash, revenue, deferred revenue, reserves, room margins, refunds, the cost to win a customer, AI against revenue.' },
     { id: 'payouts', label: 'Payouts', icon: 'payouts', group: 'Money and system', part: 4, text: 'Record what teachers are paid, beside the classes they taught.' },
     { id: 'ai', label: 'AI spend', icon: 'ai', group: 'Money and system', part: 4, text: 'Calls and cost by day, by feature and by person.' },
     { id: 'system', label: 'System', icon: 'system', group: 'Money and system', part: 4, text: 'Reviews, app settings and the automatic jobs.' }
@@ -105,7 +106,8 @@
     'vercel:cron-create-rooms': { name: 'Prepare tomorrow’s video rooms', every: DAY },
     'vercel:cron-expire-offers': { name: 'Expire offers (daily backstop)', every: DAY },
     'vercel:cron-billing': { name: 'Pause what stayed unpaid for 3 days', every: DAY },
-    'vercel:cron-rooms': { name: 'Rooms: publish, open or cancel, start and charge', every: DAY }
+    'vercel:cron-rooms': { name: 'Rooms: publish, open or cancel, start and charge', every: DAY },
+    'vercel:cron-finance': { name: 'Finance: founding notices, exchange rates, the month\u2019s figures', every: DAY }
   };
   function jobsSummary() {
     var by = {};
@@ -205,7 +207,7 @@
   var MODULES = { activity: function () { return window.AlimunAdminActivity; }, campaigns: function () { return window.AlimunAdminCampaigns; }, students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; },
     classes: function () { return window.AlimunAdminClasses; }, schedule: function () { return window.AlimunAdminSchedule; },
     waiting: function () { return window.AlimunAdminWaiting; }, messages: function () { return window.AlimunAdminMessages; },
-    payouts: function () { return window.AlimunAdminPayouts; }, ai: function () { return window.AlimunAdminAi; }, system: function () { return window.AlimunAdminSystem; } };
+    figures: function () { return window.AlimunAdminFigures; }, payouts: function () { return window.AlimunAdminPayouts; }, ai: function () { return window.AlimunAdminAi; }, system: function () { return window.AlimunAdminSystem; } };
   function helpers() {
     return { esc: esc, fmt: fmt, num: num, cap: cap, plural: plural, relative: relative, className: className, icon: icon, Cast: Cast, loaderInner: loaderInner, jobs: JOBS,
       mode: function () { return mode; }, rerender: function () { render(current, false); } };

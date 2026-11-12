@@ -271,5 +271,13 @@
     "heading": "This room will not open",
     "body": "**{room}** starting on {start} ({days} at {time}, {zone}) will not open: not enough learners joined, or the learners moved to another room.",
     "body2": "Thank you for offering this time. Rooms you can teach will come to you as new offers."
+  },
+  "founding_notice": {
+    "subject": "Your founding price ends on {date}",
+    "preheader": "Nothing changes before then.",
+    "heading": "Your founding price ends on {date}",
+    "body": "You joined Alimun at the founding price, and it is kept for you until **{date}**. After that, new purchases are at the usual price shown in Plans and prices; a pack you are already in keeps its price to its end.",
+    "body2": "Nothing changes before then, and nothing is charged because of this email.",
+    "button": "See plans and prices"
   }
 }

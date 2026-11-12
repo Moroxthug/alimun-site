@@ -466,7 +466,7 @@
       if (!L) return;
       L.renewing = false; L.rotating = false; L.hold = [];
       var r = e && e.body && e.body.reason;
-      end(r === 'no_time' ? 'app_tu_none_left' : r === 'budget' ? 'app_tu_err_budget' : 'app_tl_lost');
+      end(r === 'no_time' ? 'app_tu_none_left' : r === 'daily_cap' ? 'app_tu_daily_cap' : r === 'budget' ? 'app_tu_err_budget' : 'app_tl_lost');
     });
   }
 
@@ -607,7 +607,7 @@
       if (!L) return;
       L.pbusy = false;
       var why = e && e.body && e.body.reason;
-      L.pnote = why === 'unheard' || why === 'audio_short' ? 'app_tu_err_unheard' : why === 'pron_closed' ? 'app_tu_err_pron_closed' : why === 'no_time' ? 'app_tu_none_left' : 'app_tu_err_pron';
+      L.pnote = why === 'unheard' || why === 'audio_short' ? 'app_tu_err_unheard' : why === 'pron_closed' ? 'app_tu_err_pron_closed' : why === 'no_time' ? 'app_tu_none_left' : why === 'daily_cap' ? 'app_tu_daily_cap' : 'app_tu_err_pron';
       boardUi();
     });
   }
@@ -641,7 +641,7 @@
     return D().tutorLiveTick(usage.length ? { session: L.session, lines: lines, usage: usage } : { session: L.session, lines: lines }).then(function (r) {
       if (!L) return;
       L.seconds = r.seconds; L.tickAt = Date.now(); clock(); timeNotes();
-      if (r.stop) { if (r.summary) L.summary = r.summary; end(r.stop === 'budget' ? 'app_tu_err_budget' : 'app_tu_none_left', true); }
+      if (r.stop) { if (r.summary) L.summary = r.summary; end(r.stop === 'budget' ? 'app_tu_err_budget' : r.stop === 'daily_cap' ? 'app_tu_daily_cap' : 'app_tu_none_left', true); }
     }, function (e) {
       if (!L) return;
       if (e && e.status !== 409) { L.queue = lines.concat(L.queue); L.usage = usage.concat(L.usage || []).slice(0, 100); }   /* tried again at the next tick */
@@ -682,7 +682,7 @@
       });
     }, function (e) {
       var r = e && e.body && e.body.reason;
-      fail(r === 'no_time' ? 'app_tu_none_left' : r === 'lesson_closed' ? 'app_tu_lesson_closed' : r === 'budget' ? 'app_tu_err_budget' : r === 'email' ? 'app_tu_email' : e && e.status === 429 ? 'app_tu_err_fast' : 'app_tl_failed');
+      fail(r === 'no_time' ? 'app_tu_none_left' : r === 'daily_cap' ? 'app_tu_daily_cap' : r === 'lesson_closed' ? 'app_tu_lesson_closed' : r === 'budget' ? 'app_tu_err_budget' : r === 'email' ? 'app_tu_email' : e && e.status === 429 ? 'app_tu_err_fast' : 'app_tl_failed');
     });
   }
   function fail(key, why) {

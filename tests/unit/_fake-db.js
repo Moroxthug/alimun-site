@@ -45,6 +45,8 @@ function fakeDb(tables, rpcs, opts) {
       // or('a.eq.x,b.eq.y'): only eq conditions, enough for the code under test
       or(expr) { const conds = expr.split(',').map((c) => c.split('.eq.')); st.filters.push((r) => conds.some(([k, v]) => String(r[k]) === v)); return api; },
       lte(k, v) { st.filters.push((r) => r[k] != null && r[k] <= v); return api; },
+      gt(k, v) { st.filters.push((r) => r[k] != null && r[k] > v); return api; },
+      lt(k, v) { st.filters.push((r) => r[k] != null && r[k] < v); return api; },
       gte(k, v) { st.filters.push((r) => r[k] != null && r[k] >= v); return api; },
       neq(k, v) { st.filters.push((r) => r[k] !== v); return api; },
       not(k, op, v) { st.filters.push((r) => (op === 'is' ? (r[k] == null ? null : r[k]) !== v : r[k] !== v)); return api; },

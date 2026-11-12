@@ -633,6 +633,8 @@
     if (r === 'pron' || r === 'pron_off') return 'app_tu_err_pron';
     if (r === 'pron_closed') return 'app_tu_err_pron_closed';
     if (r === 'lesson_closed') return 'app_tu_lesson_closed';
+    if (r === 'daily_cap') return 'app_tu_daily_cap';
+    if (r === 'daily_messages') return 'app_tu_daily_messages';
     return r === 'no_time' ? 'app_tu_none_left' : r === 'budget' ? 'app_tu_err_budget' : r === 'ended' ? 'app_tu_err_ended' : r === 'email' ? 'app_tu_email' : r === 'not_configured' ? 'app_tu_closed' : e && e.status === 429 ? 'app_tu_err_fast' : 'app_tu_err';
   }
 
@@ -676,7 +678,7 @@
   function turnFailed(e, rollback) {
     if (rollback) S.messages.pop();
     S.error = errKey(e);
-    if (e && e.body && (e.body.reason === 'ended' || e.body.reason === 'no_time')) { S.ended = true; S.summary = S.summary || {}; }
+    if (e && e.body && (e.body.reason === 'ended' || e.body.reason === 'no_time' || e.body.reason === 'daily_cap')) { S.ended = true; S.summary = S.summary || {}; }
     busy(false);
   }
   function send(form) {

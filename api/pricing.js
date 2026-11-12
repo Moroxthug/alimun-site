@@ -19,6 +19,8 @@
  *                                   changes one ({ id, teacher_id?, substitute_teacher_id?, cancel? }).
  *   GET  ?action=contracts          (teacher) course contracts offered to them; POST ?action=contract { cohortId, accept }.
  *   GET  ?action=cron-rooms         (Vercel cron) the rooms' daily steps (api/_lib/rooms.js).
+ *   GET  ?action=cron-finance       (Vercel cron) founding notices and ends, weekly exchange rates, the monthly figures.
+ *   GET  ?action=admin-figures      (admin) the figures page; POST ?action=admin-spend records acquisition spend.
  *   GET  ?action=cron-billing       (Vercel cron, Bearer CRON_SECRET) pauses entitlements unpaid for 3 days
  *                                   (public.pause_unpaid_entitlements), which frees their seats.
  *
@@ -32,6 +34,7 @@ const { createClient } = require('@supabase/supabase-js');
 const P = require('./_lib/pricing.js');
 const E = require('./_lib/entitlements.js');
 const R = require('./_lib/rooms.js');
+const F = require('./_lib/finance.js');
 const mail = require('./_lib/email.js');
 const L = require('./_lib/email-i18n.js');
 const { recordRun } = require('./_lib/cron-log.js');
@@ -575,6 +578,12 @@ function roomCtx(sb) {
         const lang = t.ui_lang || 'en', k = kind, vars = Object.assign(roomText(room, lang), { learners: String((extra && extra.learners) || 0) });
         await send(u && u.user && u.user.email, L.say(lang, `${k}.subject`, vars), email(lang, k, vars, kind === 'contract_offer' ? { label: L.say(lang, `${k}.button`), href: `${mail.SITE}/app/teach#/classes` } : null, t.full_name));
       },
+      founding: async (userId, until) => {
+        const p = await learnerOf(userId), lang = p.lang, vars = { date: L.day(until, lang) };
+        await send(p.to, L.say(lang, 'founding_notice.subject', vars), mail.renderEmail({ hero: 'update', lang, preheader: L.say(lang, 'founding_notice.preheader', vars),
+          heading: L.say(lang, 'founding_notice.heading', vars), blocks: [{ p: L.hello(lang, p.name) }, { p: L.html(lang, 'founding_notice.body', vars) },
+            { p: L.html(lang, 'founding_notice.body2', vars) }, { button: { label: L.say(lang, 'founding_notice.button'), href: `${mail.SITE}/app#/settings/plans` } }] }));
+      },
       owner: async (lines) => {
         const to = process.env.CONTACT_EMAIL || 'bchysfpol@gmail.com';
         await send(to, 'Alimun rooms: needs your attention', mail.renderEmail({ hero: 'class', lang: 'en', preheader: 'Rooms that need a decision', heading: 'Rooms that need a decision',
@@ -595,6 +604,38 @@ async function handleCronRooms(req, res, sb) {
     await recordRun(sb, 'vercel:cron-rooms', false, { error: String(e && e.message) });
     throw e;
   }
+}
+
+// ── finance (step 8) ──
+async function handleCronFinance(req, res, sb) {
+  const secret = process.env.CRON_SECRET;
+  if (!secret || req.headers.authorization !== 'Bearer ' + secret) return fail(res, 401, 'unauthorized');
+  try {
+    const out = await F.dailyJob(roomCtx(sb), new Date());
+    await recordRun(sb, 'vercel:cron-finance', true, out);
+    return res.status(200).json(out);
+  } catch (e) {
+    await recordRun(sb, 'vercel:cron-finance', false, { error: String(e && e.message) });
+    throw e;
+  }
+}
+/** The owner's acquisition spend: { month: 'YYYY-MM', channel, amount_eur, note? } (one row per month and channel), or { id, remove: true } */
+async function handleAdminSpend(req, res, sb) {
+  const b = body(req);
+  if (!b) return fail(res, 400, 'bad_json');
+  if (b.remove === true && Number.isInteger(b.id)) {
+    const { error } = await sb.from('marketing_spend').delete().eq('id', b.id);
+    if (error) throw new Error('spend delete: ' + error.message);
+    return res.status(200).json({ ok: true });
+  }
+  const month = /^\d{4}-\d{2}$/.test(b.month || '') ? b.month + '-01' : null;
+  const channel = typeof b.channel === 'string' ? b.channel.trim().toLowerCase().slice(0, 60) : '';
+  const amount = Number(b.amount_eur);
+  if (!month || !channel || !Number.isFinite(amount) || amount < 0 || amount > 10000000) return fail(res, 400, 'bad_spend');
+  const { error } = await sb.from('marketing_spend').upsert({ month, channel, amount_eur: Math.round(amount * 100) / 100,
+    note: typeof b.note === 'string' ? b.note.slice(0, 300) : null }, { onConflict: 'month,channel' });
+  if (error) throw new Error('spend: ' + error.message);
+  return res.status(200).json({ ok: true });
 }
 
 // ── daily billing job ──
@@ -630,6 +671,15 @@ module.exports = async function handler(req, res) {
       return await handleDisplay(req, res, sb);
     }
     if (action === 'cron-rooms') return await handleCronRooms(req, res, sb);
+    if (action === 'cron-finance') return await handleCronFinance(req, res, sb);
+    if (action === 'admin-figures' || action === 'admin-spend') {
+      const admin = await userOf(req, sb);
+      if (!admin) return fail(res, 401, 'sign_in_required');
+      if (!admin.app_metadata || admin.app_metadata.role !== 'admin') return fail(res, 403, 'admins_only');
+      if (action === 'admin-figures' && req.method === 'GET') return res.status(200).json(await F.figures(roomCtx(sb), new Date()));
+      if (action === 'admin-spend' && req.method === 'POST') return await handleAdminSpend(req, res, sb);
+      return fail(res, 405, 'method_not_allowed');
+    }
     if (action === 'rooms') {
       if (req.method !== 'GET') return fail(res, 405, 'method_not_allowed');
       return await handleRooms(req, res, sb);

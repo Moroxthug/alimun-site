@@ -271,5 +271,13 @@
     "heading": "Esta aula no abrirá",
     "body": "**{room}**, que empezaba el {start} ({days} a las {time}, {zone}), no abrirá: no se apuntaron suficientes estudiantes o pasaron a otra aula.",
     "body2": "Gracias por ofrecer este horario. Las aulas que puedas dar te llegarán como nuevas ofertas."
+  },
+  "founding_notice": {
+    "subject": "Tu precio fundador termina el {date}",
+    "preheader": "Hasta entonces no cambia nada.",
+    "heading": "Tu precio fundador termina el {date}",
+    "body": "Te uniste a Alimun con el precio fundador y lo mantienes hasta el **{date}**. Después, las nuevas compras tienen el precio habitual que ves en Planes y precios; el pack en el que ya estás mantiene su precio hasta el final.",
+    "body2": "Hasta entonces no cambia nada, y este correo no supone ningún cobro.",
+    "button": "Ver planes y precios"
   }
 }

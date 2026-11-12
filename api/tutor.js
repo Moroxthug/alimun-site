@@ -79,6 +79,7 @@
  */
 
 const { createClient } = require('@supabase/supabase-js');
+const { planActive } = require('./_lib/plan.js');
 const brain = require('./_lib/tutor-brain.js');
 const voice = require('./_lib/tutor-voice.js');
 const pron = require('./_lib/tutor-pron.js');
@@ -215,7 +216,7 @@ function tooFast(userId) {
 
 async function studentOf(supabase, user) {
   const { data, error } = await supabase.from('student_profiles')
-    .select('id, full_name, language, level, goal_track, goal_timeframe, placement').eq('user_id', user.id).maybeSingle();
+    .select('id, full_name, language, level, goal_track, goal_timeframe, placement, stripe_subscription_status, plan_given_until').eq('user_id', user.id).maybeSingle();
   if (error) throw error;
   return data;
 }
@@ -480,20 +481,29 @@ async function handleTurn(req, res, supabase, user) {
     row.text = text;
   }
 
-  // The time since the previous turn, within 5 to 90 seconds
-  const gap = Math.round((Date.now() - Date.parse(session.last_turn_at)) / 1000);
-  const want = Math.max(MIN_CHARGE, Math.min(MAX_CHARGE, gap));
-  const { data: ch, error: cErr } = await supabase.rpc('tutor_charge', { p_student: profile.id, p_seconds: want, p_session: session.id });
-  if (cErr || !ch || !ch[0]) return res.status(500).json({ error: 'Could not count your time' });
-  const { charged, remaining } = ch[0];
-  if (charged <= 0) {
-    await finish(supabase, user, session);
-    return res.status(402).json({ error: 'No tutor time left', reason: 'no_time' });
+  // A paying learner's written turns count against a daily message limit (written_tutor_daily_messages, 60), not their
+  // voice minutes (docs/LAUNCH_PRICING_SPEC.md section 10). Spoken turns, and everyone else's turns, use time as before.
+  let charged = 0, remaining;
+  if (!row.spoken && planActive(profile)) {
+    const sent = await writtenToday(supabase, profile.id);
+    if (sent >= await writtenLimit(supabase)) return res.status(429).json({ error: 'That is all the written messages for today', reason: 'daily_messages' });
+    remaining = await balance(supabase, profile.id);
+  } else {
+    // The time since the previous turn, within 5 to 90 seconds
+    const gap = Math.round((Date.now() - Date.parse(session.last_turn_at)) / 1000);
+    const want = Math.max(MIN_CHARGE, Math.min(MAX_CHARGE, gap));
+    const { data: ch, error: cErr } = await supabase.rpc('tutor_charge', { p_student: profile.id, p_seconds: want, p_session: session.id });
+    if (cErr || !ch || !ch[0]) return res.status(500).json({ error: 'Could not count your time' });
+    charged = ch[0].charged; remaining = ch[0].remaining;
+    if (charged <= 0) {
+      await finish(supabase, user, session);
+      return res.status(402).json({ error: 'No tutor time left', reason: outOfTime(remaining) });
+    }
   }
 
   const { data: saved, error: mErr } = await supabase.from('tutor_messages').insert(row).select(MSG_COLS).single();
   if (mErr) return res.status(500).json({ error: 'Could not save your message' });
-  const closing = remaining <= 0;
+  const closing = charged > 0 && remaining <= 0;
   try {
     const history = await messagesOf(supabase, session.id, HISTORY);
     const reply = await tutorReply(supabase, user, profile, session, history, closing ? [brain.CLOSING_TASK] : []);
@@ -504,9 +514,28 @@ async function handleTurn(req, res, supabase, user) {
     return res.status(200).json({ mine: outMessage(saved), message: out.msg, board: out.board, seconds: remaining, ended: closing, summary });
   } catch (e) {
     await supabase.from('tutor_messages').delete().eq('id', saved.id);
-    await supabase.rpc('tutor_add_credit', { p_student: profile.id, p_seconds: charged, p_reason: 'refund', p_stripe_session: null, p_note: 'tutor did not answer', p_by: null });
+    if (charged > 0) await supabase.rpc('tutor_add_credit', { p_student: profile.id, p_seconds: charged, p_reason: 'refund', p_stripe_session: null, p_note: 'tutor did not answer', p_by: null });
     return brainError(res, e);
   }
+}
+
+/** Why a charge of nothing stopped the learner: their daily voice cap, or no time left at all. */
+function outOfTime(remaining) { return remaining > 0 ? 'daily_cap' : 'no_time'; }
+/** The learner's written messages to the tutor today (UTC). */
+async function writtenToday(supabase, studentId) {
+  const since = new Date(); since.setUTCHours(0, 0, 0, 0);
+  const { count } = await supabase.from('tutor_messages').select('id', { count: 'exact', head: true })
+    .eq('student_id', studentId).eq('role', 'student').eq('spoken', false).gte('created_at', since.toISOString());
+  return count || 0;
+}
+let writtenSetting = null;
+async function writtenLimit(supabase) {
+  if (!writtenSetting || Date.now() - writtenSetting.at > 600000) {
+    let n = 60;
+    try { const { data } = await supabase.from('app_settings').select('value').eq('key', 'written_tutor_daily_messages').maybeSingle(); n = parseInt(data && data.value, 10) || 60; } catch (e) { /* 60 */ }
+    writtenSetting = { at: Date.now(), value: n };
+  }
+  return writtenSetting.value;
 }
 
 // ── end ─────────────────────────────────────────────────────
@@ -630,7 +659,7 @@ async function handlePronounce(req, res, supabase, user) {
   const { charged, remaining } = ch[0];
   if (charged <= 0) {
     await finish(supabase, user, session);
-    return res.status(402).json({ error: 'No tutor time left', reason: 'no_time' });
+    return res.status(402).json({ error: 'No tutor time left', reason: outOfTime(remaining) });
   }
   const { data: saved, error: mErr } = await supabase.from('tutor_messages').insert({
     session_id: session.id, student_id: profile.id, role: 'student', text: clean(scored.heard, MAX_TEXT), spoken: true, result: { message: target.id, pron: scored },
@@ -734,6 +763,10 @@ async function handleLiveStart(req, res, supabase, user) {
     await finish(supabase, user, session);
     return res.status(402).json({ error: 'No tutor time left', reason: 'no_time' });
   }
+  if (created && charged <= 0) {
+    await undo();
+    return res.status(402).json({ error: 'That is all the voice practice for today', reason: 'daily_cap' });
+  }
 
   if (engine === 'cascade') {
     // No pass to Google: the browser sends each turn to ?action=cascade-turn. The call's time is counted by ticks as usual.
@@ -805,9 +838,10 @@ async function handleLiveTick(req, res, supabase, user) {
     if (session.engine !== 'cascade') try { await liveCost(supabase, user.id, charged); } catch (e) { if (e && e.code === 'budget') stop = 'budget'; }
   }
   if (remaining <= 0) stop = 'no_time';
+  else if (gap >= 1 && charged <= 0) stop = 'daily_cap';
   if (stop) {
     await supabase.from('tutor_sessions').update({ live_until: null }).eq('id', session.id);
-    const summary = stop === 'no_time' ? await finish(supabase, user, Object.assign({}, session, { turns })) : null;
+    const summary = stop === 'no_time' || stop === 'daily_cap' ? await finish(supabase, user, Object.assign({}, session, { turns })) : null;
     return res.status(200).json({ seconds: Math.max(0, remaining), stop, summary });
   }
   return res.status(200).json({ seconds: remaining });
