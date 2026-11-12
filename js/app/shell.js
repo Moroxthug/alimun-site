@@ -383,26 +383,22 @@
   }
 
   /* The welcome gift (js/app/poll.js): 10 EUR off the first plan or 1 on 1 class, applied at checkout by the server */
-  function giftAmount() { return new Intl.NumberFormat(locale, { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(10); }
   function welcomeCard(d) {
     var w = d.welcome;
     if (!w) return '';
     if (!w.answered) {
       return '<section class="card card--mint span-12" style="--i:8" aria-labelledby="h-wpoll">' +
         '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2" id="h-wpoll">' + esc(t('app_home_poll_h')) + '</h2>' +
-        '<p class="t-body" style="margin-top:10px">' + esc(t('app_home_poll_p', { amount: giftAmount() })) + '</p></div>' +
+        '<p class="t-body" style="margin-top:10px">' + esc(t('app_home_poll_p')) + '</p></div>' +
         '<button class="btn btn--primary" type="button" data-poll-open>' + esc(t('app_home_poll_go')) + '</button></div></section>';
     }
-    if (!w.giftOpen) return '';
-    return '<section class="card card--lime span-12" style="--i:9" aria-labelledby="h-gift">' +
-      '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2" id="h-gift">' + esc(t('app_home_gift_h', { amount: giftAmount() })) + '</h2>' +
-      '<p class="t-body" style="margin-top:10px">' + esc(t('app_home_gift_p')) + '</p></div>' +
-      '<a class="btn btn--primary" href="#/settings/plans">' + esc(t('app_home_see_plans')) + '</a></div></section>';
+    // The welcome gift (10 EUR off) ended with the new price list (owner, 12 Nov 2026); the poll gives tutor minutes.
+    return '';
   }
 
   function planCard(d) {
     var tier = d.profile.tier;
-    if (!UNPAID[tier] || (d.welcome && d.welcome.giftOpen)) return '';
+    if (!UNPAID[tier]) return '';
     var k = tier === 'waitlist' ? ['app_home_plan_wait_h', 'app_home_plan_wait_p'] : ['app_home_plan_free_h', 'app_home_plan_free_p'];
     return '<section class="card card--lime span-12" style="--i:9" aria-labelledby="h-plan">' +
       '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px"><h2 class="t-h2" id="h-plan">' + esc(t(k[0])) + '</h2>' +
@@ -794,7 +790,7 @@
     withPoll(function (P) { P.maybe(pollHelpers(preview)); });
   }
   function pollHelpers(preview) {
-    return { t: t, esc: esc, icon: icon, lang: lang, locale: locale, profile: D.profile, drawing: Cast.drawing(buddyOf(D)), preview: preview, amount: giftAmount(),
+    return { t: t, esc: esc, icon: icon, lang: lang, locale: locale, profile: D.profile, drawing: Cast.drawing(buddyOf(D)), preview: preview,
       onDone: function (added) {
         D.welcome = { answered: true, giftOpen: !(D.welcome && D.welcome.answered && !D.welcome.giftOpen) };
         if (added) { D.tutor.seconds += added; D.tutor.fresh = false; }

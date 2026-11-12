@@ -136,7 +136,7 @@
       html = '<div class="wp__intro"><span class="wp__hero" aria-hidden="true">' + H.drawing + '</span>' +
         '<h2 class="wp__h" id="wp-h" tabindex="-1">' + esc(t('app_wp_intro_h')) + '</h2>' +
         '<p class="wp__sub">' + esc(t('app_wp_intro_text')) + '</p>' +
-        '<div class="wp__gift"><strong>' + esc(t('app_wp_gift_h')) + '</strong><span>' + esc(t('app_wp_gift_text', { amount: H.amount })) + '</span></div>' +
+        '<div class="wp__gift"><strong>' + esc(t('app_wp_gift_h')) + '</strong><span>' + esc(t('app_wp_gift_text')) + '</span></div>' +
         '<div class="wp__foot"><button type="button" class="btn btn--quiet btn--sm" data-wp="later">' + esc(t('app_wp_later')) + '</button>' +
         '<button type="button" class="btn btn--primary" data-wp="next">' + esc(t('app_wp_start')) + '</button></div></div>';
     } else if (step >= QUESTIONS.length) {
@@ -172,7 +172,7 @@
     var text = mins > 0 ? t('app_wp_done_text', { time: new Intl.NumberFormat(H.locale, { style: 'unit', unit: 'minute', unitDisplay: 'long' }).format(mins) }) : t('app_wp_done_again');
     return '<div class="wp__intro"><span class="wp__hero" aria-hidden="true">' + H.drawing + '</span>' +
       '<h2 class="wp__h" id="wp-h" tabindex="-1">' + esc(t('app_wp_done_h')) + '</h2>' +
-      (mins > 0 ? '<div class="wp__gift"><strong>' + esc(t('app_wp_done_gift')) + '</strong><span>' + esc(text) + '</span><span>' + esc(t('app_wp_done_discount', { amount: H.amount })) + '</span></div>' : '<p class="wp__sub">' + esc(text) + '</p>') +
+      (mins > 0 ? '<div class="wp__gift"><strong>' + esc(t('app_wp_done_gift')) + '</strong><span>' + esc(text) + '</span></div>' : '<p class="wp__sub">' + esc(text) + '</p>') +
       '<p class="wp__sub">' + esc(t('app_wp_done_more')) + '</p>' +
       '<div class="wp__foot"><button type="button" class="btn btn--quiet btn--sm" data-wp="close">' + esc(t('app_wp_close')) + '</button>' +
       '<a class="btn btn--primary" href="#/tutor" data-wp="close">' + esc(t('app_wp_try_tutor')) + '</a></div></div>';

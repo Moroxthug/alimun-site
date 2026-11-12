@@ -61,7 +61,10 @@ const guide = fill(guideTpl, {
   GUIDE_ROWS: g.rows.map(([h, ps]) => `          <div class="gd_row"><h3 class="heading-style-h4">${esc(h)}</h3><div class="gd_text">${ps.map((t) => `<p class="text-size-large">${mark(t)}</p>`).join('')}</div></div>`).join('\n'),
 });
 // Plans only where classes can be bought today.
-const plans = c.open ? fill(plansTpl, { ...UI, CTA_HREF: testHref }) : '';
+// The new price list (pricing engine step 9): live prices for this course's language (js/prices.js); the button
+// carries the level pack through the level test and sign-up to the room picker.
+const productLang = c.lang === 'German' ? 'de' : 'en';
+const plans = c.open ? fill(plansTpl, { ...UI, CTA_HREF: `${testHref}&product=level_${productLang}&cadence=month`, PRODUCT_LANG: productLang }) : '';
 const faq = fill(faqTpl, {
   ...UI,
   QA_QUESTIONS: faqItems.map(([q, a]) => `              <button type="button" class="qa_q" aria-expanded="false">${esc(q)}<span class="qa_mobile">${esc(a)}</span></button>`).join('\n'),

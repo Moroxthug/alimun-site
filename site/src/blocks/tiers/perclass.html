@@ -33,6 +33,9 @@
           .pc_year { margin: .75rem auto 0; max-width: 28rem; color: rgba(8, 8, 8, .7); }
           .pc_year b { font-weight: 500; color: var(--black); background-image: linear-gradient(var(--green), var(--green)); background-repeat: no-repeat; background-position: 0 88%; background-size: 100% 45%; }
           .pc_tpl { display: none; }
+          .pc_compare { margin: 1.25rem 0 0; color: rgba(8, 8, 8, .7); max-width: 34rem; }
+          .pc_sources { margin: .5rem 0 1.5rem; color: rgba(8, 8, 8, .55); }
+          .pc_sources a { color: inherit; text-decoration: underline; }
           @media (max-width: 991px) {
             .pc_grid { grid-template-columns: 1fr; gap: 2.5rem; }
           }
@@ -47,6 +50,8 @@
             <div class="pc_text">
               <h2 class="heading-style-h2" data-i18n="tiers_pc_title">What a live class costs</h2>
               <p class="text-size-medium" data-i18n="tiers2_pc_desc">Pick a way to learn to see the price of one live class with a teacher, worked out from its monthly price and the classes in a month.</p>
+              <p class="text-size-regular pc_compare" data-no-currency data-i18n="tiers2_pc_compare">For comparison, a private lesson with a native-speaker tutor on Preply costs on average about US$26 an hour for English and about US$33 for German, by Preply’s own figures on 12 November 2026.</p>
+              <p class="text-size-small pc_sources"><span data-i18n="tiers2_pc_sources">Sources:</span> <a href="https://preply.com/en/online/english-tutors" target="_blank" rel="noopener">Preply, English tutors</a>, <a href="https://preply.com/en/online/german-native-speakers" target="_blank" rel="noopener">Preply, native German tutors</a></p>
               <div class="pc_pick" role="group">
                 <button type="button" aria-pressed="false" data-p="open_en" data-i18n="tiers2_open_h">Open class</button>
                 <button type="button" aria-pressed="true" data-p="level_en" data-i18n="tiers2_level_h">Level pack</button>

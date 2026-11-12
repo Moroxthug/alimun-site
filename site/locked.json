@@ -17,8 +17,8 @@
     "approved": "2026-10-19 hero ok; 2026-10-23 video replaced on owner request (Pexels 3252922, group talking by a window)"
   },
   "src/blocks/tiers/head.html": {
-    "sha256": "2089562ba342e7da00584bd309cc96c40c417d06330008e4085aefbd564f2a67",
-    "approved": "2026-10-20 tiers nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request)"
+    "sha256": "5d825efc81b3885a352a67767071eb4c079089d5e77a222894c1b669f0c808be",
+    "approved": "2026-10-20 tiers nav ok; 2026-10-23 search descriptions and structured data made accurate (owner: yes); 2026-10-24 Alimun book icon as favicon (owner request); 2026-11-12 title, descriptions and structured data for the new price list (owner: \"2 yes\")"
   },
   "src/blocks/tiers/after.html": {
     "sha256": "82cd633a9696c7dfacd44bee29dfb2576e94b25a48757041ff25deee4665a1da",
@@ -209,8 +209,8 @@
     "approved": "2026-10-23 Italian course pages: guide text with lime markers (owner: section ok); 2026-11-11 level test range A1 to C2 (owner: \"Up to C2\")"
   },
   "src/blocks/course/plans.html": {
-    "sha256": "473e565c9eb34c4d263596fb7b7251d4d308a1b81812828d0ece35b06892a357",
-    "approved": "2026-10-23 Italian course pages: price ladder (owner: section ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
+    "sha256": "445a33c20aeb7c354e6ec417cf2f23c0ffe8c1d5379d227de2cae1e9b2973f69",
+    "approved": "2026-10-23 Italian course pages: price ladder (owner: section ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified); 2026-11-12 three columns for the new price list with live prices, no black column (owner: \"1 yes\")"
   },
   "src/blocks/course/faq.html": {
     "sha256": "f0a00aecd5b5e7e4ecb75a04be5abde57e2e058f540a31aacfb8304c52f8e83f",

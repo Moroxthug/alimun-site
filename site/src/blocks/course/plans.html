@@ -1,11 +1,11 @@
-      <section class="section pl">
+      <section class="section pl" data-no-currency>
         <style>
-          /* Plans as a price ladder: four columns of increasing height grow up from the baseline one after another; each holds the price, the tier and one sentence. */
+          /* Plans as a price ladder (pricing engine step 9, owner 12 Nov 2026): three columns of increasing height grow up from the baseline one after another; each holds the live price (js/prices.js, the visitor's currency, the course's language), the product and one sentence. No black column (owner, 26 Oct 2026). */
           .pl { padding: 6rem 0; }
           .pl_head { display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem; margin-bottom: 3rem; }
           .pl_head h2 { margin: 0; }
           .pl_head p { margin: 0; max-width: 30rem; color: rgba(8, 8, 8, .7); }
-          .pl_row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; align-items: end; height: min(36rem, 72vh); }
+          .pl_row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; align-items: end; height: min(36rem, 72vh); }
           .pl_col { height: var(--h); display: flex; flex-direction: column; justify-content: space-between; padding: 2rem; border-radius: 2.25rem; background-color: var(--white); transform-origin: center bottom; transform: scaleY(0); transition: transform 1.1s cubic-bezier(.215, .61, .355, 1); }
           .pl_col > * { opacity: 0; transition: opacity .6s ease; }
           .pl_row.is-in .pl_col { transform: none; }
@@ -14,16 +14,12 @@
           .pl_row.is-in .pl_col:nth-child(2) > * { transition-delay: .85s; }
           .pl_row.is-in .pl_col:nth-child(3) { transition-delay: .3s; }
           .pl_row.is-in .pl_col:nth-child(3) > * { transition-delay: 1s; }
-          .pl_row.is-in .pl_col:nth-child(4) { transition-delay: .45s; }
-          .pl_row.is-in .pl_col:nth-child(4) > * { transition-delay: 1.15s; }
           .pl_col.is-green { background-color: var(--green); }
-          .pl_col.is-ink { background-color: var(--black); color: var(--white); }
           .pl_price { margin: 0; font-family: Coolvetica Condensed, sans-serif; text-transform: uppercase; line-height: .9; font-size: clamp(3rem, 5vw, 4.75rem); }
           .pl_price small { font-family: Satoshi, sans-serif; text-transform: none; font-size: 1rem; margin-left: .25rem; }
           .pl_col h3 { margin: 0 0 .6rem; }
           .pl_col p.pl_desc { margin: 0; color: rgba(8, 8, 8, .75); }
-          .pl_col.is-ink .pl_price, .pl_col.is-ink h3 { color: var(--green); }
-          .pl_col.is-ink p.pl_desc { color: rgba(255, 255, 255, .75); }
+          .pl_price span[hidden] { display: inline; visibility: hidden; }
           .pl_cta { margin-top: 2.5rem; display: flex; justify-content: center; }
           @media (max-width: 767px) {
             .pl_head { flex-direction: column; align-items: flex-start; }
@@ -37,21 +33,17 @@
             <p class="text-size-medium">{{UI_PL_DESC}}</p>
           </div>
           <div class="pl_row">
-            <div class="pl_col shadow-card" style="--h: 55%">
-              <p class="pl_price">€24<small>{{UI_PL_MONTH}}</small></p>
-              <div><h3 class="heading-style-h4">Community</h3><p class="text-size-small pl_desc">{{UI_PL_1}}</p></div>
+            <div class="pl_col shadow-card" style="--h: 60%">
+              <p class="pl_price"><span data-pp-text="price=open_{{PRODUCT_LANG}}:month">{price}</span><small>{{UI_PL_MONTH}}</small></p>
+              <div><h3 class="heading-style-h4">{{UI_PL_N1}}</h3><p class="text-size-small pl_desc">{{UI_PL_1}}</p></div>
             </div>
-            <div class="pl_col is-green shadow-card" style="--h: 70%">
-              <p class="pl_price">€59<small>{{UI_PL_MONTH}}</small></p>
-              <div><h3 class="heading-style-h4">Focused</h3><p class="text-size-small pl_desc">{{UI_PL_2}}</p></div>
+            <div class="pl_col is-green shadow-card" style="--h: 85%">
+              <p class="pl_price"><span data-pp-text="price=level_{{PRODUCT_LANG}}:month">{price}</span><small>{{UI_PL_MONTH}}</small></p>
+              <div><h3 class="heading-style-h4">{{UI_PL_N2}}</h3><p class="text-size-small pl_desc">{{UI_PL_2}}</p></div>
             </div>
-            <div class="pl_col shadow-card" style="--h: 85%">
-              <p class="pl_price">€109<small>{{UI_PL_MONTH}}</small></p>
-              <div><h3 class="heading-style-h4">Intensive</h3><p class="text-size-small pl_desc">{{UI_PL_3}}</p></div>
-            </div>
-            <div class="pl_col is-ink shadow-card" style="--h: 100%">
-              <p class="pl_price">€269<small>{{UI_PL_MONTH}}</small></p>
-              <div><h3 class="heading-style-h4">1 on 1</h3><p class="text-size-small pl_desc">{{UI_PL_4}}</p></div>
+            <div class="pl_col shadow-card" style="--h: 100%">
+              <p class="pl_price"><span data-pp-text="price=exam_{{PRODUCT_LANG}}:month">{price}</span><small>{{UI_PL_MONTH}}</small></p>
+              <div><h3 class="heading-style-h4">{{UI_PL_N3}}</h3><p class="text-size-small pl_desc">{{UI_PL_3}}</p></div>
             </div>
           </div>
           <div class="pl_cta">
@@ -66,4 +58,5 @@
             io.observe(row);
           })();
         </script>
+        <script src="js/prices.js" defer></script>
       </section>
