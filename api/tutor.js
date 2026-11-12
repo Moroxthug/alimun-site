@@ -163,8 +163,8 @@ async function handleStatus(req, res, supabase, user) {
     voice: voice.voiceConfigured(),
     pron: pron.configured(),
     live: live.configured() && brain.configured() && await liveAllowed(supabase, user),
-    // The cascade call, the owner's test version (admins only for now)
-    cascade_test: user.app_metadata?.role === 'admin' && cascade.configured() && brain.configured(),
+    // The cascade call, the owner's test version (admins and the listed testers only)
+    cascade_test: cascade.configured() && brain.configured() && await isVoiceTester(supabase, user),
   });
 }
 
@@ -703,6 +703,25 @@ async function liveAllowed(supabase, user) {
   return liveSetting.value === 'all';
 }
 
+/* The cheaper call is a test (owner, 12 Nov 2026: "not in production as we need to test it out"): admins, and the people
+   whose emails are listed in app_settings tutor_cascade_testers (comma separated, empty by default), may use it.
+   Read at most once a minute. */
+let testerSetting = null;
+async function isVoiceTester(supabase, user) {
+  if (user.app_metadata?.role === 'admin') return true;
+  const email = String(user.email || '').trim().toLowerCase();
+  if (!email) return false;
+  if (!testerSetting || testerSetting.at < Date.now() - 60000) {
+    let list = [];
+    try {
+      const { data } = await supabase.from('app_settings').select('value').eq('key', 'tutor_cascade_testers').maybeSingle();
+      list = String(data && data.value || '').toLowerCase().split(/[\s,;]+/).filter((x) => x.includes('@'));
+    } catch (e) { /* admins only */ }
+    testerSetting = { at: Date.now(), list };
+  }
+  return testerSetting.list.includes(email);
+}
+
 /** Records the estimated cost of live seconds under the tutor's daily budget. Throws { code: 'budget' | 'unavailable' }. */
 async function liveCost(supabase, userId, seconds) {
   const cost = Math.round(seconds * live.LIVE_USD_PER_SEC * 1e6) / 1e6;
@@ -717,8 +736,8 @@ async function handleLiveStart(req, res, supabase, user) {
   const body = parseBody(req) || {};
   const ui = UI_LANGS.includes(body.ui) ? body.ui : 'en';
   const tutor = live.tutorOf(body.tutor);
-  // The engine: Google's live model, or the cascade test version (admins only, api/_lib/tutor-cascade.js)
-  const engine = body.engine === 'cascade' && user.app_metadata?.role === 'admin' && cascade.configured() ? 'cascade' : 'live';
+  // The engine: Google's live model, or the cascade test version (admins and testers only, api/_lib/tutor-cascade.js)
+  const engine = body.engine === 'cascade' && cascade.configured() && await isVoiceTester(supabase, user) ? 'cascade' : 'live';
   let profile;
   try { profile = await studentOf(supabase, user); } catch (e) { return res.status(500).json({ error: 'Could not load your profile' }); }
   if (!profile) return res.status(404).json({ error: 'No student profile', reason: 'no_profile' });
@@ -910,7 +929,7 @@ async function callBrief(supabase, profile, session) {
 }
 async function handleCascadeTurn(req, res, supabase, user) {
   if (!cascade.configured() || !brain.configured()) return res.status(501).json({ error: 'Not configured', reason: 'cascade_off' });
-  if (user.app_metadata?.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
+  if (!(await isVoiceTester(supabase, user))) return res.status(403).json({ error: 'Forbidden' });
   const now = Date.now(), hits = (recentCascade.get(user.id) || []).filter((x) => x > now - 60000);
   if (hits.length >= 30) return res.status(429).json({ error: 'Too many requests. Please wait a moment.' });
   hits.push(now); recentCascade.set(user.id, hits);
@@ -1028,6 +1047,11 @@ async function handleCascadeTurn(req, res, supabase, user) {
 
   await chain;
   ms.first_audio = firstAudio; ms.total = Date.now() - t0;
+  // Kept with the call for the engine comparison (Admin, AI spend): how long each step of this turn took
+  try {
+    const timing = { t: 'cascade', at: new Date().toISOString(), listen: ms.listen || 0, think: ms.think || 0, first_audio: firstAudio || 0, total: ms.total };
+    await supabase.from('tutor_sessions').update({ live_usage: (Array.isArray(session.live_usage) ? session.live_usage : []).concat([timing]).slice(-400) }).eq('id', session.id);
+  } catch (e) { /* measurement only */ }
   if (voiceRow) {
     const row = await voiceRow.catch(() => null);
     if (row) await cascade.voiceSettle(supabase, row, { chars, voice: (await voiceP.catch(() => ({}))).name, ms: ms.total - ms.think, error: voiceErr });
@@ -1152,6 +1176,50 @@ async function handleForget(req, res, supabase, user) {
   return res.status(200).json({ ok: true });
 }
 
+// ── admin-engines: the two voice calls side by side ─────────
+
+/** For the owner's test of the cheaper call: per engine, calls, people, minutes and cost over the last `days`, and for
+    the cheaper call how long learners waited before the tutor began to speak (from the timings each turn stores).
+    The live call's own wait is not measured here (Google answers in about a second). Costs of the cheaper call are the
+    listening, thinking and voice rows of that learner during each call (an estimate: a written tutor turn in the same
+    minutes would be counted too). */
+async function handleAdminEngines(req, res, supabase, user) {
+  if (user.app_metadata?.role !== 'admin') return res.status(403).json({ error: 'Forbidden' });
+  const days = Math.min(365, Math.max(1, parseInt(req.query.days, 10) || 30));
+  const since = new Date(Date.now() - days * 86400000).toISOString();
+  const { data: sessions, error } = await supabase.from('tutor_sessions').select('id, student_id, engine, seconds_used, started_at, last_turn_at, ended_at, live_usage')
+    .eq('mode', 'live').gte('started_at', since).order('started_at', { ascending: false }).limit(2000);
+  if (error) return res.status(500).json({ error: 'Could not load the calls' });
+  const sids = [...new Set((sessions || []).map((x) => x.student_id))];
+  const { data: profs } = sids.length ? await supabase.from('student_profiles').select('id, user_id').in('id', sids) : { data: [] };
+  const userOf = Object.fromEntries((profs || []).map((p) => [p.id, p.user_id]));
+  const { data: usage } = await supabase.from('ai_usage').select('user_id, action, cost_usd, created_at')
+    .in('action', ['tutor_live', 'tutor_listen', 'tutor_turn', 'tutor_voice']).gte('created_at', since).limit(20000);
+  const out = {};
+  const engineOf = (x) => (x.engine === 'cascade' ? 'cascade' : 'live');
+  for (const x of sessions || []) {
+    const e = out[engineOf(x)] = out[engineOf(x)] || { calls: 0, people: new Set(), seconds: 0, usd: 0, waits: [], thinks: [] };
+    e.calls++; e.people.add(x.student_id); e.seconds += x.seconds_used || 0;
+    if (engineOf(x) === 'cascade') {
+      const from = Date.parse(x.started_at) - 5000, to = Date.parse(x.ended_at || x.last_turn_at || x.started_at) + 120000, u = userOf[x.student_id];
+      for (const r of usage || []) if (r.user_id === u && r.action !== 'tutor_live' && Date.parse(r.created_at) >= from && Date.parse(r.created_at) <= to) e.usd += Number(r.cost_usd) || 0;
+      for (const m of Array.isArray(x.live_usage) ? x.live_usage : []) if (m && m.t === 'cascade' && m.first_audio > 0) { e.waits.push(m.first_audio); e.thinks.push(m.think || 0); }
+    }
+  }
+  if (out.live) out.live.usd = (usage || []).filter((r) => r.action === 'tutor_live').reduce((a, r) => a + (Number(r.cost_usd) || 0), 0);
+  const pct = (xs, p) => { if (!xs.length) return null; const s = xs.slice().sort((a, b) => a - b); return s[Math.min(s.length - 1, Math.floor(p * s.length))]; };
+  const engines = {};
+  for (const k of Object.keys(out)) {
+    const e = out[k], minutes = e.seconds / 60;
+    engines[k] = { calls: e.calls, people: e.people.size, minutes: Math.round(minutes * 10) / 10, usd: Math.round(e.usd * 10000) / 10000,
+      usd_per_minute: minutes > 0 ? Math.round((e.usd / minutes) * 10000) / 10000 : null,
+      turns_timed: e.waits.length, wait_median_ms: pct(e.waits, 0.5), wait_p90_ms: pct(e.waits, 0.9), think_median_ms: pct(e.thinks, 0.5) };
+  }
+  let testers = 0;
+  try { const { data } = await supabase.from('app_settings').select('value').eq('key', 'tutor_cascade_testers').maybeSingle(); testers = String(data && data.value || '').split(/[\s,;]+/).filter((x) => x.includes('@')).length; } catch (e) { /* none */ }
+  return res.status(200).json({ days, engines, testers });
+}
+
 // ── Router ──────────────────────────────────────────────────
 
 module.exports = async function handler(req, res) {
@@ -1169,6 +1237,10 @@ module.exports = async function handler(req, res) {
   if (action === 'status') {
     if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
     return handleStatus(req, res, supabase, user);
+  }
+  if (action === 'admin-engines') {
+    if (req.method !== 'GET') return res.status(405).json({ error: 'Method not allowed' });
+    return handleAdminEngines(req, res, supabase, user);
   }
   if (action === 'admin-grant') {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });

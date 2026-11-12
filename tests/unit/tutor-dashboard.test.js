@@ -396,3 +396,28 @@ test('cleanPractice keeps only what passes the checks', () => {
   assert.deepStrictEqual(p.speak, ['Ich bin sehr müde heute.', 'Ich gehe nach Hause.'], 'markup removed');
   assert.deepStrictEqual(p.write, { task: 'Schreiben Sie etwas.', min: 20, max: 300 });
 });
+
+test('the cheaper call is a test: only admins and the listed testers get it, everyone else gets the live call', async () => {
+  reset();
+  process.env.AZURE_SPEECH_KEY = 'k'; process.env.AZURE_SPEECH_REGION = 'westeurope';
+  db.app_settings.push({ key: 'tutor_cascade_testers', value: 'Tester@Example.com, other@example.com' });
+  user.email = 'learner@example.com';
+  const plain = await call(tutor, 'live-start', { tutor: 'arthur', ui: 'en', engine: 'cascade' });
+  assert.strictEqual(plain.code, 200, JSON.stringify(plain.body));
+  assert.strictEqual(db.tutor_sessions[0].engine, 'live', 'a learner who is not listed never gets the cheaper call');
+  assert.strictEqual((await call(tutor, 'cascade-turn', { session: db.tutor_sessions[0].id, text: 'Hallo' })).code, 403);
+  reset();
+  user.email = 'tester@example.com';
+  const tester = await call(tutor, 'live-start', { tutor: 'arthur', ui: 'en', engine: 'cascade' });
+  assert.strictEqual(tester.code, 200, JSON.stringify(tester.body));
+  assert.strictEqual(db.tutor_sessions[0].engine, 'cascade', 'a listed tester (any letter case) gets it');
+  const engines = await call(tutor, 'admin-engines', null, 'GET');
+  assert.strictEqual(engines.code, 403, 'the comparison is for admins');
+  user.app_metadata = { role: 'admin' };
+  db.tutor_sessions[0].live_usage = [{ t: 'cascade', first_audio: 2000, think: 1500 }, { t: 'cascade', first_audio: 3000, think: 2500 }];
+  const cmp = await call(tutor, 'admin-engines', null, 'GET');
+  assert.strictEqual(cmp.code, 200, JSON.stringify(cmp.body));
+  assert.strictEqual(cmp.body.engines.cascade.turns_timed, 2);
+  assert.strictEqual(cmp.body.engines.cascade.wait_median_ms, 3000);
+  delete process.env.AZURE_SPEECH_KEY; delete process.env.AZURE_SPEECH_REGION;
+});

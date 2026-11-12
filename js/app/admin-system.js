@@ -59,7 +59,8 @@
       by_action: { grade: { calls: Math.round(calls * 0.6), cost: total * 0.42 }, 'grade-submission': { calls: Math.round(calls * 0.25), cost: total * 0.38 }, 'generate-exercises': { calls: Math.round(calls * 0.1), cost: total * 0.15 }, transcribe: { calls: Math.round(calls * 0.05), cost: total * 0.05 } },
       by_user: { u1: { calls: 140, cost: total * 0.3 }, u2: { calls: 96, cost: total * 0.21 }, u3: { calls: 41, cost: total * 0.12 } } },
       people: { u1: { id: 's1', name: 'Lukas Brandt', role: 'student' }, u2: { id: 't1', name: 'Ana Weber', role: 'teacher' }, u3: { id: 's3', name: 'Sara Rossi', role: 'student' } },
-      failures: [{ action: 'transcribe', error: 'Provider timed out after 30 s <retry later>', created_at: new Date(Date.now() - 5 * 3600000).toISOString() }] };
+      failures: [{ action: 'transcribe', error: 'Provider timed out after 30 s <retry later>', created_at: new Date(Date.now() - 5 * 3600000).toISOString() }],
+      engines: { days: days, testers: 2, engines: { live: { calls: 19, people: 4, minutes: 39.8, usd: 1.38, usd_per_minute: 0.0347 }, cascade: { calls: 2, people: 1, minutes: 11.5, usd: 0.134, usd_per_minute: 0.0117, turns_timed: 9, wait_median_ms: 2400, wait_p90_ms: 3900, think_median_ms: 3100 } } } };
   }
   function sampleSystem() {
     var now = Date.now(), ago = function (m) { return new Date(now - m * MIN).toISOString(); }, jobs = [];
@@ -218,6 +219,24 @@
   }
 
   /* ---------- AI spend ---------- */
+  /* The two voice calls side by side (api/tutor.js ?action=admin-engines), for the owner's test of the cheaper call: it
+     stays with admins and the testers listed in the tutor_cascade_testers setting until the owner decides. */
+  function enginesCard(days) {
+    var E = AI.engines;
+    if (!E || !E.engines) return '';
+    var sec = function (ms) { return ms == null ? 'not measured yet' : (ms / 1000).toFixed(1) + ' s'; };
+    var line = function (k, name) {
+      var e = E.engines[k];
+      if (!e) return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(name) + '</span><span><small>No calls in these days.</small></span></div>';
+      var bits = [A.plural(e.calls, 'call', 'calls') + ' by ' + A.plural(e.people, 'person', 'people'), e.minutes + ' minutes', usd(e.usd) + (e.usd_per_minute != null ? ' (' + usd(e.usd_per_minute) + ' a minute)' : '')];
+      if (k === 'cascade') bits.push(e.turns_timed ? 'Wait before the tutor speaks: ' + sec(e.wait_median_ms) + ' usually, ' + sec(e.wait_p90_ms) + ' on slow turns (thinking ' + sec(e.think_median_ms) + '), over ' + A.plural(e.turns_timed, 'turn', 'turns') : 'Wait before the tutor speaks: not measured yet');
+      else bits.push('Google answers in about a second (not measured here)');
+      return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(name) + '</span><span><small>' + esc(bits.join('. ') + '.') + '</small></span></div>';
+    };
+    return '<section class="card span-12" style="--i:1" aria-labelledby="h-eng"><h2 class="t-h2" id="h-eng">Voice calls by engine</h2>' +
+      '<p class="t-small" style="margin-top:6px">' + esc('The cheaper call is a test: only admins and ' + A.plural(E.testers || 0, 'listed tester', 'listed testers') + ' (the tutor_cascade_testers setting in System) can use it. Costs of the cheaper call are estimates.') + '</p>' +
+      '<div class="tt-week" style="margin-top:10px">' + line('live', 'Live call') + line('cascade', 'Cheaper call') + '</div></section>';
+  }
   function aiView(days) {
     var u = AI.usage, t = u.totals || {}, lim = u.limits || {};
     var tab = function (d) { return '<a class="btn btn--' + (d === days ? 'primary' : 'quiet') + ' btn--sm" href="#/ai/' + d + '"' + (d === days ? ' aria-current="page"' : '') + '>' + esc('Last ' + d + ' days') + '</a>'; };
@@ -227,6 +246,7 @@
         return '<div class="ad-tile"><span class="t-num">' + esc(x[0]) + '</span><b>' + esc(x[1]) + '</b></div>';
       }).join('') + '</div><p class="t-small" style="margin-top:14px">' + esc('Limits set on the server: ' + (lim.daily_call_cap != null ? lim.daily_call_cap + ' calls a day per person' : 'no call limit') +
         (lim.user_daily_budget_usd != null ? ', ' + usd(lim.user_daily_budget_usd) + ' a day per person' : '') + (lim.daily_budget_usd != null ? ', ' + usd(lim.daily_budget_usd) + ' a day for all of Alimun' : '') + '. They are changed in Vercel’s settings.') + '</p></section>';
+    html += enginesCard(days);
     var byDay = u.by_day || {}, dayKeys = Object.keys(byDay).sort().reverse();
     html += '<section class="card span-6" style="--i:1" aria-labelledby="h-aiday"><h2 class="t-h2" id="h-aiday">By day</h2>' + (dayKeys.length ? '<div class="tt-week">' + dayKeys.map(function (d) {
       var c = Number(byDay[d].cost) || 0;
@@ -298,6 +318,7 @@
     api_url: 'The site’s address, used by the database to send waiting-list offers.',
     waitlist_webhook_secret: 'Shared with Vercel’s WAITLIST_WEBHOOK_SECRET; the waiting-list emails need both to match.',
     admin_secret: 'An older shared secret, used only when the waiting-list secret is missing.',
+    tutor_cascade_testers: 'The cheaper voice call is a test. Emails listed here (comma separated) get it in the Tutor beside the live call, as admins do; nobody else sees it. Compare the two in AI spend.',
     room_suggest_min: 'How many learners at one level must be waiting before a room is suggested in Classes, Rooms (learners who asked to be told, and pack reservations without a room).'
   };
   function reviewRowsHtml() {
@@ -426,7 +447,7 @@
         else { if (real() && !FLASH) PO = null; go = loadPayouts().then(function () { return { html: payoutsView(parts[1]), title: 'Payouts' }; }); }
       } else if (kind === 'ai') {
         var days = [7, 30, 90].indexOf(Number(p0)) > -1 ? Number(p0) : 30;
-        go = (real() ? Promise.all([window.AlimunData.adminAiUsage(days), window.AlimunData.adminAiFailures(days)]).then(function (r) { return Object.assign(r[0], { failures: r[1] }); }) : Promise.resolve(sampleAi(days)))
+        go = (real() ? Promise.all([window.AlimunData.adminAiUsage(days), window.AlimunData.adminAiFailures(days), window.AlimunData.adminEngines(days).catch(function () { return null; })]).then(function (r) { return Object.assign(r[0], { failures: r[1], engines: r[2] }); }) : Promise.resolve(sampleAi(days)))
           .then(function (d) { AI = d; return { html: aiView(days), title: 'AI spend' }; });
       } else {
         go = (SY && !real() ? Promise.resolve(SY) : real() ? Promise.all([window.AlimunData.adminReviews(), window.AlimunData.adminSettings(), window.AlimunData.adminJobs(), window.AlimunData.adminTutorMinutes().catch(function () { return []; }), window.AlimunData.adminPricingReport().catch(function () { return null; })]).then(function (r) { return { reviews: r[0], settings: r[1], jobs: r[2], tutorMinutes: r[3], checks: r[4] }; }) : Promise.resolve(sampleSystem()))
