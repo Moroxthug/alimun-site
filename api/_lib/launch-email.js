@@ -8,13 +8,14 @@
  *   POST /api/pricing?action=admin-launch-email (admin) { mode: 'preview' | 'test' | 'send', confirm }
  *     preview  the recipients (name, language, level, time zone) and the English subject; nothing sent
  *     test     one email per language in use, to the owner's address only
- *     send     everyone not sent yet; confirm must equal the number previewed
+ *     send     { only: [user ids] } the learners the owner ticked (English A1–B2, not sent yet); confirm = how many
  */
 const mail = require('./email.js');
 const TZ = require('../../js/tz.js');
 const LAUNCH = require('./launch.js');
 
 const LINK = 'https://alimun.com/app#/settings/plans/launch';
+const LEVELS = ['A1', 'A2', 'B1', 'B2'];
 const KIND = 'launch-en-a1'; /* notifications.params.launch: who has been sent the launch email */
 const LOCALE = { en: 'en-GB', fr: 'fr-FR', ma: 'fr-FR', es: 'es-ES', de: 'de-DE' };
 const WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -151,7 +152,9 @@ async function context(sb) {
 /** English learners (not staff), not sent yet */
 async function recipients(sb, exclude) {
   const skip = new Set(exclude || []);
-  const { data: people, error } = await sb.from('student_profiles').select('user_id, full_name, level, timezone, ui_lang, language').eq('language', 'English').limit(500);
+  // English learners at A1, A2, B1 and B2 only (owner, 12 Nov 2026: "only a1 and a2 english for now, also b2 b1 english")
+  const { data: people, error } = await sb.from('student_profiles').select('user_id, full_name, level, timezone, ui_lang, language').eq('language', 'English')
+    .in('level', LEVELS).limit(500);
   if (error) throw new Error('recipients: ' + error.message);
   const { data: sent } = await sb.from('notifications').select('user_id').eq('kind', 'offer').eq('params->>launch', KIND);
   const done = new Set((sent || []).map((x) => x.user_id));
@@ -170,7 +173,7 @@ async function run(sb, mode, opts) {
   const ctx = await context(sb);
   const list = await recipients(sb, ctx.offer.exclude);
   if (mode === 'preview') {
-    return { count: list.length, people: list.map((r) => { const e = build(r, ctx); return { name: r.name, level: r.level, timezone: r.timezone, lang: e.lang, beginner: !e.upper, subject: e.subject }; }) };
+    return { count: list.length, people: list.map((r) => { const e = build(r, ctx); return { id: r.user_id, name: r.name, level: r.level, timezone: r.timezone, lang: e.lang, beginner: !e.upper, subject: e.subject }; }) };
   }
   if (mode === 'test') {
     const seen = new Set(), sent = [];
@@ -184,9 +187,13 @@ async function run(sb, mode, opts) {
     return { tests: sent };
   }
   if (mode === 'send') {
-    if (Number(opts.confirm) !== list.length) return { error: 'count_changed', count: list.length };
+    // Only the learners the owner ticked; each must still be on the list (English A1–B2, not sent yet, not excluded)
+    const want = new Set(Array.isArray(opts.only) ? opts.only.filter((x) => typeof x === 'string') : []);
+    const chosen = list.filter((r) => want.has(r.user_id));
+    if (!chosen.length) return { error: 'nobody_chosen' };
+    if (Number(opts.confirm) !== chosen.length || chosen.length !== want.size) return { error: 'count_changed', count: chosen.length };
     let ok = 0; const failed = [];
-    for (const r of list) {
+    for (const r of chosen) {
       const e = build(r, ctx);
       const sentOk = await mail.sendEmail({ to: r.email, subject: e.subject, html: e.html, text: e.text, unsubscribeUrl: e.unsub });
       await sb.from('notifications').insert({ user_id: r.user_id, kind: 'offer', params: { launch: KIND }, title: e.bell.title, body: e.bell.body, link: '/app#/settings/plans/launch' });

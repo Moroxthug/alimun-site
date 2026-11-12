@@ -44,3 +44,47 @@ test('the class opens with 8 sign-ups across the pack and the open class, otherw
   assert.strictEqual(R.decideLinked(7, 8), 'cancel');
   assert.strictEqual(R.decideLinked(0, 0), 'cancel');
 });
+
+// The launch email goes only to the learners the owner ticks, among English A1–B2 learners not sent yet
+test('launch email: only the ticked learners, English A1 to B2, each once', async () => {
+  const mail = require('../../api/_lib/email.js');
+  const LM = require('../../api/_lib/launch-email.js');
+  const sent = [], notes = [];
+  const realSend = mail.sendEmail;
+  mail.sendEmail = async (m) => { sent.push(m.to); return true; };
+  const ROOM = { starts_on: '2026-11-16', schedule_time: '19:00:00', timezone: 'Europe/Paris', min_learners: 8 };
+  const profiles = [
+    { user_id: 'a1', full_name: 'Ana', level: 'A1', timezone: 'Europe/Paris', ui_lang: 'fr', language: 'English' },
+    { user_id: 'b2', full_name: 'Bo', level: 'B2', timezone: 'Europe/Istanbul', ui_lang: null, language: 'English' },
+    { user_id: 'c1', full_name: 'Cy', level: 'C1', timezone: 'Europe/Paris', ui_lang: null, language: 'English' },
+    { user_id: 'de', full_name: 'Di', level: 'A1', timezone: 'Europe/Berlin', ui_lang: 'de', language: 'German' },
+    { user_id: '44444444-4444-4444-8444-444444444444', full_name: 'Test', level: 'A1', timezone: 'UTC', ui_lang: null, language: 'English' }
+  ];
+  const q = (rows) => {
+    const o = { rows, eq(k, v) { o.rows = o.rows.filter((r) => k.includes('->>') ? (r.params || {})[k.split('->>')[1]] === v : r[k] === v); return o; },
+      in(k, v) { o.rows = o.rows.filter((r) => v.includes(r[k])); return o; }, limit() { return o; }, maybeSingle() { return Promise.resolve({ data: o.rows[0] || null }); },
+      select() { return o; }, then(res) { return Promise.resolve({ data: o.rows, error: null }).then(res); } };
+    return o;
+  };
+  const sb = {
+    from(t) {
+      if (t === 'app_settings') return q([{ key: 'launch_offer', value: JSON.stringify({ code: 'launch-en-a1', rooms: [PACK, OPEN], intro_session: OTHER, ends_at: '2026-11-16T04:00:00Z', eur_off: 1000, exclude: ['44444444-4444-4444-8444-444444444444'] }) }]);
+      if (t === 'cohorts') return q([Object.assign({ id: PACK, product_key: 'level_en', schedule_days: ['Monday', 'Tuesday', 'Thursday'] }, ROOM), Object.assign({ id: OPEN, product_key: 'open_en', schedule_days: ['Monday'] }, ROOM)]);
+      if (t === 'sessions') return q([{ id: OTHER, scheduled_at: '2026-11-14T16:00:00Z' }]);
+      if (t === 'student_profiles') return q(profiles.slice());
+      if (t === 'notifications') return Object.assign(q(notes.slice()), { insert: async (n) => { notes.push(n); return {}; } });
+      throw new Error('table ' + t);
+    },
+    auth: { admin: { getUserById: async (id) => ({ data: { user: { id, email: id + '@example.com', app_metadata: { role: 'student' } } } }) } }
+  };
+  try {
+    const p = await LM.run(sb, 'preview', {});
+    assert.deepStrictEqual(p.people.map((x) => x.id).sort(), ['a1', 'b2'], 'English A1 to B2 only, the excluded account left out');
+    assert.strictEqual((await LM.run(sb, 'send', { only: [], confirm: 0 })).error, 'nobody_chosen');
+    assert.strictEqual((await LM.run(sb, 'send', { only: ['a1', 'de'], confirm: 2 })).error, 'count_changed', 'a German learner cannot be slipped in');
+    const r = await LM.run(sb, 'send', { only: ['a1'], confirm: 1 });
+    assert.strictEqual(r.sent, 1);
+    assert.deepStrictEqual(sent, ['a1@example.com']);
+    assert.deepStrictEqual((await LM.run(sb, 'preview', {})).people.map((x) => x.id), ['b2'], 'nobody gets it twice');
+  } finally { mail.sendEmail = realSend; }
+});

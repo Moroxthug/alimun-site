@@ -361,7 +361,7 @@
   /* The English A1–A2 launch class (api/_lib/launch.js): the offer, times, places and the free first class */
   function launchInfo() { return getJson('/api/pricing?action=launch'); }
   function launchRegister() { return pricing('launch-register'); }
-  function adminLaunchEmail(mode, confirm) { return pricing('admin-launch-email', { mode: mode, confirm: confirm }); }
+  function adminLaunchEmail(mode, confirm, only) { return pricing('admin-launch-email', { mode: mode, confirm: confirm, only: only }); }
   function roomMe(product) { return getJson('/api/pricing?action=room-me&product=' + encodeURIComponent(product)); }
   function roomInterest(product, on) { return api('/api/pricing?action=interest', { product: product, on: !!on }); }
   function roomAssign(product, cohortId) { return api('/api/pricing?action=assign', { product: product, cohortId: cohortId }); }

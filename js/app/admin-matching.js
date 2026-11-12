@@ -239,22 +239,34 @@
     var rooms = (L.rooms || []).map(function (r) { return (/^level_/.test(r.product_key) ? 'level pack ' : 'open class ') + r.seats + ' (' + r.state + ')'; }).join(', ');
     html += '<p class="t-body" style="margin-top:8px">' + esc('Sign-ups: ' + L.seats + ' of ' + L.min + ' needed (' + rooms + '). Free first class: ' + (L.intro ? L.intro.registeredCount + ' registered' : 'none') + '. Sign-ups ' + (L.offer.active ? 'close ' + A.fmt(L.offer.endsAt, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : 'are closed') + '. The class page learners see: /app#/settings/plans/launch.') + '</p>';
     var m = LMAIL;
-    if (m && m.people) html += '<p class="t-body" style="margin-top:10px"><b>' + esc(A.plural(m.count, 'learner has', 'learners have') + ' not had the email yet') + '</b></p><div class="tt-week">' + m.people.map(function (x) {
-      return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc((x.level || '') + ' ' + x.lang) + '</span><span><b>' + esc(x.name || 'No name') + '</b><small>' + esc((x.timezone || 'zone not known') + '. ' + x.subject) + '</small></span></div>';
+    if (m && m.people) html += '<p class="t-body" style="margin-top:10px"><b>' + esc(A.plural(m.count, 'English learner (A1 to B2) has', 'English learners (A1 to B2) have') + ' not had the email yet. Tick who gets it.') + '</b></p>' +
+      '<div class="btn-row" style="margin-top:6px"><button class="btn btn--quiet btn--sm" type="button" data-mx-pick="all">Tick all</button><button class="btn btn--quiet btn--sm" type="button" data-mx-pick="none">Untick all</button>' +
+      '<button class="btn btn--quiet btn--sm" type="button" data-mx-pick="A">Only A1 and A2</button><button class="btn btn--quiet btn--sm" type="button" data-mx-pick="B">Only B1 and B2</button></div>' +
+      '<div class="tt-week">' + m.people.map(function (x) {
+      return '<label class="tt-row tt-row--wide" style="cursor:pointer"><span class="tt-row__time"><input type="checkbox" data-mx-who="' + esc(x.id) + '" data-mx-lv="' + esc(String(x.level || '').charAt(0)) + '"' + (PICKED[x.id] ? ' checked' : '') + '> ' + esc((x.level || '') + ' ' + x.lang) + '</span><span><b>' + esc(x.name || 'No name') + '</b><small>' + esc((x.timezone || 'zone not known') + '. ' + x.subject) + '</small></span></label>';
     }).join('') + '</div>';
     if (m && m.tests) html += '<p class="t-body" style="margin-top:10px">' + esc('Test emails sent to you: ' + m.tests.map(function (x) { return x.lang + (x.beginner ? '' : ' (B1 and above)') + (x.ok ? '' : ' failed'); }).join(', ') + '.') + '</p>';
     if (m && m.sent != null) html += '<p class="t-body" style="margin-top:10px"><b>' + esc(A.plural(m.sent, 'email sent', 'emails sent') + (m.failed && m.failed.length ? '; failed: ' + m.failed.join(', ') : '') + '.') + '</b></p>';
     html += '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-mx-mail="preview">Who gets the email</button><button class="btn btn--ghost btn--sm" type="button" data-mx-mail="test">Send me a test</button>' +
-      (m && m.people && m.count ? '<button class="btn btn--ghost btn--sm" type="button" data-mx-mail="send">' + esc('Send to ' + A.plural(m.count, 'learner', 'learners')) + '</button>' : '') + '</div>' +
+      (m && m.people && m.count ? '<button class="btn btn--ghost btn--sm" type="button" data-mx-mail="send" data-mx-sendbtn>' + esc(sendLabel()) + '</button>' : '') + '</div>' +
       '<p class="t-small st-msg" data-mx-mailmsg aria-live="polite"></p></section>';
     return html;
+  }
+  var PICKED = {};
+  function picked() { return ((LMAIL && LMAIL.people) || []).filter(function (x) { return PICKED[x.id]; }).map(function (x) { return x.id; }); }
+  function sendLabel() { var n = picked().length; return n ? 'Send to the ' + A.plural(n, 'learner', 'learners') + ' ticked' : 'Tick learners to send'; }
+  function pickRefresh() {
+    root.querySelectorAll('[data-mx-who]').forEach(function (c) { c.checked = !!PICKED[c.getAttribute('data-mx-who')]; });
+    var b = root.querySelector('[data-mx-sendbtn]'); if (b) { b.textContent = sendLabel(); b.disabled = !picked().length; }
   }
   function launchMail(b) {
     var mode = b.getAttribute('data-mx-mail'), msg = root.querySelector('[data-mx-mailmsg]');
     if (!real()) { msg.textContent = 'This is sample data; nothing is sent.'; return; }
-    if (mode === 'send' && !window.confirm('Send the launch email to ' + LMAIL.count + ' learners now?')) return;
+    var only = picked();
+    if (mode === 'send' && (!only.length || !window.confirm('Send the launch email to the ' + only.length + ' learners ticked now?'))) return;
     b.disabled = true; msg.textContent = mode === 'preview' ? 'Working it out\u2026' : 'Sending\u2026';
-    window.AlimunData.adminLaunchEmail(mode, mode === 'send' ? LMAIL.count : undefined).then(function (r) {
+    window.AlimunData.adminLaunchEmail(mode, mode === 'send' ? only.length : undefined, mode === 'send' ? only : undefined).then(function (r) {
+      if (mode === 'preview') { PICKED = {}; (r.people || []).forEach(function (x) { PICKED[x.id] = true; }); }
       LMAIL = mode === 'send' ? r : mode === 'test' ? Object.assign({}, LMAIL, r) : r;
       if (mode === 'send') return window.AlimunData.adminLaunchEmail('preview').then(function (p) { LMAIL = Object.assign(p, { sent: r.sent, failed: r.failed }); });
     }).then(function () { draw(); }, function (e) { b.disabled = false; msg.textContent = 'That did not work: ' + ((e && e.body && e.body.error) || (e && e.message) || 'please try again') + '.'; });
@@ -330,12 +342,22 @@
       if (k === 'lang') S.level = '';
       draw();
     });
+    root.addEventListener('change', function (e) {
+      var w = e.target.getAttribute && e.target.getAttribute('data-mx-who');
+      if (w) { PICKED[w] = e.target.checked; pickRefresh(); }
+    });
     root.addEventListener('input', function (e) {
       if (e.target.getAttribute('data-mt') !== 'q' || !R) return;
       S.q = e.target.value;
       var b = root.querySelector('[data-mt-rows]'); if (b) b.innerHTML = everyoneRows(R);
     });
     root.addEventListener('click', function (e) {
+      var pk = e.target.closest('[data-mx-pick]');
+      if (pk && LMAIL && LMAIL.people) {
+        var how = pk.getAttribute('data-mx-pick');
+        LMAIL.people.forEach(function (x) { var lv = String(x.level || '').charAt(0); PICKED[x.id] = how === 'all' || (how !== 'none' && lv === how); });
+        pickRefresh(); return;
+      }
       var lm = e.target.closest('[data-mx-mail]');
       if (lm && !lm.disabled) { launchMail(lm); return; }
       var b = e.target.closest('[data-mt-room],[data-mt-emails]');

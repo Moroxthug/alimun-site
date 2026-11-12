@@ -854,7 +854,7 @@ module.exports = async function handler(req, res) {
       if (!me.app_metadata || me.app_metadata.role !== 'admin') return fail(res, 403, 'admins_only');
       if (req.method !== 'POST') return fail(res, 405, 'method_not_allowed');
       const b = body(req) || {};
-      const out = await LAUNCH_MAIL.run(sb, String(b.mode || ''), { confirm: b.confirm, ownerEmail: me.email });
+      const out = await LAUNCH_MAIL.run(sb, String(b.mode || ''), { confirm: b.confirm, only: b.only, ownerEmail: me.email });
       return out.error ? fail(res, 409, out.error, out) : res.status(200).json(out);
     }
     if (action === 'launch' || action === 'launch-register') {
