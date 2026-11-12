@@ -247,6 +247,8 @@ async function onDispute(ctx, dispute) {
     await ctx.sb.from('trial_markers').upsert({ kind: 'card', hash: P.markerHash('card', fp, ctx.markerSecret),
       first_user_id: ent ? ent.user_id : null }, { onConflict: 'kind,hash', ignoreDuplicates: true });
   }
+  await ctx.sb.from('abuse_log').insert({ kind: 'dispute', user_id: ent ? ent.user_id : null,
+    detail: { dispute: dispute.id, charge: charge.id, amount: dispute.amount, currency: dispute.currency, reason: dispute.reason, product: ent ? ent.product_key : null } });
   await ctx.notify.owner('Alimun: payment dispute opened',
     `A payment was disputed: dispute ${dispute.id}, charge ${charge.id}, ${(dispute.amount / 100).toFixed(2)} ${String(dispute.currency).toUpperCase()}, reason ${dispute.reason}. ` +
     (ent ? `Entitlement ${ent.id} (${ent.product_key}) is paused.` : 'No entitlement found.') + ' Answer it in the Stripe dashboard before the due date.');

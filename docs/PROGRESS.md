@@ -1894,3 +1894,12 @@ Owner asked to clear the advisor's warnings about SECURITY DEFINER functions; pl
 - `app_settings.pricing_on_sale` now includes the app (after the deploy). Still off: open classes (rooms, step 7), trial and help class (step 7).
 - Checked: 156 of 156 unit tests (8 new for the events and room-day charges against an in-memory database and a fake Stripe), `npm run build`, inline scripts, function count (19), semgrep (0 findings). Not checked from here: real Stripe events (a real purchase by the owner).
 - Left for later steps: founding expiry notices and price switch (step 8), the open-class to pack credit (step 9), classes for the new tiers (step 7).
+
+## 2026-11-12 — Abuse checks and store purchases (pricing engine step 6)
+- Migration `supabase/migrations/202611121400_pricing_abuse.sql`, applied in parts and verified: free tutor minutes once per inbox and never for throwaway domains (72 domains seeded), `abuse_log` (admins read), quotes keep the visitor's country, one entitlement per store transaction. `tutor_refresh` replaced with the same logic plus the free-minutes check; checked on an existing student.
+- Checkout: the trial refused for a used email or card or a throwaway domain, logged; the visitor's country saved with each quote; Stripe customers tagged with `band` and `card_country` for Radar. Disputes logged.
+- Admin → System: "Payment checks, last 7 days" (purchases by band, visitor and card countries that differ, refused trials, withheld free minutes, disputes). The billing job shows under Automatic jobs.
+- `api/webhooks/revenuecat.js`: App Store and Google Play purchases through RevenueCat into entitlements and tutor time (function 20 of the CI guard's 20).
+- Referral reward rule written and tested (no referral programme exists yet).
+- `docs/STRIPE_RADAR_RULES.md`: for the owner, the Radar rules to paste (checked against Stripe's attribute list), Supabase sign-up rate limit, Turnstile captcha and leaked-password protection, RevenueCat webhook and the Vercel secrets.
+- Checked: 164 of 164 unit tests (8 new: trial refusal and logging, visitor country, Radar metadata, weekly report, referral rule, RevenueCat events), `npm run build`, inline scripts, function count, semgrep (0 findings), the admin card in a headless browser (sample data), no console errors.

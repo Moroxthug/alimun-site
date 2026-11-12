@@ -11,6 +11,8 @@
  *                                   help class, voice minutes) or a reserved pack (card saved, nothing charged until
  *                                   the room opens). A payment the bank must confirm returns { next: clientSecret }.
  *   POST ?action=confirm            (signed in) { quoteId }: after the bank's confirmation, records the purchase.
+ *   GET  ?action=admin-report       (admin) the last 7 days: purchases by band, card and visitor countries that
+ *                                   differ, refused trials, withheld free minutes and disputes (section 7).
  *   GET  ?action=cron-billing       (Vercel cron, Bearer CRON_SECRET) pauses entitlements unpaid for 3 days
  *                                   (public.pause_unpaid_entitlements), which frees their seats.
  *
@@ -40,6 +42,10 @@ async function userOf(req, sb) {
 }
 function body(req) {
   try { return typeof req.body === 'string' ? JSON.parse(req.body) : (req.body || {}); } catch { return null; }
+}
+function ipCountryOf(req) {
+  const c = String(req.headers['x-vercel-ip-country'] || '').toUpperCase();
+  return /^[A-Z]{2}$/.test(c) ? c : null;
 }
 function fail(res, status, code, extra) { return res.status(status).json(Object.assign({ error: code }, extra || {})); }
 
@@ -152,11 +158,17 @@ async function handleQuote(req, res, sb, user) {
   if (held && held.length && P.PRODUCTS[productKey].charge !== 'once') return fail(res, 409, 'already_have');
 
   // The trial once per person: email and card.
+  // The trial once per person: email and card; never for a throwaway inbox (section 7). Refusals are logged.
   if (productKey === 'trial') {
     const secret = P.markerSecret(process.env);
     const marks = [P.markerHash('email', P.normaliseEmail(user.email), secret), P.markerHash('card', pm.card.fingerprint, secret)];
     const { data: seen } = await sb.from('trial_markers').select('kind').in('hash', marks).limit(1);
-    if (seen && seen.length) return fail(res, 409, 'trial_used');
+    const { data: throwaway } = await sb.rpc('is_disposable_email', { p_email: user.email });
+    if ((seen && seen.length) || throwaway === true) {
+      await sb.from('abuse_log').insert({ kind: 'trial_refused', user_id: user.id,
+        detail: { marker: throwaway === true ? 'disposable_email' : seen[0].kind, card_country: cardCountry } });
+      return fail(res, 409, 'trial_used');
+    }
   }
 
   const row = await country(sb, cardCountry);
@@ -176,7 +188,7 @@ async function handleQuote(req, res, sb, user) {
   const { data: q, error: qErr } = await sb.from('quotes').insert({
     user_id: user.id, product_key: productKey, variant, cadence, band, currency, unit_amount: price.unit_amount,
     stripe_price_id: price.stripe_price_id, setup_intent_id: si.id, cohort_id: cohortId, expires_at: expires,
-    payment_method_id: pm.id, card_country: cardCountry, founding_claim: claim,
+    payment_method_id: pm.id, card_country: cardCountry, founding_claim: claim, ip_country: ipCountryOf(req),
   }).select('id').single();
   if (qErr) throw new Error('quote: ' + qErr.message);
 
@@ -248,9 +260,12 @@ async function handlePurchase(req, res, sb, user) {
   if (pm.customer !== customer) return fail(res, 409, 'card_not_ready');
   const prod = P.PRODUCTS[q.product_key];
   const meta = metaOf(user, q);
+  // The band on the customer, for Stripe Radar rules (docs/STRIPE_RADAR_RULES.md): ::customer:band::
+  const custUpdate = { metadata: { band: q.band, card_country: q.card_country } };
   if (TAX_ON && pm.billing_details && pm.billing_details.address && pm.billing_details.address.country) {
-    await stripe.customers.update(customer, { address: { country: pm.billing_details.address.country, postal_code: pm.billing_details.address.postal_code || undefined } });
+    custUpdate.address = { country: pm.billing_details.address.country, postal_code: pm.billing_details.address.postal_code || undefined };
   }
+  await stripe.customers.update(customer, custUpdate);
 
   if (prod.charge === 'reserve') {
     // The card stays on the customer for the room's first day (section 5); nothing is charged now.
@@ -340,13 +355,24 @@ async function handleConfirm(req, res, sb, user) {
   return fail(res, 409, 'nothing_to_confirm');
 }
 
+// ── the admin's weekly payment checks (section 7) ──
+async function handleAdminReport(req, res, sb) {
+  const since = new Date(Date.now() - 7 * 86400000).toISOString();
+  const { data: quotes, error } = await sb.from('quotes').select('product_key, band, currency, unit_amount, card_country, ip_country, used_at, entitlement_id')
+    .gte('created_at', since).not('used_at', 'is', null).limit(5000);
+  if (error) throw new Error('quotes: ' + error.message);
+  const { data: log, error: lErr } = await sb.from('abuse_log').select('at, kind, user_id, detail').gte('at', since).order('at', { ascending: false }).limit(500);
+  if (lErr) throw new Error('abuse_log: ' + lErr.message);
+  return res.status(200).json(P.weeklyReport(quotes || [], log || []));
+}
+
 // ── daily billing job ──
 async function handleCronBilling(req, res, sb) {
   const secret = process.env.CRON_SECRET;
   if (!secret || req.headers.authorization !== 'Bearer ' + secret) return fail(res, 401, 'unauthorized');
   const { data, error } = await sb.rpc('pause_unpaid_entitlements');
   const ok = !error;
-  await recordRun(sb, 'cron-billing', ok, ok ? { paused: data } : { error: error.message });
+  await recordRun(sb, 'vercel:cron-billing', ok, ok ? { paused: data } : { error: error.message });
   if (!ok) return fail(res, 500, 'server_error');
   return res.status(200).json({ paused: data });
 }
@@ -361,6 +387,13 @@ module.exports = async function handler(req, res) {
   const action = (req.query && req.query.action) || '';
   try {
     if (action === 'cron-billing') return await handleCronBilling(req, res, sb);
+    if (action === 'admin-report') {
+      if (req.method !== 'GET') return fail(res, 405, 'method_not_allowed');
+      const admin = await userOf(req, sb);
+      if (!admin) return fail(res, 401, 'sign_in_required');
+      if (!admin.app_metadata || admin.app_metadata.role !== 'admin') return fail(res, 403, 'admins_only');
+      return await handleAdminReport(req, res, sb);
+    }
     if (action === 'display') {
       if (req.method !== 'GET') return fail(res, 405, 'method_not_allowed');
       return await handleDisplay(req, res, sb);

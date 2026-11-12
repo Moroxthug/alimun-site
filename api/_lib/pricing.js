@@ -143,9 +143,53 @@ function displayBook(rows, band, currency) {
   return out;
 }
 
+/**
+ * The admin's weekly payment checks (section 7). quotes: spent quotes of the last 7 days; log: abuse_log rows.
+ * Purchases by band; those where the visitor's country (at checkout) differs from the card's, by band, newest first;
+ * refused trials by the marker that matched; free minutes withheld; disputes.
+ */
+function weeklyReport(quotes, log) {
+  const byBand = { A: 0, B: 0 }, mismatchByBand = { A: 0, B: 0 }, mismatches = [];
+  for (const q of quotes) {
+    if (!q.used_at) continue;
+    byBand[q.band] = (byBand[q.band] || 0) + 1;
+    if (q.ip_country && q.card_country && q.ip_country !== q.card_country) {
+      mismatchByBand[q.band] = (mismatchByBand[q.band] || 0) + 1;
+      mismatches.push({ at: q.used_at, product: q.product_key, band: q.band, ipCountry: q.ip_country, cardCountry: q.card_country });
+    }
+  }
+  mismatches.sort((a, b) => String(b.at).localeCompare(String(a.at)));
+  const trialsRefused = {}, withheld = {};
+  let disputes = 0;
+  const recent = [];
+  for (const r of log) {
+    const d = r.detail || {};
+    if (r.kind === 'trial_refused') trialsRefused[d.marker || 'other'] = (trialsRefused[d.marker || 'other'] || 0) + 1;
+    else if (r.kind === 'free_minutes_withheld') withheld[d.why || 'other'] = (withheld[d.why || 'other'] || 0) + 1;
+    else if (r.kind === 'dispute') disputes += 1;
+    if (recent.length < 50) recent.push({ at: r.at, kind: r.kind, detail: d });
+  }
+  return { purchases: byBand, mismatchByBand, mismatches: mismatches.slice(0, 50), trialsRefused, freeMinutesWithheld: withheld, disputes, recent };
+}
+
+/**
+ * Whether a referral earns its reward (section 7): only after the referred learner's first payment, only when their
+ * card, phone and device markers all differ from the referrer's, and at most 5 rewards a month per referrer.
+ * referrer / referred: { markers: { card, phone, device } } (hashes); rewardsThisMonth: the referrer's count so far.
+ */
+const REFERRAL_MONTHLY_CAP = 5;
+function referralEligible({ referrer, referred, referredHasPaid, rewardsThisMonth }) {
+  if (!referredHasPaid) return { ok: false, why: 'not_paid_yet' };
+  if ((rewardsThisMonth || 0) >= REFERRAL_MONTHLY_CAP) return { ok: false, why: 'monthly_cap' };
+  const a = (referrer && referrer.markers) || {}, b = (referred && referred.markers) || {};
+  for (const k of ['card', 'phone', 'device']) if (a[k] && b[k] && a[k] === b[k]) return { ok: false, why: 'same_' + k };
+  return { ok: true };
+}
+
 function isUuid(s) { return typeof s === 'string' && UUID.test(s); }
 
 module.exports = {
   PRODUCTS, QUOTE_MINUTES, onSale, checkRequest, countryRow, resolveBand, chooseCurrency, foundingWindowOpen,
   foundingHeld, chooseVariant, quoteProblem, normaliseEmail, markerHash, markerSecret, displayBook, isUuid,
+  weeklyReport, referralEligible, REFERRAL_MONTHLY_CAP,
 };

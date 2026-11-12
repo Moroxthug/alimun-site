@@ -63,13 +63,15 @@
   }
   function sampleSystem() {
     var now = Date.now(), ago = function (m) { return new Date(now - m * MIN).toISOString(); }, jobs = [];
+    var checks = { purchases: { A: 14, B: 9 }, mismatchByBand: { A: 1, B: 2 }, trialsRefused: { card: 1, disposable_email: 1 }, freeMinutesWithheld: { 'same inbox already had them': 3 }, disputes: 0,
+      mismatches: [{ at: ago(60 * 20), product: 'level_en', band: 'B', ipCountry: 'FR', cardCountry: 'MA' }, { at: ago(60 * 50), product: 'app', band: 'B', ipCountry: 'ES', cardCountry: 'CO' }, { at: ago(60 * 70), product: 'minutes_30', band: 'A', ipCountry: 'MA', cardCountry: 'IT' }] };
     for (var i = 0; i < 40; i++) { jobs.push({ job: 'db:complete-sessions', ran_at: ago(i * 15 + 3), ok: true, result: { completed: i % 9 === 0 ? 1 : 0 } }); jobs.push({ job: 'db:expire-waitlist-offers', ran_at: ago(i * 15 + 3), ok: true, result: { expired_offers_removed: 0 } }); }
     jobs.push({ job: 'vercel:cron-create-rooms', ran_at: ago(9 * 60), ok: true, result: { completed: 0, roomsCreated: 3, roomsFailed: 0 } }, { job: 'vercel:cron-expire-offers', ran_at: ago(8.5 * 60), ok: false, result: { error: 'fetch failed <timeout>' } });
     return { reviews: [
       { id: 'r1', rating: 5, review_text: 'Clear, patient and fun. I finally understand the cases.', created_at: ago(60 * 24 * 9), teacher_id: 't1', teacher_profiles: { full_name: 'Ana Weber' }, student_profiles: { id: 's1', full_name: 'Lukas Brandt' } },
       { id: 'r2', rating: 2, review_text: 'Visit <b>cheap-essays.example</b> for answers', created_at: ago(60 * 24 * 2), teacher_id: 't2', teacher_profiles: { full_name: 'James Hall' }, student_profiles: { id: 's3', full_name: 'Sara Rossi' } }],
       settings: [{ key: 'admin_secret', secret: true, value: null }, { key: 'api_url', secret: false, value: 'https://alimun.com' }, { key: 'tutor_voice', secret: false, value: 'Orus' }, { key: 'tutor_live', secret: false, value: 'admins' }, { key: 'waitlist_webhook_secret', secret: true, value: null }], jobs: jobs,
-      tutorMinutes: [['community', 30], ['focused', 60], ['intensive', 120], ['private', 120], ['onetoone', 120], ['daily', 120]].map(function (x) { return { tier: x[0], minutes_per_month: x[1] }; }) };
+      tutorMinutes: [['community', 30], ['focused', 60], ['intensive', 120], ['private', 120], ['onetoone', 120], ['daily', 120]].map(function (x) { return { tier: x[0], minutes_per_month: x[1] }; }), checks: checks };
   }
 
   /* ---------- Payouts ---------- */
@@ -249,8 +251,9 @@
   /* ---------- System ---------- */
   var RF = { teacher: '', stars: '' };
   function systemView() {
-    var html = flash() + '<div class="view__head"><div><h1 class="t-h1">System</h1><p class="t-lead">Reviews, app settings, tutor minutes and the automatic jobs.</p></div>' +
+    var html = flash() + '<div class="view__head"><div><h1 class="t-h1">System</h1><p class="t-lead">Payment checks, reviews, app settings, tutor minutes and the automatic jobs.</p></div>' +
       '<div class="btn-row"><a class="btn btn--ghost btn--sm" href="#/students/signups">Email signups</a></div></div><div class="grid rise">';
+    html += checksHtml();
     var teachers = SY.reviews.map(function (r) { return r.teacher_profiles && r.teacher_profiles.full_name; }).filter(function (v, i, a) { return v && a.indexOf(v) === i; }).sort();
     html += '<section class="card span-12" style="--i:0" aria-labelledby="h-rev"><h2 class="t-h2" id="h-rev">Reviews</h2><p class="t-small" style="margin-top:4px">' + esc(A.plural(SY.reviews.length, 'review', 'reviews') + ' from students. They show on the teachers’ public profiles; deleting one updates the teacher’s rating.') + '</p>' +
       (SY.reviews.length ? '<div class="ad-filters" style="margin-top:12px"><select class="st-in" data-rf="teacher" aria-label="Teacher">' + opt('', 'Every teacher', RF.teacher) + teachers.map(function (t) { return opt(t, t, RF.teacher); }).join('') + '</select>' +
@@ -343,6 +346,24 @@
     if (typeof r !== 'object') return String(r);
     return Object.keys(r).map(function (k) { var v = r[k]; return k + ': ' + (v && typeof v === 'object' ? JSON.stringify(v) : v); }).join(', ');
   }
+  /* The weekly payment checks (docs/PRICING_ENGINE_SPEC.md section 7): purchases by band, purchases where the visitor's
+     country at checkout differs from the card's, refused trials, withheld free minutes and disputes */
+  var MARKER = { email: 'same email', card: 'same card', disposable_email: 'throwaway email domain', other: 'other' };
+  function checksHtml() {
+    var c = SY.checks;
+    var head = '<section class="card span-12" style="--i:0" aria-labelledby="h-checks"><h2 class="t-h2" id="h-checks">Payment checks, last 7 days</h2>';
+    if (!c) return head + '<p class="t-small" style="margin-top:4px">The checks could not be loaded.</p></section>';
+    var list = function (o, names) { var ks = Object.keys(o || {}); return ks.length ? ks.map(function (k) { return (names[k] || k) + ' ' + o[k]; }).join(', ') : 'none'; };
+    var html = head + '<p class="t-small" style="margin-top:4px">' + esc('Purchases: ' + (c.purchases.A || 0) + ' in Band A, ' + (c.purchases.B || 0) + ' in Band B. ' +
+      'Where the visitor was in another country than the card: ' + (c.mismatchByBand.A || 0) + ' in Band A, ' + (c.mismatchByBand.B || 0) + ' in Band B (travellers and family cards are normal; many in Band B from Band A countries would be worth a look). ' +
+      'Trials refused: ' + list(c.trialsRefused, MARKER) + '. Free tutor minutes withheld: ' + list(c.freeMinutesWithheld, {}) + '. Disputes: ' + (c.disputes || 0) + '.') + '</p>';
+    if (c.mismatches && c.mismatches.length) {
+      html += '<div class="tt-week" style="margin-top:12px">' + c.mismatches.slice(0, 20).map(function (m) {
+        return '<div class="tt-row"><span class="tt-row__time">' + esc(A.fmt(m.at, { day: 'numeric', month: 'short' })) + '</span><span>' + esc(m.product + ', Band ' + m.band + ': visitor in ' + m.ipCountry + ', card from ' + m.cardCountry) + '</span></div>';
+      }).join('') + '</div>';
+    }
+    return html + '</section>';
+  }
   function jobsHtml() {
     var JOBS = A.jobs || {}, by = {};
     SY.jobs.forEach(function (r) { (by[r.job] = by[r.job] || []).push(r); });
@@ -407,7 +428,7 @@
         go = (real() ? Promise.all([window.AlimunData.adminAiUsage(days), window.AlimunData.adminAiFailures(days)]).then(function (r) { return Object.assign(r[0], { failures: r[1] }); }) : Promise.resolve(sampleAi(days)))
           .then(function (d) { AI = d; return { html: aiView(days), title: 'AI spend' }; });
       } else {
-        go = (SY && !real() ? Promise.resolve(SY) : real() ? Promise.all([window.AlimunData.adminReviews(), window.AlimunData.adminSettings(), window.AlimunData.adminJobs(), window.AlimunData.adminTutorMinutes().catch(function () { return []; })]).then(function (r) { return { reviews: r[0], settings: r[1], jobs: r[2], tutorMinutes: r[3] }; }) : Promise.resolve(sampleSystem()))
+        go = (SY && !real() ? Promise.resolve(SY) : real() ? Promise.all([window.AlimunData.adminReviews(), window.AlimunData.adminSettings(), window.AlimunData.adminJobs(), window.AlimunData.adminTutorMinutes().catch(function () { return []; }), window.AlimunData.adminPricingReport().catch(function () { return null; })]).then(function (r) { return { reviews: r[0], settings: r[1], jobs: r[2], tutorMinutes: r[3], checks: r[4] }; }) : Promise.resolve(sampleSystem()))
           .then(function (d) { SY = d; return { html: systemView(), title: 'System' }; });
       }
       return go.then(function (res) {

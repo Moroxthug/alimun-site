@@ -161,13 +161,14 @@ function world() {
     customer_pricing: [],
     student_profiles: [{ id: 'sp1', user_id: 'u1', full_name: 'L', stripe_customer_id: 'cus_1' }],
     products: [{ product_key: 'level_en', voice_minutes_month: 120 }, { product_key: 'minutes_30', voice_minutes_month: 30 }],
-    entitlements: [], quotes: [], trial_markers: [],
+    entitlements: [], quotes: [], trial_markers: [], abuse_log: [],
   };
   const rpcs = {
     set_band: (a) => { tables.customer_pricing.push({ user_id: a.p_user, band: a.p_band, card_country: a.p_card_country, band_change_allowed_at: '2027-02-18T00:00:00Z' }); return { data: a.p_band, error: null }; },
     claim_founding_seat: (a) => { const cp = tables.customer_pricing.find((r) => r.user_id === a.p_user); Object.assign(cp, { founding: true, founding_seq: 1, founding_until: '2027-11-20T00:00:00Z' }); return { data: 1, error: null }; },
     tutor_add_credit: (a) => { tables.ledger = (tables.ledger || []).concat(a); return { data: a.p_seconds, error: null }; },
     sync_access: (a) => syncAccess(tables, a.p_user),
+    is_disposable_email: (a) => ({ data: /@(mailinator\.com|yopmail\.com)$/.test(a.p_email), error: null }),
   };
   return { tables, rpcs };
 }
@@ -424,4 +425,54 @@ test('room day: a card the bank wants to check off-session tells the learner and
   assert.ok(tables.entitlements[0].payment_failed_at);
   assert.strictEqual(tables.entitlements[0].status, 'pending_room');
   assert.strictEqual(told[0][2].needsAction, true);
+});
+
+// ---------- Step 6: abuse checks ----------
+test('trial: a used card is refused and logged; the visitor\'s country is kept beside the card\'s', async () => {
+  const { tables, rpcs } = world();
+  tables.app_settings.find((r) => r.key === 'pricing_on_sale').value = 'trial,level_en';
+  tables.price_book.push({ product_key: 'trial', band: 'B', variant: 'list', cadence: 'once', currency: 'mad', unit_amount: 2990, stripe_price_id: 'price_trial', active: true });
+  tables.trial_markers.push({ kind: 'card', hash: P.markerHash('card', 'fp1', P.markerSecret({ SUPABASE_SERVICE_ROLE_KEY: 'service' })) });
+  const { handler } = load(tables, rpcs);
+  const r = await call(handler, 'quote', { setupIntentId: 'seti_12345678', productKey: 'trial', cadence: 'once' });
+  assert.strictEqual(r.body.error, 'trial_used');
+  assert.deepStrictEqual(tables.abuse_log[0].detail, { marker: 'card', card_country: 'MA' });
+  const q = await call(handler, 'quote', { setupIntentId: 'seti_12345678', productKey: 'level_en', cadence: 'upfront' });
+  assert.strictEqual(q.code, 200);
+  assert.strictEqual(tables.quotes[0].ip_country, 'MA');
+});
+
+test('radar: the customer carries the band and card country', async () => {
+  const { tables, rpcs } = world();
+  const { handler, calls } = load(tables, rpcs);
+  const q = await call(handler, 'quote', { setupIntentId: 'seti_12345678', productKey: 'minutes_30', cadence: 'once' });
+  await call(handler, 'purchase', { quoteId: q.body.quoteId });
+  const upd = calls.find((c) => Array.isArray(c) && c[0] === 'customers.update' && c[1].metadata);
+  assert.deepStrictEqual(upd[1].metadata, { band: 'B', card_country: 'MA' });
+});
+
+test('weekly report: purchases by band, country mismatches, refused trials, disputes', () => {
+  const quotes = [
+    { band: 'B', used_at: '2026-11-10T10:00:00Z', product_key: 'app', ip_country: 'FR', card_country: 'MA' },
+    { band: 'B', used_at: '2026-11-11T10:00:00Z', product_key: 'level_en', ip_country: 'MA', card_country: 'MA' },
+    { band: 'A', used_at: '2026-11-12T10:00:00Z', product_key: 'app', ip_country: null, card_country: 'IT' },
+    { band: 'A', used_at: null, product_key: 'app', ip_country: 'US', card_country: 'IT' },
+  ];
+  const log = [{ kind: 'trial_refused', at: 'x', detail: { marker: 'card' } }, { kind: 'trial_refused', at: 'y', detail: { marker: 'card' } },
+    { kind: 'dispute', at: 'z', detail: {} }, { kind: 'free_minutes_withheld', at: 'w', detail: { why: 'disposable domain' } }];
+  const r = P.weeklyReport(quotes, log);
+  assert.deepStrictEqual(r.purchases, { A: 1, B: 2 });
+  assert.deepStrictEqual(r.mismatchByBand, { A: 0, B: 1 });
+  assert.strictEqual(r.mismatches[0].ipCountry, 'FR');
+  assert.deepStrictEqual(r.trialsRefused, { card: 2 });
+  assert.deepStrictEqual(r.freeMinutesWithheld, { 'disposable domain': 1 });
+  assert.strictEqual(r.disputes, 1);
+});
+
+test('referrals: rewarded only after a payment, from a different card, phone and device, five a month', () => {
+  const me = { markers: { card: 'c1', phone: 'p1', device: 'd1' } }, friend = { markers: { card: 'c2', device: 'd2' } };
+  assert.deepStrictEqual(P.referralEligible({ referrer: me, referred: friend, referredHasPaid: false, rewardsThisMonth: 0 }), { ok: false, why: 'not_paid_yet' });
+  assert.deepStrictEqual(P.referralEligible({ referrer: me, referred: friend, referredHasPaid: true, rewardsThisMonth: 0 }), { ok: true });
+  assert.deepStrictEqual(P.referralEligible({ referrer: me, referred: { markers: { card: 'c1' } }, referredHasPaid: true }), { ok: false, why: 'same_card' });
+  assert.deepStrictEqual(P.referralEligible({ referrer: me, referred: friend, referredHasPaid: true, rewardsThisMonth: 5 }), { ok: false, why: 'monthly_cap' });
 });

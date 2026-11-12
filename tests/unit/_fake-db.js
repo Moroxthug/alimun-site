@@ -2,7 +2,8 @@
 // api/_lib/entitlements.js (select, insert, update, upsert, eq, in, is, or, limit, single, maybeSingle, rpc).
 const crypto = require('crypto');
 
-function fakeDb(tables, rpcs) {
+function fakeDb(tables, rpcs, opts) {
+  const unique = (opts && opts.unique) || {};
   function q(name) {
     const st = { name, filters: [], op: 'select', payload: null, single: false, maybe: false, returning: false, onConflict: null };
     const rows = () => (tables[name] = tables[name] || []);
@@ -10,6 +11,9 @@ function fakeDb(tables, rpcs) {
     const run = () => {
       let out;
       if (st.op === 'select') out = rows().filter(match);
+      else if (st.op === 'insert' && (unique[name] || []).some((k) => [].concat(st.payload).some((p) => rows().some((r) => r[k] != null && r[k] === p[k])))) {
+        return { data: null, error: { message: 'duplicate key value violates unique constraint' } };
+      }
       else if (st.op === 'insert') { const list = [].concat(st.payload).map((r) => Object.assign({ id: crypto.randomUUID() }, r)); rows().push(...list); out = list; }
       else if (st.op === 'update') { out = rows().filter(match); out.forEach((r) => Object.assign(r, st.payload)); }
       else if (st.op === 'upsert') {
