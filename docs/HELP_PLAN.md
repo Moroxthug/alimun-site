@@ -35,12 +35,13 @@ Every interaction with Help is recorded, so the owner sees what people need inst
 ## 4. The help assistant
 Every question goes to a new function, `api/help.js` (a clearly separate feature, allowed since the move to Vercel Pro), action `ask`. The server picks the few articles, guides and problems that match the question (keyword and title search over the published content in the person's language, falling back to English; a vector search only if this proves too weak), adds the person's account facts when signed in (plan and renewal date, next class and its join time, tutor minutes left, homework due; for teachers, next sessions and homework to mark), and asks the model for a reply in a fixed JSON shape: the answer, the ids it used, whether it is sure, and whether a person should look at it now (urgent). The instructions are server text only; nothing from the browser is used as instructions. Rules: answer only from the content and account facts given; never promise refunds, discounts, dates or exceptions; never quote prices that are not in an article; say it is not sure and offer a person instead of guessing. The reply is checked on the server (cited ids must be among those given; plain text, escaped on the page; lists flattened into sentences). Model: the cheapest one already used in `api/ai.js` that answers well (Groq first, Gemini as fallback), under the existing per-user and daily budgets, every call logged in `ai_usage` with feature `help`. No paid plan needed. Signed-out questions pass the captcha (`api/_lib/captcha.js`) and a per-address limit.
 
-## 5. Talking to a person, and the Telegram ops alert
-- **"Talk to a person"** under every answer, at the end of every problem check, and offered by the assistant when it is not sure. A short form with the conversation and the checks already run attached, so the person does not repeat themselves; signed-out people add their email.
-- The request lands in **Admin → Help → Requests** (open, answered, closed) and the owner is alerted on **Telegram through the ops bot**, with the subject, the question in a sentence or two, the person's plan and language, whether it is urgent, and a link to the request in Admin. No email address, payment details or conversation in the Telegram message (Telegram is a third party; the full details stay in Admin).
-- **Urgent** requests are flagged at the top of the alert: paid but no access, a class starting within the hour that the person cannot join, a teacher who cannot start a session, a payment charged twice. These are decided on the server from the account check, not only by the assistant.
-- **Replying.** The owner replies in Admin; the reply goes to the person by email (Resend, `api/_lib/email.js`, in their language) and, for signed-in people, as a notification on the bell. Later, if the owner wants: replying straight from Telegram (the bot sends the reply to `api/help.js?action=telegram`, checked with Telegram's secret token header, and only from the owner's chat).
-- The alert is sent by the server only (`api/_lib/ops-alert.js`), with the bot token and chat id in Vercel environment variables, never in the browser or the repo. If the ops bot already has its own endpoint (the ops hub that receives the Stripe alerts), the help alert posts there instead, in the same format. One alert per request; repeated requests from the same person within a few minutes are grouped.
+## 5. Talking to a person, and the Telegram ops alert (owner, 12 Nov 2026: "alert telegram bot for every message we receive from assistant, also put a chat with real human and i get notification about that as well")
+- **Every question to the assistant is sent to the owner on Telegram** through the ops bot: the question, the assistant's answer in short, whether it was sure, the person's plan, role and language, and a link to the conversation in Admin. No email address, name or payment details in the message (Telegram is a third party; the full details stay in Admin). Several questions from one person within a few minutes are grouped into one message so the chat stays readable.
+- **Chat with a person.** "Talk to a person" under every answer, at the end of every problem check, and offered by the assistant when it is not sure, opens a chat with Alimun staff inside Help. The conversation with the assistant and the checks already run are attached, so the person does not repeat themselves. Signed-in people chat in the dashboard; signed-out people on the public hub leave their email so the reply can reach them. Every message the person sends in this chat is sent to the owner on Telegram, marked as a chat with a person.
+- **Replying.** The owner answers in **Admin → Help → Chats** (open, answered, closed). The person sees the reply in the chat at once if they are still there (Supabase Realtime), on the bell, and by email (Resend, in their language) if they have left. Replying straight from Telegram (the owner answers the bot's message; the bot sends it to `api/help.js?action=telegram`, checked with Telegram's secret token header and accepted only from the owner's chat) is part of Part 3 if the bot can be pointed at it.
+- **No promised response time** (owner, 12 Nov 2026). The chat says a person will answer here and by email, without a time.
+- **Urgent** chats are flagged at the top of the alert: paid but no access, a class starting within the hour that the person cannot join, a teacher who cannot start a session, a payment charged twice. These are decided on the server from the account check, not only by the assistant.
+- The alerts are sent by the server only (`api/_lib/ops-alert.js`), with the bot token and chat id in Vercel environment variables, never in the browser or the repo. If the ops bot already has its own endpoint (the ops hub that receives the Stripe alerts), the alerts post there instead.
 
 ## 6. Keeping Help up to date
 Once a week (a cron job like `cron-reminders`), the assistant takes the gaps from Insights (searches with no answer, questions it was not sure about, articles with "No", common handover subjects) and drafts a new article or a change for each group. Drafts appear in **Admin → Help → Drafts** with the searches and questions that led to them. The owner edits, approves or discards them; approved articles are published in English and translated into the other languages for the owner to approve, like the blog. A Telegram summary of the week (new drafts waiting, open requests) is optional (question 7).
@@ -48,7 +49,7 @@ Once a week (a cron job like `cron-reminders`), the assistant takes the gaps fro
 ## 7. Design and copy
 - Same site fonts and colours; white and bone backgrounds, lime for the search button and the answer card; no black panels. In the dashboards, the dashboard's own style and one of the approved drawings beside the box.
 - Answers, guides and checks in sentences. No chips, tags, numbered steps, step counters or short bullet lists (the assistant's instructions say so and the server flattens lists).
-- The assistant is a real AI feature, so it may be called one where it is described, on the public page too, and it says it is an AI before the first answer (EU AI Act). The rest of Help is not described as AI. The Privacy page gets a sentence that help questions are answered automatically by a language model and may be read by Alimun staff, and that requests to a person are signalled to staff through Telegram without personal details.
+- The assistant is a real AI feature, so it may be called one where it is described, on the public page too, and it says it is an AI before the first answer (EU AI Act). The rest of Help is not described as AI. The Privacy page gets a sentence that help questions are answered automatically by a language model and may be read by Alimun staff, and that requests to a person are shared with staff through Telegram without the person's name, email or payment details.
 
 ## 8. Parts (each shown to the owner before the next)
 
@@ -56,7 +57,7 @@ Once a week (a cron job like `cron-reminders`), the assistant takes the gaps fro
 
 **Part 2. Help in the dashboards.** `#/help` in the student and teacher dashboards (`js/app/help.js`): search, guides, problems with the device check and the account check, answers, Help links on each page and from error messages, and the logging behind Insights. Database: `help_events` (migration below).
 
-**Part 3. The assistant and the ops alert.** `api/help.js` (ask, request, telegram), `api/_lib/ops-alert.js`, "Talk to a person", Admin → Help → Requests, replies by email and bell, the Telegram alert. Database: `help_questions`, `help_requests`.
+**Part 3. The assistant, the chat with a person and the ops alert.** `api/help.js` (ask, chat, telegram), `api/_lib/ops-alert.js`, the chat in Help, Admin → Help → Chats, replies in the chat, on the bell and by email, a Telegram alert for every assistant question and every chat message. Database: `help_questions`, `help_chats`, `help_chat_messages`.
 
 **Part 4. Insights and drafts.** Admin → Help → Insights, the weekly drafts job, Admin → Help → Drafts, the approve and translate flow.
 
@@ -64,17 +65,21 @@ Once a week (a cron job like `cron-reminders`), the assistant takes the gaps fro
 
 ## 9. Database (one migration per part, idempotent, ending with a verify query, shown to the owner before it is applied)
 - Part 2, `help_events` (id, user_id null for signed-out, lang, kind `search | open | check_step | check_end | helpful`, query, item_slug, from_page, result_count, outcome, created_at). Written through a `security definer` function with a per-person rate limit; admins read all through `public.is_admin()`; nobody else reads it. Purge after 90 days.
-- Part 3, `help_questions` (id, user_id null, lang, question, answer, item_slugs text[], sure, urgent, helpful null, created_at): a person reads only their own rows and sets `helpful` on their own through a `security definer` function; admins read all. `help_requests` (id, user_id null, email, lang, subject, question_id, conversation jsonb, checks jsonb, urgent, status `open | answered | closed`, reply, replied_at, alerted_at, created_at): written only by the server; the person reads their own; admins read and update. Purge questions after 90 days; requests kept while open, then 12 months.
+- Part 3, `help_questions` (id, user_id null, lang, question, answer, item_slugs text[], sure, urgent, helpful null, created_at): a person reads only their own rows and sets `helpful` on their own through a `security definer` function; admins read all. `help_chats` (id, user_id null, email for signed-out, lang, subject, question_id, checks jsonb, urgent, status `open | answered | closed`, created_at, closed_at) and `help_chat_messages` (id, chat_id, from `person | staff | assistant`, body, created_at, alerted_at): written only by the server; the person reads their own chat (Realtime on their own rows); admins read and write. Purge questions after 90 days; chats kept while open, then 12 months.
 - Part 4, `help_drafts` (id, item_slug null for new, title, body, evidence jsonb, status `draft | approved | discarded`, created_at, decided_at), admin only.
 
 ## 10. Cost
 A help answer is a short prompt (a few articles, about 2,000 to 3,000 tokens) and a short reply: with Groq's `openai/gpt-oss-120b` roughly a tenth of a cent per question, so 1,000 questions a month cost about a dollar. Search, guides, checks and the Telegram alerts cost nothing beyond hosting. The weekly drafts cost a few cents. Prices change; `api/ai.js` keeps them in its `PRICING` table.
 
-## 11. Open questions for the owner
-1. Where first: dashboards first, then the public hub (proposed), or both together?
-2. The Telegram ops bot: is it the ops hub that already receives the Stripe alerts? Should Help post to that hub's endpoint, or straight to Telegram with the bot token and a chat id (added by the owner as Vercel environment variables `TELEGRAM_BOT_TOKEN` and `TELEGRAM_OPS_CHAT_ID`, never in chat or the repo)? Same chat as the payment alerts, or a separate support chat?
-3. Every request to a person on Telegram, or only urgent ones (others in Admin and a daily summary)? Replying from Telegram later, or Admin only?
-4. Content: may I draft the answers, guides and problem checks from the code and the Terms for you to check (proposed), leaving out anything I cannot confirm? Is there a response time you want to promise, or none?
-5. Name in the dashboards: "Help" (proposed)? Should one of the approved drawings be its face?
-6. Teachers: their own guides, problems and account facts from the start (proposed), or students only at first?
-7. Keep activity and questions 90 days (proposed)? A weekly Telegram summary of drafts and open requests, yes or no?
+## 11. Decisions (owner, 12 Nov 2026)
+- Dashboards first, then the public hub.
+- A Telegram alert for every question to the assistant, and a chat with a person that also alerts on Telegram.
+- No promised response time.
+- Teachers get their own guides, problems and account facts from the start.
+- Questions and activity kept 90 days.
+- Part 1 (the content) started.
+
+## 12. Still open
+1. The Telegram ops bot: is it the ops hub that already receives the Stripe alerts? Should Help post to that hub's endpoint, or straight to Telegram with the bot token and a chat id (added by the owner as Vercel environment variables `TELEGRAM_BOT_TOKEN` and `TELEGRAM_OPS_CHAT_ID`, never in chat or the repo)? Same chat as the payment alerts, or a separate support chat? Needed before Part 3.
+2. Name in the dashboards: "Help" (proposed)? Should one of the approved drawings be its face?
+3. A weekly Telegram summary of drafts and open chats, yes or no?
