@@ -14,7 +14,7 @@ export default {
     { p: "If you pay for a plan, deleting the account is a separate step from the subscription. Cancel the plan first with **Manage billing** in Settings, so that it does not renew." },
     { p: "Once the account is closed, your account, profile and learning data are deleted or anonymised within 90 days. Payment and invoice records are kept for as long as tax and accounting law requires. What you told the practice tutor to remember can be deleted earlier, on the Tutor page." }
   ],
-  related: ["your-data-and-privacy", "change-email-or-name", "notifications-and-emails"],
+  related: ["your-data-and-privacy", "cancel-plan", "change-email-or-name", "notifications-and-emails"],
   missing: [
     "The Privacy Policy (§10) says you can close your account from your dashboard, but the dashboard only offers a link to the Contact page. Owner to decide which is right.",
     "Whether a deletion request also cancels an active Stripe subscription is not in the code; the answer tells people to cancel first.",
