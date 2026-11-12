@@ -21,7 +21,7 @@ export default {
     { p: 'There are also daily limits: voice practice with the tutor is up to 30 minutes a day, and the daily limit on written messages applies to plan holders. Both reset at midnight UTC. When you reach one, the tutor tells you and you can come back the next day.' },
     { p: 'To get more time, the Tutor shows the plans with their monthly minutes and packs of minutes to buy once when your time is used up; **See the plans** opens **Plans and prices** in Settings, where **Voice practice minutes** are also on sale. Bought minutes are added as soon as the payment goes through, which can take a minute.' }
   ],
-  related: ['using-the-tutor', 'tutor-minutes-run-out-or-wrong', 'is-the-tutor-a-person'],
+  related: ['minutes-packs', 'using-the-tutor', 'tutor-minutes-run-out-or-wrong', 'is-the-tutor-a-person'],
   missing: [
     'Contradiction for the owner: the dashboard text app_tu_credit says "Minutes added or bought, which never run out", but bought minutes expire 12 months after purchase (tutor_refresh, app_tu_out_packs "stay yours for 12 months", app_tu_credit_until). The text here follows the code.',
     'The number of free minutes (10 in tutor_refresh and the plan) and each plan\'s monthly minutes are not shown as text in the Tutor page before they are used; left out. They are config values (tutor_plan_minutes, entitlements).',

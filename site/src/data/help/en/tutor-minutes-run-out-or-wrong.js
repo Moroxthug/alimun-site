@@ -32,7 +32,7 @@ export default {
       done: { solved: 'Glad that is clear. The Tutor page always shows your time left and when your plan\'s minutes come back.' }
     }
   },
-  related: ['tutor-minutes', 'using-the-tutor'],
+  related: ['tutor-minutes', 'minutes-packs', 'payment-failed', 'using-the-tutor'],
   missing: [
     'Whether "a failed payment pauses the plan" applies to every product: from docs/PROGRESS.md (unpaid for 3 days pauses access) and api/_lib/entitlements.js summary, not verified line by line; worded as "may be paused".',
     'Free minutes are withheld for an inbox that already had them or a throwaway domain; not mentioned, the person check covers it.'

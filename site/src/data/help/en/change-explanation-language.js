@@ -18,7 +18,7 @@ export default {
     { p: 'The tutor speaks mostly in the language you are learning. At the lower levels it explains grammar in your dashboard language when that helps; at higher levels it explains in the language you are learning unless you ask for your own.' },
     { p: 'The language you are learning is a different setting: it is **Language you are learning** in Settings, with your **Level**, and changing it changes your book, practice and library.' }
   ],
-  related: ['using-the-book', 'tests-and-level', 'using-the-tutor'],
+  related: ['dashboard-language-and-time-zone', 'using-the-book', 'tests-and-level', 'using-the-tutor'],
   missing: [
     'Books exist with explanations in eight languages (en, es, fr, de, pt, zh, ar, it); Moroccan French uses French explanations and any other dashboard language falls back to English. Not mentioned in the text; confirm if it should be.'
   ]
