@@ -22,13 +22,20 @@ Online only: live classes (Daily), the AI tutor and speaking practice, pronuncia
 
 Checked: a fake signed-in learner in headless Chromium (phone size): service worker active and in control, the English A1 book downloaded (304 files, 5.8 MB), the app opened offline in about 10 ms, the cover and a lesson rendered offline, a recording answered with 206 partial content offline, an answer given offline was kept and sent on reconnect, no console errors. 209 unit tests, smoke 16 of 16, `npm run build`.
 
-## Step 2: speed and feel
-- One bundled, minified script for the app at build time instead of about 35 separate files; the tutor, classroom and payment code loaded only when opened.
-- The next lesson page and its recordings prefetched while the learner reads the current one.
-- Page turns with swipe gestures and the View Transitions API; light haptics on right and wrong answers where the device supports them.
-- Every online-only section says it needs a connection when offline, instead of an error.
-- Download buttons on library shelves and mock tests; "Download all" for the learner's course; homework written offline and handed in later.
-- A performance budget checked in CI: the app interactive in under one second on a mid-range phone on a repeat visit.
+## Step 2: speed and feel (built 12 Nov 2026, waiting for the owner's check)
+- One script: `scripts/bundle-app.js` (part of `npm run build`, esbuild) joins and minifies the learners' app into `js/app/dist/app.js` (580 kB, 153 kB gzipped, instead of 30 files of 1,074 kB, 267 kB gzipped). The tutor (`tutor`), the live classroom and board (`classroom`) and the payment window (`pay`) are separate files loaded the first time they are opened, and fetched ahead when the device is idle on a good connection (`js/app/lazy.js`). The build writes the version into `app/index.html` and `app-sw.js`; commit the results. Teacher and admin pages still load the source files.
+- `js/app/feel.js`: section changes use View Transitions where the browser has them (no 150 ms fade wait); a light vibration on right answers and a short double one on wrong answers (Android; not in mock tests); the recordings of the lesson page on screen and of the next one are fetched while the learner reads, and the service worker plays them from the device. Page turns by swipe already existed in the reader.
+- Online-only sections (tutor, messages, classes, progress, plans and withdrawal) show "This needs a connection" with links to the book, practice and library when the device is offline, and draw themselves again when the connection is back.
+- Download buttons on each library shelf and mock test; Settings, "Use Alimun offline", lists the learner's mock tests too and has "Download all".
+- Homework: the list is kept for offline use; homework handed in offline is kept on the device ("Handed in on this device…") and handed in when the connection is back.
+- Speed budget: `tests/smoke/app-speed.spec.js` (CI job "App speed budget") fails if the app is not ready within one second on a repeat visit with the processor slowed four times; the build fails if the main script passes 175 kB gzipped.
+
+## The free limit (built 12 Nov 2026, with step 2)
+- What is free (`api/_lib/free-limit.js`): the first 3 units of every course book, the first 2 texts of every library shelf, the first 3 exercise kinds of every "Every kind of exercise" set, the first paper of every mock test, flashcards of the words met there. Everything else needs an active plan (app, open class, level pack, exam: `planActive`), or an approved teacher or an admin.
+- At deploy time `scripts/split-material.js` cuts the public files in `/data` to the free part (locked parts keep their title with `locked: true`) and keeps the complete files, gzipped, in `private/material` (25 MB), which is never served as files (vercel.json answers 404 for `/private`). The recording plans in `/data/audio` keep only the free parts' lines.
+- `api/material.js` (`GET /api/material?path=books/English-A1.en.json`, Supabase JWT) gives the complete file to those with full access (401 signed out, 403 `plan_required`, 404 `not_locked` when nothing in the file is locked). The tutor and the mock-test marking read the complete files on the server; marking a paid paper refuses free accounts.
+- In the app, `AlimunData.material()` loads the complete file for learners with a plan and keeps it on the device ("alimun-material"), so it opens at once and offline; free accounts read the public file. Locked units, texts and papers show "Comes with a plan" and link to Plans. Downloads follow the same rule; when a plan ends the complete files are removed from the device and the downloads go back to the free part; a new plan completes the downloads quietly.
+- Not covered: the recordings themselves (Supabase Storage `course-audio`) stay public by file name; without the paid plans their names are not listed anywhere public. Moving them to a private bucket with signed links is a later choice for the owner.
 
 ## Step 3: store apps
 - Capacitor shell loading the same `/app`, with the owner's loader as the splash screen, the icon on white, deep links from emails, and native storage so iPhone does not clear downloads.
@@ -40,7 +47,7 @@ Checked: a fake signed-in learner in headless Chromium (phone size): service wor
 Ideas, none built: a home-screen widget with the word of the day and the flashcards due; listening library audio that keeps playing with the screen locked, with lock-screen controls; saving a word to Alimun flashcards from any app through the share sheet; pointing the camera at a sign or menu to add its words to flashcards; review reminders at the learner's chosen time; offline speaking practice with on-device speech recognition; a watch app for flashcards.
 
 ## Owner's decisions, 12 Nov 2026
-- "everyone can download, free download has limited access, like 2/3 units and a few exercises". Every account can download. Learners without a paid plan get the first two or three units of the book and a few exercises; paying learners get everything. Built in its own step, before or with step 2. The exact number of units and which exercises are free are still to be settled.
+- "everyone can download, free download has limited access, like 2/3 units and a few exercises". Every account can download. Learners without a paid plan get the first units of the book and a few exercises; paying learners get everything. Settled with the owner on 12 Nov: the first 3 units; flashcards, the first exercise set of each practice book (built as its first 3 exercise kinds, since each practice book is one set of 19 kinds), the first 2 texts of each library shelf and the first section of each mock test are free; any active plan unlocks everything.
 - Owner, 12 Nov: "yes, offline and online both limited for free users". The same limit applies in the browser and in downloads. Today a free learner can read the whole book online (the reader, library and practice check no plan), so the paid units must be served only to signed-in paying learners (an API check), not as public files.
 - Step 2 starts in a new conversation.
 - Owner, 12 Nov: "logo should always be on white bg, except for dark mode, where we will later plan better colour". The app icons and the install screen background are white. A dark-mode colour is to be planned later.

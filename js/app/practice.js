@@ -705,7 +705,9 @@
         teacherSection(info.tsets) +
         tutorSection(info.tutor) +
         (set ? '<a class="card span-6" href="#/practice/types" style="--i:3"><div class="card__row"><div class="card__art">' + A.Cast.drawing('owl') + '</div><div>' +
-          '<h2 class="t-h2">' + esc(t('app_pr_types_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_types_p', { course: A.languageName(set.language) + ' ' + set.level })) + '</p></div></div></a>' : '') +
+          '<h2 class="t-h2">' + esc(t('app_pr_types_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_types_p', { course: A.languageName(set.language) + ' ' + set.level })) + '</p>' +
+          (window.AlimunData.hasFullAccess && window.AlimunData.hasFullAccess() === false ? '<p class="t-small lock-line" style="margin-top:10px">' + A.icon('lock') + '<span>' + esc(t('app_lock_types')) + '</span></p>' : '') +
+          '</div></div></a>' : '') +
         (info.book ? (info.listen >= 6
           ? '<a class="card card--mint span-12" href="#/practice/listen" style="--i:4"><div class="card__row"><div class="card__art">' + (A.Cast.spot ? A.Cast.spot('headphones') : A.Cast.drawing('parrot')) + '</div><div>' +
             '<h2 class="t-h2">' + esc(t('app_pr_listen_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_pr_listen_p')) + '</p></div></div></a>'
@@ -924,9 +926,10 @@
       info.listen = info.book ? heard(info.book, info.progress || {}, info.audio).length : 0;
       if (my !== mountNo) return { stale: true };
       if (parts[0] === 'types' && info.set) {
-        return getJSON('/data/practice/' + encodeURIComponent(info.set.id + '.' + lang) + '.json').then(function (set) {
+        /* The complete set for learners with a plan, the first kinds otherwise (js/app/data.js, material) */
+        return window.AlimunData.material('practice/' + info.set.id + '.' + lang + '.json').then(function (set) {
           var code = window.AlimunData.langCode(set.language) || 'en';
-          var blocks = set.blocks.filter(function (b) { return b.t === 'ex'; });
+          var blocks = set.blocks.filter(function (b) { return b.t === 'ex' && !b.locked; });
           /* The picture exercises are built from the pictures' words, after the written set */
           ['picture', 'label'].forEach(function (k) { var pb = pictureBlock(k, set.language, info.pictures, {}, Date.now()); if (pb) blocks.push(pb.b); });
           startRound(blocks, [], attrs(lang, lang === 'ar'), attrs(code, false), true, 'types');

@@ -50,7 +50,8 @@
   }
   function loadBook(id, lang) {
     var k = id + '.' + lang;
-    return books[k] ? Promise.resolve(books[k]) : getJSON('/data/books/' + encodeURIComponent(k) + '.json').then(function (b) { books[k] = b; return b; });
+    /* The complete book for learners with a plan, the free units otherwise (js/app/data.js, material) */
+    return books[k] ? Promise.resolve(books[k]) : window.AlimunData.material('books/' + k + '.json').then(function (b) { books[k] = b; return b; });
   }
   function signedIn() { return A.mode() === 'real' && A.data().profile.id; }
   function readLocal() {
@@ -86,6 +87,7 @@
     return '#/book/' + book.id + (unit ? '/' + unit.id + (page === 'test' ? '/test' : page ? '/' + page.id : '') : '');
   }
   function written(book) { return book.units.filter(function (u) { return !u.planned; }); }
+  function locked(book) { return book.units.some(function (u) { return u.locked; }); }
   function unitNo(book, unit) { return book.units.indexOf(unit) + 1; }
   function unitTitle(book, unit) { return t('app_book_unit_title', { n: unitNo(book, unit), title: unit.title }); }
   function isDone(book, unit, page) { var r = progress[book.id][keyOf(book, unit, page)]; return !!(r && r.done); }
@@ -159,6 +161,9 @@
     var lead, h, btn;
     if (!w.length) {
       h = t('app_book_none_h'); lead = t('app_book_soon_p'); btn = '';
+    } else if (!stop && locked(book)) {
+      /* The free units are finished: the rest comes with a plan (docs/APP_PLAN.md, the free limit) */
+      h = t('app_lock_book_h'); lead = t('app_lock_book_p'); btn = '<a class="btn btn--lime" href="#/settings/plans">' + esc(t('app_lock_see')) + A.icon('arrow') + '</a>';
     } else if (!stop) {
       h = t('app_book_all_h'); lead = t('app_book_all_p'); btn = '';
     } else {
@@ -185,6 +190,13 @@
         '<h2 class="t-h2 span-12 home__section" style="--i:3">' + esc(t('app_book_units')) + '</h2>';
     book.units.forEach(function (u, i) {
       var style = ' style="--i:' + (4 + i) + '"';
+      if (u.locked) {
+        html += '<a class="card card--bone span-6 rd-unit is-locked" href="#/settings/plans"' + style + '><div class="card__row"><div class="card__art">' + A.Cast.drawing(u.art || 'owl') + '</div>' +
+          '<div style="flex:1;min-width:0"><h3 class="t-h3"' + xA(book) + '>' + esc(unitTitle(book, u)) + '</h3>' +
+          (u.goal ? '<p class="t-small" style="margin-top:8px"' + xA(book) + '>' + esc(u.goal) + '</p>' : '') +
+          '<p class="t-tiny rd-lock" style="margin-top:10px">' + A.icon('lock') + '<span>' + esc(t('app_lock_unit')) + '</span></p></div></div></a>';
+        return;
+      }
       if (u.planned) {
         html += '<div class="card card--bone span-6 rd-unit is-planned"' + style + '><h3 class="t-h3"' + xA(book) + '>' + esc(unitTitle(book, u)) + '</h3>' +
           '<p class="t-small" style="margin-top:8px">' + esc(t('app_book_writing')) + '</p></div>';
@@ -238,10 +250,28 @@
   function loadAudio(id) {
     if (audio[id]) return Promise.resolve(audio[id]);
     var get = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
-    return Promise.all([get('/data/audio/' + encodeURIComponent(id) + '.json'), get(SUPA_AUDIO + encodeURIComponent(id) + '/manifest.json')]).then(function (r) {
+    var plan = window.AlimunData.material('audio/' + id + '.json').catch(function () { return null; });
+    return Promise.all([plan, get(SUPA_AUDIO + encodeURIComponent(id) + '/manifest.json')]).then(function (r) {
       audio[id] = { items: (r[0] && r[0].items) || {}, done: (r[1] && r[1].done) || {} };
       return audio[id];
     });
+  }
+  /* The recordings of the lesson on screen and of the next one, fetched while the learner reads (js/app/feel.js) */
+  function ahead() {
+    var a = ctx && ctx.page && audio[ctx.book.id];
+    if (!a || !window.AlimunFeel) return;
+    var w = written(ctx.book), ui = w.indexOf(ctx.unit), pi = ctx.unit.pages.indexOf(ctx.page);
+    var next = ctx.unit.pages[pi + 1] ? { u: ctx.unit, p: ctx.unit.pages[pi + 1] } : w[ui + 1] && w[ui + 1].pages[0] ? { u: w[ui + 1], p: w[ui + 1].pages[0] } : null;
+    var heads = [ctx.unit.id + ':' + ctx.page.id + ':'];
+    if (next) heads.push(next.u.id + ':' + next.p.id + ':');
+    var urls = [], got = {};
+    heads.forEach(function (h) {
+      Object.keys(a.items).forEach(function (k) {
+        var f = a.items[k] && a.items[k][0];
+        if (k.indexOf(h) === 0 && f && a.done[f] && !got[f]) { got[f] = true; urls.push(SUPA_AUDIO + encodeURIComponent(ctx.book.id) + '/' + f + '.mp3'); }
+      });
+    });
+    window.AlimunFeel.ahead(urls);
   }
   /* The file for an item of the lesson on screen, if it has been made */
   function audioSrc(gi, i) {
@@ -798,7 +828,7 @@
       /* A newer navigation has started: its screen wins */
       if (res.stale || my !== mountNo) return { stale: true };
       view.innerHTML = res.html;
-      if (res.lesson) { updateBar(); afterSpread(); }
+      if (res.lesson) { updateBar(); afterSpread(); ahead(); }
       return res;
     });
   }

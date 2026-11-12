@@ -44,6 +44,8 @@
  * ============================================================
  */
 
+const { readMaterial, fullAccess } = require('./_lib/material.js');
+const { FREE } = require('./_lib/free-limit.js');
 const { createClient } = require('@supabase/supabase-js');
 const { planActive } = require('./_lib/plan.js');
 
@@ -531,9 +533,9 @@ const testCache = new Map();
 async function loadTest(id) {
   const hit = testCache.get(id);
   if (hit && hit.at > Date.now() - 600000) return hit.test;
-  const r = await fetch(`${SITE_URL}/data/tests/${encodeURIComponent(id)}.json`);
-  if (!r.ok) return null;
-  const test = await r.json();
+  // The complete test (the public file holds only the free paper; api/_lib/material.js)
+  let test;
+  try { test = await readMaterial(`tests/${id}.json`); } catch (e) { return null; }
   testCache.set(id, { at: Date.now(), test });
   return test;
 }
@@ -549,6 +551,10 @@ async function handleMarkMock(req, res, supabase, user) {
   try { T = await loadTest(testId); } catch (e) { T = null; }
   const paper = T && (T.papers || []).find((p) => p.id === paperId);
   if (!paper) return res.status(404).json({ error: 'Test not found' });
+  // Papers after the free ones are for learners with a plan (docs/APP_PLAN.md, the free limit)
+  if ((T.papers || []).indexOf(paper) >= FREE.testPapers && !(await fullAccess(supabase, user))) {
+    return res.status(403).json({ error: 'plan_required' });
+  }
   // Blocks are numbered across the paper's parts, as js/app/tests.js numbers them.
   const flat = [];
   (paper.parts || []).forEach((pt) => (pt.blocks || []).forEach((b) => flat.push({ b, pt })));

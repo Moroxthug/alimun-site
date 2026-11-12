@@ -156,7 +156,7 @@
       var lang = A.lang === 'ma' ? 'fr' : (['en', 'es', 'fr', 'de', 'pt', 'zh', 'ar', 'it'].indexOf(A.lang) > -1 ? A.lang : 'en');
       d.libKinds = {}; d.libTitles = {};
       return Promise.all(Object.keys(shelves).map(function (s) {
-        return getJSON('/data/library/' + encodeURIComponent(s + '.' + lang) + '.json').then(function (sh) {
+        return window.AlimunData.material('library/' + s + '.' + lang + '.json').then(function (sh) {
           sh.pieces.forEach(function (p) { d.libKinds[s + ':' + p.id] = p.kind; d.libTitles[s + ':' + p.id] = p.title; });
         }, function () {});
       })).then(function () { return d; });

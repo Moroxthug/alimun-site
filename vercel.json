@@ -44,7 +44,7 @@
       "continue": true
     },
     {
-      "src": "/(site|supabase|\\.agents|\\.github|\\.semgrep|scripts|docs|mockups|node_modules|sandbox)(/.*)?",
+      "src": "/(site|supabase|private|\\.agents|\\.github|\\.semgrep|scripts|docs|mockups|node_modules|sandbox)(/.*)?",
       "status": 404,
       "dest": "/404.html"
     },
@@ -163,7 +163,14 @@
       "maxDuration": 120
     },
     "api/tutor.js": {
-      "maxDuration": 60
+      "maxDuration": 60,
+      "includeFiles": "private/material/books/**"
+    },
+    "api/ai.js": {
+      "includeFiles": "private/material/tests/**"
+    },
+    "api/material.js": {
+      "includeFiles": "private/material/**"
     }
   },
   "crons": [

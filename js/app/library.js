@@ -47,12 +47,14 @@
   function loadIndex() { return index ? Promise.resolve(index) : getJSON('/data/library/index.json').then(function (x) { index = x.shelves || []; return index; }); }
   function loadShelf(id) {
     var k = id + '.' + explainLang();
-    return shelves[k] ? Promise.resolve(shelves[k]) : getJSON('/data/library/' + encodeURIComponent(k) + '.json').then(function (x) { shelves[k] = x; return x; });
+    /* The complete shelf for learners with a plan, the free texts otherwise (js/app/data.js, material) */
+    return shelves[k] ? Promise.resolve(shelves[k]) : window.AlimunData.material('library/' + k + '.json').then(function (x) { shelves[k] = x; return x; });
   }
   function loadAudio(id) {
     if (audio[id]) return Promise.resolve(audio[id]);
     var get = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
-    return Promise.all([get('/data/audio/' + encodeURIComponent(id) + '.json'), get(SUPA_AUDIO + encodeURIComponent(id) + '/manifest.json')]).then(function (r) {
+    var plan = window.AlimunData.material('audio/' + id + '.json').catch(function () { return null; });
+    return Promise.all([plan, get(SUPA_AUDIO + encodeURIComponent(id) + '/manifest.json')]).then(function (r) {
       audio[id] = { items: (r[0] && r[0].items) || {}, done: (r[1] && r[1].done) || {} };
       return audio[id];
     });
@@ -97,7 +99,8 @@
       (mine.length > 1 ? '<nav class="lb-levels" aria-label="' + esc(t('app_lb_level')) + '">' + mine.map(function (s) {
         var on = s.id === S.id;
         return '<a class="lb-level' + (on ? ' is-on' : '') + '" href="#/library/' + esc(s.id) + '"' + (on ? ' aria-current="page"' : '') + '>' + esc(A.languageName(s.language) + ' ' + s.level) + '</a>';
-      }).join('') + '</nav>' : '') + '</div>';
+      }).join('') + '</nav>' : '') +
+      (window.AlimunOffline && window.AlimunOffline.itemButton ? '<div class="btn-row">' + window.AlimunOffline.itemButton(A, 'lib', S.id, S.language) + '</div>' : '') + '</div>';
     var xa = attrs(S.explainLang || 'en', S.explainLang === 'ar'), ta = attrs(window.AlimunData.langCode(S.language) || 'en', false);
     var section = function (kind, h, p) {
       var list2 = S.pieces.filter(function (x) { return x.kind === kind; });
@@ -105,6 +108,11 @@
       return '<h2 class="t-h2 span-12 home__section">' + esc(t(h)) + '</h2><p class="t-body span-12 lb-section-p">' + esc(t(p)) + '</p>' +
         list2.map(function (x, i) {
           var r = results['lib:' + S.id + ':' + x.id];
+          if (x.locked) {
+            return '<a class="card card--bone span-6 lb-card is-locked" href="#/settings/plans" style="--i:' + (i + 1) + '"><div class="card__row"><div class="card__art">' + art(x.genre) + '</div><div>' +
+              '<h3 class="t-h2"' + ta + '>' + esc(x.title) + '</h3>' + (x.about ? '<p class="t-body" style="margin-top:8px"' + xa + '>' + md(x.about) + '</p>' : '') +
+              '<p class="t-small lock-line" style="margin-top:10px">' + A.icon('lock') + '<span>' + esc(t('app_lock_text')) + '</span></p></div></div></a>';
+          }
           return '<a class="card span-6 lb-card' + (kind === 'listen' ? ' card--mint' : '') + '" href="#/library/' + esc(S.id) + '/' + esc(x.id) + '" style="--i:' + (i + 1) + '"><div class="card__row"><div class="card__art">' + art(x.genre) + '</div><div>' +
             '<h3 class="t-h2"' + ta + '>' + esc(x.title) + '</h3><p class="t-body" style="margin-top:8px"' + xa + '>' + md(x.about) + '</p>' +
             '<p class="t-small lb-card__meta">' + esc(t('app_lb_meta', { genre: genre(x.genre), n: x.minutes })) + '</p>' +
@@ -155,6 +163,7 @@
   }
   function endHtml(f, score) {
     var S = R.S, i = S.pieces.indexOf(R.x), next = S.pieces[i + 1];
+    if (next && next.locked) next = null;
     return '<section class="card card--forest lb-end" tabindex="-1" aria-live="polite"><div class="card__row"><div class="card__art test-result__art">' + A.Cast.book(score >= 80 ? 'wow' : 'happy') + '</div><div>' +
       '<h2 class="t-h2">' + esc(t('app_lb_end_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_lb_end_p', { right: f.right, total: f.total })) + '</p>' +
       '<div class="btn-row" style="margin-top:20px">' + (next ? '<a class="btn btn--lime" href="#/library/' + esc(S.id) + '/' + esc(next.id) + '"><span' + R.ta + '>' + esc(t('app_lb_next', { title: next.title })) + '</span>' + A.icon('arrow') + '</a>' : '') +
@@ -321,7 +330,7 @@
       var info = pickShelf(r[0], parts);
       if (!info) return { html: emptyView(), title: t('app_nav_library') };
       return Promise.all([loadShelf(info.id), loadAudio(info.id)]).then(function (r2) {
-        var S = r2[0], x = parts[1] && S.pieces.filter(function (p) { return p.id === parts[1]; })[0];
+        var S = r2[0], x = parts[1] && S.pieces.filter(function (p) { return p.id === parts[1] && !p.locked; })[0];
         if (!x) return { html: shelfView(r[0], S), title: t('app_nav_library') };
         start(S, x);
         return { html: pieceView(), title: x.title, piece: true };

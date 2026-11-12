@@ -8,7 +8,11 @@
    - Everything else (the API, Supabase database and auth, Stripe, Daily) is never touched.
    Change VERSION to drop the cached app files after a breaking change; downloads (alimun-offline) are kept. */
 'use strict';
-var VERSION = 'v1';
+var VERSION = 'v2';
+/* The app's bundled script, written by scripts/bundle-app.js (npm run build) */
+/* app-bundle */
+var BUNDLE = "/js/app/dist/app.js?v=80be2c7427";
+/* /app-bundle */
 var SHELL = 'alimun-shell-' + VERSION;
 var DATA = 'alimun-data-' + VERSION;
 var OFFLINE = 'alimun-offline';
@@ -19,11 +23,7 @@ var SUPA_LIB = /^https:\/\/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js@/;
 var CORE = [
   '/app', '/css/app.css', '/fonts/Satoshi-Variable.ttf', '/fonts/coolvetica-condensed-rg.otf',
   '/images/favicon.svg?v=2', '/images/favicon-48.png?v=2', '/images/app/icon-192.png', '/app/manifest.webmanifest',
-  '/js/app/cast.js', '/js/app/cast3.js', '/js/app/lipsync.js', '/js/app/sample-data.js', '/js/app/data.js', '/js/app/offline.js',
-  '/js/app/exercises.js', '/js/app/reader.js', '/js/app/practice.js', '/js/app/cards.js', '/js/app/tests.js', '/js/app/library.js',
-  '/js/tz.js', '/js/app/find.js', '/js/app/board.js', '/js/app/classroom.js', '/js/app/classes.js', '/js/app/homework.js',
-  '/js/app/progress.js', '/js/app/messages.js', '/js/app/pay.js', '/js/app/plans.js', '/js/country.js', '/js/app/prefs.js',
-  '/js/app/withdraw.js', '/js/app/settings.js', '/js/app/tutor-live.js', '/js/app/tutor.js', '/js/app/bell.js', '/js/app/shell.js',
+  BUNDLE,
   '/js/i18n/en.app.js', '/js/banner.js', '/data/books/index.json', '/data/library/index.json'
 ];
 
@@ -99,8 +99,11 @@ function dataFirst(req, evt) {
 
 /* Recordings: from the downloads when saved (with byte ranges for audio players), otherwise the network */
 function recording(req) {
+  /* Downloads first, then the recordings fetched ahead of the learner (js/app/feel.js) */
   return caches.open(OFFLINE).then(function (c) {
     return c.match(req.url, { ignoreSearch: true }).then(function (hit) {
+      return hit || caches.open('alimun-ahead').then(function (a) { return a.match(req.url, { ignoreSearch: true }); });
+    }).then(function (hit) {
       if (!hit) return fetch(req);
       var range = req.headers.get('range');
       if (!range) return hit;

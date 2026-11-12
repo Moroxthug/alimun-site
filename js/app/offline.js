@@ -34,18 +34,23 @@
   function mineCode(lang) { var l = lang === 'ma' ? 'fr' : lang; return BOOK_LANGS.indexOf(l) > -1 ? l : 'en'; }
   function getJSON(url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error(url + ' ' + r.status); return r.json(); }); }
 
-  /* The files of a book ('book') or a library shelf ('lib'), recordings included */
+  /* The files of a book ('book'), a library shelf ('lib') or a mock test ('test'), recordings included. The free
+     limit (docs/APP_PLAN.md) applies: a learner with a plan gets the complete files (js/app/data.js, material, kept in
+     "alimun-material"), a free account the public ones, and only the recordings of the parts it may open. */
+  var BASES = { book: 'books', lib: 'library', test: 'tests' };
   function plan(kind, id, language, lang) {
     var langs = [mineCode(lang)], target = CODES[language];
     if (target && langs.indexOf(target) === -1) langs.push(target);
-    var base = kind === 'lib' ? '/data/library/' : '/data/books/';
-    var urls = [base + 'index.json'].concat(langs.map(function (l) { return base + encodeURIComponent(id + '.' + l) + '.json'; }));
-    var audioPlan = '/data/audio/' + encodeURIComponent(id) + '.json', made = AUDIO + encodeURIComponent(id) + '/manifest.json';
-    return Promise.all([getJSON(audioPlan).catch(function () { return null; }), getJSON(made).catch(function () { return null; })]).then(function (r) {
+    var base = BASES[kind] || 'books';
+    var rels = kind === 'test' ? [base + '/' + id + '.json'] : langs.map(function (l) { return base + '/' + id + '.' + l + '.json'; });
+    var urls = ['/data/' + base + '/index.json'].concat(rels.map(function (r) { return '/data/' + r; }));
+    var audioRel = 'audio/' + id + '.json', made = AUDIO + encodeURIComponent(id) + '/manifest.json';
+    var D = window.AlimunData;
+    return Promise.all([D.material(audioRel, { fresh: true }).catch(function () { return null; }), getJSON(made).catch(function () { return null; })]).then(function (r) {
       var items = (r[0] && r[0].items) || {}, done = (r[1] && r[1].done) || {}, files = {};
       Object.keys(items).forEach(function (k) { var h = items[k] && items[k][0]; if (h && done[h]) files[h] = true; });
       var mp3 = Object.keys(files).map(function (h) { return AUDIO + encodeURIComponent(id) + '/' + h + '.mp3'; });
-      return { data: urls.concat(r[0] ? [audioPlan] : [], r[1] ? [made] : []), audio: mp3 };
+      return { data: urls.concat(r[0] ? ['/data/' + audioRel] : [], r[1] ? [made] : []), audio: mp3, rels: rels.concat(r[0] ? [audioRel] : []) };
     });
   }
 
@@ -88,8 +93,11 @@
       var workers = [];
       for (var i = 0; i < 4; i++) workers.push(worker());
       return Promise.all(workers).then(function () {
+        /* The complete files for a learner with a plan (nothing more for a free account) */
+        return Promise.all(p.rels.map(function (rel) { return window.AlimunData.material(rel, { fresh: true }).catch(function () { return null; }); }));
+      }).then(function () {
         var l = readList();
-        l[id] = { kind: kind, language: language, at: Date.now(), bytes: bytes, files: all, lang: lang };
+        l[id] = { kind: kind, language: language, at: Date.now(), bytes: bytes, files: all, rels: p.rels, lang: lang, full: window.AlimunData.hasFullAccess() === true };
         writeList(l);
         return l[id];
       });
@@ -104,9 +112,10 @@
     /* Files another download also uses stay (the index files are shared) */
     var keep = {};
     Object.keys(l).forEach(function (k) { (l[k].files || []).forEach(function (u) { keep[u] = true; }); });
-    return caches.open(CACHE).then(function (cache) {
+    var mats = (rec.rels || []).map(function (r) { return location.origin + '/material/' + r; });
+    return Promise.all([caches.open(CACHE).then(function (cache) {
       return Promise.all((rec.files || []).filter(function (u) { return !keep[u]; }).map(function (u) { return cache.delete(u); }));
-    });
+    }), caches.open('alimun-material').then(function (c) { return Promise.all(mats.map(function (u) { return c.delete(u); })); }).catch(function () {})]);
   }
 
   function size(bytes) {
@@ -165,7 +174,8 @@
   /* The learner's own course: the core book, the goal book and the library shelf of their language and level */
   function myItems(d) {
     var p = d && d.profile || {}, lang = p.language || 'English', level = p.level || 'A1';
-    return Promise.all([getJSON('/data/books/index.json').catch(function () { return { books: [] }; }), getJSON('/data/library/index.json').catch(function () { return { shelves: [] }; })]).then(function (r) {
+    return Promise.all([getJSON('/data/books/index.json').catch(function () { return { books: [] }; }), getJSON('/data/library/index.json').catch(function () { return { shelves: [] }; }),
+      getJSON('/data/tests/index.json').catch(function () { return { tests: [] }; })]).then(function (r) {
       var out = [], course = (A.languageName(lang) + ' ' + level).trim();
       (r[0].books || []).forEach(function (b) {
         if (b.language !== lang || b.level !== level || !(b.written > 0)) return;
@@ -174,6 +184,12 @@
       });
       (r[1].shelves || []).forEach(function (s) {
         if (s.language === lang && s.level === level) out.push({ kind: 'lib', id: s.id, language: lang, name: A.t('app_off_item_lib', { course: course }) });
+      });
+      /* Mock tests at the learner's level (docs/APP_PLAN.md, step 2) */
+      (r[2].tests || []).forEach(function (x) {
+        if (x.language !== lang || x.level !== level) return;
+        var name = window.AlimunProgress && window.AlimunProgress.testName ? window.AlimunProgress.testName(x.id) : x.id;
+        out.push({ kind: 'test', id: x.id, language: lang, name: A.t('app_off_item_test', { test: name }) });
       });
       return out;
     });
@@ -205,7 +221,7 @@
     if (!supported) return '';
     return '<section class="card span-12 st-card off-card" style="--i:' + (i || 0) + '" aria-labelledby="h-off" data-off-card>' +
       '<h2 class="t-h2" id="h-off">' + A.esc(A.t('app_off_h')) + '</h2><p class="t-body">' + A.esc(A.t('app_off_p')) + '</p>' +
-      '<div class="off-list" data-off-list></div><p class="t-small off-msg" data-off-msg aria-live="polite"></p><div data-off-install>' + installHtml() + '</div></section>';
+      '<div class="off-list" data-off-list></div><div class="btn-row off-all" data-off-all></div><p class="t-small off-msg" data-off-msg aria-live="polite"></p><div data-off-install>' + installHtml() + '</div></section>';
   }
   function fill(helpers, d) {
     A = helpers;
@@ -222,17 +238,42 @@
     if (box) box.innerHTML = items.map(rowHtml).join('');
     var ins = document.querySelector('[data-off-install]');
     if (ins) ins.innerHTML = installHtml();
-    document.querySelectorAll('[data-off-book]').forEach(function (b) { b.outerHTML = bookButton(A, b.getAttribute('data-off-book'), b.getAttribute('data-lang')); });
+    var all = document.querySelector('[data-off-all]');
+    if (all) all.innerHTML = allHtml();
+    document.querySelectorAll('[data-off-book]').forEach(function (b) { b.outerHTML = itemButton(A, b.getAttribute('data-kind') || 'book', b.getAttribute('data-off-book'), b.getAttribute('data-lang')); });
+  }
+  /* "Download all": everything in the learner's course that is not on the device yet */
+  function allHtml() {
+    var left = items.filter(function (it) { return !readList()[it.id]; });
+    if (items.length < 2) return '';
+    if (!left.length) return '<p class="t-small">' + A.esc(A.t('app_off_all_done')) + '</p>';
+    var busy = items.some(function (it) { return running[it.id]; });
+    return '<button class="btn btn--lime btn--sm" type="button" data-off="all"' + (busy ? ' disabled' : '') + '>' + A.icon('down') + '<span>' + A.esc(A.t('app_off_all')) + '</span></button>';
+  }
+  function getAll() {
+    var left = items.filter(function (it) { return !readList()[it.id] && !running[it.id]; });
+    say('');
+    var step = function (i) {
+      if (i >= left.length) { refresh(); return; }
+      var it = left[i], last = 0;
+      refresh();
+      download(it.kind, it.id, it.language, function () { if (Date.now() - last > 250) { last = Date.now(); refresh(); } }).then(function () { step(i + 1); }, function (e) {
+        refresh();
+        if (e && e.message !== 'busy') { say('app_off_failed'); console.warn('[Alimun] Download stopped', e && e.message); }
+      });
+    };
+    step(0);
   }
   function say(key) { var m = document.querySelector('[data-off-msg]'); if (m) m.textContent = key ? A.t(key) : ''; }
 
-  /* The button on a course book's cover */
-  function bookButton(helpers, id, language) {
+  /* The download button on a course book's cover, a library shelf or a mock test ('book', 'lib', 'test') */
+  function bookButton(helpers, id, language) { return itemButton(helpers, 'book', id, language); }
+  function itemButton(helpers, kind, id, language) {
     A = helpers;
     if (!supported) return '';
     var t = A.t, esc = A.esc, rec = readList()[id], run = running[id];
     var label = run ? t('app_off_getting', { pct: Math.round(100 * run.done / Math.max(1, run.total)) }) : rec ? t('app_off_cover_saved') : t('app_off_cover_get');
-    return '<button class="btn btn--ghost btn--sm off-cover' + (rec ? ' is-saved' : '') + '" type="button" data-off-book="' + esc(id) + '" data-lang="' + esc(language || '') + '"' +
+    return '<button class="btn btn--ghost btn--sm off-cover' + (rec ? ' is-saved' : '') + '" type="button" data-off-book="' + esc(id) + '" data-kind="' + esc(kind) + '" data-lang="' + esc(language || '') + '"' +
       (run || rec ? ' aria-disabled="true"' : '') + '>' + A.icon(rec ? 'check' : 'down') + '<span>' + esc(label) + '</span></button>';
   }
 
@@ -251,11 +292,12 @@
     if (!b || !A) return;
     if (b.hasAttribute('data-off-book')) {
       if (b.getAttribute('aria-disabled') === 'true') return;
-      return start(b.getAttribute('data-off-book'), 'book', b.getAttribute('data-lang'));
+      return start(b.getAttribute('data-off-book'), b.getAttribute('data-kind') || 'book', b.getAttribute('data-lang'));
     }
     var act = b.getAttribute('data-off'), id = b.getAttribute('data-id');
     var it = items.filter(function (x) { return x.id === id; })[0];
     if (act === 'get' && it) start(it.id, it.kind, it.language);
+    else if (act === 'all') getAll();
     else if (act === 'remove') remove(id).then(refresh);
     else if (act === 'install' && installEvt) {
       installEvt.prompt();
@@ -263,14 +305,27 @@
     }
   });
 
+  /* A learner who has just taken a plan gets the rest of what they downloaded; one whose plan has ended keeps only
+     the free parts (js/app/data.js removed the complete files). Quietly, a few seconds after the app opens. */
+  function resync() {
+    var D = window.AlimunData;
+    if (!supported || !D || !D.hasFullAccess || navigator.onLine === false) return;
+    var full = D.hasFullAccess(), l = readList();
+    Object.keys(l).forEach(function (id) {
+      var rec = l[id];
+      if (full === true && !rec.full) download(rec.kind, id, rec.language).catch(function () {});
+      else if (full === false && rec.full) { rec.full = false; writeList(l); download(rec.kind, id, rec.language).catch(function () {}); }
+    });
+  }
+
   /* The shell calls this once its text has loaded */
   var attached = false;
   function attach(helpers) {
     A = helpers;
     netState();
-    if (!attached) { attached = true; watchOutbox(); }
+    if (!attached) { attached = true; watchOutbox(); setTimeout(resync, 4000); }
   }
 
   register();
-  window.AlimunOffline = { attach: attach, card: card, fill: fill, bookButton: bookButton, download: download, remove: remove, list: readList, supported: supported };
+  window.AlimunOffline = { attach: attach, resync: resync, card: card, fill: fill, bookButton: bookButton, itemButton: itemButton, download: download, remove: remove, list: readList, supported: supported };
 })();

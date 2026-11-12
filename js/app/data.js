@@ -642,7 +642,19 @@
   /* Homework (step 11): the assignments of the student's classes, the student's own submissions, the teacher's
      feedback notes and the teachers' public names. Students can hand in and edit a submission while it is pending;
      the database (trg_guard_submission_columns) keeps marks for teachers. */
+  /* Homework with its last answer kept for offline use (docs/APP_PLAN.md, step 2); answers handed in offline show as
+     handed in (waiting: true) until they have been sent */
   function homework(studentId, cohortIds) {
+    return remembered('homework', function () { return homeworkNow(studentId, cohortIds); }, function (h) {
+      var waiting = pending('assignment_submissions');
+      if (!waiting.length) return h;
+      var out = Object.assign({}, h);
+      out.submissions = (h.submissions || []).filter(function (x) { return !waiting.some(function (w) { return w.row.assignment_id === x.assignment_id; }); })
+        .concat(waiting.map(function (w) { return Object.assign({ waiting: true }, w.row); }));
+      return out;
+    });
+  }
+  function homeworkNow(studentId, cohortIds) {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
     var none = Promise.resolve({ data: [] }), ids = cohortIds || [];
@@ -685,9 +697,16 @@
   function handIn(studentId, assignmentId, text) {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
+    /* Without a connection the answer waits in the outbox and is handed in when the connection is back */
+    var row = { assignment_id: assignmentId, student_id: studentId, submission_text: text, status: 'pending', submitted_at: new Date().toISOString() };
+    var keep = function () {
+      enqueue({ op: 'upsert', table: 'assignment_submissions', conflict: 'assignment_id,student_id', key: 'hw:' + assignmentId, row: row });
+      return Object.assign({ waiting: true }, row);
+    };
+    if (!AS && offlineNow()) return Promise.resolve(keep());
     return c.from('assignment_submissions').upsert({ assignment_id: assignmentId, student_id: studentId, submission_text: text, status: 'pending', submitted_at: new Date().toISOString() },
       { onConflict: 'assignment_id,student_id' }).select('id, assignment_id, submission_text, status, score, feedback, submitted_at, graded_at').maybeSingle()
-      .then(function (r) { if (r.error) throw r.error; return r.data; });
+      .then(function (r) { if (r.error) { if (!AS && netError(r.error)) return keep(); throw r.error; } return r.data; }, function (e) { if (!AS && netError(e)) return keep(); throw e; });
   }
 
   /* Progress (step 12): what the student has done, for skills, levels and history: every practice_progress row
@@ -1858,6 +1877,67 @@
     return writeOrKeep({ op: 'update', table: 'vocab_reviews', key: 'card:' + id, id: id, patch: patch });
   }
 
+  /* ---------- Course material and the free limit (docs/APP_PLAN.md) ----------
+     The public files in /data hold what a free account may use (scripts/split-material.js). For a learner with a
+     plan, an approved teacher or an admin, material('books/English-A1.en.json') gives the complete file from
+     /api/material, kept on the device (Cache Storage "alimun-material") so it opens at once and works offline;
+     the copy on the device answers first and is refreshed quietly. Free accounts read the public file. When a plan
+     ends (setAccess(false)), the complete files are removed from the device. */
+  var MAT_CACHE = 'alimun-material';
+  var matAccess = null;               /* true, false, or null while not known (the server decides) */
+  var matOpen = {};                   /* files with nothing locked: the public file is complete */
+  var matMemo = {};
+  function hasCaches() { return typeof caches !== 'undefined'; }
+  function matKey(rel) { return location.origin + '/material/' + rel; }
+  function publicJSON(rel) {
+    return fetch('/data/' + rel).then(function (r) { if (!r.ok) throw new Error('/data/' + rel + ' ' + r.status); return r.json(); });
+  }
+  function setAccess(full) {
+    var was = matAccess;
+    matAccess = full == null ? null : !!full;
+    if (matAccess === false && was !== false) {
+      matMemo = {};
+      if (hasCaches()) caches.delete(MAT_CACHE).catch(function () {});
+    }
+  }
+  function fromServer(rel) {
+    return token().then(function (tok) {
+      if (!tok) return null;
+      return fetch('/api/material?path=' + encodeURIComponent(rel), { headers: { Authorization: 'Bearer ' + tok } }).then(function (r) {
+        if (r.status === 404) { matOpen[rel] = true; return null; }
+        if (r.status === 403 || r.status === 401) { if (r.status === 403) setAccess(false); return null; }
+        if (!r.ok) throw new Error('material ' + r.status);
+        return r.text().then(function (txt) {
+          if (matAccess === null) matAccess = true;
+          if (hasCaches()) caches.open(MAT_CACHE).then(function (c) { return c.put(matKey(rel), new Response(txt, { headers: { 'Content-Type': 'application/json' } })); }).catch(function () {});
+          return JSON.parse(txt);
+        });
+      });
+    });
+  }
+  function material(rel, opts) {
+    var fresh = opts && opts.fresh;
+    if (!fresh && matMemo[rel]) return matMemo[rel];
+    var p;
+    if (matAccess === false || matOpen[rel] || !client()) p = publicJSON(rel);
+    else {
+      var saved = hasCaches() ? caches.open(MAT_CACHE).then(function (c) { return c.match(matKey(rel)); }).then(function (hit) { return hit ? hit.json() : null; }).catch(function () { return null; }) : Promise.resolve(null);
+      p = saved.then(function (hit) {
+        var net = fromServer(rel);
+        if (hit && !fresh) { net.catch(function () {}); return hit; }
+        return net.then(function (full) { return full || hit || publicJSON(rel); }, function () { return hit || publicJSON(rel); });
+      });
+    }
+    matMemo[rel] = p;
+    p.catch(function () { delete matMemo[rel]; });
+    return p;
+  }
+  /* Whether the complete file is on the device (for downloads) */
+  function materialSaved(rel) {
+    if (!hasCaches()) return Promise.resolve(false);
+    return caches.open(MAT_CACHE).then(function (c) { return c.match(matKey(rel)); }).then(function (h) { return !!h; }, function () { return false; });
+  }
+
   /* The signed-in user's access token, for /api calls (null when signed out) */
   function token() {
     var c = client();
@@ -1868,5 +1948,5 @@
   function signOut() { var c = client(); return c ? c.auth.signOut() : Promise.resolve(); }
 
   window.AlimunData = { quickStart: quickStart, flush: flush, offlineWaiting: function () { return outbox().filter(mine).length; },
-    onOutbox: function (fn) { listeners.push(fn); }, tutorPurchase: tutorPurchase, tutorSets: tutorSets, tutorSetAudio: tutorSetAudio, tutorWritingCheck: tutorWritingCheck, saveTutorWriting: saveTutorWriting, lessonOpen: lessonOpen, tutorStatus: tutorStatus, tutorStart: tutorStart, tutorTurn: tutorTurn, tutorVoice: tutorVoice, tutorPronounce: tutorPronounce, tutorLiveStart: tutorLiveStart, tutorLiveTick: tutorLiveTick, tutorLiveBoard: tutorLiveBoard, tutorLiveAnswer: tutorLiveAnswer, tutorLivePron: tutorLivePron, tutorCascadeTurn: tutorCascadeTurn, tutorCascadeStream: tutorCascadeStream, tutorEnd: tutorEnd, tutorForget: tutorForget, tutorSessions: tutorSessions, tutorSession: tutorSession, tutorMemory: tutorMemory, adminTutorGrant: adminTutorGrant, adminTutorMinutes: adminTutorMinutes, adminTutorMinutesSet: adminTutorMinutesSet, checkout: checkout, pricing: pricing, pricingDisplay: pricingDisplay, adminPricingReport: adminPricingReport, roomsFor: roomsFor, adminRooms: adminRooms, adminRoom: adminRoom, myContracts: myContracts, adminFigures: adminFigures, myEntitlements: myEntitlements, adminSpend: adminSpend, answerContract: answerContract, myAvailability: myAvailability, saveAvailability: saveAvailability, roomMe: roomMe, launchInfo: launchInfo, launchRegister: launchRegister, adminLaunchEmail: adminLaunchEmail, roomInterest: roomInterest, roomAssign: roomAssign, adminProposal: adminProposal, billingPortal: billingPortal, findClasses: findClasses, findClass: findClass, myWaitlist: myWaitlist, joinWaitlist: joinWaitlist, leaveWaitlist: leaveWaitlist, setWaitlistOptIn: setWaitlistOptIn, enroll: enroll, myTeachers: myTeachers, reviewState: reviewState, saveReview: saveReview, viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, adminClasses: adminClasses, adminClassFile: adminClassFile, adminTeacherSlots: adminTeacherSlots, adminCreateClass: adminCreateClass, adminClassUpdate: adminClassUpdate, adminMoveStudent: adminMoveStudent, adminRemoveStudent: adminRemoveStudent, adminSchedule: adminSchedule, adminSessionUpdate: adminSessionUpdate, adminWaitlist: adminWaitlist, adminWaitlistRemove: adminWaitlistRemove, adminWaitlistOffer: adminWaitlistOffer, adminThreads: adminThreads, adminThreadMessages: adminThreadMessages, adminHideMessage: adminHideMessage, adminPayouts: adminPayouts, adminRecordPayout: adminRecordPayout, adminPayoutUpdate: adminPayoutUpdate, adminPayoutDelete: adminPayoutDelete, adminAiUsage: adminAiUsage, adminEngines: adminEngines, adminAiFailures: adminAiFailures, adminSettings: adminSettings, adminSettingSet: adminSettingSet, adminReviews: adminReviews, adminReviewDelete: adminReviewDelete, adminJobs: adminJobs, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftHomework: draftHomework, draftSet: draftSet, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, addSlots: addSlots, setSessionLesson: setSessionLesson, saveBoard: saveBoard, saveBoardWork: saveBoardWork, boardOf: boardOf, setBoardShared: setBoardShared, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, rememberUiLang: rememberUiLang, campaignAudience: campaignAudience, campaignTest: campaignTest, campaignPreview: campaignPreview, campaignSend: campaignSend, banners: banners, bannerSave: bannerSave, bannerSwitch: bannerSwitch, campaigns: campaigns, notifications: notifications, markNotificationsRead: markNotificationsRead, track: track, adminActivity: adminActivity, adminActivityOverview: adminActivityOverview, adminMatching: adminMatching, adminSignupSources: adminSignupSources, welcomePollDone: welcomePollDone, submitWelcomePoll: submitWelcomePoll, adminWelcomePoll: adminWelcomePoll, saveConsent: saveConsent, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
+    onOutbox: function (fn) { listeners.push(fn); }, tutorPurchase: tutorPurchase, tutorSets: tutorSets, tutorSetAudio: tutorSetAudio, tutorWritingCheck: tutorWritingCheck, saveTutorWriting: saveTutorWriting, lessonOpen: lessonOpen, tutorStatus: tutorStatus, tutorStart: tutorStart, tutorTurn: tutorTurn, tutorVoice: tutorVoice, tutorPronounce: tutorPronounce, tutorLiveStart: tutorLiveStart, tutorLiveTick: tutorLiveTick, tutorLiveBoard: tutorLiveBoard, tutorLiveAnswer: tutorLiveAnswer, tutorLivePron: tutorLivePron, tutorCascadeTurn: tutorCascadeTurn, tutorCascadeStream: tutorCascadeStream, tutorEnd: tutorEnd, tutorForget: tutorForget, tutorSessions: tutorSessions, tutorSession: tutorSession, tutorMemory: tutorMemory, adminTutorGrant: adminTutorGrant, adminTutorMinutes: adminTutorMinutes, adminTutorMinutesSet: adminTutorMinutesSet, checkout: checkout, pricing: pricing, pricingDisplay: pricingDisplay, adminPricingReport: adminPricingReport, roomsFor: roomsFor, adminRooms: adminRooms, adminRoom: adminRoom, myContracts: myContracts, adminFigures: adminFigures, myEntitlements: myEntitlements, adminSpend: adminSpend, answerContract: answerContract, myAvailability: myAvailability, saveAvailability: saveAvailability, roomMe: roomMe, launchInfo: launchInfo, launchRegister: launchRegister, adminLaunchEmail: adminLaunchEmail, roomInterest: roomInterest, roomAssign: roomAssign, adminProposal: adminProposal, billingPortal: billingPortal, findClasses: findClasses, findClass: findClass, myWaitlist: myWaitlist, joinWaitlist: joinWaitlist, leaveWaitlist: leaveWaitlist, setWaitlistOptIn: setWaitlistOptIn, enroll: enroll, myTeachers: myTeachers, reviewState: reviewState, saveReview: saveReview, viewingAs: function () { return VA; }, load: load, adminOverview: adminOverview, adminStudents: adminStudents, adminTeachers: adminTeachers, adminStudentFile: adminStudentFile, adminTeacherFile: adminTeacherFile, adminSave: adminSave, adminSignups: adminSignups, adminEmails: adminEmails, adminInvite: adminInvite, adminTeacherStatus: adminTeacherStatus, adminEmail: adminEmail, adminPlanEmail: adminPlanEmail, adminClasses: adminClasses, adminClassFile: adminClassFile, adminTeacherSlots: adminTeacherSlots, adminCreateClass: adminCreateClass, adminClassUpdate: adminClassUpdate, adminMoveStudent: adminMoveStudent, adminRemoveStudent: adminRemoveStudent, adminSchedule: adminSchedule, adminSessionUpdate: adminSessionUpdate, adminWaitlist: adminWaitlist, adminWaitlistRemove: adminWaitlistRemove, adminWaitlistOffer: adminWaitlistOffer, adminThreads: adminThreads, adminThreadMessages: adminThreadMessages, adminHideMessage: adminHideMessage, adminPayouts: adminPayouts, adminRecordPayout: adminRecordPayout, adminPayoutUpdate: adminPayoutUpdate, adminPayoutDelete: adminPayoutDelete, adminAiUsage: adminAiUsage, adminEngines: adminEngines, adminAiFailures: adminAiFailures, adminSettings: adminSettings, adminSettingSet: adminSettingSet, adminReviews: adminReviews, adminReviewDelete: adminReviewDelete, adminJobs: adminJobs, teacherToday: teacherToday, teacherClasses: teacherClasses, teacherStudents: teacherStudents, teacherHomework: teacherHomework, teacherSets: teacherSets, teacherPayouts: teacherPayouts, teacherProfile: teacherProfile, saveTeacherProfile: saveTeacherProfile, saveSet: saveSet, deleteSet: deleteSet, sendSet: sendSet, unsendSet: unsendSet, mySets: mySets, createHomework: createHomework, updateHomework: updateHomework, deleteHomework: deleteHomework, markSubmission: markSubmission, draftFeedback: draftFeedback, draftHomework: draftHomework, draftSet: draftSet, teacherStudent: teacherStudent, classItems: classItems, addStudentNote: addStudentNote, deleteStudentNote: deleteStudentNote, saveNotes: saveNotes, publishNotes: publishNotes, otoNote: otoNote, createClass: createClass, addSlot: addSlot, addSlots: addSlots, setSessionLesson: setSessionLesson, saveBoard: saveBoard, saveBoardWork: saveBoardWork, boardOf: boardOf, setBoardShared: setBoardShared, removeSlot: removeSlot, signOut: signOut, bookProgress: bookProgress, saveBook: saveBook, practiceItems: practiceItems, savePracticeItem: savePracticeItem, token: token, material: material, materialSaved: materialSaved, setAccess: setAccess, hasFullAccess: function () { return matAccess; }, cards: cards, addCards: addCards, updateCard: updateCard, quizScores: quizScores, mockResults: mockResults, libraryResults: libraryResults, classes: classes, homework: homework, completeMaterial: completeMaterial, handIn: handIn, progress: progress, myThreads: myThreads, openThread: openThread, threadMessages: threadMessages, sendMessage: sendMessage, markRead: markRead, userId: userId, classTeachers: classTeachers, settings: settings, rememberUiLang: rememberUiLang, campaignAudience: campaignAudience, campaignTest: campaignTest, campaignPreview: campaignPreview, campaignSend: campaignSend, banners: banners, bannerSave: bannerSave, bannerSwitch: bannerSwitch, campaigns: campaigns, notifications: notifications, markNotificationsRead: markNotificationsRead, track: track, adminActivity: adminActivity, adminActivityOverview: adminActivityOverview, adminMatching: adminMatching, adminSignupSources: adminSignupSources, welcomePollDone: welcomePollDone, submitWelcomePoll: submitWelcomePoll, adminWelcomePoll: adminWelcomePoll, saveConsent: saveConsent, saveProfile: saveProfile, changePassword: changePassword, syncClassWords: syncClassWords, leftClass: leftClass, mockResult: mockResult, saveMock: saveMock, topicLabels: topicLabels, streakFrom: streakFrom, langCode: function (l) { return LANG_CODES[l] || null; } };
 })();

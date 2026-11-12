@@ -105,6 +105,13 @@
 
   /* Opens the card-first checkout for one product; where: { cohortId } or { sessionId, label } from the picker */
   function pay(k, cadence, btn, show, where) {
+    /* The payment window is loaded the first time it is needed (js/app/lazy.js) */
+    if (!window.AlimunPay && window.AlimunLazy) {
+      if (btn) btn.disabled = true;
+      window.AlimunLazy.need('pay').then(function () { if (btn) btn.disabled = false; if (window.AlimunPay) pay(k, cadence, btn, show, where); else show('app_pl_err', true); },
+        function () { if (btn) btn.disabled = false; show(navigator.onLine === false ? 'app_off_needs_p' : 'app_pl_err', true); });
+      return;
+    }
     if (!window.AlimunPay) { show('app_pl_err', true); return; }
     if (btn) btn.disabled = true;
     var minutes = /^minutes_/.test(k), w = where || {};
@@ -331,6 +338,11 @@
   function launchBuy(b) {
     if (!real()) { say('choose', 'app_pl_sample'); return; }
     var k = b.getAttribute('data-k'), c = b.getAttribute('data-c'), r = b.getAttribute('data-r');
+    if (!window.AlimunPay && window.AlimunLazy) {
+      b.disabled = true;
+      window.AlimunLazy.need('pay').then(function () { b.disabled = false; if (window.AlimunPay) launchBuy(b); else say('choose', 'app_pl_err', true); }, function () { b.disabled = false; say('choose', 'app_pl_err', true); });
+      return;
+    }
     if (!window.AlimunPay) { say('choose', 'app_pl_err', true); return; }
     b.disabled = true;
     window.AlimunPay.open(A, { productKey: k, cadence: c, cohortId: r, offer: LN.offer.code }, { title: t(/^open_/.test(k) ? 'app_ln_open_h' : 'app_ln_pack_h'), sub: t('app_ln_title'), photo: PHOTO.group })

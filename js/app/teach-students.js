@@ -29,7 +29,7 @@
   function bookFor(language, level) {
     var id = language + '-' + level, code = A.lang === 'ma' ? 'fr' : (['en', 'es', 'fr', 'de', 'pt', 'zh', 'ar', 'it'].indexOf(A.lang) > -1 ? A.lang : 'en');
     var k = id + '.' + code;
-    if (!cache[k]) cache[k] = getJSON('/data/books/' + encodeURIComponent(k) + '.json').catch(function () { return code === 'en' ? null : getJSON('/data/books/' + encodeURIComponent(id + '.en') + '.json').catch(function () { return null; }); });
+    if (!cache[k]) cache[k] = window.AlimunData.material('books/' + k + '.json').catch(function () { return code === 'en' ? null : window.AlimunData.material('books/' + id + '.en' + '.json').catch(function () { return null; }); });
     return cache[k];
   }
 

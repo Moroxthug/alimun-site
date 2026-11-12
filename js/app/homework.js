@@ -152,7 +152,7 @@
   function editorHtml() {
     var a = W.a, s = W.s, ta = langAttr();
     var html = '<h2 class="t-h3">' + esc(t(s ? 'app_hw_your_answer' : 'app_hw_write_h')) + '</h2>';
-    if (s) html += '<p class="t-small hw-status">' + esc(t('app_hw_waiting_p')) + '</p>';
+    if (s) html += '<p class="t-small hw-status">' + esc(t(s.waiting ? 'app_hw_queued_p' : 'app_hw_waiting_p')) + '</p>';
     if (speaking(a)) {
       var recording = !!W.rec;
       html += '<p class="t-body">' + esc(t('app_hw_speak_p')) + '</p><div class="hear-row"><button class="btn btn--primary rec' + (recording ? ' is-rec' : '') + '" type="button" data-hw="rec"' + (W.wait ? ' disabled' : '') + '><i aria-hidden="true"></i><span>' +
@@ -196,7 +196,9 @@
       H.submissions = H.submissions.filter(function (x) { return x.assignment_id !== W.a.id; }).concat([row]);
       W.s = row; writeDraft(W.a.id, '');
       refreshEditor();
-      root.querySelector('[data-msg]').innerHTML = '<p class="t-body cl-flash" role="status">' + esc(t('app_hw_sent')) + '</p>';
+      root.querySelector('[data-msg]').innerHTML = '<p class="t-body cl-flash" role="status">' + esc(t(row.waiting ? 'app_hw_sent_later' : 'app_hw_sent')) + '</p>';
+      /* Handed in offline: sent by js/app/data.js when the connection is back; the list shows it as handed in */
+      if (row.waiting) window.addEventListener('online', function () { setTimeout(function () { if (W && W.s === row) { row.waiting = false; } }, 3000); }, { once: true });
       if (signedIn()) window.AlimunData.saveBook(signedIn(), 'practice:round:' + new Date().toISOString().slice(0, 10), { done: true, score: 100 }).catch(function () {});
     };
     if (H.sample) return done({ id: 'x' + W.a.id, assignment_id: W.a.id, status: 'pending', submission_text: text, submitted_at: new Date().toISOString() });

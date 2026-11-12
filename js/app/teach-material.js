@@ -382,7 +382,7 @@
      examples of the point (the draft writes new ones) */
   function mistakesPoints(whose) {
     var p = String(whose || '').split(':'), ids = p[0] === 'class' ? M.students.filter(function (s) { return s.cohorts.indexOf(p[1]) > -1; }).map(function (s) { return s.id; }) : [p[1]];
-    var bookP = getJSON('/data/books/' + encodeURIComponent(E.language + '-' + E.level + '.en') + '.json');
+    var bookP = window.AlimunData.material('books/' + E.language + '-' + E.level + '.en' + '.json');
     var itemsP = M.sample ? Promise.resolve({ items: [] }) : window.AlimunData.classItems(ids);
     return Promise.all([bookP, itemsP]).then(function (r) {
       var book = r[0], lessons = {};

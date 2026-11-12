@@ -1,11 +1,12 @@
 // Every .js file under api/ (outside _-prefixed helper folders/files) becomes
 // one serverless function. Hobby allowed 12; the owner moved the project to Pro
 // on 23 Oct 2026, so the cap is now a guard against splitting handlers for no
-// reason (CLAUDE.md, "Functions"), not a plan limit.
+// reason (CLAUDE.md, "Functions"), not a plan limit. 21 since 12 Nov 2026: api/material.js (the free limit,
+// docs/APP_PLAN.md) is separate because it carries the private course files.
 const fs = require('fs');
 const path = require('path');
 
-const MAX = Number(process.env.MAX_FUNCTIONS || 20);
+const MAX = Number(process.env.MAX_FUNCTIONS || 21);
 const apiDir = path.resolve(__dirname, '..', '..', 'api');
 
 function walk(dir, out = []) {

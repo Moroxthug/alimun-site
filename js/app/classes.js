@@ -441,6 +441,7 @@
       if (!C) return;
       /* The board from a class (step L5): the written pages and the student's own exercise work, loaded when asked */
       var bb = e.target.closest('[data-cl-board]');
+      if (bb && !bb.disabled && !window.AlimunBoard && window.AlimunLazy) { window.AlimunLazy.need('classroom').then(function () { bb.click(); }, function () {}); return; }
       if (bb && !bb.disabled && window.AlimunBoard && window.AlimunData.boardOf) {
         var view = bb.parentNode.querySelector('[data-cl-boardview]');
         bb.disabled = true;
@@ -500,7 +501,11 @@
     }
     view.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div></div>';
     var keep = C && { month: C.month, day: C.day };
-    return load().then(function (d) {
+    /* The classroom and its board are loaded the first time a class is opened (js/app/lazy.js) */
+    var need = window.AlimunLazy ? window.AlimunLazy.need : function () { return Promise.resolve(); };
+    var cr = parts[0] === 'live' ? need('classroom') : (need('classroom').catch(function () {}), Promise.resolve());
+    return Promise.all([load(), cr]).then(function (both) {
+      var d = both[0];
       if (my !== mountNo) return { stale: true };
       C = d;
       if (C.sample) C.bookings = C.bookings.concat(SAMPLE_BOOKED);

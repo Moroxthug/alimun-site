@@ -1181,7 +1181,12 @@
     if (ok) { x.done = true; x.flash = false; if (x.first === null) { x.first = true; S.onItem({ bi: bi, i: i, ok: true, kind: S.blocks[bi].kind }); } }
     else { x.tries++; if (x.first === null) S.onItem({ bi: bi, i: i, ok: false, kind: S.blocks[bi].kind }); x.first = false; x.flash = true; }
   }
-  function after(S, bi, ok) { if (S.test) S.onChange(); else S.onAnswer(bi, ok); }
+  function after(S, bi, ok) {
+    if (S.test) { S.onChange(); return; }
+    /* A light vibration on right and wrong answers (js/app/feel.js); mock tests give no feedback */
+    if (window.AlimunFeel) window.AlimunFeel.answer(ok);
+    S.onAnswer(bi, ok);
+  }
 
   function onPick(S, bi, i, o) {
     var b = S.blocks[bi], x = S.state[bi].items[i], it = b.items[i];

@@ -127,7 +127,9 @@
     close: '<path d="M6 6l12 12M18 6 6 18"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
     minus: '<path d="M5 12h14"/>',
-    play: '<path d="M8 5.5v13l10.5-6.5z"/>'
+    play: '<path d="M8 5.5v13l10.5-6.5z"/>',
+    lock: '<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>',
+    offline: '<path d="M4 9.5a12 12 0 0 1 16 0M7 13a7.5 7.5 0 0 1 10 0M10 16.5a3 3 0 0 1 4 0"/><path d="M4 4l16 16"/>'
   };
   function icon(name) { return '<svg class="i-' + name + '" viewBox="0 0 24 24" ' + P + ' aria-hidden="true" focusable="false">' + ICONS[name] + '</svg>'; }
 
@@ -637,10 +639,30 @@
     var id = (location.hash.match(/^#\/([a-z]+)/) || [])[1];
     return byId[id] ? id : 'home';
   }
+  /* ---------- Sections that need a connection (docs/APP_PLAN.md, step 2) ---------- */
+  var offShown = null;
+  function needsNet(id) {
+    if (id === 'tutor' || id === 'messages' || id === 'classes' || id === 'progress') return true;
+    return id === 'settings' && /^#\/settings\/(plans|withdraw)/.test(location.hash);
+  }
+  function offlineView(r) {
+    return '<div class="view__head"><div><h1 class="t-h1">' + esc(t(r.label)) + '</h1></div></div>' +
+      '<div class="soon rise"><div class="stage" style="--i:0;background:var(--t-mint)"><div class="bub think">' + esc(t('app_off_needs_bub')) + '</div>' + Cast.drawing('owl') + '</div>' +
+      '<div class="card" style="--i:1"><h2 class="t-h2">' + esc(t('app_off_needs_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_off_needs_p')) + '</p>' +
+      '<div class="btn-row"><a class="btn btn--primary" href="#/book">' + esc(t('app_nav_book')) + icon('arrow') + '</a><a class="btn btn--ghost" href="#/practice">' + esc(t('app_nav_practice')) + '</a><a class="btn btn--ghost" href="#/library">' + esc(t('app_nav_library')) + '</a></div></div></div>';
+  }
+  /* Scripts loaded when first opened (js/app/lazy.js); nothing to load when the page has them already */
+  function lazy(name) { return window.AlimunLazy ? window.AlimunLazy.need(name) : Promise.resolve(); }
+  /* Back online on a section that needed it: draw it again */
+  window.addEventListener('online', function () { if (offShown && offShown === current && D) render(current, false); });
+
   function render(id, animate) {
     var r = byId[id];
     if (window.AlimunData && window.AlimunData.track && id !== 'kit') window.AlimunData.track('view', { dashboard: 'student', section: id });
-    var html = id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' || id === 'messages' || id === 'settings' || id === 'tutor' ? '' : soonView(r);
+    /* Sections that need a connection say so when the device is offline (docs/APP_PLAN.md, step 2) */
+    var off = mode === 'real' && navigator.onLine === false && needsNet(id);
+    offShown = off ? id : null;
+    var html = off ? offlineView(r) : id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' || id === 'messages' || id === 'settings' || id === 'tutor' ? '' : soonView(r);
     var swap = function () {
       if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
       if (id !== 'tests' && window.AlimunTests) window.AlimunTests.reset();
@@ -653,51 +675,54 @@
       if (id === 'home') { fillOffers(); if (mode !== 'real' && /[?&]launch=1/.test(location.search)) launchBanner(Promise.resolve(sampleLaunch())); }
       document.body.classList.remove('is-reading');
       document.title = t(r.label) + ' – Alimun';
-      if (id === 'book') {
+      if (!off && id === 'book') {
         window.AlimunReader.mount(view, bookParts(), readerHelpers).then(function (res) {
           if (current === 'book' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
-      if (id === 'cards') {
+      if (!off && id === 'cards') {
         window.AlimunCards.mount(view, cardsParts(), cardsHelpers).then(function (res) {
           if (current === 'cards' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
-      if (id === 'messages') {
+      if (!off && id === 'messages') {
         window.AlimunMessages.mount(view, messagesParts(), messagesHelpers).then(function (res) {
           if (current === 'messages' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
-      if (id === 'settings') {
+      if (!off && id === 'settings') {
         window.AlimunSettings.mount(view, location.hash.replace(/^#\/settings\/?/, '').split('/').filter(Boolean), settingsHelpers);
       }
-      if (id === 'progress') {
+      if (!off && id === 'progress') {
         window.AlimunProgress.mount(view, [], progressHelpers);
       }
-      if (id === 'tutor') {
-        window.AlimunTutor.mount(view, tutorParts(), tutorHelpers);
+      if (!off && id === 'tutor') {
+        /* The tutor is loaded the first time it is opened (js/app/lazy.js) */
+        var tParts = tutorParts();
+        view.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" aria-hidden="true">' + loaderInner() + '</div></div>';
+        lazy('tutor').then(function () { if (current === 'tutor') window.AlimunTutor.mount(view, tParts, tutorHelpers); }, function () { if (current === 'tutor') view.innerHTML = offlineView(r, true); });
       }
-      if (id === 'homework') {
+      if (!off && id === 'homework') {
         window.AlimunHomework.mount(view, homeworkParts(), homeworkHelpers).then(function (res) {
           if (current === 'homework' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
-      if (id === 'classes') {
+      if (!off && id === 'classes') {
         window.AlimunClasses.mount(view, classesParts(), classesHelpers).then(function (res) {
           if (current === 'classes' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
-      if (id === 'library') {
+      if (!off && id === 'library') {
         window.AlimunLibrary.mount(view, libraryParts(), libraryHelpers).then(function (res) {
           if (current === 'library' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
-      if (id === 'tests') {
+      if (!off && id === 'tests') {
         window.AlimunTests.mount(view, testsParts(), testsHelpers).then(function (res) {
           if (current === 'tests' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
-      if (id === 'practice') {
+      if (!off && id === 'practice') {
         window.AlimunPractice.mount(view, practiceParts(), practiceHelpers).then(function (res) {
           if (current === 'practice' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
@@ -710,7 +735,10 @@
       more.classList.toggle('is-active', BAR.indexOf(id) === -1);
       if (animate) { window.scrollTo(0, 0); view.focus({ preventScroll: true }); }
     };
-    if (animate && current) { view.classList.add('is-leaving'); setTimeout(swap, 150); } else swap();
+    /* View Transitions where the browser has them (js/app/feel.js): the new screen at once, cross-faded */
+    var F = window.AlimunFeel;
+    if (animate && current && F && F.canTransition()) F.transition(swap);
+    else if (animate && current) { view.classList.add('is-leaving'); setTimeout(swap, 150); } else swap();
     current = id;
   }
 
@@ -741,6 +769,7 @@
       if (!d || !d.profile || d.profile.id !== snap.profile.id) { location.reload(); return; }
       var changed = JSON.stringify(d) !== JSON.stringify(D);
       D = d;
+      access();
       if (changed && current === 'home' && !document.body.classList.contains('is-sheet-open')) render('home', false);
     }, function (err) { console.warn('[Alimun] Home data did not refresh', err && err.message); });
     return snap;
@@ -764,8 +793,19 @@
     });
   }
 
+  /* The free limit (docs/APP_PLAN.md): learners with a plan, and an admin viewing someone, get the complete material */
+  function access() {
+    var A0 = window.AlimunData;
+    if (!A0 || !A0.setAccess) return;
+    if (mode !== 'real' || !D || !D.profile) return A0.setAccess(null);
+    A0.setAccess(!!(D.profile.paying || (A0.viewingAs && A0.viewingAs())));
+  }
+
   /* ---------- Boot ---------- */
   function start() {
+    access();
+    /* For the speed budget (tests/smoke/app-speed.spec.js): the moment the app is drawn and answers taps */
+    try { if (!performance.getEntriesByName('alimun-ready').length) performance.mark('alimun-ready'); } catch (e) { /* old browser */ }
     var back = fromStripe();
     renderShell();
     if (mode === 'real' && window.AlimunData && window.AlimunData.rememberUiLang) window.AlimunData.rememberUiLang(lang, 'student');
@@ -803,7 +843,7 @@
     (function again() {
       setTimeout(function () {
         window.AlimunData.load(lang).then(function (d) {
-          if (d && d.profile && d.profile.paying) { D = d; renderShell(); render(routeFromHash(), false); show(t('app_pl_confirmed')); }
+          if (d && d.profile && d.profile.paying) { D = d; access(); renderShell(); render(routeFromHash(), false); show(t('app_pl_confirmed')); }
           else if (++tries < 8) again();
         }, function () { if (++tries < 8) again(); });
       }, 4000);

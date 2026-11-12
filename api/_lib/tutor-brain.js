@@ -10,6 +10,7 @@
  *    checked by tutor-pron.js cleanSentence and stored in tutor_messages.pron.
  */
 
+const { readMaterial } = require('./material.js');
 const SITE_URL = (process.env.APP_URL || 'https://alimun.com').replace(/\/+$/, '');
 const GROQ_MODEL = process.env.TUTOR_GROQ_MODEL || process.env.GROQ_MODEL || 'openai/gpt-oss-120b';
 const GEMINI_MODEL = process.env.TUTOR_GEMINI_MODEL || 'gemini-2.5-flash';
@@ -181,8 +182,8 @@ async function loadBook(id) {
   const hit = bookCache.get(id);
   if (hit && hit.at > Date.now() - 600000) return hit.book;
   try {
-    const r = await fetch(`${SITE_URL}/data/books/${encodeURIComponent(id)}.en.json`);
-    const book = r.ok ? await r.json() : null;
+    // The complete book (the public file holds only the free units; ./material.js)
+    const book = /^[A-Za-z0-9-]+$/.test(String(id)) ? await readMaterial(`books/${id}.en.json`) : null;
     bookCache.set(id, { at: Date.now(), book });
     return book;
   } catch (e) { return null; }

@@ -43,3 +43,9 @@ playwright-report/
 /es/recursos/
 /fr/ressources/
 /pt/recursos/
+
+# Course material, generated at deploy time (site build, scripts/split-material.js)
+/data/
+/private/
+# The app's bundled script (scripts/bundle-app.js) is committed
+!/js/app/dist/

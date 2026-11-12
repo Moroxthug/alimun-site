@@ -27,7 +27,7 @@ jobs:
         run: node scripts/ci/check-inline-scripts.js
       - name: Unit tests (strict CommonJS, like the Vercel runtime)
         run: node --no-experimental-require-module --test 'tests/unit/*.test.js'
-      - name: Serverless function cap (Vercel Hobby = 12)
+      - name: Serverless function cap (guard against splitting handlers)
         run: node scripts/ci/check-function-count.js
       - name: Build locales and require no diff
         run: |
@@ -35,6 +35,20 @@ jobs:
           git diff --exit-code --stat || { echo "::error::Locale copies are out of date. Run npm run build and commit the result."; exit 1; }
       - name: Local links and sitemap
         run: node scripts/ci/check-links.js
+
+  app-speed:
+    name: App speed budget
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci --no-audit --no-fund
+      - run: npx playwright install --with-deps chromium
+      - name: The app is ready in under a second on a repeat visit (docs/APP_PLAN.md, step 2)
+        run: npx playwright test tests/smoke/app-speed.spec.js --trace off
 
   secrets:
     name: gitleaks

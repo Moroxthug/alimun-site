@@ -53,11 +53,13 @@
   function getJSON(url) { return fetch(url).then(function (r) { if (!r.ok) throw new Error(url + ' ' + r.status); return r.json(); }); }
   var index = null, tests = {}, audio = {};
   function loadIndex() { return index ? Promise.resolve(index) : getJSON('/data/tests/index.json').then(function (x) { index = x.tests || []; return index; }); }
-  function loadTest(id) { return tests[id] ? Promise.resolve(tests[id]) : getJSON('/data/tests/' + encodeURIComponent(id) + '.json').then(function (x) { tests[id] = x; return x; }); }
+  /* The complete test for learners with a plan, the first paper otherwise (js/app/data.js, material) */
+  function loadTest(id) { return tests[id] ? Promise.resolve(tests[id]) : window.AlimunData.material('tests/' + id + '.json').then(function (x) { tests[id] = x; return x; }); }
   function loadAudio(id) {
     if (audio[id]) return Promise.resolve(audio[id]);
     var get = function (u) { return fetch(u).then(function (r) { return r.ok ? r.json() : null; }).catch(function () { return null; }); };
-    return Promise.all([get('/data/audio/' + encodeURIComponent(id) + '.json'), get(SUPA_AUDIO + encodeURIComponent(id) + '/manifest.json')]).then(function (r) {
+    var plan = window.AlimunData.material('audio/' + id + '.json').catch(function () { return null; });
+    return Promise.all([plan, get(SUPA_AUDIO + encodeURIComponent(id) + '/manifest.json')]).then(function (r) {
       audio[id] = { items: (r[0] && r[0].items) || {}, done: (r[1] && r[1].done) || {} };
       return audio[id];
     });
@@ -152,10 +154,18 @@
   function testView(T, summary) {
     var f = FORMATS[T.format] || FORMATS.alimun;
     var html = '<a class="rd-back" href="#/tests">' + A.icon('back') + '<span>' + esc(t('app_nav_tests')) + '</span></a>' +
-      '<div class="view__head"><div><h1 class="t-h1">' + esc(testTitle(T)) + '</h1><p class="t-lead">' + esc(T.format === 'alimun' ? t('app_mt_alimun_p', { level: T.level }) : t('app_mt_exam_p', { exam: examName(T), body: f.body })) + '</p></div></div>' +
+      '<div class="view__head"><div><h1 class="t-h1">' + esc(testTitle(T)) + '</h1><p class="t-lead">' + esc(T.format === 'alimun' ? t('app_mt_alimun_p', { level: T.level }) : t('app_mt_exam_p', { exam: examName(T), body: f.body })) + '</p></div>' +
+      (window.AlimunOffline && window.AlimunOffline.itemButton ? '<div class="btn-row">' + window.AlimunOffline.itemButton(A, 'test', T.id, T.language) + '</div>' : '') + '</div>' +
       '<div class="grid rise"><section class="card span-12 mt-papers" style="--i:0"><h2 class="t-h2">' + esc(t('app_mt_papers_h')) + '</h2><p class="t-body" style="margin-top:6px">' + esc(t('app_mt_papers_p')) + '</p><ul class="qunits__list">';
+    var shut = {};
+    (T.papers || []).forEach(function (p) { if (p.locked) shut[p.id] = true; });
     summary.papers.forEach(function (p) {
       var key = T.id + ':' + p.id, r = results[key], prog = readProg(key);
+      if (shut[p.id]) {
+        html += '<li><div><b>' + esc(p.title) + '</b><span class="lock-line">' + A.icon('lock') + esc(t('app_lock_paper')) + '</span></div>' +
+          '<a class="btn btn--ghost btn--sm" href="#/settings/plans">' + esc(t('app_lock_see')) + '</a></li>';
+        return;
+      }
       var bits = [dur(p.minutes)];
       if (p.questions) bits.push(A.tn('app_mt_questions', p.questions));
       if (p.tasks) bits.push(A.tn('app_mt_tasks', p.tasks));
@@ -580,7 +590,7 @@
       if (!summary) return { html: homeView(list), title: t('app_nav_tests') };
       return Promise.all([loadTest(summary.id), loadAudio(summary.id)]).then(function (r2) {
         var T = r2[0];
-        var paper = parts[1] && T.papers.filter(function (p) { return p.id === parts[1]; })[0];
+        var paper = parts[1] && T.papers.filter(function (p) { return p.id === parts[1] && !p.locked; })[0];
         if (!paper) return { html: testView(T, summary), title: testTitle(T) };
         var key = T.id + ':' + paper.id, again = parts[2] === 'again';
         if (again && !readProg(key)) clearProg(key);

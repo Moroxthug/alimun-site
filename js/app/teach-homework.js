@@ -136,12 +136,12 @@
     if (!c) { box.innerHTML = '<p class="t-body">' + esc(t('app_th_no_course')) + '</p>'; return; }
     box.innerHTML = '<div class="rd-loading" style="min-height:120px"><div class="loader" style="--w:48px" aria-hidden="true">' + A.loaderInner() + '</div></div>';
     var p;
-    if (kind === 'book') p = getJSON('/data/books/' + encodeURIComponent(c.language + '-' + c.level + '.' + uiCode()) + '.json').catch(function () { return getJSON('/data/books/' + encodeURIComponent(c.language + '-' + c.level + '.en') + '.json'); }).then(function (b) {
+    if (kind === 'book') p = window.AlimunData.material('books/' + c.language + '-' + c.level + '.' + uiCode() + '.json').catch(function () { return window.AlimunData.material('books/' + c.language + '-' + c.level + '.en' + '.json'); }).then(function (b) {
       return b.units.filter(function (u) { return !u.planned; }).map(function (u, i) {
         return { group: t('app_book_unit_title', { n: i + 1, title: u.title }), items: (u.pages || []).map(function (pg) { return { key: 'book:' + b.id + ':' + u.id + ':' + pg.id, title: pg.title }; }) };
       });
     });
-    else if (kind === 'lib') p = getJSON('/data/library/' + encodeURIComponent(c.language + '-' + c.level + '-library.' + uiCode()) + '.json').catch(function () { return getJSON('/data/library/' + encodeURIComponent(c.language + '-' + c.level + '-library.en') + '.json'); }).then(function (sh) {
+    else if (kind === 'lib') p = window.AlimunData.material('library/' + c.language + '-' + c.level + '-library.' + uiCode() + '.json').catch(function () { return window.AlimunData.material('library/' + c.language + '-' + c.level + '-library.en' + '.json'); }).then(function (sh) {
       return [{ group: t('app_th_k_lib'), items: sh.pieces.map(function (x) { return { key: 'lib:' + sh.id + ':' + x.id, title: x.title, note: t(x.kind === 'listen' ? 'app_th_listen' : 'app_th_read') }; }) }];
     });
     else p = getJSON('/data/tests/index.json').then(function (ix) {
