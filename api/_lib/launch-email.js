@@ -149,14 +149,15 @@ async function context(sb) {
 }
 
 /** English learners (not staff), not sent yet */
-async function recipients(sb) {
+async function recipients(sb, exclude) {
+  const skip = new Set(exclude || []);
   const { data: people, error } = await sb.from('student_profiles').select('user_id, full_name, level, timezone, ui_lang, language').eq('language', 'English').limit(500);
   if (error) throw new Error('recipients: ' + error.message);
   const { data: sent } = await sb.from('notifications').select('user_id').eq('kind', 'offer').eq('params->>launch', KIND);
   const done = new Set((sent || []).map((x) => x.user_id));
   const out = [];
   for (const p of people || []) {
-    if (done.has(p.user_id)) continue;
+    if (done.has(p.user_id) || skip.has(p.user_id)) continue;
     const { data: u } = await sb.auth.admin.getUserById(p.user_id);
     const user = u && u.user;
     if (!user || !user.email || (user.app_metadata && ['admin', 'teacher'].includes(user.app_metadata.role))) continue;
@@ -167,7 +168,7 @@ async function recipients(sb) {
 
 async function run(sb, mode, opts) {
   const ctx = await context(sb);
-  const list = await recipients(sb);
+  const list = await recipients(sb, ctx.offer.exclude);
   if (mode === 'preview') {
     return { count: list.length, people: list.map((r) => { const e = build(r, ctx); return { name: r.name, level: r.level, timezone: r.timezone, lang: e.lang, beginner: !e.upper, subject: e.subject }; }) };
   }

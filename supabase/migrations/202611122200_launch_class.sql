@@ -78,6 +78,13 @@ begin
   on conflict (key) do update set value = excluded.value;
 end $$;
 
+-- Accounts that are not learners, left out of the launch email (two test accounts, two of the owner's own student
+-- accounts and the teacher's student account), checked with the owner's list on 12 Nov 2026
+update public.app_settings set value = (value::jsonb || jsonb_build_object('exclude', jsonb_build_array(
+  '02b9cda9-abce-4e79-a303-1a80aa755fe4', 'ed3d8bba-34da-4ebb-b1f3-566efc6c9bdc', '8dec0dea-9dd0-4c5e-8f29-822f8a388435',
+  '6046bdc6-1afd-4a29-9d95-5cfc005847ee', 'f4251246-e654-47c9-8d71-3e1a586e6f96')))::text
+ where key = 'launch_offer';
+
 -- Verify
 select
   (select count(*) from information_schema.columns where table_schema = 'public' and column_name in ('decide_at', 'linked_room', 'room_session_id', 'offer', 'discount_minor')) as columns,

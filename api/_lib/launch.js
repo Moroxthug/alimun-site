@@ -1,7 +1,8 @@
 /**
  * The English A1–A2 launch class (owner, 12 Nov 2026; docs/MATCHING_PLAN.md, "Launch class").
  *
- * app_settings.launch_offer = { code, rooms: [packRoomId, openRoomId], intro_session, ends_at, eur_off }:
+ * app_settings.launch_offer = { code, rooms: [packRoomId, openRoomId], intro_session, ends_at, eur_off, exclude }
+ *   (exclude: accounts that are not learners, such as test and staff accounts, left out of the email):
  *   - €10 (eur_off, in cents) off the first payment of the level pack or the open class of those rooms, until ends_at,
  *     converted at the day's rate (fx_rates) for other currencies and never below 0.50 left to pay;
  *   - the free first class: a one-date pass (entitlements.session_id) and a place in its one-session class, so it shows
@@ -19,6 +20,7 @@ function parseOffer(value) {
   const ends = Date.parse(o.ends_at);
   if (!rooms.length || !Number.isFinite(ends)) return null;
   return { code: o.code, rooms, intro_session: UUID.test(o.intro_session || '') ? o.intro_session : null, endsAt: ends,
+    exclude: Array.isArray(o.exclude) ? o.exclude.filter((x) => UUID.test(x)) : [],
     eurOff: Math.max(0, Math.min(5000, parseInt(o.eur_off, 10) || 0)) };
 }
 /** Minor units off the first payment, or 0 when the offer does not apply. perEur: the currency's rate (1 for EUR). */

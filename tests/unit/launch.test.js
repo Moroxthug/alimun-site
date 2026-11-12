@@ -6,13 +6,14 @@ const L = require('../../api/_lib/launch.js');
 const R = require('../../api/_lib/rooms.js');
 
 const PACK = '11111111-1111-4111-8111-111111111111', OPEN = '22222222-2222-4222-8222-222222222222', OTHER = '33333333-3333-4333-8333-333333333333';
-const offer = L.parseOffer(JSON.stringify({ code: 'launch-en-a1', rooms: [PACK, OPEN], intro_session: OTHER, ends_at: '2026-11-16T04:00:00Z', eur_off: 1000 }));
+const offer = L.parseOffer(JSON.stringify({ code: 'launch-en-a1', rooms: [PACK, OPEN], intro_session: OTHER, ends_at: '2026-11-16T04:00:00Z', eur_off: 1000, exclude: [OTHER, 'bad'] }));
 const BEFORE = Date.parse('2026-11-13T12:00:00Z');
 const base = { code: 'launch-en-a1', cohortId: PACK, productKey: 'level_en', currency: 'eur', unitAmount: 6400, perEur: 1, now: BEFORE };
 
 test('the offer is read from the setting and refuses bad values', () => {
   assert.strictEqual(offer.eurOff, 1000);
   assert.deepStrictEqual(offer.rooms, [PACK, OPEN]);
+  assert.deepStrictEqual(offer.exclude, [OTHER], 'accounts left out of the email');
   assert.strictEqual(L.parseOffer('not json'), null);
   assert.strictEqual(L.parseOffer({ code: 'Bad Code!', rooms: [PACK], ends_at: '2026-11-16T04:00:00Z' }), null);
   assert.strictEqual(L.parseOffer({ code: 'x', rooms: ['nope'], ends_at: '2026-11-16T04:00:00Z' }), null);
