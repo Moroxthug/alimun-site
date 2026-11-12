@@ -129,6 +129,7 @@ module.exports = async function handler(req, res) {
       .from('sessions')
       .select('id, scheduled_at, daily_room_url')
       .eq('status', 'scheduled')
+      .is('room_session_id', null) // sessions sharing another session's room (launch class Mondays) get none of their own
       .gte('scheduled_at', now.toISOString())
       .lte('scheduled_at', maxStart.toISOString());
     if (fetchError) throw fetchError;

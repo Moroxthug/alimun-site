@@ -1,5 +1,5 @@
 /* Alimun app: Alimun's own checkout page, card first (docs/PRICING_ENGINE_SPEC.md section 4; build step 4, 12 Nov 2026).
-   AlimunPay.open(A, { productKey, cadence, cohortId }, { title, sub, photo }) covers the dashboard with a full-screen
+   AlimunPay.open(A, { productKey, cadence, cohortId, offer }, { title, sub, photo }) covers the dashboard with a full-screen
    checkout in the dashboard's look. The learner adds a card first (a SetupIntent from /api/pricing?action=setup, Stripe's
    Payment Element, nothing charged); the server reads the country the card was issued in and answers with the final
    price (?action=quote), shown before anything is charged ("Your card is from Morocco, so your price is ..."). Pay or
@@ -138,7 +138,9 @@
     var box = q('bill'), p = money(qt.amount, qt.currency), lines = '';
     lines += '<p class="t-body"><b>' + esc(t('app_pay_quote', { country: countryName(qt.cardCountry), price: priced(qt) })) + '</b></p>';
     if (qt.founding && qt.listAmount) lines += '<p class="t-small">' + esc(t('app_pay_founding', { price: money(qt.listAmount, qt.currency) })) + '</p>';
-    if (qt.charge === 'reserve') lines += '<p class="t-small">' + esc(t(qt.cadence === 'month' ? 'app_pay_reserve_mo' : 'app_pay_reserve_up', { price: p })) + '</p>';
+    if (qt.charge === 'reserve') lines += '<p class="t-small">' + esc(t(/^open_/.test(qt.productKey) ? 'app_pay_reserve_open' : qt.cadence === 'month' ? 'app_pay_reserve_mo' : 'app_pay_reserve_up', { price: p })) + '</p>';
+    /* An offer (the launch class): what comes off the first payment */
+    if (qt.discount > 0) lines += '<p class="t-small"><b>' + esc(t('app_pay_offer', { off: money(qt.discount, qt.currency), first: money(Math.max(0, qt.amount - qt.discount), qt.currency) })) + '</b></p>';
     else if (qt.cadence === 'month' || qt.cadence === 'year') lines += '<p class="t-small">' + esc(t(qt.cadence === 'year' ? 'app_pay_then_year' : 'app_pay_then_month', { price: p })) + '</p>';
     if (qt.minutes) lines += '<p class="t-small">' + esc(t('app_pay_minutes_p', { n: qt.minutes })) + '</p>';
     if (qt.taxInclusive === false) lines += '<p class="t-small">' + esc(t('app_pp_tax_plus')) + '</p>';
@@ -234,7 +236,7 @@
     setBusy(true); say(''); label(t('app_pay_checking'));
     stripe.confirmSetup({ elements: elements, redirect: 'if_required', confirmParams: { return_url: location.origin + '/app#/settings/plans' } }).then(function (r) {
       if (r && r.error) throw Object.assign(new Error(r.error.message || 'card'), { stripeMessage: r.error.message });
-      return post('quote', { setupIntentId: setup.setupIntentId, productKey: want.productKey, cadence: want.cadence, cohortId: want.cohortId || undefined, sessionId: want.sessionId || undefined });
+      return post('quote', { setupIntentId: setup.setupIntentId, productKey: want.productKey, cadence: want.cadence, cohortId: want.cohortId || undefined, sessionId: want.sessionId || undefined, offer: want.offer || undefined });
     }).then(function (qt) {
       setBusy(false);
       if (!el) return;

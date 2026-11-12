@@ -228,9 +228,40 @@
       '<p class="t-tiny" style="margin-top:6px">The time on the left is the time where they live right now.</p>' +
       '<div class="tt-week" data-mt-rows>' + everyoneRows(R) + '</div></section>';
   }
+  /* ---------- The English A1–A2 launch class (owner, 12 Nov 2026; api/_lib/launch.js, launch-email.js) ---------- */
+  var LAUNCH = null, LMAIL = null;
+  function launchCard() {
+    if (S.lang !== 'English') return '';
+    var L = LAUNCH;
+    var html = '<section class="card card--lime span-12" style="--i:1" aria-labelledby="h-launch"><h2 class="t-h2" id="h-launch">Launch class</h2>';
+    if (!L) return html + '<p class="t-body" style="margin-top:8px">' + esc(real() ? 'Not set up, or it did not load.' : 'In the sample there is no launch class.') + '</p></section>';
+    if (!L.offer) return html + '<p class="t-body" style="margin-top:8px">No launch class is set up.</p></section>';
+    var rooms = (L.rooms || []).map(function (r) { return (/^level_/.test(r.product_key) ? 'level pack ' : 'open class ') + r.seats + ' (' + r.state + ')'; }).join(', ');
+    html += '<p class="t-body" style="margin-top:8px">' + esc('Sign-ups: ' + L.seats + ' of ' + L.min + ' needed (' + rooms + '). Free first class: ' + (L.intro ? L.intro.registeredCount + ' registered' : 'none') + '. Sign-ups ' + (L.offer.active ? 'close ' + A.fmt(L.offer.endsAt, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : 'are closed') + '. The class page learners see: /app#/settings/plans/launch.') + '</p>';
+    var m = LMAIL;
+    if (m && m.people) html += '<p class="t-body" style="margin-top:10px"><b>' + esc(A.plural(m.count, 'learner has', 'learners have') + ' not had the email yet') + '</b></p><div class="tt-week">' + m.people.map(function (x) {
+      return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc((x.level || '') + ' ' + x.lang) + '</span><span><b>' + esc(x.name || 'No name') + '</b><small>' + esc((x.timezone || 'zone not known') + '. ' + x.subject) + '</small></span></div>';
+    }).join('') + '</div>';
+    if (m && m.tests) html += '<p class="t-body" style="margin-top:10px">' + esc('Test emails sent to you: ' + m.tests.map(function (x) { return x.lang + (x.beginner ? '' : ' (B1 and above)') + (x.ok ? '' : ' failed'); }).join(', ') + '.') + '</p>';
+    if (m && m.sent != null) html += '<p class="t-body" style="margin-top:10px"><b>' + esc(A.plural(m.sent, 'email sent', 'emails sent') + (m.failed && m.failed.length ? '; failed: ' + m.failed.join(', ') : '') + '.') + '</b></p>';
+    html += '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-mx-mail="preview">Who gets the email</button><button class="btn btn--ghost btn--sm" type="button" data-mx-mail="test">Send me a test</button>' +
+      (m && m.people && m.count ? '<button class="btn btn--ghost btn--sm" type="button" data-mx-mail="send">' + esc('Send to ' + A.plural(m.count, 'learner', 'learners')) + '</button>' : '') + '</div>' +
+      '<p class="t-small st-msg" data-mx-mailmsg aria-live="polite"></p></section>';
+    return html;
+  }
+  function launchMail(b) {
+    var mode = b.getAttribute('data-mx-mail'), msg = root.querySelector('[data-mx-mailmsg]');
+    if (!real()) { msg.textContent = 'This is sample data; nothing is sent.'; return; }
+    if (mode === 'send' && !window.confirm('Send the launch email to ' + LMAIL.count + ' learners now?')) return;
+    b.disabled = true; msg.textContent = mode === 'preview' ? 'Working it out\u2026' : 'Sending\u2026';
+    window.AlimunData.adminLaunchEmail(mode, mode === 'send' ? LMAIL.count : undefined).then(function (r) {
+      LMAIL = mode === 'send' ? r : mode === 'test' ? Object.assign({}, LMAIL, r) : r;
+      if (mode === 'send') return window.AlimunData.adminLaunchEmail('preview').then(function (p) { LMAIL = Object.assign(p, { sent: r.sent, failed: r.failed }); });
+    }).then(function () { draw(); }, function (e) { b.disabled = false; msg.textContent = 'That did not work: ' + ((e && e.body && e.body.error) || (e && e.message) || 'please try again') + '.'; });
+  }
   function mainView(R) {
     return '<div class="view__head"><div><h1 class="t-h1">Matching</h1><p class="t-lead">Every learner’s level, focus and time zone, the groups they could form, and who is closest to buying. Worked out again each time you open this page; nothing here is saved or sent.</p></div></div>' +
-      '<div class="grid rise">' + controls(R) + whoCard(R) + heatCard(R) + groupsCards(R) + unplacedCard(R) + readyCard(R) + everyoneCard(R) +
+      '<div class="grid rise">' + controls(R) + launchCard() + whoCard(R) + heatCard(R) + groupsCards(R) + unplacedCard(R) + readyCard(R) + everyoneCard(R) +
       (real() ? '' : '<p class="t-tiny span-12">This is sample data.</p>') + '</div>';
   }
 
@@ -305,6 +336,8 @@
       var b = root.querySelector('[data-mt-rows]'); if (b) b.innerHTML = everyoneRows(R);
     });
     root.addEventListener('click', function (e) {
+      var lm = e.target.closest('[data-mx-mail]');
+      if (lm && !lm.disabled) { launchMail(lm); return; }
       var b = e.target.closest('[data-mt-room],[data-mt-emails]');
       if (!b || !R) return;
       if (b.hasAttribute('data-mt-room')) makeRoom(+b.getAttribute('data-mt-room'));
@@ -324,6 +357,7 @@
     bind();
     if (!window.AlimunMatch) { root.innerHTML = '<div class="card"><p class="t-body">The matching engine did not load. Please reload the page.</p></div>'; return Promise.resolve({ stale: true }); }
     var get = RAW && real() && parts0 ? Promise.resolve(RAW) : real() ? window.AlimunData.adminMatching() : Promise.resolve(sample());
+    if (real() && !parts0 && window.AlimunData.launchInfo) get = Promise.all([get, window.AlimunData.launchInfo().catch(function () { return null; })]).then(function (r) { LAUNCH = r[1]; return r[0]; });
     if (!RAW || !parts0) root.innerHTML = loading();
     return get.then(function (d) {
       if (my !== no) return { stale: true };

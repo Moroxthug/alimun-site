@@ -133,7 +133,7 @@ module.exports = async function handler(req, res) {
     // 2. Load session + cohort + teacher
     const { data: session, error: sessionError } = await supabase
       .from('sessions')
-      .select('id, scheduled_at, status, daily_room_url, cohort_id, cohorts ( id, teacher_id, language, level, teacher_profiles ( id, user_id, full_name, status ) )')
+      .select('id, scheduled_at, status, daily_room_url, cohort_id, room_session_id, cohorts ( id, teacher_id, language, level, teacher_profiles ( id, user_id, full_name, status ) )')
       .eq('id', sessionId)
       .maybeSingle();
 
@@ -165,8 +165,9 @@ module.exports = async function handler(req, res) {
         if (enrollment) studentProfile = sp;
       }
       // A trial or help-class pass for this one class date (api/pricing.js, docs/PRICING_ENGINE_SPEC.md step 7)
+      // (checked even when enrolled: the launch class's free first class gives both a place and a pass)
       let pass = false;
-      if (!studentProfile) {
+      {
         const { data: passes } = await supabase.from('entitlements').select('id').eq('user_id', user.id)
           .eq('session_id', session.id).eq('status', 'active').limit(1);
         if (passes && passes.length && sp) { studentProfile = sp; pass = true; }
@@ -195,7 +196,8 @@ module.exports = async function handler(req, res) {
     //    scoped to it), and its expiry is refreshed on every join so a
     //    rescheduled session or a room pre-created by the cron with a stale
     //    exp/config stays joinable (APIP-12, APIO-12).
-    const roomName = `alimun-${session.id}`;
+    // The launch class's open-class Mondays share the level pack's video room (sessions.room_session_id)
+    const roomName = `alimun-${UUID_RE.test(session.room_session_id || '') ? session.room_session_id : session.id}`;
     const expEpoch = Math.floor(endMs / 1000);
     const roomProperties = {
       exp: expEpoch,

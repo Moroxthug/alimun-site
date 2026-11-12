@@ -71,7 +71,8 @@ async function fulfil(ctx, user, q, refs) {
       source: 'stripe', cohort_id: q.cohort_id, voice_minutes_month: (pr && pr.voice_minutes_month) || 0, quote_id: q.id,
       stripe_payment_method_id: q.payment_method_id, session_id: q.session_id || null,
     };
-    if (prod.charge === 'reserve') Object.assign(ent, { status: 'pending_room', amount_paid: 0 });
+    if (q.offer) Object.assign(ent, { offer: q.offer, discount_minor: q.discount_minor || 0 });
+    if (prod.charge === 'reserve' || refs.reserve) Object.assign(ent, { status: 'pending_room', amount_paid: 0 });
     else Object.assign(ent, { status: 'active', starts_at: new Date().toISOString(), amount_paid: refs.amountPaid || 0,
       ends_at: refs.periodEnd || null, stripe_subscription_id: refs.subscription || null,
       stripe_invoice_id: refs.subscription ? null : (refs.invoice || null), last_invoice_id: refs.invoice || null });
@@ -79,7 +80,7 @@ async function fulfil(ctx, user, q, refs) {
     if (error) throw new Error('entitlement: ' + error.message);
     entitlementId = data.id;
     // An open class is a room that already runs or is about to: the learner joins it at once
-    if (prod.kind === 'open_class' && q.cohort_id) await enrol(sb, user.id, q.cohort_id);
+    if (prod.kind === 'open_class' && q.cohort_id && !refs.reserve) await enrol(sb, user.id, q.cohort_id);
   }
   if (q.product_key === 'trial') {
     const pm = await stripe.paymentMethods.retrieve(q.payment_method_id);
@@ -356,12 +357,20 @@ async function startPack(ctx, ent, startAt) {
   const meta = { type: TYPE, entitlement_id: ent.id, product_key: ent.product_key, band: ent.band, variant: ent.variant, cadence: ent.cadence, supabase_user_id: ent.user_id };
   const at = startAt instanceof Date ? startAt : new Date();
   // Moving up from an open class: its unused share of the month comes off the pack's first payment
-  const credit = at.getTime() <= Date.now() + 60000 ? await moveUpCredit(ctx, ent, customer, Date.now()) : 0;
+  const isOpen = /^open_/.test(ent.product_key);
+  const credit = at.getTime() <= Date.now() + 60000 && !isOpen ? await moveUpCredit(ctx, ent, customer, Date.now()) : 0;
+  // An offer's discount (launch class, €10 off): off the first payment, in the entitlement's currency
+  const discount = Math.max(0, Math.min(ent.discount_minor || 0, price.unit_amount - 50));
   if (ent.cadence === 'month') {
     const future = at.getTime() > Date.now() + 60000;
+    if (discount > 0) {
+      await stripe.customers.createBalanceTransaction(customer, { amount: -discount, currency: ent.currency,
+        description: 'Launch offer: off the first payment', metadata: { type: TYPE, entitlement_id: ent.id, offer: ent.offer || '' } }, { idempotencyKey: 'offer-' + ent.id });
+    }
+    // A pack is three monthly payments; an open class reserved for its first day goes on monthly until cancelled
     const sched = await stripe.subscriptionSchedules.create({
-      customer, start_date: future ? Math.floor(at.getTime() / 1000) : 'now', end_behavior: 'cancel', metadata: meta,
-      phases: [{ items: [{ price: price.stripe_price_id }], iterations: 3, currency: ent.currency,
+      customer, start_date: future ? Math.floor(at.getTime() / 1000) : 'now', end_behavior: isOpen ? 'release' : 'cancel', metadata: meta,
+      phases: [{ items: [{ price: price.stripe_price_id }], iterations: isOpen ? 1 : 3, currency: ent.currency,
         default_payment_method: ent.stripe_payment_method_id || undefined, metadata: meta }],
     }, { idempotencyKey: 'pack-sched-' + ent.id });
     const { error } = await sb.from('entitlements').update({ stripe_schedule_id: sched.id, starts_at: at.toISOString(),
@@ -372,7 +381,7 @@ async function startPack(ctx, ent, startAt) {
   // Upfront: one off-session payment now (the room job calls this on the first day)
   try {
     const pi = await stripe.paymentIntents.create({
-      amount: Math.max(50, price.unit_amount - credit), currency: ent.currency, customer, payment_method: ent.stripe_payment_method_id,
+      amount: Math.max(50, price.unit_amount - credit - discount), currency: ent.currency, customer, payment_method: ent.stripe_payment_method_id,
       off_session: true, confirm: true, metadata: meta, description: `Alimun ${ent.product_key}`,
     }, { idempotencyKey: 'pack-pi-' + ent.id });
     await sb.from('entitlements').update({ stripe_payment_intent_id: pi.id, starts_at: at.toISOString(), updated_at: new Date().toISOString() }).eq('id', ent.id);

@@ -444,6 +444,19 @@
         if (go) { go.href = '#/settings/plans/pick/' + product + '/month'; go.textContent = t('app_home_offer_go'); }
       });
     }
+    // The English launch class (api/_lib/launch.js): free first class, then the class from Monday, while sign-ups are open
+    if (suffix === 'en' && window.AlimunData.launchInfo) {
+      window.AlimunData.launchInfo().then(function (L) {
+        var grid = view.querySelector('.grid');
+        if (!L || !L.offer || !L.offer.active || !grid || current !== 'home' || grid.querySelector('[data-launch]')) return;
+        if ((L.mine || []).length && (!L.intro || L.intro.registered)) return;
+        var at = L.intro && L.intro.open && !L.intro.registered ? new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(L.intro.at)) : null;
+        grid.insertAdjacentHTML('afterbegin', '<section class="card card--lime span-12" data-launch aria-labelledby="h-launch"><div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:240px">' +
+          '<h2 class="t-h2" id="h-launch">' + esc(t(at ? 'app_ln_home_h' : 'app_ln_title')) + '</h2><p class="t-body" style="margin-top:10px">' +
+          esc(at ? t('app_ln_home_p', { when: at }) : t('app_ln_off')) + '</p></div>' +
+          '<a class="btn btn--primary" href="#/settings/plans/launch">' + esc(t('app_ln_home_go')) + '</a></div></section>');
+      }, function () { /* no launch class */ });
+    }
     // In an open class for more than two months: the level pack, the month credited
     if (!window.AlimunData.myEntitlements) return;
     window.AlimunData.myEntitlements().then(function (rows) {

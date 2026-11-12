@@ -69,6 +69,9 @@ function planDecisions(rooms) {
   return { merges, open, cancel };
 }
 
+/** A class with its own decision time: open with at least `min` learners across its linked rooms (pure, unit tested). */
+function decideLinked(seats, min) { return seats >= Math.max(1, min || 0) ? 'open' : 'cancel'; }
+
 // ── Planning: suggested rooms from the teachers' availability and the learners' demand ──
 const WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 /** Pack start dates: the first Monday of each month, the next n that still leave 14 days to fill the room. */
@@ -265,7 +268,41 @@ async function runRoomJob(ctx, now) {
   }
 
   // 10 days before: merge, open or cancel the pack rooms
-  const due = await rows(sb.from('cohorts').select('*').eq('room_state', 'published').lte('starts_on', addDays(today, 10)), 'due rooms');
+  // Rooms with their own decision time (decide_at, with a linked room counted together): open both or cancel both
+  const decideNow = await rows(sb.from('cohorts').select('*').eq('room_state', 'published').not('decide_at', 'is', null).lte('decide_at', (now || new Date()).toISOString()), 'rooms to decide');
+  const seen = new Set();
+  for (const r of decideNow) {
+    if (seen.has(r.id)) continue;
+    const pair = [r];
+    if (r.linked_room) {
+      const other = decideNow.find((x) => x.id === r.linked_room) ||
+        (await rows(sb.from('cohorts').select('*').eq('id', r.linked_room).eq('room_state', 'published'), 'linked room'))[0];
+      if (other) pair.push(other);
+    }
+    pair.forEach((x) => seen.add(x.id));
+    let seats = 0;
+    for (const x of pair) seats += await seatsOf(sb, x.id);
+    const min = Math.max(...pair.map((x) => (isPack(x.product_key) ? x.min_learners : 0) || 0), r.min_learners || 0);
+    const d = decideLinked(seats, min);
+    for (const x of pair) {
+      if (d === 'open') {
+        await setRoom(sb, x.id, { room_state: 'open', decided_at: new Date().toISOString(), contract_offered_at: x.contract_offered_at || new Date().toISOString() });
+        out.opened++;
+      } else {
+        for (const ent of await reservations(sb, x.id)) {
+          await E.releasePack(ctx, ent);
+          await ctx.tell.learner(ent.user_id, 'room_cancelled', x, {});
+        }
+        await setRoom(sb, x.id, { room_state: 'cancelled', decided_at: new Date().toISOString() });
+        await cancelSessions(sb, x.id);
+        out.cancelled++;
+      }
+    }
+    attention.push(`${label(r)}: ${seats} of ${min} learners signed up, so the class ${d === 'open' ? 'opens and starts on ' + r.starts_on : 'was cancelled and nothing was charged'}.`);
+  }
+
+  const due = (await rows(sb.from('cohorts').select('*').eq('room_state', 'published').lte('starts_on', addDays(today, 10)), 'due rooms'))
+    .filter((r) => !r.decide_at);
   const packRooms = [];
   for (const r of due.filter((x) => isPack(x.product_key))) packRooms.push(Object.assign({}, r, { seats: await seatsOf(sb, r.id) }));
   const byId = Object.fromEntries(packRooms.map((r) => [r.id, r]));
@@ -361,11 +398,12 @@ async function seatProblem(sb, productKey, cohortId, sessionId) {
   }
   if (!kind) return null;
   if (!cohortId) return kind === 'open_class' ? 'room_required' : null;   // a pack may be reserved for the next start
-  const { data: r } = await sb.from('cohorts').select('id, product_key, room_state, max_students').eq('id', cohortId).maybeSingle();
+  const { data: r } = await sb.from('cohorts').select('id, product_key, room_state, max_students, decide_at').eq('id', cohortId).maybeSingle();
   if (!r || r.product_key !== productKey) return 'room_unavailable';
-  const ok = kind === 'open_class' ? ['open', 'running'] : ['published', 'open'];
+  /* An open class waiting for its decision (decide_at) is reserved like a pack */
+  const ok = kind === 'open_class' ? (r.decide_at ? ['published', 'open', 'running'] : ['open', 'running']) : ['published', 'open'];
   if (!ok.includes(r.room_state)) return 'room_unavailable';
   return (await seatsOf(sb, cohortId)) >= r.max_students ? 'room_full' : null;
 }
 
-module.exports = { KINDS, PRODUCT_KIND, LANGUAGE, planDecisions, planProposals, packStarts, demandOf, suggestRooms, announceRoom, runRoomJob, seatProblem, enrol, unenrol, isPack, addDays, ymd };
+module.exports = { KINDS, PRODUCT_KIND, LANGUAGE, planDecisions, decideLinked, planProposals, packStarts, demandOf, suggestRooms, announceRoom, runRoomJob, seatProblem, enrol, unenrol, isPack, addDays, ymd };

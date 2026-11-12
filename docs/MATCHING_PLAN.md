@@ -92,3 +92,27 @@ In this order, each step using what is already built:
 Decisions for the owner: the banner and email wording (step 1); whether the first founding rooms may open below 8
 (today `min_learners` is 8 for packs and 12 for the open class, `api/_lib/rooms.js`); whether to create the European A1
 room for 7 December now.
+
+## Launch class (owner, 12 Nov 2026)
+
+Owner: "students should not be the ones dictating time ... email them and propose a new class starting next monday ...
+start them all at either open class or level pack, both discounted of 10 euros ... class will be formed if 8 users min
+... first class will be free ... i will teach the first class." Answers: free class Saturday 14 November 17:00 Paris,
+level pack Monday, Tuesday and Thursday 19:00 Paris and open class Mondays 19:00 (the same class) from 16 November;
+one beginner class A1–A2 (B1 and above are invited to the free class); email everyone with an unsubscribe link; the
+owner teaches (an approved English teacher profile on the owner's account).
+
+- Rooms: `level_en` A1 and `open_en` A1 from 16 November, owner as teacher, contract accepted, `decide_at` Monday
+  16 November 04:00 UTC, linked. The daily room job (04:23 UTC) counts both rooms' sign-ups together: 8 or more and both
+  open and start that day (cards charged, learners enrolled); fewer and both are cancelled, nothing charged, learners
+  emailed. The open class's Mondays use the pack's video room (`sessions.room_session_id`).
+- Sign-up: learners reserve (card saved, nothing charged) on `/app#/settings/plans/launch`, which shows the free class,
+  the times in their own time zone, places taken and the prices with €10 off the first payment (`app_settings.launch_offer`,
+  converted at the day's rate for other currencies; `api/_lib/launch.js`). The open class reserved this way goes on
+  monthly after its first day. B1 and above see only the free class and a line about a class at their level.
+- Free first class: one click on that page gives a free pass and a place in a one-session class, so the join button
+  shows under Classes 15 minutes before; the owner opens it from Admin → Overview → Today's classes.
+- Home: English learners see a lime card pointing to the page while sign-ups are open.
+- Email (`api/_lib/launch-email.js`): in the learner's language (English, French, Spanish, German), times in their zone,
+  unsubscribe link, plus a note in the dashboard bell. Sent from Admin → Matching → Launch class: who gets it, a test
+  to the owner, then send (once per learner).

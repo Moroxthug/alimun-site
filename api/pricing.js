@@ -21,6 +21,10 @@
  *   GET  ?action=cron-rooms         (Vercel cron) the rooms' daily steps (api/_lib/rooms.js).
  *   GET  ?action=cron-finance       (Vercel cron) founding notices and ends, weekly exchange rates, the monthly figures.
  *   GET  ?action=admin-figures      (admin) the figures page; POST ?action=admin-spend records acquisition spend.
+ *   GET  ?action=launch             (signed in) the launch class: offer, times, places, the free class (api/_lib/launch.js);
+ *                                   POST ?action=launch-register a free place in its free first class. A quote may carry
+ *                                   { offer } for €10 off the first payment of the launch class's rooms.
+ *   POST ?action=admin-launch-email (admin) { mode: preview | test | send, confirm }: the launch email (launch-email.js).
  *   GET  ?action=cron-billing       (Vercel cron, Bearer CRON_SECRET) pauses entitlements unpaid for 3 days
  *                                   (public.pause_unpaid_entitlements), which frees their seats.
  *
@@ -35,6 +39,8 @@ const P = require('./_lib/pricing.js');
 const E = require('./_lib/entitlements.js');
 const R = require('./_lib/rooms.js');
 const F = require('./_lib/finance.js');
+const LAUNCH = require('./_lib/launch.js');
+const LAUNCH_MAIL = require('./_lib/launch-email.js');
 const mail = require('./_lib/email.js');
 const L = require('./_lib/email-i18n.js');
 const { recordRun } = require('./_lib/cron-log.js');
@@ -200,8 +206,19 @@ async function handleQuote(req, res, sb, user) {
   if (!price || !price.stripe_price_id) return fail(res, 503, 'price_missing');
   const list = variant === 'founding' ? (rows || []).find((r) => r.variant === 'list' && r.currency === currency) : null;
 
+  // The launch offer (api/_lib/launch.js): €10 off the first payment for the launch class's rooms
+  let offer = null, discount = 0;
+  if (typeof b.offer === 'string' && cohortId) {
+    const lo = await LAUNCH.offerOf(sb);
+    discount = LAUNCH.discountFor(lo, { code: b.offer, cohortId, productKey, currency, unitAmount: price.unit_amount,
+      perEur: await LAUNCH.rateOf(sb, currency), now: Date.now() });
+    if (discount > 0) offer = lo.code;
+  }
+  const reserveRoom = await reservesFirst(sb, productKey, cohortId);
+
   const expires = new Date(Date.now() + P.QUOTE_MINUTES * 60000).toISOString();
   const { data: q, error: qErr } = await sb.from('quotes').insert({
+    offer, discount_minor: discount,
     user_id: user.id, product_key: productKey, variant, cadence, band, currency, unit_amount: price.unit_amount,
     stripe_price_id: price.stripe_price_id, setup_intent_id: si.id, cohort_id: R.PRODUCT_KIND[productKey] ? cohortId : null,
     session_id: productKey === 'trial' || productKey === 'help_class' ? sessionId : null, expires_at: expires,
@@ -212,9 +229,17 @@ async function handleQuote(req, res, sb, user) {
   return res.status(200).json({
     quoteId: q.id, productKey, cadence, band, currency, amount: price.unit_amount, listAmount: list ? list.unit_amount : null,
     founding: variant === 'founding', cardCountry, taxInclusive: row.band === band ? row.tax_inclusive !== false : true,
-    charge: P.PRODUCTS[productKey].charge, months: P.PRODUCTS[productKey].kind.endsWith('_pack') ? 3 : null,
+    charge: reserveRoom ? 'reserve' : P.PRODUCTS[productKey].charge, months: P.PRODUCTS[productKey].kind.endsWith('_pack') ? 3 : null,
+    discount, offer,
     minutes: P.PRODUCTS[productKey].minutes || null, expiresAt: expires,
   });
+}
+
+/** An open class in a room still waiting for its decision (cohorts.decide_at) is reserved like a pack. */
+async function reservesFirst(sb, productKey, cohortId) {
+  if (!cohortId || !/^open_/.test(productKey || '')) return false;
+  const { data } = await sb.from('cohorts').select('decide_at, room_state').eq('id', cohortId).maybeSingle();
+  return !!(data && data.decide_at && data.room_state === 'published');
 }
 
 /** Locks the band (logged) and, for a founding quote, claims the seat. Returns an error code or null. */
@@ -286,10 +311,11 @@ async function handlePurchase(req, res, sb, user) {
   }
   await stripe.customers.update(customer, custUpdate);
 
-  if (prod.charge === 'reserve') {
+  const reserveRoom = await reservesFirst(sb, q.product_key, q.cohort_id);
+  if (prod.charge === 'reserve' || reserveRoom) {
     // The card stays on the customer for the room's first day (section 5); nothing is charged now.
     await stripe.customers.update(customer, { invoice_settings: { default_payment_method: pm.id } });
-    const id = await fulfil(sb, user, q, {});
+    const id = await fulfil(sb, user, q, { reserve: reserveRoom });
     return res.status(200).json({ done: true, reserved: true, entitlementId: id });
   }
 
@@ -820,6 +846,25 @@ module.exports = async function handler(req, res) {
       if (!teacher) return fail(res, 401, 'sign_in_required');
       if (action === 'contracts' && req.method === 'GET') return await handleContracts(req, res, sb, teacher);
       if (action === 'contract' && req.method === 'POST') return await handleContract(req, res, sb, teacher);
+      return fail(res, 405, 'method_not_allowed');
+    }
+    if (action === 'admin-launch-email') {
+      const me = await userOf(req, sb);
+      if (!me) return fail(res, 401, 'sign_in_required');
+      if (!me.app_metadata || me.app_metadata.role !== 'admin') return fail(res, 403, 'admins_only');
+      if (req.method !== 'POST') return fail(res, 405, 'method_not_allowed');
+      const b = body(req) || {};
+      const out = await LAUNCH_MAIL.run(sb, String(b.mode || ''), { confirm: b.confirm, ownerEmail: me.email });
+      return out.error ? fail(res, 409, out.error, out) : res.status(200).json(out);
+    }
+    if (action === 'launch' || action === 'launch-register') {
+      const me = await userOf(req, sb);
+      if (!me) return fail(res, 401, 'sign_in_required');
+      if (action === 'launch' && req.method === 'GET') return res.status(200).json(await LAUNCH.info(sb, me));
+      if (action === 'launch-register' && req.method === 'POST') {
+        const r = await LAUNCH.register(sb, me);
+        return r.error ? fail(res, r.status, r.error) : res.status(200).json(r);
+      }
       return fail(res, 405, 'method_not_allowed');
     }
     if (['availability', 'room-me', 'interest', 'assign'].includes(action)) {
