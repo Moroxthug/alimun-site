@@ -14,7 +14,7 @@ Online only: live classes (Daily), the AI tutor and speaking practice, pronuncia
 
 ## Step 1: offline foundation (built 12 Nov 2026, waiting for the owner's check)
 - `app-sw.js`, the service worker, scope `/app` only (teacher and admin pages and the public site are not touched). The app's files are served from the device and refreshed in the background, so a second open takes about a quarter of a second instead of almost two. Course data is network-first with the saved copy as fallback. Recordings come from the downloads with byte-range support for audio players. The API, database, auth, Stripe and Daily are never cached. Bump `VERSION` in it to drop cached app files after a breaking change. Emergency off switch: replace `app-sw.js` with one whose `activate` deletes the `alimun-shell-*` and `alimun-data-*` caches and calls `self.registration.unregister()`; browsers fetch the worker without cache, so it takes effect on the next visit.
-- `app/manifest.webmanifest` and icons in `images/app/` (the forest and gold mark on lime): Alimun can be installed on the home screen and opens full screen at `/app`.
+- `app/manifest.webmanifest` and icons in `images/app/` (the forest and gold mark on white): Alimun can be installed on the home screen and opens full screen at `/app`.
 - `js/app/offline.js`: downloads per book or library shelf (both explanation languages the reader switches between, plus the recordings), removal, the size on the device, the offline note, the "Back online" note, and "Install the app" (the browser's prompt on Android and desktop, the Share steps on iPhone and iPad).
 - `js/app/data.js`: Home's data saved per account so the app opens at once, then refreshed quietly (`quickStart`); the reads the material needs keep their last answer; the learner's writes go to an outbox when offline (`writeOrKeep`, `flush`), sent when the connection is back, after renewing the sign-in. Never for an admin viewing someone (`?as=`).
 - Settings has a "Use Alimun offline" card with the learner's course book, goal book and library shelf; the book cover has "Download for offline".
@@ -43,7 +43,7 @@ Ideas, none built: a home-screen widget with the word of the day and the flashca
 - "everyone can download, free download has limited access, like 2/3 units and a few exercises". Every account can download. Learners without a paid plan get the first two or three units of the book and a few exercises; paying learners get everything. Built in its own step, before or with step 2. The exact number of units and which exercises are free are still to be settled.
 - Owner, 12 Nov: "yes, offline and online both limited for free users". The same limit applies in the browser and in downloads. Today a free learner can read the whole book online (the reader, library and practice check no plan), so the paid units must be served only to signed-in paying learners (an API check), not as public files.
 - Step 2 starts in a new conversation.
+- Owner, 12 Nov: "logo should always be on white bg, except for dark mode, where we will later plan better colour". The app icons and the install screen background are white. A dark-mode colour is to be planned later.
 
 ## Decisions for the owner
-- The app icon (the mark in forest and gold on lime, `images/app/icon-512.png`).
 - When to start step 3 (Apple and Google developer accounts are needed: Apple $99 a year, Google $25 once).
