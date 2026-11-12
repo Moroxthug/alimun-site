@@ -136,3 +136,57 @@ test('seats: packs reserve in published rooms, open classes need a room, trials 
   assert.strictEqual(await R.seatProblem(w.ctx.sb, 'trial', null, null), 'session_required');
   assert.strictEqual(await R.seatProblem(w.ctx.sb, 'help_class', null, s.id), 'session_unavailable', 'help passes are for help-class rooms');
 });
+
+// The launch class (docs/MATCHING_PLAN.md, "Launch class"): a pack and an open class linked, deciding at decide_at
+function launchPair(w, startsIn, decideAt) {
+  w.ctx.stripe.customers = { createBalanceTransaction: async (c, p) => { w.charged.push(['credit', p]); return {}; } };
+  w.tables.price_book.push({ product_key: 'level_en', band: 'A', variant: 'founding', cadence: 'month', currency: 'eur', unit_amount: 6400, stripe_price_id: 'price_pack', active: true },
+    { product_key: 'open_en', band: 'A', variant: 'list', cadence: 'month', currency: 'eur', unit_amount: 2400, stripe_price_id: 'price_open', active: true });
+  const extra = { room_state: 'published', starts_on: day(startsIn), decide_at: decideAt, substitute_teacher_id: null, contract_offered_at: new Date().toISOString(), contract_accepted_at: new Date().toISOString() };
+  const pack = addRoom(w, Object.assign({ level: 'A1' }, extra));
+  const open = addRoom(w, Object.assign({ level: 'A1', product_key: 'open_en', max_students: 20, schedule_days: ['Monday'], linked_room: pack.id }, extra));
+  pack.linked_room = open.id;
+  const add = (room, n) => {
+    reserve(w, room, n, 'month');
+    w.tables.entitlements.filter((e) => e.cohort_id === room.id).forEach((e) => Object.assign(e, { band: 'A', currency: 'eur', variant: room.product_key === 'level_en' ? 'founding' : 'list', discount_minor: 1000, offer: 'launch-en-a1' }));
+  };
+  return { pack, open, add };
+}
+
+test('launch class: before its decision time it is neither cancelled nor started, whatever the 10-day rule says', async () => {
+  const w = world();
+  const { pack, open, add } = launchPair(w, 3, new Date(Date.now() + 86400000).toISOString());
+  add(pack, 2);
+  await R.runRoomJob(w.ctx, new Date());
+  assert.deepStrictEqual([pack.room_state, open.room_state], ['published', 'published']);
+  assert.strictEqual(w.charged.length, 0);
+});
+
+test('launch class: 8 sign-ups across the pack and the open class open both, start them, take 10 euros off each first payment', async () => {
+  const w = world();
+  const { pack, open, add } = launchPair(w, 0, new Date(Date.now() - 60000).toISOString());
+  add(pack, 6); add(open, 2);
+  await R.runRoomJob(w.ctx, new Date());
+  assert.deepStrictEqual([pack.room_state, open.room_state], ['running', 'running']);
+  const scheds = w.charged.filter((c) => c[0] === 'schedule').map((c) => c[1]);
+  assert.strictEqual(scheds.length, 8);
+  assert.strictEqual(scheds.filter((p) => p.end_behavior === 'cancel' && p.phases[0].iterations === 3).length, 6, 'pack: three monthly payments');
+  assert.strictEqual(scheds.filter((p) => p.end_behavior === 'release' && p.phases[0].iterations === 1).length, 2, 'open class: monthly until cancelled');
+  const credits = w.charged.filter((c) => c[0] === 'credit').map((c) => c[1]);
+  assert.strictEqual(credits.length, 8);
+  assert.ok(credits.every((c) => c.amount === -1000 && c.currency === 'eur'));
+  assert.strictEqual(w.tables.enrollments.filter((e) => e.status === 'active').length, 8);
+  assert.ok(w.told.some((x) => x[0] === 'owner' && /8 of 8 learners signed up/.test(x[1].join(' '))));
+});
+
+test('launch class: 7 sign-ups cancel both rooms, end every reservation with nothing charged and tell the learners', async () => {
+  const w = world();
+  const { pack, open, add } = launchPair(w, 0, new Date(Date.now() - 60000).toISOString());
+  add(pack, 5); add(open, 2);
+  await R.runRoomJob(w.ctx, new Date());
+  assert.deepStrictEqual([pack.room_state, open.room_state], ['cancelled', 'cancelled']);
+  assert.strictEqual(w.charged.length, 0);
+  assert.strictEqual(w.tables.entitlements.filter((e) => e.status === 'ended').length, 7);
+  assert.strictEqual(w.told.filter((x) => x[1] === 'room_cancelled').length, 7);
+  assert.ok(w.tables.sessions.filter((s) => s.cohort_id === pack.id).every((s) => s.status === 'cancelled'));
+});
