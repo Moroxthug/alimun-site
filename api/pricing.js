@@ -733,7 +733,7 @@ function roomCtx(sb) {
             { p: L.html(lang, 'founding_notice.body2', vars) }, { button: { label: L.say(lang, 'founding_notice.button'), href: `${mail.SITE}/app#/settings/plans` } }] }));
       },
       owner: async (lines) => {
-        const to = process.env.CONTACT_EMAIL || 'bchysfpol@gmail.com';
+        const to = process.env.CONTACT_EMAIL || 'bchysf@gmail.com';
         await send(to, 'Alimun rooms: needs your attention', mail.renderEmail({ hero: 'class', lang: 'en', preheader: 'Rooms that need a decision', heading: 'Rooms that need a decision',
           blocks: lines.map((l) => ({ p: mail.esc(l) })) }));
       },

@@ -90,7 +90,7 @@ module.exports = async function contact(req, res) {
       headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
       body: JSON.stringify({
         from: process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>',
-        to: [process.env.CONTACT_EMAIL || 'bchysfpol@gmail.com'],
+        to: [process.env.CONTACT_EMAIL || 'bchysf@gmail.com'],
         reply_to: email,
         subject: L.say(lang, 'contact.subject', { name }).replace(/[\r\n<>]+/g, ' ').slice(0, 200),
         ...content,

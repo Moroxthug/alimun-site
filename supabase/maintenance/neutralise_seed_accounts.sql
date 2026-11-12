@@ -17,14 +17,14 @@
 --          keeps every row; signs the accounts out)
 --  STEP 2B delete the accounts   (irreversible; owner's explicit yes)
 --
---  The owner account bchysfpol@gmail.com is excluded explicitly.
+--  The owner account bchysf@gmail.com (bchysfpol@gmail.com until 12 Nov 2026) is excluded explicitly.
 -- ============================================================
 
 -- Target accounts. Edit this list if STEP 1 shows a real person.
 create temp table if not exists _seed_accounts as
 select u.id as user_id, u.email
 from auth.users u
-where lower(u.email) <> 'bchysfpol@gmail.com'
+where lower(u.email) <> 'bchysf@gmail.com'
   and (
     lower(u.email) in ('admin@alimun.com', 'sofia@alimun.com', 'lukas@alimun.com',
                        'aisha@example.com', 'marco@example.com', 'yuki@example.com',

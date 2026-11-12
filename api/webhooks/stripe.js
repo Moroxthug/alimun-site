@@ -619,7 +619,7 @@ function pricingCtx(supabase) {
       if (student) await sendPricingPaymentEmail(student, info);
     },
     owner: async (subject, text) => {
-      const to = process.env.CONTACT_EMAIL || 'bchysfpol@gmail.com';
+      const to = process.env.CONTACT_EMAIL || 'bchysf@gmail.com';
       await sendResend({ to, subject, content: mail.renderEmail({ hero: 'payment', lang: 'en', preheader: subject, heading: subject, blocks: [{ p: mail.esc(text) }] }) });
     },
   } };

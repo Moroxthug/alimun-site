@@ -25,7 +25,7 @@ alter table public.entitlements add column if not exists discount_minor integer 
 insert into public.teacher_profiles (user_id, full_name, languages, status, country)
 select u.id, coalesce(nullif(u.raw_user_meta_data ->> 'full_name', ''), 'Alimun'), array['English'], 'approved', 'MA'
   from auth.users u
- where u.email = 'bchysfpol@gmail.com'
+ where u.email = 'bchysf@gmail.com'
    and not exists (select 1 from public.teacher_profiles t where t.user_id = u.id);
 
 -- The class: level pack Monday, Tuesday, Thursday 19:00 Paris and open class Monday 19:00 Paris, from 16 November;
@@ -34,7 +34,7 @@ do $$
 declare
   v_teacher uuid; v_pack uuid; v_open uuid; v_intro uuid; v_session uuid;
 begin
-  select t.id into v_teacher from public.teacher_profiles t join auth.users u on u.id = t.user_id where u.email = 'bchysfpol@gmail.com';
+  select t.id into v_teacher from public.teacher_profiles t join auth.users u on u.id = t.user_id where u.email = 'bchysf@gmail.com';
   if v_teacher is null then raise exception 'owner teacher profile missing'; end if;
 
   select id into v_pack from public.cohorts where product_key = 'level_en' and level = 'A1' and starts_on = date '2026-11-16' and decide_at is not null;

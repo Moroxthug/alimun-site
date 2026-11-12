@@ -40,7 +40,7 @@ async function alertAt80(supabase, spent, budget) {
     const { data: won } = await supabase.from('app_settings').update({ value: today }).eq('key', 'tutor_budget_alerted_on').neq('value', today).select('key');
     if (!won || !won.length) return;
     const mail = require('./email.js');
-    const to = process.env.CONTACT_EMAIL || 'bchysfpol@gmail.com';
+    const to = process.env.CONTACT_EMAIL || 'bchysf@gmail.com';
     const heading = 'The tutor has used 80% of the day’s budget';
     const line = `The tutor has spent $${spent.toFixed(2)} today, ${Math.round((spent / budget) * 100)}% of the day’s budget of $${budget.toFixed(2)}. At 100% the tutor stops answering until midnight UTC. The budget grows with paying learners (tutor_budget_per_paid_usd in Admin, System).`;
     await mail.sendEmail(Object.assign({ to, subject: 'Alimun: ' + heading },

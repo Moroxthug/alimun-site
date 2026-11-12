@@ -181,7 +181,7 @@ async function handleSubmit(req, res, supabase, user) {
 
   try {
     await mail.sendEmail({
-      to: process.env.CONTACT_EMAIL || 'bchysfpol@gmail.com',
+      to: process.env.CONTACT_EMAIL || 'bchysf@gmail.com',
       subject: `Withdrawal received: ${label}`.replace(/[\r\n<>]+/g, ' ').slice(0, 200),
       ...mail.renderEmail({
         heading: 'A learner withdrew from a contract',
