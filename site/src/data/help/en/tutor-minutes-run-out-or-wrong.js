@@ -25,7 +25,7 @@ export default {
       bought: { ask: 'Did you just buy minutes that do not show yet?', yes: 'fix-bought', no: 'plan' },
       'fix-bought': { fix: 'Minutes are added as soon as the payment goes through, which can take a minute. Wait a moment and open the Tutor again. If they still do not show after a few minutes, talk to a person; your payment is checked from our side.', next: 'bought-check' },
       'bought-check': { auto: 'payment', ask: 'Do the minutes show now?', yes: 'done', no: 'person' },
-      plan: { auto: 'access', ask: 'Do you expected plan minutes this month that are missing?', yes: 'fix-plan', no: 'used' },
+      plan: { auto: 'access', ask: 'Are you on a plan and missing this month\'s plan minutes?', yes: 'fix-plan', no: 'used' },
       'fix-plan': { fix: 'Plan minutes are given only while your plan is active, and they are renewed on the first day of each month (UTC); unused plan minutes from last month do not carry over. If a payment failed, your plan may be paused, so check your plan under Plans and prices in Settings. Bought minutes last 12 months from the purchase.', next: 'used' },
       used: { ask: 'Do the minutes left still look wrong to you?', yes: 'person', no: 'done' },
       person: { fix: 'Talk to a person and say what the Tutor page shows and what you expected. Every change to your tutor time is recorded, so it can be checked.', handover: true },
