@@ -77,7 +77,7 @@ export default {
         ]],
         ['Cours en groupe ou cours particuliers', [
           'Les cours particuliers offrent une attention totale, mais coûtent plus cher et vous habituent à un seul interlocuteur. En groupe, vous parlez avec des personnes différentes et **le coût de chaque cours est partagé**.',
-          'Chez Alimun, vous choisissez entre des groupes de tailles différentes, selon l’attention que vous souhaitez, et une formule en cours individuels. Dans tous les cas, les cours ont lieu à jours et heures fixes, pour que l’apprentissage devienne une habitude.',
+          'Chez Alimun, vous choisissez entre un cours ouvert hebdomadaire jusqu’à 20 personnes et des packs jusqu’à 12 personnes qui se retrouvent trois fois par semaine pendant 12 semaines. Dans tous les cas, les cours ont lieu à jours et heures fixes, pour qu’apprendre devienne une habitude.',
         ]],
         ['Combien on progresse', [
           'Il n’existe pas de nombre de semaines valable pour tout le monde : les progrès dépendent du niveau de départ, de la régularité et du travail entre les cours. **Quelques heures régulières chaque semaine** valent mieux que de longues séances espacées.',
@@ -153,7 +153,7 @@ export default {
   faq: (c) => {
     if (c.open) {
       return [
-        [`Combien coûte le cours ${c.de} en ligne d’Alimun ?`, 'Les formules commencent à 24 € par mois avec Community, en groupes d’environ 35 personnes. Focused coûte 59 €, Intensive 109 € et les cours particuliers 1 on 1 269 € par mois. Avec l’abonnement annuel, vous payez dix mois au lieu de douze.'],
+        [`Combien coûte le cours ${c.de} en ligne d’Alimun ?`, 'Il y a trois façons d’apprendre avec un professeur, toutes avec l’app incluse : un cours ouvert chaque semaine, un pack niveau de 12 semaines à trois cours par semaine et un pack examen. Le prix dépend du pays de votre carte ; la page Formules et prix l’affiche dans votre devise, et vous voyez le montant exact avant de payer. Les packs se paient au mois ou en une fois.'],
         ['Puis-je suivre les cours depuis le Maroc ?', 'Oui. Les cours ont lieu en ligne, par vidéo, et vous les suivez depuis n’importe quelle ville, avec une connexion stable.'],
         ['Les cours sont-ils en direct ou enregistrés ?', 'Ce sont des cours en direct par vidéo, avec un professeur et toujours le même groupe. Alimun n’enregistre pas les cours : après chaque cours, vous recevez les notes de la séance, le nouveau vocabulaire et les devoirs.'],
         ['Quels jours et à quelle heure ont lieu les cours ?', 'Chaque groupe se retrouve à jours fixes et à la même heure chaque semaine, avec le même professeur et le même groupe. L’apprentissage devient ainsi une partie de votre semaine.'],

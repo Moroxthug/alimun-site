@@ -65,7 +65,7 @@ export default {
         ]],
         ['Gruppenunterricht oder Einzelunterricht', [
           'Einzelunterricht bietet volle Aufmerksamkeit, kostet aber mehr und gewöhnt Sie an nur einen Gesprächspartner. In der Gruppe sprechen Sie mit verschiedenen Menschen, hören unterschiedliche Akzente, und **die Kosten jeder Stunde werden geteilt**.',
-          'Auf Alimun wählen Sie zwischen Gruppen unterschiedlicher Größe, je nachdem, wie viel Aufmerksamkeit Sie möchten, und einem Tarif mit Einzelunterricht. In allen Fällen findet der Unterricht an festen Tagen und Uhrzeiten statt, damit das Lernen zur Gewohnheit wird.',
+          'Auf Alimun wählen Sie zwischen einem wöchentlichen offenen Kurs mit bis zu 20 Personen und Paketen mit bis zu 12 Personen, die sich 12 Wochen lang dreimal pro Woche treffen. In jedem Fall finden die Kurse an festen Tagen und Uhrzeiten statt, damit Lernen zur Gewohnheit wird.',
         ]],
         ['Wie schnell Sie Fortschritte machen', [
           'Eine für alle gleiche Zahl von Wochen gibt es nicht: Fortschritte hängen vom Ausgangsniveau, von der Regelmäßigkeit und vom Üben zwischen den Stunden ab. **Ein paar feste Stunden pro Woche** bringen mehr als lange, seltene Einheiten.',
@@ -133,7 +133,7 @@ export default {
   faq: (c) => {
     if (c.open) {
       return [
-        [`Was kostet ein ${c.name}kurs online auf Alimun?`, 'Die Tarife beginnen bei €24 im Monat mit Community, in Gruppen von etwa 35 Personen. Focused kostet €59, Intensive €109 und der Einzelunterricht 1 on 1 €269 im Monat. Mit dem Jahresabo zahlen Sie zehn statt zwölf Monate.'],
+        [`Was kostet ein ${c.name}kurs online auf Alimun?`, 'Es gibt drei Wege, mit einer Lehrkraft zu lernen, jeweils mit der App: einen wöchentlichen offenen Kurs, ein 12-wöchiges Niveau-Paket mit drei Kursen pro Woche und ein Prüfungspaket. Der Preis hängt vom Land Ihrer Karte ab; unter Tarife und Preise sehen Sie ihn in Ihrer Währung, und den genauen Betrag sehen Sie vor dem Bezahlen. Pakete zahlen Sie monatlich oder in einer Zahlung.'],
         ['Ist der Unterricht live oder aufgezeichnet?', 'Es ist Live-Unterricht per Video mit einer Lehrkraft und immer derselben Gruppe. Alimun zeichnet den Unterricht nicht auf: Nach jeder Stunde erhalten Sie die Stundennotizen, den neuen Wortschatz und die Hausaufgaben.'],
         ['An welchen Tagen und zu welcher Uhrzeit findet der Unterricht statt?', 'Jeder Kurs trifft sich an festen Tagen und zur selben Uhrzeit jede Woche, mit derselben Lehrkraft und derselben Gruppe. So wird das Lernen ein fester Teil Ihrer Woche.'],
         ['Brauche ich Vorkenntnisse?', 'Nein. Es gibt Kurse ab Niveau A1, und ein kurzer Einstufungstest ordnet Sie von A1 bis C2 ein, damit Sie in den passenden Kurs kommen.'],

@@ -77,7 +77,7 @@ export default {
         ]],
         ['Group classes or private lessons', [
           'Private lessons give you full attention, but they cost more and get you used to one person. In a group you speak with different people, hear different accents, and **the cost of each class is shared**.',
-          'At Alimun you choose between groups of different sizes, depending on how much attention you want, and a plan with one-to-one classes. In every case classes are on fixed days and times, so learning becomes a habit.',
+          'At Alimun you choose between a weekly open class of up to 20 people and packs of up to 12 people that meet three times a week for 12 weeks. In every case classes are on fixed days and times, so learning becomes a habit.',
         ]],
         ['How fast you improve, and what it depends on', [
           'There is no number of weeks that is right for everyone: progress depends on your starting level, how regular you are and how much you practice between classes. **A few regular hours every week** work better than long sessions far apart.',
@@ -167,7 +167,7 @@ export default {
   faq: (c) => {
     if (c.open) {
       return [
-        [`How much does the online ${c.name} course at Alimun cost?`, 'Plans start at €24 a month with Community, in groups of about 35 people. Focused costs €59, Intensive €109 and private 1 on 1 classes €269 a month. With the yearly plan you pay for ten months instead of twelve.'],
+        [`How much does the online ${c.name} course at Alimun cost?`, 'There are three ways to learn with a teacher, each with the app included: a weekly open class, a 12-week level pack with three classes a week, and an exam pack. The price depends on the country your card comes from; Plans and prices shows it in your currency, and you see the exact amount before you pay. Packs can be paid monthly or once.'],
         ['Are the classes live or recorded?', 'They are live video classes with a teacher and always the same group. Alimun does not record classes: after each class you get the session notes, the new vocabulary and your homework.'],
         ['On which days and at what times are the classes?', 'Each group meets on fixed days at the same time every week, with the same teacher and the same group. That way learning becomes part of your week.'],
         ['Do I need a certain level to start?', 'No. There are groups from A1, and a short test at the start places you between A1 and C2 so that you join the right group.'],

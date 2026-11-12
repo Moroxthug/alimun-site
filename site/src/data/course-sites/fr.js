@@ -74,7 +74,7 @@ export default {
         ]],
         ['Cours en groupe ou cours particuliers', [
           "Les cours particuliers offrent une attention complète, mais ils coûtent plus cher et t'habituent à un seul interlocuteur. En groupe, tu parles avec des personnes différentes, tu entends des accents variés et **le coût de chaque cours est partagé**.",
-          "Sur Alimun, tu peux choisir entre des groupes de tailles différentes, selon l'attention que tu souhaites, et une formule de cours individuels. Dans tous les cas, les cours ont lieu à jours et heures fixes, pour que l'apprentissage devienne une habitude.",
+          "Sur Alimun, tu choisis entre un cours ouvert hebdomadaire jusqu’à 20 personnes et des packs jusqu’à 12 personnes qui se retrouvent trois fois par semaine pendant 12 semaines. Dans tous les cas, les cours ont lieu à jours et heures fixes, pour qu’apprendre devienne une habitude.",
         ]],
         ['Combien de progrès et de quoi ils dépendent', [
           "Il n'existe pas de nombre de semaines valable pour tous : les progrès dépendent du niveau de départ, de la régularité et de la pratique entre les cours. **Quelques heures régulières chaque semaine** valent mieux que de longues séances occasionnelles.",
@@ -153,7 +153,7 @@ export default {
   faq: (c) => {
     if (c.open) {
       return [
-        [`Combien coûte un cours ${c.de} en ligne sur Alimun ?`, "Les formules commencent à €24 par mois avec Community, en groupes d'environ 35 personnes. Focused coûte €59, Intensive €109 et les cours particuliers 1 on 1 €269 par mois. Avec l'abonnement annuel, tu paies dix mois au lieu de douze."],
+        [`Combien coûte un cours ${c.de} en ligne sur Alimun ?`, "Il y a trois façons d’apprendre avec un professeur, toutes avec l’app incluse : un cours ouvert chaque semaine, un pack niveau de 12 semaines à trois cours par semaine et un pack examen. Le prix dépend du pays de ta carte ; la page Formules et prix l’affiche dans ta devise, et tu vois le montant exact avant de payer. Les packs se paient au mois ou en une fois."],
         ['Les cours sont-ils en direct ou enregistrés ?', "Ce sont des cours en direct en visio avec un professeur et toujours le même groupe. Alimun n'enregistre pas les cours : après chaque cours, tu reçois les notes de la séance, le nouveau vocabulaire et les devoirs."],
         ['Quels jours et à quelle heure ont lieu les cours ?', "Chaque classe se réunit à jours fixes et à la même heure chaque semaine, avec le même professeur et le même groupe. L'apprentissage devient ainsi une partie de ta semaine."],
         ['Faut-il un niveau minimum pour commencer ?', 'Non. Il y a des classes dès le niveau A1, et un court test initial te situe de A1 à C2 pour que tu entres dans la classe qui te convient.'],

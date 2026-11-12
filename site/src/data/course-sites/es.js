@@ -74,7 +74,7 @@ export default {
         ]],
         ['Clases en grupo o clases particulares', [
           'Las clases particulares ofrecen atención completa, pero cuestan más y te acostumbran a un solo interlocutor. En un grupo hablas con personas distintas, escuchas acentos diferentes y **el coste de cada clase se comparte**.',
-          'En Alimun puedes elegir entre grupos de distinto tamaño, según la atención que quieras, y un plan con clases individuales. En todos los casos las clases son en días y horarios fijos, así estudiar se convierte en un hábito.',
+          'En Alimun eliges entre una clase abierta semanal de hasta 20 personas y packs de hasta 12 personas que se reúnen tres veces por semana durante 12 semanas. En todos los casos las clases son en días y horarios fijos, para que aprender se convierta en un hábito.',
         ]],
         ['Cuánto se mejora y de qué depende', [
           'No existe un número de semanas igual para todos: el progreso depende del nivel de partida, de la constancia y de cuánto practiques entre clase y clase. **Unas horas constantes cada semana** funcionan mejor que sesiones largas y ocasionales.',
@@ -156,7 +156,7 @@ export default {
     const n = c.name;
     if (c.open) {
       return [
-        [`¿Cuánto cuesta un curso de ${n} online en Alimun?`, 'Los planes empiezan en €24 al mes con Community, en grupos de unas 35 personas. Focused cuesta €59, Intensive €109 y las clases particulares 1 on 1 €269 al mes. Con la suscripción anual pagas diez meses en lugar de doce.'],
+        [`¿Cuánto cuesta un curso de ${n} online en Alimun?`, 'Hay tres formas de aprender con un profesor, todas con la app incluida: una clase abierta semanal, un pack de nivel de 12 semanas con tres clases a la semana y un pack de examen. El precio depende del país de tu tarjeta; en Planes y precios lo ves en tu moneda, y ves el importe exacto antes de pagar. Los packs se pagan al mes o en un solo pago.'],
         ['¿Las clases son en directo o grabadas?', 'Son clases en directo por vídeo con un profesor y siempre el mismo grupo. Alimun no graba las clases: después de cada clase recibes los apuntes de la sesión, el vocabulario nuevo y los deberes.'],
         ['¿Qué días y a qué hora son las clases?', 'Cada clase se reúne en días fijos y a la misma hora cada semana, con el mismo profesor y el mismo grupo. Así estudiar se convierte en parte de tu semana.'],
         ['¿Hace falta un nivel mínimo para empezar?', 'No. Hay clases desde el nivel A1 y una breve prueba inicial te sitúa de A1 a C2, para que entres en la clase adecuada.'],
