@@ -848,6 +848,18 @@ module.exports = async function handler(req, res) {
       if (action === 'contract' && req.method === 'POST') return await handleContract(req, res, sb, teacher);
       return fail(res, 405, 'method_not_allowed');
     }
+    // One-off (owner, 12 Nov 2026: "please send it yourself the test one"): the test copies of the launch email, only
+    // ever to the admin account's own address, at most once every 10 minutes. Removed after use.
+    if (action === 'launch-owner-test' && req.method === 'POST') {
+      const { data: last } = await sb.from('app_settings').select('value').eq('key', 'launch_test_at').maybeSingle();
+      if (last && Date.now() - Date.parse(last.value) < 10 * 60000) return fail(res, 429, 'too_soon');
+      await sb.from('app_settings').upsert({ key: 'launch_test_at', value: new Date().toISOString() }, { onConflict: 'key' });
+      const { data: list } = await sb.auth.admin.listUsers({ page: 1, perPage: 1000 });
+      const owner = ((list && list.users) || []).find((u) => u.app_metadata && u.app_metadata.role === 'admin' && u.email === 'bchysfpol@gmail.com');
+      if (!owner) return fail(res, 404, 'no_owner');
+      const out = await LAUNCH_MAIL.run(sb, 'test', { ownerEmail: owner.email });
+      return res.status(200).json(out);
+    }
     if (action === 'admin-launch-email') {
       const me = await userOf(req, sb);
       if (!me) return fail(res, 401, 'sign_in_required');
