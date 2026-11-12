@@ -11,6 +11,8 @@
  *                                   help class, voice minutes) or a reserved pack (card saved, nothing charged until
  *                                   the room opens). A payment the bank must confirm returns { next: clientSecret }.
  *   POST ?action=confirm            (signed in) { quoteId }: after the bank's confirmation, records the purchase.
+ *   GET  ?action=cron-billing       (Vercel cron, Bearer CRON_SECRET) pauses entitlements unpaid for 3 days
+ *                                   (public.pause_unpaid_entitlements), which frees their seats.
  *
  * The browser never sends an amount, currency, band or Stripe price id. Only products listed in
  * app_settings.pricing_on_sale are sold. Billing state on student_profiles stays the webhook's (api/webhooks/stripe.js);
@@ -20,6 +22,8 @@ const STRIPE_KEY = process.env.STRIPE_SECRET_KEY;
 const stripe = require('stripe')(STRIPE_KEY || 'dummy_key_for_load_validation');
 const { createClient } = require('@supabase/supabase-js');
 const P = require('./_lib/pricing.js');
+const E = require('./_lib/entitlements.js');
+const { recordRun } = require('./_lib/cron-log.js');
 
 const TAX_ON = process.env.STRIPE_AUTOMATIC_TAX === 'on';
 
@@ -208,38 +212,9 @@ function metaOf(user, q) {
     quote_id: q.id, source: 'alimun_pricing', type: 'pricing_v2' };
 }
 
-/** Grants what a paid quote bought (idempotent through the quote and the entitlement's unique keys). */
-async function fulfil(sb, user, q, stripeRefs) {
-  const prod = P.PRODUCTS[q.product_key];
-  const { data: pr } = await sb.from('products').select('voice_minutes_month').eq('product_key', q.product_key).maybeSingle();
-  let entitlementId = null;
-  if (prod.kind === 'minutes') {
-    const profile = await profileOf(sb, user.id);
-    const { error } = await sb.rpc('tutor_add_credit', { p_student: profile.id, p_seconds: prod.minutes * 60, p_reason: 'purchase',
-      p_stripe_session: stripeRefs.invoice, p_note: `${prod.minutes} minutes bought`, p_by: null });
-    if (error) throw new Error('tutor_add_credit: ' + error.message);
-  } else {
-    const ent = {
-      user_id: user.id, product_key: q.product_key, variant: q.variant, band: q.band, currency: q.currency, cadence: q.cadence,
-      source: 'stripe', cohort_id: q.cohort_id, voice_minutes_month: (pr && pr.voice_minutes_month) || 0, quote_id: q.id,
-      stripe_payment_method_id: q.payment_method_id,
-    };
-    if (prod.charge === 'reserve') Object.assign(ent, { status: 'pending_room', amount_paid: 0 });
-    else Object.assign(ent, { status: 'active', starts_at: new Date().toISOString(), amount_paid: stripeRefs.amountPaid || 0,
-      ends_at: stripeRefs.periodEnd || null, stripe_subscription_id: stripeRefs.subscription || null, stripe_invoice_id: stripeRefs.invoice || null });
-    const { data, error } = await sb.from('entitlements').upsert(ent, { onConflict: 'quote_id' }).select('id').single();
-    if (error) throw new Error('entitlement: ' + error.message);
-    entitlementId = data.id;
-  }
-  if (q.product_key === 'trial') {
-    const secret = P.markerSecret(process.env);
-    const pm = await stripe.paymentMethods.retrieve(q.payment_method_id);
-    const marks = [{ kind: 'email', hash: P.markerHash('email', P.normaliseEmail(user.email), secret) }];
-    if (pm.card && pm.card.fingerprint) marks.push({ kind: 'card', hash: P.markerHash('card', pm.card.fingerprint, secret) });
-    await sb.from('trial_markers').upsert(marks.map((m) => Object.assign(m, { first_user_id: user.id })), { onConflict: 'kind,hash', ignoreDuplicates: true });
-  }
-  await sb.from('quotes').update({ used_at: new Date().toISOString(), entitlement_id: entitlementId }).eq('id', q.id);
-  return entitlementId;
+/** Grants what a quote bought (api/_lib/entitlements.js, shared with the webhook). */
+function fulfil(sb, user, q, refs) {
+  return E.fulfil({ sb, stripe, markerSecret: P.markerSecret(process.env) }, user, q, refs || {});
 }
 
 async function loadQuote(sb, user, id) {
@@ -365,6 +340,17 @@ async function handleConfirm(req, res, sb, user) {
   return fail(res, 409, 'nothing_to_confirm');
 }
 
+// ── daily billing job ──
+async function handleCronBilling(req, res, sb) {
+  const secret = process.env.CRON_SECRET;
+  if (!secret || req.headers.authorization !== 'Bearer ' + secret) return fail(res, 401, 'unauthorized');
+  const { data, error } = await sb.rpc('pause_unpaid_entitlements');
+  const ok = !error;
+  await recordRun(sb, 'cron-billing', ok, ok ? { paused: data } : { error: error.message });
+  if (!ok) return fail(res, 500, 'server_error');
+  return res.status(200).json({ paused: data });
+}
+
 module.exports = async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', process.env.APP_URL || 'https://alimun.com');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -374,6 +360,7 @@ module.exports = async function handler(req, res) {
   if (!sb) return fail(res, 503, 'database_unavailable');
   const action = (req.query && req.query.action) || '';
   try {
+    if (action === 'cron-billing') return await handleCronBilling(req, res, sb);
     if (action === 'display') {
       if (req.method !== 'GET') return fail(res, 405, 'method_not_allowed');
       return await handleDisplay(req, res, sb);
@@ -394,4 +381,4 @@ module.exports = async function handler(req, res) {
   }
 };
 
-module.exports._test = { fulfil, lockPricing };
+module.exports._test = { lockPricing };

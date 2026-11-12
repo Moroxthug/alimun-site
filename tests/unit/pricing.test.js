@@ -82,51 +82,7 @@ test('display book: the band\'s rows in one currency', () => {
 
 // ---------- The handler, with an in-memory database and a fake Stripe ----------
 
-function fakeDb(tables, rpcs) {
-  function q(name) {
-    const st = { name, filters: [], op: 'select', payload: null, single: false, maybe: false, returning: false, onConflict: null };
-    const rows = () => (tables[name] = tables[name] || []);
-    const match = (r) => st.filters.every((f) => f(r));
-    const run = () => {
-      let out;
-      if (st.op === 'select') out = rows().filter(match);
-      else if (st.op === 'insert') { const list = [].concat(st.payload).map((r) => Object.assign({ id: require('crypto').randomUUID() }, r)); rows().push(...list); out = list; }
-      else if (st.op === 'update') { out = rows().filter(match); out.forEach((r) => Object.assign(r, st.payload)); }
-      else if (st.op === 'upsert') {
-        const keys = (st.onConflict || 'id').split(',');
-        out = [].concat(st.payload).map((p) => {
-          const hit = rows().find((r) => keys.every((k) => r[k] != null && r[k] === p[k]));
-          if (hit) { if (!st.ignore) Object.assign(hit, p); return hit; }
-          const n = Object.assign({ id: require('crypto').randomUUID() }, p); rows().push(n); return n;
-        });
-      }
-      if (st.single || st.maybe) {
-        if (!out.length && st.single) return { data: null, error: { message: 'no rows' } };
-        return { data: out[0] || null, error: null };
-      }
-      return { data: out, error: null };
-    };
-    const api = {
-      select() { st.returning = true; return api; },
-      insert(p) { st.op = 'insert'; st.payload = p; return api; },
-      update(p) { st.op = 'update'; st.payload = p; return api; },
-      upsert(p, o) { st.op = 'upsert'; st.payload = p; st.onConflict = o && o.onConflict; st.ignore = o && o.ignoreDuplicates; return api; },
-      eq(k, v) { st.filters.push((r) => r[k] === v); return api; },
-      in(k, vs) { st.filters.push((r) => vs.includes(r[k])); return api; },
-      is(k, v) { st.filters.push((r) => (r[k] == null ? null : r[k]) === v); return api; },
-      limit() { return api; },
-      single() { st.single = true; return Promise.resolve(run()); },
-      maybeSingle() { st.maybe = true; return Promise.resolve(run()); },
-      then(a, b) { return Promise.resolve(run()).then(a, b); },
-    };
-    return api;
-  }
-  return {
-    from: q,
-    rpc: (name, args) => Promise.resolve(rpcs[name](args)),
-    auth: { getUser: (tok) => Promise.resolve(tok === 'good' ? { data: { user: { id: 'u1', email: 'Learner+x@gmail.com' } }, error: null } : { data: null, error: { message: 'bad' } }) },
-  };
-}
+const { fakeDb } = require('./_fake-db.js');
 
 function fakeStripe(calls, opts) {
   const pm = { id: 'pm_1', customer: 'cus_1', card: { country: opts.cardCountry || 'MA', fingerprint: 'fp1' }, billing_details: { address: { country: 'MA' } } };
@@ -173,6 +129,20 @@ function call(handler, action, body, method) {
   });
 }
 
+// The rule of public.sync_access (supabase/migrations/202611121300_pricing_access.sql), for the in-memory database
+const RANK = { app: 1, open_en: 2, open_de: 2, level_en: 3, level_de: 3, exam_en: 4, exam_de: 4 };
+const TIER = { 1: 'app', 2: 'open', 3: 'pack', 4: 'exam' };
+function syncAccess(tables, user) {
+  const now = Date.now(), mine = tables.entitlements.filter((e) => e.user_id === user && RANK[e.product_key]);
+  const live = mine.filter((e) => e.status === 'active' && (!e.ends_at || Date.parse(e.ends_at) > now));
+  const sp = tables.student_profiles.find((r) => r.user_id === user);
+  if (live.length) { sp.tier = TIER[Math.max(...live.map((e) => RANK[e.product_key]))]; sp.stripe_subscription_status = 'active'; return { data: sp.tier, error: null }; }
+  if (mine.some((e) => e.status !== 'pending_room') && ['app', 'open', 'pack', 'exam'].includes(sp.tier)) {
+    sp.stripe_subscription_status = mine.some((e) => e.status === 'paused') ? 'past_due' : 'cancelled';
+  }
+  return { data: null, error: null };
+}
+
 function world() {
   const book = [];
   const add = (product, band, variant, cadence, currency, amount) => book.push({ product_key: product, band, variant, cadence, currency, unit_amount: amount, stripe_price_id: `price_${product}_${band}_${variant}_${cadence}`, active: true });
@@ -196,7 +166,8 @@ function world() {
   const rpcs = {
     set_band: (a) => { tables.customer_pricing.push({ user_id: a.p_user, band: a.p_band, card_country: a.p_card_country, band_change_allowed_at: '2027-02-18T00:00:00Z' }); return { data: a.p_band, error: null }; },
     claim_founding_seat: (a) => { const cp = tables.customer_pricing.find((r) => r.user_id === a.p_user); Object.assign(cp, { founding: true, founding_seq: 1, founding_until: '2027-11-20T00:00:00Z' }); return { data: 1, error: null }; },
-    tutor_add_credit: (a) => { tables.ledger = (tables.ledger || []).concat(a); return { data: 1800, error: null }; },
+    tutor_add_credit: (a) => { tables.ledger = (tables.ledger || []).concat(a); return { data: a.p_seconds, error: null }; },
+    sync_access: (a) => syncAccess(tables, a.p_user),
   };
   return { tables, rpcs };
 }
@@ -293,4 +264,164 @@ test('display: prices for the visitor\'s country, founding while open', async ()
   assert.strictEqual(d.body.founding, true);
   assert.deepStrictEqual(d.body.onSale, ['level_en', 'minutes_30']);
   assert.deepStrictEqual(d.body.prices.level_en.upfront.founding, { amount: 189900, currency: 'mad' });
+});
+
+// ---------- Step 5: Stripe events and room-day charges (api/_lib/entitlements.js) ----------
+const E = require('../../api/_lib/entitlements.js');
+
+function ctxOf(tables, rpcs, extra) {
+  const told = [], calls = [];
+  const stripe = Object.assign({
+    subscriptions: { retrieve: async (id) => (extra.subs || {})[id], cancel: async (id) => { calls.push(['sub.cancel', id]); return {}; } },
+    subscriptionSchedules: { create: async (p, o) => { calls.push(['schedules.create', p, o]); return { id: 'sub_sched_1', subscription: null }; }, cancel: async (id) => { calls.push(['schedules.cancel', id]); } },
+    paymentIntents: { create: async (p, o) => { calls.push(['pi.create', p, o]); if (extra.piError) throw extra.piError; return { id: 'pi_1', status: 'succeeded', amount: p.amount, amount_received: p.amount, metadata: p.metadata }; } },
+    charges: { retrieve: async () => extra.charge },
+    paymentMethods: { retrieve: async () => ({ card: { fingerprint: 'fp1' } }) },
+  }, extra.stripe || {});
+  const ctx = { sb: fakeDb(tables, rpcs), stripe, markerSecret: 's',
+    notify: { paymentFailed: async (u, info) => { told.push(['learner', u, info]); }, owner: async (subj) => { told.push(['owner', subj]); } } };
+  return { ctx, told, calls };
+}
+const ev = (type, object) => ({ id: 'evt_' + Math.random(), type, data: { object } });
+const SUB = (status, extra) => Object.assign({ id: 'sub_1', status, customer: 'cus_1', current_period_start: 1794000000, current_period_end: 1796600000,
+  metadata: { type: 'pricing_v2', quote_id: null }, latest_invoice: 'in_s' }, extra || {});
+
+async function boughtApp() {
+  const { tables, rpcs } = world();
+  tables.app_settings.find((r) => r.key === 'pricing_on_sale').value = 'app,level_en,minutes_30';
+  tables.products.push({ product_key: 'app', voice_minutes_month: 60 });
+  const { handler } = load(tables, rpcs);
+  const quote = await call(handler, 'quote', { setupIntentId: 'seti_12345678', productKey: 'app', cadence: 'month' });
+  const buy = await call(handler, 'purchase', { quoteId: quote.body.quoteId });
+  assert.strictEqual(buy.code, 200, JSON.stringify(buy.body));
+  return { tables, rpcs, quoteId: quote.body.quoteId };
+}
+
+test('access: buying the app makes the learner a paying app learner with its minutes', async () => {
+  const { tables } = await boughtApp();
+  const ent = tables.entitlements[0];
+  assert.strictEqual(ent.status, 'active');
+  assert.strictEqual(ent.stripe_subscription_id, 'sub_1');
+  assert.strictEqual(ent.voice_minutes_month, 60);
+  assert.strictEqual(ent.last_invoice_id, 'in_s');
+  assert.strictEqual(tables.student_profiles[0].tier, 'app');
+  assert.strictEqual(tables.student_profiles[0].stripe_subscription_status, 'active');
+});
+
+test('events: only the new checkout\'s events are taken; old plan events go to the old code', async () => {
+  const { tables, rpcs } = world();
+  const { ctx } = ctxOf(tables, rpcs, {});
+  assert.strictEqual(await E.isPricingEvent(ctx, ev('customer.subscription.updated', SUB('active'))), true);
+  assert.strictEqual(await E.isPricingEvent(ctx, ev('customer.subscription.updated', SUB('active', { metadata: { tier: 'focused' } }))), false);
+  assert.strictEqual(await E.isPricingEvent(ctx, ev('invoice.paid', { id: 'in_x', subscription_details: { metadata: { type: 'pricing_v2' } } })), true);
+  assert.strictEqual(await E.isPricingEvent(ctx, ev('invoice.paid', { id: 'in_y', subscription: 'sub_old', metadata: {} })), false);
+  assert.strictEqual(await E.isPricingEvent(ctx, ev('charge.refunded', { id: 'ch_1', invoice: 'in_nobody' })), false);
+});
+
+test('renewal: a paid month moves the end date and adds the amount once; a failed one holds the seat and tells the learner', async () => {
+  const { tables, rpcs } = await boughtApp();
+  const sub = SUB('active', { current_period_end: 1799200000 });
+  const { ctx, told } = ctxOf(tables, rpcs, { subs: { sub_1: sub } });
+  const inv = { id: 'in_2', subscription: 'sub_1', amount_paid: 5490, subscription_details: { metadata: { type: 'pricing_v2' } },
+    lines: { data: [{ period: { start: 1796600000, end: 1799200000 } }] }, hosted_invoice_url: 'https://invoice.stripe.com/i/x' };
+  await E.processEvent(ctx, ev('invoice.paid', inv));
+  await E.processEvent(ctx, ev('invoice.paid', inv));
+  const ent = tables.entitlements[0];
+  assert.strictEqual(ent.amount_paid, 499 + 5490);
+  assert.strictEqual(ent.ends_at, new Date(1799200000 * 1000).toISOString());
+
+  await E.processEvent(ctx, ev('invoice.payment_failed', Object.assign({}, inv, { id: 'in_3' })));
+  assert.ok(ent.payment_failed_at);
+  assert.strictEqual(ent.status, 'active', 'the seat is held for 3 days');
+  assert.strictEqual(told[0][0], 'learner');
+  assert.strictEqual(told[0][2].link, 'https://invoice.stripe.com/i/x');
+  await E.processEvent(ctx, ev('invoice.paid', Object.assign({}, inv, { id: 'in_3' })));
+  assert.strictEqual(ent.payment_failed_at, null);
+});
+
+test('cancellation and refunds end access; a dispute pauses it, tells the owner and flags the card', async () => {
+  let w = await boughtApp();
+  let { ctx } = ctxOf(w.tables, w.rpcs, {});
+  await E.processEvent(ctx, ev('customer.subscription.deleted', SUB('canceled', { ended_at: 1796600000 })));
+  assert.strictEqual(w.tables.entitlements[0].status, 'ended');
+  assert.strictEqual(w.tables.student_profiles[0].stripe_subscription_status, 'cancelled');
+
+  w = await boughtApp();
+  const r = ctxOf(w.tables, w.rpcs, {});
+  await E.processEvent(r.ctx, ev('charge.refunded', { id: 'ch_1', invoice: 'in_s', amount: 499, amount_refunded: 499, refunded: true }));
+  assert.strictEqual(w.tables.entitlements[0].status, 'refunded');
+  assert.deepStrictEqual(r.calls[0], ['sub.cancel', 'sub_1']);
+
+  w = await boughtApp();
+  const d = ctxOf(w.tables, w.rpcs, { charge: { id: 'ch_2', invoice: 'in_s', payment_method_details: { card: { fingerprint: 'fp9' } } } });
+  assert.strictEqual(await E.isPricingEvent(d.ctx, ev('charge.dispute.created', { id: 'dp_1', charge: 'ch_2', amount: 499, currency: 'mad', reason: 'fraudulent' })), true);
+  await E.processEvent(d.ctx, ev('charge.dispute.created', { id: 'dp_1', charge: 'ch_2', amount: 499, currency: 'mad', reason: 'fraudulent' }));
+  assert.strictEqual(w.tables.entitlements[0].status, 'paused');
+  assert.strictEqual(w.tables.student_profiles[0].stripe_subscription_status, 'past_due');
+  assert.strictEqual(d.told[0][0], 'owner');
+  assert.strictEqual(w.tables.trial_markers.length, 1);
+});
+
+test('refunded voice minutes are taken back from the tutor time', async () => {
+  const { tables, rpcs } = world();
+  const { handler } = load(tables, rpcs);
+  const quote = await call(handler, 'quote', { setupIntentId: 'seti_12345678', productKey: 'minutes_30', cadence: 'once' });
+  await call(handler, 'purchase', { quoteId: quote.body.quoteId });
+  const { ctx } = ctxOf(tables, rpcs, {});
+  await E.processEvent(ctx, ev('charge.refunded', { id: 'ch_3', invoice: 'in_1', amount: 3290, amount_refunded: 3290, refunded: true }));
+  assert.deepStrictEqual(tables.ledger.map((x) => x.p_seconds), [1800, -1800]);
+});
+
+test('a learner who closed the page before the bank\'s check still gets what they paid for', async () => {
+  const { tables, rpcs } = world();
+  tables.app_settings.find((r) => r.key === 'pricing_on_sale').value = 'app';
+  tables.products.push({ product_key: 'app', voice_minutes_month: 60 });
+  tables.quotes.push({ id: '11111111-1111-4111-8111-111111111111', user_id: 'u1', product_key: 'app', variant: 'list', cadence: 'month', band: 'B',
+    currency: 'mad', unit_amount: 5490, payment_method_id: 'pm_1', used_at: null, expires_at: '2099-01-01T00:00:00Z' });
+  const sub = SUB('active', { metadata: { type: 'pricing_v2', quote_id: '11111111-1111-4111-8111-111111111111' } });
+  const { ctx } = ctxOf(tables, rpcs, { subs: { sub_1: sub } });
+  await E.processEvent(ctx, ev('customer.subscription.updated', sub));
+  assert.strictEqual(tables.entitlements.length, 1);
+  assert.strictEqual(tables.entitlements[0].status, 'active');
+  assert.ok(tables.quotes[0].used_at);
+  assert.strictEqual(tables.student_profiles[0].tier, 'app');
+});
+
+test('room day: a monthly pack becomes a 3-month schedule, an upfront pack one payment; a room that does not open charges nothing', async () => {
+  const { tables, rpcs } = world();
+  const base = { user_id: 'u1', product_key: 'level_en', variant: 'founding', band: 'B', currency: 'mad', status: 'pending_room', stripe_payment_method_id: 'pm_1', amount_paid: 0 };
+  tables.price_book.push({ product_key: 'level_en', band: 'B', variant: 'founding', cadence: 'month', currency: 'mad', unit_amount: 67900, stripe_price_id: 'price_lm', active: true });
+  tables.entitlements.push(Object.assign({ id: 'aaaaaaaa-0000-4000-8000-000000000001', cadence: 'month' }, base), Object.assign({ id: 'aaaaaaaa-0000-4000-8000-000000000002', cadence: 'upfront' }, base), Object.assign({ id: 'aaaaaaaa-0000-4000-8000-000000000003', cadence: 'upfront' }, base));
+  const { ctx, calls } = ctxOf(tables, rpcs, {});
+  const start = new Date(Date.now() + 10 * 86400000);
+  assert.strictEqual((await E.startPack(ctx, tables.entitlements[0], start)).status, 'scheduled');
+  const sched = calls.find((c) => c[0] === 'schedules.create')[1];
+  assert.strictEqual(sched.phases[0].iterations, 3);
+  assert.strictEqual(sched.phases[0].currency, 'mad');
+  assert.strictEqual(sched.phases[0].items[0].price, 'price_lm');
+  assert.strictEqual(sched.start_date, Math.floor(start.getTime() / 1000));
+  assert.strictEqual(sched.end_behavior, 'cancel');
+
+  assert.strictEqual((await E.startPack(ctx, tables.entitlements[1], new Date())).status, 'paid');
+  const pi = calls.find((c) => c[0] === 'pi.create')[1];
+  assert.strictEqual(pi.amount, 189900);
+  assert.strictEqual(pi.off_session, true);
+  const up = tables.entitlements[1];
+  assert.strictEqual(up.status, 'active');
+  assert.strictEqual(Date.parse(up.ends_at) - Date.parse(up.starts_at), E.PACK_DAYS * 86400000);
+  assert.strictEqual(tables.student_profiles[0].tier, 'pack');
+
+  assert.strictEqual(await E.releasePack(ctx, tables.entitlements[2]), true);
+  assert.strictEqual(tables.entitlements[2].status, 'ended');
+});
+
+test('room day: a card the bank wants to check off-session tells the learner and holds the seat', async () => {
+  const { tables, rpcs } = world();
+  tables.entitlements.push({ id: 'aaaaaaaa-0000-4000-8000-000000000002', user_id: 'u1', product_key: 'level_en', variant: 'founding', band: 'B', currency: 'mad', cadence: 'upfront', status: 'pending_room', stripe_payment_method_id: 'pm_1' });
+  const err = Object.assign(new Error('auth'), { code: 'authentication_required', raw: { payment_intent: { id: 'pi_9', status: 'requires_payment_method' } } });
+  const { ctx, told } = ctxOf(tables, rpcs, { piError: err });
+  assert.strictEqual((await E.startPack(ctx, tables.entitlements[0], new Date())).status, 'needs_action');
+  assert.ok(tables.entitlements[0].payment_failed_at);
+  assert.strictEqual(tables.entitlements[0].status, 'pending_room');
+  assert.strictEqual(told[0][2].needsAction, true);
 });

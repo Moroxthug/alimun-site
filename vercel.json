@@ -173,6 +173,10 @@
     {
       "path": "/api/cron-reminders",
       "schedule": "41 16 * * *"
+    },
+    {
+      "path": "/api/pricing?action=cron-billing",
+      "schedule": "17 3 * * *"
     }
   ]
 }

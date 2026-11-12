@@ -28,6 +28,8 @@ const { createClient } = require('@supabase/supabase-js');
 const tutorPacks = require('../_lib/tutor-packs.js');
 const mail = require('../_lib/email.js');
 const L = require('../_lib/email-i18n.js');
+const E = require('../_lib/entitlements.js');
+const P = require('../_lib/pricing.js');
 
 const env = (k) => process.env[k] || '';
 
@@ -323,6 +325,16 @@ async function markWelcomeGiftUsed(session, supabaseUserId, supabase) {
 async function processWebhookEvent(event, supabase) {
   const object = event.data.object;
 
+  // The card-first checkout (api/pricing.js, docs/PRICING_ENGINE_SPEC.md section 6): its subscriptions, invoices,
+  // room-day payments, refunds and disputes are handled by api/_lib/entitlements.js, which keeps entitlements and,
+  // through public.sync_access, student_profiles.tier and stripe_subscription_status. The old plan logic below never
+  // sees them.
+  const ctx = pricingCtx(supabase);
+  if (await E.isPricingEvent(ctx, event)) {
+    await E.processEvent(ctx, event);
+    return;
+  }
+
   switch (event.type) {
     case 'checkout.session.completed':
     case 'checkout.session.async_payment_succeeded': {
@@ -597,6 +609,41 @@ async function handleOneTimeCheckout(session, metadata, supabaseUserId, supabase
     default:
       throw new Error(`Unknown one-time purchase type '${type}' on session ${session.id}`);
   }
+}
+
+// ── The card-first checkout's helpers ─────────────────────────
+function pricingCtx(supabase) {
+  return { sb: supabase, stripe, markerSecret: P.markerSecret(process.env), notify: {
+    paymentFailed: async (userId, info) => {
+      const { data: student } = await supabase.from('student_profiles').select(STUDENT_BILLING_COLUMNS).eq('user_id', userId).maybeSingle();
+      if (student) await sendPricingPaymentEmail(student, info);
+    },
+    owner: async (subject, text) => {
+      const to = process.env.CONTACT_EMAIL || 'bchysfpol@gmail.com';
+      await sendResend({ to, subject, content: mail.renderEmail({ hero: 'payment', lang: 'en', preheader: subject, heading: subject, blocks: [{ p: mail.esc(text) }] }) });
+    },
+  } };
+}
+
+/** A payment of the new checkout that failed or needs the bank's check: the learner gets the link to pay. */
+async function sendPricingPaymentEmail(student, info) {
+  const email = await resolveStudentEmail(student, null);
+  if (!email) return;
+  const lang = student.ui_lang || 'en';
+  const link = info && typeof info.link === 'string' && /^https:\/\/([a-z0-9-]+\.)*stripe\.com\//.test(info.link) ? info.link : `${mail.SITE}/app#/settings`;
+  const content = mail.renderEmail({
+    hero: 'payment', lang,
+    preheader: L.say(lang, 'pay_failed.preheader'),
+    heading: L.say(lang, 'pay_failed.heading'),
+    blocks: [
+      { p: L.hello(lang, student.full_name) },
+      { p: L.html(lang, 'pay_failed.body') },
+      { p: L.html(lang, 'pay_failed.body2') },
+      { button: { label: L.say(lang, 'pay_failed.button'), href: link } },
+    ],
+    footer: L.html(lang, 'pay_failed.footer'),
+  });
+  await sendResend({ to: email, subject: L.say(lang, 'pay_failed.subject'), content });
 }
 
 // ── Email helpers (Resend) ────────────────────────────────────
