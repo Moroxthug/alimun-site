@@ -3,7 +3,7 @@ export function courseFaq(c) {
   const n = c.name;
   if (c.open) {
     return [
-      [`Quanto costa un corso di ${n} online su Alimun?`, `I piani partono da €24 al mese con Community, in gruppi di circa 35 persone. Focused costa €59, Intensive €109 e le lezioni private 1 on 1 €269 al mese. Con l'abbonamento annuale paghi dieci mesi invece di dodici.`],
+      [`Quanto costa un corso di ${n} online su Alimun?`, `Ci sono tre modi per imparare con un insegnante, tutti con l'app inclusa: una lezione aperta settimanale, un pacchetto livello di 12 settimane con tre lezioni a settimana e un pacchetto esame. Il prezzo dipende dal paese della tua carta; nella pagina Piani e prezzi lo vedi nella tua valuta, e vedi l'importo esatto prima di pagare. I pacchetti si pagano al mese o in un'unica soluzione.`],
       ['Le lezioni sono dal vivo o registrate?', `Sono lezioni dal vivo in video con un insegnante e sempre lo stesso gruppo. Alimun non registra le lezioni: dopo ogni lezione ricevi gli appunti della sessione, il nuovo vocabolario e i compiti.`],
       ['In che giorni e a che ora si svolgono le lezioni?', 'Ogni classe si riunisce in giorni fissi e alla stessa ora ogni settimana, con lo stesso insegnante e lo stesso gruppo. Così lo studio diventa parte della tua settimana.'],
       ['Serve un livello minimo per iniziare?', `No. Ci sono classi dal livello A1 in su e un breve test iniziale ti colloca dalla A1 alla C2, così entri nella classe adatta a te.`],

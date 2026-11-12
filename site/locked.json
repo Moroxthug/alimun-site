@@ -205,8 +205,8 @@
     "approved": "2026-10-23 Italian course pages: guide text with lime markers (owner: section ok)"
   },
   "src/data/course-guides.js": {
-    "sha256": "da9c00c1bd4e05abea89659494cd5603015ffec0f1b9eab2233e6fb37188f74a",
-    "approved": "2026-10-23 Italian course pages: guide text with lime markers (owner: section ok); 2026-11-11 level test range A1 to C2 (owner: \"Up to C2\")"
+    "sha256": "33031f07e9724eed2d65d32ca32d66dd2bc86a75087f9f9e82d88d1e9b6343eb",
+    "approved": "2026-10-23 Italian course pages: guide text with lime markers (owner: section ok); 2026-11-11 level test range A1 to C2 (owner: \"Up to C2\"); 2026-11-12 cost answer and plan sentence for the new price list (owner: \"yes replace both\")"
   },
   "src/blocks/course/plans.html": {
     "sha256": "445a33c20aeb7c354e6ec417cf2f23c0ffe8c1d5379d227de2cae1e9b2973f69",
@@ -217,8 +217,8 @@
     "approved": "2026-10-23 Italian course pages: FAQ (owner: section ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
   },
   "src/data/course-faq.js": {
-    "sha256": "2ff6fee9423beec372a04548978e0645dc89e3f08fbdaae043e6e9ff7e454885",
-    "approved": "2026-10-23 Italian course pages: FAQ text (owner: section ok); 2026-11-11 level test range A1 to C2 (owner: \"Up to C2\")"
+    "sha256": "d9b6a73b1350ec79629e9eef3ddcd2819ff63f66ff38a5f9b5701525312ae49e",
+    "approved": "2026-10-23 Italian course pages: FAQ text (owner: section ok); 2026-11-11 level test range A1 to C2 (owner: \"Up to C2\"); 2026-11-12 cost answer and plan sentence for the new price list (owner: \"yes replace both\")"
   },
   "src/data/course-quiz.js": {
     "sha256": "c84b045ce8095d1e6a80a3895c96f5aebf11f817b9f15a610e13695f03d9ddb7",

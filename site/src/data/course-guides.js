@@ -11,7 +11,7 @@ export const GUIDES = {
       ]],
       ["Lezioni di gruppo o lezioni private", [
         "Le lezioni private offrono attenzione completa, ma costano di più e ti abituano a un solo interlocutore. In un gruppo parli con persone diverse, ascolti accenti e modi di esprimersi differenti e **il costo di ogni lezione è condiviso**.",
-        "Su Alimun puoi scegliere tra gruppi di dimensioni diverse, a seconda di quanta attenzione desideri, e un piano con lezioni individuali. In tutti i casi le lezioni si svolgono **in giorni e orari fissi, così lo studio diventa un'abitudine** e non un impegno da incastrare ogni settimana.",
+        "Su Alimun scegli tra una lezione aperta settimanale fino a 20 persone e pacchetti fino a 12 persone che si incontrano tre volte a settimana per 12 settimane. In tutti i casi le lezioni si svolgono **in giorni e orari fissi, così lo studio diventa un'abitudine** e non un impegno da incastrare ogni settimana.",
       ]],
       ["Come capire da che livello partire", [
         "Il Quadro comune europeo di riferimento divide la conoscenza di una lingua in sei livelli, dalla A1 alla C2. Partire da un livello troppo alto è frustrante, partire troppo in basso fa perdere motivazione: per questo **conviene misurarsi prima di iniziare**.",
