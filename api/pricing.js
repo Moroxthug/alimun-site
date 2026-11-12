@@ -20,6 +20,7 @@
  *   GET  ?action=contracts          (teacher) course contracts offered to them; POST ?action=contract { cohortId, accept }.
  *   GET  ?action=cron-rooms         (Vercel cron) the rooms' daily steps (api/_lib/rooms.js).
  *   GET  ?action=cron-finance       (Vercel cron) founding notices and ends, weekly exchange rates, the monthly figures.
+ *   GET  ?action=cron-launch-email  (Vercel cron, hourly) the launch email to new English learners, when switched on.
  *   GET  ?action=admin-figures      (admin) the figures page; POST ?action=admin-spend records acquisition spend.
  *   GET  ?action=launch             (signed in) the launch class: offer, times, places, the free class (api/_lib/launch.js);
  *                                   POST ?action=launch-register a free place in its free first class. A quote may carry
@@ -533,7 +534,19 @@ async function handleAdminRoom(req, res, sb) {
   }
   const made = await createRoom(sb, b);
   if (made.error) return fail(res, 400, made.error, made.detail ? { detail: made.detail } : undefined);
-  return res.status(200).json({ ok: true, id: made.id, sessions: made.sessions });
+  // From Matching: the group's learners are put down as interested, so the room job tells them by email and in the
+  // dashboard as soon as the room is published (21 days before it starts) without the admin writing to anyone
+  let invited = 0;
+  const ids = Array.isArray(b.invite) ? b.invite.filter((x) => P.isUuid(x)).slice(0, 40) : [];
+  if (ids.length) {
+    const { data: who } = await sb.from('student_profiles').select('user_id').in('user_id', ids);
+    const rowsIn = (who || []).map((w) => ({ user_id: w.user_id, product_key: b.product_key, level: b.level, notified_at: null }));
+    if (rowsIn.length) {
+      const { error: iErr } = await sb.from('room_interest').upsert(rowsIn, { onConflict: 'user_id,product_key' });
+      if (iErr) console.error('[rooms] invite:', iErr.message); else invited = rowsIn.length;
+    }
+  }
+  return res.status(200).json({ ok: true, id: made.id, sessions: made.sessions, invited });
 }
 /** Creates a draft room with its class dates: from the admin's form, or from an approved suggestion. { id, sessions } or { error, detail } */
 async function createRoom(sb, b) {
@@ -786,6 +799,24 @@ async function handleAdminSpend(req, res, sb) {
   return res.status(200).json({ ok: true });
 }
 
+// ── the launch email, sent automatically (hourly, when the owner switched it on in Admin → Matching) ──
+async function handleCronLaunchEmail(req, res, sb) {
+  const secret = process.env.CRON_SECRET;
+  if (!secret || req.headers.authorization !== 'Bearer ' + secret) return fail(res, 401, 'unauthorized');
+  const { data: on } = await sb.from('app_settings').select('value').eq('key', 'launch_email_auto').maybeSingle();
+  if (!on || on.value !== 'on') return res.status(200).json({ off: true });
+  try {
+    const out = await LAUNCH_MAIL.run(sb, 'auto', {});
+    await recordRun(sb, 'vercel:cron-launch-email', !out.error, out);
+    return res.status(200).json(out);
+  } catch (e) {
+    // No launch class set up any more: nothing to send, not a failure worth an alert
+    const none = /no launch offer|missing/.test(String(e && e.message));
+    await recordRun(sb, 'vercel:cron-launch-email', none, { error: String(e && e.message) });
+    return res.status(200).json({ skipped: String(e && e.message) });
+  }
+}
+
 // ── daily billing job ──
 async function handleCronBilling(req, res, sb) {
   const secret = process.env.CRON_SECRET;
@@ -819,6 +850,7 @@ module.exports = async function handler(req, res) {
       return await handleDisplay(req, res, sb);
     }
     if (action === 'cron-rooms') return await handleCronRooms(req, res, sb);
+    if (action === 'cron-launch-email') return await handleCronLaunchEmail(req, res, sb);
     if (action === 'cron-finance') return await handleCronFinance(req, res, sb);
     if (action === 'admin-figures' || action === 'admin-spend') {
       const admin = await userOf(req, sb);
@@ -854,7 +886,19 @@ module.exports = async function handler(req, res) {
       if (!me.app_metadata || me.app_metadata.role !== 'admin') return fail(res, 403, 'admins_only');
       if (req.method !== 'POST') return fail(res, 405, 'method_not_allowed');
       const b = body(req) || {};
-      const out = await LAUNCH_MAIL.run(sb, String(b.mode || ''), { confirm: b.confirm, only: b.only, ownerEmail: me.email });
+      if (b.mode === 'auto-set') {
+        // Automatic sending to new English learners (the hourly job reads it): 'on' or 'off'
+        const v = b.on === true ? 'on' : 'off';
+        const { error } = await sb.from('app_settings').upsert({ key: 'launch_email_auto', value: v }, { onConflict: 'key' });
+        if (error) throw new Error('launch auto: ' + error.message);
+        return res.status(200).json({ auto: v === 'on' });
+      }
+      if (b.mode === 'auto-get') {
+        const { data } = await sb.from('app_settings').select('value').eq('key', 'launch_email_auto').maybeSingle();
+        return res.status(200).json({ auto: !!data && data.value === 'on' });
+      }
+      if (String(b.mode || '') === 'auto') return fail(res, 400, 'bad_mode');
+      const out = await LAUNCH_MAIL.run(sb, String(b.mode || ''), { confirm: b.confirm, only: b.only, all: b.all === true, ownerEmail: me.email });
       return out.error ? fail(res, 409, out.error, out) : res.status(200).json(out);
     }
     if (action === 'launch' || action === 'launch-register') {

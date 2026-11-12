@@ -641,6 +641,7 @@
     return D().tutorLiveTick(usage.length ? { session: L.session, lines: lines, usage: usage } : { session: L.session, lines: lines }).then(function (r) {
       if (!L) return;
       L.seconds = r.seconds; L.tickAt = Date.now(); clock(); timeNotes();
+      if (window.AlimunTutor && window.AlimunTutor.feedbackTick) window.AlimunTutor.feedbackTick(L.seconds);
       if (r.stop) { if (r.summary) L.summary = r.summary; end(r.stop === 'budget' ? 'app_tu_err_budget' : r.stop === 'daily_cap' ? 'app_tu_daily_cap' : 'app_tu_none_left', true); }
     }, function (e) {
       if (!L) return;
@@ -914,5 +915,7 @@
   function active() { return !!(L && !L.ended && (L.started || L.state === 'connecting')); }
   function reset() { if (L && !L.ended) end(); L = null; }
 
+  /* Minutes added during the call (the 3-minute feedback in js/app/tutor.js) */
+  if (window.addEventListener) window.addEventListener('alimun:tutor-seconds', function (e) { var sec = e.detail && e.detail.seconds; if (L && !L.ended && sec != null) { L.seconds = sec; clock(); } });
   window.AlimunTutorLive = { speechGate: speechGate, turnTaker: turnTaker, wav16: wav16, prime: prime, want: want, begin: begin, mount: mount, active: active, reset: reset, myTutor: myTutor, setTutor: setTutor, supported: supported, TUTOR_KEY: TUTOR_KEY };
 })();

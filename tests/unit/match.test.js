@@ -117,3 +117,20 @@ test('heat map and start dates', () => {
   assert.strictEqual(M.startDate('level_pack', [1, 2, 4], NOW), '2026-12-07');
   assert.strictEqual(M.startDate('open_class', [3], NOW), '2026-11-25');
 });
+
+test('a group is shown in the zone most of its members live in, not the first zone in the alphabet', () => {
+  // Owner, 12 Nov 2026: two Turkish learners were shown in Karachi time. One had Asia/Karachi saved, one Europe/Istanbul
+  // (country TR); on a tie the member with a known country wins, never "Asia" sorting before "Europe".
+  const R = M.run({ learners: [L('k', 'A1', 'Asia/Karachi'), L('i', 'A1', 'Europe/Istanbul', { country: 'TR' })] }, { now: NOW });
+  assert.strictEqual(R.groups.length, 1);
+  assert.strictEqual(R.groups[0].zone, 'Europe/Istanbul');
+  const R2 = M.run({ learners: [L('k', 'A1', 'Asia/Karachi'), L('i', 'A1', 'Europe/Istanbul'), L('j', 'A1', 'Europe/Istanbul')] }, { now: NOW });
+  assert.strictEqual(R2.groups[0].zone, 'Europe/Istanbul', 'two of three live in Istanbul');
+});
+
+test('the owner’s test accounts stay out of the groups unless asked for', () => {
+  const data = { learners: [L('a', 'A1', 'Europe/Paris'), L('b', 'A1', 'Europe/Paris'), L('t', 'A1', 'Europe/Paris', { test: true })] };
+  assert.strictEqual(M.run(data, { now: NOW }).pool.length, 2);
+  assert.strictEqual(M.run(data, { now: NOW }).summary.tests, 1);
+  assert.strictEqual(M.run(data, { now: NOW, includeTests: true }).pool.length, 3);
+});

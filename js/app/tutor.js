@@ -671,7 +671,7 @@
     var ops = r.message && r.message.board || [], last = -1;
     ops.forEach(function (o, i) { if (o.op === 'clear') last = i; });
     S.board = r.board || S.board; S.fresh = ops.length - last - 1;
-    S.seconds = r.seconds;
+    S.seconds = r.seconds; fbTick(r.seconds);
     if (r.ended) { S.ended = true; S.summary = r.summary || {}; }
     prepareExercise();
     busy(false);
@@ -817,6 +817,7 @@
       var keep = S && S.session && !S.ended ? S : null;
       S = keep || { messages: [], board: [], audio: {} };
       S.status = h.status; S.sessions = h.sessions; S.memory = h.memory; S.sample = !!h.sample;
+      if (!FB || !FB.el) fbInit(h.status);
       S.lesson = parts[0] === 'lesson' && /^[\w-]{1,40}$/.test(parts[1] || '') ? parts[1] : null;
       if (S.session && !S.ended) { location.replace('#/tutor/session'); return {}; }
       draw();
@@ -828,7 +829,69 @@
     });
   }
 
+  /* ---------- The 3-minute feedback (owner, 12 Nov 2026) ----------
+     Once a learner has used 3 minutes of tutor time (written or a voice call) a banner asks how it is going and what
+     to improve; sending it adds 5 minutes, once (/api/tutor?action=feedback). It never blocks the session: "Later"
+     hides it until the tutor is opened again. The written tutor and the live call both report their time left here. */
+  var FB = null;
+  function fbInit(status) {
+    var f = status && status.feedback;
+    if (!f || f.done || S && S.sample) { FB = f ? { done: true } : null; return; }
+    FB = { used: f.used || 0, after: f.after || 180, gift: f.gift || 300, done: false, later: false, start: status.seconds ? status.seconds.total : null, el: null, mood: null, busy: false };
+    fbTick(FB.start);
+  }
+  function fbTick(left) {
+    if (!FB || FB.done || FB.later || FB.el || left == null) return;
+    if (FB.start == null) FB.start = left;
+    if (FB.used + Math.max(0, FB.start - left) >= FB.after) fbShow();
+  }
+  function fbShow() {
+    var el = document.createElement('section');
+    el.className = 'tfb'; el.setAttribute('role', 'region'); el.setAttribute('aria-label', t('app_tf_q'));
+    var mood = function (k) { return '<button class="btn btn--quiet btn--sm" type="button" data-tf-mood="' + k + '" aria-pressed="false">' + esc(t('app_tf_' + k)) + '</button>'; };
+    el.innerHTML = '<div class="tfb__in"><p class="tfb__q"><b>' + esc(t('app_tf_q')) + '</b></p><p class="tfb__sub">' + esc(t('app_tf_sub', { n: Math.round(FB.gift / 60) })) + '</p>' +
+      '<div class="tfb__moods" role="group" aria-label="' + esc(t('app_tf_q')) + '">' + mood('great') + mood('good') + mood('meh') + '</div>' +
+      '<label class="tfb__lbl" for="tfb-in">' + esc(t('app_tf_improve')) + '</label><textarea class="st-in tfb__ta" id="tfb-in" rows="2" maxlength="1000" dir="auto"></textarea>' +
+      '<p class="tfb__msg" data-tf-msg aria-live="polite"></p>' +
+      '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-tf-send disabled>' + esc(t('app_tf_send', { n: Math.round(FB.gift / 60) })) + '</button>' +
+      '<button class="btn btn--quiet btn--sm" type="button" data-tf-later>' + esc(t('app_tf_later')) + '</button></div></div>';
+    document.body.appendChild(el); FB.el = el;
+    requestAnimationFrame(function () { el.classList.add('is-in'); });
+    el.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-tf-mood],[data-tf-send],[data-tf-later]'); if (!b || b.disabled) return;
+      if (b.hasAttribute('data-tf-mood')) {
+        FB.mood = b.getAttribute('data-tf-mood');
+        el.querySelectorAll('[data-tf-mood]').forEach(function (x) { x.setAttribute('aria-pressed', String(x === b)); x.classList.toggle('btn--primary', x === b); x.classList.toggle('btn--quiet', x !== b); });
+        el.querySelector('[data-tf-send]').disabled = false;
+      } else if (b.hasAttribute('data-tf-later')) { FB.later = true; fbHide(); }
+      else fbSend(b);
+    });
+  }
+  function fbHide() { var el = FB && FB.el; if (!el) return; el.classList.remove('is-in'); setTimeout(function () { if (el.parentNode) el.parentNode.removeChild(el); }, 260); FB.el = null; }
+  function fbSend(btn) {
+    if (FB.busy || !FB.mood) return;
+    FB.busy = true; btn.disabled = true;
+    var msg = FB.el.querySelector('[data-tf-msg]'); msg.textContent = '';
+    D().tutorFeedback({ mood: FB.mood, improve: FB.el.querySelector('#tfb-in').value, ui: A.lang }).then(function (r) {
+      FB.done = true;
+      FB.el.querySelector('.tfb__in').innerHTML = '<p class="tfb__q"><b>' + esc(t(r.added ? 'app_tf_thanks' : 'app_tf_thanks_plain', { n: Math.round(FB.gift / 60) })) + '</b></p>';
+      if (r.seconds != null) window.dispatchEvent(new CustomEvent('alimun:tutor-seconds', { detail: { seconds: r.seconds } }));
+      setTimeout(fbHide, 4200);
+    }, function (e) {
+      var why = e && e.body && e.body.reason;
+      if (why === 'done') { FB.done = true; fbHide(); return; }
+      FB.busy = false; btn.disabled = false; msg.textContent = t('app_tf_err');
+    });
+  }
+  /* New time from the feedback: the written tutor's counter and home figure follow it */
+  if (window.addEventListener) window.addEventListener('alimun:tutor-seconds', function (e) {
+    var sec = e.detail && e.detail.seconds; if (sec == null || !S) return;
+    if (S.status && S.status.seconds) S.status.seconds.total = sec;
+    if (S.session && !S.ended) { S.seconds = sec; var el = root && root.querySelector('[data-tu-left]'); if (el) el.textContent = t('app_tu_left_n', { time: mins(sec) }); }
+    else if (root && root.isConnected && !S.session) draw();
+  });
+
   /* Shared with the live call (js/app/tutor-live.js): the board's lines, the pronunciation card's body, the recording helpers */
-  window.AlimunTutor = { mount: mount, kit: { opHtml: function (o, isNew) { return opHtml(o, isNew); }, pronBody: function (s, r, mine) { return pronBody(s, r, mine); },
+  window.AlimunTutor = { mount: mount, feedbackTick: function (left) { fbTick(left); }, kit: { opHtml: function (o, isNew) { return opHtml(o, isNew); }, pronBody: function (s, r, mine) { return pronBody(s, r, mine); },
     toWav: toWav, blobBase64: blobBase64, recMime: recMime, ta: function () { return ta(); }, afterHtml: function (x) { return afterHtml(x); }, outHtml: function () { return S ? outHtml(true) : ''; } } };
 })();

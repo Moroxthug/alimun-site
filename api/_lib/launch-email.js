@@ -9,11 +9,13 @@
  *     preview  the recipients (name, language, level, time zone) and the English subject; nothing sent
  *     test     one email per language in use, to the owner's address only
  *     report   what each learner sent the email did next (clicked, bell read, free place, price looked at, reserved)
- *     send     { only: [user ids] } the learners the owner ticked (English A1–B2, not sent yet); confirm = how many
+ *     send     { only: [user ids] } or { all: true }: the learners chosen, or everyone not sent yet; confirm = how many
+ *     auto     (the hourly job, when app_settings.launch_email_auto is 'on') everyone not sent yet; at most 50 at a time
  */
 const mail = require('./email.js');
 const TZ = require('../../js/tz.js');
 const LAUNCH = require('./launch.js');
+const { isTestAccount } = require('./test-accounts.js');
 
 const LINK = 'https://alimun.com/app#/settings/plans/launch';
 const LEVELS = ['A1', 'A2', 'B1', 'B2'];
@@ -165,6 +167,8 @@ async function recipients(sb, exclude) {
     const { data: u } = await sb.auth.admin.getUserById(p.user_id);
     const user = u && u.user;
     if (!user || !user.email || (user.app_metadata && ['admin', 'teacher'].includes(user.app_metadata.role))) continue;
+    // The owner's test accounts get tests only ("Send me a test"), never the real send
+    if (isTestAccount({ email: user.email, name: p.full_name, app_metadata: user.app_metadata })) continue;
     out.push({ user_id: p.user_id, email: user.email, name: p.full_name, level: p.level, timezone: p.timezone, ui_lang: p.ui_lang });
   }
   return out;
@@ -235,12 +239,20 @@ async function run(sb, mode, opts) {
     }
     return { tests: sent };
   }
-  if (mode === 'send') {
-    // Only the learners the owner ticked; each must still be on the list (English A1–B2, not sent yet, not excluded)
-    const want = new Set(Array.isArray(opts.only) ? opts.only.filter((x) => typeof x === 'string') : []);
-    const chosen = list.filter((r) => want.has(r.user_id));
-    if (!chosen.length) return { error: 'nobody_chosen' };
-    if (Number(opts.confirm) !== chosen.length || chosen.length !== want.size) return { error: 'count_changed', count: chosen.length };
+  if (mode === 'send' || mode === 'auto') {
+    // send: the learners the owner chose, or everyone still on the list with all: true (confirm = how many the owner saw);
+    // auto: everyone on the list, from the hourly job when the owner has switched automatic sending on.
+    // Each must still be on the list (English A1–B2, not sent yet, not excluded, not a test account).
+    let chosen;
+    if (mode === 'auto' || opts.all === true) chosen = list;
+    else {
+      const want = new Set(Array.isArray(opts.only) ? opts.only.filter((x) => typeof x === 'string') : []);
+      chosen = list.filter((r) => want.has(r.user_id));
+      if (chosen.length !== want.size) return { error: 'count_changed', count: chosen.length };
+    }
+    if (!chosen.length) return mode === 'auto' ? { sent: 0, failed: [] } : { error: 'nobody_chosen' };
+    if (mode === 'send' && Number(opts.confirm) !== chosen.length) return { error: 'count_changed', count: chosen.length };
+    if (mode === 'auto' && chosen.length > 50) return { error: 'too_many_for_auto', count: chosen.length };
     const camp = await campaignOf(sb, true);
     const sendCtx = Object.assign({}, ctx, { clickUrl: clickUrlFor(camp.id) });
     let ok = 0; const failed = [];

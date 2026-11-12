@@ -26,7 +26,9 @@
   /* A plan given without payment (student_profiles.plan_given_until) */
   function givenOn(s) { var u = s && s.plan_given_until ? Date.parse(s.plan_given_until) : NaN; return isFinite(u) && u > Date.now(); }
   /* Paying: a Stripe subscription, or an active purchase in entitlements (the pricing engine, 12 Nov 2026); admin grants and trials do not count */
-  function paying(s) { return s.stripe_subscription_status === 'active' || !!(ST && ST.paid && ST.paid[s.user_id]); }
+  function paying(s) { return !isTest(s) && (s.stripe_subscription_status === 'active' || !!(ST && ST.paid && ST.paid[s.user_id])); }
+  /* The owner's own accounts: shown, marked, and left out of the counts */
+  function isTest(s) { return !!(ST && ST.tests && ST.tests[s.user_id]); }
   function payLine(s) { var e = ST && ST.paid && ST.paid[s.user_id]; if (e && s.stripe_subscription_status !== 'active') return 'paid: ' + e; return PAY[s.stripe_subscription_status] || (givenOn(s) ? 'given until ' + day(s.plan_given_until) : s.plan_given_until ? 'given plan ended ' + day(s.plan_given_until) : ''); }
   function dateInput(iso) { if (!iso) return ''; var d = new Date(iso); return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); }
   function real() { return A.mode() === 'real'; }
@@ -123,7 +125,7 @@
   }
   function studentsView() {
     var langs = ST.students.map(function (s) { return s.language; }).filter(function (v, i, a) { return v && a.indexOf(v) === i; }).sort();
-    return '<div class="view__head"><div><h1 class="t-h1">Students</h1><p class="t-lead">' + esc(A.plural(ST.students.length, 'student', 'students') + ', ' + A.plural(ST.students.filter(paying).length, 'paying', 'paying') + '.') + '</p></div>' +
+    return '<div class="view__head"><div><h1 class="t-h1">Students</h1><p class="t-lead">' + esc(A.plural(ST.students.filter(function (s) { return !isTest(s); }).length, 'student', 'students') + ', ' + A.plural(ST.students.filter(paying).length, 'paying', 'paying') + '.' + (ST.tests && Object.keys(ST.tests).length ? ' Your test accounts are listed but not counted.' : '')) + '</p></div>' +
       '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/students/invite">Invite a student</a><a class="btn btn--ghost btn--sm" href="#/students/signups">Email signups</a></div></div>' +
       '<div class="grid rise"><section class="card span-12" style="--i:0"><div class="ad-filters">' +
         '<input class="st-in" type="search" data-sf="q" placeholder="Search by name, email or language" value="' + esc(SF.q) + '" aria-label="Search">' +
@@ -139,7 +141,7 @@
     /* A table: one student per row, the columns the admin scans (owner, 12 Nov 2026: corporate-grade console) */
     return '<div class="dt-wrap"><table class="dt"><thead><tr><th>Student</th><th>Learning</th><th>Plan</th><th>Payment</th><th>Class</th><th class="r">Joined</th></tr></thead><tbody>' + list.slice(0, 300).map(function (s) {
       var co = cohortOf(ST.cohorts, s.enrolled_cohort_id), pay = payLine(s);
-      return '<tr data-href="#/students/' + esc(s.id) + '"><td><a href="#/students/' + esc(s.id) + '">' + esc(s.full_name || 'Student') + '</a><div class="m">' + esc(EMAILS[s.user_id] || '') + '</div></td>' +
+      return '<tr data-href="#/students/' + esc(s.id) + '"><td><a href="#/students/' + esc(s.id) + '">' + esc(s.full_name || 'Student') + '</a>' + (isTest(s) ? ' <span class="m">(your test account)</span>' : '') + '<div class="m">' + esc(EMAILS[s.user_id] || '') + '</div></td>' +
         '<td>' + esc([s.language, s.level].filter(Boolean).join(' ')) + '</td><td>' + esc(PLANS[s.tier] || s.tier || '') + '</td>' +
         '<td class="nw"><span class="dot' + (paying(s) ? '' : s.stripe_subscription_status === 'past_due' ? ' dot--bad' : givenOn(s) ? ' dot--warn' : ' dot--off') + '"></span>' + esc(pay ? A.cap(pay) : 'None') + '</td>' +
         '<td>' + esc(co ? A.className(co) : '') + '</td><td class="r m">' + esc(day(s.created_at)) + '</td></tr>';

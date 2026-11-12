@@ -195,6 +195,10 @@
       "schedule": "23 4 * * *"
     },
     {
+      "path": "/api/pricing?action=cron-launch-email",
+      "schedule": "47 * * * *"
+    },
+    {
       "path": "/api/pricing?action=cron-finance",
       "schedule": "37 5 * * *"
     }

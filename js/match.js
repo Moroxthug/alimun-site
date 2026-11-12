@@ -16,7 +16,7 @@
  *      left alone at their level join a group one level away when its time suits them (marked "one level apart").
  *      Each group gets the product its members' focus points to, and how many more learners it needs to open.
  *   4. Readiness to buy, 0 to 100, with its reasons: recent activity, use of the tutor and exercises, poll answers,
- *      their deadline, asking for a room, a price quote.
+ *      their deadline, asking for a room, a price quote, a free place in the first class.
  *   5. A heat map: how many learners can start a class at each hour of the week, in any time zone.
  */
 (function (root, factory) {
@@ -127,6 +127,7 @@
     add({ '3_months': 10, '6_months': 6, '1_year': 3 }[l.timeframe] || 0, 'has a deadline (' + String(l.timeframe || '').replace('_', ' ') + ')');
     add(l.interest && l.interest.length ? 10 : 0, 'asked to be told when a room opens');
     add(l.quotes > 0 ? 15 : 0, 'looked at a price');
+    add(l.freeClass > 0 ? 15 : 0, 'saved a free place in the first class');
     score = Math.min(100, score);
     return { score: score, stage: score >= 55 ? 'ready' : score >= 30 ? 'warming' : 'cold', why: why };
   }
@@ -139,8 +140,9 @@
       tz: wk.tz, region: region(wk.tz), country: r.country || (poll && poll.from) || null, poll: poll,
       slots: wk.slots, times: wk.source, sure: SURE[wk.source] || 0,
       created_at: r.created_at, last_active: r.last_active || null, acts_7d: r.acts_7d || 0, acts_30d: r.acts_30d || 0, days_active: r.days_active || 0,
-      tutor_min: +r.tutor_min || 0, exercises: +r.exercises || 0, interest: r.interest || [], quotes: +r.quotes || 0, news: r.news === true,
-      paying: (+r.paid || 0) > 0 || r.sub_status === 'active' || r.sub_status === 'trialing', inRoom: !!r.cohort
+      tutor_min: +r.tutor_min || 0, exercises: +r.exercises || 0, interest: r.interest || [], quotes: +r.quotes || 0, freeClass: +r.free_class || 0, news: r.news === true,
+      paying: (+r.paid || 0) > 0 || r.sub_status === 'active' || r.sub_status === 'trialing', inRoom: !!r.cohort,
+      test: r.test === true, tzSet: r.timezone || null
     };
     l.staff = l.role === 'admin' || l.role === 'teacher';
     /* No level test and no real time zone: an old test account or a sign-up that stopped half way */
@@ -226,7 +228,7 @@
   var KIND_ORDER = ['level_pack', 'exam_pack', 'open_class'];
   var KIND_NAME = { level_pack: 'level pack', exam_pack: 'exam pack', open_class: 'open class' };
   /**
-   * run({ learners, availability, rooms }, { language, now, includeIncomplete, includeStaff })
+   * run({ learners, availability, rooms }, { language, now, includeIncomplete, includeStaff, includeTests })
    * → { learners, pool, groups, unplaced, summary }
    * Groups are made per level and product (a pack meets three times a week, an open class once). Then each learner
    * still alone joins, where the time suits and there is room: a level pack at their level when they asked for exams
@@ -237,7 +239,8 @@
     var now = opts.now || new Date(), language = opts.language || 'English';
     var all = (data.learners || []).map(function (r) { return normalise(r, now); });
     var mine = all.filter(function (l) { return l.language === language; });
-    var pool = mine.filter(function (l) { return (opts.includeStaff || !l.staff) && (opts.includeIncomplete || !l.incomplete) && !l.inRoom && l.level; });
+    /* The owner's test accounts (public.is_test_user) stay out unless asked for, like staff accounts */
+    var pool = mine.filter(function (l) { return (opts.includeStaff || !l.staff) && (opts.includeTests || !l.test) && (opts.includeIncomplete || !l.incomplete) && !l.inRoom && l.level; });
     var zones = pool.map(function (l) { return l.tz; }).filter(function (z, i, a) { return z && a.indexOf(z) === i; }).sort();
     var cands = candidates(language, data.availability, now, zones);
     var groups = [], left = pool.slice();
@@ -275,9 +278,15 @@
       g.min = KINDS[g.kind].min; g.max = KINDS[g.kind].max;
       g.need = Math.max(0, g.min - g.members.length);
       g.teacher = g.slot.teacher || null;
-      var zones = {};
-      g.members.forEach(function (m) { if (m.learner.tz) zones[m.learner.tz] = (zones[m.learner.tz] || 0) + 1; });
-      g.zone = g.slot.zone || Object.keys(zones).sort(function (a, b) { return zones[b] - zones[a]; })[0] || 'UTC';
+      /* Shown in the zone most of its members live in (a teacher's offered time keeps the teacher's zone). On a tie the
+         zone of members whose country is known counts a little more, then the region most of them are in: never the
+         alphabet (two learners in Istanbul and Karachi used to show in Karachi time because "Asia" sorts first). */
+      /* First the clock most of them share (Paris, Berlin and Madrid are one clock), then the zone most of them have
+         on it, with a known country counting a little more */
+      var zones = {}, clocks = {};
+      g.members.forEach(function (m) { var l = m.learner; if (l.tz) { var o = offsetMin(l.tz, now); zones[l.tz] = (zones[l.tz] || 0) + 1 + (l.country ? 0.25 : 0); clocks[o] = (clocks[o] || 0) + 1; } });
+      var zbest = Object.keys(zones).sort(function (a, b) { return (clocks[offsetMin(b, now)] || 0) - (clocks[offsetMin(a, now)] || 0) || zones[b] - zones[a] || a.localeCompare(b); })[0];
+      g.zone = g.slot.teacher ? g.slot.zone : zbest || g.slot.zone || 'UTC';
       var pairs = 0, sum = 0;
       for (var i = 0; i < g.members.length; i++) for (var j = i + 1; j < g.members.length; j++) { sum += compat(g.members[i].learner, g.members[j].learner).score; pairs++; }
       g.cohesion = pairs ? Math.round(sum / pairs) : 0;
@@ -301,7 +310,7 @@
       language: language, all: mine, pool: pool, groups: groups, unplaced: unplaced,
       left: mine.filter(function (l) { return pool.indexOf(l) < 0; }),
       summary: {
-        total: mine.length, pool: pool.length, staff: mine.filter(function (l) { return l.staff; }).length,
+        total: mine.length, pool: pool.length, staff: mine.filter(function (l) { return l.staff; }).length, tests: mine.filter(function (l) { return l.test && !l.staff; }).length,
         incomplete: mine.filter(function (l) { return l.incomplete && !l.staff; }).length, paying: mine.filter(function (l) { return l.paying; }).length,
         levels: count(pool, function (l) { return l.level; }), goals: count(pool, function (l) { return l.goal; }), regions: count(pool, function (l) { return l.region; }),
         zones: count(pool, function (l) { return l.tz; }), times: count(pool, function (l) { return l.times; }), stages: count(pool, function (l) { return l.ready.stage; }),

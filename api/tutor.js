@@ -144,8 +144,11 @@ async function handleStatus(req, res, supabase, user) {
   const plans = {};
   (allMinutes || []).forEach((x) => { if (PAID_TIERS.includes(x.tier)) plans[x.tier] = x.minutes_per_month; });
   const soon = (lots || [])[0];
+  const fb = await feedbackState(supabase, profile.id);
   return res.status(200).json({
     seconds: balanceOf(t),
+    // The 3-minute feedback banner: seconds used with the tutor so far, and whether it was answered
+    feedback: fb,
     // Part 6: bought time expires 12 months after the purchase; the lot that expires first
     expiring: soon ? { seconds: soon.left_seconds, at: soon.expires_at } : null,
     // The monthly minutes of each plan, for the out-of-time screen
@@ -166,6 +169,55 @@ async function handleStatus(req, res, supabase, user) {
     // The cascade call, the owner's test version (admins and the listed testers only)
     cascade_test: cascade.configured() && brain.configured() && await isVoiceTester(supabase, user),
   });
+}
+
+// ── feedback ────────────────────────────────────────────────
+// Owner, 12 Nov 2026: after 3 minutes with the tutor the learner is asked how it is going and what to improve;
+// answering once adds 5 minutes (tutor_add_credit, reason 'feedback'). One answer per learner (tutor_feedback's key).
+
+const FEEDBACK_AFTER = 180, FEEDBACK_GIFT = 300;
+const MOODS = ['great', 'good', 'meh'];
+
+async function feedbackState(supabase, profileId) {
+  const [{ data: used }, { data: done }] = await Promise.all([
+    supabase.from('tutor_sessions').select('seconds_used').eq('student_id', profileId).limit(1000),
+    supabase.from('tutor_feedback').select('created_at').eq('student_id', profileId).maybeSingle(),
+  ]);
+  const seconds = (used || []).reduce((a, r) => a + (r.seconds_used || 0), 0);
+  return { used: seconds, after: FEEDBACK_AFTER, gift: FEEDBACK_GIFT, done: !!done };
+}
+
+async function handleFeedback(req, res, supabase, user) {
+  const body = parseBody(req);
+  if (!body) return res.status(400).json({ error: 'Bad request' });
+  const mood = String(body.mood || '');
+  if (!MOODS.includes(mood)) return res.status(400).json({ error: 'Choose how it is going', reason: 'mood' });
+  const improve = String(body.improve || '').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g, '').trim().slice(0, 1000) || null;
+  const ui = /^[a-z]{2}$/.test(String(body.ui || '')) ? String(body.ui) : null;
+  const { data: profile } = await supabase.from('student_profiles').select('id').eq('user_id', user.id).maybeSingle();
+  if (!profile) return res.status(404).json({ error: 'No student profile', reason: 'no_profile' });
+  const st = await feedbackState(supabase, profile.id);
+  if (st.done) return res.status(409).json({ error: 'Already answered', reason: 'done' });
+  // A little slack for the time a live call has used since its last tick
+  if (st.used < FEEDBACK_AFTER - 45) return res.status(403).json({ error: 'Not yet', reason: 'early' });
+  const { error: insErr } = await supabase.from('tutor_feedback').insert({
+    student_id: profile.id, mood, improve, minutes_used: Math.round(st.used / 60), seconds_added: FEEDBACK_GIFT, ui_lang: ui,
+  });
+  if (insErr) {
+    if (insErr.code === '23505') return res.status(409).json({ error: 'Already answered', reason: 'done' });
+    console.error('[Tutor] feedback insert failed:', insErr.message);
+    return res.status(500).json({ error: 'Could not save your answer' });
+  }
+  const { error: gErr } = await supabase.rpc('tutor_add_credit', {
+    p_student: profile.id, p_seconds: FEEDBACK_GIFT, p_reason: 'feedback', p_stripe_session: null, p_note: 'Tutor feedback', p_by: null,
+  });
+  if (gErr) {
+    // The answer is kept; the minutes are added again by hand from the admin page if this ever fails
+    console.error('[Tutor] feedback gift failed:', gErr.message);
+    await supabase.from('tutor_feedback').update({ seconds_added: 0 }).eq('student_id', profile.id);
+    return res.status(200).json({ saved: true, added: 0, seconds: await balance(supabase, profile.id) });
+  }
+  return res.status(200).json({ saved: true, added: FEEDBACK_GIFT, seconds: await balance(supabase, profile.id) });
 }
 
 // ── admin-grant ─────────────────────────────────────────────
@@ -1246,7 +1298,7 @@ module.exports = async function handler(req, res) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return handleAdminGrant(req, res, supabase, user);
   }
-  const POST = { start: handleStart, turn: handleTurn, 'set-audio': handleSetAudio, voice: handleVoice, pronounce: handlePronounce, 'live-start': handleLiveStart, 'live-tick': handleLiveTick, 'live-board': handleLiveBoard, 'live-answer': handleLiveAnswer, 'live-pron': handleLivePron, 'cascade-turn': handleCascadeTurn, end: handleEnd, forget: handleForget };
+  const POST = { feedback: handleFeedback, start: handleStart, turn: handleTurn, 'set-audio': handleSetAudio, voice: handleVoice, pronounce: handlePronounce, 'live-start': handleLiveStart, 'live-tick': handleLiveTick, 'live-board': handleLiveBoard, 'live-answer': handleLiveAnswer, 'live-pron': handleLivePron, 'cascade-turn': handleCascadeTurn, end: handleEnd, forget: handleForget };
   if (POST[action]) {
     if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
     return POST[action](req, res, supabase, user);

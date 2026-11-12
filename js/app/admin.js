@@ -197,6 +197,7 @@
     'vercel:cron-rooms': { name: 'Rooms: publish, open or cancel, start and charge', every: DAY, since: '2026-11-12T04:38:00Z' },
     'vercel:cron-finance': { name: 'Finance: founding notices, exchange rates, the month’s figures', every: DAY, since: '2026-11-12T04:38:00Z' },
     'db:tutor-purge': { name: 'Delete old tutor recordings', every: DAY },
+    'vercel:cron-launch-email': { name: 'Launch email to new English learners (when switched on)', every: HOUR, since: '2026-11-13T01:00:00Z' },
     /* Not on a schedule: written when something happens, so never late, only failed */
     'daily:join-session': { name: 'Opening a class video room (Daily)', every: 0 }
   };
@@ -276,6 +277,8 @@
       if (l.reason === 'free_grant') return;
       add(l.created_at, l.reason === 'purchase' ? 'money' : 'tutor', 'bot', b(sName(l.student_id)) + ' got ' + plural(Math.round(l.seconds / 60), 'tutor minute', 'tutor minutes'), [l.reason === 'admin' ? 'Added by an admin' : cap(String(l.reason || '').replace(/_/g, ' ')), l.note].filter(Boolean).join(': '), sHref(l.student_id));
     });
+    var MOOD = { great: 'great', good: 'good', meh: 'not great' };
+    (C.feedback || []).forEach(function (f) { add(f.created_at, 'tutor', 'bot', b(sName(f.student_id)) + ' said the tutor is ' + esc(MOOD[f.mood] || f.mood), [f.improve ? '\u201c' + cut(f.improve, 100) + '\u201d' : 'No suggestion', f.seconds_added ? Math.round(f.seconds_added / 60) + ' minutes added' : ''].filter(Boolean).join(', '), sHref(f.student_id)); });
     (C.tutor || []).forEach(function (t) {
       add(t.started_at, 'tutor', 'bot', b(sName(t.student_id)) + ' had a ' + Math.max(1, Math.round((t.seconds_used || 0) / 60)) + '-minute ' + (t.mode === 'live' ? 'voice' : 'written') + ' tutor session',
         [[t.language, t.level].filter(Boolean).join(' '), plural(t.turns || 0, 'turn', 'turns'), t.title].filter(Boolean).join(', '), sHref(t.student_id));
@@ -313,6 +316,7 @@
     (C.abuse || []).forEach(function (a) { add(a.at, 'problems', 'alert', 'Blocked: ' + b(String(a.kind || '').replace(/_/g, ' ')), a.user_id ? uName(a.user_id) : '', a.user_id ? uHref(a.user_id) : null); });
     return items.sort(function (a, b2) { return String(b2.at).localeCompare(String(a.at)); });
   }
+  var MOODS = { great: 'great', good: 'good', meh: 'not great' };
   var FEED_IC = { money: 'k-money', problems: 'k-bad', tutor: 'k-ai', people: 'k-people' };
   function feedHtml(items) {
     var list = items.filter(function (i) { return feedFilter === 'all' ? i.g !== 'visits' : i.g === feedFilter; }).slice(0, 200);
@@ -348,7 +352,7 @@
   function overviewView() {
     var c = D.counts, C = D.console || {}, me = D.userId, dir = directory(), items = attention(), feed = buildFeed(), N = 30;
     var html = '<div class="view__head"><div><h1 class="t-h1">Overview</h1><p class="t-lead">' + esc(cap(fmt(Date.now(), { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }))) +
-      '. Figures cover the last 30 days unless they say otherwise.</p></div></div>';
+      '. Figures cover the last 30 days unless they say otherwise' + (C.testCount ? '; your ' + C.testCount + ' test accounts are left out' : '') + '.</p></div></div>';
     if (mode !== 'real') html += '<div class="sample-bar" role="note"><b>Sample data.</b><span>' + esc(mode === 'forced' ? 'You asked for the sample.' : mode === 'error' ? 'The real data did not load.' : 'Sign in with an admin account to see Alimun’s real data.') + '</span>' +
       (mode === 'forced' ? '<a class="btn btn--primary btn--sm" href="' + location.pathname + location.hash + '">Show the real data</a>' : mode === 'error' ? '<button class="btn btn--primary btn--sm" type="button" data-retry>Try again</button>' : '<a class="btn btn--primary btn--sm" href="/signin.html?next=/app/admin">Sign in</a>') + '</div>';
 
@@ -370,7 +374,7 @@
     var spend = (D.ai || []).reduce(function (n, r) { return n + Number(r.cost_usd || 0); }, 0), calls = (D.ai || []).reduce(function (n, r) { return n + Number(r.calls || 0); }, 0);
     var trend = function (a, b2) { if (!a && !b2) return ''; var d = a - b2; return '<b class="' + (d < 0 ? 'is-down' : '') + '">' + (d >= 0 ? '+' : '−') + num(Math.abs(d)) + '</b> on the week before'; };
     var kpis = [
-      { l: 'Students', v: num(c.students), s: '<b>+' + num(new7) + '</b> this week' + (newPrev7 || new7 ? ', ' + num(newPrev7) + ' the week before' : ''), sp: signupS, href: '#/students' },
+      { l: 'Students', v: num(students.length), s: '<b>+' + num(new7) + '</b> this week' + (newPrev7 || new7 ? ', ' + num(newPrev7) + ' the week before' : ''), sp: signupS, href: '#/students' },
       { l: 'Active this week', v: num(Object.keys(active7).length), s: 'people who used a dashboard', sp: activeS, href: '#/activity' },
       { l: 'Paying', v: num(payingNow), s: 'subscriptions and purchases, trials left out', href: '#/students' },
       { l: 'Paid in 30 days', v: paidTxt, s: plural(paid.length, 'payment', 'payments'), href: '#/figures', small: true },
@@ -430,6 +434,16 @@
         return '<tr><td><a href="#/students/' + esc(p.id) + '">' + esc(s.full_name || 'Student') + '</a>' + (s.user_id === me ? ' <span class="m">(you)</span>' : '') + '<div class="m">' + esc((D.emails || {})[s.user_id] || s.country || '') + '</div></td><td class="m">' + esc(Object.keys(p.langs).join(', ')) + '</td>' +
           '<td class="r">' + num(p.n) + (p.voice ? ' <span class="m">(' + num(p.voice) + ' voice)</span>' : '') + '</td><td class="r">' + num(Math.round(p.sec / 6) / 10) + '</td><td class="r m">' + esc(ago(p.last)) + '</td></tr>';
       }).join('') + '</tbody></table></div>' : '<p class="t-small" style="margin-top:6px">Nobody used the tutor in the last 30 days.</p>') + '</section>';
+
+    /* What learners said about the tutor (the 3-minute feedback) */
+    var fbs = C.feedback || [], fc = { great: 0, good: 0, meh: 0 }; fbs.forEach(function (f) { fc[f.mood] = (fc[f.mood] || 0) + 1; });
+    html += '<section class="card span-12" style="--i:9" aria-labelledby="h-tfb"><div class="panel-h"><h2 class="t-h2" id="h-tfb">What learners say about the tutor</h2><span class="t-small">' +
+      esc(fbs.length ? plural(fbs.length, 'answer', 'answers') + ': ' + num(fc.great) + ' great, ' + num(fc.good) + ' good, ' + num(fc.meh) + ' not great' : 'Asked after 3 minutes with the tutor; answering adds 5 minutes') + '</span></div>' +
+      (fbs.length ? '<div class="dt-wrap"><table class="dt"><thead><tr><th>Learner</th><th>How it is going</th><th>What to improve</th><th class="r">Minutes used</th><th class="r">When</th></tr></thead><tbody>' + fbs.slice(0, 30).map(function (f) {
+        var st = dir.s[f.student_id] || {};
+        return '<tr><td><a href="#/students/' + esc(f.student_id) + '">' + esc(st.full_name || 'Student') + '</a><div class="m">' + esc([st.language, st.level].filter(Boolean).join(' ')) + '</div></td>' +
+          '<td class="nw"><span class="dot' + (f.mood === 'great' ? '' : f.mood === 'good' ? ' dot--warn' : ' dot--bad') + '"></span>' + esc(cap(MOODS[f.mood] || f.mood)) + '</td><td>' + esc(f.improve || '') + '</td><td class="r">' + num(f.minutes_used || 0) + '</td><td class="r m">' + esc(ago(f.created_at)) + '</td></tr>';
+      }).join('') + '</tbody></table></div>' : '<p class="t-small" style="margin-top:6px">No answers yet.</p>') + '</section>';
 
     /* Latest accounts */
     var lastSeen = {}; (C.events || []).forEach(function (e) { if (e.user_id && (!lastSeen[e.user_id] || e.created_at > lastSeen[e.user_id])) lastSeen[e.user_id] = e.created_at; });
@@ -532,13 +546,26 @@
         signups: [{ email: 'reader@example.com', source: 'blog', country: 'ES', created_at: ago2(60 * 12) }],
         withdraw: [], aiFail: [{ action: 'tutor_turn', provider: 'groq', error: 'rate limited', created_at: ago2(55) }], cronFail: [{ job: 'vercel:cron-expire-offers', ran_at: ago2(8.5 * 60), result: 'timeout' }], hooks: [], attend: [{ student_id: 'st4', joined_at: ago2(60 * 22), duration_minutes: 55 }], abuse: [] } };
   }
+  /* The owner's own accounts (any email with "bchysf", "Test", "Test test"; public.is_test_user) are left out of every
+     figure and the feed (owner, 12 Nov 2026). They are kept in the database for testing classrooms. */
+  function dropTests(C) {
+    var tu = {}, ts = {};
+    (C.tests || []).forEach(function (x) { tu[typeof x === 'string' ? x : x.admin_test_users] = 1; });
+    (C.students || []).forEach(function (s) { if (tu[s.user_id]) ts[s.id] = 1; });
+    var byUser = function (k) { return function (x) { return !tu[x[k]]; }; }, byStudent = function (x) { return !ts[x.student_id]; };
+    ['students', 'teachers', 'events', 'money', 'paidNow', 'interest', 'aiFail', 'abuse'].forEach(function (k) { if (C[k]) C[k] = C[k].filter(byUser('user_id')); });
+    if (C.messages) C.messages = C.messages.filter(byUser('sender_user'));
+    ['tutor', 'ledger', 'enrol', 'waitlist', 'homework', 'oto', 'poll', 'attend', 'feedback'].forEach(function (k) { if (C[k]) C[k] = C[k].filter(byStudent); });
+    C.testCount = Object.keys(tu).length;
+    return C;
+  }
   function loadData() {
     if (/[?&]sample=1/.test(location.search)) { mode = 'forced'; return Promise.resolve(sample()); }
     return window.AlimunData.adminOverview().then(function (d) {
       if (d && d.admin) {
         mode = 'real';
         return Promise.all([window.AlimunData.adminConsole().catch(function () { return { failed: ['console'] }; }), window.AlimunData.userId()]).then(function (r) {
-          d.console = r[0]; d.failed = r[0].failed || []; d.userId = r[1]; d.emails = {}; return d;
+          d.console = dropTests(r[0]); d.failed = r[0].failed || []; d.userId = r[1]; d.emails = {}; return d;
         });
       }
       if (d && d.signedIn) { mode = 'denied'; return d; }

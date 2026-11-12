@@ -2118,3 +2118,20 @@ body.is-class .view { max-width: 1640px; }
 .off-cover svg { width: 18px; height: 18px; }
 .off-cover.is-saved { box-shadow: none; background: var(--t-lime); cursor: default; }
 .off-cover.is-saved:hover { background: var(--t-lime); color: var(--forest); }
+
+/* ---------- Tutor: the 3-minute feedback banner (js/app/tutor.js, owner 12 Nov 2026) ---------- */
+.tfb { position: fixed; z-index: 70; right: 24px; bottom: 24px; width: min(400px, calc(100vw - 32px)); background: var(--white); color: var(--ink);
+  border-radius: var(--r-lg); box-shadow: 0 22px 60px rgba(8, 8, 8, .18), inset 0 0 0 2px var(--lime); padding: 18px 20px;
+  opacity: 0; transform: translateY(16px); transition: opacity var(--t-mid) var(--ease), transform var(--t-mid) var(--ease); }
+.tfb.is-in { opacity: 1; transform: none; }
+.tfb__q { margin: 0; font-size: 16px; line-height: 1.35; }
+.tfb__q b { font-weight: 700; }
+.tfb__sub { margin: 4px 0 12px; color: var(--muted); font-size: 14px; }
+.tfb__moods { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+.tfb__lbl { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+.tfb__ta { resize: vertical; min-height: 64px; font-size: 15px; }
+.tfb__msg { margin: 6px 0 0; min-height: 1.2em; font-size: 14px; color: #b0472f; }
+.tfb__msg:empty { display: none; }
+.tfb .btn-row { margin-top: 10px; }
+@media (max-width: 899px) { .tfb { right: 16px; left: 16px; width: auto; bottom: calc(var(--bar-h) + 12px + env(safe-area-inset-bottom)); } }
+@media (prefers-reduced-motion: reduce) { .tfb { transition: none; } }
