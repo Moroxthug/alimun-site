@@ -1,0 +1,16 @@
+{
+  "name": "alimun-admin",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Alimun Admin for Android: the admin pages with microphone and camera, installed by hand, never published (docs/APP_PLAN.md)",
+  "scripts": {
+    "apk": "cap sync android && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "7.6.9",
+    "@capacitor/core": "7.6.9"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "7.6.9"
+  }
+}

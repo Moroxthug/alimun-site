@@ -1,0 +1,13 @@
+{
+  "appId": "com.alimun.admin",
+  "appName": "Alimun Admin",
+  "webDir": "www",
+  "server": {
+    "url": "https://alimun.com/app/admin",
+    "androidScheme": "https"
+  },
+  "android": {
+    "backgroundColor": "#ffffff",
+    "adjustMarginsForEdgeToEdge": "force"
+  }
+}

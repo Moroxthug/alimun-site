@@ -1,8 +1,8 @@
 """Launcher icons and the launch screen for the Android app from images/app (the logo on white, owner 12 Nov 2026).
-Run from the repository root after `npx cap add android`: python3 mobile/icons.py"""
-import glob
+Run from the repository root after `npx cap add android`: python3 mobile/icons.py [mobile/admin]"""
+import glob, sys
 from PIL import Image, ImageDraw
-R = 'mobile/android/app/src/main/res'
+R = (sys.argv[1] if len(sys.argv) > 1 else 'mobile') + '/android/app/src/main/res'
 mask = Image.open('images/app/icon-maskable-512.png').convert('RGBA')
 icon = Image.open('images/app/icon-512.png').convert('RGBA')
 for d, legacy, fg in [('mdpi', 48, 108), ('hdpi', 72, 162), ('xhdpi', 96, 216), ('xxhdpi', 144, 324), ('xxxhdpi', 192, 432)]:
