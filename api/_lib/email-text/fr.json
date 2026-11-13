@@ -297,5 +297,16 @@
     "heading_l": "Votre professeur arrive",
     "body_l": "Votre cours de **{class}** devait commencer à {time}. Votre professeur a quelques minutes de retard et a été prévenu. Restez dans la salle ou revenez dans quelques minutes.",
     "button_l": "Aller au cours"
+  },
+  "class_remind": {
+    "subject_60": "Votre cours de {class} commence à {time}",
+    "heading_60": "Votre cours commence dans une heure",
+    "body_60": "Votre cours de **{class}** commence à {time}. Signalez votre présence quand vous êtes prêt, au moins 5 minutes avant le début, pour que nous sachions que vous êtes là.",
+    "button_checkin": "Signaler ma présence",
+    "subject_5": "Signalez votre présence : votre cours de {class} commence à {time}",
+    "heading_5": "Votre cours commence dans 5 minutes",
+    "body_5_missing": "Votre cours de **{class}** commence à {time} et vous n’avez pas encore signalé votre présence. Faites-le maintenant et ouvrez la salle ; vos apprenants vont arriver.",
+    "body_5_ok": "Votre cours de **{class}** commence à {time}. Votre présence est signalée : ouvrez la salle maintenant.",
+    "button_room": "Ouvrir la salle"
   }
 }

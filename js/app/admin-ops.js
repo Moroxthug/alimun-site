@@ -69,7 +69,10 @@
 
   /* ---------- Class log ---------- */
   var F = { days: 30, teacher: '', outcome: '', tests: false }, LOG = null;
-  function isTestClass(s) { var tp = s.cohorts && s.cohorts.teacher_profiles; return !!(tp && LOG.tests[tp.user_id]); }
+  /* One of the owner's tests: a test persona teaching (not the owner's own account) and no real learner came
+     (owner, 13 Nov 2026: classes the owner teaches are real) */
+  function isTestClass(s) { var tp = s.cohorts && s.cohorts.teacher_profiles; return !!(tp && LOG.tests[tp.user_id] && tp.user_id !== LOG.me && !(s.learners_present > 0)); }
+  function checkText(s) { return s.teacher_checked_in_at ? hm(s.teacher_checked_in_at) + (s.teacher_checkin_via === 'room' ? ', on entering' : s.teacher_checkin_via === 'email' ? ', from the email' : '') : ''; }
   function list() {
     return LOG.sessions.filter(function (s) {
       if (!F.tests && isTestClass(s)) return false;
@@ -104,10 +107,11 @@
         '<select class="st-in" data-cl="teacher" aria-label="Teacher">' + opt('', 'Every teacher', F.teacher) + Object.keys(teachers).sort().map(function (t) { return opt(t, t, F.teacher); }).join('') + '</select>' +
         '<select class="st-in" data-cl="outcome" aria-label="Outcome">' + opt('', 'Every class date', F.outcome) + opt('past', 'Past only', F.outcome) + Object.keys(OUT).map(function (k) { return opt(k, OUT[k], F.outcome); }).join('') + opt('none', 'Not verified', F.outcome) + '</select>' +
         '<label class="st-check"><input type="checkbox" data-cl="tests"' + (F.tests ? ' checked' : '') + '> Your test classes</label></div>' +
-      (L.length ? '<div class="dt-wrap"><table class="dt"><thead><tr><th>When</th><th>Class</th><th>In the room <span class="tl-key"><i class="k-slot"></i>slot <i class="k-room"></i>anyone <i class="k-t"></i>teacher</span></th><th class="r">Learners</th><th class="r">Late</th><th>Outcome</th></tr></thead><tbody>' + L.slice(0, 400).map(function (s) {
+      (L.length ? '<div class="dt-wrap"><table class="dt"><thead><tr><th>When</th><th>Class</th><th>In the room <span class="tl-key"><i class="k-slot"></i>slot <i class="k-room"></i>anyone <i class="k-t"></i>teacher</span></th><th>Check-in</th><th class="r">Learners</th><th class="r">Late</th><th>Outcome</th></tr></thead><tbody>' + L.slice(0, 400).map(function (s) {
         var o = outcomeOf(s), co = s.cohorts || {};
         return '<tr data-href="#/classlog/' + esc(s.id) + '"><td class="nw">' + esc(when(s.scheduled_at)) + '</td><td><a href="#/classlog/' + esc(s.id) + '">' + esc(label(co)) + '</a>' + (isTestClass(s) ? ' <span class="m">(test)</span>' : '') + '<div class="m">' + esc(teacherOf(s)) + '</div></td>' +
           '<td class="tl-c">' + bar(s) + '<div class="m">' + esc(s.actual_start ? hm(s.actual_start) + ' to ' + hm(s.actual_end) : s.outcome ? 'Nobody' : '') + '</div></td>' +
+          '<td class="nw' + (!s.teacher_checked_in_at && s.status !== 'cancelled' && new Date(s.scheduled_at).getTime() - 5 * MIN < Date.now() && !isTestClass(s) ? ' is-bad' : ' m') + '">' + esc(checkText(s) || (new Date(s.scheduled_at).getTime() - 5 * MIN < Date.now() && s.status !== 'cancelled' ? 'None' : '')) + '</td>' +
           '<td class="r">' + esc(s.learners_present != null ? s.learners_present + ' of ' + (co.enrolled_count || 0) : '') + '</td><td class="r' + (s.minutes_late > 5 ? ' is-bad' : '') + '">' + esc(s.minutes_late != null ? s.minutes_late + ' min' : '') + '</td>' +
           '<td class="nw"><span class="dot' + o.d + '"></span>' + esc(o.t) + '</td></tr>';
       }).join('') + '</tbody></table></div>' : '<p class="t-small">No class dates match.</p>') + '</section>';
@@ -128,6 +132,7 @@
     var from = st - 15 * MIN, span = (m + 30) * MIN, pos = function (t) { return Math.max(0, Math.min(100, (t - from) / span * 100)); };
     var facts = [['Scheduled', when(s.scheduled_at) + ' for ' + m + ' minutes'], ['Outcome', o.t], ['In the room', s.actual_start ? hm(s.actual_start) + ' to ' + hm(s.actual_end) : 'Nobody seen'],
       ['Teacher', teacherOf(s) + (s.teacher_joined_at ? ', joined ' + hm(s.teacher_joined_at) + (s.minutes_late ? ' (' + s.minutes_late + ' min late)' : ', on time') + ', ' + mins(s.teacher_seconds) + ' of ' + m + ' minutes in the class' : ', not seen in the room')],
+      ['Check-in', s.teacher_checked_in_at ? checkText(s) + (new Date(s.teacher_checked_in_at).getTime() > st - 5 * MIN ? ' (later than 5 minutes before the start)' : '') : 'The teacher did not check in'],
       ['Learners', (s.learners_present != null ? s.learners_present : '–') + ' of ' + (co.enrolled_count || 0) + ' enrolled; most people at once: ' + (s.peak_people || 0)],
       ['Last read', s.verified_at ? when(s.verified_at) : 'Not yet']];
     var people = d.presence.slice().sort(function (a, b) { return (a.role === 'teacher' ? 0 : 1) - (b.role === 'teacher' ? 0 : 1) || String(a.first_join).localeCompare(String(b.first_join)); });

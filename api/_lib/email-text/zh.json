@@ -297,5 +297,16 @@
     "heading_l": "你的老师马上就到",
     "body_l": "你的**{class}**课应于{time}开始。老师会晚几分钟，已经收到通知。请留在教室里，或几分钟后再回来。",
     "button_l": "进入课堂"
+  },
+  "class_remind": {
+    "subject_60": "你的{class}课将于{time}开始",
+    "heading_60": "你的课一小时后开始",
+    "body_60": "你的**{class}**课将于{time}开始。准备好后请签到，最晚在开课前 5 分钟，好让我们知道你已到位。",
+    "button_checkin": "签到",
+    "subject_5": "请立即签到：你的{class}课将于{time}开始",
+    "heading_5": "你的课 5 分钟后开始",
+    "body_5_missing": "你的**{class}**课将于{time}开始，你还没有签到。请现在签到并进入教室，学员马上就到。",
+    "body_5_ok": "你的**{class}**课将于{time}开始。你已签到，请现在进入教室。",
+    "button_room": "进入教室"
   }
 }

@@ -2145,3 +2145,9 @@ body.is-class .view { max-width: 1640px; }
   -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
 .is-native img, .is-native svg { -webkit-touch-callout: none; -webkit-user-drag: none; }
 .is-native body { overscroll-behavior: none; }
+
+/* Teacher check-in on the next class (js/app/teach.js, owner 13 Nov 2026) */
+.tc-check { margin-top: 16px; display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+.tc-check .t-small, .tc-check.t-small { color: var(--on-forest); margin: 0; }
+.tc-check.is-done { color: var(--lime); font-weight: 700; }
+.tc-checknote { margin: 0 0 14px; padding: 12px 16px; border-radius: var(--r-md); background: var(--t-lime); color: var(--forest); font-weight: 600; }

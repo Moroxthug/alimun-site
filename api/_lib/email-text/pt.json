@@ -297,5 +297,16 @@
     "heading_l": "O seu professor está a caminho",
     "body_l": "A sua aula de **{class}** devia começar às {time}. O seu professor está alguns minutos atrasado e já foi avisado. Fique na sala ou volte daqui a alguns minutos.",
     "button_l": "Ir para a aula"
+  },
+  "class_remind": {
+    "subject_60": "A sua aula de {class} começa às {time}",
+    "heading_60": "A sua aula começa daqui a uma hora",
+    "body_60": "A sua aula de **{class}** começa às {time}. Confirme a sua presença quando estiver pronto, pelo menos 5 minutos antes de começar, para sabermos que está lá.",
+    "button_checkin": "Confirmar presença",
+    "subject_5": "Confirme já: a sua aula de {class} começa às {time}",
+    "heading_5": "A sua aula começa daqui a 5 minutos",
+    "body_5_missing": "A sua aula de **{class}** começa às {time} e ainda não confirmou a sua presença. Confirme agora e abra a sala; os seus alunos estão à espera.",
+    "body_5_ok": "A sua aula de **{class}** começa às {time}. Já confirmou: abra a sala agora.",
+    "button_room": "Abrir a sala"
   }
 }

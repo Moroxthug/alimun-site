@@ -297,5 +297,16 @@
     "heading_l": "Ihre Lehrkraft ist unterwegs",
     "body_l": "Ihr Kurs **{class}** sollte um {time} beginnen. Ihre Lehrkraft verspätet sich ein paar Minuten und wurde benachrichtigt. Bleiben Sie im Raum oder kommen Sie in ein paar Minuten zurück.",
     "button_l": "Zum Kurs"
+  },
+  "class_remind": {
+    "subject_60": "Ihr {class}-Kurs beginnt um {time}",
+    "heading_60": "Ihr Kurs beginnt in einer Stunde",
+    "body_60": "Ihr Kurs **{class}** beginnt um {time}. Melden Sie sich an, sobald Sie bereit sind, spätestens 5 Minuten vor Beginn, damit wir wissen, dass Sie da sind.",
+    "button_checkin": "Anwesenheit melden",
+    "subject_5": "Jetzt melden: Ihr {class}-Kurs beginnt um {time}",
+    "heading_5": "Ihr Kurs beginnt in 5 Minuten",
+    "body_5_missing": "Ihr Kurs **{class}** beginnt um {time}, und Sie haben sich noch nicht gemeldet. Melden Sie sich jetzt und öffnen Sie den Kursraum; Ihre Lernenden warten.",
+    "body_5_ok": "Ihr Kurs **{class}** beginnt um {time}. Sie sind gemeldet: Öffnen Sie jetzt den Kursraum.",
+    "button_room": "Kursraum öffnen"
   }
 }

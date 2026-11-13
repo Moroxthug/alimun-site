@@ -223,6 +223,13 @@
   }
   function otoNotesDue() { var now = Date.now(); return (D.oto || []).filter(function (b) { return b.status === 'booked' && !b.noted && new Date(b.at).getTime() < now; }); }
 
+  function checkIn(btn) {
+    var id = btn.getAttribute('data-checkin'), msg = app.querySelector('[data-checkin-msg]'), s = (D.sessions || []).filter(function (x) { return x.id === id; })[0];
+    if (mode !== 'real') { if (s) s.checkedIn = new Date().toISOString(); render(current, false); return; }
+    btn.disabled = true;
+    window.AlimunData.teacherCheckIn(id).then(function (r) { if (s) s.checkedIn = r.checked_in_at || new Date().toISOString(); render(current, false); },
+      function () { btn.disabled = false; if (msg) msg.textContent = t('app_t_checkin_err'); });
+  }
   function nextCard() {
     var s = nextSession();
     var head = '<section class="card card--forest span-8' + (s ? '' : ' card--center') + '" style="--i:1" aria-labelledby="h-next">';
@@ -236,8 +243,14 @@
     var btn = !open ? '' : mode === 'real'
       ? '<a class="btn btn--lime" href="#/classes/live/' + esc(s.id) + '" data-start>' + icon('play') + esc(t('app_t_start')) + '</a>'
       : '<button class="btn btn--lime" type="button" data-start-sample>' + icon('play') + esc(t('app_t_start')) + '</button>';
+    /* Check-in (owner, 13 Nov 2026): from an hour before; at least 5 minutes before the start, or the owner is told */
+    var canCheck = s.status !== 'cancelled' && now >= start - HOUR && now <= start + HOUR;
+    var check = s.checkedIn ? '<p class="t-small tc-check is-done" role="status">' + esc(t('app_t_checked_in', { time: time(s.checkedIn) })) + '</p>'
+      : canCheck ? '<div class="tc-check"><button class="btn btn--on-forest" type="button" data-checkin="' + esc(s.id) + '">' + esc(t('app_t_checkin')) + '</button><p class="t-small" data-checkin-msg>' + esc(t('app_t_checkin_hint')) + '</p></div>'
+      : start - now < 24 * HOUR ? '<p class="t-small tc-check">' + esc(t('app_t_checkin_later')) + '</p>' : '';
     return head + '<h2 class="t-h1" id="h-next">' + esc(t('app_t_next_when', { day: dayName(s.at), time: time(s.at) })) + '</h2>' +
       '<p class="t-lead" style="margin-top:12px">' + esc(t('app_t_next_line', { class: className(co), students: tn('app_t_students_n', co.enrolled_count || 0), when: when })) + '</p>' +
+      check +
       '<div class="btn-row" style="margin-top:26px">' + btn +
         '<a class="btn btn--ghost btn--on-forest" href="#/classes/notes/' + esc(s.id) + '">' + esc(t('app_t_prepare')) + '</a></div></section>';
   }
@@ -452,6 +465,14 @@
     if (mode === 'real' && window.AlimunData && window.AlimunData.rememberUiLang) window.AlimunData.rememberUiLang(lang, 'teacher');
     if (window.AlimunBell) window.AlimunBell.attach(document.querySelector('[data-bell]'), helpers, mode === 'real' && !(window.AlimunData && window.AlimunData.viewingAs && window.AlimunData.viewingAs()));
     render(routeFromHash(), false);
+    /* Back from the check-in link in a reminder email (/api/ops?action=checkin-link) */
+    var ck = (location.search.match(/[?&]checkin=([a-z_]+)/) || [])[1];
+    if (ck) {
+      history.replaceState(null, '', location.pathname + location.hash);
+      var key = { done: 'app_t_checkin_done', too_early: 'app_t_checkin_later', over: 'app_t_checkin_over' }[ck] || 'app_t_checkin_bad';
+      var note = document.createElement('p'); note.className = 't-body tc-checknote'; note.setAttribute('role', 'status'); note.textContent = t(key);
+      view.insertBefore(note, view.firstChild);
+    }
   }
   function boot() {
     if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('open_dashboard', { dashboard: 'teacher' });
@@ -478,6 +499,8 @@
       window.AlimunData.teacherToday().then(function (d) { if (d && d.teacher && !d.pending) { D = d; if (current === 'today') render('today', false); } }, function () { /* keep what is shown */ });
     }, 5 * MIN);
     app.addEventListener('click', function (e) {
+      var ck = e.target.closest('[data-checkin]');
+      if (ck && !ck.disabled) { checkIn(ck); return; }
       var el = e.target.closest('[data-more],[data-close],[data-start],[data-start-sample],[data-retry]');
       if (!el) return;
       if (el.hasAttribute('data-more')) setSheet(!document.body.classList.contains('is-sheet-open'));

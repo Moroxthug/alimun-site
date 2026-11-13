@@ -15,6 +15,9 @@
  *   POST ?action=record-start | record-stop { session }   (admin only: teachers never record; owner, 13 Nov 2026)
  *   POST ?action=recording-link { id }   (admin) a 15-minute link to watch; every viewing is logged
  *   POST ?action=recording-keep { id, keep, note }        (admin) keep past the deletion date, or not
+ *   POST ?action=checkin { session }   (the class's teacher or substitute, from 1 hour before to the end)
+ *   GET  ?action=checkin-link&s&u&sig  the same, one click from the reminder email (signed link)
+ *   cron-clips also sends the teacher reminders 1 hour and 5 minutes before, and tells the owner of a missing check-in
  * Every automated action goes through api/_lib/automation.js (switch, dry run, once only, daily cap, log, pause).
  */
 const { createClient } = require('@supabase/supabase-js');
@@ -59,17 +62,21 @@ function timeIn(at, tz, lang) {
   try { return new Intl.DateTimeFormat(L.locale(lang || 'en'), { timeZone: tz || 'Europe/Paris', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }).format(new Date(at)); } catch (e) { return new Date(at).toISOString().slice(11, 16) + ' UTC'; }
 }
 
-const SESSION_COLS = 'id, cohort_id, scheduled_at, status, room_session_id, outcome, verified_at, minutes_late, learners_present, teacher_seconds, cohorts(id, language, level, tier, product_key, teacher_id, substitute_teacher_id, class_minutes, timezone)';
+const SESSION_COLS = 'id, cohort_id, scheduled_at, status, room_session_id, outcome, verified_at, minutes_late, learners_present, teacher_seconds, teacher_checked_in_at, cohorts(id, language, level, tier, product_key, teacher_id, substitute_teacher_id, class_minutes, timezone)';
 
 /* ---------- Teacher late ---------- */
-async function learnersOf(sb, cohortId) {
-  const [{ data: en }, { data: ents }] = await Promise.all([
+/* The learners of a class date: enrolled in the class, holding a place in the room, or booked into that one date
+   (the free first class is an entitlement on the date itself) */
+async function learnersOf(sb, cohortId, sessionId) {
+  const [{ data: en }, { data: ents }, { data: one }] = await Promise.all([
     sb.from('enrollments').select('student_profiles(user_id, full_name, ui_lang)').eq('cohort_id', cohortId).eq('status', 'active').limit(60),
     sb.from('entitlements').select('user_id').eq('cohort_id', cohortId).in('status', ['active', 'pending_room']).limit(60),
+    sessionId ? sb.from('entitlements').select('user_id').eq('session_id', sessionId).eq('status', 'active').limit(60) : Promise.resolve({ data: [] }),
   ]);
+  const ents2 = (ents || []).concat(one || []);
   const out = {};
   (en || []).forEach((e) => { const s = e.student_profiles; if (s && s.user_id) out[s.user_id] = { user_id: s.user_id, name: s.full_name, lang: s.ui_lang || 'en' }; });
-  const more = (ents || []).map((e) => e.user_id).filter((id) => id && !out[id]);
+  const more = ents2.map((e) => e.user_id).filter((id, i, all) => id && !out[id] && all.indexOf(id) === i);
   if (more.length) {
     const { data: sp } = await sb.from('student_profiles').select('user_id, full_name, ui_lang').in('user_id', more);
     (sp || []).forEach((s) => { out[s.user_id] = { user_id: s.user_id, name: s.full_name, lang: s.ui_lang || 'en' }; });
@@ -77,6 +84,22 @@ async function learnersOf(sb, cohortId) {
   return Object.keys(out).map((k) => out[k]);
 }
 async function emailOf(sb, userId) { const { data } = await sb.auth.admin.getUserById(userId); return data && data.user && data.user.email; }
+
+/* A class date is real unless it is one of the owner's tests: taught by one of the owner's test personas (not the
+   owner's own admin account) with no real learner in it (owner, 13 Nov 2026: "it should be counted as real class as
+   far as i am teaching it"). Returns { real, teacher: { id, user_id, full_name, ui_lang, email }, learners }. */
+async function classIs(sb, s) {
+  const co = s.cohorts || {};
+  const { data: tp } = co.teacher_id ? await sb.from('teacher_profiles').select('id, user_id, full_name, ui_lang').eq('id', co.teacher_id).maybeSingle() : { data: null };
+  let email = '', meta = {};
+  if (tp && tp.user_id) { const { data } = await sb.auth.admin.getUserById(tp.user_id); email = (data && data.user && data.user.email) || ''; meta = (data && data.user && data.user.app_metadata) || {}; }
+  const learners = await learnersOf(sb, s.cohort_id, s.id);
+  const teacher = tp ? Object.assign({}, tp, { email }) : null;
+  const testTeacher = !!tp && isTestAccount({ email, name: tp.full_name, app_metadata: meta }) && meta.role !== 'admin';
+  const realLearners = [];
+  for (const l of learners) { if (!isTestAccount({ email: await emailOf(sb, l.user_id), name: l.name })) realLearners.push(l); }
+  return { real: !!tp && (!testTeacher || realLearners.length > 0), teacher, learners };
+}
 
 async function lateCheck(sb, now, auto) {
   const out = { checked: 0, late: 0, results: {} };
@@ -88,15 +111,15 @@ async function lateCheck(sb, now, auto) {
     const co = s.cohorts || {};
     if (!co.teacher_id) continue;
     out.checked++;
-    /* A class taught by one of the owner's test accounts is for testing: verified, never alerted */
-    const { data: tpx } = await sb.from('teacher_profiles').select('user_id, full_name').eq('id', co.teacher_id).maybeSingle();
-    if (!tpx || isTestAccount({ email: tpx.user_id ? await emailOf(sb, tpx.user_id) : '', name: tpx.full_name })) continue;
+    /* The owner's tests (a test persona teaching, no real learner) are verified, never alerted */
+    const kind = await classIs(sb, s);
+    if (!kind.real) continue;
     const teacherIds = await CV.teachersOf(sb, co);
     const here = await CV.presentNow(CV.roomName(s));
     if (here.some((id) => teacherIds.includes(id))) continue;
     out.late++;
     const label = classLabel(co), whenLocal = (lang) => timeIn(s.scheduled_at, co.timezone, lang);
-    const learners = await learnersOf(sb, s.cohort_id);
+    const learners = kind.learners;
     const { data: tp } = await sb.from('teacher_profiles').select('user_id, full_name, ui_lang').eq('id', co.teacher_id).maybeSingle();
     const tag = (who) => ({ key: `late:${s.id}:${who}`, sessionId: s.id });
     /* The owner */
@@ -159,6 +182,74 @@ async function outcomes(sb, now, auto) {
   return out;
 }
 
+
+
+/* ---------- Check-in and teacher reminders (owner, 13 Nov 2026) ----------
+   Teachers check in at least 5 minutes before a class: from their dashboard, from the link in the reminder emails, or
+   by entering the classroom. Reminders 1 hour and 5 minutes before; 5 minutes before with no check-in, the owner is
+   told (checkin-missing); 5 minutes after the start with no teacher in the room, teacher-late tells everyone. */
+const CHECKIN_FROM_MIN = 60;
+function checkinUrl(sessionId, userId) {
+  const sig = mail.linkSig(`checkin:${sessionId}:${userId}`);
+  return sig ? `${mail.SITE}/api/ops?action=checkin-link&s=${sessionId}&u=${userId}&sig=${sig}` : `${mail.SITE}/app/teach#/`;
+}
+async function checkIn(sb, s, via) {
+  if (s.teacher_checked_in_at) return s.teacher_checked_in_at;
+  const at = new Date().toISOString();
+  const { error } = await sb.from('sessions').update({ teacher_checked_in_at: at, teacher_checkin_via: via }).eq('id', s.id).is('teacher_checked_in_at', null);
+  if (error) throw new Error('check-in: ' + error.message);
+  return at;
+}
+/** May this account check in for this class date now? The class's teacher or substitute, from an hour before to its end */
+async function mayCheckIn(sb, s, userId) {
+  const co = s.cohorts || {}, start = new Date(s.scheduled_at).getTime(), end = start + (co.class_minutes || 60) * MIN, now = Date.now();
+  if (s.status === 'cancelled') return 'cancelled';
+  if (now < start - CHECKIN_FROM_MIN * MIN) return 'too_early';
+  if (now > end) return 'over';
+  const ids = await CV.teachersOf(sb, co);
+  return ids.includes(userId) ? 'ok' : 'not_teacher';
+}
+
+async function teacherReminders(sb, now) {
+  const out = { reminded: 0, missing: 0 };
+  const rem = await AUTO.load(sb, 'teacher-reminders'), miss = await AUTO.load(sb, 'checkin-missing');
+  if (!(rem && rem.enabled) && !(miss && miss.enabled)) return out;
+  const { data: list, error } = await sb.from('sessions').select(SESSION_COLS).neq('status', 'cancelled')
+    .gte('scheduled_at', new Date(now + 2 * MIN).toISOString()).lte('scheduled_at', new Date(now + 62 * MIN).toISOString()).limit(40);
+  if (error) throw new Error('reminder sessions: ' + error.message);
+  for (const s of list || []) {
+    const co = s.cohorts || {}, start = new Date(s.scheduled_at).getTime(), left = (start - now) / MIN;
+    const which = left >= 54 ? '60' : left <= 5.2 ? '5' : null;
+    if (!which) continue;
+    const kind = await classIs(sb, s);
+    if (!kind.real || !kind.teacher) continue;
+    const tp = kind.teacher, lang = tp.ui_lang || 'en', label = classLabel(co), vars = { class: label, time: timeIn(s.scheduled_at, co.timezone, lang) };
+    const checked = !!s.teacher_checked_in_at;
+    let here = [];
+    if (which === '5') { try { here = await CV.presentNow(CV.roomName(s)); } catch (e) { here = []; } }
+    const inRoom = here.includes(tp.user_id);
+    /* The teacher */
+    const r = await AUTO.act(sb, rem, { key: `remind${which}:${s.id}`, action: which === '60' ? 'remind the teacher, 1 hour before' : 'remind the teacher, 5 minutes before', sessionId: s.id, target: tp.full_name, detail: { checked_in: checked } }, async () => {
+      const k = which === '60' ? { subject: 'subject_60', heading: 'heading_60', body: 'body_60' } : { subject: 'subject_5', heading: 'heading_5', body: checked || inRoom ? 'body_5_ok' : 'body_5_missing' };
+      const buttons = checked || inRoom ? [{ label: L.say(lang, 'class_remind.button_room'), href: `${mail.SITE}/app/teach#/classes/live/${s.id}` }]
+        : [{ label: L.say(lang, 'class_remind.button_checkin'), href: checkinUrl(s.id, tp.user_id) }, { label: L.say(lang, 'class_remind.button_room'), href: `${mail.SITE}/app/teach#/classes/live/${s.id}` }];
+      await send(tp.email, L.say(lang, 'class_remind.' + k.subject, vars), mail.renderEmail({ hero: 'class', lang, preheader: L.say(lang, 'class_remind.' + k.heading, vars), heading: L.say(lang, 'class_remind.' + k.heading, vars),
+        blocks: [{ p: L.hello(lang, tp.full_name) }, { p: L.html(lang, 'class_remind.' + k.body, vars) }, { buttons }] }));
+      await sb.from('notifications').insert({ user_id: tp.user_id, kind: 'service', title: L.say(lang, 'class_remind.' + k.heading, vars), body: L.say(lang, 'class_remind.' + k.body, vars), link: '/app/teach#/' });
+    }, tellOwner);
+    if (r === 'done') out.reminded++;
+    /* The owner, when the teacher has neither checked in nor joined 5 minutes before */
+    if (which === '5' && !checked && !inRoom) {
+      out.missing++;
+      await AUTO.act(sb, miss, { key: `missing:${s.id}`, action: 'tell the owner: no check-in 5 minutes before', sessionId: s.id, target: tp.full_name, detail: { class: label } }, async () => {
+        await send(OWNER(), `No check-in yet: ${label} at ${timeIn(s.scheduled_at, 'Europe/Paris')}`, mail.renderEmail({ hero: 'class', lang: 'en', preheader: `${tp.full_name} has not checked in.`,
+          heading: 'A teacher has not checked in', blocks: [{ p: mail.esc(`${label} starts at ${timeIn(s.scheduled_at, 'Europe/Paris')} (${timeIn(s.scheduled_at, 'America/Vancouver')}). ${tp.full_name} has not checked in and is not in the room. ${kind.learners.length} learners are booked. If the teacher is still not in the room 5 minutes after the start, the teacher and the learners are told.`) },
+            { button: { label: 'See the class date', href: `${mail.SITE}/app/admin#/classlog/${s.id}` } }] }));
+      }, tellOwner);
+    }
+  }
+  return out;
+}
 
 /* ---------- Recordings ---------- */
 async function proofClips(sb, now, auto) {
@@ -320,9 +411,10 @@ module.exports = async function handler(req, res) {
     }
     if (action === 'cron-clips') {
       if (!cronOk(req)) return res.status(401).json({ error: 'unauthorized' });
-      let out;
-      try { out = await proofClips(sb, Date.now(), await AUTO.load(sb, 'proof-clips')); } catch (e) { out = { error: String(e.message || e) }; }
-      if (out.error || out.due) await recordRun(sb, 'vercel:cron-clips', !out.error, out);
+      const out = {};
+      try { out.reminders = await teacherReminders(sb, Date.now()); } catch (e) { out.error = 'reminders: ' + String(e.message || e); }
+      try { out.clips = await proofClips(sb, Date.now(), await AUTO.load(sb, 'proof-clips')); } catch (e) { out.error = (out.error ? out.error + '; ' : '') + 'clips: ' + String(e.message || e); }
+      if (out.error || (out.clips && out.clips.due) || (out.reminders && (out.reminders.reminded || out.reminders.missing))) await recordRun(sb, 'vercel:cron-clips', !out.error, out);
       return res.status(200).json(out);
     }
     if (action === 'cron-digest') {
@@ -333,6 +425,31 @@ module.exports = async function handler(req, res) {
         () => send(OWNER(), `Alimun yesterday: ${d.held} of ${d.classes} classes held`, d.html).then(() => ({})), tellOwner);
       await recordRun(sb, 'vercel:cron-digest', r !== 'failed', { day: ymd, result: r });
       return res.status(200).json({ day: ymd, result: r });
+    }
+    if (action === 'checkin-link') {
+      /* One click from the reminder email: signed for this class date and this teacher */
+      const sid = String(req.query.s || ''), uid = String(req.query.u || ''), back = (q) => { res.statusCode = 302; res.setHeader('Location', `${mail.SITE}/app/teach?checkin=${q}#/`); return res.end(); };
+      if (!UUID.test(sid) || !UUID.test(uid) || !mail.checkLinkSig(`checkin:${sid}:${uid}`, String(req.query.sig || ''))) return back('bad');
+      const { data: s } = await sb.from('sessions').select(SESSION_COLS).eq('id', sid).maybeSingle();
+      if (!s) return back('bad');
+      const ok = await mayCheckIn(sb, s, uid);
+      if (ok !== 'ok') return back(ok);
+      await checkIn(sb, s, 'email');
+      return back('done');
+    }
+    if (action === 'checkin') {
+      /* From the teacher's dashboard (the teacher's own sign-in) */
+      if (req.method !== 'POST') return res.status(405).json({ error: 'method not allowed' });
+      const h = req.headers.authorization || '';
+      const { data: who } = h.startsWith('Bearer ') ? await sb.auth.getUser(h.slice(7)) : { data: null };
+      if (!who || !who.user) return res.status(401).json({ error: 'sign in' });
+      const b0 = body(req) || {};
+      if (!UUID.test(String(b0.session || ''))) return res.status(400).json({ error: 'bad session' });
+      const { data: s } = await sb.from('sessions').select(SESSION_COLS).eq('id', b0.session).maybeSingle();
+      if (!s) return res.status(404).json({ error: 'no such class date' });
+      const ok = await mayCheckIn(sb, s, who.user.id);
+      if (ok !== 'ok') return res.status(409).json({ error: ok });
+      return res.status(200).json({ checked_in_at: await checkIn(sb, s, 'button') });
     }
     if (req.method !== 'POST') return res.status(405).json({ error: 'method not allowed' });
     const me = await adminOf(req, sb);

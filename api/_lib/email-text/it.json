@@ -297,5 +297,16 @@
     "heading_l": "Il tuo insegnante sta arrivando",
     "body_l": "La tua lezione di **{class}** doveva iniziare alle {time}. Il tuo insegnante è in ritardo di qualche minuto ed è stato avvisato. Resta nella stanza o torna tra qualche minuto.",
     "button_l": "Vai alla lezione"
+  },
+  "class_remind": {
+    "subject_60": "La tua lezione di {class} inizia alle {time}",
+    "heading_60": "La tua lezione inizia tra un’ora",
+    "body_60": "La tua lezione di **{class}** inizia alle {time}. Conferma la tua presenza quando sei pronto, almeno 5 minuti prima dell’inizio, così sappiamo che ci sei.",
+    "button_checkin": "Conferma la presenza",
+    "subject_5": "Conferma ora: la tua lezione di {class} inizia alle {time}",
+    "heading_5": "La tua lezione inizia tra 5 minuti",
+    "body_5_missing": "La tua lezione di **{class}** inizia alle {time} e non hai ancora confermato la presenza. Confermala ora e apri l’aula; i tuoi studenti ti aspettano.",
+    "body_5_ok": "La tua lezione di **{class}** inizia alle {time}. Hai confermato: apri l’aula ora.",
+    "button_room": "Apri l’aula"
   }
 }

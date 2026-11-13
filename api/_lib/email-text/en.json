@@ -297,5 +297,16 @@
     "heading_l": "Your teacher is on the way",
     "body_l": "Your **{class}** class was due to start at {time}. Your teacher is running a few minutes late and has been told. Please stay in the room or come back in a few minutes.",
     "button_l": "Go to the class"
+  },
+  "class_remind": {
+    "subject_60": "Your {class} class starts at {time}",
+    "heading_60": "Your class starts in an hour",
+    "body_60": "Your **{class}** class starts at {time}. Check in when you are ready, at least 5 minutes before it starts, so we know you are there.",
+    "button_checkin": "Check in",
+    "subject_5": "Check in now: your {class} class starts at {time}",
+    "heading_5": "Your class starts in 5 minutes",
+    "body_5_missing": "Your **{class}** class starts at {time} and you have not checked in yet. Check in now and open the classroom; your learners will be waiting.",
+    "body_5_ok": "Your **{class}** class starts at {time}. You are checked in: open the classroom now.",
+    "button_room": "Open the classroom"
   }
 }

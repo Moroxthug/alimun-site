@@ -297,5 +297,16 @@
     "heading_l": "Tu profesor está de camino",
     "body_l": "Tu clase de **{class}** debía empezar a las {time}. Tu profesor llega unos minutos tarde y ya está avisado. Quédate en la sala o vuelve en unos minutos.",
     "button_l": "Ir a la clase"
+  },
+  "class_remind": {
+    "subject_60": "Tu clase de {class} empieza a las {time}",
+    "heading_60": "Tu clase empieza dentro de una hora",
+    "body_60": "Tu clase de **{class}** empieza a las {time}. Confirma tu asistencia cuando estés listo, al menos 5 minutos antes de empezar, para que sepamos que estás.",
+    "button_checkin": "Confirmar asistencia",
+    "subject_5": "Confirma ya: tu clase de {class} empieza a las {time}",
+    "heading_5": "Tu clase empieza en 5 minutos",
+    "body_5_missing": "Tu clase de **{class}** empieza a las {time} y todavía no has confirmado tu asistencia. Confírmala ahora y abre el aula; tus alumnos te esperan.",
+    "body_5_ok": "Tu clase de **{class}** empieza a las {time}. Ya has confirmado: abre el aula ahora.",
+    "button_room": "Abrir el aula"
   }
 }

@@ -274,6 +274,10 @@ module.exports = async function handler(req, res) {
     if (isTeacher && session.status === 'scheduled') {
       await supabase.from('sessions').update({ status: 'live' }).eq('id', session.id);
     }
+    // Entering the classroom checks the teacher in (owner, 13 Nov 2026), if not already
+    if (isTeacher) {
+      await supabase.from('sessions').update({ teacher_checked_in_at: new Date().toISOString(), teacher_checkin_via: 'room' }).eq('id', session.id).is('teacher_checked_in_at', null);
+    }
     if (studentProfile) {
       await supabase
         .from('session_attendance')

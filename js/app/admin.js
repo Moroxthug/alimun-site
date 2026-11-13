@@ -200,6 +200,7 @@
     'vercel:cron-finance': { name: 'Finance: founding notices, exchange rates, the month’s figures', every: DAY, since: '2026-11-12T04:38:00Z' },
     'db:tutor-purge': { name: 'Delete old tutor recordings', every: DAY },
     'vercel:cron-class-watch': { name: 'Class watch: late teachers and class outcomes', every: 0 },
+    'vercel:cron-clips': { name: 'Every minute: teacher reminders, missing check-ins, proof clips', every: 0 },
     'vercel:cron-digest': { name: 'Morning digest to you', every: DAY, since: '2026-11-14T07:00:00Z' },
     'vercel:cron-launch-email': { name: 'Launch email to new English learners (when switched on)', every: HOUR, since: '2026-11-13T01:00:00Z' },
     /* Not on a schedule: written when something happens, so never late, only failed */
