@@ -269,9 +269,10 @@ async function handleEmailDecision(req, res, action) {
   }
 
   // Conditional update: succeeds only if the row is still pending right now.
+  // The hiring stage follows (docs/TEACHER_HIRING_PLAN.md): approving directly skips the interview and trial
   const update = action === 'approve'
-    ? { status: 'approved', tier_level: 'focused' } // first approval starts on Focused, as in set-status
-    : { status: 'suspended' };
+    ? { status: 'approved', tier_level: 'focused', hiring_stage: 'approved' } // first approval starts on Focused, as in set-status
+    : { status: 'suspended', hiring_stage: 'rejected' };
   const { data: changed, error: updateErr } = await supabase
     .from('teacher_profiles')
     .update(update)
@@ -556,6 +557,10 @@ async function handleSetStatus(req, res) {
     }
 
     const update = { status };
+    // The hiring stage follows (docs/TEACHER_HIRING_PLAN.md)
+    if (status === 'approved' && previous === 'pending') update.hiring_stage = 'approved';
+    else if (status === 'suspended' && previous === 'pending') update.hiring_stage = 'rejected';
+    else if (status === 'pending') update.hiring_stage = 'applied';
     // First approval starts on Focused (the welcome email says so), same as the email-link flow
     if (status === 'approved' && previous === 'pending') update.tier_level = 'focused';
     const { error: updateErr } = await supabase.from('teacher_profiles').update(update).eq('id', profile.id);

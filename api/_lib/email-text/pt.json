@@ -308,5 +308,22 @@
     "body_5_missing": "A sua aula de **{class}** começa às {time} e ainda não confirmou a sua presença. Confirme agora e abra a sala; os seus alunos estão à espera.",
     "body_5_ok": "A sua aula de **{class}** começa às {time}. Já confirmou: abra a sala agora.",
     "button_room": "Abrir a sala"
+  },
+  "interview": {
+    "invite_subject": "A sua candidatura para ensinar na Alimun: escolha uma hora para falarmos",
+    "invite_heading": "Vamos conversar",
+    "invite_body": "Obrigado por se candidatar a ensinar na Alimun. O próximo passo é uma breve videochamada connosco, de cerca de 30 minutos, para o conhecermos. Escolha a hora que lhe for mais conveniente no seu painel.",
+    "invite_button": "Escolher uma hora",
+    "booked_subject": "A sua chamada com a Alimun: {time}",
+    "booked_body": "A sua chamada com a Alimun está marcada para **{time}**. Entre pelo seu painel alguns minutos antes; somos só nós os dois, em vídeo, e não é gravada. Pode mudar a hora até 12 horas antes.",
+    "dash_button": "Abrir o meu painel",
+    "remind_subject_60": "A sua chamada com a Alimun começa às {time}",
+    "remind_body_60": "A sua chamada com a Alimun começa às **{time}**, daqui a uma hora. Entre pelo seu painel alguns minutos antes.",
+    "remind_subject_5": "A sua chamada com a Alimun começa daqui a 5 minutos",
+    "remind_body_5": "A sua chamada com a Alimun começa às **{time}**. Entre agora pelo seu painel.",
+    "join_button": "Entrar na chamada",
+    "passed_subject": "Próximo passo: uma aula experimental de 30 minutos com a Alimun",
+    "passed_heading": "Obrigado pela chamada",
+    "passed_body": "Gostámos de falar consigo. O próximo passo é uma aula experimental gratuita de 30 minutos com alguns dos nossos alunos, para nos mostrar como ensina. Vamos escrever-lhe com os detalhes."
   }
 }

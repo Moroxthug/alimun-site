@@ -2151,3 +2151,7 @@ body.is-class .view { max-width: 1640px; }
 .tc-check .t-small, .tc-check.t-small { color: var(--on-forest); margin: 0; }
 .tc-check.is-done { color: var(--lime); font-weight: 700; }
 .tc-checknote { margin: 0 0 14px; padding: 12px 16px; border-radius: var(--r-md); background: var(--t-lime); color: var(--forest); font-weight: 600; }
+/* Teacher interview times (js/app/teach.js, docs/TEACHER_HIRING_PLAN.md) */
+.iv-days { display: grid; gap: 14px; margin-top: 14px; }
+.iv-day b { display: block; font-weight: 700; margin-bottom: 6px; }
+.iv-times { display: flex; flex-wrap: wrap; gap: 8px; }

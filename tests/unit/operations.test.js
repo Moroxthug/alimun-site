@@ -137,3 +137,20 @@ test('recordings: Daily’s recordings pair with Alimun’s requests; any other 
   assert.strictEqual(again.update.length, 1);
   assert.strictEqual(again.unknown.length, 0);
 });
+
+const IV = require('../../api/_lib/interviews.js');
+
+test('interview times: the owner’s hours in their zone, 12 hours to 14 days ahead, busy times left out', () => {
+  // Owner in Vancouver (UTC-7 all year since Nov 2026 in current time-zone data, or UTC-8 in older data: compute it)
+  const now = Date.parse('2026-11-13T16:00:00Z');
+  const hours = { tz: 'America/Vancouver', minutes: 30, days: { 1: [['09:00', '11:00']] } }; // Mondays 9 to 11
+  const slots = IV.freeSlots({ hours, now });
+  assert.strictEqual(slots.length, 8, 'two Mondays, four half hours each');
+  const off = IV.offsetMin('America/Vancouver', Date.parse('2026-11-16T17:00:00Z'));
+  assert.strictEqual(slots[0], new Date(Date.UTC(2026, 10, 16, 9, 0) - off * 60000).toISOString(), 'Monday 16 Nov 09:00 Vancouver');
+  const first = Date.parse(slots[0]);
+  const busy = IV.freeSlots({ hours, now, busy: [[first + 10 * 60000, first + 40 * 60000]] });
+  assert.strictEqual(busy.length, 6, 'a class from 09:10 to 09:40 takes the 09:00 and 09:30 interviews');
+  assert.deepStrictEqual(IV.freeSlots({ hours: { tz: 'Not/AZone', days: { 1: [['09:00', '11:00']] } }, now }), []);
+  assert.strictEqual(IV.cleanHours({ tz: 'Europe/Paris', minutes: 30, days: { 2: [['10:00', '10:15']] } }).days[2], undefined, 'a range shorter than one interview is dropped');
+});

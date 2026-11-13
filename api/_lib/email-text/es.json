@@ -308,5 +308,22 @@
     "body_5_missing": "Tu clase de **{class}** empieza a las {time} y todavía no has confirmado tu asistencia. Confírmala ahora y abre el aula; tus alumnos te esperan.",
     "body_5_ok": "Tu clase de **{class}** empieza a las {time}. Ya has confirmado: abre el aula ahora.",
     "button_room": "Abrir el aula"
+  },
+  "interview": {
+    "invite_subject": "Tu solicitud para enseñar en Alimun: elige un momento para hablar",
+    "invite_heading": "Hablemos",
+    "invite_body": "Gracias por solicitar enseñar en Alimun. El siguiente paso es una breve videollamada con nosotros, de unos 30 minutos, para conocerte. Elige el momento que te venga mejor en tu panel.",
+    "invite_button": "Elegir un momento",
+    "booked_subject": "Tu llamada con Alimun: {time}",
+    "booked_body": "Tu llamada con Alimun está reservada para el **{time}**. Entra desde tu panel unos minutos antes; seremos solo nosotros dos, por vídeo, y no se graba. Puedes cambiar la hora hasta 12 horas antes.",
+    "dash_button": "Abrir mi panel",
+    "remind_subject_60": "Tu llamada con Alimun empieza a las {time}",
+    "remind_body_60": "Tu llamada con Alimun empieza a las **{time}**, dentro de una hora. Entra desde tu panel unos minutos antes.",
+    "remind_subject_5": "Tu llamada con Alimun empieza en 5 minutos",
+    "remind_body_5": "Tu llamada con Alimun empieza a las **{time}**. Entra ahora desde tu panel.",
+    "join_button": "Entrar en la llamada",
+    "passed_subject": "Siguiente paso: una clase de prueba de 30 minutos con Alimun",
+    "passed_heading": "Gracias por la llamada",
+    "passed_body": "Nos ha gustado hablar contigo. El siguiente paso es una clase de prueba gratuita de 30 minutos con algunos de nuestros alumnos, para que nos muestres cómo enseñas. Te escribiremos con los detalles."
   }
 }

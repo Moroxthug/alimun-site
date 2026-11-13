@@ -308,5 +308,22 @@
     "body_5_missing": "你的**{class}**课将于{time}开始，你还没有签到。请现在签到并进入教室，学员马上就到。",
     "body_5_ok": "你的**{class}**课将于{time}开始。你已签到，请现在进入教室。",
     "button_room": "进入教室"
+  },
+  "interview": {
+    "invite_subject": "你在 Alimun 的教师申请：请选择通话时间",
+    "invite_heading": "我们聊聊吧",
+    "invite_body": "感谢你申请在 Alimun 任教。下一步是和我们进行一次约 30 分钟的视频通话，让我们认识你。请在你的面板中选择合适的时间。",
+    "invite_button": "选择时间",
+    "booked_subject": "你与 Alimun 的通话：{time}",
+    "booked_body": "你与 Alimun 的通话已预约在 **{time}**。请提前几分钟从面板进入；只有我们两人视频通话，不会录像。最晚可在开始前 12 小时更改时间。",
+    "dash_button": "打开我的面板",
+    "remind_subject_60": "你与 Alimun 的通话将于{time}开始",
+    "remind_body_60": "你与 Alimun 的通话将于 **{time}** 开始，还有一小时。请提前几分钟从面板进入。",
+    "remind_subject_5": "你与 Alimun 的通话 5 分钟后开始",
+    "remind_body_5": "你与 Alimun 的通话将于 **{time}** 开始。请现在从面板进入。",
+    "join_button": "进入通话",
+    "passed_subject": "下一步：在 Alimun 上一节 30 分钟的试讲课",
+    "passed_heading": "感谢你的通话",
+    "passed_body": "和你交谈很愉快。下一步是和我们的几位学员上一节 30 分钟的免费试讲课，向我们展示你的教学方式。我们会写信告诉你具体安排。"
   }
 }

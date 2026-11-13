@@ -308,5 +308,22 @@
     "body_5_missing": "Votre cours de **{class}** commence à {time} et vous n’avez pas encore signalé votre présence. Faites-le maintenant et ouvrez la salle ; vos apprenants vont arriver.",
     "body_5_ok": "Votre cours de **{class}** commence à {time}. Votre présence est signalée : ouvrez la salle maintenant.",
     "button_room": "Ouvrir la salle"
+  },
+  "interview": {
+    "invite_subject": "Votre candidature pour enseigner avec Alimun : choisissez un moment pour échanger",
+    "invite_heading": "Parlons-en",
+    "invite_body": "Merci d’avoir postulé pour enseigner avec Alimun. L’étape suivante est un court appel vidéo avec nous, d’environ 30 minutes, pour faire connaissance. Choisissez le moment qui vous convient dans votre espace.",
+    "invite_button": "Choisir un moment",
+    "booked_subject": "Votre appel avec Alimun : {time}",
+    "booked_body": "Votre appel avec Alimun est prévu le **{time}**. Rejoignez-le depuis votre espace quelques minutes avant ; nous serons seulement tous les deux, en vidéo, et il n’est pas enregistré. Vous pouvez changer l’horaire jusqu’à 12 heures avant.",
+    "dash_button": "Ouvrir mon espace",
+    "remind_subject_60": "Votre appel avec Alimun commence à {time}",
+    "remind_body_60": "Votre appel avec Alimun commence à **{time}**, dans une heure. Rejoignez-le depuis votre espace quelques minutes avant.",
+    "remind_subject_5": "Votre appel avec Alimun commence dans 5 minutes",
+    "remind_body_5": "Votre appel avec Alimun commence à **{time}**. Rejoignez-le maintenant depuis votre espace.",
+    "join_button": "Rejoindre l’appel",
+    "passed_subject": "Étape suivante : un cours d’essai de 30 minutes avec Alimun",
+    "passed_heading": "Merci pour l’appel",
+    "passed_body": "Nous avons apprécié notre échange. L’étape suivante est un cours d’essai gratuit de 30 minutes avec quelques-uns de nos apprenants, pour nous montrer comment vous enseignez. Nous vous écrirons avec les détails."
   }
 }

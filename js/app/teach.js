@@ -343,11 +343,71 @@
       '<div class="grid rise">' + sampleNote() + nextCard() + stage() + todo() + weekCard() + classesCard() + waitingCard() + '</div>';
   }
   /* A teacher whose application is still being reviewed */
+  /* A teacher waiting for review (docs/TEACHER_HIRING_PLAN.md, step 1): the application under review, then, once
+     invited, the times for the interview call with Alimun, the booked call with Join (from 10 minutes before) and
+     Change (until 12 hours before), then the next step after a good interview */
+  var IVS = null, IVPICK = false;
   function pendingView() {
     return '<div class="view__head"><div><h1 class="t-h1">' + esc(greeting(firstName((D.teacher || {}).full_name))) + '</h1></div></div>' +
       '<div class="soon rise"><div class="stage" style="--i:0;background:var(--t-mint)"><div class="bub think">' + esc(t('app_t_pending_bub')) + '</div>' + Cast.drawing('owl') + '</div>' +
-      '<div class="card" style="--i:1"><h2 class="t-h2">' + esc(t('app_t_pending_h')) + '</h2><p class="t-body">' + esc(t('app_t_pending_p')) + '</p>' +
-      '<div class="btn-row"><a class="btn btn--primary" href="/contact">' + esc(t('app_t_pending_contact')) + '</a></div></div></div>';
+      '<div class="card" style="--i:1" data-iv>' + ivHtml() + '</div></div>';
+  }
+  function myZone() { try { return Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC'; } catch (e) { return 'UTC'; } }
+  function ivWhen(at) { return new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }).format(new Date(at)); }
+  function ivHtml() {
+    var S = IVS, stage = S ? S.stage : (D.teacher || {}).hiring_stage;
+    var base = '<h2 class="t-h2">' + esc(t('app_t_pending_h')) + '</h2><p class="t-body">' + esc(t('app_t_pending_p')) + '</p><div class="btn-row"><a class="btn btn--primary" href="/contact">' + esc(t('app_t_pending_contact')) + '</a></div>';
+    if (!S) return stage === 'interview_invited' || stage === 'interview_booked' ? '<p class="t-body">' + esc(t('app_loading_open')) + '</p>' : base;
+    if (stage === 'pre_approved') return '<h2 class="t-h2">' + esc(t('app_iv_passed_h')) + '</h2><p class="t-body">' + esc(t('app_iv_passed_p')) + '</p>';
+    if (stage !== 'interview_invited' && stage !== 'interview_booked') return base;
+    var iv = S.interview, html = '';
+    if (iv && !IVPICK) {
+      var start = new Date(iv.scheduled_at).getTime(), now = Date.now(), canJoin = now >= start - 10 * 60000 && now <= start + (iv.minutes + 30) * 60000;
+      html = '<h2 class="t-h2">' + esc(t('app_iv_booked_h', { when: ivWhen(iv.scheduled_at) })) + '</h2><p class="t-body">' + esc(t('app_iv_booked_p', { n: iv.minutes })) + '</p>' +
+        '<div class="btn-row">' + (canJoin ? '<button class="btn btn--primary" type="button" data-iv-join>' + esc(t('app_iv_join')) + '</button>' : '<span class="btn btn--primary is-off" aria-disabled="true">' + esc(t('app_iv_join')) + '</span>') +
+        (start - now > 12 * 3600000 ? '<button class="btn btn--ghost" type="button" data-iv-change>' + esc(t('app_iv_change')) + '</button>' : '') + '</div>' +
+        '<p class="t-small" style="margin-top:8px">' + esc(t('app_iv_join_when')) + '</p>';
+    } else {
+      var days = {}, order = [];
+      (S.slots || []).forEach(function (x) { var k = new Intl.DateTimeFormat(locale, { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(x)); if (!days[k]) { days[k] = []; order.push(k); } days[k].push(x); });
+      html = '<h2 class="t-h2">' + esc(t('app_iv_choose_h')) + '</h2><p class="t-body">' + esc(t('app_iv_choose_p', { n: S.minutes || 30 })) + '</p>' +
+        '<p class="t-small" style="margin-top:6px">' + esc(t('app_iv_zone', { zone: myZone().replace(/_/g, ' ') })) + '</p>' +
+        (order.length ? '<div class="iv-days">' + order.map(function (k) {
+          return '<div class="iv-day"><b>' + esc(k) + '</b><div class="iv-times">' + days[k].map(function (x) {
+            return '<button class="btn btn--quiet btn--sm" type="button" data-iv-at="' + esc(x) + '">' + esc(new Intl.DateTimeFormat(locale, { hour: '2-digit', minute: '2-digit' }).format(new Date(x))) + '</button>';
+          }).join('') + '</div></div>';
+        }).join('') + '</div>' : '<p class="t-body" style="margin-top:10px">' + esc(t('app_iv_none')) + '</p>') +
+        (iv ? '<div class="btn-row"><button class="btn btn--ghost btn--sm" type="button" data-iv-keep>' + esc(t('app_iv_keep')) + '</button></div>' : '');
+    }
+    return html + '<p class="t-small st-msg" data-iv-msg aria-live="polite"></p>';
+  }
+  function ivDraw() { var box = app && app.querySelector('[data-iv]'); if (box) box.innerHTML = ivHtml(); }
+  function ivLoad() {
+    if (mode !== 'pending' || !window.AlimunData.teacherInterview) return;
+    window.AlimunData.teacherInterview().then(function (r) { IVS = r; ivDraw(); }, function () { IVS = null; ivDraw(); });
+  }
+  function ivClick(e) {
+    var msg = function (k) { var m = app.querySelector('[data-iv-msg]'); if (m) m.textContent = t(k); };
+    var at = e.target.closest('[data-iv-at]');
+    if (at) {
+      var when = at.getAttribute('data-iv-at');
+      if (at.getAttribute('data-sure') !== '1') { app.querySelectorAll('[data-iv-at]').forEach(function (b) { b.removeAttribute('data-sure'); b.classList.remove('btn--primary'); b.classList.add('btn--quiet'); }); at.setAttribute('data-sure', '1'); at.classList.add('btn--primary'); at.classList.remove('btn--quiet'); var m = app.querySelector('[data-iv-msg]'); if (m) m.textContent = t('app_iv_confirm', { when: ivWhen(when) }); return true; }
+      at.disabled = true;
+      window.AlimunData.teacherInterviewBook(when, myZone()).then(function () { IVPICK = false; ivLoad(); }, function (er) { at.disabled = false; msg(er && er.body && er.body.error === 'taken' ? 'app_iv_taken' : 'app_iv_err'); if (er && er.body && er.body.error === 'taken') ivLoad(); });
+      return true;
+    }
+    if (e.target.closest('[data-iv-change]')) { IVPICK = true; ivDraw(); return true; }
+    if (e.target.closest('[data-iv-keep]')) { IVPICK = false; ivDraw(); return true; }
+    var j = e.target.closest('[data-iv-join]');
+    if (j && !j.disabled) {
+      var win = window.open('', '_blank'); j.disabled = true;
+      window.AlimunData.teacherInterviewJoin().then(function (r) {
+        var u = new URL(r.url); if (u.protocol !== 'https:' || !/\.daily\.co$/.test(u.hostname)) throw new Error('room');
+        u.searchParams.set('t', r.token); if (win) { win.opener = null; win.location.href = u.href; } else location.href = u.href; j.disabled = false;
+      }).catch(function () { if (win) win.close(); j.disabled = false; msg('app_iv_err'); });
+      return true;
+    }
+    return false;
   }
   var SPOTS = { classes: 'calendar', students: 'chart', homework: 'pencil', material: 'books', messages: 'envelope', payouts: 'plant', settings: 'plant' };
   function soonView(r) {
@@ -404,6 +464,7 @@
       Object.keys(MODULES).forEach(function (k) { var m = MODULES[k](); if (m) m.reset(); });
       view.innerHTML = html;
       view.classList.remove('is-leaving');
+      if (mode === 'pending' && !IVS) ivLoad();
       document.title = t(r.label) + ' – Alimun';
       if (mod) mod.mount(view, partsOf(id), helpers).then(function (res) { if (current === id && res && !res.stale && res.title) document.title = res.title + ' – Alimun'; });
       top.querySelector('.top__title').textContent = t(r.label);
@@ -499,6 +560,7 @@
       window.AlimunData.teacherToday().then(function (d) { if (d && d.teacher && !d.pending) { D = d; if (current === 'today') render('today', false); } }, function () { /* keep what is shown */ });
     }, 5 * MIN);
     app.addEventListener('click', function (e) {
+      if (mode === 'pending' && ivClick(e)) return;
       var ck = e.target.closest('[data-checkin]');
       if (ck && !ck.disabled) { checkIn(ck); return; }
       var el = e.target.closest('[data-more],[data-close],[data-start],[data-start-sample],[data-retry]');

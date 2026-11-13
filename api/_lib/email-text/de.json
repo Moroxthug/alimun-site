@@ -308,5 +308,22 @@
     "body_5_missing": "Ihr Kurs **{class}** beginnt um {time}, und Sie haben sich noch nicht gemeldet. Melden Sie sich jetzt und öffnen Sie den Kursraum; Ihre Lernenden warten.",
     "body_5_ok": "Ihr Kurs **{class}** beginnt um {time}. Sie sind gemeldet: Öffnen Sie jetzt den Kursraum.",
     "button_room": "Kursraum öffnen"
+  },
+  "interview": {
+    "invite_subject": "Ihre Bewerbung bei Alimun: Wählen Sie einen Termin für ein Gespräch",
+    "invite_heading": "Lassen Sie uns sprechen",
+    "invite_body": "Danke für Ihre Bewerbung als Lehrkraft bei Alimun. Der nächste Schritt ist ein kurzes Videogespräch mit uns, etwa 30 Minuten, damit wir Sie kennenlernen. Wählen Sie in Ihrem Dashboard einen passenden Termin.",
+    "invite_button": "Termin wählen",
+    "booked_subject": "Ihr Gespräch mit Alimun: {time}",
+    "booked_body": "Ihr Gespräch mit Alimun ist für **{time}** gebucht. Treten Sie ein paar Minuten vorher über Ihr Dashboard bei; nur wir beide, per Video, ohne Aufzeichnung. Sie können den Termin bis 12 Stunden vorher ändern.",
+    "dash_button": "Mein Dashboard öffnen",
+    "remind_subject_60": "Ihr Gespräch mit Alimun beginnt um {time}",
+    "remind_body_60": "Ihr Gespräch mit Alimun beginnt um **{time}**, in einer Stunde. Treten Sie ein paar Minuten vorher über Ihr Dashboard bei.",
+    "remind_subject_5": "Ihr Gespräch mit Alimun beginnt in 5 Minuten",
+    "remind_body_5": "Ihr Gespräch mit Alimun beginnt um **{time}**. Treten Sie jetzt über Ihr Dashboard bei.",
+    "join_button": "Gespräch beitreten",
+    "passed_subject": "Nächster Schritt: eine 30-minütige Probestunde bei Alimun",
+    "passed_heading": "Danke für das Gespräch",
+    "passed_body": "Wir haben uns über das Gespräch gefreut. Der nächste Schritt ist eine kostenlose 30-minütige Probestunde mit einigen unserer Lernenden, in der Sie zeigen, wie Sie unterrichten. Wir schreiben Ihnen mit den Einzelheiten."
   }
 }

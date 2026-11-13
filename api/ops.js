@@ -17,7 +17,10 @@
  *   POST ?action=recording-keep { id, keep, note }        (admin) keep past the deletion date, or not
  *   POST ?action=checkin { session }   (the class's teacher or substitute, from 1 hour before to the end)
  *   GET  ?action=checkin-link&s&u&sig  the same, one click from the reminder email (signed link)
- *   cron-clips also sends the teacher reminders 1 hour and 5 minutes before, and tells the owner of a missing check-in
+ *   cron-clips also sends the teacher reminders 1 hour and 5 minutes before, and tells the owner of a missing check-in,
+ *   and the interview reminders (docs/TEACHER_HIRING_PLAN.md)
+ *   POST ?action=interview-hours | interview-invite | interview-decide   (admin)
+ *   POST ?action=interview-state | interview-book | interview-join      (the waiting teacher; interview-join also admin)
  * Every automated action goes through api/_lib/automation.js (switch, dry run, once only, daily cap, log, pause).
  */
 const { createClient } = require('@supabase/supabase-js');
@@ -26,6 +29,8 @@ const L = require('./_lib/email-i18n.js');
 const AUTO = require('./_lib/automation.js');
 const CV = require('./_lib/class-verify.js');
 const REC = require('./_lib/recordings.js');
+const IV = require('./_lib/interviews.js');
+const { dailyFetch } = require('./_lib/daily.js');
 const { recordRun } = require('./_lib/cron-log.js');
 const { isTestAccount } = require('./_lib/test-accounts.js');
 
@@ -251,6 +256,181 @@ async function teacherReminders(sb, now) {
   return out;
 }
 
+
+/* ---------- Teacher interviews (docs/TEACHER_HIRING_PLAN.md, step 1) ----------
+   The owner invites a waiting teacher; the teacher picks a time from the owner's weekly interview hours and joins a
+   private, unrecorded video room for the two of them; reminders 1 hour and 5 minutes before; the owner pre-approves
+   (next: a 30-minute trial class) or rejects. */
+async function userOf(req, sb) {
+  const h = req.headers.authorization || '';
+  if (!h.startsWith('Bearer ')) return null;
+  const { data } = await sb.auth.getUser(h.slice(7));
+  return (data && data.user) || null;
+}
+async function hoursOf(sb) {
+  const { data } = await sb.from('app_settings').select('value').eq('key', 'interview_hours').maybeSingle();
+  try { return IV.cleanHours(JSON.parse((data && data.value) || '{}')); } catch (e) { return null; }
+}
+/** The owner's busy times in the next 15 days: other booked interviews and the classes the owner teaches */
+async function ownerBusy(sb, exceptInterview) {
+  const now = Date.now(), until = new Date(now + 15 * DAY).toISOString(), busy = [];
+  const { data: iv } = await sb.from('teacher_interviews').select('id, scheduled_at, minutes').eq('status', 'booked').gte('scheduled_at', new Date(now - 2 * HOUR).toISOString()).lte('scheduled_at', until);
+  (iv || []).forEach((x) => { if (x.id !== exceptInterview) { const a = new Date(x.scheduled_at).getTime(); busy.push([a - 15 * MIN, a + (x.minutes + 15) * MIN]); } });
+  const { data: tps } = await sb.from('teacher_profiles').select('id, user_id').eq('status', 'approved').limit(200);
+  const mine = [];
+  for (const t of tps || []) { const { data } = await sb.auth.admin.getUserById(t.user_id); if (data && data.user && data.user.app_metadata && data.user.app_metadata.role === 'admin') mine.push(t.id); }
+  if (mine.length) {
+    const { data: ss } = await sb.from('sessions').select('scheduled_at, cohorts!inner(teacher_id, class_minutes)').neq('status', 'cancelled').in('cohorts.teacher_id', mine)
+      .gte('scheduled_at', new Date(now - 2 * HOUR).toISOString()).lte('scheduled_at', until);
+    (ss || []).forEach((x) => { const a = new Date(x.scheduled_at).getTime(); busy.push([a - 30 * MIN, a + (((x.cohorts || {}).class_minutes || 60) + 15) * MIN]); });
+  }
+  return busy;
+}
+function ivTime(at, tz, lang) {
+  try { return new Intl.DateTimeFormat(L.locale(lang || 'en'), { timeZone: IV.validZone(tz) ? tz : 'UTC', weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }).format(new Date(at)); }
+  catch (e) { return new Date(at).toISOString(); }
+}
+function ivEmail(lang, heading, body, vars, button, name) {
+  return mail.renderEmail({ hero: 'welcome', lang, preheader: heading, heading, blocks: [{ p: L.hello(lang, name) }, { p: L.html(lang, body, vars) }].concat(button ? [{ button }] : []) });
+}
+async function interviewRoom(iv, user, isAdmin, name) {
+  const room = 'alimun-iv-' + iv.id, start = new Date(iv.scheduled_at).getTime(), exp = Math.floor((start + (iv.minutes + 60) * MIN) / 1000);
+  /* Private, for the two of them; recording is not allowed in this room (owner, 13 Nov 2026: interviews not recorded) */
+  const properties = { exp, eject_at_room_exp: true, enable_chat: true, enable_screenshare: true, enable_knocking: false, start_video_off: false, enable_emoji_reactions: false };
+  let r = await dailyFetch(`/rooms/${room}`, { method: 'POST', body: JSON.stringify({ properties }) });
+  if (!r.ok) r = await dailyFetch('/rooms', { method: 'POST', body: JSON.stringify({ name: room, privacy: 'private', properties }) });
+  if (!r.ok || !r.body || !r.body.url) throw new Error('the video room could not be opened');
+  const tok = await dailyFetch('/meeting-tokens', { method: 'POST', body: JSON.stringify({ properties: { room_name: room, user_name: String(name || '').slice(0, 60), user_id: user.id, is_owner: !!isAdmin, enable_recording_ui: false, exp } }) });
+  if (!tok.ok || !tok.body || !tok.body.token) throw new Error('the video pass could not be made');
+  return { url: r.body.url, token: tok.body.token };
+}
+
+async function interviewReminders(sb, now) {
+  const out = { reminded: 0 };
+  const auto = await AUTO.load(sb, 'interview-reminders');
+  if (!auto || !auto.enabled) return out;
+  const { data: list } = await sb.from('teacher_interviews').select('id, teacher_id, scheduled_at, minutes, teacher_tz, teacher_profiles(user_id, full_name, ui_lang)').eq('status', 'booked')
+    .gte('scheduled_at', new Date(now + 2 * MIN).toISOString()).lte('scheduled_at', new Date(now + 62 * MIN).toISOString());
+  for (const iv of list || []) {
+    const left = (new Date(iv.scheduled_at).getTime() - now) / MIN, which = left >= 54 ? '60' : left <= 5.2 ? '5' : null;
+    if (!which) continue;
+    const tp = iv.teacher_profiles || {}, lang = tp.ui_lang || 'en', vars = { time: ivTime(iv.scheduled_at, iv.teacher_tz, lang) };
+    const r = await AUTO.act(sb, auto, { key: `iv${which}:${iv.id}`, action: `remind the teacher and you, ${which === '60' ? '1 hour' : '5 minutes'} before an interview`, target: tp.full_name }, async () => {
+      await send(await emailOf(sb, tp.user_id), L.say(lang, `interview.remind_subject_${which}`, vars), ivEmail(lang, L.say(lang, `interview.remind_subject_${which}`, vars), `interview.remind_body_${which}`, vars,
+        { label: L.say(lang, 'interview.join_button'), href: `${mail.SITE}/app/teach#/` }, tp.full_name));
+      await sb.from('notifications').insert({ user_id: tp.user_id, kind: 'service', title: L.say(lang, `interview.remind_subject_${which}`, vars), body: L.say(lang, `interview.remind_body_${which}`, vars), link: '/app/teach#/' });
+      await send(OWNER(), `Interview with ${tp.full_name} at ${ivTime(iv.scheduled_at, 'America/Vancouver', 'en')}`, mail.renderEmail({ hero: 'welcome', lang: 'en', preheader: `In ${which === '60' ? 'an hour' : '5 minutes'}.`,
+        heading: `Interview with ${tp.full_name}`, blocks: [{ p: mail.esc(`${ivTime(iv.scheduled_at, 'America/Vancouver', 'en')} (${ivTime(iv.scheduled_at, 'Europe/Paris', 'en')}). Join from the teacher's file.`) },
+          { button: { label: 'Open their file', href: `${mail.SITE}/app/admin#/teachers/${iv.teacher_id}` } }] }));
+    }, tellOwner);
+    if (r === 'done') out.reminded++;
+  }
+  return out;
+}
+
+async function interviewAction(action, req, res, sb) {
+  const user = await userOf(req, sb);
+  if (!user) return res.status(401).json({ error: 'sign in' });
+  const isAdmin = !!(user.app_metadata && user.app_metadata.role === 'admin');
+  const b = body(req) || {};
+  /* ----- The owner ----- */
+  if (action === 'interview-hours') {
+    if (!isAdmin) return res.status(403).json({ error: 'admins only' });
+    if (req.method === 'POST' && b.hours) {
+      const h = IV.cleanHours(b.hours);
+      if (!h) return res.status(400).json({ error: 'Check the time zone and the times.' });
+      const { error } = await sb.from('app_settings').upsert({ key: 'interview_hours', value: JSON.stringify(h) }, { onConflict: 'key' });
+      if (error) throw new Error(error.message);
+    }
+    const h = await hoursOf(sb);
+    return res.status(200).json({ hours: h, next: h ? IV.freeSlots({ hours: h, busy: await ownerBusy(sb) }).slice(0, 6) : [] });
+  }
+  if (action === 'interview-invite') {
+    if (!isAdmin) return res.status(403).json({ error: 'admins only' });
+    if (!UUID.test(String(b.teacher || ''))) return res.status(400).json({ error: 'bad teacher' });
+    const { data: tp } = await sb.from('teacher_profiles').select('id, user_id, full_name, ui_lang, status, hiring_stage').eq('id', b.teacher).maybeSingle();
+    if (!tp) return res.status(404).json({ error: 'no such teacher' });
+    if (tp.status !== 'pending') return res.status(409).json({ error: 'Only a teacher waiting for review can be invited.' });
+    if (!(await hoursOf(sb))) return res.status(409).json({ error: 'Set your interview hours first.' });
+    await sb.from('teacher_profiles').update({ hiring_stage: 'interview_invited' }).eq('id', tp.id);
+    const lang = tp.ui_lang || 'en';
+    await send(await emailOf(sb, tp.user_id), L.say(lang, 'interview.invite_subject'), ivEmail(lang, L.say(lang, 'interview.invite_heading'), 'interview.invite_body', {},
+      { label: L.say(lang, 'interview.invite_button'), href: `${mail.SITE}/app/teach#/` }, tp.full_name));
+    await sb.from('notifications').insert({ user_id: tp.user_id, kind: 'service', title: L.say(lang, 'interview.invite_heading'), body: L.say(lang, 'interview.invite_body'), link: '/app/teach#/' });
+    await sb.from('automation_log').insert({ automation: 'interview-reminders', key: 'invite:' + tp.id + ':' + Date.now(), action: 'an admin invited a teacher to an interview', target: tp.full_name, detail: { by: user.email }, ok: true });
+    return res.status(200).json({ ok: true });
+  }
+  if (action === 'interview-decide') {
+    if (!isAdmin) return res.status(403).json({ error: 'admins only' });
+    const result = b.result;
+    if (!UUID.test(String(b.teacher || '')) || !['pre_approved', 'rejected', 'no_show'].includes(result)) return res.status(400).json({ error: 'bad request' });
+    const { data: tp } = await sb.from('teacher_profiles').select('id, user_id, full_name, ui_lang, status').eq('id', b.teacher).maybeSingle();
+    if (!tp) return res.status(404).json({ error: 'no such teacher' });
+    const note = typeof b.note === 'string' ? b.note.slice(0, 2000) : null;
+    const { data: iv } = await sb.from('teacher_interviews').select('id').eq('teacher_id', tp.id).in('status', ['booked', 'done']).order('scheduled_at', { ascending: false }).limit(1).maybeSingle();
+    const lang = tp.ui_lang || 'en', email = await emailOf(sb, tp.user_id);
+    if (result === 'no_show') {
+      if (iv) await sb.from('teacher_interviews').update({ status: 'no_show', note, decided_at: new Date().toISOString(), decided_by: user.id, updated_at: new Date().toISOString() }).eq('id', iv.id);
+      await sb.from('teacher_profiles').update({ hiring_stage: 'interview_invited' }).eq('id', tp.id);
+      return res.status(200).json({ ok: true });
+    }
+    if (iv) await sb.from('teacher_interviews').update({ status: 'done', result, note, decided_at: new Date().toISOString(), decided_by: user.id, updated_at: new Date().toISOString() }).eq('id', iv.id);
+    if (result === 'pre_approved') {
+      await sb.from('teacher_profiles').update({ hiring_stage: 'pre_approved' }).eq('id', tp.id);
+      if (b.notify !== false) await send(email, L.say(lang, 'interview.passed_subject'), ivEmail(lang, L.say(lang, 'interview.passed_heading'), 'interview.passed_body', {}, null, tp.full_name));
+    } else {
+      await sb.from('teacher_profiles').update({ status: 'suspended', hiring_stage: 'rejected' }).eq('id', tp.id);
+      if (b.notify !== false) await send(email, L.say(lang, 'rejected.subject'), mail.renderEmail({ hero: 'update', lang, preheader: L.say(lang, 'rejected.preheader'), heading: L.say(lang, 'rejected.heading'),
+        blocks: [{ p: L.hello(lang, tp.full_name) }, { p: L.html(lang, 'rejected.body') }, { p: L.html(lang, 'rejected.body2') }], footer: L.html(lang, 'rejected.footer', { email: mail.esc(email || '') }) }));
+    }
+    return res.status(200).json({ ok: true });
+  }
+  /* ----- The teacher (or the owner joining) ----- */
+  const { data: me } = await sb.from('teacher_profiles').select('id, user_id, full_name, ui_lang, status, hiring_stage').eq('user_id', user.id).maybeSingle();
+  if (action === 'interview-join' && isAdmin && UUID.test(String(b.interview || ''))) {
+    const { data: iv } = await sb.from('teacher_interviews').select('*').eq('id', b.interview).maybeSingle();
+    if (!iv) return res.status(404).json({ error: 'no such interview' });
+    return res.status(200).json(await interviewRoom(iv, user, true, 'Alimun'));
+  }
+  if (!me) return res.status(403).json({ error: 'teachers only' });
+  const { data: mine } = await sb.from('teacher_interviews').select('*').eq('teacher_id', me.id).eq('status', 'booked').maybeSingle();
+  if (action === 'interview-state') {
+    const open = me.status === 'pending' && ['interview_invited', 'interview_booked'].includes(me.hiring_stage);
+    const h = open ? await hoursOf(sb) : null;
+    return res.status(200).json({ stage: me.hiring_stage, interview: mine || null, minutes: h ? h.minutes : 30,
+      slots: open && h ? IV.freeSlots({ hours: h, busy: await ownerBusy(sb, mine && mine.id) }) : [] });
+  }
+  if (action === 'interview-book') {
+    if (me.status !== 'pending' || !['interview_invited', 'interview_booked'].includes(me.hiring_stage)) return res.status(409).json({ error: 'not_invited' });
+    const at = new Date(String(b.at || ''));
+    const h = await hoursOf(sb);
+    if (!h || !at || isNaN(at.getTime())) return res.status(400).json({ error: 'bad_time' });
+    if (mine && new Date(mine.scheduled_at).getTime() - Date.now() < IV.LEAD_HOURS * HOUR) return res.status(409).json({ error: 'too_late_to_change' });
+    const free = IV.freeSlots({ hours: h, busy: await ownerBusy(sb, mine && mine.id) });
+    if (!free.includes(at.toISOString())) return res.status(409).json({ error: 'taken' });
+    const tz = IV.validZone(b.tz) ? b.tz : null;
+    if (mine) await sb.from('teacher_interviews').update({ status: 'cancelled', updated_at: new Date().toISOString() }).eq('id', mine.id);
+    const { data: iv, error } = await sb.from('teacher_interviews').insert({ teacher_id: me.id, scheduled_at: at.toISOString(), minutes: h.minutes, teacher_tz: tz }).select('*').single();
+    if (error) { if (mine) await sb.from('teacher_interviews').update({ status: 'booked' }).eq('id', mine.id); return res.status(409).json({ error: error.code === '23505' ? 'taken' : 'not_saved' }); }
+    await sb.from('teacher_profiles').update({ hiring_stage: 'interview_booked' }).eq('id', me.id);
+    const lang = me.ui_lang || 'en', vars = { time: ivTime(iv.scheduled_at, tz, lang) };
+    await send(user.email, L.say(lang, 'interview.booked_subject', vars), ivEmail(lang, L.say(lang, 'interview.invite_heading'), 'interview.booked_body', vars, { label: L.say(lang, 'interview.dash_button'), href: `${mail.SITE}/app/teach#/` }, me.full_name)).catch(() => {});
+    await send(OWNER(), `${mine ? 'Interview moved' : 'Interview booked'}: ${me.full_name}, ${ivTime(iv.scheduled_at, 'America/Vancouver', 'en')}`, mail.renderEmail({ hero: 'welcome', lang: 'en', preheader: ivTime(iv.scheduled_at, 'America/Vancouver', 'en'),
+      heading: `Interview with ${me.full_name}`, blocks: [{ p: mail.esc(`${ivTime(iv.scheduled_at, 'America/Vancouver', 'en')} (${ivTime(iv.scheduled_at, 'Europe/Paris', 'en')}; theirs: ${ivTime(iv.scheduled_at, tz, 'en')}).`) },
+        { button: { label: 'Open their file', href: `${mail.SITE}/app/admin#/teachers/${me.id}` } }] })).catch(() => {});
+    return res.status(200).json({ interview: iv });
+  }
+  if (action === 'interview-join') {
+    if (!mine) return res.status(404).json({ error: 'no_interview' });
+    const start = new Date(mine.scheduled_at).getTime();
+    if (Date.now() < start - 10 * MIN) return res.status(409).json({ error: 'too_early' });
+    if (Date.now() > start + (mine.minutes + 30) * MIN) return res.status(409).json({ error: 'over' });
+    if (!mine.teacher_checked_in_at) await sb.from('teacher_interviews').update({ teacher_checked_in_at: new Date().toISOString() }).eq('id', mine.id);
+    return res.status(200).json(await interviewRoom(mine, user, false, me.full_name));
+  }
+  return res.status(400).json({ error: 'unknown action' });
+}
+
 /* ---------- Recordings ---------- */
 async function proofClips(sb, now, auto) {
   const out = { due: 0, started: 0 };
@@ -413,8 +593,9 @@ module.exports = async function handler(req, res) {
       if (!cronOk(req)) return res.status(401).json({ error: 'unauthorized' });
       const out = {};
       try { out.reminders = await teacherReminders(sb, Date.now()); } catch (e) { out.error = 'reminders: ' + String(e.message || e); }
+      try { out.interviews = await interviewReminders(sb, Date.now()); } catch (e) { out.error = (out.error ? out.error + '; ' : '') + 'interviews: ' + String(e.message || e); }
       try { out.clips = await proofClips(sb, Date.now(), await AUTO.load(sb, 'proof-clips')); } catch (e) { out.error = (out.error ? out.error + '; ' : '') + 'clips: ' + String(e.message || e); }
-      if (out.error || (out.clips && out.clips.due) || (out.reminders && (out.reminders.reminded || out.reminders.missing))) await recordRun(sb, 'vercel:cron-clips', !out.error, out);
+      if (out.error || (out.clips && out.clips.due) || (out.reminders && (out.reminders.reminded || out.reminders.missing)) || (out.interviews && out.interviews.reminded)) await recordRun(sb, 'vercel:cron-clips', !out.error, out);
       return res.status(200).json(out);
     }
     if (action === 'cron-digest') {
@@ -426,6 +607,7 @@ module.exports = async function handler(req, res) {
       await recordRun(sb, 'vercel:cron-digest', r !== 'failed', { day: ymd, result: r });
       return res.status(200).json({ day: ymd, result: r });
     }
+    if (/^interview-(hours|invite|decide|state|book|join)$/.test(action)) return await interviewAction(action, req, res, sb);
     if (action === 'checkin-link') {
       /* One click from the reminder email: signed for this class date and this teacher */
       const sid = String(req.query.s || ''), uid = String(req.query.u || ''), back = (q) => { res.statusCode = 302; res.setHeader('Location', `${mail.SITE}/app/teach?checkin=${q}#/`); return res.end(); };

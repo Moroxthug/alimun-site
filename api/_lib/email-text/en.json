@@ -308,5 +308,22 @@
     "body_5_missing": "Your **{class}** class starts at {time} and you have not checked in yet. Check in now and open the classroom; your learners will be waiting.",
     "body_5_ok": "Your **{class}** class starts at {time}. You are checked in: open the classroom now.",
     "button_room": "Open the classroom"
+  },
+  "interview": {
+    "invite_subject": "Your application to teach with Alimun: choose a time to talk",
+    "invite_heading": "Let’s talk",
+    "invite_body": "Thank you for applying to teach with Alimun. The next step is a short video call with us, about 30 minutes, so we can get to know you. Choose a time that suits you in your dashboard.",
+    "invite_button": "Choose a time",
+    "booked_subject": "Your call with Alimun: {time}",
+    "booked_body": "Your call with Alimun is booked for **{time}**. Join from your dashboard a few minutes before; it is just the two of us, on video, and it is not recorded. You can change the time until 12 hours before.",
+    "dash_button": "Open my dashboard",
+    "remind_subject_60": "Your call with Alimun starts at {time}",
+    "remind_body_60": "Your call with Alimun starts at **{time}**, in an hour. Join from your dashboard a few minutes before.",
+    "remind_subject_5": "Your call with Alimun starts in 5 minutes",
+    "remind_body_5": "Your call with Alimun starts at **{time}**. Join now from your dashboard.",
+    "join_button": "Join the call",
+    "passed_subject": "Next step: a 30-minute trial class with Alimun",
+    "passed_heading": "Thank you for the call",
+    "passed_body": "We enjoyed talking with you. The next step is a free 30-minute trial class with a few of our learners, so you can show us how you teach. We will write to you with the details."
   }
 }

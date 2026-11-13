@@ -356,3 +356,13 @@ a.feed__it:hover { background: #f7f6f2; margin: 0 -20px; padding-left: 20px; pad
 .au__cap { display: flex; align-items: end; gap: 8px; margin-top: 6px; }
 .au__cap .st-field { max-width: 130px; }
 @media (max-width: 899px) { .cl-f { grid-template-columns: minmax(0, 1fr); } .pl__r { grid-template-columns: 110px minmax(0, 1fr); } }
+
+/* Hiring card and interview hours (js/app/admin-people.js, docs/TEACHER_HIRING_PLAN.md) */
+.hc { box-shadow: 0 0 0 1px var(--line), inset 4px 0 0 var(--lime); }
+.hc-decide { display: grid; gap: 8px; margin-top: 12px; max-width: 720px; }
+.hr-t input[type="time"] { width: auto; min-width: 110px; display: inline-block; }
+/* Buttons made for the old dark cards stay visible on the white panels */
+.adm .btn--on-forest { color: var(--forest); box-shadow: inset 0 0 0 1px rgba(26, 68, 60, .45); background: transparent; }
+.adm .btn--on-forest:hover { background: #f0efe9; color: var(--forest); }
+.adm .card--forest .btn--lime { box-shadow: inset 0 0 0 1px rgba(26, 68, 60, .25); }
+.hc .btn-row { margin-top: 10px; }

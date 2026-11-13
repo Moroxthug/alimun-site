@@ -71,8 +71,8 @@
     var te = [
       { id: 't1', user_id: 'ut1', full_name: 'Ana Weber', languages: ['German', 'English'], experience_years: 12, specialty: 'German for moving abroad', bio: 'I have taught German to adults for twelve years.', location: 'Leipzig', hourly_rate: 28, rating: 4.9, tier_level: 'focused', status: 'approved', created_at: ago(200), sessions_delivered: 184 },
       { id: 't2', user_id: 'ut2', full_name: 'James Hall', languages: ['English'], experience_years: 8, specialty: 'Exam preparation', bio: '', location: 'Bristol', hourly_rate: 26, rating: 4.7, tier_level: 'focused', status: 'approved', created_at: ago(150), sessions_delivered: 120 },
-      { id: 't3', user_id: 'ut3', full_name: 'Léa Martin', languages: ['French'], experience_years: 5, specialty: 'Conversation and pronunciation', bio: 'Native French speaker, DELF examiner.', location: 'Lyon', hourly_rate: 22, rating: 0, tier_level: 'community', status: 'pending', created_at: ago(1), sessions_delivered: 0 },
-      { id: 't4', user_id: 'ut4', full_name: 'Tomás Ruiz', languages: ['Spanish'], experience_years: 3, specialty: 'Spanish for travel', bio: '', location: 'Valencia', hourly_rate: 22, rating: 0, tier_level: 'community', status: 'pending', created_at: ago(0.2), sessions_delivered: 0 },
+      { id: 't3', user_id: 'ut3', full_name: 'Léa Martin', languages: ['French'], experience_years: 5, specialty: 'Conversation and pronunciation', bio: 'Native French speaker, DELF examiner.', location: 'Lyon', hourly_rate: 22, rating: 0, tier_level: 'community', status: 'pending', hiring_stage: 'interview_booked', created_at: ago(1), sessions_delivered: 0 },
+      { id: 't4', user_id: 'ut4', full_name: 'Tomás Ruiz', languages: ['Spanish'], experience_years: 3, specialty: 'Spanish for travel', bio: '', location: 'Valencia', hourly_rate: 22, rating: 0, tier_level: 'community', status: 'pending', hiring_stage: 'applied', created_at: ago(0.2), sessions_delivered: 0 },
       { id: 't5', user_id: 'ut5', full_name: 'Paul Grant', languages: ['English'], experience_years: 1, specialty: '', bio: '', location: '', hourly_rate: 22, rating: 0, tier_level: 'community', status: 'suspended', created_at: ago(60), sessions_delivered: 0 }
     ];
     te.forEach(function (x, i) { EMAILS[x.user_id] = ['ana.weber', 'james.hall', 'lea.martin', 'tomas.ruiz', 'paul.grant'][i] + '@example.com'; });
@@ -83,7 +83,8 @@
   }
   function sampleTeacherFile(t) {
     var now = Date.now(), ago = function (d) { return new Date(now - d * DAY).toISOString(); };
-    return { profile: t, cohorts: TE.cohorts.filter(function (c) { return c.teacher_id === t.id; }).map(function (c) { return Object.assign({ schedule_days: ['Tuesday', 'Thursday'], schedule_time: '18:30', timezone: 'Europe/Berlin' }, c); }),
+    var ivs = t.hiring_stage === 'interview_booked' ? [{ id: 'iv1', status: 'booked', scheduled_at: new Date(now + 8 * 60000).toISOString(), minutes: 30, teacher_tz: 'Europe/Paris' }] : [];
+    return { interviews: ivs, profile: t, cohorts: TE.cohorts.filter(function (c) { return c.teacher_id === t.id; }).map(function (c) { return Object.assign({ schedule_days: ['Tuesday', 'Thursday'], schedule_time: '18:30', timezone: 'Europe/Berlin' }, c); }),
       slots: t.status === 'approved' ? [{ day_of_week: 2, start_time: '17:00:00', end_time: '21:00:00', timezone: 'Europe/Berlin' }, { day_of_week: 4, start_time: '17:00:00', end_time: '21:00:00', timezone: 'Europe/Berlin' }] : [],
       reviews: t.status === 'approved' ? [{ rating: 5, review_text: 'Clear, patient and fun.', created_at: ago(9) }] : [], payouts: t.status === 'approved' ? [{ period_start: ago(55).slice(0, 10), period_end: ago(25).slice(0, 10), amount_eur: 540, status: 'paid' }] : [] };
   }
@@ -315,7 +316,7 @@
     which = which || (c.pending ? 'pending' : 'approved');
     var tab = function (k, label) { return '<a class="btn btn--' + (k === which ? 'primary' : 'quiet') + ' btn--sm" href="#/teachers/list/' + k + '"' + (k === which ? ' aria-current="page"' : '') + '>' + esc(label + ' (' + c[k] + ')') + '</a>'; };
     return '<div class="view__head"><div><h1 class="t-h1">Teachers</h1><p class="t-lead">' + esc(A.plural(c.approved, 'approved teacher', 'approved teachers') + ', ' + A.plural(c.pending, 'application', 'applications') + ' waiting.') + '</p></div>' +
-      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/teachers/invite">Invite a teacher</a></div></div>' +
+      '<div class="btn-row"><a class="btn btn--ghost btn--sm" href="#/teachers/hours">Interview hours</a><a class="btn btn--primary btn--sm" href="#/teachers/invite">Invite a teacher</a></div></div>' +
       '<div class="grid rise"><section class="card span-12" style="--i:0"><div class="btn-row ad-tabs" role="navigation" aria-label="Which teachers">' + tab('pending', 'Waiting for review') + tab('approved', 'Approved') + tab('suspended', 'Rejected or suspended') + tab('all', 'All') + '</div>' +
       '<div class="ad-filters"><input class="st-in" type="search" data-tf placeholder="Search by name, email, language or specialty" value="' + esc(TF.q) + '" aria-label="Search"></div>' +
       '<div data-trows data-which="' + which + '">' + teacherRowsHtml(which) + '</div></section>' + sampleLine() + '</div>';
@@ -338,7 +339,7 @@
       return '<tr>' + (bulk ? '<td style="width:36px"><input type="checkbox" data-sel="' + esc(t.id) + '"' + (SEL[t.id] ? ' checked' : '') + ' aria-label="Select ' + esc(t.full_name) + '" style="width:16px;height:16px;accent-color:#1a443c"></td>' : '') +
         '<td><a href="#/teachers/' + esc(t.id) + '">' + esc(t.full_name || 'Teacher') + '</a><div class="m">' + esc(EMAILS[t.user_id] || '') + '</div></td>' +
         '<td>' + esc((t.languages || []).join(', ')) + '</td><td class="m">' + esc(t.specialty || '') + '</td><td class="r">' + esc(t.experience_years != null ? t.experience_years : '') + '</td>' +
-        '<td class="nw"><span class="dot' + (t.status === 'approved' ? '' : t.status === 'pending' ? ' dot--warn' : ' dot--off') + '"></span>' + esc(t.status === 'approved' ? A.plural(cos, 'open class', 'open classes') : STATUS[t.status] || t.status) + '</td>' +
+        '<td class="nw"><span class="dot' + (t.status === 'approved' ? '' : t.status === 'pending' ? ' dot--warn' : ' dot--off') + '"></span>' + esc(t.status === 'approved' ? A.plural(cos, 'open class', 'open classes') : t.status === 'pending' ? stageOf(t) : STATUS[t.status] || t.status) + '</td>' +
         '<td class="r m">' + esc(day(t.created_at)) + '</td><td class="r"><a class="btn btn--ghost btn--sm" href="#/teachers/' + esc(t.id) + '">' + esc(t.status === 'pending' ? 'Review' : 'Open') + '</a></td></tr>';
     }).join('') + '</tbody></table></div>';
   }
@@ -369,11 +370,94 @@
       apply(res.filter(function (x) { return x.emailed; }).length);
     }, function (e) { btn.disabled = false; say('[data-msg="st"]', (e && e.message) || 'That did not work.', true); });
   }
+
+  /* ---------- Hiring (docs/TEACHER_HIRING_PLAN.md, step 1: the interview) ---------- */
+  var STAGE = { applied: 'Applied', interview_invited: 'Invited to an interview', interview_booked: 'Interview booked', pre_approved: 'Pre-approved: trial class next',
+    trial_scheduled: 'Trial class booked', trial_done: 'Trial class done', approved: 'Approved', assigned: 'Assigned to classes', rejected: 'Rejected' };
+  function stageOf(t) { return STAGE[t.hiring_stage] || STATUS[t.status] || t.status; }
+  function whenBoth(at, tz) {
+    var f = function (z) { try { return new Intl.DateTimeFormat('en-GB', { timeZone: z, weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', timeZoneName: 'short' }).format(new Date(at)); } catch (e) { return ''; } };
+    var mine = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    return f(mine) + (tz && tz !== mine ? '; theirs ' + f(tz) : '');
+  }
+  function hiringCard(p, ivs) {
+    if (p.status !== 'pending' && p.hiring_stage !== 'pre_approved') return '';
+    var iv = ivs.filter(function (x) { return x.status === 'booked'; })[0], last = ivs[0];
+    var html = '<section class="card span-12 hc" style="--i:0"><div class="panel-h"><h2 class="t-h2">Hiring: ' + esc(stageOf(p)) + '</h2><a href="#/teachers/hours">Interview hours</a></div>';
+    if (p.hiring_stage === 'applied' || !p.hiring_stage) {
+      html += '<p class="t-small">Next: a 30-minute video call with you. They choose a time from your interview hours.</p><div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-hire="invite" data-id="' + esc(p.id) + '">Invite to interview</button></div>';
+    } else if (p.hiring_stage === 'interview_invited') {
+      html += '<p class="t-small">Invited. They have not chosen a time yet' + (last && last.status === 'no_show' ? '; they missed the last one, ' + esc(whenBoth(last.scheduled_at)) : '') + '.</p>';
+    } else if (iv) {
+      var start = new Date(iv.scheduled_at).getTime();
+      html += '<p class="t-body"><b>' + esc(whenBoth(iv.scheduled_at, iv.teacher_tz)) + '</b>, ' + iv.minutes + ' minutes, not recorded.' + (iv.teacher_checked_in_at ? ' They joined at ' + esc(A.fmt(iv.teacher_checked_in_at, { hour: '2-digit', minute: '2-digit' })) + '.' : '') + '</p>' +
+        '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-hire="join" data-iv="' + esc(iv.id) + '">Join the call</button></div>' +
+        (Date.now() > start - 15 * 60000 ? decideHtml(p) : '<p class="t-small">Pre-approve or reject once the call has started.</p>');
+    } else if (p.hiring_stage === 'pre_approved') {
+      html += '<p class="t-small">' + esc((last && last.note ? 'Your note: ' + last.note + ' ' : '') + 'The trial class comes in step 2 of hiring.') + '</p>';
+    }
+    return html + '<p class="t-small st-msg" data-hire-msg aria-live="polite"></p></section>';
+  }
+  function decideHtml(p) {
+    return '<div class="hc-decide"><label class="st-field"><span class="st-lbl">Your note (only admins see it)</span><textarea class="st-in" rows="2" maxlength="2000" data-hire-note></textarea></label>' +
+      '<label class="st-check"><input type="checkbox" data-hire-notify checked> Email them the decision</label>' +
+      '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-hire="pre_approved" data-id="' + esc(p.id) + '">Pre-approve: trial class next</button>' +
+      '<button class="btn btn--quiet btn--sm" type="button" data-hire="rejected" data-id="' + esc(p.id) + '">Reject</button>' +
+      '<button class="btn btn--ghost btn--sm" type="button" data-hire="no_show" data-id="' + esc(p.id) + '">They did not come: let them book again</button></div></div>';
+  }
+  function hireAction(b) {
+    var k = b.getAttribute('data-hire'), msg = root.querySelector('[data-hire-msg]');
+    if (!real()) { msg.textContent = 'This is sample data; nothing is sent.'; return; }
+    if (k === 'rejected' && b.getAttribute('data-sure') !== '1') { b.setAttribute('data-sure', '1'); b.textContent = 'Yes, reject'; return; }
+    b.disabled = true; msg.textContent = 'Working…';
+    var call;
+    if (k === 'join') {
+      var win = window.open('', '_blank');
+      call = window.AlimunData.ops('interview-join', { interview: b.getAttribute('data-iv') }).then(function (r) {
+        var u = new URL(r.url); if (u.protocol !== 'https:' || !/\.daily\.co$/.test(u.hostname)) throw new Error('unexpected room address');
+        u.searchParams.set('t', r.token); if (win) { win.opener = null; win.location.href = u.href; } else location.href = u.href; b.disabled = false; msg.textContent = 'Opened in a new tab.';
+      }).catch(function (e) { if (win) win.close(); throw e; });
+    } else if (k === 'invite') {
+      call = window.AlimunData.ops('interview-invite', { teacher: b.getAttribute('data-id') });
+    } else {
+      var note = root.querySelector('[data-hire-note]'), notify = root.querySelector('[data-hire-notify]');
+      call = window.AlimunData.ops('interview-decide', { teacher: b.getAttribute('data-id'), result: k, note: note ? note.value : '', notify: notify ? notify.checked : true });
+    }
+    call.then(function () { if (k !== 'join') { TE = null; window.AlimunAdminTeachers.mount(root, ['' + b.getAttribute('data-id')], A); } }, function (e) { b.disabled = false; msg.textContent = 'That did not work: ' + ((e && e.body && e.body.error) || (e && e.message) || 'try again') + '.'; });
+  }
+  /* The owner's weekly interview hours */
+  var HOURS = null, DAYNAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  var ZONE_LIST = ['America/Vancouver', 'America/Los_Angeles', 'America/New_York', 'Europe/London', 'Europe/Paris', 'Europe/Madrid', 'Europe/Berlin', 'Europe/Istanbul', 'Africa/Casablanca', 'Asia/Dubai'];
+  function hoursView() {
+    var h = (HOURS && HOURS.hours) || { tz: 'America/Vancouver', minutes: 30, days: {} };
+    var row = function (d) { var r = (h.days[d] || [])[0] || ['', ''], r2 = (h.days[d] || [])[1] || ['', ''];
+      return '<tr><td>' + DAYNAMES[d] + '</td><td><input class="st-in" type="time" data-hr="' + d + ':0:0" value="' + esc(r[0]) + '"> to <input class="st-in" type="time" data-hr="' + d + ':0:1" value="' + esc(r[1]) + '"></td>' +
+        '<td><input class="st-in" type="time" data-hr="' + d + ':1:0" value="' + esc(r2[0]) + '"> to <input class="st-in" type="time" data-hr="' + d + ':1:1" value="' + esc(r2[1]) + '"></td></tr>'; };
+    return back('#/teachers', 'Teachers') + '<div class="view__head"><div><h1 class="t-h1">Interview hours</h1><p class="t-lead">When teachers can book their call with you. Times you teach or have another interview are left out; calls are booked from 12 hours to 14 days ahead.</p></div></div>' +
+      '<div class="grid rise"><section class="card span-12"><div class="st-row" style="max-width:520px">' + field('Your time zone', '<select class="st-in" data-hz>' + ZONE_LIST.concat(ZONE_LIST.indexOf(h.tz) < 0 ? [h.tz] : []).map(function (z) { return opt(z, z.replace(/_/g, ' '), h.tz); }).join('') + '</select>') +
+      field('Length of a call', '<select class="st-in" data-hm>' + [20, 30, 45, 60].map(function (m) { return opt(m, m + ' minutes', h.minutes); }).join('') + '</select>') + '</div>' +
+      '<div class="dt-wrap"><table class="dt hr-t"><thead><tr><th>Day</th><th>Hours</th><th>More hours (optional)</th></tr></thead><tbody>' + [1, 2, 3, 4, 5, 6, 0].map(row).join('') + '</tbody></table></div>' +
+      '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-hours-save>Save the hours</button></div><p class="t-small st-msg" data-hours-msg aria-live="polite"></p>' +
+      (HOURS && HOURS.next && HOURS.next.length ? '<p class="t-small">Next free times: ' + esc(HOURS.next.map(function (x) { return whenBoth(x); }).join('; ')) + '.</p>' : '') + '</section></div>';
+  }
+  function saveHours(b) {
+    var msg = root.querySelector('[data-hours-msg]'), days = {};
+    for (var d = 0; d < 7; d++) for (var i = 0; i < 2; i++) {
+      var a = root.querySelector('[data-hr="' + d + ':' + i + ':0"]').value, z = root.querySelector('[data-hr="' + d + ':' + i + ':1"]').value;
+      if (a && z) (days[d] = days[d] || []).push([a, z]);
+    }
+    var hours = { tz: root.querySelector('[data-hz]').value, minutes: +root.querySelector('[data-hm]').value, days: days };
+    if (!real()) { HOURS = { hours: hours, next: [] }; msg.textContent = 'Sample: not saved.'; return; }
+    b.disabled = true; msg.textContent = 'Saving…';
+    window.AlimunData.ops('interview-hours', { hours: hours }).then(function (r) { HOURS = r; root.innerHTML = hoursView(); var m = root.querySelector('[data-hours-msg]'); if (m) m.textContent = 'Saved.'; },
+      function (e) { b.disabled = false; msg.textContent = 'Not saved: ' + ((e && e.body && e.body.error) || (e && e.message) || 'try again') + '.'; });
+  }
   function teacherFileView(t, f) {
     var p = f.profile || t, email = EMAILS[p.user_id] || '';
     var html = back('#/teachers/list/' + (p.status || 'approved'), 'Teachers') + '<div class="view__head"><div><h1 class="t-h1">' + esc(p.full_name || '') + '</h1><p class="t-lead">' + esc([email, STATUS[p.status] || p.status, 'Joined ' + day(p.created_at)].filter(Boolean).join('. ') + '.') + '</p></div>' +
       '<div class="btn-row">' + (p.status === 'approved' ? '<a class="btn btn--primary btn--sm" href="/app/teach?as=' + esc(p.id) + '" target="_blank" rel="noopener">Open their dashboard, read-only</a>' : '') + '</div></div><div class="grid rise">';
-    var actions = p.status === 'pending' ? [['approved', 'Approve', 'primary'], ['suspended', 'Reject', 'quiet']] : p.status === 'approved' ? [['suspended', 'Suspend', 'quiet']] : [['approved', 'Reinstate', 'primary'], ['pending', 'Move back to review', 'quiet']];
+    var actions = p.status === 'pending' ? [['approved', 'Approve without interview', 'primary'], ['suspended', 'Reject', 'quiet']] : p.status === 'approved' ? [['suspended', 'Suspend', 'quiet']] : [['approved', 'Reinstate', 'primary'], ['pending', 'Move back to review', 'quiet']];
+    html += hiringCard(p, f.interviews || []);
     html += '<section class="card card--forest span-12" style="--i:0"><h2 class="t-h2">' + esc(STATUS[p.status] || p.status) + '</h2>' +
       (p.status === 'pending' && p.bio ? '<p class="t-body" style="margin-top:8px" dir="auto">' + esc(p.bio) + '</p>' : '') +
       '<div class="btn-row" style="margin-top:14px">' + actions.map(function (a) { return '<button class="btn btn--' + (a[2] === 'primary' ? 'lime' : 'ghost btn--on-forest') + ' btn--sm" type="button" data-ask1="' + a[0] + '" data-id="' + esc(p.id) + '">' + esc(a[1]) + '</button>'; }).join('') + '</div><div data-confirm1></div></section>';
@@ -438,6 +522,10 @@
       else if (f.hasAttribute('data-tgrant')) { e.preventDefault(); grantTutor(f); }
     });
     root.addEventListener('click', function (e) {
+      var hb = e.target.closest('[data-hire]');
+      if (hb && !hb.disabled) { hireAction(hb); return; }
+      var hs = e.target.closest('[data-hours-save]');
+      if (hs && !hs.disabled) { saveHours(hs); return; }
       var b = e.target.closest('[data-ask],[data-ask1],[data-do],[data-cancel],[data-csv],[data-copy]');
       if (!b || b.disabled) return;
       if (b.hasAttribute('data-ask')) askStatus(b.getAttribute('data-ask'), Object.keys(SEL).filter(function (k) { return SEL[k] && root.querySelector('[data-sel="' + k + '"]'); }));
@@ -469,6 +557,8 @@
         else go = loadStudents().then(function () { return { html: studentsView(), title: 'Students' }; });
       } else {
         if (p0 === 'invite') go = Promise.resolve({ html: inviteView('teacher'), title: 'Invite a teacher' });
+        else if (p0 === 'hours') go = (real() ? window.AlimunData.ops('interview-hours', {}) : Promise.resolve({ hours: { tz: 'America/Vancouver', minutes: 30, days: { 1: [['09:00', '11:00']], 3: [['14:00', '16:00']] } }, next: [] }))
+          .then(function (r) { HOURS = r; return { html: hoursView(), title: 'Interview hours' }; });
         else if (p0 && p0 !== 'list') go = loadTeachers().then(function () {
           var t = TE.teachers.filter(function (x) { return x.id === p0; })[0];
           if (!t) return { html: back('#/teachers', 'Teachers') + '<div class="card"><p class="t-body">This teacher could not be found.</p></div>' };
