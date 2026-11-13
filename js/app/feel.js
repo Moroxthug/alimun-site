@@ -12,7 +12,10 @@
   var AHEAD = 'alimun-ahead', KEEP = 120;
 
   function answer(ok) {
-    if (ok == null || !navigator.vibrate) return;
+    if (ok == null) return;
+    /* The store app: the phone's own haptics (js/app/device.js) */
+    if (window.AlimunDevice && window.AlimunDevice.haptic(ok)) return;
+    if (!navigator.vibrate) return;
     try { navigator.vibrate(ok ? 12 : [24, 60, 24]); } catch (e) { /* not allowed before a tap */ }
   }
 

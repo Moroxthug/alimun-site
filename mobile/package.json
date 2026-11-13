@@ -1,0 +1,20 @@
+{
+  "name": "alimun-mobile",
+  "private": true,
+  "version": "0.1.0",
+  "description": "The Alimun store apps (docs/APP_PLAN.md, step 3): the learners' app packaged in a Capacitor shell",
+  "scripts": {
+    "www": "node build-www.js",
+    "sync": "node build-www.js && cap sync android",
+    "apk": "node build-www.js && cap sync android && cd android && ./gradlew assembleDebug"
+  },
+  "dependencies": {
+    "@capacitor/android": "7.6.9",
+    "@capacitor/core": "7.6.9",
+    "@capacitor/filesystem": "7.1.9",
+    "@capacitor/haptics": "7.0.5"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "7.6.9"
+  }
+}

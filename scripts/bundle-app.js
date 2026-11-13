@@ -19,7 +19,7 @@ const BUDGET_KB = 175;
 
 /* In the order the page used to load them; shell.js last */
 const CORE = [
-  'js/app/lazy.js', 'js/app/cast.js', 'js/app/cast3.js', 'js/app/sample-data.js', 'js/app/data.js', 'js/app/offline.js',
+  'js/app/lazy.js', 'js/app/cast.js', 'js/app/cast3.js', 'js/app/sample-data.js', 'js/app/device.js', 'js/app/data.js', 'js/app/offline.js',
   'js/app/feel.js', 'js/app/exercises.js', 'js/app/reader.js', 'js/app/practice.js', 'js/app/cards.js', 'js/app/tests.js',
   'js/app/library.js', 'js/tz.js', 'js/app/find.js', 'js/app/classes.js', 'js/app/homework.js', 'js/app/progress.js',
   'js/app/messages.js', 'js/app/plans.js', 'js/country.js', 'js/app/prefs.js', 'js/app/withdraw.js', 'js/app/settings.js',

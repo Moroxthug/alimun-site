@@ -44,7 +44,7 @@
       "continue": true
     },
     {
-      "src": "/(site|supabase|private|\\.agents|\\.github|\\.semgrep|scripts|docs|mockups|node_modules|sandbox)(/.*)?",
+      "src": "/(site|supabase|private|mobile|\\.agents|\\.github|\\.semgrep|scripts|docs|mockups|node_modules|sandbox)(/.*)?",
       "status": 404,
       "dest": "/404.html"
     },

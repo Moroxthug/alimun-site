@@ -1,0 +1,13 @@
+{
+  "appId": "com.alimun.app",
+  "appName": "Alimun",
+  "webDir": "www",
+  "server": {
+    "hostname": "alimun.com",
+    "androidScheme": "https",
+    "appStartPath": "/app"
+  },
+  "android": {
+    "backgroundColor": "#ffffff"
+  }
+}

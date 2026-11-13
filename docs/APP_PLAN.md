@@ -38,6 +38,12 @@ Checked: a fake signed-in learner in headless Chromium (phone size): service wor
 - Not covered: the recordings themselves (Supabase Storage `course-audio`) stay public by file name; without the paid plans their names are not listed anywhere public. Moving them to a private bucket with signed links is a later choice for the owner.
 
 ## Step 3: store apps
+
+Started 13 Nov 2026 (owner: "an app that is not the browser version but an app with its own storage"). Android first, in `mobile/` (Capacitor 7):
+- The app's files are inside the app: `mobile/build-www.js` copies the bundled app page, scripts, styles, fonts, the photos it uses and the Supabase library (checked against the page's integrity) into `mobile/www`, and Capacitor packages them. The app runs at https://alimun.com/app, so sign-in, /api, the database and payments work as on the website; `mobile/android/app/src/main/java/com/alimun/app/AlimunClient.java` answers each request from the app or the network. It opens with no connection, even the first time. A change to the app's screens needs a new build (`cd mobile && npm run apk` after `npm run build` at the root); course material and data come fresh from the server.
+- Downloads and the complete course material are files in the app's own storage (`js/app/device.js`, Filesystem plugin, `files/offline/...`), not browser caches; the native layer serves downloaded course files when the phone is offline and downloaded recordings always (with byte ranges). No service worker in the app. The free limit applies the same way.
+- Haptics through the phone (Haptics plugin); the install card is hidden in the app; icons and launch screen are the logo on white (`mobile/icons.py`).
+- Test builds are debug-signed APKs. Before Google Play: a release key, Play Billing for the app plan and tutor minutes (through RevenueCat), and iOS.
 - Capacitor shell loading the same `/app`, with the owner's loader as the splash screen, the icon on white, deep links from emails, and native storage so iPhone does not clear downloads.
 - Push notifications for class reminders, homework and flashcard reviews (the bell's notifications already exist).
 - Store purchases through RevenueCat for the app subscription and tutor minutes only, as decided on 11 Nov 2026 (`docs/PRICING_ENGINE_SPEC.md`). Classes and packs stay on the website, within what each store's rules allow; check the current App Review Guidelines before submitting.

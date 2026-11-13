@@ -18,11 +18,30 @@
   var running = {};      /* id -> { done, total } while downloading */
   var installEvt = null;
 
-  var supported = typeof window !== 'undefined' && 'caches' in window && 'serviceWorker' in navigator;
+  /* The store app keeps downloads as files in its own storage (js/app/device.js); a browser in Cache Storage */
+  var DEV = window.AlimunDevice && window.AlimunDevice.native ? window.AlimunDevice : null;
+  var supported = !!DEV || (typeof window !== 'undefined' && 'caches' in window && 'serviceWorker' in navigator);
+  function openStore() {
+    if (DEV) {
+      return Promise.resolve({
+        size: function (url) { var k = DEV.keyOf(url); return k ? DEV.size(k) : Promise.resolve(null); },
+        put: function (url, blob) { var k = DEV.keyOf(url); return k ? DEV.put(k, blob) : Promise.resolve(); },
+        del: function (url) { var k = DEV.keyOf(url); return k ? DEV.remove(k) : Promise.resolve(); }
+      });
+    }
+    return caches.open(CACHE).then(function (cache) {
+      return {
+        size: function (url) { return cache.match(url).then(function (h) { return h ? h.blob().then(function (b) { return b.size; }) : null; }); },
+        put: function (url, blob, type) { return cache.put(url, new Response(blob, { headers: { 'Content-Type': type } })); },
+        del: function (url) { return cache.delete(url); }
+      };
+    });
+  }
 
   /* ---------- Service worker ---------- */
   function register() {
-    if (!supported) return;
+    /* The store app serves its own files; no service worker there */
+    if (!supported || DEV) return;
     if (!/^\/app\/?$/.test(location.pathname) || /[?&](as|sample)=/.test(location.search)) return;
     if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') return;
     navigator.serviceWorker.register('/app-sw.js', { scope: '/app' }).catch(function (e) { console.warn('[Alimun] Offline support not started', e && e.message); });
@@ -60,7 +79,7 @@
     var state = running[id] = { done: 0, total: 1 };
     if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {});
     var lang = A ? A.lang : 'en';
-    return Promise.all([plan(kind, id, language, lang), caches.open(CACHE)]).then(function (r) {
+    return Promise.all([plan(kind, id, language, lang), openStore()]).then(function (r) {
       var p = r[0], cache = r[1], all = p.data.concat(p.audio), bytes = 0, at = 0;
       state.total = all.length;
       var step = function () { state.done++; if (onStep) onStep(state.done, state.total); };
@@ -79,13 +98,13 @@
         if (stopped || at >= all.length) return Promise.resolve();
         var url = all[at++];
         var isData = url.indexOf('/data/') === 0 || /manifest\.json$/.test(url);
-        return (isData ? Promise.resolve(null) : cache.match(url)).then(function (had) {
-          if (had) return had.blob().then(function (b) { bytes += b.size; });
+        return (isData ? Promise.resolve(null) : cache.size(url)).then(function (had) {
+          if (had != null) { bytes += had; return; }
           return get(url, 0).then(function (res) {
             return res.blob().then(function (b) {
               bytes += b.size;
               if (stopped) return;
-              return cache.put(url, new Response(b, { headers: { 'Content-Type': res.headers.get('Content-Type') || (/\.mp3$/.test(url) ? 'audio/mpeg' : 'application/json') } }));
+              return cache.put(url, b, res.headers.get('Content-Type') || (/\.mp3$/.test(url) ? 'audio/mpeg' : 'application/json'));
             });
           });
         }).then(function () { step(); return worker(); }, function (e) { stopped = true; throw e; });
@@ -113,9 +132,9 @@
     var keep = {};
     Object.keys(l).forEach(function (k) { (l[k].files || []).forEach(function (u) { keep[u] = true; }); });
     var mats = (rec.rels || []).map(function (r) { return location.origin + '/material/' + r; });
-    return Promise.all([caches.open(CACHE).then(function (cache) {
-      return Promise.all((rec.files || []).filter(function (u) { return !keep[u]; }).map(function (u) { return cache.delete(u); }));
-    }), caches.open('alimun-material').then(function (c) { return Promise.all(mats.map(function (u) { return c.delete(u); })); }).catch(function () {})]);
+    return Promise.all([openStore().then(function (cache) {
+      return Promise.all((rec.files || []).filter(function (u) { return !keep[u]; }).map(function (u) { return cache.del(u); }));
+    }), DEV ? Promise.all((rec.rels || []).map(function (r) { return DEV.remove('material/' + r); })) : caches.open('alimun-material').then(function (c) { return Promise.all(mats.map(function (u) { return c.delete(u); })); }).catch(function () {})]);
   }
 
   function size(bytes) {
@@ -210,6 +229,7 @@
   }
   function installHtml() {
     var t = A.t, esc = A.esc;
+    if (DEV) return '';
     if (standalone()) return '<p class="t-body off-install">' + esc(t('app_off_installed')) + '</p>';
     if (installEvt) return '<div class="off-install"><p class="t-body">' + esc(t('app_off_install_p')) + '</p><div class="btn-row"><button class="btn btn--lime btn--sm" type="button" data-off="install">' + esc(t('app_off_install')) + '</button></div></div>';
     if (ios()) return '<div class="off-install"><p class="t-body">' + esc(t('app_off_install_p')) + '</p><p class="t-small" style="margin-top:6px">' + esc(t('app_off_ios')) + '</p></div>';

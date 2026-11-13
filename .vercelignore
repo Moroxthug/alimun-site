@@ -25,3 +25,6 @@ nul
 
 # Owner's original product films (kept in the repo; the web versions live in videos/)
 /media/
+
+# The store apps (docs/APP_PLAN.md, step 3): built separately, never part of the site
+/mobile/

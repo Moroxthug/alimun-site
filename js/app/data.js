@@ -1985,6 +1985,20 @@
   var matMemo = {};
   function hasCaches() { return typeof caches !== 'undefined'; }
   function matKey(rel) { return location.origin + '/material/' + rel; }
+  /* In the store app the complete files are files in the app's own storage (js/app/device.js) */
+  function devApp() { return window.AlimunDevice && window.AlimunDevice.native ? window.AlimunDevice : null; }
+  function keepMat(rel, txt) {
+    var dv = devApp();
+    if (dv) return dv.put('material/' + rel, txt).catch(function () {});
+    if (hasCaches()) return caches.open(MAT_CACHE).then(function (c) { return c.put(matKey(rel), new Response(txt, { headers: { 'Content-Type': 'application/json' } })); }).catch(function () {});
+    return Promise.resolve();
+  }
+  function savedMat(rel) {
+    var dv = devApp();
+    if (dv) return dv.getText('material/' + rel).then(function (txt) { return txt ? JSON.parse(txt) : null; }).catch(function () { return null; });
+    if (!hasCaches()) return Promise.resolve(null);
+    return caches.open(MAT_CACHE).then(function (c) { return c.match(matKey(rel)); }).then(function (hit) { return hit ? hit.json() : null; }).catch(function () { return null; });
+  }
   function publicJSON(rel) {
     return fetch('/data/' + rel).then(function (r) { if (!r.ok) throw new Error('/data/' + rel + ' ' + r.status); return r.json(); });
   }
@@ -1993,6 +2007,7 @@
     matAccess = full == null ? null : !!full;
     if (matAccess === false && was !== false) {
       matMemo = {};
+      if (devApp()) devApp().removeDir('material');
       if (hasCaches()) caches.delete(MAT_CACHE).catch(function () {});
     }
   }
@@ -2005,7 +2020,7 @@
         if (!r.ok) throw new Error('material ' + r.status);
         return r.text().then(function (txt) {
           if (matAccess === null) matAccess = true;
-          if (hasCaches()) caches.open(MAT_CACHE).then(function (c) { return c.put(matKey(rel), new Response(txt, { headers: { 'Content-Type': 'application/json' } })); }).catch(function () {});
+          keepMat(rel, txt);
           return JSON.parse(txt);
         });
       });
@@ -2017,8 +2032,7 @@
     var p;
     if (matAccess === false || matOpen[rel] || !client()) p = publicJSON(rel);
     else {
-      var saved = hasCaches() ? caches.open(MAT_CACHE).then(function (c) { return c.match(matKey(rel)); }).then(function (hit) { return hit ? hit.json() : null; }).catch(function () { return null; }) : Promise.resolve(null);
-      p = saved.then(function (hit) {
+      p = savedMat(rel).then(function (hit) {
         var net = fromServer(rel);
         if (hit && !fresh) { net.catch(function () {}); return hit; }
         return net.then(function (full) { return full || hit || publicJSON(rel); }, function () { return hit || publicJSON(rel); });
@@ -2030,6 +2044,7 @@
   }
   /* Whether the complete file is on the device (for downloads) */
   function materialSaved(rel) {
+    if (devApp()) return devApp().size('material/' + rel).then(function (n) { return n != null; });
     if (!hasCaches()) return Promise.resolve(false);
     return caches.open(MAT_CACHE).then(function (c) { return c.match(matKey(rel)); }).then(function (h) { return !!h; }, function () { return false; });
   }
