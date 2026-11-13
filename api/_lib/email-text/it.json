@@ -287,5 +287,15 @@
     "body": "Ti sei unito ad Alimun al prezzo fondatore, che resta tuo fino al **{date}**. Dopo, i nuovi acquisti hanno il prezzo normale che trovi in Piani e prezzi; un pacchetto che stai già seguendo mantiene il suo prezzo fino alla fine.",
     "body2": "Fino ad allora non cambia nulla, e questa email non comporta alcun addebito.",
     "button": "Vedi piani e prezzi"
+  },
+  "class_late": {
+    "subject_t": "La tua lezione di {class} è iniziata alle {time}: i tuoi studenti ti aspettano",
+    "heading_t": "La tua lezione è iniziata",
+    "body_t": "La tua lezione di **{class}** doveva iniziare alle {time} e non sei ancora nella stanza. Entra ora; ai tuoi studenti abbiamo detto che stai arrivando.",
+    "button_t": "Entra nella lezione",
+    "subject_l": "Il tuo insegnante è in ritardo di qualche minuto",
+    "heading_l": "Il tuo insegnante sta arrivando",
+    "body_l": "La tua lezione di **{class}** doveva iniziare alle {time}. Il tuo insegnante è in ritardo di qualche minuto ed è stato avvisato. Resta nella stanza o torna tra qualche minuto.",
+    "button_l": "Vai alla lezione"
   }
 }

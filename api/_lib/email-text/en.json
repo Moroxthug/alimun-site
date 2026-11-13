@@ -287,5 +287,15 @@
     "body": "You joined Alimun at the founding price, and it is kept for you until **{date}**. After that, new purchases are at the usual price shown in Plans and prices; a pack you are already in keeps its price to its end.",
     "body2": "Nothing changes before then, and nothing is charged because of this email.",
     "button": "See plans and prices"
+  },
+  "class_late": {
+    "subject_t": "Your {class} class started at {time}: your learners are waiting",
+    "heading_t": "Your class has started",
+    "body_t": "Your **{class}** class was due to start at {time} and you are not in the room yet. Please join now; your learners have been told you are on your way.",
+    "button_t": "Join the class",
+    "subject_l": "Your teacher is running a few minutes late",
+    "heading_l": "Your teacher is on the way",
+    "body_l": "Your **{class}** class was due to start at {time}. Your teacher is running a few minutes late and has been told. Please stay in the room or come back in a few minutes.",
+    "button_l": "Go to the class"
   }
 }

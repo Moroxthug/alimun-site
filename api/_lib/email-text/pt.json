@@ -287,5 +287,15 @@
     "body": "Juntou-se à Alimun com o preço de fundador, que mantém até **{date}**. Depois disso, as novas compras têm o preço normal que vê em Planos e preços; um pacote em que já está mantém o preço até ao fim.",
     "body2": "Até lá nada muda, e este email não implica qualquer cobrança.",
     "button": "Ver planos e preços"
+  },
+  "class_late": {
+    "subject_t": "A sua aula de {class} começou às {time}: os seus alunos estão à espera",
+    "heading_t": "A sua aula começou",
+    "body_t": "A sua aula de **{class}** devia começar às {time} e ainda não está na sala. Entre agora; os seus alunos já sabem que está a caminho.",
+    "button_t": "Entrar na aula",
+    "subject_l": "O seu professor está alguns minutos atrasado",
+    "heading_l": "O seu professor está a caminho",
+    "body_l": "A sua aula de **{class}** devia começar às {time}. O seu professor está alguns minutos atrasado e já foi avisado. Fique na sala ou volte daqui a alguns minutos.",
+    "button_l": "Ir para a aula"
   }
 }

@@ -287,5 +287,15 @@
     "body": "Vous avez rejoint Alimun au prix fondateur, qui vous est garanti jusqu'au **{date}**. Ensuite, les nouveaux achats se font au prix habituel affiché dans Formules et prix ; un pack que vous suivez déjà garde son prix jusqu'à la fin.",
     "body2": "Rien ne change d'ici là, et cet e-mail n'entraîne aucun débit.",
     "button": "Voir les formules et prix"
+  },
+  "class_late": {
+    "subject_t": "Votre cours de {class} a commencé à {time} : vos apprenants vous attendent",
+    "heading_t": "Votre cours a commencé",
+    "body_t": "Votre cours de **{class}** devait commencer à {time} et vous n’êtes pas encore dans la salle. Rejoignez-la maintenant ; vos apprenants savent que vous arrivez.",
+    "button_t": "Rejoindre le cours",
+    "subject_l": "Votre professeur a quelques minutes de retard",
+    "heading_l": "Votre professeur arrive",
+    "body_l": "Votre cours de **{class}** devait commencer à {time}. Votre professeur a quelques minutes de retard et a été prévenu. Restez dans la salle ou revenez dans quelques minutes.",
+    "button_l": "Aller au cours"
   }
 }

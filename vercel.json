@@ -159,6 +159,9 @@
     "api/admin/teacher.js": {
       "maxDuration": 30
     },
+    "api/ops.js": {
+      "maxDuration": 60
+    },
     "api/speech.js": {
       "maxDuration": 120
     },
@@ -193,6 +196,14 @@
     {
       "path": "/api/pricing?action=cron-rooms",
       "schedule": "23 4 * * *"
+    },
+    {
+      "path": "/api/ops?action=cron-class-watch",
+      "schedule": "*/5 * * * *"
+    },
+    {
+      "path": "/api/ops?action=cron-digest",
+      "schedule": "43 6 * * *"
     },
     {
       "path": "/api/pricing?action=cron-launch-email",

@@ -201,7 +201,7 @@ module.exports = async function handler(req, res) {
     const expEpoch = Math.floor(endMs / 1000);
     const roomProperties = {
       exp: expEpoch,
-      max_participants: 40,
+      // No max_participants: the Daily plan refused 40 (7 Nov 2026); private rooms need a pass and classes are capped by enrolment
       enable_chat: false, // one class chat: the Alimun class conversation beside the video
       enable_screenshare: true,
       enable_knocking: false,

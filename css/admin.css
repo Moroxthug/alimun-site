@@ -329,3 +329,30 @@ a.feed__it:hover { background: #f7f6f2; margin: 0 -20px; padding-left: 20px; pad
   .mt-kpis { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 .dt td:first-child { min-width: 150px; }
+
+/* ---------- Class log and automations (js/app/admin-ops.js, 13 Nov 2026) ---------- */
+.cl-f { grid-template-columns: repeat(3, minmax(0, 220px)) auto; align-items: center; }
+.tl { position: relative; display: block; height: 12px; min-width: 160px; border-radius: 6px; background: #f0efe9; overflow: hidden; }
+.tl--lg { height: 16px; }
+.tl i { position: absolute; top: 0; bottom: 0; border-radius: 6px; }
+.tl__slot { background: transparent; box-shadow: inset 0 0 0 1.5px rgba(26, 68, 60, .35); }
+.tl__room { background: var(--lime); top: 3px; bottom: 3px; }
+.tl__bar { background: var(--forest); top: 3px; bottom: 3px; }
+.tl--lg .tl__room, .tl--lg .tl__bar { top: 4px; bottom: 4px; }
+.tl-c { min-width: 180px; }
+.tl-key { font-weight: 600; text-transform: none; letter-spacing: 0; margin-left: 8px; color: var(--muted); }
+.tl-key i { display: inline-block; width: 12px; height: 7px; border-radius: 3px; margin: 0 3px 0 8px; vertical-align: 0; }
+.tl-key .k-slot { box-shadow: inset 0 0 0 1.5px rgba(26, 68, 60, .35); }
+.tl-key .k-room { background: var(--lime); }
+.tl-key .k-t { background: var(--forest); }
+.pl { display: grid; gap: 8px; margin-top: 8px; }
+.pl__r { display: grid; grid-template-columns: 170px minmax(0, 1fr); gap: 12px; align-items: center; }
+.pl__n { font-size: 13.5px; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pl__n small { display: block; font-weight: 400; color: var(--muted); font-size: 12px; }
+.au { display: flex; flex-direction: column; gap: 6px; }
+.au.is-live { box-shadow: 0 0 0 1px var(--line), inset 4px 0 0 var(--lime); }
+.au__state { color: var(--ink) !important; font-weight: 600; }
+.au .mt-switch { margin-top: 6px; }
+.au__cap { display: flex; align-items: end; gap: 8px; margin-top: 6px; }
+.au__cap .st-field { max-width: 130px; }
+@media (max-width: 899px) { .cl-f { grid-template-columns: minmax(0, 1fr); } .pl__r { grid-template-columns: 110px minmax(0, 1fr); } }

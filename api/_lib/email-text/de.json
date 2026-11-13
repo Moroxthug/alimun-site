@@ -287,5 +287,15 @@
     "body": "Sie sind Alimun zum Gründungspreis beigetreten, und er gilt für Sie bis zum **{date}**. Danach gelten für neue Käufe die üblichen Preise unter Tarife und Preise; ein Paket, in dem Sie schon sind, behält seinen Preis bis zum Ende.",
     "body2": "Bis dahin ändert sich nichts, und diese E-Mail löst keine Abbuchung aus.",
     "button": "Tarife und Preise ansehen"
+  },
+  "class_late": {
+    "subject_t": "Ihr {class}-Kurs hat um {time} begonnen: Ihre Lernenden warten",
+    "heading_t": "Ihr Kurs hat begonnen",
+    "body_t": "Ihr Kurs **{class}** sollte um {time} beginnen, und Sie sind noch nicht im Raum. Bitte kommen Sie jetzt dazu; Ihren Lernenden wurde gesagt, dass Sie unterwegs sind.",
+    "button_t": "Zum Kurs",
+    "subject_l": "Ihre Lehrkraft verspätet sich ein paar Minuten",
+    "heading_l": "Ihre Lehrkraft ist unterwegs",
+    "body_l": "Ihr Kurs **{class}** sollte um {time} beginnen. Ihre Lehrkraft verspätet sich ein paar Minuten und wurde benachrichtigt. Bleiben Sie im Raum oder kommen Sie in ein paar Minuten zurück.",
+    "button_l": "Zum Kurs"
   }
 }

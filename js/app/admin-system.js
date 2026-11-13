@@ -39,7 +39,7 @@
   /* ---------- Sample ---------- */
   function samplePayouts() {
     var now = new Date(), m = function (back, d) { return ymd(new Date(now.getFullYear(), now.getMonth() + back, d)); };
-    var classes = [], oto = [], push = function (list, tid, daysAgo) { list.push({ teacher_id: tid, at: new Date(Date.now() - daysAgo * DAY).toISOString() }); };
+    var classes = [], oto = [], push = function (list, tid, daysAgo) { list.push({ teacher_id: tid, at: new Date(Date.now() - daysAgo * DAY).toISOString(), outcome: daysAgo % 7 === 0 ? 'teacher_absent' : daysAgo % 11 === 0 ? null : 'held' }); };
     for (var i = 1; i < 80; i += 2) push(classes, 't1', i);
     for (i = 2; i < 60; i += 3) push(classes, 't2', i);
     [3, 9, 20, 33].forEach(function (d) { push(oto, 't1', d); });
@@ -86,9 +86,16 @@
   function taught(tid, from, to) {
     var a = from ? dateOf(from).getTime() : 0, b = to ? dateOf(to).getTime() + DAY : Infinity;
     var inside = function (x) { var t = new Date(x.at).getTime(); return x.teacher_id === tid && t >= a && t < b; };
-    return { classes: PO.classes.filter(inside).length, oto: PO.oto.filter(inside).length };
+    var mine = PO.classes.filter(inside);
+    /* Only classes verified as held count (owner, 13 Nov 2026); the rest are shown so one can be paid by hand */
+    return { classes: mine.filter(function (x) { return x.outcome === 'held'; }).length, oto: PO.oto.filter(inside).length,
+      unverified: mine.filter(function (x) { return !x.outcome; }).length, notHeld: mine.filter(function (x) { return x.outcome && x.outcome !== 'held'; }).length };
   }
-  function taughtText(n) { return A.plural(n.classes, 'class', 'classes') + ' and ' + A.plural(n.oto, '1:1', '1:1s'); }
+  function taughtText(n) {
+    return A.plural(n.classes, 'class verified as held', 'classes verified as held') + ' and ' + A.plural(n.oto, '1:1', '1:1s') +
+      (n.unverified ? '; ' + A.plural(n.unverified, 'class date', 'class dates') + ' not verified (before verification began, or no record from the video room)' : '') +
+      (n.notHeld ? '; ' + A.plural(n.notHeld, 'class date', 'class dates') + ' not held, see the Class log' : '');
+  }
   function payoutsView(which) {
     which = which === 'paid' || which === 'all' ? which : 'pending';
     var pend = PO.payouts.filter(function (p) { return p.status === 'pending'; }), year = Date.now() - 365 * DAY;
@@ -98,7 +105,7 @@
       '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/payouts/new">Record a payout</a></div></div><div class="grid rise">';
     var since = PO.teachers.map(function (t) { var e = lastEnd(t.id), from = e ? ymd(new Date(dateOf(e).getTime() + DAY)) : null; return { t: t, end: e, n: taught(t.id, from, null) }; })
       .filter(function (x) { return x.t.status === 'approved' || x.n.classes + x.n.oto; });
-    html += '<section class="card span-12" style="--i:0" aria-labelledby="h-since"><h2 class="t-h2" id="h-since">Taught since their last payout</h2><p class="t-small" style="margin-top:4px">Completed class dates and 1:1s, counted from the day after the last period recorded for them.</p>' +
+    html += '<section class="card span-12" style="--i:0" aria-labelledby="h-since"><h2 class="t-h2" id="h-since">Taught since their last payout</h2><p class="t-small" style="margin-top:4px">Classes verified as held from the video room\u2019s records (the teacher in the room for 90% of the class, with at least one learner) and completed 1:1s, counted from the day after the last period recorded for them.</p>' +
       (since.length ? '<div class="tt-week">' + since.map(function (x) {
         return '<div class="tt-row ad-act"><span class="tt-row__time">' + esc(String(x.n.classes + x.n.oto)) + '</span><span><b>' + esc(x.t.full_name) + '</b><small>' +
           esc(taughtText(x.n) + ', ' + (x.end ? 'since their last payout ended on ' + dayLabel(x.end) : 'no payout recorded yet; counted over the last thirteen months')) + '</small></span>' +

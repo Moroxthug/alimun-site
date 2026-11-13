@@ -84,11 +84,13 @@
     { id: 'matching', label: 'Matching', icon: 'matching', group: 'Teaching', text: 'Every learner’s level, focus and time zone, the groups they could form, and who is closest to buying.' },
     { id: 'classes', label: 'Classes', icon: 'classes', group: 'Teaching', part: 3, text: 'Creating classes for teachers, rosters, moving students, closing and reopening.' },
     { id: 'schedule', label: 'Schedule', icon: 'schedule', group: 'Teaching', part: 3, text: 'Every class date: cancel or move one, with students and teacher told.' },
+    { id: 'classlog', label: 'Class log', icon: 'activity', group: 'Teaching', text: 'What really happened in each class: who was in the room, when, and the outcome.' },
     { id: 'waiting', label: 'Waiting list', icon: 'waiting', group: 'Teaching', part: 3, text: 'Who is waiting for which class, and the places offered.' },
     { id: 'messages', label: 'Messages', icon: 'messages', group: 'Teaching', part: 3, text: 'Read conversations and hide a message if needed.' },
     { id: 'figures', label: 'Figures', icon: 'card', group: 'Money and system', part: 4, text: 'Cash, revenue, deferred revenue, reserves, room margins, refunds, the cost to win a customer, AI against revenue.' },
     { id: 'payouts', label: 'Payouts', icon: 'payouts', group: 'Money and system', part: 4, text: 'Record what teachers are paid, beside the classes they taught.' },
     { id: 'ai', label: 'AI spend', icon: 'ai', group: 'Money and system', part: 4, text: 'Calls and cost by day, by feature and by person.' },
+    { id: 'automations', label: 'Automations', icon: 'refresh', group: 'Money and system', text: 'What runs by itself: switches, dry runs, caps and every action taken.' },
     { id: 'system', label: 'System', icon: 'system', group: 'Money and system', part: 4, text: 'Reviews, app settings and the automatic jobs.' }
   ];
   var byId = {}; ROUTES.forEach(function (r) { byId[r.id] = r; });
@@ -197,6 +199,8 @@
     'vercel:cron-rooms': { name: 'Rooms: publish, open or cancel, start and charge', every: DAY, since: '2026-11-12T04:38:00Z' },
     'vercel:cron-finance': { name: 'Finance: founding notices, exchange rates, the month’s figures', every: DAY, since: '2026-11-12T04:38:00Z' },
     'db:tutor-purge': { name: 'Delete old tutor recordings', every: DAY },
+    'vercel:cron-class-watch': { name: 'Class watch: late teachers and class outcomes', every: 0 },
+    'vercel:cron-digest': { name: 'Morning digest to you', every: DAY, since: '2026-11-14T07:00:00Z' },
     'vercel:cron-launch-email': { name: 'Launch email to new English learners (when switched on)', every: HOUR, since: '2026-11-13T01:00:00Z' },
     /* Not on a schedule: written when something happens, so never late, only failed */
     'daily:join-session': { name: 'Opening a class video room (Daily)', every: 0 }
@@ -490,6 +494,7 @@
   var MODULES = { activity: function () { return window.AlimunAdminActivity; }, campaigns: function () { return window.AlimunAdminCampaigns; }, students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; },
     classes: function () { return window.AlimunAdminClasses; }, schedule: function () { return window.AlimunAdminSchedule; },
     matching: function () { return window.AlimunAdminMatching; }, waiting: function () { return window.AlimunAdminWaiting; }, messages: function () { return window.AlimunAdminMessages; },
+    classlog: function () { return window.AlimunAdminClassLog; }, automations: function () { return window.AlimunAdminAutomations; },
     figures: function () { return window.AlimunAdminFigures; }, payouts: function () { return window.AlimunAdminPayouts; }, ai: function () { return window.AlimunAdminAi; }, system: function () { return window.AlimunAdminSystem; } };
   function helpers() {
     return { esc: esc, fmt: fmt, num: num, cap: cap, plural: plural, relative: relative, className: className, icon: icon, Cast: Cast, loaderInner: loaderInner, jobs: JOBS,

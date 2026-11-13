@@ -296,7 +296,7 @@ module.exports = async function handler(req, res) {
                     privacy: 'private',
                     properties: {
                       exp: expEpoch,
-                      max_participants: 40,
+                      // No max_participants: the Daily plan refused 40 (7 Nov 2026); private rooms need a pass and classes are capped by enrolment
                       enable_chat: false,
                       enable_screenshare: true,
                       enable_knocking: false,
