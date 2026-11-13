@@ -120,3 +120,117 @@
  HTTP  11/13/2026 1:58:42 AM 127.0.0.1 Returned 200 in 1 ms
  HTTP  11/13/2026 1:58:42 AM 127.0.0.1 Returned 200 in 1 ms
  HTTP  11/13/2026 1:58:42 AM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /app/admin?sample=1
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /fonts/Satoshi-Variable.ttf
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /css/app.css
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /css/admin.css
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /fonts/coolvetica-condensed-rg.otf
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/cast.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/data.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/cast3.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/tz.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/admin-people.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/admin-activity.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 5 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/admin-campaigns.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/admin-classes.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/admin-teaching.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/admin-system.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/admin-figures.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/match.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/admin-matching.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/admin-ops.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 GET /js/app/admin.js
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/13/2026 2:21:27 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 GET /app?sample=1
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 GET /fonts/Satoshi-Variable.ttf
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 GET /css/app.css
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 GET /fonts/coolvetica-condensed-rg.otf
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 GET /js/app/dist/app.js?v=624a41e4ea
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 Returned 200 in 5 ms
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 Returned 200 in 8 ms
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 GET /js/i18n/en.app.js
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 GET /data/level-test/German.json
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 Returned 404 in 1 ms
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 GET /js/app/dist/classroom.js?v=6325612240
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 GET /js/banner.js
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 GET /api/campaigns?action=banner&place=dashboard&lang=en
+ HTTP  11/13/2026 2:22:49 AM 127.0.0.1 Returned 404 in 1 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /app/teach?sample=1
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 4 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /fonts/Satoshi-Variable.ttf
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /fonts/coolvetica-condensed-rg.otf
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /css/app.css
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/cast.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/cast3.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/data.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/tz.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/teach-classes.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/progress.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 1 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/teach-students.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/teach-homework.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/lipsync.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 8 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 7 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/exercises.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/teach-material.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/teach-lessons.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 5 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/board.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/classroom.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/teach-messages.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/country.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/prefs.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/teach-account.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 3 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/bell.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/app/teach.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 2 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /js/i18n/en.app.js
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 200 in 0 ms
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 GET /data/classes/English-A1.json
+ HTTP  11/13/2026 2:22:56 AM 127.0.0.1 Returned 404 in 1 ms

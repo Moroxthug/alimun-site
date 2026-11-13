@@ -2135,3 +2135,5 @@ body.is-class .view { max-width: 1640px; }
 .tfb .btn-row { margin-top: 10px; }
 @media (max-width: 899px) { .tfb { right: 16px; left: 16px; width: auto; bottom: calc(var(--bar-h) + 12px + env(safe-area-inset-bottom)); } }
 @media (prefers-reduced-motion: reduce) { .tfb { transition: none; } }
+/* The recording notice under a group class's title (js/app/classroom.js) */
+.cr-rec { margin: 8px 0 0; max-width: 72ch; color: var(--muted); }

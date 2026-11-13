@@ -71,7 +71,7 @@ async function createDailyRoom(session, summary) {
         enable_knocking: false,
         start_video_off: false,
         eject_at_room_exp: true,
-        enable_recording: false,
+        enable_recording: 'cloud', // for Alimun's server only: no pass shows the record button (api/join-session.js)
         enable_emoji_reactions: false,
       },
     }),

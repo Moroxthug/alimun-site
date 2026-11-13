@@ -302,6 +302,7 @@ module.exports = async function handler(req, res) {
                       enable_knocking: false,
                       start_video_off: false,
                       eject_at_room_exp: true,
+                      enable_recording: 'cloud', // for Alimun's server only: no pass shows the record button (api/join-session.js)
                     }
                   })
                 });

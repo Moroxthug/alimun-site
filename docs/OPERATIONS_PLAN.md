@@ -77,3 +77,14 @@ that are safe enough to run alone with minimal supervision."
   later for second-by-second alerts.
 - The teacher-late alert starts in dry run: it logs what it would send. The owner switches it to live in Admin,
   Automations, after checking a few.
+
+## Recordings (owner, 13 Nov 2026: "do not allow teacher to record freely, it would be bad for privacy. only admins and me")
+
+- Daily is on pay as you go (the owner added a card). Proof clips: five 60-second cloud recordings at random moments
+  in each group class with people in the room (about $0.08 a class); full recording only by admins, from the class
+  date's page in Admin (everyone in the room sees Daily's recording sign). Clips deleted after 30 days, full
+  recordings after 90, unless kept; every viewing is logged; any recording Alimun did not start is reported at once.
+- Teachers are no longer room owners: their pass gives the right to manage participants (mute, remove) instead, and
+  nobody's pass shows Daily's record button. The board recognises the teacher by that right (`js/app/board.js`).
+- The proof clips start in dry run until the owner approves the wording in `docs/RECORDING_NOTICE_DRAFT.md` for the
+  Terms and Privacy Policy. The classroom shows the short notice already.

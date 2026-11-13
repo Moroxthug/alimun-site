@@ -111,3 +111,29 @@ test('automation: three failures in a row pause it and tell the owner', async ()
   assert.strictEqual(told.length, 1);
   assert.strictEqual(await AUTO.act(sb, a, { key: '4', action: 'a' }, async () => ({})), 'off');
 });
+
+const REC = require('../../api/_lib/recordings.js');
+
+test('proof clips: five moments, one in each fifth of the class, never in the first 3 or last 4 minutes, the same each time', () => {
+  for (const id of ['a', 'b', '11111111-1111-4111-8111-111111111111', 'zz']) {
+    const m = REC.clipMinutes(id, 60);
+    assert.strictEqual(m.length, 5);
+    m.forEach((x) => assert.ok(x >= 3 && x <= 55, `minute ${x}`));
+    for (let i = 1; i < m.length; i++) assert.ok(m[i] > m[i - 1], 'in order, apart');
+    assert.deepStrictEqual(REC.clipMinutes(id, 60), m, 'the same for the same class date');
+  }
+  assert.notDeepStrictEqual(REC.clipMinutes('a', 60), REC.clipMinutes('b', 60), 'not predictable from one class to the next');
+});
+
+test('recordings: Daily’s recordings pair with Alimun’s requests; any other is unknown', () => {
+  const t0 = Date.parse('2026-11-13T18:10:00Z');
+  const rows = [{ id: 'r1', kind: 'proof', requested_at: new Date(t0).toISOString() }, { id: 'r2', kind: 'full', requested_at: new Date(t0 + 20 * 60000).toISOString() },
+    { id: 'r3', kind: 'proof', requested_at: new Date(t0 + 30 * 60000).toISOString(), start_error: 'refused' }];
+  const recs = [{ id: 'd1', start_ts: t0 / 1000 + 8 }, { id: 'd2', start_ts: t0 / 1000 + 20 * 60 + 5 }, { id: 'dx', start_ts: t0 / 1000 + 30 * 60 + 2 }, { id: 'dy', start_ts: t0 / 1000 + 45 * 60 }];
+  const p = REC.pair(rows, recs);
+  assert.deepStrictEqual(p.link.map(([r, d]) => r.id + '=' + d.id), ['r1=d1', 'r2=d2']);
+  assert.deepStrictEqual(p.unknown.map((d) => d.id), ['dx', 'dy'], 'a refused request and a recording nobody asked for');
+  const again = REC.pair([Object.assign({}, rows[0], { daily_recording_id: 'd1' })], [recs[0]]);
+  assert.strictEqual(again.update.length, 1);
+  assert.strictEqual(again.unknown.length, 0);
+});

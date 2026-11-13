@@ -103,7 +103,16 @@
     }
     function people() { var ps = frame && frame.participants ? frame.participants() : {}; return Object.keys(ps).map(function (k) { return ps[k]; }); }
     function myId() { if (!me) { var l = people().filter(function (x) { return x.local; })[0]; me = l ? l.session_id : null; } return me; }
-    function teacherId() { var x = people().filter(function (y) { return y.owner && !y.local; })[0]; return x ? x.session_id : null; }
+    /* Who leads the room: the room owner (an admin) or the teacher, whose pass gives the right to manage participants
+       instead of ownership (owner, 13 Nov 2026: teachers may not record, and room owners could). Passes are made by
+       the server only (api/join-session.js), so a learner cannot give themselves either. */
+    function lead(x) {
+      if (!x) return false;
+      if (x.owner) return true;
+      var ca = x.permissions && x.permissions.canAdmin;
+      return ca === true || !!(ca && (typeof ca.has === 'function' ? ca.has('participants') : Array.isArray(ca) && ca.indexOf('participants') > -1));
+    }
+    function teacherId() { var x = people().filter(function (y) { return lead(y) && !y.local; })[0]; return x ? x.session_id : null; }
     function mayWrite(id) { var w = S.write || {}; return w.m === 'all' || (w.m === 'one' && !!id && w.who === id); }
     function canWrite() { return teacher || mayWrite(myId()); }
 
@@ -266,7 +275,7 @@
       var who = '<label class="bd-field"><span class="t-small">' + esc(t('app_bd_who')) + '</span><select class="st-in" data-bd-who>' +
         '<option value="none"' + (sel === 'none' ? ' selected' : '') + '>' + esc(t('app_bd_who_none')) + '</option>' +
         '<option value="all"' + (sel === 'all' ? ' selected' : '') + '>' + esc(t('app_bd_who_all')) + '</option>' +
-        people().filter(function (x) { return !x.local && !x.owner; }).map(function (x) {
+        people().filter(function (x) { return !x.local && !lead(x); }).map(function (x) {
           return '<option value="one:' + esc(x.session_id) + '"' + (sel === 'one:' + x.session_id ? ' selected' : '') + '>' + esc(x.user_name || t('app_bd_student')) + '</option>';
         }).join('') + '</select></label>';
       var solo = '<span class="bd-field bd-field--solo"><button class="btn btn--ghost btn--sm" type="button" data-bd="solo">' + ic('clock') + '<span>' + esc(t('app_bd_solo')) + '</span></button><select class="st-in" data-bd-mins aria-label="' + esc(t('app_bd_solo')) + '">' +
@@ -285,7 +294,7 @@
               (soloSent ? '<p class="t-small bd-you">' + esc(t('app_bd_sent')) + '</p>' : '') + '</div>') + '</div>';
       }
       if (teacher && isSolo()) {
-        var list = people().filter(function (x) { return !x.local && !x.owner; });
+        var list = people().filter(function (x) { return !x.local && !lead(x); });
         var gone = Object.keys(S.work[S.solo.id] || {}).filter(function (k) { return !list.some(function (x) { return x.session_id === k; }); });
         var row = function (id, name) { var w = workOf(id); return '<button class="btn btn--sm ' + (viewing === id ? 'btn--primary' : 'btn--quiet') + ' bd-person' + (w ? ' is-done' : '') + '" type="button" data-bd="see" data-k="' + esc(id) + '"><span class="bd-person__dot"></span><span>' + esc(name) + '</span><small>' + esc(t(w ? 'app_bd_done' : 'app_bd_working')) + '</small></button>'; };
         return '<div class="card card--leaf bd-solo"><div class="bd-solo__top"><h3 class="t-h3">' + esc(t('app_bd_solving')) + '</h3>' + clock() + '</div>' +
@@ -445,9 +454,9 @@
         else if (m.k === 'rsolo') takeWork(m, e.fromId);
         return;
       }
-      /* Students accept the board only from the room owner (the teacher's token) */
+      /* Students accept the board only from whoever leads the room (the teacher's or an admin's pass) */
       var from = people().filter(function (x) { return x.session_id === e.fromId; })[0];
-      if (!from || !from.owner) return;
+      if (!lead(from)) return;
       if (m.k === 'pc') { m = piece(m, e.fromId); if (!m) return; }
       if (m.k !== 'state' && !course && S.course === null) { send({ k: 'hi' }); }
       apply(m);
@@ -488,7 +497,7 @@
     function takeWork(m, from) {
       if (!isSolo() || m.id !== S.solo.id || !Array.isArray(m.it)) return;
       var who = people().filter(function (x) { return x.session_id === from; })[0];
-      if (!who || who.owner) return;
+      if (!who || lead(who)) return;
       var it = m.it.slice(0, 400).map(function (x) { return cleanItem(x, from); }).filter(Boolean);
       S.work = S.work || {}; S.work[S.solo.id] = S.work[S.solo.id] || {};
       S.work[S.solo.id][from] = { name: who.user_name || '', uid: /^[0-9a-f-]{36}$/.test(String(who.user_id || '')) ? who.user_id : null, it: it, at: Date.now() };

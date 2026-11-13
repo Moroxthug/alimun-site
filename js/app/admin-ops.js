@@ -50,7 +50,8 @@
     var p = function (n, role, a, b, joins) { return { user_id: n, name: n, role: role, is_test: false, first_join: new Date(st + a * MIN).toISOString(), last_leave: new Date(st + b * MIN).toISOString(), seconds: (b - a) * 60, in_slot_seconds: Math.max(0, Math.min(b, 60) - Math.max(a, 0)) * 60, joins: joins || 1 }; };
     return { session: s, presence: [p(teacherOf(s), 'teacher', -3, 61), p('Marco Rossi', 'learner', 0, 60), p('Aya Benali', 'learner', 4, 58, 2), p('Lena Fischer', 'learner', 12, 60)],
       meetings: [{ meeting_id: 'm1', room: 'alimun-' + s.id, started_at: new Date(st - 3 * MIN).toISOString(), duration_seconds: 3840, ongoing: false }],
-      log: [{ automation: 'class-outcomes', action: 'set the outcome', target: label(s.cohorts), detail: { outcome: s.outcome }, ok: true, dry_run: false, created_at: new Date(st + 85 * MIN).toISOString() }] };
+      log: [{ automation: 'class-outcomes', action: 'set the outcome', target: label(s.cohorts), detail: { outcome: s.outcome }, ok: true, dry_run: false, created_at: new Date(st + 85 * MIN).toISOString() }],
+      recordings: [7, 19, 28, 41, 52].map(function (m, i) { return { id: 'r' + i, kind: 'proof', planned_minute: m, requested_at: new Date(st + m * MIN).toISOString(), started_at: new Date(st + m * MIN + 9000).toISOString(), duration_seconds: 60, daily_recording_id: 'd' + i, delete_after: new Date(st + 30 * DAY).toISOString(), recording_views: i === 2 ? [{ viewer_email: 'you', viewed_at: new Date(st + 2 * HOUR).toISOString() }] : [] }; }) };
   }
   function sampleAutos() {
     var now = Date.now(), ago = function (m) { return new Date(now - m * MIN).toISOString(); };
@@ -131,7 +132,7 @@
       ['Last read', s.verified_at ? when(s.verified_at) : 'Not yet']];
     var people = d.presence.slice().sort(function (a, b) { return (a.role === 'teacher' ? 0 : 1) - (b.role === 'teacher' ? 0 : 1) || String(a.first_join).localeCompare(String(b.first_join)); });
     var html = back + '<div class="view__head"><div><h1 class="t-h1">' + esc(label(co) + ', ' + when(s.scheduled_at)) + '</h1><p class="t-lead"><span class="dot' + o.d + '"></span>' + esc(o.t + '. ' + teacherOf(s) + '.') + '</p></div>' +
-      '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-cl-verify="' + esc(s.id) + '">Read the video room again</button>' + (co.id ? '<a class="btn btn--ghost btn--sm" href="#/classes/' + esc(co.id) + '">The class</a>' : '') + '</div></div>' +
+      '<div class="btn-row">' + recordButtons(s, d.recordings || []) + '<button class="btn btn--ghost btn--sm" type="button" data-cl-verify="' + esc(s.id) + '">Read the video room again</button>' + (co.id ? '<a class="btn btn--ghost btn--sm" href="#/classes/' + esc(co.id) + '">The class</a>' : '') + '</div></div>' +
       '<p class="t-small st-msg" data-cl-msg aria-live="polite"></p><div class="grid rise">' +
       '<section class="card span-5"><h2 class="t-h2">Facts</h2><div class="dt-wrap"><table class="dt"><tbody>' + facts.map(function (f) { return '<tr><td class="m nw">' + esc(f[0]) + '</td><td>' + esc(f[1]) + '</td></tr>'; }).join('') + '</tbody></table></div></section>' +
       '<section class="card span-7"><div class="panel-h"><h2 class="t-h2">Who was in the room</h2><span class="t-small">' + esc(hm(new Date(from)) + ' to ' + hm(new Date(from + span))) + '</span></div>' +
@@ -141,13 +142,54 @@
       }).join('') + '</div><div class="dt-wrap" style="margin-top:12px"><table class="dt"><thead><tr><th>Person</th><th>Joined</th><th>Left</th><th class="r">Minutes</th><th class="r">In the class</th><th class="r">Joins</th></tr></thead><tbody>' + people.map(function (p) {
         return '<tr><td>' + esc(p.name || 'Unknown') + '<div class="m">' + esc(ROLE[p.role] + (p.is_test ? ', your test account' : '')) + '</div></td><td>' + esc(hm(p.first_join)) + '</td><td>' + esc(hm(p.last_leave)) + '</td><td class="r">' + mins(p.seconds) + '</td><td class="r">' + mins(p.in_slot_seconds) + '</td><td class="r' + (p.joins > 2 ? ' is-bad' : '') + '">' + p.joins + '</td></tr>';
       }).join('') + '</tbody></table></div>' : '<p class="t-small">' + esc(s.verified_at ? 'Nobody was seen in the video room.' : 'The video room has not been read yet.') + '</p>') + '</section>' +
+      recordingsCard(d.recordings || []) +
       '<section class="card span-6"><h2 class="t-h2">Video room records</h2>' + (d.meetings.length ? '<div class="dt-wrap"><table class="dt"><thead><tr><th>Started</th><th class="r">Lasted</th><th>Record</th></tr></thead><tbody>' + d.meetings.map(function (x) {
         return '<tr><td>' + esc(when(x.started_at)) + '</td><td class="r">' + mins(x.duration_seconds) + ' min' + (x.ongoing ? ', still on' : '') + '</td><td class="m">' + esc(x.meeting_id) + '</td></tr>';
       }).join('') + '</tbody></table></div>' : '<p class="t-small">No meeting recorded by the video service for this class date.</p>') + '</section>' +
       '<section class="card span-6"><h2 class="t-h2">What the automations did</h2>' + logTable(d.log, true) + '</section></div>';
     return html;
   }
-  var LABELS = { 'class-outcomes': 'Class outcomes', 'teacher-late': 'Teacher late alert', 'daily-digest': 'Morning digest' };
+
+  /* ---------- Recordings (owner, 13 Nov 2026: only admins record; clips kept 30 days, full recordings 90) ---------- */
+  var KIND = { proof: 'Proof clip', full: 'Full recording', unknown: 'Not started by Alimun' };
+  function onNow(s) { var st = new Date(s.scheduled_at).getTime(), m = (s.cohorts && s.cohorts.class_minutes) || 60; return Date.now() >= st - 15 * MIN && Date.now() <= st + (m + 90) * MIN; }
+  function recordButtons(s, recs) {
+    if (!onNow(s) || s.status === 'cancelled') return '';
+    var running = recs.some(function (r) { return r.kind === 'full' && !r.start_error && !r.deleted_at && (r.status === 'in-progress' || (!r.status && Date.now() - new Date(r.requested_at).getTime() < 3 * HOUR)); });
+    return running ? '<button class="btn btn--primary btn--sm" type="button" data-rec="stop" data-s="' + esc(s.id) + '">Stop recording</button>'
+      : '<button class="btn btn--primary btn--sm" type="button" data-rec="start" data-s="' + esc(s.id) + '">Record the class</button>';
+  }
+  function recordingsCard(recs) {
+    var html = '<section class="card span-12"><div class="panel-h"><h2 class="t-h2">Recordings</h2><span class="t-small">Only admins can watch; every viewing is noted. Proof clips are deleted after 30 days, full recordings after 90, unless kept.</span></div>';
+    if (!recs.length) return html + '<p class="t-small">None for this class date.</p></section>';
+    return html + '<div class="dt-wrap"><table class="dt"><thead><tr><th>Recording</th><th>Started</th><th class="r">Length</th><th>Deleted</th><th>Watched by</th><th></th></tr></thead><tbody>' + recs.map(function (r) {
+      var views = r.recording_views || [], ready = r.daily_recording_id && !r.deleted_at;
+      var state = r.deleted_at ? 'Deleted ' + when(r.deleted_at) : r.start_error ? 'Did not start' : !r.daily_recording_id ? 'Waiting for the video service' : r.keep ? 'Kept' + (r.keep_note ? ': ' + r.keep_note : '') : r.delete_after ? 'On ' + A.fmt(r.delete_after, { day: 'numeric', month: 'short' }) : '';
+      return '<tr><td><span class="dot' + (r.kind === 'unknown' ? ' dot--bad' : r.kind === 'full' ? ' dot--warn' : '') + '"></span>' + esc(KIND[r.kind] || r.kind) + (r.planned_minute != null ? ' <span class="m">(minute ' + r.planned_minute + ')</span>' : '') + (r.start_error ? '<div class="m is-bad">' + esc(String(r.start_error).slice(0, 140)) + '</div>' : '') + '</td>' +
+        '<td class="nw">' + esc(r.started_at ? hm(r.started_at) : hm(r.requested_at) + ' (asked)') + '</td><td class="r">' + esc(r.duration_seconds ? Math.round(r.duration_seconds) + ' s' : '') + '</td><td class="m">' + esc(state) + '</td>' +
+        '<td class="m">' + esc(views.length ? views.map(function (v) { return (v.viewer_email || 'an admin') + ', ' + when(v.viewed_at); }).join('; ') : 'Nobody') + '</td>' +
+        '<td class="r nw">' + (ready ? '<button class="btn btn--quiet btn--sm" type="button" data-rec="watch" data-id="' + esc(r.id) + '">Watch</button> <button class="btn btn--ghost btn--sm" type="button" data-rec="' + (r.keep ? 'unkeep' : 'keep') + '" data-id="' + esc(r.id) + '">' + (r.keep ? 'Let it be deleted' : 'Keep') + '</button>' : '') + '</td></tr>';
+    }).join('') + '</tbody></table></div></section>';
+  }
+  function recAction(b) {
+    var k = b.getAttribute('data-rec'), msg = root.querySelector('[data-cl-msg]');
+    if (!real()) { msg.textContent = 'In the sample nothing is recorded or played.'; return; }
+    if (k === 'start' && b.getAttribute('data-sure') !== '1') { b.setAttribute('data-sure', '1'); b.textContent = 'Yes, record now'; msg.textContent = 'Everyone in the room will see that the class is being recorded. Press again to start; it stops by itself 15 minutes after the class ends.'; return; }
+    b.disabled = true; msg.textContent = k === 'watch' ? 'Opening…' : 'Working…';
+    var win = k === 'watch' ? window.open('', '_blank') : null;
+    var call = k === 'start' || k === 'stop' ? window.AlimunData.ops(k === 'start' ? 'record-start' : 'record-stop', { session: b.getAttribute('data-s') })
+      : k === 'watch' ? window.AlimunData.ops('recording-link', { id: b.getAttribute('data-id') })
+      : window.AlimunData.ops('recording-keep', { id: b.getAttribute('data-id'), keep: k === 'keep', note: k === 'keep' ? (window.prompt('Why keep it? (shown beside it)') || '') : '' });
+    call.then(function (r) {
+      if (k === 'watch') {
+        var u = null; try { u = new URL(r.url); } catch (e) { /* not a link */ }
+        if (!u || u.protocol !== 'https:') { if (win) win.close(); throw new Error('unexpected link'); }
+        if (win) { win.opener = null; win.location.href = u.href; } else location.href = u.href;
+      }
+      return window.AlimunData.adminClassDate(part).then(function (d) { DATE = d; draw(); var m = root.querySelector('[data-cl-msg]'); if (m) m.textContent = k === 'start' ? 'Recording for about ' + (r.minutes || '') + ' minutes. It appears below once the video service has it.' : k === 'stop' ? 'Stopped.' : k === 'watch' ? 'Opened in a new tab; the link works for 15 minutes.' : 'Saved.'; });
+    }).catch(function (e) { if (win) win.close(); b.disabled = false; msg.textContent = 'That did not work: ' + ((e && e.body && e.body.error) || (e && e.message) || 'try again') + '.'; });
+  }
+  var LABELS = { 'class-outcomes': 'Class outcomes', 'teacher-late': 'Teacher late alert', 'daily-digest': 'Morning digest', 'proof-clips': 'Proof clips', 'recording-cleanup': 'Recording clean-up', 'recording-guard': 'Recording guard' };
   function autoLabel(n) { var a = AU && AU.automations.filter(function (x) { return x.name === n; })[0]; return a ? a.label : LABELS[n] || n; }
   function logTable(list, short) {
     if (!list.length) return '<p class="t-small">Nothing yet.</p>';
@@ -201,6 +243,8 @@
       if (e.target.hasAttribute('data-au-f')) { AF = e.target.value; draw(); }
     });
     root.addEventListener('click', function (e) {
+      var rb = e.target.closest('[data-rec]');
+      if (rb && !rb.disabled) { recAction(rb); return; }
       var v = e.target.closest('[data-cl-verify]');
       if (v) {
         var msg = root.querySelector('[data-cl-msg]');

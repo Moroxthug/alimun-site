@@ -32,7 +32,9 @@
     var art = A.Cast && A.Cast.drawing ? A.Cast.drawing(o.art || 'mug') : '';
     return '<div class="cr" data-cr data-role="' + esc(o.role) + '">' +
       '<a class="rd-back" href="' + esc(o.back || '#/classes') + '">' + A.icon('back') + '<span>' + esc(t('app_cl_leave')) + '</span></a>' +
-      '<div class="view__head cr-head"><div><h1 class="t-h1">' + esc(o.title) + '</h1>' + (o.sub ? '<p class="t-lead">' + o.sub + '</p>' : '') + '</div>' +
+      '<div class="view__head cr-head"><div><h1 class="t-h1">' + esc(o.title) + '</h1>' + (o.sub ? '<p class="t-lead">' + o.sub + '</p>' : '') +
+        /* Group classes may be recorded by Alimun only (owner, 13 Nov 2026): said before anyone joins */
+        (o.board ? '<p class="t-small cr-rec">' + esc(t('app_cr_rec_note')) + '</p>' : '') + '</div>' +
         (o.actions ? '<div class="btn-row cr-actions">' + o.actions + '</div>' : '') + '</div>' +
       '<div class="cr-body rise">' +
         (o.board ? '<section class="card cr-board" data-board hidden style="--i:0" aria-label="' + esc(t('app_bd_open')) + '"></section>' : '') +

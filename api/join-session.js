@@ -208,6 +208,9 @@ module.exports = async function handler(req, res) {
       start_video_off: false,
       eject_at_room_exp: true,
       enable_emoji_reactions: false,
+      // Cloud recording is allowed in the room so Alimun's server can record (proof clips, an admin's recording);
+      // nobody's pass shows the record button and teachers are not room owners (owner, 13 Nov 2026)
+      enable_recording: 'cloud',
     };
     let roomUrl = null;
 
@@ -251,7 +254,11 @@ module.exports = async function handler(req, res) {
           room_name: roomName,
           user_name: String(displayName).slice(0, 60),
           user_id: user.id,
-          is_owner: isTeacher || isAdmin,
+          // Admins own the room; the teacher manages participants (mute, remove) without owning it, so a teacher
+          // cannot start a recording (owner, 13 Nov 2026: only admins record). The board recognises either (board.js).
+          is_owner: isAdmin,
+          ...(isTeacher && !isAdmin ? { permissions: { canAdmin: ['participants'] } } : {}),
+          enable_recording_ui: false,
           exp: expEpoch,
         },
       }),

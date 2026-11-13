@@ -1492,10 +1492,11 @@
       c.from('sessions').select(CLASS_LOG_COLS).eq('id', id).maybeSingle(),
       c.from('class_presence').select('*').eq('session_id', id).order('first_join', { ascending: true }),
       c.from('video_meetings').select('meeting_id, room, started_at, duration_seconds, ongoing, fetched_at').eq('session_id', id).order('started_at', { ascending: true }),
-      c.from('automation_log').select('automation, action, target, detail, dry_run, ok, error, created_at').eq('session_id', id).order('created_at', { ascending: false }).limit(100)
+      c.from('automation_log').select('automation, action, target, detail, dry_run, ok, error, created_at').eq('session_id', id).order('created_at', { ascending: false }).limit(100),
+      c.from('class_recordings').select('*, recording_views(viewer_email, viewed_at)').eq('session_id', id).order('requested_at', { ascending: true })
     ]).then(function (r) {
       if (r[0].error) throw r[0].error;
-      return { session: r[0].data, presence: rows(r[1]), meetings: rows(r[2]), log: rows(r[3]) };
+      return { session: r[0].data, presence: rows(r[1]), meetings: rows(r[2]), log: rows(r[3]), recordings: rows(r[4]) };
     });
   }
   function adminAutomations() {

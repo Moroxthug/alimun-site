@@ -9,6 +9,12 @@
  *   POST ?action=automation-set    (admin) { name, enabled?, dry_run?, daily_cap? }
  *   POST ?action=verify-session    (admin) { session }: reads Daily for one class date now.
  *   POST ?action=digest-now        (admin) the digest of yesterday, to the owner, now (does not count as the morning one).
+ *   GET  ?action=cron-clips        (Vercel cron, every minute) proof-clips: five 60-second recordings in each class.
+ *        cron-class-watch also pairs Daily's recordings with Alimun's (recording-guard reports any other) and, once an
+ *        hour, deletes recordings past their date (recording-cleanup).
+ *   POST ?action=record-start | record-stop { session }   (admin only: teachers never record; owner, 13 Nov 2026)
+ *   POST ?action=recording-link { id }   (admin) a 15-minute link to watch; every viewing is logged
+ *   POST ?action=recording-keep { id, keep, note }        (admin) keep past the deletion date, or not
  * Every automated action goes through api/_lib/automation.js (switch, dry run, once only, daily cap, log, pause).
  */
 const { createClient } = require('@supabase/supabase-js');
@@ -16,6 +22,7 @@ const mail = require('./_lib/email.js');
 const L = require('./_lib/email-i18n.js');
 const AUTO = require('./_lib/automation.js');
 const CV = require('./_lib/class-verify.js');
+const REC = require('./_lib/recordings.js');
 const { recordRun } = require('./_lib/cron-log.js');
 const { isTestAccount } = require('./_lib/test-accounts.js');
 
@@ -152,6 +159,92 @@ async function outcomes(sb, now, auto) {
   return out;
 }
 
+
+/* ---------- Recordings ---------- */
+async function proofClips(sb, now, auto) {
+  const out = { due: 0, started: 0 };
+  if (!auto || !auto.enabled) return out;
+  const { data: list, error } = await sb.from('sessions').select(SESSION_COLS).neq('status', 'cancelled')
+    .gte('scheduled_at', new Date(now - 125 * MIN).toISOString()).lte('scheduled_at', new Date(now).toISOString()).limit(40);
+  if (error) throw new Error('clip sessions: ' + error.message);
+  for (const s of list || []) {
+    const co = s.cohorts || {}, minutes = co.class_minutes || 60, startMs = new Date(s.scheduled_at).getTime(), elapsed = Math.floor((now - startMs) / MIN);
+    if (elapsed > minutes) continue;
+    const due = REC.clipMinutes(s.id, minutes).filter((m) => elapsed >= m && elapsed < m + 3);
+    if (!due.length) continue;
+    const { data: done } = await sb.from('class_recordings').select('kind, planned_minute, start_error').eq('session_id', s.id);
+    /* An admin's full recording already proves the class, and Daily runs one recording per room at a time */
+    if ((done || []).some((d) => d.kind === 'full' && !d.start_error)) continue;
+    const todo = due.filter((m) => !(done || []).some((d) => d.kind === 'proof' && d.planned_minute === m));
+    if (!todo.length) continue;
+    const room = CV.roomName(s), here = await CV.presentNow(room);
+    if (!here.length) continue; /* nobody in the room: nothing to record */
+    for (const m of todo.slice(0, 1)) {
+      out.due++;
+      const r = await AUTO.act(sb, auto, { key: `clip:${s.id}:${m}`, action: 'record a 60-second proof clip', sessionId: s.id, target: classLabel(co), detail: { minute: m, in_room: here.length } }, async () => {
+        const { data: row, error: e1 } = await sb.from('class_recordings').insert({ session_id: s.id, room, kind: 'proof', planned_minute: m }).select('id').single();
+        if (e1) { if (e1.code === '23505') return { skipped: 'already taken' }; throw new Error('clip row: ' + e1.message); }
+        try { await REC.start(room, REC.CLIP_SECONDS); } catch (e) { await sb.from('class_recordings').update({ start_error: String(e.message).slice(0, 300) }).eq('id', row.id); throw e; }
+        return {};
+      }, tellOwner);
+      if (r === 'done') out.started++;
+    }
+  }
+  return out;
+}
+
+/* Pairs Daily's recordings of recent class rooms with Alimun's requests; any other is reported (recording-guard) */
+async function syncRecordings(sb, now, guard) {
+  const out = { rooms: 0, linked: 0, unknown: 0 };
+  const { data: sess } = await sb.from('sessions').select('id, room_session_id, scheduled_at, cohorts(language, level, class_minutes)').neq('status', 'cancelled')
+    .gte('scheduled_at', new Date(now - 6 * HOUR).toISOString()).lte('scheduled_at', new Date(now + 15 * MIN).toISOString()).limit(60);
+  const rooms = {};
+  (sess || []).forEach((s) => { rooms[CV.roomName(s)] = rooms[CV.roomName(s)] || s; });
+  for (const room of Object.keys(rooms)) {
+    let recs;
+    try { recs = await REC.list(room); } catch (e) { continue; }
+    out.rooms++;
+    const recent = recs.filter((r) => (r.start_ts || 0) * 1000 > now - 8 * HOUR);
+    if (!recent.length) continue;
+    const { data: rows } = await sb.from('class_recordings').select('*').eq('room', room).gte('requested_at', new Date(now - 9 * HOUR).toISOString());
+    const pr = REC.pair(rows || [], recent);
+    for (const [row, rec] of pr.link.concat(pr.update)) {
+      const startMs = (rec.start_ts || 0) * 1000;
+      await sb.from('class_recordings').update({ daily_recording_id: rec.id, started_at: new Date(startMs).toISOString(), duration_seconds: rec.duration || null, status: rec.status || null,
+        delete_after: row.delete_after || REC.deleteAfter(row.kind, startMs) }).eq('id', row.id);
+      out.linked++;
+    }
+    for (const rec of pr.unknown) {
+      out.unknown++;
+      const s = rooms[room], startMs = (rec.start_ts || 0) * 1000;
+      await sb.from('class_recordings').upsert({ session_id: s.id, room, kind: 'unknown', requested_at: new Date(startMs).toISOString(), daily_recording_id: rec.id, started_at: new Date(startMs).toISOString(),
+        duration_seconds: rec.duration || null, status: rec.status || null, delete_after: REC.deleteAfter('unknown', startMs) }, { onConflict: 'daily_recording_id' });
+      await AUTO.act(sb, guard, { key: 'unknown:' + rec.id, action: 'report a recording Alimun did not start', sessionId: s.id, target: room, detail: { recording: rec.id } }, async () => {
+        await send(OWNER(), 'Alimun: a class was recorded by someone other than Alimun', mail.renderEmail({ hero: 'class', lang: 'en', preheader: 'A recording nobody at Alimun started.', heading: 'An unexpected recording',
+          blocks: [{ p: mail.esc(`A recording started at ${timeIn(startMs, 'Europe/Paris')} in the room of ${classLabel(s.cohorts || {})} (${room}) was not started by Alimun. It is kept for 90 days and listed on the class date's page.`) },
+            { button: { label: 'See the class date', href: `${mail.SITE}/app/admin#/classlog/${s.id}` } }] }));
+      }, tellOwner);
+    }
+  }
+  return out;
+}
+
+async function cleanupRecordings(sb, now, auto) {
+  const out = { deleted: 0 };
+  if (!auto || !auto.enabled) return out;
+  const { data: due } = await sb.from('class_recordings').select('id, daily_recording_id, kind, session_id').is('deleted_at', null).eq('keep', false).lte('delete_after', new Date(now).toISOString()).limit(200);
+  for (const r of due || []) {
+    const res = await AUTO.act(sb, auto, { key: 'delete:' + r.id, action: 'delete a ' + r.kind + ' recording past its date', sessionId: r.session_id, target: r.daily_recording_id }, async () => {
+      if (r.daily_recording_id) await REC.remove(r.daily_recording_id);
+      await sb.from('class_recordings').update({ deleted_at: new Date().toISOString() }).eq('id', r.id);
+    }, tellOwner);
+    if (res === 'done') out.deleted++;
+  }
+  /* Requests that never became a recording (nobody in the room, Daily refused): closed after two days */
+  await sb.from('class_recordings').update({ deleted_at: new Date(now).toISOString() }).is('daily_recording_id', null).is('deleted_at', null).lte('requested_at', new Date(now - 2 * DAY).toISOString());
+  return out;
+}
+
 /* ---------- Morning digest ---------- */
 function parisDay(offsetDays) {
   const fmt = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' });
@@ -218,9 +311,18 @@ module.exports = async function handler(req, res) {
       const late = await AUTO.load(sb, 'teacher-late'), oc = await AUTO.load(sb, 'class-outcomes');
       try { out.late = await lateCheck(sb, now, late); } catch (e) { out.late = { error: String(e.message || e) }; }
       try { out.outcomes = await outcomes(sb, now, oc); } catch (e) { out.outcomes = { error: String(e.message || e) }; }
-      const ok = !(out.late && out.late.error) && !(out.outcomes && out.outcomes.error);
+      try { out.recordings = await syncRecordings(sb, now, await AUTO.load(sb, 'recording-guard')); } catch (e) { out.recordings = { error: String(e.message || e) }; }
+      if (new Date(now).getUTCMinutes() < 5) { try { out.cleanup = await cleanupRecordings(sb, now, await AUTO.load(sb, 'recording-cleanup')); } catch (e) { out.cleanup = { error: String(e.message || e) }; } }
+      const ok = !(out.late && out.late.error) && !(out.outcomes && out.outcomes.error) && !(out.recordings && out.recordings.error) && !(out.cleanup && out.cleanup.error);
       /* Quiet runs (nothing due) are not recorded every 5 minutes: only work done and failures */
-      if (!ok || (out.late && out.late.checked) || (out.outcomes && (out.outcomes.verified || out.outcomes.failed))) await recordRun(sb, 'vercel:cron-class-watch', ok, out);
+      if (!ok || (out.late && out.late.checked) || (out.outcomes && (out.outcomes.verified || out.outcomes.failed)) || (out.recordings && (out.recordings.linked || out.recordings.unknown)) || (out.cleanup && out.cleanup.deleted)) await recordRun(sb, 'vercel:cron-class-watch', ok, out);
+      return res.status(200).json(out);
+    }
+    if (action === 'cron-clips') {
+      if (!cronOk(req)) return res.status(401).json({ error: 'unauthorized' });
+      let out;
+      try { out = await proofClips(sb, Date.now(), await AUTO.load(sb, 'proof-clips')); } catch (e) { out = { error: String(e.message || e) }; }
+      if (out.error || out.due) await recordRun(sb, 'vercel:cron-clips', !out.error, out);
       return res.status(200).json(out);
     }
     if (action === 'cron-digest') {
@@ -255,6 +357,42 @@ module.exports = async function handler(req, res) {
       if (!s) return res.status(404).json({ error: 'no such class date' });
       const v = await CV.verifySession(sb, s, Date.now());
       return res.status(200).json({ outcome: v.outcome, settled: v.settled, learners: v.learnersPresent, minutes_late: v.minutesLate, meetings: v.meetings, people: v.people.length });
+    }
+    if (action === 'record-start' || action === 'record-stop') {
+      /* Only admins record (the check above); teachers have no way to (owner, 13 Nov 2026) */
+      if (!UUID.test(String(b.session || ''))) return res.status(400).json({ error: 'bad session' });
+      const { data: s } = await sb.from('sessions').select(SESSION_COLS).eq('id', b.session).maybeSingle();
+      if (!s) return res.status(404).json({ error: 'no such class date' });
+      const room = CV.roomName(s), co = s.cohorts || {}, startMs = new Date(s.scheduled_at).getTime(), endMs = startMs + (co.class_minutes || 60) * MIN;
+      if (action === 'record-stop') {
+        await REC.stop(room);
+        await sb.from('automation_log').insert({ automation: 'recording-guard', key: 'stop:' + Date.now(), action: 'an admin stopped a recording', target: me.email, session_id: s.id, ok: true });
+        return res.status(200).json({ ok: true });
+      }
+      if (Date.now() < startMs - 15 * MIN || Date.now() > endMs + 90 * MIN) return res.status(409).json({ error: 'The class is not on now.' });
+      const here = await CV.presentNow(room);
+      if (!here.length) return res.status(409).json({ error: 'Nobody is in the room yet.' });
+      const seconds = Math.max(15 * 60, Math.min(3 * 3600, (endMs + 15 * MIN - Date.now()) / 1000));
+      const { data: row, error } = await sb.from('class_recordings').insert({ session_id: s.id, room, kind: 'full', requested_by: me.id }).select('id').single();
+      if (error) throw new Error(error.message);
+      try { await REC.start(room, seconds); } catch (e) { await sb.from('class_recordings').update({ start_error: String(e.message).slice(0, 300) }).eq('id', row.id); return res.status(502).json({ error: e.message }); }
+      return res.status(200).json({ ok: true, minutes: Math.round(seconds / 60) });
+    }
+    if (action === 'recording-link') {
+      if (!UUID.test(String(b.id || ''))) return res.status(400).json({ error: 'bad recording' });
+      const { data: r } = await sb.from('class_recordings').select('id, daily_recording_id, deleted_at').eq('id', b.id).maybeSingle();
+      if (!r || !r.daily_recording_id) return res.status(404).json({ error: 'This recording is not ready yet.' });
+      if (r.deleted_at) return res.status(410).json({ error: 'This recording was deleted.' });
+      const l = await REC.link(r.daily_recording_id);
+      await sb.from('recording_views').insert({ recording_id: r.id, viewer: me.id, viewer_email: me.email });
+      return res.status(200).json(l);
+    }
+    if (action === 'recording-keep') {
+      if (!UUID.test(String(b.id || ''))) return res.status(400).json({ error: 'bad recording' });
+      const { error } = await sb.from('class_recordings').update({ keep: b.keep === true, keep_note: typeof b.note === 'string' ? b.note.slice(0, 300) : null }).eq('id', b.id);
+      if (error) throw new Error(error.message);
+      await sb.from('automation_log').insert({ automation: 'recording-cleanup', key: 'keep:' + b.id + ':' + Date.now(), action: b.keep === true ? 'an admin marked a recording to keep' : 'an admin let a recording be deleted when due', target: me.email, detail: { recording: b.id, note: b.note || null }, ok: true });
+      return res.status(200).json({ ok: true });
     }
     if (action === 'digest-now') {
       const ymd = parisDay(-1), d = await digestHtml(sb, ymd);
