@@ -2137,3 +2137,11 @@ body.is-class .view { max-width: 1640px; }
 @media (prefers-reduced-motion: reduce) { .tfb { transition: none; } }
 /* The recording notice under a group class's title (js/app/classroom.js) */
 .cr-rec { margin: 8px 0 0; max-width: 72ch; color: var(--muted); }
+
+/* The store app (js/app/device.js adds .is-native): no tap flash, no long-press menu or selection on buttons, links,
+   menus and cards; reading text and fields stay selectable. */
+.is-native, .is-native * { -webkit-tap-highlight-color: transparent; }
+.is-native a, .is-native button, .is-native .btn, .is-native .card, .is-native nav, .is-native [role="button"], .is-native .top, .is-native .bar {
+  -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+.is-native img, .is-native svg { -webkit-touch-callout: none; -webkit-user-drag: none; }
+.is-native body { overscroll-behavior: none; }

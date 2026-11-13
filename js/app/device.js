@@ -13,6 +13,8 @@
   var HAP = native ? C.registerPlugin('Haptics') : null;
   var AUDIO_PATH = '/storage/v1/object/public/course-audio/';
   var DIR = 'DATA', ROOT = 'offline/';
+  /* css/app.css drops the browser's tap flashes and long-press menus in the app */
+  if (native) document.documentElement.classList.add('is-native');
 
   function safe(key) { return String(key || '').split('/').filter(function (p) { return p && p !== '.' && p !== '..'; }).join('/'); }
   /* The key for a downloadable address, or null */
