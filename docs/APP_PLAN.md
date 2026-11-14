@@ -70,3 +70,23 @@ Owner, after trying the test builds (13 Nov: "it is still a browser app"): "i wa
 - The bottom bar's icons can be chosen by the learner, and are animated.
 - Features that exist only in the app (ideas in "Step 4"; the owner has not picked which).
 - Built in a new conversation, starting from `mobile/` (learner app) and `mobile/admin/` (owner's admin app, never published).
+
+## The complete app: plan and owner's decisions (14 Nov 2026)
+Owner's answers, 14 Nov 2026:
+- App-only features: all four, built in this order: reminders (flashcard reviews at a chosen time and before each class, on the phone itself), listening with the screen locked (lock-screen controls), saving a word to flashcards from any app's Share, and a home-screen widget (flashcards due, word of the day).
+- The bottom bar at first open adapts to the learner: Home, Book, Practice, Flashcards without a class; Classes takes the place of Flashcards for learners in a class; More is always fifth. Learners change it in Settings.
+- Selling in the Android app: only the app plan and tutor minutes, through Google Play (RevenueCat). Classes and packs bought on the website are shown and joined in the app, with no prices, buy buttons or links to the website's checkout for them. Reason: Google Play's payments policy (read 14 Nov 2026) requires Play billing for digital goods used in the app and forbids leading users to another payment method; only one-to-one live sessions are exempt, and the EEA and US outside-link programmes need enrolment and reporting.
+- Accounts (Google Play developer, RevenueCat): later. Everything is built up to the signed store files first; Play billing and the upload wait for the accounts.
+
+Steps, each sent to the owner as an installable APK and confirmed before the next:
+1. It feels like an app (built 14 Nov 2026, waiting for the owner's check). Below.
+2. App language in Settings (nine languages, at once, offline) and the bottom bar the learner chooses, with animated icons.
+3. The app-only features, in the order above; app shortcuts on the icon.
+4. The store version: release key, version numbers, signed AAB and APK, Play billing, the store's rules applied to Plans, listing texts, screenshots, data safety, AI notices.
+
+### Step 1: it feels like an app (built 14 Nov 2026)
+- Screen changes move on phones, in the browser too (`js/app/feel.js` `direction()` and `transition(fn, kind)`, css/app.css "The app's motion"): a deeper screen slides in from the side, going back slides the other way (mirrored in Arabic), a change of section rises and fades; the top and bottom bars stay still. Bar icons pop when chosen, buttons and menu rows press under a finger, the More sheet's groups arrive one after another.
+- The keyboard: the bottom bar is put away while it is open (`html.is-kb`) and the field being typed in is brought into view.
+- Only in the app (`js/app/native.js`, a separate file loaded by `js/app/device.js`; plugin `@capacitor/app`): the back button and back gesture close what is on top (More, notifications, a table, the payment window, the welcome questions), else go one screen back, else to Home, and from Home put the app away; leaving a live class or tutor call needs a second press (`app_back_again`). Pulling down on Home, Classes, Homework, Messages, Progress and Flashcards refreshes, with the Alimun loader as the sign. Coming back after five minutes refreshes Home. A light tap of the phone on the bottom bar.
+- Native (`MainActivity.java`, `AlimunPhone.java`): the launch screen (logo on white) stays until the first screen is drawn and fades (four seconds at most); the screen stays on in a lesson, a mock test paper, a live class and a tutor call.
+- Checked in headless Chromium at phone size with a stand-in for the phone: directions (tab, forward, back), the back button's order, the keyboard, pull to refresh with simulated touches, keep-awake calls, no page errors; APK builds. Not checked: anything on a real phone (launch hand-off, back gesture, keyboard, haptics).

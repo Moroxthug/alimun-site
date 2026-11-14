@@ -4,6 +4,9 @@
    (mobile/android/.../MainActivity.java) serves offline/data/... and offline/audio/... to the page when the phone is
    offline, and recordings always from the device once downloaded. Vibration goes through the Haptics plugin.
    In a browser, AlimunDevice.native is false and the callers keep using Cache Storage as before.
+   The complete app (docs/APP_PLAN.md, step 1): ready() lets the launch screen go once the first screen is drawn,
+   awake(on) keeps the screen on, tick() is the lightest tap of the phone; the rest of the phone's behaviour (back
+   button, pulling down to refresh, coming back to the app) is js/app/native.js, loaded only in the app.
    Keys: 'data/books/English-A1.en.json', 'audio/English-A1/<file>.mp3', 'material/books/English-A1.en.json'. */
 (function () {
   'use strict';
@@ -11,6 +14,7 @@
   var native = !!(C && C.isNativePlatform && C.isNativePlatform() && C.registerPlugin);
   var FS = native ? C.registerPlugin('Filesystem') : null;
   var HAP = native ? C.registerPlugin('Haptics') : null;
+  var PHONE = native ? C.registerPlugin('AlimunPhone') : null;
   var AUDIO_PATH = '/storage/v1/object/public/course-audio/';
   var DIR = 'DATA', ROOT = 'offline/';
   /* css/app.css drops the browser's tap flashes and long-press menus in the app */
@@ -56,5 +60,13 @@
     return true;
   }
 
-  window.AlimunDevice = { native: native, keyOf: keyOf, put: put, getText: getText, size: size, remove: remove, removeDir: removeDir, haptic: haptic };
+  function quiet(p) { if (p && p.catch) p.catch(function () {}); }
+  function tick() { if (HAP) try { quiet(HAP.impact({ style: 'LIGHT' })); } catch (e) { /* no vibrator */ } }
+  var isReady = false, isAwake = false;
+  function ready() { if (!PHONE || isReady) return; isReady = true; try { quiet(PHONE.ready()); } catch (e) { /* older app */ } }
+  function awake(on) { on = !!on; if (!PHONE || on === isAwake) return; isAwake = on; try { quiet(PHONE.keepAwake({ on: on })); } catch (e) { /* older app */ } }
+  /* The launch screen never waits for a page that failed to start */
+  if (native) { setTimeout(ready, 3500); if (window.AlimunLazy) window.AlimunLazy.need('native').catch(function () {}); }
+
+  window.AlimunDevice = { native: native, keyOf: keyOf, put: put, getText: getText, size: size, remove: remove, removeDir: removeDir, haptic: haptic, tick: tick, ready: ready, awake: awake };
 })();

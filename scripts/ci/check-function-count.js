@@ -3,10 +3,11 @@
 // on 23 Oct 2026, so the cap is now a guard against splitting handlers for no
 // reason (CLAUDE.md, "Functions"), not a plan limit. 21 since 12 Nov 2026: api/material.js (the free limit,
 // docs/APP_PLAN.md) is separate because it carries the private course files.
+// 22 since 14 Nov 2026: api/ops.js (verified classes and automations, docs/OPERATIONS_PLAN.md) is its own feature.
 const fs = require('fs');
 const path = require('path');
 
-const MAX = Number(process.env.MAX_FUNCTIONS || 21);
+const MAX = Number(process.env.MAX_FUNCTIONS || 22);
 const apiDir = path.resolve(__dirname, '..', '..', 'api');
 
 function walk(dir, out = []) {

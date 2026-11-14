@@ -2155,3 +2155,64 @@ body.is-class .view { max-width: 1640px; }
 .iv-days { display: grid; gap: 14px; margin-top: 14px; }
 .iv-day b { display: block; font-weight: 700; margin-bottom: 6px; }
 .iv-times { display: flex; flex-wrap: wrap; gap: 8px; }
+
+/* ---------- The app's motion (docs/APP_PLAN.md, "The complete app", step 1; js/app/feel.js) ----------
+   On phones a change of screen moves: a deeper screen slides in from the side, going back slides the other way, a
+   change of section rises and fades. The top bar and the bottom bar stay where they are. */
+@media (max-width: 899px) {
+  .view { view-transition-name: view; }
+  .bar { view-transition-name: bar; }
+  .top { view-transition-name: top; }
+  ::view-transition-old(view), ::view-transition-new(view) { animation-duration: 300ms; animation-timing-function: cubic-bezier(.22, .8, .24, 1); animation-fill-mode: both; mix-blend-mode: normal; }
+  html[data-nav="forward"]::view-transition-old(view) { animation-name: navAwayStart; }
+  html[data-nav="forward"]::view-transition-new(view) { animation-name: navFromEnd; }
+  html[data-nav="back"]::view-transition-old(view) { animation-name: navAwayEnd; z-index: 1; }
+  html[data-nav="back"]::view-transition-new(view) { animation-name: navFromStart; }
+  html[dir="rtl"][data-nav="forward"]::view-transition-old(view) { animation-name: navAwayStartRtl; }
+  html[dir="rtl"][data-nav="forward"]::view-transition-new(view) { animation-name: navFromEndRtl; }
+  html[dir="rtl"][data-nav="back"]::view-transition-old(view) { animation-name: navAwayEndRtl; }
+  html[dir="rtl"][data-nav="back"]::view-transition-new(view) { animation-name: navFromStartRtl; }
+  /* The screen on top covers the one under it while it moves */
+  html[data-nav="forward"]::view-transition-new(view), html[data-nav="back"]::view-transition-old(view) { background: var(--bone); box-shadow: 0 0 40px rgba(8, 8, 8, .12); min-height: 100vh; }
+  html[data-nav="tab"]::view-transition-old(view) { animation-name: navFade; animation-duration: 120ms; }
+  html[data-nav="tab"]::view-transition-new(view) { animation-name: navRise; }
+  html[data-nav="none"]::view-transition-old(view), html[data-nav="none"]::view-transition-new(view) { animation-duration: 140ms; }
+
+  /* Pressed looks under a finger */
+  .bar a, .bar button { transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease); }
+  .bar a:active, .bar button:active { transform: scale(.9); }
+  .bar [aria-current="page"] svg { animation: barPop .5s var(--spring) both; }
+  .sheet .nav a { transition: transform var(--t-fast) var(--ease), background var(--t-fast) var(--ease); }
+  .sheet .nav a:active { transform: scale(.97); background: var(--bone); }
+  .icon-btn:active, .avatar:active, .course-btn:active { transform: scale(.92); }
+  .is-sheet-open .sheet .nav__group { animation: rise var(--t-slow) var(--ease) both; }
+  .is-sheet-open .sheet .nav__group:nth-child(2) { animation-delay: 60ms; }
+  .is-sheet-open .sheet .nav__group:nth-child(3) { animation-delay: 120ms; }
+
+  /* The keyboard is open: the bottom bar and the notes above it are put away */
+  .is-kb .bar, .is-kb .net-note { display: none; }
+  .is-kb .view { padding-bottom: 24px; }
+}
+@keyframes navAwayStart { to { transform: translateX(-24%); opacity: 0; } }
+@keyframes navFromEnd { from { transform: translateX(100%); } }
+@keyframes navAwayEnd { to { transform: translateX(100%); } }
+@keyframes navFromStart { from { transform: translateX(-24%); opacity: 0; } }
+@keyframes navAwayStartRtl { to { transform: translateX(24%); opacity: 0; } }
+@keyframes navFromEndRtl { from { transform: translateX(-100%); } }
+@keyframes navAwayEndRtl { to { transform: translateX(-100%); } }
+@keyframes navFromStartRtl { from { transform: translateX(24%); opacity: 0; } }
+@keyframes navFade { to { opacity: 0; } }
+@keyframes navRise { from { opacity: 0; transform: translateY(14px) scale(.985); } }
+@keyframes barPop { 0% { transform: scale(.7); } 60% { transform: translateY(-3px) scale(1.18); } 100% { transform: translateY(-1px) scale(1.08); } }
+
+/* Pulling down to refresh in the store app (js/app/native.js): the Alimun loader comes down from the top */
+.ptr { position: fixed; top: calc(env(safe-area-inset-top, 0px) + 6px); left: 50%; z-index: 80; width: 48px; height: 48px; margin-left: -24px; border-radius: 50%;
+  background: var(--white); box-shadow: var(--shadow-lift); display: grid; place-items: center; pointer-events: none; opacity: 0;
+  transform: translateY(calc(var(--pull, 0px) - 64px)) scale(.7); transition: transform var(--t-mid) var(--spring), opacity var(--t-fast) var(--ease); }
+.ptr.is-moving { transition: none; }
+.ptr.is-on { opacity: 1; transform: translateY(calc(var(--pull, 0px) - 40px)) scale(.85); }
+.ptr.is-ready { transform: translateY(calc(var(--pull, 0px) - 40px)) scale(1); }
+.ptr .whirl, .ptr .spark { animation-play-state: paused; }
+.ptr.is-ready .whirl, .ptr.is-ready .spark, .ptr.is-busy .whirl, .ptr.is-busy .spark { animation-play-state: running; }
+
+@media (max-width: 899px) { .view:focus { outline: none; } }

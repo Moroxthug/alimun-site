@@ -23,7 +23,8 @@
   function ahead() {
     var c = navigator.connection;
     if (navigator.onLine === false || (c && (c.saveData || /2g/.test(c.effectiveType || '')))) return;
-    Object.keys(CHUNKS).forEach(function (n, i) { setTimeout(function () { need(n).catch(function () {}); }, 400 * i); });
+    /* 'native' is the store app's own part (js/app/native.js), asked for by js/app/device.js */
+    Object.keys(CHUNKS).filter(function (n) { return n !== 'native'; }).forEach(function (n, i) { setTimeout(function () { need(n).catch(function () {}); }, 400 * i); });
   }
   window.addEventListener('load', function () {
     var idle = window.requestIdleCallback || function (f) { return setTimeout(f, 2500); };

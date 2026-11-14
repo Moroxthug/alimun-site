@@ -656,7 +656,7 @@
   /* Back online on a section that needed it: draw it again */
   window.addEventListener('online', function () { if (offShown && offShown === current && D) render(current, false); });
 
-  function render(id, animate) {
+  function render(id, animate, kind) {
     var r = byId[id];
     if (window.AlimunData && window.AlimunData.track && id !== 'kit') window.AlimunData.track('view', { dashboard: 'student', section: id });
     /* Sections that need a connection say so when the device is offline (docs/APP_PLAN.md, step 2) */
@@ -737,7 +737,7 @@
     };
     /* View Transitions where the browser has them (js/app/feel.js): the new screen at once, cross-faded */
     var F = window.AlimunFeel;
-    if (animate && current && F && F.canTransition()) F.transition(swap);
+    if (animate && current && F && F.canTransition()) F.transition(swap, kind);
     else if (animate && current) { view.classList.add('is-leaving'); setTimeout(swap, 150); } else swap();
     current = id;
   }
@@ -811,9 +811,27 @@
     if (mode === 'real' && window.AlimunData && window.AlimunData.rememberUiLang) window.AlimunData.rememberUiLang(lang, 'student');
     if (window.AlimunBell) window.AlimunBell.attach(document.querySelector('[data-bell]'), readerHelpers, mode === 'real' && !(window.AlimunData && window.AlimunData.viewingAs && window.AlimunData.viewingAs()));
     render(routeFromHash(), false);
+    if (window.AlimunFeel && window.AlimunFeel.direction) window.AlimunFeel.direction(location.hash);
     if (back) stripeNote(back);
     if (window.AlimunOffline) window.AlimunOffline.attach(readerHelpers);
   }
+
+  /* For the store app (js/app/native.js): pulling down to refresh, the back button, coming back to the app */
+  function refresh() {
+    if (mode !== 'real' || !window.AlimunData || navigator.onLine === false) return Promise.resolve(false);
+    return window.AlimunData.load(lang).then(function (d) {
+      if (!d || !d.profile) return false;
+      D = d; access();
+      if (!document.body.classList.contains('is-sheet-open')) render(current || routeFromHash(), false);
+      return true;
+    }, function (err) { console.warn('[Alimun] Refresh failed', err && err.message); return false; });
+  }
+  window.AlimunShell = {
+    refresh: refresh, t: t, loaderInner: loaderInner,
+    current: function () { return current; }, isReal: function () { return mode === 'real'; },
+    sheetOpen: function () { return document.body.classList.contains('is-sheet-open'); },
+    closeSheet: function () { setSheet(false); }
+  };
 
   /* Coming back from Stripe (step 16): ?checkout=success|cancelled|credit, with ?join=<class> when a class needed the
      plan. The address is cleaned, the class opened, and a paid plan that the payment webhook has not recorded yet is
@@ -905,10 +923,12 @@
       // In-page banner for students, when one is switched on in Admin (js/banner.js).
       if (!document.querySelector('script[src="/js/banner.js"]')) { var bs = document.createElement('script'); bs.src = '/js/banner.js'; bs.defer = true; document.head.appendChild(bs); }
       setTimeout(hideLoader, quick ? 0 : Math.max(0, 900 - (Date.now() - started)));
+      /* The store app: the first screen is drawn, the launch screen can go (js/app/device.js) */
+      if (window.AlimunDevice && window.AlimunDevice.ready) requestAnimationFrame(function () { requestAnimationFrame(window.AlimunDevice.ready); });
       welcomePoll();
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'messages' || id === 'settings' || id === 'tutor') render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); var kind = window.AlimunFeel && window.AlimunFeel.direction ? window.AlimunFeel.direction(location.hash) : 'tab'; if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'messages' || id === 'settings' || id === 'tutor') render(id, true, kind); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 
