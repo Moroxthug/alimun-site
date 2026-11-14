@@ -2119,3 +2119,4 @@ Search Console (28 days to 10 Nov) showed three English articles with many impre
 - First room: B1, Monday to Friday 10:00 Europe/Dublin from 4 January 2027, 60 classes, draft, teacher youssef bouchtaoui. Needs a substitute teacher before 14 December, when the room job publishes it; the owner can change teacher and level in Admin.
 - Not done: the locked `tiers/head.html` structured data still lists three products (needs the owner's yes); the home page groups block and the per-class comparison do not show the intensive pack; matching never suggests it.
 - Checked: `npm run build`, `node --check`, 235 of 235 unit tests.
+- Reply sent to Sylvie Tostivint (14 Nov, owner's request) in the Alimun email template (hero class-english), from Alimun <info@alimun.com>, reply-to info@alimun.com, blind copy to the owner; Resend id 01a1daed-d944-7661-b432-553ab50267e4, through a send-only Resend key the owner saved on the environment.
