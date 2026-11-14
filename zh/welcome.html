@@ -155,7 +155,7 @@ async function teacher() {
     if (!app || !app.language || !app.specialty) { location.replace(base + 'signup.html?role=teacher'); return; }
     const { error: insErr } = await supabase.from('teacher_profiles').insert({
       user_id: user.id, full_name: meta.full_name || user.email, languages: [String(app.language)],
-      experience_years: parseInt(app.experience_years, 10) || 1, specialty: String(app.specialty).slice(0, 120),
+      experience_years: parseInt(app.experience_years, 10) || 1, specialty: String(app.specialty).slice(0, 200),
       bio: String(app.bio || '').slice(0, 1200), status: 'pending',
     });
     if (insErr && insErr.code !== '23505') return fail();

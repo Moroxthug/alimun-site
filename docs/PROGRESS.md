@@ -2105,3 +2105,9 @@ Search Console (28 days to 10 Nov) showed three English articles with many impre
 - Job interview: six more common questions with sample answers, an interview vocabulary table, three more rows in the question table, a new FAQ entry, new title and description.
 - Internal links: the three articles now appear among the first three "keep reading" cards of present perfect, conditionals, false friends, practise speaking, German past tense, German articles (its list held only English articles before), IELTS band scores, TOEFL vs IELTS and English levels.
 - Indexing requests on 13 Nov were refused with "Quota exceeded" although none had been sent since 11 Nov; the queue is unchanged.
+
+## 2026-11-14 — Teacher location no longer defaults to Madrid; longer specialty
+- Owner: "you need to fix the location stuff". `teacher_profiles.location` had the column default 'Madrid, Spain' and the application form never asks for a location, so every teacher (9 of 9) showed as in Madrid in Find a teacher. Default dropped in production. Clearing the existing 'Madrid, Spain' values waits for the owner's yes (`supabase/migrations/202611141600_teacher_location_default.sql` holds both steps).
+- The application's specialty field took 120 characters and cut off a real application (Hannah Oseni's ends "Business Engl"); raised to 200 in `signup.html` and `welcome.html`, matching Settings and the database check.
+- Contact enquiry (Sylvie Tostivint, /fr/contact, 14 Nov) asks about the "Intensive €109" plan, which is retired and no longer on the live site; a reply was drafted for the owner. Open for the owner: whether a daytime (9:00-15:00 Irish time) A2/B1 group can run from January, and the old Intensive text still in the root HTML in git (tiers.html, index.html, services.html, setup-stripe-prices.js).
+- Checked: `npm run build`.
