@@ -325,5 +325,24 @@
     "passed_subject": "Étape suivante : un cours d’essai de 30 minutes avec Alimun",
     "passed_heading": "Merci pour l’appel",
     "passed_body": "Nous avons apprécié notre échange. L’étape suivante est un cours d’essai gratuit de 30 minutes avec quelques-uns de nos apprenants, pour nous montrer comment vous enseignez. Nous vous écrirons avec les détails."
+  },
+  "trial": {
+    "scheduled_subject": "Votre cours d’essai avec Alimun : {time}",
+    "scheduled_heading": "Votre cours d’essai est réservé",
+    "scheduled_body": "Votre cours d’essai gratuit de 30 minutes est réservé pour le **{time}** : {class}, avec quelques-uns de nos apprenants. Signalez votre présence depuis votre tableau de bord au moins 5 minutes avant, puis rejoignez le cours depuis celui-ci. Une personne d’Alimun peut venir observer, et le cours est enregistré pour que nous puissions le revoir ; seule l’équipe d’Alimun peut voir l’enregistrement.",
+    "dash_button": "Ouvrir mon tableau de bord",
+    "cancelled_subject_t": "Votre cours d’essai du {time} est annulé",
+    "cancelled_body_t": "Votre cours d’essai du **{time}** est annulé. Nous vous écrirons avec un nouvel horaire.",
+    "invite_subject": "Un cours gratuit de {class} de 30 minutes pour vous",
+    "invite_heading": "Vous êtes invité à un cours gratuit",
+    "invite_body": "Un nouveau professeur d’Alimun donne un cours gratuit de {class} de 30 minutes le **{time}**, et votre niveau correspond. Les places sont peu nombreuses : réservez la vôtre dans votre tableau de bord, rubrique Cours. Le cours est enregistré pour qu’Alimun puisse évaluer le nouveau professeur ; seule l’équipe d’Alimun regarde l’enregistrement.",
+    "invite_button": "Voir l’invitation",
+    "cancelled_subject_l": "Le cours gratuit du {time} est annulé",
+    "cancelled_body_l": "Le cours gratuit de {class} de 30 minutes du **{time}** est annulé. Nous en sommes désolés. Vous n’avez rien à faire.",
+    "rate_subject": "Comment s’est passé le cours ?",
+    "rate_body": "Merci d’avoir participé au cours gratuit de {class} du {time}. Comment était-il ? Touchez une réponse, cela prend une seconde.",
+    "rate_3": "Très bien",
+    "rate_2": "Bien",
+    "rate_1": "Pas bien"
   }
 }

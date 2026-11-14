@@ -109,6 +109,7 @@
       '<p class="t-small cl-zone">' + esc(t('app_cl_zone', { zone: zone().replace(/_/g, ' ') })) + '</p></div><div class="grid rise">';
     var offer = A.data().offer;
     if (offer && window.AlimunFind) html += AlimunFind.offerHtml(offer, 0);
+    html += trialHtml();
     if (!C.cohorts.length && !C.bookings.length) {
       html += '<section class="stage span-4" style="--i:0;background:var(--t-mint)" aria-hidden="true"><div class="bub think">' + esc(t('app_cl_none_bub')) + '</div>' + A.Cast.drawing('mug') + '</section>' +
         '<section class="card span-8" style="--i:1"><h2 class="t-h2">' + esc(t('app_cl_none_h')) + '</h2><p class="t-body" style="margin-top:8px">' + esc(t('app_cl_none_p')) + '</p>' +
@@ -127,6 +128,60 @@
     }
     if (C.sample) html += '<p class="t-tiny span-12" style="margin-top:4px">' + esc(t('app_cl_sample')) + '</p>';
     return html + '</div>';
+  }
+  /* A new teacher's free 30-minute trial class (docs/TEACHER_HIRING_PLAN.md, step 2): the invitation, taking or giving up
+     a place, and afterwards the one-tap rating (also from the email: ?rated=done). Sample: ?trial=1 shows one of each. */
+  function trials() {
+    if (!signedIn()) return Promise.resolve(/[?&]trial=1/.test(location.search) ? sampleTrials() : null);
+    return window.AlimunData.trialMine ? window.AlimunData.trialMine().catch(function () { return null; }) : Promise.resolve(null);
+  }
+  function sampleTrials() {
+    var d = new Date(Date.now() + 3 * DAY); d.setMinutes(0, 0, 0);
+    return { invites: [{ invite: 'i1', trial: 'tr1', at: d.toISOString(), minutes: 30, language: 'German', level: 'B1', status: 'invited' }],
+      rate: [{ invite: 'i0', trial: 'tr0', at: new Date(Date.now() - DAY).toISOString(), minutes: 30, language: 'German', level: 'B1', status: 'accepted', score: null }] };
+  }
+  var RATE_KEYS = { 3: 'app_tr_rate_3', 2: 'app_tr_rate_2', 1: 'app_tr_rate_1' };
+  function trialHtml() {
+    var T = C.trials, html = '', rated = /[?&]rated=done/.test(location.search);
+    if (rated && !C.ratedShown) { C.ratedShown = true; html += '<p class="t-body st-msg span-12" role="status">' + esc(t('app_tr_rated')) + '</p>'; }
+    if (!T) return html;
+    (T.invites || []).forEach(function (x) {
+      var label = (A.languageName ? A.languageName(x.language) : x.language) + ' ' + x.level;
+      html += '<section class="card span-12 cl-trial" style="--i:0" data-tr="' + esc(x.invite) + '"><h2 class="t-h2">' + esc(t('app_tr_inv_h')) + '</h2>' +
+        '<p class="t-body" style="margin-top:8px">' + esc(t('app_tr_inv_p', { 'class': label, when: when(x.at) })) + '</p>' +
+        (x.status === 'accepted'
+          ? '<p class="t-body" style="margin-top:8px"><b>' + esc(t('app_tr_accepted')) + '</b></p><div class="btn-row" style="margin-top:12px"><button class="btn btn--ghost btn--sm" type="button" data-tr-ans="no" data-id="' + esc(x.invite) + '">' + esc(t('app_tr_leave')) + '</button></div>'
+          : '<div class="btn-row" style="margin-top:12px"><button class="btn btn--primary" type="button" data-tr-ans="yes" data-id="' + esc(x.invite) + '">' + esc(t('app_tr_accept')) + '</button><button class="btn btn--quiet" type="button" data-tr-ans="no" data-id="' + esc(x.invite) + '">' + esc(t('app_tr_decline')) + '</button></div>') +
+        '<p class="t-small st-msg" data-tr-msg aria-live="polite"></p></section>';
+    });
+    (T.rate || []).forEach(function (x) {
+      html += '<section class="card span-12 cl-trial" style="--i:0"><h2 class="t-h2">' + esc(t('app_tr_rate_h', { when: when(x.at) })) + '</h2>' +
+        (x.score ? '<p class="t-body" style="margin-top:8px">' + esc(t('app_tr_rated')) + '</p>'
+          : '<p class="t-body" style="margin-top:8px">' + esc(t('app_tr_rate_p')) + '</p><div class="btn-row" style="margin-top:12px">' + [3, 2, 1].map(function (n) {
+            return '<button class="btn ' + (n === 3 ? 'btn--primary' : 'btn--quiet') + '" type="button" data-tr-rate="' + n + '" data-id="' + esc(x.trial) + '">' + esc(t(RATE_KEYS[n])) + '</button>';
+          }).join('') + '</div><p class="t-small st-msg" data-tr-msg aria-live="polite"></p>') + '</section>';
+    });
+    return html;
+  }
+  function trialClick(e) {
+    var a = e.target.closest('[data-tr-ans]'), r = e.target.closest('[data-tr-rate]'), b = a || r;
+    if (!b || b.disabled) return false;
+    var box = b.closest('section'), msg = box && box.querySelector('[data-tr-msg]'), id = b.getAttribute('data-id');
+    var redraw = function () { root.innerHTML = pageView(); };
+    if (C.sample) {
+      if (a) C.trials.invites.forEach(function (x) { if (x.invite === id) x.status = a.getAttribute('data-tr-ans') === 'yes' ? 'accepted' : 'declined'; });
+      else C.trials.rate.forEach(function (x) { if (x.trial === id) x.score = +r.getAttribute('data-tr-rate'); });
+      C.trials.invites = C.trials.invites.filter(function (x) { return x.status !== 'declined'; });
+      redraw(); return true;
+    }
+    b.disabled = true;
+    var call = a ? window.AlimunData.trialAnswer(id, a.getAttribute('data-tr-ans') === 'yes') : window.AlimunData.trialRate(id, +r.getAttribute('data-tr-rate'));
+    call.then(function () {
+      /* A place taken or given up changes the class list: load the page again */
+      if (a) { mount(root, [], A); return; }
+      C.trials.rate.forEach(function (x) { if (x.trial === id) x.score = +r.getAttribute('data-tr-rate'); }); redraw();
+    }, function (er) { b.disabled = false; if (msg) msg.textContent = t(er && er.body && er.body.error === 'full' ? 'app_tr_full' : 'app_tr_err'); });
+    return true;
   }
   function nextHtml(n) {
     if (!n) {
@@ -439,6 +494,7 @@
     root.__classes = true;
     root.addEventListener('click', function (e) {
       if (!C) return;
+      if (trialClick(e)) return;
       /* The board from a class (step L5): the written pages and the student's own exercise work, loaded when asked */
       var bb = e.target.closest('[data-cl-board]');
       if (bb && !bb.disabled && !window.AlimunBoard && window.AlimunLazy) { window.AlimunLazy.need('classroom').then(function () { bb.click(); }, function () {}); return; }
@@ -504,10 +560,11 @@
     /* The classroom and its board are loaded the first time a class is opened (js/app/lazy.js) */
     var need = window.AlimunLazy ? window.AlimunLazy.need : function () { return Promise.resolve(); };
     var cr = parts[0] === 'live' ? need('classroom') : (need('classroom').catch(function () {}), Promise.resolve());
-    return Promise.all([load(), cr]).then(function (both) {
+    return Promise.all([load(), cr, parts[0] === 'live' ? null : trials()]).then(function (both) {
       var d = both[0];
       if (my !== mountNo) return { stale: true };
       C = d;
+      C.trials = both[2] || null;
       if (C.sample) C.bookings = C.bookings.concat(SAMPLE_BOOKED);
       var today = dayOf(new Date().toISOString());
       C.month = keep ? keep.month : { y: +today.slice(0, 4), m: +today.slice(5, 7) - 1 };

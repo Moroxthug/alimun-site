@@ -346,7 +346,7 @@
   /* A teacher waiting for review (docs/TEACHER_HIRING_PLAN.md, step 1): the application under review, then, once
      invited, the times for the interview call with Alimun, the booked call with Join (from 10 minutes before) and
      Change (until 12 hours before), then the next step after a good interview */
-  var IVS = null, IVPICK = false;
+  var IVS = null, IVPICK = false, TRTICK = null;
   function pendingView() {
     return '<div class="view__head"><div><h1 class="t-h1">' + esc(greeting(firstName((D.teacher || {}).full_name))) + '</h1></div></div>' +
       '<div class="soon rise"><div class="stage" style="--i:0;background:var(--t-mint)"><div class="bub think">' + esc(t('app_t_pending_bub')) + '</div>' + Cast.drawing('owl') + '</div>' +
@@ -357,8 +357,9 @@
   function ivHtml() {
     var S = IVS, stage = S ? S.stage : (D.teacher || {}).hiring_stage;
     var base = '<h2 class="t-h2">' + esc(t('app_t_pending_h')) + '</h2><p class="t-body">' + esc(t('app_t_pending_p')) + '</p><div class="btn-row"><a class="btn btn--primary" href="/contact">' + esc(t('app_t_pending_contact')) + '</a></div>';
-    if (!S) return stage === 'interview_invited' || stage === 'interview_booked' ? '<p class="t-body">' + esc(t('app_loading_open')) + '</p>' : base;
+    if (!S) return stage === 'interview_invited' || stage === 'interview_booked' || stage === 'trial_scheduled' || stage === 'trial_done' ? '<p class="t-body">' + esc(t('app_loading_open')) + '</p>' : base;
     if (stage === 'pre_approved') return '<h2 class="t-h2">' + esc(t('app_iv_passed_h')) + '</h2><p class="t-body">' + esc(t('app_iv_passed_p')) + '</p>';
+    if (stage === 'trial_scheduled' || stage === 'trial_done') return trialHtml(S.trial, stage);
     if (stage !== 'interview_invited' && stage !== 'interview_booked') return base;
     var iv = S.interview, html = '';
     if (iv && !IVPICK) {
@@ -381,10 +382,25 @@
     }
     return html + '<p class="t-small st-msg" data-iv-msg aria-live="polite"></p>';
   }
+  /* Step 2: the trial class (docs/TEACHER_HIRING_PLAN.md). Check in from an hour before; the room opens 15 minutes before
+     and is the class's Daily room, joined through /api/join-session like any class (the teacher's own trial date only) */
+  function trialHtml(tr, stage) {
+    if (!tr || stage === 'trial_done' || tr.status === 'done') return '<h2 class="t-h2">' + esc(t('app_tr_done_h')) + '</h2><p class="t-body">' + esc(t('app_tr_done_p')) + '</p>';
+    var start = new Date(tr.scheduled_at).getTime(), now = Date.now(), end = start + tr.minutes * 60000;
+    var canCheck = !tr.checked_in_at && now >= start - 3600000 && now <= end, canJoin = now >= start - 15 * 60000 && now <= end + 30 * 60000;
+    return '<h2 class="t-h2">' + esc(t('app_tr_h', { when: ivWhen(tr.scheduled_at) })) + '</h2>' +
+      '<p class="t-body">' + esc(t('app_tr_p', { 'class': languageName(tr.language) + ' ' + tr.level })) + '</p>' +
+      '<p class="t-small" style="margin-top:6px">' + esc(t('app_tr_places', { n: tr.learners || 0, max: tr.places || 8 })) + '</p>' +
+      '<div class="btn-row">' +
+        (tr.checked_in_at ? '<span class="btn btn--quiet is-off" aria-disabled="true">' + esc(t('app_tr_checked', { time: time(tr.checked_in_at) })) + '</span>'
+          : canCheck ? '<button class="btn btn--ghost" type="button" data-tr-checkin="' + esc(tr.session_id) + '">' + esc(t('app_tr_checkin')) + '</button>' : '') +
+        (canJoin ? '<button class="btn btn--primary" type="button" data-tr-join="' + esc(tr.session_id) + '">' + esc(t('app_tr_join')) + '</button>' : '<span class="btn btn--primary is-off" aria-disabled="true">' + esc(t('app_tr_join')) + '</span>') +
+      '</div><p class="t-small" style="margin-top:8px">' + esc(t('app_tr_join_when')) + '</p>';
+  }
   function ivDraw() { var box = app && app.querySelector('[data-iv]'); if (box) box.innerHTML = ivHtml(); }
   function ivLoad() {
     if (mode !== 'pending' || !window.AlimunData.teacherInterview) return;
-    window.AlimunData.teacherInterview().then(function (r) { IVS = r; ivDraw(); }, function () { IVS = null; ivDraw(); });
+    window.AlimunData.teacherInterview().then(function (r) { IVS = r; ivDraw(); if (r && r.trial && !TRTICK) TRTICK = setInterval(function () { if (mode === 'pending') ivDraw(); }, 60000); }, function () { IVS = null; ivDraw(); });
   }
   function ivClick(e) {
     var msg = function (k) { var m = app.querySelector('[data-iv-msg]'); if (m) m.textContent = t(k); };
@@ -394,6 +410,23 @@
       if (at.getAttribute('data-sure') !== '1') { app.querySelectorAll('[data-iv-at]').forEach(function (b) { b.removeAttribute('data-sure'); b.classList.remove('btn--primary'); b.classList.add('btn--quiet'); }); at.setAttribute('data-sure', '1'); at.classList.add('btn--primary'); at.classList.remove('btn--quiet'); var m = app.querySelector('[data-iv-msg]'); if (m) m.textContent = t('app_iv_confirm', { when: ivWhen(when) }); return true; }
       at.disabled = true;
       window.AlimunData.teacherInterviewBook(when, myZone()).then(function () { IVPICK = false; ivLoad(); }, function (er) { at.disabled = false; msg(er && er.body && er.body.error === 'taken' ? 'app_iv_taken' : 'app_iv_err'); if (er && er.body && er.body.error === 'taken') ivLoad(); });
+      return true;
+    }
+    var ck = e.target.closest('[data-tr-checkin]');
+    if (ck && !ck.disabled) {
+      ck.disabled = true;
+      window.AlimunData.teacherCheckIn(ck.getAttribute('data-tr-checkin')).then(function (r) { if (IVS && IVS.trial) IVS.trial.checked_in_at = r.checked_in_at || new Date().toISOString(); ivDraw(); }, function () { ck.disabled = false; msg('app_tr_err'); });
+      return true;
+    }
+    var tj = e.target.closest('[data-tr-join]');
+    if (tj && !tj.disabled) {
+      var tw = window.open('', '_blank'); tj.disabled = true;
+      window.AlimunData.teacherTrialJoin(tj.getAttribute('data-tr-join')).then(function (r) {
+        var u = new URL(r.url); if (u.protocol !== 'https:' || !/\.daily\.co$/.test(u.hostname)) throw new Error('room');
+        if (r.token) u.searchParams.set('t', r.token);
+        if (tw) { tw.opener = null; tw.location.href = u.href; } else location.href = u.href;
+        tj.disabled = false; if (IVS && IVS.trial && !IVS.trial.checked_in_at) { IVS.trial.checked_in_at = new Date().toISOString(); ivDraw(); }
+      }).catch(function () { if (tw) tw.close(); tj.disabled = false; msg('app_tr_err'); });
       return true;
     }
     if (e.target.closest('[data-iv-change]')) { IVPICK = true; ivDraw(); return true; }

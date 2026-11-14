@@ -21,6 +21,9 @@
  *   and the interview reminders (docs/TEACHER_HIRING_PLAN.md)
  *   POST ?action=interview-hours | interview-invite | interview-decide   (admin)
  *   POST ?action=interview-state | interview-book | interview-join      (the waiting teacher; interview-join also admin)
+ *   Trial classes (step 2): POST ?action=trial-file | trial-slots | trial-schedule | trial-invite | trial-cancel | trial-decide (admin);
+ *   POST ?action=trial-mine | trial-answer | trial-rate (the learner); GET ?action=trial-rate-link (signed, one tap from the email);
+ *   cron-class-watch closes trial classes after their end and asks learners to rate them (trial-ratings)
  * Every automated action goes through api/_lib/automation.js (switch, dry run, once only, daily cap, log, pause).
  */
 const { createClient } = require('@supabase/supabase-js');
@@ -30,6 +33,7 @@ const AUTO = require('./_lib/automation.js');
 const CV = require('./_lib/class-verify.js');
 const REC = require('./_lib/recordings.js');
 const IV = require('./_lib/interviews.js');
+const TR = require('./_lib/trials.js');
 const { dailyFetch } = require('./_lib/daily.js');
 const { recordRun } = require('./_lib/cron-log.js');
 const { isTestAccount } = require('./_lib/test-accounts.js');
@@ -397,7 +401,16 @@ async function interviewAction(action, req, res, sb) {
   if (action === 'interview-state') {
     const open = me.status === 'pending' && ['interview_invited', 'interview_booked'].includes(me.hiring_stage);
     const h = open ? await hoursOf(sb) : null;
-    return res.status(200).json({ stage: me.hiring_stage, interview: mine || null, minutes: h ? h.minutes : 30,
+    let trial = null;
+    if (['trial_scheduled', 'trial_done'].includes(me.hiring_stage)) {
+      const { data: tr } = await sb.from('teacher_trials').select('id, session_id, language, level, scheduled_at, minutes, status').eq('teacher_id', me.id).in('status', ['scheduled', 'done']).order('scheduled_at', { ascending: false }).limit(1).maybeSingle();
+      if (tr) {
+        const [{ data: s }, { count }] = await Promise.all([sb.from('sessions').select('teacher_checked_in_at').eq('id', tr.session_id).maybeSingle(),
+          sb.from('trial_invites').select('id', { count: 'exact', head: true }).eq('trial_id', tr.id).eq('status', 'accepted')]);
+        trial = Object.assign({}, tr, { checked_in_at: (s && s.teacher_checked_in_at) || null, learners: count || 0, places: TR.MAX_PLACES });
+      }
+    }
+    return res.status(200).json({ stage: me.hiring_stage, interview: mine || null, trial, minutes: h ? h.minutes : 30,
       slots: open && h ? IV.freeSlots({ hours: h, busy: await ownerBusy(sb, mine && mine.id) }) : [] });
   }
   if (action === 'interview-book') {
@@ -427,6 +440,318 @@ async function interviewAction(action, req, res, sb) {
     if (Date.now() > start + (mine.minutes + 30) * MIN) return res.status(409).json({ error: 'over' });
     if (!mine.teacher_checked_in_at) await sb.from('teacher_interviews').update({ teacher_checked_in_at: new Date().toISOString() }).eq('id', mine.id);
     return res.status(200).json(await interviewRoom(mine, user, false, me.full_name));
+  }
+  return res.status(400).json({ error: 'unknown action' });
+}
+
+/* ---------- Trial classes (docs/TEACHER_HIRING_PLAN.md, step 2) ----------
+   A pre-approved teacher gives a free 30-minute taster to real learners: the admin picks a time from the teacher's
+   availability (48 hours to 21 days ahead), a one-date class is made (a closed cohort with one 30-minute session, like
+   the launch class's free first class), the admin invites learners chosen from Matching (trial-invites, an automation
+   that starts in dry run), learners take a free place (an entitlement on the date and a place in the class), the usual
+   check-in, reminders, verification and admin-only recording apply; after the class learners rate it with one tap
+   (trial-ratings) and the admin approves or rejects from the scorecard. */
+const TRIAL_COLS = 'id, teacher_id, cohort_id, session_id, language, level, scheduled_at, minutes, teacher_tz, status, note, done_at, decided_at, created_at';
+const testIdsOf = async (sb) => { const { data } = await sb.rpc('admin_test_users').then((r) => r, () => ({ data: [] })); return new Set((data || []).map((x) => (typeof x === 'string' ? x : x.admin_test_users))); };
+function trialLabel(tr) { return `${tr.language} ${tr.level}`; }
+/** Times the owner and other trial classes take, for the trial times */
+async function trialBusy(sb, exceptTrial) {
+  const busy = await ownerBusy(sb);
+  const { data: tt } = await sb.from('teacher_trials').select('id, scheduled_at, minutes').eq('status', 'scheduled').gte('scheduled_at', new Date(Date.now() - 2 * HOUR).toISOString());
+  (tt || []).forEach((x) => { if (x.id !== exceptTrial) { const a = new Date(x.scheduled_at).getTime(); busy.push([a - 15 * MIN, a + (x.minutes + 15) * MIN]); } });
+  return busy;
+}
+async function availabilityOf(sb, teacherId) {
+  const { data } = await sb.from('teacher_availability').select('day_of_week, start_time, end_time, timezone').eq('teacher_id', teacherId);
+  return data || [];
+}
+/** A learner's email unless they said no to Alimun's emails (consent withdrawn) */
+async function learnerMail(sb, userId) {
+  const [{ data: u }, { data: c }] = await Promise.all([sb.auth.admin.getUserById(userId), sb.from('marketing_consent_current').select('granted').eq('user_id', userId).maybeSingle().then((r) => r, () => ({ data: null }))]);
+  const user = u && u.user;
+  return { email: user && user.email, user, emailOk: !(c && c.granted === false) };
+}
+async function sendInvite(sb, auto, tr, inv) {
+  const { data: sp } = await sb.from('student_profiles').select('user_id, full_name, ui_lang, timezone').eq('user_id', inv.user_id).maybeSingle();
+  if (!sp) return 'no profile';
+  const lang = sp.ui_lang || 'en', vars = { class: trialLabel(tr), time: ivTime(tr.scheduled_at, sp.timezone, lang) };
+  return AUTO.act(sb, auto, { key: `invite:${tr.id}:${inv.user_id}`, action: 'invite a learner to a trial class', sessionId: tr.session_id, target: sp.full_name, detail: { class: trialLabel(tr) } }, async () => {
+    const m = await learnerMail(sb, inv.user_id);
+    if (m.email && m.emailOk) await send(m.email, L.say(lang, 'trial.invite_subject', vars), ivEmail(lang, L.say(lang, 'trial.invite_heading'), 'trial.invite_body', vars, { label: L.say(lang, 'trial.invite_button'), href: `${mail.SITE}/app#/classes` }, sp.full_name));
+    await sb.from('notifications').insert({ user_id: inv.user_id, kind: 'service', title: L.say(lang, 'trial.invite_heading'), body: L.say(lang, 'trial.invite_body', vars).replace(/\*\*/g, ''), link: '/app#/classes' });
+    await sb.from('trial_invites').update({ sent_at: new Date().toISOString() }).eq('id', inv.id);
+    return { emailed: !!(m.email && m.emailOk) };
+  }, tellOwner);
+}
+/** A learner's free place in the trial class: a pass for the date and a place in the one-date class */
+async function trialPlace(sb, tr, inv, on) {
+  const { data: sp } = await sb.from('student_profiles').select('id').eq('user_id', inv.user_id).maybeSingle();
+  if (!sp) throw new Error('profile_required');
+  if (on) {
+    const { data: had } = await sb.from('entitlements').select('id').eq('user_id', inv.user_id).eq('session_id', tr.session_id).eq('status', 'active').limit(1);
+    if (!had || !had.length) {
+      const { error } = await sb.from('entitlements').insert({ user_id: inv.user_id, product_key: 'trial', variant: 'list', band: 'A', currency: 'eur', cadence: 'once', source: 'admin', status: 'active', amount_paid: 0, session_id: tr.session_id, starts_at: new Date().toISOString() });
+      if (error) throw new Error('trial pass: ' + error.message);
+    }
+    const { data: en } = await sb.from('enrollments').select('id, status').eq('student_id', sp.id).eq('cohort_id', tr.cohort_id).limit(1);
+    if (en && en.length) { if (en[0].status !== 'active') await sb.from('enrollments').update({ status: 'active', cancelled_at: null }).eq('id', en[0].id); }
+    else { const { error } = await sb.from('enrollments').insert({ student_id: sp.id, cohort_id: tr.cohort_id, status: 'active' }); if (error) throw new Error('trial place: ' + error.message); }
+  } else {
+    await sb.from('entitlements').update({ status: 'ended', ends_at: new Date().toISOString() }).eq('user_id', inv.user_id).eq('session_id', tr.session_id).eq('status', 'active');
+    await sb.from('enrollments').update({ status: 'cancelled', cancelled_at: new Date().toISOString() }).eq('student_id', sp.id).eq('cohort_id', tr.cohort_id).eq('status', 'active');
+  }
+}
+/** Everything the admin's Hiring panel shows about a teacher's trial classes */
+async function trialFile(sb, teacherId) {
+  const { data: trials } = await sb.from('teacher_trials').select(TRIAL_COLS).eq('teacher_id', teacherId).order('created_at', { ascending: false }).limit(5);
+  const out = [];
+  for (const tr of trials || []) {
+    const [{ data: s }, { data: inv }, { data: rt }, { data: recs }] = await Promise.all([
+      tr.session_id ? sb.from('sessions').select('id, status, minutes_late, teacher_seconds, learners_present, outcome, teacher_checked_in_at, teacher_checkin_via, verified_at').eq('id', tr.session_id).maybeSingle() : Promise.resolve({ data: null }),
+      sb.from('trial_invites').select('id, user_id, status, sent_at, answered_at').eq('trial_id', tr.id),
+      sb.from('trial_ratings').select('user_id, score').eq('trial_id', tr.id),
+      tr.session_id ? sb.from('class_recordings').select('id, kind, daily_recording_id, deleted_at, duration_seconds, requested_at').eq('session_id', tr.session_id) : Promise.resolve({ data: [] }),
+    ]);
+    const ids = (inv || []).map((x) => x.user_id);
+    const { data: sps } = ids.length ? await sb.from('student_profiles').select('user_id, full_name, level, timezone').in('user_id', ids) : { data: [] };
+    const nameOf = {}; (sps || []).forEach((p) => { nameOf[p.user_id] = p; });
+    const scoreOf = {}; (rt || []).forEach((r) => { scoreOf[r.user_id] = r.score; });
+    const invites = (inv || []).map((x) => Object.assign({}, x, { name: (nameOf[x.user_id] || {}).full_name || 'A learner', level: (nameOf[x.user_id] || {}).level || null, score: scoreOf[x.user_id] || null }));
+    out.push(Object.assign({}, tr, { session: s || null, invites, recordings: recs || [],
+      score: TR.scorecard({ trial: tr, session: s || {}, accepted: invites.filter((x) => x.status === 'accepted').length, ratings: (rt || []).map((r) => r.score), recordings: recs || [] }) }));
+  }
+  return out;
+}
+function rateUrl(trialId, userId, score) {
+  const sig = mail.linkSig(`trate:${trialId}:${userId}`);
+  return sig ? `${mail.SITE}/api/ops?action=trial-rate-link&t=${trialId}&u=${userId}&r=${score}&sig=${sig}` : `${mail.SITE}/app#/classes`;
+}
+async function saveRating(sb, tr, userId, score, via) {
+  const { data: inv } = await sb.from('trial_invites').select('status').eq('trial_id', tr.id).eq('user_id', userId).maybeSingle();
+  const { data: here } = tr.session_id ? await sb.from('class_presence').select('user_id').eq('session_id', tr.session_id).eq('user_id', userId).maybeSingle() : { data: null };
+  if (!(inv && inv.status === 'accepted') && !here) return 'not_in_class';
+  const start = new Date(tr.scheduled_at).getTime();
+  if (Date.now() < start + tr.minutes * MIN - 5 * MIN) return 'too_early';
+  if (Date.now() > start + 14 * DAY) return 'over';
+  const { error } = await sb.from('trial_ratings').upsert({ trial_id: tr.id, user_id: userId, score, via, updated_at: new Date().toISOString() }, { onConflict: 'trial_id,user_id' });
+  if (error) throw new Error('rating: ' + error.message);
+  return 'ok';
+}
+
+/* After the class: the trial is done, the teacher's stage moves on, the owner is told once and learners are asked to rate it */
+async function trialsAfter(sb, now) {
+  const out = { done: 0, asked: 0 };
+  const { data: due } = await sb.from('teacher_trials').select(TRIAL_COLS + ', teacher_profiles(full_name)').in('status', ['scheduled', 'done', 'approved', 'rejected'])
+    .lte('scheduled_at', new Date(now - 35 * MIN).toISOString()).gte('scheduled_at', new Date(now - 3 * DAY).toISOString()).limit(20);
+  if (!due || !due.length) return out;
+  const auto = await AUTO.load(sb, 'trial-ratings');
+  for (const tr of due) {
+    if (now < new Date(tr.scheduled_at).getTime() + (tr.minutes + 5) * MIN) continue;
+    if (tr.status === 'scheduled') {
+      const { data: flipped } = await sb.from('teacher_trials').update({ status: 'done', done_at: new Date(now).toISOString(), updated_at: new Date(now).toISOString() }).eq('id', tr.id).eq('status', 'scheduled').select('id');
+      if (!flipped || !flipped.length) continue;
+      out.done++;
+      await sb.from('teacher_profiles').update({ hiring_stage: 'trial_done' }).eq('id', tr.teacher_id).eq('hiring_stage', 'trial_scheduled');
+      const who = (tr.teacher_profiles || {}).full_name || 'The teacher';
+      await send(OWNER(), `Trial class done: ${who}`, mail.renderEmail({ hero: 'class', lang: 'en', preheader: 'The scorecard is ready.', heading: `${who}'s trial class is over`,
+        blocks: [{ p: mail.esc(`${trialLabel(tr)} at ${ivTime(tr.scheduled_at, 'America/Vancouver', 'en')}. The scorecard fills in as the video room is read (about an hour after the class) and as learners rate it. Approve or reject from their file.`) },
+          { button: { label: 'Open their file', href: `${mail.SITE}/app/admin#/teachers/${tr.teacher_id}` } }] })).catch(() => {});
+    }
+    /* Learners who took a place, asked once each (the automation's once-only key) */
+    const { data: inv } = await sb.from('trial_invites').select('user_id').eq('trial_id', tr.id).eq('status', 'accepted');
+    for (const x of inv || []) {
+      const { data: sp } = await sb.from('student_profiles').select('full_name, ui_lang, timezone').eq('user_id', x.user_id).maybeSingle();
+      if (!sp) continue;
+      const lang = sp.ui_lang || 'en', vars = { class: trialLabel(tr), time: ivTime(tr.scheduled_at, sp.timezone, lang) };
+      const r = await AUTO.act(sb, auto, { key: `rate:${tr.id}:${x.user_id}`, action: 'ask a learner to rate a trial class', sessionId: tr.session_id, target: sp.full_name }, async () => {
+        const m = await learnerMail(sb, x.user_id);
+        if (m.email && m.emailOk) await send(m.email, L.say(lang, 'trial.rate_subject'), mail.renderEmail({ hero: 'class', lang, preheader: L.say(lang, 'trial.rate_subject'), heading: L.say(lang, 'trial.rate_subject'),
+          blocks: [{ p: L.hello(lang, sp.full_name) }, { p: L.html(lang, 'trial.rate_body', vars) }, { buttons: [3, 2, 1].map((n) => ({ label: L.say(lang, 'trial.rate_' + n), href: rateUrl(tr.id, x.user_id, n), secondary: n !== 3 })) }] }));
+        await sb.from('notifications').insert({ user_id: x.user_id, kind: 'service', title: L.say(lang, 'trial.rate_subject'), body: L.say(lang, 'trial.rate_body', vars).replace(/\*\*/g, ''), link: '/app#/classes' });
+        return { emailed: !!(m.email && m.emailOk) };
+      }, tellOwner);
+      if (r === 'done' || r === 'dry_run') out.asked++;
+    }
+  }
+  return out;
+}
+
+async function trialAction(action, req, res, sb) {
+  if (action === 'trial-rate-link') {
+    /* One tap from the email: signed for this trial and this learner */
+    const tid = String(req.query.t || ''), uid = String(req.query.u || ''), score = parseInt(req.query.r, 10);
+    const back = (q) => { res.statusCode = 302; res.setHeader('Location', `${mail.SITE}/app?rated=${q}#/classes`); return res.end(); };
+    if (!UUID.test(tid) || !UUID.test(uid) || ![1, 2, 3].includes(score) || !mail.checkLinkSig(`trate:${tid}:${uid}`, String(req.query.sig || ''))) return back('bad');
+    const { data: tr } = await sb.from('teacher_trials').select(TRIAL_COLS).eq('id', tid).maybeSingle();
+    if (!tr) return back('bad');
+    return back(await saveRating(sb, tr, uid, score, 'email') === 'ok' ? 'done' : 'bad');
+  }
+  if (req.method !== 'POST') return res.status(405).json({ error: 'method not allowed' });
+  const user = await userOf(req, sb);
+  if (!user) return res.status(401).json({ error: 'sign in' });
+  const isAdmin = !!(user.app_metadata && user.app_metadata.role === 'admin');
+  const b = body(req) || {};
+  const trialOf = async (id) => { if (!UUID.test(String(id || ''))) return null; const { data } = await sb.from('teacher_trials').select(TRIAL_COLS).eq('id', id).maybeSingle(); return data || null; };
+
+  /* ----- The learner ----- */
+  if (action === 'trial-mine') {
+    const now = Date.now();
+    const { data: inv } = await sb.from('trial_invites').select('id, trial_id, status, sent_at').eq('user_id', user.id).not('sent_at', 'is', null).in('status', ['invited', 'accepted']).limit(10);
+    const ids = (inv || []).map((x) => x.trial_id);
+    const { data: trs } = ids.length ? await sb.from('teacher_trials').select(TRIAL_COLS).in('id', ids) : { data: [] };
+    const { data: mine } = await sb.from('trial_ratings').select('trial_id, score').eq('user_id', user.id);
+    const rated = {}; (mine || []).forEach((r) => { rated[r.trial_id] = r.score; });
+    const invites = [], rate = [];
+    for (const x of inv || []) {
+      const tr = (trs || []).filter((t) => t.id === x.trial_id)[0];
+      if (!tr) continue;
+      const start = new Date(tr.scheduled_at).getTime(), end = start + tr.minutes * MIN;
+      const item = { invite: x.id, trial: tr.id, session: tr.session_id, at: tr.scheduled_at, minutes: tr.minutes, language: tr.language, level: tr.level, status: x.status };
+      if (tr.status === 'scheduled' && now < end) invites.push(item);
+      else if (x.status === 'accepted' && tr.status !== 'cancelled' && now >= end - 5 * MIN && now < start + 14 * DAY) rate.push(Object.assign(item, { score: rated[tr.id] || null }));
+    }
+    return res.status(200).json({ invites, rate });
+  }
+  if (action === 'trial-answer') {
+    const { data: inv } = UUID.test(String(b.invite || '')) ? await sb.from('trial_invites').select('*').eq('id', b.invite).eq('user_id', user.id).maybeSingle() : { data: null };
+    if (!inv || !inv.sent_at || !['invited', 'accepted'].includes(inv.status)) return res.status(404).json({ error: 'no_invitation' });
+    const tr = await trialOf(inv.trial_id);
+    if (!tr || tr.status !== 'scheduled' || Date.now() > new Date(tr.scheduled_at).getTime()) return res.status(409).json({ error: 'over' });
+    if (b.yes === true) {
+      if (inv.status !== 'accepted') {
+        const { count } = await sb.from('trial_invites').select('id', { count: 'exact', head: true }).eq('trial_id', tr.id).eq('status', 'accepted');
+        if ((count || 0) >= TR.MAX_PLACES) return res.status(409).json({ error: 'full' });
+      }
+      try { await trialPlace(sb, tr, inv, true); } catch (e) { return res.status(409).json({ error: e.message === 'profile_required' ? 'profile_required' : 'not_saved' }); }
+      await sb.from('trial_invites').update({ status: 'accepted', answered_at: new Date().toISOString() }).eq('id', inv.id);
+      return res.status(200).json({ status: 'accepted' });
+    }
+    if (inv.status === 'accepted') await trialPlace(sb, tr, inv, false);
+    await sb.from('trial_invites').update({ status: 'declined', answered_at: new Date().toISOString() }).eq('id', inv.id);
+    return res.status(200).json({ status: 'declined' });
+  }
+  if (action === 'trial-rate') {
+    const tr = await trialOf(b.trial), score = parseInt(b.score, 10);
+    if (!tr || ![1, 2, 3].includes(score)) return res.status(400).json({ error: 'bad request' });
+    const r = await saveRating(sb, tr, user.id, score, 'dashboard');
+    return r === 'ok' ? res.status(200).json({ ok: true, score }) : res.status(409).json({ error: r });
+  }
+
+  /* ----- The admin ----- */
+  if (!isAdmin) return res.status(403).json({ error: 'admins only' });
+  const teacherOf = async (id) => { if (!UUID.test(String(id || ''))) return null; const { data } = await sb.from('teacher_profiles').select('id, user_id, full_name, ui_lang, status, hiring_stage, languages').eq('id', id).maybeSingle(); return data || null; };
+  if (action === 'trial-file') {
+    const tp = await teacherOf(b.teacher);
+    if (!tp) return res.status(404).json({ error: 'no such teacher' });
+    const [trials, invAuto, rateAuto] = await Promise.all([trialFile(sb, tp.id), AUTO.load(sb, 'trial-invites'), AUTO.load(sb, 'trial-ratings')]);
+    const pick = (a) => (a ? { enabled: a.enabled, dry_run: a.dry_run } : null);
+    return res.status(200).json({ trials, automations: { invites: pick(invAuto), ratings: pick(rateAuto) }, max: TR.MAX_PLACES });
+  }
+  if (action === 'trial-slots') {
+    const tp = await teacherOf(b.teacher);
+    if (!tp) return res.status(404).json({ error: 'no such teacher' });
+    const avail = await availabilityOf(sb, tp.id);
+    const { data: lastIv } = await sb.from('teacher_interviews').select('teacher_tz').eq('teacher_id', tp.id).not('teacher_tz', 'is', null).order('scheduled_at', { ascending: false }).limit(1).maybeSingle();
+    return res.status(200).json({ slots: TR.trialSlots({ availability: avail, busy: await trialBusy(sb) }), zone: (avail[0] || {}).timezone || (lastIv && lastIv.teacher_tz) || null, availability: avail.length, languages: tp.languages || [] });
+  }
+  if (action === 'trial-schedule') {
+    const tp = await teacherOf(b.teacher);
+    if (!tp) return res.status(404).json({ error: 'no such teacher' });
+    if (tp.status !== 'pending' || tp.hiring_stage !== 'pre_approved') return res.status(409).json({ error: 'Only a pre-approved teacher can be given a trial class.' });
+    const language = (tp.languages || []).filter((l) => String(l).toLowerCase() === String(b.language || '').toLowerCase())[0];
+    if (!language) return res.status(400).json({ error: 'Choose a language they teach.' });
+    if (!TR.LEVELS.includes(b.level)) return res.status(400).json({ error: 'Choose a level.' });
+    const at = new Date(String(b.at || ''));
+    const avail = await availabilityOf(sb, tp.id), busy = await trialBusy(sb);
+    if (isNaN(at.getTime())) return res.status(400).json({ error: 'Choose a time.' });
+    if (b.custom === true) {
+      /* A time agreed with the teacher (they have no availability yet): on the half hour, 48 hours to 60 days ahead, not busy */
+      const t0 = at.getTime();
+      if (t0 % (30 * MIN) || t0 < Date.now() + TR.LEAD_HOURS * HOUR || t0 > Date.now() + 60 * DAY) return res.status(400).json({ error: 'Choose a time on the hour or half hour, at least 48 hours ahead.' });
+      if (busy.some((x) => t0 < x[1] && t0 + TR.MINUTES * MIN > x[0])) return res.status(409).json({ error: 'You are busy then (another interview, trial class or class).' });
+    } else if (!TR.trialSlots({ availability: avail, busy }).includes(at.toISOString())) return res.status(409).json({ error: 'That time is no longer free. Choose another.' });
+    const { data: lastIv } = await sb.from('teacher_interviews').select('teacher_tz').eq('teacher_id', tp.id).not('teacher_tz', 'is', null).order('scheduled_at', { ascending: false }).limit(1).maybeSingle();
+    const tz = IV.validZone((avail[0] || {}).timezone) ? avail[0].timezone : lastIv && IV.validZone(lastIv.teacher_tz) ? lastIv.teacher_tz : 'UTC', wall = TR.wallClock(at.getTime(), tz);
+    const { data: co, error: e1 } = await sb.from('cohorts').insert({ teacher_id: tp.id, language, level: b.level, goal_track: 'foundations', tier: 'open', max_students: TR.MAX_PLACES,
+      description: `Trial class: ${tp.full_name || 'new teacher'}`.slice(0, 200), schedule_days: [wall.day], schedule_time: wall.time, timezone: tz, status: 'closed', class_minutes: TR.MINUTES }).select('id').single();
+    if (e1) throw new Error('trial class: ' + e1.message);
+    const { data: s, error: e2 } = await sb.from('sessions').insert({ cohort_id: co.id, scheduled_at: at.toISOString(), status: 'scheduled' }).select('id').single();
+    if (e2) { await sb.from('cohorts').delete().eq('id', co.id); throw new Error('trial date: ' + e2.message); }
+    const { data: tr, error: e3 } = await sb.from('teacher_trials').insert({ teacher_id: tp.id, cohort_id: co.id, session_id: s.id, language, level: b.level, scheduled_at: at.toISOString(), minutes: TR.MINUTES, teacher_tz: tz, created_by: user.id }).select(TRIAL_COLS).single();
+    if (e3) { await sb.from('sessions').delete().eq('id', s.id); await sb.from('cohorts').delete().eq('id', co.id); return res.status(409).json({ error: e3.code === '23505' ? 'They already have a trial class.' : e3.message }); }
+    await sb.from('teacher_profiles').update({ hiring_stage: 'trial_scheduled' }).eq('id', tp.id);
+    const lang = tp.ui_lang || 'en', vars = { class: trialLabel(tr), time: ivTime(tr.scheduled_at, tz, lang) };
+    await send(await emailOf(sb, tp.user_id), L.say(lang, 'trial.scheduled_subject', vars), ivEmail(lang, L.say(lang, 'trial.scheduled_heading'), 'trial.scheduled_body', vars, { label: L.say(lang, 'trial.dash_button'), href: `${mail.SITE}/app/teach#/` }, tp.full_name)).catch(() => {});
+    await sb.from('notifications').insert({ user_id: tp.user_id, kind: 'service', title: L.say(lang, 'trial.scheduled_heading'), body: L.say(lang, 'trial.scheduled_body', vars).replace(/\*\*/g, ''), link: '/app/teach#/' });
+    await sb.from('automation_log').insert({ automation: 'trial-invites', key: 'schedule:' + tr.id, action: 'an admin scheduled a trial class', target: tp.full_name, session_id: s.id, detail: { by: user.email, at: tr.scheduled_at, class: trialLabel(tr) }, ok: true });
+    return res.status(200).json({ trial: tr });
+  }
+  if (action === 'trial-invite') {
+    /* { trial, learners: [user ids] }: new invitations, then every invitation not sent yet is sent (dry run: logged only) */
+    const tr = await trialOf(b.trial);
+    if (!tr || tr.status !== 'scheduled') return res.status(404).json({ error: 'no such trial class' });
+    if (Date.now() > new Date(tr.scheduled_at).getTime() - 2 * HOUR) return res.status(409).json({ error: 'The class starts in less than 2 hours.' });
+    const want = Array.isArray(b.learners) ? b.learners.filter((x) => UUID.test(String(x))).slice(0, 30) : [];
+    const { data: had } = await sb.from('trial_invites').select('user_id').eq('trial_id', tr.id);
+    const refused = {}, tests = await testIdsOf(sb);
+    let n = (had || []).length;
+    for (const uid of want) {
+      if ((had || []).some((x) => x.user_id === uid)) continue;
+      if (n >= 20) { refused[uid] = 'too many invitations'; continue; }
+      const { data: sp } = await sb.from('student_profiles').select('id, full_name, language').eq('user_id', uid).maybeSingle();
+      if (!sp) { refused[uid] = 'not a learner'; continue; }
+      if (String(sp.language || '').toLowerCase() !== tr.language.toLowerCase()) { refused[uid] = 'learns another language'; continue; }
+      const { data: u } = await sb.auth.admin.getUserById(uid), au = (u && u.user) || {};
+      /* Never the owner's test accounts, admins or teachers */
+      if (tests.has(uid) || isTestAccount({ email: au.email, name: sp.full_name, app_metadata: au.app_metadata }) || ['admin', 'teacher'].includes((au.app_metadata || {}).role)) { refused[uid] = 'test or staff account'; continue; }
+      const { error } = await sb.from('trial_invites').insert({ trial_id: tr.id, user_id: uid, student_id: sp.id, created_by: user.id });
+      if (!error) n++;
+    }
+    const auto = await AUTO.load(sb, 'trial-invites');
+    const { data: todo } = await sb.from('trial_invites').select('id, user_id').eq('trial_id', tr.id).eq('status', 'invited').is('sent_at', null);
+    const results = {};
+    for (const inv of todo || []) results[inv.user_id] = await sendInvite(sb, auto, tr, inv);
+    return res.status(200).json({ results, refused, automation: auto ? { enabled: auto.enabled, dry_run: auto.dry_run } : null });
+  }
+  if (action === 'trial-cancel') {
+    const tr = await trialOf(b.trial);
+    if (!tr || tr.status !== 'scheduled') return res.status(404).json({ error: 'no such trial class' });
+    const { data: tp } = await sb.from('teacher_profiles').select('id, user_id, full_name, ui_lang').eq('id', tr.teacher_id).maybeSingle();
+    await sb.from('teacher_trials').update({ status: 'cancelled', note: typeof b.note === 'string' ? b.note.slice(0, 2000) : tr.note, updated_at: new Date().toISOString() }).eq('id', tr.id);
+    if (tr.session_id) await sb.from('sessions').update({ status: 'cancelled' }).eq('id', tr.session_id);
+    const { data: inv } = await sb.from('trial_invites').select('id, user_id, status, sent_at').eq('trial_id', tr.id).in('status', ['invited', 'accepted']);
+    const auto = await AUTO.load(sb, 'trial-invites');
+    for (const x of inv || []) {
+      if (x.status === 'accepted') await trialPlace(sb, tr, x, false).catch(() => {});
+      await sb.from('trial_invites').update({ status: 'cancelled' }).eq('id', x.id);
+      if (!x.sent_at) continue;
+      const { data: sp } = await sb.from('student_profiles').select('full_name, ui_lang, timezone').eq('user_id', x.user_id).maybeSingle();
+      if (!sp) continue;
+      const lang = sp.ui_lang || 'en', vars = { class: trialLabel(tr), time: ivTime(tr.scheduled_at, sp.timezone, lang) };
+      await AUTO.act(sb, auto, { key: `cancel:${tr.id}:${x.user_id}`, action: 'tell a learner a trial class is cancelled', sessionId: tr.session_id, target: sp.full_name }, async () => {
+        const m = await learnerMail(sb, x.user_id);
+        if (m.email && m.emailOk) await send(m.email, L.say(lang, 'trial.cancelled_subject_l', vars), ivEmail(lang, L.say(lang, 'trial.cancelled_subject_l', vars), 'trial.cancelled_body_l', vars, null, sp.full_name));
+        await sb.from('notifications').insert({ user_id: x.user_id, kind: 'service', title: L.say(lang, 'trial.cancelled_subject_l', vars), body: L.say(lang, 'trial.cancelled_body_l', vars).replace(/\*\*/g, ''), link: '/app#/classes' });
+      }, tellOwner);
+    }
+    if (tp) {
+      await sb.from('teacher_profiles').update({ hiring_stage: 'pre_approved' }).eq('id', tp.id).in('hiring_stage', ['trial_scheduled', 'trial_done']);
+      const lang = tp.ui_lang || 'en', vars = { time: ivTime(tr.scheduled_at, tr.teacher_tz, lang) };
+      if (b.notify !== false) await send(await emailOf(sb, tp.user_id), L.say(lang, 'trial.cancelled_subject_t', vars), ivEmail(lang, L.say(lang, 'trial.cancelled_subject_t', vars), 'trial.cancelled_body_t', vars, null, tp.full_name)).catch(() => {});
+    }
+    return res.status(200).json({ ok: true });
+  }
+  if (action === 'trial-decide') {
+    /* Records the decision on the trial; the browser then approves or rejects the teacher through the usual
+       /api/admin/teacher?action=set-status, which sets the stage and sends the existing welcome or rejection email */
+    const tr = await trialOf(b.trial), result = b.result;
+    if (!tr || !['approved', 'rejected'].includes(result)) return res.status(400).json({ error: 'bad request' });
+    if (!['scheduled', 'done', 'approved', 'rejected'].includes(tr.status)) return res.status(409).json({ error: 'This trial class was cancelled.' });
+    if (Date.now() < new Date(tr.scheduled_at).getTime() + 10 * MIN) return res.status(409).json({ error: 'Decide once the class has started.' });
+    const { error } = await sb.from('teacher_trials').update({ status: result, note: typeof b.note === 'string' ? b.note.slice(0, 2000) : tr.note, decided_at: new Date().toISOString(), decided_by: user.id, updated_at: new Date().toISOString(),
+      done_at: tr.done_at || new Date().toISOString() }).eq('id', tr.id);
+    if (error) throw new Error(error.message);
+    return res.status(200).json({ ok: true });
   }
   return res.status(400).json({ error: 'unknown action' });
 }
@@ -582,11 +907,12 @@ module.exports = async function handler(req, res) {
       const late = await AUTO.load(sb, 'teacher-late'), oc = await AUTO.load(sb, 'class-outcomes');
       try { out.late = await lateCheck(sb, now, late); } catch (e) { out.late = { error: String(e.message || e) }; }
       try { out.outcomes = await outcomes(sb, now, oc); } catch (e) { out.outcomes = { error: String(e.message || e) }; }
+      try { out.trials = await trialsAfter(sb, now); } catch (e) { out.trials = { error: String(e.message || e) }; }
       try { out.recordings = await syncRecordings(sb, now, await AUTO.load(sb, 'recording-guard')); } catch (e) { out.recordings = { error: String(e.message || e) }; }
       if (new Date(now).getUTCMinutes() < 5) { try { out.cleanup = await cleanupRecordings(sb, now, await AUTO.load(sb, 'recording-cleanup')); } catch (e) { out.cleanup = { error: String(e.message || e) }; } }
-      const ok = !(out.late && out.late.error) && !(out.outcomes && out.outcomes.error) && !(out.recordings && out.recordings.error) && !(out.cleanup && out.cleanup.error);
+      const ok = !(out.trials && out.trials.error) && !(out.late && out.late.error) && !(out.outcomes && out.outcomes.error) && !(out.recordings && out.recordings.error) && !(out.cleanup && out.cleanup.error);
       /* Quiet runs (nothing due) are not recorded every 5 minutes: only work done and failures */
-      if (!ok || (out.late && out.late.checked) || (out.outcomes && (out.outcomes.verified || out.outcomes.failed)) || (out.recordings && (out.recordings.linked || out.recordings.unknown)) || (out.cleanup && out.cleanup.deleted)) await recordRun(sb, 'vercel:cron-class-watch', ok, out);
+      if (!ok || (out.late && out.late.checked) || (out.outcomes && (out.outcomes.verified || out.outcomes.failed)) || (out.recordings && (out.recordings.linked || out.recordings.unknown)) || (out.cleanup && out.cleanup.deleted) || (out.trials && (out.trials.done || out.trials.asked))) await recordRun(sb, 'vercel:cron-class-watch', ok, out);
       return res.status(200).json(out);
     }
     if (action === 'cron-clips') {
@@ -608,6 +934,7 @@ module.exports = async function handler(req, res) {
       return res.status(200).json({ day: ymd, result: r });
     }
     if (/^interview-(hours|invite|decide|state|book|join)$/.test(action)) return await interviewAction(action, req, res, sb);
+    if (/^trial-(mine|answer|rate|rate-link|file|slots|schedule|invite|cancel|decide)$/.test(action)) return await trialAction(action, req, res, sb);
     if (action === 'checkin-link') {
       /* One click from the reminder email: signed for this class date and this teacher */
       const sid = String(req.query.s || ''), uid = String(req.query.u || ''), back = (q) => { res.statusCode = 302; res.setHeader('Location', `${mail.SITE}/app/teach?checkin=${q}#/`); return res.end(); };

@@ -356,7 +356,36 @@
     return ymd(now.getTime() + 7 * 86400000);
   }
 
-  return { LEVELS: LEVELS, WEEK: WEEK, KINDS: KINDS, KIND_NAME: KIND_NAME, PRODUCTS: PRODUCTS, GOALS: GOALS, validZone: validZone, offsetMin: offsetMin, toSlot: toSlot, slotIn: slotIn, hhmm: hhmm,
+  /* ---------- A new teacher's trial class (docs/TEACHER_HIRING_PLAN.md, step 2) ----------
+     The best learners to invite to a 30-minute class in `language` at `level` starting at `at` (ms): the same language,
+     the same level or one level apart, ranked by level, whether the time suits them (their stated times, their days, or
+     the usual evening and weekend hours in their own time zone) and how ready they are. Never the owner's test accounts,
+     staff, or learners already in a class. Each comes with the reasons in plain words. */
+  var TEST_NAME = /^\s*test(\s+test)*\s*$/i;
+  function isTestRow(r) { return r.test === true || String(r.email || '').toLowerCase().indexOf('bchysf') > -1 || TEST_NAME.test(String(r.name || '')); }
+  function trialPick(data, o) {
+    var at = new Date(o.at), now = o.now ? new Date(o.now) : new Date(), want = LEVELS.indexOf(o.level);
+    var d = at.getUTCDay(), slot = d * 48 + Math.floor((at.getUTCHours() * 60 + at.getUTCMinutes()) / 30), prev = (slot + SLOTS - 1) % SLOTS;
+    var out = [];
+    ((data && data.learners) || []).forEach(function (r) {
+      if (!r || isTestRow(r) || r.role === 'admin' || r.role === 'teacher') return;
+      if (String(r.language || '').toLowerCase() !== String(o.language || '').toLowerCase()) return;
+      var l = normalise(r, at), lv = LEVELS.indexOf(l.level);
+      if (lv < 0 || want < 0 || Math.abs(lv - want) > 1) return;
+      var fits = l.slots.has(slot) || l.slots.has(prev);
+      var score = (lv === want ? 50 : 20) + (fits ? { stated: 30, days: 25, assumed: 15 }[l.times] || 0 : 0) + Math.round(readiness(l, now).score / 5) - (l.inRoom ? 10 : 0);
+      var why = [lv === want ? 'level ' + l.level + (l.tested ? ' (level test)' : '') : 'level ' + l.level + ', one level apart'];
+      if (!l.tz) why.push('time zone not known');
+      else if (fits) why.push(l.times === 'stated' ? 'the time is in the hours they gave' : l.times === 'days' ? 'on one of their days' : 'an evening or weekend hour where they live');
+      else why.push('the time is outside their usual hours');
+      if (l.inRoom) why.push('already in a class');
+      if (l.ready.score >= 30) why.push(l.ready.why.slice(0, 2).join(', '));
+      out.push({ userId: l.userId, name: l.name, email: l.email, level: l.level, tz: l.tz, fits: fits, score: score, why: why.filter(Boolean).join('; '), paying: l.paying });
+    });
+    return out.sort(function (a, b) { return b.score - a.score || String(a.name).localeCompare(String(b.name)); });
+  }
+
+  return { trialPick: trialPick, LEVELS: LEVELS, WEEK: WEEK, KINDS: KINDS, KIND_NAME: KIND_NAME, PRODUCTS: PRODUCTS, GOALS: GOALS, validZone: validZone, offsetMin: offsetMin, toSlot: toSlot, slotIn: slotIn, hhmm: hhmm,
     region: region, normalise: normalise, weekOf: weekOf, compat: compat, bestMatches: bestMatches, readiness: readiness, productKind: productKind, candidates: candidates,
     fits: fits, run: run, heat: heat, timesIn: timesIn, startDate: startDate };
 });

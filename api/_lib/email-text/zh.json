@@ -325,5 +325,24 @@
     "passed_subject": "下一步：在 Alimun 上一节 30 分钟的试讲课",
     "passed_heading": "感谢你的通话",
     "passed_body": "和你交谈很愉快。下一步是和我们的几位学员上一节 30 分钟的免费试讲课，向我们展示你的教学方式。我们会写信告诉你具体安排。"
+  },
+  "trial": {
+    "scheduled_subject": "你在 Alimun 的试讲课：{time}",
+    "scheduled_heading": "你的试讲课已安排",
+    "scheduled_body": "你的 30 分钟免费试讲课安排在 **{time}**：{class}，和我们的几位学员一起。请至少提前 5 分钟在你的面板中签到，然后从那里进入课堂。Alimun 的工作人员可能会进来旁听，课程会被录制以便我们回看；只有 Alimun 的工作人员能看到录像。",
+    "dash_button": "打开我的面板",
+    "cancelled_subject_t": "你在 {time} 的试讲课已取消",
+    "cancelled_body_t": "你在 **{time}** 的试讲课已取消。我们会写信告诉你新的时间。",
+    "invite_subject": "邀请你参加一节 30 分钟的免费 {class} 课",
+    "invite_heading": "邀请你参加一节免费课",
+    "invite_body": "Alimun 的一位新老师将在 **{time}** 上一节 30 分钟的免费 {class} 课，你的水平正合适。名额不多：请在你的面板“课程”中预留位置。课程会被录制，以便 Alimun 评估新老师；只有 Alimun 的工作人员会观看录像。",
+    "invite_button": "查看邀请",
+    "cancelled_subject_l": "{time} 的免费课已取消",
+    "cancelled_body_l": "**{time}** 的 30 分钟免费 {class} 课已取消。很抱歉。你不需要做任何事。",
+    "rate_subject": "这节课怎么样？",
+    "rate_body": "感谢你参加 {time} 的免费 {class} 课。这节课怎么样？点一个答案，只需一秒钟。",
+    "rate_3": "很好",
+    "rate_2": "好",
+    "rate_1": "不好"
   }
 }

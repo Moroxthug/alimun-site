@@ -325,5 +325,24 @@
     "passed_subject": "Nächster Schritt: eine 30-minütige Probestunde bei Alimun",
     "passed_heading": "Danke für das Gespräch",
     "passed_body": "Wir haben uns über das Gespräch gefreut. Der nächste Schritt ist eine kostenlose 30-minütige Probestunde mit einigen unserer Lernenden, in der Sie zeigen, wie Sie unterrichten. Wir schreiben Ihnen mit den Einzelheiten."
+  },
+  "trial": {
+    "scheduled_subject": "Ihre Probestunde bei Alimun: {time}",
+    "scheduled_heading": "Ihre Probestunde ist gebucht",
+    "scheduled_body": "Ihre kostenlose 30-minütige Probestunde ist für **{time}** gebucht: {class}, mit einigen unserer Lernenden. Melden Sie sich mindestens 5 Minuten vorher in Ihrem Dashboard an und treten Sie von dort aus dem Unterricht bei. Jemand von Alimun kann zum Zuschauen dazukommen, und die Stunde wird aufgezeichnet, damit wir sie auswerten können; nur das Alimun-Team kann die Aufzeichnung sehen.",
+    "dash_button": "Mein Dashboard öffnen",
+    "cancelled_subject_t": "Ihre Probestunde am {time} ist abgesagt",
+    "cancelled_body_t": "Ihre Probestunde am **{time}** ist abgesagt. Wir schreiben Ihnen mit einem neuen Termin.",
+    "invite_subject": "Eine kostenlose 30-minütige {class}-Stunde für Sie",
+    "invite_heading": "Sie sind zu einer kostenlosen Stunde eingeladen",
+    "invite_body": "Eine neue Lehrkraft bei Alimun gibt am **{time}** eine kostenlose 30-minütige {class}-Stunde, und Ihr Niveau passt. Es gibt nur wenige Plätze: Sichern Sie sich Ihren in Ihrem Dashboard unter Kurse. Die Stunde wird aufgezeichnet, damit Alimun die neue Lehrkraft beurteilen kann; nur das Alimun-Team sieht die Aufzeichnung.",
+    "invite_button": "Einladung ansehen",
+    "cancelled_subject_l": "Die kostenlose Stunde am {time} ist abgesagt",
+    "cancelled_body_l": "Die kostenlose 30-minütige {class}-Stunde am **{time}** ist abgesagt. Das tut uns leid. Sie müssen nichts tun.",
+    "rate_subject": "Wie war die Stunde?",
+    "rate_body": "Danke, dass Sie an der kostenlosen {class}-Stunde am {time} teilgenommen haben. Wie war sie? Tippen Sie auf eine Antwort, das dauert eine Sekunde.",
+    "rate_3": "Sehr gut",
+    "rate_2": "Gut",
+    "rate_1": "Nicht gut"
   }
 }

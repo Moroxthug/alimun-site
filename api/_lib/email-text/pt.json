@@ -325,5 +325,24 @@
     "passed_subject": "Próximo passo: uma aula experimental de 30 minutos com a Alimun",
     "passed_heading": "Obrigado pela chamada",
     "passed_body": "Gostámos de falar consigo. O próximo passo é uma aula experimental gratuita de 30 minutos com alguns dos nossos alunos, para nos mostrar como ensina. Vamos escrever-lhe com os detalhes."
+  },
+  "trial": {
+    "scheduled_subject": "A sua aula experimental com a Alimun: {time}",
+    "scheduled_heading": "A sua aula experimental está marcada",
+    "scheduled_body": "A sua aula experimental gratuita de 30 minutos está marcada para **{time}**: {class}, com alguns dos nossos alunos. Faça o check-in no seu painel pelo menos 5 minutos antes e entre na aula a partir daí. Alguém da Alimun pode entrar para assistir, e a aula é gravada para que a possamos rever; só a equipa da Alimun pode ver a gravação.",
+    "dash_button": "Abrir o meu painel",
+    "cancelled_subject_t": "A sua aula experimental de {time} foi cancelada",
+    "cancelled_body_t": "A sua aula experimental de **{time}** foi cancelada. Vamos escrever-lhe com uma nova hora.",
+    "invite_subject": "Uma aula gratuita de {class} de 30 minutos para si",
+    "invite_heading": "Está convidado para uma aula gratuita",
+    "invite_body": "Um novo professor da Alimun dá uma aula gratuita de {class} de 30 minutos em **{time}**, e o seu nível encaixa. Há poucos lugares: reserve o seu no seu painel, em Aulas. A aula é gravada para que a Alimun possa avaliar o novo professor; só a equipa da Alimun vê a gravação.",
+    "invite_button": "Ver o convite",
+    "cancelled_subject_l": "A aula gratuita de {time} foi cancelada",
+    "cancelled_body_l": "A aula gratuita de {class} de 30 minutos de **{time}** foi cancelada. Lamentamos. Não precisa de fazer nada.",
+    "rate_subject": "Como foi a aula?",
+    "rate_body": "Obrigado por participar na aula gratuita de {class} de {time}. Como foi? Toque numa resposta; demora um segundo.",
+    "rate_3": "Muito boa",
+    "rate_2": "Boa",
+    "rate_1": "Não foi boa"
   }
 }

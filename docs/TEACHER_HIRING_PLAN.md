@@ -27,11 +27,35 @@ approved → assigned; or rejected at any point. The owner can still approve a t
 - After it: "Pre-approve" (the teacher is told the next step is a 30-minute trial class) or "Reject" (the existing
   rejection email), with a note only admins see.
 
-## Step 2: the trial class (next, after the owner has seen step 1)
+## Step 2: the trial class (built 14 Nov 2026)
 
 A free 30-minute taster for real learners at a level the teacher teaches, at a time from the teacher's availability;
 learners invited from Matching; check-in, verification and a full recording by the owner; learners rate it with one
 tap; a scorecard; "Approve" or "Reject".
+
+- Admin, a pre-approved teacher's file: choose the language (one they teach) and level, then a time from their weekly
+  availability (`teacher_availability`; `room_availability` is empty), every half hour from 48 hours to 21 days ahead,
+  leaving out the owner's interviews, the classes the owner teaches and other trial classes. Teachers in hiring cannot
+  set availability yet, so a time agreed with them can be typed instead (still at least 48 hours ahead, not busy).
+- Booking makes a one-date class (a closed cohort with one 30-minute session, up to 8 places, the teacher as its teacher)
+  and a `teacher_trials` row; the stage becomes trial_scheduled and the teacher is emailed. The teacher's dashboard shows
+  the time, Check in (from an hour before) and Join (from 15 minutes before; their own trial date only, through
+  /api/join-session). Reminders, the missing check-in alert, the late alert, verification and proof clips work as for
+  any class.
+- Learners: "Suggest learners from Matching" ranks real learners of the language at the level or one level apart by
+  level, whether the time suits them where they live, and activity (`trialPick` in js/match.js); test accounts and staff
+  are never suggested, and the server refuses them again. Invitations go through the `trial-invites` automation (email
+  unless they withdrew consent, and a dashboard note); it starts in dry run, and an invitation only appears on the
+  learner's Classes page once it is really sent. A learner takes a free place (a `trial` entitlement on the date and a
+  place in the class) or gives it up.
+- The owner joins as Alimun staff and records from the class date page (admin-only recording, unchanged).
+- After the class: the trial is marked done, the stage becomes trial_done, the owner is emailed once, and learners who
+  took a place are asked to rate it with one tap (`trial-ratings` automation, dry run at first; email buttons are signed
+  one-tap links; the Classes page has the same three answers). Ratings in `trial_ratings`, written only by the server.
+- Scorecard on the teacher's file: punctuality, check-in, time in the room, learners present and booked, ratings, the
+  recording (Watch), a note; Approve or Reject record the decision on the trial and then use the existing set-status
+  (approved with the welcome email, or rejected with the rejection email). Cancelling a trial releases the places, tells
+  the learners (through `trial-invites`) and the teacher, and moves the teacher back to pre_approved.
 
 ## Step 3: assignment (after step 2)
 

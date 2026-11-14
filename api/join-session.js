@@ -143,7 +143,12 @@ module.exports = async function handler(req, res) {
 
     const teacherProfile = session.cohorts?.teacher_profiles;
     // A suspended (or pending) teacher is not treated as the class owner.
-    const isTeacher = !!teacherProfile && teacherProfile.user_id === user.id && teacherProfile.status === 'approved';
+    let isTeacher = !!teacherProfile && teacherProfile.user_id === user.id && teacherProfile.status === 'approved';
+    // A teacher still in hiring teaches their own trial class (docs/TEACHER_HIRING_PLAN.md, step 2), and only that date
+    if (!isTeacher && teacherProfile && teacherProfile.user_id === user.id && teacherProfile.status === 'pending') {
+      const { data: trial } = await supabase.from('teacher_trials').select('id').eq('session_id', session.id).eq('teacher_id', teacherProfile.id).eq('status', 'scheduled').maybeSingle();
+      isTeacher = !!trial;
+    }
 
     // Or an actively enrolled, actively paying student?
     let studentProfile = null;

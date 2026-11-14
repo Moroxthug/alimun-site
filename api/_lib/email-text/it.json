@@ -325,5 +325,24 @@
     "passed_subject": "Prossimo passo: una lezione di prova di 30 minuti con Alimun",
     "passed_heading": "Grazie per la chiamata",
     "passed_body": "Ci ha fatto piacere parlare con te. Il prossimo passo è una lezione di prova gratuita di 30 minuti con alcuni dei nostri studenti, per mostrarci come insegni. Ti scriveremo con i dettagli."
+  },
+  "trial": {
+    "scheduled_subject": "La tua lezione di prova con Alimun: {time}",
+    "scheduled_heading": "La tua lezione di prova è prenotata",
+    "scheduled_body": "La tua lezione di prova gratuita di 30 minuti è prenotata per **{time}**: {class}, con alcuni dei nostri studenti. Fai il check-in dalla tua dashboard almeno 5 minuti prima, poi entra nella lezione da lì. Qualcuno di Alimun può entrare per osservare, e la lezione viene registrata per poterla rivedere; solo lo staff di Alimun può vedere la registrazione.",
+    "dash_button": "Apri la mia dashboard",
+    "cancelled_subject_t": "La tua lezione di prova del {time} è annullata",
+    "cancelled_body_t": "La tua lezione di prova del **{time}** è annullata. Ti scriveremo con un nuovo orario.",
+    "invite_subject": "Una lezione gratuita di {class} di 30 minuti per te",
+    "invite_heading": "Sei invitato a una lezione gratuita",
+    "invite_body": "Un nuovo insegnante di Alimun tiene una lezione gratuita di {class} di 30 minuti il **{time}**, e il tuo livello è adatto. I posti sono pochi: prenota il tuo nella dashboard, in Lezioni. La lezione viene registrata perché Alimun possa valutare il nuovo insegnante; solo lo staff di Alimun guarda la registrazione.",
+    "invite_button": "Vedi l’invito",
+    "cancelled_subject_l": "La lezione gratuita del {time} è annullata",
+    "cancelled_body_l": "La lezione gratuita di {class} di 30 minuti del **{time}** è annullata. Ci dispiace. Non devi fare nulla.",
+    "rate_subject": "Com’è andata la lezione?",
+    "rate_body": "Grazie per aver partecipato alla lezione gratuita di {class} del {time}. Com’è andata? Tocca una risposta, ci vuole un secondo.",
+    "rate_3": "Molto bene",
+    "rate_2": "Bene",
+    "rate_1": "Non bene"
   }
 }

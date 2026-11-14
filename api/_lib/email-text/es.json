@@ -325,5 +325,24 @@
     "passed_subject": "Siguiente paso: una clase de prueba de 30 minutos con Alimun",
     "passed_heading": "Gracias por la llamada",
     "passed_body": "Nos ha gustado hablar contigo. El siguiente paso es una clase de prueba gratuita de 30 minutos con algunos de nuestros alumnos, para que nos muestres cómo enseñas. Te escribiremos con los detalles."
+  },
+  "trial": {
+    "scheduled_subject": "Tu clase de prueba con Alimun: {time}",
+    "scheduled_heading": "Tu clase de prueba está reservada",
+    "scheduled_body": "Tu clase de prueba gratuita de 30 minutos está reservada para el **{time}**: {class}, con algunos de nuestros alumnos. Registra tu llegada en tu panel al menos 5 minutos antes y entra en la clase desde allí. Alguien de Alimun puede entrar para observar, y la clase se graba para que podamos revisarla; solo el equipo de Alimun puede ver la grabación.",
+    "dash_button": "Abrir mi panel",
+    "cancelled_subject_t": "Tu clase de prueba del {time} se ha cancelado",
+    "cancelled_body_t": "Tu clase de prueba del **{time}** se ha cancelado. Te escribiremos con una nueva hora.",
+    "invite_subject": "Una clase gratuita de {class} de 30 minutos para ti",
+    "invite_heading": "Te invitamos a una clase gratuita",
+    "invite_body": "Un nuevo profesor de Alimun da una clase gratuita de {class} de 30 minutos el **{time}**, y tu nivel encaja. Hay pocas plazas: reserva la tuya en tu panel, en Clases. La clase se graba para que Alimun pueda evaluar al nuevo profesor; solo el equipo de Alimun ve la grabación.",
+    "invite_button": "Ver la invitación",
+    "cancelled_subject_l": "La clase gratuita del {time} se ha cancelado",
+    "cancelled_body_l": "La clase gratuita de {class} de 30 minutos del **{time}** se ha cancelado. Lo sentimos. No tienes que hacer nada.",
+    "rate_subject": "¿Qué tal la clase?",
+    "rate_body": "Gracias por participar en la clase gratuita de {class} del {time}. ¿Qué tal fue? Toca una respuesta; solo lleva un segundo.",
+    "rate_3": "Muy bien",
+    "rate_2": "Bien",
+    "rate_1": "No muy bien"
   }
 }

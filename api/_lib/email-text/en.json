@@ -325,5 +325,24 @@
     "passed_subject": "Next step: a 30-minute trial class with Alimun",
     "passed_heading": "Thank you for the call",
     "passed_body": "We enjoyed talking with you. The next step is a free 30-minute trial class with a few of our learners, so you can show us how you teach. We will write to you with the details."
+  },
+  "trial": {
+    "scheduled_subject": "Your trial class with Alimun: {time}",
+    "scheduled_heading": "Your trial class is booked",
+    "scheduled_body": "Your free 30-minute trial class is booked for **{time}**: {class}, with a few of our learners. Check in from your dashboard at least 5 minutes before, then join the class from there. Someone from Alimun may join to watch, and the class is recorded so we can review it; only Alimun staff can see the recording.",
+    "dash_button": "Open my dashboard",
+    "cancelled_subject_t": "Your trial class on {time} is cancelled",
+    "cancelled_body_t": "Your trial class on **{time}** is cancelled. We will write to you with a new time.",
+    "invite_subject": "A free 30-minute {class} class for you",
+    "invite_heading": "You are invited to a free class",
+    "invite_body": "A new teacher at Alimun is giving a free 30-minute {class} class on **{time}**, and your level fits. There are only a few places: take yours in your dashboard, under Classes. The class is recorded so Alimun can review the new teacher; only Alimun staff watch the recording.",
+    "invite_button": "See the invitation",
+    "cancelled_subject_l": "The free class on {time} is cancelled",
+    "cancelled_body_l": "The free 30-minute {class} class on **{time}** is cancelled. We are sorry. You do not need to do anything.",
+    "rate_subject": "How was the class?",
+    "rate_body": "Thank you for joining the free {class} class on {time}. How was it? Tap one answer; it takes a second.",
+    "rate_3": "Very good",
+    "rate_2": "Good",
+    "rate_1": "Not good"
   }
 }

@@ -73,9 +73,12 @@
       { id: 't2', user_id: 'ut2', full_name: 'James Hall', languages: ['English'], experience_years: 8, specialty: 'Exam preparation', bio: '', location: 'Bristol', hourly_rate: 26, rating: 4.7, tier_level: 'focused', status: 'approved', created_at: ago(150), sessions_delivered: 120 },
       { id: 't3', user_id: 'ut3', full_name: 'Léa Martin', languages: ['French'], experience_years: 5, specialty: 'Conversation and pronunciation', bio: 'Native French speaker, DELF examiner.', location: 'Lyon', hourly_rate: 22, rating: 0, tier_level: 'community', status: 'pending', hiring_stage: 'interview_booked', created_at: ago(1), sessions_delivered: 0 },
       { id: 't4', user_id: 'ut4', full_name: 'Tomás Ruiz', languages: ['Spanish'], experience_years: 3, specialty: 'Spanish for travel', bio: '', location: 'Valencia', hourly_rate: 22, rating: 0, tier_level: 'community', status: 'pending', hiring_stage: 'applied', created_at: ago(0.2), sessions_delivered: 0 },
+      { id: 't6', user_id: 'ut6', full_name: 'Maya Chen', languages: ['English'], experience_years: 6, specialty: 'Business English', bio: 'CELTA, six years with adult groups.', location: 'Toronto', hourly_rate: 22, rating: 0, tier_level: 'community', status: 'pending', hiring_stage: 'pre_approved', created_at: ago(4), sessions_delivered: 0 },
+      { id: 't7', user_id: 'ut7', full_name: 'Jonas Becker', languages: ['German'], experience_years: 4, specialty: 'German grammar made simple', bio: '', location: 'Hamburg', hourly_rate: 22, rating: 0, tier_level: 'community', status: 'pending', hiring_stage: 'trial_scheduled', created_at: ago(6), sessions_delivered: 0 },
+      { id: 't8', user_id: 'ut8', full_name: 'Sara Okafor', languages: ['English'], experience_years: 9, specialty: 'IELTS and conversation', bio: '', location: 'Lagos', hourly_rate: 22, rating: 0, tier_level: 'community', status: 'pending', hiring_stage: 'trial_done', created_at: ago(9), sessions_delivered: 0 },
       { id: 't5', user_id: 'ut5', full_name: 'Paul Grant', languages: ['English'], experience_years: 1, specialty: '', bio: '', location: '', hourly_rate: 22, rating: 0, tier_level: 'community', status: 'suspended', created_at: ago(60), sessions_delivered: 0 }
     ];
-    te.forEach(function (x, i) { EMAILS[x.user_id] = ['ana.weber', 'james.hall', 'lea.martin', 'tomas.ruiz', 'paul.grant'][i] + '@example.com'; });
+    te.forEach(function (x, i) { EMAILS[x.user_id] = ['ana.weber', 'james.hall', 'lea.martin', 'tomas.ruiz', 'maya.chen', 'jonas.becker', 'sara.okafor', 'paul.grant'][i] + '@example.com'; });
     return { sample: true, teachers: te, cohorts: [
       { id: 'c1', teacher_id: 't1', language: 'German', level: 'B1', tier: 'focused', status: 'open', enrolled_count: 9, max_students: 17 },
       { id: 'c3', teacher_id: 't1', language: 'German', level: 'A2', tier: 'intensive', status: 'open', enrolled_count: 5, max_students: 6 },
@@ -381,7 +384,7 @@
     return f(mine) + (tz && tz !== mine ? '; theirs ' + f(tz) : '');
   }
   function hiringCard(p, ivs) {
-    if (p.status !== 'pending' && p.hiring_stage !== 'pre_approved') return '';
+    if (p.status !== 'pending') return '';
     var iv = ivs.filter(function (x) { return x.status === 'booked'; })[0], last = ivs[0];
     var html = '<section class="card span-12 hc" style="--i:0"><div class="panel-h"><h2 class="t-h2">Hiring: ' + esc(stageOf(p)) + '</h2><a href="#/teachers/hours">Interview hours</a></div>';
     if (p.hiring_stage === 'applied' || !p.hiring_stage) {
@@ -393,10 +396,174 @@
       html += '<p class="t-body"><b>' + esc(whenBoth(iv.scheduled_at, iv.teacher_tz)) + '</b>, ' + iv.minutes + ' minutes, not recorded.' + (iv.teacher_checked_in_at ? ' They joined at ' + esc(A.fmt(iv.teacher_checked_in_at, { hour: '2-digit', minute: '2-digit' })) + '.' : '') + '</p>' +
         '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-hire="join" data-iv="' + esc(iv.id) + '">Join the call</button></div>' +
         (Date.now() > start - 15 * 60000 ? decideHtml(p) : '<p class="t-small">Pre-approve or reject once the call has started.</p>');
-    } else if (p.hiring_stage === 'pre_approved') {
-      html += '<p class="t-small">' + esc((last && last.note ? 'Your note: ' + last.note + ' ' : '') + 'The trial class comes in step 2 of hiring.') + '</p>';
+    } else if (p.hiring_stage === 'pre_approved' || p.hiring_stage === 'trial_scheduled' || p.hiring_stage === 'trial_done') {
+      if (last && last.note) html += '<p class="t-small">' + esc('Your note from the interview: ' + last.note) + '</p>';
+      html += trialCard(p);
     }
     return html + '<p class="t-small st-msg" data-hire-msg aria-live="polite"></p></section>';
+  }
+  /* ---------- Hiring, step 2: the trial class ---------- */
+  var TS = null; /* choosing a time: { teacher, slots, zone, availability, language, level, pick, custom } */
+  function trialOpen() { var T = FILE && FILE.trial; return T && (T.trials || []).filter(function (x) { return x.status === 'scheduled' || x.status === 'done'; })[0]; }
+  function trialCard(p) {
+    var T = FILE && FILE.trial;
+    if (!T) return '<p class="t-small">The trial class did not load. Open the file again.</p>';
+    var tr = trialOpen();
+    if (!tr) return p.hiring_stage === 'pre_approved' || p.hiring_stage === 'trial_scheduled' ? scheduleHtml(p) : '';
+    return trialNowHtml(p, tr, T);
+  }
+  function scheduleHtml(p) {
+    var langs = p.languages && p.languages.length ? p.languages : LANGS, cur = TS && TS.teacher === p.id ? TS : {};
+    return '<p class="t-small">Next: a free 30-minute trial class with real learners at a level they teach. Choose the language and level, then a time from their availability, at least 48 hours ahead. After that you invite learners from Matching.</p>' +
+      '<div class="st-row" style="max-width:520px">' + field('Language', '<select class="st-in" data-trl>' + langs.map(function (l) { return opt(l, l, cur.language || langs[0]); }).join('') + '</select>') +
+      field('Level', '<select class="st-in" data-trv>' + LEVELS.map(function (l) { return opt(l, l, cur.level || 'A2'); }).join('') + '</select>') + '</div>' +
+      '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-hire="trial-times" data-id="' + esc(p.id) + '">Show the free times</button></div><div data-trtimes>' + timesHtml(p) + '</div>';
+  }
+  function timesHtml(p) {
+    if (!TS || TS.teacher !== p.id) return '';
+    var html = '', groups = {}, order = [];
+    TS.slots.forEach(function (x) { var k = A.fmt(x, { weekday: 'long', day: 'numeric', month: 'long' }); if (!groups[k]) { groups[k] = []; order.push(k); } groups[k].push(x); });
+    if (order.length) {
+      html += '<p class="t-small" style="margin-top:10px">' + esc('Times in your zone' + (TS.zone ? '; theirs is ' + TS.zone.replace(/_/g, ' ') : '') + '. Times you teach, interview or have another trial class are left out.') + '</p><div class="iv-days">' + order.slice(0, 10).map(function (k) {
+        return '<div class="iv-day"><b>' + esc(k) + '</b><div class="iv-times">' + groups[k].map(function (x) {
+          return '<button class="btn ' + (TS.pick === x && !TS.custom ? 'btn--primary' : 'btn--quiet') + ' btn--sm" type="button" data-trat="' + esc(x) + '">' + esc(A.fmt(x, { hour: '2-digit', minute: '2-digit' })) + '</button>';
+        }).join('') + '</div></div>';
+      }).join('') + '</div>';
+    } else {
+      html += '<p class="t-body" style="margin-top:10px">' + esc(TS.availability ? 'Their availability has no free 30 minutes in the next three weeks.' : 'They have not given their availability (teachers in hiring cannot set it yet).') + '</p>';
+    }
+    html += '<label class="st-field" style="max-width:320px;margin-top:10px"><span class="st-lbl">Or a time agreed with them (your time zone)</span><input class="st-in" type="datetime-local" step="1800" data-trcustom value=""></label>';
+    if (TS.pick) html += '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-hire="trial-book" data-id="' + esc(p.id) + '">' + esc('Book the trial class: ' + whenBoth(TS.pick, TS.zone)) + '</button></div>' +
+      '<p class="t-small">They are emailed the time. A one-date class is made with them as its teacher; they check in and join from their dashboard.</p>';
+    return html;
+  }
+  var INV = { invited: 'invited', accepted: 'took a place', declined: 'declined', cancelled: 'cancelled' };
+  var VIA = { button: 'from the dashboard', email: 'from the email link', room: 'by entering the room', admin: 'by an admin' };
+  function trialNowHtml(p, tr, T) {
+    var start = Date.parse(tr.scheduled_at), end = start + tr.minutes * 60000, now = Date.now(), sc = tr.score || {}, s = tr.session || {};
+    var auto = T.automations || {}, html = '';
+    html += '<p class="t-body"><b>' + esc(whenBoth(tr.scheduled_at, tr.teacher_tz)) + '</b>' + esc(', ' + tr.language + ' ' + tr.level + ', ' + tr.minutes + ' minutes' + (s.teacher_checked_in_at ? '. They checked in at ' + A.fmt(s.teacher_checked_in_at, { hour: '2-digit', minute: '2-digit' }) + '.' : '.')) + '</p>' +
+      '<div class="btn-row">' + (now >= start - 15 * 60000 && now <= end + 90 * 60000 && tr.status === 'scheduled' ? '<button class="btn btn--primary btn--sm" type="button" data-room="' + esc(tr.session_id) + '">Join as Alimun staff</button>' : '') +
+      (tr.session_id ? '<a class="btn btn--ghost btn--sm" href="#/classlog/' + esc(tr.session_id) + '">The class date: watch, record, read the room</a>' : '') +
+      (tr.status === 'scheduled' && now < start ? '<button class="btn btn--quiet btn--sm" type="button" data-hire="trial-cancel" data-trial="' + esc(tr.id) + '">Cancel the trial class</button>' : '') + '</div><p class="t-small st-msg" data-roommsg aria-live="polite"></p>';
+    /* Learners */
+    var inv = tr.invites || [];
+    html += '<h3 class="t-h3" style="margin-top:16px">Learners</h3>';
+    if (auto.invites && auto.invites.dry_run) html += '<p class="t-small">Invitations are in dry run: nothing reaches learners until you switch Trial class invitations to live in <a href="#/automations">Automations</a>. Until then each invitation is written down as “not sent”.</p>';
+    if (inv.length) html += '<div class="tt-week">' + inv.map(function (x) {
+      var st = x.status === 'invited' && !x.sent_at ? 'not sent yet' : INV[x.status] || x.status;
+      return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(x.level || '') + '</span><span><b>' + esc(x.name) + '</b><small>' + esc(st + (x.score ? ', rated it ' + RATE[x.score] : '')) + '</small></span></div>';
+    }).join('') + '</div>';
+    else html += '<p class="t-small">Nobody invited yet.</p>';
+    if (tr.status === 'scheduled' && now < start - 2 * 3600000) {
+      html += '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-hire="trial-suggest" data-trial="' + esc(tr.id) + '">Suggest learners from Matching</button>' +
+        (inv.some(function (x) { return x.status === 'invited' && !x.sent_at; }) ? '<button class="btn btn--ghost btn--sm" type="button" data-hire="trial-invite" data-trial="' + esc(tr.id) + '" data-resend="1">Send the invitations not sent yet</button>' : '') + '</div><div data-trsug>' + suggestHtml(tr) + '</div>';
+    }
+    /* Scorecard */
+    if (now >= start) {
+      var row2 = function (k, v) { return '<div class="tt-row tt-row--wide ad-kv"><span class="tt-row__time">' + esc(k) + '</span><span><small>' + esc(v) + '</small></span></div>'; };
+      var rt = sc.ratings || { n: 0, counts: {} };
+      html += '<h3 class="t-h3" style="margin-top:16px">Scorecard</h3><div class="tt-week">' +
+        row2('Punctuality', sc.minutesLate == null ? 'Not read from the video room yet' : sc.minutesLate ? sc.minutesLate + ' minutes late' : 'On time') +
+        row2('Check-in', sc.checkin ? 'At ' + A.fmt(sc.checkin.at, { hour: '2-digit', minute: '2-digit' }) + ', ' + (sc.checkin.minutesBefore >= 0 ? sc.checkin.minutesBefore + ' minutes before the start' : -sc.checkin.minutesBefore + ' minutes after the start') + (VIA[sc.checkin.via] ? ', ' + VIA[sc.checkin.via] : '') : 'No check-in') +
+        row2('Time in the room', sc.teacherMinutes == null ? 'Not read yet' : sc.teacherMinutes + ' of ' + sc.ofMinutes + ' minutes') +
+        row2('Learners', (sc.learnersPresent == null ? 'Not read yet' : sc.learnersPresent + ' in the room') + ', ' + sc.learnersBooked + ' took a place') +
+        row2('Ratings', rt.n ? 'Very good ' + (rt.counts[3] || 0) + ', good ' + (rt.counts[2] || 0) + ', not good ' + (rt.counts[1] || 0) + ' (' + A.plural(rt.n, 'answer', 'answers') + ')' : 'No ratings yet' + (auto.ratings && auto.ratings.dry_run ? '; the email asking for them is in dry run, learners can still rate on their Classes page' : '')) +
+        row2('Recording', sc.recording ? 'Full recording' + (sc.recording.minutes ? ', ' + sc.recording.minutes + ' minutes' : '') : 'No full recording. Start one on the class date page while the class is on.') + '</div>' +
+        '<div class="btn-row">' + (sc.recording ? '<button class="btn btn--ghost btn--sm" type="button" data-hire="trial-watch" data-rec="' + esc(sc.recording.id) + '">Watch the recording</button>' : '') +
+        (now > end ? '<button class="btn btn--quiet btn--sm" type="button" data-hire="trial-verify" data-session="' + esc(tr.session_id) + '">Read the video room again</button>' : '') + '</div>';
+      if (now >= start + 10 * 60000) html += '<div class="hc-decide"><label class="st-field"><span class="st-lbl">Your note (only admins see it)</span><textarea class="st-in" rows="2" maxlength="2000" data-hire-note>' + esc(tr.note || '') + '</textarea></label>' +
+        '<label class="st-check"><input type="checkbox" data-hire-notify checked> Email them the decision (the welcome or the rejection email)</label>' +
+        '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-hire="trial-approved" data-trial="' + esc(tr.id) + '" data-id="' + esc(p.id) + '">Approve</button>' +
+        '<button class="btn btn--quiet btn--sm" type="button" data-hire="trial-rejected" data-trial="' + esc(tr.id) + '" data-id="' + esc(p.id) + '">Reject</button></div></div>';
+    }
+    return html;
+  }
+  var RATE = { 3: 'very good', 2: 'good', 1: 'not good' };
+  function suggestHtml(tr) {
+    var list = FILE.trialSuggest;
+    if (!list) return '';
+    var had = {}; (tr.invites || []).forEach(function (x) { had[x.user_id] = true; });
+    list = list.filter(function (l) { return !had[l.userId]; }).slice(0, 20);
+    if (!list.length) return '<p class="t-small">No other learner of ' + esc(tr.language + ' at ' + tr.level) + ' or one level apart. Your test accounts and staff are never suggested.</p>';
+    var room = Math.max(0, (FILE.trial.max || 8) + 2 - (tr.invites || []).filter(function (x) { return x.status !== 'declined' && x.status !== 'cancelled'; }).length);
+    return '<p class="t-small" style="margin-top:8px">Best first: the same level, a time that suits them where they live, then how active they are. The first ' + room + ' with a good time are ticked. Your test accounts and staff are never suggested.</p>' +
+      '<div class="tt-week">' + list.map(function (l, i) {
+        return '<label class="tt-row tt-row--wide" style="cursor:pointer"><span class="tt-row__time"><input type="checkbox" data-trsel="' + esc(l.userId) + '"' + (l.fits && i < room ? ' checked' : '') + ' style="width:16px;height:16px;accent-color:#1a443c"> ' + esc(l.level) + '</span><span><b>' + esc(l.name) + '</b><small>' + esc((l.email ? l.email + '. ' : '') + l.why + (l.tz ? '. ' + A.fmt(tr.scheduled_at, { timeZone: l.tz, weekday: 'short', hour: '2-digit', minute: '2-digit' }) + ' for them' : '')) + '</small></span></label>';
+      }).join('') + '</div><div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-hire="trial-invite" data-trial="' + esc(tr.id) + '">Invite the ticked learners</button></div>';
+  }
+  function sampleTrial(t) {
+    var now = Date.now(), d3 = new Date(now + 3 * DAY); d3.setHours(18, 0, 0, 0);
+    var y = new Date(now - DAY); y.setHours(18, 0, 0, 0);
+    if (t.hiring_stage === 'trial_scheduled') return { automations: { invites: { enabled: true, dry_run: true }, ratings: { enabled: true, dry_run: true } }, max: 8, trials: [{ id: 'tr7', session_id: 's7', status: 'scheduled', language: 'German', level: 'A2', scheduled_at: d3.toISOString(), minutes: 30, teacher_tz: 'Europe/Berlin', session: {}, score: {},
+      invites: [{ user_id: 'l1', name: 'Mia Novak', level: 'A2', status: 'accepted', sent_at: new Date(now - DAY).toISOString() }, { user_id: 'l2', name: 'Omar Haddad', level: 'A2', status: 'invited', sent_at: new Date(now - DAY).toISOString() }, { user_id: 'l3', name: 'Lucía Torres', level: 'B1', status: 'invited', sent_at: null }] }] };
+    if (t.hiring_stage === 'trial_done') return { automations: { invites: { enabled: true, dry_run: false }, ratings: { enabled: true, dry_run: false } }, max: 8, trials: [{ id: 'tr8', session_id: 's8', status: 'done', language: 'English', level: 'B1', scheduled_at: y.toISOString(), minutes: 30, teacher_tz: 'Africa/Lagos',
+      session: { teacher_checked_in_at: new Date(y.getTime() - 11 * 60000).toISOString() },
+      score: { ended: true, verified: true, minutesLate: 0, checkin: { at: new Date(y.getTime() - 11 * 60000).toISOString(), via: 'button', minutesBefore: 11 }, teacherMinutes: 30, ofMinutes: 30, learnersPresent: 5, learnersBooked: 6, ratings: { n: 4, counts: { 3: 3, 2: 1, 1: 0 }, mean: 2.8 }, recording: { id: 'r8', minutes: 33 } },
+      invites: [['Mia Novak', 3], ['Omar Haddad', 3], ['Lucía Torres', 2], ['Kenji Sato', 3], ['Nora Lind', null], ['Ivan Petrov', null]].map(function (x, i) { return { user_id: 'l' + i, name: x[0], level: 'B1', status: 'accepted', sent_at: y.toISOString(), score: x[1] }; }) }] };
+    return { automations: { invites: { enabled: true, dry_run: true }, ratings: { enabled: true, dry_run: true } }, max: 8, trials: [] };
+  }
+  function sampleSlots() {
+    var out = [], d = new Date(); d.setHours(0, 0, 0, 0);
+    for (var i = 3; i < 17; i++) { var x = new Date(d.getTime() + i * DAY); if (x.getDay() === 0 || x.getDay() === 6) continue; [17, 17.5, 18, 18.5].forEach(function (h) { var y = new Date(x.getTime()); y.setHours(Math.floor(h), h % 1 ? 30 : 0); out.push(y.toISOString()); }); }
+    return { slots: out, zone: 'America/Toronto', availability: 5 };
+  }
+  function sampleMatching() {
+    var L = function (id, name, level, tz, extra) { return Object.assign({ id: 's' + id, user_id: 'l' + id, name: name, email: name.split(' ')[0].toLowerCase() + '@example.com', language: 'German', level: level, timezone: tz, created_at: new Date().toISOString(), last_active: new Date(Date.now() - id * DAY).toISOString(), days_active: 6 - id % 5 }, extra || {}); };
+    return { learners: [L(1, 'Mia Novak', 'A2', 'Europe/Prague'), L(2, 'Omar Haddad', 'A2', 'Africa/Casablanca'), L(3, 'Lucía Torres', 'B1', 'Europe/Madrid'), L(4, 'Ravi Shah', 'A2', 'Asia/Kolkata'), L(5, 'Elena Rossi', 'A1', 'Europe/Rome', { tutor_min: 40 }), L(6, 'Test', 'A2', 'Europe/Paris', { test: true }), L(7, 'Chloé Dubois', 'A2', 'Europe/Paris', { quotes: 1 })] };
+  }
+  function trialAction(k, b) {
+    var id = b.getAttribute('data-id'), trial = b.getAttribute('data-trial'), p = FILE && FILE.profile;
+    var say2 = function (t) { var m = root.querySelector('[data-hire-msg]'); if (m) m.textContent = t; };
+    var fail = function (e) { b.disabled = false; say2('That did not work: ' + ((e && e.body && e.body.error) || (e && e.message) || 'try again') + '.'); };
+    var reload = function (note) { TE = null; TS = null; window.AlimunAdminTeachers.mount(root, ['' + p.id], A).then(function () { if (note) say2(note); }); };
+    if (k === 'trial-times') {
+      var lang = root.querySelector('[data-trl]').value, level = root.querySelector('[data-trv]').value;
+      b.disabled = true;
+      (real() ? window.AlimunData.ops('trial-slots', { teacher: id }) : Promise.resolve(sampleSlots())).then(function (r) {
+        TS = { teacher: id, slots: r.slots || [], zone: r.zone, availability: r.availability, language: lang, level: level, pick: null, custom: false };
+        b.disabled = false; root.querySelector('[data-trtimes]').innerHTML = timesHtml(p);
+      }, fail);
+      return;
+    }
+    if (k === 'trial-suggest') {
+      var tr = trialOpen(); b.disabled = true; say2('Reading Matching…');
+      (real() ? window.AlimunData.adminMatching() : Promise.resolve(sampleMatching())).then(function (data) {
+        FILE.trialSuggest = window.AlimunMatch ? window.AlimunMatch.trialPick(data, { language: tr.language, level: tr.level, at: Date.parse(tr.scheduled_at) }) : [];
+        b.disabled = false; say2(''); root.querySelector('[data-trsug]').innerHTML = suggestHtml(tr);
+      }, fail);
+      return;
+    }
+    if (!real()) { say2('This is sample data; nothing is saved or sent.'); return; }
+    if ((k === 'trial-cancel' || k === 'trial-rejected') && b.getAttribute('data-sure') !== '1') { b.setAttribute('data-sure', '1'); b.textContent = k === 'trial-cancel' ? 'Yes, cancel it' : 'Yes, reject'; return; }
+    b.disabled = true; say2('Working…');
+    if (k === 'trial-book') {
+      window.AlimunData.ops('trial-schedule', { teacher: id, at: TS.pick, language: TS.language, level: TS.level, custom: !!TS.custom }).then(function () { reload('Booked. They have been emailed. Now invite learners.'); }, fail);
+    } else if (k === 'trial-invite') {
+      var ids = b.getAttribute('data-resend') ? [] : Array.prototype.map.call(root.querySelectorAll('[data-trsel]:checked'), function (c) { return c.getAttribute('data-trsel'); });
+      if (!b.getAttribute('data-resend') && !ids.length) { b.disabled = false; say2('Tick at least one learner.'); return; }
+      window.AlimunData.ops('trial-invite', { trial: trial, learners: ids }).then(function (r) {
+        var res = r.results || {}, n = function (v) { return Object.keys(res).filter(function (k2) { return res[k2] === v; }).length; }, ref = Object.keys(r.refused || {}).length;
+        FILE.trialSuggest = null;
+        reload((n('done') ? A.plural(n('done'), 'invitation', 'invitations') + ' sent. ' : '') + (n('dry_run') ? A.plural(n('dry_run'), 'invitation', 'invitations') + ' written down in dry run, not sent. ' : '') + (n('failed') ? n('failed') + ' failed. ' : '') + (ref ? ref + ' refused (another language, a test or staff account, or too many).' : ''));
+      }, fail);
+    } else if (k === 'trial-cancel') {
+      window.AlimunData.ops('trial-cancel', { trial: trial }).then(function () { reload('Cancelled. They can be given a new time.'); }, fail);
+    } else if (k === 'trial-verify') {
+      window.AlimunData.ops('verify-session', { session: b.getAttribute('data-session') }).then(function () { reload('Read again.'); }, fail);
+    } else if (k === 'trial-watch') {
+      var win = window.open('', '_blank');
+      window.AlimunData.ops('recording-link', { id: b.getAttribute('data-rec') }).then(function (r) {
+        var u = null; try { u = new URL(r.url); } catch (e) { /* not a link */ }
+        if (!u || u.protocol !== 'https:') throw new Error('unexpected link');
+        if (win) { win.opener = null; win.location.href = u.href; } else location.href = u.href; b.disabled = false; say2('Opened in a new tab.');
+      }).catch(function (e) { if (win) win.close(); fail(e); });
+    } else if (k === 'trial-approved' || k === 'trial-rejected') {
+      var result = k === 'trial-approved' ? 'approved' : 'rejected', note = root.querySelector('[data-hire-note]'), notify = root.querySelector('[data-hire-notify]');
+      window.AlimunData.ops('trial-decide', { trial: trial, result: result, note: note ? note.value : '' })
+        .then(function () { return window.AlimunData.adminTeacherStatus([id], result === 'approved' ? 'approved' : 'suspended', notify ? notify.checked : true, ''); })
+        .then(function (r) { var x = (r.results || [])[0] || {}; if (x.error) throw new Error(x.error); reload(result === 'approved' ? 'Approved.' + (x.emailed ? ' The welcome email was sent.' : '') : 'Rejected.' + (x.emailed ? ' The rejection email was sent.' : '')); }, fail);
+    }
   }
   function decideHtml(p) {
     return '<div class="hc-decide"><label class="st-field"><span class="st-lbl">Your note (only admins see it)</span><textarea class="st-in" rows="2" maxlength="2000" data-hire-note></textarea></label>' +
@@ -407,6 +574,7 @@
   }
   function hireAction(b) {
     var k = b.getAttribute('data-hire'), msg = root.querySelector('[data-hire-msg]');
+    if (k.indexOf('trial-') === 0) { trialAction(k, b); return; }
     if (!real()) { msg.textContent = 'This is sample data; nothing is sent.'; return; }
     if (k === 'rejected' && b.getAttribute('data-sure') !== '1') { b.setAttribute('data-sure', '1'); b.textContent = 'Yes, reject'; return; }
     b.disabled = true; msg.textContent = 'Working…';
@@ -508,6 +676,12 @@
       if (e.target.hasAttribute('data-tf') && TE) { TF.q = e.target.value; redrawTeachers(); }
     });
     root.addEventListener('change', function (e) {
+      if (e.target.hasAttribute('data-trcustom') && TS) {
+        var v = e.target.value, d = v ? new Date(v) : null;
+        if (d && !isNaN(d.getTime())) { TS.pick = d.toISOString(); TS.custom = true; var box = root.querySelector('[data-trtimes]'); box.innerHTML = timesHtml(FILE.profile); box.querySelector('[data-trcustom]').value = v; }
+        return;
+      }
+      if ((e.target.hasAttribute('data-trl') || e.target.hasAttribute('data-trv')) && TS) { TS.language = root.querySelector('[data-trl]').value; TS.level = root.querySelector('[data-trv]').value; return; }
       var k = e.target.getAttribute('data-sf');
       if (k && k !== 'q' && ST) { SF[k] = e.target.value; var b = root.querySelector('[data-srows]'); if (b) b.innerHTML = studentRowsHtml(); return; }
       if (e.target.hasAttribute('data-sel')) { SEL[e.target.getAttribute('data-sel')] = e.target.checked; redrawTeachers(); return; }
@@ -522,6 +696,8 @@
       else if (f.hasAttribute('data-tgrant')) { e.preventDefault(); grantTutor(f); }
     });
     root.addEventListener('click', function (e) {
+      var ta = e.target.closest('[data-trat]');
+      if (ta && TS) { TS.pick = ta.getAttribute('data-trat'); TS.custom = false; root.querySelector('[data-trtimes]').innerHTML = timesHtml(FILE.profile); return; }
       var hb = e.target.closest('[data-hire]');
       if (hb && !hb.disabled) { hireAction(hb); return; }
       var hs = e.target.closest('[data-hours-save]');
@@ -562,7 +738,12 @@
         else if (p0 && p0 !== 'list') go = loadTeachers().then(function () {
           var t = TE.teachers.filter(function (x) { return x.id === p0; })[0];
           if (!t) return { html: back('#/teachers', 'Teachers') + '<div class="card"><p class="t-body">This teacher could not be found.</p></div>' };
-          return (real() ? window.AlimunData.adminTeacherFile(t.id) : Promise.resolve(sampleTeacherFile(t))).then(function (f) { FILE = f; return { html: teacherFileView(t, f), title: t.full_name }; });
+          return (real() ? window.AlimunData.adminTeacherFile(t.id) : Promise.resolve(sampleTeacherFile(t))).then(function (f) {
+            FILE = f;
+            var stage = (f.profile || t).hiring_stage;
+            if (!/^(pre_approved|trial_scheduled|trial_done)$/.test(stage || '')) return f;
+            return (real() ? window.AlimunData.ops('trial-file', { teacher: t.id }) : Promise.resolve(sampleTrial(t))).then(function (x) { f.trial = x; return f; }, function () { f.trial = null; return f; });
+          }).then(function (f) { return { html: teacherFileView(t, f), title: t.full_name }; });
         });
         else go = loadTeachers().then(function () { return { html: teachersView(parts[1]), title: 'Teachers' }; });
       }
