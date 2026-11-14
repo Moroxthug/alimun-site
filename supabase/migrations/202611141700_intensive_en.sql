@@ -78,3 +78,8 @@ select
   (select count(distinct stripe_price_id) from public.price_book where product_key = 'intensive_en') as stripe_prices,
   (select value ~ '(^|,)intensive_en(,|$)' from public.app_settings where key = 'pricing_on_sale') as on_sale,
   (select count(*) from public.sessions s join public.cohorts c on c.id = s.cohort_id where c.product_key = 'intensive_en' and c.starts_on = date '2027-01-04') as first_room_classes;
+
+-- Owner, 15 Nov 2026: the first room's start on 4 January 2027 is guaranteed whatever the number of learners (promised
+-- to a parent), so it opens with one learner instead of eight and the 10-day decision never cancels or merges it.
+update public.cohorts set min_learners = 1
+where product_key = 'intensive_en' and starts_on = date '2027-01-04' and level = 'B1' and min_learners <> 1;
