@@ -70,7 +70,7 @@
       '<form class="st-form" data-form="pw"><label class="st-field"><span class="st-lbl">' + esc(t('app_st_pw')) + '</span><input class="st-in" type="password" name="pw" autocomplete="new-password" minlength="8" required></label>' +
       '<div class="btn-row"><button class="btn btn--ghost btn--sm" type="submit">' + esc(t('app_st_pw_save')) + '</button></div><p class="t-body st-msg" data-msg="pw" aria-live="polite"></p></form>' +
       '<div class="st-acc-foot"><button class="btn btn--quiet btn--sm" type="button" data-st="signout">' + esc(t('app_st_signout')) + '</button>' +
-      '<a class="linkish" href="/contact">' + esc(t('app_st_delete')) + '</a></div></section>';
+      '<a class="linkish" href="https://alimun.com/contact">' + esc(t('app_st_delete')) + '</a></div></section>';
     if (S.sample) html += '<p class="t-tiny span-12">' + esc(t('app_st_sample')) + '</p>';
     return html + '</div>';
   }
@@ -154,7 +154,7 @@
     root.addEventListener('click', function (e) {
       var b = e.target.closest('[data-st]'); if (!b || b.disabled) return;
       if (b.getAttribute('data-st') === 'portal') portal(b);
-      else if (b.getAttribute('data-st') === 'signout') { if (S.sample) { say('pw', 'app_st_sample_saved'); return; } window.AlimunData.signOut().then(function () { location.href = '/'; }); }
+      else if (b.getAttribute('data-st') === 'signout') { if (S.sample) { say('pw', 'app_st_sample_saved'); return; } window.AlimunData.signOut().then(function () { if (window.AlimunDevice && window.AlimunDevice.native) { location.replace('/app'); setTimeout(function () { location.reload(); }, 50); } else location.href = '/'; }); }
     });
   }
 

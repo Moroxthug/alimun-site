@@ -30,7 +30,7 @@ const CHUNKS = {
   classroom: ['js/app/board.js', 'js/app/classroom.js'],
   pay: ['js/app/pay.js'],
   /* Only in the store app (docs/APP_PLAN.md, the complete app): the back button, pulling down to refresh, keep-awake */
-  native: ['js/app/native.js'],
+  native: ['js/app/native.js', 'js/app/account.js'],
 };
 
 function join(files) {

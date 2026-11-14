@@ -51,6 +51,8 @@
       return;
     }
     askedAt = 0;
+    /* Signing in and the first set-up (js/app/account.js) have their own steps */
+    if (document.body.classList.contains('is-account')) { if (!window.AlimunAccount || !window.AlimunAccount.back()) { try { App.minimizeApp(); } catch (e) { /* older app */ } } return; }
     var prev = Feel && Feel.back ? Feel.back() : null;
     if (prev) { location.replace(prev); return; }
     if (!/^#\/home\/?$/.test(location.hash) && location.hash && location.hash !== '#' && location.hash !== '#/') { location.replace('#/home'); return; }

@@ -2216,3 +2216,37 @@ body.is-class .view { max-width: 1640px; }
 .ptr.is-ready .whirl, .ptr.is-ready .spark, .ptr.is-busy .whirl, .ptr.is-busy .spark { animation-play-state: running; }
 
 @media (max-width: 899px) { .view:focus { outline: none; } }
+
+/* ---------- Signing in and the first set-up inside the store app (js/app/account.js) ---------- */
+.ac { min-height: 100dvh; display: flex; flex-direction: column; padding: calc(env(safe-area-inset-top, 0px) + 14px) 16px calc(env(safe-area-inset-bottom, 0px) + 28px); max-width: 560px; margin: 0 auto; width: 100%; }
+.ac__top { display: flex; align-items: center; gap: 8px; height: 44px; }
+.ac__top .book { width: 32px; height: 34px; overflow: visible; }
+.ac__top .wordmark { height: 19px; }
+.ac__body { flex: 1; view-transition-name: view; outline: none; }
+.ac__in { display: grid; gap: 16px; padding-top: 8px; }
+.ac__back { border: 0; background: none; cursor: pointer; font: inherit; font-weight: 700; justify-self: start; margin: 0; }
+.ac__stage { min-height: 0; height: 190px; padding: 16px; justify-content: flex-end; }
+.ac__stage > svg { width: 132px; height: 132px; }
+.ac__stage .bub { top: 14px; inset-inline-start: 16px; }
+.ac__card .t-h1 { font-size: 38px; }
+.ac__lead { margin: 8px 0 0; color: var(--muted); }
+.ac__form { display: grid; gap: 14px; margin-top: 20px; }
+.ac__form .st-in { box-shadow: inset 0 0 0 2px var(--line); background: var(--white); min-height: 50px; }
+.ac-pw { position: relative; }
+.ac-pw .st-in { padding-inline-end: 84px; }
+.ac-pw .linkish { position: absolute; inset-inline-end: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; }
+.ac__link { justify-self: start; }
+.ac__go { width: 100%; justify-content: center; min-height: 54px; }
+.ac__alt { margin: 18px 0 0; text-align: center; color: var(--muted); }
+.ac__hint { margin: 0; color: var(--muted); }
+.ac__hint a { color: var(--forest); font-weight: 700; }
+.ac__ticks { margin-top: 0; }
+.ac__choices { display: grid; gap: 10px; margin-top: 20px; }
+.ac__choice { display: grid; gap: 2px; text-align: start; border: 0; border-radius: var(--r-md); padding: 16px 18px; background: var(--bone); color: var(--ink); font: inherit; cursor: pointer;
+  box-shadow: inset 0 0 0 2px transparent; transition: transform var(--t-fast) var(--ease), background var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease); }
+.ac__choice b { font-size: 17px; }
+.ac__choice span { color: var(--muted); font-size: var(--fs-small); }
+.ac__choice:active { transform: scale(.98); }
+.ac__choice[aria-pressed="true"] { background: var(--lime); box-shadow: inset 0 0 0 2px var(--forest); }
+.ac__choices + .st-msg { margin-top: 12px; }
+.ac__choices ~ .ac__go { margin-top: 8px; }

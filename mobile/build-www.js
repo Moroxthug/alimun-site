@@ -17,7 +17,7 @@ const www = path.join(__dirname, 'www');
 const FILES = [
   'css/app.css',
   'fonts/Satoshi-Variable.ttf', 'fonts/coolvetica-condensed-rg.otf',
-  'js/banner.js', 'js/app/launch-pop.js', 'js/app/poll.js',
+  'js/banner.js', 'js/app/launch-pop.js', 'js/app/poll.js', 'js/captcha.js',
   'images/favicon.svg', 'images/favicon-48.png',
   'images/app/icon-192.png', 'images/app/icon-512.png', 'images/app/icon-maskable-512.png', 'images/app/apple-touch-icon.png',
   'images/pexels-6599010-tool.jpg', 'images/pexels-diimejii-3466163-p-800.jpg', 'images/pexels-katerina-holmes-5905749-p-1080.jpg',
@@ -41,6 +41,17 @@ async function main() {
   FILES.forEach(copy);
   for (const d of DIRS) for (const f of fs.readdirSync(path.join(root, d))) copy(d + '/' + f);
   for (const f of fs.readdirSync(path.join(root, 'js/i18n'))) if (/\.app\.js$/.test(f)) copy('js/i18n/' + f);
+  /* The app's own sign-in, account and set-up screens (js/app/account.js) use the texts of the website's account
+     pages (au_*, and the level names lt_name_*), which the site keeps in its public text files: they are added to the
+     packaged copies of the app's text files, from js/translations.js. */
+  const T = (() => { const w = {}; new Function('window', fs.readFileSync(path.join(root, 'js/translations.js'), 'utf8') + '\n;window.T = typeof ALIMUN_TRANSLATIONS !== "undefined" ? ALIMUN_TRANSLATIONS : window.ALIMUN_TRANSLATIONS;')(w); return w.T; })();
+  if (!T || !T.en || !T.en.au_signin) throw new Error('js/translations.js: the account texts (au_*) were not found');
+  for (const lang of Object.keys(T)) {
+    const extra = {};
+    for (const [k, v] of Object.entries(T[lang])) if (/^(au_|lt_name_)/.test(k)) extra[k] = v;
+    fs.appendFileSync(path.join(www, 'js/i18n', lang + '.app.js'),
+      `\n(function () { var T = window.ALIMUN_TRANSLATIONS = window.ALIMUN_TRANSLATIONS || {}; var d = T[${JSON.stringify(lang)}] = T[${JSON.stringify(lang)}] || {}; var a = ${JSON.stringify(extra)}; for (var k in a) d[k] = a[k]; })();\n`);
+  }
 
   const m = page.match(/<script src="(https:\/\/cdn\.jsdelivr\.net\/npm\/@supabase\/supabase-js@[^"]+)" integrity="(sha384-[^"]+)"/);
   if (!m) throw new Error('app/index.html: Supabase script not found');

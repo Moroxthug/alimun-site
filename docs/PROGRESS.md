@@ -2090,3 +2090,9 @@ Owner asked to clear the advisor's warnings about SECURITY DEFINER functions; pl
 - Live on alimun.com/app (deployment e8d5e3f, the new app script and `native.js` served).
 - Not checked: on a real phone. Sent to the owner as an APK to try (uninstall the earlier test build first if Android refuses to update).
 - Next: the owner's check of step 1, then step 2 (app language, the chosen bottom bar with animated icons).
+
+## 2026-11-14 — The complete app, step 1b: nothing of the website inside the app
+- Owner after step 1: "it's still a browser version ... i can go back to the homepage through the app ... i want an app 100% on the phone". Signing in, sign-up, the welcome steps and some links were website pages shown inside the app.
+- Built: the app's own sign-in, forgot password, create account, check-your-email, first set-up and "this app is for learners" screens (`js/app/account.js`); a wall in `AlimunClient.java` so the app's window loads only the app and everything else opens in the phone's browser; sign-out stays in the app; level-test buttons hidden in the app. Details and what is still a website page: `docs/APP_PLAN.md`, "Step 1b".
+- Missing, to build inside the app: the level test; account deletion; terms and privacy as app screens; opening the email links in the app.
+- Checked: `npm run build`, `node --check` (485 scripts), 233 unit tests, smoke 17 of 17 and the speed budget, the screens at phone size with stand-ins, debug APK built and sent. Not checked on a real phone, nor a real sign-in from the app.

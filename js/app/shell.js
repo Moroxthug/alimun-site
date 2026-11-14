@@ -342,13 +342,13 @@
       /* Topic names in bold, joined the way the interface language joins a list */
       var list = esc(listOf(d.topics.map(function (x) { return '\u0001' + x + '\u0002'; }))).replace(/\u0001/g, '<b>').replace(/\u0002/g, '</b>');
       body = esc(t('app_home_focus_p', { level: d.placement.level })).replace('{topics}', list);
-      btn = '<a class="btn btn--ghost btn--sm" href="/level-test">' + esc(t('app_home_retake')) + '</a>';
+      btn = inApp() ? '' : '<a class="btn btn--ghost btn--sm" href="/level-test">' + esc(t('app_home_retake')) + '</a>';
     } else if (d.placement) {
       body = esc(t('app_home_focus_top', { level: d.placement.level }));
-      btn = '<a class="btn btn--ghost btn--sm" href="/level-test">' + esc(t('app_home_retake')) + '</a>';
+      btn = inApp() ? '' : '<a class="btn btn--ghost btn--sm" href="/level-test">' + esc(t('app_home_retake')) + '</a>';
     } else {
       body = esc(t('app_home_focus_none'));
-      btn = '<a class="btn btn--primary btn--sm" href="/level-test">' + esc(t('app_home_take')) + icon('arrow') + '</a>';
+      btn = inApp() ? '' : '<a class="btn btn--primary btn--sm" href="/level-test">' + esc(t('app_home_take')) + icon('arrow') + '</a>';
     }
     return '<section class="card span-7" style="--i:8" aria-labelledby="h-focus">' +
       '<div class="card__row card__row--split"><div><h2 class="t-h2" id="h-focus">' + esc(t('app_home_focus_h')) + '</h2>' +
@@ -756,6 +756,16 @@
   /* /app is the students' dashboard (step 16): signed out goes to sign-in (and back here after), teachers and admins to
      their own pages, a student without a profile to the welcome steps. The sample only with ?sample=1. */
   function away(to) { location.replace(to); return new Promise(function () {}); }
+  function inApp() { return !!(window.AlimunDevice && window.AlimunDevice.native); }
+  function account(what) {
+    lazy('native').then(function () {
+      if (!window.AlimunAccount) throw new Error('account screens missing');
+      window.AlimunAccount.open(readerHelpers, what);
+      hideLoader();
+      if (window.AlimunDevice.ready) window.AlimunDevice.ready();
+    }).catch(function (err) { console.warn('[Alimun] Account screens did not load', err && err.message); hideLoader(); });
+    return new Promise(function () {});
+  }
   /* The app (docs/APP_PLAN.md, step 1): with a copy of Home saved at the last visit, the app opens on it at once and
      the fresh data replaces it a moment later (Home is drawn again only if it changed and is still on screen). Not when
      coming back from a payment or for an admin viewing someone. */
@@ -780,6 +790,9 @@
     if (snap) { mode = 'real'; return Promise.resolve(snap); }
     return window.AlimunData.load(lang).then(function (d) {
       if (d && d.profile) { mode = 'real'; return d; }
+      /* The store app never opens a website page: signing in, creating an account and the first set-up are its own
+         screens (js/app/account.js) */
+      if (inApp()) return account(!d ? 'signin' : d.role === 'teacher' || d.role === 'admin' ? 'role' : 'setup');
       if (!d) return away('/signin?next=' + encodeURIComponent('/app' + (/^#\/[A-Za-z0-9\/_-]*$/.test(location.hash) ? location.hash : '')));
       if (d.role === 'teacher') return away('/app/teach');
       if (d.role === 'admin') return away('/app/admin');

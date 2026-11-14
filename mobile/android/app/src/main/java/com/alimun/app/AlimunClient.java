@@ -1,6 +1,7 @@
 package com.alimun.app;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.AssetManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
@@ -33,7 +34,8 @@ import java.util.Set;
  *   phone is offline; from the network otherwise, so they stay up to date.
  * - Downloaded recordings (Supabase Storage course-audio): always from the app's storage once downloaded, with byte
  *   ranges for the audio player.
- * - Everything else (sign-in, /api, the database, payments): the network, as on the website.
+ * - Everything else the page asks for (/api, the database, payments): the network.
+ * - No other page is ever shown in the app: see shouldOverrideUrlLoading.
  * The page writes the downloads with the Filesystem plugin (js/app/device.js), under Directory.Data/offline.
  */
 public class AlimunClient extends BridgeWebViewClient {
@@ -70,6 +72,33 @@ public class AlimunClient extends BridgeWebViewClient {
         }
     }
 
+    /**
+     * The app only ever shows itself (owner, 14 Nov 2026: "an app 100% on the phone"). Any other page a tap would open,
+     * a page of the website included, opens in the phone's browser (or mail, or phone) instead, never inside the app.
+     */
+    @Override
+    public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+        if (!request.isForMainFrame()) return false;
+        Uri u = request.getUrl();
+        String scheme = u.getScheme() == null ? "" : u.getScheme();
+        String path = u.getPath() == null ? "/" : u.getPath();
+        if ("https".equals(scheme) && HOST.equalsIgnoreCase(u.getHost()) && isApp(path)) return false;
+        if ("https".equals(scheme) || "mailto".equals(scheme) || "tel".equals(scheme)) {
+            try {
+                Intent open = new Intent(Intent.ACTION_VIEW, u);
+                open.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(open);
+            } catch (Exception e) {
+                // nothing on the phone opens it
+            }
+        }
+        return true;
+    }
+
+    private static boolean isApp(String path) {
+        return path.equals("/") || path.equals("/app") || path.equals("/app/") || path.equals("/app/index.html");
+    }
+
     @Override
     public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
         Uri u = request.getUrl();
@@ -82,7 +111,7 @@ public class AlimunClient extends BridgeWebViewClient {
         }
         if (HOST.equalsIgnoreCase(host)) {
             if (!get) return null;
-            if (path.equals("/") || path.equals("/app") || path.equals("/app/") || path.equals("/app/index.html")) {
+            if (isApp(path)) {
                 return super.shouldInterceptRequest(view, request);
             }
             String rel = path.substring(1);
