@@ -44,10 +44,20 @@
           .tp_desc { margin: 0 0 1.75rem; flex: 1; }
           .tp_cta { align-self: flex-start; white-space: nowrap; }
           .tp_lead { margin: 0 0 1rem; font-weight: 500; }
+          /* The intensive pack (owner, 14 Nov 2026): English only, a class every weekday. A wide card under the three,
+             photo beside the text; shown only while it is on sale and while English is chosen. */
+          .tp_int { grid-column: 1 / -1; flex-direction: row; }
+          .tp_int[hidden], .tp[data-pp-lang="de"] .tp_int { display: none; }
+          .tp_int .tp_img { flex: 0 0 42%; aspect-ratio: auto; min-height: 22rem; }
+          .tp_int .tp_body { padding: 2.25rem 2.5rem 2.5rem; }
+          .tp_int .tp_desc { max-width: 38rem; }
           .tp_also { margin: 2.5rem 0 0; max-width: 52rem; color: rgba(8, 8, 8, .7); }
           .tp_also span + span::before { content: " "; }
           @media (max-width: 1199px) {
             .tp_grid { grid-template-columns: 1fr; max-width: 40rem; }
+            .tp_int { flex-direction: column; }
+            .tp_int .tp_img { flex: none; aspect-ratio: 4 / 3; min-height: 0; }
+            .tp_int .tp_body { padding: 1.75rem 1.75rem 2rem; }
           }
           @media (max-width: 767px) {
             .tp { padding: 4rem 0 4.5rem; }
@@ -108,6 +118,18 @@
                 <p class="tp_billed" data-pp-text="class=exam_{lang}:class" data-i18n="tiers2_per_class">{class} a class</p>
                 <p class="tp_desc text-size-medium" data-i18n="tiers2_exam_desc">Preparation for IELTS in English, and for Goethe or telc B1 in German. Alimun prepares you for the exam; the certificate is issued by the exam board.</p>
                 <a class="button w-inline-block tp_cta" href="level-test.html?product=exam_en&amp;cadence=month" data-base="level-test.html?product=exam_{lang}&amp;cadence=month"><p data-i18n="tiers2_exam_cta">Choose an exam pack</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
+              </div>
+            </div>
+            <div class="tp_card tp_int shadow-card" data-product="intensive" data-pp-sale="intensive_en" hidden>
+              <div class="tp_img"><img src="images/edu_square_1-800.jpg" alt="" width="800" height="800" loading="lazy"></div>
+              <div class="tp_body">
+                <h3 class="heading-style-h3" data-i18n="tiers2_int_h">Intensive pack</h3>
+                <p class="tp_size text-size-regular" data-i18n="tiers2_int_size">A live class every weekday, Monday to Friday, for 12 weeks, up to 12 people in a fixed room</p>
+                <p class="tp_price" data-pp-text="price=intensive_en:month" data-i18n="tiers2_month_3">{price} a month for three months</p>
+                <p class="tp_billed" data-pp-text="up=intensive_en:upfront,save=intensive_en:save" data-i18n="tiers2_upfront">or {up} paid once, saving {save}</p>
+                <p class="tp_billed" data-pp-text="class=intensive_en:class" data-i18n="tiers2_per_class">{class} a class</p>
+                <p class="tp_desc text-size-medium" data-i18n="tiers2_int_desc">For learners who want to move faster: five 60-minute classes a week, about 22 a month, with the same teacher and the same people. English only. You reserve a place with your card and nothing is charged until your room opens.</p>
+                <a class="button w-inline-block tp_cta" href="level-test.html?product=intensive_en&amp;cadence=month" data-base="level-test.html?product=intensive_en&amp;cadence=month"><p data-i18n="tiers2_int_cta">Choose the intensive pack</p><img src="images/icon-arrow-light.svg" alt="" class="icon-16"></a>
               </div>
             </div>
           </div>

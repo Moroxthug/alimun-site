@@ -18,7 +18,7 @@
 (function () {
   'use strict';
   var KEY = 'alimun_pp_v1', TTL = 600000, data = null, waiting = null;
-  var CLASSES = { level_en: 13, level_de: 13, exam_en: 13, exam_de: 13, open_en: 4, open_de: 4 };
+  var CLASSES = { level_en: 13, level_de: 13, intensive_en: 22, exam_en: 13, exam_de: 13, open_en: 4, open_de: 4 };
 
   function load() {
     if (data) return Promise.resolve(data);

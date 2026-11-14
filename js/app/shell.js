@@ -453,7 +453,7 @@
     if (!window.AlimunData.myEntitlements) return;
     window.AlimunData.myEntitlements().then(function (rows) {
       rows = rows || [];
-      if (rows.some(function (e) { return /^(level|exam)_/.test(e.product_key); })) return;
+      if (rows.some(function (e) { return /^(level|exam|intensive)_/.test(e.product_key); })) return;
       var open = rows.filter(function (e) { return /^open_/.test(e.product_key) && e.status === 'active' && e.starts_at && Date.now() - Date.parse(e.starts_at) > 60 * 86400000; })[0];
       if (!open) return;
       var product = 'level_' + open.product_key.slice(-2);

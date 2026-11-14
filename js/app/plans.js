@@ -25,15 +25,17 @@
   /* Photos for the checkout page (the homepage's own) */
   var PHOTO = { group: '/images/pexels-katerina-holmes-5905749-p-1080.jpg', tutor: '/images/pexels-6599010-tool.jpg' };
   /* The order on the page, and what each product is called and says */
-  var ORDER = ['level_en', 'level_de', 'exam_en', 'exam_de', 'open_en', 'open_de', 'app', 'help_class', 'trial'];
+  var ORDER = ['level_en', 'intensive_en', 'level_de', 'exam_en', 'exam_de', 'open_en', 'open_de', 'app', 'help_class', 'trial'];
   function lang(k) { return '⁨' + t(/_de$/.test(k) ? 'app_pp_lang_de' : 'app_pp_lang_en') + '⁩'; }
   function nameOf(k) {
+    if (/^intensive_/.test(k)) return t('app_pp_intensive_h', { lang: lang(k) });
     if (/^level_/.test(k)) return t('app_pp_level_h', { lang: lang(k) });
     if (/^exam_/.test(k)) return t('app_pp_exam_h', { lang: lang(k) });
     if (/^open_/.test(k)) return t('app_pp_open_h', { lang: lang(k) });
     return t({ app: 'app_pp_app_h', help_class: 'app_pp_help_h', trial: 'app_pp_trial_h' }[k] || 'app_pp_min_h');
   }
   function textOf(k) {
+    if (/^intensive_/.test(k)) return t('app_pp_intensive_p');
     if (/^level_/.test(k)) return t('app_pp_level_p');
     if (k === 'exam_en') return t('app_pp_exam_en_p');
     if (k === 'exam_de') return t('app_pp_exam_de_p');
@@ -69,7 +71,7 @@
     var offers = cadences.map(function (c) { return { c: c, o: offer(k, c) }; }).filter(function (x) { return x.o; });
     if (!offers.length) return '';
     var founding = offers.filter(function (x) { return x.o.founding; })[0];
-    var pack = /^(level|exam)_/.test(k);
+    var pack = /^(level|exam|intensive)_/.test(k);
     return '<section class="card span-6" style="--i:' + i + '"><h2 class="t-h2"><bdi>' + esc(nameOf(k)) + '</bdi></h2>' +
       '<p class="t-body" style="margin-top:8px">' + esc(textOf(k)) + '</p>' +
       (founding ? '<p class="t-small" style="margin-top:8px">' + esc(t('app_pp_founding', { price: buttonText(k, founding.c, { price: founding.o.list }) })) + '</p>' : '') +
@@ -120,7 +122,7 @@
       .then(function () { if (btn) btn.disabled = false; }, function (e) { if (btn) btn.disabled = false; show('app_pl_err', true); console.warn('[Alimun] Checkout', e && e.message); });
   }
   /* Products bought for a room (packs, open classes) or a class date (trial, help class) go through the picker first */
-  function picks(k) { return /^(level|exam|open)_/.test(k) || k === 'trial' || k === 'help_class'; }
+  function picks(k) { return /^(level|exam|intensive|open)_/.test(k) || k === 'trial' || k === 'help_class'; }
   function choose(k, cadence, btn) {
     if (picks(k)) { location.hash = '#/settings/plans/pick/' + k + '/' + cadence; return; }
     if (!real()) { say('choose', 'app_pl_sample'); return; }
@@ -130,7 +132,7 @@
 
   /* ---------- The picker: rooms with their start date, days, time and places, or class dates ---------- */
   var PICK = null, ME = null;
-  function plannable(k) { return /^(level|exam|open)_/.test(k); }
+  function plannable(k) { return /^(level|exam|intensive|open)_/.test(k); }
   function day(iso) { return new Intl.DateTimeFormat(A.locale, { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(iso + (iso.length === 10 ? 'T12:00:00Z' : ''))); }
   function weekdays(days) {
     var idx = { Sunday: 0, Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6 };
@@ -144,7 +146,7 @@
   function lineOf(k, x) {
     var bits = [];
     if (x.sessionId) bits.push(t('app_pp_pick_session', { when: when(x.at, x.timezone), zone: x.timezone, cls: x.language + ' ' + x.level }));
-    else if (/^(level|exam)_/.test(k)) bits.push(t('app_pp_pick_pack', { date: day(x.startsOn), days: weekdays(x.days), time: x.time, zone: x.timezone, level: x.level }));
+    else if (/^(level|exam|intensive)_/.test(k)) bits.push(t('app_pp_pick_pack', { date: day(x.startsOn), days: weekdays(x.days), time: x.time, zone: x.timezone, level: x.level }));
     else bits.push(t('app_pp_pick_open', { days: weekdays(x.days), time: x.time, zone: x.timezone, level: x.level }));
     if (x.teacher) bits.push(t('app_pp_pick_with', { teacher: x.teacher }));
     if (x.joined != null) bits.push(t('app_pp_pick_joined', { n: x.joined }));
@@ -152,7 +154,7 @@
     return bits.join(' ');
   }
   function pickView(k, cadence) {
-    var items = (PICK && PICK.items) || [], pack = /^(level|exam)_/.test(k), moving = !!(pack && ME && ME.reserved);
+    var items = (PICK && PICK.items) || [], pack = /^(level|exam|intensive)_/.test(k), moving = !!(pack && ME && ME.reserved);
     var html = '<a class="rd-back" href="#/settings/plans">' + A.icon('back') + '<span>' + esc(t('app_pp_title')) + '</span></a>' +
       '<div class="view__head"><div><h1 class="t-h1"><bdi>' + esc(nameOf(k)) + '</bdi></h1><p class="t-lead">' + esc(t(pack ? 'app_pp_pick_lead_pack' : 'app_pp_pick_lead')) + '</p></div></div><div class="grid rise">';
     html += '<section class="card span-12" style="--i:0"><h2 class="t-h2">' + esc(t('app_pp_pick_h')) + '</h2>';

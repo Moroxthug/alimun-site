@@ -30,6 +30,7 @@ Each step costs less per class the more the learner commits. Money already paid 
 | Open class, English | €24 a month (4 classes) | same |
 | Open class, German | €29 a month | same |
 | Level pack, English | €72 a month × 3, or €199 upfront | €64 a month, or €179 upfront |
+| Intensive pack, English (five classes a week, Monday to Friday; added 14 Nov 2026) | €119 a month × 3, or €329 upfront | €109 a month, or €299 upfront |
 | Level pack, German | €89 a month × 3, or €249 upfront | €82 a month, or €229 upfront |
 | Exam pack, English (IELTS) | €89 a month × 3, or €249 upfront | €79 a month, or €219 upfront |
 | Exam pack, German (Goethe/telc B1) | €107 a month × 3, or €299 upfront | €96 a month, or €269 upfront |

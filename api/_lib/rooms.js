@@ -28,9 +28,12 @@ const KINDS = {
   help_class: { tier: 'help', min: 3, max: 8, minutes: 30, days: ['Sunday'], goal: 'foundations' },
 };
 const PRODUCT_KIND = {
-  level_en: 'level_pack', level_de: 'level_pack', exam_en: 'exam_pack', exam_de: 'exam_pack',
+  level_en: 'level_pack', level_de: 'level_pack', intensive_en: 'level_pack', exam_en: 'exam_pack', exam_de: 'exam_pack',
   open_en: 'open_class', open_de: 'open_class', help_class: 'help_class',
 };
+// Products whose rooms always meet on the same days, whatever the kind's default or the teacher's availability says:
+// the intensive pack is a level pack with a class every weekday (owner, 14 Nov 2026)
+const PRODUCT_DAYS = { intensive_en: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'] };
 const LANGUAGE = { en: 'English', de: 'German' };
 const DAY = 86400000;
 
@@ -135,7 +138,7 @@ function planProposals({ today, availability, demand, taken, minDemand }) {
       const sub = subs[0] || null;
       if (sub) subUse[sub] = (subUse[sub] || 0) + 1;
       teachers.add(s.teacher_id);
-      out.push({ product_key: productKey, level, starts_on: start, schedule_days: pack ? s.days : [WEEK[new Date(start + 'T12:00:00Z').getUTCDay()]],
+      out.push({ product_key: productKey, level, starts_on: start, schedule_days: pack ? (PRODUCT_DAYS[productKey] || s.days) : [WEEK[new Date(start + 'T12:00:00Z').getUTCDay()]],
         schedule_time: s.schedule_time, timezone: s.timezone, teacher_id: s.teacher_id, substitute_teacher_id: sub, demand: n });
       made++;
     }
@@ -406,4 +409,4 @@ async function seatProblem(sb, productKey, cohortId, sessionId) {
   return (await seatsOf(sb, cohortId)) >= r.max_students ? 'room_full' : null;
 }
 
-module.exports = { KINDS, PRODUCT_KIND, LANGUAGE, planDecisions, decideLinked, planProposals, packStarts, demandOf, suggestRooms, announceRoom, runRoomJob, seatProblem, enrol, unenrol, isPack, addDays, ymd };
+module.exports = { KINDS, PRODUCT_KIND, PRODUCT_DAYS, LANGUAGE, planDecisions, decideLinked, planProposals, packStarts, demandOf, suggestRooms, announceRoom, runRoomJob, seatProblem, enrol, unenrol, isPack, addDays, ymd };

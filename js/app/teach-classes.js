@@ -245,7 +245,7 @@
   var KONTRACTS = null;
   function roomName(r) {
     var lang = '\u2068' + t(/_de$/.test(r.product_key) || r.language === 'German' ? 'app_pp_lang_de' : 'app_pp_lang_en') + '\u2069';
-    var key = /^level_/.test(r.product_key) ? 'app_pp_level_h' : /^exam_/.test(r.product_key) ? 'app_pp_exam_h' : /^open_/.test(r.product_key) ? 'app_pp_open_h' : 'app_pp_help_h';
+    var key = /^intensive_/.test(r.product_key) ? 'app_pp_intensive_h' : /^level_/.test(r.product_key) ? 'app_pp_level_h' : /^exam_/.test(r.product_key) ? 'app_pp_exam_h' : /^open_/.test(r.product_key) ? 'app_pp_open_h' : 'app_pp_help_h';
     return t(key, { lang: lang }) + ' ' + r.level;
   }
   function kWeekdays(days) {

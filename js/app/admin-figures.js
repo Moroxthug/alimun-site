@@ -9,7 +9,7 @@
 (function () {
   'use strict';
   var A = null, root = null, FG = null, FLASH = '', bound = false;
-  var PRODUCT = { app: 'App', open_en: 'Open class, English', open_de: 'Open class, German', level_en: 'Level pack, English', level_de: 'Level pack, German',
+  var PRODUCT = { app: 'App', open_en: 'Open class, English', open_de: 'Open class, German', level_en: 'Level pack, English', level_de: 'Level pack, German', intensive_en: 'Intensive pack, English',
     exam_en: 'Exam pack, English', exam_de: 'Exam pack, German', help_class: 'Help class', trial: 'Trial class', minutes_30: 'Voice minutes 30', minutes_120: 'Voice minutes 120', other: 'Other' };
 
   function esc(s) { return A.esc(s); }

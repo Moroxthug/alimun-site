@@ -11,7 +11,7 @@
 var VERSION = 'v2';
 /* The app's bundled script, written by scripts/bundle-app.js (npm run build) */
 /* app-bundle */
-var BUNDLE = "/js/app/dist/app.js?v=885330e310";
+var BUNDLE = "/js/app/dist/app.js?v=4cb397312b";
 /* /app-bundle */
 var SHELL = 'alimun-shell-' + VERSION;
 var DATA = 'alimun-data-' + VERSION;

@@ -148,7 +148,7 @@ async function deferredNow(sb, rates) {
   const ents = await rows(sb.from('entitlements').select('id, product_key, cadence, band, variant, currency, amount_paid, cohort_id, starts_at')
     .in('status', ['active', 'paused']).not('cohort_id', 'is', null).limit(5000), 'pack entitlements');
   let total = 0;
-  for (const e of ents.filter((x) => /^(level|exam)_/.test(x.product_key))) {
+  for (const e of ents.filter((x) => /^(level|exam|intensive)_/.test(x.product_key))) {
     const sessions = await rows(sb.from('sessions').select('status, scheduled_at').eq('cohort_id', e.cohort_id).neq('status', 'cancelled'), 'room sessions');
     const delivered = sessions.filter((s) => s.status === 'completed' && (!e.starts_at || s.scheduled_at >= e.starts_at)).length;
     const price = (await rows(sb.from('price_book').select('unit_amount').eq('product_key', e.product_key).eq('band', e.band).eq('variant', e.variant)
@@ -248,7 +248,7 @@ async function figures(ctx, now) {
 
   // Rooms: margin per class and size
   const rooms = await rows(sb.from('cohorts').select('id, product_key, language, level, class_minutes, room_state, starts_on, max_students').in('room_state', ['open', 'running']), 'rooms');
-  const KIND = { level_en: 'level_pack', level_de: 'level_pack', exam_en: 'exam_pack', exam_de: 'exam_pack', open_en: 'open_class', open_de: 'open_class', help_class: 'help_class' };
+  const KIND = { level_en: 'level_pack', level_de: 'level_pack', intensive_en: 'level_pack', exam_en: 'exam_pack', exam_de: 'exam_pack', open_en: 'open_class', open_de: 'open_class', help_class: 'help_class' };
   out.rooms = [];
   for (const r of rooms) {
     const ents = await rows(sb.from('entitlements').select('product_key, cadence, band, variant, currency').eq('cohort_id', r.id).is('session_id', null).in('status', ['pending_room', 'active', 'paused']), 'room learners');

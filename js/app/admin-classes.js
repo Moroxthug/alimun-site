@@ -457,7 +457,7 @@
 
   /* ---------- Rooms of the new price list ---------- */
   var RM = null;
-  var PRODUCTS = { level_en: 'Level pack, English', level_de: 'Level pack, German', exam_en: 'Exam pack, English (IELTS)', exam_de: 'Exam pack, German (Goethe or telc B1)', open_en: 'Open class, English', open_de: 'Open class, German', help_class: 'Help class (30 minutes)' };
+  var PRODUCTS = { level_en: 'Level pack, English', level_de: 'Level pack, German', intensive_en: 'Intensive pack, English (Monday to Friday)', exam_en: 'Exam pack, English (IELTS)', exam_de: 'Exam pack, German (Goethe or telc B1)', open_en: 'Open class, English', open_de: 'Open class, German', help_class: 'Help class (30 minutes)' };
   var ROOM_STATE = { draft: 'Draft: published 21 days before the start once it has a teacher and a substitute', published: 'Published: taking reservations', open: 'Open: course contract offered', running: 'Running', finished: 'Finished', cancelled: 'Cancelled' };
   var WEEK = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   function loadRooms() {

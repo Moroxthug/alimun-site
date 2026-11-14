@@ -24,7 +24,7 @@
   var EXPLAIN = { target: 'explanations only in the language they learn', mostly: 'explanations mostly in that language', own: 'explanations in their own language' };
   var TF = { '3_months': 'within 3 months', '6_months': 'within 6 months', '1_year': 'within a year', no_deadline: 'no deadline' };
   var ROOM_STATE = { draft: 'Draft', published: 'Published, taking sign-ups', open: 'Open', running: 'Running' };
-  var PRODUCT_NAME = { level_en: 'English level pack', exam_en: 'English exam pack', open_en: 'English open class', level_de: 'German level pack', exam_de: 'German exam pack', open_de: 'German open class', help_class: 'Help class' };
+  var PRODUCT_NAME = { level_en: 'English level pack', intensive_en: 'English intensive pack', exam_en: 'English exam pack', open_en: 'English open class', level_de: 'German level pack', exam_de: 'German exam pack', open_de: 'German open class', help_class: 'Help class' };
   /* Time zones offered when correcting a learner's: the ones learners have, plus the usual ones */
   var ZONES = ['Europe/London', 'Europe/Lisbon', 'Europe/Madrid', 'Europe/Paris', 'Europe/Berlin', 'Europe/Rome', 'Europe/Warsaw', 'Europe/Budapest', 'Europe/Athens', 'Europe/Istanbul', 'Europe/Kyiv', 'Europe/Moscow',
     'Africa/Casablanca', 'Africa/Algiers', 'Africa/Tunis', 'Africa/Cairo', 'Africa/Lagos', 'Africa/Nairobi', 'Africa/Mogadishu', 'Asia/Dubai', 'Asia/Tehran', 'Asia/Karachi', 'Asia/Kolkata', 'Asia/Shanghai', 'Asia/Taipei', 'Asia/Seoul', 'Asia/Tokyo',

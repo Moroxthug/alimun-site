@@ -239,7 +239,7 @@ function readResult() {
 
 // Plan chosen on the Tiers page, carried through the test: payment comes after the goal step.
 // The new price list (pricing engine step 9): ?product=level_en&cadence=month from the Plans and prices page.
-const PRODUCTS = ['open_en', 'open_de', 'level_en', 'level_de', 'exam_en', 'exam_de', 'app'];
+const PRODUCTS = ['open_en', 'open_de', 'level_en', 'level_de', 'intensive_en', 'exam_en', 'exam_de', 'app'];
 const intent = PRODUCTS.includes(params.get('product')) ? { product: params.get('product'), cadence: params.get('cadence') === 'upfront' ? 'upfront' : 'month' }
   : TIERS.includes(params.get('tier')) ? { tier: params.get('tier'), billing: params.get('billing') === 'yearly' ? 'yearly' : 'monthly' } : null;
 

@@ -16,6 +16,7 @@ const PRODUCTS = {
   open_de:     { kind: 'open_class', cadences: ['month'],             charge: 'subscription', language: 'de' },
   level_en:    { kind: 'level_pack', cadences: ['month', 'upfront'],  charge: 'reserve',      language: 'en' },
   level_de:    { kind: 'level_pack', cadences: ['month', 'upfront'],  charge: 'reserve',      language: 'de' },
+  intensive_en: { kind: 'level_pack', cadences: ['month', 'upfront'], charge: 'reserve',      language: 'en' },
   exam_en:     { kind: 'exam_pack',  cadences: ['month', 'upfront'],  charge: 'reserve',      language: 'en' },
   exam_de:     { kind: 'exam_pack',  cadences: ['month', 'upfront'],  charge: 'reserve',      language: 'de' },
   help_class:  { kind: 'help_class', cadences: ['once'],              charge: 'once' },

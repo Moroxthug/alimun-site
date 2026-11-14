@@ -563,7 +563,7 @@ async function createRoom(sb, b) {
   if (!known || known.length !== want.length) return { error: 'teacher_not_approved' };
   if (!/^\d{4}-\d{2}-\d{2}$/.test(b.starts_on || '') || b.starts_on < R.ymd(new Date())) return { error: 'bad_start' };
   if (!TIME_RE.test(b.schedule_time || '')) return { error: 'bad_time' };
-  const days = Array.isArray(b.schedule_days) && b.schedule_days.length ? b.schedule_days : K.days;
+  const days = R.PRODUCT_DAYS[b.product_key] || (Array.isArray(b.schedule_days) && b.schedule_days.length ? b.schedule_days : K.days);
   if (!days.every((d) => WEEKDAYS.includes(d)) || new Set(days).size !== days.length) return { error: 'bad_days' };
   const tz = typeof b.timezone === 'string' && b.timezone.length < 64 ? b.timezone : 'Europe/Rome';
   try { new Intl.DateTimeFormat('en', { timeZone: tz }); } catch { return { error: 'bad_timezone' }; }

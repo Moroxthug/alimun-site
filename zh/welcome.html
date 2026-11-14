@@ -212,7 +212,7 @@ async function learner() {
     try { localStorage.removeItem('alimun-level-result'); } catch (e) {}
     // The product chosen on Plans and prices goes to the card-first checkout in the dashboard (pricing engine step 9):
     // packs and open classes through their room picker; anything else (and the old plans' links) to Plans and prices.
-    if (willPay) return location.replace(intent.product && /^(open|level|exam)_(en|de)$/.test(intent.product)
+    if (willPay) return location.replace(intent.product && /^(open|level|exam|intensive)_(en|de)$/.test(intent.product)
       ? '/app#/settings/plans/pick/' + intent.product + '/' + (intent.cadence === 'upfront' ? 'upfront' : 'month') : '/app#/settings/plans');
     location.replace('/app');
   });
