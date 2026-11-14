@@ -145,7 +145,7 @@ export default {
     ['Which false friends should I learn first?', 'Start with the ones that affect speakers of all Romance languages: actually, eventually, sensible, library, parents, pretend and assist. Then add the ones specific to your own language.'],
     ['Are most similar-looking words false friends?', 'No. Most words that look alike in English and the Romance languages, such as information, possible or important, mean the same thing. False friends are a limited group, which is why learning the common ones pays off.'],
   ],
-  related: ['phrasal-verbs', 'practise-speaking', 'cefr-english'],
+  related: ['english-job-interview', 'phrasal-verbs', 'practise-speaking', 'cefr-english'],
   sources: [
     ['Cambridge Dictionary: false friend', 'https://dictionary.cambridge.org/dictionary/english/false-friend'],
     ["Oxford Learner's Dictionaries: actually", 'https://www.oxfordlearnersdictionaries.com/definition/english/actually'],

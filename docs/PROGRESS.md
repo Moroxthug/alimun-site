@@ -2096,3 +2096,12 @@ Owner asked to clear the advisor's warnings about SECURITY DEFINER functions; pl
 - Built: the app's own sign-in, forgot password, create account, check-your-email, first set-up and "this app is for learners" screens (`js/app/account.js`); a wall in `AlimunClient.java` so the app's window loads only the app and everything else opens in the phone's browser; sign-out stays in the app; level-test buttons hidden in the app. Details and what is still a website page: `docs/APP_PLAN.md`, "Step 1b".
 - Missing, to build inside the app: the level test; account deletion; terms and privacy as app screens; opening the email links in the app.
 - Checked: `npm run build`, `node --check` (485 scripts), 233 unit tests, smoke 17 of 17 and the speed budget, the screens at phone size with stand-ins, debug APK built and sent. Not checked on a real phone, nor a real sign-in from the app.
+## 2026-11-14: three near-ranking articles strengthened
+
+Search Console (28 days to 10 Nov) showed three English articles with many impressions but low positions: /blog/clb-levels-explained (searches like "clb 9", "clb 4 in celpip", "celpip clb score chart"; position 24 to 70), /blog/german-cases-explained ("german cases", position 54) and /blog/job-interview-in-english ("job interview in english", position 55 to 67). Owner: "Yes, improve them".
+
+- CLB levels: new all-tests chart (minimum IELTS General Training, CELPIP and PTE Core score per skill for CLB 4 to 10, from the IRCC tables already cited), a short answer for each of CLB 4, 5, 6, 7, 8, 9 and 10, a note that the 3 Nov 2026 CRS update left language points unchanged, three new FAQ entries, new title and description.
+- German cases: full adjective ending tables (weak, mixed, strong), der-words and ein-words, a section on the dative case in one place, a new quiz question and FAQ entry, new title and description.
+- Job interview: six more common questions with sample answers, an interview vocabulary table, three more rows in the question table, a new FAQ entry, new title and description.
+- Internal links: the three articles now appear among the first three "keep reading" cards of present perfect, conditionals, false friends, practise speaking, German past tense, German articles (its list held only English articles before), IELTS band scores, TOEFL vs IELTS and English levels.
+- Indexing requests on 13 Nov were refused with "Quota exceeded" although none had been sent since 11 Nov; the queue is unchanged.

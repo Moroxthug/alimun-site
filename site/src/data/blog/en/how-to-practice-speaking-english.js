@@ -149,7 +149,7 @@ export default {
     ['How do I find a tandem partner?', 'Many universities, language centers and cities run tandem programs, and there are online exchanges as well. Agree on equal time for both languages, regular meetings and how you want to be corrected.'],
     ['I freeze when I have to speak. What can I do?', 'You are not alone: in a well-known 1986 study, about half the students said they panic when they have to speak without preparation. Practice in private first, prepare the phrases you will need, and speak regularly with people you know, such as a tandem partner or a small group.'],
   ],
-  related: ['how-long-english', 'cefr-english', 'phrasal-verbs'],
+  related: ['english-job-interview', 'how-long-english', 'cefr-english', 'phrasal-verbs'],
   sources: [
     ['British Council LearnEnglish, Five tips for busy learners: listening and speaking', 'https://learnenglish.britishcouncil.org/english-levels/improve-your-english-level/five-tips-busy-learners-listening-speaking'],
     ['Yo Hamada, Shadowing for language teaching, TESL Ontario Contact (2018)', 'https://contact.teslontario.org/shadowing/'],

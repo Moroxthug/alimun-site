@@ -177,7 +177,7 @@ export default {
     ['How long is an IELTS result valid?', 'IELTS results are officially recognized for two years from the test date, and the Test Report Form cannot be extended. Some organizations set their own rules, so check with them.'],
     ['Can I retake only Writing?', 'Yes, with IELTS One Skill Retake, if your full test was taken on computer at a test center within the last 60 days. You can retake one skill once per full test, and the organization you apply to must accept One Skill Retake results.'],
   ],
-  related: ['ielts-or-cambridge', 'cefr-english', 'how-long-english'],
+  related: ['clb-levels', 'ielts-or-cambridge', 'cefr-english', 'how-long-english'],
   sources: [
     ['IELTS scoring in detail (ielts.org)', 'https://ielts.org/take-a-test/your-results/ielts-scoring-in-detail'],
     ['IELTS and the CEFR (ielts.org)', 'https://ielts.org/organisations/ielts-for-organisations/compare-ielts/ielts-and-the-cefr'],

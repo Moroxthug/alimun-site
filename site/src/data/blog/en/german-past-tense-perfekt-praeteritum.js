@@ -161,7 +161,7 @@ export default {
     ['Is the Plusquamperfekt common?', 'Less common than the Perfekt and the Präteritum, but useful whenever you need to show that one past event came before another, especially after nachdem.'],
     ['Is the Perfekt the same as the English present perfect?', 'It is formed in a similar way, but it is used as a normal past tense and works with gestern, letzte Woche or a year. For something still going on, German uses the present with seit.'],
   ],
-  related: ['german-modal-verbs', 'german-word-order', 'present-perfect'],
+  related: ['german-cases', 'german-modal-verbs', 'german-word-order', 'present-perfect'],
   sources: [
     ['Grimm Grammar (UT Austin): Perfekt', 'https://coerll.utexas.edu/gg/gr/vcp_01.html'],
     ['Grimm Grammar (UT Austin): irregular verbs with sein', 'https://coerll.utexas.edu/gg/gr/vcp_04.html'],

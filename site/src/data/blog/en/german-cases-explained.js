@@ -1,5 +1,6 @@
 // The four German cases. Checked against Duden (wegen: genitive, dative in speech), DWDS (helfen and gefallen with
 // the dative, n-declension of Student and Herr, Name/Namens) and the Goethe-Institut sheet on two-way prepositions (wo? / wohin?).
+// 14 Nov 2026: added the full adjective ending tables (weak, mixed, strong), der-words and ein-words, and the dative summary.
 export default {
   key: 'german-cases',
   site: 'en',
@@ -7,10 +8,10 @@ export default {
   section: 'grammar',
   course: 'German',
   published: '2026-10-26',
-  updated: '2026-10-26',
-  title: 'The four German cases explained: nominative, accusative, dative, genitive',
-  metaTitle: 'German cases explained: accusative, dative and genitive – Alimun',
-  desc: 'What each German case does, how to find it with wer, wen, wem and wessen, dative verbs, prepositions by case, wo or wohin, and the mistakes to avoid.',
+  updated: '2026-11-14',
+  title: 'German cases explained: nominative, accusative, dative and genitive, with charts',
+  metaTitle: 'German cases: nominative, accusative, dative, genitive chart – Alimun',
+  desc: 'The four German cases with charts for articles, pronouns and adjective endings, how to find the case with wer, wen, wem and wessen, and the verbs and prepositions that decide it.',
   lead: "German uses four cases to show who does what to whom. They decide whether you say der, den, dem or des, ich, mich or mir. It feels like a lot at first, but **a handful of questions and a few groups of verbs and prepositions** cover most of what you will ever need.",
   photo: 'german-cases-neuschwanstein',
   sticker: { draw: 'dog', say: 'Wem gehört der Hund? Mir! That is the dative.' },
@@ -93,7 +94,18 @@ export default {
       ],
       note: 'Ihr has two jobs: it is “you all” in the nominative and “to her” in the dative. Ihr kommt (you all come), but ich helfe ihr (I help her).',
     } },
+    { h3: 'Der-words and ein-words' },
+    { p: "Two families of words follow the article table above. **Der-words** take the endings of der, die, das: dieser (this), jeder (every), welcher (which), jener (that) and mancher (some). So you say diesen Mann, mit jedem Kind, welche Frau. **Ein-words** take the endings of ein: kein and the possessives mein, dein, sein, ihr, unser, euer and Ihr. Learn one table and you have them all: mit meinem Bruder, für unsere Kinder, ohne seinen Pass." },
     { note: { title: 'Mir or mich?', text: "Ask the question. Wen siehst du? **Mich**: accusative. Wem gibst du das Buch? **Mir**: dative. The same goes for dich and dir, uns and euch. If the verb is one of the dative verbs below, it is always mir and dir.", draw: 'parrot' } },
+
+    { h: 'The dative case in one place' },
+    { p: "The dative is the case learners find hardest, because it has **three different triggers**. It marks the indirect object, the person who receives something (Ich gebe dem Kind einen Apfel). It follows a fixed group of prepositions: aus, bei, mit, nach, seit, von, zu and gegenüber, plus the two-way prepositions when they answer wo?. And it is the only object of a small group of verbs such as helfen, danken, gefallen and gehören. Whenever you meet one of these three, the articles become **dem, der, dem and den**, and the pronouns become mir, dir, ihm, ihr, uns, euch and ihnen." },
+    { examples: [
+      ['Ich schreibe **meiner Mutter** eine Karte.', 'Indirect object: the person who receives the card.'],
+      ['Wir fahren **mit dem** Zug.', 'Preposition: mit always takes the dative.'],
+      ['Das Handy liegt **auf dem** Sofa.', 'Two-way preposition answering wo?: dative.'],
+      ['Das Kleid steht **dir** gut.', 'Verb with a dative object: stehen here means to suit.'],
+    ] },
 
     { h: 'Verbs that take the dative' },
     { p: "Most verbs with one object take the accusative: ich sehe den Mann, ich kaufe einen Apfel. But a group of common verbs takes **the dative with their only object**, even though the English verb has a direct object. These are worth learning as a set, because there is no reliable rule to predict them." },
@@ -177,9 +189,45 @@ export default {
     ] },
     { p: "A few nouns in this group also add -s in the genitive. **Der Name** becomes des Namens, and der Gedanke (the thought) becomes des Gedankens. A good dictionary shows the genitive singular next to the noun, so if it ends in -n or -en, you know the noun belongs to this group." },
 
-    { h: 'Adjective endings, in brief' },
-    { p: "Case also appears on adjectives, and adjective endings deserve their own lesson. The basic idea is simple: **the case has to be shown once**. If the article already shows it clearly, as der and dem do, the adjective takes a short ending, -e or -en: der gute Wein, mit dem guten Wein. If the article does not show it, as with ein, or if there is no article at all, the adjective takes over: ein guter Wein, mit gutem Wein." },
-    { p: "You do not need to learn the full tables before you start speaking. Get the article right first; the adjective endings come more easily once **the article system is automatic**." },
+    { h: 'Adjective endings in all four cases' },
+    { p: "Case also appears on adjectives, and the idea behind the endings is simple: **the case has to be shown once**. If the article already shows it clearly, as der and dem do, the adjective takes a short ending, -e or -en: der gute Wein, mit dem guten Wein. If the article does not show it, as with ein, or if there is no article at all, the adjective takes over: ein guter Wein, mit gutem Wein. That gives three sets of endings, usually called weak, mixed and strong." },
+    { h3: 'After der, die, das (weak endings)' },
+    { p: "After the definite article and the der-words, adjectives only ever end in **-e or -en**. The five -e endings are the nominative singular of all three genders and the accusative of feminine and neuter; everything else is -en." },
+    { table: {
+      head: ['Case', 'Masculine', 'Feminine', 'Neuter', 'Plural'],
+      rows: [
+        ['Nominative', 'der gute Wein', 'die gute Suppe', 'das gute Brot', 'die guten Weine'],
+        ['Accusative', 'den guten Wein', 'die gute Suppe', 'das gute Brot', 'die guten Weine'],
+        ['Dative', 'dem guten Wein', 'der guten Suppe', 'dem guten Brot', 'den guten Weinen'],
+        ['Genitive', 'des guten Weines', 'der guten Suppe', 'des guten Brotes', 'der guten Weine'],
+      ],
+      note: 'The same endings follow dieser, jeder, welcher, jener and mancher, and alle in the plural.',
+    } },
+    { h3: 'After ein, kein and mein (mixed endings)' },
+    { p: "After ein-words, the adjective has to show the case in the three places where ein has no ending of its own: **the masculine nominative (-er) and the neuter nominative and accusative (-es)**. Everywhere else the endings match the weak table." },
+    { table: {
+      head: ['Case', 'Masculine', 'Feminine', 'Neuter', 'Plural'],
+      rows: [
+        ['Nominative', 'ein guter Wein', 'eine gute Suppe', 'ein gutes Brot', 'keine guten Weine'],
+        ['Accusative', 'einen guten Wein', 'eine gute Suppe', 'ein gutes Brot', 'keine guten Weine'],
+        ['Dative', 'einem guten Wein', 'einer guten Suppe', 'einem guten Brot', 'keinen guten Weinen'],
+        ['Genitive', 'eines guten Weines', 'einer guten Suppe', 'eines guten Brotes', 'keiner guten Weine'],
+      ],
+      note: 'Ein has no plural, so the plural column uses kein. Mein, dein, sein, ihr, unser, euer and Ihr follow the same pattern.',
+    } },
+    { h3: 'With no article (strong endings)' },
+    { p: "Without an article, the adjective carries the endings of the definite article itself: guter Wein like der, **mit gutem Wein like dem**. The one exception is the masculine and neuter genitive, where the noun already ends in -s, so the adjective takes -en: trotz guten Wetters." },
+    { table: {
+      head: ['Case', 'Masculine', 'Feminine', 'Neuter', 'Plural'],
+      rows: [
+        ['Nominative', 'guter Wein', 'gute Suppe', 'gutes Brot', 'gute Weine'],
+        ['Accusative', 'guten Wein', 'gute Suppe', 'gutes Brot', 'gute Weine'],
+        ['Dative', 'gutem Wein', 'guter Suppe', 'gutem Brot', 'guten Weinen'],
+        ['Genitive', 'guten Weines', 'guter Suppe', 'guten Brotes', 'guter Weine'],
+      ],
+      note: 'Strong endings also follow numbers and words such as viele and einige in the plural: viele gute Ideen, but mit zwei kleinen Kindern, because the dative plural always ends in -en.',
+    } },
+    { p: "You do not need these tables by heart before you start speaking. Get the article right first; the adjective endings come much more easily once **the article system is automatic**, and the weak table, the one after der, covers a large share of everyday sentences." },
 
     { h: 'Common mistakes' },
     { p: "These errors are typical with the cases, and each one breaks a rule from this article." },
@@ -206,10 +254,12 @@ export default {
     { q: 'Der Film gefällt ___.', options: ['ich', 'mich', 'mir', 'mein'], a: 2, why: 'With gefallen, the person who likes something is in the dative: mir.' },
     { q: 'In written German: Wegen ___ Regens bleiben wir zu Hause.', options: ['des', 'dem', 'den', 'der'], a: 0, why: 'In writing, wegen takes the genitive: wegen des Regens. Wegen dem Regen is common in speech.' },
     { q: 'Ich frage den ___. (Student)', options: ['Student', 'Studenten', 'Studente', 'Students'], a: 1, why: 'Student belongs to the n-declension: den Studenten.' },
+    { q: 'Ich helfe dem ___ Mann. (alt)', options: ['alte', 'alten', 'alter', 'altem'], a: 1, why: 'After dem, the article already shows the dative, so the adjective takes the weak ending -en: dem alten Mann.' },
     { q: 'Mein Bruder ist ___ guter Koch.', options: ['einen', 'einem', 'ein', 'eines'], a: 2, why: 'After sein, the noun stays in the nominative: ein guter Koch.' },
   ],
   faq: [
     ['Which German case should I learn first?', 'Start with the nominative and the accusative, which together cover most simple sentences. Add the dative next, with the dative verbs and prepositions, and leave the genitive for last, since spoken German often replaces it.'],
+    ['What is the dative case in German?', 'The dative is the case of the indirect object, the person who receives something or for whom something is done, found with the question wem?. It also follows the prepositions aus, bei, mit, nach, seit, von, zu and gegenüber, the two-way prepositions when they answer wo?, and verbs such as helfen, danken and gefallen.'],
     ['Do Germans still use the genitive?', 'Yes. It is normal in writing, in names (Annas Buch), in fixed expressions and after prepositions such as wegen, trotz and während. In everyday speech, many people say von plus the dative instead, as in das Auto von meinem Vater.'],
     ['Is “wegen dem” wrong?', 'Duden lists wegen with the genitive and describes the dative as standard in speech but colloquial in writing. Use wegen des in anything written, especially in exams.'],
     ['How do I know which case a verb takes?', 'Look at the dictionary entry: jmdm. means the verb takes a dative, jmdn. an accusative. Most verbs with one object take the accusative, so the dative verbs such as helfen, danken, gefallen and gehören are the ones to learn as a group.'],

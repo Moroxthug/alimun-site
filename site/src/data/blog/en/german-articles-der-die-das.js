@@ -165,7 +165,7 @@ export default {
     ['Do Germans ever disagree about articles?', 'With common words, native speakers agree. A few nouns have two accepted genders, such as der or das Joghurt and die or das Cola, depending on the region. For a learner, the standard forms in a dictionary are always safe.'],
     ['Is der See a lake or a sea?', 'Der See is a lake, die See is the sea, as in die Nordsee and die Ostsee. The plural of the lake is die Seen.'],
   ],
-  related: ['cefr-english', 'how-long-english', 'ielts-or-cambridge'],
+  related: ['german-cases', 'german-prepositions', 'german-pronunciation', 'how-long-german'],
   sources: [
     ['Duden: See (sea)', 'https://www.duden.de/rechtschreibung/See_Meer'],
     ['Duden: Band (volume)', 'https://www.duden.de/rechtschreibung/Band_Buch'],

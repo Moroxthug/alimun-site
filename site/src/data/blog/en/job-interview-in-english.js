@@ -1,6 +1,8 @@
 // Job interview in English. Checked against the National Careers Service (STAR method, top interview questions,
 // video interviews), University of Washington Career & Internship Center (STAR proportions), UMass Amherst (thank-you
 // email within 24 hours) and Cambridge Dictionary (actually, eventually, assist, sensible, CV and résumé, bear with someone).
+// 14 Nov 2026: added more common questions with sample answers and the interview vocabulary table (Cambridge Dictionary:
+// notice period, shortlist, probation, reference, relocate).
 export default {
   key: 'english-job-interview',
   site: 'en',
@@ -8,10 +10,10 @@ export default {
   section: 'abroad',
   course: 'English',
   published: '2026-11-01',
-  updated: '2026-11-01',
-  title: 'Job interview in English: questions, answers and phrases',
-  metaTitle: 'Job interview in English: questions, answers, phrases – Alimun',
-  desc: 'How a job interview in English works, the classic questions and natural answers, the STAR method, phrases to buy time and the mistakes non-native speakers make.',
+  updated: '2026-11-14',
+  title: 'Job interview in English: common questions, sample answers and useful phrases',
+  metaTitle: 'Job interview in English: questions and sample answers – Alimun',
+  desc: 'The questions you will hear in a job interview in English, with sample answers, the STAR method, interview vocabulary, phrases to buy time and the mistakes non-native speakers make.',
   lead: 'A job interview in English tests two things at once: whether you can do the job, and whether you can **talk about it clearly** in a language that is not your own. The questions are surprisingly predictable, and so is the English you need. Here is how an interview usually runs, what to say to the classic questions, and the small language traps that catch Italian, Spanish, French and Portuguese speakers.',
   photo: 'english-job-interview-meeting-table',
   sticker: { draw: 'suitcase', say: 'Tell me about yourself. Briefly!' },
@@ -65,6 +67,40 @@ export default {
       ['I see myself developing my skills in data analysis, which is a big part of this role.', 'Link your plans back to the job.'],
     ] },
 
+    { h: 'More common interview questions, with sample answers' },
+    { p: "Beyond the classics, a handful of other questions come up in almost every interview in English. None of them has one right answer, but each one has **a purpose you can serve**. The sample answers below are short on purpose: say them in your own words and add a detail from your real experience." },
+    { h3: '“Why are you leaving your current job?”' },
+    { p: "The interviewer wants to know whether you are moving towards something or running away from something. Stay positive and **never criticize your current employer**, even if you have good reasons. Talk about what you are looking for next. If you were made redundant or your contract ended, say so plainly: it is common and nothing to hide." },
+    { examples: [
+      ["I've learned a lot in my current role, but I'm ready for more responsibility, and there's no room to grow into a team lead position there.", 'Moving towards something, not away from someone.'],
+      ['My contract ended in June, and I used the time to finish a certificate in project management.', 'A plain fact, followed by something useful you did.'],
+    ] },
+    { h3: '“Why should we hire you?”' },
+    { p: "This is your chance to sum up. Pick **two or three points that match the job advert** and give one piece of evidence for each. It is a moment to sound confident, so avoid “I think maybe” and use direct statements." },
+    { examples: [
+      ["You need someone who can manage suppliers in English and Spanish. I've done exactly that for four years, and last year I cut our delivery costs by renegotiating two contracts.", 'Their need, your experience, one result.'],
+    ] },
+    { h3: '“What is your greatest achievement?”' },
+    { p: "Choose a work achievement that is recent, relevant to the job and **easy to explain in a minute**. Tell it as a short STAR story, and end with the result and why it mattered to you." },
+    { examples: [
+      ['Last year I trained three new colleagues while we moved to a new system. All three were working on their own within a month, and we did not miss a single deadline.', 'Concrete, recent and with a clear result.'],
+    ] },
+    { h3: '“Tell me about a time you made a mistake”' },
+    { p: "Interviewers ask this to see **honesty and what you learned**. Choose a real but limited mistake, take responsibility for it with I, explain how you fixed it and what you do differently now. The past simple tells the story, and the present simple describes your new habit." },
+    { examples: [
+      ["I once sent a client the wrong price list. I called them as soon as I noticed, apologized and sent the right one the same day. Now I always check attachments against the order before I send anything.", 'Mistake, fix, lesson, in that order.'],
+    ] },
+    { h3: '“How do you handle stress and pressure?”' },
+    { p: "Describe **what you actually do** when work gets intense, then support it with a quick example. Planning, prioritizing and communicating early are the kind of habits interviewers want to hear about." },
+    { examples: [
+      ["When everything is urgent, I make a list, agree on priorities with my manager and tell clients early if something will be late. That worked well during our year-end closing last December.", 'A method, then proof.'],
+    ] },
+    { h3: '“Do you prefer working alone or in a team?”' },
+    { p: "Most jobs need both, so the best answer usually shows **you can do both** and explains when each works best for you." },
+    { examples: [
+      ['I enjoy both. I like working with the team to plan a project, and then I am happy to work on my part on my own and report back.', 'Balanced and specific.'],
+    ] },
+
     { h: 'Salary expectations' },
     { p: 'Questions about pay can come early, in a screening call, or at the end of the process. Before any interview, find out the typical pay for the role in that city and country, so that any figure you give is realistic. Remember, too, that a salary is usually discussed as a yearly figure: Cambridge Dictionary defines it as “a fixed amount of money agreed every year”. In English, it is common and perfectly polite to **give a range** rather than a single number, or to turn the question back to the employer first.' },
     { examples: [
@@ -81,6 +117,9 @@ export default {
         ['Why do you want to work here?', 'Whether you researched the company', "I've read about your … and with my experience in …"],
         ['Where do you see yourself in five years?', 'Whether your plans fit the role', "I'd like to … and I hope to …"],
         ['What are your salary expectations?', 'Whether you are realistic', "I'm looking for something in the range of …"],
+        ['Why are you leaving your current job?', 'What you are looking for next', "I'm ready for more responsibility, and …"],
+        ['Why should we hire you?', 'A summary of your fit for the role', 'You need someone who can … I have done exactly that for …'],
+        ['Tell me about a time you made a mistake.', 'Honesty and learning', 'I once … I fixed it by … Now I always …'],
         ['Do you have any questions for us?', 'Your interest in the job', 'Yes, I was wondering what a typical day involves.'],
       ],
       note: 'The National Careers Service lists questions like these among the most common, together with questions about your spare time and why you left your last job.',
@@ -135,6 +174,25 @@ export default {
       ['An American tendency', 'More direct statements, enthusiasm said out loud (“I\'m really excited about this role”) and a clear account of your own results, without false modesty.'],
     ] },
 
+    { h: 'Interview vocabulary you will hear' },
+    { p: "Some words come up in almost every hiring process in English, and **misunderstanding one can cost you** a good answer. These are the ones learners most often ask about." },
+    { table: {
+      head: ['Word or phrase', 'What it means', 'Example'],
+      rows: [
+        ['shortlist', 'the small group of candidates chosen for interview', 'You have been shortlisted for the second round.'],
+        ['notice period', 'the time you must work after you resign, before you can leave', 'My notice period is one month.'],
+        ['start date', 'the first day you could start the new job', 'My earliest start date would be 1 March.'],
+        ['references', 'people who can confirm your work, usually former managers', 'I can provide two references from my last employer.'],
+        ['probation period', 'a first period in a new job when your work is assessed', 'There is a three-month probation period.'],
+        ['relocate', 'to move to another city or country for work', 'I would be happy to relocate to Toronto.'],
+        ['full-time, part-time', 'the number of hours you work each week', 'Is this a full-time position?'],
+        ['permanent, fixed-term', 'a contract with no end date, or one that ends on a set date', 'It is a fixed-term contract for twelve months.'],
+        ['hybrid, remote', 'partly in the office and partly at home, or fully from home', 'The role is hybrid, with two office days a week.'],
+        ['benefits, package', 'what you receive besides your salary, such as holidays or health insurance', 'What does the benefits package include?'],
+      ],
+      note: 'Meanings as in Cambridge Dictionary. British English says CV and holiday; American English usually says résumé and vacation.',
+    } },
+
     { h: 'The grammar that matters most' },
     { p: 'You do not need perfect grammar to do well in an interview, but three areas come up again and again. The first is the difference between the **present perfect and the past simple**. Use the present perfect for experience up to now, often with for and since: “I\'ve worked in sales for five years”. Use the past simple for finished jobs and dates: “I worked at a hotel in Lisbon from 2019 to 2021”. Our article on the present perfect and the past simple explains the difference in detail.' },
     { p: 'The second is the conditional. Hypothetical questions such as “What would you do if a client was unhappy?” need an answer with **would**: “I would call them first to understand the problem.” Use the second conditional to talk about the job you are applying for, too: “If I joined the team, I would focus on…”. Our guide to English conditionals covers all the forms. The third is the use of I as the subject of active verbs. “I organized”, “I negotiated”, “I trained” make your contribution clear, where passive sentences hide it.' },
@@ -187,6 +245,7 @@ export default {
     ['What if I do not understand a question?', 'Ask. “Sorry, could you repeat the question?” or “Just to make sure I understand, do you mean…?” are polite and normal. Answering the wrong question is a much bigger problem than asking for clarification.'],
     ['Should I use British or American English?', 'Either is fine, as long as you are consistent and clear. It helps to know the local words, such as CV in the United Kingdom and résumé in the United States, and the general difference in style between British understatement and American directness.'],
     ['How long should my answers be?', 'Long enough to give an example, short enough to keep the conversation moving. About a minute for “Tell me about yourself” and a little longer for a STAR story is a good guide. If the interviewer wants more, they will ask a follow-up question.'],
+    ['What are the most common job interview questions in English?', 'Tell me about yourself, what are your strengths and weaknesses, why do you want to work here, why are you leaving your current job, why should we hire you, where do you see yourself in five years, what are your salary expectations, behavioral questions that start with tell me about a time when, and do you have any questions for us.'],
     ['Is it OK to say I am still learning English?', 'If the job needs English, the interviewer can already hear your level. There is no need to apologize for it. If a language question comes up, say what you are doing to improve, as you would for any other weakness.'],
   ],
   related: ['present-perfect', 'english-conditionals', 'practise-speaking'],

@@ -156,7 +156,7 @@ export default {
     ['Can I be at different levels in different skills?', "Yes, and it is very common. Many learners read at a higher level than they speak, which is why regular speaking practice matters so much."],
     ['Does a Cambridge certificate expire?', "No, a Cambridge English certificate does not expire. Some universities and employers still ask for a recent result, and IELTS results are usually accepted for a limited time, so check what the organization requires."],
   ],
-  related: ['how-long-english', 'ielts-or-cambridge', 'german-articles'],
+  related: ['how-long-english', 'clb-levels', 'ielts-or-cambridge', 'german-articles'],
   sources: [
     ['Council of Europe, CEFR common reference levels: global scale', 'https://www.coe.int/en/web/common-european-framework-reference-languages/table-1-cefr-3.3-common-reference-levels-global-scale'],
     ['Council of Europe, CEFR Companion Volume (2020)', 'https://www.coe.int/en/web/common-european-framework-reference-languages/cefr-companion-volume'],

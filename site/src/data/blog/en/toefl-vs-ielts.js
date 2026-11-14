@@ -170,7 +170,7 @@ export default {
     ['Is TOEFL easier than IELTS?', 'Neither is easier in itself. TOEFL is shorter, adaptive and has a recorded Speaking section; IELTS is longer, fixed in format and has a live Speaking test with an examiner. The better test is the one whose format lets you show your English best.'],
     ['Do universities accept TOEFL Home Edition and IELTS Online?', 'Many do, but not all. Arizona State University, for example, accepts both. Both ETS and IELTS tell you to check with your school before you book an at-home test.'],
   ],
-  related: ['ielts-band-scores', 'ielts-or-cambridge', 'cefr-english'],
+  related: ['ielts-band-scores', 'clb-levels', 'ielts-or-cambridge', 'cefr-english'],
   sources: [
     ['TOEFL iBT test content and structure (ETS)', 'https://www.in.ets.org/toefl/institutions/ibt/about/content-structure.html'],
     ['TOEFL iBT score scale update (ETS)', 'https://www.ets.org/toefl/institutions/ibt/score-scale-update.html'],

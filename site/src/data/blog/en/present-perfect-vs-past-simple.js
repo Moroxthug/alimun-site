@@ -168,7 +168,7 @@ export default {
     ['When should I use the present perfect continuous?', 'For an activity that started in the past and is still going on, or has just stopped, especially with for and since: I have been waiting for an hour. Verbs for states, such as know and like, stay in the simple form.'],
     ['Why do Italian, French and German speakers say "I have seen him yesterday"?', 'Because their own perfect tense is an everyday past tense that works with finished times. In English, a finished time such as yesterday needs the past simple.'],
   ],
-  related: ['cefr-english', 'phrasal-verbs', 'ielts-or-cambridge'],
+  related: ['english-job-interview', 'cefr-english', 'phrasal-verbs', 'ielts-or-cambridge'],
   sources: [
     ['British Council LearnEnglish: Present perfect', 'https://learnenglish.britishcouncil.org/free-resources/grammar/english-grammar-reference/present-perfect'],
     ['British Council LearnEnglish: just, yet, still and already', 'https://learnenglish.britishcouncil.org/free-resources/grammar/b1-b2/present-perfect-just-yet-still-already'],
