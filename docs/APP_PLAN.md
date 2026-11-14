@@ -61,3 +61,12 @@ Ideas, none built: a home-screen widget with the word of the day and the flashca
 
 ## Decisions for the owner
 - When to start step 3 (Apple and Google developer accounts are needed: Apple $99 a year, Google $25 once).
+
+## Owner's request, 14 Nov 2026: the complete app
+Owner, after trying the test builds (13 Nov: "it is still a browser app"): "i want you in a new convo to do the app, but it needs to be complete. i want you to do an app that is the one people will download, full with all animations, settings to change language, changeable home icons at bottom, animated, nice and beautiful, with exclusive features only in app."
+- The app people download: release signing, version numbers, store billing for the app plan and tutor minutes, store listing. Not a test copy.
+- It must feel like an app, not a web page in a frame: animated screens and transitions throughout.
+- A setting to change the app's language.
+- The bottom bar's icons can be chosen by the learner, and are animated.
+- Features that exist only in the app (ideas in "Step 4"; the owner has not picked which).
+- Built in a new conversation, starting from `mobile/` (learner app) and `mobile/admin/` (owner's admin app, never published).
