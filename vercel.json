@@ -159,6 +159,9 @@
     "api/admin/teacher.js": {
       "maxDuration": 30
     },
+    "api/help.js": {
+      "maxDuration": 60
+    },
     "api/ops.js": {
       "maxDuration": 60
     },
@@ -216,6 +219,10 @@
     {
       "path": "/api/pricing?action=cron-finance",
       "schedule": "37 5 * * *"
+    },
+    {
+      "path": "/api/help?action=cron_drafts",
+      "schedule": "13 6 * * 1"
     }
   ]
 }

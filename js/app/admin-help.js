@@ -39,10 +39,10 @@
           messages: [{ id: 'm4', author: 'person', body: 'Please change my email to my work address.', created_at: at(60 * 80) }, { id: 'm5', author: 'alimun', body: 'Hello Kenji, it is changed. The Alimun team', created_at: at(60 * 70) }] }
       ],
       questions: [
-        { question: 'How do I join my class?', sure: true, helpful: true, created_at: at(30) },
+        { question: 'How do I join my class?', sure: true, helpful: true, article_slugs: ['join-your-live-class'], created_at: at(30) },
         { question: 'Can I get a refund for a class I missed?', sure: false, helpful: null, created_at: at(200) },
-        { question: 'When does my German pack start?', sure: true, helpful: false, created_at: at(400) },
-        { question: 'How many tutor minutes do I have?', sure: true, helpful: true, created_at: at(900) }
+        { question: 'When does my German pack start?', sure: true, helpful: false, article_slugs: ['how-rooms-start'], created_at: at(400) },
+        { question: 'How many tutor minutes do I have?', sure: true, helpful: true, article_slugs: ['how-tutor-minutes-work', 'join-your-live-class'], created_at: at(900) }
       ]
     };
   }
@@ -90,7 +90,7 @@
     which = ['open', 'answered', 'closed', 'all'].indexOf(which) > -1 ? which : 'open';
     var n = { all: D.requests.length, open: 0, answered: 0, closed: 0 }; D.requests.forEach(function (r) { n[r.status]++; });
     var tab = function (k, label) { return '<a class="btn btn--' + (k === which ? 'primary' : 'quiet') + ' btn--sm" href="#/help/list/' + k + '"' + (k === which ? ' aria-current="page"' : '') + '>' + esc(label + ' (' + n[k] + ')') + '</a>'; };
-    return flash() + '<div class="view__head"><div><h1 class="t-h1">Help requests</h1><p class="t-lead">What students and teachers write to Support. Your reply reaches their dashboard and their inbox; they can answer from either.</p></div></div>' +
+    return flash() + tabs('conv') + '<div class="view__head"><div><h1 class="t-h1">Help requests</h1><p class="t-lead">What students and teachers write to Support. Your reply reaches their dashboard and their inbox; they can answer from either.</p></div></div>' +
       '<div class="grid rise"><section class="card span-12" style="--i:0"><div class="btn-row ad-tabs" role="navigation" aria-label="Which conversations">' + tab('open', 'Waiting for us') + tab('answered', 'Answered') + tab('closed', 'Closed') + tab('all', 'All') + '</div>' +
       '<div class="ad-filters"><input class="st-in" type="search" data-hf placeholder="Search by subject, name or email" value="' + esc(Q.q) + '" aria-label="Search"></div>' +
       '<div data-hrows data-which="' + which + '">' + rowsHtml(which) + '</div></section>' +
@@ -144,9 +144,152 @@
     });
   }
 
+  /* ---------- Part 3: drafts and article use ---------- */
+  var DR = null, EN = null;
+  var SUBJ = { classes: 'Live classes', plans: 'Plans and payments', dashboard: 'The dashboard', practice: 'Homework and practice', tutor: 'The tutor', account: 'Account and privacy', teachers: 'Teaching' };
+  var AUD = { student: 'Students', teacher: 'Teachers', all: 'Everyone' };
+  function sampleDrafts() {
+    var now = Date.now(), at = function (h) { return new Date(now - h * HOUR).toISOString(); };
+    return { lastRun: { ok: true, created_at: at(30), result: { made: 2, questions: 5 } }, drafts: [
+      { id: 'd1', kind: 'new', article_slug: null, section: 'help', subject: 'classes', audience: 'student', status: 'draft', created_at: at(30),
+        title: 'What happens if I miss a class in my pack?', summary: 'You can catch up with the notes your teacher publishes after each class.',
+        body: ['After every class your teacher publishes notes in Classes, with the words from the class and anything to practise. If you miss a class, open them there and go through them before the next one.', 'You can also go over the lesson with your tutor from Classes, using your usual tutor minutes.'],
+        missing: ['Can a learner get a refund or credit for a class they missed in a pack?'], reason: 'Three people asked about missed classes and refunds; the articles explain the notes but not refunds.',
+        questions: [{ question: 'Can I get a refund for a class I missed?', sure: false, at: at(40) }, { question: 'I missed Tuesday, what now?', sure: false, at: at(50) }, { question: 'Do I lose a class if I am sick?', helpful: false, sure: true, at: at(70) }] },
+      { id: 'd2', kind: 'change', article_slug: 'cancel-your-plan', section: 'help', subject: 'plans', audience: 'student', status: 'draft', created_at: at(30),
+        title: 'How do I cancel my plan?', summary: 'Go to Settings and choose Manage billing; cancelling stops the next payment.',
+        body: ['In your dashboard, go to Settings and choose Manage billing on your plan card.', 'A reserved pack is not charged until the room opens.'], missing: [], reason: 'People with a reserved pack asked how to cancel it.',
+        questions: [{ question: 'How do I cancel a reserved pack?', helpful: false, sure: true, at: at(60) }] },
+      { id: 'd3', kind: 'new', article_slug: 'change-class-time', section: 'help', subject: 'classes', audience: 'student', status: 'approved', created_at: at(200), decided_at: at(190),
+        title: 'Can I change my class time?', summary: '', body: [], missing: [], questions: [{ question: 'Can I move my class to the evening?' }] }
+    ] };
+  }
+  function loadDrafts() {
+    var en = EN ? Promise.resolve(EN) : fetch('/js/help/en.json').then(function (r) { return r.json(); }).then(function (j) { return (EN = j.articles || []); }).catch(function () { return (EN = []); });
+    if (!real()) return en.then(function () { return DR || (DR = sampleDrafts()); });
+    return Promise.all([en, window.AlimunData.token().then(function (tok) { return fetch('/api/help?action=admin_drafts', { headers: { Authorization: 'Bearer ' + (tok || '') } }); })
+      .then(function (r) { return r.json().then(function (j) { if (!r.ok) throw new Error(j.error || r.status); return (DR = j); }); })]);
+  }
+  function tabs(cur) {
+    var open = D ? D.requests.filter(function (r) { return r.status === 'open'; }).length : 0;
+    var waiting = DR ? DR.drafts.filter(function (d) { return d.status === 'draft'; }).length : 0;
+    var t = function (k, href, label) { return '<a class="btn btn--' + (k === cur ? 'primary' : 'quiet') + ' btn--sm" href="' + href + '"' + (k === cur ? ' aria-current="page"' : '') + '>' + esc(label) + '</a>'; };
+    return '<div class="btn-row ad-tabs ad-help-tabs" role="navigation" aria-label="Help sections">' + t('conv', '#/help', 'Conversations' + (open ? ' (' + open + ' waiting)' : '')) +
+      t('drafts', '#/help/drafts', 'Article drafts' + (waiting ? ' (' + waiting + ')' : '')) + t('articles', '#/help/articles', 'Article use') + '</div>';
+  }
+  function draftsView() {
+    var waiting = DR.drafts.filter(function (d) { return d.status === 'draft'; }), done = DR.drafts.filter(function (d) { return d.status !== 'draft'; });
+    var run = DR.lastRun ? (DR.lastRun.ok === false ? 'The last run failed ' + ago(DR.lastRun.created_at) + '.' : 'Last run ' + ago(DR.lastRun.created_at) + ': ' + ((DR.lastRun.result || {}).questions || 0) + ' questions, ' + ((DR.lastRun.result || {}).made || 0) + ' drafts.') : 'No run yet.';
+    return flash() + tabs('drafts') +
+      '<div class="view__head"><div><h1 class="t-h1">Article drafts</h1><p class="t-lead">Every Monday the questions Help could not answer well are grouped and turned into a new article or a change to one. Nothing is published until you approve it; approving publishes it in English and translates it into the other languages.</p></div>' +
+        '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-drun>Draft now from the last 30 days</button></div></div>' +
+      '<p class="t-small ad-help-run" data-drunmsg>' + esc(run) + '</p>' +
+      '<div class="grid rise">' +
+        (waiting.length ? waiting.map(function (d, i) {
+          return '<a class="card span-6 ad-draft" style="--i:' + i + '" href="#/help/drafts/' + esc(d.id) + '">' +
+            '<span class="ad-draft__kind">' + esc(d.kind === 'change' ? 'Change to an article' : 'New article') + ', ' + esc(SUBJ[d.subject] || d.subject) + ', for ' + esc((AUD[d.audience] || '').toLowerCase()) + '</span>' +
+            '<b class="t-h3">' + esc(d.title) + '</b>' + (d.reason ? '<span class="t-small">' + esc(d.reason) + '</span>' : '') +
+            '<span class="ad-draft__foot">' + esc(d.questions.length === 1 ? 'From 1 question' : 'From ' + d.questions.length + ' questions') + (d.missing && d.missing.length ? ', ' + esc(d.missing.length === 1 ? '1 fact for you to add' : d.missing.length + ' facts for you to add') : '') + ', ' + esc(ago(d.created_at)) + '</span></a>';
+        }).join('') : '<section class="card span-12"><p class="t-body">No drafts waiting. When Help cannot answer a question well, it is drafted here the next Monday.</p></section>') +
+        (done.length ? '<section class="card span-12"><h2 class="t-h3">Decided</h2><div class="tt-week">' + done.slice(0, 40).map(function (d) {
+          return '<div class="tt-row tt-row--wide"><span class="tt-row__time">' + esc(d.status === 'approved' ? 'Published' : 'Discarded') + '</span><span><b>' + esc(d.title) + '</b><small>' + esc((d.article_slug ? d.article_slug + ', ' : '') + ago(d.decided_at || d.created_at)) + '</small></span></div>';
+        }).join('') + '</div></section>' : '') + sampleLine() +
+      '</div>';
+  }
+  function opt(v, label, cur) { return '<option value="' + esc(v) + '"' + (v === cur ? ' selected' : '') + '>' + esc(label) + '</option>'; }
+  function draftView(d) {
+    var base = d.kind === 'change' ? (EN || []).filter(function (a) { return a.slug === d.article_slug; })[0] : null;
+    var open = d.status === 'draft';
+    return flash() + back('#/help/drafts', 'Article drafts') +
+      '<div class="view__head"><div><h1 class="t-h1">' + esc(d.kind === 'change' ? 'Change to an article' : 'A new article') + '</h1><p class="t-lead">' + esc(d.reason || '') + '</p></div></div>' +
+      '<div class="grid rise ad-draft-grid">' +
+        '<form class="card span-8 ad-draft-form" data-dform novalidate style="--i:0">' +
+          '<label class="st-field"><span class="st-lbl">Title, as a question people ask</span><input class="st-in" name="title" maxlength="200" value="' + esc(d.title) + '"' + (open ? '' : ' disabled') + '></label>' +
+          '<label class="st-field"><span class="st-lbl">Summary, one sentence that answers it</span><textarea class="st-in" name="summary" rows="2" maxlength="600"' + (open ? '' : ' disabled') + '>' + esc(d.summary) + '</textarea></label>' +
+          '<label class="st-field"><span class="st-lbl">The article, with an empty line between paragraphs</span><textarea class="st-in ad-draft-body" name="body" rows="14"' + (open ? '' : ' disabled') + '>' + esc((d.body || []).join('\n\n')) + '</textarea></label>' +
+          '<div class="st-row ad-draft-row">' +
+            '<label class="st-field"><span class="st-lbl">Where</span><select class="st-in" name="section"' + (open ? '' : ' disabled') + '>' + opt('help', 'Help', d.section) + opt('support', 'Support', d.section) + '</select></label>' +
+            '<label class="st-field"><span class="st-lbl">Topic</span><select class="st-in" name="subject"' + (open ? '' : ' disabled') + '>' + Object.keys(SUBJ).map(function (k) { return opt(k, SUBJ[k], d.subject); }).join('') + '</select></label>' +
+            '<label class="st-field"><span class="st-lbl">For</span><select class="st-in" name="audience"' + (open ? '' : ' disabled') + '>' + Object.keys(AUD).map(function (k) { return opt(k, AUD[k], d.audience); }).join('') + '</select></label>' +
+          '</div>' +
+          (d.kind === 'new' ? '<label class="st-field"><span class="st-lbl">Web address</span><input class="st-in" name="slug" maxlength="80" value="' + esc(d.article_slug || slugOf(d.title)) + '"' + (open ? '' : ' disabled') + '><span class="t-tiny">Letters, numbers and hyphens. It cannot be changed later.</span></label>' : '') +
+          (open ? '<div class="btn-row"><button class="btn btn--primary btn--sm" type="submit" data-act="approve">Approve and publish in every language</button><button class="btn btn--quiet btn--sm" type="submit" data-act="save">Save</button><button class="btn btn--quiet btn--sm" type="submit" data-act="discard">Discard</button><span class="t-small st-msg" data-dmsg role="status"></span></div>'
+            : '<p class="t-body"><b>' + esc(d.status === 'approved' ? 'Published.' : 'Discarded.') + '</b></p>') +
+        '</form>' +
+        '<aside class="span-4 ad-draft-side">' +
+          (d.missing && d.missing.length ? '<section class="card ad-help-q" style="--i:1"><h2 class="t-h3">Facts for you to add</h2><p class="t-small">The articles do not say these, so the draft leaves them out. Add them, or leave them out.</p>' + d.missing.map(function (m) { return '<p class="t-body ad-draft-fact" dir="auto">' + esc(m) + '</p>'; }).join('') + '</section>' : '') +
+          '<section class="card" style="--i:2"><h2 class="t-h3">The questions behind it</h2>' + (d.questions || []).map(function (q) {
+            return '<div class="ad-draft-q"><p class="t-body" dir="auto"><b>' + esc(q.question) + '</b></p><p class="t-small">' + esc((q.helpful === false ? 'Said Help did not help' : 'Help was not sure') + (q.at ? ', ' + ago(q.at) : '')) + '</p>' + (q.answer ? '<p class="t-small" dir="auto">Help answered: ' + esc(q.answer) + '</p>' : '') + '</div>';
+          }).join('') + '</section>' +
+          (base ? '<section class="card card--bone" style="--i:3"><h2 class="t-h3">The article now</h2><p class="t-body"><b>' + esc(base.title) + '</b></p><p class="t-small">' + esc(base.summary) + '</p>' + base.body.map(function (p) { return '<p class="t-small">' + esc(p) + '</p>'; }).join('') + '</section>' : '') +
+        '</aside>' + sampleLine() +
+      '</div>';
+  }
+  function slugOf(s) { return String(s || '').toLowerCase().normalize('NFKD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').split('-').slice(0, 8).join('-').slice(0, 70); }
+  function wireDrafts(my) {
+    var b = root.querySelector('[data-drun]'), msg = root.querySelector('[data-drunmsg]');
+    if (b) b.addEventListener('click', function () {
+      if (!real()) { msg.textContent = 'Sample: nothing was drafted.'; return; }
+      b.disabled = true; msg.textContent = 'Reading the questions and drafting. This takes up to a minute…';
+      post('admin_draft_run', {}).then(function (j) {
+        if (my !== no) return;
+        FLASH = j.questions ? j.made + ' drafts from ' + j.questions + ' questions.' : 'No new questions to draft from.'; DR = null; A.rerender();
+      }, function (e) { b.disabled = false; msg.textContent = e.message; });
+    });
+  }
+  function wireDraft(d, my) {
+    var f = root.querySelector('[data-dform]');
+    if (!f || d.status !== 'draft') return;
+    var act = 'save', msg = f.querySelector('[data-dmsg]');
+    f.querySelectorAll('button[type=submit]').forEach(function (x) { x.addEventListener('click', function () { act = x.getAttribute('data-act'); }); });
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var body = f.body.value.split(/\n\s*\n/).map(function (p) { return p.replace(/\s+/g, ' ').trim(); }).filter(Boolean);
+      var data = { id: d.id, decision: act, title: f.title.value.trim(), summary: f.summary.value.trim(), body: body, section: f.section.value, subject: f.subject.value, audience: f.audience.value, slug: f.slug ? f.slug.value.trim() : null };
+      if (act === 'discard' && msg.getAttribute('data-sure') !== '1') { msg.setAttribute('data-sure', '1'); msg.textContent = 'Press Discard again to throw this draft away.'; return; }
+      if (!real()) { msg.textContent = 'Sample: nothing was saved.'; return; }
+      f.querySelectorAll('button').forEach(function (x) { x.disabled = true; });
+      msg.textContent = act === 'approve' ? 'Publishing and translating into seven languages. This takes up to a minute…' : 'Saving…';
+      post('admin_draft_decide', data).then(function (j) {
+        if (my !== no) return;
+        FLASH = j.status === 'approved' ? 'Published as "' + j.slug + '". Translated into ' + (j.translated.length ? j.translated.join(', ') : 'no language') + (j.failed.length ? '; not into ' + j.failed.join(', ') + ' (they show the English until you approve it again)' : '') + '.' : j.status === 'discarded' ? 'Discarded.' : 'Saved.';
+        DR = null; A.rerender();
+      }, function (e2) { f.querySelectorAll('button').forEach(function (x) { x.disabled = false; }); msg.textContent = e2.message; });
+    });
+  }
+  /* Which articles Help used in its answers over the last 30 days (help_questions.article_slugs) */
+  function articlesView() {
+    var use = {}, yes = {}, nope = {};
+    (D.questions || []).forEach(function (q) { (q.article_slugs || []).forEach(function (s) { use[s] = (use[s] || 0) + 1; if (q.helpful === true) yes[s] = (yes[s] || 0) + 1; if (q.helpful === false) nope[s] = (nope[s] || 0) + 1; }); });
+    var list = (EN || []).slice().sort(function (a, b) { return (use[b.slug] || 0) - (use[a.slug] || 0) || a.title.localeCompare(b.title); });
+    var used = list.filter(function (a) { return use[a.slug]; }), unused = list.filter(function (a) { return !use[a.slug]; });
+    var line = function (a) { return '<a class="tt-row tt-row--wide" href="/app#/help/a/' + esc(a.slug) + '" target="_blank" rel="noopener"><span class="tt-row__time">' + esc(use[a.slug] ? A.num(use[a.slug]) + (use[a.slug] === 1 ? ' answer' : ' answers') : 'Not used') + '</span><span><b>' + esc(a.title) + '</b><small>' + esc([SUBJ[a.subject], AUD[a.audience], yes[a.slug] ? yes[a.slug] + ' said it helped' : '', nope[a.slug] ? nope[a.slug] + ' said it did not' : ''].filter(Boolean).join(', ')) + '</small></span></a>'; };
+    return tabs('articles') +
+      '<div class="view__head"><div><h1 class="t-h1">Article use</h1><p class="t-lead">How often Help used each article in an answer over the last 30 days, and whether people found it helpful.</p></div></div>' +
+      '<div class="grid rise"><section class="card span-12" style="--i:0"><h2 class="t-h3">Used</h2>' + (used.length ? '<div class="tt-week">' + used.map(line).join('') + '</div>' : '<p class="t-body">No answers in the last 30 days yet.</p>') + '</section>' +
+      '<section class="card span-12" style="--i:1"><h2 class="t-h3">Not used in the last 30 days</h2><div class="tt-week">' + unused.map(line).join('') + '</div></section>' + sampleLine() + '</div>';
+  }
+
   function mount(view, parts, helpers) {
     var my = ++no; A = helpers; root = view;
     if (!D) root.innerHTML = loading();
+    if (parts[0] === 'drafts') {
+      if (!DR) root.innerHTML = loading();
+      return Promise.all([load(), loadDrafts()]).then(function () {
+        if (my !== no) return {};
+        if (parts[1]) {
+          var d = DR.drafts.filter(function (x) { return x.id === parts[1]; })[0];
+          if (!d) { root.innerHTML = back('#/help/drafts', 'Article drafts') + '<div class="card"><p class="t-body">This draft could not be found.</p></div>'; return { title: 'Article drafts' }; }
+          root.innerHTML = draftView(d); wireDraft(d, my); return { title: d.title };
+        }
+        root.innerHTML = draftsView(); wireDrafts(my); return { title: 'Article drafts' };
+      }, function (e) { if (my === no) root.innerHTML = '<div class="card"><p class="t-body">This did not load: ' + esc((e && e.message) || 'please try again') + '.</p></div>'; return {}; });
+    }
+    if (parts[0] === 'articles') {
+      return Promise.all([load(), loadDrafts()]).then(function () { if (my === no) root.innerHTML = articlesView(); return { title: 'Article use' }; },
+        function (e) { if (my === no) root.innerHTML = '<div class="card"><p class="t-body">This did not load: ' + esc((e && e.message) || 'please try again') + '.</p></div>'; return {}; });
+    }
+    loadDrafts().then(function () { var tb = root.querySelector('.ad-help-tabs'); if (tb && my === no) tb.outerHTML = tabs('conv'); }, function () {});
     return load().then(function () {
       if (my !== no) return {};
       if (parts[0] && parts[0] !== 'list') {

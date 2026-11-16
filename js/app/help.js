@@ -41,13 +41,28 @@
     return fetch('/js/help/' + encodeURIComponent(l) + '.json').then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
       .then(function (d) { return d.articles || []; });
   }
+  /* Articles published from approved drafts (help_articles, docs/HELP_PLAN.md Part 3): they add to, or replace by slug, the files */
+  function published(l) {
+    var c = window.AlimunData && window.AlimunData.auth ? window.AlimunData.auth() : null;
+    if (!c) return Promise.resolve([]);
+    return c.from('help_articles').select('slug, lang, section, subject, audience, title, summary, body, related, updated').in('lang', l === 'en' ? ['en'] : ['en', l])
+      .then(function (r) { return r.error ? [] : (r.data || []); }, function () { return []; });
+  }
   function articles() {
     var l = A.lang === 'ma' ? 'fr' : (A.lang || 'en'); /* Morocco reads the French articles */
     if (!ARTS[l]) {
       var en = ARTS.en || (ARTS.en = fetchLang('en'));
-      ARTS[l] = l === 'en' ? en : Promise.all([en, fetchLang(l).catch(function () { return []; })]).then(function (r) {
-        var by = {}; r[0].forEach(function (a) { by[a.slug] = a; }); r[1].forEach(function (a) { by[a.slug] = a; });
-        return r[0].map(function (a) { return by[a.slug]; });
+      ARTS[l] = Promise.all([en, l === 'en' ? [] : fetchLang(l).catch(function () { return []; }), published(l)]).then(function (r) {
+        var by = {}, order = [];
+        var put = function (a) { if (!by[a.slug]) order.push(a.slug); by[a.slug] = a; };
+        r[0].forEach(put);
+        r[2].filter(function (a) { return a.lang === 'en'; }).forEach(put);
+        /* A changed article whose translation is not published yet shows its new English, not the old translation */
+        var newEn = {}; r[2].forEach(function (a) { if (a.lang === 'en') newEn[a.slug] = true; });
+        var newL = {}; r[2].forEach(function (a) { if (a.lang === l) newL[a.slug] = true; });
+        r[1].forEach(function (a) { if (!newEn[a.slug] || newL[a.slug]) put(a); });
+        r[2].filter(function (a) { return a.lang === l && l !== 'en'; }).forEach(put);
+        return order.map(function (s) { return by[s]; });
       });
       ARTS[l].catch(function () { delete ARTS[l]; });
     }
