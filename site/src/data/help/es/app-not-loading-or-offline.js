@@ -13,7 +13,7 @@ export default {
     'Sin conexión solo funciona lo que has descargado. Ve a Ajustes, luego a Usa Alimun sin conexión, y comprueba que cada elemento dice En este dispositivo; mientras tengas conexión, pulsa Descargar o Descargar todo para lo que falte. Si una descarga se detiene, verás La descarga se ha detenido. Comprueba tu conexión y vuelve a intentarlo; al volver a intentarlo se conserva lo que ya ha llegado y continúa desde ahí.',
     'Sin un plan, las descargas contienen solo las partes gratuitas, así que las unidades, los textos y las pruebas posteriores también muestran Incluido en un plan sin conexión.',
     'Si no ves Usa Alimun sin conexión en Ajustes, el navegador que usas no puede guardar descargas; abre tu panel en otro navegador.',
-    'Si una página no carga, verás un mensaje como El libro no se ha cargado. Comprueba tu conexión y vuelve a intentarlo. Si Inicio dice que no se han podido cargar tus datos, pulsa Intentar de nuevo. Si sigue sin funcionar, escríbenos desde Support en tu panel o envía un correo a support@alimun.com, y dinos qué dispositivo y qué navegador usas.',
+    'Si una página no carga, verás un mensaje como El libro no se ha cargado. Comprueba tu conexión y vuelve a intentarlo. Si Inicio dice que no se han podido cargar tus datos, pulsa Intentar de nuevo. Si sigue sin funcionar, escríbenos desde Soporte en tu panel o envía un correo a support@alimun.com, y dinos qué dispositivo y qué navegador usas.',
   ],
   related: ['install-the-app-and-use-offline', 'progress-or-homework-missing'],
 };

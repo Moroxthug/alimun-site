@@ -11,7 +11,7 @@ export default {
   body: [
     'Abra Definições no seu painel. Em Sobre si, mude O seu nome e prima Guardar alterações; aparece "Guardado." quando estiver feito. Os alunos também podem mudar aí o país, a língua que aprendem e o nível. Mudar a língua ou o nível muda o seu livro, a sua prática e a sua biblioteca, e o painel recarrega.',
     'No painel do aluno, Fuso horário também está em Sobre si. As horas das aulas são mostradas neste fuso horário, por isso escolha aquele onde se encontra e prima Guardar alterações.',
-    'O seu endereço de e-mail aparece em E-mail, porque é o endereço com que inicia sessão, mas não pode ser mudado nas Definições. Se precisar de usar outro endereço, escreva-nos a partir de Support no seu painel, ou envie um e-mail para support@alimun.com.',
+    'O seu endereço de e-mail aparece em E-mail, porque é o endereço com que inicia sessão, mas não pode ser mudado nas Definições. Se precisar de usar outro endereço, escreva-nos a partir de Suporte no seu painel, ou envie um e-mail para support@alimun.com.',
   ],
   related: ['change-dashboard-language', 'sign-in-and-reset-password', 'class-times-and-time-zones'],
 };
