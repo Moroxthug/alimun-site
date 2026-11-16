@@ -59,7 +59,7 @@
   }
 
   /* ---------- The inbox ---------- */
-  function who(r) { return (r.name || r.email || 'Someone') + (r.role === 'teacher' ? ', teacher' : ''); }
+  function who(r) { return (r.name || r.email || 'Someone') + (r.role === 'teacher' ? ', teacher' : r.role === 'visitor' ? ', no account (from the public Help page)' : ''); }
   function lastOf(r) { return r.messages && r.messages[r.messages.length - 1]; }
   function rowsHtml(which) {
     var q = Q.q.trim().toLowerCase();

@@ -44,6 +44,17 @@ playwright-report/
 /fr/ressources/
 /pt/recursos/
 
+# Help pages are generated at deploy time (site/ build, docs/HELP_PLAN.md Part 4)
+/help/
+/es/help/
+/fr/help/
+/ma/help/
+/de/help/
+/pt/help/
+/it/help/
+/zh/help/
+/ar/help/
+
 # Course material, generated at deploy time (site build, scripts/split-material.js)
 /data/
 /private/

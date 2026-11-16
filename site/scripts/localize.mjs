@@ -301,6 +301,19 @@ movePages('resources', (lang) => RES_UI[lang].slugBase, (lang, name) => {
   return r ? withBlogStrip(html, lang, { course: r.course, keys: READING.resources[r.key] }) : html;
 });
 
+// Help (docs/HELP_PLAN.md, Part 4): /help, /help/<slug>, /<site>/help and /<site>/help/<slug>, built by
+// src/pages/help/[p].astro. Last change: the article's own date, or the newest for the start page.
+const helpDates = {};
+for (const d of fs.readdirSync(path.join(site, 'src', 'data', 'help'), { withFileTypes: true }).filter((e) => e.isDirectory())) {
+  for (const f of fs.readdirSync(path.join(site, 'src', 'data', 'help', d.name)).filter((f) => f.endsWith('.js'))) {
+    const a = (await import(new URL(`../src/data/help/${d.name}/${f}`, import.meta.url))).default;
+    helpDates[`${d.name}/${a.slug}`] = a.updated;
+  }
+}
+const helpNewest = Object.values(helpDates).sort().pop() || today0();
+function today0() { return new Date().toISOString().slice(0, 10); }
+movePages('help', () => 'help', (lang, name) => helpDates[`${lang === 'ma' ? 'fr' : lang}/${name}`] || helpDates[`en/${name}`] || helpNewest);
+
 // The 404 page has no language copies but shares the footer.
 const notFound = path.join(dist, '404.html');
 if (fs.existsSync(notFound)) fs.writeFileSync(notFound, withFooterCourses(fs.readFileSync(notFound, 'utf8'), 'en'));

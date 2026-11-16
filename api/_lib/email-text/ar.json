@@ -346,6 +346,8 @@
     "rate_1": "ليس جيدًا"
   },
   "help": {
+    "after_visitor": "للرد، يكفي أن ترد على هذه الرسالة.",
+    "button_visitor": "الذهاب إلى المساعدة",
     "subject": "دعم Alimun: {subject}",
     "preheader": "رددنا على رسالتك.",
     "heading": "رددنا على رسالتك",

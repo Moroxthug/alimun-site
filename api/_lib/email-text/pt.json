@@ -346,6 +346,8 @@
     "rate_1": "Não foi boa"
   },
   "help": {
+    "after_visitor": "Para responder, basta responder a este e-mail.",
+    "button_visitor": "Ir para a Ajuda",
     "subject": "Suporte Alimun: {subject}",
     "preheader": "Respondemos à sua mensagem.",
     "heading": "Respondemos à sua mensagem",

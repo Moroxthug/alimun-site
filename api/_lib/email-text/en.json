@@ -346,6 +346,8 @@
     "rate_1": "Not good"
   },
   "help": {
+    "after_visitor": "To answer, simply reply to this email.",
+    "button_visitor": "Visit Help",
     "subject": "Alimun Support: {subject}",
     "preheader": "We replied to your message.",
     "heading": "We replied to your message",

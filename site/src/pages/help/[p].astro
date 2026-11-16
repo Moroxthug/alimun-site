@@ -1,0 +1,60 @@
+---
+// Public Help (docs/HELP_PLAN.md, Part 4): /help and /<site>/help, and /help/<slug> for each article, for every site
+// language. Built as help/<site>--index.html and help/<site>--<slug>.html, then moved to /help, /help/<slug>,
+// /<site>/help and /<site>/help/<slug> by scripts/localize.mjs (which also translates nav and footer), like the blog.
+// Markup in src/help/render.js; articles in src/data/help/<lang>/ (approved only; Morocco reads the French);
+// interface text in src/data/help/ui.js; look in src/blocks/help/style.html on top of the blog's style.
+import Base from '../../layouts/Base.astro';
+import headTpl from '../../blocks/blog/head.html?raw';
+import blogStyle from '../../blocks/blog/style.html?raw';
+import cards from '../../blocks/blog/cards.html?raw';
+import style from '../../blocks/help/style.html?raw';
+import after from '../../blocks/legal/after.html?raw';
+import nav from '../../blocks/legal/nav.html?raw';
+import footer from '../../blocks/footer.html?raw';
+import UI from '../../data/help/ui.js';
+import { esc, home, article, homeLd, articleLd, helpPath, articlePath } from '../../help/render.js';
+
+export async function getStaticPaths() {
+  const all = Object.entries(import.meta.glob('../../data/help/*/*.js', { eager: true }))
+    .map(([file, m]) => Object.assign({ lang: file.split('/').slice(-2)[0] }, m.default))
+    .filter((a) => a.status === 'approved');
+  const byLang = (l) => {
+    const en = all.filter((a) => a.lang === 'en'), own = all.filter((a) => a.lang === (l === 'ma' ? 'fr' : l));
+    return en.map((a) => own.find((x) => x.slug === a.slug) || a);
+  };
+  const paths = [];
+  for (const site of Object.keys(UI)) {
+    const list = byLang(site);
+    paths.push({ params: { p: `${site}--index` }, props: { site, list } });
+    for (const a of list) paths.push({ params: { p: `${site}--${a.slug}` }, props: { site, list, a } });
+  }
+  return paths;
+}
+
+const { site, list, a } = Astro.props;
+const ui = UI[site];
+const sites = Object.keys(UI);
+const fill = (tpl, values) => Object.entries(values).reduce((t, [k, v]) => t.split(`{{${k}}}`).join(v), tpl);
+const json = (o) => JSON.stringify(o).replace(/</g, '\\u003c');
+let head, main;
+if (a) {
+  const related = (a.related || []).map((s) => list.find((x) => x.slug === s)).filter(Boolean).slice(0, 4);
+  const alts = Object.fromEntries(sites.map((s) => [s, articlePath(s, a.slug)]));
+  head = fill(headTpl, { PAGE_TITLE: esc(`${a.title} – Alimun`), META_DESC: esc(a.summary), CANON: 'https://alimun.com' + articlePath(site, a.slug), LOCALE: ui.locale, OG_TYPE: 'article', LD: articleLd(site, a, ui) })
+    + `\n  <script type="application/json" id="alimun-lang-alternates">${json(alts)}</script>`;
+  main = blogStyle + cards + style + article(site, a, ui, related);
+} else {
+  const alts = Object.fromEntries(sites.map((s) => [s, helpPath(s)]));
+  head = fill(headTpl, { PAGE_TITLE: esc(ui.metaTitle), META_DESC: esc(ui.metaDesc), CANON: 'https://alimun.com' + helpPath(site), LOCALE: ui.locale, OG_TYPE: 'website', LD: homeLd(site, list, ui) })
+    + `\n  <script type="application/json" id="alimun-lang-alternates">${json(alts)}</script>`;
+  main = blogStyle + cards + style + home(site, list, ui);
+}
+---
+<Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang={site}>
+  <Fragment set:html={nav} />
+  <main class="main-wrapper">
+    <Fragment set:html={main} />
+  </main>
+  <Fragment set:html={footer} />
+</Base>

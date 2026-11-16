@@ -1,0 +1,297 @@
+        <style>
+          /* Public Help (docs/HELP_PLAN.md, Part 4), on top of the blog's style (src/blocks/blog/style.html): bone page,
+             white rounded cards, soft tints with the drawing cast and the lifebuoy, forest buttons, lime markers and
+             the lime answer card. No black backgrounds, no lists or chips: links are full rows. */
+          .hl .bm-wrap { padding-bottom: 96px; }
+          .hl-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+          .hl svg { display: block; }
+          .hl-top .bm-hello { gap: 22px; justify-content: flex-start; }
+          .hl-top .bm-hello h1 { font-size: clamp(52px, 6.4vw, 92px); }
+          .hl-ask { position: relative; display: flex; align-items: flex-end; gap: 8px; background: #f0efe9; border-radius: 32px; padding: 7px 7px 7px 24px; box-shadow: inset 0 0 0 2px transparent; transition: box-shadow .25s, background .25s; }
+          .hl-ask:focus-within { background: #fff; box-shadow: inset 0 0 0 2px #1a443c, 0 0 0 5px rgba(206, 255, 101, .6); }
+          .hl-ask textarea { flex: 1; min-width: 0; border: 0; background: transparent; resize: none; font: 18px/1.45 Satoshi, sans-serif; color: #080808; padding: 13px 0; min-height: 52px; max-height: 180px; outline: none; }
+          .hl-ask textarea::placeholder { color: rgba(8, 8, 8, .5); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+          .hl-go { flex: none; width: 52px; height: 52px; border-radius: 50%; border: 0; background: #1a443c; color: #ceff65; display: grid; place-items: center; cursor: pointer; transition: transform .25s cubic-bezier(.3, 1.5, .5, 1); }
+          .hl-go svg { width: 22px; height: 22px; }
+          .hl-go:hover { transform: scale(1.07) rotate(-8deg); }
+          .hl-ask.is-busy .hl-go { opacity: .45; pointer-events: none; }
+          [dir="rtl"] .hl-ask { padding: 7px 24px 7px 7px; }
+          [dir="rtl"] .hl svg { transform: scaleX(-1); }
+          .hl-suggest { display: grid; gap: 2px; }
+          .hl-suggest:empty { display: none; }
+          .hl-suggest p { margin: 0 0 4px; font: 700 13px Satoshi, sans-serif; color: #1a443c; }
+          .hl-suggest a, .hl-from a, .hl-related a { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 11px 14px; margin-inline: -14px; border-radius: 14px; color: #080808; text-decoration: none; font: 600 16px/1.4 Satoshi, sans-serif; transition: background .2s; }
+          .hl-suggest a:hover, .hl-related a:hover { background: #f4fbe0; }
+          .hl-suggest a svg, .hl-from a svg, .hl-related a svg { width: 18px; height: 18px; flex: none; color: #1a443c; }
+          .hl-buddy { flex-direction: column; justify-content: flex-end; gap: 0; overflow: visible; }
+          .hl-buoy svg { width: 230px; height: 230px; overflow: visible; }
+          .hl-buddy .hl-buoy { animation: float 3.2s ease-in-out infinite; }
+          .hl-bub { position: absolute; top: 26px; left: 26px; right: 26px; max-width: 280px; padding: 12px 16px; background: #fff; border: 3px solid #1a443c; border-radius: 255px 18px 225px 18px / 18px 225px 18px 255px; box-shadow: 4px 5px 0 #1a443c; font: 600 16px/1.3 Satoshi, sans-serif; color: #1a443c; z-index: 2; }
+          .hl-bub::after { content: ""; position: absolute; left: 34px; bottom: -12px; width: 16px; height: 16px; background: #fff; border-right: 3px solid #1a443c; border-bottom: 3px solid #1a443c; transform: rotate(45deg); }
+          .hl-bub.is-static { position: relative; top: auto; left: auto; right: auto; }
+          [dir="rtl"] .hl-bub { left: 26px; right: 26px; }
+
+          /* The answer */
+          .hl-answer:empty { display: none; }
+          .hl-turn { background: #fff; border-radius: 32px; box-shadow: 0 20px 60px rgba(8, 8, 8, .08); padding: 30px 34px; display: grid; gap: 16px; margin-top: 4px; animation: bmUp .6s cubic-bezier(.2, .8, .2, 1) both; }
+          .hl-q { justify-self: end; max-width: 80%; margin: 0; background: #1a443c; color: #f0efe9; padding: 12px 18px; border-radius: 22px 22px 6px 22px; font: 600 16.5px/1.45 Satoshi, sans-serif; overflow-wrap: anywhere; }
+          .hl-a-row { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 14px; align-items: start; }
+          .hl-av { width: 64px; height: 64px; border-radius: 50%; background: #eaf6f2; display: grid; place-items: center; overflow: hidden; }
+          .hl-av svg { width: 96%; height: 96%; margin-top: 6%; }
+          .hl-a-body { display: grid; gap: 14px; min-width: 0; }
+          .hl-a { background: #f4fbe0; border-radius: 6px 24px 24px 24px; padding: 20px 22px; display: grid; gap: 12px; }
+          .hl-a.is-unsure { background: #fff4e0; }
+          .hl-a > p { margin: 0; font: 17px/1.6 Satoshi, sans-serif; }
+          .hl-from { display: grid; gap: 2px; border-top: 1px solid rgba(8, 8, 8, .1); padding-top: 10px; }
+          .hl-from > span { font: 700 12.5px Satoshi, sans-serif; color: rgba(8, 8, 8, .6); }
+          .hl-from a { color: #1a443c; font-weight: 700; padding: 8px 10px; margin-inline: -10px; }
+          .hl-from a:hover { background: rgba(255, 255, 255, .8); }
+          .hl-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; }
+          .hl-foot > span, .hl-foot > p { margin: 0; font: 15px Satoshi, sans-serif; color: rgba(8, 8, 8, .66); }
+          .hl-foot > p { flex-basis: 100%; }
+          .hl-foot .bm-btn { height: 42px; padding: 0 20px; font-size: 14.5px; }
+          .hl-foot .bm-btn.is-ghost { height: 40px; }
+          .hl-thanks { color: #1a443c !important; font-weight: 700 !important; }
+          .hl-dots { display: inline-flex; gap: 6px; padding: 4px 0; }
+          .hl-dots i { width: 8px; height: 8px; border-radius: 50%; background: #1a443c; animation: hlDot 1.2s infinite; }
+          .hl-dots i:nth-child(2) { animation-delay: .2s; } .hl-dots i:nth-child(3) { animation-delay: .4s; }
+          @keyframes hlDot { 0%, 100% { opacity: .3; } 50% { opacity: 1; } }
+          .hl-note { margin: 16px 6px 0; max-width: 90ch; font: 13.5px/1.55 Satoshi, sans-serif; color: rgba(8, 8, 8, .6); }
+          .hl-note a { color: #1a443c; font-weight: 700; }
+
+          /* Topics */
+          .hl-topics { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; align-items: start; }
+          .hl-topic { border-radius: 32px; padding: 26px 22px 14px; }
+          .hl-topic__head { display: flex; align-items: center; gap: 16px; padding: 0 8px 12px; }
+          .hl-topic__art svg { width: 76px; height: 76px; overflow: visible; }
+          .hl-topic h3 { font: 400 34px/1 "Coolvetica Condensed", sans-serif; text-transform: uppercase; margin: 0; }
+          .hl-rows { display: grid; }
+          .hl-row { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) 38px; align-items: center; gap: 14px; padding: 15px 12px; border-radius: 16px; color: #080808; text-decoration: none; transition: background .2s; }
+          .hl-row + .hl-row::before { content: ""; position: absolute; top: 0; left: 12px; right: 12px; height: 1px; background: rgba(8, 8, 8, .1); }
+          .hl-row:hover { background: rgba(255, 255, 255, .75); }
+          .t-white .hl-row:hover { background: #f4fbe0; }
+          .hl-row:hover::before, .hl-row:hover + .hl-row::before { opacity: 0; }
+          .hl-row b { display: block; font: 700 16.5px/1.35 Satoshi, sans-serif; }
+          .hl-row small { display: block; margin-top: 4px; font: 14px/1.45 Satoshi, sans-serif; color: rgba(8, 8, 8, .62); }
+          .hl-row svg { width: 38px; height: 38px; padding: 9px; border-radius: 50%; background: #fff; color: #1a443c; transition: background .2s, color .2s; }
+          .t-white .hl-row svg { background: #f0efe9; }
+          .hl-row:hover svg { background: #1a443c; color: #ceff65; }
+          .hl-wrong { max-width: none; }
+
+          /* Write to a person */
+          .hl-write { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 20px; margin-top: 64px; scroll-margin-top: 110px; }
+          .hl-write__side { border-radius: 32px; display: flex; flex-direction: column-reverse; align-items: center; justify-content: center; gap: 18px; padding: 30px; }
+          .hl-write__side .hl-buoy svg { width: 190px; height: 190px; }
+          .hl-form { background: #fff; border-radius: 32px; box-shadow: 0 20px 60px rgba(8, 8, 8, .08); padding: 36px; display: grid; gap: 16px; }
+          .hl-form h2 { font: 400 clamp(36px, 4vw, 52px)/1 "Coolvetica Condensed", sans-serif; text-transform: uppercase; margin: 0; }
+          .hl-form > p { margin: -4px 0 4px; font: 16px/1.5 Satoshi, sans-serif; color: rgba(8, 8, 8, .66); }
+          .hl-form label { display: grid; gap: 6px; min-width: 0; }
+          .hl-form label > span { font: 700 15px Satoshi, sans-serif; }
+          .hl-form input, .hl-form select, .hl-form textarea { width: 100%; min-width: 0; border: 0; border-radius: 14px; padding: 13px 15px; font: 16px Satoshi, sans-serif; color: #080808; background: #f0efe9; box-shadow: inset 0 0 0 2px transparent; outline: none; transition: box-shadow .2s, background .2s; }
+          .hl-form textarea { resize: vertical; min-height: 140px; line-height: 1.5; }
+          .hl-form input:focus, .hl-form select:focus, .hl-form textarea:focus { background: #fff; box-shadow: inset 0 0 0 2px #1a443c; }
+          .hl-two { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+          .hl-send { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 18px; }
+          .hl-send .bm-btn svg { width: 18px; height: 18px; }
+          .hl-msg { margin: 0; font: 600 15px Satoshi, sans-serif; color: #1a443c; }
+          .hl-msg.is-bad { color: #b0472f; }
+          .hl-attached { background: #f4fbe0; border-radius: 14px; padding: 12px 16px; font: 15px Satoshi, sans-serif; }
+          .hl-attached b { display: block; margin-top: 4px; }
+          .hl-done { background: #f4fbe0; border-radius: 20px; padding: 22px 24px; font: 600 17px/1.5 Satoshi, sans-serif; color: #1a443c; }
+
+          /* An article */
+          .hl-art { padding-top: 132px; }
+          .hl-crumb { margin: 0 0 18px; font: 15px Satoshi, sans-serif; color: rgba(8, 8, 8, .55); }
+          .hl-crumb a { color: #1a443c; font-weight: 700; text-decoration: none; }
+          .hl-art__grid { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; align-items: start; }
+          .hl-paper { background: #fff; border-radius: 32px; box-shadow: 0 20px 60px rgba(8, 8, 8, .08); padding: clamp(28px, 4vw, 52px); animation: bmUp .7s cubic-bezier(.2, .8, .2, 1) both; }
+          .hl-paper h1 { font: 400 clamp(40px, 4.6vw, 64px)/.95 "Coolvetica Condensed", sans-serif; text-transform: uppercase; margin: 0 0 22px; text-wrap: balance; }
+          .hl-paper p { max-width: 66ch; font: 17.5px/1.72 Satoshi, sans-serif; margin: 0 0 16px; color: #080808; }
+          .hl-paper .hl-sum { font-weight: 600; font-size: 19px; line-height: 1.55; background: #f4fbe0; border-radius: 18px; padding: 18px 22px; margin-bottom: 26px; }
+          .hl-paper .hl-date { margin: 26px 0 0; padding-top: 16px; border-top: 1px solid rgba(8, 8, 8, .1); font-size: 13px; color: rgba(8, 8, 8, .55); }
+          .hl-side { display: grid; gap: 16px; position: sticky; top: 110px; }
+          .hl-buddy.is-small { min-height: 250px; padding: 24px; }
+          .hl-buddy.is-small .hl-buoy svg { width: 150px; height: 150px; }
+          .hl-rate { background: #fff; border-radius: 26px; padding: 18px 20px; display: grid; gap: 12px; box-shadow: 0 20px 60px rgba(8, 8, 8, .06); }
+          .hl-btns { display: flex; gap: 10px; flex-wrap: wrap; }
+          .hl-rate .bm-btn { height: 44px; }
+          .hl-related { background: #fff; border-radius: 26px; padding: 20px 20px 12px; box-shadow: 0 20px 60px rgba(8, 8, 8, .06); }
+          .hl-related h2 { font: 400 26px/1 "Coolvetica Condensed", sans-serif; text-transform: uppercase; margin: 0 0 6px; }
+          .hl-still { display: grid; grid-template-columns: 110px minmax(0, 1fr) auto; gap: 18px 28px; align-items: center; border-radius: 32px; padding: 24px 34px 24px 24px; margin-top: 40px; }
+          .hl-still .hl-buoy svg { width: 110px; height: 110px; }
+          .hl-still h2 { font: 400 clamp(32px, 3.4vw, 44px)/1 "Coolvetica Condensed", sans-serif; text-transform: uppercase; margin: 0 0 6px; color: #1a443c; }
+          .hl-still p { margin: 0; font: 16px/1.5 Satoshi, sans-serif; color: #1a443c; }
+
+          @media (max-width: 991px) {
+            .hl-topics { grid-template-columns: 1fr; }
+            .hl-write { grid-template-columns: 1fr; }
+            .hl-write__side { flex-direction: row-reverse; justify-content: flex-start; padding: 18px 22px; }
+            .hl-write__side .hl-buoy svg { width: 90px; height: 90px; }
+            .hl-art__grid { grid-template-columns: 1fr; }
+            .hl-side { position: static; }
+            .hl-buddy.is-small { display: none; }
+          }
+          @media (max-width: 767px) {
+            .hl-top .bm-hello { padding: 28px 22px; }
+            .hl-buddy { min-height: 0 !important; padding: 16px 18px !important; flex-direction: row-reverse; align-items: center; justify-content: flex-start; gap: 10px; }
+            .hl-buddy .hl-buoy svg { width: 84px; height: 84px; }
+            .hl-buddy .hl-bub { position: relative; top: auto; left: auto; right: auto; font-size: 14px; }
+            .hl-buddy .hl-bub::after { left: -11px; bottom: 50%; transform: translateY(50%) rotate(135deg); }
+            .hl-turn { padding: 22px 18px; border-radius: 26px; }
+            .hl-a-row { grid-template-columns: 44px minmax(0, 1fr); gap: 10px; }
+            .hl-av { width: 44px; height: 44px; }
+            .hl-q { max-width: 92%; }
+            .hl-topic { padding: 20px 14px 10px; }
+            .hl-topic h3 { font-size: 28px; }
+            .hl-topic__art svg { width: 60px; height: 60px; }
+            .hl-form { padding: 26px 20px; }
+            .hl-two { grid-template-columns: 1fr; }
+            .hl-art { padding-top: 110px; }
+            .hl-still { grid-template-columns: 72px minmax(0, 1fr); padding: 20px; }
+            .hl-still .hl-buoy svg { width: 72px; height: 72px; }
+            .hl-still .bm-btn { grid-column: 1 / -1; justify-self: start; }
+          }
+          @media (prefers-reduced-motion: reduce) { .hl-turn, .hl-paper { animation: none; } .hl-buddy .hl-buoy { animation: none; } }
+        </style>
+        <script src="/js/app/cast3.js"></script>
+        <script src="/js/app/cast-help.js"></script>
+        <script src="/js/captcha.js" defer></script>
+        <script>
+          (function () {
+            var D = {}; try { D = JSON.parse((document.getElementById("hl-data") || {}).textContent || "{}"); } catch (e) { D = {}; }
+            var U = D.ui || {}, lang = D.lang || document.documentElement.lang || "en", history = [], last = null;
+            function esc(s) { return String(s == null ? "" : s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+            var ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>';
+            function buoy(m) { return window.AlimunCast && window.AlimunCast.help ? window.AlimunCast.help(m) : ""; }
+            function drawBuoys() { [].forEach.call(document.querySelectorAll("[data-buoy]"), function (el) { el.innerHTML = buoy(el.getAttribute("data-buoy")); }); }
+            function stage(mood, text) {
+              var s = document.querySelector("[data-stage]"); if (!s) return;
+              var b = s.querySelector("[data-bub]"), d = s.querySelector("[data-buoy]");
+              if (b && text) b.textContent = text;
+              if (d) { d.setAttribute("data-buoy", mood); d.innerHTML = buoy(mood); }
+            }
+            function link(slug) { var a = (D.pool || []).filter(function (x) { return x.s === slug; })[0]; return a ? '<a href="' + esc(U.base + "/" + a.s) + '">' + esc(a.t) + ARROW + "</a>" : ""; }
+            var STOP = /^(the|and|for|are|you|your|how|what|can|why|when|does|did|with|from|this|that|have|has|not|about|my|do|is|it|of|to|in|on|a|an|i)$/;
+            function words(s) { return (String(s || "").toLowerCase().match(/[^\s.,;:!?¿¡"'()«»“”„]{3,}/g) || []).filter(function (w) { return !STOP.test(w); }); }
+            function matches(q) {
+              var ws = words(q); if (!ws.length) return [];
+              return (D.pool || []).map(function (a) {
+                var t = words(a.t), u = words(a.u), sc = 0;
+                ws.forEach(function (w) { var st = w.slice(0, Math.max(4, w.length - 2)); var hit = function (arr) { return arr.some(function (x) { return x === w || x.indexOf(st) === 0; }); }; if (hit(t)) sc += 3; if (hit(u)) sc += 1; });
+                return { a: a, sc: sc };
+              }).filter(function (x) { return x.sc > 0; }).sort(function (x, y) { return y.sc - x.sc; }).slice(0, 3).map(function (x) { return x.a; });
+            }
+            function token() { return window.AlimunCaptcha && window.AlimunCaptcha.token ? window.AlimunCaptcha.token().catch(function () { return ""; }) : Promise.resolve(""); }
+            function post(action, body) {
+              return token().then(function (tk) {
+                return fetch("/api/help?action=" + action, { method: "POST", headers: { "Content-Type": "application/json", "X-Captcha-Token": tk || "" }, body: JSON.stringify(body) });
+              }).then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { if (!r.ok) throw new Error(j.error || U.err); return j; }); });
+            }
+            function turn(q, inner) {
+              return '<div class="hl-turn"><p class="hl-q" dir="auto">' + esc(q) + '</p><div class="hl-a-row"><span class="hl-av">' + buoy(last && last.sure === false ? "think" : "happy") + '</span><div class="hl-a-body">' + inner + "</div></div></div>";
+            }
+            function foot(x) {
+              var person = '<a class="bm-btn" href="#write" data-person>' + esc(U.person) + "</a>";
+              if (x.helped === true) return '<p class="hl-thanks">' + esc(U.glad) + "</p>";
+              if (x.helped === false || !x.sure) return "<p>" + esc(x.sure ? U.sorry : U.unsure) + "</p>" + person;
+              return "<span>" + esc(U.helpedQ) + '</span><button class="bm-btn is-ghost" type="button" data-rate="yes">' + esc(U.yes) + '</button><button class="bm-btn is-ghost" type="button" data-rate="no">' + esc(U.no) + "</button>";
+            }
+            function show(box) {
+              var from = (last.articles || []).map(link).filter(Boolean);
+              box.innerHTML = turn(last.q, '<div class="hl-a' + (last.sure ? "" : " is-unsure") + '"><p dir="auto">' + esc(last.a) + "</p>" + (from.length ? '<div class="hl-from"><span>' + esc(U.from) + "</span>" + from.join("") + "</div>" : "") + "</div>" +
+                '<div class="hl-foot" data-foot>' + foot(last) + "</div>");
+              wireFoot(box);
+            }
+            function wireFoot(box) {
+              [].forEach.call(box.querySelectorAll("[data-rate]"), function (b) {
+                b.addEventListener("click", function () {
+                  last.helped = b.getAttribute("data-rate") === "yes";
+                  box.querySelector("[data-foot]").innerHTML = foot(last); wireFoot(box);
+                  stage(last.helped ? "glad" : "happy", last.helped ? U.bubbleGlad : U.bubblePerson);
+                  if (last.id) post("public_rate", { id: last.id, helpful: last.helped }).catch(function () {});
+                });
+              });
+              [].forEach.call(box.querySelectorAll("[data-person]"), function (a) { a.addEventListener("click", function () { attach(); }); });
+            }
+            function attach() {
+              var f = document.querySelector("[data-write]"); if (!f || !last) return;
+              f.qid.value = last.id || "";
+              var at = f.querySelector("[data-attached]"); at.hidden = false; at.innerHTML = esc(U.attached) + "<b dir=\"auto\">" + esc(last.q) + "</b>";
+              if (!f.subject.value) f.subject.value = last.q.slice(0, 120);
+              setTimeout(function () { f.message.focus(); }, 400);
+            }
+            function initAsk() {
+              var form = document.querySelector("[data-ask]"); if (!form) return;
+              var ta = form.querySelector("textarea"), sug = document.querySelector("[data-suggest]"), box = document.querySelector("[data-answer]"), common = sug.innerHTML;
+              var grow = function () { ta.style.height = "auto"; ta.style.height = Math.min(ta.scrollHeight, 180) + "px"; };
+              ta.addEventListener("input", function () {
+                grow();
+                var m = ta.value.trim().length > 2 ? matches(ta.value) : [];
+                sug.innerHTML = m.length ? "<p>" + esc(U.maybe) + "</p>" + m.map(function (a) { return link(a.s); }).join("") : (ta.value.trim() || last ? "" : common);
+              });
+              ta.addEventListener("keydown", function (e) { if (e.key === "Enter" && !e.shiftKey && !e.isComposing) { e.preventDefault(); form.requestSubmit ? form.requestSubmit() : form.dispatchEvent(new Event("submit")); } });
+              form.addEventListener("submit", function (e) {
+                e.preventDefault();
+                var q = ta.value.trim();
+                if (q.length < 2 || form.classList.contains("is-busy")) { ta.focus(); return; }
+                form.classList.add("is-busy"); sug.innerHTML = "";
+                last = { q: q, sure: true };
+                box.innerHTML = turn(q, '<div class="hl-a"><span class="hl-dots" aria-label="' + esc(U.thinking) + '"><i></i><i></i><i></i></span></div>');
+                stage("think", U.bubbleThink);
+                post("public_ask", { question: q, lang: lang, history: history.slice(-2) }).then(function (d) {
+                  last = { q: q, a: d.answer, id: d.id, articles: d.articles || [], sure: !!d.sure, helped: null };
+                  history.push({ q: q, a: d.answer }); ta.value = ""; grow();
+                  show(box); stage(d.sure ? "happy" : "think", d.sure ? U.bubbleFound : U.bubblePerson);
+                }, function (err) {
+                  last = { q: q, a: err.message || U.err, sure: false, helped: false, articles: [] };
+                  show(box); stage("happy", U.bubblePerson);
+                }).then(function () { form.classList.remove("is-busy"); });
+              });
+            }
+            function initWrite() {
+              var f = document.querySelector("[data-write]"); if (!f) return;
+              var msg = f.querySelector("[data-msg]");
+              f.addEventListener("submit", function (e) {
+                e.preventDefault();
+                var bad = function (t, el) { msg.textContent = t; msg.classList.add("is-bad"); if (el) el.focus(); };
+                msg.classList.remove("is-bad");
+                var email = f.email.value.trim();
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return bad(U.needEmail, f.email);
+                if (f.subject.value.trim().length < 2) return bad(U.needSubject, f.subject);
+                if (f.message.value.trim().length < 2) return bad(U.needMessage, f.message);
+                var btn = f.querySelector("button[type=submit]"); btn.disabled = true; msg.textContent = U.sending;
+                post("public_request", { name: f.name.value.trim(), email: email, topic: f.topic.value, subject: f.subject.value.trim(), message: f.message.value.trim(), question_id: f.qid.value || null, lang: lang }).then(function () {
+                  f.innerHTML = '<div class="hl-done" role="status">' + esc(U.sent) + "</div>";
+                }, function (err) { btn.disabled = false; bad(err.message || U.err); });
+              });
+            }
+            function initRate() {
+              var r = document.querySelector("[data-rate]"); if (!r || document.querySelector("[data-ask]")) return;
+              var m = r.querySelector("[data-ratemsg]"), p = r.querySelector("[data-person]");
+              [].forEach.call(r.querySelectorAll("[data-r]"), function (b) {
+                b.addEventListener("click", function () {
+                  var yes = b.getAttribute("data-r") === "yes";
+                  r.querySelector(".hl-btns").hidden = true; m.hidden = false; m.textContent = m.getAttribute(yes ? "data-glad" : "data-sorry");
+                  if (!yes) p.hidden = false;
+                  stage(yes ? "glad" : "happy");
+                });
+              });
+            }
+            function init() { drawBuoys(); initAsk(); initWrite(); initRate(); }
+            if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init); else init();
+          })();
+        </script>
+        <style>
+          .hl-row.is-short { padding: 13px 12px; }
+          .hl-row.is-short b { font-size: 16px; font-weight: 600; }
+          .hl-row.is-short svg { width: 32px; height: 32px; padding: 7px; }
+          .hl-more summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; margin: 8px 12px 10px; padding: 9px 18px; border-radius: 999px; font: 700 14.5px Satoshi, sans-serif; color: #1a443c; box-shadow: inset 0 0 0 2px #1a443c; transition: background .2s, color .2s; }
+          .hl-more summary::-webkit-details-marker { display: none; }
+          .hl-more summary:hover { background: #1a443c; color: #ceff65; }
+          .hl-more[open] summary { display: none; }
+          .hl-more .hl-rows > .hl-row:first-child::before { content: ""; position: absolute; top: 0; left: 12px; right: 12px; height: 1px; background: rgba(8, 8, 8, .1); }
+        </style>
+        <style>
+          .hl [hidden] { display: none !important; }
+          .hl .hl-buddy.t-mint { background: #eaf6f2; }
+        </style>

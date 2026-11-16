@@ -346,6 +346,8 @@
     "rate_1": "不好"
   },
   "help": {
+    "after_visitor": "如需回复，直接回复这封邮件即可。",
+    "button_visitor": "前往帮助",
     "subject": "Alimun 客服：{subject}",
     "preheader": "我们已回复你的消息。",
     "heading": "我们已回复你的消息",

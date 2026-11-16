@@ -16,6 +16,8 @@
  *  POST ?action=admin_draft_run   admin: make drafts now from the last 30 days
  *  POST ?action=admin_draft_decide  admin: save, approve (publish in English and translate into every language) or discard
  *  GET  ?action=cron_drafts       the weekly run (vercel.json), with CRON_SECRET
+ *  POST ?action=public_ask | public_rate | public_request   the public /help page (Part 4): no account, the captcha
+ *                          (api/_lib/captcha.js) and daily limits per keyed hash of the address; articles only
  *
  *  Every action checks the Supabase JWT here. Tables (supabase/migrations/202611161800_help.sql) are written
  *  only by this file with the service role; people read their own rows. The instructions to the model are
@@ -29,6 +31,7 @@ const AI = require('./ai.js').internal;
 const mail = require('./_lib/email.js');
 const L = require('./_lib/email-i18n.js');
 const crypto = require('crypto');
+const captcha = require('./_lib/captcha.js');
 function cronAuthorized(req) {
   const s = process.env.CRON_SECRET, h = Buffer.from(String(req.headers.authorization || '')), want = Buffer.from(`Bearer ${s || ''}`);
   return !!s && h.length === want.length && crypto.timingSafeEqual(h, want);
@@ -206,21 +209,27 @@ function plain(s) {
 
 // ── Help: ask ──────────────────────────────────────────────
 
-async function handleAsk(req, res, supabase, user) {
+/* One answer, for a signed-in person (dashboards) or a visitor (the public page). who: { userId, role, ipHash, quotaUser, facts } */
+async function answerQuestion(req, res, supabase, who) {
   const b = bodyOf(req);
   const question = clean(b.question, 600);
   if (question.length < 2) return res.status(400).json({ error: 'Write your question first.' });
-  const lang = langOf(b.lang), role = roleOf(user);
+  const lang = langOf(b.lang), role = who.role;
   const history = Array.isArray(b.history) ? b.history.slice(-2).map((h) => ({ q: clean(h && h.q, 400), a: clean(h && h.a, 900) })).filter((h) => h.q) : [];
 
-  const { count, error: cErr } = await supabase.from('help_questions').select('id', { count: 'exact', head: true })
-    .eq('user_id', user.id).gte('created_at', startOfTodayUtc());
+  let q = supabase.from('help_questions').select('id', { count: 'exact', head: true }).gte('created_at', startOfTodayUtc());
+  q = who.userId ? q.eq('user_id', who.userId) : q.eq('ip_hash', who.ipHash);
+  const { count, error: cErr } = await q;
   if (cErr) return res.status(503).json({ error: 'Help is unavailable right now. Please try again later.' });
-  if ((count || 0) >= QUESTIONS_PER_DAY) return res.status(429).json({ error: 'You have asked a lot of questions today. Write to us in Support and a person will answer.', reason: 'help_cap' });
+  if ((count || 0) >= (who.userId ? QUESTIONS_PER_DAY : VISITOR_QUESTIONS_PER_DAY)) return res.status(429).json({ error: 'You have asked a lot of questions today. Write to a person and we will answer.', reason: 'help_cap' });
+  if (!who.userId) {
+    const { count: all } = await supabase.from('help_questions').select('id', { count: 'exact', head: true }).is('user_id', null).gte('created_at', startOfTodayUtc());
+    if ((all || 0) >= VISITOR_QUESTIONS_ALL_PER_DAY) return res.status(503).json({ error: 'Help is very busy today. Please write to a person instead.', reason: 'help_busy' });
+  }
 
-  const list = articlesFor(lang, role, await liveArticles(supabase));
+  const list = articlesFor(lang, role === 'visitor' ? 'admin' : role, await liveArticles(supabase));
   const best = bestMatches(list, question + ' ' + history.map((h) => h.q).join(' '), 4);
-  const facts = await accountFacts(supabase, user, role);
+  const facts = who.facts ? await who.facts() : [];
   const strip = (s) => String(s).replace(/<\/?(article|articles|index|facts|question|earlier)[^>]*>/gi, '');
   const prompt =
     `Answer in ${LANG_NAMES[lang] || 'English'}.\n` +
@@ -231,7 +240,7 @@ async function handleAsk(req, res, supabase, user) {
     `<question>\n${strip(question)}\n</question>`;
 
   if (!AI.providerConfigured()) return res.status(501).json({ error: 'Help answers are not set up yet.' });
-  const quota = await AI.reserveQuota(supabase, user.id, 'help', AI.estimateMaxCostUsd(HELP_SYSTEM.length + prompt.length, ANSWER_MAX_TOKENS));
+  const quota = await AI.reserveQuota(supabase, who.quotaUser, who.userId ? 'help' : 'help-public', AI.estimateMaxCostUsd(HELP_SYSTEM.length + prompt.length, ANSWER_MAX_TOKENS));
   if (!quota.ok) return AI.quotaRefusal(res, quota.reason);
   const t0 = Date.now();
   let result, out;
@@ -242,17 +251,72 @@ async function handleAsk(req, res, supabase, user) {
   } catch (err) {
     console.error('[help] ask:', err.message);
     await AI.finalizeUsage(supabase, quota.id, { result: result || null, latencyMs: Date.now() - t0, ok: false, error: err.message });
-    return res.status(502).json({ error: 'Help could not answer just now. Please try again, or write to us in Support.' });
+    return res.status(502).json({ error: 'Help could not answer just now. Please try again, or write to a person.' });
   }
   const known = new Set(list.map((a) => a.slug));
   const used = (Array.isArray(out && out.used) ? out.used : []).filter((s) => typeof s === 'string' && known.has(s)).slice(0, 3);
   const answer = plain(out && out.answer);
   const sure = !!(out && out.sure === true && answer && used.length);
-  if (!answer) return res.status(502).json({ error: 'Help could not answer just now. Please try again, or write to us in Support.' });
+  if (!answer) return res.status(502).json({ error: 'Help could not answer just now. Please try again, or write to a person.' });
 
   const { data: row } = await supabase.from('help_questions')
-    .insert({ user_id: user.id, role, lang, question, answer, article_slugs: used, sure }).select('id').single();
+    .insert({ user_id: who.userId || null, role, lang, question, answer, article_slugs: used, sure, ip_hash: who.userId ? null : who.ipHash }).select('id').single();
   return res.status(200).json({ id: row ? row.id : null, answer, articles: used, sure });
+}
+
+async function handleAsk(req, res, supabase, user) {
+  const role = roleOf(user);
+  return answerQuestion(req, res, supabase, { userId: user.id, role, quotaUser: user.id, facts: () => accountFacts(supabase, user, role) });
+}
+
+// ── The public page (Part 4): visitors who are not signed in ──
+
+const VISITOR_QUESTIONS_PER_DAY = 15;
+const VISITOR_QUESTIONS_ALL_PER_DAY = 600;
+const VISITOR_REQUESTS_PER_DAY = 3;
+function ipHash(req) {
+  const ip = captcha.clientIp ? captcha.clientIp(req) : String(req.headers['x-forwarded-for'] || '').split(',')[0].trim();
+  return crypto.createHmac('sha256', process.env.SUPABASE_SERVICE_ROLE_KEY || 'alimun-help').update('help:' + (ip || 'unknown')).digest('hex');
+}
+let ADMIN_ID = null;
+async function visitorQuotaUser(supabase) { return ADMIN_ID || (ADMIN_ID = await firstAdminId(supabase)); }
+const VISITOR_FACTS = ['The person is a visitor who is not signed in, so their account is not available. If the question needs their own account (their class, plan, payments or homework), say so in one sentence: they can sign in and ask from Help in their dashboard, or write to a person on this page.'];
+
+async function handlePublicAsk(req, res, supabase) {
+  if (!(await captcha.verify(req))) return res.status(403).json({ error: 'The check that you are a person did not pass. Please try again.', reason: 'captcha_failed' });
+  const quotaUser = await visitorQuotaUser(supabase);
+  if (!quotaUser) return res.status(503).json({ error: 'Help is unavailable right now. Please try again later.' });
+  return answerQuestion(req, res, supabase, { userId: null, role: 'visitor', ipHash: ipHash(req), quotaUser, facts: async () => VISITOR_FACTS });
+}
+async function handlePublicRate(req, res, supabase) {
+  const b = bodyOf(req);
+  if (!UUID_RE.test(String(b.id || '')) || typeof b.helpful !== 'boolean') return res.status(400).json({ error: 'Bad request' });
+  await supabase.from('help_questions').update({ helpful: b.helpful }).eq('id', b.id).is('user_id', null).eq('ip_hash', ipHash(req));
+  return res.status(200).json({ ok: true });
+}
+async function handlePublicRequest(req, res, supabase) {
+  if (!(await captcha.verify(req))) return res.status(403).json({ error: 'The check that you are a person did not pass. Please try again.', reason: 'captcha_failed' });
+  const b = bodyOf(req);
+  const email = clean(b.email, 254).toLowerCase(), name = oneLine(clean(b.name, 120), 120) || null;
+  const subject = clean(b.subject, 140), message = clean(b.message, 4000);
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return res.status(400).json({ error: 'Add an email address so we can answer.' });
+  if (subject.length < 2 || message.length < 2) return res.status(400).json({ error: 'Write a subject and a message.' });
+  const ip = ipHash(req);
+  const { count } = await supabase.from('help_requests').select('id', { count: 'exact', head: true }).eq('ip_hash', ip).gte('created_at', startOfTodayUtc());
+  if ((count || 0) >= VISITOR_REQUESTS_PER_DAY) return res.status(429).json({ error: 'We already have your messages from today and will answer them first.' });
+  const lang = langOf(b.lang), topic = TOPICS.has(b.topic) ? b.topic : 'other';
+  let qid = null;
+  if (UUID_RE.test(String(b.question_id || ''))) {
+    const { data: q } = await supabase.from('help_questions').select('id').eq('id', b.question_id).is('user_id', null).eq('ip_hash', ip).maybeSingle();
+    qid = q ? q.id : null;
+  }
+  const { data: r, error } = await supabase.from('help_requests')
+    .insert({ user_id: null, email, name, role: 'visitor', lang, topic, subject, question_id: qid, ip_hash: ip }).select('*').single();
+  if (error || !r) { console.error('[help] public request:', error && error.message); return res.status(500).json({ error: 'Could not send your message. Please try again.' }); }
+  const { error: mErr } = await supabase.from('help_messages').insert({ request_id: r.id, author: 'person', body: message });
+  if (mErr) { await supabase.from('help_requests').delete().eq('id', r.id); return res.status(500).json({ error: 'Could not send your message. Please try again.' }); }
+  await tellSupport(supabase, r, { name, email }, message, true);
+  return res.status(200).json({ ok: true });
 }
 
 async function handleRate(req, res, supabase, user) {
@@ -389,7 +453,8 @@ async function handleAdminReply(req, res, supabase, user) {
   if (r.email) {
     const lang = r.lang || 'en';
     const first = String(r.name || '').split(/\s+/)[0];
-    const link = `${SITE}${r.role === 'teacher' ? '/app/teach' : '/app'}#/support/${r.id}`;
+    const visitor = !r.user_id;
+    const link = visitor ? `${SITE}${lang === 'en' ? '' : '/' + lang}/help` : `${SITE}${r.role === 'teacher' ? '/app/teach' : '/app'}#/support/${r.id}`;
     try {
       emailed = (await mail.sendEmail({
         to: r.email,
@@ -403,7 +468,7 @@ async function handleAdminReply(req, res, supabase, user) {
             { p: mail.esc(L.hello(lang, first)) },
             { p: L.html(lang, 'help.intro', { subject: r.subject }) },
             { p: mail.esc(message).replace(/\n/g, '<br>') },
-            { p: L.html(lang, 'help.after'), button: { href: link, label: L.say(lang, 'help.button') } },
+            { p: L.html(lang, visitor ? 'help.after_visitor' : 'help.after'), button: { href: link, label: L.say(lang, visitor ? 'help.button_visitor' : 'help.button') } },
           ],
           footer: L.html(lang, 'help.footer'),
         }),
@@ -638,6 +703,15 @@ module.exports = async function handler(req, res) {
   if (action === 'cron_drafts') {
     if (!cronAuthorized(req)) return res.status(401).json({ error: 'Unauthorized' });
     return handleCronDrafts(req, res, supabase);
+  }
+  // The public page: no account; the captcha and a daily limit per address instead
+  if (action === 'public_ask' || action === 'public_rate' || action === 'public_request') {
+    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+    try {
+      if (action === 'public_ask') return await handlePublicAsk(req, res, supabase);
+      if (action === 'public_rate') return await handlePublicRate(req, res, supabase);
+      return await handlePublicRequest(req, res, supabase);
+    } catch (e) { console.error('[help]', action, e && e.message); return res.status(500).json({ error: 'Something went wrong. Please try again.' }); }
   }
   const user = await AI.requireAuth(req, supabase);
   if (!user) return res.status(401).json({ error: 'Unauthorized' });
