@@ -103,59 +103,63 @@
     var m = (STARTERS[role] || []).map(function (s) { return LIST.filter(function (a) { return a.slug === s; })[0]; }).filter(Boolean);
     return m.length ? '<p class="t-tiny">' + esc(t('app_hp_common')) + '</p>' + m.map(function (a) { return '<a href="#/help/a/' + esc(a.slug) + '">' + esc(a.title) + A.icon('arrow') + '</a>'; }).join('') : '';
   }
-  function askCard() {
-    return '<div class="card hp-ask-card span-8" style="--i:0">' +
-      '<h2 class="t-h2">' + esc(t('app_hp_ask_h')) + '</h2>' +
-      '<form class="hp-ask" data-ask novalidate>' +
-        '<label class="hp-sr" for="hp-q">' + esc(t('app_hp_ask_label')) + '</label>' +
-        '<textarea id="hp-q" class="hp-ask__in" rows="1" maxlength="600" placeholder="' + esc(t(role === 'teacher' ? 'app_hp_ask_ph_t' : 'app_hp_ask_ph')) + '" dir="auto"></textarea>' +
-        '<button class="hp-ask__go" type="submit" aria-label="' + esc(t('app_hp_ask_go')) + '">' + A.icon('arrow') + '</button>' +
-      '</form>' +
-      '<div class="hp-suggest" data-suggest aria-live="polite">' + starters() + '</div>' +
-      '<div class="hp-answer" data-answer aria-live="polite"></div>' +
-      '<p class="t-tiny hp-ai">' + esc(t('app_hp_ai_note')) + '</p>' +
-    '</div>';
+  var TOPIC_CARD = { classes: 'mint', plans: 'sun', dashboard: 'leaf', practice: 'coral', tutor: 'mint', account: 'white', teachers: 'sun' };
+  /* The hero: the question box on forest, the lifebuoy beside it */
+  function hero() {
+    return '<section class="card card--forest hp-hero" style="--i:0">' +
+      '<div class="hp-hero__main">' +
+        '<h1 class="t-display">' + esc(t('app_hp_ask_h')) + '</h1>' +
+        '<p class="t-lead">' + esc(t(role === 'teacher' ? 'app_hp_lead_t' : 'app_hp_lead')) + '</p>' +
+        '<form class="hp-ask" data-ask novalidate>' +
+          '<label class="hp-sr" for="hp-q">' + esc(t('app_hp_ask_label')) + '</label>' +
+          '<textarea id="hp-q" class="hp-ask__in" rows="1" maxlength="600" placeholder="' + esc(t(role === 'teacher' ? 'app_hp_ask_ph_t' : 'app_hp_ask_ph')) + '" dir="auto"></textarea>' +
+          '<button class="hp-ask__go" type="submit" aria-label="' + esc(t('app_hp_ask_go')) + '">' + A.icon('arrow') + '</button>' +
+        '</form>' +
+        '<div class="hp-suggest" data-suggest aria-live="polite">' + starters() + '</div>' +
+      '</div>' +
+      '<div class="hp-hero__art" data-stage>' + stageInner('happy', t('app_hp_bub_hi'), 'say') + '</div>' +
+    '</section>';
   }
-  function stage(mood, bubble, kind) {
-    return '<div class="stage hp-stage span-4" style="--i:1;background:var(--t-mint)" data-stage>' +
-      '<div class="bub ' + (kind || 'say') + '" data-bub>' + esc(bubble) + '</div>' + buoy(mood) + '</div>';
-  }
+  function stageInner(mood, bubble, kind) { return '<div class="bub ' + (kind || 'say') + '" data-bub>' + esc(bubble) + '</div>' + buoy(mood); }
   function setStage(mood, bubble, kind) {
     var s = root.querySelector('[data-stage]');
-    if (!s) return;
-    s.innerHTML = '<div class="bub ' + (kind || 'say') + '" data-bub>' + esc(bubble) + '</div>' + buoy(mood);
+    if (s) s.innerHTML = stageInner(mood, bubble, kind);
   }
   function topicCards(list) {
     return (TOPICS[role] || TOPICS.student).map(function (s, i) {
       var n = list.filter(function (a) { return a.subject === s && a.section === 'help'; });
       if (!n.length) return '';
-      return '<a class="card hp-topic" style="--i:' + (i + 2) + '" href="#/help/topic/' + s + '">' +
-        '<span class="hp-topic__art" style="background:' + TOPIC_TINT[s] + '">' + A.Cast.drawing(TOPIC_ART[s]) + '</span>' +
+      return '<a class="card card--' + TOPIC_CARD[s] + ' hp-topic span-4" style="--i:' + (i + 2) + '" href="#/help/topic/' + s + '">' +
+        '<span class="hp-topic__art">' + A.Cast.drawing(TOPIC_ART[s]) + '</span>' +
         '<span class="hp-topic__txt"><b class="t-h3">' + esc(topicName(s)) + '</b><small>' + esc(n[0].title) + '</small></span>' +
-        A.icon('arrow') + '</a>';
+        '<span class="hp-topic__go" aria-hidden="true">' + A.icon('arrow') + '</span></a>';
     }).join('');
   }
   function homeView(list) {
-    return head(t('app_hp_title'), t(role === 'teacher' ? 'app_hp_lead_t' : 'app_hp_lead')) +
-      '<div class="grid rise hp-top">' + askCard() + stage('happy', t('app_hp_bub_hi')) + '</div>' +
+    return '<div class="hp-home rise">' + hero() +
+        '<div class="hp-answer" data-answer aria-live="polite"></div>' +
+        '<p class="t-tiny hp-ai">' + esc(t('app_hp_ai_note')) + '</p>' +
+      '</div>' +
       '<h2 class="t-h2 hp-h">' + esc(t('app_hp_browse')) + '</h2>' +
-      '<div class="hp-topics rise">' + topicCards(list) + '</div>' +
-      '<a class="card card--forest hp-cta rise" href="#/support">' +
-        '<span><b class="t-h2">' + esc(t('app_hp_cta_h')) + '</b><span class="t-body">' + esc(t('app_hp_cta_p')) + '</span></span>' +
-        '<span class="btn btn--lime">' + esc(t('app_hp_cta_btn')) + A.icon('arrow') + '</span></a>' +
+      '<div class="grid rise hp-topics">' + topicCards(list) + '</div>' +
+      '<a class="card card--lime hp-cta rise" href="#/support">' +
+        '<span class="hp-cta__art" aria-hidden="true">' + buoy('glad') + '</span>' +
+        '<span class="hp-cta__txt"><b class="t-h2">' + esc(t('app_hp_cta_h')) + '</b><span class="t-body">' + esc(t('app_hp_cta_p')) + '</span></span>' +
+        '<span class="btn btn--primary">' + esc(t('app_hp_cta_btn')) + A.icon('arrow') + '</span></a>' +
       sampleNote();
   }
 
   function answerHtml(x) {
     var arts = (x.list || []);
-    return '<div class="hp-turn">' +
+    return '<div class="card hp-turn">' +
       '<p class="hp-turn__q" dir="auto">' + esc(x.q) + '</p>' +
-      '<div class="hp-turn__a' + (x.sure ? '' : ' is-unsure') + '">' +
+      '<div class="hp-turn__row"><span class="hp-turn__av" aria-hidden="true">' + buoy(x.sure ? 'happy' : 'think') + '</span>' +
+      '<div class="hp-turn__body"><div class="hp-turn__a' + (x.sure ? '' : ' is-unsure') + '">' +
         '<p dir="auto">' + esc(x.a) + '</p>' +
         (arts.length ? '<div class="hp-turn__from"><span class="t-tiny">' + esc(t('app_hp_from')) + '</span>' +
           arts.map(function (a) { return '<a href="#/help/a/' + esc(a.slug) + '">' + esc(a.title) + A.icon('arrow') + '</a>'; }).join('') + '</div>' : '') +
       '</div>' +
-      '<div class="hp-turn__foot" data-foot>' + footHtml(x) + '</div>' +
+      '<div class="hp-turn__foot" data-foot>' + footHtml(x) + '</div></div></div>' +
     '</div>';
   }
   function footHtml(x) {
@@ -202,7 +206,7 @@
       var q = ta.value.trim();
       if (q.length < 2 || form.classList.contains('is-busy')) { ta.focus(); return; }
       form.classList.add('is-busy'); sug.innerHTML = '';
-      box.innerHTML = '<div class="hp-turn"><p class="hp-turn__q" dir="auto">' + esc(q) + '</p><div class="hp-turn__a is-wait"><span class="hp-dots" aria-label="' + esc(t('app_hp_thinking')) + '"><i></i><i></i><i></i></span></div></div>';
+      box.innerHTML = '<div class="card hp-turn"><p class="hp-turn__q" dir="auto">' + esc(q) + '</p><div class="hp-turn__row"><span class="hp-turn__av" aria-hidden="true">' + buoy('think') + '</span><div class="hp-turn__body"><div class="hp-turn__a is-wait"><span class="hp-dots" aria-label="' + esc(t('app_hp_thinking')) + '"><i></i><i></i><i></i></span></div></div></div></div>';
       setStage('think', t('app_hp_bub_think'), 'think');
       var go = real() ? call('ask', { question: q, lang: A.lang, history: history.slice(-2) }) : new Promise(function (ok) { setTimeout(function () { ok(sampleAnswer(list, q)); }, 900); });
       go.then(function (d) {
@@ -215,8 +219,8 @@
         track('help_ask', { sure: !!d.sure });
       }, function (err) {
         if (my !== mountNo) return;
-        box.innerHTML = '<div class="hp-turn"><p class="hp-turn__q" dir="auto">' + esc(q) + '</p><div class="hp-turn__a is-unsure"><p>' + esc(err && err.message ? err.message : t('app_hp_err')) + '</p></div>' +
-          '<div class="hp-turn__foot"><a class="btn btn--primary btn--sm" href="#/support/new">' + esc(t('app_hp_person')) + '</a></div></div>';
+        box.innerHTML = '<div class="card hp-turn"><p class="hp-turn__q" dir="auto">' + esc(q) + '</p><div class="hp-turn__row"><span class="hp-turn__av" aria-hidden="true">' + buoy('think') + '</span><div class="hp-turn__body"><div class="hp-turn__a is-unsure"><p>' + esc(err && err.message ? err.message : t('app_hp_err')) + '</p></div>' +
+          '<div class="hp-turn__foot"><a class="btn btn--primary btn--sm" href="#/support/new">' + esc(t('app_hp_person')) + '</a></div></div></div></div>';
         setStage('happy', t('app_hp_bub_person'), 'think');
       }).then(function () { form.classList.remove('is-busy'); });
     });
@@ -228,10 +232,12 @@
     var help = list.filter(function (a) { return a.subject === s && a.section === 'help'; });
     var sup = list.filter(function (a) { return a.subject === s && a.section === 'support'; });
     return back('#/help', t('app_hp_title')) +
-      '<div class="hp-topic-head rise"><span class="hp-topic__art hp-topic__art--lg" style="--i:0;background:' + (TOPIC_TINT[s] || 'var(--bone)') + '">' + A.Cast.drawing(TOPIC_ART[s] || 'books') + '</span>' +
-        '<h1 class="t-h1" style="--i:1">' + esc(topicName(s)) + '</h1></div>' +
-      '<div class="hp-rows card rise">' + help.map(row).join('') + '</div>' +
-      (sup.length ? '<h2 class="t-h3 hp-h hp-h--sm">' + esc(t('app_hp_wrong')) + '</h2><div class="hp-rows card rise">' + sup.map(row).join('') + '</div>' : '');
+      '<div class="rise">' +
+        '<section class="card card--' + (TOPIC_CARD[s] || 'bone') + ' hp-topic-hero" style="--i:0"><h1 class="t-display">' + esc(topicName(s)) + '</h1>' +
+          '<span class="hp-topic-hero__art" aria-hidden="true">' + A.Cast.drawing(TOPIC_ART[s] || 'books') + '</span></section>' +
+        '<div class="hp-rows card" style="--i:1">' + help.map(row).join('') + '</div>' +
+        (sup.length ? '<h2 class="t-h2 hp-h hp-h--sm" style="--i:2">' + esc(t('app_hp_wrong')) + '</h2><div class="hp-rows card" style="--i:3">' + sup.map(row).join('') + '</div>' : '') +
+      '</div>';
   }
 
   /* ---------- Help: one article ---------- */
@@ -343,7 +349,7 @@
     return list.map(function (s) { return '<option value="' + s + '"' + (s === sel ? ' selected' : '') + '>' + esc(s === 'other' ? t('app_sp_topic_other') : topicName(s)) + '</option>'; }).join('');
   }
   function composeCard(qid, q) {
-    return '<form class="card span-8 sp-compose" style="--i:0" data-compose novalidate>' +
+    return '<form class="card span-7 sp-compose" style="--i:1" data-compose novalidate>' +
       '<h2 class="t-h2">' + esc(t('app_sp_write_h')) + '</h2>' +
       '<p class="t-small">' + esc(t('app_sp_write_p')) + '</p>' +
       (q ? '<div class="sp-attached"><span class="t-tiny">' + esc(t('app_sp_attached')) + '</span><p dir="auto">' + esc(q) + '</p></div>' : '') +
@@ -358,13 +364,16 @@
   }
   function supportHome(reqs, list, qid, q) {
     var quick = list.filter(function (a) { return a.section === 'support'; });
-    return head(t('app_sp_title'), t('app_sp_lead')) +
-      '<div class="grid rise sp-top">' + composeCard(qid, q) +
-        '<div class="stage hp-stage span-4" style="--i:1;background:var(--t-coral)" data-stage><div class="bub say">' + esc(t('app_sp_bub')) + '</div>' + buoy('happy') + '</div>' +
+    return '<div class="rise">' +
+        '<section class="card card--coral sp-hero" style="--i:0"><div class="hp-hero__main"><h1 class="t-display">' + esc(t('app_sp_title')) + '</h1>' +
+          '<p class="t-lead">' + esc(t('app_sp_lead')) + '</p></div>' +
+          '<div class="hp-hero__art" data-stage>' + stageInner('happy', t('app_sp_bub'), 'say') + '</div></section>' +
       '</div>' +
-      '<div class="grid rise sp-bottom">' +
-        '<section class="card span-6 sp-mine" style="--i:2"><h2 class="t-h3">' + esc(t('app_sp_mine')) + '</h2><div class="ms-list sp-list">' + convList(reqs) + '</div></section>' +
-        (quick.length ? '<section class="card span-6" style="--i:3"><h2 class="t-h3">' + esc(t('app_sp_quick')) + '</h2><div class="hp-rows">' + quick.map(row).join('') + '</div></section>' : '') +
+      '<div class="grid rise sp-grid">' + composeCard(qid, q) +
+        '<div class="span-5 sp-aside">' +
+          '<section class="card sp-mine" style="--i:2"><h2 class="t-h3">' + esc(t('app_sp_mine')) + '</h2><div class="ms-list sp-list">' + convList(reqs) + '</div></section>' +
+          (quick.length ? '<section class="card card--bone sp-quick" style="--i:3"><h2 class="t-h3">' + esc(t('app_sp_quick')) + '</h2><div class="hp-rows">' + quick.map(row).join('') + '</div></section>' : '') +
+        '</div>' +
       '</div>' + sampleNote();
   }
   function wireCompose(my) {
