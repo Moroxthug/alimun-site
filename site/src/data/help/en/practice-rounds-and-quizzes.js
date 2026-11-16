@@ -15,5 +15,5 @@ export default {
     'There is also a Listening round with the voices of your course book once its recordings are ready, and Speaking, where you pick your tutor, listen and then say the sentences yourself; your recording is turned into text by speech recognition, compared word by word and not kept. Every kind of exercise lets you try each type of exercise once: the first three kinds are free and every kind comes with a plan. Sets your teacher sends you appear under From your teacher, with Do it again and Just my mistakes.',
     'When you are signed in, your practice is saved to your account. Without an account it is kept in that browser only.',
   ],
-  related: ['your-course-book', 'mock-tests', 'track-your-progress'],
+  related: ['your-course-book', 'mock-tests', 'speaking-practice-and-pronunciation'],
 };

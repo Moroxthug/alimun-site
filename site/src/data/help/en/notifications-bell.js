@@ -14,5 +14,5 @@ export default {
     'There are also a few reminders: when a week has gone by since you last practised, when you have taken the level test but not yet chosen a class or plan, and when your free tutor minutes are used up. If you agreed to receive news and offers, these reminders also come by email.',
     'When there is nothing for you, the bell says Nothing new yet.',
   ],
-  related: ['homework-marks-and-feedback', 'find-your-way-around-the-dashboard'],
+  related: ['homework-marks-and-feedback', 'news-offers-and-emails', 'find-your-way-around-the-dashboard'],
 };

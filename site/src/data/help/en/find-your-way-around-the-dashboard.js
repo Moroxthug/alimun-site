@@ -15,5 +15,5 @@ export default {
     'The Streak card counts the days in a row on which you did something: a lesson, a practice round or quiz, a flashcard review, a library piece, homework handed in or a live class. Until you have done something today it says Practise today to keep it going, and the week under it shows the days you were active.',
     'The bell at the top of the screen holds your notifications.',
   ],
-  related: ['your-course-book', 'notifications-bell', 'track-your-progress'],
+  related: ['your-course-book', 'join-your-live-class', 'notifications-bell'],
 };
