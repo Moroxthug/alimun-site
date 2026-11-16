@@ -13,7 +13,7 @@ export default {
     'Alcune cose restano sul dispositivo su cui le hai fatte finché non vengono inviate. Una bozza di compito che non hai ancora consegnato e le risposte di una prova di simulazione d’esame che non hai finito vengono conservate in quel browser, quindi aprile sullo stesso dispositivo. Le risposte e i compiti dati offline vengono inviati quando quel dispositivo torna online, quindi apri Alimun lì con una connessione. Senza un account, i tuoi progressi restano solo in quel browser.',
     'I compiti compaiono per le classi di cui fai parte. I compiti che sono una lezione del libro del corso, un contenuto della biblioteca o una prova di simulazione d’esame contano come consegnati appena li finisci; apri di nuovo Compiti e vengono registrati.',
     'In Progressi, un’abilità dice non ci sono ancora abbastanza risposte finché non sono state contate abbastanza tue risposte, quindi all’inizio una nuova abilità può sembrare vuota.',
-    'Se manca ancora qualcosa, scrivici da Support nella tua dashboard, oppure invia un’email a support@alimun.com, dicendoci cosa manca e su quale dispositivo l’hai fatto.',
+    'Se manca ancora qualcosa, scrivici da Assistenza nella tua dashboard, oppure invia un’email a support@alimun.com, dicendoci cosa manca e su quale dispositivo l’hai fatto.',
   ],
   related: ['hand-in-homework', 'track-your-progress', 'app-not-loading-or-offline'],
 };

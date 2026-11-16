@@ -13,7 +13,7 @@ export default {
     'Certaines choses restent sur l’appareil où vous les avez faites jusqu’à ce qu’elles soient envoyées. Un brouillon de devoir que vous n’avez pas encore rendu et les réponses d’une épreuve d’examen blanc que vous n’avez pas terminée sont conservés dans ce navigateur : ouvrez-les donc sur le même appareil. Les réponses et les devoirs donnés hors ligne sont envoyés lorsque cet appareil est de nouveau en ligne : ouvrez donc Alimun sur cet appareil avec une connexion. Sans compte, vos progrès ne sont conservés que dans ce navigateur.',
     'Les devoirs apparaissent pour les cours que vous suivez. Les devoirs qui sont une leçon du manuel, un document de la bibliothèque ou une épreuve d’examen blanc comptent comme rendus dès que vous les terminez ; rouvrez Devoirs et ils sont enregistrés.',
     'Dans Progrès, une compétence indique pas encore assez de réponses tant que pas assez de vos réponses n’ont été comptées : une nouvelle compétence peut donc sembler vide au début.',
-    'S’il manque encore quelque chose, écrivez-nous depuis Support dans votre tableau de bord, ou par e-mail à support@alimun.com, en nous disant ce qui manque et sur quel appareil vous l’avez fait.',
+    'S’il manque encore quelque chose, écrivez-nous depuis Assistance dans votre tableau de bord, ou par e-mail à support@alimun.com, en nous disant ce qui manque et sur quel appareil vous l’avez fait.',
   ],
   related: ['hand-in-homework', 'track-your-progress', 'app-not-loading-or-offline'],
 };

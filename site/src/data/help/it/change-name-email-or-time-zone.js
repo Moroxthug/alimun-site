@@ -11,7 +11,7 @@ export default {
   body: [
     'Apri Impostazioni nella tua dashboard. In Su di te, modifica Il tuo nome, poi premi Salva le modifiche; quando è fatto vedi “Salvato.”. Gli studenti possono cambiare lì anche il paese, la lingua che stanno imparando e il livello. Cambiare la lingua o il livello cambia il tuo libro, i tuoi esercizi e la tua biblioteca, e la dashboard si ricarica.',
     'Nella dashboard studente, anche Fuso orario si trova in Su di te. Gli orari delle lezioni sono mostrati in questo fuso orario, quindi scegli quello del luogo in cui ti trovi e premi Salva le modifiche.',
-    'Il tuo indirizzo email è mostrato in Email, perché è l’indirizzo con cui accedi, ma non si può cambiare in Impostazioni. Se devi usare un indirizzo diverso, scrivici da Support nella tua dashboard, oppure invia un’email a support@alimun.com.',
+    'Il tuo indirizzo email è mostrato in Email, perché è l’indirizzo con cui accedi, ma non si può cambiare in Impostazioni. Se devi usare un indirizzo diverso, scrivici da Assistenza nella tua dashboard, oppure invia un’email a support@alimun.com.',
   ],
   related: ['change-dashboard-language', 'sign-in-and-reset-password', 'class-times-and-time-zones'],
 };
