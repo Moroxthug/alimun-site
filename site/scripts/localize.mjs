@@ -176,7 +176,16 @@ function withFaqLd(html) {
 // Shared footer (src/blocks/footer.html): its course column links to this site's course pages; sites
 // without course pages drop the column.
 // Footer "Blog" link (src/blocks/footer.html): kept only in languages that have a blog.
+// Links to Help (footer and Contact, owner 16 Nov 2026): /help or /<site>/help, a folder rather than a page.
+function withHelpLinks(html, lang) {
+  if (!html.includes('data-help-link')) return html;
+  const $ = cheerio.load(html);
+  const to = `${lang === 'en' ? '/' : '/' + lang + '/'}help`;
+  $('[data-help-link]').each((_, el) => { const a = el.tagName === 'a' ? $(el) : $(el).find('a'); a.attr('href', to); $(el).removeAttr('data-help-link'); });
+  return $.html();
+}
 function withFooterBlog(html, lang) {
+  html = withHelpLinks(html, lang);
   if (!html.includes('data-footer-blog') && !html.includes('data-footer-resources')) return html;
   const $ = cheerio.load(html);
   if (blogList(lang).length) $('[data-footer-blog] a').attr('href', `${lang === 'en' ? '/' : '/' + lang + '/'}blog`);
