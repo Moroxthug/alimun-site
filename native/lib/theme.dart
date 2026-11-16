@@ -34,13 +34,16 @@ const kFast = Duration(milliseconds: 160);
 const kMid = Duration(milliseconds: 280);
 const kSlow = Duration(milliseconds: 520);
 
+/// Only for the picture tests: the build machine has no Arabic or Chinese font, a phone uses its own
+List<String>? testFontFallback;
+
 TextStyle _satoshi(double size, double weight, {Color color = C.ink, double height = 1.5}) => TextStyle(
-    fontFamily: 'Satoshi', fontSize: size, height: height, color: color,
+    fontFamily: 'Satoshi', fontFamilyFallback: testFontFallback, fontSize: size, height: height, color: color,
     fontWeight: FontWeight.values[((weight / 100).round() - 1).clamp(0, 8)], fontVariations: [FontVariation('wght', weight)]);
 
 class T {
   static TextStyle display(double size, {Color color = C.ink}) =>
-      TextStyle(fontFamily: 'Coolvetica', fontSize: size, height: 1.0, color: color, letterSpacing: .2);
+      TextStyle(fontFamily: 'Coolvetica', fontFamilyFallback: testFontFallback, fontSize: size, height: 1.0, color: color, letterSpacing: .2);
   static final h1 = display(38);
   static final h2 = display(29);
   static final h3 = display(24);
