@@ -13,5 +13,5 @@ export default {
     'The app on its own gives you every unit, the full course book, exercises and 60 minutes of voice practice a month, paid monthly or yearly. You can also buy a 30-minute help class in a small group on the week\'s units, a trial class (one live class in a running room, once per person), and extra voice practice minutes for the tutor, which are yours for 12 months.',
     'To compare them, open the Plans and prices page on alimun.com (alimun.com/tiers), where you can switch between English and German. Inside your dashboard, go to Settings and choose See the plans, or open Plans and prices from there. Prices are shown for the country you are in, and the country your card was issued in sets the final price, which you always see before anything is charged.',
   ],
-  related: ['monthly-or-upfront', 'reserve-a-place-in-a-pack', 'price-in-my-country', 'founding-price'],
+  related: ['monthly-or-upfront', 'reserve-a-place-in-a-pack', 'price-in-my-country', 'founding-price', 'trial-class-and-help-class', 'get-more-tutor-minutes'],
 };

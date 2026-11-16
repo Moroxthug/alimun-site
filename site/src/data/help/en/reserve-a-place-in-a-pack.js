@@ -13,5 +13,5 @@ export default {
     'A room opens when at least 8 learners join. If not enough people join, the room does not start, your reservation ends and nothing is charged. We email you, and you can choose another time or the next start date.',
     'If no room suits you yet, you can choose Reserve without choosing a room and pick your room when the next start dates are published. When a room at your level is published we email you, and on the same page you choose Move my reservation here. If you would rather not reserve anything yet, Tell me when a room opens sends you one email when a room at your level opens; nothing is reserved or charged.',
   ],
-  related: ['monthly-or-upfront', 'founding-price', 'plans-and-prices'],
+  related: ['how-rooms-start', 'monthly-or-upfront', 'founding-price', 'plans-and-prices'],
 };
