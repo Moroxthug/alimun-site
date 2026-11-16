@@ -1339,7 +1339,7 @@
   }
 
   /* Teacher dashboard, Payouts (step 15, part 6): payouts recorded by Alimun (admins write them), and this month's
-     classes marked as done and 1:1s completed. No amount is worked out in the browser (owner, 26 Oct 2026). */
+     classes the class log shows as held (or ended early) and 1:1s completed. No amount is worked out in the browser (owner, 26 Oct 2026). */
   function teacherPayouts() {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
@@ -1355,7 +1355,8 @@
           var cos = rows(cr), ids = cos.map(function (co) { return co.id; }), none = Promise.resolve({ data: [] });
           return Promise.all([
             c.from('teacher_payouts').select('id, period_start, period_end, sessions_count, amount_eur, status, paid_at').eq('teacher_id', tp.id).order('period_start', { ascending: false }).limit(100),
-            ids.length ? c.from('sessions').select('id, cohort_id, scheduled_at').in('cohort_id', ids).eq('status', 'completed').gte('scheduled_at', first.toISOString()).lte('scheduled_at', new Date().toISOString()) : none,
+            /* Classes count once the class log shows they took place (owner, 16 Nov 2026), as in Admin, Payouts */
+            ids.length ? c.from('sessions').select('id, cohort_id, scheduled_at').in('cohort_id', ids).in('outcome', ['held', 'ended_early']).gte('scheduled_at', first.toISOString()).lte('scheduled_at', new Date().toISOString()) : none,
             c.from('one_on_one_bookings').select('id, kind, scheduled_at, duration_minutes').eq('teacher_id', tp.id).eq('status', 'completed').gte('scheduled_at', first.toISOString())
           ]).then(function (r) {
             return { signedIn: true, teacher: tp, cohorts: cos, payouts: rows(r[0]), classes: rows(r[1]), oto: rows(r[2]), since: first.toISOString() };

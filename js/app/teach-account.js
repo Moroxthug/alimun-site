@@ -47,7 +47,7 @@
       return '<div class="tt-row tp-row"><span class="tt-row__time">' + esc(money(p.amount_eur)) + '</span><span><b>' + esc(day(p.period_start) + ' – ' + day(p.period_end)) + '</b><small>' +
         esc(A.tn('app_t_classes_taught_n', p.sessions_count || 0) + '. ' + st + '.') + '</small></span></div>';
     }).join('') + '</div>';
-    html += '<p class="t-small" style="margin-top:14px">' + esc(t('app_tp_questions')) + ' <a class="linkish" href="/contact">' + esc(t('app_tp_contact')) + '</a></p></section>';
+    html += '<p class="t-small" style="margin-top:14px">' + esc(t('app_tp_questions')) + ' <a class="linkish" href="#/support">' + esc(t('app_tp_contact')) + '</a></p></section>';
     if (d.sample) html += '<p class="t-tiny span-12">' + esc(t('app_tp_sample')) + '</p>';
     return html + '</div>';
   }

@@ -836,7 +836,7 @@
   function draw() {
     if (!root || !L) return;
     var name = cap(L.tutor), on = L.started && !L.ended;
-    var html = '<div class="tl-wrap' + (live() ? ' is-live' : '') + '" data-board="closed"><div class="view__head tu-head"><div><h1 class="t-h1">' + esc(t('app_tl_h', { name: name })) + '</h1><p class="t-lead" data-tl-left>' + esc(t('app_tu_left_n', { time: mins(L.seconds) })) + '</p>' + (L.engine === 'cascade' ? '<p class="t-small" data-tl-cost>' + esc(t('app_tl_test_h')) + '</p>' : '') + '</div>' +
+    var html = '<div class="tl-wrap' + (live() ? ' is-live' : '') + '" data-board="closed"><div class="view__head tu-head"><div><h1 class="t-h1">' + esc(t('app_tl_h', { name: name })) + '</h1><p class="t-lead" data-tl-left>' + esc(t('app_tu_left_n', { time: mins(L.seconds) })) + '</p><p class="tu-ai">' + esc(t('app_tu_ai_note')) + '</p>' + (L.engine === 'cascade' ? '<p class="t-small" data-tl-cost>' + esc(t('app_tl_test_h')) + '</p>' : '') + '</div>' +
       (L.ended ? '' : '<div class="btn-row">' + (on ? '<button class="btn btn--quiet btn--sm" type="button" data-tl="mute" aria-pressed="' + (L.muted ? 'true' : 'false') + '">' + esc(t(L.muted ? 'app_tl_unmute' : 'app_tl_mute')) + '</button>' : '') +
         '<button class="btn btn--primary btn--sm" type="button" data-tl="end"' + (L.ending ? ' disabled' : '') + '>' + esc(t('app_tl_end')) + '</button></div>') + '</div>';
     var stage = '<section class="tl-stage" data-state="' + esc(L.state) + '" aria-labelledby="tl-name"><div class="tl-face tutor-art" data-tl-face data-mouth="rest" aria-hidden="true">' + (A.Cast.tutor ? A.Cast.tutor(L.tutor) : '') + '</div>' +

@@ -152,7 +152,7 @@ export default {
     if (c.open) {
       return [
         [`Quanto custa um curso de ${c.name} online na Alimun?`, 'Há três formas de aprender com um professor, todas com o app incluído: uma aula aberta semanal, um pacote de nível de 12 semanas com três aulas por semana e um pacote de exame. O preço depende do país do seu cartão; em Planos e preços você o vê na sua moeda, e vê o valor exato antes de pagar. Os pacotes são pagos por mês ou de uma vez.'],
-        ['As aulas são ao vivo ou gravadas?', 'São aulas ao vivo por vídeo com um professor e sempre a mesma turma. A Alimun não grava as aulas: depois de cada aula você recebe as anotações da sessão, o vocabulário novo e as tarefas.'],
+        ['As aulas são ao vivo ou gravadas?', 'São aulas ao vivo por vídeo com um professor e sempre a mesma turma. As aulas não ficam disponíveis em vídeo: depois de cada aula você recebe as anotações da sessão, o vocabulário novo e as tarefas. Para verificar a qualidade e manter todos em segurança, a Alimun grava alguns momentos curtos de cada aula em grupo, vistos apenas pela equipe da Alimun e apagados após 30 dias.'],
         ['Em que dias e horários são as aulas?', 'Cada turma se reúne em dias fixos e no mesmo horário toda semana, com o mesmo professor e a mesma turma. Assim, estudar vira parte da sua semana.'],
         ['Preciso de um nível mínimo para começar?', 'Não. Há turmas a partir do nível A1, e um teste inicial curto coloca você entre o A1 e o C2, para entrar na turma certa.'],
         ['Posso me preparar para um certificado?', c.lang === 'German'

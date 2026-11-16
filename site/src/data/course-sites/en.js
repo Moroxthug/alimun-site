@@ -168,7 +168,7 @@ export default {
     if (c.open) {
       return [
         [`How much does the online ${c.name} course at Alimun cost?`, 'There are three ways to learn with a teacher, each with the app included: a weekly open class, a 12-week level pack with three classes a week, and an exam pack. The price depends on the country your card comes from; Plans and prices shows it in your currency, and you see the exact amount before you pay. Packs can be paid monthly or once.'],
-        ['Are the classes live or recorded?', 'They are live video classes with a teacher and always the same group. Alimun does not record classes: after each class you get the session notes, the new vocabulary and your homework.'],
+        ['Are the classes live or recorded?', 'They are live video classes with a teacher and always the same group. Classes are not made available as videos: after each class you get the session notes, the new vocabulary and your homework. To check quality and keep everyone safe, Alimun records a few short moments of each group class, seen only by Alimun staff and deleted after 30 days.'],
         ['On which days and at what times are the classes?', 'Each group meets on fixed days at the same time every week, with the same teacher and the same group. That way learning becomes part of your week.'],
         ['Do I need a certain level to start?', 'No. There are groups from A1, and a short test at the start places you between A1 and C2 so that you join the right group.'],
         ['Can I prepare for a certificate?', c.lang === 'German'

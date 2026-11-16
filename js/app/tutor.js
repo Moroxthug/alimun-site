@@ -516,7 +516,7 @@
   function homeView() {
     var s = S.status, sec = s.seconds || {}, plan = s.plan || {}, none = (sec.total || 0) <= 0;
     var buddy = A.Cast.drawing(A.buddyFor(A.data().profile.language)), liveOn = liveReady();
-    var html = '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_nav_tutor')) + '</h1><p class="t-lead">' + esc(t('app_tu_lead2')) + '</p></div></div><div class="grid rise">';
+    var html = '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_nav_tutor')) + '</h1><p class="t-lead">' + esc(t('app_tu_lead2')) + '</p><p class="tu-ai">' + esc(t('app_tu_ai_note')) + '</p></div></div><div class="grid rise">';
     /* Part 5b: going over a class lesson */
     if (S.lesson) html += '<section class="card card--sun span-12" style="--i:0" aria-labelledby="tu-lesson"><h2 class="t-h2" id="tu-lesson">' + esc(t('app_tu_lesson_h')) + '</h2>' +
       '<p class="t-body" style="margin-top:8px">' + esc(t('app_tu_lesson_p')) + '</p><div class="btn-row" style="margin-top:12px"><a class="btn btn--quiet btn--sm" href="#/tutor">' + esc(t('app_tu_lesson_not')) + '</a></div></section>';
@@ -557,7 +557,7 @@
   }
 
   function sessionView() {
-    var html = '<div class="view__head tu-head"><div><h1 class="t-h1">' + esc(t('app_nav_tutor')) + '</h1><p class="t-lead" data-tu-left>' + esc(t('app_tu_left_n', { time: mins(S.seconds) })) + '</p></div>' +
+    var html = '<div class="view__head tu-head"><div><h1 class="t-h1">' + esc(t('app_nav_tutor')) + '</h1><p class="t-lead" data-tu-left>' + esc(t('app_tu_left_n', { time: mins(S.seconds) })) + '</p><p class="tu-ai">' + esc(t('app_tu_ai_note')) + '</p></div>' +
       '<div class="btn-row">' + (S.ended ? '<button class="btn btn--primary btn--sm" type="button" data-tu="home">' + esc(t('app_tu_back')) + '</button>'
         : (voiceReady() ? '<button class="btn btn--quiet btn--sm" type="button" data-tu="voice" aria-pressed="' + (voiceOn() ? 'true' : 'false') + '">' + esc(t(voiceOn() ? 'app_tu_voice_off' : 'app_tu_voice_on')) + '</button>' : '') +
           '<button class="btn btn--ghost btn--sm" type="button" data-tu="end"' + (S.busy ? ' disabled' : '') + '>' + esc(t('app_tu_end')) + '</button>') + '</div></div>';

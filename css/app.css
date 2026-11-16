@@ -2457,3 +2457,7 @@ section.card .hp-rows { padding: 0; margin: 12px -12px -8px; }
 @media (max-width: 1099px) { .hp-hero__art .bub { bottom: 178px; } .sp-hero .hp-hero__art .bub { bottom: 160px; } }
 @media (max-width: 899px) { .hp-hero__art .bub, .sp-hero .hp-hero__art .bub { bottom: auto; } }
 @media (max-width: 899px) { .sp-hero .hp-hero__art { min-height: 0; } .sp-hero { padding-block: 24px; } }
+
+/* The tutor says it is AI (owner, 16 Nov 2026; EU AI Act): under the Tutor heading and in every session */
+.tu-ai { display: inline-flex; align-items: center; gap: 8px; margin: 10px 0 0; padding: 6px 12px 6px 10px; border-radius: 10px; background: var(--t-lime); color: var(--forest); font-size: 14px; font-weight: 600; line-height: 1.4; }
+.tu-ai::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 3px rgba(206, 255, 101, .35); }

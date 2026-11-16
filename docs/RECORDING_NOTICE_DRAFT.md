@@ -1,6 +1,6 @@
 # Class recordings: draft wording for the owner (13 Nov 2026)
 
-Not published. The owner approves (or changes) this before it goes into `terms.html` and `gdpr.html` (root HTML; the
+Published 16 Nov 2026 (owner: "publish the draft"): the Terms and Privacy wording below is live in all languages, the course FAQ updated, proof clips switched on. Before then: not published. The owner approves (or changes) this before it goes into `terms.html` and `gdpr.html` (root HTML; the
 locale copies are generated with `npm run build` and the translations added). Until then the proof clips stay in dry
 run (Admin, Automations); an admin's full recording works already, and the classroom already shows the short notice
 (`app_cr_rec_note`). This is not legal advice: a lawyer should read it before it is published.

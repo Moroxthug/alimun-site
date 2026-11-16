@@ -88,8 +88,10 @@
     var inside = function (x) { var t = new Date(x.at).getTime(); return x.teacher_id === tid && t >= a && t < b; };
     var mine = PO.classes.filter(inside);
     /* Only classes verified as held count (owner, 13 Nov 2026); the rest are shown so one can be paid by hand */
-    return { classes: mine.filter(function (x) { return x.outcome === 'held'; }).length, oto: PO.oto.filter(inside).length,
-      unverified: mine.filter(function (x) { return !x.outcome; }).length, notHeld: mine.filter(function (x) { return x.outcome && x.outcome !== 'held'; }).length };
+    /* Pay follows the class log (owner, 16 Nov 2026): held, or ended early with the teacher there */
+    var paid = function (x) { return x.outcome === 'held' || x.outcome === 'ended_early'; };
+    return { classes: mine.filter(paid).length, oto: PO.oto.filter(inside).length,
+      unverified: mine.filter(function (x) { return !x.outcome; }).length, notHeld: mine.filter(function (x) { return x.outcome && !paid(x); }).length };
   }
   function taughtText(n) {
     return A.plural(n.classes, 'class verified as held', 'classes verified as held') + ' and ' + A.plural(n.oto, '1:1', '1:1s') +
