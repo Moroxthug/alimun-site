@@ -38,6 +38,12 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
     SharedPreferences.setMockInitialValues({});
     await _fonts();
+    // A stand-in for the phone's own Arabic font, which the build machine lacks
+    final dejavu = File('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf');
+    if (dejavu.existsSync()) {
+      await (FontLoader('TestFallback')..addFont(Future.value(ByteData.view(dejavu.readAsBytesSync().buffer)))).load();
+      testFontFallback = ['TestFallback'];
+    }
     await i18n.start();
     await startCountries();
     await initializeDateFormatting();
