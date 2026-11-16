@@ -5,7 +5,7 @@ export default {
   subject: 'account',
   audience: 'all',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "What data does Alimun keep about me, and for how long?",
   summary: "We keep what we need to run your account and your learning, for as long as your account is open, and the Privacy page lists everything and how long it is kept.",
   body: [

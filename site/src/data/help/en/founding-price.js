@@ -5,7 +5,7 @@ export default {
   subject: 'plans',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'What is the founding price?',
   summary: 'The founding price is a lower price on level, intensive and exam packs for the first 500 learners who join before 1 January 2027, kept for 12 months.',
   body: [

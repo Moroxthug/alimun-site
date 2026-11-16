@@ -5,7 +5,7 @@ export default {
   subject: 'dashboard',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'Where can I see my progress?',
   summary: 'Progress shows your level, your skills, your lessons and your weeks, counted only from what you have actually done.',
   body: [

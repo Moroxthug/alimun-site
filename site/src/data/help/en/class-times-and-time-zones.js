@@ -8,7 +8,7 @@ export default {
   subject: 'classes',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'Which time zone are my class times in?',
   summary: 'Class times are shown in the time zone set in your Settings, or in your device\'s time zone if you have not set one.',
   body: [

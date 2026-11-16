@@ -5,7 +5,7 @@ export default {
   subject: 'account',
   audience: 'all',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "Which emails will I get, and how do I stop news and offers?",
   summary: "You always get emails about your account, classes and payments; news, offers and reminders come only if you are 16 or older and ask for them, and you can stop them in Settings or from any of those emails.",
   body: [

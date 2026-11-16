@@ -9,7 +9,7 @@ export default {
   subject: 'teachers',
   audience: 'teacher',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I use the prepared lessons and the board in class?',
   summary: 'Each class date gets the next lesson Alimun has prepared for the course, which you can open, change or skip, and in the classroom the “Board” button shows that lesson’s pages to your students as you teach.',
   body: [

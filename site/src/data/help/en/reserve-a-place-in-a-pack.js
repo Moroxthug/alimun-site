@@ -5,7 +5,7 @@ export default {
   subject: 'plans',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'What does it mean to reserve a place in a pack?',
   summary: 'When you reserve a place in a level, intensive or exam pack, your card is saved but nothing is charged until the day your room opens, and if the room does not open you are not charged at all.',
   body: [

@@ -5,7 +5,7 @@ export default {
   subject: 'account',
   audience: 'all',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "How do I get a copy of my data or delete my account?",
   summary: "Email privacy@alimun.com for a copy of your data, and use Ask us to delete your account in Settings, or the same address, to close your account.",
   body: [

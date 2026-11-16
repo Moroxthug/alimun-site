@@ -5,7 +5,7 @@ export default {
   subject: 'practice',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'What is in the Library?',
   summary: 'Library has listening and reading pieces at your level, each with its words and exercises, and you can listen as often as you like.',
   body: [

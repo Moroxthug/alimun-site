@@ -9,7 +9,7 @@ export default {
   subject: 'teachers',
   audience: 'teacher',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I check in and start my live class?',
   summary: 'Check in on Today from an hour before your class, at least 5 minutes before it starts, then press “Start the class” from 15 minutes before to open the classroom in your dashboard.',
   body: [

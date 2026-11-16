@@ -5,7 +5,7 @@ export default {
   subject: 'plans',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'What plans can I choose from?',
   summary: 'You can learn with a teacher in an open class, a level pack, an intensive pack or an exam pack, or use the app on its own, and you compare them all on the Plans and prices page.',
   body: [

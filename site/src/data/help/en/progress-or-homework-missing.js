@@ -5,7 +5,7 @@ export default {
   subject: 'dashboard',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'My progress or my homework is missing. What can I do?',
   summary: 'Check that you are signed in and online, and open Alimun on the device where you did the work: drafts, unfinished mock papers and anything done offline wait there until they are sent.',
   body: [

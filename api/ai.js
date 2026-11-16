@@ -1112,3 +1112,6 @@ module.exports = async function handler(req, res) {
       return res.status(400).json({ error: 'Unknown action' });
   }
 };
+
+// Shared with api/help.js (docs/HELP_PLAN.md, Part 2): the same providers, caps and usage records.
+module.exports.internal = { callAI, reserveQuota, finalizeUsage, estimateMaxCostUsd, quotaRefusal, providerConfigured, parseJsonReply, getSupabaseAdmin, requireAuth };

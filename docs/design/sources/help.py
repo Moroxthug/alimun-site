@@ -50,3 +50,11 @@ for name, fn in (('buoy', buoy), ('lantern', lantern), ('bubble', bubble)):
     out[name] = {m: fn(m) for m in FACES}
 json.dump(out, open('help.json', 'w'), indent=1)
 print('ok', {k: len(v) for k, v in out.items()})
+
+# The chosen drawing (owner, 16 Nov 2026: "lifebuoy") for the dashboards: js/app/cast-help.js
+import os
+js = ('/* Alimun app: the Help drawing, the lifebuoy (owner, 16 Nov 2026; docs/HELP_PLAN.md).\n'
+      '   Generated from docs/design/sources/help.py; do not edit the SVG by hand. Cast.help(mood): happy, think, glad. */\n'
+      '(function () {\n  var H = ' + json.dumps(out['buoy']) + ';\n'
+      '  if (window.AlimunCast) window.AlimunCast.help = function (mood) { return H[mood] || H.happy; };\n})();\n')
+open(os.path.join('..', '..', '..', 'js', 'app', 'cast-help.js'), 'w').write(js)

@@ -5,7 +5,7 @@ export default {
   subject: 'account',
   audience: 'all',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "Which cookies does Alimun use, and how do I change my choice?",
   summary: "Only the cookies needed to run the site are always on; analytics and marketing are used only if you accept them, and you can change your choice with Manage Cookies at the bottom of any page.",
   body: [

@@ -366,3 +366,12 @@ a.feed__it:hover { background: #f7f6f2; margin: 0 -20px; padding-left: 20px; pad
 .adm .btn--on-forest:hover { background: #f0efe9; color: var(--forest); }
 .adm .card--forest .btn--lime { box-shadow: inset 0 0 0 1px rgba(26, 68, 60, .25); }
 .hc .btn-row { margin-top: 10px; }
+
+/* Help requests (js/app/admin-help.js) */
+.adm .ad-help-row.is-open .tt-row__time { color: #b0472f; }
+.adm .ad-help-pv { margin-top: 4px; color: var(--ink); opacity: .75; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.adm .ad-help-q { background: #f4fbe0; box-shadow: none; }
+.adm .ad-help-q .t-body { margin: 8px 0 4px; }
+.adm .ad-help-reply { display: grid; gap: 8px; padding-top: 16px; border-top: 1px solid var(--line); margin-top: 8px; }
+.adm .ad-help-reply textarea { resize: vertical; line-height: 1.5; }
+.adm .ad-help-reply .t-small { margin: 0; }

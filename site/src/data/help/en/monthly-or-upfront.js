@@ -5,7 +5,7 @@ export default {
   subject: 'plans',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'Should I pay for my pack monthly or upfront?',
   summary: 'A level, intensive or exam pack is either three monthly payments or one payment for the 12 weeks that costs a little less, and either way your card is only charged once your room opens.',
   body: [

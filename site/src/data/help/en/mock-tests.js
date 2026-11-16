@@ -5,7 +5,7 @@ export default {
   subject: 'practice',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do the mock tests work?',
   summary: 'Mock tests are full practice tests in the format of real exams, plus Alimun’s own end-of-level tests, taken one paper at a time and marked when you finish the paper.',
   body: [

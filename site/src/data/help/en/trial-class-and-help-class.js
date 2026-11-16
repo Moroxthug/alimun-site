@@ -9,7 +9,7 @@ export default {
   subject: 'classes',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'What are the trial class and the help class?',
   summary: 'The trial class is one live class in a group that is already running, once per person; the help class is a 30-minute live class in a small group on the week\'s units.',
   body: [

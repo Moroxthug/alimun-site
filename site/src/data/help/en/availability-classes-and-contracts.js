@@ -8,7 +8,7 @@ export default {
   subject: 'teachers',
   audience: 'teacher',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I set my availability and get classes?',
   summary: 'Add the times you are free each week under Classes, “Your availability”; you can then create a class inside those times, and rooms that fit what you can teach come to you as course contracts you may accept or decline.',
   body: [

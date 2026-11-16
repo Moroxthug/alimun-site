@@ -5,7 +5,7 @@ export default {
   subject: 'plans',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'My card was declined at checkout. What can I do?',
   summary: 'The decision comes from your bank, so check with your bank or try another card with Use another card.',
   body: [

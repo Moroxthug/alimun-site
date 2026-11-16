@@ -7,7 +7,7 @@ export default {
   subject: 'teachers',
   audience: 'teacher',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I write and publish the notes after a class?',
   summary: 'Open the class date from Today or Classes, fill in the words and the grammar point, and press “Publish the notes”: your students see them in their dashboard, the words go into their flashcards and the class gets an email with the PDF.',
   body: [

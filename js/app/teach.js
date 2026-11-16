@@ -104,6 +104,9 @@
     more: '<circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/>',
     arrow: '<path d="M5 12h14M13 6l6 6-6 6"/>',
     back: '<path d="M19 12H5M11 6l-6 6 6 6"/>',
+    check: '<path d="m5 12.5 4.5 4.5L19 7"/>',
+    help: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/><path d="m6 6 3.5 3.5M14.5 14.5 18 18M18 6l-3.5 3.5M9.5 14.5 6 18"/>',
+    support: '<path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13" width="4" height="6" rx="1.6"/><rect x="16.5" y="13" width="4" height="6" rx="1.6"/><path d="M18.5 19c0 1.3-1.6 2-4 2H13"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
     minus: '<path d="M5 12h14"/>',
     play: '<path d="M8 5.5v13l10.5-6.5z"/>'
@@ -125,7 +128,9 @@
     { id: 'material', label: 'app_t_nav_material', icon: 'material', group: 'make', part: 5, art: 'owl', tint: 'sun', kind: 'think', text: 'app_t_soon_material_text', bub: 'app_t_soon_material_bub' },
     { id: 'messages', label: 'app_t_nav_messages', icon: 'messages', group: 'account', part: 6, art: 'alien', tint: 'mint', kind: 'say', text: 'app_t_soon_messages_text', bub: 'app_t_soon_messages_bub' },
     { id: 'payouts', label: 'app_t_nav_payouts', icon: 'payouts', group: 'account', part: 6, art: 'suitcase', tint: 'sun', kind: 'think', text: 'app_t_soon_payouts_text', bub: 'app_t_soon_payouts_bub' },
-    { id: 'settings', label: 'app_t_nav_settings', icon: 'settings', group: 'account', part: 6, art: 'cat', tint: 'bone', kind: 'think', text: 'app_t_soon_settings_text', bub: 'app_t_soon_settings_bub' }
+    { id: 'settings', label: 'app_t_nav_settings', icon: 'settings', group: 'account', part: 6, art: 'cat', tint: 'bone', kind: 'think', text: 'app_t_soon_settings_text', bub: 'app_t_soon_settings_bub' },
+    { id: 'help', label: 'app_nav_help', icon: 'help', group: 'account' },
+    { id: 'support', label: 'app_nav_support', icon: 'support', group: 'account' }
   ];
   var GROUPS = { teach: 'app_t_group_teach', make: 'app_t_group_make', account: 'app_t_group_account' };
   var TINTS = { sun: 'var(--t-sun)', mint: 'var(--t-mint)', coral: 'var(--t-coral)', leaf: 'var(--t-lime)', bone: 'var(--bone)' };
@@ -476,10 +481,11 @@
   var helpers = {
     t: t, tn: tn, esc: esc, icon: icon, Cast: Cast, lang: lang, locale: locale, cap: cap, languageName: languageName, listOf: listOf, fmt: fmt,
     loaderInner: loaderInner, dayName: dayName, relative: relative, className: className, weekday: weekday, browserZone: browserZone,
-    mode: function () { return mode; }, rerender: function () { render(current, false); }
+    mode: function () { return mode; }, rerender: function () { render(current, false); }, role: 'teacher'
   };
   var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; }, homework: function () { return window.AlimunTeachHomework; }, material: function () { return window.AlimunTeachMaterial; }, lessons: function () { return window.AlimunTeachLessons; },
-    messages: function () { return window.AlimunTeachMessages; }, payouts: function () { return window.AlimunTeachPayouts; }, settings: function () { return window.AlimunTeachSettings; } };
+    messages: function () { return window.AlimunTeachMessages; }, payouts: function () { return window.AlimunTeachPayouts; }, settings: function () { return window.AlimunTeachSettings; },
+    help: function () { return window.AlimunHelp; }, support: function () { return window.AlimunSupport; } };
   function partsOf(id) { return location.hash.replace(new RegExp('^#\\/' + id + '\\/?'), '').split('/').filter(Boolean); }
 
   /* ---------- Routing ---------- */

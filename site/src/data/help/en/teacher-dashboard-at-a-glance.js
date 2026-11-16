@@ -7,7 +7,7 @@ export default {
   subject: 'teachers',
   audience: 'teacher',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'What is on my teacher dashboard?',
   summary: 'Your teacher dashboard at alimun.com/app/teach opens on Today, with your next class and what needs doing, and has sections for your classes, students, homework, lessons, material, messages, payouts and settings.',
   body: [

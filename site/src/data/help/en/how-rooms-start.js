@@ -9,7 +9,7 @@ export default {
   subject: 'classes',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'When does my class start, and what if it does not open?',
   summary: 'A pack room opens on its start date once at least 8 learners have joined; until then nothing is charged, and if it does not open your reservation ends with nothing charged.',
   body: [

@@ -9,7 +9,7 @@ export default {
   subject: 'classes',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I change class or leave my class?',
   summary: 'Use Switch class or Leave the class on the Your class card in Classes; leaving gives your place to someone waiting and does not change your plan.',
   body: [

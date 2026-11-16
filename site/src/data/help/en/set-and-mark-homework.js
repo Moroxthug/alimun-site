@@ -8,7 +8,7 @@ export default {
   subject: 'teachers',
   audience: 'teacher',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I set and mark homework?',
   summary: 'Set homework under Homework with “Set homework”, then mark each piece yourself: you can ask for an AI-drafted mark and feedback, but nothing reaches the student until you have checked it and pressed “Send to the student”.',
   body: [

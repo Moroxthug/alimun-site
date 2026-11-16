@@ -104,6 +104,8 @@
   /* Line icons drawn for Alimun: 24px grid, 2px rounded strokes, same weight as the drawings */
   var P = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
   var ICONS = {
+    help: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/><path d="m6 6 3.5 3.5M14.5 14.5 18 18M18 6l-3.5 3.5M9.5 14.5 6 18"/>',
+    support: '<path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13" width="4" height="6" rx="1.6"/><rect x="16.5" y="13" width="4" height="6" rx="1.6"/><path d="M18.5 19c0 1.3-1.6 2-4 2H13"/>',
     home: '<path d="M4 10.5 12 4l8 6.5V19a1 1 0 0 1-1 1h-4.5v-5.5h-5V20H5a1 1 0 0 1-1-1z"/>',
     book: '<path d="M12 6.5C10.4 5 8.2 4.5 4 4.8v13.4c4.2-.3 6.4.2 8 1.8 1.6-1.6 3.8-2.1 8-1.8V4.8c-4.2-.3-6.4.2-8 1.7z"/><path d="M12 6.5V20"/>',
     practice: '<path d="M13 3 5.5 13.2H12L11 21l7.5-10.2H12z"/>',
@@ -148,6 +150,8 @@
     { id: 'progress', label: 'app_nav_progress', icon: 'progress', group: 'class', step: 12, art: 'snail', tint: 'coral', kind: 'think', text: 'app_soon_progress_text', bub: 'app_soon_progress_bub' },
     { id: 'messages', label: 'app_nav_messages', icon: 'messages', group: 'class', step: 13, art: 'alien', tint: 'mint', kind: 'say', text: 'app_soon_messages_text', bub: 'app_soon_messages_bub' },
     { id: 'settings', label: 'app_nav_settings', icon: 'settings', group: 'account', step: 14, art: 'cat', tint: 'bone', kind: 'think', text: 'app_soon_settings_text', bub: 'app_soon_settings_bub' },
+    { id: 'help', label: 'app_nav_help', icon: 'help', group: 'account' },
+    { id: 'support', label: 'app_nav_support', icon: 'support', group: 'account' },
     { id: 'kit', label: 'app_nav_kit', icon: 'kit', group: 'account' }
   ];
   var GROUPS = { learn: 'app_nav_group_learn', class: 'app_nav_group_class', account: 'app_nav_group_account' };
@@ -622,6 +626,7 @@
   var progressHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('progress', false); } });
   var messagesHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('messages', false); } });
   var settingsHelpers = Object.assign({}, readerHelpers, { rerender: function () { render('settings', false); } });
+  var helpHelpers = Object.assign({}, readerHelpers, { role: 'student', rerender: function () { render(current, false); } });
   var tutorHelpers = Object.assign({}, readerHelpers, { listOf: listOf, rerender: function () { render('tutor', false); } });
   function tutorParts() { return location.hash.replace(/^#\/tutor\/?/, '').split('/').filter(Boolean); }
   function messagesParts() { return location.hash.replace(/^#\/messages\/?/, '').split('/').filter(Boolean); }
@@ -642,7 +647,7 @@
   /* ---------- Sections that need a connection (docs/APP_PLAN.md, step 2) ---------- */
   var offShown = null;
   function needsNet(id) {
-    if (id === 'tutor' || id === 'messages' || id === 'classes' || id === 'progress') return true;
+    if (id === 'tutor' || id === 'messages' || id === 'classes' || id === 'progress' || id === 'support') return true;
     return id === 'settings' && /^#\/settings\/(plans|withdraw)/.test(location.hash);
   }
   function offlineView(r) {
@@ -662,7 +667,7 @@
     /* Sections that need a connection say so when the device is offline (docs/APP_PLAN.md, step 2) */
     var off = mode === 'real' && navigator.onLine === false && needsNet(id);
     offShown = off ? id : null;
-    var html = off ? offlineView(r) : id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' || id === 'messages' || id === 'settings' || id === 'tutor' ? '' : soonView(r);
+    var html = off ? offlineView(r) : id === 'home' ? homeView() : id === 'kit' ? kitView() : id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'progress' || id === 'messages' || id === 'settings' || id === 'tutor' || id === 'help' || id === 'support' ? '' : soonView(r);
     var swap = function () {
       if (id !== 'book' && window.AlimunReader) window.AlimunReader.reset();
       if (id !== 'tests' && window.AlimunTests) window.AlimunTests.reset();
@@ -670,6 +675,7 @@
       if (window.AlimunClasses) window.AlimunClasses.reset();
       if (window.AlimunHomework) window.AlimunHomework.reset();
       if (window.AlimunMessages) window.AlimunMessages.reset();
+      if (window.AlimunHelp) window.AlimunHelp.reset();
       view.innerHTML = html;
       view.classList.remove('is-leaving');
       if (id === 'home') { fillOffers(); if (mode !== 'real' && /[?&]launch=1/.test(location.search)) launchBanner(Promise.resolve(sampleLaunch())); }
@@ -688,6 +694,11 @@
       if (!off && id === 'messages') {
         window.AlimunMessages.mount(view, messagesParts(), messagesHelpers).then(function (res) {
           if (current === 'messages' && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
+        });
+      }
+      if (!off && (id === 'help' || id === 'support')) {
+        (id === 'help' ? window.AlimunHelp : window.AlimunSupport).mount(view, location.hash.replace(new RegExp('^#\\/' + id + '\\/?'), '').split('/').filter(Boolean), helpHelpers).then(function (res) {
+          if (current === id && res && !res.stale && res.title) document.title = res.title + ' – Alimun';
         });
       }
       if (!off && id === 'settings') {
@@ -941,7 +952,7 @@
       welcomePoll();
     });
 
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); var kind = window.AlimunFeel && window.AlimunFeel.direction ? window.AlimunFeel.direction(location.hash) : 'tab'; if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'messages' || id === 'settings' || id === 'tutor') render(id, true, kind); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); var kind = window.AlimunFeel && window.AlimunFeel.direction ? window.AlimunFeel.direction(location.hash) : 'tab'; if (id !== current || id === 'book' || id === 'practice' || id === 'cards' || id === 'tests' || id === 'library' || id === 'classes' || id === 'homework' || id === 'messages' || id === 'settings' || id === 'tutor' || id === 'help' || id === 'support') render(id, true, kind); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
 

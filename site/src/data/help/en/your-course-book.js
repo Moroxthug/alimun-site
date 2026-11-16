@@ -5,7 +5,7 @@ export default {
   subject: 'dashboard',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How does my course book work?',
   summary: 'Course book takes you through your course unit by unit: each lesson teaches on a few pages and checks you with exercises, and every unit ends with a unit test you pass with 70%.',
   body: [

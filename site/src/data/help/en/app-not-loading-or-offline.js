@@ -5,7 +5,7 @@ export default {
   subject: 'dashboard',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'Why does the app not load, or only partly work offline?',
   summary: 'Offline, only what you downloaded works, and live classes, the tutor, messages, progress and plans always need a connection.',
   body: [

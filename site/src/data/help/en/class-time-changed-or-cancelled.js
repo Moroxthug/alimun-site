@@ -9,7 +9,7 @@ export default {
   subject: 'teachers',
   audience: 'teacher',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'I can’t teach a class: how do I cancel or move it, and what are my students told?',
   summary: 'Class dates are cancelled or moved by Alimun, not from the teacher dashboard, so write to us as early as you can; your students and you are then emailed the change.',
   body: [

@@ -5,7 +5,7 @@ export default {
   subject: 'plans',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I pay, change my card or find my invoices?',
   summary: 'You pay by card through Stripe, and you change your card or see your invoices with Manage billing in Settings.',
   body: [

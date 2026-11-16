@@ -5,7 +5,7 @@ export default {
   subject: 'practice',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How does Practice work, and why do my mistakes come back?',
   summary: 'Practice gives you short rounds and quizzes from the units of your course book you have reached, and the answers you got wrong come back first until you know them.',
   body: [

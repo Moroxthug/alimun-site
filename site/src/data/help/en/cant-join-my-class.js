@@ -9,7 +9,7 @@ export default {
   subject: 'classes',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'I can\'t join my class, or my camera or microphone is not working',
   summary: 'Check the time, your plan and your browser\'s camera and microphone permission, then try Join again; if it still fails, write to us.',
   body: [

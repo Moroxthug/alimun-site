@@ -9,7 +9,7 @@ export default {
   subject: 'teachers',
   audience: 'teacher',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'Where do I change my profile, and where do I see what I have been paid?',
   summary: 'Settings holds your name, location, specialty and the bio students read, plus your password and the dashboard’s language; Payouts shows each payout Alimun has recorded for you and what you have taught this month.',
   body: [

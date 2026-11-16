@@ -5,7 +5,7 @@ export default {
   subject: 'account',
   audience: 'all',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "How do I sign in, and how do I reset my password?",
   summary: "Sign in with your email and password; if you forgot the password, use Forgot your password? on the Sign in page and follow the link we email you.",
   body: [

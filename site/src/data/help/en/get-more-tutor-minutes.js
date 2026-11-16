@@ -5,7 +5,7 @@ export default {
   subject: 'tutor',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "How do I get more tutor minutes?",
   summary: "You can buy a pack of 30 or 120 voice practice minutes once, which stay yours for 12 months, or choose a plan that adds minutes every month.",
   body: [

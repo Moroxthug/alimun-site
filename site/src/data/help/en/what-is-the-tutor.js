@@ -5,7 +5,7 @@ export default {
   subject: 'tutor',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "What is the tutor, and is it a real person?",
   summary: "The tutor is an AI practice tutor in your student dashboard: it is a computer program, not a person, and a teacher does not review its sessions.",
   body: [

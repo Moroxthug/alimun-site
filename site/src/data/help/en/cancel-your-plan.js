@@ -5,7 +5,7 @@ export default {
   subject: 'plans',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I cancel my plan?',
   summary: 'Go to Settings in your dashboard and choose Manage billing; cancelling stops the next payment and you keep access until the end of the period you already paid for.',
   body: [

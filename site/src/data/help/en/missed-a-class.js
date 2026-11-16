@@ -8,7 +8,7 @@ export default {
   subject: 'classes',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'What happens if I miss a class?',
   summary: 'Missed classes are not refunded or moved, but your teacher\'s notes, the class words and the board stay in your dashboard so you can catch up.',
   body: [

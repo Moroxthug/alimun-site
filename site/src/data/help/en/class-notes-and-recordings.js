@@ -10,7 +10,7 @@ export default {
   subject: 'classes',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'Can I watch a recording of my class?',
   summary: 'No, there are no class recordings for learners to watch; after each class you get your teacher\'s notes, the class words and the board instead.',
   body: [

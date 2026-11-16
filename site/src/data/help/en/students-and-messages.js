@@ -7,7 +7,7 @@ export default {
   subject: 'teachers',
   audience: 'teacher',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I follow my students’ progress and message them?',
   summary: 'Students shows each class and each student from what they actually do between classes, with those who need attention first, and Messages holds one conversation per class and a private one per student.',
   body: [

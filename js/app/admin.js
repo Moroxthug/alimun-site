@@ -65,6 +65,7 @@
     bot: '<rect x="4.5" y="8" width="15" height="11" rx="3"/><path d="M12 4v4M9 13h.01M15 13h.01"/>',
     alert: '<path d="M12 4 2.8 19.5h18.4z"/><path d="M12 10v4.5M12 17.2h.01"/>',
     eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
+    help: '<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.5"/><path d="m6 6 3.5 3.5M14.5 14.5 18 18M18 6l-3.5 3.5M9.5 14.5 6 18"/>',
     mail: '<rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4 7 8 6 8-6"/>'
   };
   function icon(name) { return '<svg class="i-' + name + '" viewBox="0 0 24 24" ' + P + ' aria-hidden="true" focusable="false">' + (ICONS[name] || '') + '</svg>'; }
@@ -80,6 +81,7 @@
     { id: 'activity', label: 'Activity', icon: 'activity', group: 'Console', text: 'Who is active, who is slipping away, where new students stop, and countries.' },
     { id: 'students', label: 'Students', icon: 'students', group: 'People', part: 2, text: 'Every student: search, their file, plan, class and progress, and view their dashboard as they see it.' },
     { id: 'teachers', label: 'Teachers', icon: 'teachers', group: 'People', part: 2, text: 'Applications to approve or reject, and each teacher’s file, classes and availability.' },
+    { id: 'help', label: 'Help requests', icon: 'help', group: 'People', text: 'What students and teachers write to Support, your replies, and what people ask Help.' },
     { id: 'campaigns', label: 'Campaigns', icon: 'campaigns', group: 'People', text: 'News and offers by email and in the dashboard bell, to people who asked for them.' },
     { id: 'matching', label: 'Matching', icon: 'matching', group: 'Teaching', text: 'Every learner’s level, focus and time zone, the groups they could form, and who is closest to buying.' },
     { id: 'classes', label: 'Classes', icon: 'classes', group: 'Teaching', part: 3, text: 'Creating classes for teachers, rosters, moving students, closing and reopening.' },
@@ -492,7 +494,7 @@
   function hideLoader() { loadingScreen.classList.add('is-done'); loadingScreen.setAttribute('aria-hidden', 'true'); }
   function setSheet(open) { document.body.classList.toggle('is-sheet-open', open); app.querySelector('[data-more]').setAttribute('aria-expanded', String(open)); if (open) { var a = sheet.querySelector('a'); if (a) a.focus(); } }
   function routeFromHash() { var id = (location.hash.match(/^#\/([a-z]+)/) || [])[1]; return byId[id] ? id : 'overview'; }
-  var MODULES = { activity: function () { return window.AlimunAdminActivity; }, campaigns: function () { return window.AlimunAdminCampaigns; }, students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; },
+  var MODULES = { activity: function () { return window.AlimunAdminActivity; }, campaigns: function () { return window.AlimunAdminCampaigns; }, help: function () { return window.AlimunAdminHelp; }, students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; },
     classes: function () { return window.AlimunAdminClasses; }, schedule: function () { return window.AlimunAdminSchedule; },
     matching: function () { return window.AlimunAdminMatching; }, waiting: function () { return window.AlimunAdminWaiting; }, messages: function () { return window.AlimunAdminMessages; },
     classlog: function () { return window.AlimunAdminClassLog; }, automations: function () { return window.AlimunAdminAutomations; },

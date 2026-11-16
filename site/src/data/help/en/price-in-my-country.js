@@ -5,7 +5,7 @@ export default {
   subject: 'plans',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'Why does my price depend on my country, and which currency do I pay in?',
   summary: 'Prices follow the cost of living in each country, the country your card was issued in sets your final price, and you see the exact amount before anything is charged.',
   body: [

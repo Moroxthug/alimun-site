@@ -5,7 +5,7 @@ export default {
   subject: 'account',
   audience: 'all',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "I can't sign in, or I didn't get the password reset email",
   summary: "Check the message on the Sign in page, look in your spam folder for the reset email, and make sure you used the address of your account; if it still fails, write to us.",
   body: [

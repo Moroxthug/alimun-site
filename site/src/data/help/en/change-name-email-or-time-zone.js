@@ -5,7 +5,7 @@ export default {
   subject: 'account',
   audience: 'all',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "How do I change my name, email address or time zone?",
   summary: "Change your name and time zone in Settings under About you; your email address cannot be changed there, so write to us if you need a new one.",
   body: [

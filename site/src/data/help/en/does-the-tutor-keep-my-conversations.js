@@ -5,7 +5,7 @@ export default {
   subject: 'tutor',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "Does the tutor keep my conversations, and for how long?",
   summary: "Tutor conversations are kept for 90 days, recordings are never stored, and you can delete what the tutor remembers and every past session at any time.",
   body: [

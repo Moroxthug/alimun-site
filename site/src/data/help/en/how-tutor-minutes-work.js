@@ -5,7 +5,7 @@ export default {
   subject: 'tutor',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "How do my tutor minutes work, and what happens at the end of the month?",
   summary: "You get 10 free minutes once, a plan adds minutes every calendar month that do not carry over, and minutes you buy last 12 months.",
   body: [

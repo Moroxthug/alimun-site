@@ -5,7 +5,7 @@ export default {
   subject: 'account',
   audience: 'all',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "How do I change the language of my dashboard?",
   summary: "Open Settings and choose a language under Dashboard language; it applies on the device you are using.",
   body: [

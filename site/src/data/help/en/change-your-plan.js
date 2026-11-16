@@ -5,7 +5,7 @@ export default {
   subject: 'plans',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I change my plan?',
   summary: 'You add a new plan from Plans and prices in Settings, and you manage an existing subscription with Manage billing on your plan card in Settings.',
   body: [

@@ -8,7 +8,7 @@ export default {
   subject: 'teachers',
   audience: 'teacher',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I apply to teach with Alimun, and what happens next?',
   summary: 'You apply from the Careers page, then Alimun reviews your application, invites you to a short video call and, after a good call, to a free 30-minute trial class before approving you.',
   body: [

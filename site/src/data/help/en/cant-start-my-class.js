@@ -9,7 +9,7 @@ export default {
   subject: 'teachers',
   audience: 'teacher',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'I can’t start my class, or my students can’t see or hear me',
   summary: 'Most problems come from opening the class too early, from being signed in with the wrong account, or from a video room that did not open the first time; the message on the classroom page tells you which.',
   body: [

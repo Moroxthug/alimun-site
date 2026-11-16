@@ -344,5 +344,14 @@
     "rate_3": "Very good",
     "rate_2": "Good",
     "rate_1": "Not good"
+  },
+  "help": {
+    "subject": "Alimun Support: {subject}",
+    "preheader": "We replied to your message.",
+    "heading": "We replied to your message",
+    "intro": "Here is our reply about **{subject}**:",
+    "button": "Open Support",
+    "after": "You can answer in Support in your dashboard, or simply reply to this email.",
+    "footer": "You received this email because you wrote to Alimun Support."
   }
 }

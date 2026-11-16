@@ -5,7 +5,7 @@ export default {
   subject: 'dashboard',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I install Alimun and use it offline?',
   summary: 'In Settings, Use Alimun offline lets you put Alimun on your home screen and download your course book, library and mock tests to use without a connection.',
   body: [

@@ -5,7 +5,7 @@ export default {
   subject: 'plans',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'My payment did not go through. What should I do?',
   summary: 'Update your payment method from the email we sent you or with Manage billing in Settings, so your place in your class is kept.',
   body: [

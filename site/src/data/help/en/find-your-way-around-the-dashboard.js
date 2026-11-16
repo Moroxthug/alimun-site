@@ -5,7 +5,7 @@ export default {
   subject: 'dashboard',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I find my way around my dashboard?',
   summary: 'Your dashboard is at alimun.com/app: the menu groups everything under Learn, With your teacher and Account, and Home shows your next class and what to do today.',
   body: [

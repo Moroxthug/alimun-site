@@ -5,7 +5,7 @@ export default {
   subject: 'tutor',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: "How do speaking practice and pronunciation checks work, and how do I allow the microphone?",
   summary: "You speak to the tutor or record sentences in Practice, an AI turns your voice into text or scores your pronunciation, and your recordings are never kept.",
   body: [

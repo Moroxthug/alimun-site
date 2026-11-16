@@ -5,7 +5,7 @@ export default {
   subject: 'plans',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'What happens when my paid period or my pack ends?',
   summary: 'The app and the open class renew by themselves until you cancel, while a 12-week pack simply ends after its last paid month and nothing more is charged.',
   body: [

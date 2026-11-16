@@ -7,7 +7,7 @@ export default {
   subject: 'classes',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I join my live class?',
   summary: 'Open Classes in your dashboard and press Join, which opens 15 minutes before your class starts.',
   body: [

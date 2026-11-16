@@ -5,7 +5,7 @@ export default {
   subject: 'dashboard',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I write to my teacher or my class?',
   summary: 'Open Messages: each class you are in has a conversation with the whole class and one with just you and your teacher.',
   body: [

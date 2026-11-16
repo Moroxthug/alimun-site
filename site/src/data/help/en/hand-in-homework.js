@@ -5,7 +5,7 @@ export default {
   subject: 'practice',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'How do I hand in my homework?',
   summary: 'Open Homework, choose the task, write or record your answer and press Hand it in; you can still change it until your teacher marks it.',
   body: [

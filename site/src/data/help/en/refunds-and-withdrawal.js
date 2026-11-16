@@ -5,7 +5,7 @@ export default {
   subject: 'plans',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'I was charged and want a refund. Can I get one?',
   summary: 'Payments are not refunded except where the law or the Terms say so, but if you live in the EU or the UK you can withdraw from a purchase within 14 days from Settings in your dashboard.',
   body: [

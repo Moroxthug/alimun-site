@@ -8,7 +8,7 @@ export default {
   subject: 'classes',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'I was invited to a free class with a new teacher. What is it?',
   summary: 'It is a free 30-minute class given by a teacher who is joining Alimun; you can take a place, and afterwards tell us how it went with one tap.',
   body: [

@@ -8,7 +8,7 @@ export default {
   subject: 'classes',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'My class was cancelled or moved, or my teacher is late',
   summary: 'We tell you by email and on the bell in your dashboard when a class is cancelled or moved, and by email when your teacher is running late.',
   body: [

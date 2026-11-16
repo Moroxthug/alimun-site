@@ -5,7 +5,7 @@ export default {
   subject: 'dashboard',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'What does the bell show?',
   summary: 'The bell at the top of your dashboard shows your notifications: marked homework, changes to your classes, class notes, places offered to you, reminders and offers.',
   body: [

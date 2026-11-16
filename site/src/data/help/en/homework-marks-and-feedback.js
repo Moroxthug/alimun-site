@@ -5,7 +5,7 @@ export default {
   subject: 'practice',
   audience: 'student',
   updated: '2026-11-16',
-  status: 'draft',
+  status: 'approved',
   title: 'Who marks my homework, and when do I see my mark?',
   summary: 'Your teacher marks your homework; when they send the mark, it moves to Marked with a score out of 100 and their feedback, and a notification appears on the bell.',
   body: [
