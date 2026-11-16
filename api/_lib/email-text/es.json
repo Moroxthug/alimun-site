@@ -344,5 +344,14 @@
     "rate_3": "Muy bien",
     "rate_2": "Bien",
     "rate_1": "No muy bien"
+  },
+  "help": {
+    "subject": "Soporte de Alimun: {subject}",
+    "preheader": "Hemos respondido a tu mensaje.",
+    "heading": "Hemos respondido a tu mensaje",
+    "intro": "Esta es nuestra respuesta sobre **{subject}**:",
+    "button": "Abrir Soporte",
+    "after": "Puedes contestar en Soporte, en tu panel, o simplemente responder a este correo.",
+    "footer": "Recibes este correo porque escribiste al Soporte de Alimun."
   }
 }

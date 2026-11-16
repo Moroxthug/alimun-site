@@ -344,5 +344,14 @@
     "rate_3": "很好",
     "rate_2": "好",
     "rate_1": "不好"
+  },
+  "help": {
+    "subject": "Alimun 客服：{subject}",
+    "preheader": "我们已回复你的消息。",
+    "heading": "我们已回复你的消息",
+    "intro": "以下是我们关于 **{subject}** 的回复：",
+    "button": "打开客服",
+    "after": "你可以在控制面板的客服页面回复，也可以直接回复这封邮件。",
+    "footer": "你收到这封邮件，是因为你曾给 Alimun 客服写信。"
   }
 }
