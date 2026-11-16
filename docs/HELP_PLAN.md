@@ -1,6 +1,15 @@
-# Alimun help section — plan (10 Nov 2026; nothing built yet)
+# Alimun help section — plan (10 Nov 2026; Part 1 drafting since 16 Nov 2026)
 
 Owner, 10 Nov 2026: "we need to create a help section, managed by our ai assistant" and then "yes write the plan". Each part below is shown to the owner and confirmed before the next starts, like the tutor parts (`docs/AI_TUTOR_PLAN.md`). Open questions are at the end; until the owner answers, each part says what it assumes.
+
+## Owner's answers (16 Nov 2026)
+"ok but needs access for specific support and help sections, support@ is ok, sure draft, create a new drawing for help, both for students and teachers, yes."
+1. Dashboards first, then the public page. Help and Support are two separate sections, each with its own entry in the student and teacher menus: **Help** (`#/help`: the articles and the question box) and **Support** (`#/support`: talk to a person, and the person's own requests with our replies). Articles carry `section: 'help' | 'support'`; Support articles (payment failed, can't join, refunds, can't sign in) are listed on the Support page above the request form. The public site gets `/help` and `/support` the same way in Part 4.
+2. Handovers go to the Admin inbox and to support@alimun.com.
+3. Articles drafted from the code and the Terms, for the owner to check; anything unconfirmed is left out and listed in `docs/PROGRESS.md`.
+4. A new drawing for Help: three candidates on a board (`docs/design/drawings-help.png`, sources `docs/design/sources/help.py`, `help.json`, `help-board.html`), each with three moods. Waiting for the owner's pick.
+5. Students and teachers both, with their own articles and account facts.
+6. Questions kept 90 days.
 
 ## 1. What people get
 Today help is the six homepage FAQs, the course pages' FAQs (`site/src/data/course-faq.js`), the Contact form and messages to a class teacher. Questions about the account itself (billing, joining a class, plan changes, tutor minutes, homework) all end up in the owner's inbox.
