@@ -2142,3 +2142,10 @@ Search Console (28 days to 10 Nov) showed three English articles with many impre
 - `npm run build` now runs `scripts/help-data.js` (approved articles to `js/help/<lang>.json`).
 - For the owner: the Privacy page should say that help questions are answered by a language model and kept 90 days (HELP_PLAN §6); the legal block is locked, so it waits for your wording approval. The five questions from Part 1 (recordings in the Terms, tutor summaries, the AI notice on the Tutor screen, the Terms and the new products, teacher pay) are still open.
 - Next: Part 3 (weekly drafts from unanswered questions) and Part 4 (public /help and /support).
+
+## 2026-11-16 — The phone app is rebuilt natively; step 1 (foundation)
+- Owner, after the web-shell builds: broken language and time pickers, class prices shown, "stop with this browser bs", "create a multi step plan ... a full and complete app". Decision: a real app in `native/` (Flutter, Android first, iPhone later from the same code). Plan in eight steps: `docs/NATIVE_APP_PLAN.md`. `docs/APP_PLAN.md` now covers only the website's `/app`; `mobile/` is frozen.
+- Built: the project, design system, nine languages with the language setting, sign in, create account, forgot password, first set-up, the frame with the bottom bar and More, Home with the learner's own data, Settings. `app/check.html` (the person check page the app uses for sign-in). Two new texts in nine languages.
+- Checked: `flutter analyze`, screens rendered to pictures, release APK built; site: `npm run build`, `node --check` (485 scripts), 235 unit tests. Not checked on a phone; a real sign-in from the app is the first thing for the owner to try.
+- Missing copy and features noted in the plan (level test in the app, account deletion in the app).
+- Next: the owner's check of step 1, then step 2 (the course book and the exercise engine).

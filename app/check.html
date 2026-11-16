@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Alimun</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<style>html, body { margin: 0; background: #fff; } #box { min-height: 65px; }</style>
+</head>
+<body>
+<!--
+  The person check for the Alimun app (docs/NATIVE_APP_PLAN.md; native/lib/captcha.dart). Supabase asks for a
+  Cloudflare Turnstile token on sign-in, sign-up and password emails, and Turnstile only runs on a page of alimun.com.
+  The app opens this page out of sight, receives the token through its AlimunCheck channel and closes it; when
+  Cloudflare wants a tick, the app shows this page inside its own card. Same public site key as js/captcha.js.
+-->
+<div id="box"></div>
+<script>
+  (function () {
+    function say(m) { try { if (window.AlimunCheck) window.AlimunCheck.postMessage(m); } catch (e) { /* not in the app */ } }
+    var lang = (location.search.match(/[?&]lang=([a-z]{2})/) || [])[1] || 'en';
+    window.alimunCheckReady = function () {
+      try {
+        window.turnstile.render('#box', {
+          sitekey: '0x4AAAAAAF21wM8ag7AmQ4hx', appearance: 'interaction-only', theme: 'light', language: lang,
+          callback: function (token) { say('token:' + token); },
+          'before-interactive-callback': function () { say('show'); },
+          'error-callback': function () { say('error'); return true; },
+          'unsupported-callback': function () { say('error'); }
+        });
+      } catch (e) { say('error'); }
+    };
+    var s = document.createElement('script');
+    s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=alimunCheckReady';
+    s.async = true;
+    s.onerror = function () { say('error'); };
+    document.head.appendChild(s);
+  })();
+</script>
+</body>
+</html>
