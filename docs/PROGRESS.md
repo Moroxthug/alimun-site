@@ -2184,3 +2184,7 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - New table `public.contact_messages` (RLS on, admin read via `is_admin()`, written by the service role). Migration `202611171000_contact_messages.sql`, applied to production and verified.
 - `api/_lib/contact.js` now saves each submission before emailing it; a failed save is logged and never blocks the email. Only messages from now on are stored; earlier ones are only in the owner's inbox.
 - Not done: an Admin view to browse the messages.
+
+## 17 Nov 2026 - Admin page for contact messages
+- Admin → People → Contact messages (`#/contact`, `js/app/admin-contact.js`): newest first, search by name, email or words, Reply by email link. Reads `contact_messages` through the admin-only policy (`adminContactMessages` in `js/app/data.js`).
+- Checked locally with `?preview=1`: sample data shows, search filters, no console errors. Not yet checked against live data: needs a signed-in admin and a real submission.
