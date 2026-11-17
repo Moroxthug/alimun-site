@@ -2190,3 +2190,8 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 ## 17 Nov 2026 - Admin page for contact messages
 - Admin → People → Contact messages (`#/contact`, `js/app/admin-contact.js`): newest first, search by name, email or words, Reply by email link. Reads `contact_messages` through the admin-only policy (`adminContactMessages` in `js/app/data.js`).
 - Checked locally with `?preview=1`: sample data shows, search filters, no console errors. Not yet checked against live data: needs a signed-in admin and a real submission.
+
+## 17 Nov 2026 - Student settings page: layout pass (owner: "improve the design of the settings page, phone and desktop")
+- Desktop: the profile form is two columns (you and your course on the left; country, time zone and class days and times on the right) with the save button in a bar under both; it used to be one narrow column in a wide card. Phone: one column, full-width save, sign out and change-password buttons, 48 px fields.
+- Days that suit the student are tap tiles (bone, forest outline when ticked) in two columns on phone and four on tablets; the time zone list and day names are built once instead of on every render. The two bottom cards no longer stretch to equal height.
+- No new text, colours, fonts or icons; no database change. Checked at 1360 and 390 px with `?sample=1`. The teacher settings page shares none of this and is unchanged.

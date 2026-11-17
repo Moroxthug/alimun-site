@@ -20,9 +20,12 @@
   function t(k, v) { return A.t(k, v); }
   function esc(s) { return A.esc(s); }
   function signedIn() { return A.mode() === 'real' && A.data().profile.id; }
+  var ZONES = null;
   function zones() {
+    if (ZONES) return ZONES;
     var list = [];
     try { list = Intl.supportedValuesOf('timeZone'); } catch (e) { list = ['Europe/London', 'Europe/Paris', 'Europe/Berlin', 'Europe/Madrid', 'Europe/Rome', 'Europe/Lisbon', 'Africa/Casablanca', 'America/New_York', 'America/Sao_Paulo', 'Asia/Shanghai', 'Asia/Dubai', 'Australia/Sydney']; }
+    ZONES = list;
     return list;
   }
   /* The saved zone always appears in the list, even one this browser does not name ("UTC") */
@@ -39,12 +42,12 @@
 
   /* ---------- The page ---------- */
   function view() {
-    var p = S.profile || {}, zoneNow = p.timezone || browserZone();
+    var p = S.profile || {}, zoneNow = p.timezone || browserZone(), dayName = new Intl.DateTimeFormat(A.locale, { weekday: 'long', timeZone: 'UTC' });
     var html = '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_nav_settings')) + '</h1><p class="t-lead">' + esc(t('app_st_lead')) + '</p></div></div><div class="grid rise st">';
     html += planHtml(p);
     /* Offline use and installing the app (js/app/offline.js) */
     if (window.AlimunOffline) html += window.AlimunOffline.card(A, 1);
-    html += '<section class="card span-12 st-card" style="--i:1" aria-labelledby="h-me"><h2 class="t-h2" id="h-me">' + esc(t('app_st_me_h')) + '</h2><form class="st-form" data-form="me">' +
+    html += '<section class="card span-12 st-card" style="--i:1" aria-labelledby="h-me"><h2 class="t-h2" id="h-me">' + esc(t('app_st_me_h')) + '</h2><form class="st-form st-form--cols" data-form="me"><div class="st-col">' +
       field('app_st_name', '<input class="st-in" name="full_name" autocomplete="name" maxlength="100" required value="' + esc(p.full_name || '') + '">') +
       field('app_st_email', '<input class="st-in" type="email" value="' + esc(S.email || '') + '" disabled>', 'app_st_email_p') +
       '<div class="st-row">' +
@@ -54,15 +57,16 @@
       '<div class="st-row">' +
         field('app_st_goal', select('goal_track', Object.keys(GOALS).map(function (g) { return [g, t(GOALS[g])]; }), p.goal_track)) +
         field('app_st_timeframe', select('goal_timeframe', [['', '…']].concat(Object.keys(TIMEFRAMES).map(function (g) { return [g, t(TIMEFRAMES[g])]; })), p.goal_timeframe || '')) + '</div>' +
+      '</div><div class="st-col">' +
       (window.AlimunPrefs ? window.AlimunPrefs.countryField(A, p.country) : '') +
       field('app_st_zone', select('timezone', zoneList(zoneNow).map(function (z) { return [z, z.replace(/_/g, ' ')]; }), zoneNow), 'app_st_zone_p') +
       '<fieldset class="st-field"><legend class="st-lbl">' + esc(t('app_st_days')) + '</legend><div class="st-days">' + [1, 2, 3, 4, 5, 6, 0].map(function (d) {
-        var on = (p.preferred_days || []).indexOf(d) > -1, name = new Intl.DateTimeFormat(A.locale, { weekday: 'long', timeZone: 'UTC' }).format(new Date(Date.UTC(2024, 0, d === 0 ? 7 : d)));
+        var on = (p.preferred_days || []).indexOf(d) > -1, name = dayName.format(new Date(Date.UTC(2024, 0, d === 0 ? 7 : d)));
         return '<label class="st-day"><input type="checkbox" name="day" value="' + d + '"' + (on ? ' checked' : '') + '><span>' + esc(name) + '</span></label>';
       }).join('') + '</div></fieldset>' +
       '<div class="st-row">' + field('app_st_from', '<input class="st-in" type="time" name="preferred_time_start" value="' + esc(String(p.preferred_time_start || '').slice(0, 5)) + '">') +
         field('app_st_to', '<input class="st-in" type="time" name="preferred_time_end" value="' + esc(String(p.preferred_time_end || '').slice(0, 5)) + '">') + '</div>' +
-      '<div class="btn-row"><button class="btn btn--primary" type="submit">' + esc(t('app_st_save')) + '</button></div><p class="t-body st-msg" data-msg="me" aria-live="polite"></p></form></section>';
+      '</div><div class="st-save"><button class="btn btn--primary" type="submit">' + esc(t('app_st_save')) + '</button><p class="t-body st-msg" data-msg="me" role="status" aria-live="polite"></p></div></form></section>';
     if (window.AlimunPrefs) html += window.AlimunPrefs.newsCard(A, S.consent, 2);
     html += '<section class="card span-6 st-card" style="--i:2" aria-labelledby="h-ui"><h2 class="t-h2" id="h-ui">' + esc(t('app_st_ui_h')) + '</h2><p class="t-body">' + esc(t('app_st_ui_p')) + '</p>' +
       '<div class="st-field" style="margin-top:14px">' + select('ui', Object.keys(UI).map(function (l) { return [l, UI[l]]; }), A.lang, 'data-ui') + '</div></section>';
