@@ -648,7 +648,7 @@
   var offShown = null;
   function needsNet(id) {
     if (id === 'tutor' || id === 'messages' || id === 'classes' || id === 'progress' || id === 'support') return true;
-    return id === 'settings' && /^#\/settings\/(plans|withdraw)/.test(location.hash);
+    return id === 'settings' && /^#\/settings\/(plans|withdraw|delete)/.test(location.hash);
   }
   function offlineView(r) {
     return '<div class="view__head"><div><h1 class="t-h1">' + esc(t(r.label)) + '</h1></div></div>' +

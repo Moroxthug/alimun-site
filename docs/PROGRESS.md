@@ -2197,3 +2197,14 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - No new text, colours, fonts or icons; no database change. Checked at 1360 and 390 px with `?sample=1`. The teacher settings page shares none of this and is unchanged.
 - Settings, phone: the cat card under the plan card is now one compact row (bubble beside the cat, 136 px instead of about 300). Desktop unchanged.
 - Settings, plan card: the "Withdraw from contract here" link was dark green on the dark green card (invisible, and it left a blank strip); it is now lime, the empty message line is hidden, and the spacing is even.
+
+## 17 Nov 2026 - Learners can delete their own account
+- Owner: "create an option so users can delete their accounts, upon confirmation and before that asking if they're sure and offering something". Settings → Your account → "Delete your account" (was "Ask us to delete your account", a link to Contact) opens `#/settings/delete` (`js/app/delete-account.js`).
+- Step 1, "Before you go": what is lost, then what the learner can do instead: cancel the plan and keep their progress on the free plan (Manage billing, shown only with a live Stripe plan), turn off news and offers (Settings), or write to Support. "Keep my account" is the main button. A learner paying through the App Store or Google Play is told to cancel it there.
+- Step 2: optional reason (six choices) and comments, then they type their email address; "Delete my account" stays disabled until it matches.
+- `api/account.js` (new function): `delete-check` and `delete`. It takes the Stripe ids off the profile (so the webhook sends no "your plan ended" email), cancels every live Stripe subscription and schedule at once, and stops with nothing deleted if Stripe fails. Then it writes an anonymous row to `public.account_deletions` (plan, had a subscription, days as a member, reason; no name, email or id), removes the learner's tutor audio and calls `auth.admin.deleteUser`; everything the learner owns goes by ON DELETE CASCADE (checked: no restricting foreign key on the learner side). Stripe keeps its invoices. A confirmation email goes to the learner (`deleted.*` in `api/_lib/email-text`, eight languages) and a notice to the owner.
+- Teachers and admins cannot delete here: teachers keep "Ask us to delete your account" (Contact), because `cohorts.teacher_id` restricts deletion and their classes and payouts need a handover.
+- Migration `202611171200_account_deletions.sql` applied to production and verified (RLS on, admin read).
+- Help article "How do I get a copy of my data or delete my account?" updated in eight languages.
+- Not offered: a discount to stay. No retention coupon exists in Stripe; the owner decides whether to add one and its amount.
+- Not done: the Flutter app in `native/` has no delete option yet (Apple and Google require in-app account deletion for store apps); it can call the same `/api/account?action=delete`.

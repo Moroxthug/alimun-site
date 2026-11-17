@@ -355,5 +355,14 @@
     "button": "Support öffnen",
     "after": "Sie können im Support in Ihrem Dashboard antworten oder einfach auf diese E-Mail antworten.",
     "footer": "Sie erhalten diese E-Mail, weil Sie dem Alimun-Support geschrieben haben."
+  },
+  "deleted": {
+    "subject": "Ihr Alimun-Konto ist gelöscht",
+    "preheader": "Ihr Konto und Ihre Lerndaten sind gelöscht.",
+    "heading": "Ihr Konto ist gelöscht",
+    "body": "Wir haben Ihr Alimun-Konto wie gewünscht gelöscht. Ihr Profil, Ihr Fortschritt, Ihre Hausaufgaben und alles, woran sich der Tutor erinnerte, sind gelöscht, und jeder auf alimun.com bezahlte Plan ist gekündigt, sodass Ihnen nichts mehr berechnet wird.",
+    "kept": "Rechnungen über Ihre Zahlungen werden aufbewahrt, wie es das Steuerrecht verlangt. Wenn Sie einen Plan im App Store oder bei Google Play gekauft haben, kündigen Sie ihn dort.",
+    "back": "Danke, dass Sie mit uns gelernt haben. Sie sind jederzeit wieder willkommen und können auf alimun.com ein neues Konto anlegen.",
+    "footer": "Sie erhalten diese E-Mail, weil Sie Ihr Alimun-Konto gelöscht haben."
   }
 }

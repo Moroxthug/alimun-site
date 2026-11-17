@@ -22,7 +22,7 @@ const CORE = [
   'js/app/lazy.js', 'js/app/cast.js', 'js/app/cast3.js', 'js/app/cast-help.js', 'js/app/sample-data.js', 'js/app/device.js', 'js/app/data.js', 'js/app/offline.js',
   'js/app/feel.js', 'js/app/exercises.js', 'js/app/reader.js', 'js/app/practice.js', 'js/app/cards.js', 'js/app/tests.js',
   'js/app/library.js', 'js/tz.js', 'js/app/find.js', 'js/app/classes.js', 'js/app/homework.js', 'js/app/progress.js',
-  'js/app/messages.js', 'js/app/plans.js', 'js/country.js', 'js/app/prefs.js', 'js/app/withdraw.js', 'js/app/settings.js',
+  'js/app/messages.js', 'js/app/plans.js', 'js/country.js', 'js/app/prefs.js', 'js/app/withdraw.js', 'js/app/delete-account.js', 'js/app/settings.js',
   'js/app/bell.js', 'js/app/help.js', 'js/app/shell.js',
 ];
 const CHUNKS = {

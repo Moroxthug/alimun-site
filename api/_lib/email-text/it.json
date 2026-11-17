@@ -355,5 +355,14 @@
     "button": "Apri l'Assistenza",
     "after": "Puoi rispondere in Assistenza nella tua dashboard, oppure semplicemente rispondere a questa email.",
     "footer": "Ricevi questa email perché hai scritto all'Assistenza di Alimun."
+  },
+  "deleted": {
+    "subject": "Il tuo account Alimun è stato eliminato",
+    "preheader": "Il tuo account e i tuoi dati di apprendimento sono stati cancellati.",
+    "heading": "Il tuo account è stato eliminato",
+    "body": "Abbiamo eliminato il tuo account Alimun come hai chiesto. Il tuo profilo, i tuoi progressi, i compiti e ciò che il tutor ricordava sono stati cancellati, e ogni piano pagato su alimun.com è annullato, quindi non ti verrà addebitato altro.",
+    "kept": "Le fatture di ciò che hai pagato sono conservate come richiede la legge fiscale. Se hai acquistato un piano su App Store o Google Play, annullalo lì.",
+    "back": "Grazie per aver imparato con noi. Puoi tornare quando vuoi creando un nuovo account su alimun.com.",
+    "footer": "Ricevi questa email perché hai eliminato il tuo account Alimun."
   }
 }

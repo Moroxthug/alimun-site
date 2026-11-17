@@ -73,7 +73,7 @@
     html += '<section class="card span-6 st-card" style="--i:2"><h2 class="t-h2">' + esc(t('app_st_acc_h')) + '</h2>' +
       '<form class="st-form" data-tst="pw"><label class="st-field"><span class="st-lbl">' + esc(t('app_st_pw')) + '</span><input class="st-in" type="password" name="pw" autocomplete="new-password" minlength="8" required></label>' +
       '<div class="btn-row"><button class="btn btn--ghost btn--sm" type="submit">' + esc(t('app_st_pw_save')) + '</button></div><p class="t-body st-msg" data-msg="pw" aria-live="polite"></p></form>' +
-      '<div class="st-acc-foot"><button class="btn btn--quiet btn--sm" type="button" data-tst-out>' + esc(t('app_st_signout')) + '</button><a class="linkish" href="/contact">' + esc(t('app_st_delete')) + '</a></div></section>';
+      '<div class="st-acc-foot"><button class="btn btn--quiet btn--sm" type="button" data-tst-out>' + esc(t('app_st_signout')) + '</button><a class="linkish" href="/contact">' + esc(t('app_st_delete_ask')) + '</a></div></section>';
     if (SET.sample) html += '<p class="t-tiny span-12">' + esc(t('app_tst_sample')) + '</p>';
     return html + '</div>';
   }

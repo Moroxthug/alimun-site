@@ -355,5 +355,14 @@
     "button": "Open Support",
     "after": "You can answer in Support in your dashboard, or simply reply to this email.",
     "footer": "You received this email because you wrote to Alimun Support."
+  },
+  "deleted": {
+    "subject": "Your Alimun account is deleted",
+    "preheader": "Your account and your learning data are gone.",
+    "heading": "Your account is deleted",
+    "body": "We deleted your Alimun account as you asked. Your profile, your progress, your homework and what the tutor remembered are gone, and any plan you paid for on alimun.com is cancelled, so you will not be charged again.",
+    "kept": "Invoices for what you paid are kept as tax law requires. If you bought a plan in the App Store or Google Play, cancel it there.",
+    "back": "Thank you for learning with us. You are welcome back any time: you can make a new account on alimun.com.",
+    "footer": "You received this email because you deleted your Alimun account."
   }
 }

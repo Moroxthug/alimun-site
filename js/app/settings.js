@@ -4,7 +4,7 @@
    these). The dashboard's own language (this browser, "alimun-lang"). Plan and billing: the plan and its status as the
    payment webhook wrote them; subscribers manage payment method, invoices, plan changes and cancelling in Stripe's
    billing portal (/api/stripe?action=billing-portal), others see the plans page. Account: password, signing out,
-   asking for the account to be deleted (contact page).
+   deleting the account (js/app/delete-account.js, #/settings/delete).
    Signed out: the sample profile, nothing is saved. Route: #/settings. Interface text: app_st_* keys. */
 (function () {
   'use strict';
@@ -74,7 +74,7 @@
       '<form class="st-form" data-form="pw"><label class="st-field"><span class="st-lbl">' + esc(t('app_st_pw')) + '</span><input class="st-in" type="password" name="pw" autocomplete="new-password" minlength="8" required></label>' +
       '<div class="btn-row"><button class="btn btn--ghost btn--sm" type="submit">' + esc(t('app_st_pw_save')) + '</button></div><p class="t-body st-msg" data-msg="pw" aria-live="polite"></p></form>' +
       '<div class="st-acc-foot"><button class="btn btn--quiet btn--sm" type="button" data-st="signout">' + esc(t('app_st_signout')) + '</button>' +
-      '<a class="linkish" href="https://alimun.com/contact">' + esc(t('app_st_delete')) + '</a></div></section>';
+      '<a class="linkish" href="#/settings/delete">' + esc(t('app_st_delete')) + '</a></div></section>';
     if (S.sample) html += '<p class="t-tiny span-12">' + esc(t('app_st_sample')) + '</p>';
     return html + '</div>';
   }
@@ -169,6 +169,11 @@
     if (parts && parts[0] === 'withdraw' && window.AlimunWithdraw) {
       view_.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + helpers.esc(helpers.t('app_book_loading')) + '">' + helpers.loaderInner() + '</div></div>';
       return window.AlimunWithdraw.mount(view_, parts, helpers);
+    }
+    /* Deleting the account lives in js/app/delete-account.js */
+    if (parts && parts[0] === 'delete' && window.AlimunDeleteAccount) {
+      view_.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + helpers.esc(helpers.t('app_book_loading')) + '">' + helpers.loaderInner() + '</div></div>';
+      return window.AlimunDeleteAccount.mount(view_, parts, helpers);
     }
     /* Choosing a plan lives in js/app/plans.js */
     if (parts && parts[0] === 'plans' && window.AlimunPlans) {

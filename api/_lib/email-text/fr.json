@@ -355,5 +355,14 @@
     "button": "Ouvrir l’assistance",
     "after": "Vous pouvez répondre depuis l’assistance dans votre tableau de bord, ou simplement répondre à cet e-mail.",
     "footer": "Vous recevez cet e-mail car vous avez écrit à l’assistance Alimun."
+  },
+  "deleted": {
+    "subject": "Votre compte Alimun est supprimé",
+    "preheader": "Votre compte et vos données d'apprentissage sont effacés.",
+    "heading": "Votre compte est supprimé",
+    "body": "Nous avons supprimé votre compte Alimun comme vous l'avez demandé. Votre profil, votre progression, vos devoirs et ce dont le tuteur se souvenait sont effacés, et tout forfait payé sur alimun.com est annulé : vous ne serez plus débité.",
+    "kept": "Les factures de vos paiements sont conservées comme l'exige la loi fiscale. Si vous avez acheté un forfait dans l'App Store ou Google Play, annulez-le là-bas.",
+    "back": "Merci d'avoir appris avec nous. Vous pouvez revenir quand vous le souhaitez en créant un nouveau compte sur alimun.com.",
+    "footer": "Vous recevez cet e-mail parce que vous avez supprimé votre compte Alimun."
   }
 }

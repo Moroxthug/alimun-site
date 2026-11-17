@@ -1337,6 +1337,11 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
   .st-stage > svg { flex: 0 0 auto; width: auto; height: 104px; max-width: 45%; }
 }
 .st-acc-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 22px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
+/* Deleting the account (js/app/delete-account.js): what the learner can do instead */
+.dl-offers { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 22px; }
+.dl-offer { display: flex; flex-direction: column; gap: 10px; padding: 18px; border-radius: var(--r-md); background: var(--t-lime); }
+.dl-offer .btn-row { margin-top: auto; }
+.dl-note { margin-top: 18px; padding: 14px 16px; border-radius: var(--r-sm); background: var(--t-sun); }
 
 /* ---------- Teacher dashboard (step 15, js/app/teach.js) ---------- */
 .tt-week { display: grid; margin-top: 10px; }
