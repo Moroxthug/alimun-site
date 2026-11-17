@@ -8,6 +8,8 @@ import '../api.dart';
 import '../i18n.dart';
 import '../theme.dart';
 import '../ui/parts.dart';
+import '../book/store.dart';
+import 'book.dart';
 import 'home.dart';
 import 'settings.dart';
 
@@ -40,8 +42,17 @@ class Shell extends StatefulWidget {
   State<Shell> createState() => _ShellState();
 }
 
-class _ShellState extends State<Shell> {
+class _ShellState extends State<Shell> with WidgetsBindingObserver {
   String _at = 'home';
+
+  // Answers given offline go out when the app starts and each time it comes back to the front
+  @override
+  void initState() { super.initState(); WidgetsBinding.instance.addObserver(this); BookStore.I.start().then((_) => BookStore.I.flush()); }
+  @override
+  void dispose() { WidgetsBinding.instance.removeObserver(this); super.dispose(); }
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) { if (state == AppLifecycleState.resumed) BookStore.I.flush(); }
+
   List<String> get _bar => ['home', 'book', 'practice', widget.data.inClass ? 'classes' : 'cards'];
 
   void _go(String id) { if (id != _at) setState(() => _at = id); }
@@ -56,6 +67,7 @@ class _ShellState extends State<Shell> {
     switch (_at) {
       case 'home': return HomeScreen(key: const ValueKey('home'), data: widget.data, onRefresh: widget.onRefresh, onOpen: _go);
       case 'settings': return SettingsScreen(key: const ValueKey('settings'), data: widget.data, onSignOut: widget.onSignOut, onProfileChanged: widget.onProfileChanged);
+      case 'book': return BookScreen(key: const ValueKey('book'), data: widget.data);
       default: return LaterScreen(key: ValueKey(_at), section: sectionOf(_at));
     }
   }
@@ -80,7 +92,7 @@ class _ShellState extends State<Shell> {
                   ])),
                   Expanded(child: AnimatedSwitcher(duration: kMid, switchInCurve: kEase, switchOutCurve: kEase,
                       transitionBuilder: (child, a) => FadeTransition(opacity: a, child: SlideTransition(position: Tween(begin: const Offset(0, .025), end: Offset.zero).animate(a), child: child)),
-                      layoutBuilder: (cur, prev) => Stack(alignment: Alignment.topCenter, children: [if (cur != null) cur]),
+                      layoutBuilder: (cur, prev) => Stack(alignment: Alignment.topCenter, children: [?cur]),
                       child: _body())),
                 ])),
                 bottomNavigationBar: _Bar(items: _bar, current: _at, onTap: _go, onMore: _more))));
