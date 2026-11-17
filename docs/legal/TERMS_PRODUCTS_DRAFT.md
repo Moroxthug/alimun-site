@@ -1,6 +1,6 @@
 # Terms: sections 5 and 6 for the new products (draft for the owner, 16 Nov 2026)
 
-Not published. The Terms (`site/src/blocks/legal/terms.html`, last updated 16 Nov 2026) still describe only monthly or
+Published 17 Nov 2026 (owner: "publish the Terms draft for the new products"): sections 5 and 6 below are live in the Terms in all languages, the product list written as one sentence. Before then: not published. The Terms (`site/src/blocks/legal/terms.html`, last updated 16 Nov 2026) still describe only monthly or
 yearly subscriptions. What is sold since 11 Nov 2026 is in `docs/PRICING_ENGINE_SPEC.md` (approved by the owner on
 11 Nov) and `docs/LAUNCH_PRICING_SPEC.md`. This draft replaces sections 5 and 6 with wording that matches them. Every
 statement below is taken from those specs or from the code; nothing new is promised. When the owner approves it (after a

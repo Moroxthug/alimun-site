@@ -2180,3 +2180,5 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - The morning digest also failed when sent alone; its logs no longer exist, so its cause is not known. If it fails again, Admin → Automations shows Resend's reason.
 - A test email from the connected key to the owner was accepted (16 Nov). The four automations were switched back on after the deploy (failure counts reset).
 - Also: proof clips switched from dry run to live once the recording notice was online (owner: publish the draft).
+- Later, owner: "re-enable the automations and deploy when ready": the four automations were switched back on (failure counts reset) once the email fix was live in production.
+- Owner: "publish the Terms draft for the new products". Terms sections 5 ("What You Can Buy, Prices and Payment") and 6 ("Cancellation, Refunds and Withdrawal") replaced with `docs/legal/TERMS_PRODUCTS_DRAFT.md` (the product list as one sentence), last updated 17 November 2026, in English and the seven translations (helper agent, checked: same paragraphs, sections and blocks). Lock updated. The lawyer points in the draft are still open.
