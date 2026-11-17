@@ -262,9 +262,22 @@ a { color: ${INK}; }
 }
 
 /** Send through Resend. Returns true only when Resend accepted the message. */
+/* Resend accepts about two emails a second per account. Emails sent in a burst from one function (a teacher, their
+   learners and the owner, or a list of reminders) were refused, which paused the automations (16 Nov 2026). Sends from
+   one instance are spaced out, and a refusal for speed (429) or a passing error (5xx) is tried again after a short
+   wait. sendEmail still answers true or false; sendEmail.lastError says why the last one failed. */
+const MIN_GAP_MS = 600;
+let nextSlot = 0;
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+async function slot() {
+  const now = Date.now(), at = Math.max(now, nextSlot);
+  nextSlot = at + MIN_GAP_MS;
+  if (at > now) await sleep(at - now);
+}
 async function sendEmail({ to, subject, html, text, replyTo, from, unsubscribeUrl }) {
+  sendEmail.lastError = '';
   const key = process.env.RESEND_API_KEY;
-  if (!key || key.includes('YOUR_RESEND_API_KEY')) { console.error('[email] RESEND_API_KEY missing'); return false; }
+  if (!key || key.includes('YOUR_RESEND_API_KEY')) { console.error('[email] RESEND_API_KEY missing'); sendEmail.lastError = 'RESEND_API_KEY missing'; return false; }
   const payload = {
     from: from || process.env.EMAIL_FROM_ADDRESS || 'Alimun <no-reply@alimun.com>',
     to,
@@ -275,23 +288,31 @@ async function sendEmail({ to, subject, html, text, replyTo, from, unsubscribeUr
   if (replyTo) payload.reply_to = replyTo;
   // One-click unsubscribe (RFC 8058): mail apps show their own Unsubscribe button and POST to the link.
   if (unsubscribeUrl) payload.headers = { 'List-Unsubscribe': `<${unsubscribeUrl}>`, 'List-Unsubscribe-Post': 'List-Unsubscribe=One-Click' };
-  try {
-    const r = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
-    if (!r.ok) {
+  for (let attempt = 1; attempt <= 4; attempt++) {
+    await slot();
+    try {
+      const r = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${key}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (r.ok) return true;
       const body = await r.text().catch(() => '');
+      let msg = body; try { msg = JSON.parse(body).message || body; } catch (e) { /* not JSON */ }
+      sendEmail.lastError = `Resend ${r.status}: ${String(msg).slice(0, 200)}`;
       console.error('[email] Resend rejected email:', r.status, body.slice(0, 300));
-      return false;
+      if (r.status !== 429 && r.status < 500) return false;
+      const wait = Number(r.headers.get('retry-after')) * 1000 || 800 * attempt;
+      await sleep(Math.min(wait, 5000));
+    } catch (err) {
+      sendEmail.lastError = 'Resend unreachable: ' + err.message;
+      console.error('[email] Resend error:', err.message);
+      await sleep(800 * attempt);
     }
-    return true;
-  } catch (err) {
-    console.error('[email] Resend error:', err.message);
-    return false;
   }
+  return false;
 }
+sendEmail.lastError = '';
 
 /* Unsubscribe links (docs/GROWTH_PLAN.md step 2): /api/auth?action=unsubscribe&u=<user id>&s=<signature>. The
    signature is an HMAC of the user id with UNSUBSCRIBE_SECRET (Vercel), or, if that is not set, a key derived from the

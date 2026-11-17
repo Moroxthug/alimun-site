@@ -59,7 +59,7 @@ async function send(to, subject, html) {
   if (!to) throw new Error('no address');
   if (!process.env.RESEND_API_KEY) throw new Error('email is not configured');
   const ok = await mail.sendEmail({ to, subject, html });
-  if (!ok) throw new Error('the email was not accepted');
+  if (!ok) throw new Error('the email was not accepted' + (mail.sendEmail.lastError ? ' (' + mail.sendEmail.lastError + ')' : ''));
   return true;
 }
 function tellOwner(text) {
