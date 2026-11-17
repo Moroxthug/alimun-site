@@ -1324,6 +1324,9 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 .st-msg.is-bad { color: #b0472f; }
 .st-msg--light { color: var(--lime); margin-top: 12px; }
 .st-msg--light.is-bad { color: var(--coral); }
+.st-plan .st-msg:empty { display: none; }
+.st-plan .linkish { color: var(--lime); }
+.st-plan > .t-small:last-child { margin-top: 10px !important; }
 .st-plan__p { margin: 10px 0 0; color: var(--on-forest); }
 .st-card { align-self: start; }
 @media (max-width: 599px) {

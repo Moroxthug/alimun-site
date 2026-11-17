@@ -2196,3 +2196,4 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - Days that suit the student are tap tiles (bone, forest outline when ticked) in two columns on phone and four on tablets; the time zone list and day names are built once instead of on every render. The two bottom cards no longer stretch to equal height.
 - No new text, colours, fonts or icons; no database change. Checked at 1360 and 390 px with `?sample=1`. The teacher settings page shares none of this and is unchanged.
 - Settings, phone: the cat card under the plan card is now one compact row (bubble beside the cat, 136 px instead of about 300). Desktop unchanged.
+- Settings, plan card: the "Withdraw from contract here" link was dark green on the dark green card (invisible, and it left a blank strip); it is now lime, the empty message line is hidden, and the spacing is even.
