@@ -2180,3 +2180,7 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - The morning digest also failed when sent alone; its logs no longer exist, so its cause is not known. If it fails again, Admin → Automations shows Resend's reason.
 - A test email from the connected key to the owner was accepted (16 Nov). The four automations were switched back on after the deploy (failure counts reset).
 - Also: proof clips switched from dry run to live once the recording notice was online (owner: publish the draft).
+## 17 Nov 2026 - Contact form messages are saved
+- New table `public.contact_messages` (RLS on, admin read via `is_admin()`, written by the service role). Migration `202611171000_contact_messages.sql`, applied to production and verified.
+- `api/_lib/contact.js` now saves each submission before emailing it; a failed save is logged and never blocks the email. Only messages from now on are stored; earlier ones are only in the owner's inbox.
+- Not done: an Admin view to browse the messages.
