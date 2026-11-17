@@ -1,8 +1,8 @@
 /**
  * Public contact form (contact.html, js/contact-form.js). Served by
  * /api/send-admin-email?action=contact (the function cap keeps it there).
- * Emails each message through Resend to CONTACT_EMAIL (default: the owner),
- * with the sender as reply-to. Nothing is stored.
+ * Saves each message in public.contact_messages, then emails it through Resend
+ * to CONTACT_EMAIL (default: the owner), with the sender as reply-to.
  *
  * Abuse limits: Cloudflare Turnstile (./captcha.js, once keys are set), a hidden honeypot
  * field, length caps, and at most PER_IP_HOUR messages per address per hour
@@ -70,6 +70,14 @@ module.exports = async function contact(req, res) {
   const url = process.env.SUPABASE_URL, sk = process.env.SUPABASE_SERVICE_ROLE_KEY;
   const lang = await L.adminLang(url && sk ? createClient(url, sk, { auth: { autoRefreshToken: false, persistSession: false } }) : null);
   const visitorLang = { en: 'English', es: 'Spanish', fr: 'French', de: 'German', it: 'Italian', pt: 'Portuguese', zh: 'Mandarin', ar: 'Arabic' }[locale];
+  // Keep a copy; a failed save never blocks the email.
+  if (url && sk) {
+    try {
+      const sb = createClient(url, sk, { auth: { autoRefreshToken: false, persistSession: false } });
+      const { error } = await sb.from('contact_messages').insert({ first_name: firstName, last_name: lastName || null, email, phone: phone || null, message, locale, page: page || null });
+      if (error) console.error('[contact] save failed:', error.message);
+    } catch (e) { console.error('[contact] save failed:', e.message || e); }
+  }
   const content = mail.renderEmail({
     hero: 'message', lang,
     signoff: false,

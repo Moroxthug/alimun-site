@@ -42,3 +42,13 @@ Each step ends with an installable APK for the owner and is confirmed before the
 - New texts: `app_st_applang_h`, `app_st_applang_p` (nine languages). Names of the six course languages are a table in `lib/i18n.dart` (the website gets them from the browser).
 - Not in this step: prices and buying (step 8), the level test in the app, account deletion in the app, notifications.
 - Checked: `flutter analyze` clean; nine screens rendered to pictures at phone size (`native/test/screens_test.dart`, `native/test/shots/`), right-to-left layout included; the release APK builds. Not checked: anything on a phone, and a real sign-in (the person check needs the phone and the live page).
+
+## Setting up the build machine (each new cloud session starts without the tools)
+Java 21 is installed; Flutter and the Android SDK are not, and the scratchpad of an earlier session is gone. In the session's scratchpad `S`:
+- Android: download `https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip`, unzip to `S/sdk/cmdline-tools/latest`, then `yes | sdkmanager --sdk_root=S/sdk "platform-tools" "platforms;android-36" "build-tools;36.0.0"` (the first build also fetches the NDK and CMake by itself, about six minutes).
+- Flutter: the stable Linux archive named in `https://storage.googleapis.com/flutter_infra_release/releases/releases_linux.json` (3.50.0 on 16 Nov 2026), untarred to `S/flutter`; `git config --global --add safe.directory S/flutter`; `flutter config --no-analytics --android-sdk S/sdk`; `yes | flutter doctor --android-licenses`.
+- In `native/`: `echo "sdk.dir=S/sdk" >> android/local.properties` (ignored by git), `flutter pub get`, `node tool/export.js` from the repository root, `flutter analyze`, `timeout 420 flutter test --update-goldens test/screens_test.dart` (pictures in `test/shots/`; pump in small steps, entrance animations need several frames; real file or network work inside a test goes through `tester.runAsync`), `flutter build apk --release --target-platform android-arm64` (20 MB, debug-signed until step 8).
+- This Flutter version keeps Material in the package `material_ui` and Cupertino in `cupertino_ui` (import `package:material_ui/material_ui.dart`, not `package:flutter/material.dart`); follow `flutter analyze` over memory.
+
+## Owner, 17 Nov 2026
+"ok go ahead with step 2, the course book, on new convo". Step 1 was sent as an APK on 16 Nov; the owner has not yet said whether signing in works on his phone (the person check in `lib/captcha.dart` could not be tried from the build machine), so step 2 starts by asking him.
