@@ -1,4 +1,5 @@
-// Settings: about you (name, course, why and by when), the app's language, a new password, signing out.
+// Settings: about you (name, course, why and by when), the app's language, a new password, signing out, deleting the
+// account (delete_account.dart).
 // The learner changes only the columns the database lets a learner change (guard_student_profile_columns).
 import 'package:material_ui/material_ui.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -6,6 +7,7 @@ import '../api.dart';
 import '../i18n.dart';
 import '../theme.dart';
 import '../ui/parts.dart';
+import 'delete_account.dart';
 
 class SettingsScreen extends StatefulWidget {
   final HomeData data; final VoidCallback onSignOut; final Future<void> Function() onProfileChanged;
@@ -79,6 +81,8 @@ class _SettingsState extends State<SettingsScreen> {
         Msg(_pwMsg, ok: _pwOk), const SizedBox(height: 18),
         Btn(t('app_st_pw_save'), wide: true, ghost: true, busy: _pwBusy, onTap: _password), gap,
         Btn(t('app_st_signout'), wide: true, ghost: true, onTap: widget.onSignOut),
+        const SizedBox(height: 6),
+        Center(child: LinkBtn(t('app_st_delete'), onTap: () => Navigator.of(context).push(MaterialPageRoute(builder: (_) => DeleteAccountScreen(onDeleted: widget.onSignOut))))),
       ])),
     ]));
   }
