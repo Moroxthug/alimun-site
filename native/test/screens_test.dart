@@ -6,6 +6,7 @@ import 'package:alimun/countries.dart';
 import 'package:alimun/i18n.dart';
 import 'package:alimun/main.dart';
 import 'package:alimun/screens/account.dart';
+import 'package:alimun/screens/delete_account.dart';
 import 'package:alimun/screens/shell.dart';
 import 'package:alimun/theme.dart';
 import 'package:flutter/services.dart';
@@ -71,6 +72,12 @@ void main() {
       }));
   testWidgets('more', (t) => shot(t, 'more', Shell(data: sample(), onRefresh: () async {}, onSignOut: () {}, onProfileChanged: () async {}), then: () async { await t.tap(find.text(i18n.t('app_nav_more'))); }));
   testWidgets('later', (t) => shot(t, 'practice', Shell(data: sample(), onRefresh: () async {}, onSignOut: () {}, onProfileChanged: () async {}), then: () async { await t.tap(find.text(i18n.t('app_nav_practice'))); }));
+  const delInfo = DeleteInfo(can: true, email: 'sara@example.com', stripeSub: true);
+  testWidgets('delete before', (t) => shot(t, 'delete-before', DeleteAccountScreen(onDeleted: () {}, info: delInfo)));
+  testWidgets('delete confirm', (t) => shot(t, 'delete-confirm', DeleteAccountScreen(onDeleted: () {}, info: delInfo, step: 2), then: () async {
+        await t.enterText(find.byType(TextField).last, 'sara@example.com');
+      }));
+  testWidgets('delete teacher', (t) => shot(t, 'delete-teacher', DeleteAccountScreen(onDeleted: () {}, info: const DeleteInfo(can: false, why: 'teacher', email: 'jonas@example.com'))));
   testWidgets('arabic', (t) async {
     await t.runAsync(() => i18n.choose('ar'));
     await shot(t, 'home-ar', Shell(data: sample(), onRefresh: () async {}, onSignOut: () {}, onProfileChanged: () async {}));
