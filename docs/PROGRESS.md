@@ -2215,3 +2215,4 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - Help article "How do I get a copy of my data or delete my account?" updated in eight languages.
 - Not offered: a discount to stay. No retention coupon exists in Stripe; the owner decides whether to add one and its amount.
 - Not done: the Flutter app in `native/` has no delete option yet (Apple and Google require in-app account deletion for store apps); it can call the same `/api/account?action=delete`.
+- Owner: "add the Help sentence to the course pages too". Every course page (42, all site languages) now ends its FAQ with the Contact page's line, "Looking for a quick answer about classes, plans or your account? Visit Help", linking to /help or /<site>/help (`{{HELP_LINE}}` in the locked `course/faq.html`, lock updated; text `courseLine`/`courseLink` in `site/src/data/help/ui.js`, filled in `src/pages/[page].astro`). Checked in the full site build.
