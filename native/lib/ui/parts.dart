@@ -27,6 +27,14 @@ const _icons = {
   'check': '<path d="m5 12.5 4.5 4.5L19 7"/>',
   'close': '<path d="M6 6l12 12M18 6 6 18"/>',
   'down': '<path d="m6 9 6 6 6-6"/>',
+  'play': '<path d="M8 5.5v13l10.5-6.5z"/>',
+  'stop': '<rect x="6.5" y="6.5" width="11" height="11" rx="2"/>',
+  'lock': '<rect x="5" y="10.5" width="14" height="10" rx="2.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/>',
+  'expand': '<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>',
+  'plus': '<path d="M12 5v14M5 12h14"/>',
+  'minus': '<path d="M5 12h14"/>',
+  'mic': '<rect x="9" y="3.5" width="6" height="10.5" rx="3"/><path d="M5.5 11.5a6.5 6.5 0 0 0 13 0M12 18v3"/>',
+  'cloud': '<path d="M7 18.5a4.5 4.5 0 0 1-.6-8.96 6 6 0 0 1 11.5 1.5A3.8 3.8 0 0 1 17.5 18.5z"/><path d="M12 11v5M9.8 14l2.2 2.2 2.2-2.2"/>',
   'eye': '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/>',
 };
 String _hex(Color c) => '#${(c.toARGB32() & 0xFFFFFF).toRadixString(16).padLeft(6, '0')}';
@@ -178,18 +186,19 @@ class _PressableState extends State<Pressable> {
 
 /* ---------- Buttons ---------- */
 class Btn extends StatelessWidget {
-  final String label; final VoidCallback? onTap; final bool ghost, busy, small, wide; final String? icon;
-  const Btn(this.label, {super.key, this.onTap, this.ghost = false, this.busy = false, this.small = false, this.wide = false, this.icon});
+  final String label; final VoidCallback? onTap; final bool ghost, busy, small, wide, lime, onForest; final String? icon;
+  /// `lime`: the lime button used on forest cards; `onForest`: a ghost button on a forest card
+  const Btn(this.label, {super.key, this.onTap, this.ghost = false, this.busy = false, this.small = false, this.wide = false, this.icon, this.lime = false, this.onForest = false});
   @override
   Widget build(BuildContext context) {
     final off = onTap == null || busy;
-    final fg = ghost ? C.forest : C.lime;
+    final fg = lime ? C.forest : ghost ? (onForest ? C.bone : C.forest) : C.lime;
     final h = small ? 44.0 : 54.0;
     return Semantics(button: true, enabled: !off, label: label, excludeSemantics: true, child: Opacity(opacity: onTap == null && !busy ? .45 : 1,
         child: Pressable(onTap: off ? null : onTap, child: AnimatedContainer(duration: kFast, height: h, width: wide ? double.infinity : null,
             padding: EdgeInsets.symmetric(horizontal: small ? 20 : 26),
-            decoration: BoxDecoration(color: ghost ? Colors.transparent : C.forest, borderRadius: BorderRadius.circular(h / 2),
-                border: ghost ? Border.all(color: C.forest, width: 2) : null),
+            decoration: BoxDecoration(color: lime ? C.lime : ghost ? Colors.transparent : C.forest, borderRadius: BorderRadius.circular(h / 2),
+                border: ghost && !lime ? Border.all(color: onForest ? C.bone : C.forest, width: 2) : null),
             child: Row(mainAxisSize: wide ? MainAxisSize.max : MainAxisSize.min, mainAxisAlignment: MainAxisAlignment.center, children: [
               if (busy) SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2.4, color: fg)) else ...[
                 Flexible(child: Text(label, style: T.button.copyWith(color: fg, fontSize: small ? 15 : 16), maxLines: 1, overflow: TextOverflow.ellipsis)),
@@ -278,7 +287,7 @@ class PickIn<V> extends StatelessWidget {
 }
 
 /// The app's sheet for choosing one of a list: rises from the bottom, the chosen row in lime
-Future<V?> pickSheet<V>(BuildContext context, {required String title, required List<(V, String)> options, V? value}) =>
+Future<V?> pickSheet<V>(BuildContext context, {required String title, required List<(V, String)> options, V? value, Set<V> disabled = const {}, TextDirection? optionsDirection}) =>
     showModalBottomSheet<V>(context: context, isScrollControlled: true, backgroundColor: Colors.transparent, barrierColor: const Color(0x5C080808),
         builder: (ctx) => Container(
             constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * .78),
@@ -289,12 +298,13 @@ Future<V?> pickSheet<V>(BuildContext context, {required String title, required L
               Padding(padding: const EdgeInsets.fromLTRB(22, 16, 22, 8), child: Align(alignment: AlignmentDirectional.centerStart, child: Text(title.toUpperCase(), style: T.h3))),
               Flexible(child: ListView.builder(shrinkWrap: true, padding: EdgeInsets.fromLTRB(12, 0, 12, 16 + MediaQuery.of(ctx).padding.bottom), itemCount: options.length,
                   itemBuilder: (_, i) {
-                    final o = options[i], on = o.$1 == value;
-                    return Semantics(button: true, selected: on, label: o.$2, excludeSemantics: true, child: Pressable(scale: .985, onTap: () => Navigator.pop(ctx, o.$1),
+                    final o = options[i], on = o.$1 == value, off = disabled.contains(o.$1);
+                    return Semantics(button: true, selected: on, enabled: !off, label: o.$2, excludeSemantics: true, child: Pressable(scale: .985, onTap: off ? null : () => Navigator.pop(ctx, o.$1),
                         child: Container(margin: const EdgeInsets.symmetric(vertical: 3), padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
                             decoration: BoxDecoration(color: on ? C.lime : Colors.transparent, borderRadius: BorderRadius.circular(R.md)),
                             child: Row(children: [
-                              Expanded(child: Text(o.$2, style: T.s(17, on ? 700 : 500, color: on ? C.forest : C.ink, height: 1.3))),
+                              Expanded(child: Text(o.$2, textDirection: optionsDirection, style: T.s(17, on ? 700 : 500, color: off ? C.muted : on ? C.forest : C.ink, height: 1.3)
+                                  .copyWith(decoration: off ? TextDecoration.lineThrough : null))),
                               if (on) const LineIcon('check', size: 22, color: C.forest)]))));
                   })),
             ])));
@@ -349,4 +359,75 @@ class Msg extends StatelessWidget {
   Widget build(BuildContext context) => AnimatedSize(duration: kFast, alignment: Alignment.topCenter, child: text.isEmpty
       ? const SizedBox(width: double.infinity)
       : Padding(padding: const EdgeInsets.only(top: 2), child: Semantics(liveRegion: true, child: Text(text, style: T.s(15, 600, color: ok ? C.forest : C.bad, height: 1.4)))));
+}
+
+/* ---------- Book text: **bold** and *italic*, everything else as written ---------- */
+final _boldRe = RegExp(r'\*\*(.+?)\*\*'), _italicRe = RegExp(r'\*(.+?)\*');
+List<InlineSpan> mdSpans(String s, TextStyle base) {
+  final out = <InlineSpan>[];
+  void italics(String part, TextStyle st) {
+    var at = 0;
+    for (final m in _italicRe.allMatches(part)) {
+      if (m.start > at) out.add(TextSpan(text: part.substring(at, m.start), style: st));
+      out.add(TextSpan(text: m[1], style: st.copyWith(fontStyle: FontStyle.italic)));
+      at = m.end;
+    }
+    if (at < part.length) out.add(TextSpan(text: part.substring(at), style: st));
+  }
+  final bold = base.copyWith(fontWeight: FontWeight.w700, fontVariations: const [FontVariation('wght', 700)]);
+  var at = 0;
+  for (final m in _boldRe.allMatches(s)) {
+    if (m.start > at) italics(s.substring(at, m.start), base);
+    italics(m[1]!, bold);
+    at = m.end;
+  }
+  if (at < s.length) italics(s.substring(at), base);
+  return out;
+}
+
+class Md extends StatelessWidget {
+  final String text; final TextStyle? style; final TextDirection? dir; final TextAlign? align;
+  const Md(this.text, {super.key, this.style, this.dir, this.align});
+  @override
+  Widget build(BuildContext context) => Text.rich(TextSpan(children: mdSpans(text, style ?? T.body)), textDirection: dir, textAlign: align);
+}
+
+/// How far along: a rounded bar that fills in lime on forest, or forest on a light ground
+class Meter extends StatelessWidget {
+  final double value; final bool onForest; final String? label;
+  const Meter(this.value, {super.key, this.onForest = false, this.label});
+  @override
+  Widget build(BuildContext context) => Semantics(label: label, value: '${(value * 100).round()}%', child: ClipRRect(borderRadius: BorderRadius.circular(6),
+      child: Container(height: 10, color: onForest ? const Color(0x33F0EFE9) : C.line, alignment: AlignmentDirectional.centerStart,
+          child: TweenAnimationBuilder<double>(tween: Tween(begin: 0, end: value.clamp(0, 1)), duration: kSlow, curve: kEase,
+              builder: (_, v, _) => FractionallySizedBox(widthFactor: v, child: Container(decoration: BoxDecoration(color: onForest ? C.lime : C.forest, borderRadius: BorderRadius.circular(6))))))));
+}
+
+/// The book character with a mood (idle, happy, think, wow); it hops when the mood changes
+class BookFace extends StatelessWidget {
+  final String mood; final double size;
+  const BookFace(this.mood, {super.key, this.size = 44});
+  @override
+  Widget build(BuildContext context) => TweenAnimationBuilder<double>(key: ValueKey(mood), tween: Tween(begin: mood == 'idle' ? 1 : 0, end: 1), duration: const Duration(milliseconds: 520), curve: kSpring,
+      builder: (_, v, child) => Transform.translate(offset: Offset(0, -6 * (1 - v).abs()), child: Transform.scale(scale: .8 + .2 * v, child: child)),
+      child: SvgPicture.asset('assets/art/book-$mood.svg', width: size, height: size * 1.06));
+}
+
+/// A short sideways shake, each time `n` goes up (a wrong answer)
+class Shake extends StatefulWidget {
+  final int n; final Widget child;
+  const Shake({super.key, required this.n, required this.child});
+  @override
+  State<Shake> createState() => _ShakeState();
+}
+
+class _ShakeState extends State<Shake> with SingleTickerProviderStateMixin {
+  late final AnimationController _c = AnimationController(vsync: this, duration: const Duration(milliseconds: 360));
+  @override
+  void didUpdateWidget(Shake old) { super.didUpdateWidget(old); if (widget.n > old.n && !MediaQuery.of(context).disableAnimations) _c.forward(from: 0); }
+  @override
+  void dispose() { _c.dispose(); super.dispose(); }
+  @override
+  Widget build(BuildContext context) => AnimatedBuilder(animation: _c, child: widget.child,
+      builder: (_, child) => Transform.translate(offset: Offset(math.sin(_c.value * math.pi * 4) * 7 * (1 - _c.value), 0), child: child));
 }

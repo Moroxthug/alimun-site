@@ -4,7 +4,7 @@
  * - native/assets/i18n/<lang>.json: the app's texts in the nine languages, from js/translations.js (the only place
  *   text is written): the dashboard keys (app_*), the account keys (au_*) and the level names (lt_name_*).
  * - native/assets/art/<name>.svg: the approved drawing cast (js/app/cast.js), the book character, the logo mark and
- *   the wordmark.
+ *   the wordmark; the book character's moods, the picture objects, the scenes and the tutors (js/app/cast3.js).
  * - native/assets/fonts: Satoshi and Coolvetica Condensed.
  */
 const fs = require('fs');
@@ -41,6 +41,14 @@ fs.writeFileSync(path.join(out, 'art', 'wordmark.svg'), clean(C.wordmark().repla
 fs.writeFileSync(path.join(out, 'art', 'mark.svg'),
   '<svg viewBox="290 360 445 445" xmlns="http://www.w3.org/2000/svg">' + C.logoPath.replace(/ class="[^"]*"/g, '') +
   '<circle fill="#d5af33" cx="453" cy="605" r="19"/><circle fill="#d5af33" cx="574" cy="605" r="19"/></svg>');
+
+/* The book character's moods, and the third cast (js/app/cast3.js): objects for picture exercises, scenes to label,
+   the six tutors (mouth at rest) */
+require(path.join(root, 'js/app/cast3.js'));
+for (const m of C.moods) { fs.writeFileSync(path.join(out, 'art', 'book-' + m + '.svg'), clean(C.book(m))); n++; }
+for (const o of C.objects) { fs.writeFileSync(path.join(out, 'art', 'obj-' + o + '.svg'), clean(C.object(o))); n++; }
+for (const sc of C.scenes) { fs.writeFileSync(path.join(out, 'art', 'scene-' + sc + '.svg'), clean(C.scene(sc))); n++; }
+for (const tu of C.tutors) { fs.writeFileSync(path.join(out, 'art', 'tutor-' + tu + '.svg'), clean(C.tutor(tu).replace(/<g class="mo mo-(a|e|o|m)">.*?<\/g>/g, ''))); n++; }
 
 /* Countries: the site's list (js/country.js), with their names in each language */
 global.self = global;

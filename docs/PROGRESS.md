@@ -2198,6 +2198,13 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - Settings, phone: the cat card under the plan card is now one compact row (bubble beside the cat, 136 px instead of about 300). Desktop unchanged.
 - Settings, plan card: the "Withdraw from contract here" link was dark green on the dark green card (invisible, and it left a blank strip); it is now lime, the empty message line is hidden, and the spacing is even.
 
+## 17 Nov 2026: native app step 2, the course book
+- Built the Book section of the native app (`native/`, details in `docs/NATIVE_APP_PLAN.md`, "Step 2"): cover, units, lessons with pages turned by swipe, every block, the explanation-language switch, the exercise engine (the 19 kinds plus picture, label and speak), unit tests, progress in the website's tables with an offline queue, the free limit without prices or links, books kept on the phone, "Download for offline" with recordings, play buttons and Listen.
+- The app's marking is tested against the website's engine on exercises from the books (`native/tool/marking-cases.js`, `native/test/marking_test.dart`): all cases agree.
+- Five new texts in nine languages in `js/translations.js` (hints without dragging, the microphone message for the app); `npm run build` rerun. Website: inline-script check, 235 unit tests and the build pass. The Playwright smoke tests were not run: the project's Playwright version does not match the browser on the cloud machine.
+- Sent the owner the APK (22 MB) to install over step 1. Asked him whether sign-in and Arabic letters worked in the step 1 build; no answer yet.
+- Not checked on a phone: page-turn feel, haptics, sound, the download, recording, the keyboard, loading and saving from the app with a real account.
+- Not done: dragging word tiles (tap only), the tutor's lip movement in speaking exercises.
 ## 17 Nov 2026 - Learners can delete their own account
 - Owner: "create an option so users can delete their accounts, upon confirmation and before that asking if they're sure and offering something". Settings → Your account → "Delete your account" (was "Ask us to delete your account", a link to Contact) opens `#/settings/delete` (`js/app/delete-account.js`).
 - Step 1, "Before you go": what is lost, then what the learner can do instead: cancel the plan and keep their progress on the free plan (Manage billing, shown only with a live Stripe plan), turn off news and offers (Settings), or write to Support. "Keep my account" is the main button. A learner paying through the App Store or Google Play is told to cancel it there.

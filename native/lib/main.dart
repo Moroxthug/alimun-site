@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'api.dart';
+import 'book/store.dart';
 import 'countries.dart';
 import 'i18n.dart';
 import 'screens/account.dart';
@@ -83,6 +84,7 @@ class _RootState extends State<Root> {
   Future<void> _signOut() async {
     try { await sb.auth.signOut(); } catch (_) {}
     await forgetHome();
+    BookStore.I.forget();
     if (!mounted) return;
     Navigator.of(context).popUntil((r) => r.isFirst);
     setState(() { _data = null; _user = null; _at = _At.signin; });
