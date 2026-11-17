@@ -2215,3 +2215,4 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - Help article "How do I get a copy of my data or delete my account?" updated in eight languages.
 - Not offered: a discount to stay. No retention coupon exists in Stripe; the owner decides whether to add one and its amount.
 - Not done: the Flutter app in `native/` has no delete option yet (Apple and Google require in-app account deletion for store apps); it can call the same `/api/account?action=delete`.
+- Settings: the "Withdraw from contract here" link on the plan card shows only on paid plans (owner request). The withdrawal page itself (`#/settings/withdraw`) is unchanged and still opens by address.

@@ -96,7 +96,7 @@
     var btn = paid && status ? '<button class="btn btn--lime" type="button" data-st="portal">' + esc(t('app_st_manage')) + A.icon('arrow') + '</button><p class="t-small st-plan__p">' + esc(t('app_st_manage_p')) + '</p>'
       : paid ? '' : '<a class="btn btn--lime" href="#/settings/plans">' + esc(t(tier === 'waitlist' ? 'app_st_see_plans' : 'app_st_choose_plan')) + A.icon('arrow') + '</a>';
     return '<section class="card card--forest span-8 cover-card st-plan" style="--i:0" aria-live="polite">' + body + '<div class="btn-row" style="margin-top:22px;flex-direction:column;align-items:flex-start">' + btn + '</div><p class="t-body st-msg st-msg--light" data-msg="plan"></p>' +
-      '<p class="t-small" style="margin-top:14px"><a class="linkish" href="#/settings/withdraw">' + esc(t('app_wd_link')) + '</a></p></section>' +
+      (paid ? '<p class="t-small" style="margin-top:14px"><a class="linkish" href="#/settings/withdraw">' + esc(t('app_wd_link')) + '</a></p>' : '') + '</section>' +
       '<section class="stage st-stage span-4" style="--i:0;background:var(--t-sun)" aria-hidden="true"><div class="bub say">' + esc(t(paid ? 'app_st_bub_paid' : 'app_st_bub_free')) + '</div>' + A.Cast.drawing('cat') + '</section>';
   }
 
