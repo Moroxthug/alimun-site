@@ -11,6 +11,7 @@ import examsTpl from '../blocks/course/exams.html?raw';
 import guideTpl from '../blocks/course/guide.html?raw';
 import plansTpl from '../blocks/course/plans.html?raw';
 import faqTpl from '../blocks/course/faq.html?raw';
+import HELP_UI from '../data/help/ui.js';
 import bottomCta from '../blocks/tiers/s02.html?raw';
 import after from '../blocks/legal/after.html?raw';
 import nav from '../blocks/legal/nav.html?raw';
@@ -69,6 +70,8 @@ const faq = fill(faqTpl, {
   ...UI,
   QA_QUESTIONS: faqItems.map(([q, a]) => `              <button type="button" class="qa_q" aria-expanded="false">${esc(q)}<span class="qa_mobile">${esc(a)}</span></button>`).join('\n'),
   QA_ANSWERS: faqItems.map(([q, a]) => `              <div class="qa_a"><h3 class="heading-style-h4">${esc(q)}</h3><p class="text-size-large">${esc(a)}</p></div>`).join('\n'),
+  // Under the FAQ, a link to Help in the page's language (owner, 17 Nov 2026: "add the Help sentence to the course pages too")
+  HELP_LINE: (() => { const h = HELP_UI[S.site] || HELP_UI.en; return `          <p class="qa_help">${esc(h.courseLine)} <a href="${S.site === 'en' ? '' : '/' + S.site}/help">${esc(h.courseLink)}</a></p>`; })(),
 });
 ---
 <Base wfPage="68d948d23b6c9f2bbbac3eab" head={head} after={after} lang={S.site}>

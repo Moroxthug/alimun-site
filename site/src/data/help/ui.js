@@ -1,6 +1,8 @@
 // Public Help page text (docs/HELP_PLAN.md, Part 4). One entry per site language; articles come from
 // src/data/help/<lang>/ (Morocco "ma" reads the French articles). {date} is filled with the article's date.
 const en = {
+  courseLine: "Looking for a quick answer about classes, plans or your account?",
+  courseLink: "Visit Help",
   showAll: 'Show all {n}',
   locale: 'en-GB',
   home: 'Home',
@@ -63,6 +65,8 @@ const en = {
 };
 
 const es = {
+  courseLine: "¿Buscas una respuesta rápida sobre las clases, los planes o tu cuenta?",
+  courseLink: "Ir a Ayuda",
   showAll: 'Ver los {n}',
   locale: 'es-ES',
   home: 'Inicio',
@@ -125,6 +129,8 @@ const es = {
 };
 
 const fr = {
+  courseLine: "Vous cherchez une réponse rapide sur les cours, les formules ou votre compte ?",
+  courseLink: "Consulter l’Aide",
   showAll: 'Tout afficher ({n})',
   locale: 'fr-FR',
   home: 'Accueil',
@@ -189,6 +195,8 @@ const fr = {
 const ma = { ...fr, locale: 'fr-MA', topics: { ...fr.topics } };
 
 const de = {
+  courseLine: "Sie suchen eine schnelle Antwort zu Kursen, Tarifen oder Ihrem Konto?",
+  courseLink: "Zur Hilfe",
   showAll: 'Alle {n} anzeigen',
   locale: 'de-DE',
   home: 'Startseite',
@@ -251,6 +259,8 @@ const de = {
 };
 
 const pt = {
+  courseLine: "Procura uma resposta rápida sobre as aulas, os planos ou a sua conta?",
+  courseLink: "Ir para a Ajuda",
   showAll: 'Ver todos ({n})',
   locale: 'pt-PT',
   home: 'Início',
@@ -313,6 +323,8 @@ const pt = {
 };
 
 const it = {
+  courseLine: "Cerchi una risposta veloce su lezioni, piani o il tuo account?",
+  courseLink: "Vai all’Aiuto",
   showAll: 'Mostra tutti ({n})',
   locale: 'it-IT',
   home: 'Home',
@@ -375,6 +387,8 @@ const it = {
 };
 
 const zh = {
+  courseLine: "想快速了解课程、方案或你的账户？",
+  courseLink: "前往帮助",
   showAll: '显示全部 {n} 篇',
   locale: 'zh-CN',
   home: '首页',
@@ -437,6 +451,8 @@ const zh = {
 };
 
 const ar = {
+  courseLine: "تبحث عن إجابة سريعة عن الحصص أو الخطط أو حسابك؟",
+  courseLink: "زيارة المساعدة",
   showAll: 'عرض الكل ({n})',
   locale: 'ar',
   home: 'الرئيسية',

@@ -213,8 +213,8 @@
     "approved": "2026-10-23 Italian course pages: price ladder (owner: section ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified); 2026-11-12 three columns for the new price list with live prices, no black column (owner: \"1 yes\")"
   },
   "src/blocks/course/faq.html": {
-    "sha256": "f0a00aecd5b5e7e4ecb75a04be5abde57e2e058f540a31aacfb8304c52f8e83f",
-    "approved": "2026-10-23 Italian course pages: FAQ (owner: section ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified)"
+    "sha256": "f345d6ab3beb731beac3a2aff0fb9f20ff8980d0af7ff1a6069d16aa2b64f91a",
+    "approved": "2026-10-23 Italian course pages: FAQ (owner: section ok); 2026-10-23 Italian text moved to src/data/course-sites/it.js for the other site languages (Italian pages unchanged, verified); 2026-11-17 a sentence under the FAQ linking to Help in the page language (owner: \"add the Help sentence to the course pages too\")"
   },
   "src/data/course-faq.js": {
     "sha256": "d9b6a73b1350ec79629e9eef3ddcd2819ff63f66ff38a5f9b5701525312ae49e",
