@@ -2243,3 +2243,8 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - Related cards: CELPIP vs IELTS, CLB levels, Express Entry language points and citizenship language articles now link the two Canada articles; the Morocco TOEIC/IELTS/TOEFL and C1 articles link the Cambridge one.
 - Missing, not invented: Cambridge exam fees and dates in Morocco (no current official page), TOEIC price in Morocco.
 - Sent 18 Nov 04:47 UTC by the hourly job: 18 English learners emailed (all accepted by Resend) and 18 dashboard notes; fusheng's address (@gmai.com) will bounce. New English learners get it within the hour of signing up while sign-ups are open.
+
+## 18 Nov 2026 - Replies to contact messages (owner approved)
+- Sent through Resend from no-reply@alimun.com, replies to youssef.bouchtaoui@alimun.com: Denys Rapiy (free class before paying; his account was deleted on 17 Nov, which ended his intensive reservation; never charged; apology for the delay, normal operations from Monday), Viviana Calle (no German class or teacher yet; German prices in USD for Ecuador), Oumou Balde (B2 evening class being prepared, asked for her free evenings, invited to the free class on 23 Nov).
+- Denys's saved card removed from Stripe (customer cus_VcKVr0iWy2PogM, owner's yes).
+- Not sent: the reply to Sylvie Lemonnier (Joséphine's mother); her own address is not in our system. Promised in it: a short video call to assess Joséphine's speaking.
