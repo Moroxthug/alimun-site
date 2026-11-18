@@ -99,3 +99,19 @@ test('launch email: only the ticked learners, English learners, each once', asyn
     assert.deepStrictEqual((await LM.run(sb, 'preview', {})).people.map((x) => x.id).sort(), ['b2', 'c1'], 'nobody gets it twice');
   } finally { mail.sendEmail = realSend; }
 });
+
+// The reminder and the follow-up (owner, 18 Nov 2026): times read from the offer, every language and step builds
+test('launch steps: offer times and emails in every language', () => {
+  const LM = require('../../api/_lib/launch-email.js');
+  const o = L.parseOffer(JSON.stringify({ code: 'launch-en-2', rooms: [PACK, OPEN], intro_session: OTHER, ends_at: '2026-11-30T04:00:00Z', eur_off: 1000, remind_at: '2026-11-23T09:00:00Z', follow_at: 'nope' }));
+  assert.strictEqual(o.remindAt, Date.parse('2026-11-23T09:00:00Z'));
+  assert.strictEqual(o.followAt, null);
+  const room = (days) => ({ starts_on: '2026-11-30', schedule_days: days, schedule_time: '19:00:00', timezone: 'Europe/Paris', min_learners: 8 });
+  const ctx = { offer: o, pack: room(['Monday', 'Wednesday', 'Thursday']), open: room(['Monday']), introAt: new Date('2026-11-23T18:00:00Z'), min: 8, unsub: false };
+  for (const lang of ['en', 'fr', 'es', 'de', 'ma', 'zh']) for (const step of ['remind', 'came', 'missed']) for (const level of ['A1', 'B2']) {
+    const e = LM.buildStep(step, { name: 'ana', level, timezone: 'Europe/Madrid', ui_lang: lang }, ctx);
+    assert.ok(e.subject && e.html.includes('settings/plans/launch') && !/\{days\}|\{open\}|undefined/.test(e.text), lang + ' ' + step);
+  }
+  const r = LM.buildStep('remind', { name: 'ana', level: 'A1', timezone: 'Europe/Istanbul', ui_lang: 'en' }, ctx);
+  assert.ok(/21:00/.test(r.subject), 'times in the learner’s own zone');
+});

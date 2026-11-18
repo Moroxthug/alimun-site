@@ -21,7 +21,10 @@ function parseOffer(value) {
   if (!rooms.length || !Number.isFinite(ends)) return null;
   return { code: o.code, rooms, intro_session: UUID.test(o.intro_session || '') ? o.intro_session : null, endsAt: ends,
     exclude: Array.isArray(o.exclude) ? o.exclude.filter((x) => UUID.test(x)) : [],
-    eurOff: Math.max(0, Math.min(5000, parseInt(o.eur_off, 10) || 0)) };
+    eurOff: Math.max(0, Math.min(5000, parseInt(o.eur_off, 10) || 0)),
+    // The reminder on the free class's day and the follow-up after it (owner, 18 Nov 2026), sent by the hourly job
+    remindAt: Number.isFinite(Date.parse(o.remind_at)) ? Date.parse(o.remind_at) : null,
+    followAt: Number.isFinite(Date.parse(o.follow_at)) ? Date.parse(o.follow_at) : null };
 }
 /** Minor units off the first payment, or 0 when the offer does not apply. perEur: the currency's rate (1 for EUR). */
 function discountFor(offer, { code, cohortId, productKey, currency, unitAmount, perEur, now }) {

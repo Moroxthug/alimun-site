@@ -803,8 +803,12 @@ async function handleAdminSpend(req, res, sb) {
 async function handleCronLaunchEmail(req, res, sb) {
   const secret = process.env.CRON_SECRET;
   if (!secret || req.headers.authorization !== 'Bearer ' + secret) return fail(res, 401, 'unauthorized');
+  // The reminder and the follow-up of the launch class go out at their times whether or not automatic sending is on
+  let stepsOut = null;
+  try { stepsOut = await LAUNCH_MAIL.steps(sb, {}); if (Object.keys(stepsOut).length) await recordRun(sb, 'vercel:cron-launch-steps', true, stepsOut); }
+  catch (e) { stepsOut = { error: String(e && e.message) }; await recordRun(sb, 'vercel:cron-launch-steps', /no launch offer|missing/.test(stepsOut.error), stepsOut); }
   const { data: on } = await sb.from('app_settings').select('value').eq('key', 'launch_email_auto').maybeSingle();
-  if (!on || on.value !== 'on') return res.status(200).json({ off: true });
+  if (!on || on.value !== 'on') return res.status(200).json({ off: true, steps: stepsOut });
   try {
     const out = await LAUNCH_MAIL.run(sb, 'auto', {});
     await recordRun(sb, 'vercel:cron-launch-email', !out.error, out);
