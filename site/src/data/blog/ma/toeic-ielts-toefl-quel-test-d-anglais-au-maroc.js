@@ -135,7 +135,7 @@ export default {
     ["Mon score TOEFL sur 120 est-il encore accepté ?", "Les scores obtenus avant le 21 janvier 2026 restent valables deux ans après la date du test. Depuis cette date, le relevé donne une note de 1 à 6 et, pendant une transition de deux ans, un score comparable sur 120. Chaque université fixe ses propres exigences, vérifiez sa page d'admission."],
     ["Puis-je passer l'IELTS depuis chez moi au Maroc ?", "Oui, avec l'IELTS Online, mais uniquement en version Academic. Pour l'immigration ou un visa britannique, il faut passer le test en centre, dans la version exigée."],
   ],
-  related: ['germany-from-morocco'],
+  related: ['cambridge-exams-morocco', 'english-c1-level', 'germany-from-morocco'],
   sources: [
     ['TOEFL iBT test content and structure (ETS)', 'https://www.ets.org/toefl/test-takers/ibt/about/content.html'],
     ['Understanding TOEFL iBT scores (ETS)', 'https://www.ets.org/toefl/test-takers/ibt/scores/understand-scores.html'],

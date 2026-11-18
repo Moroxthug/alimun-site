@@ -189,7 +189,7 @@ export default {
     ['Can I get points for French if English is my main language?', 'Yes. A second official language earns up to 24 points for a single applicant, and NCLC 7 or higher in all four French skills together with CLB 5 or higher in English adds 50 more. You need TEF Canada or TCF Canada results.'],
     ['Did the November 2026 changes affect language points?', 'The language tables on the CRS criteria page stayed the same. What changed on 3 November 2026 was the work experience and job offer side: a new Labour Market Integration factor and the removal of LMIA requirements for job offers. Check your profile, because IRCC recalculated existing scores.'],
   ],
-  related: ['clb-levels', 'celpip-or-ielts', 'canada-citizenship-language', 'ielts-band-scores', 'cefr-english', 'how-long-english', 'practise-speaking'],
+  related: ['clb-levels', 'pte-core-canada', 'celpip-to-ielts', 'celpip-or-ielts', 'canada-citizenship-language', 'ielts-band-scores', 'cefr-english', 'how-long-english', 'practise-speaking'],
   sources: [
     ['IRCC: Express Entry, Comprehensive Ranking System (CRS) criteria', 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/check-score/crs-criteria.html'],
     ['IRCC: Express Entry language testing (accepted tests, minimums, validity)', 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/documents/language-requirements/language-testing.html'],

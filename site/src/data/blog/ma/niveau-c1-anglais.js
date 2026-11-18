@@ -129,7 +129,7 @@ export default {
     ["Où passer le C1 Advanced au Maroc ?", "Le British Council organise les examens Cambridge au Maroc et accepte les candidats de tout le pays. Les épreuves sur papier ont lieu à Casablanca et à Rabat, et une session n'est maintenue qu'avec au moins 10 candidats inscrits. Vérifiez les dates et les tarifs sur le site du British Council Maroc."],
     ["Le certificat C1 Advanced a-t-il une date d'expiration ?", "Non. Cambridge indique que ses certificats n'expirent pas. Une université ou un employeur peut toutefois décider de n'accepter que des résultats récents : vérifiez sa propre règle."],
   ],
-  related: ['moroccan-english-exams', 'germany-from-morocco'],
+  related: ['cambridge-exams-morocco', 'moroccan-english-exams', 'germany-from-morocco'],
   sources: [
     ["CECRL : échelle globale des niveaux communs de référence (Conseil de l'Europe)", 'https://www.coe.int/en/web/common-european-framework-reference-languages/table-1-cefr-3.3-common-reference-levels-global-scale'],
     ['C1 Advanced (Cambridge English)', 'https://www.cambridgeenglish.org/exams-and-tests/qualifications/advanced/'],

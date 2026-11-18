@@ -2,6 +2,7 @@
 // as long as; In case (of); errores típicos; if y cortesía; "if I were you" B1), British Council LearnEnglish (zero, first y
 // second; third y mixed, B1-B2; inversión y condicionales, C1), formatos de examen de Cambridge English (key word
 // transformations de B2 First y C1 Advanced), descriptores de IELTS y la RAE (condicional tras si; habría y hubiera).
+// 17 Nov 2026: añadidos los ejercicios con soluciones (búsquedas reales: ejercicios condicionales inglés).
 export default {
   key: 'english-conditionals',
   site: 'es',
@@ -9,10 +10,10 @@ export default {
   section: 'grammar',
   course: 'English',
   published: '2026-10-31',
-  updated: '2026-10-31',
-  title: 'Condicionales en inglés: zero, first, second, third y mixed',
-  metaTitle: 'Condicionales en inglés: reglas, ejemplos y errores – Alimun',
-  desc: 'Cómo funcionan las frases con if: zero, first, second, third y mixed conditional, unless e in case, if I were you, la inversión formal y los errores típicos.',
+  updated: '2026-11-17',
+  title: 'Condicionales en inglés: reglas, ejemplos y ejercicios con soluciones',
+  metaTitle: 'Condicionales en inglés: reglas y ejercicios con soluciones – Alimun',
+  desc: 'Zero, first, second, third y mixed conditional explicados con ejemplos, unless e in case, la inversión formal, los errores típicos y ejercicios de condicionales con soluciones.',
   lead: "Si llueve, si ganara, si lo hubiera sabido: el inglés construye sus oraciones condicionales con unos pocos esquemas, y **el verbo le dice al oyente lo real que es la situación**. Aprende los esquemas, la única regla sobre would y las palabras que pueden sustituir a if, y casi todo encaja.",
   photo: 'english-conditionals-umbrella-rain',
   sticker: { draw: 'cat', say: "If it rains, I'm staying in. ¿Llueve? Me quedo en casa." },
@@ -142,6 +143,28 @@ export default {
     { p: "El español admite hubiera también en la principal: si lo hubiera sabido, no hubiera venido. Traducido palabra por palabra, sale if I had known, I had not come, que en inglés está mal. **La principal siempre lleva would have**: if I had known, I wouldn't have come. En inglés no hay alternancia posible entre las dos formas." },
     { h3: 'Cuando y el subjuntivo' },
     { p: "Con cuando, el español pide subjuntivo para el futuro: cuando llegue, te llamo. Muchos estudiantes buscan algo especial en inglés y acaban diciendo when I will arrive. **El inglés usa el presente simple**: when I arrive, I'll call you. Lo mismo con as soon as, en cuanto: as soon as I know, I'll tell you." },
+
+    { h: 'Ejercicios de condicionales en inglés, con soluciones' },
+    { p: "Intenta completar cada frase antes de mirar la columna de la solución. Fíjate primero en **qué tiempo va después de if** y luego en la oración principal: si aciertas el tipo de condicional, el resto sale casi solo. Las primeras frases son de nivel A2 y B1; las últimas, de B2 y C1." },
+    { table: {
+      head: ['Frase', 'Solución', 'Tipo'],
+      rows: [
+        ['If you mix red and white, you ___ pink. (get)', 'get', 'Zero'],
+        ['If it ___ this weekend, we will go to the beach. (not rain)', "doesn't rain", 'First'],
+        ["I'll call you as soon as I ___ at the station. (arrive)", 'arrive', 'First (as soon as)'],
+        ['If I ___ you, I would accept the offer. (be)', 'were', 'Second'],
+        ['What ___ you do if you lost your passport abroad? (do)', 'would', 'Second'],
+        ['If she ___ harder, she would have passed the exam. (study)', 'had studied', 'Third'],
+        ["We ___ the flight if the taxi hadn't been late. (not miss)", "wouldn't have missed", 'Third'],
+        ["If I had taken that job in London, I ___ there now. (live)", 'would be living', 'Mixed'],
+        ["If he ___ so shy, he would have spoken to her at the party. (not be)", "weren't", 'Mixed'],
+        ["You won't improve ___ you practise every day. (unless / in case)", 'unless', 'Unless'],
+        ['Take some cash ___ the card machine is broken. (unless / in case)', 'in case', 'In case'],
+        ['___ I known about the strike, I would have taken the train. (Had / Were)', 'Had', 'Inversión'],
+      ],
+      note: 'Si fallas una frase, vuelve a la sección de ese condicional y compara tu respuesta con los ejemplos.',
+    } },
+    { p: "Para practicar la producción, que es lo que de verdad cuesta, cambia cada frase a otro tipo. Pasa la del pasaporte al first conditional, **What will you do if you lose your passport?**, o la del examen al second, If she studied harder, she would pass. Decirlas en voz alta, y no solo escribirlas, es lo que hace que el condicional salga solo cuando hablas." },
 
     { h: 'Errores frecuentes' },
     { p: "Estos son los tropiezos más comunes de los hispanohablantes, y cada uno rompe una regla de este artículo." },
