@@ -77,7 +77,7 @@ test('launch email: only the ticked learners, English learners, each once', asyn
       if (t === 'campaigns') return Object.assign(q(camps.slice()), {
         insert: (c) => ({ select: () => ({ single: async () => { const row = Object.assign({ id: 'camp1', recipients: 0, emailed: 0 }, c); camps.push(row); return { data: row, error: null }; } }) }),
         update: (f) => ({ eq: async () => { Object.assign(camps[0], f); return {}; } }) });
-      if (t === 'marketing_consent_current') return q([{ user_id: 'c2', granted: false }]);
+      if (t === 'marketing_consent_current') return q([{ user_id: 'c2', granted: false, source: 'unsubscribe' }]);
       if (t === 'campaign_recipients') return Object.assign(q(recips.slice()), { upsert: async (r) => { recips.push(r); return {}; } });
       throw new Error('table ' + t);
     },

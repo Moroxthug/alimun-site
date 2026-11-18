@@ -163,8 +163,9 @@ async function recipients(sb, exclude, kind) {
   if (error) throw new Error('recipients: ' + error.message);
   const { data: sent } = await sb.from('notifications').select('user_id').eq('kind', 'offer').eq('params->>launch', kind);
   const done = new Set((sent || []).map((x) => x.user_id));
-  // Whoever unsubscribed from news and offers (latest consent withdrawn) is not emailed
-  const { data: off } = await sb.from('marketing_consent_current').select('user_id').eq('granted', false);
+  // Whoever unsubscribed (latest consent withdrawn through the unsubscribe link) is not emailed. Not ticking the offers
+  // box at sign-up does not count: the owner chose to send the launch email to every learner, with an unsubscribe link.
+  const { data: off } = await sb.from('marketing_consent_current').select('user_id').eq('granted', false).eq('source', 'unsubscribe');
   (off || []).forEach((x) => done.add(x.user_id));
   const out = [];
   for (const p of people || []) {
