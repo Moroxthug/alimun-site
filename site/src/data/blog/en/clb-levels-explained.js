@@ -224,7 +224,7 @@ export default {
     ['What is CLB 4 in CELPIP?', 'A CELPIP-General level of 4 in a skill equals CLB 4 in that skill. For citizenship you need 4 or higher in listening and speaking, and IRCC also accepts the shorter CELPIP-General LS for citizenship.'],
     ['Can I use IELTS Academic for citizenship?', 'No. For citizenship IRCC accepts IELTS General Training (at least 4.5 in listening and 4.0 in speaking), CELPIP-General or CELPIP-General LS (4 or higher in listening and speaking) and PTE Core (at least 28 in listening and 42 in speaking), among other proofs.'],
   ],
-  related: ['cefr-english', 'ielts-band-scores', 'celpip-or-ielts'],
+  related: ['celpip-to-ielts', 'pte-core-canada', 'celpip-or-ielts', 'ielts-band-scores', 'cefr-english'],
   sources: [
     ['IRCC: Express Entry language testing and CLB equivalency tables', 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/documents/language-requirements/language-testing.html'],
     ['IRCC: Comprehensive Ranking System (CRS) criteria', 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/check-score/crs-criteria.html'],

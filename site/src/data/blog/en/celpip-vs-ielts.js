@@ -139,7 +139,7 @@ export default {
     ['Which test do I need for citizenship?', 'Adults aged 18 to 54 need CLB 4 in speaking and listening. IRCC accepts CELPIP-General or CELPIP-General LS (4 or higher in both), IELTS General Training (4.0 speaking, 4.5 listening) or PTE Core (42 speaking, 28 listening), as well as some other kinds of proof.'],
     ['How quickly do I get my results?', 'CELPIP results usually appear online 2 to 4 business days after the test. IELTS on computer results are usually issued within two days, and paper results take about 13 days. PTE Core results usually arrive in about two days.'],
   ],
-  related: ['clb-levels', 'ielts-band-scores', 'ielts-or-cambridge'],
+  related: ['celpip-to-ielts', 'pte-core-canada', 'clb-levels', 'ielts-band-scores', 'ielts-or-cambridge'],
   sources: [
     ['IRCC: Express Entry language test results and CLB conversion', 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/documents/language-test.html'],
     ['IRCC: Express Entry approved language tests', 'https://www.canada.ca/en/immigration-refugees-citizenship/services/immigrate-canada/express-entry/documents/language-requirements/language-testing.html'],

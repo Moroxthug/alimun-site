@@ -125,7 +125,7 @@ export default {
     ['I am 55. Do I need to prove my English?', 'No. If you are 55 or older on the day you sign your application, you do not send language proof and you do not take the citizenship test.'],
     ['Is IELTS Academic accepted for citizenship?', 'No. IRCC says it only accepts IELTS General Training for citizenship applications.'],
   ],
-  related: ['clb-levels', 'celpip-or-ielts', 'ielts-band-scores', 'practise-speaking', 'cefr-english'],
+  related: ['clb-levels', 'celpip-or-ielts', 'pte-core-canada', 'ielts-band-scores', 'practise-speaking', 'cefr-english'],
   sources: [
     ['IRCC: Who can apply for citizenship (eligibility)', 'https://www.canada.ca/en/immigration-refugees-citizenship/services/canadian-citizenship/become-canadian-citizen/eligibility.html'],
     ['IRCC: Language proof for citizenship', 'https://www.canada.ca/en/immigration-refugees-citizenship/services/canadian-citizenship/become-canadian-citizen/eligibility/language-proof.html'],
