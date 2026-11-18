@@ -1,0 +1,222 @@
+// Les prépositions allemandes et leurs cas, écrit pour des lecteurs en France. Vérifié le 18 novembre 2026, en reprenant les
+// faits déjà contrôlés pour la version marocaine (10 novembre) : fiche du Goethe-Institut « Spickzettel Wechselpräpositionen »
+// (wohin? = accusatif, mouvement ; wo? = datif, position ; articles den/das/die et dem/dem/der), Duden (wegen : génitif, datif
+// standard à l'oral et familier à l'écrit ; trotz : génitif, datif surtout dans le sud), DWDS (an, in, zu, bei, nach, seit, von,
+// durch, ohne, während, statt, entlang, gegenüber, hängen fort/faible, nach Hause / zu Hause). Ajouté et vérifié le 18 novembre
+// sur le DWDS : helfen et gefallen avec le datif de la personne (jmdm. helfen, das Bild gefällt mir), danken avec le datif
+// (ich danke dir), geben sur le modèle jmdm. etw. geben (datif pour la personne, accusatif pour la chose). Le tableau des articles
+// au nominatif reprend la déclinaison standard ; les colonnes accusatif et datif suivent la fiche du Goethe-Institut.
+// Non retenu faute de source officielle : la liste des prépositions exigées par niveau au Goethe-Zertifikat, toute statistique
+// sur les erreurs des apprenants, les formes fürs, durchs et ums.
+export default {
+  key: 'german-prepositions',
+  site: 'fr',
+  slug: 'prepositions-allemand-datif-accusatif',
+  section: 'grammar',
+  course: 'German',
+  published: '2026-11-18',
+  updated: '2026-11-18',
+  title: "Prépositions allemandes : datif ou accusatif ? Le guide complet",
+  metaTitle: "Prépositions allemandes : datif ou accusatif ? – Alimun",
+  desc: "Datif ou accusatif après une préposition allemande ? Les listes, le tableau des articles, wo ? et wohin ?, le génitif et les erreurs typiques des Français.",
+  lead: "Mit dem ou mit den ? In der ou in die ? En allemand, c'est la préposition qui décide du cas, et c'est le cas qui décide de l'article. La bonne nouvelle, c'est que **la plupart des prépositions ont un cas fixe**, et que les autres obéissent à une seule question. Voici tout ce qu'il faut savoir, avec le tableau des articles et les pièges que rencontrent les francophones.",
+  photo: 'german-prepositions-fr-bookshelf',
+  sticker: { draw: 'croissant', say: 'Das Croissant liegt auf dem Teller. Wo ? Datif !' },
+  facts: [
+    { n: 7, unit: 'prépositions', text: 'aus, bei, mit, nach, seit, von et zu : toujours le datif, même avec un mouvement' },
+    { n: 5, unit: 'prépositions', text: "durch, für, gegen, ohne et um : toujours l'accusatif" },
+    { n: 9, unit: 'prépositions', text: 'an, auf, hinter, in, neben, über, unter, vor et zwischen : datif pour wo ?, accusatif pour wohin ?' },
+    { label: 'dem', text: 'au datif, der et das deviennent dem ; le féminin die devient der' },
+  ],
+  blocks: [
+    { take: { title: "L'essentiel", text: "Chaque préposition allemande impose un cas au groupe nominal qui la suit. **Aus, bei, mit, nach, seit, von et zu** demandent toujours le datif. **Durch, für, gegen, ohne et um** demandent toujours l'accusatif. Neuf prépositions de lieu, an, auf, hinter, in, neben, über, unter, vor et zwischen, prennent le datif pour une position (wo ?) et l'accusatif pour un déplacement vers un lieu (wohin ?). Wegen, trotz, während et statt prennent le génitif à l'écrit. Retiens chaque préposition avec un article, jamais toute seule.", draw: 'owl' } },
+
+    { h: 'Pourquoi le français ne t’aide pas ici' },
+    { p: "En français, la préposition est un mot invariable qui ne touche pas au reste de la phrase. On dit « avec le train », « pour le train », « dans le train », et l'article ne bouge pas. Cette habitude est précisément ce qui piège les francophones en allemand, car là-bas **la préposition commande un cas** : mit dem Zug, für den Zug, in dem Zug. Changer de préposition, c'est souvent changer d'article." },
+    { p: "Il y a une deuxième difficulté, plus sournoise. Le français utilise « à » et « en » aussi bien pour dire où l'on est que pour dire où l'on va : je suis à Lyon, je vais à Lyon ; je travaille en Allemagne, je pars en Allemagne. Un Français ne se pose donc jamais la question de la position ou du trajet. En allemand, **cette question décide de tout** pour les prépositions de lieu : ich bin in der Stadt, mais ich gehe in die Stadt." },
+
+    { h: 'Datif ou accusatif ? Le tableau des articles' },
+    { p: "Avant les listes de prépositions, voici le tableau dont tout dépend. Il donne l'article défini et l'article indéfini au nominatif, à l'accusatif et au datif, pour les trois genres et le pluriel. Le nominatif sert de point de départ : c'est la forme que tu trouves dans le dictionnaire, celle du sujet." },
+    { table: {
+      head: ['', 'Masculin', 'Neutre', 'Féminin', 'Pluriel'],
+      rows: [
+        ['Nominatif', 'der / ein', 'das / ein', 'die / eine', 'die / keine'],
+        ['Accusatif', 'den / einen', 'das / ein', 'die / eine', 'die / keine'],
+        ['Datif', 'dem / einem', 'dem / einem', 'der / einer', 'den / keinen + -n'],
+      ],
+      note: "Les colonnes accusatif et datif correspondent à celles de la fiche du Goethe-Institut sur les prépositions mixtes. Au pluriel, il n'y a pas d'article indéfini : on montre ici kein, qui se décline de la même façon. Au datif pluriel, le nom prend en général un -n : mit den Kindern.",
+    } },
+    { p: "Trois remarques rendent ce tableau beaucoup plus simple qu'il n'en a l'air. D'abord, **à l'accusatif, seul le masculin change** : der devient den, ein devient einen. Le neutre, le féminin et le pluriel gardent la forme du nominatif. Si tu hésites entre nominatif et accusatif devant un nom féminin, la question ne se pose même pas." },
+    { p: "Ensuite, **au datif, tout change**, mais de façon régulière. Le masculin et le neutre partagent la même forme, dem ou einem. Le féminin prend der ou einer, ce qui ressemble à un nominatif masculin et trompe beaucoup d'apprenants : in der Küche n'est pas un masculin, c'est un féminin au datif. Enfin, le pluriel du datif est den, avec un -n ajouté au nom quand il n'en a pas déjà un." },
+    { p: "Un moyen mnémotechnique utile : au datif, le masculin et le neutre se terminent par **-m**, le féminin par **-r**, le pluriel par **-n**. Dem, einem, meinem, keinem ; der, einer, meiner ; den, meinen. Les possessifs mein, dein, sein, unser suivent exactement les terminaisons de ein, ce qui t'évite d'apprendre un deuxième tableau." },
+
+    { h3: 'Reconnaître le datif et l’accusatif après un verbe' },
+    { p: "Les prépositions ne sont pas les seules à imposer un cas : le verbe le fait aussi. Le schéma le plus fréquent est celui de geben, donner. Le DWDS le présente sous la forme jmdm. etw. geben : **la personne qui reçoit est au datif**, la chose donnée est à l'accusatif. Ich gebe dem Kellner das Geld, je donne l'argent au serveur. C'est le même partage qu'en français entre « lui » et « le » : je le lui donne." },
+    { p: "Le piège vient des verbes qui n'ont pas la même construction dans les deux langues. En français, on aide quelqu'un, sans préposition, comme un complément d'objet direct. En allemand, helfen prend **le datif** : ich helfe dir, ich helfe meiner Mutter. Le DWDS donne l'exemple der Mutter beim Abwaschen helfen. De même, danken se construit avec le datif (ich danke dir), et gefallen met au datif la personne à qui quelque chose plaît : das Bild gefällt mir." },
+    { p: "Pour savoir quel cas utiliser après un verbe, le réflexe le plus sûr est de **regarder l'entrée du dictionnaire** plutôt que de traduire. Les dictionnaires allemands notent jmdn. (jemanden, accusatif) ou jmdm. (jemandem, datif) devant le complément. Quand tu apprends un nouveau verbe, apprends-le avec cette indication, exactement comme tu apprends une préposition avec son cas." },
+
+    { h: 'Les prépositions toujours suivies du datif' },
+    { p: "Ce groupe est le plus important au quotidien, parce qu'il contient les prépositions les plus fréquentes. **Aus, bei, mit, nach, seit, von et zu** prennent toujours le datif. Toujours, cela veut dire aussi avec un verbe de mouvement : nach et zu indiquent une destination, et pourtant elles restent au datif. La question wo ou wohin ne concerne pas ce groupe." },
+    { table: {
+      head: ['Préposition', 'Sens', 'Exemple', 'En français'],
+      rows: [
+        ['aus', "de (provenance), hors de", 'Sie kommt gerade aus der Bibliothek.', 'Elle sort de la bibliothèque.'],
+        ['bei', 'chez, auprès de', 'Ich übernachte bei einer Freundin in Lille.', "Je dors chez une amie à Lille."],
+        ['mit', 'avec, en (transport)', 'Wir fahren mit dem TGV nach Straßburg.', 'Nous allons à Strasbourg en TGV.'],
+        ['nach', 'à, vers (villes et pays sans article), après', 'Nach dem Essen fahren wir nach Köln.', 'Après le repas, nous partons pour Cologne.'],
+        ['seit', 'depuis', 'Er wohnt seit einem Monat in Berlin.', 'Il habite à Berlin depuis un mois.'],
+        ['von', 'de, par', 'Ich habe eine Nachricht von meinem Chef.', "J'ai un message de mon chef."],
+        ['zu', 'chez, à (personne, lieu précis)', 'Am Samstag gehe ich zur Bäckerei.', 'Samedi, je vais à la boulangerie.'],
+      ],
+      note: "Cas vérifiés dans le dictionnaire DWDS. D'autres prépositions moins fréquentes prennent aussi le datif, comme gegenüber, qui se place souvent après un pronom : mir gegenüber, en face de moi.",
+    } },
+    { p: "Deux de ces prépositions méritent une attention particulière pour un francophone. **Seit se comporte comme « depuis »** : on garde le présent pour une situation qui dure encore. Ich lerne seit zwei Jahren Deutsch, j'apprends l'allemand depuis deux ans. Les anglophones doivent passer par un temps du passé ; toi, tu peux calquer le français, à condition de mettre le datif : seit zwei Jahren, seit einem Monat, seit der Schule." },
+    { p: "La seconde est **le couple bei et zu**, qui se partage le travail de « chez ». Bei décrit l'endroit où tu es : ich bin beim Zahnarzt, je suis chez le dentiste. Zu décrit l'endroit où tu vas : ich gehe zum Zahnarzt, je vais chez le dentiste. Les deux prennent le datif, c'est donc la préposition qui change, pas le cas. Le DWDS illustre bei avec l'exemple beim Arzt lange warten müssen." },
+    { h3: 'Nach, zu ou in : dire où l’on va' },
+    { p: "Pour une destination, le français se contente de « à » ou « en ». L'allemand choisit selon le type de lieu. On emploie **nach** devant les villes et les pays qui s'utilisent sans article : nach Paris, nach Frankreich, nach Deutschland. Devant un pays qui a un article, on emploie in avec l'accusatif : in die Schweiz, in die Türkei ; le DWDS cite in die Niederlande reisen. Pour une personne, un commerce ou un bâtiment, on emploie zu : zum Bahnhof, zur Post, zu meinen Großeltern." },
+    { p: "Deux expressions figées complètent le tableau. **Nach Hause** veut dire « à la maison » avec un mouvement : ich gehe jetzt nach Hause, je rentre. **Zu Hause** décrit la position : ich bin zu Hause, je suis chez moi. Le DWDS donne cette répartition dans l'entrée Haus. Si tu ne retiens qu'une chose de cette section, retiens cette paire, car elle revient dans presque toutes les conversations." },
+    { figure: { photo: 'german-prepositions-fr-cafe-terrace', alt: "Terrasse d'un café avec des tables grises, des chaises et une ardoise de boissons peinte sur un mur blanc", caption: "Wir sitzen vor dem Café, mit einem Kaffee : vor décrit une position, mit prend toujours le datif." } },
+
+    { h: "Les prépositions toujours suivies de l'accusatif" },
+    { p: "Le deuxième groupe est court : **durch, für, gegen, ohne et um**. Elles prennent toujours l'accusatif. Comme l'accusatif ne se distingue du nominatif qu'au masculin singulier, tu verras surtout la différence avec un nom masculin ou un pronom : für den Kunden, ohne einen Schirm, für mich, gegen ihn." },
+    { table: {
+      head: ['Préposition', 'Sens', 'Exemple', 'En français'],
+      rows: [
+        ['durch', 'à travers, par', 'Wir laufen durch den Park.', 'Nous traversons le parc à pied.'],
+        ['für', 'pour', 'Ich kaufe Blumen für meinen Freund.', "J'achète des fleurs pour mon copain."],
+        ['gegen', 'contre, vers (heure approximative)', 'Frankreich spielt heute gegen den Weltmeister.', 'La France joue aujourd’hui contre le champion du monde.'],
+        ['ohne', 'sans', 'Er geht nie ohne seinen Laptop aus dem Haus.', 'Il ne sort jamais sans son ordinateur.'],
+        ['um', 'autour de, à (heure)', 'Der Film beginnt um zwanzig Uhr.', 'Le film commence à vingt heures.'],
+      ],
+      note: "Durch et ohne sont indiquées « mit Akkusativ » dans le DWDS. Entlang prend lui aussi l'accusatif quand il est placé après le nom : den Fluss entlang, le long du fleuve.",
+    } },
+    { p: "Le réflexe français à combattre ici, c'est le pronom. Après « pour » et « sans », on dit « moi », « toi », « lui ». En allemand, ce sont **les pronoms à l'accusatif** : für mich, für dich, ohne ihn, ohne uns. Für dir ou ohne mir sont des fautes qu'un examinateur repère tout de suite. Retiens la phrase-modèle das ist für dich, et le reste suivra." },
+
+    { h: 'Les prépositions mixtes : la question wo ? ou wohin ?' },
+    { p: "Voici le groupe qui fait la réputation du datif et de l'accusatif. Neuf prépositions de lieu, **an, auf, hinter, in, neben, über, unter, vor et zwischen**, peuvent prendre l'un ou l'autre cas. Le Goethe-Institut les appelle Wechselpräpositionen, les prépositions qui alternent, et sa fiche de révision les résume à une seule distinction." },
+    { p: "Quand il y a **un déplacement d'un point vers un autre**, la question est wohin ?, où ?, au sens de « vers où », et la préposition prend l'accusatif. Quand la phrase décrit **une situation immobile**, quelqu'un ou quelque chose qui se trouve à un endroit et y reste, la question est wo ?, où se trouve-t-il, et la préposition prend le datif. C'est tout : il n'y a pas d'autre règle à apprendre pour ces neuf prépositions quand elles parlent de lieu." },
+    { table: {
+      head: ['Préposition', 'Wo ? Position, datif', 'Wohin ? Déplacement, accusatif'],
+      rows: [
+        ['an', 'Der Kalender hängt an der Tür. (Le calendrier est accroché à la porte.)', 'Ich hänge den Kalender an die Tür. (J’accroche le calendrier à la porte.)'],
+        ['auf', 'Die Schlüssel liegen auf dem Regal. (Les clés sont sur l’étagère.)', 'Ich lege die Schlüssel auf das Regal. (Je pose les clés sur l’étagère.)'],
+        ['hinter', 'Das Fahrrad steht hinter der Garage. (Le vélo est derrière le garage.)', 'Ich stelle das Fahrrad hinter die Garage. (Je mets le vélo derrière le garage.)'],
+        ['in', 'Die Milch ist im Kühlschrank. (Le lait est au frigo.)', 'Ich stelle die Milch in den Kühlschrank. (Je mets le lait au frigo.)'],
+        ['neben', 'Sie sitzt neben ihrem Bruder. (Elle est assise à côté de son frère.)', 'Sie setzt sich neben ihren Bruder. (Elle s’assoit à côté de son frère.)'],
+        ['über', 'Das Foto hängt über dem Sofa. (La photo est au-dessus du canapé.)', 'Ich hänge das Foto über das Sofa. (J’accroche la photo au-dessus du canapé.)'],
+        ['unter', 'Der Hund schläft unter dem Tisch. (Le chien dort sous la table.)', 'Der Hund läuft unter den Tisch. (Le chien file sous la table.)'],
+        ['vor', 'Wir warten vor dem Kino. (Nous attendons devant le cinéma.)', 'Wir gehen vor das Kino. (Nous allons devant le cinéma.)'],
+        ['zwischen', 'Die Apotheke liegt zwischen der Bank und dem Café. (La pharmacie est entre la banque et le café.)', 'Ich parke zwischen die Autos. (Je me gare entre les voitures.)'],
+      ],
+      note: "Règle d'après la fiche « Spickzettel Wechselpräpositionen » du Goethe-Institut : l'accusatif pour un mouvement vers un lieu (wohin ?), le datif pour une position (wo ?).",
+    } },
+    { p: "Attention : **bouger ne suffit pas pour passer à l'accusatif**. Ce qui compte, c'est le changement de lieu. Le DWDS oppose in einer Stadt wohnen, au datif, et in die Niederlande reisen, à l'accusatif. Si tu cours dans le parc, tu bouges, mais tu restes dans le parc : ich jogge im Park, au datif. Si tu entres dans le parc, tu passes de la rue au parc : ich gehe in den Park, à l'accusatif. Pose-toi la question « est-ce que je change d'endroit ? » plutôt que « est-ce que ça bouge ? »." },
+    { figure: { photo: 'german-prepositions-fr-cat-window', alt: "Un chat tigré et blanc assis devant une fenêtre ouverte sur un ciel bleu et des nuages", caption: "Die Katze sitzt am Fenster, au datif. Si elle saute sur le rebord, elle springt auf das Fensterbrett, à l'accusatif." } },
+
+    { h3: 'Stellen ou stehen, legen ou liegen' },
+    { p: "Là où le français dit simplement « mettre » et « être », l'allemand précise la position de l'objet. Il existe pour cela des couples de verbes très réguliers : le premier verbe décrit l'action de placer et appelle **l'accusatif**, le second décrit le résultat et appelle **le datif**. Connaître ces couples, c'est connaître le cas avant même d'avoir réfléchi à la préposition." },
+    { table: {
+      head: ['Placer (wohin ? accusatif)', 'Se trouver (wo ? datif)', 'Exemple'],
+      rows: [
+        ['stellen : mettre debout', 'stehen : être debout', 'Ich stelle den Wein auf den Tisch. Der Wein steht auf dem Tisch.'],
+        ['legen : poser à plat', 'liegen : être posé à plat', 'Ich lege die Zeitung auf das Sofa. Die Zeitung liegt auf dem Sofa.'],
+        ['setzen : asseoir', 'sitzen : être assis', 'Ich setze das Kind auf den Stuhl. Das Kind sitzt auf dem Stuhl.'],
+        ['hängen (hängte, gehängt) : accrocher', 'hängen (hing, gehangen) : être accroché', 'Ich hänge die Jacke in den Schrank. Die Jacke hängt im Schrank.'],
+      ],
+      note: "Le DWDS distingue les deux verbes hängen : le verbe fort (hing, gehangen) pour la position, le verbe faible (hängte, gehängt) pour l'action d'accrocher.",
+    } },
+
+    { cta: true },
+
+    { h3: 'Quand ces prépositions parlent du temps' },
+    { p: "Utilisées pour dater un événement, an, in et vor ne répondent plus à wo ou wohin mais à wann ?, quand. Dans ce cas, elles prennent **le datif**. Le DWDS l'indique pour an avec les jours et les moments de la journée, et pour in avec les périodes. Tu diras donc am Freitag (vendredi), am Morgen (le matin), im August (en août), im Winter (en hiver), in drei Tagen (dans trois jours) et vor einer Woche (il y a une semaine)." },
+    { p: "Ce dernier exemple contient un faux ami classique. **Vor, avec une durée, signifie « il y a »**, pas « avant » : vor zwei Jahren, il y a deux ans. Pour dire « avant » au sens de « avant un événement », on emploie aussi vor, mais suivi d'un nom d'événement : vor dem Essen, avant le repas. Dans les deux cas, c'est le datif." },
+
+    { h: 'Les formes contractées' },
+    { p: "Comme le français contracte « à le » en « au » et « de le » en « du », l'allemand fusionne plusieurs prépositions avec l'article. Ces formes sont **la norme à l'oral comme à l'écrit**, et elles t'évitent même une partie du travail, puisque le cas est déjà inclus dans la contraction." },
+    { table: {
+      head: ['Contraction', 'Forme longue', 'Cas', 'Exemple'],
+      rows: [
+        ['am', 'an dem', 'datif', 'Wir treffen uns am Bahnhof.'],
+        ['ans', 'an das', 'accusatif', 'Im Sommer fahren wir ans Meer.'],
+        ['im', 'in dem', 'datif', 'Sie arbeitet im Krankenhaus.'],
+        ['ins', 'in das', 'accusatif', 'Heute Abend gehen wir ins Theater.'],
+        ['beim', 'bei dem', 'datif', 'Ich bin gerade beim Bäcker.'],
+        ['vom', 'von dem', 'datif', 'Er kommt vom Training.'],
+        ['zum', 'zu dem', 'datif', 'Wie komme ich zum Rathaus?'],
+        ['zur', 'zu der', 'datif', 'Sie geht zur Schule.'],
+      ],
+      note: "Contractions décrites dans les entrées an, in, zu, bei et von du DWDS.",
+    } },
+    { p: "Les contractions sont aussi **un indice de genre**. Zum ne peut venir que de zu dem, donc d'un masculin ou d'un neutre ; zur vient de zu der, donc d'un féminin. Si tu entends zur Apotheke, tu sais qu'Apotheke est féminin. Paire à surveiller : im et ins. Im Kino, je suis au cinéma ; ins Kino, j'y vais. Une seule lettre sépare la position du déplacement." },
+
+    { h: 'Les prépositions du génitif' },
+    { p: "Le dernier groupe concerne surtout l'écrit soigné. **Wegen (à cause de), trotz (malgré), während (pendant) et statt (au lieu de)** prennent le génitif en allemand standard. Au génitif, l'article devient des au masculin et au neutre, avec un -s ou -es sur le nom, et der au féminin et au pluriel : wegen des Streiks, trotz der Kälte, während der Ferien, statt eines Geschenks." },
+    { examples: [
+      ['Wegen **des** Schnees fällt der Unterricht aus.', 'À cause de la neige, le cours est annulé.'],
+      ['Trotz **der** Kälte sitzen wir draußen.', 'Malgré le froid, nous sommes assis dehors.'],
+      ['Während **der** Ferien arbeite ich in einem Hotel.', 'Pendant les vacances, je travaille dans un hôtel.'],
+      ['Statt **eines** Geschenks schicke ich eine Karte.', "Au lieu d'un cadeau, j'envoie une carte."],
+    ] },
+    { p: "À l'oral, tu entendras souvent le datif à la place. Le Duden précise que wegen avec le datif est **standard à l'oral, mais familier à l'écrit**, et que trotz avec le datif est courant surtout dans le sud. Le DWDS qualifie de familier während dem Essen. Le conseil pratique est simple : comprends le datif quand tu l'entends, mais écris le génitif dans une lettre, un courriel professionnel ou une épreuve d'examen." },
+    { figure: { photo: 'german-prepositions-fr-stone-bridge', alt: "Un vieux pont de pierre en arc au-dessus d'une rivière peu profonde bordée d'arbres", caption: "Der Fluss fließt unter der Brücke, au datif. Wir gehen über die Brücke, à l'accusatif : on passe d'une rive à l'autre." } },
+
+    { h: 'Les erreurs les plus fréquentes chez les Français' },
+    { p: "Les fautes ci-dessous ont presque toutes la même origine : **traduire la préposition française mot à mot**, sans se demander quel cas l'allemand impose. Elles reviennent dans les copies du lycée comme dans les productions écrites d'examen, et elles se corrigent vite une fois qu'on les a repérées." },
+    { mistakes: [
+      ['Ich fahre mit meinen Auto.', 'Ich fahre mit **meinem** Auto.', 'Mit prend toujours le datif ; Auto est neutre, donc meinem.'],
+      ['Ich gehe im Kino.', 'Ich gehe **ins** Kino.', "Aller au cinéma, c'est un déplacement (wohin ?) : in + accusatif, ins."],
+      ['Ich arbeite in die Stadt.', 'Ich arbeite in **der** Stadt.', 'Travailler en ville décrit une position (wo ?) : in + datif.'],
+      ['Ich helfe meinen Bruder.', 'Ich helfe **meinem** Bruder.', 'Helfen prend le datif, même si « aider quelqu’un » n’a pas de préposition en français.'],
+      ['Ich fahre in Frankreich zurück.', 'Ich fahre **nach** Frankreich zurück.', 'Pour un pays sans article, la direction se dit avec nach.'],
+      ['Ich bin seit zwei Jahre hier.', 'Ich bin seit zwei **Jahren** hier.', 'Seit prend le datif, et le datif pluriel ajoute -n au nom.'],
+      ['Ich gehe bei meiner Oma.', 'Ich gehe **zu** meiner Oma.', '« Aller chez » se dit zu ; bei sert pour être chez quelqu’un.'],
+      ['Das ist für mir.', 'Das ist für **mich**.', "Für prend l'accusatif, donc le pronom mich."],
+    ] },
+
+    { h: 'Comment apprendre tout cela pour de bon' },
+    { p: "Connaître les règles ne suffit pas à les appliquer quand tu parles. Ce qui fonctionne, c'est d'**apprendre des groupes de mots entiers** : mit dem Zug, zum Bahnhof, seit einem Jahr, für dich, ins Kino, im Büro, nach Hause. Ce sont ces blocs qui te viennent quand tu parles vite, pas la règle. Pour les deux groupes fixes, répète-les à voix haute jusqu'à ce qu'ils sortent tout seuls, aus, bei, mit, nach, seit, von, zu, puis durch, für, gegen, ohne, um." },
+    { p: "Pour les prépositions mixtes, décris ce qui t'entoure. Dans ta cuisine, dis où sont les choses, au datif : die Tasse steht auf dem Tisch, der Käse liegt im Kühlschrank. Puis range quelque chose en disant ce que tu fais, à l'accusatif : ich stelle die Tasse in den Schrank. **Quelques minutes par jour** suffisent pour que la question wo ou wohin devienne un réflexe." },
+    { p: "Enfin, fais-toi corriger. Une erreur de cas passe facilement inaperçue à la relecture, parce qu'on lit ce qu'on voulait écrire. Chez Alimun, tu suis des **cours d'allemand en direct avec un professeur et un petit groupe**, avec des exercices à correction immédiate et des devoirs corrigés par ton professeur ; un test de niveau te place dans le groupe qui te correspond. Les prépositions font partie des automatismes qu'il vaut mieux installer tôt, avant qu'une mauvaise habitude ne s'installe." },
+  ],
+  quiz: [
+    { q: 'Wir fahren mit ___ Zug nach Straßburg.', options: ['den', 'dem', 'der', 'das'], a: 1, why: 'Mit prend toujours le datif, et Zug est masculin : mit dem Zug.' },
+    { q: 'Ich kaufe Blumen für ___ Freund.', options: ['meinem', 'meinen', 'meiner', 'mein'], a: 1, why: "Für prend toujours l'accusatif, et Freund est masculin : für meinen Freund." },
+    { q: 'Ich stelle die Milch in ___ Kühlschrank.', options: ['dem', 'den', 'der', 'das'], a: 1, why: "Stellen décrit un déplacement (wohin ?), donc in prend l'accusatif : in den Kühlschrank." },
+    { q: 'Die Milch steht in ___ Kühlschrank.', options: ['den', 'dem', 'die', 'des'], a: 1, why: 'Stehen décrit une position (wo ?), donc in prend le datif : in dem Kühlschrank, ou im Kühlschrank.' },
+    { q: 'Quel est l’article défini féminin au datif ?', options: ['die', 'den', 'der', 'dem'], a: 2, why: 'Au datif, le féminin die devient der : in der Schule.' },
+    { q: 'Ich helfe ___ Mutter.', options: ['meine', 'meiner', 'meinen', 'meines'], a: 1, why: 'Helfen se construit avec le datif, et Mutter est féminin : meiner Mutter.' },
+    { q: 'Comment dit-on « il y a une semaine » ?', options: ['seit einer Woche', 'vor einer Woche', 'für eine Woche', 'in einer Woche'], a: 1, why: 'Vor avec une durée signifie « il y a » et prend le datif : vor einer Woche.' },
+    { q: 'Dans une lettre formelle, quelle forme faut-il écrire ?', options: ['wegen dem Streik', 'wegen den Streik', 'wegen des Streiks', 'wegen der Streik'], a: 2, why: "Wegen prend le génitif à l'écrit ; le Duden juge le datif standard à l'oral seulement." },
+  ],
+  faq: [
+    ['Quelles prépositions allemandes prennent le datif ?', "Aus, bei, mit, nach, seit, von et zu prennent toujours le datif, même avec un verbe de mouvement : ich fahre mit dem Bus, ich gehe zum Arzt. Les neuf prépositions mixtes (an, auf, hinter, in, neben, über, unter, vor, zwischen) prennent aussi le datif quand elles décrivent une position ou une date."],
+    ['Comment savoir s’il faut le datif ou l’accusatif ?', "Regarde d'abord la préposition : beaucoup ont un cas fixe. Pour les prépositions mixtes, demande-toi s'il y a un changement de lieu. Si oui (wohin ?), c'est l'accusatif : ich gehe in die Stadt. Si la phrase décrit une position (wo ?), c'est le datif : ich bin in der Stadt. Après un verbe, vérifie dans le dictionnaire s'il est noté jmdn. (accusatif) ou jmdm. (datif)."],
+    ['Pourquoi dit-on nach Deutschland mais in die Schweiz ?', "Nach s'emploie avec les villes et les pays utilisés sans article, comme Deutschland ou Frankreich. Les pays qui ont un article, comme die Schweiz ou die Niederlande, se construisent avec in et l'accusatif pour indiquer la direction."],
+    ['Pourquoi entend-on wegen dem alors qu’on apprend wegen des ?', "Parce que les deux existent. Le Duden indique que wegen avec le datif est standard à l'oral mais familier à l'écrit. Dans un texte soigné ou à l'examen, écris le génitif : wegen des Wetters."],
+  ],
+  related: ['german-cases', 'german-articles', 'german-word-order', 'german-modal-verbs', 'goethe-certificates'],
+  sources: [
+    ['Goethe-Institut : Spickzettel Wechselpräpositionen', 'https://www.goethe.de/resources/files/pdf134/pdf-spickzettel-wechselprpositionen.pdf'],
+    ['Duden : wegen', 'https://www.duden.de/rechtschreibung/wegen'],
+    ['Duden : trotz', 'https://www.duden.de/rechtschreibung/trotz'],
+    ['DWDS : an', 'https://www.dwds.de/wb/an'],
+    ['DWDS : in', 'https://www.dwds.de/wb/in'],
+    ['DWDS : zu', 'https://www.dwds.de/wb/zu'],
+    ['DWDS : bei', 'https://www.dwds.de/wb/bei'],
+    ['DWDS : nach', 'https://www.dwds.de/wb/nach'],
+    ['DWDS : seit', 'https://www.dwds.de/wb/seit'],
+    ['DWDS : von', 'https://www.dwds.de/wb/von'],
+    ['DWDS : durch', 'https://www.dwds.de/wb/durch'],
+    ['DWDS : ohne', 'https://www.dwds.de/wb/ohne'],
+    ['DWDS : während', 'https://www.dwds.de/wb/w%C3%A4hrend'],
+    ['DWDS : entlang', 'https://www.dwds.de/wb/entlang'],
+    ['DWDS : gegenüber', 'https://www.dwds.de/wb/gegen%C3%BCber'],
+    ['DWDS : hängen', 'https://www.dwds.de/wb/h%C3%A4ngen'],
+    ['DWDS : Haus (nach Hause, zu Hause)', 'https://www.dwds.de/wb/Haus'],
+    ['DWDS : helfen', 'https://www.dwds.de/wb/helfen'],
+    ['DWDS : danken', 'https://www.dwds.de/wb/danken'],
+    ['DWDS : gefallen', 'https://www.dwds.de/wb/gefallen'],
+    ['DWDS : geben', 'https://www.dwds.de/wb/geben'],
+  ],
+};

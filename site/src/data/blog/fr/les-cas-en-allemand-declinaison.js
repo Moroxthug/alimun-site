@@ -215,7 +215,7 @@ export default {
     ['Comment savoir quel cas prend un verbe ?', "Regarde l'entrée du dictionnaire : jmdm. veut dire que le verbe prend le datif, jmdn. l'accusatif. La plupart des verbes à un seul complément prennent l'accusatif, donc ce sont les verbes au datif comme helfen, danken, gefallen et gehören qu'il faut apprendre en groupe."],
     ['Les noms allemands changent-ils selon le cas ?', "En général, peu : les masculins et les neutres ajoutent -s ou -es au génitif singulier, et la plupart des noms ajoutent -n au datif pluriel. L'exception, c'est la déclinaison faible, un groupe de masculins comme der Student qui ajoutent -n ou -en à tous les cas sauf au nominatif singulier."],
   ],
-  related: ['german-articles', 'goethe-certificates', 'practise-speaking'],
+  related: ['german-prepositions', 'german-articles', 'goethe-certificates', 'practise-speaking'],
   sources: [
     ['Duden : wegen', 'https://www.duden.de/rechtschreibung/wegen'],
     ['DWDS : helfen', 'https://www.dwds.de/wb/helfen'],

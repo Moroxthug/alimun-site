@@ -132,7 +132,7 @@ export default {
     ['Mon certificat Cambridge expire-t-il ?', "Non. Les certificats Cambridge n'ont pas de date d'expiration. Certaines universités et certains employeurs fixent leur propre règle sur l'ancienneté du certificat, alors vérifie si tu postules quelque part en particulier."],
     ["Vaut-il mieux passer l'IELTS sur papier ou sur ordinateur ?", "Le contenu, le minutage et la correction sont les mêmes. Sur ordinateur, tu tapes tes réponses et tu as en général tes résultats en quelques jours ; sur papier, tu écris à la main et les résultats arrivent 13 jours après le test. Choisis le format où tu es le plus à l'aise, sauf si une date limite décide pour toi."],
   ],
-  related: ['cefr-english', 'how-long-english', 'german-articles'],
+  related: ['english-c1-level', 'cefr-english', 'how-long-english', 'german-articles'],
   sources: [
     ['IELTS Academic test format', 'https://ielts.org/take-a-test/test-types/ielts-academic-test'],
     ['IELTS General Training test format', 'https://ielts.org/take-a-test/test-types/ielts-general-training-test'],

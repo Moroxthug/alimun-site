@@ -165,7 +165,7 @@ export default {
     ["Les Allemands sont-ils toujours d'accord sur les articles ?", "Pour les mots courants, oui. Quelques noms admettent deux genres, comme der ou das Joghurt et die ou das Cola, selon la région. Pour un apprenant, les formes standard du dictionnaire sont toujours sûres."],
     ['Der See, est-ce un lac ou la mer ?', 'Der See est le lac, die See est la mer, comme dans die Nordsee et die Ostsee. Le pluriel de lac est die Seen.'],
   ],
-  related: ['cefr-english', 'how-long-english', 'ielts-or-cambridge'],
+  related: ['german-prepositions', 'cefr-english', 'how-long-english', 'ielts-or-cambridge'],
   sources: [
     ['Duden : See (mer)', 'https://www.duden.de/rechtschreibung/See_Meer'],
     ['Duden : Band (tome)', 'https://www.duden.de/rechtschreibung/Band_Buch'],

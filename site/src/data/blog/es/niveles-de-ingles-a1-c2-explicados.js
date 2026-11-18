@@ -156,7 +156,7 @@ export default {
     ['¿Puedo tener niveles distintos en cada destreza?', 'Sí, y es muy habitual. Muchos estudiantes leen a un nivel más alto que el que hablan, y por eso practicar la expresión oral con regularidad es tan importante.'],
     ['¿Caduca el certificado de Cambridge?', 'No, el certificado de Cambridge English no caduca. Aun así, algunas universidades y empresas piden un resultado reciente, y los resultados de IELTS suelen aceptarse durante un tiempo limitado, así que comprueba lo que exige la institución.'],
   ],
-  related: ['how-long-english', 'ielts-or-cambridge', 'german-articles'],
+  related: ['english-b1-level', 'how-long-english', 'ielts-or-cambridge', 'german-articles'],
   sources: [
     ['Consejo de Europa, niveles comunes de referencia del MCER: escala global', 'https://www.coe.int/en/web/common-european-framework-reference-languages/table-1-cefr-3.3-common-reference-levels-global-scale'],
     ['Consejo de Europa, Volumen complementario del MCER (2020)', 'https://www.coe.int/en/web/common-european-framework-reference-languages/cefr-companion-volume'],

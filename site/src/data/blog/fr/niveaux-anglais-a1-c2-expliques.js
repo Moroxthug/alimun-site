@@ -157,7 +157,7 @@ export default {
     ['Puis-je avoir des niveaux différents selon les compétences ?', "Oui, et c'est très courant. Beaucoup d'apprenants lisent à un niveau plus élevé que celui auquel ils parlent : c'est pour ça que la pratique régulière de l'oral compte autant."],
     ['Le certificat Cambridge expire-t-il ?', "Non, le certificat Cambridge English n'expire pas. Certaines universités et certains employeurs demandent quand même un résultat récent, et les résultats IELTS sont en général acceptés pendant une durée limitée : vérifie ce qu'exige l'organisme."],
   ],
-  related: ['how-long-english', 'ielts-or-cambridge', 'german-articles'],
+  related: ['english-c1-level', 'how-long-english', 'ielts-or-cambridge', 'german-articles'],
   sources: [
     ["Conseil de l'Europe, niveaux communs de référence du CECRL : échelle globale", 'https://www.coe.int/en/web/common-european-framework-reference-languages/table-1-cefr-3.3-common-reference-levels-global-scale'],
     ["Conseil de l'Europe, Volume complémentaire du CECRL (2020)", 'https://www.coe.int/en/web/common-european-framework-reference-languages/cefr-companion-volume'],

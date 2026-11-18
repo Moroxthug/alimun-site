@@ -177,7 +177,7 @@ export default {
     ['Combien de temps un résultat IELTS est-il valable ?', 'Les résultats IELTS sont officiellement reconnus pendant deux ans à compter de la date du test, et le Test Report Form ne peut pas être prolongé. Certains organismes ont leurs propres règles, alors vérifie auprès d’eux.'],
     ['Puis-je repasser seulement le Writing ?', 'Oui, avec IELTS One Skill Retake, si tu as passé le test complet sur ordinateur dans un centre d’examen au cours des 60 derniers jours. Tu peux repasser une compétence une fois par test complet, et l’organisme où tu postules doit accepter les résultats du One Skill Retake.'],
   ],
-  related: ['ielts-or-cambridge', 'cefr-english', 'how-long-english'],
+  related: ['english-c1-level', 'ielts-or-cambridge', 'cefr-english', 'how-long-english'],
   sources: [
     ['IELTS scoring in detail (ielts.org)', 'https://ielts.org/take-a-test/your-results/ielts-scoring-in-detail'],
     ['IELTS and the CEFR (ielts.org)', 'https://ielts.org/organisations/ielts-for-organisations/compare-ielts/ielts-and-the-cefr'],
