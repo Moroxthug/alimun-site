@@ -46,7 +46,7 @@ test('the class opens with 8 sign-ups across the pack and the open class, otherw
 });
 
 // The launch email goes only to the learners the owner ticks, among English A1–B2 learners not sent yet
-test('launch email: only the ticked learners, English A1 to B2, each once', async () => {
+test('launch email: only the ticked learners, English learners, each once', async () => {
   const mail = require('../../api/_lib/email.js');
   const LM = require('../../api/_lib/launch-email.js');
   const sent = [], notes = [], camps = [], recips = [], bodies = [];
@@ -57,6 +57,7 @@ test('launch email: only the ticked learners, English A1 to B2, each once', asyn
     { user_id: 'a1', full_name: 'Ana', level: 'A1', timezone: 'Europe/Paris', ui_lang: 'fr', language: 'English' },
     { user_id: 'b2', full_name: 'Bo', level: 'B2', timezone: 'Europe/Istanbul', ui_lang: null, language: 'English' },
     { user_id: 'c1', full_name: 'Cy', level: 'C1', timezone: 'Europe/Paris', ui_lang: null, language: 'English' },
+    { user_id: 'c2', full_name: 'Cu', level: 'C1', timezone: 'Europe/Paris', ui_lang: null, language: 'English' },
     { user_id: 'de', full_name: 'Di', level: 'A1', timezone: 'Europe/Berlin', ui_lang: 'de', language: 'German' },
     { user_id: '44444444-4444-4444-8444-444444444444', full_name: 'Test', level: 'A1', timezone: 'UTC', ui_lang: null, language: 'English' }
   ];
@@ -76,6 +77,7 @@ test('launch email: only the ticked learners, English A1 to B2, each once', asyn
       if (t === 'campaigns') return Object.assign(q(camps.slice()), {
         insert: (c) => ({ select: () => ({ single: async () => { const row = Object.assign({ id: 'camp1', recipients: 0, emailed: 0 }, c); camps.push(row); return { data: row, error: null }; } }) }),
         update: (f) => ({ eq: async () => { Object.assign(camps[0], f); return {}; } }) });
+      if (t === 'marketing_consent_current') return q([{ user_id: 'c2', granted: false }]);
       if (t === 'campaign_recipients') return Object.assign(q(recips.slice()), { upsert: async (r) => { recips.push(r); return {}; } });
       throw new Error('table ' + t);
     },
@@ -83,7 +85,7 @@ test('launch email: only the ticked learners, English A1 to B2, each once', asyn
   };
   try {
     const p = await LM.run(sb, 'preview', {});
-    assert.deepStrictEqual(p.people.map((x) => x.id).sort(), ['a1', 'b2'], 'English A1 to B2 only, the excluded account left out');
+    assert.deepStrictEqual(p.people.map((x) => x.id).sort(), ['a1', 'b2', 'c1'], 'English learners only; the excluded account and the one who unsubscribed left out');
     assert.strictEqual((await LM.run(sb, 'send', { only: [], confirm: 0 })).error, 'nobody_chosen');
     assert.strictEqual((await LM.run(sb, 'send', { only: ['a1', 'de'], confirm: 2 })).error, 'count_changed', 'a German learner cannot be slipped in');
     const r = await LM.run(sb, 'send', { only: ['a1'], confirm: 1 });
@@ -94,6 +96,6 @@ test('launch email: only the ticked learners, English A1 to B2, each once', asyn
     assert.strictEqual(notes[0].campaign_id, 'camp1');
     assert.strictEqual(camps[0].emailed, 1);
     assert.ok(/action=click&amp;c=camp1&amp;u=a1/.test(bodies[0]) || !mail.linkSig('x'), 'the button is a personal click link (when the signing key is set)');
-    assert.deepStrictEqual((await LM.run(sb, 'preview', {})).people.map((x) => x.id), ['b2'], 'nobody gets it twice');
+    assert.deepStrictEqual((await LM.run(sb, 'preview', {})).people.map((x) => x.id).sort(), ['b2', 'c1'], 'nobody gets it twice');
   } finally { mail.sendEmail = realSend; }
 });
