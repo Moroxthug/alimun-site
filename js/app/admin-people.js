@@ -46,12 +46,12 @@
     var now = Date.now(), ago = function (d) { return new Date(now - d * DAY).toISOString(); };
     var cos = [{ id: 'c1', language: 'German', level: 'B1', tier: 'focused', status: 'open', teacher_profiles: { full_name: 'Ana Weber' } }, { id: 'c2', language: 'English', level: 'B2', tier: 'focused', status: 'full', teacher_profiles: { full_name: 'James Hall' } }];
     var st = [
-      ['s1', 'Lukas Brandt', 'German', 'B1', 'focused', 'relocation', 'active', 'c1', 40, 'lukas@example.com'],
-      ['s2', 'Mei Chen', 'German', 'B1', 'focused', 'professional', 'active', 'c1', 35, 'mei.chen@example.com'],
-      ['s3', 'Sara Rossi', 'English', 'B2', 'focused', 'academic', 'past_due', 'c2', 80, 'sara.rossi@example.com'],
-      ['s4', 'Omar Haddad', 'German', 'A2', 'free', 'foundations', null, null, 3, 'omar.h@example.com'],
-      ['s5', 'Ines Duarte', 'French', 'A2', 'waitlist', 'pleasure', null, null, 1, 'ines@example.com']
-    ].map(function (x) { EMAILS['u' + x[0]] = x[9]; return { id: x[0], user_id: 'u' + x[0], full_name: x[1], language: x[2], level: x[3], tier: x[4], goal_track: x[5], stripe_subscription_status: x[6], enrolled_cohort_id: x[7], created_at: ago(x[8]) }; });
+      ['s1', 'Lukas Brandt', 'German', 'B1', 'focused', 'relocation', 'active', 'c1', 40, 'lukas@example.com', 'AT', 'Europe/Vienna'],
+      ['s2', 'Mei Chen', 'German', 'B1', 'focused', 'professional', 'active', 'c1', 35, 'mei.chen@example.com', 'TW', 'Asia/Taipei'],
+      ['s3', 'Sara Rossi', 'English', 'B2', 'focused', 'academic', 'past_due', 'c2', 80, 'sara.rossi@example.com', 'IT', 'Europe/Rome'],
+      ['s4', 'Omar Haddad', 'German', 'A2', 'free', 'foundations', null, null, 3, 'omar.h@example.com', 'MA', 'Africa/Casablanca'],
+      ['s5', 'Ines Duarte', 'French', 'A2', 'waitlist', 'pleasure', null, null, 1, 'ines@example.com', null, 'UTC']
+    ].map(function (x) { EMAILS['u' + x[0]] = x[9]; return { id: x[0], user_id: 'u' + x[0], full_name: x[1], language: x[2], level: x[3], tier: x[4], goal_track: x[5], stripe_subscription_status: x[6], enrolled_cohort_id: x[7], created_at: ago(x[8]), country: x[10], timezone: x[11] }; });
     return { sample: true, students: st, cohorts: cos };
   }
   function sampleStudentFile(s) {
@@ -117,7 +117,7 @@
   function studentRows() {
     var q = SF.q.trim().toLowerCase();
     return ST.students.filter(function (s) {
-      if (q && [s.full_name, EMAILS[s.user_id], s.language].join(' ').toLowerCase().indexOf(q) < 0) return false;
+      if (q && [s.full_name, EMAILS[s.user_id], s.language, s.timezone, s.country ? countryOf(s.country) : ''].join(' ').toLowerCase().indexOf(q) < 0) return false;
       if (SF.plan === 'paying' && !paying(s)) return false;
       if (SF.plan === 'given' && !givenOn(s)) return false;
       if (SF.plan && SF.plan !== 'paying' && SF.plan !== 'given' && s.tier !== SF.plan) return false;
@@ -132,21 +132,29 @@
     return '<div class="view__head"><div><h1 class="t-h1">Students</h1><p class="t-lead">' + esc(A.plural(ST.students.filter(function (s) { return !isTest(s); }).length, 'student', 'students') + ', ' + A.plural(ST.students.filter(paying).length, 'paying', 'paying') + '.' + (ST.tests && Object.keys(ST.tests).length ? ' Your test accounts are listed but not counted.' : '')) + '</p></div>' +
       '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/students/invite">Invite a student</a><a class="btn btn--ghost btn--sm" href="#/students/signups">Email signups</a></div></div>' +
       '<div class="grid rise"><section class="card span-12" style="--i:0"><div class="ad-filters">' +
-        '<input class="st-in" type="search" data-sf="q" placeholder="Search by name, email or language" value="' + esc(SF.q) + '" aria-label="Search">' +
+        '<input class="st-in" type="search" data-sf="q" placeholder="Search by name, email, language, country or time zone" value="' + esc(SF.q) + '" aria-label="Search">' +
         '<select class="st-in" data-sf="plan" aria-label="Plan">' + opt('', 'Every plan', SF.plan) + opt('paying', 'Paying', SF.plan) + opt('given', 'Plan given without payment', SF.plan) + Object.keys(PLANS).map(function (k) { return opt(k, PLANS[k], SF.plan); }).join('') + '</select>' +
         '<select class="st-in" data-sf="lang" aria-label="Language">' + opt('', 'Every language', SF.lang) + langs.map(function (l) { return opt(l, l, SF.lang); }).join('') + '</select>' +
         '<select class="st-in" data-sf="klass" aria-label="Class">' + opt('', 'In a class or not', SF.klass) + opt('in', 'In a class', SF.klass) + opt('none', 'Not in a class', SF.klass) + '</select></div>' +
         (ST.noEmails ? '<p class="t-small st-msg is-bad">Emails could not be loaded, so the search covers names and languages only.</p>' : '') +
         '<div class="tt-week" data-srows>' + studentRowsHtml() + '</div></section>' + sampleLine() + '</div>';
   }
+  /* Country and time zone in the list (owner, 18 Nov 2026). UTC is the sign-up default, read as "not known". */
+  function countryOf(c) { if (!c) return 'Not given'; try { return new Intl.DisplayNames(['en'], { type: 'region' }).of(c) || c; } catch (e) { return c; } }
+  function zoneOf(tz) {
+    if (!tz || tz === 'UTC' || tz === 'Etc/UTC') return '<span class="m">Not known</span>';
+    var now = '';
+    try { now = new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit' }).format(new Date()); } catch (e) { return esc(tz); }
+    return esc(tz.split('/').pop().replace(/_/g, ' ')) + '<div class="m">' + esc('now ' + now) + '</div>';
+  }
   function studentRowsHtml() {
     var list = studentRows();
     if (!list.length) return '<p class="t-body" style="margin-top:12px">No student matches.</p>';
     /* A table: one student per row, the columns the admin scans (owner, 12 Nov 2026: corporate-grade console) */
-    return '<div class="dt-wrap"><table class="dt"><thead><tr><th>Student</th><th>Learning</th><th>Plan</th><th>Payment</th><th>Class</th><th class="r">Joined</th></tr></thead><tbody>' + list.slice(0, 300).map(function (s) {
+    return '<div class="dt-wrap"><table class="dt"><thead><tr><th>Student</th><th>Learning</th><th>Country</th><th>Time zone</th><th>Plan</th><th>Payment</th><th>Class</th><th class="r">Joined</th></tr></thead><tbody>' + list.slice(0, 300).map(function (s) {
       var co = cohortOf(ST.cohorts, s.enrolled_cohort_id), pay = payLine(s);
       return '<tr data-href="#/students/' + esc(s.id) + '"><td><a href="#/students/' + esc(s.id) + '">' + esc(s.full_name || 'Student') + '</a>' + (isTest(s) ? ' <span class="m">(your test account)</span>' : '') + '<div class="m">' + esc(EMAILS[s.user_id] || '') + '</div></td>' +
-        '<td>' + esc([s.language, s.level].filter(Boolean).join(' ')) + '</td><td>' + esc(PLANS[s.tier] || s.tier || '') + '</td>' +
+        '<td>' + esc([s.language, s.level].filter(Boolean).join(' ')) + '</td><td>' + esc(countryOf(s.country)) + '</td><td class="nw">' + zoneOf(s.timezone) + '</td><td>' + esc(PLANS[s.tier] || s.tier || '') + '</td>' +
         '<td class="nw"><span class="dot' + (paying(s) ? '' : s.stripe_subscription_status === 'past_due' ? ' dot--bad' : givenOn(s) ? ' dot--warn' : ' dot--off') + '"></span>' + esc(pay ? A.cap(pay) : 'None') + '</td>' +
         '<td>' + esc(co ? A.className(co) : '') + '</td><td class="r m">' + esc(day(s.created_at)) + '</td></tr>';
     }).join('') + '</tbody></table></div>' + (list.length > 300 ? '<p class="t-small">Showing the first 300. Narrow the search to see the rest.</p>' : '');

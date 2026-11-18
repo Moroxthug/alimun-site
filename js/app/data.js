@@ -1534,7 +1534,7 @@
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
     return Promise.all([
-      c.from('student_profiles').select('id, user_id, full_name, language, level, tier, goal_track, stripe_subscription_status, plan_given_until, enrolled_cohort_id, created_at').order('created_at', { ascending: false }).limit(2000),
+      c.from('student_profiles').select('id, user_id, full_name, language, level, tier, goal_track, stripe_subscription_status, plan_given_until, enrolled_cohort_id, created_at, country, timezone').order('created_at', { ascending: false }).limit(2000),
       c.from('cohorts').select('id, language, level, tier, status, teacher_profiles(full_name)').limit(500),
       c.from('entitlements').select('user_id, product_key, variant, source, status').eq('status', 'active').neq('source', 'admin').limit(5000),
       c.rpc('admin_test_users')

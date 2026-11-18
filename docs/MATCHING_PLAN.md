@@ -116,3 +116,13 @@ owner teaches (an approved English teacher profile on the owner's account).
 - Email (`api/_lib/launch-email.js`): in the learner's language (English, French, Spanish, German), times in their zone,
   unsubscribe link, plus a note in the dashboard bell. Sent from Admin → Matching → Launch class: who gets it, a test
   to the owner, then send (once per learner).
+
+## Rebuilt page and class planner (owner, 18 Nov 2026)
+
+Owner: "matching page is very messy and should update every time someone new joins. fix it and show me data another way.
+also, check out which classes could be organised and give me accurate details based on each students profile".
+The page now has four tabs (Classes that could run, Who is where, Every learner, Launch class and rooms) and checks for
+new learners every minute. The groups come from a planner in `js/app/admin-matching.js` (the engine in `js/match.js` still
+gives each learner's free times, level and readiness): level band (A1–A2, B1–B2, C1–C2) by part of the world (the
+Americas; Europe, Africa and the Middle East; Asia and Oceania), the three-day evening time from 17:00 to 21:00 in the
+zone most of them live in that suits most, with learners an hour off still in and named. Details in `docs/PROGRESS.md`.
