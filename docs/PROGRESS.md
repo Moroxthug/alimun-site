@@ -2242,3 +2242,4 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - Spanish conditionals article: added an exercises table with answers and a new title ("ejercicios condicionales" searches).
 - Related cards: CELPIP vs IELTS, CLB levels, Express Entry language points and citizenship language articles now link the two Canada articles; the Morocco TOEIC/IELTS/TOEFL and C1 articles link the Cambridge one.
 - Missing, not invented: Cambridge exam fees and dates in Morocco (no current official page), TOEIC price in Morocco.
+- Sent 18 Nov 04:47 UTC by the hourly job: 18 English learners emailed (all accepted by Resend) and 18 dashboard notes; fusheng's address (@gmai.com) will bounce. New English learners get it within the hour of signing up while sign-ups are open.
