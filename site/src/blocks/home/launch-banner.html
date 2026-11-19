@@ -1,23 +1,27 @@
-<!-- The English launch class on the homepage (owner, 19 Nov 2026: "yes add the homepage banner"). Hidden unless its
-     dates are on: until the free class starts it offers the free class, then until sign-ups close it offers the class.
-     Times are shown in the visitor's own time zone and language. Dates: offer launch-en-2 (supabase/migrations/
-     202611181200_launch_class_2.sql). After 30 November it shows nothing and can be removed. -->
+<!-- The English launch class on the homepage (owner, 19 Nov 2026: "yes add the homepage banner"; "make it look better
+     from mobile"). Hidden unless its dates are on: until the free class starts it offers the free class, then until
+     sign-ups close it offers the class. A short heading, the day and time on their own line under a lime marker (as the
+     homepage marks words), one sentence and the button. Times in the visitor's own time zone and language. Dates: offer
+     launch-en-2 (supabase/migrations/202611181200_launch_class_2.sql). After 30 November it shows nothing. -->
 <section class="lnb" data-lnb hidden aria-labelledby="lnb-h"
   data-free="2026-11-23T18:00:00Z" data-start="2026-11-30T18:00:00Z" data-ends="2026-11-30T04:00:00Z">
   <div class="container-large">
     <div class="lnb_box">
       <div class="lnb_text">
         <h2 class="lnb_h" id="lnb-h" data-lnb-h></h2>
+        <p class="lnb_when"><span data-lnb-w></span></p>
         <p class="lnb_p" data-lnb-p></p>
       </div>
       <a class="lnb_btn" href="signup.html" data-lnb-btn></a>
     </div>
   </div>
   <div hidden>
-    <span data-lnb-k="h1" data-i18n="home_ln_h1">A free English class with a teacher, {when}</span>
-    <span data-lnb-k="p1" data-i18n="home_ln_p1">One hour, live, in a small group for beginners (A1 and A2). Then choose one or three classes a week from {start}, with €10 off your first payment.</span>
+    <span data-lnb-k="h1" data-i18n="home_ln_h1">Free English class with a teacher</span>
+    <span data-lnb-k="w1" data-i18n="home_ln_w1">{when}</span>
+    <span data-lnb-k="p1" data-i18n="home_ln_p1">One hour, live, in a small group for beginners (A1 and A2). Then one or three classes a week, with €10 off your first payment.</span>
     <span data-lnb-k="b1" data-i18n="home_ln_b1">Save my free place</span>
-    <span data-lnb-k="h2" data-i18n="home_ln_h2">English classes for beginners start {start}</span>
+    <span data-lnb-k="h2" data-i18n="home_ln_h2">English classes for beginners</span>
+    <span data-lnb-k="w2" data-i18n="home_ln_w2">Starting {start}</span>
     <span data-lnb-k="p2" data-i18n="home_ln_p2">Live with a teacher, in a small group (A1 and A2): one class a week or three, with €10 off your first payment if you sign up by {deadline}.</span>
     <span data-lnb-k="b2" data-i18n="home_ln_b2">Sign up</span>
   </div>
@@ -25,14 +29,24 @@
     .lnb { padding: 1rem 0 0; }
     .lnb.is-in { padding: 0 0 2rem; position: relative; z-index: 2; }
     .lnb.is-in > .container-large { padding: 0; max-width: none; }
-    .lnb_box { display: flex; align-items: center; gap: 1.25rem 2rem; flex-wrap: wrap; padding: 1.4rem 1.75rem; border-radius: 1.5rem; background: #f0efe9; box-shadow: inset 6px 0 0 #ceff65; }
+    .lnb_box { display: flex; align-items: center; gap: 1.25rem 2.5rem; flex-wrap: wrap; padding: 1.5rem 1.9rem; border-radius: 1.5rem; background: #f0efe9; box-shadow: inset 6px 0 0 #ceff65; }
     .lnb_text { flex: 1 1 22rem; min-width: 0; }
-    .lnb_h { margin: 0; font: 400 clamp(1.6rem, 2.6vw, 2.2rem)/1.05 'Coolvetica Condensed', Satoshi, sans-serif; color: #080808; }
-    .lnb_p { margin: .5rem 0 0; font: 400 1rem/1.5 Satoshi, sans-serif; color: #080808; max-width: 46rem; }
-    .lnb_btn { display: inline-flex; align-items: center; height: 3.25rem; padding: 0 1.6rem; border-radius: 5rem; background: #1a443c; color: #ceff65; font: 700 .95rem Satoshi, sans-serif; text-decoration: none; white-space: nowrap; transition: transform .45s cubic-bezier(.3, 1.5, .5, 1), box-shadow .3s; }
+    .lnb_h { margin: 0; font: 400 clamp(1.75rem, 2.6vw, 2.3rem)/1 'Coolvetica Condensed', Satoshi, sans-serif; color: #080808; text-wrap: balance; }
+    .lnb_when { margin: .55rem 0 0; font: 700 1.1rem/1.35 Satoshi, sans-serif; color: #1a443c; }
+    .lnb_when span { background: linear-gradient(#ceff65, #ceff65) no-repeat 0 88% / 100% 45%; padding: 0 .1em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+    .lnb_p { margin: .45rem 0 0; font: 400 1rem/1.5 Satoshi, sans-serif; color: #080808; max-width: 44rem; }
+    .lnb_btn { display: inline-flex; align-items: center; justify-content: center; height: 3.25rem; padding: 0 1.6rem; border-radius: 5rem; background: #1a443c; color: #ceff65; font: 700 .95rem Satoshi, sans-serif; text-decoration: none; white-space: nowrap; transition: transform .45s cubic-bezier(.3, 1.5, .5, 1), box-shadow .3s; }
     .lnb_btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 12px 26px rgba(26, 68, 60, .22); }
     .lnb_btn:focus-visible { outline: 3px solid #1a443c; outline-offset: 3px; }
-    @media (max-width: 767px) { .lnb.is-in { padding-top: 3.5rem; } .lnb_box { padding: 1.25rem; } .lnb_btn { width: 100%; justify-content: center; } }
+    @media (max-width: 767px) {
+      .lnb.is-in { padding: 3.25rem 0 1.25rem; }
+      .lnb_box { gap: 1rem; padding: 1.15rem 1.15rem 1.15rem 1.4rem; border-radius: 1.25rem; box-shadow: inset 5px 0 0 #ceff65; }
+      .lnb_text { flex-basis: 100%; }
+      .lnb_h { font-size: 1.65rem; }
+      .lnb_when { font-size: 1rem; margin-top: .45rem; }
+      .lnb_p { font-size: .92rem; line-height: 1.45; }
+      .lnb_btn { width: 100%; height: 3rem; }
+    }
     @media (prefers-reduced-motion: reduce) { .lnb_btn { transition: none; } }
   </style>
   <script>
@@ -52,6 +66,7 @@
       var deadline = f(ends - 6 * 3600000, day);
       var fill = function (s) { return s.replace('{when}', when).replace('{start}', start).replace('{deadline}', deadline); };
       el.querySelector('[data-lnb-h]').textContent = fill(k('h' + phase));
+      el.querySelector('[data-lnb-w]').textContent = fill(k('w' + phase));
       el.querySelector('[data-lnb-p]').textContent = fill(k('p' + phase));
       el.querySelector('[data-lnb-btn]').textContent = k('b' + phase);
       // Inside the hero's own space, below the fixed navigation (the hero block itself stays as approved)
