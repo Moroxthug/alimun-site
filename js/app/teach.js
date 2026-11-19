@@ -533,7 +533,7 @@
       view.classList.remove('is-leaving');
       if (mode === 'pending' && !IVS) ivLoad();
       document.title = t(r.label) + ' – Alimun';
-      if (mod) mod.mount(view, partsOf(id), helpers).then(function (res) { if (current === id && res && !res.stale && res.title) document.title = res.title + ' – Alimun'; });
+      if (mod) mod.mount(view, partsOf(id), helpers).then(function (res) { if (current === id && res && !res.stale && res.title) { document.title = res.title + ' – Alimun'; top.querySelector('.top__title').textContent = res.title; } });
       top.querySelector('.top__title').textContent = t(r.label);
       pageHelp(id);
       app.querySelectorAll('[data-route]').forEach(function (a) {

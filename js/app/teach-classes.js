@@ -302,14 +302,15 @@
     liveId = 'practice'; guest = null;
     document.body.classList.add('is-reading');
     var CR = window.AlimunClassroom;
-    var tips = '<div class="pr-tips"><p class="t-small">' + esc(t('app_pr_try_p')) + '</p>' +
-      '<p class="t-small">' + esc(t('app_pr_try_board')) + '</p>' +
-      '<p class="t-small">' + esc(t('app_pr_try_screen')) + '</p>' +
-      '<h3 class="t-h3" style="margin-top:14px">' + esc(t('app_pr_guest_h')) + '</h3><p class="t-small">' + esc(t('app_pr_guest_p')) + '</p>' +
-      '<div data-guest>' + (C.sample ? '' : '<p class="t-tiny">' + esc(t('app_pr_guest_wait')) + '</p>') + '</div>' +
-      '<p class="cr-more"><a class="linkish" href="#/help/a/lessons-and-the-classroom-board" target="_blank" rel="noopener">' + esc(t('app_pr_help')) + '</a></p></div>';
+    /* What to try, in three short parts with headings, at reading size (no scroll box inside the panel) */
+    var tips = '<div class="pr-tips">' + (C.sample ? '<p class="pr-note">' + esc(t('app_pr_sample')) + '</p>' : '') +
+      '<section><h3 class="t-h3">' + esc(t('app_pr_board_h')) + '</h3><p class="t-body">' + esc(t('app_pr_try_board')) + '</p></section>' +
+      '<section><h3 class="t-h3">' + esc(t('app_pr_cam_h')) + '</h3><p class="t-body">' + esc(t('app_pr_try_p')) + '</p></section>' +
+      '<section><h3 class="t-h3">' + esc(t('app_pr_guest_h')) + '</h3><p class="t-body">' + esc(t('app_pr_guest_p')) + '</p>' +
+      '<div data-guest>' + (C.sample ? '' : '<p class="t-small">' + esc(t('app_pr_guest_wait')) + '</p>') + '</div></section>' +
+      '<p><a class="linkish" href="#/help/a/lessons-and-the-classroom-board" target="_blank" rel="noopener">' + esc(t('app_pr_help')) + '</a></p></div>';
     var actions = '<button class="btn btn--lime btn--sm" type="button" data-tc="board" aria-pressed="false">' + CR.icon('board') + '<span>' + esc(t('app_bd_open')) + '</span></button>';
-    return CR.shell({ A: A, role: 'teacher', title: t('app_pr_h'), sub: esc(t('app_pr_sub')), back: '#/start', practice: true, board: true, actions: actions,
+    return CR.shell({ A: A, role: 'teacher', title: t('app_pr_h'), sub: esc(t('app_pr_sub')), back: '#/start', practice: true, noVideo: C.sample, board: true, actions: actions,
       tabs: [{ id: 'try', label: t('app_pr_tab'), icon: 'notes', html: tips }], wait: t('app_pr_opening'), art: 'owl' });
   }
   function drawGuest() {

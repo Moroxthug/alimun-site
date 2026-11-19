@@ -2517,3 +2517,22 @@ section.card .hp-rows { padding: 0; margin: 12px -12px -8px; }
 .cr-tabs--one { justify-content: space-between; }
 .cr-one { margin: 0; }
 @media (max-width: 1099px) { .ob-stage { min-height: 190px; padding: 18px; } .ob-stage > svg { height: 140px; } }
+/* Board controls (teacher): one bar under the page switcher, each label beside its menu, "Everyone solves this" at the end */
+.bd-ctls { flex: 1 1 100%; align-items: center; gap: 8px; padding: 8px; border-radius: var(--r-md); background: var(--bone); }
+.bd-ctls .btn--quiet, .bd-ctls .st-in { background: var(--white); }
+.bd-field { flex-direction: row; align-items: center; gap: 8px; }
+.bd-field > .t-small { white-space: nowrap; padding-inline-start: 6px; }
+.bd-field--solo { margin-inline-start: auto; }
+/* Room under the page's last line for the floating pen toolbar */
+.bd-paper { padding-bottom: 130px; }
+/* Practice classroom: no empty video box in the sample; the guide at reading size, without a scroll box */
+.cr--novideo .cr-video { display: none; }
+.cr--novideo.has-board .cr-body { grid-template-areas: "board side"; grid-template-rows: auto; }
+.cr--novideo:not(.has-board) .cr-body { grid-template-columns: minmax(0, 1fr); grid-template-areas: "side"; }
+.cr--practice .cr-side { max-height: none; }
+.cr--practice .cr-panel { overflow: visible; }
+.pr-tips { display: flex; flex-direction: column; gap: 20px; }
+.pr-tips section > .t-h3 { margin: 0 0 6px; }
+.pr-tips .t-body { font-size: 16px; line-height: 1.5; }
+.pr-note { margin: 0; padding: 12px 14px; border-radius: var(--r-md); background: var(--t-sun); font-size: 15px; line-height: 1.45; }
+@media (max-width: 899px) { .bd-paper { padding-bottom: 36px; } }

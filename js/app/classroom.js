@@ -30,7 +30,7 @@
   function shell(o) {
     var A = o.A, t = A.t, esc = A.esc, tabs = o.tabs || [];
     var art = A.Cast && A.Cast.drawing ? A.Cast.drawing(o.art || 'mug') : '';
-    return '<div class="cr" data-cr data-role="' + esc(o.role) + '">' +
+    return '<div class="cr' + (o.practice ? ' cr--practice' : '') + (o.noVideo ? ' cr--novideo' : '') + '" data-cr data-role="' + esc(o.role) + '">' +
       '<a class="rd-back" href="' + esc(o.back || '#/classes') + '">' + A.icon('back') + '<span>' + esc(t('app_cl_leave')) + '</span></a>' +
       '<div class="view__head cr-head"><div><h1 class="t-h1">' + esc(o.title) + '</h1>' + (o.sub ? '<p class="t-lead">' + o.sub + '</p>' : '') +
         /* Group classes may be recorded by Alimun only (owner, 13 Nov 2026): said before anyone joins */
