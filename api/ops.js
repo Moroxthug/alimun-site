@@ -55,10 +55,13 @@ async function adminOf(req, sb) {
   if (error || !data || !data.user || !data.user.app_metadata || data.user.app_metadata.role !== 'admin') return null;
   return data.user;
 }
-async function send(to, subject, html) {
+/* content is what mail.renderEmail returns ({ html, text }); a plain HTML string also works */
+async function send(to, subject, content) {
   if (!to) throw new Error('no address');
   if (!process.env.RESEND_API_KEY) throw new Error('email is not configured');
-  const ok = await mail.sendEmail({ to, subject, html });
+  const c = typeof content === 'string' ? { html: content } : (content || {});
+  if (typeof c.html !== 'string' || !c.html) throw new Error('empty email');
+  const ok = await mail.sendEmail({ to, subject, html: c.html, text: c.text });
   if (!ok) throw new Error('the email was not accepted' + (mail.sendEmail.lastError ? ' (' + mail.sendEmail.lastError + ')' : ''));
   return true;
 }
