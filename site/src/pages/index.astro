@@ -23,10 +23,13 @@ import v2VideoTutor from '../blocks/home/v2/video-tutor.html?raw';
 import v2Try from '../blocks/home/v2/try.html?raw';
 import v2Strings from '../blocks/home/v2/strings.html?raw';
 import v2Assets from '../blocks/home/v2/assets.html?raw';
+// 19 Nov 2026 (owner: "yes put it live"): the English launch class banner, shown only while its dates are on
+import launchBanner from '../blocks/home/launch-banner.html?raw';
 ---
 <Base wfPage="68d948d13b6c9f2bbbac3ea7" head={head} after={after}>
   <Fragment set:html={nav} />
   <main class="main-wrapper">
+    <Fragment set:html={launchBanner} />
     <Fragment set:html={v2Hero} />
     <Fragment set:html={hero} />
     <Fragment set:html={groups} />

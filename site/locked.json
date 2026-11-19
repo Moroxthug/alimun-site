@@ -293,8 +293,8 @@
     "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
   },
   "src/pages/index.astro": {
-    "sha256": "a7c99e1eaf0ba08ddbf689913d8e41512dd70bd467762940176047474ba588f7",
-    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
+    "sha256": "06f9b5d50cf2d27e151fdbdb24975f7a79154d8de0030f828eb1ff21bf9a90c7",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-11-19 English launch class banner above the hero, shown until sign-ups close on 30 Nov (owner: \"yes put it live\")"
   },
   "src/blocks/alive.html": {
     "sha256": "2a89bc828f2ceb338d3976f4398bece898d7f073187c422e080c524e2b59526b",
