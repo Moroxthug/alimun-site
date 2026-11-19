@@ -398,7 +398,8 @@
     if (p.hiring_stage === 'applied' || !p.hiring_stage) {
       html += '<p class="t-small">Next: a 30-minute video call with you. They choose a time from your interview hours.</p><div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-hire="invite" data-id="' + esc(p.id) + '">Invite to interview</button></div>';
     } else if (p.hiring_stage === 'interview_invited') {
-      html += '<p class="t-small">Invited. They have not chosen a time yet' + (last && last.status === 'no_show' ? '; they missed the last one, ' + esc(whenBoth(last.scheduled_at)) : '') + '.</p>';
+      html += '<p class="t-small">Invited. They have not chosen a time yet' + (last && last.status === 'no_show' ? '; they missed the last one, ' + esc(whenBoth(last.scheduled_at)) : '') + '.</p>'
+        + '<div class="btn-row"><button class="btn btn--ghost btn--sm" type="button" data-hire="invite" data-id="' + esc(p.id) + '">Send the invite again</button></div>';
     } else if (iv) {
       var start = new Date(iv.scheduled_at).getTime();
       html += '<p class="t-body"><b>' + esc(whenBoth(iv.scheduled_at, iv.teacher_tz)) + '</b>, ' + iv.minutes + ' minutes, not recorded.' + (iv.teacher_checked_in_at ? ' They joined at ' + esc(A.fmt(iv.teacher_checked_in_at, { hour: '2-digit', minute: '2-digit' })) + '.' : '') + '</p>' +

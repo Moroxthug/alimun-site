@@ -359,10 +359,11 @@ async function interviewAction(action, req, res, sb) {
     if (!tp) return res.status(404).json({ error: 'no such teacher' });
     if (tp.status !== 'pending') return res.status(409).json({ error: 'Only a teacher waiting for review can be invited.' });
     if (!(await hoursOf(sb))) return res.status(409).json({ error: 'Set your interview hours first.' });
-    await sb.from('teacher_profiles').update({ hiring_stage: 'interview_invited' }).eq('id', tp.id);
     const lang = tp.ui_lang || 'en';
     await send(await emailOf(sb, tp.user_id), L.say(lang, 'interview.invite_subject'), ivEmail(lang, L.say(lang, 'interview.invite_heading'), 'interview.invite_body', {},
       { label: L.say(lang, 'interview.invite_button'), href: `${mail.SITE}/app/teach#/` }, tp.full_name));
+    /* Mark the stage only once the email is accepted, so a failed send can simply be retried */
+    await sb.from('teacher_profiles').update({ hiring_stage: 'interview_invited' }).eq('id', tp.id);
     await sb.from('notifications').insert({ user_id: tp.user_id, kind: 'service', title: L.say(lang, 'interview.invite_heading'), body: L.say(lang, 'interview.invite_body'), link: '/app/teach#/' });
     await sb.from('automation_log').insert({ automation: 'interview-reminders', key: 'invite:' + tp.id + ':' + Date.now(), action: 'an admin invited a teacher to an interview', target: tp.full_name, detail: { by: user.email }, ok: true });
     return res.status(200).json({ ok: true });
