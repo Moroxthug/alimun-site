@@ -109,7 +109,8 @@
     support: '<path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13" width="4" height="6" rx="1.6"/><rect x="16.5" y="13" width="4" height="6" rx="1.6"/><path d="M18.5 19c0 1.3-1.6 2-4 2H13"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
     minus: '<path d="M5 12h14"/>',
-    play: '<path d="M8 5.5v13l10.5-6.5z"/>'
+    play: '<path d="M8 5.5v13l10.5-6.5z"/>',
+    question: '<circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.5a2.4 2.4 0 0 1 4.7.7c0 1.6-2.4 2.1-2.4 3.6"/><path d="M12 16.8h.01"/>'
   };
   function loaderInner() {
     return '<div class="whirl whirl--outer"></div><div class="whirl whirl--inner"></div><div class="spark"></div>' +
@@ -129,6 +130,7 @@
     { id: 'messages', label: 'app_t_nav_messages', icon: 'messages', group: 'account', part: 6, art: 'alien', tint: 'mint', kind: 'say', text: 'app_t_soon_messages_text', bub: 'app_t_soon_messages_bub' },
     { id: 'payouts', label: 'app_t_nav_payouts', icon: 'payouts', group: 'account', part: 6, art: 'suitcase', tint: 'sun', kind: 'think', text: 'app_t_soon_payouts_text', bub: 'app_t_soon_payouts_bub' },
     { id: 'settings', label: 'app_t_nav_settings', icon: 'settings', group: 'account', part: 6, art: 'cat', tint: 'bone', kind: 'think', text: 'app_t_soon_settings_text', bub: 'app_t_soon_settings_bub' },
+    { id: 'start', label: 'app_t_nav_start', icon: 'play', group: 'account' },
     { id: 'help', label: 'app_nav_help', icon: 'help', group: 'account' },
     { id: 'support', label: 'app_nav_support', icon: 'support', group: 'account' }
   ];
@@ -197,7 +199,7 @@
         '<header class="top">' +
           '<a class="top__brand" href="#/today" aria-label="' + esc(t('app_home_link')) + '">' + Cast.book('idle') + Cast.wordmark() + '</a>' +
           '<p class="top__title" aria-hidden="true"></p>' +
-          '<div class="top__actions">' + (mode === 'pending' ? '' : '<button class="icon-btn" type="button" data-bell aria-label="' + esc(t('app_notifications')) + '">' + icon('bell') + '</button>') + '<a class="avatar" href="#/settings" aria-label="' + esc(t('app_account')) + '">' + esc(initials(tp.full_name)) + '</a></div>' +
+          '<div class="top__actions">' + (mode === 'pending' ? '' : '<a class="icon-btn" href="#/help" data-pagehelp aria-label="' + esc(t('app_help_page')) + '" title="' + esc(t('app_help_page')) + '">' + icon('question') + '</a>') + (mode === 'pending' ? '' : '<button class="icon-btn" type="button" data-bell aria-label="' + esc(t('app_notifications')) + '">' + icon('bell') + '</button>') + '<a class="avatar" href="#/settings" aria-label="' + esc(t('app_account')) + '">' + esc(initials(tp.full_name)) + '</a></div>' +
         '</header>' +
         '<main class="view" id="view" tabindex="-1"></main>' +
       '</div>' +
@@ -342,10 +344,35 @@
       '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:220px"><h2 class="t-h3">' + esc(t('app_sample_h')) + '</h2>' +
       '<p class="t-small" style="margin-top:6px">' + esc(p) + '</p></div>' + btn + '</div></section>';
   }
+  /* Getting started (js/app/teach-start.js): on Today until every part is done */
+  var OB = null;
+  function startCard() {
+    if (!OB || OB.finished_at || !window.AlimunTeachStart) return '';
+    var parts = window.AlimunTeachStart.parts, done = {};
+    (OB.parts || []).forEach(function (x) { if (x.done_at) done[x.id] = true; });
+    var next = parts.filter(function (x) { return !done[x.id]; })[0];
+    if (!next) return '';
+    var n = Object.keys(done).length;
+    return '<a class="card card--sun span-12 ob-today" style="--i:0" href="#/start"><div class="card__row card__row--split"><div class="card__row"><div class="card__art">' + Cast.drawing('owl') + '</div>' +
+      '<div><h2 class="t-h2">' + esc(t('app_ob_today_h')) + '</h2><p class="t-small" style="margin-top:6px">' + esc(n ? t('app_ob_today_more', { part: t(next.h) }) : t('app_ob_today_p')) + '</p></div></div>' +
+      '<span class="btn btn--primary btn--sm">' + esc(t(n ? 'app_ob_today_continue' : 'app_ob_today_start')) + '</span></div></a>';
+  }
+  /* The help article for the page on show: the "?" in the top bar */
+  var PAGE_HELP = { today: 'teacher-dashboard-at-a-glance', classes: 'availability-classes-and-contracts', students: 'students-and-messages', homework: 'set-and-mark-homework',
+    lessons: 'lessons-and-the-classroom-board', material: 'set-and-mark-homework', messages: 'students-and-messages', payouts: 'teacher-account-and-payouts',
+    settings: 'teacher-account-and-payouts', start: 'teacher-dashboard-at-a-glance' };
+  var CLASS_HELP = { live: 'start-your-live-class', notes: 'class-notes-after-class', oto: 'class-notes-after-class', availability: 'availability-classes-and-contracts', 'new': 'availability-classes-and-contracts', practice: 'lessons-and-the-classroom-board' };
+  function pageHelp(id) {
+    var a = app.querySelector('[data-pagehelp]');
+    if (!a) return;
+    var sub = partsOf(id)[0], slug = id === 'classes' && CLASS_HELP[sub] ? CLASS_HELP[sub] : PAGE_HELP[id];
+    a.hidden = id === 'help' || id === 'support';
+    a.setAttribute('href', slug ? '#/help/a/' + slug : '#/help');
+  }
   function todayView() {
     return '<div class="view__head"><div><h1 class="t-h1">' + esc(greeting(firstName((D.teacher || {}).full_name))) + '</h1>' +
         '<p class="t-lead">' + esc(cap(fmt(Date.now(), { weekday: 'long', day: 'numeric', month: 'long' }))) + '</p></div></div>' +
-      '<div class="grid rise">' + sampleNote() + nextCard() + stage() + todo() + weekCard() + classesCard() + waitingCard() + '</div>';
+      '<div class="grid rise">' + sampleNote() + startCard() + nextCard() + stage() + todo() + weekCard() + classesCard() + waitingCard() + '</div>';
   }
   /* A teacher whose application is still being reviewed */
   /* A teacher waiting for review (docs/TEACHER_HIRING_PLAN.md, step 1): the application under review, then, once
@@ -481,11 +508,12 @@
   var helpers = {
     t: t, tn: tn, esc: esc, icon: icon, Cast: Cast, lang: lang, locale: locale, cap: cap, languageName: languageName, listOf: listOf, fmt: fmt,
     loaderInner: loaderInner, dayName: dayName, relative: relative, className: className, weekday: weekday, browserZone: browserZone,
-    mode: function () { return mode; }, rerender: function () { render(current, false); }, role: 'teacher'
+    mode: function () { return mode; }, rerender: function () { render(current, false); }, role: 'teacher',
+    onboarding: function (st) { OB = st; }
   };
   var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; }, homework: function () { return window.AlimunTeachHomework; }, material: function () { return window.AlimunTeachMaterial; }, lessons: function () { return window.AlimunTeachLessons; },
     messages: function () { return window.AlimunTeachMessages; }, payouts: function () { return window.AlimunTeachPayouts; }, settings: function () { return window.AlimunTeachSettings; },
-    help: function () { return window.AlimunHelp; }, support: function () { return window.AlimunSupport; } };
+    start: function () { return window.AlimunTeachStart; }, help: function () { return window.AlimunHelp; }, support: function () { return window.AlimunSupport; } };
   function partsOf(id) { return location.hash.replace(new RegExp('^#\\/' + id + '\\/?'), '').split('/').filter(Boolean); }
 
   /* ---------- Routing ---------- */
@@ -507,6 +535,7 @@
       document.title = t(r.label) + ' – Alimun';
       if (mod) mod.mount(view, partsOf(id), helpers).then(function (res) { if (current === id && res && !res.stale && res.title) document.title = res.title + ' – Alimun'; });
       top.querySelector('.top__title').textContent = t(r.label);
+      pageHelp(id);
       app.querySelectorAll('[data-route]').forEach(function (a) {
         if (a.getAttribute('data-route') === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
       });
@@ -559,6 +588,13 @@
     });
   }
 
+  function loadOnboarding() {
+    if (mode !== 'real' && mode !== 'forced' && mode !== 'sample') return;
+    if (mode !== 'real') { OB = { parts: [] }; return; }
+    if (!window.AlimunData.onboardingState) return;
+    window.AlimunData.onboardingState(lang).then(function (st) { OB = st; if (current === 'today') render('today', false); }, function () { /* no card */ });
+  }
+
   /* ---------- Boot ---------- */
   function start() {
     renderShell();
@@ -587,6 +623,7 @@
       return Promise.all([loadData(), fonts]);
     }).then(function (res) {
       D = res[0];
+      loadOnboarding();
       start();
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });

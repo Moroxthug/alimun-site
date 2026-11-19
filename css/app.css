@@ -2486,3 +2486,20 @@ section.card .hp-rows { padding: 0; margin: 12px -12px -8px; }
 /* The tutor says it is AI (owner, 16 Nov 2026; EU AI Act): under the Tutor heading and in every session */
 .tu-ai { display: inline-flex; align-items: center; gap: 8px; margin: 10px 0 0; padding: 6px 12px 6px 10px; border-radius: 10px; background: var(--t-lime); color: var(--forest); font-size: 14px; font-weight: 600; line-height: 1.4; }
 .tu-ai::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 3px rgba(206, 255, 101, .35); }
+
+/* Teacher Getting started (js/app/teach-start.js) and the practice classroom (docs/TEACHER_ONBOARDING_PLAN.md) */
+.ob-part .card__row--split { align-items: center; gap: 16px; }
+.ob-art { width: 76px; height: 76px; border-radius: var(--r-sm); padding: 6px; }
+.ob-part.is-locked { opacity: .62; }
+.ob-part.is-locked .ob-art { filter: grayscale(.6); }
+.ob-part.is-current { box-shadow: inset 0 0 0 2px var(--forest); }
+.ob-body { margin-top: 18px; max-width: 760px; }
+.ob-body > .t-body { margin-top: 4px; }
+.ob-video { display: block; width: 100%; aspect-ratio: 16 / 9; margin-bottom: 16px; border-radius: 20px; background: var(--forest); }
+.ob-unlock { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+.ob-choices { display: grid; gap: 8px; margin-top: 8px; }
+.ob-choice { min-height: 52px; padding-block: 10px; line-height: 1.35; }
+.ob-today .card__art { width: 84px; height: 84px; }
+.ob-today .card__row--split { align-items: center; gap: 16px; flex-wrap: wrap; }
+.pr-tips .t-small + .t-small { margin-top: 8px; }
+@media (max-width: 599px) { .ob-art { width: 56px; height: 56px; } .ob-part .card__row--split { flex-wrap: wrap; } }

@@ -34,7 +34,7 @@
       '<a class="rd-back" href="' + esc(o.back || '#/classes') + '">' + A.icon('back') + '<span>' + esc(t('app_cl_leave')) + '</span></a>' +
       '<div class="view__head cr-head"><div><h1 class="t-h1">' + esc(o.title) + '</h1>' + (o.sub ? '<p class="t-lead">' + o.sub + '</p>' : '') +
         /* Group classes may be recorded by Alimun only (owner, 13 Nov 2026): said before anyone joins */
-        (o.board ? '<p class="t-small cr-rec">' + esc(t('app_cr_rec_note')) + '</p>' : '') + '</div>' +
+        (o.board && !o.practice ? '<p class="t-small cr-rec">' + esc(t('app_cr_rec_note')) + '</p>' : '') + '</div>' +
         (o.actions ? '<div class="btn-row cr-actions">' + o.actions + '</div>' : '') + '</div>' +
       '<div class="cr-body rise">' +
         (o.board ? '<section class="card cr-board" data-board hidden style="--i:0" aria-label="' + esc(t('app_bd_open')) + '"></section>' : '') +
@@ -47,7 +47,7 @@
           tabs.map(function (x, i) { return '<div class="cr-panel" role="tabpanel" id="cr-p-' + esc(x.id) + '" aria-labelledby="cr-tab-' + esc(x.id) + '" data-cr-panel="' + esc(x.id) + '"' + (i ? ' hidden' : '') + '>' + x.html + '</div>'; }).join('') +
         '</aside>' : '') +
       '</div>' +
-      (tabs.length ? '<button class="btn btn--primary cr-fab" type="button" data-cr="sheet" aria-expanded="false">' + icon('chat') + '<span>' + esc(t('app_cr_chat')) + '</span><b class="cr-count" data-cr-count hidden></b></button>' : '') +
+      (tabs.length ? '<button class="btn btn--primary cr-fab" type="button" data-cr="sheet" aria-expanded="false">' + icon(o.practice ? 'notes' : 'chat') + '<span>' + esc(o.practice ? tabs[0].label : t('app_cr_chat')) + '</span><b class="cr-count" data-cr-count hidden></b></button>' : '') +
       '<div class="cr-toasts" data-cr-toasts aria-live="polite"></div></div>';
   }
   function chatHtml(A) {
