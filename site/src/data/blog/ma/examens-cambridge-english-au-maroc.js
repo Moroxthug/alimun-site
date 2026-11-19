@@ -162,7 +162,7 @@ export default {
     ["Faut-il choisir le B2 First ou le C1 Advanced ?", "Choisissez le niveau que vous avez déjà. Au B2 First, un score de 180 à 190 donne un certificat C1 ; au C1 Advanced, un score de 160 à 179 ne donne qu'un certificat B2. Un test de niveau ou un examen blanc vous aide à décider."],
     ["Un certificat Cambridge ancien est-il encore accepté ?", "Le certificat n'expire pas, mais chaque université, école ou employeur fixe sa propre règle. Certains demandent un résultat récent : vérifiez leur page d'admission ou leur offre d'emploi."],
   ],
-  related: ['moroccan-english-exams', 'english-c1-level'],
+  related: ['english-test-prices-morocco', 'moroccan-english-exams', 'english-c1-level'],
   sources: [
     ['Find an exam centre (Cambridge English)', 'https://www.cambridgeenglish.org/find-a-centre/find-an-exam-centre/'],
     ['Results for Cambridge English Qualifications', 'https://www.cambridgeenglish.org/exams-and-tests/qualifications/results/'],

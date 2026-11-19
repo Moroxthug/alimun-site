@@ -165,7 +165,7 @@ export default {
     ['¿Los alemanes coinciden siempre en los artículos?', 'Con las palabras comunes, sí. Algunos sustantivos admiten dos géneros, como der o das Joghurt y die o das Cola, según la región. Para quien aprende, las formas estándar del diccionario son siempre seguras.'],
     ['¿Der See es un lago o el mar?', 'Der See es el lago y die See es el mar, como en die Nordsee y die Ostsee. El plural de lago es die Seen.'],
   ],
-  related: ['cefr-english', 'how-long-english', 'ielts-or-cambridge'],
+  related: ['german-a1-exercises', 'cefr-english', 'how-long-english', 'ielts-or-cambridge'],
   sources: [
     ['Duden: See (mar)', 'https://www.duden.de/rechtschreibung/See_Meer'],
     ['Duden: Band (tomo)', 'https://www.duden.de/rechtschreibung/Band_Buch'],

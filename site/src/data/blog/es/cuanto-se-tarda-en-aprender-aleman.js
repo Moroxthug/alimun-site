@@ -189,7 +189,7 @@ export default {
     ['¿Qué nivel necesito para estudiar en una universidad alemana?', 'Cada universidad fija su nivel para las carreras en alemán, y puede variar incluso entre titulaciones de la misma universidad. Las pruebas habituales son el DSH y el TestDaF. Consulta la página de la titulación antes de planificar tus plazos.'],
     ['¿Cómo sé mi nivel actual?', 'Haz una prueba de nivel. La de Alimun te sitúa del A1 al C2 en pocos minutos, y a partir de ahí la tabla del Goethe te muestra más o menos cuánto te queda.'],
   ],
-  related: ['goethe-certificates', 'german-for-work', 'german-cases'],
+  related: ['german-a1-exercises', 'goethe-certificates', 'german-for-work', 'german-cases'],
   sources: [
     ['Goethe-Institut Londres, preguntas frecuentes sobre cursos (horas por nivel)', 'https://www.goethe.de/ins/gb/de/sta/lon/kur/faq.html'],
     ['US Department of State, plazos de aprendizaje del Foreign Service Institute', 'https://2021-2025.state.gov/foreign-language-training/'],
