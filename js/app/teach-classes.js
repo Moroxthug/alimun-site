@@ -263,7 +263,7 @@
         var line = t('app_tk_offer', { room: roomName(r), date: start, days: kWeekdays(r.schedule_days), time: String(r.schedule_time || '').slice(0, 5), zone: r.timezone, n: r.learners });
         var state = r.role === 'substitute' ? t('app_tk_substitute') : r.contract_accepted_at ? t('app_tk_accepted') : r.contract_declined_at ? t('app_tk_declined') : !r.contract_offered_at ? t('app_tk_waiting') : '';
         var ask = r.role === 'teacher' && r.contract_offered_at && !r.contract_accepted_at && !r.contract_declined_at;
-        return '<div class="tt-row"><span><b><bdi>' + esc(roomName(r)) + '</bdi></b><small>' + esc(line + (state ? ' ' + state : '')) + '</small></span>' +
+        return '<div class="tt-row tt-row--plain"><span><b><bdi>' + esc(roomName(r)) + '</bdi></b><small>' + esc(line + (state ? ' ' + state : '')) + '</small></span>' +
           (ask ? '<span class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-tc="contract" data-id="' + esc(r.id) + '" data-ok="1">' + esc(t('app_tk_accept')) + '</button>' +
             '<button class="btn btn--quiet btn--sm" type="button" data-tc="contract" data-id="' + esc(r.id) + '" data-ok="0">' + esc(t('app_tk_decline')) + '</button></span>' : '') + '</div>';
       }).join('') + '</div><p class="t-small st-msg" data-tk-msg aria-live="polite"></p></section>';
@@ -306,7 +306,7 @@
       '<p class="t-small">' + esc(t('app_pr_try_board')) + '</p>' +
       '<p class="t-small">' + esc(t('app_pr_try_screen')) + '</p>' +
       '<h3 class="t-h3" style="margin-top:14px">' + esc(t('app_pr_guest_h')) + '</h3><p class="t-small">' + esc(t('app_pr_guest_p')) + '</p>' +
-      '<div data-guest><p class="t-tiny">' + esc(t('app_pr_guest_wait')) + '</p></div>' +
+      '<div data-guest>' + (C.sample ? '' : '<p class="t-tiny">' + esc(t('app_pr_guest_wait')) + '</p>') + '</div>' +
       '<p class="cr-more"><a class="linkish" href="#/help/a/lessons-and-the-classroom-board" target="_blank" rel="noopener">' + esc(t('app_pr_help')) + '</a></p></div>';
     var actions = '<button class="btn btn--lime btn--sm" type="button" data-tc="board" aria-pressed="false">' + CR.icon('board') + '<span>' + esc(t('app_bd_open')) + '</span></button>';
     return CR.shell({ A: A, role: 'teacher', title: t('app_pr_h'), sub: esc(t('app_pr_sub')), back: '#/start', practice: true, board: true, actions: actions,
@@ -427,7 +427,7 @@
       board = window.AlimunBoard.create({ A: A, role: 'teacher', frame: frame || null, sessionId: 'practice', course: PRACTICE.course, lesson: PRACTICE.lesson, persist: false,
         words: [{ word: 'every day', definition: 'on each day' }, { word: 'usually', definition: 'most of the time' }, { word: 'never', definition: 'not at any time' }] });
       var pb = board;
-      board.mount(pel).then(function () { if (board === pb && board.shown()) setBoardOpen(true); });
+      board.mount(pel).then(function () { if (board === pb) setBoardOpen(true); });
       return board;
     }
     var s = sessionOf(id), x = s ? lessonFor(s) : null, el = root.querySelector('[data-board]');

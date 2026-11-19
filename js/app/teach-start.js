@@ -79,11 +79,13 @@
       : locked ? t('app_ob_locked', { part: t(PARTS[i - 1].h) }) : '';
     var toggle = done ? '<button class="btn btn--quiet btn--sm" type="button" data-ob-toggle="' + esc(p.id) + '" aria-expanded="' + !!show + '">' + esc(t(show ? 'app_ob_close' : 'app_ob_again')) + '</button>' : '';
     return '<section class="card span-12 ob-part' + (done ? ' is-done' : locked ? ' is-locked' : ' is-current') + '" id="ob-' + esc(p.id) + '" style="--i:' + (i + 2) + '" aria-labelledby="ob-h-' + esc(p.id) + '">' +
-      '<div class="card__row card__row--split"><div class="card__row"><div class="card__art ob-art" style="background:' + p.tint + '">' + A.Cast.drawing(p.art) + '</div>' +
+      '<div class="card__row card__row--split"><div class="card__row">' + (show ? '' : '<div class="card__art ob-art" style="background:' + p.tint + '">' + A.Cast.drawing(p.art) + '</div>') +
         '<div><h2 class="t-h2" id="ob-h-' + esc(p.id) + '">' + esc(t(p.h)) + '</h2>' + (status ? '<p class="t-small" style="margin-top:4px">' + esc(status) + '</p>' : '') + '</div></div>' + toggle + '</div>' +
-      (show ? '<div class="ob-body">' + videoHtml(p) + '<p class="t-body">' + esc(t(p.p)) + '</p>' +
-        '<p class="t-small" style="margin-top:8px"><a class="linkish" href="#/help/a/' + esc(p.help) + '">' + esc(t('app_ob_read')) + '</a></p>' +
-        (isCur ? unlockHtml(p) : '') + '</div>' : '') +
+      /* Open part: the video (or, until there is one, the part's drawing on its colour) beside the text and the question */
+      (show ? '<div class="ob-body"><div class="ob-media">' + (videoHtml(p) || '<div class="stage ob-stage" style="background:' + p.tint + '" aria-hidden="true">' + A.Cast.drawing(p.art) + '</div>') + '</div>' +
+        '<div class="ob-text"><p class="t-body">' + esc(t(p.p)) + '</p>' +
+        '<p class="t-small" style="margin-top:10px"><a class="linkish" href="#/help/a/' + esc(p.help) + '">' + esc(t('app_ob_read')) + '</a></p>' +
+        (isCur ? unlockHtml(p) : '') + '</div></div>' : '') +
       '</section>';
   }
   function headHtml() {
@@ -91,8 +93,7 @@
     var line = cur ? (n ? t('app_ob_progress', { done: n, all: PARTS.length }) + ' ' + t('app_ob_next', { part: t(cur.h) }) : t('app_ob_first')) : '';
     return '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_t_nav_start')) + '</h1><p class="t-lead">' + esc(t('app_ob_lead')) + '</p></div></div>' +
       '<div class="grid rise">' +
-      (S.sample ? '<p class="t-small span-12" style="--i:0">' + esc(t('app_ob_sample')) + '</p>' : '') +
-      (cur ? '<p class="t-body span-12" style="--i:1" role="status">' + esc(line) + '</p>'
+      (cur ? '<div class="span-12 ob-status" style="--i:1"><p class="t-body" role="status">' + esc(line) + '</p>' + (S.sample ? '<p class="t-small">' + esc(t('app_ob_sample')) + '</p>' : '') + '</div>'
         : '<section class="card card--forest span-12" style="--i:1"><div class="card__row card__row--split"><div><h2 class="t-h1">' + esc(t('app_ob_ready_h')) + '</h2>' +
           '<p class="t-lead" style="margin-top:12px">' + esc(t('app_ob_ready_p')) + '</p><div class="btn-row" style="margin-top:22px"><a class="btn btn--lime" href="#/today">' + esc(t('app_ob_ready_btn')) + '</a></div></div>' +
           '<div class="card__art card__art--lg">' + A.Cast.drawing('owl') + '</div></div></section>');

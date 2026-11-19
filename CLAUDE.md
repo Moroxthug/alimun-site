@@ -26,7 +26,18 @@ Plan of record: `docs/IMPLEMENTATION_PLAN.md`. Public-site rebuild (Astro, same 
 - No emojis. No eyebrow/kicker labels above headings. No invented stats, testimonials, badges, logos or counters; numbers come from the database or are removed. Missing copy is left out, not invented, and never shown as a placeholder: no `[COPY NEEDED]` markers on pages (owner, 7 Nov 2026: "do not use copy needed, just leave empty for now"); list what is missing in `docs/PROGRESS.md` instead.
 - **Banned (owner, 22 Oct 2026):** tags/chips/pills/badges (small outlined labels holding one word or name), numbered lists and numbered steps (01, 02, 03, "1 2 3 4", step counters like "04 / 06"), checklists and bullet lists of short items. Say it in sentences instead (e.g. "practice in the format of B2 First, C1 Advanced and IELTS"). This applies to new and redesigned sections; flag any that remain in existing blocks to the owner.
 
+## Layout quality (owner, 19 Nov 2026: "this design is bullshit … hardcode something about the design")
+Shipped broken once: course contracts squeezed into an 84 px column, a practice classroom that was mostly an empty dark box, a one-tab tab bar, cards whose text stopped at half their width. These are hard rules for every new or changed screen:
+- **Look at it at the owner's size.** Screenshot every new or changed screen at 1600 px wide and at 375 px (phone), with sample data and with the empty state, and look at the picture before claiming done. Reading the DOM is not looking.
+- **No squeezed text.** No paragraph or line narrower than 220 px on a desktop or 150 px on a phone. Do not reuse a component whose layout assumes content you do not have (`.tt-row` keeps an 84 px first column for a time: rows without a time use `.tt-row--plain`).
+- **No half-empty cards.** On a wide screen a full-width card's content uses the width: put media beside text (two columns from 1100 px) or make the card narrower. Do not cap text at 760 px inside a 1400 px card.
+- **No big empty areas.** Never leave a large box with only a waiting message or a drawing when something useful can be shown: open the useful thing by default (the practice classroom opens its board).
+- **No controls with one option:** a tab bar with one tab, a select with one choice, a toggle that does nothing. Use a heading.
+- **Same building blocks as the rest of the dashboard:** `view__head`, the 12-column `.grid` of `.card`s, `.stage` with a cast drawing, existing button and form classes. A one-off layout needs a reason.
+- **Automatic check:** `npx playwright test tests/smoke/layout.spec.js` opens every teacher and admin page with sample data at 1600 and 375 px and fails on sideways scrolling, squeezed text and one-tab tab bars. Add every new route to its lists. It must pass before pushing.
+
 ## Verify before claiming done
 - `npm run build` passes; inline scripts and `api/` files pass `node --check`.
 - Dashboards boot locally with `?preview=1` and no console errors (`npx serve .`).
+- `npx playwright test tests/smoke/layout.spec.js` passes, and every new or changed screen has been looked at in a screenshot at 1600 px and 375 px (see "Layout quality").
 - Production smoke test in `docs/IMPLEMENTATION_PLAN.md` §5 after any deploy.

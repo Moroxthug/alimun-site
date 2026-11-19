@@ -890,6 +890,8 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
   .view { padding: 4px 16px calc(var(--bar-h) + 40px + env(safe-area-inset-bottom)); }
   .grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .grid > * { grid-column: 1 / -1; }
+  /* Cards inside a display:contents wrapper are grid items too: a "span 12" there would add eleven empty columns and squeeze the card */
+  .grid [class*="span-"] { grid-column: 1 / -1; }
   .card { padding: 22px; border-radius: var(--r-lg); }
   .card__art { width: 92px; height: 92px; }
   .card__art--lg { width: 104px; height: 104px; }
@@ -2493,13 +2495,25 @@ section.card .hp-rows { padding: 0; margin: 12px -12px -8px; }
 .ob-part.is-locked { opacity: .62; }
 .ob-part.is-locked .ob-art { filter: grayscale(.6); }
 .ob-part.is-current { box-shadow: inset 0 0 0 2px var(--forest); }
-.ob-body { margin-top: 18px; max-width: 760px; }
-.ob-body > .t-body { margin-top: 4px; }
+.ob-body { display: grid; gap: 28px; margin-top: 20px; }
+@media (min-width: 1100px) { .ob-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
+.ob-media .ob-video { margin-bottom: 0; }
+.ob-stage { min-height: 320px; padding: 28px; justify-content: center; }
+.ob-stage > svg { height: 220px; }
+.ob-status { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.ob-status .t-small { color: var(--muted); }
 .ob-video { display: block; width: 100%; aspect-ratio: 16 / 9; margin-bottom: 16px; border-radius: 20px; background: var(--forest); }
-.ob-unlock { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+.ob-unlock { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line); }
 .ob-choices { display: grid; gap: 8px; margin-top: 8px; }
 .ob-choice { min-height: 52px; padding-block: 10px; line-height: 1.35; }
 .ob-today .card__art { width: 84px; height: 84px; }
 .ob-today .card__row--split { align-items: center; gap: 16px; flex-wrap: wrap; }
 .pr-tips .t-small + .t-small { margin-top: 8px; }
 @media (max-width: 599px) { .ob-art { width: 56px; height: 56px; } .ob-part .card__row--split { flex-wrap: wrap; } }
+/* A row with no time in front (course contracts): the text, then its buttons on the right */
+.tt-row--plain { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+@media (max-width: 520px) { .tt-row--plain { grid-template-columns: 1fr; gap: 10px; } .tt-row--plain .btn-row { margin: 0; } }
+/* A side panel with one part only (practice classroom): its name as a heading */
+.cr-tabs--one { justify-content: space-between; }
+.cr-one { margin: 0; }
+@media (max-width: 1099px) { .ob-stage { min-height: 190px; padding: 18px; } .ob-stage > svg { height: 140px; } }
