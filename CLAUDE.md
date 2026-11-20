@@ -34,7 +34,7 @@ Shipped broken once: course contracts squeezed into an 84 px column, a practice 
 - **No big empty areas.** Never leave a large box with only a waiting message or a drawing when something useful can be shown: open the useful thing by default (the practice classroom opens its board).
 - **No controls with one option:** a tab bar with one tab, a select with one choice, a toggle that does nothing. Use a heading.
 - **Same building blocks as the rest of the dashboard:** `view__head`, the 12-column `.grid` of `.card`s, `.stage` with a cast drawing, existing button and form classes. A one-off layout needs a reason.
-- **Automatic check:** `npx playwright test tests/smoke/layout.spec.js` opens every teacher and admin page with sample data at 1600 and 375 px and fails on sideways scrolling, squeezed text and one-tab tab bars. Add every new route to its lists. It must pass before pushing.
+- **Automatic check:** `npx playwright test tests/smoke/layout.spec.js` opens every teacher, learner and admin page with sample data at 1600 and 375 px and fails on sideways scrolling, squeezed text (narrow and wrapped onto three lines) and one-tab tab bars. Add every new route to its lists. It must pass before pushing.
 
 ## Verify before claiming done
 - `npm run build` passes; inline scripts and `api/` files pass `node --check`.

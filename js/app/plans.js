@@ -162,7 +162,7 @@
     if (!items.length && !moving) html += '<p class="t-body" style="margin-top:8px">' + esc(t('app_pp_pick_none')) + '</p>';
     else if (items.length) html += '<div class="tt-week" style="margin-top:12px">' + items.map(function (x, i) {
       var id = x.sessionId ? 's:' + x.sessionId : 'r:' + x.cohortId, full = x.seatsLeft <= 0;
-      return '<div class="tt-row"><span>' + esc(lineOf(k, x)) + '</span><span class="btn-row"><button class="btn btn--' + (i ? 'ghost' : 'primary') + ' btn--sm" type="button" data-pl="' + (moving ? 'assign' : 'pick') + '" data-k="' + esc(k) + '" data-c="' + esc(cadence) + '" data-w="' + esc(id) + '" data-i="' + i + '"' + (full ? ' disabled' : '') + '>' + esc(t(moving ? 'app_pp_move' : 'app_pp_pick_choose')) + '</button></span></div>';
+      return '<div class="tt-row tt-row--plain"><span>' + esc(lineOf(k, x)) + '</span><span class="btn-row"><button class="btn btn--' + (i ? 'ghost' : 'primary') + ' btn--sm" type="button" data-pl="' + (moving ? 'assign' : 'pick') + '" data-k="' + esc(k) + '" data-c="' + esc(cadence) + '" data-w="' + esc(id) + '" data-i="' + i + '"' + (full ? ' disabled' : '') + '>' + esc(t(moving ? 'app_pp_move' : 'app_pp_pick_choose')) + '</button></span></div>';
     }).join('') + '</div>';
     if (plannable(k) && !items.length && !moving) {
       var on = !!(ME && ME.interested);

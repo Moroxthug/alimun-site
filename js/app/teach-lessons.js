@@ -40,8 +40,8 @@
       html += '<section class="card span-12" style="--i:' + gi + '"><h2 class="t-h2">' + esc(t('app_tl_unit', { n: g.u.replace(/^u/, '') })) + '</h2><div class="tt-week">' +
         g.list.map(function (l) {
           var href = '#/lessons/' + esc(c.id) + '/' + esc(l.id);
-          return l.planned ? '<div class="tt-row tt-row--wide"><span><b>' + esc(l.title) + '</b><small>' + esc(t('app_tl_planned')) + '</small></span></div>'
-            : '<a class="tt-row tt-row--wide" href="' + href + '"><span><b>' + esc(l.title) + '</b><small>' + esc(t(KINDS[l.kind] || 'app_tl_kind_book')) + '</small></span></a>';
+          return l.planned ? '<div class="tt-row tt-row--plain"><span><b>' + esc(l.title) + '</b><small>' + esc(t('app_tl_planned')) + '</small></span></div>'
+            : '<a class="tt-row tt-row--plain" href="' + href + '"><span><b>' + esc(l.title) + '</b><small>' + esc(t(KINDS[l.kind] || 'app_tl_kind_book')) + '</small></span></a>';
         }).join('') + '</div></section>';
     });
     return html + '</div>';
