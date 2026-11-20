@@ -130,7 +130,7 @@
     { id: 'messages', label: 'app_t_nav_messages', icon: 'messages', group: 'account', part: 6, art: 'alien', tint: 'mint', kind: 'say', text: 'app_t_soon_messages_text', bub: 'app_t_soon_messages_bub' },
     { id: 'payouts', label: 'app_t_nav_payouts', icon: 'payouts', group: 'account', part: 6, art: 'suitcase', tint: 'sun', kind: 'think', text: 'app_t_soon_payouts_text', bub: 'app_t_soon_payouts_bub' },
     { id: 'settings', label: 'app_t_nav_settings', icon: 'settings', group: 'account', part: 6, art: 'cat', tint: 'bone', kind: 'think', text: 'app_t_soon_settings_text', bub: 'app_t_soon_settings_bub' },
-    { id: 'start', label: 'app_t_nav_start', icon: 'play', group: 'account' },
+    { id: 'tour', label: 'app_tour_nav', icon: 'play', group: 'account' },
     { id: 'help', label: 'app_nav_help', icon: 'help', group: 'account' },
     { id: 'support', label: 'app_nav_support', icon: 'support', group: 'account' }
   ];
@@ -344,23 +344,10 @@
       '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:220px"><h2 class="t-h3">' + esc(t('app_sample_h')) + '</h2>' +
       '<p class="t-small" style="margin-top:6px">' + esc(p) + '</p></div>' + btn + '</div></section>';
   }
-  /* Getting started (js/app/teach-start.js): on Today until every part is done */
-  var OB = null;
-  function startCard() {
-    if (!OB || OB.finished_at || !window.AlimunTeachStart) return '';
-    var parts = window.AlimunTeachStart.parts, done = {};
-    (OB.parts || []).forEach(function (x) { if (x.done_at) done[x.id] = true; });
-    var next = parts.filter(function (x) { return !done[x.id]; })[0];
-    if (!next) return '';
-    var n = Object.keys(done).length;
-    return '<a class="card card--sun span-12 ob-today" style="--i:0" href="#/start"><div class="card__row card__row--split"><div class="card__row"><div class="card__art">' + Cast.drawing('owl') + '</div>' +
-      '<div><h2 class="t-h2">' + esc(t('app_ob_today_h')) + '</h2><p class="t-small" style="margin-top:6px">' + esc(n ? t('app_ob_today_more', { part: t(next.h) }) : t('app_ob_today_p')) + '</p></div></div>' +
-      '<span class="btn btn--primary btn--sm">' + esc(t(n ? 'app_ob_today_continue' : 'app_ob_today_start')) + '</span></div></a>';
-  }
   /* The help article for the page on show: the "?" in the top bar */
   var PAGE_HELP = { today: 'teacher-dashboard-at-a-glance', classes: 'availability-classes-and-contracts', students: 'students-and-messages', homework: 'set-and-mark-homework',
     lessons: 'lessons-and-the-classroom-board', material: 'set-and-mark-homework', messages: 'students-and-messages', payouts: 'teacher-account-and-payouts',
-    settings: 'teacher-account-and-payouts', start: 'teacher-dashboard-at-a-glance' };
+    settings: 'teacher-account-and-payouts' };
   var CLASS_HELP = { live: 'start-your-live-class', notes: 'class-notes-after-class', oto: 'class-notes-after-class', availability: 'availability-classes-and-contracts', 'new': 'availability-classes-and-contracts', practice: 'lessons-and-the-classroom-board' };
   function pageHelp(id) {
     var a = app.querySelector('[data-pagehelp]');
@@ -372,7 +359,7 @@
   function todayView() {
     return '<div class="view__head"><div><h1 class="t-h1">' + esc(greeting(firstName((D.teacher || {}).full_name))) + '</h1>' +
         '<p class="t-lead">' + esc(cap(fmt(Date.now(), { weekday: 'long', day: 'numeric', month: 'long' }))) + '</p></div></div>' +
-      '<div class="grid rise">' + sampleNote() + startCard() + nextCard() + stage() + todo() + weekCard() + classesCard() + waitingCard() + '</div>';
+      '<div class="grid rise">' + sampleNote() + nextCard() + stage() + todo() + weekCard() + classesCard() + waitingCard() + '</div>';
   }
   /* A teacher whose application is still being reviewed */
   /* A teacher waiting for review (docs/TEACHER_HIRING_PLAN.md, step 1): the application under review, then, once
@@ -508,12 +495,11 @@
   var helpers = {
     t: t, tn: tn, esc: esc, icon: icon, Cast: Cast, lang: lang, locale: locale, cap: cap, languageName: languageName, listOf: listOf, fmt: fmt,
     loaderInner: loaderInner, dayName: dayName, relative: relative, className: className, weekday: weekday, browserZone: browserZone,
-    mode: function () { return mode; }, rerender: function () { render(current, false); }, role: 'teacher',
-    onboarding: function (st) { OB = st; }
+    mode: function () { return mode; }, rerender: function () { render(current, false); }, role: 'teacher'
   };
   var MODULES = { classes: function () { return window.AlimunTeachClasses; }, students: function () { return window.AlimunTeachStudents; }, homework: function () { return window.AlimunTeachHomework; }, material: function () { return window.AlimunTeachMaterial; }, lessons: function () { return window.AlimunTeachLessons; },
     messages: function () { return window.AlimunTeachMessages; }, payouts: function () { return window.AlimunTeachPayouts; }, settings: function () { return window.AlimunTeachSettings; },
-    start: function () { return window.AlimunTeachStart; }, help: function () { return window.AlimunHelp; }, support: function () { return window.AlimunSupport; } };
+    help: function () { return window.AlimunHelp; }, support: function () { return window.AlimunSupport; } };
   function partsOf(id) { return location.hash.replace(new RegExp('^#\\/' + id + '\\/?'), '').split('/').filter(Boolean); }
 
   /* ---------- Routing ---------- */
@@ -523,6 +509,7 @@
     return byId[id] ? id : 'today';
   }
   function render(id, animate) {
+    if (id === 'tour') { history.replaceState(null, '', location.pathname + location.search + '#/today'); id = 'today'; setTimeout(function () { startTour(false); }, 400); }
     var r = byId[id];
     if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('view', { dashboard: 'teacher', section: id });
     var mod = mode !== 'pending' && MODULES[id] ? MODULES[id]() : null;
@@ -588,11 +575,18 @@
     });
   }
 
-  function loadOnboarding() {
-    if (mode !== 'real' && mode !== 'forced' && mode !== 'sample') return;
-    if (mode !== 'real') { OB = { parts: [] }; return; }
-    if (!window.AlimunData.onboardingState) return;
-    window.AlimunData.onboardingState(lang).then(function (st) { OB = st; if (current === 'today') render('today', false); }, function () { /* no card */ });
+  /* The dashboard tour (js/app/teach-tour.js): by itself the first time an approved teacher opens the dashboard,
+     and from "Dashboard tour" in the menu. Finished or closed is saved, so it does not open by itself again. */
+  function startTour(first) {
+    if (!window.AlimunTeachTour || window.AlimunTeachTour.running() || mode === 'pending') return;
+    window.AlimunTeachTour.start({ A: helpers, onEnd: function (done) {
+      if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('teacher_tour', { done: done, first: !!first });
+      if (mode === 'real' && window.AlimunData.tourSeen) window.AlimunData.tourSeen(done).catch(function () { /* opens again next time */ });
+    } });
+  }
+  function maybeTour() {
+    if (mode !== 'real' || !window.AlimunData.onboardingState || current !== 'today') return;
+    window.AlimunData.onboardingState(lang).then(function (st) { if (st && !st.tour_seen_at && current === 'today') startTour(true); }, function () { /* no tour this time */ });
   }
 
   /* ---------- Boot ---------- */
@@ -623,8 +617,8 @@
       return Promise.all([loadData(), fonts]);
     }).then(function (res) {
       D = res[0];
-      loadOnboarding();
       start();
+      setTimeout(maybeTour, 1200);
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
     window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || MODULES[id]) render(id, true); });

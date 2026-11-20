@@ -2489,34 +2489,14 @@ section.card .hp-rows { padding: 0; margin: 12px -12px -8px; }
 .tu-ai { display: inline-flex; align-items: center; gap: 8px; margin: 10px 0 0; padding: 6px 12px 6px 10px; border-radius: 10px; background: var(--t-lime); color: var(--forest); font-size: 14px; font-weight: 600; line-height: 1.4; }
 .tu-ai::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 3px rgba(206, 255, 101, .35); }
 
-/* Teacher Getting started (js/app/teach-start.js) and the practice classroom (docs/TEACHER_ONBOARDING_PLAN.md) */
-.ob-part .card__row--split { align-items: center; gap: 16px; }
-.ob-art { width: 76px; height: 76px; border-radius: var(--r-sm); padding: 6px; }
-.ob-part.is-locked { opacity: .62; }
-.ob-part.is-locked .ob-art { filter: grayscale(.6); }
-.ob-part.is-current { box-shadow: inset 0 0 0 2px var(--forest); }
-.ob-body { display: grid; gap: 28px; margin-top: 20px; }
-@media (min-width: 1100px) { .ob-body { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; } }
-.ob-media .ob-video { margin-bottom: 0; }
-.ob-stage { min-height: 320px; padding: 28px; justify-content: center; }
-.ob-stage > svg { height: 220px; }
-.ob-status { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
-.ob-status .t-small { color: var(--muted); }
-.ob-video { display: block; width: 100%; aspect-ratio: 16 / 9; margin-bottom: 16px; border-radius: 20px; background: var(--forest); }
-.ob-unlock { margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--line); }
-.ob-choices { display: grid; gap: 8px; margin-top: 8px; }
-.ob-choice { min-height: 52px; padding-block: 10px; line-height: 1.35; }
-.ob-today .card__art { width: 84px; height: 84px; }
-.ob-today .card__row--split { align-items: center; gap: 16px; flex-wrap: wrap; }
+/* The practice classroom (docs/TEACHER_ONBOARDING_PLAN.md) */
 .pr-tips .t-small + .t-small { margin-top: 8px; }
-@media (max-width: 599px) { .ob-art { width: 56px; height: 56px; } .ob-part .card__row--split { flex-wrap: wrap; } }
 /* A row with no time in front (course contracts): the text, then its buttons on the right */
 .tt-row--plain { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
 @media (max-width: 520px) { .tt-row--plain { grid-template-columns: 1fr; gap: 10px; } .tt-row--plain .btn-row { margin: 0; } }
 /* A side panel with one part only (practice classroom): its name as a heading */
 .cr-tabs--one { justify-content: space-between; }
 .cr-one { margin: 0; }
-@media (max-width: 1099px) { .ob-stage { min-height: 190px; padding: 18px; } .ob-stage > svg { height: 140px; } }
 /* Board controls (teacher): one bar under the page switcher, each label beside its menu, "Everyone solves this" at the end */
 .bd-ctls { flex: 1 1 100%; align-items: center; gap: 8px; padding: 8px; border-radius: var(--r-md); background: var(--bone); }
 .bd-ctls .btn--quiet, .bd-ctls .st-in { background: var(--white); }
@@ -2536,3 +2516,17 @@ section.card .hp-rows { padding: 0; margin: 12px -12px -8px; }
 .pr-tips .t-body { font-size: 16px; line-height: 1.5; }
 .pr-note { margin: 0; padding: 12px 14px; border-radius: var(--r-md); background: var(--t-sun); font-size: 15px; line-height: 1.45; }
 @media (max-width: 899px) { .bd-paper { padding-bottom: 36px; } }
+/* The dashboard tour (js/app/teach-tour.js): the screen dims, the real element is lit up, a card says what it is */
+.tour { position: fixed; inset: 0; z-index: 900; }
+.tour__dim { position: absolute; inset: 0; background: rgba(8, 8, 8, .55); }
+.tour__spot { position: absolute; border-radius: var(--r-md); box-shadow: 0 0 0 3px var(--lime), 0 0 0 9999px rgba(8, 8, 8, .55); pointer-events: none; transition: left .3s var(--ease), top .3s var(--ease), width .3s var(--ease), height .3s var(--ease); }
+.tour__card { position: absolute; width: min(400px, calc(100vw - 32px)); padding: 22px 22px 18px; border-radius: var(--r-lg); background: var(--white); box-shadow: var(--shadow-lift); transition: opacity .15s var(--ease); }
+.tour.is-moving .tour__card { opacity: 0; }
+.tour__card .t-h3 { margin: 0 0 8px; margin-inline-end: 40px; }
+.tour__card .t-body { font-size: 16px; line-height: 1.5; }
+.tour__row { display: flex; justify-content: space-between; gap: 10px; margin-top: 18px; }
+.tour__x { position: absolute; top: 12px; inset-inline-end: 12px; width: 36px; height: 36px; background: var(--bone); box-shadow: none; }
+.tour__x svg { width: 18px; height: 18px; }
+.tour__card.is-center { left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(480px, calc(100vw - 32px)); padding: 30px 30px 24px; }
+.tour__card.is-center .t-h3 { font-size: 30px; }
+.tour__card.is-dock { left: 12px; right: 12px; top: auto; bottom: calc(var(--bar-h) + 28px + env(safe-area-inset-bottom)); width: auto; }

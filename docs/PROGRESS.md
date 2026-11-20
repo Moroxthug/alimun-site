@@ -2275,3 +2275,8 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - Migration `202611191200_teacher_onboarding.sql` applied (tables `teacher_onboarding`, `teacher_tutorial_videos`, bucket `teacher-tutorial`). Text in all nine dashboard languages (`app_ob_*`, `app_pr_*`).
 - Checked locally with `?sample=1`: wrong and right answers, the next part opening, the Today card, the "?" links, the practice classroom and its board, the admin page, German on a phone. The board's prepared lesson only loads on the deployed site (the lesson data is built by `build:site`).
 - Missing: the seven videos (owner to record; scripts in the admin page); a link to the practice classroom from the hiring screen; the pt heading "Quando podes ensinar" uses "tu" while the rest of pt uses "você" (flag to owner).
+## 20 Nov 2026 - Teacher onboarding simplified to a dashboard tour (owner: "simplify everything … like other platforms")
+- Getting started (seven parts, questions, Today card, video uploads) removed. In its place a guided tour on the real dashboard (`js/app/teach-tour.js`): opens by itself for an approved teacher's first visit, lights up the real elements one by one with a card (Back, Next, Close), ends on the practice classroom; "Dashboard tour" in the menu reopens it. Seen/closed saved in `teacher_onboarding.steps`.
+- Practice classroom now reached from a button on Classes. Admin → Teacher onboarding shows tour and practice-classroom status only.
+- Tour text in nine languages (`app_tour_*`); the 62 `app_ob_*` keys removed. Checked with screenshots of every stop at 1600 px and 375 px; layout test 34/34.
+- Unused and empty: table `teacher_tutorial_videos`, bucket `teacher-tutorial` (ask the owner before removing).

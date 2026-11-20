@@ -7,7 +7,7 @@
 // Run: npx playwright test tests/smoke/layout.spec.js   (part of CLAUDE.md "Verify before claiming done")
 const { test, expect } = require('@playwright/test');
 
-const TEACH = ['today', 'start', 'classes', 'classes/availability', 'classes/new', 'classes/practice', 'students', 'homework', 'lessons', 'material', 'messages', 'payouts', 'settings', 'help'];
+const TEACH = ['today', 'classes', 'classes/availability', 'classes/new', 'classes/practice', 'students', 'homework', 'lessons', 'material', 'messages', 'payouts', 'settings', 'help'];
 const ADMIN = ['overview', 'onboarding', 'teachers', 'contact'];
 const SIZES = [{ name: 'desktop', width: 1600, height: 930 }, { name: 'phone', width: 375, height: 812 }];
 

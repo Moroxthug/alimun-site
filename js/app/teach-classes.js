@@ -236,7 +236,7 @@
   }
   function timetableView() {
     return '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_t_nav_classes')) + '</h1><p class="t-lead">' + esc(t('app_tc_lead')) + '</p></div>' +
-      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/classes/new">' + A.icon('plus') + esc(t('app_tc_new')) + '</a><a class="btn btn--ghost btn--sm" href="#/classes/availability">' + esc(t('app_tc_avail')) + '</a></div></div>' +
+      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/classes/new">' + A.icon('plus') + esc(t('app_tc_new')) + '</a><a class="btn btn--ghost btn--sm" href="#/classes/availability">' + esc(t('app_tc_avail')) + '</a><a class="btn btn--ghost btn--sm" href="#/classes/practice">' + esc(t('app_pr_h')) + '</a></div></div>' +
       '<div class="grid rise"><div class="span-12" data-contracts hidden></div>' + nextCard() + stageCard() + calendarHtml() + comingCard() + pastCard() + sampleLine() + '</div>';
   }
 
@@ -310,7 +310,7 @@
       '<div data-guest>' + (C.sample ? '' : '<p class="t-small">' + esc(t('app_pr_guest_wait')) + '</p>') + '</div></section>' +
       '<p><a class="linkish" href="#/help/a/lessons-and-the-classroom-board" target="_blank" rel="noopener">' + esc(t('app_pr_help')) + '</a></p></div>';
     var actions = '<button class="btn btn--lime btn--sm" type="button" data-tc="board" aria-pressed="false">' + CR.icon('board') + '<span>' + esc(t('app_bd_open')) + '</span></button>';
-    return CR.shell({ A: A, role: 'teacher', title: t('app_pr_h'), sub: esc(t('app_pr_sub')), back: '#/start', practice: true, noVideo: C.sample, board: true, actions: actions,
+    return CR.shell({ A: A, role: 'teacher', title: t('app_pr_h'), sub: esc(t('app_pr_sub')), back: '#/classes', practice: true, noVideo: C.sample, board: true, actions: actions,
       tabs: [{ id: 'try', label: t('app_pr_tab'), icon: 'notes', html: tips }], wait: t('app_pr_opening'), art: 'owl' });
   }
   function drawGuest() {
@@ -340,7 +340,7 @@
         leave();
         call = D.createFrame(box, roomOptions());
         if (cls) cls.attach(call);
-        call.on('left-meeting', function () { leave(); if (location.hash.indexOf('#/classes/practice') === 0) location.hash = '#/start'; });
+        call.on('left-meeting', function () { leave(); if (location.hash.indexOf('#/classes/practice') === 0) location.hash = '#/classes'; });
         startBoard('practice', call);
         return call.join({ url: url, token: j.token });
       });
