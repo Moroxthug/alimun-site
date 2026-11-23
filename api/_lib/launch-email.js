@@ -361,8 +361,53 @@ const STEP_TX = {
 };
 STEP_TX.ma = STEP_TX.fr;
 
+/* The same-day note (owner, 23 Nov 2026: "email the students that the free class is today ... this class will be held
+   to get them started, to understand what's their level and to get them a feel of how alimun will help them achieve
+   their level"). To everyone sent the launch email: those with a place are told how to join, the others how to save
+   one. Sent by the hourly job from offer.today_at until the class starts. */
+const TODAY_TX = {
+  en: { subject: (t) => `Today at ${t}: your free English class`, heading: 'Your free English class is today',
+    when: (d) => `Your free English class is today, ${d} your time: one hour, live, in a small group, with the teacher.`,
+    why: 'This first class is here to get you started. The teacher will get to know you and your level, and show you how Alimun will help you reach the level you are aiming for.',
+    have: 'Your place is saved. The join button appears under Classes 15 minutes before the class starts.',
+    save: 'Save your place in one click; the join button then appears under Classes 15 minutes before the class starts.',
+    btnHave: 'Open my classes', btnSave: 'Save my free place', bell: 'Your free English class is today' },
+  fr: { subject: (t) => `Aujourd’hui à ${t} : votre cours d’anglais gratuit`, heading: 'Votre cours d’anglais gratuit, c’est aujourd’hui',
+    when: (d) => `Votre cours d’anglais gratuit a lieu aujourd’hui, ${d} à votre heure : une heure, en direct, en petit groupe, avec le professeur.`,
+    why: 'Ce premier cours est là pour bien commencer. Le professeur fera votre connaissance, verra votre niveau et vous montrera comment Alimun vous aidera à atteindre le niveau que vous visez.',
+    have: 'Votre place est réservée. Le bouton pour rejoindre apparaît dans Cours 15 minutes avant le début.',
+    save: 'Réservez votre place en un clic ; le bouton pour rejoindre apparaîtra dans Cours 15 minutes avant le début.',
+    btnHave: 'Ouvrir mes cours', btnSave: 'Réserver ma place gratuite', bell: 'Votre cours d’anglais gratuit, c’est aujourd’hui' },
+  es: { subject: (t) => `Hoy a las ${t}: tu clase de inglés gratis`, heading: 'Tu clase de inglés gratis es hoy',
+    when: (d) => `Tu clase de inglés gratis es hoy, ${d} en tu hora: una hora, en directo, en un grupo pequeño, con el profesor.`,
+    why: 'Esta primera clase sirve para empezar con buen pie. El profesor te conocerá, verá tu nivel y te mostrará cómo Alimun te ayudará a llegar al nivel que buscas.',
+    have: 'Tu plaza está reservada. El botón para entrar aparece en Clases 15 minutos antes de empezar.',
+    save: 'Reserva tu plaza con un clic; el botón para entrar aparecerá en Clases 15 minutos antes de empezar.',
+    btnHave: 'Abrir mis clases', btnSave: 'Reservar mi plaza gratis', bell: 'Tu clase de inglés gratis es hoy' },
+  de: { subject: (t) => `Heute um ${t}: deine kostenlose Englischstunde`, heading: 'Deine kostenlose Englischstunde ist heute',
+    when: (d) => `Deine kostenlose Englischstunde ist heute, ${d} deine Zeit: eine Stunde, live, in einer kleinen Gruppe, mit der Lehrkraft.`,
+    why: 'Diese erste Stunde ist für einen guten Start da. Die Lehrkraft lernt dich und dein Niveau kennen und zeigt dir, wie Alimun dir hilft, das Niveau zu erreichen, das du dir vorgenommen hast.',
+    have: 'Dein Platz ist gesichert. Der Button zum Beitreten erscheint unter Kurse 15 Minuten vor Beginn.',
+    save: 'Sichere dir deinen Platz mit einem Klick; der Button zum Beitreten erscheint dann unter Kurse 15 Minuten vor Beginn.',
+    btnHave: 'Meine Kurse öffnen', btnSave: 'Kostenlosen Platz sichern', bell: 'Deine kostenlose Englischstunde ist heute' }
+};
+TODAY_TX.ma = TODAY_TX.fr;
+function buildToday(r, ctx, hasPlace) {
+  const lang = TODAY_TX[r.ui_lang] ? r.ui_lang : 'en', x = TODAY_TX[lang], tz = zoneOf(r.timezone);
+  const time = fmt(ctx.introAt, tz, lang, { hour: '2-digit', minute: '2-digit' });
+  const when = fmt(ctx.introAt, tz, lang, { weekday: 'long', day: 'numeric', month: 'long' }) + ', ' + time;
+  const T = TX[lang] || TX.en, name = firstName(r.name);
+  const blocks = [{ p: mail.esc(name ? T.hi(name) : T.hiNo) }, { p: mail.esc(x.when(when)) }, { p: mail.esc(x.why) }, { p: mail.esc(hasPlace ? x.have : x.save) }];
+  const link = hasPlace ? mail.SITE + '/app#/classes' : LINK;
+  blocks.push({ button: { label: hasPlace ? x.btnHave : x.btnSave, href: hasPlace ? link : ((ctx.clickUrl && ctx.clickUrl(r.user_id)) || LINK) } });
+  const unsub = ctx.unsub ? mail.unsubscribeUrl(r.user_id) : '';
+  const out = mail.renderEmail({ hero: 'class-english', preheader: x.subject(time), heading: x.heading, blocks, note: mail.esc((STEP_TX[lang] || STEP_TX.en).note), unsubscribeUrl: unsub, lang });
+  return { subject: x.subject(time), html: out.html, text: out.text, lang, unsub, bell: { title: x.bell, body: x.subject(time) } };
+}
+
 /** One learner's reminder or follow-up: step is 'remind', 'came' or 'missed'. */
 function buildStep(step, r, ctx) {
+  if (step === 'today-have' || step === 'today-save') return buildToday(r, ctx, step === 'today-have');
   const lang = STEP_TX[r.ui_lang] ? r.ui_lang : 'en', x = STEP_TX[lang], tz = zoneOf(r.timezone);
   const upper = /^(B1|B2|C1|C2)$/.test(String(r.level || '').slice(0, 2).toUpperCase());
   const time = (d) => fmt(d, tz, lang, { hour: '2-digit', minute: '2-digit' });
@@ -416,11 +461,12 @@ async function stepAudience(sb, ctx, which) {
   for (const p of profs || []) {
     if (skip.has(p.user_id)) continue;
     if (which === 'remind' && hasPass.has(p.user_id)) continue;
+    if (which === 'today' && hasRoom.has(p.user_id) && !hasPass.has(p.user_id)) continue;
     if (which === 'follow' && (hasRoom.has(p.user_id) || !hasPass.has(p.user_id))) continue;
     const { data: u } = await sb.auth.admin.getUserById(p.user_id);
     const user = u && u.user;
     if (!user || !user.email || isTestAccount({ email: user.email, name: p.full_name, app_metadata: user.app_metadata })) continue;
-    list.push({ step: which === 'remind' ? 'remind' : came.has(p.id) ? 'came' : 'missed',
+    list.push({ step: which === 'today' ? (hasPass.has(p.user_id) ? 'today-have' : 'today-save') : which === 'remind' ? 'remind' : came.has(p.id) ? 'came' : 'missed',
       r: { user_id: p.user_id, email: user.email, name: p.full_name, level: p.level, timezone: p.timezone, ui_lang: p.ui_lang } });
   }
   return { kind, list };
@@ -429,9 +475,11 @@ async function stepAudience(sb, ctx, which) {
 /** The hourly job: sends a step during the 12 hours after its time. mode 'preview-remind' / 'preview-follow' lists who. */
 async function steps(sb, opts) {
   const ctx = await context(sb), now = (opts && opts.now) || Date.now(), out = {};
-  for (const [which, at] of [['remind', ctx.offer.remindAt], ['follow', ctx.offer.followAt]]) {
+  for (const [which, at] of [['today', ctx.offer.todayAt], ['remind', ctx.offer.remindAt], ['follow', ctx.offer.followAt]]) {
     const preview = opts && opts.preview === which;
-    if (!preview && (!at || now < at || now > at + 12 * 3600000)) continue;
+    // The same-day note stops when the class starts; the others run for 12 hours
+    const until = which === 'today' ? ctx.introAt.getTime() - 15 * 60000 : (at || 0) + 12 * 3600000;
+    if (!preview && (!at || now < at || now > until)) continue;
     const { kind, list } = await stepAudience(sb, ctx, which);
     if (preview) { out[which] = list.map((x) => ({ name: x.r.name, level: x.r.level, step: x.step, lang: STEP_TX[x.r.ui_lang] ? x.r.ui_lang : 'en' })); continue; }
     if (!list.length) { out[which] = { sent: 0 }; continue; }
