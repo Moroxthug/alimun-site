@@ -115,3 +115,99 @@ test('launch steps: offer times and emails in every language', () => {
   const r = LM.buildStep('remind', { name: 'ana', level: 'A1', timezone: 'Europe/Istanbul', ui_lang: 'en' }, ctx);
   assert.ok(/21:00/.test(r.subject), 'times in the learner’s own zone');
 });
+
+// The free first class (23 Nov 2026): the place keeps enrolled_count right, an earlier free class that is over never
+// blocks the sign-up, a learner in a real class gets no free place, and there is never a pass without a place.
+describe_free_class();
+function describe_free_class() {
+  const { fakeDb } = require('./_fake-db.js');
+  const E = require('../../api/_lib/entitlements.js');
+  const FREE = 'f0000000-0000-4000-8000-000000000001', OLD = 'f0000000-0000-4000-8000-000000000002', REAL = 'f0000000-0000-4000-8000-000000000003';
+  const S_FREE = 'e0000000-0000-4000-8000-000000000001';
+  const H = 3600000, now = Date.now();
+  function world(extra) {
+    const t = {
+      app_settings: [{ key: 'launch_offer', value: JSON.stringify({ code: 'launch-en-2', rooms: [PACK, OPEN], intro_session: S_FREE, ends_at: new Date(now + 99 * H).toISOString(), eur_off: 1000 }) }],
+      cohorts: [{ id: FREE, product_key: null, enrolled_count: 0 }, { id: OLD, product_key: null, enrolled_count: 0 }, { id: REAL, product_key: 'level_en', enrolled_count: 1 }],
+      sessions: [{ id: S_FREE, cohort_id: FREE, scheduled_at: new Date(now + 2 * H).toISOString(), status: 'scheduled' },
+        { id: 'old-s', cohort_id: OLD, scheduled_at: new Date(now - 9 * 24 * H).toISOString(), status: 'completed' },
+        { id: 'real-1', cohort_id: REAL, scheduled_at: new Date(now - 24 * H).toISOString(), status: 'completed' },
+        { id: 'real-2', cohort_id: REAL, scheduled_at: new Date(now + 24 * H).toISOString(), status: 'scheduled' }],
+      student_profiles: [{ id: 'sp1', user_id: 'u1' }, { id: 'sp2', user_id: 'u2' }, { id: 'sp3', user_id: 'u3' }],
+      entitlements: [], enrollments: []
+    };
+    Object.keys(extra || {}).filter((k) => k !== 'opts').forEach((k) => { t[k] = t[k].concat(extra[k]); });
+    const rpcs = { recount_enrollment: ({ p_cohort }) => {
+      const n = t.enrollments.filter((e) => e.cohort_id === p_cohort && ['active', 'completed'].includes(e.status)).length;
+      t.cohorts.find((c) => c.id === p_cohort).enrolled_count = n; return { data: n, error: null };
+    } };
+    const sb = fakeDb(t, rpcs, Object.assign({ uniqueWhere: { enrollments: [{ key: 'student_id', where: (r) => r.status === 'active' }] } }, extra && extra.opts));
+    return { t, sb, count: (id) => t.cohorts.find((c) => c.id === id).enrolled_count, active: (sp) => t.enrollments.filter((e) => e.student_id === sp && e.status === 'active').map((e) => e.cohort_id) };
+  }
+
+  test('free class: a place and a pass, and the teacher sees the number of learners', async () => {
+    const w = world();
+    assert.strictEqual((await L.register(w.sb, { id: 'u1' })).registered, true);
+    assert.strictEqual((await L.register(w.sb, { id: 'u2' })).registered, true);
+    assert.strictEqual((await L.register(w.sb, { id: 'u1' })).registered, true, 'saving again changes nothing');
+    assert.strictEqual(w.count(FREE), 2);
+    assert.deepStrictEqual(w.active('sp1'), [FREE]);
+    assert.strictEqual(w.t.entitlements.filter((e) => e.user_id === 'u1' && e.session_id === S_FREE && e.status === 'active').length, 1);
+  });
+
+  test('free class: a cancelled place comes back once and is counted once', async () => {
+    const w = world({ enrollments: [{ id: 'x', student_id: 'sp1', cohort_id: FREE, status: 'cancelled', cancelled_at: '2026-11-20T00:00:00Z' }] });
+    await L.register(w.sb, { id: 'u1' });
+    assert.strictEqual(w.t.enrollments.length, 1);
+    assert.strictEqual(w.t.enrollments[0].status, 'active');
+    assert.strictEqual(w.count(FREE), 1);
+  });
+
+  test('free class: a place in an earlier free class that is over is completed, not a blocker', async () => {
+    const w = world({ enrollments: [{ id: 'old', student_id: 'sp1', cohort_id: OLD, status: 'active' }] });
+    const r = await L.register(w.sb, { id: 'u1' });
+    assert.strictEqual(r.registered, true);
+    assert.deepStrictEqual(w.active('sp1'), [FREE], 'one active place, in the new free class');
+    assert.strictEqual(w.t.enrollments.find((e) => e.id === 'old').status, 'completed');
+    assert.strictEqual(w.count(OLD), 1, 'the past class still counts its learner');
+    assert.strictEqual(w.count(FREE), 1);
+    assert.strictEqual(w.t.entitlements.length, 1);
+  });
+
+  test('free class: a learner in a real class gets neither a place nor a pass', async () => {
+    const w = world({ enrollments: [{ id: 'r', student_id: 'sp1', cohort_id: REAL, status: 'active' }] });
+    const r = await L.register(w.sb, { id: 'u1' });
+    assert.deepStrictEqual([r.status, r.error], [409, 'in_class']);
+    assert.deepStrictEqual(w.active('sp1'), [REAL], 'the real class is left alone');
+    assert.strictEqual(w.t.entitlements.length, 0, 'no pass without a place');
+    assert.strictEqual(w.count(FREE), 0);
+  });
+
+  test('free class: an upcoming free class is not ended to make room for another', async () => {
+    const w = world({ cohorts: [{ id: 'up', product_key: null, enrolled_count: 1 }], sessions: [{ id: 'up-s', cohort_id: 'up', scheduled_at: new Date(now + 48 * H).toISOString(), status: 'scheduled' }],
+      enrollments: [{ id: 'u', student_id: 'sp1', cohort_id: 'up', status: 'active' }] });
+    assert.strictEqual((await L.register(w.sb, { id: 'u1' })).error, 'in_class');
+    assert.deepStrictEqual(w.active('sp1'), ['up']);
+  });
+
+  test('free class: when the pass cannot be saved, the place is taken back', async () => {
+    const w = world({ entitlements: [{ id: 'e0', user_id: 'u1', status: 'ended' }], opts: { unique: { entitlements: ['user_id'] } } });
+    await assert.rejects(() => L.register(w.sb, { id: 'u1' }), /free class pass/);
+    assert.deepStrictEqual(w.active('sp1'), []);
+    assert.strictEqual(w.count(FREE), 0);
+  });
+
+  test('free class over: room places and paid sign-ups are not blocked by it', async () => {
+    const w = world({ cohorts: [{ id: PACK, product_key: 'level_en', enrolled_count: 0 }], enrollments: [{ id: 'old', student_id: 'sp2', cohort_id: OLD, status: 'active' }] });
+    await E.enrol(w.sb, 'u2', PACK);   // a pack room's start day (api/_lib/rooms.js)
+    assert.deepStrictEqual(w.active('sp2'), [PACK]);
+    assert.strictEqual(w.count(PACK), 1);
+    assert.strictEqual(w.t.enrollments.find((e) => e.id === 'old').status, 'completed');
+  });
+
+  test('free class: the one date counts as over 90 minutes after it starts', async () => {
+    const w = world({ cohorts: [{ id: 'just', product_key: null }], sessions: [{ id: 'j', cohort_id: 'just', scheduled_at: new Date(now - 60 * 60000).toISOString(), status: 'live' }] });
+    assert.deepStrictEqual(await E.finishedFreeClasses(w.sb, ['just', OLD, REAL]), [OLD]);
+    assert.deepStrictEqual(await E.finishedFreeClasses(w.sb, ['just'], new Date(now + 31 * 60000)), ['just']);
+  });
+}

@@ -10,6 +10,8 @@
  *   - the rooms decide together at decide_at (api/_lib/rooms.js): at least min_learners sign-ups or nobody is charged.
  * Pure parts (parseOffer, discountFor) are unit tested in tests/unit/launch.test.js.
  */
+const E = require('./entitlements.js');
+
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 function parseOffer(value) {
@@ -92,18 +94,17 @@ async function register(sb, user) {
   if (!s || s.status !== 'scheduled' || Date.parse(s.scheduled_at) < Date.now() - 30 * 60000) return { status: 409, error: 'free_class_over' };
   const sp = await profileOf(sb, user.id);
   if (!sp) return { status: 409, error: 'profile_required' };
+  // The place first: a place in the one-session class, so it shows under Classes with the join button
+  // (enrolled_cohort_id is left alone). A place in an earlier free class that is over is marked completed; a learner
+  // in a real class keeps it and gets no free place (one active place per learner).
+  const place = await E.savePlace(sb, sp.id, s.cohort_id);
+  if (!place.ok) return { status: 409, error: place.error };
+  // Then the pass for the date. If it cannot be saved, the place is put back as it was: no place without a pass.
   const { data: had } = await sb.from('entitlements').select('id').eq('user_id', user.id).eq('session_id', s.id).eq('status', 'active').limit(1);
   if (!had || !had.length) {
     const { error } = await sb.from('entitlements').insert({ user_id: user.id, product_key: 'trial', variant: 'list', band: 'A', currency: 'eur', cadence: 'once',
       source: 'admin', status: 'active', amount_paid: 0, session_id: s.id, offer: offer.code, starts_at: new Date().toISOString() });
-    if (error) throw new Error('free class pass: ' + error.message);
-  }
-  // A place in the one-session class, so it shows under Classes (enrolled_cohort_id is left alone)
-  const { data: en } = await sb.from('enrollments').select('id, status').eq('student_id', sp.id).eq('cohort_id', s.cohort_id).limit(1);
-  if (en && en.length) { if (en[0].status !== 'active') await sb.from('enrollments').update({ status: 'active', cancelled_at: null }).eq('id', en[0].id); }
-  else {
-    const { error } = await sb.from('enrollments').insert({ student_id: sp.id, cohort_id: s.cohort_id, status: 'active' });
-    if (error) throw new Error('free class place: ' + error.message);
+    if (error) { await place.undo(); throw new Error('free class pass: ' + error.message); }
   }
   return { status: 200, registered: true, at: s.scheduled_at };
 }

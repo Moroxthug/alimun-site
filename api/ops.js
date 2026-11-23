@@ -34,6 +34,7 @@ const CV = require('./_lib/class-verify.js');
 const REC = require('./_lib/recordings.js');
 const IV = require('./_lib/interviews.js');
 const TR = require('./_lib/trials.js');
+const ENT = require('./_lib/entitlements.js');
 const { dailyFetch } = require('./_lib/daily.js');
 const { recordRun } = require('./_lib/cron-log.js');
 const { isTestAccount } = require('./_lib/test-accounts.js');
@@ -492,17 +493,18 @@ async function trialPlace(sb, tr, inv, on) {
   const { data: sp } = await sb.from('student_profiles').select('id').eq('user_id', inv.user_id).maybeSingle();
   if (!sp) throw new Error('profile_required');
   if (on) {
+    // The place first (an earlier free class that is over no longer blocks it, enrolled_count kept right), then the pass
+    const place = await ENT.savePlace(sb, sp.id, tr.cohort_id);
+    if (!place.ok) throw new Error('trial place: the learner already has a place in another class');
     const { data: had } = await sb.from('entitlements').select('id').eq('user_id', inv.user_id).eq('session_id', tr.session_id).eq('status', 'active').limit(1);
     if (!had || !had.length) {
       const { error } = await sb.from('entitlements').insert({ user_id: inv.user_id, product_key: 'trial', variant: 'list', band: 'A', currency: 'eur', cadence: 'once', source: 'admin', status: 'active', amount_paid: 0, session_id: tr.session_id, starts_at: new Date().toISOString() });
-      if (error) throw new Error('trial pass: ' + error.message);
+      if (error) { await place.undo(); throw new Error('trial pass: ' + error.message); }
     }
-    const { data: en } = await sb.from('enrollments').select('id, status').eq('student_id', sp.id).eq('cohort_id', tr.cohort_id).limit(1);
-    if (en && en.length) { if (en[0].status !== 'active') await sb.from('enrollments').update({ status: 'active', cancelled_at: null }).eq('id', en[0].id); }
-    else { const { error } = await sb.from('enrollments').insert({ student_id: sp.id, cohort_id: tr.cohort_id, status: 'active' }); if (error) throw new Error('trial place: ' + error.message); }
   } else {
     await sb.from('entitlements').update({ status: 'ended', ends_at: new Date().toISOString() }).eq('user_id', inv.user_id).eq('session_id', tr.session_id).eq('status', 'active');
     await sb.from('enrollments').update({ status: 'cancelled', cancelled_at: new Date().toISOString() }).eq('student_id', sp.id).eq('cohort_id', tr.cohort_id).eq('status', 'active');
+    await ENT.recount(sb, tr.cohort_id);
   }
 }
 /** Everything the admin's Hiring panel shows about a teacher's trial classes */

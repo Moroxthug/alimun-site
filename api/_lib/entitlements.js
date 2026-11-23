@@ -34,22 +34,91 @@ async function profileId(sb, userId) {
 }
 
 // ── Room places (enrolments give the class pages, video and reminders) ──
+// A learner holds one active place at a time (unique index uq_enrollments_one_active_per_student). A place in a
+// one-session free class (no product_key, its one date over) is marked 'completed' before a new place is saved, so an
+// old free class never blocks the next sign-up (migration 202611232100_free_class_places.sql).
+const FREE_CLASS_OVER_MIN = 90;   // the join window after the start (api/join-session.js)
+
+/** cohorts.enrolled_count = the class's active and completed places. Inserts are not counted by the database trigger. */
+async function recount(sb, cohortId) {
+  if (!cohortId) return;
+  try {
+    const { error } = await sb.rpc('recount_enrollment', { p_cohort: cohortId });
+    if (error) console.warn('[enrol] recount_enrollment ' + cohortId + ': ' + error.message);
+  } catch (e) { console.warn('[enrol] recount_enrollment ' + cohortId + ': ' + (e && e.message)); }   // never blocks a place
+}
+
+/** The cohorts among ids that are one-session free classes whose date is over (or was cancelled). */
+async function finishedFreeClasses(sb, ids, now) {
+  if (!ids.length) return [];
+  const { data: cos } = await sb.from('cohorts').select('id, product_key').in('id', ids);
+  const free = (Array.isArray(cos) ? cos : []).filter((c) => c && !c.product_key).map((c) => c.id);
+  if (!free.length) return [];
+  const { data: ss } = await sb.from('sessions').select('cohort_id, scheduled_at, status').in('cohort_id', free);
+  const t = (now || new Date()).getTime();
+  return free.filter((id) => {
+    const mine = (Array.isArray(ss) ? ss : []).filter((s) => s.cohort_id === id);
+    if (mine.length !== 1) return false;
+    const s = mine[0];
+    return s.status === 'completed' || s.status === 'cancelled' || Date.parse(s.scheduled_at) + FREE_CLASS_OVER_MIN * 60000 < t;
+  });
+}
+
+/**
+ * Ends the learner's active places in finished one-session free classes (other than cohortId).
+ * Returns { released: [cohortId], blocking: [cohortId] }: blocking are active places in other, real classes.
+ */
+async function releaseFinishedFreePlaces(sb, studentId, cohortId, now) {
+  const { data: act } = await sb.from('enrollments').select('id, cohort_id').eq('student_id', studentId).eq('status', 'active');
+  const others = (Array.isArray(act) ? act : []).filter((e) => e && e.cohort_id && e.cohort_id !== cohortId);
+  const done = await finishedFreeClasses(sb, others.map((e) => e.cohort_id), now);
+  for (const id of done) {
+    const { error } = await sb.from('enrollments').update({ status: 'completed' }).eq('student_id', studentId).eq('cohort_id', id).eq('status', 'active');
+    if (error) throw new Error('free class place: ' + error.message);
+    await recount(sb, id);
+  }
+  return { released: done, blocking: others.map((e) => e.cohort_id).filter((id) => !done.includes(id)) };
+}
+
+/**
+ * Saves an active place for studentId in cohortId and keeps enrolled_count right.
+ * Returns { ok: true, undo } (undo() puts the place back as it was) or { ok: false, error: 'in_class', blocking }.
+ */
+async function savePlace(sb, studentId, cohortId, now) {
+  const { data: had } = await sb.from('enrollments').select('id, status, cancelled_at').eq('student_id', studentId).eq('cohort_id', cohortId).limit(1);
+  const row = had && had[0];
+  if (row && row.status === 'active') return { ok: true, undo: async () => {} };
+  const { blocking } = await releaseFinishedFreePlaces(sb, studentId, cohortId, now);
+  if (blocking.length) return { ok: false, error: 'in_class', blocking };
+  let undo;
+  if (row) {
+    const { error } = await sb.from('enrollments').update({ status: 'active', cancelled_at: null }).eq('id', row.id);
+    if (error) throw new Error('place: ' + error.message);
+    undo = async () => { await sb.from('enrollments').update({ status: row.status, cancelled_at: row.cancelled_at || null }).eq('id', row.id); await recount(sb, cohortId); };
+  } else {
+    const { data, error } = await sb.from('enrollments').insert({ student_id: studentId, cohort_id: cohortId, status: 'active' }).select('id').single();
+    if (error) {
+      if (error.code === '23505') return { ok: false, error: 'in_class', blocking: [] };   // a place saved at the same moment
+      throw new Error('place: ' + error.message);
+    }
+    undo = async () => { await sb.from('enrollments').delete().eq('id', data.id); await recount(sb, cohortId); };
+  }
+  await recount(sb, cohortId);
+  return { ok: true, undo };
+}
+
 async function enrol(sb, userId, cohortId) {
   const { data: sp } = await sb.from('student_profiles').select('id, enrolled_cohort_id').eq('user_id', userId).maybeSingle();
   if (!sp) return;
-  const { data: had } = await sb.from('enrollments').select('id, status').eq('student_id', sp.id).eq('cohort_id', cohortId).limit(1);
-  if (had && had.length) {
-    if (had[0].status !== 'active') await sb.from('enrollments').update({ status: 'active', cancelled_at: null }).eq('id', had[0].id);
-  } else {
-    const { error } = await sb.from('enrollments').insert({ student_id: sp.id, cohort_id: cohortId, status: 'active' });
-    if (error) throw new Error('enrol: ' + error.message);
-  }
+  const r = await savePlace(sb, sp.id, cohortId);
+  if (!r.ok) throw new Error('enrol: the learner already has a place in another class (' + r.blocking.join(', ') + ')');
   if (!sp.enrolled_cohort_id) await sb.from('student_profiles').update({ enrolled_cohort_id: cohortId }).eq('id', sp.id);
 }
 async function unenrol(sb, userId, cohortId) {
   const { data: sp } = await sb.from('student_profiles').select('id, enrolled_cohort_id').eq('user_id', userId).maybeSingle();
   if (!sp) return;
   await sb.from('enrollments').update({ status: 'cancelled', cancelled_at: new Date().toISOString() }).eq('student_id', sp.id).eq('cohort_id', cohortId).eq('status', 'active');
+  await recount(sb, cohortId);
   if (sp.enrolled_cohort_id === cohortId) await sb.from('student_profiles').update({ enrolled_cohort_id: null }).eq('id', sp.id);
 }
 
@@ -407,4 +476,4 @@ async function releasePack(ctx, ent) {
   return true;
 }
 
-module.exports = { TYPE, creditShare, fulfil, enrol, unenrol, isPricingEvent, processEvent, startPack, releasePack, PACK_DAYS };
+module.exports = { TYPE, creditShare, fulfil, enrol, unenrol, savePlace, releaseFinishedFreePlaces, finishedFreeClasses, recount, isPricingEvent, processEvent, startPack, releasePack, PACK_DAYS };

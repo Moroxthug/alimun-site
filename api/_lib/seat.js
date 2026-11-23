@@ -8,6 +8,7 @@
  * everything back if a later step fails, so a student is never left
  * without the seat they had.
  */
+const { releaseFinishedFreePlaces } = require('./entitlements.js');
 
 /** Cancel the student's active enrollment(s). The enrollments trigger frees the seat(s). */
 async function cancelActiveEnrollments(supabase, studentId) {
@@ -32,6 +33,9 @@ async function cancelActiveEnrollments(supabase, studentId) {
  * Throws only on unexpected errors (callers answer 500).
  */
 async function takeSeat(supabase, { studentId, cohortId, previousCohortId = null, replaceCurrent = false }) {
+  // A place in a one-session free class that is over no longer counts as being in a class (entitlements.js)
+  await releaseFinishedFreePlaces(supabase, studentId, cohortId);
+
   // Atomic capacity claim FIRST (SECURITY DEFINER RPC, service-role only).
   const { data: newCount, error: rpcError } = await supabase
     .rpc('increment_enrollment', { cohort_id: cohortId });
