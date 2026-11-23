@@ -119,7 +119,11 @@
       var f = scope.querySelector('.ln__facts'); if (f) f.outerHTML = facts();
       var see = scope.querySelector('[data-ln-see]'); if (see) see.className = 'btn btn--primary';
       if (H.onChange) H.onChange(L);
-    }, function (e) { btn.disabled = false; if (msg) msg.textContent = t('app_pl_err'); console.warn('[Alimun] Free class', e && e.message); });
+    }, function (e) {
+      /* Already in a class: one place at a time (api/_lib/launch.js), so trying again would not help */
+      if (e && e.body && e.body.error === 'in_class') { btn.remove(); if (msg) msg.textContent = t('app_ln_free_in_class'); return; }
+      btn.disabled = false; if (msg) msg.textContent = t('app_pl_err'); console.warn('[Alimun] Free class', e && e.message);
+    });
   }
   /* Clicks on the Home banner (the shell passes them here) */
   function homeClick(e, root) {

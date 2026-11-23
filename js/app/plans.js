@@ -335,7 +335,11 @@
     b.disabled = true;
     window.AlimunData.launchRegister().then(function () {
       LN.intro.registered = true; root.innerHTML = launchView();
-    }, function (e) { b.disabled = false; say('free', 'app_pl_err', true); console.warn('[Alimun] Free class', e && e.message); });
+    }, function (e) {
+      /* Already in a class: one place at a time (api/_lib/launch.js), so trying again would not help */
+      if (e && e.body && e.body.error === 'in_class') { b.remove(); say('free', 'app_ln_free_in_class', false); return; }
+      b.disabled = false; say('free', 'app_pl_err', true); console.warn('[Alimun] Free class', e && e.message);
+    });
   }
   function launchBuy(b) {
     if (!real()) { say('choose', 'app_pl_sample'); return; }
