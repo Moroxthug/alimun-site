@@ -9,7 +9,7 @@
  *   POST ?action=automation-set    (admin) { name, enabled?, dry_run?, daily_cap? }
  *   POST ?action=verify-session    (admin) { session }: reads Daily for one class date now.
  *   POST ?action=digest-now        (admin) the digest of yesterday, to the owner, now (does not count as the morning one).
- *   GET  ?action=cron-clips        (Vercel cron, every minute) proof-clips: five 60-second recordings in each class.
+ *   GET  ?action=cron-clips        (Vercel cron, every minute) proof-clips: five 60-second recordings in each paid class (none in free classes or teacher trials).
  *        cron-class-watch also pairs Daily's recordings with Alimun's (recording-guard reports any other) and, once an
  *        hour, deletes recordings past their date (recording-cleanup).
  *   POST ?action=record-start | record-stop { session }   (admin only: teachers never record; owner, 13 Nov 2026)
@@ -763,6 +763,14 @@ async function trialAction(action, req, res, sb) {
 }
 
 /* ---------- Recordings ---------- */
+/** A free class date: a free first class (a free pass for this one date) or a new teacher's trial class */
+async function freeSession(sb, sessionId) {
+  const [{ data: pass }, { data: trial }] = await Promise.all([
+    sb.from('entitlements').select('id').eq('session_id', sessionId).limit(1),
+    sb.from('teacher_trials').select('id').eq('session_id', sessionId).limit(1)
+  ]);
+  return !!((pass && pass.length) || (trial && trial.length));
+}
 async function proofClips(sb, now, auto) {
   const out = { due: 0, started: 0 };
   if (!auto || !auto.enabled) return out;
@@ -779,6 +787,9 @@ async function proofClips(sb, now, auto) {
     if ((done || []).some((d) => d.kind === 'full' && !d.start_error)) continue;
     const todo = due.filter((m) => !(done || []).some((d) => d.kind === 'proof' && d.planned_minute === m));
     if (!todo.length) continue;
+    /* Proof clips only in paid classes (owner, 23 Nov 2026: "keep quality clips only for paid classes, no more warnings
+       they're distracting"): never in a free class (learners hold a free pass for its one date) or a teacher's trial */
+    if (await freeSession(sb, s.id)) continue;
     const room = CV.roomName(s), here = await CV.presentNow(room);
     if (!here.length) continue; /* nobody in the room: nothing to record */
     for (const m of todo.slice(0, 1)) {
