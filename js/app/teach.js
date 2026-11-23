@@ -109,7 +109,8 @@
     support: '<path d="M4.5 14v-2a7.5 7.5 0 0 1 15 0v2"/><rect x="3.5" y="13" width="4" height="6" rx="1.6"/><rect x="16.5" y="13" width="4" height="6" rx="1.6"/><path d="M18.5 19c0 1.3-1.6 2-4 2H13"/>',
     plus: '<path d="M12 5v14M5 12h14"/>',
     minus: '<path d="M5 12h14"/>',
-    play: '<path d="M8 5.5v13l10.5-6.5z"/>'
+    play: '<path d="M8 5.5v13l10.5-6.5z"/>',
+    question: '<circle cx="12" cy="12" r="8.5"/><path d="M9.7 9.5a2.4 2.4 0 0 1 4.7.7c0 1.6-2.4 2.1-2.4 3.6"/><path d="M12 16.8h.01"/>'
   };
   function loaderInner() {
     return '<div class="whirl whirl--outer"></div><div class="whirl whirl--inner"></div><div class="spark"></div>' +
@@ -129,6 +130,7 @@
     { id: 'messages', label: 'app_t_nav_messages', icon: 'messages', group: 'account', part: 6, art: 'alien', tint: 'mint', kind: 'say', text: 'app_t_soon_messages_text', bub: 'app_t_soon_messages_bub' },
     { id: 'payouts', label: 'app_t_nav_payouts', icon: 'payouts', group: 'account', part: 6, art: 'suitcase', tint: 'sun', kind: 'think', text: 'app_t_soon_payouts_text', bub: 'app_t_soon_payouts_bub' },
     { id: 'settings', label: 'app_t_nav_settings', icon: 'settings', group: 'account', part: 6, art: 'cat', tint: 'bone', kind: 'think', text: 'app_t_soon_settings_text', bub: 'app_t_soon_settings_bub' },
+    { id: 'tour', label: 'app_tour_nav', icon: 'play', group: 'account' },
     { id: 'help', label: 'app_nav_help', icon: 'help', group: 'account' },
     { id: 'support', label: 'app_nav_support', icon: 'support', group: 'account' }
   ];
@@ -197,7 +199,7 @@
         '<header class="top">' +
           '<a class="top__brand" href="#/today" aria-label="' + esc(t('app_home_link')) + '">' + Cast.book('idle') + Cast.wordmark() + '</a>' +
           '<p class="top__title" aria-hidden="true"></p>' +
-          '<div class="top__actions">' + (mode === 'pending' ? '' : '<button class="icon-btn" type="button" data-bell aria-label="' + esc(t('app_notifications')) + '">' + icon('bell') + '</button>') + '<a class="avatar" href="#/settings" aria-label="' + esc(t('app_account')) + '">' + esc(initials(tp.full_name)) + '</a></div>' +
+          '<div class="top__actions">' + (mode === 'pending' ? '' : '<a class="icon-btn" href="#/help" data-pagehelp aria-label="' + esc(t('app_help_page')) + '" title="' + esc(t('app_help_page')) + '">' + icon('question') + '</a>') + (mode === 'pending' ? '' : '<button class="icon-btn" type="button" data-bell aria-label="' + esc(t('app_notifications')) + '">' + icon('bell') + '</button>') + '<a class="avatar" href="#/settings" aria-label="' + esc(t('app_account')) + '">' + esc(initials(tp.full_name)) + '</a></div>' +
         '</header>' +
         '<main class="view" id="view" tabindex="-1"></main>' +
       '</div>' +
@@ -341,6 +343,18 @@
     return '<section class="card card--bone span-12 sample-note" style="--i:0" role="note">' +
       '<div class="card__row" style="flex-wrap:wrap"><div style="flex:1;min-width:220px"><h2 class="t-h3">' + esc(t('app_sample_h')) + '</h2>' +
       '<p class="t-small" style="margin-top:6px">' + esc(p) + '</p></div>' + btn + '</div></section>';
+  }
+  /* The help article for the page on show: the "?" in the top bar */
+  var PAGE_HELP = { today: 'teacher-dashboard-at-a-glance', classes: 'availability-classes-and-contracts', students: 'students-and-messages', homework: 'set-and-mark-homework',
+    lessons: 'lessons-and-the-classroom-board', material: 'set-and-mark-homework', messages: 'students-and-messages', payouts: 'teacher-account-and-payouts',
+    settings: 'teacher-account-and-payouts' };
+  var CLASS_HELP = { live: 'start-your-live-class', notes: 'class-notes-after-class', oto: 'class-notes-after-class', availability: 'availability-classes-and-contracts', 'new': 'availability-classes-and-contracts', practice: 'lessons-and-the-classroom-board' };
+  function pageHelp(id) {
+    var a = app.querySelector('[data-pagehelp]');
+    if (!a) return;
+    var sub = partsOf(id)[0], slug = id === 'classes' && CLASS_HELP[sub] ? CLASS_HELP[sub] : PAGE_HELP[id];
+    a.hidden = id === 'help' || id === 'support';
+    a.setAttribute('href', slug ? '#/help/a/' + slug : '#/help');
   }
   function todayView() {
     return '<div class="view__head"><div><h1 class="t-h1">' + esc(greeting(firstName((D.teacher || {}).full_name))) + '</h1>' +
@@ -495,6 +509,7 @@
     return byId[id] ? id : 'today';
   }
   function render(id, animate) {
+    if (id === 'tour') { history.replaceState(null, '', location.pathname + location.search + '#/today'); id = 'today'; setTimeout(function () { startTour(false); }, 400); }
     var r = byId[id];
     if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('view', { dashboard: 'teacher', section: id });
     var mod = mode !== 'pending' && MODULES[id] ? MODULES[id]() : null;
@@ -505,8 +520,9 @@
       view.classList.remove('is-leaving');
       if (mode === 'pending' && !IVS) ivLoad();
       document.title = t(r.label) + ' – Alimun';
-      if (mod) mod.mount(view, partsOf(id), helpers).then(function (res) { if (current === id && res && !res.stale && res.title) document.title = res.title + ' – Alimun'; });
+      if (mod) mod.mount(view, partsOf(id), helpers).then(function (res) { if (current === id && res && !res.stale && res.title) { document.title = res.title + ' – Alimun'; top.querySelector('.top__title').textContent = res.title; } });
       top.querySelector('.top__title').textContent = t(r.label);
+      pageHelp(id);
       app.querySelectorAll('[data-route]').forEach(function (a) {
         if (a.getAttribute('data-route') === id) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current');
       });
@@ -559,6 +575,20 @@
     });
   }
 
+  /* The dashboard tour (js/app/teach-tour.js): by itself the first time an approved teacher opens the dashboard,
+     and from "Dashboard tour" in the menu. Finished or closed is saved, so it does not open by itself again. */
+  function startTour(first) {
+    if (!window.AlimunTeachTour || window.AlimunTeachTour.running() || mode === 'pending') return;
+    window.AlimunTeachTour.start({ A: helpers, onEnd: function (done) {
+      if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('teacher_tour', { done: done, first: !!first });
+      if (mode === 'real' && window.AlimunData.tourSeen) window.AlimunData.tourSeen(done).catch(function () { /* opens again next time */ });
+    } });
+  }
+  function maybeTour() {
+    if (mode !== 'real' || !window.AlimunData.onboardingState || current !== 'today') return;
+    window.AlimunData.onboardingState(lang).then(function (st) { if (st && !st.tour_seen_at && current === 'today') startTour(true); }, function () { /* no tour this time */ });
+  }
+
   /* ---------- Boot ---------- */
   function start() {
     renderShell();
@@ -588,6 +618,7 @@
     }).then(function (res) {
       D = res[0];
       start();
+      setTimeout(maybeTour, 1200);
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
     window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || MODULES[id]) render(id, true); });

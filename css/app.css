@@ -890,6 +890,8 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
   .view { padding: 4px 16px calc(var(--bar-h) + 40px + env(safe-area-inset-bottom)); }
   .grid { grid-template-columns: minmax(0, 1fr); gap: 16px; }
   .grid > * { grid-column: 1 / -1; }
+  /* Cards inside a display:contents wrapper are grid items too: a "span 12" there would add eleven empty columns and squeeze the card */
+  .grid [class*="span-"] { grid-column: 1 / -1; }
   .card { padding: 22px; border-radius: var(--r-lg); }
   .card__art { width: 92px; height: 92px; }
   .card__art--lg { width: 104px; height: 104px; }
@@ -2486,3 +2488,45 @@ section.card .hp-rows { padding: 0; margin: 12px -12px -8px; }
 /* The tutor says it is AI (owner, 16 Nov 2026; EU AI Act): under the Tutor heading and in every session */
 .tu-ai { display: inline-flex; align-items: center; gap: 8px; margin: 10px 0 0; padding: 6px 12px 6px 10px; border-radius: 10px; background: var(--t-lime); color: var(--forest); font-size: 14px; font-weight: 600; line-height: 1.4; }
 .tu-ai::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 3px rgba(206, 255, 101, .35); }
+
+/* The practice classroom (docs/TEACHER_ONBOARDING_PLAN.md) */
+.pr-tips .t-small + .t-small { margin-top: 8px; }
+/* A row with no time in front (course contracts): the text, then its buttons on the right */
+.tt-row--plain { grid-template-columns: minmax(0, 1fr) auto; align-items: center; }
+@media (max-width: 520px) { .tt-row--plain { grid-template-columns: 1fr; gap: 10px; } .tt-row--plain .btn-row { margin: 0; } }
+/* A side panel with one part only (practice classroom): its name as a heading */
+.cr-tabs--one { justify-content: space-between; }
+.cr-one { margin: 0; }
+/* Board controls (teacher): one bar under the page switcher, each label beside its menu, "Everyone solves this" at the end */
+.bd-ctls { flex: 1 1 100%; align-items: center; gap: 8px; padding: 8px; border-radius: var(--r-md); background: var(--bone); }
+.bd-ctls .btn--quiet, .bd-ctls .st-in { background: var(--white); }
+.bd-field { flex-direction: row; align-items: center; gap: 8px; }
+.bd-field > .t-small { white-space: nowrap; padding-inline-start: 6px; }
+.bd-field--solo { margin-inline-start: auto; }
+/* Room under the page's last line for the floating pen toolbar */
+.bd-paper { padding-bottom: 130px; }
+/* Practice classroom: no empty video box in the sample; the guide at reading size, without a scroll box */
+.cr--novideo .cr-video { display: none; }
+.cr--novideo.has-board .cr-body { grid-template-areas: "board side"; grid-template-rows: auto; }
+.cr--novideo:not(.has-board) .cr-body { grid-template-columns: minmax(0, 1fr); grid-template-areas: "side"; }
+.cr--practice .cr-side { max-height: none; }
+.cr--practice .cr-panel { overflow: visible; }
+.pr-tips { display: flex; flex-direction: column; gap: 20px; }
+.pr-tips section > .t-h3 { margin: 0 0 6px; }
+.pr-tips .t-body { font-size: 16px; line-height: 1.5; }
+.pr-note { margin: 0; padding: 12px 14px; border-radius: var(--r-md); background: var(--t-sun); font-size: 15px; line-height: 1.45; }
+@media (max-width: 899px) { .bd-paper { padding-bottom: 36px; } }
+/* The dashboard tour (js/app/teach-tour.js): the screen dims, the real element is lit up, a card says what it is */
+.tour { position: fixed; inset: 0; z-index: 900; }
+.tour__dim { position: absolute; inset: 0; background: rgba(8, 8, 8, .55); }
+.tour__spot { position: absolute; border-radius: var(--r-md); box-shadow: 0 0 0 3px var(--lime), 0 0 0 9999px rgba(8, 8, 8, .55); pointer-events: none; transition: left .3s var(--ease), top .3s var(--ease), width .3s var(--ease), height .3s var(--ease); }
+.tour__card { position: absolute; width: min(400px, calc(100vw - 32px)); padding: 22px 22px 18px; border-radius: var(--r-lg); background: var(--white); box-shadow: var(--shadow-lift); transition: opacity .15s var(--ease); }
+.tour.is-moving .tour__card { opacity: 0; }
+.tour__card .t-h3 { margin: 0 0 8px; margin-inline-end: 40px; }
+.tour__card .t-body { font-size: 16px; line-height: 1.5; }
+.tour__row { display: flex; justify-content: space-between; gap: 10px; margin-top: 18px; }
+.tour__x { position: absolute; top: 12px; inset-inline-end: 12px; width: 36px; height: 36px; background: var(--bone); box-shadow: none; }
+.tour__x svg { width: 18px; height: 18px; }
+.tour__card.is-center { left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(480px, calc(100vw - 32px)); padding: 30px 30px 24px; }
+.tour__card.is-center .t-h3 { font-size: 30px; }
+.tour__card.is-dock { left: 12px; right: 12px; top: auto; bottom: calc(var(--bar-h) + 28px + env(safe-area-inset-bottom)); width: auto; }

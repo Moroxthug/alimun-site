@@ -30,24 +30,26 @@
   function shell(o) {
     var A = o.A, t = A.t, esc = A.esc, tabs = o.tabs || [];
     var art = A.Cast && A.Cast.drawing ? A.Cast.drawing(o.art || 'mug') : '';
-    return '<div class="cr" data-cr data-role="' + esc(o.role) + '">' +
+    return '<div class="cr' + (o.practice ? ' cr--practice' : '') + (o.noVideo ? ' cr--novideo' : '') + '" data-cr data-role="' + esc(o.role) + '">' +
       '<a class="rd-back" href="' + esc(o.back || '#/classes') + '">' + A.icon('back') + '<span>' + esc(t('app_cl_leave')) + '</span></a>' +
       '<div class="view__head cr-head"><div><h1 class="t-h1">' + esc(o.title) + '</h1>' + (o.sub ? '<p class="t-lead">' + o.sub + '</p>' : '') +
         /* Group classes may be recorded by Alimun only (owner, 13 Nov 2026): said before anyone joins */
-        (o.board ? '<p class="t-small cr-rec">' + esc(t('app_cr_rec_note')) + '</p>' : '') + '</div>' +
+        (o.board && !o.practice ? '<p class="t-small cr-rec">' + esc(t('app_cr_rec_note')) + '</p>' : '') + '</div>' +
         (o.actions ? '<div class="btn-row cr-actions">' + o.actions + '</div>' : '') + '</div>' +
       '<div class="cr-body rise">' +
         (o.board ? '<section class="card cr-board" data-board hidden style="--i:0" aria-label="' + esc(t('app_bd_open')) + '"></section>' : '') +
         '<div class="cr-video" data-cr-video style="--i:1"><div class="cr-frame" data-frame><div class="cl-live__wait cr-wait"><div class="bub say" data-livemsg>' + esc(o.wait || '') + '</div>' + art +
           '<div class="loader" style="--w:46px" aria-hidden="true">' + A.loaderInner() + '</div></div></div>' +
           '<button class="icon-btn cr-grow" type="button" data-cr="grow" aria-pressed="false" aria-label="' + esc(t('app_cr_bigger')) + '" title="' + esc(t('app_cr_bigger')) + '">' + icon('grow') + '</button></div>' +
-        (tabs.length ? '<aside class="card cr-side" data-cr-side style="--i:2" aria-label="' + esc(t('app_cr_panel')) + '"><div class="cr-tabs" role="tablist">' +
-          tabs.map(function (x, i) { return '<button class="btn btn--sm ' + (i === 0 ? 'btn--primary' : 'btn--quiet') + ' cr-tab" type="button" role="tab" id="cr-tab-' + esc(x.id) + '" aria-controls="cr-p-' + esc(x.id) + '" aria-selected="' + (i === 0) + '" data-cr="tab" data-k="' + esc(x.id) + '">' + icon(x.icon) + '<span>' + esc(x.label) + '</span><b class="cr-dot" data-cr-dot="' + esc(x.id) + '" hidden></b></button>'; }).join('') +
+        (tabs.length ? '<aside class="card cr-side" data-cr-side style="--i:2" aria-label="' + esc(t('app_cr_panel')) + '"><div class="cr-tabs' + (tabs.length === 1 ? ' cr-tabs--one' : '') + '"' + (tabs.length === 1 ? '' : ' role="tablist"') + '>' +
+          /* One panel only (the practice classroom): its name as a heading, not a tab bar with a single tab */
+          (tabs.length === 1 ? '<h2 class="t-h3 cr-one">' + esc(tabs[0].label) + '</h2>' : '') +
+          (tabs.length === 1 ? [] : tabs).map(function (x, i) { return '<button class="btn btn--sm ' + (i === 0 ? 'btn--primary' : 'btn--quiet') + ' cr-tab" type="button" role="tab" id="cr-tab-' + esc(x.id) + '" aria-controls="cr-p-' + esc(x.id) + '" aria-selected="' + (i === 0) + '" data-cr="tab" data-k="' + esc(x.id) + '">' + icon(x.icon) + '<span>' + esc(x.label) + '</span><b class="cr-dot" data-cr-dot="' + esc(x.id) + '" hidden></b></button>'; }).join('') +
           '<button class="icon-btn cr-x" type="button" data-cr="sheet" aria-label="' + esc(t('app_cr_close')) + '">' + icon('close') + '</button></div>' +
-          tabs.map(function (x, i) { return '<div class="cr-panel" role="tabpanel" id="cr-p-' + esc(x.id) + '" aria-labelledby="cr-tab-' + esc(x.id) + '" data-cr-panel="' + esc(x.id) + '"' + (i ? ' hidden' : '') + '>' + x.html + '</div>'; }).join('') +
+          tabs.map(function (x, i) { return '<div class="cr-panel"' + (tabs.length === 1 ? '' : ' role="tabpanel" aria-labelledby="cr-tab-' + esc(x.id) + '"') + ' id="cr-p-' + esc(x.id) + '" data-cr-panel="' + esc(x.id) + '"' + (i ? ' hidden' : '') + '>' + x.html + '</div>'; }).join('') +
         '</aside>' : '') +
       '</div>' +
-      (tabs.length ? '<button class="btn btn--primary cr-fab" type="button" data-cr="sheet" aria-expanded="false">' + icon('chat') + '<span>' + esc(t('app_cr_chat')) + '</span><b class="cr-count" data-cr-count hidden></b></button>' : '') +
+      (tabs.length ? '<button class="btn btn--primary cr-fab" type="button" data-cr="sheet" aria-expanded="false">' + icon(o.practice ? 'notes' : 'chat') + '<span>' + esc(o.practice ? tabs[0].label : t('app_cr_chat')) + '</span><b class="cr-count" data-cr-count hidden></b></button>' : '') +
       '<div class="cr-toasts" data-cr-toasts aria-live="polite"></div></div>';
   }
   function chatHtml(A) {

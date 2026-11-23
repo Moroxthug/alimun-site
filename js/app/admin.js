@@ -81,6 +81,7 @@
     { id: 'activity', label: 'Activity', icon: 'activity', group: 'Console', text: 'Who is active, who is slipping away, where new students stop, and countries.' },
     { id: 'students', label: 'Students', icon: 'students', group: 'People', part: 2, text: 'Every student: search, their file, plan, class and progress, and view their dashboard as they see it.' },
     { id: 'teachers', label: 'Teachers', icon: 'teachers', group: 'People', part: 2, text: 'Applications to approve or reject, and each teacher’s file, classes and availability.' },
+    { id: 'onboarding', label: 'Teacher onboarding', icon: 'teachers', group: 'People', text: 'Who went through the dashboard tour and who tried the practice classroom.' },
     { id: 'help', label: 'Help requests', icon: 'help', group: 'People', text: 'What students and teachers write to Support, your replies, and what people ask Help.' },
     { id: 'contact', label: 'Contact messages', icon: 'messages', group: 'People', text: 'What people wrote in the contact form on alimun.com.' },
     { id: 'campaigns', label: 'Campaigns', icon: 'campaigns', group: 'People', text: 'News and offers by email and in the dashboard bell, to people who asked for them.' },
@@ -495,7 +496,7 @@
   function hideLoader() { loadingScreen.classList.add('is-done'); loadingScreen.setAttribute('aria-hidden', 'true'); }
   function setSheet(open) { document.body.classList.toggle('is-sheet-open', open); app.querySelector('[data-more]').setAttribute('aria-expanded', String(open)); if (open) { var a = sheet.querySelector('a'); if (a) a.focus(); } }
   function routeFromHash() { var id = (location.hash.match(/^#\/([a-z]+)/) || [])[1]; return byId[id] ? id : 'overview'; }
-  var MODULES = { activity: function () { return window.AlimunAdminActivity; }, campaigns: function () { return window.AlimunAdminCampaigns; }, help: function () { return window.AlimunAdminHelp; }, contact: function () { return window.AlimunAdminContact; }, students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; },
+  var MODULES = { activity: function () { return window.AlimunAdminActivity; }, campaigns: function () { return window.AlimunAdminCampaigns; }, help: function () { return window.AlimunAdminHelp; }, contact: function () { return window.AlimunAdminContact; }, onboarding: function () { return window.AlimunAdminOnboarding; }, students: function () { return window.AlimunAdminStudents; }, teachers: function () { return window.AlimunAdminTeachers; },
     classes: function () { return window.AlimunAdminClasses; }, schedule: function () { return window.AlimunAdminSchedule; },
     matching: function () { return window.AlimunAdminMatching; }, waiting: function () { return window.AlimunAdminWaiting; }, messages: function () { return window.AlimunAdminMessages; },
     classlog: function () { return window.AlimunAdminClassLog; }, automations: function () { return window.AlimunAdminAutomations; },

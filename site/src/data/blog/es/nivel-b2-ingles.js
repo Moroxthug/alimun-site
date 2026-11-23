@@ -160,7 +160,7 @@ export default {
     ['¿Puedo presentarme al B2 de la EOI sin haber estudiado allí?', 'Sí. Según el Real Decreto 1/2019, puedes matricularte por libre en las pruebas de cualquier nivel sin tener los certificados de los niveles anteriores. Las fechas, la matrícula y las tasas las fija cada comunidad autónoma.'],
     ['¿Cuánto se tarda en pasar de B1 a B2?', 'Depende de cuánto estudies y de cuánto uses el inglés. Como referencia, Cambridge indica unas 350 a 400 horas guiadas acumuladas para el B1 y unas 500 a 600 para el B2, empezando desde cero.'],
   ],
-  related: ['english-b1-level', 'cefr-english', 'b2-first', 'ielts-or-cambridge', 'ielts-band-scores', 'how-long-english'],
+  related: ['english-b2-exercises', 'english-b1-level', 'cefr-english', 'b2-first', 'ielts-or-cambridge', 'ielts-band-scores', 'how-long-english'],
   sources: [
     ['Consejo de Europa, MCER: niveles comunes de referencia, escala global', 'https://www.coe.int/en/web/common-european-framework-reference-languages/table-1-cefr-3.3-common-reference-levels-global-scale'],
     ['Consejo de Europa, Volumen complementario del MCER (2020)', 'https://www.coe.int/en/web/common-european-framework-reference-languages/cefr-companion-volume'],

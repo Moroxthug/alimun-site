@@ -148,7 +148,7 @@ export default {
     ['Qualsiasi certificazione B2 vale punti nelle GPS?', "No. Secondo le tabelle dell'ordinanza n. 27 del 2026, valgono solo le certificazioni rilasciate dagli enti riconosciuti dal Ministero, e si valuta un solo titolo per ciascuna lingua. Controlla l'elenco degli enti sul sito del MIM."],
     ['Quanto tempo serve per passare dal B1 al B2?', "Dipende da quanto studi e da quanto usi l'inglese. Come riferimento, Cambridge indica circa 350-400 ore guidate cumulative per il B1 e 500-600 per il B2, partendo da zero."],
   ],
-  related: ['cefr-english', 'b2-first', 'ielts-or-cambridge', 'ielts-band-scores', 'how-long-english'],
+  related: ['english-b2-exercises', 'cefr-english', 'b2-first', 'ielts-or-cambridge', 'ielts-band-scores', 'how-long-english'],
   sources: [
     ["Consiglio d'Europa, livelli comuni di riferimento del QCER: scala globale", 'https://www.coe.int/en/web/common-european-framework-reference-languages/table-1-cefr-3.3-common-reference-levels-global-scale'],
     ["Consiglio d'Europa, Volume complementare del QCER (2020)", 'https://www.coe.int/en/web/common-european-framework-reference-languages/cefr-companion-volume'],

@@ -152,7 +152,7 @@ export default {
     ['L’esame al computer è più facile?', 'No. Contenuti, tempi, formato e certificato sono gli stessi. Le differenze principali sono che digiti le risposte e che i risultati arrivano prima, di solito in 5-10 giorni lavorativi.'],
     ['Con il B2 First posso ottenere un certificato C1?', 'Sì. Con un punteggio complessivo da 180 a 190 ottieni il voto A e un certificato che attesta un livello C1. Se però un ente chiede esplicitamente il C1 Advanced, devi sostenere quell’esame.'],
   ],
-  related: ['ielts-or-cambridge', 'cefr-english', 'how-long-english'],
+  related: ['english-b2-exercises', 'ielts-or-cambridge', 'cefr-english', 'how-long-english'],
   sources: [
     ['B2 First, Cambridge English', 'https://www.cambridgeenglish.org/exams-and-tests/qualifications/first/'],
     ['Formato del B2 First', 'https://www.cambridgeenglish.org/exams-and-tests/qualifications/first/format/'],

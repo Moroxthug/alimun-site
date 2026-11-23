@@ -236,7 +236,7 @@
   }
   function timetableView() {
     return '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_t_nav_classes')) + '</h1><p class="t-lead">' + esc(t('app_tc_lead')) + '</p></div>' +
-      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/classes/new">' + A.icon('plus') + esc(t('app_tc_new')) + '</a><a class="btn btn--ghost btn--sm" href="#/classes/availability">' + esc(t('app_tc_avail')) + '</a></div></div>' +
+      '<div class="btn-row"><a class="btn btn--primary btn--sm" href="#/classes/new">' + A.icon('plus') + esc(t('app_tc_new')) + '</a><a class="btn btn--ghost btn--sm" href="#/classes/availability">' + esc(t('app_tc_avail')) + '</a><a class="btn btn--ghost btn--sm" href="#/classes/practice">' + esc(t('app_pr_h')) + '</a></div></div>' +
       '<div class="grid rise"><div class="span-12" data-contracts hidden></div>' + nextCard() + stageCard() + calendarHtml() + comingCard() + pastCard() + sampleLine() + '</div>';
   }
 
@@ -263,7 +263,7 @@
         var line = t('app_tk_offer', { room: roomName(r), date: start, days: kWeekdays(r.schedule_days), time: String(r.schedule_time || '').slice(0, 5), zone: r.timezone, n: r.learners });
         var state = r.role === 'substitute' ? t('app_tk_substitute') : r.contract_accepted_at ? t('app_tk_accepted') : r.contract_declined_at ? t('app_tk_declined') : !r.contract_offered_at ? t('app_tk_waiting') : '';
         var ask = r.role === 'teacher' && r.contract_offered_at && !r.contract_accepted_at && !r.contract_declined_at;
-        return '<div class="tt-row"><span><b><bdi>' + esc(roomName(r)) + '</bdi></b><small>' + esc(line + (state ? ' ' + state : '')) + '</small></span>' +
+        return '<div class="tt-row tt-row--plain"><span><b><bdi>' + esc(roomName(r)) + '</bdi></b><small>' + esc(line + (state ? ' ' + state : '')) + '</small></span>' +
           (ask ? '<span class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-tc="contract" data-id="' + esc(r.id) + '" data-ok="1">' + esc(t('app_tk_accept')) + '</button>' +
             '<button class="btn btn--quiet btn--sm" type="button" data-tc="contract" data-id="' + esc(r.id) + '" data-ok="0">' + esc(t('app_tk_decline')) + '</button></span>' : '') + '</div>';
       }).join('') + '</div><p class="t-small st-msg" data-tk-msg aria-live="polite"></p></section>';
@@ -293,6 +293,59 @@
     }, function (e) { el.disabled = false; if (msg) msg.textContent = t('app_tk_err'); console.warn('[Alimun] Contract', e && e.message); });
   }
   function sampleLine() { return C.sample ? '<p class="t-tiny span-12">' + esc(t('app_tc_sample')) + '</p>' : ''; }
+
+  /* ---------- The practice classroom (docs/TEACHER_ONBOARDING_PLAN.md) ----------
+     #/classes/practice: a private room of the teacher's own for an hour, any time, with the board on a prepared lesson
+     and a second pass to join as a learner from a phone or another browser. Nothing is saved or recorded. */
+  var PRACTICE = { course: 'English-A2', lesson: 'c02' }, guest = null;
+  function practiceView() {
+    liveId = 'practice'; guest = null;
+    document.body.classList.add('is-reading');
+    var CR = window.AlimunClassroom;
+    /* What to try, in three short parts with headings, at reading size (no scroll box inside the panel) */
+    var tips = '<div class="pr-tips">' + (C.sample ? '<p class="pr-note">' + esc(t('app_pr_sample')) + '</p>' : '') +
+      '<section><h3 class="t-h3">' + esc(t('app_pr_board_h')) + '</h3><p class="t-body">' + esc(t('app_pr_try_board')) + '</p></section>' +
+      '<section><h3 class="t-h3">' + esc(t('app_pr_cam_h')) + '</h3><p class="t-body">' + esc(t('app_pr_try_p')) + '</p></section>' +
+      '<section><h3 class="t-h3">' + esc(t('app_pr_guest_h')) + '</h3><p class="t-body">' + esc(t('app_pr_guest_p')) + '</p>' +
+      '<div data-guest>' + (C.sample ? '' : '<p class="t-small">' + esc(t('app_pr_guest_wait')) + '</p>') + '</div></section>' +
+      '<p><a class="linkish" href="#/help/a/lessons-and-the-classroom-board" target="_blank" rel="noopener">' + esc(t('app_pr_help')) + '</a></p></div>';
+    var actions = '<button class="btn btn--lime btn--sm" type="button" data-tc="board" aria-pressed="false">' + CR.icon('board') + '<span>' + esc(t('app_bd_open')) + '</span></button>';
+    return CR.shell({ A: A, role: 'teacher', title: t('app_pr_h'), sub: esc(t('app_pr_sub')), back: '#/classes', practice: true, noVideo: C.sample, board: true, actions: actions,
+      tabs: [{ id: 'try', label: t('app_pr_tab'), icon: 'notes', html: tips }], wait: t('app_pr_opening'), art: 'owl' });
+  }
+  function drawGuest() {
+    var box = root && root.querySelector('[data-guest]');
+    if (!box) return;
+    if (!guest) { box.innerHTML = '<p class="t-tiny">' + esc(t('app_pr_guest_none')) + '</p>'; return; }
+    box.innerHTML = '<div class="btn-row"><button class="btn btn--primary btn--sm" type="button" data-tc="copyguest">' + esc(t('app_pr_copy')) + '</button>' +
+      '<a class="btn btn--ghost btn--sm" href="' + esc(guest) + '" target="_blank" rel="noopener">' + esc(t('app_pr_open_tab')) + '</a></div><p class="t-tiny" data-guestmsg aria-live="polite"></p>';
+  }
+  function copyGuest() {
+    var m = root.querySelector('[data-guestmsg]'), say = function (k) { if (m) m.textContent = t(k); };
+    if (!guest) return;
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(guest).then(function () { say('app_pr_copied'); }, function () { say('app_pr_copy_fail'); });
+    else say('app_pr_copy_fail');
+  }
+  function joinPractice() {
+    if (C.sample) { liveSay('app_pr_sample'); startBoard('practice', null); return; }
+    window.AlimunData.practiceRoom().then(function (j) {
+      var url = safeUrl(j.url);
+      if (!url) throw { message: '' };
+      guest = safeUrl(j.guestUrl);
+      drawGuest();
+      return loadDaily().then(function (D) {
+        var box = root.querySelector('[data-frame]');
+        if (!box) return;
+        box.innerHTML = '';
+        leave();
+        call = D.createFrame(box, roomOptions());
+        if (cls) cls.attach(call);
+        call.on('left-meeting', function () { leave(); if (location.hash.indexOf('#/classes/practice') === 0) location.hash = '#/classes'; });
+        startBoard('practice', call);
+        return call.join({ url: url, token: j.token });
+      });
+    }).catch(function (e) { drawGuest(); liveSay('app_tc_join_error', e && e.message ? e.message : null); });
+  }
 
   /* ---------- Classroom ---------- */
   function liveView(kind, id) {
@@ -368,6 +421,16 @@
   /* The live board (js/app/board.js): the lesson's board pages beside the video, sent to the students */
   function startBoard(id, frame) {
     if (board || !window.AlimunBoard) return board;
+    if (id === 'practice') {
+      var pel = root.querySelector('[data-board]');
+      if (!pel) return null;
+      try { localStorage.removeItem('alimun-board-practice'); } catch (e) { /* storage blocked */ }
+      board = window.AlimunBoard.create({ A: A, role: 'teacher', frame: frame || null, sessionId: 'practice', course: PRACTICE.course, lesson: PRACTICE.lesson, persist: false,
+        words: [{ word: 'every day', definition: 'on each day' }, { word: 'usually', definition: 'most of the time' }, { word: 'never', definition: 'not at any time' }] });
+      var pb = board;
+      board.mount(pel).then(function () { if (board === pb) setBoardOpen(true); });
+      return board;
+    }
     var s = sessionOf(id), x = s ? lessonFor(s) : null, el = root.querySelector('[data-board]');
     if (!s || !el) return null;
     var lastWords = (C.sessions.filter(function (y) { return y.cohortId === s.cohortId && y.notes && (y.notes.vocabulary || []).length && new Date(y.at) < new Date(s.at); }).pop() || { notes: {} }).notes.vocabulary || [];
@@ -804,6 +867,7 @@
       else if (a === 'publish') publish(el);
       else if (a === 'delslot') delSlot(el);
       else if (a === 'board') toggleBoard();
+      else if (a === 'copyguest') copyGuest();
       else if (a === 'days') { var want = el.getAttribute('data-k') === 'all' ? [0, 1, 2, 3, 4, 5, 6] : [1, 2, 3, 4, 5];
         el.closest('form').querySelectorAll('input[name="day"]').forEach(function (c) { c.checked = want.indexOf(+c.value) > -1; }); }
       else if (a === 'moretime') { var box = el.closest('form').querySelector('[data-times]'), last = box.querySelectorAll('input[name="end"]'), from = last.length ? last[last.length - 1].value : '14:00';
@@ -850,6 +914,7 @@
       if (my !== mountNo) return { stale: true };
       var p0 = parts[0], html, title = t('app_t_nav_classes');
       if (p0 === 'live') html = liveView(parts[1] === 'b' ? 'b' : 's', parts[1] === 'b' ? parts[2] : parts[1]);
+      else if (p0 === 'practice') { html = practiceView(); title = t('app_pr_h'); }
       else if (p0 === 'notes') { html = notesView(parts[1]); }
       else if (p0 === 'oto') html = otoView(parts[1]);
       else if (p0 === 'new') { html = newView(); title = t('app_tc_new_h'); }
@@ -867,6 +932,10 @@
           sampleMsgs: [{ id: 'm1', sender_user: 'x', sender_role: 'student', sender_name: 'Mei', body: 'Guten Abend! I will be two minutes late.', created_at: new Date(Date.now() - 4 * MIN).toISOString() }],
           onLayout: function () { if (board) board.fit(); } });
         join(kind, id);
+      }
+      if (p0 === 'practice') {
+        cls = window.AlimunClassroom.start({ root: root, A: A, role: 'teacher', cohortId: null, sample: true, sampleMsgs: [], onLayout: function () { if (board) board.fit(); } });
+        joinPractice();
       }
       if (!p0) tick = setInterval(function () {
         var el = root.querySelector('[data-countdown]');
