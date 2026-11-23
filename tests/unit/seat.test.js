@@ -43,6 +43,7 @@ test('first enrollment: claims the seat, inserts, points the profile at the clas
   const r = await takeSeat(db, { studentId: 's1', cohortId: 'c2' });
   assert.deepStrictEqual(r, { ok: true, newCount: 5 });
   assert.deepStrictEqual(db.log, [
+    'select enrollments',   // the learner's active places: one in a finished free class is completed first (entitlements.js)
     'rpc increment_enrollment', 'delete enrollments', 'insert enrollments:active',
     'select enrollments', 'update student_profiles',
   ]);
@@ -52,7 +53,7 @@ test('full class: nothing else is touched', async () => {
   const db = fakeDb({ full: true });
   const r = await takeSeat(db, { studentId: 's1', cohortId: 'c2', previousCohortId: 'c1', replaceCurrent: true });
   assert.strictEqual(r.error, 'cohort_full');
-  assert.deepStrictEqual(db.log, ['rpc increment_enrollment']);
+  assert.deepStrictEqual(db.log, ['select enrollments', 'rpc increment_enrollment']);
 });
 
 test('switch: new seat is claimed BEFORE the old one is released', async () => {

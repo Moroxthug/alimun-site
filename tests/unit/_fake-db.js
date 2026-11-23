@@ -4,6 +4,12 @@ const crypto = require('crypto');
 
 function fakeDb(tables, rpcs, opts) {
   const unique = (opts && opts.unique) || {};
+  // Partial unique indexes: { table: [{ key, where(row) }] }, e.g. one active enrollment per student
+  const partial = (opts && opts.uniqueWhere) || {};
+  const breaks = (name, list) => (partial[name] || []).some((u) => {
+    const seen = new Set();
+    return list.filter(u.where).some((r) => { const k = r[u.key]; if (seen.has(k)) return true; seen.add(k); return false; });
+  });
   function q(name) {
     const st = { name, filters: [], op: 'select', payload: null, single: false, maybe: false, returning: false, onConflict: null };
     const rows = () => (tables[name] = tables[name] || []);
@@ -17,6 +23,12 @@ function fakeDb(tables, rpcs, opts) {
       else if (st.op === 'delete') { out = rows().filter(match); tables[name] = rows().filter((r) => !match(r)); }
       else if (st.op === 'insert' && (unique[name] || []).some((k) => [].concat(st.payload).some((p) => rows().some((r) => r[k] != null && r[k] === p[k])))) {
         return { data: null, error: { message: 'duplicate key value violates unique constraint' } };
+      }
+      else if (st.op === 'insert' && breaks(name, rows().concat([].concat(st.payload)))) {
+        return { data: null, error: { code: '23505', message: 'duplicate key value violates unique constraint' } };
+      }
+      else if (st.op === 'update' && breaks(name, rows().map((r) => (match(r) ? Object.assign({}, r, st.payload) : r)))) {
+        return { data: null, error: { code: '23505', message: 'duplicate key value violates unique constraint' } };
       }
       else if (st.op === 'insert') { const list = [].concat(st.payload).map((r) => Object.assign({ id: crypto.randomUUID() }, r)); rows().push(...list); out = list; }
       else if (st.op === 'update') { out = rows().filter(match); out.forEach((r) => Object.assign(r, st.payload)); }
