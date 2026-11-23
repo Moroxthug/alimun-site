@@ -366,15 +366,25 @@
               state = null; closeRun();
             });
 
-            // Estimated level: the highest level where at least two items were seen and at least two thirds were right.
+            // Estimated level (owner, 23 Nov 2026: "look into it" / "yes do both"): the level that best explains every
+            // answer, allowing for lucky guesses (four options, so about one in four by chance). Each answer counts:
+            // the chance of a right answer to an item at level d for a learner of ability t (0 = A1 ... 6 = top of C2)
+            // is 0.25 + 0.75 / (1 + e^(-2.5 (t - d - 0.5))); the ability with the highest likelihood over all answers
+            // is found on a fine grid and rounded down to its level (on a tie, the lower level). The rule it replaces
+            // ("highest level with two thirds right") ignored the levels below, so a few lucky guesses at C1 could place
+            // a B1 learner at C1: in 24,000 simulated runs it placed 53% at the right level and 5% two or more levels
+            // off; this one 75% and under 1% (docs/LEVEL_TEST.md, "Scoring").
             function estimate(answers) {
-              var best = 0;
-              LEVELS.forEach(function (l, i) {
-                var seen = answers.filter(function (a) { return a.level === l; });
-                var ok = seen.filter(function (a) { return a.right; }).length;
-                if (seen.length >= 2 && ok / seen.length >= 2 / 3) best = i;
-              });
-              return LEVELS[best];
+              var bestT = 0, bestLL = -Infinity;
+              for (var t = 0; t <= 6.0001; t += 0.05) {
+                var ll = 0;
+                answers.forEach(function (a) {
+                  var d = LEVELS.indexOf(a.level), p = 0.25 + 0.75 / (1 + Math.exp(-2.5 * (t - d - 0.5)));
+                  ll += Math.log(a.right ? p : 1 - p);
+                });
+                if (ll > bestLL + 1e-9) { bestLL = ll; bestT = t; }
+              }
+              return LEVELS[Math.max(0, Math.min(5, Math.floor(bestT + 1e-9)))];
             }
 
             function finish() {
@@ -388,7 +398,8 @@
               var cap = LEVELS.indexOf(level) + 1, miss = {};
               answers.forEach(function (a) { if (!a.right && LEVELS.indexOf(a.level) <= cap) miss[a.topic] = (miss[a.topic] || 0) + 1; });
               var topics = Object.keys(miss).sort(function (x, y) { return miss[y] - miss[x]; }).slice(0, 3);
-              var result = { language: state.lang, level: level, skills: skills, topics: topics, topicLabels: topics.map(function (t) { var ui = (bank.topicsI18n || {})[uiLang === "ma" ? "fr" : uiLang] || {}; return ui[t] || bank.topics[t] || t; }), answers: answers.length, at: new Date().toISOString() };
+              // Every answer is kept with the result (item id and right or wrong), so results can be checked and re-scored later
+              var result = { language: state.lang, level: level, skills: skills, topics: topics, items: answers.map(function (a) { return [a.id, a.right ? 1 : 0]; }), scorer: "ml1", topicLabels: topics.map(function (t) { var ui = (bank.topicsI18n || {})[uiLang === "ma" ? "fr" : uiLang] || {}; return ui[t] || bank.topics[t] || t; }), answers: answers.length, at: new Date().toISOString() };
               try { localStorage.setItem("alimun-level-result", JSON.stringify(result)); } catch (e) {}
               closeRun();
               show(result);

@@ -165,10 +165,12 @@ async function teacher() {
 }
 
 // ── Learners: goal, timeframe, profile, then dashboard or payment ────────────
+// The level test's answers (item id, 1 right / 0 wrong), at most 30, kept with the placement so results can be re-scored
+function answersOf(r) { return Array.isArray(r.items) ? r.items.slice(0, 30).filter(function (a) { return Array.isArray(a) && typeof a[0] === 'string' && a[0].length <= 24; }).map(function (a) { return [a[0], a[1] ? 1 : 0]; }) : null; }
 function placement() {
   let p = meta.onboarding && meta.onboarding.placement;
   if (!p || !p.language) {
-    try { const r = JSON.parse(localStorage.getItem('alimun-level-result') || 'null'); if (r && r.language) p = { language: r.language, level: r.level, skills: r.skills || null, topics: (r.topics || []).slice(0, 5), at: r.at || null }; } catch (e) {}
+    try { const r = JSON.parse(localStorage.getItem('alimun-level-result') || 'null'); if (r && r.language) p = { language: r.language, level: r.level, skills: r.skills || null, topics: (r.topics || []).slice(0, 5), at: r.at || null, items: answersOf(r), scorer: typeof r.scorer === 'string' ? r.scorer.slice(0, 12) : null }; } catch (e) {}
   }
   return p && typeof p.language === 'string' ? p : null;
 }
