@@ -6,7 +6,7 @@
    Signed out or not a teacher: sample conversations, nothing is sent. Text: app_ms_* and app_tm_* keys. */
 (function () {
   'use strict';
-  var A = null, root = null, S = null, poll = null;
+  var A = null, root = null, S = null, poll = null, stopLive = null;
   var DAY = 86400000;
   function t(k, v) { return A.t(k, v); }
   function esc(s) { return A.esc(s); }
@@ -149,7 +149,8 @@
     if (S.sample) return;
     var thread = c.thread ? Promise.resolve(c.thread) : window.AlimunData.openThread('direct', null, null, c.student);
     thread.then(function (id) { c.thread = id; return window.AlimunData.sendMessage(id, body); }).then(function (row) {
-      c.msgs = c.msgs.filter(function (x) { return x !== temp; }).concat(row ? [row] : []);
+      c.msgs = c.msgs.filter(function (x) { return x !== temp; });
+      if (row && !c.msgs.some(function (x) { return x.id === row.id; })) c.msgs.push(row);
       redrawMsgs(c);
     }, function (e) {
       c.msgs = c.msgs.filter(function (x) { return x !== temp; });
@@ -192,7 +193,13 @@
         document.body.classList.toggle('is-reading', !!c);
         root.innerHTML = view(c);
         var m = root.querySelector('[data-msgs]'); if (m) m.scrollTop = m.scrollHeight;
-        if (c) poll = setInterval(function () { refresh(c); }, 8000);
+        if (c) {
+          poll = setInterval(function () { refresh(c); }, 45000);
+          /* Live (owner, 24 Nov 2026): new messages show at once; the poll is a slow safety net */
+          if (!S.sample && window.AlimunLive) stopLive = window.AlimunLive.watch('messages', [{ table: 'messages', event: 'INSERT' }], function (ch) {
+            if (!ch.length || ch.some(function (x) { return x.row && (!c.thread || x.row.thread_id === c.thread); })) refresh(c);
+          }, { wait: 150 });
+        }
         return { title: c ? titleOf(c) : t('app_t_nav_messages') };
       });
     }).catch(function (e) {
@@ -201,7 +208,7 @@
       return { stale: true };
     });
   }
-  function stop() { if (poll) { clearInterval(poll); poll = null; } }
+  function stop() { if (poll) { clearInterval(poll); poll = null; } if (stopLive) { stopLive(); stopLive = null; } }
   function reset() { stop(); }
   window.AlimunTeachMessages = { mount: mount, reset: reset };
 })();

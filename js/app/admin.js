@@ -104,12 +104,13 @@
   var app, view, top, sheet, loadingScreen, D = null, current = null, loadedAt = 0;
   var mode = 'sample'; /* 'real', 'sample' (signed out), 'forced' (?sample=1), 'denied', 'error' */
   var feedFilter = 'all';
+  var liveState = 'off', livePaint = false, feedSeen = null, liveBusy = false, liveAgain = false, liveLast = 0, liveTimer = null, liveStarted = false;
 
   /* Counts shown beside a section in the menu: things waiting for the admin there */
   function navCounts() {
     if (!D || !D.counts) return {};
     var c = D.counts, jobsBad = jobsSummary().filter(function (j) { return j.bad; }).length;
-    return { teachers: c.pending || 0, waiting: c.waiting || 0, system: jobsBad };
+    return { teachers: c.pending || 0, waiting: c.waiting || 0, system: jobsBad, help: ((D.console || {}).helpOpen || []).length };
   }
   function navLinks() {
     var n = navCounts();
@@ -120,7 +121,7 @@
     }).join('');
   }
   function syncLabel() {
-    if (mode === 'real') return 'Live, updated ' + fmt(loadedAt, { hour: '2-digit', minute: '2-digit' });
+    if (mode === 'real') return (liveState === 'live' ? 'Live' : liveState === 'connecting' ? 'Connecting' : 'Not live') + ', updated ' + fmt(loadedAt, { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     return mode === 'error' ? 'Real data did not load' : 'Sample data';
   }
   function renderShell() {
@@ -135,7 +136,7 @@
         '<div class="adm-search" role="search"><label class="sr-only" for="adm-q" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Search students and teachers</label>' + icon('search') +
           '<input id="adm-q" type="search" autocomplete="off" spellcheck="false" placeholder="Search students and teachers by name or email" aria-controls="adm-results" aria-expanded="false"><kbd>/</kbd>' +
           '<div class="adm-results" id="adm-results" role="listbox" hidden></div></div>' +
-        '<div class="top__actions"><span class="adm-sync' + (mode === 'real' ? '' : ' is-sample') + '" data-sync><i></i><span>' + esc(syncLabel()) + '</span></span>' +
+        '<div class="top__actions"><span class="adm-sync' + (mode === 'real' ? (liveState === 'live' ? ' is-live' : ' is-off') : ' is-sample') + '" data-sync role="status"><i></i><span>' + esc(syncLabel()) + '</span></span>' +
           (mode === 'real' ? '<button class="btn btn--quiet btn--sm" type="button" data-reload title="Load the latest data">' + icon('refresh') + 'Refresh</button>' : '') +
           '<button class="btn btn--quiet btn--sm" type="button" data-signout>Sign out</button></div></header>' +
         '<main class="view" id="view" tabindex="-1"></main></div>' +
@@ -327,7 +328,11 @@
   }
   var MOODS = { great: 'great', good: 'good', meh: 'not great' };
   var FEED_IC = { money: 'k-money', problems: 'k-bad', tutor: 'k-ai', people: 'k-people' };
+  function feedKey(i) { return i.at + '|' + i.html; }
   function feedHtml(items) {
+    var mark = livePaint && feedSeen, seen = {};
+    items.forEach(function (i) { seen[feedKey(i)] = 1; });
+    var was = feedSeen; feedSeen = seen;
     var list = items.filter(function (i) { return feedFilter === 'all' ? i.g !== 'visits' : i.g === feedFilter; }).slice(0, 200);
     if (!list.length) return '<p class="feed__empty">Nothing in the last 14 days.</p>';
     var last = '', html = '';
@@ -335,13 +340,17 @@
       var d = new Date(i.at), k = dayKey(d);
       if (k !== last) { last = k; html += '<div class="feed__day">' + esc(k === dayKey(Date.now()) ? 'Today' : k === dayKey(Date.now() - DAY) ? 'Yesterday' : fmt(d, { weekday: 'long', day: 'numeric', month: 'long' })) + '</div>'; }
       var inner = '<span class="feed__t">' + esc(fmt(d, { hour: '2-digit', minute: '2-digit' })) + '</span><span class="feed__ic ' + (FEED_IC[i.g] || '') + '">' + icon(i.ic) + '</span><span class="feed__x">' + i.html + (i.sub ? '<small>' + esc(i.sub) + '</small>' : '') + '</span>';
-      html += i.href ? '<a class="feed__it" href="' + esc(i.href) + '">' + inner + '</a>' : '<div class="feed__it">' + inner + '</div>';
+      var cls = 'feed__it' + (mark && !was[feedKey(i)] ? ' is-new' : '');
+      html += i.href ? '<a class="' + cls + '" href="' + esc(i.href) + '">' + inner + '</a>' : '<div class="' + cls + '">' + inner + '</div>';
     });
     return html;
   }
 
   function attention(feed) {
     var items = [], c = D.counts, jobs = jobsSummary().filter(function (j) { return j.bad; }), C = D.console || {};
+    var hq = C.helpOpen || [];
+    if (hq.length) items.push({ bad: false, href: '#/help', h: plural(hq.length, 'support conversation', 'support conversations') + ' waiting for a reply',
+      p: 'Oldest: \u201c' + cut(hq[0].subject, 60) + '\u201d, ' + ago(hq[0].updated_at || hq[0].created_at) + '.' });
     if (c.pending) items.push({ bad: false, href: '#/teachers', h: plural(c.pending, 'teacher application', 'teacher applications') + ' waiting',
       p: 'Oldest: ' + D.applications[0].full_name + ', ' + ago(D.applications[0].created_at) + '.' });
     if (D.oldHomework.length) items.push({ bad: false, href: '#/teachers', h: plural(D.oldHomework.length, 'piece', 'pieces') + ' of homework unmarked for over a week',
@@ -406,6 +415,7 @@
       }).join('') + '</div><div class="feed" data-feedlist>' + feedHtml(feed) + '</div></section>';
 
     html += '<div class="span-5" style="display:grid;gap:16px;align-content:start">';
+    html += '<section class="card" style="--i:2" aria-labelledby="h-online" data-online>' + onlineInner() + '</section>';
     html += '<section class="card" style="--i:2" aria-labelledby="h-att"><div class="panel-h"><h2 class="t-h2" id="h-att">Needs you</h2></div>' +
       (items.length ? '<div class="todo">' + items.map(function (it) { return '<a href="' + it.href + '"><i class="' + (it.bad ? 'is-bad' : '') + '"></i><span><b>' + esc(it.h) + '</b><small>' + esc(it.p) + '</small></span>' + icon('chev') + '</a>'; }).join('') + '</div>'
         : '<div class="todo-ok"><i></i>No applications waiting, no old homework, no failures, and every automatic job ran on time.</div>') + '</section>';
@@ -465,6 +475,33 @@
 
     return html + '</div>';
   }
+  /* ---------- Online now (public.online_now, written by the dashboards once a minute while open) ---------- */
+  var ONLINE_MS = 150000;
+  var SECTION_NAMES = { home: 'Home', book: 'Course book', practice: 'Practice', cards: 'Flashcards', tests: 'Mock tests', library: 'Library',
+    classes: 'Classes', homework: 'Homework', progress: 'Progress', messages: 'Messages', settings: 'Settings', tutor: 'Tutor', plans: 'Plans',
+    help: 'Help', support: 'Support', today: 'Today', students: 'Students', material: 'Material', lessons: 'Lessons', payouts: 'Payouts',
+    account: 'Account', find: 'Find a class', availability: 'Availability' };
+  function onlineLists() {
+    var rows = (D.console || {}).online || [], now = Date.now(), me = D.userId;
+    var on = [], recent = [];
+    rows.forEach(function (o) { if (o.user_id === me) return; var age = now - new Date(o.seen_at).getTime(); if (age < ONLINE_MS) on.push(o); else if (age < 15 * MIN) recent.push(o); });
+    on.sort(function (a, b) { return String(a.started_at).localeCompare(String(b.started_at)); });
+    return { on: on, recent: recent };
+  }
+  function onlineInner() {
+    var L = onlineLists(), dir = directory();
+    function row(o, live) {
+      var p = dir.u[o.user_id], name = p ? p.name : (o.dashboard === 'teacher' ? 'A teacher' : 'A student');
+      var where = (o.dashboard === 'teacher' ? 'Teacher dashboard' : 'Student dashboard') + (o.section ? ', ' + (SECTION_NAMES[o.section] || cap(o.section)) : '');
+      var since = live ? 'for ' + plural(Math.max(1, Math.round((Date.now() - new Date(o.started_at).getTime()) / MIN)), 'minute', 'minutes') : 'left ' + ago(o.seen_at);
+      var inner = '<i class="' + (live ? 'is-on' : '') + '"></i><span><b>' + esc(name) + '</b><small>' + esc(where + ', ' + since) + '</small></span>';
+      return p ? '<a href="' + esc(p.href) + '">' + inner + icon('chev') + '</a>' : '<div>' + inner + '</div>';
+    }
+    return '<div class="panel-h"><h2 class="t-h2" id="h-online">Online now</h2><span class="t-small">' + esc(L.on.length ? plural(L.on.length, 'person', 'people') : 'Nobody') + '</span></div>' +
+      (L.on.length ? '<div class="todo ad-online">' + L.on.slice(0, 12).map(function (o) { return row(o, true); }).join('') + '</div>'
+        : '<p class="t-small" style="margin-top:6px">Nobody has a dashboard open right now.' + (L.recent.length ? '' : ' Visits show here the moment someone opens one.') + '</p>') +
+      (L.recent.length ? '<p class="t-small ad-online__h">In the last 15 minutes</p><div class="todo ad-online">' + L.recent.slice(0, 6).map(function (o) { return row(o, false); }).join('') + '</div>' : '');
+  }
   function soonView(r) {
     return '<div class="view__head"><div><h1 class="t-h1">' + esc(r.label) + '</h1><p class="t-lead">' + esc(r.text) + '</p></div></div>' +
       '<div class="card"><h2 class="t-h2">Comes in part ' + r.part + ' of the admin pages</h2><div class="btn-row" style="margin-top:12px"><a class="btn btn--primary" href="#/overview">Back to the overview</a></div></div>';
@@ -503,7 +540,8 @@
     figures: function () { return window.AlimunAdminFigures; }, payouts: function () { return window.AlimunAdminPayouts; }, ai: function () { return window.AlimunAdminAi; }, system: function () { return window.AlimunAdminSystem; } };
   function helpers() {
     return { esc: esc, fmt: fmt, num: num, cap: cap, plural: plural, relative: relative, className: className, icon: icon, Cast: Cast, loaderInner: loaderInner, jobs: JOBS,
-      mode: function () { return mode; }, rerender: function () { render(current, false); } };
+      mode: function () { return mode; }, rerender: function () { render(current, false); },
+      console: function () { return (D && D.console) || {}; }, me: function () { return D && D.userId; }, directory: directory, onlineHtml: onlineInner };
   }
   function partsOf(id) { return location.hash.replace(new RegExp('^#\\/' + id + '\\/?'), '').split('/').filter(Boolean); }
   function render(id, animate) {
@@ -546,6 +584,9 @@
       ai: [{ day: '', calls: 412, cost_usd: 3.84, failures: 2 }], jobs: jobs, failed: [],
       console: { students: students, teachers: [{ id: 'x1', user_id: 'tu1', full_name: 'Léa Martin', languages: ['French'], status: 'pending', created_at: ago2(60 * 30) }],
         events: events, tutor: tutor,
+        online: [{ user_id: 'u1', dashboard: 'student', section: 'tutor', started_at: ago2(12), seen_at: ago2(0.4) }, { user_id: 'u4', dashboard: 'student', section: 'homework', started_at: ago2(3), seen_at: ago2(0.8) },
+          { user_id: 'tu1', dashboard: 'teacher', section: 'classes', started_at: ago2(25), seen_at: ago2(1) }, { user_id: 'u6', dashboard: 'student', section: 'book', started_at: ago2(40), seen_at: ago2(9) }],
+        helpOpen: [{ id: 'hq1', subject: 'Can I move my class to the evening?', created_at: ago2(190), updated_at: ago2(190) }],
         money: [{ user_id: 'u0', product_key: 'focused', variant: 'monthly', source: 'stripe', status: 'active', currency: 'eur', amount_paid: 4900, created_at: ago2(60 * 3) }, { user_id: 'u5', product_key: 'intensive', variant: 'monthly', source: 'stripe', status: 'active', currency: 'eur', amount_paid: 8900, created_at: ago2(60 * 30) }],
         ledger: [{ student_id: 'st3', seconds: 600, reason: 'admin', note: 'Welcome back', created_at: ago2(60 * 6) }],
         enrol: [{ student_id: 'st5', status: 'active', enrolled_at: ago2(60 * 29), cohorts: { language: 'German', level: 'B1', tier: 'intensive' } }],
@@ -563,7 +604,7 @@
     (C.tests || []).forEach(function (x) { tu[typeof x === 'string' ? x : x.admin_test_users] = 1; });
     (C.students || []).forEach(function (s) { if (tu[s.user_id]) ts[s.id] = 1; });
     var byUser = function (k) { return function (x) { return !tu[x[k]]; }; }, byStudent = function (x) { return !ts[x.student_id]; };
-    ['students', 'teachers', 'events', 'money', 'paidNow', 'interest', 'aiFail', 'abuse'].forEach(function (k) { if (C[k]) C[k] = C[k].filter(byUser('user_id')); });
+    ['students', 'teachers', 'events', 'money', 'paidNow', 'interest', 'aiFail', 'abuse', 'online'].forEach(function (k) { if (C[k]) C[k] = C[k].filter(byUser('user_id')); });
     if (C.messages) C.messages = C.messages.filter(byUser('sender_user'));
     ['tutor', 'ledger', 'enrol', 'waitlist', 'homework', 'oto', 'poll', 'attend', 'feedback'].forEach(function (k) { if (C[k]) C[k] = C[k].filter(byStudent); });
     C.testCount = Object.keys(tu).length;
@@ -584,14 +625,83 @@
   }
   function reload() {
     var btn = app.querySelector('[data-reload]'); if (btn) btn.disabled = true;
-    return loadData().then(function (d) { D = d; loadedAt = Date.now(); emailsAsked = false; current = null; renderShell(); render(routeFromHash(), false); loadEmails(); });
+    return loadData().then(function (d) { D = d; loadedAt = Date.now(); emailsAsked = false; current = null; renderShell(); render(routeFromHash(), false); loadEmails(); startLive(); });
+  }
+  /* ---------- Live (owner, 24 Nov 2026: "improve the reactiveness … activity flow from admin panel") ----------
+     The console listens to the main tables through Supabase Realtime (js/app/live.js). Visits (activity_events) and
+     who is online (online_now) are added to what is loaded already; anything else (accounts, payments, classes,
+     homework, the tutor, messages, support) loads the console's data again quietly, at most every 6 seconds. The
+     Overview is drawn again in place (scroll and feed filter kept, new feed lines marked); the menu counts and the
+     status in the top bar follow. Other sections may offer live(), called after each quiet reload. */
+  var LIVE_TABLES = ['student_profiles', 'teacher_profiles', 'entitlements', 'enrollments', 'assignment_submissions', 'tutor_sessions',
+    'messages', 'help_requests', 'help_messages', 'cohort_waitlist', 'session_attendance', 'contact_messages'];
+  function paintSync() {
+    var el = app && app.querySelector('[data-sync]');
+    if (!el) return;
+    el.className = 'adm-sync' + (mode === 'real' ? (liveState === 'live' ? ' is-live' : ' is-off') : ' is-sample');
+    el.querySelector('span').textContent = syncLabel();
+  }
+  function paintNav() {
+    app.querySelectorAll('nav.nav').forEach(function (n) { n.innerHTML = navLinks(); });
+    app.querySelectorAll('[data-route]').forEach(function (a) { if (a.getAttribute('data-route') === current) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  }
+  function repaintOverview() {
+    if (current !== 'overview' || mode !== 'real') return;
+    var y = window.scrollY, fl = view.querySelector('[data-feedlist]'), ft = fl ? fl.scrollTop : 0;
+    var act = document.activeElement, actKey = act && act.getAttribute ? (act.getAttribute('data-feed') || act.getAttribute('href')) : null;
+    livePaint = true; view.classList.add('is-quiet');
+    try { view.innerHTML = overviewView(); } finally { livePaint = false; }
+    setTimeout(function () { view.classList.remove('is-quiet'); }, 50);
+    var fl2 = view.querySelector('[data-feedlist]'); if (fl2) fl2.scrollTop = ft;
+    window.scrollTo(0, y);
+    if (actKey && view.contains(act) === false) { var back = view.querySelector('[data-feed="' + actKey + '"]'); if (back) back.focus({ preventScroll: true }); }
+  }
+  function repaintOnline() { var box = view && view.querySelector('[data-online]'); if (box) box.innerHTML = onlineInner(); }
+  function quietReload() {
+    if (liveBusy) { liveAgain = true; return; }
+    var wait = liveLast + 6000 - Date.now();
+    if (wait > 0) { clearTimeout(liveTimer); liveTimer = setTimeout(quietReload, wait); return; }
+    if (document.hidden) { liveAgain = true; return; }
+    liveBusy = true; liveLast = Date.now();
+    var was = mode, emails = D.emails;
+    loadData().then(function (d) {
+      if (mode !== 'real') { mode = was; return; }
+      d.emails = emails || {}; D = d; loadedAt = Date.now();
+      paintNav(); paintSync();
+      if (current === 'overview') repaintOverview();
+      else { var m = MODULES[current] && MODULES[current](); if (m && m.live) m.live(); }
+    }, function () { mode = was; }).then(function () {
+      liveBusy = false;
+      if (liveAgain) { liveAgain = false; quietReload(); }
+    });
+  }
+  function startLive() {
+    if (liveStarted || mode !== 'real' || !window.AlimunLive) return;
+    liveStarted = true;
+    window.AlimunLive.onStatus(function (st) { liveState = st; paintSync(); });
+    window.AlimunLive.watch('admin', LIVE_TABLES.map(function (t) { return { table: t, event: '*' }; }), quietReload, { wait: 1200 });
+    window.AlimunLive.watch('admin-visits', [{ table: 'activity_events', event: 'INSERT' }, { table: 'online_now', event: '*' }], function (ch) {
+      if (!ch.length) return quietReload();
+      var C = D.console || (D.console = {}), tests = {}, touched = false, visits = false;
+      (C.tests || []).forEach(function (x) { tests[typeof x === 'string' ? x : x.admin_test_users] = 1; });
+      ch.forEach(function (x) {
+        var r = x.row || {};
+        if (!r.user_id || tests[r.user_id]) return;
+        if (x.table === 'activity_events') { (C.events = C.events || []).unshift({ user_id: r.user_id, event: r.event, page: r.page, created_at: r.created_at }); visits = true; }
+        else { C.online = (C.online || []).filter(function (o) { return o.user_id !== r.user_id; }); C.online.unshift(r); touched = true; }
+      });
+      if (current !== 'overview') { var m = MODULES[current] && MODULES[current](); if (m && m.live) m.live(); return; }
+      if (visits) repaintOverview(); else if (touched) repaintOnline();
+    }, { wait: 800 });
+    /* "Online now" ages without any change in the database: someone who closed the tab stops being seen */
+    setInterval(function () { if (!document.hidden && current === 'overview') repaintOnline(); paintSync(); }, 30000);
   }
   function boot() {
     app = document.getElementById('app'); loadingScreen = document.getElementById('loading');
     var started = Date.now(), fonts = document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve();
     loadingScreen.querySelector('p').textContent = 'Opening the admin console';
     Promise.all([loadData(), fonts]).then(function (r) {
-      D = r[0]; loadedAt = Date.now(); renderShell(); render(routeFromHash(), false); loadEmails();
+      D = r[0]; loadedAt = Date.now(); renderShell(); render(routeFromHash(), false); loadEmails(); startLive();
       setTimeout(hideLoader, Math.max(0, 600 - (Date.now() - started)));
     });
     window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || MODULES[id]) render(id, true); });

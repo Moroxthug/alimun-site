@@ -449,8 +449,40 @@
       var body = ta.value.trim();
       if (!body || !real()) return;
       var b = f.querySelector('button'); b.disabled = true;
-      call('reply', { id: r.id, message: body }).then(function () { if (my === mountNo) A.rerender(); }, function (err) { b.disabled = false; ta.setCustomValidity(err.message || ''); ta.reportValidity(); ta.setCustomValidity(''); });
+      call('reply', { id: r.id, message: body }).then(function () { if (my === mountNo) redraw(r.id, my, true); }, function (err) { b.disabled = false; ta.setCustomValidity(err.message || ''); ta.reportValidity(); ta.setCustomValidity(''); });
     });
+  }
+  /* Live (owner, 24 Nov 2026): a reply from Alimun, or a conversation closed or reopened, shows at once. The row rules
+     send this person changes to their own conversations only. The open conversation is drawn again in place, keeping
+     what they are typing; on the Support page only the list of conversations is redrawn, so the form is untouched. */
+  var stopLive = null;
+  function unlive() { if (stopLive) { stopLive(); stopLive = null; } }
+  function live(my) {
+    unlive();
+    if (!real() || !window.AlimunLive) return;
+    stopLive = window.AlimunLive.watch('support', [{ table: 'help_messages', event: 'INSERT' }, { table: 'help_requests', event: '*' }], function () {
+      var id = ((location.hash.match(/^#\/support\/([0-9a-f-]{36})/i) || [])[1]) || null;
+      redraw(id, my, false);
+    }, { wait: 200 });
+  }
+  function redraw(id, my, sent) {
+    return loadRequests().then(function (reqs) {
+      if (my !== mountNo) return;
+      if (!id) { var list = root.querySelector('.sp-list'); if (list) list.innerHTML = convList(reqs); return; }
+      var cur = reqs.filter(function (x) { return x.id === id; })[0];
+      if (!cur) return;
+      var ta = root.querySelector('[data-reply] textarea'), draft = !sent && ta ? ta.value : '', focused = ta && document.activeElement === ta;
+      var side = root.querySelector('.sp-side'), sideTop = side ? side.scrollTop : 0;
+      root.innerHTML = threadView(reqs, cur);
+      wireThread(cur, my);
+      var side2 = root.querySelector('.sp-side'); if (side2) side2.scrollTop = sideTop;
+      var ta2 = root.querySelector('[data-reply] textarea');
+      if (ta2) {
+        ta2.value = draft;
+        if (draft) ta2.dispatchEvent(new Event('input'));
+        if (focused || sent) ta2.focus({ preventScroll: true });
+      }
+    }, function (e) { console.warn('[Alimun] support refresh', e && e.message); });
   }
   function mountSupport(view, parts, helpers, my) {
     root.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" aria-hidden="true">' + A.loaderInner() + '</div></div>';
@@ -460,6 +492,7 @@
       if (my !== mountNo) return { stale: true };
       var reqs = res[0], list = res[1];
       var cur = parts[0] && parts[0] !== 'new' ? reqs.filter(function (x) { return x.id === parts[0]; })[0] : null;
+      live(my);
       if (cur) { root.innerHTML = threadView(reqs, cur); wireThread(cur, my); return { title: cur.subject }; }
       root.innerHTML = supportHome(reqs, list, qid, qText);
       wireCompose(my);
@@ -474,11 +507,12 @@
 
   function start(which, view, parts, helpers) {
     var my = ++mountNo;
+    unlive();
     A = helpers; root = view;
     role = helpers.role === 'teacher' ? 'teacher' : 'student';
     return which === 'support' ? mountSupport(view, parts, helpers, my) : mountHelp(view, parts, helpers, my);
   }
-  function reset() { mountNo++; }
+  function reset() { mountNo++; unlive(); }
   window.AlimunHelp = { mount: function (v, p, h) { return start('help', v, p, h); }, reset: reset };
   window.AlimunSupport = { mount: function (v, p, h) { return start('support', v, p, h); }, reset: reset };
 })();

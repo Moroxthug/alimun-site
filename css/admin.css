@@ -226,6 +226,26 @@ a.feed__it:hover { background: #f7f6f2; margin: 0 -20px; padding-left: 20px; pad
 
 /* Panels appear together: a short stagger, never more than a quarter of a second */
 .adm .rise > * { animation-duration: 260ms; animation-delay: min(calc(var(--i, 0) * 30ms), 240ms); }
+/* Live (24 Nov 2026): a quiet redraw does not replay the entrance; new feed lines and the status say what changed */
+.adm .is-quiet .rise > * { animation: none; }
+.feed__it.is-new { animation: feed-new 2.6s ease-out both; }
+@keyframes feed-new { 0%, 35% { background: rgba(206, 255, 101, .55); } 100% { background: transparent; } }
+.adm-sync.is-live i { animation: live-pulse 2s ease-out infinite; }
+.adm-sync.is-off i { background: var(--muted); box-shadow: 0 0 0 3px rgba(0, 0, 0, .06); }
+@keyframes live-pulse { 0% { box-shadow: 0 0 0 0 rgba(58, 167, 109, .45); } 70%, 100% { box-shadow: 0 0 0 7px rgba(58, 167, 109, 0); } }
+.ad-online i { background: var(--line, #ddd); }
+.ad-online i.is-on { background: #3aa76d; }
+.ad-online__h { margin-top: 12px; }
+.ac-online .ad-online { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); column-gap: 24px; }
+.ac-use__tools { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 6px; }
+.ac-use { display: grid; gap: 22px; margin-top: 14px; }
+@media (min-width: 1100px) { .ac-use { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: start; } }
+.ac-bar { display: inline-block; vertical-align: middle; width: 120px; height: 8px; border-radius: 4px; background: #f0efe9; margin-right: 8px; overflow: hidden; }
+.ac-bar i { display: block; height: 100%; background: var(--forest); border-radius: 4px; }
+@media (max-width: 640px) { .ac-use__barh { display: none; } }
+.ad-online > div { display: grid; grid-template-columns: 8px minmax(0, 1fr); gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line-2); }
+.ad-online > :first-child { border-top: 0; }
+@media (prefers-reduced-motion: reduce) { .feed__it.is-new, .adm-sync.is-live i { animation: none; } .feed__it.is-new { background: rgba(206, 255, 101, .35); } }
 @media (prefers-reduced-motion: reduce) { .adm .rise > * { animation: none; } }
 .dt tr[data-href] { cursor: pointer; }
 

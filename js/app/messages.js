@@ -8,8 +8,8 @@
    Interface text: app_ms_* keys. */
 (function () {
   'use strict';
-  var A = null, root = null, M = null, poll = null;
-  var POLL_MS = 8000, MAX = 4000;
+  var A = null, root = null, M = null, poll = null, stopLive = null;
+  var POLL_MS = 45000, MAX = 4000;
   function t(k, v) { return A.t(k, v); }
   function esc(s) { return A.esc(s); }
   function signedIn() { return A.mode() === 'real' && A.data().profile.id; }
@@ -161,7 +161,8 @@
       c.thread = id;
       return window.AlimunData.sendMessage(id, body);
     }).then(function (row) {
-      c.msgs = c.msgs.filter(function (x) { return x !== temp; }).concat(row ? [row] : []);
+      c.msgs = c.msgs.filter(function (x) { return x !== temp; });
+      if (row && !c.msgs.some(function (x) { return x.id === row.id; })) c.msgs.push(row);
       redrawMsgs(c, true);
     }, function (e) {
       c.msgs = c.msgs.filter(function (x) { return x !== temp; });
@@ -229,11 +230,19 @@
         document.body.classList.add('is-reading');
         var box = root.querySelector('[data-msgs]'); if (box) box.scrollTop = box.scrollHeight;
         poll = setInterval(function () { refresh(res.cur); }, POLL_MS);
+        /* Live (owner, 24 Nov 2026): a new message in this conversation shows at once; the poll above stays as a
+           slow safety net. Row rules send only messages in conversations this person can read. */
+        if (!M.sample && window.AlimunLive) {
+          var c0 = res.cur;
+          stopLive = window.AlimunLive.watch('messages', [{ table: 'messages', event: 'INSERT' }], function (ch) {
+            if (!ch.length || ch.some(function (x) { return x.row && (!c0.thread || x.row.thread_id === c0.thread); })) refresh(c0);
+          }, { wait: 150 });
+        }
       }
       return res;
     });
   }
-  function reset() { if (poll) { clearInterval(poll); poll = null; } }
+  function reset() { if (poll) { clearInterval(poll); poll = null; } if (stopLive) { stopLive(); stopLive = null; } }
 
   window.AlimunMessages = { mount: mount, reset: reset, debug: function () { return M; } };
 })();

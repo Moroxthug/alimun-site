@@ -512,6 +512,7 @@
     if (id === 'tour') { history.replaceState(null, '', location.pathname + location.search + '#/today'); id = 'today'; setTimeout(function () { startTour(false); }, 400); }
     var r = byId[id];
     if (window.AlimunData && window.AlimunData.track) window.AlimunData.track('view', { dashboard: 'teacher', section: id });
+    if (window.AlimunLive) window.AlimunLive.online('teacher', id, mode === 'real');
     var mod = mode !== 'pending' && MODULES[id] ? MODULES[id]() : null;
     var html = mode === 'pending' ? pendingView() : id === 'today' ? todayView() : mod ? '' : soonView(r);
     var swap = function () {

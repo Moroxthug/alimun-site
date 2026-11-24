@@ -94,7 +94,23 @@
     btn.addEventListener('click', function () { if (panel) close(); else { open(); if (!loaded) load(); } });
     load();
     clearInterval(attach.timer);
-    attach.timer = setInterval(function () { if (!document.hidden && !panel) load(); }, 120000);
+    attach.timer = setInterval(function () { if (!document.hidden && !panel) load(); }, 300000);
+    /* Live (owner, 24 Nov 2026): a new notification shows at once, with a short pulse on the bell. The slow
+       refresh above stays as a safety net. Only this person's own rows are watched. */
+    if (attach.stop) { attach.stop(); attach.stop = null; }
+    if (real && window.AlimunLive && window.AlimunData && window.AlimunData.userId) {
+      window.AlimunData.userId().then(function (me) {
+        if (!me || !/^[0-9a-f-]{36}$/i.test(me)) return;
+        attach.stop = window.AlimunLive.watch('bell', [{ table: 'notifications', event: 'INSERT', filter: 'user_id=eq.' + me }], function (ch) {
+          var fresh = ch.some(function (x) { return x.type === 'INSERT'; });
+          load().then(function () {
+            if (!fresh || !btn) return;
+            btn.classList.remove('is-ringing'); void btn.offsetWidth; btn.classList.add('is-ringing');
+            setTimeout(function () { if (btn) btn.classList.remove('is-ringing'); }, 1300);
+          });
+        }, { wait: 400 });
+      }, function () { /* signed out */ });
+    }
   }
   window.AlimunBell = { attach: attach };
 })();

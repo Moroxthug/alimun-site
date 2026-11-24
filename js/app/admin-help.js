@@ -270,8 +270,39 @@
       '<section class="card span-12" style="--i:1"><h2 class="t-h3">Not used in the last 30 days</h2><div class="tt-week">' + unused.map(line).join('') + '</div></section>' + sampleLine() + '</div>';
   }
 
+  function drawList(which) {
+    root.innerHTML = listView(which);
+    var s = root.querySelector('[data-hf]'), rows = root.querySelector('[data-hrows]');
+    if (s) s.addEventListener('input', function () { Q.q = s.value; rows.innerHTML = rowsHtml(rows.getAttribute('data-which')); });
+  }
+  /* Live (owner, 24 Nov 2026): a new request or a new message from the person shows at once. In a conversation only
+     the messages are redrawn, so a reply being written is untouched; the list is redrawn keeping the search. */
+  var stopLive = null;
+  function unlive() { if (stopLive) { stopLive(); stopLive = null; } }
+  function live(my, id, which) {
+    unlive();
+    if (!real() || !window.AlimunLive) return;
+    stopLive = window.AlimunLive.watch('admin-help', [{ table: 'help_requests', event: '*' }, { table: 'help_messages', event: 'INSERT' }], function () {
+      load().then(function () {
+        if (my !== no) return;
+        if (id) {
+          var r = D.requests.filter(function (x) { return x.id === id; })[0];
+          if (!r) return;
+          var tmp = document.createElement('div'); tmp.innerHTML = convView(r);
+          var box = root.querySelector('.ad-msgs'), box2 = tmp.querySelector('.ad-msgs');
+          if (box && box2) { var end = box.scrollHeight - box.scrollTop - box.clientHeight < 80; box.innerHTML = box2.innerHTML; if (end) box.scrollTop = box.scrollHeight; }
+          return;
+        }
+        var s = root.querySelector('[data-hf]'), focused = s && document.activeElement === s;
+        drawList(which);
+        var s2 = root.querySelector('[data-hf]');
+        if (s2 && focused) { s2.focus(); var n = s2.value.length; try { s2.setSelectionRange(n, n); } catch (e) { /* search input */ } }
+      }, function (e) { console.warn('[Alimun] help refresh', e && e.message); });
+    }, { wait: 300 });
+  }
   function mount(view, parts, helpers) {
     var my = ++no; A = helpers; root = view;
+    unlive();
     if (!D) root.innerHTML = loading();
     if (parts[0] === 'drafts') {
       if (!DR) root.innerHTML = loading();
@@ -296,16 +327,16 @@
         var r = D.requests.filter(function (x) { return x.id === parts[0]; })[0];
         if (!r) { root.innerHTML = back('#/help', 'Help requests') + '<div class="card"><p class="t-body">This conversation could not be found.</p></div>'; return { title: 'Help requests' }; }
         root.innerHTML = convView(r); wireConv(r, my);
+        live(my, r.id, null);
         return { title: r.subject };
       }
-      root.innerHTML = listView(parts[1]);
-      var s = root.querySelector('[data-hf]'), rows = root.querySelector('[data-hrows]');
-      if (s) s.addEventListener('input', function () { Q.q = s.value; rows.innerHTML = rowsHtml(rows.getAttribute('data-which')); });
+      drawList(parts[1]);
+      live(my, null, parts[1]);
       return { title: 'Help requests' };
     }, function (e) {
       if (my === no) root.innerHTML = '<div class="card"><p class="t-body">This did not load: ' + esc((e && e.message) || 'please try again') + '.</p></div>';
       return {};
     });
   }
-  window.AlimunAdminHelp = { mount: mount, reset: function () { no++; } };
+  window.AlimunAdminHelp = { mount: mount, reset: function () { no++; unlive(); } };
 })();

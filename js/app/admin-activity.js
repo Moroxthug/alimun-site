@@ -194,6 +194,8 @@
   function overviewView() {
     var o = OV, f = o.funnel || {};
     var html = '<div class="view__head"><div><h1 class="t-h1">Activity</h1><p class="t-lead">Who is using Alimun, who is slipping away, and where new students stop. Active means doing something in a dashboard, not only signing in.</p></div></div><div class="grid rise">';
+    html += onlineCard();
+    html += '<section class="card span-12" style="--i:1" data-use>' + useInner() + '</section>';
     html += '<section class="card span-12" style="--i:0"><h2 class="t-h2">Active people</h2><div class="ac-stats">' +
       stat(o.active_1d, 'today') + stat(o.active_7d, 'in the last 7 days') + stat(o.active_30d, 'in the last 30 days') + stat(o.signups_7d, 'new accounts in 7 days') + stat(o.signups_30d, 'new accounts in 30 days') +
       '</div>' + bars(o.by_day || []) + '</section>';
@@ -213,6 +215,90 @@
     if (o.sample) html += '<p class="t-tiny span-12">This is sample data.</p>';
     return html + '</div>';
   }
+  /* ---------- What people use (24 Nov 2026, owner: "more analytics control over everything") ----------
+     Dashboard visits and the sections opened, for a period (7, 30 or 90 days) and a dashboard (everyone, students,
+     teachers): how many people opened each section and how often, and the hours of the day people come (your own
+     time). From activity_events ('open_dashboard' once per tab, 'view' per section, the same section counted again
+     after 10 minutes). Your own and test accounts are left out. */
+  var USE = { days: 30, who: 'all', rows: null, at: 0, busy: false };
+  function sampleEvents() {
+    var out = [], n = Date.now(), secs = ['home', 'book', 'practice', 'tutor', 'classes', 'homework', 'cards', 'messages', 'progress'];
+    for (var i = 0; i < 420; i++) {
+      var at = new Date(n - (i * 97 % (30 * 24 * 60)) * 60000 - (i % 5) * 3600000).toISOString(), u = 'u' + (i % 9), teach = i % 7 === 0;
+      out.push({ user_id: u, event: i % 4 ? 'view' : 'open_dashboard', detail: { dashboard: teach ? 'teacher' : 'student', section: teach ? ['today', 'classes', 'students'][i % 3] : secs[(i * 7) % secs.length] }, created_at: at });
+    }
+    return out;
+  }
+  function loadUse() {
+    USE.busy = true;
+    var get = real() ? window.AlimunData.adminEvents(USE.days) : Promise.resolve(sampleEvents().filter(function (e) { return Date.now() - new Date(e.created_at).getTime() < USE.days * DAYMS; }));
+    return get.then(function (rows) { USE.rows = rows; USE.at = Date.now(); USE.busy = false; }, function (e) { USE.busy = false; USE.rows = USE.rows || []; console.warn('[Alimun] usage', e && e.message); });
+  }
+  function useRows() {
+    var C = A.console ? A.console() : {}, me = A.me ? A.me() : null, tests = {};
+    (C.tests || []).forEach(function (x) { tests[typeof x === 'string' ? x : x.admin_test_users] = 1; });
+    return (USE.rows || []).filter(function (e) {
+      var d = e.detail || {};
+      return e.user_id && e.user_id !== me && !tests[e.user_id] && (USE.who === 'all' || d.dashboard === USE.who);
+    });
+  }
+  function seg(attr, cur, opts) {
+    return '<div class="feed-tools" role="group">' + opts.map(function (o) { return '<button type="button" ' + attr + '="' + o[0] + '" aria-pressed="' + (String(cur) === String(o[0])) + '">' + esc(o[1]) + '</button>'; }).join('') + '</div>';
+  }
+  function useInner() {
+    var head = '<div class="panel-h"><h2 class="t-h2">What people use</h2><span class="t-small">' + esc(USE.rows ? 'Updated ' + when(USE.at) : 'Loading') + '</span></div>' +
+      '<div class="ac-use__tools">' + seg('data-use-days', USE.days, [[7, '7 days'], [30, '30 days'], [90, '90 days']]) + seg('data-use-who', USE.who, [['all', 'Everyone'], ['student', 'Students'], ['teacher', 'Teachers']]) + '</div>';
+    if (!USE.rows) return head + loading();
+    var rows = useRows(), people = {}, visits = 0, views = 0, sec = {}, hours = [];
+    for (var h = 0; h < 24; h++) hours.push(0);
+    rows.forEach(function (e) {
+      people[e.user_id] = 1;
+      if (e.event === 'open_dashboard') { visits++; hours[new Date(e.created_at).getHours()]++; return; }
+      views++;
+      var k = (e.detail || {}).section || 'other', x = sec[k] = sec[k] || { k: k, n: 0, who: {} };
+      x.n++; x.who[e.user_id] = 1;
+    });
+    var nPeople = Object.keys(people).length;
+    var list = Object.keys(sec).map(function (k) { var x = sec[k]; x.p = Object.keys(x.who).length; return x; }).sort(function (a, b) { return b.p - a.p || b.n - a.n; });
+    var stats = '<div class="ac-stats">' + stat(A.num(nPeople), nPeople === 1 ? 'person opened a dashboard' : 'people opened a dashboard') + stat(A.num(visits), visits === 1 ? 'visit' : 'visits') +
+      stat(A.num(views), 'sections opened') + stat(visits ? (Math.round(views / visits * 10) / 10).toLocaleString('en-GB') : '0', 'sections per visit') + '</div>';
+    if (!rows.length) return head + stats + '<p class="t-body" style="margin-top:8px">Nobody opened a dashboard in this period.</p>';
+    var top = list.length ? list[0].p : 1;
+    var table = '<div class="dt-wrap"><table class="dt"><thead><tr><th>Section</th><th class="r">People</th><th class="r">Times opened</th><th class="ac-use__barh">Share of people</th></tr></thead><tbody>' + list.map(function (x) {
+      return '<tr><td>' + esc(SECTION[x.k] || A.cap(String(x.k).replace(/_/g, ' '))) + '</td><td class="r">' + esc(A.num(x.p)) + '</td><td class="r">' + esc(A.num(x.n)) + '</td>' +
+        '<td class="ac-use__barh"><span class="ac-bar"><i style="width:' + Math.max(2, Math.round(x.p / Math.max(nPeople, 1) * 100)) + '%"></i></span><span class="m">' + esc(pct(x.p, nPeople)) + '</span></td></tr>';
+    }).join('') + '</tbody></table></div>';
+    void top;
+    var maxH = Math.max.apply(null, hours.concat([1]));
+    var hourCard = '<div><h3 class="t-h3">When people come</h3><p class="t-small" style="margin-top:4px">Visits by hour of the day, in your own time.</p>' +
+      '<div class="bars" role="img" aria-label="' + esc('Visits by hour, most at ' + hours.indexOf(Math.max.apply(null, hours)) + ':00') + '">' +
+      hours.map(function (v, i) { return '<i style="--h:' + Math.round(v / maxH * 100) + '%" title="' + esc((i < 10 ? '0' : '') + i + ':00, ' + v + (v === 1 ? ' visit' : ' visits')) + '"></i>'; }).join('') +
+      '</div><div class="bars-axis"><span>00:00</span><span>12:00</span><span>23:00</span></div></div>';
+    return head + stats + '<div class="ac-use"><div>' + table + '</div>' + hourCard + '</div>';
+  }
+  function paintUse() { var b = root && root.querySelector('[data-use]'); if (b) b.innerHTML = useInner(); }
+  function wireUse() {
+    if (root.__acUse) return;
+    root.__acUse = true;
+    root.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-use-days],[data-use-who]');
+      if (!b) return;
+      var my = no;
+      if (b.hasAttribute('data-use-who')) { USE.who = b.getAttribute('data-use-who'); paintUse(); return; }
+      var d = +b.getAttribute('data-use-days'); if (d === USE.days) return;
+      USE.days = d; USE.rows = null; paintUse();
+      loadUse().then(function () { if (my === no) paintUse(); });
+    });
+  }
+  function onlineCard() {
+    return A.onlineHtml ? '<section class="card span-12 ac-online" style="--i:0" data-online>' + A.onlineHtml() + '</section>' : '';
+  }
+  /* Called by the console after a quiet reload or a new visit (js/app/admin.js, live) */
+  function live() {
+    if (!root || !OV) return;
+    var o = root.querySelector('[data-online]'); if (o && A.onlineHtml) o.innerHTML = A.onlineHtml();
+    if (!USE.busy && Date.now() - USE.at > 60000) { var my = no; loadUse().then(function () { if (my === no) paintUse(); }); }
+  }
   var no = 0;
   function mount(view, parts, helpers) {
     var my = ++no;
@@ -224,11 +310,13 @@
     var get = Promise.all([real() ? window.AlimunData.adminActivityOverview() : Promise.resolve(sampleOverview()), src, poll]).then(function (r) { SRC = r[1]; POLLROWS = r[2]; return r[0]; });
     return get.then(function (o) {
       if (my !== no) return { stale: true };
-      OV = o || sampleOverview(); root.innerHTML = overviewView(); return { title: 'Activity' };
+      OV = o || sampleOverview(); root.innerHTML = overviewView(); wireUse();
+      if (!USE.rows || Date.now() - USE.at > 60000) loadUse().then(function () { if (my === no) paintUse(); });
+      return { title: 'Activity' };
     }, function (e) {
       if (my === no) root.innerHTML = '<div class="card"><p class="t-body">Activity did not load: ' + esc((e && e.message) || 'please try again') + '.</p></div>';
       return { stale: true };
     });
   }
-  window.AlimunAdminActivity = { mount: mount, reset: function () {}, timelineCard: timelineCard };
+  window.AlimunAdminActivity = { mount: mount, reset: function () { no++; }, live: live, timelineCard: timelineCard };
 })();

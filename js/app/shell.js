@@ -664,6 +664,7 @@
   function render(id, animate, kind) {
     var r = byId[id];
     if (window.AlimunData && window.AlimunData.track && id !== 'kit') window.AlimunData.track('view', { dashboard: 'student', section: id });
+    if (window.AlimunLive && id !== 'kit') window.AlimunLive.online('student', id, mode === 'real');
     /* Sections that need a connection say so when the device is offline (docs/APP_PLAN.md, step 2) */
     var off = mode === 'real' && navigator.onLine === false && needsNet(id);
     offShown = off ? id : null;
