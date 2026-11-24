@@ -2,7 +2,7 @@
    #/onboarding   each approved teacher (and each teacher about to give a trial class): whether they went through the
    dashboard tour, and how often they opened the practice classroom; then the overview video on the tour's welcome
    card, per language: an upload here (tour/<lang>.mp4 in the public teacher-tutorial bucket, e.g. a Claude Design
-   version) replaces the recorded one shipped with the site (/videos/teacher-tour/). Data: /api/onboarding?action=admin.
+   version) replaces the designed one shipped with the site (/videos/teacher-tour/). Data: /api/onboarding?action=admin.
    Signed out or ?sample=1: a sample. */
 (function () {
   'use strict';
@@ -39,7 +39,7 @@
   }
   function videoRow(l) {
     var h = HAS[l[0]] || {}, url = h.up ? BUCKET + l[0] + '.mp4' : h.built ? BUILT + l[0] + '.mp4' : null;
-    var state = h.up ? 'Your upload plays.' : h.built ? 'The recorded version plays.' : 'No video in this language: the English one plays.';
+    var state = h.up ? 'Your upload plays.' : h.built ? 'The built-in designed version plays.' : 'No video in this language: the English one plays.';
     return '<div class="tt-row tt-row--plain" data-vlang="' + l[0] + '"><span><b>' + esc(l[1]) + '</b><small>' + esc(state) + '</small><small data-vmsg></small></span>' +
       '<span class="btn-row">' + (url ? '<a class="btn btn--ghost btn--sm" href="' + esc(url) + '" target="_blank" rel="noopener">Watch</a>' : '') +
       '<label class="btn btn--primary btn--sm">' + (h.up ? 'Replace' : 'Upload') + '<input type="file" accept="video/mp4" data-vup hidden></label>' +
@@ -47,7 +47,7 @@
   }
   function videoCard() {
     return '<section class="card span-12" style="--i:1"><h2 class="t-h2">Overview video</h2>' +
-      '<p class="t-body" style="margin-top:8px">The tour opens with a short video of the dashboard. A recorded version in each language is part of the site. To use your own, for example one made in Claude Design, upload an MP4 here; it plays instead of the recorded one, and "Remove upload" brings the recorded one back. Teachers see a new upload within a few minutes.</p>' +
+      '<p class="t-body" style="margin-top:8px">The tour opens with a short video of the dashboard. A designed version in each language is part of the site. To use your own, upload an MP4 here; it plays instead of the built-in one, and "Remove upload" brings the built-in one back. Teachers see a new upload within a few minutes.</p>' +
       '<div class="tt-week" style="margin-top:12px" data-videos>' + LANGS.map(videoRow).join('') + '</div></section>';
   }
   function say(row, text, bad) { var m = row.querySelector('[data-vmsg]'); m.textContent = text; m.style.color = bad ? 'var(--coral)' : ''; }
@@ -70,7 +70,7 @@
     root.addEventListener('click', function (e) {
       var b = e.target.closest('[data-vdel]'); if (!b || b.disabled) return;
       var row = b.closest('[data-vlang]');
-      if (b.getAttribute('data-sure') !== '1') { b.setAttribute('data-sure', '1'); b.textContent = 'Remove it'; say(row, 'Press again to remove your upload; the recorded version plays again.'); return; }
+      if (b.getAttribute('data-sure') !== '1') { b.setAttribute('data-sure', '1'); b.textContent = 'Remove it'; say(row, 'Press again to remove your upload; the built-in version plays again.'); return; }
       if (!real()) { say(row, 'In the sample nothing is removed.'); return; }
       b.disabled = true;
       window.AlimunData.removeTourVideo(row.getAttribute('data-vlang')).then(function () { return check(); }).then(redraw, function (er) { b.disabled = false; say(row, 'Not removed: ' + ((er && er.message) || 'please try again') + '.', true); });

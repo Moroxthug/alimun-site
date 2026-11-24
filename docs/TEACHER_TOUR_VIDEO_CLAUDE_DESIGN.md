@@ -1,8 +1,8 @@
 # Teacher tour video: prompt for Claude Design
 
-The teacher dashboard tour opens with a short overview video (docs/TEACHER_ONBOARDING_PLAN.md). A version recorded from
-the real dashboard ships with the site in every language (`videos/teacher-tour/<lang>.mp4`, made with
-`scripts/record-tour-video.js`). To replace one with a designed version: make it in Claude Design with the prompt below,
+The teacher dashboard tour opens with a short overview video (docs/TEACHER_ONBOARDING_PLAN.md). A version made to this
+prompt ships with the site in every language (`videos/teacher-tour/<lang>.mp4`, made with
+`scripts/design-tour-video.js`). To replace one with a version made in Claude Design itself: make it in Claude Design with the prompt below,
 export it as MP4, and upload it in Admin -> Teacher onboarding -> Overview video for that language. "Remove upload"
 brings the recorded one back.
 
