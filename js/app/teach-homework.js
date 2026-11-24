@@ -342,10 +342,39 @@
     });
   }
 
+  /* Live (owner, 24 Nov 2026: "make the class list and homework live too"): a student handing in homework (or
+     changing it before it is marked) shows at once in "waiting to be marked" and on that homework's page. The data is
+     loaded again quietly; the list and a homework's page are drawn again in place, never while the teacher is typing.
+     Setting homework and marking are forms: they are left alone. Row rules send each teacher their own students' work. */
+  var stopLive = null, liveTimer = null;
+  function unlive() { if (stopLive) { stopLive(); stopLive = null; } clearTimeout(liveTimer); }
+  function quiet(my) {
+    if (my !== mountNo || !H || H.sample) return;
+    var a = document.activeElement;
+    if (document.hidden || (a && root.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) { clearTimeout(liveTimer); liveTimer = setTimeout(function () { quiet(my); }, 5000); return; }
+    load().then(function (d) {
+      if (my !== mountNo || !d || d.sample) return;
+      H = d;
+      var p0 = decodeURIComponent((location.hash.match(/^#\/homework\/([^/?#]+)/) || [])[1] || '');
+      if (p0 === 'new' || p0 === 'mark') return;
+      var y = window.scrollY;
+      if (!p0) root.innerHTML = listView();
+      else { var x = asgOf(p0); if (!x) return; root.innerHTML = itemView(x); }
+      window.scrollTo(0, y);
+    }, function (e) { console.warn('[Alimun] Homework refresh', e && e.message); });
+  }
+  function live(my) {
+    unlive();
+    if (!real() || !window.AlimunLive || !H || H.sample || !H.teacher || !/^[0-9a-f-]{36}$/i.test(H.teacher.id || '')) return;
+    stopLive = window.AlimunLive.watch('teach-homework', [{ table: 'assignment_submissions', event: '*' }, { table: 'assignments', event: '*', filter: 'teacher_id=eq.' + H.teacher.id }],
+      function () { quiet(my); }, { wait: 800 });
+  }
+
   var mountNo = 0;
   function mount(view, parts, helpers) {
     var my = ++mountNo;
     A = helpers; root = view;
+    unlive();
     if (window.AlimunProgress) window.AlimunProgress.use(helpers);
     bind();
     root.innerHTML = '<div class="rd-loading"><div class="loader" style="--w:72px" role="img" aria-label="' + esc(t('app_book_loading')) + '">' + A.loaderInner() + '</div></div>';
@@ -357,6 +386,7 @@
       else if (p0) { var a = asgOf(p0); html = a ? itemView(a) : missingView(); if (a) title = a.title; }
       else html = listView();
       root.innerHTML = html;
+      live(my);
       return { title: title };
     }).catch(function (e) {
       console.warn('[Alimun] Homework did not load', e && e.message);
@@ -365,7 +395,7 @@
     });
   }
   /* Data stays loaded while the teacher works through it; a new visit to the dashboard loads it again */
-  function reset() {}
+  function reset() { unlive(); }
 
   window.AlimunTeachHomework = { mount: mount, reset: reset };
 })();

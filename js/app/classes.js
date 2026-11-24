@@ -533,12 +533,56 @@
     window.addEventListener('pagehide', function () { leave(); });
   }
 
+  /* ---------- Live (owner, 24 Nov 2026: "make the class list and homework live too") ----------
+     On the Classes page (not in the classroom, not while finding a class): a class date moved, cancelled or going
+     live, new class notes, homework with a due date, a 1 on 1 booked or changed, all show without reloading. The page is
+     drawn again in place, keeping the month on show and the scroll; never while the person is typing or answering
+     "cancel this?" (it waits until they are done). A new or ended place in a class reloads the dashboard's data
+     (the list of classes lives in the profile). Row rules send each student their own classes only. */
+  var stopLive = null, liveWaiting = false, liveTimer = null;
+  function unlive() { if (stopLive) { stopLive(); stopLive = null; } clearTimeout(liveTimer); liveWaiting = false; }
+  function busy() {
+    var a = document.activeElement;
+    if (a && root.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return true;
+    return Array.prototype.some.call(root.querySelectorAll('[data-cancelbox]'), function (b) { return b.innerHTML.trim() !== ''; });
+  }
+  function quiet(my) {
+    if (my !== mountNo || !C || C.sample || !root.querySelector('.cl-up, .cl-oto, .cl-next')) return;
+    if (busy() || document.hidden) { liveWaiting = true; clearTimeout(liveTimer); liveTimer = setTimeout(function () { quiet(my); }, 5000); return; }
+    liveWaiting = false;
+    var keep = { month: C.month, day: C.day, trials: C.trials };
+    load().then(function (d) {
+      if (my !== mountNo || busy()) return;
+      d.month = keep.month; d.day = keep.day; d.trials = keep.trials;
+      var y = window.scrollY;
+      C = d;
+      root.innerHTML = pageView();
+      window.scrollTo(0, y);
+    }, function (e) { console.warn('[Alimun] Classes refresh', e && e.message); });
+  }
+  function live(my) {
+    unlive();
+    if (!signedIn() || !window.AlimunLive || !C || C.sample) return;
+    var p = A.data().profile, ids = (p.cohorts || []).filter(function (x) { return /^[0-9a-f-]{36}$/i.test(x); });
+    if (!/^[0-9a-f-]{36}$/i.test(p.id || '')) return;
+    var inIds = ids.length ? 'cohort_id=in.(' + ids.slice(0, 90).join(',') + ')' : null;
+    var specs = [{ table: 'one_on_one_bookings', event: '*', filter: 'student_id=eq.' + p.id }, { table: 'enrollments', event: '*', filter: 'student_id=eq.' + p.id }];
+    if (inIds) specs.push({ table: 'sessions', event: '*', filter: inIds }, { table: 'assignments', event: '*', filter: inIds }, { table: 'session_notes', event: '*' });
+    stopLive = window.AlimunLive.watch('classes', specs, function (ch) {
+      if (ch.some(function (x) { return x.table === 'enrollments'; }) && window.AlimunShell && window.AlimunShell.refresh) { window.AlimunShell.refresh(); return; }
+      quiet(my);
+    }, { wait: 600 });
+  }
+  /* A student who comes back from typing or a cancel question gets the waiting update */
+  document.addEventListener('focusout', function () { if (liveWaiting && root) setTimeout(function () { if (liveWaiting) quiet(mountNo); }, 300); });
+
   /* ---------- Entry ---------- */
   var mountNo = 0;
   function mount(view, parts, helpers) {
     var my = ++mountNo;
     A = helpers; root = view;
     leave();
+    unlive();
     bind();
     if (window.AlimunFind) AlimunFind.bind(view, helpers);
     document.body.classList.remove('is-reading');
@@ -587,6 +631,7 @@
           onLayout: function () { if (board) board.fit(); } });
         join(res.live.kind, res.live.id);
       }
+      if (!res.live) live(my);
       if (FLASH && root.querySelector('.cl-up, .cl-oto')) {
         var where = root.querySelector('.cl-oto') || root.querySelector('.cl-up');
         where.insertAdjacentHTML('afterbegin', '<p class="t-body cl-flash" role="status">' + esc(t(FLASH)) + '</p>');
@@ -595,7 +640,7 @@
       return res;
     });
   }
-  function reset() { leave(); }
+  function reset() { leave(); unlive(); }
 
   window.AlimunClasses = { mount: mount, reset: reset, debug: function () { return C; } };
 })();

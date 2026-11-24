@@ -290,6 +290,49 @@
   }
 
   /* ---------- Entry ---------- */
+  /* ---------- Live (owner, 24 Nov 2026: "make the class list and homework live too") ----------
+     New homework from the teacher, a changed due date, a mark or feedback: shown without reloading. The list is drawn
+     again in place. An open piece of homework is drawn again only when its mark, feedback or task changed, and never
+     while the student is typing, recording or answering "hand it in?" (it waits). Drafts are kept in this browser, so
+     nothing typed is lost. Row rules send each student their own homework only. */
+  var stopLive = null, liveTimer = null;
+  function unlive() { if (stopLive) { stopLive(); stopLive = null; } clearTimeout(liveTimer); }
+  function busy() {
+    var a = document.activeElement;
+    if (W && (W.rec || W.wait)) return true;
+    if (a && root.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName)) return true;
+    var m = root.querySelector('[data-msg]');
+    return !!(m && m.querySelector('.mt-confirm'));
+  }
+  function sig(a, s) { return JSON.stringify([a && [a.title, a.prompt, a.due_date, a.min_words], s && [s.status, s.score, s.feedback, s.graded_at]]); }
+  function quiet(my) {
+    if (my !== mountNo || !H || H.sample) return;
+    if (busy() || document.hidden) { clearTimeout(liveTimer); liveTimer = setTimeout(function () { quiet(my); }, 5000); return; }
+    var p = A.data().profile, id = decodeURIComponent((location.hash.match(/^#\/homework\/([^/?#]+)/) || [])[1] || '');
+    var before = id ? sig(H.assignments.filter(function (x) { return x.id === id; })[0], subOf(id)) : null;
+    window.AlimunData.homework(p.id, p.cohorts || []).then(function (d) {
+      if (my !== mountNo || busy()) return;
+      var y = window.scrollY;
+      H = d;
+      if (!id) { root.innerHTML = listView(); window.scrollTo(0, y); return; }
+      var a = H.assignments.filter(function (x) { return x.id === id; })[0];
+      if (!a || sig(a, subOf(id)) === before) return;
+      if (W) { stopRec(); W = null; }
+      root.innerHTML = itemView(a);
+      window.scrollTo(0, y);
+    }, function (e) { console.warn('[Alimun] Homework refresh', e && e.message); });
+  }
+  function live(my) {
+    unlive();
+    if (!signedIn() || !window.AlimunLive || !H || H.sample) return;
+    var p = A.data().profile, ids = (p.cohorts || []).filter(function (x) { return /^[0-9a-f-]{36}$/i.test(x); });
+    if (!/^[0-9a-f-]{36}$/i.test(p.id || '')) return;
+    var specs = [{ table: 'assignment_submissions', event: '*', filter: 'student_id=eq.' + p.id }, { table: 'assignments', event: '*', filter: 'student_id=eq.' + p.id },
+      { table: 'student_feedback', event: '*', filter: 'student_id=eq.' + p.id }];
+    if (ids.length) specs.push({ table: 'assignments', event: '*', filter: 'cohort_id=in.(' + ids.slice(0, 90).join(',') + ')' });
+    stopLive = window.AlimunLive.watch('homework', specs, function () { quiet(my); }, { wait: 600 });
+  }
+
   var mountNo = 0;
   function mount(view, parts, helpers) {
     var my = ++mountNo;
@@ -310,10 +353,11 @@
     }).then(function (res) {
       if (res.stale || my !== mountNo) return { stale: true };
       view.innerHTML = res.html;
+      live(my);
       return res;
     });
   }
-  function reset() { if (W) { stopRec(); W = null; } }
+  function reset() { unlive(); if (W) { stopRec(); W = null; } }
 
   window.AlimunHomework = { mount: mount, reset: reset, debug: function () { return { H: H, W: W }; } };
 })();

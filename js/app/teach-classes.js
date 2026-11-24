@@ -893,8 +893,36 @@
   }
   function reload() { return load().then(function (d) { var keep = { month: C.month, day: C.day, flash: C.flash }; C = Object.assign(d, keep); }); }
 
+  /* Live (owner, 24 Nov 2026: "make the class list and homework live too"): on the timetable, a student joining or
+     leaving a class, a class date moved, cancelled or going live, a 1 on 1 booked: shown without reloading. Drawn again
+     in place (month and scroll kept), never while the teacher is typing (it waits). Row rules send each teacher their
+     own classes only. Not in the classroom, the notes or the forms. */
+  var stopLive = null, liveTimer = null;
+  function unlive() { if (stopLive) { stopLive(); stopLive = null; } clearTimeout(liveTimer); }
+  function quietTimetable(my) {
+    if (my !== mountNo || !C || C.sample || !root.querySelector('[data-countdown], .tt-week, .view__head')) return;
+    var a = document.activeElement;
+    if (document.hidden || (a && root.contains(a) && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) { clearTimeout(liveTimer); liveTimer = setTimeout(function () { quietTimetable(my); }, 5000); return; }
+    reload().then(function () {
+      if (my !== mountNo || /^#\/classes\/./.test(location.hash)) return;
+      var y = window.scrollY;
+      root.innerHTML = timetableView();
+      loadContracts();
+      window.scrollTo(0, y);
+    }, function (e) { console.warn('[Alimun] Classes refresh', e && e.message); });
+  }
+  function liveTimetable(my) {
+    unlive();
+    if (!real() || !window.AlimunLive || !C || C.sample || !C.teacher || !/^[0-9a-f-]{36}$/i.test(C.teacher.id || '')) return;
+    var ids = (C.cohorts || []).map(function (c) { return c.id; }).filter(function (x) { return /^[0-9a-f-]{36}$/i.test(x || ''); }).slice(0, 90);
+    var specs = [{ table: 'cohorts', event: '*', filter: 'teacher_id=eq.' + C.teacher.id }, { table: 'one_on_one_bookings', event: '*', filter: 'teacher_id=eq.' + C.teacher.id }];
+    if (ids.length) specs.push({ table: 'sessions', event: '*', filter: 'cohort_id=in.(' + ids.join(',') + ')' }, { table: 'enrollments', event: '*', filter: 'cohort_id=in.(' + ids.join(',') + ')' });
+    stopLive = window.AlimunLive.watch('teach-classes', specs, function () { quietTimetable(my); }, { wait: 800 });
+  }
+
   /* Leaving the section or the classroom: stop the call, the chat and the timers; save a notes draft not yet saved */
   function reset() {
+    unlive();
     leave();
     if (cls) { cls.destroy(); cls = null; }
     if (tick) { clearInterval(tick); tick = null; }
@@ -921,7 +949,7 @@
       else if (p0 === 'availability') { html = availView(); title = t('app_tc_avail'); }
       else html = timetableView();
       root.innerHTML = html;
-      if (!p0) loadContracts();
+      if (!p0) { loadContracts(); liveTimetable(my); }
       if (p0 === 'availability') loadRoomAvail();
       if (!p0 && C.flash) { root.querySelector('.view__head').insertAdjacentHTML('afterend', '<p class="t-body st-msg tc-flash" role="status">' + esc(C.flash) + '</p>'); C.flash = null; }
       if (p0 === 'notes') boardCard(parts[1]);
