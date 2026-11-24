@@ -693,6 +693,23 @@
       if (current !== 'overview') { var m = MODULES[current] && MODULES[current](); if (m && m.live) m.live(); return; }
       if (visits) repaintOverview(); else if (touched) repaintOnline();
     }, { wait: 800 });
+    /* A new message from a person in Support: a pop-up in the corner (js/app/admin-push.js), unless that
+       conversation is open in front of the admin already */
+    window.AlimunLive.watch('admin-support', [{ table: 'help_messages', event: 'INSERT' }], function (ch) {
+      var c = window.AlimunData.auth && window.AlimunData.auth();
+      ch.forEach(function (x) {
+        var m = x.row || {};
+        if (m.author !== 'person' || !m.request_id || !c || !window.AlimunAdminPush) return;
+        if (!document.hidden && location.hash.indexOf('#/help/' + m.request_id) === 0) return;
+        c.from('help_requests').select('id, user_id, name, email, role, subject, created_at').eq('id', m.request_id).maybeSingle().then(function (r) {
+          var q = r && r.data; if (!q) return;
+          var p = q.user_id ? directory().u[q.user_id] : null;
+          var who = (p && p.name) || q.name || q.email || 'Someone';
+          var first = Math.abs(new Date(m.created_at).getTime() - new Date(q.created_at).getTime()) < 15000;
+          window.AlimunAdminPush.toast({ title: (first ? 'New support request from ' : 'New message from ') + who, sub: q.subject, text: cut(m.body, 160), href: '#/help/' + q.id });
+        });
+      });
+    }, { wait: 200 });
     /* "Online now" ages without any change in the database: someone who closed the tab stops being seen */
     setInterval(function () { if (!document.hidden && current === 'overview') repaintOnline(); paintSync(); }, 30000);
   }

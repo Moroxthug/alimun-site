@@ -446,3 +446,20 @@ a.feed__it:hover { background: #f7f6f2; margin: 0 -20px; padding-left: 20px; pad
 .adm .ad-draft-q p { margin: 0 0 3px; }
 .adm .ad-draft-fact { margin: 8px 0 0; padding-left: 12px; border-left: 3px solid var(--lime); }
 @media (max-width: 899px) { .adm .ad-draft-grid > * { grid-column: span 12; } .adm .ad-draft-row { grid-template-columns: 1fr; } }
+
+/* Pop-ups for new support messages (24 Nov 2026): the switch on Help requests and the pop-ups in the console */
+.ad-push { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; }
+.ad-push__x { flex: 1 1 320px; min-width: 0; }
+.ad-push__x .t-small { margin-top: 4px; max-width: 900px; }
+.ad-push__btns { margin: 0; flex: 0 0 auto; }
+.adm-toasts { position: fixed; right: 20px; bottom: 20px; z-index: 80; display: grid; gap: 10px; width: min(380px, calc(100vw - 32px)); }
+.adm-toast { display: grid; grid-template-columns: 8px minmax(0, 1fr); gap: 12px; align-items: start; padding: 14px 16px; background: #fff; color: var(--ink); border: 1px solid var(--line); border-radius: 14px; box-shadow: 0 10px 30px rgba(8, 8, 8, .12); animation: toast-in .22s ease-out both; }
+.adm-toast > i { width: 8px; height: 8px; margin-top: 6px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 3px rgba(206, 255, 101, .35); }
+.adm-toast b { display: block; font-weight: 600; font-size: 14px; }
+.adm-toast span { display: block; color: var(--muted); font-size: 12.5px; margin-top: 2px; }
+.adm-toast p { margin: 6px 0 0; font-size: 13.5px; line-height: 1.4; overflow-wrap: anywhere; }
+.adm-toast__btns { display: flex; gap: 8px; margin-top: 10px; }
+.adm-toast.is-out { opacity: 0; transform: translateY(8px); transition: opacity .2s, transform .2s; }
+@keyframes toast-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+@media (max-width: 760px) { .adm-toasts { right: 16px; left: 16px; width: auto; bottom: 92px; } }
+@media (prefers-reduced-motion: reduce) { .adm-toast { animation: none; } .adm-toast.is-out { transition: none; } }

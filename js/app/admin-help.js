@@ -91,7 +91,8 @@
     var n = { all: D.requests.length, open: 0, answered: 0, closed: 0 }; D.requests.forEach(function (r) { n[r.status]++; });
     var tab = function (k, label) { return '<a class="btn btn--' + (k === which ? 'primary' : 'quiet') + ' btn--sm" href="#/help/list/' + k + '"' + (k === which ? ' aria-current="page"' : '') + '>' + esc(label + ' (' + n[k] + ')') + '</a>'; };
     return flash() + tabs('conv') + '<div class="view__head"><div><h1 class="t-h1">Help requests</h1><p class="t-lead">What students and teachers write to Support. Your reply reaches their dashboard and their inbox; they can answer from either.</p></div></div>' +
-      '<div class="grid rise"><section class="card span-12" style="--i:0"><div class="btn-row ad-tabs" role="navigation" aria-label="Which conversations">' + tab('open', 'Waiting for us') + tab('answered', 'Answered') + tab('closed', 'Closed') + tab('all', 'All') + '</div>' +
+      '<div class="grid rise"><section class="card span-12 ad-push" style="--i:0" data-push>' + pushInner(PUSH.state) + '</section>' +
+      '<section class="card span-12" style="--i:0"><div class="btn-row ad-tabs" role="navigation" aria-label="Which conversations">' + tab('open', 'Waiting for us') + tab('answered', 'Answered') + tab('closed', 'Closed') + tab('all', 'All') + '</div>' +
       '<div class="ad-filters"><input class="st-in" type="search" data-hf placeholder="Search by subject, name or email" value="' + esc(Q.q) + '" aria-label="Search"></div>' +
       '<div data-hrows data-which="' + which + '">' + rowsHtml(which) + '</div></section>' +
       '<section class="card span-12" style="--i:1"><h2 class="t-h2">What people ask Help</h2><p class="t-small" style="margin:6px 0 14px">The last 30 days. Questions are deleted after 90 days.</p>' + askedHtml() + '</section>' + sampleLine() + '</div>';
@@ -270,8 +271,42 @@
       '<section class="card span-12" style="--i:1"><h2 class="t-h3">Not used in the last 30 days</h2><div class="tt-week">' + unused.map(line).join('') + '</div></section>' + sampleLine() + '</div>';
   }
 
+  /* ---------- Pop-ups for new support messages on this device (js/app/admin-push.js) ---------- */
+  var PUSH = { state: null, msg: '', busy: false };
+  var PUSH_TEXT = {
+    on: 'On for this browser. New support messages pop up here even when the admin console is closed.',
+    off: 'Off for this browser. Turn them on to see new support messages pop up on this computer or phone, even with the admin console closed. You keep getting the emails either way.',
+    denied: 'This browser blocks notifications from alimun.com. Allow them in the site settings (the lock or settings icon beside the address), then come back here.',
+    unsupported: 'This browser cannot show pop-ups. On an iPhone, add Alimun to the Home Screen first and open the admin console from there.'
+  };
+  function pushInner(st) {
+    var btns = st === 'on' ? '<button class="btn btn--primary btn--sm" type="button" data-push-do="test">Send a test</button><button class="btn btn--quiet btn--sm" type="button" data-push-do="off">Turn off</button>'
+      : st === 'off' ? '<button class="btn btn--primary btn--sm" type="button" data-push-do="on">Turn on pop-ups</button>' : '';
+    return '<div class="ad-push__x"><h2 class="t-h3">Pop-ups for new support messages</h2><p class="t-small">' + esc(st ? PUSH_TEXT[st] : 'Checking this browser…') + '</p>' +
+      (PUSH.msg ? '<p class="t-small st-msg" role="status">' + esc(PUSH.msg) + '</p>' : '') + '</div>' + (btns ? '<div class="btn-row ad-push__btns">' + btns + '</div>' : '');
+  }
+  function paintPush() { var el = root && root.querySelector('[data-push]'); if (el) el.innerHTML = pushInner(PUSH.state); }
+  function wirePush(my) {
+    var P = window.AlimunAdminPush;
+    if (!P) { PUSH.state = 'unsupported'; return paintPush(); }
+    P.state().then(function (st) { if (my !== no) return; PUSH.state = st; paintPush(); });
+    var el = root.querySelector('[data-push]');
+    if (!el) return;
+    el.addEventListener('click', function (e) {
+      var b = e.target.closest('[data-push-do]'); if (!b || PUSH.busy) return;
+      var what = b.getAttribute('data-push-do');
+      if (!real()) { PUSH.msg = 'Sample: nothing was changed.'; return paintPush(); }
+      PUSH.busy = true; b.disabled = true;
+      var job = what === 'on' ? P.turnOn().then(function () { return P.test(); }).then(function () { PUSH.msg = 'Pop-ups are on. A test is on its way.'; })
+        : what === 'off' ? P.turnOff().then(function () { PUSH.msg = 'Pop-ups are off for this browser.'; })
+        : P.test().then(function (j) { PUSH.msg = j && j.sent ? 'Test sent. It shows in a few seconds.' : 'The test did not reach this device. Turn pop-ups off and on again.'; });
+      job.catch(function (err) { PUSH.msg = (err && err.message) || 'That did not work. Please try again.'; })
+        .then(function () { return P.state(); }).then(function (st) { PUSH.busy = false; if (my !== no) return; PUSH.state = st; paintPush(); });
+    });
+  }
   function drawList(which) {
     root.innerHTML = listView(which);
+    wirePush(no);
     var s = root.querySelector('[data-hf]'), rows = root.querySelector('[data-hrows]');
     if (s) s.addEventListener('input', function () { Q.q = s.value; rows.innerHTML = rowsHtml(rows.getAttribute('data-which')); });
   }

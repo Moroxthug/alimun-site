@@ -29,6 +29,7 @@
 
 const AI = require('./ai.js').internal;
 const mail = require('./_lib/email.js');
+const adminPush = require('./_lib/admin-push.js');
 const L = require('./_lib/email-i18n.js');
 const crypto = require('crypto');
 const captcha = require('./_lib/captcha.js');
@@ -343,6 +344,16 @@ async function sentToday(supabase, user) {
   return { reqs: reqs || 0, msgs: msgs || 0 };
 }
 async function tellSupport(supabase, request, who, body, first) {
+  /* Pop-up on the admins' devices that turned it on (Admin → Help requests), alongside the email */
+  const push = adminPush.sendToAdmins(supabase, {
+    title: (first ? 'New support request' : 'New message in Support') + ' from ' + adminPush.cut(who.name || who.email || 'someone', 50),
+    body: adminPush.cut(request.subject, 70) + ': ' + adminPush.cut(body, 110),
+    url: '/app/admin#/help/' + request.id, tag: 'support-' + request.id,
+  }).catch((e) => console.error('[help] push:', e && e.message));
+  await tellSupportEmail(supabase, request, who, body, first);
+  await push;
+}
+async function tellSupportEmail(supabase, request, who, body, first) {
   try {
     const conv = await supabase.from('help_messages').select('author, body, created_at').eq('request_id', request.id).order('created_at').limit(20);
     const earlier = (conv.data || []).slice(0, -1).map((m) => ({ p: `<strong>${m.author === 'alimun' ? 'Alimun' : mail.esc(who.name || 'Them')}:</strong> ${mail.esc(m.body).replace(/\n/g, '<br>')}` }));
@@ -688,6 +699,27 @@ async function handleAdminDraftDecide(req, res, supabase, user) {
   return res.status(200).json({ ok: true, status: 'approved', slug, translated: done.sort(), failed: failed.sort() });
 }
 
+// ── Pop-ups for new support messages on the admins' devices (api/_lib/admin-push.js) ──
+async function handleAdminPush(action, req, res, supabase, user) {
+  const b = bodyOf(req);
+  if (action === 'admin_push_off') {
+    const endpoint = String(b.endpoint || '').slice(0, 1000);
+    if (endpoint) await supabase.from('admin_push_subscriptions').delete().eq('endpoint', endpoint).eq('user_id', user.id);
+    return res.status(200).json({ ok: true });
+  }
+  if (!adminPush.publicKey()) return res.status(503).json({ error: 'Pop-ups are not set up on the server yet.' });
+  if (action === 'admin_push_on') {
+    const sub = adminPush.validSubscription(b.subscription);
+    if (!sub) return res.status(400).json({ error: 'This browser gave an address we do not accept.' });
+    const { error } = await supabase.from('admin_push_subscriptions')
+      .upsert({ ...sub, user_id: user.id, user_agent: oneLine(req.headers['user-agent'], 300) || null, last_error: null }, { onConflict: 'endpoint' });
+    if (error) { console.error('[help] push on:', error.message); return res.status(500).json({ error: 'Could not save this device.' }); }
+    return res.status(200).json({ ok: true });
+  }
+  const r = await adminPush.sendToAdmins(supabase, { title: 'Pop-ups are on', body: 'New support messages will show here, even when the admin console is closed.', url: '/app/admin#/help', tag: 'support-test' }, user.id);
+  return res.status(200).json({ ok: true, sent: r.sent, failed: r.failed });
+}
+
 // ── Router ─────────────────────────────────────────────────
 
 module.exports = async function handler(req, res) {
@@ -737,6 +769,8 @@ module.exports = async function handler(req, res) {
       case 'admin_draft_run': if (!isAdmin(user)) return res.status(403).json({ error: 'Forbidden' }); return await handleAdminDraftRun(req, res, supabase, user);
       case 'admin_draft_decide': if (!isAdmin(user)) return res.status(403).json({ error: 'Forbidden' }); return await handleAdminDraftDecide(req, res, supabase, user);
       case 'admin_status': if (!isAdmin(user)) return res.status(403).json({ error: 'Forbidden' }); return await handleAdminStatus(req, res, supabase);
+      case 'admin_push_on': case 'admin_push_off': case 'admin_push_test':
+        if (!isAdmin(user)) return res.status(403).json({ error: 'Forbidden' }); return await handleAdminPush(action, req, res, supabase, user);
       default: return res.status(400).json({ error: 'Unknown action' });
     }
   } catch (e) {

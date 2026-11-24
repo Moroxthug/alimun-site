@@ -29,6 +29,11 @@
       "continue": true
     },
     {
+      "src": "/admin-push-sw\\.js",
+      "headers": { "Cache-Control": "no-cache", "Content-Type": "application/javascript; charset=utf-8" },
+      "continue": true
+    },
+    {
       "src": "/app-sw\\.js",
       "headers": { "Cache-Control": "no-cache", "Content-Type": "application/javascript; charset=utf-8" },
       "continue": true
