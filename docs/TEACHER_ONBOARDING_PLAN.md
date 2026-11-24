@@ -7,7 +7,7 @@ teacher sees instructions from the dashboard, like other platforms"), so it was 
 ## What a teacher sees
 
 - **Dashboard tour** (`js/app/teach-tour.js`). The first time an approved teacher opens the dashboard, a short welcome
-  card offers "Show me around" or "Later". The tour then walks through the real dashboard: the screen dims, the real
+  card with an 80-second overview video of the dashboard offers "Show me around" or "Later". The tour then walks through the real dashboard: the screen dims, the real
   element is lit up and a small card beside it says what it is, with Back, Next and Close (Esc and the arrow keys work
   too). Stops: the next class (Check in, Start the class), To do, Classes and availability, Lessons, Homework, Messages,
   Settings, the question mark, and last the practice classroom with "Open the practice classroom". On a phone the card
@@ -22,7 +22,16 @@ teacher sees instructions from the dashboard, like other platforms"), so it was 
 
 Admin → People → **Teacher onboarding** (`js/app/admin-onboarding.js`): each approved teacher (and teachers about to give
 a trial class): finished the tour, closed it early, or not opened the dashboard yet; and how often they opened the
-practice classroom.
+practice classroom. Below that, **Overview video**: per language, which video the welcome card plays, with Watch,
+Upload/Replace (MP4) and Remove upload.
+
+## Overview video
+
+- Recorded from the real dashboard with sample data in every language: `videos/teacher-tour/<lang>.mp4`, made with
+  `node scripts/record-tour-video.js <lang> videos/teacher-tour/<lang>.mp4 http://localhost:3000 <ffmpeg>` (Playwright
+  plus ffmpeg; about 80 s, 7-9 MB). Keep the computer awake while it records: a sleep makes a broken, hours-long file.
+- An admin upload (`teacher-tutorial` bucket, `tour/<lang>.mp4`, e.g. a Claude Design version made with
+  `docs/TEACHER_TOUR_VIDEO_CLAUDE_DESIGN.md`) plays instead. Order on the card: upload, recorded, then English.
 
 ## Data and API
 
@@ -30,5 +39,6 @@ practice classroom.
   (closed early), `practice_at`, `practice_count`; written by the service role only.
 - `api/onboarding.js`: `state`, `tour`, `practice` (teacher), `admin`.
 - Text: `app_tour_*`, `app_pr_*`, `app_help_page` in all nine dashboard languages.
-- Left over from the first version and no longer used: table `teacher_tutorial_videos` and bucket `teacher-tutorial`
-  (both empty). Remove them only with the owner's yes.
+- Bucket `teacher-tutorial` holds the admin's overview-video uploads (policies in `202611191200` and
+  `202611201200_teacher_tutorial_admin_select.sql`). Table `teacher_tutorial_videos` is left from the first version and
+  unused; the owner asked to keep it.

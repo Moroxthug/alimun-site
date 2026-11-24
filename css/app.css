@@ -2530,3 +2530,9 @@ section.card .hp-rows { padding: 0; margin: 12px -12px -8px; }
 .tour__card.is-center { left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(480px, calc(100vw - 32px)); padding: 30px 30px 24px; }
 .tour__card.is-center .t-h3 { font-size: 30px; }
 .tour__card.is-dock { left: 12px; right: 12px; top: auto; bottom: calc(var(--bar-h) + 28px + env(safe-area-inset-bottom)); width: auto; }
+/* The overview video on the tour's welcome card */
+.tour__card.has-video.is-center { width: min(820px, calc(100vw - 32px)); }
+.tour__media:empty { display: none; }
+.tour__video { display: block; width: 100%; aspect-ratio: 16 / 9; margin-bottom: 18px; border-radius: var(--r-md); background: var(--bone); }
+.tour__card.has-video .tour__x { z-index: 1; background: var(--white); }
+.tour__card.is-dock.has-video { top: 12px; bottom: auto; max-height: calc(100dvh - var(--bar-h) - 40px); overflow-y: auto; }

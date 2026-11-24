@@ -22,6 +22,17 @@
     { id: 'practice', h: 'app_tour_practice_h', p: 'app_tour_practice_p' }
   ];
   var A = null, el = null, at = 0, target = null, onEnd = null, drawNo = 0;
+  /* The overview video on the welcome card (scripts/record-tour-video.js; its intro reads app_tour_video_h and
+     app_tour_video_p). An admin upload in the teacher-tutorial bucket (Admin -> Teacher onboarding, e.g. a Claude
+     Design version) comes first, then the recorded file shipped with the site; the teacher's language, then English. */
+  var BUCKET = 'https://dgaiasmefcbrtzqwdyri.supabase.co/storage/v1/object/public/teacher-tutorial/tour/';
+  var BUILT = '/videos/teacher-tour/';
+  function videoHtml() {
+    var l = A.lang, srcs = [BUCKET + l + '.mp4', BUILT + l + '.mp4'];
+    if (l !== 'en') srcs.push(BUCKET + 'en.mp4', BUILT + 'en.mp4');
+    return '<video class="tour__video" controls playsinline preload="metadata" aria-label="' + esc(t('app_tour_video_h')) + '" title="' + esc(t('app_tour_video_p')) + '">' +
+      srcs.map(function (u) { return '<source src="' + esc(u) + '#t=0.1" type="video/mp4">'; }).join('') + '</video>';
+  }
 
   function t(k, v) { return A.t(k, v); }
   function esc(s) { return A.esc(s); }
@@ -57,7 +68,7 @@
     el.setAttribute('aria-modal', 'true');
     el.setAttribute('aria-labelledby', 'tour-h');
     el.innerHTML = '<div class="tour__dim" data-tour-dim></div><div class="tour__spot" data-tour-spot hidden></div>' +
-      '<div class="tour__card" data-tour-card><button class="icon-btn tour__x" type="button" data-tour="close" aria-label="' + esc(t('app_tour_close')) + '">' +
+      '<div class="tour__card" data-tour-card><div class="tour__media" data-tour-media></div><button class="icon-btn tour__x" type="button" data-tour="close" aria-label="' + esc(t('app_tour_close')) + '">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>' +
       '<h2 class="t-h3" id="tour-h"></h2><p class="t-body" data-tour-p></p><div class="tour__row" data-tour-row></div></div>';
     document.body.appendChild(el);
@@ -101,6 +112,11 @@
       if (target) target.scrollIntoView({ block: 'center', inline: 'nearest' });
       /* On a phone the card sits at the bottom: bring an element of the page up under the top bar, above the card */
       if (target && window.innerWidth < 640 && target.closest('#view')) window.scrollBy(0, target.getBoundingClientRect().top - 76);
+      var media = el.querySelector('[data-tour-media]'), card = el.querySelector('[data-tour-card]');
+      media.innerHTML = s.id === 'welcome' ? videoHtml() : '';
+      card.classList.toggle('has-video', s.id === 'welcome');
+      var v = media.querySelector('video');
+      if (v) { var last = v.querySelector('source:last-child'); last.addEventListener('error', function () { media.innerHTML = ''; card.classList.remove('has-video'); place(); }); }
       el.querySelector('#tour-h').textContent = t(s.h);
       el.querySelector('[data-tour-p]').textContent = t(s.p);
       el.querySelector('[data-tour-row]').innerHTML = buttons();
