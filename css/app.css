@@ -2537,6 +2537,9 @@ section.card .hp-rows { padding: 0; margin: 12px -12px -8px; }
 /* The overview video on the tour's welcome card */
 .tour__card.has-video.is-center { width: min(820px, calc(100vw - 32px)); }
 .tour__media:empty { display: none; }
+.tour__more { margin-top: 14px; }
+.tour__more:empty { display: none; }
+.tour__more .btn svg { width: 14px; height: 14px; }
 .tour__video { display: block; width: 100%; aspect-ratio: 16 / 9; margin-bottom: 18px; border-radius: var(--r-md); background: var(--bone); }
 .tour__card.has-video .tour__x { z-index: 1; background: var(--white); }
 .tour__card.is-dock.has-video { top: 12px; bottom: auto; max-height: calc(100dvh - var(--bar-h) - 40px); overflow-y: auto; }

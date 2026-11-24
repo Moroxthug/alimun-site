@@ -21,19 +21,28 @@
     { id: 'help', route: 'today', sel: '[data-pagehelp]', h: 'app_tour_help_h', p: 'app_tour_help_p' },
     { id: 'practice', h: 'app_tour_practice_h', p: 'app_tour_practice_p' }
   ];
-  var A = null, el = null, at = 0, target = null, onEnd = null, drawNo = 0;
-  /* The overview video on the welcome card (scripts/record-tour-video.js; its intro reads app_tour_video_h and
-     app_tour_video_p). An admin upload in the teacher-tutorial bucket (Admin -> Teacher onboarding, e.g. a Claude
-     Design version) comes first, then the recorded file shipped with the site; the teacher's language, then English. */
+  var A = null, el = null, at = 0, target = null, onEnd = null, drawNo = 0, watching = false;
+  /* "Watch how it's done" on a stop: a short video of exactly what to press for that job (scripts/task-videos.js,
+     made by scripts/design-tour-video.js), in the teacher's language, else English */
+  var TASKS = { next: 'start', todo: 'notes', classes: 'availability', lessons: 'board', homework: 'homework', messages: 'messages', settings: 'profile' };
+  /* The overview video on the welcome card (scripts/design-tour-video.js; its title card reads app_tour_video_h and
+     app_tour_video_p). An admin upload in the teacher-tutorial bucket (Admin -> Teacher onboarding) comes first, then
+     the file shipped with the site; the teacher's language, then English. */
   var BUCKET = 'https://dgaiasmefcbrtzqwdyri.supabase.co/storage/v1/object/public/teacher-tutorial/tour/';
-  var BUILT = '/videos/teacher-tour/';
+  var BUILT = '/videos/teacher-tour/', VER = '.mp4?v=2'; /* raise v when the built-in videos change: they are cached for a week */
   function videoHtml() {
-    var l = A.lang, srcs = [BUCKET + l + '.mp4', BUILT + l + '.mp4'];
-    if (l !== 'en') srcs.push(BUCKET + 'en.mp4', BUILT + 'en.mp4');
+    var l = A.lang, srcs = [BUCKET + l + '.mp4', BUILT + l + VER];
+    if (l !== 'en') srcs.push(BUCKET + 'en.mp4', BUILT + 'en' + VER);
     return '<video class="tour__video" controls playsinline preload="metadata" aria-label="' + esc(t('app_tour_video_h')) + '" title="' + esc(t('app_tour_video_p')) + '">' +
       srcs.map(function (u) { return '<source src="' + esc(u) + '#t=0.1" type="video/mp4">'; }).join('') + '</video>';
   }
 
+  function taskHtml(id, label) {
+    var l = A.lang, srcs = [BUILT + id + '-' + l + VER];
+    if (l !== 'en') srcs.push(BUILT + id + '-en' + VER);
+    return '<video class="tour__video" controls playsinline preload="auto" aria-label="' + esc(label) + '">' +
+      srcs.map(function (u) { return '<source src="' + esc(u) + '" type="video/mp4">'; }).join('') + '</video>';
+  }
   function t(k, v) { return A.t(k, v); }
   function esc(s) { return A.esc(s); }
   function shown(x) {
@@ -70,7 +79,7 @@
     el.innerHTML = '<div class="tour__dim" data-tour-dim></div><div class="tour__spot" data-tour-spot hidden></div>' +
       '<div class="tour__card" data-tour-card><div class="tour__media" data-tour-media></div><button class="icon-btn tour__x" type="button" data-tour="close" aria-label="' + esc(t('app_tour_close')) + '">' +
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>' +
-      '<h2 class="t-h3" id="tour-h"></h2><p class="t-body" data-tour-p></p><div class="tour__row" data-tour-row></div></div>';
+      '<h2 class="t-h3" id="tour-h"></h2><p class="t-body" data-tour-p></p><div class="tour__more" data-tour-more></div><div class="tour__row" data-tour-row></div></div>';
     document.body.appendChild(el);
     el.addEventListener('click', function (e) {
       var b = e.target.closest('[data-tour]');
@@ -80,6 +89,7 @@
       else if (a === 'back') step(at - 1);
       else if (a === 'close') end(at === STEPS.length - 1);
       else if (a === 'practice') { end(true); location.hash = '#/classes/practice'; }
+      else if (a === 'watch') watch();
     });
     document.addEventListener('keydown', keys);
     window.addEventListener('resize', place);
@@ -103,7 +113,7 @@
   function step(i) {
     if (i < 0 || i >= STEPS.length) return;
     var my = ++drawNo, s = STEPS[i];
-    at = i;
+    at = i; watching = false;
     el.classList.add('is-moving');
     go(s.route);
     waitFor(s.sel).then(function (x) {
@@ -119,6 +129,8 @@
       if (v) { var last = v.querySelector('source:last-child'); last.addEventListener('error', function () { media.innerHTML = ''; card.classList.remove('has-video'); place(); }); }
       el.querySelector('#tour-h').textContent = t(s.h);
       el.querySelector('[data-tour-p]').textContent = t(s.p);
+      el.querySelector('[data-tour-more]').innerHTML = TASKS[s.id] ? '<button class="btn btn--ghost btn--sm" type="button" data-tour="watch">' +
+        '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>' + esc(t('app_tour_watch')) + '</button>' : '';
       el.querySelector('[data-tour-row]').innerHTML = buttons();
       el.classList.remove('is-moving');
       place();
@@ -126,12 +138,26 @@
       if (first) first.focus({ preventScroll: true });
     });
   }
+  /* Play the stop's task video in the card, in the middle of the screen; Back, Next or Close go on as before */
+  function watch() {
+    var s = STEPS[at], id = TASKS[s.id];
+    if (!id || !el) return;
+    watching = true;
+    var media = el.querySelector('[data-tour-media]'), card = el.querySelector('[data-tour-card]');
+    media.innerHTML = taskHtml(id, t(s.h));
+    el.querySelector('[data-tour-more]').innerHTML = '';
+    card.classList.add('has-video');
+    var v = media.querySelector('video'), last = v.querySelector('source:last-child');
+    last.addEventListener('error', function () { media.innerHTML = ''; card.classList.remove('has-video'); watching = false; place(); });
+    place();
+    var p = v.play(); if (p && p.catch) p.catch(function () {});
+  }
   /* The light around the element, and the card below it, above it, or in the middle; at the bottom on a phone */
   function place() {
     if (!el) return;
     var spot = el.querySelector('[data-tour-spot]'), card = el.querySelector('[data-tour-card]'), dim = el.querySelector('[data-tour-dim]');
     var W = window.innerWidth, H = window.innerHeight, phone = W < 640, pad = 8, gap = 14, m = 16;
-    var r = target && shown(target) ? target.getBoundingClientRect() : null;
+    var r = target && shown(target) && !watching ? target.getBoundingClientRect() : null;
     spot.hidden = !r; dim.hidden = !!r;
     card.classList.toggle('is-center', !r && !phone);
     card.style.left = card.style.top = card.style.right = card.style.bottom = '';
