@@ -243,3 +243,20 @@ test('Black Friday takes two weeks off the first payment, then the €10 offer i
   assert.strictEqual(L.discountFor(bf, Object.assign({}, b, { now: after, cohortId: INT, productKey: 'intensive_en' })), 0);
   assert.strictEqual(L.discountFor(bf, Object.assign({}, b, { unitAmount: 80 })), 30, 'never below 0.50 left to pay');
 });
+
+test('the Black Friday message: beginners get the group, B1 and above the intensive course, in their language', () => {
+  const M = require('../../api/_lib/launch-email.js');
+  const bf = L.parseOffer({ code: 'launch-en-2', rooms: [PACK], ends_at: '2026-12-07T04:00:00Z', eur_off: 1000,
+    deal: { name: 'black-friday', ends_at: '2026-11-30T22:59:00Z', send_at: '2026-11-25T23:00:00Z', rooms: [OTHER] } });
+  assert.strictEqual(bf.deal.sendAt, Date.parse('2026-11-25T23:00:00Z'));
+  const ctx = { offer: bf, unsub: false,
+    pack: { starts_on: '2026-12-07', schedule_days: ['Monday', 'Wednesday', 'Thursday'], schedule_time: '19:00:00', timezone: 'Europe/Paris' },
+    intensive: { starts_on: '2026-12-07', schedule_days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], schedule_time: '10:00:00', timezone: 'Europe/Dublin' } };
+  const a = M.buildBf({ user_id: 'u1', name: 'JUDIT M', level: 'A1', timezone: 'Europe/Madrid', ui_lang: 'es' }, ctx);
+  assert.strictEqual(a.kind, 'beg'); assert.strictEqual(a.link, '/app#/settings/plans/launch');
+  assert.match(a.text, /Hola Judit:/); assert.match(a.text, /lunes, miércoles y jueves a las 19:00/);
+  const b = M.buildBf({ user_id: 'u2', name: 'Selin', level: 'B2', timezone: 'Europe/Istanbul', ui_lang: 'en' }, ctx);
+  assert.strictEqual(b.kind, 'int'); assert.match(b.text, /Monday to Friday at 13:00/);
+  assert.ok(b.bell.title.length <= 140 && b.bell.body.length <= 1000);
+  assert.strictEqual(M.buildBf({ user_id: 'u3', name: '', level: 'B1', ui_lang: 'ma' }, Object.assign({}, ctx, { intensive: null })).kind, 'beg', 'no intensive room: the group');
+});

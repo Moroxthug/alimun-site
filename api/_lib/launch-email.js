@@ -405,6 +405,127 @@ function buildToday(r, ctx, hasPlace) {
   return { subject: x.subject(time), html: out.html, text: out.text, lang, unsub, bell: { title: x.bell, body: x.subject(time) } };
 }
 
+/* Black Friday (owner, 25 Nov 2026: "we need to find a way to convert and get at least 8 inside a class now"; "you write
+   on behalf of alimun. send it as notification, so even people who unsubscribed receive it"). From launch_offer.deal
+   .send_at until the deal ends, the hourly job writes to every English learner who has not reserved: a note in the
+   dashboard bell for everyone, and the email to everyone except those who unsubscribed (EU rules: no offers by email
+   after an unsubscribe). A1–A2 get the beginner group, B1 and above the intensive course. New learners get it within
+   the hour while the deal is on. Replies go to support@. */
+const BF_TX = {
+ en: { subject: 'Black Friday: half price on your first month of English classes', pre: 'Live classes with a teacher from Monday 7 December. Until {end}.',
+   heading: 'Black Friday on your English classes', hi: 'Hello {n},', hiNo: 'Hello,',
+   beg: 'Our small beginner group (A1 and A2) starts on Monday 7 December, live with a teacher, and we would like you in it. For Black Friday, your first month is half price.',
+   int: 'Our intensive English course (B1 and up) starts on Monday 7 December: five live classes a week with a teacher, in a small group. For Black Friday, your first month is half price.',
+   classes: 'Classes', starts: 'Starts', length: 'Length', weeks: '12 weeks', at: '{d} at {t}', mf: 'Monday to Friday', zone: 'All times are in your time zone.',
+   offH: 'Half price', offNow: 'on your first month, or two weeks off if you pay the 12 weeks at once', offEnds: 'Until {end}',
+   rule: 'Your card is saved now and charged on the first day of class. If the group does not start, nothing is charged.', button: 'Get the deal',
+   note: 'You are getting this email because you have an Alimun account to learn English.',
+   bellT: 'Black Friday: half price on your first month', bellB: 'Live English classes with a teacher from Monday 7 December. Until {end}.' },
+ es: { subject: 'Black Friday: mitad de precio en tu primer mes de clases de inglés', pre: 'Clases en directo con profesor desde el lunes 7 de diciembre. Hasta el {end}.',
+   heading: 'Black Friday en tus clases de inglés', hi: 'Hola {n}:', hiNo: 'Hola:',
+   beg: 'Nuestro grupo pequeño de principiantes (A1 y A2) empieza el lunes 7 de diciembre, en directo con profesor, y nos gustaría que estuvieras en él. Por Black Friday, tu primer mes cuesta la mitad.',
+   int: 'Nuestro curso intensivo de inglés (B1 o más) empieza el lunes 7 de diciembre: cinco clases en directo por semana con profesor, en grupo pequeño. Por Black Friday, tu primer mes cuesta la mitad.',
+   classes: 'Clases', starts: 'Empieza', length: 'Duración', weeks: '12 semanas', at: '{d} a las {t}', mf: 'De lunes a viernes', zone: 'Todas las horas están en tu zona horaria.',
+   offH: 'Mitad de precio', offNow: 'en tu primer mes, o dos semanas de descuento si pagas las 12 semanas de una vez', offEnds: 'Hasta el {end}',
+   rule: 'Tu tarjeta queda guardada ahora y se cobra el primer día de clase. Si el grupo no empieza, no se cobra nada.', button: 'Aprovechar la oferta',
+   note: 'Recibes este correo porque tienes una cuenta de Alimun para aprender inglés.',
+   bellT: 'Black Friday: mitad de precio en tu primer mes', bellB: 'Clases de inglés en directo con profesor desde el lunes 7 de diciembre. Hasta el {end}.' },
+ fr: { subject: 'Black Friday : moitié prix sur votre premier mois de cours d’anglais', pre: 'Des cours en direct avec un professeur à partir du lundi 7 décembre. Jusqu’au {end}.',
+   heading: 'Black Friday sur vos cours d’anglais', hi: 'Bonjour {n},', hiNo: 'Bonjour,',
+   beg: 'Notre petit groupe de débutants (A1 et A2) commence le lundi 7 décembre, en direct avec un professeur, et nous aimerions vous y accueillir. Pour le Black Friday, votre premier mois est à moitié prix.',
+   int: 'Notre cours intensif d’anglais (B1 et plus) commence le lundi 7 décembre : cinq cours en direct par semaine avec un professeur, en petit groupe. Pour le Black Friday, votre premier mois est à moitié prix.',
+   classes: 'Cours', starts: 'Début', length: 'Durée', weeks: '12 semaines', at: '{d} à {t}', mf: 'Du lundi au vendredi', zone: 'Toutes les heures sont à votre heure locale.',
+   offH: 'Moitié prix', offNow: 'sur votre premier mois, ou deux semaines offertes si vous payez les 12 semaines en une fois', offEnds: 'Jusqu’au {end}',
+   rule: 'Votre carte est enregistrée maintenant et débitée le premier jour de cours. Si le groupe ne démarre pas, rien n’est débité.', button: 'Profiter de l’offre',
+   note: 'Vous recevez cet e-mail parce que vous avez un compte Alimun pour apprendre l’anglais.',
+   bellT: 'Black Friday : moitié prix sur votre premier mois', bellB: 'Des cours d’anglais en direct avec un professeur à partir du lundi 7 décembre. Jusqu’au {end}.' },
+ de: { subject: 'Black Friday: halber Preis für deinen ersten Monat Englisch', pre: 'Live-Unterricht mit Lehrkraft ab Montag, 7. Dezember. Bis {end}.',
+   heading: 'Black Friday für deinen Englischkurs', hi: 'Hallo {n},', hiNo: 'Hallo,',
+   beg: 'Unsere kleine Anfängergruppe (A1 und A2) startet am Montag, 7. Dezember, live mit Lehrkraft, und wir hätten dich gern dabei. Zum Black Friday kostet dein erster Monat die Hälfte.',
+   int: 'Unser Englisch-Intensivkurs (ab B1) startet am Montag, 7. Dezember: fünf Live-Stunden pro Woche mit Lehrkraft, in einer kleinen Gruppe. Zum Black Friday kostet dein erster Monat die Hälfte.',
+   classes: 'Unterricht', starts: 'Start', length: 'Dauer', weeks: '12 Wochen', at: '{d} um {t}', mf: 'Montag bis Freitag', zone: 'Alle Zeiten in deiner Zeitzone.',
+   offH: 'Halber Preis', offNow: 'für deinen ersten Monat, oder zwei Wochen gratis, wenn du die 12 Wochen auf einmal bezahlst', offEnds: 'Bis {end}',
+   rule: 'Deine Karte wird jetzt gespeichert und am ersten Unterrichtstag belastet. Startet die Gruppe nicht, wird nichts abgebucht.', button: 'Angebot sichern',
+   note: 'Du bekommst diese E-Mail, weil du ein Alimun-Konto zum Englischlernen hast.',
+   bellT: 'Black Friday: halber Preis für deinen ersten Monat', bellB: 'Englisch live mit Lehrkraft ab Montag, 7. Dezember. Bis {end}.' },
+ pt: { subject: 'Black Friday: metade do preço no teu primeiro mês de aulas de inglês', pre: 'Aulas ao vivo com professor a partir de segunda-feira, 7 de dezembro. Até {end}.',
+   heading: 'Black Friday nas tuas aulas de inglês', hi: 'Olá {n},', hiNo: 'Olá,',
+   beg: 'O nosso pequeno grupo de principiantes (A1 e A2) começa na segunda-feira, 7 de dezembro, ao vivo com professor, e gostávamos de te ter connosco. Na Black Friday, o teu primeiro mês custa metade.',
+   int: 'O nosso curso intensivo de inglês (B1 ou mais) começa na segunda-feira, 7 de dezembro: cinco aulas ao vivo por semana com professor, em grupo pequeno. Na Black Friday, o teu primeiro mês custa metade.',
+   classes: 'Aulas', starts: 'Início', length: 'Duração', weeks: '12 semanas', at: '{d} às {t}', mf: 'De segunda a sexta', zone: 'Todas as horas estão no teu fuso horário.',
+   offH: 'Metade do preço', offNow: 'no teu primeiro mês, ou duas semanas de desconto se pagares as 12 semanas de uma vez', offEnds: 'Até {end}',
+   rule: 'O teu cartão fica guardado agora e é cobrado no primeiro dia de aulas. Se o grupo não começar, nada é cobrado.', button: 'Aproveitar a oferta',
+   note: 'Recebes este e-mail porque tens uma conta Alimun para aprender inglês.',
+   bellT: 'Black Friday: metade do preço no teu primeiro mês', bellB: 'Aulas de inglês ao vivo com professor a partir de segunda-feira, 7 de dezembro. Até {end}.' },
+};
+BF_TX.ma = BF_TX.fr;
+const BF_LINK = { beg: '/app#/settings/plans/launch', int: '/app#/settings/plans/pick/intensive_en/month' };
+function fill(s, v) { return String(s).replace(/\{(\w+)\}/g, (m, k) => (k in v ? v[k] : m)); }
+function buildBf(r, ctx) {
+  const lang = BF_TX[r.ui_lang] ? r.ui_lang : 'en', x = BF_TX[lang], tz = zoneOf(r.timezone);
+  const kind = /^(B1|B2|C1|C2)$/.test(String(r.level || '').slice(0, 2).toUpperCase()) && ctx.intensive ? 'int' : 'beg';
+  const wk = firstWeek(kind === 'int' ? ctx.intensive : ctx.pack);
+  const time = fmt(wk[0], tz, lang, { hour: '2-digit', minute: '2-digit' });
+  const days = list(wk.map((d) => fmt(d, tz, lang, { weekday: 'long' })), lang);
+  const end = fmt(new Date(ctx.offer.deal.endsAt - 60000), tz, lang, { weekday: 'long', day: 'numeric', month: 'long' });
+  const name = firstName(String(r.name || '').toLowerCase());
+  const facts = [[x.classes, fill(x.at, { d: kind === 'int' ? x.mf : days, t: time })], [x.starts, fmt(wk[0], tz, lang, { weekday: 'long', day: 'numeric', month: 'long' })], [x.length, x.weeks]];
+  const href = (ctx.clickUrl && ctx.clickUrl(r.user_id)) || (mail.SITE + BF_LINK[kind]);
+  const blocks = [{ p: mail.esc(name ? fill(x.hi, { n: name }) : x.hiNo) }, { p: mail.esc(x[kind]) }, { facts },
+    { p: `<span style="font-size:14px">${mail.esc(x.zone)}</span>` },
+    { offer: { headline: x.offH, now: x.offNow, ends: fill(x.offEnds, { end }) } }, { p: mail.esc(x.rule) }, { button: { label: x.button, href } }];
+  const unsub = ctx.unsub ? mail.unsubscribeUrl(r.user_id) : '';
+  const out = mail.renderEmail({ hero: 'class-english', preheader: fill(x.pre, { end }), heading: x.heading, blocks, note: mail.esc(x.note), unsubscribeUrl: unsub, lang });
+  return { subject: x.subject, html: out.html, text: out.text, lang, kind, unsub, link: BF_LINK[kind], bell: { title: x.bellT, body: fill(x.bellB, { end }) } };
+}
+/** Everyone who gets the Black Friday message now: [{ r, email: bool }] */
+async function bfAudience(sb, ctx) {
+  const kind = ctx.offer.code + '-bf';
+  const rooms = ctx.offer.rooms.concat(ctx.offer.deal.rooms);
+  const [{ data: people, error }, { data: done }, { data: off }, { data: reserved }] = await Promise.all([
+    sb.from('student_profiles').select('user_id, full_name, level, timezone, ui_lang').eq('language', 'English').in('level', LEVELS).limit(1000),
+    sb.from('notifications').select('user_id').eq('kind', 'offer').eq('params->>launch', kind),
+    sb.from('marketing_consent_current').select('user_id').eq('granted', false).eq('source', 'unsubscribe'),
+    sb.from('entitlements').select('user_id').in('cohort_id', rooms).in('status', ['pending_room', 'active', 'paused'])
+  ]);
+  if (error) throw new Error('bf audience: ' + error.message);
+  const skip = new Set([...(done || []), ...(reserved || [])].map((x) => x.user_id).concat(ctx.offer.exclude || []));
+  const unsub = new Set((off || []).map((x) => x.user_id));
+  const list = [];
+  for (const p of people || []) {
+    if (skip.has(p.user_id)) continue;
+    const { data: u } = await sb.auth.admin.getUserById(p.user_id);
+    const user = u && u.user;
+    if (!user || !user.email || (user.app_metadata && ['admin', 'teacher'].includes(user.app_metadata.role))) continue;
+    if (isTestAccount({ email: user.email, name: p.full_name, app_metadata: user.app_metadata })) continue;
+    list.push({ email: !unsub.has(p.user_id), r: { user_id: p.user_id, email: user.email, name: p.full_name, level: p.level, timezone: p.timezone, ui_lang: p.ui_lang } });
+  }
+  return { kind, list };
+}
+async function bfStep(sb, ctx, opts) {
+  const d = ctx.offer.deal, now = (opts && opts.now) || Date.now(), preview = opts && opts.preview === 'bf';
+  if (!d || !d.sendAt || (!preview && (now < d.sendAt || now >= d.endsAt))) return null;
+  const { data: ir } = d.rooms.length ? await sb.from('cohorts').select('id, product_key, starts_on, schedule_days, schedule_time, timezone')
+    .in('id', d.rooms).eq('product_key', 'intensive_en').limit(1) : { data: [] };
+  const bctx = Object.assign({}, ctx, { intensive: (ir || [])[0] || null });
+  const { kind, list } = await bfAudience(sb, bctx);
+  if (preview) return list.map((x) => ({ name: x.r.name, level: x.r.level, email: x.email, lang: BF_TX[x.r.ui_lang] ? x.r.ui_lang : 'en' }));
+  if (!list.length) return { sent: 0 };
+  if (list.length > 100) return { error: 'too_many_for_auto', count: list.length };
+  const camp = await campaignOf(sb, true, kind);
+  const sendCtx = Object.assign({}, bctx, { clickUrl: clickUrlFor(camp.id) });
+  let ok = 0, bellOnly = 0; const failed = [];
+  for (const { r, email } of list) {
+    const e = buildBf(r, sendCtx);
+    const sentOk = email ? await mail.sendEmail({ to: r.email, replyTo: 'support@alimun.com', subject: e.subject, html: e.html, text: e.text, unsubscribeUrl: e.unsub }) : false;
+    await sb.from('campaign_recipients').upsert({ campaign_id: camp.id, user_id: r.user_id, emailed: !!sentOk }, { onConflict: 'campaign_id,user_id' });
+    await sb.from('notifications').insert({ user_id: r.user_id, kind: 'offer', params: { launch: kind, step: e.kind }, title: e.bell.title, body: e.bell.body, link: e.link, campaign_id: camp.id });
+    if (!email) bellOnly++; else if (sentOk) ok++; else failed.push(r.email);
+  }
+  await sb.from('campaigns').update({ recipients: (camp.recipients || 0) + list.length, emailed: (camp.emailed || 0) + ok, sent_at: new Date().toISOString() }).eq('id', camp.id);
+  return { sent: ok, bellOnly, failed };
+}
+
 /** One learner's reminder or follow-up: step is 'remind', 'came' or 'missed'. */
 function buildStep(step, r, ctx) {
   if (step === 'today-have' || step === 'today-save') return buildToday(r, ctx, step === 'today-have');
@@ -496,7 +617,9 @@ async function steps(sb, opts) {
     await sb.from('campaigns').update({ recipients: (camp.recipients || 0) + list.length, emailed: (camp.emailed || 0) + ok, sent_at: new Date().toISOString() }).eq('id', camp.id);
     out[which] = { sent: ok, failed };
   }
+  const bf = await bfStep(sb, ctx, { now, preview: opts && opts.preview });
+  if (bf) out.bf = bf;
   return out;
 }
 
-module.exports = { build, buildStep, run, steps, recipients, TX, STEP_TX };
+module.exports = { build, buildStep, buildBf, run, steps, recipients, TX, STEP_TX, BF_TX };

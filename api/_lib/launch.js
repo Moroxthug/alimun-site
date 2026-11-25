@@ -39,6 +39,8 @@ function parseOffer(value) {
 function parseDeal(d) {
   if (!d || typeof d !== 'object' || !Number.isFinite(Date.parse(d.ends_at))) return null;
   return { name: /^[a-z0-9-]{1,40}$/.test(d.name || '') ? d.name : 'deal', endsAt: Date.parse(d.ends_at),
+    // When the hourly job starts sending the deal's message (api/_lib/launch-email.js, step 'bf')
+    sendAt: Number.isFinite(Date.parse(d.send_at)) ? Date.parse(d.send_at) : null,
     rooms: Array.isArray(d.rooms) ? d.rooms.filter((x) => UUID.test(x)) : [] };
 }
 /** The deal is on now for this room and product: the launch rooms' level or open class, or one of deal.rooms' intensive */
