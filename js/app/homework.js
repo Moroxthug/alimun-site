@@ -53,12 +53,12 @@
   function load() {
     if (!signedIn()) return Promise.resolve(sample());
     var p = A.data().profile;
-    return window.AlimunData.homework(p.id, p.cohorts || []).then(function (h) {
+    return window.AlimunData.homework(p.id, (p.cohorts || []).concat(p.pastCohorts || [])).then(function (h) {
       /* Book lessons, library pieces and mock papers set as homework: record the ones finished since the last visit */
       var open = h.assignments.filter(function (a) { return a.material && !h.submissions.some(function (s) { return s.assignment_id === a.id; }); });
       if (!open.length) return h;
       return Promise.all(open.slice(0, 20).map(function (a) { return window.AlimunData.completeMaterial(a.id).catch(function () { return { done: false }; }); })).then(function (r) {
-        return r.some(function (x) { return x && x.done; }) ? window.AlimunData.homework(p.id, p.cohorts || []) : h;
+        return r.some(function (x) { return x && x.done; }) ? window.AlimunData.homework(p.id, (p.cohorts || []).concat(p.pastCohorts || [])) : h;
       });
     });
   }
@@ -310,7 +310,7 @@
     if (busy() || document.hidden) { clearTimeout(liveTimer); liveTimer = setTimeout(function () { quiet(my); }, 5000); return; }
     var p = A.data().profile, id = decodeURIComponent((location.hash.match(/^#\/homework\/([^/?#]+)/) || [])[1] || '');
     var before = id ? sig(H.assignments.filter(function (x) { return x.id === id; })[0], subOf(id)) : null;
-    window.AlimunData.homework(p.id, p.cohorts || []).then(function (d) {
+    window.AlimunData.homework(p.id, (p.cohorts || []).concat(p.pastCohorts || [])).then(function (d) {
       if (my !== mountNo || busy()) return;
       var y = window.scrollY;
       H = d;

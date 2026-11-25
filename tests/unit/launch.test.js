@@ -205,6 +205,17 @@ function describe_free_class() {
     assert.strictEqual(w.t.enrollments.find((e) => e.id === 'old').status, 'completed');
   });
 
+  test('daily job: places in free classes that are over are completed, others stay active', async () => {
+    const w = world({ enrollments: [{ id: 'a', student_id: 'sp1', cohort_id: OLD, status: 'active' }, { id: 'b', student_id: 'sp2', cohort_id: FREE, status: 'active' },
+      { id: 'c', student_id: 'sp3', cohort_id: REAL, status: 'active' }] });
+    assert.strictEqual(await E.completeFinishedFreePlaces(w.sb), 1);
+    assert.deepStrictEqual(w.active('sp1'), []);
+    assert.deepStrictEqual(w.active('sp2'), [FREE]);
+    assert.deepStrictEqual(w.active('sp3'), [REAL]);
+    assert.strictEqual(w.count(OLD), 1);   // a completed place still counts for the class that was held
+    assert.strictEqual(await E.completeFinishedFreePlaces(w.sb), 0);
+  });
+
   test('free class: the one date counts as over 90 minutes after it starts', async () => {
     const w = world({ cohorts: [{ id: 'just', product_key: null }], sessions: [{ id: 'j', cohort_id: 'just', scheduled_at: new Date(now - 60 * 60000).toISOString(), status: 'live' }] });
     assert.deepStrictEqual(await E.finishedFreeClasses(w.sb, ['just', OLD, REAL]), [OLD]);

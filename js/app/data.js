@@ -272,12 +272,15 @@
   }
 
   function loadFor(c, p, lang) {
-    var cohortsOf = [];
+    var cohortsOf = [], pastOf = [];
     var since = new Date(Date.now() - 70 * DAY).toISOString();
     var today = dayKey(Date.now());
 
-    return c.from('enrollments').select('cohort_id').eq('student_id', p.id).eq('status', 'active').then(function (er) {
-      var cohorts = rows(er).map(function (e) { return e.cohort_id; });
+    /* Active places are the learner's classes now; completed ones (a free first class that is over, a class that ended)
+       keep their homework and notes (migration 202611251200_finished_places_keep_homework.sql) */
+    return c.from('enrollments').select('cohort_id, status').eq('student_id', p.id).in('status', ['active', 'completed']).then(function (er) {
+      var all = rows(er), cohorts = all.filter(function (e) { return e.status === 'active'; }).map(function (e) { return e.cohort_id; });
+      pastOf = all.filter(function (e) { return e.status === 'completed' && cohorts.indexOf(e.cohort_id) === -1; }).map(function (e) { return e.cohort_id; });
       if (p.enrolled_cohort_id && cohorts.indexOf(p.enrolled_cohort_id) === -1) cohorts.push(p.enrolled_cohort_id);
       cohortsOf = cohorts.slice();
 
@@ -286,8 +289,8 @@
         .in('cohort_id', cohorts).in('status', ['scheduled', 'live'])
         .gte('scheduled_at', new Date(Date.now() - 90 * 60000).toISOString())
         .order('scheduled_at', { ascending: true }).limit(1) : null;
-      var homework = cohorts.length ? c.from('assignments').select('id, title, due_date')
-        .in('cohort_id', cohorts).or('due_date.is.null,due_date.gte.' + today).order('due_date', { ascending: true, nullsFirst: false }).limit(20) : null;
+      var hwIds = cohorts.concat(pastOf), homework = hwIds.length ? c.from('assignments').select('id, title, due_date')
+        .in('cohort_id', hwIds).or('due_date.is.null,due_date.gte.' + today).order('due_date', { ascending: true, nullsFirst: false }).limit(20) : null;
 
       return Promise.all([
         next,
@@ -314,7 +317,7 @@
         c.from('welcome_poll').select('discount_used_at').eq('student_id', p.id).maybeSingle()
       ]);
     }).then(function (res) {
-      res.cohorts = cohortsOf;
+      res.cohorts = cohortsOf; res.pastCohorts = pastOf;
       /* The teacher's public name (teachers_public is a view over a function, so it cannot be embedded above) */
       var tid = res[0] && !res[0].error && res[0].data && res[0].data[0] && res[0].data[0].cohorts && res[0].data[0].cohorts.teacher_id;
       if (!tid) return res;
@@ -351,6 +354,7 @@
           goal: p.goal_track || null,
           timezone: p.timezone || null,
           cohorts: res.cohorts || [],
+          pastCohorts: (res.pastCohorts || []).filter(function (id) { return (res.cohorts || []).indexOf(id) === -1; }),
           paying: p.stripe_subscription_status === 'active' || givenActive(p),
           givenUntil: p.stripe_subscription_status !== 'active' && givenActive(p) ? p.plan_given_until : null,
           waitlistOptIn: !!p.waitlist_opt_in,
@@ -583,17 +587,17 @@
   /* Live classes (step 10): the student's classes from 60 days back to 90 days ahead, their published notes (with
      the class words), homework due dates, 1:1 bookings, attendance and the teachers' public names. Read through
      row-level security, like the class dashboard. */
-  function classes(studentId, cohortIds) {
+  function classes(studentId, cohortIds, pastIds) {
     var c = client();
     if (!c) return Promise.reject(new Error('Supabase did not load'));
     var from = new Date(Date.now() - 60 * DAY).toISOString(), to = new Date(Date.now() + 90 * DAY).toISOString();
     var none = Promise.resolve({ data: [] });
-    var ids = cohortIds || [];
+    var ids = cohortIds || [], noteIds = ids.concat((pastIds || []).filter(function (id) { return ids.indexOf(id) === -1; }));
     return Promise.all([
       ids.length ? c.from('cohorts').select('id, language, level, tier, teacher_id, schedule_days, schedule_time, timezone').in('id', ids) : none,
       ids.length ? c.from('sessions').select('id, cohort_id, scheduled_at, status').in('cohort_id', ids).gte('scheduled_at', from).lte('scheduled_at', to).order('scheduled_at', { ascending: true }).limit(300) : none,
-      ids.length ? c.from('session_notes').select('id, session_id, vocabulary, grammar_focus, exercises, homework, due_date, teacher_note, pdf_url, published_at, sessions!inner ( id, scheduled_at, cohort_id )')
-        .in('sessions.cohort_id', ids).not('published_at', 'is', null).order('published_at', { ascending: false }).limit(100) : none,
+      noteIds.length ? c.from('session_notes').select('id, session_id, vocabulary, grammar_focus, exercises, homework, due_date, teacher_note, pdf_url, published_at, sessions!inner ( id, scheduled_at, cohort_id )')
+        .in('sessions.cohort_id', noteIds).not('published_at', 'is', null).order('published_at', { ascending: false }).limit(100) : none,
       ids.length ? c.from('assignments').select('id, cohort_id, title, due_date').in('cohort_id', ids).not('due_date', 'is', null).gte('due_date', from.slice(0, 10)).limit(200) : none,
       c.from('one_on_one_bookings').select('id, kind, scheduled_at, duration_minutes, status, teacher_note, teacher_id').eq('student_id', studentId).gte('scheduled_at', from).order('scheduled_at', { ascending: true }).limit(100),
       c.from('session_attendance').select('session_id, joined_at').eq('student_id', studentId).gte('joined_at', from)

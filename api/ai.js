@@ -452,11 +452,12 @@ async function handleHomeworkCheck(req, res, supabase, user) {
   ]);
   if (pErr || aErr) return res.status(500).json({ error: 'Could not load the homework' });
   if (!profile || !a) return res.status(404).json({ error: 'Homework not found' });
-  // Same rule as the assignments row policy: set for this student, or for a class they are in.
+  // Same rule as the assignments row policy: set for this student, or for a class they are in or finished
+  // (an active or completed place; migration 202611251200_finished_places_keep_homework.sql).
   let mine = a.student_id === profile.id;
   if (!mine && !a.student_id && a.cohort_id) {
     const { count, error } = await supabase.from('enrollments').select('id', { count: 'exact', head: true })
-      .eq('student_id', profile.id).eq('cohort_id', a.cohort_id).eq('status', 'active');
+      .eq('student_id', profile.id).eq('cohort_id', a.cohort_id).in('status', ['active', 'completed']);
     if (error) return res.status(500).json({ error: 'Could not load the homework' });
     mine = (count || 0) > 0;
   }

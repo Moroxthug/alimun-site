@@ -81,6 +81,26 @@ async function releaseFinishedFreePlaces(sb, studentId, cohortId, now) {
 }
 
 /**
+ * The daily job (api/cron-create-rooms.js): every active place in a one-session free class that is over is marked
+ * completed. The learner keeps that class's homework and notes (migration 202611251200_finished_places_keep_homework.sql);
+ * the place no longer counts as their class now. Returns the number of places completed.
+ */
+async function completeFinishedFreePlaces(sb, now) {
+  const { data: act, error } = await sb.from('enrollments').select('cohort_id').eq('status', 'active');
+  if (error) throw new Error('active places: ' + error.message);
+  const ids = [...new Set((Array.isArray(act) ? act : []).map((e) => e && e.cohort_id).filter(Boolean))];
+  const done = await finishedFreeClasses(sb, ids, now);
+  let n = 0;
+  for (const id of done) {
+    const { data, error: upErr } = await sb.from('enrollments').update({ status: 'completed' }).eq('cohort_id', id).eq('status', 'active').select('id');
+    if (upErr) throw new Error('free class places: ' + upErr.message);
+    n += (data || []).length;
+    await recount(sb, id);
+  }
+  return n;
+}
+
+/**
  * Saves an active place for studentId in cohortId and keeps enrolled_count right.
  * Returns { ok: true, undo } (undo() puts the place back as it was) or { ok: false, error: 'in_class', blocking }.
  */
@@ -476,4 +496,4 @@ async function releasePack(ctx, ent) {
   return true;
 }
 
-module.exports = { TYPE, creditShare, fulfil, enrol, unenrol, savePlace, releaseFinishedFreePlaces, finishedFreeClasses, recount, isPricingEvent, processEvent, startPack, releasePack, PACK_DAYS };
+module.exports = { TYPE, creditShare, fulfil, enrol, unenrol, savePlace, releaseFinishedFreePlaces, finishedFreeClasses, completeFinishedFreePlaces, recount, isPricingEvent, processEvent, startPack, releasePack, PACK_DAYS };

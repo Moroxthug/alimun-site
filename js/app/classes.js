@@ -72,7 +72,7 @@
   function load() {
     if (!signedIn()) return Promise.resolve(sample());
     var p = A.data().profile;
-    return window.AlimunData.classes(p.id, p.cohorts || []).then(function (d) {
+    return window.AlimunData.classes(p.id, p.cohorts || [], p.pastCohorts || []).then(function (d) {
       /* Class words go to the flashcards, quietly */
       window.AlimunData.syncClassWords(p.id, d.notes).catch(function (e) { console.warn('[Alimun] Class words not copied', e && e.message); });
       return oto('oto-status', {}).then(function (st) { d.oto = st; return d; }, function () { d.oto = null; return d; });

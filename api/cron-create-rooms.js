@@ -22,6 +22,7 @@
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const { recordRun } = require('./_lib/cron-log.js');
+const { completeFinishedFreePlaces } = require('./_lib/entitlements.js');
 const { dailyFetch, dailyErrorSummary, hasDailyKey } = require('./_lib/daily.js');
 
 const COMPLETE_AFTER_MIN = 90;   // must match the join window in join-session.js
@@ -100,7 +101,7 @@ module.exports = async function handler(req, res) {
   }
 
   const now = new Date();
-  const summary = { completed: 0, roomsCreated: 0, roomsFailed: 0 };
+  const summary = { completed: 0, freePlacesCompleted: 0, roomsCreated: 0, roomsFailed: 0 };
 
   try {
     // 1. Close out sessions that are over.
@@ -115,6 +116,14 @@ module.exports = async function handler(req, res) {
       console.error('[Cron Sessions] Failed to mark sessions completed:', completeErr);
     } else {
       summary.completed = completedRows?.length || 0;
+    }
+
+    // 1b. Places in free first classes that are over are completed (they keep the class's homework and notes).
+    try {
+      summary.freePlacesCompleted = await completeFinishedFreePlaces(supabase, now);
+    } catch (e) {
+      console.error('[Cron Sessions] Free class places:', e && e.message);
+      summary.freePlacesError = String((e && e.message) || e);
     }
 
     // 2. Prefetch rooms for the next 24h.
