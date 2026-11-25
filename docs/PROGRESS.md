@@ -2371,3 +2371,4 @@ The launch banner sat under the fixed header with its top cut off: its script ra
 - Joséphine Tostivint (22 Nov) and Oumou Balde (17 Nov) were already answered.
 - Note: sending from this container needs `NODE_USE_ENV_PROXY=1` so Node's fetch goes through the proxy that adds the Resend key.
 - Missing (from the help gaps list): there is still no way for a learner to change their own email address; it is done by hand.
+- Owner: "send denys the speaking exercise links". Emailed Denys (new address, reply-to youssef.bouchtaoui@): Speaking round `/app#/practice/speak` (AI speech check named, recording not kept), Listening round `/app#/practice/listen`, all practice `/app#/practice`, from his English A1 book, before the intensive starts on 7 Dec. He can use the speech check now: his place in the 23 Nov free class is still an active enrolment. Resend accepted it.
