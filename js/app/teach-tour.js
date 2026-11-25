@@ -29,7 +29,7 @@
      app_tour_video_p). An admin upload in the teacher-tutorial bucket (Admin -> Teacher onboarding) comes first, then
      the file shipped with the site; the teacher's language, then English. */
   var BUCKET = 'https://dgaiasmefcbrtzqwdyri.supabase.co/storage/v1/object/public/teacher-tutorial/tour/';
-  var BUILT = '/videos/teacher-tour/', VER = '.mp4?v=2'; /* raise v when the built-in videos change: they are cached for a week */
+  var BUILT = '/videos/teacher-tour/', VER = '.mp4?v=3'; /* raise v when the built-in videos change: they are cached for a week */
   function videoHtml() {
     var l = A.lang, srcs = [BUCKET + l + '.mp4', BUILT + l + VER];
     if (l !== 'en') srcs.push(BUCKET + 'en.mp4', BUILT + 'en' + VER);
