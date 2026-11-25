@@ -2361,3 +2361,7 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - Dashboard (`js/app/data.js`): the profile carries `pastCohorts` (completed places); Home and the Homework page list their homework, the Classes page shows their notes; the next class and the empty state still use current places only. `api/ai.js` homework check accepts a completed place too.
 - Daily job (`api/cron-create-rooms.js`, 00:00 UTC): `completeFinishedFreePlaces()` in `api/_lib/entitlements.js` marks places in one-session free classes that are over as completed (summary `freePlacesCompleted`). Before, they stayed active until the learner took another place.
 - Checked: unit tests 245/245 (one new); `node --check` on all api files; build; layout test 62/62. The signed-in homework and notes lists can only be seen with a real learner account.
+
+## 25 Nov 2026 — homepage launch banner fix
+
+The launch banner sat under the fixed header with its top cut off: its script ran before the hero was in the page, so it never moved into the hero. It now waits for the page to load before moving, and lines up with the hero cards. Checked at 1975, 1600 and 375 px.
