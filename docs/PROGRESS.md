@@ -2365,3 +2365,9 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 ## 25 Nov 2026 — homepage launch banner fix
 
 The launch banner sat under the fixed header with its top cut off: its script ran before the hero was in the page, so it never moved into the hero. It now waits for the page to load before moving, and lines up with the hero cards. Checked at 1975, 1600 and 375 px.
+## 25 Nov 2026 - Support and contact replies (owner: "answer to the most recent ones")
+- Denys Rapiy (Support, "change my email address"): sign-in email changed from denysr_a@ to denysr_e@icloud.com (auth.users and the email identity, by SQL; the new address was not verified by a link, the request came from his signed-in account), Stripe customer cus_Vex1SSMNJzFUTB updated (the old customer cus_VcKVr0iWy2PogM belongs to his deleted account and was left). He reserved the intensive course today (founding, monthly, card saved, not charged yet). Reply saved in his Support conversation (bell notification) and emailed to the new address.
+- Sol Delmonaco (/es/contact, A2, asked about the intensive course): reply in Spanish from no-reply, reply-to youssef.bouchtaoui@: live classes with a teacher in groups of 8 to 12; five 60-minute classes Monday to Friday, 12 weeks, from 7 December at 11:00 Spain time; €119/month or €329 upfront, founding €109 / €299 until 1 January; the group is B1, so the free level test first; no A2 group yet, we will tell her if one opens; AI speaking practice with pronunciation checks. Resend accepted both.
+- Joséphine Tostivint (22 Nov) and Oumou Balde (17 Nov) were already answered.
+- Note: sending from this container needs `NODE_USE_ENV_PROXY=1` so Node's fetch goes through the proxy that adds the Resend key.
+- Missing (from the help gaps list): there is still no way for a learner to change their own email address; it is done by hand.
