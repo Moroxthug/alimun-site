@@ -1,0 +1,81 @@
+<!-- Black Friday corner card (owner, 25 Nov 2026: "the banners look bad, they should be more on page pop ups"; corner
+     card chosen; "label it as black friday discount"). Replaces the homepage launch banner; also on Plans and prices and
+     the blog. A card in the bottom corner (a sheet at the bottom on a phone) after a few seconds or some scrolling, never
+     while the cookie box is open, not covering the page. Close hides it for a day. Hidden after data-ends (Monday
+     30 November 23:59 Paris, launch_offer.deal in supabase/migrations/202611251800_black_friday.sql). Texts home_bf_*. -->
+<aside class="bfc" data-bfc hidden aria-labelledby="bfc-h" data-ends="2026-11-30T22:59:00Z">
+  <div class="bfc_card">
+    <button class="bfc_x" type="button" data-bfc-x><span class="bfc_sr" data-i18n="home_bf_x">Close</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    <div class="bfc_photo"><img src="/images/pexels-diimejii-3466163-p-800.jpg" alt="" width="800" height="1067" loading="lazy"></div>
+    <div class="bfc_body">
+      <h2 class="bfc_h" id="bfc-h" data-i18n="home_bf_h">Black Friday</h2>
+      <p class="bfc_w"><span data-i18n="home_bf_w">Half price on your first month</span></p>
+      <p class="bfc_p" data-bfc-p></p>
+      <span hidden data-bfc-tpl data-i18n="home_bf_p">Live English classes with a teacher, in a small group. Beginners (A1 and A2) from Monday 7 December, three evenings a week; B1 and up, five mornings a week. Until {deadline}.</span>
+      <a class="bfc_btn" href="/signup" data-bfc-go data-i18n="home_bf_b">Get the deal</a>
+    </div>
+  </div>
+  <style>
+    .bfc { position: fixed; z-index: 900; right: 1.5rem; bottom: 1.5rem; width: min(23rem, calc(100vw - 1.5rem)); opacity: 0; transform: translateY(1.5rem); transition: opacity .35s ease, transform .45s cubic-bezier(.2, .9, .3, 1); pointer-events: none; }
+    .bfc.is-in { opacity: 1; transform: none; pointer-events: auto; }
+    .bfc_card { position: relative; background: #fff; border-radius: 1.5rem; overflow: hidden; box-shadow: 0 1.5rem 3.75rem rgba(8, 8, 8, .18); }
+    .bfc_photo { height: 9.5rem; background: #eeeeec; }
+    .bfc_photo img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 30%; }
+    .bfc_body { padding: 1.15rem 1.4rem 1.4rem; }
+    .bfc_h { margin: 0; font: 400 2.5rem/.95 'Coolvetica Condensed', Satoshi, sans-serif; color: #080808; text-transform: uppercase; }
+    .bfc_w { margin: .5rem 0 0; font: 700 1.1rem/1.35 Satoshi, sans-serif; color: #1a443c; }
+    .bfc_w span { background: linear-gradient(#ceff65, #ceff65) no-repeat 0 88% / 100% 45%; padding: 0 .1em; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
+    .bfc_p { margin: .5rem 0 0; font: 400 .95rem/1.5 Satoshi, sans-serif; color: #080808; }
+    .bfc_btn { display: flex; align-items: center; justify-content: center; height: 3.1rem; margin-top: 1rem; border-radius: 5rem; background: #1a443c; color: #ceff65; font: 700 .95rem Satoshi, sans-serif; text-decoration: none; transition: transform .45s cubic-bezier(.3, 1.5, .5, 1), box-shadow .3s; }
+    .bfc_btn:hover { transform: translateY(-2px); box-shadow: 0 .75rem 1.6rem rgba(26, 68, 60, .22); color: #ceff65; }
+    .bfc_btn:focus-visible, .bfc_x:focus-visible { outline: 3px solid #1a443c; outline-offset: 3px; }
+    .bfc_x { position: absolute; top: .75rem; right: .75rem; z-index: 2; width: 2.4rem; height: 2.4rem; border: 0; border-radius: 50%; background: #fff; color: #080808; display: grid; place-items: center; cursor: pointer; box-shadow: 0 .4rem 1.1rem rgba(8, 8, 8, .14); padding: 0; }
+    .bfc_x svg { width: 1.1rem; height: 1.1rem; }
+    .bfc_sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+    @media (max-width: 767px) {
+      .bfc { left: .75rem; right: .75rem; bottom: .75rem; width: auto; }
+      .bfc_photo { display: none; }
+      .bfc_body { padding: 1rem 1.15rem 1.15rem; }
+      .bfc_h { font-size: 2rem; padding-right: 2.75rem; }
+      .bfc_w { font-size: 1rem; }
+      .bfc_p { font-size: .9rem; line-height: 1.45; }
+      .bfc_x { background: #f0efe9; box-shadow: none; }
+    }
+    @media (prefers-reduced-motion: reduce) { .bfc, .bfc_btn { transition: none; transform: none; } }
+  </style>
+  <script>
+    (function () {
+      var el = document.querySelector('[data-bfc]');
+      if (!el) return;
+      var ends = Date.parse(el.getAttribute('data-ends')), KEY = 'alimun-bf-later';
+      if (!(Date.now() < ends)) { el.remove(); return; }
+      try { var at = +localStorage.getItem(KEY); if (at && Date.now() - at < 86400000) { el.remove(); return; } } catch (e) { /* storage blocked */ }
+      var lang = document.documentElement.lang || 'en';
+      var loc = lang === 'ma' ? 'fr-MA' : lang === 'en' ? 'en-GB' : lang;
+      var deadline;
+      try { deadline = new Intl.DateTimeFormat(loc, { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date(ends - 60000)); } catch (e) { deadline = new Date(ends).toDateString(); }
+      // The sentence is filled when the card opens, after js/i18n.js has put the page's language into the template
+      var fill = function () { el.querySelector('[data-bfc-p]').textContent = el.querySelector('[data-bfc-tpl]').textContent.replace('{deadline}', deadline); };
+      // Sign-up in the page's language
+      var go = el.querySelector('[data-bfc-go]');
+      var seg = (location.pathname.match(/^\/(ar|de|es|fr|it|ma|pt|zh)(\/|$)/) || [])[1];
+      if (seg) go.setAttribute('href', '/' + seg + '/signup');
+      var shown = false;
+      var cookieOpen = function () { var b = document.getElementById('alimun-cookie-banner'), o = document.getElementById('cookie-modal-overlay'); return !!((b && b.classList.contains('show')) || (o && o.classList.contains('show'))); };
+      var show = function () {
+        if (shown) return;
+        if (cookieOpen()) { setTimeout(show, 1200); return; }
+        shown = true; fill(); el.hidden = false;
+        requestAnimationFrame(function () { requestAnimationFrame(function () { el.classList.add('is-in'); }); });
+      };
+      var onScroll = function () { if (window.scrollY > window.innerHeight * 0.35) { window.removeEventListener('scroll', onScroll); show(); } };
+      window.addEventListener('scroll', onScroll, { passive: true });
+      setTimeout(show, 4000);
+      el.querySelector('[data-bfc-x]').addEventListener('click', function () {
+        try { localStorage.setItem(KEY, String(Date.now())); } catch (e) { /* storage blocked */ }
+        el.classList.remove('is-in');
+        setTimeout(function () { el.remove(); }, 400);
+      });
+    })();
+  </script>
+</aside>

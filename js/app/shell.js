@@ -450,8 +450,8 @@
         if (go) { go.href = '#/settings/plans/pick/' + product + '/month'; go.textContent = t('app_home_offer_go'); }
       });
     }
-    // The English launch class (api/_lib/launch.js; js/app/launch-pop.js): a banner at the top of Home, and the same as a
-    // window in the welcome poll's place once the poll is answered. English learners at A1 to B2.
+    // The English classes offer (api/_lib/launch.js; js/app/launch-pop.js): a card in the bottom corner, never on top of
+    // the welcome poll (25 Nov 2026: no more Home banner). English learners at A1 to B2.
     if (suffix === 'en' && /^(A1|A2|B1|B2)$/.test(level || '') && window.AlimunData.launchInfo) launchBanner(window.AlimunData.launchInfo());
     // In an open class for more than two months: the level pack, the month credited
     if (!window.AlimunData.myEntitlements) return;
@@ -489,8 +489,11 @@
   function sampleLaunch() {
     var sat = new Date(Date.now() + 2 * 86400000); sat.setUTCHours(16, 0, 0, 0);
     var mon = new Date(Date.now() + 4 * 86400000).toISOString().slice(0, 10);
-    return { offer: { code: 'launch-en-a1', endsAt: mon + 'T04:00:00Z', active: true, eurOff: 1000 }, seats: 3, min: 8, mine: [],
-      rooms: [{ product_key: 'level_en', starts_on: mon, state: 'published' }, { product_key: 'open_en', starts_on: mon, state: 'published' }],
+    var bfEnds = new Date(Date.now() + 3 * 86400000).toISOString();
+    return { offer: { code: 'launch-en-a1', endsAt: mon + 'T04:00:00Z', active: true, eurOff: 1000, deal: { name: 'black-friday', endsAt: bfEnds, rooms: ['r3'] } }, seats: 3, min: 8, mine: [],
+      rooms: [{ product_key: 'level_en', starts_on: mon, days: ['Monday', 'Wednesday', 'Thursday'], time: '19:00', timezone: 'Europe/Paris', state: 'published' },
+        { product_key: 'open_en', starts_on: mon, days: ['Monday'], time: '19:00', timezone: 'Europe/Paris', state: 'published' }],
+      dealRooms: [{ id: 'r3', product_key: 'intensive_en', level: 'B1', starts_on: mon, days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '10:00', timezone: 'Europe/Dublin', state: 'published' }],
       intro: { session: 's1', at: sat.toISOString(), open: true, registered: false, registeredCount: 4 } };
   }
 

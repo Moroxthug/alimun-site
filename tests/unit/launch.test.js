@@ -222,3 +222,24 @@ function describe_free_class() {
     assert.deepStrictEqual(await E.finishedFreeClasses(w.sb, ['just'], new Date(now + 31 * 60000)), ['just']);
   });
 }
+
+// Black Friday (owner, 25 Nov 2026): two weeks of classes off the first payment until deal.ends_at
+test('Black Friday takes two weeks off the first payment, then the €10 offer is back', () => {
+  const INT = '44444444-4444-4444-8444-444444444444';
+  const bf = L.parseOffer(JSON.stringify({ code: 'launch-en-2', rooms: [PACK, OPEN], ends_at: '2026-12-07T04:00:00Z', eur_off: 1000,
+    deal: { name: 'black-friday', ends_at: '2026-11-30T22:59:00Z', rooms: [INT, 'bad'] } }));
+  const now = Date.parse('2026-11-27T10:00:00Z'), after = Date.parse('2026-12-01T10:00:00Z');
+  const b = { code: 'launch-en-2', cohortId: PACK, productKey: 'level_en', cadence: 'month', currency: 'eur', unitAmount: 6400, perEur: 1, now };
+  assert.deepStrictEqual(bf.deal.rooms, [INT]);
+  assert.strictEqual(L.discountFor(bf, b), 3200, 'half of the first month');
+  assert.strictEqual(L.discountFor(bf, Object.assign({}, b, { cadence: 'upfront', unitAmount: 17900 })), 2983, '2 of 12 weeks of the pack');
+  assert.strictEqual(L.discountFor(bf, Object.assign({}, b, { currency: 'usd', unitAmount: 6999 })), 3500, 'any currency, no rate needed');
+  assert.strictEqual(L.discountFor(bf, Object.assign({}, b, { cohortId: OPEN, productKey: 'open_en', unitAmount: 2400 })), 1200);
+  assert.strictEqual(L.discountFor(bf, Object.assign({}, b, { code: null })), 0, 'the launch rooms still need the code');
+  assert.strictEqual(L.discountFor(bf, Object.assign({}, b, { code: null, cohortId: INT, productKey: 'intensive_en', unitAmount: 10900 })), 5450, 'the intensive, no code');
+  assert.strictEqual(L.discountFor(bf, Object.assign({}, b, { cohortId: INT, productKey: 'level_en' })), 0, 'only the intensive in its room');
+  assert.strictEqual(L.discountFor(bf, Object.assign({}, b, { cohortId: OTHER })), 0);
+  assert.strictEqual(L.discountFor(bf, Object.assign({}, b, { now: after })), 1000, 'after Black Friday the €10 offer');
+  assert.strictEqual(L.discountFor(bf, Object.assign({}, b, { now: after, cohortId: INT, productKey: 'intensive_en' })), 0);
+  assert.strictEqual(L.discountFor(bf, Object.assign({}, b, { unitAmount: 80 })), 30, 'never below 0.50 left to pay');
+});

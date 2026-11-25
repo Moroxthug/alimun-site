@@ -261,14 +261,21 @@
   function sampleLaunch() {
     var mon = new Date(); mon.setUTCDate(mon.getUTCDate() + ((8 - mon.getUTCDay()) % 7 || 7));
     var ymd = mon.toISOString().slice(0, 10), sat = new Date(Date.now() + 2 * 86400000); sat.setUTCHours(16, 0, 0, 0);
-    return { offer: { code: 'launch-en-a1', endsAt: ymd + 'T04:00:00Z', active: true, eurOff: 1000 }, seats: 5, min: 8, mine: [],
+    return { offer: { code: 'launch-en-a1', endsAt: ymd + 'T04:00:00Z', active: true, eurOff: 1000, deal: { name: 'black-friday', endsAt: new Date(Date.now() + 3 * 86400000).toISOString(), rooms: ['r3'] } }, seats: 5, min: 8, mine: [],
+      dealRooms: [{ id: 'r3', product_key: 'intensive_en', level: 'B1', starts_on: ymd, days: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], time: '10:00', timezone: 'Europe/Dublin', state: 'published' }],
       rooms: [{ id: 'r1', product_key: 'level_en', starts_on: ymd, days: ['Monday', 'Tuesday', 'Thursday'], time: '19:00', timezone: 'Europe/Paris', seats: 3, state: 'published' },
         { id: 'r2', product_key: 'open_en', starts_on: ymd, days: ['Monday'], time: '19:00', timezone: 'Europe/Paris', seats: 2, state: 'published' }],
       intro: { session: 's1', at: sat.toISOString(), open: true, registered: false, registeredCount: 6 } };
   }
+  /* Black Friday (launch_offer.deal, api/_lib/launch.js twoWeeksOff): half a first month, 2 of 12 weeks upfront */
+  function bfOn() { var d = LN && LN.offer && LN.offer.deal; return !!(d && Date.parse(d.endsAt) > Date.now()); }
   function firstPrice(k, cadence) {
     var o = offer(k, cadence);
     if (!o) return null;
+    if (bfOn()) {
+      var cut = cadence === 'upfront' ? Math.round(o.price.amount * 2 / 12) : Math.round(o.price.amount / 2);
+      return { price: o.price, first: { amount: Math.max(50, o.price.amount - cut), currency: o.price.currency }, bf: true };
+    }
     var off = LN.offer && LN.offer.active ? LN.offer.eurOff : 0;
     var cur = String(o.price.currency || '').toLowerCase();
     return { price: o.price, first: off && cur === 'eur' ? { amount: Math.max(50, o.price.amount - off), currency: o.price.currency } : null };
@@ -281,10 +288,18 @@
     var start = pw[0] || ow[0];
     var deadline = new Date(Date.parse(L.offer.endsAt) - 6 * 3600000);
     var waiting = L.rooms.some(function (r) { return r.state === 'published'; });
-    var mine = (L.mine || [])[0];
+    var ids = L.rooms.map(function (r) { return r.id; });
+    var mine = (L.mine || []).filter(function (m) { return ids.indexOf(m.cohort_id) > -1; })[0];
     html += '<div class="view__head"><div><h1 class="t-h1">' + esc(t('app_ln_title')) + '</h1><p class="t-lead">' + esc(t('app_ln_lead')) + '</p></div></div><div class="grid rise">';
     /* The free first class */
-    if (L.intro) {
+    /* Black Friday, first on the page while it is on */
+    if (bfOn()) {
+      html += '<section class="card card--lime span-12" style="--i:0"><h2 class="t-h2">' + esc(t('app_bf_h')) + '</h2>' +
+        '<p class="t-body" style="margin-top:8px"><b>' + esc(t('app_bf_deal')) + '</b></p>' +
+        '<p class="t-body" style="margin-top:6px">' + esc(t('app_bf_p', { date: when(new Date(Date.parse(L.offer.deal.endsAt) - 60000), { weekday: 'long', day: 'numeric', month: 'long' }) })) + '</p></section>';
+    }
+    /* The free first class, while it is still to come */
+    if (L.intro && L.intro.open) {
       var at = new Date(L.intro.at);
       html += '<section class="card card--lime span-12" style="--i:0"><h2 class="t-h2">' + esc(t('app_ln_free_h')) + '</h2>' +
         '<p class="t-body" style="margin-top:8px">' + esc(t('app_ln_free_p', { when: when(at, { weekday: 'long', day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) })) + '</p>' +
@@ -296,7 +311,9 @@
     /* The class is for A1 and A2: learners above see the free class and a line about a class at their level */
     var lv = String((P() && P().level) || '').slice(0, 2).toUpperCase();
     if (/^(B1|B2|C1|C2)$/.test(lv) && !mine) {
-      html += '<section class="card span-12" style="--i:1"><p class="t-body">' + esc(t('app_ln_upper', { level: lv })) + '</p></section>';
+      var int = (L.dealRooms || []).filter(function (r) { return /^intensive_/.test(r.product_key); })[0];
+      html += '<section class="card span-12" style="--i:1"><div class="card__row" style="flex-wrap:wrap"><p class="t-body" style="flex:1;min-width:240px">' + esc(t('app_ln_upper', { level: lv })) + '</p>' +
+        (int && bfOn() ? '<a class="btn btn--primary" href="#/settings/plans/pick/' + esc(int.product_key) + '/month">' + esc(t('app_bf_go')) + '</a>' : '') + '</div></section>';
       if (!real()) html += '<p class="t-tiny span-12">' + esc(t('app_pl_sample')) + '</p>';
       return html + '</div>';
     }
@@ -309,7 +326,7 @@
     var priceLine = function (k, cadence) {
       var f = firstPrice(k, cadence);
       if (!f) return '';
-      var off = L.offer.active ? (f.first ? t(cadence === 'upfront' ? 'app_ln_first_up' : 'app_ln_first', { first: money(f.first), price: money(f.price) }) : money(f.price) + (cadence === 'month' ? ' / ' + t('app_ln_month') : '') + '. ' + t('app_ln_off')) : money(f.price);
+      var off = L.offer.active ? (f.first ? t(f.bf ? (cadence === 'upfront' ? 'app_bf_first_up' : 'app_bf_first') : (cadence === 'upfront' ? 'app_ln_first_up' : 'app_ln_first'), { first: money(f.first), price: money(f.price) }) : money(f.price) + (cadence === 'month' ? ' / ' + t('app_ln_month') : '') + '. ' + t('app_ln_off')) : money(f.price);
       return '<p class="t-body" style="margin-top:6px"><b>' + esc(off) + '</b></p>';
     };
     if (pack) {

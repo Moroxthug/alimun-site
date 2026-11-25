@@ -8,6 +8,11 @@
  *   - the free first class: a one-date pass (entitlements.session_id) and a place in its one-session class, so it shows
  *     under Classes with the usual join button;
  *   - the rooms decide together at decide_at (api/_lib/rooms.js): at least min_learners sign-ups or nobody is charged.
+ *   - Black Friday (owner, 25 Nov 2026: "label it as black friday discount ... discount it from the initial price of the
+ *     month or of the pack and get them to pay"): launch_offer.deal = { name, ends_at, rooms }. Until deal.ends_at, two
+ *     weeks of classes come off the first payment instead of eur_off: half of a first month, or 2 of the 12 weeks of a
+ *     pack paid upfront. It covers the launch rooms (level or open class) and deal.rooms (the intensive course), which
+ *     get it without a code. After it ends, eur_off applies again until ends_at.
  * Pure parts (parseOffer, discountFor) are unit tested in tests/unit/launch.test.js.
  */
 const E = require('./entitlements.js');
@@ -28,11 +33,35 @@ function parseOffer(value) {
     remindAt: Number.isFinite(Date.parse(o.remind_at)) ? Date.parse(o.remind_at) : null,
     followAt: Number.isFinite(Date.parse(o.follow_at)) ? Date.parse(o.follow_at) : null,
     // A same-day note about the free class (owner, 23 Nov 2026), sent until the class starts
-    todayAt: Number.isFinite(Date.parse(o.today_at)) ? Date.parse(o.today_at) : null };
+    todayAt: Number.isFinite(Date.parse(o.today_at)) ? Date.parse(o.today_at) : null,
+    deal: parseDeal(o.deal) };
+}
+function parseDeal(d) {
+  if (!d || typeof d !== 'object' || !Number.isFinite(Date.parse(d.ends_at))) return null;
+  return { name: /^[a-z0-9-]{1,40}$/.test(d.name || '') ? d.name : 'deal', endsAt: Date.parse(d.ends_at),
+    rooms: Array.isArray(d.rooms) ? d.rooms.filter((x) => UUID.test(x)) : [] };
+}
+/** The deal is on now for this room and product: the launch rooms' level or open class, or one of deal.rooms' intensive */
+function dealFor(offer, cohortId, productKey, now) {
+  const d = offer && offer.deal;
+  if (!d || (now || Date.now()) >= d.endsAt || !cohortId) return null;
+  if (offer.rooms.includes(cohortId) && /^(level|open)_en$/.test(productKey || '')) return d;
+  if (d.rooms.includes(cohortId) && /^intensive_en$/.test(productKey || '')) return d;
+  return null;
+}
+/** Two weeks of classes off: half of a monthly payment, 2/12 of a 12-week pack paid upfront */
+function twoWeeksOff(cadence, unitAmount) {
+  const u = Math.max(0, unitAmount || 0);
+  return cadence === 'upfront' ? Math.round(u * 2 / 12) : Math.round(u / 2);
 }
 /** Minor units off the first payment, or 0 when the offer does not apply. perEur: the currency's rate (1 for EUR). */
-function discountFor(offer, { code, cohortId, productKey, currency, unitAmount, perEur, now }) {
-  if (!offer || code !== offer.code || !offer.eurOff) return 0;
+function discountFor(offer, { code, cohortId, productKey, cadence, currency, unitAmount, perEur, now }) {
+  if (!offer) return 0;
+  if (dealFor(offer, cohortId, productKey, now)) {
+    if (!offer.deal.rooms.includes(cohortId) && code !== offer.code) return 0;
+    return Math.max(0, Math.min(twoWeeksOff(cadence, unitAmount), (unitAmount || 0) - 50));
+  }
+  if (code !== offer.code || !offer.eurOff) return 0;
   if ((now || Date.now()) >= offer.endsAt || !offer.rooms.includes(cohortId) || !/^(level|open)_en$/.test(productKey || '')) return 0;
   const rate = currency === 'eur' ? 1 : Number(perEur);
   if (!(rate > 0)) return 0;
@@ -76,12 +105,23 @@ async function info(sb, user) {
         registered: !!(pass && pass.length), registeredCount: count || 0 };
     }
   }
+  // Black Friday's other rooms (the intensive course): times for the dashboard's pop-up
+  const dealOn = offer.deal && Date.now() < offer.deal.endsAt;
+  let dealRooms = [];
+  if (dealOn && offer.deal.rooms.length) {
+    const { data: dr } = await sb.from('cohorts').select('id, product_key, level, starts_on, schedule_days, schedule_time, timezone, room_state')
+      .in('id', offer.deal.rooms).in('room_state', ['published', 'confirmed']);
+    dealRooms = dr || [];
+  }
   const { data: mine } = await sb.from('entitlements').select('product_key, status, cohort_id, cadence').eq('user_id', user.id)
-    .in('cohort_id', offer.rooms).in('status', ['pending_room', 'active', 'paused']).limit(5);
+    .in('cohort_id', offer.rooms.concat(dealOn ? offer.deal.rooms : [])).in('status', ['pending_room', 'active', 'paused']).limit(5);
   return {
-    offer: { code: offer.code, endsAt: new Date(offer.endsAt).toISOString(), active: Date.now() < offer.endsAt, eurOff: offer.eurOff },
+    offer: { code: offer.code, endsAt: new Date(offer.endsAt).toISOString(), active: Date.now() < offer.endsAt, eurOff: offer.eurOff,
+      deal: offer.deal && Date.now() < offer.deal.endsAt ? { name: offer.deal.name, endsAt: new Date(offer.deal.endsAt).toISOString(), rooms: offer.deal.rooms } : null },
     rooms: (rooms || []).map((r) => ({ id: r.id, product_key: r.product_key, starts_on: r.starts_on, days: r.schedule_days, time: String(r.schedule_time || '').slice(0, 5),
       timezone: r.timezone, seats: r.seats, max: r.max_students, state: r.room_state, decideAt: r.decide_at })),
+    dealRooms: dealRooms.map((r) => ({ id: r.id, product_key: r.product_key, level: r.level, starts_on: r.starts_on, days: r.schedule_days,
+      time: String(r.schedule_time || '').slice(0, 5), timezone: r.timezone, state: r.room_state })),
     seats, min: pack ? pack.min_learners || 8 : 8, intro, mine: mine || []
   };
 }
@@ -109,4 +149,4 @@ async function register(sb, user) {
   return { status: 200, registered: true, at: s.scheduled_at };
 }
 
-module.exports = { parseOffer, discountFor, offerOf, rateOf, info, register };
+module.exports = { parseOffer, discountFor, dealFor, twoWeeksOff, offerOf, rateOf, info, register };

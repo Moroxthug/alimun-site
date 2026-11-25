@@ -208,12 +208,13 @@ async function handleQuote(req, res, sb, user) {
   const list = variant === 'founding' ? (rows || []).find((r) => r.variant === 'list' && r.currency === currency) : null;
 
   // The launch offer (api/_lib/launch.js): €10 off the first payment for the launch class's rooms
+  // Black Friday (launch_offer.deal): also for the intensive course's room, without a code
   let offer = null, discount = 0;
-  if (typeof b.offer === 'string' && cohortId) {
+  if (cohortId && (typeof b.offer === 'string' || productKey === 'intensive_en')) {
     const lo = await LAUNCH.offerOf(sb);
-    discount = LAUNCH.discountFor(lo, { code: b.offer, cohortId, productKey, currency, unitAmount: price.unit_amount,
+    discount = LAUNCH.discountFor(lo, { code: typeof b.offer === 'string' ? b.offer : null, cohortId, productKey, cadence, currency, unitAmount: price.unit_amount,
       perEur: await LAUNCH.rateOf(sb, currency), now: Date.now() });
-    if (discount > 0) offer = lo.code;
+    if (discount > 0) offer = LAUNCH.dealFor(lo, cohortId, productKey, Date.now()) ? lo.deal.name : lo.code;
   }
   const reserveRoom = await reservesFirst(sb, productKey, cohortId);
 

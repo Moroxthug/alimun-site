@@ -241,8 +241,8 @@
     "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
   },
   "src/pages/blog/[p].astro": {
-    "sha256": "c57a9df04217ca544432acfdd2ea7c09facf68c04eae18ba2f01d4907300a07a",
-    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\")"
+    "sha256": "5c05757c5d9c3329a2282c27506ac28f8fec144db7e35ce54bb35e2a133269a2",
+    "approved": "2026-10-26 blog templates (guide, explainer, grammar, compare), blog home and reading strip; locked on the owner's request (\"lock 3/4 templates which you will always recall for new articles\"); 2026-10-26 second design on the owner's request (white, photos in rounded frames, no black backgrounds); 2026-10-26 third design from the owner-approved previews /preview/blog-step1 and /preview/article-step2 (owner: \"perfect, i love how it looks. lock it in\"); 2026-11-25 Black Friday corner card added (owner: pop-ups instead of banners)"
   },
   "src/resources/render.js": {
     "sha256": "7ce5428c9a2aa1ba911542eb744cf5997b9346bc819c90e6463da37417eea26f",
@@ -293,8 +293,8 @@
     "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language"
   },
   "src/pages/index.astro": {
-    "sha256": "06f9b5d50cf2d27e151fdbdb24975f7a79154d8de0030f828eb1ff21bf9a90c7",
-    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-11-19 English launch class banner above the hero, shown until sign-ups close on 30 Nov (owner: \"yes put it live\")"
+    "sha256": "0ed7381caec998fd1035b8c41cea690cba81414567766a34e16ea00c47a99a8c",
+    "approved": "2026-10-28 homepage from the owner-approved mockup D (owner: \"apply it\"), text in home2_* keys in every language; 2026-11-19 English launch class banner above the hero, shown until sign-ups close on 30 Nov (owner: \"yes put it live\"); 2026-11-25 launch banner replaced by the Black Friday corner card (owner: \"the banners look bad, they should be more on page pop ups\", corner card chosen)"
   },
   "src/blocks/alive.html": {
     "sha256": "2a89bc828f2ceb338d3976f4398bece898d7f073187c422e080c524e2b59526b",
