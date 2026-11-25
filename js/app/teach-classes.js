@@ -396,8 +396,17 @@
     if (m) m.textContent = extra ? t(k) + ' ' + extra : t(k);
     var w = root.querySelector('.cl-live__wait .loader'); if (w) w.remove();
   }
+  /* The sample classroom shows its people as a video call would (drawings in place of cameras), not an empty frame */
+  function sampleTiles() {
+    var f = root.querySelector('[data-frame]');
+    if (!f) return;
+    var who = [[C.teacher.full_name, 'owl', 'var(--t-mint)'], ['Mei Chen', 'cat', 'var(--t-sun)'], ['Jonas Berg', 'dog', 'var(--t-coral)'], ['Sofia Ruiz', 'parrot', 'var(--t-lime)']];
+    f.innerHTML = '<div class="cr-tiles">' + who.map(function (w) {
+      return '<div class="cr-tile" style="background:' + w[2] + '">' + A.Cast.drawing(w[1]) + '<span>' + esc(w[0]) + '</span></div>';
+    }).join('') + '</div>';
+  }
   function join(kind, id) {
-    if (C.sample) { liveSay('app_tc_sample_join'); return; }
+    if (C.sample) { liveSay('app_tc_sample_join'); if (A.Cast && A.Cast.drawing) sampleTiles(); return; }
     var body = kind === 'b' ? { bookingId: id } : { sessionId: id };
     window.AlimunData.token().then(function (tok) {
       return fetch('/api/join-session', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok }, body: JSON.stringify(body) });

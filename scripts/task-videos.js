@@ -13,6 +13,9 @@
  * Captions: TEXT[lang][video id] = [title, intro, beat captions...]. {app_...} is replaced by that label as the
  * dashboard shows it in the language, so the video quotes every button exactly. ma uses fr.
  */
+/* What the teacher types to the class in the messages video, in the teacher's own language */
+const MSG = { en: 'See you tonight at seven!', es: '¡Nos vemos esta tarde a las siete!', fr: 'À ce soir, à sept heures !', ma: 'À ce soir, à sept heures !',
+  de: 'Bis heute Abend um sieben!', pt: 'Até logo à noite, às sete!', it: 'Ci vediamo stasera alle sette!', zh: '今晚七点见！', ar: 'نلتقي الليلة في السابعة!' };
 const VIDEOS = {
   start: { stop: 'next', beats: [
     { route: 'today', ring: '#view .card--forest', minW: 1400 },
@@ -33,7 +36,7 @@ const VIDEOS = {
   availability: { stop: 'classes', beats: [
     { route: 'classes', ring: '#view .view__head .btn-row', cursor: 'a[href="#/classes/availability"]', click: true, minW: 1600 },
     { act: [['click', '[data-tc=days][data-k=week]'], ['fill', 'input[name=start]', '17:00'], ['fill', 'input[name=end]', '21:00']], ring: '#view .card:has([name=day])' },
-    { ring: '#view .card:has([name=day])', cursor: '#view .card:has([name=day]) button[type=submit]', press: true },
+    { ring: '#view .card:has([name=day])', cursor: '#view .card:has([name=day]) button[type=submit]', click: true },
     { ring: '#view .card:has([data-tc=delslot])' },
     { route: 'classes', ring: '#view .card:has([data-tc=contract])', minW: 1400 },
     { ring: '#view .card:has([data-tc=contract])', cursor: '[data-tc=contract][data-ok="1"]', press: true, minW: 1400 }
@@ -54,7 +57,7 @@ const VIDEOS = {
   ] },
   messages: { stop: 'messages', beats: [
     { route: 'messages', ring: '.ms-list', cursor: 'a.ms-conv', click: true },
-    { act: [['fill', '.ms-main textarea', 'Bis heute Abend um sieben!']], ring: '.ms-main' },
+    { act: [['fill', '.ms-main textarea', MSG]], ring: '.ms-main' },
     { ring: '.ms-main', cursor: '[data-send]', press: true },
     { ring: '.ms-list', cursor: '[data-start]', press: true }
   ] },

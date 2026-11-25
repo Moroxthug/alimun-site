@@ -80,7 +80,7 @@ async function capture(page, tmp) {
     } else await page.waitForTimeout(300);
     for (const a of s.act || []) { /* done before the screenshot, not shown */
       if (a[0] === 'click') await page.evaluate(([sel, visSrc]) => { const e = eval(visSrc)(sel); if (e) e.click(); }, [a[1], '(' + vis.toString() + ')']);
-      else if (a[0] === 'fill') { await page.locator(a[1]).filter({ visible: true }).first().fill(a[2]); await page.evaluate(() => document.activeElement && document.activeElement.blur()); }
+      else if (a[0] === 'fill') { await page.locator(a[1]).filter({ visible: true }).first().fill(typeof a[2] === 'object' ? a[2][lang] || a[2].en : a[2]); await page.evaluate(() => document.activeElement && document.activeElement.blur()); }
       await page.waitForTimeout(300);
     }
     const rects = await page.evaluate(([ring, cur, visSrc]) => {

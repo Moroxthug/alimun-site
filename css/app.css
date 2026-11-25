@@ -1852,6 +1852,10 @@ body.is-class .view { max-width: 1640px; }
 .cr-video { grid-area: video; position: relative; border-radius: var(--r-xl); overflow: hidden; background: var(--forest); min-height: min(68dvh, 720px); box-shadow: var(--shadow); }
 .cr-frame { position: absolute; inset: 0; display: grid; }
 .cr-frame > iframe { width: 100%; height: 100%; }
+.cr-tiles { position: absolute; inset: 0; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: 1fr; gap: 8px; padding: 8px; }
+.cr-tile { position: relative; display: grid; place-items: center; border-radius: var(--r-md); overflow: hidden; min-height: 0; }
+.cr-tile > svg { width: 72%; height: 72%; overflow: visible; }
+.cr-tile > span { position: absolute; inset-inline-start: 10px; bottom: 8px; font-size: 13px; line-height: 1.3; color: var(--ink); background: rgba(255, 255, 255, .85); padding: 2px 8px; border-radius: 8px; max-width: calc(100% - 20px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .cr-wait { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; gap: 8px; padding: 110px 24px 28px; }
 .cr-wait .bub { top: 20px; inset-inline-start: 20px; max-width: min(320px, calc(100% - 92px)); }
 .cr-wait > svg { width: 100%; max-width: 260px; height: 170px; overflow: visible; }
