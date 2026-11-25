@@ -12,10 +12,13 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Machines are pinned to ubuntu-24.04: "ubuntu-latest" moved to 26.04, which Playwright 1.56 cannot install a browser
+# on, and every browser job had failed since (25 Nov 2026).
+
 jobs:
   checks:
     name: Syntax, build, function cap, links
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -38,7 +41,7 @@ jobs:
 
   app-speed:
     name: App speed budget
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -52,7 +55,7 @@ jobs:
 
   secrets:
     name: gitleaks
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
         with:
@@ -64,7 +67,7 @@ jobs:
 
   dependencies:
     name: npm audit
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -74,7 +77,7 @@ jobs:
 
   semgrep:
     name: Semgrep
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -94,7 +97,7 @@ jobs:
 
   smoke:
     name: Playwright smoke (preview mode)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -106,3 +109,25 @@ jobs:
       - run: npx playwright test
         env:
           CI: '1'
+
+  # The one check Vercel waits for before putting a commit live on alimun.com (owner, 25 Nov 2026: deploy gate).
+  # Vercel → Settings → Build and Deployment → Deployment Checks → GitHub → "Deploy gate". Every push to main still
+  # builds, but the build only gets the alimun.com domains when this passes; otherwise the site stays on the last good
+  # build. Keep this job's name: Vercel finds the check by it. Add a job here to make it part of the gate.
+  gate:
+    name: Deploy gate
+    if: always()
+    needs: [checks, app-speed, secrets, dependencies, semgrep, smoke]
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Every required job passed
+        env:
+          RESULTS: ${{ toJSON(needs) }}
+        run: |
+          echo "$RESULTS" | node -e '
+            let s = ""; process.stdin.on("data", (d) => (s += d)).on("end", () => {
+              const bad = Object.entries(JSON.parse(s)).filter(([, v]) => v.result !== "success");
+              for (const [k, v] of bad) console.log("::error::" + k + ": " + v.result);
+              if (bad.length) { console.log("Not deploying: fix the jobs above, or Force Promote in Vercel for an emergency."); process.exit(1); }
+              console.log("All required jobs passed.");
+            });'

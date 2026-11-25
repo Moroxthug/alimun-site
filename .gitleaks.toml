@@ -8,4 +8,8 @@ regexes = [
   '''sb_publishable_[A-Za-z0-9_-]+''',
   '''pk_(live|test)_[A-Za-z0-9]+''',
   '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.(YOUR_[A-Z_]+|\.\.)''',
+  # The public half of the Web Push key pair (js/app/admin-push.js): public by design; the private half is on Vercel.
+  '''BHGMGn7ABNKv2UHYmyaGWptUCK5qFQK6eibvYOLsTIjetiWU5kiSfOfu6wm6OEAcjzzxQcpVrd5SN-J89AM9Y04''',
+  # A translation key name ("tiers_plan_2_desc") that the generic-api-key rule mistakes for a key; checked 25 Nov 2026.
+  '''tiers_plan_2_desc''',
 ]

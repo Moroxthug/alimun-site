@@ -13,7 +13,18 @@ function resolves(urlPath) {
   if (p.startsWith('/api/')) return true; // serverless, checked elsewhere
   const abs = path.join(root, p);
   const candidates = p.endsWith('/') ? [path.join(abs, 'index.html')] : [abs, abs + '.html', path.join(abs, 'index.html')];
-  return candidates.some((c) => fs.existsSync(c) && fs.statSync(c).isFile());
+  if (candidates.some((c) => fs.existsSync(c) && fs.statSync(c).isFile())) return true;
+  return astroPage(p);
+}
+/* Pages the Astro site builds at deploy time (npm run build:site, site/src/pages), in every locale folder:
+   /level-test.html, /fr/level-test.html -> site/src/pages/level-test.astro (added 25 Nov 2026 with the deploy gate;
+   the sign-in and sign-up pages link to the level test, which only exists after the site build). */
+function astroPage(urlPath) {
+  const parts = urlPath.replace(/^\/+/, '').replace(/\.html$/, '').replace(/\/$/, '').split('/');
+  if (DIRS.includes(parts[0]) && parts[0] !== '.') parts.shift();
+  const name = parts.join('/') || 'index';
+  const pages = path.join(root, 'site', 'src', 'pages');
+  return [name + '.astro', path.join(name, 'index.astro')].some((c) => fs.existsSync(path.join(pages, c)));
 }
 
 const sitemap = fs.readFileSync(path.join(root, 'sitemap.xml'), 'utf8');
