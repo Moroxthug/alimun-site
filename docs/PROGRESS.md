@@ -2353,3 +2353,6 @@ Owner's choices (all four recommendations): publish the recording draft, keep tu
 - Availability video: the Add press is now a real click, so "Your week" shows the new times. Messages video: the teacher types in the video's language (`MSG` in `scripts/task-videos.js`). The Moroccan videos stay in French because the Moroccan dashboard is French.
 - Start, availability and messages re-rendered in all nine languages; video cache version raised to v=3 in `teach-tour.js`.
 - Checked: classroom screenshots at 1600 and 375 px (with and without the board), no console errors; layout test 62/62; stills and frames of the changed beats (en, de, zh, ar).
+## 25 Nov 2026 - Free class error message (owner: "fix the error message")
+- When saving a free place fails for a reason other than `in_class`, the launch page (`js/app/plans.js`) and the Home banner and pop-up (`js/app/launch-pop.js`) now say "Your free place was not saved. Please try again in a moment." (new key `app_ln_free_err`, nine languages) instead of the payment-page line; offline they show the usual offline line.
+- Checked: screenshots of the launch page at 1600 px (en) and 375 px (de) with the message; layout test.

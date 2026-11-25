@@ -122,7 +122,7 @@
     }, function (e) {
       /* Already in a class: one place at a time (api/_lib/launch.js), so trying again would not help */
       if (e && e.body && e.body.error === 'in_class') { btn.remove(); if (msg) msg.textContent = t('app_ln_free_in_class'); return; }
-      btn.disabled = false; if (msg) msg.textContent = t('app_pl_err'); console.warn('[Alimun] Free class', e && e.message);
+      btn.disabled = false; if (msg) msg.textContent = t(navigator.onLine === false ? 'app_off_needs_p' : 'app_ln_free_err'); console.warn('[Alimun] Free class', e && e.message);
     });
   }
   /* Clicks on the Home banner (the shell passes them here) */

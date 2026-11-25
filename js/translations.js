@@ -2890,6 +2890,8 @@ window.ALIMUN_TRANSLATIONS = {
     "app_ln_free_done": "Your place is saved. The join button appears under Classes 15 minutes before the class.",
     "app_ln_free_over": "The free class has taken place.",
     "app_ln_free_in_class": "You already have a place in a class, so the free first class is not for you this time. Your class and its join button are under Classes.",
+
+    "app_ln_free_err": "Your free place was not saved. Please try again in a moment.",
     "app_ln_class_h": "Then, from {date}",
     "app_ln_rule": "The class goes ahead if at least {min} people sign up by {deadline}. Until then nothing is charged: your card is saved and charged on the first day. If fewer than {min} sign up, nothing is charged at all.",
     "app_ln_count": "{n} of {min} places taken so far.",
@@ -6286,6 +6288,8 @@ window.ALIMUN_TRANSLATIONS = {
     "app_ln_free_done": "Tu plaza está reservada. El botón para entrar aparece en Clases 15 minutos antes de la clase.",
     "app_ln_free_over": "La clase gratuita ya ha tenido lugar.",
     "app_ln_free_in_class": "Ya tienes plaza en una clase, así que esta vez la clase gratuita no es para ti. Tu clase y su botón para entrar están en Clases.",
+
+    "app_ln_free_err": "No se guardó tu plaza gratuita. Inténtalo de nuevo en un momento.",
     "app_ln_class_h": "Después, desde el {date}",
     "app_ln_rule": "La clase sale adelante si al menos {min} personas se apuntan antes del {deadline}. Hasta entonces no se cobra nada: tu tarjeta queda guardada y se cobra el primer día. Si se apuntan menos de {min}, no se cobra nada.",
     "app_ln_count": "{n} de {min} plazas ocupadas por ahora.",
@@ -9683,6 +9687,8 @@ window.ALIMUN_TRANSLATIONS = {
     "app_ln_free_done": "Votre place est réservée. Le bouton pour rejoindre apparaît dans Cours 15 minutes avant le cours.",
     "app_ln_free_over": "Le cours gratuit a eu lieu.",
     "app_ln_free_in_class": "Vous avez déjà une place dans un cours, le cours gratuit n'est donc pas pour vous cette fois. Votre cours et son bouton pour rejoindre sont dans Cours.",
+
+    "app_ln_free_err": "Votre place gratuite n'a pas été enregistrée. Veuillez réessayer dans un instant.",
     "app_ln_class_h": "Ensuite, à partir du {date}",
     "app_ln_rule": "Le cours a lieu si au moins {min} personnes s'inscrivent avant le {deadline}. D'ici là, rien n'est débité : votre carte est enregistrée et débitée le premier jour. S'il y a moins de {min} inscrits, rien n'est débité du tout.",
     "app_ln_count": "{n} places prises sur {min} pour l'instant.",
@@ -13067,6 +13073,8 @@ window.ALIMUN_TRANSLATIONS = {
     "app_ln_free_done": "Dein Platz ist gesichert. Der Button zum Beitreten erscheint unter Kurse 15 Minuten vor Beginn.",
     "app_ln_free_over": "Die kostenlose Stunde hat stattgefunden.",
     "app_ln_free_in_class": "Du hast schon einen Platz in einem Kurs, deshalb ist die kostenlose Stunde diesmal nicht für dich. Dein Kurs und der Button zum Beitreten sind unter Kurse.",
+
+    "app_ln_free_err": "Dein kostenloser Platz wurde nicht gespeichert. Bitte versuche es gleich noch einmal.",
     "app_ln_class_h": "Danach, ab {date}",
     "app_ln_rule": "Der Kurs findet statt, wenn sich bis {deadline} mindestens {min} Personen anmelden. Bis dahin wird nichts abgebucht: Deine Karte wird gespeichert und am ersten Tag belastet. Melden sich weniger als {min} an, wird gar nichts abgebucht.",
     "app_ln_count": "Bisher {n} von {min} Plätzen belegt.",
@@ -16458,6 +16466,8 @@ window.ALIMUN_TRANSLATIONS = {
     "app_ln_free_done": "O teu lugar está reservado. O botão para entrar aparece em Aulas 15 minutos antes da aula.",
     "app_ln_free_over": "A aula grátis já aconteceu.",
     "app_ln_free_in_class": "Já tens lugar numa turma, por isso a aula grátis não é para ti desta vez. A tua turma e o botão para entrar estão em Aulas.",
+
+    "app_ln_free_err": "O teu lugar grátis não foi guardado. Tenta outra vez daqui a pouco.",
     "app_ln_class_h": "Depois, a partir de {date}",
     "app_ln_rule": "A turma avança se pelo menos {min} pessoas se inscreverem até {deadline}. Até lá não é cobrado nada: o teu cartão fica guardado e é cobrado no primeiro dia. Se se inscreverem menos de {min}, não é cobrado nada.",
     "app_ln_count": "{n} de {min} lugares ocupados até agora.",
@@ -19823,6 +19833,8 @@ window.ALIMUN_TRANSLATIONS = {
     "app_ln_free_done": "名额已预留。上课前 15 分钟，“课程”页面会出现进入按钮。",
     "app_ln_free_over": "免费课已经结束。",
     "app_ln_free_in_class": "你已经在一个班级里了，所以这次的免费课不适用于你。你的班级和进入按钮在“课程”页面。",
+
+    "app_ln_free_err": "你的免费名额没有保存成功，请稍后再试一次。",
     "app_ln_class_h": "之后，从 {date} 开始",
     "app_ln_rule": "如果在 {deadline} 前至少有 {min} 人报名，课程就会开班。在此之前不会扣款：你的卡会被保存，在第一天扣款。如果报名人数少于 {min} 人，则完全不扣款。",
     "app_ln_count": "目前已有 {n}/{min} 个名额被预订。",
@@ -23320,6 +23332,8 @@ window.ALIMUN_TRANSLATIONS = {
     "app_ln_free_done": "تم حجز مقعدك. يظهر زر الدخول في صفحة الصفوف قبل الحصة بـ 15 دقيقة.",
     "app_ln_free_over": "انتهت الحصة المجانية.",
     "app_ln_free_in_class": "لديك مقعد في صف بالفعل، لذلك الحصة المجانية ليست لك هذه المرة. تجد صفك وزر الدخول في صفحة الصفوف.",
+
+    "app_ln_free_err": "لم يُحفظ مقعدك المجاني. حاول مرة أخرى بعد قليل.",
     "app_ln_class_h": "بعد ذلك، ابتداءً من {date}",
     "app_ln_rule": "ينطلق الصف إذا سجّل {min} أشخاص على الأقل قبل {deadline}. حتى ذلك الحين لا يُخصم شيء: تُحفظ بطاقتك ويُخصم المبلغ في اليوم الأول. إذا سجّل أقل من {min}، فلن يُخصم أي شيء.",
     "app_ln_count": "حُجز {n} من أصل {min} مقاعد حتى الآن.",
@@ -26781,6 +26795,8 @@ window.ALIMUN_TRANSLATIONS = {
     "app_ln_free_done": "Il tuo posto è prenotato. Il pulsante per entrare compare in Lezioni 15 minuti prima della lezione.",
     "app_ln_free_over": "La lezione gratuita si è già svolta.",
     "app_ln_free_in_class": "Hai già un posto in una classe, quindi questa volta la lezione gratuita non fa per te. La tua classe e il pulsante per entrare sono in Lezioni.",
+
+    "app_ln_free_err": "Il tuo posto gratuito non è stato salvato. Riprova tra un momento.",
     "app_ln_class_h": "Poi, dal {date}",
     "app_ln_rule": "Il corso parte se almeno {min} persone si iscrivono entro {deadline}. Fino ad allora non viene addebitato nulla: la tua carta viene salvata e addebitata il primo giorno. Se gli iscritti sono meno di {min}, non viene addebitato niente.",
     "app_ln_count": "{n} posti su {min} occupati finora.",
@@ -30178,6 +30194,8 @@ window.ALIMUN_TRANSLATIONS = {
     "app_ln_free_done": "Votre place est réservée. Le bouton pour rejoindre apparaît dans Cours 15 minutes avant le cours.",
     "app_ln_free_over": "Le cours gratuit a eu lieu.",
     "app_ln_free_in_class": "Vous avez déjà une place dans un cours, le cours gratuit n'est donc pas pour vous cette fois. Votre cours et son bouton pour rejoindre sont dans Cours.",
+
+    "app_ln_free_err": "Votre place gratuite n'a pas été enregistrée. Veuillez réessayer dans un instant.",
     "app_ln_class_h": "Ensuite, à partir du {date}",
     "app_ln_rule": "Le cours a lieu si au moins {min} personnes s'inscrivent avant le {deadline}. D'ici là, rien n'est débité : votre carte est enregistrée et débitée le premier jour. S'il y a moins de {min} inscrits, rien n'est débité du tout.",
     "app_ln_count": "{n} places prises sur {min} pour l'instant.",
