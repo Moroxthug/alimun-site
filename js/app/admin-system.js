@@ -279,9 +279,26 @@
 
   /* ---------- System ---------- */
   var RF = { teacher: '', stars: '' };
+  /* Error alerts (25 Nov 2026; api/_lib/alerts.js): what went wrong in the last 7 days, newest first. The owner is
+     told by email and pop-up within about ten minutes; this is the list to look at afterwards. */
+  var SRC = { api: 'Server', email: 'Email', cron: 'Automatic job', ai: 'AI', stripe: 'Payments', other: 'Other' };
+  function problemsHtml() {
+    var list = (A.console ? A.console().problems : null) || [];
+    var head = '<section class="card span-12" style="--i:0" aria-labelledby="h-probs"><h2 class="t-h2" id="h-probs">Problems, last 7 days</h2>' +
+      '<p class="t-small" style="margin-top:4px">Failed requests, emails that did not go out, automatic jobs that failed or did not run, bursts of failed AI calls and payment events not processed. You are told by email and by a pop-up on devices with pop-ups on (Help requests) within about ten minutes, and again only if a problem happens again, at most once an hour.</p>';
+    if (!list.length) return head + '<p class="t-body" style="margin-top:10px">Nothing went wrong in the last 7 days.</p></section>';
+    var rel = function (at) { return A.relative(new Date(at).getTime() - Date.now()); };
+    return head + '<div class="todo ad-probs">' + list.map(function (p) {
+      var recent = Date.now() - new Date(p.last_at).getTime() < 86400000;
+      return '<div><i class="' + (recent ? 'is-bad' : '') + '"></i><span><b>' + esc(p.message) + '</b><small>' +
+        esc([SRC[p.source] || p.source, A.plural(p.count, 'time', 'times'), 'last ' + rel(p.last_at), p.alerted_at ? 'told ' + rel(p.alerted_at) : 'not told yet'].join(', ')) +
+        '</small><small class="ad-probs__key">' + esc(p.key) + '</small></span></div>';
+    }).join('') + '</div></section>';
+  }
   function systemView() {
     var html = flash() + '<div class="view__head"><div><h1 class="t-h1">System</h1><p class="t-lead">Payment checks, reviews, app settings, tutor minutes and the automatic jobs.</p></div>' +
       '<div class="btn-row"><a class="btn btn--ghost btn--sm" href="#/students/signups">Email signups</a></div></div><div class="grid rise">';
+    html += problemsHtml();
     html += checksHtml();
     var teachers = SY.reviews.map(function (r) { return r.teacher_profiles && r.teacher_profiles.full_name; }).filter(function (v, i, a) { return v && a.indexOf(v) === i; }).sort();
     html += '<section class="card span-12" style="--i:0" aria-labelledby="h-rev"><h2 class="t-h2" id="h-rev">Reviews</h2><p class="t-small" style="margin-top:4px">' + esc(A.plural(SY.reviews.length, 'review', 'reviews') + ' from students. They show on the teachers’ public profiles; deleting one updates the teacher’s rating.') + '</p>' +

@@ -349,6 +349,9 @@
   function attention(feed) {
     var items = [], c = D.counts, jobs = jobsSummary().filter(function (j) { return j.bad; }), C = D.console || {};
     var hq = C.helpOpen || [];
+    var pr = (C.problems || []).filter(function (p) { return Date.now() - new Date(p.last_at).getTime() < DAY; });
+    if (pr.length) items.push({ bad: true, href: '#/system', h: plural(pr.length, 'problem', 'problems') + ' on the site in the last 24 hours',
+      p: 'Latest: ' + cut(pr[0].message, 90) + ', ' + ago(pr[0].last_at) + '.' });
     if (hq.length) items.push({ bad: false, href: '#/help', h: plural(hq.length, 'support conversation', 'support conversations') + ' waiting for a reply',
       p: 'Oldest: \u201c' + cut(hq[0].subject, 60) + '\u201d, ' + ago(hq[0].updated_at || hq[0].created_at) + '.' });
     if (c.pending) items.push({ bad: false, href: '#/teachers', h: plural(c.pending, 'teacher application', 'teacher applications') + ' waiting',
@@ -587,6 +590,8 @@
         online: [{ user_id: 'u1', dashboard: 'student', section: 'tutor', started_at: ago2(12), seen_at: ago2(0.4) }, { user_id: 'u4', dashboard: 'student', section: 'homework', started_at: ago2(3), seen_at: ago2(0.8) },
           { user_id: 'tu1', dashboard: 'teacher', section: 'classes', started_at: ago2(25), seen_at: ago2(1) }, { user_id: 'u6', dashboard: 'student', section: 'book', started_at: ago2(40), seen_at: ago2(9) }],
         helpOpen: [{ id: 'hq1', subject: 'Can I move my class to the evening?', created_at: ago2(190), updated_at: ago2(190) }],
+        problems: [{ id: 'pb1', source: 'email', key: 'Resend 422: The html field must be a string', message: 'Resend 422: The html field must be a string', count: 14, first_at: ago2(60 * 30), last_at: ago2(35), alerted_at: ago2(30) },
+          { id: 'pb2', source: 'cron', key: 'vercel:cron-billing late', message: 'cron-billing has not run for 31 hours', count: 3, first_at: ago2(60 * 8), last_at: ago2(12), alerted_at: ago2(60 * 8) }],
         money: [{ user_id: 'u0', product_key: 'focused', variant: 'monthly', source: 'stripe', status: 'active', currency: 'eur', amount_paid: 4900, created_at: ago2(60 * 3) }, { user_id: 'u5', product_key: 'intensive', variant: 'monthly', source: 'stripe', status: 'active', currency: 'eur', amount_paid: 8900, created_at: ago2(60 * 30) }],
         ledger: [{ student_id: 'st3', seconds: 600, reason: 'admin', note: 'Welcome back', created_at: ago2(60 * 6) }],
         enrol: [{ student_id: 'st5', status: 'active', enrolled_at: ago2(60 * 29), cohorts: { language: 'German', level: 'B1', tier: 'intensive' } }],
@@ -634,7 +639,7 @@
      Overview is drawn again in place (scroll and feed filter kept, new feed lines marked); the menu counts and the
      status in the top bar follow. Other sections may offer live(), called after each quiet reload. */
   var LIVE_TABLES = ['student_profiles', 'teacher_profiles', 'entitlements', 'enrollments', 'assignment_submissions', 'tutor_sessions',
-    'messages', 'help_requests', 'help_messages', 'cohort_waitlist', 'session_attendance', 'contact_messages'];
+    'messages', 'help_requests', 'help_messages', 'cohort_waitlist', 'session_attendance', 'contact_messages', 'system_problems'];
   function paintSync() {
     var el = app && app.querySelector('[data-sync]');
     if (!el) return;

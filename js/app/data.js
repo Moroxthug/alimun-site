@@ -1477,7 +1477,9 @@
       abuse: q('abuse_log', c.from('abuse_log').select('kind, user_id, at').gte('at', d14).order('at', { ascending: false }).limit(100)),
       /* Live (24 Nov 2026): who has a dashboard open now (public.touch_online), and support conversations waiting for a reply */
       online: q('online_now', c.from('online_now').select('user_id, dashboard, section, page, started_at, seen_at').gte('seen_at', new Date(now - 15 * 60000).toISOString()).order('seen_at', { ascending: false }).limit(500)),
-      helpOpen: q('help_requests', c.from('help_requests').select('id, subject, created_at, updated_at').eq('status', 'open').order('updated_at', { ascending: true }).limit(200))
+      helpOpen: q('help_requests', c.from('help_requests').select('id, subject, created_at, updated_at').eq('status', 'open').order('updated_at', { ascending: true }).limit(200)),
+      /* Error alerts (25 Nov 2026): problems the server noticed in the last 7 days (api/_lib/alerts.js) */
+      problems: q('system_problems', c.from('system_problems').select('id, source, key, message, count, first_at, last_at, alerted_at').gte('last_at', new Date(now - 7 * DAY).toISOString()).order('last_at', { ascending: false }).limit(100))
     };
     var keys = Object.keys(parts);
     return Promise.all(keys.map(function (k) { return parts[k]; })).then(function (r) {

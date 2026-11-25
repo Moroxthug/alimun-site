@@ -463,3 +463,9 @@ a.feed__it:hover { background: #f7f6f2; margin: 0 -20px; padding-left: 20px; pad
 @keyframes toast-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
 @media (max-width: 760px) { .adm-toasts { right: 16px; left: 16px; width: auto; bottom: 92px; } }
 @media (prefers-reduced-motion: reduce) { .adm-toast { animation: none; } .adm-toast.is-out { transition: none; } }
+
+/* Problems on Admin → System (error alerts, 25 Nov 2026): a list like Needs you */
+.ad-probs { margin-top: 8px; }
+.ad-probs > div { display: grid; grid-template-columns: 8px minmax(0, 1fr); gap: 12px; align-items: center; padding: 10px 0; border-top: 1px solid var(--line-2); }
+.ad-probs > div:first-child { border-top: 0; }
+.ad-probs__key { overflow-wrap: anywhere; }

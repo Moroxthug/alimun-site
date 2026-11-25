@@ -417,3 +417,6 @@ module.exports = async function handler(req, res) {
 };
 
 module.exports._test = { findAudio, toWav, speak, wav, pcmOf, mp3, splitPcm, chunks, retrySeconds, limited, cloudTest, serviceAccount, speakVertex, generate };
+
+/* Error alerts (25 Nov 2026): a request that ends in a 5xx or crashes is kept as a problem and the owner is told (api/_lib/alerts.js) */
+module.exports = require('./_lib/alerts.js').watch('speech', module.exports);

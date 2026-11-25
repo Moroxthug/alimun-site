@@ -274,7 +274,22 @@ async function slot() {
   nextSlot = at + MIN_GAP_MS;
   if (at > now) await sleep(at - now);
 }
-async function sendEmail({ to, subject, html, text, replyTo, from, unsubscribeUrl }) {
+/* A refused or undelivered email is kept as a problem (api/_lib/alerts.js) so the owner hears about it within ten
+   minutes; the key is the error without addresses, so one bug counts as one problem however many emails it hits.
+   Added 25 Nov 2026 after emails failed for six days unnoticed. */
+function reportFailure(subject) {
+  try {
+    const err = sendEmail.lastError || 'not sent';
+    const key = err.replace(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/gi, '<email>').replace(/\d{3,}/g, (d) => (d.length === 3 ? d : '#')).slice(0, 120);
+    return require('./alerts.js').record('email', key, err, { subject: String(subject || '').slice(0, 80) });
+  } catch (e) { return Promise.resolve(); }
+}
+async function sendEmail(opts) {
+  const ok = await sendEmailOnce(opts);
+  if (!ok) await reportFailure(opts && opts.subject);
+  return ok;
+}
+async function sendEmailOnce({ to, subject, html, text, replyTo, from, unsubscribeUrl }) {
   sendEmail.lastError = '';
   const key = process.env.RESEND_API_KEY;
   if (!key || key.includes('YOUR_RESEND_API_KEY')) { console.error('[email] RESEND_API_KEY missing'); sendEmail.lastError = 'RESEND_API_KEY missing'; return false; }

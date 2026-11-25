@@ -218,6 +218,10 @@
       "schedule": "43 6 * * *"
     },
     {
+      "path": "/api/ops?action=cron-alerts",
+      "schedule": "*/10 * * * *"
+    },
+    {
       "path": "/api/pricing?action=cron-launch-email",
       "schedule": "47 * * * *"
     },

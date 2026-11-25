@@ -47,3 +47,6 @@ module.exports = async function handler(req, res) {
   res.setHeader('Content-Type', 'application/json; charset=utf-8');
   return res.status(200).send(text);
 };
+
+/* Error alerts (25 Nov 2026): a request that ends in a 5xx or crashes is kept as a problem and the owner is told (api/_lib/alerts.js) */
+module.exports = require('./_lib/alerts.js').watch('material', module.exports);

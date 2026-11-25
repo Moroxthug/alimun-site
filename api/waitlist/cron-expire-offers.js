@@ -64,3 +64,6 @@ module.exports = async function (req, res) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 };
+
+/* Error alerts (25 Nov 2026): a request that ends in a 5xx or crashes is kept as a problem and the owner is told (api/_lib/alerts.js) */
+module.exports = require('../_lib/alerts.js').watch('waitlist/cron-expire-offers', module.exports);

@@ -38,6 +38,8 @@ const ENT = require('./_lib/entitlements.js');
 const { dailyFetch } = require('./_lib/daily.js');
 const { recordRun } = require('./_lib/cron-log.js');
 const { isTestAccount } = require('./_lib/test-accounts.js');
+const ALERTS = require('./_lib/alerts.js');
+const adminPush = require('./_lib/admin-push.js');
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 const OWNER = () => process.env.CONTACT_EMAIL || 'bchysf@gmail.com';
@@ -68,6 +70,19 @@ async function send(to, subject, content) {
 }
 function tellOwner(text) {
   return send(OWNER(), 'Alimun automations: needs your attention', mail.renderEmail({ hero: 'update', lang: 'en', preheader: text.slice(0, 90), heading: 'An automation needs you', blocks: [{ p: mail.esc(text) }] }));
+}
+/* Error alerts (owner, 25 Nov 2026; api/_lib/alerts.js): one email listing what went wrong, and a pop-up on the admin's
+   devices that turned pop-ups on (Admin → Help requests). Either one reaching the owner counts as told, so a broken
+   email service is still reported by the pop-up. */
+async function tellProblems(lines, total) {
+  const first = lines[0];
+  const head = total === 1 ? `${first.source}: ${first.message}` : `${total} problems on alimun.com`;
+  const blocks = lines.map((l) => ({ p: `<strong>${mail.esc(l.source)}</strong>: ${mail.esc(l.message)}<br><span style="color:#6b6b6b">${mail.esc(l.key)}, ${l.times} ${l.times === 1 ? 'time' : 'times'}, last ${mail.esc(new Date(l.last_at).toISOString().slice(0, 16).replace('T', ' '))} UTC</span>` }));
+  blocks.push({ p: 'Each problem is told again only if it happens again, at most once an hour.', button: { href: 'https://alimun.com/app/admin#/system', label: 'Open Admin, System' } });
+  let emailed = false, pushed = 0;
+  try { emailed = await send(OWNER(), 'Alimun: ' + head.slice(0, 120), mail.renderEmail({ hero: 'update', lang: 'en', preheader: head.slice(0, 90), heading: total === 1 ? 'Something went wrong' : `${total} things went wrong`, blocks, signoff: false })); } catch (e) { console.warn('[alerts] email:', e.message); }
+  try { pushed = (await adminPush.sendToAdmins(sbAdmin(), { title: total === 1 ? 'Alimun: ' + first.source + ' problem' : `Alimun: ${total} problems`, body: first.message, url: '/app/admin#/system', tag: 'problems' })).sent || 0; } catch (e) { console.warn('[alerts] push:', e.message); }
+  return emailed || pushed > 0;
 }
 const TIERS = { community: 'Community', focused: 'Focused', intensive: 'Intensive', private: '1 on 1', pack: 'Level pack', exam: 'Exam pack', open: 'Open class', help: 'Help class' };
 function classLabel(co) { return `${co.language || ''} ${co.level || ''}`.trim(); }
@@ -932,6 +947,13 @@ module.exports = async function handler(req, res) {
       if (!ok || (out.late && out.late.checked) || (out.outcomes && (out.outcomes.verified || out.outcomes.failed)) || (out.recordings && (out.recordings.linked || out.recordings.unknown)) || (out.cleanup && out.cleanup.deleted) || (out.trials && (out.trials.done || out.trials.asked))) await recordRun(sb, 'vercel:cron-class-watch', ok, out);
       return res.status(200).json(out);
     }
+    if (action === 'cron-alerts') {
+      if (!cronOk(req)) return res.status(401).json({ error: 'unauthorized' });
+      let out;
+      try { out = await ALERTS.check(sb, tellProblems); } catch (e) { out = { error: String(e.message || e) }; }
+      if (out.error || out.told) await recordRun(sb, 'vercel:cron-alerts', !out.error && out.delivered !== false, out);
+      return res.status(out.error ? 500 : 200).json(out);
+    }
     if (action === 'cron-clips') {
       if (!cronOk(req)) return res.status(401).json({ error: 'unauthorized' });
       const out = {};
@@ -1052,3 +1074,6 @@ module.exports = async function handler(req, res) {
 };
 
 module.exports._test = { dayBounds, parisDay };
+
+/* Error alerts (25 Nov 2026): a request that ends in a 5xx or crashes is kept as a problem and the owner is told (api/_lib/alerts.js) */
+module.exports = require('./_lib/alerts.js').watch('ops', module.exports);

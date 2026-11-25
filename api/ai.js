@@ -1115,3 +1115,6 @@ module.exports = async function handler(req, res) {
 
 // Shared with api/help.js (docs/HELP_PLAN.md, Part 2): the same providers, caps and usage records.
 module.exports.internal = { callAI, reserveQuota, finalizeUsage, estimateMaxCostUsd, quotaRefusal, providerConfigured, parseJsonReply, getSupabaseAdmin, requireAuth };
+
+/* Error alerts (25 Nov 2026): a request that ends in a 5xx or crashes is kept as a problem and the owner is told (api/_lib/alerts.js) */
+module.exports = require('./_lib/alerts.js').watch('ai', module.exports);
