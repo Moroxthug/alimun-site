@@ -591,11 +591,55 @@
   }
 
   /* ---------- Boot ---------- */
+  /* ---------- Live Today (owner, 25 Nov 2026: "make the teacher Today page live too") ----------
+     The next class, what to mark, unread messages, this week, the classes and who is waiting follow the database:
+     a class date moved, cancelled or going live, a student joining or leaving, a 1 on 1 booked, homework handed in or
+     a new message reload Today's data quietly (at most every 4 seconds) and Today is drawn again in place, without
+     the entrance animation and keeping the scroll. Coming back to Today from another section loads it again too
+     (messages read meanwhile). Row rules send each teacher their own classes and conversations only. The refresh every
+     five minutes below stays as a safety net. */
+  var todayStop = null, todayIds = '', todayBusy = false, todayAgain = false, todayLast = 0, todayTimer = null;
+  function quietToday() {
+    if (mode !== 'real') return;
+    if (todayBusy) { todayAgain = true; return; }
+    var wait = todayLast + 4000 - Date.now();
+    if (wait > 0 || document.hidden) { clearTimeout(todayTimer); todayTimer = setTimeout(quietToday, Math.max(wait, 5000)); return; }
+    todayBusy = true; todayLast = Date.now();
+    window.AlimunData.teacherToday().then(function (d) {
+      if (!d || !d.teacher || d.pending) return;
+      D = d;
+      if (current === 'today' && !document.body.classList.contains('is-sheet-open')) {
+        var y = window.scrollY;
+        view.classList.add('is-quiet');
+        render('today', false);
+        window.scrollTo(0, y);
+        setTimeout(function () { view.classList.remove('is-quiet'); }, 50);
+      }
+      liveToday();
+    }, function () { /* keep what is shown */ }).then(function () {
+      todayBusy = false;
+      if (todayAgain) { todayAgain = false; quietToday(); }
+    });
+  }
+  function liveToday() {
+    if (mode !== 'real' || !window.AlimunLive || !D || !D.teacher || !/^[0-9a-f-]{36}$/i.test(D.teacher.id || '')) return;
+    if (window.AlimunData.viewingAs && window.AlimunData.viewingAs()) return;
+    var ids = (D.cohorts || []).map(function (c) { return c.id; }).filter(function (x) { return /^[0-9a-f-]{36}$/i.test(x || ''); }).slice(0, 90).sort().join(',');
+    if (todayStop && ids === todayIds) return;
+    if (todayStop) todayStop();
+    todayIds = ids;
+    var specs = [{ table: 'cohorts', event: '*', filter: 'teacher_id=eq.' + D.teacher.id }, { table: 'one_on_one_bookings', event: '*', filter: 'teacher_id=eq.' + D.teacher.id },
+      { table: 'assignment_submissions', event: '*' }, { table: 'messages', event: 'INSERT' }];
+    if (ids) specs.push({ table: 'sessions', event: '*', filter: 'cohort_id=in.(' + ids + ')' }, { table: 'enrollments', event: '*', filter: 'cohort_id=in.(' + ids + ')' });
+    todayStop = window.AlimunLive.watch('teach-today', specs, quietToday, { wait: 700 });
+  }
+
   function start() {
     renderShell();
     if (mode === 'real' && window.AlimunData && window.AlimunData.rememberUiLang) window.AlimunData.rememberUiLang(lang, 'teacher');
     if (window.AlimunBell) window.AlimunBell.attach(document.querySelector('[data-bell]'), helpers, mode === 'real' && !(window.AlimunData && window.AlimunData.viewingAs && window.AlimunData.viewingAs()));
     render(routeFromHash(), false);
+    liveToday();
     /* Back from the check-in link in a reminder email (/api/ops?action=checkin-link) */
     var ck = (location.search.match(/[?&]checkin=([a-z_]+)/) || [])[1];
     if (ck) {
@@ -622,13 +666,13 @@
       setTimeout(maybeTour, 1200);
       setTimeout(hideLoader, Math.max(0, 900 - (Date.now() - started)));
     });
-    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); if (id !== current || MODULES[id]) render(id, true); });
+    window.addEventListener('hashchange', function () { if (!D) return; setSheet(false); var id = routeFromHash(); var back = id === 'today' && current !== 'today'; if (id !== current || MODULES[id]) render(id, true); if (back) quietToday(); });
     window.addEventListener('scroll', function () { if (top) top.classList.toggle('is-scrolled', window.scrollY > 8); }, { passive: true });
     document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && D) setSheet(false); });
     /* Today is drawn from the data loaded at the start: refresh it every five minutes so counts and Start stay right */
     setInterval(function () {
       if (mode !== 'real' || document.hidden) return;
-      window.AlimunData.teacherToday().then(function (d) { if (d && d.teacher && !d.pending) { D = d; if (current === 'today') render('today', false); } }, function () { /* keep what is shown */ });
+      quietToday();
     }, 5 * MIN);
     app.addEventListener('click', function (e) {
       if (mode === 'pending' && ivClick(e)) return;

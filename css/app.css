@@ -851,6 +851,8 @@ a.card:active, button.card:active { transform: translateY(-1px) scale(.995); }
 @keyframes pop { 0% { transform: scale(1); } 40% { transform: scale(1.12) rotate(-4deg); } 100% { transform: scale(1); } }
 
 .rise > * { animation: rise var(--t-slow) var(--ease) both; animation-delay: calc(var(--i, 0) * 60ms); }
+/* A quiet live redraw (js/app/teach.js, Today) does not replay the entrance */
+.is-quiet .rise > * { animation: none; }
 .view.is-leaving { opacity: 0; transform: translateY(8px); transition: opacity var(--t-fast) var(--ease), transform var(--t-fast) var(--ease); }
 
 /* Drawing animations (from docs/design/sources/zoo.css) */
