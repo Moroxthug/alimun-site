@@ -51,7 +51,7 @@ select value::jsonb ->> 'ends_at' as offer_ends, value::jsonb -> 'deal' as deal,
 -- 4. (25 Nov, later) The Black Friday message: the hourly job (api/_lib/launch-email.js, step 'bf') sends it from send_at
 --    until the deal ends, to every English learner who has not reserved (bell for all, email unless unsubscribed).
 update public.app_settings
-   set value = jsonb_set(value::jsonb, '{deal,send_at}', to_jsonb('2026-11-25T23:30:00Z'::text))::text
+   set value = jsonb_set(value::jsonb, '{deal,send_at}', to_jsonb('2026-11-26T07:00:00Z'::text))::text
  where key = 'launch_offer' and value::jsonb ? 'deal';
 -- 5. Denys (reserved the intensive course on 25 Nov before Black Friday) gets the same price: half his first month.
 update public.entitlements set offer = 'black-friday', discount_minor = 5450
