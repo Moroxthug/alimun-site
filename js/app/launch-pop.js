@@ -12,7 +12,7 @@
 (function () {
   'use strict';
   var LATER = 'alimun-launch-later', DAY = 86400000;
-  var PHOTO = '/images/pexels-diimejii-3466163-p-800.jpg';
+  var PHOTO = '/images/pexels-julia-m-cameron-4145153-p-800.jpg';
   var WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   var box = null, H = null, L = null;
 
@@ -62,11 +62,27 @@
     var waiting = (L.rooms || []).some(function (r) { return r.state === 'published'; });
     return waiting && L.seats > 0 ? '<p class="t-small bfp__count">' + esc(t('app_ln_count', { n: Math.min(L.seats, L.min), min: L.min })) + '</p>' : '';
   }
+  /* 26 Nov 2026 (owner: "improve the design of those banners"): the real first-month price for this learner (the same
+     prices and founding rule as the class page and checkout), the normal one struck through, and how long is left */
+  var PRICE = null;
+  function money(minor, cur) {
+    try { return new Intl.NumberFormat(H.locale, { style: 'currency', currency: String(cur).toUpperCase(), minimumFractionDigits: minor % 100 ? 2 : 0, maximumFractionDigits: 2 }).format(minor / 100); } catch (e) { return ''; }
+  }
+  function priceHtml() {
+    var p = PRICE, k = upper() && intensive() ? 'intensive_en' : 'level_en';
+    var c = p && p.prices && p.prices[k] && p.prices[k].month, x = c && (p.founding && c.founding ? c.founding : c.list);
+    if (!x || !(x.amount > 0)) return '<p class="bfp__mark"><span>' + esc(t('app_bf_deal')) + '</span></p>';
+    return '<p class="bfp__price"><span class="bfp__now">' + esc(money(x.amount - Math.round(x.amount / 2), x.currency)) + '</span> <s class="bfp__was">' + esc(money(x.amount, x.currency)) + '</s>' +
+      '<span class="bfp__first">' + esc(t('app_bf_first_m')) + '</span></p>';
+  }
+  function left(bf) {
+    var h = Math.max(1, Math.round((Date.parse(bf.endsAt) - Date.now()) / 3600000));
+    try { var f = new Intl.RelativeTimeFormat(H.locale, { numeric: 'auto' }); return t('app_bf_ends', { rel: h >= 36 ? f.format(Math.round(h / 24), 'day') : f.format(h, 'hour') }); } catch (e) { return ''; }
+  }
   function html() {
     var bf = deal(), cl = classLine();
     if (upper() && !(bf && intensive())) return '';
-    var head = bf ? '<h2 class="bfp__h" id="bfp-h">' + esc(t('app_bf_h')) + '</h2><p class="bfp__mark"><span>' + esc(t('app_bf_deal')) + '</span></p>' +
-        '<p class="t-small bfp__p">' + esc(t('app_bf_p', { date: fmt(Date.parse(bf.endsAt) - 60000, { weekday: 'long', day: 'numeric', month: 'long' }) })) + '</p>'
+    var head = bf ? '<h2 class="bfp__h" id="bfp-h">' + esc(t('app_bf_h')) + '</h2><p class="bfp__ends">' + esc(left(bf)) + '</p>' + priceHtml()
       : '<h2 class="bfp__h" id="bfp-h">' + esc(t('app_ln_title')) + '</h2>';
     return '<div class="bfp__card" role="dialog" aria-labelledby="bfp-h">' +
       '<button class="bfp__x" type="button" data-bf-later aria-label="' + esc(t('app_ln_later')) + '"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>' +
@@ -81,6 +97,12 @@
   function maybe(l, helpers) {
     H = helpers; L = l;
     if (!wanted(L) || box || snoozed()) return;
+    var prices = H.real && window.AlimunData && window.AlimunData.pricingDisplay ? window.AlimunData.pricingDisplay().catch(function () { return null; })
+      : Promise.resolve({ founding: true, prices: { level_en: { month: { list: { amount: 7200, currency: 'eur' }, founding: { amount: 6400, currency: 'eur' } } },
+        intensive_en: { month: { list: { amount: 11900, currency: 'eur' }, founding: { amount: 10900, currency: 'eur' } } } } });
+    prices.then(function (p) { PRICE = p; go(); });
+  }
+  function go() {
     var inner = html();
     if (!inner) return;
     /* Never on top of the poll or another window: wait until they are closed */
