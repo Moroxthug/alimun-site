@@ -2383,3 +2383,7 @@ The launch banner sat under the fixed header with its top cut off: its script ra
 - Rule added to CLAUDE.md: messages come from Alimun, never in a staff member's name.
 - Checked: unit tests 247/247; `node --check`; `npm run build`; site build; layout test 62/62; screenshots of the public and dashboard cards at 1600 and 375 px; the email rendered. Both deploys READY.
 - Owner to decide: the beginner group still opens with 4; the intensive with 1.
+## 26 Nov 2026 - Squeezed tables on Admin → System fixed (owner: "fix the two squeezed tables on the System page")
+- Cause: one rule in `css/admin.css` (`.adm .ad-act`, three columns with a 120 px label column) overrode the two-column row (`.ad-act--2`) and the phone stack from `css/app.css`. So App settings put each setting's text in the 120 px column on every screen, and on phones every action row (reviews, and also Schedule, Waiting list and Payouts) kept text squeezed beside its label.
+- Fix: `css/admin.css` restores the two-column row and stacks action rows on phones (button under the text). Before: 5 admin layout checks failed (System on desktop and phone, Schedule, Waiting list and Payouts on phone); after: all 38 pass.
+- `tests/smoke/layout.spec.js` now checks all 19 admin pages (was 6), so the deploy gate catches a squeezed or sideways-scrolling admin page. Full layout test 88 passed (13 teacher, 12 learner and 19 admin pages, each at 1600 and 375 px). System's reviews and settings looked at at 1600 and 375 px.

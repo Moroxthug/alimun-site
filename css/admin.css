@@ -111,6 +111,10 @@ body.adm {
 .adm .tt-row__time { font-size: 13px; font-weight: 600; }
 .adm .tt-row--wide { grid-template-columns: 120px minmax(0, 1fr); }
 .adm .ad-act { grid-template-columns: 120px minmax(0, 1fr) auto; }
+/* The two-column row (no label column, e.g. System → App settings) and the phone stack from css/app.css, which the
+   rule above overrode: settings text sat in the 120 px label column and reviews were squeezed on phones (26 Nov 2026) */
+.adm .ad-act--2 { grid-template-columns: minmax(0, 1fr) auto; }
+@media (max-width: 520px) { .adm .ad-act, .adm .ad-act--2 { grid-template-columns: 1fr; gap: 6px; } .adm .ad-act__btns { justify-content: flex-start; } }
 .adm .tt-week__day, .adm .ad-day { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; margin: 14px 0 2px; }
 
 /* Tabs and filters */
