@@ -8,7 +8,7 @@
 const { test, expect } = require('@playwright/test');
 
 const TEACH = ['today', 'classes', 'classes/availability', 'classes/new', 'classes/practice', 'students', 'homework', 'lessons', 'material', 'messages', 'payouts', 'settings', 'help'];
-const ADMIN = ['overview', 'activity', 'help', 'onboarding', 'teachers', 'contact'];
+const ADMIN = ['overview', 'activity', 'students', 'teachers', 'onboarding', 'help', 'contact', 'campaigns', 'matching', 'classes', 'schedule', 'classlog', 'waiting', 'messages', 'figures', 'payouts', 'ai', 'automations', 'system'];
 const LEARN = ['home', 'book', 'practice', 'cards', 'tests', 'library', 'classes', 'homework', 'progress', 'messages', 'settings', 'help'];
 const SIZES = [{ name: 'desktop', width: 1600, height: 930 }, { name: 'phone', width: 375, height: 812 }];
 
