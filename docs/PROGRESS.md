@@ -2393,3 +2393,5 @@ The launch banner sat under the fixed header with its top cut off: its script ra
 - `js/cookies-banner.js` loads gtag on alimun.com only, and only once the visitor accepts analytics cookies; ad storage follows the marketing choice (GPC forces it off). Withdrawing analytics consent sets `ga-disable`, updates consent to denied and removes `_ga` cookies. Vercel Web Analytics is unchanged.
 - Cookie Policy (English + ar de es fr it pt zh): analytics paragraph names Google Analytics, new `_ga, _ga_ZXFYDXSLFG` row, date 27 Nov 2026. Owner approved ("Approve and push"); `site/locked.json` updated. CSP (report-only) allows googletagmanager and google-analytics.
 - Not done: the Privacy Policy provider list does not name Google Analytics (it refers to the Cookie Policy for analytics cookie data).
+## 27 Nov 2026 - Deploy gate switched on
+- The owner added "Deploy gate" in Vercel → alimun-site → Settings → Build and Deployment → Deployment Checks (GitHub). Each production build now waits for that CI job before it gets the alimun.com domains; a failing run leaves the site on the last good build. Emergency: Force Promote on the deployment in Vercel.
