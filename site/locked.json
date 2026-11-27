@@ -149,8 +149,8 @@
     "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-31 header account links script (owner: \"have dashboard or similar when logged in? And also the sign in option?\")"
   },
   "src/blocks/legal/cookies.html": {
-    "sha256": "3b358552ffdd50ff3b8ce8b634882195f3a31a7c731b8ee50d040d61e75ec1a1",
-    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 made accurate: no analytics cookies are set (Google Analytics removed), currency preference listed, teacher application fields match the real form (owner: go on with the legal pages); 2026-11-08 how you found Alimun (sign-up answer and, with analytics consent, first-visit source) and the alimun-first-touch local storage item (owner: \"approve the wording and push to main, just do not mention vercel web analytics\")"
+    "sha256": "e889e5ea7bc5ae58a66fe87f3dbe4b67b5409a6a04f26318e1543ae32a308ecb",
+    "approved": "2026-10-23 Legal pages and 404 (owner: legal ok); [COPY NEEDED] details to be filled in on owner request; 2026-10-24 made accurate: no analytics cookies are set (Google Analytics removed), currency preference listed, teacher application fields match the real form (owner: go on with the legal pages); 2026-11-08 how you found Alimun (sign-up answer and, with analytics consent, first-visit source) and the alimun-first-touch local storage item (owner: \"approve the wording and push to main, just do not mention vercel web analytics\"); 2026-11-27 Google Analytics 4 (G-ZXFYDXSLFG) added, loaded only with analytics consent: analytics paragraph, _ga/_ga_ZXFYDXSLFG row and date (owner: \"Approve and push\")"
   },
   "src/blocks/legal/gdpr.html": {
     "sha256": "a2d1d2d10d3fd433dbf9678c63c6df4911e8b518f5a1b0b14ee4d3af3772046a",

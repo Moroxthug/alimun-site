@@ -481,10 +481,50 @@
     if (navigator.globalPrivacyControl) prefs = Object.assign({}, prefs, { marketing: false });
     console.log('[Alimun Cookie Consent Applied]:', prefs);
     window.ALIMUN_CONSENT = prefs;
-    
+    applyGoogleAnalytics(prefs);
+
     // Dispatch event for other scripts to listen to
     const event = new CustomEvent('alimun-consent-updated', { detail: prefs });
     window.dispatchEvent(event);
+  }
+
+  // Google Analytics 4 (owner, 27 Nov 2026), property "Alimun", stream alimun.com. Loaded on alimun.com only, and only
+  // once the visitor accepts analytics cookies; advertising storage follows the marketing choice. Turning analytics off
+  // later stops it on this page and removes its _ga cookies.
+  var GA_ID = 'G-ZXFYDXSLFG';
+  var gaLoaded = false;
+  function applyGoogleAnalytics(prefs) {
+    if (!/(^|\.)alimun\.com$/.test(location.hostname)) return;
+    var analytics = !!prefs.analytics;
+    var ads = prefs.marketing ? 'granted' : 'denied';
+    window.dataLayer = window.dataLayer || [];
+    window.gtag = window.gtag || function () { window.dataLayer.push(arguments); };
+    window['ga-disable-' + GA_ID] = !analytics;
+    if (!gaLoaded) {
+      if (!analytics) return;
+      gaLoaded = true;
+      window.gtag('consent', 'default', { analytics_storage: 'granted', ad_storage: ads, ad_user_data: ads, ad_personalization: ads });
+      window.gtag('js', new Date());
+      window.gtag('config', GA_ID);
+      var s = document.createElement('script');
+      s.async = true;
+      s.src = 'https://www.googletagmanager.com/gtag/js?id=' + GA_ID;
+      document.head.appendChild(s);
+      return;
+    }
+    window.gtag('consent', 'update', { analytics_storage: analytics ? 'granted' : 'denied', ad_storage: ads, ad_user_data: ads, ad_personalization: ads });
+    if (!analytics) removeGaCookies();
+  }
+  function removeGaCookies() {
+    var host = location.hostname;
+    var domains = ['', host, '.' + host, '.' + host.split('.').slice(-2).join('.')];
+    document.cookie.split(';').forEach(function (c) {
+      var name = c.split('=')[0].trim();
+      if (name !== '_ga' && name.indexOf('_ga_') !== 0) return;
+      domains.forEach(function (d) {
+        document.cookie = name + '=; Max-Age=0; path=/' + (d ? '; domain=' + d : '');
+      });
+    });
   }
 
   // Where visitors first came from (js/source.js, kept only with analytics consent) and Vercel Web Analytics
