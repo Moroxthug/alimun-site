@@ -2395,3 +2395,7 @@ The launch banner sat under the fixed header with its top cut off: its script ra
 - Not done: the Privacy Policy provider list does not name Google Analytics (it refers to the Cookie Policy for analytics cookie data).
 ## 27 Nov 2026 - Deploy gate switched on
 - The owner added "Deploy gate" in Vercel → alimun-site → Settings → Build and Deployment → Deployment Checks (GitHub). Each production build now waits for that CI job before it gets the alimun.com domains; a failing run leaves the site on the last good build. Emergency: Force Promote on the deployment in Vercel.
+## 28 Nov 2026 - Security audit started (owner: "a thorough audit for vulnerabilities, exploits, possible hacks ... create phases and after each phase automatically start a new convo")
+- Scope chosen by the owner: alimun-site only; confirmed issues are fixed and pushed, database changes follow CLAUDE.md (migration written and tested, applied after the owner's yes).
+- Plan: `docs/audit/2026-11/PLAN.md` (nine phases after this one: secrets and hosting, database, API authorisation, money, AI, browser side, integrations and abuse, native apps, live attack pass and report). Each phase runs in its own cloud session and starts the next one when it is done. Findings go to `docs/audit/2026-11/FINDINGS.md`.
+- Phase 0 (this session): plan and inventory only, no code changed.
